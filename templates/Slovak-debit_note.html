@@ -28,7 +28,7 @@
         <tr>
           <th colspan=3>
 	    <hr noshade><br>
-            <h4>D E B I T &nbsp;&nbsp; N O T E</h4>
+            <h4>S T O R N O &nbsp;&nbsp; Z A V A Z O K</h4>
           </th>
         </tr>
       </table>
@@ -74,38 +74,38 @@
           <%end email%>
 
           <%if vendortaxnumber%>
-          <p>Taxnumber: <%vendortaxnumber%>
+          <p>DIC: <%vendortaxnumber%>
           <%end vendortaxnumber%>
           </td>
    
 	  <td align=right>
 	    <table>
 	      <tr>
-		<th align=left nowrap>Invoice #</th>
+		<th align=left nowrap>Faktura</th>
 		<td><%invnumber%></td>
 	      </tr>
 	      <tr>
-		<th align=left nowrap>Invoice Date</th>
+		<th align=left nowrap>Datum</th>
 		<td><%invdate%></td>
 	      </tr>
 	      <tr>
-		<th align=left nowrap>Due Date</th>
+		<th align=left nowrap>Splatnost</th>
 		<td><%duedate%></td>
 	      </tr>
 	      <%if ponumber%>
               <tr>
-                <th align=left>PO #</th>
+                <th align=left>PO </th>
 		<td><%ponumber%>&nbsp;</td>
 	      </tr>
 	      <%end ponumber%>
 	      <%if ordnumber%>
 	      <tr>
-		<th align=left>Order #</th>
+		<th align=left>Objednavka</th>
 		<td><%ordnumber%>&nbsp;</td>
 	      </tr>
 	      <%end ordnumber%>
 	      <tr>
-		<th align=left nowrap>Contact</th>
+		<th align=left nowrap>Kontakt</th>
 		<td><%employee%>&nbsp;</td>
 	      </tr>
 	    </table>
@@ -126,25 +126,25 @@
 	<tr valign=top>
 	  <td><%accno%></td>
 	  <td><%account%></td>
-	  <td width=10>&nbsp</td>
+	  <td width=10> </td>
 	  <td align=right><%amount%></td>
-	  <td width=10>&nbsp</td>
+	  <td width=10> </td>
 	  <td><%description%></td>
-	  <td width=10>&nbsp</td>
+	  <td width=10> </td>
 	  <td><%projectnumber%></td>
 	</tr>
 	<%end account%>
 
 	<tr>
 	  <%if taxincluded%>
-	  <th colspan=2 align=right>Total</th>
-	  <td width=10>&nbsp</td>
+	  <th colspan=2 align=right>Celkom</th>
+	  <td width=10> </td>
 	  <td align=right><%invtotal%></td>
 	  <%end taxincluded%>
 
 	  <%if not taxincluded%>
-	  <th colspan=2 align=right>Subtotal</th>
-	  <td width=10>&nbsp</td>
+	  <th colspan=2 align=right>Medzisucet</th>
+	  <td width=10> </td>
 	  <td align=right><%subtotal%></td>
 	  <%end taxincluded%>
 	</tr>
@@ -152,15 +152,15 @@
 	<%foreach tax%>
 	<tr>
 	  <th colspan=2 align=right><%taxdescription%> @ <%taxrate%> %</th>
-	  <td width=10>&nbsp</td>
+	  <td width=10> </td>
 	  <td align=right><%tax%></td>
 	</tr>
 	<%end tax%>
 	
 	<%if not taxincluded%>
 	<tr>
-	  <th colspan=2 align=right>Total</th>
-	  <td width=10>&nbsp</td>
+	  <th colspan=2 align=right>Celkom</th>
+	  <td width=10> </td>
 	  <td align=right><%invtotal%></td>
 	</tr>
 	<%end taxincluded%>
@@ -191,7 +191,7 @@
     <td>
       <table>
         <tr>
-          <th>Payments</th>
+          <th>Platby</th>
         </tr>
 
         <tr>
@@ -204,11 +204,11 @@
 	  <td>
 	    <table>
 	      <tr>
-		<th>Date</th>
+		<th>Datum</th>
 		<th>&nbsp;</th>
-		<th>Source</th>
-		<th>Memo</th>
-		<th>Amount</th>
+		<th>Doklad</th>
+		<th>Poznamka</th>
+		<th>Suma</th>
 	      </tr>
   <%end paid_1%>
 
@@ -239,7 +239,7 @@
   </tr>
 
   <tr>
-    <th colspan=3 align=left><font size=-2>Taxes shown are included in price.</th>
+    <th colspan=3 align=left><font size=-2>Ceny su s DPH.</th>
   </tr>
   <%end taxincluded%>
 
@@ -247,4 +247,5 @@
 
 </body>
 </html>
+
 

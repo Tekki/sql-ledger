@@ -53,6 +53,8 @@ sub check_name {
       # put employee together if there is a new employee_id
       $form->{employee} = "$form->{employee}--$form->{employee_id}" if $form->{employee_id};
 
+      $form->{rvp} = ($form->{remittancevoucher}) ? $myconfig{rvp} : "";
+
       $rv = 1;
     }
   } else {
@@ -99,6 +101,8 @@ sub check_name {
 	$form->{employee} = "$form->{employee}--$form->{employee_id}" if $form->{employee_id};
 	$form->{cashdiscount} *= 100;
 	$form->{cashdiscount} = 0 if $form->{type} =~ /(debit|credit)_/;
+
+	$form->{rvp} = ($form->{remittancevoucher}) ? $myconfig{rvp} : "";
 
       } else {
 	# name is not on file
@@ -257,6 +261,8 @@ sub name_selected {
   $form->{cashdiscount} = 0 if $form->{type} =~ /(debit|credit)_/;
   for (qw(terms discountterms)) { $form->{$_} = "" if ! $form->{$_} }
 
+  $form->{rvp} = ($form->{remittancevoucher}) ? $myconfig{rvp} : "";
+
   &update(1);
 
 }
@@ -285,17 +291,14 @@ sub rebuild_vc {
 
 
 sub add_transaction {
-  my ($module) = @_;
 
-  delete $form->{script};
   $form->{action} = "add";
-  $form->{type} = "invoice" if $module =~ /(is|ir)/;
 
   $form->{callback} = $form->escape($form->{callback},1);
   $argv = "";
   for (keys %$form) { $argv .= "$_=$form->{$_}&" }
 
-  $form->{callback} = "$module.pl?$argv";
+  $form->{callback} = "$form->{script}?$argv";
 
   $form->redirect;
   
@@ -652,7 +655,8 @@ pdf--|.$locale->text('PDF');
       $selectprinter =~ s/(<option value="\Q$p{$item}{printer}\E")/$1 selected/;
 
       $checked = ($p{$item}{formname}) ? "checked" : "";
- 
+
+      $p{$item}{format} ||= $myconfig{outputformat};
       $p{$item}{format} ||= "postscript";
      
       $print .= qq|
@@ -939,8 +943,32 @@ sub reprint {
 
 sub continue { &{ $form->{nextsub} } };
 sub gl_transaction { &add };
-sub ar_transaction { &add_transaction(ar) };
-sub ap_transaction { &add_transaction(ap) };
-sub sales_invoice_ { &add_transaction(is) };
-sub vendor_invoice_ { &add_transaction(ir) };
+sub ar_transaction {
+  $form->{script} = "ar.pl";
+  &add_transaction;
+}
+sub ap_transaction {
+  $form->{script} = "ap.pl";
+  &add_transaction;
+};
+sub sales_invoice_ {
+  $form->{script} = "is.pl";
+  $form->{type} = "invoice";
+  &add_transaction;
+}
+sub credit_invoice_ {
+  $form->{script} = "is.pl";
+  $form->{type} = "credit_invoice";
+  &add_transaction;
+}
+sub vendor_invoice_ {
+  $form->{script} = "ir.pl";
+  $form->{type} = "invoice";
+  &add_transaction;
+}
+sub debit_invoice_ {
+  $form->{script} = "ir.pl";
+  $form->{type} = "debit_invoice";
+  &add_transaction;
+}
 

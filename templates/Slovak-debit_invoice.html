@@ -35,7 +35,7 @@
     <td>
       <table width=100% cellspacing=5>
         <tr bgcolor=000000>
-	  <th width=50% align=left><font color=ffffff>TO</th>
+	  <th width=50% align=left><font color=ffffff>PRE</th>
 	</tr>
 
 	<tr valign=top>
@@ -122,7 +122,7 @@
   <tr>
     <td>&nbsp;</td>
     <th align=left>
-      <h2>D E B I T &nbsp;&nbsp;&nbsp; I N V O I C E</h2>
+      <h2>D O B R O P I S &nbsp;&nbsp;&nbsp; O D &nbsp;&nbsp;&nbsp; D O D A V A T E L A</h2>
     </th>
   </tr>
  
@@ -134,13 +134,13 @@
     <td>
       <table width=100% border=1>
         <tr>
-	  <th width=14% align=left nowrap>Invoice #</th>
-	  <th width=14% align=left nowrap>Date</th>
-	  <th width=14% align=left nowrap>Due</th>
-	  <th width=14% align=left nowrap>Order #</th>
-	  <th width=14% align=left nowrap>Contact</th>
-	  <th width=14% align=left nowrap>Shipping Point</th>
-	  <th width=14% align=left nowrap>Ship via</th>
+	  <th width=14% align=left nowrap>Faktura</th>
+	  <th width=14% align=left nowrap>Datum</th>
+	  <th width=14% align=left nowrap>Splatnost</th>
+	  <th width=14% align=left nowrap>Objednavka</th>
+	  <th width=14% align=left nowrap>Osoba</th>
+	  <th width=14% align=left nowrap>Miesto urcenia</th>
+	  <th width=14% align=left nowrap>Sposob dopravy</th>
 	</tr>
 
 	<tr>
@@ -162,15 +162,15 @@
     <td>
       <table width=100%>
         <tr bgcolor=000000>
-          <th align=right nowrap><font color=ffffff>Item</th>
-          <th align=left nowrap><font color=ffffff>Number</th>
-          <th align=left nowrap><font color=ffffff>Description</th>
+          <th align=right nowrap><font color=ffffff>Pol.</th>
+          <th align=left nowrap><font color=ffffff>Cislo</th>
+          <th align=left nowrap><font color=ffffff>Popis</th>
           <th>&nbsp;</th>
-          <th align=right nowrap><font color=ffffff>Qt'y</th>
+          <th align=right nowrap><font color=ffffff>Mnoz.</th>
           <th>&nbsp;</th>
-          <th align=right nowrap><font color=ffffff>Unit Price</th>
-          <th align=right nowrap><font color=ffffff>Disc %</th>
-          <th align=right nowrap><font color=ffffff>Extended</th>
+          <th align=right nowrap><font color=ffffff>Cena</th>
+          <th align=right nowrap><font color=ffffff>Zlava %</th>
+          <th align=right nowrap><font color=ffffff>Suma</th>
         </tr>
 
         <%foreach number%>
@@ -198,19 +198,19 @@
     
         <tr>
           <%if taxincluded%>
-          <th colspan=7 align=right>Total</th>
+          <th colspan=7 align=right>Celkom</th>
           <td colspan=2 align=right><%invtotal%></td>
           <%end taxincluded%>
 
           <%if not taxincluded%>
-          <th colspan=7 align=right>Subtotal</th>
+          <th colspan=7 align=right>Medzisucet</th>
           <td colspan=2 align=right><%subtotal%></td>
           <%end taxincluded%>
         </tr>
 
         <%foreach tax%>
         <tr>
-	  <th colspan=3 align=left><font size=-2>Registration No. <%taxnumber%></font></th>
+	  <th colspan=3 align=left><font size=-2>DIC. <%taxnumber%></font></th>
           <th colspan=4 align=right nowrap><%taxdescription%> on <%taxbase%> @ <%taxrate%> %</th>
           <td colspan=2 align=right><%tax%></td>
         </tr>
@@ -218,14 +218,14 @@
 
 	<%if not taxincluded%>
 	<tr>
-          <th colspan=7 align=right>Total</th>
+          <th colspan=7 align=right>Celkom</th>
           <td colspan=2 align=right><%invtotal%></td>
 	</tr>
 	<%end taxincluded%>
 
         <%if paid%>
         <tr>
-          <th colspan=7 align=right>Paid</th>
+          <th colspan=7 align=right>Platby</th>
           <td colspan=2 align=right>- <%paid%></td>
         </tr>
         <%end paid%>
@@ -238,7 +238,7 @@
         <%if total%>
         <tr>
           <td colspan=5>&nbsp;</td>
-          <th colspan=2 align=right nowrap>Balance Due</th>
+          <th colspan=2 align=right nowrap>Suma</th>
           <th colspan=2 align=right><%total%></th>
         </tr>
         <%end total%>
@@ -256,12 +256,12 @@
         <tr valign=top>
 	  <th align=left><%text_amount%> ***** <%decimal%>/100</th>
           <td align=right nowrap>
-          All prices in <b><%currency%></b>
+          Hodnoty su v <b><%currency%></b>
           </td>
         </tr>
 	<%if taxincluded%>
 	<tr>
-	  <th align=left><font size=-2>Taxes included in price</font></th>
+	  <th align=left><font size=-2>Cena s DPH</font></th>
 	</tr>
 	<%end taxincluded%>
       </table>
@@ -287,14 +287,14 @@
 		<td>
 		  <table width=100%>
 		    <tr bgcolor=000000>
-		      <th colspan=4><font color=ffffff>Payments</th>
+		      <th colspan=4><font color=ffffff>Platby</th>
 		    </tr>
 
 		    <tr>
-		      <th align=left>Date</th>
+		      <th align=left>Datum</th>
 		      <th align=left>&nbsp;</th>
-		      <th align=left>Source</th>
-		      <th align=left width=1%>Amount</th>
+		      <th align=left>Doklad</th>
+		      <th align=left width=1%>Suma</th>
 		    </tr>
   <%end paid_1%>
 
@@ -328,5 +328,6 @@
 
 </body>
 </html>
+
 
 

@@ -1,5 +1,5 @@
 \documentclass{scrartcl}
-\usepackage[latin1]{inputenc}
+\usepackage[latin2]{inputenc}
 \usepackage{tabularx}
 \usepackage[top=2.2cm,bottom=-1cm,left=1.9cm,right=0.5cm]{geometry}
 \usepackage{graphicx}
@@ -36,7 +36,7 @@
   
   \hfill
   \begin{tabularx}{7cm}{Xr@{}}
-  \textbf{Subtotal} & \textbf{<%sumcarriedforward%>} \\
+  \textbf{Medzisucet} & \textbf{<%sumcarriedforward%>} \\
   \end{tabularx}
 
 \newpage
@@ -44,15 +44,15 @@
 \markboth{<%company%>\hfill <%invnumber%>}{<%company%>\hfill <%invnumber%>}
 
 \begin{tabularx}{\textwidth}{@{}rlXlrlrrr@{}}
-  \textbf{Item} & \textbf{Number} & \textbf{Description} & & \textbf{Qt'y} &
-    \textbf{Unit} & \textbf{Price} & \textbf{Disc \%} & \textbf{Amount} \\ [0.5em]
+  \textbf{Pol} & \textbf{Èíslo} & \textbf{Popis} & & \textbf{Mno¾.} &
+    \textbf{Jedn} & \textbf{Cena} & \textbf{Zlava \%} & \textbf{Suma} \\ [0.5em]
   & carried forward from page <%lastpage%> & & & & & & & <%sumcarriedforward%> \\ [0.5em]
 <%end pagebreak%>
 
 \vspace{0.5cm}
 
 \parbox[t]{.5\textwidth}{
-\textbf{TO}
+\textbf{Pre}
 \vspace{0.3cm}
 
 <%name%>
@@ -92,20 +92,20 @@ Fax: <%customerfax%>
 
 \vspace{1cm}
 
-\textbf{C R E D I T \hspace{0.2cm} I N V O I C E}
+\textbf{D O B R O B I S}
 
 \vspace{1cm}
 
 \begin{tabularx}{\textwidth}{*{8}{|X}|} \hline
-  \textbf{Invoice \#} & \textbf{Invoice Date} & \textbf{Order \#} & \textbf{Salesperson}
+  \textbf{Faktúra} & \textbf{Dátum} & \textbf{Objecnávka} & \textbf{Pred.osoba}
   <%if shippingpoint%>
-  & \textbf{Shipping Point}
+  & \textbf{Miesto urèenia}
   <%end shippingpoint>
   <%if ponumber%>
-  & \textbf{PO Number}
+  & \textbf{PO èíslo}
   <%end ponumber%>
   <%if shipvia%>
-  & \textbf{Ship via}
+  & \textbf{Spôsob dodania}
   <%end shipvia%>
   \\ [0.5em]
   \hline
@@ -126,8 +126,8 @@ Fax: <%customerfax%>
 \vspace{1cm}
 
 \begin{tabularx}{\textwidth}{@{}rlXlrlrrr@{}}
-  \textbf{Item} & \textbf{Number} & \textbf{Description} & \textbf{Qt'y} &
-    \textbf{Unit} & \textbf{Price} & \textbf{Amount} \\ [0.5em]
+  \textbf{Pol.} & \textbf{Èíslo} & \textbf{Popis} & \textbf{Mno¾} &
+    \textbf{Jedn.} & \textbf{Cena} & \textbf{Suma} \\ [0.5em]
 <%foreach number%>
   <%runningnumber%> & <%number%> & <%description%> &
   <%qty%> & <%unit%> & <%sellprice%> & <%linetotal%> \\
@@ -143,16 +143,16 @@ Fax: <%customerfax%>
 \hfill
 \begin{tabularx}{\textwidth}{@{}Xr@{\hspace{1cm}}r@{}}
 <%if not taxincluded%>
- & Subtotal & <%subtotal%> \\
+ & Medzisúèet & <%subtotal%> \\
 <%end taxincluded%>
 <%if taxincluded%>
- & Total & <%invtotal%> \\
+ & Celkom & <%invtotal%> \\
 <%end taxincluded%>
 <%foreach tax%>
- Registration No. <%taxnumber%> & <%taxdescription%> on <%taxbase%> @ <%taxrate%> \% & <%tax%> \\
+ DIÈ. <%taxnumber%> & <%taxdescription%> on <%taxbase%> @ <%taxrate%> \% & <%tax%> \\
 <%end tax%>
 <%if not taxincluded%>
- & Total & <%invtotal%> \\
+ & Celkom & <%invtotal%> \\
 <%end taxincluded%>
   \cline{2-3}
 \end{tabularx}
@@ -161,10 +161,10 @@ Fax: <%customerfax%>
 
 <%text_amount%> ***** <%decimal%>/100
 \hfill
-All prices in \textbf{<%currency%>}.
+Hodnoty sú v \textbf{<%currency%>}.
 
 <%if taxincluded%>
-Taxes included in price.
+Ceny sú s DPH.
 <%end tax included%>
 
 \vspace{1em}
@@ -176,9 +176,9 @@ Taxes included in price.
 
 <%if paid_1%>
 \begin{tabularx}{10cm}{@{}lXlr@{}}
-  \multicolumn{4}{c}{\textbf{Refund}} \\
+  \multicolumn{4}{c}{\textbf{Platby}} \\
   \hline
-  \textbf{Date} & & \textbf{Source} & \textbf{Amount} \\
+  \textbf{Dátum} & & \textbf{Doklad} & \textbf{Suma} \\
 <%end paid_1%>
 <%foreach payment%>
   <%paymentdate%> & <%paymentaccount%> & <%paymentsource%> & <%payment%> \\
@@ -192,4 +192,5 @@ Taxes included in price.
 \rule{\textwidth}{0.5pt}
 
 \end{document}
+
 

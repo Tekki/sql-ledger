@@ -1666,7 +1666,7 @@ sub tax_report {
 	# include open transactions from previous period
 	if ($cashwhere) {
 	  $query .= qq|
-              UNION ALL
+              UNION
 	      
                 SELECT a.id, a.invoice, $transdate AS transdate,
 		a.invnumber, n.name, n.${vc}number, a.netamount,
@@ -1729,7 +1729,7 @@ sub tax_report {
       if ($form->{fromdate}) {
 	if ($cashwhere) {
 	 $query .= qq|
-	      UNION ALL
+	      UNION
 	      
 	        SELECT a.id, '0' AS invoice, $transdate AS transdate,
 		a.invnumber, n.name, n.${vc}number, a.netamount,
@@ -1746,7 +1746,7 @@ sub tax_report {
 		AND NOT (ch.link LIKE '%_paid' OR ch.link = '$ARAP')
 		$cashwhere
 		
-	      UNION ALL
+	      UNION
 	      
 		SELECT a.id, '1' AS invoice, $transdate AS transdate,
 		a.invnumber, n.name, n.${vc}number,
@@ -1791,7 +1791,7 @@ sub tax_report {
       if ($form->{fromdate}) {
 	if ($cashwhere) {
 	  $query .= qq|
-                UNION ALL
+                UNION
 		
                   SELECT DISTINCT a.id, a.invoice, $transdate AS transdate,
 		  a.invnumber, n.name, n.${vc}number, a.netamount,
@@ -1855,7 +1855,7 @@ sub tax_report {
       if ($form->{fromdate}) {
 	if ($cashwhere) {
 	  $query .= qq|
-                UNION ALL
+                UNION
 		
                   SELECT a.id, '0' AS invoice, $transdate AS transdate,
 		  a.invnumber, n.name, n.${vc}number, a.netamount,
@@ -1873,7 +1873,7 @@ sub tax_report {
 		GROUP BY a.id, $transdate, a.invnumber, n.name, a.netamount,
 		ac.memo, a.till, n.id, n.${vc}number
 		
-		UNION ALL
+		UNION
 		
 		  SELECT a.id, '1' AS invoice, $transdate AS transdate,
 		  a.invnumber, n.name, n.${vc}number,

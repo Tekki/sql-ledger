@@ -34,7 +34,7 @@ sub create_links {
 		g.pricegroup || '--' || g.id AS pricegroup,
 		ct.curr
                 FROM $form->{db} ct
-		JOIN address ad ON (ct.id = ad.trans_id)
+		LEFT JOIN address ad ON (ct.id = ad.trans_id)
 		LEFT JOIN business b ON (ct.business_id = b.id)
 		LEFT JOIN shipto s ON (ct.id = s.trans_id)
 		LEFT JOIN employee e ON (ct.employee_id = e.id)

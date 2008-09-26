@@ -110,7 +110,7 @@
             >{\hsize=2.0cm\raggedleft}X@{}
            }
   \textbf{pol} & \textbf{Skup} & \textbf{»Ìslo} & \centering\textbf{Popis} &
-  \textbf{Reg·l} & \textbf{Mnoû.} & \textbf{MJ} & 
+  \textbf{Reg·l} & \textbf{Mno&#65533;.} & \textbf{MJ} & 
   \textbf{Cena bez DPH} & \textbf{Suma bez DPH} & \textbf{DPH\%} & 
   \textbf{Suma DPH} & \textbf{Suma}
   \cr
@@ -182,33 +182,16 @@ fax: <%fax%>
 
 \hspace{-3mm}
 {\scriptsize
-\begin{tabularx}{\textwidth}{>{\hsize=0.4cm\centering}X@{\ }
-                             >{\hsize=0.9cm\raggedright}X@{\ }
-                             >{\hsize=1.9cm\raggedright}X@{\ }
-                             >{\hsize=2.9cm\raggedright}X@{\ }
-                             >{\hsize=1.9cm\centering}X@{\ }
-                             >{\hsize=0.9cm\raggedleft}X@{\ }
-                             >{\hsize=0.5cm\centering}X@{\ }
-                             >{\hsize=2.0cm\raggedleft}X@{\ }
-                             >{\hsize=2.0cm\raggedleft}X@{\ }
-                             >{\hsize=0.8cm\raggedleft}X@{\ }
-                             >{\hsize=2.0cm\raggedleft}X@{\ }
-                             >{\hsize=2.0cm\raggedleft}X@{}
-                             }
-  \centering\textbf{pol} & \raggedright\textbf{Skup.} & \raggedright\textbf{»Ìslo} & \raggedright\textbf{Popis} &
-  \centering\textbf{Reg·l} & \raggedleft\textbf{Mnoû} & \centering\textbf{MJ} & 
-  \raggedleft\textbf{Cena bez DPH} & \raggedleft\textbf{Suma bez DPH} & \raggedright\textbf{DPH\%} & 
-  \raggedleft\textbf{Suma DPH} & \raggedleft\textbf{Suma}
-  \cr
+
+\begin{tabularx}{\textwidth}{@{}rlXlrlrrr@{}}
+  \textbf{Pol.} & \textbf{»Ìslo} & \textbf{Popis} & & \textbf{Mnoæstvo} &
+    \textbf{MJ} & \textbf{Cena} & \textbf{Zµava \%} & \textbf{Suma} \\ [0.5em]
 <%foreach number%>
-  <%runningnumber%> & <%partsgroup%> & <%number%> & <%description%> &
-  <%bin%> & <%qty%> & <%unit%> &
-  <%netprice%> & <%linetotal%> & <%linetaxrate%> & 
-  <%taxamount%> & <%linetotal2%> 
-  \cr
+  <%runningnumber%> & <%number%> & <%description%> & <%deliverydate%> &
+  <%qty%> & <%unit%> & <%sellprice%> & <%discountrate%> & <%linetotal%> \\
 <%end number%>
 \end{tabularx}
-}
+
 
 \rule{\textwidth}{1.5pt}
 
@@ -275,6 +258,23 @@ fax: <%fax%>
 <%intnotes%>
 
 \end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

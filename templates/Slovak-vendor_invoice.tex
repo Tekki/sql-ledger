@@ -12,47 +12,32 @@
 
 \fontfamily{cmss}\fontsize{10pt}{12pt}\selectfont
 
-\parbox{\textwidth}{%
-  \parbox[b]{.42\textwidth}{%
-    <%company%>
-   
-    <%address%>
-  }
-  \parbox[b]{.2\textwidth}{
-    \includegraphics[scale=0.3]{sql-ledger}
-  }\hfill
-  \begin{tabular}[b]{rr@{}}
-  Tel: & <%tel%>\\
-  Fax: & <%fax%>
-  \end{tabular}
+<%include letterhead.tex%>
 
-  \rule[1.5em]{\textwidth}{0.5pt}
-}
-
-<%pagebreak 90 27 37%>
+<%pagebreak 65 27 37%>
 \end{tabularx}
 
   \rule{\textwidth}{2pt}
   
   \hfill
   \begin{tabularx}{7cm}{Xr@{}}
-  \textbf{Medzisucet} & \textbf{<%sumcarriedforward%>} \\
+  \textbf{Medzis˙Ëet} & \textbf{<%sumcarriedforward%>} \\
   \end{tabularx}
 
 \newpage
 
-\markboth{<%company%>\hfill <%invnumber%>}{<%company%>\hfill <%invnumber%>}
+\markright{<%company%>\hfill <%invnumber%>}
 
 \begin{tabularx}{\textwidth}{@{}rlXlrlrrr@{}}
-  \textbf{Pol.} & \textbf{»Ìslo} & \textbf{Popis} & & \textbf{Mnoæ.} &
-    \textbf{Jedn.} & \textbf{Cena} & \textbf{Zlava \%} & \textbf{Hodnota} \\ [0.5em]
+  \textbf{Pol} & \textbf{»Ìslo} & \textbf{Popis} & & \textbf{Mnoû} &
+    \textbf{Jedn} & \textbf{Cena} & \textbf{Zlava \%} & \textbf{Suma} \\ [0.5em]
   & carried forward from page <%lastpage%> & & & & & & & <%sumcarriedforward%> \\ [0.5em]
 <%end pagebreak%>
 
 \vspace{0.5cm}
 
 \parbox[t]{.5\textwidth}{
-\textbf{PRE}
+\textbf{OD}
 \vspace{0.3cm}
 
 <%name%>
@@ -88,8 +73,8 @@ Fax: <%vendorfax%>
 
 <%vendortaxnumber%>
 }
-\parbox[t]{.5\textwidth}{
-\textbf{DODA´}
+\parbox[t]{1.8\textwidth}{
+\textbf{PRE}
 \vspace{0.3cm}
 
 <%shiptoname%>
@@ -127,21 +112,21 @@ Fax: <%shiptofax%>
 
 \vspace{1cm}
 
-\textbf{D O B R O P I S \hspace{0.2cm} O D \hspace{0.2cm} D O D A V A T E L A}
+\textbf{D O D ¡ V A T E L S K ¡ \hspace{0.3cm} F A K T ⁄ R A}
 
 \vspace{1cm}
 
 \begin{tabularx}{\textwidth}{*{8}{|X}|} \hline
-  \textbf{Fakt˙ra} & \textbf{D·tum} & \textbf{Splat.} & \textbf{Objedn·vka}
-  & \textbf{Osoba}
+  \textbf{Fakt˙ra} & \textbf{D·tum} & \textbf{Splatnosù} & \textbf{Objedn·vka}
+  & \textbf{Kontakt}
   <%if shippingpoint%>
-  & \textbf{Miesto dod.}
+  & \textbf{Miesto dodania}
   <%end shippingpoint>
   <%if ponumber%>
-  & \textbf{Objedn·vka}
+  & \textbf{PO}
   <%end ponumber%>
   <%if shipvia%>
-  & \textbf{SpÙs.dod.}
+  & \textbf{SpÙsob dodania}
   <%end shipvia%>
   \\ [0.5em]
   \hline
@@ -162,8 +147,8 @@ Fax: <%shiptofax%>
 \vspace{1cm}
 
 \begin{tabularx}{\textwidth}{@{}rlXlrlrrr@{}}
-  \textbf{Pol.} & \textbf{»Ìslo} & \textbf{Popis} & & \textbf{Mnoæ.} &
-    \textbf{Jedn.} & \textbf{Cena} & \textbf{Zlava \%} & \textbf{Suma} \\ [0.5em]
+  \textbf{Pol} & \textbf{»Ìslo} & \textbf{Popis} & & \textbf{Mnoû} &
+    \textbf{Jedn} & \textbf{Cena} & \textbf{Zlava \%} & \textbf{Suma} \\ [0.5em]
 <%foreach number%>
   <%runningnumber%> & <%number%> & <%description%> & <%deliverydate%> &
   <%qty%> & <%unit%> & <%sellprice%> & <%discountrate%> & <%linetotal%> \\
@@ -179,13 +164,13 @@ Fax: <%shiptofax%>
 \hfill
 \begin{tabularx}{\textwidth}{@{}Xr@{\hspace{1cm}}r@{}}
 <%if not taxincluded%>
- & MedzisuËet & <%subtotal%> \\
+ & Medzis˙Ëet & <%subtotal%> \\
 <%end taxincluded%>
 <%if taxincluded%>
  & Celkom & <%invtotal%> \\
 <%end taxincluded%>
 <%foreach tax%>
- DI». <%taxnumber%> & <%taxdescription%> on <%taxbase%> @ <%taxrate%> \% & <%tax%> \\
+ & <%taxdescription%> on <%taxbase%> @ <%taxrate%> \% & <%tax%> \\
 <%end tax%>
 <%if not taxincluded%>
  & Celkom & <%invtotal%> \\
@@ -195,7 +180,7 @@ Fax: <%shiptofax%>
 <%end paid%>
   \cline{2-3}
 <%if total%>
-  & Zaplatiª & <%total%> \\
+  & Zaplatit & <%total%> \\
 <%end total%>
 \end{tabularx}
 
@@ -220,7 +205,7 @@ Ceny s˙ s DPH.
 \begin{tabularx}{10cm}{@{}lXlr@{}}
   \multicolumn{4}{c}{\textbf{Platby}} \\
   \hline
-  \textbf{D·tum} & & \textbf{Doklad} & \textbf{Hodnota} \\
+  \textbf{D·tum} & & \textbf{Doklad} & \textbf{Suma} \\
 <%end paid_1%>
 <%foreach payment%>
   <%paymentdate%> & <%paymentaccount%> & <%paymentsource%> & <%payment%> \\

@@ -1,16 +1,16 @@
 $self{charset} = 'ISO-8859-2';
 
 $self{texts} = {
-  'Account'                     => 'Ú&#269;et',
-  'Amount'                      => '&#268;iastka',
-  'Continue'                    => 'Pokra&#269;ovanie',
+  'Account'                     => 'Úèet',
+  'Amount'                      => 'Èiastka',
+  'Continue'                    => 'Pokraèovanie',
   'Date'                        => 'Dátum',
   'Memo'                        => 'Memo',
-  'Nothing to print!'           => 'Neni &#269;o tla&#269;i&#357;!',
+  'Nothing to print!'           => 'Neni èo tlaèi»!',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
   'Screen'                      => 'Obrazovka',
-  'Select a Printer!'           => 'Vyberte tla&#269;iare&#328;',
+  'Select a Printer!'           => 'Vyberte tlaèiareò',
   'Select payment'              => 'Vyberte spôsob platby',
   'Select postscript or PDF!'   => 'Vyberte postscript alebo PDF!',
   'Source'                      => 'Doklad',
@@ -27,7 +27,7 @@ $self{subs} = {
   'print_receipt'               => 'print_receipt',
   'print_transaction'           => 'print_transaction',
   'select_payment'              => 'select_payment',
-  'pokra&#269;ovanie'           => 'continue',
+  'pokraèovanie'                => 'continue',
 };
 
 1;

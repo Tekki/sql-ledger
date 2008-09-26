@@ -385,26 +385,14 @@ Webserver directives were written to
       if (!$confd) {
 	if (!(`grep "^# SQL-Ledger" $httpd`)) {
 
-	  open(FH, ">>$httpd");
-
-	  print FH qq|
+	  print qq|Please add
 
 # SQL-Ledger
 Include $httpddir/$filename
-|;
-	  close(FH);
-	  
-	}
-      }
 
-      if (!$>) {
-	# send SIGHUP to httpd
-	if ($f = `find /var -type f -name 'httpd.pid'`) {
-	  $pid = `cat $f`;
-	  chomp $pid;
-	  if ($pid) {
-	    system("kill -s HUP $pid");
-	  }
+to your httpd configuration file and restart the web server.
+|;
+	  
 	}
       }
     }

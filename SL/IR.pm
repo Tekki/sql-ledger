@@ -684,6 +684,12 @@ sub post_invoice {
 
   }
 
+  if ($form->{department_id}) {
+    $query = qq|INSERT INTO dpt_trans (trans_id, department_id)
+                VALUES ($form->{id}, $form->{department_id})|;
+    $dbh->do($query) || $form->dberror($query);
+  }
+
   my $amount;
   my $grossamount;
   my $allocated;
@@ -844,20 +850,19 @@ sub post_invoice {
 	if ($form->{"qty_$i"} > 0) {
 
 	  $query = qq|SELECT i.id, i.qty, i.allocated, i.trans_id, i.project_id,
-		      p.inventory_accno_id, p.expense_accno_id, a.transdate
+		      p.inventory_accno_id, p.expense_accno_id
 		      FROM invoice i
 		      JOIN parts p ON (p.id = i.parts_id)
-		      JOIN ar a ON (a.id = i.trans_id)
 		      WHERE i.parts_id = $form->{"id_$i"}
 		      AND (i.qty + i.allocated) > 0
-		      ORDER BY a.transdate|;
+		      ORDER BY i.trans_id|;
 	  $sth = $dbh->prepare($query);
 	  $sth->execute || $form->dberror($query);
 
 	  my $totalqty = $form->{"qty_$i"};
 	  
 	  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
-	    
+
 	    $qty = $ref->{qty} + $ref->{allocated};
 
 	    if (($qty - $totalqty) > 0) {
@@ -869,18 +874,19 @@ sub post_invoice {
 
 	    # add entry for inventory, this one is for the sold item
 	    if ($linetotal) {
+	      # credit inventory
 	      $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount, 
 			  transdate, project_id, id)
 			  VALUES ($ref->{trans_id}, $ref->{inventory_accno_id},
-			  $linetotal, '$ref->{transdate}', $ref->{project_id},
+			  $linetotal, '$form->{transdate}', $ref->{project_id},
 			  $id)|;
 	      $dbh->do($query) || $form->dberror($query);
 
-	      # add expense
+	      # add cogs
 	      $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount, 
 			  transdate, project_id, id)
 			  VALUES ($ref->{trans_id}, $ref->{expense_accno_id},
-			  $linetotal * -1, '$ref->{transdate}',
+			  $linetotal * -1, '$form->{transdate}',
 			  $ref->{project_id}, $id)|;
 	      $dbh->do($query) || $form->dberror($query);
 	    }
@@ -901,65 +907,47 @@ sub post_invoice {
 	  
 	} else {
 	 
-	  # returned item, de-allocate sale
-  	  $query = qq|SELECT i.id, i.qty, i.allocated, i.trans_id, i.project_id,
-		      p.inventory_accno_id, p.income_accno_id, a.transdate
+	  # returned item, check if we can allocate purchases
+	  $query = qq|SELECT i.id, i.qty, i.allocated, i.trans_id
 		      FROM invoice i
-		      JOIN parts p ON (p.id = i.parts_id)
-		      JOIN ar a ON (a.id = i.trans_id)
 		      WHERE i.parts_id = $form->{"id_$i"}
-		      AND i.allocated < 0
-		      ORDER BY a.transdate DESC|;
+		      AND (i.qty + i.allocated) < 0
+		      ORDER BY i.trans_id|;
 	  $sth = $dbh->prepare($query);
 	  $sth->execute || $form->dberror($query);
 
-	  my $totalqty = $form->{"qty_$i"};
+	  my $totalqty = $form->{"qty_$i"} * -1;
 	  
 	  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
-	    
-	    $qty = $totalqty;
 
-	    if ($qty < $ref->{allocated}) {
-	      $qty = $ref->{allocated};
+	    $qty = ($ref->{qty} + $ref->{allocated}) * -1;
+
+	    if (($qty - $totalqty) > 0) {
+	      $qty = $totalqty;
 	    }
 
-	    $linetotal = $form->round_amount($form->{"sellprice_$i"} * $qty, $form->{precision});
-	    $ref->{project_id} ||= 'NULL';
-
-	    # credit inventory, this one is for the returned item
-	    if ($linetotal) {
-	      $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount, 
-			  transdate, project_id, id)
-			  VALUES ($ref->{trans_id}, $ref->{inventory_accno_id},
-			  $linetotal, '$form->{transdate}', $ref->{project_id},
-			  $id)|;
-	      $dbh->do($query) || $form->dberror($query);
-
-	      # debit income
-	      $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount, 
-			  transdate, project_id, id)
-			  VALUES ($ref->{trans_id}, $ref->{income_accno_id},
-			  $linetotal * -1, '$form->{transdate}',
-			  $ref->{project_id}, $id)|;
-	      $dbh->do($query) || $form->dberror($query);
-	    }
-	
 	    # update allocated for sold item
 	    $form->update_balance($dbh,
 				  "invoice",
 				  "allocated",
 				  qq|id = $ref->{id}|,
-				  $qty * -1);
+				  $qty);
 	    
 	    $allocated += $qty;
 
-	    last if (($totalqty -= $qty) >= 0);
+	    last if (($totalqty -= $qty) <= 0);
 	  }
-
 	  $sth->finish;
 
+	  $allocated *= -1;
+	  
 	}
-	
+
+	$query = qq|UPDATE invoice SET
+		    allocated = $allocated
+		    WHERE id = $id|;
+	$dbh->do($query) || $form->dberror($query);
+
       } else {
 	
 	# add purchase to expense
@@ -1380,7 +1368,7 @@ sub post_invoice {
     my ($lastcost) = $lth->fetchrow_array;
     $lastcost *= 1;
     $lth->finish;
-    
+
     $sth->execute($avgcost, $lastcost, $item) || $form->dberror;
     $sth->finish;
     
@@ -1415,8 +1403,13 @@ sub reverse_invoice {
 
   my $amount;
   my $netamount = 0;
+
+  my $ref;
+  my $pref;
+  my $qty;
+  my $totalqty;
   
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     $netamount += $form->round_amount($ref->{sellprice} * $ref->{qty} * -1, $form->{precision});
 
     if ($ref->{inventory_accno_id}) {
@@ -1427,30 +1420,26 @@ sub reverse_invoice {
 			    qq|id = $ref->{parts_id}|,
 			    $ref->{qty});
       
-      # if $ref->{allocated} > 0 than we sold that many items
+      # we sold that many items
       if ($ref->{allocated} > 0) {
 
 	# get references for sold items
-	$query = qq|SELECT i.id, i.trans_id, i.allocated, a.transdate
+	$query = qq|SELECT i.id, i.trans_id, i.allocated
 	            FROM invoice i
-		    JOIN ar a ON (a.id = i.trans_id)
 		    WHERE i.parts_id = $ref->{parts_id}
 		    AND i.allocated < 0
-		  UNION ALL  
-		    SELECT i.id, i.trans_id, i.allocated, a.transdate
-		    FROM invoice i
-		    JOIN ap a ON (a.id = i.trans_id)
-		    WHERE i.parts_id = $ref->{parts_id}
-		    AND i.allocated < 0
-		    ORDER BY transdate DESC|;
+		    ORDER BY trans_id DESC|;
 	my $sth = $dbh->prepare($query);
 	$sth->execute || $form->dberror($query);
 
-	while (my $pthref = $sth->fetchrow_hashref(NAME_lc)) {
-	  my $qty = $ref->{allocated};
+        $totalqty = $ref->{allocated};
+	
+	while ($pref = $sth->fetchrow_hashref(NAME_lc)) {
+	  
+	  $qty = $totalqty;
 	 
-	  if (($ref->{allocated} + $pthref->{allocated}) > 0) {
-	    $qty = $pthref->{allocated} * -1;
+	  if ($qty > ($pref->{allocated} * -1)) {
+	    $qty = $pref->{allocated} * -1;
 	  }
 
 	  $amount = $form->round_amount($ref->{sellprice} * $qty, $form->{precision});
@@ -1459,26 +1448,61 @@ sub reverse_invoice {
 	  $form->update_balance($dbh,
 				"invoice",
 				"allocated",
-				qq|id = $pthref->{id}|,
+				qq|id = $pref->{id}|,
 				$qty);
 
           # add reversal for sale
-	  $ref->{project_id} *= 1;
+	  $ref->{project_id} ||= 'NULL';
           $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount, 
 		      transdate, project_id)
-		      VALUES ($pthref->{trans_id}, $ref->{expense_accno_id},
+		      VALUES ($pref->{trans_id}, $ref->{expense_accno_id},
 		      $amount, '$form->{transdate}', $ref->{project_id})|;
 	  $dbh->do($query) || $form->dberror($query);
 	  
           $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount, 
 		      transdate, project_id)
-		      VALUES ($pthref->{trans_id}, $ref->{inventory_accno_id},
+		      VALUES ($pref->{trans_id}, $ref->{inventory_accno_id},
 		      $amount * -1, '$form->{transdate}', $ref->{project_id})|;
 	  $dbh->do($query) || $form->dberror($query);
   
-	  last if (($ref->{allocated} -= $qty) <= 0);
+	  last if (($totalqty -= $qty) <= 0);
+	  
 	}
 	$sth->finish;
+	
+      } else {
+	
+	# get references for bought items
+	$query = qq|SELECT i.id, i.trans_id, i.allocated
+	            FROM invoice i
+		    WHERE i.parts_id = $ref->{parts_id}
+		    AND i.allocated > 0
+		    ORDER BY trans_id DESC|;
+	my $sth = $dbh->prepare($query);
+	$sth->execute || $form->dberror($query);
+
+        $totalqty = $ref->{allocated} * -1;
+	
+	while ($pref = $sth->fetchrow_hashref(NAME_lc)) {
+	  
+	  $qty = $totalqty;
+	 
+	  if ($qty > $pref->{allocated}) {
+	    $qty = $pref->{allocated};
+	  }
+
+	  #adjust allocated
+	  $form->update_balance($dbh,
+				"invoice",
+				"allocated",
+				qq|id = $pref->{id}|,
+				$qty * -1);
+
+	  last if (($totalqty -= $qty) <= 0);
+	  
+	}
+	$sth->finish;
+
       }
     }
   }
@@ -1528,9 +1552,13 @@ sub reverse_invoice {
   $sth->finish;
   
   
-  for (qw(acc_trans invoice inventory shipto cargo vr)) {
-    $query = qq|DELETE FROM $_
-                WHERE trans_id = $form->{id}|;
+  for (qw(acc_trans dpt_trans invoice inventory shipto cargo vr)) {
+    $query = qq|DELETE FROM $_ WHERE trans_id = $form->{id}|;
+    $dbh->do($query) || $form->dberror($query);
+  }
+  
+  for (qw(recurring recurringemail recurringprint)) {
+    $query = qq|DELETE FROM $_ WHERE id = $form->{id}|;
     $dbh->do($query) || $form->dberror($query);
   }
 

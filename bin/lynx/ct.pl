@@ -2416,6 +2416,8 @@ sub pricelist_footer {
 
 sub update {
 
+  for (qw(creditlimit threshold discount cashdiscount)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
+
   if ($form->{update_contact}) {
 
     $form->{title} = ($form->{id}) ? 'Edit' : 'Add';

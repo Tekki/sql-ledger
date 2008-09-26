@@ -78,7 +78,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.8.1";
+  $self->{version} = "2.8.2";
   $self->{dbversion} = "2.8.0";
 
   $self->{precision} = 2;
@@ -3049,8 +3049,11 @@ sub date {
 	($dd, $mm, $yy) = split /\D/, $date;
       }
     } else {
-      $date = substr($date, 2);
-      ($yy, $mm, $dd) = ($date =~ /(..)(..)(..)/);
+      if (length $date > 6) {
+	($yy, $mm, $dd) = ($date =~ /(....)(..)(..)/);
+      } else {
+	($yy, $mm, $dd) = ($date =~ /(..)(..)(..)/);
+      }
     }
     
     $dd *= 1;

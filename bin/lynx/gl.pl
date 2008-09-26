@@ -100,7 +100,7 @@ sub edit {
  
   &create_links;
   
-  $form->{locked} = ($form->{revtrans}) ? '1' : ($form->datetonum(\%myconfig, $form->{transdate}) <= $form->datetonum(\%myconfig, $form->{closedto}));
+  $form->{locked} = ($form->{revtrans}) ? '1' : ($form->datetonum(\%myconfig, $form->{transdate}) <= $form->{closedto});
 
   $i = 1;
   foreach $ref (@{ $form->{GL} }) {
@@ -710,12 +710,16 @@ sub transactions {
     $button{'AR--Add Transaction'}{order} = $i++;
     $button{'AR--Sales Invoice'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Sales Invoice ').qq|"> |;
     $button{'AR--Sales Invoice'}{order} = $i++;
+    $button{'AR--Credit Invoice'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Credit Invoice ').qq|"> |;
+    $button{'AR--Credit Invoice'}{order} = $i++;
   }
   if ($myconfig{acs} !~ /AP--AP/) {
     $button{'AP--Add Transaction'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('AP Transaction').qq|"> |;
     $button{'AP--Add Transaction'}{order} = $i++;
     $button{'AP--Vendor Invoice'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Vendor Invoice ').qq|"> |;
     $button{'AP--Vendor Invoice'}{order} = $i++;
+    $button{'AP--Debit Invoice'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Debit Invoice ').qq|"> |;
+    $button{'AP--Debit Invoice'}{order} = $i++;
   }
 
   foreach $item (split /;/, $myconfig{acs}) {
@@ -1074,7 +1078,6 @@ sub form_footer {
   $form->hide_form(qw(path login callback));
   
   $transdate = $form->datetonum(\%myconfig, $form->{transdate});
-  $closedto = $form->datetonum(\%myconfig, $form->{closedto});
 
   if (! $form->{readonly}) {
 
@@ -1091,13 +1094,13 @@ sub form_footer {
       for ('Update', 'Post as new', 'Schedule') { $a{$_} = 1 }
       
       if (! $form->{locked}) {
-	if ($transdate > $closedto) {
+	if ($transdate > $form->{closedto}) {
 	  for ('Post', 'Delete') { $a{$_} = 1 }
 	}
       }
       
     } else {
-      if ($transdate > $closedto) {
+      if ($transdate > $form->{closedto}) {
 	for ("Update", "Post", "Schedule") { $a{$_} = 1 }
       }
     }
@@ -1170,9 +1173,8 @@ sub post {
   $form->isblank("transdate", $locale->text('Transaction Date missing!'));
 
   $transdate = $form->datetonum(\%myconfig, $form->{transdate});
-  $closedto = $form->datetonum(\%myconfig, $form->{closedto});
 
-  $form->error($locale->text('Cannot post transaction for a closed period!')) if ($transdate <= $closedto);
+  $form->error($locale->text('Cannot post transaction for a closed period!')) if ($transdate <= $form->{closedto});
 
   # add up debits and credits
   for $i (1 .. $form->{rowcount}) {
