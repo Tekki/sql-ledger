@@ -62,12 +62,12 @@ insert into chart (accno,description,charttype,gifi_accno,category,link) values 
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3500','VERBINDLICHKEITEN FINANZAMT','H','35','L','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3510','Finanzamt Verrechnung Körperschaftssteuer','A','350-359','L','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3520','Finanzamt Verrechnung Umsatzsteuer','A','350-359','L','');
-insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3530','Mehrwertsteuer 0%','A','350-359','L','AR_tax:AP_tax:IC_taxpart:IC_taxservice');
-insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3531','Mehrwertsteuer 10%','A','350-359','L','AR_tax:AP_tax:IC_taxpart:IC_taxservice');
-insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3532','Mehrwertsteuer 20%','A','350-359','L','AR_tax:AP_tax:IC_taxpart:IC_taxservice');
-insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3540','Vorsteuer 0%','A','350-359','L','AR_tax:AP_tax:IC_taxpart:IC_taxservice');
-insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3541','Vorsteuer 10%','A','350-359','L','AR_tax:AP_tax:IC_taxpart:IC_taxservice');
-insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3542','Vorsteuer 20%','A','350-359','L','AR_tax:AP_tax:IC_taxpart:IC_taxservice');
+insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3530','Umsatzsteuer 0%','A','350-359','L','AR_tax:IC_taxpart:IC_taxservice');
+insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3531','Umsatzsteuer 10%','A','350-359','L','AR_tax:IC_taxpart:IC_taxservice');
+insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3532','Umsatzsteuer 20%','A','350-359','L','AR_tax:IC_taxpart:IC_taxservice');
+insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3540','Vorsteuer 0%','A','350-359','L','AP_tax:IC_taxpart:IC_taxservice');
+insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3541','Vorsteuer 10%','A','350-359','L','AP_tax:IC_taxpart:IC_taxservice');
+insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3542','Vorsteuer 20%','A','350-359','L','AP_tax:IC_taxpart:IC_taxservice');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('4000','UMSATZ','H','4','I','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('4020','Verkauf - Hardware','A','40-44','I','AR_amount:IC_sale');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('4030','Verkauf - Software ','A','40-44','I','AR_amount:IC_sale');
@@ -138,6 +138,9 @@ insert into chart (accno,description,charttype,gifi_accno,category,link) values 
 insert into tax (chart_id,rate) values ((select id from chart where accno = '3530'),0.00);
 insert into tax (chart_id,rate) values ((select id from chart where accno = '3531'),0.10);
 insert into tax (chart_id,rate) values ((select id from chart where accno = '3532'),0.20);
+insert into tax (chart_id,rate) values ((select id from chart where accno = '3540'),0.00);
+insert into tax (chart_id,rate) values ((select id from chart where accno = '3541'),0.10);
+insert into tax (chart_id,rate) values ((select id from chart where accno = '3542'),0.20);
 --
 update defaults set inventory_accno_id = (select id from chart where accno = '1520'), income_accno_id = (select id from chart where accno = '4020'), expense_accno_id = (select id from chart where accno = '7610'), fxgain_accno_id = (select id from chart where accno = '4640'), fxloss_accno_id = (select id from chart where accno = '8050'), curr = 'EUR:USD', weightunit = 'kg';
 --

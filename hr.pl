@@ -63,6 +63,8 @@ $script =~ s/\.pl//;
 # pull in DBI
 use DBI qw(:sql_types);
 
+$form->{login} =~ s/(\.\.|\/|\\|\x00)//g;
+
 # check for user config file, could be missing or ???
 eval { require("$userspath/$form->{login}.conf"); };
 if ($@) {
