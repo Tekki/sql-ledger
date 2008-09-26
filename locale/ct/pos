@@ -19,6 +19,7 @@ $self{texts} = {
   'Screen'                      => 'Pantalla',
   'Source'                      => 'Font',
   'Subtotal'                    => 'Subtotal',
+  'Tax Included'                => 'Impostos Inclosos',
   'To'                          => 'Fins',
   'Total'                       => 'Total',
   'Unit'                        => 'Unitat',

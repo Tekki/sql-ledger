@@ -92,7 +92,6 @@ $self{texts} = {
   'May '                        => 'Toukokuu',
   'Message'                     => 'Viesti',
   'Month'                       => 'Kuukausi',
-  'No.'                         => 'no',
   'Notes'                       => 'Lisätietoja',
   'Nothing entered!'            => 'Ei syötettä',
   'Nothing selected!'           => 'Mitään valitsematta!',

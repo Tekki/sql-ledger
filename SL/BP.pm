@@ -43,8 +43,7 @@ sub get_vc {
 	       bin_list => ['oe'],
 	       sales_quotation => ['oe'],
 	       request_quotation => ['oe'],
-	       check => ['ap'],
-	       receipt => ['ar']
+	       timecard => ['jcitems'],
 	     );
   
   my $query = "";
@@ -66,7 +65,6 @@ sub get_vc {
     $count += $n;
   }
 
-
   # build selection list
   my $union = "";
   $query = "";
@@ -75,10 +73,10 @@ sub get_vc {
       $query .= qq|
                   $union
 		  SELECT DISTINCT vc.id, vc.name
-		  FROM $form->{vc} vc, $item a, status s
-		  WHERE a.$form->{vc}_id = vc.id
-		  AND s.trans_id = a.id
-		  AND s.formname = '$form->{type}'
+		  FROM $item a
+		  JOIN $form->{vc} vc ON (a.$form->{vc}_id = vc.id)
+		  JOIN status s ON (s.trans_id = a.id)
+		  WHERE s.formname = '$form->{type}'
 		  AND s.spoolfile IS NOT NULL|;
       $union = "UNION";
     }
@@ -99,30 +97,6 @@ sub get_vc {
 }
 		 
   
-
-sub payment_accounts {
-  my ($self, $myconfig, $form) = @_;
-  
-  # connect to database
-  my $dbh = $form->dbconnect($myconfig);
-
-  my $query = qq|SELECT DISTINCT c.accno, c.description
-                 FROM status s, chart c
-		 WHERE s.chart_id = c.id
-		 AND s.formname = '$form->{type}'|;
-  my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
-
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
-    push @{ $form->{accounts} }, $ref;
-  }
-  
-  $sth->finish;
-  $dbh->disconnect;
-  
-}
-
- 
 sub get_spoolfiles {
   my ($self, $myconfig, $form) = @_;
 
@@ -142,50 +116,39 @@ sub get_spoolfiles {
 	       bin_list => ['oe'],
 	       sales_quotation => ['oe'],
 	       request_quotation => ['oe'],
-	       check => ['ap'],
-	       receipt => ['ar']
+	       timecard => ['jc'],
 	     );
-  
 
-  if ($form->{type} eq 'check' || $form->{type} eq 'receipt') {
+  ($form->{transdatefrom}, $form->{transdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
+
+  if ($form->{type} eq 'timecard') {
+    my $dateformat = $myconfig->{dateformat};
+    $dateformat =~ s/yy/yyyy/;
+    $dateformat =~ s/yyyyyy/yyyy/;
+
+    $invnumber = 'id';
     
-    my ($accno) = split /--/, $form->{account};
-    
-    $query = qq|SELECT a.id, vc.name, a.invnumber, ac.transdate, s.spoolfile,
-                a.invoice, '$arap{$form->{type}}[0]' AS module
-                FROM acc_trans ac
-		JOIN chart c ON (c.id = ac.chart_id)
-		JOIN $arap{$form->{type}}[0] a ON (a.id = ac.trans_id)
-		JOIN status s ON (s.trans_id = a.id)
-		JOIN $form->{vc} vc ON (vc.id = a.$form->{vc}_id)
+    $query = qq|SELECT j.id, e.name, j.id AS invnumber,
+                to_char(j.checkedin, '$dateformat') AS transdate,
+		'' AS ordnumber, '' AS quonumber, '0' AS invoice,
+		'$arap{$form->{type}}[0]' AS module, s.spoolfile
+		FROM jcitems j
+		JOIN employee e ON (e.id = j.employee_id)
+		JOIN status s ON (s.trans_id = j.id)
 		WHERE s.formname = '$form->{type}'
-		AND c.accno = '$accno'
-		AND NOT ac.fx_transaction|;
+		AND s.spoolfile IS NOT NULL|;
 
       if ($form->{"$form->{vc}_id"}) {
-	$query .= qq| AND a.$form->{vc}_id = $form->{"$form->{vc}_id"}|;
+	$query .= qq| AND j.$form->{vc}_id = $form->{"$form->{vc}_id"}|;
       } else {
-	if ($form->{$form->{vc}} ne "") {
+	if ($form->{$form->{vc}}) {
 	  $item = $form->like(lc $form->{$form->{vc}});
-	  $query .= " AND lower(vc.name) LIKE '$item'";
+	  $query .= " AND lower(e.name) LIKE '$item'";
 	}
       }
-      if ($form->{invnumber} ne "") {
-	$item = $form->like(lc $form->{invnumber});
-	$query .= " AND lower(a.invnumber) LIKE '$item'";
-      }
-      if ($form->{ordnumber} ne "") {
-	$item = $form->like(lc $form->{ordnumber});
-	$query .= " AND lower(a.ordnumber) LIKE '$item'";
-      }
-      if ($form->{quonumber} ne "") {
-	$item = $form->like(lc $form->{quonumber});
-	$query .= " AND lower(a.quonumber) LIKE '$item'";
-      }
 
-      $query .= " AND a.transdate >= '$form->{transdatefrom}'" if $form->{transdatefrom};
-      $query .= " AND a.transdate <= '$form->{transdateto}'" if $form->{transdateto};
-
+      $query .= " AND j.checkedin >= '$form->{transdatefrom}'" if $form->{transdatefrom};
+      $query .= " AND j.checkedin <= '$form->{transdateto}'" if $form->{transdateto};
 
   } else {
     
@@ -200,9 +163,9 @@ sub get_spoolfiles {
       }
       
       $query .= qq|
-                $union
+		$union
 		SELECT a.id, vc.name, a.$invnumber AS invnumber, a.transdate,
-                a.ordnumber, a.quonumber, $invoice AS invoice,
+		a.ordnumber, a.quonumber, $invoice AS invoice,
 		'$item' AS module, s.spoolfile
 		FROM $item a, $form->{vc} vc, status s
 		WHERE s.trans_id = a.id
@@ -243,11 +206,12 @@ sub get_spoolfiles {
                   'invnumber' => 3,
                   'transdate' => 4,
 		  'ordnumber' => 5,
-		  'quonumber' => 6
+		  'quonumber' => 6,
 		);
-  my @a = (transdate, $invnumber, name);
+
+  my @a = ();
+  push @a, ("transdate", "$invnumber", "name");
   my $sortorder = $form->sort_order(\@a, \%ordinal);
- 
   $query .= " ORDER by $sortorder";
 
   my $sth = $dbh->prepare($query);
@@ -272,17 +236,10 @@ sub delete_spool {
   my $query;
   my %audittrail;
   
-  if ($form->{type} =~ /(check|receipt)/) {
-    $query = qq|DELETE FROM status
-                WHERE spoolfile = ?|;
-  } else {
-    $query = qq|UPDATE status SET
-                 spoolfile = NULL,
-		 printed = '1'
-                 WHERE spoolfile = ?|;
-  }
+  $query = qq|UPDATE status SET
+	       spoolfile = NULL
+	       WHERE spoolfile = ?|;
   my $sth = $dbh->prepare($query) || $form->dberror($query);
-  
   
   foreach my $i (1 .. $form->{rowcount}) {
     if ($form->{"checked_$i"}) {
@@ -327,18 +284,19 @@ sub print_spool {
   
   my $query = qq|UPDATE status SET
 		 printed = '1'
-                 WHERE formname = '$form->{type}'
-		 AND spoolfile = ?|;
+                 WHERE spoolfile = ?|;
   my $sth = $dbh->prepare($query) || $form->dberror($query);
   
   foreach my $i (1 .. $form->{rowcount}) {
     if ($form->{"checked_$i"}) {
       open(OUT, $form->{OUT}) or $form->error("$form->{OUT} : $!");
+      binmode(OUT);
       
       $spoolfile = qq|$spool/$form->{"spoolfile_$i"}|;
       
       # send file to printer
       open(IN, $spoolfile) or $form->error("$spoolfile : $!");
+      binmode(IN);
 
       while (<IN>) {
 	print OUT $_;

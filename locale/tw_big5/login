@@ -1,6 +1,7 @@
 $self{charset} = 'BIG5';
 
 $self{texts} = {
+  'Access Denied!'              => '拒絕存取！',
   'Company'                     => '公司',
   'Continue'                    => '繼續',
   'Dataset is newer than version!' => '較新資料集！',

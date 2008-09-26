@@ -710,13 +710,9 @@ sub print_form {
   for (qw(company address tel fax businessnumber)) { $form->{$_} = $myconfig{$_}; }
   $form->{username} = $myconfig{name};
 
-  if ($form->{format} eq 'txt') {
-    $form->{address} =~ s/\\n/ /g;
-  } else {
-    $form->{address} =~ s/\\n/\r/g;
-    push @a, qw(company address tel fax businessnumber username);
-    $form->format_string(@a);
-  }
+  $form->{address} =~ s/\\n/\n/g;
+  push @a, qw(company address tel fax businessnumber username);
+  $form->format_string(@a);
 
   $form->{templates} = "$myconfig{templates}";
   $form->{IN} = "$form->{type}.$form->{format}";

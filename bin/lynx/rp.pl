@@ -1604,6 +1604,9 @@ sub e_mail {
   for $i (1 .. $form->{rowcount}) {
     if ($form->{"statement_$i"}) {
       $form->{"$form->{ct}_id"} = $form->{"$form->{ct}_id_$i"};
+      $form->{"statement_1"} = 1;
+      $form->{"language_code_1"} = $form->{"language_code_$i"};
+      $form->{"curr_1"} = $form->{"curr_$i"};
       RP->get_customer(\%myconfig, \%$form);
       $selected = 1;
       last;
@@ -1761,7 +1764,7 @@ sub print_form {
   # setup variables for the form
   @a = qw(company address businessnumber tel fax);
   for (@a) { $form->{$_} = $myconfig{$_} }
-  $form->{address} =~ s/\\n/\r/g;
+  $form->{address} =~ s/\\n/\n/g;
 
   $form->format_string(@a);
   

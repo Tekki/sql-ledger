@@ -37,6 +37,7 @@ $self{texts} = {
   'Screen'                      => 'Näyttö',
   'Source'                      => 'Lähde',
   'Subtotal'                    => 'Välisumma',
+  'Tax Included'                => 'ALV sisältyy',
   'To'                          => 'Hetkeen',
   'Total'                       => 'Yhteensä',
   'Unit'                        => 'Yksikkö',

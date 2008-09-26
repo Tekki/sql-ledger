@@ -41,6 +41,7 @@ $self{texts} = {
   'Payment'                     => 'Greislur',
   'Payments'                    => 'Greiğslur',
   'Preferences'                 => 'Uppsetningar',
+  'Print'                       => 'Prenta',
   'Projects'                    => 'Verkefni',
   'Purchase Order'              => 'Innkaupspöntun',
   'Purchase Orders'             => 'Innkaupspantanir',

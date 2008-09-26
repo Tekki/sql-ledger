@@ -106,7 +106,6 @@ $self{texts} = {
   'Message'                     => 'Повідомлення',
   'Month'                       => 'Місяць',
   'Next Date'                   => 'Наступна дата',
-  'No.'                         => 'No.',
   'Notes'                       => 'Примітки',
   'Nothing entered!'            => 'Нічого не введено!',
   'Nothing selected!'           => 'Нічого не вибрано!',

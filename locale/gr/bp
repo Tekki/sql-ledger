@@ -4,7 +4,6 @@ $self{texts} = {
   'Account'                     => 'Λογαριασμός',
   'Accounting Menu'             => 'Μενπύ Λογιστικής',
   'Cannot remove files!'        => 'Δεν μπορούν να διαγραφούν αρχεία',
-  'Checks'                      => 'Επιταγές',
   'Confirm!'                    => 'Επιβεβαίωση!',
   'Continue'                    => 'Συνέχεια',
   'Current'                     => 'Τρέχων',

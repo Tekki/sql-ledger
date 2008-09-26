@@ -25,6 +25,7 @@ $self{texts} = {
   'Screen'                      => 'Schermo',
   'Source'                      => 'Sorgente',
   'Subtotal'                    => 'Totale Parziale',
+  'Tax Included'                => 'Tasse Incluse',
   'To'                          => 'Al',
   'Total'                       => 'Totale',
   'Unit'                        => 'Unit&agrave;',

@@ -41,6 +41,7 @@ $self{texts} = {
   'Select a printer!'           => 'Välj skrivare',
   'Source'                      => 'Källa',
   'Subtotal'                    => 'Delsummera',
+  'Tax Included'                => 'Moms ingår',
   'To'                          => 'Till',
   'Total'                       => 'Total',
   'Trade Discount'              => 'Handelsrabatt',

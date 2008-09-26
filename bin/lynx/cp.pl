@@ -1125,6 +1125,13 @@ sub post_payment {
 
   $form->{amount} = $form->format_amount(\%myconfig, $form->{amount}, 2);
 
+  $source = $form->{source};
+  $source =~ s/(\d+)/$1 + 1/e;
+  
+  if ($form->{callback}) {
+    $form->{callback} .= "&source=$source";
+  }
+  
   if (CP->post_payment(\%myconfig, \%$form)) {
     $form->redirect($locale->text($msg1));
   } else {
@@ -1134,7 +1141,12 @@ sub post_payment {
 }
 
 
-sub print { &{"print_$form->{payment}"}; &update if $form->{media} ne 'screen' }
+sub print {
+  
+  &{ "print_$form->{payment}" };
+  &update if $form->{media} ne 'screen';
+  
+}
 
 
 sub print_payments {
@@ -1144,7 +1156,7 @@ sub print_payments {
   $SIG{INT} = 'IGNORE';
 
   for (qw(company address)) { $form->{$_} = $myconfig{$_} }
-  $form->{address} =~ s/\\n/\r/g;
+  $form->{address} =~ s/\\n/\n/g;
 
   %oldform = ();
   for (keys %$form) { $oldform{$_} = $form->{$_} };
@@ -1171,7 +1183,7 @@ sub print_payments {
       $form->{amount} = 0;
       for (qw(invnumber invdate due paid)) { @{ $form->{$_} } = () }
       for (qw(language_code source memo)) { $form->{$_} = $form->{"${_}_$i"} }
-      
+
     }
 
     if ($form->{"checked_$i"}) {
@@ -1208,6 +1220,9 @@ sub print_form {
   $form->{text_decimal} = $c->num2text($form->{decimal} * 1);
   $form->{text_amount} = $c->num2text($whole);
 
+  $datepaid = $form->datetonum(\%myconfig, $form->{datepaid});
+  ($form->{yyyy}, $form->{mm}, $form->{dd}) = $datepaid =~ /(....)(..)(..)/;
+  
   &{ "$form->{vc}_details" };
 
   $form->{templates} = "$myconfig{templates}";
@@ -1227,7 +1242,7 @@ sub print_payment {
   &check_form;
   
   for (qw(company address)) { $form->{$_} = $myconfig{$_} }
-  $form->{address} =~ s/\\n/\r/g;
+  $form->{address} =~ s/\\n/\n/g;
 
   @a = qw(name company address text_amount text_decimal address1 address2 city state zipcode country memo);
 
@@ -1304,7 +1319,7 @@ sub check_openvc {
 
     if ($ok) {
       $form->{redo} = 1;
-      if (($myconfig{vclimit} * 1) > 0) {
+      if ($form->{"select$name"}) {
 	$form->{"${name}_id"} = $new_id;
 	AA->get_name(\%myconfig, \%$form);
 	$form->{$name} = $form->{"old$name"} = "$new_name--$new_id";

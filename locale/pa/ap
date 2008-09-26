@@ -74,7 +74,6 @@ $self{texts} = {
   'Memo'                        => 'Nota',
   'Message'                     => 'Mensaje',
   'Month'                       => 'Mes',
-  'No.'                         => 'Nº',
   'Notes'                       => 'Notas',
   'Nothing to print!'           => '¡No hay nada para imprimir!',
   'Nov'                         => 'Nov',

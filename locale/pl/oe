@@ -98,7 +98,6 @@ $self{texts} = {
   'May '                        => 'Maj',
   'Message'                     => 'Wiadomo¶æ',
   'Month'                       => 'Miesi±c',
-  'No.'                         => 'Nr.',
   'Notes'                       => 'Noty',
   'Nothing entered!'            => 'Nic nie wprowadzono!',
   'Nothing selected!'           => 'Nic nie zaznaczone!',

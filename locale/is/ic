@@ -82,7 +82,6 @@ $self{texts} = {
   'Microfiche'                  => 'Mikrofilm',
   'Model'                       => 'Model',
   'Name'                        => 'Nafn',
-  'No.'                         => 'Nr.',
   'Notes'                       => 'Upplısinar',
   'Nov'                         => 'nóv',
   'November'                    => 'nóvember',

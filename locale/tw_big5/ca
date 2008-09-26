@@ -1,6 +1,7 @@
 $self{charset} = 'BIG5';
 
 $self{texts} = {
+  'AR/AP'                       => '應收/應付 ',
   'Account'                     => '帳戶',
   'Apr'                         => '四月',
   'April'                       => '四月',

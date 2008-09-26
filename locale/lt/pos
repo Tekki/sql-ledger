@@ -29,6 +29,7 @@ $self{texts} = {
   'Screen'                      => 'Ekranas',
   'Source'                      => 'Dokumentas',
   'Subtotal'                    => 'Viso',
+  'Tax Included'                => 'su mokesèiais',
   'To'                          => 'iki',
   'Total'                       => 'Iğ viso',
   'Unit'                        => 'Vienetas',

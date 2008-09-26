@@ -432,7 +432,7 @@ sub project_selected {
 
 sub post_as_new {
 
-  for (qw(id printed emailed)) { delete $form->{$_} }
+  for (qw(id printed emailed queued)) { delete $form->{$_} }
   &post;
 
 }
@@ -440,7 +440,7 @@ sub post_as_new {
 
 sub print_and_post_as_new {
 
-  for (qw(id printed emailed)) { delete $form->{$_} }
+  for (qw(id printed emailed queued)) { delete $form->{$_} }
   &print_and_post;
 
 }

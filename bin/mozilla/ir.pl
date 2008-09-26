@@ -300,7 +300,7 @@ sub form_header {
 |;
 
   $form->{vc} = "vendor";
-  $form->hide_form(qw(id title vc type printed emailed terms creditlimit creditremaining closedto locked shipped oldtransdate recurring));
+  $form->hide_form(qw(id title vc type terms creditlimit creditremaining closedto locked shipped oldtransdate recurring));
   
   print qq|
 <table width=100%>

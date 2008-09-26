@@ -55,7 +55,6 @@ $self{texts} = {
   'Manager'                     => 'Behandler',
   'Name'                        => 'Navn',
   'Name missing!'               => 'Navn mangler!',
-  'No.'                         => 'Nr.',
   'Notes'                       => 'Merknader',
   'Number'                      => 'Nummer',
   'Open'                        => 'Åpne',

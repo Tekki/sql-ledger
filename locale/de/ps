@@ -141,7 +141,6 @@ $self{texts} = {
   'Month(s)'                    => 'Monat(e)',
   'N/A'                         => 'N.Z.',
   'Next Date'                   => 'Nächstes Datum',
-  'No.'                         => 'Nr.',
   'Non-taxable Purchases'       => 'Steuerfreie Einkäufe',
   'Non-taxable Sales'           => 'Steuerfreie Verkäufe',
   'Notes'                       => 'Bemerkungen',

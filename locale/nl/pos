@@ -41,6 +41,7 @@ $self{texts} = {
   'Select a printer!'           => 'Selecteer een printer!',
   'Source'                      => 'Herkomst',
   'Subtotal'                    => 'Subtotaal',
+  'Tax Included'                => 'Belasting Inbegrepen',
   'To'                          => 'Tot',
   'Total'                       => 'Totaal',
   'Trade Discount'              => 'Handelskorting',

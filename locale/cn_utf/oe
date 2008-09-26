@@ -108,7 +108,6 @@ $self{texts} = {
   'Message'                     => '讯息',
   'Month'                       => '月份',
   'Month(s)'                    => '月',
-  'No.'                         => '序号',
   'Notes'                       => '备注',
   'Nothing entered!'            => '没有巳输入',
   'Nothing selected!'           => '没有巳选择',

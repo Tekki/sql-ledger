@@ -69,6 +69,7 @@ $self{subs} = {
   'ar_transaction'              => 'ar_transaction',
   'check_form'                  => 'check_form',
   'check_name'                  => 'check_name',
+  'check_openvc'                => 'check_openvc',
   'check_project'               => 'check_project',
   'continue'                    => 'continue',
   'customer_details'            => 'customer_details',

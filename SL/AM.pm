@@ -1277,7 +1277,7 @@ sub backup {
   $t[4] = substr("0$t[4]", -2);
 
   my $boundary = time;
-  my $tmpfile = "$userspath/$boundary.$myconfig->{dbname}-$form->{dbversion}-$t[5]$t[4]$t[3].sql";
+  my $tmpfile = "$userspath/$boundary.$myconfig->{dbname}-$form->{dbversion}-$t[5]$t[4]$t[3]";
   my $out = $form->{OUT};
   $form->{OUT} = ">$tmpfile";
 
@@ -1529,7 +1529,7 @@ DROP SEQUENCE $item $restrict;\n|;
 
     $mail->{to} = qq|"$myconfig->{name}" <$myconfig->{email}>|;
     $mail->{from} = qq|"$myconfig->{name}" <$myconfig->{email}>|;
-    $mail->{subject} = "SQL-Ledger Backup / $myconfig->{dbname}-$form->{dbversion}-$t[5]$t[4]$t[3].sql$suffix";
+    $mail->{subject} = "SQL-Ledger Backup / $myconfig->{dbname}-$form->{dbversion}-$t[5]$t[4]$t[3]$suffix";
     @{ $mail->{attachments} } = ($tmpfile);
     $mail->{version} = $form->{version};
     $mail->{fileid} = "$boundary.";
@@ -1546,7 +1546,7 @@ DROP SEQUENCE $item $restrict;\n|;
     open(OUT, ">-") or $form->error("STDOUT : $!");
    
     print OUT qq|Content-Type: application/file;
-Content-Disposition: attachment; filename="$myconfig->{dbname}-$form->{dbversion}-$t[5]$t[4]$t[3].sql$suffix"
+Content-Disposition: attachment; filename="$myconfig->{dbname}-$form->{dbversion}-$t[5]$t[4]$t[3]$suffix"
 
 |;
 
@@ -1657,7 +1657,7 @@ sub post_yearend {
 
   my $query;
   my $uid = time;
-  $uid .= $form->{login};
+  $uid .= $$;
 
   $query = qq|INSERT INTO gl (reference, employee_id)
 	      VALUES ('$uid', (SELECT id FROM employee

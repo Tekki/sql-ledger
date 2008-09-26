@@ -1,5 +1,4 @@
 $self{texts} = {
-  'Checks'                      => 'Cheques',
 };
 
 $self{subs} = {

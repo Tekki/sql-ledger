@@ -119,7 +119,6 @@ $self{texts} = {
   'Microfiche'                  => '单片缩影胶片',
   'Model'                       => '型号',
   'Name'                        => '名称',
-  'No.'                         => '序号',
   'Notes'                       => '备注',
   'Nov'                         => '十一月',
   'November'                    => '十一月',

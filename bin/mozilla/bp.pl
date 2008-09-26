@@ -42,8 +42,6 @@ sub search {
 # $locale->text('Bin Lists')
 # $locale->text('Quotations')
 # $locale->text('RFQs')
-# $locale->text('Checks')
-# $locale->text('Receipts')
 # $locale->text('Time Cards')
 
   # setup customer/vendor selection
@@ -69,9 +67,7 @@ sub search {
              bin_list => { title => 'Bin Lists', name => 'Vendor' },
              sales_quotation => { title => 'Quotations', name => 'Customer' },
              request_quotation => { title => 'RFQs', name => 'Vendor' },
-             check => { title => 'Checks', name => 'Vendor' },
-             receipt => { title => 'Receipts', name => 'Customer' },
-	     timecard => { title => 'Time Cards', name => 'Employee' },
+             timecard => { title => 'Time Cards', name => 'Employee' },
 	   );
 
   $label{invoice}{invnumber} = qq|
@@ -93,13 +89,6 @@ sub search {
 	</tr>
 |;
 
-  $label{check}{chknumber} = qq|
-  	<tr>
-	  <th align=right nowrap>|.$locale->text('Reference').qq|</th>
-	  <td colspan=3><input name=chknumber size=20></td>
-	</tr>
-|;
-
   $label{packing_list}{invnumber} = $label{invoice}{invnumber};
   $label{packing_list}{ordnumber} = $label{invoice}{ordnumber};
   $label{pick_list}{invnumber} = $label{invoice}{invnumber};
@@ -109,45 +98,11 @@ sub search {
   $label{purchase_order}{ordnumber} = $label{invoice}{ordnumber};
   $label{bin_list}{ordnumber} = $label{invoice}{ordnumber};
   $label{request_quotation}{quonumber} = $label{sales_quotation}{quonumber};
-  $label{receipt}{rctnumber} = $label{check}{chknumber};
   
   # do one call to text
   $form->{title} = $locale->text('Print')." ".$locale->text($label{$form->{type}}{title});
 
-  if ($form->{type} =~ /(check|receipt)/) {
-    if (BP->payment_accounts(\%myconfig, \%$form)) {
-      $account = qq|
-        <tr>
-      	  <th align=right>|.$locale->text('Account').qq|</th>
-|;
-
-      if ($form->{accounts}) {
-	$account .= qq|
-	  <td colspan=3><select name=account>
-|;
-	foreach $ref (@{ $form->{accounts} }) {
-	  $account .= qq|
-          <option>$ref->{accno}--$ref->{description}
-|;
-	}
-
-	$account .= qq|
-          </select>
-|;
-      } else {
-	$account .= qq|
-	  <td colspan=3><input name=account></td>
-|;
-
-      }
-      
-      $account .= qq|
-	</tr>
-|;
-
-    }
-  }
-
+  # accounting years
   if (@{ $form->{all_years} }) {
     # accounting years
     $form->{selectaccountingyear} = "<option>\n";
@@ -177,11 +132,11 @@ sub search {
 <body>
 
 <form method=post action=$form->{script}>
+|;
 
-<input type=hidden name=vc value=$form->{vc}>
-<input type=hidden name=type value=$form->{type}>
-<input type=hidden name=title value="$form->{title}">
+  $form->hide_form(qw(vc type title));
 
+  print qq|
 <table width=100%>
   <tr><th class=listtop>$form->{title}</th></tr>
   <tr height="5"></tr>
@@ -196,15 +151,12 @@ sub search {
 	$label{$form->{type}}{invnumber}
 	$label{$form->{type}}{ordnumber}
 	$label{$form->{type}}{quonumber}
-	$label{$form->{type}}{chknumber}
-	$label{$form->{type}}{rctnumber}
 	<tr>
 	  <th align=right nowrap>|.$locale->text('From').qq|</th>
 	  <td><input name=transdatefrom size=11 title="$myconfig{dateformat}"></td>
 	  <th align=right>|.$locale->text('To').qq|</th>
 	  <td><input name=transdateto size=11 title="$myconfig{dateformat}"></td>
 	</tr>
-	<input type=hidden name=sort value=transdate>
 	$selectfrom
       </table>
     </td>
@@ -214,14 +166,16 @@ sub search {
   </tr>
 </table>
 
+<input type=hidden name=sort value=transdate>
 <input type=hidden name=nextsub value=list_spool>
-
-<input type=hidden name=path value=$form->{path}>
-<input type=hidden name=login value=$form->{login}>
-<input type=hidden name=sessionid value=$form->{sessionid}>
 
 <br>
 <input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">
+|;
+
+  $form->hide_form(qw(path login sessionid));
+  
+  print qq|
 
 </form>
 
@@ -379,7 +333,7 @@ sub list_spool {
   $name = ucfirst $form->{vc};
   
   @columns = qw(transdate);
-  if ($form->{type} =~ /(invoice|check|receipt)/) {
+  if ($form->{type} =~ /(invoice)/) {
     push @columns, "invnumber";
   }
   if ($form->{type} =~ /(packing|pick)_list/) {
@@ -391,6 +345,10 @@ sub list_spool {
   if ($form->{type} =~ /_quotation$/) {
     push @columns, "quonumber";
   }
+  if ($form->{type} eq 'timecard') {
+    push @columns, "id";
+  }
+
 
   push @columns, (name, spoolfile);
   @column_index = $form->sort_columns(@columns);
@@ -402,6 +360,7 @@ sub list_spool {
   $column_header{ordnumber} = "<th><a class=listheading href=$href&sort=ordnumber>".$locale->text('Order')."</a></th>";
   $column_header{quonumber} = "<th><a class=listheading href=$href&sort=quonumber>".$locale->text('Quotation')."</a></th>";
   $column_header{name} = "<th><a class=listheading href=$href&sort=name>".$locale->text($name)."</a></th>";
+  $column_header{id} = "<th><a class=listheading href=$href&sort=id>".$locale->text('ID')."</a></th>";
   $column_header{spoolfile} = "<th class=listheading>".$locale->text('Spoolfile')."</th>";
 
 
@@ -463,6 +422,8 @@ sub list_spool {
       $column_data{checked} = qq|<td><input name=checked_$i type=checkbox class=checkbox $form->{"checked_$i"} $form->{"checked_$i"}></td>|;
     }
     
+    for (qw(id invnumber ordnumber quonumber)) { $column_data{$_} = qq|<td>$ref->{$_}</td>| }
+    
     if ($ref->{module} eq 'oe') {
       $column_data{invnumber} = qq|<td>&nbsp</td>|;
       $column_data{ordnumber} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&type=$form->{type}&callback=$callback>$ref->{ordnumber}</a></td>
@@ -471,9 +432,10 @@ sub list_spool {
       $column_data{quonumber} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&type=$form->{type}&callback=$callback>$ref->{quonumber}</a></td>
     <input type=hidden name="reference_$i" value="$ref->{quonumber}">|;
  
+    } elsif ($ref->{module} eq 'jc') {
+      $column_data{id} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&type=$form->{type}&callback=$callback>$ref->{id}</a></td>
+    <input type=hidden name="reference_$i" value="$ref->{id}">|;
     } else {
-      $column_data{ordnumber} = qq|<td>$ref->{ordnumber}</td>|;
-      $column_data{quonumber} = qq|<td>$ref->{quonumber}</td>|;
       $column_data{invnumber} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&type=$form->{type}&callback=$callback>$ref->{invnumber}</a></td>
     <input type=hidden name="reference_$i" value="$ref->{invnumber}">|;
     }
@@ -514,22 +476,10 @@ sub list_spool {
 </table>
 
 <br>
-
-<input name=callback type=hidden value="$form->{callback}">
-
-<input type=hidden name=title value="$form->{title}">
-<input type=hidden name=vc value="$form->{vc}">
-<input type=hidden name=type value="$form->{type}">
-<input type=hidden name=sort value="$form->{sort}">
-<input type=hidden name=module value=$form->{module}>
-
-<input type=hidden name=account value="$form->{account}">
-
-<input type=hidden name=path value=$form->{path}>
-<input type=hidden name=login value=$form->{login}>
-<input type=hidden name=sessionid value=$form->{sessionid}>
 |;
 
+  $form->hide_form(qw(callback title vc type sort module account path login sessionid));
+    
   if (%printer && $latex) {
     foreach $key (sort keys %printer) {
       print qq|
@@ -537,13 +487,20 @@ sub list_spool {
       print qq|checked| if $key eq $myconfig{printer};
       print qq|>$key|;
     }
+
+    print qq|<p>\n|;
     
-    print qq|
-<p>
-<input class=submit type=submit name=action value="|.$locale->text('Select all').qq|">
-<input class=submit type=submit name=action value="|.$locale->text('Print').qq|">
-<input class=submit type=submit name=action value="|.$locale->text('Remove').qq|">
-|;
+# type=submit $locale->text('Select all')
+# type=submit $locale->text('Print')
+# type=submit $locale->text('Remove')
+
+    %button = ('Select all' => { ndx => 2, key => 'A', value => $locale->text('Select all') },
+               'Print' => { ndx => 3, key => 'P', value => $locale->text('Print') },
+	       'Remove' => { ndx => 4, key => 'R', value => $locale->text('Remove') },
+	      );
+	       
+    for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+    
   }
 
   if ($form->{menubar}) {

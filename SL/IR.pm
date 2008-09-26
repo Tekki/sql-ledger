@@ -90,7 +90,7 @@ sub post_invoice {
   if (! $form->{id}) {
 
     my $uid = time;
-    $uid .= $form->{login};
+    $uid .= $$;
 
     $query = qq|INSERT INTO ap (invnumber, employee_id)
                 VALUES ('$uid', (SELECT id FROM employee

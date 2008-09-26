@@ -240,7 +240,7 @@ sub save {
   if (! $form->{id}) {
     
     my $uid = time;
-    $uid .= $form->{login};
+    $uid .= $$;
     
     $query = qq|INSERT INTO oe (ordnumber, employee_id)
 		VALUES ('$uid', $form->{employee_id})|;
@@ -360,8 +360,8 @@ sub save {
       $dbh->do($query) || $form->dberror($query);
 
       $form->{"sellprice_$i"} = $fxsellprice;
-      $form->{"discount_$i"} *= 100;
     }
+    $form->{"discount_$i"} *= 100;
   }
 
 
@@ -939,11 +939,11 @@ sub order_details {
       ($partsgroup) = split /--/, $form->{"partsgroup_$i"};
     }
     push @sortlist, [ $i, "$projectnumber$partsgroup", $projectnumber, $projectnumber_id, $partsgroup ];
-
-    # sort the whole thing by project and group
-    @sortlist = sort { $a->[1] cmp $b->[1] } @sortlist;
-
+    
   }
+
+  # sort the whole thing by project and group
+  @sortlist = sort { $a->[1] cmp $b->[1] } @sortlist;
 
   # if there is a warehouse limit picking
   if ($form->{warehouse_id} && $form->{formname} =~ /(pick|packing)_list/) {
@@ -1840,7 +1840,7 @@ sub generate_orders {
     $taxincluded *= 1;
     
     my $uid = time;
-    $uid .= $form->{login};
+    $uid .= $$;
  
     $query = qq|INSERT INTO oe (ordnumber)
 		VALUES ('$uid')|;

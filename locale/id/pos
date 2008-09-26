@@ -35,6 +35,7 @@ $self{texts} = {
   'Salesperson'                 => 'Salesman',
   'Screen'                      => 'Layar',
   'Source'                      => 'Bukti',
+  'Tax Included'                => 'Termasuk Pajak',
   'To'                          => 'Sampai',
   'Total'                       => 'Total',
   'Unit'                        => 'Satuan',

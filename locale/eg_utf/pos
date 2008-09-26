@@ -36,6 +36,7 @@ $self{texts} = {
   'Screen'                      => 'الشاشة',
   'Source'                      => 'مصدر',
   'Subtotal'                    => 'اجمالى',
+  'Tax Included'                => 'الضريبة المضافة',
   'To'                          => 'إلى',
   'Total'                       => 'مجموع',
   'Unit'                        => 'وحدة',

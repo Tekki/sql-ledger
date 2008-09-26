@@ -80,7 +80,6 @@ $self{texts} = {
   'Message'                     => '讯息',
   'Month'                       => '月份',
   'Month(s)'                    => '月',
-  'No.'                         => '序号',
   'Notes'                       => '备注',
   'Nov'                         => '十一月',
   'November'                    => '十一月',

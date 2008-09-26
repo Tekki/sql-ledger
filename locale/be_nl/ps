@@ -128,7 +128,6 @@ $self{texts} = {
   'Message'                     => 'Boodschap',
   'Method'                      => 'Methode',
   'N/A'                         => 'N/A',
-  'No.'                         => 'Nr.',
   'Non-taxable Purchases'       => 'Onbelaste aankopen',
   'Non-taxable Sales'           => 'Onbelaste verkopen',
   'Notes'                       => 'Opmerkingen',

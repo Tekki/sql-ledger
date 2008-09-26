@@ -40,6 +40,7 @@ $self{texts} = {
   'Screen'                      => 'Skjerm',
   'Source'                      => 'Bilag',
   'Subtotal'                    => 'Subtotal',
+  'Tax Included'                => 'Inkl. avgifter og mva',
   'To'                          => 'Til',
   'Total'                       => 'I alt',
   'Trade Discount'              => 'Handelsrabatt',

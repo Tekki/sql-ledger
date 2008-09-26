@@ -41,6 +41,7 @@ $self{texts} = {
   'Select a printer!'           => 'Bitte wählen Sie einen Drucker',
   'Source'                      => 'Beleg',
   'Subtotal'                    => 'Zwischensumme',
+  'Tax Included'                => 'Steuer im Preis enthalten',
   'To'                          => 'Bis',
   'Total'                       => 'Betrag',
   'Trade Discount'              => 'Handelsrabatt',

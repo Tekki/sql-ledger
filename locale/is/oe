@@ -67,7 +67,6 @@ $self{texts} = {
   'May'                         => 'maí',
   'May '                        => 'maí',
   'Message'                     => 'Skilaboð',
-  'No.'                         => 'Nr.',
   'Notes'                       => 'Upplýsinar',
   'Nothing selected!'           => 'Ekkert valið!',
   'Nov'                         => 'nóv',

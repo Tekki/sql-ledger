@@ -27,6 +27,7 @@ $self{texts} = {
   'Screen'                      => 'Skjá',
   'Source'                      => 'Frálag',
   'Subtotal'                    => 'Samtala',
+  'Tax Included'                => 'Taka með VSK',
   'To'                          => 'til',
   'Total'                       => 'Samtals',
   'Unit'                        => 'Einingar',

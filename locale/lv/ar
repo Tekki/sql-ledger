@@ -71,7 +71,6 @@ $self{texts} = {
   'May '                        => 'Maijâ ',
   'Memo'                        => 'Memorands',
   'Message'                     => 'Paziòojums',
-  'No.'                         => 'Nr.',
   'Notes'                       => 'Piezîmes',
   'Nov'                         => 'Nov',
   'November'                    => 'Novembrî',

@@ -58,6 +58,7 @@ $self{texts} = {
   'Number'                      => '編號',
   'Orphaned'                    => '無主',
   'Payroll Deduction'           => '薪金減除額',
+  'Pos'                         => '序號',
   'Rate'                        => '稅率',
   'Rate missing!'               => '未指明稅率',
   'Role'                        => '任務',

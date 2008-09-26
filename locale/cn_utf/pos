@@ -42,6 +42,7 @@ $self{texts} = {
   'Screen'                      => '显示器',
   'Source'                      => '来源',
   'Subtotal'                    => '共计',
+  'Tax Included'                => '巳含税金',
   'To'                          => '至',
   'Total'                       => '总计',
   'Trade Discount'              => '贸易折扣',

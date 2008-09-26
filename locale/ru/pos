@@ -42,6 +42,7 @@ $self{texts} = {
   'Screen'                      => 'Экран',
   'Source'                      => 'Источник',
   'Subtotal'                    => 'Итого по разделу',
+  'Tax Included'                => 'Налоги включены в сумму',
   'To'                          => 'по',
   'Total'                       => 'Всего',
   'Trade Discount'              => 'Торговая скидка',

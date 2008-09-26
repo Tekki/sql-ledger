@@ -2,36 +2,15 @@
 <body bgcolor=ffffff>
 
 <table width=100%>
+
+  <%include letterhead.html%>
+  
   <tr>
     <td width=10>&nbsp;</td>
     
-    <td>
-      <table width=100%>
-	<tr valign=bottom>
-	  <td>
-	    <h4>
-	    <%company%>
-	    <br><%address%>
-	    </h4>
-	  </td>
-
-	  <th><img src=http://www.sql-ledger.org/images/sql-ledger.png border=0 width=80 height=58></th>
-
-	  <td align=right>
-	    <h4>
-	    Tel: <%tel%>
-	    <br>Fax: <%fax%>
-	    </h4>
-	  </td>
-	</tr>
-
-	<tr>
-	  <th colspan=3>
-	    <h4>S A L E S &nbsp;&nbsp; O R D E R</h4>
-	  </th>
-	</tr>
-      </table>
-    </td>
+    <th colspan=3>
+      <h4>S A L E S &nbsp;&nbsp; O R D E R</h4>
+    </th>
   </tr>
 
   <tr>
@@ -50,8 +29,11 @@
 	  <%if address2%>
 	  <br><%address2%>
 	  <%end address2%>
-	  <br><%city%> <%state%>
-          <br><%zipcode%>
+	  <br><%city%>
+	  <%if state%>
+	  , <%state%>
+	  <%end state%>
+          <%zipcode%>
 	  <%if country%>
 	  <br><%country%>
 	  <%end country%>
@@ -75,8 +57,11 @@
 	  <%if shiptoaddress2%>
 	  <br><%shiptoaddress2%>
 	  <%end shiptoaddress2%>
-	  <br><%shiptocity%> <%shiptostate%>
-          <br><%shiptozipcode%>
+	  <br><%shiptocity%>
+	  <%if shiptostate%>
+	  , <%shiptostate%>
+	  <%end shiptostate%>
+          <%shiptozipcode%>
 	  <%if shiptocountry%>
 	  <br><%shiptocountry%>
 	  <%end shiptocountry%>
@@ -107,7 +92,7 @@
     <td>
       <table width=100% border=1>
 	<tr>
-	  <th width=17% align=left nowrap>Order Number</th>
+	  <th width=17% align=left nowrap>Order #</th>
 	  <th width=17% align=left>Order Date</th>
 	  <th width=17% align=left>Required by</th>
 	  <th width=17% align=left nowrap>Salesperson</th>
@@ -133,7 +118,7 @@
     <td>
       <table width=100%>
 	<tr bgcolor=000000>
-	  <th align=right><font color=ffffff>No.</th>
+	  <th align=right><font color=ffffff>Item</th>
 	  <th align=left><font color=ffffff>Number</th>
 	  <th align=left><font color=ffffff>Description</th>
 	  <th><font color=ffffff>Qt'y</th>
@@ -243,3 +228,4 @@
 
 </body>
 </html>
+

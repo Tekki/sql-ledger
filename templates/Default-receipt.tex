@@ -1,22 +1,13 @@
-\documentclass[twoside]{scrartcl}
-\usepackage[frame]{xy}
-\usepackage{tabularx}
+\documentclass{scrartcl}
 \usepackage[latin1]{inputenc}
-\setlength{\voffset}{0.4cm}
-\setlength{\hoffset}{-2.0cm}
-\setlength{\topmargin}{0cm}
-\setlength{\headheight}{0.0cm}
-\setlength{\headsep}{1cm}
-\setlength{\topskip}{0pt}
-\setlength{\oddsidemargin}{1.0cm}
-\setlength{\evensidemargin}{1.0cm}
-\setlength{\textwidth}{19.2cm}
-\setlength{\textheight}{24.5cm}
-\setlength{\footskip}{1cm}
-\setlength{\parindent}{0pt}
-\renewcommand{\baselinestretch}{1}
+\usepackage{tabularx}
+\usepackage[letterpaper,top=2cm,bottom=-3cm,left=1.1cm,right=1.5cm]{geometry}
+\usepackage{graphicx}
+
 \begin{document}
 
+\pagestyle{myheadings}
+\thispagestyle{empty}
 
 \fontfamily{cmss}\fontsize{9pt}{9pt}\selectfont
 
@@ -35,6 +26,9 @@
 
 \hfill <%datepaid%> \makebox[2cm]{\hfill} <%amount%>
 
+% different date format for datepaid
+% <%DD%><%MM%><%YYYY%>
+
 \vspace{0.5cm}
 
 <%name%>
@@ -43,7 +37,11 @@
 
 <%address2%>
 
-<%city%> <%state%> <%zipcode%>
+<%city%>
+<%if state%>
+\hspace{-0.1cm}, <%state%>
+<%end state%>
+<%zipcode%>
 
 <%country%>
 
@@ -76,3 +74,4 @@
 \vfill
 
 \end{document}
+

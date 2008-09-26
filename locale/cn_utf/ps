@@ -138,7 +138,6 @@ $self{texts} = {
   'Month'                       => '月份',
   'Month(s)'                    => '月',
   'N/A'                         => '不适用',
-  'No.'                         => '序号',
   'Non-taxable Purchases'       => '不应课税的采购',
   'Non-taxable Sales'           => '不应课税的销售',
   'Notes'                       => '备注',

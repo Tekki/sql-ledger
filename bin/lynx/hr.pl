@@ -304,7 +304,7 @@ sub list_employees {
 
     $i++;
     
-    $ref->{notes} =~ s/\r\n/<br>/g;
+    $ref->{notes} =~ s/\r?\n/<br>/g;
     for (@column_index) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
 
     $column_data{ndx} = "<td align=right>$i</td>";

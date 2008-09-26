@@ -43,7 +43,6 @@ $self{texts} = {
   'Language'                    => 'Kalba',
   'Name'                        => 'Vardas',
   'Name missing!'               => 'Pavadinimo nëra',
-  'No.'                         => 'Num',
   'Notes'                       => 'Pastaba',
   'Number'                      => 'Numeris',
   'Open'                        => 'Atidaryti',

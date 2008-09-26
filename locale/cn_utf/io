@@ -53,7 +53,6 @@ $self{texts} = {
   'May'                         => '五月',
   'May '                        => '五月',
   'Message'                     => '讯息',
-  'No.'                         => '序号',
   'Nov'                         => '十一月',
   'November'                    => '十一月',
   'Number'                      => '料号',

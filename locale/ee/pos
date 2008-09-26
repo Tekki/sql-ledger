@@ -42,6 +42,7 @@ $self{texts} = {
   'Screen'                      => 'Ekraan',
   'Source'                      => 'Allikas',
   'Subtotal'                    => 'Vahesumma',
+  'Tax Included'                => 'Koos maksuga',
   'To'                          => 'Kuni',
   'Total'                       => 'Kokku',
   'Unit'                        => 'Ühik',

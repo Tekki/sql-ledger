@@ -2,36 +2,15 @@
 <body bgcolor=ffffff>
 
 <table width=100%>
+
+  <%include letterhead.html%>
+  
   <tr>
     <td width=10>&nbsp;</td>
 
-    <td>
-      <table width=100%>
-        <tr>
-          <td>
-            <h4>
-            <%company%>
-        <br><%address%>
-            </h4>
-          </td>
-
-          <th><img src=http://www.sql-ledger.org/images/sql-ledger.png border=0 width=80 height=58></th>
-
-          <td align=right>
-            <h4>
-            Tel: <%tel%>
-        <br>Fax: <%fax%>
-            </h4>
-          </td>
-        </tr>
-
-        <tr>
-          <th colspan=3>
-            <h4>I N V O I C E</h4>
-          </th>
-        </tr>
-      </table>
-    </td>
+    <th colspan=3>
+      <h4>I N V O I C E</h4>
+    </th>
   </tr>
 
   <tr>
@@ -50,7 +29,11 @@
 	  <%if address2%>
           <br><%address2%>
 	  <%end address2%>
-          <br><%city%> <%state%> <%zipcode%>
+          <br><%city%>
+	  <%if state%>
+	  , <%state%>
+	  <%end state%>
+	  <%zipcode%>
 	  <%if country%>
 	  <br><%country%>
 	  <%end country%>
@@ -79,7 +62,11 @@
 	  <%if shiptoaddress2%>
           <br><%shiptoaddress2%>
 	  <%end shiptoaddress2%>
-          <br><%shiptocity%> <%shiptostate%> <%shiptozipcode%>
+          <br><%shiptocity%>
+	  <%if shiptostate%>
+	  , <%shiptostate%>
+	  <%end shiptostate%>
+	  <%shiptozipcode%>
 	  <%if shiptocountry%>
 	  <br><%shiptocountry%>
 	  <%end shiptocountry%>
@@ -143,7 +130,7 @@
     <td>
       <table width=100%>
         <tr bgcolor=000000>
-          <th align=right><font color=ffffff>No.</th>
+          <th align=right><font color=ffffff>Item</th>
           <th align=left><font color=ffffff>Number</th>
           <th align=left><font color=ffffff>Description</th>
           <th>&nbsp;</th>
@@ -167,12 +154,6 @@
           <td align=right><%linetotal%></td>
         </tr>
         <%end number%>
-
-<!--
-you can also use netprice instead of sellprice if you
-don't want to show the discount
-netprice = sellprice - discount
--->
 
         <tr>
           <td colspan=9><hr noshade></td>
@@ -242,7 +223,7 @@ netprice = sellprice - discount
     </td>
   </tr>
 
-  <%if paid%>
+  <%if paid_1%>
   <tr>
     <td>&nbsp;</td>
 
@@ -265,7 +246,7 @@ netprice = sellprice - discount
           <th align=left>Source</th>
           <th align=left>Amount</th>
         </tr>
-  <%end paid%>
+  <%end paid_1%>
 
         <%foreach payment%>
         <tr>
@@ -276,11 +257,11 @@ netprice = sellprice - discount
         </tr>
         <%end payment%>
 
-  <%if paid%>
+  <%if paid_1%>
       </table>
     </td>
   </tr>
-  <%end paid%>
+  <%end paid_1%>
 
   <tr height=10></tr>
 

@@ -399,7 +399,8 @@ sub jcitems {
   }
   
   $query = qq|SELECT j.id, j.description, j.qty, j.allocated,
-              j.checkedin, j.checkedout,
+	      to_char(j.checkedin, 'HH24:MI') AS checkedin,
+	      to_char(j.checkedout, 'HH24:MI') AS checkedout,
 	      to_char(j.checkedin, '$dateformat') AS transdate,
 	      to_char(j.checkedin, 'D') AS weekday,
 	      p.partnumber,
@@ -467,7 +468,7 @@ sub save {
     
   } else {
     my $uid = time;
-    $uid .= $form->{login};
+    $uid .= $$;
 
     $query = qq|INSERT INTO jcitems (description)
                 VALUES ('$uid')|;

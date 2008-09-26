@@ -41,6 +41,7 @@ $self{texts} = {
   'Payment'                     => 'Pagamento',
   'Payments'                    => 'Pagamenti',
   'Preferences'                 => 'Preferenze',
+  'Print'                       => 'Stampa',
   'Projects'                    => 'Progetti',
   'Purchase Order'              => 'Ordine di acquisto',
   'Purchase Orders'             => 'Ordini di acquisto',

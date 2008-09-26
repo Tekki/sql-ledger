@@ -45,6 +45,7 @@ $self{texts} = {
   'Open'                        => '’νοιγμα',
   'Outstanding'                 => 'Αξιοσημείωτο',
   'Preferences'                 => 'Επιλογές',
+  'Print'                       => 'Εκτύπωση',
   'Projects'                    => 'Έργα',
   'Receipt'                     => 'Απόδειξη',
   'Sale'                        => 'Πώληση',

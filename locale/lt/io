@@ -42,7 +42,6 @@ $self{texts} = {
   'May'                         => 'Geg',
   'May '                        => 'Geguşë',
   'Message'                     => 'Şinutë',
-  'No.'                         => 'Num',
   'Nov'                         => 'Lap',
   'November'                    => 'Lapkritis',
   'Number'                      => 'Numeris',

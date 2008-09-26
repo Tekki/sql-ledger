@@ -486,7 +486,7 @@ sub form_header {
 <form method=post action="$form->{script}">
 |;
 
-  $form->hide_form(qw(id type formname media format printed emailed vc title discount creditlimit creditremaining tradediscount business recurring));
+  $form->hide_form(qw(id type formname media format printed emailed queued vc title discount creditlimit creditremaining tradediscount business recurring));
 
   print qq|
 <table width=100%>
@@ -864,7 +864,7 @@ sub update {
       } else {
 
         $form->{"qty_$i"} = ($form->{"qty_$i"} * 1) ? $form->{"qty_$i"} : 1;
-	$form->{"reqdate_$i"}	= $form->{reqdate} if $form->{type} !~ /_quotation/;
+	$form->{"reqdate_$i"}	= $form->{reqdate} if $form->{type} ne 'sales_quotation';
 	$sellprice = $form->parse_amount(\%myconfig, $form->{"sellprice_$i"});
 	
 	for (qw(partnumber description unit)) { $form->{item_list}[$i]{$_} = $form->quote($form->{item_list}[$i]{$_}) }
@@ -877,14 +877,18 @@ sub update {
 	  
 	  ($dec) = ($form->{"sellprice_$i"} =~ /\.(\d+)/);
 	  $dec = length $dec;
-	  $decimalplaces = ($dec > 2) ? $dec : 2;
+	  $decimalplaces1 = ($dec > 2) ? $dec : 2;
 	} else {
 	  ($dec) = ($form->{"sellprice_$i"} =~ /\.(\d+)/);
 	  $dec = length $dec;
-	  $decimalplaces = ($dec > 2) ? $dec : 2;
+	  $decimalplaces1 = ($dec > 2) ? $dec : 2;
 
 	  $form->{"sellprice_$i"} /= $exchangerate;
 	}
+	
+	($dec) = ($form->{"lastcost_$i"} =~ /\.(\d+)/);
+	$dec = length $dec;
+	$decimalplaces2 = ($dec > 2) ? $dec : 2;
 
 	for (qw(listprice lastcost)) { $form->{"${_}_$i"} /= $exchangerate }
 
@@ -897,7 +901,8 @@ sub update {
 	
 	$form->{creditremaining} -= $amount;
 
-	for (qw(sellprice listprice lastcost)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}, $decimalplaces) }
+	for (qw(sellprice listprice)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}, $decimalplaces1) }
+	$form->{"lastcost_$i"} = $form->format_amount(\%myconfig, $form->{"lastcost_$i"}, $decimalplaces2);
 	
 	$form->{"oldqty_$i"} = $form->{"qty_$i"};
 	for (qw(qty discount)) { $form->{"{_}_$i"} =  $form->format_amount(\%myconfig, $form->{"${_}_$i"}) }
@@ -1095,7 +1100,7 @@ sub search {
   }
 
   @a = ();
-  push @a, qq|<input name="l_runningnumber" class=checkbox type=checkbox value=Y> |.$locale->text('No.');
+  push @a, qq|<input name="l_runningnumber" class=checkbox type=checkbox value=Y> |.$locale->text('Item');
   push @a, qq|<input name="l_id" class=checkbox type=checkbox value=Y> |.$locale->text('ID');
   push @a, qq|<input name="l_$ordnumber" class=checkbox type=checkbox value=Y checked> $ordlabel|;
   push @a, qq|<input name="l_transdate" class=checkbox type=checkbox value=Y checked> |.$locale->text('Date');
@@ -1826,7 +1831,7 @@ sub invoice {
     $buysell = 'buy';
   }
  
-  for (qw(id subject message cc bcc printed emailed)) { delete $form->{$_} }
+  for (qw(id subject message cc bcc printed emailed queued)) { delete $form->{$_} }
   $form->{$form->{vc}} =~ s/--.*//g;
   $form->{type} = "invoice";
  
@@ -1865,7 +1870,7 @@ sub invoice {
     for (qw(qty sellprice discount)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}) }
   }
 
-  for (qw(id subject message cc bcc printed emailed audittrail)) { delete $form->{$_} }
+  for (qw(id subject message cc bcc printed emailed queued audittrail)) { delete $form->{$_} }
 
   &display_form;
 
@@ -1996,7 +2001,7 @@ sub create_backorder {
   }
 
   # clear flags
-  for (qw(id subject message cc bcc printed emailed audittrail)) { delete $form->{$_} }
+  for (qw(id subject message cc bcc printed emailed queued audittrail)) { delete $form->{$_} }
 
   OE->save(\%myconfig, \%$form);
  
@@ -2027,7 +2032,7 @@ sub create_backorder {
 
 sub save_as_new {
 
-  for (qw(closed id printed emailed)) { delete $form->{$_} }
+  for (qw(closed id printed emailed queued)) { delete $form->{$_} }
   &save;
 
 }
@@ -2035,7 +2040,7 @@ sub save_as_new {
 
 sub print_and_save_as_new {
 
-  for (qw(closed id printed emailed)) { delete $form->{$_} }
+  for (qw(closed id printed emailed queued)) { delete $form->{$_} }
   &print_and_save;
 
 }
@@ -2152,7 +2157,7 @@ sub display_ship_receive {
 <input type=hidden name=display_form value=display_ship_receive>
 |;
 
-  $form->hide_form(qw(id type media format printed emailed vc));
+  $form->hide_form(qw(id type media format printed emailed queued vc));
 
   print qq|
 <input type=hidden name="old$form->{vc}" value="$form->{"old$form->{vc}"}">
@@ -2263,7 +2268,7 @@ sub display_ship_receive {
     for (qw(partnumber sku description unit bin serialnumber)) { $form->{"${_}_$i"} = $form->quote($form->{"${_}_$i"}) }
 
     $description = $form->{"description_$i"};
-    $description =~ s/\r/<br>/g;
+    $description =~ s/\r?\n/<br>/g;
     
     $column_data{partnumber} = qq|<td>$form->{"partnumber_$i"}<input type=hidden name="partnumber_$i" value="$form->{"partnumber_$i"}"></td>|;
     $column_data{sku} = qq|<td>$form->{"sku_$i"}<input type=hidden name="sku_$i" value="$form->{"sku_$i"}"></td>|;

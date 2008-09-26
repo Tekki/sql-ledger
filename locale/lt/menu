@@ -43,6 +43,7 @@ $self{texts} = {
   'Payment'                     => 'Mokëjimas',
   'Payments'                    => 'Mokëjimai',
   'Preferences'                 => 'Nuostatos',
+  'Print'                       => 'Spausdinti',
   'Projects'                    => 'Projektai',
   'Purchase Order'              => 'Pirkimo uþsakymas',
   'Purchase Orders'             => 'Pirkimo uþsakymai',

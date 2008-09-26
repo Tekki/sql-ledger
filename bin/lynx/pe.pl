@@ -1675,7 +1675,7 @@ sub list_translations {
   if ($form->{description}) {
     $callback .= "&description=$form->{description}";
     $description = $form->{description};
-    $description =~ s/\r/<br>/g;
+    $description =~ s/\r?\n/<br>/g;
     $option .= $locale->text('Description').qq| : $form->{description}<br>|;
   }
 
@@ -1739,7 +1739,7 @@ sub list_translations {
 
   foreach $ref (@{ $form->{translations} }) {
   
-    $ref->{description} =~ s/\r/<br>/g;
+    $ref->{description} =~ s/\r?\n/<br>/g;
     
     for (@column_index) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
     
@@ -1802,7 +1802,7 @@ sub edit_translation {
 
   $form->{"$form->{number}"} = $form->{translations}->[0]->{"$form->{number}"};
   $form->{description} = $form->{translations}->[0]->{description};
-  $form->{description} =~ s/\r/<br>/g;
+  $form->{description} =~ s/\r?\n/<br>/g;
 
   shift @{ $form->{translations} };
 

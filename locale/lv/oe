@@ -97,7 +97,6 @@ $self{texts} = {
   'May'                         => 'Mai',
   'May '                        => 'Maijâ ',
   'Message'                     => 'Paziòojums',
-  'No.'                         => 'Nr.',
   'Notes'                       => 'Piezîmes',
   'Nothing entered!'            => 'Nekas nav ievadîts',
   'Nothing selected!'           => 'Nekas nav iezîmçts!',

@@ -86,7 +86,6 @@ $self{texts} = {
   'Message'                     => 'Nachricht',
   'Month(s)'                    => 'Monat(e)',
   'Next Date'                   => 'Nächstes Datum',
-  'No.'                         => 'Nr.',
   'Notes'                       => 'Bemerkungen',
   'Nov'                         => 'Nov',
   'November'                    => 'November',

@@ -274,7 +274,14 @@ sub form_header {
   $dec = length $dec;
   $decimalplaces = ($dec > 2) ? $dec : 2;
   
-  for (qw(listprice sellprice lastcost avgcost)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, $decimalplaces) }
+  for (qw(listprice sellprice)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, $decimalplaces) }
+  
+  ($dec) = ($form->{lastcost} =~ /\.(\d+)/);
+  $dec = length $dec;
+  $decimalplaces = ($dec > 2) ? $dec : 2;
+ 
+  for (qw(lastcost avgcost)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, $decimalplaces) }
+  
   for (qw(weight rop stock)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}) }
   
   for (qw(partnumber description unit notes)) { $form->{$_} = $form->quote($form->{$_}) }
@@ -339,14 +346,17 @@ sub form_header {
 	      </tr>
 |;
 
+  $avgcost = qq|
+ 	      <tr>
+                <th align="right" nowrap="true">|.$locale->text('Average Cost').qq|</th>
+                <td><input type=hidden name=avgcost value=$form->{avgcost}>$form->{avgcost}</td>
+              </tr>
+|;
+
   $lastcost = qq|
  	      <tr>
                 <th align="right" nowrap="true">|.$locale->text('Last Cost').qq|</th>
                 <td><input name=lastcost size=11 value=$form->{lastcost}></td>
-              </tr>
- 	      <tr>
-                <th align="right" nowrap="true">|.$locale->text('Average Cost').qq|</th>
-                <td><input type=hidden name=avgcost value=$form->{avgcost}>$form->{avgcost}</td>
               </tr>
 	      <tr>
 	        <th align="right" nowrap="true">|.$locale->text('Markup').qq| %</th>
@@ -453,6 +463,8 @@ sub form_header {
 
 
   if ($form->{item} eq "assembly") {
+
+    $avgcost = "";
     
     if ($form->{project_id}) {
       $weight = qq|
@@ -501,6 +513,7 @@ sub form_header {
 
     if ($form->{project_id}) {
       $lastcost = "";
+      $avgcost = "";
       $onhand = "";
       $rop = "";
       $form->{isassemblyitem} = 1;
@@ -518,17 +531,12 @@ sub form_header {
 	        <th align="right" nowrap="true">|.$locale->text('Last Cost').qq|</th> 
 		<td><input type=hidden name=lastcost value=$form->{lastcost}>$form->{lastcost}</td>
 	      </tr>
- 	      <tr>
-                <th align="right" nowrap="true">|.$locale->text('Average Cost').qq|</th>
-                <td><input type=hidden name=avgcost value=$form->{avgcost}>$form->{avgcost}</td>
-              </tr>
 	      <tr>
 	        <th align="right" nowrap="true">|.$locale->text('Markup').qq| %</th>
 		<td><input name=markup size=5 value=$form->{markup}></td>
 		<input type=hidden name=oldmarkup value=$markup>
 	      </tr>
 |;
-
 
     }
 
@@ -553,7 +561,7 @@ sub form_header {
 
  
   if ($form->{item} eq "service") {
-    
+    $avgcost = "";
     $linkaccounts = qq|
 	      <tr>
 		<th align=right>|.$locale->text('Income').qq|</th>
@@ -580,6 +588,8 @@ sub form_header {
 
   if ($form->{item} eq 'labor') {
     $lastcost = "";
+    $avgcost = "";
+    
     $sellprice = qq|
 	      <tr>
 		<th align="right" nowrap="true">|.$locale->text('Rate').qq|</th>
@@ -680,6 +690,7 @@ sub form_header {
 	      </tr>
 	      $sellprice
 	      $lastcost
+	      $avgcost
 	      <tr>
 		<th align="right" nowrap="true">|.$locale->text('Unit').qq|</th>
 		<td><input name=unit size=5 value="$form->{unit}"></td>
@@ -1014,7 +1025,7 @@ sub search {
   
 
   @a = ();
-  push @a, qq|<input name=l_runningnumber class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('No.');
+  push @a, qq|<input name=l_runningnumber class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Item');
   push @a, qq|<input name=l_partnumber class=checkbox type=checkbox value=Y checked>&nbsp;|.$locale->text('Number');
   push @a, qq|<input name=l_description class=checkbox type=checkbox value=Y checked>&nbsp;|.$locale->text('Description');
   push @a, $l_serialnumber if $l_serialnumber;
@@ -1331,7 +1342,7 @@ sub generate_report {
   if ($form->{description}) {
     $callback .= "&description=".$form->escape($form->{description},1);
     $description = $form->{description};
-    $description =~ s/\r/<br>/g;
+    $description =~ s/\r?\n/<br>/g;
     $option .= $locale->text('Description').qq| : $form->{description}<br>|;
   }
   if ($form->{make}) {
@@ -1597,7 +1608,7 @@ sub generate_report {
     # use this for assemblies
     $onhand = $ref->{onhand};
 
-    for (qw(description notes)) { $ref->{$_} =~ s/\r\n/<br>/g }
+    for (qw(description notes)) { $ref->{$_} =~ s/\r?\n/<br>/g }
     
     for (1 .. $form->{pncol}) { $column_data{"partnumber_$_"} = "<td>&nbsp;</td>" }
 
@@ -2025,7 +2036,7 @@ sub assembly_row {
   $form->{callback} = $callback;
 
 
-  $column_header{runningnumber} = qq|<th nowrap width=5%>|.$locale->text('No.').qq|</th>|;
+  $column_header{runningnumber} = qq|<th nowrap width=5%>|.$locale->text('Item').qq|</th>|;
   $column_header{qty} = qq|<th align=left nowrap width=10%>|.$locale->text('Qty').qq|</th>|;
   $column_header{unit} = qq|<th align=left nowrap width=5%>|.$locale->text('Unit').qq|</th>|;
   $column_header{partnumber} = qq|<th align=left nowrap width=20%>|.$locale->text('Number').qq|</th>|;
@@ -2553,6 +2564,10 @@ sub save {
       $form->{"qty_$i"} = 1 unless ($form->{"qty_$i"});
 
       for (qw(partnumber description bin unit listprice sellprice partsgroup)) { $form->{"${_}_$i"} = $newform{$_} }
+      for (qw(inventory income expense)) {
+	$form->{"${_}_accno_id_$i"} = $newform{"IC_$_"};
+	$form->{"${_}_accno_id_$i"} =~ s/--.*//;
+      }
       $form->{"sellprice_$i"} = $newform{lastcost} if ($form->{vendor_id});
 
       if ($form->{exchangerate} != 0) {

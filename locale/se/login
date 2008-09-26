@@ -1,4 +1,5 @@
 $self{texts} = {
+  'Access Denied!'              => 'Fel kod eller användarnamn!',
   'Company'                     => 'Företag',
   'Continue'                    => 'Fortsätt',
   'Dataset is newer than version!' => 'Dataset är nyare än programversionen',

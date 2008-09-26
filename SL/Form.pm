@@ -56,8 +56,8 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.6.2";
-  $self->{dbversion} = "2.6.2";
+  $self->{version} = "2.6.3";
+  $self->{dbversion} = "2.6.3";
 
   $self->{debug} = 1;
 
@@ -102,6 +102,7 @@ sub unescape {
   $str =~ s/\\$//;
 
   $str =~ s/%([0-9a-fA-Z]{2})/pack("c",hex($1))/eg;
+  $str =~ s/\r?\n/\n/g;
 
   $str;
 
@@ -206,14 +207,12 @@ sub info {
 }
 
 
-
-
 sub numtextrows {
   my ($self, $str, $cols, $maxrows) = @_;
 
   my $rows = 0;
 
-  for (split /\r?\n/, $str) { $rows += int (((length) - 2)/$cols) + 1 }
+  for (split /\n/, $str) { $rows += int (((length) - 2)/$cols) + 1 }
   $maxrows = $rows unless defined $maxrows;
 
   return ($rows > $maxrows) ? $maxrows : $rows;
@@ -352,13 +351,12 @@ sub sort_order {
   }
   $self->{oldsort} = $self->{sort};
 
-  my $sortorder = join ',', $self->sort_columns(@{$columns});
-
+  my @a = $self->sort_columns(@{$columns});
   if (%$ordinal) {
-    for (keys %$ordinal) { $sortorder =~ s/^$_$/$ordinal->{$_}/ }
+    $a[0] = "$ordinal->{$a[0]} $self->{direction}";
+    for (1 .. $#a) { $a[$_] = $ordinal->{$a[$_]} if $ordinal->{$a[$_]} }
   }
-  my @a = split /,/, $sortorder;
-  $a[0] = "$a[0] $self->{direction}";
+
   $sortorder = join ',', @a;
 
   $sortorder;
@@ -837,9 +835,18 @@ sub format_line {
 
   $_ = shift;
   my $i = shift;
-  my ($str, $pos, $l, $item, $newstr);
+  
+  my $str;
+  my $newstr;
+  my $pos;
+  my $l;
+  my $lf;
+  my $line;
   my $var = "";
   my %a;
+  my $offset;
+  my $pad;
+  my $item;
 
   while (/<%(.+?)%>/) {
 
@@ -855,61 +862,60 @@ sub format_line {
     }
 
     $str = (defined $i) ? $self->{$var}[$i] : $self->{$var};
+    $newstr = $str;
 
     if ($a{align} || $a{width} || $a{offset}) {
 
-      $str =~ s/(\r|\n)+/" " x $a{offset}/ge;
-      $l = length $str;
+      $newstr = "";
+      $offset = 0;
+      $lf = "";
+      foreach $str (split /\n/, $str) {
+      
+	$line = $str;
+	$l = length $str;
 
-      if ($l > $a{width}) {
-	if (($pos = rindex $str, " ", $a{width}) > 0) {
-	  $newstr = substr($str, 0, $pos);
-	  $newstr .= "\n";
-	  $str = substr($str, $pos + 1);
-
-	  while (length $str > $a{width}) {
+	do {
+	  if (($pos = length $str) > $a{width}) {
 	    if (($pos = rindex $str, " ", $a{width}) > 0) {
-	      $newstr .= (" " x $a{offset}).substr($str, 0, $pos);
-	      $newstr .= "\n";
-	      $str = substr($str, $pos + 1);
-	    } else {
-	      $newstr .= (" " x $a{offset}).substr($str, 0, $a{width});
-	      $newstr .= "\n";
-	      $str = substr($str, $a{width} + 1);
+	      $line = substr($str, 0, $pos);
 	    }
 	  }
-	}
-	$l = length $str;
-	$str .= " " x ($a{width} - $l);
-	$newstr .= (" " x $a{offset}).$str;
-	$str = $newstr;
 
-	$l = $a{width};
-      }
+	  $l = length $line;
 
-      # pad left, right or center
-      $pos = lc $a{align};
-      $l = ($a{width} - $l);
-      
-      my $pad = " " x $l;
-      
-      if ($pos eq 'right') {
-	$str = "$pad$str";
-      }
+	  # pad left, right or center
+	  $l = ($a{width} - $l);
+	  
+	  $pad = " " x $l;
+	  
+	  if ($a{align} =~ /right/i) {
+	    $line = " " x $offset . $pad . $line;
+	  }
 
-      if ($pos eq 'left') {
-	$str = "$str$pad";
-      }
+	  if ($a{align} =~ /left/i) {
+	    $line = " " x $offset . $line . $pad;
+	  }
 
-      if ($pos eq 'center') {
-	$pad = " " x ($l/2);
-	$str = "$pad$str";
-	$pad = " " x ($l/2 + 1) if ($l % 2);
-	$str .= "$pad";
+	  if ($a{align} =~ /center/i) {
+	    $pad = " " x ($l/2);
+	    $line = " " x $offset . $pad . $line;
+	    $pad = " " x ($l/2);
+	    $line .= $pad;
+	  }
+
+	  $newstr .= "$lf$line";
+
+	  $str = substr($str, $pos + 1);
+          $line = $str;
+	  $lf = "\n";
+	  
+	  $offset = $a{offset};
+	  
+	} while ($str);
       }
     }
 
-    s/<%(.+?)%>/$str/;
+    s/<%(.+?)%>/$newstr/;
 
   }
 
@@ -952,9 +958,9 @@ sub format_string {
     $format = 'tex';
   }
 
-  my %replace = ( 'order' => { html => [ '<', '>', quotemeta('\n'), '\r' ],
-                               txt  => [ quotemeta('\n') ],
-                               tex  => [ quotemeta('\\'), '&', quotemeta('\n'),
+  my %replace = ( 'order' => { html => [ '<', '>', '\n', '\r' ],
+                               txt  => [ '\n', '\r' ],
+                               tex  => [ quotemeta('\\'), '&', '\n',
 			                 '\r', '\$', '%', '_', '#',
 					 quotemeta('^'), '{', '}', '<', '>',
 					 '£' ],
@@ -962,14 +968,14 @@ sub format_string {
 			                 '\r', '\$', '%', '_', '#',
 					 quotemeta('^'), '{', '}', '<', '>' ] },
                    html => { '<' => '&lt;', '>' => '&gt;',
-                quotemeta('\n') => '<br>', '\r' => '<br>'
+                             '\n' => '<br>', '\r' => '<br>'
 		            },
-		   txt  => { quotemeta('\n') },
+		   txt  => { '\n' => "\n", '\r' => "\r" },
 	           tex  => {
 	        '&' => '\&', '\$' => '\$', '%' => '\%', '_' => '\_',
 		'#' => '\#', quotemeta('^') => '\^\\', '{' => '\{', '}' => '\}',
 		'<' => '$<$', '>' => '$>$',
-		quotemeta('\n') => '\newline ', '\r' => '\newline ',
+		'\n' => '\newline ', '\r' => '\newline ',
 		'£' => '\pounds ', quotemeta('\\') => '/'
                             }
 	        );
@@ -983,7 +989,7 @@ sub format_string {
 
 
 sub datetonum {
-  my ($self, $myconfig, $date) = @_;
+  my ($self, $myconfig, $date, $picture) = @_;
 
   if ($date && $date =~ /\D/) {
 
@@ -1910,60 +1916,23 @@ sub update_status {
   # no id return
   return unless $self->{id};
 
-  my $i;
-  my $id;
- 
   my $dbh = $self->dbconnect_noauto($myconfig);
 
-  my $query = qq|DELETE FROM status
-                 WHERE formname = '$self->{formname}'
-		 AND trans_id = ?|;
-  my $sth = $dbh->prepare($query) || $self->dberror($query);
-
-  my %queued = split / /, $self->{queued};
+  my %queued = split / +/, $self->{queued};
   
-  if ($self->{formname} =~ /(check|receipt)/) {
-    $query = qq|DELETE FROM status
-                WHERE formname = '$self->{formname}'
-		AND spoolfile = '$queued{$self->{formname}}'
-		AND trans_id = ?|;
-    $sth = $dbh->prepare($query) || $self->dberror($query);
-
-    for $i (1 .. $self->{rowcount}) {
-      $sth->execute($self->{"id_$i"} * 1) || $self->dberror($query);
-      $sth->finish;
-    }
-  } else {
-    $sth->execute($self->{id}) || $self->dberror($query);
-    $sth->finish;
-  }
+  my $query = qq|DELETE FROM status
+ 	         WHERE formname = '$self->{formname}'
+	         AND trans_id = $self->{id}|;
+  $dbh->do($query) || $self->dberror($query);
 
   my $printed = ($self->{printed} =~ /$self->{formname}/) ? "1" : "0";
   my $emailed = ($self->{emailed} =~ /$self->{formname}/) ? "1" : "0";
   
-
-  if ($self->{formname} =~ /(check|receipt)/) {
-    # this is a check or receipt, add one entry for each lineitem
-    my ($accno) = split /--/, $self->{account};
-    $query = qq|INSERT INTO status (trans_id, printed, spoolfile, formname,
-		chart_id) VALUES (?, '$printed', '$queued{$self->{formname}}',
-		'$self->{formname}',
-		(SELECT id FROM chart WHERE accno = '$accno'))|;
-    $sth = $dbh->prepare($query) || $self->dberror($query);
-
-    for $i (1 .. $self->{rowcount}) {
-      if ($self->{"checked_$i"}) {
-	$sth->execute($self->{"id_$i"} * 1) || $self->dberror($query);
-	$sth->finish;
-      }
-    }
-  } else {
-    $query = qq|INSERT INTO status (trans_id, printed, emailed,
-		spoolfile, formname)
-		VALUES ($self->{id}, '$printed', '$emailed',
-		'$queued{$self->{formname}}', '$self->{formname}')|;
-    $dbh->do($query) || $self->dberror($query);
-  }
+  $query = qq|INSERT INTO status (trans_id, printed, emailed,
+	      spoolfile, formname) VALUES ($self->{id}, '$printed',
+	      '$emailed', '$queued{$self->{formname}}',
+	      '$self->{formname}')|;
+  $dbh->do($query) || $self->dberror($query);
 
   $dbh->commit;
   $dbh->disconnect;
@@ -1974,33 +1943,32 @@ sub update_status {
 sub save_status {
   my ($self, $dbh) = @_;
 
-  my ($query, $printed, $emailed);
-
   my $formnames = $self->{printed};
   my $emailforms = $self->{emailed};
 
   my $query = qq|DELETE FROM status
-                 WHERE formname = '$self->{formname}'
-		 AND trans_id = $self->{id}|;
+		 WHERE trans_id = $self->{id}|;
   $dbh->do($query) || $self->dberror($query);
 
+  my %queued;
+  my $formname;
+  
   if ($self->{queued}) {
-    $query = qq|DELETE FROM status
-                WHERE spoolfile IS NOT NULL
-		AND trans_id = $self->{id}|;
-    $dbh->do($query) || $self->dberror($query);
-   
-    my %queued = split / /, $self->{queued};
+    %queued = split / +/, $self->{queued};
 
-    foreach my $formname (keys %queued) {
-      $printed = ($self->{printed} =~ /$self->{formname}/) ? "1" : "0";
-      $emailed = ($self->{emailed} =~ /$self->{formname}/) ? "1" : "0";
+    foreach $formname (keys %queued) {
       
-      $query = qq|INSERT INTO status (trans_id, printed, emailed,
-                  spoolfile, formname)
-		  VALUES ($self->{id}, '$printed', '$emailed',
-		  '$queued{$formname}', '$formname')|;
-      $dbh->do($query) || $self->dberror($query);
+      $printed = ($self->{printed} =~ /$formname/) ? "1" : "0";
+      $emailed = ($self->{emailed} =~ /$formname/) ? "1" : "0";
+      
+      if ($queued{$formname}) {
+	$query = qq|INSERT INTO status (trans_id, printed, emailed,
+		    spoolfile, formname)
+		    VALUES ($self->{id}, '$printed', '$emailed',
+		    '$queued{$formname}', '$formname')|;
+	$dbh->do($query) || $self->dberror($query);
+      }
+      
       $formnames =~ s/$formname//;
       $emailforms =~ s/$formname//;
       
@@ -2226,14 +2194,15 @@ sub update_defaults {
   $_ = "0" unless $_;
 
   # check for and replace
-  # <%DATE%>, <%YYMMDD%> or variations of
+  # <%DATE%>, <%YYMMDD%>, <%YEAR%>, <%MONTH%>, <%DAY%> or variations of
   # <%NAME 1 1 3%>, <%BUSINESS%>, <%BUSINESS 10%>, <%CURR...%>
   # <%DESCRIPTION 1 1 3%>, <%ITEM 1 1 3%>, <%PARTSGROUP 1 1 3%> only for parts
   # <%PHONE%> for customer and vendors
   
   my $num = $_;
-  $num =~ s/(<%.*?%>)//g;
+  $num =~ s/.*?<%.*?%>//g;
   ($num) = $num =~ /(\d+)/;
+
   if (defined $num) {
     my $incnum;
     # if we have leading zeros check how long it is

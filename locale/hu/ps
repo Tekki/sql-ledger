@@ -111,7 +111,6 @@ $self{texts} = {
   'May '                        => 'Május',
   'Message'                     => 'Üzenet',
   'N/A'                         => 'N/A',
-  'No.'                         => 'Sz.',
   'Notes'                       => 'Megjegyzés',
   'Nothing selected!'           => 'Nincs semmi kiválasztva!',
   'Nov'                         => 'Nov.',

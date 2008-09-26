@@ -130,7 +130,6 @@ $self{texts} = {
   'Message'                     => 'Paziòojums',
   'Method'                      => 'Metode',
   'N/A'                         => 'Nav',
-  'No.'                         => 'Nr.',
   'Non-taxable Purchases'       => 'Pirkumi, kas nav apliekami ar nodokïiem',
   'Non-taxable Sales'           => 'Tirgoðana, kas nav apliekama ar nodokïiem',
   'Notes'                       => 'Piezîmes',

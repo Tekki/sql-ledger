@@ -2,36 +2,15 @@
 <body bgcolor=ffffff>
 
 <table width=100%>
+
+  <%include letterhead.html%>
+  
   <tr>
     <td width=10>&nbsp;</td> 
     
-    <td>
-      <table width=100%>
-	<tr>
-	  <td>
-	    <h4>
-	    <%company%>
-	    <br><%address%>
-	    </h4>
-	  </td>
-
-	  <th><img src=http://www.sql-ledger.org/images/sql-ledger.png border=0 width=80 height=58></th>
-
-	  <td align=right>
-	    <h4>
-	    Tel: <%tel%>
-	    <br>Fax: <%fax%>
-	    </h4>
-	  </td>
-	</tr>
-
-	<tr>
-	  <th colspan=3>
-	    <h4>P A C K I N G &nbsp;&nbsp; L I S T</h4>
-	  </th>
-	</tr>
-      </table>
-    </td>
+    <th colspan=3>
+      <h4>P A C K I N G &nbsp;&nbsp; L I S T</h4>
+    </th>
   </tr>
 
   <tr>
@@ -50,7 +29,11 @@
 	  <%if shiptoaddress2%>
 	  <br><%shiptoaddress2%>
 	  <%end shiptoaddress2%>
-	  <br><%shiptocity%> <%shiptostate%> <%shiptozipcode%>
+	  <br><%shiptocity%>
+	  <%if shiptostate%>
+	  , <%shiptostate%>
+	  <%end shiptostate%>
+	  <%shiptozipcode%>
 	  <%if shiptocountry%>
 	  <br><%shiptocountry%>
 	  <%end shiptocountry%>
@@ -126,10 +109,10 @@
     <td>
       <table width=100%>
 	<tr bgcolor=000000>
-	  <th align=left><font color=ffffff>Pos</th>
+	  <th align=left><font color=ffffff>Item</th>
 	  <th align=left><font color=ffffff>Number</th>
 	  <th align=left><font color=ffffff>Description</th>
-	  <th align=left><font color=ffffff>Serial Number</th>
+	  <th align=left><font color=ffffff>Serial #</th>
 	  <th>&nbsp;</th>
 	  <th><font color=ffffff>Qty</th>
 	  <th><font color=ffffff>Ship</th>
@@ -159,6 +142,7 @@
     <td><hr noshade></td>
   </tr>
 
+  <%if notes%>
   <tr>
     <td>&nbsp;</td>
     
@@ -171,6 +155,7 @@
       </table>
     </td>
   </tr>
+  <%end notes%>
 
   <tr>
     <td>&nbsp;</td>
@@ -194,4 +179,7 @@
     </td>
   </tr>
 </table>
+
+</body>
+</html>
 

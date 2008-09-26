@@ -21,6 +21,7 @@ $self{texts} = {
   'Screen'                      => 'Na obrazovku',
   'Source'                      => 'Zdroj',
   'Subtotal'                    => 'Mezisouèet',
+  'Tax Included'                => 'Cena vèetnì danì',
   'To'                          => 'do',
   'Total'                       => 'Celkem',
   'Unit'                        => 'Jednotka',

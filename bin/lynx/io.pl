@@ -111,7 +111,7 @@ sub display_row {
   $form->{invsubtotal} = 0;
   for (split / /, $form->{taxaccounts}) { $form->{"${_}_base"} = 0 }
   
-  $column_data{runningnumber} = qq|<th class=listheading nowrap>|.$locale->text('No.').qq|</th>|;
+  $column_data{runningnumber} = qq|<th class=listheading nowrap>|.$locale->text('Item').qq|</th>|;
   $column_data{partnumber} = qq|<th class=listheading nowrap>|.$locale->text('Number').qq|</th>|;
   $column_data{description} = qq|<th class=listheading nowrap>|.$locale->text('Description').qq|</th>|;
   $column_data{qty} = qq|<th class=listheading nowrap>|.$locale->text('Qty').qq|</th>|;
@@ -151,9 +151,13 @@ sub display_row {
   $exchangerate = $form->parse_amount(\%myconfig, $form->{exchangerate});
   $exchangerate = ($exchangerate) ? $exchangerate : 1;
 
+  $spc = substr($myconfig{numberformat},-3,1);
   for $i (1 .. $numrows) {
-    $spc = substr($myconfig{numberformat},-3,1);
-    ($dec) = ($form->{"sellprice_$i"} =~ /$spc(\d+)/);
+    if ($spc eq '.') {
+      ($null, $dec) = split /\./, $form->{"sellprice_$i"};
+    } else {
+      ($null, $dec) = split /,/, $form->{"sellprice_$i"};
+    }
     $dec = length $dec;
     $decimalplaces = ($dec > 2) ? $dec : 2;
 
@@ -444,13 +448,17 @@ sub item_selected {
 
       ($dec) = ($form->{"sellprice_$i"} =~ /\.(\d+)/);
       $dec = length $dec;
-      $decimalplaces = ($dec > 2) ? $dec : 2;
+      $decimalplaces1 = ($dec > 2) ? $dec : 2;
+      
+      ($dec) = ($form->{"lastcost_$i"} =~ /\.(\d+)/);
+      $dec = length $dec;
+      $decimalplaces2 = ($dec > 2) ? $dec : 2;
 
       # if there is an exchange rate adjust sellprice
       if (($form->{exchangerate} * 1)) {
 	for (qw(sellprice listprice lastcost)) { $form->{"${_}_$i"} /= $form->{exchangerate} }
         # don't format list and cost
-	$form->{"sellprice_$i"} = $form->round_amount($form->{"sellprice_$i"}, $decimalplaces);
+	$form->{"sellprice_$i"} = $form->round_amount($form->{"sellprice_$i"}, $decimalplaces1);
       }
 
       # this is for the assembly
@@ -475,7 +483,8 @@ sub item_selected {
   
       # format amounts
       if ($form->{item} ne 'assembly') {
-	for (qw(sellprice listprice lastcost)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}, $decimalplaces) }
+	for (qw(sellprice listprice)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}, $decimalplaces1) }
+	$form->{"lastcost_$i"} = $form->format_amount(\%myconfig, $form->{"lastcost_$i"}, $decimalplaces2);
       }
       $form->{"discount_$i"} = $form->format_amount(\%myconfig, $form->{"discount_$i"});
 
@@ -631,7 +640,7 @@ sub check_form {
 
   # remove any makes or model rows
   if ($form->{item} eq 'part') {
-    for (qw(listprice sellprice lastcost weight rop markup)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
+    for (qw(listprice sellprice lastcost avgcost weight rop markup)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
     
     &calc_markup;
     
@@ -658,7 +667,7 @@ sub check_form {
   
   if ($form->{item} eq 'service') {
     
-    for (qw(sellprice listprice lastcost markup)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
+    for (qw(sellprice listprice lastcost avgcost markup)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
     
     &calc_markup;
     &check_vendor;
@@ -881,7 +890,7 @@ sub quotation {
 
 sub create_form {
 
-  for (qw(id printed emailed)) { delete $form->{$_} }
+  for (qw(id printed emailed queued)) { delete $form->{$_} }
  
   $form->{script} = 'oe.pl';
 
@@ -1058,6 +1067,10 @@ sub print_options {
       for (sort keys %printer) { $media .= qq|
             <option value="$_">$_| }
     }
+    if ($latex) {
+      $media .= qq|
+            <option value="queue">|.$locale->text('Queue');
+    }
     $media .= qq|</select>|;
 
     # set option selected
@@ -1117,6 +1130,10 @@ sub print_options {
   
   if ($form->{emailed} =~ /$form->{formname}/) {
     print $locale->text('E-mailed').qq|<br>|;
+  }
+
+  if ($form->{queued} =~ /$form->{formname}/) {
+    print $locale->text('Queued');
   }
   
   if ($form->{recurring}) {
@@ -1321,7 +1338,7 @@ sub print_form {
     if ($form->{formname} eq 'purchase_order' || $form->{formname} eq 'request_quotation') {
 	$form->{shiptoname} = $myconfig{company};
 	$form->{shiptoaddress1} = $myconfig{address};
-	$form->{shiptoaddress1} =~ s/\\n/\r/g;
+	$form->{shiptoaddress1} =~ s/\\n/\n/g;
     } else {
       if ($form->{formname} !~ /bin_list/) {
 	for (@a) { $form->{"shipto$_"} = $form->{$_} }
@@ -1335,7 +1352,7 @@ sub print_form {
   push @a, ("${inv}number", "${inv}date", "${due}date");
   
   for (qw(company address tel fax businessnumber)) { $form->{$_} = $myconfig{$_} }
-  $form->{address} =~ s/\\n/\r/g;
+  $form->{address} =~ s/\\n/\n/g;
 
   for (qw(name email)) { $form->{"user$_"} = $myconfig{$_} }
 
@@ -1359,7 +1376,7 @@ sub print_form {
 
   $form->{pre} = "<body bgcolor=#ffffff>\n<pre>" if $form->{format} eq 'txt';
 
-  if ($form->{media} !~ /(screen|email)/) {
+  if ($form->{media} !~ /(screen|queue|email)/) {
     $form->{OUT} = "| $printer{$form->{media}}";
     
     $form->{OUT} =~ s/<%(fax)%>/<%$form->{vc}$1%>/;
@@ -1431,6 +1448,41 @@ sub print_form {
  
     $old_form->{audittrail} .= $form->audittrail("", \%myconfig, \%audittrail) if defined %$old_form;
   }
+
+
+  if ($form->{media} eq 'queue') {
+    %queued = split / /, $form->{queued};
+
+    if ($filename = $queued{$form->{formname}}) {
+      $form->{queued} =~ s/$form->{formname} $filename//;
+      unlink "$spool/$filename";
+      $filename =~ s/\..*$//g;
+    } else {
+      $filename = time;
+      $filename .= $$;
+    }
+
+    $filename .= ($form->{format} eq 'postscript') ? '.ps' : '.pdf';
+    $form->{OUT} = ">$spool/$filename";
+
+    $form->{queued} .= " $form->{formname} $filename";
+    $form->{queued} =~ s/^ //;
+
+    # save status
+    $form->update_status(\%myconfig);
+
+    $old_form->{queued} = $form->{queued};
+
+    %audittrail = ( tablename   => ($order) ? 'oe' : lc $ARAP,
+                    reference   => $form->{"${inv}number"},
+		    formname    => $form->{formname},
+		    action      => 'queued',
+		    id          => $form->{id} );
+
+    $old_form->{audittrail} .= $form->audittrail("", \%myconfig, \%audittrail);
+
+  }
+
 
   $form->format_string("email", "cc", "bcc");
  

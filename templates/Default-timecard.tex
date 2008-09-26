@@ -1,9 +1,8 @@
 \documentclass{scrartcl}
 \usepackage[latin1]{inputenc}
 \usepackage{tabularx}
-\usepackage[letterpaper,top=2cm,bottom=-1cm,left=2cm,right=1cm]{geometry}
+\usepackage[letterpaper,top=2cm,bottom=-3cm,left=1.1cm,right=1.5cm]{geometry}
 \usepackage{graphicx}
-\setlength{\parindent}{0pt}
 
 \begin{document}
 
@@ -12,24 +11,7 @@
 
 \fontfamily{cmss}\fontsize{10pt}{12pt}\selectfont
 
-\vspace*{-1.3cm}
-
-\parbox{\textwidth}{%
-  \parbox[b]{.42\textwidth}{%
-    <%company%>
-   
-    <%address%>
-  }
-  \parbox[b]{.2\textwidth}{
-    \includegraphics[scale=0.3]{sql-ledger}
-  }\hfill
-  \begin{tabular}[b]{rr@{}}
-  Tel: & <%tel%>\\
-  Fax: & <%fax%>
-  \end{tabular}
-
-  \rule[1.5em]{\textwidth}{0.5pt}
-}
+<%include letterhead.tex%>
 
 \centerline{\textbf{T I M E}\hspace{0.5cm}\textbf{C A R D}}
 
@@ -42,23 +24,23 @@
 \hfill
 \begin{tabular}[t]{ll}
   \textbf{Card ID} & <%id%> \\
-  \textbf{Date Worked} & <%transdate%> \\
-  \textbf{Time In} & <%checkedin%> \\
-  \textbf{Time Out} & <%checkedout%> \\
-  \textbf{Hours Worked} & <%qty%> \\
+  \textbf{Date} & <%transdate%> \\
+  \textbf{In} & <%checkedin%> \\
+  \textbf{Out} & <%checkedout%> \\
+  \textbf{Hours} & <%qty%> \\
 \end{tabular}
 
 \vspace{1cm}
 
 \begin{tabular}[b]{ll}
-  \textbf{Project/Job \#} & <%projectnumber%> \\
+  \textbf{Job/Project \#} & <%projectnumber%> \\
   \textbf{Description} & <%projectdescription%> \\
   \textbf{Labor/Service Code} & <%partnumber%> \\
   \textbf{Description} & <%description%> \\
 \end{tabular}
 \hfill
 \begin{tabular}[b]{lr}
-  \textbf{Unit Rate} & <%sellprice%> \\
+  \textbf{Rate} & <%sellprice%> \\
   \textbf{Total} & <%total%> \\
 \end{tabular}
   
@@ -67,5 +49,4 @@
 <%notes%>
  
 \end{document}
-
 

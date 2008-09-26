@@ -110,7 +110,6 @@ $self{texts} = {
   'Month'                       => 'Maand',
   'Month(s)'                    => 'Maand(en)',
   'Next Date'                   => 'Volgende Datum',
-  'No.'                         => 'Nr.',
   'Notes'                       => 'Opmerkingen',
   'Nothing entered!'            => 'Niets ingevuld!',
   'Nothing selected!'           => 'Niets geselecteerd!',

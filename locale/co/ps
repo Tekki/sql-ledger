@@ -133,7 +133,6 @@ $self{texts} = {
   'Method'                      => 'Metódo',
   'Month'                       => 'Mes',
   'N/A'                         => 'Sin respuesta',
-  'No.'                         => 'No.',
   'Non-taxable Purchases'       => 'Compras sin Impuestos',
   'Non-taxable Sales'           => 'Ventas sin Impuestos',
   'Notes'                       => 'Notas',

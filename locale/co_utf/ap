@@ -82,7 +82,6 @@ $self{texts} = {
   'Message'                     => 'Mensaje',
   'Month'                       => 'Mes',
   'Next Date'                   => 'Proxima Fecha',
-  'No.'                         => 'No.',
   'Notes'                       => 'Notas',
   'Nothing to print!'           => '¡No hay nada que imprimir!',
   'Nov'                         => 'Nov',

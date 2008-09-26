@@ -38,6 +38,7 @@ $self{texts} = {
   'Screen'                      => 'Ekrâns',
   'Source'                      => 'Dokuments',
   'Subtotal'                    => 'Kopâ',
+  'Tax Included'                => 'Kopâ ar nodokïiem',
   'To'                          => 'uz',
   'Total'                       => 'Pavisam Kopâ',
   'Trade Discount'              => 'Vairumtirgotâja atlaide',

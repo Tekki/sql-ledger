@@ -44,7 +44,6 @@ $self{texts} = {
   'Language'                    => 'Nyelv',
   'Name'                        => 'Név',
   'Name missing!'               => 'Név hiányzik',
-  'No.'                         => 'Sz.',
   'Notes'                       => 'Megjegyzés',
   'Number'                      => 'Szám',
   'Open'                        => 'Nyitott',

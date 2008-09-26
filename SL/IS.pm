@@ -76,11 +76,10 @@ sub invoice_details {
     }
     push @sortlist, [ $i, "$projectnumber$partsgroup", $projectnumber, $projectnumber_id, $partsgroup ];
 
-
-    # sort the whole thing by project and group
-    @sortlist = sort { $a->[1] cmp $b->[1] } @sortlist;
-    
   }
+
+  # sort the whole thing by project and group
+  @sortlist = sort { $a->[1] cmp $b->[1] } @sortlist;
   
   my @taxaccounts;
   my %taxaccounts;
@@ -489,7 +488,7 @@ sub post_invoice {
   if (! $form->{id}) {
 
     my $uid = time;
-    $uid .= $form->{login};
+    $uid .= $$;
     
     $query = qq|INSERT INTO ar (invnumber, employee_id)
                 VALUES ('$uid', $form->{employee_id})|;

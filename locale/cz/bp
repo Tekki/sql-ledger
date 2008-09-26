@@ -8,6 +8,7 @@ $self{texts} = {
   'Customer'                    => 'Odbìratel',
   'Date'                        => 'Datum',
   'From'                        => 'z',
+  'ID'                          => 'ID',
   'Invoice'                     => 'Faktura',
   'Invoice Number'              => 'Èíslo faktury',
   'Order'                       => 'Objednávka',

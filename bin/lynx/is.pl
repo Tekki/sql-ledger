@@ -323,7 +323,7 @@ sub form_header {
 <form method=post action="$form->{script}">
 |;
 
-  $form->hide_form(qw(id type media format printed emailed title vc terms discount creditlimit creditremaining tradediscount business closedto locked shipped oldtransdate recurring));
+  $form->hide_form(qw(id type media format printed emailed queued title vc terms discount creditlimit creditremaining tradediscount business closedto locked shipped oldtransdate recurring));
   
   print qq|
 <table width=100%>
@@ -774,15 +774,19 @@ sub update {
 	  
 	  ($dec) = ($form->{"sellprice_$i"} =~ /\.(\d+)/);
 	  $dec = length $dec;
-	  $decimalplaces = ($dec > 2) ? $dec : 2;
+	  $decimalplaces1 = ($dec > 2) ? $dec : 2;
 	} else {
 	  ($dec) = ($form->{"sellprice_$i"} =~ /\.(\d+)/);
 	  $dec = length $dec;
-	  $decimalplaces = ($dec > 2) ? $dec : 2;
+	  $decimalplaces1 = ($dec > 2) ? $dec : 2;
 	  
 	  $form->{"sellprice_$i"} /= $exchangerate;
 	}
 	
+	($dec) = ($form->{"lastcost_$i"} =~ /\.(\d+)/);
+	$dec = length $dec;
+	$decimalplaces2 = ($dec > 2) ? $dec : 2;
+
 	# if there is an exchange rate adjust sellprice
 	for (qw(listprice lastcost)) { $form->{"${_}_$i"} /= $exchangerate }
 	
@@ -795,7 +799,8 @@ sub update {
 	
         $form->{creditremaining} -= $amount;
 	
-	for (qw(sellprice listprice lastcost)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}, $decimalplaces) }
+	for (qw(sellprice listprice)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}, $decimalplaces1) }
+	$form->{"lastcost_$i"} = $form->format_amount(\%myconfig, $form->{"lastcost_$i"}, $decimalplaces2);
 	
 	$form->{"oldqty_$i"} = $form->{"qty_$i"};
 	for (qw(qty discount)) { $form->{"{_}_$i"} =  $form->format_amount(\%myconfig, $form->{"${_}_$i"}) }

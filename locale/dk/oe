@@ -96,7 +96,6 @@ $self{texts} = {
   'May '                        => 'maj ',
   'Message'                     => 'Besked',
   'Month'                       => 'Måned',
-  'No.'                         => 'Nummer',
   'Notes'                       => 'Bemærkninger',
   'Nothing entered!'            => 'Ingenting indtastet!',
   'Nothing selected!'           => 'Ingenting valgt!',

@@ -517,7 +517,7 @@ sub save_job {
 
   if (!$form->{id}) {
     my $uid = time;
-    $uid .= $form->{login};
+    $uid .= $$;
     
     $query = qq|INSERT INTO project (projectnumber)
                 VALUES ('$uid')|;
@@ -674,7 +674,7 @@ sub stock_assembly {
       $jth->finish;
 
       $uid = time;
-      $uid .= $form->{login};
+      $uid .= $$;
       
       $query = qq|INSERT INTO parts (partnumber)
                   VALUES ('$uid')|;
@@ -1085,7 +1085,7 @@ sub description_translations {
   for (qw(partnumber description)) {
     if ($form->{$_}) {
       $var = $form->like(lc $form->{$_});
-      $where .= " AND lower(pr.projectnumber) LIKE '$var'";
+      $where .= " AND lower(p.$_) LIKE '$var'";
     }
   }
   
@@ -1211,7 +1211,7 @@ sub project_translations {
   for (qw(projectnumber description)) {
     if ($form->{$_}) {
       $var = $form->like(lc $form->{$_});
-      $where .= " AND lower(pr.projectnumber) LIKE '$var'";
+      $where .= " AND lower(p.$_) LIKE '$var'";
     }
   }
   

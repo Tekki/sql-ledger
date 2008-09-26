@@ -108,7 +108,6 @@ $self{texts} = {
   'Microfiche'                  => 'Mikrofilm',
   'Model'                       => 'Model',
   'Name'                        => 'Navn',
-  'No.'                         => 'Nummer',
   'Notes'                       => 'Bemærkninger',
   'Nov'                         => 'nov',
   'November'                    => 'november',

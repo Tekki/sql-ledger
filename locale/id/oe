@@ -66,7 +66,6 @@ $self{texts} = {
   'May '                        => 'Mei',
   'Message'                     => 'Pesan',
   'Month'                       => 'Bulan',
-  'No.'                         => 'No.',
   'Notes'                       => 'Catatan',
   'Nothing entered!'            => 'Catatan sudah dimasukkan!',
   'Nothing selected!'           => 'Tidak ada yang dipilih!',

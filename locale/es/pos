@@ -40,6 +40,7 @@ $self{texts} = {
   'Screen'                      => 'Pantalla',
   'Source'                      => 'Fuente',
   'Subtotal'                    => 'Subtotal',
+  'Tax Included'                => 'Impuestos incluidos en el precio',
   'To'                          => 'Hasta',
   'Total'                       => 'Total',
   'Trade Discount'              => 'Descuento',

@@ -2,36 +2,25 @@
 <body bgcolor=ffffff>
 
 <table width=100%>
+
+  <%include letterhead.html%>
+  
   <tr>
     <td width=10>&nbsp;</td>
-    <td>
-      <table width=100%>
-	<tr>
-	  <td>
-	    <h4>
-	    <%company%>
-	    <br><%address%>
-	    </h4>
-	  </td>
-	  <th><img src=http://www.sql-ledger.org/images/sql-ledger.png border=0 width=84 height=58></th>
-	  <td align=right>
-	  <h4>
-	  Tel: <%tel%>
-	  <br>Fax: <%fax%>
-	  </h4>
-	  </td>
-	</tr>
-	<tr>
-	  <th colspan=3><h4>S T A T E M E N T</h4></th>
-	</tr>
-	<tr>
-	  <td colspan=3 align=right><%statementdate%></td>
-	</tr>
-      </table>
-    </td>
+    
+    <th colspan=3><h4>S T A T E M E N T</h4></th>
+    
   </tr>
+
   <tr>
     <td>&nbsp;</td>
+    
+    <td colspan=3 align=right><%statementdate%></td>
+  </tr>
+  
+  <tr>
+    <td>&nbsp;</td>
+    
     <td>
       <table width=100%>
 	<tr valign=top>
@@ -43,28 +32,32 @@
 	  <br><%city%>
 	  <%if state%>
 	  , <%state%>
-	  <%end state%> <%zipcode%>
+	  <%end state%>
+	  <%zipcode%>
 	  <%if country%>
 	  <br><%country%>
 	  <%end country%>
 	  <br>
-<%if customerphone%>
+          <%if customerphone%>
 	  <br>Tel: <%customerphone%>
-<%end customerphone%>
-<%if customerfax%>
+          <%end customerphone%>
+          <%if customerfax%>
 	  <br>Fax: <%customerfax%>
-<%end customerfax%>
-<%if email%>
+          <%end customerfax%>
+          <%if email%>
 	  <br><%email%>
-<%end email%>
+          <%end email%>
 	  </td>
 	</tr>
       </table>
     </td>
   </tr>
+  
   <tr height=10></tr>
+  
   <tr>
     <td>&nbsp;</td>
+    
     <td>
       <table width=100%>
         <tr>
@@ -77,7 +70,8 @@
 	  <th width=10%>60</th>
 	  <th width=10%>90</th>
 	</tr>
-<%foreach invnumber%>
+        
+	<%foreach invnumber%>
 	<tr>
 	  <td><%invnumber%></td>
           <td><%ordnumber%></td>
@@ -88,10 +82,12 @@
 	  <td align=right><%c60%></td>
 	  <td align=right><%c90%></td>
 	</tr>
-<%end invnumber%>
+        <%end invnumber%>
+	
         <tr>
 	  <td colspan=8><hr size=1></td>
 	</tr>
+	
 	<tr>
 	  <td>&nbsp;</td>
 	  <td>&nbsp;</td>
@@ -105,9 +101,12 @@
       </table>
     </td>
   </tr>
+  
   <tr height=10></tr>
+  
   <tr>
     <td>&nbsp;</td>
+    
     <td align=right>
       <table width=50%>
         <tr>
@@ -117,10 +116,13 @@
       </table>
     </td>
   </tr>
+  
   <tr>
     <td>&nbsp;</td>
+    
     <td><hr noshade></td>
   </tr>
+  
   <tr>
     <td>&nbsp;</td>
     <td>All amounts in <b><%currency%></b> funds.
@@ -132,3 +134,4 @@
 
 </body>
 </html>
+

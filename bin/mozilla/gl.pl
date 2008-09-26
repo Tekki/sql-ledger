@@ -568,7 +568,7 @@ sub generate_report {
     
     $column_data{reference} = "<td><a href=$ref->{module}.pl?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&callback=$callback>$ref->{reference}</td>";
 
-    $ref->{notes} =~ s/\r\n/<br>/g;
+    $ref->{notes} =~ s/\r?\n/<br>/g;
     for (qw(description source memo notes department)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
     
     $column_data{debit} = "<td align=right>$ref->{debit}</td>";

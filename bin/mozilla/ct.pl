@@ -257,7 +257,7 @@ sub include_in_report {
 
   @a = ();
   
-  push @a, qq|<input name="l_ndx" type=checkbox class=checkbox value=Y> |.$locale->text('No.');
+  push @a, qq|<input name="l_ndx" type=checkbox class=checkbox value=Y> |.$locale->text('Item');
   push @a, qq|<input name="l_id" type=checkbox class=checkbox value=Y> |.$locale->text('ID');
   push @a, qq|<input name="l_$form->{db}number" type=checkbox class=checkbox value=Y> |.$locale->text($label . ' Number');
   push @a, qq|<input name="l_name" type=checkbox class=checkbox value=Y $form->{l_name}> |.$locale->text('Company Name');
@@ -796,7 +796,7 @@ sub list_names {
     
       $i++;
       
-      $ref->{notes} =~ s/\r\n/<br>/g;
+      $ref->{notes} =~ s/\r?\n/<br>/g;
       for (@column_index) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
 
       $column_data{ndx} = "<td align=right>$i</td>";

@@ -1398,19 +1398,21 @@ sub save_language {
       umask(007);
 
       opendir TEMPLATEDIR, "$myconfig{templates}" or $form->error("$myconfig{templates} : $!");
-      @templates = grep /\.(html|tex|txt)$/, readdir TEMPLATEDIR;
+      @templates = grep !/^(\.|\.\.)/, readdir TEMPLATEDIR;
       closedir TEMPLATEDIR;
 
       foreach $file (@templates) {
-	open(TEMP, "$myconfig{templates}/$file") or $form->error("$myconfig{templates}/$file : $!");
+	if (-f "$myconfig{templates}/$file") {
+	  open(TEMP, "$myconfig{templates}/$file") or $form->error("$myconfig{templates}/$file : $!");
 
-	open(NEW, ">$myconfig{templates}/$form->{code}/$file") or $form->error("$myconfig{templates}/$form->{code}/$file : $!");
+	  open(NEW, ">$myconfig{templates}/$form->{code}/$file") or $form->error("$myconfig{templates}/$form->{code}/$file : $!");
 
-	while ($line = <TEMP>) {
-	  print NEW $line;
+	  while ($line = <TEMP>) {
+	    print NEW $line;
+	  }
+	  close(TEMP);
+	  close(NEW);
 	}
-	close(TEMP);
-	close(NEW);
       }
     } else {
       $form->error("${templates}/$form->{code} : $!");
@@ -1537,7 +1539,7 @@ sub list_templates {
         <tr valign=top class=listrow$i>
 |;
 
-    $column_data{code} = qq|<td><a href=$form->{script}?action=display_form&file=$myconfig{templates}/$ref->{code}/$form->{file}&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&callback=$callback>$ref->{code}</td>|;
+    $column_data{code} = qq|<td><a href=$form->{script}?action=display_form&file=$myconfig{templates}/$ref->{code}/$form->{file}&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&code=$ref->{code}&callback=$callback>$ref->{code}</td>|;
     $column_data{description} = qq|<td>$ref->{description}</td>|;
     
    for (@column_index) { print "$column_data{$_}\n" }
@@ -1595,6 +1597,8 @@ sub display_form {
   AM->load_template(\%$form);
 
   $form->{title} = $form->{file};
+
+  $form->{body} =~ s/<%include (.*?)%>/<a href=$form->{script}\?action=display_form&file=$myconfig{templates}\/$form->{code}\/$1&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}>$1<\/a>/g;
 
   # if it is anything but html
   if ($form->{file} !~ /\.html$/) {
@@ -1892,7 +1896,7 @@ sub config {
   }
 
   for (qw(name company address signature)) { $myconfig{$_} = $form->quote($myconfig{$_}) }
-  for (qw(address signature)) { $myconfig{$_} =~ s/\\n/\r/g }
+  for (qw(address signature)) { $myconfig{$_} =~ s/\\n/\n/g }
 
   %countrycodes = User->country_codes;
   $countrycodes = '';
@@ -2888,7 +2892,7 @@ sub process_transactions {
 	    $form->{paidaccounts} = -1;
 	  }
 
-	  for (qw(id recurring intnotes printed emailed)) { delete $form->{$_} }
+	  for (qw(id recurring intnotes printed emailed queued)) { delete $form->{$_} }
 
 	  ($form->{$form->{ARAP}}) = split /--/, $form->{$form->{ARAP}};
 
@@ -2954,7 +2958,7 @@ sub process_transactions {
 	  # calculate reqdate
 	  $form->{reqdate} = $form->add_date(\%myconfig, $form->{transdate}, $pt->{req}, "days") if $form->{reqdate};
 
-	  for (qw(id recurring intnotes printed emailed)) { delete $form->{$_} }
+	  for (qw(id recurring intnotes printed emailed queued)) { delete $form->{$_} }
 	  for (1 .. $form->{rowcount}) { delete $form->{"orderitems_id_$_"} }
 
 	  $form->{$ordnumber} = $form->update_defaults(\%myconfig, "$ordfld") unless $form->{$ordnumber};

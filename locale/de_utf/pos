@@ -42,6 +42,7 @@ $self{texts} = {
   'Screen'                      => 'Bildschirm',
   'Source'                      => 'Beleg',
   'Subtotal'                    => 'Zwischensumme',
+  'Tax Included'                => 'Steuer im Preis enthalten',
   'To'                          => 'Bis',
   'Total'                       => 'Betrag',
   'Trade Discount'              => 'Handelsrabatt',

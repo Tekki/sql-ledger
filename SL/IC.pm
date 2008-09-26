@@ -320,7 +320,7 @@ sub save {
   
   if (!$form->{id}) {
     my $uid = time;
-    $uid .= $form->{login};
+    $uid .= $$;
 
     $query = qq|INSERT INTO parts (partnumber)
                 VALUES ('$uid')|;

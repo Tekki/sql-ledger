@@ -6,13 +6,13 @@ $userspath = "users";
 # spool directory for batch printing
 $spool = "spool";
 
-# template base directory
+# templates base directory
 $templates = "templates";
 
 # member file
 $memberfile = "users/members";
 
-# email command
+# location of sendmail
 $sendmail = "| /usr/sbin/sendmail -t";
 
 # set language for login and admin
@@ -26,8 +26,8 @@ $language = "";
 $latex = 1;
 
 # available printers
-%printer = ( 'HP Laser'	=> 'lpr -Plaser',
-	     Epson	=> 'lpr -Pepson'
+%printer = ( Laser	=> 'lpr -Plaser',
+             Epson	=> 'lpr -PEpson',
 	     );
 
 # program to use for file compression

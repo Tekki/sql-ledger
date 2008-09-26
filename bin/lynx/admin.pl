@@ -348,7 +348,7 @@ sub form_header {
     $myconfig = new User "$memberfile", "$form->{login}";
 
     for (qw(company address signature)) { $myconfig->{$_} = $form->quote($myconfig->{$_}) }
-    for (qw(address signature)) { $myconfig->{$_} =~ s/\\n/\r/g }
+    for (qw(address signature)) { $myconfig->{$_} =~ s/\\n/\n/g }
 
     # strip basedir from templates directory
     $myconfig->{templates} =~ s/^$templates\///;
@@ -383,7 +383,13 @@ sub form_header {
   closedir TEMPLATEDIR;
 
   @allhtml = sort grep /\.html/, @all;
-  @alldir = grep !/\.(html|tex|txt)$/, @all;
+
+  @alldir = ();
+  for (@all) {
+    if (-d "$templates/$_") {
+      push @alldir, $_;
+    }
+  }
   
   @allhtml = reverse grep !/Default/, @allhtml;
   push @allhtml, 'Default';
@@ -828,7 +834,7 @@ sub save {
       
       # copy templates to the directory
       opendir TEMPLATEDIR, "$templates/." or $form->error("$templates : $!");
-      @templates = grep /$form->{mastertemplates}.*?\.(html|tex|txt)$/, readdir TEMPLATEDIR;
+      @templates = grep /$form->{mastertemplates}-/, readdir TEMPLATEDIR;
       closedir TEMPLATEDIR;
 
       foreach $file (@templates) {

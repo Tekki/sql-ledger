@@ -39,7 +39,6 @@ $self{texts} = {
   'Language'                    => 'Lingua',
   'Name'                        => 'Nome',
   'Name missing!'               => 'Manca il Nome!',
-  'No.'                         => 'No.',
   'Notes'                       => 'Note',
   'Number'                      => 'Partita IVA',
   'Open'                        => 'Aperto',

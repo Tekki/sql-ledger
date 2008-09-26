@@ -42,6 +42,7 @@ $self{texts} = {
   'Screen'                      => 'Ekran',
   'Source'                      => '¯ród³o',
   'Subtotal'                    => 'Warto¶æ Netto',
+  'Tax Included'                => 'Podatek Wliczony',
   'To'                          => 'do',
   'Total'                       => 'Warto¶æ Brutto',
   'Trade Discount'              => 'Rabat Handlowy',

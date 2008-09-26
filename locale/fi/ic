@@ -97,7 +97,6 @@ $self{texts} = {
   'Microfiche'                  => 'Mikrokuva',
   'Model'                       => 'Tuotenimi',
   'Name'                        => 'Nimi',
-  'No.'                         => 'no',
   'Notes'                       => 'Lisätietoja',
   'Nov'                         => 'Mar',
   'November'                    => 'Marraskuu',

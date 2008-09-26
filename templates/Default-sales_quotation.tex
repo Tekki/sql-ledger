@@ -1,65 +1,43 @@
-\documentclass[twoside]{scrartcl}
-\usepackage[frame]{xy}
+\documentclass{scrartcl}
+\usepackage[latin1]{inputenc}
 \usepackage{tabularx}
+\usepackage[letterpaper,top=2cm,bottom=-3cm,left=1.1cm,right=1.5cm]{geometry}
 \usepackage{graphicx}
-\setlength{\voffset}{0.5cm}
-\setlength{\hoffset}{-1.9cm}
-\setlength{\topmargin}{0cm}
-\setlength{\headheight}{0.5cm}
-\setlength{\headsep}{1cm}
-\setlength{\topskip}{0pt}
-\setlength{\oddsidemargin}{1.0cm}
-\setlength{\evensidemargin}{1.0cm}
-\setlength{\textwidth}{19.2cm}
-\setlength{\textheight}{24.7cm}
-\setlength{\footskip}{1cm}
-\setlength{\parindent}{0pt}
-\renewcommand{\baselinestretch}{1}
-\begin{document}
 
-\newlength{\descrwidth}\setlength{\descrwidth}{10cm}
-\fontfamily{cmss}\fontsize{10pt}{12pt}\selectfont
+\begin{document}
 
 \pagestyle{myheadings}
 \thispagestyle{empty}
 
-\vspace*{-1.3cm}
+\fontfamily{cmss}\fontsize{10pt}{12pt}\selectfont
 
-\parbox{\textwidth}{
-  \parbox[b]{.42\textwidth}{
-    <%company%>
-    
-    <%address%>
+\newsavebox{\ftr}
+\sbox{\ftr}{
+  \parbox{\textwidth}{
+  \tiny
+  \rule[1.5em]{\textwidth}{0.5pt}
+Special order items are subject to a 10\% cancellation fee.
   }
-  \parbox[b]{.2\textwidth}{
-    \includegraphics[scale=0.3]{sql-ledger}
-  }\hfill
-  \begin{tabular}[b]{rr@{}}
-  Telephone & <%tel%>\\
-  Facsimile & <%fax%>
-  \end{tabular}
-
-  \rule[1.5ex]{\textwidth}{0.5pt}
 }
+
+<%include letterhead.tex%>
 
 
 <%pagebreak 90 27 48%>
-\end{tabular*}
+\end{tabularx}
 
   \rule{\textwidth}{2pt}
   
   \hfill
-  \begin{tabularx}{7cm}{Xr@{}}
-  \textbf{Subtotal} & \textbf{<%sumcarriedforward%>} \\
+  \begin{tabularx}{7cm}{Xr@{\hspace{1cm}}r@{}}
+  & \textbf{Subtotal} & \textbf{<%sumcarriedforward%>} \\
   \end{tabularx}
 
 \newpage
 
 \markboth{<%company%>\hfill <%quonumber%>}{<%company%>\hfill <%quonumber%>}
 
-\vspace*{-12pt}
-
-\begin{tabular*}{\textwidth}{@{}lp{\descrwidth}@{\extracolsep\fill}rlrrr@{}}
+\begin{tabularx}{\textwidth}{@{}lXrlrrr@{}}
   \textbf{Number} & \textbf{Description} & \textbf{Qt'y} &
     \textbf{Unit} & \textbf{Price} & \textbf{Disc \%} & \textbf{Amount} \\
   & carried forward from <%lastpage%> & & & & & <%sumcarriedforward%> \\
@@ -68,8 +46,7 @@
 
 \vspace*{0.5cm}
 
-\parbox[t]{1cm}{\hfill}
-\parbox[t]{.45\textwidth}{
+\parbox[t]{.5\textwidth}{
 
 <%name%>
 
@@ -77,15 +54,20 @@
 
 <%address2%>
 
-<%city%> <%state%> <%zipcode%>
+<%city%>
+<%if state%>
+\hspace{-0.1cm}, <%state%>
+<%end state%>
+<%zipcode%>
 
 <%country%>
 
 \vspace{0.3cm}
 
+<%if contact%>
 <%contact%>
-
 \vspace{0.2cm}
+<%end contact%>
 
 <%if customerphone%>
 Tel: <%customerphone%>
@@ -114,14 +96,14 @@ Fax: <%customerfax%>
   
 \vspace{1cm}
 
-\begin{tabular*}{\textwidth}{@{}lp{\descrwidth}@{\extracolsep\fill}rlrrr@{}}
+\begin{tabularx}{\textwidth}{@{}lXrlrrr@{}}
   \textbf{Number} & \textbf{Description} & \textbf{Qt'y} &
     \textbf{Unit} & \textbf{Price} & \textbf{Disc \%} & \textbf{Amount} \\
 <%foreach number%>
   <%number%> & <%description%> & <%qty%> &
     <%unit%> & <%sellprice%> & <%discountrate%> & <%linetotal%> \\
 <%end number%>
-\end{tabular*}
+\end{tabularx}
 
 
 \parbox{\textwidth}{
@@ -130,19 +112,23 @@ Fax: <%customerfax%>
 \vspace{0.2cm}
 
 \hfill
-\begin{tabularx}{7cm}{Xr@{}}
-  Subtotal & <%subtotal%> \\
+\begin{tabularx}{7cm}{Xr@{\hspace{1cm}}r@{}}
+  & Subtotal & <%subtotal%> \\
 <%foreach tax%>
-  <%taxdescription%> on <%taxbase%> & <%tax%>\\
+  & <%taxdescription%> on <%taxbase%> & <%tax%>\\
 <%end tax%>
   \hline
-  Total & <%quototal%>\\
+  & Total & <%quototal%>\\
 \end{tabularx}
 
 \vspace{0.3cm}
 
 \hfill
-  All prices in \textbf{<%currency%>}.
+All prices in \textbf{<%currency%>}.
+
+<%if terms%>
+Terms: <%terms%> days
+<%end terms%>
 
 \vspace{12pt}
 
@@ -152,6 +138,11 @@ Fax: <%customerfax%>
 
 \vfill
 
-\end{document}
+\hfill \parbox{7cm}{X \rule{6.5cm}{0.5pt}}
 
+\rule{\textwidth}{0.5pt}
+
+\usebox{\ftr}
+
+\end{document}
 

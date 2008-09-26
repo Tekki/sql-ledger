@@ -45,10 +45,12 @@ sub print {
     for (keys %$form) { $old_form->{$_} = $form->{$_} }
   }
  
-  if ($form->{media} eq 'screen' && $form->{formname} =~ /(check|receipt)/) {
-    $form->error($locale->text('Select postscript or PDF!')) if $form->{format} !~ /(postscript|pdf)/;
+  if ($form->{formname} =~ /(check|receipt)/) {
+    if ($form->{media} eq 'screen') {
+      $form->error($locale->text('Select postscript or PDF!')) if $form->{format} !~ /(postscript|pdf)/;
+    }
   }
-  
+
   if (! $form->{invnumber}) {
     $invfld = 'sinumber';
     $invfld = 'vinumber' if $form->{ARAP} eq 'AP';
@@ -111,6 +113,12 @@ sub print_check {
   }
 
   $form->{amount} = $form->{"paid_$i"};
+
+  if (($form->{formname} eq 'check' && $form->{vc} eq 'customer') ||
+    ($form->{formname} eq 'receipt' && $form->{vc} eq 'vendor')) {
+    $form->{amount} =~ s/-//g;
+  }
+    
   for (qw(datepaid source memo)) { $form->{$_} = $form->{"${_}_$i"} }
 
   &{ "$form->{vc}_details" };
@@ -141,7 +149,7 @@ sub print_check {
   push @a, "notes";
 
   for (qw(company address tel fax businessnumber)) { $form->{$_} = $myconfig{$_} }
-  $form->{address} =~ s/\\n/\r/g;
+  $form->{address} =~ s/\\n/\n/g;
 
   push @a, qw(company address tel fax businessnumber text_amount text_decimal);
   
@@ -154,19 +162,9 @@ sub print_check {
     $form->{IN} =~ s/html$/tex/;
   }
 
-  if ($form->{media} ne 'screen') {
+  if ($form->{media} !~ /(screen)/) {
     $form->{OUT} = "| $printer{$form->{media}}";
     
-    $reference = $form->{invnumber};
-    
-    if ($form->{formname} =~ /(check|receipt)/) {
-      $form->{rowcount} = 1;
-      $form->{"id_1"} = $form->{id};
-      $form->{"checked_1"} = 1;
-      $form->{account} = $form->{"$form->{ARAP}_paid_$i"};
-      $reference = $form->{"source_$i"};
-    }
-      
     if ($form->{printed} !~ /$form->{formname}/) {
 
       $form->{printed} .= " $form->{formname}";
@@ -176,7 +174,7 @@ sub print_check {
     }
 
     %audittrail = ( tablename   => lc $form->{ARAP},
-                    reference   => $reference,
+                    reference   => $form->{invnumber},
 		    formname    => $form->{formname},
 		    action      => 'printed',
 		    id          => $form->{id} );
@@ -334,7 +332,7 @@ sub print_transaction {
   @a = ("invnumber", "transdate", "duedate", "notes");
 
   for (qw(company address tel fax businessnumber)) { $form->{$_} = $myconfig{$_} }
-  $form->{address} =~ s/\\n/\r/g;
+  $form->{address} =~ s/\\n/\n/g;
 
   push @a, qw(company address tel fax businessnumber text_amount text_decimal);
   
@@ -349,7 +347,7 @@ sub print_transaction {
     $form->{IN} =~ s/html$/tex/;
   }
 
-  if ($form->{media} ne 'screen') {
+  if ($form->{media} !~ /(screen)/) {
     $form->{OUT} = "| $printer{$form->{media}}";
     
     if ($form->{printed} !~ /$form->{formname}/) {
@@ -443,12 +441,32 @@ sub select_payment {
 	</tr>
 |;
 
+  $checked = "checked";
   foreach $i (1 .. $form->{paidaccounts} - 1) {
-   $checked = ($i == 1) ? "checked" : "";
 
-   for (@column_index) { $column_data{$_} = qq|<td>$form->{"${_}_$i"}</td>| }
-   $column_data{ndx} = qq|<td><input name=ndx class=radio type=radio value=$i $checked></td>|;
-   $column_data{paid} = qq|<td align=right>$form->{"paid_$i"}</td>|;
+    for (@column_index) { $column_data{$_} = qq|<td>$form->{"${_}_$i"}</td>| }
+
+    $paid = $form->{"paid_$i"};
+    if ($form->{vc} eq 'customer') {
+      if ($form->{formname} eq 'check') {
+        next if $paid !~ s/-//;
+      } else {
+        next if $paid =~ /-/;
+      }
+      $ok = 1;
+    } else {
+      if ($form->{formname} eq 'receipt') {
+        next if $paid !~ s/-//;
+      } else {
+        next if $paid =~ /-/;
+      }
+      $ok = 1;
+    }
+
+    $column_data{ndx} = qq|<td><input name=ndx class=radio type=radio value=$i $checked></td>|;
+    $column_data{paid} = qq|<td align=right>$paid</td>|;
+
+    $checked = "";
     
     $j++; $j %= 2;
     print qq|
@@ -480,8 +498,14 @@ sub select_payment {
 
 <br>
 <input type=hidden name=nextsub value=payment_selected>
+|;
 
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">
+  if ($ok) {
+    print qq|
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">|;
+  }
+
+  print qq|
 </form>
 
 </body>

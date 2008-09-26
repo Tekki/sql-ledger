@@ -86,7 +86,6 @@ $self{texts} = {
   'Message'                     => 'Boodschap',
   'Month(s)'                    => 'Maand(en)',
   'Next Date'                   => 'Volgende Datum',
-  'No.'                         => 'Nr.',
   'Notes'                       => 'Opmerkingen',
   'Nov'                         => 'nov',
   'November'                    => 'november',

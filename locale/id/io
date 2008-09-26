@@ -29,7 +29,6 @@ $self{texts} = {
   'March'                       => 'Maret',
   'May '                        => 'Mei',
   'Message'                     => 'Pesan',
-  'No.'                         => 'No.',
   'Number'                      => 'Nomor',
   'October'                     => 'Oktober',
   'Order Date missing!'         => 'Tanggal Pesanan harap diisi!',

@@ -1,50 +1,30 @@
-\documentclass[twoside]{scrartcl}
-\usepackage[frame]{xy}
-\usepackage{tabularx}
+\documentclass{scrartcl}
 \usepackage[latin1]{inputenc}
+\usepackage{tabularx}
+\usepackage[letterpaper,top=2cm,bottom=-3cm,left=1.1cm,right=1.5cm]{geometry}
 \usepackage{graphicx}
-\setlength{\voffset}{0.5cm}
-\setlength{\hoffset}{-1.9cm}
-\setlength{\topmargin}{0cm}
-\setlength{\headheight}{0.5cm}
-\setlength{\headsep}{1cm}
-\setlength{\topskip}{0pt}
-\setlength{\oddsidemargin}{1.0cm}
-\setlength{\evensidemargin}{1.0cm}
-\setlength{\textwidth}{19.2cm}
-\setlength{\textheight}{24.7cm}
-\setlength{\footskip}{1cm}
-\setlength{\parindent}{0pt}
-\renewcommand{\baselinestretch}{1}
 
 \begin{document}
 
 \pagestyle{myheadings}
 \thispagestyle{empty}
 
-\newlength{\descrwidth}\setlength{\descrwidth}{10cm}
 \fontfamily{cmss}\fontsize{10pt}{12pt}\selectfont
 
-\vspace*{-1.3cm}
-
-\parbox{\textwidth}{
-  \parbox[b]{.42\textwidth}{%
-    <%company%>
-    
-    <%address%>
+\newsavebox{\ftr}
+\sbox{\ftr}{
+  \parbox{\textwidth}{
+  \tiny
+   \rule[1.5em]{\textwidth}{0.5pt}
+Items returned are subject to a 10\% restocking charge.
+A return authorization must be obtained from <%company%> before goods are
+returned. Returns must be shipped prepaid and properly insured.
+<%company%> will not be responsible for damages during transit.
   }
-  \parbox[b]{.2\textwidth}{
-    \includegraphics[scale=0.3]{sql-ledger}
-  }\hfill
-  \begin{tabular}[b]{rr@{}}
-  Telephone & <%tel%>\\
-  Facsimile & <%fax%>
-  \end{tabular}
-
-  \rule[1.5ex]{\textwidth}{0.5pt}
 }
 
- 
+<%include letterhead.tex%>
+
 <%pagebreak 90 27 37%>
 \end{tabularx}
 
@@ -52,22 +32,18 @@
 
 \markboth{<%company%>\hfill <%ordnumber%>}{<%company%>\hfill <%ordnumber%>}
 
-\vspace*{-12pt}
-
 \begin{tabularx}{\textwidth}{@{}rlXllrrl@{}}
-  \textbf{Pos} & \textbf{Number} & \textbf{Description} & \textbf{Serial Number} & & \textbf{Qty} & \textbf{Ship} & \\
+  \textbf{Item} & \textbf{Number} & \textbf{Description} & \textbf{Serial Number} & & \textbf{Qty} & \textbf{Ship} & \\
 <%end pagebreak%>
 
 
 \vspace*{0.5cm}
 
-\parbox[t]{1cm}{\hfill}
 \parbox[t]{.5\textwidth}{
 \textbf{Ship To}} \hfill
 
-\vspace{0.7cm}
+\vspace{0.3cm}
 
-\parbox[t]{1cm}{\hfill}
 \parbox[t]{.5\textwidth}{
   
 <%shiptoname%>
@@ -76,11 +52,15 @@
 
 <%shiptoaddress2%>
 
-<%shiptocity%> <%shiptostate%> <%shiptozipcode%>
+<%shiptocity%>
+<%if shiptostate%>
+\hspace{-0.1cm}, <%shiptostate%>
+<%end shiptostate%>
+<%shiptozipcode%>
 
 <%shiptocountry%>
 }
-\parbox[t]{.4\textwidth}{
+\parbox[t]{.5\textwidth}{
   <%shiptocontact%>
   
   <%if shiptophone%>
@@ -128,7 +108,7 @@
 \vspace{1cm}
   
 \begin{tabularx}{\textwidth}{@{}rlXllrrl@{}}
-  \textbf{Pos} & \textbf{Number} & \textbf{Description} & \textbf{Serial Number} & & \textbf{Qty} & \textbf{Ship} & \\
+  \textbf{Item} & \textbf{Number} & \textbf{Description} & \textbf{Serial Number} & & \textbf{Qty} & \textbf{Ship} & \\
 
 <%foreach number%>
   <%runningnumber%> & <%number%> & <%description%> & <%serialnumber%> &
@@ -147,15 +127,10 @@
 }
 
 \vfill
-\centerline{\textbf{Thank You for your valued business!}}
 
-\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\rule{\textwidth}{0.5pt}
 
-\footnotetext[1]{\tiny
-Items returned are subject to a 10\% restocking charge.
-A return authorization must be obtained from <%company%> before goods are
-returned. Returns must be shipped prepaid and properly insured.
-<%company%> will not be responsible for damages during transit.}
+\usebox{\ftr}
 
 \end{document}
 

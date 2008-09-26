@@ -42,7 +42,6 @@ $self{texts} = {
   'Item not on file!'           => '¡El artículo no se encuentra en archivo!',
   'Name'                        => 'Nombre',
   'Name missing!'               => 'Falta nombre!',
-  'No.'                         => ' No ',
   'Notes'                       => 'Notas',
   'Number'                      => 'Número',
   'Open'                        => 'Abierto',

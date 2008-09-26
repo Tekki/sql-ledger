@@ -102,7 +102,6 @@ $self{texts} = {
   'Microfiche'                  => 'Microkaart',
   'Model'                       => 'Mudel',
   'Name'                        => 'Nimi',
-  'No.'                         => 'Nr.',
   'Notes'                       => 'Märkused',
   'Nov'                         => 'Nov',
   'November'                    => 'November',

@@ -44,7 +44,6 @@ $self{texts} = {
   'Language'                    => 'Bahasa',
   'Name'                        => 'Nama',
   'Name missing!'               => 'Nama harap diisi!',
-  'No.'                         => 'No.',
   'Notes'                       => 'Catatan',
   'Number'                      => 'Nomor',
   'Order'                       => 'No. Pesanan',

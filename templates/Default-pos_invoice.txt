@@ -3,7 +3,7 @@
 
 Till: <%till align=left width=3%>         Phone#: <%tel%>
 Cashier: <%employee%>
-Inv No/Date: <%invnumber%> / <%invdate%>
+Inv #/Date: <%invnumber%> / <%invdate%>
 Printed: <%dateprinted%>
 
   Qty Description                 Amount

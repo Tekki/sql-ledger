@@ -102,7 +102,6 @@ $self{texts} = {
   'Message'                     => 'Message',
   'Month'                       => 'Mois',
   'Next Date'                   => 'Prochaine date',
-  'No.'                         => 'N°',
   'Notes'                       => 'Notes',
   'Nothing entered!'            => 'Rien n\'a été saisi!',
   'Nothing selected!'           => 'Pas de sélection!',

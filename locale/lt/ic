@@ -84,7 +84,6 @@ $self{texts} = {
   'Microfiche'                  => 'Mikrofiða',
   'Model'                       => 'Modelis',
   'Name'                        => 'Vardas',
-  'No.'                         => 'Num',
   'Notes'                       => 'Pastaba',
   'Nov'                         => 'Lap',
   'November'                    => 'Lapkritis',

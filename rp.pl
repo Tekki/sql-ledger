@@ -143,7 +143,11 @@ sub check_password {
     } else {
       if ($ENV{HTTP_USER_AGENT}) {
 	$ENV{HTTP_COOKIE} =~ s/;\s*/;/g;
-	%cookie = split /[=;]/, $ENV{HTTP_COOKIE};
+	@cookies = split /;/, $ENV{HTTP_COOKIE};
+	foreach (@cookies) {
+	  ($name,$value) = split /=/, $_, 2;
+	  $cookie{$name} = $value;
+	}
 	
 	if ($form->{action} ne 'display') {
 	  if ((! $cookie{"SQL-Ledger-$form->{login}"}) || $cookie{"SQL-Ledger-$form->{login}"} ne $form->{sessionid}) {

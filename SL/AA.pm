@@ -206,7 +206,7 @@ sub post_transaction {
   } else {
   
     my $uid = time;
-    $uid .= $form->{login};
+    $uid .= $$;
 
     $query = qq|INSERT INTO $table (invnumber)
                 VALUES ('$uid')|;

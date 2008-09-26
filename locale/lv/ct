@@ -58,7 +58,6 @@ $self{texts} = {
   'Manager'                     => 'Vadîtâjs',
   'Name'                        => 'Nosaukums',
   'Name missing!'               => 'Nepareizs nosaukums',
-  'No.'                         => 'Nr.',
   'Notes'                       => 'Piezîmes',
   'Number'                      => 'Numurs',
   'Open'                        => 'Atvçrts',

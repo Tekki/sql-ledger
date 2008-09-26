@@ -96,7 +96,6 @@ $self{texts} = {
   'May '                        => 'Mai ',
   'Message'                     => 'Teade',
   'Month'                       => 'Kuu',
-  'No.'                         => 'Nr.',
   'Notes'                       => 'Märkused',
   'Nothing entered!'            => 'Midagi pole sisestatud!',
   'Nothing selected!'           => 'Valik puudub!',

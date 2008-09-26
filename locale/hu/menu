@@ -47,6 +47,7 @@ $self{texts} = {
   'Payment'                     => 'Kifizetés',
   'Payments'                    => 'Kifizetések',
   'Preferences'                 => 'Beállítások',
+  'Print'                       => 'Nyomtatás',
   'Projects'                    => 'Munkaszámok',
   'Purchase Order'              => 'Beszerzési rendelés',
   'Purchase Orders'             => 'Beszerzési rendelések',

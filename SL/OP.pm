@@ -38,7 +38,7 @@ sub overpayment {
   $department_id *= 1;
 
   my $uid = time;
-  $uid .= $form->{login};
+  $uid .= $$;
 
   # add AR/AP header transaction with a payment
   $query = qq|INSERT INTO $form->{arap} (invnumber, employee_id)
@@ -48,11 +48,7 @@ sub overpayment {
 
   $query = qq|SELECT id FROM $form->{arap}
 	    WHERE invnumber = '$uid'|;
-  $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
-
-  ($uid) = $sth->fetchrow_array;
-  $sth->finish;
+  ($uid) = $dbh->selectrow_array($query);
 
   my $invnumber = $form->{invnumber};
   $invnumber = $form->update_defaults($myconfig, ($form->{arap} eq 'ar') ? "sinumber" : "vinumber", $dbh) unless $invnumber;

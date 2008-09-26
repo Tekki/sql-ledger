@@ -66,7 +66,7 @@ CREATE TABLE defaults (
   vendornumber text,
   glnumber text
 );
-INSERT INTO defaults (version) VALUES ('2.6.2');
+INSERT INTO defaults (version) VALUES ('2.6.3');
 --
 CREATE TABLE acc_trans (
   trans_id int,
@@ -390,8 +390,7 @@ CREATE TABLE status (
   formname text,
   printed bool default 'f',
   emailed bool default 'f',
-  spoolfile text,
-  chart_id int
+  spoolfile text
 );
 --
 CREATE TABLE department (
