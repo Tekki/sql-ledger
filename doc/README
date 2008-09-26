@@ -154,15 +154,14 @@ change directory to /usr/local/sql-ledger
 
 # chown -hR nobody:nogroup users templates css spool
 
-replace nobody:nogroup with the web server
-user and group of your system. Some systems use
-apache:apache, www, www-data, ...
+replace nobody:nogroup with the web server user and group.
+Some systems use apache:apache, www, www-data, ...
 
 
 FTP INSTALLATION:
 -----------------
 If you do not have access to the server's configuration
-files install SQL-Ledger in user space by ftp'ing all the
+files install SQL-Ledger in userspace by ftp'ing all the
 files to your server.
 
 a) untar sql-ledger in your private_html directory
@@ -193,7 +192,7 @@ e) set up your PostgreSQL database and the tables.
 You will most likely only have access to PostgreSQL with
 some other tools like pgadmin.
 
-1) create a database user or use the database user assigned to you
+1) create a database user or use an assigned database user
 2) create a blank database or use one which was created for you
 3) load your web browser and connect to
 http://host.domain.com/private_html/sql-ledger/admin.pl
@@ -265,7 +264,7 @@ interface, only the datasets used by SQL-Ledger.
 POSTGRESQL: template1 is only used to query
 the server, none of the information stored
 in template1 is manipulated in any way.
-You may connect to any other database you
+You can connect to any other database you
 own, template1 is only a default.
 
 
@@ -294,9 +293,11 @@ UPGRADING TO A NEWER VERSION:
 5. log in
 
 NOTE: datasets are upgraded when you log in for
-the first time. If an error occurs the system
-will remain locked. Track down the error, fix it,
-load admin.pl, unlock the system and log in again.
+the first time. During the upgrade process the
+dataset is locked so nobody can do any work.
+If an error occurs the system will remain locked.
+Track down the error, fix it, load admin.pl,
+unlock the system and log in again.
 
 
 UPGRADING WITH setup.pl:
@@ -338,5 +339,5 @@ where you can seek free help.
 For commercial support see http://www.sql-ledger.com
 
 =====================================================================
-April 6, 2006
+June 14, 2006
 

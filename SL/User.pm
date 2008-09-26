@@ -892,8 +892,9 @@ sub delete_login {
   my ($id) = $sth->fetchrow_array;
   $sth->finish;
 	
-  my $query = qq|UPDATE employee
-		 login = NULL
+  my $query = qq|UPDATE employee SET
+		 login = NULL,
+		 enddate = current_date
 		 WHERE login = '$login'|;
   $dbh->do($query);
  

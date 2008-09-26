@@ -945,8 +945,10 @@ sub delete {
     }
   }
 
-  if ($myconfig{login}) {
+  if ($myconfig{dbconnect}) {
+    $myconfig{dbpasswd} = unpack 'u', $myconfig{dbpasswd};
     for (keys %myconfig) { $form->{$_} = $myconfig{$_} }
+    
     User->delete_login(\%$form);
   
     # delete config file for user

@@ -56,7 +56,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.6.12";
+  $self->{version} = "2.6.13";
   $self->{dbversion} = "2.6.12";
 
   bless $self, $type;
@@ -1411,7 +1411,8 @@ sub get_name {
   my $name = $self->like(lc $self->{$table});
   my $query = qq|SELECT *
                  FROM $table
-		 WHERE lower(name) LIKE '$name'
+		 WHERE (lower(name) LIKE '$name'
+		        OR ${table}number LIKE '$name')
 		 $where
 		 ORDER BY name|;
 
@@ -1503,6 +1504,23 @@ sub all_vc {
     push @{ $self->{all_language} }, $ref;
   }
   $sth->finish;
+
+  if ($self->{taxaccounts} && $transdate) {
+    # rebuild tax rates
+    $query = qq|SELECT t.rate, t.taxnumber 
+                FROM tax t 
+		JOIN chart c ON (c.id = t.chart_id) 
+		WHERE c.accno = ? 
+		AND (t.validto >= '$transdate' OR t.validto IS NULL)
+		ORDER BY accno, validto|; 
+    $sth = $dbh->prepare($query) || $self->dberror($query);
+
+    foreach my $accno (split / /, $self->{taxaccounts}) {
+      $sth->execute($accno); 
+      ($self->{"${accno}_rate"}, $self->{"${accno}_taxnumber"}) = $sth->fetchrow_array;
+      $sth->finish;
+    }
+  }
 
   $dbh->disconnect if $disconnect;
 

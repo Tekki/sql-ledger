@@ -110,6 +110,7 @@ $self{texts} = {
   'System'                      => 'System',
   'Tax collected'               => 'vereinnahmte Steuer',
   'Tax paid'                    => 'Vorsteuer',
+  'Taxes'                       => 'Steuern',
   'Text Templates'              => 'Text Schablonen',
   'Time Cards'                  => 'Zeitlohnkarte',
   'Transactions'                => 'Buchungen',

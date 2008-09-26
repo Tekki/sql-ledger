@@ -48,6 +48,7 @@ $self{texts} = {
   'Nothing selected!'           => 'Es wurde nichts ausgewählt!',
   'Number'                      => 'Nummer',
   'Orphaned'                    => 'nie benutzt',
+  'Part Number'                 => 'Artikelnummer',
   'Period'                      => 'Zeitraum',
   'Pricegroup'                  => 'Preisgruppe',
   'Pricegroup deleted!'         => 'Preisgruppe gelöscht!',

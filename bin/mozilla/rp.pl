@@ -1394,46 +1394,44 @@ sub aging {
       $c90subtotal = $form->format_amount(\%myconfig, $c90subtotal, 2, "&nbsp");
       $subtotal = $form->format_amount(\%myconfig, $subtotal, 2, "&nbsp");
 
-      if (! $form->{$form->{ct}}) {
-	if ($form->{summary}) {
-	  $column_data{c0} = qq|<td align=right>$c0subtotal</th>|;
-	  $column_data{c30} = qq|<td align=right>$c30subtotal</th>|;
-	  $column_data{c60} = qq|<td align=right>$c60subtotal</th>|;
-	  $column_data{c90} = qq|<td align=right>$c90subtotal</th>|;
-	  $column_data{total} = qq|<td align=right>$subtotal</th>|;
+      if ($form->{summary}) {
+	$column_data{c0} = qq|<td align=right>$c0subtotal</th>|;
+	$column_data{c30} = qq|<td align=right>$c30subtotal</th>|;
+	$column_data{c60} = qq|<td align=right>$c60subtotal</th>|;
+	$column_data{c90} = qq|<td align=right>$c90subtotal</th>|;
+	$column_data{total} = qq|<td align=right>$subtotal</th>|;
 
-	  $j++; $j %= 2;
-	  print qq|
-	<tr class=listrow$j>
+	$j++; $j %= 2;
+	print qq|
+      <tr class=listrow$j>
 |;
 
-	  for (@column_index) { print "$column_data{$_}\n" }
+	for (@column_index) { print "$column_data{$_}\n" }
 
-	  print qq|
-	</tr>
+	print qq|
+      </tr>
 |;
 
-	} else {
+      } else {
 
-	  for (@column_index) { $column_data{$_} = qq|<th>&nbsp;</th>| }
+	for (@column_index) { $column_data{$_} = qq|<th>&nbsp;</th>| }
 
-	  $column_data{c0} = qq|<th class=listsubtotal align=right>$c0subtotal</th>|;
-	  $column_data{c30} = qq|<th class=listsubtotal align=right>$c30subtotal</th>|;
-	  $column_data{c60} = qq|<th class=listsubtotal align=right>$c60subtotal</th>|;
-	  $column_data{c90} = qq|<th class=listsubtotal align=right>$c90subtotal</th>|;
-	  $column_data{total} = qq|<th class=listsubtotal align=right>$subtotal</th>|;
+	$column_data{c0} = qq|<th class=listsubtotal align=right>$c0subtotal</th>|;
+	$column_data{c30} = qq|<th class=listsubtotal align=right>$c30subtotal</th>|;
+	$column_data{c60} = qq|<th class=listsubtotal align=right>$c60subtotal</th>|;
+	$column_data{c90} = qq|<th class=listsubtotal align=right>$c90subtotal</th>|;
+	$column_data{total} = qq|<th class=listsubtotal align=right>$subtotal</th>|;
 
-	  # print subtotals
-	  print qq|
+	# print subtotals
+	print qq|
 	<tr class=listsubtotal>
 |;
-	  for (@column_index) { print "$column_data{$_}\n" }
+	for (@column_index) { print "$column_data{$_}\n" }
 
-	  print qq|
+	print qq|
 	</tr>
 |;
 
-	}
       }
       
       $c0subtotal = 0;

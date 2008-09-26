@@ -82,7 +82,7 @@ INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VA
 INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('3200','Permanently restricted net assets','H','','Q','');
 INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('3210','Endowment net assets','A','21&27','Q','');
 INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('4000','Revenue from direct contributions','H','','I','');
-INSERT INTO chart (accno, description, charttype, gifi_accno, category, link, contra) VALUES ('4010','Individual/small business contributions','A','1','I','AR_amount:IC_income');
+INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('4010','Individual/small business contributions','A','1','I','AR_amount:IC_income');
 INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('4020','Corporate contributions','A','1','I','AR_amount:IC_income');
 INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('4070','Legacies & bequests','A','1','I','AR_amount');
 INSERT INTO chart (accno, description, charttype, gifi_accno, category, link, contra) VALUES ('4075','Uncollectible pledges - estimated','A','1','I','','1');

@@ -698,7 +698,7 @@ sub list_names {
   $column_header{bcc} = qq|<th><a class=listheading href=$href&sort=cc>|.$locale->text('Bcc').qq|</a></th>|;
   $column_header{notes} = qq|<th><a class=listheading href=$href&sort=notes>|.$locale->text('Notes').qq|</a></th>|;
   $column_header{discount} = qq|<th class=listheading>%</th>|;
-  $column_header{terms} = qq|<th class=listheading>Terms</th>|;
+  $column_header{terms} = qq|<th class=listheading>|.$locale->text('Terms').qq|</th>|;
   
   $column_header{taxnumber} = qq|<th><a class=listheading href=$href&sort=taxnumber>|.$locale->text('Tax Number').qq|</a></th>|;
   $column_header{taxaccount} = qq|<th class=listheading>|.$locale->text('Tax Account').qq|</th>|;
@@ -2117,7 +2117,7 @@ sub update {
 	$pricebreak = $form->{"pricebreak_$i"};
 	$lastcost = $form->{"lastcost_$i"};
 	
-	for (qw(partnumber description)) { $form->{item_list}[$i]{$_} = $form->quote($form->{item_list}[$i]{$_}) }
+	for (qw(partnumber description)) { $form->{item_list}[0]{$_} = $form->quote($form->{item_list}[0]{$_}) }
 	for (keys %{ $form->{item_list}[0] }) { $form->{"${_}_$i"} = $form->{item_list}[0]{$_} }
 
         if ($form->{db} eq 'customer') {
@@ -2132,7 +2132,7 @@ sub update {
 	  
 	} else {
 
-          foreach $j (1 .. $form->{rowcount}) {
+          foreach $j (1 .. $form->{rowcount} - 1) {
 	    if ($form->{"sku_$j"} eq $form->{"partnumber_$i"}) {
 	      $form->error($locale->text('Item already on pricelist!'));
 	    }
@@ -2212,7 +2212,7 @@ sub select_item {
 
     for (qw(partnumber description unit)) { $ref->{$_} = $form->quote($ref->{$_}) }
     
-    $column_data{ndx} = qq|<td><input name="ndx_$i" class=checkbox type=checkbox value=$i $checked></td>|;
+    $column_data{ndx} = qq|<td><input name="ndx_$i" class=checkbox type=checkbox value=$i></td>|;
 
     for (qw(partnumber description partsgroup unit)) { $column_data{$_} = qq|<td>$ref->{$_}&nbsp;</td>| }
 
@@ -2283,7 +2283,9 @@ sub item_selected {
 
     if ($form->{"ndx_$j"}) {
 
-      next if $id{$form->{"new_id_$j"}};
+      if ($id{$form->{"new_id_$j"}}) {
+	next if $form->{db} eq 'vendor';
+      }
       
       for (qw(id partnumber description unit sellprice lastcost)) {
 	$form->{"${_}_$i"} = $form->{"new_${_}_$j"};
@@ -2302,6 +2304,7 @@ sub item_selected {
   # delete all the new_ variables
   for $i (1 .. $form->{lastndx}) {
     for (qw(id partnumber description unit sellprice lastcost partsgroup partsgroup_id)) { delete $form->{"new_${_}_$i"} }
+    delete $form->{"ndx_$i"};
   }
   
   for (qw(ndx lastndx nextsub)) { delete $form->{$_} }

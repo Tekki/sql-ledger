@@ -1,6 +1,7 @@
 $self{charset} = 'ISO-8859-2';
 
 $self{texts} = {
+  'AR/AP'                       => 'VEVÕK/SZÁLLÍTÓK',
   'Account'                     => 'Számla',
   'Apr'                         => 'Ápr.',
   'April'                       => 'Április',
@@ -14,6 +15,7 @@ $self{texts} = {
   'Debit'                       => 'Tartozik',
   'Dec'                         => 'Dec.',
   'December'                    => 'December',
+  'Department'                  => 'Osztály',
   'Description'                 => 'Szöveges leírás',
   'Feb'                         => 'Feb.',
   'February'                    => 'Február',
@@ -31,17 +33,21 @@ $self{texts} = {
   'March'                       => 'Március',
   'May'                         => 'Máj.',
   'May '                        => 'Május',
+  'Month'                       => 'Hónap',
   'Nov'                         => 'Nov.',
   'November'                    => 'November',
   'Oct'                         => 'Okt.',
   'October'                     => 'Október',
+  'Period'                      => 'Idõszak',
   'Project Number'              => 'Munkaszám',
+  'Quarter'                     => 'Negyedév',
   'R'                           => 'E',
   'Reference'                   => 'Hivatkozás',
   'Sep'                         => 'Szept.',
   'September'                   => 'Szeptember',
   'Subtotal'                    => 'Részösszeg',
   'To'                          => 'Meddig:',
+  'Year'                        => 'Év',
 };
 
 $self{subs} = {
