@@ -164,10 +164,10 @@ sub display_row {
     # undo formatting
     for (qw(qty oldqty ship discount sellprice)) { $form->{"${_}_$i"} = $form->parse_amount(\%myconfig, $form->{"${_}_$i"}) }
     
-    if (($form->{"qty_$i"} != $form->{"oldqty_$i"}) || ($form->{currency} ne $form->{oldcurrency})) {
+    if ($form->{"qty_$i"} != $form->{"oldqty_$i"}) {
       # check pricematrix
       @a = split / /, $form->{"pricematrix_$i"};
-      if (scalar @a) {
+      if (scalar @a > 2) {
 	foreach $item (@a) {
 	  ($q, $p) = split /:/, $item;
 	  if (($p * 1) && ($form->{"qty_$i"} >= ($q * 1))) {

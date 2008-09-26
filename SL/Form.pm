@@ -56,7 +56,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.6.4";
+  $self->{version} = "2.6.5";
   $self->{dbversion} = "2.6.4";
 
   $self->{debug} = 1;
@@ -355,6 +355,8 @@ sub sort_order {
   if (%$ordinal) {
     $a[0] = ($ordinal->{$a[$_]}) ? "$ordinal->{$a[0]} $self->{direction}" : "$a[0] $self->{direction}";
     for (1 .. $#a) { $a[$_] = $ordinal->{$a[$_]} if $ordinal->{$a[$_]} }
+  } else {
+    $a[0] .= " $self->{direction}";
   }
 
   $sortorder = join ',', @a;

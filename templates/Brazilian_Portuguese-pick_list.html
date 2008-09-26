@@ -27,7 +27,7 @@
 
 	<tr>
 	  <th colspan=3>
-	    <h4>P I C K &nbsp;&nbsp; L I S T</h4>
+	    <h4>P R E P A R A Ç Ã O &nbsp;&nbsp; D E &nbsp;&nbsp; P E D I D O</h4>
 	  </th>
 	</tr>
       </table>
@@ -40,7 +40,7 @@
     <td>
       <table width=100% callspacing=0 cellpadding=0>
         <tr bgcolor=000000>
-	  <th width=50% align=left><font color=ffffff>Ship To:</th>
+	  <th width=50% align=left><font color=ffffff>Enviar para:</th>
 	  <th width=50%>&nbsp;</th>
 	</tr>
 
@@ -58,7 +58,7 @@
 
 	  <td>
 	  <%if shiptocontact%>
-	  <br>Attn: <%shiptocontact%>
+	  <br>A/C: <%shiptocontact%>
 	  <%end shiptocontact%>
 
 	  <%if shiptophone%>
@@ -84,13 +84,13 @@
     <td>
       <table width=100% border=1>
         <tr>
-	  <th width=15% align=left>Invoice #</th>
-	  <th width=15% align=left>Order #</th>
-	  <th width=10% align=left>Date</th>
-	  <th width=15% align=left nowrap>Contact</th>
-	  <th width=15% align=left>Warehouse</th>
-	  <th width=10% align=left>Shipping Point</th>
-	  <th width=10% align=left>Ship via</th>
+	  <th width=15% align=left>Fatura #</th>
+	  <th width=15% align=left>Pedido #</th>
+	  <th width=10% align=left>Data</th>
+	  <th width=15% align=left nowrap>Contato</th>
+	  <th width=15% align=left>Armazém</th>
+	  <th width=10% align=left>Local do despacho</th>
+	  <th width=10% align=left>Enviar por</th>
 	</tr>
 
         <tr>
@@ -120,12 +120,12 @@
       <table width=100%>
 	<tr bgcolor=000000>
 	  <th align=left><font color=ffffff>Pos</th>
-	  <th align=left><font color=ffffff>Number</th>
-	  <th align=left><font color=ffffff>Description</th>
-	  <th><font color=ffffff>Qty</th>
-	  <th><font color=ffffff>Ship</th>
+	  <th align=left><font color=ffffff>Número</th>
+	  <th align=left><font color=ffffff>Descrição</th>
+	  <th><font color=ffffff>Qtd</th>
+	  <th><font color=ffffff>Enviado</th>
 	  <th>&nbsp;</th>
-	  <th><font color=ffffff>Bin</th>
+	  <th><font color=ffffff>Local</th>
 	</tr>
 
         <%foreach number%>

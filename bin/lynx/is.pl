@@ -686,7 +686,7 @@ sub update {
     &rebuild_vc(customer, AR, $form->{transdate}, 1);
   }
   if ($form->{transdate} ne $form->{oldtransdate}) {
-    $form->{duedate} = $form->current_date(\%myconfig, $form->{transdate}, $form->{terms} * 1);
+    $form->{duedate} = ($form->{terms}) ? $form->current_date(\%myconfig, $form->{transdate}, $form->{terms} * 1) : $form->{duedate};
     $form->{oldtransdate} = $form->{transdate};
     &rebuild_vc(customer, AR, $form->{transdate}, 1) if ! $newname;
 
@@ -694,7 +694,6 @@ sub update {
       delete $form->{exchangerate};
       $form->{exchangerate} = $exchangerate if ($form->{forex} = ($exchangerate = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate}, 'buy')));
     }
-    for (1 .. $form->{rowcount}) { $form->{"oldqty_$_"} = "" }
 
     $form->{selectemployee} = "";
     if (@{ $form->{all_employee} }) {

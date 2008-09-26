@@ -5,15 +5,21 @@
 <%company%>
 <br><%address%>
 
-  <p>DECLARA&Ccedil;&Atilde;O DE RENDIMENTOS<br>
-    <%period%>
+<p>APURAÇÃO DE LUCROS E PERDAS
+<br><%period%>
 </h2>
 
+<%if department%>
+<h4>Departamento: <%department%></h4>
+<%end department%>
+
+<%if projectnumber%>
+<h4>Número do Projeto: <%projectnumber%></h4>
+<%end projectnumber%>
 
 <table width=100% border=0>
 <tr>
-    <th width=400 align=left colspan=2>RENDIMENTOS<br>
-      <hr width=300 size=5 align=left noshade></th>
+  <th width=400 align=left colspan=2>LUCRO<br><hr width=300 size=5 align=left noshade></th>
   <th><%this_period%></th>
   <th><%last_period%></th>
 </tr>
@@ -35,14 +41,13 @@
 
 <tr valign=top>
   <td> </td>
-    <th align=left>Total</th>
+  <th align=left>TOTAL DE RECEITAS</th>
   <td align=right><%total_income_this_period%><hr noshade size=2></td>
   <td align=right><%total_income_last_period%><hr noshade size=2></td>
 </tr>
 
 <tr>
-    <th align=left colspan=2>DESPESAS<br>
-      <hr width=300 size=5 align=left noshade></th>
+  <th align=left colspan=2>DESPESAS<br><hr width=300 size=5 align=left noshade></th>
 </tr>
 
 <%foreach expense_account%>
@@ -62,13 +67,13 @@
 
 <tr valign=top>
   <td> </td>
-    <th align=left>Total</th>
-  <td align=right><%total_expenses_this_period%><br><hr noshade size=2></td>
-  <td align=right><%total_expenses_last_period%><br><hr noshade size=2></td>
+  <th align=left>TOTAL DE DESPESAS</th>
+  <td align=right><%total_expenses_this_period%><br><hr noshade size=2</td>
+  <td align=right><%total_expenses_last_period%><br><hr noshade size=2</td>
 </tr>
 
 <tr valign=top>
-    <th align=left colspan=2>RENDIMENTOS / (PREJUIZO)</th>
+  <th align=left colspan=2>LUCRO / (PREJUÍZO)</th>
   <td align=right><%total_this_period%><br><hr noshade size=2></td>
   <td align=right><%total_last_period%><br><hr noshade size=2></td>
 </tr>

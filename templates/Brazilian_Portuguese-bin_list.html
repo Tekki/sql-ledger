@@ -27,7 +27,7 @@
 	
 	<tr>
 	  <th colspan=3>
-	    <h4>B I N &nbsp;&nbsp; L I S T</h4>
+	    <h4>L I S T A &nbsp;&nbsp; D E &nbsp;&nbsp; P R A T E LE I R A S</h4>
 	  </th>
 	</tr>
       </table>
@@ -40,24 +40,24 @@
     <td>
       <table width=100% cellspacing=0 cellpadding=0>
 	<tr bgcolor=000000>
-	  <th align=left width=50%><font color=ffffff>From</th>
-	  <th align=left width=50%><font color=ffffff>Ship To</th>
+	  <th align=left width=50%><font color=ffffff>De</th>
+	  <th align=left width=50%><font color=ffffff>Enviar para</th>
 	</tr>
 
 	<tr valign=top>
 	  <td><%name%>
 	  <br><%address1%>
 	  <%if address2%>
-	  <br><%address2%>
-	  <%end address2%>
+<br><%address2%>
+<%end address2%>
 	  <br><%city%> <%state%> <%zipcode%>
 	  <%if country%>
-	  <br><%country%>
-	  <%end country%>
+<%country%>
+<%end country%>
 	  <br>
 
 	  <%if contact%>
-	  <br>Attn: <%contact%>
+	  <br>A/C: <%contact%>
 	  <%end contact%>
 
 	  <%if vendorphone%>
@@ -77,16 +77,16 @@
 	  <td><%shiptoname%>
 	  <br><%shiptoaddress1%>
 	  <%if shiptoaddress2%>
-	  <br><%shiptoaddress2%>
-	  <%end shiptoaddress2%>
+<br><%shiptoaddress2%>
+<%end shiptoaddress2%>
 	  <br><%shiptocity%> <%shiptostate%> <%shiptozipcode%>
 	  <%if shiptocountry%>
-	  <br><%shiptocountry%>
-	  <%end shiptocountry%>
+<%shiptocountry%>
+<%end shiptocountry%>
 
 	  <br>
 	  <%if shiptocontact%>
-	  <br>Attn: <%shiptocontact%>
+	  <br>A/C: <%shiptocontact%>
 	  <%end shiptocontact%>
 	  
 	  <%if shiptophone%>
@@ -110,14 +110,14 @@
     <td>
       <table width=100% border=1>
 	<tr>
-	  <th width=17% align=left nowrap>Order #</th>
-	  <th width=17% align=left nowrap>Date</th>
-	  <th width=17% align=left nowrap>Contact</th>
+	  <th width=17% align=left nowrap>Pedido #</th>
+	  <th width=17% align=left nowrap>Data</th>
+	  <th width=17% align=left nowrap>Contato</th>
 	  <%if warehouse%>
-	  <th width=17% align=left nowrap>Warehouse</th>
+	  <th width=17% align=left nowrap>Armazém</th>
 	  <%end warehouse%>
-	  <th width=17% align=left>Shipping Point</th>
-	  <th width=15% align=left>Ship via</th>
+	  <th width=17% align=left>Local do despacho</th>
+	  <th width=15% align=left>Enviar por</th>
 	</tr>
 
 	<tr>
@@ -151,14 +151,14 @@
       <table width=100%>
 	<tr bgcolor=000000>
 	  <th align=left><font color=ffffff>Pos</th>
-	  <th align=left><font color=ffffff>Number</th>
-	  <th align=left><font color=ffffff>Description</th>
-	  <th><font color=ffffff>Serialnumber</th>
+	  <th align=left><font color=ffffff>Número</th>
+	  <th align=left><font color=ffffff>Descrição</th>
+	  <th><font color=ffffff>Nº de série</th>
 	  <th>&nbsp;</th>
-	  <th><font color=ffffff>Qty</th>
-	  <th><font color=ffffff>Recd</th>
+	  <th><font color=ffffff>Qtd</th>
+	  <th><font color=ffffff>Receb</th>
 	  <th>&nbsp;</th>
-	  <th><font color=ffffff>Bin</th>
+	  <th><font color=ffffff>Local</th>
 	</tr>
 
 	<%foreach number%>

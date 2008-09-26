@@ -45,50 +45,65 @@ sub projects {
   my $sortorder = $form->sort_order(\@a, \%ordinal);
 
   my $query;
+  my $where = "WHERE 1=1";
   
   $query = qq|SELECT pr.*, c.name
 	      FROM project pr
-	      LEFT JOIN customer c ON (c.id = pr.customer_id)
-	      WHERE pr.id NOT IN (SELECT id
-				  FROM parts
-				  WHERE project_id > 0)|;
+	      LEFT JOIN customer c ON (c.id = pr.customer_id)|;
+
+  if ($form->{type} eq 'job') {
+    $where .= qq| AND pr.id NOT IN (SELECT DISTINCT id
+			            FROM parts
+			            WHERE project_id > 0)|;
+  }
   
   my $var;
   if ($form->{projectnumber} ne "") {
     $var = $form->like(lc $form->{projectnumber});
-    $query .= " AND lower(pr.projectnumber) LIKE '$var'";
+    $where .= " AND lower(pr.projectnumber) LIKE '$var'";
   }
   if ($form->{description} ne "") {
     $var = $form->like(lc $form->{description});
-    $query .= " AND lower(pr.description) LIKE '$var'";
+    $where .= " AND lower(pr.description) LIKE '$var'";
   }
 
   ($form->{startdatefrom}, $form->{startdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
   
   if ($form->{startdatefrom}) {
-    $query .= " AND (pr.startdate IS NULL OR pr.startdate >= '$form->{startdatefrom}')";
+    $where .= " AND (pr.startdate IS NULL OR pr.startdate >= '$form->{startdatefrom}')";
   }
   if ($form->{startdateto}) {
-    $query .= " AND (pr.startdate IS NULL OR pr.startdate <= '$form->{startdateto}')";
+    $where .= " AND (pr.startdate IS NULL OR pr.startdate <= '$form->{startdateto}')";
   }
   
   if ($form->{status} eq 'orphaned') {
-    $query .= qq| AND pr.id NOT IN (SELECT DISTINCT project_id
-                                 FROM acc_trans)
-                  AND pr.id NOT IN (SELECT DISTINCT project_id
-		                 FROM invoice)
-		  AND pr.id NOT IN (SELECT DISTINCT project_id
-		                 FROM orderitems)|;
+    $where .= qq| AND pr.id NOT IN (SELECT DISTINCT project_id
+                                    FROM acc_trans
+				    WHERE project_id > 0
+                                 UNION
+                                    SELECT DISTINCT project_id
+		                    FROM invoice
+				    WHERE project_id > 0
+				 UNION
+		                    SELECT DISTINCT project_id
+		                    FROM orderitems
+				    WHERE project_id > 0
+				 UNION
+		                    SELECT DISTINCT project_id
+		                    FROM jcitems
+				    WHERE project_id > 0)
+		|;
 
   }
   if ($form->{status} eq 'active') {
-    $query .= qq| AND pr.enddate IS NULL|;
+    $where .= qq| AND pr.enddate IS NULL|;
   }
   if ($form->{status} eq 'inactive') {
-    $query .= qq| AND pr.enddate <= current_date|;
+    $where .= qq| AND pr.enddate <= current_date|;
   }
 
   $query .= qq|
+		 $where
 		 ORDER BY $sortorder|;
 
   $sth = $dbh->prepare($query);
@@ -148,6 +163,10 @@ sub get_project {
 	     UNION
 		SELECT count(*)
 		FROM orderitems
+		WHERE project_id = $form->{id}
+	     UNION
+		SELECT count(*)
+		FROM jcitems
 		WHERE project_id = $form->{id}
 	       |;
     $sth = $dbh->prepare($query);
@@ -307,11 +326,16 @@ sub jobs {
   }
   if ($form->{status} eq 'orphaned') {
     $query .= qq| AND pr.completed = 0
-                  AND (pr.id NOT IN (SELECT DISTINCT project_id
-                                     FROM invoice)
-		       OR pr.id NOT IN
-				    (SELECT DISTINCT trans_id
-				     FROM orderitems)
+                  AND (pr.id NOT IN SELECT DISTINCT project_id
+                                    FROM invoice
+				    WHERE project_id > 0)
+		                    UNION
+				    SELECT DISTINCT project_id
+				    FROM orderitems
+				    WHERE project_id > 0
+				    SELECT DISTINCT project_id
+				    FROM jcitems
+				    WHERE project_id > 0
 				    )|;
   }
 
@@ -381,6 +405,10 @@ sub get_job {
 	     UNION
 		SELECT count(*)
 		FROM orderitems
+		WHERE project_id = $form->{id}
+	     UNION
+		SELECT count(*)
+		FROM jcitems
 		WHERE project_id = $form->{id}
 	       |;
 
@@ -997,7 +1025,8 @@ sub pricegroups {
                 FROM pricegroup g
 		WHERE $where
 		AND g.id NOT IN (SELECT DISTINCT pricegroup_id
-		                 FROM partscustomer)
+		                 FROM partscustomer
+				 WHERE pricegroup_id > 0)
 		ORDER BY $sortorder|;
   }
 

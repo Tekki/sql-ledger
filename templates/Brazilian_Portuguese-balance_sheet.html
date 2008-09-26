@@ -5,14 +5,17 @@
 <%company%>
 <br><%address%>
 
-  <p>BALAN&Ccedil;O<br>
-    <%period%>
+<p>FOLHA DE BALANÇO
+<br>as at <%this_period%>
 </h2>
+
+<%if department%>
+<h4>Departamento: <%department%></h4>
+<%end department%>
 
 <table border=0>
 <tr>
-    <th align=left width=400 colspan=2>VALORES<br>
-      <hr align=left width=250 size=5 noshade></th>
+  <th align=left width=400 colspan=2>ATIVO<br><hr align=left width=250 size=5 noshade></th>
   <th><%this_period%></th>
   <th><%last_period%></th>
 </tr>
@@ -33,14 +36,13 @@
 </tr>
 
 <tr valign=top>
-    <th align=left colspan=2>TOTAL</th>
+  <th align=left colspan=2>TOTAL DO ATIVO</th>
   <td align=right><%total_assets_this_period%><hr noshade size=2></td>
   <td align=right><%total_assets_last_period%><hr noshade size=2></td>
 </tr>
 
 <tr>
-    <th align=left colspan=4>BALAN&Ccedil;O<b> 
-      <hr align=left width=250 size=5 noshade></b></th>
+  <th align=left colspan=4>OBRIGAÇÕES<b><hr align=left width=250 size=5 noshade></th>
 </tr>
 
 <%foreach liability_account%>
@@ -60,14 +62,13 @@
 
 <tr valign=top>
   <td></td>
-    <th align=left>Total</th>
-  <td align=right><%total_liabilities_this_period%><br><hr noshade size=2></td>
-  <td align=right><%total_liabilities_last_period%><br><hr noshade size=2></td>
+  <th align=left>TOTAL DE OBRIGAÇÕES</th>
+  <td align=right><%total_liabilities_this_period%><br><hr noshade size=2</td>
+  <td align=right><%total_liabilities_last_period%><br><hr noshade size=2</td>
 </tr>
 
 <tr>
-    <th align=left colspan=4>S&Oacute;CIOS (%)<br>
-      <hr align=left width=250 size=5 noshade></th>
+  <th align=left colspan=4>PATRIMÔNIO LIQUIDO<br><hr align=left width=250 size=5 noshade></th>
 </tr>
 
 <%foreach equity_account%>
@@ -87,13 +88,13 @@
 
 <tr valign=top>
   <td></td>
-    <th align=left>Total</th>
-  <td align=right><%total_equity_this_period%><br><hr noshade size=2></td>
-  <td align=right><%total_equity_last_period%><br><hr noshade size=2></td>
+  <th align=left>TOTAL PATRIMÔNIO</th>
+  <td align=right><%total_equity_this_period%><br><hr noshade size=2</td>
+  <td align=right><%total_equity_last_period%><br><hr noshade size=2</td>
 </tr>
 
 <tr valign=top>
-    <th align=left colspan=2>TOTAIS</th>
+  <th align=left colspan=2>TOTAL OBRIGAÇÕES & PATRIMÔNIO</th>
   <td align=right><%total_this_period%><br><hr noshade size=2></td>
   <td align=right><%total_last_period%><br><hr noshade size=2></td>
 </tr>

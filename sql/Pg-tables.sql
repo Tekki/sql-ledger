@@ -173,7 +173,7 @@ CREATE TABLE assembly (
   qty float,
   bom bool,
   adj bool
-);
+) WITH OIDS;
 --
 CREATE TABLE ar (
   id int DEFAULT nextval ( 'id' ),
@@ -289,7 +289,7 @@ CREATE TABLE orderitems (
   ship float4,
   serialnumber text,
   notes text
-);
+) WITH OIDS;
 --
 CREATE TABLE exchangerate (
   curr char(3),
@@ -438,7 +438,7 @@ CREATE TABLE inventory (
   qty float4,
   shippingdate date,
   employee_id int
-);
+) WITH OIDS;
 --
 CREATE TABLE yearend (
   trans_id int,

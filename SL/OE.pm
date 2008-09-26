@@ -1075,7 +1075,7 @@ sub order_details {
 	  }
 
 	  push(@{ $form->{description} }, $item->[2]);
-	  for (qw(taxrates runningnumber number sku qty ship unit bin serialnumber reqdate projectnumber sellprice listprice netprice discount discountrate linetotal weight)) { push(@{ $form->{$_} }, "") }
+	  for (qw(taxrates runningnumber number sku qty ship unit bin serialnumber reqdate projectnumber sellprice listprice netprice discount discountrate linetotal weight itemnotes)) { push(@{ $form->{$_} }, "") }
 	  push(@{ $form->{lineitems} }, { amount => 0, tax => 0 });
 	}
       }
@@ -1096,6 +1096,7 @@ sub order_details {
       push(@{ $form->{number} }, qq|$form->{"partnumber_$i"}|);
       push(@{ $form->{sku} }, qq|$form->{"sku_$i"}|);
       push(@{ $form->{description} }, qq|$form->{"description_$i"}|);
+      push(@{ $form->{itemnotes} }, $form->{"notes_$i"});
       push(@{ $form->{qty} }, $form->format_amount($myconfig, $form->{"qty_$i"}));
       push(@{ $form->{ship} }, $form->format_amount($myconfig, $form->{"ship_$i"}));
       push(@{ $form->{unit} }, qq|$form->{"unit_$i"}|);
@@ -1212,7 +1213,7 @@ sub order_details {
 	      push(@{ $form->{part} }, NULL);
 	    }
 
-	    for (qw(taxrates runningnumber number sku qty ship unit bin serialnumber reqdate projectnumber sellprice listprice netprice discount discountrate weight)) { push(@{ $form->{$_} }, "") }
+	    for (qw(taxrates runningnumber number sku qty ship unit bin serialnumber reqdate projectnumber sellprice listprice netprice discount discountrate weight itemnotes)) { push(@{ $form->{$_} }, "") }
 
 	    push(@{ $form->{description} }, $form->{groupsubtotaldescription});
 
@@ -1239,7 +1240,7 @@ sub order_details {
 	      push(@{ $form->{part} }, NULL);
 	    } 
 	    
-	    for (qw(taxrates runningnumber number sku qty ship unit bin serialnumber reqdate projectnumber sellprice listprice netprice discount discountrate weight)) { push(@{ $form->{$_} }, "") }
+	    for (qw(taxrates runningnumber number sku qty ship unit bin serialnumber reqdate projectnumber sellprice listprice netprice discount discountrate weight itemnotes)) { push(@{ $form->{$_} }, "") }
 
 	    push(@{ $form->{description} }, $form->{groupsubtotaldescription});
 	    push(@{ $form->{linetotal} }, $form->format_amount($myconfig, $subtotal, 2));
@@ -1368,7 +1369,7 @@ sub assembly_details {
     }
    
     if ($form->{grouppartsgroup} && $ref->{partsgroup} ne $sm) {
-      for (qw(taxrates number sku unit qty runningnumber ship bin serialnumber reqdate projectnumber sellprice listprice netprice discount discountrate linetotal)) { push(@{ $form->{$_} }, "") }
+      for (qw(taxrates number sku unit qty runningnumber ship bin serialnumber reqdate projectnumber sellprice listprice netprice discount discountrate linetotal weight itemnotes)) { push(@{ $form->{$_} }, "") }
       $sm = ($form->{"a_partsgroup"}) ? $form->{"a_partsgroup"} : "";
       push(@{ $form->{description} }, "$spacer$sm");
       
@@ -1379,7 +1380,7 @@ sub assembly_details {
     if ($form->{stagger}) {
      
       push(@{ $form->{description} }, qq|$spacer$form->{"a_partnumber"}, $form->{"a_description"}|);
-      for (qw(taxrates number sku runningnumber ship serialnumber reqdate projectnumber sellprice listprice netprice discount discountrate linetotal)) { push(@{ $form->{$_} }, "") }
+      for (qw(taxrates number sku runningnumber ship serialnumber reqdate projectnumber sellprice listprice netprice discount discountrate linetotal weight itemnotes)) { push(@{ $form->{$_} }, "") }
       
     } else {
       
@@ -1387,7 +1388,7 @@ sub assembly_details {
       push(@{ $form->{sku} }, $form->{"a_partnumber"});
       push(@{ $form->{number} }, $form->{"a_partnumber"});
       
-      for (qw(taxrates runningnumber ship serialnumber reqdate projectnumber sellprice listprice netprice discount discountrate linetotal)) { push(@{ $form->{$_} }, "") }
+      for (qw(taxrates runningnumber ship serialnumber reqdate projectnumber sellprice listprice netprice discount discountrate linetotal weight itemnotes)) { push(@{ $form->{$_} }, "") }
       
     }
 

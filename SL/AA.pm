@@ -458,7 +458,7 @@ sub delete_transaction {
   # get spool files
   $query = qq|SELECT spoolfile FROM status
               WHERE trans_id = $form->{id}
-	      AND NOT spoolfile IS NULL|;
+	      AND spoolfile IS NOT NULL|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
@@ -636,7 +636,7 @@ sub transactions {
 
   if ($form->{till} ne "") {
     $where .= " AND a.invoice = '1'
-                AND NOT a.till IS NULL";
+                AND a.till IS NOT NULL";
     if ($myconfig->{role} eq 'user') {
       $where .= " AND e.login = '$form->{login}'";
     }
