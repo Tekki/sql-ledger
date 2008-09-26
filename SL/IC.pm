@@ -1514,6 +1514,7 @@ sub requirements {
 		AND p.inventory_accno_id > 0
 		AND p.assembly = '0'
 		AND a.closed = '0'
+		AND a.quotation = '0'
 		AND a.${_}_id > 0
 		GROUP BY p.id, p.partnumber, p.description, p.onhand,
 		month|;

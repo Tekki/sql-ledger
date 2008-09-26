@@ -56,7 +56,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.6.24";
+  $self->{version} = "2.6.25";
   $self->{dbversion} = "2.6.12";
 
   bless $self, $type;
@@ -164,14 +164,9 @@ sub error {
 
     exit;
 
-  } else {
-  
-    if ($self->{error_function}) {
-      &{ $self->{error_function} }($msg);
-    } else {
-      die "Error: $msg\n";
-    }
   }
+  
+  die "Error: $msg\n";
   
 }
 
@@ -194,11 +189,8 @@ sub info {
 
   } else {
   
-    if ($self->{info_function}) {
-      &{ $self->{info_function} }($msg);
-    } else {
-      print "$msg\n";
-    }
+    print "$msg\n";
+    
   }
   
 }
