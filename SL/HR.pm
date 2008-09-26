@@ -241,19 +241,18 @@ sub employees {
   
   my $var;
   
+  for (qw(name employeenumber notes)) {
+    if ($form->{$_} ne "") {
+      $var = $form->like(lc $form->{$_});
+      $where .= " AND lower(e.$_) LIKE '$var'";
+    }
+  }
+  
   if ($form->{startdatefrom}) {
     $where .= " AND e.startdate >= '$form->{startdatefrom}'";
   }
   if ($form->{startdateto}) {
     $where .= " AND e.startddate <= '$form->{startdateto}'";
-  }
-  if ($form->{name} ne "") {
-    $var = $form->like(lc $form->{name});
-    $where .= " AND lower(e.name) LIKE '$var'";
-  }
-  if ($form->{notes} ne "") {
-    $var = $form->like(lc $form->{notes});
-    $where .= " AND lower(e.notes) LIKE '$var'";
   }
   if ($form->{sales} eq 'Y') {
     $where .= " AND e.sales = '1'";

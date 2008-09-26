@@ -55,8 +55,8 @@ sub search_employee {
 
   push @a, qq|<input name="l_ndx" type=checkbox class=checkbox value=Y> |.$locale->text('Pos');
   push @a, qq|<input name="l_id" type=checkbox class=checkbox value=Y> |.$locale->text('ID');
-  push @a, qq|<input name="l_employeenumber" type=checkbox class=checkbox value=Y checked> |.$locale->text('Employee Number');
   push @a, qq|<input name="l_name" type=checkbox class=checkbox value=Y checked> |.$locale->text('Employee Name');
+  push @a, qq|<input name="l_employeenumber" type=checkbox class=checkbox value=Y checked> |.$locale->text('Employee Number');
   push @a, qq|<input name="l_address" type=checkbox class=checkbox value=Y> |.$locale->text('Address');
   push @a, qq|<input name="l_city" type=checkbox class=checkbox value=Y> |.$locale->text('City');
   push @a, qq|<input name="l_state" type=checkbox class=checkbox value=Y> |.$locale->text('State/Province');
@@ -94,12 +94,12 @@ sub search_employee {
     <td>
       <table>
 	<tr>
-	  <th align=right nowrap>|.$locale->text('Employee Number').qq|</th>
-	  <td colspan=3><input name=employeenumber size=20></td>
-	</tr>
-	<tr>
 	  <th align=right nowrap>|.$locale->text('Employee Name').qq|</th>
 	  <td colspan=3><input name=name size=35></td>
+	</tr>
+	<tr>
+	  <th align=right nowrap>|.$locale->text('Employee Number').qq|</th>
+	  <td colspan=3><input name=employeenumber size=35></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Startdate').qq|</th>
@@ -710,6 +710,7 @@ sub save_employee {
     
     for (qw(dbpasswd password)) { $user->{"old_$_"} = $user->{$_} }
     $user->{packpw} = 1;
+    $user->{encrypted} = 1;
 
     $user->save_member($memberfile, $userspath) if $user->{login};
   }
