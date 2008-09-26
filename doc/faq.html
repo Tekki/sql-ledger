@@ -23,13 +23,9 @@ CREATE SEQUENCE jcitemsid START 53;
 
 <p>Change it to:
 <pre>
-CREATE SEQUENCE id;
 SELECT SETVAL('id', 10579);
-CREATE SEQUENCE invoiceid;
 SELECT SETVAL('invoiceid', 11096);
-CREATE SEQUENCE orderitemsid;
 SELECT SETVAL('orderitemsid', 178);
-CREATE SEQUENCE jcitemsid;
 SELECT SETVAL('jcitemsid', 53);
 </pre>
 
@@ -37,7 +33,7 @@ SELECT SETVAL('jcitemsid', 53);
 <p><li><h4>PostgreSQL template1</h4>
 template1 is a template to build new databases
 from. Anything you put into template1 will be copied to a new database.
-So when you try to create a new dataset, the tables are already created from
+When you try to create a new dataset, the tables are already created from
 template1 and when SQL-Ledger tries to create them you'll get an error that
 the tables already exist.
 
@@ -81,7 +77,7 @@ CREATE TABLE assembly (
 ) WITH OIDS;
 </pre>
 
-This change is only required for SQL-Ledger versions 2.6.3 and below.
+This change is only required for SQL-Ledger versions 2.6.3 and older.
 
 <p>If you already built a dataset without this change you will get
 an error when you try to save a PO or assembly.
@@ -143,15 +139,16 @@ recv_msg };
 
 <p><li><h4>session timeouts</h4>
 If you get frequent timeouts or can't even log in synchronize
-the clocks from the server and workstation.
+the clock with your server.
 
 
 <p><li><h4>lineitems not printing</h4>
-Templates designed on a UNIX platform don't work on a DOS platform.
-To make them work load the template either with the builtin template editor
+Templates edited on a UNIX platform don't work on a DOS platform.
+To make them work load the template either with the builtin editor
 or a text editor and save. Templates designed on a Windows platform have the
 same problem and won't work on a UNIX platform. Once you strip the ^M's
-the'll work just fine.
+the'll work just fine. This only affects the .tex templates because latex
+can't process them properly.
 
 
 <p><li><h4>UTF-8 character encoding</h4>
@@ -172,7 +169,7 @@ The easiest is to use the setup.pl script as root.
 You don't need to know very much about your system, just login as root,
 run 'perl setup.pl' and follow the prompts.
 <p>setup.pl does not check for missing software packages and it is your
-responsibilite to make sure you have the required software
+responsibility to have the required software
 installed either from source or from a package.
 
 <p>Requirements are clearly indicated in the README file and on the
@@ -219,6 +216,10 @@ into the file.
   &lt;/Directory&gt;</pre>
 replace '/etc/httpd' and '/var/www' with the appropriate directories.
 
+<p>If you run Apache and configuration files are in a conf.d directory
+you don't need to change httpd.conf but simply copy sql-ledger-httpd.conf
+into /etc/apache/conf.d and restart apache.
+
 
 <p><li><h4>users/members : Permission denied</h4>
 Your webserver must have write access to the users directory.
@@ -239,7 +240,7 @@ Check if you have latex and pdflatex installed.
 
 <p><li><h4>Apache 2.0 "error 500"</h4>
 Some of the early versions of Apache 2.0 (< patchlevel 44) had a rewrite engine
-which decoded escaped strings. This created a lot of problems and I worked
+which unescaped escaped strings. This created a lot of problems and I worked
 around it by escaping strings twice.
 If you get a server 500 error 'filename too long' or if collapsed menus
 don't expand you may have to adjusted the following code in
@@ -247,7 +248,7 @@ SL/Form.pm and change the number (44) on line 84.
 <pre>
   # for Apache 2 we escape strings twice
   if (($ENV{SERVER_SIGNATURE} =~ /Apache\/2\.(\d+)\.(\d+)/) && !$beenthere) {
-    $str = $self->escape($str, 1) if $2 < 44;
+    $str = $self->escape($str, 1) if $1 < 2 && $2 < 44;
   }</pre>
 
 
@@ -263,16 +264,14 @@ This is different with every distribution so look for it.
   # find / -name 'pg_hba.conf'</pre>
 
 <p>Some people can't read and seem to think 'localhost' is just some
-fancy word for a local machine.
+fancy name for a local machine.
 'localhost' is a host like any other host on a network.
-A 'local' entry in pg_hba.conf will allow socket connections ONLY and
-not allow a host connection. If you then try to connect to 'localhost'
-postgres will come back with an authentication error.
+A 'local' entry in pg_hba.conf will allow local connections ONLY and
+not allow host connections. If you then try to connect to 'localhost'
+postgres will come back with an authentication error because you tried
+to connect to a host.
 
-<p>So, forget you ever heard there is such a thing as 'localhost' and leave
-the Host portion blank.
-
-<p><b>WARNING!</b> DO NOT just put a 'host  all all trust' in pg_hba.conf
+<p><b>WARNING!</b> DO NOT just put a 'host all all trust' in pg_hba.conf
 unless you know what you are doing.
 
 
@@ -315,8 +314,10 @@ To use without frames
 
 <p><li><h4>PDF option disappeared</h4>
 Edit sql-ledger.conf and set $latex = 1;
-<br>sql-ledger.conf is perl code, check if it compiles, if it does not,
+<br>sql-ledger.conf is perl code. If there is a mistake in the file it
+will not be loaded and
 the internal defaults are used which turn off $latex, hence no PDF option.
+
 
 <p><li><h4>Installation on Windows (WIN32)</h4>
 <ul>
@@ -412,7 +413,7 @@ Check in your /etc/printcap file for the names of available printers.
 
 <p>If you have LaTeX installed set
 <pre>
-  $latex = 1</pre> in sql-ledger.conf
+  $latex = 1;</pre> in sql-ledger.conf
 
 <p>To send the document to the printer check the "Postscript" or "PDF" format,
 enter the number of copies and click on the "Print" button.
@@ -427,7 +428,7 @@ browser to print to a printer.
 
 <p><li><h4>Using samba to send printjobs to a printer attached to a Windows XP workstation</h4>
 The next part applies to roll your own print filters only. If you use CUPS or
-LPRng your milage may vary but you can still use this as a guide how it works.
+LPRng use this as a guide how printing works.
 I use the printer 'Epson' as an example which is
 attached to a XP workstation called Raven.
 
@@ -548,7 +549,7 @@ not packaged follow this recipe to get it working.
 This could be because of a missing configuration file in the users directory
 
 <p>check the permission for the users directory. The directory must be
-set writeable for the webserver. If your webserver runs ias user/group
+set writeable for the webserver. If your webserver runs as user/group
 nobody.nogroup set the directory to
 <pre>
 drwx--x--x   2 nobody   nogroup    1024 May 26 16:49 users
@@ -571,12 +572,12 @@ the frontend script couldn't figure out which browser you are using
 <p>include the terminal variable on the URL
 <pre>
   http://localhost/sql-ledger/login.pl?terminal=lynx</pre>
-Valid terminal variables are lynx, mozilla and js
+Valid terminal variables are lynx and mozilla
 
 
 <p><li><h4>permission denied</h4>
 
-Check if your web server has write permission to write to the following
+Check if your webserver has write permission to write to the following
 files and directories:
 <pre>
   users/
@@ -631,7 +632,7 @@ Edit sql-ledger.conf and enter the code for the $language variable
   $language = "de";</pre>
 
 <p>This is a global change and applies to all logins, individual settings
-may be changed by setting the language in your Preferences.
+can be changed by setting the language in your Preferences.
 
 
 </ul>
@@ -643,7 +644,7 @@ may be changed by setting the language in your Preferences.
 </a>
 
 <ul>
-<li>The security features built into SQL-Ledger provide encrypted passwords
+<li>The security features built into SQL-Ledger provide password
 and access control which makes it fairly safe out of the box to run even in
 front of a firewall.
 Some precautions which are out of our control must be taken though.
@@ -673,7 +674,7 @@ The location for the users directory can be specified in sql-ledger.conf
 
 <p><li>Set permission for the users and templates directory to 711
 
-<p><li>If you do not want anyone to change the templates with the built-in
+<p><li>If you do not want anyone to change the templates with the builtin
 editor set the files in templates/directory/ to read only or disable
 the menu item to edit the templates.
 
@@ -681,11 +682,11 @@ the menu item to edit the templates.
 to add data. i.e 'Add Transaction' if unchecked you will not be able to add
 a transaction or repost a transaction. You may look at it but nothing else.
 
-<p><li>There are various settings for audit control and you may disable
-reposting entirely or up to a certain date. And with the audit trail enabled
+<p><li>There are various settings for audit control and you can disable
+reposting entirely or up to a certain date. And with audit trails enabled
 you can keep tab of who is doing what.
 
-<p><li>For PostgreSQL you may also set who has access to the server in the file
+<p><li>For PostgreSQL you can also set who has access to the server in the file
 pg_hba.conf
 <br>Authentication crypt does not work because not all SQL servers
 accept encrypted passwords.

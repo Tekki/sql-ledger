@@ -226,6 +226,8 @@ sub prepare_order {
       
       $form->{"qty_$i"} = $form->format_amount(\%myconfig, $form->{"qty_$i"});
       $form->{"oldqty_$i"} = $form->{"qty_$i"};
+
+      $form->{"ship_$i"} = $form->format_amount(\%myconfig, $form->{"ship_$i"});
       
       for (qw(partnumber sku description unit)) { $form->{"${_}_$i"} = $form->quote($form->{"${_}_$i"}) }
       $form->{rowcount} = $i;

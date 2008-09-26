@@ -56,7 +56,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.6.22";
+  $self->{version} = "2.6.23";
   $self->{dbversion} = "2.6.12";
 
   bless $self, $type;
@@ -1997,34 +1997,36 @@ sub get_partsgroup {
   my $query = qq|SELECT DISTINCT pg.id, pg.partsgroup
                  FROM partsgroup pg
 		 JOIN parts p ON (p.partsgroup_id = pg.id)|;
-  my $where;
+
+  my $where = qq|WHERE p.obsolete = '0'|;
   my $sortorder = "partsgroup";
   
   if ($p->{searchitems} eq 'part') {
-    $where = qq|
-                 WHERE (p.inventory_accno_id > 0
+    $where .= qq|
+                 AND (p.inventory_accno_id > 0
 		        AND p.income_accno_id > 0)|;
   }
   if ($p->{searchitems} eq 'service') {
-    $where = qq|
-                 WHERE p.inventory_accno_id IS NULL|;
+    $where .= qq|
+                 AND p.inventory_accno_id IS NULL|;
   }
   if ($p->{searchitems} eq 'assembly') {
-    $where = qq|
-                 WHERE p.assembly = '1'|;
+    $where .= qq|
+                 AND p.assembly = '1'|;
   }
   if ($p->{searchitems} eq 'labor') {
-    $where = qq|
-                 WHERE p.inventory_accno_id > 0 AND p.income_accno_id IS NULL|;
+    $where .= qq|
+                 AND p.inventory_accno_id > 0 AND p.income_accno_id IS NULL|;
   }
   if ($p->{searchitems} eq 'nolabor') {
-    $where = qq|
-                 WHERE p.income_accno_id > 0|;
+    $where .= qq|
+                 AND p.income_accno_id > 0|;
   }
 
   if ($p->{all}) {
     $query = qq|SELECT id, partsgroup
                 FROM partsgroup|;
+    $where = "";
   } 
 
   if ($p->{language_code}) {
