@@ -1250,6 +1250,9 @@ sub trial_balance {
       $ref->{debit} = $form->round_amount($ref->{debit}, 2);
       $ref->{credit} = $form->round_amount($ref->{credit}, 2);
     
+      if (!$form->{all_accounts}) {
+	next if $form->round_amount($ref->{debit} + $ref->{credit}, 2) == 0;
+      }
     }
 
     # add subtotal

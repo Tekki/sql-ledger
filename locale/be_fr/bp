@@ -35,6 +35,7 @@ $self{texts} = {
   'Sales Orders'                => 'Commandes de vente',
   'Select all'                  => 'Tout sélectionner',
   'Spoolfile'                   => 'Fichier file d\'attente impression',
+  'Time Cards'                  => 'Fiches de travail',
   'To'                          => 'À',
   'Vendor'                      => 'Fournisseur',
   'Work Orders'                 => 'Fiche de traitement',

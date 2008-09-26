@@ -827,6 +827,7 @@ sub post_invoice {
     $invamount += $diff;
   }
   $fxdiff = $form->round_amount($fxdiff,2);
+  $invnetamount += $fxdiff if $amount == 0;
   $invamount += $fxdiff;
 
   if ($form->round_amount($form->{paid} - $fxgrossamount,2) == 0) {

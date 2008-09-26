@@ -56,10 +56,8 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.6.5";
+  $self->{version} = "2.6.6";
   $self->{dbversion} = "2.6.4";
-
-  $self->{debug} = 1;
 
   bless $self, $type;
   
@@ -496,6 +494,8 @@ sub parse_template {
   my $subdir = "";
   my $err = "";
 
+  my $include = ();
+
   if ($self->{language_code}) {
     if (-f "$self->{templates}/$self->{language_code}/$self->{IN}") {
       open(IN, "$self->{templates}/$self->{language_code}/$self->{IN}") or $self->error("$self->{IN} : $!");
@@ -540,25 +540,25 @@ sub parse_template {
     $var = $_;
 
     # detect pagebreak block and its parameters
-    if (/\s*<%pagebreak ([0-9]+) ([0-9]+) ([0-9]+)%>/) {
+    if (/<%pagebreak ([0-9]+) ([0-9]+) ([0-9]+)%>/) {
       $chars_per_line = $1;
       $lines_on_first_page = $2;
       $lines_on_second_page = $3;
       
       while ($_ = shift) {
-        last if (/\s*<%end pagebreak%>/);
+        last if (/<%end pagebreak%>/);
         $pagebreak .= $_;
       }
     }
 
     
-    if (/\s*<%foreach /) {
+    if (/<%foreach /) {
       
       # this one we need for the count
       chomp $var;
-      $var =~ s/\s*<%foreach (.+?)%>/$1/;
+      $var =~ s/.*?<%foreach (.+?)%>/$1/;
       while ($_ = shift) {
-	last if (/\s*<%end $var%>/);
+	last if (/<%end $var%>/);
 
 	# store line in $par
 	$par .= $_;
@@ -617,14 +617,14 @@ sub parse_template {
     }
 
     # if not comes before if!
-    if (/\s*<%if not /) {
+    if (/<%if not /) {
       # check if it is not set and display
       chop;
-      s/\s*<%if not (.+?)%>/$1/;
+      s/.*?<%if not (.+?)%>/$1/;
 
       if (! $self->{$_}) {
 	while ($_ = shift) {
-	  last if (/\s*<%end /);
+	  last if (/<%end /);
 
 	  # store line in $par
 	  $par .= $_;
@@ -634,20 +634,20 @@ sub parse_template {
 	
       } else {
 	while ($_ = shift) {
-	  last if (/\s*<%end /);
+	  last if (/<%end /);
 	}
 	next;
       }
     }
  
-    if (/\s*<%if /) {
+    if (/<%if /) {
       # check if it is set and display
       chop;
-      s/\s*<%if (.+?)%>/$1/;
+      s/.*?<%if (.+?)%>/$1/;
 
       if ($self->{$_}) {
 	while ($_ = shift) {
-	  last if (/\s*<%end /);
+	  last if (/<%end /);
 
 	  # store line in $par
 	  $par .= $_;
@@ -657,34 +657,34 @@ sub parse_template {
 	
       } else {
 	while ($_ = shift) {
-	  last if (/\s*<%end /);
+	  last if (/<%end /);
 	}
 	next;
       }
     }
    
     # check for <%include filename%>
-    if (/\s*<%include /) {
+    if (/<%include /) {
       
       # get the filename
       chomp $var;
-      $var =~ s/\s*<%include (.+?)%>/$1/;
+      $var =~ s/.*?<%include (.+?)%>/$1/;
 
       # mangle filename
       $var =~ s/(\/|\.\.)//g;
 
       # prevent the infinite loop!
-      next if ($self->{"$var"});
+      next if ($include{$var});
 
-      unless (open(INC, "$self->{templates}/$var")) {
+      unless (open(INC, "$self->{templates}/$self->{language_code}/$var")) {
         $err = $!;
 	$self->cleanup;
-	$self->error("$self->{templates}/$var : $err");
+	$self->error("$self->{templates}/$self->{language_code}/$var : $err");
       }
       unshift(@_, <INC>);
       close(INC);
 
-      $self->{"$var"} = 1;
+      $include{$var} = 1;
 
       next;
     }

@@ -1497,9 +1497,13 @@ sub requirements {
 
   $form->sort_order();
 
-  my ($transdatefrom, $transdateto) = $form->from_to($form->{year}, '01', 12);
-  $where .= qq| AND a.transdate >= '$transdatefrom'
-		AND a.transdate <= '$transdateto'|;
+  my ($transdatefrom, $transdateto);
+  if ($form->{year}) {
+    ($transdatefrom, $transdateto) = $form->from_to($form->{year}, '01', 12);
+    
+    $where .= qq| AND a.transdate >= '$transdatefrom'
+		  AND a.transdate <= '$transdateto'|;
+  }
     
   $query = qq|SELECT p.id, p.partnumber, p.description,
               sum(i.qty) AS qty, p.onhand,
@@ -1531,7 +1535,7 @@ sub requirements {
   my $sth = $dbh->prepare($query);
 
   # query for orders
-  $query = qq|SELECT qty
+  $query = qq|SELECT sum(qty) - sum(ship)
 	      FROM orderitems i
 	      JOIN oe a ON (i.trans_id = a.id)
 	      WHERE i.parts_id = ?
@@ -1541,7 +1545,7 @@ sub requirements {
 
   my $soth = $dbh->prepare($query);
   
-  $query = qq|SELECT qty
+  $query = qq|SELECT sum(qty) - sum(ship)
 	      FROM orderitems i
 	      JOIN oe a ON (i.trans_id = a.id)
 	      WHERE i.parts_id = ?

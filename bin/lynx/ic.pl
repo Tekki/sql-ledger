@@ -111,7 +111,7 @@ sub link_part {
   if ($form->{item} eq 'service') {
     $form->{readonly} = 1 if $myconfig{acs} =~ /Goods \& Services--Add Service/;
     $form->error($locale->text('Cannot create Service').";".$locale->text('Income account does not exist!')) if ! @{ $form->{IC_links}{IC_income} };
-    $form->error($locale->text('Cannot create Part').";".$locale->text('Expense account does not exist!')) if ! @{ $form->{IC_links}{IC_expense} };
+    $form->error($locale->text('Cannot create Service').";".$locale->text('Expense account does not exist!')) if ! @{ $form->{IC_links}{IC_expense} };
   }
   
   if ($form->{item} eq 'assembly') {
@@ -1804,6 +1804,7 @@ sub requirements {
 
   if (@{ $form->{all_years} }) {
     # accounting years
+    $form->{selectaccountingyear} = qq|<option>\n|;
     for (@{ $form->{all_years} }) { $form->{selectaccountingyear} .= qq|<option>$_\n| }
     
     

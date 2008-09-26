@@ -840,9 +840,9 @@ sub save_member {
     $self->{dbpasswd} =~ s/\\\\/\\/g;
     $self->{dbpasswd} = unpack 'u', $self->{dbpasswd};
     
-    # check if login is in database, no error checking
-    my $dbh = DBI->connect($self->{dbconnect}, $self->{dbuser}, $self->{dbpasswd}, {AutoCommit => 0});
-
+    # check if login is in database
+    my $dbh = DBI->connect($self->{dbconnect}, $self->{dbuser}, $self->{dbpasswd}, {AutoCommit => 0}) or $self->error($DBI::errstr);
+    
     # add login to employee table if it does not exist
     my $login = $self->{login};
     $login =~ s/@.*//;

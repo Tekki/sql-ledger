@@ -1937,6 +1937,8 @@ sub generate_orders {
 
   my $description;
   my $unit;
+
+  my $sellprice;
   
   foreach $vendor_id (keys %a) {
     
@@ -1979,7 +1981,12 @@ sub generate_orders {
     
     foreach my $parts_id (keys %{ $a{$vendor_id} }) {
 
-      my $sellprice = $form->round_amount($a{$vendor_id}{$parts_id}{lastcost} / $form->{$curr} * $form->{$a{$vendor_id}{$parts_id}{curr}}, 2);
+      if (($form->{$curr} * $form->{$a{$vendor_id}{$parts_id}{curr}}) > 0) {
+	$sellprice = $a{$vendor_id}{$parts_id}{lastcost} / $form->{$curr} * $form->{$a{$vendor_id}{$parts_id}{curr}};
+      } else {
+	$sellprice = $a{$vendor_id}{$parts_id}{lastcost};
+      }
+      $sellprice = $form->round_amount($sellprice, 2);
       
       my $linetotal = $form->round_amount($sellprice * $a{$vendor_id}{$parts_id}{qty}, 2);
        
@@ -2184,7 +2191,7 @@ sub consolidate_orders {
 
       # add items
       foreach $item (@orderitems) {
-	$item->{project_id} *= 1;
+	for (qw(qty sellprice discount project_id ship)) { $item->{$_} *= 1 }
 	$query = qq|INSERT INTO orderitems (
 		    trans_id, parts_id, description,
 		    qty, sellprice, discount,

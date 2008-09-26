@@ -1704,11 +1704,9 @@ sub send_email {
 
   $form->{subject} = $locale->text('Statement').qq| - $form->{todate}| unless $form->{subject};
   $form->isblank("email", $locale->text('E-mail address missing!'));
-  
+
   RP->aging(\%myconfig, \%$form);
   
-  $form->{"statement_1"} = 1;
-
   &print_form;
   
   $form->redirect($locale->text('Statement sent to')." $form->{$form->{ct}}");
@@ -2129,28 +2127,56 @@ sub list_payments {
   }
   
   # construct href
-  $account = $form->escape($form->{account});
   $title = $form->escape($form->{title});
-  $department = $form->escape($form->{department});
   $form->{paymentaccounts} =~ s/ /%20/g;
-  $source = $form->escape($form->{source});
-  $memo = $form->escape($form->{memo});
   
-  $href = "$form->{script}?path=$form->{path}&direction=$form->{direction}&oldsort=$form->{oldsort}&action=list_payments&till=$form->{till}&login=$form->{login}&sessionid=$form->{sessionid}&fromdate=$form->{fromdate}&todate=$form->{todate}&fx_transaction=$form->{fx_transaction}&db=$form->{db}&l_subtotal=$form->{l_subtotal}&prepayment=$form->{prepayment}&title=$title&account=$account&department=$department&paymentaccounts=$form->{paymentaccounts}&source=$source&memo=$memo";
-
-  # construct callback
-  $account = $form->escape($form->{account},1);
-  $title = $form->escape($form->{title},1);
-  $department = $form->escape($form->{department},1);
-  $source = $form->escape($form->{source},1);
-  $memo = $form->escape($form->{memo},1);
+  $href = "$form->{script}?path=$form->{path}&direction=$form->{direction}&sort=$form->{sort}&oldsort=$form->{oldsort}&action=list_payments&till=$form->{till}&login=$form->{login}&sessionid=$form->{sessionid}&fromdate=$form->{fromdate}&todate=$form->{todate}&fx_transaction=$form->{fx_transaction}&db=$form->{db}&l_subtotal=$form->{l_subtotal}&prepayment=$form->{prepayment}&paymentaccounts=$form->{paymentaccounts}&title=".$form->escape($form->{title});
   
   $form->sort_order();
 
-  $form->{callback} = "$form->{script}?path=$form->{path}&direction=$form->{direction}&oldsort=$form->{oldsort}&action=list_payments&till=$form->{till}&login=$form->{login}&sessionid=$form->{sessionid}&fromdate=$form->{fromdate}&todate=$form->{todate}&fx_transaction=$form->{fx_transaction}&db=$form->{db}&l_subtotal=$form->{l_subtotal}&prepayment=$form->{prepayment}&title=$title&account=$account&department=$department&paymentaccounts=$form->{paymentaccounts}&source=$source&memo=$memo&sort=$form->{sort}";
-  $callback = $form->escape($form->{callback});
+  $form->{callback} = "$form->{script}?path=$form->{path}&direction=$form->{direction}&sort=$form->{sort}&oldsort=$form->{oldsort}&action=list_payments&till=$form->{till}&login=$form->{login}&sessionid=$form->{sessionid}&fromdate=$form->{fromdate}&todate=$form->{todate}&fx_transaction=$form->{fx_transaction}&db=$form->{db}&l_subtotal=$form->{l_subtotal}&prepayment=$form->{prepayment}&paymentaccounts=$form->{paymentaccounts}&title=".$form->escape($form->{title},1);
 
-  
+  if ($form->{account}) {
+    $callback .= "&account=".$form->escape($form->{account},1);
+    $href .= "&account=".$form->escape($form->{account});
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Account')." : $form->{account}";
+  }
+  if ($form->{department}) {
+    $callback .= "&department=".$form->escape($form->{department},1);
+    $href .= "&department=".$form->escape($form->{department});
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Department')." : $form->{department}";
+  }
+  if ($form->{description}) {
+    $callback .= "&description=".$form->escape($form->{description},1);
+    $href .= "&description=".$form->escape($form->{description});
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Description')." : $form->{description}";
+  }
+  if ($form->{source}) {
+    $callback .= "&source=".$form->escape($form->{source},1);
+    $href .= "&source=".$form->escape($form->{source});
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Source')." : $form->{source}";
+  }
+  if ($form->{memo}) {
+    $callback .= "&memo=".$form->escape($form->{memo},1);
+    $href .= "&memo=".$form->escape($form->{memo});
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Memo')." : $form->{memo}";
+  }
+  if ($form->{fromdate}) {
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('From')."&nbsp;".$locale->date(\%myconfig, $form->{fromdate}, 1);
+  }
+  if ($form->{todate}) {
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('To')."&nbsp;".$locale->date(\%myconfig, $form->{todate}, 1);
+  }
+
+  $callback = $form->escape($form->{callback});
+ 
   $column_header{name} = "<th><a class=listheading href=$href&sort=name>".$locale->text('Description')."</a></th>";
   $column_header{transdate} = "<th><a class=listheading href=$href&sort=transdate>".$locale->text('Date')."</a></th>";
   $column_header{paid} = "<th class=listheading>".$locale->text('Amount')."</a></th>";
@@ -2161,16 +2187,6 @@ sub list_payments {
   $column_header{employee} = "<th><a class=listheading href=$href&sort=employee>".$locale->text('Salesperson')."</a></th>";
   $column_header{till} = "<th><a class=listheading href=$href&sort=till>".$locale->text('Till')."</a></th>";
   
-
-  if ($form->{fromdate}) {
-    $option .= "\n<br>" if ($option);
-    $option .= $locale->text('From')."&nbsp;".$locale->date(\%myconfig, $form->{fromdate}, 1);
-  }
-  if ($form->{todate}) {
-    $option .= "\n<br>" if ($option);
-    $option .= $locale->text('To')."&nbsp;".$locale->date(\%myconfig, $form->{todate}, 1);
-  }
-
   @column_index = @columns;
   $colspan = $#column_index + 1;
 

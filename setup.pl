@@ -37,7 +37,7 @@ $latex = `latex -version`;
 	    10 => { url => "http://ovh.dl.sourceforge.net/sourceforge/sql-ledger", site => "France", locale => fr },
 	    11 => { url => "http://mesh.dl.sourceforge.net/sourceforge/sql-ledger", site => "Germany", locale => de },
 	    12 => { url => "http://citkit.dl.sourceforge.net/sourceforge/sql-ledger", site => "Russia", locale => ru },
-	    13 => { url => "http://optusnet.dl.sourceforge.net/sourceforge/sql-ledger", site => "Sidney, Australia", locale => au },
+	    13 => { url => "http://optusnet.dl.sourceforge.net/sourceforge/sql-ledger", site => "Sydney, Australia", locale => au },
 	    14 => { url => "http://nchc.dl.sourceforge.net/sourceforge/sql-ledger", site => "Taiwan", locale => tw },
 	    15 => { url => "http://jaist.dl.sourceforge.net/sourceforge/sql-ledger", site => "Japan", locale => jp }
 	  );
