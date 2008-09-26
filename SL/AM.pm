@@ -1445,6 +1445,32 @@ sub backup {
     }
   }
   
+  # create sequences
+  foreach $item (@sequences) {
+    if ($myconfig->{dbdriver} eq 'DB2') {
+      $query = qq|SELECT NEXTVAL FOR $item FROM sysibm.sysdummy1|;
+    } else {
+      $query = qq|SELECT last_value FROM $item|;
+    }
+    
+    my ($id) = $dbh->selectrow_array($query);
+  
+    if ($myconfig->{dbdriver} eq 'DB2') {
+      print OUT qq|DROP SEQUENCE $item RESTRICT
+CREATE SEQUENCE $item AS INTEGER START WITH $id INCREMENT BY 1 MAXVALUE 2147483647 MINVALUE 1 CACHE 5;\n|;
+    } else {
+      if ($myconfig->{dbdriver} eq 'Pg') {
+	print OUT qq|CREATE SEQUENCE $item;
+SELECT SETVAL('$item', $id, FALSE);\n|;
+      } else {
+	print OUT qq|DROP SEQUENCE $item
+CREATE SEQUENCE $item START $id;\n|;
+      }
+    }
+  }
+ 
+  print OUT "--\n";
+
   # add schema
   print OUT @schema;
   print OUT "\n";
@@ -1480,30 +1506,6 @@ $myconfig->{dboptions};
     }
     
     $sth->finish;
-  }
-
-  # create sequences and triggers
-  foreach $item (@sequences) {
-    if ($myconfig->{dbdriver} eq 'DB2') {
-      $query = qq|SELECT NEXTVAL FOR $item FROM sysibm.sysdummy1|;
-    } else {
-      $query = qq|SELECT last_value FROM $item|;
-    }
-    
-    my ($id) = $dbh->selectrow_array($query);
-    $id;
-  
-    if ($myconfig->{dbdriver} eq 'DB2') {
-      print OUT qq|DROP SEQUENCE $item RESTRICT
-CREATE SEQUENCE $item AS INTEGER START WITH $id INCREMENT BY 1 MAXVALUE 2147483647 MINVALUE 1 CACHE 5;\n|;
-    }
-    if ($myconfig->{dbdriver} eq 'Pg') {
-      print OUT qq|CREATE SEQUENCE $item;
-SELECT SETVAL('$item', $id);\n|;
-    } else {
-      print OUT qq|DROP SEQUENCE $item
-CREATE SEQUENCE $item START $id;\n|;
-    }
   }
 
   print OUT "--\n";

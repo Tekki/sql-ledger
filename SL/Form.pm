@@ -56,7 +56,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.6.13";
+  $self->{version} = "2.6.14";
   $self->{dbversion} = "2.6.12";
 
   bless $self, $type;
@@ -1030,7 +1030,7 @@ sub rerun_latex {
   my $a = 0;
   if (-f "$self->{errfile}") {
     open(FH, "$self->{errfile}");
-    $a = grep /(longtable Warning:|Warning:.*?Lastpage)/, <FH>;
+    $a = grep /(longtable Warning:|Warning:.*?LastPage)/, <FH>;
     close(FH);
   }
 

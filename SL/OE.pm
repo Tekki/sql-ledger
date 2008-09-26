@@ -918,6 +918,8 @@ sub exchangerate_defaults {
     $eth1->finish;
   }
 
+  $form->{$form->{currency}} = $form->{exchangerate} if $form->{exchangerate};
+  $form->{$form->{currency}} ||= 1;
   $form->{$form->{defaultcurrency}} = 1;
       
 }
