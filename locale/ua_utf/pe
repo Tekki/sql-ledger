@@ -24,6 +24,7 @@ $self{texts} = {
   'Edit Group'                  => 'Редагувати групу',
   'Edit Pricegroup'             => 'Редагувати цінову групу',
   'Edit Project'                => 'Редагувати проект',
+  'Employee'                    => 'Працівник',
   'Enddate'                     => 'Дата закінчення',
   'From'                        => 'Від/З',
   'Group'                       => 'Група',

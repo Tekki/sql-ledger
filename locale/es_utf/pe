@@ -18,6 +18,7 @@ $self{texts} = {
   'Delete'                      => 'Borrar',
   'Description'                 => 'Descripción',
   'Edit Project'                => 'Editar proyecto',
+  'Employee'                    => 'Colaborador/Empleado',
   'From'                        => 'Desde',
   'Language'                    => 'Lenguaje',
   'Link Accounts'               => 'Enlazar cuentas',

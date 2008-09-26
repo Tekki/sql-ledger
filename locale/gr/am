@@ -2,9 +2,7 @@ $self{charset} = 'ISO-8859-7';
 
 $self{texts} = {
   'AP'                          => 'Αγορές',
-  'AP Transaction'              => 'Κινήση Αγοράς',
   'AR'                          => 'Πωλήσεις',
-  'AR Transaction'              => 'Κινήσεις Πωλήσεων',
   'Account'                     => 'Λογαριασμός',
   'Account Number'              => 'Κωδικός Λογαριασμού',
   'Account Number missing!'     => 'Ο κωδικός λογαριασμού λείπει',

@@ -1,8 +1,6 @@
 $self{texts} = {
   'AP'                          => 'Hutang',
-  'AP Transaction'              => 'Transkasi Hutang',
   'AR'                          => 'Piutang',
-  'AR Transaction'              => 'Transaksi Piutang',
   'Account'                     => 'Akun',
   'Account Number'              => 'Nomor Akun',
   'Account Number missing!'     => 'Nomor Akun harap diisi!',

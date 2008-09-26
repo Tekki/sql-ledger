@@ -20,6 +20,7 @@ $self{texts} = {
   'Description Translations'    => 'ترجمة مواصفات',
   'Edit Group'                  => 'تعديل مجموعة',
   'Edit Project'                => 'تعديل مشروع',
+  'Employee'                    => 'الموظف',
   'Enddate'                     => 'تاريخ نهاية العمل',
   'From'                        => 'من',
   'Group'                       => 'مجموعة',

@@ -12,7 +12,6 @@ $self{texts} = {
   'Include in Report'           => 'Raporla',
   'Notes'                       => 'Notlar:',
   'Qty'                         => 'Adet',
-  'Rate'                        => 'Oran',
   'Save'                        => 'Kaydet',
   'Subtotal'                    => 'Aratoplam',
   'To'                          => 'Bitiþ',

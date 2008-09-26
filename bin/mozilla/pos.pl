@@ -144,6 +144,15 @@ sub form_header {
 	      </tr>
 | if $form->{selectdepartment};
 
+   $employee = qq|
+	      <tr>
+	        <th align=right nowrap>|.$locale->text('Salesperson').qq|</th>
+		<td colspan=3><select name=employee>$form->{selectemployee}</select></td>
+		<input type=hidden name=selectemployee value="|.
+		$form->escape($form->{selectemployee},1).qq|">
+	      </tr>
+| if $form->{selectemployee};
+
   if ($form->{change} != $form->{oldchange}) {
     $form->{creditremaining} -= $form->{oldchange};
   }
@@ -227,12 +236,7 @@ sub form_header {
 	  </td>
 	  <td>
 	    <table>
-	      <tr>
-	        <th align=right nowrap>|.$locale->text('Salesperson').qq|</th>
-		<td colspan=3><select name=employee>$form->{selectemployee}</select></td>
-		<input type=hidden name=selectemployee value="|.
-		$form->escape($form->{selectemployee},1).qq|">
-	      </tr>
+	      $employee
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Currency').qq|</th>
 		<td><select name=currency>$form->{selectcurrency}</select></td>
@@ -425,7 +429,7 @@ sub form_footer {
       }
 
       delete $button{'Print and Post'} unless $latex;
-
+      
       for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
 
       print qq|<p>
@@ -446,6 +450,7 @@ sub form_footer {
 	  print qq| <input class=submit type=submit name=action value="$spc$item">\n| if $item;
 	}
       }
+
     }
   }
 

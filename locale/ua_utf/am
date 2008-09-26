@@ -2,9 +2,7 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'AP'                          => 'Витрати',
-  'AP Transaction'              => 'Проводка витрат',
   'AR'                          => 'Доходи',
-  'AR Transaction'              => 'Проводка доходів',
   'About'                       => 'Про програму',
   'Account'                     => 'Рахунок',
   'Account Number'              => 'Номер рахунку',

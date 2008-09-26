@@ -1,3 +1,5 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'Access Control'              => 'Контроль доступа',
   'Accounting'                  => 'Бухгалтерия',
@@ -143,3 +145,4 @@ $self{subs} = {
 };
 
 1;
+

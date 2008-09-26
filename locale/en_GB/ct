@@ -44,6 +44,7 @@ $self{subs} = {
   'list_names'                  => 'list_names',
   'list_subtotal'               => 'list_subtotal',
   'menubar'                     => 'menubar',
+  'pos'                         => 'pos',
   'pricelist'                   => 'pricelist',
   'pricelist_footer'            => 'pricelist_footer',
   'pricelist_header'            => 'pricelist_header',

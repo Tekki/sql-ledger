@@ -1,3 +1,5 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'AP Transaction'              => 'Проводка закупки',
   'AR Transaction'              => 'Проводка продаж',
@@ -185,3 +187,4 @@ $self{subs} = {
 };
 
 1;
+

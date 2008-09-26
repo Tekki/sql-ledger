@@ -2,9 +2,7 @@ $self{charset} = 'BIG5';
 
 $self{texts} = {
   'AP'                          => '應付帳款',
-  'AP Transaction'              => '應付交易',
   'AR'                          => '應收帳款',
-  'AR Transaction'              => '應收交易',
   'About'                       => '關於',
   'Account'                     => '帳戶',
   'Account Number'              => '帳戶編號',

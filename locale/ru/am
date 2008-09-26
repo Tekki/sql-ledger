@@ -2,9 +2,7 @@ $self{charset} = 'ISO-8859-5';
 
 $self{texts} = {
   'AP'                          => 'Поступления',
-  'AP Transaction'              => 'Проводка закупки',
   'AR'                          => 'Продажи',
-  'AR Transaction'              => 'Проводка продаж',
   'About'                       => 'О программе',
   'Account'                     => 'Счет',
   'Account Number'              => 'Код счета',

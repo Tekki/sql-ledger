@@ -1,3 +1,5 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'AP Transaction'              => 'Проводка закупки',
   'AP Transactions'             => 'Проводки закупки',
@@ -59,14 +61,15 @@ $self{texts} = {
   'Manager'                     => 'Менеджер',
   'Name'                        => 'Наименование',
   'Name missing!'               => 'Пропущено наименование!',
+  'No.'                         => 'Ном.',
   'Notes'                       => 'Комментарии',
   'Number'                      => 'код',
   'Open'                        => 'Открыть',
   'Order'                       => 'Заказ клиента',
   'Orphaned'                    => 'Без проводок',
+  'POS'                         => 'ККМ',
   'Partnumber'                  => 'Код',
   'Phone'                       => 'Тел.',
-  'Pos'                         => 'ККМ',
   'Pricegroup'                  => 'Тип цен',
   'Pricelist'                   => 'Прайслист',
   'Project Number'              => 'Код проекта',
@@ -144,6 +147,7 @@ $self{subs} = {
   'list_names'                  => 'list_names',
   'list_subtotal'               => 'list_subtotal',
   'menubar'                     => 'menubar',
+  'pos'                         => 'pos',
   'pricelist'                   => 'pricelist',
   'pricelist_footer'            => 'pricelist_footer',
   'pricelist_header'            => 'pricelist_header',
@@ -169,6 +173,7 @@ $self{subs} = {
   'Новый_поставщик' => 'add_vendor',
   'Продолжить'        => 'continue',
   'Удалить'              => 'delete',
+  'ККМ'                      => 'pos',
   'Прайслист'          => 'pricelist',
   'Заказ_поставщику' => 'purchase_order',
   'Резервирование' => 'quotation',
@@ -183,3 +188,4 @@ $self{subs} = {
 };
 
 1;
+

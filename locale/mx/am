@@ -1,8 +1,6 @@
 $self{texts} = {
   'AP'                          => 'Ctas. x pagar',
-  'AP Transaction'              => 'Movimiento CxP',
   'AR'                          => 'Ctas. x cobrar',
-  'AR Transaction'              => 'Movimiento CxC',
   'About'                       => 'Acerca de',
   'Account'                     => 'Cuenta',
   'Account Number'              => 'Número de cuenta',

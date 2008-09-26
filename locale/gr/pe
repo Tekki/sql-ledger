@@ -20,6 +20,7 @@ $self{texts} = {
   'Description'                 => 'Περιγραφή',
   'Description Translations'    => 'Περιγραφή Μεταφράσεων',
   'Edit Project'                => 'Επεξεργασία έργου',
+  'Employee'                    => 'Υπάλληλος',
   'From'                        => 'Από',
   'Group'                       => 'Ομάδα',
   'Income'                      => 'Εισόδημα',

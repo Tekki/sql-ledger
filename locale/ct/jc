@@ -1,6 +1,7 @@
 $self{texts} = {
   'Accounting Menu'             => 'Menú Comptable',
   'Amount'                      => 'Total',
+  'Closed'                      => 'Tancat',
   'Confirm!'                    => 'Confirmar!',
   'Continue'                    => 'Continuar',
   'Date'                        => 'Data',
@@ -10,8 +11,8 @@ $self{texts} = {
   'ID'                          => 'ID',
   'Include in Report'           => 'Incloure en l\'Informe',
   'Notes'                       => 'Notes',
+  'Open'                        => 'Obert',
   'Qty'                         => 'Quantitat',
-  'Rate'                        => 'Tarifa',
   'Save'                        => 'Guardar',
   'Screen'                      => 'Pantalla',
   'Subtotal'                    => 'Subtotal',

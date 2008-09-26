@@ -2,9 +2,7 @@ $self{charset} = 'ISO-8859-2';
 
 $self{texts} = {
   'AP'                          => 'Szállítók',
-  'AP Transaction'              => 'Szállító tranzakció',
   'AR'                          => 'Vevõk',
-  'AR Transaction'              => 'Vevõ tranzakció',
   'About'                       => ' ',
   'Account'                     => 'Számla',
   'Account Number'              => 'Számlaszám',

@@ -2,9 +2,7 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'AP'                          => 'Verbindlichkeiten',
-  'AP Transaction'              => 'Eingangsbuchung',
   'AR'                          => 'Forderungen',
-  'AR Transaction'              => 'Ausgangsbuchung',
   'Account'                     => 'Konto',
   'Account Number'              => 'Kontonummer',
   'Account Number missing!'     => 'Kontonummer fehlt!',

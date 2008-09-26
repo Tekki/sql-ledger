@@ -25,6 +25,7 @@ $self{texts} = {
   'Edit Group'                  => '编辑组',
   'Edit Pricegroup'             => '编辑价格组',
   'Edit Project'                => '编辑方案',
+  'Employee'                    => '职员',
   'Enddate'                     => '结束日',
   'From'                        => '从',
   'Group'                       => '组',

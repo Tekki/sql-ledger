@@ -1,3 +1,5 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'Add Purchase Order'          => 'Новый заказ поставщика',
   'Add Quotation'               => 'Новое резервирование',
@@ -133,3 +135,4 @@ $self{subs} = {
 };
 
 1;
+

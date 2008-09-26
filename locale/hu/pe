@@ -20,6 +20,7 @@ $self{texts} = {
   'Description'                 => 'Szöveges leírás',
   'Edit Group'                  => 'Csoport módosítása',
   'Edit Project'                => 'Projekt módosítása',
+  'Employee'                    => 'Alkalmazott',
   'From'                        => 'Mikortól:',
   'Group'                       => 'Csoport',
   'Group deleted!'              => 'Csoport törölve!',

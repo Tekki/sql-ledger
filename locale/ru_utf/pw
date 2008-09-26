@@ -1,3 +1,5 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'Continue'                    => 'Продолжить',
   'Password'                    => 'Пароль',
@@ -10,3 +12,4 @@ $self{subs} = {
 };
 
 1;
+

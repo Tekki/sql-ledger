@@ -16,6 +16,7 @@ $self{texts} = {
   'Delete'                      => 'Eyğa',
   'Description'                 => 'Skıringar',
   'Edit Project'                => 'Breyta verkefni',
+  'Employee'                    => 'Starfsmenn',
   'From'                        => 'Frá',
   'Language'                    => 'Túngumál',
   'Link Accounts'               => 'Tengja lykla',

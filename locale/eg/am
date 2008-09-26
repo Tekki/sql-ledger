@@ -2,9 +2,7 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'AP'                          => 'موردين',
-  'AP Transaction'              => 'حركة حساب مورد',
   'AR'                          => 'عملاء',
-  'AR Transaction'              => 'حركة حساب عميل',
   'About'                       => 'عن',
   'Account'                     => 'حساب',
   'Account Number'              => 'رقم حساب',

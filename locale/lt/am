@@ -2,9 +2,7 @@ $self{charset} = 'ISO-8859-13';
 
 $self{texts} = {
   'AP'                          => 'Pirkimai',
-  'AP Transaction'              => 'Pirkimo Operacijà',
   'AR'                          => 'Pardavimai',
-  'AR Transaction'              => 'Pardavimo Operacijà',
   'About'                       => 'Apie...',
   'Account'                     => 'Sàskaita',
   'Account Number'              => 'Sàskaitos numeris',

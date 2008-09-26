@@ -1,3 +1,5 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'Accounting Menu'             => 'Бухгалтерское меню',
   'Active'                      => 'Активный',
@@ -163,3 +165,4 @@ $self{subs} = {
 };
 
 1;
+

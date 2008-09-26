@@ -23,6 +23,7 @@ $self{texts} = {
   'Edit Group'                  => 'Editar Grupo',
   'Edit Pricegroup'             => 'Editar Grupo de Precios',
   'Edit Project'                => 'Editar proyecto',
+  'Employee'                    => 'Colaborador/Empleado',
   'Enddate'                     => 'Fecha final',
   'From'                        => 'Desde',
   'Group'                       => 'Grupo',

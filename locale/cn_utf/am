@@ -2,9 +2,7 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'AP'                          => '应付帐款',
-  'AP Transaction'              => '应付交易',
   'AR'                          => '应收帐款',
-  'AR Transaction'              => '应收交易',
   'About'                       => '关于',
   'Account'                     => '帐户',
   'Account Number'              => '帐户编号',

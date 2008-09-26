@@ -2,9 +2,7 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'AP'                          => 'Cartera de pagos',
-  'AP Transaction'              => 'Gestión se pago',
   'AR'                          => 'Cartera de cobros',
-  'AR Transaction'              => 'Gestión de cobro',
   'About'                       => 'Acerca de',
   'Account'                     => 'Cuenta',
   'Account Number'              => 'Número de cuenta',

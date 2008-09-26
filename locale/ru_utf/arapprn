@@ -1,3 +1,5 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'Account'                     => 'Счет',
   'Amount'                      => 'Сумма',
@@ -31,3 +33,4 @@ $self{subs} = {
 };
 
 1;
+

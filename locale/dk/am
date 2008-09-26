@@ -1,8 +1,6 @@
 $self{texts} = {
   'AP'                          => 'Kreditorer',
-  'AP Transaction'              => 'Leverandørfaktura',
   'AR'                          => 'Debitorer',
-  'AR Transaction'              => 'Debitorpostering',
   'About'                       => 'Om',
   'Account'                     => 'Konto',
   'Account Number'              => 'Kontonummer',

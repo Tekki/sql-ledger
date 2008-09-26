@@ -2,9 +2,7 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'AP'                          => 'Facturas de Proveedores',
-  'AP Transaction'              => 'Transaccion Proveedor',
   'AR'                          => 'Factura de Ventas',
-  'AR Transaction'              => 'Cuentas por Cobrar',
   'About'                       => 'Acerca de',
   'Account'                     => 'Cuenta',
   'Account Number'              => 'Número de cuenta',

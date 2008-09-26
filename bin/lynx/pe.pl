@@ -2517,7 +2517,7 @@ sub generate_sales_orders {
 	description => $form->{"description_$i"},
 	qty => $form->{"qty_$i"},
 	sellprice => $form->{"sellprice_$i"},
-	project_id => $form->{"project_id_$i"},
+	projectnumber => qq|--$form->{"project_id_$i"}|,
 	reqdate => $form->{"transdate_$i"},
 	taxaccounts => $form->{"taxaccounts_$i"},
 	jcitems => $form->{"id_$i"},
