@@ -62,7 +62,7 @@ $self{subs} = {
   'tulosta'                     => 'print',
   'poista'                      => 'remove',
   'valitse_kaikki'              => 'select_all',
-  'kyll�                       => 'yes',
+  'kyllä'                       => 'yes',
 };
 
 1;

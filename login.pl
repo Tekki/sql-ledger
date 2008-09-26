@@ -111,6 +111,8 @@ if ($form{path}) {
 
 
   if ($form{terminal}) {
+    $form{terminal} =~ s/%2f/\//gi;
+    $form{terminal} =~ s/\.\.\///g;
 
     $ARGV[0] = "path=bin/$form{terminal}&script=$script";
     map { $ARGV[0] .= "&${_}=$form{$_}" } keys %form;

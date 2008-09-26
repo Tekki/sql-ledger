@@ -1327,7 +1327,7 @@ sub order_details {
 
   $form->{text_decimal} = $c->num2text($form->{decimal} * 1);
   $form->{text_amount} = $c->num2text($whole);
-  $form->{integer_amount} = $form->format_amount($myconfig, $whole);
+  $form->{integer_amount} = $whole;
 
   # format amounts
   $form->{quototal} = $form->{ordtotal} = $form->format_amount($myconfig, $form->{ordtotal}, 2);
@@ -2185,7 +2185,7 @@ sub consolidate_orders {
       $ordnumber ||= $form->update_defaults($myconfig, $numberfld, $dbh);
     
       $query = qq|INSERT INTO oe (ordnumber)
-		  VALUES ($uid)|;
+		  VALUES ('$uid')|;
       $dbh->do($query) || $form->dberror($query);
 
       $query = qq|SELECT id

@@ -39,7 +39,7 @@ sub menuitem {
   my $target = ($self->{$item}{target}) ? $self->{$item}{target} : "";
 
   my $level = $form->escape($item);
-  my $str = qq|<a href=$module?path=$form->{path}&action=$action&level=$level&login=$form->{login}&timeout=$form->{timeout}&sessionid=$form->{sessionid}&js=$form->{js}|;
+  my $str = qq|<a href=$module?path=$form->{path}&action=$action&level=$level&login=$form->{login}&js=$form->{js}|;
 
   my @vars = qw(module action target href);
   

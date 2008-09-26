@@ -28,8 +28,30 @@
 sub getpassword {
   my ($s) = @_;
 
-  $form->{endsession} = 1;
-  $form->header;
+  my $login = ($form->{"root login"}) ? "root login" : $form->{login};
+  
+  my @d = split / +/, scalar gmtime(time);
+  my $today = "$d[0], $d[2]-$d[1]-$d[4] $d[3] GMT";
+  
+  if ($form->{stylesheet} && (-f "css/$form->{stylesheet}")) {
+    $stylesheet = qq|<LINK REL="stylesheet" HREF="css/$form->{stylesheet}" TYPE="text/css" TITLE="SQL-Ledger stylesheet">
+|;
+  }
+  
+  if ($form->{charset}) {
+    $charset = qq|<META HTTP-EQUIV="Content-Type" CONTENT="text/plain; charset=$form->{charset}">
+|;
+  }
+
+  print qq|Set-Cookie: SL-$login=; expires=$today; path=/;
+Content-Type: text/html
+
+<head>
+  <title>$form->{titlebar}</title>
+  $stylesheet
+  $charset
+</head>
+|;
 
   $sessionexpired = qq|<b><font color=red><blink>|.$locale->text('Session expired!').qq|</blink></font></b><p>| if $s;
   
@@ -58,7 +80,7 @@ function sf(){
 
 |;
 
-  for (qw(script endsession password)) { delete $form->{$_} }
+  for (qw(script password header)) { delete $form->{$_} }
   $form->hide_form;
   
   print qq|

@@ -1,6 +1,7 @@
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
+  'Access Denied!'              => 'Acceso negado',
   'Company'                     => 'Empresa',
   'Continue'                    => 'Continuar',
   'Dataset is newer than version!' => 'La base de datos está más actual que la versión del programa',

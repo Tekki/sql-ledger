@@ -429,7 +429,7 @@ sub invoice_details {
   $form->{decimal} = substr($form->{decimal}, 0, 2);
   $form->{text_decimal} = $c->num2text($form->{decimal} * 1);
   $form->{text_amount} = $c->num2text($whole);
-  $form->{integer_amount} = $form->format_amount($myconfig, $whole);
+  $form->{integer_amount} = $whole;
  
   $form->format_string(qw(text_amount text_decimal));
 

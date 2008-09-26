@@ -39,14 +39,14 @@ sub display {
   $menuwidth = ($ENV{HTTP_USER_AGENT} =~ /links/i) ? "240" : "155";
   $menuwidth = $myconfig{menuwidth} if $myconfig{menuwidth};
 
-  $form->header(!$form->{duplicate});
+  $form->header;
 
   print qq|
 
 <FRAMESET COLS="$menuwidth,*" BORDER="1">
 
-  <FRAME NAME="acc_menu" SRC="$form->{script}?login=$form->{login}&sessionid=$form->{sessionid}&action=acc_menu&path=$form->{path}&js=$form->{js}">
-  <FRAME NAME="main_window" SRC="am.pl?login=$form->{login}&sessionid=$form->{sessionid}&action=$form->{main}&path=$form->{path}">
+  <FRAME NAME="acc_menu" SRC="$form->{script}?login=$form->{login}&action=acc_menu&path=$form->{path}&js=$form->{js}">
+  <FRAME NAME="main_window" SRC="am.pl?login=$form->{login}&action=$form->{main}&path=$form->{path}">
 
 </FRAMESET>
 

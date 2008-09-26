@@ -2068,7 +2068,6 @@ sub config {
 
 <form method=post action=$form->{script}>
 
-<input type=hidden name=old_password value=$myconfig{password}>
 <input type=hidden name=type value=preferences>
 <input type=hidden name=role value=$myconfig{role}>
 
@@ -2114,7 +2113,7 @@ sub config {
 	    <table>
 	      <tr>
 		<th align=right>|.$locale->text('Password').qq|</th>
-		<td><input type=password name=new_password size=10 value=$myconfig{password}></td>
+		<td><input type=password name=new_password size=10 value=*></td>
 	      </tr>
 	      <tr>
 		<th align=right>|.$locale->text('Confirm').qq|</th>
@@ -2206,9 +2205,9 @@ sub save_preferences {
 
   $form->{stylesheet} = $form->{usestylesheet};
 
-  if ($form->{new_password} ne $form->{old_password}) {
-    $form->error($locale->text('Password does not match!')) if $form->{new_password} ne $form->{confirm_password};
-  }
+  $form->error($locale->text('Password does not match!')) if $form->{new_password} ne $form->{confirm_password};
+
+  $form->{password} = $form->{new_password};
 
   if (AM->save_preferences(\%myconfig, \%$form, $memberfile, $userspath)) {
     $form->redirect($locale->text('Preferences saved!'));

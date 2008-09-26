@@ -5,6 +5,7 @@
 #  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.org
 #
+#  Contributors:
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -67,7 +68,6 @@ sub login_screen {
   $form->{stylesheet} = "sql-ledger.css";
   $form->{favicon} = "sql-ledger.ico";
 
-  $form->{endsession} = 1;
   $form->header(1);
 
   if ($form->{login}) {
@@ -158,6 +158,11 @@ sub selectdataset {
     $form->{stylesheet} = "sql-ledger.css";
   }
 
+  if (-f sql-ledger.ico) {
+    $form->{favicon} = "sql-ledger.ico";
+  }
+  
+  delete $self->{sessioncookie};
   $form->header(1);
 
   print qq|
@@ -300,7 +305,7 @@ sub login {
 
       print $locale->text('done');
 
-      print "<p><a href=menu.pl?login=$form->{login}&sessionid=$form->{sessionid}&path=$form->{path}&action=display&main=company_logo&js=$form->{js}>".$locale->text('Continue')."</a>";
+      print "<p><a href=menu.pl?login=$form->{login}&path=$form->{path}&action=display&main=company_logo&js=$form->{js}>".$locale->text('Continue')."</a>";
 
       exit;
     }
@@ -308,9 +313,13 @@ sub login {
     $form->error($err[$errno]);
   }
 
+  $user->create_config("$userspath/$form->{login}.conf");
+  $form->{timeout} = $user->{timeout};
+  $form->{sessioncookie} = $user->{sessioncookie};
+
   # made it this far, setup callback for the menu
   $form->{callback} = "menu.pl?action=display";
-  for (qw(login path js)) { $form->{callback} .= "&$_=$form->{$_}" }
+  for (qw(login path js sessioncookie)) { $form->{callback} .= "&$_=$form->{$_}" }
   
   # check for recurring transactions
   if ($user->{acs} !~ /Recurring Transactions/) {
@@ -340,10 +349,7 @@ sub login {
 sub logout {
 
   $form->{callback} = "$form->{script}?path=$form->{path}&login=$form->{login}";
-
-  $form->{endsession} = 1;
-  
-  $form->redirect;
+  $form->redirect($locale->text('You are logged out'));
 
 }
 

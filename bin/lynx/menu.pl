@@ -46,7 +46,7 @@ sub display {
 
   $form->{title} = "SQL-Ledger $form->{version}";
   
-  $form->header(1);
+  $form->header;
 
   $offset = int (21 - $#menuorder)/2;
 

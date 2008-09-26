@@ -18,6 +18,7 @@ $self{texts} = {
   'Continue'                    => 'Continuar',
   'Create Chart of Accounts'    => 'Crear plan de cuentas',
   'Create Dataset'              => 'Crear base de datos',
+  'DBA'                         => 'DBA',
   'DBI not installed!'          => 'No se ha instalado DBI',
   'Database'                    => 'Base de datos',
   'Database Administration'     => 'Administración de las bases de datos',

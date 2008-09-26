@@ -1091,10 +1091,9 @@ sub save_preferences {
   foreach my $item (keys %$form) {
     $myconfig->{$item} = $form->{$item};
   }
-  
-  $myconfig->{password} = $form->{new_password} if ($form->{old_password} ne $form->{new_password});
 
   $myconfig->save_member($memberfile, $userspath);
+  $form->{sessioncookie} = $myconfig->{sessioncookie};
 
   1;
 

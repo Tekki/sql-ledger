@@ -32,7 +32,6 @@ package Inifile;
 sub new {
   my ($type, $file) = @_;
 
-  warn "$type has no copy constructor! creating a new object." if ref($type);
   $type = ref($type) || $type;
   my $self = bless {}, $type;
   $self->add_file($file) if defined $file;

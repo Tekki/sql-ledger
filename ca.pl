@@ -8,7 +8,7 @@
 #   Email: dsimader@sql-ledger.org
 #     Web: http://www.sql-ledger.org
 #
-#  Contributors:
+#  Contributors:	Tony Fraser <tony@sybaspace.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -72,6 +72,7 @@ if ($@) {
   $msg1 = $locale->text('You are logged out!');
   $msg2 = $locale->text('Login');
   $form->redirect("$msg1 <p><a href=login.pl target=_top>$msg2</a>");
+  exit;
 }
 
 # locale messages
@@ -144,8 +145,19 @@ sub check_password {
 	  $form->error($locale->text('Access Denied!'));
 	}
 	exit;
+      } else {
+        # password checked out, create session
+	if ($ENV{HTTP_USER_AGENT}) {
+	  # create new session
+	  use SL::User;
+	  $user = new User $memberfile, $form->{login};
+	  $user->{password} = $form->{password};
+	  $user->create_config("$userspath/$form->{login}.conf");
+	  $form->{sessioncookie} = $user->{sessioncookie};
+	}
       }
     } else {
+      
       if ($ENV{HTTP_USER_AGENT}) {
 	$ENV{HTTP_COOKIE} =~ s/;\s*/;/g;
 	@cookies = split /;/, $ENV{HTTP_COOKIE};
@@ -154,11 +166,42 @@ sub check_password {
 	  $cookie{$name} = $value;
 	}
 	
-	if ($form->{action} ne 'display') {
-	  if ((! $cookie{"SQL-Ledger-$form->{login}"}) || $cookie{"SQL-Ledger-$form->{login}"} ne $form->{sessionid}) {
+	if ($cookie{"SL-$form->{login}"}) {
+	  
+	  $form->{sessioncookie} = $cookie{"SL-$form->{login}"};
+	  
+	  $s = "";
+	  %ndx = ();
+	  # take cookie apart
+	  $l = length $form->{sessioncookie};
+	  
+	  for $i (0 .. $l - 1) {
+	    $j = substr($myconfig{sessionkey}, $i * 2, 2);
+	    $ndx{$j} = substr($cookie{"SL-$form->{login}"}, $i, 1);
+	  }
+
+	  for (sort keys %ndx) {
+	    $s .= $ndx{$_};
+	  }
+
+	  $l = length $form->{login};
+	  $login = substr($s, 0, $l);
+	  $time = substr($s, -10);
+	  $password = substr($s, $l, (length $s) - ($l + 10));
+
+	  # validate cookie
+	  if ((time > $time) || ($login ne $form->{login}) || ($myconfig{password} ne crypt $password, substr($form->{login}, 0, 2))) {
 	    &getpassword(1);
 	    exit;
 	  }
+
+	} else {
+
+	  if ($form->{action} ne 'display') {
+	    &getpassword(1); 
+	    exit;
+	  }
+
 	}
       } else {
 	exit;

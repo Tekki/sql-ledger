@@ -42,6 +42,7 @@ $form->error($locale->text('DBI not installed!')) if ($@);
 $form->{stylesheet} = "sql-ledger.css";
 $form->{favicon} = "favicon.ico";
 $form->{timeout} = 600;
+$form->{"root login"} = 1;
 
 require "$form->{path}/pw.pl";
 
@@ -86,7 +87,7 @@ password=
 sub adminlogin {
 
   $form->{title} = qq|SQL-Ledger $form->{version} |.$locale->text('Administration');
-  
+
   $form->header;
   
     print qq|
@@ -130,8 +131,47 @@ function sf(){
 }
 
 
+sub create_config {
+  
+  $form->{sessionkey} = "";
+  $form->{sessioncookie} = "";
+  
+  if ($form->{password}) {
+    my $t = time + $form->{timeout};
+    srand( time() ^ ($$ + ($$ << 15)) );
+    $key = "root login$form->{password}$t";
+    
+    my $i = 0;
+    my $l = length $key;
+    my $j = $l;
+    my %ndx = ();
+    my $pos;
+    
+    while ($j > 0) {
+      $pos = int rand($l);
+      next if $ndx{$pos};
+      $ndx{$pos} = 1;
+      $form->{sessioncookie} .= substr($key, $pos, 1);
+      $form->{sessionkey} .= substr("0$pos", -2);
+      $j--;
+    }
+  }
+
+  open(CONF, ">$userspath/root login.conf") or $form->error("root login.conf : $!");
+  print CONF qq|# configuration file for root login
+
+\%rootconfig = (
+sessionkey => '$form->{sessionkey}'
+);\n\n|;
+  
+  close CONF;
+
+}
+
+
 sub login {
 
+  &create_config;
   &list_users;
 
 }
@@ -139,7 +179,7 @@ sub login {
 
 sub logout {
 
-  $form->{callback} = "$form->{script}?path=$form->{path}&endsession=1";
+  $form->{callback} = "$form->{script}?path=$form->{path}";
   $form->redirect($locale->text('You are logged out'));
 
 }
@@ -254,7 +294,6 @@ sub list_users {
 
   $form->{title} = "SQL-Ledger ".$locale->text('Accounting')." ".$locale->text('Administration');
 
-  $form->{login} = "root login";
   $form->header;
 
   print qq|
@@ -280,7 +319,7 @@ sub list_users {
 |;
 
 foreach $key (sort keys %member) {
-  $href = "$script?action=edit&login=$key&path=$form->{path}&sessionid=$form->{sessionid}";
+  $href = "$script?action=edit&login=$key&path=$form->{path}";
   $href =~ s/ /%20/g;
   
   $member{$key}{templates} =~ s/^$templates\///;
@@ -447,10 +486,7 @@ sub form_header {
 
   }
   
-  $user = $form->{login};
-  $form->{login} = "root login";
   $form->header;
-  $form->{login} = $user;
  
   print qq|
 <body class=admin>
@@ -740,6 +776,7 @@ sub save {
   # no driver checked
   $form->error($locale->text('Database Driver not checked!')) unless $form->{dbdriver};
 
+ 
   # no spaces allowed in login name
   $form->{login} =~ s/ //g;
 
@@ -805,13 +842,14 @@ sub save {
     $form->isblank("dbname", $locale->text('Dataset missing!'));
     $form->isblank("dbuser", $locale->text('Database User missing!'));
   }
-    
+  
   foreach $item (keys %{$form}) {
     $myconfig->{$item} = $form->{$item};
   }
 
-  $myconfig->{password} = $form->{old_password};
-  $myconfig->{password} = $form->{new_password} if $form->{new_password} ne $form->{old_password};
+  $myconfig->{encrypted} = $form->{new_password} eq $form->{old_password};
+  $myconfig->{password} = $form->{new_password};
+
   $myconfig->{timeout} = $form->{newtimeout};
 
   delete $myconfig->{stylesheet};
@@ -820,6 +858,7 @@ sub save {
   }
   
   $myconfig->{packpw} = 1;
+  delete $myconfig->{"root login"};
   
   $myconfig->save_member($memberfile, $userspath);
 
@@ -973,7 +1012,6 @@ sub change_admin_password {
 
   $form->{title} = qq|SQL-Ledger |.$locale->text('Accounting')." ".$locale->text('Administration')." / ".$locale->text('Change Admin Password');
 
-  $form->{login} = "root login";
   $form->header;
 
   print qq|
@@ -1028,9 +1066,13 @@ sub change_password {
   $root->{password} = $form->{new_password};
   
   $root->{'root login'} = 1;
+  $root->{login} = "root login";
   $root->save_member($memberfile);
 
-  $form->{callback} = "$form->{script}?action=list_users&path=$form->{path}&sessionid=$form->{sessionid}";
+  $form->{password} = $form->{new_password};
+  &create_config;
+  
+  $form->{callback} = "$form->{script}?action=list_users&path=$form->{path}&sessionid=$form->{sessionid}&password=$form->{password}";
 
   $form->redirect($locale->text('Password changed!'));
 
@@ -1041,22 +1083,62 @@ sub check_password {
 
   $root = new User "$memberfile", "root login";
 
+  $rootname = "root login";
+  eval { require "$userspath/${rootname}.conf"; };
+  
   if ($root->{password}) {
-      
+   
     if ($form->{password}) {
       $form->{callback} .= "&password=$form->{password}" if $form->{callback};
-      $form->{sessionid} = time;
       if ($root->{password} ne crypt $form->{password}, 'ro') {
 	&getpassword;
 	exit;
       }
+
+      # create config
+      &create_config;
+      
     } else {
+
       if ($ENV{HTTP_USER_AGENT}) {
 	$ENV{HTTP_COOKIE} =~ s/;\s*/;/g;
-	%cookie = split /[=;]/, $ENV{HTTP_COOKIE};
-	$cookie = ($form->{path} eq 'bin/lynx') ? $cookie{login} : $cookie{"SQL-Ledger-root login"};
-	if (! $cookie || $cookie ne $form->{sessionid}) {
-	  &getpassword;
+	@cookies = split /;/, $ENV{HTTP_COOKIE};
+	%cookie = ();
+	foreach (@cookies) {
+	  ($name,$value) = split /=/, $_, 2;
+	  $cookie{$name} = $value;
+	}
+ 
+	$cookie = ($form->{path} eq 'bin/lynx') ? $cookie{login} : $cookie{"SL-root login"};
+
+	if ($cookie) {
+	  $form->{sessioncookie} = $cookie;
+
+	  $s = ""; 
+	  %ndx = (); 
+	  $l = length $form->{sessioncookie};
+
+	  for $i (0 .. $l - 1) {
+	    $j = substr($rootconfig{sessionkey}, $i * 2, 2);
+	    $ndx{$j} = substr($cookie, $i, 1);
+	  }
+
+	  for (sort keys %ndx) {
+	    $s .= $ndx{$_}; 
+	  }
+
+	  $l = length 'root login';
+	  $login = substr($s, 0, $l);
+	  $time = substr($s, -10);
+	  $password = substr($s, $l, (length $s) - ($l + 10));
+
+	  if ((time > $time) || ($login ne 'root login') || ($root->{password} ne crypt $password, 'ro')) {
+	    &getpassword; 
+	    exit; 
+	  }
+	  
+	} else {
+	  &getpassword; 
 	  exit;
 	}
       }
@@ -1120,7 +1202,6 @@ sub dbselect_source {
 
  $form->{title} = "SQL-Ledger ".$locale->text('Accounting')." / ".$locale->text('Database Administration');
   
-  $form->{login} = "root login";
   $form->header;
 
   print qq|
@@ -1204,7 +1285,6 @@ sub update_dataset {
 
   $form->{title} = "SQL-Ledger ".$locale->text('Accounting')." ".$locale->text('Database Administration')." / ".$locale->text('Update Dataset');
   
-  $form->{login} = "root login";
   $form->header;
 
   print qq|
@@ -1343,7 +1423,6 @@ sub create_dataset {
   
   $form->{title} = "SQL-Ledger ".$locale->text('Accounting')." ".$locale->text('Database Administration')." / ".$locale->text('Create Dataset');
   
-  $form->{login} = "root login";
   $form->header;
 
   print qq|
@@ -1447,7 +1526,6 @@ sub dbcreate {
   
   $form->{title} = "SQL-Ledger ".$locale->text('Accounting')." ".$locale->text('Database Administration')." / ".$locale->text('Create Dataset');
 
-  $form->{login} = "root login";
   $form->header;
 
   print qq|
@@ -1491,7 +1569,6 @@ sub delete_dataset {
 
   $form->{title} = "SQL-Ledger ".$locale->text('Accounting')." ".$locale->text('Database Administration')." / ".$locale->text('Delete Dataset');
 
-  $form->{login} = "root login";
   $form->header;
 
   print qq|
@@ -1555,7 +1632,6 @@ sub dbdelete {
 
   $form->{title} = "SQL-Ledger ".$locale->text('Accounting')." ".$locale->text('Database Administration')." / ".$locale->text('Delete Dataset');
 
-  $form->{login} = "root login";
   $form->header;
 
   print qq|

@@ -104,10 +104,11 @@ sub login {
 	return -1;
       }
     }
+   
+    $self->{password} = $form->{password};
+    $self->create_config("$userspath/$self->{login}.conf");
     
-    unless (-f "$userspath/$self->{login}.conf") {
-      $self->create_config("$userspath/$self->{login}.conf");
-    }
+    $self->{password} = $form->{password};
     
     do "$userspath/$self->{login}.conf";
     $myconfig{dbpasswd} = unpack 'u', $myconfig{dbpasswd};
@@ -744,8 +745,36 @@ sub script_version {
 sub create_config {
   my ($self, $filename) = @_;
 
-
   @config = &config_vars;
+
+  my $password = $self->{password};
+  my $key = "";
+  
+  $self->{sessionkey} = "";
+  $self->{sessioncookie} = "";
+  
+  if ($self->{password}) {
+    my $t = time + $self->{timeout};
+    srand( time() ^ ($$ + ($$ << 15)) );
+    $key = "$self->{login}$self->{password}$t";
+
+    my $i = 0;
+    my $l = length $key;
+    my $j = $l;
+    my %ndx = ();
+    my $pos;
+
+    while ($j > 0) {
+      $pos = int rand($l);
+      next if $ndx{$pos};
+      $ndx{$pos} = 1;
+      $self->{sessioncookie} .= substr($key, $pos, 1);
+      $self->{sessionkey} .= substr("0$pos", -2);
+      $j--;
+    }
+    
+    $self->{password} = crypt $self->{password}, substr($self->{login}, 0, 2) if ! $self->{encrypted};
+  }
 
   open(CONF, ">$filename") or $self->error("$filename : $!");
   
@@ -766,6 +795,13 @@ sub create_config {
 
   close CONF;
 
+  foreach $key (sort @config) {
+    $self->{$key} =~ s/\\\\/\\/g;
+    $self->{$key} =~ s/\\'/'/g;
+  }
+
+  $self->{password} = $password;
+  
 }
 
 
@@ -813,7 +849,8 @@ sub save_member {
     chop $self->{dbpasswd};
   }
   
-  if ($self->{password} ne $self->{old_password}) {
+  my $password = $self->{password};
+  if (!$self->{encrypted}) {
     $self->{password} = crypt $self->{password}, substr($self->{login}, 0, 2) if $self->{password};
   }
   
@@ -821,6 +858,7 @@ sub save_member {
     @config = qw(password);
   } else {
     @config = &config_vars;
+    @config = grep !/^session/, @config;
   }
  
   # replace \r\n with \n
@@ -834,10 +872,9 @@ sub save_member {
   
   # create conf file
   if (! $self->{'root login'}) {
+    $self->{password} = $password;
     $self->create_config("$userspath/$self->{login}.conf");
 
-    $self->{dbpasswd} =~ s/\\'/'/g;
-    $self->{dbpasswd} =~ s/\\\\/\\/g;
     $self->{dbpasswd} = unpack 'u', $self->{dbpasswd};
     
     # check if login is in database
@@ -905,11 +942,11 @@ sub delete_login {
 
 
 sub config_vars {
-  
-  my @conf = qw(acs address businessnumber company countrycode
-             currency dateformat dbconnect dbdriver dbhost dbname dboptions
+ 
+  my @conf = qw(acs address businessnumber company countrycode currency
+             dateformat dbconnect dbdriver dbhost dbname dboptions
 	     dbpasswd dbport dbuser email fax menuwidth name numberformat
-	     password printer role sid signature stylesheet tel
+	     password printer sessionkey role sid signature stylesheet tel
 	     templates timeout vclimit);
 
   @conf;

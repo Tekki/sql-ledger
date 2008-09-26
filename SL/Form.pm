@@ -56,7 +56,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.6.17";
+  $self->{version} = "2.6.18";
   $self->{dbversion} = "2.6.12";
 
   bless $self, $type;
@@ -235,7 +235,7 @@ sub isblank {
   
 
 sub header {
-  my ($self, $init) = @_;
+  my ($self, $endsession) = @_;
 
   return if $self->{header};
 
@@ -261,12 +261,13 @@ sub header {
 
     $self->{titlebar} = ($self->{title}) ? "$self->{title} - $self->{titlebar}" : $self->{titlebar};
 
-    $self->set_cookie($init);
+    $self->set_cookie($endsession);
 
     print qq|Content-Type: text/html
 
 <head>
   <title>$self->{titlebar}</title>
+  <META NAME="robots" CONTENT="noindex,nofollow" />
   $favicon
   $stylesheet
   $charset
@@ -282,25 +283,29 @@ $self->{pre}
 
 
 sub set_cookie {
-  my ($self, $init) = @_;
+  my ($self, $endsession) = @_;
 
-  $self->{timeout} = ($self->{timeout} > 0) ? $self->{timeout} : 3600;
-  my $t = ($self->{endsession}) ? time : time + $self->{timeout};
+  $self->{timeout} ||= 3600;
+  my $t = ($endsession) ? time : time + $self->{timeout};
+  my $login = ($self->{"root login"}) ? "root login" : $self->{login};
   
   if ($ENV{HTTP_USER_AGENT}) {
-
     my @d = split / +/, scalar gmtime($t);
     my $today = "$d[0], $d[2]-$d[1]-$d[4] $d[3] GMT";
 
-    if ($init) {
-      $self->{sessionid} = time;
+    if ($login) {
+      if ($self->{sessioncookie}) {
+	print qq|Set-Cookie: SL-${login}=$self->{sessioncookie}; expires=$today; path=/;\n|;
+      } else {
+	print qq|Set-Cookie: SL-${login}=; expires=$today; path=/;\n|;
+      }
     }
-    print qq|Set-Cookie: SQL-Ledger-$self->{login}=$self->{sessionid}; expires=$today; path=/;\n| if $self->{login};
+      
   }
 
 }
 
- 
+
 sub redirect {
   my ($self, $msg) = @_;
 
