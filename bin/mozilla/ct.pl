@@ -2756,7 +2756,7 @@ sub add_transaction {
 sub ap_transaction {
 
   $form->{script} = "ap.pl";
-  $form->{type} = "ap_transaction";
+  $form->{type} = "transaction";
   &add_transaction;
 
 }
@@ -2765,7 +2765,7 @@ sub ap_transaction {
 sub ar_transaction {
 
   $form->{script} = "ar.pl";
-  $form->{type} = "ar_transaction";
+  $form->{type} = "transaction";
   &add_transaction;
 
 }

@@ -309,7 +309,8 @@ sub invoice_details {
 	$ml *= -1;
       }
 
-      push(@{ $form->{lineitems} }, { amount => $linetotal, tax => $form->round_amount($tax, $form->{precision}) });
+      $tax = $form->round_amount($tax, $form->{precision});
+      push(@{ $form->{lineitems} }, { amount => $linetotal, tax => $tax });
       push(@{ $form->{taxrates} }, join ' ', sort { $a <=> $b } @taxrates);
       
       if ($form->{"assembly_$i"}) {
@@ -537,12 +538,7 @@ sub invoice_details {
 sub delete_invoice {
   my ($self, $myconfig, $form, $spool) = @_;
 
-  my $disconnect = ($dbh) ? 0 : 1;
-
-  # connect to database, turn off autocommit
-  if (! $dbh) {
-    $dbh = $form->dbconnect_noauto($myconfig);
-  }
+  $dbh = $form->dbconnect_noauto($myconfig);
   
   &reverse_invoice($dbh, $form);
   
@@ -588,8 +584,6 @@ sub delete_invoice {
       unlink "$spool/$spoolfile" if $spoolfile;
     }
   }
-  
-  $dbh->disconnect if $disconnect;
   
   $rc;
   

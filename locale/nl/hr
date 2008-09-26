@@ -72,6 +72,8 @@ $self{texts} = {
   'To'                          => 'Tot',
   'Update'                      => 'Bijwerken',
   'User'                        => 'Gebruiker',
+  'Work Fax'                    => 'Fax (werk)',
+  'Work Mobile'                 => 'Mobiel (werk)',
   'Work Phone'                  => 'Bedrijfstelefoon',
   'Zip/Postal Code'             => 'Postcode',
 };

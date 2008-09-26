@@ -309,7 +309,8 @@ sub invoice_details {
 	$ml *= -1;
       }
 
-      push(@{ $form->{lineitems} }, { amount => $linetotal, tax => $form->round_amount($tax, $form->{precision}) });
+      $tax = $form->round_amount($tax, $form->{precision});
+      push(@{ $form->{lineitems} }, { amount => $linetotal, tax => $tax });
       push(@{ $form->{taxrates} }, join ' ', sort { $a <=> $b } @taxrates);
       
       if ($form->{"assembly_$i"}) {
@@ -916,7 +917,7 @@ sub post_invoice {
 	fxamount => $fxlinetotal,
 	project_id => $project_id };
 	
-      $ndx = $#{@{$form->{acc_trans}{lineitems}}};
+      $ndx = $#{$form->{acc_trans}{lineitems}};
 
       $form->{"sellprice_$i"} = $form->round_amount($form->{"sellprice_$i"} * $form->{exchangerate}, $decimalplaces);
   
