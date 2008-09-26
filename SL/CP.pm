@@ -487,6 +487,13 @@ sub post_payments {
 		OR c.link LIKE '%:AP:%')
 		|;
   }
+
+  # get AR/AP account
+  $query = qq|SELECT c.accno FROM chart c
+               JOIN acc_trans ac ON (ac.chart_id = c.id)
+	       WHERE trans_id = ?
+	       AND $where|;
+  my $ath = $dbh->prepare($query) || $form->dberror($query);
   
   # query to retrieve paid amount
   $query = qq|SELECT paid FROM $form->{arap}
@@ -502,12 +509,16 @@ sub post_payments {
   # go through line by line
   for my $i (1 .. $form->{rowcount}) {
 
+    $ath->execute($form->{"id_$i"});
+    ($form->{$form->{ARAP}}) = $ath->fetchrow_array;
+    $ath->finish;
+
     $form->{"paid_$i"} = $form->parse_amount($myconfig, $form->{"paid_$i"});
     $form->{"due_$i"} = $form->parse_amount($myconfig, $form->{"due_$i"});
     
     if ($form->{"$form->{vc}_id_$i"} ne $sameid) {
       # record a AR/AP with a payment
-      if ($overpayment > 0) {
+      if ($overpayment > 0 && $form->{$form->{ARAP}}) {
 	$form->{invnumber} = "";
 	OP::overpayment("", $myconfig, $form, $dbh, $overpayment, $ml, 1);
       }
@@ -615,7 +626,7 @@ sub post_payments {
   }
 
   # record a AR/AP with a payment
-  if ($overpayment > 0) {
+  if ($overpayment > 0 && $form->{$form->{ARAP}}) {
     $form->{invnumber} = "";
     OP::overpayment("", $myconfig, $form, $dbh, $overpayment, $ml, 1);
   }

@@ -1,3 +1,6 @@
+-- May 7, 2006
+-- Johan Hambraeus
+--
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1','Tillgångar ','H','','','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('10','Immateriella anläggningstillgångar ','H','','','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1010','Balanserade utgifter ','A','234','A','');
@@ -101,7 +104,7 @@ insert into chart (accno,description,charttype,gifi_accno,category,link) values 
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1389','Värdereglering av andra långfristiga fordringar','A','233','A','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1390','Värdereglering av värdepapper och långfristiga fordringar (ofördelad)','A','233','A','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('14','Lager och pågående arbeten','H','','A','');
-insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1400','Lager (gruppkonto) ','A','219','A','');
+insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1400','Lager (gruppkonto) ','A','219','A','IC');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1401','Inneliggande lager ','A','219','A','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1402','Varor på väg ','A','219','A','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1403','Konsignationslager ','A','219','A','');
@@ -456,7 +459,7 @@ insert into chart (accno,description,charttype,gifi_accno,category,link) values 
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('2992','Beräknat arvode för revision ','A','305','L','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3','Rörelsens inkomster/intäkter ','H','','L','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('30','Huvudintäkter ','H','','L','');
-insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3010','Försäljning eller arvoden/Utfört arbete ','A','400','I','AR_amount:IC_sale');
+insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3010','Försäljning eller arvoden/Utfört arbete ','A','400','I','AR_amount:IC_sale:IC_income');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3040','Försäljning av tjänster ','A','400','I','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3041','Försäljning av tjänster inom Sverige, moms 25% ','A','400','I','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3042','Försäljning av tjänster inom Sverige, moms 12% ','A','400','I','');
@@ -1125,11 +1128,11 @@ insert into chart (accno,description,charttype,gifi_accno,category,link) values 
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('8980','Övriga skatter ','A','598','E','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('8990','Resultat ','A','599/596','E','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('8999','Årets resultat','A','599/596','E','');
-
+--
 insert into tax (chart_id,rate) values ((select id from chart where accno = '2610'),0.25);
 insert into tax (chart_id,rate) values ((select id from chart where accno = '2620'),0.12);
 insert into tax (chart_id,rate) values ((select id from chart where accno = '2630'),0.06);
 insert into tax (chart_id,rate) values ((select id from chart where accno = '2640'),0);
-
+--
 update defaults set inventory_accno_id = (select id from chart where accno ='1400'), income_accno_id = (select id from chart where accno = '3010'), expense_accno_id = (select id from chart where accno = '4010'), fxgain_accno_id = (select id from chart where accno = '3960'), fxloss_accno_id = (select id from chart where accno = '7960'), curr = 'SEK:EUR:USD', weightunit = 'kg';
 

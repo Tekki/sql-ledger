@@ -39,6 +39,7 @@ $self{texts} = {
   'Message'                     => 'Boodschap',
   'Month(s)'                    => 'Maand(en)',
   'Next Date'                   => 'Volgende Datum',
+  'Nothing open!'               => 'Niets open!',
   'Number'                      => 'Code',
   'PDF'                         => 'PDF',
   'Payment'                     => 'Betaling',

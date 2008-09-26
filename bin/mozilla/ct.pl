@@ -1373,7 +1373,7 @@ sub form_header {
 
     $lang = qq|
  	  <th align=right>|.$locale->text('Language').qq|</th>
-	  <td><select name=language>$form->{selectlanguage}</select></td>
+	  <td><select name=language_code>$form->{selectlanguage}</select></td>
 |;
   }
 

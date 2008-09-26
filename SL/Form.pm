@@ -56,7 +56,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.6.9";
+  $self->{version} = "2.6.10";
   $self->{dbversion} = "2.6.7";
 
   bless $self, $type;
@@ -915,7 +915,7 @@ sub format_line {
     if ($var =~ /^if\s+not\s+/) {
       if ($str) {
 	$var =~ s/if\s+not\s+//;
-	s/<%if\s+not\s+$var%>.*?<%end\s+$var%>//s;
+	s/<%if\s+not\s+$var%>.*?(<%end\s+$var%>|$)//s;
       } else {
 	s/<%$var%>//;
       }
@@ -927,7 +927,7 @@ sub format_line {
 	s/<%$var%>//;
       } else {
 	$var =~ s/if\s+//;
-	s/<%if\s+$var%>.*?<%end\s+$var%>//s;
+	s/<%if\s+$var%>.*?(<%end\s+$var%>|$)//s;
       }
       next;
     }

@@ -566,12 +566,18 @@ sub post_invoice {
 sub reverse_invoice {
   my ($dbh, $form) = @_;
   
+  my $query = qq|SELECT id FROM ap
+                 WHERE id = $form->{id}|;
+  my ($id) = $dbh->selectrow_array($query);
+
+  return unless $id;
+  
   # reverse inventory items
-  my $query = qq|SELECT i.parts_id, p.inventory_accno_id, p.expense_accno_id,
-                 i.qty, i.allocated, i.sellprice, i.project_id
-                 FROM invoice i, parts p
-		 WHERE i.parts_id = p.id
-                 AND i.trans_id = $form->{id}|;
+  $query = qq|SELECT i.parts_id, p.inventory_accno_id, p.expense_accno_id,
+              i.qty, i.allocated, i.sellprice, i.project_id
+              FROM invoice i, parts p
+	      WHERE i.parts_id = p.id
+              AND i.trans_id = $form->{id}|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
@@ -652,7 +658,9 @@ sub reverse_invoice {
   $query = qq|DELETE FROM shipto
               WHERE trans_id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
-  
+
+  $dbh->commit;
+
 } 
 
 

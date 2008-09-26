@@ -1021,6 +1021,9 @@ sub order_details {
 
   }
 
+  delete $form->{reqdate};
+  delete $form->{projectnumber};
+  
   # sort the whole thing by project and group
   @sortlist = sort { $a->[1] cmp $b->[1] } @sortlist;
   
@@ -1636,16 +1639,18 @@ sub adj_inventory {
 
     $ith->execute($ref->{id}, $ref->{id}) || $form->dberror($query);
 
+    my $ship = $ref->{ship};
     while (my $inv = $ith->fetchrow_hashref(NAME_lc)) {
 
-      if (($qty = (($inv->{total} * $ml) - $ref->{ship})) >= 0) {
-	$qty = $inv->{qty} if ($qty > ($inv->{qty} * $ml));
+      if (($qty = (($inv->{total} * $ml) - $ship)) >= 0) {
+	$qty = $inv->{qty} * $ml if ($qty > ($inv->{qty} * $ml));
 	
 	$form->update_balance($dbh,
                               "inventory",
                               "qty",
                               qq|$oid{$myconfig->{dbdriver}} = $inv->{oid}|,
                               $qty * -1 * $ml);
+	$ship -= $qty;
       }
     }
     $ith->finish;

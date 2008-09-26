@@ -1146,6 +1146,12 @@ sub cogs {
 sub reverse_invoice {
   my ($dbh, $form) = @_;
   
+  my $query = qq|SELECT id FROM ar
+                 WHERE id = $form->{id}|;
+  my ($id) = $dbh->selectrow_array($query);
+
+  return unless $id;
+
   # reverse inventory items
   my $query = qq|SELECT i.id, i.parts_id, i.qty, i.assemblyitem, p.assembly,
 		 p.inventory_accno_id
@@ -1215,6 +1221,8 @@ sub reverse_invoice {
   $query = qq|DELETE FROM shipto
               WHERE trans_id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
+
+  $dbh->commit;
 
 }
 

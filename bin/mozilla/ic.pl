@@ -1214,6 +1214,27 @@ sub generate_report {
     $form->{warehouse} = "";
     $form->{l_warehouse} = 0;
   }
+
+  if ($form->{l_account}) {
+    for (qw(l_name l_curr l_employee)) { delete $form->{$_} }
+  } else {
+    $ok = 0; 
+    foreach $l (qw(l_name l_curr l_employee)) {
+      if ($form->{$l}) {
+	foreach $v (qw(onorder ordered rfq quoted bought sold)) {
+	  if ($form->{$v}) {
+	    $ok = 1; 
+	    last; 
+	  }
+	}
+	if (!$ok) {
+	  for (qw(onorder ordered rfq quoted bought sold)) { $form->{$_} = 1 }
+	}
+	last;
+      }
+    }
+  }
+
   if ($form->{onorder}) {
     $form->{l_ordnumber} = "Y";
     $callback .= "&onorder=$form->{onorder}";
@@ -1287,7 +1308,6 @@ sub generate_report {
       $callback .= "&transdateto=$form->{transdateto}";
       $option .= "\n<br>".$locale->text('To')."&nbsp;".$locale->date(\%myconfig, $form->{transdateto}, 1);
     }
-     
   }
   
   if ($form->{warehouse}) {
