@@ -56,7 +56,7 @@ if (-f "$form->{path}/$form->{login}_io.pl") {
 sub display_row {
   my $numrows = shift;
 
-  @column_index = qw(runningnumber partnumber description lineitemdetail qty);
+  @column_index = qw(runningnumber partnumber itemdetail description lineitemdetail qty);
 
   if ($form->{type} eq "sales_order") {
     push @column_index, "ship";
@@ -88,7 +88,7 @@ sub display_row {
   }
       
 
-  push @column_index, qw(unit sellprice discount linetotal);
+  push @column_index, qw(unit sellprice markup discount linetotal);
 
   my $colspan = $#column_index + 1;
 
@@ -97,6 +97,8 @@ sub display_row {
   
   $column_data{runningnumber} = qq|<th class=listheading nowrap>|.$locale->text('Item').qq|</th>|;
   $column_data{partnumber} = qq|<th class=listheading nowrap>|.$locale->text('Number').qq|</th>|;
+  $column_data{itemdetail} = qq|<th class=listheading nowrap></th>|;
+  $column_data{markup} = qq|<th class=listheading nowrap></th>|;
   $column_data{description} = qq|<th class=listheading nowrap>|.$locale->text('Description').qq|</th>|;
   $column_data{qty} = qq|<th class=listheading nowrap>|.$locale->text('Qty').qq|</th>|;
   $column_data{unit} = qq|<th class=listheading nowrap>|.$locale->text('Unit').qq|</th>|;
@@ -162,6 +164,7 @@ function CheckAll(v) {
   $exchangerate = $form->parse_amount(\%myconfig, $form->{exchangerate});
   $exchangerate ||= 1;
 
+  $itemdetailok = ($myconfig{acs} =~ /Goods \& Services--Add /) ? 0 : 1;
 
   $spc = substr($myconfig{numberformat},-3,1);
   for $i (1 .. $numrows) {
@@ -205,6 +208,13 @@ function CheckAll(v) {
     $discount = $form->round_amount($form->{"sellprice_$i"} * $form->{"discount_$i"}/100, $decimalplaces);
     $linetotal = $form->round_amount($form->{"sellprice_$i"} - $discount, $decimalplaces);
     $linetotal = $form->round_amount($linetotal * $form->{"qty_$i"}, $form->{precision});
+
+    $lastcost = $form->parse_amount(\%myconfig, $form->{"lastcost_$i"});
+    if ($lastcost && $myconfig{role} ne 'user') {
+      if ($lastcost) {
+	$form->{"markup_$i"} = $form->round_amount((($form->{"sellprice_$i"} / $lastcost - 1) * 100), 1);
+      }
+    }
     
     if (($rows = $form->numtextrows($form->{"description_$i"}, 46, 6)) > 1) {
       $form->{"description_$i"} = $form->quote($form->{"description_$i"});
@@ -233,14 +243,24 @@ function CheckAll(v) {
 	  <input name="${delvar}_$i" size=11 class=date title="$myconfig{dateformat}" value="$form->{"${delvar}_$i"}"></td>
 |;
 
-    $zero = ($numrows == $i) ? "" : "0";
+    $itemdetail = "<td></td>";
+    $zero = "";
+    
+    if ($numrows != $i) {
+      $zero = "0";
+      if ($itemdetailok) {
+	$itemdetail = qq|<td><a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"id_$i"}" target=_blank>?</a></td>|;
+      }
+    }
     
     $column_data{runningnumber} = qq|<td><input name="runningnumber_$i" size=3 value=$i></td>|;
     $column_data{partnumber} = qq|<td><input name="partnumber_$i" size=15 value="|.$form->quote($form->{"partnumber_$i"}).qq|" accesskey="$i" title="[Alt-$i]">$skunumber</td>|;
+    $column_data{itemdetail} = $itemdetail;
     $column_data{qty} = qq|<td align=right><input name="qty_$i" title="$form->{"onhand_$i"}" size=8 value=|.$form->format_amount(\%myconfig, $form->{"qty_$i"}).qq|></td>|;
     $column_data{ship} = qq|<td align=right><input name="ship_$i" size=8 value=|.$form->format_amount(\%myconfig, $form->{"ship_$i"}).qq|></td>|;
     $column_data{unit} = qq|<td><input name="unit_$i" size=5 value="|.$form->quote($form->{"unit_$i"}).qq|"></td>|;
     $column_data{sellprice} = qq|<td align=right><input name="sellprice_$i" size=11 value=|.$form->format_amount(\%myconfig, $form->{"sellprice_$i"}, $decimalplaces, $zero).qq|></td>|;
+    $column_data{markup} = qq|<td align=right>|.$form->format_amount(\%myconfig, $form->{"markup_$i"}, 1).qq|</td>|;
     $column_data{discount} = qq|<td align=right><input name="discount_$i" size=3 value=|.$form->format_amount(\%myconfig, $form->{"discount_$i"}).qq|></td>|;
     $column_data{linetotal} = qq|<td align=right>|.$form->format_amount(\%myconfig, $linetotal, $form->{precision}, $zero).qq|</td>|;
     $column_data{bin} = qq|<td>$form->{"bin_$i"}</td>|;
@@ -322,6 +342,7 @@ function CheckAll(v) {
       print qq|
         <tr valign=top>
 	  $delivery
+	  <td></td>
 	  $itemnotes
 	  $serial
 	</tr>
@@ -1077,7 +1098,6 @@ sub create_form {
   $form->{exchangerate} = $exchangerate if ($form->{forex} = ($exchangerate = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate}, $buysell)));
 
 
-#################
   for $i (1 .. $form->{rowcount}) {
     $form->{"discount_$i"} = $form->format_amount(\%myconfig, $form->{"discount_$i"} * 100);
     for (qw(netweight grossweight volume)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}) }
@@ -1738,11 +1758,19 @@ sub print_form {
 
     $old_form->{"${inv}number"} = $form->{"${inv}number"};
     $old_form->{dcn} = $form->{dcn};
+
+    for (1 .. $old_form->{paidaccounts}) {
+      delete $old_form->{"paid_$_"};
+    }
     
     # restore and display form
     for (keys %$old_form) { $form->{$_} = $old_form->{$_} }
     delete $form->{pre};
-
+    
+    for (1 .. $form->{paidaccounts}) {
+      $form->{"paid_$_"} = $form->parse_amount(\%myconfig, $form->{"paid_$_"});
+    }
+ 
     $form->{rowcount}--;
 
     &{ "$display_form" };

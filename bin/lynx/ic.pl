@@ -93,7 +93,6 @@ sub link_part {
   for (split /:/, $form->{currencies}) { $form->{selectcurrency} .= "$_\n" }
 
   # readonly
-###############
   if ($form->{changeup}) {
     $form->{readonly} = 1 if $myconfig{acs} =~ /Goods \& Services--Changeup/;
   }

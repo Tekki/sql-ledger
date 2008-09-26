@@ -631,10 +631,10 @@ sub im_payment {
       <tr class=listrow$j>
 |;
 
-    $total += $form->{"amount_$i"};
-    
+    $total += $form->parse_amount(\%myconfig, $form->{"amount_$i"});
+
     for (@column_index) { $column_data{$_} = qq|<td>$form->{"${_}_$i"}</td>| }
-    $column_data{amount} = qq|<td align=right>|.$form->format_amount(\%myconfig, $form->{"amount_$i"}, $form->{precision}).qq|</td>|;
+    $column_data{amount} = qq|<td align=right>$form->{"amount_$i"}</td>|;
 
     $column_data{runningnumber} = qq|<td align=right>$i</td>|;
     $column_data{exchangerate} = qq|<td><input name="exchangerate_$i" size=10 value=|.$form->format_amount(\%myconfig, $form->{"exchangerate_$i"}).qq|></td>|;
@@ -717,7 +717,7 @@ sub import_payments {
 
       if (CP->post_payment(\%myconfig, \%$newform)) {
 	$form->info(qq| $form->{"invnumber_$i"}, $form->{"description_$i"}, $form->{"companynumber_$i"}, $form->{"name_$i"}, $form->{"city_$i"}, |);
-	$form->info($form->format_amount(\%myconfig, $form->{"amount_$i"}, $form->{precision}));
+	$form->info($form->{"amount_$i"});
 	$form->info(" ... ".$locale->text('ok')."\n");
       } else {
 	$form->error($locale->text('Posting failed!'));

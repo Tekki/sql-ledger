@@ -1,8 +1,8 @@
-Upgrading from version 2.8.7 to 2.8.13
+Upgrading from version 2.8.7 to 2.8.17
 
 1. install SQL-Ledger over top
    # cd /usr/local
-   # tar zxvf sql-ledger-2.8.13.tar.gz
+   # tar zxvf sql-ledger-2.8.17.tar.gz
 
 2. fix permissions
    # chown -hR nobody:nogroup *

@@ -459,9 +459,9 @@ sub payments {
       
       if ($am) {
 	
-	if ($amount) {
+	if ($amount * 1) {
 
-	  if ($amount{$amount}) {
+	  if ($amount{$amount}->[0]->{vc}) {
 	      
 	    $i++;
     
@@ -474,7 +474,7 @@ sub payments {
 	    for (qw(id invnumber description name companynumber vc arap city paymentmethod_id)) { $form->{"${_}_$i"} = $amount{$amount}->[0]->{$_} }
 	    $form->{"amount_$i"} = $amount;
 
-	    pop @{ $amount{$amount} };
+	    shift @{ $amount{$amount} };
 	  }
 	}
       }
