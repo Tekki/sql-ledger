@@ -56,8 +56,8 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.6.6";
-  $self->{dbversion} = "2.6.4";
+  $self->{version} = "2.6.7";
+  $self->{dbversion} = "2.6.7";
 
   bless $self, $type;
   
@@ -84,7 +84,7 @@ sub escape {
 
   # for Apache 2 we escape strings twice
   if (($ENV{SERVER_SIGNATURE} =~ /Apache\/2\.(\d+)\.(\d+)/) && !$beenthere) {
-    $str = $self->escape($str, 1) if $2 < 44;
+    $str = $self->escape($str, 1) if $1 == 0 && $2 < 44;
   }
 	    
   $str =~ s/([^a-zA-Z0-9_.-])/sprintf("%%%02x", ord($1))/ge;
@@ -249,7 +249,8 @@ sub header {
     }
 
     if ($self->{favicon} && (-f "$self->{favicon}")) {
-      $favicon = qq|<LINK REL="shortcut icon" HREF="$self->{favicon}" TYPE="image/x-icon">
+      $favicon = qq|<LINK REL="icon" HREF="$self->{favicon}" TYPE="image/x-icon">
+<LINK REL="shortcut icon" HREF="$self->{favicon}" TYPE="image/x-icon">
   |;
     }
 
@@ -494,7 +495,8 @@ sub parse_template {
   my $subdir = "";
   my $err = "";
 
-  my $include = ();
+  my %include = ();
+  my $ok;
 
   if ($self->{language_code}) {
     if (-f "$self->{templates}/$self->{language_code}/$self->{IN}") {
@@ -574,40 +576,42 @@ sub parse_template {
         # Try to detect whether a manual page break is necessary
         # but only if there was a <%pagebreak ...%> block before
 	
-        if ($chars_per_line && defined $self->{$var}) {
-          my $lines = int(length($self->{description}[$i]) / $chars_per_line + 0.95);
-          my $lpp;
-	  
-          if ($current_page == 1) {
-            $lpp = $lines_on_first_page;
-          } else {
-            $lpp = $lines_on_second_page;
-          }
+	if ($var eq 'number' || $var eq 'part' || $var eq 'service') {
+	  if ($chars_per_line && defined $self->{$var}) {
+	    my $lines = int((length($self->{description}[$i]) + length($self->{itemnotes}[$i])) / $chars_per_line + 0.95);
+	    my $lpp;
+	    
+	    if ($current_page == 1) {
+	      $lpp = $lines_on_first_page;
+	    } else {
+	      $lpp = $lines_on_second_page;
+	    }
 
-          # Yes we need a manual page break
-          if (($current_line + $lines) >= $lpp) {
-            my $pb = $pagebreak;
-	    
-            # replace the special variables <%sumcarriedforward%>
-            # and <%lastpage%>
-	    
-            my $psum = $self->format_amount($myconfig, $sum, 2);
-            $pb =~ s/<%sumcarriedforward%>/$psum/g;
-            $pb =~ s/<%lastpage%>/$current_page/g;
-            
-	    # only "normal" variables are supported here
-            # (no <%if, no <%foreach, no <%include)
-            
-	    $pb =~ s/<%(.+?)%>/$self->{$1}/g;
-            
-	    # page break block is ready to rock
-            print(OUT $pb);
-            $current_page++;
-            $current_line = 1;
-          }
-          $current_line += $lines;
-        }
-        $sum += $self->parse_amount($myconfig, $self->{linetotal}[$i]);
+	    # Yes we need a manual page break
+	    if (($current_line + $lines) >= $lpp) {
+	      my $pb = $pagebreak;
+	      
+	      # replace the special variables <%sumcarriedforward%>
+	      # and <%lastpage%>
+	      
+	      my $psum = $self->format_amount($myconfig, $sum, 2);
+	      $pb =~ s/<%sumcarriedforward%>/$psum/g;
+	      $pb =~ s/<%lastpage%>/$current_page/g;
+	      
+	      # only "normal" variables are supported here
+	      # (no <%if, no <%foreach, no <%include)
+	      
+	      $pb =~ s/<%(.+?)%>/$self->{$1}/g;
+	      
+	      # page break block is ready to rock
+	      print(OUT $pb);
+	      $current_page++;
+	      $current_line = 1;
+	    }
+	    $current_line += $lines;
+	  }
+	  $sum += $self->parse_amount($myconfig, $self->{linetotal}[$i]);
+	}
 
 	# don't parse par, we need it for each line
 	print OUT $self->format_line($par, $i);
@@ -644,11 +648,17 @@ sub parse_template {
       # check if it is set and display
       chop;
       s/.*?<%if (.+?)%>/$1/;
-
-      if ($self->{$_}) {
+      
+      if (/\s/) {
+	@a = split;
+	$ok = eval "$self->{$a[0]} $a[1] $a[2]";
+      } else {
+	$ok = $self->{$_};
+      }
+	
+      if ($ok) {
 	while ($_ = shift) {
 	  last if (/<%end /);
-
 	  # store line in $par
 	  $par .= $_;
 	}
@@ -670,11 +680,11 @@ sub parse_template {
       chomp $var;
       $var =~ s/.*?<%include (.+?)%>/$1/;
 
-      # mangle filename
+      # remove / .. for security reasons
       $var =~ s/(\/|\.\.)//g;
 
-      # prevent the infinite loop!
-      next if ($include{$var});
+      # assume loop after 10 includes of the same file
+      next if ($include{$var} > 10);
 
       unless (open(INC, "$self->{templates}/$self->{language_code}/$var")) {
         $err = $!;
@@ -684,7 +694,7 @@ sub parse_template {
       unshift(@_, <INC>);
       close(INC);
 
-      $include{$var} = 1;
+      $include{$var}++;
 
       next;
     }
@@ -1467,7 +1477,10 @@ sub all_employees {
   if ($transdate) {
     $query .= qq| AND (startdate IS NULL OR startdate <= '$transdate')
                   AND (enddate IS NULL OR enddate >= '$transdate')|;
+  } else {
+    $query .= qq| AND enddate IS NULL|;
   }
+  
   if ($sales) {
     $query .= qq| AND sales = '1'|;
   }
@@ -1658,8 +1671,9 @@ sub create_links {
   }
   $sth->finish;
 
+  my $arap = ($vc eq 'customer') ? 'ar' : 'ap';
+  
   if ($self->{id}) {
-    my $arap = ($vc eq 'customer') ? 'ar' : 'ap';
     
     $query = qq|SELECT a.invnumber, a.transdate,
                 a.${vc}_id, a.datepaid, a.duedate, a.ordnumber,
@@ -1955,7 +1969,7 @@ sub update_status {
   my $dbh = $self->dbconnect_noauto($myconfig);
 
   my %queued = split / +/, $self->{queued};
-  
+  my $spoolfile = ($queued{$self->{formname}}) ? "'$queued{$self->{formname}}'" : 'NULL';
   my $query = qq|DELETE FROM status
  	         WHERE formname = '$self->{formname}'
 	         AND trans_id = $self->{id}|;
@@ -1966,7 +1980,7 @@ sub update_status {
   
   $query = qq|INSERT INTO status (trans_id, printed, emailed,
 	      spoolfile, formname) VALUES ($self->{id}, '$printed',
-	      '$emailed', '$queued{$self->{formname}}',
+	      '$emailed', $spoolfile,
 	      '$self->{formname}')|;
   $dbh->do($query) || $self->dberror($query);
 

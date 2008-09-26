@@ -58,7 +58,6 @@ $self{texts} = {
   'Open'                        => 'Avoinna',
   'Order'                       => 'Tilaus',
   'Orphaned'                    => 'Hylätyt',
-  'Partnumber'                  => 'Tarvikenumero',
   'Phone'                       => 'Puhelin',
   'Pricegroup'                  => 'Hintaryhmä',
   'Pricelist'                   => 'Hintalista',

@@ -28,26 +28,25 @@ $self{texts} = {
   'July'                        => '七月',
   'Jun'                         => '六月',
   'June'                        => '六月',
-  'List Transactions'           => '列出記錄',
+  'List Transactions'           => '列出所有交易',
   'Mar'                         => '三月',
   'March'                       => '三月',
   'May'                         => '五月',
   'May '                        => '五月',
-  'Month'                       => '月份',
+  'Month'                       => '月',
   'Nov'                         => '十一月',
   'November'                    => '十一月',
   'Oct'                         => '十月',
   'October'                     => '十月',
-  'Period'                      => '時期',
-  'Project Number'              => '方案號碼',
-  'Quarter'                     => '季度',
-  'R'                           => '對',
-  'Reference'                   => '參照',
+  'Period'                      => '期間',
+  'Project Number'              => '項目號碼',
+  'Quarter'                     => '季',
+  'Reference'                   => '參考資料',
   'Sep'                         => '九月',
   'September'                   => '九月',
   'Subtotal'                    => '小計',
   'To'                          => '至',
-  'Year'                        => '年份',
+  'Year'                        => '年',
 };
 
 $self{subs} = {
@@ -55,7 +54,7 @@ $self{subs} = {
   'chart_of_accounts'           => 'chart_of_accounts',
   'list'                        => 'list',
   'list_transactions'           => 'list_transactions',
-  '列出記錄'                => 'list_transactions',
+  '列出所有交易'          => 'list_transactions',
 };
 
 1;

@@ -256,7 +256,7 @@ sub print {
   for $i (1 .. $form->{rowcount}) {
     if ($form->{"checked_$i"}) {
       $form->{OUT} = "| $printer{$form->{media}}";
-      $form->info($locale->text('Printing ... '));
+      $form->info($locale->text('Printing')." ...");
 
       if (BP->print_spool(\%myconfig, \%$form, $spool)) {
 	print $locale->text('done');

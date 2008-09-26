@@ -138,7 +138,7 @@ sub get_project {
 
     $where = "WHERE pr.id = $form->{id}" if $form->{id};
     
-    $query = qq|SELECT pr.*, pr.description AS projectdescription,
+    $query = qq|SELECT pr.*,
                 c.name AS customer
 		FROM project pr
 		LEFT JOIN customer c ON (c.id = pr.customer_id)
@@ -195,11 +195,13 @@ sub save_project {
   
   $form->{customer_id} ||= 'NULL';
 
+  $form->{projectnumber} = $form->update_defaults($myconfig, "projectnumber", $dbh) unless $form->{projectnumber};
+
   if ($form->{id}) {
 
     $query = qq|UPDATE project SET
                 projectnumber = |.$dbh->quote($form->{projectnumber}).qq|,
-		description = |.$dbh->quote($form->{projectdescription}).qq|,
+		description = |.$dbh->quote($form->{description}).qq|,
 		startdate = |.$form->dbquote($form->{startdate}, SQL_DATE).qq|,
 		enddate = |.$form->dbquote($form->{enddate}, SQL_DATE).qq|,
 		customer_id = $form->{customer_id}
@@ -210,7 +212,7 @@ sub save_project {
                 (projectnumber, description, startdate, enddate, customer_id)
                 VALUES (|
 		.$dbh->quote($form->{projectnumber}).qq|, |
-		.$dbh->quote($form->{projectdescription}).qq|, |
+		.$dbh->quote($form->{description}).qq|, |
 		.$form->dbquote($form->{startdate}, SQL_DATE).qq|, |
 		.$form->dbquote($form->{enddate}, SQL_DATE).qq|,
 		$form->{customer_id}
@@ -371,8 +373,8 @@ sub get_job {
 		FROM defaults|;
     ($form->{weightunit}) = $dbh->selectrow_array($query);
 
-    $query = qq|SELECT pr.*, pr.description AS projectdescription,
-                p.partnumber, p.description, p.unit, p.listprice,
+    $query = qq|SELECT pr.*,
+                p.partnumber, p.description AS partdescription, p.unit, p.listprice,
 		p.sellprice, p.priceupdate, p.weight, p.notes, p.bin,
 		p.partsgroup_id,
 		ch.accno AS income_accno, ch.description AS income_description,
@@ -556,9 +558,11 @@ sub save_job {
     ($form->{id}) = $dbh->selectrow_array($query);
   }
 
+  $form->{projectnumber} = $form->update_defaults($myconfig, "projectnumber", $dbh) unless $form->{projectnumber};
+
   $query = qq|UPDATE project SET
 	      projectnumber = |.$dbh->quote($form->{projectnumber}).qq|,
-	      description = |.$dbh->quote($form->{projectdescription}).qq|,
+	      description = |.$dbh->quote($form->{description}).qq|,
 	      startdate = |.$form->dbquote($form->{startdate}, SQL_DATE).qq|,
 	      enddate = |.$form->dbquote($form->{enddate}, SQL_DATE).qq|,
 	      parts_id = $form->{id},
@@ -583,7 +587,7 @@ sub save_job {
   
   $query = qq|UPDATE parts SET
               partnumber = |.$dbh->quote($partnumber).qq|,
-	      description = |.$dbh->quote($form->{description}).qq|,
+	      description = |.$dbh->quote($form->{partdescription}).qq|,
 	      priceupdate = |.$form->dbquote($form->{priceupdate}, SQL_DATE).qq|,
 	      listprice = |.$form->parse_amount($myconfig, $form->{listprice}).qq|,
 	      sellprice = |.$form->parse_amount($myconfig, $form->{sellprice}).qq|,
@@ -723,7 +727,7 @@ sub stock_assembly {
       
       $query = qq|UPDATE parts SET
                   partnumber = '$pref->{partnumber}-$rev',
-		  description = '$pref->{description}',
+		  description = '$pref->{partdescription}',
 		  priceupdate = '$form->{stockingdate}',
 		  unit = '$pref->{unit}',
 		  listprice = $listprice,

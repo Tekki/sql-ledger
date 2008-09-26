@@ -1,6 +1,7 @@
 $self{charset} = 'ISO-8859-15';
 
 $self{texts} = {
+  'AR/AP'                       => 'MR/OR',
   'Account'                     => 'Konto',
   'Apr'                         => 'Apr',
   'April'                       => 'Aprill',
@@ -40,6 +41,7 @@ $self{texts} = {
   'Period'                      => 'Periood',
   'Project Number'              => 'Projekti number',
   'Quarter'                     => 'Trimester',
+  'R'                           => 'M',
   'Reference'                   => 'Referenss',
   'Sep'                         => 'Sept',
   'September'                   => 'September',

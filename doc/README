@@ -140,7 +140,7 @@ restart your web server.
 
 
 Note: /usr/local/sql-ledger is only a suggested
-path, you may install in any directory.
+path, you can install in any directory.
 
 Some versions of Apache 2.0 use a conf directory for
 configuration files. If this is the case copy
@@ -188,25 +188,13 @@ Load your web browser and connect to
 http://localhost/sql-ledger/admin.pl
 
 Select the "Database Administration" link,
-enter a host, port and the user you created
-in the previous step.
+enter the user you created in the previous step.
 
 The "Create Dataset" link queries the server
 for existing datasets and displays them in a
 table. Enter a name for the new dataset (use
 lowercase letters only!) and select one of the
 Chart of Accounts and click on Continue.
-Your new dataset and the tables will be created
-and the selected Chart of Accounts loaded. The
-owner of the tables will be the user you entered
-in the previous screen as the "User".
-
-The "Delete Dataset" link queries the server
-for datasets which are in use by SQL-Ledger
-and are not used by any members. This might
-take a while to figure out. "Be patient".
-If there are any datasets not in use, you get
-a list of datasets.
 
 You cannot manage any other datasets from this
 interface, only the datasets used by SQL-Ledger.
@@ -253,7 +241,7 @@ run setup.pl from the command line and follow the prompts.
 
 INSTALLATION CHECKLIST:
 -----------------------
-1. untar SL somewhere
+1. untar SQL-Ledger somewhere (i.e /usr/local, /opt)
 2. change permission for the users, templates, css and spool directory
 3. edit httpd.conf
 4. edit sql-ledger.conf
@@ -276,7 +264,7 @@ INSTALLATION CHECKLIST:
 IF SOMETHING DOESN'T WORK:
 --------------------------
 There is a FAQ at http://www.sql-ledger.org/misc/faq.html
-or read the one included in the doc directory.
+or see the one included in the doc directory.
 
 There are also several mailing lists at
 http://www.sql-ledger.org/misc/mailinglist.html
@@ -285,5 +273,5 @@ where you can seek free help.
 For commercial support see http://www.sql-ledger.com
 
 =====================================================================
-October 1, 2005
+Feb. 2, 2006
 

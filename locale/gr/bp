@@ -16,7 +16,6 @@ $self{texts} = {
   'Order'                       => 'Παραγγελία',
   'Order Number'                => 'Αρ. Παραγγελίας',
   'Print'                       => 'Εκτύπωση',
-  'Printing ... '               => 'Εκτυπώνεται...',
   'Select all'                  => 'Επιλογή όλων',
   'Vendor'                      => 'Creditor',
 };

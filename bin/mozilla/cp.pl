@@ -429,6 +429,9 @@ sub payments_footer {
   
   $form->{DF}{$form->{format}} = "selected";
 
+  $transdate = $form->datetonum(\%myconfig, $form->{datepaid});
+  $closedto = $form->datetonum(\%myconfig, $form->{closedto});
+  
   if ($latex) {
    
     $media = qq|<select name=media>
@@ -465,6 +468,11 @@ sub payments_footer {
 
   if (! $latex) {
     delete $button{'Print'};
+  }
+
+  if ($transdate <= $closedto) {
+    for ('Post', 'Print') { delete $button{$_} }
+    $media = $format = "";
   }
   
   for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
@@ -1020,6 +1028,9 @@ sub payment_footer {
 
   $form->{DF}{$form->{format}} = "selected";
 
+  $transdate = $form->datetonum(\%myconfig, $form->{datepaid});
+  $closedto = $form->datetonum(\%myconfig, $form->{closedto});
+
   if ($latex) {
     if ($form->{selectlanguage}) {
       $form->{"selectlanguage"} = $form->unescape($form->{"selectlanguage"});
@@ -1059,6 +1070,11 @@ sub payment_footer {
 
   if (! $latex) {
     delete $button{'Print'};
+  }
+
+  if ($transdate <= $closedto) {
+    for ('Post', 'Print') { delete $button{$_} }
+    $media = $format = "";
   }
 
   for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }

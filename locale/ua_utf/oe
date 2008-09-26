@@ -133,7 +133,6 @@ $self{texts} = {
   'Packing List Date missing!'  => 'Не вказано дату пакувального списку',
   'Packing List Number missing!' => 'Не вказано номер пакувального списку',
   'Part'                        => 'Частина',
-  'Partnumber'                  => 'Номер частини',
   'Period'                      => 'Період',
   'Phone'                       => 'Тел.',
   'Pick List'                   => 'Список комплектування',

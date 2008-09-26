@@ -37,7 +37,7 @@ insert into chart (accno,description,charttype,gifi_accno,category,link) values 
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('4400','OTHER REVENUE','H','8090','I','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('4430','Shipping & Handling','A','8457','I','IC_income');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('4440','Interest','A','8090','I','IC_income');
-insert into chart (accno,description,charttype,gifi_accno,category,link) values ('4450','Foreign Exchange Gain','A','8231','I','');
+insert into chart (accno,description,charttype,gifi_accno,category,link) values ('4450','Foreign Exchange Gain / (Loss)','A','8231','I','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('5000','COST OF GOODS SOLD','H','8515','E','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('5010','Purchases','A','8320','E','AP_amount:IC_cogs:IC_expense');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('5050','Aftermarket Parts','A','8320','E','AP_amount:IC_cogs');
@@ -62,10 +62,9 @@ insert into chart (accno,description,charttype,gifi_accno,category,link) values 
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('5785','Travel & Entertainment','A','8523','E','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('5790','Utilities','A','8812','E','AP_amount');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('5800','Licenses','A','8760','E','AP_amount');
-insert into chart (accno,description,charttype,gifi_accno,category,link) values ('5810','Foreign Exchange Loss','A','8231','E','');
 --
 insert into tax (chart_id,rate) values ((select id from chart where accno = '2310'),0.07);
 insert into tax (chart_id,rate) values ((select id from chart where accno = '2320'),0.08);
 --
-update defaults set inventory_accno_id = (select id from chart where accno = '1520'), income_accno_id = (select id from chart where accno = '4020'), expense_accno_id = (select id from chart where accno = '5010'), fxgain_accno_id = (select id from chart where accno = '4450'), fxloss_accno_id = (select id from chart where accno = '5810'), curr = 'CAD:USD:EUR', weightunit = 'kg';
+update defaults set inventory_accno_id = (select id from chart where accno = '1520'), income_accno_id = (select id from chart where accno = '4020'), expense_accno_id = (select id from chart where accno = '5010'), fxgain_accno_id = (select id from chart where accno = '4450'), fxloss_accno_id = (select id from chart where accno = '4450'), curr = 'CAD:USD:EUR', weightunit = 'kg';
 --

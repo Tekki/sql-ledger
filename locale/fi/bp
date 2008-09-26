@@ -19,7 +19,6 @@ $self{texts} = {
   'Packing Lists'               => 'Pakkauslistat',
   'Period'                      => 'Ajanjakso',
   'Print'                       => 'Tulosta',
-  'Printing ... '               => 'Tulostaa..',
   'Purchase Orders'             => 'Ostotilaukset',
   'Quarter'                     => 'Neljännes',
   'Quotation'                   => 'Tarjous',

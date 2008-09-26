@@ -63,7 +63,6 @@ $self{texts} = {
   'Order'                       => '订单',
   'Orphaned'                    => '无主',
   'POS'                         => '收款台',
-  'Partnumber'                  => '料号',
   'Phone'                       => '电话号码',
   'Pricegroup'                  => '价格组',
   'Project Number'              => '方案号码',

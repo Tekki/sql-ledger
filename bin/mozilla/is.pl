@@ -638,7 +638,7 @@ sub form_footer {
 
     if ($form->{id}) {
       
-      if ($form->{locked}) {
+      if ($form->{locked} || $transdate <= $closedto) {
 	for ("Post", "Print and Post", "Delete") { delete $button{$_} }
       }
      

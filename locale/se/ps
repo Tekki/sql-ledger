@@ -214,7 +214,6 @@ $self{texts} = {
   'Scheduled'                   => 'Schemalagd',
   'Screen'                      => 'Skärm',
   'Select a Printer!'           => 'Välj skrivare',
-  'Select a printer!'           => 'Välj skrivare',
   'Select all'                  => 'Välj alla',
   'Select from one of the names below' => 'Välj ett av namnen nedan',
   'Select from one of the projects below' => 'Välj ett av projekten nedan',

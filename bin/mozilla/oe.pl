@@ -1016,7 +1016,7 @@ sub search {
     $employee = $locale->text('Employee');
   }
  
-
+  $l_employee = qq|<input name="l_employee" class=checkbox type=checkbox value=Y> $employee|;
   $l_manager = qq|<input name="l_manager" class=checkbox type=checkbox value=Y> |.$locale->text('Manager');
 
   if ($form->{type} =~ /(ship|receive)_order/) {
@@ -1047,6 +1047,21 @@ sub search {
   $form->all_vc(\%myconfig, $form->{vc}, ($form->{vc} eq 'customer') ? "AR" : "AP");
 
   for (@{ $form->{"all_$form->{vc}"} }) { $vc .= qq|<option value="$_->{name}--$_->{id}">$_->{name}\n| }
+
+  $selectemployee = "";
+  if (@{ $form->{all_employee} }) {
+    $selectemployee = "<option>\n";
+    for (@{ $form->{all_employee} }) { $selectemployee .= qq|<option value="$_->{name}--$_->{id}">$_->{name}\n| }
+
+    $selectemployee = qq|
+      <tr>
+	<th align=right>$employee</th>
+	<td colspan=3><select name=employee>$selectemployee</select></td>
+      </tr>
+|;
+  } else {
+    $l_employee = $l_manager = "";
+  }
 
   $vclabel = ucfirst $form->{vc};
   $vclabel = $locale->text($vclabel);
@@ -1128,7 +1143,7 @@ sub search {
   push @a, $l_ponumber if $l_ponumber;
   push @a, qq|<input name="l_reqdate" class=checkbox type=checkbox value=Y checked> $requiredby|;
   push @a, qq|<input name="l_name" class=checkbox type=checkbox value=Y checked> $vclabel|;
-  push @a, qq|<input name="l_employee" class=checkbox type=checkbox value=Y checked> $employee|;
+  push @a, $l_employee if $l_employee;
   push @a, $l_manager if $l_manager;
   push @a, qq|<input name="l_shipvia" class=checkbox type=checkbox value=Y> |.$locale->text('Ship via');
   push @a, qq|<input name="l_netamount" class=checkbox type=checkbox value=Y> |.$locale->text('Amount');
@@ -1158,6 +1173,7 @@ sub search {
         </tr>
 	$warehouse
 	$department
+	$selectemployee
         <tr>
           <th align=right>$ordlabel</th>
           <td colspan=3><input name="$ordnumber" size=20></td>
@@ -1246,7 +1262,7 @@ sub transactions {
   # construct href
   $href = qq|$form->{script}?action=transactions|;
   for ("oldsort", "direction", "path", "type", "vc", "login", "sessionid", "transdatefrom", "transdateto", "open", "closed") { $href .= qq|&$_=$form->{$_}| }
-  for ("$ordnumber", "department", "warehouse", "shipvia", "ponumber", "description") { $href .= qq|&$_=|.$form->escape($form->{$_}) }
+  for ("$ordnumber", "department", "warehouse", "shipvia", "ponumber", "description", "employee") { $href .= qq|&$_=|.$form->escape($form->{$_}) }
   $href .= "&$form->{vc}=$name";
 
   # construct callback
@@ -1258,7 +1274,7 @@ sub transactions {
   
   $callback = qq|$form->{script}?action=transactions|;
   for ("oldsort", "direction", "path", "type", "vc", "login", "sessionid", "transdatefrom", "transdateto", "open", "closed") { $callback .= qq|&$_=$form->{$_}| }
-  for ("$ordnumber", "department", "warehouse", "shipvia", "ponumber", "description") { $callback .= qq|&$_=|.$form->escape($form->{$_},1) }
+  for ("$ordnumber", "department", "warehouse", "shipvia", "ponumber", "description", "employee") { $callback .= qq|&$_=|.$form->escape($form->{$_},1) }
   $callback .= "&$form->{vc}=$name";
 
 
@@ -1410,10 +1426,6 @@ sub transactions {
     $option = $locale->text(ucfirst $form->{vc});
     $option .= " : $form->{$form->{vc}}";
   }
-  if ($form->{ponumber}) {
-    $option = $locale->text('PO Number');
-    $option .= " : $form->{ponumber}";
-  }
   if ($form->{warehouse}) {
     ($warehouse) = split /--/, $form->{warehouse};
     $option .= "\n<br>" if ($option);
@@ -1424,6 +1436,36 @@ sub transactions {
     $option .= "\n<br>" if ($option);
     ($department) = split /--/, $form->{department};
     $option .= $locale->text('Department')." : $department";
+  }
+  if ($form->{employee}) {
+    ($employee) = split /--/, $form->{employee};
+    $option .= "\n<br>" if ($option);
+    if ($form->{vc} eq 'customer') {
+      $option .= $locale->text('Salesperson');
+    } else {
+      $option .= $locale->text('Employee');
+    }
+    $option .= " : $employee";
+  }
+  if ($form->{ordnumber}) {
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Order Number')." : $form->{ordnumber}";
+  }
+  if ($form->{quonumber}) {
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Quotation Number')." : $form->{quonumber}";
+  }
+  if ($form->{ponumber}) {
+    $option = $locale->text('PO Number');
+    $option .= " : $form->{ponumber}";
+  }
+  if ($form->{shipvia}) {
+    $option .= "\n<br>" if ($option); 
+    $option .= $locale->text('Ship via')." : $form->{shipvia}";
+  }
+  if ($form->{description}) {
+    $option .= "\n<br>" if $option;
+    $option .= $locale->text('Description')." : $form->{description}";
   }
   if ($form->{transdatefrom}) {
     $option .= "\n<br>".$locale->text('From')." ".$locale->date(\%myconfig, $form->{transdatefrom}, 1);
@@ -1589,7 +1631,7 @@ sub transactions {
 <br>
 |;
 
-  $form->hide_form(qw(callback type vc path login sessionid));
+  $form->hide_form(qw(callback type vc path login sessionid department ordnumber ponumber shipvia));
   
   print qq|
 
@@ -2458,7 +2500,7 @@ sub search_transfer {
           <td><select name=towarehouse>$form->{selectwarehouse}</select></td>
         </tr>
 	<tr>
-	  <th align="right" nowrap="true">|.$locale->text('Partnumber').qq|</th>
+	  <th align="right" nowrap="true">|.$locale->text('Part Number').qq|</th>
 	  <td><input name=partnumber size=20></td>
 	</tr>
 	<tr>
@@ -2522,7 +2564,7 @@ sub list_transfer {
 
   @column_index = $form->sort_columns(qw(partnumber description partsgroup make model fromwarehouse qty towarehouse transfer));
 
-  $column_header{partnumber} = qq|<th><a class=listheading href=$href&sort=partnumber>|.$locale->text('Partnumber').qq|</a></th>|;
+  $column_header{partnumber} = qq|<th><a class=listheading href=$href&sort=partnumber>|.$locale->text('Part Number').qq|</a></th>|;
   $column_header{description} = qq|<th><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</a></th>|;
   $column_header{partsgroup} = qq|<th><a class=listheading href=$href&sort=partsgroup>|.$locale->text('Group').qq|</a></th>|;
   $column_header{fromwarehouse} = qq|<th><a class=listheading href=$href&sort=warehouse>|.$locale->text('From').qq|</a></th>|;
@@ -2544,7 +2586,7 @@ sub list_transfer {
   }
   if ($form->{partnumber}) {
     $option .= "\n<br>" if ($option);
-    $option .= $locale->text('Partnumber')." : $form->{partnumber}";
+    $option .= $locale->text('Part Number')." : $form->{partnumber}";
   }
   if ($form->{description}) {
     $option .= "\n<br>" if ($option);
@@ -2751,7 +2793,7 @@ sub po_orderitems {
   @column_index = qw(sku description partnumber leadtime fx lastcost curr required qty name);
   
   $column_header{sku} = qq|<th class=listheading>|.$locale->text('SKU').qq|</th>|;
-  $column_header{partnumber} = qq|<th class=listheading>|.$locale->text('Partnumber').qq|</th>|;
+  $column_header{partnumber} = qq|<th class=listheading>|.$locale->text('Part Number').qq|</th>|;
   $column_header{description} = qq|<th class=listheading>|.$locale->text('Description').qq|</th>|;
   $column_header{name} = qq|<th class=listheading>|.$locale->text('Vendor').qq|</th>|;
   $column_header{qty} = qq|<th class=listheading>|.$locale->text('Order').qq|</th>|;

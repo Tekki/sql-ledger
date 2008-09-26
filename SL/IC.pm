@@ -993,9 +993,8 @@ sub all_parts {
   if ($form->{bought} || $form->{sold} || $form->{onorder} || $form->{ordered} || $form->{rfq} || $form->{quoted}) {
 
     $form->sort_order();
-    my @a = qw(partnumber description employee);
-    
-    push @a, qw(invnumber serialnumber) if ($form->{bought} || $form->{sold});
+    @a = qw(partnumber description curr employee name serialnumber id);
+    push @a, "invnumber" if ($form->{bought} || $form->{sold});
     push @a, "ordnumber" if ($form->{onorder} || $form->{ordered});
     push @a, "quonumber" if ($form->{rfq} || $form->{quoted});
 
@@ -1010,6 +1009,7 @@ sub all_parts {
 		 'quonumber' => 22,
 		 'name' => 24,
 		 'employee' => 25,
+		 'curr' => 26,
 		 'make' => 29,
 		 'model' => 30
 	       );
@@ -1134,7 +1134,7 @@ sub all_parts {
 		 p.priceupdate, p.image, p.drawing, p.microfiche,
 		 p.assembly,
 		 pg.partsgroup, '' AS invnumber, a.ordnumber, a.quonumber,
-		 i.trans_id, ct.name,e.name AS employee, a.curr, '0' AS till,
+		 i.trans_id, ct.name, e.name AS employee, a.curr, '0' AS till,
 		 p.notes
 		 $makemodelfld|;
 
@@ -1277,7 +1277,6 @@ sub all_parts {
 
   }
 
-  
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
@@ -1299,7 +1298,7 @@ sub all_parts {
   }
   $sth->finish;
 
-  my @a = ();
+  @a = ();
   
   # include individual items for assembly
   if (($form->{searchitems} eq 'assembly') && $form->{individual}) {

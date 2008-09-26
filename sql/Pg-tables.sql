@@ -67,9 +67,10 @@ CREATE TABLE defaults (
   partnumber text,
   customernumber text,
   vendornumber text,
-  glnumber text
+  glnumber text,
+  projectnumber text
 );
-INSERT INTO defaults (version) VALUES ('2.6.4');
+INSERT INTO defaults (version) VALUES ('2.6.7');
 --
 CREATE TABLE acc_trans (
   trans_id int,

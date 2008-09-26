@@ -58,7 +58,7 @@ sub send {
   for (qw(from to cc bcc)) {
     $self->{$_} =~ s/\&lt;/</g;
     $self->{$_} =~ s/\&gt;/>/g;
-    $self->{$_} =~ s/(\\|\$)//g;
+    $self->{$_} =~ s/(\/|\\|\$)//g;
     $h{$_} = $self->{$_};
   }
  

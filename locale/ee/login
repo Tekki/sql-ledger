@@ -1,6 +1,7 @@
 $self{charset} = 'ISO-8859-15';
 
 $self{texts} = {
+  'Access Denied!'              => 'Ligipääs Keelatud!',
   'Company'                     => 'Ettevõte',
   'Continue'                    => 'Edasi',
   'Dataset is newer than version!' => 'Andmekogu versioon, on uuem süsteemi omast!',

@@ -192,7 +192,6 @@ $self{texts} = {
   'Sales Order'                 => 'Commande de vente',
   'Salesperson'                 => 'Vendeur',
   'Screen'                      => 'Écran',
-  'Select a printer!'           => 'Sélectionner une imprimante',
   'Select all'                  => 'Tout sélectionner',
   'Select from one of the names below' => 'Sélectionner un des noms ci-dessous',
   'Select from one of the projects below' => 'Sélectionner un des projets ci-dessous',

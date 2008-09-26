@@ -28,7 +28,7 @@ $self{texts} = {
   'July'                        => '七月',
   'Jun'                         => '六月',
   'June'                        => '六月',
-  'List Transactions'           => '列出交易',
+  'List Transactions'           => '列出所有交易',
   'Mar'                         => '三月',
   'March'                       => '三月',
   'May'                         => '五月',
@@ -39,7 +39,7 @@ $self{texts} = {
   'Oct'                         => '十月',
   'October'                     => '十月',
   'Period'                      => '期間',
-  'Project Number'              => '方案號碼',
+  'Project Number'              => '項目號碼',
   'Quarter'                     => '季',
   'Reference'                   => '參考資料',
   'Sep'                         => '九月',
@@ -54,7 +54,7 @@ $self{subs} = {
   'chart_of_accounts'           => 'chart_of_accounts',
   'list'                        => 'list',
   'list_transactions'           => 'list_transactions',
-  '圭台交易'                    => 'list_transactions',
+  '圭台所有交易'                => 'list_transactions',
 };
 
 1;

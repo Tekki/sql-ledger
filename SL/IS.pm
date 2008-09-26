@@ -210,7 +210,7 @@ sub invoice_details {
       # listprice
       push(@{ $form->{listprice} }, $form->{"listprice_$i"});
       
-      push(@{ $form->{weight} }, $form->format_amount($myconfig, $form->{"weight_$i"}));
+      push(@{ $form->{weight} }, $form->format_amount($myconfig, $form->{"weight_$i"} * $form->{"qty_$i"}));
 
       my $sellprice = $form->parse_amount($myconfig, $form->{"sellprice_$i"});
       my ($dec) = ($sellprice =~ /\.(\d+)/);
@@ -291,7 +291,7 @@ sub invoice_details {
       }
 
       push(@{ $form->{lineitems} }, { amount => $linetotal, tax => $form->round_amount($tax, 2) });
-      push(@{ $form->{taxrates} }, join /:/, sort { $a <=> $b } @taxrates);
+      push(@{ $form->{taxrates} }, join ' ', sort { $a <=> $b } @taxrates);
       
       if ($form->{"assembly_$i"}) {
 	$form->{stagger} = -1;
@@ -568,6 +568,7 @@ sub post_invoice {
   my $null;
   my $project_id;
   my $exchangerate = 0;
+  my $keepcleared = 0;
   
   %$form->{acc_trans} = ();
 
@@ -590,6 +591,7 @@ sub post_invoice {
   my $pth = $dbh->prepare($query) || $form->dberror($query);
   
   if ($form->{id}) {
+    $keepcleared = 1;
     $query = qq|SELECT id FROM ar
                 WHERE id = $form->{id}|;
 
@@ -797,13 +799,11 @@ sub post_invoice {
     }
   }
 
-  $form->{datepaid} = $form->{transdate};
-  
   $form->{paid} = 0;
   for $i (1 .. $form->{paidaccounts}) {
     $form->{"paid_$i"} = $form->parse_amount($myconfig, $form->{"paid_$i"});
     $form->{paid} += $form->{"paid_$i"};
-    $form->{datepaid} = $form->{"datepaid_$i"} if ($form->{"datepaid_$i"});
+    $form->{datepaid} = $form->{"datepaid_$i"} if ($form->{"paid_$i"});
   }
   
   # add lineitems + tax
@@ -827,7 +827,7 @@ sub post_invoice {
     $invamount += $diff;
   }
   $fxdiff = $form->round_amount($fxdiff,2);
-  $invnetamount += $fxdiff if $amount == 0;
+  $invnetamount += $fxdiff;
   $invamount += $fxdiff;
 
   if ($form->round_amount($form->{paid} - $fxgrossamount,2) == 0) {
@@ -838,7 +838,6 @@ sub post_invoice {
 
   foreach $ref (sort { $b->{amount} <=> $a->{amount} } @ { $form->{acc_trans}{lineitems} }) {
     $amount = $ref->{amount} + $diff + $fxdiff;
-    $ref->{invoice_id} *= 1;
     $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount,
 		transdate, project_id, invoice_id)
 		VALUES ($form->{id}, $ref->{chart_id}, $amount,
@@ -890,7 +889,7 @@ sub post_invoice {
     $form->{receivables} = 1;
   }
   
-  my $cleared;
+  my $cleared = 0;
   
   # record payments and offsetting AR
   for $i (1 .. $form->{paidaccounts}) {
@@ -925,7 +924,9 @@ sub post_invoice {
 
       # record payment
       $amount = $form->{"paid_$i"} * -1;
-      $cleared = ($form->{"cleared_$i"}) ? 1 : 0;
+      if ($keepcleared) {
+	$cleared = ($form->{"cleared_$i"}) ? 1 : 0;
+      }
       
       $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount, transdate,
                   source, memo, cleared)

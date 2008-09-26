@@ -122,7 +122,6 @@ $self{texts} = {
   'Packing List Date missing!'  => 'Nav norâdîts iesaiòojumu datums!',
   'Packing List Number missing!' => 'Nav norâdîts iesaiòojumu numurs!',
   'Part'                        => 'Prece',
-  'Partnumber'                  => 'Daïas numurs',
   'Phone'                       => 'Tel.',
   'Pick List'                   => 'Izvçles saraksts',
   'Postscript'                  => 'Postscript',

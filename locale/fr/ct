@@ -65,7 +65,6 @@ $self{texts} = {
   'Order'                       => 'Commande',
   'Orphaned'                    => 'Orphelin',
   'POS'                         => 'Point de vente',
-  'Partnumber'                  => 'Numéro de marchandise',
   'Phone'                       => 'Tél.',
   'Pricegroup'                  => 'Groupe de prix',
   'Pricelist'                   => 'Liste de prix',

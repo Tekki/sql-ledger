@@ -1550,6 +1550,7 @@ sub ship_to {
   $form->{title} = $locale->text('Ship to');
 
   for (qw(exchangerate creditlimit creditremaining)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
+  for (1 .. $form->{paidaccounts}) { $form->{"paid_$_"} = $form->parse_amount(\%myconfig, $form->{"paid_$_"}) }
 
   # get details for name
   &{ "$form->{vc}_details" };

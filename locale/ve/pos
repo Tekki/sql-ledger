@@ -38,6 +38,7 @@ $self{texts} = {
   'Remaining'                   => 'Resto',
   'Salesperson'                 => 'Vendedor',
   'Screen'                      => 'Pantalla',
+  'Select a Printer!'           => '¡Seleccione una impresora!',
   'Source'                      => 'Cheque N°',
   'Subtotal'                    => 'Subtotal',
   'Tax Included'                => 'Impuesto Incluído',

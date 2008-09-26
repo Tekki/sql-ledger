@@ -143,10 +143,11 @@ sub post_transaction {
       
       ($null, $project_id) = split /--/, $form->{"projectnumber_$i"};
       $project_id ||= 'NULL';
-      $form->{"fx_transaction_$i"} *= 1;
+      for (qw(fx_transaction cleared)) { $form->{"${_}_$i"} *= 1 }
+      
       
       $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount, transdate,
-		  source, project_id, fx_transaction, memo)
+		  source, project_id, fx_transaction, memo, cleared)
 		  VALUES
 		  ($form->{id}, (SELECT id
 				 FROM chart
@@ -154,7 +155,8 @@ sub post_transaction {
 		   $amount, '$form->{transdate}', |.
 		   $dbh->quote($form->{"source_$i"}) .qq|,
 		  $project_id, '$form->{"fx_transaction_$i"}', |.
-		  $dbh->quote($form->{"memo_$i"}).qq|)|;
+		  $dbh->quote($form->{"memo_$i"}).qq|,
+		  '$form->{"cleared_$i"}')|;
     
       $dbh->do($query) || $form->dberror($query);
 
@@ -473,23 +475,10 @@ sub transaction {
 
   $sth->finish;
 
-  my $paid;
-  if ($form->{transfer}) {
-    $paid = qq|AND link LIKE '%_paid%'
-	     
-	  UNION
-	  
-	       SELECT accno,description
-	       FROM chart
-	       WHERE id IN (SELECT fxgain_accno_id FROM defaults)
-	       OR id IN (SELECT fxloss_accno_id FROM defaults)|;
-  }
-  
   # get chart of accounts
   $query = qq|SELECT accno,description
               FROM chart
 	      WHERE charttype = 'A'
-	      $paid
               ORDER by accno|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);

@@ -462,7 +462,6 @@ sub get_accounts {
   my $project;
   my $where = "1 = 1";
   my $glwhere = "";
-  my $projectwhere = "";
   my $subwhere = "";
   my $yearendwhere = "1 = 1";
   my $item;
@@ -511,17 +510,16 @@ sub get_accounts {
   }
 
   if ($fromdate) {
-    $where .= " AND ac.transdate >= '$fromdate'";
-    $projectwhere .= " AND transdate >= '$fromdate'";
     if ($form->{method} eq 'cash') {
       $subwhere .= " AND transdate >= '$fromdate'";
       $glwhere = " AND ac.transdate >= '$fromdate'";
+    } else {
+      $where .= " AND ac.transdate >= '$fromdate'";
     }
   }
 
   if ($todate) {
     $where .= " AND ac.transdate <= '$todate'";
-    $projectwhere .= " AND transdate <= '$todate'";
     $subwhere .= " AND transdate <= '$todate'";
     $yearendwhere = "ac.transdate < '$todate'";
   }
@@ -530,6 +528,12 @@ sub get_accounts {
     $ywhere = " AND ac.trans_id NOT IN
                (SELECT trans_id FROM yearend)";
 	       
+   if ($todate) {
+      $ywhere = " AND ac.trans_id NOT IN
+		 (SELECT trans_id FROM yearend
+		  WHERE transdate <= '$todate')";
+    }
+       
     if ($fromdate) {
       $ywhere = " AND ac.trans_id NOT IN
 		 (SELECT trans_id FROM yearend
@@ -540,12 +544,6 @@ sub get_accounts {
 		    WHERE transdate >= '$fromdate'
 		    AND transdate <= '$todate')";
       }
-    }
-
-    if ($todate) {
-      $ywhere = " AND ac.trans_id NOT IN
-		 (SELECT trans_id FROM yearend
-		  WHERE transdate <= '$todate')";
     }
   }
 

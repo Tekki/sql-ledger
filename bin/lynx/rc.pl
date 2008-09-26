@@ -90,16 +90,16 @@ sub reconciliation {
 
     $selectfrom = qq|
         <tr>
-	<th align=right>|.$locale->text('Period').qq|</th>
-	<td colspan=3>
-	<select name=month>$form->{selectaccountingmonth}</select>
-	<select name=year>$form->{selectaccountingyear}</select>
-	<input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
-	<input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
-	<input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
-	<input name=interval class=radio type=radio value=12>&nbsp;|.$locale->text('Year').qq|
-	</td>
-      </tr>
+	  <th align=right>|.$locale->text('Period').qq|</th>
+	  <td colspan=3>
+	  <select name=month>$form->{selectaccountingmonth}</select>
+	  <select name=year>$form->{selectaccountingyear}</select>
+	  <input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
+	  <input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
+	  <input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
+	  <input name=interval class=radio type=radio value=12>&nbsp;|.$locale->text('Year').qq|
+	  </td>
+	</tr>
 |;
   }
 
@@ -121,26 +121,22 @@ sub reconciliation {
       <table>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Account').qq|</th>
-	  <td colspan=3><select name=accno>$selection</select>
-	  </td>
+	  <td colspan=3><select name=accno>$selection</select></td>
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('From').qq|</th>
-	  <td><input name=fromdate size=11 title="$myconfig{dateformat}"></td>
-	  <th align=right>|.$locale->text('To').qq|</th>
-	  <td><input name=todate size=11 title="$myconfig{dateformat}"></td>
+	  <td colspan=3><input name=fromdate size=11 title="$myconfig{dateformat}"> <b>|.$locale->text('To').qq|</b> <input name=todate size=11 title="$myconfig{dateformat}"></td>
 	</tr>
 	$selectfrom
 	$cleared
         <tr>
-	  <td align=right><input type=radio style=radio name=summary value=1 checked></td>
-	  <td>|.$locale->text('Summary').qq|</td>
-	  <td align=right><input type=radio style=radio name=summary value=0></td>
-	  <td>|.$locale->text('Detail').qq|</td>
+	  <td></td>
+	  <td colspan=3><input type=radio style=radio name=summary value=1 checked> |.$locale->text('Summary').qq|
+	  <input type=radio style=radio name=summary value=0> |.$locale->text('Detail').qq|</td>
 	</tr>
 	<tr>
-	  <td align=right><input type=checkbox class=checkbox name=fx_transaction value=1 checked></td>
-	  <td colspan=3>|.$locale->text('Include Exchange Rate Difference').qq|</td>
+	  <td></td>
+	  <td colspan=3><input type=checkbox class=checkbox name=fx_transaction value=1 checked> |.$locale->text('Include Exchange Rate Difference').qq|</td>
 	</tr>
       </table>
     </td>

@@ -117,7 +117,6 @@ $self{texts} = {
   'Packing List Date missing!'  => 'Pakkauslistan päiväys puuttuu!',
   'Packing List Number missing!' => 'Pakkauslistan numero puuttuu!',
   'Part'                        => 'Tarvike',
-  'Partnumber'                  => 'Tarvikenumero',
   'Period'                      => 'Ajanjakso',
   'Phone'                       => 'Puhelin',
   'Postscript'                  => 'Postscript',

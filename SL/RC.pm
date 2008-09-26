@@ -359,9 +359,10 @@ sub reconcile {
   $chart_id *= 1;
   
   $query = qq|SELECT trans_id FROM acc_trans
-              WHERE source = ?
+              WHERE (source = ? OR source IS NULL)
 	      AND transdate = ?
-	      AND cleared = '0'|;
+	      AND cleared = '0'
+	      AND chart_id = $chart_id|;
   my $sth = $dbh->prepare($query) || $form->dberror($query);
     
   my $i;

@@ -125,8 +125,8 @@ sub create_links {
   }
   $sth->finish;
 
-  # this is for the salesperson
-  $form->all_employees($myconfig, $dbh, $form->{startdate}, ($form->{vc} eq 'customer') ? 1 : 0);
+  # employees/salespersons
+  $form->all_employees($myconfig, $dbh, undef, ($form->{vc} eq 'customer') ? 1 : 0);
 
   # get language
   $query = qq|SELECT *
@@ -706,41 +706,19 @@ sub get_history {
     $var = $form->like(lc $form->{"$form->{db}number"});
     $where .= " AND lower(ct.$form->{db}number) LIKE '$var'";
   }
-  if ($form->{name} ne "") {
-    $var = $form->like(lc $form->{name});
-    $where .= " AND lower(ct.name) LIKE '$var'";
-  }
   if ($form->{address} ne "") {
     $var = $form->like(lc $form->{address});
     $where .= " AND lower(ct.address1) LIKE '$var'";
   }
-  if ($form->{city} ne "") {
-    $var = $form->like(lc $form->{city});
-    $where .= " AND lower(ct.city) LIKE '$var'";
+  for (qw(name contact email phone notes city state zipcode country)) {
+    if ($form->{$_} ne "") {
+      $var = $form->like(lc $form->{$_});
+      $where .= " AND lower(ct.$_) LIKE '$var'";
+    }
   }
-  if ($form->{state} ne "") {
-    $var = $form->like(lc $form->{state});
-    $where .= " AND lower(ct.state) LIKE '$var'";
-  }
-  if ($form->{zipcode} ne "") {
-    $var = $form->like(lc $form->{zipcode});
-    $where .= " AND lower(ct.zipcode) LIKE '$var'";
-  }
-  if ($form->{country} ne "") {
-    $var = $form->like(lc $form->{country});
-    $where .= " AND lower(ct.country) LIKE '$var'";
-  }
-  if ($form->{contact} ne "") {
-    $var = $form->like(lc $form->{contact});
-    $where .= " AND lower(ct.contact) LIKE '$var'";
-  }
-  if ($form->{notes} ne "") {
-    $var = $form->like(lc $form->{notes});
-    $where .= " AND lower(ct.notes) LIKE '$var'";
-  }
-  if ($form->{email} ne "") {
-    $var = $form->like(lc $form->{email});
-    $where .= " AND lower(ct.email) LIKE '$var'";
+  if ($form->{employee} ne "") {
+    $var = $form->like(lc $form->{employee});
+    $where .= " AND lower(e.name) LIKE '$var'";
   }
 
   $where .= " AND a.transdate >= '$form->{transdatefrom}'" if $form->{transdatefrom};
@@ -761,12 +739,14 @@ sub get_history {
   my $invnumber = 'invnumber';
   my $deldate = 'deliverydate';
   my $buysell;
+  my $sellprice = "sellprice";
   
   if ($form->{db} eq 'customer') {
     $buysell = "buy";
     if ($form->{type} eq 'invoice') {
       $where .= qq| AND a.invoice = '1' AND i.assemblyitem = '0'|;
       $table = 'ar';
+      $sellprice = "fxsellprice";
     } else {
       $table = 'oe';
       if ($form->{type} eq 'order') {
@@ -784,6 +764,7 @@ sub get_history {
     if ($form->{type} eq 'invoice') {
       $where .= qq| AND a.invoice = '1' AND i.assemblyitem = '0'|;
       $table = 'ap';
+      $sellprice = "fxsellprice";
     } else {
       $table = 'oe';
       if ($form->{type} eq 'order') {
@@ -811,76 +792,40 @@ sub get_history {
   }
 
 
-  if ($form->{history} eq 'summary') {
-    $query = qq|SELECT curr FROM defaults|;
-    my ($curr) = $dbh->selectrow_array($query);
-    $curr =~ s/:.*//;
-    
-    %ordinal = ( partnumber	=> 8,
-                 description	=> 9
-	       );
-    $sortorder = "2 $form->{direction}, 1, $ordinal{$sortorder} $form->{direction}";
-    
-    $query = qq|SELECT ct.id AS ctid, ct.name, ct.address1,
-		ct.address2, ct.city, ct.state,
-		p.id AS pid, p.partnumber, i.description, p.unit,
-		sum(i.qty) AS qty, sum(i.sellprice) AS sellprice,
-		'$curr' AS curr,
-		ct.zipcode, ct.country
-		FROM $form->{db} ct
-		JOIN $table a ON (a.$form->{db}_id = ct.id)
-		$invjoin
-		JOIN parts p ON (p.id = i.parts_id)
-		WHERE $where
-		GROUP BY ct.id, ct.name, ct.address1, ct.address2, ct.city,
-		ct.state, ct.zipcode, ct.country,
-		p.id, p.partnumber, i.description, p.unit
-		ORDER BY $sortorder|;
-  } else {
-    %ordinal = ( partnumber	=> 9,
-                 description	=> 12,
-		 "$deldate"	=> 16,
-		 serialnumber	=> 17,
-		 projectnumber	=> 18
-		);
- 
-    $sortorder = "2 $form->{direction}, 1, 11, $ordinal{$sortorder} $form->{direction}";
-    
-    $query = qq|SELECT ct.id AS ctid, ct.name, ct.address1,
-		ct.address2, ct.city, ct.state,
-		p.id AS pid, p.partnumber, a.id AS invid,
-		a.$invnumber, a.curr, i.description,
-		i.qty, i.sellprice, i.discount,
-		i.$deldate, i.serialnumber, pr.projectnumber,
-		e.name AS employee, ct.zipcode, ct.country, i.unit|;
-    $query .= qq|, i.fxsellprice| if $form->{type} eq 'invoice';
+  %ordinal = ( partnumber	=> 9,
+	       description	=> 12,
+	       "$deldate"	=> 16,
+	       serialnumber	=> 17,
+	       projectnumber	=> 18
+	      );
 
-    if ($form->{type} ne 'invoice') {
-      if ($form->{l_curr}) {
-	$query .= qq|, (SELECT $buysell FROM exchangerate ex
-	                WHERE a.curr = ex.curr
-			AND a.transdate = ex.transdate) AS exchangerate|;
-      }
-    }
-	
-    $query .= qq|
-                FROM $form->{db} ct
-		JOIN $table a ON (a.$form->{db}_id = ct.id)
-		$invjoin
-		JOIN parts p ON (p.id = i.parts_id)
-		LEFT JOIN project pr ON (pr.id = i.project_id)
-		LEFT JOIN employee e ON (e.id = a.employee_id)
-		WHERE $where
-		ORDER BY $sortorder|;
-  }
-
+  $sortorder = "2 $form->{direction}, 1, 11, $ordinal{$sortorder} $form->{direction}";
+    
+  $query = qq|SELECT ct.id AS ctid, ct.name, ct.address1,
+	      ct.address2, ct.city, ct.state,
+	      p.id AS pid, p.partnumber, a.id AS invid,
+	      a.$invnumber, a.curr, i.description,
+	      i.qty, i.$sellprice AS sellprice, i.discount,
+	      i.$deldate, i.serialnumber, pr.projectnumber,
+	      e.name AS employee, ct.zipcode, ct.country, i.unit,
+              (SELECT $buysell FROM exchangerate ex
+		    WHERE a.curr = ex.curr
+		    AND a.transdate = ex.transdate) AS exchangerate
+	      FROM $form->{db} ct
+	      JOIN $table a ON (a.$form->{db}_id = ct.id)
+	      $invjoin
+	      JOIN parts p ON (p.id = i.parts_id)
+	      LEFT JOIN project pr ON (pr.id = i.project_id)
+	      LEFT JOIN employee e ON (e.id = a.employee_id)
+	      WHERE $where
+	      ORDER BY $sortorder|;
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
     $ref->{address} = "";
-    $ref->{exchangerate} = 1 unless $ref->{exchangerate};
+    $ref->{exchangerate} ||= 1;
     for (qw(address1 address2 city state zipcode country)) { $ref->{address} .= "$ref->{$_} " }
     $ref->{id} = $ref->{ctid};
     push @{ $form->{CT} }, $ref;

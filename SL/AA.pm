@@ -1,6 +1,6 @@
 #=====================================================================
 # SQL-Ledger Accounting
-# Copyright (C) 2000
+# Copyright (C) 2006
 #
 #  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.org
@@ -22,6 +22,7 @@
 #======================================================================
 #
 # AR/AP backend routines
+# common routines
 #
 #======================================================================
 
@@ -46,6 +47,8 @@ sub post_transaction {
   my $buysell = 'buy';
   my $ARAP = 'AR';
   my $invnumber = "sinumber";
+  my $keepcleared;
+
   if ($form->{vc} eq 'vendor') {
     $table = 'ap';
     $buysell = 'sell';
@@ -106,6 +109,7 @@ sub post_transaction {
 
   my $i;
   my $project_id;
+  my $cleared = 0;
   
   $diff = 0;
   # deduct tax from amounts if tax included
@@ -127,11 +131,16 @@ sub post_transaction {
       $project_id ||= 'NULL';
       ($accno) = split /--/, $form->{"${ARAP}_amount_$i"};
 
+      if ($keepcleared) {
+	$cleared = ($form->{"cleared_$i"}) ? 1 : 0;
+      }
+
       push @{ $form->{acc_trans}{lineitems} }, {
 	accno => $accno,
 	amount => $amount{fxamount}{$i},
 	project_id => $project_id,
 	description => $form->{"description_$i"},
+	cleared => $cleared,
 	fx_transaction => 0 };
 
       if ($form->{currency} ne $form->{defaultcurrency}) {
@@ -141,6 +150,7 @@ sub post_transaction {
 	  amount => $amount,
 	  project_id => $project_id,
 	  description => $form->{"description_$i"},
+	  cleared => $cleared,
 	  fx_transaction => 1 };
       }
     }
@@ -195,6 +205,7 @@ sub post_transaction {
 
   # check if id really exists
   if ($form->{id}) {
+    $keepcleared = 1;
     $query = qq|SELECT id FROM $table
                 WHERE id = $form->{id}|;
     if ($dbh->selectrow_array($query)) {
@@ -263,12 +274,12 @@ sub post_transaction {
     # insert detail records in acc_trans
     if ($ref->{amount}) {
       $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount, transdate,
-		  project_id, memo, fx_transaction)
+		  project_id, memo, fx_transaction, cleared)
 		  VALUES ($form->{id}, (SELECT id FROM chart
 					WHERE accno = '$ref->{accno}'),
 		  $ref->{amount} * $ml, '$form->{transdate}',
 		  $ref->{project_id}, |.$dbh->quote($ref->{description}).qq|,
-		  '$ref->{fx_transaction}')|;
+		  '$ref->{fx_transaction}', '$ref->{cleared}')|;
       $dbh->do($query) || $form->dberror($query);
     }
   }
@@ -591,39 +602,44 @@ sub transactions {
       $where .= " AND lower(vc.name) LIKE '$var'";
     }
   }
-  if ($form->{department}) {
-    ($null, $var) = split /--/, $form->{department};
-    $where .= " AND a.department_id = $var";
-  }
-  if ($form->{invnumber}) {
-    $var = $form->like(lc $form->{invnumber});
-    $where .= " AND lower(a.invnumber) LIKE '$var'";
-    $form->{open} = $form->{closed} = 0;
-  }
-  if ($form->{ordnumber}) {
-    $var = $form->like(lc $form->{ordnumber});
-    $where .= " AND lower(a.ordnumber) LIKE '$var'";
-    $form->{open} = $form->{closed} = 0;
-  }
-  if ($form->{ponumber}) {
-    $var = $form->like(lc $form->{ponumber});
-    $where .= " AND lower(a.ponumber) LIKE '$var'";
+  for (qw(department employee)) {
+    if ($form->{$_}) {
+      ($null, $var) = split /--/, $form->{$_};
+      $where .= " AND a.${_}_id = $var";
+    }
   }
 
-  if ($form->{shipvia}) {
-    $var = $form->like(lc $form->{shipvia});
-    $where .= " AND lower(a.shipvia) LIKE '$var'";
+  for (qw(invnumber ordnumber)) {
+    if ($form->{$_}) {
+      $var = $form->like(lc $form->{$_});
+      $where .= " AND lower(a.$_) LIKE '$var'";
+      $form->{open} = $form->{closed} = 0;
+    }
   }
-  if ($form->{notes}) {
-    $var = $form->like(lc $form->{notes});
-    $where .= " AND lower(a.notes) LIKE '$var'";
+  for (qw(ponumber shipvia notes)) {
+    if ($form->{$_}) {
+      $var = $form->like(lc $form->{$_});
+      $where .= " AND lower(a.$_) LIKE '$var'";
+    }
   }
-  if ($form->{description} && $acc_trans_flds) {
-    $var = $form->like(lc $form->{description});
-    $where .= " AND lower(ac.memo) LIKE '$var'
-                OR lower(i.description) LIKE '$var'";
+  if ($form->{description}) {
+    if ($acc_trans_flds) {
+      $var = $form->like(lc $form->{description});
+      $where .= " AND lower(ac.memo) LIKE '$var'
+		  OR lower(i.description) LIKE '$var'";
+    } else {
+      $where .= " AND a.id = 0";
+    }
   }
- 
+  if ($form->{source}) {
+    if ($acc_trans_flds) {
+      $var = $form->like(lc $form->{source});
+      $where .= " AND lower(ac.source) LIKE '$var'";
+    } else {
+      $where .= " AND a.id = 0";
+    }
+  }
+
   
   $where .= " AND a.transdate >= '$form->{transdatefrom}'" if $form->{transdatefrom};
   $where .= " AND a.transdate <= '$form->{transdateto}'" if $form->{transdateto};

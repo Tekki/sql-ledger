@@ -112,7 +112,6 @@ $self{texts} = {
   'Number Format'               => 'Numeron muoto',
   'PDF'                         => 'PDF',
   'Packing List'                => 'Pakkauslista',
-  'Partnumber'                  => 'Tarvikenumero',
   'Password'                    => 'Salasana',
   'Password does not match!'    => 'Salasana ei täsmää!',
   'Payables'                    => 'Maksettavaa',

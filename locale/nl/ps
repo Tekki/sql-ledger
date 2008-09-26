@@ -209,7 +209,6 @@ $self{texts} = {
   'Scheduled'                   => 'Ingepland',
   'Screen'                      => 'Scherm',
   'Select a Printer!'           => 'Selecteer een Printer',
-  'Select a printer!'           => 'Selecteer een printer!',
   'Select all'                  => 'Selecteer alles',
   'Select from one of the names below' => 'Kies een van de onderstaande namen',
   'Select from one of the projects below' => 'Kies een van de onderstaande projecten',

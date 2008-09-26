@@ -1,4 +1,5 @@
 $self{texts} = {
+  'AR/AP'                       => 'CxC/CxP',
   'Account'                     => 'Cuenta',
   'Apr'                         => 'Abr',
   'April'                       => 'Abril',

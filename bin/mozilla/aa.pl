@@ -25,6 +25,15 @@
 #
 #======================================================================
 
+# any custom scripts for this one
+if (-f "$form->{path}/custom_aa.pl") {
+      eval { require "$form->{path}/custom_aa.pl"; };
+}
+if (-f "$form->{path}/$form->{login}_aa.pl") {
+      eval { require "$form->{path}/$form->{login}_aa.pl"; };
+}
+
+
 1;
 # end of main
 
@@ -711,21 +720,21 @@ sub form_footer {
 
     if ($form->{id}) {
 
-      if ($form->{locked}) {
+      if ($form->{locked} || $transdate <= $closedto) {
 	for ("Post", "Print and Post", "Delete") { delete $button{$_} }
       }
 	
       if (!$latex) {
-	for ("Print", "Print and Post", "Print and Post as new") { delete $button{$_} }
+	for ("Print and Post", "Print and Post as new") { delete $button{$_} }
       }
 
     } else {
       
-      if ($transdate > $closedto) {
-
-	for ("Post as new", "Print and Post as new", "Delete") { delete $button{$_} }
-	delete $button{"Print and Post"} if ! $latex;
-
+      for ("Post as new", "Print and Post as new", "Delete") { delete $button{$_} }
+      delete $button{"Print and Post"} if ! $latex;
+      
+      if ($transdate <= $closedto) {
+	for ("Post", "Print and Post") { delete $button{$_} }
       }
     }
 
@@ -1014,6 +1023,24 @@ sub search {
 |;
   }
 
+  if (@{ $form->{all_employee} }) {
+    $form->{selectemployee} = "<option>\n";
+    for (@{ $form->{all_employee} }) { $form->{selectemployee} .= qq|<option value="$_->{name}--$_->{id}">$_->{name}\n| }
+
+    $employeelabel = ($form->{ARAP} eq 'AR') ? $locale->text('Salesperson') : $locale->text('Employee');
+
+    $employee = qq|
+        <tr>
+	  <th align=right nowrap>$employeelabel</th>
+	  <td colspan=3><select name=employee>$form->{selectemployee}</select></td>
+	</tr>
+|;
+
+    $l_employee = qq|<input name="l_employee" class=checkbox type=checkbox value=Y> $employeelabel|;
+
+    $l_manager = qq|<input name="l_manager" class=checkbox type=checkbox value=Y> |.$locale->text('Manager');
+  }
+
 
   $form->{title} = ($form->{ARAP} eq 'AR') ? $locale->text('AR Transactions') : $locale->text('AP Transactions');
 
@@ -1092,13 +1119,11 @@ sub search {
 
   $name = $locale->text('Customer');
   $l_name = qq|<input name="l_name" class=checkbox type=checkbox value=Y checked> $name|;
-  $l_employee = qq|<input name="l_employee" class=checkbox type=checkbox value=Y> |.$locale->text('Salesperson');
   $l_till = qq|<input name="l_till" class=checkbox type=checkbox value=Y> |.$locale->text('Till');
   
   if ($form->{vc} eq 'vendor') {
     $name = $locale->text('Vendor');
     $l_till = "";
-    $l_employee = qq|<input name="l_employee" class=checkbox type=checkbox value=Y> |.$locale->text('Employee');
     $l_name = qq|<input name="l_name" class=checkbox type=checkbox value=Y checked> $name|;
   }
   
@@ -1110,8 +1135,8 @@ sub search {
   push @a, qq|<input name="l_ponumber" class=checkbox type=checkbox value=Y> |.$locale->text('PO Number');
   push @a, qq|<input name="l_transdate" class=checkbox type=checkbox value=Y checked> |.$locale->text('Invoice Date');
   push @a, $l_name;
-  push @a, $l_employee;
-  push @a, qq|<input name="l_manager" class=checkbox type=checkbox value=Y> |.$locale->text('Manager');
+  push @a, $l_employee if $l_employee;
+  push @a, $l_manager if $l_employee;
   push @a, $l_department if $l_department;
   push @a, qq|<input name="l_netamount" class=checkbox type=checkbox value=Y> |.$locale->text('Amount');
   push @a, qq|<input name="l_tax" class=checkbox type=checkbox value=Y> |.$locale->text('Tax');
@@ -1147,6 +1172,7 @@ sub search {
 	  <th align=right>$name</th>
 	  <td colspan=3>$selectname</td>
 	</tr>
+	$employee
 	$department
 	$invnumber
 	<tr>
@@ -1253,7 +1279,7 @@ sub transactions {
   
   if ($form->{$form->{vc}}) {
     $callback .= "&$form->{vc}=".$form->escape($form->{$form->{vc}},1).qq|--$form->{"$form->{vc}_id"}|;
-    $href .= "&$form->{vc}=".$form->escape($form->{customer}).qq|--$form->{"$form->{vc}_id"}|;
+    $href .= "&$form->{vc}=".$form->escape($form->{$form->{vc}}).qq|--$form->{"$form->{vc}_id"}|;
     $option .= "\n<br>" if ($option);
     $name = ($form->{vc} eq 'customer') ? $locale->text('Customer') : $locale->text('Vendor');
     $option .= "$name : $form->{$form->{vc}}";
@@ -1265,6 +1291,19 @@ sub transactions {
     $option .= "\n<br>" if ($option);
     $option .= $locale->text('Department')." : $department";
   }
+  if ($form->{employee}) {
+    $callback .= "&employee=".$form->escape($form->{employee},1);
+    $href .= "&employee=".$form->escape($form->{employee});
+    ($employee) = split /--/, $form->{employee};
+    $option .= "\n<br>" if ($option);
+    if ($form->{ARAP} eq 'AR') {
+      $option .= $locale->text('Salesperson');
+    } else {
+      $option .= $locale->text('Employee');
+    }
+    $option .= " : $employee";
+  }
+
   if ($form->{invnumber}) {
     $callback .= "&invnumber=".$form->escape($form->{invnumber},1);
     $href .= "&invnumber=".$form->escape($form->{invnumber});
@@ -1283,11 +1322,11 @@ sub transactions {
     $option .= "\n<br>" if ($option);
     $option .= $locale->text('PO Number')." : $form->{ponumber}";
   }
-  if ($form->{notes}) {
-    $callback .= "&notes=".$form->escape($form->{notes},1);
-    $href .= "&notes=".$form->escape($form->{notes});
+  if ($form->{source}) {
+    $callback .= "&source=".$form->escape($form->{source},1);
+    $href .= "&source=".$form->escape($form->{source});
     $option .= "\n<br>" if $option;
-    $option .= $locale->text('Notes')." : $form->{notes}";
+    $option .= $locale->text('Source')." : $form->{source}";
   }
   if ($form->{description}) {
     $callback .= "&description=".$form->escape($form->{description},1);
@@ -1295,7 +1334,18 @@ sub transactions {
     $option .= "\n<br>" if $option;
     $option .= $locale->text('Description')." : $form->{description}";
   }
-  
+  if ($form->{notes}) {
+    $callback .= "&notes=".$form->escape($form->{notes},1);
+    $href .= "&notes=".$form->escape($form->{notes});
+    $option .= "\n<br>" if $option;
+    $option .= $locale->text('Notes')." : $form->{notes}";
+  }
+  if ($form->{shipvia}) {
+    $callback .= "&shipvia=".$form->escape($form->{shipvia},1);
+    $href .= "&shipvia=".$form->escape($form->{shipvia});
+    $option .= "\n<br>" if $option;
+    $option .= $locale->text('Ship via')." : $form->{shipvia}";
+  }
   if ($form->{transdatefrom}) {
     $callback .= "&transdatefrom=$form->{transdatefrom}";
     $href .= "&transdatefrom=$form->{transdatefrom}";

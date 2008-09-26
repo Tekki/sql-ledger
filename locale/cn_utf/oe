@@ -134,7 +134,6 @@ $self{texts} = {
   'Packing List Date missing!'  => '未指明包装清单日期!',
   'Packing List Number missing!' => '未指明包装清单编号!',
   'Part'                        => '零件',
-  'Partnumber'                  => '料号',
   'Period'                      => '时期',
   'Phone'                       => '电话号码',
   'Pick List'                   => '拣货清单',

@@ -23,7 +23,6 @@ $self{texts} = {
   'Period'                      => 'Период',
   'Pick Lists'                  => 'Списки для выбора',
   'Print'                       => 'Печать',
-  'Printing ... '               => 'Печать...',
   'Purchase Orders'             => 'Заказы поставщику',
   'Quarter'                     => 'Квартал',
   'Quotation'                   => 'Резервирование',

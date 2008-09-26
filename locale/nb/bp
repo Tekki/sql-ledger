@@ -21,7 +21,6 @@ $self{texts} = {
   'Period'                      => 'Periode',
   'Pick Lists'                  => 'Plukklister',
   'Print'                       => 'Skriv ut',
-  'Printing ... '               => 'Skriver ut',
   'Purchase Orders'             => 'Innkjøpsordrer',
   'Quarter'                     => 'Kvartal',
   'Quotation'                   => 'Tilbud',

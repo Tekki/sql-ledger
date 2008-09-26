@@ -800,24 +800,81 @@ sub search {
   $l_lastcost = qq|<input name=l_lastcost class=checkbox type=checkbox value=Y checked> |.$locale->text('Last Cost');
   $l_avgcost = qq|<input name=l_avgcost class=checkbox type=checkbox value=Y checked> |.$locale->text('Average Cost');
   $l_linetotal = qq|<input name=l_linetotal class=checkbox type=checkbox value=Y> |.$locale->text('Line Total');
-  $l_curr = qq|<input name=l_curr class=checkbox type=checkbox value=Y> |.$locale->text('Currency');
   $l_markup = qq|<input name=l_markup class=checkbox type=checkbox value=Y> |.$locale->text('Markup');
   $l_account = qq|<input name=l_account class=checkbox type=checkbox value=Y> |.$locale->text('Accounts');
   
-
-  $accrual = qq|
-		    <tr>
-		      <td colspan=4 nowrap><input name=method class=radio type=radio value=accrual checked>|.$locale->text('Accrual').qq|
-		      <input name=method class=radio type=radio value=cash>|.$locale->text('Cash').qq|</td>
-		    </tr>
+  $bought = qq|
+          <td>
+	    <table>
+	      <tr>
+		<td><input name=bought class=checkbox type=checkbox value=1></td>
+		<td nowrap>|.$locale->text('Vendor Invoices').qq|</td>
+	      </tr>
+	      <tr>
+		<td><input name=onorder class=checkbox type=checkbox value=1></td>
+		<td nowrap>|.$locale->text('Purchase Orders').qq|</td>
+	      </tr>
+	      <tr>
+		<td><input name=rfq class=checkbox type=checkbox value=1></td>
+		<td nowrap>|.$locale->text('RFQ').qq|</td>
+	      </tr>
+	    </table>
+	  </td>
 |;
+
+  $sold = qq|
+	  <td>
+	    <table>
+	      <tr>
+		<td><input name=sold class=checkbox type=checkbox value=1></td>
+		<td nowrap>|.$locale->text('Sales Invoices').qq|</td>
+	      </tr>
+	      <tr>
+		<td><input name=ordered class=checkbox type=checkbox value=1></td>
+		<td nowrap>|.$locale->text('Sales Orders').qq|</td>
+	      </tr>
+	      <tr>
+		<td><input name=quoted class=checkbox type=checkbox value=1></td>
+		<td nowrap>|.$locale->text('Quotations').qq|</td>
+	      </tr>
+	    </table>
+	  </td>
+|;
+
+  $fromto = qq|
+	  <td>
+	    <table>
+	      <tr>
+		<td nowrap><b>|.$locale->text('From').qq|</b>
+		<input name=transdatefrom size=11 title="$myconfig{dateformat}">
+		<b>|.$locale->text('To').qq|</b>
+		<input name=transdateto size=11 title="$myconfig{dateformat}"></td>
+	      </tr>
+	      <tr>
+		<td nowrap><input name=method class=radio type=radio value=accrual checked>|.$locale->text('Accrual').qq|
+		<input name=method class=radio type=radio value=cash>|.$locale->text('Cash').qq|</td>
+	      </tr>
+	      <tr>
+		<td nowrap>
+		<input name=open class=checkbox type=checkbox value=1 checked> |.$locale->text('Open').qq|
+		<input name=closed class=checkbox type=checkbox> |.$locale->text('Closed').qq|
+		<input name=summary type=radio class=radio value=1> |.$locale->text('Summary').qq|
+		<input name=summary type=radio class=radio value=0 checked> |.$locale->text('Detail').qq|
+		</td>
+	      </tr>
+	    </table>
+	  </td>
+|;
+
+  $l_name = qq|<input name=l_name class=checkbox type=checkbox value=Y> |.$locale->text('Name');
+  $l_curr = qq|<input name=l_curr class=checkbox type=checkbox value=Y> |.$locale->text('Currency');
+  $l_employee = qq|<input name=l_employee class=checkbox type=checkbox value=Y> |.$locale->text('Employee');
+  $l_serialnumber = qq|<input name=l_serialnumber class=checkbox type=checkbox value=Y> |.$locale->text('Serial Number');
 
   $serialnumber = qq|
           <th align=right nowrap>|.$locale->text('Serial Number').qq|</th>
           <td><input name=serialnumber size=20></td>
 |;
-
-  $l_serialnumber = qq|<input name=l_serialnumber class=checkbox type=checkbox value=Y> |.$locale->text('Serial Number');
 
   $orphaned = qq|
             <input name=itemstatus class=radio type=radio value=orphaned>&nbsp;|.$locale->text('Orphaned');
@@ -879,6 +936,8 @@ sub search {
   }
 
   if ($form->{searchitems} eq 'assembly') {
+
+    $bought = "";
  
     $toplevel = qq|
         <tr>
@@ -891,136 +950,34 @@ sub search {
 |;
     $bom = qq|<input name=itemstatus type=radio value=bom>&nbsp;|.$locale->text('BOM');
     
-    $bought = qq|
-	<tr>
-	  <td></td>
-	  <td colspan=3>
-	    <table>
-	      <tr>
-	        <td>
-		  <table>
-		    <tr>
-		      <td><input name=sold class=checkbox type=checkbox value=1></td>
-		      <td nowrap>|.$locale->text('Sales Invoices').qq|</td>
-		    </tr>
-		    <tr>
-		      <td colspan=2><hr size=1 noshade></td>
-		    </tr>
-		    <tr>
-		      <td><input name=ordered class=checkbox type=checkbox value=1></td>
-		      <td nowrap>|.$locale->text('Sales Orders').qq|</td>
-		    </tr>
-		    <tr>
-		      <td colspan=4><hr size=1 noshade></td>
-		    </tr>
-		    <tr>
-		      <td><input name=quoted class=checkbox type=checkbox value=1></td>
-		      <td nowrap>|.$locale->text('Quotations').qq|</td>
-		    </tr>
-		  </table>
-		</td>
-		<td width=5%>&nbsp;</td>
-		<td>
-		  <table>
-		    $accrual
-		    <tr>
-		      <th>|.$locale->text('From').qq|</th>
-		      <td><input name=transdatefrom size=11 title="$myconfig{dateformat}"></td>
-		      <th>|.$locale->text('To').qq|</th>
-		      <td><input name=transdateto size=11 title="$myconfig{dateformat}"></td>
-		    </tr>
-		    <tr>
-		      <td colspan=4><input name=open class=checkbox type=checkbox value=1 checked>&nbsp;|.$locale->text('Open').qq|
-		      <input name=closed class=checkbox type=checkbox>&nbsp;|.$locale->text('Closed').qq|</td>
-		    </tr>
-		  </table>
-		</td>
-	      </tr>
-	    </table>
-	  </td>
-	</tr>
-|;
-
   } elsif ($form->{searchitems} eq 'component') {
+
+    $bought = "";
+    $sold = "";
+    $fromto = "";
+    $l_name = "";
+    $l_curr = "";
+    $l_employee = "";
+    $l_serialnumber = "";
 
     $warehouse = "";
     $serialnumber = "";
     $orphaned = "";
-    $l_serialnumber = "";
     $l_warehouse = "";
-    $l_curr = "";
     $l_account = "";
   
   } elsif ($form->{searchitems} eq 'labor') {
 
+    $sold = "";
+
     $warehouse = "";
     $serialnumber = "";
-    $l_serialnumber = "";
     $l_sellprice = qq|<input name=l_sellprice class=checkbox type=checkbox value=Y checked>&nbsp;|.$locale->text('Rate');
     $l_listprice = "";
     $l_lastcost = "";
     $l_avgcost = "";
-    $l_curr = "";
     $l_markup = "";
     
-  } else {
-       
-     $bought = qq|
-        <tr>
-          <td></td>
-          <td colspan=3>
-	    <table>
-	      <tr>
-	        <td>
-		  <table>
-		    <tr>
-		      <td><input name=bought class=checkbox type=checkbox value=1></td>
-		      <td nowrap>|.$locale->text('Vendor Invoices').qq|</td>
-		      <td><input name=sold class=checkbox type=checkbox value=1></td>
-		      <td nowrap>|.$locale->text('Sales Invoices').qq|</td>
-		    </tr>
-		    <tr>
-		      <td colspan=4><hr size=1 noshade></td>
-		    </tr>
-		    <tr>
-		      <td><input name=onorder class=checkbox type=checkbox value=1></td>
-		      <td nowrap>|.$locale->text('Purchase Orders').qq|</td>
-		      <td><input name=ordered class=checkbox type=checkbox value=1></td>
-		      <td nowrap>|.$locale->text('Sales Orders').qq|</td>
-		    </tr>
-		    <tr>
-		      <td colspan=4><hr size=1 noshade></td>
-		    </tr>
-		    <tr>
-		      <td><input name=rfq class=checkbox type=checkbox value=1></td>
-		      <td nowrap>|.$locale->text('RFQ').qq|</td>
-		      <td><input name=quoted class=checkbox type=checkbox value=1></td>
-		      <td nowrap>|.$locale->text('Quotations').qq|</td>
-		    </tr>
-		  </table>
-		</td>
-		<td width=5%>&nbsp;</td>
-		<td>
-		  <table>
-		    $accrual
-		    <tr>
-		      <th>|.$locale->text('From').qq|</th>
-		      <td><input name=transdatefrom size=11 title="$myconfig{dateformat}"></td>
-		      <th>|.$locale->text('To').qq|</th>
-		      <td><input name=transdateto size=11 title="$myconfig{dateformat}"></td>
-		    </tr>
-		    <tr>
-		      <td colspan=4><input name=open class=checkbox type=checkbox value=1 checked>&nbsp;|.$locale->text('Open').qq|
-		      <input name=closed class=checkbox type=checkbox>&nbsp;|.$locale->text('Closed').qq|</td>
-		    </tr>
-		  </table>
-		</td>
-	      </tr>
-	    </table>
-	  </td>
-	</tr>
-|;
-
   }
   
 
@@ -1028,9 +985,8 @@ sub search {
   push @a, qq|<input name=l_runningnumber class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('No.');
   push @a, qq|<input name=l_partnumber class=checkbox type=checkbox value=Y checked>&nbsp;|.$locale->text('Number');
   push @a, qq|<input name=l_description class=checkbox type=checkbox value=Y checked>&nbsp;|.$locale->text('Description');
-  push @a, $l_serialnumber if $l_serialnumber;
   push @a, qq|<input name=l_qty class=checkbox type=checkbox value=Y checked>&nbsp;|.$locale->text('Qty');
-  push @a, qq|<input name=l_unit class=checkbox type=checkbox value=Y checked>&nbsp;|.$locale->text('Unit of measure');
+  push @a, qq|<input name=l_unit class=checkbox type=checkbox value=Y checked>&nbsp;|.$locale->text('Unit');
   push @a, qq|<input name=l_priceupdate class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Updated');
   push @a, $l_partsgroup if $l_partsgroup;
   push @a, $l_listprice if $l_listprice;
@@ -1039,7 +995,6 @@ sub search {
   push @a, $l_avgcost if $l_avgcost;
   push @a, $l_linetotal if $l_linetotal;
   push @a, $l_markup if $l_markup;
-  push @a, $l_curr if $l_curr;
   push @a, $l_bin if $l_bin;
   push @a, $l_rop if $l_rop;
   push @a, $l_weight if $l_weight;
@@ -1051,6 +1006,10 @@ sub search {
   push @a, $l_model if $l_model;
   push @a, $l_warehouse if $l_warehouse;
   push @a, $l_account if $l_account;
+  push @a, $l_name if $l_name;
+  push @a, $l_curr if $l_curr;
+  push @a, $l_employee if $l_employee;
+  push @a, $l_serialnumber if $l_serialnumber;
 
   %title = ( all	=> 'Items',
              part	=> 'Parts',
@@ -1115,7 +1074,17 @@ sub search {
 	    $bom
 	  </td>
 	</tr>
-	$bought
+        <tr>
+	  <td></td>
+          <td colspan=3>
+	    <hr size=1 noshade>
+	  </td>
+	</tr>
+	<tr>
+	  <td></td>
+	  $bought
+	  $sold
+	  $fromto
         <tr>
 	  <td></td>
           <td colspan=3>
@@ -1290,10 +1259,6 @@ sub generate_report {
     $form->{warehouse} = "";
     $form->{l_warehouse} = 0;
     
-    $form->{l_lastcost} = "";
-    $form->{l_name} = "Y";
-    $form->{l_employee} = "Y";
-
     $form->{l_account} = "";
 
     if ($form->{open}) {
@@ -1308,7 +1273,16 @@ sub generate_report {
 	$option .= $locale->text('Closed');
       }
     }
-
+    if ($form->{summary}) {
+      $callback .= "&summary=$form->{summary}";
+      $option .= " : ".$locale->text('Summary');
+      $form->{l_ordnumber} = "";
+      $form->{l_quonumber} = "";
+      $form->{l_invnumber} = "";
+    } else {
+      $option .= " : ".$locale->text('Detail');
+    }
+ 
     if ($form->{transdatefrom}) {
       $callback .= "&transdatefrom=$form->{transdatefrom}";
       $option .= "\n<br>".$locale->text('From')."&nbsp;".$locale->date(\%myconfig, $form->{transdatefrom}, 1);
@@ -1317,6 +1291,7 @@ sub generate_report {
       $callback .= "&transdateto=$form->{transdateto}";
       $option .= "\n<br>".$locale->text('To')."&nbsp;".$locale->date(\%myconfig, $form->{transdateto}, 1);
     }
+     
   }
   
   if ($form->{warehouse}) {
@@ -1390,8 +1365,7 @@ sub generate_report {
         $form->{ordered} || $form->{rfq} || $form->{quoted}) {
       $form->{l_onhand} = "Y";
     } else {
-      $form->{l_linetotalsellprice} = "";
-      $form->{l_linetotallastcost} = "";
+      for (qw(sellprice lastcost avgcost listprice)) { $form->{"l_linetotal$_"} = "" }
     }
   } else {
     $form->{l_onhand} = "Y" if $form->{l_qty};
@@ -1499,7 +1473,7 @@ sub generate_report {
   
   for (qw(sellprice lastcost avgcost listprice)) { $column_header{"linetotal$_"} = qq|<th class=listheading nowrap>|.$locale->text('Extended').qq|</th>| }
   
-  $column_header{curr} = qq|<th class=listheading nowrap>|.$locale->text('Curr').qq|</th>|;
+  $column_header{curr} = qq|<th nowrap><a class=listheading href=$href&sort=curr>|.$locale->text('Curr').qq|</a></th>|;
   
   $column_header{image} = qq|<th class=listheading nowrap>|.$locale->text('Image').qq|</a></th>|;
   $column_header{drawing} = qq|<th nowrap><a class=listheading href=$href&sort=drawing>|.$locale->text('Drawing').qq|</a></th>|;
@@ -1570,14 +1544,61 @@ sub generate_report {
   # escape callback for href
   $callback = $form->escape($callback);
 
-  if (@{ $form->{parts} }) {
-    $sameitem = $form->{parts}->[0]->{$form->{sort}};
+
+  $k = $#{@{ $form->{parts} }};
+  @groupby = ($form->{sort});
+  
+  if ($form->{summary}) {
+    @groupby = ();
+    for (qw(partnumber description notes partsgroup make model bin curr priceupdate image drawing microfiche invnumber ordnumber quonumber name employee serialnumber warehouse)) { $a{$_} = 1 };
+
+    for (@column_index) {
+      if ($a{$_}) {
+	push @groupby, $_;
+      }
+    }
+    push @groupby, "id";
+  }
+
+  if ($k > 0) {
+    $samegroup = "";
+    for (@groupby) { $samegroup .= $form->{parts}->[0]->{$_} }
   }
 
   $i = 0;
+  $n = 0;
+
   foreach $ref (@{ $form->{parts} }) {
-  
-    $i++;
+
+    $ref->{exchangerate} ||= 1;
+    $ref->{discount} *= 1;
+
+    if ($form->{summary}) {
+      
+      $summary{$ref->{id}}{total} += $ref->{sellprice} * $ref->{onhand};
+      $summary{$ref->{id}}{onhand} += $ref->{onhand};
+     
+      if ($n < $k) {
+	$nextgroup = "";
+	for (@groupby) { $nextgroup .= $form->{parts}->[$n+1]->{$_} }
+	$n++;
+
+	$form->{parts}->[$n]->{exchangerate} ||= 1;
+
+        if ($samegroup eq $nextgroup) {
+	  for (qw(exchangerate discount)) { $form->{parts}->[$n]->{$_} = ($ref->{$_} + $form->{parts}->[$n]->{$_}) / 2 }
+	  next;
+	}
+	$samegroup = $nextgroup;
+      }
+
+      $ref->{onhand} = $summary{$ref->{id}}{onhand};
+      $ref->{sellprice} = ($ref->{onhand}) ? $summary{$ref->{id}}{total} / $ref->{onhand} : 0;
+      
+      $summary{$ref->{id}}{total} = 0;
+      $summary{$ref->{id}}{onhand} = 0;
+      
+    }
     
     if ($form->{l_subtotal} eq 'Y' && !$ref->{assemblyitem}) {
       if ($sameitem ne $ref->{$form->{sort}}) {
@@ -1585,20 +1606,25 @@ sub generate_report {
 	$sameitem = $ref->{$form->{sort}};
       }
     }
+    
+    $i++;
 
-    $ref->{exchangerate} = 1 unless $ref->{exchangerate};
-    $ref->{discount} *= 1;
-    $ref->{sellprice} = $ref->{sellprice} * (1 - $ref->{discount});
     if ($form->{l_curr}) {
-      if ($ref->{module} ne 'oe') {
+      if ($ref->{module} eq 'oe') {
+	$ref->{sellprice} = $ref->{sellprice} * (1 - $ref->{discount});
+      } else {
 	for (qw(sellprice listprice lastcost avgcost)) { $ref->{$_} /= $ref->{exchangerate} }
       }
     } else {
       if ($ref->{module} eq 'oe') {
+	$ref->{sellprice} = $ref->{sellprice} * (1 - $ref->{discount});
 	for (qw(sellprice listprice lastcost avgcost)) { $ref->{$_} *= $ref->{exchangerate} }
       }
     }
-    for (qw(sellprice listprice lastcost avgcost)) { $ref->{$_} = $form->round_amount($ref->{$_}, 2) }
+
+    if (!$form->{summary}) {
+      for (qw(sellprice listprice lastcost avgcost)) { $ref->{$_} = $form->round_amount($ref->{$_}, 2) }
+    }
 
     if ($form->{l_markup}) {
       $ref->{lastcostmarkup} = (($ref->{sellprice} / $ref->{lastcost}) - 1) * 100 if $ref->{lastcost} != 0;
@@ -1640,14 +1666,21 @@ sub generate_report {
     $column_data{onhand} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{onhand}, '', "&nbsp;")."</td>";
     $column_data{perassembly} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{perassembly}, '', "&nbsp;")."</td>";
 
-    for (qw(sellprice listprice lastcost avgcost)) { $column_data{$_} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{$_}, 2, "&nbsp;") . "</td>" }
+    if ($form->{summary}) {
+      $column_data{sellprice} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{sellprice}, 4, "&nbsp;") . "</td>";
+    } else {
+      $column_data{sellprice} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{sellprice}, 2, "&nbsp;") . "</td>";
+    }
+    for (qw(listprice lastcost avgcost)) { $column_data{$_} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{$_}, 2, "&nbsp;") . "</td>" }
     
     for (qw(lastcost avgcost)) { $column_data{"${_}markup"} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{"${_}markup"}, 1, "&nbsp;")."</td>" }
-    
-    for (qw(sellprice lastcost avgcost listprice)) { $column_data{"linetotal$_"} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{onhand} * $ref->{$_}, 2, "&nbsp;")."</td>" }
+
+    if ($form->{l_linetotal}) {
+      for (qw(sellprice lastcost avgcost listprice)) { $column_data{"linetotal$_"} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{onhand} * $ref->{$_}, 2, "&nbsp;")."</td>" }
+    }
 
     if ($ref->{assemblyitem} && $ref->{stagger} > 1) {
-      for (qw(linetotalsellprice linetotallastcost linetotalavgcost linetotallistprice)) { $column_data{$_} = "<td>&nbsp;</td>" }
+      for (qw(sellprice lastcost avgcost listprice)) { $column_data{"linetotal$_"} = "<td>&nbsp;</td>" }
     }
     
     if (!$ref->{assemblyitem}) {
@@ -1752,7 +1785,6 @@ sub generate_report {
 |;
 
 }
-
 
 
 sub parts_subtotal {
@@ -2922,7 +2954,11 @@ sub save {
 	for (split / /, $form->{"taxaccounts_$i"}) { $amount += ($form->{"${_}_base"} * $form->{"${_}_rate"}) }
       }
 
-      $form->{creditremaining} -= $amount;
+      $ml = 1;
+      if ($form->{type} =~ /invoice/) {
+	$ml = -1 if $form->{type} =~ /_invoice/;
+      }
+      $form->{creditremaining} -= ($amount * $ml);
       
     }
     

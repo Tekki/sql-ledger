@@ -19,7 +19,6 @@ $self{texts} = {
   'Order Number'                => 'Ordera Nr.',
   'Packing Lists'               => 'Iesaiòojumu saraksti',
   'Print'                       => 'Drukât',
-  'Printing ... '               => 'Drukâ ...',
   'Purchase Orders'             => 'Pirkðanas orderi',
   'Quotation'                   => 'Tâme',
   'Quotation Number'            => 'Tâmes numurs',

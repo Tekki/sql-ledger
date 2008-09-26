@@ -83,7 +83,6 @@ $self{texts} = {
   'Packing List Date missing!'  => 'Tanggal Packing List harap diisi!',
   'Packing List Number missing!' => 'Nomor Packing List harap diisi!',
   'Part'                        => 'Barang',
-  'Partnumber'                  => 'Nomor Barang',
   'Period'                      => 'Perioda',
   'Phone'                       => 'Telephone',
   'Price'                       => 'Harga',

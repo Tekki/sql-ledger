@@ -15,7 +15,6 @@ $self{texts} = {
   'Order Number'                => 'Nomor Pesanan',
   'Period'                      => 'Perioda',
   'Print'                       => 'Cetak',
-  'Printing ... '               => 'Sedang mencetak...',
   'Purchase Orders'             => 'Pesanan Pembelian (PO)',
   'Quotation'                   => 'Quotation',
   'Quotation Number'            => 'Nomor Quotation',

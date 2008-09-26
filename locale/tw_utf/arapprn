@@ -2,19 +2,19 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Account'                     => '帳戶',
-  'Amount'                      => '總計',
+  'Amount'                      => '金額',
   'Continue'                    => '繼續',
   'Date'                        => '日期',
   'Memo'                        => '備忘錄',
   'Nothing to print!'           => '沒有可列印的項目！',
   'PDF'                         => 'PDF',
-  'Postscript'                  => 'PostScript',
-  'Printed'                     => '巳列印',
+  'Postscript'                  => 'Postscript',
+  'Printed'                     => '已列印',
   'Scheduled'                   => '編排了時間',
-  'Screen'                      => '顯示器',
+  'Screen'                      => '螢幕',
   'Select a Printer!'           => '選擇印表機！',
   'Select payment'              => '選擇付款',
-  'Select postscript or PDF!'   => '於PostScript或PDF中選一',
+  'Select postscript or PDF!'   => '選擇postscript或PDF！',
   'Source'                      => '來源',
 };
 

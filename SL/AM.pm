@@ -1142,6 +1142,7 @@ sub save_defaults {
 		 employeenumber = '$form->{employeenumber}',
 		 customernumber = '$form->{customernumber}',
 		 vendornumber = '$form->{vendornumber}',
+		 projectnumber = '$form->{projectnumber}',
 		 yearend = '$form->{yearend}',
 		 curr = '$form->{curr}',
 		 weightunit = |.$dbh->quote($form->{weightunit}).qq|,
@@ -1215,7 +1216,7 @@ sub defaultaccounts {
 
   $query = qq|SELECT id, accno, description
               FROM chart
-	      WHERE category = 'I'
+	      WHERE (category = 'I' or category = 'E')
 	      AND charttype = 'A'
               ORDER BY accno|;
   $sth = $dbh->prepare($query);
@@ -1224,23 +1225,10 @@ sub defaultaccounts {
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
     %{ $form->{IC}{FX_gain}{$ref->{accno}} } = ( id => $ref->{id},
                                       description => $ref->{description} );
-  }
-  $sth->finish;
-
-  $query = qq|SELECT id, accno, description
-              FROM chart
-	      WHERE category = 'E'
-	      AND charttype = 'A'
-              ORDER BY accno|;
-  $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
-
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
     %{ $form->{IC}{FX_loss}{$ref->{accno}} } = ( id => $ref->{id},
                                       description => $ref->{description} );
   }
   $sth->finish;
-
 
   # now get the tax rates and numbers
   $query = qq|SELECT chart.id, chart.accno, chart.description,
@@ -1465,9 +1453,6 @@ $myconfig->{dboptions};
     $sth->finish;
   }
 
- 
-  my $restrict = ($myconfig->{dbdriver} eq 'DB2') ? "RESTRICT" : "";
- 
   # create sequences and triggers
   foreach $item (@sequences) {
     if ($myconfig->{dbdriver} eq 'DB2') {
@@ -1477,15 +1462,18 @@ $myconfig->{dboptions};
     }
     
     my ($id) = $dbh->selectrow_array($query);
-    $id++;
+    $id;
   
-    print OUT qq|--
-DROP SEQUENCE $item $restrict;\n|;
-    
     if ($myconfig->{dbdriver} eq 'DB2') {
-      print OUT qq|CREATE SEQUENCE $item AS INTEGER START WITH $id INCREMENT BY 1 MAXVALUE 2147483647 MINVALUE 1 CACHE 5;\n|;
+      print OUT qq|DROP SEQUENCE $item RESTRICT
+CREATE SEQUENCE $item AS INTEGER START WITH $id INCREMENT BY 1 MAXVALUE 2147483647 MINVALUE 1 CACHE 5;\n|;
+    }
+    if ($myconfig->{dbdriver} eq 'Pg') {
+      print OUT qq|CREATE SEQUENCE $item;
+SELECT SETVAL('$item', $id)\n|;
     } else {
-      print OUT qq|CREATE SEQUENCE $item START $id;\n|;
+      print OUT qq|DROP SEQUENCE $item
+CREATE SEQUENCE $item START $id;\n|;
     }
   }
 
@@ -1549,7 +1537,9 @@ DROP SEQUENCE $item $restrict;\n|;
 Content-Disposition: attachment; filename="$myconfig->{dbname}-$form->{dbversion}-$t[5]$t[4]$t[3]$suffix"
 
 |;
-
+    binmode(IN);
+    binmode(OUT);
+    
     while (<IN>) {
       print OUT $_;
     }
@@ -1582,23 +1572,15 @@ sub closebooks {
   my ($self, $myconfig, $form) = @_;
 
   my $dbh = $form->dbconnect_noauto($myconfig);
+  my $query = qq|UPDATE defaults SET|;
 
   if ($form->{revtrans}) {
-    
-    $query = qq|UPDATE defaults SET closedto = NULL,
-				    revtrans = '1'|;
+    $query .= qq| revtrans = '1'|;
   } else {
-    if ($form->{closedto}) {
-      
-      $query = qq|UPDATE defaults SET closedto = '$form->{closedto}',
-				      revtrans = '0'|;
-    } else {
-      
-      $query = qq|UPDATE defaults SET closedto = NULL,
-				      revtrans = '0'|;
-    }
+    $query .= qq| revtrans = '0'|;
   }
-
+  $query .= qq|, closedto = |.$form->dbquote($form->{closedto}, SQL_DATE);
+  
   if ($form->{audittrail}) {
     $query .= qq|, audittrail = '1'|;
   } else {
@@ -1613,8 +1595,7 @@ sub closebooks {
                 WHERE transdate < '$form->{removeaudittrail}'|;
     $dbh->do($query) || $form->dberror($query);
   }
-		
-  
+
   $dbh->commit;
   $dbh->disconnect;
   

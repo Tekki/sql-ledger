@@ -19,7 +19,6 @@ $self{texts} = {
   'Packing Lists'               => 'Pakbonnen',
   'Pick Lists'                  => 'Pick lijsten',
   'Print'                       => 'Afdrukken',
-  'Printing ... '               => 'Afdrukken ...',
   'Purchase Orders'             => 'Inkooporders',
   'Quotation'                   => 'Offerte',
   'Quotation Number'            => 'Offertenummer',

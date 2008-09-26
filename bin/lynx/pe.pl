@@ -124,21 +124,21 @@ sub prepare_job {
 
 sub job_header {
 
-  for (qw(partnumber description projectdescription notes unit)) { $form->{$_} = $form->quote($form->{$_}) }
+  for (qw(partnumber partdescription description notes unit)) { $form->{$_} = $form->quote($form->{$_}) }
 
   for (qw(production weight)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}) }
   for (qw(listprice sellprice)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, 2) }
+  
+  if (($rows = $form->numtextrows($form->{partdescription}, 60)) > 1) {
+    $partdescription = qq|<textarea name="partdescription" rows=$rows cols=60 style="width: 100%" wrap=soft>$form->{partdescription}</textarea>|;
+  } else {
+    $partdescription = qq|<input name=partdescription size=60 value="$form->{partdescription}">|;
+  }
   
   if (($rows = $form->numtextrows($form->{description}, 60)) > 1) {
     $description = qq|<textarea name="description" rows=$rows cols=60 style="width: 100%" wrap=soft>$form->{description}</textarea>|;
   } else {
     $description = qq|<input name=description size=60 value="$form->{description}">|;
-  }
-  
-  if (($rows = $form->numtextrows($form->{projectdescription}, 60)) > 1) {
-    $projectdescription = qq|<textarea name="projectdescription" rows=$rows cols=60 style="width: 100%" wrap=soft>$form->{projectdescription}</textarea>|;
-  } else {
-    $projectdescription = qq|<input name=projectdescription size=60 value="$form->{projectdescription}">|;
   }
   
   if (($rows = $form->numtextrows($form->{notes}, 40)) < 2) {
@@ -252,7 +252,7 @@ sub job_header {
 	      </tr>
 	      <tr valign=top>
 	        <td><input name=partnumber value="$form->{partnumber}" size=20></td>
-		<td>$description</td>
+		<td>$partdescription</td>
 		<td>$partsgroup</td>
 	      </tr>
 	    </table>
@@ -290,7 +290,7 @@ sub job_header {
 	  <th align=right>|.$locale->text('Number').qq|</th>
 	  <td><input name=projectnumber size=20 value="$form->{projectnumber}"></td>
 	  <th align=right>|.$locale->text('Description').qq|</th>
-	  <td>$projectdescription</td>
+	  <td>$description</td>
 	</tr>
 	$name
 	<tr>
@@ -979,12 +979,12 @@ sub list_projects {
 
 sub project_header {
 
-  $form->{projectdescription} = $form->quote($form->{projectdescription});
+  $form->{description} = $form->quote($form->{description});
   
-  if (($rows = $form->numtextrows($form->{projectdescription}, 60)) > 1) {
-    $projectdescription = qq|<textarea name="projectdescription" rows=$rows cols=60 style="width: 100%" wrap=soft>$form->{projectdescription}</textarea>|;
+  if (($rows = $form->numtextrows($form->{description}, 60)) > 1) {
+    $description = qq|<textarea name="description" rows=$rows cols=60 style="width: 100%" wrap=soft>$form->{description}</textarea>|;
   } else {
-    $projectdescription = qq|<input name=projectdescription size=60 value="$form->{projectdescription}">|;
+    $description = qq|<input name=description size=60 value="$form->{description}">|;
   }
   
   $form->{"select$form->{vc}"} = $form->unescape($form->{"select$form->{vc}"});
@@ -1036,7 +1036,7 @@ sub project_header {
 	  <th align=right>|.$locale->text('Number').qq|</th>
 	  <td><input name=projectnumber size=20 value="$form->{projectnumber}"></td>
 	  <th align=right>|.$locale->text('Description').qq|</th>
-	  <td>$projectdescription</td>
+	  <td>$description</td>
 	</tr>
 	$name
 	<tr>
@@ -1098,8 +1098,6 @@ sub save {
   }
 
   if ($form->{type} eq 'project') {
-    $form->isblank("projectnumber", $locale->text('Project Number missing!'));
-
     if ($form->{"select$form->{vc}"}) {
       ($null, $form->{"$form->{vc}_id"}) = split /--/, $form->{"$form->{vc}"};
     } else {
@@ -1136,9 +1134,6 @@ sub save {
   
 
   if ($form->{type} eq 'job') {
-  
-    $form->isblank("projectnumber", $locale->text('Job Number missing!'));
-
     if ($form->{"select$form->{vc}"}) {
       ($null, $form->{"$form->{vc}_id"}) = split /--/, $form->{"$form->{vc}"};
     } else {
@@ -1960,6 +1955,8 @@ sub update {
 
     for (qw(production listprice sellprice weight)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
 
+    $form->{projectnumber} = $form->update_defaults(\%myconfig, "projectnumber") unless $form->{projectnumber};
+    
     if ($form->{"select$form->{vc}"}) {
       if ($form->{startdate} ne $form->{oldstartdate} || $form->{enddate} ne $form->{oldenddate}) {
 	

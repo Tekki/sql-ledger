@@ -460,28 +460,29 @@ sub form_footer {
       }
 
       delete $button{'Print and Post'} unless $latex;
+    } else {
+      for ('Print', 'Post', 'Print and Post', 'Delete') { delete $button{$_} }
+    }
       
-      for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+    for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
 
-      print qq|<p>
-      <input type=text size=1 value="B" accesskey="B" title="[Alt-B]">\n|;
-    
-      if ($form->{partsgroup}) {
-	$form->{partsgroup} =~ s/\r//g;
-	$form->{partsgroup} = $form->quote($form->{partsgroup});
+    print qq|<p>
+    <input type=text size=1 value="B" accesskey="B" title="[Alt-B]">\n|;
+  
+    if ($form->{partsgroup}) {
+      $form->{partsgroup} =~ s/\r//g;
+      $form->{partsgroup} = $form->quote($form->{partsgroup});
 
-	$spc = ($form->{path} =~ /lynx/) ? "." : " ";
-	print qq|
+      $spc = ($form->{path} =~ /lynx/) ? "." : " ";
+      print qq|
 <input type=hidden name=nextsub value=lookup_partsgroup>
 <input type=hidden name=partsgroup value="$form->{partsgroup}">|;
 
-	foreach $item (split /\n/, $form->{partsgroup}) {
-	  ($partsgroup, $translation) = split /--/, $item;
-	  $item = ($translation) ? $translation : $partsgroup;
-	  print qq| <input class=submit type=submit name=action value="$spc$item">\n| if $item;
-	}
+      foreach $item (split /\n/, $form->{partsgroup}) {
+	($partsgroup, $translation) = split /--/, $item;
+	$item = ($translation) ? $translation : $partsgroup;
+	print qq| <input class=submit type=submit name=action value="$spc$item">\n| if $item;
       }
-
     }
   }
 
@@ -521,6 +522,8 @@ sub post {
   
   $paid = 0;
   for (1 .. $form->{paidaccounts}) { $paid += $form->parse_amount(\%myconfig, $form->{"paid_$_"}); }
+  delete $form->{datepaid} unless $paid;
+  
   $total = $form->parse_amount(\%myconfig, $form->{invtotal});
   
   # deduct change from first payment
@@ -764,7 +767,7 @@ sub print_form {
 
 sub print_and_post {
 
-  $form->error($locale->text('Select a printer!')) if ($form->{media} eq 'screen');
+  $form->error($locale->text('Select a Printer!')) if ($form->{media} eq 'screen');
   $form->{printandpost} = 1;
   &print;
   &post;

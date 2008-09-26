@@ -1,6 +1,14 @@
 <ul>
-<p><li><h4>PostgreSQL 8.1</h4>
-To use SQL-Ledger with 8.1 you have to modify Pg-tables.sql The file
+<p><li><h4>PostgreSQL template1</h4>
+template1 is a template to build new databases
+from. Anything you put into template1 will be copied to a new database.
+So when you try to create a new dataset, the tables are already created from
+template1 and when SQL-Ledger tries to create them you'll get an error that
+the tables already exist.
+
+
+<p><li><h4>PostgreSQL 8.0+</h4>
+To use SQL-Ledger with 8.0+ you have to modify Pg-tables.sql The file
 is in the sql directory.
 
 <pre>

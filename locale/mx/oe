@@ -121,7 +121,6 @@ $self{texts} = {
   'Packing List Date missing!'  => '¡Falta la fecha en la lista de empaque!',
   'Packing List Number missing!' => '¡Falta le número en la lista de empaque!',
   'Part'                        => 'Parte',
-  'Partnumber'                  => 'Número de Parte',
   'Period'                      => 'Período',
   'Phone'                       => 'Teléfono',
   'Pick List'                   => 'Lista de Selección',

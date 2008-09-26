@@ -49,7 +49,6 @@ $self{texts} = {
   'Number'                      => 'Nomor',
   'Order'                       => 'No. Pesanan',
   'POS'                         => 'Kasir (POS)',
-  'Partnumber'                  => 'Nomor Barang',
   'Phone'                       => 'Telephone',
   'Pricegroup'                  => 'Kelompok Harga',
   'Pricelist'                   => 'Daftar Harga',

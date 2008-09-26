@@ -34,58 +34,61 @@ sub get_vc {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
   
-  my %arap = ( invoice => ['ar'],
-               packing_list => ['oe', 'ar'],
-	       sales_order => ['oe'],
-	       work_order => ['oe'],
-	       pick_list => ['oe', 'ar'],
-	       purchase_order => ['oe'],
-	       bin_list => ['oe'],
-	       sales_quotation => ['oe'],
-	       request_quotation => ['oe'],
-	       timecard => ['jcitems'],
+  my %arap = ( invoice => { ar => customer, ap => vendor },
+               packing_list => { oe => customer, ar => customer, ap => vendor },
+	       sales_order => { oe => customer },
+	       work_order => { oe => customer },
+	       pick_list => { oe => customer, ar => customer, ap => vendor },
+	       purchase_order => { oe => vendor },
+	       bin_list => { oe => customer, ar => customer, ap => vendor },
+	       sales_quotation => { oe => customer },
+	       request_quotation => { oe => vendor },
+	       timecard => { jcitems => employee },
 	     );
   
   my $query = "";
   my $sth;
-  my $n;
   my $count;
   my $item;
-  
-  foreach $item (@{ $arap{$form->{type}} }) {
+  my $vc;
+  my $wildcard = ($form->{type} eq 'invoice') ? '%' : '';
+
+  foreach $item (keys %{ $arap{$form->{type}} }) {
     $query = qq|
               SELECT count(*)
 	      FROM (SELECT DISTINCT vc.id
-		    FROM $form->{vc} vc, $item a, status s
-		    WHERE a.$form->{vc}_id = vc.id
+		    FROM $arap{$form->{type}}{$item} vc, $item a, status s
+		    WHERE a.$arap{$form->{type}}{$item}_id = vc.id
 		    AND s.trans_id = a.id
-		    AND s.formname = '$form->{type}'
+		    AND s.formname LIKE '$wildcard$form->{type}'
 		    AND s.spoolfile IS NOT NULL) AS total|;
-    ($n) = $dbh->selectrow_array($query);
-    $count += $n;
+    ($vc) = $dbh->selectrow_array($query);
+    $form->{$arap{$form->{type}}{$item}} ||= $vc;
+    $count += $vc;
   }
 
   # build selection list
   my $union = "";
   $query = "";
-  if ($count < $myconfig->{vclimit}) {
-    foreach $item (@{ $arap{$form->{type}} }) {
+  if (($count < $myconfig->{vclimit}) && $count) {
+    foreach $item (keys %{ $arap{$form->{type}} }) {
       $query .= qq|
                   $union
-		  SELECT DISTINCT vc.id, vc.name
+		  SELECT DISTINCT ON (vc.name, vc.id) vc.id, vc.name, '$arap{$form->{type}}{$item}' AS vclabel
 		  FROM $item a
-		  JOIN $form->{vc} vc ON (a.$form->{vc}_id = vc.id)
+		  JOIN $arap{$form->{type}}{$item} vc ON (a.$arap{$form->{type}}{$item}_id = vc.id)
 		  JOIN status s ON (s.trans_id = a.id)
-		  WHERE s.formname = '$form->{type}'
+		  WHERE s.formname LIKE '$wildcard$form->{type}'
 		  AND s.spoolfile IS NOT NULL|;
       $union = "UNION";
     }
-    
+    $query .= qq| ORDER BY 2, 1|;
+
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
 
     while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
-      push @{ $form->{"all_$form->{vc}"} }, $ref;
+      push @{ $form->{"all_$ref->{vclabel}"} }, $ref;
     }
     $sth->finish;
   }
@@ -93,9 +96,11 @@ sub get_vc {
   $form->all_years($myconfig, $dbh);
 
   $dbh->disconnect;
+
+  $count;
  
 }
-		 
+
   
 sub get_spoolfiles {
   my ($self, $myconfig, $form) = @_;
@@ -106,19 +111,20 @@ sub get_spoolfiles {
   my $query;
   my $invnumber = "invnumber";
   my $item;
+  my $wildcard = ($form->{type} eq 'invoice') ? '%' : '';
   
-  my %arap = ( invoice => ['ar'],
-               packing_list => ['oe', 'ar'],
-	       sales_order => ['oe'],
-	       work_order => ['oe'],
-	       pick_list => ['oe', 'ar'],
-	       purchase_order => ['oe'],
-	       bin_list => ['oe'],
-	       sales_quotation => ['oe'],
-	       request_quotation => ['oe'],
-	       timecard => ['jc'],
+  my %arap = ( invoice => { ar => customer, ap => vendor },
+               packing_list => { oe => customer, ar => customer, ap => vendor },
+	       sales_order => { oe => customer },
+	       work_order => { oe => customer },
+	       pick_list => { oe => customer, ar => customer, ap => vendor },
+	       purchase_order => { oe => vendor },
+	       bin_list => { oe => customer, ar => customer, ap => vendor },
+	       sales_quotation => { oe => customer },
+	       request_quotation => { oe => vendor },
+	       timecard => { jcitems => employee },
 	     );
-
+ 
   ($form->{transdatefrom}, $form->{transdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
 
   if ($form->{type} eq 'timecard') {
@@ -131,28 +137,33 @@ sub get_spoolfiles {
     $query = qq|SELECT j.id, e.name, j.id AS invnumber,
                 to_char(j.checkedin, '$dateformat') AS transdate,
 		'' AS ordnumber, '' AS quonumber, '0' AS invoice,
-		'$arap{$form->{type}}[0]' AS module, s.spoolfile
+		'$jcitems' AS module, s.spoolfile
 		FROM jcitems j
 		JOIN employee e ON (e.id = j.employee_id)
 		JOIN status s ON (s.trans_id = j.id)
 		WHERE s.formname = '$form->{type}'
 		AND s.spoolfile IS NOT NULL|;
 
-      if ($form->{"$form->{vc}_id"}) {
-	$query .= qq| AND j.$form->{vc}_id = $form->{"$form->{vc}_id"}|;
-      } else {
-	if ($form->{$form->{vc}}) {
-	  $item = $form->like(lc $form->{$form->{vc}});
-	  $query .= " AND lower(e.name) LIKE '$item'";
-	}
+    my ($employee, $employee_id) = split /--/, $form->{$arap{$form->{type}}{jcitems}};
+    if ($employee_id) {
+      $query .= qq| AND j.$arap{$form->{type}}{jcitems}_id = $employee_id|;
+    } else {
+      if ($employee) {
+	$item = $form->like(lc $employee);
+	$query .= " AND lower(e.name) LIKE '$item'";
       }
+    }
 
-      $query .= " AND j.checkedin >= '$form->{transdatefrom}'" if $form->{transdatefrom};
-      $query .= " AND j.checkedin <= '$form->{transdateto}'" if $form->{transdateto};
+    $query .= " AND j.checkedin >= '$form->{transdatefrom}'" if $form->{transdatefrom};
+    $query .= " AND j.checkedin <= '$form->{transdateto}'" if $form->{transdateto};
 
   } else {
     
-    foreach $item (@{ $arap{$form->{type}} }) {
+    foreach $item (keys %{ $arap{$form->{type}} }) {
+      ($form->{$arap{$form->{type}}{$item}}, $form->{"$arap{$form->{type}}{$item}_id"}) = split /--/, $form->{$arap{$form->{type}}{$item}};
+    }
+
+    foreach $item (keys %{ $arap{$form->{type}} }) {
       
       $invoice = "a.invoice";
       $invnumber = "invnumber";
@@ -162,22 +173,27 @@ sub get_spoolfiles {
 	$invoice = "'0'"; 
       }
       
+      if ($form->{"print$arap{$form->{type}}{$item}"} ne 'Y') {
+	$form->{$arap{$form->{type}}{$item}} = "x";
+	$form->{"$arap{$form->{type}}{$item}_id"} = 0;
+      }
+	
       $query .= qq|
 		$union
 		SELECT a.id, vc.name, a.$invnumber AS invnumber, a.transdate,
 		a.ordnumber, a.quonumber, $invoice AS invoice,
 		'$item' AS module, s.spoolfile
-		FROM $item a, $form->{vc} vc, status s
+		FROM $item a, $arap{$form->{type}}{$item} vc, status s
 		WHERE s.trans_id = a.id
 		AND s.spoolfile IS NOT NULL
-		AND s.formname = '$form->{type}'
-		AND a.$form->{vc}_id = vc.id|;
+		AND s.formname LIKE '$wildcard$form->{type}'
+		AND a.$arap{$form->{type}}{$item}_id = vc.id|;
 
-      if ($form->{"$form->{vc}_id"}) {
-	$query .= qq| AND a.$form->{vc}_id = $form->{"$form->{vc}_id"}|;
-      } else {
-	if ($form->{$form->{vc}} ne "") {
-	  $item = $form->like(lc $form->{$form->{vc}});
+      if ($form->{$arap{$form->{type}}{$item}}) {
+	if ($form->{"$arap{$form->{type}}{$item}_id"} ne "") {
+	  $query .= qq| AND a.$arap{$form->{type}}{$item}_id = $form->{"$arap{$form->{type}}{$item}_id"}|;
+	} else {
+	  $item = $form->like(lc $form->{$arap{$form->{type}}{$item}});
 	  $query .= " AND lower(vc.name) LIKE '$item'";
 	}
       }

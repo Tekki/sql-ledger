@@ -46,7 +46,13 @@ sub post_invoice {
   my $diff = 0;
   my $item;
   my $invoice_id;
+  my $keepcleared;
   
+  ($null, $form->{employee_id}) = split /--/, $form->{employee};
+  unless ($form->{employee_id}) {
+    ($form->{employee}, $form->{employee_id}) = $form->get_employee($dbh);
+  }
+
   ($null, $form->{department_id}) = split(/--/, $form->{department});
   $form->{department_id} *= 1;
  
@@ -62,6 +68,7 @@ sub post_invoice {
   my %updparts = ();
   
   if ($form->{id}) {
+    $keepcleared = 1;
     $query = qq|SELECT id FROM ap
 		WHERE id = $form->{id}|;
     
@@ -282,7 +289,7 @@ sub post_invoice {
 			transdate, project_id, invoice_id)
 			VALUES ($ref->{trans_id}, $ref->{inventory_accno_id},
 			$linetotal, '$ref->{transdate}', $ref->{project_id},
-			$invoice_id )|;
+			$invoice_id)|;
 	    $dbh->do($query) || $form->dberror($query);
 
 	    # add expense
@@ -354,7 +361,7 @@ sub post_invoice {
     $invamount += $diff;
   }
   $fxdiff = $form->round_amount($fxdiff,2);
-  $invnetamount += $fxdiff if $amount == 0;
+  $invnetamount += $fxdiff;
   $invamount += $fxdiff;
 
   if ($form->round_amount($form->{paid} - $fxgrossamount,2) == 0) {
@@ -415,7 +422,7 @@ sub post_invoice {
     $form->{payables} = 1;
   }
 
-  my $cleared;
+  my $cleared = 0;
   
   # record payments and offsetting AP
   for my $i (1 .. $form->{paidaccounts}) {
@@ -448,8 +455,10 @@ sub post_invoice {
 	$dbh->do($query) || $form->dberror($query);
       }
 
-      $cleared = ($form->{"cleared_$i"}) ? $form->{"cleared_$i"} : 0;
-
+      if ($keepcleared) {
+	$cleared = ($form->{"cleared_$i"}) ? 1 : 0;
+      }
+      
       # record payment
       $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount, transdate,
                   source, memo, cleared)
@@ -510,11 +519,14 @@ sub post_invoice {
 	      datepaid = |.$form->dbquote($form->{datepaid}, SQL_DATE).qq|,
 	      duedate = |.$form->dbquote($form->{duedate}, SQL_DATE).qq|,
 	      invoice = '1',
+	      shippingpoint = |.$dbh->quote($form->{shippingpoint}).qq|,
+	      shipvia = |.$dbh->quote($form->{shipvia}).qq|,
 	      taxincluded = '$form->{taxincluded}',
 	      notes = |.$dbh->quote($form->{notes}).qq|,
 	      intnotes = |.$dbh->quote($form->{intnotes}).qq|,
 	      curr = '$form->{currency}',
 	      department_id = $form->{department_id},
+	      employee_id = $form->{employee_id},
 	      language_code = '$form->{language_code}',
 	      ponumber = |.$dbh->quote($form->{ponumber}).qq|
               WHERE id = $form->{id}|;

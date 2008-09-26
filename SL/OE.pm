@@ -36,11 +36,11 @@ sub transactions {
   my $dbh = $form->dbconnect($myconfig);
  
   my $query;
+  my $null;
+  my $var;
   my $ordnumber = 'ordnumber';
   my $quotation = '0';
-  my ($null, $department_id) = split /--/, $form->{department};
-
-  my $department = " AND o.department_id = $department_id" if $department_id;
+  my $department;
   
   my $rate = ($form->{vc} eq 'customer') ? 'buy' : 'sell';
 
@@ -53,6 +53,13 @@ sub transactions {
   
   my $number = $form->like(lc $form->{$ordnumber});
   my $name = $form->like(lc $form->{$form->{vc}});
+  
+  for (qw(department employee)) {
+    if ($form->{$_}) {
+      ($null, $var) = split /--/, $form->{$_};
+      $department .= " AND o.${_}_id = $var";
+    }
+  }
   
   my $query = qq|SELECT o.id, o.ordnumber, o.transdate, o.reqdate,
                  o.amount, ct.name, o.netamount, o.$form->{vc}_id,
@@ -381,7 +388,7 @@ sub save {
 
   # add up the tax
   my $tax = 0;
-  for (keys %taxaccounts) { $tax += $form->round_amount($taxaccounts{$_}, 2) }
+  for (keys %taxaccounts) { $tax += $taxaccounts{$_} }
   
   $amount = $form->round_amount($netamount + $tax, 2);
   $netamount = $form->round_amount($netamount, 2);
@@ -1189,7 +1196,7 @@ sub order_details {
       }
 
       push(@{ $form->{lineitems} }, { amount => $linetotal, tax => $form->round_amount($tax, 2) });
-      push(@{ $form->{taxrates} }, join /:/, sort { $a <=> $b } @taxrates);
+      push(@{ $form->{taxrates} }, join ' ', sort { $a <=> $b } @taxrates);
 	
       if ($form->{"assembly_$i"}) {
 	$form->{stagger} = -1;
@@ -2043,7 +2050,8 @@ sub generate_orders {
 		taxincluded = '$taxincluded',
 		curr = '$curr',
 		employee_id = $employee_id,
-		department_id = '$department_id'
+		department_id = '$department_id',
+		ponumber = |.$dbh->quote($form->{ponumber}).qq|
 		WHERE id = $id|;
     $dbh->do($query) || $form->dberror($query);
     
@@ -2112,8 +2120,11 @@ sub consolidate_orders {
   }
 
   
-  my $ordnumber;
+  my $ordnumber = $form->{ordnumber};
   my $numberfld = ($form->{vc} eq 'customer') ? 'sonumber' : 'ponumber';
+  
+  my ($department, $department_id) = $form->{department};
+  $department_id *= 1;
   
   my $uid = time;
   $uid .= $$;
@@ -2156,7 +2167,7 @@ sub consolidate_orders {
 	    
       }
 
-      $ordnumber = $form->update_defaults($myconfig, $numberfld, $dbh);
+      $ordnumber ||= $form->update_defaults($myconfig, $numberfld, $dbh);
     
       $query = qq|INSERT INTO oe (ordnumber)
 		  VALUES ($uid)|;
@@ -2184,7 +2195,9 @@ sub consolidate_orders {
 		  employee_id = $ref->{employee_id},
 		  intnotes = |.$dbh->quote($ref->{intnotes}).qq|,
 		  shipvia = |.$dbh->quote($ref->{shipvia}).qq|,
-		  language_code = '$ref->{language_code}'
+		  language_code = '$ref->{language_code}',
+		  ponumber = |.$dbh->quote($form->{ponumber}).qq|,
+		  department_id = $department_id
 		  WHERE id = $id|;
       $dbh->do($query) || $form->dberror($query);
 	  

@@ -72,7 +72,7 @@ sub add {
 
   &create_links;
 
-  $form->{rowcount} = ($form->{transfer}) ? 2 : 9;
+  $form->{rowcount} = ($form->{transfer}) ? 3 : 9;
   $form->{oldtransdate} = $form->{transdate};
   $form->{focus} = "reference";
 
@@ -1013,7 +1013,9 @@ sub form_footer {
       for ('Update', 'Post as new', 'Schedule') { $a{$_} = 1 }
       
       if (! $form->{locked}) {
-	for ('Post', 'Delete') { $a{$_} = 1 }
+	if ($transdate > $closedto) {
+	  for ('Post', 'Delete') { $a{$_} = 1 }
+	}
       }
       
     } else {

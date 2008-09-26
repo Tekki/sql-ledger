@@ -289,13 +289,6 @@ sub save_account {
     $form->error($locale->text('Cannot set multiple options for')." $item") if $i > 1;
   }
   
-  $i = 0;
-  for (qw(IC_income IC_expense IC_taxservice)) { $i++ if $form->{$_} }
-  $form->error($locale->text('Cannot set multiple options for Item')) if $i > 1;
-  $i = 0;
-  for (qw(IC_sale IC_cogs IC_taxpart)) { $i++ if $form->{$_} }
-  $form->error($locale->text('Cannot set multiple options for Item')) if $i > 1;
-  
   if (AM->save_account(\%myconfig, \%$form)) {
     $form->redirect($locale->text('Account saved!'));
   } else {
@@ -361,11 +354,13 @@ sub list_account {
 
     $ca->{link} =~ s/:/<br>/og;
 
+    $gifi_accno = $form->escape($ca->{gifi_accno});
+    
     if ($ca->{charttype} eq "H") {
       print qq|<tr class=listheading>|;
 
       $column_data{accno} = qq|<th><a class=listheading href=$form->{script}?action=edit_account&id=$ca->{id}&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&callback=$callback>$ca->{accno}</a></th>|;
-      $column_data{gifi_accno} = qq|<th class=listheading><a href=$form->{script}?action=edit_gifi&accno=$ca->{gifi_accno}&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&callback=$callback>$ca->{gifi_accno}</a>&nbsp;</th>|;
+      $column_data{gifi_accno} = qq|<th class=listheading><a href=$form->{script}?action=edit_gifi&accno=$gifi_accno&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&callback=$callback>$ca->{gifi_accno}</a>&nbsp;</th>|;
       $column_data{description} = qq|<th class=listheading>$ca->{description}&nbsp;</th>|;
       $column_data{debit} = qq|<th>&nbsp;</th>|;
       $column_data{credit} = qq| <th>&nbsp;</th>|;
@@ -376,7 +371,7 @@ sub list_account {
       print qq|
 <tr valign=top class=listrow$i>|;
       $column_data{accno} = qq|<td><a href=$form->{script}?action=edit_account&id=$ca->{id}&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&callback=$callback>$ca->{accno}</a></td>|;
-      $column_data{gifi_accno} = qq|<td><a href=$form->{script}?action=edit_gifi&accno=$ca->{gifi_accno}&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&callback=$callback>$ca->{gifi_accno}</a>&nbsp;</td>|;
+      $column_data{gifi_accno} = qq|<td><a href=$form->{script}?action=edit_gifi&accno=$gifi_accno&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&callback=$callback>$ca->{gifi_accno}</a>&nbsp;</td>|;
       $column_data{description} = qq|<td>$ca->{description}&nbsp;</td>|;
       $column_data{debit} = qq|<td align=right>$ca->{debit}</td>|;
       $column_data{credit} = qq|<td align=right>$ca->{credit}</td>|;
@@ -467,7 +462,8 @@ sub list_gifi {
     print qq|
 <tr valign=top class=listrow$i>|;
     
-    $column_data{accno} = qq|<td><a href=$form->{script}?action=edit_gifi&coa=1&accno=$ca->{accno}&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&callback=$callback>$ca->{accno}</td>|;
+    $accno = $form->escape($ca->{accno});
+    $column_data{accno} = qq|<td><a href=$form->{script}?action=edit_gifi&coa=1&accno=$accno&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&callback=$callback>$ca->{accno}</td>|;
     $column_data{description} = qq|<td>$ca->{description}&nbsp;</td>|;
     
     for (@column_index) { print "$column_data{$_}\n" }
@@ -1807,9 +1803,13 @@ sub defaults {
 	  <td><input name=rfqnumber size=40 value="$form->{defaults}{rfqnumber}"></td>
 	</tr>
 	<tr>
-	  <th align=right nowrap>|.$locale->text('Partnumber').qq|</th>
+	  <th align=right nowrap>|.$locale->text('Part Number').qq|</th>
 	  <td><input name=partnumber size=40 value="$form->{defaults}{partnumber}"></td>
 	</tr>
+	<tr>
+	  <th align=right nowrap>|.$locale->text('Job/Project Number').qq|</th>
+	  <td><input name=projectnumber size=40 value="$form->{defaults}{projectnumber}"></td>
+        </tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Employee Number').qq|</th>
 	  <td><input name=employeenumber size=40 value="$form->{defaults}{employeenumber}"></td>
@@ -2150,11 +2150,11 @@ sub audit_control {
 	  <td><input name=closedto size=11 title="$myconfig{dateformat}" value=$form->{closedto}></td>
 	</tr>
 	<tr>
-	  <th align=right>|.$locale->text('Activate Audit trails').qq|</th>
+	  <th align=right>|.$locale->text('Activate Audit trail').qq|</th>
 	  <td><input name=audittrail class=radio type=radio value="1" $checked{audittrailY}> |.$locale->text('Yes').qq| <input name=audittrail class=radio type=radio value="0" $checked{audittrailN}> |.$locale->text('No').qq|</td>
 	</tr>
 	<tr>
-	  <th align=right>|.$locale->text('Remove Audit trails up to').qq|</th>
+	  <th align=right>|.$locale->text('Remove Audit trail up to').qq|</th>
 	  <td><input name=removeaudittrail size=11 title="$myconfig{dateformat}"></td>
 	</tr>
       </table>
@@ -2185,6 +2185,7 @@ sub doclose {
   if ($form->{revtrans}) {
     $msg = $locale->text('Transaction reversal enforced for all dates');
   } else {
+    
     if ($form->{closedto}) {
       $msg = $locale->text('Transaction reversal enforced up to')
       ." ".$locale->date(\%myconfig, $form->{closedto}, 1);
@@ -2195,9 +2196,9 @@ sub doclose {
 
   $msg .= "<p>";
   if ($form->{audittrail}) {
-    $msg .= $locale->text('Audit trails enabled');
+    $msg .= $locale->text('Audit trail enabled');
   } else {
-    $msg .= $locale->text('Audit trails disabled');
+    $msg .= $locale->text('Audit trail disabled');
   }
 
   $msg .= "<p>";
@@ -2523,7 +2524,7 @@ sub company_logo {
 
 </pre>
 <center>
-<a href="http://www.sql-ledger.org" target=_top><img src=sql-ledger.gif border=0>&trade;</a>
+<a href="http://www.sql-ledger.org" target=_blank><img src=sql-ledger.gif border=0></a>
 <h1 class=login>|.$locale->text('Version').qq| $form->{version}</h1>
 
 <p>
@@ -2885,6 +2886,7 @@ sub process_transactions {
 	      $form->{"datepaid_$j"} = $form->add_date(\%myconfig, $form->{transdate}, $pt->{paid}, "days");
 
 	      ($form->{"$form->{ARAP}_paid_$j"}) = split /--/, $form->{"$form->{ARAP}_paid_$j"};
+	      delete $form->{"cleared_$j"};
 	    }
 	    
 	    $form->{paidaccounts}++;
@@ -3102,6 +3104,8 @@ sub formnames {
   
 # $locale->text('Transaction')
 # $locale->text('Invoice')
+# $locale->text('Credit Invoice')
+# $locale->text('Debit Invoice')
 # $locale->text('Packing List')
 # $locale->text('Pick List')
 # $locale->text('Sales Order')
@@ -3111,6 +3115,8 @@ sub formnames {
  
   my %f = ( transaction => 'Transaction',
 		invoice => 'Invoice',
+	 credit_invoice => 'Credit Invoice',
+	  debit_invoice => 'Debit Invoice',
 	   packing_list => 'Packing List',
 	      pick_list => 'Pick List',
 	    sales_order => 'Sales Order',

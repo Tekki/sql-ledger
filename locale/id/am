@@ -86,7 +86,6 @@ $self{texts} = {
   'No email address for'        => 'Tidak ada alamat email untuk',
   'Number'                      => 'Nomor',
   'Number Format'               => 'Format Angka',
-  'Partnumber'                  => 'Nomor Barang',
   'Password does not match!'    => 'Password tidak cocok!',
   'Payables'                    => 'Hutang',
   'Payment'                     => 'Pembayaran',
