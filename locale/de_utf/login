@@ -1,10 +1,11 @@
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
+  'Access Denied!'              => 'Zugriff verweigert!',
   'Company'                     => 'Firma',
   'Continue'                    => 'Weiter',
-  'Dataset is newer than version!' => 'Datensatz ist jÃ¼nger als installierte Version',
-  'Incorrect Dataset version!'  => 'UngÃ¼ltigige Datensatzversion',
+  'Dataset is newer than version!' => 'Datensatz ist jünger als installierte Version',
+  'Incorrect Dataset version!'  => 'Ungültige Datensatzversion',
   'Login'                       => 'Anmelden',
   'Name'                        => 'Name',
   'Password'                    => 'Passwort',

@@ -2447,7 +2447,7 @@ sub select_customer {
     last if ($ok = $form->{"ndx_$_"});
   }
 
-  $form->error($locale->text('Nothing selected!')) unless $ok;
+  $form->error($locale->text('All selected!')) unless $ok;
 
   $label = ($form->{vc} eq 'customer') ? $locale->text('Customer') : $locale->text('Vendor');
   
@@ -2509,6 +2509,7 @@ sub sales_order_header {
     if ($form->{"ndx_$_"}) {
       $form->{"$form->{vc}_id_$_"} = $form->{"$form->{vc}_id"};
       $form->{"$form->{vc}_$_"} = $form->{"$form->{vc}"};
+      $form->{"$form->{vc}number_$_"} = $form->{"$form->{vc}number"};
     }
   }
   

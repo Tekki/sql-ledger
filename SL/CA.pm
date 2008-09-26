@@ -86,7 +86,7 @@ sub all_transactions {
   my $dbh = $form->dbconnect($myconfig);
 
 
-  my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
     
   # get chart_id

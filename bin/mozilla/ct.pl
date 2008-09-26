@@ -853,17 +853,10 @@ sub list_names {
   $column_header{quototal} = qq|<th class=listheading>$total</th>|;
  
 
-# $locale->text('Customers')
-# $locale->text('Vendors')
-# $locale->text('Customer Transactions')
-# $locale->text('Vendor Transactions')
-
   if ($form->{status}) {
-    $label = "${vcname}s";
-    $form->{title} = $locale->text($label);
+    $form->{title} = ($form->{db} eq 'customer') ? $locale->text('Customers') : $locale->text('Vendors');
   } else {
-    $label = $vcname;
-    $form->{title} = $locale->text($label ." Transactions");
+    $form->{title} = ($form->{db} eq 'customer') ? $locale->text('Customer Transactions') : $locale->text('Vendor Transactions');
   }
 
   $title = "$form->{title} / $form->{company}";

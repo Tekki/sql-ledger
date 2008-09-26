@@ -939,13 +939,15 @@ sub invoicetotal {
     $form->{oldinvtotal} += $amount;
   }
 
+  $form->{oldinvtotal} = $form->round_amount($form->{oldinvtotal}, $form->{precision});
+
   if ($form->{taxincluded}) {
     $netamount = $form->{oldinvtotal};
     for (split / /, $form->{taxaccounts}) { $netamount -= ($form->{"${_}_base"} * $form->{"${_}_rate"}) }
     $form->{cd_available} = $form->round_amount($netamount * $form->{cashdiscount} / 100, $form->{precision});
   } else {
     $form->{cd_available} = $form->round_amount($form->{oldinvtotal} * $form->{cashdiscount} / 100, $form->{precision});
-    for (split / /, $form->{taxaccounts}) { $form->{oldinvtotal} += ($form->{"${_}_base"} * $form->{"${_}_rate"}) }
+    for (split / /, $form->{taxaccounts}) { $form->{oldinvtotal} += $form->round_amount($form->{"${_}_base"} * $form->{"${_}_rate"}, $form->{precision}) }
   }
   
   $form->{oldtotalpaid} = 0;

@@ -1,3 +1,5 @@
+$self{charset} = 'ISO-8859-1';
+
 $self{texts} = {
   'Account'                     => 'Konto',
   'Accounting Menu'             => 'Buchhaltungsmenü',
@@ -9,6 +11,7 @@ $self{texts} = {
   'Add Project'                 => 'Projekt anlegen',
   'Address'                     => 'Adresse',
   'All'                         => 'Alle',
+  'All selected!'               => 'Alles ausgewählt!',
   'Amount'                      => 'Betrag',
   'As of'                       => 'Ab',
   'Assembly'                    => 'Erzeugnis',
@@ -60,7 +63,6 @@ $self{texts} = {
   'Month'                       => 'Monat',
   'No open Projects!'           => 'Keine offenen Projekte!',
   'Notes'                       => 'Bemerkungen',
-  'Nothing selected!'           => 'Es wurde nichts ausgewählt!',
   'Number'                      => 'Nummer',
   'Orders generated!'           => 'Bestellungen wurden generiert!',
   'Orphaned'                    => 'Nie benutzt',

@@ -1,12 +1,17 @@
+$self{charset} = 'ISO-8859-1';
+
 $self{texts} = {
   'Account'                     => 'Konto',
   'Amount'                      => 'Betrag',
   'Continue'                    => 'Weiter',
+  'DCN missing!'                => 'DCN fehlt!',
   'Date'                        => 'Datum',
   'Memo'                        => 'Notiz',
   'Nothing to print!'           => 'Es wurde nichts gedruckt!',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
+  'RVC missing!'                => 'Codierzeile fehlt!',
+  'Remittance Voucher'          => 'Zahlschein',
   'Screen'                      => 'Bildschirm',
   'Select a Printer!'           => 'Drucker auswählen!',
   'Select payment'              => 'Zahlung auswählen',

@@ -1,3 +1,5 @@
+$self{charset} = 'ISO-8859-1';
+
 $self{texts} = {
   'Address'                     => 'Adresse',
   'Bcc'                         => 'Bcc',
@@ -15,6 +17,7 @@ $self{texts} = {
   'Every'                       => 'Jeden',
   'For'                         => 'für',
   'Include Payment'             => 'Bezahlung reinnehmen',
+  'Locked by'                   => 'Gesperrt von',
   'Message'                     => 'Nachricht',
   'Month(s)'                    => 'Monat(e)',
   'Next Date'                   => 'Nächstes Datum',
@@ -25,6 +28,7 @@ $self{texts} = {
   'Project not on file!'        => 'Dieses Projekt ist nicht in der Datenbank!',
   'Recurring Transaction'       => 'Wiederkehrende Buchung',
   'Reference'                   => 'Referenz',
+  'Remittance Voucher'          => 'Zahlschein',
   'Repeat'                      => 'Wiederholen',
   'Save Schedule'               => 'Zeitplan speichern',
   'Select from one of the names below' => 'Wählen Sie einen der untenstehenden Namen',

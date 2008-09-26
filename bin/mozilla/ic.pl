@@ -61,8 +61,11 @@ sub edit {
 # $locale->text('Edit Part')
 # $locale->text('Edit Service')
 # $locale->text('Edit Assembly')
-# $locale->text('Assembly Changeup')
 # $locale->text('Edit Labor/Overhead')
+# $locale->text('Part Changeup')
+# $locale->text('Service Changeup')
+# $locale->text('Assembly Changeup')
+# $locale->text('Labor/Overhead Changeup')
 
   IC->get_part(\%myconfig, \%$form);
 
@@ -1038,6 +1041,9 @@ sub search {
 # $locale->text('Assemblies')
 # $locale->text('Components')
 # $locale->text('Changeup Assemblies')
+# $locale->text('Changeup Parts')
+# $locale->text('Changeup Services')
+# $locale->text('Changeup Labor/Overhead')
   
   if ($form->{changeup}) {
     $form->{title} = $locale->text('Changeup' . ' ' .$title{$form->{searchitems}});

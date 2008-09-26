@@ -852,6 +852,8 @@ sub ship_all {
     $form->{"ship_$_"} = $form->{"qty_$_"};
   }
 
+  $form->{rowcount}--;
+
   &display_form;
 
 }

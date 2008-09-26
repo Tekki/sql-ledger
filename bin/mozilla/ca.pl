@@ -286,7 +286,7 @@ sub list_transactions {
     
   $form->{title} = ($form->{accounttype} eq 'gifi') ? $locale->text('GIFI') : $locale->text('Account');
   
-  $form->{title} .= " $form->{accno} - $form->{description}";
+  $form->{title} .= " $form->{accno} - $form->{description} / $form->{company}";
 
   if ($form->{department}) {
     ($department) = split /--/, $form->{department};

@@ -1,3 +1,5 @@
+$self{charset} = 'ISO-8859-1';
+
 $self{texts} = {
   'Accounting Menu'             => 'Kontoverwaltung',
   'Add Stores Card'             => 'Artikelkarte',
@@ -39,6 +41,7 @@ $self{texts} = {
   'Job Number missing!'         => 'Auftragsnummer fehlt!',
   'Labor Code'                  => 'Arbeitscode',
   'Labor Code missing!'         => 'Arbeitscode fehlt!',
+  'Locked by'                   => 'Gesperrt von',
   'Monday'                      => 'Montag',
   'Month'                       => 'Monat',
   'No Employees on file!'       => 'Kein Mitarbeiter in Datenbank!',

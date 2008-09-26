@@ -393,7 +393,7 @@ sub print {
       
       for (qw(id vc)) { $form->{$_} = $myform->{"${_}_$i"} }
       $form->{script} = qq|$myform->{"module_$i"}.pl|;
-      for (qw(login path media sendmode format type header)) { $form->{$_} = $myform->{$_} }
+      for (qw(login path media sendmode subject message format type header)) { $form->{$_} = $myform->{$_} }
 
       do "$form->{path}/$form->{script}";
 
@@ -804,13 +804,12 @@ function CheckAll() {
   $selectformat = "";
   $media = qq|<select name=media>|;
   
-  $form->{format} ||= $myconfig{outputformat};
-
   if ($form->{batch} eq 'email') {
     $form->{format} ||= "pdf";
     $selectformat .= qq|
           <option value="html">|.$locale->text('html');
   } else {
+    $form->{format} ||= $myconfig{outputformat};
     $form->{media} ||= $myconfig{printer};
     $form->{format} ||= "postscript";
     exit if (! $latex && $form->{batch} eq 'print');
@@ -835,6 +834,15 @@ function CheckAll() {
 
   }
 
+  $form->{SM}{attachment} = "selected" if $form->{sendmode} eq 'attachment';
+  $form->{SM}{inline} = "selected" if $form->{sendmode} eq 'inline';
+  
+  if ($form->{batch} eq 'email') {
+    $sendmode = qq|<select name="sendmode">
+            <option value="attachment" $form->{SM}{attachment}>|.$locale->text('Attachment').qq|
+	    <option value="inline" $form->{SM}{inline}>|.$locale->text('In-line').qq|</select>|;
+  }
+  
   if ($form->{batch} ne 'email') {
     $media .= qq|
           <option value="queue">|.$locale->text('Queue') if $form->{batch} eq 'print';
@@ -842,16 +850,25 @@ function CheckAll() {
  
   $media .= qq|</select>|;
 
+  $sendmode =~ s/(<option value="\Q$form->{sendmode}\E")/$1 selected/;
+  $sendmode = qq|<td>$sendmode</td>|;
+  
   $media =~ s/(<option value="\Q$form->{media}\E")/$1 selected/;
   $media = qq|<td>$media</td>|;
   
   $format = qq|<select name=format>$selectformat</select>|;
   $format =~ s/(<option value="\Q$form->{format}\E")/$1 selected/;
-  $format = qq|<td>$format</td>|;
+  $format = qq|<td width=1%>$format</td>|;
  
   if ($form->{batch} eq 'email') {
+    $message = qq|<tr>
+                    <td colspan=2 nowrap><b>|.$locale->text('Subject').qq|</b>&nbsp;<input name=subject size=30></td>
+                  </tr>
+		  <tr>
+                    <td colspan=2><b>|.$locale->text('Message').qq|<br><textarea name=message rows=15 cols=60 wrap=soft>$form->{message}</textarea></td>
+      </tr>|;
+      
     $media = qq|<input type="hidden" name="media" value="email">
-<input type="hidden" name="sendmode" value="attachment">
 |;
   }
   if ($form->{batch} eq 'queue') {
@@ -863,8 +880,10 @@ function CheckAll() {
 
   print qq|
 <table>
+  $message
   <tr>
   $format
+  $sendmode
   $media
   $copies
   </tr>

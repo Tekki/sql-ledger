@@ -1,3 +1,5 @@
+$self{charset} = 'ISO-8859-1';
+
 $self{texts} = {
   'Add Part'                    => 'Ware erfassen',
   'Add Purchase Order'          => 'Einkaufsbeleg erfassen',
@@ -23,6 +25,7 @@ $self{texts} = {
   'Credit Invoice'              => 'Credit Invoice',
   'Customer'                    => 'Kunde',
   'Customer Number'             => 'Kundennummer',
+  'DCN missing!'                => 'DCN fehlt!',
   'Date'                        => 'Datum',
   'Debit Invoice'               => 'Debit Invoice',
   'Dec'                         => 'Dez',
@@ -85,6 +88,7 @@ $self{texts} = {
   'Quotation'                   => 'Offerte',
   'Quotation Date missing!'     => 'Offertendatum fehlt!',
   'Quotation Number missing!'   => 'Offertenummer fehlt!',
+  'RVC missing!'                => 'Codierzeile fehlt!',
   'Recd'                        => 'Erh',
   'Required by'                 => 'Erforderlich bis am',
   'SKU'                         => 'Lagerhaltungseinheit',

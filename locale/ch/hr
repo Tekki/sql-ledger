@@ -1,3 +1,5 @@
+$self{charset} = 'ISO-8859-1';
+
 $self{texts} = {
   'AP'                          => 'Verbindlichkeiten',
   'Above'                       => 'Über',
@@ -72,6 +74,8 @@ $self{texts} = {
   'To'                          => 'Bis',
   'Update'                      => 'Erneuern',
   'User'                        => 'Datenbankbenutzer',
+  'Work Fax'                    => 'Fax Geschäft',
+  'Work Mobile'                 => 'Mobile Geschäft',
   'Work Phone'                  => 'Tel Arbeit',
   'Zip/Postal Code'             => 'PLZ',
 };

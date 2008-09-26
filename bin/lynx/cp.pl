@@ -162,6 +162,7 @@ sub payment {
     if ($myconfig{vclimit} > 0) {
       $form->{"all_$form->{vc}"} = $form->{name_list};
     }
+    $form->{"$form->{vc}_id"} = $form->{"all_$form->{vc}"}->[0]->{id} if @{ $form->{"all_$form->{vc}"} };
   }
 
   $form->{"select$form->{vc}"} = "";
