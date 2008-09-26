@@ -1310,7 +1310,7 @@ sub partsgroup_report {
 
 sub partsgroup_header {
 
-  $form->{title} = ucfirst $form->{action} . " Group";
+  $form->{title} = $locale->text(ucfirst $form->{action} . " Group");
 
 # $locale->text('Add Group')
 # $locale->text('Edit Group')
@@ -1505,13 +1505,13 @@ sub pricegroup_report {
 
 sub pricegroup_header {
 
-  $form->{title} = $locale->text("$form->{title} Pricegroup");
-  
+  $form->{title} = $locale->text(ucfirst $form->{action} ." Pricegroup");
+
+# $locale->text('Add Pricegroup')
 # $locale->text('Edit Pricegroup')
 
   $form->{pricegroup} = $form->quote($form->{pricegroup});
 
-  
   $form->header;
 
   print qq|
@@ -2208,8 +2208,8 @@ sub project_sales_order {
 	$fromto
 	<tr>
 	  <th></th>
-  	  <td><input name=summary type=radio class=radio value=1 checked> Summary
-  	  <input name=summary type=radio class=radio value=0> Detail
+  	  <td><input name=summary type=radio class=radio value=1 checked> |.$locale->text('Summary').qq|
+  	  <input name=summary type=radio class=radio value=0> |.$locale->text('Detail').qq|
   	  </td>
   	</tr>
       </table>

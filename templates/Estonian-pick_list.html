@@ -2,36 +2,15 @@
 <body bgcolor=ffffff>
 
 <table width=100%>
+
+  <%include letterhead.html%>
+
   <tr>
     <td width=10>&nbsp;</td>
     
-    <td>
-      <table width=100%>
-	<tr>
-	  <td>
-	  <h4>
-	  <%company%>
-	  <br><%address%>
-	  </h4>
-	  </td>
-
-	  <th><img src=http://www.sql-ledger.org/images/sql-ledger.png border=0 width=80 height=58></th>
-
-	  <td align=right>
-	  <h4>
-	  Tel: <%tel%>
-	  <br>Fax: <%fax%>
-	  </h4>
-	  </td>
-	</tr>
-
-	<tr>
-	  <th colspan=3>
-	    <h4>P I C K &nbsp;&nbsp; L I S T</h4>
-	  </th>
-	</tr>
-      </table>
-    </td>
+    <th colspan=3>
+      <h4>V E O S E &nbsp;&nbsp; S A A T E L E H T</h4>
+    </th>
   </tr>
 
   <tr>
@@ -40,7 +19,7 @@
     <td>
       <table width=100% callspacing=0 cellpadding=0>
         <tr bgcolor=000000>
-	  <th width=50% align=left><font color=ffffff>Ship To:</th>
+	  <th width=50% align=left><font color=ffffff>Kellele:</th>
 	  <th width=50%>&nbsp;</th>
 	</tr>
 
@@ -50,7 +29,11 @@
 	  <%if shiptoaddress2%>
 	  <br><%shiptoaddress2%>
 	  <%end shiptoaddress2%>
-	  <br><%shiptocity%> <%shiptostate%> <%shiptozipcode%>
+	  <br><%shiptocity%>
+	  <%if shiptostate%>
+	  , <%shiptostate%>
+	  <%end shiptostate%>
+	  <%shiptozipcode%>
 	  <%if shiptocountry%>
 	  <br><%shiptocountry%>
 	  <%end shiptocountry%>
@@ -58,7 +41,7 @@
 
 	  <td>
 	  <%if shiptocontact%>
-	  <br>Attn: <%shiptocontact%>
+	  <br>Kontaktisik: <%shiptocontact%>
 	  <%end shiptocontact%>
 
 	  <%if shiptophone%>
@@ -66,7 +49,7 @@
 	  <%end shiptophone%>
 
 	  <%if shiptofax%>
-	  <br>Fax: <%shiptofax%>
+	  <br>Faks: <%shiptofax%>
 	  <%end shiptofax%>
 
 	  <%shiptoemail%>
@@ -84,13 +67,13 @@
     <td>
       <table width=100% border=1>
         <tr>
-	  <th width=15% align=left>Invoice #</th>
-	  <th width=15% align=left>Order #</th>
-	  <th width=10% align=left>Date</th>
-	  <th width=15% align=left nowrap>Contact</th>
-	  <th width=15% align=left>Warehouse</th>
-	  <th width=10% align=left>Shipping Point</th>
-	  <th width=10% align=left>Ship via</th>
+	  <th width=15% align=left>Arve #</th>
+	  <th width=15% align=left>Tellimus #</th>
+	  <th width=10% align=left>KuupÃ€ev</th>
+	  <th width=15% align=left nowrap>Kontakt</th>
+	  <th width=15% align=left>Kaubaladu</th>
+	  <th width=10% align=left>Tarneaadress</th>
+	  <th width=10% align=left>Tarneviis</th>
 	</tr>
 
         <tr>
@@ -119,13 +102,13 @@
     <td>
       <table width=100%>
 	<tr bgcolor=000000>
-	  <th align=left><font color=ffffff>Pos</th>
+	  <th align=left><font color=ffffff>AR.</th>
 	  <th align=left><font color=ffffff>Number</th>
-	  <th align=left><font color=ffffff>Description</th>
-	  <th><font color=ffffff>Qty</th>
-	  <th><font color=ffffff>Ship</th>
+	  <th align=left><font color=ffffff>Kirjeldus</th>
+	  <th><font color=ffffff>Kogus</th>
+	  <th><font color=ffffff>Saatmine</th>
 	  <th>&nbsp;</th>
-	  <th><font color=ffffff>Bin</th>
+	  <th><font color=ffffff>Pakend</th>
 	</tr>
 
         <%foreach number%>
@@ -150,4 +133,17 @@
   </tr>
 
 </table>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
 

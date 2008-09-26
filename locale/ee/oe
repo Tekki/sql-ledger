@@ -126,6 +126,7 @@ $self{texts} = {
   'November'                    => 'November',
   'Number'                      => 'Kood',
   'Number missing in Row'       => 'Antud real puudub kood',
+  'O'                           => 'Avatud',
   'OH'                          => 'Ülekulud',
   'Oct'                         => 'Okt',
   'October'                     => 'Oktoober',

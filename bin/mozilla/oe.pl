@@ -215,7 +215,14 @@ sub prepare_order {
       $dec = length $dec;
       $decimalplaces = ($dec > 2) ? $dec : 2;
       
-      $form->{"sellprice_$i"} = $form->format_amount(\%myconfig, $form->{"sellprice_$i"}, $decimalplaces);
+      for (map { "${_}_$i" } qw(sellprice listprice)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, $decimalplaces) }
+
+      ($dec) = ($form->{"lastcost_$i"} =~ /\.(\d+)/);
+      $dec = length $dec;
+      $decimalplaces = ($dec > 2) ? $dec : 2;
+
+      $form->{"lastcost_$i"} = $form->format_amount(\%myconfig, $form->{"lastcost_$i"}, $decimalplaces);
+      
       $form->{"qty_$i"} = $form->format_amount(\%myconfig, $form->{"qty_$i"});
       $form->{"oldqty_$i"} = $form->{"qty_$i"};
       

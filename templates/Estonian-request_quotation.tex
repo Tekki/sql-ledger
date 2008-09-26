@@ -1,63 +1,32 @@
-\documentclass[twoside]{scrartcl}
-\usepackage[frame]{xy}
+\documentclass{scrartcl}
+\usepackage[latin1]{inputenc}
 \usepackage{tabularx}
+\usepackage[letterpaper,top=2cm,bottom=-3cm,left=1.1cm,right=1.5cm]{geometry}
 \usepackage{graphicx}
-\setlength{\voffset}{0.5cm}
-\setlength{\hoffset}{-1.9cm}
-\setlength{\topmargin}{0cm}
-\setlength{\headheight}{0.5cm}
-\setlength{\headsep}{1cm}
-\setlength{\topskip}{0pt}
-\setlength{\oddsidemargin}{1.0cm}
-\setlength{\evensidemargin}{1.0cm}
-\setlength{\textwidth}{19.2cm}
-\setlength{\textheight}{24.7cm}
-\setlength{\footskip}{1cm}
-\setlength{\parindent}{0pt}
-\renewcommand{\baselinestretch}{1}
-\begin{document}
 
-\newlength{\descrwidth}\setlength{\descrwidth}{10cm}
-\fontfamily{cmss}\fontsize{10pt}{12pt}\selectfont
+\begin{document}
 
 \pagestyle{myheadings}
 \thispagestyle{empty}
 
-\vspace*{-1.3cm}
+\fontfamily{cmss}\fontsize{10pt}{12pt}\selectfont
 
-\parbox{\textwidth}{
-  \parbox[b]{.42\textwidth}{
-    <%company%>
-    
-    <%address%>
-  }
-  \parbox[b]{.2\textwidth}{
-    \includegraphics[scale=0.3]{sql-ledger}
-  }\hfill
-  \begin{tabular}[b]{rr@{}}
-  Telephone & <%tel%>\\
-  Facsimile & <%fax%>
-  \end{tabular}
+<%include letterhead.tex%>
 
-  \rule[1.5ex]{\textwidth}{0.5pt}
-}
-    
 
-<%pagebreak 90 27 48%>
+<%pagebreak 65 27 48%>
 \end{tabularx}
 
   \rule{\textwidth}{2pt}
   
   \hfill
-  \begin{tabularx}{7cm}{Xr@{}}
-  \textbf{Subtotal} & \textbf{<%sumcarriedforward%>} \\
+  \begin{tabularx}{7cm}{Xr@{\hspace{1cm}}r@{}}
+  & \textbf{Subtotal} & \textbf{<%sumcarriedforward%>} \\
   \end{tabularx}
 
 \newpage
 
 \markboth{<%company%>\hfill <%ordnumber%>}{<%company%>\hfill <%ordnumber%>}
-
-\vspace*{-12pt}
 
 \begin{tabularx}{\textwidth}{@{}lXrlrr@{}}
   \textbf{Number} & \textbf{Description} & \textbf{Qt'y} &
@@ -68,10 +37,9 @@
 
 \vspace*{0.5cm}
 
-\parbox[t]{1cm}{\hfill}
-\parbox[t]{.45\textwidth}{
+\parbox[t]{.5\textwidth}{
 \textbf{To}
-\vspace{0.7cm}
+\vspace{0.3cm}
   
 <%name%>
 
@@ -79,7 +47,11 @@
 
 <%address2%>
 
-<%city%> <%state%> <%zipcode%>
+<%city%>
+<%if state%>
+\hspace{-0.1cm}, <%state%>
+<%end state%>
+<%zipcode%>
 
 <%country%>
 
@@ -100,9 +72,9 @@ Fax: <%vendorfax%>
 
 <%email%>
 }
-\parbox[t]{.45\textwidth}{
+\parbox[t]{.5\textwidth}{
 \textbf{Ship To}
-\vspace{0.7cm}
+\vspace{0.3cm}
 
 <%shiptoname%>
 
@@ -110,7 +82,11 @@ Fax: <%vendorfax%>
 
 <%shiptoaddress2%>
 
-<%shiptocity%> <%shiptostate%> <%shiptozipcode%>
+<%shiptocity%>
+<%if shiptostate%>
+\hspace{-0.1cm}, <%shiptostate%>
+<%end shiptostate%>
+<%shiptozipcode%>
 
 <%shiptocountry%>
 

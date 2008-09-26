@@ -1,37 +1,15 @@
 <body bgcolor=ffffff>
 
 <table width=100%>
+
+  <%include letterhead.html%>
+  
   <tr>
     <td width=10>&nbsp;</td>
 
-    <td>
-      <table width=100%>
-        <tr>
-          <td>
-            <h4>
-            <%company%>
-        <br><%address%>
-            </h4>
-          </td>
-
-          <th><img src=sql-ledger.png border=0 width=84 height=58></th>
-
-          <td align=right>
-            <h4>
-            Tel: <%tel%>
-        <br>Fax: <%fax%>
-            </h4>
-          </td>
-        </tr>
-
-        <tr>
-          <th colspan=3>
-	    <hr noshade><br>
-            <h4>T I M E &nbsp;&nbsp; C A R D</h4>
-          </th>
-        </tr>
-      </table>
-    </td>
+    <th colspan=3>
+      <h4>AJAKAART</h4>
+    </th>
   </tr>
 
   <tr>
@@ -43,11 +21,11 @@
 	  <td>
 	    <table>
 	      <tr>
-		<th align=left>Employee</th>
+		<th align=left>TÃ¶Ã¶taja</th>
 		<td><%employee%></td>
 	      </tr>
 	      <tr>
-		<th align=left>ID</th>
+		<th align=left>TÃ¶Ã¶taja Kood</th>
 		<td><%employee_id%></td>
 	      </tr>
 	    </table>
@@ -56,23 +34,23 @@
 	  <td align=right>
 	    <table>
 	      <tr>
-		<th align=left nowrap>Card ID</th>
+		<th align=left nowrap>Kaardi Kood</th>
 		<td><%id%></td>
 	      </tr>
 	      <tr>
-		<th align=left nowrap>Date Worked</th>
+		<th align=left nowrap>KuupÃ€ev</th>
 		<td><%transdate%></td>
 	      </tr>
 	      <tr>
-		<th align=left nowrap>Time In</th>
+		<th align=left nowrap>Algus</th>
 		<td><%checkedin%></td>
 	      </tr>
               <tr>
-                <th align=left>Time Out</th>
+                <th align=left>LÃµpp</th>
 		<td><%checkedout%></td>
 	      </tr>
 	      <tr>
-		<th align=left nowrap>Hours Worked</th>
+		<th align=left nowrap>Tundi</th>
 		<td><%qty%></td>
 	      </tr>
 	    </table>
@@ -93,19 +71,19 @@
 	  <td>
 	    <table>
 	      <tr valign=top>
-	        <th align=left>Project/Job #</th>
+	        <th align=left>TÃ¶Ã¶ÃŒlesanne/Projekt #</th>
 		<td><%projectnumber%></td>
 	      </tr>
 	      <tr>
-	        <th align=left>Description</th>
+	        <th align=left>Kirjeldus</th>
 		<td><%projectdescription%></td>
 	      </tr>
 	      <tr valign=top>
-	        <th align=left>Labor/Service Code</th>
+	        <th align=left>TÃ¶Ã¶/Teenuse Kood</th>
 		<td><%partnumber%></td>
 	      </tr>
 	      <tr>
-	        <th align=left>Description</th>
+	        <th align=left>Kirjeldus</th>
 		<td><%description%></td>
 	      </tr>
 	    </table>
@@ -113,11 +91,11 @@
 	  <td align=right>
 	    <table>
 	      <tr>
-	        <th align=right>Unit Rate</th>
+	        <th align=right>Tariif</th>
 		<td><%sellprice%></td>
 	      </tr>
 	      <tr>
-		<th align=right>Total</th>
+		<th align=right>Kokku</th>
 		<td><%total%></td>
 	      </tr>
 	    </table>
@@ -127,7 +105,7 @@
     </td>
   </tr>
 
-<%if notes%>
+  <%if notes%>
   <tr height=5></tr>
   
   <tr>
@@ -137,10 +115,11 @@
       <%notes%>
     </td>
   </tr>
-<%end notes%>
+  <%end notes%>
 
 </table>
 
 </body>
 </html>
+
 

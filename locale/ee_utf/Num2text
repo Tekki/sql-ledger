@@ -75,9 +75,9 @@ sub num2text {
   while (@numblock) {
 
     $i = $#numblock;
+    $numblock[$i] *= 1;
     @num = split //, $numblock[$i];
     
-    $numblock[$i] *= 1;
     $appendit = "it";
     $hundred = 0;
     

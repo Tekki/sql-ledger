@@ -1052,7 +1052,8 @@ sub check_password {
       if ($ENV{HTTP_USER_AGENT}) {
 	$ENV{HTTP_COOKIE} =~ s/;\s*/;/g;
 	%cookie = split /[=;]/, $ENV{HTTP_COOKIE};
-	if ((! $cookie{"SQL-Ledger-root login"}) || $cookie{"SQL-Ledger-root login"} ne $form->{sessionid}) {
+	$cookie = ($form->{path} eq 'bin/lynx') ? $cookie{login} : $cookie{"SQL-Ledger-root login"};
+	if (! $cookie || $cookie ne $form->{sessionid}) {
 	  &getpassword;
 	  exit;
 	}

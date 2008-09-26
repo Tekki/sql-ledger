@@ -1,112 +1,138 @@
-\documentclass[twoside]{scrartcl}
-\usepackage[frame]{xy}
-\usepackage{tabularx}
+\documentclass{scrartcl}
 \usepackage[latin1]{inputenc}
-\setlength{\voffset}{0.5cm}
-\setlength{\hoffset}{-2.0cm}
-\setlength{\topmargin}{0cm}
-\setlength{\headheight}{0.5cm}
-\setlength{\headsep}{1cm}
-\setlength{\topskip}{0pt}
-\setlength{\oddsidemargin}{1.0cm}
-\setlength{\evensidemargin}{1.0cm}
-\setlength{\textwidth}{19.2cm}
-\setlength{\textheight}{24.5cm}
-\setlength{\footskip}{1cm}
-\setlength{\parindent}{0pt}
-\renewcommand{\baselinestretch}{1}
+\usepackage{tabularx}
+\usepackage[letterpaper,top=2cm,bottom=-3cm,left=1.1cm,right=1.5cm]{geometry}
+\usepackage{graphicx}
+
 \begin{document}
 
-\newlength{\descrwidth}\setlength{\descrwidth}{10cm}
-
-\newsavebox{\hdr}
-\sbox{\hdr}{
-  \fontfamily{cmss}\fontsize{10pt}{12pt}\selectfont
-
-  \parbox{\textwidth}{
-    \parbox[b]{12cm}{
-      <%company%>
-      
-      <%address%>}\hfill
-    \begin{tabular}[b]{rr@{}}
-    Telefon & <%tel%>\\
-    Faks & <%fax%>
-    \end{tabular}
-
-    \rule[1.5ex]{\textwidth}{0.5pt}
-  }
-}
-    
-\fontfamily{cmss}\fontshape{n}\selectfont
-
-\markboth{<%company%>\hfill <%ordnumber%>}{\usebox{\hdr}}
 
 \pagestyle{myheadings}
-%\thispagestyle{empty}     use this with letterhead paper
+\thispagestyle{empty}
 
-<%pagebreak 90 27 37%>
-\end{tabular*}
+\fontfamily{cmss}\fontsize{10pt}{12pt}\selectfont
+
+<%include letterhead.tex%>
+
+
+<%pagebreak 65 27 48%>
+\end{tabularx}
 
   \rule{\textwidth}{2pt}
   
   \hfill
-  \begin{tabularx}{7cm}{Xr@{}}
-  \textbf{Vahesumma} & \textbf{<%sumcarriedforward%>} \\
+  \begin{tabularx}{7cm}{Xr@{\hspace{1cm}r@{}}
+  & Subtotal & <%sumcarriedforward%> \\
   \end{tabularx}
 
 \newpage
 
-\markright{<%company%>\hfill <%ordnumber%>}
+\markboth{<%company%>\hfill <%ordnumber%>}{<%company%>\hfill <%ordnumber%>}
 
-\vspace*{-12pt}
-
-\begin{tabular*}{\textwidth}{@{}lp{\descrwidth}@{\extracolsep\fill}rlrr@{}}
-  \textbf{Kood} & \textbf{Kirjeldus} & \textbf{Kogus} &
-    \textbf{Ühik} & \textbf{Hind} & \textbf{Kogus} \\
-  & üle kantud lehelt <%lastpage%> & & & & <%sumcarriedforward%> \\
+\begin{tabularx}{\textwidth}{@{}lXrlrr@{}}
+  \textbf{Number} & \textbf{Description} & \textbf{Qt'y} &
+    \textbf{Unit} & \textbf{Price} & \textbf{Amount} \\
+  & carried forward from <%lastpage%> & & & & <%sumcarriedforward%> \\
 <%end pagebreak%>
 
 
-\fontfamily{cmss}\fontsize{10pt}{12pt}\selectfont
+\vspace*{0.5cm}
 
-\vspace*{2cm}
-
+\parbox[t]{.5\textwidth}{
+\textbf{To}
+\vspace{0.3cm}
+  
 <%name%>
 
 <%address1%>
 
-<%if address2%>
 <%address2%>
-<%end address2%>
 
-<%city%> <%state%> <%zipcode%>
+<%city%>
+<%if state%>
+\hspace{-0.1cm}, <%state%>
+<%end state%>
+<%zipcode%>
 
-<%if country%>
 <%country%>
-<%end country%>
 
-\vspace{3.5cm}
+\vspace{0.3cm}
 
-\textbf{O S T U T E L L I M U S} \parbox{0.3cm}{\hfill}
+<%if contact%>
+Attn: <%contact%>
+\vspace{0.2cm}
+<%end contact%>
+
+<%if vendorphone%>
+Tel: <%vendorphone%>
+<%end vendorphone%>
+
+<%if vendorfax%>
+Fax: <%vendorfax%>
+<%end vendorfax%>
+
+<%email%>
+}
+\parbox[t]{.5\textwidth}{
+\textbf{Ship To}
+\vspace{0.3cm}
+
+<%shiptoname%>
+
+<%shiptoaddress1%>
+
+<%shiptoaddress2%>
+
+<%shiptocity%>
+<%if shiptostate%>
+\hspace{-0.1cm}, <%shiptostate%>
+<%end shiptostate%>
+<%shiptozipcode%>
+
+<%shiptocountry%>
+
+\vspace{0.3cm}
+
+<%if shiptocontact%>
+Attn: <%shiptocontact%>
+\vspace{0.2cm}
+<%end shiptocontact%>
+
+<%if shiptophone%>
+Tel: <%shiptophone%>
+<%end shiptophone%>
+
+<%if shiptofax%>
+Fax: <%shiptofax%>
+<%end shiptofax%>
+
+<%shiptoemail%>
+}
 \hfill
-\begin{tabular}[t]{l@{\hspace{0.3cm}}l}
-  \textbf{Date} & <%orddate%> \\
-<%if reqdate%>
-  \textbf{Required by} & <%reqdate%> \\
-<%end reqdate%>
-  \textbf{Number} & <%ordnumber%>
-\end{tabular}
 
 \vspace{1cm}
 
-\begin{tabular*}{\textwidth}{@{}lp{\descrwidth}@{\extracolsep\fill}rlrr@{}}
-  \textbf{Kood} & \textbf{Kirjeldus} & \textbf{Kogus} &
-    \textbf{Ühik} & \textbf{Hind} & \textbf{Kokku} \\
+\textbf{P U R C H A S E} \parbox{0.3cm}{\hfill} \textbf{O R D E R}
+\hfill
+
+\vspace{1cm}
+\begin{tabularx}{\textwidth}{*{6}{|X}|} \hline
+  \textbf{Order \#} & \textbf{Date} & \textbf{Required by} & \textbf{Contact} & \textbf{Shipping Point} & \textbf{Ship via} \\ [0.5ex]
+  \hline
+  <%ordnumber%> & <%orddate%> & <%reqdate%> & <%employee%> & <%shippingpoint%> & <%shipvia%> \\
+  \hline
+\end{tabularx}
+
+\vspace{1cm}
+
+\begin{tabularx}{\textwidth}{@{}lXrlrr@{}}
+  \textbf{Number} & \textbf{Description} & \textbf{Qt'y} &
+    \textbf{Unit} & \textbf{Price} & \textbf{Amount} \\
 <%foreach number%>
   <%number%> & <%description%> & <%qty%> &
     <%unit%> & <%sellprice%> & <%linetotal%> \\
 <%end number%>
-\end{tabular*}
+\end{tabularx}
 
 
 \parbox{\textwidth}{
@@ -115,25 +141,23 @@
 \vspace{0.2cm}
 
 \hfill
-\begin{tabularx}{7cm}{Xr@{}}
-  \textbf{Vahesumma} & \textbf{<%subtotal%>} \\
+\begin{tabularx}{7cm}{Xr@{\hspace{1cm}}r@{}}
+  & Subtotal & <%subtotal%> \\
 <%foreach tax%>
-  <%taxdescription%> on <%taxbase%> & <%tax%>\\
+  & <%taxdescription%> on <%taxbase%> & <%tax%>\\
 <%end tax%>
   \hline
-  \textbf{Summa} & \textbf{<%ordtotal%>}\\
+  & Total & <%ordtotal%>\\
 \end{tabularx}
 
 \vspace{0.3cm}
 
 \hfill
-  Kõik hinnad \textbf{<%currency%>} funds.
+  All prices in \textbf{<%currency%>}.
 
 \vspace{12pt}
 
-<%if notes%>
-  <%notes%>
-<%end if%>
+<%notes%>
 
 }
 
@@ -143,5 +167,4 @@
 %\footnotetext[1]{\tiny }
 
 \end{document}
-
 

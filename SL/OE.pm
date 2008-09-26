@@ -699,18 +699,18 @@ sub retrieve {
       $tth->finish;
       chop $ref->{taxaccounts};
 
-      # preserve prices
+      # preserve price
       $sellprice = $ref->{sellprice};
-      $listprice = $ref->{listprice};
       
       # multiply by exchangerate
-      for (qw(sellprice listprice)) { $ref->{$_} = $form->round_amount($ref->{$_} * $form->{$form->{currency}}, $decimalplaces) }
+      $ref->{sellprice} = $form->round_amount($ref->{sellprice} * $form->{$form->{currency}}, $decimalplaces);
+      
+      for (qw(listprice lastcost)) { $ref->{$_} = $form->round_amount($ref->{$_} / $form->{$form->{currency}}, $decimalplaces) }
       
       # partnumber and price matrix
       &price_matrix($pmh, $ref, $form->{transdate}, $decimalplaces, $form, $myconfig);
 
       $ref->{sellprice} = $sellprice;
-      $ref->{listprice} = $listprice;
 
       $ref->{partsgroup} = $ref->{partsgrouptranslation} if $ref->{partsgrouptranslation};
       

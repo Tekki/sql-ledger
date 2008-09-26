@@ -96,7 +96,7 @@ sub projects {
 
   }
   if ($form->{status} eq 'active') {
-    $where .= qq| AND pr.enddate IS NULL|;
+    $where .= qq| AND (pr.enddate IS NULL OR pr.enddate >= current_date)|;
   }
   if ($form->{status} eq 'inactive') {
     $where .= qq| AND pr.enddate <= current_date|;

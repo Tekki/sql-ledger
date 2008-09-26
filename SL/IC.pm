@@ -1453,8 +1453,8 @@ sub requirements {
   my $var;
   my $ref;
   
-  my $where = qq|(p.inventory_accno_id > 0 AND p.income_accno_id > 0)
-                 AND p.obsolete = '0'|;
+  my $where = qq|p.obsolete = '0'|;
+  my $dwhere;
 
   for (qw(partnumber description)) {
     if ($form->{$_} ne "") {
@@ -1463,21 +1463,6 @@ sub requirements {
     }
   }
   
-  my $makemodelflds = qq|, '', ''|;;
-  my $makemodeljoin;
-  
-  if (($form->{make} ne "") || ($form->{model} ne "")) {
-    $makemodeljoin = qq|JOIN makemodel m ON (m.parts_id = p.id)|;
-    
-    if ($form->{make} ne "") {
-      $var = $form->like(lc $form->{make});
-      $where .= qq| AND lower(m.make) LIKE '$var'|;
-    }
-    if ($form->{model} ne "") {
-      $var = $form->like(lc $form->{model});
-      $where .= qq| AND lower(m.model) LIKE '$var'|;
-    }
-  }
   if ($form->{partsgroup} ne "") {
     ($null, $var) = split /--/, $form->{partsgroup};
     $where .= qq| AND p.partsgroup_id = $var|;
@@ -1486,99 +1471,131 @@ sub requirements {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  my %ordinal = ( id => 1,
-                  partnumber => 2,
-                  description => 3,
-		);
-  
-  my @a = qw(partnumber description id);
-  my $sortorder = $form->sort_order(\@a, \%ordinal);
-
-  $form->sort_order();
-
   my ($transdatefrom, $transdateto);
   if ($form->{year}) {
     ($transdatefrom, $transdateto) = $form->from_to($form->{year}, '01', 12);
     
-    $where .= qq| AND a.transdate >= '$transdatefrom'
-		  AND a.transdate <= '$transdateto'|;
+    $dwhere = qq| AND a.transdate >= '$transdatefrom'
+ 		  AND a.transdate <= '$transdateto'|;
   }
     
   $query = qq|SELECT p.id, p.partnumber, p.description,
               sum(i.qty) AS qty, p.onhand,
-	      extract(MONTH FROM a.transdate) AS month
+	      extract(MONTH FROM a.transdate) AS month,
+	      '0' AS so, '0' AS po
 	      FROM invoice i
 	      JOIN parts p ON (p.id = i.parts_id)
 	      JOIN ar a ON (a.id = i.trans_id)
-	      $makemodeljoin
 	      WHERE $where
+	      $dwhere
+	      AND p.inventory_accno_id > 0
 	      GROUP BY p.id, p.partnumber, p.description, p.onhand,
-	      extract(MONTH FROM a.transdate)
-	      
-	      UNION
-
-	      SELECT p.id, p.partnumber, p.description,
-	      0 AS qty, 0 AS onhand,
-	      0 AS month
-	      FROM orderitems i
-	      JOIN parts p ON (p.id = i.parts_id)
-	      JOIN oe a ON (a.id = i.trans_id)
-	      $makemodeljoin
-	      WHERE $where
-	      AND a.closed = '0'
-	      GROUP BY p.id, p.partnumber, p.description, p.onhand,
-	      month
-	      
-	      ORDER BY $sortorder|;
-
+	      extract(MONTH FROM a.transdate)|;
   my $sth = $dbh->prepare($query);
-
-  # query for orders
-  $query = qq|SELECT sum(qty) - sum(ship)
-	      FROM orderitems i
-	      JOIN oe a ON (i.trans_id = a.id)
-	      WHERE i.parts_id = ?
-	      AND a.quotation = '0'
-	      AND a.closed = '0'
-	      AND a.customer_id > 0|;
-
-  my $soth = $dbh->prepare($query);
-  
-  $query = qq|SELECT sum(qty) - sum(ship)
-	      FROM orderitems i
-	      JOIN oe a ON (i.trans_id = a.id)
-	      WHERE i.parts_id = ?
-	      AND a.quotation = '0'
-	      AND a.closed = '0'
-	      AND a.vendor_id > 0|;
-
-  my $poth = $dbh->prepare($query);
-  
   $sth->execute || $form->dberror($query);
- 
+
+  my %parts;
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-    unless (exists $soqty{$ref->{id}}) {
-      $soth->execute($ref->{id}) || $form->dberror($query);
-      ($soqty{$ref->{id}}) = $soth->fetchrow_array;
-      $soth->finish;
-      $soqty{$ref->{id}} ||= 0;
-    }
-    unless (exists $poqty{$ref->{id}}) {
-      $poth->execute($ref->{id}) || $form->dberror($query);
-      ($poqty{$ref->{id}}) = $poth->fetchrow_array;
-      $poth->finish;
-      $poqty{$ref->{id}} ||= 0;
-    }
+    $parts{$ref->{id}} = $ref;
+  }
+  $sth->finish;
 
-    $ref->{so} = $soqty{$ref->{id}};
-    $ref->{po} = $poqty{$ref->{id}};
+  my %ofld = ( customer => so,
+               vendor => po );
+  
+  for (qw(customer vendor)) {
+    $query = qq|SELECT p.id, p.partnumber, p.description,
+		sum(qty) - sum(ship) AS $ofld{$_}, p.onhand,
+		0 AS month
+		FROM orderitems i
+		JOIN parts p ON (p.id = i.parts_id)
+		JOIN oe a ON (a.id = i.trans_id)
+		WHERE $where
+		AND p.inventory_accno_id > 0
+		AND p.assembly = '0'
+		AND a.closed = '0'
+		AND a.${_}_id > 0
+		GROUP BY p.id, p.partnumber, p.description, p.onhand,
+		month|;
+    $sth = $dbh->prepare($query);
+    $sth->execute || $form->dberror($query);
 
-    push @{ $form->{parts} }, $ref;
+    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+      if (exists $parts{$ref->{id}}->{$ofld{$_}}) {
+	$parts{$ref->{id}}->{$ofld{$_}} += $ref->{$ofld{$_}};
+      } else {
+	$parts{$ref->{id}} = $ref;
+      }
+    }
+    $sth->finish;
+  }
+
+  # add assemblies from open sales orders
+  $query = qq|SELECT DISTINCT a.id AS orderid, b.id, i.qty - i.ship AS qty
+              FROM parts p
+	      JOIN assembly b ON (b.parts_id = p.id)
+	      JOIN orderitems i ON (i.parts_id = b.id)
+	      JOIN oe a ON (a.id = i.trans_id)
+	      WHERE $where
+	      AND (p.inventory_accno_id > 0 OR p.assembly = '1')
+	      AND a.closed = '0'|;
+  $sth = $dbh->prepare($query);
+  $sth->execute || $form->dberror($query);
+
+  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    &requirements_assembly($dbh, $form, \%parts, $ref->{id}, $ref->{qty}, $where) if $ref->{qty};
   }
   $sth->finish;
 
   $dbh->disconnect;
 
+  for (sort { $parts{$a}->{$form->{sort}} cmp $parts{$b}->{$form->{sort}} } keys %parts) {
+    push @{ $form->{parts} }, $parts{$_};
+  }
+  
+}
+
+
+sub requirements_assembly {
+  my ($dbh, $form, $parts, $id, $qty, $where) = @_;
+
+  # assemblies
+  my $query = qq|SELECT p.id, p.partnumber, p.description,
+                 a.qty * $qty AS so, p.onhand, p.assembly,
+	         p.partsgroup_id
+	         FROM assembly a
+	         JOIN parts p ON (p.id = a.parts_id)
+ 	         WHERE $where
+		 AND a.id = $id
+	         AND p.inventory_accno_id > 0
+		 
+		 UNION
+	  
+	         SELECT p.id, p.partnumber, p.description,
+                 a.qty * $qty AS so, p.onhand, p.assembly,
+	         p.partsgroup_id
+	         FROM assembly a
+	         JOIN parts p ON (p.id = a.parts_id)
+ 	         WHERE a.id = $id
+		 AND p.assembly = '1'|;
+		 
+  my $sth = $dbh->prepare($query);
+  $sth->execute || $form->dberror($query);
+
+  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+    if ($ref->{assembly}) {
+      &requirements_assembly($dbh, $form, $parts, $ref->{id}, $ref->{so}, $where);
+      next;
+    }
+
+    if (exists $parts->{$ref->{id}}{so}) {
+      $parts->{$ref->{id}}{so} += $ref->{so};
+    } else {
+      $parts->{$ref->{id}} = $ref;
+    }
+  }
+  $sth->finish;
+    
 }
 
 

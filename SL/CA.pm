@@ -137,9 +137,10 @@ sub all_transactions {
   my $department_id;
   my $dpt_where;
   my $dpt_join;
+  my $union;
   
   ($null, $department_id) = split /--/, $form->{department};
-  
+ 
   if ($department_id) {
     $dpt_join = qq|
                    JOIN department t ON (t.id = a.department_id)
@@ -149,6 +150,7 @@ sub all_transactions {
 		  |;
   }
 
+ 
   my $project;
   my $project_id;
   if ($form->{projectnumber}) {
@@ -174,38 +176,76 @@ sub all_transactions {
     ($form->{description}, $form->{category}, $form->{link}, $form->{contra}) = $dbh->selectrow_array($query);
     
     if ($form->{fromdate}) {
-
-      # get beginning balance
-      $query = qq|SELECT SUM(ac.amount)
-		  FROM acc_trans ac
-		  JOIN chart c ON (ac.chart_id = c.id)
-		  $dpt_join
-		  WHERE c.accno = '$form->{accno}'
-		  AND ac.transdate < '$form->{fromdate}'
-		  $dpt_where
-		  $project
-		  |;
-
-      if ($form->{accounttype} eq 'gifi') {
-        $query = qq|SELECT SUM(ac.amount)
-		  FROM acc_trans ac
-		  JOIN chart c ON (ac.chart_id = c.id)
-		  $dpt_join
-		  WHERE c.gifi_accno = '$form->{gifi_accno}'
-		  AND ac.transdate < '$form->{fromdate}'
-		  $dpt_where
-		  $project
-		  |;
-		  
-      }
       
+      if ($department_id) {
+
+	# get beginning balance
+	$query = "";
+	$union = "";
+	
+	for (qw(ar ap gl)) {
+
+	  if ($form->{accounttype} eq 'gifi') {
+	    $query = qq|
+	                $union
+			SELECT SUM(ac.amount)
+			FROM acc_trans ac
+			JOIN $_ a ON (a.id = ac.trans_id)
+			JOIN chart c ON (ac.chart_id = c.id)
+			WHERE c.gifi_accno = '$form->{gifi_accno}'
+			AND ac.transdate < '$form->{fromdate}'
+			AND a.department_id = $department_id
+			$project
+			|;
+		      
+	  } else {
+	  
+	    $query .= qq|
+			$union
+			SELECT SUM(ac.amount)
+			FROM acc_trans ac
+			JOIN $_ a ON (a.id = ac.trans_id)
+			JOIN chart c ON (ac.chart_id = c.id)
+			WHERE c.accno = '$form->{accno}'
+			AND ac.transdate < '$form->{fromdate}'
+			AND a.department_id = $department_id
+			$project
+			|;
+	  }
+
+	  $union = qq|
+	            UNION ALL|;
+	}
+
+      } else {
+	
+	if ($form->{accounttype} eq 'gifi') {
+	  $query = qq|SELECT SUM(ac.amount)
+		    FROM acc_trans ac
+		    JOIN chart c ON (ac.chart_id = c.id)
+		    WHERE c.gifi_accno = '$form->{gifi_accno}'
+		    AND ac.transdate < '$form->{fromdate}'
+		    $project
+		    |;
+	} else {
+	  $query = qq|SELECT SUM(ac.amount)
+		      FROM acc_trans ac
+		      JOIN chart c ON (ac.chart_id = c.id)
+		      WHERE c.accno = '$form->{accno}'
+		      AND ac.transdate < '$form->{fromdate}'
+		      $project
+		      |;
+	}
+
+      }
+
       ($form->{balance}) = $dbh->selectrow_array($query);
       
     }
   }
 
   $query = "";
-  my $union = "";
+  $union = "";
 
   foreach my $id (@id) {
     

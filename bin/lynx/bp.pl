@@ -57,6 +57,7 @@ sub search {
 
 # $locale->text('Customer')
 # $locale->text('Vendor')
+# $locale->text('Employee')
 
   %label = ( invoice => { title => 'Sales Invoices', name => 'Customer' },
              packing_list => { title => 'Packing Lists', name => 'Customer' },

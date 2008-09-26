@@ -2,36 +2,15 @@
 <body bgcolor=ffffff>
 
 <table width=100%>
+
+  <%include letterhead.html%>
+  
   <tr>
     <td width=10>&nbsp;</td>
     
-    <td>
-      <table width=100%>
-	<tr valign=bottom>
-	  <td>
-	    <h4>
-	    <%company%>
-	    <br><%address%>
-	    </h4>
-	  </td>
-
-	  <th><img src=http://www.sql-ledger.org/images/sql-ledger.png border=0 width=80 height=58></th>
-
-	  <td align=right>
-	    <h4>
-	    Tel: <%tel%>
-	    <br>Fax: <%fax%>
-	    </h4>
-	  </td>
-	</tr>
-
-	<tr>
-	  <th colspan=3>
-	    <h4>W O R K &nbsp;&nbsp; O R D E R</h4>
-	  </th>
-	</tr>
-      </table>
-    </td>
+    <th colspan=3>
+      <h4>T Ã Ã K Ã S K</h4>
+    </th>
   </tr>
 
   <tr>
@@ -40,8 +19,8 @@
     <td>
       <table width=100% callspacing=0 cellpadding=0>
 	<tr bgcolor=000000>
-	  <th align=left width=50%><font color=ffffff>To</th>
-	  <th align=left width=50%><font color=ffffff>Ship To</th>
+	  <th align=left width=50%><font color=ffffff>Tellija</th>
+	  <th align=left width=50%><font color=ffffff>Tarneaadress</th>
 	</tr>
 
 	<tr valign=top>
@@ -50,20 +29,23 @@
 	  <%if address2%>
 	  <br><%address2%>
 	  <%end address2%>
-	  <br><%city%> <%state%>
-          <br><%zipcode%>
+	  <br><%city%>
+	  <%if state%>
+	  , <%state%>
+	  <%end state%>
+          <%zipcode%>
 	  <%if country%>
 	  <br><%country%>
 	  <%end country%>
           <br>
 	  <%if contact%>
-	  <br>Attn: <%contact%>
+	  <br>Kontaktisik: <%contact%>
 	  <%end contact%>
 	  <%if customerphone%>
 	  <br>Tel: <%customerphone%>
 	  <%end customerphone%>
 	  <%if customerfax%>
-	  <br>Fax: <%customerfax%>
+	  <br>Faks: <%customerfax%>
 	  <%end customerfax%>
 	  <%if email%>
 	  <br><%email%>
@@ -75,8 +57,11 @@
 	  <%if shiptoaddress2%>
 	  <br><%shiptoaddress2%>
 	  <%end shiptoaddress2%>
-	  <br><%shiptocity%> <%shiptostate%>
-          <br><%shiptozipcode%>
+	  <br><%shiptocity%>
+	  <%if shiptostate%>
+	  , <%shiptostate%>
+	  <%end shiptostate%>
+          <%shiptozipcode%>
 	  <%if shiptocountry%>
 	  <br><%shiptocountry%>
 	  <%end shiptocountry%>
@@ -88,7 +73,7 @@
 	  <br>Tel: <%shiptophone%>
 	  <%end shiptophone%>
 	  <%if shiptofax%>
-	  <br>Fax: <%shiptofax%>
+	  <br>Faks: <%shiptofax%>
 	  <%end shiptofax%>
 	  <%if shiptoemail%>
 	  <br><%shiptoemail%>
@@ -107,12 +92,12 @@
     <td>
       <table width=100% border=1>
 	<tr>
-	  <th width=17% align=left nowrap>Order Number</th>
-	  <th width=17% align=left>Order Date</th>
-	  <th width=17% align=left>Required by</th>
-	  <th width=17% align=left nowrap>Salesperson</th>
-	  <th width=17% align=left nowrap>Shipping Point</th>
-	  <th width=15% align=left nowrap>Ship Via</th>
+	  <th width=17% align=left nowrap>Tellimus #</th>
+	  <th width=17% align=left>Tellimuse KuupÃ€ev</th>
+	  <th width=17% align=left>TarnetÃ€htaeg</th>
+	  <th width=17% align=left nowrap>MÃŒÃŒja</th>
+	  <th width=17% align=left nowrap>Tarneaadress</th>
+	  <th width=15% align=left nowrap>Tarneviis</th>
 	</tr>
 
 	<tr>
@@ -133,12 +118,13 @@
     <td>
       <table width=100%>
 	<tr bgcolor=000000>
-	  <th align=right><font color=ffffff>No.</th>
+	  <th align=right><font color=ffffff>AR.</th>
 	  <th align=left><font color=ffffff>Number</th>
-	  <th align=left><font color=ffffff>Description</th>
-	  <th><font color=ffffff>Qt'y</th>
+	  <th align=left><font color=ffffff>Kirjeldus</th>
+	  <th><font color=ffffff>Kogus</th>
 	  <th>&nbsp;</th>
-	  <th><font color=ffffff>Serial No.</th>
+           <th><font color=ffffff>Kast</th>
+	  <th><font color=ffffff>Seerianumber #</th>
 	</tr>
 
 	<%foreach number%>
@@ -148,12 +134,13 @@
 	  <td><%description%></td>
 	  <td align=right><%qty%></td>
 	  <td><%unit%></td>
+           <td><%bin%></td>
 	  <td><%serialnumber%></td>
 	</tr>
 	<%end number%>
 
 	<tr>
-	  <td colspan=6><hr noshade></td>
+	  <td colspan=7><hr noshade></td>
 	</tr>
 
       </table>
@@ -171,4 +158,7 @@
 
 </body>
 </html>
+
+
+
 

@@ -111,12 +111,14 @@ sub create_links {
   
   $form->{selectformname} = qq|<option value="transaction">|.$locale->text('Transaction');
   
-  if ($form->{ARAP} eq 'AR') {
-    $form->{selectformname} .= qq|
-<option value="receipt">|.$locale->text('Receipt');
-  } else {
-    $form->{selectformname} .= qq|
-<option value="check">|.$locale->text('Check');
+  if ($latex) {
+    if ($form->{ARAP} eq 'AR') {
+      $form->{selectformname} .= qq|
+  <option value="receipt">|.$locale->text('Receipt');
+    } else {
+      $form->{selectformname} .= qq|
+  <option value="check">|.$locale->text('Check');
+    }
   }
   
   # currencies

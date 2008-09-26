@@ -56,7 +56,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.6.7";
+  $self->{version} = "2.6.8";
   $self->{dbversion} = "2.6.7";
 
   bless $self, $type;
@@ -578,7 +578,17 @@ sub parse_template {
 	
 	if ($var eq 'number' || $var eq 'part' || $var eq 'service') {
 	  if ($chars_per_line && defined $self->{$var}) {
-	    my $lines = int((length($self->{description}[$i]) + length($self->{itemnotes}[$i])) / $chars_per_line + 0.95);
+	    my $line;
+	    my $lines = 1;
+	    foreach my $item (qw(description itemnotes)) {
+	      if ($self->{$item}[$i]) {
+		foreach $line (split /\r?\n/, $self->{$item}[$i]) {
+		  $lines++;
+		  $lines += int(length($line) / $chars_per_line);
+		}
+	      }
+	    }
+	      
 	    my $lpp;
 	    
 	    if ($current_page == 1) {

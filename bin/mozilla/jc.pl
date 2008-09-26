@@ -90,7 +90,7 @@ sub jcitems_links {
       $form->{selectpartnumber} .= qq|<option value="$ref->{partnumber}--$ref->{id}">$ref->{partnumber}\n|;
       if ($form->{partnumber} eq "$ref->{partnumber}--$ref->{id}") {
 	if ($form->{partnumber} ne $form->{oldpartnumber}) {
-	  for (qw(description unit sellprice)) { $form->{$_} = $ref->{$_} }
+	  for (qw(description unit sellprice pricematrix)) { $form->{$_} = $ref->{$_} }
 	}
       }
     }
@@ -423,7 +423,7 @@ sub timecard_header {
     if ($myconfig{role} ne 'user') {
       $rate = qq|
 		<tr>
-		  <th align=right nowrap>|.$locale->text('Unit Rate').qq|</th>
+		  <th align=right nowrap>|.$locale->text('Chargeout Rate').qq|</th>
 		  <td><input name=sellprice value=$form->{sellprice}></td>
 		  <th align=right nowrap>|.$locale->text('Total').qq|</th>
 		  <td>$form->{amount}</td>
@@ -435,6 +435,12 @@ sub timecard_header {
 |;
     } else {
       $rate = qq|
+		<tr>
+		  <th align=right nowrap>|.$locale->text('Chargeout Rate').qq|</th>
+		  <td>$form->{sellprice}</td>
+		  <th align=right nowrap>|.$locale->text('Total').qq|</th>
+		  <td>$form->{amount}</td>
+		</tr>
 		<tr>
 		  <th align=right nowrap>|.$locale->text('Allocated').qq|</th>
 		  <td>$form->{allocated}</td>
@@ -455,14 +461,16 @@ sub timecard_header {
     $rows = 2;
   }
 
-  $form->{notes} = $form->quote($form->{notes});
   $notes = qq|<tr>
 		<th align=right>|.$locale->text('Notes').qq|</th>
                   <td colspan=3><textarea name="notes" rows=$rows cols=46 wrap=soft>$form->{notes}</textarea>
 		</td>
 	      </tr>
 |;
-    
+
+##################
+  ($null, $form->{oldproject_id}) = split /--/, $form->{projectnumber};
+  
   $form->header;
 
   print qq|
@@ -471,7 +479,7 @@ sub timecard_header {
 <form method=post action="$form->{script}">
 |;
 
-  $form->hide_form(qw(id type media format printed queued title closedto locked oldtransdate oldcheckedin oldcheckedout oldpartnumber project oldqty oldnoncharge));
+  $form->hide_form(qw(id type media format printed queued title closedto locked oldtransdate oldcheckedin oldcheckedout oldpartnumber project oldqty oldnoncharge pricematrix oldproject_id));
 
   print qq|
 <table width=100%>
@@ -871,6 +879,8 @@ sub update {
 
   &jcitems_links;
   
+  $checkmatrix = 1 if $form->{oldproject_id} != $form->{project_id};
+  
   if ($form->{type} eq 'timecard') {
 
     # time clocked
@@ -898,18 +908,35 @@ sub update {
     $form->{clocked} = ($form->{checkedout} - $form->{checkedin}) / 3600;
 
     for (qw(sellprice qty noncharge allocated)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
+
+    $checkmatrix = 1 if $form->{oldqty} != $form->{qty};
     
     if (($form->{oldcheckedin} != $form->{checkedin}) || ($form->{oldcheckedout} != $form->{checkedout})) {
+      $checkmatrix = 1;
       $form->{oldqty} = $form->{qty} = $form->{clocked} - $form->{noncharge};
       $form->{oldnoncharge} = $form->{noncharge};
     }
 
     if (($form->{qty} != $form->{oldqty}) && $form->{clocked}) {
       $form->{oldnoncharge} = $form->{noncharge} = $form->{clocked} - $form->{qty};
+      $checkmatrix = 1;
     }
 
     if (($form->{oldnoncharge} != $form->{noncharge}) && $form->{clocked}) {
       $form->{oldqty} = $form->{qty} = $form->{clocked} - $form->{noncharge};
+      $checkmatrix = 1;
+    }
+    
+    if ($checkmatrix) {
+      @a = split / /, $form->{pricematrix};
+      if (scalar @a > 2) {
+	for (@a) {
+	  ($q, $p) = split /:/, $_;
+	  if (($p * 1) && ($form->{qty} >= ($q * 1))) {
+	    $form->{sellprice} = $p;
+	  }
+	}
+      }
     }
     
     $form->{amount} = $form->{sellprice} * $form->{qty};
@@ -925,6 +952,18 @@ sub update {
     
     for (qw(sellprice qty allocated)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
 
+    if ($form->{oldqty} != $form->{qty}) {
+      @a = split / /, $form->{pricematrix};
+      if (scalar @a > 2) {
+	for (@a) {
+	  ($q, $p) = split /:/, $_;
+	  if (($p * 1) && ($form->{qty} >= ($q * 1))) {
+	    $form->{sellprice} = $p;
+	  }
+	}
+      }
+    }
+    
     $form->{amount} = $form->{sellprice} * $form->{qty};
     for (qw(sellprice amount)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, 2) }
 	

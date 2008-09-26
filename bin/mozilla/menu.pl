@@ -93,7 +93,7 @@ document.onselectstart = new Function("return false");
 
 <body class=menu>
 
-<img src=sql-ledger.png width=80 border=0>
+<img src=sql-ledger.gif width=80 border=0>
 |;
 
   if ($form->{js}) {

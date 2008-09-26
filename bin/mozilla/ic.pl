@@ -587,16 +587,16 @@ sub form_header {
   }
 
   if ($form->{item} eq 'labor') {
-    $lastcost = "";
     $avgcost = "";
-    
-    $sellprice = qq|
-	      <tr>
-		<th align="right" nowrap="true">|.$locale->text('Rate').qq|</th>
-		<td><input name=sellprice size=11 value=$form->{sellprice}></td>
-	      </tr>
-|;
 
+    $n = ($form->{onhand} > 0) ? "1" : "0";
+    $onhand = qq|
+              <tr>
+	        <th align="right" nowrap>|.$locale->text('On Hand').qq|</th>
+		<th align=left nowrap class="plus$n">&nbsp;|.$form->format_amount(\%myconfig, $form->{onhand}).qq|</th>
+              </tr>
+|;
+    
     $linkaccounts = qq|
 	      <tr>
 		<th align=right>|.$locale->text('Labor/Overhead').qq|</th>
@@ -972,11 +972,7 @@ sub search {
 
     $warehouse = "";
     $serialnumber = "";
-    $l_sellprice = qq|<input name=l_sellprice class=checkbox type=checkbox value=Y checked>&nbsp;|.$locale->text('Rate');
-    $l_listprice = "";
-    $l_lastcost = "";
     $l_avgcost = "";
-    $l_markup = "";
     
   }
   
@@ -1467,9 +1463,7 @@ sub generate_report {
   
   $column_header{employee} = qq|<th nowrap><a class=listheading href=$href&sort=employee>|.$locale->text('Employee').qq|</a></th>|;
   
-  $column_header{sellprice} = qq|<th class=listheading nowrap>|;
-  $column_header{sellprice} .= ($form->{searchitems} ne 'labor') ? $locale->text('Sell Price') : $locale->text('Rate');
-  $column_header{sellprice} .= qq|</th>|;
+  $column_header{sellprice} = qq|<th class=listheading nowrap>|.$locale->text('Sell Price').qq|</th>|;
   
   for (qw(sellprice lastcost avgcost listprice)) { $column_header{"linetotal$_"} = qq|<th class=listheading nowrap>|.$locale->text('Extended').qq|</th>| }
   

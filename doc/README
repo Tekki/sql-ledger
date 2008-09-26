@@ -63,7 +63,7 @@ FOREIGN LANGUAGE SUPPORT:
 -------------------------
 28 languages are supported. Language files are
 ordinary text files, no special software is
-required to change or add new translations.
+needed to change or add new translations.
 
 Some of the translation files are not 100% complete.
 If strings are missing, English is used instead.
@@ -159,6 +159,70 @@ user and group of your system. Some systems use
 apache:apache, www, www-data, ...
 
 
+FTP INSTALLATION:
+-----------------
+If you do not have access to the server's configuration
+files install SQL-Ledger in user space by ftp'ing the
+whole installation tree to your server space.
+
+a) untar sql-ledger in your private_html directory
+b) turn on script execution for the folder sql-ledger
+You can control this with an .htaccess file
+
+Options +ExecCGI
+DirectoryIndex login.pl
+
+c) protect the users directory with an .htpasswd file
+
+AuthGroupFile /dev/null
+AuthName "Unauthorized"
+AuthType Basic
+AuthUserFile /home/host.domain/private_html/sql-ledger/users/.htpasswd
+require valid-user
+
+d) protect the templates directory with an .htpasswd file
+
+AuthGroupFile /dev/null
+AuthName "Templates"
+AuthType Basic
+AuthUserFile /home/host.domain/private_html/sql-ledger/templates/.htpasswd
+require valid-user
+
+e) set up your PostgreSQL database and the tables.
+
+You will most likely only have access to PostgreSQL with
+some other tools like pgadmin.
+
+1) create a database user
+2) create a blank database
+3) load your web browser and connect to
+http://host.domain.com/private_html/sql-ledger/admin.pl
+to create the tables.
+
+There is no password so just hit the Enter key or click
+on "Continue".
+
+Select the "Database Administration" link
+
+Host [database host]               Port [      ]
+User [database user]           Password [for your database]
+Connect to [your database]
+
+click on "Create Dataset"
+
+The next screen is for choosing a Chart of Accounts
+
+Create Dataset [your database]
+Multibyte Encoding [                 ]
+
+Select a chart of accounts and click on "Continue".
+
+Your tables will now be created and the chart of accounts
+will be loaded.
+
+Go to the next step, "SET UP A USER"
+
+
 PREPARE YOUR SQL SERVER:
 ------------------------
 
@@ -171,7 +235,7 @@ PREPARE YOUR SQL SERVER:
   # su postgres
   $ createuser -d sql-ledger
   Shall the new user be allowed to create databases? (y/n) y
-  Shall the new user be allowed to create more new users? (y/n) y
+  Shall the new user be allowed to create more new users? (y/n) n
   
   if you use passwords to access postgres use this command
   $ createuser -d -P sql-ledger
@@ -202,6 +266,8 @@ interface, only the datasets used by SQL-Ledger.
 POSTGRESQL: template1 is only used to query
 the server, none of the information stored
 in template1 is manipulated in any way.
+You may connect to any other database you
+own, template1 is only a default.
 
 
 SET UP A USER:
@@ -273,5 +339,5 @@ where you can seek free help.
 For commercial support see http://www.sql-ledger.com
 
 =====================================================================
-Feb. 2, 2006
+March 23, 2006
 

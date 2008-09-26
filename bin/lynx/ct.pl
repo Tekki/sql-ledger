@@ -341,6 +341,7 @@ sub search {
 
   $orphan = qq|
 	<tr>
+	  <td></td>
 	  <td><input name=status class=radio type=radio value=all checked>&nbsp;|.$locale->text('All').qq|
 	  <input name=status class=radio type=radio value=active>&nbsp;|.$locale->text('Active').qq|
 	  <input name=status class=radio type=radio value=inactive>&nbsp;|.$locale->text('Inactive').qq|
@@ -468,12 +469,11 @@ sub search_name {
     </td>
   </tr>
 
-  $orphan
-
   <tr>
     <td>
       <table>
 
+	$orphan
 	$transactions
 	$include
 
