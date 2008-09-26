@@ -1310,6 +1310,7 @@ sub partsgroup_report {
 
 sub partsgroup_header {
 
+  $form->{action} =~ s/_.*//;
   $form->{title} = $locale->text(ucfirst $form->{action} . " Group");
 
 # $locale->text('Add Group')

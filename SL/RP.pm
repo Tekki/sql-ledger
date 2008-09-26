@@ -747,7 +747,7 @@ sub get_accounts {
 	      $dpt_join
 	      WHERE $where
 	      $ywhere
-	      $dpt_from
+	      $dpt_where
 	      $category
 	      $project
 	      GROUP BY g.accno, g.description, c.category
@@ -761,7 +761,7 @@ sub get_accounts {
 	      $dpt_join
 	      WHERE $where
 	      $ywhere
-	      $dpt_from
+	      $dpt_where
 	      $category
 	      AND c.gifi_accno = ''
 	      $project
@@ -856,7 +856,7 @@ sub get_accounts {
 		 WHERE $where
 	         $ywhere
 		 $glwhere
-		 $dpt_from
+		 $dpt_where
 		 $category
 		 AND NOT (c.link = 'AR' OR c.link = 'AP')
 		 $project

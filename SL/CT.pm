@@ -236,6 +236,9 @@ sub save_customer {
   ($null, $business_id) = split /--/, $form->{business};
   $business_id *= 1;
 
+  my $language_code;
+  ($null, $language_code) = split /--/, $form->{language};
+
   $form->{customernumber} = $form->update_defaults($myconfig, "customernumber", $dbh) if ! $form->{customernumber};
   
   $query = qq|UPDATE customer SET
@@ -265,7 +268,7 @@ sub save_customer {
 	      bic = '$form->{bic}',
 	      employee_id = $employee_id,
 	      pricegroup_id = $pricegroup_id,
-	      language_code = '$form->{language_code}',
+	      language_code = '$language_code',
 	      curr = '$form->{curr}',
 	      startdate = |.$form->dbquote($form->{startdate}, SQL_DATE).qq|,
 	      enddate = |.$form->dbquote($form->{enddate}, SQL_DATE).qq|
@@ -365,6 +368,9 @@ sub save_vendor {
   my $business_id;
   ($null, $business_id) = split /--/, $form->{business};
   $business_id *= 1;
+  
+  my $language_code;
+  ($null, $language_code) = split /--/, $form->{language};
 
   $form->{vendornumber} = $form->update_defaults($myconfig, "vendornumber", $dbh) if ! $form->{vendornumber};
   
@@ -395,7 +401,7 @@ sub save_vendor {
 	      iban = '$form->{iban}',
 	      bic = '$form->{bic}',
 	      employee_id = $employee_id,
-	      language_code = '$form->{language_code}',
+	      language_code = '$language_code',
 	      pricegroup_id = $pricegroup_id,
 	      curr = '$form->{curr}',
 	      startdate = |.$form->dbquote($form->{startdate}, SQL_DATE).qq|,

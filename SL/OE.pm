@@ -1021,7 +1021,6 @@ sub order_details {
 
   }
 
-  delete $form->{reqdate};
   delete $form->{projectnumber};
   
   # sort the whole thing by project and group
@@ -1085,7 +1084,7 @@ sub order_details {
 	  }
 
 	  push(@{ $form->{description} }, $item->[2]);
-	  for (qw(taxrates runningnumber number sku qty ship unit bin serialnumber reqdate projectnumber sellprice listprice netprice discount discountrate linetotal weight itemnotes)) { push(@{ $form->{$_} }, "") }
+	  for (qw(taxrates runningnumber number sku qty ship unit bin serialnumber requiredate projectnumber sellprice listprice netprice discount discountrate linetotal weight itemnotes)) { push(@{ $form->{$_} }, "") }
 	  push(@{ $form->{lineitems} }, { amount => 0, tax => 0 });
 	}
       }
@@ -1112,7 +1111,7 @@ sub order_details {
       push(@{ $form->{unit} }, qq|$form->{"unit_$i"}|);
       push(@{ $form->{bin} }, qq|$form->{"bin_$i"}|);
       push(@{ $form->{serialnumber} }, qq|$form->{"serialnumber_$i"}|);
-      push(@{ $form->{reqdate} }, qq|$form->{"reqdate_$i"}|);
+      push(@{ $form->{requiredate} }, qq|$form->{"reqdate_$i"}|);
       push(@{ $form->{projectnumber} }, qq|$form->{"projectnumber_$i"}|);
       
       push(@{ $form->{sellprice} }, $form->{"sellprice_$i"});
@@ -1223,7 +1222,7 @@ sub order_details {
 	      push(@{ $form->{part} }, NULL);
 	    }
 
-	    for (qw(taxrates runningnumber number sku qty ship unit bin serialnumber reqdate projectnumber sellprice listprice netprice discount discountrate weight itemnotes)) { push(@{ $form->{$_} }, "") }
+	    for (qw(taxrates runningnumber number sku qty ship unit bin serialnumber requiredate projectnumber sellprice listprice netprice discount discountrate weight itemnotes)) { push(@{ $form->{$_} }, "") }
 
 	    push(@{ $form->{description} }, $form->{groupsubtotaldescription});
 
@@ -1250,7 +1249,7 @@ sub order_details {
 	      push(@{ $form->{part} }, NULL);
 	    } 
 	    
-	    for (qw(taxrates runningnumber number sku qty ship unit bin serialnumber reqdate projectnumber sellprice listprice netprice discount discountrate weight itemnotes)) { push(@{ $form->{$_} }, "") }
+	    for (qw(taxrates runningnumber number sku qty ship unit bin serialnumber requiredate projectnumber sellprice listprice netprice discount discountrate weight itemnotes)) { push(@{ $form->{$_} }, "") }
 
 	    push(@{ $form->{description} }, $form->{groupsubtotaldescription});
 	    push(@{ $form->{linetotal} }, $form->format_amount($myconfig, $subtotal, 2));
@@ -1379,7 +1378,7 @@ sub assembly_details {
     }
    
     if ($form->{grouppartsgroup} && $ref->{partsgroup} ne $sm) {
-      for (qw(taxrates number sku unit qty runningnumber ship bin serialnumber reqdate projectnumber sellprice listprice netprice discount discountrate linetotal weight itemnotes)) { push(@{ $form->{$_} }, "") }
+      for (qw(taxrates number sku unit qty runningnumber ship bin serialnumber requiredate projectnumber sellprice listprice netprice discount discountrate linetotal weight itemnotes)) { push(@{ $form->{$_} }, "") }
       $sm = ($form->{"a_partsgroup"}) ? $form->{"a_partsgroup"} : "";
       push(@{ $form->{description} }, "$spacer$sm");
       
@@ -1390,7 +1389,7 @@ sub assembly_details {
     if ($form->{stagger}) {
      
       push(@{ $form->{description} }, qq|$spacer$form->{"a_partnumber"}, $form->{"a_description"}|);
-      for (qw(taxrates number sku runningnumber ship serialnumber reqdate projectnumber sellprice listprice netprice discount discountrate linetotal weight itemnotes)) { push(@{ $form->{$_} }, "") }
+      for (qw(taxrates number sku runningnumber ship serialnumber requiredate projectnumber sellprice listprice netprice discount discountrate linetotal weight itemnotes)) { push(@{ $form->{$_} }, "") }
       
     } else {
       
@@ -1398,7 +1397,7 @@ sub assembly_details {
       push(@{ $form->{sku} }, $form->{"a_partnumber"});
       push(@{ $form->{number} }, $form->{"a_partnumber"});
       
-      for (qw(taxrates runningnumber ship serialnumber reqdate projectnumber sellprice listprice netprice discount discountrate linetotal weight itemnotes)) { push(@{ $form->{$_} }, "") }
+      for (qw(taxrates runningnumber ship serialnumber requiredate projectnumber sellprice listprice netprice discount discountrate linetotal weight itemnotes)) { push(@{ $form->{$_} }, "") }
       
     }
 
