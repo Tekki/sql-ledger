@@ -2,7 +2,6 @@ $self{charset} = 'ISO-8859-2';
 
 $self{texts} = {
   'Accounting Menu'             => 'Menü',
-  'Add POS Invoice'             => 'Új Nyugta',
   'Amount'                      => 'Összeg',
   'Business'                    => 'Üzletág',
   'Cannot post transaction!'    => 'A tranzakciót nem lehet rögzíteni!',
@@ -12,11 +11,11 @@ $self{texts} = {
   'Currency'                    => 'Deviza',
   'Current'                     => '0-30',
   'Customer'                    => 'Vevõ',
+  'Customer Number'             => 'Ügyfél szám',
   'Customer missing!'           => 'Vevõ hiányzik!',
   'Delete'                      => 'Törlés',
   'Department'                  => 'Részleg',
   'Description'                 => 'Szöveges leírás',
-  'Edit POS Invoice'            => 'Nyugta módosítása',
   'Exchange Rate'               => 'Átváltási árfolyam',
   'Exchange rate missing!'      => 'Átváltási árfolyam hiányzik!',
   'Extended'                    => 'Összeg',
@@ -38,6 +37,7 @@ $self{texts} = {
   'Receipts'                    => 'Befizetések',
   'Record in'                   => 'Feladás:',
   'Remaining'                   => 'Maradék',
+  'Sales Invoice'               => 'Vevõszámla',
   'Salesperson'                 => 'Ügynök',
   'Screen'                      => 'Képernyõre',
   'Select a Printer!'           => 'Válasszon Nyomtatót',
@@ -76,6 +76,7 @@ $self{subs} = {
   'rögzítés'                    => 'post',
   'nyomtatás'                   => 'print',
   'számlát_nyomtat'             => 'print_and_post',
+  'vevõszámla'                  => 'sales_invoice',
   'frissítés'                   => 'update',
 };
 

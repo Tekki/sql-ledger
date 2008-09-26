@@ -1,0 +1,236 @@
+\documentclass{scrartcl}
+\usepackage[latin1]{inputenc}
+\usepackage{tabularx}
+\usepackage[top=2.7cm,bottom=-1cm,left=1.9cm,right=0.5cm]{geometry}
+\usepackage{graphicx}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+\pagestyle{myheadings}
+\thispagestyle{empty}
+
+\fontfamily{cmss}\fontsize{10pt}{12pt}\selectfont
+
+\parbox{\textwidth}{%
+  \parbox[b]{.42\textwidth}{%
+    <%company%>
+   
+    <%address%>
+  }
+  \parbox[b]{.2\textwidth}{
+    \includegraphics[scale=0.3]{sql-ledger}
+  }\hfill
+  \begin{tabular}[b]{rr@{}}
+  Tel: & <%tel%>\\
+  Fax: & <%fax%>
+  \end{tabular}
+
+  \rule[1.5em]{\textwidth}{0.5pt}
+}
+
+<%pagebreak 90 27 37%>
+\end{tabularx}
+
+  \rule{\textwidth}{2pt}
+  
+  \hfill
+  \begin{tabularx}{7cm}{Xr@{}}
+  \textbf{Subtotal} & \textbf{<%sumcarriedforward%>} \\
+  \end{tabularx}
+
+\newpage
+
+\markboth{<%company%>\hfill <%invnumber%>}{<%company%>\hfill <%invnumber%>}
+
+\begin{tabularx}{\textwidth}{@{}rlXlrlrrr@{}}
+  \textbf{Item} & \textbf{Number} & \textbf{Description} & & \textbf{Qt'y} &
+    \textbf{Unit} & \textbf{Price} & \textbf{Disc \%} & \textbf{Amount} \\ [0.5em]
+  & carried forward from page <%lastpage%> & & & & & & & <%sumcarriedforward%> \\ [0.5em]
+<%end pagebreak%>
+
+\vspace{0.5cm}
+
+\parbox[t]{.5\textwidth}{
+\textbf{SOLD TO}
+\vspace{0.3cm}
+
+<%name%>
+
+<%address1%>
+
+<%address2%>
+
+<%city%>
+<%if state%>
+\hspace{-1mm}, <%state%>
+<%end state%>
+<%zipcode%>
+
+<%country%>
+
+\vspace{0.3cm}
+
+<%if contact%>
+<%contact%>
+\vspace{0.2cm}
+<%end contact%>
+
+<%if vendorphone%>
+Tel: <%vendorphone%>
+<%end vendorphone%>
+
+<%if vendorfax%>
+Fax: <%vendorfax%>
+<%end vendorfax%>
+
+<%email%>
+
+<%vendortaxnumber%>
+}
+\parbox[t]{.5\textwidth}{
+\textbf{SHIP TO}
+\vspace{0.3cm}
+
+<%shiptoname%>
+
+<%shiptoaddress1%>
+
+<%shiptoaddress2%>
+
+<%shiptocity%>
+<%if shiptostate%>
+\hspace{-1mm}, <%shiptostate%>
+<%end shiptostate%>
+<%shiptozipcode%>
+
+<%shiptocountry%>
+
+\vspace{0.3cm}
+
+<%if shiptocontact%>
+<%shiptocontact%>
+\vspace{0.2cm}
+<%end shiptocontact%>
+
+<%if shiptophone%>
+Tel: <%shiptophone%>
+<%end shiptophone%>
+
+<%if shiptofax%>
+Fax: <%shiptofax%>
+<%end shiptofax%>
+
+<%shiptoemail%>
+}
+\hfill
+
+\vspace{1cm}
+
+\textbf{D E B I T \hspace{0.2cm} I N V O I C E}
+
+\vspace{1cm}
+
+\begin{tabularx}{\textwidth}{*{8}{|X}|} \hline
+  \textbf{Invoice \#} & \textbf{Date} & \textbf{Due} & \textbf{Order \#}
+  & \textbf{Salesperson}
+  <%if shippingpoint%>
+  & \textbf{Shipping Point}
+  <%end shippingpoint>
+  <%if ponumber%>
+  & \textbf{PO Number}
+  <%end ponumber%>
+  <%if shipvia%>
+  & \textbf{Ship via}
+  <%end shipvia%>
+  \\ [0.5em]
+  \hline
+  <%invnumber%> & <%invdate%> & <%duedate%> & <%ordnumber%> & <%employee%>
+  <%if shippingpoint%>
+  & <%shippingpoint%>
+  <%end shippingpoint>
+  <%if ponumber%>
+  & <%ponumber%>
+  <%end ponumber%>
+  <%if shipvia%>
+  & <%shipvia%>
+  <%end shipvia%>
+  \\
+  \hline
+\end{tabularx}
+
+\vspace{1cm}
+
+\begin{tabularx}{\textwidth}{@{}rlXlrlrrr@{}}
+  \textbf{Item} & \textbf{Number} & \textbf{Description} & & \textbf{Qt'y} &
+    \textbf{Unit} & \textbf{Price} & \textbf{Disc \%} & \textbf{Amount} \\ [0.5em]
+<%foreach number%>
+  <%runningnumber%> & <%number%> & <%description%> & <%deliverydate%> &
+  <%qty%> & <%unit%> & <%sellprice%> & <%discountrate%> & <%linetotal%> \\
+  <%if itemnotes%>& & <%itemnotes%> \\[1em]<%end itemnotes%>
+<%end number%>
+\end{tabularx}
+
+\parbox{\textwidth}{
+\rule{\textwidth}{2pt}
+
+\vspace{0.2cm}
+
+\hfill
+\begin{tabularx}{\textwidth}{@{}Xr@{\hspace{1cm}}r@{}}
+<%if not taxincluded%>
+ & Subtotal & <%subtotal%> \\
+<%end taxincluded%>
+<%if taxincluded%>
+ & Total & <%invtotal%> \\
+<%end taxincluded%>
+<%foreach tax%>
+ Registration No. <%taxnumber%> & <%taxdescription%> on <%taxbase%> @ <%taxrate%> \% & <%tax%> \\
+<%end tax%>
+<%if not taxincluded%>
+ & Total & <%invtotal%> \\
+<%end taxincluded%>
+<%if paid%>
+ & Paid & - <%paid%> \\
+<%end paid%>
+  \cline{2-3}
+<%if total%>
+  & Balance Due & <%total%> \\
+<%end total%>
+\end{tabularx}
+
+\vspace{0.3cm}
+
+<%text_amount%> ***** <%decimal%>/100
+\hfill
+All prices in \textbf{<%currency%>}.
+
+<%if taxincluded%>
+Taxes included in price.
+<%end tax included%>
+
+\vspace{1em}
+
+<%notes%>
+}
+
+\vfill
+
+<%if paid_1%>
+\begin{tabularx}{10cm}{@{}lXlr@{}}
+  \multicolumn{4}{c}{\textbf{Payments}} \\
+  \hline
+  \textbf{Date} & & \textbf{Source} & \textbf{Amount} \\
+<%end paid_1%>
+<%foreach payment%>
+  <%paymentdate%> & <%paymentaccount%> & <%paymentsource%> & <%payment%> \\
+<%end payment%>
+<%if paid_1%>
+\end{tabularx}
+<%end paid_1%>
+
+\vspace{0.5cm}
+
+\rule{\textwidth}{0.5pt}
+
+\end{document}

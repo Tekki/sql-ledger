@@ -1,3 +1,5 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'Accounting Menu'             => 'Kirjanpitovalikko',
   'Active'                      => 'Avoin',
@@ -18,6 +20,7 @@ $self{texts} = {
   'Continue'                    => 'Jatka',
   'Current'                     => 'Erääntyy',
   'Customer'                    => 'Asiakas',
+  'Customer Number'             => 'Asiakasnumero',
   'Customer missing!'           => 'Asiakas puuttuu!',
   'Customer not on file!'       => 'Asiakas ei järjestelmässä!',
   'Date'                        => 'Päiväys',
@@ -93,6 +96,7 @@ $self{texts} = {
   'Update'                      => 'Päivitä',
   'Updated'                     => 'Päivitetty',
   'Vendor'                      => 'Toimittaja',
+  'Vendor Number'               => 'Toimittajanumero',
   'Vendor not on file!'         => 'Toimittajaa ei järjestelmässä!',
   'Weight'                      => 'Paino',
   'Year'                        => 'Vuosi',
@@ -150,16 +154,16 @@ $self{subs} = {
   'translation_footer'          => 'translation_footer',
   'translation_header'          => 'translation_header',
   'update'                      => 'update',
-  'lisää_ryhmä'                 => 'add_group',
+  'lisää_ryhmä'              => 'add_group',
   'lisää_työ'                => 'add_job',
-  'lisää_hintaryhmä'            => 'add_pricegroup',
-  'lisää_projekti'              => 'add_project',
+  'lisää_hintaryhmä'         => 'add_pricegroup',
+  'lisää_projekti'            => 'add_project',
   'jatka'                       => 'continue',
   'poista'                      => 'delete',
   'luo_myyntitilaukset'         => 'generate_sales_orders',
   'tallenna'                    => 'save',
   'valitse_asiakas'             => 'select_customer',
-  'päivitä'                     => 'update',
+  'päivitä'                   => 'update',
 };
 
 1;

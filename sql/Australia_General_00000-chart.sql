@@ -74,6 +74,11 @@ insert into chart (accno,description,charttype,gifi_accno,category,link) values 
 insert into tax (chart_id,rate) values ((select id from chart where accno = '16001'),0.1);
 insert into tax (chart_id,rate) values ((select id from chart where accno = '21002'),0.1);
 --
-update defaults 
-set inventory_accno_id = (select id from chart where accno = '15001'), income_accno_id = (select id from chart where accno = '40001'), expense_accno_id = (select id from chart where accno = '50001'), fxgain_accno_id = (select id from chart where accno = '42002'), fxloss_accno_id = (select id from chart where accno = '58002'), curr = 'AUD:USD:EUR', weightunit = 'kg';
+INSERT INTO defaults (fldname, fldvalue) VALUES ('inventory_accno_id', (SELECT id FROM chart WHERE accno = '15001'));
+INSERT INTO defaults (fldname, fldvalue) VALUES ('income_accno_id', (SELECT id FROM chart WHERE accno = '40001')); 
+INSERT INTO defaults (fldname, fldvalue) VALUES ('expense_accno_id', (SELECT id FROM chart WHERE accno = '50001'));
+INSERT INTO defaults (fldname, fldvalue) VALUES ('fxgain_accno_id', (SELECT id FROM chart WHERE accno = '42002'));
+INSERT INTO defaults (fldname, fldvalue) VALUES ('fxloss_accno_id', (SELECT id FROM chart WHERE accno = '58002'));
+INSERT INTO defaults (fldname, fldvalue) VALUES ('currencies', 'AUD:USD:EUR');
+INSERT INTO defaults (fldname, fldvalue) VALUES ('weightunit', 'kg'); 
 

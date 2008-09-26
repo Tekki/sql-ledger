@@ -1,0 +1,28 @@
+$self{texts} = {
+  'City'                        => 'Ciudad',
+  'Continue'                    => 'Continuar',
+  'Curr'                        => 'Mon.',
+  'Customer'                    => 'Cliente',
+  'Customer Number'             => 'Número del cliente',
+  'Description'                 => 'Descripción',
+  'Due Date'                    => 'Fecha de vencimiento',
+  'Invoice Date'                => 'Fecha de factura',
+  'Invoice Number'              => 'Número de factura',
+  'No'                          => 'No',
+  'Qty'                         => 'Cantidad',
+  'Salesperson'                 => 'Vendedor',
+  'Total'                       => 'Total',
+  'Unit'                        => 'Unidad',
+  'Yes'                         => 'Si',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'do_import'                   => 'do_import',
+  'import'                      => 'import',
+  'import_sales_invoices'       => 'import_sales_invoices',
+  'continuar'                   => 'continue',
+};
+
+1;
+

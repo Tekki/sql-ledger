@@ -1,0 +1,31 @@
+$self{charset} = 'ISO-8859-15';
+
+$self{texts} = {
+  'City'                        => 'Linn',
+  'Continue'                    => 'Edasi',
+  'Curr'                        => 'Val.',
+  'Customer'                    => 'Klient',
+  'Customer Number'             => 'Kliendi number',
+  'Description'                 => 'Selgitus',
+  'Due Date'                    => 'Maksetähtaeg',
+  'Invoice Date'                => 'Arve kuupäev',
+  'Invoice Number'              => 'Arve number',
+  'No'                          => 'Ei',
+  'Posting failed!'             => 'Postitamine ebaõnnestus',
+  'Qty'                         => 'Kogus',
+  'Salesperson'                 => 'Müügiesindaja',
+  'Total'                       => 'Kokku',
+  'Unit'                        => 'Ühik',
+  'Yes'                         => 'Jah',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'do_import'                   => 'do_import',
+  'import'                      => 'import',
+  'import_sales_invoices'       => 'import_sales_invoices',
+  'edasi'                       => 'continue',
+};
+
+1;
+

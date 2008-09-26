@@ -1,0 +1,30 @@
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'City'                        => '城市',
+  'Continue'                    => '继续',
+  'Curr'                        => '币别',
+  'Customer'                    => '客户',
+  'Customer Number'             => '客户编号',
+  'Description'                 => '说明',
+  'Due Date'                    => '到期日',
+  'Invoice Date'                => '发票日期',
+  'Invoice Number'              => '发票编号',
+  'No'                          => '否',
+  'Qty'                         => '数量',
+  'Salesperson'                 => '销售人员',
+  'Total'                       => '总计',
+  'Unit'                        => '单位',
+  'Yes'                         => '是',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'do_import'                   => 'do_import',
+  'import'                      => 'import',
+  'import_sales_invoices'       => 'import_sales_invoices',
+  '继续'                      => 'continue',
+};
+
+1;
+

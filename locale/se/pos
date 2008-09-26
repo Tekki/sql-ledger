@@ -1,6 +1,5 @@
 $self{texts} = {
   'Accounting Menu'             => 'Bokförings-meny',
-  'Add POS Invoice'             => 'Ny försäljning',
   'Amount'                      => 'Belopp',
   'Business'                    => 'Verksamhet',
   'Cannot post transaction!'    => 'Kan inte bokföra transaktion',
@@ -10,11 +9,11 @@ $self{texts} = {
   'Currency'                    => 'Valuta',
   'Current'                     => 'Nuvarande',
   'Customer'                    => 'Kund',
+  'Customer Number'             => 'Kund nr',
   'Customer missing!'           => 'Kund saknas',
   'Delete'                      => 'Radera',
   'Department'                  => 'Kostnadsställe/resultatenhet',
   'Description'                 => 'Beskrivning',
-  'Edit POS Invoice'            => 'Redigera försäljningsfakturor',
   'Exchange Rate'               => 'Växlingskurs',
   'Exchange rate missing!'      => 'Växelkurs saknas',
   'Extended'                    => 'Summa',
@@ -36,6 +35,7 @@ $self{texts} = {
   'Receipts'                    => 'Kvitton',
   'Record in'                   => 'Bokför på',
   'Remaining'                   => 'Resterar',
+  'Sales Invoice'               => 'Kundfaktura',
   'Salesperson'                 => 'Försäljare',
   'Screen'                      => 'Skärm',
   'Select a Printer!'           => 'Välj skrivare',
@@ -74,6 +74,7 @@ $self{subs} = {
   'bokför'                      => 'post',
   'skriv_ut'                    => 'print',
   'skriv_och_bokför'            => 'print_and_post',
+  'kundfaktura'                 => 'sales_invoice',
   'uppdatera'                   => 'update',
 };
 

@@ -2,7 +2,6 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Accounting Menu'             => 'Меню Сметкоплан',
-  'Add POS Invoice'             => 'Добави POS фактура',
   'Amount'                      => 'Сума',
   'Business'                    => 'Направление',
   'Cannot post transaction!'    => 'Не мога да извърша плащане!',
@@ -12,11 +11,11 @@ $self{texts} = {
   'Currency'                    => 'Валута',
   'Current'                     => 'Текущ',
   'Customer'                    => 'Клиент',
+  'Customer Number'             => 'Клиент номер',
   'Customer missing!'           => 'Пропуснат клиент!',
   'Delete'                      => 'Изстрии',
   'Department'                  => 'Отдел',
   'Description'                 => 'Обяснение',
-  'Edit POS Invoice'            => 'Редакция на POS фактура',
   'Exchange Rate'               => 'Валутен курс',
   'Exchange rate missing!'      => 'Пропуснат валутен курс',
   'Extended'                    => 'Обобщен',
@@ -38,6 +37,7 @@ $self{texts} = {
   'Receipts'                    => 'Получавания',
   'Record in'                   => 'Запази в',
   'Remaining'                   => 'Напомняне',
+  'Sales Invoice'               => 'Фактура продажба',
   'Salesperson'                 => 'Продавач',
   'Screen'                      => 'Екран',
   'Select a Printer!'           => 'Избери принтер!',
@@ -76,6 +76,7 @@ $self{subs} = {
   'Запази'                => 'post',
   'Печат'                  => 'print',
   'Разпечатай_и_запази' => 'print_and_post',
+  'Фактура_продажба' => 'sales_invoice',
   'Обнови'                => 'update',
 };
 

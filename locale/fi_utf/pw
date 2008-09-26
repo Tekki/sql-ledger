@@ -1,3 +1,5 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'Continue'                    => 'Jatka',
   'Password'                    => 'Salasana',

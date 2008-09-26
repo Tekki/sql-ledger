@@ -1,6 +1,5 @@
 $self{texts} = {
   'Accounting Menu'             => 'Menu de comptabilité',
-  'Add POS Invoice'             => 'Saisie ticket de caisse',
   'Amount'                      => 'Montant',
   'Business'                    => 'Type d\'affaire',
   'Cannot post transaction!'    => 'Impossible d\'enregistrer l\'écriture!',
@@ -10,11 +9,11 @@ $self{texts} = {
   'Currency'                    => 'Devise',
   'Current'                     => 'En cours',
   'Customer'                    => 'Client',
+  'Customer Number'             => 'Numéro de client',
   'Customer missing!'           => 'Client manquant!',
   'Delete'                      => 'Supprimer',
   'Department'                  => 'Service',
   'Description'                 => 'Description',
-  'Edit POS Invoice'            => 'Modifier ticket de caisse',
   'Exchange Rate'               => 'Taux de change',
   'Exchange rate missing!'      => 'Taux de change manquant!',
   'Extended'                    => 'Prix total',
@@ -36,6 +35,7 @@ $self{texts} = {
   'Receipts'                    => 'Reçus',
   'Record in'                   => 'Enregistrer dans',
   'Remaining'                   => 'Restant',
+  'Sales Invoice'               => 'Facture de vente',
   'Salesperson'                 => 'Vendeur',
   'Screen'                      => 'Écran',
   'Source'                      => 'Source',
@@ -73,6 +73,7 @@ $self{subs} = {
   'enregistrer'                 => 'post',
   'imprimer'                    => 'print',
   'imprimer_et_imputer'         => 'print_and_post',
+  'facture_de_vente'            => 'sales_invoice',
   'mettre_à_jour'               => 'update',
 };
 

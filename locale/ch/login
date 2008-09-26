@@ -3,8 +3,8 @@ $self{texts} = {
   'Company'                     => 'Firmenname',
   'Continue'                    => 'Weiter',
   'Dataset is newer than version!' => 'Datenset ist neuer als installierte Version',
-  'Incorrect Dataset version!'  => 'Ungültigige Datenset-Version',
-  'Login'                       => 'Benutzername',
+  'Incorrect Dataset version!'  => 'Ungültige Datenset-Version',
+  'Login'                       => 'anmelden',
   'Name'                        => 'Benutzername',
   'Password'                    => 'Passwort',
   'Upgrading to Version'        => 'Datenset wird erneuert auf Version',
@@ -18,7 +18,7 @@ $self{subs} = {
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
-  'benutzername'                => 'login',
+  'anmelden'                    => 'login',
 };
 
 1;

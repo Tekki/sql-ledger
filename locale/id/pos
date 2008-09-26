@@ -1,6 +1,5 @@
 $self{texts} = {
   'Accounting Menu'             => 'Menu Akunting',
-  'Add POS Invoice'             => 'Tambah Invoice Kasir',
   'Amount'                      => 'Jumlah',
   'Business'                    => 'Bisnis',
   'Cannot post transaction!'    => 'Tidak dapat posting transaksi!',
@@ -9,11 +8,11 @@ $self{texts} = {
   'Credit Limit'                => 'Batas Kredit',
   'Currency'                    => 'Mata Uang',
   'Customer'                    => 'Pelanggan',
+  'Customer Number'             => 'Nomor Pelanggan',
   'Customer missing!'           => 'Pelanggan harap diisi!',
   'Delete'                      => 'Hapus',
   'Department'                  => 'Departemen',
   'Description'                 => 'Keterangan',
-  'Edit POS Invoice'            => 'Edit Invoice Kasir',
   'Exchange Rate'               => 'Kurs',
   'Exchange rate missing!'      => 'Kurs harap diisi!',
   'Extended'                    => 'Jumlah',
@@ -32,6 +31,7 @@ $self{texts} = {
   'Receipts'                    => 'Penerimaan',
   'Record in'                   => 'Catat pada',
   'Remaining'                   => 'Sisa',
+  'Sales Invoice'               => 'Invoice Penjualan',
   'Salesperson'                 => 'Salesman',
   'Screen'                      => 'Layar',
   'Source'                      => 'Bukti',
@@ -66,6 +66,7 @@ $self{subs} = {
   'posting'                     => 'post',
   'cetak'                       => 'print',
   'cetak_dan_posting'           => 'print_and_post',
+  'invoice_penjualan'           => 'sales_invoice',
 };
 
 1;

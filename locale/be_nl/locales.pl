@@ -308,6 +308,12 @@ sub scanfile {
           if (/type=submit/i) {
 	    $submit{$string} = 1;
           }
+
+          # is it a value before $locale->
+          if (/value => \$locale/) {
+	    $submit{$string} = 1;
+          }
+
 	}
       }
 

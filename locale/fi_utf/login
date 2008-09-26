@@ -1,23 +1,25 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'Access Denied!'              => 'Pääsy kielletty',
   'Company'                     => 'Yritys',
   'Continue'                    => 'Jatka',
   'Dataset is newer than version!' => 'Tietokanta on uudempi kuin sovelluksen versio',
-  'Incorrect Dataset version!'  => 'Väärätietokannan versio!',
+  'Incorrect Dataset version!'  => 'Väärä tietokannan versio!',
   'Login'                       => 'Nimi',
   'Name'                        => 'Nimi',
   'Password'                    => 'Salasana',
-  'Upgrading to Version'        => 'Pävitetän versioon',
+  'Upgrading to Version'        => 'Päivitetään versioon',
   'Version'                     => 'Versio',
-  'You did not enter a name!'   => 'Et kirjoittanut nimeä,
+  'You did not enter a name!'   => 'Et kirjoittanut nimeä',
   'done'                        => 'valmis',
 };
 
 $self{subs} = {
-  'login'                       => 'kirjaudu sisään',
+  'login'                       => 'login',
   'login_screen'                => 'login_screen',
-  'logout'                      => 'kirjaudu ulos',
-  'selectdataset'               => 'valitse tietosetti',
+  'logout'                      => 'logout',
+  'selectdataset'               => 'selectdataset',
   'nimi'                        => 'login',
 };
 

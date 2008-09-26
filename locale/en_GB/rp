@@ -2,8 +2,10 @@ $self{texts} = {
   'AP Aging'                    => 'Creditor Aging',
   'AR Aging'                    => 'Debtor Aging',
   'Customer'                    => 'Debtor',
+  'Customer Number'             => 'Debtor Number',
   'Customer not on file!'       => 'Debtor not on file!',
   'Vendor'                      => 'Creditor',
+  'Vendor Number'               => 'Creditor Number',
   'Vendor not on file!'         => 'Creditor not on file!',
 };
 
@@ -38,6 +40,8 @@ $self{subs} = {
   'print_and_post_as_new'       => 'print_and_post_as_new',
   'print_form'                  => 'print_form',
   'print_options'               => 'print_options',
+  'print_report'                => 'print_report',
+  'print_report_options'        => 'print_report_options',
   'project_selected'            => 'project_selected',
   'rebuild_vc'                  => 'rebuild_vc',
   'report'                      => 'report',

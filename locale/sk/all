@@ -3,6 +3,7 @@
 # this file is just a shortcut to build strings which are the same
 $self{charset} = 'ISO-8859-2';
 
+
 $self{texts} = {
   'A'                           => 'A',
   'AP'                          => 'Záväzky',
@@ -920,4 +921,3 @@ $self{texts} = {
 };
 
 1;
-

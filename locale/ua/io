@@ -1,8 +1,10 @@
 $self{charset} = 'ISO-8859-5';
 
 $self{texts} = {
+  'Add Part'                    => 'Новий Товар',
   'Add Purchase Order'          => 'Нове замовлення на куп╕влю',
   'Add Sales Order'             => 'Нове замовлення на продаж',
+  'Add Service'                 => 'Нова послуга',
   'Address'                     => 'Адреса',
   'Apr'                         => 'кв╕тня',
   'April'                       => 'Кв╕тень',
@@ -15,6 +17,7 @@ $self{texts} = {
   'Contact'                     => 'Контактна особа',
   'Continue'                    => 'Продовжити',
   'Copies'                      => 'Коп╕й',
+  'Customer'                    => 'Кл╕╓нт',
   'Date'                        => 'Дата',
   'Dec'                         => 'грудня',
   'December'                    => 'Грудень',
@@ -54,7 +57,6 @@ $self{texts} = {
   'Packing List'                => 'Пакувальний Список',
   'Packing List Date missing!'  => 'Не вказана Дата Пакувального Списоку',
   'Packing List Number missing!' => 'Не вказаний Номер Пакувального Списоку',
-  'Part'                        => 'Товар',
   'Phone'                       => 'Тел.',
   'Postscript'                  => 'Postscript',
   'Price'                       => 'Ц╕на',
@@ -67,21 +69,19 @@ $self{texts} = {
   'Screen'                      => 'Екран',
   'Sep'                         => 'вересня',
   'September'                   => 'Вересень',
-  'Service'                     => 'Послуга',
   'Ship'                        => 'Послати',
   'Ship to'                     => 'Послати до',
   'Subject'                     => 'Тема',
   'Subtotal'                    => 'П╕дсумок по розд╕лу',
   'To'                          => 'До',
   'Unit'                        => 'Одиниця',
-  'What type of item is this?'  => 'Який це вид/тип товару',
+  'Vendor'                      => 'Постачальник',
 };
 
 $self{subs} = {
   'calc_markup'                 => 'calc_markup',
   'check_form'                  => 'check_form',
   'create_form'                 => 'create_form',
-  'customer_details'            => 'customer_details',
   'display_form'                => 'display_form',
   'display_row'                 => 'display_row',
   'e_mail'                      => 'e_mail',
@@ -99,7 +99,8 @@ $self{subs} = {
   'send_email'                  => 'send_email',
   'ship_to'                     => 'ship_to',
   'validate_items'              => 'validate_items',
-  'vendor_details'              => 'vendor_details',
+  'Новий_Товар'                 => 'add_part',
+  'Нова_послуга'                => 'add_service',
   'Продовжити'                  => 'continue',
 };
 

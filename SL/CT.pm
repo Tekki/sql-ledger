@@ -1,24 +1,10 @@
 #=====================================================================
-# SQL-Ledger Accounting
-# Copyright (C) 2000
+# SQL-Ledger ERP
+# Copyright (C) 2006
 #
 #  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.org
+#     Web: http://www.sql-ledger.com
 #
-#  Contributors:
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #======================================================================
 #
 # backend code for customers and vendors
@@ -35,25 +21,41 @@ sub create_links {
   my $query;
   my $sth;
   my $ref;
-  my $arap = ($form->{db} eq 'customer') ? "ar" : "ap";
-  my $ARAP = uc $arap;
+  my $arap = lc $form->{ARAP};
+  my $accno;
+  my $description;
  
   if ($form->{id}) {
-    $query = qq|SELECT ct.*, b.description AS business, s.*,
-                e.name AS employee, g.pricegroup AS pricegroup,
-		l.description AS language, ct.curr
+    $query = qq/SELECT ct.*,
+                ad.id AS addressid, ad.address1, ad.address2, ad.city,
+		ad.state, ad.zipcode, ad.country,
+		b.description || '--' || b.id AS business, s.*,
+                e.name || '--' || e.id AS employee,
+		g.pricegroup || '--' || g.id AS pricegroup,
+		ct.curr
                 FROM $form->{db} ct
+		JOIN address ad ON (ct.id = ad.trans_id)
 		LEFT JOIN business b ON (ct.business_id = b.id)
 		LEFT JOIN shipto s ON (ct.id = s.trans_id)
 		LEFT JOIN employee e ON (ct.employee_id = e.id)
 		LEFT JOIN pricegroup g ON (g.id = ct.pricegroup_id)
-		LEFT JOIN language l ON (l.code = ct.language_code)
-                WHERE ct.id = $form->{id}|;
+                WHERE ct.id = $form->{id}/;
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
   
     $ref = $sth->fetchrow_hashref(NAME_lc);
     for (keys %$ref) { $form->{$_} = $ref->{$_} }
+    $sth->finish;
+
+    $query = qq|SELECT * FROM contact
+                WHERE trans_id = $form->{id}
+		ORDER BY id|;
+    $sth = $dbh->prepare($query);
+    $sth->execute || $form->dberror($query);
+
+    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+      push @{ $form->{all_contact} }, $ref;
+    }
     $sth->finish;
 
     # check if it is orphaned
@@ -83,31 +85,61 @@ sub create_links {
     $sth->execute || $form->dberror($query);
 
     while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-      $form->{tax}{$ref->{accno}}{taxable} = 1;
+      $form->{"tax_$ref->{accno}"} = 1;
     }
     $sth->finish;
+
+    for (qw(arap payment discount)) {
+      $form->{"${_}_accno_id"} *= 1;
+      $query = qq|SELECT accno, description
+		  FROM chart
+		  WHERE id = $form->{"${_}_accno_id"}|;
+      ($accno, $description) = $dbh->selectrow_array($query);
+
+      $form->{"${_}_accno"} = "${accno}--$description";
+    }
 
   } else {
 
     ($form->{employee}, $form->{employee_id}) = $form->get_employee($dbh);
-
-    $query = qq|SELECT current_date FROM defaults|;
-    ($form->{startdate}) = $dbh->selectrow_array($query);
+    $form->{employee} = "$form->{employee}--$form->{employee_id}";
+    $form->{startdate} = $form->current_date($myconfig);
 
   }
 
+  # ARAP, payment and discount account
+  $query = qq|SELECT c.accno, c.description, c.link
+              FROM chart c
+	      WHERE c.link LIKE '%$form->{ARAP}%'
+	      ORDER BY c.accno|;
+  $sth = $dbh->prepare($query);
+  $sth->execute || $form->dberror($query);
+  
+  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    if ($ref->{link} =~ /$form->{ARAP}_paid/) {
+      push @{ $form->{payment_accounts} }, $ref;
+    }
+    if ($ref->{link} =~ /$form->{ARAP}_discount/) {
+      push @{ $form->{discount_accounts} }, $ref;
+    }
+    if (($ref->{link} !~ /_/) && ($ref->{link} =~ /$form->{ARAP}/)) {
+      push @{ $form->{arap_accounts} }, $ref;
+    }
+  }
+  $sth->finish;
+  
   # get tax labels
   $query = qq|SELECT DISTINCT c.accno, c.description
               FROM chart c
 	      JOIN tax t ON (t.chart_id = c.id)
-	      WHERE c.link LIKE '%${ARAP}_tax%'
+	      WHERE c.link LIKE '%$form->{ARAP}_tax%'
 	      ORDER BY c.accno|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     $form->{taxaccounts} .= "$ref->{accno} ";
-    $form->{tax}{$ref->{accno}}{description} = $ref->{description};
+    $form->{"tax_$ref->{accno}_description"} = $ref->{description};
   }
   $sth->finish;
   chop $form->{taxaccounts};
@@ -153,149 +185,15 @@ sub create_links {
   $sth->finish;
   
   # get currencies
-  $query = qq|SELECT curr AS currencies
-              FROM defaults|;
-  ($form->{currencies}) = $dbh->selectrow_array($query);
+  my %defaults = $form->get_defaults($dbh, \@{['currencies']});
+  $form->{currencies} = $defaults{currencies};
 
   $dbh->disconnect;
 
 }
 
 
-sub save_customer {
-  my ($self, $myconfig, $form) = @_;
-
-  # connect to database
-  my $dbh = $form->dbconnect_noauto($myconfig);
-  my $query;
-  my $sth;
-  my $null;
-  
-  # remove double spaces
-  $form->{name} =~ s/  / /g;
-  # remove double minus and minus at the end
-  $form->{name} =~ s/--+/-/g;
-  $form->{name} =~ s/-+$//;
-  
-  # assign value discount, terms, creditlimit
-  $form->{discount} = $form->parse_amount($myconfig, $form->{discount});
-  $form->{discount} /= 100;
-  $form->{terms} *= 1;
-  $form->{taxincluded} *= 1;
-  $form->{creditlimit} = $form->parse_amount($myconfig, $form->{creditlimit});
-  
-
-  if ($form->{id}) {
-    $query = qq|DELETE FROM customertax
-                WHERE customer_id = $form->{id}|;
-    $dbh->do($query) || $form->dberror($query);
-
-    $query = qq|DELETE FROM shipto
-                WHERE trans_id = $form->{id}|;
-    $dbh->do($query) || $form->dberror($query);
-
-    $query = qq|SELECT id FROM customer
-                WHERE id = $form->{id}|;
-    if (! $dbh->selectrow_array($query)) {
-      $query = qq|INSERT INTO customer (id)
-                  VALUES ($form->{id})|;
-      $dbh->do($query) || $form->dberror($query);
-    }
-
-    # retrieve enddate
-    if ($form->{type} && $form->{enddate}) {
-      my $now;
-      $query = qq|SELECT enddate, current_date AS now FROM customer|;
-      ($form->{enddate}, $now) = $dbh->selectrow_array($query);
-      $form->{enddate} = $now if $form->{enddate} lt $now;
-    }
-
-  } else {
-    my $uid = localtime;
-    $uid .= "$$";
-
-    $query = qq|INSERT INTO customer (name)
-                VALUES ('$uid')|;
-    $dbh->do($query) || $form->dberror($query);
-    
-    $query = qq|SELECT id FROM customer
-                WHERE name = '$uid'|;
-    ($form->{id}) = $dbh->selectrow_array($query);
-
-  }
-
-  my $employee_id;
-  ($null, $employee_id) = split /--/, $form->{employee};
-  $employee_id *= 1;
-  
-  my $pricegroup_id;
-  ($null, $pricegroup_id) = split /--/, $form->{pricegroup};
-  $pricegroup_id *= 1;
-
-  my $business_id;
-  ($null, $business_id) = split /--/, $form->{business};
-  $business_id *= 1;
-
-  my $language_code;
-  ($null, $language_code) = split /--/, $form->{language};
-
-  $form->{customernumber} = $form->update_defaults($myconfig, "customernumber", $dbh) if ! $form->{customernumber};
-  
-  $query = qq|UPDATE customer SET
-              customernumber = |.$dbh->quote($form->{customernumber}).qq|,
-	      name = |.$dbh->quote($form->{name}).qq|,
-	      address1 = |.$dbh->quote($form->{address1}).qq|,
-	      address2 = |.$dbh->quote($form->{address2}).qq|,
-	      city = |.$dbh->quote($form->{city}).qq|,
-	      state = |.$dbh->quote($form->{state}).qq|,
-	      zipcode = |.$dbh->quote($form->{zipcode}).qq|,
-	      country = |.$dbh->quote($form->{country}).qq|,
-	      contact = |.$dbh->quote($form->{contact}).qq|,
-	      phone = '$form->{phone}',
-	      fax = '$form->{fax}',
-	      email = '$form->{email}',
-	      cc = '$form->{cc}',
-	      bcc = '$form->{bcc}',
-	      notes = |.$dbh->quote($form->{notes}).qq|,
-	      discount = $form->{discount},
-	      creditlimit = $form->{creditlimit},
-	      terms = $form->{terms},
-	      taxincluded = '$form->{taxincluded}',
-	      business_id = $business_id,
-	      taxnumber = |.$dbh->quote($form->{taxnumber}).qq|,
-	      sic_code = '$form->{sic_code}',
-	      iban = '$form->{iban}',
-	      bic = '$form->{bic}',
-	      employee_id = $employee_id,
-	      pricegroup_id = $pricegroup_id,
-	      language_code = '$language_code',
-	      curr = '$form->{curr}',
-	      startdate = |.$form->dbquote($form->{startdate}, SQL_DATE).qq|,
-	      enddate = |.$form->dbquote($form->{enddate}, SQL_DATE).qq|
-	      WHERE id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
-
-  # save taxes
-  foreach $item (split / /, $form->{taxaccounts}) {
-    if ($form->{"tax_$item"}) {
-      $query = qq|INSERT INTO customertax (customer_id, chart_id)
-		  VALUES ($form->{id}, (SELECT id
-				        FROM chart
-				        WHERE accno = '$item'))|;
-      $dbh->do($query) || $form->dberror($query);
-    }
-  }
-  
-  # add shipto
-  $form->add_shipto($dbh, $form->{id});
-
-  $dbh->commit;
-  $dbh->disconnect;
-
-}
-
-
-sub save_vendor {
+sub save {
   my ($self, $myconfig, $form) = @_;
 
   # connect to database
@@ -304,33 +202,49 @@ sub save_vendor {
   my $query;
   my $sth;
   my $null;
+  
+  $form->{name} ||= "$form->{lastname} $form->{firstname}";
+  $form->{contact} = "$form->{firstname} $form->{lastname}";
+  $form->{name} =~ s/^\s+//;
+  $form->{name} =~ s/\s+$//;
 
   # remove double spaces
   $form->{name} =~ s/  / /g;
   # remove double minus and minus at the end
   $form->{name} =~ s/--+/-/g;
   $form->{name} =~ s/-+$//;
+  
+  for (qw(discount cashdiscount)) {
+    $form->{$_} = $form->parse_amount($myconfig, $form->{$_});
+    $form->{$_} /= 100;
+  }
 
-  $form->{discount} = $form->parse_amount($myconfig, $form->{discount});
-  $form->{discount} /= 100;
-  $form->{terms} *= 1;
-  $form->{taxincluded} *= 1;
-  $form->{creditlimit} = $form->parse_amount($myconfig, $form->{creditlimit});
+  for (qw(terms discountterms taxincluded addressid contactid)) { $form->{$_} *= 1 }
+  
+  for (qw(creditlimit threshold)) { $form->{$_} = $form->parse_amount($myconfig, $form->{$_}) }
  
   
   if ($form->{id}) {
-    $query = qq|DELETE FROM vendortax
-                WHERE vendor_id = $form->{id}|;
+    $query = qq|DELETE FROM $form->{db}tax
+                WHERE $form->{db}_id = $form->{id}|;
     $dbh->do($query) || $form->dberror($query);
 
     $query = qq|DELETE FROM shipto
                 WHERE trans_id = $form->{id}|;
     $dbh->do($query) || $form->dberror($query);
+   
+    $query = qq|DELETE FROM contact
+                WHERE id = $form->{contactid}|;
+    $dbh->do($query) || $form->dberror($query);
     
-    $query = qq|SELECT id FROM vendor
+    $query = qq|DELETE FROM address
+                WHERE id = $form->{addressid}|;
+    $dbh->do($query) || $form->dberror($query);
+    
+    $query = qq|SELECT id FROM $form->{db}
                 WHERE id = $form->{id}|;
     if (! $dbh->selectrow_array($query)) {
-      $query = qq|INSERT INTO vendor (id)
+      $query = qq|INSERT INTO $form->{db} (id)
                   VALUES ($form->{id})|;
       $dbh->do($query) || $form->dberror($query);
     }
@@ -338,51 +252,47 @@ sub save_vendor {
     # retrieve enddate
     if ($form->{type} && $form->{enddate}) {
       my $now;
-      $query = qq|SELECT enddate, current_date AS now FROM vendor|;
+      $query = qq|SELECT enddate, current_date AS now FROM $form->{db}|;
       ($form->{enddate}, $now) = $dbh->selectrow_array($query);
       $form->{enddate} = $now if $form->{enddate} lt $now;
     }
 
   } else {
     my $uid = localtime;
-    $uid .= "$$";
+    $uid .= $$;
     
-    $query = qq|INSERT INTO vendor (name)
+    $query = qq|INSERT INTO $form->{db} (name)
                 VALUES ('$uid')|;
     $dbh->do($query) || $form->dberror($query);
    
-    $query = qq|SELECT id FROM vendor
+    $query = qq|SELECT id FROM $form->{db}
                 WHERE name = '$uid'|;
     ($form->{id}) = $dbh->selectrow_array($query);
 
+    delete $form->{addressid};
+
   }
+  
+  $form->{"$form->{db}number"} = $form->update_defaults($myconfig, "$form->{db}number", $dbh) if ! $form->{"$form->{db}number"};
+ 
+  my %rec;
+  for (qw(employee pricegroup business)) {
+    ($null, $rec{"${_}_id"}) = split /--/, $form->{$_};
+    $rec{"${_}_id"} *= 1;
+  }
+  
+  for (qw(arap payment discount)) {
+    ($rec{"${_}_accno"}) = split /--/, $form->{"${_}_accno"};
+  }
+
    
-  my $employee_id;
-  ($null, $employee_id) = split /--/, $form->{employee};
-  $employee_id *= 1;
-  
-  my $pricegroup_id;
-  ($null, $pricegroup_id) = split /--/, $form->{pricegroup};
-  $pricegroup_id *= 1;
+  my $gifi;
+  $gifi = qq|
+	      gifi_accno = '$form->{gifi_accno}',| if $form->{db} eq 'vendor';
 
-  my $business_id;
-  ($null, $business_id) = split /--/, $form->{business};
-  $business_id *= 1;
-  
-  my $language_code;
-  ($null, $language_code) = split /--/, $form->{language};
-
-  $form->{vendornumber} = $form->update_defaults($myconfig, "vendornumber", $dbh) if ! $form->{vendornumber};
-  
-  $query = qq|UPDATE vendor SET
-              vendornumber = |.$dbh->quote($form->{vendornumber}).qq|,
+  $query = qq|UPDATE $form->{db} SET
+              $form->{db}number = |.$dbh->quote($form->{"$form->{db}number"}).qq|,
 	      name = |.$dbh->quote($form->{name}).qq|,
-	      address1 = |.$dbh->quote($form->{address1}).qq|,
-	      address2 = |.$dbh->quote($form->{address2}).qq|,
-	      city = |.$dbh->quote($form->{city}).qq|,
-	      state = |.$dbh->quote($form->{state}).qq|,
-	      zipcode = |.$dbh->quote($form->{zipcode}).qq|,
-	      country = |.$dbh->quote($form->{country}).qq|,
 	      contact = |.$dbh->quote($form->{contact}).qq|,
 	      phone = '$form->{phone}',
 	      fax = '$form->{fax}',
@@ -394,25 +304,31 @@ sub save_vendor {
 	      discount = $form->{discount},
 	      creditlimit = $form->{creditlimit},
 	      taxincluded = '$form->{taxincluded}',
-	      gifi_accno = '$form->{gifi_accno}',
-	      business_id = $business_id,
+	      $gifi
+	      business_id = $rec{business_id},
 	      taxnumber = |.$dbh->quote($form->{taxnumber}).qq|,
 	      sic_code = '$form->{sic_code}',
 	      iban = '$form->{iban}',
 	      bic = '$form->{bic}',
-	      employee_id = $employee_id,
-	      language_code = '$language_code',
-	      pricegroup_id = $pricegroup_id,
+	      employee_id = $rec{employee_id},
+	      language_code = '$form->{language_code}',
+	      pricegroup_id = $rec{pricegroup_id},
 	      curr = '$form->{curr}',
 	      startdate = |.$form->dbquote($form->{startdate}, SQL_DATE).qq|,
-	      enddate = |.$form->dbquote($form->{enddate}, SQL_DATE).qq|
+	      enddate = |.$form->dbquote($form->{enddate}, SQL_DATE).qq|,
+	      arap_accno_id = (SELECT id FROM chart WHERE accno = '$rec{arap_accno}'),
+	      payment_accno_id = (SELECT id FROM chart WHERE accno = '$rec{payment_accno}'),
+	      discount_accno_id = (SELECT id FROM chart WHERE accno = '$rec{discount_accno}'),
+	      cashdiscount = $form->{cashdiscount},
+	      threshold = $form->{threshold},
+	      discountterms = $form->{discountterms}
 	      WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
 
   # save taxes
   foreach $item (split / /, $form->{taxaccounts}) {
     if ($form->{"tax_$item"}) {
-      $query = qq|INSERT INTO vendortax (vendor_id, chart_id)
+      $query = qq|INSERT INTO $form->{db}tax ($form->{db}_id, chart_id)
 		  VALUES ($form->{id}, (SELECT id
 				        FROM chart
 				        WHERE accno = '$item'))|;
@@ -420,6 +336,51 @@ sub save_vendor {
     }
   }
 
+  # add address
+  my $id;
+  my $var;
+  
+  if ($form->{addressid}) {
+    $id = "id, ";
+    $var = "$form->{addressid}, ";
+  }
+  
+  $query = qq|INSERT INTO address ($id trans_id, address1, address2,
+              city, state, zipcode, country) VALUES ($var
+	      $form->{id},
+	      |.$dbh->quote($form->{address1}).qq|,
+	      |.$dbh->quote($form->{address2}).qq|,
+	      |.$dbh->quote($form->{city}).qq|,
+	      |.$dbh->quote($form->{state}).qq|,
+	      |.$dbh->quote($form->{zipcode}).qq|,
+	      |.$dbh->quote($form->{country}).qq|)|;
+  $dbh->do($query) || $form->dberror($query);
+
+  $id = "";
+  $var = "";
+  
+  if ($form->{contactid}) {
+    $id = "id, ";
+    $var = "$form->{contactid}, ";
+  }
+
+  $query = qq|INSERT INTO contact ($id trans_id, firstname, lastname,
+              salutation, contacttitle, occupation, phone, fax, mobile,
+	      typeofcontact, email, gender) VALUES ($var
+	      $form->{id},
+	      |.$dbh->quote($form->{firstname}).qq|,
+	      |.$dbh->quote($form->{lastname}).qq|,
+	      |.$dbh->quote($form->{salutation}).qq|,
+	      |.$dbh->quote($form->{contacttitle}).qq|,
+	      |.$dbh->quote($form->{occupation}).qq|,
+	      |.$dbh->quote($form->{phone}).qq|,
+	      |.$dbh->quote($form->{fax}).qq|,
+	      |.$dbh->quote($form->{mobile}).qq|,
+	      |.$dbh->quote($form->{typeofcontact}).qq|,
+	      |.$dbh->quote($form->{email}).qq|,
+	      |.$dbh->quote($form->{gender}).qq|)|;
+  $dbh->do($query) || $form->dberror($query);
+ 
   # add shipto
   $form->add_shipto($dbh, $form->{id});
 
@@ -457,11 +418,12 @@ sub search {
   my @a = qw(name);
   my $sortorder = $form->sort_order(\@a);
 
+  my $ref;
   my $var;
   my $item;
 
   @a = ("$form->{db}number");
-  push @a, qw(name contact city state zipcode country notes phone email);
+  push @a, qw(name contact notes phone email);
 
   if ($form->{employee}) {
     $var = $form->like(lc $form->{employee});
@@ -474,10 +436,21 @@ sub search {
       $where .= " AND lower(ct.$item) LIKE '$var'";
     }
   }
+
+  @a = ();
+  push @a, qw(city state zipcode country);
+  foreach $item (@a) {
+    if ($form->{$item} ne "") {
+      $var = $form->like(lc $form->{$item});
+      $where .= " AND lower(ad.$item) LIKE '$var'";
+    }
+  }
+
   if ($form->{address} ne "") {
     $var = $form->like(lc $form->{address});
-    $where .= " AND (lower(ct.address1) LIKE '$var' OR lower(ct.address2) LIKE '$var')";
+    $where .= " AND (lower(ad.address1) LIKE '$var' OR lower(ad.address2) LIKE '$var')";
   }
+  
   if ($form->{startdatefrom}) {
     $where .= " AND ct.startdate >= '$form->{startdatefrom}'";
   }
@@ -512,8 +485,11 @@ sub search {
 
   my $query = qq|SELECT ct.*, b.description AS business,
                  e.name AS employee, g.pricegroup, l.description AS language,
-		 m.name AS manager
+		 m.name AS manager,
+		 ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
+		 ad.country
                  FROM $form->{db} ct
+	      JOIN address ad ON (ad.trans_id = ct.id)
 	      LEFT JOIN business b ON (ct.business_id = b.id)
 	      LEFT JOIN employee e ON (ct.employee_id = e.id)
 	      LEFT JOIN employee m ON (m.id = e.managerid)
@@ -552,8 +528,11 @@ sub search {
                   a.invnumber, a.ordnumber, a.quonumber, a.id AS invid,
 		  '$ar' AS module, 'invoice' AS formtype,
 		  (a.amount = a.paid) AS closed, a.amount, a.netamount,
-		  e.name AS employee, m.name AS manager
+		  e.name AS employee, m.name AS manager,
+		  ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
+		  ad.country
 		  FROM $form->{db} ct
+		JOIN address ad ON (ad.trans_id = ct.id)
 		JOIN $ar a ON (a.$form->{db}_id = ct.id)
 	        LEFT JOIN business b ON (ct.business_id = b.id)
 		LEFT JOIN employee e ON (a.employee_id = e.id)
@@ -582,8 +561,11 @@ sub search {
                   a.invnumber, a.ordnumber, a.quonumber, a.id AS invid,
 		  '$module' AS module, 'invoice' AS formtype,
 		  (a.amount = a.paid) AS closed, a.amount, a.netamount,
-		  e.name AS employee, m.name AS manager
+		  e.name AS employee, m.name AS manager,
+		  ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
+		  ad.country
 		  FROM $form->{db} ct
+		JOIN address ad ON (ad.trans_id = ct.id)
 		JOIN $ar a ON (a.$form->{db}_id = ct.id)
 	        LEFT JOIN business b ON (ct.business_id = b.id)
 		LEFT JOIN employee e ON (a.employee_id = e.id)
@@ -609,8 +591,11 @@ sub search {
 		  ' ' AS invnumber, o.ordnumber, o.quonumber, o.id AS invid,
 		  'oe' AS module, 'order' AS formtype,
 		  o.closed, o.amount, o.netamount,
-		  e.name AS employee, m.name AS manager
+		  e.name AS employee, m.name AS manager,
+		  ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
+		  ad.country
 		  FROM $form->{db} ct
+		JOIN address ad ON (ad.trans_id = ct.id)
 		JOIN oe o ON (o.$form->{db}_id = ct.id)
 	        LEFT JOIN business b ON (ct.business_id = b.id)
 		LEFT JOIN employee e ON (o.employee_id = e.id)
@@ -636,8 +621,11 @@ sub search {
 		  ' ' AS invnumber, o.ordnumber, o.quonumber, o.id AS invid,
 		  'oe' AS module, 'quotation' AS formtype,
 		  o.closed, o.amount, o.netamount,
-		  e.name AS employee, m.name AS manager
+		  e.name AS employee, m.name AS manager,
+		  ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
+		  ad.country
 		  FROM $form->{db} ct
+		JOIN address ad ON (ad.trans_id = ct.id)
 		JOIN oe o ON (o.$form->{db}_id = ct.id)
 	        LEFT JOIN business b ON (ct.business_id = b.id)
 		LEFT JOIN employee e ON (o.employee_id = e.id)
@@ -660,19 +648,31 @@ sub search {
   $sth->execute || $form->dberror($query);
 
   # accounts
+  my %accno;
+  $query = qq|SELECT id, accno FROM chart
+              WHERE link LIKE '%$form->{ARAP}%'|;
+  my $tth = $dbh->prepare($query);
+  $tth->execute || $form->dberror($query);
+  while ($ref = $tth->fetchrow_hashref(NAME_lc)) {
+    $accno{$ref->{id}} = $ref->{accno};
+  }
+  $tth->finish;
+
   $query = qq|SELECT c.accno
               FROM chart c
 	      JOIN $form->{db}tax t ON (t.chart_id = c.id)
 	      WHERE t.$form->{db}_id = ?|;
-  my $tth = $dbh->prepare($query);
+  $tth = $dbh->prepare($query) || $form->dberror($query);
   
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     $tth->execute($ref->{id});
     while (($item) = $tth->fetchrow_array) {
-      $ref->{taxaccount} .= "$item ";
+      $ref->{taxaccounts} .= "$item ";
     }
     $tth->finish;
     chop $ref->{taxaccount};
+    
+    for (qw(arap payment discount)) { $ref->{"${_}_accno"} = $accno{$ref->{"${_}_accno_id"}} }
     
     $ref->{address} = "";
     for (qw(address1 address2 city state zipcode country)) { $ref->{address} .= "$ref->{$_} " }
@@ -708,14 +708,21 @@ sub get_history {
   }
   if ($form->{address} ne "") {
     $var = $form->like(lc $form->{address});
-    $where .= " AND lower(ct.address1) LIKE '$var'";
+    $where .= " AND lower(ad.address1) LIKE '$var'";
   }
-  for (qw(name contact email phone notes city state zipcode country)) {
+  for (qw(name contact email phone notes)) {
     if ($form->{$_} ne "") {
       $var = $form->like(lc $form->{$_});
       $where .= " AND lower(ct.$_) LIKE '$var'";
     }
   }
+  for (qw(city state zipcode country)) {
+    if ($form->{$_} ne "") {
+      $var = $form->like(lc $form->{$_});
+      $where .= " AND lower(ad.$_) LIKE '$var'";
+    }
+  }
+     
   if ($form->{employee} ne "") {
     $var = $form->like(lc $form->{employee});
     $where .= " AND lower(e.name) LIKE '$var'";
@@ -801,17 +808,18 @@ sub get_history {
 
   $sortorder = "2 $form->{direction}, 1, 11, $ordinal{$sortorder} $form->{direction}";
     
-  $query = qq|SELECT ct.id AS ctid, ct.name, ct.address1,
-	      ct.address2, ct.city, ct.state,
+  $query = qq|SELECT ct.id AS ctid, ct.name, ad.address1,
+	      ad.address2, ad.city, ad.state,
 	      p.id AS pid, p.partnumber, a.id AS invid,
 	      a.$invnumber, a.curr, i.description,
 	      i.qty, i.$sellprice AS sellprice, i.discount,
 	      i.$deldate, i.serialnumber, pr.projectnumber,
-	      e.name AS employee, ct.zipcode, ct.country, i.unit,
+	      e.name AS employee, ad.zipcode, ad.country, i.unit,
               (SELECT $buysell FROM exchangerate ex
 		    WHERE a.curr = ex.curr
 		    AND a.transdate = ex.transdate) AS exchangerate
 	      FROM $form->{db} ct
+	      JOIN address ad ON (ad.trans_id = ct.id)
 	      JOIN $table a ON (a.$form->{db}_id = ct.id)
 	      $invjoin
 	      JOIN parts p ON (p.id = i.parts_id)
@@ -844,8 +852,25 @@ sub pricelist {
   my $dbh = $form->dbconnect($myconfig);
 
   my $query;
+  my $sth;
+  my $ref;
 
   if ($form->{db} eq 'customer') {
+    $query = qq|SELECT DISTINCT pg.id, pg.partsgroup
+		FROM parts p
+		JOIN partsgroup pg ON (pg.id = p.partsgroup_id)
+		WHERE p.partsgroup_id > 0
+		ORDER BY pg.partsgroup|;
+
+    $sth = $dbh->prepare($query);
+    $sth->execute || $self->dberror($query);
+
+    $form->{all_partsgroup} = ();
+    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+      push @{ $form->{all_partsgroup} }, $ref;
+    }
+    $sth->finish;
+ 
     $query = qq|SELECT p.id, p.partnumber, p.description,
                 p.sellprice, pg.partsgroup, p.partsgroup_id,
                 m.pricebreak, m.sellprice,
@@ -857,6 +882,22 @@ sub pricelist {
 		ORDER BY partnumber|;
   }
   if ($form->{db} eq 'vendor') {
+    $query = qq|SELECT DISTINCT pg.id, pg.partsgroup
+		FROM parts p
+		JOIN partsgroup pg ON (pg.id = p.partsgroup_id)
+		WHERE p.partsgroup_id > 0
+		AND p.assembly = '0'
+		ORDER BY pg.partsgroup|;
+
+    $sth = $dbh->prepare($query);
+    $sth->execute || $self->dberror($query);
+
+    $form->{all_partsgroup} = ();
+    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+      push @{ $form->{all_partsgroup} }, $ref;
+    }
+    $sth->finish;
+   
     $query = qq|SELECT p.id, p.partnumber AS sku, p.description,
                 pg.partsgroup, p.partsgroup_id,
 		m.partnumber, m.leadtime, m.lastcost, m.curr
@@ -866,9 +907,6 @@ sub pricelist {
 		WHERE m.vendor_id = $form->{id}
 		ORDER BY p.partnumber|;
   }
-
-  my $sth;
-  my $ref;
 
   if ($form->{id}) {
     $sth = $dbh->prepare($query);
@@ -880,21 +918,9 @@ sub pricelist {
     $sth->finish;
   }
 
-  $query = qq|SELECT curr FROM defaults|;
-  ($form->{currencies}) = $dbh->selectrow_array($query);
-
-  $query = qq|SELECT id, partsgroup FROM partsgroup
-              ORDER BY partsgroup|;
-
-  $sth = $dbh->prepare($query);
-  $sth->execute || $self->dberror($query);
-
-  $form->{all_partsgroup} = ();
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-    push @{ $form->{all_partsgroup} }, $ref;
-  }
-  $sth->finish;
-  
+  my %defaults = $form->get_defaults($dbh, \@{['currencies']});
+  $form->{currencies} = $defaults{currencies};
+ 
   $dbh->disconnect;
 
 }

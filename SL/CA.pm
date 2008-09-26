@@ -1,24 +1,10 @@
 #=====================================================================
-# SQL-Ledger Accounting
-# Copyright (C) 2001
+# SQL-Ledger ERP
+# Copyright (C) 2006
 #
 #  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.org
+#     Web: http://www.sql-ledger.com
 #
-#  Contributors:
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #======================================================================
 #
 # chart of accounts
@@ -36,10 +22,11 @@ sub all_accounts {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  my $query = qq|SELECT accno,
-                 SUM(acc_trans.amount) AS amount
-                 FROM chart, acc_trans
-		 WHERE chart.id = acc_trans.chart_id
+  my $query = qq|SELECT c.accno,
+                 SUM(ac.amount) AS amount
+                 FROM chart c
+		 JOIN acc_trans ac ON (ac.chart_id = c.id)
+		 WHERE ac.approved = '1'
 		 GROUP BY accno|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -117,7 +104,7 @@ sub all_transactions {
 		|;
   }
   if ($form->{todate}) {
-    $todate_where .= qq|
+    $todate_where = qq|
                  AND ac.transdate <= '$form->{todate}'
 		|;
   }
@@ -140,7 +127,7 @@ sub all_transactions {
   my $union;
   
   ($null, $department_id) = split /--/, $form->{department};
- 
+  
   if ($department_id) {
     $dpt_join = qq|
                    JOIN department t ON (t.id = a.department_id)
@@ -150,7 +137,6 @@ sub all_transactions {
 		  |;
   }
 
- 
   my $project;
   my $project_id;
   if ($form->{projectnumber}) {
@@ -176,15 +162,14 @@ sub all_transactions {
     ($form->{description}, $form->{category}, $form->{link}, $form->{contra}) = $dbh->selectrow_array($query);
     
     if ($form->{fromdate}) {
-      
+
       if ($department_id) {
-
-	# get beginning balance
-	$query = "";
-	$union = "";
 	
-	for (qw(ar ap gl)) {
+	$query = ""; 
+	$union = "";
 
+	for (qw(ar ap gl)) {
+	  
 	  if ($form->{accounttype} eq 'gifi') {
 	    $query = qq|
 	                $union
@@ -193,30 +178,30 @@ sub all_transactions {
 			JOIN $_ a ON (a.id = ac.trans_id)
 			JOIN chart c ON (ac.chart_id = c.id)
 			WHERE c.gifi_accno = '$form->{gifi_accno}'
+			AND ac.approved = '1'
 			AND ac.transdate < '$form->{fromdate}'
 			AND a.department_id = $department_id
 			$project
 			|;
 		      
 	  } else {
-	  
-	    $query .= qq|
+
+	    $query = qq|
 			$union
 			SELECT SUM(ac.amount)
 			FROM acc_trans ac
 			JOIN $_ a ON (a.id = ac.trans_id)
 			JOIN chart c ON (ac.chart_id = c.id)
 			WHERE c.accno = '$form->{accno}'
+			AND ac.approved = '1'
 			AND ac.transdate < '$form->{fromdate}'
 			AND a.department_id = $department_id
 			$project
 			|;
 	  }
 
-	  $union = qq|
-	            UNION ALL|;
 	}
-
+	
       } else {
 	
 	if ($form->{accounttype} eq 'gifi') {
@@ -224,6 +209,7 @@ sub all_transactions {
 		    FROM acc_trans ac
 		    JOIN chart c ON (ac.chart_id = c.id)
 		    WHERE c.gifi_accno = '$form->{gifi_accno}'
+		    AND ac.approved = '1'
 		    AND ac.transdate < '$form->{fromdate}'
 		    $project
 		    |;
@@ -232,20 +218,20 @@ sub all_transactions {
 		      FROM acc_trans ac
 		      JOIN chart c ON (ac.chart_id = c.id)
 		      WHERE c.accno = '$form->{accno}'
+		      AND ac.approved = '1'
 		      AND ac.transdate < '$form->{fromdate}'
 		      $project
 		      |;
 	}
-
       }
-
+	
       ($form->{balance}) = $dbh->selectrow_array($query);
       
     }
   }
 
   $query = "";
-  $union = "";
+  my $union = "";
 
   foreach my $id (@id) {
     
@@ -254,11 +240,12 @@ sub all_transactions {
                  SELECT a.id, a.reference, a.description, ac.transdate,
 	         $false AS invoice, ac.amount, 'gl' as module, ac.cleared,
 		 ac.source,
-		 '' AS till, ac.chart_id
+		 '' AS till, ac.chart_id, '0' AS vc_id
 		 FROM gl a
 		 JOIN acc_trans ac ON (ac.trans_id = a.id)
 		 $dpt_join
 		 WHERE ac.chart_id = $id
+		 AND ac.approved = '1'
 		 $fromdate_where
 		 $todate_where
 		 $dpt_where
@@ -269,12 +256,13 @@ sub all_transactions {
                  SELECT a.id, a.invnumber, c.name, ac.transdate,
 	         a.invoice, ac.amount, 'ar' as module, ac.cleared,
 		 ac.source,
-		 a.till, ac.chart_id
+		 a.till, ac.chart_id, c.id AS vc_id
 		 FROM ar a
 		 JOIN acc_trans ac ON (ac.trans_id = a.id)
 		 JOIN customer c ON (a.customer_id = c.id)
 		 $dpt_join
 		 WHERE ac.chart_id = $id
+		 AND ac.approved = '1'
 		 $fromdate_where
 		 $todate_where
 		 $dpt_where
@@ -285,12 +273,13 @@ sub all_transactions {
                  SELECT a.id, a.invnumber, v.name, ac.transdate,
 	         a.invoice, ac.amount, 'ap' as module, ac.cleared,
 		 ac.source,
-		 a.till, ac.chart_id
+		 a.till, ac.chart_id, v.id AS vc_id
 		 FROM ap a
 		 JOIN acc_trans ac ON (ac.trans_id = a.id)
 		 JOIN vendor v ON (a.vendor_id = v.id)
 		 $dpt_join
 		 WHERE ac.chart_id = $id
+		 AND ac.approved = '1'
 		 $fromdate_where
 		 $todate_where
 		 $dpt_where
@@ -312,6 +301,7 @@ sub all_transactions {
               JOIN acc_trans ac ON (ac.chart_id = c.id)
               WHERE ac.amount >= 0
 	      AND (c.link = 'AR' OR c.link = 'AP')
+	      AND ac.approved = '1'
 	      AND ac.trans_id = ?|;
   my $dr = $dbh->prepare($query) || $form->dberror($query);
   
@@ -319,6 +309,7 @@ sub all_transactions {
               JOIN acc_trans ac ON (ac.chart_id = c.id)
               WHERE ac.amount < 0
 	      AND (c.link = 'AR' OR c.link = 'AP')
+	      AND ac.approved = '1'
 	      AND ac.trans_id = ?|;
   my $cr = $dbh->prepare($query) || $form->dberror($query);
   
@@ -331,18 +322,22 @@ sub all_transactions {
     # gl
     if ($ca->{module} eq "gl") {
       $ca->{module} = "gl";
+      $ca->{vc_id} = 0;
+      $ca->{db} = "";
     }
 
     # ap
     if ($ca->{module} eq "ap") {
       $ca->{module} = ($ca->{invoice}) ? 'ir' : 'ap';
       $ca->{module} = 'ps' if $ca->{till};
+      $ca->{db} = "vendor";
     }
 
     # ar
     if ($ca->{module} eq "ar") {
       $ca->{module} = ($ca->{invoice}) ? 'is' : 'ar';
       $ca->{module} = 'ps' if $ca->{till};
+      $ca->{db} = "customer";
     }
 
     if ($ca->{amount}) {

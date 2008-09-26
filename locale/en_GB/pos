@@ -1,5 +1,6 @@
 $self{texts} = {
   'Customer'                    => 'Debtor',
+  'Customer Number'             => 'Debtor Number',
   'Customer missing!'           => 'Debtor missing!',
 };
 

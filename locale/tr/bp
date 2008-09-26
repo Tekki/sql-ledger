@@ -1,20 +1,25 @@
 $self{charset} = 'ISO-8859-9';
 
 $self{texts} = {
-  'Account'                     => 'Hesap',
   'Accounting Menu'             => 'Muhasebe Menüsü',
+  'Amount'                      => 'Miktar',
   'Confirm!'                    => 'Onayla!',
   'Continue'                    => 'Devam',
   'Customer'                    => 'Alıcı',
   'Date'                        => 'Tarih',
+  'Description'                 => 'Açıklama',
+  'E-mail'                      => 'Posta',
   'From'                        => 'Başlangıç',
   'Invoice'                     => 'Fatura',
   'Invoice Number'              => 'Fatura No',
+  'Name'                        => 'İsim',
+  'Number'                      => 'Numara',
   'Order'                       => 'Sipariş',
   'Order Number'                => 'Sipariş No',
   'Purchase Orders'             => 'Satınalma Siparişleri',
   'Sales Orders'                => 'Satış Siparişleri',
   'To'                          => 'Bitiş',
+  'Total'                       => 'Toplam',
   'Vendor'                      => 'Satıcı',
   'Yes'                         => 'Evet',
 };
@@ -22,7 +27,9 @@ $self{texts} = {
 $self{subs} = {
   'acc_menu'                    => 'acc_menu',
   'continue'                    => 'continue',
+  'deselect_all'                => 'deselect_all',
   'display'                     => 'display',
+  'e_mail'                      => 'e_mail',
   'js_menu'                     => 'js_menu',
   'list_spool'                  => 'list_spool',
   'menubar'                     => 'menubar',
@@ -33,6 +40,7 @@ $self{subs} = {
   'select_all'                  => 'select_all',
   'yes'                         => 'yes',
   'devam'                       => 'continue',
+  'posta'                       => 'e_mail',
   'evet'                        => 'yes',
 };
 

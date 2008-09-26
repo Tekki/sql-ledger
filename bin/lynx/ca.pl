@@ -1,24 +1,10 @@
 #=====================================================================
-# SQL-Ledger Accounting
-# Copyright (C) 2001
+# SQL-Ledger ERP
+# Copyright (C) 2006
 #
 #  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.org
+#     Web: http://www.sql-ledger.com
 #
-#  Contributors:
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #======================================================================
 #
 # module for Chart of Accounts, Income Statement and Balance Sheet
@@ -99,7 +85,7 @@ sub chart_of_accounts {
     $description = $form->escape($ca->{description});
     $gifi_description = $form->escape($ca->{gifi_description});
     
-    $href = qq|$form->{script}?path=$form->{path}&action=list&accno=$ca->{accno}&login=$form->{login}&sessionid=$form->{sessionid}&description=$description&gifi_accno=$ca->{gifi_accno}&gifi_description=$gifi_description|;
+    $href = qq|$form->{script}?path=$form->{path}&action=list&accno=$ca->{accno}&login=$form->{login}&description=$description&gifi_accno=$ca->{gifi_accno}&gifi_description=$gifi_description|;
     
     if ($ca->{charttype} eq "H") {
       print qq|<tr class=listheading>|;
@@ -113,8 +99,8 @@ sub chart_of_accounts {
       $column_data{description} = "<td>$ca->{description}</td>";
     }
       
-    $column_data{debit} = "<td align=right>".$form->format_amount(\%myconfig, $ca->{debit}, 2, "&nbsp;")."</td>\n";
-    $column_data{credit} = "<td align=right>".$form->format_amount(\%myconfig, $ca->{credit}, 2, "&nbsp;")."</td>\n";
+    $column_data{debit} = "<td align=right>".$form->format_amount(\%myconfig, $ca->{debit}, $form->{precision}, "&nbsp;")."</td>\n";
+    $column_data{credit} = "<td align=right>".$form->format_amount(\%myconfig, $ca->{credit}, $form->{precision}, "&nbsp;")."</td>\n";
     
     $totaldebit += $ca->{debit};
     $totalcredit += $ca->{credit};
@@ -128,8 +114,8 @@ sub chart_of_accounts {
 
   for (qw(accno gifi_accno description)) { $column_data{$_} = "<td>&nbsp;</td>" }
 
-  $column_data{debit} = "<th align=right class=listtotal>".$form->format_amount(\%myconfig, $totaldebit, 2, 0)."</th>";
-  $column_data{credit} = "<th align=right class=listtotal>".$form->format_amount(\%myconfig, $totalcredit, 2, 0)."</th>";
+  $column_data{debit} = "<th align=right class=listtotal>".$form->format_amount(\%myconfig, $totaldebit, $form->{precision}, 0)."</th>";
+  $column_data{credit} = "<th align=right class=listtotal>".$form->format_amount(\%myconfig, $totalcredit, $form->{precision}, 0)."</th>";
   
   print "<tr class=listtotal>";
 
@@ -161,31 +147,31 @@ sub list {
   # get departments
   $form->all_departments(\%myconfig);
   if (@{ $form->{all_department} }) {
-    $form->{selectdepartment} = "<option>\n";
+    $selectdepartment = "<option>\n";
 
-    for (@{ $form->{all_department} }) { $form->{selectdepartment} .= qq|<option value="$_->{description}--$_->{id}">$_->{description}\n| }
+    for (@{ $form->{all_department} }) { $selectdepartment .= qq|<option value="|.$form->quote($_->{description}).qq|--$_->{id}">$_->{description}\n| }
   }
 
   $department = qq|
         <tr>
 	  <th align=right nowrap>|.$locale->text('Department').qq|</th>
-	  <td colspan=3><select name=department>$form->{selectdepartment}</select></td>
+	  <td colspan=3><select name=department>$selectdepartment</select></td>
 	</tr>
-| if $form->{selectdepartment};
+| if $selectdepartment;
 
   if (@{ $form->{all_years} }) {
     # accounting years
-    $form->{selectaccountingyear} = "<option>\n";
-    for (@{ $form->{all_years} }) { $form->{selectaccountingyear} .= qq|<option>$_\n| }
-    $form->{selectaccountingmonth} = "<option>\n";
-    for (sort keys %{ $form->{all_month} }) { $form->{selectaccountingmonth} .= qq|<option value=$_>|.$locale->text($form->{all_month}{$_}).qq|\n| }
+    $selectaccountingyear = "<option>\n";
+    for (@{ $form->{all_years} }) { $selectaccountingyear .= qq|<option>$_\n| }
+    $selectaccountingmonth = "<option>\n";
+    for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|<option value=$_>|.$locale->text($form->{all_month}{$_}).qq|\n| }
 
     $selectfrom = qq|
         <tr>
 	<th align=right>|.$locale->text('Period').qq|</th>
 	<td colspan=3>
-	<select name=month>$form->{selectaccountingmonth}</select>
-	<select name=year>$form->{selectaccountingyear}</select>
+	<select name=month>$selectaccountingmonth</select>
+	<select name=year>$selectaccountingyear</select>
 	<input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
 	<input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
 	<input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
@@ -202,16 +188,13 @@ sub list {
 <body>
 
 <form method=post action=$form->{script}>
+|;
 
-<input type=hidden name=accno value=$form->{accno}>
-<input type=hidden name=description value="$form->{description}">
-
+  $form->hide_form(qw(accno description accounttype gifi_accno gifi_description login path));
+  
+  print qq|
 <input type=hidden name=sort value=transdate>
 <input type=hidden name=oldsort value=transdate>
-
-<input type=hidden name=accounttype value=$form->{accounttype}>
-<input type=hidden name=gifi_accno value=$form->{gifi_accno}>
-<input type=hidden name=gifi_description value="$form->{gifi_description}">
 
 <table border=0 width=100%>
   <tr><th class=listtop>$form->{title}</th></tr>
@@ -240,10 +223,6 @@ sub list {
   <tr><td><hr size=3 noshade></td></tr>
 </table>
 
-<input type=hidden name=login value=$form->{login}>
-<input type=hidden name=path value=$form->{path}>
-<input type=hidden name=sessionid value=$form->{sessionid}>
-
 <br><input class=submit type=submit name=action value="|.$locale->text('List Transactions').qq|">
 </form>
 
@@ -264,7 +243,7 @@ sub list_transactions {
 
   # construct href
   $href = "$form->{script}?action=list_transactions&department=$department&projectnumber=$projectnumber&title=$title";
-  for (qw(path oldsort accno login sessionid fromdate todate accounttype gifi_accno l_heading l_subtotal l_accno)) { $href .= "&$_=$form->{$_}" }
+  for (qw(path oldsort accno login fromdate todate accounttype gifi_accno l_heading l_subtotal l_accno)) { $href .= "&$_=$form->{$_}" }
 
   $drilldown = $href;
   $drilldown .= "&sort=$form->{sort}";
@@ -345,7 +324,7 @@ sub list_transactions {
   $form->{prevreport} = $form->escape($form->{prevreport},1);
  
   $form->{callback} = "$form->{script}?action=list_transactions&department=$department&projectnumber=$projectnumber&title=$title";
-  for (qw(path direction oldsort accno login sessionid fromdate todate accounttype gifi_accno l_heading l_subtotal l_accno prevreport)) { $form->{callback} .= "&$_=$form->{$_}" }
+  for (qw(path direction oldsort accno login fromdate todate accounttype gifi_accno l_heading l_subtotal l_accno prevreport)) { $form->{callback} .= "&$_=$form->{$_}" }
  
   
   $form->header;
@@ -387,7 +366,7 @@ sub list_transactions {
     
     for (@column_index) { $column_data{$_} = "<td>&nbsp;</td>" }
 
-    $column_data{balance} = "<td align=right>".$form->format_amount(\%myconfig, $form->{balance} * $ml, 2, 0)."</td>";
+    $column_data{balance} = "<td align=right>".$form->format_amount(\%myconfig, $form->{balance} * $ml, $form->{precision}, 0)."</td>";
 
     $i++; $i %= 2;
     
@@ -410,14 +389,14 @@ sub list_transactions {
     }
     
     # construct link to source
-    $href = "<a href=$ca->{module}.pl?path=$form->{path}&action=edit&id=$ca->{id}&login=$form->{login}&sessionid=$form->{sessionid}&callback=$form->{callback}>$ca->{reference}</a>";
+    $href = "<a href=$ca->{module}.pl?path=$form->{path}&action=edit&id=$ca->{id}&login=$form->{login}&callback=$form->{callback}>$ca->{reference}</a>";
 
     
-    $column_data{debit} = "<td align=right>".$form->format_amount(\%myconfig, $ca->{debit}, 2, "&nbsp;")."</td>";
-    $column_data{credit} = "<td align=right>".$form->format_amount(\%myconfig, $ca->{credit}, 2, "&nbsp;")."</td>";
+    $column_data{debit} = "<td align=right>".$form->format_amount(\%myconfig, $ca->{debit}, $form->{precision}, "&nbsp;")."</td>";
+    $column_data{credit} = "<td align=right>".$form->format_amount(\%myconfig, $ca->{credit}, $form->{precision}, "&nbsp;")."</td>";
     
     $form->{balance} += $ca->{amount};
-    $column_data{balance} = "<td align=right>".$form->format_amount(\%myconfig, $form->{balance} * $ml, 2, 0)."</td>";
+    $column_data{balance} = "<td align=right>".$form->format_amount(\%myconfig, $form->{balance} * $ml, $form->{precision}, 0)."</td>";
 
     $subtotaldebit += $ca->{debit};
     $subtotalcredit += $ca->{credit};
@@ -425,9 +404,15 @@ sub list_transactions {
     $totaldebit += $ca->{debit};
     $totalcredit += $ca->{credit};
     
-    $column_data{transdate} = qq|<td>$ca->{transdate}</td>|;
+    $column_data{transdate} = qq|<td nowrap>$ca->{transdate}</td>|;
     $column_data{reference} = qq|<td>$href</td>|;
-    $column_data{description} = qq|<td>$ca->{description}&nbsp;</td>|;
+
+    if ($ca->{vc_id}) {
+      $href = "<a href=ct.pl?path=$form->{path}&action=edit&id=$ca->{vc_id}&db=$ca->{db}&login=$form->{login}&callback=$form->{callback}>$ca->{description}</a>";
+      $column_data{description} = qq|<td>$href</td>|;
+    } else {
+      $column_data{description} = qq|<td>$ca->{description}&nbsp;</td>|;
+    }
     
     $column_data{cleared} = ($ca->{cleared}) ? qq|<td>*</td>| : qq|<td>&nbsp;</td>|;
     $column_data{source} = qq|<td>$ca->{source}&nbsp;</td>|;
@@ -461,9 +446,9 @@ sub list_transactions {
 
   for (@column_index) { $column_data{$_} = "<td>&nbsp;</td>" }
   
-  $column_data{debit} = "<th align=right class=listtotal>".$form->format_amount(\%myconfig, $totaldebit, 2, "&nbsp;")."</th>";
-  $column_data{credit} = "<th align=right class=listtotal>".$form->format_amount(\%myconfig, $totalcredit, 2, "&nbsp;")."</th>";
-  $column_data{balance} = "<th align=right class=listtotal>".$form->format_amount(\%myconfig, $form->{balance} * $ml, 2, 0)."</th>";
+  $column_data{debit} = "<th align=right class=listtotal>".$form->format_amount(\%myconfig, $totaldebit, $form->{precision}, "&nbsp;")."</th>";
+  $column_data{credit} = "<th align=right class=listtotal>".$form->format_amount(\%myconfig, $totalcredit, $form->{precision}, "&nbsp;")."</th>";
+  $column_data{balance} = "<th align=right class=listtotal>".$form->format_amount(\%myconfig, $form->{balance} * $ml, $form->{precision}, 0)."</th>";
 
   print qq|
 	<tr class=listtotal>
@@ -492,8 +477,8 @@ sub ca_subtotal {
 
   for (@column_index) { $column_data{$_} = "<td>&nbsp;</td>" }
   
-  $column_data{debit} = "<th align=right class=listsubtotal>".$form->format_amount(\%myconfig, $subtotaldebit, 2, "&nbsp;") . "</th>";
-  $column_data{credit} = "<th align=right class=listsubtotal>".$form->format_amount(\%myconfig, $subtotalcredit, 2, "&nbsp;") . "</th>";
+  $column_data{debit} = "<th align=right class=listsubtotal>".$form->format_amount(\%myconfig, $subtotaldebit, $form->{precision}, "&nbsp;") . "</th>";
+  $column_data{credit} = "<th align=right class=listsubtotal>".$form->format_amount(\%myconfig, $subtotalcredit, $form->{precision}, "&nbsp;") . "</th>";
        
   $subtotaldebit = 0;
   $subtotalcredit = 0;

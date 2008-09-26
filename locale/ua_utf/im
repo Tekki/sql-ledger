@@ -1,0 +1,30 @@
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'City'                        => 'Місто',
+  'Continue'                    => 'Продовжити',
+  'Curr'                        => 'Валюта',
+  'Customer'                    => 'Клієнт',
+  'Customer Number'             => 'Номер клієнта',
+  'Description'                 => 'Опис',
+  'Due Date'                    => 'Заплатити до',
+  'Invoice Date'                => 'Дата виставлення',
+  'Invoice Number'              => 'Номер рахунка-фактури',
+  'No'                          => 'Ні',
+  'Qty'                         => 'Кількість',
+  'Salesperson'                 => 'Торговець/представник',
+  'Total'                       => 'Загальна Сума',
+  'Unit'                        => 'Одиниця',
+  'Yes'                         => 'Tak',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'do_import'                   => 'do_import',
+  'import'                      => 'import',
+  'import_sales_invoices'       => 'import_sales_invoices',
+  'Продовжити'        => 'continue',
+};
+
+1;
+

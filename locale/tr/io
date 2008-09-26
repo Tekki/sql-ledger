@@ -1,8 +1,10 @@
 $self{charset} = 'ISO-8859-9';
 
 $self{texts} = {
+  'Add Part'                    => 'Parça Ekle',
   'Add Purchase Order'          => 'Satýnalma Sip. Ekle',
   'Add Sales Order'             => 'Satýþ Sipariþi Ekle',
+  'Add Service'                 => 'Hizmet Ekle',
   'Address'                     => 'Adres',
   'Apr'                         => 'Nis',
   'April'                       => 'Nisan',
@@ -10,6 +12,7 @@ $self{texts} = {
   'August'                      => 'Aðustos',
   'Contact'                     => 'Kontak',
   'Continue'                    => 'Devam',
+  'Customer'                    => 'Alýcý',
   'Date'                        => 'Tarih',
   'Dec'                         => 'Ara',
   'December'                    => 'Aralýk',
@@ -42,7 +45,6 @@ $self{texts} = {
   'Order Date missing!'         => 'Sipariþ Tarihi yok!',
   'Order Number missing!'       => 'Sipariþ Numarasý yok!',
   'Packing List'                => 'Paketleme Listesi',
-  'Part'                        => 'Parça',
   'Phone'                       => 'Telefon',
   'Price'                       => 'Fiyat',
   'Purchase Order'              => 'Satýnalma Sipariþi',
@@ -51,18 +53,16 @@ $self{texts} = {
   'Sales Order'                 => 'Satýþ Sipariþi',
   'Sep'                         => 'Eyl',
   'September'                   => 'Eylül',
-  'Service'                     => 'servis',
   'Subtotal'                    => 'Aratoplam',
   'To'                          => 'Bitiþ',
   'Unit'                        => 'Birim',
-  'What type of item is this?'  => 'Bu ne çeþit bir kalemdir?',
+  'Vendor'                      => 'Satýcý',
 };
 
 $self{subs} = {
   'calc_markup'                 => 'calc_markup',
   'check_form'                  => 'check_form',
   'create_form'                 => 'create_form',
-  'customer_details'            => 'customer_details',
   'display_form'                => 'display_form',
   'display_row'                 => 'display_row',
   'e_mail'                      => 'e_mail',
@@ -80,7 +80,8 @@ $self{subs} = {
   'send_email'                  => 'send_email',
   'ship_to'                     => 'ship_to',
   'validate_items'              => 'validate_items',
-  'vendor_details'              => 'vendor_details',
+  'parça_ekle'                  => 'add_part',
+  'hizmet_ekle'                 => 'add_service',
   'devam'                       => 'continue',
 };
 

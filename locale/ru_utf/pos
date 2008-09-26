@@ -2,7 +2,6 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Accounting Menu'             => 'Бухгалтерское меню',
-  'Add POS Invoice'             => 'Новыая фактура ККМ',
   'Amount'                      => 'Сумма',
   'Business'                    => 'Бизнес',
   'Cannot post transaction!'    => 'Невозможно провести проводку!',
@@ -12,11 +11,11 @@ $self{texts} = {
   'Currency'                    => 'Валюта',
   'Current'                     => 'Текущий',
   'Customer'                    => 'Клиент',
+  'Customer Number'             => 'Код клиента',
   'Customer missing!'           => 'Пропущен клиент!',
   'Delete'                      => 'Удалить',
   'Department'                  => 'Отдел',
   'Description'                 => 'Описание',
-  'Edit POS Invoice'            => 'Редактировать ККМ-фактуру',
   'Exchange Rate'               => 'Курс валюты',
   'Exchange rate missing!'      => 'Пропущен курс!',
   'Extended'                    => 'Сумма',
@@ -38,6 +37,7 @@ $self{texts} = {
   'Receipts'                    => 'Получения',
   'Record in'                   => 'Отнести на счет',
   'Remaining'                   => 'Остаток',
+  'Sales Invoice'               => 'Фактура клиента',
   'Salesperson'                 => 'Продавец',
   'Screen'                      => 'Экран',
   'Select a Printer!'           => 'Выбрать принтер',
@@ -76,6 +76,7 @@ $self{subs} = {
   'Сохранить'          => 'post',
   'Печать'                => 'print',
   'Напечатать_и_отправить' => 'print_and_post',
+  'Фактура_клиента' => 'sales_invoice',
   'Обновить'            => 'update',
 };
 

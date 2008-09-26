@@ -1,8 +1,10 @@
 $self{charset} = 'ISO-8859-2';
 
 $self{texts} = {
+  'Add Part'                    => 'Pøíjem zbo¾í',
   'Add Purchase Order'          => 'Nová objednávka (nákup)',
   'Add Sales Order'             => 'Nová objednávka (pøíjem)',
+  'Add Service'                 => 'Nový druh slu¾by',
   'Address'                     => 'Adresa',
   'Apr'                         => 'Dub',
   'April'                       => 'Duben',
@@ -13,6 +15,7 @@ $self{texts} = {
   'Contact'                     => 'Kontakt',
   'Continue'                    => 'Pokraèování',
   'Copies'                      => 'Kopie',
+  'Customer'                    => 'Odbìratel',
   'Date'                        => 'Datum',
   'Dec'                         => 'Pro',
   'December'                    => 'Prosinec',
@@ -49,7 +52,6 @@ $self{texts} = {
   'Packing List'                => 'Dodací list',
   'Packing List Date missing!'  => 'Chybí datum dodacího listu',
   'Packing List Number missing!' => 'Chybí èíslo dodacího listu',
-  'Part'                        => 'Zbo¾í',
   'Phone'                       => 'Telefon',
   'Price'                       => 'Cena',
   'Purchase Order'              => 'Vystavená objednávka',
@@ -59,19 +61,17 @@ $self{texts} = {
   'Screen'                      => 'Na obrazovku',
   'Sep'                         => 'Záø',
   'September'                   => 'Záøí',
-  'Service'                     => 'Slu¾ba',
   'Subject'                     => 'Pøedmìt',
   'Subtotal'                    => 'Mezisouèet',
   'To'                          => 'do',
   'Unit'                        => 'Jednotka',
-  'What type of item is this?'  => 'O jaký typ polo¾ky se jedná?',
+  'Vendor'                      => 'Dodavatel',
 };
 
 $self{subs} = {
   'calc_markup'                 => 'calc_markup',
   'check_form'                  => 'check_form',
   'create_form'                 => 'create_form',
-  'customer_details'            => 'customer_details',
   'display_form'                => 'display_form',
   'display_row'                 => 'display_row',
   'e_mail'                      => 'e_mail',
@@ -89,7 +89,8 @@ $self{subs} = {
   'send_email'                  => 'send_email',
   'ship_to'                     => 'ship_to',
   'validate_items'              => 'validate_items',
-  'vendor_details'              => 'vendor_details',
+  'pøíjem_zbo¾í'                => 'add_part',
+  'nový_druh_slu¾by'            => 'add_service',
   'pokraèování'                 => 'continue',
 };
 

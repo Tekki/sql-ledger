@@ -1,0 +1,25 @@
+$self{charset} = 'ISO-8859-7';
+
+$self{texts} = {
+  'City'                        => 'Πόλη',
+  'Continue'                    => 'Συνέχεια',
+  'Customer'                    => 'Πελάτης',
+  'Customer Number'             => 'Κωδικός Πελάτη',
+  'Description'                 => 'Περιγραφή',
+  'Due Date'                    => 'Ημερομηνία λήξης',
+  'Invoice Date'                => 'Ημ. τιμολογίου',
+  'Invoice Number'              => 'Αρ. τιμολογίου',
+  'No'                          => 'Όχι',
+  'Qty'                         => 'Ποσ.',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'do_import'                   => 'do_import',
+  'import'                      => 'import',
+  'import_sales_invoices'       => 'import_sales_invoices',
+  'Συνέχεια'                    => 'continue',
+};
+
+1;
+

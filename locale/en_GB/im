@@ -1,0 +1,14 @@
+$self{texts} = {
+  'Customer'                    => 'Debtor',
+  'Customer Number'             => 'Debtor Number',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'do_import'                   => 'do_import',
+  'import'                      => 'import',
+  'import_sales_invoices'       => 'import_sales_invoices',
+};
+
+1;
+

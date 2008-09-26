@@ -1,0 +1,28 @@
+$self{texts} = {
+  'City'                        => 'Kota',
+  'Continue'                    => 'Lanjut',
+  'Curr'                        => 'Mata Uang',
+  'Customer'                    => 'Pelanggan',
+  'Customer Number'             => 'Nomor Pelanggan',
+  'Description'                 => 'Keterangan',
+  'Due Date'                    => 'Jatuh Tempo',
+  'Invoice Date'                => 'Tanggal Invoice',
+  'Invoice Number'              => 'Nomor Invoice',
+  'No'                          => 'Tidak',
+  'Qty'                         => 'Banyak',
+  'Salesperson'                 => 'Salesman',
+  'Total'                       => 'Total',
+  'Unit'                        => 'Satuan',
+  'Yes'                         => 'Ya',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'do_import'                   => 'do_import',
+  'import'                      => 'import',
+  'import_sales_invoices'       => 'import_sales_invoices',
+  'lanjut'                      => 'continue',
+};
+
+1;
+

@@ -1,6 +1,5 @@
 $self{texts} = {
   'Accounting Menu'             => 'Menu de Contabilidade',
-  'Add POS Invoice'             => 'Adicionar Fatura de PDV',
   'Amount'                      => 'Total',
   'Business'                    => 'Negócio',
   'Cannot post transaction!'    => 'Não pode lançar transação!',
@@ -10,11 +9,11 @@ $self{texts} = {
   'Currency'                    => 'Moeda',
   'Current'                     => 'Corrente',
   'Customer'                    => 'Cliente',
+  'Customer Number'             => 'Número do Cliente',
   'Customer missing!'           => 'Cliente faltando!',
   'Delete'                      => 'Apagar',
   'Department'                  => 'Departamento',
   'Description'                 => 'Descrição',
-  'Edit POS Invoice'            => 'Editar Fatura de PDV',
   'Exchange Rate'               => 'Taxa de câmbio',
   'Exchange rate missing!'      => 'Falta a taxa de câmbio!',
   'Extended'                    => 'Extendida',
@@ -36,6 +35,7 @@ $self{texts} = {
   'Receipts'                    => 'Recibos',
   'Record in'                   => 'Registrar em',
   'Remaining'                   => 'Restante',
+  'Sales Invoice'               => 'Fatura de Venda',
   'Salesperson'                 => 'Vendedor',
   'Screen'                      => 'Tela',
   'Select a Printer!'           => 'Selecione uma Impressora!',
@@ -74,6 +74,7 @@ $self{subs} = {
   'lançar'                      => 'post',
   'imprimir'                    => 'print',
   'imprimir_e_lançar'           => 'print_and_post',
+  'fatura_de_venda'             => 'sales_invoice',
   'atualizar'                   => 'update',
 };
 

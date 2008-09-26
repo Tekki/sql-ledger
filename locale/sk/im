@@ -1,0 +1,31 @@
+$self{charset} = 'ISO-8859-2';
+
+$self{texts} = {
+  'City'                        => 'Mesto',
+  'Continue'                    => 'Pokra&#269;ovanie',
+  'Curr'                        => 'Mena',
+  'Customer'                    => 'Kupujúci',
+  'Customer Number'             => '&#268;íslo odberate&#318;a',
+  'Description'                 => 'Popis',
+  'Due Date'                    => 'Dátum splatnosti',
+  'Invoice Date'                => 'Dátum faktúry',
+  'Invoice Number'              => '&#268;íslo faktúry',
+  'No'                          => 'Nie',
+  'Posting failed!'             => 'Uloženie neúspešné!',
+  'Qty'                         => 'Množstvo',
+  'Salesperson'                 => 'Predávajúca osoba',
+  'Total'                       => 'Celkom',
+  'Unit'                        => 'Jednotka',
+  'Yes'                         => 'Ano',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'do_import'                   => 'do_import',
+  'import'                      => 'import',
+  'import_sales_invoices'       => 'import_sales_invoices',
+  'pokra&#269;ovanie'           => 'continue',
+};
+
+1;
+

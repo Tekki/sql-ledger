@@ -1,0 +1,25 @@
+$self{texts} = {
+  'Continue'                    => 'Áfram',
+  'Curr'                        => 'Gjaldm',
+  'Customer'                    => 'Viðskiptavinur',
+  'Description'                 => 'Skýringar',
+  'Due Date'                    => 'Dags. lokið',
+  'Invoice Date'                => 'Sölureikningur dags.',
+  'Invoice Number'              => 'Sölureikningur Númer',
+  'No'                          => 'Nei',
+  'Qty'                         => 'Magn',
+  'Total'                       => 'Samtals',
+  'Unit'                        => 'Einingar',
+  'Yes'                         => 'Já',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'do_import'                   => 'do_import',
+  'import'                      => 'import',
+  'import_sales_invoices'       => 'import_sales_invoices',
+  'Áfram'                       => 'continue',
+};
+
+1;
+

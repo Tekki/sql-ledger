@@ -66,6 +66,7 @@ $self{subs} = {
   'change_password'             => 'change_password',
   'check_password'              => 'check_password',
   'continue'                    => 'continue',
+  'create_config'               => 'create_config',
   'create_dataset'              => 'create_dataset',
   'dbcreate'                    => 'dbcreate',
   'dbdelete'                    => 'dbdelete',

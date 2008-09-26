@@ -3,12 +3,15 @@ $self{charset} = 'ISO-8859-7';
 $self{texts} = {
   'Address'                     => 'Διέυθυνση',
   'Continue'                    => 'Συνέχεια',
+  'Customer Number'             => 'Κωδικός Πελάτη',
   'Customer not on file!'       => 'Debtor not on file!',
   'Date'                        => 'Ημερομηνία',
   'Description'                 => 'Περιγραφή',
+  'Employee Number'             => 'Αρ. Υπαλλήλου',
   'Message'                     => 'Μύνημα',
   'Number'                      => 'Αριθμός',
   'Print'                       => 'Εκτύπωση',
+  'Vendor Number'               => 'Creditor Number',
   'Vendor not on file!'         => 'Creditor not on file!',
 };
 

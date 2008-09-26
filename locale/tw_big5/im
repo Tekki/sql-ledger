@@ -1,0 +1,31 @@
+$self{charset} = 'BIG5';
+
+$self{texts} = {
+  'City'                        => '城市',
+  'Continue'                    => '繼續',
+  'Curr'                        => '目前',
+  'Customer'                    => '客戶',
+  'Customer Number'             => '客戶編號',
+  'Description'                 => '說明',
+  'Due Date'                    => '到期日',
+  'Invoice Date'                => '發票日期',
+  'Invoice Number'              => '發票編號',
+  'No'                          => '否',
+  'Posting failed!'             => '加入失敗！',
+  'Qty'                         => '數量',
+  'Salesperson'                 => '銷售人員',
+  'Total'                       => '總計',
+  'Unit'                        => '單位',
+  'Yes'                         => '是',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'do_import'                   => 'do_import',
+  'import'                      => 'import',
+  'import_sales_invoices'       => 'import_sales_invoices',
+  '繼續'                        => 'continue',
+};
+
+1;
+

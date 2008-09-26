@@ -26,6 +26,7 @@ $self{texts} = {
   'Receipts'                    => 'Квитанц╕╖',
   'Record in'                   => 'Внести в',
   'Remaining'                   => 'Залишилось',
+  'Sales Invoice'               => 'Рахунок-фактура',
   'Screen'                      => 'Екран',
   'Source'                      => 'Джерело',
   'Subtotal'                    => 'П╕дсумок по розд╕лу',
@@ -59,6 +60,7 @@ $self{subs} = {
   'Видалити'                    => 'delete',
   'Виставити'                   => 'post',
   'Надрукувати'                 => 'print',
+  'Рахунок_фактура'             => 'sales_invoice',
   'Поновити'                    => 'update',
 };
 

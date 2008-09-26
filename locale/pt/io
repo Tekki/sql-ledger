@@ -1,6 +1,8 @@
 $self{texts} = {
+  'Add Part'                    => 'Novo Produto',
   'Add Purchase Order'          => 'Nova Ordem de Compra',
   'Add Sales Order'             => 'Nova Encomenda de Cliente',
+  'Add Service'                 => 'Novo Serviço',
   'Address'                     => 'Endereço',
   'Apr'                         => 'Abr',
   'April'                       => 'Abril',
@@ -13,6 +15,7 @@ $self{texts} = {
   'Contact'                     => 'Contacto',
   'Continue'                    => 'Continuar',
   'Copies'                      => 'Cópias',
+  'Customer'                    => 'Cliente',
   'Date'                        => 'Data',
   'Dec'                         => 'Dez',
   'December'                    => 'Dezembro',
@@ -51,7 +54,6 @@ $self{texts} = {
   'Packing List'                => 'Lista de Expedição',
   'Packing List Date missing!'  => 'Falta Data da Lista de Expedição',
   'Packing List Number missing!' => 'Falta Numero de Lista de Expedição',
-  'Part'                        => 'Produto',
   'Phone'                       => 'Tel',
   'Postscript'                  => 'PostScript',
   'Price'                       => 'Preço',
@@ -64,21 +66,19 @@ $self{texts} = {
   'Screen'                      => 'Ecran',
   'Sep'                         => 'Set',
   'September'                   => 'Setembro',
-  'Service'                     => 'Serviço',
   'Ship'                        => 'Expedir',
   'Ship to'                     => 'Expedir para',
   'Subject'                     => 'Assunto',
   'Subtotal'                    => 'Sub-total',
   'To'                          => 'Até',
   'Unit'                        => 'Unidade',
-  'What type of item is this?'  => 'Que tipo de Item é este?',
+  'Vendor'                      => 'Fornecedor',
 };
 
 $self{subs} = {
   'calc_markup'                 => 'calc_markup',
   'check_form'                  => 'check_form',
   'create_form'                 => 'create_form',
-  'customer_details'            => 'customer_details',
   'display_form'                => 'display_form',
   'display_row'                 => 'display_row',
   'e_mail'                      => 'e_mail',
@@ -96,7 +96,8 @@ $self{subs} = {
   'send_email'                  => 'send_email',
   'ship_to'                     => 'ship_to',
   'validate_items'              => 'validate_items',
-  'vendor_details'              => 'vendor_details',
+  'novo_produto'                => 'add_part',
+  'novo_serviço'                => 'add_service',
   'continuar'                   => 'continue',
 };
 

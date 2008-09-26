@@ -2,7 +2,6 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Accounting Menu'             => 'Menú general',
-  'Add POS Invoice'             => 'Agregar Factura PdV',
   'Amount'                      => 'Total',
   'Business'                    => 'Empresa',
   'Cannot post transaction!'    => '¡No se puede registrar la transacción',
@@ -12,11 +11,11 @@ $self{texts} = {
   'Currency'                    => 'Moneda',
   'Current'                     => 'Actual',
   'Customer'                    => 'Cliente',
+  'Customer Number'             => 'Número del cliente',
   'Customer missing!'           => '¡Falta el cliente!',
   'Delete'                      => 'Borrar',
   'Department'                  => 'Centro de Costos',
   'Description'                 => 'Descripción',
-  'Edit POS Invoice'            => 'Editar Factura Punto de Venta',
   'Exchange Rate'               => 'Tasa de Cambio',
   'Exchange rate missing!'      => 'Falta Tasa de Cambio',
   'Extended'                    => 'Extendido',
@@ -38,6 +37,7 @@ $self{texts} = {
   'Receipts'                    => 'Recibos',
   'Record in'                   => 'Registrar en',
   'Remaining'                   => 'Resto',
+  'Sales Invoice'               => 'Facturas de Ventas',
   'Salesperson'                 => 'Vendedor',
   'Screen'                      => 'Pantalla',
   'Select a Printer!'           => 'Selecciona Impresora!',
@@ -76,6 +76,7 @@ $self{subs} = {
   'registrar'                   => 'post',
   'imprimir'                    => 'print',
   'imprimir_y_registrar'        => 'print_and_post',
+  'facturas_de_ventas'          => 'sales_invoice',
   'actualizar'                  => 'update',
 };
 

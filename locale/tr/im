@@ -1,0 +1,26 @@
+$self{charset} = 'ISO-8859-9';
+
+$self{texts} = {
+  'Continue'                    => 'Devam',
+  'Customer'                    => 'Alýcý',
+  'Description'                 => 'Açýklama',
+  'Due Date'                    => 'Vade Tarihi',
+  'Invoice Date'                => 'Fatura Tarihi',
+  'Invoice Number'              => 'Fatura No',
+  'No'                          => 'Hayýr',
+  'Qty'                         => 'Adet',
+  'Total'                       => 'Toplam',
+  'Unit'                        => 'Birim',
+  'Yes'                         => 'Evet',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'do_import'                   => 'do_import',
+  'import'                      => 'import',
+  'import_sales_invoices'       => 'import_sales_invoices',
+  'devam'                       => 'continue',
+};
+
+1;
+

@@ -1,6 +1,5 @@
 $self{texts} = {
   'Accounting Menu'             => 'Konto-menu',
-  'Add POS Invoice'             => 'Ny POS faktura',
   'Amount'                      => 'Beløb',
   'Business'                    => 'Forretning',
   'Cannot post transaction!'    => 'Kan ikke bogføre postering!',
@@ -10,11 +9,11 @@ $self{texts} = {
   'Currency'                    => 'Valuta',
   'Current'                     => 'Aktuel',
   'Customer'                    => 'Kunde',
+  'Customer Number'             => 'Kundenummer',
   'Customer missing!'           => 'Kunde mangler!',
   'Delete'                      => 'Fjern',
   'Department'                  => 'Afdeling',
   'Description'                 => 'Beskrivelse',
-  'Edit POS Invoice'            => 'Redigér POS faktura',
   'Exchange Rate'               => 'Vekselkurs',
   'Exchange rate missing!'      => 'Vekselkurs mangler!',
   'Extended'                    => 'Udvidet',
@@ -36,6 +35,7 @@ $self{texts} = {
   'Receipts'                    => 'Kvitteringer',
   'Record in'                   => 'Bogfør på',
   'Remaining'                   => 'Resterer',
+  'Sales Invoice'               => 'Salgsfaktura',
   'Salesperson'                 => 'Sælger',
   'Screen'                      => 'Skærm',
   'Source'                      => 'Bilag',
@@ -73,6 +73,7 @@ $self{subs} = {
   'bogfør'                      => 'post',
   'udskriv'                     => 'print',
   'udskriv_og_send'             => 'print_and_post',
+  'salgsfaktura'                => 'sales_invoice',
   'opdatér'                     => 'update',
 };
 

@@ -111,7 +111,6 @@ $self{texts} = {
   'Text Templates'              => 'Text Schablonen',
   'Transactions'                => 'Buchungen',
   'Transfer'                    => 'Übertrag',
-  'Transfer Inventory'          => 'Inventarübertrag',
   'Translations'                => 'Übersetzungen',
   'Trial Balance'               => 'Saldenbilanz',
   'Type of Business'            => 'Gewerbe',

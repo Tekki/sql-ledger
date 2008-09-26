@@ -2,7 +2,6 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Accounting Menu'             => 'قائمة الحسابات',
-  'Add POS Invoice'             => 'اضافة فاتورة نقطة بيع',
   'Amount'                      => 'الكمية',
   'Cannot post transaction!'    => 'لا يمكن تسجيل الحركة',
   'Change'                      => 'تغيير',
@@ -11,11 +10,11 @@ $self{texts} = {
   'Currency'                    => 'عملة',
   'Current'                     => 'الحالي',
   'Customer'                    => 'العميل',
+  'Customer Number'             => 'رقم العميل',
   'Customer missing!'           => 'عميل غير موجود',
   'Delete'                      => 'الغاء',
   'Department'                  => 'قسم',
   'Description'                 => 'وصف',
-  'Edit POS Invoice'            => 'تعديل فاتورة أمر الشراء',
   'Exchange Rate'               => 'سعر الصرف',
   'Exchange rate missing!'      => 'سعر الصرف غير موجود',
   'Extended'                    => 'اجمالى',
@@ -32,6 +31,7 @@ $self{texts} = {
   'Receipts'                    => 'الواردات',
   'Record in'                   => 'في السجل',
   'Remaining'                   => 'متبقى',
+  'Sales Invoice'               => 'فاتورة المبيعات',
   'Salesperson'                 => 'مندوب مبيعات',
   'Screen'                      => 'الشاشة',
   'Source'                      => 'مصدر',
@@ -66,6 +66,7 @@ $self{subs} = {
   'الغاء'                  => 'delete',
   'تسجيل'                  => 'post',
   'طباعة'                  => 'print',
+  'فاتورة_المبيعات' => 'sales_invoice',
   'تعديل'                  => 'update',
 };
 

@@ -45,6 +45,7 @@ $self{texts} = {
   'Reference'                   => 'Hivatkozás',
   'Sep'                         => 'Szept.',
   'September'                   => 'Szeptember',
+  'Source'                      => 'Bizonylatszám',
   'Subtotal'                    => 'Részösszeg',
   'To'                          => 'Meddig:',
   'Year'                        => 'Év',

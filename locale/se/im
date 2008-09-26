@@ -1,0 +1,29 @@
+$self{texts} = {
+  'City'                        => 'Stad',
+  'Continue'                    => 'Fortsätt',
+  'Curr'                        => 'Valuta',
+  'Customer'                    => 'Kund',
+  'Customer Number'             => 'Kund nr',
+  'Description'                 => 'Beskrivning',
+  'Due Date'                    => 'Förfallodatum',
+  'Invoice Date'                => 'Fakturadatum',
+  'Invoice Number'              => 'Fakturanummer',
+  'No'                          => 'Inga',
+  'Posting failed!'             => 'Bokföring misslyckats!',
+  'Qty'                         => 'Antal',
+  'Salesperson'                 => 'Försäljare',
+  'Total'                       => 'Total',
+  'Unit'                        => 'Enhet',
+  'Yes'                         => 'Ja',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'do_import'                   => 'do_import',
+  'import'                      => 'import',
+  'import_sales_invoices'       => 'import_sales_invoices',
+  'fortsätt'                    => 'continue',
+};
+
+1;
+

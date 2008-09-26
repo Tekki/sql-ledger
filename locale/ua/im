@@ -1,0 +1,27 @@
+$self{charset} = 'ISO-8859-5';
+
+$self{texts} = {
+  'Continue'                    => 'Продовжити',
+  'Curr'                        => 'Валюта',
+  'Customer'                    => 'Кл╕╓нт',
+  'Description'                 => 'Опис',
+  'Due Date'                    => 'Заплатити до',
+  'Invoice Date'                => 'Дата виставлення',
+  'Invoice Number'              => 'Номер рахунка-фактури',
+  'No'                          => 'Н╕',
+  'Qty'                         => 'К╕льк╕сть',
+  'Total'                       => 'Загальна Сума',
+  'Unit'                        => 'Одиниця',
+  'Yes'                         => 'Tak',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'do_import'                   => 'do_import',
+  'import'                      => 'import',
+  'import_sales_invoices'       => 'import_sales_invoices',
+  'Продовжити'                  => 'continue',
+};
+
+1;
+

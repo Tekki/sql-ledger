@@ -13,6 +13,7 @@ $self{texts} = {
   'Continue'                    => 'Verder',
   'Current'                     => 'Huidig',
   'Customer'                    => 'Klant',
+  'Customer Number'             => 'Klantnummer',
   'Customer missing!'           => 'Klant ontbreekt!',
   'Customer not on file!'       => 'Klant bestaat niet!',
   'Date'                        => 'Datum',
@@ -68,6 +69,7 @@ $self{texts} = {
   'Update'                      => 'Bijwerken',
   'Updated'                     => 'Bijgewerkt',
   'Vendor'                      => 'Leverancier',
+  'Vendor Number'               => 'Leveranciernummer',
   'Vendor not on file!'         => 'Leverancier bestaat niet!',
   'Weight'                      => 'Gewicht',
 };

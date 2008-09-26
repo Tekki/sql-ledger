@@ -15,7 +15,6 @@ $self{subs} = {
   'check_vendor'                => 'check_vendor',
   'continue'                    => 'continue',
   'create_form'                 => 'create_form',
-  'customer_details'            => 'customer_details',
   'customer_row'                => 'customer_row',
   'delete'                      => 'delete',
   'display'                     => 'display',
@@ -58,7 +57,6 @@ $self{subs} = {
   'stock_assembly'              => 'stock_assembly',
   'update'                      => 'update',
   'validate_items'              => 'validate_items',
-  'vendor_details'              => 'vendor_details',
   'vendor_row'                  => 'vendor_row',
 };
 

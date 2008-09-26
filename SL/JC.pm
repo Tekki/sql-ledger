@@ -1,24 +1,10 @@
 #=====================================================================
-# SQL-Ledger Accounting
-# Copyright (C) 2005
+# SQL-Ledger ERP
+# Copyright (C) 2006
 #
 #  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.org
+#     Web: http://www.sql-ledger.com
 #
-#  Contributors:
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #======================================================================
 #
 # Job Costing
@@ -30,14 +16,16 @@ package JC;
 
 use SL::IS;
 
-sub get_jcitems {
+
+sub retrieve_card {
   my ($self, $myconfig, $form) = @_;
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
+  my $sth;
+  my $query;
 
-  my $query = qq|SELECT current_date FROM defaults|;
-  ($form->{transdate}) = $dbh->selectrow_array($query);
+  $form->{transdate} = $form->current_date($myconfig);
 
   ($form->{employee}, $form->{employee_id}) = $form->get_employee($dbh);
   
@@ -45,6 +33,8 @@ sub get_jcitems {
   $dateformat =~ s/yy/yyyy/;
   $dateformat =~ s/yyyyyy/yyyy/;
  
+  $form->remove_locks($myconfig, $dbh, 'jcitems');
+  
   if ($form->{id}) {
     # retrieve timecard/storescard
     $query = qq|SELECT j.*, to_char(j.checkedin, 'HH24:MI:SS') AS checkedina,
@@ -52,7 +42,8 @@ sub get_jcitems {
 		to_char(j.checkedin, '$dateformat') AS transdate,
 		e.name AS employee, p.partnumber,
 		pr.projectnumber, pr.description AS projectdescription,
-		pr.production, pr.completed, pr.parts_id AS project
+		pr.production, pr.completed, pr.parts_id AS project,
+		pr.customer_id
                 FROM jcitems j
 		JOIN employee e ON (e.id = j.employee_id)
 		JOIN parts p ON (p.id = j.parts_id)
@@ -84,7 +75,19 @@ sub get_jcitems {
     }
     $sth->finish;
     for (qw(printed queued)) { $form->{$_} =~ s/ +$//g }
+
+    if ($form->{customer_id}) {
+      my $pmh = price_matrix_query($dbh, $form, $form->{project_id}, $form->{customer_id});
+      %ref = ();
+      $ref->{id} = $form->{parts_id};
+      
+      IS::exchangerate_defaults($dbh, $form);
+      IS::price_matrix($pmh, $ref, $form->datetonum($myconfig, $form->{transdate}), 4, $form, $myconfig);
+    }
+
   }
+
+  $form->create_lock($myconfig, $dbh, $form->{id}, 'jcitems');
   
   JC->jcitems_links($myconfig, $form, $dbh);
  
@@ -119,25 +122,25 @@ sub jcitems_links {
   my $query;
 
   if ($form->{project_id}) {
-    $form->{orphaned} = 1;
     $query = qq|SELECT parts_id
                 FROM project
 	        WHERE id = $form->{project_id}|;
     if ($dbh->selectrow_array($query)) {
       $form->{project} = 'job';
-      $query = qq|SELECT id
-                  FROM project
-	          WHERE parts_id > 0
-	          AND production > completed
-	          AND id = $form->{project_id}|;
-      ($form->{orphaned}) = $dbh->selectrow_array($q);
+      if (! exists $form->{orphaned}) {
+	$query = qq|SELECT id
+		    FROM project
+		    WHERE parts_id > 0
+		    AND production > completed
+		    AND id = $form->{project_id}|;
+	($form->{orphaned}) = $dbh->selectrow_array($q);
+      }
     } else {
+      $form->{orphaned} = 1;
       $form->{project} = 'project';
     }
   }
 
-  JC->jcparts($myconfig, $form, $dbh);
-   
   $form->all_employees($myconfig, $dbh, $form->{transdate});
   
   my $where;
@@ -177,12 +180,12 @@ sub jcitems_links {
 
   if ($form->{project_id}) {
     $query .= qq|
-                 UNION
-		 SELECT *
-		 FROM project
-		 WHERE id = $form->{project_id}|;
+	       UNION
+	       SELECT pr.*
+	       FROM project pr
+	       WHERE id = $form->{project_id}|;
   }
-  
+
   $query .= qq|
                  ORDER BY projectnumber|;
 
@@ -199,79 +202,81 @@ sub jcitems_links {
 }
 
 
-sub jcparts {
-  my ($self, $myconfig, $form, $dbh) = @_;
+sub retrieve_item {
+  my ($self, $myconfig, $form) = @_;
+  
+  my $dbh = $form->dbconnect($myconfig);
   
   my ($null, $project_id) = split /--/, $form->{projectnumber};
   $project_id *= 1;
-
+  
   my $query = qq|SELECT customer_id
                  FROM project
 		 WHERE id = $project_id|;
-  my ($customer_id) = $dbh->selectrow_array($query);
+  ($customer_id) = $dbh->selectrow_array($query);
   $customer_id *= 1;
   
+  my $var;
   my $where;
-
-  if ($form->{project} eq 'job') {
-    $where = " AND p.income_accno_id IS NULL";
-    if ($form->{type} eq 'storescard') {
-      $where = " AND p.inventory_accno_id > 0
-                 AND p.income_accno_id > 0";
-    }
-    
-    $query = qq|SELECT p.id, p.partnumber, p.description, p.sellprice,
-		 p.unit, t.description AS translation
-                 FROM parts p
-		 LEFT JOIN translation t ON (t.trans_id = p.id AND t.language_code = '$form->{language_code}')
-	         WHERE p.obsolete = '0'
-		 $where|;
-  } elsif ($form->{project} eq 'project') {
-    $where = " AND p.inventory_accno_id IS NULL";
-    if ($form->{type} eq 'storescard') {
-      $where = " AND p.inventory_accno_id > 0";
-    }
-    
-    $query = qq|SELECT p.id, p.partnumber, p.description, p.sellprice,
-		 p.unit, t.description AS translation 
-		 FROM parts p 
-		 LEFT JOIN translation t ON (t.trans_id = p.id AND t.language_code = '$form->{language_code}')
-		 WHERE p.obsolete = '0'
-		 AND p.assembly = '0'
-		 $where|;
-  } else {
-    
-    $query = qq|SELECT p.id, p.partnumber, p.description, p.sellprice,
-		 p.unit, t.description AS translation
-                 FROM parts p
-		 LEFT JOIN translation t ON (t.trans_id = p.id AND t.language_code = '$form->{language_code}')
-	         WHERE p.obsolete = '0'
-		 AND p.income_accno_id IS NULL
-		 UNION
-                 SELECT p.id, p.partnumber, p.description, p.sellprice,
-		 p.unit, t.description AS translation 
-		 FROM parts p 
-		 LEFT JOIN translation t ON (t.trans_id = p.id AND t.language_code = '$form->{language_code}')
-		 WHERE p.obsolete = '0'
-		 AND p.assembly = '0'
-		 AND p.inventory_accno_id IS NULL|;
+  
+  if ($form->{partnumber} ne "") {
+    $var = $form->like(lc $form->{partnumber});
+    $where .= qq| AND lower(p.partnumber) LIKE '$var'|;
   }
 
+  if ($form->{project} eq 'job') {
+    if ($form->{type} eq 'storescard') {
+      $where .= " AND p.inventory_accno_id > 0
+                  AND p.income_accno_id > 0";
+    } else {
+      $where .= " AND p.income_accno_id IS NULL";
+    }
+    
+    $query = qq|SELECT p.id, p.partnumber, p.description,
+                p.lastcost AS sellprice,
+                p.unit, t.description AS translation
+                FROM parts p
+		LEFT JOIN translation t ON (t.trans_id = p.id AND t.language_code = '$form->{language_code}')
+	        WHERE p.obsolete = '0'
+		$where|;
+  }
+  
+  if ($form->{project} eq 'project') {
+    if ($form->{type} eq 'storescard') {
+      $where .= " AND p.inventory_accno_id > 0";
+    } else {
+      $where .= " AND p.inventory_accno_id IS NULL";
+    }
+    
+    $query = qq|SELECT p.id, p.partnumber, p.description,
+                p.sellprice,
+                p.unit, t.description AS translation 
+		FROM parts p 
+		LEFT JOIN translation t ON (t.trans_id = p.id AND t.language_code = '$form->{language_code}')
+		WHERE p.obsolete = '0'
+		AND p.assembly = '0'
+		$where|;
+  }
+  
   $query .= qq|
 		 ORDER BY 2|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
-  my $pmh = price_matrix_query($dbh, $project_id, $customer_id);
+  my $pmh = price_matrix_query($dbh, $form, $project_id, $customer_id);
   IS::exchangerate_defaults($dbh, $form);
 
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
     $ref->{description} = $ref->{translation} if $ref->{translation};
-    IS::price_matrix($pmh, $ref, $form->datetonum($form->{transdate}), 4, $form, $myconfig);
-    push @{ $form->{all_parts} }, $ref;
+    IS::price_matrix($pmh, $ref, $form->datetonum($myconfig, $form->{transdate}), 4, $form, $myconfig);
+    $ref->{parts_id} = $ref->{id};
+    delete $ref->{id};
+    push @{ $form->{item_list} }, $ref;
   }
   $sth->finish;
 
+  $dbh->disconnect;
+  
 }
 
 
@@ -315,6 +320,8 @@ sub delete_timecard {
 	      AND trans_id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
 
+  $form->remove_locks($myconfig, $dbh, 'jcitems');
+
   my $rc = $dbh->commit;
 
   if ($rc) {
@@ -350,18 +357,22 @@ sub jcitems {
 		WHERE id = $var|;
     my ($job) = $dbh->selectrow_array($query);
     $form->{project} = ($job) ? "job" : "project";
-    
   }
-  if ($form->{partnumber}) {
-    ($null, $var) = split /--/, $form->{partnumber};
-    $where .= " AND j.parts_id = $var";
+  if ($form->{partnumber} ne "") {
+    $var = $form->like(lc $form->{partnumber});
+    $where .= " AND lower(p.partnumber) LIKE '$var'";
 
-    $query = qq|SELECT inventory_accno_id
-                FROM parts
-		WHERE id = $var|;
-    my ($job) = $dbh->selectrow_array($query);
-    $form->{project} = ($job) ? "job" : "project";
-    
+    if ($form->{project}) {
+      if ($form->{project} eq 'job') {
+	$where .= " AND p.inventory_accno_id > 0";
+      }
+    } else {
+      $query = qq|SELECT inventory_accno_id
+		  FROM parts
+		  WHERE lower(partnumber) LIKE '$var'|;
+      my ($job) = $dbh->selectrow_array($query);
+      $form->{project} = ($job) ? "job" : "project";
+    }
   }
   if ($form->{employee}) {
     ($null, $var) = split /--/, $form->{employee};
@@ -382,12 +393,12 @@ sub jcitems {
   my %ordinal = ( id => 1,
                   description => 2,
 		  transdate => 7,
-		  partnumber => 9,
-		  projectnumber => 10,
-		  projectdescription => 11,
+		  partnumber => 10,
+		  projectnumber => 11,
+		  projectdescription => 12,
 		);
   
-  my @a = (transdate, projectnumber);
+  my @a = qw(transdate projectnumber);
   my $sortorder = $form->sort_order(\@a, \%ordinal);
   
   my $dateformat = $myconfig->{dateformat};
@@ -395,20 +406,20 @@ sub jcitems {
   $dateformat =~ s/yyyyyy/yyyy/;
   
   if ($form->{project} eq 'job') {
+    $where .= " AND pr.parts_id > 0";
     if ($form->{type} eq 'timecard') {
-      $where .= " AND pr.parts_id > 0
-                  AND p.income_accno_id IS NULL";
+      $where .= " AND p.income_accno_id IS NULL";
     }
-      
     if ($form->{type} eq 'storescard') {
-      $where .= " AND pr.parts_id > 0
-                  AND p.income_accno_id > 0";
+      $where .= " AND p.income_accno_id > 0";
     }
   }
   if ($form->{project} eq 'project') {
     $where .= " AND pr.parts_id IS NULL";
   }
   
+  $sortorder = qq|employee, employeenumber, $sortorder| if $form->{type} eq 'timecard';
+
   $query = qq|SELECT j.id, j.description, j.qty, j.allocated,
 	      to_char(j.checkedin, 'HH24:MI') AS checkedin,
 	      to_char(j.checkedout, 'HH24:MI') AS checkedout,
@@ -419,21 +430,29 @@ sub jcitems {
 	      pr.projectnumber, pr.description AS projectdescription,
 	      e.employeenumber, e.name AS employee,
 	      to_char(j.checkedin, 'WW') AS workweek, pr.parts_id,
-	      j.sellprice
+	      j.sellprice, p.inventory_accno_id, p.income_accno_id
 	      FROM jcitems j
 	      JOIN parts p ON (p.id = j.parts_id)
 	      JOIN project pr ON (pr.id = j.project_id)
 	      JOIN employee e ON (e.id = j.employee_id)
 	      WHERE $where
-	      ORDER BY employee, employeenumber, $sortorder|;
+	      ORDER BY $sortorder|;
 
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-    $ref->{project} = ($ref->{parts_id}) ? "job" : "project";
+    if ($ref->{parts_id}) {
+      $ref->{project} = 'job';
+      $ref->{type} = ($ref->{inventory_accno_id} && $ref->{income_accno_id}) ? 'storescard' : 'timecard';
+    } else {
+      $ref->{project} = 'project';
+      $ref->{type} = 'timecard';
+    }
+    
     $ref->{transdate} = $ref->{transdatea};
     delete $ref->{transdatea};
+    
     push @{ $form->{transactions} }, $ref;
   }
   $sth->finish;
@@ -482,10 +501,10 @@ sub save {
     
   } else {
     my $uid = localtime;
-    $uid .= "$$";
+    $uid .= $$;
 
-    $query = qq|INSERT INTO jcitems (description)
-                VALUES ('$uid')|;
+    $query = qq|INSERT INTO jcitems (description, parts_id)
+                VALUES ('$uid', $form->{parts_id})|;
     $dbh->do($query) || $form->dberror($query);
 
     $query = qq|SELECT id FROM jcitems
@@ -509,12 +528,9 @@ sub save {
     ($form->{employee}, $form->{employee_id}) = $form->get_employee($dbh);
   } 
 
-  my $parts_id;
-  ($null, $parts_id) = split /--/, $form->{partnumber};
-  
   $query = qq|UPDATE jcitems SET
               project_id = $project_id,
-	      parts_id = $parts_id,
+	      parts_id = $form->{parts_id},
 	      description = |.$dbh->quote($form->{description}).qq|,
 	      qty = $form->{qty},
 	      allocated = $form->{allocated},
@@ -539,6 +555,8 @@ sub save {
 
   $form->audittrail($dbh, "", \%audittrail);
   
+  $form->remove_locks($myconfig, $dbh, 'jcitems');
+
   my $rc = $dbh->commit;
   
   $rc;
@@ -547,11 +565,14 @@ sub save {
 
 
 sub price_matrix_query {
-  my ($dbh, $project_id, $customer_id) = @_;
+  my ($dbh, $form, $project_id, $customer_id) = @_;
+  
+  my %defaults = $form->get_defaults($dbh, \@{['currencies']});
+  my $curr = substr($defaults{currencies},0,3);
   
   my $query = qq|SELECT p.id AS parts_id, 0 AS customer_id, 0 AS pricegroup_id,
               0 AS pricebreak, p.sellprice, NULL AS validfrom, NULL AS validto,
-	      (SELECT substr(curr,1,3) FROM defaults) AS curr, '' AS pricegroup
+	      '$curr' AS curr, '' AS pricegroup
               FROM parts p
 	      WHERE p.id = ?
 
@@ -583,9 +604,23 @@ sub price_matrix_query {
 	      ORDER BY customer_id DESC, pricegroup_id DESC, pricebreak
 	      
 	      |;
-  my $sth = $dbh->prepare($query) || $form->dberror($query);
 
-  $sth;
+  $dbh->prepare($query) || $form->dberror($query);
+
+}
+
+
+sub company_defaults {
+  my ($self, $myconfig, $form) = @_;
+
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+
+  my %defaults = $form->get_defaults($dbh, \@{['company','address','tel','fax','businessnumber']});
+
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+
+  $dbh->disconnect;
 
 }
 

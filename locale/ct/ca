@@ -32,6 +32,7 @@ $self{texts} = {
   'October'                     => 'Octubre',
   'Sep'                         => 'Set',
   'September'                   => 'Setembre',
+  'Source'                      => 'Font',
   'Subtotal'                    => 'Subtotal',
   'To'                          => 'Fins',
 };

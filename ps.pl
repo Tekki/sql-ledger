@@ -1,27 +1,12 @@
 #!/usr/bin/perl
 #
 ######################################################################
-# SQL-Ledger Accounting
-# Copyright (C) 2001
+# SQL-Ledger ERP
+# Copyright (C) 2006
 #
-#  Author: Dieter Simader
-#   Email: dsimader@sql-ledger.org
-#     Web: http://www.sql-ledger.org
+#  Author: DWS Systems Inc.
+#     Web: http://www.sql-ledger.com
 #
-#  Contributors:	Tony Fraser <tony@sybaspace.com>
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #######################################################################
 #
 # this script is the frontend called from bin/$terminal/$script
@@ -67,6 +52,7 @@ $form->{login} =~ s/(\.\.|\/|\\|\x00)//g;
 
 # check for user config file, could be missing or ???
 eval { require("$userspath/$form->{login}.conf"); };
+
 if ($@) {
   $locale = new Locale "$language", "$script";
   
@@ -113,7 +99,7 @@ if (-f "$form->{path}/$form->{login}_$form->{script}") {
   eval { require "$form->{path}/$form->{login}_$form->{script}"; };
 }
 
-  
+
 if ($form->{action}) {
   # window title bar, user info
   $form->{titlebar} = "SQL-Ledger ".$locale->text('Version'). " $form->{version} - $myconfig{name} - $myconfig{dbname}";
@@ -134,7 +120,7 @@ if ($form->{action}) {
 
 
 sub check_password {
-  
+
   if ($myconfig{password}) {
 
     require "$form->{path}/pw.pl";
@@ -159,24 +145,24 @@ sub check_password {
 	}
       }
     } else {
-      
+
       if ($ENV{HTTP_USER_AGENT}) {
 	$ENV{HTTP_COOKIE} =~ s/;\s*/;/g;
 	@cookies = split /;/, $ENV{HTTP_COOKIE};
+	%cookie = ();
 	foreach (@cookies) {
 	  ($name,$value) = split /=/, $_, 2;
 	  $cookie{$name} = $value;
 	}
-	
+
 	if ($cookie{"SL-$form->{login}"}) {
-	  
+
 	  $form->{sessioncookie} = $cookie{"SL-$form->{login}"};
-	  
+
 	  $s = "";
 	  %ndx = ();
-	  # take cookie apart
 	  $l = length $form->{sessioncookie};
-	  
+
 	  for $i (0 .. $l - 1) {
 	    $j = substr($myconfig{sessionkey}, $i * 2, 2);
 	    $ndx{$j} = substr($cookie{"SL-$form->{login}"}, $i, 1);
@@ -190,7 +176,7 @@ sub check_password {
 	  $login = substr($s, 0, $l);
 	  $password = substr($s, $l, (length $s) - ($l + 10));
 
-	  # validate cookie
+          # validate cookie
 	  if (($login ne $form->{login}) || ($myconfig{password} ne crypt $password, substr($form->{login}, 0, 2))) {
 	    &getpassword(1);
 	    exit;
@@ -199,7 +185,7 @@ sub check_password {
 	} else {
 
 	  if ($form->{action} ne 'display') {
-	    &getpassword(1); 
+	    &getpassword(1);
 	    exit;
 	  }
 

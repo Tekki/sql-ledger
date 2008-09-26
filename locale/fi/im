@@ -1,0 +1,28 @@
+$self{texts} = {
+  'City'                        => 'Kaupunki',
+  'Continue'                    => 'Jatka',
+  'Curr'                        => 'Valuutta',
+  'Customer'                    => 'Asiakas',
+  'Customer Number'             => 'Asiakasnumero',
+  'Description'                 => 'Kuvaus',
+  'Due Date'                    => 'Eräpäivä',
+  'Invoice Date'                => 'Laskun päiväys',
+  'Invoice Number'              => 'Laskun numero',
+  'No'                          => 'Ei',
+  'Qty'                         => 'Määrä',
+  'Salesperson'                 => 'Myyjä',
+  'Total'                       => 'Yhteensä',
+  'Unit'                        => 'Yksikkö',
+  'Yes'                         => 'Kyllä',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'do_import'                   => 'do_import',
+  'import'                      => 'import',
+  'import_sales_invoices'       => 'import_sales_invoices',
+  'jatka'                       => 'continue',
+};
+
+1;
+

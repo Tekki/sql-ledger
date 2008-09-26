@@ -26,6 +26,7 @@ $self{texts} = {
   'Receipts'                    => 'Kasos orderiai',
   'Record in'                   => 'Árağyti á',
   'Remaining'                   => 'Likutis',
+  'Sales Invoice'               => 'Pardavimo SF',
   'Screen'                      => 'Ekranas',
   'Source'                      => 'Dokumentas',
   'Subtotal'                    => 'Viso',
@@ -59,6 +60,7 @@ $self{subs} = {
   'iğtrinti'                    => 'delete',
   'patvirtinti'                 => 'post',
   'spausdinti'                  => 'print',
+  'pardavimo_sf'                => 'sales_invoice',
   'atnaujinti'                  => 'update',
 };
 

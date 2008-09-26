@@ -1,6 +1,8 @@
 $self{texts} = {
+  'Add Part'                    => 'Ný vara',
   'Add Purchase Order'          => 'Ný innkaupspöntun',
   'Add Sales Order'             => 'Ný sölupöntun',
+  'Add Service'                 => 'Ný þjónusta',
   'Address'                     => 'Heimilisfang',
   'Apr'                         => 'apr',
   'April'                       => 'apríl',
@@ -13,6 +15,7 @@ $self{texts} = {
   'Contact'                     => 'Talsmaður',
   'Continue'                    => 'Áfram',
   'Copies'                      => 'Afrit',
+  'Customer'                    => 'Viðskiptavinur',
   'Date'                        => 'Dagsetning',
   'Dec'                         => 'des',
   'December'                    => 'desember',
@@ -52,7 +55,6 @@ $self{texts} = {
   'Packing List'                => 'Fylgiseðill',
   'Packing List Date missing!'  => 'Dags. fylgiseðils vantar!',
   'Packing List Number missing!' => 'Númer fylgiseðils vantar!',
-  'Part'                        => 'Vara',
   'Phone'                       => 'Sími.',
   'Postscript'                  => 'Postscript',
   'Price'                       => 'Verð',
@@ -65,21 +67,19 @@ $self{texts} = {
   'Screen'                      => 'Skjá',
   'Sep'                         => 'sep',
   'September'                   => 'september',
-  'Service'                     => 'Þjónusta',
   'Ship'                        => 'Senda',
   'Ship to'                     => 'Senda til',
   'Subject'                     => 'Efni',
   'Subtotal'                    => 'Samtala',
   'To'                          => 'til',
   'Unit'                        => 'Einingar',
-  'What type of item is this?'  => 'Hvernig hlutur er þetta?',
+  'Vendor'                      => 'Byrgir',
 };
 
 $self{subs} = {
   'calc_markup'                 => 'calc_markup',
   'check_form'                  => 'check_form',
   'create_form'                 => 'create_form',
-  'customer_details'            => 'customer_details',
   'display_form'                => 'display_form',
   'display_row'                 => 'display_row',
   'e_mail'                      => 'e_mail',
@@ -97,7 +97,8 @@ $self{subs} = {
   'send_email'                  => 'send_email',
   'ship_to'                     => 'ship_to',
   'validate_items'              => 'validate_items',
-  'vendor_details'              => 'vendor_details',
+  'ný_vara'                     => 'add_part',
+  'ný_þjónusta'                 => 'add_service',
   'Áfram'                       => 'continue',
 };
 

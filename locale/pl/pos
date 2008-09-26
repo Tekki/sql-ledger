@@ -2,7 +2,6 @@ $self{charset} = 'ISO-8859-2';
 
 $self{texts} = {
   'Accounting Menu'             => 'Menu Ksiêgowo¶ci',
-  'Add POS Invoice'             => 'Dodaj Fakturê w Punkcie Sprzeda¿y',
   'Amount'                      => 'Kwota',
   'Business'                    => 'Dzia³alno¶æ',
   'Cannot post transaction!'    => 'Nie mo¿esz zatwierdziæ transakcji!',
@@ -12,11 +11,11 @@ $self{texts} = {
   'Currency'                    => 'Waluta',
   'Current'                     => 'Bie¿±cy',
   'Customer'                    => 'Odbiorca',
+  'Customer Number'             => 'Numer Odbiorcy',
   'Customer missing!'           => 'Brak Odbiorcy',
   'Delete'                      => 'Usuñ',
   'Department'                  => 'Wydzia³',
   'Description'                 => 'Opis',
-  'Edit POS Invoice'            => 'Zmieñ Fakturê Punktu Sprzeda¿y',
   'Exchange Rate'               => 'Kurs Walut',
   'Exchange rate missing!'      => 'Brakuje Kursu Walut',
   'Extended'                    => 'Warto¶æ Netto',
@@ -38,6 +37,7 @@ $self{texts} = {
   'Receipts'                    => 'Wp³aty',
   'Record in'                   => 'Zapisz w',
   'Remaining'                   => 'Pozosta³e',
+  'Sales Invoice'               => 'Faktura VAT Sprzeda¿y',
   'Salesperson'                 => 'Sprzedawca',
   'Screen'                      => 'Ekran',
   'Source'                      => '¯ród³o',
@@ -75,6 +75,7 @@ $self{subs} = {
   'zatwierd¿'                   => 'post',
   'wydrukuj'                    => 'print',
   'wydrukuj_i_zatwierd¿'        => 'print_and_post',
+  'faktura_vat_sprzeda¿y'       => 'sales_invoice',
   'uzupe³nij'                   => 'update',
 };
 

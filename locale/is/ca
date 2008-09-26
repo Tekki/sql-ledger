@@ -36,6 +36,7 @@ $self{texts} = {
   'Reference'                   => 'Fylgiskjal',
   'Sep'                         => 'sep',
   'September'                   => 'september',
+  'Source'                      => 'Frálag',
   'Subtotal'                    => 'Samtala',
   'To'                          => 'til',
 };

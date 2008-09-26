@@ -218,10 +218,16 @@ INSERT INTO chart (accno,description,charttype,category,link,gifi_accno) VALUES 
 INSERT INTO chart (accno,description,charttype,category,link,gifi_accno) VALUES ('0840000','Erlöse 16% USt.','A','I','AR_amount:IC_sale:IC_income','0840000');
 INSERT INTO chart (accno,description,charttype,category,link,gifi_accno) VALUES ('950','Rückstellungen','H','L','','');
 --
-update defaults set inventory_accno_id = (select id from chart where accno = '0398000'), income_accno_id = (select id from chart where accno = '0840000'), expense_accno_id = (select id from chart where accno = '0399000'), fxgain_accno_id = (select id from chart where accno = '0266000'), fxloss_accno_id = (select id from chart where accno = '0215000'), curr = 'EUR:USD', weightunit = 'kg';
---
 INSERT INTO tax (chart_id,rate) VALUES ((SELECT id FROM chart WHERE accno = '0157100'),0.07);
 INSERT INTO tax (chart_id,rate) VALUES ((SELECT id FROM chart WHERE accno = '0157500'),0.16);
 INSERT INTO tax (chart_id,rate) VALUES ((SELECT id FROM chart WHERE accno = '0177100'),0.07);
 INSERT INTO tax (chart_id,rate) VALUES ((SELECT id FROM chart WHERE accno = '0177500'),0.16);
+--
+INSERT INTO defaults (fldname, fldvalue) VALUES ('inventory_accno_id', (SELECT id FROM chart WHERE accno = '0398000'));
+INSERT INTO defaults (fldname, fldvalue) VALUES ('income_accno_id', (SELECT id FROM chart WHERE accno = '0840000'));
+INSERT INTO defaults (fldname, fldvalue) VALUES ('expense_accno_id', (SELECT id FROM chart WHERE accno = '0399000'));
+INSERT INTO defaults (fldname, fldvalue) VALUES ('fxgain_accno_id', (SELECT id FROM chart WHERE accno = '0266000'));
+INSERT INTO defaults (fldname, fldvalue) VALUES ('fxloss_accno_id', (SELECT id FROM chart WHERE accno = '0215000'));
+INSERT INTO defaults (fldname, fldvalue) VALUES ('currencies', 'EUR:USD');
+INSERT INTO defaults (fldname, fldvalue) VALUES ('weightunit', 'kg');
 

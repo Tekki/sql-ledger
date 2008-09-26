@@ -44,6 +44,7 @@ $self{texts} = {
   'Reference'                   => 'Ссылка',
   'Sep'                         => 'сен',
   'September'                   => 'сентябрь',
+  'Source'                      => 'Источник',
   'Subtotal'                    => 'Итого по разделу',
   'To'                          => 'по',
   'Year'                        => 'Год',

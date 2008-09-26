@@ -26,6 +26,7 @@ $self{texts} = {
   'Receipts'                    => 'Recibos',
   'Record in'                   => 'Registrar en',
   'Remaining'                   => 'Resto',
+  'Sales Invoice'               => 'Facturas de ventas',
   'Screen'                      => 'Pantalla',
   'Source'                      => 'Fuente',
   'Subtotal'                    => 'Subtotal',
@@ -59,6 +60,7 @@ $self{subs} = {
   'borrar'                      => 'delete',
   'registrar'                   => 'post',
   'imprimir'                    => 'print',
+  'facturas_de_ventas'          => 'sales_invoice',
   'actualizar'                  => 'update',
 };
 

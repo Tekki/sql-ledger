@@ -1,6 +1,5 @@
 $self{texts} = {
   'Accounting Menu'             => 'Menú de Contabilidad',
-  'Add POS Invoice'             => 'Agregar Factura POS',
   'Amount'                      => 'Total',
   'Cannot post transaction!'    => 'No puede registrar transacción!',
   'Change'                      => 'Cambio',
@@ -12,7 +11,6 @@ $self{texts} = {
   'Customer missing!'           => 'Falta cliente!',
   'Delete'                      => 'Borrar',
   'Description'                 => 'Descripción',
-  'Edit POS Invoice'            => 'Editar Factura POS',
   'Exchange Rate'               => 'Tasa de Intercambio',
   'Exchange rate missing!'      => 'No se encuentra cambio de moneda',
   'Extended'                    => 'Extendido',
@@ -27,6 +25,7 @@ $self{texts} = {
   'Receipts'                    => 'Ingresos',
   'Record in'                   => 'Registrar en',
   'Remaining'                   => 'Faltan',
+  'Sales Invoice'               => 'Factura de Venta',
   'Salesperson'                 => 'Vendedor',
   'Screen'                      => 'Pantalla',
   'Source'                      => 'Fuente',
@@ -61,6 +60,7 @@ $self{subs} = {
   'borrar'                      => 'delete',
   'registrar'                   => 'post',
   'imprimir'                    => 'print',
+  'factura_de_venta'            => 'sales_invoice',
   'actualizar'                  => 'update',
 };
 

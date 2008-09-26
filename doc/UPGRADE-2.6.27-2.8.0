@@ -1,0 +1,30 @@
+Upgrading from version 2.6.x to 2.8.0
+
+1. install SQL-Ledger over top
+   # cd /usr/local
+   # tar zxvf sql-ledger-2.8.0.tar.gz
+
+2. fix permissions
+   # chown -hR nobody:nogroup *
+   # chmod 711 templates users css spool
+
+Note: replace nobody:nogroup with your web server user and group
+
+3. copy the following templates from the templates directory to
+   your private directory
+
+   Default-credit_invoice.html
+   Default-credit_invoice.tex
+   Default-credit_note.html
+   Default-credit_note.tex
+   Default-debit_invoice.html
+   Default-debit_invoice.tex
+   Default-debit_note.html
+   Default-debit_note.tex
+
+   remove the Default- prefix
+   
+4. log in
+
+5. Go to System -> Defaults and enter your company name
+

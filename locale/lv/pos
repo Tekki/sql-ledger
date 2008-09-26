@@ -2,7 +2,6 @@ $self{charset} = 'ISO-8859-13';
 
 $self{texts} = {
   'Accounting Menu'             => 'Kontçğanas izvçlne',
-  'Add POS Invoice'             => 'Pievienot POS rçíinu',
   'Amount'                      => 'Summa',
   'Business'                    => 'Komercdarbîba',
   'Cannot post transaction!'    => 'Nevar iegrâmatot transakciju!',
@@ -12,11 +11,11 @@ $self{texts} = {
   'Currency'                    => 'Valûta',
   'Current'                     => 'Pağreizçjs',
   'Customer'                    => 'Klients',
+  'Customer Number'             => 'Klienta numurs',
   'Customer missing!'           => 'Nav norâdîts klients!',
   'Delete'                      => 'Dzçst',
   'Department'                  => 'Nodaïa',
   'Description'                 => 'Apraksts',
-  'Edit POS Invoice'            => 'Labot POS rçíinu',
   'Exchange Rate'               => 'Valûtas maiòas kurss',
   'Exchange rate missing!'      => 'Nav norâdîts valûtas maiòas kurss!',
   'Extended'                    => 'Kopâ',
@@ -34,6 +33,7 @@ $self{texts} = {
   'Receipts'                    => 'Kvîtis',
   'Record in'                   => 'Ierakstît',
   'Remaining'                   => 'Atlikums',
+  'Sales Invoice'               => 'Pârdoğanas rçíins',
   'Salesperson'                 => 'Pârdevçjs',
   'Screen'                      => 'Ekrâns',
   'Source'                      => 'Dokuments',
@@ -69,6 +69,7 @@ $self{subs} = {
   'dzçst'                       => 'delete',
   'iegrâmatot'                  => 'post',
   'drukât'                      => 'print',
+  'pârdoğanas_rçíins'           => 'sales_invoice',
   'atjauninât'                  => 'update',
 };
 

@@ -2,7 +2,6 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Accounting Menu'             => 'Raamatupidamise Menüü',
-  'Add POS Invoice'             => 'Lisada Müügipunkti Arve',
   'Amount'                      => 'Summa',
   'Business'                    => 'Ettevõte',
   'Cannot post transaction!'    => 'Kannet ei saa postitada!',
@@ -12,11 +11,11 @@ $self{texts} = {
   'Currency'                    => 'Valuuta',
   'Current'                     => 'Käesolev',
   'Customer'                    => 'Klient',
+  'Customer Number'             => 'Kliendi Number',
   'Customer missing!'           => 'Klient puudu!',
   'Delete'                      => 'Kustuta',
   'Department'                  => 'Osakond',
   'Description'                 => 'Selgitus',
-  'Edit POS Invoice'            => 'Muuda Müügipunkti Arve',
   'Exchange Rate'               => 'Valuutakurss',
   'Exchange rate missing!'      => 'Valuutakurssi ei ole',
   'Extended'                    => 'Summa',
@@ -38,6 +37,7 @@ $self{texts} = {
   'Receipts'                    => 'Sissetulek',
   'Record in'                   => 'Sihtkonto',
   'Remaining'                   => 'Kasutamata',
+  'Sales Invoice'               => 'Müügiarve',
   'Salesperson'                 => 'Müüja',
   'Screen'                      => 'Ekraan',
   'Select a Printer!'           => 'Vali Printer',
@@ -76,6 +76,7 @@ $self{subs} = {
   'postita'                     => 'post',
   'trüki'                      => 'print',
   'trüki_ja_postita'           => 'print_and_post',
+  'müügiarve'                 => 'sales_invoice',
   'värskenda'                  => 'update',
 };
 

@@ -1,0 +1,30 @@
+$self{charset} = 'ISO-8859-13';
+
+$self{texts} = {
+  'City'                        => 'Pilsçta',
+  'Continue'                    => 'Turpinât',
+  'Curr'                        => 'Val.',
+  'Customer'                    => 'Klients',
+  'Customer Number'             => 'Klienta numurs',
+  'Description'                 => 'Apraksts',
+  'Due Date'                    => 'Apmaksas termiòð',
+  'Invoice Date'                => 'Rçíina datums',
+  'Invoice Number'              => 'Rçíina numurs',
+  'No'                          => 'Nç',
+  'Qty'                         => 'Skaits',
+  'Salesperson'                 => 'Pârdevçjs',
+  'Total'                       => 'Pavisam Kopâ',
+  'Unit'                        => 'Vienîba',
+  'Yes'                         => 'Jâ',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'do_import'                   => 'do_import',
+  'import'                      => 'import',
+  'import_sales_invoices'       => 'import_sales_invoices',
+  'turpinât'                    => 'continue',
+};
+
+1;
+

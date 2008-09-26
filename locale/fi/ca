@@ -41,6 +41,7 @@ $self{texts} = {
   'Reference'                   => 'Viite',
   'Sep'                         => 'Syy',
   'September'                   => 'Syyskuu',
+  'Source'                      => 'Lähde',
   'Subtotal'                    => 'Välisumma',
   'To'                          => 'Hetkeen',
   'Year'                        => 'Vuosi',

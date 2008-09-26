@@ -1,23 +1,10 @@
 #=====================================================================
-# SQL-Ledger Accounting
-# Copyright (c) 2003
+# SQL-Ledger ERP
+# Copyright (c) 2006
 #
 #  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.org
+#     Web: http://www.sql-ledger.com
 #
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #======================================================================
 #
 # Batch printing
@@ -33,7 +20,7 @@ use SL::BP;
 
 sub search {
 
-# $locale->text('Sales Invoices')
+# $locale->text('Invoices')
 # $locale->text('Packing Lists')
 # $locale->text('Pick Lists')
 # $locale->text('Sales Orders')
@@ -44,31 +31,23 @@ sub search {
 # $locale->text('RFQs')
 # $locale->text('Time Cards')
 
-  # setup customer/vendor selection
-  BP->get_vc(\%myconfig, \%$form);
-  
-  if (@{ $form->{"all_$form->{vc}"} }) { 
-    $name = "<option>\n";
-    for (@{ $form->{"all_$form->{vc}"} }) { $name .= qq|<option value="$_->{name}--$_->{id}">$_->{name}\n| }
-    $name = qq|<select name=$form->{vc}>$name</select>|;
-  } else {
-    $name = qq|<input name=$form->{vc} size=35>|;
-  }
-
 # $locale->text('Customer')
+# $locale->text('Customer Number')
 # $locale->text('Vendor')
+# $locale->text('Vendor Number')
 # $locale->text('Employee')
+# $locale->text('Employee Number')
 
-  %label = ( invoice => { title => 'Sales Invoices', name => 'Customer' },
-             packing_list => { title => 'Packing Lists', name => 'Customer' },
-             pick_list => { title => 'Pick Lists', name => 'Customer' },
-             sales_order => { title => 'Sales Orders', name => 'Customer' },
-             work_order => { title => 'Work Orders', name => 'Customer' },
-             purchase_order => { title => 'Purchase Orders', name => 'Vendor' },
-             bin_list => { title => 'Bin Lists', name => 'Vendor' },
-             sales_quotation => { title => 'Quotations', name => 'Customer' },
-             request_quotation => { title => 'RFQs', name => 'Vendor' },
-             timecard => { title => 'Time Cards', name => 'Employee' },
+  %label = ( invoice => { title => 'Invoices', name => ['Customer','Vendor'] },
+             packing_list => { title => 'Packing Lists', name => ['Customer', 'Vendor'] },
+             pick_list => { title => 'Pick Lists', name => ['Customer','Vendor'] },
+             sales_order => { title => 'Sales Orders', name => ['Customer'] },
+             work_order => { title => 'Work Orders', name => ['Customer'] },
+             purchase_order => { title => 'Purchase Orders', name => ['Vendor'] },
+             bin_list => { title => 'Bin Lists', name => ['Customer', 'Vendor'] },
+             sales_quotation => { title => 'Quotations', name => ['Customer'] },
+             request_quotation => { title => 'RFQs', name => ['Vendor'] },
+             timecard => { title => 'Time Cards', name => ['Employee'] },
 	   );
 
   $label{invoice}{invnumber} = qq|
@@ -97,26 +76,144 @@ sub search {
   $label{sales_order}{ordnumber} = $label{invoice}{ordnumber};
   $label{work_order}{ordnumber} = $label{invoice}{ordnumber};
   $label{purchase_order}{ordnumber} = $label{invoice}{ordnumber};
+  $label{bin_list}{invnumber} = $label{invoice}{invnumber};
   $label{bin_list}{ordnumber} = $label{invoice}{ordnumber};
   $label{request_quotation}{quonumber} = $label{sales_quotation}{quonumber};
   
-  # do one call to text
-  $form->{title} = $locale->text('Print')." ".$locale->text($label{$form->{type}}{title});
+  $label{print}{title} = "Print";
+  $label{queue}{title} = "Queued";
+  $label{email}{title} = "E-Mail";
+
+  $checked{$form->{batch}} = "checked";
+
+# $locale->text('Print')
+# $locale->text('Queued')
+# $locale->text('E-Mail')
+
+  $form->{title} = $locale->text($label{$form->{batch}}{title})." ".$locale->text($label{$form->{type}}{title});
+
+  if ($form->{batch} ne 'queue') {
+    $onhold = qq|
+		<input name=onhold class=checkbox type=checkbox value=Y> |.$locale->text('On Hold');
+
+    @a = qw(invoice packing_list pick_list bin_list);
+
+    if (! grep /$form->{type}/, @a) {
+      $onhold = "";
+    }
+
+    $openclosed = qq| 
+              <tr>
+	        <td></td>
+	        <td colspan=3 nowrap><input name=open class=checkbox type=checkbox value=Y checked> |.$locale->text('Open').qq|
+		<input name=closed class=checkbox type=checkbox value=Y> |.$locale->text('Closed').qq|
+		$onhold
+		<input name="printed" class=checkbox type=checkbox value=Y> |.$locale->text('Printed').qq|
+		<input name="notprinted" class=checkbox type=checkbox value=Y $checked{print}> |.$locale->text('Not Printed').qq|
+		<input name="emailed" class=checkbox type=checkbox value=Y> |.$locale->text('E-mailed').qq|
+		<input name="notemailed" class=checkbox type=checkbox value=Y $checked{email}> |.$locale->text('Not E-mailed').qq|
+		</td>
+              </tr>
+|;
+  }
+
+
+  # setup customer/vendor/employee selection
+  if (! BP->get_vc(\%myconfig, \%$form)) {
+    if ($form->{batch} eq 'queue') {
+      $form->error($locale->text('Nothing in the Queue!'));
+    }
+  }
+  
+  if ($form->{vc}) {
+    @{ $label{$form->{type}}{name} } = (ucfirst $form->{vc});
+  }
+
+  $k = 0;
+  foreach $vc (@{ $label{$form->{type}}{name} }) {
+    $vcn = lc $vc;
+    if ($form->{$vcn}) {
+      $k++;
+      if (@{ $form->{"all_$vcn"} }) {
+	
+	$form->{"select$vcn"} = qq|
+	<tr>
+	  <th align=right>|.$locale->text($vc).qq|</th>
+	  <td colspan=3><select name=$vcn><option>\n|;
+	  
+	for (@{ $form->{"all_$vcn"} }) { $form->{"select$vcn"} .= qq|<option value="$_->{name}--$_->{id}">$_->{name}\n| }
+	
+	$form->{"select$vcn"} .= qq|<option value="1--0">|.$locale->text('None') if $k > 1;
+	
+	$form->{"select$vcn"} .= qq|</select></tr>
+        <input type=hidden name="print$vcn" value=Y>|;
+
+      } else {
+	$form->{"select$vcn"} = qq|
+	  <tr>
+	    <th align=right>|.$locale->text($vc).qq|</th>
+	    <td colspan=3><input name=$vcn size=35>|;
+
+	if ($#{$label{$form->{type}}{name}} > 0) {
+	  $form->{"select$vcn"} .= qq|
+	    <input name=print$vcn type=checkbox class=checkbox value=Y checked>|;
+	} else {
+	  $form->{"select$vcn"} .= qq| 
+	    <input name=print$vcn type=hidden value="Y">|;
+
+	}
+
+        $vcnumber = "$vc Number";
+        $form->{"select$vcn"} .= qq|
+            </td>
+	  </tr>
+	  <tr>
+	    <th align=right>|.$locale->text($vcnumber).qq|</th>
+	    <td colspan=3><input name="${vcn}number" size=35></td>
+	  </tr>|;
+	    
+      }
+    }
+  }
+
+  if ($form->{type} eq 'timecard') {
+    if (@{ $form->{all_project} }) {
+      $projectnumber = qq|
+          <tr>
+	    <th align=right>|.$locale->text('Project Number').qq|</th>
+	    <td colspan=3><select name=projectnumber><option>\n|;
+
+	    for (@{ $form->{all_project} }) { $projectnumber .= qq|<option value="$_->{projectnumber}--$_->{id}">$_->{projectnumber}\n| }
+	    $projectnumber .= qq|</select></tr>|;
+    }
+  }
+  if ($form->{type} eq 'storescard') {
+    if (@{ $form->{all_project} }) {
+      $projectnumber = qq|
+          <tr>
+	    <th align=right>|.$locale->text('Job Number').qq|</th>
+	    <td colspan=3><select name=projectnumber><option>\n|;
+
+	    for (@{ $form->{all_project} }) { $projectnumber .= qq|<option value="$_->{projectnumber}--$_->{id}">$_->{projectnumber}\n| }
+	    $projectnumber .= qq|</select></tr>|;
+    }
+  }
+    
 
   # accounting years
   if (@{ $form->{all_years} }) {
     # accounting years
-    $form->{selectaccountingyear} = "<option>\n";
-    for (@{ $form->{all_years} }) { $form->{selectaccountingyear} .= qq|<option>$_\n| }
-    $form->{selectaccountingmonth} = "<option>\n";
-    for (sort keys %{ $form->{all_month} }) { $form->{selectaccountingmonth} .= qq|<option value=$_>|.$locale->text($form->{all_month}{$_}).qq|\n| }
+    $selectaccountingyear = "<option>\n";
+    for (@{ $form->{all_years} }) { $selectaccountingyear .= qq|<option>$_\n| }
+    $selectaccountingmonth = "<option>\n";
+    for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|<option value=$_>|.$locale->text($form->{all_month}{$_}).qq|\n| }
 
     $selectfrom = qq|
         <tr>
 	<th align=right>|.$locale->text('Period').qq|</th>
-	<td colspan=3>
-	<select name=month>$form->{selectaccountingmonth}</select>
-	<select name=year>$form->{selectaccountingyear}</select>
+	<td colspan=3 nowrap>
+	<select name=month>$selectaccountingmonth</select>
+	<select name=year>$selectaccountingyear</select>
 	<input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
 	<input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
 	<input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
@@ -126,16 +223,18 @@ sub search {
 |;
   }
 
+  $form->{sort} = "transdate";
+  $form->{nextsub} = "list_spool";
   
   $form->header;
-  
+
   print qq|
 <body>
 
 <form method=post action=$form->{script}>
 |;
 
-  $form->hide_form(qw(vc type title));
+  $form->hide_form(qw(batch sort nextsub type title));
 
   print qq|
 <table width=100%>
@@ -144,21 +243,26 @@ sub search {
   <tr>
     <td>
       <table>
-	<tr>
-	  <th align=right>|.$locale->text($label{$form->{type}}{name}).qq|</th>
-	  <td colspan=3>$name</td>
-	</tr>
+        $form->{selectcustomer}
+	$form->{selectvendor}
+	$form->{selectemployee}
 	$account
 	$label{$form->{type}}{invnumber}
 	$label{$form->{type}}{ordnumber}
 	$label{$form->{type}}{quonumber}
+	$projectnumber
+	<tr>
+	  <th align=right nowrap>|.$locale->text('Description').qq|</th>
+	  <td><input name=description size=40></td>
+	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('From').qq|</th>
-	  <td><input name=transdatefrom size=11 title="$myconfig{dateformat}"></td>
-	  <th align=right>|.$locale->text('To').qq|</th>
-	  <td><input name=transdateto size=11 title="$myconfig{dateformat}"></td>
+	  <td><input name=transdatefrom size=11 title="$myconfig{dateformat}">
+	  <b>|.$locale->text('To').qq|</b>
+	  <input name=transdateto size=11 title="$myconfig{dateformat}"></td>
 	</tr>
 	$selectfrom
+	$openclosed
       </table>
     </td>
   </tr>
@@ -167,14 +271,11 @@ sub search {
   </tr>
 </table>
 
-<input type=hidden name=sort value=transdate>
-<input type=hidden name=nextsub value=list_spool>
-
 <br>
 <input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">
 |;
-
-  $form->hide_form(qw(path login sessionid));
+  
+  $form->hide_form(qw(path login));
   
   print qq|
 
@@ -193,7 +294,7 @@ sub remove {
   $selected = 0;
   
   for $i (1 .. $form->{rowcount}) {
-    if ($form->{"checked_$i"}) {
+    if ($form->{"ndx_$i"}) {
       $selected = 1;
       last;
     }
@@ -213,10 +314,8 @@ sub remove {
 
   for (qw(action header)) { delete $form->{$_} }
   
-  foreach $key (keys %$form) {
-    print qq|<input type=hidden name=$key value="$form->{$key}">\n|;
-  }
-
+  $form->hide_form;
+  
   print qq|
 <h2 class=confirm>$form->{title}</h2>
 
@@ -247,57 +346,142 @@ sub yes {
 }
 
 
+
 sub print {
 
-  if ($form->{callback}) {
-    for (1 .. $form->{rowcount}) { $form->{callback} .= "&checked_$_=1" if $form->{"checked_$_"} }
-    $form->{callback} .= "&header=1";
+  $myform = new Form;
+  
+  for (keys %$form) {
+    $myform->{$_} = $form->{$_};
+    delete $form->{$_};
   }
 
-  for $i (1 .. $form->{rowcount}) {
-    if ($form->{"checked_$i"}) {
-      $form->{OUT} = "| $printer{$form->{media}}";
-      $form->info($locale->text('Printing')." ...");
+  %msg = ( print => 'Printing',
+           email => 'E-mailing',
+	   );
 
-      if (BP->print_spool(\%myconfig, \%$form, $spool)) {
-	print $locale->text('done');
-	$form->redirect($locale->text('Marked entries printed!'));
+# $locale->text('Printing')
+# $locale->text('E-mailing')
+
+  $ok = 0;
+  $myconfig{vclimit} = 0;
+  $r = 1;
+  $total = 0;
+
+  for my $i (1 .. $myform->{rowcount}) {
+    
+    if ($myform->{"ndx_$i"}) {
+
+      $ok = 1;
+      
+      for (keys %$form) { delete $form->{$_} }
+      
+      for (qw(id vc)) { $form->{$_} = $myform->{"${_}_$i"} }
+      $form->{script} = qq|$myform->{"module_$i"}.pl|;
+      for (qw(login path media sendmode format type precision)) { $form->{$_} = $myform->{$_} }
+
+      do "$form->{path}/$form->{script}";
+
+      if ($myform->{"module_$i"} eq 'oe') {
+	&order_links;
+	&prepare_order;
+	$form->{formname} = $myform->{type};
+	$inv = 'ord'
+      } elsif ($myform->{"module_$i"} eq 'jc') {
+	&{"prepare_$myform->{type}"};
+	$form->{formname} = $myform->{type};
+      } else {
+	&invoice_links;
+	&prepare_invoice;
+	if ($myform->{type} ne 'invoice') {
+	  $form->{formname} = $myform->{type};
+	}
+	delete $form->{paid};
+	for (1 .. $form->{paidaccounts}) { $form->{"paid_$_"} = $form->format_amount(\%myconfig, $form->{"paid_$_"}, $form->{precision}) }
+	$form->{paidaccounts}++;
+	$inv = 'inv'
       }
-      exit;
+
+      $form->{rowcount}++;
+
+      # unquote variables
+      if ($form->{media} eq 'email' || $form->{media} eq 'queue') {
+	for (keys %$form) { $form->{$_} = $form->unquote($form->{$_}) }
+      }
+
+      $myform->{description} = $form->{description};
+
+      &print_form;
+
+      $myform->info("${r}. ".$locale->text($msg{$myform->{batch}}).qq| ... $myform->{"reference_$i"}|);
+      $myform->info(qq|, $myform->{description}|) if $myform->{description};
+
+      if ($myform->{"module_$i"} ne 'jc') {
+	$total += $form->parse_amount(\%myconfig, $form->{"${inv}total"});
+	$myform->info(qq|, $form->{"${inv}total"}, $form->{"$form->{vc}number"}, $form->{"$form->{vc}"}, $form->{city}|);
+      }
+      $myform->info(" ... ".$locale->text('ok')."\n");
+
+      $r++;
+      
     }
   }
+  
+  $myform->info($locale->text('Total').": ".$form->format_amount(\%myconfig, $total, $form->{precision})) if $total;
+  
+  for (keys %$form) { delete $form->{$_} }
+  for (keys %$myform) { $form->{$_} = $myform->{$_} }
 
-  $form->error('Nothing selected!');
-
+  if ($ok) {
+    $form->{callback} = "";
+    $form->redirect;
+  } else {
+    $form->error($locale->text('Nothing selected!'));
+  }
+  
 }
+
+
+sub e_mail { &print }
 
 
 sub list_spool {
 
-  $form->{$form->{vc}} = $form->unescape($form->{$form->{vc}});
-  ($form->{$form->{vc}}, $form->{"$form->{vc}_id"}) = split(/--/, $form->{$form->{vc}});
-
   BP->get_spoolfiles(\%myconfig, \%$form);
 
-  $title = $form->escape($form->{title});
-  $href = "$form->{script}?action=list_spool&direction=$form->{direction}&oldsort=$form->{oldsort}&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&vc=$form->{vc}&type=$form->{type}&title=$title";
+  @a = qw(direction oldsort path login type printcustomer printvendor batch allbox);
+  $href = "$form->{script}?action=list_spool";
+  for (@a) { $href .= "&$_=$form->{$_}" }
+  $href .= "&title=".$form->escape($form->{title});
+
  
   $form->sort_order();
   
-  $title = $form->escape($form->{title},1);
-  $callback = "$form->{script}?action=list_spool&direction=$form->{direction}&oldsort=$form->{oldsort}&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&vc=$form->{vc}&type=$form->{type}&title=$title";
+  $callback = "$form->{script}?action=list_spool";
+  for (@a) { $callback .= "&$_=$form->{$_}" }
+  $callback .= "&title=".$form->escape($form->{title},1);
 
-  if ($form->{$form->{vc}}) {
-    $callback .= "&$form->{vc}=".$form->escape($form->{$form->{vc}},1);
-    $href .= "&$form->{vc}=".$form->escape($form->{$form->{vc}});
-    $option = ($form->{vc} eq 'customer') ? $locale->text('Customer') : $locale->text('Vendor');
-    $option .= " : $form->{$form->{vc}}";
-  }
-  if ($form->{account}) {
-    $callback .= "&account=".$form->escape($form->{account},1);
-    $href .= "&account=".$form->escape($form->{account});
-    $option .= "\n<br>" if ($option);
-    $option .= $locale->text('Account')." : $form->{account}";
+  %vc = ( customer => { name => 'Customer', number => 'Customer Number' },
+            vendor => { name => 'Vendor', number => 'Vendor Number' },
+          employee => { name => 'Employee', number => 'Employee Number' }
+	     );
+  
+  for (qw(customer vendor employee)) {
+    if ($form->{$_}) {
+      $var = $form->{$_};
+      $var =~ s/--.*//;
+      $callback .= "&$_=".$form->escape($var,1);
+      $href .= "&$_=".$form->escape($var);
+      $option .= "\n<br>" if ($option);
+      $option .= $locale->text($vc{$_}{name})." : $var";
+    }
+    if ($form->{"${_}number"}) {
+      $callback .= qq|&${_}number=|.$form->escape($form->{$form->{"${_}number"}},1);
+      $href .= qq|&${_}number=|.$form->escape($form->{$form->{"${_}number"}});
+      $option .= "\n<br>" if ($option);
+      $option .= $locale->text($vc{$_}{number}).qq| : $form->{"${_}number"}|;
+    }
+
   }
   if ($form->{invnumber}) {
     $callback .= "&invnumber=".$form->escape($form->{invnumber},1);
@@ -317,7 +501,20 @@ sub list_spool {
     $option .= "\n<br>" if ($option);
     $option .= $locale->text('Quotation Number')." : $form->{quonumber}";
   }
- 
+  if ($form->{projectnumber}) {
+    $callback .= "&projectnumber=".$form->escape($form->{projectnumber},1);
+    $href .= "&projectnumber=".$form->escape($form->{projectnumber});
+    $option .= "\n<br>" if ($option);
+    ($projectnumber) = split /--/, $form->{projectnumber};
+    $option .= $locale->text('Project Number')." : $projectnumber";
+  }
+
+  if ($form->{description}) {
+    $callback .= "&description=".$form->escape($form->{description},1);
+    $href .= "&description=".$form->escape($form->{description});
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Description')." : $form->{description}";
+  }
   if ($form->{transdatefrom}) {
     $callback .= "&transdatefrom=$form->{transdatefrom}";
     $href .= "&transdatefrom=$form->{transdatefrom}";
@@ -330,14 +527,52 @@ sub list_spool {
     $option .= "\n<br>" if ($option);
     $option .= $locale->text('To')."&nbsp;".$locale->date(\%myconfig, $form->{transdateto}, 1);
   }
-
-  $name = ucfirst $form->{vc};
-  
-  @columns = qw(transdate);
-  if ($form->{type} =~ /(invoice)/) {
-    push @columns, "invnumber";
+  if ($form->{open}) {
+    $callback .= "&open=$form->{open}";
+    $href .= "&open=$form->{open}";
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Open');
   }
-  if ($form->{type} =~ /(packing|pick)_list/) {
+  if ($form->{closed}) {
+    $callback .= "&closed=$form->{closed}";
+    $href .= "&closed=$form->{closed}";
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Closed');
+  }
+  if ($form->{onhold}) {
+    $callback .= "&onhold=$form->{onhold}";
+    $href .= "&onhold=$form->{onhold}";
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('On Hold');
+  } 
+  if ($form->{printed}) {
+    $callback .= "&printed=$form->{printed}";
+    $href .= "&printed=$form->{printed}";
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Printed');
+  }
+  if ($form->{emailed}) {
+    $callback .= "&emailed=$form->{emailed}";
+    $href .= "&emailed=$form->{emailed}";
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('E-mailed');
+  }
+  if ($form->{notprinted}) {
+    $callback .= "&notprinted=$form->{notprinted}";
+    $href .= "&notprinted=$form->{notprinted}";
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Not Printed');
+  }
+  if ($form->{notemailed}) {
+    $callback .= "&notemailed=$form->{notemailed}";
+    $href .= "&notemailed=$form->{notemailed}";
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Not E-mailed');
+  }
+
+
+  @columns = qw(transdate);
+  if ($form->{type} =~ /(packing|pick|bin)_list|invoice/) {
     push @columns, "invnumber";
   }
   if ($form->{type} =~ /_(order|list)$/) {
@@ -349,25 +584,57 @@ sub list_spool {
   if ($form->{type} eq 'timecard') {
     push @columns, "id";
   }
-
-
-  push @columns, (name, spoolfile);
+  
+  push @columns, qw(description name vcnumber);
+  push @columns, "email" if $form->{batch} eq 'email';
+  push @columns, qw(city amount);
+  push @columns, "spoolfile" if $form->{batch} eq 'queue';
+  
   @column_index = $form->sort_columns(@columns);
-  unshift @column_index, "checked";
+  unshift @column_index, qw(runningnumber ndx);
 
-  $column_header{checked} = "<th class=listheading>&nbsp;</th>";
+  $column_header{runningnumber} = "<th><a class=listheading>&nbsp;</th>";
+  $form->{allbox} = ($form->{allbox}) ? "checked" : "";
+  $action = ($form->{deselect}) ? "deselect_all" : "select_all";
+  $column_header{ndx} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll(); javascript:document.forms[0].submit()"><input type=hidden name=action value="$action"></th>|;
   $column_header{transdate} = "<th><a class=listheading href=$href&sort=transdate>".$locale->text('Date')."</a></th>";
   $column_header{invnumber} = "<th><a class=listheading href=$href&sort=invnumber>".$locale->text('Invoice')."</a></th>";
   $column_header{ordnumber} = "<th><a class=listheading href=$href&sort=ordnumber>".$locale->text('Order')."</a></th>";
   $column_header{quonumber} = "<th><a class=listheading href=$href&sort=quonumber>".$locale->text('Quotation')."</a></th>";
-  $column_header{name} = "<th><a class=listheading href=$href&sort=name>".$locale->text($name)."</a></th>";
+  $column_header{name} = "<th><a class=listheading href=$href&sort=name>".$locale->text('Name')."</a></th>";
+
+$column_header{vcnumber} = "<th><a class=listheading href=$href&sort=vcnumber>".$locale->text('Number')."</a></th>";
+
+  $column_header{email} = "<th class=listheading>".$locale->text('E-mail')."</th>";
+  $column_header{city} = "<th class=listheading>".$locale->text('City')."</th>";
   $column_header{id} = "<th><a class=listheading href=$href&sort=id>".$locale->text('ID')."</a></th>";
+  $column_header{description} = "<th><a class=listheading href=$href&sort=description>".$locale->text('Description')."</a></th>";
   $column_header{spoolfile} = "<th class=listheading>".$locale->text('Spoolfile')."</th>";
+  $column_header{amount} = "<th class=listheading>".$locale->text('Amount')."</th>";
 
 
   $form->header;
-
+  
   print qq|
+<script language="JavaScript">
+<!--
+
+function CheckAll() {
+
+  var frm = document.forms[0]
+  var el = frm.elements
+  var re = /ndx_/;
+  
+  for (i = 0; i < el.length; i++) {
+    if (el[i].type == 'checkbox' && re.test(el[i].name)) {
+      el[i].checked = frm.allbox.checked
+    }
+  }
+
+}
+// -->
+</script>
+
 <body>
 
 <form method=post action=$form->{script}>
@@ -398,15 +665,20 @@ sub list_spool {
 
   # escape callback for href
   $callback = $form->escape($callback);
-  
+
   $i = 0;
+  $totalamount = 0;
   
   foreach $ref (@{ $form->{SPOOL} }) {
 
     $i++;
-   
-    $form->{"checked_$i"} = "checked" if $form->{"checked_$i"};
     
+    if ($form->{"ndx_$i"}) {
+      $form->{"ndx_$i"} = "checked";
+    }
+    
+    $totalamount += $ref->{amount};
+
     # this is for audittrail
     $form->{module} = $ref->{module};
     
@@ -415,30 +687,35 @@ sub list_spool {
     }
     $module = "$ref->{module}.pl";
     
-    $column_data{transdate} = "<td>$ref->{transdate}&nbsp;</td>";
+    $column_data{amount} = qq|<td align=right>|.$form->format_amount(\%myconfig, $ref->{amount}, $form->{precision}).qq|</td>|;
 
-    if ($spoolfile eq $ref->{spoolfile}) {
-      $column_data{checked} = qq|<td></td>|;
-    } else {
-      $column_data{checked} = qq|<td><input name=checked_$i type=checkbox class=checkbox $form->{"checked_$i"} $form->{"checked_$i"}></td>|;
+    $column_data{ndx} = qq|<td><input name="ndx_$i" type=checkbox class=checkbox $form->{"ndx_$i"} $form->{"ndx_$i"}></td>|;
+
+    if ($form->{batch} eq 'queue') {
+      if ($spoolfile eq $ref->{spoolfile}) {
+	$column_data{ndx} = qq|<td></td>|;
+      }
     }
     
-    for (qw(id invnumber ordnumber quonumber)) { $column_data{$_} = qq|<td>$ref->{$_}</td>| }
-    
+    $column_data{runningnumber} = qq|<td>$i</td>|;
+
+    for (qw(description email city id invnumber ordnumber quonumber vcnumber)) { $column_data{$_} = qq|<td>$ref->{$_}</td>| }
+    $column_data{transdate} = qq|<td nowrap>$ref->{transdate}</td>|;
+
     if ($ref->{module} eq 'oe') {
       $column_data{invnumber} = qq|<td>&nbsp</td>|;
-      $column_data{ordnumber} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&type=$form->{type}&callback=$callback>$ref->{ordnumber}</a></td>
-      <input type=hidden name="reference_$i" value="$ref->{ordnumber}">|;
+      $column_data{ordnumber} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{ordnumber}</a></td>
+      <input type=hidden name="reference_$i" value="|.$form->quote($ref->{ordnumber}).qq|">|;
       
-      $column_data{quonumber} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&type=$form->{type}&callback=$callback>$ref->{quonumber}</a></td>
-    <input type=hidden name="reference_$i" value="$ref->{quonumber}">|;
+      $column_data{quonumber} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{quonumber}</a></td>
+    <input type=hidden name="reference_$i" value="|.$form->quote($ref->{quonumber}).qq|">|;
  
     } elsif ($ref->{module} eq 'jc') {
-      $column_data{id} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&type=$form->{type}&callback=$callback>$ref->{id}</a></td>
+      $column_data{id} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{id}</a></td>
     <input type=hidden name="reference_$i" value="$ref->{id}">|;
     } else {
-      $column_data{invnumber} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&type=$form->{type}&callback=$callback>$ref->{invnumber}</a></td>
-    <input type=hidden name="reference_$i" value="$ref->{invnumber}">|;
+      $column_data{invnumber} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{invnumber}</a></td>
+    <input type=hidden name="reference_$i" value="|.$form->quote($ref->{invnumber}).qq|">|;
     }
     
    
@@ -457,13 +734,22 @@ sub list_spool {
     for (@column_index) { print "\n$column_data{$_}" }
 
     print qq|
-<input type=hidden name="id_$i" value=$ref->{id}>
-<input type=hidden name="spoolfile_$i" value=$ref->{spoolfile}>
-
         </tr>
-|;
 
+<input type=hidden name="id_$i" value="$ref->{id}">
+<input type=hidden name="spoolfile_$i" value="$ref->{spoolfile}">
+<input type=hidden name="vc_$i" value="$ref->{vc}">
+<input type=hidden name="module_$i" value="$ref->{module}">
+|;
   }
+
+  for (@column_index) { $column_data{$_} = "<td>&nbsp;</td>" }
+
+  $column_data{amount} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $totalamount, $form->{precision}, "&nbsp;")."</th>";
+  
+  print qq|<tr class=listtotal>|;
+  
+  for (@column_index) { print "\n$column_data{$_}" }
 
   print qq|
 <input type=hidden name=rowcount value=$i>
@@ -479,30 +765,101 @@ sub list_spool {
 <br>
 |;
 
-  $form->hide_form(qw(callback title vc type sort module account path login sessionid));
-    
-  if (%printer && $latex) {
-    foreach $key (sort keys %printer) {
-      print qq|
-<input name=media type=radio class=radio value="$key" |;
-      print qq|checked| if $key eq $myconfig{printer};
-      print qq|>$key|;
-    }
+  $form->hide_form(qw(callback title type sort path login printcustomer printvendor customer customernumber vendor vendornumber employee employeenumber batch invnumber ordnumber quonumber description transdatefrom transdateto open closed onhold printed emailed notprinted notemailed));
 
-    print qq|<p>\n|;
-    
-# type=submit $locale->text('Select all')
-# type=submit $locale->text('Print')
-# type=submit $locale->text('Remove')
+  $form->{copies} ||= 1;
 
-    %button = ('Select all' => { ndx => 2, key => 'A', value => $locale->text('Select all') },
-               'Print' => { ndx => 3, key => 'P', value => $locale->text('Print') },
-	       'Remove' => { ndx => 4, key => 'R', value => $locale->text('Remove') },
-	      );
-	       
-    for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
-    
+  $selectformat = "";
+  $media = qq|<select name=media>|;
+  
+  if ($form->{batch} eq 'email') {
+    $form->{format} ||= "pdf";
+    $selectformat .= qq|
+          <option value="html">|.$locale->text('html');
+  } else {
+    $form->{media} ||= $myconfig{printer};
+    $form->{format} ||= "postscript";
+    exit if (! $latex && $form->{batch} eq 'print');
   }
+  
+  if ($latex) {
+    $selectformat .= qq|
+	  <option value="postscript">|.$locale->text('Postscript').qq|
+          <option value="pdf">|.$locale->text('PDF');
+  }
+   
+  if (%printer && $form->{batch} ne 'email') {
+    
+    for (sort keys %printer) { $media .= qq|
+          <option value="$_">$_| }
+
+    $media .= qq|
+          <option value="queue">|.$locale->text('Queue') if $form->{batch} eq 'print';
+	  
+    $copies = qq|
+      <td nowrap>|.$locale->text('Copies').qq|
+      <input name=copies size=2 value=$form->{copies}></td>
+|;
+
+  }
+ 
+  $media .= qq|</select>|;
+
+  $media =~ s/(<option value="\Q$form->{media}\E")/$1 selected/;
+  $media = qq|<td>$media</td>|;
+  
+  $format = qq|<select name=format>$selectformat</select>|;
+  $format =~ s/(<option value="\Q$form->{format}\E")/$1 selected/;
+  $format = qq|<td>$format</td>|;
+ 
+  if ($form->{batch} eq 'email') {
+    $media = qq|<input type="hidden" name="media" value="email">
+<input type="hidden" name="sendmode" value="attachment">
+|;
+  }
+  if ($form->{batch} eq 'queue') {
+    $format = "";
+    $copies = "";
+  }
+
+
+  print qq|
+<table>
+  <tr>
+  $format
+  $media
+  $copies
+  </tr>
+</table>
+<p>
+|;
+  
+  %button = ('Select all' => { ndx => 2, key => 'A', value => $locale->text('Select all') },
+               'Deselect all' => { ndx => 3, key => 'A', value => $locale->text('Deselect all') },
+               'Print' => { ndx => 4, key => 'P', value => $locale->text('Print') },
+               'E-mail' => { ndx => 5, key => 'E', value => $locale->text('E-mail') },
+	       'Remove' => { ndx => 6, key => 'R', value => $locale->text('Remove') },
+	      );
+
+
+  if ($form->{deselect}) {
+    delete $button{'Select all'};
+  } else {
+    delete $button{'Deselect all'};
+  }
+  
+  if ($form->{batch} eq 'print' || $form->{batch} eq 'queue') {
+    delete $button{'E-mail'};
+  }
+  if ($form->{batch} ne 'queue') {
+    delete $button{'Remove'};
+  }
+  if ($form->{batch} eq 'email') {
+    delete $button{'Print'};
+  }
+
+  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+    
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -521,7 +878,18 @@ sub list_spool {
 
 sub select_all {
 
-  for (1 .. $form->{rowcount}) { $form->{"checked_$_"} = 1 }
+  for (1 .. $form->{rowcount}) { $form->{"ndx_$_"} = 1 }
+  $form->{allbox} = 1;
+  $form->{deselect} = 1;
+  &list_spool;
+  
+}
+
+
+sub deselect_all {
+  
+  for (1 .. $form->{rowcount}) { $form->{"ndx_$_"} = "" }
+  $form->{allbox} = "";
   &list_spool;
   
 }

@@ -1,0 +1,28 @@
+$self{texts} = {
+  'City'                        => 'Poststed',
+  'Continue'                    => 'Fortsett',
+  'Curr'                        => 'Val',
+  'Customer'                    => 'Kunde',
+  'Customer Number'             => 'Kundenummer',
+  'Description'                 => 'Beskrivelse',
+  'Due Date'                    => 'Forfallsdato',
+  'Invoice Date'                => 'Fakturadato',
+  'Invoice Number'              => 'Fakturanummer',
+  'No'                          => 'Nei',
+  'Qty'                         => 'Antall',
+  'Salesperson'                 => 'Selger',
+  'Total'                       => 'I alt',
+  'Unit'                        => 'Enhet',
+  'Yes'                         => 'Ja',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'do_import'                   => 'do_import',
+  'import'                      => 'import',
+  'import_sales_invoices'       => 'import_sales_invoices',
+  'fortsett'                    => 'continue',
+};
+
+1;
+

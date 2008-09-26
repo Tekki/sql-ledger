@@ -36,6 +36,7 @@ $self{texts} = {
   'Oct'                         => 'Οκτ',
   'October'                     => 'Οκτώβριος',
   'Project Number'              => 'Αριθμός έργου',
+  'Source'                      => 'Πηγή',
 };
 
 $self{subs} = {

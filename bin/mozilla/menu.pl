@@ -1,25 +1,10 @@
 ######################################################################
-# SQL-Ledger Accounting
-# Copyright (c) 2001
+# SQL-Ledger ERP
+# Copyright (c) 2006
 #
 #  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.org
+#     Web: http://www.sql-ledger.com
 #
-#  Contributors: Christopher Browne
-#                Tony Fraser <tony@sybaspace.com>
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #######################################################################
 #
 # two frame layout with refractured menu
@@ -73,7 +58,6 @@ sub acc_menu {
 function SwitchMenu(obj) {
   if (document.getElementById) {
     var el = document.getElementById(obj);
-    var ar = document.getElementById("cont").getElementsByTagName("DIV");
 
     if (el.style.display == "none") {
       el.style.display = "block"; //display the block of info
@@ -180,10 +164,6 @@ sub section_menu {
 sub js_menu {
   my ($menu, $level) = @_;
 
- print qq|
-	<div id="cont">
-	|;
-
   # build tiered menus
   my @menuorder = $menu->access_control(\%myconfig, $level);
 
@@ -201,7 +181,7 @@ sub js_menu {
 	$display = "display: none;" unless $level eq ' ';
 
 	print qq|
-<div id="menu$i" class="menuOut" onclick="SwitchMenu('sub$i')" onmouseover="ChangeClass('menu$i','menuOver')" onmouseout="ChangeClass('menu$i','menuOut')">$label</div>
+        <div id="menu$i" class="menuOut" onclick="SwitchMenu('sub$i')" onmouseover="ChangeClass('menu$i','menuOver')" onmouseout="ChangeClass('menu$i','menuOut')">$label</div>
 	<div class="submenu" id="sub$i" style="$display">|;
 	
 	# remove same level items
@@ -210,9 +190,8 @@ sub js_menu {
 	&js_menu($menu, $item);
 	
 	print qq|
-
-		</div>
-		|;
+	</div>
+|;
 
     } else {
 
@@ -243,9 +222,8 @@ sub js_menu {
 	&js_menu($menu, $item);
 	
 	print qq|
-
-		</div>
-		|;
+	</div>
+|;
 
       }
 
@@ -253,9 +231,6 @@ sub js_menu {
 
   }
 
-  print qq|
-	</div>
-	|;
 }
 
 

@@ -1,0 +1,31 @@
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'City'                        => 'Град',
+  'Continue'                    => 'Продължение',
+  'Curr'                        => 'Валута',
+  'Customer'                    => 'Клиент',
+  'Customer Number'             => 'Клиент номер',
+  'Description'                 => 'Обяснение',
+  'Due Date'                    => 'Платете до',
+  'Invoice Date'                => 'Фактура дата',
+  'Invoice Number'              => 'Фактура номер',
+  'No'                          => 'Но.',
+  'Posting failed!'             => 'Грешка при запазване!',
+  'Qty'                         => 'К-во',
+  'Salesperson'                 => 'Продавач',
+  'Total'                       => 'Всичко',
+  'Unit'                        => 'Единица',
+  'Yes'                         => 'Да',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'do_import'                   => 'do_import',
+  'import'                      => 'import',
+  'import_sales_invoices'       => 'import_sales_invoices',
+  'Продължение'      => 'continue',
+};
+
+1;
+

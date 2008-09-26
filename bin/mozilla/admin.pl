@@ -1,23 +1,10 @@
 #=====================================================================
-# SQL-Ledger Accounting
-# Copyright (c) 2002
+# SQL-Ledger ERP
+# Copyright (c) 2006
 #
 #  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.org
+#     Web: http://www.sql-ledger.com
 #
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #======================================================================
 #
 # setup module
@@ -87,14 +74,14 @@ password=
 sub adminlogin {
 
   $form->{title} = qq|SQL-Ledger $form->{version} |.$locale->text('Administration');
-
+  
   $form->header;
   
     print qq|
 <script language="JavaScript" type="text/javascript">
 <!--
 function sf(){
-  document.admin.password.focus();
+  document.forms[0].password.focus();
 }
 // End -->
 </script>
@@ -103,10 +90,10 @@ function sf(){
 
 <div align=center>
 
-<a href="http://www.sql-ledger.org"><img src=sql-ledger.gif border=0></a>
+<a href="http://www.sql-ledger.org"><img src=sql-ledger.gif border=0 target=_blank></a>
 <h1 class=login>|.$locale->text('Version').qq| $form->{version}<p>|.$locale->text('Administration').qq|</h1>
 
-<form method=post action="$form->{script}" name=admin>
+<form method=post action="$form->{script}">
 
 <table>
   <tr>
@@ -120,7 +107,7 @@ function sf(){
 
 </form>
 
-<a href=http://www.sql-ledger.org>SQL-Ledger |.$locale->text('website').qq|</a>
+<a href=http://www.sql-ledger.org target=_blank>SQL-Ledger |.$locale->text('website').qq|</a>
 
 </div>
 
@@ -132,7 +119,7 @@ function sf(){
 
 
 sub create_config {
-  
+
   $form->{sessionkey} = "";
   $form->{sessioncookie} = "";
   
@@ -140,13 +127,13 @@ sub create_config {
     my $t = time + $form->{timeout};
     srand( time() ^ ($$ + ($$ << 15)) );
     $key = "root login$form->{password}$t";
-    
+
     my $i = 0;
     my $l = length $key;
     my $j = $l;
     my %ndx = ();
     my $pos;
-    
+
     while ($j > 0) {
       $pos = int rand($l);
       next if $ndx{$pos};
@@ -163,7 +150,7 @@ sub create_config {
 \%rootconfig = (
 sessionkey => '$form->{sessionkey}'
 );\n\n|;
-  
+
   close CONF;
 
 }
@@ -227,10 +214,9 @@ sub form_footer {
 
   print qq|
 
-<input name=callback type=hidden value="$form->{script}?action=list_users&path=$form->{path}&sessionid=$form->{sessionid}">
+<input name=callback type=hidden value="$form->{script}?action=list_users&path=$form->{path}">
 
 <input type=hidden name=path value=$form->{path}>
-<input type=hidden name=sessionid value=$form->{sessionid}>
 
 <input type=submit class=submit name=action value="|.$locale->text('Save').qq|">
 $delete
@@ -294,6 +280,7 @@ sub list_users {
 
   $form->{title} = "SQL-Ledger ".$locale->text('Accounting')." ".$locale->text('Administration');
 
+
   $form->header;
 
   print qq|
@@ -355,7 +342,6 @@ print qq|
 </table>
 
 <input type=hidden name=path value=$form->{path}>
-<input type=hidden name=sessionid value=$form->{sessionid}>
 
 <br><input type=submit class=submit name=action value="|.$locale->text('Add User').qq|">
 <input type=submit class=submit name=action value="|.$locale->text('Change Admin Password').qq|">
@@ -386,8 +372,7 @@ sub form_header {
     # get user
     $myconfig = new User "$memberfile", "$form->{login}";
 
-    for (qw(company address signature)) { $myconfig->{$_} = $form->quote($myconfig->{$_}) }
-    for (qw(address signature)) { $myconfig->{$_} =~ s/\\n/\n/g }
+    $myconfig->{signature} =~ s/\\n/\n/g;
 
     # strip basedir from templates directory
     $myconfig->{templates} =~ s/^$templates\///;
@@ -510,7 +495,7 @@ sub form_header {
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('Name').qq|</th>
-	  <td><input name=name size=15 value="$myconfig->{name}"></td>
+	  <td><input name=name size=15 value="|.$form->quote($myconfig->{name}).qq|"></td>
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('E-mail').qq|</th>
@@ -530,11 +515,7 @@ sub form_header {
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('Company').qq|</th>
-	  <td><input name=company size=35 value="$myconfig->{company}"></td>
-	</tr>
-	<tr valign=top>
-	  <th align=right>|.$locale->text('Address').qq|</th>
-	  <td><textarea name=address rows=4 cols=35>$myconfig->{address}</textarea></td>
+	  <td><input name=company size=35 value="|.$form->quote($myconfig->{company}).qq|"></td>
 	</tr>
       </table>
     </td>
@@ -776,7 +757,6 @@ sub save {
   # no driver checked
   $form->error($locale->text('Database Driver not checked!')) unless $form->{dbdriver};
 
- 
   # no spaces allowed in login name
   $form->{login} =~ s/ //g;
 
@@ -842,7 +822,7 @@ sub save {
     $form->isblank("dbname", $locale->text('Dataset missing!'));
     $form->isblank("dbuser", $locale->text('Database User missing!'));
   }
-  
+    
   foreach $item (keys %{$form}) {
     $myconfig->{$item} = $form->{$item};
   }
@@ -987,7 +967,7 @@ sub delete {
   if ($myconfig{dbconnect}) {
     $myconfig{dbpasswd} = unpack 'u', $myconfig{dbpasswd};
     for (keys %myconfig) { $form->{$_} = $myconfig{$_} }
-    
+
     User->delete_login(\%$form);
   
     # delete config file for user
@@ -1045,7 +1025,6 @@ sub change_admin_password {
 <br>
 <hr size=3 noshade>
 <input type=hidden name=path value=$form->{path}>
-<input type=hidden name=sessionid value=$form->{sessionid}>
 
 <p>
 <input type=submit class=submit name=action value="|.$locale->text('Change Password').qq|">
@@ -1072,7 +1051,7 @@ sub change_password {
   $form->{password} = $form->{new_password};
   &create_config;
   
-  $form->{callback} = "$form->{script}?action=list_users&path=$form->{path}&sessionid=$form->{sessionid}&password=$form->{password}";
+  $form->{callback} = "$form->{script}?action=list_users&path=$form->{path}&password=$form->{password}";
 
   $form->redirect($locale->text('Password changed!'));
 
@@ -1087,7 +1066,7 @@ sub check_password {
   eval { require "$userspath/${rootname}.conf"; };
   
   if ($root->{password}) {
-   
+      
     if ($form->{password}) {
       $form->{callback} .= "&password=$form->{password}" if $form->{callback};
       if ($root->{password} ne crypt $form->{password}, 'ro') {
@@ -1099,7 +1078,7 @@ sub check_password {
       &create_config;
       
     } else {
-
+      
       if ($ENV{HTTP_USER_AGENT}) {
 	$ENV{HTTP_COOKIE} =~ s/;\s*/;/g;
 	@cookies = split /;/, $ENV{HTTP_COOKIE};
@@ -1108,14 +1087,14 @@ sub check_password {
 	  ($name,$value) = split /=/, $_, 2;
 	  $cookie{$name} = $value;
 	}
- 
+	
 	$cookie = ($form->{path} eq 'bin/lynx') ? $cookie{login} : $cookie{"SL-root login"};
 
-	if ($cookie) {
+        if ($cookie) {
 	  $form->{sessioncookie} = $cookie;
 
-	  $s = ""; 
-	  %ndx = (); 
+	  $s = "";
+	  %ndx = ();
 	  $l = length $form->{sessioncookie};
 
 	  for $i (0 .. $l - 1) {
@@ -1124,25 +1103,25 @@ sub check_password {
 	  }
 
 	  for (sort keys %ndx) {
-	    $s .= $ndx{$_}; 
+	    $s .= $ndx{$_};
 	  }
 
 	  $l = length 'root login';
 	  $login = substr($s, 0, $l);
 	  $time = substr($s, -10);
 	  $password = substr($s, $l, (length $s) - ($l + 10));
-
-	  if ((time > $time) || ($login ne 'root login') || ($root->{password} ne crypt $password, 'ro')) {
-	    &getpassword; 
-	    exit; 
-	  }
 	  
+	  if ((time > $time) || ($login ne 'root login') || ($root->{password} ne crypt $password, 'ro')) {
+	    &getpassword;
+	    exit;
+	  }
+
 	} else {
-	  &getpassword; 
+	  &getpassword;
 	  exit;
 	}
       } else {
-	&getpassword; 
+	&getpassword;
 	exit;
       }
     }
@@ -1249,9 +1228,8 @@ sub dbselect_source {
 	</tr>
       </table>
 
-<input name=callback type=hidden value="$form->{script}?action=list_users&path=$form->{path}&sessionid=$form->{sessionid}">
+<input name=callback type=hidden value="$form->{script}?action=list_users&path=$form->{path}">
 <input type=hidden name=path value=$form->{path}>
-<input type=hidden name=sessionid value=$form->{sessionid}>
 
 <br>
 
@@ -1337,10 +1315,9 @@ $upd
 
 <input name=dbupdate type=hidden value="$form->{dbupdate}">
 
-<input name=callback type=hidden value="$form->{script}?action=list_users&path=$form->{path}&sessionid=$form->{sessionid}">
+<input name=callback type=hidden value="$form->{script}?action=list_users&path=$form->{path}">
 
 <input type=hidden name=path value=$form->{path}>
-<input type=hidden name=sessionid value=$form->{sessionid}>
 
 <input type=hidden name=nextsub value=dbupdate>
 
@@ -1501,11 +1478,11 @@ sub create_dataset {
 </table>
 |;
 
-  $form->hide_form(qw(dbdriver dbuser dbhost dbport dbpasswd dbdefault path sessionid));
+  $form->hide_form(qw(dbdriver dbuser dbhost dbport dbpasswd dbdefault path));
   
   print qq|
   
-<input name=callback type=hidden value="$form->{script}?action=list_users&path=$form->{path}&sessionid=$form->{sessionid}">
+<input name=callback type=hidden value="$form->{script}?action=list_users&path=$form->{path}">
 <input type=hidden name=nextsub value=dbcreate>
   
 <br>
@@ -1545,7 +1522,6 @@ sub dbcreate {
 .qq|
 
 <input type=hidden name=path value="$form->{path}">
-<input type=hidden name=sessionid value=$form->{sessionid}>
 
 <input type=hidden name=nextsub value=list_users>
 
@@ -1601,10 +1577,9 @@ sub delete_dataset {
 <input type=hidden name=dbpasswd value=$form->{dbpasswd}>
 <input type=hidden name=dbdefault value=$form->{dbdefault}>
 
-<input name=callback type=hidden value="$form->{script}?action=list_users&path=$form->{path}&sessionid=$form->{sessionid}">
+<input name=callback type=hidden value="$form->{script}?action=list_users&path=$form->{path}">
 
 <input type=hidden name=path value="$form->{path}">
-<input type=hidden name=sessionid value=$form->{sessionid}>
 
 <input type=hidden name=nextsub value=dbdelete>
 
@@ -1651,7 +1626,6 @@ $form->{db} |.$locale->text('successfully deleted!')
 .qq|
 
 <input type=hidden name=path value="$form->{path}">
-<input type=hidden name=sessionid value=$form->{sessionid}>
 
 <input type=hidden name=nextsub value=list_users>
 
@@ -1670,7 +1644,7 @@ sub unlock_system {
 
   unlink "$userspath/nologin";
   
-  $form->{callback} = "$form->{script}?action=list_users&path=$form->{path}&sessionid=$form->{sessionid}";
+  $form->{callback} = "$form->{script}?action=list_users&path=$form->{path}";
 
   $form->redirect($locale->text('Lockfile removed!'));
 
@@ -1682,7 +1656,7 @@ sub lock_system {
   open(FH, ">$userspath/nologin") or $form->error($locale->text('Cannot create Lock!'));
   close(FH);
   
-  $form->{callback} = "$form->{script}?action=list_users&path=$form->{path}&sessionid=$form->{sessionid}";
+  $form->{callback} = "$form->{script}?action=list_users&path=$form->{path}";
 
   $form->redirect($locale->text('Lockfile created!'));
 

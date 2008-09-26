@@ -32,6 +32,7 @@ begin
   delete from shipto where trans_id = old.id;
   delete from customertax where customer_id = old.id;
   delete from partscustomer where customer_id = old.id;
+  delete from address where trans_id = old.id;
   return NULL;
 end;
 ' language 'plpgsql';
@@ -45,6 +46,7 @@ begin
   delete from shipto where trans_id = old.id;
   delete from vendortax where vendor_id = old.id;
   delete from partsvendor where vendor_id = old.id;
+  delete from address where trans_id = old.id;
   return NULL;
 end;
 ' language 'plpgsql';
@@ -63,7 +65,7 @@ declare
 
 begin
 
-  select into d_curr substr(curr,1,3) from defaults;
+  select into d_curr substr(fldvalue,1,3) from defaults where fldname = ''currencies'';
   
   if TG_RELNAME = ''ar'' then
     select into t_curr, t_transdate curr, transdate from ar where id = old.id;

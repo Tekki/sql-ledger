@@ -1,6 +1,7 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'Accounting Menu'             => 'Kirjanpitovalikko',
-  'Add POS Invoice'             => 'Lisää käteislasku',
   'Amount'                      => 'Summa',
   'Business'                    => 'Toimiala',
   'Cannot post transaction!'    => 'Vientiä ei voi kirjata',
@@ -10,11 +11,11 @@ $self{texts} = {
   'Currency'                    => 'Valuutta',
   'Current'                     => 'Erääntyy',
   'Customer'                    => 'Asiakas',
+  'Customer Number'             => 'Asiakasnumero',
   'Customer missing!'           => 'Asiakas puuttuu!',
   'Delete'                      => 'Poista',
   'Department'                  => 'Toimipiste',
   'Description'                 => 'Kuvaus',
-  'Edit POS Invoice'            => 'Muokkaa käteismyyntilaskua',
   'Exchange Rate'               => 'Vaihtokurssi',
   'Exchange rate missing!'      => 'Vaihtokurssi puuttuu',
   'Extended'                    => 'Pidennetty',
@@ -36,6 +37,7 @@ $self{texts} = {
   'Receipts'                    => 'Kuitit',
   'Record in'                   => 'Talleta tilille',
   'Remaining'                   => 'Jäljellä',
+  'Sales Invoice'               => 'Myyntilasku',
   'Salesperson'                 => 'Myyjä',
   'Screen'                      => 'Näyttö',
   'Select a Printer!'           => 'Valitse tulostin',
@@ -74,7 +76,8 @@ $self{subs} = {
   'kirjaa'                      => 'post',
   'tulosta'                     => 'print',
   'tulosta_ja_kirjaa'           => 'print_and_post',
-  'päivitä'                     => 'update',
+  'myyntilasku'                 => 'sales_invoice',
+  'päivitä'                   => 'update',
 };
 
 1;

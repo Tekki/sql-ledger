@@ -69,7 +69,7 @@ Tax Number: <%vendortaxnumber%>
 
 \vspace{1cm}
 
-\begin{tabularx}{\textwidth}[t]{@{}llrX@{\hspace{1cm}}l@{}}
+\begin{tabular}[t]{@{}llrl@{\hspace{1cm}}l@{}}
 <%foreach amount%>
   <%accno%> & <%account%> & <%amount%> & <%description%> & <%projectnumber%> \\
 <%end amount%>
@@ -81,7 +81,7 @@ Tax Number: <%vendortaxnumber%>
 
   \multicolumn{2}{r}{\textbf{Total}} & <%invtotal%> & \\
   
-\end{tabularx}
+\end{tabular}
 
 \vspace{0.3cm}
 

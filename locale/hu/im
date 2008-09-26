@@ -1,0 +1,31 @@
+$self{charset} = 'ISO-8859-2';
+
+$self{texts} = {
+  'City'                        => 'Ország',
+  'Continue'                    => 'Folytatás',
+  'Curr'                        => 'Dev',
+  'Customer'                    => 'Vevõ',
+  'Customer Number'             => 'Ügyfél szám',
+  'Description'                 => 'Szöveges leírás',
+  'Due Date'                    => 'Esedékesség',
+  'Invoice Date'                => 'Teljesítés dátuma',
+  'Invoice Number'              => 'Számlaszám',
+  'No'                          => 'Nem',
+  'Posting failed!'             => 'A rögzítés nem sikerült!',
+  'Qty'                         => 'Menny.',
+  'Salesperson'                 => 'Ügynök',
+  'Total'                       => 'Végösszeg',
+  'Unit'                        => 'Egység',
+  'Yes'                         => 'Igen',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'do_import'                   => 'do_import',
+  'import'                      => 'import',
+  'import_sales_invoices'       => 'import_sales_invoices',
+  'folytatás'                   => 'continue',
+};
+
+1;
+

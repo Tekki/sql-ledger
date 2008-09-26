@@ -1,6 +1,8 @@
 $self{texts} = {
+  'Add Part'                    => 'Afegir Article',
   'Add Purchase Order'          => 'Afegir Ordre Compra',
   'Add Sales Order'             => 'Afegir Pressupost',
+  'Add Service'                 => 'Afegir Servei',
   'Address'                     => 'Adreça',
   'Apr'                         => 'Abr',
   'April'                       => 'Abril',
@@ -11,6 +13,7 @@ $self{texts} = {
   'Contact'                     => 'Contacte',
   'Continue'                    => 'Continuar',
   'Copies'                      => 'Còpies',
+  'Customer'                    => 'Client',
   'Date'                        => 'Data',
   'Dec'                         => 'Des',
   'December'                    => 'Desembre',
@@ -46,7 +49,6 @@ $self{texts} = {
   'Packing List'                => 'Albarà',
   'Packing List Date missing!'  => 'Falta Data Albarà!',
   'Packing List Number missing!' => 'Falta Número Albarà!',
-  'Part'                        => 'Article',
   'Phone'                       => 'Tel',
   'Price'                       => 'Preu',
   'Purchase Order'              => 'Ordre de Compra',
@@ -56,18 +58,16 @@ $self{texts} = {
   'Screen'                      => 'Pantalla',
   'Sep'                         => 'Set',
   'September'                   => 'Setembre',
-  'Service'                     => 'Servei',
   'Subtotal'                    => 'Subtotal',
   'To'                          => 'Fins',
   'Unit'                        => 'Unitat',
-  'What type of item is this?'  => 'Quin tipus d\'element és?',
+  'Vendor'                      => 'Proveïdor',
 };
 
 $self{subs} = {
   'calc_markup'                 => 'calc_markup',
   'check_form'                  => 'check_form',
   'create_form'                 => 'create_form',
-  'customer_details'            => 'customer_details',
   'display_form'                => 'display_form',
   'display_row'                 => 'display_row',
   'e_mail'                      => 'e_mail',
@@ -85,7 +85,8 @@ $self{subs} = {
   'send_email'                  => 'send_email',
   'ship_to'                     => 'ship_to',
   'validate_items'              => 'validate_items',
-  'vendor_details'              => 'vendor_details',
+  'afegir_article'              => 'add_part',
+  'afegir_servei'               => 'add_service',
   'continuar'                   => 'continue',
 };
 

@@ -1,14 +1,14 @@
-                SQL-Ledger Accounting
-                     Version 2.6
+                   SQL-Ledger ERP
+                    Version 2.8
 
 
 DESCRIPTION:
 ------------
-SQL-Ledger is a double-entry accounting system written
-in perl. It has been tested with PostgreSQL, Apache,
-Netscape, Mozilla, Galeon, Explorer, Links, Lynx,
-Konqueror, Voyager, W3M and Opera clients on Linux,
-FreeBSD, Solaris, Windows, Mac computers and PDA's.
+SQL-Ledger is a double-entry accounting/ERP system written
+in perl. It has been tested with PostgreSQL, Apache, Netscape,
+Mozilla, Galeon, Explorer, Links, Lynx, Konqueror, Voyager,
+W3M and Opera clients on Linux, FreeBSD, Solaris, Windows,
+Mac computers and PDA's.
 
 Data is stored in a SQL database server, either locally or
 remote, the display is through a text or GUI web browser.
@@ -34,14 +34,9 @@ generate most of the forms. Forms can be printed to screen,
 sent to a printer or e-mailed.
 
 
-COPYRIGHT:
-----------
-Licensed under the terms of the GPL.
-
-
 LATEST VERSION:
 ---------------
-available from http://www.sql-ledger.org
+available from http://www.sql-ledger.com
 
 
 PLATFORMS:
@@ -61,7 +56,7 @@ REQUIREMENTS:
 
 FOREIGN LANGUAGE SUPPORT:
 -------------------------
-28 languages are supported. Language files are
+30 languages are supported. Language files are
 ordinary text files, no special software is
 needed to change or add new translations.
 
@@ -70,8 +65,8 @@ If strings are missing, English is used instead.
 
 
 INSTALLATION WITH setup.pl:
----------------------------
-Make a directory
+-----------------------------
+Make a directory on your system
 
   mkdir /usr/local/sql-ledger
 
@@ -83,23 +78,22 @@ run setup.pl as root and follow the prompts.
 
 Go to the next step, "PREPARE YOUR SQL DATABASE SERVER".
 
-NOTE: If you are behind a firewall and cannot download
-the code with setup.pl, download the source code and
-pass the filename as an argument on the command line.
-
-  perl setup.pl sql-ledger-2.6.x.tar.gz
-
 VERY IMPORTANT: setup.pl tries to figure out your system
 but it will not succeed if your distribution decided
 to "hide" configuration files for your web server in some
 other file.
 
+If you cannot use setup.pl because of a proxy or firewall
+download the tar.gz file and pass the filename to setup.pl
+
+  perl setup.pl sql-ledger-2.8.0.tar.gz
+  
 
 INSTALLATION WITHOUT setup.pl:
-------------------------------
+--------------------------------
 unpack the tar.gz file in /usr/local
 
-  tar xzvf sql-ledger-2.6.x.tar.gz
+  tar xzvf sql-ledger-2.8.0.tar.gz
 
 you should now have everything in /usr/local/sql-ledger
 
@@ -107,8 +101,8 @@ rename sql-ledger.conf.default to sql-ledger.conf
 
 edit sql-ledger.conf
 
-create a file sql-ledger-httpd.conf in the same location
-where your httpd.conf is and copy the next section into the file
+create the file sql-ledger-httpd.conf in the same location
+where httpd.conf is and copy the next section into the file
 
   Alias /sql-ledger /usr/local/sql-ledger/
   <Directory /usr/local/sql-ledger>
@@ -142,10 +136,10 @@ restart your web server.
 Note: /usr/local/sql-ledger is only a suggested
 path, you can install in any directory.
 
-Some versions of Apache 2.0 use a conf directory for
+Some versions of Apache 2 use a confd directory for
 configuration files. If this is the case copy
 sql-ledger-httpd.conf into this directory and leave
-httpd.conf as is.
+httpd.conf as is. Restart Apache.
 
 
 SET PERMISSION:
@@ -278,7 +272,7 @@ section select the driver and enter
 the user you used to create the dataset.
 
 
-LOAD THE ACCOUNTING PROGRAM:
+LOAD THE PROGRAM:
 ----------------------------
 Load your web browser and connect to
 http://localhost/sql-ledger/login.pl
@@ -298,11 +292,6 @@ dataset is locked so nobody can do any work.
 If an error occurs the system will remain locked.
 Track down the error, fix it, load admin.pl,
 unlock the system and log in again.
-
-
-UPGRADING WITH setup.pl:
-------------------------
-run setup.pl from the command line and follow the prompts.
 
 
 INSTALLATION CHECKLIST:
@@ -326,18 +315,16 @@ INSTALLATION CHECKLIST:
       User:     sql-ledger
       Password: password for sql-ledger
 
+Windows: You must enter a host in the Host field. You
+can use an IP number too if you do not have a hostname.
+
 
 IF SOMETHING DOESN'T WORK:
 --------------------------
-There is a FAQ at http://www.sql-ledger.org/misc/faq.html
+There is a FAQ at http://www.sql-ledger.com/misc/faq.html
 or see the one included in the doc directory.
 
-There are also several mailing lists at
-http://www.sql-ledger.org/misc/mailinglist.html
-where you can seek free help.
-
-For commercial support see http://www.sql-ledger.com
-
+For other support options please see http://www.sql-ledger.com
 =====================================================================
-Feb. 18, 2006
+Mar 29, 2007
 

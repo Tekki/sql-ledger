@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 #
 ######################################################################
-# SQL-Ledger, Accounting Software Installer
-# Copyright (c) 2002, Dieter Simader
+# SQL-Ledger ERP Installer
+# Copyright (c) 2007, DWS Systems Inc.
 #
-#     Web: http://www.sql-ledger.org
+#     Web: http://www.sql-ledger.com
 #
 #######################################################################
 
@@ -22,24 +22,12 @@ $gzip = `gzip -V 2>&1`;            # gz decompression utility
 $tar = `tar --version 2>&1`;       # tar archiver
 $latex = `latex -version`;
 
-%checkversion = ( www => 3, abacus => 4, pluto => 5, neptune => 8 );
+%checkversion = ( www => 3, abacus => 4, pluto => 5 );
 
 %source = (
-	    1 => { url => "http://voxel.dl.sourceforge.net/sourceforge/sql-ledger", site => "New York, U.S.A", locale => us },
-            2 => { url => "http://easynews.dl.sourceforge.net/sourceforge/sql-ledger", site => "Arizona, U.S.A", locale => us },
 	    3 => { url => "http://www.sql-ledger.com/source", site => "California, U.S.A", locale => us },
             4 => { url => "http://abacus.sql-ledger.com/source", site => "Toronto, Canada", locale => ca },
 	    5 => { url => "http://pluto.sql-ledger.com/source", site => "Edmonton, Canada", locale => ca },
-	    6 => { url => "http://ufpr.dl.sourceforge.net/sourceforge/sql-ledger", site =>"Brazil", locale => br },
-	    7 => { url => "http://surfnet.dl.sourceforge.net/sourceforge/sql-ledger", site => "The Netherlands", locale => nl },
-	    8 => { url => "http://neptune.sql-ledger.com/source", site => "Ireland", locale => ie },
-	    9 => { url => "http://kent.dl.sourceforge.net/sourceforge/sql-ledger", site => "U.K", locale => uk },
-	    10 => { url => "http://ovh.dl.sourceforge.net/sourceforge/sql-ledger", site => "France", locale => fr },
-	    11 => { url => "http://mesh.dl.sourceforge.net/sourceforge/sql-ledger", site => "Germany", locale => de },
-	    12 => { url => "http://citkit.dl.sourceforge.net/sourceforge/sql-ledger", site => "Russia", locale => ru },
-	    13 => { url => "http://optusnet.dl.sourceforge.net/sourceforge/sql-ledger", site => "Sydney, Australia", locale => au },
-	    14 => { url => "http://nchc.dl.sourceforge.net/sourceforge/sql-ledger", site => "Taiwan", locale => tw },
-	    15 => { url => "http://jaist.dl.sourceforge.net/sourceforge/sql-ledger", site => "Japan", locale => jp }
 	  );
 
 $userspath = "users";         # default for new installation
@@ -134,7 +122,7 @@ $install .= "\n(d)ownload $latest_version (no installation)" unless $filename;
   print qq|
 
 
-               SQL-Ledger Accounting Installation
+               SQL-Ledger ERP Installation
 
 
 
@@ -163,22 +151,6 @@ if ($a !~ /d/) {
   
 }
 
-if ($a ne 'f') {
-  system("tput clear");
-
-  # choose site
-  foreach $item (sort { $a <=> $b } keys %source) {
-    $i++;
-    print qq|$i. $source{$item}{site}\n|;
-  }
-
-  $site = "1";
-
-  print qq|\nChoose Location [$site] : |;
-  $b = <STDIN>;
-  chomp $b;
-  $site = $b if $b;
-}
 
 if ($a eq 'd') {
   &download;
@@ -215,7 +187,7 @@ sub get_latest_version {
   }
 
   if ($lwp) {
-    foreach $source (qw(pluto www abacus neptune)) {
+    foreach $source (qw(pluto www abacus)) {
       $url = $source{$checkversion{$source}}{url};
       print "\n$source{$checkversion{$source}}{site} ... ";
 
@@ -233,7 +205,7 @@ sub get_latest_version {
       exit 1;
     }
 
-    foreach $source (qw(pluto www abacus neptune)) {
+    foreach $source (qw(pluto www abacus)) {
       $url = $source{$checkversion{$source}}{url};
       print "\n$source{$checkversion{$source}}{site} ... ";
       $ok = `lynx -dump -head $url/latest_version`;
@@ -260,7 +232,6 @@ sub get_source_code {
   $err = 0;
 
   @order = ();
-  push @order, $site;
   
   for (sort { $a <=> $b } keys %source) {
     push @order, $_;

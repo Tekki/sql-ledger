@@ -22,6 +22,7 @@ $self{texts} = {
   'Period'                      => 'Perioda',
   'Project Number'              => 'Nomor Proyek',
   'Reference'                   => 'Referensi',
+  'Source'                      => 'Bukti',
   'To'                          => 'Sampai',
   'Year'                        => 'Tahun',
 };

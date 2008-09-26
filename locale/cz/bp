@@ -1,21 +1,29 @@
 $self{charset} = 'ISO-8859-2';
 
 $self{texts} = {
-  'Account'                     => 'Úèet',
   'Accounting Menu'             => 'Menu úèetnictví',
+  'Amount'                      => 'Èástka',
+  'Closed'                      => 'Zaplaceno',
   'Confirm!'                    => 'Podtvrïte!',
   'Continue'                    => 'Pokraèování',
+  'Copies'                      => 'Kopie',
   'Customer'                    => 'Odbìratel',
   'Date'                        => 'Datum',
+  'Description'                 => 'Popis',
+  'E-mail'                      => 'E-mail',
   'From'                        => 'z',
   'ID'                          => 'ID',
   'Invoice'                     => 'Faktura',
   'Invoice Number'              => 'Èíslo faktury',
+  'Name'                        => 'Jméno',
+  'Number'                      => 'Èíslo',
+  'Open'                        => 'Otevøené',
   'Order'                       => 'Objednávka',
   'Order Number'                => 'Objednávka èíslo',
   'Purchase Orders'             => 'Vystavené objednávky',
   'Sales Orders'                => 'Pøijaté objednávky',
   'To'                          => 'do',
+  'Total'                       => 'Celkem',
   'Vendor'                      => 'Dodavatel',
   'Yes'                         => 'Ano',
 };
@@ -23,7 +31,9 @@ $self{texts} = {
 $self{subs} = {
   'acc_menu'                    => 'acc_menu',
   'continue'                    => 'continue',
+  'deselect_all'                => 'deselect_all',
   'display'                     => 'display',
+  'e_mail'                      => 'e_mail',
   'js_menu'                     => 'js_menu',
   'list_spool'                  => 'list_spool',
   'menubar'                     => 'menubar',
@@ -34,6 +44,7 @@ $self{subs} = {
   'select_all'                  => 'select_all',
   'yes'                         => 'yes',
   'pokraèování'                 => 'continue',
+  'e_mail'                      => 'e_mail',
   'ano'                         => 'yes',
 };
 

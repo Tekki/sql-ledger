@@ -24,6 +24,7 @@ $self{texts} = {
   'Receipts'                    => 'Kvittanir',
   'Record in'                   => 'Bóka á',
   'Remaining'                   => 'Eftir',
+  'Sales Invoice'               => 'Sölureikningur',
   'Screen'                      => 'Skjá',
   'Source'                      => 'Frálag',
   'Subtotal'                    => 'Samtala',
@@ -57,6 +58,7 @@ $self{subs} = {
   'eyğa'                        => 'delete',
   'bókfæra'                     => 'post',
   'prenta'                      => 'print',
+  'sölureikningur'              => 'sales_invoice',
   'uppfærsla'                   => 'update',
 };
 

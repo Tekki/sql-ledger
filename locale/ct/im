@@ -1,0 +1,24 @@
+$self{texts} = {
+  'Continue'                    => 'Continuar',
+  'Customer'                    => 'Client',
+  'Description'                 => 'Descripció',
+  'Due Date'                    => 'Data Venciment',
+  'Invoice Date'                => 'Data Fra.',
+  'Invoice Number'              => 'Núm Fra.',
+  'No'                          => 'No',
+  'Qty'                         => 'Quantitat',
+  'Total'                       => 'Total',
+  'Unit'                        => 'Unitat',
+  'Yes'                         => 'Sí',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'do_import'                   => 'do_import',
+  'import'                      => 'import',
+  'import_sales_invoices'       => 'import_sales_invoices',
+  'continuar'                   => 'continue',
+};
+
+1;
+

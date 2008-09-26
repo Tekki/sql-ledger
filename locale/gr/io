@@ -3,6 +3,7 @@ $self{charset} = 'ISO-8859-7';
 $self{texts} = {
   'Add Quotation'               => 'Προσθήκη προσφοράς',
   'Add Sales Order'             => 'Προσθήκη Παραγγελίας',
+  'Add Service'                 => 'Προσθήκη υπηρεσίας',
   'Address'                     => 'Διέυθυνση',
   'Apr'                         => 'Απρ',
   'April'                       => 'Απρίλιος',
@@ -10,11 +11,11 @@ $self{texts} = {
   'Aug'                         => 'Αυγ',
   'August'                      => 'Αύγουστος',
   'City'                        => 'Πόλη',
-  'Company Name'                => 'Όνομα εταιρίας',
   'Contact'                     => 'Επαφή',
   'Continue'                    => 'Συνέχεια',
   'Copies'                      => 'Αντίγραφα',
   'Country'                     => 'Χώρα',
+  'Customer'                    => 'Πελάτης',
   'Customer Number'             => 'Κωδικός Πελάτη',
   'Date'                        => 'Ημερομηνία',
   'Dec'                         => 'Δεκ',
@@ -49,7 +50,7 @@ $self{texts} = {
   'Project'                     => 'Έργο',
   'Qty'                         => 'Ποσ.',
   'Screen'                      => 'Οθόνη',
-  'Service'                     => 'Υπηρεσία',
+  'Vendor'                      => 'Creditor',
   'Vendor Number'               => 'Creditor Number',
 };
 
@@ -57,7 +58,6 @@ $self{subs} = {
   'calc_markup'                 => 'calc_markup',
   'check_form'                  => 'check_form',
   'create_form'                 => 'create_form',
-  'customer_details'            => 'customer_details',
   'display_form'                => 'display_form',
   'display_row'                 => 'display_row',
   'e_mail'                      => 'e_mail',
@@ -75,7 +75,7 @@ $self{subs} = {
   'send_email'                  => 'send_email',
   'ship_to'                     => 'ship_to',
   'validate_items'              => 'validate_items',
-  'vendor_details'              => 'vendor_details',
+  'Προσθήκη_υπηρεσίας'          => 'add_service',
   'Συνέχεια'                    => 'continue',
 };
 

@@ -36,6 +36,7 @@ $self{texts} = {
   'Reference'                   => 'Riferimento',
   'Sep'                         => 'Set',
   'September'                   => 'Settembre',
+  'Source'                      => 'Sorgente',
   'Subtotal'                    => 'Totale Parziale',
   'To'                          => 'Al',
 };

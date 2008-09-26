@@ -1,6 +1,5 @@
 $self{texts} = {
   'Accounting Menu'             => 'Boekhoudmenu',
-  'Add POS Invoice'             => 'Directe verkooporder toevoegen',
   'Amount'                      => 'Bedrag',
   'Business'                    => 'Zaaktype',
   'Cannot post transaction!'    => 'Kan transactie niet boeken!',
@@ -10,11 +9,11 @@ $self{texts} = {
   'Currency'                    => 'Valuta',
   'Current'                     => 'Huidig',
   'Customer'                    => 'Klant',
+  'Customer Number'             => 'Klantnummer',
   'Customer missing!'           => 'Klant ontbreekt!',
   'Delete'                      => 'Verwijder',
   'Department'                  => 'Afdeling',
   'Description'                 => 'Omschrijving',
-  'Edit POS Invoice'            => 'Directe verkooporder wijzigen',
   'Exchange Rate'               => 'Wisselkoers',
   'Exchange rate missing!'      => 'Wisselkoers ontbreekt!',
   'Extended'                    => 'Uitgebreid',
@@ -32,6 +31,7 @@ $self{texts} = {
   'Receipts'                    => 'Ontvangstbewijzen',
   'Record in'                   => 'Boeken op',
   'Remaining'                   => 'Resterend',
+  'Sales Invoice'               => 'Verkoopfactuur',
   'Salesperson'                 => 'Verkoper',
   'Screen'                      => 'Scherm',
   'Source'                      => 'Herkomst',
@@ -67,6 +67,7 @@ $self{subs} = {
   'verwijder'                   => 'delete',
   'boek'                        => 'post',
   'afdrukken'                   => 'print',
+  'verkoopfactuur'              => 'sales_invoice',
   'bijwerken'                   => 'update',
 };
 

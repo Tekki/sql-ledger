@@ -1,8 +1,9 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'Access Control'              => 'Kulunvalvonta',
   'Accounting'                  => 'Kirjanpito',
   'Add User'                    => 'Lisää käyttäjä',
-  'Address'                     => 'Osoite',
   'Administration'              => 'Ylläpito',
   'Administrator'               => 'Pääkäyttäjä',
   'All Datasets up to date!'    => 'Kaikki tietokannat ajan tasalla',
@@ -100,6 +101,7 @@ $self{subs} = {
   'change_password'             => 'change_password',
   'check_password'              => 'check_password',
   'continue'                    => 'continue',
+  'create_config'               => 'create_config',
   'create_dataset'              => 'create_dataset',
   'dbcreate'                    => 'dbcreate',
   'dbdelete'                    => 'dbdelete',
@@ -123,22 +125,22 @@ $self{subs} = {
   'save'                        => 'save',
   'unlock_system'               => 'unlock_system',
   'update_dataset'              => 'update_dataset',
-  'lisää_käyttäjä'              => 'add_user',
+  'lisää_käyttäjä'         => 'add_user',
   'muuta_pääkäyttäjän_salasana' => 'change_admin_password',
   'muuta_salasana'              => 'change_password',
   'jatka'                       => 'continue',
-  'luo_tietolähteet'            => 'create_dataset',
+  'luo_tietolähteet'           => 'create_dataset',
   'poista'                      => 'delete',
   'poista_tietokanta'           => 'delete_dataset',
-  'lukitse_järjestelmä'         => 'lock_system',
+  'lukitse_järjestelmä'       => 'lock_system',
   'nimi'                        => 'login',
   'kirjaudu_ulos'               => 'logout',
   'oracle_tietokannan_ylläpito' => 'oracle_database_administration',
   'postgres_tietokannan_ylläpito' => 'pg_database_administration',
-  'pgpp_tietokannan_ylläpito'   => 'pgpp_database_administration',
+  'pgpp_tietokannan_ylläpito'  => 'pgpp_database_administration',
   'tallenna'                    => 'save',
-  'avaa_järjestelmä'            => 'unlock_system',
-  'päivitä_tietokanta'          => 'update_dataset',
+  'avaa_järjestelmä'          => 'unlock_system',
+  'päivitä_tietokanta'        => 'update_dataset',
 };
 
 1;

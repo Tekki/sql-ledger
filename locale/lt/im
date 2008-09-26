@@ -1,0 +1,27 @@
+$self{charset} = 'ISO-8859-13';
+
+$self{texts} = {
+  'Continue'                    => 'Tæsti',
+  'Curr'                        => 'Val.',
+  'Customer'                    => 'Klientas',
+  'Description'                 => 'Apraðymas',
+  'Due Date'                    => 'Iki Data',
+  'Invoice Date'                => 'Sàskaitos-faktûros data',
+  'Invoice Number'              => 'Sàskaitos-faktûros numeris',
+  'No'                          => 'Ne',
+  'Qty'                         => 'Kks',
+  'Total'                       => 'Ið viso',
+  'Unit'                        => 'Vienetas',
+  'Yes'                         => 'Taip',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'do_import'                   => 'do_import',
+  'import'                      => 'import',
+  'import_sales_invoices'       => 'import_sales_invoices',
+  'tæsti'                       => 'continue',
+};
+
+1;
+

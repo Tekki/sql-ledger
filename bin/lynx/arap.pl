@@ -1,23 +1,10 @@
 #=====================================================================
-# SQL-Ledger Accounting
-# Copyright (c) 2003
+# SQL-Ledger ERP
+# Copyright (c) 2006
 #
 #  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.org
+#     Web: http://www.sql-ledger.com
 #
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #======================================================================
 #
 # common routines for gl, ar, ap, is, ir, oe
@@ -25,14 +12,14 @@
 
 use SL::AA;
 
-# any custom scripts for this one
+# any custom scripts for this one   
 if (-f "$form->{path}/custom_arap.pl") {
-  eval { require "$form->{path}/custom_arap.pl"; };
+    eval { require "$form->{path}/custom_arap.pl"; };
 }
 if (-f "$form->{path}/$form->{login}_arap.pl") {
-  eval { require "$form->{path}/$form->{login}_arap.pl"; };
+    eval { require "$form->{path}/$form->{login}_arap.pl"; };
 }
-
+ 
 
 1;
 # end of main
@@ -60,6 +47,8 @@ sub check_name {
 
       $form->{$name} = $form->{"old$name"} = "$new_name--$new_id";
       $form->{currency} =~ s/ //g;
+      $form->{cashdiscount} *= 100;
+      $form->{cashdiscount} = 0 if $form->{type} =~ /(debit|credit)_/;
 
       # put employee together if there is a new employee_id
       $form->{employee} = "$form->{employee}--$form->{employee_id}" if $form->{employee_id};
@@ -68,8 +57,20 @@ sub check_name {
     }
   } else {
 
+    my $dosearch;
     # check name, combine name and id
     if ($form->{"old$name"} ne qq|$form->{$name}--$form->{"${name}_id"}|) {
+      $form->{searchby} = "name";
+      $dosearch = 1;
+    }
+
+    if ($form->{"old${name}number"} ne $form->{"${name}number"}) {
+      $form->{searchby} = "$form->{vc}number";
+      $dosearch = 1;
+    }
+
+    if ($dosearch) {
+
       # this is needed for is, ir and oe
       for (split / /, $form->{taxaccounts}) { delete $form->{"${_}_rate"} }
 
@@ -89,12 +90,15 @@ sub check_name {
 	$form->{"${name}_id"} = $form->{name_list}[0]->{id};
 	$form->{$name} = $form->{name_list}[0]->{name};
 	$form->{"old$name"} = qq|$form->{$name}--$form->{"${name}_id"}|;
+	$form->{"old${name}number"} = $form->{"${name}number"};
 	
 	AA->get_name(\%myconfig, \%$form);
 	
 	$form->{currency} =~ s/ //g;
 	# put employee together if there is a new employee_id
 	$form->{employee} = "$form->{employee}--$form->{employee_id}" if $form->{employee_id};
+	$form->{cashdiscount} *= 100;
+	$form->{cashdiscount} = 0 if $form->{type} =~ /(debit|credit)_/;
 
       } else {
 	# name is not on file
@@ -114,11 +118,18 @@ sub check_name {
 
 sub select_name {
   my ($table) = @_;
-  
-  @column_index = qw(ndx name address);
+
+# $locale->text('Customer Number')
+# $locale->text('Vendor Number')
+# $locale->text('Employee Number')
+
+  @column_index = qw(ndx name number address);
 
   $label = ucfirst $table;
-  $column_data{ndx} = qq|<th>&nbsp;</th>|;
+  $labelnumber = "$label Number";
+  
+  $column_data{ndx} = qq|<th class=listheading width=1%>&nbsp;</th>|;
+  $column_data{number} = qq|<th class=listheading>|.$locale->text($labelnumber).qq|</th>|;
   $column_data{name} = qq|<th class=listheading>|.$locale->text($label).qq|</th>|;
   $column_data{address} = qq|<th class=listheading colspan=5>|.$locale->text('Address').qq|</th>|;
   
@@ -148,7 +159,7 @@ sub select_name {
 	</tr>
 |;
 
-  @column_index = qw(ndx name address city state zipcode country);
+  @column_index = qw(ndx name number address city state zipcode country);
   
   my $i = 0;
   foreach $ref (@{ $form->{name_list} }) {
@@ -157,7 +168,8 @@ sub select_name {
     $ref->{name} = $form->quote($ref->{name});
     
    $column_data{ndx} = qq|<td><input name=ndx class=radio type=radio value=$i $checked></td>|;
-   $column_data{name} = qq|<td><input name="new_name_$i" type=hidden value="$ref->{name}">$ref->{name}</td>|;
+   $column_data{number} = qq|<td><input name="new_${table}number_$i" type=hidden value="|.$form->quote($ref->{"${table}number"}).qq|">$ref->{"${table}number"}</td>|;
+   $column_data{name} = qq|<td><input name="new_name_$i" type=hidden value="|.$form->quote($ref->{name}).qq|">$ref->{name}</td>|;
    $column_data{address} = qq|<td>$ref->{address1} $ref->{address2}</td>|;
    for (qw(city state zipcode country)) { $column_data{$_} = qq|<td>$ref->{$_}&nbsp;</td>| }
     
@@ -221,18 +233,29 @@ sub name_selected {
   $form->{$form->{vc}} = $form->{"new_name_$i"};
   $form->{"$form->{vc}_id"} = $form->{"new_id_$i"};
   $form->{"old$form->{vc}"} = qq|$form->{$form->{vc}}--$form->{"$form->{vc}_id"}|;
+  $form->{"$form->{vc}number"} = $form->{"new_$form->{vc}number_$i"};
+  $form->{"old$form->{vc}number"} = $form->{"$form->{vc}number"};
 
   # delete all the new_ variables
   for $i (1 .. $form->{lastndx}) {
     for (qw(id, name)) { delete $form->{"new_${_}_$i"} }
+    delete $form->{"new_$form->{vc}number_$i"};
   }
   
   for (qw(ndx lastndx nextsub)) { delete $form->{$_} }
 
+  $arap_accno = $form->{$form->{ARAP}};
+  
   AA->get_name(\%myconfig, \%$form);
+
+  $form->{$form->{ARAP}} ||= $arap_accno;
+  $form->{"old$form->{ARAP}"} = $form->{$form->{ARAP}};
 
   # put employee together if there is a new employee_id
   $form->{employee} = "$form->{employee}--$form->{employee_id}" if $form->{employee_id};
+  $form->{cashdiscount} *= 100;
+  $form->{cashdiscount} = 0 if $form->{type} =~ /(debit|credit)_/;
+  for (qw(terms discountterms)) { $form->{$_} = "" if ! $form->{$_} }
 
   &update(1);
 
@@ -245,15 +268,18 @@ sub rebuild_vc {
   ($null, $form->{employee_id}) = split /--/, $form->{employee};
   $form->all_vc(\%myconfig, $vc, $ARAP, undef, $transdate, $job);
   $form->{"select$vc"} = "";
-  for (@{ $form->{"all_$vc"} }) { $form->{"select$vc"} .= qq|<option value="$_->{name}--$_->{id}">$_->{name}\n| }
+  for (@{ $form->{"all_$vc"} }) { $form->{"select$vc"} .= qq|$_->{name}--$_->{id}\n| }
+  $form->{"select$vc"} = $form->escape($form->{"select$vc"},1);
   
   $form->{selectprojectnumber} = "";
   if (@{ $form->{all_project} }) {
-    $form->{selectprojectnumber} = "<option>\n";
-    for (@{ $form->{all_project} }) { $form->{selectprojectnumber} .= qq|<option value="$_->{projectnumber}--$_->{id}">$_->{projectnumber}\n| }
+    $form->{selectprojectnumber} = "\n";
+    for (@{ $form->{all_project} }) { $form->{selectprojectnumber} .= qq|$_->{projectnumber}--$_->{id}\n| }
+    $form->{selectprojectnumber} = $form->escape($form->{selectprojectnumber},1);
   }
 
   1;
+
 }
 
 
@@ -313,7 +339,7 @@ sub select_project {
   
   @column_index = qw(ndx projectnumber description);
 
-  $column_data{ndx} = qq|<th>&nbsp;</th>|;
+  $column_data{ndx} = qq|<th width=1%>&nbsp;</th>|;
   $column_data{projectnumber} = qq|<th>|.$locale->text('Number').qq|</th>|;
   $column_data{description} = qq|<th>|.$locale->text('Description').qq|</th>|;
   
@@ -349,10 +375,8 @@ sub select_project {
   foreach $ref (@{ $form->{project_list} }) {
     $checked = ($i++) ? "" : "checked";
 
-    $ref->{name} = $form->quote($ref->{name});
-    
    $column_data{ndx} = qq|<td><input name=ndx class=radio type=radio value=$i $checked></td>|;
-   $column_data{projectnumber} = qq|<td><input name="new_projectnumber_$i" type=hidden value="$ref->{projectnumber}">$ref->{projectnumber}</td>|;
+   $column_data{projectnumber} = qq|<td><input name="new_projectnumber_$i" type=hidden value="|.$form->quote($ref->{projectnumber}).qq|">$ref->{projectnumber}</td>|;
    $column_data{description} = qq|<td>$ref->{description}</td>|;
     
     $j++; $j %= 2;
@@ -504,11 +528,10 @@ sub repost {
 
 sub schedule {
   
-  ($form->{recurringreference}, $form->{recurringstartdate}, $form->{recurringrepeat}, $form->{recurringunit}, $form->{recurringhowmany}, $form->{recurringpayment}, $form->{recurringprint}, $form->{recurringemail}, $form->{recurringmessage}) = split /,/, $form->{recurring};
+  ($form->{recurringreference}, $form->{recurringdescription}, $form->{recurringstartdate}, $form->{recurringrepeat}, $form->{recurringunit}, $form->{recurringhowmany}, $form->{recurringpayment}, $form->{recurringprint}, $form->{recurringemail}, $form->{recurringmessage}) = split /,/, $form->{recurring};
 
-  $form->{recurringreference} = $form->quote($form->unescape($form->{recurringreference}));
-  $form->{recurringmessage} = $form->quote($form->unescape($form->{recurringmessage}));
-
+  for (qw(reference description message)) { $form->{"recurring$_"} = $form->quote($form->unescape($form->{"recurring$_"})) }
+  
   $form->{recurringstartdate} ||= $form->{transdate};
   $recurringpayment = "checked" if $form->{recurringpayment};
 
@@ -530,18 +553,15 @@ sub schedule {
 |;
   }
 
-  @a = split /<option/, $form->unescape($form->{selectformname});
-  %formname = ();
-  
-  for ($i = 1; $i <= $#a; $i++) {
-    $a[$i] =~ /"(.*)"/;
-    $v = $1;
-    $a[$i] =~ />(.*)/;
-    $formname{$v} = $1;
+  for (split /\r?\n/, $form->unescape($form->{selectformname})) {
+    (@_) = split /--/, $_;
+    $formname{$_[0]} = $_[1];
   }
   for (qw(check receipt)) { delete $formname{$_} }
 
-  $selectformat = $form->unescape($form->{selectformat});
+  $selectformat = qq|html--html
+postscript--|.$locale->text('Postscript').qq|
+pdf--|.$locale->text('PDF');
 
   if ($form->{type} !~ /transaction/ && %formname) {
     $email = qq|
@@ -565,15 +585,16 @@ sub schedule {
     foreach $item (keys %formname) {
 
       $checked = ($p{$item}{format}) ? "checked" : "";
-      $selectformat =~ s/ selected//;
       $p{$item}{format} ||= "pdf";
-      $selectformat =~ s/(<option value="\Q$p{$item}{format}\E")/$1 selected/;
     
       $email .= qq|
 		<tr>
 		  <td><input name="email$item" type=checkbox class=checkbox value=1 $checked></td>
 		  <th align=left>$formname{$item}</th>
-		  <td><select name="emailformat$item">$selectformat</select></td>
+		  <td><select name="emailformat$item">|
+		  .$form->select_option($selectformat, $p{$item}{format}, undef, 1)
+		  .qq|</select>
+		  </td>
 		</tr>
 |;
     }
@@ -598,7 +619,6 @@ sub schedule {
 |;
 
   }
-
 
   if (%printer && $latex && %formname) {
     $selectprinter = qq|<option>\n|;
@@ -625,24 +645,25 @@ sub schedule {
 	      <table>
 |;
 
-    $selectformat =~ s/<option.*html//;
     foreach $item (keys %formname) {
    
       $selectprinter =~ s/ selected//;
+      $p{$item}{printer} ||= $myconfig{printer};
       $selectprinter =~ s/(<option value="\Q$p{$item}{printer}\E")/$1 selected/;
 
       $checked = ($p{$item}{formname}) ? "checked" : "";
  
-      $selectformat =~ s/ selected//;
       $p{$item}{format} ||= "postscript";
-      $selectformat =~ s/(<option value="\Q$p{$item}{format}\E")/$1 selected/;
      
       $print .= qq|
 		<tr>
 		  <td><input name="print$item" type=checkbox class=checkbox value=1 $checked></td>
 		  <th align=left>$formname{$item}</th>
 		  <td><select name="printprinter$item">$selectprinter</select></td>
-		  <td><select name="printformat$item">$selectformat</select></td>
+		  <td><select name="printformat$item">|
+		  .$form->select_option($selectformat, $p{$item}{format}, undef, 1)
+		  .qq|</select>
+		  </td>
 		</tr>
 |;
     }
@@ -672,6 +693,7 @@ sub schedule {
 
   if ($form->{$form->{vc}}) {
     $description = $form->{$form->{vc}};
+    $description =~ s/--.*//;
   } else {
     $description = $form->{description};
   }
@@ -698,6 +720,12 @@ sub schedule {
   
   $title = $locale->text('Recurring Transaction') ." ".  $locale->text('for') ." $description";
 
+  if (($rows = $form->numtextrows($form->{recurringdescription}, 60)) > 1) {
+    $description = qq|<textarea name="recurringdescription" rows=$rows cols=35 wrap=soft>$form->{recurringdescription}</textarea>|;
+  } else {
+    $description = qq|<input name=recurringdescription size=60 value="|.$form->quote($form->{recurringdescription}).qq|">|;
+  }
+  
   $form->header;
 
   print qq|
@@ -718,8 +746,13 @@ sub schedule {
 	    <table>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Reference').qq|</th>
-		<td><input name=recurringreference size=20 value="$form->{recurringreference}"></td>
+		<td><input name=recurringreference size=20 value="|.$form->quote($form->{recurringreference}).qq|"></td>
 	      </tr>
+	      <tr>
+		<th align=right nowrap>|.$locale->text('Description').qq|</th>
+		<td>$description</td>
+	      </tr>
+
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Startdate').qq|</th>
 		<td><input name=recurringstartdate size=11 title="($myconfig{'dateformat'})" value=$form->{recurringstartdate}></td>
@@ -762,9 +795,6 @@ sub schedule {
 <br>
 |;
 
-# type=submit $locale->text('Save Schedule')
-# type=submit $locale->text('Delete Schedule')
-
   %button = ('Save Schedule' => { ndx => 1, key => 'S', value => $locale->text('Save Schedule') },
              'Delete Schedule' => { ndx => 16, key => 'D', value => $locale->text('Delete Schedule') },
 	    );
@@ -777,7 +807,7 @@ sub schedule {
 
   # delete variables
   for (qw(action recurring)) { delete $form->{$_} }
-  for (qw(reference startdate nextdate enddate repeat unit howmany payment print email message)) { delete $form->{"recurring$_"} }
+  for (qw(reference description startdate nextdate enddate repeat unit howmany payment print email message)) { delete $form->{"recurring$_"} }
 
   $form->hide_form;
 
@@ -796,18 +826,16 @@ sub save_schedule {
 
   $form->{recurring} = "";
 
-  $form->{recurringreference} = $form->escape($form->{recurringreference},1);
-  $form->{recurringmessage} = $form->escape($form->{recurringmessage},1);
+  for (qw(reference description message)) { $form->{"recurring$_"} = $form->escape($form->{"recurring$_"},1) }
+  
   if ($form->{recurringstartdate}) {
-    for (qw(reference startdate repeat unit howmany payment)) { $form->{recurring} .= qq|$form->{"recurring$_"},| }
+    for (qw(reference description startdate repeat unit howmany payment)) { $form->{recurring} .= qq|$form->{"recurring$_"},| }
   }
 
-  @a = split /<option/, $form->unescape($form->{selectformname});
   @p = ();
-
-  for ($i = 1; $i <= $#a; $i++) {
-    $a[$i] =~ /"(.*)"/;
-    push @p, $1;
+  for (split /\r?\n/, $form->unescape($form->{selectformname})) {
+    (@_) = split /--/, $_;
+    push @p, $_[0];
   }
 
   $recurringemail = "";
@@ -866,8 +894,8 @@ sub reprint {
     } else {
       &create_links;
       $form->{rowcount}--;
-      for (1 .. $form->{rowcount}) { $form->{"amount_$_"} = $form->format_amount(\%myconfig, $form->{"amount_$_"}, 2) }
-      for (split / /, $form->{taxaccounts}) { $form->{"tax_$_"} = $form->format_amount(\%myconfig, $form->{"tax_$_"}, 2) }
+      for (1 .. $form->{rowcount}) { $form->{"amount_$_"} = $form->format_amount(\%myconfig, $form->{"amount_$_"}, $form->{precision}) }
+      for (split / /, $form->{taxaccounts}) { $form->{"tax_$_"} = $form->format_amount(\%myconfig, $form->{"tax_$_"}, $form->{precision}) }
       $pf = "print_transaction";
     }
     for (qw(acc_trans invoice_details)) { delete $form->{$_} }
@@ -882,7 +910,7 @@ sub reprint {
 
   delete $form->{paid};
 
-  for (1 .. $form->{paidaccounts}) { $form->{"paid_$_"} = $form->format_amount(\%myconfig, $form->{"paid_$_"}, 2) }
+  for (1 .. $form->{paidaccounts}) { $form->{"paid_$_"} = $form->format_amount(\%myconfig, $form->{"paid_$_"}, $form->{precision}) }
 
   $form->{copies} = 1;
 

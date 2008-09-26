@@ -1,0 +1,30 @@
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'City'                        => 'Stadt',
+  'Continue'                    => 'Weiter',
+  'Curr'                        => 'Währung',
+  'Customer'                    => 'Kunde',
+  'Customer Number'             => 'Kundennummer',
+  'Description'                 => 'Beschreibung',
+  'Due Date'                    => 'Fälligkeitsdatum',
+  'Invoice Date'                => 'Rechnungsdatum',
+  'Invoice Number'              => 'Rechnungsnummer',
+  'No'                          => 'Nein',
+  'Qty'                         => 'Menge',
+  'Salesperson'                 => 'Verkäufer',
+  'Total'                       => 'Betrag',
+  'Unit'                        => 'Einh.',
+  'Yes'                         => 'Ja',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'do_import'                   => 'do_import',
+  'import'                      => 'import',
+  'import_sales_invoices'       => 'import_sales_invoices',
+  'weiter'                      => 'continue',
+};
+
+1;
+

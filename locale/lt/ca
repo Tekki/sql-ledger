@@ -38,6 +38,7 @@ $self{texts} = {
   'Reference'                   => 'Nuorodos',
   'Sep'                         => 'Rgs',
   'September'                   => 'Rûgsëjis',
+  'Source'                      => 'Dokumentas',
   'Subtotal'                    => 'Viso',
   'To'                          => 'iki',
 };

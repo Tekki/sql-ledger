@@ -1,0 +1,27 @@
+$self{charset} = 'ISO-8859-2';
+
+$self{texts} = {
+  'Continue'                    => 'Pokraèování',
+  'Curr'                        => 'Mìna',
+  'Customer'                    => 'Odbìratel',
+  'Description'                 => 'Popis',
+  'Due Date'                    => 'Datum splatnosti',
+  'Invoice Date'                => 'Datum vystavení',
+  'Invoice Number'              => 'Èíslo faktury',
+  'No'                          => 'Ne',
+  'Qty'                         => 'Mno¾ství',
+  'Total'                       => 'Celkem',
+  'Unit'                        => 'Jednotka',
+  'Yes'                         => 'Ano',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'do_import'                   => 'do_import',
+  'import'                      => 'import',
+  'import_sales_invoices'       => 'import_sales_invoices',
+  'pokraèování'                 => 'continue',
+};
+
+1;
+

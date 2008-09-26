@@ -44,6 +44,7 @@ $self{texts} = {
   'Reference'                   => '參考資料',
   'Sep'                         => '九月',
   'September'                   => '九月',
+  'Source'                      => '來源',
   'Subtotal'                    => '小計',
   'To'                          => '至',
   'Year'                        => '年',

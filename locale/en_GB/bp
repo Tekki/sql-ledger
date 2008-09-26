@@ -1,12 +1,16 @@
 $self{texts} = {
   'Customer'                    => 'Debtor',
+  'Customer Number'             => 'Debtor Number',
   'Vendor'                      => 'Creditor',
+  'Vendor Number'               => 'Creditor Number',
 };
 
 $self{subs} = {
   'acc_menu'                    => 'acc_menu',
   'continue'                    => 'continue',
+  'deselect_all'                => 'deselect_all',
   'display'                     => 'display',
+  'e_mail'                      => 'e_mail',
   'js_menu'                     => 'js_menu',
   'list_spool'                  => 'list_spool',
   'menubar'                     => 'menubar',

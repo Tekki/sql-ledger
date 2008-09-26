@@ -9,6 +9,7 @@ $self{texts} = {
   'Currency'                    => 'Valuutta',
   'Current'                     => 'Erääntyy',
   'Customer'                    => 'Asiakas',
+  'Customer Number'             => 'Asiakasnumero',
   'Customer missing!'           => 'Asiakas puuttuu!',
   'Delete'                      => 'Poista',
   'Department'                  => 'Toimipiste',
@@ -33,6 +34,7 @@ $self{texts} = {
   'Receipts'                    => 'Kuitit',
   'Record in'                   => 'Talleta tilille',
   'Remaining'                   => 'Jäljellä',
+  'Sales Invoice'               => 'Myyntilasku',
   'Salesperson'                 => 'Myyjä',
   'Screen'                      => 'Näyttö',
   'Source'                      => 'Lähde',
@@ -69,6 +71,7 @@ $self{subs} = {
   'kirjaa'                      => 'post',
   'tulosta'                     => 'print',
   'tulosta_ja_kirjaa'           => 'print_and_post',
+  'myyntilasku'                 => 'sales_invoice',
   'päivitä'                     => 'update',
 };
 
