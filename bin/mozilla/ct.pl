@@ -1511,6 +1511,17 @@ sub form_header {
 	</tr>
 |;
   }
+  
+  if ($form->{selectpaymentmethod}) {
+
+    $paymentmethod = qq|
+ 	  &nbsp;<b>|.$locale->text('Method').qq|</b>
+	  <select name=paymentmethod>|
+	  .$form->select_option($form->{selectpaymentmethod}, $form->{paymentmethod}, 1)
+	  .qq|</select>
+|;
+
+  }
 
   if ($form->{selectpayment}) {
 
@@ -1523,6 +1534,7 @@ sub form_header {
 	  </td>
 	  <th align=right>|.$locale->text('Threshold').qq|</th>
 	  <td><input name=threshold size=11 value="$form->{threshold}">
+	  $paymentmethod
 	  </td>
 	</tr>
 |;
@@ -1545,18 +1557,6 @@ sub form_header {
 
   }
   
-  if ($form->{selectpaymentmethod}) {
-
-    $paymentmethod = qq|
- 	  <th align=right>|.$locale->text('Payment Method').qq|</th>
-	  <td><select name=paymentmethod>|
-	  .$form->select_option($form->{selectpaymentmethod}, $form->{paymentmethod}, 1)
-	  .qq|</select>
-	  </td>
-|;
-
-  }
-
   if ($form->{selectpricegroup} && $form->{db} eq 'customer') {
     
     $pricegroup = qq|
@@ -1844,11 +1844,8 @@ sub form_header {
 	  <td colspan=2>
 	    <table>
 	      <tr>
-		$paymentmethod
-	      </tr>
-	      <tr>
 		<th align=right>|.$locale->text('IBAN').qq|</th>
-		<td><input name=iban size=24 maxlength=34 value="$form->{iban}"></td>
+		<td><input name=iban size=34 maxlength=34 value="$form->{iban}"></td>
 	      </tr>
 	      <tr>
 		<th align=right>|.$locale->text('BIC').qq|</th>
@@ -2046,6 +2043,8 @@ sub form_footer {
 sub shipping_address {
 
   $form->{title} = $locale->text('Shipping Address');
+
+  $form->{name} ||= "$form->{firstname} $form->{lastname}";
   
   $form->header;
 

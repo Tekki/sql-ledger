@@ -1275,7 +1275,7 @@ sub save_defaults {
   }
 
   # optional
-  for (qw(company address tel fax yearend weightunit businessnumber closedto revtrans audittrail currencies method cdt namesbynumber aruniq apuniq gluniq souniq pouniq trackinguniq nontracking)) {
+  for (qw(company address tel fax yearend weightunit businessnumber closedto revtrans audittrail currencies method cdt namesbynumber aruniq apuniq gluniq souniq pouniq trackinguniq nontrackinguniq borev)) {
     if ($form->{$_}) {
       $sth->execute($_, $form->{$_}) || $form->dberror;
       $sth->finish;
@@ -1913,7 +1913,7 @@ sub bank_accounts {
   my $dbh = $form->dbconnect($myconfig);
 
   my $query = qq|SELECT c.id, c.accno, c.description,
-                 bk.name, bk.iban, bk.bic,
+                 bk.name, bk.iban, bk.bic, bk.membernumber, bk.dcn, bk.rvc,
 		 ad.address1, ad.address2, ad.city,
                  ad.state, ad.zipcode, ad.country
                  FROM chart c
@@ -1950,7 +1950,7 @@ sub get_bank {
   my $dbh = $form->dbconnect($myconfig);
 
   $query = qq/SELECT c.accno || '--' || c.description AS account,
-              bk.name, bk.iban, bk.bic,
+              bk.name, bk.iban, bk.bic, bk.membernumber, bk.dcn, bk.rvc,
 	      ad.address1, ad.address2, ad.city,
               ad.state, ad.zipcode, ad.country
 	      FROM chart c
@@ -1980,7 +1980,7 @@ sub save_bank {
   my ($id) = $dbh->selectrow_array($query);
 
   my $ok;
-  for (qw(name iban bic address1 address2 city state zipcode country)) {
+  for (qw(name iban bic address1 address2 city state zipcode country membernumber rvc dcn)) {
     if ($form->{$_}) {
       $ok = 1;
       last;
@@ -1992,7 +1992,10 @@ sub save_bank {
       $query = qq|UPDATE bank SET
 		  name = |.$dbh->quote(uc $form->{name}).qq|,
 		  iban = |.$dbh->quote($form->{iban}).qq|,
-		  bic = |.$dbh->quote(uc $form->{bic}).qq|
+		  bic = |.$dbh->quote(uc $form->{bic}).qq|,
+		  membernumber = |.$dbh->quote($form->{membernumber}).qq|,
+		  rvc = |.$dbh->quote($form->{rvc}).qq|,
+		  dcn = |.$dbh->quote($form->{dcn}).qq|
 		  WHERE id = $form->{id}|;
       $dbh->do($query) || $form->dberror($query);
     } else {
@@ -2000,11 +2003,14 @@ sub save_bank {
 		  VALUES ($form->{id})|;
       $dbh->do($query) || $form->dberror($query);
 
-      $query = qq|INSERT INTO bank (id, name, iban, bic)
+      $query = qq|INSERT INTO bank (id, name, iban, bic, membernumber, rvc, dcn)
 		  VALUES ($form->{id}, |
 		  .$dbh->quote(uc $form->{name}).qq|, |
 		  .$dbh->quote(uc $form->{iban}).qq|, |
-		  .$dbh->quote($form->{bic}).qq|
+		  .$dbh->quote($form->{bic}).qq|, |
+		  .$dbh->quote($form->{membernumber}).qq|, |
+		  .$dbh->quote($form->{rvc}).qq|, |
+		  .$dbh->quote($form->{dcn}).qq|
 		  )|;
       $dbh->do($query) || $form->dberror($query);
     }

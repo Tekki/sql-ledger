@@ -65,6 +65,7 @@ $self{texts} = {
   'Language'                    => 'Keel',
   'Leadtime'                    => 'Tellimuse täitmisaeg',
   'Manager'                     => 'Juhataja',
+  'Method'                      => 'Meetod',
   'Name'                        => 'Nimi',
   'Name missing!'               => 'Nimi puudub!',
   'No.'                         => 'Nr.',

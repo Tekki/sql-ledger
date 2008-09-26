@@ -827,6 +827,8 @@ sub check_form {
     # this section applies to invoices and orders
     # remove any empty numbers
     
+    $focus = "partnumber_1";
+    
     $count = 0;
     @a = ();
     if ($form->{rowcount}) {
@@ -1241,24 +1243,26 @@ sub print_options {
   # remittance voucher
   if ($form->{media} ne 'email') {
     if ($form->{type} =~ /invoice/) {
-      $form->{remittancevoucher} = ($form->{remittancevoucher}) ? "checked" : "";
-      $rvp = qq|<select name=rvp>
-	    <option value="screen">|.$locale->text('Screen');
+      if ($form->{type} !~ /_/) {
+	$form->{remittancevoucher} = ($form->{remittancevoucher}) ? "checked" : "";
+	$rvp = qq|<select name=rvp>
+	      <option value="screen">|.$locale->text('Screen');
 
-      if (%printer) {
-	for (sort keys %printer) { $rvp .= qq|
-	      <option value="$_">$_| }
-      }
+	if (%printer) {
+	  for (sort keys %printer) { $rvp .= qq|
+		<option value="$_">$_| }
+	}
 
-      $rvp .= qq|</select>|;
+	$rvp .= qq|</select>|;
 
-      # set option selected
-      $rvp =~ s/(<option value="\Q$form->{rvp}\E")/$1 selected/;
+	# set option selected
+	$rvp =~ s/(<option value="\Q$form->{rvp}\E")/$1 selected/;
 
-      print qq|
+	print qq|
       <td nowrap><input name=remittancevoucher type=checkbox class=checkbox value=1 $form->{remittancevoucher}>|.$locale->text('Remittance Voucher').qq|</td>
       <td>$rvp</td>
 |;
+      }
     }
   }
 
@@ -1361,19 +1365,14 @@ sub print_form {
   }
 
 
-  $form->{bankconnection} = "";
-  
   if ($form->{formname} eq 'invoice') {
     $form->{label} = $locale->text('Invoice');
-    $form->{bankconnection} = ($form->{vc} eq 'customer') ? "ours" : "theirs";
   }
   if ($form->{formname} eq 'debit_invoice') {
     $form->{label} = $locale->text('Debit Invoice');
-    $form->{bankconnection} = "ours";
   }
   if ($form->{formname} eq 'credit_invoice') {
     $form->{label} = $locale->text('Credit Invoice');
-    $form->{bankconnection} = "theirs";
   }
 
   if ($form->{formname} eq 'sales_order') {
@@ -1550,7 +1549,7 @@ sub print_form {
       if ($form->{warehouse}) {
 	$form->{shiptoname} = $form->{company};
 	for (qw(address1 address2 city state zipcode country)) {
-	  $form->{"shipto$_"} = $form->{"warehouse_$_"};
+	  $form->{"shipto$_"} = $form->{"warehouse$_"};
 	}
       } else {
 	# fill in company address
@@ -1608,15 +1607,16 @@ sub print_form {
       $form->update_status(\%myconfig);
     }
 
-    $old_form->{printed} = $form->{printed} if defined %$old_form;
-
     %audittrail = ( tablename	=> ($order) ? 'oe' : lc $ARAP,
                     reference	=> $form->{"${inv}number"},
 		    formname	=> $form->{formname},
 		    action	=> 'printed',
 		    id		=> $form->{id} );
- 
-    $old_form->{audittrail} .= $form->audittrail("", \%myconfig, \%audittrail) if defined %$old_form;
+
+    if (defined %$old_form) {
+      $old_form->{printed} = $form->{printed};
+      $old_form->{audittrail} .= $form->audittrail("", \%myconfig, \%audittrail);
+    }
     
   }
 
@@ -1640,6 +1640,12 @@ sub print_form {
     $cc = $locale->text('Cc').qq|: $form->{cc}\n| if $form->{cc};
     $bcc = $locale->text('Bcc').qq|: $form->{bcc}\n| if $form->{bcc};
     
+    %audittrail = ( tablename	=> ($order) ? 'oe' : lc $ARAP,
+                    reference	=> $form->{"${inv}number"},
+		    formname	=> $form->{formname},
+		    action	=> 'emailed',
+		    id		=> $form->{id} );
+   
     if (defined %$old_form) {
       $old_form->{intnotes} = qq|$old_form->{intnotes}\n\n| if $old_form->{intnotes};
       $old_form->{intnotes} .= qq|[email]\n|
@@ -1657,15 +1663,10 @@ sub print_form {
       $old_form->{media} = $myconfig{printer};
 
       $old_form->save_intnotes(\%myconfig, ($order) ? 'oe' : lc $ARAP);
+    
+      $old_form->{audittrail} .= $form->audittrail("", \%myconfig, \%audittrail);
     }
     
-    %audittrail = ( tablename	=> ($order) ? 'oe' : lc $ARAP,
-                    reference	=> $form->{"${inv}number"},
-		    formname	=> $form->{formname},
-		    action	=> 'emailed',
-		    id		=> $form->{id} );
- 
-    $old_form->{audittrail} .= $form->audittrail("", \%myconfig, \%audittrail) if defined %$old_form;
   }
 
 
@@ -1806,12 +1807,6 @@ sub print_form {
     delete $form->{pre};
 
     $form->{rowcount}--;
-
-    for (qw(exchangerate creditlimit creditremaining)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
-    
-    for $i (1 .. $form->{paidaccounts}) {
-      for (qw(paid exchangerate)) { $form->{"${_}_$i"} = $form->parse_amount(\%myconfig, $form->{"${_}_$i"}) }
-    }
 
     &{ "$display_form" };
 

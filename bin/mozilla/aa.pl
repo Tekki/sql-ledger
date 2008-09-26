@@ -524,6 +524,15 @@ sub form_header {
 |;
   }
 
+  if ($form->{vc} eq 'vendor') {
+    $dcn = qq|
+              <tr>
+	        <th align=right nowrap>|.$locale->text('DCN').qq|</th>
+		<td><input name=dcn size=60 value="|.$form->quote($form->{dcn}).qq|"></td>
+	      </tr>
+|;
+  }
+    
   if (($rows = $form->numtextrows($form->{description}, 60, 5)) > 1) {
     $description = qq|<textarea name="description" rows=$rows cols=60 wrap=soft>$form->{description}</textarea>|;
   } else {
@@ -627,6 +636,7 @@ sub form_header {
 	<tr>
 	  <td>
 	    <table>
+	      $dcn
 	      $description
 	    </table>
 	  </td>
@@ -1522,6 +1532,7 @@ sub search {
   push @a, qq|<input name="l_shippingpoint" class=checkbox type=checkbox value=Y> |.$locale->text('Shipping Point');
   push @a, qq|<input name="l_shipvia" class=checkbox type=checkbox value=Y> |.$locale->text('Ship via');
   push @a, qq|<input name="l_waybill" class=checkbox type=checkbox value=Y> |.$locale->text('Waybill');
+  push @a, qq|<input name="l_dcn" class=checkbox type=checkbox value=Y> |.$locale->text('DCN');
   
   $form->header;
   
@@ -1670,6 +1681,14 @@ sub transactions {
     $name = ($form->{vc} eq 'customer') ? $locale->text('Customer') : $locale->text('Vendor');
     $option .= "$name : $form->{$form->{vc}}";
   }
+  if ($form->{"$form->{vc}number"}) {
+    $callback .= "&$form->{vc}number=".$form->escape($form->{"$form->{vc}number"},1);
+    $href .= "&$form->{vc}number=".$form->escape($form->{"$form->{vc}number"});
+    $option .= "\n<br>" if ($option);
+    $name = ($form->{vc} eq 'customer') ? $locale->text('Customer Number') : $locale->text('Vendor Number');
+    $option .= qq|$name : $form->{"$form->{vc}number"}|;
+  }
+
   if ($form->{department}) {
     $callback .= "&department=".$form->escape($form->{department},1);
     $href .= "&department=".$form->escape($form->{department});
@@ -1796,7 +1815,7 @@ sub transactions {
   }
 
 
-  @columns = $form->sort_columns(qw(transdate id invnumber ordnumber ponumber description name customernumber vendornumber address netamount tax amount paid due curr datepaid duedate memo notes till employee manager warehouse shippingpoint shipvia waybill paymentdiff department));
+  @columns = $form->sort_columns(qw(transdate id invnumber ordnumber ponumber description name customernumber vendornumber address netamount tax amount paid due curr datepaid duedate memo notes till employee manager warehouse shippingpoint shipvia waybill dcn paymentdiff department));
   pop @columns if $form->{department};
   unshift @columns, "runningnumber";
 
@@ -1863,6 +1882,7 @@ sub transactions {
   $column_header{shippingpoint} = "<th><a class=listheading href=$href&sort=shippingpoint>" . $locale->text('Shipping Point') . "</a></th>";
   $column_header{shipvia} = "<th><a class=listheading href=$href&sort=shipvia>" . $locale->text('Ship via') . "</a></th>";
   $column_header{waybill} = "<th><a class=listheading href=$href&sort=waybill>" . $locale->text('Waybill') . "</a></th>";
+  $column_header{dcn} = "<th><a class=listheading href=$href&sort=dcn>" . $locale->text('DCN') . "</a></th>";
   $column_header{paymentdiff} = "<th><a class=listheading href=$href&sort=paymentdiff>" . $locale->text('+/-') . "</a></th>";
 
   $column_header{curr} = "<th><a class=listheading href=$href&sort=curr>" . $locale->text('Curr') . "</a></th>";
@@ -1975,7 +1995,7 @@ sub transactions {
     
     for (qw(notes description memo)) { $ref->{$_} =~ s/\r?\n/<br>/g }
     for (qw(transdate datepaid duedate)) { $column_data{$_} = "<td nowrap>$ref->{$_}&nbsp;</td>" }
-    for (qw(department ordnumber ponumber notes warehouse shippingpoint shipvia waybill employee manager till source memo description projectnumber address)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
+    for (qw(department ordnumber ponumber notes warehouse shippingpoint shipvia waybill employee manager till source memo description projectnumber address dcn)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
     $column_data{$namefld} = "<td>$ref->{$namefld}&nbsp;</td>";
     
     if ($ref->{paymentdiff} <= 0) {

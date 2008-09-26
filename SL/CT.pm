@@ -622,7 +622,7 @@ sub search {
 		 ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
 		 ad.country
                  FROM $form->{db} ct
-	      JOIN address ad ON (ad.trans_id = ct.id)
+	      LEFT JOIN address ad ON (ad.trans_id = ct.id)
 	      LEFT JOIN business b ON (ct.business_id = b.id)
 	      LEFT JOIN employee e ON (ct.employee_id = e.id)
 	      LEFT JOIN employee m ON (m.id = e.managerid)

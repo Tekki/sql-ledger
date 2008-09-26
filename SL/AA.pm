@@ -106,6 +106,7 @@ sub post_transaction {
   my $cleared = 'NULL';
   
   $diff = 0;
+  $fxdiff = 0;
   $invnetamount = 0;
   $fxinvnetamount = 0;
   
@@ -116,7 +117,9 @@ sub post_transaction {
       
       if ($form->{taxincluded}) {
 	$amount = ($fxinvamount) ? $fxtax * $amount{fxamount}{$i} / $fxinvamount : 0;
-	$amount{fxamount}{$i} -= $amount;
+	$taxamount = $form->round_amount($amount - $fxdiff, $form->{precision});
+	$amount{fxamount}{$i} -= $taxamount;
+	$fxdiff = $taxamount - ($amount - $fxdiff);
       }
 	
       # multiply by exchangerate
@@ -165,12 +168,16 @@ sub post_transaction {
 
   my $paid = 0;
   
+  my ($paymentaccno) = split(/--/, $form->{"${ARAP}_paid_1"});
+ 
   $diff = 0;
   # add payments
   for $i (1 .. $form->{paidaccounts}) {
     $fxamount = $form->parse_amount($myconfig, $form->{"paid_$i"});
 
     if ($fxamount) {
+      ($paymentaccno) = split /--/, $form->{"$form->{ARAP}_paid_$i"};
+      
       $paid += $fxamount;
 
       $paidamount = $fxamount * $form->{exchangerate};
@@ -251,6 +258,21 @@ sub post_transaction {
 
   $form->{amount} = $invamount;          # need for vr batch
 
+  if ($form->{vc} eq 'customer') {
+    # dcn
+    ($form->{integer_amount}, $form->{decimal}) = split /\./, $fxinvamount;
+    $form->{decimal} = substr("$form->{decimal}00", 0, 2);
+
+    $query = qq|SELECT bk.membernumber, bk.dcn, bk.rvc
+		FROM bank bk
+		JOIN chart c ON (c.id = bk.id)
+		WHERE c.accno = '$paymentaccno'|;
+    ($form->{membernumber}, $form->{dcn}, $form->{rvc}) = $dbh->selectrow_array($query);
+    
+    for my $dcn (qw(dcn rvc)) { $form->{$dcn} = $form->format_dcn($form->{$dcn}) }
+  }
+
+
   $query = qq|UPDATE $table SET
 	      invnumber = |.$dbh->quote($form->{invnumber}).qq|,
 	      description = |.$dbh->quote($form->{description}).qq|,
@@ -272,7 +294,8 @@ sub post_transaction {
 	      cashdiscount = $form->{cashdiscount},
 	      discountterms = $form->{discountterms},
 	      onhold = '$form->{onhold}',
-	      exchangerate = $form->{exchangerate}
+	      exchangerate = $form->{exchangerate},
+	      dcn = |.$dbh->quote($form->{dcn}).qq|
 	      WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
 
@@ -361,7 +384,8 @@ sub post_transaction {
   my $voucherid;
   my $apprpaid = $approved;
   my $paymentid = 1;
-  
+
+ 
   # add paid transactions
   for $i (1 .. $form->{paidaccounts}) {
     
@@ -758,7 +782,8 @@ sub transactions {
 		 a.exchangerate, d.description AS department,
 		 a.ponumber, a.warehouse_id, w.description AS warehouse,
 		 a.description, a.datepaid - a.duedate AS paymentdiff,
-		 ad.address1, ad.address2, ad.city, ad.zipcode, ad.country
+		 ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
+		 a.dcn
 		 $acc_trans_flds
 	         FROM $table a
 	      JOIN $form->{vc} vc ON (a.$form->{vc}_id = vc.id)
@@ -789,9 +814,9 @@ sub transactions {
 		  ponumber => 24,
 		  warehouse => 26,
 		  description => 27,
-		  accno => 34,
-		  source => 35,
-		  project => 36
+		  accno => 35,
+		  source => 36,
+		  project => 37
 		);
 
   
@@ -1246,38 +1271,23 @@ sub company_details {
   }
    
   # banking details
-  if ($form->{bankconnection} eq 'theirs') {
+  if ($form->{vc} eq 'customer') {
+    my ($paymentaccno) = split /--/, $form->{"AR_paid_$form->{paidaccounts}"};
     $query = qq|SELECT bk.*, ad.*
-                FROM bank bk
-		LEFT JOIN address ad ON (bk.address_id = ad.id)
-                WHERE bk.id = $form->{"$form->{vc}_id"}|;
-    $sth = $dbh->prepare($query) || $form->dberror($query);
-    $sth->execute;
-    $ref = $sth->fetchrow_hashref(NAME_lc);
-
-    for (keys %$ref) { $form->{"bank$_"} = $ref->{$_} }
-    $sth->finish;
-  }
-
-  for (qw(iban bic)) { $form->{$_} ||= $form->{"bank$_"} };
-
-
-  if ($form->{bankconnection} eq 'ours') {
-    my $ARAP = ($form->{vc} eq 'customer') ? "AR" : "AP";
-    ($id) = split /--/, $form->{"${ARAP}_paid_$form->{paidaccounts}"};
-    $query = qq|SELECT bk.*, ad.*
-                FROM chart c
+		FROM chart c
 		JOIN bank bk ON (c.id = bk.id)
-                JOIN address ad ON (c.id = ad.trans_id)
-                WHERE c.accno = '$id'|;
+		JOIN address ad ON (c.id = ad.trans_id)
+		WHERE c.accno = '$paymentaccno'|;
     $sth = $dbh->prepare($query) || $form->dberror($query);
     $sth->execute;
     $ref = $sth->fetchrow_hashref(NAME_lc);
 
     for (keys %$ref) { $form->{"bank$_"} = $ref->{$_} }
     $sth->finish;
+      
+    for (qw(iban bic membernumber rvc dcn)) { $form->{$_} = $form->{"bank$_"} };
   }
-  
+
   $dbh->disconnect;
 
 }

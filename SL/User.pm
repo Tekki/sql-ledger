@@ -542,7 +542,7 @@ sub dbneedsupdate {
 
       if ($dbh->selectrow_array($query)) {
 	$query = qq|SELECT * FROM defaults|;
-	$sth = $dbh->prepare($query);
+	my $sth = $dbh->prepare($query);
 	$sth->execute || $form->dberror($query);
 
 	if ($sth->{NAME}->[0] eq 'fldname') {

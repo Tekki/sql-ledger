@@ -60,6 +60,7 @@ $self{texts} = {
   'Number'                      => 'Número',
   'Orders generated!'           => 'Pedidos gerados!',
   'Orphaned'                    => 'Órfãs',
+  'POS'                         => 'PDV',
   'Part Number'                 => 'Número do Item',
   'Period'                      => 'Período',
   'Pricegroup'                  => 'Grupo de Preço',

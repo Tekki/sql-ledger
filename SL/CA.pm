@@ -27,7 +27,7 @@ sub all_accounts {
                  FROM chart c
 		 JOIN acc_trans ac ON (ac.chart_id = c.id)
 		 WHERE ac.approved = '1'
-		 GROUP BY accno|;
+		 GROUP BY c.accno|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 

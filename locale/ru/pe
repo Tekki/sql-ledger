@@ -46,6 +46,7 @@ $self{texts} = {
   'Nothing selected!'           => 'Ничего не выбрано!',
   'Number'                      => 'код',
   'Orphaned'                    => 'Без проводок',
+  'POS'                         => 'ККМ',
   'Part Number'                 => 'Код товара',
   'Period'                      => 'Период',
   'Pricegroup'                  => 'Тип цен',

@@ -159,6 +159,7 @@ $self{subs} = {
   'form_footer'                 => 'form_footer',
   'form_header'                 => 'form_header',
   'gl_transaction'              => 'gl_transaction',
+  'islocked'                    => 'islocked',
   'js_menu'                     => 'js_menu',
   'menubar'                     => 'menubar',
   'name_selected'               => 'name_selected',

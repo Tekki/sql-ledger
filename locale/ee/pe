@@ -62,6 +62,7 @@ $self{texts} = {
   'Number'                      => 'Kood',
   'Orders generated!'           => 'Arved genereeritud',
   'Orphaned'                    => 'Seosteta',
+  'POS'                         => 'MüügiPunkt',
   'Part Number'                 => 'Deaili Number',
   'Period'                      => 'Periood',
   'Pricegroup'                  => 'Hinnagrupp',

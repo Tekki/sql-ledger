@@ -63,7 +63,7 @@ CREATE TABLE defaults (
   fldvalue text
 );
 --
-INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '2.8.5');
+INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '2.8.6');
 --
 CREATE TABLE acc_trans (
   trans_id int,
@@ -210,7 +210,8 @@ CREATE TABLE ar (
   warehouse_id int,
   description text,
   onhold bool DEFAULT 'f',
-  exchangerate float
+  exchangerate float,
+  dcn text
 );
 --
 CREATE TABLE ap (
@@ -245,7 +246,8 @@ CREATE TABLE ap (
   warehouse_id int,
   description text,
   onhold bool DEFAULT 'f',
-  exchangerate float
+  exchangerate float,
+  dcn text
 );
 --
 CREATE TABLE partstax (
@@ -639,7 +641,10 @@ CREATE TABLE bank (
   name varchar(64),
   iban varchar(34),
   bic varchar(11),
-  address_id int default nextval('addressid')
+  address_id int default nextval('addressid'),
+  dcn text,
+  rvc text,
+  membernumber text
 );
 --
 CREATE TABLE payment (

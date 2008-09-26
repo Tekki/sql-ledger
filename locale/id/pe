@@ -34,6 +34,7 @@ $self{texts} = {
   'Notes'                       => 'Catatan',
   'Nothing selected!'           => 'Tidak ada yang dipilih!',
   'Number'                      => 'Nomor',
+  'POS'                         => 'Kasir (POS)',
   'Period'                      => 'Perioda',
   'Pricegroup'                  => 'Kelompok Harga',
   'Pricegroup deleted!'         => 'Kelompok Harga sudah dihapus!',

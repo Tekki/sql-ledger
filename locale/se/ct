@@ -61,6 +61,7 @@ $self{texts} = {
   'Language'                    => 'Språk',
   'Leadtime'                    => 'Leveranstid',
   'Manager'                     => 'Direktör',
+  'Method'                      => 'Metod',
   'Mobile'                      => 'Mobiltelefon',
   'Name'                        => 'Namn',
   'Name missing!'               => 'Namn saknas',

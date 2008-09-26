@@ -3680,7 +3680,7 @@ sub bank_accounts {
   $callback = "$form->{script}?action=bank_accounts";
   for (qw(path login)) { $callback .= "&$_=$form->{$_}" }
   
-  @column_index = qw(accno description name iban bic address);
+  @column_index = qw(accno description name iban bic membernumber rvc dcn);
   
   $callback = $form->escape($callback);
 
@@ -3690,6 +3690,9 @@ sub bank_accounts {
   $column_header{iban} = qq|<th class=listheading>|.$locale->text('IBAN').qq|</th>|;
   $column_header{bic} = qq|<th class=listheading>|.$locale->text('BIC').qq|</th>|;
   $column_header{address} = qq|<th class=listheading>|.$locale->text('Address').qq|</th>|;
+  $column_header{membernumber} = qq|<th class=listheading>|.$locale->text('Member No.').qq|</th>|;
+  $column_header{rvc} = qq|<th class=listheading>|.$locale->text('RVC').qq|</th>|;
+  $column_header{dcn} = qq|<th class=listheading>|.$locale->text('DCN').qq|</th>|;
 
   
   $form->header;
@@ -3717,7 +3720,7 @@ sub bank_accounts {
   foreach $ref (@{ $form->{ALL} }) {
     
     $ref->{address} =~ s/\n/<br>/g;
-    for (qw(name description)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
+    for (qw(name description membernumber rvc dcn)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
     for (qw(iban bic address)) { $column_data{$_} = "<td nowrap>$ref->{$_}&nbsp;</td>" }
     $column_data{accno} = "<td><a href=$form->{script}?action=edit_bank&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{accno}</td>";
 
@@ -3784,16 +3787,16 @@ sub bank_header {
 	  <td>$form->{account}</td>
 	</tr>
 	<tr>
+	  <th align=right nowrap>|.$locale->text('Bank').qq|</th>
+	  <td><input name=name size=32 maxlength=64 value="|.$form->quote($form->{name}).qq|"></td>
+	</tr>
+	<tr>
 	  <th align=right>|.$locale->text('BIC').qq|</th>
 	  <td><input name=bic size=11 maxlength=11 value="$form->{bic}"></td>
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('IBAN').qq|</th>
 	  <td><input name=iban size=24 maxlength=34 value="$form->{iban}"></td>
-	</tr>
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Bank').qq|</th>
-	  <td><input name=name size=32 maxlength=64 value="|.$form->quote($form->{name}).qq|"></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Address').qq|</th>
@@ -3818,6 +3821,18 @@ sub bank_header {
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Country').qq|</th>
 	  <td><input name=country size=32 maxlength=32 value="|.$form->quote($form->{country}).qq|"></td>
+	</tr>
+	<tr>
+	  <th align=right>|.$locale->text('Member No.').qq|</th>
+	  <td><input name=membernumber value="$form->{membernumber}"></td>
+	</tr>
+	<tr>
+	  <th align=right>|.$locale->text('RVC').qq|</th>
+	  <td><input name=rvc size=60 value="$form->{rvc}"></td>
+	</tr>
+	<tr>
+	  <th align=right>|.$locale->text('DCN').qq|</th>
+	  <td><input name=dcn size=60 value="$form->{dcn}"></td>
 	</tr>
       </table>
     </td>

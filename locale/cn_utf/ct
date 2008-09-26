@@ -58,6 +58,7 @@ $self{texts} = {
   'Language'                    => '语言',
   'Leadtime'                    => '总需时',
   'Manager'                     => '经理',
+  'Method'                      => '方法',
   'Name'                        => '名称',
   'Name missing!'               => '未指明名字',
   'No.'                         => '序号',

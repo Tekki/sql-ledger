@@ -581,6 +581,10 @@ print qq|
     }
       
     $form->{nextsub} = "generate_$form->{report}";
+
+    $form->{type} = "statement";
+    $form->{format} ||= $myconfig{outputformat};
+    $form->{media} ||= $myconfig{printer};
     
     # setup vc selection
     $form->all_vc(\%myconfig, $form->{vc}, ($form->{vc} eq 'customer') ? "AR" : "AP");
@@ -612,9 +616,6 @@ print qq|
 |;
     }
 		  
-    
-    $postscript = "postscript" if $myconfig{printer};
-
     print qq|
         $vc
 	<tr>
@@ -622,11 +623,7 @@ print qq|
 	  <td><input name=todate size=11 title="$myconfig{dateformat}"></td>
 	</tr>
 	$selectto
-        <input type=hidden name=type value=statement>
-        <input type=hidden name=format value=$postscript>
-	<input type=hidden name=media value="$myconfig{printer}">
-
-	<input type=hidden name=action value=$form->{nextsub}>
+	<input type=hidden name=action value="$form->{nextsub}">
 	$summary
 	<tr>
 	  <table>
@@ -657,6 +654,9 @@ print qq|
 	</tr>
 
 |;
+
+    $form->hide_form(qw(nextsub type format media));
+
   }
 
 # above action can be removed if there is more than one input field
@@ -1246,6 +1246,7 @@ sub generate_ap_aging {
 
 sub aging {
 
+
   $form->header;
   
   $vcnumber = ($form->{vc} eq 'customer') ? $locale->text('Customer Number') : $locale->text('Vendor Number');
@@ -1367,7 +1368,7 @@ function CheckAll() {
   $i = 0;
   $k = 0;
   $l = $#{ $form->{AG} };
-
+  
   foreach $ref (@{ $form->{AG} }) {
 
     if ($curr ne $ref->{curr}) {
@@ -1477,7 +1478,7 @@ function CheckAll() {
     }
    
     # print subtotal
-    if ($l > 1) {
+    if ($l > 0) {
       $nextid = ($k <= $l) ? $form->{AG}->[$k]->{vc_id} : 0;
     }
 
@@ -1627,18 +1628,23 @@ sub deselect_all {
 
 sub print_options {
 
-  $form->{sendmode} = "attachment";
   $form->{copies} ||= 1;
-  $form->{format} = "pdf" if ($latex && $form->{media} eq 'email');
-  
   $form->{PD}{$form->{type}} = "selected";
-  $form->{DF}{$form->{format}} = "selected";
-  $form->{SM}{$form->{sendmode}} = "selected";
+  
+  if ($myconfig{printer}) {
+    $form->{format} ||= "postscript";
+  } else {
+    $form->{format} ||= "pdf";
+  }
+  $form->{media} ||= $myconfig{printer};
+
+  $form->{sendmode} = "attachment";
+  $form->{format} = "pdf" if ($latex && $form->{media} eq 'email');
 
   if ($form->{media} eq 'email') {
     $media = qq|<select name=sendmode>
-	    <option value=attachment $form->{SM}{attachment}>|.$locale->text('Attachment').qq|
-	    <option value=inline $form->{SM}{inline}>|.$locale->text('In-line')
+	    <option value=attachment>|.$locale->text('Attachment').qq|
+	    <option value=inline>|.$locale->text('In-line')
 	    .qq|</select>|;
 
     if ($form->{selectlanguage}) {
@@ -1647,6 +1653,7 @@ sub print_options {
   } else {
     $media = qq|<select name=media>
 	    <option value=screen>|.$locale->text('Screen');
+
     if (%printer && $latex) {
       for (sort keys %printer) { $media .= qq|
             <option value="$_">$_| }
@@ -1654,22 +1661,24 @@ sub print_options {
   }
   
   $format = qq|<select name=format>
-            <option value=html $form->{PD}{format}>html|;
+            <option value="html">html|;
 	    
   $type = qq|<select name=type>
-	    <option value=statement $form->{PD}{statement}>|.$locale->text('Statement').qq|</select>|;
+	    <option value="statement" $form->{PD}{statement}>|.$locale->text('Statement').qq|</select>|;
 
-  $media =~ s/(<option value="\Q$form->{media}\E")/$1 selected/;
   $media .= qq|</select>|;
+  $media =~ s/(<option value="\Q$form->{media}\E")/$1 selected/;
 
   if ($latex) {
     $format .= qq|
-            <option value=postscript $form->{DF}{postscript}>|.$locale->text('Postscript').qq|
-	    <option value=pdf $form->{DF}{pdf}>|.$locale->text('PDF');
+            <option value="postscript">|.$locale->text('Postscript').qq|
+	    <option value="pdf">|.$locale->text('PDF');
   }
 
   $format .= qq|</select>|;
-  
+  $format =~ s/(<option value="\Q$form->{format}\E")/$1 selected/;
+
+
   print qq|
 <table>
   <tr>
@@ -2547,9 +2556,6 @@ sub print_report_options {
   $form->{format} ||= "pdf";
   $form->{media} ||= "screen";
   
-  $form->{DF}{$form->{format}} = "selected";
-  $form->{MD}{$form->{media}} = "selected";
-
   $media = qq|<select name=media>
 	    <option value=screen $form->{MD}{screen}>|.$locale->text('Screen').qq|
 	    <option value=file $form->{MD}{file}>|.$locale->text('File');

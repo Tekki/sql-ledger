@@ -62,6 +62,7 @@ $self{texts} = {
   'Number'                      => 'Szám',
   'Orders generated!'           => 'Rendelések generálva!',
   'Orphaned'                    => 'Tranzakció nélküli',
+  'POS'                         => 'Nyugta',
   'Part Number'                 => 'Cikkszám',
   'Period'                      => 'Idõszak',
   'Pricegroup'                  => 'Árcsoport',

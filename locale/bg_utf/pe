@@ -62,6 +62,7 @@ $self{texts} = {
   'Number'                      => 'Номер',
   'Orders generated!'           => 'Поръчките са създадени!',
   'Orphaned'                    => 'Без движение',
+  'POS'                         => 'Кредино известие',
   'Part Number'                 => 'Сериен номер',
   'Period'                      => 'Период',
   'Pricegroup'                  => 'Ценова група',

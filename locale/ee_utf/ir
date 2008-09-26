@@ -222,6 +222,7 @@ $self{subs} = {
   'gl_transaction'              => 'gl_transaction',
   'invoice_links'               => 'invoice_links',
   'invoicetotal'                => 'invoicetotal',
+  'islocked'                    => 'islocked',
   'item_selected'               => 'item_selected',
   'js_menu'                     => 'js_menu',
   'menubar'                     => 'menubar',

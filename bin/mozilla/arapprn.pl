@@ -123,22 +123,26 @@ sub print_check {
   $c->init;
   ($whole, $form->{decimal}) = split /\./, $form->parse_amount(\%myconfig, $form->{amount});
 
-  $form->{decimal} .= "00";
-  $form->{decimal} = substr($form->{decimal}, 0, 2);
+  $form->{decimal} = substr("$form->{decimal}00", 0, 2);
   $form->{text_decimal} = $c->num2text($form->{decimal} * 1);
   $form->{text_amount} = $c->num2text($whole);
   $form->{integer_amount} = $whole;
 
   if ($form->{cd_amount}) {
     ($whole, $form->{cd_decimal}) = split /\./, $form->{cd_invtotal};
-    $form->{cd_decimal} .= "00";
-    $form->{cd_decimal} = substr($form->{cd_decimal}, 0, 2);
+    $form->{cd_decimal} = substr("$form->{cd_decimal}00", 0, 2);
     $form->{text_cd_decimal} = $c->num2text($form->{cd_decimal} * 1);
     $form->{text_cd_invtotal} = $c->num2text($whole);
     $form->{integer_cd_invtotal} = $whole;
   }
   
   push @a, (qw(text_amount text_decimal text_cd_invtotal text_cd_decimal));
+
+  # dcn
+  if ($form->{vc} eq 'customer') {
+    for (qw(memberno rvc dcn)) { $form->{$_} = $form->{"bank$_"} }
+    for (qw(rvc dcn)) { $form->{$_} = $form->format_dcn($form->{$_}) }
+  }
   
   ($form->{employee}) = split /--/, $form->{employee};
 
@@ -344,6 +348,11 @@ sub print_transaction {
   $form->{integer_amount} = $whole;
   
   for (qw(cd_subtotal cd_amount cd_invtotal invtotal subtotal paid total)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, $form->{precision}) }
+
+  # dcn
+  if ($form->{vc} eq 'customer') {
+    for (qw(rvc dcn)) { $form->{$_} = $form->format_dcn($form->{$_}) }
+  }
   
   ($form->{employee}) = split /--/, $form->{employee};
 

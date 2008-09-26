@@ -206,14 +206,13 @@ sub prepare_order {
   $form->{currency} =~ s/ //g;
   $form->{oldcurrency} = $form->{currency};
 
-  $i = 0;
+  $i = 1;
 
   if ($form->{id}) {
     
     for (qw(ordnumber quonumber shippingpoint shipvia waybill notes intnotes shiptoname shiptoaddress1 shiptoaddress2 shiptocity shiptostate shiptozipcode shiptocountry shiptocontact)) { $form->{$_} = $form->quote($form->{$_}) }
     
     foreach $ref (@{ $form->{form_details} } ) {
-      $i++;
       for (keys %$ref) { $form->{"${_}_$i"} = $ref->{$_} }
 
       $form->{"projectnumber_$i"} = qq|$ref->{projectnumber}--$ref->{project_id}| if $ref->{project_id};
@@ -242,6 +241,7 @@ sub prepare_order {
       
       for (qw(partnumber sku description unit)) { $form->{"${_}_$i"} = $form->quote($form->{"${_}_$i"}) }
       $form->{rowcount} = $i;
+      $i++;
     }
   }
 
@@ -559,7 +559,7 @@ sub form_header {
 <form method=post action="$form->{script}">
 |;
 
-  $form->hide_form(qw(id type defaultcurrency formname printed emailed queued vc title discount creditlimit creditremaining tradediscount business oldtransdate recurring city state country));
+  $form->hide_form(qw(id type defaultcurrency formname printed emailed queued vc title discount creditlimit creditremaining tradediscount business oldtransdate recurring city state country closedto));
 
   $form->hide_form("select$form->{vc}");
   $form->hide_form(map { "select$_" } qw(formname currency partsgroup projectnumber department warehouse employee language));
@@ -738,6 +738,8 @@ sub form_footer {
 <br>
 |;
 
+  $transdate = $form->datetonum(\%myconfig, $form->{transdate});
+  
   if ($form->{readonly}) {
 
     &islocked;
@@ -772,6 +774,10 @@ sub form_footer {
       $a{'Delete'} = 1;
       $a{'Save as new'} = 1;
       $a{'Print and Save as new'} = 1 if $latex;
+      if ($form->{closed} && $transdate <= $form->{closedto}) {
+	$a{'Save'} = 0;
+	$a{'Delete'} = 0;
+      }
 
       if ($form->{type} =~ /sales_/) {
 	if ($myconfig{acs} !~ /(AR--AR|AR--Sales Invoice)/) {
@@ -2074,20 +2080,6 @@ sub invoice {
   }
 
 
-  if ($form->{type} =~ /_order/ && $form->{currency} ne $form->{defaultcurrency}) {
-    # check if we need a new exchangerate
-    $buysell = ($form->{type} eq 'sales_order') ? "buy" : "sell";
-    
-    $orddate = $form->current_date(\%myconfig);
-    $exchangerate = $form->check_exchangerate(\%myconfig, $form->{currency}, $orddate, $buysell);
-
-    if (!$exchangerate) {
-      &backorder_exchangerate($orddate, $buysell);
-      exit;
-    }
-  }
-
-
   # close orders/quotations
   $form->{closed} = 1;
 
@@ -2110,9 +2102,9 @@ sub invoice {
 
 
   if ($form->{type} =~ /_order$/) {
-    $form->{exchangerate} = $exchangerate;
     &create_backorder;
   }
+
 
   $form->{id} = '';
   
@@ -2126,7 +2118,11 @@ sub invoice {
     $script = "is";
     $buysell = 'buy';
   }
- 
+
+  if ($form->{currency} ne $form->{defaultcurrency}) {
+    $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->current_date(\%myconfig), $buysell);
+  }
+  
   for (qw(id subject message cc bcc printed emailed queued)) { delete $form->{$_} }
   $form->{$form->{vc}} =~ s/--.*//g;
   $form->{type} = "invoice";
@@ -2171,80 +2167,6 @@ sub invoice {
 
 }
 
-
-
-sub backorder_exchangerate {
-  my ($orddate, $buysell) = @_;
-
-  $form->header;
-
-  print qq|
-<body>
-
-<form method=post action=$form->{script}>
-|;
-
-  # delete action variable
-  for (qw(action nextsub exchangerate)) { delete $form->{$_} }
-
-  $form->hide_form;
-
-  $form->{title} = $locale->text('Add Exchange Rate');
-  
-  print qq|
-
-<input type=hidden name=exchangeratedate value=$orddate>
-<input type=hidden name=buysell value=$buysell>
-
-<table width=100%>
-  <tr><th class=listtop>$form->{title}</th></tr>
-  <tr height="5"></tr>
-  <tr>
-    <td>
-      <table>
-        <tr>
-	  <th align=right>|.$locale->text('Currency').qq|</th>
-	  <td>$form->{currency}</td>
-	</tr>
-	<tr>
-	  <th align=right>|.$locale->text('Date').qq|</th>
-	  <td>$orddate</td>
-	</tr>
-        <tr>
-	  <th align=right>|.$locale->text('Exchange Rate').qq|</th>
-	  <td><input name=exchangerate size=11></td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-</table>
-
-<hr size=3 noshade>
-
-<br>
-<input type=hidden name=nextsub value=save_exchangerate>
-
-<input name=action class=submit type=submit value="|.$locale->text('Continue').qq|">
-
-</form>
-
-</body>
-</html>
-|;
-
-
-}
-
-
-sub save_exchangerate {
-
-  $form->isblank("exchangerate", $locale->text('Exchange rate missing!'));
-  $form->{exchangerate} = $form->parse_amount(\%myconfig, $form->{exchangerate});
-  $form->save_exchangerate(\%myconfig, $form->{currency}, $form->{exchangeratedate}, $form->{exchangerate}, $form->{buysell});
-  
-  &invoice;
-
-}
 
 
 sub create_backorder {

@@ -47,6 +47,7 @@ $self{subs} = {
   'edit'                        => 'edit',
   'form_footer'                 => 'form_footer',
   'form_header'                 => 'form_header',
+  'islocked'                    => 'islocked',
   'item_selected'               => 'item_selected',
   'jcitems_links'               => 'jcitems_links',
   'js_menu'                     => 'js_menu',

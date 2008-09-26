@@ -78,8 +78,8 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.8.5";
-  $self->{dbversion} = "2.8.5";
+  $self->{version} = "2.8.6";
+  $self->{dbversion} = "2.8.6";
 
   $self->{precision} = 2;
   
@@ -619,184 +619,184 @@ sub parse_template {
       }
     }
 
-  @_ = @texform;
+    @_ = @texform;
 
-  while ($_ = shift) {
-      
-    $par = "";
-    $var = $_;
+    while ($_ = shift) {
+	
+      $par = "";
+      $var = $_;
 
-    # detect pagebreak block and its parameters
-    if (/<%pagebreak ([0-9]+) ([0-9]+) ([0-9]+)%>/) {
-      $chars_per_line = $1;
-      $lines_on_first_page = $2;
-      $lines_on_second_page = $3;
-      
-      while ($_ = shift) {
-        last if (/<%end pagebreak%>/);
-        $pagebreak .= $_;
-      }
-    }
-
-    
-    if (/<%foreach /) {
-      
-      # this one we need for the count
-      chomp $var;
-      $var =~ s/.*?<%foreach (.+?)%>/$1/;
-      while ($_ = shift) {
-	last if (/<%end $var%>/);
-
-	# store line in $par
-	$par .= $_;
+      # detect pagebreak block and its parameters
+      if (/<%pagebreak ([0-9]+) ([0-9]+) ([0-9]+)%>/) {
+	$chars_per_line = $1;
+	$lines_on_first_page = $2;
+	$lines_on_second_page = $3;
+	
+	while ($_ = shift) {
+	  last if (/<%end pagebreak%>/);
+	  $pagebreak .= $_;
+	}
       }
 
-      # display contents of $self->{number}[] array
-      for my $i (0 .. $#{ $self->{$var} }) {
+      
+      if (/<%foreach /) {
+	
+	# this one we need for the count
+	chomp $var;
+	$var =~ s/.*?<%foreach (.+?)%>/$1/;
+	while ($_ = shift) {
+	  last if (/<%end $var%>/);
 
-        if ($var =~ /^(part|service)$/) {
-	  next if $self->{$var}[$i] eq 'NULL';
+	  # store line in $par
+	  $par .= $_;
 	}
 
-        # Try to detect whether a manual page break is necessary
-        # but only if there was a <%pagebreak ...%> block before
-	
-	if ($var eq 'number' || $var eq 'part' || $var eq 'service') {
-	  if ($chars_per_line && defined $self->{$var}) {
-	    my $line;
-	    my $lines = 0;
-	    my $item = $self->{description}[$i];
-	    $item .= "\n".$self->{itemnotes}[$i] if $self->{itemnotes}[$i];
-	    
-	    foreach $line (split /\r?\n/, $item) {
-	      $lines++;
-	      $lines += int(length($line) / $chars_per_line);
-	    }
-	    
-	    my $lpp;
-	    
-	    if ($current_page == 1) {
-	      $lpp = $lines_on_first_page;
-	    } else {
-	      $lpp = $lines_on_second_page;
-	    }
+	# display contents of $self->{number}[] array
+	for my $i (0 .. $#{ $self->{$var} }) {
 
-	    # Yes we need a manual page break
-	    if (($current_line + $lines) > $lpp) {
-	      my $pb = $pagebreak;
-	      
-	      # replace the special variables <%sumcarriedforward%>
-	      # and <%lastpage%>
-	      
-	      my $psum = $self->format_amount($myconfig, $sum, $self->{precision});
-	      $pb =~ s/<%sumcarriedforward%>/$psum/g;
-	      $pb =~ s/<%lastpage%>/$current_page/g;
-	      
-	      # only "normal" variables are supported here
-	      # (no <%if, no <%foreach, no <%include)
-	      
-	      $pb =~ s/<%(.+?)%>/$self->{$1}/g;
-	      
-	      # page break block is ready to rock
-	      print(OUT $pb);
-	      $current_page++;
-	      $current_line = 1;
-	      $lines = 0;
-	    }
-	    $current_line += $lines;
+	  if ($var =~ /^(part|service)$/) {
+	    next if $self->{$var}[$i] eq 'NULL';
 	  }
-	  $sum += $self->parse_amount($myconfig, $self->{linetotal}[$i]);
-	}
 
-	# don't parse par, we need it for each line
-	print OUT $self->format_line($par, $i);
-	
-      }
-      next;
-    }
+	  # Try to detect whether a manual page break is necessary
+	  # but only if there was a <%pagebreak ...%> block before
+	  
+	  if ($var eq 'number' || $var eq 'part' || $var eq 'service') {
+	    if ($chars_per_line && defined $self->{$var}) {
+	      my $line;
+	      my $lines = 0;
+	      my $item = $self->{description}[$i];
+	      $item .= "\n".$self->{itemnotes}[$i] if $self->{itemnotes}[$i];
+	      
+	      foreach $line (split /\r?\n/, $item) {
+		$lines++;
+		$lines += int(length($line) / $chars_per_line);
+	      }
+	      
+	      my $lpp;
+	      
+	      if ($current_page == 1) {
+		$lpp = $lines_on_first_page;
+	      } else {
+		$lpp = $lines_on_second_page;
+	      }
 
-    # if not comes before if!
-    if (/<%if not /) {
-      # check if it is not set and display
-      chop;
-      s/.*?<%if not (.+?)%>/$1/;
+	      # Yes we need a manual page break
+	      if (($current_line + $lines) > $lpp) {
+		my $pb = $pagebreak;
+		
+		# replace the special variables <%sumcarriedforward%>
+		# and <%lastpage%>
+		
+		my $psum = $self->format_amount($myconfig, $sum, $self->{precision});
+		$pb =~ s/<%sumcarriedforward%>/$psum/g;
+		$pb =~ s/<%lastpage%>/$current_page/g;
+		
+		# only "normal" variables are supported here
+		# (no <%if, no <%foreach, no <%include)
+		
+		$pb =~ s/<%(.+?)%>/$self->{$1}/g;
+		
+		# page break block is ready to rock
+		print(OUT $pb);
+		$current_page++;
+		$current_line = 1;
+		$lines = 0;
+	      }
+	      $current_line += $lines;
+	    }
+	    $sum += $self->parse_amount($myconfig, $self->{linetotal}[$i]);
+	  }
 
-      if (! $self->{$_}) {
-	while ($_ = shift) {
-	  last if /<%end /;
-
-	  # store line in $par
-	  $par .= $_;
-	}
-	
-	$_ = $par;
-	
-      } else {
-	while ($_ = shift) {
-	  last if /<%end /;
-	}
-	next;
-      }
-    }
- 
-    if (/<%if /) {
-      # check if it is set and display
-      chop;
-      s/.*?<%if (.+?)%>/$1/;
-
-      if (/\s/) {
-	@a = split;
-	$ok = eval "$self->{$a[0]} $a[1] $a[2]";
-      } else {
-	$ok = $self->{$_};
-      }
-	
-      if ($ok) {
-	while ($_ = shift) {
-	  last if /<%end /;
-	  # store line in $par
-	  $par .= $_;
-	}
-	
-	$_ = $par;
-	
-      } else {
-	while ($_ = shift) {
-	  last if /<%end /;
+	  # don't parse par, we need it for each line
+	  print OUT $self->format_line($par, $i);
+	  
 	}
 	next;
       }
-    }
+
+      # if not comes before if!
+      if (/<%if not /) {
+	# check if it is not set and display
+	chop;
+	s/.*?<%if not (.+?)%>/$1/;
+
+	if (! $self->{$_}) {
+	  while ($_ = shift) {
+	    last if /<%end /;
+
+	    # store line in $par
+	    $par .= $_;
+	  }
+	  
+	  $_ = $par;
+	  
+	} else {
+	  while ($_ = shift) {
+	    last if /<%end /;
+	  }
+	  next;
+	}
+      }
    
-    # check for <%include filename%>
-    if (/<%include /) {
-      
-      # get the filename
-      chomp $var;
-      $var =~ s/.*?<%include (.+?)%>/$1/;
+      if (/<%if /) {
+	# check if it is set and display
+	chop;
+	s/.*?<%if (.+?)%>/$1/;
 
-      # remove / .. for security reasons
-      $var =~ s/(\/|\.\.)//g;
-
-      # assume loop after 10 includes of the same file
-      next if $include{$var} > 10;
-
-      unless (open(INC, "$self->{templates}/$self->{language_code}/$var")) {
-        $err = $!;
-	$self->cleanup;
-	$self->error("$self->{templates}/$self->{language_code}/$var : $err");
+	if (/\s/) {
+	  @a = split;
+	  $ok = eval "$self->{$a[0]} $a[1] $a[2]";
+	} else {
+	  $ok = $self->{$_};
+	}
+	  
+	if ($ok) {
+	  while ($_ = shift) {
+	    last if /<%end /;
+	    # store line in $par
+	    $par .= $_;
+	  }
+	  
+	  $_ = $par;
+	  
+	} else {
+	  while ($_ = shift) {
+	    last if /<%end /;
+	  }
+	  next;
+	}
       }
-      unshift(@_, <INC>);
-      close(INC);
+     
+      # check for <%include filename%>
+      if (/<%include /) {
+	
+	# get the filename
+	chomp $var;
+	$var =~ s/.*?<%include (.+?)%>/$1/;
 
-      $include{$var}++;
+	# remove / .. for security reasons
+	$var =~ s/(\/|\.\.)//g;
 
-      next;
+	# assume loop after 10 includes of the same file
+	next if $include{$var} > 10;
+
+	unless (open(INC, "$self->{templates}/$self->{language_code}/$var")) {
+	  $err = $!;
+	  $self->cleanup;
+	  $self->error("$self->{templates}/$self->{language_code}/$var : $err");
+	}
+	unshift(@_, <INC>);
+	close(INC);
+
+	$include{$var}++;
+
+	next;
+      }
+      
+      print OUT $self->format_line($_);
+      
     }
-    
-    print OUT $self->format_line($_);
-    
-  }
   }
 
   close(OUT);
@@ -1061,7 +1061,119 @@ sub format_line {
       }
     }
 
+    if ($a{group}) {
+      
+      $a{group} =~ s/\d+//;
+      $n = $&;
+      @a = split //, $str;
+
+      if ($a{group} =~ /right/i) {
+	@a = reverse @a;
+      }
+
+      $i = $n - 1;
+      $newstr = "";
+      foreach $str (@a) {
+	$i++;
+	if (! ($i % $n)) {
+	  $newstr .= " $str";
+	} else {
+	  $newstr .= $str;
+	}
+      }
+
+      if ($a{group} =~ /right/i) {
+	$newstr = reverse split //, $newstr;
+      }
+    }
+
     s/<%(.+?)%>/$newstr/;
+
+  }
+
+  $_;
+
+}
+
+
+sub format_dcn {
+  my $self = shift;
+
+  $_ = shift;
+  
+  my $str;
+  my $modulo;
+  my $var;
+  my $padl;
+  my $param;
+  
+  my @m = (0, 9, 4, 6, 8, 2, 7, 1, 3, 5);
+  my %m;
+  my $m;
+  my $e;
+  my @e;
+  my $i;
+
+  for (0 .. $#m) {
+    @{ $m{$_} } = @m;
+    $m = shift @m;
+    push @m, $m;
+  }
+  
+  if (/<%/) {
+    
+    while (/<%(.+?)%>/) {
+
+      $param = $1;
+      $str = $param;
+
+      ($var, $padl) = split / /, $1;
+      $padl *= 1;
+
+      if ($var eq 'membernumber') {
+	
+	$str = $self->{$var};
+	$str =~ s/\W//g;
+	$str = substr('0' x $padl . $str, -$padl) if $padl;
+	
+      } elsif ($var =~ /modulo/) {
+
+	$str = qq|\x01$str\x01|;
+      
+      } else {
+	$i = 0;
+	$str = $self->{$var};
+	$str =~ s/\D/++$i/ge;
+	$str = substr('0' x $padl . $str, -$padl) if $padl;
+      }
+
+      s/<%$param%>/$str/;
+
+    }
+
+    /(.+?)\x01modulo/;
+    $modulo = $1;
+
+    while (/\x01(modulo.+?)\x01/) {
+
+      $param = $1;
+      
+      if ($param eq 'modulo10') {
+	@e = split //, $modulo;
+	$e = 0;
+
+	for (@e) {
+	  $e = $m{$e}[$_];
+	}
+	$str = substr(10 - $e, -1);
+      }
+      
+      /\x01modulo.+?\x01(.+?)\x01modulo.+?\x01/;
+      $modulo = $1;
+
+      s/\x01$param\x01/$str/;
+
+    }
 
   }
 
@@ -1978,7 +2090,7 @@ sub create_links {
 		a.employee_id, e.name AS employee, c.language_code,
 		a.ponumber, a.approved,
 		br.id AS batchid, br.description AS batchdescription,
-		a.description, a.onhold, a.exchangerate
+		a.description, a.onhold, a.exchangerate, a.dcn
 		FROM $arap a
 		JOIN $vc c ON (a.${vc}_id = c.id)
 		LEFT JOIN employee e ON (e.id = a.employee_id)

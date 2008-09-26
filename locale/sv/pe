@@ -33,6 +33,7 @@ $self{texts} = {
   'Nothing selected!'           => 'Nada seleccionado!',
   'Number'                      => 'Número',
   'Orphaned'                    => 'Huerfano',
+  'POS'                         => 'POS',
   'Project'                     => 'Proyecto',
   'Project Number'              => 'Número de Proyecto',
   'Project deleted!'            => 'Proyecto borrado!',

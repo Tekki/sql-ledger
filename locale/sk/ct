@@ -72,6 +72,7 @@ $self{texts} = {
   'Leadtime'                    => 'èas znovudodania',
   'Male'                        => 'Mu¾',
   'Manager'                     => 'Manager',
+  'Method'                      => 'Metody',
   'Mobile'                      => 'Mobil',
   'Name'                        => 'Meno',
   'Name missing!'               => 'Názov chýba!',

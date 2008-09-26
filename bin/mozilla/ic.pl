@@ -945,7 +945,7 @@ sub search {
         </tr>
 |;
     $bom = qq|<input name=itemstatus type=radio value=bom>&nbsp;|.$locale->text('BOM');
-    
+
   } elsif ($form->{searchitems} eq 'component') {
 
     $bought = "";
@@ -2176,6 +2176,315 @@ sub requirements_report {
 </body>
 </html>
 |;
+
+}
+
+
+sub so_requirements {
+  
+  $form->{vc} = "customer";
+  
+  if (! IC->get_vc(\%myconfig, \%$form)) {
+    $form->error($locale->text('No open Sales Orders!'));
+  }
+  
+  $form->all_years(\%myconfig);
+
+  $vcname = $locale->text('Customer');
+  $vcnumber = $locale->text('Customer Number');
+  
+  # setup customers
+  if (@{ $form->{"all_$form->{vc}"} }) {
+    $form->{"select$form->{vc}"} = "\n";
+    for (@{ $form->{"all_$form->{vc}"} }) { $form->{"select$form->{vc}"} .= qq|$_->{name}--$_->{id}\n| }
+    delete $form->{"all_$form->{vc}"};
+  }
+
+  $vc = qq|
+              <tr>
+	        <th align=right nowrap>$vcname</th>
+|;
+
+  if ($form->{"select$form->{vc}"}) {
+    $vc .= qq|
+                <td><select name="$form->{vc}">|.$form->select_option($form->{"select$form->{vc}"}, $form->{$form->{vc}}, 1).qq|</select>
+		</td>
+              </tr>
+|;
+  } else {
+    $vc .= qq|
+               <td><input name="$form->{vc}" value="$form->{$form->{vc}}" size=35>
+	       </td>
+	     </tr>
+	     <tr>
+	       <th align=right nowrap>$vcnumber</th>
+	       <td><input name="$form->{vc}number" value="$form->{"$form->{vc}number"}" size=35></td>
+	     </tr>
+|;
+  }
+
+
+  if (@{ $form->{all_years} }) {
+    # accounting years
+    $selectaccountingyear = "<option>\n";
+    for (@{ $form->{all_years} }) { $selectaccountingyear .= qq|<option>$_\n| }
+    $selectaccountingmonth = "<option>\n";
+    for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|<option value=$_>|.$locale->text($form->{all_month}{$_}).qq|\n| }
+
+    $selectfrom = qq|
+      <tr>
+	<th align=right>|.$locale->text('Period').qq|</th>
+	<td>
+	<select name=month>$selectaccountingmonth</select>
+	<select name=year>$selectaccountingyear</select>
+	<input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
+	<input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
+	<input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
+	<input name=interval class=radio type=radio value=12>&nbsp;|.$locale->text('Year').qq|
+	</td>
+      </tr>
+|;
+  }
+
+  $form->{title} = $locale->text('Sales Order Requirements');
+  
+  $form->header;
+  
+  print qq|
+<body>
+
+<form method=post action=$form->{script}>
+
+|;
+
+  print qq|
+
+<table width="100%">
+
+  <tr><th class=listtop>$form->{title}</th></tr>
+  <tr height="5"></tr>
+  <tr valign=top>
+    <td>
+      <table>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Number').qq|</th>
+          <td><input name=partnumber size=20></td>
+        </tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Description').qq|</th>
+          <td><input name=description size=40></td>
+        </tr>
+	<tr>
+	  $vc
+	</tr>
+	<tr>
+	  <th align=right nowrap>|.$locale->text('From').qq|</th>
+	  <td colspan=3><input name=reqdatefrom size=11 title="$myconfig{dateformat}"> <b>|.$locale->text('To').qq|</b> <input name=reqdateto size=11 title="$myconfig{dateformat}"></td>
+	</tr>
+	  $selectfrom
+	<tr>
+	  <td></td>
+	  <td>
+	  <input name=searchitems class=radio type=radio value=all checked>
+	  <b>|.$locale->text('All').qq|</b>
+	  <input name=searchitems class=radio type=radio value=part>
+	  <b>|.$locale->text('Parts').qq|</b>
+	  <input name=searchitems class=radio type=radio value=assembly>
+	  <b>|.$locale->text('Assemblies').qq|</b>
+	  <input name=searchitems class=radio type=radio value=service>
+	  <b>|.$locale->text('Services').qq|</b>
+	  </td>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td><hr size=3 noshade></td>
+  </tr>
+</table>
+
+<input type=hidden name=nextsub value=so_requirements_report>
+<input type=hidden name=sort value=partnumber>
+
+<br>
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">|;
+
+  $form->hide_form(qw(vc path login));
+  
+  print qq|
+</form>
+|;
+
+  if ($form->{menubar}) {
+    require "$form->{path}/menu.pl";
+    &menubar;
+  }
+
+  print qq|
+  
+</body>
+</html>
+|;
+
+}   
+
+
+sub so_requirements_report {
+
+  if ($form->{$form->{vc}}) {
+    ($form->{$form->{vc}}, $form->{"$form->{vc}_id"}) = split(/--/, $form->{$form->{vc}});
+  }
+
+  $form->{title} = $locale->text('Sales Order Requirements');
+  
+  IC->so_requirements(\%myconfig, \%$form);
+
+  $href = "$form->{script}?action=so_requirements_report";
+  for (qw(searchitems vc direction oldsort path login)) { $href .= qq|&$_=$form->{$_}| }
+
+  $form->sort_order();
+
+  $callback = "$form->{script}?action=so_requirements_report";
+  for (qw(searchitems vc direction oldsort path login)) { $callback .= qq|&$_=$form->{$_}| }
+
+  
+  if ($form->{$form->{vc}}) {
+    $callback .= "&$form->{vc}=".$form->escape($form->{$form->{vc}},1).qq|--$form->{"$form->{vc}_id"}|;
+    $href .= "&$form->{vc}=".$form->escape($form->{$form->{vc}}).qq|--$form->{"$form->{vc}_id"}|;
+    $option .= "\n<br>" if ($option);
+    $name = ($form->{vc} eq 'customer') ? $locale->text('Customer') : $locale->text('Vendor');
+    $option .= "$name : $form->{$form->{vc}}";
+  }
+  if ($form->{"$form->{vc}number"}) {
+    $callback .= "&$form->{vc}number=".$form->escape($form->{"$form->{vc}number"},1);
+    $href .= "&$form->{vc}number=".$form->escape($form->{"$form->{vc}number"});
+    $option .= "\n<br>" if ($option);
+    $name = ($form->{vc} eq 'customer') ? $locale->text('Customer Number') : $locale->text('Vendor Number');
+    $option .= qq|$name : $form->{"$form->{vc}number"}|;
+  }
+
+  if ($form->{partnumber}) {
+    $callback .= "&partnumber=".$form->escape($form->{partnumber},1);
+    $href .= "&partnumber=".$form->escape($form->{partnumber});
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Number')." : $form->{partnumber}";
+  }
+  if ($form->{description}) {
+    $callback .= "&description=".$form->escape($form->{description},1);
+    $href .= "&description=".$form->escape($form->{description});
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Description')." : $form->{description}";
+  }
+
+  if ($form->{reqdatefrom}) {
+    $callback .= "&reqdatefrom=$form->{reqdatefrom}";
+    $href .= "&reqdatefrom=$form->{reqdatefrom}";
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('From')."&nbsp;".$locale->date(\%myconfig, $form->{reqdatefrom}, 1);
+  }
+  if ($form->{reqdateto}) {
+    $callback .= "&reqdateto=$form->{reqdateto}";
+    $href .= "&reqdateto=$form->{reqdateto}";
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('To')."&nbsp;".$locale->date(\%myconfig, $form->{reqdateto}, 1);
+  }
+
+  @column_index = $form->sort_columns(qw(reqdate id ordnumber name customernumber partnumber description qty));
+
+  $name = $locale->text('Customer');
+  $namenumber = $locale->text('Customer Number');
+  $namefld = "customernumber";
+  
+  $column_header{reqdate} = "<th><a class=listheading href=$href&sort=reqdate>".$locale->text('Required by')."</a></th>";
+  $column_header{ordnumber} = "<th><a class=listheading href=$href&sort=ordnumber>".$locale->text('Order')."</a></th>";
+  $column_header{name} = "<th><a class=listheading href=$href&sort=name>$name</a></th>";
+  $column_header{$namefld} = "<th><a class=listheading href=$href&sort=$namefld>$namenumber</a></th>";
+  $column_header{partnumber} = "<th><a class=listheading href=$href&sort=partnumber>" . $locale->text('Part Number') . "</a></th>";
+  $column_header{description} = "<th><a class=listheading href=$href&sort=description>" . $locale->text('Description') . "</a></th>";
+  $column_header{qty} = "<th class=listheading>" . $locale->text('Qty') . "</th>";
+  
+  $form->header;
+
+  print qq|
+<body>
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$form->{title}</th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>$option</td>
+  </tr>
+  <tr>
+    <td>
+      <table width=100%>
+	<tr class=listheading>
+|;
+
+  for (@column_index) { print "\n$column_header{$_}" }
+
+  print qq|
+	</tr>
+|;
+
+
+  # add sort and escape callback, this one we use for the add sub
+  $form->{callback} = $callback .= "&sort=$form->{sort}";
+
+  # escape callback for href
+  $callback = $form->escape($callback);
+  
+  if (@{ $form->{all_parts} }) {
+    $sameitem = $form->{all_parts}->[0]->{$form->{sort}};
+  }
+  
+  #
+  $i = 0;
+  foreach $ref (@{ $form->{all_parts} }) {
+
+    $i++;
+    
+    $column_data{qty} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{qty}, undef, "&nbsp;")."</td>";
+    
+    $column_data{ordnumber} = "<td><a href=oe.pl?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=sales_order&callback=$callback>$ref->{ordnumber}&nbsp;</a></td>";
+    
+    $ref->{description} =~ s/\r?\n/<br>/g;
+    $column_data{reqdate} = "<td nowrap>$ref->{reqdate}</td>";
+    $column_data{description} = "<td>$ref->{description}</td>";
+    
+    $column_data{partnumber} = qq|<td><a href=ic.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{parts_id}&callback=$callback>$ref->{partnumber}</a></td>|;
+    
+    $column_data{name} = qq|<td><a href=ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{"$form->{vc}_id"}&db=$form->{vc}&callback=$callback>$ref->{name}</a></td>|;
+   
+    $column_data{$namefld} = qq|<td>$ref->{$namefld}&nbsp;</td>|;
+    
+    $j++; $j %= 2;
+
+    print "
+        <tr class=listrow$j>
+";
+
+    for (@column_index) { print "\n$column_data{$_}" }
+
+    print qq|
+        </tr>
+|;
+  }
+
+  print qq|
+	</tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td><hr size=3 noshade></td>
+  </tr>
+</table>
+
+</body>
+</html>
+|;
+
 
 }
 

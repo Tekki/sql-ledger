@@ -61,6 +61,7 @@ $self{subs} = {
   'debit_invoice_'              => 'debit_invoice_',
   'delete_schedule'             => 'delete_schedule',
   'gl_transaction'              => 'gl_transaction',
+  'islocked'                    => 'islocked',
   'name_selected'               => 'name_selected',
   'post_as_new'                 => 'post_as_new',
   'print_and_post_as_new'       => 'print_and_post_as_new',

@@ -185,7 +185,7 @@ sub post_transaction {
   my $bramount = 0;
  
   # insert acc_trans transactions
-  for $i (1 .. $form->{rowcount} - 1) {
+  for $i (1 .. $form->{rowcount}) {
 
     $amount = 0;
     
@@ -211,34 +211,41 @@ sub post_transaction {
       $cleared = $form->dbquote($form->{"cleared_$i"}, SQL_DATE);
     }
 
-    $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount, transdate,
-		source, project_id, memo, cleared, approved)
-		VALUES
-		($form->{id}, (SELECT id
-			       FROM chart
-			       WHERE accno = '$accno'),
-		 $amount, '$form->{transdate}', |.
-		 $dbh->quote($form->{"source_$i"}) .qq|,
-		$project_id, |.$dbh->quote($form->{"memo_$i"}).qq|,
-		$cleared, '$approved')|;
-    $dbh->do($query) || $form->dberror($query);
-
-    if ($form->{currency} ne $form->{defaultcurrency}) {
-
-      $amount = $form->round_amount($amount * ($exchangerate - 1), $form->{precision});
-      
+    if ($form->{"fx_transaction_$i"} *= 1) {
+      $cleared = $form->dbquote($form->{transdate}, SQL_DATE);
+    }
+    
+    if ($amount || $form->{"source_$i"} || $form->{"memo_$i"} || ($project_id ne 'NULL')) {
       $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount, transdate,
-		  source, project_id, fx_transaction, memo, cleared, approved)
+		  source, fx_transaction, project_id, memo, cleared, approved)
 		  VALUES
 		  ($form->{id}, (SELECT id
 				 FROM chart
 				 WHERE accno = '$accno'),
 		   $amount, '$form->{transdate}', |.
 		   $dbh->quote($form->{"source_$i"}) .qq|,
-		  $project_id, '1', |.$dbh->quote($form->{"memo_$i"}).qq|,
+		  '$form->{"fx_transaction_$i"}',
+		  $project_id, |.$dbh->quote($form->{"memo_$i"}).qq|,
 		  $cleared, '$approved')|;
       $dbh->do($query) || $form->dberror($query);
 
+      if ($form->{currency} ne $form->{defaultcurrency}) {
+
+	$amount = $form->round_amount($amount * ($exchangerate - 1), $form->{precision});
+	
+	$query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount, transdate,
+		    source, project_id, fx_transaction, memo, cleared, approved)
+		    VALUES
+		    ($form->{id}, (SELECT id
+				   FROM chart
+				   WHERE accno = '$accno'),
+		     $amount, '$form->{transdate}', |.
+		     $dbh->quote($form->{"source_$i"}) .qq|,
+		    $project_id, '1', |.$dbh->quote($form->{"memo_$i"}).qq|,
+		    $cleared, '$approved')|;
+	$dbh->do($query) || $form->dberror($query);
+
+      }
     }
   }
 
@@ -651,15 +658,32 @@ sub transaction {
 	        JOIN chart c ON (ac.chart_id = c.id)
 	        LEFT JOIN project p ON (p.id = ac.project_id)
 	        WHERE ac.trans_id = $form->{id}
-		AND fx_transaction = '0'
 	        ORDER BY accno|;
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
     
     while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-      push @{ $form->{GL} }, $ref;
+      push @a, $ref;
+      if ($ref->{fx_transaction}) {
+	$fxdr += $ref->{amount} if $ref->{amount} < 0;
+	$fxcr += $ref->{amount} if $ref->{amount} > 0;
+      }
     }
     $sth->finish;
+    
+    if ($fxdr < 0 || $fxcr > 0) {
+      $form->{fxadj} = 1 if $form->round_amount($fxdr * -1, $form->{precision}) != $form->round_amount($fxcr, $form->{precision});
+    }
+
+    if ($form->{fxadj}) {
+      @{ $form->{GL} } = @a;
+    } else {
+      foreach $ref (@a) {
+	if (! $ref->{fx_transaction}) {
+	  push @{ $form->{GL} }, $ref;
+	}
+      }
+    }
     
     # get recurring transaction
     $form->get_recurring($dbh);

@@ -60,6 +60,7 @@ $self{texts} = {
   'Language'                    => 'Valoda',
   'Leadtime'                    => 'Izlaides termiòð',
   'Manager'                     => 'Vadîtâjs',
+  'Method'                      => 'Metode',
   'Name'                        => 'Nosaukums',
   'Name missing!'               => 'Nepareizs nosaukums',
   'No.'                         => 'Nr.',

@@ -440,7 +440,7 @@ sub form_header {
 |;
     }
   }
- 
+
   print qq|
 <table width=100%>
   <tr class=listtop>
@@ -506,10 +506,6 @@ sub form_header {
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Invoice Number').qq|</th>
 		<td><input name=invnumber size=20 value="|.$form->quote($form->{invnumber}).qq|"></td>
-	      </tr>
-	      <tr>
-		<th align=right nowrap>|.$locale->text('DCN').qq|</th>
-		<td><input name=dcn size=20 value="|.$form->quote($form->{dcn}).qq|"></td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Order Number').qq|</th>

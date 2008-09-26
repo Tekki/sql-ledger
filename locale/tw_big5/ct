@@ -63,6 +63,7 @@ $self{texts} = {
   'Language'                    => '語言',
   'Leadtime'                    => '總需時',
   'Manager'                     => '經理',
+  'Method'                      => '方法',
   'Name'                        => '名稱',
   'Name missing!'               => '未指明名字！',
   'No.'                         => '編號',

@@ -59,10 +59,14 @@ sub add {
       $form->{title} .= " / $form->{batchdescription}";
     }
   } else {
-    $form->{title} = $locale->text('Add General Ledger Transaction');
+    if ($form->{fxadj}) {
+      $form->{title} = $locale->text('Add FX Adjustment');
+    } else {
+      $form->{title} = $locale->text('Add General Ledger Transaction');
+    }
   }
   
-  $form->{callback} = "$form->{script}?action=add&path=$form->{path}&login=$form->{login}" unless $form->{callback};
+  $form->{callback} = "$form->{script}?action=add&fxadj=$form->{fxadj}&path=$form->{path}&login=$form->{login}" unless $form->{callback};
 
   $transdate = $form->{transdate};
   
@@ -70,11 +74,13 @@ sub add {
 
   $form->{transdate} = $transdate if $transdate;
 
-  $form->{rowcount} = 9;
+  $form->{rowcount} = ($form->{fxadj}) ? 2 : 9;
   $form->{oldtransdate} = $form->{transdate};
   $form->{focus} = "reference";
 
   $form->{currency} = $form->{defaultcurrency};
+
+  delete $form->{defaultcurrency} if $form->{fxadj};
 
   &display_form(1);
   
@@ -83,18 +89,25 @@ sub add {
 
 sub edit {
 
+  &create_links;
+ 
+  $form->{locked} = ($form->{revtrans}) ? '1' : ($form->datetonum(\%myconfig, $form->{transdate}) <= $form->{closedto});
+
+  delete $form->{defaultcurrency} if $form->{fxadj};
+
   if ($form->{batch}) {
     $form->{title} = $locale->text('Edit General Ledger Voucher');
     if ($form->{batchdescription}) {
       $form->{title} .= " / $form->{batchdescription}";
     }
   } else {
-    $form->{title} = $locale->text('Edit General Ledger Transaction');
+    if ($form->{fxadj}) {
+      $form->{title} = $locale->text('Edit FX Adjustment');
+    } else {
+      $form->{title} = $locale->text('Edit General Ledger Transaction');
+    }
   }
  
-  &create_links;
-  
-  $form->{locked} = ($form->{revtrans}) ? '1' : ($form->datetonum(\%myconfig, $form->{transdate}) <= $form->{closedto});
 
   $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate});
 
@@ -880,6 +893,12 @@ sub display_rows {
 	$project = qq|
     <td><select name="projectnumber_$i">|.$form->select_option($form->{selectprojectnumber}, undef, 1).qq|</select></td>|;
       }
+
+      if ($form->{fxadj}) {
+	$fx_transaction = qq|
+	<td><input name="fx_transaction_$i" class=checkbox type=checkbox value=1></td>
+|;
+      }
     
     } else {
    
@@ -897,6 +916,14 @@ sub display_rows {
 	  $project =~ s/--.*//;
 	  $project = qq|<td>$project</td>|;
 	}
+
+	if ($form->{fxadj}) {
+	  $checked = ($form->{"fx_transaction_$i"}) ? "1" : "";
+	  $x = ($checked) ? "x" : "";
+	  $fx_transaction = qq|
+      <td><input type=hidden name="fx_transaction_$i" value="$checked">$x</td>
+|;
+	}
       
 	$form->hide_form(map { "${_}_$i"} qw(accno projectnumber));
 	
@@ -908,6 +935,12 @@ sub display_rows {
 	if ($form->{selectprojectnumber}) {
 	  $project = qq|
       <td><select name="projectnumber_$i">|.$form->select_option($form->{selectprojectnumber}, undef, 1).qq|</select></td>|;
+	}
+
+	if ($form->{fxadj}) {
+	  $fx_transaction = qq|
+      <td><input name="fx_transaction_$i" class=checkbox type=checkbox value=1></td>
+|;
 	}
       }
     }
@@ -985,6 +1018,11 @@ sub form_header {
 	  <th class=listheading>|.$locale->text('Project').qq|</th>
 | if $form->{selectprojectnumber};
 
+  if ($form->{fxadj}) {
+    $fx_transaction = qq|
+          <th class=listheading>|.$locale->text('FX').qq|</th>
+|;
+  }
 
   $focus = ($form->{focus}) ? $form->{focus} : "debit_$form->{rowcount}";
   
@@ -1008,7 +1046,7 @@ sub form_header {
 <form method=post action=$form->{script}>
 |;
 
-  $form->hide_form(qw(id closedto locked oldtransdate oldcurrency recurring batch batchid batchnumber batchdescription defaultcurrency fxbuy fxsell));
+  $form->hide_form(qw(id fxadj closedto locked oldtransdate oldcurrency recurring batch batchid batchnumber batchdescription defaultcurrency fxbuy fxsell));
   $form->hide_form(map { "select$_" } qw(accno department currency));
   
   print qq|
@@ -1068,6 +1106,12 @@ sub form_footer {
   $project = qq|
 	  <th>&nbsp;</th>
 | if $form->{selectprojectnumber};
+
+  if ($form->{fxadj}) {
+    $fx_transaction = qq|
+          <th>&nbsp;</th>
+|;
+  }
 
   print qq|
         <tr class=listtotal>

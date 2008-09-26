@@ -52,6 +52,7 @@ $self{subs} = {
   'edit'                        => 'edit',
   'gl_transaction'              => 'gl_transaction',
   'invoices_due'                => 'invoices_due',
+  'islocked'                    => 'islocked',
   'js_menu'                     => 'js_menu',
   'list_invoices'               => 'list_invoices',
   'menubar'                     => 'menubar',

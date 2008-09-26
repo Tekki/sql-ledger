@@ -255,8 +255,7 @@ sub payment_transactions {
       
       if ("$ref->{transdate}$ref->{source}" eq $sameitem) {
 	if ($ref->{fx_transaction}) {
-	  push @{ $form->{PR} }, $ref;
-	  $i++;
+	  $form->{PR}->[$i]->{amount} += $ref->{amount};
 	} else {
 	  push @{ $form->{PR}->[$i]->{name} }, $ref->{description} if $ref->{description} ne $samename;
 	  $form->{PR}->[$i]->{amount} += $ref->{amount};

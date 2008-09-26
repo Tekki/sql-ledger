@@ -65,6 +65,7 @@ $self{texts} = {
   'Number'                      => 'Projektnummer',
   'Orders generated!'           => 'Bestellungen erstellt!',
   'Orphaned'                    => 'nie benutzt',
+  'POS'                         => 'Kasse',
   'Part Number'                 => 'Artikelnummer',
   'Period'                      => 'Zeitraum',
   'Pricegroup'                  => 'Preisgruppe',

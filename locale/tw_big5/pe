@@ -61,6 +61,7 @@ $self{texts} = {
   'Number'                      => '編號',
   'Orders generated!'           => '已生成訂單！',
   'Orphaned'                    => '無主',
+  'POS'                         => '銷售點(POS)',
   'Part Number'                 => '零件編號',
   'Period'                      => '期間',
   'Pricegroup'                  => '價格組別',

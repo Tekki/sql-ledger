@@ -54,6 +54,7 @@ $self{texts} = {
   'Item not on file!'           => 'Nimikettä ei ole järjestelmässä!',
   'Language'                    => 'Kieli',
   'Manager'                     => 'Johtaja',
+  'Method'                      => 'Tapa',
   'Name'                        => 'Nimi',
   'Name missing!'               => 'Nimi puuttuu!',
   'No.'                         => 'no',

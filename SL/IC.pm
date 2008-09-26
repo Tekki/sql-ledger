@@ -525,16 +525,17 @@ sub retrieve_assemblies {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
+  my $var;
   my $where = '1 = 1';
   
   if ($form->{partnumber} ne "") {
-    my $partnumber = $form->like(lc $form->{partnumber});
-    $where .= " AND lower(p.partnumber) LIKE '$partnumber'";
+    $var = $form->like(lc $form->{partnumber});
+    $where .= " AND lower(p.partnumber) LIKE '$var'";
   }
   
   if ($form->{description} ne "") {
-    my $description = $form->like(lc $form->{description});
-    $where .= " AND lower(p.description) LIKE '$description'";
+    $var = $form->like(lc $form->{description});
+    $where .= " AND lower(p.description) LIKE '$var'";
   }
   $where .= qq| AND p.obsolete = '0'
                 AND p.project_id IS NULL|;
@@ -1713,6 +1714,120 @@ sub get_warehouses {
   $dbh->disconnect;
 
 }
+
+
+sub get_vc {
+  my ($self, $myconfig, $form) = @_;
+
+  my $dbh = $form->dbconnect($myconfig);
+
+  my $query = qq|SELECT count(*)
+                 FROM $form->{vc} c
+		 JOIN oe o ON (o.$form->{vc}_id = c.id)
+		 WHERE o.closed = '0'|;
+  my ($count) = $dbh->selectrow_array($query);
+  
+  if ($count) {
+    if ($myconfig->{vclimit} *= 1) {
+      $query = qq|SELECT DISTINCT c.id, c.name
+		  FROM $form->{vc} c
+		  JOIN oe o ON (o.$form->{vc}_id = c.id)
+		  WHERE o.closed = '0'
+		  ORDER BY name|;
+
+      my $sth = $dbh->prepare($query);
+      $sth->execute || $form->dberror($query);
+
+      while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+	push @{ $form->{"all_$form->{vc}"} }, $ref;
+      }
+      $sth->finish;
+    }
+  }
+
+  $dbh->disconnect;
+
+  $count;
+
+}
+
+
+sub so_requirements {
+  my ($self, $myconfig, $form) = @_;
+
+  my $dbh = $form->dbconnect($myconfig);
+
+  my $var;
+  my $where = "o.closed = '0'";
+  
+  if ($form->{searchitems} eq 'part') {
+    $where .= " AND p.inventory_accno_id > 0 AND p.income_accno_id > 0";
+  }
+  if ($form->{searchitems} eq 'assembly') {
+    $where .= " AND p.assembly = '1'";
+  }
+  if ($form->{searchitems} eq 'service') {
+    $where .= " AND p.assembly = '0' AND p.inventory_accno_id IS NULL";
+  }
+  if ($form->{searchitems} eq 'labor') {
+    $where .= " AND p.inventory_accno_id > 0 AND p.income_accno_id IS NULL";
+  }
+
+  if ($form->{partnumber}) {
+    $var = $form->like(lc $form->{partnumber});
+    $where .= " AND lower(p.partnumber) LIKE '$var'";
+  }
+  if ($form->{description}) {
+    $var = $form->like(lc $form->{description});
+    $where .= " AND lower(p.description) LIKE '$var'";
+  }
+  if ($form->{$form->{vc}}) {
+    $var = $form->like(lc $form->{$form->{vc}});
+    $where .= " AND lower(c.name) LIKE '$var'";
+  }
+  if ($form->{"$form->{vc}number"}) {
+    $var = $form->like(lc $form->{"$form->{vc}number"});
+    $where .= " AND lower(c.$form->{vc}number) LIKE '$var'";
+  }
+
+  ($form->{reqdatefrom}, $form->{reqdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
+  $where .= " AND o.reqdate >= '$form->{reqdatefrom}'" if $form->{reqdatefrom};
+  $where .= " AND o.reqdate <= '$form->{reqdateto}'" if $form->{reqdateto};
+  
+  my @a = qw(partnumber ordnumber reqdate);
+  my %ordinal = ( 'partnumber' => 1,
+ 	          'description' => 10,
+	          'ordnumber' => 7,
+	          'name' => 4,
+	          'customernumber' => 5,
+	          'vendornumber' => 5,
+	          'reqdate' => 8
+	        );
+  
+  my $sortorder = $form->sort_order(\@a, \%ordinal);
+ 
+  my $query = qq|SELECT p.partnumber, p.id as parts_id,
+                 c.id AS $form->{vc}_id, c.name, c.$form->{vc}number,
+		 o.id, o.ordnumber, o.reqdate,
+		 oi.qty, oi.description
+                 FROM oe o
+		 JOIN orderitems oi ON (oi.trans_id = o.id)
+		 JOIN parts p ON (p.id = oi.parts_id)
+		 JOIN $form->{vc} c ON (o.$form->{vc}_id = c.id)
+		 WHERE $where
+		 ORDER BY $sortorder|;
+  my $sth = $dbh->prepare($query);
+  $sth->execute || $form->dberror($query);
+
+  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+    push @{ $form->{all_parts} }, $ref;
+  }
+  $sth->finish;
+
+  $dbh->disconnect;
+
+}
+
 
 1;
 

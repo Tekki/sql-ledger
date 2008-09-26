@@ -65,6 +65,7 @@ $self{texts} = {
   'Language'                    => 'Nyelv',
   'Leadtime'                    => 'Utánpótlási idõ',
   'Manager'                     => 'Manager',
+  'Method'                      => 'Módszer',
   'Name'                        => 'Név',
   'Name missing!'               => 'Név hiányzik',
   'No.'                         => 'Sz.',

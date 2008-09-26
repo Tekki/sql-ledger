@@ -2315,13 +2315,16 @@ sub jcitems {
   if (!$form->{summary}) {
     push @column_index, qw(transdate);
   }
-  push @column_index, qw(partnumber description qty amount);
+  push @column_index, qw(partnumber description);
+  push @column_index, "itemnotes" if !$form->{summary};
+  push @column_index, qw(qty amount);
 
   $column_header{id} = qq|<th>&nbsp;</th>|;
   $column_header{transdate} = qq|<th class=listheading>|.$locale->text('Date').qq|</th>|;
   $column_header{partnumber} = qq|<th class=listheading>|.$locale->text('Service Code').qq|<br>|.$locale->text('Part Number').qq|</th>|;
   $column_header{projectnumber} = qq|<th class=listheading>|.$locale->text('Project Number').qq|</th>|;
-  $column_header{description} = qq|<th class=listheading>|.$locale->text('Line Item').qq|</th>|;
+  $column_header{description} = qq|<th class=listheading>|.$locale->text('Description').qq|</th>|;
+  $column_header{itemnotes} = qq|<th class=listheading>|.$locale->text('Notes').qq|</th>|;
   $column_header{name} = qq|<th class=listheading>$vc</th>|;
   $column_header{"$form->{vc}number"} = qq|<th class=listheading>|.$locale->text($vcnumber).qq|</th>|;
   $column_header{qty} = qq|<th class=listheading>|.$locale->text('Qty').qq|</th>|;
@@ -2356,6 +2359,7 @@ sub jcitems {
 
   for $i (1 .. $form->{rowcount}) {
 
+    for (qw(description itemnotes)) { $form->{"${_}_$i"} =~ s/\n/<br>/g }
     for (@column_index) { $column_data{$_} = qq|<td>$form->{"${_}_$i"}</td>| }
     for (qw(qty amount)) { $column_data{$_} = qq|<td align=right>$form->{"${_}_$i"}</td>| }
     

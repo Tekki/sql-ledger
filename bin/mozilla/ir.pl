@@ -232,7 +232,7 @@ sub prepare_invoice {
 .qq|\npacking_list--|.$locale->text('Packing List');
   }
 
-  $i = 0;
+  $i = 1;
   $form->{currency} =~ s/ //g;
   $form->{oldcurrency} = $form->{currency};
 
@@ -241,7 +241,6 @@ sub prepare_invoice {
     for (qw(invnumber ordnumber ponumber quonumber shippingpoint shipvia waybill notes intnotes)) { $form->{$_} = $form->quote($form->{$_}) }
 
     foreach $ref (@{ $form->{invoice_details} }) {
-      $i++;
       for (keys %$ref) { $form->{"${_}_$i"} = $ref->{$_} }
 
       $form->{"projectnumber_$i"} = qq|$ref->{projectnumber}--$ref->{project_id}| if $ref->{project_id};
@@ -262,9 +261,10 @@ sub prepare_invoice {
       for (qw(partnumber sku description unit)) { $form->{"${_}_$i"} = $form->quote($form->{"${_}_$i"}) }
 
       $form->{rowcount} = $i;
+      $i++;
     }
   }
-
+  
   $focus = "partnumber_$i";
 
   $form->{selectformname} = $form->escape($form->{selectformname},1);
@@ -520,6 +520,10 @@ sub form_header {
   <tr>
     <td>
       <table>
+	<tr>
+	  <th align=right nowrap>|.$locale->text('DCN').qq|</th>
+	  <td><input name=dcn size=60 value="$form->{dcn}"></td>
+	</tr>
         $description
       </table>
     </td>

@@ -46,6 +46,7 @@ $self{texts} = {
   'Item already on pricelist!'  => 'Barang sudah terdapat pada daftar harga',
   'Item not on file!'           => 'Item ini tidak ditemukan!',
   'Language'                    => 'Bahasa',
+  'Method'                      => 'Metoda',
   'Name'                        => 'Nama',
   'Name missing!'               => 'Nama harap diisi!',
   'No.'                         => 'No.',

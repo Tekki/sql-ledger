@@ -43,6 +43,7 @@ $self{texts} = {
   'Nothing selected!'           => 'Niets geselecteerd!',
   'Number'                      => 'Nummer',
   'Orphaned'                    => 'Wees',
+  'POS'                         => 'Verkooppunt',
   'Pricegroup'                  => 'Prijsgroep',
   'Pricegroup deleted!'         => 'Prijsgroep verwijderd!',
   'Pricegroup missing!'         => 'Prijsgroep mist!',

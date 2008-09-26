@@ -3,7 +3,5 @@ alter table partsgroup add pos bool;
 alter table partsgroup alter pos set default 't';
 update partsgroup set pos = '1';
 --
--- create table lineitemtax (id int, chart_id int, amount float);
---
 update defaults set fldvalue = '2.8.5' where fldname = 'version';
 

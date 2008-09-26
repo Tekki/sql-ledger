@@ -422,6 +422,7 @@ sub save {
   # add up the tax
   my $tax = 0;
   for (keys %taxaccounts) { $tax += $form->round_amount($taxaccounts{$_}, $form->{precision}) }
+  $netamount -= $tax if $form->{taxincluded};
 
   $amount = $form->round_amount($netamount + $tax, $form->{precision});
   $netamount = $form->round_amount($netamount, $form->{precision});
@@ -635,7 +636,7 @@ sub retrieve {
   my $var;
   my $ref;
 
-  my %defaults = $form->get_defaults($dbh, \@{[qw(currencies weightunit)]});
+  my %defaults = $form->get_defaults($dbh, \@{[qw(currencies weightunit closedto)]});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
   
   $form->remove_locks($myconfig, $dbh, 'oe');

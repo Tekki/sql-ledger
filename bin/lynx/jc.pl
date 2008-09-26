@@ -139,6 +139,7 @@ sub search {
   if ($form->{project} eq 'job') {
     
     $projectnumberlabel = $locale->text('Job Number');
+    $projectdescriptionlabel = $locale->text('Job Name');
     if ($form->{type}) {
       if ($form->{type} eq 'timecard') {
 	$partnumberlabel = $locale->text('Labor Code');
@@ -152,12 +153,14 @@ sub search {
   } elsif ($form->{project} eq 'project') {
     
     $projectnumberlabel = $locale->text('Project Number');
+    $projectdescriptionlabel = $locale->text('Project Name');
     $partnumberlabel = $locale->text('Service Code');
     
   } else {
     
     $projectnumberlabel = $locale->text('Project Number')."/".$locale->text('Job Number');
     $partnumberlabel = $locale->text('Service Code')."/".$locale->text('Labor Code');
+    $projectdescriptionlabel = $locale->text('Project Name')."/".$locale->text('Job Name');
     
   }
   
@@ -194,9 +197,21 @@ sub search {
         </tr>
 |;
 
-    $l_time = qq|<td nowrap><input name=l_time class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Time').qq|</td>|;
+    $l_time = qq|<input name=l_time class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Time');
    
   }
+  
+  @a = ();
+  push @a, qq|<input name="l_transdate" class=checkbox type=checkbox value=Y checked> |.$locale->text('Date');
+  push @a, qq|<input name="l_projectnumber" class=checkbox type=checkbox value=Y checked> $projectnumberlabel|;
+  push @a, qq|<input name="l_projectdescription" class=checkbox type=checkbox value=Y checked> $projectdescriptionlabel|;
+  push @a, qq|<input name="l_id" class=checkbox type=checkbox value=Y checked> |.$locale->text('ID');
+  push @a, qq|<input name="l_partnumber" class=checkbox type=checkbox value=Y checked> $partnumberlabel|;
+  push @a, qq|<input name="l_description" class=checkbox type=checkbox value=Y checked> |.$locale->text('Description');
+  push @a, qq|<input name="l_notes" class=checkbox type=checkbox value=Y checked> |.$locale->text('Notes');
+  push @a, qq|<input name="l_qty" class=checkbox type=checkbox value=Y checked> |.$locale->text('Qty');
+  push @a, $l_time if $l_time;
+  push @a, qq|<input name=l_allocated class=checkbox type=checkbox value=Y> |.$locale->text('Allocated');
 
   $form->header;
 
@@ -226,10 +241,17 @@ sub search {
        		<td nowrap><input name=open class=checkbox type=checkbox value=Y checked> |.$locale->text('Open').qq|</td>
 		<td nowrap><input name=closed class=checkbox type=checkbox value=Y> |.$locale->text('Closed').qq|</td>
 	      </tr>
-	      <tr>
-		$l_time
-       		<td nowrap><input name=l_allocated class=checkbox type=checkbox value=Y> |.$locale->text('Allocated').qq|</td>
-	      </tr>
+|;
+
+  while (@a) {
+    for (1 .. 5) {
+      print qq|<td nowrap>|. shift @a;
+      print qq|</td>\n|;
+    }
+    print qq|</tr>\n|;
+  }
+
+  print qq|
 	      <tr>
 	        <td><input name=l_subtotal class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Subtotal').qq|</td>
 	      </tr>
@@ -1183,7 +1205,7 @@ sub list_cards {
   
   JC->jcitems(\%myconfig, \%$form);
 
-  @a = qw(type direction oldsort path login project l_subtotal open closed l_time l_allocated);
+  @a = qw(type direction oldsort path login project open closed);
   $href = "$form->{script}?action=list_cards";
   for (@a) { $href .= "&$_=$form->{$_}" }
 
@@ -1193,7 +1215,26 @@ sub list_cards {
 
   $callback = "$form->{script}?action=list_cards";
   for (@a) { $callback .= "&$_=$form->{$_}" }
-  
+
+  @columns = $form->sort_columns(qw(transdate id projectnumber projectname partnumber description notes));
+
+  @column_index = ();
+  foreach $item (@columns) {
+    if ($form->{"l_$item"} eq "Y") {
+      push @column_index, $item;
+
+      $callback .= "&l_$item=Y";
+      $href .= "&l_$item=Y";
+    }
+  }
+
+  foreach $item (qw(subtotal qty allocated sellprice)) {
+    if ($form->{"l_$item"} eq "Y") {
+      $callback .= "&l_$item=Y";
+      $href .= "&l_$item=Y";
+    }
+  }
+
   $callback .= "&title=".$form->escape($form->{title},1);
   
   if (@{ $form->{transactions} }) {
@@ -1205,16 +1246,14 @@ sub list_cards {
     }
   }
 
-  @column_index = (qw(transdate projectnumber projectdescription id partnumber description));
   
-  push @column_index, (qw(allocated)) if $form->{l_allocated};
   if ($form->{type} eq 'timecard') {
-    push @column_index, (qw(1 2 3 4 5 6 7));
+    push @column_index, (qw(1 2 3 4 5 6 7)) if ($form->{l_qty} || $form->{l_time});
   } else {
-    push @column_index, qw(qty sellprice);
+    push @column_index, (qw(qty sellprice)) if $form->{l_qty};
   }
   
-  @column_index = $form->sort_columns(@column_index);
+  push @column_index, "allocated" if $form->{l_allocated};
   
   if ($form->{project} eq 'job') {
     $joblabel = $locale->text('Job Number');
@@ -1301,9 +1340,10 @@ sub list_cards {
   $column_header{projectnumber} = "<th><a class=listheading href=$href&sort=projectnumber>$joblabel</a></th>";
   $column_header{partnumber} = "<th><a class=listheading href=$href&sort=partnumber>$laborlabel</a></th>";
   $column_header{projectdescription} = "<th><a class=listheading href=$href&sort=projectdescription>$desclabel</a></th>";
+  $column_header{notes} = "<th class=listheading>".$locale->text('Notes')."</th>";
   $column_header{qty} = "<th class=listheading>".$locale->text('Qty')."</th>";
+  $column_header{allocated} = "<th class=listheading>".$locale->text('Allocated')."</th>";
   $column_header{sellprice} = "<th class=listheading>".$locale->text('Amount')."</th>";
-  $column_header{allocated} = "<th class=listheading></th>";
 
   
   $form->header;
@@ -1454,6 +1494,8 @@ sub list_cards {
 	}
       }
     }
+
+    for (qw(description notes)) { $ref->{$_} =~ s/\n/<br>/g }
     
     for (@column_index) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
     
@@ -1462,10 +1504,13 @@ sub list_cards {
     $column_data{qty} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{qty}, undef, "&nbsp;")."</td>";
     $column_data{allocated} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{allocated}, undef, "&nbsp;")."</td>";
     $column_data{sellprice} = qq|<td align=right>|.$form->format_amount(\%myconfig,$ref->{qty} * $ref->{sellprice}, $form->{precision})."</td>";
-    $column_data{$ref->{weekday}} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{qty}, undef, "&nbsp;");
+    
+    $column_data{$ref->{weekday}} = "<td align=right>";
+    $column_data{$ref->{weekday}} .= $form->format_amount(\%myconfig, $ref->{qty}, undef, "&nbsp;") if $form->{l_qty};
     
     if ($form->{l_time}) {
-      $column_data{$ref->{weekday}} .= "<br>$ref->{checkedin}<br>$ref->{checkedout}";
+      $column_data{$ref->{weekday}} .= "<br>" if $form->{l_qty};
+      $column_data{$ref->{weekday}} .= "$ref->{checkedin}<br>$ref->{checkedout}";
     }
     $column_data{$ref->{weekday}} .= "</td>";
     

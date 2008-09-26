@@ -63,6 +63,7 @@ $self{texts} = {
   'Language'                    => 'Taal',
   'Leadtime'                    => 'Levertijd',
   'Manager'                     => 'Manager',
+  'Method'                      => 'Gebruikt Stelsel',
   'Name'                        => 'Naam',
   'Name missing!'               => 'Naam ontbreekt!',
   'No.'                         => 'Nr.',

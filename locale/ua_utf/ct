@@ -60,6 +60,7 @@ $self{texts} = {
   'Item not on file!'           => 'Речі нема в списку!',
   'Language'                    => 'Мова',
   'Manager'                     => 'Менеджер',
+  'Method'                      => 'Метод',
   'Name'                        => 'Назва',
   'Name missing!'               => 'Не вказано назву!',
   'No.'                         => 'No.',

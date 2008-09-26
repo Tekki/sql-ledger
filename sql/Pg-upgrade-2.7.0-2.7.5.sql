@@ -41,7 +41,7 @@ create table semaphore(id int, login text, module text);
 --
 create sequence addressid;
 create table address (id int default nextval('addressid') primary key, trans_id int, address1 varchar(32), address2 varchar(32), city varchar(32), state varchar(32), zipcode varchar(10), country varchar(32));
-insert into address (trans_id,address1,address2,city,state,zipcode,country) select id,address1,address2,city,state,zipcode,country from vendor;
+insert into address (trans_id,address1,address2,city,state,zipcode,country) select distinct id,address1,address2,city,state,zipcode,country from vendor;
 --
 drop trigger del_vendor on vendor;
 alter table vendor rename to old_vendor;
@@ -49,7 +49,7 @@ drop function del_vendor();
 --
 CREATE TABLE vendor (id int default nextval('id') primary key, name varchar(64), contact varchar(64), phone varchar(20), fax varchar(20), email text, notes text, terms int2 default 0, taxincluded bool default 'f', vendornumber varchar(32), cc text, bcc text, gifi_accno varchar(30), business_id int, taxnumber varchar(32), sic_code varchar(6), discount float4, creditlimit float default 0, iban varchar(34), bic varchar(11), employee_id int, language_code varchar(6), pricegroup_id int, curr char(3), startdate date, enddate date, arap_accno_id int, payment_accno_id int, discount_accno_id int, cashdiscount float4, discountterms int2, threshold float);
 --
-insert into vendor (id,name,contact,phone,fax,email,notes,terms,taxincluded,vendornumber,cc,bcc,gifi_accno,business_id,taxnumber,sic_code,discount,creditlimit,iban,bic,employee_id,language_code,pricegroup_id,curr,startdate,enddate) select id,name,contact,phone,fax,email,notes,terms,taxincluded,vendornumber,cc,bcc,gifi_accno,business_id,taxnumber,sic_code,discount,creditlimit,iban,bic,employee_id,language_code,pricegroup_id,curr,startdate,enddate from old_vendor;
+insert into vendor (id,name,contact,phone,fax,email,notes,terms,taxincluded,vendornumber,cc,bcc,gifi_accno,business_id,taxnumber,sic_code,discount,creditlimit,iban,bic,employee_id,language_code,pricegroup_id,curr,startdate,enddate) select distinct id,name,contact,phone,fax,email,notes,terms,taxincluded,vendornumber,cc,bcc,gifi_accno,business_id,taxnumber,sic_code,discount,creditlimit,iban,bic,employee_id,language_code,pricegroup_id,curr,startdate,enddate from old_vendor;
 --
 --
 CREATE FUNCTION del_vendor() RETURNS OPAQUE AS '
@@ -72,7 +72,7 @@ create index vendor_name_key on vendor (lower(name));
 create index vendor_vendornumber_key on vendor (vendornumber);
 create index vendor_contact_key on vendor (lower(contact));
 --
-insert into address (trans_id,address1,address2,city,state,zipcode,country) select id,address1,address2,city,state,zipcode,country from customer;
+insert into address (trans_id,address1,address2,city,state,zipcode,country) select distinct id,address1,address2,city,state,zipcode,country from customer;
 --
 drop trigger del_customer on customer;
 alter table customer rename to old_customer;
@@ -80,7 +80,7 @@ drop function del_customer();
 --
 CREATE TABLE customer (id int default nextval('id') primary key, name varchar(64), contact varchar(64), phone varchar(20), fax varchar(20), email text, notes text, terms int2 default 0, taxincluded bool default 'f', customernumber varchar(32), cc text, bcc text, business_id int, taxnumber varchar(32), sic_code varchar(6), discount float4, creditlimit float default 0, iban varchar(34), bic varchar(11), employee_id int, language_code varchar(6), pricegroup_id int, curr char(3), startdate date, enddate date, arap_accno_id int, payment_accno_id int, discount_accno_id int, cashdiscount float4, discountterms int2, threshold float);
 --
-insert into customer (id,name,contact,phone,fax,email,notes,terms,taxincluded,customernumber,cc,bcc,business_id,taxnumber,sic_code,discount,creditlimit,iban,bic,employee_id,language_code,pricegroup_id,curr,startdate,enddate) select id,name,contact,phone,fax,email,notes,terms,taxincluded,customernumber,cc,bcc,business_id,taxnumber,sic_code,discount,creditlimit,iban,bic,employee_id,language_code,pricegroup_id,curr,startdate,enddate from old_customer;
+insert into customer (id,name,contact,phone,fax,email,notes,terms,taxincluded,customernumber,cc,bcc,business_id,taxnumber,sic_code,discount,creditlimit,iban,bic,employee_id,language_code,pricegroup_id,curr,startdate,enddate) select distinct id,name,contact,phone,fax,email,notes,terms,taxincluded,customernumber,cc,bcc,business_id,taxnumber,sic_code,discount,creditlimit,iban,bic,employee_id,language_code,pricegroup_id,curr,startdate,enddate from old_customer;
 --
 --
 CREATE FUNCTION del_customer() RETURNS OPAQUE AS '

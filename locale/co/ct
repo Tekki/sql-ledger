@@ -60,6 +60,7 @@ $self{texts} = {
   'Language'                    => 'Idioma',
   'Leadtime'                    => 'Tiempo de Entrega',
   'Manager'                     => 'Administrador',
+  'Method'                      => 'Metódo',
   'Name'                        => 'Nombre',
   'Name missing!'               => '¡Falta el nombre!',
   'No.'                         => 'No.',

@@ -47,6 +47,7 @@ $self{texts} = {
   'Nothing selected!'           => '没有巳选择',
   'Number'                      => '编号',
   'Orphaned'                    => '无主',
+  'POS'                         => '收款台',
   'Period'                      => '时期',
   'Pricegroup'                  => '价格组',
   'Pricegroup deleted!'         => '巳删除价格组',

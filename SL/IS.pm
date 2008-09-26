@@ -471,11 +471,13 @@ sub invoice_details {
     }
   }
 
-
+  my ($paymentaccno) = split /--/, $form->{"AR_paid_1"};
+  
   for $i (1 .. $form->{paidaccounts}) {
     if ($form->{"paid_$i"}) {
       push(@{ $form->{payment} }, $form->{"paid_$i"});
       my ($accno, $description) = split /--/, $form->{"AR_paid_$i"};
+      $paymentaccno = $accno;
       push(@{ $form->{paymentaccount} }, $description); 
       push(@{ $form->{paymentdate} }, $form->{"datepaid_$i"});
       push(@{ $form->{paymentsource} }, $form->{"source_$i"});
@@ -505,16 +507,14 @@ sub invoice_details {
 
   my $whole;
   ($whole, $form->{decimal}) = split /\./, $form->{invtotal};
-  $form->{decimal} .= "00";
-  $form->{decimal} = substr($form->{decimal}, 0, 2);
+  $form->{decimal} = substr("$form->{decimal}00", 0, 2);
   $form->{text_decimal} = $c->num2text($form->{decimal} * 1);
   $form->{text_amount} = $c->num2text($whole);
   $form->{integer_amount} = $whole;
 
   if ($form->{cd_amount}) {
     ($whole, $form->{cd_decimal}) = split /\./, $form->{cd_invtotal};
-    $form->{cd_decimal} .= "00";
-    $form->{cd_decimal} = substr($form->{cd_decimal}, 0, 2);
+    $form->{cd_decimal} = substr("$form->{cd_decimal}00", 0, 2);
     $form->{text_cd_decimal} = $c->num2text($form->{cd_decimal} * 1);
     $form->{text_cd_invtotal} = $c->num2text($whole);
     $form->{integer_cd_invtotal} = $whole;
@@ -526,6 +526,14 @@ sub invoice_details {
   for (qw(cd_subtotal cd_invtotal invtotal subtotal total totalparts totalservices)) { $form->{$_} = $form->format_amount($myconfig, $form->{$_}, $form->{precision}, "0") }
   for (qw(totalqty totalship totalnetweight totalgrossweight)) { $form->{$_} = $form->format_amount($myconfig, $form->{$_}) }
 
+  # dcn
+  $query = qq|SELECT bk.iban, bk.bic, bk.membernumber, bk.dcn, bk.rvc
+	      FROM bank bk
+	      JOIN chart c ON (c.id = bk.id)
+	      WHERE c.accno = '$paymentaccno'|;
+  ($form->{iban}, $form->{bic}, $form->{membernumber}, $form->{dcn}, $form->{rvc}) = $dbh->selectrow_array($query);
+
+  for my $dcn (qw(dcn rvc)) { $form->{$dcn} = $form->format_dcn($form->{$dcn}) }
 
   $dbh->disconnect;
   
@@ -1010,9 +1018,11 @@ sub post_invoice {
 
   $form->{paid} = 0;
   for $i (1 .. $form->{paidaccounts}) {
-    $form->{"paid_$i"} = $form->parse_amount($myconfig, $form->{"paid_$i"}) * $sw;
-    $form->{paid} += $form->{"paid_$i"};
-    $form->{datepaid} = $form->{"datepaid_$i"} if ($form->{"paid_$i"});
+    if ($form->{"paid_$i"}) {
+      $form->{"paid_$i"} = $form->parse_amount($myconfig, $form->{"paid_$i"}) * $sw;
+      $form->{paid} += $form->{"paid_$i"};
+      $form->{datepaid} = $form->{"datepaid_$i"};
+    }
   }
   
   # add lineitems + tax
@@ -1025,7 +1035,7 @@ sub post_invoice {
     $fxamount += $_->{fxamount};
   }
   $invnetamount = $amount;
-  
+
   $amount = 0;
   for (split / /, $form->{taxaccounts}) { $amount += $form->{acc_trans}{$form->{id}}{$_}{amount} = $form->round_amount($form->{acc_trans}{$form->{id}}{$_}{amount}, $form->{precision}) }
   $invamount = $invnetamount + $amount;
@@ -1058,7 +1068,7 @@ sub post_invoice {
   }
   
   $form->{receivables} = $invamount * -1;
- 
+
   delete $form->{acc_trans}{lineitems};
   
   # update exchangerate
@@ -1174,11 +1184,14 @@ sub post_invoice {
   my $approved;
   my $paymentid = 1;
 
+  my ($paymentaccno) = split /--/, $form->{"AR_paid_1"};
+
   # record payments and offsetting AR
   for $i (1 .. $form->{paidaccounts}) {
     
     if ($form->{"paid_$i"}) {
       ($accno) = split /--/, $form->{"AR_paid_$i"};
+      $paymentaccno = $accno;
       $form->{"datepaid_$i"} = $form->{transdate} unless ($form->{"datepaid_$i"});
       $form->{datepaid} = $form->{"datepaid_$i"};
       
@@ -1289,7 +1302,21 @@ sub post_invoice {
   if ($form->{cdt} && $form->{"paid_$form->{discount_index}"}) {
     $invamount -= $cd_tax if !$form->{taxincluded};
   }
+
   
+  # for dcn
+  ($form->{integer_amount}, $form->{decimal}) = split /\./, $form->{oldinvtotal};
+  $form->{decimal} = substr("$form->{decimal}00", 0, 2);
+
+  $query = qq|SELECT bk.membernumber, bk.dcn
+	      FROM bank bk
+	      JOIN chart c ON (c.id = bk.id)
+	      WHERE c.accno = '$paymentaccno'|;
+  ($form->{membernumber}, $form->{dcn}) = $dbh->selectrow_array($query);
+
+  $form->{dcn} = $form->format_dcn($form->{dcn});
+
+
   # save AR record
   $query = qq|UPDATE ar set
               invnumber = |.$dbh->quote($form->{invnumber}).qq|,
@@ -1321,7 +1348,8 @@ sub post_invoice {
 	      discountterms = $form->{discountterms},
 	      onhold = '$form->{onhold}',
 	      warehouse_id = $form->{warehouse_id},
-	      exchangerate = $form->{exchangerate}
+	      exchangerate = $form->{exchangerate},
+	      dcn = '$form->{dcn}'
               WHERE id = $form->{id}
              |;
   $dbh->do($query) || $form->dberror($query);

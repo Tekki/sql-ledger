@@ -44,6 +44,7 @@ $self{texts} = {
   'Nothing selected!'           => 'Ingenting valgt!',
   'Number'                      => 'Nummer',
   'Orphaned'                    => 'Fritstående',
+  'POS'                         => 'POS',
   'Period'                      => 'Periode',
   'Pricegroup'                  => 'Prisgruppe',
   'Pricegroup deleted!'         => 'Prisgruppe slettet!',

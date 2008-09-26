@@ -430,7 +430,8 @@ sub jcitems {
 	      pr.projectnumber, pr.description AS projectdescription,
 	      e.employeenumber, e.name AS employee,
 	      to_char(j.checkedin, 'WW') AS workweek, pr.parts_id,
-	      j.sellprice, p.inventory_accno_id, p.income_accno_id
+	      j.sellprice, p.inventory_accno_id, p.income_accno_id,
+	      j.notes
 	      FROM jcitems j
 	      JOIN parts p ON (p.id = j.parts_id)
 	      JOIN project pr ON (pr.id = j.project_id)

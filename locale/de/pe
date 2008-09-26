@@ -49,6 +49,7 @@ $self{texts} = {
   'Nothing selected!'           => 'Es wurde nichts ausgewählt!',
   'Number'                      => 'Nummer',
   'Orphaned'                    => 'Nie benutzt',
+  'POS'                         => 'Barverkauf',
   'Period'                      => 'Zeitraum',
   'Pricegroup'                  => 'Preisgruppe',
   'Pricegroup deleted!'         => 'Preisgruppe gelöscht!',

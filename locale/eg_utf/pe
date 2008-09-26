@@ -38,6 +38,7 @@ $self{texts} = {
   'Notes'                       => 'ملاحظات',
   'Nothing selected!'           => 'لم يتم الاختيار',
   'Number'                      => 'الرقم',
+  'POS'                         => 'نقطة بيع',
   'Pricegroup'                  => 'مجموعة سعرية',
   'Pricegroups'                 => 'مجموعات سعرية',
   'Project'                     => 'مشروع',
