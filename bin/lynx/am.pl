@@ -2447,6 +2447,7 @@ sub save_preferences {
     if ($form->{new_password} ne $form->{confirm_password}) {
       $form->error($locale->text('Password does not match!'));
     }
+    $form->error($locale->text('Password may only contain alphanumeric characters!')) if $form->{new_password} =~ /\W/;
   }
   $form->{password} = $form->{new_password}; 
 

@@ -659,7 +659,7 @@ sub restock_assemblies {
   my $disconnect;
   
   # connect to database
-  if ($dbh) {
+  if (!$dbh) {
     $dbh = $form->dbconnect_noauto($myconfig);
     $disconnect = 1;
   }

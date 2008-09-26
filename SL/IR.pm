@@ -391,13 +391,13 @@ sub invoice_details {
 
   # adjust taxes for lineitems
   my $total = 0;
-  for (@{ $form->{lineitems} }) {
-    $total += $_->{tax};
+  for $ref (@{ $form->{lineitems} }) {
+    $total += $ref->{tax};
   }
   if ($form->round_amount($total, $form->{precision}) != $form->round_amount($tax, $form->{precision})) {
     # get largest amount
-    for (reverse sort { $a->{tax} <=> $b->{tax} } @{ $form->{lineitems} }) {
-      $_->{tax} -= $total - $tax;
+    for $ref (reverse sort { $a->{tax} <=> $b->{tax} } @{ $form->{lineitems} }) {
+      $ref->{tax} -= ($total - $tax);
       last;
     }
   }

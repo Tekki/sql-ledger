@@ -858,9 +858,9 @@ sub save_schedule {
   }
 
   @p = ();
-  for (split /\r?\n/, $form->unescape($form->{selectformname})) {
-    (@_) = split /--/, $_;
-    push @p, $_[0];
+  for $item (split /\r?\n/, $form->unescape($form->{selectformname})) {
+    (@a) = split /--/, $item;
+    push @p, $a[0];
   }
 
   $recurringemail = "";

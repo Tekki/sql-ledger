@@ -22,12 +22,11 @@ $gzip = `gzip -V 2>&1`;            # gz decompression utility
 $tar = `tar --version 2>&1`;       # tar archiver
 $latex = `latex -version`;
 
-%checkversion = ( www => 3, abacus => 4, pluto => 5 );
+%checkversion = ( www => 1, abacus => 2 );
 
 %source = (
-	    3 => { url => "http://www.sql-ledger.com/source", site => "California, U.S.A", locale => us },
-            4 => { url => "http://abacus.sql-ledger.com/source", site => "Toronto, Canada", locale => ca },
-	    5 => { url => "http://pluto.sql-ledger.com/source", site => "Edmonton, Canada", locale => ca },
+	    1 => { url => "http://www.sql-ledger.com/source", site => "www.sql-ledger.com", locale => us },
+            2 => { url => "http://abacus.sql-ledger.com/source", site => "abacus.sql-ledger.com", locale => ca },
 	  );
 
 $userspath = "users";         # default for new installation
@@ -108,8 +107,9 @@ if (!$newinstall) {
   
 }
 
+
 if ($version && $latest_version) {
-  if ($version lt $latest_version) {
+  if (calcversion($version) < calcversion($latest_version)) {
     $install .= "\n(u)pgrade to $latest_version\n";
   }
 }
@@ -170,6 +170,20 @@ exit;
 # end main
 
 
+sub calcversion {
+  my $v = shift;
+
+  @v = split /\./, $v;
+
+  for (0 .. 2) {
+    $v[$_] = 1000 + $v[$_];
+  }
+
+  return join '', @v;
+
+}
+
+
 sub download {
 
   &get_source_code;
@@ -187,7 +201,7 @@ sub get_latest_version {
   }
 
   if ($lwp) {
-    foreach $source (qw(pluto www abacus)) {
+    foreach $source (qw(www abacus)) {
       $url = $source{$checkversion{$source}}{url};
       print "\n$source{$checkversion{$source}}{site} ... ";
 
@@ -205,7 +219,7 @@ sub get_latest_version {
       exit 1;
     }
 
-    foreach $source (qw(pluto www abacus)) {
+    foreach $source (qw(www abacus)) {
       $url = $source{$checkversion{$source}}{url};
       print "\n$source{$checkversion{$source}}{site} ... ";
       $ok = `lynx -dump -head $url/latest_version`;

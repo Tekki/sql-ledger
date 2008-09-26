@@ -1972,7 +1972,7 @@ sub tax_report {
 		  WHERE a.datepaid >= '$form->{fromdate}'
 		  AND a.invoice = '0'
 		  AND a.netamount = a.amount
-		  AND NOT (c.link LIKE '%_paid' OR c.link = '$ARAP')
+		  AND NOT (ch.link LIKE '%_paid' OR ch.link = '$ARAP')
 		  $cashwhere
 		GROUP BY a.id, $transdate, a.invnumber, n.name, a.netamount,
 		ac.memo, a.till, n.id, n.${vc}number

@@ -730,12 +730,22 @@ sub save {
 
   # no driver checked
   $form->error($locale->text('Database Driver not checked!')) unless $form->{dbdriver};
-
-  # no spaces allowed in login name
-  $form->{login} =~ s/ //g;
-
-  $form->isblank("login", $locale->text('Login name missing!'));
   
+  $form->isblank("login", $locale->text('Login name missing!'));
+ 
+  # no spaces or strange characters allowed in login name
+  $form->error($locale->text('No space allowed for login!')) if $form->{login} =~ / /;
+  if ($form->{login} =~ /\W/) {
+    $login = $form->{login};
+    $login =~ s/\@//;
+    
+    $form->error($locale->text('login may only contain alphanumeric characters!')) if $login =~ /\W/;
+  }
+  
+  if ($form->{new_password} ne $form->{old_password}) {
+    $form->error($locale->text('Password may only contain alphanumeric characters!')) if $form->{new_password} =~ /\W/;
+  }
+
   # check for duplicates
   if (!$form->{edit}) {
     $temp = new User "$memberfile", "$form->{login}";
