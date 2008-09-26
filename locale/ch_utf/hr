@@ -1,3 +1,5 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'AP'                          => 'Verbindlichkeiten',
   'Above'                       => 'Über',
@@ -110,7 +112,7 @@ $self{subs} = {
   'abzug_erfassen'              => 'add_deduction',
   'arbeitnehmer_erfassen'       => 'add_employee',
   'weiter'                      => 'continue',
-  'löschen'                     => 'delete',
+  'löschen'                    => 'delete',
   'speichern'                   => 'save',
   'als_neu_speichern'           => 'save_as_new',
   'erneuern'                    => 'update',

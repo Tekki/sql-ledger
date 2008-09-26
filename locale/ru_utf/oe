@@ -85,7 +85,6 @@ $self{texts} = {
   'Generate Sales Order'        => 'Создать ордеры продажи',
   'Generate Sales Order from Purchase Orders' => 'Создать ордеры продажи из ордеров покупки',
   'Group'                       => 'Группа',
-  'Group Items'                 => 'Группа номенклатуры',
   'ID'                          => 'Идентификатор',
   'In-line'                     => 'внутристрочный',
   'Include Payment'             => 'Включая оплату',

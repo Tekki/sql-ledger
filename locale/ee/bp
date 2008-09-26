@@ -11,6 +11,7 @@ $self{texts} = {
   'Current'                     => 'Käesolev',
   'Customer'                    => 'Klient',
   'Date'                        => 'Kuupäev',
+  'Employee'                    => 'Töötaja',
   'From'                        => 'Alates',
   'ID'                          => 'ID',
   'Invoice'                     => 'Arve',

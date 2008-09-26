@@ -9,6 +9,7 @@ $self{texts} = {
   'Current'                     => 'En cours',
   'Customer'                    => 'Client',
   'Date'                        => 'Date',
+  'Employee'                    => 'Employé',
   'From'                        => 'De',
   'ID'                          => 'ID',
   'Invoice'                     => 'Facture',

@@ -65,7 +65,6 @@ $self{texts} = {
   'February'                    => 'Veebruar',
   'For'                         => 'Saata',
   'Group'                       => 'Grupp',
-  'Group Items'                 => 'Grupi liikmed',
   'In-line'                     => 'Dokumendisisene',
   'Include Payment'             => 'Lisa Makse',
   'Internal Notes'              => 'Sisemärkused',

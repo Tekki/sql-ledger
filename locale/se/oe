@@ -83,7 +83,6 @@ $self{texts} = {
   'Generate Sales Order'        => 'Skapa försäljningsorder',
   'Generate Sales Order from Purchase Orders' => 'Skapa försäljningsorder från inköpsorder',
   'Group'                       => 'Grupp',
-  'Group Items'                 => 'Grupp varor',
   'ID'                          => 'ID',
   'In-line'                     => 'På väg',
   'Include Payment'             => 'Inkudera betalning',

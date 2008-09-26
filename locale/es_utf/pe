@@ -28,7 +28,6 @@ $self{texts} = {
   'Number'                      => 'Número',
   'Orphaned'                    => 'Huérfano',
   'Project'                     => 'Proyecto',
-  'Project Number missing!'     => '¡Falta el número de proyecto!',
   'Project deleted!'            => '¡Proyecto borrado!',
   'Project saved!'              => '¡Proyecto guardado ',
   'Projects'                    => 'Proyectos',

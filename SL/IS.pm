@@ -83,7 +83,8 @@ sub invoice_details {
               WHERE id = ?|;
   my $pth = $dbh->prepare($query) || $form->dberror($query);
 
-
+  my $sortby;
+  
   # sort items by project and partsgroup
   for $i (1 .. $form->{rowcount} - 1) {
 
@@ -133,12 +134,19 @@ sub invoice_details {
 
     }
 
-    push @sortlist, [ $i, qq|$projectnumber$form->{partsgroup}$inventory_accno_id|, $form->{projectnumber}, $projectnumber_id, $form->{partsgroup} ];
+    $sortby = qq|$projectnumber$form->{partsgroup}|;
+    if ($form->{sortby} ne 'runningnumber') {
+      for (qw(partnumber description bin)) {
+	$sortby .= $form->{"${_}_$i"} if $form->{sortby} eq $_;
+      }
+    }
+
+    push @sortlist, [ $i, qq|$projectnumber$form->{partsgroup}$inventory_accno_id|, $form->{projectnumber}, $projectnumber_id, $form->{partsgroup}, $sortby ];
 
   }
 
   # sort the whole thing by project and group
-  @sortlist = sort { $a->[1] cmp $b->[1] } @sortlist;
+  @sortlist = sort { $a->[5] cmp $b->[5] } @sortlist;
 
   my $runningnumber = 1;
   my $sameitem = "";
@@ -421,6 +429,7 @@ sub invoice_details {
   $form->{decimal} = substr($form->{decimal}, 0, 2);
   $form->{text_decimal} = $c->num2text($form->{decimal} * 1);
   $form->{text_amount} = $c->num2text($whole);
+  $form->{integer_amount} = $form->format_amount($myconfig, $whole);
  
   $form->format_string(qw(text_amount text_decimal));
 

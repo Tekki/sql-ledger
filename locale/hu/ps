@@ -84,7 +84,6 @@ $self{texts} = {
   'From'                        => 'Mikortól:',
   'GIFI'                        => 'Gyûjtõkód',
   'Group'                       => 'Csoport',
-  'Group Items'                 => 'Tételek rendezése csoport alapján',
   'Heading'                     => 'Fejléc',
   'ID'                          => 'Azonosító',
   'In-line'                     => 'Beágyazva',

@@ -1,3 +1,5 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'Account'                     => 'Konto',
   'Accounting Menu'             => 'Kontoverwaltung',
@@ -9,6 +11,7 @@ $self{texts} = {
   'Current'                     => 'Aktuell',
   'Customer'                    => 'Kunde',
   'Date'                        => 'Datum',
+  'Employee'                    => 'Verkäufer',
   'From'                        => 'Von',
   'ID'                          => 'ID',
   'Invoice'                     => 'Rechnung',
@@ -60,7 +63,7 @@ $self{subs} = {
   'weiter'                      => 'continue',
   'drucken'                     => 'print',
   'entfernen'                   => 'remove',
-  'alle_auswählen'              => 'select_all',
+  'alle_auswählen'             => 'select_all',
   'ja'                          => 'yes',
 };
 

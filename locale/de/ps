@@ -106,7 +106,6 @@ $self{texts} = {
   'From'                        => 'Von',
   'GIFI'                        => 'GIFI',
   'Group'                       => 'Warengruppe',
-  'Group Items'                 => 'Artikel sortieren',
   'Heading'                     => 'Überschrift',
   'ID'                          => 'Nr.',
   'In-line'                     => 'im Textkörper (Inline)',

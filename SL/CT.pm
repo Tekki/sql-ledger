@@ -97,7 +97,7 @@ sub create_links {
   }
 
   # get tax labels
-  $query = qq|SELECT c.accno, c.description
+  $query = qq|SELECT DISTINCT c.accno, c.description
               FROM chart c
 	      JOIN tax t ON (t.chart_id = c.id)
 	      WHERE c.link LIKE '%${ARAP}_tax%'

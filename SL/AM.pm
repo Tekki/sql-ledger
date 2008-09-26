@@ -1104,7 +1104,7 @@ sub save_preferences {
 sub save_defaults {
   my ($self, $myconfig, $form) = @_;
 
-  for (qw(inventory_accno income_accno expense_accno fxgain_accno fxloss_accno)) { ($form->{$_}) = split /--/, $form->{$_} }
+  for (qw(IC IC_income IC_expense FX_gain FX_loss)) { ($form->{$_}) = split /--/, $form->{$_} }
   
   my @a;
   $form->{curr} =~ s/ //g;
@@ -1118,19 +1118,19 @@ sub save_defaults {
   my $query = qq|UPDATE defaults SET
                  inventory_accno_id = 
 		     (SELECT id FROM chart
-		                WHERE accno = '$form->{inventory_accno}'),
+		                WHERE accno = '$form->{IC}'),
                  income_accno_id =
 		     (SELECT id FROM chart
-		                WHERE accno = '$form->{income_accno}'),
+		                WHERE accno = '$form->{IC_income}'),
 	         expense_accno_id =
 		     (SELECT id FROM chart
-		                WHERE accno = '$form->{expense_accno}'),
+		                WHERE accno = '$form->{IC_expense}'),
 	         fxgain_accno_id =
 		     (SELECT id FROM chart
-		                WHERE accno = '$form->{fxgain_accno}'),
+		                WHERE accno = '$form->{FX_gain}'),
 	         fxloss_accno_id =
 		     (SELECT id FROM chart
-		                WHERE accno = '$form->{fxloss_accno}'),
+		                WHERE accno = '$form->{FX_loss}'),
 	         glnumber = '$form->{glnumber}',
 	         sinumber = '$form->{sinumber}',
 		 vinumber = '$form->{vinumber}',
@@ -1148,15 +1148,6 @@ sub save_defaults {
 		 weightunit = |.$dbh->quote($form->{weightunit}).qq|,
 		 businessnumber = |.$dbh->quote($form->{businessnumber});
   $dbh->do($query) || $form->dberror($query);
-
-  foreach my $item (split / /, $form->{taxaccounts}) {
-    $form->{$item} = $form->parse_amount($myconfig, $form->{$item}) / 100;
-    $query = qq|UPDATE tax
-		SET rate = $form->{$item},
-		taxnumber = |.$dbh->quote($form->{"taxnumber_$item"}).qq|
-		WHERE chart_id = $item|;
-    $dbh->do($query) || $form->dberror($query);
-  }
 
   my $rc = $dbh->commit;
   $dbh->disconnect;
@@ -1177,14 +1168,16 @@ sub defaultaccounts {
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
   
-  $form->{defaults} = $sth->fetchrow_hashref(NAME_lc);
-  $form->{defaults}{IC_inventory} = $form->{defaults}{inventory_accno_id};
-  $form->{defaults}{IC_income} = $form->{defaults}{income_accno_id};
-  $form->{defaults}{IC_sale} = $form->{defaults}{income_accno_id};
-  $form->{defaults}{IC_expense} = $form->{defaults}{expense_accno_id};
-  $form->{defaults}{IC_cogs} = $form->{defaults}{expense_accno_id};
-  $form->{defaults}{FX_gain} = $form->{defaults}{fxgain_accno_id};
-  $form->{defaults}{FX_loss} = $form->{defaults}{fxloss_accno_id};
+  my $ref = $sth->fetchrow_hashref(NAME_lc);
+  for (keys %$ref) { $form->{$_} = $ref->{$_} }
+  
+  $form->{defaults}{IC} = $form->{inventory_accno_id};
+  $form->{defaults}{IC_income} = $form->{income_accno_id};
+  $form->{defaults}{IC_sale} = $form->{income_accno_id};
+  $form->{defaults}{IC_expense} = $form->{expense_accno_id};
+  $form->{defaults}{IC_cogs} = $form->{expense_accno_id};
+  $form->{defaults}{FX_gain} = $form->{fxgain_accno_id};
+  $form->{defaults}{FX_loss} = $form->{fxloss_accno_id};
   
   $sth->finish;
 
@@ -1196,7 +1189,7 @@ sub defaultaccounts {
   $sth->execute || $form->dberror($query);
 
   my $nkey;
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     foreach my $key (split(/:/, $ref->{link})) {
       if ($key =~ /IC/) {
 	$nkey = $key;
@@ -1206,7 +1199,7 @@ sub defaultaccounts {
 	if ($key =~ /sale/) {
 	  $nkey = "IC_income";
 	}
-        %{ $form->{IC}{$nkey}{$ref->{accno}} } = ( id => $ref->{id},
+        %{ $form->{accno}{$nkey}{$ref->{accno}} } = ( id => $ref->{id},
                                         description => $ref->{description} );
       }
     }
@@ -1216,39 +1209,75 @@ sub defaultaccounts {
 
   $query = qq|SELECT id, accno, description
               FROM chart
-	      WHERE (category = 'I' or category = 'E')
+	      WHERE (category = 'I' OR category = 'E')
 	      AND charttype = 'A'
               ORDER BY accno|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
-    %{ $form->{IC}{FX_gain}{$ref->{accno}} } = ( id => $ref->{id},
+    %{ $form->{accno}{FX_gain}{$ref->{accno}} } = ( id => $ref->{id},
                                       description => $ref->{description} );
-    %{ $form->{IC}{FX_loss}{$ref->{accno}} } = ( id => $ref->{id},
+    %{ $form->{accno}{FX_loss}{$ref->{accno}} } = ( id => $ref->{id},
                                       description => $ref->{description} );
   }
   $sth->finish;
 
-  # now get the tax rates and numbers
-  $query = qq|SELECT chart.id, chart.accno, chart.description,
-              tax.rate * 100 AS rate, tax.taxnumber
-              FROM chart, tax
-	      WHERE chart.id = tax.chart_id|;
+  $dbh->disconnect;
+  
+}
 
-  $sth = $dbh->prepare($query);
+
+sub taxes {
+  my ($self, $myconfig, $form) = @_;
+  
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+  
+  my $query = qq|SELECT c.id, c.accno, c.description,
+              t.rate * 100 AS rate, t.taxnumber, t.validto
+              FROM chart c
+	      JOIN tax t ON (c.id = t.chart_id)
+	      ORDER BY 3, 6|;
+
+  my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
-    $form->{taxrates}{$ref->{accno}}{id} = $ref->{id};
-    $form->{taxrates}{$ref->{accno}}{description} = $ref->{description};
-    $form->{taxrates}{$ref->{accno}}{taxnumber} = $ref->{taxnumber} if $ref->{taxnumber};
-    $form->{taxrates}{$ref->{accno}}{rate} = $ref->{rate} if $ref->{rate};
+    push @{ $form->{taxrates} }, $ref;
   }
-
   $sth->finish;
+
   $dbh->disconnect;
   
+}
+
+
+sub save_taxes {
+  my ($self, $myconfig, $form) = @_;
+
+  # connect to database
+  my $dbh = $form->dbconnect_noauto($myconfig);
+
+  my $query = qq|DELETE FROM tax|;
+  $dbh->do($query) || $form->dberror($query);
+
+  foreach my $item (split / /, $form->{taxaccounts}) {
+    my ($chart_id, $i) = split /_/, $item;
+    my $rate = $form->parse_amount($myconfig, $form->{"taxrate_$i"}) / 100;
+    $query = qq|INSERT INTO tax (chart_id, rate, taxnumber, validto)
+                VALUES ($chart_id, $rate, |
+		.$dbh->quote($form->{"taxnumber_$i"}).qq|, |
+		.$form->dbquote($form->{"validto_$i"}, SQL_DATE)
+		.qq|)|;
+    $dbh->do($query) || $form->dberror($query);
+  }
+
+  my $rc = $dbh->commit;
+  $dbh->disconnect;
+
+  $rc;
+ 
 }
 
 

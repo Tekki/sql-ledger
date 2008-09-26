@@ -86,7 +86,6 @@ $self{texts} = {
   'Generate Sales Order'        => 'Genereer Verkooporder',
   'Generate Sales Order from Purchase Orders' => 'Genereer Verkooporder van Aankooporders',
   'Group'                       => 'Productgroep',
-  'Group Items'                 => 'Groepeer Onderdelen',
   'ID'                          => 'ID',
   'In-line'                     => 'In Lijn',
   'Include Payment'             => 'Inclusief Bedrag',

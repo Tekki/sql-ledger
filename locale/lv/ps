@@ -99,7 +99,6 @@ $self{texts} = {
   'From'                        => 'No',
   'GIFI'                        => 'GIFI',
   'Group'                       => 'Grupa',
-  'Group Items'                 => 'Ierakstu grupa',
   'Heading'                     => 'Virsraksts',
   'ID'                          => 'ID',
   'In-line'                     => 'Iekïauts',

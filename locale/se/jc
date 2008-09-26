@@ -90,7 +90,6 @@ $self{texts} = {
   'To'                          => 'Till',
   'Total'                       => 'Total',
   'Tuesday'                     => 'Tisdag',
-  'Unit Rate'                   => 'Kostnad/timme',
   'Update'                      => 'Uppdatera',
   'Warning!'                    => 'Varning!',
   'Wednesday'                   => 'Onsdag',

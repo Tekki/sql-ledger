@@ -81,7 +81,6 @@ $self{texts} = {
   'February'                    => 'Февруари',
   'From'                        => 'От',
   'Group'                       => 'Група',
-  'Group Items'                 => 'Елемент от група',
   'Image'                       => 'Изображение',
   'In-line'                     => 'Включен',
   'Include in Report'           => 'Включен в справката',

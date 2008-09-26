@@ -6,6 +6,7 @@ $self{texts} = {
   'Current'                     => 'Núvirði',
   'Customer'                    => 'Viðskiptavinur',
   'Date'                        => 'Dagsetning',
+  'Employee'                    => 'Starfsmenn',
   'From'                        => 'Frá',
   'ID'                          => 'ID',
   'Invoice'                     => 'Sölureikningur',

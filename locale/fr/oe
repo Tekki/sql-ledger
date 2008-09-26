@@ -76,7 +76,6 @@ $self{texts} = {
   'For'                         => 'Pour',
   'From'                        => 'De',
   'Group'                       => 'Groupe',
-  'Group Items'                 => 'Grouper objets',
   'ID'                          => 'ID',
   'In-line'                     => 'En ligne',
   'Include Payment'             => 'Inclure paiement',

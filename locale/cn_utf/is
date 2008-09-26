@@ -63,7 +63,6 @@ $self{texts} = {
   'Feb'                         => '二月',
   'February'                    => '二月',
   'Group'                       => '组',
-  'Group Items'                 => '组的项目',
   'In-line'                     => '行内',
   'Internal Notes'              => '内部备忘录',
   'Invoice'                     => '发票',

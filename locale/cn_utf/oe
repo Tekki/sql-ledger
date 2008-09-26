@@ -82,7 +82,6 @@ $self{texts} = {
   'Generate Sales Order'        => '产生销货单',
   'Generate Sales Order from Purchase Orders' => '用销货单产生采购单',
   'Group'                       => '组',
-  'Group Items'                 => '组的项目',
   'ID'                          => '编号',
   'In-line'                     => '行内',
   'Include in Report'           => '一并显示',

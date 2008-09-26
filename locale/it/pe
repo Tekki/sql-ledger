@@ -27,7 +27,6 @@ $self{texts} = {
   'Number'                      => 'Partita IVA',
   'Orphaned'                    => 'Orfano',
   'Project'                     => 'Progetto',
-  'Project Number missing!'     => 'Manca il codice del progetto!',
   'Project deleted!'            => 'Progetto cancellato!',
   'Project saved!'              => 'Progetto salvato!',
   'Projects'                    => 'Progetti',

@@ -1694,18 +1694,16 @@ sub defaults {
   # get defaults for account numbers and last numbers
   AM->defaultaccounts(\%myconfig, \%$form);
 
-  foreach $key (keys %{ $form->{IC} }) {
-    foreach $accno (sort keys %{ $form->{IC}{$key} }) {
-      $form->{account}{$key} .= "<option>$accno--$form->{IC}{$key}{$accno}{description}\n";
-      $form->{accno}{$form->{IC}{$key}{$accno}{id}} = $accno;
+  foreach $key (keys %{ $form->{accno} }) {
+    foreach $accno (sort keys %{ $form->{accno}{$key} }) {
+      $form->{account}{$key} .= "<option>$accno--$form->{accno}{$key}{$accno}{description}\n";
+      $form->{accno}{$form->{accno}{$key}{$accno}{id}} = $accno;
     }
   }
 
-  $form->{account}{IC_inventory} = $form->{account}{IC};
+  for (qw(IC IC_inventory IC_income IC_expense FX_gain FX_loss)) { $form->{account}{$_} =~ s/>$form->{accno}{$form->{defaults}{$_}}/ selected>$form->{accno}{$form->{defaults}{$_}}/ }
 
-  for (qw(IC_inventory IC_income IC_expense FX_gain FX_loss)) { $form->{account}{$_} =~ s/>$form->{accno}{$form->{defaults}{$_}}/ selected>$form->{accno}{$form->{defaults}{$_}}/ }
-
-  delete $form->{accno};
+  for (qw(accno defaults)) { delete $form->{$_} }
   
   $form->{title} = $locale->text('System Defaults');
   
@@ -1725,11 +1723,11 @@ sub defaults {
       <table>
 	<tr>
 	  <th align=right>|.$locale->text('Business Number').qq|</th>
-	  <td><input name=businessnumber size=25 value="$form->{defaults}{businessnumber}"></td>
+	  <td><input name=businessnumber size=25 value="$form->{businessnumber}"></td>
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('Weight Unit').qq|</th>
-	  <td><input name=weightunit size=5 value="$form->{defaults}{weightunit}"></td>
+	  <td><input name=weightunit size=5 value="$form->{weightunit}"></td>
 	</tr>
       </table>
     </td>
@@ -1742,23 +1740,23 @@ sub defaults {
       <table>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Inventory').qq|</th>
-	  <td><select name=inventory_accno>$form->{account}{IC_inventory}</select></td>
+	  <td><select name=IC>$form->{account}{IC}</select></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Income').qq|</th>
-	  <td><select name=income_accno>$form->{account}{IC_income}</select></td>
+	  <td><select name=IC_income>$form->{account}{IC_income}</select></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Expense').qq|</th>
-	  <td><select name=expense_accno>$form->{account}{IC_expense}</select></td>
+	  <td><select name=IC_expense>$form->{account}{IC_expense}</select></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Foreign Exchange Gain').qq|</th>
-	  <td><select name=fxgain_accno>$form->{account}{FX_gain}</select></td>
+	  <td><select name=FX_gain>$form->{account}{FX_gain}</select></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Foreign Exchange Loss').qq|</th>
-	  <td><select name=fxloss_accno>$form->{account}{FX_loss}</select></td>
+	  <td><select name=FX_loss>$form->{account}{FX_loss}</select></td>
 	</tr>
       </table>
     </td>
@@ -1768,7 +1766,7 @@ sub defaults {
   </tr>
   <tr>
     <td>
-    <input name=curr size=40 value="$form->{defaults}{curr}">
+    <input name=curr size=40 value="$form->{curr}">
     </td>
   </tr>
   <tr>
@@ -1776,88 +1774,55 @@ sub defaults {
       <table>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('GL Reference Number').qq|</th>
-	  <td><input name=glnumber size=40 value="$form->{defaults}{glnumber}"></td>
+	  <td><input name=glnumber size=40 value="$form->{glnumber}"></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Sales Invoice/AR Transaction Number').qq|</th>
-	  <td><input name=sinumber size=40 value="$form->{defaults}{sinumber}"></td>
+	  <td><input name=sinumber size=40 value="$form->{sinumber}"></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Sales Order Number').qq|</th>
-	  <td><input name=sonumber size=40 value="$form->{defaults}{sonumber}"></td>
+	  <td><input name=sonumber size=40 value="$form->{sonumber}"></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Vendor Invoice/AP Transaction Number').qq|</th>
-	  <td><input name=vinumber size=40 value="$form->{defaults}{vinumber}"></td>
+	  <td><input name=vinumber size=40 value="$form->{vinumber}"></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Purchase Order Number').qq|</th>
-	  <td><input name=ponumber size=40 value="$form->{defaults}{ponumber}"></td>
+	  <td><input name=ponumber size=40 value="$form->{ponumber}"></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Sales Quotation Number').qq|</th>
-	  <td><input name=sqnumber size=40 value="$form->{defaults}{sqnumber}"></td>
+	  <td><input name=sqnumber size=40 value="$form->{sqnumber}"></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('RFQ Number').qq|</th>
-	  <td><input name=rfqnumber size=40 value="$form->{defaults}{rfqnumber}"></td>
+	  <td><input name=rfqnumber size=40 value="$form->{rfqnumber}"></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Part Number').qq|</th>
-	  <td><input name=partnumber size=40 value="$form->{defaults}{partnumber}"></td>
+	  <td><input name=partnumber size=40 value="$form->{partnumber}"></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Job/Project Number').qq|</th>
-	  <td><input name=projectnumber size=40 value="$form->{defaults}{projectnumber}"></td>
+	  <td><input name=projectnumber size=40 value="$form->{projectnumber}"></td>
         </tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Employee Number').qq|</th>
-	  <td><input name=employeenumber size=40 value="$form->{defaults}{employeenumber}"></td>
+	  <td><input name=employeenumber size=40 value="$form->{employeenumber}"></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Customer Number').qq|</th>
-	  <td><input name=customernumber size=40 value="$form->{defaults}{customernumber}"></td>
+	  <td><input name=customernumber size=40 value="$form->{customernumber}"></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Vendor Number').qq|</th>
-	  <td><input name=vendornumber size=40 value="$form->{defaults}{vendornumber}"></td>
+	  <td><input name=vendornumber size=40 value="$form->{vendornumber}"></td>
 	</tr>
       </table>
     </td>
   </tr>
-  <tr>
-    <th class=listheading>|.$locale->text('Tax Accounts').qq|</th>
-  </tr>
-  <tr>
-    <td>
-      <table>
-	<tr>
-	  <th></th>
-	  <th>|.$locale->text('Rate').qq| (%)</th>
-	  <th>|.$locale->text('Number').qq|</th>
-	</tr>
-|;
-
-  foreach $accno (sort keys %{ $form->{taxrates} }) {
-    $form->{taxrates}{$accno}{rate} = $form->format_amount(\%myconfig, $form->{taxrates}{$accno}{rate});
-    
-    print qq|
-	<tr>
-	  <th align=right>$form->{taxrates}{$accno}{description}</th>
-	  <td><input name=$form->{taxrates}{$accno}{id} size=6 value=$form->{taxrates}{$accno}{rate}></td>
-	  <td><input name="taxnumber_$form->{taxrates}{$accno}{id}" value="$form->{taxrates}{$accno}{taxnumber}"></td>
-	</tr>
-|;
-    $form->{taxaccounts} .= "$form->{taxrates}{$accno}{id} ";
-  }
-
-  chop $form->{taxaccounts};
-
-  print qq|
-      </table>
-    </td>
-  </tr>
-<input name=taxaccounts type=hidden value="$form->{taxaccounts}">
   <tr>
     <td><hr size=3 noshade></td>
   </tr>
@@ -1881,8 +1846,165 @@ sub defaults {
 </html>
 |;
 
+}
+
+
+sub taxes {
+  
+  # get tax account numbers
+  AM->taxes(\%myconfig, \%$form);
+
+  $i = 0;
+  foreach $ref (@{ $form->{taxrates} }) {
+    $i++;
+    $form->{"taxrate_$i"} = $form->format_amount(\%myconfig, $ref->{rate});
+    $form->{"taxdescription_$i"} = $ref->{description};
+    
+    for (qw(taxnumber validto)) { $form->{"${_}_$i"} = $ref->{$_} }
+    $form->{taxaccounts} .= "$ref->{id}_$i ";
+  }
+  chop $form->{taxaccounts};
+  
+  &display_taxes;
 
 }
+
+
+sub display_taxes {
+  
+  $form->{title} = $locale->text('Taxes');
+  
+  $form->header;
+  
+  print qq|
+<body>
+
+<form method=post action=$form->{script}>
+
+<input type=hidden name=type value=taxes>
+
+<table width=100%>
+  <tr><th class=listtop>$form->{title}</th></tr>
+  <tr>
+    <td>
+      <table>
+	<tr>
+	  <th></th>
+	  <th>|.$locale->text('Rate').qq| (%)</th>
+	  <th>|.$locale->text('Number').qq|</th>
+	  <th>|.$locale->text('Valid To').qq|</th>
+	</tr>
+|;
+
+  for (split(/ /, $form->{taxaccounts})) {
+    
+    ($null, $i) = split /_/, $_;
+    
+    $form->{"taxrate_$i"} = $form->format_amount(\%myconfig, $form->{"taxrate_$i"});
+    
+    $form->hide_form("taxdescription_$i");
+    
+    print qq|
+	<tr>
+	  <th align=right>|;
+	  
+    if ($form->{"taxdescription_$i"} eq $sametax) {
+      print "";
+    } else {
+      print qq|$form->{"taxdescription_$i"}|;
+    }
+    
+    print qq|</th>
+	  <td><input name="taxrate_$i" size=6 value=$form->{"taxrate_$i"}></td>
+	  <td><input name="taxnumber_$i" value="$form->{"taxnumber_$i"}"></td>
+	  <td><input name="validto_$i" size=11 value="$form->{"validto_$i"}" title="$myconfig{dateformat}"></td>
+	</tr>
+|;
+    $sametax = $form->{"taxdescription_$i"};
+    
+  }
+
+  print qq|
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td><hr size=3 noshade></td>
+  </tr>
+</table>
+|;
+
+  $form->hide_form(qw(taxaccounts path login sessionid));
+
+  print qq|
+<input type=submit class=submit name=action value="|.$locale->text('Update').qq|">
+<input type=submit class=submit name=action value="|.$locale->text('Save').qq|">|;
+
+  if ($form->{menubar}) {
+    require "$form->{path}/menu.pl";
+    &menubar;
+  }
+
+  print qq|
+  </form>
+
+</body>
+</html>
+|;
+
+}
+
+
+sub update {
+
+  @a = split / /, $form->{taxaccounts};
+  $ndx = $#a + 1;
+  
+  foreach $item (@a) {
+    ($accno, $i) = split /_/, $item;
+    push @t, $accno;
+
+    if ($form->{"validto_$i"}) {
+      $j = $i + 1;
+      if ($form->{"taxdescription_$i"} ne $form->{"taxdescription_$j"}) {
+	#insert line
+	for ($j = $ndx + 1; $j > $i; $j--) {
+	  $k = $j - 1;
+	  for (qw(taxrate taxdescription taxnumber validto)) { $form->{"${_}_$j"} = $form->{"${_}_$k"} }
+	}
+	$ndx++;
+	$k = $i + 1;
+	for (qw(taxdescription taxnumber)) { $form->{"${_}_$k"} = $form->{"${_}_$i"} }
+	for (qw(taxrate validto)) { $form->{"${_}_$k"} = "" }
+	push @t, $accno;
+      }
+    } else {
+      # remove line
+      $j = $i + 1;
+      if ($form->{"taxdescription_$i"} eq $form->{"taxdescription_$j"}) {
+	  for ($j = $i + 1; $j <= $ndx; $j++) {
+	    $k = $j + 1;
+	    for (qw(taxrate taxdescription taxnumber validto)) { $form->{"${_}_$j"} = $form->{"${_}_$k"} }
+	  }
+	  $ndx--;
+	  splice @t, $i-1, 1;
+	}
+    }
+	
+  }
+
+  $i = 1;
+  $form->{taxaccounts} = "";
+  for (@t) {
+    $form->{taxaccounts} .= "${_}_$i ";
+    $i++;
+  }
+  chop $form->{taxaccounts};
+
+  &display_taxes;
+  
+}
+
 
 
 sub config {
@@ -2064,6 +2186,17 @@ sub save_defaults {
     $form->redirect($locale->text('Defaults saved!'));
   } else {
     $form->error($locale->text('Cannot save defaults!'));
+  }
+
+}
+
+
+sub save_taxes {
+
+  if (AM->save_taxes(\%myconfig, \%$form)) {
+    $form->redirect($locale->text('Taxes saved!'));
+  } else {
+    $form->error($locale->text('Cannot save taxes!'));
   }
 
 }

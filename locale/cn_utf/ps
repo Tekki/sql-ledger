@@ -105,7 +105,6 @@ $self{texts} = {
   'February'                    => '二月',
   'From'                        => '从',
   'Group'                       => '组',
-  'Group Items'                 => '组的项目',
   'Heading'                     => '标题',
   'ID'                          => '编号',
   'In-line'                     => '行内',

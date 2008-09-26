@@ -110,7 +110,6 @@ $self{texts} = {
   'From'                        => 'От',
   'GIFI'                        => 'GIFI',
   'Group'                       => 'Група',
-  'Group Items'                 => 'Елемент от група',
   'Heading'                     => 'Заглавие',
   'ID'                          => 'Код',
   'In-line'                     => 'Включен',

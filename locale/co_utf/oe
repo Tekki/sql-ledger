@@ -83,7 +83,6 @@ $self{texts} = {
   'Generate Sales Order'        => 'Elaborar Orden de Venta',
   'Generate Sales Order from Purchase Orders' => 'Elaborar Orden de Venta de Orden de Compra',
   'Group'                       => 'Grupo',
-  'Group Items'                 => 'Agrupar itemes',
   'ID'                          => 'ID',
   'In-line'                     => 'Incrustado',
   'Include Payment'             => 'Incluir Pago',

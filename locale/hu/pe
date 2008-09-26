@@ -37,7 +37,6 @@ $self{texts} = {
   'Orphaned'                    => 'Tranzakció nélküli',
   'Project'                     => 'Munkaszám',
   'Project Number'              => 'Munkaszám',
-  'Project Number missing!'     => 'Munkaszám száma hiányzik!',
   'Project deleted!'            => 'Munkaszám törölve!',
   'Project saved!'              => 'Munkaszám elmentve!',
   'Projects'                    => 'Munkaszámok',

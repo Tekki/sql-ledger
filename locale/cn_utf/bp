@@ -11,6 +11,7 @@ $self{texts} = {
   'Current'                     => '现有',
   'Customer'                    => '客户',
   'Date'                        => '日期',
+  'Employee'                    => '职员',
   'From'                        => '从',
   'ID'                          => '编号',
   'Invoice'                     => '发票',

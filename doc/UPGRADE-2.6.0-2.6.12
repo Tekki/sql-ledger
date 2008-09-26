@@ -1,8 +1,8 @@
-Upgrading from version 2.6.(0-10) to 2.6.11
+Upgrading from version 2.6.(0-11) to 2.6.12
 
 1. install SQL-Ledger over top
    # cd /usr/local
-   # tar zxvf sql-ledger-2.6.11.tar.gz
+   # tar zxvf sql-ledger-2.6.12.tar.gz
 
 2. fix permissions
    # chown -hR nobody:nogroup *

@@ -1,3 +1,5 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'Accounting Menu'             => 'Kontoverwaltung',
   'Add Stores Card'             => 'Artikelkarte',
@@ -92,7 +94,6 @@ $self{texts} = {
   'To'                          => 'Bis',
   'Total'                       => 'Total',
   'Tuesday'                     => 'Dienstag',
-  'Unit Rate'                   => 'Unit Rate',
   'Update'                      => 'Erneuern',
   'Warning!'                    => 'Warnung!',
   'Wednesday'                   => 'Mittwoch',
@@ -142,7 +143,7 @@ $self{subs} = {
   'artikelkarte'                => 'add_stores_card',
   'stempelkarte_erfassen'       => 'add_time_card',
   'weiter'                      => 'continue',
-  'löschen'                     => 'delete',
+  'löschen'                    => 'delete',
   'drucken'                     => 'print',
   'drucken_und_speichern'       => 'print_and_save',
   'drucken_und_als_neu_speichern' => 'print_and_save_as_new',

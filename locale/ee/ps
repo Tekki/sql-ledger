@@ -110,7 +110,6 @@ $self{texts} = {
   'From'                        => 'Alates',
   'GIFI'                        => 'GIFI',
   'Group'                       => 'Grupp',
-  'Group Items'                 => 'Grupi liikmed',
   'Heading'                     => 'Päis',
   'ID'                          => 'ID',
   'In-line'                     => 'Dokumendisisene',

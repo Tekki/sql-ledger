@@ -834,23 +834,30 @@ sub get_name {
     $tax{$ref->{accno}} = 1;
   }
   $sth->finish;
-    
+  
+  my $where; 
+  $where = qq|AND (t.validto >= '$form->{transdate}' OR t.validto IS NULL)| if $
+  form->{transdate};
+  
   # get tax rates and description
   $query = qq|SELECT c.accno, c.description, t.rate, t.taxnumber
 	      FROM chart c
 	      JOIN tax t ON (c.id = t.chart_id)
 	      WHERE c.link LIKE '%${ARAP}_tax%'
-	      ORDER BY accno|;
+	      $where
+	      ORDER BY accno, validto|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   $form->{taxaccounts} = "";
+  my %a = ();
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     if ($tax{$ref->{accno}}) {
-      $form->{"$ref->{accno}_rate"} = $ref->{rate};
-      $form->{"$ref->{accno}_description"} = $ref->{description};
-      $form->{"$ref->{accno}_taxnumber"} = $ref->{taxnumber};
-      $form->{taxaccounts} .= "$ref->{accno} ";
+      if (not exists $a{$ref->{accno}}) {
+	for (qw(rate description taxnumber)) { $form->{"$ref->{accno}_$_"} = $ref->{$_} }
+	$form->{taxaccounts} .= "$ref->{accno} ";
+	$a{$ref->{accno}} = 1;
+      }
     }
   }
   $sth->finish;

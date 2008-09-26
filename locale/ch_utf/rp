@@ -1,3 +1,5 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'AP Aging'                    => 'Offene Verbindl.',
   'AR Aging'                    => 'Forderungenspiegel',
@@ -194,11 +196,11 @@ $self{subs} = {
   'tax_subtotal'                => 'tax_subtotal',
   'vendor_invoice_'             => 'vendor_invoice_',
   'weiter'                      => 'continue',
-  'zeitplan_löschen'            => 'delete_schedule',
+  'zeitplan_löschen'           => 'delete_schedule',
   'e_mail'                      => 'e_mail',
   'drucken'                     => 'print',
   'zeitplan_speichern'          => 'save_schedule',
-  'alle_auswählen'              => 'select_all',
+  'alle_auswählen'             => 'select_all',
 };
 
 1;

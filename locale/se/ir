@@ -60,7 +60,6 @@ $self{texts} = {
   'February'                    => 'Februari',
   'For'                         => 'under',
   'Group'                       => 'Grupp',
-  'Group Items'                 => 'Grupp varor',
   'In-line'                     => 'På väg',
   'Include Payment'             => 'Inkudera betalning',
   'Internal Notes'              => 'Egna anteckningar',

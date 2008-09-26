@@ -108,7 +108,6 @@ $self{texts} = {
   'From'                        => 'Från',
   'GIFI'                        => 'SRU-kod',
   'Group'                       => 'Grupp',
-  'Group Items'                 => 'Grupp varor',
   'Heading'                     => 'Överskrift',
   'ID'                          => 'ID',
   'In-line'                     => 'På väg',

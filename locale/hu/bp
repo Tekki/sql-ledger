@@ -8,6 +8,7 @@ $self{texts} = {
   'Current'                     => '0-30',
   'Customer'                    => 'Vevõ',
   'Date'                        => 'Dátum',
+  'Employee'                    => 'Alkalmazott',
   'From'                        => 'Mikortól:',
   'ID'                          => 'Azonosító',
   'Invoice'                     => 'Számla',

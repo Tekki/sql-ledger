@@ -101,7 +101,6 @@ $self{texts} = {
   'From'                        => 'Desde',
   'GIFI'                        => 'Plan de Cuentas Fiscal (PCF)',
   'Group'                       => 'Grupo',
-  'Group Items'                 => 'Componentes de grupo',
   'Heading'                     => 'Encabezado',
   'ID'                          => 'ID',
   'In-line'                     => 'Incorporado',

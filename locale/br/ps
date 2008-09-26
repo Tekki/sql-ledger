@@ -108,7 +108,6 @@ $self{texts} = {
   'From'                        => 'De',
   'GIFI'                        => 'CFOP - Código Fiscal da Operação',
   'Group'                       => 'Grupo',
-  'Group Items'                 => 'Ítens do Grupo',
   'Heading'                     => 'Cabeçalho',
   'ID'                          => 'ID',
   'In-line'                     => 'em linha',

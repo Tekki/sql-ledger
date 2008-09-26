@@ -101,7 +101,6 @@ $self{texts} = {
   'From'                        => 'De',
   'GIFI'                        => 'Code d\'identification comptable ou fiscale',
   'Group'                       => 'Groupe',
-  'Group Items'                 => 'Grouper objets',
   'Heading'                     => 'En-tête',
   'ID'                          => 'ID',
   'In-line'                     => 'En ligne',

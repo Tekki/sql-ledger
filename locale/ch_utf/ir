@@ -1,3 +1,5 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'Account'                     => 'Konto',
   'Accounting Menu'             => 'Kontoverwaltung',
@@ -60,7 +62,6 @@ $self{texts} = {
   'February'                    => 'Februar',
   'For'                         => 'für',
   'Group'                       => 'Warengruppe',
-  'Group Items'                 => 'Artikel sortieren',
   'In-line'                     => 'im Textkörper (Inline)',
   'Include Payment'             => 'Bezahlung reinnehmen',
   'Internal Notes'              => 'Interne Notizen',
@@ -243,8 +244,8 @@ $self{subs} = {
   'vendor_invoice_'             => 'vendor_invoice_',
   'yes'                         => 'yes',
   'weiter'                      => 'continue',
-  'löschen'                     => 'delete',
-  'zeitplan_löschen'            => 'delete_schedule',
+  'löschen'                    => 'delete',
+  'zeitplan_löschen'           => 'delete_schedule',
   'buchen'                      => 'post',
   'als_neu_buchen'              => 'post_as_new',
   'einkaufsbestellung'          => 'purchase_order',

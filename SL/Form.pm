@@ -56,8 +56,8 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.6.11";
-  $self->{dbversion} = "2.6.7";
+  $self->{version} = "2.6.12";
+  $self->{dbversion} = "2.6.12";
 
   bless $self, $type;
   
@@ -1030,7 +1030,7 @@ sub rerun_latex {
   my $a = 0;
   if (-f "$self->{errfile}") {
     open(FH, "$self->{errfile}");
-    $a = grep /longtable Warning:/, <FH>;
+    $a = grep /(longtable Warning:|Warning:.*?Lastpage)/, <FH>;
     close(FH);
   }
 
@@ -1907,7 +1907,11 @@ sub like {
   my ($self, $str) = @_;
   
   if ($str !~ /(%|_)/) {
-    $str = "%$str%";
+    if ($str =~ /(^").*("$)/) {
+      $str =~ s/(^"|"$)//g; 
+    } else { 
+      $str = "%$str%";
+    }
   }
 
   $str =~ s/'/''/g;

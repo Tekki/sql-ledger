@@ -28,7 +28,6 @@ $self{texts} = {
   'Number'                      => 'Numeris',
   'Orphaned'                    => 'Naðlaitinis',
   'Project'                     => 'Projektas',
-  'Project Number missing!'     => 'Projekto numerio nëra!',
   'Project deleted!'            => 'Projektas iðtrintas!',
   'Project saved!'              => 'Projektas iðsaugotas!',
   'Projects'                    => 'Projektai',

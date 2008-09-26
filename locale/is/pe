@@ -26,7 +26,6 @@ $self{texts} = {
   'Number'                      => 'Númer',
   'Orphaned'                    => 'Sjáfstætt',
   'Project'                     => 'Verkefni',
-  'Project Number missing!'     => 'Verkefnisnúmer vantar!',
   'Project deleted!'            => 'Verkefni eytt!',
   'Project saved!'              => 'verkefni geymt!',
   'Projects'                    => 'Verkefni',

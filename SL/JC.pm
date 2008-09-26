@@ -412,7 +412,8 @@ sub jcitems {
   $query = qq|SELECT j.id, j.description, j.qty, j.allocated,
 	      to_char(j.checkedin, 'HH24:MI') AS checkedin,
 	      to_char(j.checkedout, 'HH24:MI') AS checkedout,
-	      to_char(j.checkedin, '$dateformat') AS transdate,
+	      to_char(j.checkedin, 'yyyymmdd') AS transdate,
+	      to_char(j.checkedin, '$dateformat') AS transdatea,
 	      to_char(j.checkedin, 'D') AS weekday,
 	      p.partnumber,
 	      pr.projectnumber, pr.description AS projectdescription,
@@ -431,6 +432,8 @@ sub jcitems {
 
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     $ref->{project} = ($ref->{parts_id}) ? "job" : "project";
+    $ref->{transdate} = $ref->{transdatea};
+    delete $ref->{transdatea};
     push @{ $form->{transactions} }, $ref;
   }
   $sth->finish;

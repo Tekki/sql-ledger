@@ -28,7 +28,6 @@ $self{texts} = {
   'Number'                      => 'Номер',
   'Orphaned'                    => 'В╕докремлений/Осирот╕лий',
   'Project'                     => 'Проект',
-  'Project Number missing!'     => 'Не вказаний номер проекту!',
   'Project deleted!'            => 'Проект видалено!',
   'Project saved!'              => 'Проект збережено!',
   'Projects'                    => 'Проекти',

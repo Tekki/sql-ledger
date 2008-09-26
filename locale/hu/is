@@ -49,7 +49,6 @@ $self{texts} = {
   'Feb'                         => 'Feb.',
   'February'                    => 'Február',
   'Group'                       => 'Csoport',
-  'Group Items'                 => 'Tételek rendezése csoport alapján',
   'In-line'                     => 'Beágyazva',
   'Invoice'                     => 'Számla',
   'Invoice Date'                => 'Teljesítés dátuma',

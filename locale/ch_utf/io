@@ -1,3 +1,5 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'Add Purchase Order'          => 'Einkaufsbeleg erfassen',
   'Add Quotation'               => 'Offerte erstellen',
@@ -34,7 +36,6 @@ $self{texts} = {
   'Feb'                         => 'Feb',
   'February'                    => 'Februar',
   'Group'                       => 'Warengruppe',
-  'Group Items'                 => 'Artikel sortieren',
   'In-line'                     => 'im Textkörper (Inline)',
   'Invoice'                     => 'Rechnung',
   'Invoice Date missing!'       => 'Rechnungsdatum fehlt!',

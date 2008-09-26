@@ -1,3 +1,5 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'Access Control'              => 'Zugriffskontrolle',
   'Accounting'                  => 'Buchhaltung',
@@ -124,11 +126,11 @@ $self{subs} = {
   'update_dataset'              => 'update_dataset',
   'benutzer_erfassen'           => 'add_user',
   'administratorenpasswort_ändern' => 'change_admin_password',
-  'passwort_ändern'             => 'change_password',
+  'passwort_ändern'            => 'change_password',
   'weiter'                      => 'continue',
   'datenset_erstellen'          => 'create_dataset',
-  'löschen'                     => 'delete',
-  'datenset_löschen'            => 'delete_dataset',
+  'löschen'                    => 'delete',
+  'datenset_löschen'           => 'delete_dataset',
   'system_sperren'              => 'lock_system',
   'benutzername'                => 'login',
   'abmelden'                    => 'logout',

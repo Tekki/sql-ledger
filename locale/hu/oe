@@ -52,7 +52,6 @@ $self{texts} = {
   'February'                    => 'Február',
   'From'                        => 'Mikortól:',
   'Group'                       => 'Csoport',
-  'Group Items'                 => 'Tételek rendezése csoport alapján',
   'ID'                          => 'Azonosító',
   'In-line'                     => 'Beágyazva',
   'Include in Report'           => 'Oszlopok:',

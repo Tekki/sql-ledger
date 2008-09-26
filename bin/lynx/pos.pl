@@ -597,9 +597,9 @@ sub display_row {
     }
     
     if ($i < $numrows) {
-      if ($form->{"discount_$i"} != $form->{discount} * 100) {
-	$form->{"discount_$i"} = $form->{discount} * 100;
-      }
+      $column_data{discount} = qq|<td align=right><input name="discount_$i" size=3 value=|.$form->format_amount(\%myconfig, $form->{"discount_$i"}).qq|></td>|;
+    } else {
+      $column_data{discount} = qq|<td></td>|;
     }
     
     $discount = $form->round_amount($form->{"sellprice_$i"} * $form->{"discount_$i"}/100, $decimalplaces);
@@ -620,11 +620,6 @@ sub display_row {
     $column_data{unit} = qq|<td>$form->{"unit_$i"}</td>|;
     $column_data{sellprice} = qq|<td align=right><input name="sellprice_$i" size=9 value=|.$form->format_amount(\%myconfig, $form->{"sellprice_$i"}, $decimalplaces).qq|></td>|;
     $column_data{linetotal} = qq|<td align=right>|.$form->format_amount(\%myconfig, $linetotal, 2).qq|</td>|;
-    
-
-    $discount = $form->format_amount(\%myconfig, $form->{"discount_$i"});
-    $column_data{discount} = qq|<td align=right>$discount</td>
-    <input type=hidden name="discount_$i" value=$discount>|;
     
     print qq|
         <tr valign=top>|;

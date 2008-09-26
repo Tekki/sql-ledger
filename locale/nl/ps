@@ -108,7 +108,6 @@ $self{texts} = {
   'From'                        => 'Van',
   'GIFI'                        => 'GIFI',
   'Group'                       => 'Productgroep',
-  'Group Items'                 => 'Groepeer Onderdelen',
   'Heading'                     => 'Kopregel',
   'ID'                          => 'ID',
   'In-line'                     => 'In Lijn',

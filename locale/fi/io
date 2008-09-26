@@ -33,7 +33,6 @@ $self{texts} = {
   'Feb'                         => 'Hel',
   'February'                    => 'Helmikuu',
   'Group'                       => 'Ryhmä',
-  'Group Items'                 => 'Ryhmän tuotteet',
   'In-line'                     => 'Linjalla',
   'Invoice'                     => 'Lasku',
   'Invoice Date missing!'       => 'Laskun päiväys puuttuu!',

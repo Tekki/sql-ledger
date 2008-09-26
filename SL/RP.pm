@@ -1556,10 +1556,10 @@ sub get_taxaccounts {
   my $ARAP = uc $form->{db};
   
   # get tax accounts
-  my $query = qq|SELECT c.accno, c.description, t.rate, c.link
-                 FROM chart c, tax t
+  my $query = qq|SELECT DISTINCT c.accno, c.description
+                 FROM chart c
+		 JOIN tax t ON (c.id = t.chart_id)
 		 WHERE c.link LIKE '%${ARAP}_tax%'
-		 AND c.id = t.chart_id
                  ORDER BY c.accno|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror;
@@ -1571,13 +1571,11 @@ sub get_taxaccounts {
   $sth->finish;
 
   # get gifi tax accounts
-  my $query = qq|SELECT DISTINCT g.accno, g.description,
-                 sum(t.rate) AS rate
-                 FROM gifi g, chart c, tax t
-		 WHERE g.accno = c.gifi_accno
-		 AND c.id = t.chart_id
-		 AND c.link LIKE '%${ARAP}_tax%'
-		 GROUP BY g.accno, g.description
+  my $query = qq|SELECT DISTINCT g.accno, g.description
+                 FROM gifi g
+		 JOIN chart c ON (c.gifi_accno= g.accno)
+		 JOIN tax t ON (c.id = t.chart_id)
+		 WHERE c.link LIKE '%${ARAP}_tax%'
                  ORDER BY accno|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror;
@@ -1614,20 +1612,16 @@ sub tax_report {
   my $query;
   my $sth;
   my $accno;
-  my $rate;
   
   if ($form->{accno}) {
     if ($form->{accno} =~ /^gifi_/) {
       ($null, $accno) = split /_/, $form->{accno};
-      $rate = $form->{"$form->{accno}_rate"};
       $accno = qq| AND ch.gifi_accno = '$accno'|;
     } else {
       $accno = $form->{accno};
-      $rate = $form->{"$form->{accno}_rate"};
       $accno = qq| AND ch.accno = '$accno'|;
     }
   }
-  $rate *= 1;
 
   my $table;
   my $ARAP;
@@ -1689,11 +1683,9 @@ sub tax_report {
   my @a = qw(transdate invnumber name);
   my $sortorder = $form->sort_order(\@a, \%ordinal);
 
-  $rate = 1 unless $rate;
-
   if ($form->{summary}) {
     
-    $query = qq|SELECT a.id, '0' AS invoice, $transdate AS transdate,
+    $query = qq|SELECT a.id, a.invoice, $transdate AS transdate,
 		a.invnumber, n.name, a.netamount,
 		ac.amount * $ml AS tax,
 		a.till
@@ -1703,28 +1695,7 @@ sub tax_report {
 	      JOIN $table n ON (n.id = a.${table}_id)
 		WHERE $where
 		$accno
-		AND a.invoice = '0'
 		$cashwhere
-		
-	      UNION
-	      
-		SELECT a.id, '1' AS invoice, $transdate AS transdate,
-		a.invnumber, n.name,
-		sum(ac.sellprice * ac.qty) * $ml AS netamount,
-		sum(ac.sellprice * ac.qty) * $rate * $ml AS tax,
-		a.till
-		FROM invoice ac
-	      JOIN partstax pt ON (pt.parts_id = ac.parts_id)
-	      JOIN chart ch ON (ch.id = pt.chart_id)
-	      JOIN $form->{db} a ON (a.id = ac.trans_id)
-	      JOIN $table n ON (n.id = a.${table}_id)
-	      JOIN ${table}tax t ON (t.${table}_id = n.id AND t.chart_id = ch.id)
-		WHERE $where
-		$accno
-		AND a.invoice = '1'
-		$cashwhere
-	        GROUP BY a.id, a.invoice, $transdate, a.invnumber, n.name,
-		a.till
 		|;
 
       if ($form->{fromdate}) {
@@ -1733,7 +1704,7 @@ sub tax_report {
 	  $query .= qq|
               UNION
 	      
-                SELECT a.id, '0' AS invoice, $transdate AS transdate,
+                SELECT a.id, a.invoice, $transdate AS transdate,
 		a.invnumber, n.name, a.netamount,
 		ac.amount * $ml AS tax,
 		a.till
@@ -1743,28 +1714,7 @@ sub tax_report {
 	      JOIN $table n ON (n.id = a.${table}_id)
 		WHERE a.datepaid >= '$form->{fromdate}'
 		$accno
-		AND a.invoice = '0'
 		$cashwhere
-		
-	      UNION
-	      
-		SELECT a.id, '1' AS invoice, $transdate AS transdate,
-		a.invnumber, n.name,
-		sum(ac.sellprice * ac.qty) * $ml AS netamount,
-		sum(ac.sellprice * ac.qty) * $rate * $ml AS tax,
-		a.till
-		FROM invoice ac
-	      JOIN partstax pt ON (pt.parts_id = ac.parts_id)
-	      JOIN chart ch ON (ch.id = pt.chart_id)
-	      JOIN $form->{db} a ON (a.id = ac.trans_id)
-	      JOIN $table n ON (n.id = a.${table}_id)
-	      JOIN ${table}tax t ON (t.${table}_id = n.id AND t.chart_id = ch.id)
-		WHERE a.datepaid >= '$form->{fromdate}'
-		$accno
-		AND a.invoice = '1'
-		$cashwhere
-	        GROUP BY a.id, a.invoice, $transdate, a.invnumber, n.name,
-		a.till
 		|;
 	}
       }
@@ -1790,7 +1740,8 @@ sub tax_report {
 		SELECT a.id, '1' AS invoice, $transdate AS transdate,
 		a.invnumber, n.name,
 		i.sellprice * i.qty * $ml AS netamount,
-		i.sellprice * i.qty * $rate * $ml AS tax,
+		i.sellprice * i.qty * $ml *
+		(SELECT tx.rate FROM tax tx WHERE tx.chart_id = ch.id AND (tx.validto > $transdate OR tx.validto IS NULL) ORDER BY validto LIMIT 1) AS tax,
 		i.description, a.till
 		FROM acc_trans ac
 	      JOIN $form->{db} a ON (a.id = ac.trans_id)
@@ -1828,7 +1779,8 @@ sub tax_report {
 		SELECT a.id, '1' AS invoice, $transdate AS transdate,
 		a.invnumber, n.name,
 		i.sellprice * i.qty * $ml AS netamount,
-		i.sellprice * i.qty * $rate * $ml AS tax,
+		i.sellprice * i.qty * $ml *
+		(SELECT tx.rate FROM tax tx WHERE tx.chart_id = ch.id AND (tx.validto > $transdate OR tx.validto IS NULL) ORDER BY validto LIMIT 1) AS tax,
 		i.description, a.till
 		FROM acc_trans ac
 	      JOIN $form->{db} a ON (a.id = ac.trans_id)
@@ -1851,38 +1803,14 @@ sub tax_report {
     
     if ($form->{summary}) {
       # only gather up non-taxable transactions
-      $query = qq|SELECT a.id, '0' AS invoice, $transdate AS transdate,
+      $query = qq|SELECT a.id, a.invoice, $transdate AS transdate,
 		  a.invnumber, n.name, a.netamount, a.till
 		  FROM acc_trans ac
 		JOIN $form->{db} a ON (a.id = ac.trans_id)
 		JOIN $table n ON (n.id = a.${table}_id)
 		  WHERE $where
-		  AND a.invoice = '0'
 		  AND a.netamount = a.amount
 		  $cashwhere
-		GROUP BY a.id, $transdate, a.invnumber, n.name, a.netamount,
-		a.till
-		
-		UNION
-		
-		  SELECT a.id, '1' AS invoice, $transdate AS transdate,
-		  a.invnumber, n.name,
-		  sum(ac.sellprice * ac.qty) * $ml AS netamount, a.till
-		  FROM invoice ac
-		JOIN $form->{db} a ON (a.id = ac.trans_id)
-		JOIN $table n ON (n.id = a.${table}_id)
-		  WHERE $where
-		  AND a.invoice = '1'
-		  AND (
-		    a.${table}_id NOT IN (
-			  SELECT ${table}_id FROM ${table}tax t (${table}_id)
-					 ) OR
-		    ac.parts_id NOT IN (
-			  SELECT parts_id FROM partstax p (parts_id)
-				      )
-		      )
-		  $cashwhere
-		  GROUP BY a.id, a.invnumber, $transdate, n.name, a.till
 		  |;
 
       if ($form->{fromdate}) {
@@ -1890,38 +1818,14 @@ sub tax_report {
 	  $query .= qq|
                 UNION
 		
-                  SELECT a.id, '0' AS invoice, $transdate AS transdate,
+                  SELECT a.id, a.invoice, $transdate AS transdate,
 		  a.invnumber, n.name, a.netamount, a.till
 		  FROM acc_trans ac
 		JOIN $form->{db} a ON (a.id = ac.trans_id)
 		JOIN $table n ON (n.id = a.${table}_id)
 		WHERE a.datepaid >= '$form->{fromdate}'
-		  AND a.invoice = '0'
 		  AND a.netamount = a.amount
 		  $cashwhere
-		GROUP BY a.id, $transdate, a.invnumber, n.name, a.netamount,
-		a.till
-		
-		UNION
-		
-		  SELECT a.id, '1' AS invoice, $transdate AS transdate,
-		  a.invnumber, n.name,
-		  sum(ac.sellprice * ac.qty) * $ml AS netamount, a.till
-		  FROM invoice ac
-		JOIN $form->{db} a ON (a.id = ac.trans_id)
-		JOIN $table n ON (n.id = a.${table}_id)
-		  WHERE a.datepaid >= '$form->{fromdate}'
-		  AND a.invoice = '1'
-		  AND (
-		    a.${table}_id NOT IN (
-			  SELECT ${table}_id FROM ${table}tax t (${table}_id)
-					 ) OR
-		    ac.parts_id NOT IN (
-			  SELECT parts_id FROM partstax p (parts_id)
-				      )
-		      )
-		  $cashwhere
-		  GROUP BY a.id, a.invnumber, $transdate, n.name, a.till
 		  |;
 	}
       }

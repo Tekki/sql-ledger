@@ -1,3 +1,5 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'Accounting Menu'             => 'Kontoverwaltung',
   'Add POS Invoice'             => 'Kassenbon erfassen',
@@ -70,7 +72,7 @@ $self{subs} = {
   'receipts'                    => 'receipts',
   'section_menu'                => 'section_menu',
   'weiter'                      => 'continue',
-  'löschen'                     => 'delete',
+  'löschen'                    => 'delete',
   'buchen'                      => 'post',
   'drucken'                     => 'print',
   'drucken_und_buchen'          => 'print_and_post',

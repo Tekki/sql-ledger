@@ -101,7 +101,6 @@ $self{texts} = {
   'From'                        => 'Desde',
   'GIFI'                        => 'Plan Único de Cuentas (PUC)',
   'Group'                       => 'Grupo',
-  'Group Items'                 => 'Agrupar artículos',
   'Heading'                     => 'Encabezado',
   'ID'                          => 'ID',
   'In-line'                     => 'Incrustado',

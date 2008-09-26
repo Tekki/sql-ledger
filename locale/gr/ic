@@ -38,6 +38,7 @@ $self{texts} = {
   'December'                    => 'Δεκέμβριος',
   'Delete'                      => 'Διαγραφή',
   'Description'                 => 'Περιγραφή',
+  'Detail'                      => 'Λεπτομέρεια',
   'Drawing'                     => 'Σχέδιο',
   'Edit Assembly'               => 'Επεξεργασία συναρμολόγησης',
   'Edit Service'                => 'Επεξεργασία υπηρεσίας',

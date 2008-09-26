@@ -103,7 +103,6 @@ $self{texts} = {
   'From'                        => 'Od',
   'GIFI'                        => 'GIFI',
   'Group'                       => 'Grupa',
-  'Group Items'                 => 'Grupój pozycje',
   'Heading'                     => 'Nag³ówek',
   'ID'                          => 'Identyfikator',
   'In-line'                     => 'W³±czony',

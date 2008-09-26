@@ -88,7 +88,6 @@ $self{texts} = {
   'Generate Sales Order'        => 'Genereeri Müügitellimused',
   'Generate Sales Order from Purchase Orders' => 'Genereeri Müügitellimused Ostutellimustest',
   'Group'                       => 'Grupp',
-  'Group Items'                 => 'Grupi liikmed',
   'ID'                          => 'ID',
   'In-line'                     => 'Dokumendisisene',
   'Include Payment'             => 'Lisa Makse',

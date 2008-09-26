@@ -33,7 +33,6 @@ $self{texts} = {
   'Feb'                         => 'فبراير',
   'February'                    => 'فبراير',
   'Group'                       => 'مجموعة',
-  'Group Items'                 => 'مجموعة الوحدات',
   'In-line'                     => 'في الصف',
   'Invoice'                     => 'فاتورة',
   'Invoice Date missing!'       => 'تاريخ الفاتورة غير موجود',

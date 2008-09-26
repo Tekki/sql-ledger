@@ -57,7 +57,6 @@ $self{texts} = {
   'Feb'                         => 'Hel',
   'February'                    => 'Helmikuu',
   'Group'                       => 'Ryhmä',
-  'Group Items'                 => 'Ryhmän tuotteet',
   'In-line'                     => 'Linjalla',
   'Internal Notes'              => 'Sisäiset viestit',
   'Invoice'                     => 'Lasku',

@@ -142,7 +142,8 @@ sub print_check {
   $form->{decimal} = substr($form->{decimal}, 0, 2);
   $form->{text_decimal} = $c->num2text($form->{decimal} * 1);
   $form->{text_amount} = $c->num2text($whole);
-  
+  $form->{integer_amount} = $form->format_amount($myconfig, $whole);
+
   ($form->{employee}) = split /--/, $form->{employee};
 
   $form->{notes} =~ s/^\s+//g;
@@ -318,7 +319,8 @@ sub print_transaction {
   $form->{decimal} = substr($form->{decimal}, 0, 2);
   $form->{text_decimal} = $c->num2text($form->{decimal} * 1); 
   $form->{text_amount} = $c->num2text($whole); 
-  
+  $form->{integer_amount} = $form->format_amount($myconfig, $whole);
+
   for (qw(invtotal subtotal paid total)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, 2) }
   
   ($form->{employee}) = split /--/, $form->{employee};

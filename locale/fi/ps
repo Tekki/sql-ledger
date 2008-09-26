@@ -95,7 +95,6 @@ $self{texts} = {
   'From'                        => 'Alkaen',
   'GIFI'                        => 'GIFI',
   'Group'                       => 'Ryhmä',
-  'Group Items'                 => 'Ryhmän tuotteet',
   'Heading'                     => 'Otsikko',
   'ID'                          => 'ID',
   'In-line'                     => 'Linjalla',

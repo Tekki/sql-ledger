@@ -68,7 +68,6 @@ $self{texts} = {
   'February'                    => 'Helmikuu',
   'From'                        => 'Alkaen',
   'Group'                       => 'Ryhmä',
-  'Group Items'                 => 'Ryhmän tuotteet',
   'ID'                          => 'ID',
   'In-line'                     => 'Linjalla',
   'Include in Report'           => 'Sisällytä raporttiin',

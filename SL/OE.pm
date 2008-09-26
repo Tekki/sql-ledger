@@ -965,6 +965,7 @@ sub order_details {
 	      WHERE id = ?|;
   my $pth = $dbh->prepare($query) || $form->dberror($query);
   
+  my $sortby;
   
   # sort items by project and partsgroup
   for $i (1 .. $form->{rowcount}) {
@@ -1016,7 +1017,14 @@ sub order_details {
 
       }
 
-      push @sortlist, [ $i, qq|$projectnumber$form->{partsgroup}$inventory_accno_id|, $form->{projectnumber}, $projectnumber_id, $form->{partsgroup} ];
+      $sortby = qq|$projectnumber$form->{partsgroup}|;
+      if ($form->{sortby} ne 'runningnumber') {
+	for (qw(partnumber description bin)) {
+	  $sortby .= $form->{"${_}_$i"} if $form->{sortby} eq $_;
+	}
+      }
+
+      push @sortlist, [ $i, qq|$projectnumber$form->{partsgroup}$inventory_accno_id|, $form->{projectnumber}, $projectnumber_id, $form->{partsgroup}, $sortby ];
     }
 
   }
@@ -1024,7 +1032,7 @@ sub order_details {
   delete $form->{projectnumber};
   
   # sort the whole thing by project and group
-  @sortlist = sort { $a->[1] cmp $b->[1] } @sortlist;
+  @sortlist = sort { $a->[5] cmp $b->[5] } @sortlist;
   
 
   # if there is a warehouse limit picking
@@ -1317,7 +1325,8 @@ sub order_details {
 
   $form->{text_decimal} = $c->num2text($form->{decimal} * 1);
   $form->{text_amount} = $c->num2text($whole);
-  
+  $form->{integer_amount} = $form->format_amount($myconfig, $whole);
+
   # format amounts
   $form->{quototal} = $form->{ordtotal} = $form->format_amount($myconfig, $form->{ordtotal}, 2);
 

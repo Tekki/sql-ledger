@@ -36,7 +36,6 @@ $self{texts} = {
   'Feb'                         => 'Veebr',
   'February'                    => 'Veebruar',
   'Group'                       => 'Grupp',
-  'Group Items'                 => 'Grupi Tooteühikud',
   'In-line'                     => 'Dokumendisisene',
   'Invoice'                     => 'Arve',
   'Invoice Date missing!'       => 'Arve Kuupäev puudu!',

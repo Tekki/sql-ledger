@@ -72,7 +72,6 @@ $self{texts} = {
   'February'                    => 'Febrero',
   'From'                        => 'Desde',
   'Group'                       => 'Grupo',
-  'Group Items'                 => 'Agrupar artículos',
   'ID'                          => 'ID',
   'In-line'                     => 'Incrustado',
   'Include in Report'           => 'Incluir en informe',

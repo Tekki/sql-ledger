@@ -106,7 +106,6 @@ $self{texts} = {
   'From'                        => 'Desde',
   'GIFI'                        => 'Código GIFI',
   'Group'                       => 'Grupo',
-  'Group Items'                 => 'Agrupar Artículos',
   'Heading'                     => 'Encabezado',
   'ID'                          => 'N° de identidad',
   'In-line'                     => 'Incrustado',

@@ -1,3 +1,5 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'Address'                     => 'Adresse',
   'Bcc'                         => 'Bcc',
@@ -66,7 +68,7 @@ $self{subs} = {
   'select_project'              => 'select_project',
   'vendor_invoice_'             => 'vendor_invoice_',
   'weiter'                      => 'continue',
-  'zeitplan_löschen'            => 'delete_schedule',
+  'zeitplan_löschen'           => 'delete_schedule',
   'zeitplan_speichern'          => 'save_schedule',
 };
 

@@ -94,7 +94,6 @@ $self{texts} = {
   'To'                          => 'Kuni',
   'Total'                       => 'Kokku',
   'Tuesday'                     => 'Teisipäev',
-  'Unit Rate'                   => 'Ühiku Tase',
   'Update'                      => 'Värskenda',
   'Warning!'                    => 'Ettevaatust!',
   'Wednesday'                   => 'Kolmapäev',

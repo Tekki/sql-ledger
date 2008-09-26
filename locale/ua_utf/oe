@@ -80,7 +80,6 @@ $self{texts} = {
   'Generate Orders'             => 'Створити замовлення',
   'Generate Purchase Orders'    => 'Створити купівельні замовлення',
   'Group'                       => 'Група',
-  'Group Items'                 => 'Зрупувати елементи',
   'ID'                          => 'Ідентифікаційний номер',
   'In-line'                     => 'Включено (In-line)',
   'Include Payment'             => 'Включити плтіж',

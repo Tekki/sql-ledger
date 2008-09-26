@@ -1,3 +1,5 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'AP Transaction'              => 'Eingangsbuchung',
   'AP Transactions'             => 'Eingangsbuchungen',
@@ -171,14 +173,14 @@ $self{subs} = {
   'kunde_erfassen'              => 'add_customer',
   'lieferant_erfassen'          => 'add_vendor',
   'weiter'                      => 'continue',
-  'löschen'                     => 'delete',
+  'löschen'                    => 'delete',
   'kasse'                       => 'pos',
   'preisliste'                  => 'pricelist',
   'einkaufsbestellung'          => 'purchase_order',
   'offerte'                     => 'quotation',
   'offertanfrage'               => 'rfq',
   'ausgangsrechnung'            => 'sales_invoice',
-  'auftragsbestätigung'         => 'sales_order',
+  'auftragsbestätigung'        => 'sales_order',
   'speichern'                   => 'save',
   'preisliste_speichern'        => 'save_pricelist',
   'als_neu_speichern'           => 'save_as_new',

@@ -64,7 +64,6 @@ $self{texts} = {
   'February'                    => 'Лютий',
   'For'                         => 'Для',
   'Group'                       => 'Група',
-  'Group Items'                 => 'Зрупувати елементи',
   'In-line'                     => 'Включено (In-line)',
   'Include Payment'             => 'Включити плтіж',
   'Internal Notes'              => 'Внутрішні примітки',

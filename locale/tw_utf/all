@@ -1,7 +1,7 @@
 # These are all the texts to build the translations files.
 # to build unique strings edit the module files instead
 # this file is just a shortcut to build strings which are the same
-$self{charset} = 'BIG5';
+$self{charset} = 'UTF-8';
 
 
 $self{texts} = {

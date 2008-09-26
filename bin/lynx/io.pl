@@ -444,6 +444,7 @@ sub item_selected {
 
   $i = $form->{rowcount} - 1;
   $i = $form->{assembly_rows} - 1 if ($form->{item} eq 'assembly');
+  $qty = ($form->{"qty_$form->{rowcount}"}) ? $form->{"qty_$form->{rowcount}"} : 1;
 
   for $j (1 .. $form->{lastndx}) {
     
@@ -451,7 +452,7 @@ sub item_selected {
 
       $i++;
   
-      $form->{"qty_$i"} = 1;
+      $form->{"qty_$i"} = $qty;
       $form->{"discount_$i"} = $form->{discount} * 100;
       $form->{"reqdate_$i"} = $form->{reqdate} if $form->{type} !~ /_quotation/;
 
@@ -1124,43 +1125,57 @@ sub print_options {
 |;
   }
 
+# $locale->text('Printed')
+# $locale->text('E-mailed')
+# $locale->text('Queued')
+# $locale->text('Scheduled')
+
+  %status = ( printed => 'Printed',
+              emailed => 'E-mailed',
+	      queued  => 'Queued',
+	      recurring => 'Scheduled' );
+
+  print qq|<td align=right width=90%>|;
+
+  for (qw(printed emailed queued recurring)) {
+    if ($form->{$_} =~ /$form->{formname}/) {
+      print $locale->text($status{$_}).qq|<br>|;
+    }
+  }
+
+  print qq|
+    </td>
+  </tr>
+|;
+
   $form->{groupprojectnumber} = "checked" if $form->{groupprojectnumber};
   $form->{grouppartsgroup} = "checked" if $form->{grouppartsgroup};
 
+  for (qw(runningnumber partnumber description bin)) { $sortby{$_} = "checked" if $form->{sortby} eq $_ }
+  
   print qq|
-    <td nowrap>|.$locale->text('Group Items').qq|</td>
-    <td nowrap>
+  <tr>
+    <td colspan=3>|.$locale->text('Group by').qq| ->
     <input name=groupprojectnumber type=checkbox class=checkbox $form->{groupprojectnumber}>
     |.$locale->text('Project').qq|
     <input name=grouppartsgroup type=checkbox class=checkbox $form->{grouppartsgroup}>
     |.$locale->text('Group').qq|
     </td>
-|;
 
-  print qq|<td align=right width=90%>|;
-
-  if ($form->{printed} =~ /$form->{formname}/) {
-    print $locale->text('Printed').qq|<br>|;
-  }
-  
-  if ($form->{emailed} =~ /$form->{formname}/) {
-    print $locale->text('E-mailed').qq|<br>|;
-  }
-
-  if ($form->{queued} =~ /$form->{formname}/) {
-    print $locale->text('Queued');
-  }
-  
-  if ($form->{recurring}) {
-    print $locale->text('Scheduled');
-  }
-  
-  print qq|
+    <td colspan=3>|.$locale->text('Sort by').qq| ->
+    <input name=sortby type=radio class=radio value=runningnumber $sortby{runningnumber}>
+    |.$locale->text('Item').qq|
+    <input name=sortby type=radio class=radio value=partnumber $sortby{partnumber}>
+    |.$locale->text('Number').qq|
+    <input name=sortby type=radio class=radio value=description $sortby{description}>
+    |.$locale->text('Description').qq|
+    <input name=sortby type=radio class=radio value=bin $sortby{bin}>
+    |.$locale->text('Bin').qq|
     </td>
+    
   </tr>
 </table>
 |;
-
 
 }
 

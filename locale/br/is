@@ -63,7 +63,6 @@ $self{texts} = {
   'February'                    => 'Fevereiro',
   'For'                         => 'Para',
   'Group'                       => 'Grupo',
-  'Group Items'                 => 'Ítens do Grupo',
   'In-line'                     => 'em linha',
   'Include Payment'             => 'Incluir Pagamento',
   'Internal Notes'              => 'Notas internas',

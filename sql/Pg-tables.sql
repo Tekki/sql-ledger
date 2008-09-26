@@ -70,7 +70,7 @@ CREATE TABLE defaults (
   glnumber text,
   projectnumber text
 );
-INSERT INTO defaults (version) VALUES ('2.6.7');
+INSERT INTO defaults (version) VALUES ('2.6.12');
 --
 CREATE TABLE acc_trans (
   trans_id int,
@@ -238,7 +238,8 @@ CREATE TABLE partstax (
 CREATE TABLE tax (
   chart_id int,
   rate float,
-  taxnumber text
+  taxnumber text,
+  validto date
 );
 --
 CREATE TABLE customertax (

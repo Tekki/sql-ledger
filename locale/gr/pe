@@ -19,6 +19,7 @@ $self{texts} = {
   'Delete'                      => 'Διαγραφή',
   'Description'                 => 'Περιγραφή',
   'Description Translations'    => 'Περιγραφή Μεταφράσεων',
+  'Detail'                      => 'Λεπτομέρεια',
   'Edit Project'                => 'Επεξεργασία έργου',
   'Employee'                    => 'Υπάλληλος',
   'From'                        => 'Από',

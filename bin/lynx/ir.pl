@@ -533,7 +533,7 @@ sub form_footer {
       $column_data{"AP_paid_$i"} = qq|<td align=center><select name="AP_paid_$i">$form->{"selectAP_paid_$i"}</select></td>|;
       $column_data{"datepaid_$i"} = qq|<td align=center><input name="datepaid_$i" size=11 title="$myconfig{dateformat}" value=$form->{"datepaid_$i"}></td>|;
       $column_data{"source_$i"} = qq|<td align=center><input name="source_$i" size=11 value="$form->{"source_$i"}"></td>|;
-      $column_data{"memo_$i"} = qq|<td align=center><input name="memo_$i" size=11 value=$form->{"memo_$i"}></td>|;
+      $column_data{"memo_$i"} = qq|<td align=center><input name="memo_$i" size=11 value="$form->{"memo_$i"}"></td>|;
 
       for (@column_index) { print qq|$column_data{"${_}_$i"}\n| }
 

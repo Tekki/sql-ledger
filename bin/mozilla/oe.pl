@@ -195,6 +195,7 @@ sub prepare_order {
   $form->{format} = "postscript" if $myconfig{printer};
   $form->{media} = $myconfig{printer};
   $form->{formname} = $form->{type};
+  $form->{sortby} ||= "runningnumber";
   $form->{currency} =~ s/ //g;
   $form->{oldcurrency} = $form->{currency};
   

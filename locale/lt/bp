@@ -8,6 +8,7 @@ $self{texts} = {
   'Current'                     => 'Dabartinis',
   'Customer'                    => 'Klientas',
   'Date'                        => 'Data',
+  'Employee'                    => 'Darbuotojas',
   'From'                        => 'Nuo',
   'ID'                          => 'ID',
   'Invoice'                     => 'Sàskaita-faktûra',
