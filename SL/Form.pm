@@ -78,7 +78,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.8.8";
+  $self->{version} = "2.8.9";
   $self->{dbversion} = "2.8.8";
 
   bless $self, $type;
@@ -377,6 +377,7 @@ sub sort_columns {
   my ($self, @columns) = @_;
 
   if ($self->{sort}) {
+    $self->{sort} =~ s/;//g;
     if (@columns) {
       @columns = grep !/^$self->{sort}$/, @columns;
       splice @columns, 0, 0, $self->{sort};
@@ -543,7 +544,7 @@ sub parse_template {
   my ($chars_per_line, $lines_on_first_page, $lines_on_second_page) = (0, 0, 0);
   my ($current_page, $current_line) = (1, 1);
   my $pagebreak = "";
-  my $sum = 0;
+  my $sum;
 
   my $subdir = "";
   my $err = "";
@@ -591,7 +592,7 @@ sub parse_template {
   $self->{copy} = "";
 
   for my $i (1 .. $self->{copies}) {
-    
+
     $sum = 0;
     $self->{copy} = 1 if $i == 2;
 
@@ -1823,7 +1824,7 @@ sub all_vc {
   }
   $query .= qq|SELECT count(*) FROM $vc vc
                $joinarap
-	       WHERE $where|;
+               WHERE $where|;
   my ($count) = $dbh->selectrow_array($query);
 
   # build selection list
@@ -1863,7 +1864,26 @@ sub all_vc {
   
   $self->all_projects($myconfig, $dbh, $transdate, $job);
 
-  # get language codes
+  $self->all_languages($myconfig, $dbh);
+
+  $self->all_taxaccounts($myconfig, $dbh, $transdate);
+
+  $dbh->disconnect if $disconnect;
+
+}
+
+
+sub all_languages {
+  my ($self, $myconfig, $dbh) = @_;
+  
+  my $disconnect = ($dbh) ? 0 : 1;
+
+  if (! $dbh) {
+    $dbh = $self->dbconnect($myconfig);
+  }
+  my $sth;
+  my $query;
+
   $query = qq|SELECT *
               FROM language
 	      ORDER BY 2|;
@@ -1876,10 +1896,8 @@ sub all_vc {
   }
   $sth->finish;
 
-  $self->all_taxaccounts($myconfig, $dbh, $transdate);
-
   $dbh->disconnect if $disconnect;
-
+  
 }
 
 
@@ -2094,8 +2112,10 @@ sub all_years {
   $startdate = substr($startdate,0,4);
   $enddate = substr($enddate,0,4);
   
-  while ($enddate >= $startdate) {
-    push @{ $self->{all_years} }, $enddate--;
+  if ($startdate) {
+    while ($enddate >= $startdate) {
+      push @{ $self->{all_years} }, $enddate--;
+    }
   }
 
   %{ $self->{all_month} } = ( '01' => 'January',
@@ -2286,6 +2306,7 @@ sub create_links {
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     push @{ $self->{"all_paymentmethod"} }, $ref;
   }
+  $sth->finish;
 
   $dbh->disconnect;
 
@@ -2381,11 +2402,18 @@ sub lastname_used {
   
   $trans_id *= 1;
 
-  my $DAYS = ($myconfig->{dbdriver} eq 'DB2') ? "DAYS" : "";
-  my $duedate = ($self->{transdate}) ? qq|date '$self->{transdate}'| : qq|current_date|;
+  my $duedate;
+  if ($myconfig->{dbdriver} eq 'DB2') {
+    $duedate = ($self->{transdate}) ? qq|date '$self->{transdate}' + ct.terms DAYS| : qq|current_date + ct.terms DAYS|;
+  } elsif ($myconfig->{dbdriver} eq 'Sybase') {
+    $duedate = ($self->{transdate}) ? qq|dateadd($myconfig->{dateformat}, ct.terms DAYS, $self->{transdate})| : qq|dateadd($myconfig->{dateformat}, ct.terms DAYS, current_date)|;
+  } else {
+    $duedate = ($self->{transdate}) ? qq|date '$self->{transdate}' + ct.terms| : qq|current_date + ct.terms|;
+  }
+    
   $query = qq|SELECT ct.name AS $vc, ct.${vc}number, a.curr AS currency,
               a.${vc}_id,
-              $duedate + ct.terms $DAYS AS duedate, a.department_id,
+              $duedate AS duedate, a.department_id,
 	      d.description AS department, ct.notes, ct.curr AS currency,
 	      ct.remittancevoucher
 	      FROM $arap a
@@ -2724,6 +2752,7 @@ sub save_recurring {
     # calculate enddate
     my $advance = $s{repeat} * ($s{howmany} - 1);
     my %interval = ( 'Pg' => "(date '$s{startdate}' + interval '$advance $s{unit}')",
+                  'Sybase' => "dateadd($myconfig->{dateformat}, $advance $s{unit}, $s{startdate})",
                     'DB2' => qq|(date ('$s{startdate}') + "$advance $s{unit}")|,
                    );
     $interval{Oracle} = $interval{PgPP} = $interval{Pg};
@@ -2731,12 +2760,19 @@ sub save_recurring {
 		FROM defaults
 		WHERE fldname = 'version'|;
     my ($enddate) = $dbh->selectrow_array($query);
-
+    
     # calculate nextdate
-    $query = qq|SELECT current_date - date '$s{startdate}' AS a,
-                date '$enddate' - current_date AS b
-                FROM defaults
-		WHERE fldname = 'version'|;
+    if ($myconfig->{dbdriver} eq 'Sybase') {
+      $query = qq|SELECT datediff($myconfig->{dateformat}, $s{startdate}, current_date) AS a,
+		  datediff($myconfig->{dateformat}, current_date, $enddate) AS b
+		  FROM defaults
+		  WHERE fldname = 'version'|;
+    } else {
+      $query = qq|SELECT current_date - date '$s{startdate}' AS a,
+		  date '$enddate' - current_date AS b
+		  FROM defaults
+		  WHERE fldname = 'version'|;
+    }
     my ($a, $b) = $dbh->selectrow_array($query);
     
     if ($a + $b) {
@@ -2749,6 +2785,7 @@ sub save_recurring {
     if ($advance > 0) {
       if ($advance < ($s{repeat} * $s{howmany})) {
 	%interval = ( 'Pg' => "(date '$s{startdate}' + interval '$advance $s{unit}')",
+	            'Sybase' => "dateadd($myconfig->{dateformat}, $advance $s{unit}, $s{startdate})",
 		      'DB2' => qq|(date ('$s{startdate}') + "$advance $s{unit}")|,
 		    );
 	$interval{Oracle} = $interval{PgPP} = $interval{Pg};
@@ -2767,6 +2804,12 @@ sub save_recurring {
       $query = qq|SELECT '$enddate' - date '$nextdate'
                   FROM defaults
 		  WHERE fldname = 'version'|;
+      if ($myconfig->{dbdriver} eq 'Sybase') {
+	$query = qq|SELECT datediff($myconfig->{dateformat}, $enddate, $nextdate)
+	            FROM defaults
+		    WHERE fldname = 'version'|;
+      }
+
       if ($dbh->selectrow_array($query) < 0) {
 	undef $nextdate;
       }

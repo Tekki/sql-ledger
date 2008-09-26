@@ -637,6 +637,7 @@ sub transaction {
   my $query;
   my $sth;
   my $ref;
+  my @a;
   
   # connect to database
   my $dbh = $form->dbconnect($myconfig);

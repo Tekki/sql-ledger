@@ -61,11 +61,14 @@ sub edit {
 # $locale->text('Edit Part')
 # $locale->text('Edit Service')
 # $locale->text('Edit Assembly')
+# $locale->text('Assembly Changeup')
 # $locale->text('Edit Labor/Overhead')
 
   IC->get_part(\%myconfig, \%$form);
 
   $label = "Edit $label{$form->{item}}";
+  $label = "$label{$form->{item}} Changeup" if $form->{changeup};
+
   $form->{title} = $locale->text($label);
 
   $form->{previousform} = $form->escape($form->{previousform}, 1) if $form->{previousform};
@@ -87,6 +90,11 @@ sub link_part {
   for (split /:/, $form->{currencies}) { $form->{selectcurrency} .= "$_\n" }
 
   # readonly
+###############
+  if ($form->{changeup}) {
+    $form->{readonly} = 1 if $myconfig{acs} =~ /Goods \& Services--Changeup/;
+  }
+
   if ($form->{item} eq 'part') {
     $form->{readonly} = 1 if $myconfig{acs} =~ /Goods \& Services--Add Part/;
     $form->error($locale->text('Cannot create Part').";".$locale->text('Inventory account does not exist!')) if ! @{ $form->{IC_links}{IC} };
@@ -179,14 +187,6 @@ sub link_part {
       }
     }
     
-    $form->get_partsgroup(\%myconfig);
-
-    if (@{ $form->{all_partsgroup} }) {
-      $form->{selectassemblypartsgroup} = qq|\n|;
-
-      for (@{ $form->{all_partsgroup} }) { $form->{selectassemblypartsgroup} .= qq|$_->{partsgroup}--$_->{id}\n| }
-      delete $form->{all_partsgroup};
-    }
   }
   
   # setup make and models
@@ -291,10 +291,14 @@ sub form_header {
   # set option
   for (qw(IC_inventory IC_income IC_expense)) {
     if ($form->{$_}) {
-      if ($form->{orphaned}) {
+      if ($form->{changeup}) {
 	$select{$_} = $form->select_option($form->{"select$_"}, $form->{$_});
       } else {
-	$select{$_} = qq|<option selected>$form->{$_}|;
+	if ($form->{orphaned}) {
+	  $select{$_} = $form->select_option($form->{"select$_"}, $form->{$_});
+	} else {
+	  $select{$_} = qq|<option selected>$form->{$_}|;
+	}
       }
     }
   }
@@ -507,7 +511,6 @@ sub form_header {
       $avgcost = "";
       $onhand = "";
       $rop = "";
-      $form->{isassemblyitem} = 1;
 
     } else {
       $stock = qq|
@@ -619,7 +622,7 @@ sub form_header {
 <form method=post action="$form->{script}">
 |;
 
-  $form->hide_form(qw(id item title makemodel alternate onhand orphaned taxaccounts rowcount project_id precision));
+  $form->hide_form(qw(id item title makemodel alternate onhand orphaned taxaccounts rowcount project_id precision changeup));
   
   print qq|
 <table width="100%">
@@ -667,7 +670,7 @@ sub form_header {
 	    <table width="100%">
 	      <tr>
 		<th align="right" nowrap="true">|.$locale->text('Updated').qq|</th>
-		<td><input name=priceupdate size=11 title="$myconfig{dateformat}" value=$form->{priceupdate}></td>    
+		<td><input name=priceupdate size=11 class=date title="$myconfig{dateformat}" value=$form->{priceupdate}></td>    
 	      </tr>
 	      $sellprice
 	      $lastcost
@@ -697,6 +700,12 @@ sub form_header {
 
 
 sub form_footer {
+  
+  if (! $form->{project_id}) {
+    if ($form->{item} eq 'assembly') {
+      &assembly_row(++$form->{assembly_rows});
+    }
+  }
 
   print qq|
   <tr>
@@ -723,7 +732,9 @@ sub form_footer {
     
     if ($form->{id}) {
 
-      $button{'Save as new'} = { ndx => 7, key => 'N', value => $locale->text('Save as new') };
+      if (! $form->{changeup}) {
+	$button{'Save as new'} = { ndx => 7, key => 'N', value => $locale->text('Save as new') };
+      }
 
       if ($form->{orphaned}) {
 	$button{'Delete'} = { ndx => 16, key => 'D', value => $locale->text('Delete') };
@@ -739,13 +750,7 @@ sub form_footer {
     &menubar;
   }
 
-  if (! $form->{project_id}) {
-    if ($form->{item} eq 'assembly') {
-      &assembly_row(++$form->{assembly_rows});
-    }
-  }
-
-  $form->hide_form(qw(login path callback previousform isassemblyitem));
+  $form->hide_form(qw(login path callback previousform));
   
   print qq|
 </form>
@@ -759,7 +764,7 @@ sub form_footer {
 
 sub search {
 
-  $form->get_partsgroup(\%myconfig, { searchitems => $form->{searchitems}});
+  $form->get_partsgroup(\%myconfig, { searchitems => $form->{searchitems} });
 
   IC->get_warehouses(\%myconfig, \%$form) unless $form->{searchitems} =~ /(service|labor)/;
 
@@ -830,9 +835,9 @@ sub search {
 	    <table>
 	      <tr>
 		<td nowrap><b>|.$locale->text('From').qq|</b>
-		<input name=transdatefrom size=11 title="$myconfig{dateformat}">
+		<input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">
 		<b>|.$locale->text('To').qq|</b>
-		<input name=transdateto size=11 title="$myconfig{dateformat}"></td>
+		<input name=transdateto size=11 class=date title="$myconfig{dateformat}"></td>
 	      </tr>
 	      <tr>
 		<td nowrap><input name=method class=radio type=radio value=accrual $method{accrual}>|.$locale->text('Accrual').qq|
@@ -945,8 +950,18 @@ sub search {
         </tr>
 |;
     $bom = qq|<input name=itemstatus type=radio value=bom>&nbsp;|.$locale->text('BOM');
+    
+    if ($form->{changeup}) {
 
-  } elsif ($form->{searchitems} eq 'component') {
+      $sold = "";
+      $fromto = "";
+      $l_name = "";
+   
+    }
+
+  }
+  
+  if ($form->{searchitems} eq 'component') {
 
     $bought = "";
     $sold = "";
@@ -961,8 +976,10 @@ sub search {
     $orphaned = "";
     $l_warehouse = "";
     $l_account = "";
+    
+  }
   
-  } elsif ($form->{searchitems} eq 'labor') {
+  if ($form->{searchitems} eq 'labor') {
 
     $sold = "";
     $warehouse = "";
@@ -1020,8 +1037,13 @@ sub search {
 # $locale->text('Services')
 # $locale->text('Assemblies')
 # $locale->text('Components')
+# $locale->text('Changeup Assemblies')
   
-  $form->{title} = $locale->text($title{$form->{searchitems}});
+  if ($form->{changeup}) {
+    $form->{title} = $locale->text('Changeup' . ' ' .$title{$form->{searchitems}});
+  } else {
+    $form->{title} = $locale->text($title{$form->{searchitems}});
+  }
    
   $form->header;
   
@@ -1031,7 +1053,7 @@ sub search {
 <form method=post action=$form->{script}>
 |;
 
-  $form->hide_form(qw(searchitems title));
+  $form->hide_form(qw(changeup searchitems title));
 
   print qq|
 
@@ -1094,6 +1116,7 @@ sub search {
 |;
 
   while (@a) {
+    print qq|<tr>\n|;
     for (1 .. 5) {
       print qq|<td nowrap>|. shift @a;
       print qq|</td>\n|;
@@ -1159,7 +1182,7 @@ sub generate_report {
   }
 
   $callback = "$form->{script}?action=generate_report";
-  for (qw(path login searchitems itemstatus individual bom l_linetotal method)) { $callback .= qq|&$_=$form->{$_}| }
+  for (qw(path login searchitems changeup itemstatus individual bom l_linetotal method)) { $callback .= qq|&$_=$form->{$_}| }
   for (qw(warehouse partsgroup title)) { $callback .= qq|&$_=|.$form->escape($form->{$_},1) }
 
   # if we have a serialnumber limit search
@@ -1517,21 +1540,23 @@ sub generate_report {
   $form->header;
 
   $i = 1;
-  if ($form->{searchitems} eq 'part') {
-    $button{'Goods & Services--Add Part'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Part').qq|"> |;
-    $button{'Goods & Services--Add Part'}{order} = $i++;
-  }
-  if ($form->{searchitems} eq 'service') {
-    $button{'Goods & Services--Add Service'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Service').qq|"> |;
-    $button{'Goods & Services--Add Service'}{order} = $i++;
-  }
-  if ($form->{searchitems} eq 'assembly') {  
-    $button{'Goods & Services--Add Assembly'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Assembly').qq|"> |;
-    $button{'Goods & Services--Add Assembly'}{order} = $i++;
-  }
-  if ($form->{searchitems} eq 'labor') {  
-    $button{'Goods & Services--Add Labor/Overhead'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Labor/Overhead').qq|"> |;
-    $button{'Goods & Services--Add Labor/Overhead'}{order} = $i++;
+  if (! $form->{changeup}) {
+    if ($form->{searchitems} eq 'part') {
+      $button{'Goods & Services--Add Part'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Part').qq|"> |;
+      $button{'Goods & Services--Add Part'}{order} = $i++;
+    }
+    if ($form->{searchitems} eq 'service') {
+      $button{'Goods & Services--Add Service'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Service').qq|"> |;
+      $button{'Goods & Services--Add Service'}{order} = $i++;
+    }
+    if ($form->{searchitems} eq 'assembly') {  
+      $button{'Goods & Services--Add Assembly'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Assembly').qq|"> |;
+      $button{'Goods & Services--Add Assembly'}{order} = $i++;
+    }
+    if ($form->{searchitems} eq 'labor') {  
+      $button{'Goods & Services--Add Labor/Overhead'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Labor/Overhead').qq|"> |;
+      $button{'Goods & Services--Add Labor/Overhead'}{order} = $i++;
+    }
   }
 
   foreach $item (split /;/, $myconfig{acs}) {
@@ -1665,7 +1690,7 @@ sub generate_report {
     for (1 .. $form->{pncol}) { $column_data{"partnumber_$_"} = "<td>&nbsp;</td>" }
 
     $column_data{runningnumber} = "<td align=right>$i</td>";
-    $column_data{partnumber} = "<td><a href=$form->{script}?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{partnumber}&nbsp;</a></td>";
+    $column_data{partnumber} = "<td><a href=$form->{script}?action=edit&id=$ref->{id}&changeup=$form->{changeup}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{partnumber}&nbsp;</a></td>";
 
     if ($ref->{assemblypartnumber}) {
       if ($sameid eq $ref->{id}) {
@@ -1674,7 +1699,7 @@ sub generate_report {
       }
     }
     
-    $column_data{assemblypartnumber} = "<td><a href=$form->{script}?action=edit&id=$ref->{assembly_id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{assemblypartnumber}&nbsp;</a></td>";
+    $column_data{assemblypartnumber} = "<td><a href=$form->{script}?action=edit&id=$ref->{assembly_id}&changeup=$form->{changeup}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{assemblypartnumber}&nbsp;</a></td>";
 
     if ($ref->{assemblyitem}) {
       $onhand = 0 if $form->{sold};
@@ -2281,7 +2306,7 @@ sub so_requirements {
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('From').qq|</th>
-	  <td colspan=3><input name=reqdatefrom size=11 title="$myconfig{dateformat}"> <b>|.$locale->text('To').qq|</b> <input name=reqdateto size=11 title="$myconfig{dateformat}"></td>
+	  <td colspan=3><input name=reqdatefrom size=11 class=date title="$myconfig{dateformat}"> <b>|.$locale->text('To').qq|</b> <input name=reqdateto size=11 class=date title="$myconfig{dateformat}"></td>
 	</tr>
 	  $selectfrom
 	<tr>
@@ -2672,8 +2697,8 @@ sub customer_row {
 	  <td><input name="pricebreak_$i" size=5 value=|.$form->format_amount(\%myconfig, $form->{"pricebreak_$i"}).qq|></td>
 	  <td><input name="customerprice_$i" size=11 value=|.$form->format_amount(\%myconfig, $form->{"customerprice_$i"}, $form->{decimalplacessell}).qq|></td>
 	  $currency
-	  <td><input name="validfrom_$i" size=11 title="$myconfig{dateformat}" value="$form->{"validfrom_$i"}"></td>
-	  <td><input name="validto_$i" size=11 title="$myconfig{dateformat}" value="$form->{"validto_$i"}"></td>
+	  <td><input name="validfrom_$i" size=11 class=date title="$myconfig{dateformat}" value="$form->{"validfrom_$i"}"></td>
+	  <td><input name="validto_$i" size=11 class=date title="$myconfig{dateformat}" value="$form->{"validto_$i"}"></td>
 	</tr>
 |;
   }
@@ -2692,40 +2717,11 @@ sub assembly_row {
   my ($numrows) = @_;
 
   @column_index = qw(runningnumber qty unit bom adj partnumber description sellprice listprice lastcost);
-  
-  if ($form->{selectassemblypartsgroup}) {
-    @column_index = qw(runningnumber qty unit bom adj partnumber description partsgroup sellprice listprice lastcost);
-  }
-
-  delete $form->{previousform};
-
-  # change callback
-  $form->{old_callback} = $form->{callback};
-  $callback = $form->{callback};
-  $form->{callback} = "$form->{script}?action=display_form";
-
-  # delete action
-  for (qw(action header)) { delete $form->{$_} }
-
-  $previousform = "";
-  # save form variables in a previousform variable
-  $form->{selectcustomer} = "";   # we seem to have run into a 40kb limit
-  foreach $key (sort keys %$form) {
-    # escape ampersands
-    $form->{$key} =~ s/&/%26/g;
-    $previousform .= qq|$key=$form->{$key}&| if $form->{$key};
-  }
-  chop $previousform;
-  $form->{previousform} = $form->escape($previousform, 1);
-  $form->{header} = 1;
 
   $form->{sellprice} = 0;
   $form->{listprice} = 0;
   $form->{lastcost} = 0;
   $form->{weight} = 0;
-
-  $form->{callback} = $callback;
-
 
   $column_data{runningnumber} = qq|<th nowrap width=5%>|.$locale->text('Item').qq|</th>|;
   $column_data{qty} = qq|<th align=left nowrap width=10%>|.$locale->text('Qty').qq|</th>|;
@@ -2737,18 +2733,18 @@ sub assembly_row {
   $column_data{lastcost} = qq|<th align=right nowrap>|.$locale->text('Cost').qq|</th>|;
   $column_data{bom} = qq|<th>|.$locale->text('BOM').qq|</th>|;
   $column_data{adj} = qq|<th>|.$locale->text('A').qq|</th>|;
-  $column_data{partsgroup} = qq|<th>|.$locale->text('Group').qq|</th>|;
   
   print qq|
-  <p>
-  <table width="100%">
-  <tr class=listheading>
-    <th class=listheading>|.$locale->text('Individual Items').qq|</th>
-  </tr>
   <tr>
     <td>
       <table width="100%">
-        <tr>
+      <tr class=listheading>
+	<th class=listheading>|.$locale->text('Individual Items').qq|</th>
+      </tr>
+      <tr>
+	<td>
+	  <table width="100%">
+	    <tr>
 |;
 
   for (@column_index) { print "\n$column_data{$_}" }
@@ -2756,8 +2752,6 @@ sub assembly_row {
   print qq|
         </tr>
 |;
-
-  $spc = ($form->{path} =~ /lynx/) ? "." : " ";
 
   for $i (1 .. $numrows) {
     for (qw(partnumber description)) { $form->{"${_}_$i"} = $form->quote($form->{"${_}_$i"}) }
@@ -2771,16 +2765,14 @@ sub assembly_row {
     $linetotallastcost = $form->round_amount($form->{"lastcost_$i"} * $form->{"qty_$i"}, $form->{decimalplacescost});
     $form->{lastcost} += $linetotallastcost;
 
-
     if ($i == $numrows) {
       $linetotalsellprice = $linetotallistprice = $linetotallastcost = "";
  
       for (qw(runningnumber unit bom adj)) { $column_data{$_} = qq|<td></td>| }
 
       $column_data{qty} = qq|<td><input name="qty_$i" size=6 value="$form->{"qty_$i"}" accesskey="$i" title="[Alt-$i]"></td>|;
-      $column_data{partnumber} = qq|<td><input name="partnumber_$i" size=15 value="|.$form->quote($form->{"partnumber_$i"}).qq|"></td>|;
-      $column_data{description} = qq|<td><input name="description_$i" size=30 value="|.$form->quote($form->{"description_$i"}).qq|"></td>|;
-      $column_data{partsgroup} = qq|<td><select name="partsgroup_$i">|.$form->select_option($form->{selectassemblypartsgroup}, undef, 1).qq|</select></td>|;
+      $column_data{partnumber} = qq|<td><input name="partnumber_$i" size=15></td>|;
+      $column_data{description} = qq|<td><input name="description_$i" size=30></td>|;
 
     } else {
 
@@ -2789,13 +2781,9 @@ sub assembly_row {
       $linetotalsellprice = $form->format_amount(\%myconfig, $linetotalsellprice, $form->{decimalplacessell}, 0);
       $linetotallistprice = $form->format_amount(\%myconfig, $linetotallistprice, $form->{decimalplacessell}, 0);
       $linetotallastcost = $form->format_amount(\%myconfig, $linetotallastcost, $form->{decimalplacescost}, 0);
-     
-      if ($form->{isassemblyitem}) {
-	$column_data{partnumber} = qq|<td>|.$form->quote($form->{"partnumber_$i"}).qq|</td>|.$form->hide_form("partnumber_$i");
-      } else {
-	$column_data{partnumber} = qq|<td><input class=submit type=submit name=action value="$spc|.$form->quote($form->{"partnumber_$i"}).qq|"></td>|.$form->hide_form("partnumber_$i");
-      }
-	
+
+      $column_data{partnumber} = qq|<td>$form->{"partnumber_$i"}</td>|;
+
       $column_data{runningnumber} = qq|<td><input name="runningnumber_$i" size=3 value="$i"></td>|;
       $column_data{qty} = qq|<td><input name="qty_$i" size=6 value="$form->{"qty_$i"}" accesskey="$i" title="[Alt-$i]"></td>|;
 
@@ -2803,12 +2791,10 @@ sub assembly_row {
       $column_data{bom} = qq|<td align=center><input name="bom_$i" type=checkbox class=checkbox value=1 $form->{"bom_$i"}></td>|;
       $column_data{adj} = qq|<td align=center><input name="adj_$i" type=checkbox class=checkbox value=1 $form->{"adj_$i"}></td>|;
 
-      ($partsgroup) = split /--/, $form->{"partsgroup_$i"};
-      $column_data{partsgroup} = qq|<td>$partsgroup</td>|.$form->hide_form("partsgroup_$i");
+      $column_data{unit} = qq|<td>$form->{"unit_$i"}</td>|;
+      $column_data{description} = qq|<td>$form->{"description_$i"}</td>|;
 
-      $column_data{unit} = qq|<td>$form->{"unit_$i"}</td>|.$form->hide_form("unit_$i");
-      $column_data{description} = qq|<td>$form->{"description_$i"}</td>|.$form->hide_form("description_$i");
-      
+      $form->hide_form(map { "${_}_$i" } qw(partnumber description unit));
     }
     
     $column_data{sellprice} = qq|<td align=right>$linetotalsellprice</td>|;
@@ -2839,38 +2825,17 @@ sub assembly_row {
   for (@column_index) { print "\n$column_data{$_}" }
     
   print qq|
-        </tr>
+	      </tr>
+	    </table>
+	  </td>
+	</tr>
       </table>
     </td>
   </tr>
-  <tr>
-    <td><hr size=3 noshade></td>
-  </tr>
-  </table>
-  <input type=hidden name=nextsub value=edit_assemblyitem>
 |;
 
   $form->hide_form(qw(assembly_rows));
  
-}
-
-
-sub edit_assemblyitem {
-
-  $pn = substr($form->{action}, 1);
-
-  $i = 0;
-  for (1 .. $form->{assembly_rows} - 1) {
-    $i++;
-    last if $form->{"partnumber_$_"} eq $pn;
-  }
-
-  $form->error($locale->text('unexpected error!')) unless $i;
-  
-  $form->{callback} = qq|$form->{script}?action=edit&id=$form->{"id_$i"}&path=$form->{path}&login=$form->{login}&rowcount=$i&isassemblyitem=1&previousform=$form->{previousform}|;
-
-  $form->redirect;
-  
 }
 
 
@@ -2881,7 +2846,7 @@ sub update {
     $i = $form->{assembly_rows};
    
     # if last row is empty check the form otherwise retrieve item
-    if (($form->{"partnumber_$i"} eq "") && ($form->{"description_$i"} eq "") && ($form->{"partsgroup_$i"} eq "")) {
+    if (($form->{"partnumber_$i"} eq "") && ($form->{"description_$i"} eq "")) {
       
       &check_form;
       
@@ -2905,10 +2870,6 @@ sub update {
 	  for (qw(partnumber description unit)) { $form->{item_list}[$i]{$_} = $form->quote($form->{item_list}[$i]{$_}) }
 	  for (keys %{ $form->{item_list}[0] }) { $form->{"${_}_$i"} = $form->{item_list}[0]{$_} }
 
-	  if ($form->{item_list}[0]{partsgroup_id}) {
-	    $form->{"partsgroup_$i"} = qq|$form->{item_list}[0]{partsgroup}--$form->{item_list}[0]{partsgroup_id}|;
-	  }
-	  
 	  $form->{"runningnumber_$i"} = $form->{assembly_rows};
 	  $form->{assembly_rows}++;
 
@@ -3187,7 +3148,9 @@ sub save {
   $msg = "Inventory quantity must be zero before you can set this $form->{item} obsolete!";
 
   if ($form->{obsolete}) {
-    $form->error($locale->text($msg)) if $form->{onhand};
+    if (! $form->{changeup}) {
+      $form->error($locale->text($msg)) if $form->{onhand};
+    }
   }
 
   $olditem = $form->{id};

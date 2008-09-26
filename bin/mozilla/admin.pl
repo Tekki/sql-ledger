@@ -262,6 +262,7 @@ sub list_users {
 # type=submit $locale->text('Pg Database Administration')
 # type=submit $locale->text('PgPP Database Administration')
 # type=submit $locale->text('Oracle Database Administration')
+# type=submit $locale->text('Sybase Database Administration')
 
   foreach $item (User->dbdrivers) {
     $dbdrivers .= qq|<input name=action type=submit class=submit value="|.$locale->text("$item Database Administration").qq|">|;
@@ -380,22 +381,15 @@ sub form_header {
     $myconfig->{dbpasswd} = unpack 'u', $myconfig->{dbpasswd};
   }
 
-  foreach $item (qw(mm-dd-yy mm/dd/yy dd-mm-yy dd/mm/yy dd.mm.yy yyyy-mm-dd)) {
-    $dateformat .= ($item eq $myconfig->{dateformat}) ? "<option selected>$item\n" : "<option>$item\n";
-  }
+  for (qw(mm-dd-yy mm/dd/yy dd-mm-yy dd/mm/yy dd.mm.yy yyyy-mm-dd)) { $selectdateformat .= "$_\n" }
 
-  foreach $item (qw(1,000.00 1000.00 1.000,00 1000,00 1'000.00)) {
-    $numberformat .= ($item eq $myconfig->{numberformat}) ? "<option selected>$item\n" : "<option>$item\n";
-  }
-
+  for (qw(1,000.00 1000.00 1.000,00 1000,00 1'000.00)) { $selectnumberformat .= "$_\n" }
 
   %countrycodes = User->country_codes;
-  $countrycodes = "";
+  $selectcountrycodes = "";
   
-  foreach $key (sort { $countrycodes{$a} cmp $countrycodes{$b} } keys %countrycodes) {
-    $countrycodes .= ($myconfig->{countrycode} eq $key) ? "<option selected value=$key>$countrycodes{$key}" : "<option value=$key>$countrycodes{$key}";
-  }
-  $countrycodes = qq|<option value="">English\n$countrycodes|;
+  for (sort { $countrycodes{$a} cmp $countrycodes{$b} } keys %countrycodes) { $selectcountrycodes .= "${_}--$countrycodes{$_}" }
+  $selectcountrycodes = qq|--English\n$selectcountrycodes|;
 
   # is there a templates basedir
   if (! -d "$templates") {
@@ -419,23 +413,17 @@ sub form_header {
   push @allhtml, 'Default';
   @allhtml = reverse @allhtml;
   
-  foreach $item (sort @alldir) {
-    if ($item eq $myconfig->{templates}) {
-      $usetemplates .= qq|<option selected>$item\n|;
-    } else {
-      $usetemplates .= qq|<option>$item\n|;
-    }
-  }
+  for (sort @alldir) { $selectusetemplates .= qq|$_\n| }
   
   $lastitem = $allhtml[0];
   $lastitem =~ s/-.*//g;
-  $mastertemplates = qq|<option>$lastitem\n|;
-  foreach $item (@allhtml) {
-    $item =~ s/-.*//g;
+  $selectmastertemplates = qq|$lastitem\n|;
+  for (@allhtml) {
+    $_ =~ s/-.*//g;
     
-    if ($item ne $lastitem) {
-      $mastertemplates .= qq|<option>$item\n|;
-      $lastitem = $item;
+    if ($_ ne $lastitem) {
+      $selectmastertemplates .= qq|$_\n|;
+      $lastitem = $_;
     }
   }
 
@@ -443,29 +431,17 @@ sub form_header {
   @all = grep /.*\.css$/, readdir CSS;
   closedir CSS;
   
-  foreach $item (@all) {
-    if ($item eq $myconfig->{stylesheet}) {
-      $selectstylesheet .= qq|<option selected>$item\n|;
-    } else {
-      $selectstylesheet .= qq|<option>$item\n|;
-    }
-  }
-  $selectstylesheet .= "<option>\n";
+  $selectstylesheet = "\n";
+  for (sort @all) { $selectstylesheet .= qq|$_\n| }
   
   if (%printer && $latex) {
-    $selectprinter = "<option>\n";
-    foreach $item (sort keys %printer) {
-      if ($myconfig->{printer} eq $item) {
-	$selectprinter .= qq|<option value="$item" selected>$item\n|;
-      } else {
-	$selectprinter .= qq|<option value="$item">$item\n|;
-      }
-    }
+    $selectprinter = "\n";
+    for (sort keys %printer) { $selectprinter .= "$_\n" }
 
     $printer = qq|
 	<tr>
 	  <th align=right>|.$locale->text('Printer').qq|</th>
-	  <td><select name=printer>$selectprinter</select></td>
+	  <td><select name=printer>|.$form->select_option($selectprinter, $myconfig->{printer}).qq|</td>
 	</tr>
 |;
 
@@ -523,11 +499,11 @@ sub form_header {
       <table>
 	<tr>
 	  <th align=right>|.$locale->text('Date Format').qq|</th>
-	  <td><select name=dateformat>$dateformat</select></td>
+	  <td><select name=dateformat>|.$form->select_option($selectdateformat, $myconfig->{dateformat}).qq|</select></td>
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('Number Format').qq|</th>
-	  <td><select name=numberformat>$numberformat</select></td>
+	  <td><select name=numberformat>|.$form->select_option($selectnumberformat, $myconfig->{numberformat}).qq|</select></td>
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('Dropdown Limit').qq|</th>
@@ -539,7 +515,7 @@ sub form_header {
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('Language').qq|</th>
-	  <td><select name=countrycode>$countrycodes</select></td>
+	  <td><select name=countrycode>|.$form->select_option($selectcountrycodes, $myconfig->{countrycode}, undef, 1).qq|</td>
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('Session Timeout').qq|</th>
@@ -548,12 +524,12 @@ sub form_header {
 
 	<tr>
 	  <th align=right>|.$locale->text('Stylesheet').qq|</th>
-	  <td><select name=userstylesheet>$selectstylesheet</select></td>
+	  <td><select name=userstylesheet>|.$form->select_option($selectstylesheet, $myconfig->{stylesheet}).qq|</select></td>
 	</tr>
 	$printer
 	<tr>
 	  <th align=right>|.$locale->text('Use Templates').qq|</th>
-	  <td><select name=usetemplates>$usetemplates</select></td>
+	  <td><select name=usetemplates>|.$form->select_option($selectusetemplates, $myconfig->{templates}).qq|</select></td>
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('New Templates').qq|</th>
@@ -561,7 +537,7 @@ sub form_header {
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('Setup Templates').qq|</th>
-	  <td><select name=mastertemplates>$mastertemplates</select></td>
+	  <td><select name=mastertemplates>|.$form->select_option($selectmastertemplates, $myconfig->{templates}).qq|</select></td>
 	</tr>
 	<input type=hidden name=templates value=$myconfig->{templates}>
       </table>
@@ -594,7 +570,7 @@ sub form_header {
 	</tr>
 	<tr>|;
 
-    if ($item =~ /Pg/) {
+    if ($item =~ /(Pg|Sybase)/) {
       print qq|
 	  <th align=right>|.$locale->text('Dataset').qq|</th>
 	  <td><input name="${item}_dbname" size=15 value=$form->{"${item}_dbname"}></td>
@@ -678,16 +654,14 @@ sub form_header {
 	   );
 	    
   $selectrole = "";
-  foreach $item (qw(user admin supervisor manager)) {
-    $selectrole .= ($myconfig->{role} eq $item) ? "<option selected value=$item>$role{$item}\n" : "<option value=$item>$role{$item}\n";
-  }
+  for (qw(user admin supervisor manager)) { $selectrole .= "$_--$role{$_}\n" }
   
   print qq|
   <tr class=listheading>
     <th colspan=2>|.$locale->text('Access Control').qq|</th>
   </tr>
   <tr>
-    <td><select name=role>$selectrole</select></td>
+    <td><select name=role>|.$form->select_option($selectrole, $myconfig->{role}, undef, 1).qq|</select></td>
   </tr>
 |;
   
@@ -818,13 +792,13 @@ sub save {
     $form->isblank("dbport", $locale->text('Port missing!'));
     $form->isblank("dbuser", $locale->text('Dataset missing!'));
   }
-  if ($form->{dbdriver} =~ /Pg/) {
+  if ($form->{dbdriver} =~ /(Pg|Sybase)/) {
     $form->isblank("dbname", $locale->text('Dataset missing!'));
     $form->isblank("dbuser", $locale->text('Database User missing!'));
   }
     
-  foreach $item (keys %{$form}) {
-    $myconfig->{$item} = $form->{$item};
+  for (keys %{$form}) {
+    $myconfig->{$_} = $form->{$_};
   }
 
   $myconfig->{encrypted} = $form->{new_password} eq $form->{old_password};
@@ -1154,6 +1128,14 @@ sub oracle_database_administration {
 }
 
 
+sub sybase_database_administration {
+  
+  $form->{dbdriver} = 'Sybase';
+  &dbselect_source;
+
+}
+
+
 sub dbdriver_defaults {
 
   # load some defaults for the selected driver
@@ -1168,13 +1150,19 @@ sub dbdriver_defaults {
 		             dbdefault => $sid,
 				dbhost => `hostname`,
 			 connectstring => 'SID'
+			      },
+                   'Sybase' => { dbport => '',
+		                dbuser => 'sql-ledger',
+		             dbdefault => '',
+				dbhost => '',
+			 connectstring => $locale->text('Connect to')
 			      }
                     );
 
   $driverdefaults{PgPP} = $driverdefaults{Pg};
 
   for (keys %{ $driverdefaults{Pg} }) { $form->{$_} = $driverdefaults{$form->{dbdriver}}{$_} }
-  
+
 }
   
 
@@ -1292,14 +1280,13 @@ sub update_dataset {
     print qq|
 <table width=100%>
 <form method=post action=$form->{script}>
+|;
 
-<input type=hidden name=dbdriver value=$form->{dbdriver}>
-<input type=hidden name=dbhost value=$form->{dbhost}>
-<input type=hidden name=dbport value=$form->{dbport}>
-<input type=hidden name=dbuser value=$form->{dbuser}>
-<input type=hidden name=dbpasswd value=$form->{dbpasswd}>
-<input type=hidden name=dbdefault value=$form->{dbdefault}>
+    $form->{callback} = "$form->{script}?action=list_users&path=$form->{path}";
+    $form->{nextsub} = "dbupdate";
+    $form->hide_form(qw(dbdriver dbhost dbport dbuser dbpasswd dbdefault dbupdate mextsub callback path));
 
+    print qq|
 <tr class=listheading>
   <th>|.$locale->text('The following Datasets need to be updated').qq|</th>
 </tr>
@@ -1312,14 +1299,6 @@ $upd
 </tr>
 <tr>
 <td>
-
-<input name=dbupdate type=hidden value="$form->{dbupdate}">
-
-<input name=callback type=hidden value="$form->{script}?action=list_users&path=$form->{path}">
-
-<input type=hidden name=path value=$form->{path}>
-
-<input type=hidden name=nextsub value=dbupdate>
 
 <hr size=3 noshade>
 
@@ -1371,15 +1350,15 @@ sub create_dataset {
   # add Default at beginning
   unshift @charts, qq|<input name=chart class=radio type=radio value="Default" checked>Default|;
 
-  $selectencoding = qq|<option>
+  $selectencoding{Pg} = qq|<option>
   <option value=SQL_ASCII>ASCII
-  <option value=EUC_JP>Japanese EUC
+  <option value=UTF8>Unicode (UTF-8)
   <option value=EUC_CN>Chinese EUC
+  <option value=EUC_JP>Japanese EUC
   <option value=EUC_KR>Korean EUC
-  <option value=JOHAB>Korean EUC (Hangle base)
+  <option value=JOHAB>Korean (Hangul)
   <option value=EUC_TW>Taiwan EUC
-  <option value=UNICODE>Unicode (UTF-8)
-  <option value=MULE_INTERNAL>Mule internal type
+  <option value=KOI8>KOI8-R(U)
   <option value=LATIN1>ISO 8859-1/ECMA 94 (Latin alphabet no. 1)
   <option value=LATIN2>ISO 8859-2/ECMA 94 (Latin alphabet no. 2)
   <option value=LATIN3>ISO 8859-3/ECMA 94 (Latin alphabet no. 3)
@@ -1394,9 +1373,11 @@ sub create_dataset {
   <option value=ISO_8859_6>ISO 8859-6/ECMA 114 (Latin/Arabic)
   <option value=ISO_8859_7>ISO 8859-7/ECMA 118 (Latin/Greek)
   <option value=ISO_8859_8>ISO 8859-8/ECMA 121 (Latin/Hebrew)
-  <option value=KOI8>KOI8-R(U)
-  <option value=WIN>Windows CP1251
-  <option value=ALT>Windows CP866
+  <option value=MULE_INTERNAL>Mule internal type
+  <option value=ALT>Windows CP866 (Cyrillic)
+  <option value=WIN1250>Windows CP1250 (Central Euope)
+  <option value=WIN>Windows CP1251 (Cyrillic)
+  <option value=WIN1252>Windows CP1252 (Western European)
   <option value=WIN1256>Windows CP1256 (Arabic)
   <option value=TCVN>Windows CP1258 (Vietnamese)
   <option value=WIN874>Windows CP874 (Thai)
@@ -1438,13 +1419,20 @@ sub create_dataset {
     <td><input name=db></td>
 
   </tr>
+|;
 
+  if ($selectencoding{$form->{dbdriver}}) {
+    print qq|
   <tr>
 
     <th align=right nowrap>|.$locale->text('Multibyte Encoding').qq|</th>
-    <td><select name=encoding>$selectencoding</select></td>
+    <td><select name=encoding>$selectencoding{$form->{dbdriver}}</select></td>
 
   </tr>
+|;
+  }
+
+  print qq|
  
   <tr>
 

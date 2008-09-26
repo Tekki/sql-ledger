@@ -228,7 +228,7 @@ sub employees {
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   my $where = "1 = 1";
-  $form->{sort} = ($form->{sort}) ? $form->{sort} : "name";
+  $form->{sort} ||= "name";
   my @a = qw(name);
   my $sortorder = $form->sort_order(\@a);
   

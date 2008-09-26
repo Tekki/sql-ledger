@@ -317,6 +317,17 @@ sub paymentaccounts {
   $sth->finish;
 
   $form->{currencies} = $form->get_currencies($dbh, $myconfig);
+
+  $query = qq|SELECT *
+              FROM paymentmethod
+	      ORDER BY 2|;
+  $sth = $dbh->prepare($query);
+  $sth->execute || $form->dberror($query);
+
+  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    push @{ $form->{all_paymentmethod} }, $ref;
+  }
+  $sth->finish;
   
   $dbh->disconnect;
   
@@ -521,6 +532,78 @@ sub ndxline {
   }
 
   return @a;
+
+}
+
+
+sub unreconciled_payments {
+  my ($self, $myconfig, $form) = @_;
+
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+
+  my $query;
+  my $ref;
+  my $null;
+
+  my ($accno) = split /--/, $form->{paymentaccount};
+
+  my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  $form->{precision} = $defaults{precision};
+
+  my $where;
+  
+  if ($form->{currency}) {
+    $where = " AND a.curr = '$form->{currency}'";
+    $query = qq|SELECT precision FROM curr
+                WHERE curr = '$form->{currency}'|;
+    ($form->{precision}) = $dbh->selectrow_array($query);
+  }
+
+  my $paymentmethod_id;
+  if ($form->{paymentmethod}) {
+    ($null, $paymentmethod_id) = split /--/, $form->{paymentmethod};
+    $where .= " AND a.paymentmethod_id = $paymentmethod_id";
+  }
+  
+  $query = qq|SELECT vc.name, vc.customernumber AS companynumber,
+              a.id, a.invnumber, a.description, a.curr,
+	      ac.source, ac.memo, ac.amount, ac.transdate AS datepaid
+	      FROM ar a
+	      JOIN acc_trans ac ON (ac.trans_id = a.id)
+	      JOIN chart c ON (c.id = ac.chart_id)
+	      JOIN customer vc ON (a.customer_id = vc.id)
+	      WHERE ac.cleared IS NULL
+	      AND c.accno = '$accno'
+	      AND ac.amount > 0
+	      AND ac.fx_transaction = '0'
+	      AND ac.approved = '1'
+	      $where
+	      UNION
+	      SELECT vc.name, vc.vendornumber AS companynumber,
+	      a.id, a.invnumber, a.description, a.curr,
+	      ac.source, ac.memo, ac.amount, ac.transdate AS datepaid
+	      FROM ap a
+	      JOIN acc_trans ac ON (ac.trans_id = a.id)
+	      JOIN chart c ON (c.id = ac.chart_id)
+	      JOIN vendor vc ON (a.vendor_id = vc.id)
+	      WHERE ac.cleared IS NULL
+	      AND c.accno = '$accno'
+	      AND ac.amount > 0
+	      AND ac.fx_transaction = '0'
+	      AND ac.approved = '1'
+	      $where
+	      ORDER BY datepaid
+	      |;
+  my $sth = $dbh->prepare($query);
+  $sth->execute || $form->dberror($query);
+
+  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    push @{ $form->{TR} }, $ref;
+  }
+  $sth->finish;
+
+  $dbh->disconnect;
 
 }
 

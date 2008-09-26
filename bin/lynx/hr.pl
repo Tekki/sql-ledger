@@ -92,7 +92,7 @@ sub search_employee {
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Startdate').qq|</th>
-	  <td>|.$locale->text('From').qq| <input name=startdatefrom size=11 title="$myconfig{dateformat}"> |.$locale->text('To').qq| <input name=startdateto size=11 title="$myconfig{dateformat}"></td>
+	  <td>|.$locale->text('From').qq| <input name=startdatefrom size=11 class=date title="$myconfig{dateformat}"> |.$locale->text('To').qq| <input name=startdateto size=11 class=date title="$myconfig{dateformat}"></td>
 	</tr>
 	<tr valign=top>
 	  <th align=right nowrap>|.$locale->text('Notes').qq|</th>
@@ -550,11 +550,11 @@ sub employee_header {
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Startdate').qq|</th>
-		<td><input name=startdate size=11 title="$myconfig{dateformat}" value=$form->{startdate}></td>
+		<td><input name=startdate size=11 class=date title="$myconfig{dateformat}" value=$form->{startdate}></td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Enddate').qq|</th>
-		<td><input name=enddate size=11 title="$myconfig{dateformat}" value=$form->{enddate}></td>
+		<td><input name=enddate size=11 class=date title="$myconfig{dateformat}" value=$form->{enddate}></td>
 	      </tr>
 
 	      <tr>
@@ -563,7 +563,7 @@ sub employee_header {
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('DOB').qq|</th>
-		<td><input name=dob size=11 title="$myconfig{dateformat}" value=$form->{dob}></td>
+		<td><input name=dob size=11 class=date title="$myconfig{dateformat}" value=$form->{dob}></td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('IBAN').qq|</th>

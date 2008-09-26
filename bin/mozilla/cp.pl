@@ -471,7 +471,7 @@ sub payments_header {
 |;
   } else {
     $datepaid = qq|
-		<td><input name=datepaid value="$form->{datepaid}" title="$myconfig{dateformat}" size=11></td>
+		<td><input name=datepaid value="$form->{datepaid}" title="$myconfig{dateformat}" size=11 class=date></td>
 |;
   }
 
@@ -530,9 +530,9 @@ javascript:window.history.forward(1);
 		  <table>
 		    <tr>
 		<th align=right>|.$locale->text('From').qq|</th>
-		<td><input name=duedatefrom value="$form->{duedatefrom}" title="$myconfig{dateformat}" size=11></td>
+		<td><input name=duedatefrom value="$form->{duedatefrom}" title="$myconfig{dateformat}" size=11 class=date></td>
 		<th align=right>|.$locale->text('To').qq|</th>
-		<td><input name=duedateto value="$form->{duedateto}" title="$myconfig{dateformat}" size=11></td>
+		<td><input name=duedateto value="$form->{duedateto}" title="$myconfig{dateformat}" size=11 class=date></td>
 		    </tr>
 		  </table>
 		</td>
@@ -1241,9 +1241,9 @@ sub payment_header {
 		  <table>
 		    <tr>
 		      <th align=right>|.$locale->text('From').qq|</th>
-		      <td><input name=duedatefrom value="$form->{duedatefrom}" title="$myconfig{dateformat}" size=11></td>
+		      <td><input name=duedatefrom value="$form->{duedatefrom}" title="$myconfig{dateformat}" size=11 class=date></td>
 		      <th align=right>|.$locale->text('To').qq|</th>
-		      <td><input name=duedateto value="$form->{duedateto}" title="$myconfig{dateformat}" size=11></td>
+		      <td><input name=duedateto value="$form->{duedateto}" title="$myconfig{dateformat}" size=11 class=date></td>
 		    </tr>
 		  </table>
 		</td>
@@ -1350,7 +1350,7 @@ sub payment_header {
 |;
   } else {
     $datepaid = qq|
-		<td><input name=datepaid value="$form->{datepaid}" title="$myconfig{dateformat}" size=11></td>
+		<td><input name=datepaid value="$form->{datepaid}" title="$myconfig{dateformat}" size=11 class=date></td>
 |;
   }
 

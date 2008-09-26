@@ -182,17 +182,7 @@ sub create_links {
   # employees/salespersons
   $form->all_employees($myconfig, $dbh, undef, ($form->{vc} eq 'customer') ? 1 : 0);
 
-  # get language
-  $query = qq|SELECT *
-              FROM language
-	      ORDER BY 2|;
-  $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
-  
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-    push @{ $form->{all_language} }, $ref;
-  }
-  $sth->finish;
+  $form->all_languages($myconfig, $dbh);
  
   # get pricegroups
   $query = qq|SELECT *
@@ -850,6 +840,7 @@ sub get_history {
   my $query;
   my $where = "1 = 1";
   $form->{sort} = "partnumber" unless $form->{sort};
+  $form->{sort} =~ s/;//g;
   my $sortorder = $form->{sort};
   my %ordinal = ();
   my $var;
@@ -965,6 +956,7 @@ sub get_history {
 	       projectnumber	=> 18
 	      );
 
+  $form->{direction} =~ s/;//g;
   $sortorder = "2 $form->{direction}, 1, 11, $ordinal{$sortorder} $form->{direction}";
     
   $query = qq|SELECT ct.id AS ctid, ct.name, ad.address1,

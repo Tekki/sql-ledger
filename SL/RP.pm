@@ -92,6 +92,23 @@ sub yearend_statement {
 }
 
 
+sub create_links {
+  my ($self, $myconfig, $form, $vc) = @_;
+
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+
+  $form->all_departments($myconfig, $dbh, $vc);
+  
+  $form->all_projects($myconfig, $dbh);
+
+  $form->all_languages($myconfig, $dbh);
+  
+  $dbh->disconnect;
+
+}
+
+
 sub income_statement {
   my ($self, $myconfig, $form) = @_;
 
@@ -484,7 +501,7 @@ sub get_accounts {
   $query = qq|SELECT c.accno, c.description, c.category,
               l.description AS translation
 	      FROM chart c
-	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$form->{language_code}')
 	      WHERE c.charttype = 'H'
 	      $category
 	      ORDER by c.accno|;
@@ -828,7 +845,7 @@ sub get_accounts {
 		 FROM acc_trans ac
 		 JOIN chart c ON (c.id = ac.chart_id)
 		 JOIN ar a ON (a.id = ac.trans_id)
-		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$form->{language_code}')
 		 $dpt_join
 		 WHERE $where
 		 AND ac.approved = '1'
@@ -856,7 +873,7 @@ sub get_accounts {
 		 FROM acc_trans ac
 		 JOIN chart c ON (c.id = ac.chart_id)
 		 JOIN ap a ON (a.id = ac.trans_id)
-		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$form->{language_code}')
 		 $dpt_join
 		 WHERE $where
 		 AND a.approved = '1'
@@ -884,7 +901,7 @@ sub get_accounts {
 		 FROM acc_trans ac
 		 JOIN chart c ON (c.id = ac.chart_id)
 		 JOIN gl a ON (a.id = ac.trans_id)
-		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$form->{language_code}')
 		 $dpt_join
 		 WHERE $where
 		 AND a.approved = '1'
@@ -912,7 +929,7 @@ sub get_accounts {
 		 JOIN gl a ON (a.id = y.trans_id)
 		 JOIN acc_trans ac ON (ac.trans_id = y.trans_id)
 		 JOIN chart c ON (c.id = ac.chart_id)
-		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$form->{language_code}')
 	         $dpt_join
 		 WHERE $yearendwhere
 		 AND c.category = 'Q'
@@ -941,7 +958,7 @@ sub get_accounts {
 		 l.description AS translation
 		 FROM acc_trans ac
 		 JOIN chart c ON (c.id = ac.chart_id)
-		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$form->{language_code}')
 		 $dpt_join
 		 WHERE $where
 		 AND ac.approved = '1'
@@ -967,7 +984,7 @@ sub get_accounts {
 		 JOIN gl a ON (a.id = y.trans_id)
 		 JOIN acc_trans ac ON (ac.trans_id = y.trans_id)
 		 JOIN chart c ON (c.id = ac.chart_id)
-		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$form->{language_code}')
 	         $dpt_join
 		 WHERE $yearendwhere
 		 AND c.category = 'Q'
@@ -1102,7 +1119,7 @@ sub trial_balance {
 		  l.description AS translation
 		  FROM acc_trans ac
 		  JOIN chart c ON (ac.chart_id = c.id)
-		  LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+		  LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$form->{language_code}')
 		  $dpt_join
 		  WHERE ac.transdate < '$form->{fromdate}'
 		  AND ac.approved = '1'
@@ -1139,7 +1156,7 @@ sub trial_balance {
   $query = qq|SELECT c.accno, c.description, c.category,
               l.description AS translation
 	      FROM chart c
-	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$form->{language_code}')
 	      WHERE c.charttype = 'H'
 	      ORDER by c.accno|;
 
@@ -1203,7 +1220,7 @@ sub trial_balance {
 		l.description AS translation
 		FROM acc_trans ac
 		JOIN chart c ON (c.id = ac.chart_id)
-		LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+		LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$form->{countrycode}')
 		$dpt_join
 		WHERE $where
 		$dpt_where
@@ -1392,6 +1409,7 @@ sub aging {
     $where .= qq| AND a.department_id = $department_id|;
   }
   
+  $form->{sort} =~ s/;//g;
   my $sortorder = ($form->{sort}) ? "ct.$form->{sort}" : "ct.name";
   
   # select outstanding vendors or customers, depends on $ct
@@ -1521,6 +1539,7 @@ sub aging {
   $sth = $dbh->prepare($query) || $form->dberror($query);
 
   my @var;
+  my %audittrail;
   
   foreach $curr (split /:/, $form->{currencies}) {
   
@@ -1537,6 +1556,15 @@ sub aging {
 	$ref->{exchangerate} ||= 1;
 	$ref->{language_code} = $item->{language_code};
 	push @{ $form->{AG} }, $ref;
+
+	if ($form->{audittrail}) {
+	  %audittrail = ( tablename  => '$form->{arap}',
+	                  reference  => $ref->{invnumber},
+			  formname   => 'statement',
+			  action     => '$form->{audittrail}',
+			  id         => $ref->{id} );
+	  $form->audittrail($dbh, "", \%audittrail);
+	}
       }
       $sth->finish;
 

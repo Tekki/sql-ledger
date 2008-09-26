@@ -1929,7 +1929,7 @@ sub display_taxes {
     print qq|</th>
 	  <td><input name="taxrate_$i" size=6 value=$form->{"taxrate_$i"}></td>
 	  <td><input name="taxnumber_$i" value="$form->{"taxnumber_$i"}"></td>
-	  <td><input name="validto_$i" size=11 value="$form->{"validto_$i"}" title="$myconfig{dateformat}"></td>
+	  <td><input name="validto_$i" size=11 class=date value="$form->{"validto_$i"}" title="$myconfig{dateformat}"></td>
 	</tr>
 |;
     my $sametax = $form->{"taxdescription_$i"};
@@ -2239,6 +2239,7 @@ sub defaults {
 sub config {
 
   for (qw(mm-dd-yy mm/dd/yy dd-mm-yy dd/mm/yy dd.mm.yy yyyy-mm-dd)) { $form->{selectdateformat} .= "$_\n" }
+  $form->{selectdateformat} = "yyyy-mm-dd" if $myconfig{dbdriver} eq 'mysql';
 
   for (qw(1,000.00 1000.00 1.000,00 1000,00 1'000.00)) { $form->{selectnumberformat} .= "$_\n" }
 
@@ -2506,7 +2507,7 @@ sub audit_control {
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('Close Books up to').qq|</th>
-	  <td><input name=closedto size=11 title="$myconfig{dateformat}" value=$form->{closedto}></td>
+	  <td><input name=closedto size=11 class=date title="$myconfig{dateformat}" value=$form->{closedto}></td>
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('Activate Audit trail').qq|</th>
@@ -2514,7 +2515,7 @@ sub audit_control {
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('Remove Audit trail up to').qq|</th>
-	  <td><input name=removeaudittrail size=11 title="$myconfig{dateformat}"></td>
+	  <td><input name=removeaudittrail size=11 class=date title="$myconfig{dateformat}"></td>
 	</tr>
 <!--
 	<tr>
@@ -2856,7 +2857,7 @@ sub yearend {
       <table>
 	<tr>
 	  <th align=right>|.$locale->text('Date').qq| <font color=red>*</font></th>
-	  <td><input name=todate size=11 title="$myconfig{dateformat}" value=$todate></td>
+	  <td><input name=todate size=11 class=date title="$myconfig{dateformat}" value=$todate></td>
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('Reference').qq|</th>
@@ -3430,6 +3431,8 @@ $pt->{paid};
 	  }
 	  require "$form->{path}/$form->{script}";
 
+# require "$form->{path}/arap.pl";
+
 	  &order_links;
 	  &prepare_order;
 
@@ -3473,6 +3476,8 @@ $pt->{paid};
 	$form->{reference} = $pt->{reference};
 	$form->{description} = $pt->{description};
 	$form->{transdate} = $pt->{nextdate};
+
+	$form->{defaultcurrency} = substr($form->{currencies},0,3);
 
 	$j = 1;
 	foreach $ref (@{ $form->{GL} }) {
@@ -3939,7 +3944,7 @@ sub search_exchangerates {
         $selectcurrency
 	<tr>
 	  <th align=right nowrap>|.$locale->text('From').qq|</th>
-	  <td colspan=3><input name=transdatefrom size=11 title="$myconfig{dateformat}"> <b>|.$locale->text('To').qq|</b> <input name=transdateto size=11 title="$myconfig{dateformat}"></td>
+	  <td colspan=3><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}"> <b>|.$locale->text('To').qq|</b> <input name=transdateto size=11 class=date title="$myconfig{dateformat}"></td>
         </tr>
 	$selectfrom
       </table>
@@ -4231,7 +4236,7 @@ sub exchangerate_header {
       <table>
 	<tr>
 	  <td></td>
-	  <td><input name=transdate value="$form->{transdate}" title="$myconfig{dateformat}"></td>
+	  <td><input name=transdate value="$form->{transdate}" size=11 class=date title="$myconfig{dateformat}"></td>
 	  <th>|.$locale->text('Buy').qq|</th>
 	  <th>|.$locale->text('Sell').qq|</th>
 	</tr>

@@ -390,11 +390,11 @@ sub form_header {
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Order Date').qq| <font color=red>*</font></th>
-		<td><input name=transdate size=11 title="$myconfig{dateformat}" value=$form->{transdate}></td>
+		<td><input name=transdate size=11 class=date title="$myconfig{dateformat}" value=$form->{transdate}></td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap=true>|.$locale->text('Required by').qq|</th>
-		<td><input name=reqdate size=11 title="$myconfig{dateformat}" value=$form->{reqdate}></td>
+		<td><input name=reqdate size=11 class=date title="$myconfig{dateformat}" value=$form->{reqdate}></td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('PO Number').qq|</th>
@@ -452,11 +452,11 @@ sub form_header {
     $ordnumber .= qq|
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Quotation Date').qq|</th>
-		<td><input name=transdate size=11 title="$myconfig{dateformat}" value=$form->{transdate}></td>
+		<td><input name=transdate size=11 class=date title="$myconfig{dateformat}" value=$form->{transdate}></td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap=true>$reqlabel</th>
-		<td><input name=reqdate size=11 title="$myconfig{dateformat}" value=$form->{reqdate}></td>
+		<td><input name=reqdate size=11 class=date title="$myconfig{dateformat}" value=$form->{reqdate}></td>
 	      </tr>
 |;
 
@@ -749,24 +749,27 @@ sub form_footer {
                'Print' => { ndx => 2, key => 'P', value => $locale->text('Print') },
 	       'Save' => { ndx => 3, key => 'S', value => $locale->text('Save') },
 	       'Ship to' => { ndx => 4, key => 'T', value => $locale->text('Ship to') },
-	       'E-mail' => { ndx => 5, key => 'E', value => $locale->text('E-mail') },
-	       'Print and Save' => { ndx => 6, key => 'R', value => $locale->text('Print and Save') },
-	       'Save as new' => { ndx => 7, key => 'N', value => $locale->text('Save as new') },
-	       'Print and Save as new' => { ndx => 8, key => 'W', value => $locale->text('Print and Save as new') },
-	       'Sales Invoice' => { ndx => 9, key => 'I', value => $locale->text('Sales Invoice') },
-	       'Sales Order' => { ndx => 10, key => 'O', value => $locale->text('Sales Order') },
-	       'Quotation' => { ndx => 11, key => 'Q', value => $locale->text('Quotation') },
-	       'Vendor Invoice' => { ndx => 12, key => 'I', value => $locale->text('Vendor Invoice') },
-	       'Purchase Order' => { ndx => 13, key => 'O', value => $locale->text('Purchase Order') },
-	       'RFQ' => { ndx => 14, key => 'Q', value => $locale->text('RFQ') },
-	       'Schedule' => { ndx => 15, key => 'H', value => $locale->text('Schedule') },
-	       'Delete' => { ndx => 16, key => 'D', value => $locale->text('Delete') },
+	       'Ship all' => { ndx => 5, key => 'A', value => $locale->text('Ship all') },
+	       'E-mail' => { ndx => 6, key => 'E', value => $locale->text('E-mail') },
+	       'Print and Save' => { ndx => 7, key => 'R', value => $locale->text('Print and Save') },
+	       'Save as new' => { ndx => 8, key => 'N', value => $locale->text('Save as new') },
+	       'Print and Save as new' => { ndx => 9, key => 'W', value => $locale->text('Print and Save as new') },
+	       'Sales Invoice' => { ndx => 10, key => 'I', value => $locale->text('Sales Invoice') },
+	       'Sales Order' => { ndx => 11, key => 'O', value => $locale->text('Sales Order') },
+	       'Quotation' => { ndx => 12, key => 'Q', value => $locale->text('Quotation') },
+	       'Vendor Invoice' => { ndx => 13, key => 'I', value => $locale->text('Vendor Invoice') },
+	       'Purchase Order' => { ndx => 14, key => 'O', value => $locale->text('Purchase Order') },
+	       'RFQ' => { ndx => 15, key => 'Q', value => $locale->text('RFQ') },
+	       'Schedule' => { ndx => 16, key => 'H', value => $locale->text('Schedule') },
+	       'Delete' => { ndx => 17, key => 'D', value => $locale->text('Delete') },
 	      );
 
 
     %a = ();
     for ("Update", "Ship to", "Print", "E-mail", "Save") { $a{$_} = 1 }
     $a{'Print and Save'} = 1 if $latex;
+
+    $a{'Ship all'} = 1 if $form->{type} =~ /(sales|purchase)_order/;
     
     if ($form->{id}) {
       
@@ -843,6 +846,17 @@ sub form_footer {
 }
 
 
+sub ship_all {
+  
+  for (1 .. $form->{rowcount}) {
+    $form->{"ship_$_"} = $form->{"qty_$_"};
+  }
+
+  &display_form;
+
+}
+
+      
 sub update {
 
   if ($form->{type} eq 'generate_purchase_order') {
@@ -1313,9 +1327,9 @@ sub search {
 
         <tr>
           <th align=right>|.$locale->text('From').qq|</th>
-          <td><input name=transdatefrom size=11 title="$myconfig{dateformat}"></td>
+          <td><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}"></td>
           <th align=right>|.$locale->text('To').qq|</th>
-          <td><input name=transdateto size=11 title="$myconfig{dateformat}"></td>
+          <td><input name=transdateto size=11 class=date title="$myconfig{dateformat}"></td>
         </tr>
         <input type=hidden name=sort value=transdate>
 	$selectfrom
@@ -1327,6 +1341,7 @@ sub search {
 |;
 
   while (@a) {
+    print qq|<tr>\n|;
     for (1 .. 5) {
       print qq|<td nowrap>|. shift @a;
       print qq|</td>\n|;
@@ -2441,7 +2456,7 @@ sub display_ship_receive {
 	      </tr>
 	      <tr>
 		<th align=right nowrap>$shipped <font color=red>*</font></th>
-		<td><input name=shippingdate size=11 value=$form->{shippingdate}></td>
+		<td><input name=shippingdate size=11 class=date value=$form->{shippingdate} title="$myconfig{dateformat}"></td>
 	      </tr>
 	    </table>
 	  </td>

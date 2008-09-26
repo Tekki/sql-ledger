@@ -301,7 +301,7 @@ sub search {
 
 	<tr>
 	  <th align=right>|.$locale->text('From').qq|</th>
-	  <td><input name=datefrom size=11 title="$myconfig{dateformat}"> <b>|.$locale->text('To').qq|</b> <input name=dateto size=11 title="$myconfig{dateformat}"></td>
+	  <td><input name=datefrom size=11 class=date title="$myconfig{dateformat}"> <b>|.$locale->text('To').qq|</b> <input name=dateto size=11 class=date title="$myconfig{dateformat}"></td>
 	</tr>
 	
 	$selectfrom
@@ -1033,7 +1033,7 @@ sub form_header {
 |;
   } else {
     $transdate = qq|
-	  <td><input name=transdate size=11 title="$myconfig{dateformat}" value=$form->{transdate}></td>
+	  <td><input name=transdate size=11 class=date title="$myconfig{dateformat}" value=$form->{transdate}></td>
 |;
   }
 

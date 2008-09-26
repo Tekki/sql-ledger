@@ -89,9 +89,10 @@ sub report {
 </tr>
 |;
   
-    
-  # get departments
-  $form->all_departments(\%myconfig, undef, $report{$form->{report}}->{vc});
+
+  RP->create_links(\%myconfig, \%$form, $report{$form->{report}}->{vc});
+  
+  # departments
   if (@{ $form->{all_department} }) {
     $form->{selectdepartment} = "<option>\n";
 
@@ -147,8 +148,7 @@ sub report {
 	</tr>
 |;
 
-  # get projects
-  $form->all_projects(\%myconfig);
+  # projects
   if (@{ $form->{all_project} }) {
     $form->{selectproject} = "<option>\n";
     for (@{ $form->{all_project} }) { $form->{selectproject} .= qq|<option value="|.$form->quote($_->{projectnumber}).qq|--$_->{id}">$_->{projectnumber}\n| }
@@ -157,6 +157,18 @@ sub report {
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Project').qq|</th>
 	  <td colspan=3><select name=projectnumber>$form->{selectproject}</select></td>
+	</tr>|;
+
+  }
+  
+  if (@{ $form->{all_language} }) {
+    $form->{selectlanguage} = "\n";
+    for (@{ $form->{all_language} }) { $form->{selectlanguage} .= qq|$_->{code}--$_->{description}\n| }
+    
+    $lang = qq|
+	<tr>
+	  <th align=right nowrap>|.$locale->text('Language').qq|</th>
+	  <td colspan=3><select name=language_code>|.$form->select_option($form->{selectlanguage}, $myconfig{countrycode}, undef, 1).qq|</select></td>
 	</tr>|;
 
   }
@@ -219,7 +231,7 @@ sub report {
         $project
         <tr>
 	  <th align=right>|.$locale->text('From').qq|</th>
-	  <td colspan=3><input name=fromdate size=11 title="$myconfig{dateformat}" value=$form->{fromdate}> <b>|.$locale->text('To').qq|</b> <input name=todate size=11 title="$myconfig{dateformat}"></td>
+	  <td colspan=3><input name=fromdate size=11 class=date title="$myconfig{dateformat}" value=$form->{fromdate}> <b>|.$locale->text('To').qq|</b> <input name=todate size=11 class=date title="$myconfig{dateformat}"></td>
 	</tr>
 	$selectfrom
       </table>
@@ -243,7 +255,7 @@ sub report {
 	$project
 	<tr>
 	  <th align=right>|.$locale->text('From').qq|</th>
-	  <td colspan=3><input name=fromdate size=11 title="$myconfig{dateformat}" value=$form->{fromdate}> <b>|.$locale->text('To').qq|</b> <input name=todate size=11 title="$myconfig{dateformat}"></td>
+	  <td colspan=3><input name=fromdate size=11 class=date title="$myconfig{dateformat}" value=$form->{fromdate}> <b>|.$locale->text('To').qq|</b> <input name=todate size=11 class=date title="$myconfig{dateformat}"></td>
 	</tr>
 |;
 
@@ -270,7 +282,7 @@ sub report {
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('From').qq|</th>
-	  <td colspan=3><input name=comparefromdate size=11 title="$myconfig{dateformat}"> <b>|.$locale->text('To').qq|</b> <input name=comparetodate size=11 title="$myconfig{dateformat}"></td>
+	  <td colspan=3><input name=comparefromdate size=11 class=date title="$myconfig{dateformat}"> <b>|.$locale->text('To').qq|</b> <input name=comparetodate size=11 class=date title="$myconfig{dateformat}"></td>
 	</tr>
 |;
 
@@ -292,6 +304,7 @@ sub report {
 	  <th align=right>|.$locale->text('Decimalplaces').qq|</th>
 	  <td><input name=decimalplaces size=3 value=$form->{decimalplaces}></td>
 	</tr>
+	$lang
       </table>
     </td>
   </tr>
@@ -316,7 +329,7 @@ sub report {
     print qq|
 	<tr>
 	  <th align=right>|.$locale->text('as at').qq|</th>
-	  <td><input name=asofdate size=11 title="$myconfig{dateformat}" value=$form->{asofdate}></td>
+	  <td><input name=asofdate size=11 class=date title="$myconfig{dateformat}" value=$form->{asofdate}></td>
 |;
 
    if ($selectfrom) {
@@ -332,7 +345,7 @@ sub report {
 	</tr>
 
 	  <th align=right nowrap>|.$locale->text('Compare to').qq|</th>
-	  <td><input name=compareasofdate size=11 title="$myconfig{dateformat}"></td>
+	  <td><input name=compareasofdate size=11 class=date title="$myconfig{dateformat}"></td>
 	  <td>
 |;
 
@@ -351,6 +364,7 @@ sub report {
 	  <th align=right>|.$locale->text('Decimalplaces').qq|</th>
 	  <td><input name=decimalplaces size=3 value=$form->{precision}></td>
 	</tr>
+	$lang
       </table>
     </td>
   </tr>
@@ -375,9 +389,10 @@ sub report {
     print qq|
         <tr>
 	  <th align=right>|.$locale->text('From').qq|</th>
-	  <td colspan=3><input name=fromdate size=11 title="$myconfig{dateformat}" value=$form->{fromdate}> <b>|.$locale->text('To').qq|</b> <input name=todate size=11 title="$myconfig{dateformat}"></td>
+	  <td colspan=3><input name=fromdate size=11 class=date title="$myconfig{dateformat}" value=$form->{fromdate}> <b>|.$locale->text('To').qq|</b> <input name=todate size=11 class=date title="$myconfig{dateformat}"></td>
 	</tr>
 	$selectfrom
+	$lang
       </table>
     </td>
   </tr>
@@ -406,7 +421,7 @@ sub report {
     print qq|
 	<tr>
 	  <th align=right>|.$locale->text('From').qq|</th>
-	  <td colspan=3><input name=fromdate size=11 title="$myconfig{dateformat}" value=$form->{fromdate}> <b>|.$locale->text('To').qq|</b> <input name=todate size=11 title="$myconfig{dateformat}"></td>
+	  <td colspan=3><input name=fromdate size=11 class=date title="$myconfig{dateformat}" value=$form->{fromdate}> <b>|.$locale->text('To').qq|</b> <input name=todate size=11 class=date title="$myconfig{dateformat}"></td>
 	</tr>
 	$selectfrom
 	$summary
@@ -550,7 +565,7 @@ print qq|
 
 	<tr>
 	  <th align=right>|.$locale->text('From').qq|</th>
-	  <td colspan=3><input name=fromdate size=11 title="$myconfig{dateformat}" value=$form->{fromdate}> <b>|.$locale->text('To').qq|</b> <input name=todate size=11 title="$myconfig{dateformat}"></td>
+	  <td colspan=3><input name=fromdate size=11 class=date title="$myconfig{dateformat}" value=$form->{fromdate}> <b>|.$locale->text('To').qq|</b> <input name=todate size=11 class=date title="$myconfig{dateformat}"></td>
 	</tr>
 	$selectfrom
 	$summary
@@ -643,7 +658,7 @@ print qq|
         $vc
 	<tr>
 	  <th align=right>|.$locale->text('To').qq|</th>
-	  <td><input name=todate size=11 title="$myconfig{dateformat}"></td>
+	  <td><input name=todate size=11 class=date title="$myconfig{dateformat}"></td>
 	</tr>
 	$selectto
 	<input type=hidden name=action value="$form->{nextsub}">
@@ -767,7 +782,7 @@ print qq|
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('From').qq|</th>
-	  <td colspan=3><input name=fromdate size=11 title="$myconfig{dateformat}" value=$form->{fromdate}> <b>|.$locale->text('To').qq|</b> <input name=todate size=11 title="$myconfig{dateformat}"></td>
+	  <td colspan=3><input name=fromdate size=11 class=date title="$myconfig{dateformat}" value=$form->{fromdate}> <b>|.$locale->text('To').qq|</b> <input name=todate size=11 class=date title="$myconfig{dateformat}"></td>
 	</tr>
 	$selectfrom
 	<tr>
@@ -791,6 +806,7 @@ print qq|
     push @a, qq|<input name="l_memo" class=checkbox type=checkbox value=Y checked> |.$locale->text('Memo');
     
     while (@a) {
+      print qq|<tr>\n|;
       for (1 .. 5) {
 	print qq|<td nowrap>|. shift @a;
 	print qq|</td>\n|;

@@ -744,7 +744,7 @@ sub post_invoice {
 
       $amount = $fxlinetotal * $form->{exchangerate};
       my $linetotal = $form->round_amount($amount, $form->{precision});
-      $fxdiff += $amount - $linetotal;
+      $fxdiff += $form->round_amount($amount - $linetotal, 10);
 
       @taxaccounts = split / /, $form->{"taxaccounts_$i"};
 
@@ -1400,8 +1400,8 @@ sub reverse_invoice {
   return unless $id;
   
   # reverse inventory items
-  $query = qq|SELECT i.parts_id, p.inventory_accno_id, p.expense_accno_id,
-              i.qty, i.allocated, i.sellprice, i.project_id
+  $query = qq|SELECT i.parts_id, i.qty, i.allocated, i.sellprice, i.project_id,
+              p.inventory_accno_id, p.expense_accno_id, p.obsolete
               FROM invoice i
 	      JOIN parts p ON (p.id = i.parts_id)
 	      WHERE i.parts_id = p.id
@@ -1419,6 +1419,12 @@ sub reverse_invoice {
   
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     $netamount += $form->round_amount($ref->{sellprice} * $ref->{qty} * -1, $form->{precision});
+
+    if ($ref->{obsolete}) {
+      $query = qq|UPDATE parts SET obsolete = '0'
+                  WHERE id = $ref->{parts_id}|;
+      $dbh->do($query) || $form->dberror($query);
+    }
 
     if ($ref->{inventory_accno_id}) {
       # update onhand

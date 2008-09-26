@@ -935,9 +935,9 @@ sub receipts {
 	  <td colspan=3>
 	    <table>
 	      <tr>
-		<td><input name=fromdate size=11 title="$myconfig{dateformat}" value=$form->{fromdate}></td>
+		<td><input name=fromdate size=11 class=date title="$myconfig{dateformat}" value=$form->{fromdate}></td>
 		<th align=right>|.$locale->text('To').qq|</th>
-		<td><input name=todate size=11 title="$myconfig{dateformat}"></td>
+		<td><input name=todate size=11 class=date title="$myconfig{dateformat}"></td>
 	      </tr>
 	    </table>
 	  </td>

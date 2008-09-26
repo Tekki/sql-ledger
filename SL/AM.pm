@@ -641,9 +641,13 @@ sub paymentmethod {
   my %defaults = $form->get_defaults($dbh, \@{['precision']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
   
-  my $sortorder = ($form->{sort}) ? $form->{sort} : "rn";
+  $form->{sort} ||= "rn";
+ 
+  my @a = qw(description rn);
+  my %ordinal = ( description	=> 2,
+                  rn		=> 4 );
+  my $sortorder = $form->sort_order(\@a, \%ordinal);
   
-  $form->sort_order();
   my $query = qq|SELECT *
                  FROM paymentmethod
 		 ORDER BY $sortorder $form->{direction}|;
@@ -1170,10 +1174,11 @@ sub update_recurring {
 		 WHERE id = $id|;
   my ($nextdate, $repeat, $unit) = $dbh->selectrow_array($query);
   
-  my %advance = ( 'Pg' => "(date '$nextdate' + interval '$repeat $unit')",
-                  'DB2' => qq|(date ('$nextdate') + "$repeat $unit")|,
+  my %advance = ( 'Pg' => qq|(date '$nextdate' + interval '$repeat $unit')|,
+              'Sybase' => qq|dateadd($myconfig->{dateformat}, $repeat $unit, $nextdate)|,
+                 'DB2' => qq|(date ('$nextdate') + "$repeat $unit")|,
 		 );
-  for (qw(PgPP Oracle mySQL)) { $interval{$_} = $interval{Pg} }
+  for (qw(PgPP Oracle)) { $interval{$_} = $interval{Pg} }
 
   # check if it is the last date
   $query = qq|SELECT $advance{$myconfig->{dbdriver}} > enddate

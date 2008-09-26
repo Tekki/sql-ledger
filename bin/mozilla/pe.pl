@@ -273,9 +273,9 @@ sub job_header {
 	$name
 	<tr>
 	  <th align=right>|.$locale->text('Startdate').qq|</th>
-	  <td><input name=startdate size=11 title="($myconfig{dateformat})" value=$form->{startdate}></td>
+	  <td><input name=startdate size=11 class=date title="$myconfig{dateformat}" value=$form->{startdate}></td>
 	  <th align=right>|.$locale->text('Enddate').qq|</th>
-	  <td><input name=enddate size=11 title="($myconfig{dateformat})" value=$form->{enddate}></td>
+	  <td><input name=enddate size=11 class=date title="$myconfig{dateformat}" value=$form->{enddate}></td>
 	</tr>
 	$production
       </table>
@@ -312,7 +312,7 @@ sub job_header {
 		  <table>
 		    <tr>
 		      <th align="right" nowrap="true">|.$locale->text('Updated').qq|</th>
-		      <td><input name=priceupdate size=11 title="$myconfig{dateformat}" value=$form->{priceupdate}></td>
+		      <td><input name=priceupdate size=11 class=date title="$myconfig{dateformat}" value=$form->{priceupdate}></td>
 		    </tr>
 		    <tr>
 		      <th align="right" nowrap="true">|.$locale->text('List Price').qq|</th>
@@ -564,8 +564,8 @@ sub search {
     $fromto = qq|
  	<tr>
 	  <th align=right>|.$locale->text('Startdate').qq|</th>
-	  <td>|.$locale->text('From').qq| <input name=startdatefrom size=11 title="($myconfig{'dateformat'})">|.$locale->text('To').qq|
-	  <input name=startdateto size=11 title="($myconfig{'dateformat'})"></td>
+	  <td>|.$locale->text('From').qq| <input name=startdatefrom size=11 class=date title="$myconfig{'dateformat'}">|.$locale->text('To').qq|
+	  <input name=startdateto size=11 class=date title="$myconfig{'dateformat'}"></td>
 	</tr>
 |;
 
@@ -615,7 +615,7 @@ sub search {
     $fromto = qq|
         <tr>
 	  <th align=right nowrap>|.$locale->text('As of').qq|</th>
-	  <td><input name=stockingdate size=11 title="$myconfig{dateformat}"></td>
+	  <td><input name=stockingdate size=11 class=date title="$myconfig{dateformat}"></td>
 	</tr>
 |;
 
@@ -1010,9 +1010,9 @@ sub project_header {
 	  <td>
 	  <table>
 	    <tr>
-	      <td><input name=startdate size=11 title="($myconfig{dateformat})" value=$form->{startdate}></td>
+	      <td><input name=startdate size=11 class=date title="$myconfig{dateformat}" value=$form->{startdate}></td>
 	      <th align=right>|.$locale->text('Enddate').qq|</th>
-	      <td><input name=enddate size=11 title="($myconfig{dateformat})" value=$form->{enddate}></td>
+	      <td><input name=enddate size=11 class=date title="$myconfig{dateformat}" value=$form->{enddate}></td>
 	      </tr>
 	    </table>
 	  </td>
@@ -2153,8 +2153,8 @@ sub project_sales_order {
   $fromto = qq|
         <tr>
 	  <th align=right nowrap>|.$locale->text('Transaction Dates').qq|</th>
-	  <td>|.$locale->text('From').qq| <input name=transdatefrom size=11 title="$myconfig{dateformat}">
-	  |.$locale->text('To').qq| <input name=transdateto size=11 title="$myconfig{dateformat}"></td>
+	  <td>|.$locale->text('From').qq| <input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">
+	  |.$locale->text('To').qq| <input name=transdateto size=11 class=date title="$myconfig{dateformat}"></td>
 	</tr>
 	$selectfrom
 |;

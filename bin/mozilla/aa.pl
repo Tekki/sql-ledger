@@ -546,7 +546,7 @@ sub form_header {
 |;
   } else {
     $transdate = qq|
-		<td><input name=transdate size=11 title="($myconfig{'dateformat'})" value=$form->{transdate}></td>
+		<td><input name=transdate size=11 class=date title="$myconfig{dateformat}" value=$form->{transdate}></td>
 |;
   }
 
@@ -657,7 +657,7 @@ sub form_header {
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Due Date').qq|</th>
-		<td><input name=duedate size=11 title="($myconfig{'dateformat'})" value=$form->{duedate}></td>
+		<td><input name=duedate size=11 class=date title="$myconfig{dateformat}" value=$form->{duedate}></td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('PO Number').qq|</th>
@@ -815,7 +815,7 @@ sub form_header {
 
     $column_data{paid} = qq|<td align=center><input name="discount_paid" size=11 value=|.$form->format_amount(\%myconfig, $form->{"discount_paid"}, $form->{precision}).qq|></td>|;
     $column_data{ARAP_paid} = qq|<td align=center><select name="$form->{ARAP}_discount_paid">|.$form->select_option($form->{"select$form->{ARAP}_discount"}, $form->{"$form->{ARAP}_discount_paid"}).qq|</select></td>|;
-    $column_data{datepaid} = qq|<td align=center nowrap><input name="discount_datepaid" size=11 value=$form->{"discount_datepaid"}></td>|;
+    $column_data{datepaid} = qq|<td align=center nowrap><input name="discount_datepaid" size=11 class=date title="$myconfig{dateformat}" value=$form->{"discount_datepaid"}></td>|;
     $column_data{exchangerate} = qq|<td align=center>$exchangerate</td>|;
     $column_data{source} = qq|<td align=center><input name="discount_source" size=11 value="|.$form->quote($form->{"discount_source"}).qq|"></td>|;
     $column_data{memo} = qq|<td align=center><input name="discount_memo" size=11 value="|.$form->quote($form->{"discount_memo"}).qq|"></td>|;
@@ -924,7 +924,7 @@ sub form_header {
     $column_data{paid} = qq|<td align=center><input name="paid_$i" size=11 value=|.$form->format_amount(\%myconfig, $form->{"paid_$i"}, $form->{precision}).qq|></td>|;
     $column_data{ARAP_paid} = qq|<td align=center><select name="$form->{ARAP}_paid_$i">|.$form->select_option($form->{"select$form->{ARAP}_paid"}, $form->{"$form->{ARAP}_paid_$i"}).qq|</select></td>|;
     $column_data{exchangerate} = qq|<td align=center>$exchangerate</td>|;
-    $column_data{datepaid} = qq|<td align=center><input name="datepaid_$i" size=11 value=$form->{"datepaid_$i"}></td>|;
+    $column_data{datepaid} = qq|<td align=center><input name="datepaid_$i" size=11 class=date title="$myconfig{dateformat}" value=$form->{"datepaid_$i"}></td>|;
     $column_data{source} = qq|<td align=center><input name="source_$i" size=11 value="|.$form->quote($form->{"source_$i"}).qq|"></td>|;
     $column_data{memo} = qq|<td align=center><input name="memo_$i" size=11 value="|.$form->quote($form->{"memo_$i"}).qq|"></td>|;
     $column_data{paymentmethod} = qq|<td align=center><select name="paymentmethod_$i">|.$form->select_option($form->{"selectpaymentmethod"}, $form->{"paymentmethod_$i"}, 1).qq|</select></td>|;
@@ -1606,7 +1606,7 @@ sub search {
 	      $invnumber
 	      <tr>
 		<th align=right nowrap>|.$locale->text('From').qq|</th>
-		<td colspan=3><input name=transdatefrom size=11 title="$myconfig{dateformat}"> <b>|.$locale->text('To').qq|</b> <input name=transdateto size=11 title="$myconfig{dateformat}"></td>
+		<td colspan=3><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}"> <b>|.$locale->text('To').qq|</b> <input name=transdateto size=11 class=date title="$myconfig{dateformat}"></td>
 	      </tr>
 	      $selectfrom
 	    </table>
@@ -1651,6 +1651,7 @@ sub search {
   
 
   while (@a) {
+    print qq|<tr>\n|;
     for (1 .. 5) {
       print qq|<td nowrap>|. shift @a;
       print qq|</td>\n|;
@@ -1904,48 +1905,48 @@ sub transactions {
     $namefld = "vendornumber";
   }
   
-  $column_header{runningnumber} = qq|<th class=listheading>&nbsp;</th>|;
-  $column_header{id} = "<th><a class=listheading href=$href&sort=id>".$locale->text('ID')."</a></th>";
-  $column_header{transdate} = "<th><a class=listheading href=$href&sort=transdate>".$locale->text('Date')."</a></th>";
-  $column_header{duedate} = "<th><a class=listheading href=$href&sort=duedate>".$locale->text('Due Date')."</a></th>";
-  $column_header{invnumber} = "<th><a class=listheading href=$href&sort=invnumber>".$locale->text('Invoice')."</a></th>";
-  $column_header{ordnumber} = "<th><a class=listheading href=$href&sort=ordnumber>".$locale->text('Order')."</a></th>";
-  $column_header{ponumber} = "<th><a class=listheading href=$href&sort=ponumber>".$locale->text('PO Number')."</a></th>";
-  $column_header{name} = "<th><a class=listheading href=$href&sort=name>$name</a></th>";
-  $column_header{$namefld} = "<th><a class=listheading href=$href&sort=$namefld>$namenumber</a></th>";
-  $column_header{address} = "<th class=listheading>" . $locale->text('Address') . "</th>";
-  $column_header{netamount} = "<th class=listheading>" . $locale->text('Amount') . "</th>";
-  $column_header{tax} = "<th class=listheading>" . $locale->text('Tax') . "</th>";
-  $column_header{amount} = "<th class=listheading>" . $locale->text('Total') . "</th>";
-  $column_header{paid} = "<th class=listheading>" . $locale->text('Paid') . "</th>";
-  $column_header{paymentmethod} = "<th><a class=listheading href=$href&sort=paymentmethod>" . $locale->text('Payment Method') . "</a></th>";
-  $column_header{datepaid} = "<th><a class=listheading href=$href&sort=datepaid>" . $locale->text('Date Paid') . "</a></th>";
-  $column_header{due} = "<th class=listheading>" . $locale->text('Due') . "</th>";
-  $column_header{notes} = "<th class=listheading>".$locale->text('Notes')."</th>";
-  $column_header{employee} = "<th><a class=listheading href=$href&sort=employee>$employee</a></th>";
-  $column_header{manager} = "<th><a class=listheading href=$href&sort=manager>".$locale->text('Manager')."</a></th>";
-  $column_header{till} = "<th><a class=listheading href=$href&sort=till>".$locale->text('Till')."</a></th>";
+  $column_data{runningnumber} = qq|<th class=listheading>&nbsp;</th>|;
+  $column_data{id} = "<th><a class=listheading href=$href&sort=id>".$locale->text('ID')."</a></th>";
+  $column_data{transdate} = "<th><a class=listheading href=$href&sort=transdate>".$locale->text('Date')."</a></th>";
+  $column_data{duedate} = "<th><a class=listheading href=$href&sort=duedate>".$locale->text('Due Date')."</a></th>";
+  $column_data{invnumber} = "<th><a class=listheading href=$href&sort=invnumber>".$locale->text('Invoice')."</a></th>";
+  $column_data{ordnumber} = "<th><a class=listheading href=$href&sort=ordnumber>".$locale->text('Order')."</a></th>";
+  $column_data{ponumber} = "<th><a class=listheading href=$href&sort=ponumber>".$locale->text('PO Number')."</a></th>";
+  $column_data{name} = "<th><a class=listheading href=$href&sort=name>$name</a></th>";
+  $column_data{$namefld} = "<th><a class=listheading href=$href&sort=$namefld>$namenumber</a></th>";
+  $column_data{address} = "<th class=listheading>" . $locale->text('Address') . "</th>";
+  $column_data{netamount} = "<th class=listheading>" . $locale->text('Amount') . "</th>";
+  $column_data{tax} = "<th class=listheading>" . $locale->text('Tax') . "</th>";
+  $column_data{amount} = "<th class=listheading>" . $locale->text('Total') . "</th>";
+  $column_data{paid} = "<th class=listheading>" . $locale->text('Paid') . "</th>";
+  $column_data{paymentmethod} = "<th><a class=listheading href=$href&sort=paymentmethod>" . $locale->text('Payment Method') . "</a></th>";
+  $column_data{datepaid} = "<th><a class=listheading href=$href&sort=datepaid>" . $locale->text('Date Paid') . "</a></th>";
+  $column_data{due} = "<th class=listheading>" . $locale->text('Due') . "</th>";
+  $column_data{notes} = "<th class=listheading>".$locale->text('Notes')."</th>";
+  $column_data{employee} = "<th><a class=listheading href=$href&sort=employee>$employee</a></th>";
+  $column_data{manager} = "<th><a class=listheading href=$href&sort=manager>".$locale->text('Manager')."</a></th>";
+  $column_data{till} = "<th><a class=listheading href=$href&sort=till>".$locale->text('Till')."</a></th>";
   
-  $column_header{warehouse} = qq|<th><a class=listheading href=$href&sort=warehouse>|.$locale->text('Warehouse').qq|</a></th>|;
+  $column_data{warehouse} = qq|<th><a class=listheading href=$href&sort=warehouse>|.$locale->text('Warehouse').qq|</a></th>|;
   
-  $column_header{shippingpoint} = "<th><a class=listheading href=$href&sort=shippingpoint>" . $locale->text('Shipping Point') . "</a></th>";
-  $column_header{shipvia} = "<th><a class=listheading href=$href&sort=shipvia>" . $locale->text('Ship via') . "</a></th>";
-  $column_header{waybill} = "<th><a class=listheading href=$href&sort=waybill>" . $locale->text('Waybill') . "</a></th>";
-  $column_header{dcn} = "<th><a class=listheading href=$href&sort=dcn>" . $locale->text('DCN') . "</a></th>";
-  $column_header{paymentdiff} = "<th><a class=listheading href=$href&sort=paymentdiff>" . $locale->text('+/-') . "</a></th>";
+  $column_data{shippingpoint} = "<th><a class=listheading href=$href&sort=shippingpoint>" . $locale->text('Shipping Point') . "</a></th>";
+  $column_data{shipvia} = "<th><a class=listheading href=$href&sort=shipvia>" . $locale->text('Ship via') . "</a></th>";
+  $column_data{waybill} = "<th><a class=listheading href=$href&sort=waybill>" . $locale->text('Waybill') . "</a></th>";
+  $column_data{dcn} = "<th><a class=listheading href=$href&sort=dcn>" . $locale->text('DCN') . "</a></th>";
+  $column_data{paymentdiff} = "<th><a class=listheading href=$href&sort=paymentdiff>" . $locale->text('+/-') . "</a></th>";
 
-  $column_header{curr} = "<th><a class=listheading href=$href&sort=curr>" . $locale->text('Curr') . "</a></th>";
-  for (qw(amount tax netamount paid due)) { $column_header{"fx_$_"} = "<th>&nbsp;</th>" }
+  $column_data{curr} = "<th><a class=listheading href=$href&sort=curr>" . $locale->text('Curr') . "</a></th>";
+  for (qw(amount tax netamount paid due)) { $column_data{"fx_$_"} = "<th>&nbsp;</th>" }
 
-  $column_header{department} = "<th><a class=listheading href=$href&sort=department>" . $locale->text('Department') . "</a></th>";
+  $column_data{department} = "<th><a class=listheading href=$href&sort=department>" . $locale->text('Department') . "</a></th>";
   
-  $column_header{accno} = "<th><a class=listheading href=$href&sort=accno>" . $locale->text('Account') . "</a></th>";
-  $column_header{source} = "<th><a class=listheading href=$href&sort=source>" . $locale->text('Source') . "</a></th>";
-  $column_header{debit} = "<th class=listheading>" . $locale->text('Debit') . "</th>";
-  $column_header{credit} = "<th class=listheading>" . $locale->text('Credit') . "</th>";
-  $column_header{projectnumber} = "<th><a class=listheading href=$href&sort=projectnumber>" . $locale->text('Project') . "</a></th>";
-  $column_header{description} = "<th><a class=listheading href=$href&sort=description>" . $locale->text('Description') . "</a></th>";
-  $column_header{memo} = "<th class=listheading>" . $locale->text('Line Item') . "</th>";
+  $column_data{accno} = "<th><a class=listheading href=$href&sort=accno>" . $locale->text('Account') . "</a></th>";
+  $column_data{source} = "<th><a class=listheading href=$href&sort=source>" . $locale->text('Source') . "</a></th>";
+  $column_data{debit} = "<th class=listheading>" . $locale->text('Debit') . "</th>";
+  $column_data{credit} = "<th class=listheading>" . $locale->text('Credit') . "</th>";
+  $column_data{projectnumber} = "<th><a class=listheading href=$href&sort=projectnumber>" . $locale->text('Project') . "</a></th>";
+  $column_data{description} = "<th><a class=listheading href=$href&sort=description>" . $locale->text('Description') . "</a></th>";
+  $column_data{memo} = "<th class=listheading>" . $locale->text('Line Item') . "</th>";
 
   $form->{title} = ($form->{title}) ? $form->{title} : $locale->text('AR Transactions');
 
@@ -1970,7 +1971,7 @@ sub transactions {
 	<tr class=listheading>
 |;
 
-  for (@column_index) { print "\n$column_header{$_}" }
+  for (@column_index) { print "\n$column_data{$_}" }
 
   print qq|
 	</tr>

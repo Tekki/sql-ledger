@@ -90,20 +90,9 @@ sub retrieve_card {
   $form->create_lock($myconfig, $dbh, $form->{id}, 'jcitems');
   
   JC->jcitems_links($myconfig, $form, $dbh);
- 
-  # get language codes
-  $query = qq|SELECT *
-              FROM language
-	      ORDER BY 2|;
-  $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
 
-  $form->{all_language} = ();
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-    push @{ $form->{all_language} }, $ref;
-  }
-  $sth->finish;
-  
+  $form->all_languages($myconfig, $dbh);
+
   $dbh->disconnect;
 
 }
@@ -381,6 +370,15 @@ sub jcitems {
     ($null, $var) = split /--/, $form->{employee};
     $where .= " AND j.employee_id = $var";
   }
+  if ($form->{description}) {
+    $var = $form->like(lc $form->{description});
+    $where .= " AND lower(j.description) LIKE '$var'";
+  }
+  if ($form->{notes}) {
+    $var = $form->like(lc $form->{notes});
+    $where .= " AND lower(j.notes) LIKE '$var'";
+  }
+
   if ($form->{open} || $form->{closed}) {
     unless ($form->{open} && $form->{closed}) {
       $where .= " AND j.qty != j.allocated" if $form->{open};

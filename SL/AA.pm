@@ -120,7 +120,7 @@ sub post_transaction {
 	$amount = ($fxinvamount) ? $fxtax * $amount{fxamount}{$i} / $fxinvamount : 0;
 	$taxamount = $form->round_amount($amount - $fxdiff, $form->{precision});
 	$amount{fxamount}{$i} -= $taxamount;
-	$fxdiff = $taxamount - ($amount - $fxdiff);
+	$fxdiff = $form->round_amount($taxamount - ($amount - $fxdiff), 10);
       }
 	
       # multiply by exchangerate
@@ -1025,6 +1025,13 @@ sub get_name {
   
   if ($myconfig->{dbdriver} eq 'DB2') {
     $duedate = ($form->{transdate}) ? "date('$form->{transdate}') + c.terms DAYS" : "current_date + c.terms DAYS";
+  } elsif ($myconfig->{dbdriver} eq 'mssql') {
+    if ($form->{transdate}) {
+      my $transdate = $form->datetonum($myconfig, $form->{transdate});
+      $duedate = "date_add('$transdate', interval c.terms DAY)";
+    } else {
+      $duedate = "date_add(current_date, interval c.terms DAY)";
+    }
   } else {
     $duedate = ($form->{transdate}) ? "to_date('$form->{transdate}', '$dateformat') + c.terms" : "current_date + c.terms";
   }

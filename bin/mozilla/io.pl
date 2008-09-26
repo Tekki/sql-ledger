@@ -230,7 +230,7 @@ function CheckAll(v) {
     $delivery = qq|
           <td colspan=2 nowrap>
 	  <b>${$delvar}</b>
-	  <input name="${delvar}_$i" size=11 title="$myconfig{dateformat}" value="$form->{"${delvar}_$i"}"></td>
+	  <input name="${delvar}_$i" size=11 class=date title="$myconfig{dateformat}" value="$form->{"${delvar}_$i"}"></td>
 |;
 
     $zero = ($numrows == $i) ? "" : "0";
@@ -770,7 +770,7 @@ sub check_form {
     
     for (qw(rop stock markup)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
    
-    @flds = qw(id qty unit bom adj partnumber description sellprice listprice lastcost weight assembly runningnumber partsgroup);
+    @flds = qw(id qty unit bom adj partnumber description sellprice listprice lastcost weight assembly runningnumber);
     $count = 0;
     @a = ();
     
@@ -976,7 +976,12 @@ sub validate_items {
 
 
 sub purchase_order {
-  
+
+  if ($form->{type} eq 'request_quotation') {
+    $form->{closed} = 1;
+    OE->save(\%myconfig, \%$form);
+  }
+
   $form->{title} = $locale->text('Add Purchase Order');
   $form->{vc} = 'vendor';
   $form->{type} = 'purchase_order';
@@ -989,6 +994,11 @@ sub purchase_order {
 
  
 sub sales_order {
+  
+  if ($form->{type} eq 'sales_quotation') {
+    $form->{closed} = 1;
+    OE->save(\%myconfig, \%$form);
+  }
 
   $form->{title} = $locale->text('Add Sales Order');
   $form->{vc} = 'customer';
@@ -1003,6 +1013,11 @@ sub sales_order {
 
 sub rfq {
   
+  if ($form->{type} eq 'purchase_order') {
+    $form->{closed} = 1;
+    OE->save(\%myconfig, \%$form);
+  }
+ 
   $form->{title} = $locale->text('Add Request for Quotation');
   $form->{vc} = 'vendor';
   $form->{type} = 'request_quotation';
@@ -1015,7 +1030,12 @@ sub rfq {
 
 
 sub quotation {
-
+  
+  if ($form->{type} eq 'sales_order') {
+    $form->{closed} = 1;
+    OE->save(\%myconfig, \%$form);
+  }
+ 
   $form->{title} = $locale->text('Add Quotation');
   $form->{vc} = 'customer';
   $form->{type} = 'sales_quotation';

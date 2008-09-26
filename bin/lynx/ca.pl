@@ -205,9 +205,9 @@ sub list {
         $department
 	<tr>
 	  <th align=right>|.$locale->text('From').qq|</th>
-	  <td><input name=fromdate size=11 title="$myconfig{dateformat}"></td>
+	  <td><input name=fromdate size=11 class=date title="$myconfig{dateformat}"></td>
 	  <th align=right>|.$locale->text('To').qq|</th>
-	  <td><input name=todate size=11 title="$myconfig{dateformat}"></td>
+	  <td><input name=todate size=11 class=date title="$myconfig{dateformat}"></td>
 	</tr>
 	$selectfrom
 	<tr>

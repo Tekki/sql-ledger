@@ -226,18 +226,12 @@ PREPARE YOUR SQL DATABASE SERVER:
   
   # su postgres
   $ createuser -d sql-ledger
-  Shall the new user be allowed to create databases? (y/n) y
   Shall the new user be allowed to create more new users? (y/n) n
   
   if you use passwords to access postgres use this command
   $ createuser -d -P sql-ledger
 
-  Install PL/PGSQL in template1 if it has not been installed yet
 
-  # su postgres
-  $ createlang plpgsql template1
-  
-  
 SET UP A DATABASE AND TABLES:
 -----------------------------
 Load your web browser and connect to

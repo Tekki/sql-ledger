@@ -1172,7 +1172,7 @@ sub description_translations {
   }
   $sth->finish;
 
-  &get_language("", $dbh, $form) if $form->{id};
+  $form->all_languages($myconfig, $dbh) if $form->{id};
 
   $dbh->disconnect;
 
@@ -1230,7 +1230,7 @@ sub partsgroup_translations {
   }
   $sth->finish;
 
-  &get_language("", $dbh, $form) if $form->{id};
+  $form->all_languages($myconfig, $dbh) if $form->{id};
 
   $dbh->disconnect;
 
@@ -1297,7 +1297,7 @@ sub project_translations {
   }
   $sth->finish;
 
-  &get_language("", $dbh, $form) if $form->{id};
+  $form->all_languages($myconfig, $dbh) if $form->{id};
 
   $dbh->disconnect;
 
@@ -1364,29 +1364,12 @@ sub chart_translations {
   }
   $sth->finish;
 
-  &get_language("", $dbh, $form) if $form->{id};
+  $form->all_languages($myconfig, $dbh) if $form->{id};
 
   $dbh->disconnect;
 
 }
 
-
-sub get_language {
-  my ($self, $dbh, $form) = @_;
-  
-  # get language
-  my $query = qq|SELECT *
-	         FROM language
-	         ORDER BY 2|;
-  my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
-
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
-    push @{ $form->{all_language} }, $ref;
-  }
-  $sth->finish;
-
-}
 
 
 sub save_translation {

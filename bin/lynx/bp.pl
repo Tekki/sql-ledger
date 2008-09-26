@@ -271,9 +271,9 @@ sub search {
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('From').qq|</th>
-	  <td><input name=transdatefrom size=11 title="$myconfig{dateformat}">
+	  <td><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">
 	  <b>|.$locale->text('To').qq|</b>
-	  <input name=transdateto size=11 title="$myconfig{dateformat}"></td>
+	  <input name=transdateto size=11 class=date title="$myconfig{dateformat}"></td>
 	</tr>
 	$selectfrom
 	$paymentmethod

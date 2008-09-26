@@ -33,7 +33,7 @@ sub import {
   
   $form->header;
 
-  $form->{nextsub} = "display_$form->{type}";
+  $form->{nextsub} = "im_$form->{type}";
   $form->{action} = "continue";
 
   if ($form->{type} eq 'payment') {
@@ -131,7 +131,165 @@ print qq|
 }
 
 
-sub display_sales_invoice {
+sub export {
+
+  %title = ( payment => 'Payments'
+	   );
+
+# $locale->text('Export Payments')
+
+  $form->{file} ||= time;
+
+  $msg = "Export $title{$form->{type}}";
+  $form->{title} = $locale->text($msg);
+  
+  $form->header;
+
+  $form->{nextsub} = "ex_$form->{type}";
+  $form->{action} = "continue";
+
+  if ($form->{type} eq 'payment') {
+    IM->paymentaccounts(\%myconfig, \%$form);
+    if (@{ $form->{all_paymentaccount} }) {
+      @curr = split /:/, $form->{currencies};
+      $form->{defaultcurrency} = $curr[0];
+      chomp $form->{defaultcurrency};
+
+      for (@curr) { $form->{selectcurrency} .= "$_\n" }
+      
+      $form->{selectpaymentaccount} = "";
+      for (@{ $form->{all_paymentaccount} }) { $form->{selectpaymentaccount} .= qq|$_->{accno}--$_->{description}\n| }
+	
+      if (@{ $form->{all_paymentmethod} }) {
+	$form->{selectpaymentmethod} = "\n";
+	for (@{ $form->{all_paymentmethod} }) { $form->{selectpaymentmethod} .= qq|$_->{description}--$_->{id}\n| }
+      }
+
+      $paymentaccount = qq|
+         <tr>
+	  <th align=right>|.$locale->text('Account').qq|</th>
+	  <td>
+	    <select name=paymentaccount>|.$form->select_option($form->{selectpaymentaccount})
+	    .qq|</select>
+	  </td>
+	</tr>
+	<tr>
+	  <th align=right nowrap>|.$locale->text('Currency').qq|</th>
+	  <td><select name=currency>|
+	  .$form->select_option($form->{selectcurrency}, $form->{currency})
+	  .qq|</select></td>
+	</tr>
+|;
+
+      if ($form->{selectpaymentmethod}) {
+	$paymentaccount .= qq|
+	<tr>
+	  <th align=right nowrap>|.$locale->text('Payment Method').qq|</th>
+	  <td><select name=paymentmethod>|
+	  .$form->select_option($form->{selectpaymentmethod}, $form->{paymentmethod}, 1)
+	  .qq|</select></td>
+	</tr>
+|;
+      }
+    }
+  }
+
+  @a = ();
+  push @a, qq|<input name="l_invnumber" class=checkbox type=checkbox value=Y checked> |.$locale->text('Invoice Number');
+  push @a, qq|<input name="l_description" class=checkbox type=checkbox value=Y> |.$locale->text('Description');
+  push @a, qq|<input name="l_dcn" class=checkbox type=checkbox value=Y checked> |.$locale->text('DCN');
+  push @a, qq|<input name="l_name" class=checkbox type=checkbox value=Y checked> |.$locale->text('Company Name');
+  push @a, qq|<input name="l_companynumber" class=checkbox type=checkbox value=Y> |.$locale->text('Company Number');
+  push @a, qq|<input name="l_datepaid" class=checkbox type=checkbox value=Y checked> |.$locale->text('Date Paid');
+  push @a, qq|<input name="l_amount" class=checkbox type=checkbox value=Y checked> |.$locale->text('Amount');
+  push @a, qq|<input name="l_curr" class=checkbox type=checkbox value=Y> |.$locale->text('Currency');
+  push @a, qq|<input name="l_paymentmethod" class=checkbox type=checkbox value=Y> |.$locale->text('Payment Method');
+  push @a, qq|<input name="l_source" class=checkbox type=checkbox value=Y checked> |.$locale->text('Source');
+  push @a, qq|<input name="l_memo" class=checkbox type=checkbox value=Y> |.$locale->text('Memo');
+  
+  
+print qq|
+<body>
+
+<form method=post action=$form->{script}>
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$form->{title}</th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>
+      <table>
+        $paymentaccount
+        <tr>
+	  <th align=right>|.$locale->text('Filename').qq|</th>
+	  <td>
+	    <input name=file size=20 value="$form->{file}">
+	  </td>
+	</tr>
+	<tr valign=top>
+	  <th align=right>|.$locale->text('Type of File').qq|</th>
+	  <td>
+	    <table>
+	      <tr>
+	        <td><input name=filetype type=radio class=radio value=CSV checked>&nbsp;|.$locale->text('CSV').qq|</td>
+		<td width=20></td>
+		<th align=right>|.$locale->text('Delimiter').qq|</th>
+		<td><input name=delimiter size=2 value=","></td>
+	      </tr>
+	      <tr>
+		<th align=right colspan=2>|.$locale->text('Tab delimited file').qq|</th>
+		<td align=left><input name=tabdelimited type=checkbox class=checkbox></td>
+		<th align=right>|.$locale->text('Include Header').qq|</th>
+		<td align=left><input name=includeheader type=checkbox class=checkbox checked></td>
+	      </tr>
+
+	    </table>
+	  </td>
+	</tr>
+	<tr>
+	  <th align=right>|.$locale->text('Include in Report').qq|</th>
+	  <td>
+	    <table>
+|;
+  while (@a) {
+    print qq|<tr>\n|;
+    for (1 .. 5) {
+      print qq|<td nowrap>|. shift @a;
+      print qq|</td>\n|;
+    }
+    print qq|</tr>\n|;
+  }
+
+  print qq|
+            </table>
+	  </td>
+	</tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td><hr size=3 noshade></td>
+  </tr>
+
+</table>
+|;
+
+  $form->hide_form(qw(defaultcurrency title type action nextsub login path));
+
+  print qq|
+<input name=action class=submit type=submit value="|.$locale->text('Continue').qq|">
+</form>
+
+</body>
+</html>
+|;
+
+}
+
+
+sub im_sales_invoice {
 
   $form->error($locale->text('Import File missing!')) if ! $form->{data};
 
@@ -412,7 +570,7 @@ sub import_sales_invoices {
 }
 
 
-sub display_payment {
+sub im_payment {
 
   $form->error($locale->text('Import File missing!')) if ! $form->{data};
 
@@ -518,7 +676,7 @@ sub display_payment {
   
   $form->{paymentaccount} =~ s/--.*//;
 
-  $form->hide_form(qw(rowcount type paymentaccount currency defaultcurrency login path callback));
+  $form->hide_form(qw(precision rowcount type paymentaccount currency defaultcurrency login path callback));
 
   print qq|
 <input name=action class=submit type=submit value="|.$locale->text('Import Payments').qq|">
@@ -532,8 +690,6 @@ sub display_payment {
 
 
 sub import_payments {
-
-$form->{precision} = 2;
 
   my $m = 0;
 
@@ -569,6 +725,225 @@ $form->{precision} = 2;
     }
   }
 
+}
+
+
+sub ex_payment {
+
+  %columns = ( invnumber => { ndx => 1 },
+               description => { ndx => 2 },
+	       dcn => { ndx => 3 },
+	       name => { ndx => 4 },
+	       companynumber => { ndx => 5 },
+	       datepaid => { ndx => 6 },
+	       amount => { ndx => 7, numeric => 1 },
+	       curr => { ndx => 8 },
+	       paymentmethod => { ndx => 9 },
+	       source => { ndx => 10 },
+	       memo => { ndx => 11 }
+	     );
+  
+  @column_index = qw(runningnumber ndx);
+  $form->{column_index} = "";
+ 
+  for (sort { $columns{$a}->{ndx} <=> $columns{$b}->{ndx} } keys %columns) {
+    push @flds, $_;
+    if ($form->{"l_$_"} eq "Y") {
+      push @column_index, $_;
+      $form->{column_index} .= "$_=$columns{$_}->{numeric},";
+    }
+  }
+  chop $form->{column_index};
+  
+  push @flds, "id";
+
+ 
+  $form->{callback} = "$form->{script}?action=export";
+  for (qw(type login path)) { $form->{callback} .= "&$_=$form->{$_}" }
+  
+  &xrefhdr;
+  
+  IM->unreconciled_payments(\%myconfig, \%$form);
+
+  $column_data{runningnumber} = "&nbsp;";
+  $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
+  
+  $column_data{datepaid} = $locale->text('Date Paid');
+  $column_data{invnumber} = $locale->text('Invoice');
+  $column_data{description} = $locale->text('Description');
+  $column_data{name} = $locale->text('Company');
+  $column_data{companynumber} = $locale->text('Company Number');
+  $column_data{city} = $locale->text('City');
+  $column_data{dcn} = $locale->text('DCN');
+  $column_data{amount} = $locale->text('Paid');
+  $column_data{paymentmethod} = $locale->text('Payment Method');
+  $column_data{source} = $locale->text('Source');
+  $column_data{memo} = $locale->text('Memo');
+  $column_data{curr} = $locale->text('Curr');
+
+  $form->header;
+ 
+  print qq|
+<script language="JavaScript">
+<!--
+
+function CheckAll() {
+
+  var frm = document.forms[0]
+  var el = frm.elements
+  var re = /ndx_/;
+
+  for (i = 0; i < el.length; i++) {
+    if (el[i].type == 'checkbox' && re.test(el[i].name)) {
+      el[i].checked = frm.allbox.checked
+    }
+  }
+}
+
+// -->
+</script>
+
+<body>
+
+<form method=post action=$form->{script}>
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$form->{title}</th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>
+      <table width=100%>
+        <tr class=listheading>
+|;
+
+  for (@column_index) { print "\n<th>$column_data{$_}</th>" }
+
+  print qq|
+        </tr>
+|;
+
+  $i = 0;
+  foreach $ref (@{ $form->{TR} }) {
+    
+    $j++; $j %= 2;
+ 
+    print qq|
+      <tr class=listrow$j>
+|;
+
+    $i++;
+    
+    $total += $ref->{amount};
+    
+    for (@column_index) { $column_data{$_} = qq|<td>$ref->{$_}</td>| }
+    $column_data{amount} = qq|<td align=right>|.$form->format_amount(\%myconfig, $ref->{amount}, $form->{precision}).qq|</td>|;
+
+    $column_data{runningnumber} = qq|<td align=right>$i</td>|;
+    
+    $column_data{ndx} = qq|<td><input name="ndx_$i" type=checkbox class=checkbox checked></td>|;
+
+    for (@column_index) { print $column_data{$_} }
+
+    print qq|
+	</tr>
+|;
+
+    for (@flds) { $form->{"${_}_$i"} = $ref->{$_} };
+    $form->hide_form(map { "${_}_$i" } @flds);
+    
+  }
+
+  $form->{rowcount} = $i;
+
+  # print total
+  for (@column_index) { $column_data{$_} = qq|<td>&nbsp;</td>| }
+  $column_data{amount} = qq|<th class=listtotal align=right>|.$form->format_amount(\%myconfig, $total, $form->{precision}, "&nbsp;")."</th>";
+
+  print qq|
+        <tr class=listtotal>
+|;
+
+  for (@column_index) { print "\n$column_data{$_}" }
+  
+  print qq|
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td><hr size=3 noshade></td>
+  </tr>
+
+</table>
+|;
+  
+  $form->hide_form(qw(column_index rowcount file filetype delimiter tabdelimited includeheader type paymentaccount paymentmethod currency defaultcurrency login path callback));
+
+  print qq|
+<input name=action class=submit type=submit value="|.$locale->text('Export Payments').qq|">
+</form>
+
+</body>
+</html>
+|;
+
+}
+
+
+sub export_payments {
+
+  open(OUT, ">-") or $form->error("STDOUT : $!");
+  
+  binmode(OUT);
+  
+  print qq|Content-Type: application/file;
+Content-Disposition: attachment; filename="$form->{file}.$form->{filetype}"\n\n|;
+
+  @column_index = split /,/, $form->{column_index};
+  for (@column_index) {
+    ($f, $n) = split /=/, $_;
+    $column_index{$f} = $n;
+  }
+  @column_index = grep { s/=.*// } @column_index;
+
+  if ($form->{tabdelimited}) {
+    $form->{delimiter} = "\t";
+    for (@column_index) { $column_index{$_} = 1 }
+  }
+
+  # print header
+  $line = "";
+  if ($form->{includeheader}) {
+    for (@column_index) {
+      if ($form->{tabdelimited}) {
+	$line .= qq|$_$form->{delimiter}|;
+      } else {
+	$line .= qq|"$_"$form->{delimiter}|;
+      }
+    }
+    chop $line;
+    print OUT "$line\n";
+  }
+  
+  for $i (1 .. $form->{rowcount}) {
+    $line = "";
+    if ($form->{"ndx_$i"}) {
+      for (@column_index) {
+	if ($column_index{$_}) {
+	  $line .= qq|$form->{"${_}_$i"}$form->{delimiter}|;
+	} else {
+	  $line .= qq|"$form->{"${_}_$i"}"$form->{delimiter}|;
+	}
+      }
+      chop $line;
+      print OUT "$line\n";
+    }
+  }
+  
+  close(OUT);
+  
 }
 
 

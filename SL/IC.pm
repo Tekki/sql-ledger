@@ -189,29 +189,40 @@ sub get_part {
 sub save {
   my ($self, $myconfig, $form) = @_;
 
-  ($form->{inventory_accno}) = split(/--/, $form->{IC_inventory});
-  ($form->{expense_accno}) = split(/--/, $form->{IC_expense});
-  ($form->{income_accno}) = split(/--/, $form->{IC_income});
-
   # connect to database, turn off AutoCommit
   my $dbh = $form->dbconnect_noauto($myconfig);
-
-  # save the part
-  # make up a unique handle and store in partnumber field
-  # then retrieve the record based on the unique handle to get the id
-  # replace the partnumber field with the actual variable
-  # add records for makemodel
-
-  # if there is a $form->{id} then replace the old entry
-  # delete all makemodel entries and add the new ones
 
   # undo amount formatting
   for (qw(rop weight listprice sellprice lastcost stock)) { $form->{$_} = $form->parse_amount($myconfig, $form->{$_}) }
   
-  $form->{makemodel} = (($form->{make_1}) || ($form->{model_1})) ? 1 : 0;
+  $form->{assembly} = $form->{item} eq 'assembly';
+  for (qw(alternate obsolete onhand assembly)) { $form->{$_} *= 1 }
+  
+  if ($form->{id} && $form->{changeup}) {
+    my $stock = new Form;
+    $stock->{rowcount} = 1;
+    $stock->{qty_1} = $form->{onhand} * -1;
+    $stock->{id_1} = $form->{id};
 
-  $form->{assembly} = ($form->{item} eq 'assembly') ? 1 : 0;
-  for (qw(alternate obsolete onhand)) { $form->{$_} *= 1 }
+    if ($form->{assembly}) {
+      IC->restock_assemblies($myconfig, $stock, $dbh);
+      
+      $query = qq|UPDATE parts SET obsolete = '1'
+		  WHERE id = $form->{id}|;
+      $dbh->do($query) || $form->dberror($query);
+    }
+
+    $form->{stock} = $form->{onhand};
+    $form->{onhand} = 0;
+    $form->{id} = 0;
+
+  }
+  
+  ($form->{inventory_accno}) = split(/--/, $form->{IC_inventory});
+  ($form->{expense_accno}) = split(/--/, $form->{IC_expense});
+  ($form->{income_accno}) = split(/--/, $form->{IC_income});
+
+  $form->{makemodel} = (($form->{make_1}) || ($form->{model_1})) ? 1 : 0;
   
   my $query;
   my $sth;
@@ -429,7 +440,6 @@ sub save {
 
   # add vendors
   if ($form->{item} ne 'assembly') {
-    $updparts{$form->{id}} = 1;
     
     for $i (1 .. $form->{vendor_rows}) {
       if (($form->{"vendor_$i"} ne "") && $form->{"lastcost_$i"}) {
@@ -644,10 +654,15 @@ sub retrieve_assemblies {
 
 
 sub restock_assemblies {
-  my ($self, $myconfig, $form) = @_;
+  my ($self, $myconfig, $form, $dbh) = @_;
 
+  my $disconnect;
+  
   # connect to database
-  my $dbh = $form->dbconnect_noauto($myconfig);
+  if ($dbh) {
+    $dbh = $form->dbconnect_noauto($myconfig);
+    $disconnect = 1;
+  }
    
   for my $i (1 .. $form->{rowcount}) {
 
@@ -659,8 +674,12 @@ sub restock_assemblies {
  
   }
 
-  my $rc = $dbh->commit;
-  $dbh->disconnect;
+  my $rc;
+
+  if ($disconnect) {
+    $rc = $dbh->commit;
+    $dbh->disconnect;
+  }
 
   $rc;
 
@@ -863,7 +882,7 @@ sub all_parts {
   if ($form->{searchitems} eq 'part') {
     $where .= " AND p.inventory_accno_id > 0 AND p.income_accno_id > 0";
   }
-  if ($form->{searchitems} eq 'assembly') {
+  if ($form->{searchitems} =~ /assembly/) {
     $form->{bought} = "";
     $where .= " AND p.assembly = '1'";
   }
@@ -1309,7 +1328,7 @@ sub all_parts {
   @a = ();
   
   # include individual items for assembly
-  if (($form->{searchitems} eq 'assembly') && $form->{individual}) {
+  if (($form->{searchitems} =~ /assembly/) && $form->{individual}) {
 
     if ($form->{sold} || $form->{ordered} || $form->{quoted}) {
       $flds = qq|p.id, p.partnumber, p.description, p.onhand AS perassembly, p.unit,

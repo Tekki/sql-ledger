@@ -355,23 +355,15 @@ sub save {
       }
       $project_id = $form->{"project_id_$i"} if $form->{"project_id_$i"};
       
-      $orderitems_id = $form->{"orderitems_id_$i"} * 1;
       # add/save detail record in orderitems table
-      if ($orderitems_id) {
-	$query = qq|INSERT INTO orderitems (id, trans_id, parts_id)
-	            VALUES ($orderitems_id, $form->{id}, $form->{"id_$i"})|;
-	$dbh->do($query) || $form->dberror($query);
+      $query = qq|INSERT INTO orderitems (description, trans_id, parts_id)
+		  VALUES ('$uid', $form->{id}, $form->{"id_$i"})|;
+      $dbh->do($query) || $form->dberror($query);
 
-      } else {
-	$query = qq|INSERT INTO orderitems (description, trans_id, parts_id)
-	            VALUES ('$uid', $form->{id}, $form->{"id_$i"})|;
-	$dbh->do($query) || $form->dberror($query);
-
-	$query = qq|SELECT id
-	            FROM orderitems
-		    WHERE description = '$uid'|;
-        ($orderitems_id) = $dbh->selectrow_array($query);
-      }
+      $query = qq|SELECT id
+		  FROM orderitems
+		  WHERE description = '$uid'|;
+      ($form->{"orderitems_id_$i"}) = $dbh->selectrow_array($query);
 
       $lineitemdetail = ($form->{"lineitemdetail_$i"}) ? 1 : 0;
       
@@ -387,7 +379,8 @@ sub save {
 		  serialnumber = |.$dbh->quote($form->{"serialnumber_$i"}).qq|,
 		  itemnotes = |.$dbh->quote($form->{"itemnotes_$i"}).qq|,
 		  lineitemdetail = '$lineitemdetail'
-		  WHERE id = $orderitems_id AND trans_id = $form->{id}|;
+		  WHERE id = $form->{"orderitems_id_$i"}
+		  AND trans_id = $form->{id}|;
       $dbh->do($query) || $form->dberror($query);
 
       $form->{"sellprice_$i"} = $fxsellprice;
@@ -400,7 +393,7 @@ sub save {
       }
       if ($ok) {
 	$query = qq|INSERT INTO cargo (id, trans_id, package, netweight,
-	            grossweight, volume) VALUES ( $orderitems_id,
+	            grossweight, volume) VALUES ( $form->{"orderitems_id_$i"},
 		    $form->{id}, |
 		    .$dbh->quote($form->{"package_$i"}).qq|,
 		    $form->{"netweight_$i"}, $form->{"grossweight_$i"},
@@ -2017,6 +2010,17 @@ sub generate_orders {
 
     $curr ||= $form->{defaultcurrency};
     $taxincluded *= 1;
+
+    # get precision
+    $form->{precision} = "";
+    $query = qq|SELECT precision FROM curr
+                WHERE curr = '$curr'|;
+    ($form->{precision}) = $dbh->selectrow_array($query);
+    
+    if ($form->{precision} eq "") {
+      my %defaults = $form->get_defaults($dbh, \@{[qw(precision)]});
+      $form->{precision} = $defaults{precision};
+    }
     
     my $uid = localtime;
     $uid .= $$;

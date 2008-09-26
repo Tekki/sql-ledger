@@ -74,7 +74,7 @@ sub add_batch {
     $focus = "batchdescription";
     
     $transdate .= qq|
-	  <td><input name=transdate size=11 title="($myconfig{'dateformat'})" value=$form->{transdate}></td>
+	  <td><input name=transdate size=11 class=date title="$myconfig{'dateformat'}" value=$form->{transdate}></td>
 	</tr>
 |;
   }
@@ -476,7 +476,7 @@ sub search {
 	$manager
 	<tr>
 	  <th align=right nowrap>|.$locale->text('From').qq|</th>
-	  <td colspan=3><input name=transdatefrom size=11 title="$myconfig{dateformat}"> <b>|.$locale->text('To').qq|</b> <input name=transdateto size=11 title="$myconfig{dateformat}"></td>
+	  <td colspan=3><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}"> <b>|.$locale->text('To').qq|</b> <input name=transdateto size=11 class=date title="$myconfig{dateformat}"></td>
 	</tr>
 	$selectfrom
       </table>
@@ -496,6 +496,7 @@ sub search {
   
 
   while (@a) {
+    print qq|<tr>\n|;
     for (1 .. 5) {
       print qq|<td nowrap>|. shift @a;
       print qq|</td>\n|;

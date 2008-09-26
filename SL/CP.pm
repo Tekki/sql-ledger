@@ -85,18 +85,8 @@ sub paymentaccounts {
 
   if ($form->{payment} eq 'payments') {
     # get language codes
-    $query = qq|SELECT *
-		FROM language
-		ORDER BY 2|;
-    $sth = $dbh->prepare($query);
-    $sth->execute || $self->dberror($query);
-
-    $form->{all_language} = ();
-    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-      push @{ $form->{all_language} }, $ref;
-    }
-    $sth->finish;
-
+    $form->all_languages($myconfig, $dbh);
+    
     $form->all_departments($myconfig, $dbh, $form->{vc});
   }
 
@@ -258,19 +248,8 @@ sub get_openvc {
 
   $form->all_departments($myconfig, $dbh, $form->{vc});
   
-  # get language codes
-  $query = qq|SELECT *
-              FROM language
-              ORDER BY 2|;
-  $sth = $dbh->prepare($query);
-  $sth->execute || $self->dberror($query);
-
-  $form->{all_language} = ();
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-    push @{ $form->{all_language} }, $ref;
-  }
-  $sth->finish;
-
+  $form->all_languages($myconfig, $dbh);
+  
   $dbh->disconnect;
 
   $i;
@@ -424,18 +403,7 @@ sub retrieve {
   
   $form->all_departments($myconfig, $dbh, $form->{vc});
   
-  # get language codes
-  $query = qq|SELECT *
-              FROM language
-              ORDER BY 2|;
-  $sth = $dbh->prepare($query);
-  $sth->execute || $self->dberror($query);
-
-  $form->{all_language} = ();
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-    push @{ $form->{all_language} }, $ref;
-  }
-  $sth->finish;
+  $form->all_languages($myconfig, $dbh);
 
   $dbh->disconnect;
 

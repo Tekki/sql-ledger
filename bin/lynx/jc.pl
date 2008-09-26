@@ -449,13 +449,13 @@ sub timecard_header {
     
   } else {
     $rate = qq|
-	      <tr>
-		<th align=right nowrap>$chargeoutlabel</th>
+              <tr>
+	        <th align=right nowrap>$chargeoutlabel</th>
 		<td>$form->{sellprice}</td>|;
     $rate .= qq|<th align=right nowrap>|.$locale->text('Total').qq|</th>
                 <td>$form->{amount}</td>| if $form->{amount};
     $rate .= qq|
-	      </tr>
+              </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Allocated').qq|</th>
 		<td>$form->{allocated}</td>

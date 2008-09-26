@@ -188,21 +188,19 @@ sub dbconnect_vars {
 	'dd/mm/yy' => 'set DateStyle to \'SQL, EUROPEAN\'',
 	'dd-mm-yy' => 'set DateStyle to \'POSTGRES, EUROPEAN\'',
 	'dd.mm.yy' => 'set DateStyle to \'GERMAN\''
-	     },
-     'Oracle' => {
-	'yy-mm-dd' => 'ALTER SESSION SET NLS_DATE_FORMAT = \'YY-MM-DD\'',
-	'mm/dd/yy' => 'ALTER SESSION SET NLS_DATE_FORMAT = \'MM/DD/YY\'',
-	'mm-dd-yy' => 'ALTER SESSION SET NLS_DATE_FORMAT = \'MM-DD-YY\'',
-	'dd/mm/yy' => 'ALTER SESSION SET NLS_DATE_FORMAT = \'DD/MM/YY\'',
-	'dd-mm-yy' => 'ALTER SESSION SET NLS_DATE_FORMAT = \'DD-MM-YY\'',
-	'dd.mm.yy' => 'ALTER SESSION SET NLS_DATE_FORMAT = \'DD.MM.YY\'',
-	         }
+	     }
      );
 
+  if ($form->{dbdriver} eq 'Oracle') {
+    $dboptions{Oracle}{$form->{dateformat}} = qq|ALTER SESSION SET NLS_DATE_FORMAT = '$form->{dateformat}'|;
+  }
+  if ($form->{dbdriver} eq 'Sybase') {
+    $dboptions{Sybase}{$form->{dateformat}} = qq|SET DateFormat $form->{dateformat}|;
+  }
 
   $form->{dboptions} = $dboptions{$form->{dbdriver}}{$form->{dateformat}};
 
-  if ($form->{dbdriver} =~ /(Pg|mySQL)/) {
+  if ($form->{dbdriver} =~ /(Pg|Sybase)/) {
     $form->{dbconnect} = "dbi:$form->{dbdriver}:dbname=$db";
   }
 
@@ -224,8 +222,7 @@ sub dbdrivers {
 
   my @drivers = DBI->available_drivers();
 
-#  return (grep { /(Pg|Oracle|DB2)/ } @drivers);
-  return (grep { /(Pg$)/ } @drivers);
+  return (grep { /(Sybase|Pg)/ } @drivers);
 
 }
 
@@ -292,7 +289,22 @@ sub dbsources {
     }
   }
 
+  if ($form->{dbdriver} eq 'Sybase') {
 
+    $query = qq|SELECT schemaname FROM syscat.schemata|;
+    
+    if ($form->{only_acc_db}) {
+      $query = qq|SELECT tabschema FROM syscat.tables WHERE tabname = 'DEFAULTS'|;
+    }
+    
+    $sth = $dbh->prepare($query);
+    $sth->execute || $form->dberror($query);
+     
+    while (my ($db) = $sth->fetchrow_array) {
+      push @dbsources, $db;
+    }
+  }
+  
 # JJR
   if ($form->{dbdriver} eq 'DB2') {
     if ($form->{only_acc_db}) {
@@ -326,10 +338,11 @@ sub dbcreate {
   my ($self, $form) = @_;
 
   my %dbcreate = ( 'Pg' => qq|CREATE DATABASE "$form->{db}"|,
+                'Sybase' => qq|CREATE DATABASE $form->{db}|,
                'Oracle' => qq|CREATE USER "$form->{db}" DEFAULT TABLESPACE USERS TEMPORARY TABLESPACE TEMP IDENTIFIED BY "$form->{db}"|);
 
-  $dbcreate{mySQL} = $dbcreate{Pg};
   $dbcreate{Pg} .= " WITH ENCODING = '$form->{encoding}'" if $form->{encoding};
+  $dbcreate{Sybase} .= " CHARACTER SET $form->{encoding}" if $form->{encoding};
   
   $form->{sid} = $form->{dbdefault};
   &dbconnect_vars($form, $form->{dbdefault});
@@ -447,16 +460,16 @@ sub process_query {
   close FH;
  
 }
-  
+
 
 
 sub dbdelete {
   my ($self, $form) = @_;
 
   my %dbdelete = ( 'Pg' => qq|DROP DATABASE "$form->{db}"|,
+                'Sybase' => qq|DROP DATABASE $form->{db}|,
                'Oracle' => qq|DROP USER $form->{db} CASCADE|
 	         );
-  $dbdelete{mySQL} = $dbdelete{Pg};
 
   $form->{sid} = $form->{dbdefault};
   &dbconnect_vars($form, $form->{dbdefault});
@@ -578,12 +591,51 @@ sub dbneedsupdate {
       &dbconnect_vars($form, $db);
       
       my $dbh = DBI->connect($form->{dbconnect}, $form->{dbuser}, $form->{dbpasswd}) or $form->dberror;
-
-      my %defaults = $form->get_defaults($dbh, \@{['version']});
       
-      if (my $version = $defaults{version}) {
-	$dbsources{$db} = $version;
+      $query = qq|SELECT * FROM defaults|;
+      my $sth->execute || $form->dberror($query);
+      
+      if ($sth->{NAME}->[0] eq 'fldname') {
+	%defaults = $form->get_defaults($dbh, \@{['version']});
+	$version = $defaults{version};
+      } else {
+	$query = qq|SELECT version FROM defaults|;
+	($version) = $dbh->selectrow_array($query);
       }
+      $sth->finish;
+
+      $dbsources{$db} = $version if $version;
+      
+      $dbh->disconnect;
+    }
+    $sth->finish;
+  }
+
+  if ($form->{dbdriver} eq 'Sybase') {
+    $query = qq|SELECT tabschema FROM syscat.tables WHERE tabname = 'DEFAULTS'|;
+    $sth = $dbh->prepare($query);
+    $sth->execute || $form->dberror($query);
+ 
+    while (my ($db) = $sth->fetchrow_array) {
+      
+      &dbconnect_vars($form, $db);
+     
+      my $dbh = DBI->connect($form->{dbconnect}, $form->{dbuser}, $form->{dbpasswd}) or $form->dberror;
+
+      $query = qq|SELECT * FROM defaults|;
+      my $sth = $dbh->prepare($query);
+      $sth->execute || $form->dberror($query);
+
+      if ($sth->{NAME}->[0] eq 'fldname') {
+	%defaults = $form->get_defaults($dbh, \@{['version']});
+	$version = $defaults{version};
+      } else {
+	$query = qq|SELECT version FROM defaults|;
+	($version) = $dbh->selectrow_array($query);
+      }
+      $sth->finish;
+
+      $dbsources{$db} = $version if $version;
       
       $dbh->disconnect;
     }

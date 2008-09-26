@@ -1,4 +1,11 @@
 <ul>
+<p><li><h4>wrong papersize</h4>
+If the papersize for postscript and PDF does not match set the proper
+size with texconfig-sys
+<pre>
+texconfig-sys pdftex paper letter
+</pre>
+
 <p><li><h4>Install Notes for Lighttpd</h4>
 <ol>
 <li>Make sure mod_cgi and mod_alias are in server.modules list
@@ -338,8 +345,6 @@ the internal defaults are used which turn off $latex, hence no PDF option.
 <a href=http://techdocs.postgresql.org/guides/InstallingOnWindows>Postgres</a>
 or Oracle, DBI and the appropriate DBD
 module
-<br>if you can't compile DBD-Pg here is a precompiled
-<a href=http://www.edmund-mergl.de/export/>DBD-Pg module</a>
 <li>download the latest version of <a href=/cgi-bin/nav.pl?page=source/index.html&title=Download>SQL-Ledger</a>
 <li>extract the files to c:\apache\sql-ledger
 <li>run 'perl shebang' to change the first line of the scripts. If perl
