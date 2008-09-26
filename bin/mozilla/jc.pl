@@ -2,7 +2,7 @@
 # SQL-Ledger Accounting
 # Copyright (c) 2005
 #
-#  Author: DSW Systems Inc.
+#  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.org
 #
 #
@@ -1254,7 +1254,7 @@ sub list_timecard {
                7 => $locale->text('Saturday'),
 	     );
   
-  for (keys %weekday) { $column_header{$_} = "<th class=listheading width=25>".substr($weekday{$_},0,1)."</th>" }
+  for (keys %weekday) { $column_header{$_} = "<th class=listheading width=25>".substr($weekday{$_},0,3)."</th>" }
   
   $column_header{id} = "<th><a class=listheading href=$href&sort=id>".$locale->text('ID')."</a></th>";
   $column_header{transdate} = "<th><a class=listheading href=$href&sort=transdate>".$locale->text('Date')."</a></th>";

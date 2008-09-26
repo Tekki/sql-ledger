@@ -716,7 +716,7 @@ sub get_accounts {
 		 JOIN gl a ON (a.id = y.trans_id)
 		 JOIN acc_trans ac ON (ac.trans_id = y.trans_id)
 		 JOIN chart c ON (c.id = ac.chart_id)
-		 JOIN gifi g ON (g.accno = c.accno)
+		 JOIN gifi g ON (g.accno = c.gifi_accno)
 	         $dpt_join
 		 WHERE $yearendwhere
 		 AND c.category = 'Q'
@@ -782,7 +782,7 @@ sub get_accounts {
 		 JOIN gl a ON (a.id = y.trans_id)
 		 JOIN acc_trans ac ON (ac.trans_id = y.trans_id)
 		 JOIN chart c ON (c.id = ac.chart_id)
-		 JOIN gifi g ON (g.accno = c.accno)
+		 JOIN gifi g ON (g.accno = c.gifi_accno)
 	         $dpt_join
 		 WHERE $yearendwhere
 		 AND c.category = 'Q'

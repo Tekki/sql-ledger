@@ -377,7 +377,7 @@ sub jcitems {
   ($form->{startdatefrom}, $form->{startdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
   
   $where .= " AND j.checkedin >= '$form->{startdatefrom}'" if $form->{startdatefrom};
-  $where .= " AND j.checkedout <= date '$form->{startdateto}' + 1" if $form->{startdateto};
+  $where .= " AND j.checkedout < date '$form->{startdateto}' + 1" if $form->{startdateto};
 
   my %ordinal = ( id => 1,
                   description => 2,

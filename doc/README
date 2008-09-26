@@ -10,14 +10,14 @@ Netscape, Mozilla, Galeon, Explorer, Links, Lynx,
 Konqueror, Voyager, W3M and Opera clients on Linux,
 FreeBSD, Solaris, Windows, Mac computers and PDA's.
 
-Data is stored in a SQL server, either locally or remote,
-the display is through a text or GUI web browser. The system
-is linked by a chart of accounts.  All transactions for AR,
-AP and GL are stored in a transaction table. Hyper-links
+Data is stored in a SQL database server, either locally or
+remote, the display is through a text or GUI web browser.
+The system is linked by a chart of accounts.  All transactions
+for AR, AP and GL are stored in a transaction table. Hyper-links
 from the chart of accounts let you view transactions posted
 through AR, AP and GL.
 
-Configuration files let you specify to which SQL server
+Configuration files let you specify to which SQL database server
 to connect to, personal preferences such as company name,
 language, number and date format, etc.
 
@@ -81,7 +81,7 @@ run setup.pl as root and follow the prompts.
 
   perl setup.pl
 
-Go to the next step, "PREPARE YOUR SQL SERVER".
+Go to the next step, "PREPARE YOUR SQL DATABASE SERVER".
 
 NOTE: If you are behind a firewall and cannot download
 the code with setup.pl, download the source code and
@@ -162,15 +162,15 @@ apache:apache, www, www-data, ...
 FTP INSTALLATION:
 -----------------
 If you do not have access to the server's configuration
-files install SQL-Ledger in user space by ftp'ing the
-whole installation tree to your server space.
+files install SQL-Ledger in user space by ftp'ing all the
+files to your server.
 
 a) untar sql-ledger in your private_html directory
 b) turn on script execution for the folder sql-ledger
 You can control this with an .htaccess file
 
-Options +ExecCGI
-DirectoryIndex login.pl
+  Options +ExecCGI
+  DirectoryIndex login.pl
 
 c) protect the users directory with an .htpasswd file
 
@@ -193,8 +193,8 @@ e) set up your PostgreSQL database and the tables.
 You will most likely only have access to PostgreSQL with
 some other tools like pgadmin.
 
-1) create a database user
-2) create a blank database
+1) create a database user or use the database user assigned to you
+2) create a blank database or use one which was created for you
 3) load your web browser and connect to
 http://host.domain.com/private_html/sql-ledger/admin.pl
 to create the tables.
@@ -223,14 +223,13 @@ will be loaded.
 Go to the next step, "SET UP A USER"
 
 
-PREPARE YOUR SQL SERVER:
-------------------------
+PREPARE YOUR SQL DATABASE SERVER:
+---------------------------------
 
   PostgreSQL:
   -----------
-  add one database user with create database and
-  create user privileges to manage the datasets
-  and tables for SQL-Ledger
+  add one database user with create database privileges
+  to manage the datasets and tables for SQL-Ledger
   
   # su postgres
   $ createuser -d sql-ledger
@@ -240,7 +239,7 @@ PREPARE YOUR SQL SERVER:
   if you use passwords to access postgres use this command
   $ createuser -d -P sql-ledger
 
-  Install PL/PGSQL in template1
+  Install PL/PGSQL in template1 if it has not been installed yet
 
   # su postgres
   $ createlang plpgsql template1
@@ -339,5 +338,5 @@ where you can seek free help.
 For commercial support see http://www.sql-ledger.com
 
 =====================================================================
-March 23, 2006
+April 6, 2006
 

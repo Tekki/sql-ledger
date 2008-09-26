@@ -374,13 +374,12 @@ sub post_payment {
       if ($amount) {
         # exchangerate difference
 	$query = qq|INSERT INTO acc_trans (trans_id, chart_id, transdate,
-		    amount, cleared, fx_transaction, source, memo)
+		    amount, cleared, fx_transaction, source)
 		    VALUES ($form->{"id_$i"},
 		           (SELECT id FROM chart
 			    WHERE accno = '$paymentaccno'),
 		  '$form->{datepaid}', $amount * $ml * -1, '0', '1', |
-		  .$dbh->quote($form->{source}).qq|, |
-		  .$dbh->quote($form->{memo}).qq|)|;
+		  .$dbh->quote($form->{source}).qq|)|;
 	$dbh->do($query) || $form->dberror($query);
 
         # gain/loss
@@ -568,11 +567,10 @@ sub post_payments {
       if ($amount) {
         # exchangerate difference
 	$query = qq|INSERT INTO acc_trans (trans_id, chart_id, transdate,
-		    amount, source, memo)
+		    amount, source)
 		    VALUES ($form->{"id_$i"}, $accno_id, '$form->{datepaid}',
 		    $amount, |
-		    .$dbh->quote($form->{source}).qq|, |
-		    .$dbh->quote($form->{memo}).qq|)|;
+		    .$dbh->quote($form->{source}).qq|)|;
 	$dbh->do($query) || $form->dberror($query);
 
         # gain/loss

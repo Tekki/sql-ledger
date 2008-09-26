@@ -56,7 +56,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.6.8";
+  $self->{version} = "2.6.9";
   $self->{dbversion} = "2.6.7";
 
   bless $self, $type;
@@ -579,8 +579,11 @@ sub parse_template {
 	if ($var eq 'number' || $var eq 'part' || $var eq 'service') {
 	  if ($chars_per_line && defined $self->{$var}) {
 	    my $line;
-	    my $lines = 1;
-	    foreach my $item (qw(description itemnotes)) {
+	    my $lines = 0;
+	    my @d = (description);
+	    push @d, "itemnotes" if $self->{countitemnotes};
+	    
+	    foreach my $item (@d) {
 	      if ($self->{$item}[$i]) {
 		foreach $line (split /\r?\n/, $self->{$item}[$i]) {
 		  $lines++;
@@ -598,7 +601,7 @@ sub parse_template {
 	    }
 
 	    # Yes we need a manual page break
-	    if (($current_line + $lines) >= $lpp) {
+	    if (($current_line + $lines) > $lpp) {
 	      my $pb = $pagebreak;
 	      
 	      # replace the special variables <%sumcarriedforward%>
@@ -617,6 +620,7 @@ sub parse_template {
 	      print(OUT $pb);
 	      $current_page++;
 	      $current_line = 1;
+	      $lines = 0;
 	    }
 	    $current_line += $lines;
 	  }
@@ -715,6 +719,7 @@ sub parse_template {
 
   close(OUT);
 
+  delete $self->{countitemnotes};
 
   # Convert the tex file to postscript
   if ($self->{format} =~ /(postscript|pdf)/) {
@@ -734,9 +739,15 @@ sub parse_template {
     $self->{errfile} = $self->{tmpfile};
     $self->{errfile} =~ s/tex$/err/;
 
+    my $r = 1;
     if ($self->{format} eq 'postscript') {
 
       system("latex --interaction=nonstopmode $self->{tmpfile} > $self->{errfile}");
+      while ($self->rerun_latex) {
+	system("latex --interaction=nonstopmode $self->{tmpfile} > $self->{errfile}");
+	last if ++$r > 4;
+      }
+	
       $self->{tmpfile} =~ s/tex$/dvi/;
       $self->error($self->cleanup) if ! (-f $self->{tmpfile});
  
@@ -746,6 +757,11 @@ sub parse_template {
     }
     if ($self->{format} eq 'pdf') {
       system("pdflatex --interaction=nonstopmode $self->{tmpfile} > $self->{errfile}");
+      while ($self->rerun_latex) {
+	system("pdflatex --interaction=nonstopmode $self->{tmpfile} > $self->{errfile}");
+	last if ++$r > 4;
+      }
+
       $self->{tmpfile} =~ s/tex$/pdf/;
       $self->error($self->cleanup) if ! (-f $self->{tmpfile});
     }
@@ -893,6 +909,8 @@ sub format_line {
     $str = (defined $i) ? $self->{$var}[$i] : $self->{$var};
     $newstr = $str;
 
+    $self->{countitemnotes} = 1 if $var eq 'itemnotes';
+    
     $var = $1;
     if ($var =~ /^if\s+not\s+/) {
       if ($str) {
@@ -1003,6 +1021,21 @@ sub cleanup {
   
   "@err";
   
+}
+
+
+sub rerun_latex {
+  my $self = shift;
+
+  my $a = 0;
+  if (-f "$self->{errfile}") {
+    open(FH, "$self->{errfile}");
+    $a = grep /longtable Warning:/, <FH>;
+    close(FH);
+  }
+
+  $a;
+
 }
 
 

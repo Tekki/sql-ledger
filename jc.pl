@@ -36,7 +36,8 @@ $spool = "spool";
 $templates = "templates";
 $memberfile = "users/members";
 $sendmail = "| /usr/sbin/sendmail -t";
-%printer = ( Printer => 'lpr' );
+$latex = 0;
+%printer = ();
 ########## end ###########################################
 
 
@@ -81,7 +82,7 @@ $form->{charset} = $locale->{charset};
 $SIG{__WARN__} = sub { $form->info($_[0]) };
 
 # send errors to browser
-$SIG{__DIE__} = sub { $form->error($_[0]) } if $form->{debug};
+$SIG{__DIE__} = sub { $form->error($_[0]) };
 
 $myconfig{dbpasswd} = unpack 'u', $myconfig{dbpasswd};
 map { $form->{$_} = $myconfig{$_} } qw(stylesheet timeout) unless ($form->{type} eq 'preferences');
@@ -137,7 +138,11 @@ sub check_password {
 
     if ($form->{password}) {
       if ((crypt $form->{password}, substr($form->{login}, 0, 2)) ne $myconfig{password}) {
-	&getpassword;
+	if ($ENV{HTTP_USER_AGENT}) {
+	  &getpassword;
+	} else {
+	  $form->error($locale->text('Access Denied!'));
+	}
 	exit;
       }
     } else {
@@ -155,6 +160,8 @@ sub check_password {
 	    exit;
 	  }
 	}
+      } else {
+	exit;
       }
     }
   }
