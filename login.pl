@@ -69,6 +69,13 @@ $0 =~ tr/\\/\//;
 $pos = rindex $0, '/';
 $script = substr($0, $pos + 1);
 
+@scripts = qw(login.pl admin.pl custom_login.pl custom_admin.pl);
+
+if (grep !/^\Q$form{script}\E/, @scripts) {
+  print "Content-Type: text/html\n\n" if $ENV{HTTP_USER_AGENT};
+  print "\nAccess denied!\n";
+  exit;
+}
 
 if (-e "$userspath/nologin" && $script ne 'admin.pl') {
   print "Content-Type: text/html\n\n" if $ENV{HTTP_USER_AGENT};
