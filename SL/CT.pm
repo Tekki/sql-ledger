@@ -211,8 +211,8 @@ sub save_customer {
     }
 
   } else {
-    my $uid = time;
-    $uid .= $$;
+    my $uid = localtime;
+    $uid .= "--$form->{login}--$$--$form->{login}";
 
     $query = qq|INSERT INTO customer (name)
                 VALUES ('$uid')|;
@@ -344,8 +344,8 @@ sub save_vendor {
     }
 
   } else {
-    my $uid = time;
-    $uid .= $$;
+    my $uid = localtime;
+    $uid .= "--$form->{login}--$$--$form->{login}";
     
     $query = qq|INSERT INTO vendor (name)
                 VALUES ('$uid')|;

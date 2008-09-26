@@ -481,8 +481,8 @@ sub save {
     }
     
   } else {
-    my $uid = time;
-    $uid .= $$;
+    my $uid = localtime;
+    $uid .= "--$form->{login}--$$--$form->{login}";
 
     $query = qq|INSERT INTO jcitems (description)
                 VALUES ('$uid')|;

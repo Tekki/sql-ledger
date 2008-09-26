@@ -614,8 +614,8 @@ sub post_invoice {
     
   }
   
-  my $uid = time;
-  $uid .= $$;
+  my $uid = localtime;
+  $uid .= "--$form->{login}--$$--$form->{login}";
  
   if (! $form->{id}) {
    
@@ -1056,10 +1056,11 @@ sub process_assembly {
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
+  my $allocated;
   
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
 
-    my $allocated = 0;
+    $allocated = 0;
     
     $ref->{inventory_accno_id} *= 1;
     $ref->{expense_accno_id} *= 1;

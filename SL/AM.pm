@@ -1668,8 +1668,8 @@ sub post_yearend {
   my $dbh = $form->dbconnect_noauto($myconfig);
 
   my $query;
-  my $uid = time;
-  $uid .= $$;
+  my $uid = localtime;
+  $uid .= "--$form->{login}--$$--$form->{login}";
 
   $query = qq|INSERT INTO gl (reference, employee_id)
 	      VALUES ('$uid', (SELECT id FROM employee

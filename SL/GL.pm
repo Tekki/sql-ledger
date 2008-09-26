@@ -85,8 +85,8 @@ sub post_transaction {
   
   if (! $form->{id}) {
    
-    my $uid = time;
-    $uid .= $$;
+    my $uid = localtime;
+    $uid .= "--$form->{login}--$$--$form->{login}";
 
     $query = qq|INSERT INTO gl (reference, employee_id)
                 VALUES ('$uid', (SELECT id FROM employee

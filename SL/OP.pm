@@ -37,8 +37,8 @@ sub overpayment {
   my ($null, $department_id) = split /--/, $form->{department};
   $department_id *= 1;
 
-  my $uid = time;
-  $uid .= $$;
+  my $uid = localtime;
+  $uid .= "--$form->{login}--$$--$form->{login}";
 
   # add AR/AP header transaction with a payment
   $query = qq|INSERT INTO $form->{arap} (invnumber, employee_id)

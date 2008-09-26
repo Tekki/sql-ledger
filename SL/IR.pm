@@ -94,8 +94,8 @@ sub post_invoice {
     } 
   }
 
-  my $uid = time;
-  $uid .= $$;
+  my $uid = localtime;
+  $uid .= "--$form->{login}--$$--$form->{login}";
 
   if (! $form->{id}) {
 

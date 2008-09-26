@@ -1,4 +1,39 @@
 <ul>
+<p><li><h4>PostgreSQL 8.x</h4>
+PostgreSQL added a restriction in v8.x that a sequence cannot be dropped
+after if it is referenced by a table. However backups created with
+SQL-Ledger v2.6.13 and earlier have a DROP SEQUENCE step in the backup
+which will fail. To fix this edit the backup before restoring on a 8.x
+system.
+
+<p>This typically looks like this:
+<pre>
+DROP SEQUENCE id ;
+CREATE SEQUENCE id START 10579;
+--
+DROP SEQUENCE invoiceid ;
+CREATE SEQUENCE invoiceid START 11096;
+--
+DROP SEQUENCE orderitemsid ;
+CREATE SEQUENCE orderitemsid START 178;
+--
+DROP SEQUENCE jcitemsid ;
+CREATE SEQUENCE jcitemsid START 53;
+</pre>
+
+<p>Change it to:
+<pre>
+CREATE SEQUENCE id;
+SELECT SETVAL('id', 10579);
+CREATE SEQUENCE invoiceid;
+SELECT SETVAL('invoiceid', 11096);
+CREATE SEQUENCE orderitemsid;
+SELECT SETVAL('orderitemsid', 178);
+CREATE SEQUENCE jcitemsid;
+SELECT SETVAL('jcitemsid', 53);
+</pre>
+
+
 <p><li><h4>PostgreSQL template1</h4>
 template1 is a template to build new databases
 from. Anything you put into template1 will be copied to a new database.

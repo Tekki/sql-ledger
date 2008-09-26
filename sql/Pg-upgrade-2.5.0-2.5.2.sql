@@ -101,6 +101,8 @@ end;
 create trigger check_inventory after update on oe for each row execute procedure check_inventory();
 -- end trigger
 --
+alter table orderitems alter id drop default;
+--
 create function temp() returns int as '
 
 declare
@@ -120,6 +122,8 @@ end;
 --
 select temp();
 drop function temp();
+--
+alter table orderitems alter id set default nextval('orderitemsid');
 --
 alter table chart add contra boolean;
 alter table chart alter contra set default 'f';

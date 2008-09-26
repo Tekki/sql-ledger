@@ -45,7 +45,10 @@ sub add_file {
   my ($self, $file) = @_;
   
   my $id = "";
+  my %menuorder = ();
 
+  for (@{$self->{ORDER}}) { $menuorder{$_} = 1 }
+  
   open FH, "$file" or Form->error("$file : $!");
 
   while (<FH>) {
@@ -63,7 +66,8 @@ sub add_file {
     if (/^\[/) {
       s/(\[|\])//g;
       $id = $_;
-      push @{$self->{ORDER}}, $_;
+      push @{$self->{ORDER}}, $_ if ! $menuorder{$_};
+      $menuorder{$_} = 1;
       next;
     }
 

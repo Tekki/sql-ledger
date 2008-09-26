@@ -284,6 +284,7 @@ sub list_transactions {
   $column_header{reference} = qq|<th><a class=listheading href=$href&sort=reference>|.$locale->text('Reference').qq|</a></th>|;
   $column_header{description} = qq|<th><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</a></th>|;
   $column_header{cleared} = qq|<th class=listheading>|.$locale->text('R').qq|</th>|;
+  $column_header{source} = qq|<th class=listheading>|.$locale->text('Source').qq|</th>|;
   $column_header{debit} = qq|<th class=listheading>|.$locale->text('Debit').qq|</th>|;
   $column_header{credit} = qq|<th class=listheading>|.$locale->text('Credit').qq|</th>|;
   $column_header{balance} = qq|<th class=listheading>|.$locale->text('Balance').qq|</th>|;
@@ -291,7 +292,7 @@ sub list_transactions {
 
   @columns = qw(transdate reference description debit credit);
   if ($form->{link} =~ /_paid/) {
-    @columns = qw(transdate reference description cleared debit credit);
+    @columns = qw(transdate reference description source cleared debit credit);
   }
   push @columns, "accno" if $form->{l_accno};
   @column_index = $form->sort_columns(@columns);
@@ -429,6 +430,7 @@ sub list_transactions {
     $column_data{description} = qq|<td>$ca->{description}&nbsp;</td>|;
     
     $column_data{cleared} = ($ca->{cleared}) ? qq|<td>*</td>| : qq|<td>&nbsp;</td>|;
+    $column_data{source} = qq|<td>$ca->{source}&nbsp;</td>|;
     
     $column_data{accno} = qq|<td>|;
     for (@{ $ca->{accno} }) { $column_data{accno} .= "<a href=$drilldown&accno=$_>$_</a> " }

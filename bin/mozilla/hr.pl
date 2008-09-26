@@ -447,7 +447,7 @@ sub employee_header {
   $form->{selectmanager} =~ s/ selected//;
   $form->{selectmanager} =~ s/(<option value="\Q$form->{manager}\E")/$1 selected/;
 
-  $sales = qq|
+  $sales .= qq|
 <input type=hidden name=role value=$form->{role}>
 <input type=hidden name=manager value=$form->{manager}>
 |;

@@ -546,8 +546,8 @@ sub save_job {
   }
 
   if (!$form->{id}) {
-    my $uid = time;
-    $uid .= $$;
+    my $uid = localtime;
+    $uid .= "--$form->{login}--$$--$form->{login}";
     
     $query = qq|INSERT INTO project (projectnumber)
                 VALUES ('$uid')|;
@@ -705,8 +705,8 @@ sub stock_assembly {
       }
       $jth->finish;
 
-      $uid = time;
-      $uid .= $$;
+      $uid = localtime;
+      $uid .= "--$form->{login}--$$--$form->{login}";
       
       $query = qq|INSERT INTO parts (partnumber)
                   VALUES ('$uid')|;
