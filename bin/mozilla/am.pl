@@ -4168,7 +4168,7 @@ sub list_exchangerates {
 
 sub edit_exchangerate {
   
-  $form->{title} = $locale->text('Edit Exchange Rates');
+  $form->{title} = $locale->text('Edit Exchange Rate');
   
   $form->{callback} = "$form->{script}?action=edit_exchangerate&transdate=$form->{transdate}&currencies=$form->{currencies}&path=$form->{path}&login=$form->{login}" unless $form->{callback};
 
@@ -4198,7 +4198,7 @@ sub edit_exchangerate {
 
 sub add_exchange_rate {
   
-  $form->{title} = $locale->text('Add Exchange Rates');
+  $form->{title} = $locale->text('Add Exchange Rate');
   
   $form->{callback} = "$form->{script}?action=add_exchange_rate&currencies=$form->{currencies}&path=$form->{path}&login=$form->{login}" unless $form->{callback};
 

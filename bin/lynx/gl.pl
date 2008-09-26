@@ -142,6 +142,8 @@ sub create_links {
 
   for (@{ $form->{all_accno} }) { $form->{selectaccno} .= "$_->{accno}--$_->{description}\n" }
 
+  $form->{oldcurrency} = $form->{currency};
+
   # currencies
   @curr = split /:/, $form->{currencies};
   $form->{defaultcurrency} = $curr[0];
@@ -791,7 +793,9 @@ sub gl_subtotal {
 
 sub update {
 
-  $form->{exchangerate} = $form->parse_amount(\%myconfig, $form->{exchangerate});
+  if ($form->{currency} ne $form->{defaultcurrency}) {
+    $form->{exchangerate} = $form->parse_amount(\%myconfig, $form->{exchangerate});
+  }
   
   if ($form->{transdate} ne $form->{oldtransdate}) {
     if ($form->{selectprojectnumber}) {
@@ -803,14 +807,18 @@ sub update {
       }
     }
     $form->{oldtransdate} = $form->{transdate};
+    
+    $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate});
+    $form->{oldcurrency} = $form->{currency};
   }
   
-  $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate});
-  for (qw(fxbuy fxsell)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}) }
+  $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate}) if $form->{currency} ne $form->{oldcurrency};
+  
+  $form->{oldcurrency} = $form->{currency};
 
   @a = ();
   $count = 0;
-  @flds = qw(accno debit credit projectnumber fx_transaction source memo cleared);
+  @flds = qw(accno debit credit projectnumber source memo cleared);
 
   for $i (1 .. $form->{rowcount}) {
     unless (($form->{"debit_$i"} eq "") && ($form->{"credit_$i"} eq "")) {
@@ -941,8 +949,6 @@ sub form_header {
     $notes = qq|<input name=notes size=50 value="|.$form->quote($form->{notes}).qq|">|;
   }
 
-  # format amounts
-  $form->{exchangerate} = $form->format_amount(\%myconfig, $form->{exchangerate});
 
   if ($form->{defaultcurrency}) {
     $exchangerate = qq|<input type=hidden name=action value="Update">
@@ -955,13 +961,16 @@ sub form_header {
 		      .qq|</select></td>|;
 
     if ($form->{currency} ne $form->{defaultcurrency}) {
+
+      $form->{exchangerate} = $form->format_amount(\%myconfig, $form->{exchangerate});
+      
       $exchangerate .= qq|
       <th align=right nowrap>|.$locale->text('Exchange Rate').qq| <font color=red>*</font></th>
       <td><input name=exchangerate size=10 value=$form->{exchangerate}></td>
       <th align=right nowrap>|
-      .$locale->text('Buy').qq|</th><td>$form->{fxbuy}</td>
+      .$locale->text('Buy').qq|</th><td>|.$form->format_amount(\%myconfig, $form->{fxbuy}).qq|</td>
       <th align=right nowrap>|
-      .$locale->text('Sell').qq|</th><td>$form->{fxsell}</td>|;
+      .$locale->text('Sell').qq|</th><td>|.$form->format_amount(\%myconfig, $form->{fxsell}).qq|</td>|;
     }
     $exchangerate .= qq|</tr></table></td></tr>|;
   }
@@ -999,7 +1008,7 @@ sub form_header {
 <form method=post action=$form->{script}>
 |;
 
-  $form->hide_form(qw(id closedto locked oldtransdate recurring batch batchid batchnumber batchdescription defaultcurrency fxbuy fxsell));
+  $form->hide_form(qw(id closedto locked oldtransdate oldcurrency recurring batch batchid batchnumber batchdescription defaultcurrency fxbuy fxsell));
   $form->hide_form(map { "select$_" } qw(accno department currency));
   
   print qq|
@@ -1083,7 +1092,11 @@ sub form_footer {
   
   $transdate = $form->datetonum(\%myconfig, $form->{transdate});
 
-  if (! $form->{readonly}) {
+  if ($form->{readonly}) {
+
+    &islocked;
+
+  } else {
 
     %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
                'Post' => { ndx => 3, key => 'O', value => $locale->text('Post') },

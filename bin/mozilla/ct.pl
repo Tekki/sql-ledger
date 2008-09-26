@@ -1847,12 +1847,12 @@ sub form_header {
 		$paymentmethod
 	      </tr>
 	      <tr>
-		<th align=right>|.$locale->text('BIC').qq|</th>
-		<td><input name=bic size=11 maxlength=11 value="$form->{bic}"></td>
-	      </tr>
-	      <tr>
 		<th align=right>|.$locale->text('IBAN').qq|</th>
 		<td><input name=iban size=24 maxlength=34 value="$form->{iban}"></td>
+	      </tr>
+	      <tr>
+		<th align=right>|.$locale->text('BIC').qq|</th>
+		<td><input name=bic size=11 maxlength=11 value="$form->{bic}"></td>
 	      </tr>
 	      <tr>
 		<td align=right><input name=remittancevoucher class=checkbox type=checkbox value=1 $form->{remittancevoucher}></td>

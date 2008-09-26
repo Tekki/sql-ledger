@@ -918,7 +918,11 @@ sub form_footer {
   
   $transdate = $form->datetonum(\%myconfig, $form->{transdate});
 
-  if (! $form->{readonly}) {
+  if ($form->{readonly}) {
+
+    &islocked;
+
+  } else {
 
     &print_options;
 
@@ -1129,6 +1133,7 @@ sub update {
     if ($form->{discount_datepaid} ne $form->{olddiscount_datepaid} || $form->{currency} ne $form->{oldcurrency}) {
       $form->{discount_exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{discount_datepaid}, ($form->{ARAP} eq 'AR') ? 'buy' : 'sell');
     }
+    $form->{olddiscount_datepaid} = $form->{discount_datepaid};
   }
 
   $totalpaid = $form->{discount_paid};

@@ -174,7 +174,7 @@ function CheckAll(v) {
     $decimalplaces = ($dec > $form->{precision}) ? $dec : $form->{precision};
 
     # undo formatting
-    for (qw(qty oldqty ship oldship discount sellprice netweight grossweight volume)) { $form->{"${_}_$i"} = $form->parse_amount(\%myconfig, $form->{"${_}_$i"}) }
+    for (qw(qty ship discount sellprice netweight grossweight volume)) { $form->{"${_}_$i"} = $form->parse_amount(\%myconfig, $form->{"${_}_$i"}) }
     
     if ($form->{type} =~ /_order/) {
       if ($form->{"ship_$i"} != $form->{"oldship_$i"} || $form->{"qty_$i"} != $form->{"oldqty_$i"}) {
@@ -201,7 +201,7 @@ function CheckAll(v) {
 	}
       }
     }
-    
+
     $discount = $form->round_amount($form->{"sellprice_$i"} * $form->{"discount_$i"}/100, $decimalplaces);
     $linetotal = $form->round_amount($form->{"sellprice_$i"} - $discount, $decimalplaces);
     $linetotal = $form->round_amount($linetotal * $form->{"qty_$i"}, $form->{precision});
@@ -371,12 +371,6 @@ function CheckAll(v) {
     </td>
   </tr>
 |;
-
-  if ($form->{type} =~ /invoice/) {
-    if ($form->{type} !~ /(debit|credit)_invoice/) {
-      &invoicetotal;
-    }
-  }
 
   $form->{oldcurrency} = $form->{currency};
   $form->hide_form(qw(audittrail oldcurrency));
@@ -564,17 +558,18 @@ sub item_selected {
 	$form->{weight} += ($form->{"weight_$i"} * $form->{"qty_$i"});
       }
 
-      $amount = $form->{"sellprice_$i"} * (1 - $form->{"discount_$i"} / 100) * $form->{"qty_$i"};
-      for (split / /, $form->{"taxaccounts_$i"}) { $form->{"${_}_base"} += $amount }
+      $linetotal = $form->{"sellprice_$i"} * (1 - $form->{"discount_$i"} / 100) * $form->{"qty_$i"};
+      for (split / /, $form->{"taxaccounts_$i"}) { $form->{"${_}_base"} += $linetotal }
+      $amount = $linetotal;
       if (!$form->{taxincluded}) {
-	for (split / /, $form->{"taxaccounts_$i"}) { $amount += ($form->{"${_}_base"} * $form->{"${_}_rate"}) }
+	for (split / /, $form->{"taxaccounts_$i"}) { $amount += $linetotal * $form->{"${_}_rate"} }
       }
 
       $ml = 1;
       if ($form->{type} =~ /invoice/) {
 	$ml = -1 if $form->{type} =~ /(debit|credit)_invoice/;
       }
-	
+
       $form->{creditremaining} -= ($amount * $ml);
 
       $form->{"runningnumber_$i"} = $i;
@@ -720,7 +715,7 @@ sub display_form {
 
 
 sub check_form {
-  
+
   my @a = ();
   my $count = 0;
   my $i;
@@ -850,11 +845,15 @@ sub check_form {
 
       if ($form->{type} =~ /invoice/) {
 	if ($form->{type} =~ /(debit|credit)_invoice/) {
+	  $form->{creditremaining} -= ($form->{oldinvtotal} - $form->{oldtotalpaid});
 	  $form->{creditremaining} += &invoicetotal;
 	} else {
-	  $form->{creditremaining} -= &invoicetotal;
+	  $form->{creditremaining} += ($form->{oldinvtotal} - $form->{oldtotalpaid});
+	  $amount = &invoicetotal;
+	  $form->{creditremaining} -= $amount;
 	}
       } else {
+	$form->{creditremaining} += ($form->{oldinvtotal} - $form->{oldtotalpaid});
 	$form->{creditremaining} -= &invoicetotal;
       }
 
@@ -892,14 +891,23 @@ sub calc_markup {
 
 
 sub invoicetotal {
+  
+  $exchangerate = $form->parse_amount(\%myconfig, $form->{exchangerate});
+  $exchangerate ||= 1;
 
-  $form->{oldinvtotal} = 0;
   # add all parts and deduct paid
   for (split / /, $form->{taxaccounts}) { $form->{"${_}_base"} = 0 }
 
-  my ($amount, $sellprice, $discount, $qty);
+  my $amount;
+  my $sellprice;
+  my $discount;
+  my $qty;
+
+  $form->{oldinvtotal} = 0;
 
   for $i (1 .. $form->{rowcount}) {
+    
+    $qty = $form->parse_amount(\%myconfig, $form->{"qty_$i"});
     
     $spc = substr($myconfig{numberformat},-3,1);
     if ($spc eq '.') {
@@ -910,8 +918,21 @@ sub invoicetotal {
     $dec = length $dec;
     $decimalplaces = ($dec > $form->{precision}) ? $dec : $form->{precision};
 
+    if ($qty != $form->{"oldqty_$i"}) {
+      # check pricematrix
+      @a = split / /, $form->{"pricematrix_$i"};
+      if (scalar @a > 1) {
+	foreach $item (@a) {
+	  ($q, $p) = split /:/, $item;
+	  if (($p * 1) && ($qty >= ($q * 1))) {
+	    $form->{"sellprice_$i"} = $form->format_amount(\%myconfig, $p / $exchangerate, $decimalplaces);
+	  }
+	}
+      }
+    }
+
     $sellprice = $form->round_amount($form->parse_amount(\%myconfig, $form->{"sellprice_$i"}) * (1 - $form->{"discount_$i"} / 100), $decimalplaces);
-    $amount = $sellprice * $form->{"qty_$i"};
+    $amount = $sellprice * $qty;
     for (split / /, $form->{"taxaccounts_$i"}) { $form->{"${_}_base"} += $amount }
     $form->{oldinvtotal} += $amount;
   }
@@ -931,7 +952,7 @@ sub invoicetotal {
   }
   
   # return total
-  ($form->{oldinvtotal} - $form->{oldtotalpaid});
+  return ($form->{oldinvtotal} - $form->{oldtotalpaid});
 
 }
 
@@ -1520,7 +1541,11 @@ sub print_form {
     $fillshipto = 0;
     $fillshipto = 1 if $form->{formname} =~ /(credit_invoice|purchase_order|request_quotation|bin_list)/;
     $fillshipto = 1 if ($form->{type} eq 'invoice' && $form->{vc} eq 'vendor');
-    
+
+    $form->{shiptophone} = $form->{tel};
+    $form->{shiptofax} = $form->{fax};
+    $form->{shiptocontact} = $form->{employee};
+   
     if ($fillshipto) {
       if ($form->{warehouse}) {
 	$form->{shiptoname} = $form->{company};
@@ -1534,6 +1559,7 @@ sub print_form {
       }
     } else {
       for (@a) { $form->{"shipto$_"} = $form->{$_} }
+      for (qw(phone fax)) { $form->{"shipto$_"} = $form->{"$form->{vc}$_"} }
     }
   }
 
@@ -1542,7 +1568,7 @@ sub print_form {
  
   # some of the stuff could have umlauts so we translate them
   push @a, qw(contact shippingpoint shipvia notes intnotes employee warehouse);
-  push @a, map { "shipto$_" } qw(name address1 address2 city state zipcode country contact email);
+  push @a, map { "shipto$_" } qw(name address1 address2 city state zipcode country contact email phone fax);
   push @a, qw(firstname lastname salutation contacttitle occupation mobile);
 
   push @a, ("${inv}number", "${inv}date", "${due}date", "${inv}description");

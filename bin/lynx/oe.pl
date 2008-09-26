@@ -738,7 +738,12 @@ sub form_footer {
 <br>
 |;
 
-  if (! $form->{readonly}) {
+  if ($form->{readonly}) {
+
+    &islocked;
+
+  } else {
+
     %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
                'Print' => { ndx => 2, key => 'P', value => $locale->text('Print') },
 	       'Save' => { ndx => 3, key => 'S', value => $locale->text('Save') },
@@ -867,6 +872,7 @@ sub update {
     &rebuild_vc($form->{vc}, $ARAP, $form->{transdate}, 1) if ! $newname;
 
     $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate}, $buysell);
+    $form->{oldcurrency} = $form->{currency};
 
     $form->{selectemployee} = "";
     if (@{ $form->{all_employee} }) {
@@ -875,14 +881,13 @@ sub update {
     }
   }
 
-  $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate}, $buysell);
+  $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate}, $buysell) if $form->{currency} ne $form->{oldcurrency};
+  $form->{oldcurrency} = $form->{currency};
 
   my $i = $form->{rowcount};
   $form->{exchangerate} ||= 1;
 
   if (($form->{"partnumber_$i"} eq "") && ($form->{"description_$i"} eq "") && ($form->{"partsgroup_$i"} eq "")) {
-
-    $form->{creditremaining} += $form->{oldinvtotal};
 
     &check_form;
     
@@ -2143,7 +2148,7 @@ sub invoice {
   }
 
   for ("$form->{vc}", "currency") { $form->{"select$_"} = "" }
-  for (qw(currency oldcurrency employee department warehouse intnotes notes taxincluded)) { $temp{$_} = $form->{$_} }
+  for (qw(currency oldcurrency exchangerate employee department warehouse intnotes notes taxincluded)) { $temp{$_} = $form->{$_} }
 
   $form->{warehouse} =~ s/--.*//;
   
@@ -2155,9 +2160,6 @@ sub invoice {
   
   for (keys %temp) { $form->{$_} = $temp{$_} }
   
-  $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate}, $buysell);
-  $form->{exchangerate} ||= 1;
- 
   for $i (1 .. $form->{rowcount}) {
     $form->{"deliverydate_$i"} = $form->{"reqdate_$i"};
     for (qw(qty sellprice discount)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}) }

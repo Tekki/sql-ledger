@@ -90,6 +90,8 @@ $self->{message}
 	close(OUT);
 	return "$attachment : $!";
       }
+
+      binmode(IN);
       
       my $filename = $attachment;
       # strip path

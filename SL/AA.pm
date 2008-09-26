@@ -882,7 +882,9 @@ sub transactions {
     $where .= " AND a.invoice = '1'
                 AND a.till IS NOT NULL";
     if ($myconfig->{role} eq 'user') {
-      $where .= " AND e.login = '$form->{login}'";
+      my $user = $form->{login};
+      $user =~ s/@.*//;
+      $where .= " AND e.login = '$user'";
     }
   }
 
@@ -1248,7 +1250,7 @@ sub company_details {
     $query = qq|SELECT bk.*, ad.*
                 FROM bank bk
 		LEFT JOIN address ad ON (bk.address_id = ad.id)
-                WHERE bk.id = '$form->{vc}_id'|;
+                WHERE bk.id = $form->{"$form->{vc}_id"}|;
     $sth = $dbh->prepare($query) || $form->dberror($query);
     $sth->execute;
     $ref = $sth->fetchrow_hashref(NAME_lc);

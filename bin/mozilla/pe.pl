@@ -1185,9 +1185,10 @@ sub partsgroup_report {
   }
    
 
-  @column_index = $form->sort_columns(qw(partsgroup));
+  @column_index = $form->sort_columns(qw(partsgroup pos));
 
   $column_header{partsgroup} = qq|<th><a class=listheading href=$href&sort=partsgroup width=90%>|.$locale->text('Group').qq|</a></th>|;
+  $column_header{pos} = qq|<th class=listheading>|.$locale->text('POS').qq|</th>|;
 
   $form->{title} = $locale->text('Groups');
 
@@ -1231,6 +1232,8 @@ sub partsgroup_report {
 |;
     
     $column_data{partsgroup} = qq|<td><a href=$form->{script}?action=edit&type=$form->{type}&status=$form->{status}&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{partsgroup}</td>|;
+    $pos = ($ref->{pos}) ? "*" : "&nbsp;";
+    $column_data{pos} = qq|<td align=center>$pos</td>|;
     for (@column_index) { print "$column_data{$_}\n" }
     
     print "
@@ -1291,7 +1294,7 @@ sub partsgroup_header {
 # $locale->text('Edit Group')
 
   $form->{partsgroup} = $form->quote($form->{partsgroup});
-
+  $form->{pos} = ($form->{pos}) ? "checked" : "";
   
   $form->header;
 
@@ -1312,6 +1315,10 @@ sub partsgroup_header {
 	  <th align=right nowrap>|.$locale->text('Group').qq| <font color=red>*</font></th>
 
           <td><input name=partsgroup size=30 value="|.$form->quote($form->{partsgroup}).qq|"></td>
+	</tr>
+	<tr>
+	  <th align=right nowrap>|.$locale->text('POS Button').qq|</th>
+          <td><input name=pos class=checkbox type=checkbox value=1 $form->{pos}></td>
 	</tr>
       </table>
     </td>

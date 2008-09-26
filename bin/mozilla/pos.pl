@@ -35,7 +35,11 @@ sub add {
   $form->{till} = $4;
 
   $form->{partsgroup} = "";
-  for (@{ $form->{all_partsgroup} }) { $form->{partsgroup} .= "$_->{partsgroup}--$_->{translation}\n"; }
+  for (@{ $form->{all_partsgroup} }) {
+    if ($_->{pos}) {
+      $form->{partsgroup} .= "$_->{partsgroup}--$_->{translation}\n";
+    }
+  }
 
   $focus = "partnumber_1";
 
@@ -58,7 +62,7 @@ sub openinvoices {
   }
 
   $form->{title} = $locale->text('Open');
-  transactions;
+  &transactions;
   
 }
 
@@ -75,10 +79,16 @@ sub edit {
   $form->{format} = "txt";
   $form->{media} = ($myconfig{printer}) ? $myconfig{printer} : "screen";
 
-  $form->{readonly} = ($myconfig{acs} =~ /POS--Sale/) ? 1 : 0;
+  if (! $form->{readonly}) {
+    $form->{readonly} = ($myconfig{acs} =~ /POS--Sale/) ? 1 : 0;
+  }
 
   $form->{partsgroup} = "";
-  for (@{ $form->{all_partsgroup} }) { $form->{partsgroup} .= "$_->{partsgroup}--$_->{translation}\n"; }
+  for (@{ $form->{all_partsgroup} }) {
+    if ($_->{pos}) {
+      $form->{partsgroup} .= "$_->{partsgroup}--$_->{translation}\n";
+    }
+  }
   
   &display_form;
 
@@ -206,7 +216,11 @@ sub form_header {
       # rebuild partsgroup
       $form->get_partsgroup(\%myconfig, { language_code => $form->{language_code}, searchitems => 'nolabor'});
       $form->{partsgroup} = "";
-      for (@{ $form->{all_partsgroup} }) { $form->{partsgroup} .= "$_->{partsgroup}--$_->{translation}\n"; }
+      for (@{ $form->{all_partsgroup} }) {
+	if ($_->{pos}) {
+	  $form->{partsgroup} .= "$_->{partsgroup}--$_->{translation}\n";
+	}
+      }
       $form->{oldlanguage_code} = $form->{language_code};
     }
 
@@ -461,7 +475,12 @@ sub form_footer {
 
   $transdate = $form->datetonum(\%myconfig, $form->{transdate});
 
-  if (! $form->{readonly}) {
+  if ($form->{readonly}) {
+
+    &islocked;
+
+  } else {
+
     %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
 	       'Print' => { ndx => 2, key => 'P', value => $locale->text('Print') },
 	       'Post' => { ndx => 3, key => 'O', value => $locale->text('Post') },

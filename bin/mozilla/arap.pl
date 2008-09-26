@@ -941,6 +941,13 @@ sub reprint {
 }
 
 
+sub islocked {
+
+  print "<p><font color=red>".$locale->text('Locked by').": $form->{haslock}</font>" if $form->{haslock};
+
+}
+
+
 sub continue { &{ $form->{nextsub} } };
 sub gl_transaction { &add };
 sub ar_transaction {

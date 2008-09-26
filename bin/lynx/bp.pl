@@ -702,6 +702,8 @@ function CheckAll() {
     for (qw(description email city id invnumber ordnumber quonumber vcnumber)) { $column_data{$_} = qq|<td>$ref->{$_}</td>| }
     $column_data{transdate} = qq|<td nowrap>$ref->{transdate}</td>|;
 
+    $column_data{name} = qq|<td><a href=ct.pl?action=edit&id=$ref->{vc_id}&db=$ref->{db}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{name}</a></td>|;
+    
     if ($ref->{module} eq 'oe') {
       $column_data{invnumber} = qq|<td>&nbsp</td>|;
       $column_data{ordnumber} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{ordnumber}</a></td>
@@ -713,13 +715,14 @@ function CheckAll() {
     } elsif ($ref->{module} eq 'jc') {
       $column_data{id} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{id}</a></td>
     <input type=hidden name="reference_$i" value="$ref->{id}">|;
+
+      $column_data{name} = qq|<td><a href=hr.pl?action=edit&id=$ref->{employee_id}&db=employee&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{name}</a></td>|;
     } else {
       $column_data{invnumber} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{invnumber}</a></td>
     <input type=hidden name="reference_$i" value="|.$form->quote($ref->{invnumber}).qq|">|;
     }
     
    
-    $column_data{name} = "<td>$ref->{name}</td>";
     $column_data{spoolfile} = qq|<td><a href=$spool/$ref->{spoolfile}>$ref->{spoolfile}</a></td>
 
 |;

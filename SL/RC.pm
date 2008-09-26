@@ -23,7 +23,6 @@ sub paymentaccounts {
   my $query = qq|SELECT accno, description
                  FROM chart
 		 WHERE charttype = 'A'
-		 -- link LIKE '%_paid%'
 		 ORDER BY accno|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -185,7 +184,7 @@ sub payment_transactions {
 		$fx_transaction
 		$transdate
 		$cleared
-		UNION ALL
+		UNION
 		SELECT ac.transdate, ac.source, ac.fx_transaction,
 		ac.amount, ac.cleared, a.id, n.name
 		FROM acc_trans ac
@@ -197,7 +196,7 @@ sub payment_transactions {
 		$fx_transaction
 		$transdate
 		$cleared
-		UNION ALL
+		UNION
 		SELECT ac.transdate, ac.source, ac.fx_transaction,
 		ac.amount, ac.cleared, a.id, n.name
 		FROM acc_trans ac

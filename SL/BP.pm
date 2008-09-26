@@ -188,7 +188,7 @@ sub get_spoolfiles {
 		  to_char(j.checkedin, '$dateformat') AS transdate,
 		  '' AS ordnumber, '' AS quonumber, '0' AS invoice,
 		  'jc' AS module, s.spoolfile, j.description,
-		  j.sellprice * j.qty AS amount, e.city
+		  j.sellprice * j.qty AS amount, e.city, e.id AS employee_id
 		  FROM jcitems j
 		  JOIN employee e ON (e.id = j.employee_id)
 		  JOIN status s ON (s.trans_id = j.id)
@@ -224,7 +224,7 @@ sub get_spoolfiles {
 		  to_char(j.checkedin, '$dateformat') AS transdate,
 		  '' AS ordnumber, '' AS quonumber, '0' AS invoice,
 		  'jc' AS module, '' AS spoolfile, j.description, 
-		  j.sellprice * j.qty AS amount, e.city
+		  j.sellprice * j.qty AS amount, e.city, e.id AS employee_id
 		  FROM jcitems j
 		  JOIN employee e ON (e.id = j.employee_id)
 		  WHERE $where|;
@@ -283,7 +283,8 @@ sub get_spoolfiles {
 		  a.$invnumber AS invnumber, a.transdate,
 		  a.ordnumber, a.quonumber, $invoice AS invoice,
 		  '$item' AS module, s.spoolfile, a.description, a.amount,
-		  ad.city, vc.email
+		  ad.city, vc.email, '$arap{$form->{type}}{$item}' AS db,
+		  vc.id AS vc_id
 		  FROM $item a
 		  JOIN $arap{$form->{type}}{$item} vc ON (a.$arap{$form->{type}}{$item}_id = vc.id)
 		  JOIN address ad ON (ad.trans_id = vc.id)
@@ -351,7 +352,8 @@ sub get_spoolfiles {
 		  a.ordnumber, a.quonumber, $invoice AS invoice,
 		  '$item' AS module, '' AS spoolfile, a.description, a.amount,
 		  '$arap{$form->{type}}{$item}' AS vc,
-		  ad.city, vc.email
+		  ad.city, vc.email, '$arap{$form->{type}}{$item}' AS db,
+                  vc.id AS vc_id
 		  FROM $item a
 		  JOIN $arap{$form->{type}}{$item} vc ON (a.$arap{$form->{type}}{$item}_id = vc.id)
 		  JOIN address ad ON (ad.trans_id = vc.id)

@@ -508,6 +508,10 @@ sub form_header {
 		<td><input name=invnumber size=20 value="|.$form->quote($form->{invnumber}).qq|"></td>
 	      </tr>
 	      <tr>
+		<th align=right nowrap>|.$locale->text('DCN').qq|</th>
+		<td><input name=dcn size=20 value="|.$form->quote($form->{dcn}).qq|"></td>
+	      </tr>
+	      <tr>
 		<th align=right nowrap>|.$locale->text('Order Number').qq|</th>
 		<td><input name=ordnumber size=20 value="|.$form->quote($form->{ordnumber}).qq|"></td>
 	      </tr>
@@ -665,7 +669,7 @@ sub form_footer {
     $exchangerate = qq|&nbsp;|;
     if ($form->{currency} ne $form->{defaultcurrency}) {
       $form->{discount_exchangerate} = $form->format_amount(\%myconfig, $form->{discount_exchangerate});
-      $exchangerate = qq|<input name="discount_exchangerate" size=10 value=$form->{discount_exchangerate}>|;
+      $exchangerate = qq|<input name="discount_exchangerate" size=10 value=$form->{discount_exchangerate}>|.$form->hide_form(qw(olddiscount_datepaid));
     }
 
     $column_data{paid} = qq|<td align=center><input name="discount_paid" size=11 value=|.$form->format_amount(\%myconfig, $form->{"discount_paid"}, $form->{precision}).qq|></td>|;
@@ -769,7 +773,7 @@ sub form_footer {
 
     $exchangerate = qq|&nbsp;|;
     if ($form->{currency} ne $form->{defaultcurrency}) {
-      $exchangerate = qq|<input name="exchangerate_$i" size=10 value=$form->{"exchangerate_$i"}>|;
+      $exchangerate = qq|<input name="exchangerate_$i" size=10 value=$form->{"exchangerate_$i"}>|.$form->hide_form("olddatepaid_$i");
     }
 
     $form->hide_form(map { "${_}_$i" } qw(cleared vr_id));
@@ -822,7 +826,11 @@ sub form_footer {
 
   $transdate = $form->datetonum(\%myconfig, $form->{transdate});
 
-  if (! $form->{readonly}) {
+  if ($form->{readonly}) {
+
+    &islocked;
+
+  } else {
     
     %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
 	       'Print' => { ndx => 2, key => 'P', value => $locale->text('Print') },
@@ -917,18 +925,21 @@ sub update {
     }
   }
 
-  $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate}, 'buy');
+  $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate}, 'buy') if $form->{currency} ne $form->{oldcurrency};
+  $form->{oldcurrency} = $form->{currency};
 
   $form->{discount_exchangerate} = "";
   
   if ($form->{discount_paid}) {
-    $form->{discount_exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{discount_datepaid}, 'buy');
+    if ($form->{discount_datepaid} ne $form->{olddiscount_datepaid} || $form->{currency} ne $form->{oldcurrency}) {
+      $form->{discount_exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{discount_datepaid}, 'buy');
+    }
 
     $expired = $form->add_date(\%myconfig, $form->{transdate}, $form->{discountterms}, 'days');
     if ($form->datetonum(\%myconfig, $form->{discount_datepaid}) > $form->datetonum(\%myconfig, $expired)) {
       $form->{discount_datepaid} = $expired;
     }
-
+    $form->{olddiscount_datepaid} = $form->{discount_datepaid};
   }
   
   $totalpaid = $form->{discount_paid};
@@ -936,15 +947,20 @@ sub update {
   $j = 1;
   for $i (1 .. $form->{paidaccounts}) {
     if ($form->{"paid_$i"}) {
-      for (qw(datepaid source memo cleared vr_id)) { $form->{"${_}_$j"} = $form->{"${_}_$i"} }
+      for (qw(olddatepaid datepaid source memo cleared vr_id)) { $form->{"${_}_$j"} = $form->{"${_}_$i"} }
       for (qw(paid exchangerate)) { $form->{"${_}_$j"} = $form->parse_amount(\%myconfig, $form->{"${_}_$i"}) }
 
-      $form->{"exchangerate_$j"} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{"datepaid_$j"}, 'buy');
+      if ($form->{"datepaid_$j"} ne $form->{"olddatepaid_$j"} || $form->{currency} ne $form->{oldcurrency}) {
+	$form->{"exchangerate_$j"} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{"datepaid_$j"}, 'buy');
+      }
+      
+      $form->{"olddatepaid_$j"} = $form->{"datepaid_$j"};
+      
       if ($j++ != $i) {
-	for (qw(datepaid source memo cleared paid exchangerate vr_id)) { delete $form->{"${_}_$i"} }
+	for (qw(olddatepaid datepaid source memo cleared paid exchangerate vr_id)) { delete $form->{"${_}_$i"} }
       }
     } else {
-      for (qw(datepaid source memo cleared paid exchangerate vr_id)) { delete $form->{"${_}_$i"} }
+      for (qw(olddatepaid datepaid source memo cleared paid exchangerate vr_id)) { delete $form->{"${_}_$i"} }
     }
   }
   
@@ -956,12 +972,6 @@ sub update {
     
   # if last row empty, check the form otherwise retrieve new item
   if (($form->{"partnumber_$i"} eq "") && ($form->{"description_$i"} eq "") && ($form->{"partsgroup_$i"} eq "")) {
-
-    if ($form->{type} eq 'credit_invoice') {
-      $form->{creditremaining} -= ($form->{oldinvtotal} - $form->{oldtotalpaid});
-    } else {
-      $form->{creditremaining} += ($form->{oldinvtotal} - $form->{oldtotalpaid});
-    }
 
     &check_form;
 

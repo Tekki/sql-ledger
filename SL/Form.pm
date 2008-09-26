@@ -78,8 +78,8 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.8.4";
-  $self->{dbversion} = "2.8.4";
+  $self->{version} = "2.8.5";
+  $self->{dbversion} = "2.8.5";
 
   $self->{precision} = 2;
   
@@ -2068,7 +2068,6 @@ sub create_lock {
   my ($self, $myconfig, $dbh, $id, $module) = @_;
   
   my $query;
-  my $readonly;
   
   my $disconnect = 0;
   if (! $dbh) {
@@ -2078,11 +2077,16 @@ sub create_lock {
  
   if ($id) {
     $self->{readonly} = 1;
-    $query = qq|SELECT id FROM semaphore
-		 WHERE id = $id|;
-    ($readonly) = $dbh->selectrow_array($query);
+    $query = qq|SELECT id, login FROM semaphore
+		WHERE id = $id|;
+    my ($readonly, $login) = $dbh->selectrow_array($query);
     
-    if (! $readonly) {
+    if ($readonly) {
+      $login =~ s/@.*//;
+      $query = qq|SELECT name FROM employee
+		  WHERE login = '$login'|;
+      ($self->{haslock}) = $dbh->selectrow_array($query);
+    } else {
       $query = qq|INSERT INTO semaphore (id, login, module)
 		  VALUES ($id, '$self->{login}', '$module')|;
       $dbh->do($query) || $self->dberror($query);
@@ -2273,7 +2277,7 @@ sub get_partsgroup {
 
   my $dbh = $self->dbconnect($myconfig);
 
-  my $query = qq|SELECT DISTINCT pg.id, pg.partsgroup
+  my $query = qq|SELECT DISTINCT pg.*
                  FROM partsgroup pg
 		 JOIN parts p ON (p.partsgroup_id = pg.id)|;
   my $where = qq|WHERE p.obsolete = '0'|;
@@ -2302,7 +2306,7 @@ sub get_partsgroup {
   }
 
   if ($p->{all}) {
-    $query = qq|SELECT id, partsgroup
+    $query = qq|SELECT id, partsgroup, pos
                 FROM partsgroup|;
     $where = "";
   } 
@@ -2310,8 +2314,7 @@ sub get_partsgroup {
   if ($p->{language_code}) {
     $sortorder = "translation";
     
-    $query = qq|SELECT DISTINCT pg.id, pg.partsgroup,
-                t.description AS translation
+    $query = qq|SELECT DISTINCT pg.*, t.description AS translation
 		FROM partsgroup pg
 		JOIN parts p ON (p.partsgroup_id = pg.id)
 		LEFT JOIN translation t ON (t.trans_id = pg.id AND t.language_code = '$p->{language_code}')|;

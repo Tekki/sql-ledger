@@ -579,7 +579,11 @@ sub timecard_footer {
 
   $transdate = $form->datetonum(\%myconfig, $form->{transdate});
 
-  if (! $form->{readonly}) {
+  if ($form->{readonly}) {
+
+    &islocked;
+
+  } else {
 
   %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
              'Print' => { ndx => 2, key => 'P', value => $locale->text('Print') },
@@ -1969,4 +1973,10 @@ sub new_item {
 
 }
 
+
+sub islocked {
+
+  print "<p><font color=red>".$locale->text('Locked by').": $form->{haslock}</font>" if $form->{haslock};
+
+}
 

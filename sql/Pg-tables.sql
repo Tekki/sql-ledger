@@ -63,7 +63,7 @@ CREATE TABLE defaults (
   fldvalue text
 );
 --
-INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '2.8.4');
+INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '2.8.5');
 --
 CREATE TABLE acc_trans (
   trans_id int,
@@ -418,7 +418,8 @@ CREATE TABLE project (
 --
 CREATE TABLE partsgroup (
   id int DEFAULT nextval('id'),
-  partsgroup text
+  partsgroup text,
+  pos bool DEFAULT 't'
 );
 --
 CREATE TABLE status (

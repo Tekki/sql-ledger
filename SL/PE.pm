@@ -884,8 +884,8 @@ sub partsgroups {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  $form->{sort} = "partsgroup" unless $form->{partsgroup};
-  my @a = (partsgroup);
+  $form->{sort} ||= "partsgroup";
+  my @a = qw(partsgroup);
   my $sortorder = $form->sort_order(\@a);
 
   my $query = qq|SELECT g.*
@@ -937,14 +937,18 @@ sub save_partsgroup {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
   
+  $form->{pos} *= 1;
+
   if ($form->{id}) {
     $query = qq|UPDATE partsgroup SET
-                partsgroup = |.$dbh->quote($form->{partsgroup}).qq|
+                partsgroup = |.$dbh->quote($form->{partsgroup}).qq|,
+		pos = '$form->{pos}'
 		WHERE id = $form->{id}|;
   } else {
     $query = qq|INSERT INTO partsgroup
-                (partsgroup)
-                VALUES (|.$dbh->quote($form->{partsgroup}).qq|)|;
+                (partsgroup, pos)
+                VALUES (|.$dbh->quote($form->{partsgroup}).qq|,
+		'$form->{pos}')|;
   }
   $dbh->do($query) || $form->dberror($query);
   

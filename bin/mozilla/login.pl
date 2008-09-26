@@ -323,15 +323,7 @@ sub login {
       $form->{callback} .= "&main=company_logo";
     }
   } else {
-    if ($user->{role} eq 'user') {
-      $form->{callback} .= "&main=company_logo";
-    } else {
-      if ($user->check_recurring(\%$form)) {
-	$form->{callback} .= "&main=recurring_transactions";
-      } else {
-	$form->{callback} .= "&main=company_logo";
-      }
-    }
+    $form->{callback} .= "&main=company_logo";
   }
 
   $form->redirect;
