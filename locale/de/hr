@@ -1,5 +1,5 @@
 $self{texts} = {
-  'AP'                          => 'Verbindlichkeiten',
+  'AP'                          => 'Kreditoren',
   'Above'                       => 'Über',
   'Accounting Menu'             => 'Kontoverwaltung',
   'Active'                      => 'Aktiv',
@@ -39,8 +39,8 @@ $self{texts} = {
   'Employees'                   => 'Arbeitnehmer',
   'Employer'                    => 'Arbeitgeber',
   'Employer pays'               => 'Arbeitgeber bezahlt',
-  'Enddate'                     => 'Endedatum',
-  'Exempt age <'                => 'Befreiheitsalter <',
+  'Enddate'                     => 'Ausgeschieden am',
+  'Exempt age <'                => 'Befreiungsalter <',
   'Expense'                     => 'Aufwand',
   'From'                        => 'Von',
   'Home Phone'                  => 'Tel. privat',
@@ -66,11 +66,11 @@ $self{texts} = {
   'Sales'                       => 'Warenverkauf',
   'Save'                        => 'Speichern',
   'Save as new'                 => 'als neu speichern',
-  'Startdate'                   => 'Startdatum',
+  'Startdate'                   => 'Beschäftigt seit',
   'State/Province'              => 'Bundesland',
   'Supervisor'                  => 'Vorarbeiter',
   'To'                          => 'Bis',
-  'Update'                      => 'Erneuern',
+  'Update'                      => 'Übernehmen',
   'User'                        => 'Benutzer',
   'Work Phone'                  => 'Tel. Arbeit',
   'Zip/Postal Code'             => 'Postleitzahl',
@@ -113,7 +113,7 @@ $self{subs} = {
   'löschen'                     => 'delete',
   'speichern'                   => 'save',
   'als_neu_speichern'           => 'save_as_new',
-  'erneuern'                    => 'update',
+  'Übernehmen'                  => 'update',
 };
 
 1;

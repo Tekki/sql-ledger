@@ -56,7 +56,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.6.14";
+  $self->{version} = "2.6.15";
   $self->{dbversion} = "2.6.12";
 
   bless $self, $type;
@@ -1505,13 +1505,37 @@ sub all_vc {
   }
   $sth->finish;
 
-  if ($self->{taxaccounts} && $transdate) {
+  $self->all_taxaccounts($myconfig, $dbh, $transdate);
+
+  $dbh->disconnect if $disconnect;
+
+}
+
+
+sub all_taxaccounts {
+  my ($self, $myconfig, $dbh, $transdate) = @_;
+
+  my $disconnect = ($dbh) ? 0 : 1;
+
+  if (! $dbh) {
+    $dbh = $self->dbconnect($myconfig);
+  }
+  my $sth;
+  my $query;
+  my $where;
+  
+
+  if ($transdate) {
+    $where = qq| AND (t.validto >= '$transdate' OR t.validto IS NULL)|;
+  }
+
+  if ($self->{taxaccounts}) {
     # rebuild tax rates
     $query = qq|SELECT t.rate, t.taxnumber 
                 FROM tax t 
 		JOIN chart c ON (c.id = t.chart_id) 
-		WHERE c.accno = ? 
-		AND (t.validto >= '$transdate' OR t.validto IS NULL)
+		WHERE c.accno = ?
+		$where
 		ORDER BY accno, validto|; 
     $sth = $dbh->prepare($query) || $self->dberror($query);
 
@@ -1523,10 +1547,10 @@ sub all_vc {
   }
 
   $dbh->disconnect if $disconnect;
-
+  
 }
 
-
+ 
 sub all_employees {
   my ($self, $myconfig, $dbh, $transdate, $sales) = @_;
   

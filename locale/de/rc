@@ -44,7 +44,7 @@ $self{texts} = {
   'Quarter'                     => 'Quartal',
   'R'                           => 'R',
   'Reconciliation'              => 'Kontenabgleich',
-  'Reconciliation Report'       => 'Kontenabgleichungsreport',
+  'Reconciliation Report'       => 'Kontenabgleichsbericht',
   'Select all'                  => 'Alle auswählen',
   'Sep'                         => 'Sep',
   'September'                   => 'September',
@@ -52,7 +52,7 @@ $self{texts} = {
   'Statement Balance'           => 'Auszugsbilanz',
   'Summary'                     => 'Zusammenfassung',
   'To'                          => 'Bis',
-  'Update'                      => 'Erneuern',
+  'Update'                      => 'Übernehmen',
   'Year'                        => 'Jahr',
 };
 
@@ -72,7 +72,7 @@ $self{subs} = {
   'weiter'                      => 'continue',
   'fertig'                      => 'done',
   'alle_auswählen'              => 'select_all',
-  'erneuern'                    => 'update',
+  'Übernehmen'                  => 'update',
 };
 
 1;

@@ -1663,7 +1663,7 @@ sub tax_report {
 		   (
 		     SELECT trans_id
 		     FROM acc_trans
-		     JOIN chart ON (chart_id = id)
+		     JOIN chart ON (chart_id = chart.id)
 		     WHERE link LIKE '%${ARAP}_paid%'
 		     AND $transdate <= '$todate'
 		     AND a.paid = a.amount
@@ -1803,7 +1803,7 @@ sub tax_report {
     
     if ($form->{summary}) {
       # only gather up non-taxable transactions
-      $query = qq|SELECT a.id, a.invoice, $transdate AS transdate,
+      $query = qq|SELECT DISTINCT a.id, a.invoice, $transdate AS transdate,
 		  a.invnumber, n.name, a.netamount, a.till
 		  FROM acc_trans ac
 		JOIN $form->{db} a ON (a.id = ac.trans_id)
@@ -1818,7 +1818,7 @@ sub tax_report {
 	  $query .= qq|
                 UNION
 		
-                  SELECT a.id, a.invoice, $transdate AS transdate,
+                  SELECT DISTINCT a.id, a.invoice, $transdate AS transdate,
 		  a.invnumber, n.name, a.netamount, a.till
 		  FROM acc_trans ac
 		JOIN $form->{db} a ON (a.id = ac.trans_id)
