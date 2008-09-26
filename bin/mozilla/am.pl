@@ -2060,6 +2060,8 @@ sub config {
   }
   
   $form->{title} = $locale->text('Edit Preferences for').qq| $form->{login}|;
+
+  $form->{old_password} = $myconfig{password};
   
   $form->header;
 
@@ -2113,11 +2115,11 @@ sub config {
 	    <table>
 	      <tr>
 		<th align=right>|.$locale->text('Password').qq|</th>
-		<td><input type=password name=new_password size=10 value=*></td>
+		<td><input type=password name=new_password  value="$myconfig{password}" size=10></td>
 	      </tr>
 	      <tr>
 		<th align=right>|.$locale->text('Confirm').qq|</th>
-		<td><input type=password name=confirm_password size=10></td>
+		<td><input type=password name=confirm_password  value="$myconfig{password}" size=10></td>
 	      </tr>
 	      <tr>
 		<th align=right>|.$locale->text('Date Format').qq|</th>
@@ -2159,7 +2161,7 @@ sub config {
 </table>
 |;
 
-  $form->hide_form(qw(path login sessionid));
+  $form->hide_form(qw(old_password path login sessionid));
   
   print qq|
 <input type=submit class=submit name=action value="|.$locale->text('Save').qq|">|;
@@ -2205,8 +2207,13 @@ sub save_preferences {
 
   $form->{stylesheet} = $form->{usestylesheet};
 
-  $form->error($locale->text('Password does not match!')) if $form->{new_password} ne $form->{confirm_password};
-
+  if ($form->{new_password} eq $form->{old_password}) {
+    $form->{encrypted} = 1;
+  } else {
+    if ($form->{new_password} ne $form->{confirm_password}) {
+      $form->error($locale->text('Password does not match!'));
+    }
+  }
   $form->{password} = $form->{new_password};
 
   if (AM->save_preferences(\%myconfig, \%$form, $memberfile, $userspath)) {

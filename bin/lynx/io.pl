@@ -167,7 +167,7 @@ sub display_row {
     if ($form->{"qty_$i"} != $form->{"oldqty_$i"}) {
       # check pricematrix
       @a = split / /, $form->{"pricematrix_$i"};
-      if (scalar @a > 2) {
+      if (scalar @a > 1) {
 	foreach $item (@a) {
 	  ($q, $p) = split /:/, $item;
 	  if (($p * 1) && ($form->{"qty_$i"} >= ($q * 1))) {
@@ -553,43 +553,34 @@ sub new_item {
   $i = $form->{rowcount};
   for (qw(partnumber description)) { $form->{"${_}_$i"} = $form->quote($form->{"${_}_$i"}) }
 
+  %button = ('Add Part' => { ndx => 1, key => 'P', value => $locale->text('Add Part') },
+             'Add Service' => { ndx => 2, key => 'P', value => $locale->text('Add Service') }
+	    );
+
+  delete $button{'Add Part'} if $myconfig{acs} =~ /Goods \& Services--Add Part/;
+  delete $button{'Add Service'} if $myconfig{acs} =~ /Goods \& Services--Add Service/;
+  
   $form->header;
 
   print qq|
 <body>
 
-<h4 class=error>|.$locale->text('Item not on file!').qq|</h4>|;
-
-  if ($myconfig{acs} !~ /(Goods \& Services--Add Part|Goods \& Services--Add Service)/) {
-
-    print qq|
-<h4>|.$locale->text('What type of item is this?').qq|</h4>
+<h2 class=error>|.$locale->text('Error!').qq|</h2>
+<h4 class=error>|.$locale->text('Item not on file!').qq|</h4>
 
 <form method=post action=ic.pl>
 
-<p>
-
-  <input class=radio type=radio name=item value=part checked>&nbsp;|.$locale->text('Part')
-.qq|<br>
-  <input class=radio type=radio name=item value=service>&nbsp;|.$locale->text('Service')
-
-.qq|
 <input type=hidden name=partnumber value="$form->{"partnumber_$i"}">
 <input type=hidden name=description value="$form->{"description_$i"}">
-<input type=hidden name=nextsub value=add>
-<input type=hidden name=action value=add>
 |;
 
   $form->hide_form(qw(previousform rowcount path login sessionid));
 
+  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  
   print qq|
-<p>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">
 </form>
-|;
-  }
 
-  print qq|
 </body>
 </html>
 |;

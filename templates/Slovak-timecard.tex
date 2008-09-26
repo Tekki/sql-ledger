@@ -1,0 +1,53 @@
+\documentclass{scrartcl}
+\usepackage[latin1]{inputenc}
+\usepackage{tabularx}
+\usepackage[letterpaper,top=2cm,bottom=-3cm,left=1.1cm,right=1.5cm]{geometry}
+\usepackage{graphicx}
+
+\begin{document}
+
+\pagestyle{myheadings}
+\thispagestyle{empty}
+
+\fontfamily{cmss}\fontsize{10pt}{12pt}\selectfont
+
+<%include letterhead.tex%>
+
+\centerline{\textbf{È A S O V Á}\hspace{0.5cm}\textbf{K A R T A}}
+
+\vspace*{0.5cm}
+
+\begin{tabular}[t]{ll}
+  \textbf{Zamestnanec} & <%employee%> \\
+  \textbf{ID} & <%employee_id%> \\
+\end{tabular}
+\hfill
+\begin{tabular}[t]{ll}
+  \textbf{ID karty} & <%id%> \\
+  \textbf{Dátum} & <%transdate%> \\
+  \textbf{Vstup} & <%checkedin%> \\
+  \textbf{Výstup} & <%checkedout%> \\
+  \textbf{Hodiny} & <%qty%> \\
+\end{tabular}
+
+\vspace{1cm}
+
+\begin{tabular}[b]{ll}
+  \textbf{Práca/Projekt} & <%projectnumber%> \\
+  \textbf{Popis} & <%projectdescription%> \\
+  \textbf{Práca/Servis kód} & <%partnumber%> \\
+  \textbf{Popis} & <%description%> \\
+\end{tabular}
+\hfill
+\begin{tabular}[b]{lr}
+  \textbf{Kurz} & <%sellprice%> \\
+  \textbf{Celkom} & <%total%> \\
+\end{tabular}
+  
+\vspace{0.3cm}
+
+<%notes%>
+ 
+\end{document}
+
+

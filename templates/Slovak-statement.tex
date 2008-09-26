@@ -1,0 +1,79 @@
+\documentclass{scrartcl}
+\usepackage[latin2]{inputenc}
+\usepackage{tabularx}
+\usepackage[letterpaper,top=2cm,bottom=-3cm,left=1.1cm,right=1.5cm]{geometry}
+\usepackage{graphicx}
+
+\begin{document}
+
+\pagestyle{myheadings}
+\thispagestyle{empty}
+
+\fontfamily{cmss}\fontsize{10pt}{12pt}\selectfont
+
+<%include letterhead.tex%>
+
+\parbox[t]{.5\textwidth}{
+<%name%>
+
+<%address1%>
+
+<%address2%>
+
+<%city%>
+<%if state%>
+\hspace{-0.1cm}, <%state%>
+<%end state%>
+<%zipcode%>
+
+<%country%>
+}
+\parbox[t]{.5\textwidth}{
+<%if customerphone%>
+Tel: <%customerphone%>
+<%end customerphone%>
+
+<%if customerfax%>
+Fax: <%customerfax%>
+<%end customerfax%>
+
+<%email%>
+}
+\hfill
+
+\vspace{1cm}
+
+\textbf{PREHLAD STAVU} \hfill \textbf{<%statementdate%>}
+
+\vspace{2cm}
+
+\begin{tabular*}{\textwidth}{|ll@{\extracolsep\fill}ccrrrr|}
+  \hline
+  \textbf{Faktúra} & \textbf{Objednávka} & \textbf{Dátum} & \textbf{Splatnos»} &
+  \textbf{0} & \textbf{30} & \textbf{60} & \textbf{90} \\
+  \hline
+<%foreach invnumber%>
+  <%invnumber%> & <%ordnumber%> & <%invdate%> & <%duedate%> &
+  <%c0%> & <%c30%> & <%c60%> & <%c90%> \\
+<%end invnumber%>
+  \multicolumn{8}{|l|}{\mbox{}} \\
+  \hline
+  \textbf{Medzisúèet} & & & & <%c0total%> & <%c30total%> & <%c60total%> & <%c90total%> \\
+  \hline
+\end{tabular*}
+
+\vspace{0.5cm}
+
+\hfill
+\begin{tabularx}{\textwidth}{Xr@{\hspace{1cm}}r@{}}
+  & \textbf{Celkom} & \textbf{<%total%>}
+\end{tabularx}
+
+\vfill
+Hodnoty sú v \textbf{<%currency%>} .
+
+Platbu realizujte pre \textbf{<%company%>}
+
+\end{document}
+
+

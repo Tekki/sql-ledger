@@ -56,7 +56,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.6.19";
+  $self->{version} = "2.6.20";
   $self->{dbversion} = "2.6.12";
 
   bless $self, $type;
@@ -284,7 +284,7 @@ $self->{pre}
 sub set_cookie {
   my ($self, $endsession) = @_;
 
-  $self->{timeout} ||= 3600;
+  $self->{timeout} ||= 31557600;
   my $t = ($endsession) ? time : time + $self->{timeout};
   my $login = ($self->{"root login"}) ? "root login" : $self->{login};
   

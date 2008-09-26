@@ -186,11 +186,10 @@ sub check_password {
 
 	  $l = length $form->{login};
 	  $login = substr($s, 0, $l);
-	  $time = substr($s, -10);
 	  $password = substr($s, $l, (length $s) - ($l + 10));
 
 	  # validate cookie
-	  if ((time > $time) || ($login ne $form->{login}) || ($myconfig{password} ne crypt $password, substr($form->{login}, 0, 2))) {
+	  if (($login ne $form->{login}) || ($myconfig{password} ne crypt $password, substr($form->{login}, 0, 2))) {
 	    &getpassword(1);
 	    exit;
 	  }

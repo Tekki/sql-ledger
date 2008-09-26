@@ -91,6 +91,7 @@ sub jcitems_links {
       if ($form->{partnumber} eq "$ref->{partnumber}--$ref->{id}") {
 	if ($form->{partnumber} ne $form->{oldpartnumber}) {
 	  for (qw(description unit sellprice pricematrix)) { $form->{$_} = $ref->{$_} }
+	  $form->{sellprice} = $form->format_amount(\%myconfig, $form->{sellprice}, 2);
 	}
       }
     }

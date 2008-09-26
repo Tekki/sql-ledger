@@ -638,7 +638,7 @@ sub form_header {
 <form method=post action="$form->{script}">
 |;
 
-  $form->hide_form(qw(id item title makemodel alternate onhand orphaned taxaccounts rowcount baseassembly project_id));
+  $form->hide_form(qw(id item title makemodel alternate onhand orphaned taxaccounts rowcount project_id));
   
   print qq|
 <table width="100%">
@@ -752,7 +752,7 @@ sub form_footer {
 	$button{'Delete'} = { ndx => 16, key => 'D', value => $locale->text('Delete') };
       }
     }
-    
+
     for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
     
   }
@@ -2400,7 +2400,6 @@ sub assembly_row {
   # delete action
   for (qw(action header)) { delete $form->{$_} }
 
-  $form->{baseassembly} = 0;
   $previousform = "";
   # save form variables in a previousform variable
   $form->{selectcustomer} = "";   # we seem to have run into a 40kb limit
@@ -2484,8 +2483,11 @@ sub assembly_row {
 
     } else {
       
-      $column_data{partnumber} = qq|<td><input class=submit type=submit name=action value="$spc$form->{"partnumber_$i"}"></td>
-      <input type=hidden name="partnumber_$i" value="$form->{"partnumber_$i"}">|;
+      if ($form->{isassemblyitem}) {
+	$column_data{partnumber} = qq|<td>$form->{"partnumber_$i"}</td><input type=hidden name="partnumber_$i" value="$form->{"partnumber_$i"}">|;
+      } else {
+	$column_data{partnumber} = qq|<td><input class=submit type=submit name=action value="$spc$form->{"partnumber_$i"}"></td><input type=hidden name="partnumber_$i" value="$form->{"partnumber_$i"}">|;
+      }
 	
       $column_data{runningnumber} = qq|<td><input name="runningnumber_$i" size=3 value="$i"></td>|;
       $column_data{qty} = qq|<td><input name="qty_$i" size=6 value="$form->{"qty_$i"}" accesskey="$i" title="[Alt-$i]"></td>|;
@@ -2558,9 +2560,7 @@ sub edit_assemblyitem {
 
   $form->error($locale->text('unexpected error!')) unless $i;
   
-  $form->{baseassembly} = ($form->{baseassembly}) ? $form->{baseassembly} : $form->{"assembly_$i"};
-
-  $form->{callback} = qq|$form->{script}?action=edit&id=$form->{"id_$i"}&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&rowcount=$i&baseassembly=$form->{baseassembly}&isassemblyitem=1&previousform=$form->{previousform}|;
+  $form->{callback} = qq|$form->{script}?action=edit&id=$form->{"id_$i"}&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&rowcount=$i&isassemblyitem=1&previousform=$form->{previousform}|;
 
   $form->redirect;
   
@@ -2889,7 +2889,6 @@ sub save {
     for (keys %$form) { $newform{$_} = $form->{$_} }
 
     $previousform = $form->unescape($form->{previousform});
-    $baseassembly = $form->{baseassembly};
 
     # don't trample on previous variables
     for (keys %newform) { delete $form->{$_} }
@@ -2904,18 +2903,6 @@ sub save {
 
     if ($form->{item} eq 'assembly') {
 
-      if ($baseassembly) {
-	#redo the assembly
-	$previousform =~ /\&id=(\d+)/;
-	$form->{id} = $1;
-	
-	# restore original callback
-	$form->{callback} = $form->unescape($form->{old_callback});
-
-	&edit;
-	exit;
-      }
-	
       # undo number formatting
       for (qw(weight listprice sellprice lastcost rop)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
 
@@ -2953,6 +2940,15 @@ sub save {
 	$form->{"${_}_accno_id_$i"} =~ s/--.*//;
       }
       $form->{"sellprice_$i"} = $newform{lastcost} if ($form->{vendor_id});
+
+      for ($j = 1; $j <= $newform{vendor_rows}; $j++) {
+        # if vendor matches and there is a number 
+	if ($newform{"vendor_$j"} eq $form->{oldvendor}) {
+	  $form->{"sku_$i"} = $form->{"partnumber_$i"} if $newform{"partnumber_$j"};
+	  $form->{"partnumber_$i"} = $newform{"partnumber_$j"} if $newform{"partnumber_$j"};
+	  $form->{"sellprice_$i"} = $newform{"lastcost_$j"};
+	}
+      }
 
       if ($form->{exchangerate} != 0) {
 	$form->{"sellprice_$i"} = $form->round_amount($form->{"sellprice_$i"} / $form->{exchangerate}, 2);
@@ -3230,9 +3226,23 @@ sub restock_assemblies {
 
 sub continue { &{ $form->{nextsub} } };
 
-sub add_part { &add };
-sub add_service { &add };
-sub add_assembly { &add };
-sub add_labor_overhead { &add };
+sub add_part {
+  $form->{item} = 'part';
+  &add;
+}
 
+sub add_service {
+  $form->{item} = 'service';
+  &add;
+}
+
+sub add_assembly {
+  $form->{item} = 'assembly';
+  &add;
+}
+
+sub add_labor_overhead {
+  $form->{item} = 'labor';
+  &add;
+}
 
