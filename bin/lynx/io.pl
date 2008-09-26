@@ -1076,6 +1076,28 @@ sub create_form {
   $form->{forex} = "";
   $form->{exchangerate} = $exchangerate if ($form->{forex} = ($exchangerate = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate}, $buysell)));
 
+
+#################
+  for $i (1 .. $form->{rowcount}) {
+    $form->{"discount_$i"} = $form->format_amount(\%myconfig, $form->{"discount_$i"} * 100);
+    for (qw(netweight grossweight volume)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}) }
+
+    ($dec) = ($form->{"sellprice_$i"} =~ /\.(\d+)/);
+    $dec = length $dec;
+    $decimalplaces = ($dec > $form->{precision}) ? $dec : $form->{precision};
+
+    for (qw(sellprice listprice)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}, $decimalplaces) }
+
+    ($dec) = ($form->{"lastcost_$i"} =~ /\.(\d+)/);
+    $dec = length $dec;
+    $decimalplaces = ($dec > $form->{precision}) ? $dec : $form->{precision};
+
+    $form->{"lastcost_$i"} = $form->format_amount(\%myconfig, $form->{"lastcost_$i"}, $decimalplaces);
+
+    for (qw(qty ship)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}) }
+    $form->{"oldqty_$i"} = $form->{"qty_$i"};
+  }
+
   &prepare_order;
 
   &display_form;
@@ -1360,9 +1382,12 @@ sub print_form {
     $form->{copies} = 1;
   }
 
-
   if ($form->{formname} eq 'invoice') {
     $form->{label} = $locale->text('Invoice');
+  }
+  if ($form->{formname} eq 'vendor_invoice') {
+    $form->{label} = $locale->text('Invoice');
+    $numberfld = "vinumber";
   }
   if ($form->{formname} eq 'debit_invoice') {
     $form->{label} = $locale->text('Debit Invoice');

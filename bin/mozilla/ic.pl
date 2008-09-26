@@ -1208,12 +1208,6 @@ sub generate_report {
     $option .= $locale->text('Active')." : ";
   }
   if ($form->{itemstatus} eq 'obsolete') {
-    $form->{onhand} = $form->{short} = 0;
-    
-    $form->{l_qty} = 0;
-    $form->{warehouse} = "";
-    $form->{l_warehouse} = 0;
-
     $option .= $locale->text('Obsolete')." : ";
   }
   if ($form->{itemstatus} eq 'orphaned') {

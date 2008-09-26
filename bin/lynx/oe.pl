@@ -2702,7 +2702,7 @@ sub generate_purchase_orders {
 
     $form->{"lastcost_$i"} = $form->format_amount(\%myconfig, $form->{orderitems}{$parts_id}{lastcost}, $form->{precision});
 
-    $form->{"qty_$i"} = $required;
+    $form->{"qty_$i"} = $form->format_amount(\%myconfig, $required);
     
     if (exists $form->{orderitems}{$parts_id}{"parts$form->{vc}"}) {
       $form->{"qty_$i"} = "";

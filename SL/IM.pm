@@ -96,6 +96,7 @@ sub sales_invoice {
   my %tax;
   my %customertax;
   my $customernumber;
+  my $invnumber;
   my %partstax;
   my $parts_id;
 
@@ -113,7 +114,7 @@ sub sales_invoice {
 	$form->{"${_}_$i"} = $a[$form->{$form->{type}}->{$_}{ndx}];
       }
 
-      if ($customernumber ne $a[$form->{$form->{type}}->{customernumber}{ndx}]) {
+      if ($customernumber ne $a[$form->{$form->{type}}->{customernumber}{ndx}] || $invnumber ne $a[$form->{$form->{type}}->{invnumber}{ndx}]) {
 	
 	$j = $i;
 	$form->{ndx} .= "$i ";
@@ -201,6 +202,7 @@ sub sales_invoice {
 	
     }
 
+    $invnumber = $a[$form->{$form->{type}}->{invnumber}{ndx}];
     $form->{rowcount} = $i;
 
   }
