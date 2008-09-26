@@ -1141,6 +1141,9 @@ sub check_password {
 	  &getpassword; 
 	  exit;
 	}
+      } else {
+	&getpassword; 
+	exit;
       }
     }
   }
