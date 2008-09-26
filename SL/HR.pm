@@ -138,7 +138,7 @@ sub save_employee {
 
   if (! $form->{id}) {
     my $uid = localtime;
-    $uid .= "--$form->{login}--$$--$form->{login}";
+    $uid .= "$$";
 
     $query = qq|INSERT INTO employee (name)
                 VALUES ('$uid')|;
@@ -448,7 +448,7 @@ sub save_deduction {
 
   if (! $form->{id}) {
     my $uid = localtime;
-    $uid .= "--$form->{login}--$$--$form->{login}";
+    $uid .= "$$";
 
     $query = qq|INSERT INTO deduction (description)
                 VALUES ('$uid')|;

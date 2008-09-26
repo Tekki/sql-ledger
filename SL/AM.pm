@@ -1669,7 +1669,7 @@ sub post_yearend {
 
   my $query;
   my $uid = localtime;
-  $uid .= "--$form->{login}--$$--$form->{login}";
+  $uid .= "$$";
 
   $query = qq|INSERT INTO gl (reference, employee_id)
 	      VALUES ('$uid', (SELECT id FROM employee

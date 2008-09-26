@@ -258,7 +258,7 @@ sub save {
   if (! $form->{id}) {
     
     my $uid = localtime;
-    $uid .= "--$form->{login}--$$--$form->{login}";
+    $uid .= "$$";
     
     $query = qq|INSERT INTO oe (ordnumber, employee_id)
 		VALUES ('$uid', $form->{employee_id})|;
@@ -1985,7 +1985,7 @@ sub generate_orders {
     $taxincluded *= 1;
     
     my $uid = localtime;
-    $uid .= "--$form->{login}--$$--$form->{login}";
+    $uid .= "$$";
  
     $query = qq|INSERT INTO oe (ordnumber)
 		VALUES ('$uid')|;
@@ -2142,7 +2142,7 @@ sub consolidate_orders {
   $department_id *= 1;
   
   my $uid = localtime;
-  $uid .= "--$form->{login}--$$--$form->{login}";
+  $uid .= "$$";
 
   my @orderitems = ();
  
