@@ -1,0 +1,14 @@
+$self{charset} = 'ISO-8859-15';
+
+$self{texts} = {
+  'Continue'                    => 'Edasi',
+  'Password'                    => 'Parool',
+};
+
+$self{subs} = {
+  'getpassword'                 => 'getpassword',
+  'edasi'                       => 'continue',
+};
+
+1;
+
