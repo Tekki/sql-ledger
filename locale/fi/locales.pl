@@ -24,7 +24,7 @@ $language =~ s/\((.*)\)/$1/;
 $charset = $1;
 
 opendir DIR, "$bindir" or die "$!";
-@progfiles = grep { /\.pl/; !/(_|^\.)/ } readdir DIR;
+@progfiles = grep { /\.pl/; !/(_|^\.|temp)/ } readdir DIR;
 seekdir DIR, 0;
 @customfiles = grep /_/, readdir DIR;
 closedir DIR;

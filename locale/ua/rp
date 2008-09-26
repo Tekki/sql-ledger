@@ -23,6 +23,7 @@ $self{texts} = {
   'Copies'                      => 'Коп╕й',
   'Credit'                      => 'Кредит',
   'Curr'                        => 'Валюта',
+  'Currency'                    => 'Валюта',
   'Current'                     => 'Поточний',
   'Customer'                    => 'Кл╕╓нт',
   'Customer not on file!'       => 'Кл╕╓нта нема в списку!',

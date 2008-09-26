@@ -23,6 +23,7 @@ $self{texts} = {
   'Copies'                      => 'Kopijos',
   'Credit'                      => 'Kreditas',
   'Curr'                        => 'Val.',
+  'Currency'                    => 'Valiûta',
   'Current'                     => 'Dabartinis',
   'Customer'                    => 'Klientas',
   'Customer not on file!'       => 'Tokio kliento nëra!',

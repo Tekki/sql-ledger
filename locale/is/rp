@@ -21,6 +21,7 @@ $self{texts} = {
   'Copies'                      => 'Afrit',
   'Credit'                      => 'Kredit',
   'Curr'                        => 'Gjaldm',
+  'Currency'                    => 'Gjaldmiðill',
   'Current'                     => 'Núvirði',
   'Customer'                    => 'Viðskiptavinur',
   'Customer not on file!'       => 'Viðskiptavinur ekki á skrá!',

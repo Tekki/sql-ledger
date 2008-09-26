@@ -16,6 +16,7 @@ $self{texts} = {
   'Compare to'                  => '...kýyasla',
   'Continue'                    => 'Devam',
   'Credit'                      => 'Alacak',
+  'Currency'                    => 'Para Birimi',
   'Customer'                    => 'Alýcý',
   'Date'                        => 'Tarih',
   'Debit'                       => 'Borç',

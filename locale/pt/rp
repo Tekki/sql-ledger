@@ -21,6 +21,7 @@ $self{texts} = {
   'Copies'                      => 'Cópias',
   'Credit'                      => 'Crédito',
   'Curr'                        => 'Moeda',
+  'Currency'                    => 'Moeda',
   'Customer'                    => 'Cliente',
   'Customer not on file!'       => 'Cliente inexistente!',
   'Date'                        => 'Data',

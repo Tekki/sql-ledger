@@ -1,12 +1,18 @@
 $self{charset} = 'ISO-8859-7';
 
 $self{texts} = {
+  'Account'                     => 'Λογαριασμός',
   'City'                        => 'Πόλη',
+  'Company'                     => 'Εταιρία',
   'Continue'                    => 'Συνέχεια',
+  'Currency'                    => 'Συνάλλαγμα',
   'Customer'                    => 'Πελάτης',
   'Customer Number'             => 'Κωδικός Πελάτη',
+  'Date Paid'                   => 'Ημ. Πληρωμής',
   'Description'                 => 'Περιγραφή',
   'Due Date'                    => 'Ημερομηνία λήξης',
+  'Exch'                        => 'Συναλλ',
+  'Invoice'                     => 'Τιμολόγιο',
   'Invoice Date'                => 'Ημ. τιμολογίου',
   'Invoice Number'              => 'Αρ. τιμολογίου',
   'No'                          => 'Όχι',
@@ -15,9 +21,12 @@ $self{texts} = {
 
 $self{subs} = {
   'continue'                    => 'continue',
-  'do_import'                   => 'do_import',
+  'display_payment'             => 'display_payment',
+  'display_sales_invoice'       => 'display_sales_invoice',
   'import'                      => 'import',
+  'import_payments'             => 'import_payments',
   'import_sales_invoices'       => 'import_sales_invoices',
+  'xrefhdr'                     => 'xrefhdr',
   'Συνέχεια'                    => 'continue',
 };
 

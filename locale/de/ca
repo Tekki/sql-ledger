@@ -45,7 +45,7 @@ $self{texts} = {
   'September'                   => 'September',
   'Source'                      => 'Beleg',
   'Subtotal'                    => 'Zwischensumme',
-  'To'                          => 'Bis',
+  'To'                          => 'An',
   'Year'                        => 'Jahr',
 };
 

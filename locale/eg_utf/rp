@@ -26,6 +26,7 @@ $self{texts} = {
   'Copies'                      => 'نسخ',
   'Credit'                      => 'دائن',
   'Curr'                        => 'عملة',
+  'Currency'                    => 'عملة',
   'Current'                     => 'الحالي',
   'Customer'                    => 'العميل',
   'Customer Number'             => 'رقم العميل',

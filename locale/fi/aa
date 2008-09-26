@@ -67,6 +67,7 @@ $self{texts} = {
   'March'                       => 'Maaliskuu',
   'May'                         => 'Tou',
   'May '                        => 'Toukokuu',
+  'Method'                      => 'Tapa',
   'Month'                       => 'Kuukausi',
   'No.'                         => 'no',
   'Notes'                       => 'Lisätietoja',

@@ -131,7 +131,7 @@ sub create_links {
   $form->create_links($form->{ARAP}, \%myconfig, $form->{vc});
   $form->{readonly} ||= $readonly;
 
-  @a = qw(duedate taxincluded terms cashdiscount discountterms payment_accno);
+  @a = qw(duedate taxincluded terms cashdiscount discountterms payment_accno payment_method);
   push @a, $form->{ARAP};
   for (@a) { $temp{$_} = $form->{$_} }
 
@@ -243,8 +243,16 @@ sub create_links {
     for (@{ $form->{all_language} }) { $form->{selectlanguage} .= qq|$_->{code}--$_->{description}\n| }
   }
 
+  # paymentmethod
+  if (@{ $form->{all_paymentmethod} }) {
+    $form->{selectpaymentmethod} = "\n";
+    $form->{paymentmethod} = "$form->{paymentmethod}--$form->{paymentmethod_id}" if $form->{paymentmethod_id};
+
+    for (@{ $form->{all_paymentmethod} }) { $form->{selectpaymentmethod} .= qq|$_->{description}--$_->{id}\n| }
+  }
+
   $form->{"select$form->{vc}"} = $form->escape($form->{"select$form->{vc}"},1);
-  for (qw(formname currency department employee projectnumber language)) { $form->{"select$_"} = $form->escape($form->{"select$_"},1) }
+  for (qw(formname currency department employee projectnumber language paymentmethod)) { $form->{"select$_"} = $form->escape($form->{"select$_"},1) }
   
   $netamount = 0;
   $tax = 0;
@@ -277,6 +285,8 @@ sub create_links {
 	$form->{"exchangerate_$i"} = $form->{acc_trans}{$key}->[$i-1]->{exchangerate};
 	$form->{"cleared_$i"} = $form->{acc_trans}{$key}->[$i-1]->{cleared};
 	$form->{"vr_id_$i"} = $form->{acc_trans}{$key}->[$i-1]->{vr_id};
+
+	$form->{"paymentmethod_$i"} = "$form->{acc_trans}{$key}->[$i-1]->{paymentmethod}--$form->{acc_trans}{$key}->[$i-1]->{paymentmethod_id}";
 	
 	$form->{paidaccounts}++;
 
@@ -290,6 +300,7 @@ sub create_links {
 	
 	$form->{"discount_exchangerate"} = $form->{acc_trans}{$key}->[0]->{exchangerate};
 	$form->{"discount_cleared"} = $form->{acc_trans}{$key}->[0]->{cleared};
+	$form->{"discount_paymentmethod"} = "$form->{acc_trans}{$key}->[0]->{paymentmethod_id}--$form->{acc_trans}{$key}->[0]->{paymentmethod}";
 
       } else {
      
@@ -321,8 +332,16 @@ sub create_links {
       }
     }
   }
+  
+  if ($form->{paidaccounts}) {
+    $i = $form->{paidaccounts} + 1;
+  } else {
+    $i = $form->{paidaccounts} = 1;
+  }
+  
+  $form->{"$form->{ARAP}_paid_$i"} = $form->{payment_accno} if $form->{payment_accno};
+  $form->{"paymentmethod_$i"} = $form->{payment_method} if $form->{payment_method};
 
-  $form->{paidaccounts} = 1 if not defined $form->{paidaccounts};
 
   $tax = $form->{oldinvtotal} - $netamount;
   @taxaccounts = split / /, $form->{taxaccounts};
@@ -364,9 +383,8 @@ sub create_links {
     for (@taxaccounts) { $form->{"calctax_$_"} = 1 }
   }
 
-  $form->{"$form->{ARAP}_paid_$form->{paidaccounts}"} = $form->{payment_accno} if $form->{payment_accno};
-
   for (qw(payment discount)) { $form->{"${_}_accno"} = $form->escape($form->{"${_}_accno"},1) }
+  $form->{payment_method} = $form->escape($form->{payment_method}, 1);
 
   $form->{cashdiscount} *= 100;
 
@@ -575,7 +593,7 @@ sub form_header {
 
   $form->hide_form(qw(id type printed emailed sort closedto locked oldtransdate oldduedate oldcurrency audittrail recurring checktax creditlimit creditremaining defaultcurrency rowcount oldterms batch batchid batchnumber batchdescription cdt precision remittancevoucher));
   $form->hide_form("select$form->{vc}");
-  $form->hide_form(map { "select$_" } qw(formname currency department employee projectnumber language));
+  $form->hide_form(map { "select$_" } qw(formname currency department employee projectnumber language paymentmethod));
   $form->hide_form("old$form->{vc}", "$form->{vc}_id", "old$form->{vc}number");
   $form->hide_form(map { "select$_" } ("$form->{ARAP}_amount", "$form->{ARAP}", "$form->{ARAP}_paid", "$form->{ARAP}_discount"));
 
@@ -740,10 +758,12 @@ sub form_header {
   }
   
   if ($form->{currency} eq $form->{defaultcurrency}) {
-    @column_index = qw(datepaid source memo paid ARAP_paid);
+    @column_index = qw(datepaid source memo paid);
   } else {
-    @column_index = qw(datepaid source memo paid exchangerate ARAP_paid);
+    @column_index = qw(datepaid source memo paid exchangerate);
   }
+  push @column_index, "paymentmethod" if $form->{selectpaymentmethod};
+  push @column_index, "ARAP_paid";
 
   $column_data{datepaid} = "<th nowrap>".$locale->text('Date')." <font color=red>*</font></th>";
   $column_data{paid} = "<th>".$locale->text('Amount')." <font color=red>*</font></th>";
@@ -751,6 +771,7 @@ sub form_header {
   $column_data{ARAP_paid} = "<th>".$locale->text('Account')." <font color=red>*</font></th>";
   $column_data{source} = "<th>".$locale->text('Source')."</th>";
   $column_data{memo} = "<th>".$locale->text('Memo')."</th>";
+  $column_data{paymentmethod} = "<th>".$locale->text('Method')."</th>";
   
  
   $total = "";
@@ -798,6 +819,7 @@ sub form_header {
     $column_data{exchangerate} = qq|<td align=center>$exchangerate</td>|;
     $column_data{source} = qq|<td align=center><input name="discount_source" size=11 value="|.$form->quote($form->{"discount_source"}).qq|"></td>|;
     $column_data{memo} = qq|<td align=center><input name="discount_memo" size=11 value="|.$form->quote($form->{"discount_memo"}).qq|"></td>|;
+    $column_data{paymentmethod} = qq|<td align=center><select name="discount_paymentmethod">|.$form->select_option($form->{"selectpaymentmethod"}, $form->{discount_paymentmethod}, 1).qq|</select></td>|;
     
     $cashdiscount .= qq|
         <tr>
@@ -813,7 +835,7 @@ sub form_header {
 
     $payments = qq|
   <tr class=listheading>
-    <th class=listheading colspan=6>|.$locale->text('Payments').qq|</th>
+    <th class=listheading colspan=7>|.$locale->text('Payments').qq|</th>
   </tr>
 |;
 
@@ -880,6 +902,7 @@ sub form_header {
 
   $form->{paidaccounts}++ if ($form->{"paid_$form->{paidaccounts}"});
   $form->{"$form->{ARAP}_paid_$form->{paidaccounts}"} = $form->unescape($form->{payment_accno});
+  $form->{"paymentmethod_$form->{paidaccounts}"} = $form->unescape($form->{payment_method});
 
   for $i (1 .. $form->{paidaccounts}) {
 
@@ -904,6 +927,7 @@ sub form_header {
     $column_data{datepaid} = qq|<td align=center><input name="datepaid_$i" size=11 value=$form->{"datepaid_$i"}></td>|;
     $column_data{source} = qq|<td align=center><input name="source_$i" size=11 value="|.$form->quote($form->{"source_$i"}).qq|"></td>|;
     $column_data{memo} = qq|<td align=center><input name="memo_$i" size=11 value="|.$form->quote($form->{"memo_$i"}).qq|"></td>|;
+    $column_data{paymentmethod} = qq|<td align=center><select name="paymentmethod_$i">|.$form->select_option($form->{"selectpaymentmethod"}, $form->{"paymentmethod_$i"}, 1).qq|</select></td>|;
 
     for (@column_index) { print qq|$column_data{$_}\n| }
     
@@ -923,7 +947,7 @@ sub form_header {
 |;
   }
  
-  $form->hide_form(qw(city state country paidaccounts payment_accno discount_accno));
+  $form->hide_form(qw(city state country paidaccounts payment_accno discount_accno payment_method));
   
   print qq|
       </table>
@@ -1169,7 +1193,7 @@ sub update {
   $j = 1;
   for $i (1 .. $form->{paidaccounts}) {
     if ($form->{"paid_$i"}) {
-      for (qw(olddatepaid datepaid source memo cleared)) { $form->{"${_}_$j"} = $form->{"${_}_$i"} }
+      for (qw(olddatepaid datepaid source memo cleared paymentmethod)) { $form->{"${_}_$j"} = $form->{"${_}_$i"} }
       for (qw(paid exchangerate)) { $form->{"${_}_$j"} = $form->parse_amount(\%myconfig, $form->{"${_}_$i"}) }
 
       $totalpaid += $form->{"paid_$j"};
@@ -1187,6 +1211,10 @@ sub update {
       for (qw(olddatepaid datepaid source memo paid exchangerate cleared)) { delete $form->{"${_}_$i"} }
     }
   }
+
+  $form->{payment_accno} = $form->escape($form->{"$form->{ARAP}_paid_$form->{paidaccounts}"},1);
+  $form->{payment_method} = $form->escape($form->{"paymentmethod_$form->{paidaccounts}"},1);
+
   $form->{paidaccounts} = $j;
 
   $ml = ($form->{type} =~ /_note/) ? -1 : 1;
@@ -1213,7 +1241,6 @@ sub post {
 
   $form->isblank("exchangerate", $locale->text('Exchange rate missing!')) if ($form->{currency} ne $form->{defaultcurrency});
   
- 
   for $i (1 .. $form->{paidaccounts}) {
     if ($form->{"paid_$i"}) {
       $datepaid = $form->datetonum(\%myconfig, $form->{"datepaid_$i"});
@@ -1244,12 +1271,14 @@ sub post {
   }
   
   # add discount to payments
-  $i = ++$form->{paidaccounts};
+  $i = $form->{paidaccounts} + 1;
   for (qw(paid datepaid source memo exchangerate cleared)) { $form->{"${_}_$i"} = $form->{"discount_$_"} }
   $form->{discount_index} = $i;
   $form->{"$form->{ARAP}_paid_$i"} = $form->{"$form->{ARAP}_discount_paid"};
   
   if ($form->{"paid_$i"}) {
+    $form->{paidaccounts}++;
+    
     $datepaid = $form->datetonum(\%myconfig, $form->{"datepaid_$i"});
     $expired = $form->datetonum(\%myconfig, $form->add_date(\%myconfig, $form->{transdate}, $form->{discountterms}, 'days'));
     
@@ -1541,6 +1570,7 @@ sub search {
   push @a, qq|<input name="l_datepaid" class=checkbox type=checkbox value=Y> |.$locale->text('Date Paid');
   push @a, qq|<input name="l_paymentdiff" class=checkbox type=checkbox value=Y> |.$locale->text('Payment Difference');
   push @a, qq|<input name="l_paid" class=checkbox type=checkbox value=Y checked> |.$locale->text('Paid');
+  push @a, qq|<input name="l_paymentmethod" class=checkbox type=checkbox value=Y> |.$locale->text('Payment Method');
   push @a, qq|<input name="l_duedate" class=checkbox type=checkbox value=Y> |.$locale->text('Due Date');
   push @a, qq|<input name="l_due" class=checkbox type=checkbox value=Y> |.$locale->text('Due');
   push @a, qq|<input name="l_memo" class=checkbox type=checkbox value=Y> |.$locale->text('Line Item');
@@ -1833,7 +1863,7 @@ sub transactions {
   }
 
 
-  @columns = $form->sort_columns(qw(transdate id invnumber ordnumber ponumber description name customernumber vendornumber address netamount tax amount paid due curr datepaid duedate memo notes till employee manager warehouse shippingpoint shipvia waybill dcn paymentdiff department));
+  @columns = $form->sort_columns(qw(transdate id invnumber ordnumber ponumber description name customernumber vendornumber address netamount tax amount paid paymentmethod due curr datepaid duedate memo notes till employee manager warehouse shippingpoint shipvia waybill dcn paymentdiff department));
   pop @columns if $form->{department};
   unshift @columns, "runningnumber";
 
@@ -1888,6 +1918,7 @@ sub transactions {
   $column_header{tax} = "<th class=listheading>" . $locale->text('Tax') . "</th>";
   $column_header{amount} = "<th class=listheading>" . $locale->text('Total') . "</th>";
   $column_header{paid} = "<th class=listheading>" . $locale->text('Paid') . "</th>";
+  $column_header{paymentmethod} = "<th><a class=listheading href=$href&sort=paymentmethod>" . $locale->text('Payment Method') . "</a></th>";
   $column_header{datepaid} = "<th><a class=listheading href=$href&sort=datepaid>" . $locale->text('Date Paid') . "</a></th>";
   $column_header{due} = "<th class=listheading>" . $locale->text('Due') . "</th>";
   $column_header{notes} = "<th class=listheading>".$locale->text('Notes')."</th>";
@@ -2015,7 +2046,7 @@ sub transactions {
     
     for (qw(notes description memo)) { $ref->{$_} =~ s/\r?\n/<br>/g }
     for (qw(transdate datepaid duedate)) { $column_data{$_} = "<td nowrap>$ref->{$_}&nbsp;</td>" }
-    for (qw(department ordnumber ponumber notes warehouse shippingpoint shipvia waybill employee manager till source memo description projectnumber address dcn)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
+    for (qw(department ordnumber ponumber notes warehouse shippingpoint shipvia waybill employee manager till source memo description projectnumber address dcn paymentmethod)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
     $column_data{$namefld} = "<td>$ref->{$namefld}&nbsp;</td>";
     
     if ($ref->{paymentdiff} <= 0) {

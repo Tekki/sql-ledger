@@ -28,6 +28,7 @@ $self{texts} = {
   'Copies'                      => 'Kopiot',
   'Credit'                      => 'Kredit',
   'Curr'                        => 'Valuutta',
+  'Currency'                    => 'Valuutta',
   'Current'                     => 'Erääntyy',
   'Current Earnings'            => 'Nykyisen tilikauden tuotot',
   'Customer'                    => 'Asiakas',

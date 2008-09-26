@@ -1,16 +1,23 @@
 $self{charset} = 'ISO-8859-13';
 
 $self{texts} = {
+  'Account'                     => 'Konts',
   'City'                        => 'Pilsçta',
+  'Company'                     => 'Uzòçmums',
   'Continue'                    => 'Turpinât',
   'Curr'                        => 'Val.',
+  'Currency'                    => 'Valûta',
   'Customer'                    => 'Klients',
   'Customer Number'             => 'Klienta numurs',
+  'Date Paid'                   => 'Maksâjuma datums',
   'Description'                 => 'Apraksts',
   'Due Date'                    => 'Apmaksas termiòð',
+  'Exch'                        => 'Kurss',
+  'Invoice'                     => 'Rçíins',
   'Invoice Date'                => 'Rçíina datums',
   'Invoice Number'              => 'Rçíina numurs',
   'No'                          => 'Nç',
+  'Paid'                        => 'Apmaksâts',
   'Qty'                         => 'Skaits',
   'Salesperson'                 => 'Pârdevçjs',
   'Total'                       => 'Pavisam Kopâ',
@@ -20,9 +27,12 @@ $self{texts} = {
 
 $self{subs} = {
   'continue'                    => 'continue',
-  'do_import'                   => 'do_import',
+  'display_payment'             => 'display_payment',
+  'display_sales_invoice'       => 'display_sales_invoice',
   'import'                      => 'import',
+  'import_payments'             => 'import_payments',
   'import_sales_invoices'       => 'import_sales_invoices',
+  'xrefhdr'                     => 'xrefhdr',
   'turpinât'                    => 'continue',
 };
 

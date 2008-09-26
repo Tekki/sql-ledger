@@ -2147,6 +2147,8 @@ sub invoice {
   for (qw(currency oldcurrency exchangerate employee department warehouse intnotes notes taxincluded)) { $temp{$_} = $form->{$_} }
 
   $form->{warehouse} =~ s/--.*//;
+
+  $form->{transdate} = $form->current_date(\%myconfig);
   
   &invoice_links;
 

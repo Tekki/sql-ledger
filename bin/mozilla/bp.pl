@@ -202,7 +202,18 @@ sub search {
     }
   }
     
+  if ($form->{type} eq 'remittance_voucher') {
+    if (@{ $form->{all_paymentmethod} }) {
+      $paymentmethod = qq|
+          <tr>
+	    <th align=right>|.$locale->text('Payment Method').qq|</th>
+	    <td colspan=3><select name=paymentmethod><option>\n|;
 
+	    for (@{ $form->{all_paymentmethod} }) { $paymentmethod .= qq|<option value="$_->{description}--$_->{id}">$_->{description}\n| }
+	    $paymentmethod .= qq|</select></tr>|;
+    }
+  }
+ 
   # accounting years
   if (@{ $form->{all_years} }) {
     # accounting years
@@ -265,6 +276,7 @@ sub search {
 	  <input name=transdateto size=11 title="$myconfig{dateformat}"></td>
 	</tr>
 	$selectfrom
+	$paymentmethod
 	$openclosed
       </table>
     </td>
@@ -795,7 +807,7 @@ function CheckAll() {
   $form->{format} ||= $myconfig{outputformat};
 
   if ($form->{batch} eq 'email') {
-    $form->{format} = "pdf";
+    $form->{format} ||= "pdf";
     $selectformat .= qq|
           <option value="html">|.$locale->text('html');
   } else {
@@ -816,14 +828,16 @@ function CheckAll() {
       $media .= qq|<option value="$_">$_|;
     }
 
-    $media .= qq|
-          <option value="queue">|.$locale->text('Queue') if $form->{batch} eq 'print';
-	  
     $copies = qq|
       <td nowrap>|.$locale->text('Copies').qq|
       <input name=copies size=2 value=$form->{copies}></td>
 |;
 
+  }
+
+  if ($form->{batch} ne 'email') {
+    $media .= qq|
+          <option value="queue">|.$locale->text('Queue') if $form->{batch} eq 'print';
   }
  
   $media .= qq|</select>|;
@@ -843,6 +857,7 @@ function CheckAll() {
   if ($form->{batch} eq 'queue') {
     $format = "";
     $copies = "";
+    $media = "" if ! %printer;
   }
 
 
@@ -871,7 +886,7 @@ function CheckAll() {
     delete $button{'Deselect all'};
   }
   
-  if ($form->{batch} eq 'print' || $form->{batch} eq 'queue') {
+  if ($form->{batch} eq 'print') {
     delete $button{'E-mail'};
   }
   if ($form->{batch} ne 'queue') {
@@ -879,6 +894,10 @@ function CheckAll() {
   }
   if ($form->{batch} eq 'email') {
     delete $button{'Print'};
+  }
+  if ($form->{batch} eq 'queue') {
+    delete $button{'E-mail'};
+    delete $button{'Print'} if ! %printer;
   }
 
   for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }

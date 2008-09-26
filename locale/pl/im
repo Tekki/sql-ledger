@@ -1,16 +1,23 @@
 $self{charset} = 'ISO-8859-2';
 
 $self{texts} = {
+  'Account'                     => 'Konto',
   'City'                        => 'Miasto',
+  'Company'                     => 'Firma',
   'Continue'                    => 'Kontynuj',
   'Curr'                        => 'Waluta',
+  'Currency'                    => 'Waluta',
   'Customer'                    => 'Odbiorca',
   'Customer Number'             => 'Numer Odbiorcy',
+  'Date Paid'                   => 'Data Zap³aty',
   'Description'                 => 'Opis',
   'Due Date'                    => 'Termin P³atno¶ci',
+  'Exch'                        => 'Kurs Walut',
+  'Invoice'                     => 'Faktura',
   'Invoice Date'                => 'Data Wystawienia',
   'Invoice Number'              => 'Numer Faktury',
   'No'                          => 'Nie',
+  'Paid'                        => 'Zap³acono',
   'Qty'                         => 'Ilo¶æ',
   'Salesperson'                 => 'Sprzedawca',
   'Total'                       => 'Warto¶æ Brutto',
@@ -20,9 +27,12 @@ $self{texts} = {
 
 $self{subs} = {
   'continue'                    => 'continue',
-  'do_import'                   => 'do_import',
+  'display_payment'             => 'display_payment',
+  'display_sales_invoice'       => 'display_sales_invoice',
   'import'                      => 'import',
+  'import_payments'             => 'import_payments',
   'import_sales_invoices'       => 'import_sales_invoices',
+  'xrefhdr'                     => 'xrefhdr',
   'kontynuj'                    => 'continue',
 };
 

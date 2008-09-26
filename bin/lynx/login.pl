@@ -93,7 +93,7 @@ $sf
 <center>
 <table class=login border=3 cellpadding=20>
   <tr>
-    <td class=login align=center><a href="http://www.sql-ledger.org" target=_blank><img src=sql-ledger.gif border=0></a>
+    <td class=login align=center><a href="http://www.sql-ledger.org" target=_blank><img src=$images/sql-ledger.gif border=0></a>
 <h1 class=login align=center>|.$locale->text('Version').qq| $form->{version}
 </h1>
 
@@ -161,7 +161,7 @@ sub selectdataset {
 <center>
 <table class=login border=3 cellpadding=20>
   <tr>
-    <td class=login align=center><a href="http://www.sql-ledger.org" target=_blank><img src=sql-ledger.gif border=0></a>
+    <td class=login align=center><a href="http://www.sql-ledger.org" target=_blank><img src=$images/sql-ledger.gif border=0></a>
 <h1 class=login align=center>|.$locale->text('Version').qq| $form->{version}
 </h1>
 

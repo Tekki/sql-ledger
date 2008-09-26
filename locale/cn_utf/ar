@@ -81,6 +81,7 @@ $self{texts} = {
   'May '                        => '五月',
   'Memo'                        => '备忘录',
   'Message'                     => '讯息',
+  'Method'                      => '方法',
   'Month'                       => '月份',
   'Month(s)'                    => '月',
   'No.'                         => '序号',

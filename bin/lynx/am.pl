@@ -1035,13 +1035,16 @@ sub list_paymentmethod {
   
   $form->{title} = $locale->text('Method of Payment');
 
-  my @column_index = qw(description fee);
+  my @column_index = qw(rn description fee plus minus);
 
   my %column_data;
   
-  $column_data{description} = qq|<th width=90%><a class=listheading href=$href>|.$locale->text('Description').qq|</a></th>|;
+  $column_data{rn} = qq|<th><a class=listheading href=$href&sort=rn>|.$locale->text('No').qq|</a></th>|;
+  $column_data{description} = qq|<th width=90%><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</a></th>|;
   $column_data{fee} = qq|<th class=listheading>|.$locale->text('Fee').qq|</th>|;
-
+  $column_data{plus} = qq|<th class=listheading>&nbsp;</th>|;
+  $column_data{minus} = qq|<th class=listheading>&nbsp;</th>|;
+  
   $form->header;
 
   print qq|
@@ -1077,9 +1080,12 @@ sub list_paymentmethod {
 
    $fee = $form->format_amount(\%myconfig, $ref->{fee}, $form->{precision}, "&nbsp");
    
+   $column_data{rn} = qq|<td align=right>$ref->{rn}</td>|;
    $column_data{description} = qq|<td><a href=$form->{script}?action=edit_paymentmethod&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{description}</td>|;
    $column_data{fee} = qq|<td align=right>$fee</td>|;
-   
+   $column_data{plus} = qq|<td><a href=$form->{script}?action=move&db=paymentmethod&fld=id&id=$ref->{id}&move=up&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$images/up.png alt="+" border=0></td>|;
+   $column_data{minus} = qq|<td><a href=$form->{script}?action=move&db=paymentmethod&fld=id&id=$ref->{id}&move=down&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$images/down.png alt="-" border=0></td>|;
+  
    for (@column_index) { print "$column_data{$_}\n" }
 
    print qq|
@@ -1905,8 +1911,8 @@ sub display_taxes {
   for (split(/ /, $form->{taxaccounts})) {
     
     my ($null, $i) = split /_/, $_;
-    
-    $form->{"taxrate_$i"} = $form->format_amount(\%myconfig, $form->{"taxrate_$i"});
+
+    $form->{"taxrate_$i"} = $form->format_amount(\%myconfig, $form->{"taxrate_$i"}, undef, 0);
     
     $form->hide_form("taxdescription_$i");
     
@@ -2254,16 +2260,9 @@ sub config {
   for (@all) { $form->{selectstylesheet} .= "$_\n" }
   $form->{selectstylesheet} .= "\n";
   
-  my $selectoutputformat = "html--html";
-  my $outputformat = qq|
- 	      <tr>
-		<th align=right>|.$locale->text('Output Format').qq|</th>
-		<td><select name=outputformat>|;
-
-
   my $printer;
   
-  if (%printer && $latex) {
+  if (%printer) {
     $form->{selectprinter} = "\n";
     for (sort keys %printer) { $form->{selectprinter} .= "$_\n" }
 
@@ -2276,18 +2275,22 @@ sub config {
 	      </tr>
 |;
 
-    $selectoutputformat .= "\npostscript--Postscript\npdf--PDF";
-
     $myconfig{outputformat} ||= "Postscript";
     
   }
-
-  $outputformat .= $form->select_option($selectoutputformat, $myconfig{outputformat}, undef, 1)
+  
+  my $selectoutputformat = "html--html";
+  $selectoutputformat .= "\npostscript--Postscript\npdf--PDF" if $latex;
+  
+  my $outputformat = qq|
+ 	      <tr>
+		<th align=right>|.$locale->text('Output Format').qq|</th>
+		<td><select name=outputformat>|
+                .$form->select_option($selectoutputformat, $myconfig{outputformat}, undef, 1)
 		.qq|</select></td>
 	      </tr>
 |;
  
-  
   $form->{title} = $locale->text('Edit Preferences for').qq| $form->{login}|;
 
   $form->{old_password} = $myconfig{password};
@@ -2969,7 +2972,7 @@ sub company_logo {
 
 </pre>
 <center>
-<a href="http://www.sql-ledger.org" target=_blank><img src=sql-ledger.gif border=0></a>
+<a href="http://www.sql-ledger.org" target=_blank><img src=$images/sql-ledger.gif border=0></a>
 <h1 class=login>|.$locale->text('Version').qq| $form->{version}</h1>
 
 <p>
@@ -4294,7 +4297,7 @@ sub list_currencies {
   my %column_data;
   
   $column_data{rn} = qq|<th><a class=listheading href=$href&sort=rn>|.$locale->text('No').qq|</a></th>|;
-  $column_data{curr} = qq|<th><a class=listheading href=$href&sort=curr>|.$locale->text('Currency').qq|</a></th>|;
+  $column_data{curr} = qq|<th width=99%><a class=listheading href=$href&sort=curr>|.$locale->text('Currency').qq|</a></th>|;
   $column_data{precision} = qq|<th class=listheading>|.$locale->text('Precision').qq|</th>|;
   $column_data{plus} = qq|<th class=listheading>&nbsp;</th>|;
   $column_data{minus} = qq|<th class=listheading>&nbsp;</th>|;
@@ -4332,11 +4335,11 @@ sub list_currencies {
 |;
 
    $ref->{curr} =~ s/ //g;
-   $column_data{rn} = qq|<td>$ref->{rn}</td>|;
+   $column_data{rn} = qq|<td align=right>$ref->{rn}</td>|;
    $column_data{curr} = qq|<td><a href=$form->{script}?action=edit_currency&curr=$ref->{curr}&rn=$ref->{rn}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{curr}</td>|;
-   $column_data{precision} = qq|<td>$ref->{precision}</td>|;
-   $column_data{plus} = qq|<td><a href=$form->{script}?action=move_currency&curr=$ref->{curr}&move=up&path=$form->{path}&login=$form->{login}&callback=$callback>&nbsp;+&nbsp;</td>|;
-   $column_data{minus} = qq|<td><a href=$form->{script}?action=move_currency&curr=$ref->{curr}&move=down&path=$form->{path}&login=$form->{login}&callback=$callback>&nbsp;-&nbsp;</td>|;
+   $column_data{precision} = qq|<td align=right>$ref->{precision}</td>|;
+   $column_data{plus} = qq|<td align=center><a href=$form->{script}?action=move&db=curr&fld=curr&id=$ref->{curr}&move=up&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$images/up.png alt="+" border=0></td>|;
+   $column_data{minus} = qq|<td align=center><a href=$form->{script}?action=move&db=curr&fld=curr&id=$ref->{curr}&move=down&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$images/down.png alt="-" border=0></td>|;
    
 
    for (@column_index) { print "$column_data{$_}\n" }
@@ -4417,9 +4420,9 @@ sub delete_currency {
 }
 
 
-sub move_currency {
+sub move {
 
-  AM->move_currency(\%myconfig, \%$form);
+  AM->move(\%myconfig, \%$form);
   $form->redirect;
   
 }

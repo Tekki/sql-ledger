@@ -638,10 +638,15 @@ sub paymentmethod {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
+  my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+  
+  my $sortorder = ($form->{sort}) ? $form->{sort} : "rn";
+  
   $form->sort_order();
-  my $query = qq|SELECT id, description, fee
+  my $query = qq|SELECT *
                  FROM paymentmethod
-		 ORDER BY 2 $form->{direction}|;
+		 ORDER BY $sortorder $form->{direction}|;
 
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -688,9 +693,13 @@ sub save_paymentmethod {
 		fee = |.$form->parse_amount($myconfig, $form->{fee}).qq|
 		WHERE id = $form->{id}|;
   } else {
+    $query = qq|SELECT MAX(rn) FROM paymentmethod|;
+    my ($rn) = $dbh->selectrow_array($query);
+    $rn++;
+    
     $query = qq|INSERT INTO paymentmethod 
-                (description, fee)
-		VALUES (|
+                (rn, description, fee)
+		VALUES ($rn, |
 		.$dbh->quote($form->{description}).qq|, |.
 		$form->parse_amount($myconfig, $form->{fee}).qq|)|;
   }
@@ -705,11 +714,21 @@ sub delete_paymentmethod {
   my ($self, $myconfig, $form) = @_;
   
   # connect to database
-  my $dbh = $form->dbconnect($myconfig);
+  my $dbh = $form->dbconnect_noauto($myconfig);
   
+  my $query = qq|SELECT rn FROM paymentmethod
+                 WHERE id = $form->{id}|;
+  my ($rn) = $dbh->selectrow_array($query);
+  
+  $query = qq|UPDATE paymentmethod SET rn = rn - 1
+              WHERE rn > $rn|;
+  $dbh->do($query) || $form->dberror($query);
+ 
   $query = qq|DELETE FROM paymentmethod
 	      WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
+  
+  $dbh->commit;
   
   $dbh->disconnect;
 
@@ -1449,7 +1468,7 @@ sub backup {
   # get sequences, functions and triggers
   my %tables;
   my %references;
-  my @sequences;
+  my %sequences;
   my @functions;
   my @triggers;
   my @schema;
@@ -1523,7 +1542,7 @@ sub backup {
       }
 
       if (/create sequence (\w+)/i) {
-	push @sequences, $1;
+	$sequences{$1} = 1;
 	next;
       }
 
@@ -1606,8 +1625,9 @@ sub backup {
     }
   }
   
+  delete $sequences{tempid};
   # create sequences
-  foreach $item (@sequences) {
+  foreach $item (keys %sequences) {
     if ($myconfig->{dbdriver} eq 'DB2') {
       $query = qq|SELECT NEXTVAL FOR $item FROM sysibm.sysdummy1|;
     } else {
@@ -1820,7 +1840,8 @@ sub earningsaccounts {
   }
   $sth->finish;
 
-  my %defaults = $form->get_defaults($dbh, \@{['method']});
+  my %defaults = $form->get_defaults($dbh, \@{['method', 'precision']});
+  $form->{precision} = $defaults{precision};
   $form->{method} ||= "accrual";
   
   $dbh->disconnect;
@@ -2296,46 +2317,46 @@ sub delete_currency {
 }
 
 
-sub move_currency {
+sub move {
   my ($self, $myconfig, $form) = @_;
   
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
   
-  my $curr;
+  my $id;
   
-  my $query = qq|SELECT rn FROM curr
-	      WHERE curr = '$form->{curr}'|;
+  my $query = qq|SELECT rn FROM $form->{db}
+                 WHERE $form->{fld} = '$form->{id}'|;
   my ($rn) = $dbh->selectrow_array($query);
 
-  $query = qq|SELECT MAX(rn) FROM curr|;
+  $query = qq|SELECT MAX(rn) FROM $form->{db}|;
   my ($lastrn) = $dbh->selectrow_array($query);
   
-  if ($form->{move} eq 'up' && $rn != $lastrn) {
-    $query = qq|SELECT curr FROM curr
+  if ($form->{move} eq 'down' && $rn != $lastrn) {
+    $query = qq|SELECT $form->{fld} FROM $form->{db}
 	        WHERE rn = $rn + 1|;
-    ($curr) = $dbh->selectrow_array($query);
+    ($id) = $dbh->selectrow_array($query);
 
-    $query = qq|UPDATE curr SET rn = $rn + 1
-                WHERE curr = '$form->{curr}'|;
+    $query = qq|UPDATE $form->{db} SET rn = $rn + 1
+                WHERE $form->{fld} = '$form->{id}'|;
     $dbh->do($query) || $form->dberror($query);
 
-    $query = qq|UPDATE curr SET rn = $rn
-                WHERE curr = '$curr'|;
+    $query = qq|UPDATE $form->{db} SET rn = $rn
+                WHERE $form->{fld} = '$id'|;
     $dbh->do($query) || $form->dberror($query);
   }
   
-  if ($form->{move} eq 'down' && $rn > 1) {
-    $query = qq|SELECT curr FROM curr
+  if ($form->{move} eq 'up' && $rn > 1) {
+    $query = qq|SELECT $form->{fld} FROM $form->{db}
 	        WHERE rn = $rn - 1|;
-    ($curr) = $dbh->selectrow_array($query);
+    ($id) = $dbh->selectrow_array($query);
 
-    $query = qq|UPDATE curr SET rn = $rn - 1
-                WHERE curr = '$form->{curr}'|;
+    $query = qq|UPDATE $form->{db} SET rn = $rn - 1
+                WHERE $form->{fld} = '$form->{id}'|;
     $dbh->do($query) || $form->dberror($query);
 
-    $query = qq|UPDATE curr SET rn = $rn
-                WHERE curr = '$curr'|;
+    $query = qq|UPDATE $form->{db} SET rn = $rn
+                WHERE $form->{fld} = '$id'|;
     $dbh->do($query) || $form->dberror($query);
   }
   

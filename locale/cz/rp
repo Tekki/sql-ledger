@@ -20,6 +20,7 @@ $self{texts} = {
   'Copies'                      => 'Kopie',
   'Credit'                      => 'Dal',
   'Curr'                        => 'Mìna',
+  'Currency'                    => 'Mìna',
   'Customer'                    => 'Odbìratel',
   'Date'                        => 'Datum',
   'Debit'                       => 'Má dáti',

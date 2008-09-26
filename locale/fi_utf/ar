@@ -84,6 +84,7 @@ $self{texts} = {
   'May '                        => 'Toukokuu',
   'Memo'                        => 'Muistio',
   'Message'                     => 'Viesti',
+  'Method'                      => 'Tapa',
   'Month'                       => 'Kuukausi',
   'Month(s)'                    => 'Kuukausi(det)',
   'Next Date'                   => 'Seuraava pvm',

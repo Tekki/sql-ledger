@@ -1,13 +1,20 @@
 $self{charset} = 'ISO-8859-9';
 
 $self{texts} = {
+  'Account'                     => 'Hesap',
+  'Company'                     => 'Þirket',
   'Continue'                    => 'Devam',
+  'Currency'                    => 'Para Birimi',
   'Customer'                    => 'Alýcý',
+  'Date Paid'                   => 'Ödendiði Tarih',
   'Description'                 => 'Açýklama',
   'Due Date'                    => 'Vade Tarihi',
+  'Exch'                        => 'D.Kuru',
+  'Invoice'                     => 'Fatura',
   'Invoice Date'                => 'Fatura Tarihi',
   'Invoice Number'              => 'Fatura No',
   'No'                          => 'Hayýr',
+  'Paid'                        => 'Ödendi',
   'Qty'                         => 'Adet',
   'Total'                       => 'Toplam',
   'Unit'                        => 'Birim',
@@ -16,9 +23,12 @@ $self{texts} = {
 
 $self{subs} = {
   'continue'                    => 'continue',
-  'do_import'                   => 'do_import',
+  'display_payment'             => 'display_payment',
+  'display_sales_invoice'       => 'display_sales_invoice',
   'import'                      => 'import',
+  'import_payments'             => 'import_payments',
   'import_sales_invoices'       => 'import_sales_invoices',
+  'xrefhdr'                     => 'xrefhdr',
   'devam'                       => 'continue',
 };
 

@@ -1,16 +1,23 @@
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
+  'Account'                     => 'Konto',
   'City'                        => 'Stadt',
+  'Company'                     => 'Firma',
   'Continue'                    => 'Weiter',
   'Curr'                        => 'Währung',
+  'Currency'                    => 'Währung',
   'Customer'                    => 'Kunde',
   'Customer Number'             => 'Kundennummer',
+  'Date Paid'                   => 'Zahlungsdatum',
   'Description'                 => 'Beschreibung',
   'Due Date'                    => 'Fälligkeitsdatum',
+  'Exch'                        => 'Wkurs.',
+  'Invoice'                     => 'Rechnung',
   'Invoice Date'                => 'Rechnungsdatum',
   'Invoice Number'              => 'Rechnungsnummer',
   'No'                          => 'Nein',
+  'Paid'                        => 'Bezahlt',
   'Qty'                         => 'Menge',
   'Salesperson'                 => 'Verkäufer',
   'Total'                       => 'Betrag',
@@ -20,9 +27,12 @@ $self{texts} = {
 
 $self{subs} = {
   'continue'                    => 'continue',
-  'do_import'                   => 'do_import',
+  'display_payment'             => 'display_payment',
+  'display_sales_invoice'       => 'display_sales_invoice',
   'import'                      => 'import',
+  'import_payments'             => 'import_payments',
   'import_sales_invoices'       => 'import_sales_invoices',
+  'xrefhdr'                     => 'xrefhdr',
   'weiter'                      => 'continue',
 };
 

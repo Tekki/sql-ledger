@@ -986,6 +986,8 @@ sub get_accounts {
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
+  $form->{exchangerate} ||= 1;
+
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
 
     # get last heading account
@@ -1390,14 +1392,17 @@ sub aging {
     $where .= qq| AND a.department_id = $department_id|;
   }
   
+  my $sortorder = ($form->{sort}) ? "ct.$form->{sort}" : "ct.name";
+  
   # select outstanding vendors or customers, depends on $ct
-  $query = qq|SELECT DISTINCT ct.id, ct.name, ct.language_code
+  $query = qq|SELECT DISTINCT ct.id, ct.name, ct.$form->{vc}number,
+              ct.language_code
               FROM $form->{vc} ct
 	      JOIN $form->{arap} a ON (a.$form->{vc}_id = ct.id)
 	      WHERE $where
               AND a.paid != a.amount
               AND (a.$transdate <= '$form->{todate}')
-              ORDER BY ct.name|;
+              ORDER BY $sortorder|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror;
   

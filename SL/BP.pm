@@ -130,6 +130,16 @@ sub get_vc {
 	$form->{$arap{$form->{type}}{$item}} = 1;
       }
     }
+
+    $query = qq|SELECT *
+		FROM paymentmethod
+		ORDER BY rn|;
+    $sth = $dbh->prepare($query);
+    $sth->execute || $form->dberror($query);
+    while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+      push @{ $form->{"all_paymentmethod"} }, $ref;
+    }
+    $sth->finish;
    
   }
 
@@ -282,6 +292,11 @@ sub get_spoolfiles {
 
       if ($form->{type} eq 'remittance_voucher') {
 	$where .= qq| AND vc.remittancevoucher = '1'|;
+
+	if ($form->{paymentmethod}) {
+	  ($var, $paymentmethod_id) = split /--/, $form->{paymentmethod};
+	  $where .= qq| AND a.paymentmethod_id = $paymentmethod_id|;
+	}
       }
 
       if ($form->{batch} eq 'queue') {

@@ -24,6 +24,7 @@ $self{texts} = {
   'Copies'                      => 'Copies',
   'Credit'                      => 'Crédit',
   'Curr'                        => 'Dev.',
+  'Currency'                    => 'Devise',
   'Current'                     => 'En cours',
   'Current Earnings'            => 'Bénéfice de l\'exercice',
   'Customer'                    => 'Client',

@@ -1,14 +1,21 @@
 $self{charset} = 'ISO-8859-2';
 
 $self{texts} = {
+  'Account'                     => 'Úèet',
+  'Company'                     => 'Firma',
   'Continue'                    => 'Pokraèování',
   'Curr'                        => 'Mìna',
+  'Currency'                    => 'Mìna',
   'Customer'                    => 'Odbìratel',
+  'Date Paid'                   => 'Zaplaceno',
   'Description'                 => 'Popis',
   'Due Date'                    => 'Datum splatnosti',
+  'Exch'                        => 'Kurz',
+  'Invoice'                     => 'Faktura',
   'Invoice Date'                => 'Datum vystavení',
   'Invoice Number'              => 'Èíslo faktury',
   'No'                          => 'Ne',
+  'Paid'                        => 'Zaplaceno',
   'Qty'                         => 'Mno¾ství',
   'Total'                       => 'Celkem',
   'Unit'                        => 'Jednotka',
@@ -17,9 +24,12 @@ $self{texts} = {
 
 $self{subs} = {
   'continue'                    => 'continue',
-  'do_import'                   => 'do_import',
+  'display_payment'             => 'display_payment',
+  'display_sales_invoice'       => 'display_sales_invoice',
   'import'                      => 'import',
+  'import_payments'             => 'import_payments',
   'import_sales_invoices'       => 'import_sales_invoices',
+  'xrefhdr'                     => 'xrefhdr',
   'pokraèování'                 => 'continue',
 };
 

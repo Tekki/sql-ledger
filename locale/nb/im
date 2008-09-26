@@ -1,14 +1,21 @@
 $self{texts} = {
+  'Account'                     => 'Konto',
   'City'                        => 'Poststed',
+  'Company'                     => 'Firma',
   'Continue'                    => 'Fortsett',
   'Curr'                        => 'Val',
+  'Currency'                    => 'Valuta',
   'Customer'                    => 'Kunde',
   'Customer Number'             => 'Kundenummer',
+  'Date Paid'                   => 'Betalingsdato',
   'Description'                 => 'Beskrivelse',
   'Due Date'                    => 'Forfallsdato',
+  'Exch'                        => 'Vxl',
+  'Invoice'                     => 'Faktura',
   'Invoice Date'                => 'Fakturadato',
   'Invoice Number'              => 'Fakturanummer',
   'No'                          => 'Nei',
+  'Paid'                        => 'Betalt',
   'Qty'                         => 'Antall',
   'Salesperson'                 => 'Selger',
   'Total'                       => 'I alt',
@@ -18,9 +25,12 @@ $self{texts} = {
 
 $self{subs} = {
   'continue'                    => 'continue',
-  'do_import'                   => 'do_import',
+  'display_payment'             => 'display_payment',
+  'display_sales_invoice'       => 'display_sales_invoice',
   'import'                      => 'import',
+  'import_payments'             => 'import_payments',
   'import_sales_invoices'       => 'import_sales_invoices',
+  'xrefhdr'                     => 'xrefhdr',
   'fortsett'                    => 'continue',
 };
 

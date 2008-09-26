@@ -595,12 +595,14 @@ print qq|
       $vclabel = $locale->text('Customer');
       $vcnumber = $locale->text('Customer Number');
       $form->{vc} = 'customer';
+      $form->{sort} = "customernumber" if $form->{namesbynumber};
     } else {
       $vclabel = $locale->text('Vendor');
       $vcnumber = $locale->text('Vendor Number');
       $form->{vc} = 'vendor';
     }
-      
+    $form->{sort} = ($form->{namesbynumber}) ? "$form->{vc}number" : "name";
+
     $form->{nextsub} = "generate_$form->{report}";
 
     $form->{type} = "statement";
@@ -608,9 +610,9 @@ print qq|
     $form->{media} ||= $myconfig{printer};
     
     # setup vc selection
-    $form->all_vc(\%myconfig, $form->{vc}, ($form->{vc} eq 'customer') ? "AR" : "AP");
+    $form->all_vc(\%myconfig, $form->{vc}, ($form->{vc} eq 'customer') ? "AR" : "AP", undef, undef, undef, 1);
 
-    if ($@{ $form->{"all_$form->{vc}"} }) {
+    if (@{ $form->{"all_$form->{vc}"} }) {
       $vc = qq|
            <tr>
 	     <th align=right nowrap>$vclabel</th>
@@ -676,7 +678,7 @@ print qq|
 
 |;
 
-    $form->hide_form(qw(nextsub type format media));
+    $form->hide_form(qw(nextsub type format media sort));
 
   }
 
@@ -1422,11 +1424,10 @@ function CheckAll() {
  
       }
       
-      $curr = $ref->{curr};
       print qq|
         <tr>
 	  <td></td>
-	  <th>$curr</th>
+	  <th>$ref->{curr}</th>
 	</tr>
 	
 	<tr class=listheading>
@@ -1439,6 +1440,7 @@ function CheckAll() {
 |;
     }
     
+    $curr = $ref->{curr};
     $k++;
     
     if ($vc_id != $ref->{vc_id}) {
@@ -1502,10 +1504,16 @@ function CheckAll() {
    
     # print subtotal
     if ($l > 0) {
-      $nextid = ($k <= $l) ? $form->{AG}->[$k]->{vc_id} : 0;
+      if ($k <= $l) {
+	$nextid = $form->{AG}->[$k]->{vc_id};
+	$nextcurr = $form->{AG}->[$k]->{curr};
+      } else {
+	$nextid = 0;
+	$nextcurr = "";
+      }
     }
 
-    if ($vc_id != $nextid) {
+    if ($vc_id != $nextid || $curr ne $nextcurr) {
      
       for (@c) {
 	$c{$_}{subtotal} = $form->format_amount(\%myconfig, $c{$_}{subtotal}, $form->{precision}, "&nbsp");
@@ -1924,7 +1932,7 @@ sub print_form {
     $form->{IN} =~ s/html$/tex/;
   }
 
-  @a = qw(name address1 address2 city state zipcode country contact);
+  @a = qw(name address1 address2 city state zipcode country contact typeofcontact salutation firstname lastname);
   push @a, "$form->{vc}number", "$form->{vc}phone", "$form->{vc}fax", "$form->{vc}taxnumber";
   push @a, 'email' if ! $form->{media} eq 'email';
 
@@ -2101,7 +2109,7 @@ sub generate_tax_report {
   $option .= $locale->text('Cash') if ($form->{method} eq 'cash');
   $option .= $locale->text('Accrual') if ($form->{method} eq 'accrual');
   
-  $option .= "$form->{period}";
+  $option .= "<br>$form->{period}";
   
  
   $column_header{id} = qq|<th><a class=listheading href=$href&sort=id>|.$locale->text('ID').qq|</th>|;

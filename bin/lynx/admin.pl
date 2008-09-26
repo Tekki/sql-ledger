@@ -90,7 +90,7 @@ function sf(){
 
 <div align=center>
 
-<a href="http://www.sql-ledger.org"><img src=sql-ledger.gif border=0 target=_blank></a>
+<a href="http://www.sql-ledger.org"><img src=$images/sql-ledger.gif border=0 target=_blank></a>
 <h1 class=login>|.$locale->text('Version').qq| $form->{version}<p>|.$locale->text('Administration').qq|</h1>
 
 <form method=post action="$form->{script}">

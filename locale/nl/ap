@@ -82,6 +82,7 @@ $self{texts} = {
   'May '                        => 'mei ',
   'Memo'                        => 'Memo',
   'Message'                     => 'Boodschap',
+  'Method'                      => 'Gebruikt Stelsel',
   'Month'                       => 'Maand',
   'Month(s)'                    => 'Maand(en)',
   'Next Date'                   => 'Volgende Datum',

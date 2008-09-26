@@ -78,8 +78,8 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.8.7";
-  $self->{dbversion} = "2.8.7";
+  $self->{version} = "2.8.8";
+  $self->{dbversion} = "2.8.8";
 
   bless $self, $type;
   
@@ -591,7 +591,8 @@ sub parse_template {
   $self->{copy} = "";
 
   for my $i (1 .. $self->{copies}) {
-
+    
+    $sum = 0;
     $self->{copy} = 1 if $i == 2;
 
     if ($self->{format} =~ /(postscript|pdf)/ && $self->{copies} > 1) {
@@ -1796,7 +1797,7 @@ sub get_defaults {
 
   
 sub all_vc {
-  my ($self, $myconfig, $vc, $module, $dbh, $transdate, $job) = @_;
+  my ($self, $myconfig, $vc, $module, $dbh, $transdate, $job, $openinv) = @_;
   
   my $ref;
   my $disconnect = 0;
@@ -1807,27 +1808,34 @@ sub all_vc {
   }
   my $sth;
   
-  my $query = qq|SELECT count(*) FROM $vc|;
-  my $where;
+  my $query;
+  my $arap = lc $module;
+  my $joinarap;
+  my $where = "1 = 1";
   
   if ($transdate) {
-    $where = qq|AND (startdate IS NULL OR startdate <= '$transdate')
-                AND (enddate IS NULL OR enddate >= '$transdate')|;
-    $query .= qq| WHERE 1=1
-                 $where|;
+    $where .= qq| AND (vc.startdate IS NULL OR vc.startdate <= '$transdate')
+                  AND (vc.enddate IS NULL OR vc.enddate >= '$transdate')|;
   }
+  if ($openinv) {
+    $joinarap = "JOIN $arap a ON (a.${vc}_id = vc.id)";
+    $where .= " AND a.amount != a.paid";
+  }
+  $query .= qq|SELECT count(*) FROM $vc vc
+               $joinarap
+	       WHERE $where|;
   my ($count) = $dbh->selectrow_array($query);
 
   # build selection list
   if ($count < $myconfig->{vclimit}) {
     $self->{"${vc}_id"} *= 1;
-    $query = qq|SELECT id, name
-		FROM $vc
-		WHERE 1=1
-		$where
-		UNION SELECT id,name
-		FROM $vc
-		WHERE id = $self->{"${vc}_id"}
+    $query = qq|SELECT vc.id, vc.name
+		FROM $vc vc
+		$joinarap
+		WHERE $where
+		UNION SELECT vc.id, vc.name
+		FROM $vc vc
+		WHERE vc.id = $self->{"${vc}_id"}
 		ORDER BY name|;
     $sth = $dbh->prepare($query);
     $sth->execute || $self->dberror($query);
@@ -2103,7 +2111,7 @@ sub all_years {
 			  '11' => 'November',
 			  '12' => 'December' );
   
-  my %defaults = $self->get_defaults($dbh, \@{[qw(method precision)]});
+  my %defaults = $self->get_defaults($dbh, \@{[qw(method precision namesbynumber)]});
   for (keys %defaults) { $self->{$_} = $defaults{$_} }
   $self->{method} ||= "accrual";
 
@@ -2172,7 +2180,8 @@ sub create_links {
 		br.id AS batchid, br.description AS batchdescription,
 		a.description, a.onhold, a.exchangerate, a.dcn,
 		ch.accno AS bank_accno, ch.description AS bank_accno_description,
-		t.description AS bank_accno_translation
+		t.description AS bank_accno_translation,
+		pm.description AS paymentmethod, a.paymentmethod_id
 		FROM $arap a
 		JOIN $vc c ON (a.${vc}_id = c.id)
 		LEFT JOIN employee e ON (e.id = a.employee_id)
@@ -2181,6 +2190,7 @@ sub create_links {
 		LEFT JOIN br ON (br.id = vr.br_id)
 		LEFT JOIN chart ch ON (ch.id = a.bank_id)
 		LEFT JOIN translation t ON (t.trans_id = ch.id AND t.language_code = '$myconfig->{countrycode}')
+		LEFT JOIN paymentmethod pm ON (pm.id = a.paymentmethod_id)
 		WHERE a.id = $self->{id}|;
     $sth = $dbh->prepare($query);
     $sth->execute || $self->dberror($query);
@@ -2199,12 +2209,16 @@ sub create_links {
       $self->{payment_accno} = ($self->{bank_accno_translation}) ? "$self->{bank_accno}--$self->{bank_accno_translation}" : "$self->{bank_accno}--$self->{bank_accno_description}";
     }
 
+    if ($self->{paymentmethod_id}) {
+      $self->{payment_method} = "$self->{paymentmethod}--$self->{paymentmethod_id}";
+    }
+
     # get printed, emailed
     $query = qq|SELECT s.printed, s.emailed, s.spoolfile, s.formname
                 FROM status s
 		WHERE s.trans_id = $self->{id}|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute || $self->dberror($query);
 
     while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
       $self->{printed} .= "$ref->{formname} " if $ref->{printed};
@@ -2221,11 +2235,13 @@ sub create_links {
     $query = qq|SELECT c.accno, c.description, ac.source, ac.amount,
                 ac.memo, ac.transdate, ac.cleared, ac.project_id,
 		p.projectnumber, ac.id, y.exchangerate,
-		l.description AS translation
+		l.description AS translation,
+		pm.description AS paymentmethod, y.paymentmethod_id
 		FROM acc_trans ac
 		JOIN chart c ON (c.id = ac.chart_id)
 		LEFT JOIN project p ON (p.id = ac.project_id)
 		LEFT JOIN payment y ON (y.trans_id = ac.trans_id AND ac.id = y.id)
+		LEFT JOIN paymentmethod pm ON (pm.id = y.paymentmethod_id)
 		LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 		WHERE ac.trans_id = $self->{id}
 		AND ac.fx_transaction = '0'
@@ -2259,6 +2275,18 @@ sub create_links {
  
   $self->{currencies} = $self->get_currencies($dbh, $myconfig);
   
+  # get paymentmethod
+  $query = qq|SELECT *
+	      FROM paymentmethod
+	      ORDER BY rn|;
+  $sth = $dbh->prepare($query);
+  $sth->execute || $self->dberror($query);
+
+  @{ $self->{"all_paymentmethod"} } = ();
+  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    push @{ $self->{"all_paymentmethod"} }, $ref;
+  }
+
   $dbh->disconnect;
 
 }
@@ -2368,8 +2396,6 @@ sub lastname_used {
   $sth->execute || $self->dberror($query);
 
   my $ref = $sth->fetchrow_hashref(NAME_lc);
-  $ref->{payment_accno} .= qq|--|;
-  $ref->{payment_accno} .= ($ref->{payment_accno_translation}) ? $ref->{payment_accno_translation} : $ref->{payment_accno_description};
   for (keys %$ref) { $self->{$_} = $ref->{$_} }
   $sth->finish;
 
@@ -3121,6 +3147,100 @@ sub from_to {
   $t[5] += 1900;
   
   ($fromdate, "$t[5]$t[4]$t[3]");
+
+}
+
+
+sub fdld {
+  my ($self, $myconfig) = @_;
+
+  $self->{fdm} = $self->dayofmonth($myconfig{dateformat}, $self->{transdate}, 'fdm');
+  $self->{ldm} = $self->dayofmonth($myconfig{dateformat}, $self->{transdate});
+  
+  my $transdate = $self->datetonum($myconfig, $self->{transdate});
+  
+  $self->{yy} = substr($transdate, 2, 2);
+  ($self->{yyyy}, $self->{mm}, $self->{dd}) = $transdate =~ /(....)(..)(..)/;
+
+  my $m1;
+  my $m2;
+  my $y1;
+  my $y2;
+  my $d1;
+  my $d2;
+  my $d3;
+  my $d4;
+  
+  for (1 .. 11) {
+    $m1 = $self->{mm} + $_;
+    $y1 = $self->{yyyy};
+    if ($m1 > 12) {
+      $m1 -= 12;
+      $y1++;
+    }
+    $m1 = substr("0$m1", -2);
+
+    $m2 = $self->{mm} - $_;
+    $y2 = $self->{yyyy};
+    if ($m2 < 1) {
+      $m2 += 12;
+      $y2--;
+    }
+    $m2 = substr("0$m2", -2);
+
+    $d1 = $self->format_date($myconfig{dateformat}, "$y1${m1}01");
+    $d2 = $self->format_date($myconfig{dateformat}, $self->dayofmonth("yyyymmdd", "$y1${m1}01"));
+    $d3 = $self->format_date($myconfig{dateformat}, "$y2${m2}01");
+    $d4 = $self->format_date($myconfig{dateformat}, $self->dayofmonth("yyyymmdd", "$y2${m2}01"));
+
+    if (exists $self->{longformat}) {
+      $self->{"fdm+$_"} = Locale::date("", $myconfig, $d1, $self->{longformat});
+      $self->{"ldm+$_"} = Locale::date("", $myconfig, $d2, $self->{longformat});
+      $self->{"fdm-$_"} = Locale::date("", $myconfig, $d3, $self->{longformat});
+      $self->{"ldm-$_"} = Locale::date("", $myconfig, $d4, $self->{longformat});
+    } else {
+      $self->{"fdm+$_"} = $d1;
+      $self->{"ldm+$_"} = $d2;
+      $self->{"fdm-$_"} = $d3;
+      $self->{"ldm-$_"} = $d4;
+    }
+  }
+ 
+  $d1 = $self->format_date($myconfig{dateformat}, "$self->{yyyy}$self->{mm}01");
+  $d2 = $self->format_date($myconfig{dateformat}, $self->dayofmonth("yyyymmdd", "$self->{yyyy}$form->{mm}01"));
+
+  if (exists $self->{longformat}) {
+    $self->{fdm} = Locale::date("", $myconfig, $self->{fdm}, $self->{longformat});
+    $self->{ldm} = Locale::date("", $myconfig, $self->{ldm}, $self->{longformat});
+    $self->{fdy} = Locale::date("", $myconfig, $d1, $self->{longformat});
+    $self->{ldy} = Locale::date("", $myconfig, $d2, $self->{longformat});
+  } else {
+    $self->{fdy} = $d1;
+    $self->{ldy} = $d2;
+  }
+
+  for (1 .. 3) {
+    $y1 = $self->{yyyy} + $_;
+    $y2 = $self->{yyyy} - $_;
+
+    $d1 = $self->format_date($myconfig{dateformat}, "$y1$self->{mm}01");
+    $d2 = $self->format_date($myconfig{dateformat}, $self->dayofmonth("yyyymmdd", "$y1$self->{mm}01"));
+    $d3 = $self->format_date($myconfig{dateformat}, "$y2$self->{mm}01");
+    $d4 = $self->format_date($myconfig{dateformat}, $self->dayofmonth("yyyymmdd", "$y2$self->{mm}01"));
+
+    if (exists $self->{longformat}) {
+      $self->{"fdy+$_"} = Locale::date("", $myconfig, $d1, $self->{longformat});
+      $self->{"ldy+$_"} = Locale::date("", $myconfig, $d2, $self->{longformat});
+      $self->{"fdy-$_"} = Locale::date("", $myconfig, $d3, $self->{longformat});
+      $self->{"ldy-$_"} = Locale::date("", $myconfig, $d4, $self->{longformat});
+    } else {
+      $self->{"fdy+$_"} = $d1;
+      $self->{"ldy+$_"} = $d2;
+      $self->{"fdy-$_"} = $d3;
+      $self->{"ldy-$_"} = $d4;
+    }
+
+  }
 
 }
 

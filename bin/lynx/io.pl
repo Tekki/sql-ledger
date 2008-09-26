@@ -1046,6 +1046,8 @@ sub create_form {
 
   &order_links;
 
+  $form->{reqdate} = $form->add_date(\%myconfig, $form->{transdate}, $form->{terms}, 'days');
+  
   for (keys %temp) { $form->{$_} = $temp{$_} if $temp{$_} }
 
   $form->{exchangerate} = "";
@@ -1444,8 +1446,6 @@ sub print_form {
 # $locale->text('Quotation Number missing!')
 # $locale->text('Quotation Date missing!')
 
-  ($form->{warehouse}, $form->{warehouse_id}) = split /--/, $form->{warehouse};
-  
   AA->company_details(\%myconfig, \%$form);
 
   @a = ();
@@ -1465,11 +1465,10 @@ sub print_form {
     
     push @a, "${ARAP}_paid_$i", "source_$i", "memo_$i";
   }
-  
   $form->format_string(@a);
-  
-  ($form->{employee}) = split /--/, $form->{employee};
-  
+
+  for (qw(employee warehouse paymentmethod)) { ($form->{$_}, $form->{"${_}_id"}) = split /--/, $form->{$_} };
+ 
   # this is a label for the subtotals
   $form->{groupsubtotaldescription} = $locale->text('Subtotal') if not exists $form->{groupsubtotaldescription};
   delete $form->{groupsubtotaldescription} if $form->{deletegroupsubtotal};
@@ -1492,73 +1491,10 @@ sub print_form {
     $form->isblank("rvc", qq|$form->{"${ARAP}_paid_$form->{paidaccounts}"} : |.$locale->text('RVC missing!'));
   }
 
-  $form->{fdm} = $form->dayofmonth($myconfig{dateformat}, $form->{transdate}, 'fdm');
-  $form->{ldm} = $form->dayofmonth($myconfig{dateformat}, $form->{transdate});
-  $transdate = $form->datetonum(\%myconfig, $form->{transdate});
-  $form->{yy} = substr($transdate, 2, 2);
-  ($form->{yyyy}, $form->{mm}, $form->{dd}) = $transdate =~ /(....)(..)(..)/;
-
-  for (1 .. 11) {
-    $m1 = $form->{mm} + $_;
-    $y1 = $form->{yyyy};
-    if ($m1 > 12) {
-      $m1 -= 12;
-      $y1++;
-    }
-    $m1 = substr("0$m1", -2);
-
-    $m2 = $form->{mm} - $_;
-    $y2 = $form->{yyyy};
-    if ($m2 < 1) {
-      $m2 += 12;
-      $y2--;
-    }
-    $m2 = substr("0$m2", -2);
-
-    $d1 = $form->format_date($myconfig{dateformat}, "$y1${m1}01");
-    $d2 = $form->format_date($myconfig{dateformat}, $form->dayofmonth("yyyymmdd", "$y1${m1}01"));
-    $d3 = $form->format_date($myconfig{dateformat}, "$y2${m2}01");
-    $d4 = $form->format_date($myconfig{dateformat}, $form->dayofmonth("yyyymmdd", "$y2${m2}01"));
-
-    if (exists $form->{longformat}) {
-      $form->{"fdm+$_"} = $locale->date(\%myconfig, $d1, $form->{longformat});
-      $form->{"ldm+$_"} .= $locale->date(\%myconfig, $d2, $form->{longformat});
-      $form->{"fdm-$_"} = $locale->date(\%myconfig, $d3, $form->{longformat});
-      $form->{"ldm-$_"} .= $locale->date(\%myconfig, $d4, $form->{longformat});
-    } else {
-      $form->{"fdm+$_"} = $d1;
-      $form->{"ldm+$_"} = $d2;
-      $form->{"fdm-$_"} = $d3;
-      $form->{"ldm-$_"} = $d4;
-    }
-  }
-
-  for (1 .. 3) {
-    $y1 = $form->{yyyy} + $_;
-    $y2 = $form->{yyyy} - $_;
-
-    $d1 = $form->format_date($myconfig{dateformat}, "$y1$form->{mm}01");
-    $d2 = $form->format_date($myconfig{dateformat}, $form->dayofmonth("yyyymmdd", "$y1$form->{mm}01"));
-    $d3 = $form->format_date($myconfig{dateformat}, "$y2$form->{mm}01");
-    $d4 = $form->format_date($myconfig{dateformat}, $form->dayofmonth("yyyymmdd", "$y2$form->{mm}01"));
-
-    if (exists $form->{longformat}) {
-      $form->{"fdy+$_"} = $locale->date(\%myconfig, $d1, $form->{longformat});
-      $form->{"ldy+$_"} .= $locale->date(\%myconfig, $d2, $form->{longformat});
-      $form->{"fdy-$_"} = $locale->date(\%myconfig, $d3, $form->{longformat});
-      $form->{"ldy-$_"} .= $locale->date(\%myconfig, $d4, $form->{longformat});
-    } else {
-      $form->{"fdy+$_"} = $d1;
-      $form->{"ldy+$_"} = $d2;
-      $form->{"fdy-$_"} = $d3;
-      $form->{"ldy-$_"} = $d4;
-    }
-
-  }
-
+  $form->fdld(\%myconfig);
   
   if (exists $form->{longformat}) {
-    for ("fdm", "ldm", "${inv}date", "${due}date", "shippingdate", "transdate") { $form->{$_} = $locale->date(\%myconfig, $form->{$_}, $form->{longformat}) }
+    for ("${inv}date", "${due}date", "shippingdate", "transdate") { $form->{$_} = $locale->date(\%myconfig, $form->{$_}, $form->{longformat}) }
   }
 
   @a = qw(email name address1 address2 city state zipcode country contact phone fax);
@@ -1602,7 +1538,7 @@ sub print_form {
   shift @a;
  
   # some of the stuff could have umlauts so we translate them
-  push @a, qw(contact shippingpoint shipvia notes intnotes employee warehouse);
+  push @a, qw(contact shippingpoint shipvia notes intnotes employee warehouse paymentmethod);
   push @a, map { "shipto$_" } qw(name address1 address2 city state zipcode country contact email phone fax);
   push @a, qw(firstname lastname salutation contacttitle occupation mobile);
 

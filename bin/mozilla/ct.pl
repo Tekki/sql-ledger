@@ -350,6 +350,7 @@ sub include_in_report {
   push @a, qq|<input name="l_discount" type=checkbox class=checkbox value=Y> |.$locale->text('Discount');
   push @a, qq|<input name="l_threshold" type=checkbox class=checkbox value=Y> |.$locale->text('Threshold');
   push @a, qq|<input name="l_accounts" type=checkbox class=checkbox value=Y> |.$locale->text('Accounts');
+  push @a, qq|<input name="l_paymentmethod" type=checkbox class=checkbox value=Y> |.$locale->text('Payment Method');
   push @a, qq|<input name="l_taxnumber" type=checkbox class=checkbox value=Y> |.$locale->text('Tax Number');
   
   if ($form->{db} eq 'customer') {
@@ -612,6 +613,7 @@ sub list_names {
   }
 
   push @columns, (
+	     paymentmethod,
 	     threshold, taxnumber, gifi_accno, sic_code, business,
 	     pricegroup, language, iban, bic, remittancevoucher,
 	     startdate, enddate,
@@ -798,6 +800,7 @@ sub list_names {
   $column_header{discount} = qq|<th class=listheading>%</th>|;
   $column_header{terms} = qq|<th class=listheading>|.$locale->text('Terms').qq|</th>|;
   $column_header{threshold} = qq|<th class=listheading>|.$locale->text('Threshold').qq|</th>|;
+  $column_header{paymentmethod} = qq|<th><a class=listheading href=$href&sort=paymentmethod>|.$locale->text('Payment Method').qq|</a></th>|;
   $column_header{creditlimit} = qq|<th class=listheading>|.$locale->text('Credit Limit').qq|</th>|;
 
 # $locale->text('AR')
@@ -853,7 +856,7 @@ sub list_names {
 # $locale->text('Customers')
 # $locale->text('Vendors')
 # $locale->text('Customer Transactions')
-# $locale->text('VendorTransactions')
+# $locale->text('Vendor Transactions')
 
   if ($form->{status}) {
     $label = "${vcname}s";

@@ -1457,62 +1457,62 @@ sub generate_report {
   }
   
     
-  $column_header{runningnumber} = qq|<th a class=listheading>&nbsp;</th>|;
-  $column_header{partnumber} = qq|<th nowrap colspan=$colspan><a class=listheading href=$href&sort=partnumber>|.$locale->text('Number').qq|</a></th>|;
-  $column_header{description} = qq|<th nowrap><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</a></th>|;
-  $column_header{notes} = qq|<th nowrap class=listheading>|.$locale->text('Notes').qq|</th>|;
-  $column_header{partsgroup} = qq|<th nowrap><a class=listheading href=$href&sort=partsgroup>|.$locale->text('Group').qq|</a></th>|;
-  $column_header{bin} = qq|<th><a class=listheading href=$href&sort=bin>|.$locale->text('Bin').qq|</a></th>|;
-  $column_header{priceupdate} = qq|<th nowrap><a class=listheading href=$href&sort=priceupdate>|.$locale->text('Updated').qq|</a></th>|;
-  $column_header{onhand} = qq|<th class=listheading nowrap>|.$locale->text('Qty').qq|</th>|;
-  $column_header{perassembly} = qq|<th>&nbsp;</th>|;
-  $column_header{unit} = qq|<th class=listheading nowrap>|.$locale->text('Unit').qq|</th>|;
-  $column_header{listprice} = qq|<th class=listheading nowrap>|.$locale->text('List Price').qq|</th>|;
-  $column_header{lastcost} = qq|<th class=listheading nowrap>|.$locale->text('Last Cost').qq|</th>|;
-  $column_header{avgcost} = qq|<th class=listheading nowrap>|.$locale->text('Avg Cost').qq|</th>|;
-  $column_header{rop} = qq|<th class=listheading nowrap>|.$locale->text('ROP').qq|</th>|;
-  $column_header{weight} = qq|<th class=listheading nowrap>|.$locale->text('Weight').qq|</th>|;
-  $column_header{avgcostmarkup} = qq|<th class=listheading nowrap>%</th>|;
-  $column_header{lastcostmarkup} = qq|<th class=listheading nowrap>%</th>|;
+  $column_data{runningnumber} = qq|<th a class=listheading>&nbsp;</th>|;
+  $column_data{partnumber} = qq|<th nowrap colspan=$colspan><a class=listheading href=$href&sort=partnumber>|.$locale->text('Number').qq|</a></th>|;
+  $column_data{description} = qq|<th nowrap><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</a></th>|;
+  $column_data{notes} = qq|<th nowrap class=listheading>|.$locale->text('Notes').qq|</th>|;
+  $column_data{partsgroup} = qq|<th nowrap><a class=listheading href=$href&sort=partsgroup>|.$locale->text('Group').qq|</a></th>|;
+  $column_data{bin} = qq|<th><a class=listheading href=$href&sort=bin>|.$locale->text('Bin').qq|</a></th>|;
+  $column_data{priceupdate} = qq|<th nowrap><a class=listheading href=$href&sort=priceupdate>|.$locale->text('Updated').qq|</a></th>|;
+  $column_data{onhand} = qq|<th class=listheading nowrap>|.$locale->text('Qty').qq|</th>|;
+  $column_data{perassembly} = qq|<th>&nbsp;</th>|;
+  $column_data{unit} = qq|<th class=listheading nowrap>|.$locale->text('Unit').qq|</th>|;
+  $column_data{listprice} = qq|<th class=listheading nowrap>|.$locale->text('List Price').qq|</th>|;
+  $column_data{lastcost} = qq|<th class=listheading nowrap>|.$locale->text('Last Cost').qq|</th>|;
+  $column_data{avgcost} = qq|<th class=listheading nowrap>|.$locale->text('Avg Cost').qq|</th>|;
+  $column_data{rop} = qq|<th class=listheading nowrap>|.$locale->text('ROP').qq|</th>|;
+  $column_data{weight} = qq|<th class=listheading nowrap>|.$locale->text('Weight').qq|</th>|;
+  $column_data{avgcostmarkup} = qq|<th class=listheading nowrap>%</th>|;
+  $column_data{lastcostmarkup} = qq|<th class=listheading nowrap>%</th>|;
 
-  $column_header{make} = qq|<th nowrap><a class=listheading href=$href&sort=make>|.$locale->text('Make').qq|</a></th>|;
-  $column_header{model} = qq|<th nowrap><a class=listheading href=$href&sort=model>|.$locale->text('Model').qq|</a></th>|;
+  $column_data{make} = qq|<th nowrap><a class=listheading href=$href&sort=make>|.$locale->text('Make').qq|</a></th>|;
+  $column_data{model} = qq|<th nowrap><a class=listheading href=$href&sort=model>|.$locale->text('Model').qq|</a></th>|;
   
-  $column_header{invnumber} = qq|<th nowrap><a class=listheading href=$href&sort=invnumber>|.$locale->text('Invoice Number').qq|</a></th>|;
-  $column_header{ordnumber} = qq|<th nowrap><a class=listheading href=$href&sort=ordnumber>|.$locale->text('Order Number').qq|</a></th>|;
-  $column_header{quonumber} = qq|<th nowrap><a class=listheading href=$href&sort=quonumber>|.$locale->text('Quotation').qq|</a></th>|;
+  $column_data{invnumber} = qq|<th nowrap><a class=listheading href=$href&sort=invnumber>|.$locale->text('Invoice Number').qq|</a></th>|;
+  $column_data{ordnumber} = qq|<th nowrap><a class=listheading href=$href&sort=ordnumber>|.$locale->text('Order Number').qq|</a></th>|;
+  $column_data{quonumber} = qq|<th nowrap><a class=listheading href=$href&sort=quonumber>|.$locale->text('Quotation').qq|</a></th>|;
   
-  $column_header{name} = qq|<th nowrap><a class=listheading href=$href&sort=name>|.$locale->text('Name').qq|</a></th>|;
+  $column_data{name} = qq|<th nowrap><a class=listheading href=$href&sort=name>|.$locale->text('Name').qq|</a></th>|;
   
-  $column_header{employee} = qq|<th nowrap><a class=listheading href=$href&sort=employee>|.$locale->text('Employee').qq|</a></th>|;
+  $column_data{employee} = qq|<th nowrap><a class=listheading href=$href&sort=employee>|.$locale->text('Employee').qq|</a></th>|;
   
-  $column_header{sellprice} = qq|<th class=listheading nowrap>|.$locale->text('Sell Price').qq|</th>|;
+  $column_data{sellprice} = qq|<th class=listheading nowrap>|.$locale->text('Sell Price').qq|</th>|;
   
-  for (qw(sellprice lastcost avgcost listprice)) { $column_header{"linetotal$_"} = qq|<th class=listheading nowrap>|.$locale->text('Extended').qq|</th>| }
+  for (qw(sellprice lastcost avgcost listprice)) { $column_data{"linetotal$_"} = qq|<th class=listheading nowrap>|.$locale->text('Extended').qq|</th>| }
   
-  $column_header{curr} = qq|<th nowrap><a class=listheading href=$href&sort=curr>|.$locale->text('Curr').qq|</a></th>|;
+  $column_data{curr} = qq|<th nowrap><a class=listheading href=$href&sort=curr>|.$locale->text('Curr').qq|</a></th>|;
   
-  $column_header{image} = qq|<th class=listheading nowrap>|.$locale->text('Image').qq|</a></th>|;
-  $column_header{drawing} = qq|<th nowrap><a class=listheading href=$href&sort=drawing>|.$locale->text('Drawing').qq|</a></th>|;
-  $column_header{toolnumber} = qq|<th nowrap><a class=listheading href=$href&sort=toolnumber>|.$locale->text('Tool Number').qq|</a></th>|;
+  $column_data{image} = qq|<th class=listheading nowrap>|.$locale->text('Image').qq|</a></th>|;
+  $column_data{drawing} = qq|<th nowrap><a class=listheading href=$href&sort=drawing>|.$locale->text('Drawing').qq|</a></th>|;
+  $column_data{toolnumber} = qq|<th nowrap><a class=listheading href=$href&sort=toolnumber>|.$locale->text('Tool Number').qq|</a></th>|;
 
-  $column_header{microfiche} = qq|<th nowrap><a class=listheading href=$href&sort=microfiche>|.$locale->text('Microfiche').qq|</a></th>|;
+  $column_data{microfiche} = qq|<th nowrap><a class=listheading href=$href&sort=microfiche>|.$locale->text('Microfiche').qq|</a></th>|;
   
-  $column_header{countryorigin} = qq|<th nowrap><a class=listheading href=$href&sort=countryorigin>|.$locale->text('CO').qq|</a></th>|;
-  $column_header{tariff_hscode} = qq|<th nowrap><a class=listheading href=$href&sort=tariff_hscode>|.$locale->text('HS Code').qq|</a></th>|;
+  $column_data{countryorigin} = qq|<th nowrap><a class=listheading href=$href&sort=countryorigin>|.$locale->text('CO').qq|</a></th>|;
+  $column_data{tariff_hscode} = qq|<th nowrap><a class=listheading href=$href&sort=tariff_hscode>|.$locale->text('HS Code').qq|</a></th>|;
   
-  $column_header{barcode} = qq|<th nowrap><a class=listheading href=$href&sort=barcode>|.$locale->text('Barcode').qq|</a></th>|;
+  $column_data{barcode} = qq|<th nowrap><a class=listheading href=$href&sort=barcode>|.$locale->text('Barcode').qq|</a></th>|;
 
-  $column_header{serialnumber} = qq|<th nowrap><a class=listheading href=$href&sort=serialnumber>|.$locale->text('Serial Number').qq|</a></th>|;
+  $column_data{serialnumber} = qq|<th nowrap><a class=listheading href=$href&sort=serialnumber>|.$locale->text('Serial Number').qq|</a></th>|;
   
-  $column_header{assemblypartnumber} = qq|<th nowrap><a class=listheading href=$href&sort=assemblypartnumber>|.$locale->text('Assembly').qq|</a></th>|;
+  $column_data{assemblypartnumber} = qq|<th nowrap><a class=listheading href=$href&sort=assemblypartnumber>|.$locale->text('Assembly').qq|</a></th>|;
   
-  $column_header{warehouse} = qq|<th nowrap class=listheading>|.$locale->text('Warehouse').qq|</th>|;
+  $column_data{warehouse} = qq|<th nowrap class=listheading>|.$locale->text('Warehouse').qq|</th>|;
 
-  $column_header{inventory} = qq|<th nowrap class=listheading>|.$locale->text('Inventory').qq|</th>|;
-  $column_header{income} = qq|<th nowrap class=listheading>|.$locale->text('Income').qq|</th>|;
-  $column_header{expense} = qq|<th nowrap class=listheading>|.$locale->text('Expense').qq|</th>|;
-  $column_header{tax} = qq|<th nowrap class=listheading>|.$locale->text('Tax').qq|</th>|;
+  $column_data{inventory} = qq|<th nowrap class=listheading>|.$locale->text('Inventory').qq|</th>|;
+  $column_data{income} = qq|<th nowrap class=listheading>|.$locale->text('Income').qq|</th>|;
+  $column_data{expense} = qq|<th nowrap class=listheading>|.$locale->text('Expense').qq|</th>|;
+  $column_data{tax} = qq|<th nowrap class=listheading>|.$locale->text('Tax').qq|</th>|;
   
   $form->header;
 
@@ -1557,7 +1557,7 @@ sub generate_report {
         <tr class=listheading>
 |;
 
-  for (@column_index) { print "\n$column_header{$_}" }
+  for (@column_index) { print "\n$column_data{$_}" }
   
   print qq|
         </tr>
@@ -2028,16 +2028,16 @@ sub requirements_report {
   }
     
   
-  $column_header{runningnumber} = qq|<th a class=listheading>&nbsp;</th>|;
-  $column_header{partnumber} = qq|<th nowrap colspan=$colspan><a class=listheading href=$href&sort=partnumber>|.$locale->text('Number').qq|</a></th>|;
-  $column_header{description} = qq|<th nowrap><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</a></th>|;
-  $column_header{onhand} = qq|<th class=listheading nowrap>|.$locale->text('Onhand').qq|</th>|;
-  $column_header{so} = qq|<th class=listheading nowrap>|.$locale->text('SO').qq|</th>|;
-  $column_header{po} = qq|<th class=listheading nowrap>|.$locale->text('PO').qq|</th>|;
-  $column_header{order} = qq|<th class=listheading nowrap>|.$locale->text('Order').qq|</th>|;
-  $column_header{year} = qq|<th class=listheading nowrap>$form->{year}</th>|;
+  $column_data{runningnumber} = qq|<th a class=listheading>&nbsp;</th>|;
+  $column_data{partnumber} = qq|<th nowrap colspan=$colspan><a class=listheading href=$href&sort=partnumber>|.$locale->text('Number').qq|</a></th>|;
+  $column_data{description} = qq|<th nowrap><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</a></th>|;
+  $column_data{onhand} = qq|<th class=listheading nowrap>|.$locale->text('Onhand').qq|</th>|;
+  $column_data{so} = qq|<th class=listheading nowrap>|.$locale->text('SO').qq|</th>|;
+  $column_data{po} = qq|<th class=listheading nowrap>|.$locale->text('PO').qq|</th>|;
+  $column_data{order} = qq|<th class=listheading nowrap>|.$locale->text('Order').qq|</th>|;
+  $column_data{year} = qq|<th class=listheading nowrap>$form->{year}</th>|;
 
-  for (sort { $a <=> $b } keys %month) { $column_header{$_} = qq|<th class=listheading nowrap>|.$locale->text($locale->{SHORT_MONTH}[$_-1]).qq|</th>| }
+  for (sort { $a <=> $b } keys %month) { $column_data{$_} = qq|<th class=listheading nowrap>|.$locale->text($locale->{SHORT_MONTH}[$_-1]).qq|</th>| }
   
   $form->{title} = $locale->text('Parts Requirements');
   
@@ -2060,7 +2060,7 @@ sub requirements_report {
         <tr class=listheading>
 |;
 
-  for (@column_index) { print "\n$column_header{$_}" }
+  for (@column_index) { print "\n$column_data{$_}" }
   
   print qq|
         </tr>
@@ -2396,13 +2396,13 @@ sub so_requirements_report {
   $namenumber = $locale->text('Customer Number');
   $namefld = "customernumber";
   
-  $column_header{reqdate} = "<th><a class=listheading href=$href&sort=reqdate>".$locale->text('Required by')."</a></th>";
-  $column_header{ordnumber} = "<th><a class=listheading href=$href&sort=ordnumber>".$locale->text('Order')."</a></th>";
-  $column_header{name} = "<th><a class=listheading href=$href&sort=name>$name</a></th>";
-  $column_header{$namefld} = "<th><a class=listheading href=$href&sort=$namefld>$namenumber</a></th>";
-  $column_header{partnumber} = "<th><a class=listheading href=$href&sort=partnumber>" . $locale->text('Part Number') . "</a></th>";
-  $column_header{description} = "<th><a class=listheading href=$href&sort=description>" . $locale->text('Description') . "</a></th>";
-  $column_header{qty} = "<th class=listheading>" . $locale->text('Qty') . "</th>";
+  $column_data{reqdate} = "<th><a class=listheading href=$href&sort=reqdate>".$locale->text('Required by')."</a></th>";
+  $column_data{ordnumber} = "<th><a class=listheading href=$href&sort=ordnumber>".$locale->text('Order')."</a></th>";
+  $column_data{name} = "<th><a class=listheading href=$href&sort=name>$name</a></th>";
+  $column_data{$namefld} = "<th><a class=listheading href=$href&sort=$namefld>$namenumber</a></th>";
+  $column_data{partnumber} = "<th><a class=listheading href=$href&sort=partnumber>" . $locale->text('Part Number') . "</a></th>";
+  $column_data{description} = "<th><a class=listheading href=$href&sort=description>" . $locale->text('Description') . "</a></th>";
+  $column_data{qty} = "<th class=listheading>" . $locale->text('Qty') . "</th>";
   
   $title = "$form->{title} / $form->{company}";
   
@@ -2425,7 +2425,7 @@ sub so_requirements_report {
 	<tr class=listheading>
 |;
 
-  for (@column_index) { print "\n$column_header{$_}" }
+  for (@column_index) { print "\n$column_data{$_}" }
 
   print qq|
 	</tr>
@@ -2727,32 +2727,31 @@ sub assembly_row {
   $form->{callback} = $callback;
 
 
-  $column_header{runningnumber} = qq|<th nowrap width=5%>|.$locale->text('Item').qq|</th>|;
-  $column_header{qty} = qq|<th align=left nowrap width=10%>|.$locale->text('Qty').qq|</th>|;
-  $column_header{unit} = qq|<th align=left nowrap width=5%>|.$locale->text('Unit').qq|</th>|;
-  $column_header{partnumber} = qq|<th align=left nowrap width=20%>|.$locale->text('Number').qq|</th>|;
-  $column_header{description} = qq|<th nowrap width=50%>|.$locale->text('Description').qq|</th>|;
-  $column_header{sellprice} = qq|<th align=right nowrap>|.$locale->text('Sell').qq|</th>|;
-  $column_header{listprice} = qq|<th align=right nowrap>|.$locale->text('List').qq|</th>|;
-  $column_header{lastcost} = qq|<th align=right nowrap>|.$locale->text('Cost').qq|</th>|;
-  $column_header{bom} = qq|<th>|.$locale->text('BOM').qq|</th>|;
-  $column_header{adj} = qq|<th>|.$locale->text('A').qq|</th>|;
-  $column_header{partsgroup} = qq|<th>|.$locale->text('Group').qq|</th>|;
+  $column_data{runningnumber} = qq|<th nowrap width=5%>|.$locale->text('Item').qq|</th>|;
+  $column_data{qty} = qq|<th align=left nowrap width=10%>|.$locale->text('Qty').qq|</th>|;
+  $column_data{unit} = qq|<th align=left nowrap width=5%>|.$locale->text('Unit').qq|</th>|;
+  $column_data{partnumber} = qq|<th align=left nowrap width=20%>|.$locale->text('Number').qq|</th>|;
+  $column_data{description} = qq|<th nowrap width=50%>|.$locale->text('Description').qq|</th>|;
+  $column_data{sellprice} = qq|<th align=right nowrap>|.$locale->text('Sell').qq|</th>|;
+  $column_data{listprice} = qq|<th align=right nowrap>|.$locale->text('List').qq|</th>|;
+  $column_data{lastcost} = qq|<th align=right nowrap>|.$locale->text('Cost').qq|</th>|;
+  $column_data{bom} = qq|<th>|.$locale->text('BOM').qq|</th>|;
+  $column_data{adj} = qq|<th>|.$locale->text('A').qq|</th>|;
+  $column_data{partsgroup} = qq|<th>|.$locale->text('Group').qq|</th>|;
   
   print qq|
   <p>
-
-  <table width=100%>
+  <table width="100%">
   <tr class=listheading>
     <th class=listheading>|.$locale->text('Individual Items').qq|</th>
   </tr>
   <tr>
     <td>
-      <table width=100%>
+      <table width="100%">
         <tr>
 |;
 
-  for (@column_index) { print "\n$column_header{$_}" }
+  for (@column_index) { print "\n$column_data{$_}" }
   
   print qq|
         </tr>
@@ -3424,12 +3423,12 @@ sub list_assemblies {
     $form->{sort} = "description" unless $form->{sort};
   }
  
-  $column_header{partnumber} = qq|<th><a class=listheading href=$href&sort=partnumber>|.$locale->text('Number').qq|</th>|;
-  $column_header{description} = qq|<th><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</th>|;
-  $column_header{bin} = qq|<th><a class=listheading href=$href&sort=bin>|.$locale->text('Bin').qq|</th>|;
-  $column_header{onhand} = qq|<th class=listheading>|.$locale->text('Qty').qq|</th>|;
-  $column_header{rop} = qq|<th class=listheading>|.$locale->text('ROP').qq|</th>|;
-  $column_header{stock} = qq|<th class=listheading>|.$locale->text('Add').qq|</th>|;
+  $column_data{partnumber} = qq|<th><a class=listheading href=$href&sort=partnumber>|.$locale->text('Number').qq|</th>|;
+  $column_data{description} = qq|<th><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</th>|;
+  $column_data{bin} = qq|<th><a class=listheading href=$href&sort=bin>|.$locale->text('Bin').qq|</th>|;
+  $column_data{onhand} = qq|<th class=listheading>|.$locale->text('Qty').qq|</th>|;
+  $column_data{rop} = qq|<th class=listheading>|.$locale->text('ROP').qq|</th>|;
+  $column_data{stock} = qq|<th class=listheading>|.$locale->text('Add').qq|</th>|;
 
   @column_index = $form->sort_columns(qw(partnumber description bin onhand rop stock));
   
@@ -3455,7 +3454,7 @@ sub list_assemblies {
 	<tr class=listheading>
 |;
 
-  for (@column_index) { print "\n$column_header{$_}" }
+  for (@column_index) { print "\n$column_data{$_}" }
 
   print qq|
 	</tr>

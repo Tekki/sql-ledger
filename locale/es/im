@@ -1,14 +1,21 @@
 $self{texts} = {
+  'Account'                     => 'Cuenta',
   'City'                        => 'Ciudad',
+  'Company'                     => 'Compañía',
   'Continue'                    => 'Continuar',
   'Curr'                        => 'Mon.',
+  'Currency'                    => 'Moneda',
   'Customer'                    => 'Cliente',
   'Customer Number'             => 'Número del cliente',
+  'Date Paid'                   => 'Fecha de pago',
   'Description'                 => 'Descripción',
   'Due Date'                    => 'Fecha de vencimiento',
+  'Exch'                        => 'Cambio',
+  'Invoice'                     => 'Factura',
   'Invoice Date'                => 'Fecha de factura',
   'Invoice Number'              => 'Número de factura',
   'No'                          => 'No',
+  'Paid'                        => 'Pagado',
   'Qty'                         => 'Cantidad',
   'Salesperson'                 => 'Vendedor',
   'Total'                       => 'Total',
@@ -18,9 +25,12 @@ $self{texts} = {
 
 $self{subs} = {
   'continue'                    => 'continue',
-  'do_import'                   => 'do_import',
+  'display_payment'             => 'display_payment',
+  'display_sales_invoice'       => 'display_sales_invoice',
   'import'                      => 'import',
+  'import_payments'             => 'import_payments',
   'import_sales_invoices'       => 'import_sales_invoices',
+  'xrefhdr'                     => 'xrefhdr',
   'continuar'                   => 'continue',
 };
 

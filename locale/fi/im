@@ -1,14 +1,21 @@
 $self{texts} = {
+  'Account'                     => 'Tili',
   'City'                        => 'Kaupunki',
+  'Company'                     => 'Yritys',
   'Continue'                    => 'Jatka',
   'Curr'                        => 'Valuutta',
+  'Currency'                    => 'Valuutta',
   'Customer'                    => 'Asiakas',
   'Customer Number'             => 'Asiakasnumero',
+  'Date Paid'                   => 'Maksupäivä',
   'Description'                 => 'Kuvaus',
   'Due Date'                    => 'Eräpäivä',
+  'Exch'                        => 'Vaihtokurssi',
+  'Invoice'                     => 'Lasku',
   'Invoice Date'                => 'Laskun päiväys',
   'Invoice Number'              => 'Laskun numero',
   'No'                          => 'Ei',
+  'Paid'                        => 'Maksettu',
   'Qty'                         => 'Määrä',
   'Salesperson'                 => 'Myyjä',
   'Total'                       => 'Yhteensä',
@@ -18,9 +25,12 @@ $self{texts} = {
 
 $self{subs} = {
   'continue'                    => 'continue',
-  'do_import'                   => 'do_import',
+  'display_payment'             => 'display_payment',
+  'display_sales_invoice'       => 'display_sales_invoice',
   'import'                      => 'import',
+  'import_payments'             => 'import_payments',
   'import_sales_invoices'       => 'import_sales_invoices',
+  'xrefhdr'                     => 'xrefhdr',
   'jatka'                       => 'continue',
 };
 

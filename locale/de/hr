@@ -69,9 +69,11 @@ $self{texts} = {
   'Startdate'                   => 'Startdatum',
   'State/Province'              => 'Bundesland',
   'Supervisor'                  => 'Vorarbeiter',
-  'To'                          => 'Bis',
+  'To'                          => 'An',
   'Update'                      => 'Erneuern',
   'User'                        => 'Benutzer',
+  'Work Fax'                    => 'Fax geschäftl.',
+  'Work Mobile'                 => 'Mobilt. geschäftl.',
   'Work Phone'                  => 'Tel. Arbeit',
   'Zip/Postal Code'             => 'Postleitzahl',
 };

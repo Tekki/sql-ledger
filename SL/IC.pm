@@ -139,10 +139,8 @@ sub get_part {
 
   $form->{orphaned} = 0 if $form->{project_id};
 
-  if ($form->{item} eq 'assembly') {
-    if ($form->{orphaned}) {
-      $form->{orphaned} = !$form->{onhand};
-    }
+  if ($form->{orphaned}) {
+    $form->{orphaned} = !$form->{onhand};
   }
 
   if ($form->{item} =~ /(part|service)/) {

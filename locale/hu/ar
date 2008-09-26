@@ -84,6 +84,7 @@ $self{texts} = {
   'May '                        => 'Május',
   'Memo'                        => 'Memo',
   'Message'                     => 'Üzenet',
+  'Method'                      => 'Módszer',
   'Month'                       => 'Hónap',
   'Month(s)'                    => 'Hónap',
   'Next Date'                   => 'Következõ Dátum',

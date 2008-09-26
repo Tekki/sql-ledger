@@ -141,7 +141,6 @@ $self{texts} = {
   'Vendor Number'               => 'Èíslo dodavateµa',
   'Vendor deleted!'             => 'Dodavateµ bol vymazaný!',
   'Vendor saved!'               => 'Dodavateµ bol ulo¾ený!',
-  'VendorTransactions'          => 'Dodavatelske transakcie',
   'Vendors'                     => 'Dodavatelia',
   'Zip/Postal Code'             => 'PSÈ',
   'days'                        => 'dni',

@@ -114,6 +114,17 @@ sub paymentaccounts {
     $sth->finish;
   }
 
+  $query = qq|SELECT *
+	      FROM paymentmethod
+	      ORDER BY 2|;
+  $sth = $dbh->prepare($query);
+  $sth->execute || $form->dberror($query);
+
+  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    push @{ $form->{all_paymentmethod} }, $ref;
+  }
+  $sth->finish;
+
   $dbh->disconnect if $disconnect;
 
 }
@@ -149,23 +160,29 @@ sub get_openvc {
   }
 
   my $accno;
+  my $id;
+  my $description;
+  
   if (! $form->{all_vc}) {
-    my ($id, $description) = split /--/, $form->{$form->{ARAP}};
-    
+    ($id, $description) = split /--/, $form->{$form->{ARAP}};
     if ($id) {
       $where .= qq|
       	AND c.accno = '$id'|;
     }
-      
     if ($form->{vc} eq 'vendor') {
       ($description, $id) = split /--/, $form->{business};
-     
       if ($id) {
 	$where .= qq|
 		AND vc.business_id = $id|;
       }
-
     }
+  }
+  
+  ($description, $id) = split /--/, $form->{paymentmethod};
+ 
+  if ($id) {
+    $where .= qq|
+	    AND a.paymentmethod_id = $id|;
   }
 
   if (! $form->{"select$form->{vc}"}) {
@@ -472,7 +489,11 @@ sub get_openinvoices {
   ($null, $id) = split /--/, $form->{department};
   $where .= qq|
                  AND a.department_id = $id| if $id;
-		 
+
+  ($null, $id) = split /--/, $form->{paymentmethod};
+  $where .= qq|
+                 AND a.paymentmethod_id = $id| if $id;
+	 
   ($id) = split /--/, $form->{$form->{ARAP}};
   $where .= qq|
 		 AND ch.accno = '$id'| if $id;
@@ -488,6 +509,7 @@ sub get_openinvoices {
   my $buysell = ($form->{arap} eq 'ar') ? 'buy' : 'sell';
   
   my $query = qq|SELECT DISTINCT a.id, a.invnumber, a.transdate, a.duedate,
+                 a.description AS invdescription,
 		 a.amount, a.paid, a.curr, vc.$form->{vc}number, vc.name,
 		 vc.language_code, vc.threshold, vc.curr AS currency,
 		 vc.payment_accno_id,
@@ -697,7 +719,7 @@ sub post_payment {
       $dth->execute($id);
       ($trans{$id}{discount}) = $dth->fetchrow_array;
       $dth->finish;
-     
+    
       # update arap
       $form->update_balance($dbh,
                             $form->{arap},
@@ -750,6 +772,8 @@ sub post_payment {
  
   my $assignvoucherid;
   my $arap;
+  my ($null, $paymentmethod_id) = split /--/, $form->{paymentmethod};
+  $paymentmethod_id *= 1;
   
   # go through line by line
   for my $i (1 .. $form->{rowcount}) {
@@ -802,8 +826,10 @@ sub post_payment {
 		  $voucherid, $paymentid)|;
       $dbh->do($query) || $form->dberror($query);
 
-      $query = qq|INSERT INTO payment (id, trans_id, exchangerate)
-                  VALUES ($paymentid, $form->{"id_$i"}, $form->{exchangerate})|;
+      $query = qq|INSERT INTO payment (id, trans_id, exchangerate,
+                  paymentmethod_id)
+                  VALUES ($paymentid, $form->{"id_$i"}, $form->{exchangerate},
+		  $paymentmethod_id)|;
       $dbh->do($query) || $form->dberror($query);
 
       # add exchangerate difference if currency ne defaultcurrency
@@ -945,7 +971,8 @@ sub post_payment {
                   amount = $trans{$form->{"id_$i"}}{amount},
 		  paid = $amount,
 		  datepaid = '$form->{datepaid}',
-		  bank_id = (SELECT id FROM chart WHERE accno = '$paymentaccno')
+		  bank_id = (SELECT id FROM chart WHERE accno = '$paymentaccno'),
+		  paymentmethod_id = $paymentmethod_id
 		  WHERE id = $form->{"id_$i"}|;
       $dbh->do($query) || $form->dberror($query);
       
@@ -1001,6 +1028,7 @@ sub invoice_ids {
 
   my $datepaid = ($form->{datepaid}) ? "date '$form->{datepaid}'" : 'current_date';
   my $query = qq|SELECT DISTINCT a.id, a.invnumber, a.transdate, a.duedate,
+                 a.description AS invdescription,
 		 a.amount, a.paid, vc.$form->{vc}number, vc.name,
 		 a.$form->{vc}_id, a.cashdiscount, a.netamount,
                  $datepaid <= a.transdate + a.discountterms AS calcdiscount,

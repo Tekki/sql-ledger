@@ -28,6 +28,7 @@ $self{texts} = {
   'Copies'                      => 'koopiat',
   'Credit'                      => 'Kreedit',
   'Curr'                        => 'Val.',
+  'Currency'                    => 'Valuuta',
   'Current'                     => 'Käesolev',
   'Current Earnings'            => 'Käesoleva aasta kasum (kahjum)',
   'Customer'                    => 'Klient',

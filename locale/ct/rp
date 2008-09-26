@@ -16,6 +16,7 @@ $self{texts} = {
   'Continue'                    => 'Continuar',
   'Copies'                      => 'Còpies',
   'Credit'                      => 'Crèdit',
+  'Currency'                    => 'Moneda',
   'Customer'                    => 'Client',
   'Date'                        => 'Data',
   'Debit'                       => 'Dèbit',

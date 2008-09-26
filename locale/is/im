@@ -1,12 +1,19 @@
 $self{texts} = {
+  'Account'                     => 'Reikningur',
+  'Company'                     => 'Fyritæki',
   'Continue'                    => 'Áfram',
   'Curr'                        => 'Gjaldm',
+  'Currency'                    => 'Gjaldmiðill',
   'Customer'                    => 'Viðskiptavinur',
+  'Date Paid'                   => 'Greiðsludagur',
   'Description'                 => 'Skýringar',
   'Due Date'                    => 'Dags. lokið',
+  'Exch'                        => 'Vx',
+  'Invoice'                     => 'Sölureikningur',
   'Invoice Date'                => 'Sölureikningur dags.',
   'Invoice Number'              => 'Sölureikningur Númer',
   'No'                          => 'Nei',
+  'Paid'                        => 'Greitt',
   'Qty'                         => 'Magn',
   'Total'                       => 'Samtals',
   'Unit'                        => 'Einingar',
@@ -15,9 +22,12 @@ $self{texts} = {
 
 $self{subs} = {
   'continue'                    => 'continue',
-  'do_import'                   => 'do_import',
+  'display_payment'             => 'display_payment',
+  'display_sales_invoice'       => 'display_sales_invoice',
   'import'                      => 'import',
+  'import_payments'             => 'import_payments',
   'import_sales_invoices'       => 'import_sales_invoices',
+  'xrefhdr'                     => 'xrefhdr',
   'Áfram'                       => 'continue',
 };
 

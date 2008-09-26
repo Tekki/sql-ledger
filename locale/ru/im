@@ -1,16 +1,23 @@
 $self{charset} = 'ISO-8859-5';
 
 $self{texts} = {
+  'Account'                     => 'Счет',
   'City'                        => 'Город',
+  'Company'                     => 'Организация',
   'Continue'                    => 'Продолжить',
   'Curr'                        => 'Валюта',
+  'Currency'                    => 'Валюта',
   'Customer'                    => 'Клиент',
   'Customer Number'             => 'Код клиента',
+  'Date Paid'                   => 'Дата оплаты',
   'Description'                 => 'Описание',
   'Due Date'                    => 'Оплатить до',
+  'Exch'                        => 'Курс',
+  'Invoice'                     => 'Счет-фактура',
   'Invoice Date'                => 'Дата выставления',
   'Invoice Number'              => 'Номер счета-фактуры',
   'No'                          => 'Нет',
+  'Paid'                        => 'Оплачено',
   'Qty'                         => 'Количество',
   'Salesperson'                 => 'Продавец',
   'Total'                       => 'Всего',
@@ -20,9 +27,12 @@ $self{texts} = {
 
 $self{subs} = {
   'continue'                    => 'continue',
-  'do_import'                   => 'do_import',
+  'display_payment'             => 'display_payment',
+  'display_sales_invoice'       => 'display_sales_invoice',
   'import'                      => 'import',
+  'import_payments'             => 'import_payments',
   'import_sales_invoices'       => 'import_sales_invoices',
+  'xrefhdr'                     => 'xrefhdr',
   'Продолжить'                  => 'continue',
 };
 

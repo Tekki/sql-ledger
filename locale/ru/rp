@@ -26,6 +26,7 @@ $self{texts} = {
   'Copies'                      => 'Копий',
   'Credit'                      => 'Кредит',
   'Curr'                        => 'Валюта',
+  'Currency'                    => 'Валюта',
   'Current'                     => 'Текущий',
   'Current Earnings'            => 'Текущая прибыль',
   'Customer'                    => 'Клиент',

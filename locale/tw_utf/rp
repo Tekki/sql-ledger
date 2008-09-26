@@ -26,6 +26,7 @@ $self{texts} = {
   'Copies'                      => '副本',
   'Credit'                      => '貸方',
   'Curr'                        => '目前',
+  'Currency'                    => '幣別',
   'Current'                     => '現有',
   'Current Earnings'            => '現有收益',
   'Customer'                    => '客戶',

@@ -209,7 +209,7 @@ sub create_links {
   # get paymentmethod
   $query = qq|SELECT *
               FROM paymentmethod
-	      ORDER BY 2|;
+	      ORDER BY rn|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
   
@@ -633,7 +633,8 @@ sub search {
                  e.name AS employee, g.pricegroup, l.description AS language,
 		 m.name AS manager,
 		 ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
-		 ad.country
+		 ad.country,
+		 pm.description AS paymentmethod
                  FROM $form->{db} ct
 	      LEFT JOIN address ad ON (ad.trans_id = ct.id)
 	      LEFT JOIN business b ON (ct.business_id = b.id)
@@ -641,6 +642,7 @@ sub search {
 	      LEFT JOIN employee m ON (m.id = e.managerid)
 	      LEFT JOIN pricegroup g ON (ct.pricegroup_id = g.id)
 	      LEFT JOIN language l ON (l.code = ct.language_code)
+	      LEFT JOIN paymentmethod pm ON (pm.id = ct.paymentmethod_id)
                  WHERE $where|;
 
   # redo for invoices, orders and quotations
@@ -676,13 +678,15 @@ sub search {
 		  (a.amount = a.paid) AS closed, a.amount, a.netamount,
 		  e.name AS employee, m.name AS manager,
 		  ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
-		  ad.country
+		  ad.country,
+		  pm.description AS paymentmethod
 		  FROM $form->{db} ct
 		JOIN address ad ON (ad.trans_id = ct.id)
 		JOIN $ar a ON (a.$form->{db}_id = ct.id)
 	        LEFT JOIN business b ON (ct.business_id = b.id)
 		LEFT JOIN employee e ON (a.employee_id = e.id)
 		LEFT JOIN employee m ON (m.id = e.managerid)
+		LEFT JOIN paymentmethod pm ON (pm.id = ct.paymentmethod_id)
 		  WHERE $where
 		  AND a.invoice = '0'
 		  $transwhere
@@ -709,13 +713,15 @@ sub search {
 		  (a.amount = a.paid) AS closed, a.amount, a.netamount,
 		  e.name AS employee, m.name AS manager,
 		  ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
-		  ad.country
+		  ad.country,
+		  pm.description AS paymentmethod
 		  FROM $form->{db} ct
 		JOIN address ad ON (ad.trans_id = ct.id)
 		JOIN $ar a ON (a.$form->{db}_id = ct.id)
 	        LEFT JOIN business b ON (ct.business_id = b.id)
 		LEFT JOIN employee e ON (a.employee_id = e.id)
 		LEFT JOIN employee m ON (m.id = e.managerid)
+		LEFT JOIN paymentmethod pm ON (pm.id = ct.paymentmethod_id)
 		  WHERE $where
 		  AND a.invoice = '1'
 		  $transwhere
@@ -739,13 +745,15 @@ sub search {
 		  o.closed, o.amount, o.netamount,
 		  e.name AS employee, m.name AS manager,
 		  ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
-		  ad.country
+		  ad.country,
+		  pm.description AS paymentmethod
 		  FROM $form->{db} ct
 		JOIN address ad ON (ad.trans_id = ct.id)
 		JOIN oe o ON (o.$form->{db}_id = ct.id)
 	        LEFT JOIN business b ON (ct.business_id = b.id)
 		LEFT JOIN employee e ON (o.employee_id = e.id)
 		LEFT JOIN employee m ON (m.id = e.managerid)
+		LEFT JOIN paymentmethod pm ON (pm.id = ct.paymentmethod_id)
 		  WHERE $where
 		  AND o.quotation = '0'
 		  $transwhere
@@ -769,13 +777,15 @@ sub search {
 		  o.closed, o.amount, o.netamount,
 		  e.name AS employee, m.name AS manager,
 		  ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
-		  ad.country
+		  ad.country,
+		  pm.description AS paymentmethod
 		  FROM $form->{db} ct
 		JOIN address ad ON (ad.trans_id = ct.id)
 		JOIN oe o ON (o.$form->{db}_id = ct.id)
 	        LEFT JOIN business b ON (ct.business_id = b.id)
 		LEFT JOIN employee e ON (o.employee_id = e.id)
 		LEFT JOIN employee m ON (m.id = e.managerid)
+		LEFT JOIN paymentmethod pm ON (pm.id = ct.paymentmethod_id)
 		  WHERE $where
 		  AND o.quotation = '1'
 		  $transwhere

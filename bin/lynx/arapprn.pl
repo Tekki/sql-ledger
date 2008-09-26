@@ -144,12 +144,12 @@ sub print_check {
     $form->{rvc} = $form->format_dcn($form->{rvc});
     $form->{dcn} = $form->format_dcn($form->{dcn});
   }
-  
-  ($form->{employee}) = split /--/, $form->{employee};
 
+  for (qw(employee paymentmethod)) { ($form->{$_}, $form->{"${_}_id"}) = split /--/, $form->{$_} };
+  
   $form->{notes} =~ s/^\s+//g;
   
-  push @a, qw(notes company address tel fax businessnumber);
+  push @a, qw(employee paymentmethod notes company address tel fax businessnumber);
   
   $form->format_string(@a);
 
@@ -242,7 +242,10 @@ sub print_transaction {
   AA->company_details(\%myconfig, \%$form);
 
   @a = qw(name address1 address2 city state zipcode country);
-  
+
+  $form->{invdescription} = $form->{description};
+  $form->{description} = ();
+
   $form->{invtotal} = 0;
   foreach $i (1 .. $form->{rowcount} - 1) {
     ($form->{tempaccno}, $form->{tempaccount}) = split /--/, $form->{"$form->{ARAP}_amount_$i"};
@@ -368,13 +371,10 @@ sub print_transaction {
     $form->{dcn} = $form->format_dcn($form->{dcn});
   }
   
-  ($form->{employee}) = split /--/, $form->{employee};
-
-  $form->{fdm} = $form->dayofmonth($myconfig{dateformat}, $form->{transdate}, 'fdm');
-  $form->{ldm} = $form->dayofmonth($myconfig{dateformat}, $form->{transdate});
-  $transdate = $form->datetonum(\%myconfig, $form->{transdate});
-  ($form->{yyyy}, $form->{mm}, $form->{dd}) = $transdate =~ /(....)(..)(..)/;
+  for (qw(employee paymentmethod)) { ($form->{$_}, $form->{"${_}_id"}) = split /--/, $form->{$_} };
   
+  $form->fdld(\%myconfig);
+
   if (exists $form->{longformat}) {
     for (qw(duedate transdate)) { $form->{$_} = $locale->date(\%myconfig, $form->{$_}, $form->{longformat}) }
   }
@@ -384,7 +384,7 @@ sub print_transaction {
   
   $form->{notes} =~ s/^\s+//g;
   
-  @a = qw(invnumber transdate duedate notes dcn rvc);
+  @a = qw(employee paymentmethod invnumber transdate duedate notes dcn rvc);
 
   push @a, qw(company address tel fax businessnumber text_amount text_decimal);
   
@@ -649,6 +649,13 @@ sub print_and_post {
 
   $form->{printandpost} = 1;
   $form->{display_form} = "post";
+  
+  if (! $form->{invnumber}) {
+    $invfld = 'sinumber';
+    $invfld = 'vinumber' if $form->{ARAP} eq 'AP';
+    $form->{invnumber} = $form->update_defaults(\%myconfig, $invfld);
+  }
+
   &print;
 
 }

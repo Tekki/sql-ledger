@@ -20,6 +20,7 @@
 $userspath = "users";
 $spool = "spool";
 $templates = "templates";
+$images = "images";
 $memberfile = "users/members";
 $sendmail = "| /usr/sbin/sendmail -t";
 %printer = ();

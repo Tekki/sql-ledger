@@ -70,6 +70,7 @@ $self{texts} = {
   'May'                         => 'mei',
   'May '                        => 'mei ',
   'Memo'                        => 'Memo',
+  'Method'                      => 'Gebruikt Stelsel',
   'Month'                       => 'Maand',
   'No.'                         => 'Nr.',
   'Notes'                       => 'Opmerkingen',

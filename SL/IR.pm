@@ -1152,14 +1152,18 @@ sub post_invoice {
   my $voucherid;
   my $approved;
   my $paymentid = 1;
-  
-  my ($paymentaccno) = split /--/, $form->{"AP_paid_1"};
+  my $paymentaccno;
+  my $paymentmethod_id;
   
   # record payments and offsetting AP
   for $i (1 .. $form->{paidaccounts}) {
 
     if ($form->{"paid_$i"}) {
       ($accno) = split /--/, $form->{"AP_paid_$i"};
+
+      ($null, $paymentmethod_id) = split /--/, $form->{"paymentmethod_$i"};
+      $paymentmethod_id *= 1;
+      
       $paymentaccno = $accno;
       $form->{"datepaid_$i"} = $form->{transdate} unless ($form->{"datepaid_$i"});
       $form->{datepaid} = $form->{"datepaid_$i"};
@@ -1222,8 +1226,10 @@ sub post_invoice {
 		  '$approved', $voucherid, $paymentid)|;
       $dbh->do($query) || $form->dberror($query);
 
-      $query = qq|INSERT INTO payment (id, trans_id, exchangerate)
-                  VALUES ($paymentid, $form->{id}, $form->{"exchangerate_$i"})|;
+      $query = qq|INSERT INTO payment (id, trans_id, exchangerate,
+                  paymentmethod_id)
+                  VALUES ($paymentid, $form->{id}, $form->{"exchangerate_$i"},
+		  $paymentmethod_id)|;
       $dbh->do($query) || $form->dberror($query);
 
       $paymentid++;
@@ -1256,7 +1262,12 @@ sub post_invoice {
       }
     }
   }
-
+  
+  ($paymentaccno) = split /--/, $form->{"AP_paid_$form->{paidaccounts}"};
+  
+  ($null, $paymentmethod_id) = split /--/, $form->{"paymentmethod_$form->{paidaccounts}"};
+  $paymentmethod_id *= 1;
+  
   $form->{invnumber} = $form->update_defaults($myconfig, "vinumber", $dbh) unless $form->{invnumber};
 
   for (qw(terms discountterms onhold)) { $form->{$_} *= 1 }
@@ -1298,7 +1309,8 @@ sub post_invoice {
 	      warehouse_id = $form->{warehouse_id},
 	      exchangerate = $form->{exchangerate},
 	      dcn = |.$dbh->quote($form->{dcn}).qq|,
-	      bank_id = (SELECT id FROM chart WHERE accno = '$paymentaccno')
+	      bank_id = (SELECT id FROM chart WHERE accno = '$paymentaccno'),
+	      paymentmethod_id = $paymentmethod_id
               WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
 
@@ -1345,7 +1357,7 @@ sub post_invoice {
 	      LIMIT 1|;
   my $lth = $dbh->prepare($query) || $form->dberror($query);
 
-  $query = qq|SELECT SUM(i.sellprice * i.qty) / SUM(i.qty)
+  $query = qq|SELECT SUM(i.sellprice * i.qty), SUM(i.qty)
               FROM invoice i
 	      JOIN ap a ON (a.id = i.trans_id)
 	      WHERE i.parts_id = ?|;
@@ -1353,9 +1365,12 @@ sub post_invoice {
   
   foreach $item (keys %updparts) {
     $ath->execute($item) || $form->dberror;
-    my ($avgcost) = $ath->fetchrow_array;
-    $avgcost = $form->round_amount($avgcost, $form->{precision});
+    my ($cost, $qty) = $ath->fetchrow_array;
     $ath->finish;
+    $avgcost = 0;
+    if ($qty) {
+      $avgcost = $form->round_amount($cost / $qty, $form->{precision});
+    }
     
     $lth->execute($item) || $form->dberror;
     my ($lastcost) = $lth->fetchrow_array;
@@ -1590,19 +1605,32 @@ sub retrieve_invoice {
 		a.employee_id, e.name AS employee, a.vendor_id,
 		a.language_code, a.ponumber,
 		a.warehouse_id, w.description AS warehouse,
-		a.exchangerate
+		a.exchangerate,
+		c.accno AS bank_accno, c.description AS bank_accno_description,
+		t.description AS bank_accno_translation,
+		pm.description AS paymentmethod, a.paymentmethod_id
 		FROM ap a
 		LEFT JOIN employee e ON (e.id = a.employee_id)
 		LEFT JOIN warehouse w ON (a.warehouse_id = w.id)
+		LEFT JOIN chart c ON (c.id = a.bank_id)
+		LEFT JOIN translation t ON (t.trans_id = c.id AND t.language_code = '$myconfig->{countrycode}')
+		LEFT JOIN paymentmethod pm ON (pm.id = a.paymentmethod_id)
 		WHERE a.id = $form->{id}|;
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
 
     $ref = $sth->fetchrow_hashref(NAME_lc);
-    for (keys %$ref) {
-      $form->{$_} = $ref->{$_};
-    }
+    for (keys %$ref) { $form->{$_} = $ref->{$_} }
     $sth->finish;
+    
+    if ($form->{bank_accno}) {
+      $form->{payment_accno} = ($form->{bank_accno_translation}) ? "$form->{bank_accno}--$form->{bank_accno_translation}" : "$form->{bank_accno}--$form->{bank_accno_description}";
+    }
+      
+    if ($form->{paymentmethod_id}) {
+      $form->{payment_method} = "$form->{paymentmethod}--$form->{paymentmethod_id}";
+    }
+    
     $form->{type} = ($form->{amount} < 0) ? 'debit_invoice' : 'invoice';
     $form->{formname} = $form->{type};
 
@@ -1613,9 +1641,7 @@ sub retrieve_invoice {
     $sth->execute || $form->dberror($query);
 
     $ref = $sth->fetchrow_hashref(NAME_lc);
-    for (keys %$ref) {
-      $form->{$_} = $ref->{$_};
-    }
+    for (keys %$ref) { $form->{$_} = $ref->{$_} }
     $sth->finish;
     
     # retrieve individual items

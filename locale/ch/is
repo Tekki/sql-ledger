@@ -102,6 +102,7 @@ $self{texts} = {
   'May '                        => 'Mai',
   'Memo'                        => 'Notiz',
   'Message'                     => 'Nachricht',
+  'Method'                      => 'Abrechnungsmethode',
   'Month(s)'                    => 'Monat(e)',
   'N.W.'                        => 'N.W.',
   'Net'                         => 'Netto',

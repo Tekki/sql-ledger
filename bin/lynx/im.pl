@@ -13,25 +13,58 @@
 
 
 use SL::IM;
-
+use SL::CP;
+ 
 1;
 # end of main
 
 
 sub import {
 
-  %title = ( parts => 'Parts',
-             sales_invoice => 'Sales Invoices'
+  %title = ( sales_invoice => 'Sales Invoices',
+	     payment => 'Payments'
 	   );
+
+# $locale->text('Import Sales Invoices')
+# $locale->text('Import Payments')
 
   $msg = "Import $title{$form->{type}}";
   $form->{title} = $locale->text($msg);
   
   $form->header;
 
-  $form->{nextsub} = "do_import";
+  $form->{nextsub} = "display_$form->{type}";
   $form->{action} = "continue";
- 
+
+  if ($form->{type} eq 'payment') {
+    IM->paymentaccounts(\%myconfig, \%$form);
+    if (@{ $form->{all_paymentaccount} }) {
+      @curr = split /:/, $form->{currencies};
+      $form->{defaultcurrency} = $curr[0];
+      chomp $form->{defaultcurrency};
+
+      for (@curr) { $form->{selectcurrency} .= "$_\n" }
+      
+      $selectpaymentaccount = "";
+      for (@{ $form->{all_paymentaccount} }) { $selectpaymentaccount .= qq|$_->{accno}--$_->{description}\n| }
+      $paymentaccount = qq|
+         <tr>
+	  <th align=right>|.$locale->text('Account').qq|</th>
+	  <td>
+	    <select name=paymentaccount>|.$form->select_option($selectpaymentaccount)
+	    .qq|</select>
+	  </td>
+	</tr>
+	<tr>
+	  <th align=right nowrap>|.$locale->text('Currency').qq|</th>
+	  <td><select name=currency>|
+	  .$form->select_option($form->{selectcurrency}, $form->{currency})
+	  .qq|</select></td>
+	</tr>
+|;
+    }
+  }
+  
 print qq|
 <body>
 
@@ -45,6 +78,7 @@ print qq|
   <tr>
     <td>
       <table>
+        $paymentaccount
         <tr>
 	  <th align=right>|.$locale->text('File to Import').qq|</th>
 	  <td>
@@ -84,7 +118,7 @@ print qq|
 </table>
 |;
 
-  $form->hide_form(qw(title type action nextsub login path));
+  $form->hide_form(qw(defaultcurrency title type action nextsub login path));
 
   print qq|
 <input name=action class=submit type=submit value="|.$locale->text('Continue').qq|">
@@ -97,84 +131,37 @@ print qq|
 }
 
 
-sub do_import {
+sub display_sales_invoice {
 
   $form->error($locale->text('Import File missing!')) if ! $form->{data};
 
-  $i = 0;
   @column_index = qw(ndx transdate invnumber customer customernumber city invoicedescription total curr totalqty unit duedate employee);
   @flds = @column_index;
   shift @flds;
   push @flds, qw(ordnumber quonumber customer_id datepaid shippingpoint shipvia waybill terms notes intnotes language_code ponumber cashdiscount discountterms employee_id parts_id description sellprice discount qty unit serialnumber projectnumber deliverydate AR taxincluded);
   unshift @column_index, "runningnumber";
-  
+    
   $form->{callback} = "$form->{script}?action=import";
   for (qw(type login path)) { $form->{callback} .= "&$_=$form->{$_}" }
+
+  &xrefhdr;
   
-  $form->{delimiter} ||= ',';
+  $form->{vc} = 'customer';
+  IM->sales_invoice(\%myconfig, \%$form);
 
-  if ($form->{mapfile}) {
-    open(FH, "$myconfig{templates}/import.map") or $form->error($!);
-
-    while (<FH>) {
-      next if /^(#|;|\s)/;
-      chomp;
-
-      s/\s*(#|;).*//g;
-      s/^\s*(.*?)\s*$/$1/;
-
-      last if $xrefhdr && $_ =~ /^\[/;
-
-      if (/^\[$form->{type}\]/) {
-	$xrefhdr = 1;
-	next;
-      }
-
-      if ($xrefhdr) {
-	($key, $value) = split /=/, $_;
-	@a = split /,/, $value;
-	$form->{$form->{type}}{$a[0]} = { field => $key, length => $a[1], ndx => $i++ };
-      }
-    }
-    close FH;
-    
-  } else {
-    # get first line
-    @a = split /\n/, $form->{data};
-
-    if ($form->{tabdelimited}) {
-      $form->{delimiter} = '\t';
-    } else {
-      $a[0] =~ s/(^"|"$)//;
-      $a[0] =~ s/"$form->{delimiter}"/$form->{delimiter}/g;
-    }
-      
-    for (split /$form->{delimiter}/, $a[0]) {
-      $form->{$form->{type}}{$_} = { field => $_, length => "", ndx => $i++ };
-    }
-  }
-
-  
-  $form->{nextsub} = "import_$form->{type}";
-  
-  if ($form->{type} eq 'sales_invoice') {
-    $form->{vc} = 'customer';
-    IM->sales_invoice(\%myconfig, \%$form);
-  }
-
-  $column_header{runningnumber} = "&nbsp;";
-  $column_header{transdate} = $locale->text('Invoice Date');
-  $column_header{invnumber} = $locale->text('Invoice Number');
-  $column_header{invoicedescription} = $locale->text('Description');
-  $column_header{customer} = $locale->text('Customer');
-  $column_header{customernumber} = $locale->text('Customer Number');
-  $column_header{city} = $locale->text('City');
-  $column_header{total} = $locale->text('Total');
-  $column_header{totalqty} = $locale->text('Qty');
-  $column_header{curr} = $locale->text('Curr');
-  $column_header{unit} = $locale->text('Unit');
-  $column_header{duedate} = $locale->text('Due Date');
-  $column_header{employee} = $locale->text('Salesperson');
+  $column_data{runningnumber} = "&nbsp;";
+  $column_data{transdate} = $locale->text('Invoice Date');
+  $column_data{invnumber} = $locale->text('Invoice Number');
+  $column_data{invoicedescription} = $locale->text('Description');
+  $column_data{customer} = $locale->text('Customer');
+  $column_data{customernumber} = $locale->text('Customer Number');
+  $column_data{city} = $locale->text('City');
+  $column_data{total} = $locale->text('Total');
+  $column_data{totalqty} = $locale->text('Qty');
+  $column_data{curr} = $locale->text('Curr');
+  $column_data{unit} = $locale->text('Unit');
+  $column_data{duedate} = $locale->text('Due Date');
+  $column_data{employee} = $locale->text('Salesperson');
 
   $form->header;
  
@@ -194,7 +181,7 @@ sub do_import {
         <tr class=listheading>
 |;
 
-  for (@column_index) { print "\n<th>$column_header{$_}</th>" }
+  for (@column_index) { print "\n<th>$column_data{$_}</th>" }
 
   print qq|
         </tr>
@@ -218,7 +205,7 @@ sub do_import {
       $total += $form->{"total_$i"};
       
       for (@column_index) { $column_data{$_} = qq|<td>$form->{"${_}_$i"}</td>| }
-      for (qw(total)) { $column_data{$_} = qq|<td align=right>|.$form->format_amount(\%myconfig, $form->{"${_}_$i"}, $form->{precision}).qq|</td>| }
+      $column_data{total} = qq|<td align=right>|.$form->format_amount(\%myconfig, $form->{"total_$i"}, $form->{precision}).qq|</td>|;
       $column_data{totalqty} = qq|<td align=right>|.$form->format_amount(\%myconfig, $form->{"totalqty_$i"}).qq|</td>|;
 
       $column_data{runningnumber} = qq|<td align=right>$k</td>|;
@@ -280,7 +267,7 @@ sub do_import {
 </table>
 |;
    
-  $form->hide_form(qw(vc rowcount ndx nextsub type login path callback));
+  $form->hide_form(qw(vc rowcount ndx type login path callback));
 
   print qq|
 <input name=action class=submit type=submit value="|.$locale->text('Import Sales Invoices').qq|">
@@ -289,6 +276,56 @@ sub do_import {
 </body>
 </html>
 |;
+
+}
+
+
+sub xrefhdr {
+  
+  $form->{delimiter} ||= ',';
+ 
+  $i = 0;
+
+  if ($form->{mapfile}) {
+    open(FH, "$myconfig{templates}/import.map") or $form->error($!);
+
+    while (<FH>) {
+      next if /^(#|;|\s)/;
+      chomp;
+
+      s/\s*(#|;).*//g;
+      s/^\s*(.*?)\s*$/$1/;
+
+      last if $xrefhdr && $_ =~ /^\[/;
+
+      if (/^\[$form->{type}\]/) {
+	$xrefhdr = 1;
+	next;
+      }
+
+      if ($xrefhdr) {
+	($key, $value) = split /=/, $_;
+	@a = split /,/, $value;
+	$form->{$form->{type}}{$a[0]} = { field => $key, length => $a[1], ndx => $i++ };
+      }
+    }
+    close FH;
+    
+  } else {
+    # get first line
+    @a = split /\n/, $form->{data};
+
+    if ($form->{tabdelimited}) {
+      $form->{delimiter} = '\t';
+    } else {
+      $a[0] =~ s/(^"|"$)//g;
+      $a[0] =~ s/"$form->{delimiter}"/$form->{delimiter}/g;
+    }
+      
+    for (split /$form->{delimiter}/, $a[0]) {
+      $form->{$form->{type}}{$_} = { field => $_, length => "", ndx => $i++ };
+    }
+  }
 
 }
 
@@ -372,6 +409,166 @@ sub import_sales_invoices {
   $myconfig{numberformat} = $numberformat;
   $form->info("\n".$locale->text('Total:')." ".$form->format_amount(\%myconfig, $total, $form->{precision}));
   
+}
+
+
+sub display_payment {
+
+  $form->error($locale->text('Import File missing!')) if ! $form->{data};
+
+  @column_index = qw(runningnumber ndx invnumber description dcn name companynumber city datepaid amount);
+  push @column_index, "exchangerate" if $form->{currency} ne $form->{defaultcurrency};
+  @flds = @column_index;
+  shift @flds;
+  shift @flds;
+  push @flds, qw(id source memo paymentmethod arap vc);
+  
+  $form->{callback} = "$form->{script}?action=import";
+  for (qw(type login path)) { $form->{callback} .= "&$_=$form->{$_}" }
+  
+  &xrefhdr;
+  
+  IM->payments(\%myconfig, \%$form);
+
+  $column_data{runningnumber} = "&nbsp;";
+  $column_data{datepaid} = $locale->text('Date Paid');
+  $column_data{invnumber} = $locale->text('Invoice');
+  $column_data{description} = $locale->text('Description');
+  $column_data{name} = $locale->text('Company');
+  $column_data{company} = $locale->text('Company Number');
+  $column_data{city} = $locale->text('City');
+  $column_data{dcn} = $locale->text('DCN');
+  $column_data{amount} = $locale->text('Paid');
+  $column_data{exchangerate} = $locale->text('Exch');
+
+  $form->header;
+ 
+  print qq|
+<body>
+
+<form method=post action=$form->{script}>
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$form->{title}</th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>
+      <table width=100%>
+        <tr class=listheading>
+|;
+
+  for (@column_index) { print "\n<th>$column_data{$_}</th>" }
+
+  print qq|
+        </tr>
+|;
+
+  for $i (1 .. $form->{rowcount}) {
+    
+    $j++; $j %= 2;
+ 
+    print qq|
+      <tr class=listrow$j>
+|;
+
+    $total += $form->{"amount_$i"};
+    
+    for (@column_index) { $column_data{$_} = qq|<td>$form->{"${_}_$i"}</td>| }
+    $column_data{amount} = qq|<td align=right>|.$form->format_amount(\%myconfig, $form->{"amount_$i"}, $form->{precision}).qq|</td>|;
+
+    $column_data{runningnumber} = qq|<td align=right>$i</td>|;
+    $column_data{exchangerate} = qq|<td><input name="exchangerate_$i" size=10 value=|.$form->format_amount(\%myconfig, $form->{"exchangerate_$i"}).qq|></td>|;
+    
+    $column_data{ndx} = qq|<td><input name="ndx_$i" type=checkbox class=checkbox checked></td>|;
+
+    for (@column_index) { print $column_data{$_} }
+
+    print qq|
+	</tr>
+|;
+    
+    $form->{"paymentmethod_$i"} = qq|--$form->{"paymentmethod_id_$i"}|;
+    $form->hide_form(map { "${_}_$i" } @flds);
+    
+  }
+
+  # print total
+  for (@column_index) { $column_data{$_} = qq|<td>&nbsp;</td>| }
+  $column_data{amount} = qq|<th class=listtotal align=right>|.$form->format_amount(\%myconfig, $total, $form->{precision}, "&nbsp;")."</th>";
+
+  print qq|
+        <tr class=listtotal>
+|;
+
+  for (@column_index) { print "\n$column_data{$_}" }
+  
+  print qq|
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td><hr size=3 noshade></td>
+  </tr>
+
+</table>
+|;
+  
+  $form->{paymentaccount} =~ s/--.*//;
+
+  $form->hide_form(qw(rowcount type paymentaccount currency defaultcurrency login path callback));
+
+  print qq|
+<input name=action class=submit type=submit value="|.$locale->text('Import Payments').qq|">
+</form>
+
+</body>
+</html>
+|;
+
+}
+
+
+sub import_payments {
+
+$form->{precision} = 2;
+
+  my $m = 0;
+
+  $newform = new Form;
+  
+  for my $i (1 .. $form->{rowcount}) {
+    
+    if ($form->{"ndx_$i"}) {
+
+      $m++;
+      
+      for (keys %$newform) { delete $newform->{$_} };
+
+      for (qw(precision currency defaultcurrency)) { $newform->{$_} = $form->{$_} }
+      for (qw(vc arap exchangerate datepaid amount source memo paymentmethod)) { $newform->{$_} = $form->{"${_}_$i"} }
+      $newform->{ARAP} = uc $newform->{arap};
+
+      $newform->{rowcount} = 1;
+      $newform->{"$newform->{ARAP}_paid"} = $form->{paymentaccount};
+      $newform->{"paid_1"} = $form->{"amount_$i"};
+      $newform->{"checked_1"} = 1;
+      $newform->{"id_1"} = $form->{"id_$i"};
+      
+      $form->info("${m}. ".$locale->text('Posting Payment ...'));
+
+      if (CP->post_payment(\%myconfig, \%$newform)) {
+	$form->info(qq| $form->{"invnumber_$i"}, $form->{"description_$i"}, $form->{"companynumber_$i"}, $form->{"name_$i"}, $form->{"city_$i"}, |);
+	$form->info($form->format_amount(\%myconfig, $form->{"amount_$i"}, $form->{precision}));
+	$form->info(" ... ".$locale->text('ok')."\n");
+      } else {
+	$form->error($locale->text('Posting failed!'));
+      }
+    }
+  }
+
 }
 
 

@@ -106,7 +106,7 @@ sub edit {
     foreach $ref (@{ $form->{transactions} }) {
       $i++;
 
-      for (qw(id invnumber transdate duedate calcdiscount discountterms cashdiscount)) { $form->{"${_}_$i"} = $ref->{$_} }
+      for (qw(id invnumber invdescription transdate duedate calcdiscount discountterms cashdiscount)) { $form->{"${_}_$i"} = $ref->{$_} }
       $ref->{exchangerate} ||= 1;
       $form->{"netamount_$i"} = $form->round_amount($ref->{netamount} / $ref->{exchangerate}, $form->{precision});
       $form->{amount} += $ref->{paid};
@@ -176,7 +176,7 @@ sub payment {
 
   CP->paymentaccounts(\%myconfig, \%$form);
 
-  foreach $item (qw(department business)) {
+  foreach $item (qw(department business paymentmethod)) {
     if (@{ $form->{"all_$item"} }) { 
       $form->{"select$item"} = "\n";
       $form->{$item} = qq|$form->{$item}--$form->{"${item}_id"}| if $form->{$item};
@@ -209,9 +209,9 @@ sub payment {
   $form->{olddatepaid} = $form->{datepaid};
 
   for ("$form->{vc}", "$form->{ARAP}", "$form->{ARAP}_paid", "$form->{ARAP}_discount") { $form->{"select$_"} = $form->escape($form->{"select$_"},1) }
-  for (qw(currency department business language account)) { $form->{"select$_"} = $form->escape($form->{"select$_"},1) }
+  for (qw(currency department business language account paymentmethod)) { $form->{"select$_"} = $form->escape($form->{"select$_"},1) }
   
-  $form->{media} = $myconfig{printer};
+  $form->{media} ||= $myconfig{printer};
   $form->{format} ||= $myconfig{outputformat};
   $form->{format} ||= "pdf" unless $myconfig{printer};
 
@@ -264,19 +264,22 @@ sub prepare_payments_header {
   
   CP->get_openinvoices(\%myconfig, \%$form);
 
-  for ("currency","$form->{ARAP}","$form->{ARAP}_paid","$form->{ARAP}_discount","department","business") {
+  for ("currency","$form->{ARAP}","$form->{ARAP}_paid","$form->{ARAP}_discount","department","business","paymentmethod") {
     $form->{"old$_"} = $form->{$_};
   }
 
+  $exchangerate = $form->{exchangerate};
+  
   AA->get_name(\%myconfig, \%$form);
   
+  $form->{exchangerate} = $exchangerate;
   $form->{rowcount} = 0;
 
   $i = 0;
   foreach $ref (@{ $form->{PR} }) {
     $i++;
 
-    for (qw(id invnumber transdate duedate calcdiscount discountterms cashdiscount netamount)) { $form->{"${_}_$i"} = $ref->{$_} }
+    for (qw(id invnumber invdescription transdate duedate calcdiscount discountterms cashdiscount netamount)) { $form->{"${_}_$i"} = $ref->{$_} }
     $ref->{exchangerate} ||= 1;
     $due = ($form->{edit}) ? $ref->{amount} : $ref->{amount} - $ref->{paid};
     $due = $form->round_amount($due / $ref->{exchangerate}, $form->{precision});
@@ -300,7 +303,7 @@ sub prepare_payments_header {
     $form->{"total_$i"} = $form->format_amount(\%myconfig, $due, $form->{precision});
   }
   $form->{rowcount} = $i;
-    
+
   &payment_header;
 
 }
@@ -332,7 +335,7 @@ sub payments {
     for (@{ $form->{all_language} }) { $form->{selectlanguage} .= qq|$_->{code}--$_->{description}\n| }
   }
   
-  foreach $item (qw(department business)) {
+  foreach $item (qw(department business paymentmethod)) {
     if (@{ $form->{"all_$item"} }) { 
       $form->{"select$item"} = "\n";
       $form->{$item} = qq|$form->{$item}--$form->{"${item}_id"}| if $form->{$item};
@@ -362,7 +365,7 @@ sub payments {
   $form->{olddatepaid} = $form->{datepaid};
 
   for ("$form->{vc}", "$form->{ARAP}", "$form->{ARAP}_paid", "$form->{ARAP}_discount") { $form->{"select$_"} = $form->escape($form->{"select$_"},1) }
-  for (qw(currency department business language account)) { $form->{"select$_"} = $form->escape($form->{"select$_"},1) }
+  for (qw(currency department business language account paymentmethod)) { $form->{"select$_"} = $form->escape($form->{"select$_"},1) }
 
   $form->{media} = $myconfig{printer};
   $form->{format} ||= $myconfig{outputformat};
@@ -440,6 +443,17 @@ sub payments_header {
 	    </tr>
 | if $form->{selectbusiness};
 
+  $paymentmethod = qq|
+              <tr>
+	        <th align="right" nowrap>|.$locale->text('Payment Method').qq|</th>
+		<td><select name=paymentmethod>|
+		.$form->select_option($form->{selectpaymentmethod}, $form->{paymentmethod}, 1).qq|
+		</select>
+	      </td>
+	    </tr>
+| if $form->{selectpaymentmethod};
+
+
   $cashdiscount = qq|
  	      <tr>
 		<th align=right nowrap>|.$locale->text('Cash Discount').qq|</th>
@@ -492,9 +506,9 @@ javascript:window.history.forward(1);
 |;
 
   $form->hide_form(qw(defaultcurrency closedto vc type formname arap ARAP title payment batch batchid batchnumber batchdescription transdate edit voucherid deselect employee cdt precision));
-  $form->hide_form(map { "old$_" } qw(currency datepaid duedatefrom duedateto department business));
+  $form->hide_form(map { "old$_" } qw(currency datepaid duedatefrom duedateto department business paymentmethod));
   $form->hide_form(map { "old$_" } ("$form->{ARAP}", "$form->{vc}", "$form->{vc}number"));
-  $form->hide_form(map { "select$_" } qw(currency department business language account));
+  $form->hide_form(map { "select$_" } qw(currency department business language account paymentmethod));
   $form->hide_form(map { "select$_" } ("$form->{ARAP}", "$form->{ARAP}_paid", "$form->{ARAP}_discount"));
   
 
@@ -541,6 +555,7 @@ javascript:window.history.forward(1);
 		.$form->select_option($form->{"select$form->{ARAP}_paid"}, $form->{"$form->{ARAP}_paid"}).qq|</select>
 		</td>
 	      </tr>
+	      $paymentmethod
 	      $cashdiscount
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Date').qq|</th>
@@ -824,7 +839,7 @@ sub update_payments {
   $buysell = ($form->{ARAP} eq 'AR') ? "buy" : "sell";
 
   $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{datepaid}, $buysell);
-  for ("datepaid", "duedatefrom", "duedateto", "department", "business", "currency", "$form->{ARAP}") {
+  for ("datepaid", "duedatefrom", "duedateto", "department", "business", "currency", "$form->{ARAP}", "paymentmethod") {
     if ($form->{$_} ne $form->{"old$_"}) {
       if (!$form->{redo}) {
 	$form->remove_locks(\%myconfig, undef, $form->{arap});
@@ -926,7 +941,7 @@ sub update_payment {
   $buysell = ($form->{vc} eq 'customer') ? "buy" : "sell";
 
   if ($new_name_selected) {
-    for ("$form->{ARAP}", "department", "business", "currency") {
+    for ("$form->{ARAP}", "department", "business", "currency", "paymentmethod") {
       $form->{$_} = $form->{"old$_"};
     }
   }
@@ -934,6 +949,7 @@ sub update_payment {
   $department = $form->{department};
   $business = $form->{business};
   $currency = $form->{currency};
+  $paymentmethod = $form->{paymentmethod};
 
   if (! $form->{all_vc}) {
 
@@ -990,14 +1006,15 @@ sub update_payment {
   $form->{department} = $department;
   $form->{business} = $business;
   $form->{currency} = $currency;
-  
+  $form->{paymentmethod} = $paymentmethod;
+
   if ($form->{datepaid} ne $form->{olddatepaid}) {
     $form->{olddatepaid} = $form->{datepaid};
     $form->{redo} = 1;
     $form->{oldall_vc} = !$form->{oldall_vc} if $form->{all_vc};
   }
 
-  for ("duedatefrom", "duedateto", "department", "business", "$form->{ARAP}", "currency") {
+  for ("duedatefrom", "duedateto", "department", "business", "$form->{ARAP}", "currency", "paymentmethod") {
     if ($form->{$_} ne $form->{"old$_"}) {
       $form->{redo} = 1;
     }
@@ -1015,11 +1032,15 @@ sub update_payment {
     
     $form->{"select$form->{vc}"} = "";
     $form->{selectbusiness} = "";
+    $form->{selectpaymentmethod} = "";
     $business = "";
+    $paymentmethod = "";
 
     if ($form->{all_vc}) {
       $form->{business} = "";
       $form->{oldbusiness} = "";
+      $form->{paymentmethod} = "";
+      $form->{oldpaymentmethod} = "";
       
       $form->all_vc(\%myconfig, $form->{vc}, $form->{ARAP}, undef, $form->{datepaid});
       
@@ -1055,11 +1076,13 @@ sub update_payment {
 	}
       }
 
-      if (@{ $form->{all_business} }) { 
-	$form->{selectbusiness} = "\n";
-	$form->{business} = qq|$form->{business}--$form->{business_id}| if $form->{business};
+      foreach $item (qw(business paymentmethod)) {
+	if (@{ $form->{"all_$item"} }) { 
+	  $form->{"select$item"} = "\n";
+	  $form->{$item} = qq|$form->{$item}--$form->{"${item}_id"}| if $form->{$item};
 
-	for (@{ $form->{all_business} }) { $form->{selectbusiness} .= qq|$_->{description}--$_->{id}\n| }
+	  for (@{ $form->{"all_$item"} }) { $form->{"select$item"} .= qq|$_->{description}--$_->{id}\n| }
+	}
       }
 
     }
@@ -1090,7 +1113,7 @@ sub update_payment {
     foreach $ref (@{ $form->{PR} }) {
       $i++;
 
-      for (qw(id invnumber transdate duedate calcdiscount discountterms cashdiscount netamount)) { $form->{"${_}_$i"} = $ref->{$_} }
+      for (qw(id invnumber invdescription transdate duedate calcdiscount discountterms cashdiscount netamount)) { $form->{"${_}_$i"} = $ref->{$_} }
       $ref->{exchangerate} ||= 1;
       $due = ($form->{edit}) ? $ref->{amount} : $ref->{amount} - $ref->{paid};
 
@@ -1300,6 +1323,16 @@ sub payment_header {
 	    </tr>
 | if $form->{selectbusiness};
 
+  $paymentmethod = qq|
+              <tr>
+	        <th align="right" nowrap>|.$locale->text('Payment Method').qq|</th>
+		<td><select name=paymentmethod>|
+		.$form->select_option($form->{selectpaymentmethod}, $form->{paymentmethod}, 1).qq|
+		</select>
+	      </td>
+	    </tr>
+| if $form->{selectpaymentmethod};
+
   $cashdiscount = qq|
  	      <tr>
 		<th align=right nowrap>|.$locale->text('Cash Discount').qq|</th>
@@ -1353,9 +1386,9 @@ javascript:window.history.forward(1);
 
   $form->hide_form(qw(defaultcurrency closedto vc type ARAP arap title formname payment batch batchid batchnumber batchdescription transdate edit voucherid vouchernumber deselect employee precision));
   $form->hide_form("$form->{vc}_id");
-  $form->hide_form(map { "old$_" } qw(currency datepaid duedatefrom duedateto department business));
+  $form->hide_form(map { "old$_" } qw(currency datepaid duedatefrom duedateto department business paymentmethod));
   $form->hide_form(map { "old$_" } ("$form->{ARAP}", "$form->{vc}", "$form->{vc}number"));
-  $form->hide_form(map { "select$_" } qw(currency department business));
+  $form->hide_form(map { "select$_" } qw(currency department business paymentmethod));
   $form->hide_form(map { "select$_" } ("$form->{ARAP}", "$form->{ARAP}_paid", "$form->{ARAP}_discount", "$form->{vc}"));
 
   print qq|
@@ -1422,6 +1455,7 @@ javascript:window.history.forward(1);
 		<td colspan=3><select name="$form->{ARAP}_paid">|
 		.$form->select_option($form->{"select$form->{ARAP}_paid"}, $form->{"$form->{ARAP}_paid"}).qq|</select>
 		</td>
+		$paymentmethod
 	      </tr>
 	      $cashdiscount
 	      <tr>
@@ -1513,7 +1547,7 @@ sub list_invoices {
     $column_data{due} = qq|<td align=right>$form->{"due_$i"}</td>|;
     $column_data{total} = qq|<td align=right>$form->{"total_$i"}</td>|;
 
-    $form->hide_form(map { "${_}_$i" } qw(id invnumber transdate duedate due calcdiscount discountterms cashdiscount amount netamount olddiscount));
+    $form->hide_form(map { "${_}_$i" } qw(id invnumber invdescription transdate duedate due calcdiscount discountterms cashdiscount amount netamount olddiscount));
     
     $column_data{paid} = qq|<td align=right><input name="paid_$i" size=11 value=$form->{"paid_$i"}></td>|;
     
@@ -1873,7 +1907,7 @@ sub print_payments {
 
     for (qw(checked source memo language_code)) { $form->{"${_}_$i"} = $oldform{"${_}_$j"} }
 
-    for (qw(id invnumber transdate duedate)) { $form->{"${_}_$i"} = $ref->{$_} }
+    for (qw(id invnumber invdescription transdate duedate)) { $form->{"${_}_$i"} = $ref->{$_} }
     $form->{"$form->{vc}_id_$i"} = $ref->{"$form->{vc}_id"};
     
     $ref->{exchangerate} ||= 1;
@@ -1925,7 +1959,7 @@ sub print_payments {
       $ok = 0;
       $j = 0;
       $form->{amount} = 0;
-      for (qw(invnumber invdate due paid)) { @{ $form->{$_} } = () }
+      for (qw(invnumber invdescription invdate due paid)) { @{ $form->{$_} } = () }
       for (qw(language_code source memo)) { $form->{$_} = $form->{"${_}_$i"} }
 
     }
@@ -1935,7 +1969,7 @@ sub print_payments {
       $ok = 1;
       $temp{"id_$j"} = $form->{"id_$i"};
       $form->{"invdate_$i"} = $form->{"transdate_$i"};
-      for (qw(invnumber invdate due paid)) { push @{ $form->{$_} }, $form->{"${_}_$i"} }
+      for (qw(invnumber invdescription invdate due paid)) { push @{ $form->{$_} }, $form->{"${_}_$i"} }
       $form->{amount} = $form->parse_amount(\%myconfig, $oldform{"paid_$k"});
       $form->{"$form->{vc}_id"} = $form->{"$form->{vc}_id_$i"};
     }
@@ -2037,6 +2071,7 @@ sub check_form {
       push(@{ $form->{discount} }, $form->{"discount_$i"});
       push(@{ $form->{due} }, $form->{"due_$i"});
       push(@{ $form->{invnumber} }, $form->{"invnumber_$i"});
+      push(@{ $form->{invdescription} }, $form->{"invdescription_$i"});
       push(@{ $form->{invdate} }, $form->{"transdate_$i"});
     }
   }

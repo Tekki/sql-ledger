@@ -128,9 +128,17 @@ sub invoice_links {
     $form->{selectlanguage} = "\n";
     for (@{ $form->{all_language} }) { $form->{selectlanguage} .= qq|$_->{code}--$_->{description}\n| }
   }
+
+  # paymentmethod
+  if (@{ $form->{all_paymentmethod} }) {
+    $form->{selectpaymentmethod} = "\n";
+    $form->{paymentmethod} = "$form->{paymentmethod}--$form->{paymentmethod_id}" if $form->{paymentmethod_id};
+
+    for (@{ $form->{all_paymentmethod} }) { $form->{selectpaymentmethod} .= qq|$_->{description}--$_->{id}\n| }
+  }
   
   $form->{"select$form->{vc}"} = $form->escape($form->{"select$form->{vc}"},1);
-  for (qw(partsgroup projectnumber department warehouse employee language)) { $form->{"select$_"} = $form->escape($form->{"select$_"},1) }
+  for (qw(partsgroup projectnumber department warehouse employee language paymentmethod)) { $form->{"select$_"} = $form->escape($form->{"select$_"},1) }
   
   foreach $key (keys %{ $form->{AP_links} }) {
 
@@ -151,6 +159,7 @@ sub invoice_links {
 	$form->{"memo_$i"} = $form->{acc_trans}{$key}->[$i-1]->{memo};
 	$form->{"cleared_$i"} = $form->{acc_trans}{$key}->[$i-1]->{cleared};
 	$form->{"vr_id_$i"} = $form->{acc_trans}{$key}->[$i-1]->{vr_id};
+	$form->{"paymentmethod_$i"} = "$form->{acc_trans}{$key}->[$i-1]->{paymentmethod}--$form->{acc_trans}{$key}->[$i-1]->{paymentmethod_id}";
 
 	$form->{paidaccounts} = $i;
       }
@@ -163,6 +172,7 @@ sub invoice_links {
       $form->{"discount_memo"} = $form->{acc_trans}{$key}->[0]->{memo};
       $form->{"discount_exchangerate"} = $form->{acc_trans}{$key}->[0]->{exchangerate};
       $form->{"discount_cleared"} = $form->{acc_trans}{$key}->[0]->{cleared};
+      $form->{"discount_paymentmethod"} = "$form->{acc_trans}{$key}->[0]->{paymentmethod_id}--$form->{acc_trans}{$key}->[0]->{paymentmethod}";
 
     } else {
       $form->{$key} = "$form->{acc_trans}{$key}->[0]->{accno}--$form->{acc_trans}{$key}->[0]->{description}" if $form->{acc_trans}{$key}->[0]->{accno};
@@ -173,6 +183,7 @@ sub invoice_links {
   for (qw(AP_links acc_trans)) { delete $form->{$_} }
 
   for (qw(payment discount)) { $form->{"${_}_accno"} = $form->escape($form->{"${_}_accno"},1) }
+  $form->{payment_method} = $form->escape($form->{payment_method}, 1);
 
   $form->{exchangerate} ||= 1;
   $form->{cd_available} = $form->round_amount($form->{netamount} * $form->{cashdiscount} / $form->{exchangerate}, $form->{precision});
@@ -404,7 +415,7 @@ sub form_header {
   $form->hide_form(qw(id type printed emailed queued title vc creditlimit creditremaining business closedto locked shipped oldtransdate oldduedate recurring defaultcurrency duedate oldterms cdt precision order_id));
 
   $form->hide_form(map { "select$_" } ("$form->{vc}", "AP", "AP_paid", "AP_discount"));
-  $form->hide_form(map { "select$_" } qw(formname currency partsgroup projectnumber department warehouse employee language));
+  $form->hide_form(map { "select$_" } qw(formname currency partsgroup projectnumber department warehouse employee language paymentmethod));
   $form->hide_form("$form->{vc}_id", "old$form->{vc}", "quonumber", "old$form->{vc}number");
   
   $terms = qq|
@@ -612,11 +623,13 @@ sub form_footer {
   $form->{invtotal} -= $form->{discount_paid};
 
   if ($form->{currency} eq $form->{defaultcurrency}) {
-    @column_index = qw(datepaid source memo paid AP_paid);
+    @column_index = qw(datepaid source memo paid);
   } else {
-    @column_index = qw(datepaid source memo paid exchangerate AP_paid);
+    @column_index = qw(datepaid source memo paid exchangerate);
   }
-  
+  push @column_index, "paymentmethod" if $form->{selectpaymentmethod};
+  push @column_index, "AP_paid";
+
   $form->{oldinvtotal} = $form->{invtotal};
   $form->{invtotal} = $form->format_amount(\%myconfig, $form->{invtotal}, $form->{precision}, 0);
 
@@ -626,6 +639,7 @@ sub form_footer {
   $column_data{AP_paid} = "<th>".$locale->text('Account')." <font color=red>*</font></th>";
   $column_data{source} = "<th>".$locale->text('Source')."</th>";
   $column_data{memo} = "<th>".$locale->text('Memo')."</th>";
+  $column_data{paymentmethod} = "<th>".$locale->text('Method')."</th>";
 
   $cashdiscount = "";
   if ($form->{cashdiscount}) {
@@ -663,6 +677,7 @@ sub form_footer {
     $column_data{exchangerate} = qq|<td align=center>$exchangerate</td>|;
     $column_data{source} = qq|<td align=center><input name="discount_source" size=11 value="|.$form->quote($form->{"discount_source"}).qq|"></td>|;
     $column_data{memo} = qq|<td align=center><input name="discount_memo" size=11 value="|.$form->quote($form->{"discount_memo"}).qq|"></td>|;
+    $column_data{paymentmethod} = qq|<td align=center><select name="discount_paymentmethod">|.$form->select_option($form->{"selectpaymentmethod"}, $form->{discount_paymentmethod}, 1).qq|</select></td>|;
 
     $cashdiscount .= qq|
         <tr>
@@ -677,14 +692,14 @@ sub form_footer {
     
     $payments = qq|
     <tr class=listheading>
-      <th class=listheading colspan=6>|.$locale->text('Payments').qq|</th>
+      <th class=listheading>|.$locale->text('Payments').qq|</th>
     </tr>
 |;
 
   } else {
     $payments = qq|
     <tr class=listheading>
-      <th class=listheading colspan=6>|.$locale->text('Payments').qq|</th>
+      <th class=listheading>|.$locale->text('Payments').qq|</th>
     </tr>
 
     <tr>
@@ -743,6 +758,7 @@ sub form_footer {
 
   $form->{paidaccounts}++ if ($form->{"paid_$form->{paidaccounts}"});
   $form->{"AP_paid_$form->{paidaccounts}"} = $form->unescape($form->{payment_accno});
+  $form->{"paymentmethod_$form->{paidaccounts}"} = $form->unescape($form->{payment_method});
   
   $totalpaid = 0;
 
@@ -765,14 +781,15 @@ sub form_footer {
 
     $form->hide_form(map { "${_}_$i" } qw(cleared vr_id));
     
-    $column_data{"paid_$i"} = qq|<td align=center><input name="paid_$i" size=11 value=$form->{"paid_$i"}></td>|;
-    $column_data{"exchangerate_$i"} = qq|<td align=center>$exchangerate</td>|;
-    $column_data{"AP_paid_$i"} = qq|<td align=center><select name="AP_paid_$i">|.$form->select_option($form->{"selectAP_paid"}, $form->{"AP_paid_$i"}).qq|</select></td>|;
-    $column_data{"datepaid_$i"} = qq|<td align=center><input name="datepaid_$i" size=11 title="$myconfig{dateformat}" value=$form->{"datepaid_$i"}></td>|;
-    $column_data{"source_$i"} = qq|<td align=center><input name="source_$i" size=11 value="|.$form->quote($form->{"source_$i"}).qq|"></td>|;
-    $column_data{"memo_$i"} = qq|<td align=center><input name="memo_$i" size=11 value="|.$form->quote($form->{"memo_$i"}).qq|"></td>|;
+    $column_data{paid} = qq|<td align=center><input name="paid_$i" size=11 value=$form->{"paid_$i"}></td>|;
+    $column_data{exchangerate} = qq|<td align=center>$exchangerate</td>|;
+    $column_data{AP_paid} = qq|<td align=center><select name="AP_paid_$i">|.$form->select_option($form->{"selectAP_paid"}, $form->{"AP_paid_$i"}).qq|</select></td>|;
+    $column_data{datepaid} = qq|<td align=center><input name="datepaid_$i" size=11 title="$myconfig{dateformat}" value=$form->{"datepaid_$i"}></td>|;
+    $column_data{source} = qq|<td align=center><input name="source_$i" size=11 value="|.$form->quote($form->{"source_$i"}).qq|"></td>|;
+    $column_data{memo} = qq|<td align=center><input name="memo_$i" size=11 value="|.$form->quote($form->{"memo_$i"}).qq|"></td>|;
+    $column_data{paymentmethod} = qq|<td align=center><select name="paymentmethod_$i">|.$form->select_option($form->{"selectpaymentmethod"}, $form->{"paymentmethod_$i"}, 1).qq|</select></td>|;
 
-    for (@column_index) { print qq|$column_data{"${_}_$i"}\n| }
+    for (@column_index) { print qq|$column_data{$_}\n| }
 
     print qq|
 	</tr>
@@ -790,7 +807,7 @@ sub form_footer {
   }
   
   $form->{oldtotalpaid} = $totalpaid;
-  $form->hide_form(qw(paidaccounts oldinvtotal oldtotalpaid payment_accno));
+  $form->hide_form(qw(paidaccounts oldinvtotal oldtotalpaid payment_accno payment_method));
   
   print qq|
       </table>
@@ -933,7 +950,7 @@ sub update {
   $j = 1;
   for $i (1 .. $form->{paidaccounts}) {
     if ($form->{"paid_$i"}) {
-      for (qw(olddatepaid datepaid source memo cleared vr_id)) { $form->{"${_}_$j"} = $form->{"${_}_$i"} }
+      for (qw(olddatepaid datepaid source memo cleared vr_id paymentmethod)) { $form->{"${_}_$j"} = $form->{"${_}_$i"} }
       for (qw(paid exchangerate)) { $form->{"${_}_$j"} = $form->parse_amount(\%myconfig, $form->{"${_}_$i"}) }
 
       if ($form->{"datepaid_$j"} ne $form->{"olddatepaid_$j"} || $form->{currency} ne $form->{oldcurrency}) {
@@ -943,13 +960,17 @@ sub update {
       $form->{"olddatepaid_$j"} = $form->{"datepaid_$j"};
       
       if ($j++ != $i) {
-	for (qw(olddatepaid datepaid source memo cleared paid exchangerate vr_id)) { delete $form->{"${_}_$i"} }
+	for (qw(olddatepaid datepaid source memo cleared paid exchangerate vr_id paymentmethod)) { delete $form->{"${_}_$i"} }
       }
     } else {
       for (qw(olddatepaid datepaid source memo cleared paid exchangerate vr_id)) { delete $form->{"${_}_$i"} }
     }
-    $form->{paidaccounts} = $j;
   }
+  
+  $form->{payment_accno} = $form->escape($form->{"AP_paid_$form->{paidaccounts}"},1);
+  $form->{payment_method} = $form->escape($form->{"paymentmethod_$form->{paidaccounts}"},1);
+  
+  $form->{paidaccounts} = $j;
   
   $i = $form->{rowcount};
   $form->{exchangerate} ||= 1;
@@ -1093,10 +1114,11 @@ sub post {
   }
 
   # add discount to payments
-  $i = ++$form->{paidaccounts};
-  for (qw(paid datepaid source memo exchangerate cleared vr_id)) { $form->{"${_}_$i"} = $form->{"discount_$_"} }
+  $i = ++$form->{paidaccounts} if $form->{"paid_$form->{paidaccounts}"};
+  for (qw(paid datepaid source memo exchangerate cleared vr_id paymentmethod)) { $form->{"${_}_$i"} = $form->{"discount_$_"} }
   $form->{discount_index} = $i;
   $form->{"AP_paid_$i"} = $form->{"AP_discount_paid"};
+  $form->{"paymentmethod_$i"} = $form->{discount_paymentmethod};
 
   if ($form->{"paid_$i"}) {
     $datepaid = $form->datetonum(\%myconfig, $form->{"datepaid_$i"});

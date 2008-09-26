@@ -163,22 +163,18 @@ sub post_transaction {
 
 
   my $invamount = $invnetamount + $tax;
-
-  # adjust paidaccounts if there is no date in the last row
-  $form->{paidaccounts}-- unless ($form->{"datepaid_$form->{paidaccounts}"});
+  
+  my $paymentaccno;
+  my $paymentmethod_id;
 
   my $paid = 0;
-  
-  my ($paymentaccno) = split(/--/, $form->{"${ARAP}_paid_1"});
- 
+
   $diff = 0;
   # add payments
   for $i (1 .. $form->{paidaccounts}) {
     $fxamount = $form->parse_amount($myconfig, $form->{"paid_$i"});
-
+    
     if ($fxamount) {
-      ($paymentaccno) = split /--/, $form->{"$form->{ARAP}_paid_$i"};
-      
       $paid += $fxamount;
 
       $paidamount = $fxamount * $form->{exchangerate};
@@ -192,7 +188,7 @@ sub post_transaction {
       $paid{amount}{$i} = $amount;
     }
   }
-
+  
   $fxinvamount += $fxtax unless $form->{taxincluded};
   $fxinvamount = $form->round_amount($fxinvamount, $form->{precision});
   $invamount = $form->round_amount($invamount, $form->{precision});
@@ -273,6 +269,10 @@ sub post_transaction {
     for my $dcn (qw(dcn rvc)) { $form->{$dcn} = $form->format_dcn($form->{$dcn}) }
   }
 
+  ($paymentaccno) = split /--/, $form->{"$form->{ARAP}_paid_$form->{paidaccounts}"};
+  ($null, $paymentmethod_id) = split /--/, $form->{"paymentmethod_$form->{paidaccounts}"};
+  $paymentmethod_id *= 1;
+
 
   $query = qq|UPDATE $table SET
 	      invnumber = |.$dbh->quote($form->{invnumber}).qq|,
@@ -297,7 +297,8 @@ sub post_transaction {
 	      onhold = '$form->{onhold}',
 	      exchangerate = $form->{exchangerate},
 	      dcn = |.$dbh->quote($form->{dcn}).qq|,
-	      bank_id = (SELECT id FROM chart WHERE accno = '$paymentaccno')
+	      bank_id = (SELECT id FROM chart WHERE accno = '$paymentaccno'),
+	      paymentmethod_id = $paymentmethod_id
 	      WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
 
@@ -397,7 +398,6 @@ sub post_transaction {
       
       ($accno) = split(/--/, $form->{"${ARAP}_paid_$i"});
       $form->{"datepaid_$i"} = $form->{transdate} unless ($form->{"datepaid_$i"});
-     
       $form->{"exchangerate_$i"} = $form->parse_amount($myconfig, $form->{"exchangerate_$i"});
       $form->{"exchangerate_$i"} ||= 1;
      
@@ -453,6 +453,9 @@ sub post_transaction {
       # add payment
       ($accno) = split /--/, $form->{"${ARAP}_paid_$i"};
       
+      ($null, $paymentmethod_id) = split /--/, $form->{"paymentmethod_$i"};
+      $paymentmethod_id *= 1;
+     
       if ($keepcleared) {
 	$cleared = $form->dbquote($form->{"cleared_$i"}, SQL_DATE);
       }
@@ -472,8 +475,10 @@ sub post_transaction {
 		    $cleared, '$approved', $voucherid, $paymentid)|;
 	$dbh->do($query) || $form->dberror($query);
 
-	$query = qq|INSERT INTO payment (id, trans_id, exchangerate)
-		    VALUES ($paymentid, $form->{id}, $form->{"exchangerate_$i"})|;
+	$query = qq|INSERT INTO payment (id, trans_id, exchangerate,
+	            paymentmethod_id)
+		    VALUES ($paymentid, $form->{id}, $form->{"exchangerate_$i"},
+		    $paymentmethod_id)|;
 	$dbh->do($query) || $form->dberror($query);
 
 	$paymentid++;
@@ -786,9 +791,9 @@ sub transactions {
 		 a.$form->{vc}_id, a.till, m.name AS manager, a.curr,
 		 a.exchangerate, d.description AS department,
 		 a.ponumber, a.warehouse_id, w.description AS warehouse,
-		 a.description, a.datepaid - a.duedate AS paymentdiff,
-		 ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
-		 a.dcn
+		 a.description, a.dcn, pm.description AS paymentmethod,
+		 a.datepaid - a.duedate AS paymentdiff,
+		 ad.address1, ad.address2, ad.city, ad.zipcode, ad.country
 		 $acc_trans_flds
 	         FROM $table a
 	      JOIN $form->{vc} vc ON (a.$form->{vc}_id = vc.id)
@@ -797,6 +802,7 @@ sub transactions {
 	      LEFT JOIN employee m ON (e.managerid = m.id)
 	      LEFT JOIN department d ON (a.department_id = d.id)
 	      LEFT JOIN warehouse w ON (a.warehouse_id = w.id)
+	      LEFT JOIN paymentmethod pm ON (pm.id = a.paymentmethod_id)
 	      $acc_trans_join
 	      |;
 
@@ -818,10 +824,13 @@ sub transactions {
 		  department => 23,
 		  ponumber => 24,
 		  warehouse => 26,
-		  description => 27,
-		  accno => 35,
-		  source => 36,
-		  project => 37
+		  description => 28,
+		  dcn => 29,
+		  paymentmethod => 30,
+		  paymentdiff => 31,
+		  accno => 37,
+		  source => 38,
+		  project => 39
 		);
 
   
@@ -854,7 +863,6 @@ sub transactions {
     if ($form->{$_}) {
       $var = $form->like(lc $form->{$_});
       $where .= " AND lower(a.$_) LIKE '$var'";
-      $form->{open} = $form->{closed} = 0;
     }
   }
   for (qw(ponumber shipvia shippingpoint waybill notes description)) {
@@ -1048,7 +1056,8 @@ sub get_name {
 		 c2.accno AS payment_accno, c2.description AS payment_accno_description, t2.description AS payment_accno_translation,
 		 c3.accno AS discount_accno, c3.description AS discount_accno_description, t3.description AS discount_accno_translation,
 		 c.cashdiscount, c.threshold, c.discountterms,
-		 c.remittancevoucher
+		 c.remittancevoucher,
+		 pm.description AS payment_method, c.paymentmethod_id
 		 $shipto
                  FROM $form->{vc} c
 		 JOIN address ad ON (ad.trans_id = c.id)
@@ -1060,6 +1069,7 @@ sub get_name {
 		 LEFT JOIN translation t1 ON (t1.trans_id = c1.id AND t1.language_code = '$myconfig->{countrycode}')
 		 LEFT JOIN translation t2 ON (t2.trans_id = c2.id AND t2.language_code = '$myconfig->{countrycode}')
 		 LEFT JOIN translation t3 ON (t3.trans_id = c3.id AND t3.language_code = '$myconfig->{countrycode}')
+		 LEFT JOIN paymentmethod pm ON (pm.id = c.paymentmethod_id)
 		 $shiptojoin
 	         WHERE c.id = $form->{"$form->{vc}_id"}|;
   my $sth = $dbh->prepare($query);
@@ -1073,6 +1083,7 @@ sub get_name {
   $ref->{payment_accno} .= ($ref->{payment_accno_translation}) ? $ref->{payment_accno_translation} : $ref->{payment_accno_description};
   $ref->{discount_accno} .= qq|--|;
   $ref->{discount_accno} .= ($ref->{discount_accno_translation}) ? $ref->{discount_accno_translation} : $ref->{discount_accno_description};
+  $ref->{payment_method} .= qq|--$ref->{paymentmethod_id}|;
   
   $form->{$ARAP} = $ref->{arap_accno};
 

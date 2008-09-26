@@ -24,13 +24,16 @@ sub sales_invoice {
   my $query;
   my $ref;
   
+  my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  $form->{precision} = $defaults{precision};
+  
   $form->{ARAP} = "AR";
 
   # get AR accounts
   $query = qq|SELECT accno FROM chart
               WHERE link = '$form->{ARAP}'|;
   my $sth = $dbh->prepare($query) || $form->dberror($query);
-  
+
   my %ARAP = ();
   my $default_arap_accno;
   
@@ -101,35 +104,7 @@ sub sales_invoice {
 
   for (@d) {
 
-    if ($form->{tabdelimited}) {
-      @a = split /\t/, $_;
-    } else {
-      $string = 0;
-      $m = 0;
-      @a = ();
-
-      foreach $chr (split //, $_) {
-	if ($chr eq '"') {
-	  if (! $string) {
-	    $string = 1;
-	    next;
-	  }
-	}
-	if ($string) {
-	  if ($chr eq '"') {
-	    $string = 0;
-	    next;
-	  }
-	}
-	if ($chr eq $form->{delimiter}) {
-	  if (! $string) {
-	    $m++;
-	    next;
-	  }
-	}
-	$a[$m] .= $chr;
-      }
-    }
+    @a = &ndxline($form);
 
     if (@a) {
       $i++;
@@ -315,6 +290,237 @@ sub import_sales_invoice {
   $dbh->disconnect;
 
   $rc;
+
+}
+
+
+sub paymentaccounts {
+  my ($self, $myconfig, $form) = @_;
+
+  $dbh = $form->dbconnect($myconfig);
+
+  my $query = qq|SELECT c.accno, c.description, c.link,
+                 l.description AS translation
+		 FROM chart c
+		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+		 WHERE c.link LIKE '%_paid'
+		 ORDER BY c.accno|;
+  my $sth = $dbh->prepare($query);
+  $sth->execute || $form->dberror($query);
+
+  my $ref;
+  
+  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    $ref->{description} = $ref->{translation} if $ref->{translation};
+    push @{ $form->{all_paymentaccount} }, $ref;
+  }
+  $sth->finish;
+
+  $form->{currencies} = $form->get_currencies($dbh, $myconfig);
+  
+  $dbh->disconnect;
+  
+}
+
+
+sub payments {
+  my ($self, $myconfig, $form) = @_;
+
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+
+  $myconfig{numberformat} = "1000.00";
+  
+  my $query;
+  my $ref;
+  
+  my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  $form->{precision} = ($defaults{precision}) ? $defaults{precision} : 2;
+  
+  $query = qq|SELECT c.name, c.customernumber AS companynumber, ad.city,
+              a.id, a.invnumber, a.description, a.exchangerate,
+	      (a.amount - a.paid) / a.exchangerate AS amount,
+	      a.transdate, a.paymentmethod_id, 'customer' AS vc,
+	      'ar' AS arap
+	      FROM ar a
+	      JOIN customer c ON (a.customer_id = c.id)
+	      LEFT JOIN address ad ON (ad.trans_id = c.id)
+	      WHERE a.amount != a.paid
+	      UNION
+	      SELECT c.name, c.vendornumber AS companynumber, ad.city,
+	      a.id, a.invnumber, a.description, a.exchangerate,
+	      (a.amount - a.paid) / a.exchangerate AS amount,
+	      a.transdate, a.paymentmethod_id, 'vendor' AS vc,
+	      'ap' AS arap
+	      FROM ap a
+	      JOIN vendor c ON (a.vendor_id = c.id)
+	      LEFT JOIN address ad ON (ad.trans_id = c.id)
+	      WHERE a.amount != a.paid|;
+  my $sth = $dbh->prepare($query);
+  $sth->execute || $form->dberror($query);
+
+  my %amount;
+  my $amount;
+
+  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    $amount = $form->format_amount($myconfig, $ref->{amount}, $form->{precision});
+    push @{ $amount{$amount} }, $ref;
+  }
+  $sth->finish;
+	
+  # retrieve invoice by dcn
+  $query = qq|SELECT c.name, c.customernumber AS companynumber, ad.city,
+              a.id, a.invnumber, a.description, a.dcn,
+	      a.paymentmethod_id, 'customer' AS vc, 'ar' AS arap
+	      FROM ar a
+	      JOIN customer c ON (a.customer_id = c.id)
+	      LEFT JOIN address ad ON (ad.trans_id = c.id)
+	      WHERE a.amount != a.paid
+	      AND a.dcn = ?
+	      UNION
+	      SELECT c.name, c.vendornumber AS companynumber, ad.city,
+              a.id, a.invnumber, a.description, a.dcn,
+	      a.paymentmethod_id, 'vendor' AS vc, 'ap' AS arap
+	      FROM ap a
+	      JOIN vendor c ON (a.vendor_id = c.id)
+	      LEFT JOIN address ad ON (ad.trans_id = c.id)
+	      WHERE a.amount != a.paid
+	      AND a.dcn = ?
+	      |;
+  $sth = $dbh->prepare($query) || $form->dberror($query);
+
+  $query = qq|SELECT buy, sell FROM exchangerate
+	      WHERE curr = '$form->{currency}'
+	      AND transdate = ?|;
+  my $eth = $dbh->prepare($query) || $form->dberror($query);
+  
+  my $i = 0;
+  my $j = 0;
+
+  my $vc;
+  my $buy;
+  my $sell;
+
+  my @d = split /\n/, $form->{data};
+  shift @d if ! $form->{mapfile};
+
+  my $am;
+
+  for (@d) {
+
+    @a = &ndxline($form);
+
+    if (@a) {
+
+      
+      $amount = $form->format_amount($myconfig, $a[$form->{$form->{type}}->{credit}{ndx}] - $a[$form->{$form->{type}}->{debit}{ndx}], $form->{precision});
+      $am = 1;
+      
+      # dcn
+      if (exists $form->{$form->{type}}->{dcn}) {
+
+	if ($a[$form->{$form->{type}}->{dcn}{ndx}]) {
+	  $am = 0;
+	  $sth->execute("$a[$form->{$form->{type}}->{dcn}{ndx}]", "$a[$form->{$form->{type}}->{dcn}{ndx}]");
+	  $ref = $sth->fetchrow_hashref(NAME_lc);
+
+	  if ($ref->{invnumber}) {
+
+	    $i++;
+
+	    for (keys %{$form->{$form->{type}}}) {
+	      $a[$form->{$form->{type}}->{$_}{ndx}] =~ s/(^"|"$)//g;
+	      $form->{"${_}_$i"} = $a[$form->{$form->{type}}->{$_}{ndx}];
+	    }
+
+            $vc = $ref->{vc};
+	    for (qw(id invnumber description name companynumber vc arap city paymentmethod_id)) { $form->{"${_}_$i"} = $ref->{$_} }
+	    $form->{"amount_$i"} = $amount;
+	  }
+	  $sth->finish;
+	} else {
+	  $am = 1;
+	}
+	
+      }
+      
+      if ($am) {
+	
+	if ($amount) {
+
+	  if ($amount{$amount}) {
+	      
+	    $i++;
+    
+	    for (keys %{$form->{$form->{type}}}) {
+	      $a[$form->{$form->{type}}->{$_}{ndx}] =~ s/(^"|"$)//g;
+	      $form->{"${_}_$i"} = $a[$form->{$form->{type}}->{$_}{ndx}];
+	    }
+
+            $vc = $amount{$amount}->[0]->{vc};
+	    for (qw(id invnumber description name companynumber vc arap city paymentmethod_id)) { $form->{"${_}_$i"} = $amount{$amount}->[0]->{$_} }
+	    $form->{"amount_$i"} = $amount;
+
+	    pop @{ $amount{$amount} };
+	  }
+	}
+      }
+
+      # get exchangerate
+      if ($form->{currency} ne $form->{defaultcurrency}) {
+	$eth->execute($a[$form->{$form->{type}}->{datepaid}{ndx}]);
+	($buy, $sell) = $eth->fetchrow_array;
+	$eth->finish;
+	($form->{"exchangerate_$i"}) = ($vc eq 'customer') ? $buy : $sell;
+      }
+
+    }
+
+    $form->{rowcount} = $i;
+
+  }
+
+  $dbh->disconnect;
+
+}
+
+
+sub ndxline {
+  my ($form) = @_;
+ 
+ my @a = ();
+ my $string = 0;
+ my $chr = "";
+ my $m = 0;
+
+  if ($form->{tabdelimited}) {
+    @a = split /\t/, $_;
+  } else {
+    
+    foreach $chr (split //, $_) {
+      if ($chr eq '"') {
+	if (! $string) {
+	  $string = 1;
+	  next;
+	}
+      }
+      if ($string) {
+	if ($chr eq '"') {
+	  $string = 0;
+	  next;
+	}
+      }
+      if ($chr eq $form->{delimiter}) {
+	if (! $string) {
+	  $m++;
+	  next;
+	}
+      }
+      $a[$m] .= $chr;
+    }
+  }
+
+  return @a;
 
 }
 

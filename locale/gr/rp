@@ -22,6 +22,7 @@ $self{texts} = {
   'Continue'                    => 'Συνέχεια',
   'Copies'                      => 'Αντίγραφα',
   'Credit'                      => 'Πίστωση',
+  'Currency'                    => 'Συνάλλαγμα',
   'Current'                     => 'Τρέχων',
   'Current Earnings'            => 'Τρέχωντα κέρδη',
   'Customer'                    => 'Πελάτης',

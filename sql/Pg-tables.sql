@@ -63,7 +63,7 @@ CREATE TABLE defaults (
   fldvalue text
 );
 --
-INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '2.8.7');
+INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '2.8.8');
 --
 CREATE TABLE acc_trans (
   trans_id int,
@@ -212,7 +212,8 @@ CREATE TABLE ar (
   onhold bool DEFAULT 'f',
   exchangerate float,
   dcn text,
-  bank_id int
+  bank_id int,
+  paymentmethod_id int
 );
 --
 CREATE TABLE ap (
@@ -249,7 +250,8 @@ CREATE TABLE ap (
   onhold bool DEFAULT 'f',
   exchangerate float,
   dcn text,
-  bank_id int
+  bank_id int,
+  paymentmethod_id int
 );
 --
 CREATE TABLE partstax (
@@ -636,7 +638,8 @@ CREATE TABLE contact (
 CREATE TABLE paymentmethod (
   id int primary key default nextval('id'),
   description text,
-  fee float
+  fee float,
+  rn int
 );
 --
 CREATE TABLE bank (
@@ -662,4 +665,4 @@ CREATE TABLE curr (
   curr char(3) primary key,
   precision int2
 );
-
+--

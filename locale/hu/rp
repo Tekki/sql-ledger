@@ -28,6 +28,7 @@ $self{texts} = {
   'Copies'                      => 'Másolatok',
   'Credit'                      => 'Követel',
   'Curr'                        => 'Dev',
+  'Currency'                    => 'Deviza',
   'Current'                     => '0-30',
   'Current Earnings'            => 'Nyereség',
   'Customer'                    => 'Vevõ',

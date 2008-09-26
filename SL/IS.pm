@@ -27,7 +27,7 @@ sub invoice_details {
 
   $form->{total} = 0;
 
-  $form->{terms} = $form->datediff($myconfig, $form->{duedate}, $form->{transdate});
+  $form->{terms} = $form->datediff($myconfig, $form->{transdate}, $form->{duedate});
  
   # this is for the template
   $form->{invdate} = $form->{transdate};
@@ -1193,14 +1193,18 @@ sub post_invoice {
   my $voucherid;
   my $approved;
   my $paymentid = 1;
-
-  my ($paymentaccno) = split /--/, $form->{"AR_paid_1"};
+  my $paymentaccno;
+  my $paymentmethod_id;
 
   # record payments and offsetting AR
   for $i (1 .. $form->{paidaccounts}) {
     
     if ($form->{"paid_$i"}) {
       ($accno) = split /--/, $form->{"AR_paid_$i"};
+      
+      ($null, $paymentmethod_id) = split /--/, $form->{"paymentmethod_$i"};
+      $paymentmethod_id *= 1;
+
       $paymentaccno = $accno;
       $form->{"datepaid_$i"} = $form->{transdate} unless ($form->{"datepaid_$i"});
       $form->{datepaid} = $form->{"datepaid_$i"};
@@ -1265,8 +1269,10 @@ sub post_invoice {
 		  '$approved', $voucherid, $paymentid)|;
       $dbh->do($query) || $form->dberror($query);
 
-      $query = qq|INSERT INTO payment (id, trans_id, exchangerate)
-                  VALUES ($paymentid, $form->{id}, $form->{"exchangerate_$i"})|;
+      $query = qq|INSERT INTO payment (id, trans_id, exchangerate,
+                  paymentmethod_id)
+                  VALUES ($paymentid, $form->{id}, $form->{"exchangerate_$i"},
+		  $paymentmethod_id)|;
       $dbh->do($query) || $form->dberror($query);
 		  
       $paymentid++;
@@ -1300,7 +1306,11 @@ sub post_invoice {
     }
   }
 
-  
+  ($paymentaccno) = split /--/, $form->{"AR_paid_$form->{paidaccounts}"};
+
+  ($null, $paymentmethod_id) = split /--/, $form->{"paymentmethod_$form->{paidaccounts}"};
+  $paymentmethod_id *= 1;
+
   # if this is from a till
   my $till = ($form->{till}) ? qq|'$form->{till}'| : "NULL";
 
@@ -1359,7 +1369,8 @@ sub post_invoice {
 	      warehouse_id = $form->{warehouse_id},
 	      exchangerate = $form->{exchangerate},
 	      dcn = '$form->{dcn}',
-	      bank_id = (SELECT id FROM chart WHERE accno = '$paymentaccno')
+	      bank_id = (SELECT id FROM chart WHERE accno = '$paymentaccno'),
+	      paymentmethod_id = $paymentmethod_id
               WHERE id = $form->{id}
              |;
   $dbh->do($query) || $form->dberror($query);
@@ -1801,11 +1812,15 @@ sub retrieve_invoice {
 		a.language_code, a.ponumber,
 		a.warehouse_id, w.description AS warehouse,
 		a.exchangerate,
-		c.accno AS bank_accno, c.description AS bank_description
+		c.accno AS bank_accno, c.description AS bank_accno_description,
+		t.description AS bank_accno_translation,
+		pm.description AS paymentmethod, a.paymentmethod_id
 		FROM ar a
 	        LEFT JOIN employee e ON (e.id = a.employee_id)
 		LEFT JOIN warehouse w ON (a.warehouse_id = w.id)
 		LEFT JOIN chart c ON (c.id = a.bank_id)
+		LEFT JOIN translation t ON (t.trans_id = c.id AND t.language_code = '$myconfig->{countrycode}')
+		LEFT JOIN paymentmethod pm ON (pm.id = a.paymentmethod_id)
 		WHERE a.id = $form->{id}|;
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
@@ -1813,7 +1828,15 @@ sub retrieve_invoice {
     $ref = $sth->fetchrow_hashref(NAME_lc);
     for (keys %$ref) { $form->{$_} = $ref->{$_} }
     $sth->finish;
-    $form->{payment_accno} = "$form->{bank_accno}--$form->{bank_description}" if $form->{bank_accno};
+
+    if ($form->{bank_accno}) {
+      $form->{payment_accno} = ($form->{bank_accno_translation}) ? "$form->{bank_accno}--$form->{bank_accno_translation}" : "$form->{bank_accno}--$form->{bank_accno_description}";
+    }
+
+    if ($form->{paymentmethod_id}) {
+      $form->{payment_method} = "$form->{paymentmethod}--$form->{paymentmethod_id}";
+    }
+    
     $form->{type} = ($form->{amount} < 0) ? 'credit_invoice' : 'invoice';
     $form->{type} = 'pos_invoice' if $form->{till};
     $form->{formname} = $form->{type};

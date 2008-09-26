@@ -92,6 +92,7 @@ $self{texts} = {
   'May '                        => 'Mai ',
   'Memo'                        => 'Memo',
   'Message'                     => 'Teade',
+  'Method'                      => 'Meetod',
   'Month(s)'                    => 'Kuu(d)',
   'Next Date'                   => 'Järgmine Kuupäev',
   'Notes'                       => 'Märkused',

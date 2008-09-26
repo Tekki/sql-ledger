@@ -72,6 +72,16 @@ function sf(){
 |;
 
   for (qw(script password header sessioncookie)) { delete $form->{$_} }
+
+  foreach $item (split /;/, $form->{acs}) {
+    $item = $form->escape($item,1);
+    if ($form->{$item}) {
+      delete $form->{$item};
+      $item = $form->unescape($item);
+      $form->{$item} = 1;
+    }
+  }
+
   $form->hide_form;
   
   print qq|
