@@ -56,8 +56,8 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.6.3";
-  $self->{dbversion} = "2.6.3";
+  $self->{version} = "2.6.4";
+  $self->{dbversion} = "2.6.4";
 
   $self->{debug} = 1;
 
@@ -353,7 +353,7 @@ sub sort_order {
 
   my @a = $self->sort_columns(@{$columns});
   if (%$ordinal) {
-    $a[0] = "$ordinal->{$a[0]} $self->{direction}";
+    $a[0] = ($ordinal->{$a[$_]}) ? "$ordinal->{$a[0]} $self->{direction}" : "$a[0] $self->{direction}";
     for (1 .. $#a) { $a[$_] = $ordinal->{$a[$_]} if $ordinal->{$a[$_]} }
   }
 
@@ -465,9 +465,13 @@ sub round_amount {
   my ($self, $amount, $places) = @_;
 
 #  $places = 4 if $places == 2;
+  my ($null, $dec) = split /\./, $amount;
+  $dec = length $dec;
+  $dec = ($dec > $places) ? $dec : $places;
+  my $adj = ($amount < 0) ? (1/10**($dec+2)) * -1 : (1/10**($dec+2));
 
   if (($places * 1) >= 0) {
-    $amount = sprintf("%.${places}f", $amount + (1/10**($places+2))) * 1;
+    $amount = sprintf("%.${places}f", $amount + $adj) * 1;
   } else {
     $places *= -1;
     $amount = sprintf("%.0f", $amount);
@@ -533,7 +537,6 @@ sub parse_template {
     $par = "";
     $var = $_;
 
-
     # detect pagebreak block and its parameters
     if (/\s*<%pagebreak ([0-9]+) ([0-9]+) ([0-9]+)%>/) {
       $chars_per_line = $1;
@@ -553,20 +556,24 @@ sub parse_template {
       chomp $var;
       $var =~ s/\s*<%foreach (.+?)%>/$1/;
       while ($_ = shift) {
-	last if (/\s*<%end /);
+	last if (/\s*<%end $var%>/);
 
 	# store line in $par
 	$par .= $_;
       }
-      
+
       # display contents of $self->{number}[] array
       for $i (0 .. $#{ $self->{$var} }) {
+
+        if ($var =~ /^(part|service)$/) {
+	  next if $self->{$var}[$i] eq 'NULL';
+	}
 
         # Try to detect whether a manual page break is necessary
         # but only if there was a <%pagebreak ...%> block before
 	
-        if ($chars_per_line) {
-          my $lines = int(length($self->{"description"}[$i]) / $chars_per_line + 0.95);
+        if ($chars_per_line && defined $self->{$var}) {
+          my $lines = int(length($self->{description}[$i]) / $chars_per_line + 0.95);
           my $lpp;
 	  
           if ($current_page == 1) {
@@ -598,7 +605,7 @@ sub parse_template {
           }
           $current_line += $lines;
         }
-        $sum += $self->parse_amount($myconfig, $self->{"linetotal"}[$i]);
+        $sum += $self->parse_amount($myconfig, $self->{linetotal}[$i]);
 
 	# don't parse par, we need it for each line
 	print OUT $self->format_line($par, $i);
@@ -864,13 +871,39 @@ sub format_line {
     $str = (defined $i) ? $self->{$var}[$i] : $self->{$var};
     $newstr = $str;
 
+    $var = $1;
+    if ($var =~ /^if\s+not\s+/) {
+      if ($str) {
+	$var =~ s/if\s+not\s+//;
+	s/<%if\s+not\s+$var%>.*?<%end\s+$var%>//s;
+      } else {
+	s/<%$var%>//;
+      }
+      next;
+    }
+
+    if ($var =~ /^if\s+/) {
+      if ($str) {
+	s/<%$var%>//;
+      } else {
+	$var =~ s/if\s+//;
+	s/<%if\s+$var%>.*?<%end\s+$var%>//s;
+      }
+      next;
+    }
+
+    if ($var =~ /^end\s+/) {
+      s/<%$var%>//;
+      next;
+    }
+
     if ($a{align} || $a{width} || $a{offset}) {
 
       $newstr = "";
       $offset = 0;
       $lf = "";
       foreach $str (split /\n/, $str) {
-      
+
 	$line = $str;
 	$l = length $str;
 
@@ -879,6 +912,7 @@ sub format_line {
 	    if (($pos = rindex $str, " ", $a{width}) > 0) {
 	      $line = substr($str, 0, $pos);
 	    }
+	    $pos = length $str if $pos == -1;
 	  }
 
 	  $l = length $line;
@@ -910,7 +944,7 @@ sub format_line {
 	  $lf = "\n";
 	  
 	  $offset = $a{offset};
-	  
+
 	} while ($str);
       }
     }
@@ -1555,9 +1589,9 @@ sub all_years {
     ($enddate) = split /\W/, $enddate;
   } else { 
     (@_) = split /\W/, $startdate;
-    $startdate = @_[2];
+    $startdate = $_[2];
     (@_) = split /\W/, $enddate;
-    $enddate = @_[2]; 
+    $enddate = $_[2]; 
   }
 
   $self->{all_years} = ();

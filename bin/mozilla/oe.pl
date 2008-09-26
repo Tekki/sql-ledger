@@ -935,6 +935,7 @@ sub update {
 sub search {
 
   $requiredby = $locale->text('Required by');
+
   if ($form->{type} eq 'purchase_order') {
     $form->{title} = $locale->text('Purchase Orders');
     $form->{vc} = 'vendor';
@@ -942,6 +943,7 @@ sub search {
     $ordnumber = 'ordnumber';
     $employee = $locale->text('Employee');
   }
+  
   if ($form->{type} eq 'receive_order') {
     $form->{title} = $locale->text('Receive Merchandise');
     $form->{vc} = 'vendor';
@@ -949,12 +951,21 @@ sub search {
     $ordnumber = 'ordnumber';
     $employee = $locale->text('Employee');
   }
+  
   if ($form->{type} eq 'generate_sales_order') {
     $form->{title} = $locale->text('Generate Sales Order from Purchase Orders');
     $form->{vc} = 'vendor';
     $ordlabel = $locale->text('Order Number');
     $ordnumber = 'ordnumber';
     $employee = $locale->text('Employee');
+  }
+  
+  if ($form->{type} eq 'consolidate_sales_order') {
+    $form->{title} = $locale->text('Consolidate Sales Orders');
+    $form->{vc} = 'customer';
+    $ordlabel = $locale->text('Order Number');
+    $ordnumber = 'ordnumber';
+    $employee = $locale->text('Salesperson');
   }
 
   if ($form->{type} eq 'request_quotation') {
@@ -972,15 +983,9 @@ sub search {
     $ordnumber = 'ordnumber';
     $employee = $locale->text('Salesperson');
   }
+  
   if ($form->{type} eq 'ship_order') {
     $form->{title} = $locale->text('Ship Merchandise');
-    $form->{vc} = 'customer';
-    $ordlabel = $locale->text('Order Number');
-    $ordnumber = 'ordnumber';
-    $employee = $locale->text('Salesperson');
-  }
-  if ($form->{type} eq 'generate_purchase_order') {
-    $form->{title} = $locale->text('Generate Purchase Orders from Sales Order');
     $form->{vc} = 'customer';
     $ordlabel = $locale->text('Order Number');
     $ordnumber = 'ordnumber';
@@ -995,6 +1000,23 @@ sub search {
     $employee = $locale->text('Employee');
     $requiredby = $locale->text('Valid until');
   }
+
+  if ($form->{type} eq 'generate_purchase_order') {
+    $form->{title} = $locale->text('Generate Purchase Orders from Sales Order');
+    $form->{vc} = 'customer';
+    $ordlabel = $locale->text('Order Number');
+    $ordnumber = 'ordnumber';
+    $employee = $locale->text('Salesperson');
+  }
+  
+  if ($form->{type} eq 'consolidate_purchase_order') {
+    $form->{title} = $locale->text('Consolidate Purchase Orders');
+    $form->{vc} = 'vendor';
+    $ordlabel = $locale->text('Order Number');
+    $ordnumber = 'ordnumber';
+    $employee = $locale->text('Employee');
+  }
+ 
 
   $l_manager = qq|<input name="l_manager" class=checkbox type=checkbox value=Y> |.$locale->text('Manager');
 
@@ -1049,7 +1071,7 @@ sub search {
 	</tr>
 | if $form->{selectdepartment}; 
 
-  if ($form->{type} =~ /(generate_.*_|ship_|receive_)order/) {
+  if ($form->{type} =~ /(consolidate.*|generate.*|ship|receive)_order/) {
      
     $openclosed = qq|
 	        <input type=hidden name="open" value=1>
@@ -1100,7 +1122,7 @@ sub search {
   }
 
   @a = ();
-  push @a, qq|<input name="l_runningnumber" class=checkbox type=checkbox value=Y> |.$locale->text('Item');
+  push @a, qq|<input name="l_runningnumber" class=checkbox type=checkbox value=Y> |.$locale->text('No.');
   push @a, qq|<input name="l_id" class=checkbox type=checkbox value=Y> |.$locale->text('ID');
   push @a, qq|<input name="l_$ordnumber" class=checkbox type=checkbox value=Y checked> $ordlabel|;
   push @a, qq|<input name="l_transdate" class=checkbox type=checkbox value=Y checked> |.$locale->text('Date');
@@ -1265,7 +1287,8 @@ sub transactions {
     $href .= "&l_subtotal=Y";
   }
  
- 
+  $requiredby = $locale->text('Required by');
+
   $i = 1; 
   if ($form->{vc} eq 'vendor') {
     if ($form->{type} eq 'receive_order') {
@@ -1285,6 +1308,15 @@ sub transactions {
       if ($myconfig{acs} !~ /Order Entry--Order Entry/) {
 	$button{'Order Entry--Sales Order'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Generate Sales Order').qq|"> |;
 	$button{'Order Entry--Sales Order'}{order} = $i++;
+      }
+    }
+    if ($form->{type} eq 'consolidate_purchase_order') {
+      $form->{title} = $locale->text('Purchase Orders');
+      $form->{type} = "purchase_order";
+      unshift @column_index, "ndx";
+      if ($myconfig{acs} !~ /Order Entry--Order Entry/) {
+	$button{'Order Entry--Purchase Order'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Consolidate Orders').qq|"> |;
+	$button{'Order Entry--Purchase Order'}{order} = $i++;
       }
     }
 
@@ -1320,6 +1352,15 @@ sub transactions {
       if ($myconfig{acs} !~ /Order Entry--Order Entry/) {
 	$button{'Order Entry--Purchase Order'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Generate Purchase Orders').qq|"> |;
 	$button{'Order Entry--Purchase Order'}{order} = $i++;
+      }
+    }
+    if ($form->{type} eq 'consolidate_sales_order') {
+      $form->{title} = $locale->text('Sales Orders');
+      $form->{type} = "sales_order";
+      unshift @column_index, "ndx";
+      if ($myconfig{acs} !~ /Order Entry--Order Entry/) {
+	$button{'Order Entry--Sales Order'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Consolidate Orders').qq|"> |;
+	$button{'Order Entry--Sales Order'}{order} = $i++;
       }
     }
 
@@ -2832,6 +2873,34 @@ sub generate_orders {
     $form->error($locale->text('Order generation failed!'));
   }
   
+}
+
+
+
+sub consolidate_orders {
+
+  for (1 .. $form->{rowcount}) {
+    if ($form->{"ndx_$_"}) {
+      $ok = 1;
+      last;
+    }
+  }
+
+  $form->error($locale->text('Nothing selected!')) unless $ok;
+  
+  ($null, $argv) = split /\?/, $form->{callback};
+  
+  for (split /\&/, $argv) {
+    ($key, $value) = split /=/, $_;
+    $form->{$key} = $value;
+  }
+
+  if (OE->consolidate_orders(\%myconfig, \%$form)) {
+    $form->redirect;
+  } else {
+    $form->error($locale->text('Order generation failed!'));
+  }
+
 }
 
 

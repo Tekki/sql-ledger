@@ -387,8 +387,9 @@ sub list_transactions {
     for (@column_index) { $column_data{$_} = "<td>&nbsp;</td>" }
 
     $column_data{balance} = "<td align=right>".$form->format_amount(\%myconfig, $form->{balance} * $ml, 2, 0)."</td>";
-    
+
     $i++; $i %= 2;
+    
     print qq|
         <tr class=listrow$i>
 |;
@@ -396,6 +397,7 @@ sub list_transactions {
     print qq|
        </tr>
 |;
+
   }
     
   foreach $ca (@{ $form->{CA} }) {
@@ -432,8 +434,11 @@ sub list_transactions {
     for (@{ $ca->{accno} }) { $column_data{accno} .= "<a href=$drilldown&accno=$_>$_</a> " }
     $column_data{accno} .= qq|&nbsp;</td>|;
   
- 
-    $i++; $i %= 2;
+    if ($ca->{id} != $sameid) {
+      $i++; $i %= 2;
+    }
+    $sameid = $ca->{id};
+
     print qq|
         <tr class=listrow$i>
 |;

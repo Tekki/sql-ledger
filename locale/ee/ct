@@ -54,6 +54,7 @@ $self{texts} = {
   'Language'                    => 'Keel',
   'Name'                        => 'Nimi',
   'Name missing!'               => 'Nimi puudub!',
+  'No.'                         => 'Nr.',
   'Notes'                       => 'Märkused',
   'Number'                      => 'Kood',
   'Open'                        => 'Avatud',

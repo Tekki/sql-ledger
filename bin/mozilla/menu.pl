@@ -6,6 +6,7 @@
 #     Web: http://www.sql-ledger.org
 #
 #  Contributors: Christopher Browne
+#                Tony Fraser <tony@sybaspace.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -60,8 +61,8 @@ sub display {
 sub acc_menu {
 
   my $menu = new Menu "$menufile";
-  $menu = new Menu "custom_$menufile" if (-f "custom_$menufile");
-  $menu = new Menu "$form->{login}_$menufile" if (-f "$form->{login}_$menufile");
+  $menu->add_file("custom_$menufile") if -f "custom_$menufile";
+  $menu->add_file("$form->{login}_$menufile") if -f "$form->{login}_$menufile";
   
   $form->{title} = $locale->text('Accounting Menu');
 

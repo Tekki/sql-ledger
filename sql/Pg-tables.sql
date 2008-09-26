@@ -8,6 +8,9 @@ SELECT nextval ('invoiceid');
 CREATE SEQUENCE orderitemsid;
 SELECT nextval ('orderitemsid');
 --
+CREATE SEQUENCE jcitemsid;
+SELECT nextval ('jcitemsid');
+--
 CREATE TABLE makemodel (
   parts_id int,
   make text,
@@ -66,7 +69,7 @@ CREATE TABLE defaults (
   vendornumber text,
   glnumber text
 );
-INSERT INTO defaults (version) VALUES ('2.6.3');
+INSERT INTO defaults (version) VALUES ('2.6.4');
 --
 CREATE TABLE acc_trans (
   trans_id int,
@@ -77,7 +80,8 @@ CREATE TABLE acc_trans (
   cleared bool DEFAULT 'f',
   fx_transaction bool DEFAULT 'f',
   project_id int,
-  memo text
+  memo text,
+  invoice_id int
 );
 --
 CREATE TABLE invoice (
@@ -94,7 +98,8 @@ CREATE TABLE invoice (
   unit varchar(5),
   project_id int,
   deliverydate date,
-  serialnumber text
+  serialnumber text,
+  notes text
 );
 --
 CREATE TABLE customer (
@@ -271,6 +276,7 @@ CREATE TABLE oe (
 );
 --
 CREATE TABLE orderitems (
+  id int default nextval('orderitemsid'),
   trans_id int,
   parts_id int,
   description text,
@@ -282,7 +288,7 @@ CREATE TABLE orderitems (
   reqdate date,
   ship float4,
   serialnumber text,
-  id int default nextval('orderitemsid')
+  notes text
 );
 --
 CREATE TABLE exchangerate (
@@ -510,8 +516,6 @@ CREATE TABLE recurringprint (
   format text,
   printer text
 );
---
-CREATE SEQUENCE jcitemsid;
 --
 CREATE TABLE jcitems (
   id int default nextval('jcitemsid'),

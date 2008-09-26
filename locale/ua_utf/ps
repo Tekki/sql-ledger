@@ -138,6 +138,7 @@ $self{texts} = {
   'Month'                       => 'Місяць',
   'N/A'                         => 'Н/Д',
   'Next Date'                   => 'Наступна дата',
+  'No.'                         => 'No.',
   'Notes'                       => 'Примітки',
   'Nothing selected!'           => 'Нічого не вибрано!',
   'Nothing to print!'           => 'Нема що дркувати!',

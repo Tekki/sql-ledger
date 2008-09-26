@@ -41,6 +41,7 @@ $self{texts} = {
   'Language'                    => 'Túngumál',
   'Name'                        => 'Nafn',
   'Name missing!'               => 'Nafn vantar!',
+  'No.'                         => 'Nr.',
   'Notes'                       => 'Upplýsinar',
   'Number'                      => 'Númer',
   'Open'                        => 'opna',

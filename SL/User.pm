@@ -343,7 +343,7 @@ sub dbcreate {
   &dbconnect_vars($form, $form->{dbdefault});
   my $dbh = DBI->connect($form->{dbconnect}, $form->{dbuser}, $form->{dbpasswd}) or $form->dberror;
   my $query = qq|$dbcreate{$form->{dbdriver}}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query);
 
   if ($form->{dbdriver} eq 'Oracle') {
     $query = qq|GRANT CONNECT,RESOURCE TO "$form->{db}"|;

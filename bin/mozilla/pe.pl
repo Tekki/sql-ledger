@@ -2546,14 +2546,6 @@ sub generate_sales_orders {
       
       for (keys %$ref) { $order->{"${_}_$i"} = $ref->{$_} }
       
-      if ($ref->{notes}) {
-	if ($order->{notes}) {
-	  $order->{notes} .= "\n\n$ref->{notes}";
-	} else {
-	  $order->{notes} = $ref->{notes};
-	}
-      }
-      
       $taxaccounts = "";
       for (split / /, $order->{taxaccounts}) { $taxaccounts .= qq|$_ | if ($_ =~ /$order->{"taxaccounts_$i"}/) }
       $order->{"taxaccounts_$i"} = $taxaccounts;

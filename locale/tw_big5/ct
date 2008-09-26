@@ -61,6 +61,7 @@ $self{texts} = {
   'Manager'                     => '經理',
   'Name'                        => '名稱',
   'Name missing!'               => '未指明名字！',
+  'No.'                         => '編號',
   'Notes'                       => '備註',
   'Number'                      => '編號',
   'Open'                        => '開啟',

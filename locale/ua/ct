@@ -43,6 +43,7 @@ $self{texts} = {
   'Language'                    => 'Мова',
   'Name'                        => 'Назва',
   'Name missing!'               => 'Не вказана назва!',
+  'No.'                         => 'No.',
   'Notes'                       => 'Прим╕тки',
   'Number'                      => 'Номер',
   'Open'                        => 'В╕дкрито',

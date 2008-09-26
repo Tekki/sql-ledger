@@ -370,17 +370,17 @@ sub jcitems {
 
   my %ordinal = ( id => 1,
                   description => 2,
-		  transdate => 6,
-		  partnumber => 8,
-		  projectnumber => 9,
-		  projectdescription => 10,
+		  transdate => 7,
+		  partnumber => 9,
+		  projectnumber => 10,
+		  projectdescription => 11,
 		);
   
   my @a = (transdate, projectnumber);
   my $sortorder = $form->sort_order(\@a, \%ordinal);
   
   my $dateformat = $myconfig->{dateformat};
-  $dateformat =~ s/yy/yyyy/;
+  $dateformat =~ s/yy$/yyyy/;
   $dateformat =~ s/yyyyyy/yyyy/;
   
   if ($form->{project} eq 'job') {

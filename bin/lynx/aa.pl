@@ -100,9 +100,15 @@ sub create_links {
   $form->{format} = "postscript" if $myconfig{printer};
   $form->{media} = $myconfig{printer};
   
-  $form->{selectformname} = qq|<option value="transaction">|.$locale->text('Transaction').qq|
-<option value="receipt">|.$locale->text('Receipt').qq|
+  $form->{selectformname} = qq|<option value="transaction">|.$locale->text('Transaction');
+  
+  if ($form->{ARAP} eq 'AR') {
+    $form->{selectformname} .= qq|
+<option value="receipt">|.$locale->text('Receipt');
+  } else {
+    $form->{selectformname} .= qq|
 <option value="check">|.$locale->text('Check');
+  }
   
   # currencies
   @curr = split /:/, $form->{currencies};
@@ -507,7 +513,7 @@ sub form_header {
 	  <th>|.$locale->text('Amount').qq|</th>
 	  <th></th>
 	  <th>|.$locale->text('Account').qq|</th>
-	  <th>|.$locale->text('Memo').qq|</th>
+	  <th>|.$locale->text('Description').qq|</th>
 	  $project
 	</tr>
 |;
@@ -1025,7 +1031,11 @@ sub search {
 	  <td colspan=3><input name=ponumber size=20></td>
 	</tr>
 	<tr>
-	  <th align=right nowrap>|.$locale->text('Memo').qq|</th>
+	  <th align=right nowrap>|.$locale->text('Source').qq|</th>
+	  <td colspan=3><input name=source size=40></td>
+	</tr>
+	<tr>
+	  <th align=right nowrap>|.$locale->text('Description').qq|</th>
 	  <td colspan=3><input name=description size=40></td>
 	</tr>
 	<tr>
@@ -1041,10 +1051,20 @@ sub search {
 	      </tr>
 |;
 
+  $summary = qq|
+              <tr>
+		<td><input name=summary type=radio class=radio value=1 checked> |.$locale->text('Summary').qq|</td>
+		<td><input name=summary type=radio class=radio value=0> |.$locale->text('Detail').qq|
+		</td>
+	      </tr>
+|;
+
+
   if ($form->{outstanding}) {
     $form->{title} = ($form->{ARAP} eq 'AR') ? $locale->text('AR Outstanding') : $locale->text('AP Outstanding');
     $invnumber = "";
     $openclosed = "";
+    $summary = "";
   }
 
   if (@{ $form->{all_years} }) {
@@ -1083,7 +1103,7 @@ sub search {
   }
   
   @a = ();
-  push @a, qq|<input name="l_runningnumber" class=checkbox type=checkbox value=Y> |.$locale->text('Item');
+  push @a, qq|<input name="l_runningnumber" class=checkbox type=checkbox value=Y> |.$locale->text('No.');
   push @a, qq|<input name="l_id" class=checkbox type=checkbox value=Y> |.$locale->text('ID');
   push @a, qq|<input name="l_invnumber" class=checkbox type=checkbox value=Y checked> |.$locale->text('Invoice Number');
   push @a, qq|<input name="l_ordnumber" class=checkbox type=checkbox value=Y> |.$locale->text('Order Number');
@@ -1105,7 +1125,7 @@ sub search {
   push @a, $l_till if $l_till;
   push @a, qq|<input name="l_shippingpoint" class=checkbox type=checkbox value=Y> |.$locale->text('Shipping Point');
   push @a, qq|<input name="l_shipvia" class=checkbox type=checkbox value=Y> |.$locale->text('Ship via');
-    
+  
   $form->header;
   
   print qq|
@@ -1151,6 +1171,7 @@ sub search {
 	  <td>
 	    <table width=100%>
 	      $openclosed
+	      $summary
 |;
 
   $form->{sort} = "transdate";
@@ -1214,13 +1235,13 @@ sub transactions {
   AA->transactions(\%myconfig, \%$form);
 
   $href = "$form->{script}?action=transactions";
-  for (qw(direction oldsort till outstanding path login sessionid)) { $href .= qq|&$_=$form->{$_}| }
+  for (qw(direction oldsort till outstanding path login sessionid summary)) { $href .= qq|&$_=$form->{$_}| }
   $href .= "&title=".$form->escape($form->{title});
 
   $form->sort_order();
   
   $callback = "$form->{script}?action=transactions";
-  for (qw(direction oldsort till outstanding path login sessionid)) { $callback .= qq|&$_=$form->{$_}| }
+  for (qw(direction oldsort till outstanding path login sessionid summary)) { $callback .= qq|&$_=$form->{$_}| }
   $callback .= "&title=".$form->escape($form->{title},1);
 
   if ($form->{$form->{ARAP}}) {
@@ -1272,7 +1293,7 @@ sub transactions {
     $callback .= "&description=".$form->escape($form->{description},1);
     $href .= "&description=".$form->escape($form->{description});
     $option .= "\n<br>" if $option;
-    $option .= $locale->text('Memo')." : $form->{description}";
+    $option .= $locale->text('Description')." : $form->{description}";
   }
   
   if ($form->{transdatefrom}) {
@@ -1311,14 +1332,18 @@ sub transactions {
       if ($form->{l_curr} && $item =~ /(amount|tax|paid|due)/) {
 	push @column_index, "fx_$item";
       }
-	
+
       # add column to href and callback
       $callback .= "&l_$item=Y";
       $href .= "&l_$item=Y";
     }
   }
 
-    
+  if (!$form->{summary}) {
+    foreach $item (qw(source debit credit accno description projectnumber)) {
+      push @column_index, $item;
+    }
+  }
 
   if ($form->{l_subtotal} eq 'Y') {
     $callback .= "&l_subtotal=Y";
@@ -1354,6 +1379,13 @@ sub transactions {
   for (qw(amount tax netamount paid due)) { $column_header{"fx_$_"} = "<th>&nbsp;</th>" }
 
   $column_header{department} = "<th><a class=listheading href=$href&sort=department>" . $locale->text('Department') . "</a></th>";
+  
+  $column_header{accno} = "<th><a class=listheading href=$href&sort=accno>" . $locale->text('Account') . "</a></th>";
+  $column_header{source} = "<th><a class=listheading href=$href&sort=source>" . $locale->text('Source') . "</a></th>";
+  $column_header{debit} = "<th class=listheading>" . $locale->text('Debit') . "</th>";
+  $column_header{credit} = "<th class=listheading>" . $locale->text('Credit') . "</th>";
+  $column_header{projectnumber} = "<th><a class=listheading href=$href&sort=projectnumber>" . $locale->text('Project') . "</a></th>";
+  $column_header{description} = "<th><a class=listheading href=$href&sort=linedescription>" . $locale->text('Description') . "</a></th>";
 
   $form->{title} = ($form->{title}) ? $form->{title} : $locale->text('AR Transactions');
 
@@ -1430,8 +1462,8 @@ sub transactions {
     }
     
     $column_data{runningnumber} = "<td align=right>$i</td>";
-    
-    for (qw(netamount amount paid)) { $column_data{$_} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{$_}, 2, "&nbsp;")."</td>" }
+
+    for (qw(netamount amount paid debit credit)) { $column_data{$_} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{$_}, 2, "&nbsp;")."</td>" }
     
     $column_data{tax} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{amount} - $ref->{netamount}, 2, "&nbsp;")."</td>";
     $column_data{due} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{amount} - $ref->{paid}, 2, "&nbsp;")."</td>";
@@ -1440,23 +1472,32 @@ sub transactions {
     $subtotalnetamount += $ref->{netamount};
     $subtotalamount += $ref->{amount};
     $subtotalpaid += $ref->{paid};
+    $subtotaldebit += $ref->{debit};
+    $subtotalcredit += $ref->{credit};
     
     $totalnetamount += $ref->{netamount};
     $totalamount += $ref->{amount};
     $totalpaid += $ref->{paid};
+    $totaldebit += $ref->{debit};
+    $totalcredit += $ref->{credit};
     
     $module = ($ref->{invoice}) ? ($form->{ARAP} eq 'AR') ? "is.pl" : "ir.pl" : $form->{script};
     $module = ($ref->{till}) ? "ps.pl" : $module;
 
-    $column_data{invnumber} = "<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&callback=$callback>$ref->{invnumber}</a></td>";
+    $column_data{invnumber} = "<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&callback=$callback>$ref->{invnumber}&nbsp;</a></td>";
     
-    $ref->{notes} =~ s/\r?\n/<br>/g;
-    for (qw(transdate datepaid duedate department ordnumber ponumber notes shippingpoint shipvia employee manager till)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
+    for (qw(notes description)) { $ref->{$_} =~ s/\r?\n/<br>/g }
+    for (qw(transdate datepaid duedate department ordnumber ponumber notes shippingpoint shipvia employee manager till source description projectnumber)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
     for (qw(id curr)) { $column_data{$_} = "<td>$ref->{$_}</td>" }
 
+    $column_data{accno} = qq|<td><a href=ca.pl?path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&action=list_transactions&accounttype=standard&accno=$ref->{accno}&fromdate=$form->{transdatefrom}&todate=$form->{transdateto}&sort=transdate&l_subtotal=$form->{l_subtotal}&prevreport=$callback>$ref->{accno}</a></td>|;
+    
     $column_data{name} = qq|<td><a href=ct.pl?path=$form->{path}&login=$form->{login}&sessionid=$form->{sessionid}&action=edit&id=$ref->{"$form->{vc}_id"}&db=$form->{vc}&callback=$callback>$ref->{name}</a></td>|;
    
-    $j++; $j %= 2;
+    if ($ref->{id} != $sameid) {
+      $j++; $j %= 2;
+    }
+
     print "
         <tr class=listrow$j>
 ";
@@ -1466,6 +1507,8 @@ sub transactions {
     print qq|
         </tr>
 |;
+
+    $sameid = $ref->{id};
 
   
   }
@@ -1487,6 +1530,8 @@ sub transactions {
   $column_data{amount} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $totalamount, 2, "&nbsp;")."</th>";
   $column_data{paid} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $totalpaid, 2, "&nbsp;")."</th>";
   $column_data{due} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $totalamount - $totalpaid, 2, "&nbsp;")."</th>";
+  $column_data{debit} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $totaldebit, 2, "&nbsp;")."</th>";
+  $column_data{credit} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $totalcredit, 2, "&nbsp;")."</th>";
 
   if ($form->{l_curr} && $form->{sort} eq 'curr' && $form->{l_subtotal}) {
     $column_data{fx_netamount} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $totalfxnetamount, 2, "&nbsp;")."</th>";
@@ -1562,6 +1607,8 @@ sub subtotal {
   $column_data{amount} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotalamount, 2, "&nbsp;")."</th>";
   $column_data{paid} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotalpaid, 2, "&nbsp;")."</th>";
   $column_data{due} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotalamount - $subtotalpaid, 2, "&nbsp;")."</th>";
+  $column_data{debit} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotaldebit, 2, "&nbsp;")."</th>";
+  $column_data{credit} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotalcredit, 2, "&nbsp;")."</th>";
 
   if ($form->{l_curr} && $form->{sort} eq 'curr' && $form->{l_subtotal}) {
     $column_data{fx_tax} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotalfxamount - $subtotalfxnetamount, 2, "&nbsp;")."</th>";
@@ -1573,6 +1620,8 @@ sub subtotal {
   $subtotalnetamount = 0;
   $subtotalamount = 0;
   $subtotalpaid = 0;
+  $subtotaldebit = 0;
+  $subtotalcredit = 0;
   
   $subtotalfxnetamount = 0;
   $subtotalfxamount = 0;

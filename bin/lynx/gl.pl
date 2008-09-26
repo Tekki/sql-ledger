@@ -543,7 +543,8 @@ sub generate_report {
   $direction = ($form->{direction} eq 'ASC') ? "ASC" : "DESC";
   $form->sort_order();
   $href =~ s/direction=$form->{direction}/direction=$direction/;
-    
+
+  $i = 0;
   foreach $ref (@{ $form->{GL} }) {
 
     # if item ne sort print subtotal
@@ -579,12 +580,15 @@ sub generate_report {
     $column_data{balance} = "<td align=right>".$form->format_amount(\%myconfig, $form->{balance} * $ml * $cml, 2, 0)."</td>";
     $column_data{cleared} = ($ref->{cleared}) ? "<td>*</td>" : "<td>&nbsp;</td>";
 
-    $i++; $i %= 2;
+    if ($ref->{id} != $sameid) {
+      $i++; $i %= 2;
+    }
     print "
         <tr class=listrow$i>";
     for (@column_index) { print "$column_data{$_}\n" }
     print "</tr>";
     
+    $sameid = $ref->{id};
   }
 
 

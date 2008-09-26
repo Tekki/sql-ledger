@@ -1447,6 +1447,138 @@ sub include_assembly {
 }
 
 
+sub requirements {
+  my ($self, $myconfig, $form) = @_;
+
+  my $null;
+  my $var;
+  my $ref;
+  
+  my $where = qq|(p.inventory_accno_id > 0 AND p.income_accno_id > 0)
+                 AND p.obsolete = '0'|;
+
+  for (qw(partnumber description)) {
+    if ($form->{$_} ne "") {
+      $var = $form->like(lc $form->{$_});
+      $where .= qq| AND lower(p.$_) LIKE '$var'|;
+    }
+  }
+  
+  my $makemodelflds = qq|, '', ''|;;
+  my $makemodeljoin;
+  
+  if (($form->{make} ne "") || ($form->{model} ne "")) {
+    $makemodeljoin = qq|JOIN makemodel m ON (m.parts_id = p.id)|;
+    
+    if ($form->{make} ne "") {
+      $var = $form->like(lc $form->{make});
+      $where .= qq| AND lower(m.make) LIKE '$var'|;
+    }
+    if ($form->{model} ne "") {
+      $var = $form->like(lc $form->{model});
+      $where .= qq| AND lower(m.model) LIKE '$var'|;
+    }
+  }
+  if ($form->{partsgroup} ne "") {
+    ($null, $var) = split /--/, $form->{partsgroup};
+    $where .= qq| AND p.partsgroup_id = $var|;
+  }
+
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+
+  my %ordinal = ( id => 1,
+                  partnumber => 2,
+                  description => 3,
+		);
+  
+  my @a = qw(partnumber description id);
+  my $sortorder = $form->sort_order(\@a, \%ordinal);
+
+  $form->sort_order();
+
+  my ($transdatefrom, $transdateto) = $form->from_to($form->{year}, '01', 12);
+  $where .= qq| AND a.transdate >= '$transdatefrom'
+		AND a.transdate <= '$transdateto'|;
+    
+  $query = qq|SELECT p.id, p.partnumber, p.description,
+              sum(i.qty) AS qty, p.onhand,
+	      extract(MONTH FROM a.transdate) AS month
+	      FROM invoice i
+	      JOIN parts p ON (p.id = i.parts_id)
+	      JOIN ar a ON (a.id = i.trans_id)
+	      $makemodeljoin
+	      WHERE $where
+	      GROUP BY p.id, p.partnumber, p.description, p.onhand,
+	      extract(MONTH FROM a.transdate)
+	      
+	      UNION
+
+	      SELECT p.id, p.partnumber, p.description,
+	      0 AS qty, 0 AS onhand,
+	      0 AS month
+	      FROM orderitems i
+	      JOIN parts p ON (p.id = i.parts_id)
+	      JOIN oe a ON (a.id = i.trans_id)
+	      $makemodeljoin
+	      WHERE $where
+	      AND a.closed = '0'
+	      GROUP BY p.id, p.partnumber, p.description, p.onhand,
+	      month
+	      
+	      ORDER BY $sortorder|;
+
+  my $sth = $dbh->prepare($query);
+
+  # query for orders
+  $query = qq|SELECT qty
+	      FROM orderitems i
+	      JOIN oe a ON (i.trans_id = a.id)
+	      WHERE i.parts_id = ?
+	      AND a.quotation = '0'
+	      AND a.closed = '0'
+	      AND a.customer_id > 0|;
+
+  my $soth = $dbh->prepare($query);
+  
+  $query = qq|SELECT qty
+	      FROM orderitems i
+	      JOIN oe a ON (i.trans_id = a.id)
+	      WHERE i.parts_id = ?
+	      AND a.quotation = '0'
+	      AND a.closed = '0'
+	      AND a.vendor_id > 0|;
+
+  my $poth = $dbh->prepare($query);
+  
+  $sth->execute || $form->dberror($query);
+ 
+  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    unless (exists $soqty{$ref->{id}}) {
+      $soth->execute($ref->{id}) || $form->dberror($query);
+      ($soqty{$ref->{id}}) = $soth->fetchrow_array;
+      $soth->finish;
+      $soqty{$ref->{id}} ||= 0;
+    }
+    unless (exists $poqty{$ref->{id}}) {
+      $poth->execute($ref->{id}) || $form->dberror($query);
+      ($poqty{$ref->{id}}) = $poth->fetchrow_array;
+      $poth->finish;
+      $poqty{$ref->{id}} ||= 0;
+    }
+
+    $ref->{so} = $soqty{$ref->{id}};
+    $ref->{po} = $poqty{$ref->{id}};
+
+    push @{ $form->{parts} }, $ref;
+  }
+  $sth->finish;
+
+  $dbh->disconnect;
+
+}
+
+
 sub create_links {
   my ($self, $module, $myconfig, $form) = @_;
 

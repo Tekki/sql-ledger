@@ -1,4 +1,52 @@
 <ul>
+<p><li><h4>PostgreSQL 8.1</h4>
+To use SQL-Ledger with 8.1 you have to modify Pg-tables.sql The file
+is in the sql directory.
+
+<pre>
+CREATE TABLE orderitems (
+  trans_id int,
+  parts_id int,
+  description text,
+  qty float4,
+  sellprice float8,
+  discount float4,
+  unit varchar(5),
+  project_id int,
+  reqdate date,
+  ship float4,
+  serialnumber text,
+  id int default nextval('orderitemsid')
+) WITH OIDS;
+
+CREATE TABLE inventory (
+  warehouse_id int,
+  parts_id int,
+  trans_id int,
+  orderitems_id int,
+  qty float4,
+  shippingdate date,
+  employee_id int
+) WITH OIDS;
+
+CREATE TABLE assembly (
+  id int,
+  parts_id int,
+  qty float,
+  bom bool,
+  adj bool
+) WITH OIDS;
+</pre>
+
+This change is only required for SQL-Ledger versions 2.6.3 and below.
+
+<p>If you already built a dataset without this change you will get
+an error when you try to save a PO or assembly.
+<p>"ERROR: column "oid" does not exist"
+
+<p>Drop the tables and rebuild WITH OIDS.
+
+
 <p><li><h4>Japanese characters</h4>
 modify apache so that EUC_JP is the main additional language.
 <br>comment out all unrelated languages except, UTF_8 shift jis, EUC_JP

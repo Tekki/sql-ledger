@@ -45,6 +45,7 @@ sub post_invoice {
   my $taxamount;
   my $diff = 0;
   my $item;
+  my $invoice_id;
   
   ($null, $form->{department_id}) = split(/--/, $form->{department});
   $form->{department_id} *= 1;
@@ -86,11 +87,10 @@ sub post_invoice {
     } 
   }
 
+  my $uid = time;
+  $uid .= $$;
 
   if (! $form->{id}) {
-
-    my $uid = time;
-    $uid .= $$;
 
     $query = qq|INSERT INTO ap (invnumber, employee_id)
                 VALUES ('$uid', (SELECT id FROM employee
@@ -154,12 +154,16 @@ sub post_invoice {
 
       # linetotal
       my $fxlinetotal = $form->round_amount($form->{"sellprice_$i"} * $form->{"qty_$i"}, 2);
-      my $linetotal = $form->round_amount($fxlinetotal * $form->{exchangerate}, 2);
+
+      $amount = $fxlinetotal * $form->{exchangerate};
+      my $linetotal = $form->round_amount($amount, 2);
+      $fxdiff += $amount - $linetotal;
 
       @taxaccounts = split / /, $form->{"taxaccounts_$i"};
 
       $ml = 1;
       $tax = 0;
+      $fxtax = 0;
       
       for (0 .. 1) {
 	$taxrate = 0;
@@ -174,6 +178,7 @@ sub post_invoice {
 	  $form->{"sellprice_$i"} -= $amount / $form->{"qty_$i"};
 	} else {
 	  $tax += $amount = $linetotal * $taxrate;
+	  $fxtax += $fxlinetotal * $taxrate;
 	}
 
         for (@taxaccounts) {
@@ -194,17 +199,47 @@ sub post_invoice {
       $amount = $form->round_amount($linetotal, 2);
       $allocated = 0;
 
+      # adjust and round sellprice
+      $form->{"sellprice_$i"} = $form->round_amount($form->{"sellprice_$i"} * $form->{exchangerate}, $decimalplaces);
+
+      # save detail record in invoice table
+      $query = qq|INSERT INTO invoice (description)
+                  VALUES ('$uid')|;
+      $dbh->do($query) || $form->dberror($query);
+
+      $query = qq|SELECT id FROM invoice
+                  WHERE description = '$uid'|;
+      ($invoice_id) = $dbh->selectrow_array($query);
+
+      $query = qq|UPDATE invoice SET
+                  trans_id = $form->{id},
+		  parts_id = $form->{"id_$i"},
+		  description = |.$dbh->quote($form->{"description_$i"}).qq|,
+		  qty = $form->{"qty_$i"} * -1,
+		  sellprice = $form->{"sellprice_$i"},
+		  fxsellprice = $fxsellprice,
+		  discount = $form->{"discount_$i"},
+		  allocated = $allocated,
+		  unit = |.$dbh->quote($form->{"unit_$i"}).qq|,
+		  deliverydate = |.$form->dbquote($form->{"deliverydate_$i"}, SQL_DATE).qq|,
+		  project_id = $project_id,
+		  serialnumber = |.$dbh->quote($form->{"serialnumber_$i"}).qq|,
+		  notes = |.$dbh->quote($form->{"notes_$i"}).qq|
+		  WHERE id = $invoice_id|;
+      $dbh->do($query) || $form->dberror($query);
+      
+
       if ($form->{"inventory_accno_id_$i"}) {
 
 	# add purchase to inventory
 	push @{ $form->{acc_trans}{lineitems} }, {
 	  chart_id => $form->{"inventory_accno_id_$i"},
 	  amount => $amount,
+	  fxgrossamount => $fxlinetotal + $form->round_amount($fxtax, 2),
 	  grossamount => $grossamount,
-	  project_id => $project_id };
+	  project_id => $project_id,
+	  invoice_id => $invoice_id };
 	
-        # adjust and round sellprice
-	$form->{"sellprice_$i"} = $form->round_amount($form->{"sellprice_$i"} * $form->{exchangerate}, $decimalplaces);
 	
 	$updparts{$form->{"id_$i"}} = 1;
 
@@ -244,17 +279,18 @@ sub post_invoice {
 	  # add entry for inventory, this one is for the sold item
 	  if ($linetotal) {
 	    $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount, 
-			transdate, project_id)
+			transdate, project_id, invoice_id)
 			VALUES ($ref->{trans_id}, $ref->{inventory_accno_id},
-			$linetotal, '$ref->{transdate}', $ref->{project_id})|;
+			$linetotal, '$ref->{transdate}', $ref->{project_id},
+			$invoice_id )|;
 	    $dbh->do($query) || $form->dberror($query);
 
 	    # add expense
 	    $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount, 
-			transdate, project_id)
+			transdate, project_id, invoice_id)
 			VALUES ($ref->{trans_id}, $ref->{expense_accno_id},
 			|. ($linetotal * -1) .qq|, '$ref->{transdate}',
-			$ref->{project_id})|;
+			$ref->{project_id}, $invoice_id)|;
 	    $dbh->do($query) || $form->dberror($query);
 	  }
       
@@ -278,29 +314,12 @@ sub post_invoice {
 	push @{ $form->{acc_trans}{lineitems} }, {
 	  chart_id => $form->{"expense_accno_id_$i"},
 	  amount => $amount,
+	  fxgrossamount => $fxlinetotal + $form->round_amount($fxtax, 2),
 	  grossamount => $grossamount,
-	  project_id => $project_id };
-	
-        # adjust and round sellprice
-        $form->{"sellprice_$i"} = $form->round_amount($form->{"sellprice_$i"} * $form->{exchangerate}, $decimalplaces);
+	  project_id => $project_id,
+	  invoice_id => $invoice_id };
 	
       }
-
-      # save detail record in invoice table
-      $query = qq|INSERT INTO invoice (trans_id, parts_id, description, qty,
-                  sellprice, fxsellprice, discount, allocated,
-		  unit, deliverydate, project_id, serialnumber)
-		  VALUES ($form->{id}, $form->{"id_$i"}, |
-		  .$dbh->quote($form->{"description_$i"}).qq|, |
-		  .($form->{"qty_$i"} * -1) .qq|,
-		  $form->{"sellprice_$i"}, $fxsellprice,
-		  $form->{"discount_$i"}, $allocated, |
-		  .$dbh->quote($form->{"unit_$i"}).qq|, |
-		  .$form->dbquote($form->{"deliverydate_$i"}, SQL_DATE).qq|,
-		  $project_id, |
-		  .$dbh->quote($form->{"serialnumber_$i"}).qq|)|;
-      $dbh->do($query) || $form->dberror($query);
-
     }
   }
 
@@ -311,14 +330,14 @@ sub post_invoice {
     $form->{datepaid} = $form->{"datepaid_$i"} if ($form->{"datepaid_$i"});
   }
 
-  $form->{paid} = $form->round_amount($form->{paid} * $form->{exchangerate}, 2);
-
   # add lineitems + tax
   $amount = 0;
   $grossamount = 0;
+  $fxgrossamount = 0;
   for (@{ $form->{acc_trans}{lineitems} }) {
     $amount += $_->{amount};
     $grossamount += $_->{grossamount};
+    $fxgrossamount += $_->{fxgrossamount};
   }
   $invnetamount = $amount;
 
@@ -334,15 +353,24 @@ sub post_invoice {
     $diff = $form->round_amount($grossamount - $invamount, 2);
     $invamount += $diff;
   }
+  $fxdiff = $form->round_amount($fxdiff,2);
+  $invamount += $fxdiff;
 
+  if ($form->round_amount($form->{paid} - $fxgrossamount,2) == 0) {
+    $form->{paid} = $invamount;
+  } else {
+    $form->{paid} = $form->round_amount($form->{paid} * $form->{exchangerate}, 2);
+  }
+ 
   foreach $ref (sort { $b->{amount} <=> $a->{amount} } @ { $form->{acc_trans}{lineitems} }) {
-    $amount = $ref->{amount} + $diff;
+    $amount = $ref->{amount} + $diff + $fxdiff;
     $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount,
-                transdate, project_id)
+                transdate, project_id, invoice_id)
                 VALUES ($form->{id}, $ref->{chart_id}, $amount * -1,
-		'$form->{transdate}', $ref->{project_id})|;
+		'$form->{transdate}', $ref->{project_id}, $ref->{invoice_id})|;
     $dbh->do($query) || $form->dberror($query);
     $diff = 0;
+    $fxdiff = 0;
   }
 
   $form->{payables} = $invamount;
@@ -445,7 +473,7 @@ sub post_invoice {
       }
  
       # gain/loss
-      $amount = $form->round_amount($form->{"paid_$i"} * $form->{exchangerate},2) - $form->round_amount($form->{"paid_$i"} * $form->{"exchangerate_$i"},2);
+      $amount = $form->round_amount($form->round_amount($form->{"paid_$i"} * $form->{exchangerate},2) - $form->round_amount($form->{"paid_$i"} * $form->{"exchangerate_$i"},2), 2);
       
       if ($amount) {
 	my $accno_id = ($amount > 0) ? $fxgain_accno_id : $fxloss_accno_id;
@@ -776,7 +804,7 @@ sub retrieve_invoice {
 		p.partnumber, i.description, i.qty, i.fxsellprice, i.sellprice,
 		i.parts_id AS id, i.unit, p.bin, i.deliverydate,
 		pr.projectnumber,
-                i.project_id, i.serialnumber, i.discount,
+                i.project_id, i.serialnumber, i.discount, i.notes,
 		pg.partsgroup, p.partsgroup_id, p.partnumber AS sku,
 		p.weight, p.onhand,
 		p.inventory_accno_id, p.income_accno_id, p.expense_accno_id,
@@ -869,7 +897,7 @@ sub retrieve_item {
     $where .= " AND lower(p.partnumber) LIKE '$var'";
   }
   
-  if ($form->{"description_$i"} ne "" && $form->{"partnumber_$i"} eq "") {
+  if ($form->{"description_$i"} ne "") {
     $var = $form->like(lc $form->{"description_$i"});
     if ($form->{language_code} ne "") {
       $where .= " AND lower(t1.description) LIKE '$var'";
@@ -895,7 +923,7 @@ sub retrieve_item {
 
   my $query = qq|SELECT p.id, p.partnumber, p.description,
 		 pg.partsgroup, p.partsgroup_id,
-                 p.lastcost AS sellprice, p.unit, p.bin, p.onhand,
+                 p.lastcost AS sellprice, p.unit, p.bin, p.onhand, p.notes,
 		 p.inventory_accno_id, p.income_accno_id, p.expense_accno_id,
 		 p.partnumber AS sku, p.weight,
 		 t1.description AS translation,

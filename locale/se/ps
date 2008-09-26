@@ -143,6 +143,7 @@ $self{texts} = {
   'Month(s)'                    => 'Månad(er)',
   'N/A'                         => 'ej aktuell',
   'Next Date'                   => 'Nästa datum',
+  'No.'                         => 'Nr.',
   'Non-taxable Purchases'       => 'Momsfria inköp',
   'Non-taxable Sales'           => 'Momsfria försäljningar',
   'Notes'                       => 'Anmärkningar',

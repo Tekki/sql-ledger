@@ -5,7 +5,7 @@
 #  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.org
 #
-#  Contributors:
+#  Contributors: Tony Fraser <tony@sybaspace.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,12 +31,21 @@ package Inifile;
 
 sub new {
   my ($type, $file) = @_;
+
+  warn "$type has no copy constructor! creating a new object." if ref($type);
+  $type = ref($type) || $type;
+  my $self = bless {}, $type;
+  $self->add_file($file) if defined $file;
+
+  return $self;
+}
+
+
+sub add_file {
+  my ($self, $file) = @_;
   
   my $id = "";
 
-  $self ||= {};
-  $type = ref($self) || $self;
-  
   open FH, "$file" or Form->error("$file : $!");
 
   while (<FH>) {
@@ -65,8 +74,6 @@ sub new {
 
   }
   close FH;
-  
-  bless $self, $type;
   
 }
 

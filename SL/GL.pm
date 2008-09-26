@@ -248,10 +248,12 @@ sub all_transactions {
     $var = $form->like(lc $form->{description});
     $glwhere .= " AND lower(g.description) LIKE '$var'";
     $arwhere .= " AND (lower(ct.name) LIKE '$var'
+                       OR lower(ac.memo) LIKE '$var'
                        OR a.id IN (SELECT DISTINCT trans_id
 		                   FROM invoice
 			           WHERE lower(description) LIKE '$var'))";
     $apwhere .= " AND (lower(ct.name) LIKE '$var'
+                       OR lower(ac.memo) LIKE '$var'
                        OR a.id IN (SELECT DISTINCT trans_id
 		               FROM invoice
 			       WHERE lower(description) LIKE '$var'))";
@@ -474,8 +476,6 @@ sub transaction {
   my $paid;
   if ($form->{transfer}) {
     $paid = qq|AND link LIKE '%_paid%'
-               AND NOT (category = 'I'
-	             OR category = 'E')
 	     
 	  UNION
 	  

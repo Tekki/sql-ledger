@@ -70,6 +70,7 @@ $self{texts} = {
   'Invoice Number'              => 'Rechnungsnummer',
   'Invoice Number missing!'     => 'Rechnungsnummer fehlt!',
   'Invoice deleted!'            => 'Rechung gelöscht!',
+  'Item'                        => 'Artikel',
   'Item not on file!'           => 'Dieser Artikel ist nicht in der Datenbank!',
   'Jan'                         => 'Jan',
   'January'                     => 'Januar',

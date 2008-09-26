@@ -1414,21 +1414,15 @@ sub create_dataset {
     </td>
   </tr>
 </table>
- 
-<input type=hidden name=dbdriver value=$form->{dbdriver}>
-<input type=hidden name=dbuser value=$form->{dbuser}>
-<input type=hidden name=dbhost value=$form->{dbhost}>
-<input type=hidden name=dbport value=$form->{dbport}>
-<input type=hidden name=dbpasswd value=$form->{dbpasswd}>
-<input type=hidden name=dbdefault value=$form->{dbdefault}>
+|;
 
+  $form->hide_form(qw(dbdriver dbuser dbhost dbport dbpasswd dbdefault path sessionid));
+  
+  print qq|
+  
 <input name=callback type=hidden value="$form->{script}?action=list_users&path=$form->{path}&sessionid=$form->{sessionid}">
-
-<input type=hidden name=path value=$form->{path}>
-<input type=hidden name=sessionid value=$form->{sessionid}>
-
 <input type=hidden name=nextsub value=dbcreate>
-
+  
 <br>
 <input type=submit class=submit name=action value="|.$locale->text('Continue').qq|">
 

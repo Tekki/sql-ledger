@@ -5,7 +5,7 @@
 #  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.org
 #
-#  Contributors:
+#  Contributors: Tony Fraser <tony@sybaspace.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,16 +27,8 @@
 
 package Menu;
 
-
-sub new {
-  my ($type, $menufile) = @_;
-
-  use SL::Inifile;
-  my $self = Inifile->new($menufile);
-  
-  bless $self, $type if $self;
-
-}
+use SL::Inifile;
+@ISA = qw/Inifile/;
 
 
 sub menuitem {

@@ -135,6 +135,7 @@ $self{texts} = {
   'Method'                      => 'Metoda',
   'Month'                       => 'Miesi±c',
   'N/A'                         => 'N/A',
+  'No.'                         => 'Nr.',
   'Non-taxable Purchases'       => 'Rejestr VAT - Zakupy',
   'Non-taxable Sales'           => 'Rejestr VAT - Sprzeda¿',
   'Notes'                       => 'Noty',

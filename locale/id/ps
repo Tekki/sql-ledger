@@ -94,6 +94,7 @@ $self{texts} = {
   'Message'                     => 'Pesan',
   'Method'                      => 'Metoda',
   'Month'                       => 'Bulan',
+  'No.'                         => 'No.',
   'Non-taxable Purchases'       => 'Pembelian Tanpa Pajak',
   'Non-taxable Sales'           => 'Penjualan Tanpa Pajak',
   'Notes'                       => 'Catatan',

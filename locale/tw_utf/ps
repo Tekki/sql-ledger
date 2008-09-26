@@ -143,6 +143,7 @@ $self{texts} = {
   'Month(s)'                    => '月',
   'N/A'                         => '不適用',
   'Next Date'                   => '下一日',
+  'No.'                         => '序號',
   'Non-taxable Purchases'       => '不應課稅的採購',
   'Non-taxable Sales'           => '不應課稅的銷售',
   'Notes'                       => '備註',

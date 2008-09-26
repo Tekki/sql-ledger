@@ -96,7 +96,11 @@ sub jcitems_links {
     }
   } else {
     if ($form->{type} eq 'timecard') {
-      $form->error($locale->text('No Labor codes on file!'));
+      if ($form->{project} eq 'job') {
+	$form->error($locale->text('No Labor codes on file!'));
+      } else {
+	$form->error($locale->text('No Services on file!'));
+      }
     } else {
       $form->error($locale->text('No Parts on file!'));
     }
@@ -248,6 +252,8 @@ sub search {
 	      <tr>
        		<td nowrap><input name=open class=checkbox type=checkbox value=Y checked> |.$locale->text('Open').qq|</td>
 		<td nowrap><input name=closed class=checkbox type=checkbox value=Y> |.$locale->text('Closed').qq|</td>
+	      </tr>
+	      <tr>
 		$l_time
        		<td nowrap><input name=l_allocated class=checkbox type=checkbox value=Y> |.$locale->text('Allocated').qq|</td>
 	      </tr>
@@ -497,7 +503,7 @@ sub timecard_header {
 	      </tr>
 	      <tr>
 		<th align=right nowrap>$laborlabel</th>
-		<td><select name=partnumber>$form->{selectpartnumber}</td>
+		<td><select name=partnumber>$form->{selectpartnumber}</select></td>
 	      </tr>
 	      <tr valign=top>
 		<th align=right nowrap>|.$locale->text('Description').qq|</th>

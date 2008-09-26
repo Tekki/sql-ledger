@@ -184,7 +184,16 @@ sub display_row {
     $linetotal = $form->round_amount($form->{"sellprice_$i"} - $discount, $decimalplaces);
     $linetotal = $form->round_amount($linetotal * $form->{"qty_$i"}, 2);
 
-    for (qw(partnumber sku description unit)) { $form->{"${_}_$i"} = $form->quote($form->{"${_}_$i"}) }
+    
+    if (($rows = $form->numtextrows($form->{"description_$i"}, 46, 6)) > 1) {
+      $form->{"description_$i"} = $form->quote($form->{"description_$i"});
+      $column_data{description} = qq|<td><textarea name="description_$i" rows=$rows cols=46 wrap=soft>$form->{"description_$i"}</textarea></td>|;
+    } else {
+      $form->{"description_$i"} = $form->quote($form->{"description_$i"});
+      $column_data{description} = qq|<td><input name="description_$i" size=48 value="$form->{"description_$i"}"></td>|;
+    }
+
+    for (qw(partnumber sku unit)) { $form->{"${_}_$i"} = $form->quote($form->{"${_}_$i"}) }
     
     $skunumber = qq|
                 <p><b>$sku</b> $form->{"sku_$i"}| if ($form->{vc} eq 'vendor' && $form->{"sku_$i"});
@@ -193,7 +202,7 @@ sub display_row {
     if ($form->{selectpartsgroup}) {
       if ($i < $numrows) {
 	$partsgroup = qq|
-	      <p><b>$group</b>
+	      <b>$group</b>
 	      <input type=hidden name="partsgroup_$i" value="$form->{"partsgroup_$i"}">|;
 	($form->{"partsgroup_$i"}) = split /--/, $form->{"partsgroup_$i"};
 	$partsgroup .= $form->{"partsgroup_$i"};
@@ -202,20 +211,13 @@ sub display_row {
     }
     
     $delivery = qq|
+          <td colspan=2 nowrap>
 	  <b>${$delvar}</b>
-	  <input name="${delvar}_$i" size=11 title="$myconfig{dateformat}" value="$form->{"${delvar}_$i"}">
+	  <input name="${delvar}_$i" size=11 title="$myconfig{dateformat}" value="$form->{"${delvar}_$i"}"></td>
 |;
 
     $column_data{runningnumber} = qq|<td><input name="runningnumber_$i" size=3 value=$i></td>|;
     $column_data{partnumber} = qq|<td><input name="partnumber_$i" size=15 value="$form->{"partnumber_$i"}" accesskey="$i" title="[Alt-$i]">$skunumber</td>|;
-
-    $form->{"notes_$i"} = $form->quote($form->{"notes_$i"});
-    if (($rows = $form->numtextrows($form->{"description_$i"}, 46, 6)) > 1) {
-      $column_data{description} = qq|<td><textarea name="description_$i" rows=$rows cols=46 wrap=soft title="$form->{"notes_$i"}">$form->{"description_$i"}</textarea>$partsgroup</td>|;
-    } else {
-      $column_data{description} = qq|<td><input name="description_$i" size=48 value="$form->{"description_$i"}" title="$form->{"notes_$i"}">$partsgroup</td>|;
-    }
-
     $column_data{qty} = qq|<td align=right><input name="qty_$i" title="$form->{"onhand_$i"}" size=5 value=|.$form->format_amount(\%myconfig, $form->{"qty_$i"}).qq|></td>|;
     $column_data{ship} = qq|<td align=right><input name="ship_$i" size=5 value=|.$form->format_amount(\%myconfig, $form->{"ship_$i"}).qq|></td>|;
     $column_data{unit} = qq|<td><input name="unit_$i" size=5 value="$form->{"unit_$i"}"></td>|;
@@ -237,7 +239,7 @@ sub display_row {
 <input type=hidden name="oldqty_$i" value="$form->{"qty_$i"}">
 |;
 
-    for (qw(orderitems_id id bin weight listprice lastcost taxaccounts pricematrix sku onhand assembly inventory_accno_id income_accno_id expense_accno_id notes)) {
+    for (qw(orderitems_id id bin weight listprice lastcost taxaccounts pricematrix sku onhand assembly inventory_accno_id income_accno_id expense_accno_id)) {
       $form->hide_form("${_}_$i");
     }
   
@@ -249,11 +251,20 @@ sub display_row {
 		<select name="projectnumber_$i">$form->{selectprojectnumber}</select>
 | if $form->{selectprojectnumber};
 
+
+    if (($rows = $form->numtextrows($form->{"notes_$i"}, 46, 6)) > 1) {
+      $form->{"notes_$i"} = $form->quote($form->{"notes_$i"});
+      $notes = qq|<td><textarea name="notes_$i" rows=$rows cols=46 wrap=soft>$form->{"notes_$i"}</textarea></td>|;
+    } else {
+      $form->{"notes_$i"} = $form->quote($form->{"notes_$i"});
+      $notes = qq|<td><input name="notes_$i" size=48 value="$form->{"notes_$i"}"></td>|;
+    }
+	
     $serial = qq|
-                <b>$serialnumber</b> <input name="serialnumber_$i" size=15 value="$form->{"serialnumber_$i"}">| if $form->{type} !~ /_quotation/;
+                <td colspan=6 nowrap><b>$serialnumber</b> <input name="serialnumber_$i" value="$form->{"serialnumber_$i"}"></td>| if $form->{type} !~ /_quotation/;
 		
-    $partsgroup = "";
     if ($i == $numrows) {
+      $partsgroup = "";
       if ($form->{selectpartsgroup}) {
 	$partsgroup = qq|
 	        <b>$group</b>
@@ -263,16 +274,20 @@ sub display_row {
 
       $serial = "";
       $project = "";
-      $delivery = ""
+      $delivery = "";
+      $notes = "";
     }
 
 	
-    # print second row
+    # print second and third row
     print qq|
-        <tr>
-	  <td colspan=$colspan>
+        <tr valign=top>
 	  $delivery
+	  $notes
 	  $serial
+	</tr>
+        <tr valign=top>
+	  <td colspan=$colspan>
 	  $project
 	  $partsgroup
 	  </td>
@@ -1284,7 +1299,7 @@ sub print_form {
 
   @a = ();
   foreach $i (1 .. $form->{rowcount}) {
-    push @a, ("partnumber_$i", "description_$i", "projectnumber_$i", "partsgroup_$i", "serialnumber_$i", "bin_$i", "unit_$i");
+    push @a, ("partnumber_$i", "description_$i", "projectnumber_$i", "partsgroup_$i", "serialnumber_$i", "bin_$i", "unit_$i", "notes_$i");
   }
   for (split / /, $form->{taxaccounts}) { push @a, "${_}_description" }
 
@@ -1323,7 +1338,7 @@ sub print_form {
     for ("${inv}date", "${due}date", "shippingdate", "transdate") { $form->{$_} = $locale->date(\%myconfig, $form->{$_}, $form->{longformat}) }
   }
   
-  @a = qw(name address1 address2 city state zipcode country);
+  @a = qw(name address1 address2 city state zipcode country contact phone fax email);
  
   $shipto = 1;
   # if there is no shipto fill it in from billto

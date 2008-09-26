@@ -139,6 +139,7 @@ $self{texts} = {
   'Month'                       => 'Mois',
   'N/A'                         => 'Non applicable',
   'Next Date'                   => 'Prochaine date',
+  'No.'                         => 'N°',
   'Non-taxable Purchases'       => 'Achats hors taxe',
   'Non-taxable Sales'           => 'Ventes hors taxe',
   'Notes'                       => 'Notes',

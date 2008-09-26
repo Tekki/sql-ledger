@@ -125,6 +125,7 @@ $self{texts} = {
   'Method'                      => 'Tapa',
   'Month'                       => 'Kuukausi',
   'N/A'                         => 'Ei saatavilla',
+  'No.'                         => 'no',
   'Non-taxable Purchases'       => 'Verottomat ostot',
   'Non-taxable Sales'           => 'Verottomat myynnit',
   'Notes'                       => 'Lisätietoja',

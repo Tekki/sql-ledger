@@ -447,21 +447,7 @@ sub select_payment {
     for (@column_index) { $column_data{$_} = qq|<td>$form->{"${_}_$i"}</td>| }
 
     $paid = $form->{"paid_$i"};
-    if ($form->{vc} eq 'customer') {
-      if ($form->{formname} eq 'check') {
-        next if $paid !~ s/-//;
-      } else {
-        next if $paid =~ /-/;
-      }
-      $ok = 1;
-    } else {
-      if ($form->{formname} eq 'receipt') {
-        next if $paid !~ s/-//;
-      } else {
-        next if $paid =~ /-/;
-      }
-      $ok = 1;
-    }
+    $ok = 1;
 
     $column_data{ndx} = qq|<td><input name=ndx class=radio type=radio value=$i $checked></td>|;
     $column_data{paid} = qq|<td align=right>$paid</td>|;

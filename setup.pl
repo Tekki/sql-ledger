@@ -22,17 +22,32 @@ $gzip = `gzip -V 2>&1`;            # gz decompression utility
 $tar = `tar --version 2>&1`;       # tar archiver
 $latex = `latex -version`;
 
-@source = (
-            "http://www.sql-ledger.org/source",
-            "http://www.sql-ledger.com/source",
-            "http://abacus.sql-ledger.com/source",
-	    "http://pluto.sql-ledger.com/source" );
+%checkversion = ( www => 3, abacus => 4, pluto => 5, neptune => 8 );
+
+%source = (
+	    1 => { url => "http://voxel.dl.sourceforge.net/sourceforge/sql-ledger", site => "New York, U.S.A", locale => us },
+            2 => { url => "http://easynews.dl.sourceforge.net/sourceforge/sql-ledger", site => "Arizona, U.S.A", locale => us },
+	    3 => { url => "http://www.sql-ledger.com/source", site => "California, U.S.A", locale => us },
+            4 => { url => "http://abacus.sql-ledger.com/source", site => "Toronto, Canada", locale => ca },
+	    5 => { url => "http://pluto.sql-ledger.com/source", site => "Edmonton, Canada", locale => ca },
+	    6 => { url => "http://ufpr.dl.sourceforge.net/sourceforge/sql-ledger", site =>"Brazil", locale => br },
+	    7 => { url => "http://surfnet.dl.sourceforge.net/sourceforge/sql-ledger", site => "The Netherlands", locale => nl },
+	    8 => { url => "http://neptune.sql-ledger.com/source", site => "Ireland", locale => ie },
+	    9 => { url => "http://kent.dl.sourceforge.net/sourceforge/sql-ledger", site => "U.K", locale => uk },
+	    10 => { url => "http://ovh.dl.sourceforge.net/sourceforge/sql-ledger", site => "France", locale => fr },
+	    11 => { url => "http://mesh.dl.sourceforge.net/sourceforge/sql-ledger", site => "Germany", locale => de },
+	    12 => { url => "http://citkit.dl.sourceforge.net/sourceforge/sql-ledger", site => "Russia", locale => ru },
+	    13 => { url => "http://optusnet.dl.sourceforge.net/sourceforge/sql-ledger", site => "Sidney, Australia", locale => au },
+	    14 => { url => "http://nchc.dl.sourceforge.net/sourceforge/sql-ledger", site => "Taiwan", locale => tw },
+	    15 => { url => "http://jaist.dl.sourceforge.net/sourceforge/sql-ledger", site => "Japan", locale => jp }
+	  );
 
 $userspath = "users";         # default for new installation
 
 eval { require "sql-ledger.conf"; };
 
 $filename = shift;
+chomp $filename;
 
 $newinstall = 1;
 
@@ -85,8 +100,9 @@ if ($httpd = `find /etc /usr/local/etc -type f -name 'httpd.conf'`) {
 
 }
 
-$confd = `find /etc /usr/local/etc -type d -name 'conf.d'`;
-chomp $confd;
+if ($confd = `find /etc /usr/local/etc -type d -name 'apache*/conf.d'`) {
+  chomp $confd;
+}
 
 system("tput clear");
 
@@ -96,6 +112,7 @@ if ($filename) {
 
 # check for latest version
 &get_latest_version;
+chomp $latest_version;
 
 if (!$newinstall) {
 
@@ -146,6 +163,23 @@ if ($a !~ /d/) {
   
 }
 
+if ($a ne 'f') {
+  system("tput clear");
+
+  # choose site
+  foreach $item (sort { $a <=> $b } keys %source) {
+    $i++;
+    print qq|$i. $source{$item}{site}\n|;
+  }
+
+  $site = "1";
+
+  print qq|\nChoose Location [$site] : |;
+  $b = <STDIN>;
+  chomp $b;
+  $site = $b if $b;
+}
+
 if ($a eq 'd') {
   &download;
 }
@@ -181,13 +215,11 @@ sub get_latest_version {
   }
 
   if ($lwp) {
-    foreach $source (@source) {
-      $host = $source;
-      $host =~ s/(\w\/).*/$1/g;
-      chop $host;
-      print "\nTrying $host ... ";
+    foreach $source (qw(pluto www abacus neptune)) {
+      $url = $source{$checkversion{$source}}{url};
+      print "\n$source{$checkversion{$source}}{site} ... ";
 
-      $latest_version = LWP::Simple::get("$source/latest_version");
+      $latest_version = LWP::Simple::get("$url/latest_version");
       
       if ($latest_version) {
 	last;
@@ -201,15 +233,12 @@ sub get_latest_version {
       exit 1;
     }
 
-    foreach $source (@source) {
-      $host = $source;
-      $host =~ s/(\w\/).*/$1/g;
-      chop $host;
-      print "\nTrying $host ... ";
-      $ok = `lynx -dump -head $source/latest_version`;
-      if ($ok = ($ok =~ s/HTTP.*?200 OK//g)) {
-	$latest_version = `lynx -dump $source/latest_version`;
-	chomp $latest_version;
+    foreach $source (qw(pluto www abacus neptune)) {
+      $url = $source{$checkversion{$source}}{url};
+      print "\n$source{$checkversion{$source}}{site} ... ";
+      $ok = `lynx -dump -head $url/latest_version`;
+      if ($ok = ($ok =~ s/HTTP.*?200 //)) {
+	$latest_version = `lynx -dump $url/latest_version`;
 	last;
       } else {
 	print "not found";
@@ -218,7 +247,6 @@ sub get_latest_version {
     die unless $ok;
   }
 
-  chomp $latest_version;
   if ($latest_version) {
     print "ok\n";
     1;
@@ -230,33 +258,42 @@ sub get_latest_version {
 sub get_source_code {
 
   $err = 0;
- 
+
+  @order = ();
+  push @order, $site;
+  
+  for (sort { $a <=> $b } keys %source) {
+    push @order, $_;
+  }
+
   if ($latest_version) {
     # download it
+    chomp $latest_version;
     $latest_version = "sql-ledger-${latest_version}.tar.gz";
-    
+
     print "\nStatus\n";
     print "Downloading $latest_version .... ";
 
-    foreach $source (@source) {
-      $host = $source;
-      $host =~ s/(\w\/).*/$1/g;
-      chop $host;
-      print "\nTrying $host .... ";
-    
+    foreach $key (@order) {
+      print "\n$source{$key}{site} .... ";
+
       if ($lwp) {
-	$err = LWP::Simple::getstore("$source/$latest_version", "$latest_version");
+	$err = LWP::Simple::getstore("$source{$key}{url}/$latest_version", "$latest_version");
 	$err -= 200;
       } else {
-	$ok = `lynx -dump -head $source/$latest_version`;
-	$err = !($ok =~ s/HTTP.*?200 OK//);
+	$ok = `lynx -dump -head $source{$key}{url}/$latest_version`;
+	$err = !($ok =~ s/HTTP.*?200 //);
 
 	if (!$err) {
-	  $err = system("lynx -dump $source/$latest_version > $latest_version");
+	  $err = system("lynx -dump $source{$key}{url}/$latest_version > $latest_version");
 	}
       }
 
-      last unless $err;
+      if ($err) {
+	print "failed!";
+      } else {
+	last;
+      }
 
     }
     
@@ -267,7 +304,7 @@ sub get_source_code {
   if ($err) {
     die "Cannot get $latest_version";
   } else {
-    print "ok\n";
+    print "ok!\n";
   }
 
   $latest_version;

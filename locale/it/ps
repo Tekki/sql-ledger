@@ -98,6 +98,7 @@ $self{texts} = {
   'May '                        => 'Mag ',
   'Message'                     => 'Messaggio',
   'N/A'                         => 'N/A',
+  'No.'                         => 'No.',
   'Notes'                       => 'Note',
   'Nothing selected!'           => 'Non hai selezionato nulla!',
   'Nov'                         => 'Nov',

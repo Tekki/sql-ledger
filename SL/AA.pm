@@ -501,6 +501,8 @@ sub transactions {
   my $ARAP = 'AR';
   my $table = 'ar';
   my $buysell = 'buy';
+  my $acc_trans_join;
+  my $acc_trans_flds;
   
   if ($form->{vc} eq 'vendor') {
     $ml = -1;
@@ -519,22 +521,39 @@ sub transactions {
 	       AND (c.link LIKE '%${ARAP}_paid%' OR c.link = '')|;
     $paid .= qq|
                AND ac.transdate <= '$form->{transdateto}'| if $form->{transdateto};
+    $form->{summary} = 1;
   }
 
+  
+  if (!$form->{summary}) {
+    $acc_trans_flds = qq|, c.accno, ac.source,
+			 pr.projectnumber, ac.memo AS description,
+			 ac.amount AS linetotal,
+			 i.description AS linedescription|;
+		    
+    $acc_trans_join = qq|
+	    JOIN acc_trans ac ON (a.id = ac.trans_id)
+	    JOIN chart c ON (c.id = ac.chart_id)
+	    LEFT JOIN project pr ON (pr.id = ac.project_id)
+	    LEFT JOIN invoice i ON (i.id = ac.invoice_id)
+	    |;
+  }
+    
   my $query = qq|SELECT a.id, a.invnumber, a.ordnumber, a.transdate,
                  a.duedate, a.netamount, a.amount, ($paid) AS paid,
 		 a.invoice, a.datepaid, a.terms, a.notes,
-		 a.shipvia, a.shippingpoint, e.name AS employee, c.name,
-		 $form->{vc}_id, a.till, m.name AS manager, a.curr,
+		 a.shipvia, a.shippingpoint, e.name AS employee, vc.name,
+		 a.$form->{vc}_id, a.till, m.name AS manager, a.curr,
 		 ex.$buysell AS exchangerate, d.description AS department,
-		 a.ponumber
+		 a.ponumber $acc_trans_flds
 	         FROM $table a
-	      JOIN $form->{vc} c ON (a.$form->{vc}_id = c.id)
+	      JOIN $form->{vc} vc ON (a.$form->{vc}_id = vc.id)
 	      LEFT JOIN employee e ON (a.employee_id = e.id)
 	      LEFT JOIN employee m ON (e.managerid = m.id)
 	      LEFT JOIN exchangerate ex ON (ex.curr = a.curr
 	                                    AND ex.transdate = a.transdate)
 	      LEFT JOIN department d ON (a.department_id = d.id)
+	      $acc_trans_join
 	      |;
 
   my %ordinal = ( id => 1,
@@ -551,6 +570,10 @@ sub transactions {
 		  curr => 20,
 		  department => 22,
 		  ponumber => 23,
+		  accno => 24,
+		  source => 25,
+		  project => 26,
+		  description => 27
 		);
 
   
@@ -558,14 +581,14 @@ sub transactions {
   push @a, "employee" if $form->{l_employee};
   push @a, "manager" if $form->{l_manager};
   my $sortorder = $form->sort_order(\@a, \%ordinal);
-  
+
   my $where = "1 = 1";
   if ($form->{"$form->{vc}_id"}) {
     $where .= qq| AND a.$form->{vc}_id = $form->{"$form->{vc}_id"}|;
   } else {
     if ($form->{$form->{vc}}) {
       $var = $form->like(lc $form->{$form->{vc}});
-      $where .= " AND lower(c.name) LIKE '$var'";
+      $where .= " AND lower(vc.name) LIKE '$var'";
     }
   }
   if ($form->{department}) {
@@ -595,6 +618,12 @@ sub transactions {
     $var = $form->like(lc $form->{notes});
     $where .= " AND lower(a.notes) LIKE '$var'";
   }
+  if ($form->{description} && $acc_trans_flds) {
+    $var = $form->like(lc $form->{description});
+    $where .= " AND lower(ac.memo) LIKE '$var'
+                OR lower(i.description) LIKE '$var'";
+  }
+ 
   
   $where .= " AND a.transdate >= '$form->{transdatefrom}'" if $form->{transdatefrom};
   $where .= " AND a.transdate <= '$form->{transdateto}'" if $form->{transdateto};
@@ -634,10 +663,8 @@ sub transactions {
 				WHERE lower(description) LIKE '$var'))|;
   }
 
- 
   $query .= "
              WHERE $where
-	     $union
              ORDER by $sortorder";
 
   my $sth = $dbh->prepare($query);
@@ -645,6 +672,18 @@ sub transactions {
 
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
     $ref->{exchangerate} = 1 unless $ref->{exchangerate};
+    if ($ref->{linetotal} <= 0) {
+      $ref->{debit} = $ref->{linetotal} * -1;
+      $ref->{credit} = 0;
+    } else {
+      $ref->{debit} = 0;
+      $ref->{credit} = $ref->{linetotal};
+    }
+
+    if ($ref->{invoice}) {
+      $ref->{description} ||= $ref->{linedescription};
+    }
+
     if ($form->{outstanding}) {
       next if $form->round_amount($ref->{amount}, 2) == $form->round_amount($ref->{paid}, 2);
     }
