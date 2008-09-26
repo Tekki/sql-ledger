@@ -24,6 +24,7 @@ $self{subs} = {
   'post_as_new'                 => 'post_as_new',
   'print_and_post_as_new'       => 'print_and_post_as_new',
   'project_selected'            => 'project_selected',
+  'rebuild_formnames'           => 'rebuild_formnames',
   'rebuild_vc'                  => 'rebuild_vc',
   'repost'                      => 'repost',
   'reprint'                     => 'reprint',

@@ -13,7 +13,6 @@ $self{texts} = {
   'Add AR Transaction'          => 'Lisa MR Tehing',
   'Address'                     => 'Aadress',
   'Amount'                      => 'Summa',
-  'Amount Due'                  => 'Võlaosa',
   'Apr'                         => 'Apr',
   'April'                       => 'Aprill',
   'Are you sure you want to delete Transaction' => 'Kas oled kindel, et soovid kustutada kande',

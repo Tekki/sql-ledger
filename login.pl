@@ -71,7 +71,7 @@ if (-e "$userspath/nologin" && $script ne 'admin.pl') {
 
 if ($form{path}) {
   $form{path} =~ s/%2f/\//gi;
-  $form{path} =~ s/\.\.\///g;
+  $form{path} =~ s/\.\.//g;
 
   if ($form{path} !~ /^bin\//) {
     print "Content-Type: text/html\n\n" if $ENV{HTTP_USER_AGENT};
@@ -104,7 +104,7 @@ if ($form{path}) {
 
   if ($form{terminal}) {
     $form{terminal} =~ s/%2f/\//gi;
-    $form{terminal} =~ s/\.\.\///g;
+    $form{terminal} =~ s/\.\.//g;
 
     $ARGV[0] = "path=bin/$form{terminal}&script=$script";
     map { $ARGV[0] .= "&${_}=$form{$_}" } keys %form;

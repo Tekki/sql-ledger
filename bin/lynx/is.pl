@@ -224,7 +224,6 @@ sub prepare_invoice {
     $form->{format} ||= "pdf";
   }
   $form->{media} ||= $myconfig{printer};
-  $form->{rvp} = $myconfig{rvp} if $form->{remittancevoucher};
 
   $ml = 1;
 
@@ -232,6 +231,7 @@ sub prepare_invoice {
     $form->{selectformname} = qq|invoice--|.$locale->text('Invoice')
 .qq|\npick_list--|.$locale->text('Pick List')
 .qq|\npacking_list--|.$locale->text('Packing List');
+    $form->{selectformname} .= qq|\nremittance_voucher--|.$locale->text('Remittance Voucher') if $form->{remittancevoucher};
   }
   if ($form->{type} eq 'credit_invoice') {
     $ml = -1;
@@ -387,9 +387,17 @@ sub form_header {
   $description = qq|
  	      <tr valign=top>
 		<th align=right nowrap>|.$locale->text('Description').qq|</th>
-		<td colspan=3>$description</td>
+		<td>$description</td>
 	      </tr>
 |;
+
+  $dcn = qq|
+        <tr>
+	  <th align=right nowrap>|.$locale->text('DCN').qq|</th>
+	  <td>|.$form->quote($form->{dcn}).qq|</td>
+	</tr>
+|;
+
  
   %title = ( pick_list => $locale->text('Pick List'),
 	     packing_list => $locale->text('Packing List'),
@@ -410,7 +418,7 @@ sub form_header {
 <form method=post action="$form->{script}">
 |;
 
-  $form->hide_form(qw(id type printed emailed queued title vc discount creditlimit creditremaining tradediscount business closedto locked shipped oldtransdate oldduedate recurring defaultcurrency oldterms cdt order_id));
+  $form->hide_form(qw(id type printed emailed queued title vc discount creditlimit creditremaining tradediscount business closedto locked shipped oldtransdate oldduedate recurring defaultcurrency oldterms cdt precision order_id remittancevoucher));
 
   $form->hide_form(map { "select$_" } ("$form->{vc}", "AR", "AR_paid", "AR_discount"));
   $form->hide_form(map { "select$_" } qw(formname currency partsgroup projectnumber department warehouse employee language));
@@ -426,7 +434,8 @@ sub form_header {
 	      </tr>
 |;
 
-  if ($form->{type} !~ /(credit|debit)_/) {
+  if ($form->{type} !~ /credit_/) {
+
     if ($form->{"selectAR_discount"}) {
       $terms = qq|
   	      <tr>
@@ -534,6 +543,7 @@ sub form_header {
   <tr>
     <td>
       <table>
+        $dcn
 	$description
       </table>
   </td>
@@ -541,7 +551,7 @@ sub form_header {
 |;
 
   $form->hide_form(map { "shipto$_" } qw(name address1 address2 city state zipcode country contact phone fax email));
-  $form->hide_form(qw(city state country message email subject cc bcc taxaccounts));
+  $form->hide_form(qw(city state country message email subject cc bcc taxaccounts dcn));
   
   foreach $accno (split / /, $form->{taxaccounts}) { $form->hide_form(map { "${accno}_$_" } qw(rate description taxnumber)) }
 

@@ -52,7 +52,6 @@ $self{texts} = {
   'HTML Templates'              => 'HTML Sjablonen',
   'History'                     => 'Historie',
   'Income Statement'            => 'Resultatenrekening',
-  'Invoice'                     => 'Factuur',
   'LaTeX Templates'             => 'LaTeX Sjablonen',
   'Labor/Overhead'              => 'Arbeids-/Overheadkosten',
   'Language'                    => 'Taal',

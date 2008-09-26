@@ -1,6 +1,7 @@
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
+  'Account'                     => '帐户',
   'Accounting Menu'             => '会计选单',
   'Active'                      => '活跃',
   'Add'                         => '新增',

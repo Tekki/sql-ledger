@@ -21,6 +21,7 @@ use SL::BP;
 sub search {
 
 # $locale->text('Invoices')
+# $locale->text('Remittance Vouchers')
 # $locale->text('Packing Lists')
 # $locale->text('Pick Lists')
 # $locale->text('Sales Orders')
@@ -39,6 +40,7 @@ sub search {
 # $locale->text('Employee Number')
 
   %label = ( invoice => { title => 'Invoices', name => ['Customer','Vendor'] },
+             remittance_voucher => { title => 'Remittance Vouchers', name => ['Customer'] },
              packing_list => { title => 'Packing Lists', name => ['Customer', 'Vendor'] },
              pick_list => { title => 'Pick Lists', name => ['Customer','Vendor'] },
              sales_order => { title => 'Sales Orders', name => ['Customer'] },
@@ -69,6 +71,7 @@ sub search {
 	</tr>
 |;
 
+  $label{remittance_voucher}{invnumber} = $label{invoice}{invnumber};
   $label{packing_list}{invnumber} = $label{invoice}{invnumber};
   $label{packing_list}{ordnumber} = $label{invoice}{ordnumber};
   $label{pick_list}{invnumber} = $label{invoice}{invnumber};
@@ -378,7 +381,7 @@ sub print {
       
       for (qw(id vc)) { $form->{$_} = $myform->{"${_}_$i"} }
       $form->{script} = qq|$myform->{"module_$i"}.pl|;
-      for (qw(login path media rvp sendmode format type precision)) { $form->{$_} = $myform->{$_} }
+      for (qw(login path media sendmode format type header)) { $form->{$_} = $myform->{$_} }
 
       do "$form->{path}/$form->{script}";
 
@@ -397,8 +400,18 @@ sub print {
 	  $form->{formname} = $myform->{type};
 	}
 	delete $form->{paid};
-	for (1 .. $form->{paidaccounts}) { $form->{"paid_$_"} = $form->format_amount(\%myconfig, $form->{"paid_$_"}, $form->{precision}) }
-	$form->{paidaccounts}++;
+	
+	$form->{payment_accno} = $form->unescape($form->{payment_accno});
+	$arap = ($form->{vc} eq 'customer') ? "AR" : "AP";
+        @a = split /\n/, $form->unescape($form->{"select${arap}_paid"});
+	$form->{payment_accno} ||= $a[0];
+
+	for (2 .. $form->{paidaccounts}) {
+	  $form->{"paid_$_"} = $form->format_amount(\%myconfig, $form->{"paid_$_"}, $form->{precision});
+	  $form->{payment_accno} = $form->{"${arap}_paid_$_"};
+	}
+
+	$form->{"${arap}_paid_$form->{paidaccounts}"} = $form->{payment_accno};
 	$inv = 'inv'
       }
 
@@ -417,7 +430,11 @@ sub print {
       $myform->info(qq|, $myform->{description}|) if $myform->{description};
 
       if ($myform->{"module_$i"} ne 'jc') {
-	$total += $form->parse_amount(\%myconfig, $form->{"${inv}total"});
+	if ($form->{formname} =~ /_invoice/) {
+	  $total -= $form->parse_amount(\%myconfig, $form->{"${inv}total"});
+	} else {
+	  $total += $form->parse_amount(\%myconfig, $form->{"${inv}total"});
+	}
 	$myform->info(qq|, $form->{"${inv}total"}, $form->{"$form->{vc}number"}, $form->{"$form->{vc}"}, $form->{city}|);
       }
       $myform->info(" ... ".$locale->text('ok')."\n");
@@ -427,7 +444,7 @@ sub print {
     }
   }
   
-  $myform->info($locale->text('Total').": ".$form->format_amount(\%myconfig, $total, $form->{precision})) if $total;
+  $myform->info($locale->text('Total').": ".$form->format_amount(\%myconfig, $total, $myform->{precision})) if $total;
   
   for (keys %$form) { delete $form->{$_} }
   for (keys %$myform) { $form->{$_} = $myform->{$_} }
@@ -572,7 +589,7 @@ sub list_spool {
 
 
   @columns = qw(transdate);
-  if ($form->{type} =~ /(packing|pick|bin)_list|invoice/) {
+  if ($form->{type} =~ /(packing|pick|bin)_list|invoice|remittance_voucher/) {
     push @columns, "invnumber";
   }
   if ($form->{type} =~ /_(order|list)$/) {
@@ -768,13 +785,12 @@ function CheckAll() {
 <br>
 |;
 
-  $form->hide_form(qw(callback title type sort path login printcustomer printvendor customer customernumber vendor vendornumber employee employeenumber batch invnumber ordnumber quonumber description transdatefrom transdateto open closed onhold printed emailed notprinted notemailed));
+  $form->hide_form(qw(callback title type sort path login printcustomer printvendor customer customernumber vendor vendornumber employee employeenumber batch invnumber ordnumber quonumber description transdatefrom transdateto open closed onhold printed emailed notprinted notemailed precision));
 
   $form->{copies} ||= 1;
 
   $selectformat = "";
   $media = qq|<select name=media>|;
-  $rvp = $locale->text('Remittance Voucher').qq| <select name=rvp>|;
   
   $form->{format} ||= $myconfig{outputformat};
 
@@ -784,7 +800,6 @@ function CheckAll() {
           <option value="html">|.$locale->text('html');
   } else {
     $form->{media} ||= $myconfig{printer};
-    $form->{rvp} ||= $myconfig{rvp};
     $form->{format} ||= "postscript";
     exit if (! $latex && $form->{batch} eq 'print');
   }
@@ -799,7 +814,6 @@ function CheckAll() {
     
     for (sort keys %printer) {
       $media .= qq|<option value="$_">$_|;
-      $rvp .= qq|<option value="$_">$_|;
     }
 
     $media .= qq|
@@ -813,20 +827,15 @@ function CheckAll() {
   }
  
   $media .= qq|</select>|;
-  $rvp .= qq|</select>|;
 
   $media =~ s/(<option value="\Q$form->{media}\E")/$1 selected/;
   $media = qq|<td>$media</td>|;
   
-  $rvp =~ s/(<option value="\Q$form->{rvp}\E")/$1 selected/;
-  $rvp = qq|<td>$rvp</td>|;
-
   $format = qq|<select name=format>$selectformat</select>|;
   $format =~ s/(<option value="\Q$form->{format}\E")/$1 selected/;
   $format = qq|<td>$format</td>|;
  
   if ($form->{batch} eq 'email') {
-    $rvp = "";
     $media = qq|<input type="hidden" name="media" value="email">
 <input type="hidden" name="sendmode" value="attachment">
 |;
@@ -834,10 +843,8 @@ function CheckAll() {
   if ($form->{batch} eq 'queue') {
     $format = "";
     $copies = "";
-    $rvp = "";
   }
 
-  $rvp = "" if $form->{type} !~ /invoice/;
 
   print qq|
 <table>
@@ -845,7 +852,6 @@ function CheckAll() {
   $format
   $media
   $copies
-  $rvp
   </tr>
 </table>
 <p>

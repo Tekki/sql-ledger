@@ -535,6 +535,15 @@ sub invoice_details {
 
   for my $dcn (qw(dcn rvc)) { $form->{$dcn} = $form->format_dcn($form->{$dcn}) }
 
+  # save dcn
+  if ($form->{id}) {
+    $query = qq|UPDATE ar SET
+		dcn = '$form->{dcn}',
+		bank_id = (SELECT id FROM chart WHERE accno = '$paymentaccno')
+		WHERE id = $form->{id}|;
+    $dbh->do($query) || $form->dberror($query);
+  }
+
   $dbh->disconnect;
   
 }
@@ -728,7 +737,8 @@ sub post_invoice {
     $form->{"${_}_id"} *= 1;
   }
 
-  my %defaults = $form->get_defaults($dbh, \@{['fx%_accno_id', 'cdt']});
+  my %defaults = $form->get_defaults($dbh, \@{['fx%_accno_id', 'cdt', 'precision']});
+  $form->{precision} = $defaults{precision};
 
   $query = qq|SELECT p.assembly, p.inventory_accno_id,
               p.income_accno_id, p.expense_accno_id, p.project_id
@@ -1316,7 +1326,6 @@ sub post_invoice {
 
   $form->{dcn} = $form->format_dcn($form->{dcn});
 
-
   # save AR record
   $query = qq|UPDATE ar set
               invnumber = |.$dbh->quote($form->{invnumber}).qq|,
@@ -1349,7 +1358,8 @@ sub post_invoice {
 	      onhold = '$form->{onhold}',
 	      warehouse_id = $form->{warehouse_id},
 	      exchangerate = $form->{exchangerate},
-	      dcn = '$form->{dcn}'
+	      dcn = '$form->{dcn}',
+	      bank_id = (SELECT id FROM chart WHERE accno = '$paymentaccno')
               WHERE id = $form->{id}
              |;
   $dbh->do($query) || $form->dberror($query);
@@ -1776,8 +1786,7 @@ sub retrieve_invoice {
 
   my $query;
   
-  my %defaults = $form->get_defaults($dbh, \@{['currencies']});
-  $form->{currencies} = $defaults{currencies};
+  $form->{currencies} = $form->get_currencies($dbh, $myconfig);
  
   if ($form->{id}) {
     
@@ -1791,10 +1800,12 @@ sub retrieve_invoice {
 		a.employee_id, e.name AS employee, a.till, a.customer_id,
 		a.language_code, a.ponumber,
 		a.warehouse_id, w.description AS warehouse,
-		a.exchangerate
+		a.exchangerate,
+		c.accno AS bank_accno, c.description AS bank_description
 		FROM ar a
 	        LEFT JOIN employee e ON (e.id = a.employee_id)
 		LEFT JOIN warehouse w ON (a.warehouse_id = w.id)
+		LEFT JOIN chart c ON (c.id = a.bank_id)
 		WHERE a.id = $form->{id}|;
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
@@ -1802,6 +1813,7 @@ sub retrieve_invoice {
     $ref = $sth->fetchrow_hashref(NAME_lc);
     for (keys %$ref) { $form->{$_} = $ref->{$_} }
     $sth->finish;
+    $form->{payment_accno} = "$form->{bank_accno}--$form->{bank_description}" if $form->{bank_accno};
     $form->{type} = ($form->{amount} < 0) ? 'credit_invoice' : 'invoice';
     $form->{type} = 'pos_invoice' if $form->{till};
     $form->{formname} = $form->{type};
@@ -1840,7 +1852,7 @@ sub retrieve_invoice {
     $sth->execute || $form->dberror($query);
 
     # foreign currency
-    &exchangerate_defaults($dbh, $form);
+    &exchangerate_defaults($dbh, $myconfig, $form);
 
     # query for price matrix
     my $pmh = &price_matrix_query($dbh, $form);
@@ -1958,7 +1970,7 @@ sub retrieve_item {
   my $ptref;
 
   # setup exchange rates
-  &exchangerate_defaults($dbh, $form);
+  &exchangerate_defaults($dbh, $myconfig, $form);
   
   # taxes
   $query = qq|SELECT c.accno
@@ -2119,17 +2131,15 @@ sub price_matrix {
 
 
 sub exchangerate_defaults {
-  my ($dbh, $form) = @_;
+  my ($dbh, $myconfig, $form) = @_;
 
   my $var;
   
-  # get default currencies
   my $query;
   
-  my %defaults = $form->get_defaults($dbh, \@{['currencies']});
-  
-  $form->{defaultcurrency} = substr($defaults{currencies},0,3);
-  $form->{currencies} = $defaults{currencies};
+  # get default currencies
+  $form->{currencies} = $form->get_currencies($dbh, $myconfig);
+  $form->{defaultcurrency} = substr($form->{currencies},0,3);
   
   $query = qq|SELECT buy
               FROM exchangerate

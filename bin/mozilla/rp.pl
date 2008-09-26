@@ -63,8 +63,6 @@ use SL::RP;
 
 sub report {
 
-  $form->{decimalplaces} = $form->{precision};
-
   %report = ( balance_sheet	=> { title => 'Balance Sheet' },
              income_statement	=> { title => 'Income Statement' },
              trial_balance	=> { title => 'Trial Balance' },
@@ -163,9 +161,30 @@ sub report {
 
   }
   
+  $form->{decimalplaces} = $form->{precision};
+ 
   $method{accrual} = "checked" if $form->{method} eq 'accrual';
   $method{cash} = "checked" if $form->{method} eq 'cash';
 
+  if ($form->{report} eq 'balance_sheet' || $form->{report} eq 'income_statement') {
+    $form->{currencies} = $form->get_currencies(undef, \%myconfig);
+
+    if ($form->{currencies}) {
+      @curr = split /:/, $form->{currencies};
+      $form->{defaultcurrency} = $curr[0];
+      for (@curr) { $form->{selectcurrency} .= "$_\n" }
+      
+      $curr = qq|
+          <tr>
+	    <th align=right>|.$locale->text('Currency').qq|</th>
+	    <td><select name=currency>|
+	    .$form->select_option($form->{selectcurrency}, $form->{defaultcurrency})
+	    .qq|</select></td>
+	  </tr>|
+	    .$form->hide_form(defaultcurrency);
+    }
+  }
+  
   $method = qq|
 	<tr>
 	  <th align=right>|.$locale->text('Method').qq|</th>
@@ -268,6 +287,7 @@ sub report {
     }
 
     print qq|
+	$curr
 	<tr>
 	  <th align=right>|.$locale->text('Decimalplaces').qq|</th>
 	  <td><input name=decimalplaces size=3 value=$form->{decimalplaces}></td>
@@ -327,8 +347,9 @@ sub report {
    print qq|
 	</tr>
 	<tr>
+	  $curr
 	  <th align=right>|.$locale->text('Decimalplaces').qq|</th>
-	  <td><input name=decimalplaces size=3 value=2></td>
+	  <td><input name=decimalplaces size=3 value=$form->{precision}></td>
 	</tr>
       </table>
     </td>
@@ -944,7 +965,7 @@ sub generate_trial_balance {
   RP->trial_balance(\%myconfig, \%$form);
 
   $form->{nextsub} = "generate_trial_balance";
-  $form->{title} = $locale->text('Trial Balance');
+  $form->{title} = $locale->text('Trial Balance') . " / $form->{company}";
 
   $form->{callback} = "$form->{script}?action=generate_trial_balance";
   for (qw(login path nextsub fromdate todate month year interval l_heading l_subtotal all_accounts accounttype)) { $form->{callback} .= "&$_=$form->{$_}" }
@@ -1327,6 +1348,8 @@ sub aging {
   $option .= "\n<br>" if $option;
   $option .= $locale->text('for Period')." ".$locale->text('To')." $todate";
 
+  $title = "$form->{title} / $form->{company}";
+  
   print qq|
 <script language="JavaScript">
 <!--
@@ -1353,7 +1376,7 @@ function CheckAll() {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$title</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1902,7 +1925,7 @@ sub print_form {
   }
 
   @a = qw(name address1 address2 city state zipcode country contact);
-  push @a, "$form->{vc}phone", "$form->{vc}fax", "$form->{vc}taxnumber";
+  push @a, "$form->{vc}number", "$form->{vc}phone", "$form->{vc}fax", "$form->{vc}taxnumber";
   push @a, 'email' if ! $form->{media} eq 'email';
 
   $i = 0;
@@ -2015,7 +2038,7 @@ sub generate_tax_report {
   $title = $form->escape($form->{title},1);
   $callback .= "&title=$title";
   
-  $form->{title} = qq|$form->{title} $form->{"$form->{accno}_description"} |;
+  $form->{title} = qq|$form->{title} $form->{"$form->{accno}_description"} / $form->{company}|;
   
   if ($form->{db} eq 'ar') {
     $name = $locale->text('Customer');
@@ -2075,6 +2098,9 @@ sub generate_tax_report {
 
 
   $option .= "<br>" if $option;
+  $option .= $locale->text('Cash') if ($form->{method} eq 'cash');
+  $option .= $locale->text('Accrual') if ($form->{method} eq 'accrual');
+  
   $option .= "$form->{period}";
   
  
@@ -2366,7 +2392,8 @@ sub list_payments {
   $column_header{employee} = "<th><a class=listheading href=$href&sort=employee>$employee</a></th>";
   $column_header{till} = "<th><a class=listheading href=$href&sort=till>".$locale->text('Till')."</a></th>";
   
-
+  $title = "$form->{title} / $form->{company}";
+  
   $form->header;
 
   print qq|
@@ -2374,7 +2401,7 @@ sub list_payments {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$title</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -2511,7 +2538,7 @@ sub list_payments {
 </table>
 |;
 
-#################
+################
 #  &print_report_options;
 
   if ($form->{menubar}) {

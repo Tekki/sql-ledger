@@ -361,7 +361,7 @@ sub prepare_timecard {
   $form->{amount} = $form->{sellprice} * $form->{qty};
   for (qw(sellprice amount)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, $form->{precision}) }
   $form->{qty} = $form->format_amount(\%myconfig, $form->{qty}, 4);
-  $form->{allocated} = $form->format_amount(\%myconfig, $form->{allocated});
+  $form->{allocated} = $form->format_amount(\%myconfig, $form->{allocated}, 4);
 
   $form->{employee} .= "--$form->{employee_id}";
   $form->{projectnumber} .= "--$form->{project_id}";
@@ -496,7 +496,7 @@ sub timecard_header {
 |;
 
   $form->hide_form(map { "select$_" } qw(projectnumber employee formname language));
-  $form->hide_form(qw(id type printed queued title closedto locked project pricematrix parts_id));
+  $form->hide_form(qw(id type printed queued title closedto locked project pricematrix parts_id precision));
   $form->hide_form(map { "old$_" } qw(transdate checkedin checkedout partnumber qty noncharge project_id));
 
   print qq|
@@ -681,7 +681,7 @@ sub prepare_storescard {
   
   $form->{amount} = $form->{sellprice} * $form->{qty};
   for (qw(sellprice amount)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, $form->{precision}) }
-  $form->{qty} = $form->format_amount(\%myconfig, $form->{qty}, 4);
+  $form->{qty} = $form->format_amount(\%myconfig, $form->{qty});
  
   $form->{employee} .= "--$form->{employee_id}";
   $form->{projectnumber} .= "--$form->{project_id}";
@@ -742,7 +742,7 @@ sub storescard_header {
 |;
 
   $form->hide_form(map { "select$_" } qw(projectnumber formname language));
-  $form->hide_form(qw(id type printed queued title closedto locked project parts_id employee));
+  $form->hide_form(qw(id type printed queued title closedto locked project parts_id employee precision));
   $form->hide_form(map { "old$_" } qw(transdate partnumber));
 
   print qq|

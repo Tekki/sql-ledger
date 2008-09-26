@@ -24,6 +24,7 @@ sub create_links {
   my $arap = lc $form->{ARAP};
   my $accno;
   my $description;
+  my $translation;
  
   if ($form->{id}) {
     $query = qq/SELECT ct.*,
@@ -102,11 +103,14 @@ sub create_links {
 
     for (qw(arap payment discount)) {
       $form->{"${_}_accno_id"} *= 1;
-      $query = qq|SELECT accno, description
-		  FROM chart
+      $query = qq|SELECT c.accno, c.description,
+                  l.description AS translation
+		  FROM chart c
+		  LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 		  WHERE id = $form->{"${_}_accno_id"}|;
-      ($accno, $description) = $dbh->selectrow_array($query);
+      ($accno, $description, $translation) = $dbh->selectrow_array($query);
 
+      $description = $translation if $translation;
       $form->{"${_}_accno"} = "${accno}--$description";
     }
 
@@ -119,14 +123,18 @@ sub create_links {
   }
 
   # ARAP, payment and discount account
-  $query = qq|SELECT c.accno, c.description, c.link
+  $query = qq|SELECT c.accno, c.description, c.link,
+              l.description AS translation
               FROM chart c
+	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 	      WHERE c.link LIKE '%$form->{ARAP}%'
 	      ORDER BY c.accno|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
   
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    $ref->{description} = $ref->{translation} if $ref->{translation};
+
     if ($ref->{link} =~ /$form->{ARAP}_paid/) {
       push @{ $form->{payment_accounts} }, $ref;
     }
@@ -140,15 +148,18 @@ sub create_links {
   $sth->finish;
   
   # get tax labels
-  $query = qq|SELECT DISTINCT c.accno, c.description
+  $query = qq|SELECT DISTINCT c.accno, c.description,
+              l.description AS translation
               FROM chart c
 	      JOIN tax t ON (t.chart_id = c.id)
+	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 	      WHERE c.link LIKE '%$form->{ARAP}_tax%'
 	      ORDER BY c.accno|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    $ref->{description} = $ref->{translation} if $ref->{translation};
     $form->{taxaccounts} .= "$ref->{accno} ";
     $form->{"tax_$ref->{accno}_description"} = $ref->{description};
   }
@@ -208,8 +219,7 @@ sub create_links {
   $sth->finish;
  
   # get currencies
-  my %defaults = $form->get_defaults($dbh, \@{['currencies']});
-  $form->{currencies} = $defaults{currencies};
+  $form->{currencies} = $form->get_currencies($dbh, $myconfig);
 
   $dbh->disconnect;
 
@@ -546,6 +556,9 @@ sub search {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
+  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+    
   my $where = "1 = 1";
   $form->{sort} = ($form->{sort}) ? $form->{sort} : "name";
   my @a = qw(name);
@@ -835,6 +848,9 @@ sub get_history {
   # setup ASC or DESC
   $form->sort_order();
   
+  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+
   if ($form->{"$form->{db}number"} ne "") {
     $var = $form->like(lc $form->{"$form->{db}number"});
     $where .= " AND lower(ct.$form->{db}number) LIKE '$var'";
@@ -1051,8 +1067,7 @@ sub pricelist {
     $sth->finish;
   }
 
-  my %defaults = $form->get_defaults($dbh, \@{['currencies']});
-  $form->{currencies} = $defaults{currencies};
+  $form->{currencies} = $form->get_currencies($dbh, $myconfig);
  
   $dbh->disconnect;
 

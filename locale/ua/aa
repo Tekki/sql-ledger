@@ -9,7 +9,6 @@ $self{texts} = {
   'Accounting Menu'             => 'Меню Обл╕ку',
   'Address'                     => 'Адреса',
   'Amount'                      => 'Сума',
-  'Amount Due'                  => 'Заплатити Суму',
   'Apr'                         => 'кв╕тня',
   'April'                       => 'Кв╕тень',
   'Are you sure you want to delete Transaction' => 'Ви певн╕, що хочете видалити дану проводку?',

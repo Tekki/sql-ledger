@@ -20,7 +20,6 @@ $self{texts} = {
   'Description'                 => 'Açýklama',
   'General Ledger'              => 'Defteri Kebir',
   'Income Statement'            => 'Gelir Tablosu',
-  'Invoice'                     => 'Fatura',
   'Language'                    => 'Dil',
   'Order Entry'                 => 'Sipariþ Giriþi',
   'Packing List'                => 'Paketleme Listesi',

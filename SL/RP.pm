@@ -110,6 +110,15 @@ sub income_statement {
     }
   }
   
+  if ($form->{currency} ne $form->{defaultcurrency}) {
+    my $transdate = $form->{todate};
+    $transdate ||= $form->current_date($myconfig);
+ 
+    $form->{exchangerate} = $form->get_exchangerate($dbh, $form->{currency}, $transdate, 'buy');
+  }
+    
+  $form->{exchangerate} ||= 1;
+ 
   &get_accounts($dbh, $last_period, $form->{fromdate}, $form->{todate}, $form, \@categories, 1);
   
   if (! ($form->{comparefromdate} || $form->{comparetodate})) {
@@ -270,6 +279,15 @@ sub balance_sheet {
 
   $form->{decimalplaces} *= 1;
 
+  if ($form->{currency} ne $form->{defaultcurrency}) {
+    my $transdate = $form->{asofdate};
+    $transdate ||= $form->current_date($myconfig);
+ 
+    $form->{exchangerate} = $form->get_exchangerate($dbh, $form->{currency}, $transdate, 'buy');
+  }
+    
+  $form->{exchangerate} ||= 1;
+  
   &get_accounts($dbh, $last_period, "", $form->{asofdate}, $form, \@categories, 1);
   
   if ($form->{compareasofdate}) {
@@ -286,7 +304,7 @@ sub balance_sheet {
   
   # if there are any compare dates
   if ($form->{compareasofdate}) {
-
+   
     $last_period = 1;
     &get_accounts($dbh, $last_period, "", $form->{compareasofdate}, $form, \@categories, 1);
   
@@ -463,8 +481,10 @@ sub get_accounts {
 
 
   # get headings
-  $query = qq|SELECT accno, description, category
+  $query = qq|SELECT c.accno, c.description, c.category,
+              l.description AS translation
 	      FROM chart c
+	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 	      WHERE c.charttype = 'H'
 	      $category
 	      ORDER by c.accno|;
@@ -485,6 +505,8 @@ sub get_accounts {
   my @headingaccounts = ();
   while ($ref = $sth->fetchrow_hashref(NAME_lc))
   {
+    $ref->{description} = $ref->{translation} if $ref->{translation};
+    
     $form->{$ref->{category}}{$ref->{accno}}{description} = "$ref->{description}";
     $form->{$ref->{category}}{$ref->{accno}}{charttype} = "H";
     $form->{$ref->{category}}{$ref->{accno}}{accno} = $ref->{accno};
@@ -801,10 +823,12 @@ sub get_accounts {
       $query = qq|
 	
 	         SELECT c.accno, sum(ac.amount) AS amount,
-		 c.description, c.category
+		 c.description, c.category,
+		 l.description AS translation
 		 FROM acc_trans ac
 		 JOIN chart c ON (c.id = ac.chart_id)
 		 JOIN ar a ON (a.id = ac.trans_id)
+		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 		 $dpt_join
 		 WHERE $where
 		 AND ac.approved = '1'
@@ -822,15 +846,17 @@ sub get_accounts {
 		   )
 		     
 		 $project
-		 GROUP BY c.accno, c.description, c.category
+		 GROUP BY c.accno, c.description, c.category, translation
 		 
 	UNION ALL
 	
 	         SELECT c.accno, sum(ac.amount) AS amount,
-		 c.description, c.category
+		 c.description, c.category,
+		 l.description AS translation
 		 FROM acc_trans ac
 		 JOIN chart c ON (c.id = ac.chart_id)
 		 JOIN ap a ON (a.id = ac.trans_id)
+		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 		 $dpt_join
 		 WHERE $where
 		 AND a.approved = '1'
@@ -848,15 +874,17 @@ sub get_accounts {
 		   )
 		     
 		 $project
-		 GROUP BY c.accno, c.description, c.category
+		 GROUP BY c.accno, c.description, c.category, translation
 		 
         UNION ALL
 
 		 SELECT c.accno, sum(ac.amount) AS amount,
-		 c.description, c.category
+		 c.description, c.category,
+		 l.description AS translation
 		 FROM acc_trans ac
 		 JOIN chart c ON (c.id = ac.chart_id)
 		 JOIN gl a ON (a.id = ac.trans_id)
+		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 		 $dpt_join
 		 WHERE $where
 		 AND a.approved = '1'
@@ -866,7 +894,7 @@ sub get_accounts {
 		 $category
 		 AND NOT (c.link = 'AR' OR c.link = 'AP')
 		 $project
-		 GROUP BY c.accno, c.description, c.category
+		 GROUP BY c.accno, c.description, c.category, translation
 		 |;
 
       if ($excludeyearend) {
@@ -878,17 +906,19 @@ sub get_accounts {
        UNION ALL
        
 	         SELECT c.accno, sum(ac.amount) AS amount,
-		 c.description, c.category
+		 c.description, c.category,
+		 l.description AS translation
 		 FROM yearend y
 		 JOIN gl a ON (a.id = y.trans_id)
 		 JOIN acc_trans ac ON (ac.trans_id = y.trans_id)
 		 JOIN chart c ON (c.id = ac.chart_id)
+		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 	         $dpt_join
 		 WHERE $yearendwhere
 		 AND c.category = 'Q'
 		 $dpt_where
 		 $project
-		 GROUP BY c.accno, c.description, c.category
+		 GROUP BY c.accno, c.description, c.category, translation
 		 |;
       }
 
@@ -907,9 +937,11 @@ sub get_accounts {
       $query = qq|
       
 		 SELECT c.accno, sum(ac.amount) AS amount,
-		 c.description, c.category
+		 c.description, c.category,
+		 l.description AS translation
 		 FROM acc_trans ac
 		 JOIN chart c ON (c.id = ac.chart_id)
+		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 		 $dpt_join
 		 WHERE $where
 		 AND ac.approved = '1'
@@ -917,7 +949,7 @@ sub get_accounts {
 		 $dpt_where
 		 $category
 		 $project
-		 GROUP BY c.accno, c.description, c.category
+		 GROUP BY c.accno, c.description, c.category, translation
 		 |;
 
       if ($excludeyearend) {
@@ -929,17 +961,19 @@ sub get_accounts {
        UNION ALL
        
 	         SELECT c.accno, sum(ac.amount) AS amount,
-		 c.description, c.category
+		 c.description, c.category,
+		 l.description AS translation
 		 FROM yearend y
 		 JOIN gl a ON (a.id = y.trans_id)
 		 JOIN acc_trans ac ON (ac.trans_id = y.trans_id)
 		 JOIN chart c ON (c.id = ac.chart_id)
+		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 	         $dpt_join
 		 WHERE $yearendwhere
 		 AND c.category = 'Q'
 		 $dpt_where
 		 $project
-		 GROUP BY c.accno, c.description, c.category
+		 GROUP BY c.accno, c.description, c.category, translation
 		 |;
       }
     }
@@ -957,6 +991,9 @@ sub get_accounts {
     # get last heading account
     @accno = grep { $_ le "$ref->{accno}" } @headingaccounts;
     $accno = pop @accno;
+
+    $ref->{amount} /= $form->{exchangerate};
+
     if ($accno && ($accno ne $ref->{accno}) ) {
       if ($last_period)
       {
@@ -965,6 +1002,8 @@ sub get_accounts {
 	$form->{$ref->{category}}{$accno}{this} += $ref->{amount};
       }
     }
+    
+    $ref->{description} = $ref->{translation} if $ref->{translation};
     
     $form->{$ref->{category}}{$ref->{accno}}{accno} = $ref->{accno};
     $form->{$ref->{category}}{$ref->{accno}}{description} = $ref->{description};
@@ -1008,6 +1047,9 @@ sub trial_balance {
   my $dpt_where;
   my $dpt_join;
   my $project;
+  
+  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   my $where = "ac.approved = '1'";
   my $invwhere = $where;
@@ -1054,15 +1096,17 @@ sub trial_balance {
     } else {
       
       $query = qq|SELECT c.accno, c.category, SUM(ac.amount) AS amount,
-                  c.description, c.contra
+                  c.description, c.contra,
+		  l.description AS translation
 		  FROM acc_trans ac
 		  JOIN chart c ON (ac.chart_id = c.id)
+		  LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 		  $dpt_join
 		  WHERE ac.transdate < '$form->{fromdate}'
 		  AND ac.approved = '1'
 		  $dpt_where
 		  $project
-		  GROUP BY c.accno, c.category, c.description, c.contra
+		  GROUP BY c.accno, c.category, c.description, c.contra, translation
 		  |;
 		  
     }
@@ -1073,6 +1117,8 @@ sub trial_balance {
     while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
       $ref->{amount} = $form->round_amount($ref->{amount}, $form->{precision});
       $balance{$ref->{accno}} = $ref->{amount};
+
+      $ref->{description} = $ref->{translation} if $ref->{translation};
 
       if ($form->{all_accounts}) {
 	$trb{$ref->{accno}}{description} = $ref->{description};
@@ -1088,8 +1134,10 @@ sub trial_balance {
   
 
   # get headings
-  $query = qq|SELECT c.accno, c.description, c.category
+  $query = qq|SELECT c.accno, c.description, c.category,
+              l.description AS translation
 	      FROM chart c
+	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 	      WHERE c.charttype = 'H'
 	      ORDER by c.accno|;
 
@@ -1107,6 +1155,8 @@ sub trial_balance {
   
   while ($ref = $sth->fetchrow_hashref(NAME_lc))
   {
+    $ref->{description} = $ref->{translation} if $ref->{translation};
+
     $trb{$ref->{accno}}{description} = $ref->{description};
     $trb{$ref->{accno}}{charttype} = 'H';
     $trb{$ref->{accno}}{category} = $ref->{category};
@@ -1147,14 +1197,16 @@ sub trial_balance {
   } else {
 
     $query = qq|SELECT c.accno, c.description, c.category,
-                SUM(ac.amount) AS amount, c.contra
+                SUM(ac.amount) AS amount, c.contra,
+		l.description AS translation
 		FROM acc_trans ac
 		JOIN chart c ON (c.id = ac.chart_id)
+		LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 		$dpt_join
 		WHERE $where
 		$dpt_where
 		$project
-		GROUP BY c.accno, c.description, c.category, c.contra
+		GROUP BY c.accno, c.description, c.category, c.contra, translation
                 ORDER BY accno|;
 
   }
@@ -1212,6 +1264,8 @@ sub trial_balance {
 
   # calculate debit and credit for the period
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    $ref->{description} = $ref->{translation} if $ref->{translation};
+
     $trb{$ref->{accno}}{description} = $ref->{description};
     $trb{$ref->{accno}}{charttype} = 'A';
     $trb{$ref->{accno}}{category} = $ref->{category};
@@ -1301,9 +1355,11 @@ sub aging {
   my $item;
   my $curr;
   
-  my %defaults = $form->get_defaults($dbh, \@{['currencies','company','address','businessnumber','tel','fax']});
+  my %defaults = $form->get_defaults($dbh, \@{[qw(company address businessnumber tel fax precision)]});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
+  $form->{currencies} = $form->get_currencies($dbh, $myconfig);
+  
   ($null, $form->{todate}) = $form->from_to($form->{year}, $form->{month}) if $form->{year} && $form->{month};
   
   if (! $form->{todate}) {
@@ -1408,12 +1464,14 @@ sub aging {
 
   $item = $#c;
   $c{$c[$item]}{and} = qq|AND a.$transdate < $interval{$myconfig->{dbdriver}}{$c[$item]}|;
-  
-  $c{$c[0]}{and} = qq|
+
+  if ($item > 0) {
+    $c{$c[0]}{and} = qq|
     	  AND (
 		  a.$transdate <= $interval{$myconfig->{dbdriver}}{$c[0]}
 		  AND a.$transdate >= $interval{$myconfig->{dbdriver}}{$c[1]}
  	      )|;
+  }
  
   for (1 .. $item - 1) {
     $c{$c[$_]}{and} = qq|
@@ -1436,10 +1494,12 @@ sub aging {
     a.duedate, a.invoice, a.id, a.curr,
       (SELECT $buysell FROM exchangerate e
        WHERE a.curr = e.curr
-       AND e.transdate = a.transdate) AS exchangerate
+       AND e.transdate = a.transdate) AS exchangerate,
+    ct.firstname, ct.lastname, ct.salutation, ct.typeofcontact
     FROM $form->{arap} a
     JOIN $form->{vc} c ON (a.$form->{vc}_id = c.id)
     JOIN address ad ON (ad.trans_id = c.id)
+    LEFT JOIN contact ct ON (ct.trans_id = c.id)
     WHERE $where
     $c{$_}{and}
 |;
@@ -1520,9 +1580,11 @@ sub get_taxaccounts {
   my $ARAP = uc $form->{db};
   
   # get tax accounts
-  my $query = qq|SELECT DISTINCT c.accno, c.description
+  my $query = qq|SELECT DISTINCT c.accno, c.description,
+                 l.description AS translation
                  FROM chart c
 		 JOIN tax t ON (c.id = t.chart_id)
+		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 		 WHERE c.link LIKE '%${ARAP}_tax%'
                  ORDER BY c.accno|;
   my $sth = $dbh->prepare($query);
@@ -1566,7 +1628,10 @@ sub tax_report {
   # build WHERE
   my $where = "a.approved = '1'";
   my $cashwhere = "";
-
+  
+  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+ 
   if ($department_id) {
     $where .= qq|
                  AND a.department_id = $department_id
@@ -1940,14 +2005,17 @@ sub paymentaccounts {
   my $ARAP = uc $form->{db};
   
   # get A(R|P)_paid accounts
-  my $query = qq|SELECT accno, description
-                 FROM chart
-                 WHERE link LIKE '%${ARAP}_paid%'
-		 ORDER BY accno|;
+  my $query = qq|SELECT c.accno, c.description,
+                 l.description AS translation
+                 FROM chart c
+		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+                 WHERE c.link LIKE '%${ARAP}_paid%'
+		 ORDER BY c.accno|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
  
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+    $ref->{description} = $ref->{translation} if $ref->{translation};
     push @{ $form->{PR} }, $ref;
   }
   $sth->finish;
@@ -1974,6 +2042,9 @@ sub payments {
   my $arapwhere;
   my $gl = ($form->{till} eq "");
 
+  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+    
   if ($form->{department_id}) {
     $dpt_join = qq|
 	         JOIN dpt_trans t ON (t.trans_id = ac.trans_id)
@@ -2037,13 +2108,16 @@ sub payments {
   # cycle through each id
   foreach my $accno (split(/ /, $form->{paymentaccounts})) {
 
-    $query = qq|SELECT id, accno, description
-                FROM chart
-		WHERE accno = '$accno'|;
+    $query = qq|SELECT c.id, c.accno, c.description,
+                l.description AS translation
+                FROM chart c
+		LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+		WHERE c.accno = '$accno'|;
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
 
     my $ref = $sth->fetchrow_hashref(NAME_lc);
+    $ref->{description} = $ref->{translation} if $ref->{translation};
     push @{ $form->{PR} }, $ref;
     $sth->finish;
 

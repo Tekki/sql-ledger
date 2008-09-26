@@ -59,7 +59,7 @@ sub chart_of_accounts {
   $column_header{credit} = qq|<th class=listtop>|.$locale->text('Credit').qq|</th>\n|;
   
 
-  $form->{title} = $locale->text('Chart of Accounts');
+  $form->{title} = $locale->text('Chart of Accounts') . " / $form->{company}";
 
   $colspan = $#column_index + 1;
   

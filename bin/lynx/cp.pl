@@ -491,7 +491,7 @@ javascript:window.history.forward(1);
 <form method=post action=$form->{script}>
 |;
 
-  $form->hide_form(qw(defaultcurrency closedto vc type formname arap ARAP title payment batch batchid batchnumber batchdescription transdate edit voucherid deselect employee cdt));
+  $form->hide_form(qw(defaultcurrency closedto vc type formname arap ARAP title payment batch batchid batchnumber batchdescription transdate edit voucherid deselect employee cdt precision));
   $form->hide_form(map { "old$_" } qw(currency datepaid duedatefrom duedateto department business));
   $form->hide_form(map { "old$_" } ("$form->{ARAP}", "$form->{vc}", "$form->{vc}number"));
   $form->hide_form(map { "select$_" } qw(currency department business language account));
@@ -1351,7 +1351,7 @@ javascript:window.history.forward(1);
 <form method=post action=$form->{script}>
 |;
 
-  $form->hide_form(qw(defaultcurrency closedto vc type ARAP arap title formname payment batch batchid batchnumber batchdescription transdate edit voucherid vouchernumber deselect employee));
+  $form->hide_form(qw(defaultcurrency closedto vc type ARAP arap title formname payment batch batchid batchnumber batchdescription transdate edit voucherid vouchernumber deselect employee precision));
   $form->hide_form("$form->{vc}_id");
   $form->hide_form(map { "old$_" } qw(currency datepaid duedatefrom duedateto department business));
   $form->hide_form(map { "old$_" } ("$form->{ARAP}", "$form->{vc}", "$form->{vc}number"));

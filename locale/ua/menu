@@ -30,7 +30,6 @@ $self{texts} = {
   'Goods & Services'            => 'Товари ╕ Послуги',
   'HTML Templates'              => 'HTML Шаблони ',
   'Income Statement'            => 'Зв╕т про доходи ╕ видатки',
-  'Invoice'                     => 'Рахунок-фактура',
   'LaTeX Templates'             => 'LaTeX Шаблони',
   'Language'                    => 'Мова',
   'List Accounts'               => 'Список Рахунк╕в',

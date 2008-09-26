@@ -1,6 +1,7 @@
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
+  'Account'                     => 'Konto',
   'Accounting Menu'             => 'Raamatupidamise Menüü',
   'Active'                      => 'Aktiva',
   'Add'                         => 'Lisa',

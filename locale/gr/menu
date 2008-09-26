@@ -34,7 +34,6 @@ $self{texts} = {
   'Employees'                   => 'Υπάλληλοι',
   'HR'                          => 'ΔΠ',
   'History'                     => 'Ιστορικό',
-  'Invoice'                     => 'Τιμολόγιο',
   'Language'                    => 'Γλώσσα',
   'List Accounts'               => 'Λίστα Λογαριασμών',
   'List Languages'              => 'Λίστα γλωσσών',

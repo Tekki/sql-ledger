@@ -13,7 +13,6 @@ $self{texts} = {
   'Add AR Transaction'          => 'Agregar Transacción CPC',
   'Address'                     => 'Dirección',
   'Amount'                      => 'Total',
-  'Amount Due'                  => 'Por Pagar',
   'Apr'                         => 'Abr',
   'April'                       => 'Abril',
   'Are you sure you want to delete Transaction' => '¿Está seguro de que desea borrar la transacción?',

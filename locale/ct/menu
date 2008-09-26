@@ -21,7 +21,6 @@ $self{texts} = {
   'Goods & Services'            => 'Bèns i Serveis',
   'HTML Templates'              => 'Plantilles HTML',
   'Income Statement'            => 'Balanç Situació',
-  'Invoice'                     => 'Factura',
   'LaTeX Templates'             => 'Plantilles LaTeX',
   'Language'                    => 'Idioma',
   'List Accounts'               => 'Llistar Comptes',

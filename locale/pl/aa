@@ -13,7 +13,6 @@ $self{texts} = {
   'Add AR Transaction'          => 'Rejestr w Ksiêdze Nale¿no¶ci',
   'Address'                     => 'Adres',
   'Amount'                      => 'Kwota',
-  'Amount Due'                  => 'Kwota Nale¿na',
   'Apr'                         => 'Kwiecieñ',
   'April'                       => 'Kwiecieñ',
   'Are you sure you want to delete Transaction' => 'Czy chcesz usun±æ Transakcjê?',

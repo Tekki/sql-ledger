@@ -69,7 +69,8 @@ sub overpayment {
 	      amount = 0,
 	      paid = $fxamount,
 	      curr = '$form->{currency}',
-	      department_id = $department_id
+	      department_id = $department_id,
+	      bank_id = (SELECT id FROM chart WHERE accno = '$paymentaccno')
 	      WHERE id = $uid|;
   $dbh->do($query) || $form->dberror($query);
 

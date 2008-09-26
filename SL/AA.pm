@@ -32,7 +32,8 @@ sub post_transaction {
   ($null, $form->{department_id}) = split(/--/, $form->{department});
   $form->{department_id} *= 1;
   
-  my %defaults = $form->get_defaults($dbh, \@{['fx%accno_id', 'cdt']});
+  my %defaults = $form->get_defaults($dbh, \@{['fx%accno_id', 'cdt', 'precision']});
+  $form->{precision} = $defaults{precision};
 
   my $ml = 1;
   my $arapml = ($form->{type} =~ /_note/) ? -1 : 1;
@@ -295,7 +296,8 @@ sub post_transaction {
 	      discountterms = $form->{discountterms},
 	      onhold = '$form->{onhold}',
 	      exchangerate = $form->{exchangerate},
-	      dcn = |.$dbh->quote($form->{dcn}).qq|
+	      dcn = |.$dbh->quote($form->{dcn}).qq|,
+	      bank_id = (SELECT id FROM chart WHERE accno = '$paymentaccno')
 	      WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
 
@@ -725,6 +727,9 @@ sub transactions {
   my $acc_trans_join;
   my $acc_trans_flds;
   
+  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+  
   if ($form->{vc} eq 'vendor') {
     $ml = -1;
     $ARAP = 'AP';
@@ -1031,7 +1036,7 @@ sub get_name {
   my $shipto = ", s.*" if ! $form->{shipto};
   my $shiptojoin = qq|LEFT JOIN shipto s ON (s.trans_id = c.id)|;
  
-  my $query = qq/SELECT c.name AS $form->{vc}, c.$form->{vc}number,
+  my $query = qq|SELECT c.name AS $form->{vc}, c.$form->{vc}number,
                  c.discount, c.creditlimit, c.terms,
                  c.email, c.cc, c.bcc, c.taxincluded,
 		 ad.address1, ad.address2, ad.city, ad.state,
@@ -1039,9 +1044,9 @@ sub get_name {
 	         $duedate AS duedate, c.notes AS intnotes,
 		 b.discount AS tradediscount, b.description AS business,
 		 e.name AS employee, e.id AS employee_id,
-		 c1.accno || '--' || c1.description AS arap_accno,
-		 c2.accno || '--' || c2.description AS payment_accno,
-		 c3.accno || '--' || c3.description AS discount_accno,
+		 c1.accno AS arap_accno, c1.description AS arap_accno_description, t1.description AS arap_accno_translation,
+		 c2.accno AS payment_accno, c2.description AS payment_accno_description, t2.description AS payment_accno_translation,
+		 c3.accno AS discount_accno, c3.description AS discount_accno_description, t3.description AS discount_accno_translation,
 		 c.cashdiscount, c.threshold, c.discountterms,
 		 c.remittancevoucher
 		 $shipto
@@ -1052,12 +1057,22 @@ sub get_name {
 		 LEFT JOIN chart c1 ON (c1.id = c.arap_accno_id)
 		 LEFT JOIN chart c2 ON (c2.id = c.payment_accno_id)
 		 LEFT JOIN chart c3 ON (c3.id = c.discount_accno_id)
+		 LEFT JOIN translation t1 ON (t1.trans_id = c1.id AND t1.language_code = '$myconfig->{countrycode}')
+		 LEFT JOIN translation t2 ON (t2.trans_id = c2.id AND t2.language_code = '$myconfig->{countrycode}')
+		 LEFT JOIN translation t3 ON (t3.trans_id = c3.id AND t3.language_code = '$myconfig->{countrycode}')
 		 $shiptojoin
-	         WHERE c.id = $form->{"$form->{vc}_id"}/;
+	         WHERE c.id = $form->{"$form->{vc}_id"}|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   $ref = $sth->fetchrow_hashref(NAME_lc);
+  
+  $ref->{arap_accno} .= qq|--|;
+  $ref->{arap_accno} .= ($ref->{arap_accno_translation}) ? $ref->{arap_accno_translation} : $ref->{arap_accno_description};
+  $ref->{payment_accno} .= qq|--|;
+  $ref->{payment_accno} .= ($ref->{payment_accno_translation}) ? $ref->{payment_accno_translation} : $ref->{payment_accno_description};
+  $ref->{discount_accno} .= qq|--|;
+  $ref->{discount_accno} .= ($ref->{discount_accno_translation}) ? $ref->{discount_accno_translation} : $ref->{discount_accno_description};
   
   $form->{$ARAP} = $ref->{arap_accno};
 
@@ -1121,9 +1136,11 @@ sub get_name {
   }
 	      
   # get tax rates and description
-  $query = qq|SELECT c.accno, c.description, t.rate, t.taxnumber
+  $query = qq|SELECT c.accno, c.description, t.rate, t.taxnumber,
+              l.description AS translation
 	      FROM chart c
 	      JOIN tax t ON (c.id = t.chart_id)
+	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 	      WHERE c.link LIKE '%${ARAP}_tax%'
 	      $where
 	      ORDER BY accno, validto|;
@@ -1135,6 +1152,7 @@ sub get_name {
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     if ($tax{$ref->{accno}}) {
       if (not exists $a{$ref->{accno}}) {
+	$ref->{description} = $ref->{translation} if $ref->{translation};
 	for (qw(rate description taxnumber)) { $form->{"$ref->{accno}_$_"} = $ref->{$_} }
 	$form->{taxaccounts} .= "$ref->{accno} ";
 	$a{$ref->{accno}} = 1;
@@ -1162,24 +1180,28 @@ sub get_name {
     } elsif ($form->{type} =~ /invoice/) {
       $query = qq|SELECT c.accno, c.description,
 		  a.department_id, d.description AS department,
-		  a.warehouse_id, d.description AS warehouse
+		  a.warehouse_id, d.description AS warehouse,
+		  l.description AS translation
 		  FROM chart c
 		  JOIN acc_trans ac ON (ac.chart_id = c.id)
 		  JOIN $arap a ON (a.id = ac.trans_id)
 		  LEFT JOIN department d ON (d.id = a.department_id)
 		  LEFT JOIN warehouse w ON (w.id = a.warehouse_id)
+		  LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 		  WHERE a.$form->{vc}_id = $form->{"$form->{vc}_id"}
 		  AND a.id IN (SELECT max(id) FROM $arap
 			       WHERE $form->{vc}_id = $form->{"$form->{vc}_id"})|;
     } else {
       $query = qq|SELECT c.accno, c.description, c.link, c.category,
 		  ac.project_id, p.projectnumber, a.department_id,
-		  d.description AS department
+		  d.description AS department,
+		  l.description AS translation
 		  FROM chart c
 		  JOIN acc_trans ac ON (ac.chart_id = c.id)
 		  JOIN $arap a ON (a.id = ac.trans_id)
 		  LEFT JOIN project p ON (ac.project_id = p.id)
 		  LEFT JOIN department d ON (d.id = a.department_id)
+		  LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 		  WHERE a.$form->{vc}_id = $form->{"$form->{vc}_id"}
 		  AND a.id IN (SELECT max(id) FROM $arap
 			       WHERE $form->{vc}_id = $form->{"$form->{vc}_id"})|;
@@ -1196,6 +1218,7 @@ sub get_name {
       $form->{warehouse} = $ref->{warehouse};
       $form->{warehouse_id} = $ref->{warehouse_id};
       
+      $ref->{description} = $ref->{translation} if $ref->{translation};
       if ($ref->{link} =~ /_amount/) {
 	$i++;
 	next if $form->{"amount_$i"};
@@ -1226,9 +1249,10 @@ sub company_details {
 		 ct.fax as $form->{vc}fax,
 		 ct.taxnumber AS $form->{vc}taxnumber, ct.sic_code AS sic,
 		 ct.iban, ct.bic, ct.startdate, ct.enddate,
-		 ct.threshold
+		 ct.threshold, pm.description AS paymentmethod
 	         FROM $form->{vc} ct
 		 JOIN address ad ON (ad.trans_id = ct.id)
+		 LEFT JOIN paymentmethod pm ON (pm.id = ct.paymentmethod_id)
 	         WHERE ct.id = $form->{"$form->{vc}_id"}|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);

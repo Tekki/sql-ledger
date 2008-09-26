@@ -417,16 +417,20 @@ sub get_job {
 
   $form->{orphaned} = !$form->{orphaned};
   
-  $query = qq|SELECT accno, description, link
-              FROM chart
-	      WHERE link LIKE '%IC%'
-	      ORDER BY accno|;
+  $query = qq|SELECT c.accno, c.description, c.link,
+              l.description AS translation
+              FROM chart c
+	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+	      WHERE c.link LIKE '%IC%'
+	      ORDER BY c.accno|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     for (split /:/, $ref->{link}) {
       if (/IC/) {
+	$ref->{description} = $ref->{translation} if $ref->{translation};
+
 	push @{ $form->{IC_links}{$_} }, { accno => $ref->{accno},
                              description => $ref->{description} };
       }
@@ -884,6 +888,9 @@ sub partsgroups {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
+  my %defaults = $form->get_defaults($dbh, \@{['company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+  
   $form->{sort} ||= "partsgroup";
   my @a = qw(partsgroup);
   my $sortorder = $form->sort_order(\@a);
@@ -999,6 +1006,9 @@ sub pricegroups {
   
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
+
+  my %defaults = $form->get_defaults($dbh, \@{['company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   $form->{sort} = "pricegroup" unless $form->{sort};
   my @a = (pricegroup);
@@ -1294,6 +1304,73 @@ sub project_translations {
 }
 
 
+sub chart_translations {
+  my ($self, $myconfig, $form) = @_;
+
+  my $where = "1 = 1";
+  my $var;
+  my $ref;
+  
+  for (qw(accno description)) {
+    if ($form->{$_}) {
+      $var = $form->like(lc $form->{$_});
+      $where .= " AND lower(c.$_) LIKE '$var'";
+    }
+  }
+  
+  $where .= " AND c.id = $form->{id}" if $form->{id};
+
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+
+  my %ordinal = ( 'accno' => 2,
+                  'description' => 3
+		);
+  
+  my @a = qw(accno description);
+  my $sortorder = $form->sort_order(\@a, \%ordinal);
+
+  my $query = qq|SELECT l.description AS language, t.description AS translation,
+                 l.code
+                 FROM translation t
+		 JOIN language l ON (l.code = t.language_code)
+		 WHERE trans_id = ?
+		 ORDER BY 1|;
+  my $tth = $dbh->prepare($query);
+  
+  $query = qq|SELECT c.id, c.accno, c.description
+	      FROM chart c
+  	      WHERE $where
+	      ORDER BY $sortorder|;
+
+  my $sth = $dbh->prepare($query);
+  $sth->execute || $form->dberror($query);
+
+  my $tra;
+  
+  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    push @{ $form->{translations} }, $ref;
+
+    # get translations for description
+    $tth->execute($ref->{id}) || $form->dberror;
+
+    while ($tra = $tth->fetchrow_hashref(NAME_lc)) {
+      $form->{trans_id} = $ref->{id};
+      $tra->{id} = $ref->{id};
+      push @{ $form->{translations} }, $tra;
+    }
+    $tth->finish;
+
+  }
+  $sth->finish;
+
+  &get_language("", $dbh, $form) if $form->{id};
+
+  $dbh->disconnect;
+
+}
+
+
 sub get_language {
   my ($self, $dbh, $form) = @_;
   
@@ -1454,8 +1531,7 @@ sub get_jcitems {
 
   $sth->finish;
 
-  my %defaults = $form->get_defaults($dbh, \@{['currencies']});
-  $form->{currency} = substr($defaults{currencies},0,3);
+  $form->{currency} = substr($form->get_currencies($dbh, $myconfig),0,3);
   $form->{defaultcurrency} = $form->{currency};
 
   $where = "";

@@ -372,5 +372,10 @@ INSERT INTO defaults (fldname, fldvalue) VALUES ('income_accno_id', (SELECT id F
 INSERT INTO defaults (fldname, fldvalue) VALUES ('expense_accno_id', (SELECT id FROM chart WHERE accno = '504000'));
 INSERT INTO defaults (fldname, fldvalue) VALUES ('fxgain_accno_id', (SELECT id FROM chart WHERE accno = '663000'));
 INSERT INTO defaults (fldname, fldvalue) VALUES ('fxloss_accno_id', (SELECT id FROM chart WHERE accno = '563000'));
-INSERT INTO defaults (fldname, fldvalue) VALUES ('currencies', 'SKK:EUR:CZK');
 INSERT INTO defaults (fldname, fldvalue) VALUES ('weightunit', 'kg');
+INSERT INTO defaults (fldname, fldvalue) VALUES ('precision', '2');
+--
+INSERT INTO curr (rn, curr, precision) VALUES (1,'SKK',2);
+INSERT INTO curr (rn, curr, precision) VALUES (2,'EUR',2);
+INSERT INTO curr (rn, curr, precision) VALUES (3,'CZK',2);
+

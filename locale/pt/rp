@@ -132,6 +132,7 @@ $self{subs} = {
   'print_report'                => 'print_report',
   'print_report_options'        => 'print_report_options',
   'project_selected'            => 'project_selected',
+  'rebuild_formnames'           => 'rebuild_formnames',
   'rebuild_vc'                  => 'rebuild_vc',
   'report'                      => 'report',
   'repost'                      => 'repost',

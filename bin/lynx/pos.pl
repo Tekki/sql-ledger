@@ -245,7 +245,7 @@ sub form_header {
 |;
 
   $form->hide_form(map { "select$_" } qw(currency customer department warehouse employee language AR AR_paid));
-  $form->hide_form(qw(id till type format printed title discount creditlimit creditremaining tradediscount business closedto locked customer_id payment_accno));
+  $form->hide_form(qw(id till type format printed title discount creditlimit creditremaining tradediscount business closedto locked customer_id payment_accno precision));
   $form->hide_form(map { "old$_" } qw(transdate customer language customernumber));
 
   print qq|

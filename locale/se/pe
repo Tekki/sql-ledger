@@ -1,4 +1,5 @@
 $self{texts} = {
+  'Account'                     => 'Konto',
   'Accounting Menu'             => 'Bokförings-meny',
   'Active'                      => 'Aktiv',
   'Add'                         => 'Lägg till',

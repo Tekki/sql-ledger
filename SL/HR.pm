@@ -224,6 +224,9 @@ sub employees {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
+  my %defaults = $form->get_defaults($dbh, \@{['company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+
   my $where = "1 = 1";
   $form->{sort} = ($form->{sort}) ? $form->{sort} : "name";
   my @a = qw(name);
@@ -290,21 +293,30 @@ sub get_deduction {
   my $ref;
   my $item;
   my $i;
-  
+
+  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+
   if ($form->{id}) {
     $query = qq|SELECT d.*,
                  c1.accno AS ap_accno,
                  c1.description AS ap_description,
+		 l1.description AS ap_translation,
 		 c2.accno AS expense_accno,
-		 c2.description AS expense_description
+		 c2.description AS expense_description,
+		 l2.description AS expense_translation
                  FROM deduction d
 		 LEFT JOIN chart c1 ON (c1.id = d.ap_accno_id)
 		 LEFT JOIN chart c2 ON (c2.id = d.expense_accno_id)
+		 LEFT JOIN translation l1 ON (l1.trans_id = c1.id AND l1.language_code = '$myconfig->{countrycode}')
+		 LEFT JOIN translation l2 ON (l2.trans_id = c2.id AND l2.language_code = '$myconfig->{countrycode}')
                  WHERE d.id = $form->{id}|;
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
   
     $ref = $sth->fetchrow_hashref(NAME_lc);
+    $ref->{ap_description} = $ref->{ap_translation} if $ref->{ap_translation};
+    $ref->{expense_description} = $ref->{expense_translation} if $ref->{expense_translation};
     for (keys %$ref) { $form->{$_} = $ref->{$_} }
 
     $sth->finish;
@@ -378,15 +390,18 @@ $form->{status} = 'orphaned';     # for now
                    expense	=> 'E' );
   
   foreach $item (keys %category) {
-    $query = qq|SELECT accno, description
-		FROM chart
-		WHERE charttype = 'A'
-		AND category = '$category{$item}'
-		ORDER BY accno|;
+    $query = qq|SELECT c.accno, c.description,
+                l.description AS translation
+		FROM chart c
+		LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+		WHERE c.charttype = 'A'
+		AND c.category = '$category{$item}'
+		ORDER BY c.accno|;
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
 
     while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+      $ref->{description} = $ref->{translation} if $ref->{translation};
       push @{ $form->{"${item}_accounts"} }, $ref;
     }
     $sth->finish;
@@ -402,7 +417,10 @@ sub deductions {
   my ($self, $myconfig, $form) = @_;
 
   my $dbh = $form->dbconnect($myconfig);
-  
+
+  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+
   my $query = qq|SELECT d.id, d.description, d.employeepays, d.employerpays,
                  c1.accno AS ap_accno, c2.accno AS expense_accno,
                  dr.rate, dr.amount, dr.above, dr.below

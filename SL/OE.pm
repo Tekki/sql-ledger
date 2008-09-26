@@ -33,6 +33,9 @@ sub transactions {
   # remove locks
   $form->remove_locks($myconfig, $dbh, 'oe');
   
+  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+
   if ($form->{type} =~ /(ship|receive)_order/ || $form->{l_memo} eq 'Y') {
     $orderitems_description = ", oi.description AS memo";
     $orderitems_join = qq|JOIN orderitems oi ON (oi.trans_id = o.id)|;
@@ -211,6 +214,9 @@ sub save {
   my $exchangerate = 0;
   my $ok;
 
+  my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  $form->{precision} = $defaults{precision};
+  
   ($null, $form->{employee_id}) = split /--/, $form->{employee};
   if (! $form->{employee_id}) {
     ($form->{employee}, $form->{employee_id}) = $form->get_employee($dbh);
@@ -636,8 +642,10 @@ sub retrieve {
   my $var;
   my $ref;
 
-  my %defaults = $form->get_defaults($dbh, \@{[qw(currencies weightunit closedto)]});
+  my %defaults = $form->get_defaults($dbh, \@{[qw(weightunit closedto precision)]});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
+  
+  $form->{currencies} = $form->get_currencies($dbh, $myconfig);
   
   $form->remove_locks($myconfig, $dbh, 'oe');
 
@@ -713,7 +721,7 @@ sub retrieve {
     $sth->execute || $form->dberror($query);
 
     # foreign exchange rates
-    &exchangerate_defaults($dbh, $form);
+    &exchangerate_defaults($dbh, $myconfig, $form);
 
     # query for price matrix
     my $pmh = &price_matrix_query($dbh, $form);
@@ -935,17 +943,15 @@ sub price_matrix {
 
 
 sub exchangerate_defaults {
-  my ($dbh, $form) = @_;
+  my ($dbh, $myconfig, $form) = @_;
 
   my $var;
   my $query;
   my $buysell = ($form->{vc} eq "customer") ? "buy" : "sell";
   
   # get default currencies
-  my %defaults = $form->get_defaults($dbh, \@{['currencies']});
-  
-  $form->{defaultcurrency} = substr($defaults{currencies},0,3);
-  $form->{currencies} = $defaults{currencies};
+  $form->{currencies} = $form->get_currencies($dbh, $myconfig);
+  $form->{defaultcurrency} = substr($form->{currencies},0,3);
 
   $query = qq|SELECT $buysell
               FROM exchangerate
@@ -1241,7 +1247,7 @@ sub order_details {
       # this is for the subtotals for grouping
       $subtotal += $linetotal;
 
-      $form->{"linetotal_$i"} = $form->format_amount($myconfig, $linetotal, $form->{precision}, "0");
+      $form->{"linetotal_$i"} = $form->format_amount($myconfig, $linetotal, $form->{precision}, 0);
       push(@{ $form->{linetotal} }, $form->{"linetotal_$i"});
       
       @taxaccounts = split / /, $form->{"taxaccounts_$i"};
@@ -1395,7 +1401,7 @@ sub order_details {
     $form->{ordtotal} = $form->{ordtotal} + $tax;
   }
   
-  $form->{subtotal} = $form->format_amount($myconfig, $form->{subtotal}, $form->{precision}, "0");
+  $form->{subtotal} = $form->format_amount($myconfig, $form->{subtotal}, $form->{precision}, 0);
 
   my $whole;
   ($whole, $form->{decimal}) = split /\./, $form->{ordtotal};
@@ -1406,7 +1412,7 @@ sub order_details {
   $form->{integer_amount} = $whole;
   
   # format amounts
-  $form->{quototal} = $form->{ordtotal} = $form->format_amount($myconfig, $form->{ordtotal}, $form->{precision}, "0");
+  $form->{quototal} = $form->{ordtotal} = $form->format_amount($myconfig, $form->{ordtotal}, $form->{precision}, 0);
 
   $form->format_string(qw(text_amount text_decimal));
 
@@ -1864,6 +1870,9 @@ sub get_soparts {
   my $id;
   my $ref;
   
+  my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+
   # store required items from selected sales orders
   my $query = qq|SELECT p.id, oi.qty - oi.ship AS required,
                  p.assembly
@@ -1889,7 +1898,7 @@ sub get_soparts {
   $form->{transdate} = $form->current_date($myconfig);
   
   # foreign exchange rates
-  &exchangerate_defaults($dbh, $form);
+  &exchangerate_defaults($dbh, $myconfig, $form);
 
   $dbh->disconnect;
 
@@ -1973,7 +1982,7 @@ sub generate_orders {
   my $dbh = $form->dbconnect_noauto($myconfig);
   
   # foreign exchange rates
-  &exchangerate_defaults($dbh, $form);
+  &exchangerate_defaults($dbh, $myconfig, $form);
 
   my $amount;
   my $netamount;

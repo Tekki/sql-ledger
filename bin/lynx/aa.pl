@@ -131,7 +131,7 @@ sub create_links {
   $form->create_links($form->{ARAP}, \%myconfig, $form->{vc});
   $form->{readonly} ||= $readonly;
 
-  @a = qw(duedate taxincluded terms cashdiscount discountterms);
+  @a = qw(duedate taxincluded terms cashdiscount discountterms payment_accno);
   push @a, $form->{ARAP};
   for (@a) { $temp{$_} = $form->{$_} }
 
@@ -180,6 +180,14 @@ sub create_links {
     }
   }
   
+  if (!$form->{batch}) {
+    if ($form->{ARAP} eq 'AR') {
+      if ($form->{type} eq 'transaction') {
+	$form->{selectformname} .= qq|\nremittance_voucher--|.$locale->text('Remittance Voucher') if $form->{remittancevoucher};
+      }
+    }
+  }
+  
   # currencies
   @curr = split /:/, $form->{currencies};
   $form->{defaultcurrency} = $curr[0];
@@ -189,7 +197,6 @@ sub create_links {
 
   AA->get_name(\%myconfig, \%$form);
 
-  $form->{rvp} = $myconfig{rvp} if $form->{remittancevoucher};
   $form->{currency} =~ s/ //g;
   $form->{duedate} = $temp{duedate} if $temp{duedate};
 
@@ -261,7 +268,6 @@ sub create_links {
     for $i (1 .. scalar @{ $form->{acc_trans}{$key} }) {
 
       if ($key eq "$form->{ARAP}_paid") {
-	
 	$form->{"$form->{ARAP}_paid_$i"} = "$form->{acc_trans}{$key}->[$i-1]->{accno}--$form->{acc_trans}{$key}->[$i-1]->{description}";
 	$form->{"paid_$i"} = $form->{acc_trans}{$key}->[$i-1]->{amount} * -1 * $ml;
 	$form->{"datepaid_$i"} = $form->{acc_trans}{$key}->[$i-1]->{transdate};
@@ -317,7 +323,7 @@ sub create_links {
   }
 
   $form->{paidaccounts} = 1 if not defined $form->{paidaccounts};
-  
+
   $tax = $form->{oldinvtotal} - $netamount;
   @taxaccounts = split / /, $form->{taxaccounts};
 
@@ -357,6 +363,8 @@ sub create_links {
   } else {
     for (@taxaccounts) { $form->{"calctax_$_"} = 1 }
   }
+
+  $form->{"$form->{ARAP}_paid_$form->{paidaccounts}"} = $form->{payment_accno} if $form->{payment_accno};
 
   for (qw(payment discount)) { $form->{"${_}_accno"} = $form->escape($form->{"${_}_accno"},1) }
 
@@ -531,6 +539,13 @@ sub form_header {
 		<td><input name=dcn size=60 value="|.$form->quote($form->{dcn}).qq|"></td>
 	      </tr>
 |;
+  } else {
+    $dcn = qq|
+              <tr valign=top>
+	        <th align=right nowrap>|.$locale->text('DCN').qq|</th>
+		<td>$form->{dcn}</td>
+	      </tr>
+| .$form->hide_form('dcn');
   }
     
   if (($rows = $form->numtextrows($form->{description}, 60, 5)) > 1) {
@@ -545,6 +560,7 @@ sub form_header {
               </tr>
 |;
 
+
   $form->{onhold} = ($form->{onhold}) ? "checked" : "";
 
   $form->header;
@@ -557,7 +573,7 @@ sub form_header {
 <input type=hidden name=title value="|.$form->quote($form->{title}).qq|">
 |;
 
-  $form->hide_form(qw(id type printed emailed sort closedto locked oldtransdate oldduedate oldcurrency audittrail recurring checktax creditlimit creditremaining defaultcurrency rowcount oldterms batch batchid batchnumber batchdescription cdt));
+  $form->hide_form(qw(id type printed emailed sort closedto locked oldtransdate oldduedate oldcurrency audittrail recurring checktax creditlimit creditremaining defaultcurrency rowcount oldterms batch batchid batchnumber batchdescription cdt precision remittancevoucher));
   $form->hide_form("select$form->{vc}");
   $form->hide_form(map { "select$_" } qw(formname currency department employee projectnumber language));
   $form->hide_form("old$form->{vc}", "$form->{vc}_id", "old$form->{vc}number");
@@ -1146,6 +1162,8 @@ sub update {
     $form->{olddiscount_datepaid} = $form->{discount_datepaid};
   }
 
+  $form->{oldcurrency} = $form->{currency};
+
   $totalpaid = $form->{discount_paid};
   
   $j = 1;
@@ -1524,7 +1542,7 @@ sub search {
   push @a, qq|<input name="l_paymentdiff" class=checkbox type=checkbox value=Y> |.$locale->text('Payment Difference');
   push @a, qq|<input name="l_paid" class=checkbox type=checkbox value=Y checked> |.$locale->text('Paid');
   push @a, qq|<input name="l_duedate" class=checkbox type=checkbox value=Y> |.$locale->text('Due Date');
-  push @a, qq|<input name="l_due" class=checkbox type=checkbox value=Y> |.$locale->text('Amount Due');
+  push @a, qq|<input name="l_due" class=checkbox type=checkbox value=Y> |.$locale->text('Due');
   push @a, qq|<input name="l_memo" class=checkbox type=checkbox value=Y> |.$locale->text('Line Item');
   push @a, qq|<input name="l_notes" class=checkbox type=checkbox value=Y> |.$locale->text('Notes');
   push @a, $l_till if $l_till;
@@ -1871,7 +1889,7 @@ sub transactions {
   $column_header{amount} = "<th class=listheading>" . $locale->text('Total') . "</th>";
   $column_header{paid} = "<th class=listheading>" . $locale->text('Paid') . "</th>";
   $column_header{datepaid} = "<th><a class=listheading href=$href&sort=datepaid>" . $locale->text('Date Paid') . "</a></th>";
-  $column_header{due} = "<th class=listheading>" . $locale->text('Amount Due') . "</th>";
+  $column_header{due} = "<th class=listheading>" . $locale->text('Due') . "</th>";
   $column_header{notes} = "<th class=listheading>".$locale->text('Notes')."</th>";
   $column_header{employee} = "<th><a class=listheading href=$href&sort=employee>$employee</a></th>";
   $column_header{manager} = "<th><a class=listheading href=$href&sort=manager>".$locale->text('Manager')."</a></th>";
@@ -1899,6 +1917,8 @@ sub transactions {
   $column_header{memo} = "<th class=listheading>" . $locale->text('Line Item') . "</th>";
 
   $form->{title} = ($form->{title}) ? $form->{title} : $locale->text('AR Transactions');
+
+  $form->{title} .= " / $form->{company}";
 
   $form->header;
 

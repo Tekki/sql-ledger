@@ -201,7 +201,6 @@ sub prepare_order {
     $form->{format} ||= "pdf";
   } 
   $form->{media} ||= $myconfig{printer};
-  $form->{rvp} = $myconfig{rvp} if $form->{remittancevoucher};
   
   $form->{currency} =~ s/ //g;
   $form->{oldcurrency} = $form->{currency};
@@ -559,7 +558,7 @@ sub form_header {
 <form method=post action="$form->{script}">
 |;
 
-  $form->hide_form(qw(id type defaultcurrency formname printed emailed queued vc title discount creditlimit creditremaining tradediscount business oldtransdate recurring city state country closedto));
+  $form->hide_form(qw(id type defaultcurrency formname printed emailed queued vc title discount creditlimit creditremaining tradediscount business oldtransdate recurring city state country closedto precision));
 
   $form->hide_form("select$form->{vc}");
   $form->hide_form(map { "select$_" } qw(formname currency partsgroup projectnumber department warehouse employee language));
@@ -1696,6 +1695,7 @@ function CheckAll() {
 
   for (qw(amount tax netamount)) { $column_header{"fx_$_"} = "<th>&nbsp;</th>" }
   
+  $title = "$form->{title} / $form->{company}";
   
   $form->header;
 
@@ -1706,7 +1706,7 @@ function CheckAll() {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$title</th>
   </tr>
   <tr height="5"></tr>
   <tr>

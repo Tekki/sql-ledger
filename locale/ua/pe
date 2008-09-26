@@ -1,6 +1,7 @@
 $self{charset} = 'ISO-8859-5';
 
 $self{texts} = {
+  'Account'                     => 'Рахунок',
   'Accounting Menu'             => 'Меню Обл╕ку',
   'Active'                      => 'Активний',
   'Add'                         => 'Новий',

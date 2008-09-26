@@ -141,7 +141,8 @@ sub print_check {
   # dcn
   if ($form->{vc} eq 'customer') {
     for (qw(memberno rvc dcn)) { $form->{$_} = $form->{"bank$_"} }
-    for (qw(rvc dcn)) { $form->{$_} = $form->format_dcn($form->{$_}) }
+    $form->{rvc} = $form->format_dcn($form->{rvc});
+    $form->{dcn} = $form->format_dcn($form->{dcn});
   }
   
   ($form->{employee}) = split /--/, $form->{employee};
@@ -222,6 +223,13 @@ sub print_receipt {
   my ($old_form, $i) = @_;
   
   &print_check($old_form, $i);
+
+}
+
+sub print_remittance_voucher {
+  my ($old_form) = @_;
+
+  &print_transaction($old_form);
 
 }
 
@@ -326,6 +334,11 @@ sub print_transaction {
     
   }
 
+  if ($form->{formname} eq 'remittance_voucher') {
+    $form->isblank("dcn", qq|$form->{"$form->{ARAP}_paid_$form->{paidaccounts}"} : |.$locale->text('DCN missing!'));
+    $form->isblank("rvc", qq|$form->{"$form->{ARAP}_paid_$form->{paidaccounts}"} : |.$locale->text('RVC missing!'));
+  }
+
   if ($form->{taxincluded}) {
     $tax = 0;
     $cd_tax = 0;
@@ -351,7 +364,8 @@ sub print_transaction {
 
   # dcn
   if ($form->{vc} eq 'customer') {
-    for (qw(rvc dcn)) { $form->{$_} = $form->format_dcn($form->{$_}) }
+    $form->{rvc} = $form->format_dcn($form->{rvc});
+    $form->{dcn} = $form->format_dcn($form->{dcn});
   }
   
   ($form->{employee}) = split /--/, $form->{employee};
@@ -370,7 +384,7 @@ sub print_transaction {
   
   $form->{notes} =~ s/^\s+//g;
   
-  @a = ("invnumber", "transdate", "duedate", "notes");
+  @a = qw(invnumber transdate duedate notes dcn rvc);
 
   push @a, qw(company address tel fax businessnumber text_amount text_decimal);
   

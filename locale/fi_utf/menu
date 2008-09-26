@@ -54,7 +54,6 @@ $self{texts} = {
   'HTML Templates'              => 'HTML-mallit',
   'History'                     => 'Historia',
   'Income Statement'            => 'Tuloslaskelma',
-  'Invoice'                     => 'Lasku',
   'LaTeX Templates'             => 'LaTeX mallit',
   'Labor/Overhead'              => 'Työ/overhead',
   'Language'                    => 'Kieli',

@@ -92,6 +92,9 @@ sub post_transaction {
   my $approved = ($form->{pending}) ? '0' : '1';
   my $action = ($approved) ? 'posted' : 'saved';
 
+  my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  $form->{precision} = $defaults{precision};
+
   if ($form->{id}) {
     $keepcleared = 1;
     
@@ -157,6 +160,8 @@ sub post_transaction {
 
   $form->{reference} = $form->update_defaults($myconfig, 'glnumber', $dbh) unless $form->{reference};
   $form->{reference} ||= $form->{id};
+
+  $form->{currency} ||= $form->{defaultcurrency};
 
   my $exchangerate = $form->parse_amount($myconfig, $form->{exchangerate});
   $exchangerate ||= 1;
@@ -301,6 +306,9 @@ sub transactions {
   my $sth;
   my $var;
   my $null;
+  
+  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   my ($glwhere, $arwhere, $apwhere) = ("g.approved = '1'", "a.approved = '1'", "a.approved = '1'");
   
@@ -430,10 +438,13 @@ sub transactions {
     
     # get category for account
     if ($form->{accno}) {
-      $query = qq|SELECT category, link, contra, description
-		  FROM chart
-		  WHERE accno = '$form->{accno}'|;
-      ($form->{category}, $form->{link}, $form->{contra}, $form->{account_description}) = $dbh->selectrow_array($query);
+      $query = qq|SELECT c.category, c.link, c.contra, c.description,
+                  l.description AS translation
+		  FROM chart c
+		  LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+		  WHERE c.accno = '$form->{accno}'|;
+      ($form->{category}, $form->{link}, $form->{contra}, $form->{account_description}, $form->{account_translation}) = $dbh->selectrow_array($query);
+      $form->{account_description} = $form->{account_translation} if $form->{account_translation};
     }
     
     if ($form->{gifi_accno}) {
@@ -632,9 +643,11 @@ sub transaction {
 
   $form->remove_locks($myconfig, $dbh, 'gl');
   
-  my %defaults = $form->get_defaults($dbh, \@{[qw(closedto revtrans currencies)]});
+  my %defaults = $form->get_defaults($dbh, \@{[qw(closedto revtrans precision)]});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
+  $form->{currencies} = $form->get_currencies($dbh, $myconfig);
+  
   if ($form->{id}) {
     $query = qq|SELECT g.*, 
                 d.description AS department,
@@ -653,16 +666,19 @@ sub transaction {
     $sth->finish;
   
     # retrieve individual rows
-    $query = qq|SELECT ac.*, c.accno, c.description, p.projectnumber
+    $query = qq|SELECT ac.*, c.accno, c.description, p.projectnumber,
+                l.description AS translation
 	        FROM acc_trans ac
 	        JOIN chart c ON (ac.chart_id = c.id)
 	        LEFT JOIN project p ON (p.id = ac.project_id)
+		LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 	        WHERE ac.trans_id = $form->{id}
 	        ORDER BY accno|;
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
     
     while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+      $ref->{description} = $ref->{translation} if $ref->{translation};
       push @a, $ref;
       if ($ref->{fx_transaction}) {
 	$fxdr += $ref->{amount} if $ref->{amount} < 0;
@@ -695,14 +711,17 @@ sub transaction {
   }
 
   # get chart of accounts
-  $query = qq|SELECT accno,description
-              FROM chart
-	      WHERE charttype = 'A'
-              ORDER by accno|;
+  $query = qq|SELECT c.accno, c.description,
+              l.description AS translation
+              FROM chart c
+	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+	      WHERE c.charttype = 'A'
+              ORDER by c.accno|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
   
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    $ref->{description} = $ref->{translation} if $ref->{translation};
     push @{ $form->{all_accno} }, $ref;
   }
   $sth->finish;

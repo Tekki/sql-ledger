@@ -80,7 +80,7 @@ sub add {
 
   $form->{currency} = $form->{defaultcurrency};
 
-  delete $form->{defaultcurrency} if $form->{fxadj};
+#  delete $form->{defaultcurrency} if $form->{fxadj};
 
   &display_form(1);
   
@@ -93,7 +93,7 @@ sub edit {
  
   $form->{locked} = ($form->{revtrans}) ? '1' : ($form->datetonum(\%myconfig, $form->{transdate}) <= $form->{closedto});
 
-  delete $form->{defaultcurrency} if $form->{fxadj};
+#  delete $form->{defaultcurrency} if $form->{fxadj};
 
   if ($form->{batch}) {
     $form->{title} = $locale->text('Edit General Ledger Voucher');
@@ -406,7 +406,7 @@ sub transactions {
 	       'E' => $locale->text('Expense'),
 	     );
   
-  $form->{title} = $locale->text('General Ledger');
+  $form->{title} = $locale->text('General Ledger') . " / $form->{company}";
   
   $ml = ($form->{category} =~ /(A|E)/) ? -1 : 1;
 
@@ -983,7 +983,7 @@ sub form_header {
   }
 
 
-  if ($form->{defaultcurrency}) {
+  if (!$form->{fxadj}) {
     $exchangerate = qq|<input type=hidden name=action value="Update">
                 <th align=right nowrap>|.$locale->text('Currency').qq|</th>
 		<td>
@@ -1046,7 +1046,7 @@ sub form_header {
 <form method=post action=$form->{script}>
 |;
 
-  $form->hide_form(qw(id fxadj closedto locked oldtransdate oldcurrency recurring batch batchid batchnumber batchdescription defaultcurrency fxbuy fxsell));
+  $form->hide_form(qw(id fxadj closedto locked oldtransdate oldcurrency recurring batch batchid batchnumber batchdescription defaultcurrency fxbuy fxsell precision));
   $form->hide_form(map { "select$_" } qw(accno department currency));
   
   print qq|
@@ -1236,7 +1236,7 @@ sub post {
   $transdate = $form->datetonum(\%myconfig, $form->{transdate});
 
   $form->error($locale->text('Cannot post transaction for a closed period!')) if ($transdate <= $form->{closedto});
-
+  
   # add up debits and credits
   for $i (1 .. $form->{rowcount}) {
     $dr = $form->parse_amount(\%myconfig, $form->{"debit_$i"});

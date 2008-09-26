@@ -28,7 +28,6 @@ $self{texts} = {
   'Goods & Services'            => 'Beni e Servizi',
   'HTML Templates'              => 'Modelli HTML',
   'Income Statement'            => 'Conto Economico',
-  'Invoice'                     => 'Fattura',
   'LaTeX Templates'             => 'Modelli LaTeX',
   'Language'                    => 'Lingua',
   'List Accounts'               => 'Lista Conti',

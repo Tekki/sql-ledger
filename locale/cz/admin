@@ -107,6 +107,7 @@ $self{subs} = {
   'login'                       => 'login',
   'login_name'                  => 'login_name',
   'logout'                      => 'logout',
+  'main_menu'                   => 'main_menu',
   'oracle_database_administration' => 'oracle_database_administration',
   'pg_database_administration'  => 'pg_database_administration',
   'pgpp_database_administration' => 'pgpp_database_administration',

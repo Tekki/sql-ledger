@@ -186,7 +186,10 @@ sub delete_account {
   $query = qq|DELETE FROM address
               WHERE trans_id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
-
+  
+  $query = qq|DELETE FROM translation
+              WHERE trans_id = $form->{id}|;
+  $dbh->do($query) || $form->dberror($query);
 
   # set inventory_accno_id, income_accno_id, expense_accno_id to defaults
   my %defaults = $form->get_defaults($dbh, \@{['%_accno_id']});
@@ -912,8 +915,8 @@ sub recurring_transactions {
 
   my $dbh = $form->dbconnect($myconfig);
 
-  my %defaults = $form->get_defaults($dbh, \@{['currencies']});
-  my $defaultcurrency = substr($defaults{currencies},0,3);
+  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   my %ordinal = ( reference => 10,
                   description => 4,
@@ -925,7 +928,12 @@ sub recurring_transactions {
   $form->{sort} ||= "nextdate";
   my @a = ($form->{sort});
   my $sortorder = $form->sort_order(\@a, \%ordinal);
-  
+
+  # get default currency
+  $query = qq|SELECT curr FROM curr
+              ORDER BY rn|;
+  my ($defaultcurrency) = $dbh->selectrow_array($query);
+ 
   $query = qq|SELECT 'ar' AS module, 'ar' AS transaction, a.invoice,
                  a.description, n.name, n.customernumber AS vcnumber,
 		 n.id AS name_id, a.amount, s.*, se.formname AS recurringemail,
@@ -1070,6 +1078,7 @@ sub recurring_transactions {
   $dbh->disconnect;
   
 }
+
 
 sub recurring_details {
   my ($self, $myconfig, $form, $id) = @_;
@@ -1240,11 +1249,6 @@ sub save_defaults {
   $form->{fxgain_accno} = $form->{FX_gain};
   $form->{fxloss_accno} = $form->{FX_loss};
   
-  my @a;
-  $form->{currencies} =~ s/ //g;
-  for (split /:/, $form->{currencies}) { push(@a, uc pack "A3", $_) if $_ }
-  $form->{currencies} = join ':', @a;
-
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
 
@@ -1269,13 +1273,13 @@ sub save_defaults {
     $dbh->do($query) || $form->dberror($query);
   }
  
-  for (qw(glnumber sinumber vinumber batchnumber vouchernumber sonumber ponumber sqnumber rfqnumber partnumber employeenumber customernumber vendornumber projectnumber)) {
+  for (qw(glnumber sinumber vinumber batchnumber vouchernumber sonumber ponumber sqnumber rfqnumber partnumber employeenumber customernumber vendornumber projectnumber precision)) {
     $sth->execute($_, $form->{$_}) || $form->dberror;
     $sth->finish;
   }
 
   # optional
-  for (qw(company address tel fax yearend weightunit businessnumber closedto revtrans audittrail currencies method cdt namesbynumber aruniq apuniq gluniq souniq pouniq trackinguniq nontrackinguniq borev)) {
+  for (qw(company address tel fax yearend weightunit businessnumber closedto revtrans audittrail method cdt namesbynumber)) {
     if ($form->{$_}) {
       $sth->execute($_, $form->{$_}) || $form->dberror;
       $sth->finish;
@@ -1312,10 +1316,12 @@ sub defaultaccounts {
   $form->{defaults}{FX_gain} = $form->{fxgain_accno_id};
   $form->{defaults}{FX_loss} = $form->{fxloss_accno_id};
   
-  $query = qq|SELECT id, accno, description, link
-              FROM chart
-              WHERE link LIKE '%IC%'
-              ORDER BY accno|;
+  $query = qq|SELECT c.id, c.accno, c.description, c.link,
+              l.description AS translation
+              FROM chart c
+	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+              WHERE c.link LIKE '%IC%'
+              ORDER BY c.accno|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
@@ -1330,6 +1336,8 @@ sub defaultaccounts {
 	if ($key =~ /sale/) {
 	  $nkey = "IC_income";
 	}
+	$ref->{description} = $ref->{translation} if $ref->{translation};
+
         %{ $form->{accno}{$nkey}{$ref->{accno}} } = ( id => $ref->{id},
                                         description => $ref->{description} );
       }
@@ -1338,15 +1346,19 @@ sub defaultaccounts {
   $sth->finish;
 
 
-  $query = qq|SELECT id, accno, description
-              FROM chart
-	      WHERE (category = 'I' OR category = 'E')
-	      AND charttype = 'A'
-              ORDER BY accno|;
+  $query = qq|SELECT c.id, c.accno, c.description,
+              l.description AS translation
+              FROM chart c
+	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+	      WHERE (c.category = 'I' OR c.category = 'E')
+	      AND c.charttype = 'A'
+              ORDER BY c.accno|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+    $ref->{description} = $ref->{translation} if $ref->{translation};
+
     %{ $form->{accno}{FX_gain}{$ref->{accno}} } = ( id => $ref->{id},
                                       description => $ref->{description} );
     %{ $form->{accno}{FX_loss}{$ref->{accno}} } = ( id => $ref->{id},
@@ -1366,15 +1378,18 @@ sub taxes {
   my $dbh = $form->dbconnect($myconfig);
   
   my $query = qq|SELECT c.id, c.accno, c.description,
-              t.rate * 100 AS rate, t.taxnumber, t.validto
+              t.rate * 100 AS rate, t.taxnumber, t.validto,
+	      l.description AS translation
               FROM chart c
 	      JOIN tax t ON (c.id = t.chart_id)
+	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 	      ORDER BY 3, 6|;
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+    $ref->{description} = $ref->{translation} if $ref->{translation};
     push @{ $form->{taxrates} }, $ref;
   }
   $sth->finish;
@@ -1736,7 +1751,7 @@ sub closedto {
 
   my $dbh = $form->dbconnect($myconfig);
   
-  my %defaults = $form->get_defaults($dbh, \@{[qw(closedto revtrans audittrail aruniq apuniq gluniq souniq pouniq trackinguniq nontrackinguniq)]});
+  my %defaults = $form->get_defaults($dbh, \@{[qw(closedto revtrans audittrail)]});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   $dbh->disconnect;
@@ -1788,22 +1803,25 @@ sub earningsaccounts {
   my $dbh = $form->dbconnect($myconfig);
   
   # get chart of accounts
-  $query = qq|SELECT accno,description
-              FROM chart
-              WHERE charttype = 'A'
-	      AND category = 'Q'
-              ORDER by accno|;
+  $query = qq|SELECT c.accno, c.description,
+              l.description AS translation
+              FROM chart c
+	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+              WHERE c.charttype = 'A'
+	      AND c.category = 'Q'
+              ORDER by c.accno|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
   $form->{chart} = "";
 						  
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+    $ref->{description} = $ref->{translation} if $ref->{translation};
     push @{ $form->{chart} }, $ref;
   }
   $sth->finish;
 
   my %defaults = $form->get_defaults($dbh, \@{['method']});
-  $form->{method} = ($defaults{method}) ? $defaults{method} : "accrual";
+  $form->{method} ||= "accrual";
   
   $dbh->disconnect;
       
@@ -1820,9 +1838,10 @@ sub post_yearend {
   my $uid = localtime;
   $uid .= $$;
 
-  $query = qq|INSERT INTO gl (reference, employee_id)
+  my $curr = substr($form->get_currencies($dbh, $myconfig),0,3);
+  $query = qq|INSERT INTO gl (reference, employee_id, curr)
 	      VALUES ('$uid', (SELECT id FROM employee
-			       WHERE login = '$form->{login}'))|;
+			       WHERE login = '$form->{login}'), '$curr')|;
   $dbh->do($query) || $form->dberror($query);
   
   $query = qq|SELECT id FROM gl
@@ -1898,7 +1917,6 @@ sub company_defaults {
   my $dbh = $form->dbconnect($myconfig);
   
   my %defaults = $form->get_defaults($dbh, \@{['company','address']});
-
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
   
   $dbh->disconnect;
@@ -1915,12 +1933,14 @@ sub bank_accounts {
   my $query = qq|SELECT c.id, c.accno, c.description,
                  bk.name, bk.iban, bk.bic, bk.membernumber, bk.dcn, bk.rvc,
 		 ad.address1, ad.address2, ad.city,
-                 ad.state, ad.zipcode, ad.country
+                 ad.state, ad.zipcode, ad.country,
+		 l.description AS translation
                  FROM chart c
 		 LEFT JOIN bank bk ON (bk.id = c.id)
 		 LEFT JOIN address ad ON (c.id = ad.trans_id)
-		 WHERE c.link LIKE '%_paid%'
-		 ORDER BY 1|;
+		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+		 WHERE c.link LIKE '%AR_paid%'
+		 ORDER BY 2|;
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -1933,6 +1953,8 @@ sub bank_accounts {
       $ref->{address} .= "$ref->{$_}\n" if $ref->{$_};
     }
     chop $ref->{address};
+
+    $ref->{description} = $ref->{translation} if $ref->{translation};
 
     push @{ $form->{ALL} }, $ref;
   }
@@ -1949,18 +1971,22 @@ sub get_bank {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  $query = qq/SELECT c.accno || '--' || c.description AS account,
+  $query = qq|SELECT c.accno, c.description,
               bk.name, bk.iban, bk.bic, bk.membernumber, bk.dcn, bk.rvc,
 	      ad.address1, ad.address2, ad.city,
-              ad.state, ad.zipcode, ad.country
+              ad.state, ad.zipcode, ad.country,
+	      l.description AS translation
 	      FROM chart c
 	      LEFT JOIN bank bk ON (c.id = bk.id)
 	      LEFT JOIN address ad ON (c.id = ad.trans_id)
-	      WHERE c.id = $form->{id}/;
+	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+	      WHERE c.id = $form->{id}|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   $ref = $sth->fetchrow_hashref(NAME_lc);
+  $ref->{account} = "$ref->{accno}--";
+  $ref->{account} .= ($ref->{translation}) ? $ref->{translation} : $ref->{description};
   for (keys %$ref) { $form->{$_} = $ref->{$_} }
   $sth->finish;
 
@@ -2051,8 +2077,7 @@ sub exchangerates {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  my %defaults = $form->get_defaults($dbh, \@{['currencies']});
-  $form->{currencies} = $defaults{currencies};
+  $form->{currencies} = $form->get_currencies($dbh, $myconfig);
 
   $form->all_years($myconfig);
 
@@ -2073,8 +2098,7 @@ sub get_exchangerates {
   my @a = qw(transdate);
   my $sortorder = $form->sort_order(\@a);
 
-  my %defaults = $form->get_defaults($dbh, \@{['currencies']});
-  $form->{currencies} = $defaults{currencies};
+  $form->{currencies} = $form->get_currencies($dbh, $myconfig);
 
   ($form->{transdatefrom}, $form->{transdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
   
@@ -2150,6 +2174,176 @@ sub remove_locks {
   $dbh->do($query) || $form->dberror($query);
 
   $dbh->disconnect;
+
+}
+
+
+sub currencies {
+  my ($self, $myconfig, $form) = @_;
+  
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+  
+  $form->{sort} = "rn" unless $form->{sort};
+  my @a = qw(rn curr);
+  my %ordinal = ( rn	=> 1,
+                  curr	=> 2 );
+  my $sortorder = $form->sort_order(\@a, \%ordinal);
+
+  my $query = qq|SELECT * FROM curr
+		 ORDER BY $sortorder|;
+  $sth = $dbh->prepare($query);
+  $sth->execute || $form->dberror($query);
+
+  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+    push @{ $form->{ALL} }, $ref;
+  }
+  $sth->finish;
+
+  $dbh->disconnect;
+  
+}
+
+
+sub get_currency {
+  my ($self, $myconfig, $form) = @_;
+
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+  
+  my $query = qq|SELECT * FROM curr
+	         WHERE curr = '$form->{curr}'|;
+  my $sth = $dbh->prepare($query) || $form->dberror($query);
+  $sth->execute;
+  
+  my $ref = $sth->fetchrow_hashref(NAME_lc);
+  for (keys %$ref) { $form->{$_} = $ref->{$_} }
+  $sth->finish;
+
+  $query = qq|SELECT DISTINCT curr FROM ar WHERE curr = '$form->{curr}'
+        UNION SELECT DISTINCT curr FROM ap WHERE curr = '$form->{curr}'
+	UNION SELECT DISTINCT curr FROM oe WHERE curr = '$form->{curr}'|;
+  ($form->{orphaned}) = $dbh->selectrow_array($query);
+  $form->{orphaned} = !$form->{orphaned};
+
+  $dbh->disconnect;
+
+}
+
+
+sub save_currency {
+  my ($self, $myconfig, $form) = @_;
+  
+  # connect to database
+  my $dbh = $form->dbconnect_noauto($myconfig);
+  
+  $form->{curr} = substr($form->{curr}, 0, 3);
+
+  $query = qq|SELECT curr
+	      FROM curr
+	      WHERE curr = '$form->{curr}'|;
+  my ($curr) = $dbh->selectrow_array($query);
+
+  my $rn;
+  
+  if (!$curr) {
+    $query = qq|SELECT MAX(rn) FROM curr|;
+    ($rn) = $dbh->selectrow_array($query);
+    $rn++;
+    
+    $query = qq|INSERT INTO curr (rn, curr)
+                VALUES ($rn, '$form->{curr}')|;
+    $dbh->do($query) || $form->dberror($query);
+  }
+
+  for (qw(precision)) { $form->{$_} *= 1 }
+  $query = qq|UPDATE curr SET
+	      precision = $form->{precision}
+	      WHERE curr = '$form->{curr}'|;
+  $dbh->do($query) || $form->dberror($query);
+
+  my $rc = $dbh->commit;
+  $dbh->disconnect;
+
+  $rc;
+
+}
+
+
+sub delete_currency {
+  my ($self, $myconfig, $form) = @_;
+  
+  # connect to database
+  my $dbh = $form->dbconnect_noauto($myconfig);
+  
+  my $query = qq|SELECT rn FROM curr
+                 WHERE curr = '$form->{curr}'|;
+  my ($rn) = $dbh->selectrow_array($query);
+  
+  $query = qq|UPDATE curr SET rn = rn - 1
+              WHERE rn > $rn|;
+  $dbh->do($query) || $form->dberror($query);
+
+  $query = qq|DELETE FROM curr
+	      WHERE curr = '$form->{curr}'|;
+  $dbh->do($query) || $form->dberror($query);
+ 
+  my $rc = $dbh->commit;
+  $dbh->disconnect;
+
+  $rc;
+
+}
+
+
+sub move_currency {
+  my ($self, $myconfig, $form) = @_;
+  
+  # connect to database
+  my $dbh = $form->dbconnect_noauto($myconfig);
+  
+  my $curr;
+  
+  my $query = qq|SELECT rn FROM curr
+	      WHERE curr = '$form->{curr}'|;
+  my ($rn) = $dbh->selectrow_array($query);
+
+  $query = qq|SELECT MAX(rn) FROM curr|;
+  my ($lastrn) = $dbh->selectrow_array($query);
+  
+  if ($form->{move} eq 'up' && $rn != $lastrn) {
+    $query = qq|SELECT curr FROM curr
+	        WHERE rn = $rn + 1|;
+    ($curr) = $dbh->selectrow_array($query);
+
+    $query = qq|UPDATE curr SET rn = $rn + 1
+                WHERE curr = '$form->{curr}'|;
+    $dbh->do($query) || $form->dberror($query);
+
+    $query = qq|UPDATE curr SET rn = $rn
+                WHERE curr = '$curr'|;
+    $dbh->do($query) || $form->dberror($query);
+  }
+  
+  if ($form->{move} eq 'down' && $rn > 1) {
+    $query = qq|SELECT curr FROM curr
+	        WHERE rn = $rn - 1|;
+    ($curr) = $dbh->selectrow_array($query);
+
+    $query = qq|UPDATE curr SET rn = $rn - 1
+                WHERE curr = '$form->{curr}'|;
+    $dbh->do($query) || $form->dberror($query);
+
+    $query = qq|UPDATE curr SET rn = $rn
+                WHERE curr = '$curr'|;
+    $dbh->do($query) || $form->dberror($query);
+  }
+  
+  my $rc = $dbh->commit;
+  $dbh->disconnect;
+
+  $rc;
+
 
 }
 

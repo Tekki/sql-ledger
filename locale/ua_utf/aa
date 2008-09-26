@@ -13,7 +13,6 @@ $self{texts} = {
   'Add AR Transaction'          => 'Додати проводку доходів',
   'Address'                     => 'Адреса',
   'Amount'                      => 'Сума',
-  'Amount Due'                  => 'Заплатити суму',
   'Apr'                         => 'квітня',
   'April'                       => 'Квітень',
   'Are you sure you want to delete Transaction' => 'Ви певні, що хочете видалити дану проводку?',

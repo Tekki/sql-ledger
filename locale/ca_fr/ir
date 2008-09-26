@@ -203,6 +203,7 @@ $self{subs} = {
   'project_selected'            => 'project_selected',
   'purchase_order'              => 'purchase_order',
   'quotation'                   => 'quotation',
+  'rebuild_formnames'           => 'rebuild_formnames',
   'rebuild_vc'                  => 'rebuild_vc',
   'repost'                      => 'repost',
   'reprint'                     => 'reprint',

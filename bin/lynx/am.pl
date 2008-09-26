@@ -218,7 +218,7 @@ sub form_footer {
   
   if ($form->{id}) {
     $button{'Save'} = { ndx => 3, key => 'S', value => $locale->text('Save') };
-    $button{'Save as new'} = { ndx => 7, key => 'N', value => $locale->text('Save as new') };
+    $button{'Save as new'} = { ndx => 7, key => 'N', value => $locale->text('Save as new') } if $form->{type} ne 'currency';
     
     if ($form->{orphaned}) {
       $button{'Delete'} = { ndx => 16, key => 'D', value => $locale->text('Delete') };
@@ -2100,7 +2100,11 @@ sub defaults {
 	  <b>|.$locale->text('Number').qq|</b>
 	  </td>
 	</tr>
-
+	
+	<tr>
+	  <th align=right>|.$locale->text('Precision').qq|</th>
+	  <td><input name=precision size=5 value="$form->{precision}"></td>
+	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('Weight Unit').qq|</th>
 	  <td><input name=weightunit size=5 value="$form->{weightunit}"></td>
@@ -2136,14 +2140,6 @@ sub defaults {
 	  <td><select name=FX_loss>|.$form->select_option($form->{"selectFX_loss"}, $form->{FX_loss}).qq|</select></td>
 	</tr>
       </table>
-    </td>
-  </tr>
-  <tr>
-    <th align=left>|.$locale->text('Enter up to 3 letters separated by a colon (i.e CAD:USD:EUR) for your native and foreign currencies').qq|</th>
-  </tr>
-  <tr>
-    <td>
-    <input name=currencies size=40 value="$form->{currencies}">
     </td>
   </tr>
   <tr>
@@ -2280,15 +2276,6 @@ sub config {
 	      </tr>
 |;
 
-    $rvp = qq|
-	      <tr>
-		<th align=right>|.$locale->text('Remittance Voucher').qq|</th>
-		<td><select name=rvp>|
-		.$form->select_option($form->{selectprinter}, $myconfig{rvp})
-		.qq|</select></td>
-	      </tr>
-|;
-
     $selectoutputformat .= "\npostscript--Postscript\npdf--PDF";
 
     $myconfig{outputformat} ||= "Postscript";
@@ -2393,7 +2380,6 @@ sub config {
 	      </tr>
 	      $outputformat
 	      $printer
-	      $rvp
 	    </table>
 	  </td>
 	</tr>
@@ -3032,11 +3018,11 @@ sub recurring_transactions {
 
   $form->{stylesheet} = $myconfig{stylesheet};
 
-  $form->{title} = $locale->text('Recurring Transactions');
-
   $column_data{id} = "";
 
   AM->recurring_transactions(\%myconfig, \%$form);
+
+  $form->{title} = $locale->text('Recurring Transactions') . " / $form->{company}";
 
   my $href = "$form->{script}?action=recurring_transactions";
   for (qw(path login)) { $href .= qq|&$_=$form->{$_}| }
@@ -3320,6 +3306,7 @@ sub process_transactions {
       
       # process transaction
       AM->recurring_details(\%myconfig, \%$pt, $id);
+$pt->{paid};
 
       my $header = $form->{header};
       # reset $form
@@ -3378,7 +3365,6 @@ sub process_transactions {
 	    # calculate date paid
 	    for ($j = 1; $j <= $form->{paidaccounts}; $j++) {
 	      $form->{"datepaid_$j"} = $form->add_date(\%myconfig, $form->{transdate}, $pt->{paid}, "days");
-
 	      ($form->{"$form->{ARAP}_paid_$j"}) = split /--/, $form->{"$form->{ARAP}_paid_$j"};
 	      delete $form->{"cleared_$j"};
 	    }
@@ -3828,7 +3814,7 @@ sub bank_header {
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('RVC').qq|</th>
-	  <td><input name=rvc size=60 value="$form->{rvc}"></td>
+	  <td><input name=rvc size=80 value="$form->{rvc}"></td>
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('DCN').qq|</th>
@@ -4282,6 +4268,210 @@ sub save_exchangerate {
   $form->isblank("transdate", $locale->text('Date missing!'));
   AM->save_exchangerate(\%myconfig, \%$form);
   $form->redirect($locale->text('Exchange Rate saved!'));
+
+}
+
+
+sub list_currencies {
+
+  AM->currencies(\%myconfig, \%$form);
+
+  my $href = "$form->{script}?action=list_currencies";
+  for (qw(direction oldsort path login)) { $href .= qq|&$_=$form->{$_}| }
+
+  $form->sort_order();
+  
+  my $callback = "$form->{script}?action=list_currencies";
+  for (qw(direction oldsort path login)) { $callback .= qq|&$_=$form->{$_}| }
+
+  $form->{callback} = $callback .= "&sort=$form->{sort}";
+  $callback = $form->escape($callback);
+  
+  $form->{title} = $locale->text('Currencies');
+
+  my @column_index = $form->sort_columns(qw(rn curr precision plus minus));
+
+  my %column_data;
+  
+  $column_data{rn} = qq|<th><a class=listheading href=$href&sort=rn>|.$locale->text('No').qq|</a></th>|;
+  $column_data{curr} = qq|<th><a class=listheading href=$href&sort=curr>|.$locale->text('Currency').qq|</a></th>|;
+  $column_data{precision} = qq|<th class=listheading>|.$locale->text('Precision').qq|</th>|;
+  $column_data{plus} = qq|<th class=listheading>&nbsp;</th>|;
+  $column_data{minus} = qq|<th class=listheading>&nbsp;</th>|;
+
+  $form->header;
+
+  print qq|
+<body>
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$form->{title}</th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>
+      <table width=100%>
+        <tr class=listheading>
+|;
+
+  for (@column_index) { print "$column_data{$_}\n" }
+
+  print qq|
+        </tr>
+|;
+
+  my $i;
+  
+  foreach my $ref (@{ $form->{ALL} }) {
+    
+    $i++; $i %= 2;
+    
+    print qq|
+        <tr valign=top class=listrow$i>
+|;
+
+   $ref->{curr} =~ s/ //g;
+   $column_data{rn} = qq|<td>$ref->{rn}</td>|;
+   $column_data{curr} = qq|<td><a href=$form->{script}?action=edit_currency&curr=$ref->{curr}&rn=$ref->{rn}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{curr}</td>|;
+   $column_data{precision} = qq|<td>$ref->{precision}</td>|;
+   $column_data{plus} = qq|<td><a href=$form->{script}?action=move_currency&curr=$ref->{curr}&move=up&path=$form->{path}&login=$form->{login}&callback=$callback>&nbsp;+&nbsp;</td>|;
+   $column_data{minus} = qq|<td><a href=$form->{script}?action=move_currency&curr=$ref->{curr}&move=down&path=$form->{path}&login=$form->{login}&callback=$callback>&nbsp;-&nbsp;</td>|;
+   
+
+   for (@column_index) { print "$column_data{$_}\n" }
+
+   print qq|
+	</tr>
+|;
+  }
+
+  print qq|
+      </table>
+    </td>
+  </tr>
+  <tr>
+  <td><hr size=3 noshade></td>
+  </tr>
+</table>
+
+<br>
+<form method=post action=$form->{script}>
+|;
+
+  $form->{type} = "currency";
+
+  $form->hide_form(qw(type callback path login));
+  
+  print qq|
+<input class=submit type=submit name=action value="|.$locale->text('Add Currency').qq|">|;
+
+  if ($form->{menubar}) {
+    require "$form->{path}/menu.pl";
+    &menubar;
+  }
+
+  print qq|
+  </form>
+
+</body>
+</html> 
+|;
+  
+}
+
+
+sub add_currency {
+
+  $form->{title} = $locale->text('Add Currency');
+  
+  $form->{callback} = "$form->{script}?action=add_currency&path=$form->{path}&login=$form->{login}" unless $form->{callback};
+
+  &currency_header;
+  &form_footer;
+
+}
+
+
+sub edit_currency {
+
+  $form->{title} = $locale->text('Edit');
+
+  AM->get_currency(\%myconfig, \%$form);
+
+  $form->{id} = 1;
+  &currency_header;
+  &form_footer;
+
+}
+
+
+sub delete_currency {
+
+  if (AM->delete_currency(\%myconfig, \%$form)) {
+    $form->redirect($locale->text('Currency deleted!'));
+  }
+  
+  $form->error($locale->text('Failed to delete Currency!'));
+
+}
+
+
+sub move_currency {
+
+  AM->move_currency(\%myconfig, \%$form);
+  $form->redirect;
+  
+}
+
+
+sub currency_header {
+
+  $form->header;
+
+  $form->{type} = "currency";
+  
+  print qq|
+<body>
+
+<form method=post action=$form->{script}>
+
+<table width=100%>
+  <tr>
+    <th class=listtop colspan=2>$form->{title}</th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>
+      <table>
+  <tr>
+    <th align=right>|.$locale->text('Currency').qq|</th>
+    <td><input name=curr size=3 maxlength=3 value="$form->{curr}"></td>
+    <th align=right>|.$locale->text('Precision').qq|</th>
+    <td><input name=precision size=3 value="$form->{precision}"></td>
+  </tr>
+  </table>
+  </td>
+  </tr>
+  <tr>
+    <td colspan=2><hr size=3 noshade></td>
+  </tr>
+</table>
+|;
+
+  $form->hide_form(qw(type rn));
+
+}
+
+
+sub save_currency {
+
+  $form->isblank("curr", $locale->text('Currency missing!'));
+  if (AM->save_currency(\%myconfig, \%$form)) {
+    $form->redirect($locale->text('Currency saved!'));
+  }
+  
+  $form->error($locale->text('Failed to save Currency!'));
 
 }
 

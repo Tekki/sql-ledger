@@ -7,7 +7,6 @@ $self{texts} = {
   'Accounting Menu'             => 'Menu Contabilit&agrave;',
   'Address'                     => 'Indirizzo',
   'Amount'                      => 'Importo',
-  'Amount Due'                  => 'Importo Dovuto',
   'Apr'                         => 'Apr',
   'April'                       => 'Aprile',
   'Are you sure you want to delete Transaction' => 'Sei sicuro di voler cancellare la Transazione',

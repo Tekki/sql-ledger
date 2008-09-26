@@ -254,6 +254,10 @@ INSERT INTO defaults (fldname, fldvalue) VALUES ('income_accno_id', (SELECT id F
 INSERT INTO defaults (fldname, fldvalue) VALUES ('expense_accno_id', (SELECT id FROM chart WHERE accno = '5.110.01'));
 INSERT INTO defaults (fldname, fldvalue) VALUES ('fxgain_accno_id', (SELECT id FROM chart WHERE accno = '4.340'));
 INSERT INTO defaults (fldname, fldvalue) VALUES ('fxloss_accno_id', (SELECT id FROM chart WHERE accno = '5.240'));
-INSERT INTO defaults (fldname, fldvalue) VALUES ('currencies', 'PYG:USD:EUR');
 INSERT INTO defaults (fldname, fldvalue) VALUES ('weightunit', 'kg');
+INSERT INTO defaults (fldname, fldvalue) VALUES ('precision', '2');
+--
+INSERT INTO curr (rn, curr, precision) VALUES (1,'PYG',2);
+INSERT INTO curr (rn, curr, precision) VALUES (2,'USD',2);
+INSERT INTO curr (rn, curr, precision) VALUES (3,'EUR',2);
 

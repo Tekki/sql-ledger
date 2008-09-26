@@ -54,7 +54,6 @@ $self{texts} = {
   'HTML Templates'              => 'HTML sablonok',
   'History'                     => 'Történet',
   'Income Statement'            => 'Eredménykimutatás',
-  'Invoice'                     => 'Számla',
   'LaTeX Templates'             => 'LaTeX_Sablonok',
   'Labor/Overhead'              => 'Munkamûvelet',
   'Language'                    => 'Nyelv',

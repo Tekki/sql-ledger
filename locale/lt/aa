@@ -9,7 +9,6 @@ $self{texts} = {
   'Accounting Menu'             => 'Apskaitos Menu',
   'Address'                     => 'Adresas',
   'Amount'                      => 'Suma',
-  'Amount Due'                  => 'Suma iki',
   'Apr'                         => 'Bal',
   'April'                       => 'Balandis',
   'Are you sure you want to delete Transaction' => 'Ar Jus tikrai norite iðtrinti operacijà?',

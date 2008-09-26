@@ -49,7 +49,6 @@ $self{texts} = {
   'HTML Templates'              => 'Szablony HTML',
   'History'                     => 'Statystyka',
   'Income Statement'            => 'Rachunek Zysków i Strat',
-  'Invoice'                     => 'Faktura',
   'LaTeX Templates'             => 'Szablony LaTeX',
   'Labor/Overhead'              => 'Koszty Pracownicze/Administracyjne',
   'Language'                    => 'Jêzyk',

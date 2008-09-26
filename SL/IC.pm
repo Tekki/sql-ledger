@@ -25,11 +25,17 @@ sub get_part {
                  c1.accno AS inventory_accno, c1.description AS inventory_description,
 		 c2.accno AS income_accno, c2.description AS income_description,
 		 c3.accno AS expense_accno, c3.description AS expense_description,
-		 pg.partsgroup
+		 pg.partsgroup,
+		 l1.description AS inventory_translation,
+		 l2.description AS income_translation,
+		 l3.description AS expense_translation
 	         FROM parts p
 		 LEFT JOIN chart c1 ON (p.inventory_accno_id = c1.id)
+		 LEFT JOIN translation l1 ON (l1.trans_id = c1.id AND l1.language_code = '$myconfig->{countrycode}')
 		 LEFT JOIN chart c2 ON (p.income_accno_id = c2.id)
+		 LEFT JOIN translation l2 ON (l2.trans_id = c2.id AND l2.language_code = '$myconfig->{countrycode}')
 		 LEFT JOIN chart c3 ON (p.expense_accno_id = c3.id)
+		 LEFT JOIN translation l3 ON (l3.trans_id = c3.id AND l3.language_code = '$myconfig->{countrycode}')
 		 LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
                  WHERE p.id = $form->{id}|;
   my $sth = $dbh->prepare($query);
@@ -37,6 +43,10 @@ sub get_part {
   my $ref = $sth->fetchrow_hashref(NAME_lc);
 
   # copy to $form variables
+  $ref->{inventory_description} = $ref->{inventory_translation} if $ref->{inventory_translation};
+  $ref->{income_description} = $ref->{income_translation} if $ref->{income_translation};
+  $ref->{expense_description} = $ref->{expense_translation} if $ref->{expense_translation};
+  
   for (keys %$ref) { $form->{$_} = $ref->{$_} }
   $sth->finish;
   
@@ -915,6 +925,9 @@ sub all_parts {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
+  
+  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   my %ordinal = ( 'partnumber' => 2,
                   'description' => 3,
@@ -937,8 +950,7 @@ sub all_parts {
 
   my $query;
   
-  my %defaults = $form->get_defaults($dbh, \@{['currencies']});
-  my $curr = substr($defaults{currencies},0,3);
+  my $curr = substr($form->get_currencies($dbh, $myconfig),0,3);
   
   my $flds = qq|p.id, p.partnumber, p.description, p.onhand, p.unit,
                 p.bin, p.sellprice, p.listprice, p.lastcost, p.rop,
@@ -1605,16 +1617,20 @@ sub create_links {
   
   my $ref;
 
-  my $query = qq|SELECT accno, description, link
-                 FROM chart
-		 WHERE link LIKE '%$module%'
-		 ORDER BY accno|;
+  my $query = qq|SELECT c.accno, c.description, c.link,
+                 l.description AS translation
+                 FROM chart c
+		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+		 WHERE c.link LIKE '%$module%'
+		 ORDER BY c.accno|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     foreach my $key (split /:/, $ref->{link}) {
       if ($key =~ /$module/) {
+	$ref->{description} = $ref->{translation} if $ref->{translation};
+
 	push @{ $form->{"${module}_links"}{$key} }, { accno => $ref->{accno},
 				      description => $ref->{description} };
       }
@@ -1670,20 +1686,27 @@ sub create_links {
 
 
   if ($form->{id}) {
-    my %defaults = $form->get_defaults($dbh, \@{[qw(weightunit currencies)]});
+    my %defaults = $form->get_defaults($dbh, \@{[qw(weightunit precision)]});
     for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
+    $form->{currencies} = $form->get_currencies($dbh, $myconfig);
+    
   } else {
     $form->{priceupdate} = $form->current_date($myconfig);
     
-    my %defaults = $form->get_defaults($dbh, \@{['weightunit', 'currencies', '%_accno_id']});
-    for (qw(weightunit currencies)) { $form->{$_} = $defaults{$_} }
+    my %defaults = $form->get_defaults($dbh, \@{['weightunit', '%_accno_id', 'precision']});
+    for (qw(weightunit precision)) { $form->{$_} = $defaults{$_} }
+
+    $form->{currencies} = $form->get_currencies($dbh, $myconfig);
 
     for (qw(inventory income expense)) {
-      $query = qq|SELECT accno, description
-                  FROM chart
-		  WHERE id = $defaults{"${_}_accno_id"}|;
-      ($form->{"${_}_accno"}, $form->{"${_}_description"}) = $dbh->selectrow_array($query);
+      $query = qq|SELECT c.accno, c.description,
+                  l.description AS translation
+                  FROM chart c
+		  LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+		  WHERE c.id = $defaults{"${_}_accno_id"}|;
+      ($form->{"${_}_accno"}, $form->{"${_}_description"}, $form->{"${_}_translation"}) = $dbh->selectrow_array($query);
+      $form->{"${_}_description"} = $form->{"${_}_translation"} if $form->{"${_}_translation"};
       $form->{amount}{"IC_$_"} = { accno => $form->{"${_}_accno"}, description => $form->{"${_}_description"} };
       
     }
@@ -1756,6 +1779,9 @@ sub so_requirements {
   my ($self, $myconfig, $form) = @_;
 
   my $dbh = $form->dbconnect($myconfig);
+
+  my %defaults = $form->get_defaults($dbh, \@{['company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   my $var;
   my $where = "o.closed = '0'";

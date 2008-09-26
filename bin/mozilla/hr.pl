@@ -263,7 +263,7 @@ sub list_employees {
   $column_header{iban} = qq|<th><a class=listheading href=$href&sort=iban>|.$locale->text('IBAN').qq|</a></th>|;
   $column_header{bic} = qq|<th><a class=listheading href=$href&sort=bic>|.$locale->text('BIC').qq|</a></th>|;
   
-  $form->{title} = $locale->text('Employees');
+  $form->{title} = $locale->text('Employees') . " / $form->{company}";
 
   $form->header;
 
@@ -751,7 +751,7 @@ sub search_deduction {
   $column_header{ap_accno} = qq|<th class=listheading>|.$locale->text('AP').qq|</th>|;
   $column_header{expense_accno} = qq|<th class=listheading>|.$locale->text('Expense').qq|</th>|;
   
-  $form->{title} = $locale->text('Deductions');
+  $form->{title} = $locale->text('Deductions') . " / $form->{company}";
 
   $form->header;
 
@@ -923,7 +923,7 @@ sub deduction_header {
 <form method=post action=$form->{script}>
 |;
 
-  $form->hide_form(qw(title rate_rows base_rows after_rows));
+  $form->hide_form(qw(title rate_rows base_rows after_rows precision));
   $form->hide_form(map { "select$_" } qw(base ap expense));
 
   print qq|

@@ -49,7 +49,6 @@ $self{texts} = {
   'HTML Templates'              => 'HTML mallar',
   'History'                     => 'Historik',
   'Income Statement'            => 'Resultaträkning',
-  'Invoice'                     => 'Faktura',
   'LaTeX Templates'             => 'LaTeX Mallar',
   'Labor/Overhead'              => 'Arbete/omkostnader',
   'Language'                    => 'Språk',

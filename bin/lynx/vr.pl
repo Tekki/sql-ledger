@@ -623,7 +623,8 @@ sub list_batches {
   $column_header{employee} = "<th><a class=listheading href=$href&sort=employee>".$locale->text('Employee')."</th>";
   $column_header{manager} = "<th><a class=listheading href=$href&sort=manager>".$locale->text('Manager')."</th>";
   
-
+  $title = "$form->{title} / $form->{company}";
+  
   $form->header;
 
   print qq|
@@ -633,7 +634,7 @@ sub list_batches {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$title</th>
   </tr>
   <tr height="5"></tr>
   <tr>

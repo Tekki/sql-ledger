@@ -69,6 +69,10 @@ INSERT INTO defaults (fldname, fldvalue) VALUES ('income_accno_id', (SELECT id F
 INSERT INTO defaults (fldname, fldvalue) VALUES ('expense_accno_id', (SELECT id FROM chart WHERE accno = '5020'));
 INSERT INTO defaults (fldname, fldvalue) VALUES ('fxgain_accno_id', (SELECT id FROM chart WHERE accno = '4450'));
 INSERT INTO defaults (fldname, fldvalue) VALUES ('fxloss_accno_id', (SELECT id FROM chart WHERE accno = '5810'));
-INSERT INTO defaults (fldname, fldvalue) VALUES ('currencies', 'USD:CAD:EUR');
 INSERT INTO defaults (fldname, fldvalue) VALUES ('weightunit', 'lbs');
+INSERT INTO defaults (fldname, fldvalue) VALUES ('precision', '2');
+--
+INSERT INTO curr (rn, curr, precision) VALUES (1,'USD',2);
+INSERT INTO curr (rn, curr, precision) VALUES (2,'CAD',2);
+INSERT INTO curr (rn, curr, precision) VALUES (3,'EUR',2);
 

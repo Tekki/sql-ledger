@@ -1325,6 +1325,7 @@ $upd
 
 <br>
 <input type=submit class=submit name=action value="|.$locale->text('Continue').qq|">
+<input type=submit class=submit name=action value="|.$locale->text('Main Menu').qq|">
 
 </td></tr>
 </table>
@@ -1487,6 +1488,7 @@ sub create_dataset {
   
 <br>
 <input type=submit class=submit name=action value="|.$locale->text('Continue').qq|">
+<input type=submit class=submit name=action value="|.$locale->text('Main Menu').qq|">
 
 
 </form>
@@ -1526,6 +1528,7 @@ sub dbcreate {
 <input type=hidden name=nextsub value=list_users>
 
 <p><input type=submit class=submit name=action value="|.$locale->text('Continue').qq|">
+<input type=submit class=submit name=action value="|.$locale->text('Main Menu').qq|">
 </form>
 
 
@@ -1587,6 +1590,7 @@ sub delete_dataset {
 
 <br>
 <input type=submit class=submit name=action value="|.$locale->text('Continue').qq|">
+<input type=submit class=submit name=action value="|.$locale->text('Main Menu').qq|">
 
   </td></tr>
 </table>
@@ -1630,6 +1634,7 @@ $form->{db} |.$locale->text('successfully deleted!')
 <input type=hidden name=nextsub value=list_users>
 
 <p><input type=submit class=submit name=action value="|.$locale->text('Continue').qq|">
+<input type=submit class=submit name=action value="|.$locale->text('Main').qq|">
 </form>
 
 
@@ -1662,4 +1667,6 @@ sub lock_system {
 
 }
 
+
+sub main_menu { $form->redirect }
 

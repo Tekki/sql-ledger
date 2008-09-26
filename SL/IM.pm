@@ -274,9 +274,9 @@ sub import_sales_invoice {
 
   my $query;
 
-  $query = qq|SELECT substr(fldvalue,1,3)
-              FROM defaults
-	      WHERE fldname = 'currencies'|;
+  $query = qq|SELECT curr
+              FROM curr
+	      ORDER BY rn|;
   ($form->{defaultcurrency}) = $dbh->selectrow_array($query);
   
   $form->{curr} ||= $form->{defaultcurrency};

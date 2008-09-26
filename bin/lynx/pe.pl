@@ -1190,7 +1190,7 @@ sub partsgroup_report {
   $column_header{partsgroup} = qq|<th><a class=listheading href=$href&sort=partsgroup width=90%>|.$locale->text('Group').qq|</a></th>|;
   $column_header{pos} = qq|<th class=listheading>|.$locale->text('POS').qq|</th>|;
 
-  $form->{title} = $locale->text('Groups');
+  $form->{title} = $locale->text('Groups') . " / $form->{company}";
 
   $form->header;
  
@@ -1391,7 +1391,7 @@ sub pricegroup_report {
 
   $column_header{pricegroup} = qq|<th><a class=listheading href=$href&sort=pricegroup width=90%>|.$locale->text('Pricegroup').qq|</th>|;
 
-  $form->{title} = $locale->text('Pricegroups');
+  $form->{title} = $locale->text('Pricegroups') . " / $form->{company}";
 
   $form->header;
  
@@ -1585,6 +1585,18 @@ sub translation {
         <tr>
           <th align=right nowrap>|.$locale->text('Project Number').qq|</th>
           <td><input name=projectnumber size=20></td>
+        </tr>
+|;
+  }
+
+  if ($form->{translation} eq 'chart') {
+    $form->{title} = $locale->text('Chart of Accounts Translations');
+    $form->{number} = "accno";
+    $sort = qq|<input type=hidden name=sort value=accno>|;
+    $number = qq|
+        <tr>
+          <th align=right nowrap>|.$locale->text('Account').qq|</th>
+          <td><input name=accno size=20></td>
         </tr>
 |;
   }

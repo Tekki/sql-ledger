@@ -44,7 +44,6 @@ $self{texts} = {
   'HR'                          => 'موارد بشرية',
   'History'                     => 'تاريخى',
   'Income Statement'            => 'قائمة الدخل',
-  'Invoice'                     => 'فاتورة',
   'Labor/Overhead'              => 'تكلفة عمالة',
   'Language'                    => 'اللغة',
   'List Accounts'               => 'قائمة الحسابات',

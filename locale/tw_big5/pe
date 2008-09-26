@@ -1,6 +1,7 @@
 $self{charset} = 'BIG5';
 
 $self{texts} = {
+  'Account'                     => '帳戶',
   'Accounting Menu'             => '會計選單',
   'Active'                      => '生效的',
   'Add'                         => '新增',

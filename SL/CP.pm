@@ -44,10 +44,12 @@ sub paymentaccounts {
   # connect to database
   $dbh = $form->dbconnect($myconfig) unless $dbh;
   
-  my $query = qq|SELECT accno, description, link
-                 FROM chart
-		 WHERE link LIKE '%$form->{ARAP}%'
-		 ORDER BY accno|;
+  my $query = qq|SELECT c.accno, c.description, c.link,
+                 l.description AS translation
+                 FROM chart c
+		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+		 WHERE c.link LIKE '%$form->{ARAP}%'
+		 ORDER BY c.accno|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
@@ -56,6 +58,7 @@ sub paymentaccounts {
   $form->{PR}{"$form->{ARAP}_discount"} = ();
   
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+    $ref->{description} = $ref->{translation} if $ref->{translation};
     foreach my $item (split /:/, $ref->{link}) {
       if ($item eq $form->{ARAP}) {
 	push @{ $form->{PR}{$form->{ARAP}} }, $ref;
@@ -75,8 +78,10 @@ sub paymentaccounts {
 
   ($form->{employee}) = $form->get_employee($dbh);
   
-  my %defaults = $form->get_defaults($dbh, \@{[qw(currencies closedto)]});
+  my %defaults = $form->get_defaults($dbh, \@{['closedto']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
+
+  $form->{currencies} = $form->get_currencies($dbh, $myconfig);
 
   if ($form->{payment} eq 'payments') {
     # get language codes
@@ -185,12 +190,14 @@ sub get_openvc {
   $query = qq|SELECT vc.*,
               ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
 	      ad.country, a.amount, a.paid,
- 	      a.exchangerate
+ 	      a.exchangerate,
+	      l.description AS translation
 	      FROM $form->{vc} vc
 	      JOIN $arap a ON (a.$form->{vc}_id = vc.id)
 	      JOIN acc_trans ac ON (a.id = ac.trans_id)
 	      JOIN chart c ON (c.id = ac.chart_id)
 	      JOIN address ad ON (ad.trans_id = vc.id)
+	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 	      WHERE $where
 	      ORDER BY $sortorder|;
   $sth = $dbh->prepare($query);
@@ -204,6 +211,7 @@ sub get_openvc {
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     
     $ref->{exchangerate} ||= 1;
+    $ref->{description} = $ref->{translation} if $ref->{translation};
 
     if ($form->{vc} eq 'vendor') {
       $ref->{fxdue} = $form->round_amount(($ref->{amount} - $ref->{paid}) / $ref->{exchangerate}, $form->{precision});
@@ -261,7 +269,10 @@ sub retrieve {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
- 
+
+  my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+    
   my $sortorder = "transdate, invnumber";
 
   my $ml = 1;
@@ -300,32 +311,42 @@ sub retrieve {
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
-  $query = qq/SELECT c.accno || '--' || c.description
+  $query = qq|SELECT c.accno, c.description,
+              l.description AS translation
               FROM acc_trans ac
 	      JOIN chart c ON (c.id = ac.chart_id)
+	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 	      WHERE ac.trans_id = ?
 	      AND ac.fx_transaction = '0'
 	      AND (c.link LIKE '$form->{ARAP}%'
-	           OR c.link LIKE '%:$form->{ARAP}')/;
+	           OR c.link LIKE '%:$form->{ARAP}')|;
   my $ath = $dbh->prepare($query);
  
-  $query = qq/SELECT c.accno || '--' || c.description
+  $query = qq|SELECT c.accno, c.description,
+              l.description AS translation
               FROM acc_trans ac
 	      JOIN chart c ON (c.id = ac.chart_id)
+	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 	      WHERE ac.trans_id = ?
 	      AND ac.transdate = ?
 	      AND ac.fx_transaction = '0'
-	      AND c.link LIKE '%$form->{ARAP}_paid%'/;
+	      AND c.link LIKE '%$form->{ARAP}_paid%'|;
   my $pth = $dbh->prepare($query);
   
-  $query = qq/SELECT c.accno || '--' || c.description
+  $query = qq|SELECT c.accno, c.description,
+              l.description AS translation
               FROM acc_trans ac
 	      JOIN chart c ON (c.id = ac.chart_id)
+	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 	      WHERE ac.trans_id = ?
 	      AND ac.fx_transaction = '0'
-	      AND c.link LIKE '%$form->{ARAP}_discount%'/;
+	      AND c.link LIKE '%$form->{ARAP}_discount%'|;
   my $dth = $dbh->prepare($query);
 
+  my $accno;
+  my $description;
+  my $translation;
+  
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     $form->{edit} .= "$ref->{id} ";
     
@@ -340,22 +361,28 @@ sub retrieve {
     # AR/AP account
     if (!$form->{arap_accno}) {
       $ath->execute($ref->{id});
-      ($form->{arap_accno}) = $ath->fetchrow_array;
+      ($accno, $description, $translation) = $ath->fetchrow_array;
       $ath->finish;
+      $description = $translation if $translation;
+      $form->{arap_accno} = "${accno}--$description";
     }
     # payment
     if (!$form->{payment_accno}) {
       $pth->execute($ref->{id}, $ref->{datepaid});
-      ($form->{"$form->{ARAP}_paid"}) = $pth->fetchrow_array;
+      ($accno, $description, $translation) = $pth->fetchrow_array;
       $pth->finish;
+      $description = $translation if $translation;
+      $form->{"$form->{ARAP}_paid"} = "${accno}--$description";
       $form->{payment_accno} = $form->{"$form->{ARAP}_paid"};
     }
     # discount
     if (!$form->{discount_accno}) {
       if ($ref->{discount}) {
 	$dth->execute($ref->{id});
-	($form->{"$form->{ARAP}_discount"}) = $dth->fetchrow_array;
+	($accno, $description, $translation) = $dth->fetchrow_array;
 	$dth->finish;
+	$description = $translation if $translation;
+	$form->{"$form->{ARAP}_discount"} = "${accno}--$description";
 	$form->{discount_accno} = $form->{"$form->{ARAP}_discount"};
       }
     }
@@ -419,9 +446,9 @@ sub get_openinvoices {
 
   my $sortorder = "transdate, invnumber";
 
-  my %defaults = $form->get_defaults($dbh, \@{['namesbynumber', 'cdt']});
+  my %defaults = $form->get_defaults($dbh, \@{[qw(namesbynumber cdt precision)]});
 
-  $form->{cdt} = $defaults{cdt};
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   if ($form->{payment} eq 'payments') {
     $where = qq|WHERE a.amount != a.paid
@@ -917,7 +944,8 @@ sub post_payment {
       $query = qq|UPDATE $form->{arap} set
                   amount = $trans{$form->{"id_$i"}}{amount},
 		  paid = $amount,
-		  datepaid = '$form->{datepaid}'
+		  datepaid = '$form->{datepaid}',
+		  bank_id = (SELECT id FROM chart WHERE accno = '$paymentaccno')
 		  WHERE id = $form->{"id_$i"}|;
       $dbh->do($query) || $form->dberror($query);
       

@@ -49,7 +49,6 @@ $self{texts} = {
   'HTML Templates'              => 'HTML Vorlagen',
   'History'                     => 'Statistik',
   'Income Statement'            => 'G & V',
-  'Invoice'                     => 'Rechnung',
   'LaTeX Templates'             => 'LaTeX Vorlagen',
   'Labor/Overhead'              => 'Gestehungskosten',
   'Language'                    => 'Sprache',

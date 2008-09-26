@@ -371,6 +371,7 @@ sub include_in_report {
   push @a, qq|<input name="l_creditlimit" type=checkbox class=checkbox value=Y> |.$locale->text('Credit Limit');
   push @a, qq|<input name="l_terms" type=checkbox class=checkbox value=Y> |.$locale->text('Terms');
   push @a, qq|<input name="l_language" type=checkbox class=checkbox value=Y> |.$locale->text('Language');
+  push @a, qq|<input name="l_remittancevoucher" type=checkbox class=checkbox value=Y> |.$locale->text('Remittance Voucher');
   push @a, qq|<input name="l_startdate" type=checkbox class=checkbox value=Y> |.$locale->text('Startdate');
   push @a, qq|<input name="l_enddate" type=checkbox class=checkbox value=Y> |.$locale->text('Enddate');
 
@@ -612,7 +613,7 @@ sub list_names {
 
   push @columns, (
 	     threshold, taxnumber, gifi_accno, sic_code, business,
-	     pricegroup, language, iban, bic,
+	     pricegroup, language, iban, bic, remittancevoucher,
 	     startdate, enddate,
 	     invnumber, invamount, invtax, invtotal,
 	     ordnumber, ordamount, ordtax, ordtotal,
@@ -813,6 +814,7 @@ sub list_names {
   $column_header{business} = qq|<th><a class=listheading href=$href&sort=business>|.$locale->text('Type of Business').qq|</a></th>|;
   $column_header{iban} = qq|<th class=listheading>|.$locale->text('IBAN').qq|</th>|;
   $column_header{bic} = qq|<th class=listheading>|.$locale->text('BIC').qq|</th>|;
+  $column_header{remittancevoucher} = qq|<th class=listheading>|.$locale->text('RV').qq|</th>|;
   $column_header{startdate} = qq|<th><a class=listheading href=$href&sort=startdate>|.$locale->text('Startdate').qq|</a></th>|;
   $column_header{enddate} = qq|<th><a class=listheading href=$href&sort=enddate>|.$locale->text('Enddate').qq|</a></th>|;
   
@@ -861,6 +863,8 @@ sub list_names {
     $form->{title} = $locale->text($label ." Transactions");
   }
 
+  $title = "$form->{title} / $form->{company}";
+  
   $form->header;
 
   print qq|
@@ -868,7 +872,7 @@ sub list_names {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$title</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -994,12 +998,14 @@ sub list_names {
 	$column_data{terms} = "<td>&nbsp;$a</td>";
       }
       if ($form->{l_threshold}) {
-	$column_data{threshold} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{threshold}, undef, "&nbsp;")."</td>";
+	$column_data{threshold} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{threshold}, 0, "&nbsp;")."</td>";
       }
       if ($form->{l_creditlimit}) {
-	$column_data{creditlimit} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{creditlimit}, undef, "&nbsp;")."</td>";
+	$column_data{creditlimit} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{creditlimit}, 0, "&nbsp;")."</td>";
       }
-
+      if ($form->{l_remittancevoucher}) {
+	$column_data{remittancevoucher} = "<td align=center>". (($ref->{remittancevoucher}) ? "*" : "&nbsp;") . "</td>";
+      }
     }
    
     $j++; $j %= 2;
@@ -1231,7 +1237,7 @@ sub list_history {
 # $locale->text('Vendor History')
 
   $label = ucfirst $form->{db};
-  $form->{title} = $locale->text($label." History");
+  $form->{title} = $locale->text($label." History") . " / $form->{company}";
 
   $colspan = $#column_index + 1;
 

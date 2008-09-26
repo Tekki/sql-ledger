@@ -54,7 +54,6 @@ $self{texts} = {
   'HTML Templates'              => 'HTML Шаблони',
   'History'                     => 'История',
   'Income Statement'            => 'Отчет за Приходи и Разходи',
-  'Invoice'                     => 'Фактура',
   'LaTeX Templates'             => 'LaTeX Шаблони',
   'Labor/Overhead'              => 'Текущи разходи',
   'Language'                    => 'Език',

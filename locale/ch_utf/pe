@@ -1,6 +1,7 @@
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
+  'Account'                     => 'Konto',
   'Accounting Menu'             => 'Kontoverwaltung',
   'Active'                      => 'Aktiv',
   'Add'                         => 'Hinzufügen',
@@ -55,7 +56,6 @@ $self{texts} = {
   'Jobs'                        => 'Aufträge',
   'Language'                    => 'Sprache',
   'Languages not defined!'      => 'Sprachen nicht definiert!',
-  'Line Item'                   => 'Zeileneinheit',
   'Link Accounts'               => 'Konten verknüpfen',
   'List Price'                  => 'Listenpreis',
   'Month'                       => 'Monat',

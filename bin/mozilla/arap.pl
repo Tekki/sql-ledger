@@ -30,7 +30,7 @@ sub check_name {
 
   my ($new_name, $new_id) = split /--/, $form->{$name};
   my $rv = 0;
-  
+
   # if we use a selection
   if ($form->{"select$name"}) {
     if ($form->{"old$name"} ne $form->{$name}) {
@@ -52,8 +52,6 @@ sub check_name {
 
       # put employee together if there is a new employee_id
       $form->{employee} = "$form->{employee}--$form->{employee_id}" if $form->{employee_id};
-
-      $form->{rvp} = ($form->{remittancevoucher}) ? $myconfig{rvp} : "";
 
       $rv = 1;
     }
@@ -91,9 +89,10 @@ sub check_name {
 	# we got one name
 	$form->{"${name}_id"} = $form->{name_list}[0]->{id};
 	$form->{$name} = $form->{name_list}[0]->{name};
+	$form->{"${name}number"} = $form->{name_list}[0]->{"${name}number"};
 	$form->{"old$name"} = qq|$form->{$name}--$form->{"${name}_id"}|;
 	$form->{"old${name}number"} = $form->{"${name}number"};
-	
+
 	AA->get_name(\%myconfig, \%$form);
 	
 	$form->{currency} =~ s/ //g;
@@ -102,8 +101,6 @@ sub check_name {
 	$form->{cashdiscount} *= 100;
 	$form->{cashdiscount} = 0 if $form->{type} =~ /(debit|credit)_/;
 
-	$form->{rvp} = ($form->{remittancevoucher}) ? $myconfig{rvp} : "";
-
       } else {
 	# name is not on file
 	$msg = ucfirst $name . " not on file!";
@@ -111,6 +108,9 @@ sub check_name {
       }
     }
   }
+
+  &rebuild_formnames;
+
 
   $rv;
 
@@ -261,11 +261,32 @@ sub name_selected {
   $form->{cashdiscount} = 0 if $form->{type} =~ /(debit|credit)_/;
   for (qw(terms discountterms)) { $form->{$_} = "" if ! $form->{$_} }
 
-  $form->{rvp} = ($form->{remittancevoucher}) ? $myconfig{rvp} : "";
+  &rebuild_formnames;
 
   &update(1);
 
 }
+
+
+sub rebuild_formnames {
+
+  $form->{selectformname} = $form->unescape($form->{selectformname});
+
+  if ($form->{remittancevoucher}) {
+    # add remittance voucher to formname
+    if (! ($form->{selectformname} =~ /remittance_voucher/)) {
+      $form->{selectformname} .= qq|\nremittance_voucher--|.$locale->text('Remittance Voucher');
+    }
+  } else {
+    if ($form->{selectformname} =~ /remittance_voucher/) {
+      $form->{selectformname} =~ s/\nremittance_voucher--.*//s;
+    }
+  }
+
+  $form->{selectformname} = $form->escape($form->{selectformname},1);
+
+}
+
 
 
 sub rebuild_vc {
@@ -624,7 +645,7 @@ pdf--|.$locale->text('PDF');
   }
 
   if (%printer && $latex && %formname) {
-    $selectprinter = qq|<option>\n|;
+    $selectprinter = "";
     for (sort keys %printer) { $selectprinter .= qq|<option value="$_">$_\n| }
     
     # formname:format:printer

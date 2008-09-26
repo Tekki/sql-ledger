@@ -1,4 +1,5 @@
 $self{texts} = {
+  'Account'                     => 'Conto',
   'Accounting Menu'             => 'Menu Contabilit&agrave;',
   'Active'                      => 'Attivo',
   'Add'                         => 'Aggiungi',

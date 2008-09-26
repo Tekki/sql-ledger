@@ -1,6 +1,7 @@
 $self{charset} = 'ISO-8859-9';
 
 $self{texts} = {
+  'Account'                     => 'Hesap',
   'Accounting Menu'             => 'Muhasebe Menüsü',
   'Add'                         => 'Ekle',
   'Address'                     => 'Adres',

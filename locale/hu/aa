@@ -13,7 +13,6 @@ $self{texts} = {
   'Add AR Transaction'          => 'Új Vevõ Tranzakció',
   'Address'                     => 'Cím',
   'Amount'                      => 'Összeg',
-  'Amount Due'                  => 'Esedékes összeg',
   'Apr'                         => 'Ápr.',
   'April'                       => 'Április',
   'Are you sure you want to delete Transaction' => 'Biztos, hogy törölni akarja? Tranzakció:',

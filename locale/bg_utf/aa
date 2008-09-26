@@ -13,7 +13,6 @@ $self{texts} = {
   'Add AR Transaction'          => 'Добавяне превод към доставчици',
   'Address'                     => 'Адрес',
   'Amount'                      => 'Сума',
-  'Amount Due'                  => 'Сума за получаване',
   'Apr'                         => 'Апр',
   'April'                       => 'Април',
   'Are you sure you want to delete Transaction' => 'Сигурни ли сте, че ще изстриете превода?',

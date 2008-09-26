@@ -24,7 +24,6 @@ $self{texts} = {
   'Goods & Services'            => 'Zbo¾í a slu¾by',
   'HTML Templates'              => 'HTML ¹ablony',
   'Income Statement'            => 'Vısledovka',
-  'Invoice'                     => 'Faktura',
   'LaTeX Templates'             => 'LaTeX ¹ablony',
   'Language'                    => 'Jazyk',
   'List Accounts'               => 'Seznam úètù',

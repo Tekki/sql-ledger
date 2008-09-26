@@ -28,7 +28,6 @@ $self{texts} = {
   'Goods & Services'            => 'Vörur og şjónusta',
   'HTML Templates'              => 'HTML-skabalón',
   'Income Statement'            => 'Inn yfirlısing',
-  'Invoice'                     => 'Sölureikningur',
   'LaTeX Templates'             => 'LaTeX-skabalón',
   'Language'                    => 'Túngumál',
   'List Accounts'               => 'Sına lykla',

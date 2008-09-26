@@ -31,7 +31,6 @@ $self{texts} = {
   'HTML Templates'              => 'Plantillas HTML',
   'History'                     => 'Historico',
   'Income Statement'            => 'Estado de Cuentas',
-  'Invoice'                     => 'Factura',
   'LaTeX Templates'             => 'Plantillas de LaTeX',
   'List Accounts'               => 'Listar Cuentas',
   'List GIFI'                   => 'Listar código GIFI',

@@ -30,7 +30,6 @@ $self{texts} = {
   'Goods & Services'            => 'Prekës ir Paslaugos',
   'HTML Templates'              => 'HTML ðablonai',
   'Income Statement'            => 'Pelno/nuostolio ataskaita',
-  'Invoice'                     => 'Sàskaita-faktûra',
   'LaTeX Templates'             => 'LaTeX ðablonai',
   'Language'                    => 'Kalba',
   'List Accounts'               => 'Sàskaitø sàraðas',

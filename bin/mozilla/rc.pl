@@ -199,7 +199,7 @@ sub display_form {
     $option .= $locale->text('To')."&nbsp;".$locale->date(\%myconfig, $form->{todate}, 1);
   }
 
-  $form->{title} = "$form->{accno}--$form->{account}";
+  $form->{title} = "$form->{accno}--$form->{account} / $form->{company}";
   
   $form->header;
 

@@ -22,6 +22,11 @@ sub all_accounts {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
+  my $ref;
+  
+  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+ 
   my $query = qq|SELECT c.accno,
                  SUM(ac.amount) AS amount
                  FROM chart c
@@ -31,7 +36,7 @@ sub all_accounts {
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     $amount{$ref->{accno}} = $ref->{amount}
   }
   $sth->finish;
@@ -48,21 +53,24 @@ sub all_accounts {
   $sth->finish;
 
   $query = qq|SELECT c.id, c.accno, c.description, c.charttype, c.gifi_accno,
-              c.category, c.link
+              c.category, c.link,
+	      l.description AS translation
               FROM chart c
-	      ORDER BY accno|;
+	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+	      ORDER BY c.accno|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
  
-  while (my $ca = $sth->fetchrow_hashref(NAME_lc)) {
-    $ca->{amount} = $amount{$ca->{accno}};
-    $ca->{gifi_description} = $gifi{$ca->{gifi_accno}};
-    if ($ca->{amount} < 0) {
-      $ca->{debit} = $ca->{amount} * -1;
+  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    $ref->{amount} = $amount{$ref->{accno}};
+    $ref->{gifi_description} = $gifi{$ref->{gifi_accno}};
+    if ($ref->{amount} < 0) {
+      $ref->{debit} = $ref->{amount} * -1;
     } else {
-      $ca->{credit} = $ca->{amount};
+      $ref->{credit} = $ref->{amount};
     }
-    push @{ $form->{CA} }, $ca;
+    $ref->{description} = $ref->{translation} if $ref->{translation};
+    push @{ $form->{CA} }, $ref;
   }
 
   $sth->finish;
@@ -77,6 +85,10 @@ sub all_transactions {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
+
+  my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+    
   # get chart_id
   my $query = qq|SELECT id FROM chart
                  WHERE accno = '$form->{accno}'|;
@@ -148,10 +160,11 @@ sub all_transactions {
 
   if ($form->{accno} || $form->{gifi_accno}) {
     # get category for account
-    $query = qq|SELECT description, category, link, contra
-                FROM chart
-		WHERE accno = '$form->{accno}'|;
-
+    $query = qq|SELECT c.description, c.category, c.link, c.contra,
+                l.description AS translation
+                FROM chart c
+		LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+		WHERE c.accno = '$form->{accno}'|;
     if ($form->{accounttype} eq 'gifi') {
       $query = qq|SELECT description, category, link, contra
                 FROM chart
@@ -159,7 +172,9 @@ sub all_transactions {
 		AND charttype = 'A'|;
     }
 
-    ($form->{description}, $form->{category}, $form->{link}, $form->{contra}) = $dbh->selectrow_array($query);
+    ($form->{description}, $form->{category}, $form->{link}, $form->{contra}, $form->{translation}) = $dbh->selectrow_array($query);
+
+    $form->{description} = $form->{translation} if $form->{translation};
     
     if ($form->{fromdate}) {
 
@@ -317,60 +332,60 @@ sub all_transactions {
   my $chart_id;
   my %accno;
   
-  while (my $ca = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
     
     # gl
-    if ($ca->{module} eq "gl") {
-      $ca->{module} = "gl";
-      $ca->{vc_id} = 0;
-      $ca->{db} = "";
+    if ($ref->{module} eq "gl") {
+      $ref->{module} = "gl";
+      $ref->{vc_id} = 0;
+      $ref->{db} = "";
     }
 
     # ap
-    if ($ca->{module} eq "ap") {
-      $ca->{module} = ($ca->{invoice}) ? 'ir' : 'ap';
-      $ca->{module} = 'ps' if $ca->{till};
-      $ca->{db} = "vendor";
+    if ($ref->{module} eq "ap") {
+      $ref->{module} = ($ref->{invoice}) ? 'ir' : 'ap';
+      $ref->{module} = 'ps' if $ref->{till};
+      $ref->{db} = "vendor";
     }
 
     # ar
-    if ($ca->{module} eq "ar") {
-      $ca->{module} = ($ca->{invoice}) ? 'is' : 'ar';
-      $ca->{module} = 'ps' if $ca->{till};
-      $ca->{db} = "customer";
+    if ($ref->{module} eq "ar") {
+      $ref->{module} = ($ref->{invoice}) ? 'is' : 'ar';
+      $ref->{module} = 'ps' if $ref->{till};
+      $ref->{db} = "customer";
     }
 
-    if ($ca->{amount}) {
+    if ($ref->{amount}) {
       %accno = ();
 
-      if ($ca->{amount} < 0) {
-	$ca->{debit} = $ca->{amount} * -1;
-	$ca->{credit} = 0;
-	$dr->execute($ca->{id});
-	$ca->{accno} = ();
+      if ($ref->{amount} < 0) {
+	$ref->{debit} = $ref->{amount} * -1;
+	$ref->{credit} = 0;
+	$dr->execute($ref->{id});
+	$ref->{accno} = ();
 	while (($chart_id, $accno) = $dr->fetchrow_array) {
-	  $accno{$accno} = 1 if $chart_id ne $ca->{chart_id};
+	  $accno{$accno} = 1 if $chart_id ne $ref->{chart_id};
 	}
 	$dr->finish;
 	
-	for (sort keys %accno) { push @{ $ca->{accno} }, "$_ " }
+	for (sort keys %accno) { push @{ $ref->{accno} }, "$_ " }
 
       } else {
-	$ca->{credit} = $ca->{amount};
-	$ca->{debit} = 0;
+	$ref->{credit} = $ref->{amount};
+	$ref->{debit} = 0;
 	
-	$cr->execute($ca->{id});
-	$ca->{accno} = ();
+	$cr->execute($ref->{id});
+	$ref->{accno} = ();
 	while (($chart_id, $accno) = $cr->fetchrow_array) {
-	  $accno{$accno} = 1 if $chart_id ne $ca->{chart_id};
+	  $accno{$accno} = 1 if $chart_id ne $ref->{chart_id};
 	}
 	$cr->finish;
 
-	for (keys %accno) { push @{ $ca->{accno} }, "$_ " }
+	for (keys %accno) { push @{ $ref->{accno} }, "$_ " }
 
       }
 
-      push @{ $form->{CA} }, $ca;
+      push @{ $form->{CA} }, $ref;
     }
     
   }

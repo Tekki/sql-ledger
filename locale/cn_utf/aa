@@ -13,7 +13,6 @@ $self{texts} = {
   'Add AR Transaction'          => '新增应收记录',
   'Address'                     => '地址',
   'Amount'                      => '总计',
-  'Amount Due'                  => '应收小计',
   'Apr'                         => '四月',
   'April'                       => '四月',
   'Are you sure you want to delete Transaction' => '您是否确定要删除记录',

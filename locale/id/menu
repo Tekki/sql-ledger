@@ -40,7 +40,6 @@ $self{texts} = {
   'Groups'                      => 'Kelompok Rakitan',
   'History'                     => 'Historis',
   'Income Statement'            => 'Laba Rugi',
-  'Invoice'                     => 'Invoice',
   'LaTeX Templates'             => 'Template LaTeX',
   'Labor/Overhead'              => 'Tenaga Kerja/ Overhead',
   'Language'                    => 'Bahasa',

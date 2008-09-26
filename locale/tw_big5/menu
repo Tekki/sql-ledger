@@ -50,7 +50,6 @@ $self{texts} = {
   'HTML Templates'              => 'HTML 模版',
   'History'                     => '歷史',
   'Income Statement'            => '損益表',
-  'Invoice'                     => '發票',
   'LaTeX Templates'             => 'LaTex 模版',
   'Labor/Overhead'              => '直接人工/經常費用',
   'Language'                    => '語言',

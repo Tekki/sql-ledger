@@ -3,11 +3,11 @@
 # Copyright (C) 2002
 #
 #  Author: Dieter Simader
-#   Email: dsimader@sql-ledger.org
 #     Web: http://www.sql-ledger.org
 #
 #  Language: Spanish
 #  Contributors: John Christian Stoddart
+#                Dirk Enrique Seiffert
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ sub init {
 		  500 => 'quinientos',
 		  700 => 'setecientos',
 		  900 => 'novecientos',
-                10**2 => 'ciento',
+                10**2 => 'cien',
                 10**3 => 'mil',
 		10**6 => 'millón',
 	       10**12 => 'billón',
@@ -90,9 +90,9 @@ sub num2text {
   # split amount into chunks of 3
   my @num = reverse split //, abs($amount);
   my @numblock = ();
-  my $stripun = 0;
   my @a = ();
   my $i;
+
 
   while (@num) {
     @a = ();
@@ -100,12 +100,6 @@ sub num2text {
       push @a, shift @num;
     }
     push @numblock, join / /, reverse @a;
-  }
-  
-  # special case for 1000
-  if ($numblock[1] eq '1' && $numblock[0] gt '000') {
-    # remove first array element from textnumber
-    $stripun = 1;
   }
 
   while (@numblock) {
@@ -122,7 +116,11 @@ sub num2text {
     
     if ($numblock[$i] > 99) {
       if ($num[0] == 1) {
-	push @textnumber, $self->{numbername}{10**2};
+        if ($numblock[$i] > 100) {
+	  push @textnumber, $self->{numbername}{10**2}."to";
+	} else {
+	  push @textnumber, $self->{numbername}{10**2};
+	}
       } else {
         # special case for 500, 700, 900
 	if (grep /$num[0]/, (5,7,9)) {
@@ -131,8 +129,7 @@ sub num2text {
 	} else {
 	
 	  # the one from hundreds, append cientos
-	  push @textnumber, $self->{numbername}{$num[0]}.$self->{numbername}{10**2}.'s';
-	  
+	  push @textnumber, $self->{numbername}{$num[0]}.$self->{numbername}{10**2}.'tos';
 	}
       }
      
@@ -160,26 +157,31 @@ sub num2text {
 	  push @textnumber, $a;
 	} elsif ($i == 3) {
 	  $num = 10**($i * 2);
-	  $a = "$self->{10**3} $self->{numbername}{$num}"."es";
+	  $a = "$self->{numbername}{10**3} $self->{numbername}{$num}es";
 	  $a =~ s/ó/o/;
 	  push @textnumber, $a;
 	} else {
 	  if ($i == 1) {
 	    push @textnumber, $self->{numbername}{$num};
 	  } else {
-	    push @textnumber, $self->{numbername}{$num}.'s';
+	    push @textnumber, "$self->{numbername}{$num}s";
 	  }
 	}
       } else {
-	push @textnumber, $self->{numbername}{$num};
+        if ($i > 2) {
+	  shift @textnumber;
+	  push @textnumber, $self->{numbername}{10**3};
+	} else {
+	  $a = "$self->{numbername}{$num}es";
+	  $a =~ s/ó/o/;
+	  push @textnumber, $a;
+	}
       }
     }
       
     pop @numblock;
     
   }
-
-  shift @textnumber if $stripun;
 
   join ' ', @textnumber;
 

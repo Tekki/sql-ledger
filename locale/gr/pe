@@ -1,6 +1,7 @@
 $self{charset} = 'ISO-8859-7';
 
 $self{texts} = {
+  'Account'                     => 'Λογαριασμός',
   'Accounting Menu'             => 'Μενπύ Λογιστικής',
   'Active'                      => 'Ενεργός',
   'Add'                         => 'Προσθήκη',

@@ -11,7 +11,6 @@ $self{texts} = {
   'Add AR Transaction'          => 'Ausgangsbuchung anlegen',
   'Address'                     => 'Adresse',
   'Amount'                      => 'Betrag',
-  'Amount Due'                  => 'Betrag fällig',
   'Apr'                         => 'Apr',
   'April'                       => 'April',
   'Are you sure you want to delete Transaction' => 'Buchung wirklich löschen?',

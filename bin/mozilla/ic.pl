@@ -619,7 +619,7 @@ sub form_header {
 <form method=post action="$form->{script}">
 |;
 
-  $form->hide_form(qw(id item title makemodel alternate onhand orphaned taxaccounts rowcount project_id));
+  $form->hide_form(qw(id item title makemodel alternate onhand orphaned taxaccounts rowcount project_id precision));
   
   print qq|
 <table width="100%">
@@ -1537,13 +1537,15 @@ sub generate_report {
   foreach $item (split /;/, $myconfig{acs}) {
     delete $button{$item};
   }
+  
+  $title = "$form->{title} / $form->{company}";
 
   print qq|
 <body>
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$title</th>
   </tr>
   <tr height="5"></tr>
 
@@ -2402,6 +2404,8 @@ sub so_requirements_report {
   $column_header{description} = "<th><a class=listheading href=$href&sort=description>" . $locale->text('Description') . "</a></th>";
   $column_header{qty} = "<th class=listheading>" . $locale->text('Qty') . "</th>";
   
+  $title = "$form->{title} / $form->{company}";
+  
   $form->header;
 
   print qq|
@@ -2409,7 +2413,7 @@ sub so_requirements_report {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$title</th>
   </tr>
   <tr height="5"></tr>
   <tr>

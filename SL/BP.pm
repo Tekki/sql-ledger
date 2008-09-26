@@ -21,6 +21,7 @@ sub get_vc {
   my $dbh = $form->dbconnect($myconfig);
   
   my %arap = ( invoice => { ar => customer, ap => vendor },
+               remittance_voucher => { ar => customer },
                packing_list => { oe => customer, ar => customer, ap => vendor },
 	       sales_order => { oe => customer },
 	       work_order => { oe => customer },
@@ -151,6 +152,9 @@ sub get_spoolfiles {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
+  my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+    
   my $query;
   my $invnumber = "invnumber";
   my $item;
@@ -158,6 +162,7 @@ sub get_spoolfiles {
   my $wildcard = ($form->{type} eq 'invoice') ? '%' : '';
   
   my %arap = ( invoice => { ar => customer, ap => vendor },
+               remittance_voucher => { ar => customer },
                packing_list => { oe => customer, ar => customer, ap => vendor },
 	       sales_order => { oe => customer },
 	       work_order => { oe => customer },
@@ -273,6 +278,10 @@ sub get_spoolfiles {
       if ($form->{"print$arap{$form->{type}}{$item}"} ne 'Y') {
 	$form->{$arap{$form->{type}}{$item}} = "\r";
 	$form->{"$arap{$form->{type}}{$item}_id"} = 0;
+      }
+
+      if ($form->{type} eq 'remittance_voucher') {
+	$where .= qq| AND vc.remittancevoucher = '1'|;
       }
 
       if ($form->{batch} eq 'queue') {

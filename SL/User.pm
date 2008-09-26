@@ -511,7 +511,7 @@ sub dbneedsupdate {
 
   my %dbsources = ();
   my $query;
-  
+
   $form->{sid} = $form->{dbdefault};
   &dbconnect_vars($form, $form->{dbdefault});
 
@@ -526,15 +526,16 @@ sub dbneedsupdate {
     $query = qq|SELECT d.datname FROM pg_database d, pg_user u
                 WHERE d.datdba = u.usesysid
 		AND u.usename = '$form->{dbuser}'|;
+
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
-    
+
     while (my ($db) = $sth->fetchrow_array) {
-
-      next if ($db =~ /^template/);
-
-      &dbconnect_vars($form, $db);
       
+      next if ($db =~ /^template/);
+      
+      &dbconnect_vars($form, $db);
+     
       my $dbh = DBI->connect($form->{dbconnect}, $form->{dbuser}, $form->{dbpasswd}) or $form->dberror;
 
       $query = qq|SELECT tablename FROM pg_tables
@@ -945,7 +946,7 @@ sub config_vars {
   my @conf = qw(acs company countrycode dateformat
              dbconnect dbdriver dbhost dbname dboptions dbpasswd
 	     dbport dbuser email fax menuwidth name numberformat password
-	     outputformat printer rvp role sessionkey sid signature
+	     outputformat printer role sessionkey sid signature
 	     stylesheet tel templates timeout vclimit);
 
   @conf;

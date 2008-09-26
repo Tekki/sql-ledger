@@ -48,7 +48,6 @@ $self{texts} = {
   'HTML Templates'              => 'HTML ðabloni',
   'History'                     => 'Vçsture',
   'Income Statement'            => 'Peïòas vai zaudçjuma aprçíins',
-  'Invoice'                     => 'Rçíins',
   'LaTeX Templates'             => 'LaTeX ðablons',
   'Labor/Overhead'              => 'Darbs/izmaksas',
   'Language'                    => 'Valoda',

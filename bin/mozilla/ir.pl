@@ -401,7 +401,7 @@ sub form_header {
 <form method=post action="$form->{script}">
 |;
 
-  $form->hide_form(qw(id type printed emailed queued title vc creditlimit creditremaining business closedto locked shipped oldtransdate oldduedate recurring defaultcurrency duedate oldterms cdt order_id));
+  $form->hide_form(qw(id type printed emailed queued title vc creditlimit creditremaining business closedto locked shipped oldtransdate oldduedate recurring defaultcurrency duedate oldterms cdt precision order_id));
 
   $form->hide_form(map { "select$_" } ("$form->{vc}", "AP", "AP_paid", "AP_discount"));
   $form->hide_form(map { "select$_" } qw(formname currency partsgroup projectnumber department warehouse employee language));

@@ -81,7 +81,7 @@ sub retrieve_card {
       %ref = ();
       $ref->{id} = $form->{parts_id};
       
-      IS::exchangerate_defaults($dbh, $form);
+      IS::exchangerate_defaults($dbh, $myconfig, $form);
       IS::price_matrix($pmh, $ref, $form->datetonum($myconfig, $form->{transdate}), 4, $form, $myconfig);
     }
 
@@ -118,7 +118,10 @@ sub jcitems_links {
     $dbh = $form->dbconnect($myconfig);
     $disconnect = 1;
   }
-  
+
+  my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+    
   my $query;
 
   if ($form->{project_id}) {
@@ -264,7 +267,7 @@ sub retrieve_item {
   $sth->execute || $form->dberror($query);
 
   my $pmh = price_matrix_query($dbh, $form, $project_id, $customer_id);
-  IS::exchangerate_defaults($dbh, $form);
+  IS::exchangerate_defaults($dbh, $myconfig, $form);
 
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
     $ref->{description} = $ref->{translation} if $ref->{translation};
@@ -568,8 +571,7 @@ sub save {
 sub price_matrix_query {
   my ($dbh, $form, $project_id, $customer_id) = @_;
   
-  my %defaults = $form->get_defaults($dbh, \@{['currencies']});
-  my $curr = substr($defaults{currencies},0,3);
+  my $curr = substr($form->get_currencies($dbh, $myconfig),0,3);
   
   my $query = qq|SELECT p.id AS parts_id, 0 AS customer_id, 0 AS pricegroup_id,
               0 AS pricebreak, p.sellprice, NULL AS validfrom, NULL AS validto,

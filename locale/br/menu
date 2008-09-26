@@ -49,7 +49,6 @@ $self{texts} = {
   'HTML Templates'              => 'Modelos HTML',
   'History'                     => 'Histórico',
   'Income Statement'            => 'Apuração de L&P',
-  'Invoice'                     => 'Fatura',
   'LaTeX Templates'             => 'Modelos LaTeX',
   'Labor/Overhead'              => 'Tabalho/Sobretaxa',
   'Language'                    => 'Idioma',

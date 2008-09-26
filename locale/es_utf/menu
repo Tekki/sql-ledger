@@ -30,7 +30,6 @@ $self{texts} = {
   'Goods & Services'            => 'Bienes y servicios',
   'HTML Templates'              => 'Plantillas HTML',
   'Income Statement'            => 'Balance de situación',
-  'Invoice'                     => 'Factura',
   'LaTeX Templates'             => 'Plantillas LaTeX',
   'Language'                    => 'Lenguaje',
   'List Accounts'               => 'Listar cuentas',

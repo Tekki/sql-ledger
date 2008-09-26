@@ -626,7 +626,8 @@ sub post_invoice {
     $form->{"${_}_id"} *= 1;
   }
 
-  my %defaults = $form->get_defaults($dbh, \@{['fx%_accno_id', 'cdt']});
+  my %defaults = $form->get_defaults($dbh, \@{['fx%_accno_id', 'cdt', 'precision']});
+  $form->{precision} = $defaults{precision};
   
   $query = qq|SELECT inventory_accno_id, income_accno_id, expense_accno_id
 	      FROM parts
@@ -1152,16 +1153,19 @@ sub post_invoice {
   my $approved;
   my $paymentid = 1;
   
+  my ($paymentaccno) = split /--/, $form->{"AP_paid_1"};
+  
   # record payments and offsetting AP
   for $i (1 .. $form->{paidaccounts}) {
 
     if ($form->{"paid_$i"}) {
       ($accno) = split /--/, $form->{"AP_paid_$i"};
+      $paymentaccno = $accno;
       $form->{"datepaid_$i"} = $form->{transdate} unless ($form->{"datepaid_$i"});
       $form->{datepaid} = $form->{"datepaid_$i"};
 
       $form->{"exchangerate_$i"} = $form->parse_amount($myconfig, $form->{"exchangerate_$i"});
-      $form->{"exchangerate_$i"} = 1;
+      $form->{"exchangerate_$i"} ||= 1;
 
       # record AP
       $amount = ($form->round_amount($form->{"paid_$i"} * $form->{exchangerate}, $form->{precision})) * -1;
@@ -1211,7 +1215,7 @@ sub post_invoice {
       $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount, transdate,
                   source, memo, cleared, approved, vr_id, id)
                   VALUES ($form->{id}, (SELECT id FROM chart
-		                      WHERE accno = '$accno'),
+		                      WHERE accno = '$paymentaccno'),
                   $form->{"paid_$i"}, '$form->{"datepaid_$i"}', |
 		  .$dbh->quote($form->{"source_$i"}).qq|, |
 		  .$dbh->quote($form->{"memo_$i"}).qq|, $cleared,
@@ -1231,7 +1235,7 @@ sub post_invoice {
 	$query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount,
 	            transdate, source, fx_transaction, cleared, approved, vr_id)
 	            VALUES ($form->{id}, (SELECT id FROM chart
-		                        WHERE accno = '$accno'),
+		                        WHERE accno = '$paymentaccno'),
 		    $amount, '$form->{"datepaid_$i"}', |
 		    .$dbh->quote($form->{"source_$i"}).qq|, '1', $cleared,
 		    '$approved', $voucherid)|;
@@ -1293,7 +1297,8 @@ sub post_invoice {
 	      onhold = '$form->{onhold}',
 	      warehouse_id = $form->{warehouse_id},
 	      exchangerate = $form->{exchangerate},
-	      dcn = |.$dbh->quote($form->{dcn}).qq|
+	      dcn = |.$dbh->quote($form->{dcn}).qq|,
+	      bank_id = (SELECT id FROM chart WHERE accno = '$paymentaccno')
               WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
 
@@ -1561,8 +1566,9 @@ sub retrieve_invoice {
 
   my $query;
   
-  my %defaults = $form->get_defaults($dbh, \@{['currencies', '%accno_id']});
-  $form->{currencies} = $defaults{currencies};
+  my %defaults = $form->get_defaults($dbh, \@{['%accno_id']});
+
+  $form->{currencies} = $form->get_currencies($dbh, $myconfig);
   
   # get default accounts and last invoice number
   for (qw(inventory_accno income_accno expense_accno fxgain_accno fxloss_accno)) {
@@ -1636,7 +1642,7 @@ sub retrieve_invoice {
     $sth->execute || $form->dberror($query);
 
     # exchangerate defaults
-    &exchangerate_defaults($dbh, $form);
+    &exchangerate_defaults($dbh, $myconfig, $form);
 
     # price matrix and vendor partnumber
     $query = qq|SELECT partnumber
@@ -1783,7 +1789,7 @@ sub retrieve_item {
   $sth->execute || $form->dberror($query);
   
   # foreign currency
-  &exchangerate_defaults($dbh, $form);
+  &exchangerate_defaults($dbh, $myconfig, $form);
 
   # taxes
   $query = qq|SELECT c.accno
@@ -1835,14 +1841,14 @@ sub retrieve_item {
 
 
 sub exchangerate_defaults {
-  my ($dbh, $form) = @_;
+  my ($dbh, $myconfig, $form) = @_;
 
   my $var;
   
   # get default currencies
-  my %defaults = $form->get_defaults($dbh, \@{['currencies']});
-  $form->{defaultcurrency} = substr($defaults{currencies},0,3);
-  $form->{currencies} = $defaults{currencies};
+  $form->{currencies} = $form->get_currencies($dbh, $myconfig);
+  $form->{defaultcurrency} = substr($form->{currencies},0,3);
+  
   
   my $query = qq|SELECT sell
               FROM exchangerate
@@ -1907,16 +1913,20 @@ sub item_links {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  my $query = qq|SELECT accno, description, link
-	         FROM chart
-	         WHERE link LIKE '%IC%'
-		 ORDER BY accno|;
+  my $query = qq|SELECT c.accno, c.description, c.link,
+                 l.description AS translation
+	         FROM chart c
+		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+	         WHERE c.link LIKE '%IC%'
+		 ORDER BY c.accno|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
     foreach my $key (split(/:/, $ref->{link})) {
       if ($key =~ /IC/) {
+	$ref->{description} = $ref->{translation} if $ref->{translation};
+
         push @{ $form->{IC_links}{$key} }, { accno => $ref->{accno},
                                        description => $ref->{description} };
       }

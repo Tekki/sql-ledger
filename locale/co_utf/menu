@@ -54,7 +54,6 @@ $self{texts} = {
   'HTML Templates'              => 'Plantillas HTML',
   'History'                     => 'Historial',
   'Income Statement'            => 'Estado de Resultados',
-  'Invoice'                     => 'Factura de Venta',
   'LaTeX Templates'             => 'Plantillas LaTeX',
   'Labor/Overhead'              => 'Honorarios',
   'Language'                    => 'Idioma',

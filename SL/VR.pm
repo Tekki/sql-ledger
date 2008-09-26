@@ -76,6 +76,9 @@ sub list_batches {
   my $dbh = $form->dbconnect($myconfig);
   my $null;
   my $var;
+
+  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
   
   ($form->{transdatefrom}, $form->{transdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
  
@@ -603,31 +606,41 @@ sub payment_reversal {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  my $query = qq|SELECT accno, description
-                 FROM chart
-		 WHERE link LIKE '%AP_paid%'
+  my $query = qq|SELECT c.accno, c.description,
+                 l.description AS translation
+                 FROM chart c
+		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+		 WHERE c.link LIKE '%AP_paid%'
 		 ORDER BY accno|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   my $ref;
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    $ref->{description} = $ref->{translation} if $ref->{translation};
+
     push @{ $form->{all_accounts} }, $ref;
   }
   $sth->finish;
 
+  my $accno;
+  my $description;
+  my $translation;
+
   if ($form->{id}) {
     # get payment account and vouchernumber
-    $query = qq/SELECT ac.source, ac.memo,
-                (SELECT c.accno || '--' || c.description
-                 FROM chart c
-                 WHERE ac.chart_id = c.id)
+    $query = qq|SELECT ac.source, ac.memo, c.accno, c.description,
+                l.description
                 FROM acc_trans ac
 		JOIN vr ON (vr.id = ac.vr_id)
 		JOIN chart c ON (c.id = ac.chart_id)
+		LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 		WHERE vr.id = $form->{id}
-		AND c.link LIKE '%AP_paid%'/;
-    ($form->{source}, $form->{memo}, $form->{account}) = $dbh->selectrow_array($query);
+		AND c.link LIKE '%AP_paid%'|;
+    ($form->{source}, $form->{memo}, $accno, $description, $translation) = $dbh->selectrow_array($query);
+
+    $description = $translation if $translation;
+    $form->{account} = "${accno}--$description";
   }
   
   $dbh->disconnect;

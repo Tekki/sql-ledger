@@ -1,6 +1,7 @@
 $self{charset} = 'ISO-8859-2';
 
 $self{texts} = {
+  'Account'                     => 'Úèet',
   'Accounting Menu'             => 'Menu úètovníctva',
   'Active'                      => 'Aktívne',
   'Add'                         => 'Nový',
@@ -55,7 +56,6 @@ $self{texts} = {
   'Jobs'                        => 'Práce',
   'Language'                    => 'Jazyk',
   'Languages not defined!'      => 'Jazyky nie sú definované!',
-  'Line Item'                   => 'Polo¾ka riadku',
   'Link Accounts'               => 'Väzby medzi úètami',
   'List Price'                  => 'Cenník',
   'Month'                       => 'Mesiac',

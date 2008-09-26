@@ -1240,32 +1240,6 @@ sub print_options {
 |;
   }
 
-  # remittance voucher
-  if ($form->{media} ne 'email') {
-    if ($form->{type} =~ /invoice/) {
-      if ($form->{type} !~ /_/) {
-	$form->{remittancevoucher} = ($form->{remittancevoucher}) ? "checked" : "";
-	$rvp = qq|<select name=rvp>
-	      <option value="screen">|.$locale->text('Screen');
-
-	if (%printer) {
-	  for (sort keys %printer) { $rvp .= qq|
-		<option value="$_">$_| }
-	}
-
-	$rvp .= qq|</select>|;
-
-	# set option selected
-	$rvp =~ s/(<option value="\Q$form->{rvp}\E")/$1 selected/;
-
-	print qq|
-      <td nowrap><input name=remittancevoucher type=checkbox class=checkbox value=1 $form->{remittancevoucher}>|.$locale->text('Remittance Voucher').qq|</td>
-      <td>$rvp</td>
-|;
-      }
-    }
-  }
-
 
 # $locale->text('Printed')
 # $locale->text('E-mailed')
@@ -1359,9 +1333,7 @@ sub print_form {
   $display_form = ($form->{display_form}) ? $form->{display_form} : "display_form";
 
   if (! ($form->{copies} = abs($form->{copies}))) {
-    if (!$form->{remittancevoucher}) {
-      $form->{copies} = 1;
-    }
+    $form->{copies} = 1;
   }
 
 
@@ -1515,14 +1487,78 @@ sub print_form {
     }
   }
 
+  if ($form->{formname} eq 'remittance_voucher') {
+    $form->isblank("dcn", qq|$form->{"${ARAP}_paid_$form->{paidaccounts}"} : |.$locale->text('DCN missing!'));
+    $form->isblank("rvc", qq|$form->{"${ARAP}_paid_$form->{paidaccounts}"} : |.$locale->text('RVC missing!'));
+  }
+
   $form->{fdm} = $form->dayofmonth($myconfig{dateformat}, $form->{transdate}, 'fdm');
   $form->{ldm} = $form->dayofmonth($myconfig{dateformat}, $form->{transdate});
   $transdate = $form->datetonum(\%myconfig, $form->{transdate});
   $form->{yy} = substr($transdate, 2, 2);
   ($form->{yyyy}, $form->{mm}, $form->{dd}) = $transdate =~ /(....)(..)(..)/;
+
+  for (1 .. 11) {
+    $m1 = $form->{mm} + $_;
+    $y1 = $form->{yyyy};
+    if ($m1 > 12) {
+      $m1 -= 12;
+      $y1++;
+    }
+    $m1 = substr("0$m1", -2);
+
+    $m2 = $form->{mm} - $_;
+    $y2 = $form->{yyyy};
+    if ($m2 < 1) {
+      $m2 += 12;
+      $y2--;
+    }
+    $m2 = substr("0$m2", -2);
+
+    $d1 = $form->format_date($myconfig{dateformat}, "$y1${m1}01");
+    $d2 = $form->format_date($myconfig{dateformat}, $form->dayofmonth("yyyymmdd", "$y1${m1}01"));
+    $d3 = $form->format_date($myconfig{dateformat}, "$y2${m2}01");
+    $d4 = $form->format_date($myconfig{dateformat}, $form->dayofmonth("yyyymmdd", "$y2${m2}01"));
+
+    if (exists $form->{longformat}) {
+      $form->{"fdm+$_"} = $locale->date(\%myconfig, $d1, $form->{longformat});
+      $form->{"ldm+$_"} .= $locale->date(\%myconfig, $d2, $form->{longformat});
+      $form->{"fdm-$_"} = $locale->date(\%myconfig, $d3, $form->{longformat});
+      $form->{"ldm-$_"} .= $locale->date(\%myconfig, $d4, $form->{longformat});
+    } else {
+      $form->{"fdm+$_"} = $d1;
+      $form->{"ldm+$_"} = $d2;
+      $form->{"fdm-$_"} = $d3;
+      $form->{"ldm-$_"} = $d4;
+    }
+  }
+
+  for (1 .. 3) {
+    $y1 = $form->{yyyy} + $_;
+    $y2 = $form->{yyyy} - $_;
+
+    $d1 = $form->format_date($myconfig{dateformat}, "$y1$form->{mm}01");
+    $d2 = $form->format_date($myconfig{dateformat}, $form->dayofmonth("yyyymmdd", "$y1$form->{mm}01"));
+    $d3 = $form->format_date($myconfig{dateformat}, "$y2$form->{mm}01");
+    $d4 = $form->format_date($myconfig{dateformat}, $form->dayofmonth("yyyymmdd", "$y2$form->{mm}01"));
+
+    if (exists $form->{longformat}) {
+      $form->{"fdy+$_"} = $locale->date(\%myconfig, $d1, $form->{longformat});
+      $form->{"ldy+$_"} .= $locale->date(\%myconfig, $d2, $form->{longformat});
+      $form->{"fdy-$_"} = $locale->date(\%myconfig, $d3, $form->{longformat});
+      $form->{"ldy-$_"} .= $locale->date(\%myconfig, $d4, $form->{longformat});
+    } else {
+      $form->{"fdy+$_"} = $d1;
+      $form->{"ldy+$_"} = $d2;
+      $form->{"fdy-$_"} = $d3;
+      $form->{"ldy-$_"} = $d4;
+    }
+
+  }
+
   
   if (exists $form->{longformat}) {
-    for ("${inv}date", "${due}date", "shippingdate", "transdate") { $form->{$_} = $locale->date(\%myconfig, $form->{$_}, $form->{longformat}) }
+    for ("fdm", "ldm", "${inv}date", "${due}date", "shippingdate", "transdate") { $form->{$_} = $locale->date(\%myconfig, $form->{$_}, $form->{longformat}) }
   }
 
   @a = qw(email name address1 address2 city state zipcode country contact phone fax);
@@ -1574,7 +1610,7 @@ sub print_form {
   
   for (qw(name email)) { $form->{"user$_"} = $myconfig{$_} }
 
-  push @a, qw(company address tel fax businessnumber username useremail);
+  push @a, qw(company address tel fax businessnumber username useremail dcn rvc);
 
   for (qw(notes intnotes)) { $form->{$_} =~ s/^\s+//g }
 
@@ -1621,7 +1657,7 @@ sub print_form {
   }
 
   if ($form->{media} eq 'email') {
-    $mergermv = 1;
+    $mergerv = 1;
     
     $form->{subject} = qq|$form->{label} $form->{"${inv}number"}| unless $form->{subject};
 
@@ -1671,7 +1707,6 @@ sub print_form {
 
 
   if ($form->{media} eq 'queue') {
-    $mergermv = 1;
     
     %queued = split / /, $form->{queued};
 
@@ -1711,96 +1746,15 @@ sub print_form {
 
   $form->format_string(qw(email cc bcc));
   
-  my $filename;
-  my $tmpfile;
-
-  # remittance voucher
-  if ($form->{remittancevoucher}) {
-  
-    $mergermv = 1 if $form->{copies} && $form->{rvp} eq $form->{media};
-    
-    # merge the files
-    if ($mergermv) {
-
-      if ($form->{format} =~ /(postscript|pdf)/) {
-	$rmv = "remittance_voucher.tex";
-	$tmpfile = "$$.tex";
-      } else {
-	$rmv = "remittance_voucher.$form->{format}";
-	$tmpfile = "$$.$form->{format}";
-      }
-
-      if (-f "$form->{templates}/$form->{language_code}/$form->{IN}") {
-	$filename = "$form->{templates}/$form->{language_code}/$tmpfile";
-      } else {
-	$filename = "$form->{templates}/$tmpfile";
-      }
-      open(OUT, ">$filename") or $form->error("$filename : $!");
-      binmode(OUT);
-      open(IN, "$form->{templates}/$form->{language_code}/$form->{IN}") or $form->error("$form->{templates}/$form->{language_code}/$form->{IN} : $!");
-      binmode(IN);
-      while (<IN>) {
-	if (/^\\end{document}/) {
-	  print OUT qq|\\newpage\n|;
-	  last;
-	}
-	print OUT $_;
-      }
-      close(IN);
-
-      if (-f "$form->{templates}/$form->{language_code}/$rmv") {
-	open(IN, "$form->{templates}/$form->{language_code}/$rmv") or $form->error("$form->{templates}/$form->{language_code}/$rmv : $!");
-      } else {
-	open(IN, "$form->{templates}/$rmv") or $form->error("$form->{templates}/$rmv : $!");
-      }
-      binmode(IN);
-      
-      my $skip;
-      while (<IN>) {
-	if ($form->{format} =~ /(postscript|pdf)/) {
-	  if (! $skip) {
-	    if (/\\begin{document}/) {
-	      $skip = 1;
-	    }
-	    next;
-	  }
-	}
-	print OUT $_;
-      }
-      close(IN);
-      close(OUT);
-
-      $form->{IN} = "$tmpfile";
-
-    } else {
-      $mergermv = 0;
-    }
-  }
-
 
   $form->parse_template(\%myconfig, $userspath) if $form->{copies};
-
-  # print remittance voucher
-  if ($form->{remittancevoucher}) {
-    if ($mergermv) {
-      unlink "$filename";
-    } else {
-      $form->{IN} = "remittance_voucher.$form->{format}";
-      $form->{media} = $form->{rvp};
-
-      if ($form->{format} =~ /(postscript|pdf)/) {
-	$form->{IN} =~ s/$&$/tex/;
-      }
-
-      $form->parse_template(\%myconfig, $userspath);
-    }
-  }
 
 
   # if we got back here restore the previous form
   if (defined %$old_form) {
 
     $old_form->{"${inv}number"} = $form->{"${inv}number"};
+    $old_form->{dcn} = $form->{dcn};
     
     # restore and display form
     for (keys %$old_form) { $form->{$_} = $old_form->{$_} }
@@ -1895,7 +1849,7 @@ sub ship_to {
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Phone').qq|</th>
-	  <td>$form->{phone}</td>
+	  <td>$form->{"$form->{vc}phone"}</td>
 	  <td><input name=shiptophone size=20 value="$form->{shiptophone}"></td>
 	</tr>
 	<tr>

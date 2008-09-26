@@ -78,11 +78,9 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.8.6";
-  $self->{dbversion} = "2.8.6";
+  $self->{version} = "2.8.7";
+  $self->{dbversion} = "2.8.7";
 
-  $self->{precision} = 2;
-  
   bless $self, $type;
   
 }
@@ -574,7 +572,8 @@ sub parse_template {
     $out = $self->{OUT};
     $self->{OUT} = ">$self->{tmpfile}";
   }
-  
+
+
   if ($self->{OUT}) {
     open(OUT, "$self->{OUT}") or $self->error("$self->{OUT} : $!");
   } else {
@@ -900,7 +899,7 @@ sub parse_template {
       }
       
     } else {
-      
+
       $self->{OUT} = $out;
       unless (open(IN, $self->{tmpfile})) {
         $err = $!;
@@ -1416,6 +1415,42 @@ sub add_date {
 }
 
 
+sub format_date {
+  my ($self, $dateformat, $date) = @_;
+
+  use Time::Local;
+  
+  my $spc = $dateformat;
+  $spc =~ s/\w//g;
+  $spc = substr($spc, 0, 1);
+  
+  # ISO
+  $date =~ /(....)(..)(..)/;
+  $yy = $1;
+  $mm = $2;
+  $dd = $3;
+
+  if ($spc) {
+
+    if ($dateformat =~ /^yy/) {
+      $date = "$yy$spc$mm$spc$dd";
+    }
+    if ($dateformat =~ /^mm/) {
+      $date = "$mm$spc$dd$spc$yy";
+    }
+    if ($dateformat =~ /^dd/) {
+      $date = "$dd$spc$mm$spc$yy";
+    }
+    
+  } else {
+    $date = "$yy$mm$dd";
+  }
+
+  $date;
+
+}
+
+
 sub print_button {
   my ($self, $button, $name) = @_;
 
@@ -1580,6 +1615,10 @@ sub check_exchangerate {
 	      AND transdate = |.$self->dbquote($transdate, SQL_DATE);
   ($exchangerate, $self->{fxbuy}, $self->{fxsell}) = $dbh->selectrow_array($query);
   
+  $query = qq|SELECT precision FROM curr
+              WHERE curr = '$currency'|;
+  ($self->{precision}) = $dbh->selectrow_array($query);
+	      
   $dbh->disconnect;
   
   $exchangerate;
@@ -1691,6 +1730,40 @@ sub get_name {
 }
 
 
+sub get_currencies {
+  my ($self, $dbh, $myconfig) = @_;
+  
+  my $disconnect = 0;
+  
+  if (! $dbh) {
+    $dbh = $self->dbconnect($myconfig);
+    $disconnect = 1;
+  }
+
+  my $currencies;
+  my $curr;
+  my $precision;
+  
+  my $query = qq|SELECT curr, precision FROM curr
+                 ORDER BY rn|;
+  my $sth = $dbh->prepare($query);
+  $sth->execute || $self->dberror($query);
+
+  while (($curr, $precision) = $sth->fetchrow_array) {
+    if ($self->{currency} eq $curr) {
+      $self->{precision} = $precision;
+    }
+    $currencies .= "$curr:";
+  }
+
+  $dbh->disconnect if $disconnect;
+  
+  chop $currencies;
+  $currencies;
+
+}
+
+ 
 sub get_defaults {
   my ($self, $dbh, $flds) = @_;
 
@@ -2030,8 +2103,9 @@ sub all_years {
 			  '11' => 'November',
 			  '12' => 'December' );
   
-  my %defaults = $self->get_defaults($dbh, \@{['method']});
-  $self->{method} = ($defaults{method}) ? $defaults{method} : "accrual";
+  my %defaults = $self->get_defaults($dbh, \@{[qw(method precision)]});
+  for (keys %defaults) { $self->{$_} = $defaults{$_} }
+  $self->{method} ||= "accrual";
 
   $dbh->disconnect if $disconnect;
   
@@ -2048,12 +2122,16 @@ sub create_links {
 
   my %xkeyref = ();
 
+  my %defaults = $self->get_defaults($dbh, \@{[qw(closedto revtrans weightunit cdt precision)]});
+  for (keys %defaults) { $self->{$_} = $defaults{$_} }
 
   # now get the account numbers
-  $query = qq|SELECT accno, description, link
-              FROM chart
-	      WHERE link LIKE '%$module%'
-	      ORDER BY accno|;
+  $query = qq|SELECT c.accno, c.description, c.link,
+              l.description AS translation
+              FROM chart c
+	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+	      WHERE c.link LIKE '%$module%'
+	      ORDER BY c.accno|;
   $sth = $dbh->prepare($query);
   $sth->execute || $self->dberror($query);
 
@@ -2065,6 +2143,8 @@ sub create_links {
 	# cross reference for keys
 	$xkeyref{$ref->{accno}} = $key;
 	
+	$ref->{description} = $ref->{translation} if $ref->{translation};
+
 	push @{ $self->{"${module}_links"}{$key} }, { accno => $ref->{accno},
                                        description => $ref->{description} };
 
@@ -2090,18 +2170,21 @@ sub create_links {
 		a.employee_id, e.name AS employee, c.language_code,
 		a.ponumber, a.approved,
 		br.id AS batchid, br.description AS batchdescription,
-		a.description, a.onhold, a.exchangerate, a.dcn
+		a.description, a.onhold, a.exchangerate, a.dcn,
+		ch.accno AS bank_accno, ch.description AS bank_accno_description,
+		t.description AS bank_accno_translation
 		FROM $arap a
 		JOIN $vc c ON (a.${vc}_id = c.id)
 		LEFT JOIN employee e ON (e.id = a.employee_id)
 		LEFT JOIN department d ON (d.id = a.department_id)
 		LEFT JOIN vr ON (vr.trans_id = a.id)
 		LEFT JOIN br ON (br.id = vr.br_id)
+		LEFT JOIN chart ch ON (ch.id = a.bank_id)
+		LEFT JOIN translation t ON (t.trans_id = ch.id AND t.language_code = '$myconfig->{countrycode}')
 		WHERE a.id = $self->{id}|;
     $sth = $dbh->prepare($query);
     $sth->execute || $self->dberror($query);
     
-
     $ref = $sth->fetchrow_hashref(NAME_lc);
     
     $ref->{exchangerate} ||= 1;
@@ -2112,6 +2195,9 @@ sub create_links {
     }
     $sth->finish;
 
+    if ($self->{bank_accno}) {
+      $self->{payment_accno} = ($self->{bank_accno_translation}) ? "$self->{bank_accno}--$self->{bank_accno_translation}" : "$self->{bank_accno}--$self->{bank_accno_description}";
+    }
 
     # get printed, emailed
     $query = qq|SELECT s.printed, s.emailed, s.spoolfile, s.formname
@@ -2134,11 +2220,13 @@ sub create_links {
     # get amounts from individual entries
     $query = qq|SELECT c.accno, c.description, ac.source, ac.amount,
                 ac.memo, ac.transdate, ac.cleared, ac.project_id,
-		p.projectnumber, ac.id, y.exchangerate
+		p.projectnumber, ac.id, y.exchangerate,
+		l.description AS translation
 		FROM acc_trans ac
 		JOIN chart c ON (c.id = ac.chart_id)
 		LEFT JOIN project p ON (p.id = ac.project_id)
 		LEFT JOIN payment y ON (y.trans_id = ac.trans_id AND ac.id = y.id)
+		LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 		WHERE ac.trans_id = $self->{id}
 		AND ac.fx_transaction = '0'
 		ORDER BY ac.transdate|;
@@ -2147,6 +2235,7 @@ sub create_links {
 
     # store amounts in {acc_trans}{$key} for multiple accounts
     while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+      $ref->{description} = $ref->{translation} if $ref->{translation};
       $ref->{exchangerate} ||= 1;
       push @{ $self->{acc_trans}{$xkeyref{$ref->{accno}}} }, $ref;
     }
@@ -2166,11 +2255,10 @@ sub create_links {
 
   }
   
-  my %defaults = $self->get_defaults($dbh, \@{[qw(currencies closedto revtrans weightunit cdt)]});
-  for (keys %defaults) { $self->{$_} = $defaults{$_} }
-    
   $self->all_vc($myconfig, $vc, $module, $dbh, $self->{transdate}, $job);
  
+  $self->{currencies} = $self->get_currencies($dbh, $myconfig);
+  
   $dbh->disconnect;
 
 }
@@ -2182,11 +2270,21 @@ sub create_lock {
   my $query;
   
   my $disconnect = 0;
+  my $expires = time;
+  
+  
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
     $disconnect = 1;
   }
  
+  # remove expired locks
+  $query = qq|DELETE FROM semaphore
+              WHERE expires < $expires|;
+  $dbh->do($query) || $self->dberror($query);
+	      
+  $expires = time + $myconfig{timeout};
+  
   if ($id) {
     $self->{readonly} = 1;
     $query = qq|SELECT id, login FROM semaphore
@@ -2199,8 +2297,8 @@ sub create_lock {
 		  WHERE login = '$login'|;
       ($self->{haslock}) = $dbh->selectrow_array($query);
     } else {
-      $query = qq|INSERT INTO semaphore (id, login, module)
-		  VALUES ($id, '$self->{login}', '$module')|;
+      $query = qq|INSERT INTO semaphore (id, login, module, expires)
+		  VALUES ($id, '$self->{login}', '$module', '$expires')|;
       $dbh->do($query) || $self->dberror($query);
       $self->{readonly} = 0;
     }
@@ -2260,7 +2358,8 @@ sub lastname_used {
   $query = qq|SELECT ct.name AS $vc, ct.${vc}number, a.curr AS currency,
               a.${vc}_id,
               $duedate + ct.terms $DAYS AS duedate, a.department_id,
-	      d.description AS department, ct.notes, ct.curr AS currency
+	      d.description AS department, ct.notes, ct.curr AS currency,
+	      ct.remittancevoucher
 	      FROM $arap a
 	      JOIN $vc ct ON (a.${vc}_id = ct.id)
 	      LEFT JOIN department d ON (a.department_id = d.id)
@@ -2269,6 +2368,8 @@ sub lastname_used {
   $sth->execute || $self->dberror($query);
 
   my $ref = $sth->fetchrow_hashref(NAME_lc);
+  $ref->{payment_accno} .= qq|--|;
+  $ref->{payment_accno} .= ($ref->{payment_accno_translation}) ? $ref->{payment_accno_translation} : $ref->{payment_accno_description};
   for (keys %$ref) { $self->{$_} = $ref->{$_} }
   $sth->finish;
 
@@ -2873,13 +2974,17 @@ sub split_date {
 	($yy, $mm, $dd) = split /\D/, $date;
 	$mm *= 1;
 	$dd *= 1;
-	$mm = substr("0$mm", -2);
-	$dd = substr("0$dd", -2);
-	$yy = substr($yy, -2);
 	$rv = "$yy$mm$dd";
       } else {
 	$rv = $date;
+	$date =~ /(....)(..)(..)/;
+	$yy = $1;
+	$mm = $2;
+	$dd = $3;
       }
+      $mm = substr("0$mm", -2);
+      $dd = substr("0$dd", -2);
+      $yy = substr($yy, -2);
     } else {
       $rv = "$yy$mm$dd";
     }

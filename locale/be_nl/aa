@@ -9,7 +9,6 @@ $self{texts} = {
   'Accounting Menu'             => 'Boekhoudmenu',
   'Address'                     => 'Adres',
   'Amount'                      => 'Bedrag',
-  'Amount Due'                  => 'Verschuldigd bedrag',
   'Apr'                         => 'Apr',
   'April'                       => 'April',
   'Are you sure you want to delete Transaction' => 'Weet u zeker dat u deze boeking wilt verwijderen?',

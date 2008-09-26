@@ -7,7 +7,6 @@ $self{texts} = {
   'Accounting Menu'             => 'Bókhalds valmynd',
   'Address'                     => 'Heimilisfang',
   'Amount'                      => 'Upphæð',
-  'Amount Due'                  => 'Eindagi',
   'Apr'                         => 'apr',
   'April'                       => 'apríl',
   'Are you sure you want to delete Transaction' => 'Ert þú viss um að þú viljir eyða færslunni',

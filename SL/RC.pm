@@ -20,14 +20,17 @@ sub paymentaccounts {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  my $query = qq|SELECT accno, description
-                 FROM chart
-		 WHERE charttype = 'A'
-		 ORDER BY accno|;
+  my $query = qq|SELECT c.accno, c.description,
+                 l.description AS translation
+                 FROM chart c
+		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+		 WHERE c.charttype = 'A'
+		 ORDER BY c.accno|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+    $ref->{description} = $ref->{translation} if $ref->{translation};
     push @{ $form->{PR} }, $ref;
   }
   $sth->finish;
@@ -121,11 +124,13 @@ sub payment_transactions {
 	      $cleared
 	      |;
   ($form->{fx_endingbalance}) = $dbh->selectrow_array($query);
-
+  
+  my %defaults = $form->get_defaults($dbh, \@{['fx%_accno_id','precision', 'company']});
+  for (qw(precision company)) { $form->{$_} = $defaults{$_} }
+ 
   my $fx_transaction;
   if ($form->{fx_transaction}) {
-    my %defaults = $form->get_defaults($dbh, \@{['fx%_accno_id']});
-    
+   
     $fx_transaction = qq|
 	      AND NOT
 		 (ac.chart_id = $defaults{fxgain_accno_id}

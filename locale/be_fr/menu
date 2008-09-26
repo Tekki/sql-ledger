@@ -49,7 +49,6 @@ $self{texts} = {
   'HTML Templates'              => 'Squelettes HTML',
   'History'                     => 'Historique',
   'Income Statement'            => 'Compte de résultat',
-  'Invoice'                     => 'Facture',
   'LaTeX Templates'             => 'Squelettes LaTeX',
   'Labor/Overhead'              => 'Coût de production',
   'Language'                    => 'Langue',

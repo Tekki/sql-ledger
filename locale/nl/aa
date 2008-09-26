@@ -11,7 +11,6 @@ $self{texts} = {
   'Add AR Transaction'          => 'Debiteurenboeking Toevoegen',
   'Address'                     => 'Adres',
   'Amount'                      => 'Bedrag',
-  'Amount Due'                  => 'Verschuldigd Bedrag',
   'Apr'                         => 'apr',
   'April'                       => 'april',
   'Are you sure you want to delete Transaction' => 'Weet u zeker dat u deze boeking wilt verwijderen?',
