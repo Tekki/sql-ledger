@@ -1409,7 +1409,13 @@ sub aging {
   $item = $#c;
   $c{$c[$item]}{and} = qq|AND a.$transdate < $interval{$myconfig->{dbdriver}}{$c[$item]}|;
   
-  for (0 .. $item - 1) {
+  $c{$c[0]}{and} = qq|
+    	  AND (
+		  a.$transdate <= $interval{$myconfig->{dbdriver}}{$c[0]}
+		  AND a.$transdate >= $interval{$myconfig->{dbdriver}}{$c[1]}
+ 	      )|;
+ 
+  for (1 .. $item - 1) {
     $c{$c[$_]}{and} = qq|
     	  AND (
 		  a.$transdate < $interval{$myconfig->{dbdriver}}{$c[$_]}

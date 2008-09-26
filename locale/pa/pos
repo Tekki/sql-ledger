@@ -46,6 +46,7 @@ $self{texts} = {
   'Trade Discount'              => 'Descuento comercial',
   'Unit'                        => 'Unidad',
   'Update'                      => 'Actualizar',
+  'Warehouse'                   => 'Almacén',
   'Year'                        => 'Año',
 };
 

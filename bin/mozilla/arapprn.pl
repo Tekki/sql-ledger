@@ -577,6 +577,28 @@ sub print_options {
       <td>$media</td>
 |;
 
+###############
+  # remittance voucher
+#  $form->{remittancevoucher} = ($form->{remittancevoucher}) ? "checked" : "";
+#  $rvp = qq|<select name=rvp>
+#	  <option value="\n">|.$locale->text('Screen');
+ 
+#  if (%printer) {
+#    for (sort keys %printer) { $rvp .= qq|
+#      <option value="$_">$_| }
+#  }
+  
+#  $rvp .= qq|</select>|;
+
+  # set option selected
+#  $rvp =~ s/(<option value="\Q$form->{rvp}\E")/$1 selected/;
+
+#  print qq|
+#    <td nowrap><input name=remittancevoucher type=checkbox class=checkbox value=1 $form->{remittancevoucher}>|.$locale->text('Remittance Voucher').qq|</td>
+#    <td>$rvp</td>
+#|;
+#################
+  
   %status = ( printed => 'Printed',
 	      recurring => 'Scheduled' );
   

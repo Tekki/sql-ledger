@@ -185,9 +185,6 @@ sub order_links {
   $form->{"select$form->{vc}"} = $form->escape($form->{"select$form->{vc}"},1);
   for (qw(currency partsgroup projectnumber department warehouse employee language)) { $form->{"select$_"} = $form->escape($form->{"select$_"},1) }
   
-  # forex
-  $form->{forex} = $form->{exchangerate};
-  
 }
 
 
@@ -195,6 +192,8 @@ sub prepare_order {
 
   $form->{formname} ||= $form->{type};
   $form->{sortby} ||= "runningnumber";
+  $form->{format} ||= $myconfig{outputformat};
+  $form->{copies} ||= 1;
   
   if ($myconfig{printer}) {
     $form->{format} ||= "postscript";
@@ -202,6 +201,7 @@ sub prepare_order {
     $form->{format} ||= "pdf";
   } 
   $form->{media} ||= $myconfig{printer};
+  $form->{rvp} = $myconfig{rvp} if $form->{remittancevoucher};
   
   $form->{currency} =~ s/ //g;
   $form->{oldcurrency} = $form->{currency};
@@ -292,6 +292,8 @@ sub prepare_order {
     $form->{selectformname} = qq|bin_list--|.$locale->text('Bin List');
   }
 
+  $focus = "partnumber_$i";
+  
   $form->{selectformname} = $form->escape($form->{selectformname},1);
 
 }
@@ -314,8 +316,7 @@ sub form_header {
   $form->{exchangerate} = $form->format_amount(\%myconfig, $form->{exchangerate});
 
   if ($form->{defaultcurrency}) {
-    $exchangerate = qq|<tr>|;
-    $exchangerate .= qq|
+    $exchangerate = qq|<tr>
                 <th align=right nowrap>|.$locale->text('Currency').qq|</th>
 		<td>
 		  <table>
@@ -326,18 +327,12 @@ sub form_header {
 		.qq|</select><td>|;
 
     if ($form->{currency} ne $form->{defaultcurrency}) {
-      if ($form->{forex}) {
-	$exchangerate .= qq|
-	<th align=right nowrap>|.$locale->text('Exchange Rate').qq|</th>
-	<td>$form->{exchangerate}</td>|.$form->hide_form(qw(exchangerate));
-      } else {
-	$exchangerate .= qq|
-	<th align=right nowrap>|.$locale->text('Exchange Rate').qq| <font color=red>*</font></th>
-	<td><input name=exchangerate size=10 value=$form->{exchangerate}></td>|;
-      }
+      $exchangerate .= qq|
+      <th align=right nowrap>|.$locale->text('Exchange Rate').qq| <font color=red>*</font></th>
+      <td><input name=exchangerate size=10 value=$form->{exchangerate}></td>|;
     }
     $exchangerate .= qq|</tr></table></td></tr>
-|.$form->hide_form(qw(forex));
+|;
   }
 
 
@@ -373,7 +368,7 @@ sub form_header {
 	      </tr>
 |;
   }
-  
+
   $creditremaining = qq|
 	      <tr>
 		<td></td>
@@ -555,7 +550,6 @@ sub form_header {
 	   );
   $title = " / $title{$form->{formname}}" if $form->{formname} !~ /(sales_order|purchase_order|quotation)/;
 
-  $focus = ($form->{rowcount}) ? "description_$form->{rowcount}" : "partnumber_1";
   
   $form->header;
   
@@ -872,7 +866,7 @@ sub update {
     $form->{oldtransdate} = $form->{transdate};
     &rebuild_vc($form->{vc}, $ARAP, $form->{transdate}, 1) if ! $newname;
 
-    $form->{exchangerate} = $exchangerate if ($form->{forex} = ($exchangerate = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate}, $buysell)));
+    $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate}, $buysell);
 
     $form->{selectemployee} = "";
     if (@{ $form->{all_employee} }) {
@@ -881,17 +875,15 @@ sub update {
     }
   }
 
+  $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate}, $buysell);
 
-  if ($form->{currency} ne $form->{oldcurrency}) {
-    $form->{exchangerate} = $exchangerate if ($form->{forex} = ($exchangerate = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate}, $buysell)));
-  }
-    
   my $i = $form->{rowcount};
-  $exchangerate = ($form->{exchangerate}) ? $form->{exchangerate} : 1;
+  $form->{exchangerate} ||= 1;
 
   if (($form->{"partnumber_$i"} eq "") && ($form->{"description_$i"} eq "") && ($form->{"partsgroup_$i"} eq "")) {
 
-    $form->{creditremaining} += ($form->{oldinvtotal} - $form->{oldtotalpaid});
+    $form->{creditremaining} += $form->{oldinvtotal};
+
     &check_form;
     
   } else {
@@ -947,16 +939,17 @@ sub update {
 	  $dec = length $dec;
 	  $decimalplaces1 = ($dec > $form->{precision}) ? $dec : $form->{precision};
 
-	  $form->{"sellprice_$i"} /= $exchangerate;
+	  $form->{"sellprice_$i"} /= $form->{exchangerate};
 	}
 	
 	($dec) = ($form->{"lastcost_$i"} =~ /\.(\d+)/);
 	$dec = length $dec;
 	$decimalplaces2 = ($dec > $form->{precision}) ? $dec : $form->{precision};
 
-	for (qw(listprice lastcost)) { $form->{"${_}_$i"} /= $exchangerate }
+	for (qw(listprice lastcost)) { $form->{"${_}_$i"} /= $form->{exchangerate} }
 
-	$amount = $form->{"sellprice_$i"} * $form->{"qty_$i"} * (1 - $form->{"discount_$i"} / 100);
+        $sellprice = $form->{"sellprice_$i"} * (1 - $form->{"discount_$i"} / 100);
+	$amount = $sellprice * $form->{"qty_$i"};
 	for (split / /, $form->{taxaccounts}) { $form->{"${_}_base"} = 0 }
 	for (split / /, $form->{"taxaccounts_$i"}) { $form->{"${_}_base"} += $amount }
 	if (!$form->{taxincluded}) {
@@ -975,7 +968,9 @@ sub update {
 	for (qw(qty discount netweight grossweight)) { $form->{"{_}_$i"} =  $form->format_amount(\%myconfig, $form->{"${_}_$i"}) }
 
       }
-
+      
+      $focus = "description_$i";
+      
       &display_form;
 
     } else {
@@ -2160,9 +2155,8 @@ sub invoice {
   
   for (keys %temp) { $form->{$_} = $temp{$_} }
   
-  $form->{exchangerate} = "";
-  $form->{forex} = "";
-  $form->{exchangerate} = $exchangerate if ($form->{forex} = ($exchangerate = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate}, $buysell)));
+  $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate}, $buysell);
+  $form->{exchangerate} ||= 1;
  
   for $i (1 .. $form->{rowcount}) {
     $form->{"deliverydate_$i"} = $form->{"reqdate_$i"};

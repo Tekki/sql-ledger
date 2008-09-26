@@ -49,6 +49,7 @@ $self{texts} = {
   'Trade Discount'              => 'Árengedmény',
   'Unit'                        => 'Egység',
   'Update'                      => 'Frissítés',
+  'Warehouse'                   => 'Raktár',
   'Year'                        => 'Év',
 };
 

@@ -295,6 +295,8 @@ sub form_footer {
 sub prepare_timecard {
 
   $form->{formname} = "timecard";
+  $form->{format} ||= $myconfig{outputformat};
+
   if ($myconfig{printer}) {
     $form->{format} ||= "postscript";
   } else {
@@ -351,7 +353,7 @@ sub prepare_timecard {
 
   &jcitems_links;
 
-  $form->{locked} = ($form->{revtrans}) ? '1' : ($form->datetonum(\%myconfig, $form->{transdate}) <= $form->datetonum(\%myconfig, $form->{closedto}));
+  $form->{locked} = ($form->{revtrans}) ? '1' : ($form->datetonum(\%myconfig, $form->{transdate}) <= $form->{closedto});
   
   $form->{readonly} = 1 if $myconfig{acs} =~ /Production--Add Time Card/;
 
@@ -576,7 +578,6 @@ sub timecard_footer {
 |;
 
   $transdate = $form->datetonum(\%myconfig, $form->{transdate});
-  $closedto = $form->datetonum(\%myconfig, $form->{closedto});
 
   if (! $form->{readonly}) {
 
@@ -609,7 +610,7 @@ sub timecard_footer {
 
     } else {
 
-      if ($transdate > $closedto) {
+      if ($transdate > $form->{closedto}) {
 	
 	for ('Update', 'Print', 'Save') { $a{$_} = 1 }
 
@@ -668,7 +669,7 @@ sub prepare_storescard {
 
   &jcitems_links;
 
-  $form->{locked} = ($form->{revtrans}) ? '1' : ($form->datetonum(\%myconfig, $form->{transdate}) <= $form->datetonum(\%myconfig, $form->{closedto}));
+  $form->{locked} = ($form->{revtrans}) ? '1' : ($form->datetonum(\%myconfig, $form->{transdate}) <= $form->{closedto});
   
   $form->{readonly} = 1 if $myconfig{acs} =~ /Production--Add Time Card/;
 
@@ -784,7 +785,6 @@ sub storescard_footer {
 |;
 
   $transdate = $form->datetonum(\%myconfig, $form->{transdate});
-  $closedto = $form->datetonum(\%myconfig, $form->{closedto});
 
   if (! $form->{readonly}) {
 
@@ -813,7 +813,7 @@ sub storescard_footer {
       
     } else {
 
-      if ($transdate > $closedto) {
+      if ($transdate > $form->{closedto}) {
 	for ('Update', 'Print', 'Save') { $a{$_} = 1 }
 
 	if ($latex) {
@@ -1001,11 +1001,10 @@ sub save {
     $form->isblank("partnumber", $locale->text('Labor Code missing!'));
   }
 
-  $closedto = $form->datetonum(\%myconfig, $form->{closedto});
   $transdate = $form->datetonum(\%myconfig, $form->{transdate});
   
   $msg = ($form->{type} eq 'timecard') ? $locale->text('Cannot save time card for a closed period!') : $locale->text('Cannot save stores card for a closed period!');
-  $form->error($msg) if ($transdate <= $closedto);
+  $form->error($msg) if ($transdate <= $form->{closedto});
 
   if (! $form->{resave}) {
     if ($form->{id}) {

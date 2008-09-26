@@ -92,6 +92,7 @@ $self{texts} = {
   'Trial Balance'               => 'Neraca Percobaan',
   'Type of Business'            => 'Jenis Bisnis',
   'Vendor Invoice'              => 'Invoice Supplier',
+  'Vendor Invoices'             => 'Invoice Supplier',
   'Vendors'                     => 'Supplier',
   'Version'                     => 'Versi',
   'Warehouses'                  => 'Gudang',

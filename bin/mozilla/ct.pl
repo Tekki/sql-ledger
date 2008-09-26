@@ -82,6 +82,12 @@ sub create_links {
     for (@{ $form->{all_business} }) { $form->{selectbusiness} .= qq|$_->{description}--$_->{id}\n| }
     $form->{selectbusiness} = $form->escape($form->{selectbusiness},1);
   }
+  
+  if (@{ $form->{all_paymentmethod} }) {
+    $form->{selectpaymentmethod} = qq|\n|;
+    for (@{ $form->{all_paymentmethod} }) { $form->{selectpaymentmethod} .= qq|$_->{description}--$_->{id}\n| }
+    $form->{selectpaymentmethod} = $form->escape($form->{selectpaymentmethod},1);
+  }
 
   if (@{ $form->{all_pricegroup} } && $form->{db} eq 'customer') {
     $form->{selectpricegroup} = qq|\n|;
@@ -1538,11 +1544,18 @@ sub form_header {
 |;
 
   }
+  
+  if ($form->{selectpaymentmethod}) {
 
-  $pricegroup = qq|
-          <th></th>
-	  <td></td>
+    $paymentmethod = qq|
+ 	  <th align=right>|.$locale->text('Payment Method').qq|</th>
+	  <td><select name=paymentmethod>|
+	  .$form->select_option($form->{selectpaymentmethod}, $form->{paymentmethod}, 1)
+	  .qq|</select>
+	  </td>
 |;
+
+  }
 
   if ($form->{selectpricegroup} && $form->{db} eq 'customer') {
     
@@ -1687,6 +1700,8 @@ sub form_header {
 
   } 
 
+  $form->{remittancevoucher} = ($form->{remittancevoucher}) ? "checked" : "";
+
   $form->header;
 
   print qq|
@@ -1772,9 +1787,7 @@ sub form_header {
       </table>
     </td>
   </tr>
-
-	    $tax
-
+    $tax
   <tr>
     <td>
       <table>
@@ -1804,6 +1817,7 @@ sub form_header {
 	  <b>%</b></td>
 	</tr>
 	<tr>
+	  $pricegroup
 	  <th align=right>|.$locale->text('Tax Number / SSN').qq|</th>
 	  <td><input name=taxnumber size=20 value="|.$form->quote($form->{taxnumber}).qq|"></td>
 	  $gifi
@@ -1812,13 +1826,6 @@ sub form_header {
 	</tr>
 	<tr>
 	  $typeofbusiness
-	  <th align=right>|.$locale->text('BIC').qq|</th>
-	  <td><input name=bic size=11 maxlength=11 value="$form->{bic}"></td>
-	  <th align=right>|.$locale->text('IBAN').qq|</th>
-	  <td><input name=iban size=24 maxlength=34 value="$form->{iban}"></td>
-	</tr>
-	<tr>
-	  $pricegroup
 	  $lang
 	  $currency
 	</tr>
@@ -1829,6 +1836,59 @@ sub form_header {
 	      <tr valign=top>
 		<th align=left nowrap>|.$locale->text('Notes').qq|</th>
 		<td><textarea name=notes rows=3 cols=40 wrap=soft>$form->{notes}</textarea></td>
+	      </tr>
+	    </table>
+	  </td>
+	</tr>
+	<tr valign=top>
+	  <td colspan=2>
+	    <table>
+	      <tr>
+		$paymentmethod
+	      </tr>
+	      <tr>
+		<th align=right>|.$locale->text('BIC').qq|</th>
+		<td><input name=bic size=11 maxlength=11 value="$form->{bic}"></td>
+	      </tr>
+	      <tr>
+		<th align=right>|.$locale->text('IBAN').qq|</th>
+		<td><input name=iban size=24 maxlength=34 value="$form->{iban}"></td>
+	      </tr>
+	      <tr>
+		<td align=right><input name=remittancevoucher class=checkbox type=checkbox value=1 $form->{remittancevoucher}></td>
+		<th align=left>|.$locale->text('Remittance Voucher').qq|</th>
+	      </tr>
+	    </table>
+	  </td>
+	  <td colspan=4>
+	    <table>
+	      <tr>
+		<th align=right nowrap>|.$locale->text('Bank').qq|</th>
+		<td><input name=bankname size=32 maxlength=64 value="|.$form->quote($form->{bankname}).qq|"></td>
+	      </tr>
+	      <tr>
+		<th align=right nowrap>|.$locale->text('Address').qq|</th>
+		<td><input name=bankaddress1 size=32 maxlength=32 value="|.$form->quote($form->{bankaddress1}).qq|"></td>
+	      </tr>
+	      <tr>
+		<th></th>
+		<td><input name=bankaddress2 size=32 maxlength=32 value="|.$form->quote($form->{bankaddress2}).qq|"></td>
+	      </tr>
+	      <tr>
+		<th align=right nowrap>|.$locale->text('City').qq|</th>
+		<td><input name=bankcity size=32 maxlength=32 value="|.$form->quote($form->{bankcity}).qq|"></td>
+	      </tr>
+	      <tr>
+		<th align=right nowrap>|.$locale->text('State/Province').qq|</th>
+		<td><input name=bankstate size=32 maxlength=32 value="|.$form->quote($form->{bankstate}).qq|"></td>
+	      </tr>
+	      <tr>
+		<th align=right nowrap>|.$locale->text('Zip/Postal Code').qq|</th>
+		<td><input name=bankzipcode size=11 maxlength=10 value="|.$form->quote($form->{bankzipcode}).qq|"></td>
+	      </tr>
+	      <tr>
+		<th align=right nowrap>|.$locale->text('Country').qq|</th>
+		<td><input name=bankcountry size=32 maxlength=32 value="|.$form->quote($form->{bankcountry}).qq|"></td>
 	      </tr>
 	    </table>
 	  </td>
@@ -1844,7 +1904,7 @@ sub form_header {
 
 
   $form->hide_form(map { "tax_${_}_description" } (split / /, $form->{taxaccounts})) if $form->{taxaccounts};
-  $form->hide_form(map { "select$_" } qw(currency arap discount payment business pricegroup language employee));
+  $form->hide_form(map { "select$_" } qw(currency arap discount payment business pricegroup language employee paymentmethod));
   $form->hide_form(map { "shipto$_" } qw(name address1 address2 city state zipcode country contact phone fax email));
 
 }
@@ -1962,7 +2022,7 @@ sub form_footer {
   }
 
   $form->{update_contact} = 1;
-  $form->hide_form(qw(id ARAP update_contact addressid contactid taxaccounts path login callback db));
+  $form->hide_form(qw(id ARAP update_contact addressid contactid taxaccounts path login callback db status));
   
   for (keys %button) { delete $button{$_} if ! $a{$_} }
   for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
@@ -2417,7 +2477,7 @@ sub pricelist_footer {
 sub update {
 
   for (qw(creditlimit threshold discount cashdiscount)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
-
+  
   if ($form->{update_contact}) {
 
     $form->{title} = ($form->{id}) ? 'Edit' : 'Add';

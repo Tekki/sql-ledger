@@ -72,9 +72,9 @@ $self{texts} = {
   'Tax paid'                    => 'Impuesto pagado',
   'Text Templates'              => 'Plantillas de Texto',
   'Transactions'                => 'Transacciones',
-  'Transfer'                    => 'Transferencia',
   'Trial Balance'               => 'Balance De Comprobación',
   'Vendor Invoice'              => 'Factura de Proveedor',
+  'Vendor Invoices'             => 'Factura de Proveedor',
   'Vendors'                     => 'Proveedores',
   'Version'                     => 'Versión',
 };

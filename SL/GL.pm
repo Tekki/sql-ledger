@@ -49,9 +49,16 @@ sub delete_transaction {
   $query = qq|DELETE FROM gl WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
 
-  $query = qq|DELETE FROM acc_trans WHERE trans_id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
-
+  for (qw(acc_trans dpt_trans yearend)) {
+    $query = qq|DELETE FROM $_ WHERE trans_id = $form->{id}|;
+    $dbh->do($query) || $form->dberror($query);
+  }
+  
+  for (qw(recurring recurringemail recurringprint)) {
+    $query = qq|DELETE FROM $_ WHERE id = $form->{id}|;
+    $dbh->do($query) || $form->dberror($query);
+  }
+  
   $form->remove_locks($myconfig, $dbh, 'gl');
 
   # commit and redirect
@@ -122,9 +129,10 @@ sub post_transaction {
 
     if ($form->{id}) {
       # delete individual transactions
-      $query = qq|DELETE FROM acc_trans
-                  WHERE trans_id = $form->{id}|;
-      $dbh->do($query) || $form->dberror($query);
+      for (qw(acc_trans dpt_trans)) {
+	$query = qq|DELETE FROM $_ WHERE trans_id = $form->{id}|;
+	$dbh->do($query) || $form->dberror($query);
+      }
     }
   }
   
@@ -150,28 +158,37 @@ sub post_transaction {
   $form->{reference} = $form->update_defaults($myconfig, 'glnumber', $dbh) unless $form->{reference};
   $form->{reference} ||= $form->{id};
 
+  my $exchangerate = $form->parse_amount($myconfig, $form->{exchangerate});
+  $exchangerate ||= 1;
 
   $query = qq|UPDATE gl SET 
 	      reference = |.$dbh->quote($form->{reference}).qq|,
 	      description = |.$dbh->quote($form->{description}).qq|,
 	      notes = |.$dbh->quote($form->{notes}).qq|,
 	      transdate = '$form->{transdate}',
-	      department_id = $department_id
+	      department_id = $department_id,
+	      curr = '$form->{currency}',
+	      exchangerate = $exchangerate
 	      WHERE id = $form->{id}|;
-	   
   $dbh->do($query) || $form->dberror($query);
 
+  if ($department_id) {
+    $query = qq|INSERT INTO dpt_trans (trans_id, department_id)
+                VALUES ($form->{id}, $department_id)|;
+    $dbh->do($query) || $form->dberror($query);
+  }
 
-  my $amount = 0;
-  my $posted = 0;
+  my $amount;
   my $debit;
   my $credit;
   my $cleared = 'NULL';
   my $bramount = 0;
  
   # insert acc_trans transactions
-  for $i (1 .. $form->{rowcount}) {
+  for $i (1 .. $form->{rowcount} - 1) {
 
+    $amount = 0;
+    
     $debit = $form->parse_amount($myconfig, $form->{"debit_$i"});
     $credit = $form->parse_amount($myconfig, $form->{"credit_$i"});
 
@@ -180,25 +197,35 @@ sub post_transaction {
     
     if ($credit) {
       $amount = $credit;
-      $bramount += $amount;
-      $posted = 0;
+      $bramount += $form->round_amount($amount * $exchangerate, $form->{precision});
     }
     if ($debit) {
       $amount = $debit * -1;
-      $posted = 0;
     }
 
     # add the record
-    if (! $posted) {
-      
-      ($null, $project_id) = split /--/, $form->{"projectnumber_$i"};
-      $project_id ||= 'NULL';
-      
-      $form->{"fx_transaction_$i"} *= 1;
+    ($null, $project_id) = split /--/, $form->{"projectnumber_$i"};
+    $project_id ||= 'NULL';
+    
+    if ($keepcleared) {
+      $cleared = $form->dbquote($form->{"cleared_$i"}, SQL_DATE);
+    }
 
-      if ($keepcleared) {
-	$cleared = $form->dbquote($form->{"cleared_$i"}, SQL_DATE);
-      }
+    $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount, transdate,
+		source, project_id, memo, cleared, approved)
+		VALUES
+		($form->{id}, (SELECT id
+			       FROM chart
+			       WHERE accno = '$accno'),
+		 $amount, '$form->{transdate}', |.
+		 $dbh->quote($form->{"source_$i"}) .qq|,
+		$project_id, |.$dbh->quote($form->{"memo_$i"}).qq|,
+		$cleared, '$approved')|;
+    $dbh->do($query) || $form->dberror($query);
+
+    if ($form->{currency} ne $form->{defaultcurrency}) {
+
+      $amount = $form->round_amount($amount * ($exchangerate - 1), $form->{precision});
       
       $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount, transdate,
 		  source, project_id, fx_transaction, memo, cleared, approved)
@@ -208,15 +235,11 @@ sub post_transaction {
 				 WHERE accno = '$accno'),
 		   $amount, '$form->{transdate}', |.
 		   $dbh->quote($form->{"source_$i"}) .qq|,
-		  $project_id, '$form->{"fx_transaction_$i"}', |.
-		  $dbh->quote($form->{"memo_$i"}).qq|,
+		  $project_id, '1', |.$dbh->quote($form->{"memo_$i"}).qq|,
 		  $cleared, '$approved')|;
-    
       $dbh->do($query) || $form->dberror($query);
 
-      $posted = 1;
     }
-
   }
 
   if ($form->{batchid}) {
@@ -602,11 +625,11 @@ sub transaction {
 
   $form->remove_locks($myconfig, $dbh, 'gl');
   
-  my %defaults = $form->get_defaults($dbh, \@{[qw(closedto revtrans)]});
+  my %defaults = $form->get_defaults($dbh, \@{[qw(closedto revtrans currencies)]});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   if ($form->{id}) {
-    $query = qq|SELECT g.*,
+    $query = qq|SELECT g.*, 
                 d.description AS department,
 		br.id AS batchid, br.description AS batchdescription
                 FROM gl g
@@ -619,6 +642,7 @@ sub transaction {
 
     $ref = $sth->fetchrow_hashref(NAME_lc);
     for (keys %$ref) { $form->{$_} = $ref->{$_} }
+    $form->{currency} = $form->{curr};
     $sth->finish;
   
     # retrieve individual rows
@@ -627,14 +651,12 @@ sub transaction {
 	        JOIN chart c ON (ac.chart_id = c.id)
 	        LEFT JOIN project p ON (p.id = ac.project_id)
 	        WHERE ac.trans_id = $form->{id}
+		AND fx_transaction = '0'
 	        ORDER BY accno|;
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
     
     while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-      if ($ref->{fx_transaction}) {
-	$form->{transfer} = 1;
-      }
       push @{ $form->{GL} }, $ref;
     }
     $sth->finish;

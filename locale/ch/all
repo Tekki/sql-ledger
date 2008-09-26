@@ -3,6 +3,7 @@
 # this file is just a shortcut to build strings which are the same
 
 $self{texts} = {
+  '+/-'                         => '+/-',
   'A'                           => 'A',
   'AP'                          => 'Verbindlichkeiten',
   'AP Aging'                    => 'Offene Verbindl.',
@@ -624,6 +625,8 @@ $self{texts} = {
   'Packing List Number missing!' => 'Verpackungslistennummer fehlt!',
   'Packing Lists'               => 'Packlisten',
   'Paid'                        => 'Bezahlt',
+  'Paid Early'                  => 'Früh bezahlt',
+  'Paid Late'                   => 'Spät bezahlt',
   'Part Number'                 => 'Artikelnummer',
   'Parts'                       => 'Waren',
   'Parts Requirements'          => 'benötigte Artikel',
@@ -635,6 +638,7 @@ $self{texts} = {
   'Payable Vouchers'            => 'Fällige Zahlungsbelege',
   'Payables'                    => 'Verbindlichkeiten',
   'Payment'                     => 'Belastung',
+  'Payment Difference'          => 'Zahlungsvarianz',
   'Payment Reversal'            => 'Zahlung stornieren',
   'Payment Reversal Voucher'    => 'Zahlungsbeleg stornieren',
   'Payment account missing!'    => 'Zielkonto fehlt!',

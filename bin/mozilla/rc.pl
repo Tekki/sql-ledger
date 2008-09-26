@@ -292,7 +292,7 @@ function CheckAll() {
 	$checked = "checked";
       }
     }
-    
+
     %temp = ();
     if (!$ref->{fx_transaction}) {
       for (qw(name source transdate)) { $temp{$_} = $ref->{$_} }
@@ -322,7 +322,7 @@ function CheckAll() {
       $column_data{credit} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{amount}, $form->{precision}, "&nbsp;")."</td>";
       
     }
-    
+
     $column_data{balance} = "<td align=right>".$form->format_amount(\%myconfig, $balance, $form->{precision}, 0)."</td>";
 
     if ($ref->{fx_transaction}) {

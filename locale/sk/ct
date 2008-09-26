@@ -199,6 +199,8 @@ $self{subs} = {
   'nový_odberateµ'              => 'add_customer',
   'nový_dodavateµ'              => 'add_vendor',
   'pokraèovanie'                => 'continue',
+  'dobropis'                    => 'credit_invoice',
+  'dobropis_od_dodavateµa'      => 'debit_invoice',
   'vymaza»'                     => 'delete',
   'pokladòa'                    => 'pos',
   'cenník'                      => 'pricelist',
@@ -210,6 +212,7 @@ $self{subs} = {
   'ulo¾i»'                      => 'save',
   'ulo¾i»_cenník'               => 'save_pricelist',
   'ulo¾i»_ako_nový'             => 'save_as_new',
+  'adresa_dodania'              => 'shipping_address',
   'naèíta»'                     => 'update',
   'dodavateµská_faktúra'        => 'vendor_invoice',
 };

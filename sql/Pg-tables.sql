@@ -37,7 +37,9 @@ CREATE TABLE gl (
   employee_id int,
   notes text,
   department_id int DEFAULT 0,
-  approved bool DEFAULT 't'
+  approved bool DEFAULT 't',
+  curr char(3),
+  exchangerate float
 );
 --
 CREATE TABLE chart (
@@ -61,7 +63,7 @@ CREATE TABLE defaults (
   fldvalue text
 );
 --
-INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '2.8.0');
+INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '2.8.4');
 --
 CREATE TABLE acc_trans (
   trans_id int,
@@ -128,7 +130,9 @@ CREATE TABLE customer (
   discount_accno_id int,
   cashdiscount float4,
   discountterms int2,
-  threshold float
+  threshold float,
+  paymentmethod_id int,
+  remittancevoucher bool
 );
 --
 CREATE TABLE parts (
@@ -205,7 +209,8 @@ CREATE TABLE ar (
   waybill text,
   warehouse_id int,
   description text,
-  onhold bool DEFAULT 'f'
+  onhold bool DEFAULT 'f',
+  exchangerate float
 );
 --
 CREATE TABLE ap (
@@ -239,7 +244,8 @@ CREATE TABLE ap (
   waybill text,
   warehouse_id int,
   description text,
-  onhold bool DEFAULT 'f'
+  onhold bool DEFAULT 'f',
+  exchangerate float
 );
 --
 CREATE TABLE partstax (
@@ -290,7 +296,8 @@ CREATE TABLE oe (
   waybill text,
   warehouse_id int,
   description text,
-  aa_id int
+  aa_id int,
+  exchangerate float
 );
 --
 CREATE TABLE orderitems (
@@ -392,7 +399,9 @@ CREATE TABLE vendor (
   discount_accno_id int,
   cashdiscount float4,
   discountterms int2,
-  threshold float
+  threshold float,
+  paymentmethod_id int,
+  remittancevoucher bool
 );
 --
 CREATE TABLE project (
@@ -618,3 +627,25 @@ CREATE TABLE contact (
   typeofcontact varchar(20)
 );
 --
+CREATE TABLE paymentmethod (
+  id int primary key default nextval('id'),
+  description text,
+  fee float
+);
+--
+CREATE TABLE bank (
+  id int,
+  name varchar(64),
+  iban varchar(34),
+  bic varchar(11),
+  address_id int default nextval('addressid')
+);
+--
+CREATE TABLE payment (
+  id int not null,
+  trans_id int not null,
+  exchangerate float default 1,
+  paymentmethod_id int
+);
+--
+

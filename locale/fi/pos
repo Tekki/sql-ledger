@@ -44,6 +44,7 @@ $self{texts} = {
   'Total'                       => 'Yhteensä',
   'Unit'                        => 'Yksikkö',
   'Update'                      => 'Päivitä',
+  'Warehouse'                   => 'Varasto',
   'Year'                        => 'Vuosi',
 };
 

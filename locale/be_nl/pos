@@ -42,6 +42,7 @@ $self{texts} = {
   'Trade Discount'              => 'Handelskorting',
   'Unit'                        => 'Eenheid',
   'Update'                      => 'Bijwerken',
+  'Warehouse'                   => 'Magazijn',
 };
 
 $self{subs} = {

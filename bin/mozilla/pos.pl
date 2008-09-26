@@ -37,6 +37,8 @@ sub add {
   $form->{partsgroup} = "";
   for (@{ $form->{all_partsgroup} }) { $form->{partsgroup} .= "$_->{partsgroup}--$_->{translation}\n"; }
 
+  $focus = "partnumber_1";
+
   &display_form;
 
 }
@@ -219,8 +221,6 @@ sub form_header {
 |;
   }
 
-  $i = $form->{rowcount} + 1;
-  $focus = "partnumber_$i";
   
   $form->header;
  
@@ -460,7 +460,6 @@ sub form_footer {
 |;
 
   $transdate = $form->datetonum(\%myconfig, $form->{transdate});
-  $closedto = $form->datetonum(\%myconfig, $form->{closedto});
 
   if (! $form->{readonly}) {
     %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
@@ -471,7 +470,7 @@ sub form_footer {
 	       'Sales Invoice' => { ndx => 5, key => 'I', value => $locale->text('Sales Invoice') },
 	      );
    
-    if ($transdate > $closedto) {
+    if ($transdate > $form->{closedto}) {
 
       if (! $form->{id}) {
 	delete $button{'Delete'};

@@ -1,4 +1,5 @@
 $self{texts} = {
+  '+/-'                         => '+/-',
   'AP Outstanding'              => 'Offene Verbindlichkeiten',
   'AP Transaction'              => 'Eingangsbuchung',
   'AP Transactions'             => 'Eingangsbuchungen',
@@ -101,6 +102,9 @@ $self{texts} = {
   'Outstanding'                 => 'Offen',
   'PO Number'                   => 'Ihre Bestellnummer',
   'Paid'                        => 'Bezahlt',
+  'Paid Early'                  => 'Früh bezahlt',
+  'Paid Late'                   => 'Spät bezahlt',
+  'Payment Difference'          => 'Zahlungsvarianz',
   'Payment date missing!'       => 'Zahlungsdatum fehlt!',
   'Payments'                    => 'Zahlungen',
   'Period'                      => 'Zeitraum',

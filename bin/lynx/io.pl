@@ -162,6 +162,7 @@ function CheckAll(v) {
   $exchangerate = $form->parse_amount(\%myconfig, $form->{exchangerate});
   $exchangerate ||= 1;
 
+
   $spc = substr($myconfig{numberformat},-3,1);
   for $i (1 .. $numrows) {
     if ($spc eq '.') {
@@ -204,7 +205,6 @@ function CheckAll(v) {
     $discount = $form->round_amount($form->{"sellprice_$i"} * $form->{"discount_$i"}/100, $decimalplaces);
     $linetotal = $form->round_amount($form->{"sellprice_$i"} - $discount, $decimalplaces);
     $linetotal = $form->round_amount($linetotal * $form->{"qty_$i"}, $form->{precision});
-
     
     if (($rows = $form->numtextrows($form->{"description_$i"}, 46, 6)) > 1) {
       $form->{"description_$i"} = $form->quote($form->{"description_$i"});
@@ -358,7 +358,7 @@ function CheckAll(v) {
 |;
 
     $skunumber = "";
-    
+
     for (split / /, $form->{"taxaccounts_$i"}) {
       $form->{"${_}_base"} += $linetotal;
     }
@@ -592,7 +592,7 @@ sub item_selected {
   $form->{rowcount} = $i;
   $form->{assembly_rows} = $i if ($form->{item} eq 'assembly');
   
-  $form->{focus} = "description_$i";
+  $focus = "description_$i";
 
   # delete all the new_ variables
   for $i (1 .. $form->{lastndx}) {
@@ -678,7 +678,7 @@ sub display_form {
     &{ "$form->{display_form}" };
     exit;
   }
-  
+
   &form_header;
 
   $numrows = ++$form->{rowcount};
@@ -857,6 +857,10 @@ sub check_form {
       } else {
 	$form->{creditremaining} -= &invoicetotal;
       }
+
+      $count++;
+      $focus = "partnumber_$count";
+      
     }
   }
 
@@ -896,7 +900,18 @@ sub invoicetotal {
   my ($amount, $sellprice, $discount, $qty);
 
   for $i (1 .. $form->{rowcount}) {
-    $amount = $form->{"sellprice_$i"} * (1 - $form->{"discount_$i"} / 100) * $form->{"qty_$i"};
+    
+    $spc = substr($myconfig{numberformat},-3,1);
+    if ($spc eq '.') {
+      ($null, $dec) = split /\./, $form->{"sellprice_$i"};
+    } else {
+      ($null, $dec) = split /,/, $form->{"sellprice_$i"};
+    }
+    $dec = length $dec;
+    $decimalplaces = ($dec > $form->{precision}) ? $dec : $form->{precision};
+
+    $sellprice = $form->round_amount($form->parse_amount(\%myconfig, $form->{"sellprice_$i"}) * (1 - $form->{"discount_$i"} / 100), $decimalplaces);
+    $amount = $sellprice * $form->{"qty_$i"};
     for (split / /, $form->{"taxaccounts_$i"}) { $form->{"${_}_base"} += $amount }
     $form->{oldinvtotal} += $amount;
   }
@@ -1039,7 +1054,14 @@ sub e_mail {
   $name = $form->{$form->{vc}};
   $name =~ s/--.*//g;
   $title = $locale->text('E-mail')." $name";
+ 
+ 
+  ($form->{warehouse}, $form->{warehouse_id}) = split /--/, $form->{warehouse};
   
+  AA->company_details(\%myconfig, \%$form);
+
+  $form->{warehouse} = "$form->{warehouse}--$form->{warehouse_id}" if $form->{warehouse_id};
+
   $form->header;
 
   print qq|
@@ -1132,7 +1154,6 @@ sub send_email {
 sub print_options {
 
   $form->{sendmode} = "attachment";
-  $form->{copies} = 1 unless $form->{copies};
   
   $form->{SM}{$form->{sendmode}} = "selected";
   
@@ -1148,6 +1169,7 @@ sub print_options {
     $media = qq|<select name="sendmode">
 	    <option value="attachment" $form->{SM}{attachment}>|.$locale->text('Attachment').qq|
 	    <option value="inline" $form->{SM}{inline}>|.$locale->text('In-line').qq|</select>|;
+
   } else {
     $media = qq|<select name=media>
 	    <option value="screen">|.$locale->text('Screen');
@@ -1195,6 +1217,31 @@ sub print_options {
 |;
   }
 
+  # remittance voucher
+  if ($form->{media} ne 'email') {
+    if ($form->{type} =~ /invoice/) {
+      $form->{remittancevoucher} = ($form->{remittancevoucher}) ? "checked" : "";
+      $rvp = qq|<select name=rvp>
+	    <option value="screen">|.$locale->text('Screen');
+
+      if (%printer) {
+	for (sort keys %printer) { $rvp .= qq|
+	      <option value="$_">$_| }
+      }
+
+      $rvp .= qq|</select>|;
+
+      # set option selected
+      $rvp =~ s/(<option value="\Q$form->{rvp}\E")/$1 selected/;
+
+      print qq|
+      <td nowrap><input name=remittancevoucher type=checkbox class=checkbox value=1 $form->{remittancevoucher}>|.$locale->text('Remittance Voucher').qq|</td>
+      <td>$rvp</td>
+|;
+    }
+  }
+
+
 # $locale->text('Printed')
 # $locale->text('E-mailed')
 # $locale->text('Queued')
@@ -1223,34 +1270,38 @@ sub print_options {
   $form->{grouppartsgroup} = "checked" if $form->{grouppartsgroup};
   
   for (qw(runningnumber partnumber description bin)) { $sortby{$_} = "checked" if $form->{sortby} eq $_ }
-  
-  print qq|
-  <tr>
-    <td>
-      <table>
-        <tr>
-	  <th>|.$locale->text('Group by').qq| -></th>
-	  <td><input name=groupprojectnumber type=checkbox class=checkbox $form->{groupprojectnumber}></td>
-	  <td>|.$locale->text('Project').qq|</td>
-	  <td><input name=grouppartsgroup type=checkbox class=checkbox $form->{grouppartsgroup}></td>
-	  <td>|.$locale->text('Group').qq|</td>
 
-	  <td width=20></td>
-	  
-          <th><b>|.$locale->text('Sort by').qq| -></th>
-	  <td><input name=sortby type=radio class=radio value=runningnumber $sortby{runningnumber}></td>
-	  <td>|.$locale->text('Item').qq|</td>
-	  <td><input name=sortby type=radio class=radio value=partnumber $sortby{partnumber}></td>
-	  <td>|.$locale->text('Number').qq|</td>
-	  <td><input name=sortby type=radio class=radio value=description $sortby{description}></td>
-	  <td>|.$locale->text('Description').qq|</td>
-	  <td><input name=sortby type=radio class=radio value=bin $sortby{bin}></td>
-	  <td>|.$locale->text('Bin').qq|</td>
-	</tr>
-      </table>
-    </td>
-  </tr>
+  if ($form->{media} eq 'email') {
+    $form->hide_form(qw(groupprojectnumber grouppartsgroup sortby));
+  } else {
+    print qq|
+    <tr>
+      <td>
+	<table>
+	  <tr>
+	    <th>|.$locale->text('Group by').qq| -></th>
+	    <td><input name=groupprojectnumber type=checkbox class=checkbox $form->{groupprojectnumber}></td>
+	    <td>|.$locale->text('Project').qq|</td>
+	    <td><input name=grouppartsgroup type=checkbox class=checkbox $form->{grouppartsgroup}></td>
+	    <td>|.$locale->text('Group').qq|</td>
+
+	    <td width=20></td>
+	    
+	    <th><b>|.$locale->text('Sort by').qq| -></th>
+	    <td><input name=sortby type=radio class=radio value=runningnumber $sortby{runningnumber}></td>
+	    <td>|.$locale->text('Item').qq|</td>
+	    <td><input name=sortby type=radio class=radio value=partnumber $sortby{partnumber}></td>
+	    <td>|.$locale->text('Number').qq|</td>
+	    <td><input name=sortby type=radio class=radio value=description $sortby{description}></td>
+	    <td>|.$locale->text('Description').qq|</td>
+	    <td><input name=sortby type=radio class=radio value=bin $sortby{bin}></td>
+	    <td>|.$locale->text('Bin').qq|</td>
+	  </tr>
+	</table>
+      </td>
+    </tr>
 |;
+  }
 
 }
 
@@ -1282,14 +1333,26 @@ sub print_form {
 
   $display_form = ($form->{display_form}) ? $form->{display_form} : "display_form";
 
+  if (! ($form->{copies} = abs($form->{copies}))) {
+    if (!$form->{remittancevoucher}) {
+      $form->{copies} = 1;
+    }
+  }
+
+
+  $form->{bankconnection} = "";
+  
   if ($form->{formname} eq 'invoice') {
     $form->{label} = $locale->text('Invoice');
+    $form->{bankconnection} = ($form->{vc} eq 'customer') ? "ours" : "theirs";
   }
   if ($form->{formname} eq 'debit_invoice') {
     $form->{label} = $locale->text('Debit Invoice');
+    $form->{bankconnection} = "ours";
   }
   if ($form->{formname} eq 'credit_invoice') {
     $form->{label} = $locale->text('Credit Invoice');
+    $form->{bankconnection} = "theirs";
   }
 
   if ($form->{formname} eq 'sales_order') {
@@ -1532,6 +1595,8 @@ sub print_form {
   }
 
   if ($form->{media} eq 'email') {
+    $mergermv = 1;
+    
     $form->{subject} = qq|$form->{label} $form->{"${inv}number"}| unless $form->{subject};
 
     $form->{plainpaper} = 1;
@@ -1579,6 +1644,8 @@ sub print_form {
 
 
   if ($form->{media} eq 'queue') {
+    $mergermv = 1;
+    
     %queued = split / /, $form->{queued};
 
     if ($filename = $queued{$form->{formname}}) {
@@ -1617,7 +1684,91 @@ sub print_form {
 
   $form->format_string(qw(email cc bcc));
   
-  $form->parse_template(\%myconfig, $userspath);
+  my $filename;
+  my $tmpfile;
+
+  # remittance voucher
+  if ($form->{remittancevoucher}) {
+  
+    $mergermv = 1 if $form->{copies} && $form->{rvp} eq $form->{media};
+    
+    # merge the files
+    if ($mergermv) {
+
+      if ($form->{format} =~ /(postscript|pdf)/) {
+	$rmv = "remittance_voucher.tex";
+	$tmpfile = "$$.tex";
+      } else {
+	$rmv = "remittance_voucher.$form->{format}";
+	$tmpfile = "$$.$form->{format}";
+      }
+
+      if (-f "$form->{templates}/$form->{language_code}/$form->{IN}") {
+	$filename = "$form->{templates}/$form->{language_code}/$tmpfile";
+      } else {
+	$filename = "$form->{templates}/$tmpfile";
+      }
+      open(OUT, ">$filename") or $form->error("$filename : $!");
+      binmode(OUT);
+      open(IN, "$form->{templates}/$form->{language_code}/$form->{IN}") or $form->error("$form->{templates}/$form->{language_code}/$form->{IN} : $!");
+      binmode(IN);
+      while (<IN>) {
+	if (/^\\end{document}/) {
+	  print OUT qq|\\newpage\n|;
+	  last;
+	}
+	print OUT $_;
+      }
+      close(IN);
+
+      if (-f "$form->{templates}/$form->{language_code}/$rmv") {
+	open(IN, "$form->{templates}/$form->{language_code}/$rmv") or $form->error("$form->{templates}/$form->{language_code}/$rmv : $!");
+      } else {
+	open(IN, "$form->{templates}/$rmv") or $form->error("$form->{templates}/$rmv : $!");
+      }
+      binmode(IN);
+      
+      my $skip;
+      while (<IN>) {
+	if ($form->{format} =~ /(postscript|pdf)/) {
+	  if (! $skip) {
+	    if (/\\begin{document}/) {
+	      $skip = 1;
+	    }
+	    next;
+	  }
+	}
+	print OUT $_;
+      }
+      close(IN);
+      close(OUT);
+
+      $form->{IN} = "$tmpfile";
+
+    } else {
+      $mergermv = 0;
+    }
+  }
+
+
+  $form->parse_template(\%myconfig, $userspath) if $form->{copies};
+
+  # print remittance voucher
+  if ($form->{remittancevoucher}) {
+    if ($mergermv) {
+      unlink "$filename";
+    } else {
+      $form->{IN} = "remittance_voucher.$form->{format}";
+      $form->{media} = $form->{rvp};
+
+      if ($form->{format} =~ /(postscript|pdf)/) {
+	$form->{IN} =~ s/$&$/tex/;
+      }
+
+      $form->parse_template(\%myconfig, $userspath);
+    }
+  }
+
 
   # if we got back here restore the previous form
   if (defined %$old_form) {
@@ -1728,7 +1879,7 @@ sub ship_to {
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Fax').qq|</th>
-	  <td>$form->{fax}</td>
+	  <td>$form->{"$form->{vc}fax"}</td>
 	  <td><input name=shiptofax size=20 value="$form->{shiptofax}"></td>
 	</tr>
 	<tr>

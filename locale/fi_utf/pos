@@ -49,6 +49,7 @@ $self{texts} = {
   'Trade Discount'              => 'Alennus',
   'Unit'                        => 'Yksikkö',
   'Update'                      => 'Päivitä',
+  'Warehouse'                   => 'Varasto',
   'Year'                        => 'Vuosi',
 };
 

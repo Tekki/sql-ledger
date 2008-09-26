@@ -47,6 +47,7 @@ $self{texts} = {
   'Trade Discount'              => 'Escompte commercial',
   'Unit'                        => 'Unité',
   'Update'                      => 'Mettre à jour',
+  'Warehouse'                   => 'Entrepôt',
   'Year'                        => 'Année',
 };
 

@@ -110,7 +110,8 @@ sub save_account {
 		contra)
                 VALUES ('$form->{accno}',|
 		.$dbh->quote($form->{description}).qq|,
-		'$form->{charttype}', '$form->{gifi_accno}',
+		'$form->{charttype}', |
+		.$dbh->quote($form->{gifi_accno}).qq|,
 		'$form->{category}', '$form->{link}', '$form->{contra}')|;
   }
   $dbh->do($query) || $form->dberror($query);
@@ -177,6 +178,15 @@ sub delete_account {
   $query = qq|DELETE FROM chart
               WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
+  
+  $query = qq|DELETE FROM bank
+              WHERE id = $form->{id}|;
+  $dbh->do($query) || $form->dberror($query);
+  
+  $query = qq|DELETE FROM address
+              WHERE trans_id = $form->{id}|;
+  $dbh->do($query) || $form->dberror($query);
+
 
   # set inventory_accno_id, income_accno_id, expense_accno_id to defaults
   my %defaults = $form->get_defaults($dbh, \@{['%_accno_id']});
@@ -282,7 +292,8 @@ sub save_gifi {
   } else {
     $query = qq|INSERT INTO gifi 
                 (accno, description)
-                VALUES ('$form->{accno}',|
+                VALUES (|
+		.$dbh->quote($form->{accno}).qq|,|
 		.$dbh->quote($form->{description}).qq|)|;
   }
   $dbh->do($query) || $form->dberror; 
@@ -610,6 +621,90 @@ sub delete_business {
   my $dbh = $form->dbconnect($myconfig);
   
   $query = qq|DELETE FROM business
+	      WHERE id = $form->{id}|;
+  $dbh->do($query) || $form->dberror($query);
+  
+  $dbh->disconnect;
+
+}
+
+
+sub paymentmethod {
+  my ($self, $myconfig, $form) = @_;
+  
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+
+  $form->sort_order();
+  my $query = qq|SELECT id, description, fee
+                 FROM paymentmethod
+		 ORDER BY 2 $form->{direction}|;
+
+  $sth = $dbh->prepare($query);
+  $sth->execute || $form->dberror($query);
+
+  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+    push @{ $form->{ALL} }, $ref;
+  }
+  $sth->finish;
+
+  $dbh->disconnect;
+  
+}
+
+
+
+sub get_paymentmethod {
+  my ($self, $myconfig, $form) = @_;
+
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+  
+  my $query = qq|SELECT description, fee
+                 FROM paymentmethod
+	         WHERE id = $form->{id}|;
+  ($form->{description}, $form->{fee}) = $dbh->selectrow_array($query);
+
+  $dbh->disconnect;
+
+}
+
+
+sub save_paymentmethod {
+  my ($self, $myconfig, $form) = @_;
+  
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+  
+  $form->{description} =~ s/-(-)+/-/g;
+  $form->{description} =~ s/ ( )+/ /g;
+  
+  if ($form->{id}) {
+    $query = qq|UPDATE paymentmethod SET
+		description = |.$dbh->quote($form->{description}).qq|,
+		fee = |.$form->parse_amount($myconfig, $form->{fee}).qq|
+		WHERE id = $form->{id}|;
+  } else {
+    $query = qq|INSERT INTO paymentmethod 
+                (description, fee)
+		VALUES (|
+		.$dbh->quote($form->{description}).qq|, |.
+		$form->parse_amount($myconfig, $form->{fee}).qq|)|;
+  }
+  $dbh->do($query) || $form->dberror($query);
+  
+  $dbh->disconnect;
+
+}
+
+
+sub delete_paymentmethod {
+  my ($self, $myconfig, $form) = @_;
+  
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+  
+  $query = qq|DELETE FROM paymentmethod
 	      WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
   
@@ -1535,7 +1630,7 @@ $myconfig->{dboptions};
   my $fields;
   
   delete $tables{semaphore};
-
+  
   foreach $table (keys %tables) {
 
     $query = qq|SELECT * FROM $table|;
@@ -1661,6 +1756,7 @@ sub closebooks {
               VALUES (?, ?)|;
   my $sth = $dbh->prepare($query) || $form->dberror($query);
 
+  $form->{closedto} = $form->datetonum($myconfig, $form->{closedto});
   for (qw(revtrans closedto audittrail aruniq apuniq gluniq souniq pouniq trackinguniq nontrackinguniq)) {
     $dth->execute($_) || $form->dberror;
     $dth->finish;
@@ -1807,6 +1903,248 @@ sub company_defaults {
   
   $dbh->disconnect;
       
+}
+
+
+sub bank_accounts {
+  my ($self, $myconfig, $form) = @_;
+  
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+
+  my $query = qq|SELECT c.id, c.accno, c.description,
+                 bk.name, bk.iban, bk.bic,
+		 ad.address1, ad.address2, ad.city,
+                 ad.state, ad.zipcode, ad.country
+                 FROM chart c
+		 LEFT JOIN bank bk ON (bk.id = c.id)
+		 LEFT JOIN address ad ON (c.id = ad.trans_id)
+		 WHERE c.link LIKE '%_paid%'
+		 ORDER BY 1|;
+
+  my $sth = $dbh->prepare($query);
+  $sth->execute || $form->dberror($query);
+
+  my $ref;
+  
+  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    $ref->{address} = "";
+    for (qw(address1 address2 city state zipcode country)) {
+      $ref->{address} .= "$ref->{$_}\n" if $ref->{$_};
+    }
+    chop $ref->{address};
+
+    push @{ $form->{ALL} }, $ref;
+  }
+  $sth->finish;
+
+  $dbh->disconnect;
+  
+}
+
+
+sub get_bank {
+  my ($self, $myconfig, $form) = @_;
+  
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+
+  $query = qq/SELECT c.accno || '--' || c.description AS account,
+              bk.name, bk.iban, bk.bic,
+	      ad.address1, ad.address2, ad.city,
+              ad.state, ad.zipcode, ad.country
+	      FROM chart c
+	      LEFT JOIN bank bk ON (c.id = bk.id)
+	      LEFT JOIN address ad ON (c.id = ad.trans_id)
+	      WHERE c.id = $form->{id}/;
+  $sth = $dbh->prepare($query);
+  $sth->execute || $form->dberror($query);
+
+  $ref = $sth->fetchrow_hashref(NAME_lc);
+  for (keys %$ref) { $form->{$_} = $ref->{$_} }
+  $sth->finish;
+
+  $dbh->disconnect;
+
+}
+
+
+sub save_bank {
+  my ($self, $myconfig, $form) = @_;
+  
+  # connect to database
+  my $dbh = $form->dbconnect_noauto($myconfig);
+
+  my $query = qq|SELECT id FROM bank
+                 WHERE id = $form->{id}|;
+  my ($id) = $dbh->selectrow_array($query);
+
+  my $ok;
+  for (qw(name iban bic address1 address2 city state zipcode country)) {
+    if ($form->{$_}) {
+      $ok = 1;
+      last;
+    }
+  }
+
+  if ($ok) {
+    if ($id) {
+      $query = qq|UPDATE bank SET
+		  name = |.$dbh->quote(uc $form->{name}).qq|,
+		  iban = |.$dbh->quote($form->{iban}).qq|,
+		  bic = |.$dbh->quote(uc $form->{bic}).qq|
+		  WHERE id = $form->{id}|;
+      $dbh->do($query) || $form->dberror($query);
+    } else {
+      $query = qq|INSERT INTO address (trans_id)
+		  VALUES ($form->{id})|;
+      $dbh->do($query) || $form->dberror($query);
+
+      $query = qq|INSERT INTO bank (id, name, iban, bic)
+		  VALUES ($form->{id}, |
+		  .$dbh->quote(uc $form->{name}).qq|, |
+		  .$dbh->quote(uc $form->{iban}).qq|, |
+		  .$dbh->quote($form->{bic}).qq|
+		  )|;
+      $dbh->do($query) || $form->dberror($query);
+    }
+    
+    $query = qq|UPDATE address SET
+		address1 = |.$dbh->quote(uc $form->{address1}).qq|,
+		address2 = |.$dbh->quote(uc $form->{address2}).qq|,
+		city = |.$dbh->quote(uc $form->{city}).qq|,
+		state = |.$dbh->quote(uc $form->{state}).qq|,
+		zipcode = |.$dbh->quote(uc $form->{zipcode}).qq|,
+		country = |.$dbh->quote(uc $form->{country}).qq|
+		WHERE trans_id = $form->{id}|;
+    $dbh->do($query) || $form->dberror($query);
+
+  } else {
+    $query = qq|DELETE FROM bank
+                WHERE id = $form->{id}|;
+    $dbh->do($query) || $form->dberror($query);
+    
+    $query = qq|DELETE FROM address
+                WHERE trans_id = $form->{id}|;
+    $dbh->do($query) || $form->dberror($query);
+
+  }
+
+  my $rc = $dbh->commit;
+
+  $dbh->disconnect;
+
+  $rc;
+
+}
+
+
+sub exchangerates {
+  my ($self, $myconfig, $form) = @_;
+  
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+
+  my %defaults = $form->get_defaults($dbh, \@{['currencies']});
+  $form->{currencies} = $defaults{currencies};
+
+  $form->all_years($myconfig);
+
+  $dbh->disconnect;
+
+}
+
+
+
+sub get_exchangerates {
+  my ($self, $myconfig, $form) = @_;
+
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+
+  my $where = "1 = 1";
+
+  my @a = qw(transdate);
+  my $sortorder = $form->sort_order(\@a);
+
+  my %defaults = $form->get_defaults($dbh, \@{['currencies']});
+  $form->{currencies} = $defaults{currencies};
+
+  ($form->{transdatefrom}, $form->{transdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
+  
+  $where .= " AND transdate >= '$form->{transdatefrom}'" if $form->{transdatefrom};
+  $where .= " AND transdate <= '$form->{transdateto}'" if $form->{transdateto};   
+  $where .= " AND curr = '$form->{currency}'" if $form->{currency};
+  
+  my $query = qq|SELECT * FROM exchangerate
+                 WHERE $where
+		 ORDER BY $sortorder|;
+
+  my $sth = $dbh->prepare($query);
+  $sth->execute || $form->dberror($query);
+
+  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+    push @{ $form->{transactions} }, $ref;
+  }
+  $sth->finish;
+  $dbh->disconnect;
+
+}
+
+
+sub save_exchangerate {
+  my ($self, $myconfig, $form) = @_;
+  
+  # connect to database
+  my $dbh = $form->dbconnect_noauto($myconfig);
+  
+  my $query;
+  my $sth;
+  my $dth;
+
+  $query = qq|DELETE FROM exchangerate
+	      WHERE transdate = ?
+	      AND curr = ?|;
+  $dth = $dbh->prepare($query) || $form->dberror($query);
+    
+  $query = qq|INSERT INTO exchangerate
+	      (transdate, buy, sell, curr)
+	      VALUES (?,?,?,?)|;
+  $sth = $dbh->prepare($query) || $form->dberror($query);
+
+  for (split /:/, $form->{currencies}) {
+    
+    if ($form->{$_}) {
+      
+      $dth->execute($form->{transdate}, $_) || $form->dberror;
+      $dth->finish;
+      
+      $form->{"${_}buy"} *= 1;
+      $form->{"${_}sell"} *= 1;
+      
+      if ($form->{"${_}buy"} || $form->{"${_}sell"}) {
+	$sth->execute($form->{transdate}, $form->{"${_}buy"}, $form->{"${_}sell"}, $_) || $form->dberror;
+	$sth->finish;
+      }
+    }
+  }
+  
+  $dbh->commit;
+  $dbh->disconnect;
+
+}
+
+
+sub remove_locks {
+  my ($self, $myconfig, $form) = @_;
+  
+  $dbh = $form->dbconnect($myconfig);
+
+  my $query = qq|DELETE FROM semaphore|;
+  $dbh->do($query) || $form->dberror($query);
+
+  $dbh->disconnect;
+
 }
 
 

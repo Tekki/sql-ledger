@@ -137,6 +137,8 @@ $self{subs} = {
   'send_email'                  => 'send_email',
   'ship_to'                     => 'ship_to',
   'validate_items'              => 'validate_items',
+  'nový_tovar'                  => 'add_part',
+  'nový_druh_slu¾by'            => 'add_service',
   'pokraèovanie'                => 'continue',
 };
 

@@ -87,7 +87,8 @@ sub edit {
   for (qw(currency department business language account)) { $form->{"select$_"} = $form->escape($form->{"select$_"},1) }
   
   $form->{media} ||= $myconfig{printer};
-  $form->{format} = "pdf" unless $myconfig{printer};
+  $form->{format} ||= $myconfig{outputformat};
+  $form->{format} ||= "pdf" unless $myconfig{printer};
 
   if ($form->{batch}) {
     if ($form->{transdate}) {
@@ -118,7 +119,7 @@ sub edit {
   $form->{rowcount} = $i;
   
   $form->{oldcurrency} = $form->{currency};
-  $form->{forex} = $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{datepaid}, ($form->{vc} eq 'customer') ? "buy" : "sell");
+  $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{datepaid}, ($form->{vc} eq 'customer') ? "buy" : "sell");
 
   if (! $form->{readonly}) {
     if ($form->{batch}) {
@@ -203,7 +204,7 @@ sub payment {
   $form->{currency} = $form->{defaultcurrency};
   $form->{oldcurrency} = $form->{currency};
 
-  $form->{forex} = $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{datepaid}, ($form->{vc} eq 'customer') ? "buy" : "sell");
+  $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{datepaid}, ($form->{vc} eq 'customer') ? "buy" : "sell");
 
   $form->{olddatepaid} = $form->{datepaid};
 
@@ -211,7 +212,8 @@ sub payment {
   for (qw(currency department business language account)) { $form->{"select$_"} = $form->escape($form->{"select$_"},1) }
   
   $form->{media} = $myconfig{printer};
-  $form->{format} = "pdf" unless $myconfig{printer};
+  $form->{format} ||= $myconfig{outputformat};
+  $form->{format} ||= "pdf" unless $myconfig{printer};
 
   if ($form->{batch}) {
     if (! $form->{transdate}) {
@@ -363,7 +365,8 @@ sub payments {
   for (qw(currency department business language account)) { $form->{"select$_"} = $form->escape($form->{"select$_"},1) }
 
   $form->{media} = $myconfig{printer};
-  $form->{format} = "pdf" unless $myconfig{printer};
+  $form->{format} ||= $myconfig{outputformat};
+  $form->{format} ||= "pdf" unless $myconfig{printer};
   
   if ($form->{batch}) {
     if (! $form->{transdate}) {
@@ -409,21 +412,12 @@ sub payments_header {
   if ($form->{currency} ne $form->{defaultcurrency}) {
     $form->{exchangerate} = $form->format_amount(\%myconfig, $form->{exchangerate});
 
-    if ($form->{forex}) {
-      $exchangerate .= qq|
- 	      <tr>
-		<th align=right nowrap>|.$locale->text('Exchange Rate').qq|</th>
-		<td colspan=3><input type=hidden name=exchangerate size=10 value=$form->{exchangerate}>$form->{exchangerate}</td>
-	      </tr>
-|;
-    } else {
-      $exchangerate .= qq|
+    $exchangerate .= qq|
  	      <tr>
 		<th align=right nowrap>|.$locale->text('Exchange Rate').qq|</th>
 		<td colspan=3><input name=exchangerate size=10 value=$form->{exchangerate}></td>
 	      </tr>
 |;
-    }
   }
 
   $department = qq|
@@ -622,7 +616,7 @@ sub invoices_due {
   for $i (1 .. $form->{rowcount}) {
 
     for (qw(amount paid due)) { $form->{"${_}_$i"} = $form->parse_amount(\%myconfig, $form->{"${_}_$i"}) }
-      
+    
     $totalamount += $form->{"amount_$i"};
     $totaldue += $form->{"due_$i"};
     $totalpaid += $form->{"paid_$i"};
@@ -691,7 +685,6 @@ sub payments_footer {
   $form->{DF}{$form->{format}} = "selected";
 
   $transdate = $form->datetonum(\%myconfig, $form->{datepaid});
-  $closedto = $form->datetonum(\%myconfig, $form->{closedto});
   
   if ($latex) {
    
@@ -733,7 +726,7 @@ sub payments_footer {
     delete $button{'Print'};
   }
 
-  if ($transdate <= $closedto) {
+  if ($transdate <= $form->{closedto}) {
     for ('Post', 'Print') { delete $button{$_} }
     $media = $format = "";
   }
@@ -830,7 +823,7 @@ sub update_payments {
 
   $buysell = ($form->{ARAP} eq 'AR') ? "buy" : "sell";
 
-  $form->{exchangerate} = $exchangerate if ($form->{forex} = ($exchangerate = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{datepaid}, $buysell)));
+  $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{datepaid}, $buysell);
   for ("datepaid", "duedatefrom", "duedateto", "department", "business", "currency", "$form->{ARAP}") {
     if ($form->{$_} ne $form->{"old$_"}) {
       if (!$form->{redo}) {
@@ -1086,7 +1079,7 @@ sub update_payment {
     $form->{redo} = 1;
   }
 
-  $form->{exchangerate} = $exchangerate if ($form->{forex} = ($exchangerate = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{datepaid}, $buysell)));
+  $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{datepaid}, $buysell);
 
   if ($form->{redo}) {
     $form->{rowcount} = 0;
@@ -1190,21 +1183,12 @@ sub payment_header {
   if ($form->{currency} ne $form->{defaultcurrency}) {
     $form->{exchangerate} = $form->format_amount(\%myconfig, $form->{exchangerate});
 
-    if ($form->{forex}) {
-      $exchangerate .= qq|
- 	      <tr>
-		<th align=right nowrap>|.$locale->text('Exchange Rate').qq|</th>
-		<td colspan=3><input type=hidden name=exchangerate size=10 value=$form->{exchangerate}>$form->{exchangerate}</td>
-	      </tr>
-|;
-    } else {
-      $exchangerate .= qq|
+    $exchangerate .= qq|
  	      <tr>
 		<th align=right nowrap>|.$locale->text('Exchange Rate').qq|</th>
 		<td colspan=3><input name=exchangerate size=10 value=$form->{exchangerate}></td>
 	      </tr>
 |;
-    }
   }
   
   $allvc = ($form->{all_vc}) ? "checked" : "";
@@ -1579,7 +1563,6 @@ sub payment_footer {
   $form->{DF}{$form->{format}} = "selected";
 
   $transdate = $form->datetonum(\%myconfig, $form->{datepaid});
-  $closedto = $form->datetonum(\%myconfig, $form->{closedto});
 
   if (!$form->{readonly}) {
     if ($latex) {
@@ -1609,7 +1592,7 @@ sub payment_footer {
 |;
 
     $media =~ s/(<option value="\Q$form->{media}\E")/$1 selected/;
-    if ($transdate <= $closedto) {
+    if ($transdate <= $form->{closedto}) {
       $media = $format = "";
     }
 
@@ -1643,7 +1626,7 @@ sub payment_footer {
       delete $button{'Print'};
     }
 
-    if ($transdate <= $closedto) {
+    if ($transdate <= $form->{closedto}) {
       for ('Post', 'Print') { delete $button{$_} }
     }
 
@@ -2036,10 +2019,9 @@ sub check_form {
   
   $form->error($locale->text('Date missing!')) unless $form->{datepaid};
 
-  $closedto = $form->datetonum(\%myconfig, $form->{closedto});
   $datepaid = $form->datetonum(\%myconfig, $form->{datepaid});
   
-  $form->error($locale->text('Cannot post payment for a closed period!')) if ($datepaid <= $closedto);
+  $form->error($locale->text('Cannot post payment for a closed period!')) if ($datepaid <= $form->{closedto});
 
   # this is just to format the year
   $form->{datepaid} = $locale->date(\%myconfig, $form->{datepaid});

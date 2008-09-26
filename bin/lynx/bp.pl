@@ -378,7 +378,7 @@ sub print {
       
       for (qw(id vc)) { $form->{$_} = $myform->{"${_}_$i"} }
       $form->{script} = qq|$myform->{"module_$i"}.pl|;
-      for (qw(login path media sendmode format type precision)) { $form->{$_} = $myform->{$_} }
+      for (qw(login path media rvp sendmode format type precision)) { $form->{$_} = $myform->{$_} }
 
       do "$form->{path}/$form->{script}";
 
@@ -771,13 +771,17 @@ function CheckAll() {
 
   $selectformat = "";
   $media = qq|<select name=media>|;
+  $rvp = $locale->text('Remittance Voucher').qq| <select name=rvp>|;
   
+  $form->{format} ||= $myconfig{outputformat};
+
   if ($form->{batch} eq 'email') {
-    $form->{format} ||= "pdf";
+    $form->{format} = "pdf";
     $selectformat .= qq|
           <option value="html">|.$locale->text('html');
   } else {
     $form->{media} ||= $myconfig{printer};
+    $form->{rvp} ||= $myconfig{rvp};
     $form->{format} ||= "postscript";
     exit if (! $latex && $form->{batch} eq 'print');
   }
@@ -790,8 +794,10 @@ function CheckAll() {
    
   if (%printer && $form->{batch} ne 'email') {
     
-    for (sort keys %printer) { $media .= qq|
-          <option value="$_">$_| }
+    for (sort keys %printer) {
+      $media .= qq|<option value="$_">$_|;
+      $rvp .= qq|<option value="$_">$_|;
+    }
 
     $media .= qq|
           <option value="queue">|.$locale->text('Queue') if $form->{batch} eq 'print';
@@ -804,15 +810,20 @@ function CheckAll() {
   }
  
   $media .= qq|</select>|;
+  $rvp .= qq|</select>|;
 
   $media =~ s/(<option value="\Q$form->{media}\E")/$1 selected/;
   $media = qq|<td>$media</td>|;
   
+  $rvp =~ s/(<option value="\Q$form->{rvp}\E")/$1 selected/;
+  $rvp = qq|<td>$rvp</td>|;
+
   $format = qq|<select name=format>$selectformat</select>|;
   $format =~ s/(<option value="\Q$form->{format}\E")/$1 selected/;
   $format = qq|<td>$format</td>|;
  
   if ($form->{batch} eq 'email') {
+    $rvp = "";
     $media = qq|<input type="hidden" name="media" value="email">
 <input type="hidden" name="sendmode" value="attachment">
 |;
@@ -820,8 +831,10 @@ function CheckAll() {
   if ($form->{batch} eq 'queue') {
     $format = "";
     $copies = "";
+    $rvp = "";
   }
 
+  $rvp = "" if $form->{type} !~ /invoice/;
 
   print qq|
 <table>
@@ -829,6 +842,7 @@ function CheckAll() {
   $format
   $media
   $copies
+  $rvp
   </tr>
 </table>
 <p>

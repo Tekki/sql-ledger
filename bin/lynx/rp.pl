@@ -939,7 +939,7 @@ sub generate_projects {
 # added headers and subtotals
 #
 sub generate_trial_balance {
-  
+
   # get for each account initial balance, debits and credits
   RP->trial_balance(\%myconfig, \%$form);
 
@@ -947,7 +947,9 @@ sub generate_trial_balance {
   $form->{title} = $locale->text('Trial Balance');
 
   $form->{callback} = "$form->{script}?action=generate_trial_balance";
-  for (qw(login path nextsub fromdate todate month year interval l_heading l_subtotal all_accounts accounttype title)) { $form->{callback} .= "&$_=$form->{$_}" }
+  for (qw(login path nextsub fromdate todate month year interval l_heading l_subtotal all_accounts accounttype)) { $form->{callback} .= "&$_=$form->{$_}" }
+  for (qw(department title)) { $form->{callback} .= "&$_=".$form->escape($form->{$_},1) }
+
   $form->{callback} = $form->escape($form->{callback});
   
   &list_accounts;
@@ -1248,7 +1250,9 @@ sub aging {
   
   $vcnumber = ($form->{vc} eq 'customer') ? $locale->text('Customer Number') : $locale->text('Vendor Number');
   
-  $column_header{statement} = qq|<th class=listheading width=1%>&nbsp;</th>|;
+  $form->{allbox} = ($form->{allbox}) ? "checked" : "";
+  $action = ($form->{deselect}) ? "deselect_all" : "select_all";
+  $column_header{statement} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll(); javascript:document.forms[0].submit()"><input type=hidden name=action value="$action"></th>|;
   $column_header{vc} = qq|<th class=listheading width=60%>|.$locale->text(ucfirst $form->{vc}).qq|</th>|;
   $column_header{"$form->{vc}number"} = qq|<th class=listheading>$vcnumber</th>|;
   $column_header{language} = qq|<th class=listheading>|.$locale->text('Language').qq|</th>|;
@@ -1323,6 +1327,25 @@ sub aging {
   $option .= $locale->text('for Period')." ".$locale->text('To')." $todate";
 
   print qq|
+<script language="JavaScript">
+<!--
+
+function CheckAll() {
+
+  var frm = document.forms[0]
+  var el = frm.elements
+  var re = /statement_/;
+
+  for (i = 0; i < el.length; i++) {
+    if (el[i].type == 'checkbox' && re.test(el[i].name)) {
+      el[i].checked = frm.allbox.checked
+    }
+  }
+
+}
+// -->
+</script>
+
 <body>
 
 <form method=post action=$form->{script}>
@@ -1547,10 +1570,17 @@ sub aging {
     $form->hide_form(@c, "$form->{vc}");
     
     %button = ('Select all' => { ndx => 1, key => 'A', value => $locale->text('Select all') },
-               'Print' => { ndx => 2, key => 'P', value => $locale->text('Print') },
+               'Deselect all' => { ndx => 2, key => 'A', value => $locale->text('Deselect all') },
+               'Print' => { ndx => 3, key => 'P', value => $locale->text('Print') },
 	       'E-mail' => { ndx => 5, key => 'E', value => $locale->text('E-mail') },
 	      );
     
+    if ($form->{deselect}) {
+      delete $button{'Select all'};
+    } else {
+      delete $button{'Deselect all'};
+    }
+
     for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
     
   }
@@ -1575,6 +1605,20 @@ sub select_all {
   RP->aging(\%myconfig, \%$form);
 
   for (@{ $form->{AG} }) { $_->{checked} = "checked" }
+  $form->{allbox} = "checked";
+  $form->{deselect} = 1;
+
+  &aging;
+
+}
+
+
+sub deselect_all {
+
+  RP->aging(\%myconfig, \%$form);
+
+  for (@{ $form->{AG} }) { $_->{checked} = "" }
+  $form->{allbox} = "";
 
   &aging;
 
@@ -1584,7 +1628,7 @@ sub select_all {
 sub print_options {
 
   $form->{sendmode} = "attachment";
-  $form->{copies} = 1 unless $form->{copies};
+  $form->{copies} ||= 1;
   $form->{format} = "pdf" if ($latex && $form->{media} eq 'email');
   
   $form->{PD}{$form->{type}} = "selected";
@@ -1637,7 +1681,7 @@ sub print_options {
 
   if (%printer && $latex && $form->{media} ne 'email') {
     print qq|
-      <td>|.$locale->text('Copies').qq|
+      <td nowrap>|.$locale->text('Copies').qq| 
       <input name=copies size=2 value=$form->{copies}></td>
 |;
   }
@@ -1801,7 +1845,6 @@ sub print {
 
   RP->aging(\%myconfig, \%$form);
 
-################
   @c = qw(c0 c15 c30 c45 c60 c75 c90);
   $item = $c[0];
   @{$ag} = ();
@@ -1827,7 +1870,6 @@ sub print {
 #    $column_data{$_} = qq|<th align=right>|.$form->format_amount(\%myconfig, $c{$_}{total}, $form->{precision}, "&nbsp").qq|</th>|;
   }
   
-############
   &print_form;
 
   $form->redirect($locale->text('Statements sent to printer!')) if ($form->{media} !~ /(screen|email)/);

@@ -705,7 +705,6 @@ sub post_invoice {
   my $sth;
   my $null;
   my $project_id;
-  my $exchangerate = 0;
   my $keepcleared;
   my $ok;
   
@@ -774,13 +773,8 @@ sub post_invoice {
     $dbh->do($query) || $form->dberror($query);
   }
 
-  if ($form->{currency} eq $form->{defaultcurrency}) {
-    $form->{exchangerate} = 1;
-  } else {
-    $exchangerate = $form->check_exchangerate($myconfig, $form->{currency}, $form->{transdate}, 'buy');
-  }
-
-  $form->{exchangerate} = ($exchangerate) ? $exchangerate : $form->parse_amount($myconfig, $form->{exchangerate});
+  $form->{exchangerate} = $form->parse_amount($myconfig, $form->{exchangerate});
+  $form->{exchangerate} ||= 1;
 
   my $i;
   my $item;
@@ -1068,9 +1062,7 @@ sub post_invoice {
   delete $form->{acc_trans}{lineitems};
   
   # update exchangerate
-  if (($form->{currency} ne $form->{defaultcurrency}) && !$exchangerate) {
-    $form->update_exchangerate($dbh, $form->{currency}, $form->{transdate}, $form->{exchangerate}, 0);
-  }
+  $form->update_exchangerate($dbh, $form->{currency}, $form->{transdate}, $form->{exchangerate}, 0);
 
   my $accno;
   my ($araccno) = split /--/, $form->{AR};
@@ -1096,13 +1088,8 @@ sub post_invoice {
     $tax = 0;
     $fxtax = 0;
     
-    if ($form->{currency} eq $form->{defaultcurrency}) {
-      $form->{"exchangerate_$i"} = 1;
-    } else {
-      $exchangerate = $form->check_exchangerate($myconfig, $form->{currency}, $form->{"datepaid_$i"}, 'buy');
-      
-      $form->{"exchangerate_$i"} = ($exchangerate) ? $exchangerate : $form->parse_amount($myconfig, $form->{"exchangerate_$i"});
-    }
+    $form->{"exchangerate_$i"} = $form->parse_amount($myconfig, $form->{"exchangerate_$i"});
+    $form->{"exchangerate_$i"} ||= 1;
 
     # calculate tax difference
     my $discount = 0;
@@ -1185,6 +1172,7 @@ sub post_invoice {
   my $cleared = 'NULL';
   my $voucherid;
   my $approved;
+  my $paymentid = 1;
 
   # record payments and offsetting AR
   for $i (1 .. $form->{paidaccounts}) {
@@ -1194,16 +1182,8 @@ sub post_invoice {
       $form->{"datepaid_$i"} = $form->{transdate} unless ($form->{"datepaid_$i"});
       $form->{datepaid} = $form->{"datepaid_$i"};
       
-      $exchangerate = 0;
-      
-      if ($form->{currency} eq $form->{defaultcurrency}) {
-	$form->{"exchangerate_$i"} = 1;
-      } else {
-	$exchangerate = $form->check_exchangerate($myconfig, $form->{currency}, $form->{"datepaid_$i"}, 'buy');
-	
-	$form->{"exchangerate_$i"} = ($exchangerate) ? $exchangerate : $form->parse_amount($myconfig, $form->{"exchangerate_$i"});
-      }
-      
+      $form->{"exchangerate_$i"} = $form->parse_amount($myconfig, $form->{"exchangerate_$i"});
+      $form->{"exchangerate_$i"} ||= 1;
  
       # record AR
       $amount = $form->round_amount($form->{"paid_$i"} * $form->{exchangerate}, $form->{precision});
@@ -1212,23 +1192,25 @@ sub post_invoice {
       $approved = 1;
       
       # add voucher for payment
-      if ($form->{"voucherid_$i"}) {
+      if ($form->{voucher}{payment}{$voucherid}{br_id}) {
+	if ($form->{"vr_id_$i"}) {
 
-	$voucherid = $form->{"voucherid_$i"};
-	$approved = $form->{voucher}{payment}{$voucherid}{approved} * 1;
+	  $voucherid = $form->{"vr_id_$i"};
+	  $approved = $form->{voucher}{payment}{$voucherid}{approved} * 1;
 
-        if ($i != $form->{discount_index}) {
-	  $query = qq|INSERT INTO vr (br_id, trans_id, id, vouchernumber)
-		      VALUES ($form->{voucher}{payment}{$voucherid}{br_id},
-		      $form->{id}, $voucherid, |.
-		      $dbh->quote($form->{voucher}{payment}{$voucherid}{vouchernumber}).qq|)|;
-	  $dbh->do($query) || $form->dberror($query);
+	  if ($i != $form->{discount_index}) {
+	    $query = qq|INSERT INTO vr (br_id, trans_id, id, vouchernumber)
+			VALUES ($form->{voucher}{payment}{$voucherid}{br_id},
+			$form->{id}, $voucherid, |.
+			$dbh->quote($form->{voucher}{payment}{$voucherid}{vouchernumber}).qq|)|;
+	    $dbh->do($query) || $form->dberror($query);
 
-	  $form->update_balance($dbh,
-				'br',
-				'amount',
-				qq|id = $form->{voucher}{payment}{$voucherid}{br_id}|,
-				$amount);
+	    $form->update_balance($dbh,
+				  'br',
+				  'amount',
+				  qq|id = $form->{voucher}{payment}{$voucherid}{br_id}|,
+				  $amount);
+	  }
 	}
       }
 
@@ -1251,15 +1233,21 @@ sub post_invoice {
       }
       
       $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount, transdate,
-                  source, memo, cleared, approved, vr_id)
+                  source, memo, cleared, approved, vr_id, id)
                   VALUES ($form->{id}, (SELECT id FROM chart
 		                      WHERE accno = '$accno'),
 		  $amount, '$form->{"datepaid_$i"}', |
 		  .$dbh->quote($form->{"source_$i"}).qq|, |
 		  .$dbh->quote($form->{"memo_$i"}).qq|, $cleared,
-		  '$approved', $voucherid)|;
+		  '$approved', $voucherid, $paymentid)|;
       $dbh->do($query) || $form->dberror($query);
 
+      $query = qq|INSERT INTO payment (id, trans_id, exchangerate)
+                  VALUES ($paymentid, $form->{id}, $form->{"exchangerate_$i"})|;
+      $dbh->do($query) || $form->dberror($query);
+		  
+      $paymentid++;
+      
       # exchangerate difference
       $amount = $form->round_amount(($form->round_amount($form->{"paid_$i"} * $form->{"exchangerate_$i"} - $form->{"paid_$i"}, $form->{precision})) * -1, $form->{precision});
 
@@ -1286,11 +1274,6 @@ sub post_invoice {
 		    '$approved', $voucherid)|;
 	$dbh->do($query) || $form->dberror($query);
       }
-	
-      # update exchange rate
-      if (($form->{currency} ne $form->{defaultcurrency}) && !$exchangerate) {
-	$form->update_exchangerate($dbh, $form->{currency}, $form->{"datepaid_$i"}, $form->{"exchangerate_$i"}, 0);
-      }
     }
   }
 
@@ -1300,7 +1283,7 @@ sub post_invoice {
 
   $form->{invnumber} = $form->update_defaults($myconfig, "sinumber", $dbh) unless $form->{invnumber};
 
-  for (qw(terms discountterms)) { $form->{$_} *= 1 }
+  for (qw(terms discountterms onhold)) { $form->{$_} *= 1 }
   $form->{cashdiscount} = $form->parse_amount($myconfig, $form->{cashdiscount}) / 100;
 
   if ($form->{cdt} && $form->{"paid_$form->{discount_index}"}) {
@@ -1336,7 +1319,9 @@ sub post_invoice {
 	      ponumber = |.$dbh->quote($form->{ponumber}).qq|,
 	      cashdiscount = $form->{cashdiscount},
 	      discountterms = $form->{discountterms},
-	      warehouse_id = $form->{warehouse_id}
+	      onhold = '$form->{onhold}',
+	      warehouse_id = $form->{warehouse_id},
+	      exchangerate = $form->{exchangerate}
               WHERE id = $form->{id}
              |;
   $dbh->do($query) || $form->dberror($query);
@@ -1741,7 +1726,7 @@ sub reverse_invoice {
   $sth->finish;
   
   
-  for (qw(acc_trans dpt_trans invoice inventory shipto vr)) {
+  for (qw(acc_trans dpt_trans invoice inventory shipto vr payment)) {
     $query = qq|DELETE FROM $_ WHERE trans_id = $form->{id}|;
     $dbh->do($query) || $form->dberror($query);
   }
@@ -1777,7 +1762,8 @@ sub retrieve_invoice {
 		a.duedate, a.taxincluded, a.curr AS currency,
 		a.employee_id, e.name AS employee, a.till, a.customer_id,
 		a.language_code, a.ponumber,
-		a.warehouse_id, w.description AS warehouse
+		a.warehouse_id, w.description AS warehouse,
+		a.exchangerate
 		FROM ar a
 	        LEFT JOIN employee e ON (e.id = a.employee_id)
 		LEFT JOIN warehouse w ON (a.warehouse_id = w.id)
@@ -2123,7 +2109,7 @@ sub exchangerate_defaults {
 	      AND transdate = ?|;
   my $eth1 = $dbh->prepare($query) || $form->dberror($query);
 
-  $query = qq~SELECT max(transdate || ' ' || buy)
+  $query = qq~SELECT max(transdate || ' ' || buy || ' ' || curr)
               FROM exchangerate
 	      WHERE curr = ?~;
   my $eth2 = $dbh->prepare($query) || $form->dberror($query);

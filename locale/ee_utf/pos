@@ -49,6 +49,7 @@ $self{texts} = {
   'Trade Discount'              => 'Kauba Allahindlus',
   'Unit'                        => 'Komponent',
   'Update'                      => 'Värskenda',
+  'Warehouse'                   => 'Ladu',
   'Year'                        => 'Aasta',
 };
 

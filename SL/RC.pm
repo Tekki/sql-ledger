@@ -22,7 +22,8 @@ sub paymentaccounts {
 
   my $query = qq|SELECT accno, description
                  FROM chart
-		 WHERE link LIKE '%_paid%'
+		 WHERE charttype = 'A'
+		 -- link LIKE '%_paid%'
 		 ORDER BY accno|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -216,6 +217,9 @@ sub payment_transactions {
     $transdate = "";
     if ($form->{fromdate}) {
       $transdate = qq| AND ac.transdate < '$form->{fromdate}'|;
+    }
+    if ($form->{todate}) {
+      $transdate .= qq| AND ac.transdate < '$form->{todate}'|;
     }
    
     $cleared = qq| AND ac.cleared IS NULL|;

@@ -51,7 +51,7 @@ sub invoice_links {
   
   # create links
   $form->create_links("AR", \%myconfig, "customer", 1);
-  
+
   $form->{readonly} ||= $readonly;
 
   # currencies
@@ -136,8 +136,6 @@ sub invoice_links {
   $form->{"select$form->{vc}"} = $form->escape($form->{"select$form->{vc}"},1);
   for (qw(currency partsgroup projectnumber department warehouse employee language)) { $form->{"select$_"} = $form->escape($form->{"select$_"},1) }
     
-  # forex
-  $form->{forex} = $form->{exchangerate};
   
   foreach $key (keys %{ $form->{AR_links} }) {
 
@@ -153,11 +151,11 @@ sub invoice_links {
 	# reverse paid
 	$form->{"paid_$i"} = $form->{acc_trans}{$key}->[$i-1]->{amount} * -1 * $ml;
 	$form->{"datepaid_$i"} = $form->{acc_trans}{$key}->[$i-1]->{transdate};
-	$form->{"forex_$i"} = $form->{"exchangerate_$i"} = $form->{acc_trans}{$key}->[$i-1]->{exchangerate};
+	$form->{"exchangerate_$i"} = $form->{acc_trans}{$key}->[$i-1]->{exchangerate};
 	$form->{"source_$i"} = $form->{acc_trans}{$key}->[$i-1]->{source};
 	$form->{"memo_$i"} = $form->{acc_trans}{$key}->[$i-1]->{memo};
 	$form->{"cleared_$i"} = $form->{acc_trans}{$key}->[$i-1]->{cleared};
-	$form->{"voucherid_$i"} = $form->{acc_trans}{$key}->[$i-1]->{id};
+	$form->{"vr_id_$i"} = $form->{acc_trans}{$key}->[$i-1]->{vr_id};
 	
 	$form->{paidaccounts} = $i;
       }
@@ -168,7 +166,7 @@ sub invoice_links {
       $form->{"discount_datepaid"} = $form->{acc_trans}{$key}->[0]->{transdate};
       $form->{"discount_source"} = $form->{acc_trans}{$key}->[0]->{source};
       $form->{"discount_memo"} = $form->{acc_trans}{$key}->[0]->{memo};
-      $form->{"discount_forex"} = $form->{"discount_exchangerate"} = $form->{acc_trans}{$key}->[0]->{exchangerate};
+      $form->{"discount_exchangerate"} = $form->{acc_trans}{$key}->[0]->{exchangerate};
       $form->{"discount_cleared"} = $form->{acc_trans}{$key}->[0]->{cleared};
 
     } else {
@@ -181,15 +179,15 @@ sub invoice_links {
 
   for (qw(payment discount)) { $form->{"${_}_accno"} = $form->escape($form->{"${_}_accno"},1) }
 
-  $exchangerate = ($form->{exchangerate}) ? $form->{exchangerate} : 1;
-  $form->{cd_available} = $form->round_amount($form->{netamount} * $form->{cashdiscount} / $exchangerate, $form->{precision});
+  $form->{exchangerate} ||= 1;
+  $form->{cd_available} = $form->round_amount($form->{netamount} * $form->{cashdiscount} / $form->{exchangerate}, $form->{precision});
   $form->{cashdiscount} *= 100;
 
   $form->{paidaccounts} ||= 1;
 
   $form->{AR} ||= $form->{AR_1};
   
-  $form->{locked} = ($form->{revtrans}) ? '1' : ($form->datetonum(\%myconfig, $form->{transdate}) <= $form->datetonum(\%myconfig, $form->{closedto}));
+  $form->{locked} = ($form->{revtrans}) ? '1' : ($form->datetonum(\%myconfig, $form->{transdate}) <= $form->{closedto});
 
   if (! $form->{readonly}) {
     $form->{readonly} = 1 if $myconfig{acs} =~ /AR--Sales Invoice/ && $form->{type} eq 'invoice';
@@ -217,6 +215,8 @@ sub prepare_invoice {
   $form->{type} ||= "invoice";
   $form->{formname} ||= "invoice";
   $form->{sortby} ||= "runningnumber";
+  $form->{format} ||= $myconfig{outputformat};
+  $form->{copies} ||= 1;
   
   if ($myconfig{printer}) {
     $form->{format} ||= "postscript";
@@ -224,6 +224,7 @@ sub prepare_invoice {
     $form->{format} ||= "pdf";
   }
   $form->{media} ||= $myconfig{printer};
+  $form->{rvp} = $myconfig{rvp} if $form->{remittancevoucher};
 
   $ml = 1;
 
@@ -238,7 +239,7 @@ sub prepare_invoice {
 .qq|\nbin_list--|.$locale->text('Bin List');
   }
   
-  $i = 0;
+  $i = 1;
   $form->{currency} =~ s/ //g;
   $form->{oldcurrency} = $form->{currency};
   
@@ -247,7 +248,6 @@ sub prepare_invoice {
     for (qw(invnumber ordnumber ponumber quonumber shippingpoint shipvia waybill notes intnotes)) { $form->{$_} = $form->quote($form->{$_}) }
 
     foreach $ref (@{ $form->{invoice_details} } ) {
-      $i++;
       for (keys %$ref) { $form->{"${_}_$i"} = $ref->{$_} }
 
       $form->{"projectnumber_$i"} = qq|$ref->{projectnumber}--$ref->{project_id}| if $ref->{project_id};
@@ -267,9 +267,12 @@ sub prepare_invoice {
       
       for (qw(partnumber sku description unit)) { $form->{"${_}_$i"} = $form->quote($form->{"${_}_$i"}) }
       $form->{rowcount} = $i;
+      $i++;
     }
   }
 
+  $focus = "partnumber_$i";
+  
   $form->{selectformname} = $form->escape($form->{selectformname},1);
 
 }
@@ -278,11 +281,11 @@ sub prepare_invoice {
 
 sub form_header {
 
+
   $form->{exchangerate} = $form->format_amount(\%myconfig, $form->{exchangerate});
 
   if ($form->{defaultcurrency}) {
-    $exchangerate = qq|<tr>|;
-    $exchangerate .= qq|
+    $exchangerate = qq|<tr>
 		<th align=right nowrap>|.$locale->text('Currency').qq|</th>
 		<td>
 		  <table>
@@ -293,19 +296,12 @@ sub form_header {
 		.qq|</select></td>|;
 
     if ($form->{currency} ne $form->{defaultcurrency}) {
-      if ($form->{forex}) {
-	$exchangerate .= qq|
-	        <th align=right nowrap>|.$locale->text('Exchange Rate').qq|</th>
-		<td>$form->{exchangerate}</td>|
-		.$form->hide_form(qw(exchangerate));
-      } else {
-	$exchangerate .= qq|
-	        <th align=right nowrap>|.$locale->text('Exchange Rate').qq| <font color=red>*</font></th>
-		<td><input name=exchangerate size=10 value=$form->{exchangerate}></td>|;
-      }
+      $exchangerate .= qq|
+	      <th align=right nowrap>|.$locale->text('Exchange Rate').qq| <font color=red>*</font></th>
+	      <td><input name=exchangerate size=10 value=$form->{exchangerate}></td>|;
     }
     $exchangerate .= qq|</tr></table></td></tr>
-|.$form->hide_form(qw(forex));
+|;
   }
 
   $vcname = $locale->text('Customer');
@@ -403,15 +399,13 @@ sub form_header {
 
   for (qw(terms discountterms)) { $form->{$_} = "" if ! $form->{$_} }
 
-  $focus = ($form->{rowcount}) ? "description_$form->{rowcount}" : "partnumber_1";
-  
   $form->{onhold} = ($form->{onhold}) ? "checked" : "";
-  
-  
+
+
   $form->header;
 
   print qq|
-<body onLoad="document.forms[0].${focus}.focus()" />
+<body onLoad="document.forms[0].$focus.focus()" />
 
 <form method=post action="$form->{script}">
 |;
@@ -589,7 +583,7 @@ sub form_footer {
     if (!$form->{taxincluded}) {
 
       if ($form->{"${_}_base"}) {
-	
+
 	$form->{"${_}_total"} = $form->round_amount($form->{"${_}_base"} * $form->{"${_}_rate"}, $form->{precision});
 
 	if ($form->{discount_paid} && $form->{cdt}) {
@@ -671,11 +665,7 @@ sub form_footer {
     $exchangerate = qq|&nbsp;|;
     if ($form->{currency} ne $form->{defaultcurrency}) {
       $form->{discount_exchangerate} = $form->format_amount(\%myconfig, $form->{discount_exchangerate});
-      if ($form->{discount_forex}) {
-	$exchangerate = $form->{discount_exchangerate}.$form->hide_form(qw(discount_exchangerate));
-      } else {
-	$exchangerate = qq|<input name="discount_exchangerate" size=10 value=$form->{discount_exchangerate}>|;
-      }
+      $exchangerate = qq|<input name="discount_exchangerate" size=10 value=$form->{discount_exchangerate}>|;
     }
 
     $column_data{paid} = qq|<td align=center><input name="discount_paid" size=11 value=|.$form->format_amount(\%myconfig, $form->{"discount_paid"}, $form->{precision}).qq|></td>|;
@@ -694,7 +684,7 @@ sub form_footer {
     $cashdiscount .= qq|
           </tr>
 |
-    .$form->hide_form(map { "discount_$_" } qw(voucherid forex cleared));
+    .$form->hide_form(map { "discount_$_" } qw(vr_id cleared));
     
     $payments = qq|
     <tr class=listheading>
@@ -779,15 +769,10 @@ sub form_footer {
 
     $exchangerate = qq|&nbsp;|;
     if ($form->{currency} ne $form->{defaultcurrency}) {
-      if ($form->{"forex_$i"}) {
-	$form->hide_form("exchangerate_$i");
-	$exchangerate = $form->{"exchangerate_$i"};
-      } else {
-	$exchangerate = qq|<input name="exchangerate_$i" size=10 value=$form->{"exchangerate_$i"}>|;
-      }
+      $exchangerate = qq|<input name="exchangerate_$i" size=10 value=$form->{"exchangerate_$i"}>|;
     }
 
-    $form->hide_form(map { "${_}_$i" } qw(cleared forex voucherid));
+    $form->hide_form(map { "${_}_$i" } qw(cleared vr_id));
     
     $column_data{paid} = qq|<td align=center><input name="paid_$i" size=11 value=$form->{"paid_$i"}></td>|;
     $column_data{exchangerate} = qq|<td align=center>$exchangerate</td>|;
@@ -836,7 +821,6 @@ sub form_footer {
 
 
   $transdate = $form->datetonum(\%myconfig, $form->{transdate});
-  $closedto = $form->datetonum(\%myconfig, $form->{closedto});
 
   if (! $form->{readonly}) {
     
@@ -857,7 +841,7 @@ sub form_footer {
       
       delete $button{'Sales Order'} if $myconfig{acs} =~ /(Order Entry--Order Entry|Order Entry--Sales Order)/;
       
-      if ($form->{locked} || $transdate <= $closedto) {
+      if ($form->{locked} || $transdate <= $form->{closedto}) {
 	for ("Post", "Print and Post", "Delete") { delete $button{$_} }
       }
      
@@ -867,7 +851,7 @@ sub form_footer {
 
     } else {
 
-      if ($transdate > $closedto) {
+      if ($transdate > $form->{closedto}) {
 	
 	for ("Update", "Ship to", "Print", "E-mail", "Post", "Schedule") { $a{$_} = 1 }
 	$a{'Print and Post'} = 1 if $latex;
@@ -923,7 +907,7 @@ sub update {
     $form->{oldtransdate} = $form->{transdate};
     &rebuild_vc(customer, AR, $form->{transdate}, 1) if ! $newname;
 
-    $form->{exchangerate} = $exchangerate if ($form->{forex} = ($exchangerate = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate}, 'buy')));
+    $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate}, 'buy');
     $form->{oldcurrency} = $form->{currency};
 
     $form->{selectemployee} = "";
@@ -933,15 +917,12 @@ sub update {
     }
   }
 
-  if ($form->{currency} ne $form->{oldcurrency}) {
-    $form->{exchangerate} = $exchangerate if ($form->{forex} = ($exchangerate = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate}, 'buy')));
-  }
+  $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate}, 'buy');
 
-  $form->{discount_forex} = "";
   $form->{discount_exchangerate} = "";
   
   if ($form->{discount_paid}) {
-    $form->{discount_exchangerate} = $exchangerate if ($form->{discount_forex} = ($exchangerate = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{discount_datepaid}, 'buy')));
+    $form->{discount_exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{discount_datepaid}, 'buy');
 
     $expired = $form->add_date(\%myconfig, $form->{transdate}, $form->{discountterms}, 'days');
     if ($form->datetonum(\%myconfig, $form->{discount_datepaid}) > $form->datetonum(\%myconfig, $expired)) {
@@ -955,15 +936,15 @@ sub update {
   $j = 1;
   for $i (1 .. $form->{paidaccounts}) {
     if ($form->{"paid_$i"}) {
-      for (qw(datepaid source memo cleared voucherid)) { $form->{"${_}_$j"} = $form->{"${_}_$i"} }
+      for (qw(datepaid source memo cleared vr_id)) { $form->{"${_}_$j"} = $form->{"${_}_$i"} }
       for (qw(paid exchangerate)) { $form->{"${_}_$j"} = $form->parse_amount(\%myconfig, $form->{"${_}_$i"}) }
 
-      $form->{"exchangerate_$j"} = $exchangerate if ($form->{"forex_$j"} = ($exchangerate = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{"datepaid_$j"}, 'buy')));
+      $form->{"exchangerate_$j"} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{"datepaid_$j"}, 'buy');
       if ($j++ != $i) {
-	for (qw(datepaid source memo cleared paid exchangerate forex voucherid)) { delete $form->{"${_}_$i"} }
+	for (qw(datepaid source memo cleared paid exchangerate vr_id)) { delete $form->{"${_}_$i"} }
       }
     } else {
-      for (qw(datepaid source memo cleared paid exchangerate forex voucherid)) { delete $form->{"${_}_$i"} }
+      for (qw(datepaid source memo cleared paid exchangerate vr_id)) { delete $form->{"${_}_$i"} }
     }
   }
   
@@ -971,7 +952,7 @@ sub update {
   $form->{paidaccounts} = $j;
 
   $i = $form->{rowcount};
-  $exchangerate = ($form->{exchangerate}) ? $form->{exchangerate} : 1;
+  $form->{exchangerate} ||= 1;
     
   # if last row empty, check the form otherwise retrieve new item
   if (($form->{"partnumber_$i"} eq "") && ($form->{"description_$i"} eq "") && ($form->{"partsgroup_$i"} eq "")) {
@@ -1027,7 +1008,7 @@ sub update {
 	  $dec = length $dec;
 	  $decimalplaces1 = ($dec > $form->{precision}) ? $dec : $form->{precision};
 	  
-	  $form->{"sellprice_$i"} /= $exchangerate;
+	  $form->{"sellprice_$i"} /= $form->{exchangerate};
 	}
 	
 	($dec) = ($form->{"lastcost_$i"} =~ /\.(\d+)/);
@@ -1035,9 +1016,10 @@ sub update {
 	$decimalplaces2 = ($dec > $form->{precision}) ? $dec : $form->{precision};
 
 	# if there is an exchange rate adjust sellprice
-	for (qw(listprice lastcost)) { $form->{"${_}_$i"} /= $exchangerate }
+	for (qw(listprice lastcost)) { $form->{"${_}_$i"} /= $form->{exchangerate} }
 	
-        $amount = $form->{"sellprice_$i"} * $form->{"qty_$i"} * (1 - $form->{"discount_$i"} / 100);
+	$sellprice = $form->{"sellprice_$i"} * (1 - $form->{"discount_$i"} / 100);
+        $amount = $sellprice * $form->{"qty_$i"};
 	for (split / /, $form->{taxaccounts}) { $form->{"${_}_base"} = 0 }
         for (split / /, $form->{"taxaccounts_$i"}) { $form->{"${_}_base"} += $amount }
 	if (!$form->{taxincluded}) {
@@ -1059,6 +1041,8 @@ sub update {
 
       }
 
+      $focus = "description_$i";
+      
       &display_form;
 
     } else {
@@ -1095,10 +1079,9 @@ sub post {
 
   &validate_items;
 
-  $closedto = $form->datetonum(\%myconfig, $form->{closedto});
   $transdate = $form->datetonum(\%myconfig, $form->{transdate});
   
-  $form->error($locale->text('Cannot post invoice for a closed period!')) if ($transdate <= $closedto);
+  $form->error($locale->text('Cannot post invoice for a closed period!')) if ($transdate <= $form->{closedto});
 
   $form->isblank("exchangerate", $locale->text('Exchange rate missing!')) if ($form->{currency} ne $form->{defaultcurrency});
   
@@ -1108,10 +1091,9 @@ sub post {
 
       $form->isblank("datepaid_$i", $locale->text('Payment date missing!'));
       
-      $form->error($locale->text('Cannot post payment for a closed period!')) if ($datepaid <= $closedto);
+      $form->error($locale->text('Cannot post payment for a closed period!')) if ($datepaid <= $form->{closedto});
 
       if ($form->{currency} ne $form->{defaultcurrency}) {
-	$form->{"exchangerate_$i"} = $form->{exchangerate} if ($transdate == $datepaid);
 	$form->isblank("exchangerate_$i", $locale->text('Exchange rate for payment missing!'));
       }
     }
@@ -1129,7 +1111,7 @@ sub post {
   
   # add discount to payments
   $i = ++$form->{paidaccounts};
-  for (qw(paid datepaid source memo exchangerate forex cleared voucherid)) { $form->{"${_}_$i"} = $form->{"discount_$_"} }
+  for (qw(paid datepaid source memo exchangerate cleared vr_id)) { $form->{"${_}_$i"} = $form->{"discount_$_"} }
   $form->{discount_index} = $i;
   $form->{"AR_paid_$i"} = $form->{"AR_discount_paid"};
 
@@ -1139,12 +1121,11 @@ sub post {
 
     $form->isblank("datepaid_$i", $locale->text('Cash discount date missing!'));
 
-    $form->error($locale->text('Cannot post cash discount for a closed period!')) if ($datepaid <= $closedto);
+    $form->error($locale->text('Cannot post cash discount for a closed period!')) if ($datepaid <= $form->{closedto});
 
     $form->error($locale->text('Cash discount date past due!')) if ($datepaid > $expired);
 
     if ($form->{currency} ne $form->{defaultcurrency}) {
-      $form->{"exchangerate_$i"} = $form->{exchangerate} if ($transdate == $datepaid);
       $form->isblank("exchangerate_$i", $locale->text('Exchange rate for cash discount missing!'));
     }
   }

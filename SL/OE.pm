@@ -234,7 +234,7 @@ sub save {
     if ($form->{id}) {
       &adj_onhand($dbh, $form, $sw) if $form->{type} =~ /_order$/ && ! $form->{aa_id};
 
-      for (qw(orderitems shipto cargo)) {
+      for (qw(dpt_trans orderitems shipto cargo)) {
 	$query = qq|DELETE FROM $_
 		    WHERE trans_id = $form->{id}|;
 	$dbh->do($query) || $form->dberror($query);
@@ -481,7 +481,8 @@ sub save {
 	      language_code = '$form->{language_code}',
 	      ponumber = |.$dbh->quote($form->{ponumber}).qq|,
 	      terms = $form->{terms},
-	      warehouse_id = $form->{warehouse_id}
+	      warehouse_id = $form->{warehouse_id},
+	      exchangerate = $form->{exchangerate}
               WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
 
@@ -504,6 +505,12 @@ sub save {
     }
   }
   
+  if ($form->{department_id}) {
+    $query = qq|INSERT INTO dpt_trans (trans_id, department_id)
+                VALUES ($form->{id}, $form->{department_id})|;
+    $dbh->do($query) || $form->dberror($query);
+  }
+      
   if ($form->{type} =~ /_order$/) {
     # adjust onhand
     &adj_onhand($dbh, $form, $sw * -1) if ! $form->{aa_id};
@@ -577,9 +584,13 @@ sub delete {
     
   }
 
-  for (qw(inventory status orderitems shipto cargo)) {
-    $query = qq|DELETE FROM $_
-                WHERE trans_id = $form->{id}|;
+  for (qw(dpt_trans inventory status orderitems shipto cargo)) {
+    $query = qq|DELETE FROM $_ WHERE trans_id = $form->{id}|;
+    $dbh->do($query) || $form->dberror($query);
+  }
+  
+  for (qw(recurring recurringemail recurringprint)) {
+    $query = qq|DELETE FROM $_ WHERE id = $form->{id}|;
     $dbh->do($query) || $form->dberror($query);
   }
 
@@ -1433,7 +1444,7 @@ sub assembly_details {
   
   my $query = qq|SELECT p.partnumber, p.description, p.unit, a.qty,
 	         pg.partsgroup, p.partnumber AS sku, p.assembly, p.id, p.bin,
-		 p.drawing, p.toolnumber, p.barcode
+		 p.drawing, p.toolnumber, p.barcode, p.notes AS itemnotes
 	         FROM assembly a
 	         JOIN parts p ON (a.parts_id = p.id)
 	         LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
@@ -1443,12 +1454,14 @@ sub assembly_details {
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
+  my @a;
+  
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
-   
-    for (qw(partnumber description partsgroup)) {
-      $form->{"a_$_"} = $ref->{$_};
-      $form->format_string("a_$_");
-    }
+    
+    @a = qw(partnumber description partsgroup itemnotes drawing toolnumber barcode unit bin);
+
+    for (@a) { $form->{"a_$_"} = $ref->{$_} }
+    $form->format_string(map { "a_$_" } @a);
    
     if ($form->{grouppartsgroup} && $ref->{partsgroup} ne $sm) {
       for (qw(taxrates number sku unit qty runningnumber ship bin serialnumber requiredate projectnumber sellprice listprice netprice discount discountrate linetotal itemnotes package netweight grossweight volume countryorigin hscode drawing toolnumber barcode)) { push(@{ $form->{$_} }, "") }
@@ -1459,31 +1472,26 @@ sub assembly_details {
       
     }
 
-    for (qw(drawing toolnumber barcode)) { push(@{ $form->{$_} }, $ref->{$_}) }
     
     if ($form->{stagger}) {
      
+      for (qw(drawing toolnumber barcode itemnotes)) { push(@{ $form->{$_} }, qq|$spacer$form->{"a_$_"}|) }
       push(@{ $form->{description} }, qq|$spacer$form->{"a_partnumber"}, $form->{"a_description"}|);
-      for (qw(taxrates number sku runningnumber ship serialnumber requiredate projectnumber sellprice listprice netprice discount discountrate linetotal itemnotes package netweight grossweight volume countryorigin hscode)) { push(@{ $form->{$_} }, "") }
+      for (qw(taxrates number sku runningnumber ship serialnumber requiredate projectnumber sellprice listprice netprice discount discountrate linetotal package netweight grossweight volume countryorigin hscode)) { push(@{ $form->{$_} }, "") }
       
     } else {
       
-      push(@{ $form->{description} }, qq|$form->{"a_description"}|);
-      push(@{ $form->{sku} }, $form->{"a_partnumber"});
       push(@{ $form->{number} }, $form->{"a_partnumber"});
+      for (qw(description sku drawing toolnumber barcode itemnotes)) { push(@{ $form->{$_} }, $form->{"a_$_"}) }
       
-      for (qw(taxrates runningnumber ship serialnumber requiredate projectnumber sellprice listprice netprice discount discountrate linetotal itemnotes package netweight grossweight volume countryorigin hscode)) { push(@{ $form->{$_} }, "") }
+      for (qw(taxrates runningnumber ship serialnumber requiredate projectnumber sellprice listprice netprice discount discountrate linetotal package netweight grossweight volume countryorigin hscode)) { push(@{ $form->{$_} }, "") }
       
     }
 
     push(@{ $form->{lineitems} }, { amount => 0, tax => 0 });
       
     push(@{ $form->{qty} }, $form->format_amount($myconfig, $ref->{qty} * $qty));
-    for (qw(unit bin)) {
-      $form->{"a_$_"} = $ref->{$_};
-      $form->format_string("a_$_");
-      push(@{ $form->{$_} }, $form->{"a_$_"});
-    }
+    for (qw(unit bin)) { push(@{ $form->{$_} }, $form->{"a_$_"}) }
 
     if ($ref->{assembly} && $form->{formname} eq 'work_order') {
       &assembly_details($myconfig, $form, $dbh, $ref->{id}, $ref->{qty} * $qty);

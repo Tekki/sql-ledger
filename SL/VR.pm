@@ -596,32 +596,6 @@ sub post_batch {
 }
 
 
-sub _post_batches {
-  my ($self, $myconfig, $form) = @_;
-
-  # connect to database
-  my $dbh = $form->dbconnect_noauto($myconfig);
-  
-  my $query = qq|SELECT id, batch
-                 FROM br
-	         WHERE id = ?|;
-  my $sth = $dbh->prepare($query) || $form->dberror($query);
-
-  for (1 .. $form->{rowcount}) {
-    if ($form->{"checked_$_"}) {
-      $sth->execute($form->{"id_$_"});
-      ($form->{batchid}, $form->{batch}) = $sth->fetchrow_array;
-      $sth->finish;
-
-      &post_batch("", $myconfig, $form, $dbh);
-    }
-
-  }
-  
-  $dbh->disconnect;
-
-}
-
 
 sub payment_reversal {
   my ($self, $myconfig, $form) = @_;

@@ -106,7 +106,7 @@ sub prepare_job {
   $form->{"select$form->{vc}"} = $form->escape($form->{"select$form->{vc}"},1);
   for (qw(partsgroup)) { $form->{"select$_"} = $form->escape($form->{"select$_"},1) }
   
-  $form->{locked} = ($form->{revtrans}) ? '1' : ($form->datetonum(\%myconfig, $form->{transdate}) <= $form->datetonum(\%myconfig, $form->{closedto}));
+  $form->{locked} = ($form->{revtrans}) ? '1' : ($form->datetonum(\%myconfig, $form->{transdate}) <= $form->{closedto});
 
   $form->{readonly} = 1 if $myconfig{acs} =~ /Job Costing--Add Job/;
   

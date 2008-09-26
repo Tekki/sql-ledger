@@ -44,6 +44,7 @@ $self{texts} = {
   'Trade Discount'              => 'Vairumtirgotâja atlaide',
   'Unit'                        => 'Vienîba',
   'Update'                      => 'Atjauninât',
+  'Warehouse'                   => 'Noliktava',
 };
 
 $self{subs} = {

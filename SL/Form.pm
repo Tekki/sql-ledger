@@ -78,8 +78,8 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.8.2";
-  $self->{dbversion} = "2.8.0";
+  $self->{version} = "2.8.4";
+  $self->{dbversion} = "2.8.4";
 
   $self->{precision} = 2;
   
@@ -541,7 +541,7 @@ sub round_amount {
 
 sub parse_template {
   my ($self, $myconfig, $userspath) = @_;
-
+  
   my ($chars_per_line, $lines_on_first_page, $lines_on_second_page) = (0, 0, 0);
   my ($current_page, $current_line) = (1, 1);
   my $pagebreak = "";
@@ -553,21 +553,16 @@ sub parse_template {
   my %include = ();
   my $ok;
 
-  if ($self->{language_code}) {
-    if (-f "$self->{templates}/$self->{language_code}/$self->{IN}") {
-      open(IN, "$self->{templates}/$self->{language_code}/$self->{IN}") or $self->error("$self->{IN} : $!");
-    } else {
-      open(IN, "$self->{templates}/$self->{IN}") or $self->error("$self->{IN} : $!");
-    }
+  if (-f "$self->{templates}/$self->{language_code}/$self->{IN}") {
+    open(IN, "$self->{templates}/$self->{language_code}/$self->{IN}") or $self->error("$self->{templates}/$self->{language_code}/$self->{IN} : $!");
   } else {
-    open(IN, "$self->{templates}/$self->{IN}") or $self->error("$self->{IN} : $!");
+    open(IN, "$self->{templates}/$self->{IN}") or $self->error("$self->{templates}/$self->{IN} : $!");
   }
 
-  @_ = <IN>;
+  my @texform = <IN>;
   close(IN);
   
-  $self->{copies} = 1 if (($self->{copies} *= 1) <= 0);
-  
+ 
   # OUT is used for the media, screen, printer, email
   # for postscript we store a copy in a temporary file
   my $fileid = time;
@@ -589,8 +584,42 @@ sub parse_template {
     
   }
 
+  $self->{copies} ||= 1;
+
   # first we generate a tmpfile
   # read file and replace <%variable%>
+
+  $self->{copy} = "";
+
+  for my $i (1 .. $self->{copies}) {
+
+    $self->{copy} = 1 if $i == 2;
+
+    if ($self->{format} =~ /(postscript|pdf)/ && $self->{copies} > 1) {
+      if ($i == 1) {
+	@_ = ();
+	while ($_ = shift @texform) {
+	  if (/\\end{document}/) {
+	    push @_, qq|\\newpage\n|;
+	    last;
+	  }
+	  push @_, $_;
+	}
+	@texform = @_;
+      }
+
+      if ($i == 2) {
+	while ($_ = shift @texform) {
+	  last if /\\begin{document}/;
+	}
+      }
+
+      if ($i == $self->{copies}) {
+	push @texform, q|\end{document}|;
+      }
+    }
+
+  @_ = @texform;
 
   while ($_ = shift) {
       
@@ -623,7 +652,7 @@ sub parse_template {
       }
 
       # display contents of $self->{number}[] array
-      for $i (0 .. $#{ $self->{$var} }) {
+      for my $i (0 .. $#{ $self->{$var} }) {
 
         if ($var =~ /^(part|service)$/) {
 	  next if $self->{$var}[$i] eq 'NULL';
@@ -768,6 +797,7 @@ sub parse_template {
     print OUT $self->format_line($_);
     
   }
+  }
 
   close(OUT);
 
@@ -880,42 +910,36 @@ sub parse_template {
 
       binmode(IN);
 
-      $self->{copies} = 1 if $self->{media} =~ /(screen|email|queue)/;
-
       chdir("$self->{cwd}");
       
-      for my $i (1 .. $self->{copies}) {
-	if ($self->{OUT}) {
-	  unless (open(OUT, $self->{OUT})) {
-            $err = $!;
-	    $self->cleanup;
-	    $self->error("$self->{OUT} : $err");
-	  }
-	} else {
+      if ($self->{OUT}) {
+	unless (open(OUT, $self->{OUT})) {
+	  $err = $!;
+	  $self->cleanup;
+	  $self->error("$self->{OUT} : $err");
+	}
+      } else {
 
-	  # launch application
-	  print qq|Content-Type: application/$self->{format}
+	# launch application
+	print qq|Content-Type: application/$self->{format}
 Content-Disposition: attachment; filename="$self->{tmpfile}"\n\n|;
 
-	  unless (open(OUT, ">-")) {
-	    $err = $!;
-	    $self->cleanup;
-	    $self->error("STDOUT : $err");
-	  }
-
+	unless (open(OUT, ">-")) {
+	  $err = $!;
+	  $self->cleanup;
+	  $self->error("STDOUT : $err");
 	}
 
-	binmode(OUT);
-       
-	while (<IN>) {
-	  print OUT $_;
-	}
-	
-	close(OUT);
-	seek IN, 0, 0;
       }
 
+      binmode(OUT);
+     
+      while (<IN>) {
+	print OUT $_;
+      }
+      
       close(IN);
+      close(OUT);
     }
 
     $self->cleanup;
@@ -1090,7 +1114,6 @@ sub rerun_latex {
 sub format_string {
   my ($self, @fields) = @_;
 
-  
   my $format = $self->{format};
   if ($self->{format} =~ /(postscript|pdf)/) {
     $format = ($self->{charset} =~ /utf/i) ? 'utf' : 'tex';
@@ -1102,7 +1125,7 @@ sub format_string {
 			                 '\r', '\$', '%', '_', '#',
 					 quotemeta('^'), '{', '}', '<', '>',
 					 '£' ],
-                               utf  => [ quotemeta('\\'), '&', '\n',
+			       utf  => [ quotemeta('\\'), '&', '\n',
 			                 '\r', '\$', '%', '_', '#',
 					 quotemeta('^'), '{', '}', '<', '>']
 			     },
@@ -1120,7 +1143,7 @@ sub format_string {
 	        );
 
   $replace{utf} = $replace{tex};
-
+  
   my $key;
   foreach $key (@{ $replace{order}{$format} }) {
     for (@fields) { $self->{$_} =~ s/$key/$replace{$format}{$key}/g }
@@ -1362,7 +1385,7 @@ sub update_exchangerate {
   my ($self, $dbh, $curr, $transdate, $buy, $sell) = @_;
 
   # some sanity check for currency
-  return if ($curr eq "");
+  return if (!$curr || $self->{currency} eq $self->{defaultcurrency});
 
   my $query = qq|SELECT curr FROM exchangerate
                  WHERE curr = '$curr'
@@ -1390,6 +1413,7 @@ sub update_exchangerate {
                 VALUES ('$curr', $buy, $sell, '$transdate')|;
   }
   $sth->finish;
+
   $dbh->do($query) || $self->dberror($query);
   
 }
@@ -1435,10 +1459,14 @@ sub check_exchangerate {
     
   my $dbh = $self->dbconnect($myconfig);
 
-  my $query = qq|SELECT $fld FROM exchangerate
-                 WHERE curr = '$currency'
-		 AND transdate = |.$self->dbquote($transdate, SQL_DATE);
-  my ($exchangerate) = $dbh->selectrow_array($query);
+  my $query;
+  my $exchangerate;
+  
+  $fld ||= 'buy';
+  $query = qq|SELECT $fld, buy, sell FROM exchangerate
+	      WHERE curr = '$currency'
+	      AND transdate = |.$self->dbquote($transdate, SQL_DATE);
+  ($exchangerate, $self->{fxbuy}, $self->{fxsell}) = $dbh->selectrow_array($query);
   
   $dbh->disconnect;
   
@@ -1936,7 +1964,7 @@ sub create_links {
 
   my $arap = ($vc eq 'customer') ? 'ar' : 'ap';
  
-  $self->remove_locks($myconfig, $dbh, $arap);
+  $self->remove_locks($myconfig, $dbh);
 
   if ($self->{id}) {
     
@@ -1950,7 +1978,7 @@ sub create_links {
 		a.employee_id, e.name AS employee, c.language_code,
 		a.ponumber, a.approved,
 		br.id AS batchid, br.description AS batchdescription,
-		a.description, a.onhold
+		a.description, a.onhold, a.exchangerate
 		FROM $arap a
 		JOIN $vc c ON (a.${vc}_id = c.id)
 		LEFT JOIN employee e ON (e.id = a.employee_id)
@@ -1964,11 +1992,9 @@ sub create_links {
 
     $ref = $sth->fetchrow_hashref(NAME_lc);
     
-    my $fld = ($vc eq 'customer') ? 'buy' : 'sell';
-    my $exchangerate = $self->get_exchangerate($dbh, $ref->{currency}, $ref->{transdate}, $fld);
-    $exchangerate ||= 1;
+    $ref->{exchangerate} ||= 1;
 
-    for (qw(oldinvtotal oldtotalpaid)) { $ref->{$_} = $self->round_amount($ref->{$_} / $exchangerate, $self->{precision}) }
+    for (qw(oldinvtotal oldtotalpaid)) { $ref->{$_} = $self->round_amount($ref->{$_} / $ref->{exchangerate}, $self->{precision}) }
     foreach $key (keys %$ref) {
       $self->{$key} = $ref->{$key};
     }
@@ -1994,21 +2020,22 @@ sub create_links {
     $self->get_recurring($dbh);
 
     # get amounts from individual entries
-    $query = qq|SELECT c.accno, c.description, a.source, a.amount,
-                a.memo, a.transdate, a.cleared, a.project_id,
-		p.projectnumber, a.id
-		FROM acc_trans a
-		JOIN chart c ON (c.id = a.chart_id)
-		LEFT JOIN project p ON (p.id = a.project_id)
-		WHERE a.trans_id = $self->{id}
-		AND a.fx_transaction = '0'
-		ORDER BY transdate|;
+    $query = qq|SELECT c.accno, c.description, ac.source, ac.amount,
+                ac.memo, ac.transdate, ac.cleared, ac.project_id,
+		p.projectnumber, ac.id, y.exchangerate
+		FROM acc_trans ac
+		JOIN chart c ON (c.id = ac.chart_id)
+		LEFT JOIN project p ON (p.id = ac.project_id)
+		LEFT JOIN payment y ON (y.trans_id = ac.trans_id AND ac.id = y.id)
+		WHERE ac.trans_id = $self->{id}
+		AND ac.fx_transaction = '0'
+		ORDER BY ac.transdate|;
     $sth = $dbh->prepare($query);
     $sth->execute || $self->dberror($query);
 
     # store amounts in {acc_trans}{$key} for multiple accounts
     while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
-      $ref->{exchangerate} = $self->get_exchangerate($dbh, $self->{currency}, $ref->{transdate}, $fld);
+      $ref->{exchangerate} ||= 1;
       push @{ $self->{acc_trans}{$xkeyref{$ref->{accno}}} }, $ref;
     }
     $sth->finish;
@@ -2021,17 +2048,15 @@ sub create_links {
     if (!$self->{transdate}) {
       $self->{transdate} = $self->current_date($myconfig);
     }
-
     if (! $self->{"$self->{vc}_id"}) {
       $self->lastname_used($myconfig, $dbh, $vc, $module);
     }
 
   }
   
-  my %defaults = $self->get_defaults($dbh);
+  my %defaults = $self->get_defaults($dbh, \@{[qw(currencies closedto revtrans weightunit cdt)]});
+  for (keys %defaults) { $self->{$_} = $defaults{$_} }
     
-  for (qw(currencies closedto revtrans weightunit cdt)) { $self->{$_} = $defaults{$_} }
-
   $self->all_vc($myconfig, $vc, $module, $dbh, $self->{transdate}, $job);
  
   $dbh->disconnect;
@@ -2442,18 +2467,11 @@ sub save_recurring {
   
   my $query;
   
-  $query = qq|DELETE FROM recurring
-	      WHERE id = $self->{id}|;
-  $dbh->do($query) || $self->dberror($query);
+  for (qw(recurring recurringemail recurringprint)) {
+    $query = qq|DELETE FROM $_ WHERE id = $self->{id}|;
+    $dbh->do($query) || $self->dberror($query);
+  }
   
-  $query = qq|DELETE FROM recurringemail
-	      WHERE id = $self->{id}|;
-  $dbh->do($query) || $self->dberror($query);
-
-  $query = qq|DELETE FROM recurringprint
-	      WHERE id = $self->{id}|;
-  $dbh->do($query) || $self->dberror($query);
-
   if ($self->{recurring}) {
     my %s = ();
     ($s{reference}, $s{description}, $s{startdate}, $s{repeat}, $s{unit}, $s{howmany}, $s{payment}, $s{print}, $s{email}, $s{message}) = split /,/, $self->{recurring};
@@ -2883,7 +2901,7 @@ sub from_to {
   $t[5] += 1900;
   
   ($fromdate, "$t[5]$t[4]$t[3]");
-  
+
 }
 
 

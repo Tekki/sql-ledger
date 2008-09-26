@@ -77,6 +77,7 @@ $self{subs} = {
   'ulo¾i»'                      => 'post',
   'tlaè'                        => 'print',
   'tlaèi»_a_ulo¾i»'             => 'print_and_post',
+  'faktúra'                     => 'sales_invoice',
   'naèíta»'                     => 'update',
 };
 

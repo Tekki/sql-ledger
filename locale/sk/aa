@@ -180,7 +180,6 @@ $self{subs} = {
   'tlaèi»_a_ulo¾i»_ako_novı'    => 'print_and_post_as_new',
   'odberateµská_faktúra'        => 'sales_invoice_',
   'naplánovanie'                => 'schedule',
-  'doda»_na_adresu'             => 'ship_to',
   'naèíta»'                     => 'update',
   'dadavateµská_faktúra'        => 'vendor_invoice_',
   'ano'                         => 'yes',

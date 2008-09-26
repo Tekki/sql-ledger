@@ -185,13 +185,12 @@ sub get_openvc {
   $query = qq|SELECT vc.*,
               ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
 	      ad.country, a.amount, a.paid,
- 	      ex.$buysell AS vcexch
+ 	      a.exchangerate
 	      FROM $form->{vc} vc
 	      JOIN $arap a ON (a.$form->{vc}_id = vc.id)
 	      JOIN acc_trans ac ON (a.id = ac.trans_id)
 	      JOIN chart c ON (c.id = ac.chart_id)
 	      JOIN address ad ON (ad.trans_id = vc.id)
-	      LEFT JOIN exchangerate ex ON (ex.curr = a.curr AND ex.transdate = a.transdate)
 	      WHERE $where
 	      ORDER BY $sortorder|;
   $sth = $dbh->prepare($query);
@@ -204,11 +203,10 @@ sub get_openvc {
   
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     
-    $ref->{vcexch} ||= 1;
     $ref->{exchangerate} ||= 1;
 
     if ($form->{vc} eq 'vendor') {
-      $ref->{fxdue} = $form->round_amount(($ref->{amount} - $ref->{paid}) / $ref->{vcexch}, $form->{precision});
+      $ref->{fxdue} = $form->round_amount(($ref->{amount} - $ref->{paid}) / $ref->{exchangerate}, $form->{precision});
       $due{$ref->{id}} += $ref->{fxdue};
     }
     push @transactions, $ref;
@@ -266,11 +264,9 @@ sub retrieve {
  
   my $sortorder = "transdate, invnumber";
 
-  my $buysell = 'sell';
   my $ml = 1;
   
   if ($form->{vc} eq 'customer') {
-    $buysell = 'buy';
     $ml = -1;
   }
  
@@ -281,7 +277,7 @@ sub retrieve {
 		 a.curr, a.discountterms, a.cashdiscount, a.netamount,
 		 date '$form->{transdate}' <= a.transdate + a.discountterms AS calcdiscount,
 		 ac.approved,
-		 ex.$buysell AS exchangerate,
+		 a.exchangerate,
 		    (SELECT acc.amount * $ml
 		     FROM acc_trans acc
 		     JOIN chart c ON (c.id = acc.chart_id)
@@ -292,7 +288,6 @@ sub retrieve {
 	         FROM $form->{arap} a
 		 JOIN acc_trans ac ON (ac.trans_id = a.id)
 		 JOIN chart ch ON (ch.id = ac.chart_id)
-		 LEFT JOIN exchangerate ex ON (ex.curr = a.curr AND ex.transdate = a.transdate)
 		 WHERE ac.vr_id = $form->{id}
 		 AND ac.fx_transaction = '0'
 		 AND ch.link LIKE '%$form->{ARAP}_paid%'
@@ -472,14 +467,13 @@ sub get_openinvoices {
 		 a.$form->{vc}_id,
 		 a.discountterms, a.cashdiscount, a.netamount,
 		 $datepaid <= a.transdate + a.discountterms AS calcdiscount,
-		 ex1.$buysell AS exchangerate, ex2.$buysell AS vcexch,
+		 a.exchangerate, ex.$buysell AS vcexch,
 		 a.taxincluded
 		 FROM acc_trans ac
 		 JOIN $form->{arap} a ON (a.id = ac.trans_id)
 		 JOIN $form->{vc} vc ON (vc.id = a.$form->{vc}_id)
 		 JOIN chart ch ON (ch.id = ac.chart_id)
-		 LEFT JOIN exchangerate ex1 ON (ex1.curr = a.curr AND ex1.transdate = a.transdate)
-		 LEFT JOIN exchangerate ex2 ON (ex2.curr = vc.curr AND ex2.transdate = a.transdate)
+		 LEFT JOIN exchangerate ex ON (ex.curr = vc.curr AND ex.transdate = a.transdate)
 		 $where
 		 ORDER BY $sortorder|;
 
@@ -607,7 +601,8 @@ sub post_payment {
   my $paymentamount = $form->parse_amount($myconfig, $form->{amount});
   
   # query to retrieve paid amount
-  $query = qq|SELECT amount, netamount, paid, transdate, taxincluded
+  $query = qq|SELECT amount, netamount, paid, transdate, taxincluded,
+              exchangerate
               FROM $form->{arap}
               WHERE id = ?
  	      FOR UPDATE|;
@@ -618,6 +613,8 @@ sub post_payment {
   my $amount;
   my $vth;
   my $dth;
+  my $ith;
+  my $dith;
 
   my %cdt;
   my $diff;
@@ -647,6 +644,22 @@ sub post_payment {
 
     foreach $id (split / /, $form->{edit}) {
       
+      $query = qq|SELECT id
+		  FROM acc_trans
+		  WHERE trans_id = $id
+		  AND vr_id = $form->{voucherid}|;
+      $ith = $dbh->prepare($query) || $form->dberror($query);
+      $ith->execute;
+      
+      while (($paymentid) = $ith->fetchrow_array) {
+	$query = qq|DELETE FROM payment
+		    WHERE id = $paymentid
+		    AND trans_id = $id|;
+	$dith = $dbh->prepare($query) || $form->dberror($query);
+	$dbh->do($query) || $form->dberror($query);
+      }
+      $ith->finish;
+     
       # payments
       $sth->execute($id);
       $ref = $sth->fetchrow_hashref(NAME_lc);
@@ -691,7 +704,7 @@ sub post_payment {
   if (!$approved) {
     $action = 'saved';
   }
-
+  
   my $voucherid = 'NULL';
   
   if ($form->{batch}) {
@@ -721,6 +734,13 @@ sub post_payment {
     
     if ($form->{"checked_$i"}) {
 
+      # paymentid
+      $query = qq|SELECT MAX(id)
+		  FROM payment
+		  WHERE trans_id = $form->{"id_$i"}|;
+      ($paymentid) = $dbh->selectrow_array($query);
+      $paymentid++;
+
       # original paid
       # lock for update
       $pth->execute($form->{"id_$i"}) || $form->dberror;
@@ -729,21 +749,11 @@ sub post_payment {
 
       $paymentamount -= $form->{"paid_$i"};
       
-      # get exchangerate for original 
-      $query = qq|SELECT $buysell
-                  FROM exchangerate e
-                  JOIN $form->{arap} a ON (a.transdate = e.transdate)
-		  WHERE e.curr = '$form->{currency}'
-		  AND a.id = $form->{"id_$i"}|;
-      my ($exchangerate) = $dbh->selectrow_array($query);
-
-      $exchangerate ||= 1;
-
       $ath->execute($form->{"id_$i"}) || $form->dberror;
       ($arap) = $ath->fetchrow_array;
       $ath->finish;
       
-      $amount = $form->round_amount($form->{"paid_$i"} * $exchangerate, $form->{precision});
+      $amount = $form->round_amount($form->{"paid_$i"} * $trans{$form->{"id_$i"}}{exchangerate}, $form->{precision});
 
       # add AR/AP
       $query = qq|INSERT INTO acc_trans (trans_id, chart_id, transdate,
@@ -755,14 +765,18 @@ sub post_payment {
 
       # add payment
       $query = qq|INSERT INTO acc_trans (trans_id, chart_id, transdate,
-                  amount, source, memo, approved, vr_id)
+                  amount, source, memo, approved, vr_id, id)
                   VALUES ($form->{"id_$i"},
 		         (SELECT id FROM chart
 		          WHERE accno = '$paymentaccno'),
 		  '$form->{datepaid}', $form->{"paid_$i"} * $ml * -1, |
 		  .$dbh->quote($form->{source}).qq|, |
 		  .$dbh->quote($form->{memo}).qq|, '$approved',
-		  $voucherid)|;
+		  $voucherid, $paymentid)|;
+      $dbh->do($query) || $form->dberror($query);
+
+      $query = qq|INSERT INTO payment (id, trans_id, exchangerate)
+                  VALUES ($paymentid, $form->{"id_$i"}, $form->{exchangerate})|;
       $dbh->do($query) || $form->dberror($query);
 
       # add exchangerate difference if currency ne defaultcurrency
@@ -781,7 +795,7 @@ sub post_payment {
 	$dbh->do($query) || $form->dberror($query);
 
         # gain/loss
-	$amount = $form->round_amount(($form->round_amount($form->{"paid_$i"} * $exchangerate, $form->{precision}) - $form->round_amount($form->{"paid_$i"} * $form->{exchangerate}, $form->{precision})) * $ml * -1, $form->{precision});
+	$amount = $form->round_amount(($form->round_amount($form->{"paid_$i"} * $trans{$form->{"id_$i"}}{exchangerate}, $form->{precision}) - $form->round_amount($form->{"paid_$i"} * $form->{exchangerate}, $form->{precision})) * $ml * -1, $form->{precision});
 	if ($amount) {
 	  my $accno_id = ($amount > 0) ? $defaults{fxgain_accno_id} : $defaults{fxloss_accno_id};
 	  $query = qq|INSERT INTO acc_trans (trans_id, chart_id, transdate,
@@ -826,7 +840,7 @@ sub post_payment {
 	    $cdt{$accno} -= $diff;
 	  }
 	
-	  $cdt = $form->round_amount($cdt * $exchangerate, $form->{precision});
+	  $cdt = $form->round_amount($cdt * $trans{$form->{"id_$i"}}{exchangerate}, $form->{precision});
 	  
 	}
 
@@ -834,7 +848,7 @@ sub post_payment {
 
 	for (keys %cdt) {
           # add AR/AP
-	  $amount = $form->round_amount($cdt{$_} * $exchangerate, $form->{precision});
+	  $amount = $form->round_amount($cdt{$_} * $trans{$form->{"id_$i"}}{exchangerate}, $form->{precision});
 	  $query = qq|INSERT INTO acc_trans (trans_id, chart_id, transdate,
 		      amount, approved, vr_id, id)
 		      VALUES ($form->{"id_$i"}, $arap, '$form->{datepaid}',
@@ -870,7 +884,7 @@ sub post_payment {
 	    $dbh->do($query) || $form->dberror($query);
 
 	    # gain/loss
-	    $amount = $form->round_amount(($form->round_amount($cdt{$_} * $exchangerate, $form->{precision}) - $form->round_amount($cdt{$_} * $form->{exchangerate}, $form->{precision})) * $ml * -1, $form->{precision});
+	    $amount = $form->round_amount(($form->round_amount($cdt{$_} * $trans{$form->{"id_$i"}}{exchangerate}, $form->{precision}) - $form->round_amount($cdt{$_} * $form->{exchangerate}, $form->{precision})) * $ml * -1, $form->{precision});
 	    
 	    if ($amount) {
 	      my $accno_id = ($amount > 0) ? $defaults{fxgain_accno_id} : $defaults{fxloss_accno_id};
@@ -886,8 +900,8 @@ sub post_payment {
       }
 
 
-      $form->{"paid_$i"} = $form->round_amount($form->{"paid_$i"} * $exchangerate, $form->{precision});
-      $form->{"discount_$i"} = $form->round_amount($form->{"discount_$i"} * $exchangerate, $form->{precision});
+      $form->{"paid_$i"} = $form->round_amount($form->{"paid_$i"} * $trans{$form->{"id_$i"}}{exchangerate}, $form->{precision});
+      $form->{"discount_$i"} = $form->round_amount($form->{"discount_$i"} * $trans{$form->{"id_$i"}}{exchangerate}, $form->{precision});
 
       # unlock arap
       $pth->finish;
@@ -957,24 +971,21 @@ sub invoice_ids {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  my $buysell = ($form->{arap} eq 'ar') ? 'buy' : 'sell';
-  
   my $datepaid = ($form->{datepaid}) ? "date '$form->{datepaid}'" : 'current_date';
   my $query = qq|SELECT DISTINCT a.id, a.invnumber, a.transdate, a.duedate,
 		 a.amount, a.paid, vc.$form->{vc}number, vc.name,
 		 a.$form->{vc}_id, a.cashdiscount, a.netamount,
                  $datepaid <= a.transdate + a.discountterms AS calcdiscount,
+		 a.exchangerate,
 		    (SELECT acc.amount
 		     FROM acc_trans acc
 		     JOIN chart c ON (c.id = acc.chart_id)
 		     WHERE acc.trans_id = ac.trans_id
 		     AND acc.fx_transaction = '0'
-		     AND c.link LIKE '%$form->{ARAP}_discount%') AS discount,
-		 ex1.$buysell AS exchangerate
+		     AND c.link LIKE '%$form->{ARAP}_discount%') AS discount
 		 FROM acc_trans ac
 		 JOIN $form->{arap} a ON (a.id = ac.trans_id)
 		 JOIN $form->{vc} vc ON (vc.id = a.$form->{vc}_id)
-		 LEFT JOIN exchangerate ex1 ON (ex1.curr = a.curr AND ex1.transdate = a.transdate)
 		 WHERE a.id = ?|;
   my $sth = $dbh->prepare($query) || $form->dberror($query);
 

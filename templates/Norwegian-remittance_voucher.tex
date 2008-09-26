@@ -1,0 +1,39 @@
+\documentclass{scrartcl}
+\usepackage[latin1]{inputenc}
+\usepackage{tabularx}
+\usepackage[paper=letterpaper,top=1.7cm,bottom=1.0cm,left=1.9cm,right=0.5cm]{geometry}
+\usepackage{graphicx}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+\fontfamily{cmss}\fontsize{9pt}{10pt}\selectfont
+
+\vspace*{1cm}
+
+\textbf{Remittance Voucher}
+
+\hfill <%currency%> <%total%> \euro
+
+IBAN: <%bankiban%> BIC: <%bankbic%> Bank: <%bankname%>
+
+<%company%> <%address%>}
+
+\vspace{0.3cm}
+
+<%name%>
+
+<%address1%>
+
+<%address2%>
+
+<%city%>
+<%if state%>
+\hspace{-1mm}, <%state%>
+<%end state%>
+<%zipcode%>
+
+<%country%>
+
+\end{document}
+

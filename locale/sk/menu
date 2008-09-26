@@ -131,7 +131,6 @@ $self{texts} = {
   'Time Card'                   => 'Èasová karta',
   'Time Cards'                  => 'Èasové karty',
   'Transactions'                => 'Polo¾ky',
-  'Transfer'                    => 'Prevod',
   'Translations'                => 'Preklady',
   'Trial Balance'               => 'Hlavná kniha',
   'Type of Business'            => 'Druh biznisu',

@@ -32,6 +32,14 @@ sub create_links {
 		b.description || '--' || b.id AS business, s.*,
                 e.name || '--' || e.id AS employee,
 		g.pricegroup || '--' || g.id AS pricegroup,
+		m.description || '--' || m.id AS paymentmethod,
+		bk.name AS bankname,
+		ad1.address1 AS bankaddress1,
+		ad1.address2 AS bankaddress2,
+		ad1.city AS bankcity,
+		ad1.state AS bankstate,
+		ad1.zipcode AS bankzipcode,
+		ad1.country AS bankcountry,
 		ct.curr
                 FROM $form->{db} ct
 		LEFT JOIN address ad ON (ct.id = ad.trans_id)
@@ -39,6 +47,9 @@ sub create_links {
 		LEFT JOIN shipto s ON (ct.id = s.trans_id)
 		LEFT JOIN employee e ON (ct.employee_id = e.id)
 		LEFT JOIN pricegroup g ON (g.id = ct.pricegroup_id)
+		LEFT JOIN paymentmethod m ON (m.id = ct.paymentmethod_id)
+		LEFT JOIN bank bk ON (bk.id = ct.id)
+		LEFT JOIN address ad1 ON (bk.address_id = ad1.id)
                 WHERE ct.id = $form->{id}/;
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
@@ -46,7 +57,7 @@ sub create_links {
     $ref = $sth->fetchrow_hashref(NAME_lc);
     for (keys %$ref) { $form->{$_} = $ref->{$_} }
     $sth->finish;
-
+    
     $query = qq|SELECT * FROM contact
                 WHERE trans_id = $form->{id}
 		ORDER BY id|;
@@ -183,7 +194,19 @@ sub create_links {
     push @{ $form->{all_pricegroup} }, $ref;
   }
   $sth->finish;
+
+  # get paymentmethod
+  $query = qq|SELECT *
+              FROM paymentmethod
+	      ORDER BY 2|;
+  $sth = $dbh->prepare($query);
+  $sth->execute || $form->dberror($query);
   
+  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    push @{ $form->{all_paymentmethod} }, $ref;
+  }
+  $sth->finish;
+ 
   # get currencies
   my %defaults = $form->get_defaults($dbh, \@{['currencies']});
   $form->{currencies} = $defaults{currencies};
@@ -219,10 +242,11 @@ sub save {
     $form->{$_} /= 100;
   }
 
-  for (qw(terms discountterms taxincluded addressid contactid)) { $form->{$_} *= 1 }
+  for (qw(terms discountterms taxincluded addressid contactid remittancevoucher)) { $form->{$_} *= 1 }
   
   for (qw(creditlimit threshold)) { $form->{$_} = $form->parse_amount($myconfig, $form->{$_}) }
  
+  my $bank_address_id;
   
   if ($form->{id}) {
     $query = qq|DELETE FROM $form->{db}tax
@@ -236,11 +260,25 @@ sub save {
     $query = qq|DELETE FROM contact
                 WHERE id = $form->{contactid}|;
     $dbh->do($query) || $form->dberror($query);
+ 
+    $query = qq|SELECT address_id
+                FROM bank
+                WHERE id = $form->{id}|;
+    ($bank_address_id) = $dbh->selectrow_array($query);
     
+    $query = qq|DELETE FROM bank
+                WHERE id = $form->{id}|;
+    $dbh->do($query) || $form->dberror($query);
+   
     $query = qq|DELETE FROM address
                 WHERE id = $form->{addressid}|;
     $dbh->do($query) || $form->dberror($query);
     
+    $bank_address_id *= 1;
+    $query = qq|DELETE FROM address
+                WHERE trans_id = $bank_address_id|;
+    $dbh->do($query) || $form->dberror($query);
+		
     $query = qq|SELECT id FROM $form->{db}
                 WHERE id = $form->{id}|;
     if (! $dbh->selectrow_array($query)) {
@@ -272,11 +310,80 @@ sub save {
     delete $form->{addressid};
 
   }
+
+  my $ok;
   
+  if ($form->{bankname}) {
+    if ($bank_address_id) {
+      $query = qq|INSERT INTO bank (id, name, iban, bic, address_id)
+		  VALUES ($form->{id}, |
+		  .$dbh->quote(uc $form->{bankname}).qq|,|
+		  .$dbh->quote($form->{iban}).qq|,|
+		  .$dbh->quote($form->{bic}).qq|,
+		  $bank_address_id
+		  )|;
+    } else {
+      $query = qq|INSERT INTO bank (id, name, iban, bic)
+		  VALUES ($form->{id}, |
+		  .$dbh->quote(uc $form->{bankname}).qq|,|
+		  .$dbh->quote($form->{iban}).qq|,|
+		  .$dbh->quote($form->{bic}).qq|
+		  )|;
+    }
+    $dbh->do($query) || $form->dberror($query);
+
+    $query = qq|SELECT address_id
+                FROM bank
+                WHERE id = $form->{id}|;
+    ($bank_address_id) = $dbh->selectrow_array($query);
+
+  }
+  
+  for (qw(address1 address2 city state zipcode country)) {
+    if ($form->{"bank$_"}) {
+      if ($bank_address_id) {
+	$query = qq|INSERT INTO address (id, trans_id, address1, address2,
+		    city, state, zipcode, country) VALUES (
+		    $bank_address_id, $bank_address_id,
+		    |.$dbh->quote(uc $form->{bankaddress1}).qq|,
+		    |.$dbh->quote(uc $form->{bankaddress2}).qq|,
+		    |.$dbh->quote(uc $form->{bankcity}).qq|,
+		    |.$dbh->quote(uc $form->{bankstate}).qq|,
+		    |.$dbh->quote(uc $form->{bankzipcode}).qq|,
+		    |.$dbh->quote(uc $form->{bankcountry}).qq|)|;
+	$dbh->do($query) || $form->dberror($query);
+
+      } else {
+	$query = qq|INSERT INTO bank (id, name)
+		    VALUES ($form->{id},
+		    |.$dbh->quote(uc $form->{bankname}).qq|)|;
+	$dbh->do($query) || $form->dberror($query);
+	
+	$query = qq|SELECT address_id
+		    FROM bank
+		    WHERE id = $form->{id}|;
+	($bank_address_id) = $dbh->selectrow_array($query);
+
+	$query = qq|INSERT INTO address (id, trans_id, address1, address2,
+		    city, state, zipcode, country) VALUES (
+		    $bank_address_id, $bank_address_id,
+		    |.$dbh->quote(uc $form->{bankaddress1}).qq|,
+		    |.$dbh->quote(uc $form->{bankaddress2}).qq|,
+		    |.$dbh->quote(uc $form->{bankcity}).qq|,
+		    |.$dbh->quote(uc $form->{bankstate}).qq|,
+		    |.$dbh->quote(uc $form->{bankzipcode}).qq|,
+		    |.$dbh->quote(uc $form->{bankcountry}).qq|)|;
+	$dbh->do($query) || $form->dberror($query);
+      }
+      last;
+    }
+  }
+    
+ 
   $form->{"$form->{db}number"} = $form->update_defaults($myconfig, "$form->{db}number", $dbh) if ! $form->{"$form->{db}number"};
  
   my %rec;
-  for (qw(employee pricegroup business)) {
+  for (qw(employee pricegroup business paymentmethod)) {
     ($null, $rec{"${_}_id"}) = split /--/, $form->{$_};
     $rec{"${_}_id"} *= 1;
   }
@@ -285,7 +392,7 @@ sub save {
     ($rec{"${_}_accno"}) = split /--/, $form->{"${_}_accno"};
   }
 
-   
+    
   my $gifi;
   $gifi = qq|
 	      gifi_accno = '$form->{gifi_accno}',| if $form->{db} eq 'vendor';
@@ -303,13 +410,13 @@ sub save {
 	      terms = $form->{terms},
 	      discount = $form->{discount},
 	      creditlimit = $form->{creditlimit},
+              iban = |.$dbh->quote($form->{iban}).qq|,
+              bic = |.$dbh->quote($form->{bic}).qq|,
 	      taxincluded = '$form->{taxincluded}',
 	      $gifi
 	      business_id = $rec{business_id},
 	      taxnumber = |.$dbh->quote($form->{taxnumber}).qq|,
 	      sic_code = '$form->{sic_code}',
-	      iban = '$form->{iban}',
-	      bic = '$form->{bic}',
 	      employee_id = $rec{employee_id},
 	      language_code = '$form->{language_code}',
 	      pricegroup_id = $rec{pricegroup_id},
@@ -321,7 +428,9 @@ sub save {
 	      discount_accno_id = (SELECT id FROM chart WHERE accno = '$rec{discount_accno}'),
 	      cashdiscount = $form->{cashdiscount},
 	      threshold = $form->{threshold},
-	      discountterms = $form->{discountterms}
+	      discountterms = $form->{discountterms},
+	      paymentmethod_id = $rec{paymentmethod_id},
+	      remittancevoucher = '$form->{remittancevoucher}'
 	      WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
 
@@ -395,13 +504,37 @@ sub delete {
   my ($self, $myconfig, $form) = @_;
 
   # connect to database
-  my $dbh = $form->dbconnect($myconfig);
+  my $dbh = $form->dbconnect_noauto($myconfig);
 
   # delete customer/vendor
   my $query = qq|DELETE FROM $form->{db}
 	         WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
 
+  $query = qq|SELECT address_id FROM bank
+              WHERE id = $form->{id}|;
+  my ($address_id) = $dbh->selectrow_array($query);
+  
+  if ($address_id) {
+    $query = qq|DELETE FROM address WHERE id = $address_id|;
+    $dbh->do($query) || $form->dberror($query);
+  }
+  
+  for (qw(shipto address)) {
+    $query = qq|DELETE FROM $_ WHERE trans_id = $form->{id}|;
+    $dbh->do($query) || $form->dberror($query);
+  }
+
+  $query = qq|DELETE FROM bank WHERE id = $form->{id}|;
+  $dbh->do($query) || $form->dberror($query);
+  
+  $query = qq|DELETE FROM $form->{db}tax WHERE $form->{db}_id = $form->{id}|;
+  $dbh->do($query) || $form->dberror($query);
+  
+  $query = qq|DELETE FROM parts$form->{db} WHERE $form->{db}_id = $form->{id}|;
+  $dbh->do($query) || $form->dberror($query);
+
+  $dbh->commit;
   $dbh->disconnect;
 
 }

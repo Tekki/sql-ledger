@@ -53,20 +53,16 @@ require "$form->{path}/arap.pl";
 
 sub add {
   
-  if ($form->{transfer}) {
-    $form->{title} = $locale->text('Add Cash Transfer Transaction');
-  } else {
-    if ($form->{batch}) {
-      $form->{title} = $locale->text('Add General Ledger Voucher');
-      if ($form->{batchdescription}) {
-	$form->{title} .= " / $form->{batchdescription}";
-      }
-    } else {
-      $form->{title} = $locale->text('Add General Ledger Transaction');
+  if ($form->{batch}) {
+    $form->{title} = $locale->text('Add General Ledger Voucher');
+    if ($form->{batchdescription}) {
+      $form->{title} .= " / $form->{batchdescription}";
     }
+  } else {
+    $form->{title} = $locale->text('Add General Ledger Transaction');
   }
   
-  $form->{callback} = "$form->{script}?action=add&transfer=$form->{transfer}&path=$form->{path}&login=$form->{login}" unless $form->{callback};
+  $form->{callback} = "$form->{script}?action=add&path=$form->{path}&login=$form->{login}" unless $form->{callback};
 
   $transdate = $form->{transdate};
   
@@ -74,9 +70,11 @@ sub add {
 
   $form->{transdate} = $transdate if $transdate;
 
-  $form->{rowcount} = ($form->{transfer}) ? 3 : 9;
+  $form->{rowcount} = 9;
   $form->{oldtransdate} = $form->{transdate};
   $form->{focus} = "reference";
+
+  $form->{currency} = $form->{defaultcurrency};
 
   &display_form(1);
   
@@ -85,22 +83,20 @@ sub add {
 
 sub edit {
 
-  if ($form->{transfer}) {
-    $form->{title} = $locale->text('Edit Cash Transfer Transaction');
-  } else {
-    if ($form->{batch}) {
-      $form->{title} = $locale->text('Edit General Ledger Voucher');
-      if ($form->{batchdescription}) {
-	$form->{title} .= " / $form->{batchdescription}";
-      }
-    } else {
-      $form->{title} = $locale->text('Edit General Ledger Transaction');
+  if ($form->{batch}) {
+    $form->{title} = $locale->text('Edit General Ledger Voucher');
+    if ($form->{batchdescription}) {
+      $form->{title} .= " / $form->{batchdescription}";
     }
+  } else {
+    $form->{title} = $locale->text('Edit General Ledger Transaction');
   }
  
   &create_links;
   
   $form->{locked} = ($form->{revtrans}) ? '1' : ($form->datetonum(\%myconfig, $form->{transdate}) <= $form->{closedto});
+
+  $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate});
 
   $i = 1;
   foreach $ref (@{ $form->{GL} }) {
@@ -145,7 +141,14 @@ sub create_links {
   GL->transaction(\%myconfig, \%$form);
 
   for (@{ $form->{all_accno} }) { $form->{selectaccno} .= "$_->{accno}--$_->{description}\n" }
-  
+
+  # currencies
+  @curr = split /:/, $form->{currencies};
+  $form->{defaultcurrency} = $curr[0];
+  chomp $form->{defaultcurrency};
+
+  for (@curr) { $form->{selectcurrency} .= "$_\n" }
+ 
   # projects
   if (@{ $form->{all_project} }) {
     $form->{selectprojectnumber} = "\n";
@@ -158,8 +161,8 @@ sub create_links {
     $form->{selectdepartment} = "\n";
     for (@{ $form->{all_department} }) { $form->{selectdepartment} .= qq|$_->{description}--$_->{id}\n| }
   }
- 
-  for (qw(department projectnumber accno)) { $form->{"select$_"} = $form->escape($form->{"select$_"},1) }
+
+  for (qw(department projectnumber accno currency)) { $form->{"select$_"} = $form->escape($form->{"select$_"},1) }
   
 }
 
@@ -788,6 +791,8 @@ sub gl_subtotal {
 
 sub update {
 
+  $form->{exchangerate} = $form->parse_amount(\%myconfig, $form->{exchangerate});
+  
   if ($form->{transdate} ne $form->{oldtransdate}) {
     if ($form->{selectprojectnumber}) {
       $form->all_projects(\%myconfig, undef, $form->{transdate});
@@ -800,6 +805,9 @@ sub update {
     $form->{oldtransdate} = $form->{transdate};
   }
   
+  $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate});
+  for (qw(fxbuy fxsell)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}) }
+
   @a = ();
   $count = 0;
   @flds = qw(accno debit credit projectnumber fx_transaction source memo cleared);
@@ -865,12 +873,6 @@ sub display_rows {
     <td><select name="projectnumber_$i">|.$form->select_option($form->{selectprojectnumber}, undef, 1).qq|</select></td>|;
       }
     
-      if ($form->{transfer}) {
-	$fx_transaction = qq|
-        <td><input name="fx_transaction_$i" class=checkbox type=checkbox value=1></td>
-    |;
-	}
-
     } else {
    
       $form->{totaldebit} += $form->{"debit_$i"};
@@ -888,14 +890,6 @@ sub display_rows {
 	  $project = qq|<td>$project</td>|;
 	}
       
-	if ($form->{transfer}) {
-	  $checked = ($form->{"fx_transaction_$i"}) ? "1" : "";
-	  $x = ($checked) ? "x" : "";
-	  $fx_transaction = qq|
-      <td><input type=hidden name="fx_transaction_$i" value="$checked">$x</td>
-    |;
-	}
-	
 	$form->hide_form(map { "${_}_$i"} qw(accno projectnumber));
 	
       } else {
@@ -906,12 +900,6 @@ sub display_rows {
 	if ($form->{selectprojectnumber}) {
 	  $project = qq|
       <td><select name="projectnumber_$i">|.$form->select_option($form->{selectprojectnumber}, undef, 1).qq|</select></td>|;
-	}
-      
-	if ($form->{transfer}) {
-	  $fx_transaction = qq|
-      <td><input name="fx_transaction_$i" class=checkbox type=checkbox value=1></td>
-    |;
 	}
       }
     }
@@ -952,23 +940,42 @@ sub form_header {
   } else {
     $notes = qq|<input name=notes size=50 value="|.$form->quote($form->{notes}).qq|">|;
   }
- 
+
+  # format amounts
+  $form->{exchangerate} = $form->format_amount(\%myconfig, $form->{exchangerate});
+
+  if ($form->{defaultcurrency}) {
+    $exchangerate = qq|<input type=hidden name=action value="Update">
+                <th align=right nowrap>|.$locale->text('Currency').qq|</th>
+		<td>
+		  <table>
+		    <tr>
+                      <td><select name=currency onChange="javascript:document.forms[0].submit()">|
+		      .$form->select_option($form->{selectcurrency}, $form->{currency})
+		      .qq|</select></td>|;
+
+    if ($form->{currency} ne $form->{defaultcurrency}) {
+      $exchangerate .= qq|
+      <th align=right nowrap>|.$locale->text('Exchange Rate').qq| <font color=red>*</font></th>
+      <td><input name=exchangerate size=10 value=$form->{exchangerate}></td>
+      <th align=right nowrap>|
+      .$locale->text('Buy').qq|</th><td>$form->{fxbuy}</td>
+      <th align=right nowrap>|
+      .$locale->text('Sell').qq|</th><td>$form->{fxsell}</td>|;
+    }
+    $exchangerate .= qq|</tr></table></td></tr>|;
+  }
+  
+
   $department = qq|
-        <tr>
 	  <th align=right nowrap>|.$locale->text('Department').qq|</th>
 	  <td><select name=department>|.$form->select_option($form->unescape($form->{selectdepartment}), $form->{department}, 1).qq|</select></td>
-	</tr>
 | if $form->{selectdepartment};
 
   $project = qq| 
 	  <th class=listheading>|.$locale->text('Project').qq|</th>
 | if $form->{selectprojectnumber};
 
-  if ($form->{transfer}) {
-    $fx_transaction = qq|
-	  <th class=listheading>|.$locale->text('FX').qq|</th>
-|;
-  }
 
   $focus = ($form->{focus}) ? $form->{focus} : "debit_$form->{rowcount}";
   
@@ -992,8 +999,8 @@ sub form_header {
 <form method=post action=$form->{script}>
 |;
 
-  $form->hide_form(qw(id transfer closedto locked oldtransdate recurring batch batchid batchnumber batchdescription));
-  $form->hide_form(map { "select$_" } qw(accno department));
+  $form->hide_form(qw(id closedto locked oldtransdate recurring batch batchid batchnumber batchdescription defaultcurrency fxbuy fxsell));
+  $form->hide_form(map { "select$_" } qw(accno department currency));
   
   print qq|
 <input type=hidden name=title value="|.$form->quote($form->{title}).qq|">
@@ -1012,7 +1019,10 @@ sub form_header {
 	  <th align=right>|.$locale->text('Date').qq| <font color=red>*</font></th>
 	  $transdate
 	</tr>
-	$department
+	<tr>
+	  $department
+	  $exchangerate
+	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('Description').qq|</th>
 	  <td colspan=3>$description</td>
@@ -1050,12 +1060,6 @@ sub form_footer {
 	  <th>&nbsp;</th>
 | if $form->{selectprojectnumber};
 
-  if ($form->{transfer}) {
-    $fx_transaction = qq|
-	  <th>&nbsp;</th>
-|;
-  }
-    
   print qq|
         <tr class=listtotal>
 	  <th>&nbsp;</th>
