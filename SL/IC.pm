@@ -1521,7 +1521,7 @@ sub requirements {
     $sth->execute || $form->dberror($query);
 
     while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-      if (exists $parts{$ref->{id}}->{$ofld{$_}}) {
+      if (exists $parts{$ref->{id}}) {
 	$parts{$ref->{id}}->{$ofld{$_}} += $ref->{$ofld{$_}};
       } else {
 	$parts{$ref->{id}} = $ref;
@@ -1531,13 +1531,12 @@ sub requirements {
   }
 
   # add assemblies from open sales orders
-  $query = qq|SELECT DISTINCT a.id AS orderid, b.id, i.qty - i.ship AS qty
-              FROM parts p
-	      JOIN assembly b ON (b.parts_id = p.id)
-	      JOIN orderitems i ON (i.parts_id = b.id)
+  $query = qq|SELECT p.id, i.qty - i.ship AS qty
+              FROM orderitems i
+	      JOIN parts p ON (p.id = i.parts_id)
 	      JOIN oe a ON (a.id = i.trans_id)
 	      WHERE $where
-	      AND (p.inventory_accno_id > 0 OR p.assembly = '1')
+	      AND p.assembly = '1'
 	      AND a.closed = '0'|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -1588,7 +1587,7 @@ sub requirements_assembly {
       next;
     }
 
-    if (exists $parts->{$ref->{id}}{so}) {
+    if (exists $parts->{$ref->{id}}) {
       $parts->{$ref->{id}}{so} += $ref->{so};
     } else {
       $parts->{$ref->{id}} = $ref;

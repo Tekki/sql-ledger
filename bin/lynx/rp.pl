@@ -405,7 +405,7 @@ sub report {
 	  <td><input name=todate size=11 title="$myconfig{dateformat}"></td>
 	</tr>
 	$selectfrom
-	$summary
+	<input name=summary type=hidden value=1>
 	<tr>
 	  <th align=right>|.$locale->text('Report for').qq|</th>
 	  <td colspan=3>
@@ -535,7 +535,7 @@ print qq|
 	  <td><input name=todate size=11 title="$myconfig{dateformat}"></td>
 	</tr>
 	$selectfrom
-	$summary
+	<input name=summary type=hidden value=1>
 	<tr>
 	  <th align=right>|.$locale->text('Method').qq|</th>
 	  <td colspan=3><input name=method class=radio type=radio value=accrual checked>|.$locale->text('Accrual').qq|

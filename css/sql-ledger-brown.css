@@ -14,7 +14,7 @@ body {
         margin: 0px 0px 0px 0px;
         font-family: Arial, Verdana, Helvetica, sans-serif;
         color: #444444;
-        font-size: 10pt;
+        font-size: 10px;
         background-color: #ffffff;
         scrollbar-arrow-color: #FFFFFF;
         scrollbar-3dlight-color: #dddddd;
@@ -28,12 +28,12 @@ body {
 
 td {
   font-family: Verdana, Helvetica, Arial, sans-serif;
-  font-size: 10pt;
+  font-size: 10px;
 }
 
 th {
   font-family: Verdana, Helvetica, Arial, sans-serif;
-  font-size: 10pt;
+  font-size: 10px;
 }
 
 /* login and admin */
@@ -45,7 +45,7 @@ body.login {
   color: black;
 }
 h1.login {
-  font-size: 18pt;
+  font-size: 18px;
 }
 table.login {
   background-color: #eeeecc;
@@ -66,7 +66,7 @@ body.admin {
 body.menu {
   background-color: #EEEECC;
   font-family: Verdana, Helvetica, Arial, sans-serif;
-  font-size: 10pt;
+  font-size: 10px;
   color: black;
 }
 
@@ -133,17 +133,17 @@ body.menu {
   text-decoration: none;
 }
 
-.listtop { font-size: 10pt; background-color: #004d99; color: white; }
-.listheading { font-size: 10pt; background-color: #356799; color: white; }
+.listtop { font-size: 10px; background-color: #004d99; color: white; }
+.listheading { font-size: 10px; background-color: #356799; color: white; }
 A.listheading:link, A.listheading:active, A.listheading:visited {
   color: white;
   text-decoration: none; }
-.listrow1 { font-size: 10pt; background-color: #ffffee; color: black;
+.listrow1 { font-size: 10px; background-color: #ffffee; color: black;
 vertical-align: top; }
-.listrow0 { font-size: 10pt; background-color: #eeeecc; color: black;
+.listrow0 { font-size: 10px; background-color: #eeeecc; color: black;
 vertical-align: top; }
-.listsubtotal { font-size: 10pt; background-color: #dad561; color: white; }
-.listtotal { font-size: 10pt; background-color: black; color: white; }
+.listsubtotal { font-size: 10px; background-color: #dad561; color: white; }
+.listtotal { font-size: 10px; background-color: black; color: white; }
 
 textarea {
         font-family: Verdana, Helvetica, Arial, sans-serif;
@@ -163,7 +163,7 @@ input {
 
 select {
   font-family: Verdana, Helvetica, Arial, sans-serif;
-  font-size: 10pt;
+  font-size: 10px;
 }
 
 .submit {
@@ -189,12 +189,12 @@ select {
 
 h2.confirm {
   color: blue;
-  font-size: 14pt;
+  font-size: 14px;
 }
 
 h2.error {
   color: red;
-  font-size: 14pt;
+  font-size: 14px;
 }
 
 

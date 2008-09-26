@@ -87,7 +87,7 @@ if (-f "VERSION") {
 $webowner = "nobody";
 $webgroup = "nogroup";
 
-if ($httpd = `find /etc /usr/local/etc -type f -name 'httpd.conf'`) {
+if ($httpd = `find /etc /usr/local/etc -type f -name 'httpd*.conf'`) {
   chomp $httpd;
   $webowner = `grep "^User " $httpd`;
   $webgroup = `grep "^Group " $httpd`;

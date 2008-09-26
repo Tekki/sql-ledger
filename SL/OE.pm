@@ -388,7 +388,7 @@ sub save {
 
   # add up the tax
   my $tax = 0;
-  for (keys %taxaccounts) { $tax += $taxaccounts{$_} }
+  for (keys %taxaccounts) { $tax += $form->round_amount($taxaccounts{$_}, 2) }
   
   $amount = $form->round_amount($netamount + $tax, 2);
   $netamount = $form->round_amount($netamount, 2);

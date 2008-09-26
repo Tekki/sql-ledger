@@ -10,6 +10,7 @@ $self{texts} = {
   'Printed'                     => 'Imprimé',
   'Scheduled'                   => 'Planifié',
   'Screen'                      => 'Écran',
+  'Select a Printer!'           => 'Choisir une imprimante',
   'Select payment'              => 'Sélectionner le payement',
   'Select postscript or PDF!'   => 'Sélectionner Postscript ou PDF!',
   'Source'                      => 'Source',
