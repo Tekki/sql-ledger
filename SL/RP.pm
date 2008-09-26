@@ -1518,11 +1518,13 @@ sub aging {
       (SELECT $buysell FROM exchangerate e
        WHERE a.curr = e.curr
        AND e.transdate = a.transdate) AS exchangerate,
-    ct.firstname, ct.lastname, ct.salutation, ct.typeofcontact
+    ct.firstname, ct.lastname, ct.salutation, ct.typeofcontact,
+    s.*
     FROM $form->{arap} a
     JOIN $form->{vc} c ON (a.$form->{vc}_id = c.id)
     JOIN address ad ON (ad.trans_id = c.id)
     LEFT JOIN contact ct ON (ct.trans_id = c.id)
+    LEFT JOIN shipto s ON (a.id = s.trans_id)
     WHERE $where
     $c{$_}{and}
 |;

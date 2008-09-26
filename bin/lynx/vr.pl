@@ -449,6 +449,12 @@ sub search {
 	     payment_reversal => 'Payment Reversal Batches'
 	   );
 
+# $locale->text('All Batches')
+# $locale->text('Payable Batches')
+# $locale->text('General Ledger Batches')
+# $locale->text('Payment Batches')
+# $locale->text('Payment Reversal Batches')
+
   $form->{title} = $locale->text($title{$form->{batch}});
 
   $form->header;

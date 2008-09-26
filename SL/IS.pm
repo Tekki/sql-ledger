@@ -171,6 +171,8 @@ sub invoice_details {
   my $j = 0;
   my $ok;
 
+  @{ $form->{lineitems} } = ();
+
   foreach $item (@sortlist) {
 
     $i = $item->[0];

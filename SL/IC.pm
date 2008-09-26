@@ -199,22 +199,26 @@ sub save {
   for (qw(alternate obsolete onhand assembly)) { $form->{$_} *= 1 }
   
   if ($form->{id} && $form->{changeup}) {
-    my $stock = new Form;
-    $stock->{rowcount} = 1;
-    $stock->{qty_1} = $form->{onhand} * -1;
-    $stock->{id_1} = $form->{id};
-
+    
     if ($form->{assembly}) {
+      my $stock = new Form;
+      $stock->{rowcount} = 1;
+      $stock->{qty_1} = $form->{onhand} * -1;
+      $stock->{id_1} = $form->{id};
+
       IC->restock_assemblies($myconfig, $stock, $dbh);
       
       $query = qq|UPDATE parts SET obsolete = '1'
 		  WHERE id = $form->{id}|;
       $dbh->do($query) || $form->dberror($query);
-    }
 
-    $form->{stock} = $form->{onhand};
-    $form->{onhand} = 0;
-    $form->{id} = 0;
+      $form->{stock} = $form->{onhand};
+      $form->{onhand} = 0;
+      $form->{id} = 0;
+    
+    } else {
+      $form->{id} = 0 unless $form->{orphaned};
+    }
 
   }
   
@@ -1559,17 +1563,19 @@ sub requirements {
   }
 
   # add assemblies from open sales orders
-  $query = qq|SELECT p.id, i.qty - i.ship - p.onhand AS qty
+  $query = qq|SELECT p.id, SUM(i.qty) - SUM(i.ship) AS qty, p.onhand
               FROM orderitems i
 	      JOIN parts p ON (p.id = i.parts_id)
 	      JOIN oe a ON (a.id = i.trans_id)
 	      WHERE $where
 	      AND p.assembly = '1'
-	      AND a.closed = '0'|;
+	      AND a.closed = '0'
+	      GROUP BY p.id, p.onhand|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    $ref->{qty} -= $ref->{onhand};
     &requirements_assembly($dbh, $form, \%parts, $ref->{id}, $ref->{qty}, $where) if $ref->{qty};
   }
   $sth->finish;

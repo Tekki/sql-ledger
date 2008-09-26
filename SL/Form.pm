@@ -78,7 +78,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.8.13";
+  $self->{version} = "2.8.14";
   $self->{dbversion} = "2.8.8";
 
   bless $self, $type;
@@ -2330,7 +2330,7 @@ sub create_lock {
  
   # remove expired locks
   $query = qq|DELETE FROM semaphore
-              WHERE expires < $expires|;
+              WHERE expires < '$expires'|;
   $dbh->do($query) || $self->dberror($query);
 	      
   $expires = time + $myconfig{timeout};

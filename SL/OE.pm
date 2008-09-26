@@ -1150,6 +1150,8 @@ sub order_details {
   my $k = scalar @sortlist;
   my $j = 0;
 
+  @{ $form->{lineitems} } = ();
+  
   foreach $item (@sortlist) {
     $i = $item->[0];
     $j++;

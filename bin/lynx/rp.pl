@@ -1952,6 +1952,7 @@ sub print_form {
   @a = qw(name address1 address2 city state zipcode country contact typeofcontact salutation firstname lastname);
   push @a, "$form->{vc}number", "$form->{vc}phone", "$form->{vc}fax", "$form->{vc}taxnumber";
   push @a, 'email' if ! $form->{media} eq 'email';
+  push @a, map { "shipto$_" } qw(name address1 address2 city state zipcode country contact phone fax email);
 
   $i = 0;
   while (@{ $form->{AG} }) {
@@ -2297,7 +2298,7 @@ sub list_payments {
   @columns = (qw(transdate reference description name));
   @columns = $form->sort_columns(@columns);
   push @columns, "$form->{vc}number";
-  push @columns, (qw(description paid source memo));
+  push @columns, (qw(paid source memo));
 
   if ($form->{till}) {
     @columns = (qw(transdate reference name));
