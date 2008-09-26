@@ -459,11 +459,6 @@ sub transactions {
       $where = $glwhere;
       $where =~ s/(AND)??ac.transdate.*?(AND|$)//g;
       
-      $query = qq|SELECT transdate
-                  FROM yearend
-		  ORDER BY transdate DESC|;
-      my ($fromdate) = $dbh->selectrow_array($query);
-      
       $query = qq|SELECT SUM(ac.amount)
 		  FROM acc_trans ac
 		  JOIN chart c ON (ac.chart_id = c.id)
@@ -471,8 +466,6 @@ sub transactions {
 		  WHERE $where
 		  AND ac.transdate < date '$form->{datefrom}'
 		  |;
-      $query .= qq|AND ac.transdate > '$fromdate'| if $fromdate;
-      
       my ($balance) = $dbh->selectrow_array($query);
       $form->{balance} += $balance;
 
@@ -489,7 +482,6 @@ sub transactions {
 		  WHERE $where
 		  AND ac.transdate < date '$form->{datefrom}'
 		  |;
-      $query .= qq|AND ac.transdate > '$fromdate'| if $fromdate;
       ($balance) = $dbh->selectrow_array($query);
       $form->{balance} += $balance;
 
@@ -506,7 +498,6 @@ sub transactions {
 		  WHERE $where
 		  AND ac.transdate < date '$form->{datefrom}'
 		  |;
-      $query .= qq|AND ac.transdate > '$fromdate'| if $fromdate;
       
       ($balance) = $dbh->selectrow_array($query);
       $form->{balance} += $balance;

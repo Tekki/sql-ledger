@@ -1789,7 +1789,7 @@ $form->{body}
 
   $form->{type} = "template";
 
-  $form->hide_form(qw(file type path login));
+  $form->hide_form(qw(code file type path login));
   
   print qq|
 <input name=action type=submit class=submit value="|.$locale->text('Edit').qq|">|;
@@ -1817,7 +1817,7 @@ sub edit_template {
   # convert &nbsp to &amp;nbsp;
   $form->{body} =~ s/&nbsp;/&amp;nbsp;/gi;
   
-  $form->{callback} = "$form->{script}?action=display_form&file=$form->{file}&path=$form->{path}&login=$form->{login}";
+  $form->{callback} = "$form->{script}?action=display_form&file=$form->{file}&code=$form->{code}&path=$form->{path}&login=$form->{login}";
   
   $form->header;
   

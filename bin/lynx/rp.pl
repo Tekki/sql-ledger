@@ -1857,11 +1857,12 @@ sub send_email {
 
   $form->{OUT} = "$sendmail";
 
-  $form->{subject} = $locale->text('Statement').qq| - $form->{todate}| unless $form->{subject};
   $form->isblank("email", $locale->text('E-mail address missing!'));
 
   RP->aging(\%myconfig, \%$form);
   
+  $form->{subject} = $locale->text('Statement').qq| - $form->{todate}| unless $form->{subject};
+
   &print_form;
   
   $form->redirect($locale->text('Statement sent to')." $form->{$form->{vc}}");

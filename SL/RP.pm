@@ -1539,7 +1539,6 @@ sub aging {
   $sth = $dbh->prepare($query) || $form->dberror($query);
 
   my @var;
-  my %audittrail;
   
   foreach $curr (split /:/, $form->{currencies}) {
   
@@ -1556,15 +1555,6 @@ sub aging {
 	$ref->{exchangerate} ||= 1;
 	$ref->{language_code} = $item->{language_code};
 	push @{ $form->{AG} }, $ref;
-
-	if ($form->{audittrail}) {
-	  %audittrail = ( tablename  => '$form->{arap}',
-	                  reference  => $ref->{invnumber},
-			  formname   => 'statement',
-			  action     => '$form->{audittrail}',
-			  id         => $ref->{id} );
-	  $form->audittrail($dbh, "", \%audittrail);
-	}
       }
       $sth->finish;
 
