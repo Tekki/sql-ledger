@@ -1511,7 +1511,7 @@ sub print_form {
     $form->isblank("rvc", qq|$form->{"${ARAP}_paid_$form->{paidaccounts}"} : |.$locale->text('RVC missing!'));
   }
 
-  $form->fdld(\%myconfig);
+  $form->fdld(\%myconfig, \%$locale);
   
   if (exists $form->{longformat}) {
     for ("${inv}date", "${due}date", "shippingdate", "transdate") { $form->{$_} = $locale->date(\%myconfig, $form->{$_}, $form->{longformat}) }

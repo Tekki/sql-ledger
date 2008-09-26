@@ -78,7 +78,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.8.9";
+  $self->{version} = "2.8.10";
   $self->{dbversion} = "2.8.8";
 
   bless $self, $type;
@@ -1757,6 +1757,7 @@ sub get_currencies {
     }
     $currencies .= "$curr:";
   }
+  $sth->finish;
 
   $dbh->disconnect if $disconnect;
   
@@ -3195,10 +3196,10 @@ sub from_to {
 
 
 sub fdld {
-  my ($self, $myconfig) = @_;
+  my ($self, $myconfig, $locale) = @_;
 
-  $self->{fdm} = $self->dayofmonth($myconfig{dateformat}, $self->{transdate}, 'fdm');
-  $self->{ldm} = $self->dayofmonth($myconfig{dateformat}, $self->{transdate});
+  $self->{fdm} = $self->dayofmonth($myconfig->{dateformat}, $self->{transdate}, 'fdm');
+  $self->{ldm} = $self->dayofmonth($myconfig->{dateformat}, $self->{transdate});
   
   my $transdate = $self->datetonum($myconfig, $self->{transdate});
   
@@ -3231,16 +3232,16 @@ sub fdld {
     }
     $m2 = substr("0$m2", -2);
 
-    $d1 = $self->format_date($myconfig{dateformat}, "$y1${m1}01");
-    $d2 = $self->format_date($myconfig{dateformat}, $self->dayofmonth("yyyymmdd", "$y1${m1}01"));
-    $d3 = $self->format_date($myconfig{dateformat}, "$y2${m2}01");
-    $d4 = $self->format_date($myconfig{dateformat}, $self->dayofmonth("yyyymmdd", "$y2${m2}01"));
+    $d1 = $self->format_date($myconfig->{dateformat}, "$y1${m1}01");
+    $d2 = $self->format_date($myconfig->{dateformat}, $self->dayofmonth("yyyymmdd", "$y1${m1}01"));
+    $d3 = $self->format_date($myconfig->{dateformat}, "$y2${m2}01");
+    $d4 = $self->format_date($myconfig->{dateformat}, $self->dayofmonth("yyyymmdd", "$y2${m2}01"));
 
     if (exists $self->{longformat}) {
-      $self->{"fdm+$_"} = Locale::date("", $myconfig, $d1, $self->{longformat});
-      $self->{"ldm+$_"} = Locale::date("", $myconfig, $d2, $self->{longformat});
-      $self->{"fdm-$_"} = Locale::date("", $myconfig, $d3, $self->{longformat});
-      $self->{"ldm-$_"} = Locale::date("", $myconfig, $d4, $self->{longformat});
+      $self->{"fdm+$_"} = $locale->date($myconfig, $d1, $self->{longformat});
+      $self->{"ldm+$_"} = $locale->date($myconfig, $d2, $self->{longformat});
+      $self->{"fdm-$_"} = $locale->date($myconfig, $d3, $self->{longformat});
+      $self->{"ldm-$_"} = $locale->date($myconfig, $d4, $self->{longformat});
     } else {
       $self->{"fdm+$_"} = $d1;
       $self->{"ldm+$_"} = $d2;
@@ -3249,14 +3250,14 @@ sub fdld {
     }
   }
  
-  $d1 = $self->format_date($myconfig{dateformat}, "$self->{yyyy}$self->{mm}01");
-  $d2 = $self->format_date($myconfig{dateformat}, $self->dayofmonth("yyyymmdd", "$self->{yyyy}$form->{mm}01"));
+  $d1 = $self->format_date($myconfig->{dateformat}, "$self->{yyyy}$self->{mm}01");
+  $d2 = $self->format_date($myconfig->{dateformat}, $self->dayofmonth("yyyymmdd", "$self->{yyyy}$form->{mm}01"));
 
   if (exists $self->{longformat}) {
-    $self->{fdm} = Locale::date("", $myconfig, $self->{fdm}, $self->{longformat});
-    $self->{ldm} = Locale::date("", $myconfig, $self->{ldm}, $self->{longformat});
-    $self->{fdy} = Locale::date("", $myconfig, $d1, $self->{longformat});
-    $self->{ldy} = Locale::date("", $myconfig, $d2, $self->{longformat});
+    $self->{fdm} = $locale->date($myconfig, $self->{fdm}, $self->{longformat});
+    $self->{ldm} = $locale->date($myconfig, $self->{ldm}, $self->{longformat});
+    $self->{fdy} = $locale->date($myconfig, $d1, $self->{longformat});
+    $self->{ldy} = $locale->date($myconfig, $d2, $self->{longformat});
   } else {
     $self->{fdy} = $d1;
     $self->{ldy} = $d2;
@@ -3266,16 +3267,16 @@ sub fdld {
     $y1 = $self->{yyyy} + $_;
     $y2 = $self->{yyyy} - $_;
 
-    $d1 = $self->format_date($myconfig{dateformat}, "$y1$self->{mm}01");
-    $d2 = $self->format_date($myconfig{dateformat}, $self->dayofmonth("yyyymmdd", "$y1$self->{mm}01"));
-    $d3 = $self->format_date($myconfig{dateformat}, "$y2$self->{mm}01");
-    $d4 = $self->format_date($myconfig{dateformat}, $self->dayofmonth("yyyymmdd", "$y2$self->{mm}01"));
+    $d1 = $self->format_date($myconfig->{dateformat}, "$y1$self->{mm}01");
+    $d2 = $self->format_date($myconfig->{dateformat}, $self->dayofmonth("yyyymmdd", "$y1$self->{mm}01"));
+    $d3 = $self->format_date($myconfig->{dateformat}, "$y2$self->{mm}01");
+    $d4 = $self->format_date($myconfig->{dateformat}, $self->dayofmonth("yyyymmdd", "$y2$self->{mm}01"));
 
     if (exists $self->{longformat}) {
-      $self->{"fdy+$_"} = Locale::date("", $myconfig, $d1, $self->{longformat});
-      $self->{"ldy+$_"} = Locale::date("", $myconfig, $d2, $self->{longformat});
-      $self->{"fdy-$_"} = Locale::date("", $myconfig, $d3, $self->{longformat});
-      $self->{"ldy-$_"} = Locale::date("", $myconfig, $d4, $self->{longformat});
+      $self->{"fdy+$_"} = $locale->date($myconfig, $d1, $self->{longformat});
+      $self->{"ldy+$_"} = $locale->date($myconfig, $d2, $self->{longformat});
+      $self->{"fdy-$_"} = $locale->date($myconfig, $d3, $self->{longformat});
+      $self->{"ldy-$_"} = $locale->date($myconfig, $d4, $self->{longformat});
     } else {
       $self->{"fdy+$_"} = $d1;
       $self->{"ldy+$_"} = $d2;

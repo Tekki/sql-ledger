@@ -156,6 +156,7 @@ sub post_transaction {
 
   my $dbh = $form->dbconnect_noauto($myconfig);
   my $query;
+  my $rc;
   
   $form->{pending} = 1;
   
@@ -181,8 +182,12 @@ sub post_transaction {
 		transdate = '$form->{transdate}'
 		WHERE id = $form->{batchid}|;
     $dbh->do($query) || $form->dberror($query);
-  }
 
+    if (!($rc = $dbh->commit)) {
+      $dbh->disconnect;
+      return;
+    }
+  }
 
   if ($form->{batch} eq 'ap') {
     AA->post_transaction($myconfig, $form, $dbh);
@@ -191,10 +196,10 @@ sub post_transaction {
     GL->post_transaction($myconfig, $form, $dbh);
   }
   if ($form->{batch} eq 'payment') {
-    &{ "CP::post_$form->{payment}" }("", $myconfig, $form, $dbh);
+    CP->post_payment($myconfig, $form, $dbh);
   }
   
-  my $rc = $dbh->commit;
+  $rc = $dbh->commit;
   $dbh->disconnect;
 
   $rc;

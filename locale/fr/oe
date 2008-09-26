@@ -320,6 +320,7 @@ $self{subs} = {
   'select_project'              => 'select_project',
   'select_vendor'               => 'select_vendor',
   'send_email'                  => 'send_email',
+  'ship_all'                    => 'ship_all',
   'ship_receive'                => 'ship_receive',
   'ship_to'                     => 'ship_to',
   'subtotal'                    => 'subtotal',

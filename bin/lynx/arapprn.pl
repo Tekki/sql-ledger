@@ -373,7 +373,7 @@ sub print_transaction {
   
   for (qw(employee paymentmethod)) { ($form->{$_}, $form->{"${_}_id"}) = split /--/, $form->{$_} };
   
-  $form->fdld(\%myconfig);
+  $form->fdld(\%myconfig, \%$locale);
 
   if (exists $form->{longformat}) {
     for (qw(duedate transdate)) { $form->{$_} = $locale->date(\%myconfig, $form->{$_}, $form->{longformat}) }

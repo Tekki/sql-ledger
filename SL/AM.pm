@@ -1464,7 +1464,7 @@ sub backup {
   $t[4] = substr("0$t[4]", -2);
 
   my $boundary = time;
-  my $tmpfile = "$userspath/$boundary.$myconfig->{dbname}-$form->{dbversion}-$t[5]$t[4]$t[3].sql";
+  my $tmpfile = "$userspath/$boundary.$myconfig->{dbname}-$form->{version}-$t[5]$t[4]$t[3].sql";
   my $out = $form->{OUT};
   $form->{OUT} = ">$tmpfile";
 
@@ -1599,7 +1599,7 @@ sub backup {
   
   print OUT qq|-- SQL-Ledger Backup
 -- Dataset: $myconfig->{dbname}
--- Version: $form->{dbversion}
+-- Version: $form->{version}
 -- Host: $myconfig->{dbhost}
 -- Login: $form->{login}
 -- User: $myconfig->{name}
@@ -1734,7 +1734,7 @@ $myconfig->{dboptions};
 
     $mail->{to} = qq|"$myconfig->{name}" <$myconfig->{email}>|;
     $mail->{from} = qq|"$myconfig->{name}" <$myconfig->{email}>|;
-    $mail->{subject} = "SQL-Ledger Backup / $myconfig->{dbname}-$form->{dbversion}-$t[5]$t[4]$t[3].sql$suffix";
+    $mail->{subject} = "SQL-Ledger Backup / $myconfig->{dbname}-$form->{version}-$t[5]$t[4]$t[3].sql$suffix";
     @{ $mail->{attachments} } = ($tmpfile);
     $mail->{version} = $form->{version};
     $mail->{fileid} = "$boundary.";
@@ -1751,7 +1751,7 @@ $myconfig->{dboptions};
     open(OUT, ">-") or $form->error("STDOUT : $!");
    
     print OUT qq|Content-Type: application/file;
-Content-Disposition: attachment; filename="$myconfig->{dbname}-$form->{dbversion}-$t[5]$t[4]$t[3].sql$suffix"
+Content-Disposition: attachment; filename="$myconfig->{dbname}-$form->{version}-$t[5]$t[4]$t[3].sql$suffix"
 
 |;
     binmode(IN);
@@ -1873,6 +1873,8 @@ sub post_yearend {
   $query = qq|SELECT id FROM gl
 	      WHERE reference = '$uid'|;
   ($form->{id}) = $dbh->selectrow_array($query);
+
+  $form->{reference} = $form->update_defaults($myconfig, 'glnumber', $dbh) unless $form->{reference};
 
   $query = qq|UPDATE gl SET 
 	      reference = |.$dbh->quote($form->{reference}).qq|,

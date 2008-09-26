@@ -224,7 +224,6 @@ $self{texts} = {
   'Zip/Postal Code'             => 'Code postal',
   'days'                        => 'jours',
   'sent'                        => 'envoyé',
-  'unexpected error!'           => 'Erreur Inattendue!',
 };
 
 $self{subs} = {
@@ -248,7 +247,6 @@ $self{subs} = {
   'display_row'                 => 'display_row',
   'e_mail'                      => 'e_mail',
   'edit'                        => 'edit',
-  'edit_assemblyitem'           => 'edit_assemblyitem',
   'form_footer'                 => 'form_footer',
   'form_header'                 => 'form_header',
   'generate_report'             => 'generate_report',
