@@ -57,7 +57,6 @@ $self{texts} = {
   'Paid'                        => 'Ödendi',
   'Payment date missing!'       => 'Ödeme Tarihi yok',
   'Payments'                    => 'Ödemeler',
-  'Save'                        => 'Kaydet',
   'Sep'                         => 'Eyl',
   'September'                   => 'Eylül',
   'Source'                      => 'Kaynak',

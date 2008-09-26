@@ -6,10 +6,11 @@ $self{texts} = {
   'Continue'                    => '继续',
   'Date'                        => '日期',
   'Memo'                        => '备忘录',
-  'Postscript'                  => '附言',
+  'PDF'                         => 'PDF',
+  'Postscript'                  => 'PostScript',
   'Printed'                     => '巳列印',
-  'Screen'                      => '萤幕',
-  'Select postscript or PDF!'   => '【◎Fix:◎于;◎於】附言或PDF中选一',
+  'Screen'                      => '显示器',
+  'Select postscript or PDF!'   => '于PostScript或PDF中选一',
   'Source'                      => '来源',
 };
 

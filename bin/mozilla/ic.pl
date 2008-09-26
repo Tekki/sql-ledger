@@ -270,7 +270,11 @@ sub form_header {
     $form->{markup} = $form->format_amount(\%myconfig, $markup, 1);
   }
   
-  for (qw(listprice sellprice lastcost avgcost)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, 2) }
+  ($dec) = ($form->{sellprice} =~ /\.(\d+)/);
+  $dec = length $dec;
+  $decimalplaces = ($dec > 2) ? $dec : 2;
+  
+  for (qw(listprice sellprice lastcost avgcost)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, $decimalplaces) }
   for (qw(weight rop stock)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}) }
   
   for (qw(partnumber description unit notes)) { $form->{$_} = $form->quote($form->{$_}) }
@@ -352,7 +356,7 @@ sub form_header {
 |;
 
 
-  if ($form->{item} =~ /(part|labor|assembly)/) {
+  if ($form->{item} =~ /(part|assembly)/) {
     $n = ($form->{onhand} > 0) ? "1" : "0";
     $onhand = qq|
 	      <tr>
@@ -361,22 +365,21 @@ sub form_header {
 	      </tr>
 |;
 
-    if ($form->{item} ne 'labor') {
-      $rop = qq|
+    $rop = qq|
 	      <tr>
 		<th align="right" nowrap="true">|.$locale->text('ROP').qq|</th>
 		<td><input name=rop size=10 value=$form->{rop}></td>
 	      </tr>
 |;
     
-      $bin = qq|
+    $bin = qq|
 	      <tr>
 		<th align="right" nowrap="true">|.$locale->text('Bin').qq|</th>
 		<td><input name=bin size=10 value="$form->{bin}"></td>
 	      </tr>
 |;
     
-      $imagelinks = qq|
+    $imagelinks = qq|
   <tr>
     <td>
       <table width=100%>
@@ -394,8 +397,6 @@ sub form_header {
     </td>
   </tr>
 |;
-
-    }
   }
 
 
@@ -766,7 +767,7 @@ sub form_footer {
 
 sub search {
 
-  $form->get_partsgroup(\%myconfig, { all => 0, searchitems => $form->{searchitems}});
+  $form->get_partsgroup(\%myconfig, { searchitems => $form->{searchitems}});
 
   IC->get_warehouses(\%myconfig, \%$form) unless $form->{searchitems} =~ /(service|labor)/;
 
@@ -809,7 +810,7 @@ sub search {
 
   $orphaned = qq|
             <input name=itemstatus class=radio type=radio value=orphaned>&nbsp;|.$locale->text('Orphaned');
-	    
+
   if ($form->{searchitems} =~ /(all|part|assembly)/) {
     
     $onhand = qq|
@@ -848,8 +849,9 @@ sub search {
 
       $l_warehouse = qq|<input name=l_warehouse class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Warehouse');
 
+    }
 
-      $drawing = qq|
+    $drawing = qq|
         <tr>
           <th align=right nowrap>|.$locale->text('Drawing').qq|</th>
           <td><input name=drawing size=20></td>
@@ -858,12 +860,11 @@ sub search {
         </tr>
 |;
 
-      $l_image = qq|<input name=l_image class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Image');
-      
-      $l_drawing = qq|<input name=l_drawing class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Drawing');
-      $l_microfiche = qq|<input name=l_microfiche class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Microfiche');
+    $l_image = qq|<input name=l_image class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Image');
+    
+    $l_drawing = qq|<input name=l_drawing class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Drawing');
+    $l_microfiche = qq|<input name=l_microfiche class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Microfiche');
 
-    }
   }
 
   if ($form->{searchitems} eq 'assembly') {
@@ -1008,7 +1009,9 @@ sub search {
 	  </td>
 	</tr>
 |;
+
   }
+  
 
   @a = ();
   push @a, qq|<input name=l_runningnumber class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('No.');
@@ -1175,6 +1178,7 @@ sub generate_report {
   }
   
   if ($form->{itemstatus} eq 'bom') {
+    $form->{l_perassembly} = "Y" if $form->{l_qty} eq "Y";
     $form->{individual} = 1;
     $form->{title} = $locale->text('BOM');
   }
@@ -1354,7 +1358,7 @@ sub generate_report {
   }
 
   
-  @columns = $form->sort_columns(qw(partnumber description notes assemblypartnumber partsgroup make model bin onhand rop unit listprice linetotallistprice sellprice linetotalsellprice lastcost linetotallastcost lastcostmarkup avgcost linetotalavgcost avgcostmarkup curr priceupdate weight image drawing microfiche invnumber ordnumber quonumber name employee serialnumber warehouse));
+  @columns = $form->sort_columns(qw(partnumber description notes assemblypartnumber partsgroup make model bin onhand perassembly rop unit listprice linetotallistprice sellprice linetotalsellprice lastcost linetotallastcost lastcostmarkup avgcost linetotalavgcost avgcostmarkup curr priceupdate weight image drawing microfiche invnumber ordnumber quonumber name employee serialnumber warehouse));
   unshift @columns, "runningnumber";
 
   if ($form->{l_linetotal}) {
@@ -1419,16 +1423,18 @@ sub generate_report {
   
   $callback =~ s/(direction=).*?\&/$1$form->{direction}\&/;
 
-  if ($form->{searchitems} eq 'assembly' && $form->{l_partnumber}) {
-    # replace partnumber with partnumber_
-    $ndx = 0;
-    foreach $item (@column_index) {
-      $ndx++;
-      last if $item eq 'partnumber';
-    }
+  if ($form->{searchitems} eq 'assembly') {
+    if ($form->{l_partnumber}) {
+      # replace partnumber with partnumber_
+      $ndx = 0;
+      foreach $item (@column_index) {
+	$ndx++;
+	last if $item eq 'partnumber';
+      }
 
-    splice @column_index, $ndx, 0, map { "partnumber_$_" } (1 .. $form->{pncol});
-    $colspan = $form->{pncol} + 1;
+      splice @column_index, $ndx, 0, map { "partnumber_$_" } (1 .. $form->{pncol});
+      $colspan = $form->{pncol} + 1;
+    }
   }
 
   if ($form->{searchitems} eq 'component') {
@@ -1455,6 +1461,7 @@ sub generate_report {
   $column_header{bin} = qq|<th><a class=listheading href=$href&sort=bin>|.$locale->text('Bin').qq|</a></th>|;
   $column_header{priceupdate} = qq|<th nowrap><a class=listheading href=$href&sort=priceupdate>|.$locale->text('Updated').qq|</a></th>|;
   $column_header{onhand} = qq|<th class=listheading nowrap>|.$locale->text('Qty').qq|</th>|;
+  $column_header{perassembly} = qq|<th>&nbsp;</th>|;
   $column_header{unit} = qq|<th class=listheading nowrap>|.$locale->text('Unit').qq|</th>|;
   $column_header{listprice} = qq|<th class=listheading nowrap>|.$locale->text('List Price').qq|</th>|;
   $column_header{lastcost} = qq|<th class=listheading nowrap>|.$locale->text('Last Cost').qq|</th>|;
@@ -1620,6 +1627,7 @@ sub generate_report {
     for (qw(description notes partsgroup employee curr)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
 
     $column_data{onhand} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{onhand}, '', "&nbsp;")."</td>";
+    $column_data{perassembly} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{perassembly}, '', "&nbsp;")."</td>";
 
     for (qw(sellprice listprice lastcost avgcost)) { $column_data{$_} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{$_}, 2, "&nbsp;") . "</td>" }
     
@@ -1804,6 +1812,10 @@ sub vendor_row {
   my ($numrows) = @_;
 
   $form->{selectvendor} = $form->unescape($form->{selectvendor});
+
+  $currency = qq|
+	  <th class="listheading">|.$locale->text('Curr').qq|</th>| if $form->{selectcurrency};
+	  
   print qq|
   <input type=hidden name=selectvendor value="|.$form->escape($form->{selectvendor},1).qq|">
   
@@ -1814,14 +1826,19 @@ sub vendor_row {
 	  <th class="listheading">|.$locale->text('Vendor').qq|</th>
 	  <th class="listheading">|.$locale->text('Number').qq|</th>
 	  <th class="listheading">|.$locale->text('Cost').qq|</th>
-	  <th class="listheading">|.$locale->text('Curr').qq|</th>
+	  $currency
 	  <th class="listheading">|.$locale->text('Leadtime').qq|</th>
 	</tr>
 |;
 
   for $i (1 .. $numrows) {
     
-    $form->{selectcurrency} =~ s/ selected//;
+    if ($form->{selectcurrency}) {
+      $form->{selectcurrency} =~ s/ selected//;
+      $form->{selectcurrency} =~ s/option>$form->{"vendorcurr_$i"}/option selected>$form->{"vendorcurr_$i"}/;
+      $currency = qq|
+	  <td><select name="vendorcurr_$i">$form->{selectcurrency}</select></td>|;
+    }
    
     if ($i == $numrows) {
      
@@ -1837,15 +1854,12 @@ sub vendor_row {
    
     } else {
       
-      $form->{selectcurrency} =~ s/option>$form->{"vendorcurr_$i"}/option selected>$form->{"vendorcurr_$i"}/;
- 
       ($vendor) = split /--/, $form->{"vendor_$i"};
       $vendor = qq|
           <td>$vendor
 	  <input type=hidden name="vendor_$i" value="$form->{"vendor_$i"}">
 	  </td>
 |;
-
     }
    
     print qq|
@@ -1853,7 +1867,7 @@ sub vendor_row {
 	  $vendor
 	  <td><input name="partnumber_$i" size=20 value="$form->{"partnumber_$i"}"></td>
 	  <td><input name="lastcost_$i" size=10 value=|.$form->format_amount(\%myconfig, $form->{"lastcost_$i"}, 2).qq|></td>
-	  <td><select name="vendorcurr_$i">$form->{selectcurrency}</select></td>
+	  $currency
 	  <td nowrap><input name="leadtime_$i" size=5 value=|.$form->format_amount(\%myconfig, $form->{"leadtime_$i"}).qq|> <b>|.$locale->text('days').qq|</b></td>
 	</tr>
 |;
@@ -1884,6 +1898,8 @@ sub customer_row {
   
   $form->hide_form(qw(selectcurrency));
 
+  $currency = qq|<th class="listheading">|.$locale->text('Curr').qq|</th>| if $form->{selectcurrency};
+	  
   print qq|
   <input type=hidden name=selectcustomer value="|.$form->escape($form->{selectcustomer},1).qq|">
   <input type=hidden name=selectpricegroup value="|.$form->escape($form->{selectpricegroup},1).qq|">
@@ -1896,16 +1912,20 @@ sub customer_row {
 	  $pricegroup
 	  <th class="listheading">|.$locale->text('Break').qq|</th>
 	  <th class="listheading">|.$locale->text('Sell Price').qq|</th>
-	  <th class="listheading">|.$locale->text('Curr').qq|</th>
+	  $currency
 	  <th class="listheading">|.$locale->text('From').qq|</th>
 	  <th class="listheading">|.$locale->text('To').qq|</th>
 	</tr>
 |;
 
   for $i (1 .. $numrows) {
-    
-    $form->{selectcurrency} =~ s/ selected//;
-    $form->{selectcurrency} =~ s/option>$form->{"customercurr_$i"}/option selected>$form->{"customercurr_$i"}/;
+
+    if ($form->{selectcurrency}) {
+      $form->{selectcurrency} =~ s/ selected//;
+      $form->{selectcurrency} =~ s/option>$form->{"customercurr_$i"}/option selected>$form->{"customercurr_$i"}/;
+      $currency = qq|
+	  <td><select name="customercurr_$i">$form->{selectcurrency}</select></td>|;
+    }
     
     if ($i == $numrows) {
       $customer = qq|
@@ -1948,7 +1968,7 @@ sub customer_row {
 
 	  <td><input name="pricebreak_$i" size=5 value=|.$form->format_amount(\%myconfig, $form->{"pricebreak_$i"}).qq|></td>
 	  <td><input name="customerprice_$i" size=10 value=|.$form->format_amount(\%myconfig, $form->{"customerprice_$i"}, 2).qq|></td>
-	  <td><select name="customercurr_$i">$form->{selectcurrency}</select></td>
+	  $currency
 	  <td><input name="validfrom_$i" size=11 title="$myconfig{dateformat}" value="$form->{"validfrom_$i"}"></td>
 	  <td><input name="validto_$i" size=11 title="$myconfig{dateformat}" value="$form->{"validto_$i"}"></td>
 	</tr>
@@ -1968,13 +1988,13 @@ sub customer_row {
 sub assembly_row {
   my ($numrows) = @_;
 
-  @column_index = qw(runningnumber qty unit bom adj partnumber description listprice sellprice lastcost);
+  @column_index = qw(runningnumber qty unit bom adj partnumber description sellprice listprice lastcost);
   
   if ($form->{selectassemblypartsgroup}) {
     $form->{selectassemblypartsgroup} = $form->unescape($form->{selectassemblypartsgroup});
-    @column_index = qw(runningnumber qty unit bom adj partnumber description partsgroup listprice sellprice lastcost);
+    @column_index = qw(runningnumber qty unit bom adj partnumber description partsgroup sellprice listprice lastcost);
   }
-  
+
   delete $form->{previousform};
 
   # change callback
@@ -1988,6 +2008,7 @@ sub assembly_row {
   $form->{baseassembly} = 0;
   $previousform = "";
   # save form variables in a previousform variable
+  $form->{selectcustomer} = "";   # we seem to have run into a 40kb limit
   foreach $key (sort keys %$form) {
     # escape ampersands
     $form->{$key} =~ s/&/%26/g;

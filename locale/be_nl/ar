@@ -94,7 +94,6 @@ $self{texts} = {
   'Reference'                   => 'Referentie',
   'Remaining'                   => 'Resterend',
   'Salesperson'                 => 'Verkoper',
-  'Save'                        => 'Opslaan',
   'Screen'                      => 'Scherm',
   'Select from one of the names below' => 'Kies een van de onderstaande namen',
   'Select from one of the projects below' => 'Kies een van de onderstaande projecten',

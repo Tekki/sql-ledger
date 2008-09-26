@@ -181,7 +181,6 @@ $self{texts} = {
   'SKU'                         => 'SKU',
   'Sales Order'                 => 'Verkooporder',
   'Salesperson'                 => 'Verkoper',
-  'Save'                        => 'Opslaan',
   'Screen'                      => 'Scherm',
   'Select all'                  => 'Selecteer alles',
   'Select from one of the names below' => 'Kies een van de onderstaande namen',

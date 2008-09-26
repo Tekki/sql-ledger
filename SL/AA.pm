@@ -195,18 +195,16 @@ sub post_transaction {
 
   # check if id really exists
   if ($form->{id}) {
-    $query = qq|SELECT id FROM $table WHERE id = $form->{id}|;
-    ($form->{id}) = $dbh->selectrow_array($query);
-  }
-  
-  # if we have an id delete old records
-  if ($form->{id}) {
-
-    # delete detail records
-    $query = qq|DELETE FROM acc_trans WHERE trans_id = $form->{id}|;
-    $dbh->do($query) || $form->dberror($query);
-    
+    $query = qq|SELECT id FROM $table
+                WHERE id = $form->{id}|;
+    if ($dbh->selectrow_array($query)) {
+      # delete detail records
+      $query = qq|DELETE FROM acc_trans
+                  WHERE trans_id = $form->{id}|;
+      $dbh->do($query) || $form->dberror($query);
+    }
   } else {
+  
     my $uid = time;
     $uid .= $form->{login};
 
@@ -371,7 +369,7 @@ sub post_transaction {
         if ($form->{currency} ne $form->{defaultcurrency}) {
 	  
 	  # exchangerate gain/loss
-	  $amount = $form->round_amount($paid{fxamount}{$i} * ($form->{exchangerate} - $form->{"exchangerate_$i"}) * -1, 2);
+	  $amount = ($form->round_amount($paid{fxamount}{$i} * $form->{exchangerate},2) - $form->round_amount($paid{fxamount}{$i} * $form->{"exchangerate_$i"},2)) * -1;
 	  
 	  if ($amount) {
 	    my $accno_id = (($amount * $ml) > 0) ? $fxgain_accno_id : $fxloss_accno_id;
@@ -701,11 +699,11 @@ sub get_name {
   $sth->execute || $form->dberror($query);
 
   $ref = $sth->fetchrow_hashref(NAME_lc);
-
+  
   if ($form->{id}) {
     for (qw(currency employee employee_id intnotes)) { delete $ref->{$_} }
   }
-  
+ 
   for (keys %$ref) { $form->{$_} = $ref->{$_} }
   $sth->finish;
 

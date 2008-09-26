@@ -62,7 +62,6 @@ $self{texts} = {
   'Defaults saved!'             => 'Valeurs par défaut enrégistrées!',
   'Delete'                      => 'Supprimer',
   'Delete Account'              => 'Supprimer compte',
-  'Department'                  => 'Service',
   'Department deleted!'         => 'Service effacé!',
   'Department saved!'           => 'Service enregistré!',
   'Departments'                 => 'Services',

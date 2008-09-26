@@ -81,26 +81,27 @@ sub reconciliation {
 
   }
 
+  if (@{ $form->{all_years} }) {
+    # accounting years
+    $form->{selectaccountingyear} = "<option>\n";
+    for (@{ $form->{all_years} }) { $form->{selectaccountingyear} .= qq|<option>$_\n| }
+    $form->{selectaccountingmonth} = "<option>\n";
+    for (sort keys %{ $form->{all_month} }) { $form->{selectaccountingmonth} .= qq|<option value=$_>|.$locale->text($form->{all_month}{$_}).qq|\n| }
 
-  # accounting years
-  $form->{selectaccountingyear} = "<option>\n";
-  for (@{ $form->{all_years} }) { $form->{selectaccountingyear} .= qq|<option>$_\n| }
-  $form->{selectaccountingmonth} = "<option>\n";
-  for (sort keys %{ $form->{all_month} }) { $form->{selectaccountingmonth} .= qq|<option value=$_>|.$locale->text($form->{all_month}{$_}).qq|\n| }
-
-  $selectfrom = qq|
+    $selectfrom = qq|
         <tr>
 	<th align=right>|.$locale->text('Period').qq|</th>
 	<td colspan=3>
 	<select name=month>$form->{selectaccountingmonth}</select>
 	<select name=year>$form->{selectaccountingyear}</select>
-	<input name=interval class=radio type=radio value=0 checked>|.$locale->text('Current').qq|
-	<input name=interval class=radio type=radio value=1>|.$locale->text('Month').qq|
-	<input name=interval class=radio type=radio value=3>|.$locale->text('Quarter').qq|
-	<input name=interval class=radio type=radio value=12>|.$locale->text('Year').qq|
+	<input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
+	<input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
+	<input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
+	<input name=interval class=radio type=radio value=12>&nbsp;|.$locale->text('Year').qq|
 	</td>
       </tr>
 |;
+  }
 
 
   $form->header;
@@ -200,9 +201,9 @@ sub get_payments {
 sub display_form {
   
   if ($form->{report}) {
-    @column_index = qw(transdate source name cleared credit debit);
+    @column_index = qw(transdate source name cleared debit credit);
   } else {
-    @column_index = qw(transdate source name cleared credit debit balance);
+    @column_index = qw(transdate source name cleared debit credit balance);
   }
   
   $column_header{cleared} = qq|<th>|.$locale->text('R').qq|</th>|;
@@ -210,14 +211,8 @@ sub display_form {
   $column_header{name} = "<th class=listheading>".$locale->text('Description')."</a></th>";
   $column_header{transdate} = "<th class=listheading>".$locale->text('Date')."</a></th>";
 
-  if ($form->{category} eq 'A') {
-    $column_header{debit} = "<th class=listheading>".$locale->text('Deposit')."</a></th>";
-    $column_header{credit} = "<th class=listheading>".$locale->text('Payment')."</a></th>";
-  } else {
-    $column_header{debit} = "<th class=listheading>".$locale->text('Decrease')."</a></th>";
-    $column_header{credit} = "<th class=listheading>".$locale->text('Increase')."</a></th>";
-  }
-
+  $column_header{debit} = "<th class=listheading>".$locale->text('Debit')."</a></th>";
+  $column_header{credit} = "<th class=listheading>".$locale->text('Credit')."</a></th>";
   $column_header{balance} = "<th class=listheading>".$locale->text('Balance')."</a></th>";
 
   if ($form->{fromdate}) {

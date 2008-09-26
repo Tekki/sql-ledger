@@ -50,7 +50,6 @@ $self{texts} = {
   'October'                     => 'Ekim',
   'Order'                       => 'Sipariş',
   'Payments'                    => 'Ödemeler',
-  'Save'                        => 'Kaydet',
   'Sep'                         => 'Eyl',
   'September'                   => 'Eylül',
   'Source'                      => 'Kaynak',

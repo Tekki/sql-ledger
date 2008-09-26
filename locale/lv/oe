@@ -125,7 +125,6 @@ $self{texts} = {
   'Partnumber'                  => 'Daïas numurs',
   'Phone'                       => 'Tel.',
   'Pick List'                   => 'Izvçles saraksts',
-  'Post'                        => 'Iegrâmatot',
   'Postscript'                  => 'Postscript',
   'Price'                       => 'Cena',
   'Print'                       => 'Drukât',

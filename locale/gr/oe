@@ -85,7 +85,6 @@ $self{texts} = {
   'Phone'                       => 'Τηλέφωνο',
   'Price'                       => 'Τιμή',
   'Print'                       => 'Εκτύπωση',
-  'Print and Post'              => 'Έκτύπωση και αποστολή',
   'Print and Save'              => 'Εκτύπωση και αποθήκευση',
   'Printed'                     => 'Εκτυπώθηκε',
   'Project'                     => 'Έργο',

@@ -84,7 +84,6 @@ $self{texts} = {
   'Receipt'                     => 'Incasso',
   'Reference'                   => 'Riferimento',
   'Remaining'                   => 'Rimanente',
-  'Save'                        => 'Salva',
   'Screen'                      => 'Schermo',
   'Select from one of the names below' => 'Seleziona uno dei seguenti nomi',
   'Select from one of the projects below' => 'Seleziona uno dei seguenti progetti',

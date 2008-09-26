@@ -129,19 +129,19 @@ sub job_header {
   for (qw(production weight)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}) }
   for (qw(listprice sellprice)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, 2) }
   
-  if (($rows = $form->numtextrows($form->{description}, 60) - 1) > 1) {
+  if (($rows = $form->numtextrows($form->{description}, 60)) > 1) {
     $description = qq|<textarea name="description" rows=$rows cols=60 style="width: 100%" wrap=soft>$form->{description}</textarea>|;
   } else {
     $description = qq|<input name=description size=60 value="$form->{description}">|;
   }
   
-  if (($rows = $form->numtextrows($form->{projectdescription}, 60) - 1) > 1) {
+  if (($rows = $form->numtextrows($form->{projectdescription}, 60)) > 1) {
     $projectdescription = qq|<textarea name="projectdescription" rows=$rows cols=60 style="width: 100%" wrap=soft>$form->{projectdescription}</textarea>|;
   } else {
     $projectdescription = qq|<input name=projectdescription size=60 value="$form->{projectdescription}">|;
   }
   
-  if (($rows = $form->numtextrows($form->{notes}, 40) - 1) < 2) {
+  if (($rows = $form->numtextrows($form->{notes}, 40)) < 2) {
     $rows = 2;
   }
 
@@ -583,13 +583,14 @@ sub search {
   # accounting years
   $form->all_years(\%myconfig);
 
-  $form->{selectaccountingyear} = "<option>\n";
-  for (@{ $form->{all_years} }) { $form->{selectaccountingyear} .= qq|<option>$_\n| }
+  if (@{ $form->{all_years} }) {
+    $form->{selectaccountingyear} = "<option>\n";
+    for (@{ $form->{all_years} }) { $form->{selectaccountingyear} .= qq|<option>$_\n| }
 
-  $form->{selectaccountingmonth} = "<option>\n";
-  for (sort keys %{ $form->{all_month} }) { $form->{selectaccountingmonth} .= qq|<option value=$_>|.$locale->text($form->{all_month}{$_}).qq|\n| }
+    $form->{selectaccountingmonth} = "<option>\n";
+    for (sort keys %{ $form->{all_month} }) { $form->{selectaccountingmonth} .= qq|<option value=$_>|.$locale->text($form->{all_month}{$_}).qq|\n| }
 
-  $fromto = qq|
+    $fromto = qq|
  	<tr>
 	  <th align=right>|.$locale->text('Startdate').qq|</th>
 	  <td>|.$locale->text('From').qq| <input name=startdatefrom size=11 title="($myconfig{'dateformat'})">|.$locale->text('To').qq|
@@ -603,13 +604,14 @@ sub search {
 	  <td colspan=3>
 	  <select name=month>$form->{selectaccountingmonth}</select>
 	  <select name=year>$form->{selectaccountingyear}</select>
-	  <input name=interval class=radio type=radio value=0 checked>|.$locale->text('Current').qq|
-	  <input name=interval class=radio type=radio value=1>|.$locale->text('Month').qq|
-	  <input name=interval class=radio type=radio value=3>|.$locale->text('Quarter').qq|
-	  <input name=interval class=radio type=radio value=12>|.$locale->text('Year').qq|
+	  <input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
+	  <input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
+	  <input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
+	  <input name=interval class=radio type=radio value=12>&nbsp;|.$locale->text('Year').qq|
 	  </td>
 	</tr>
 |;
+  }
 
 
   $orphaned = qq|
@@ -979,7 +981,7 @@ sub project_header {
 
   $form->{projectdescription} = $form->quote($form->{projectdescription});
   
-  if (($rows = $form->numtextrows($form->{projectdescription}, 60) - 1) > 1) {
+  if (($rows = $form->numtextrows($form->{projectdescription}, 60)) > 1) {
     $projectdescription = qq|<textarea name="projectdescription" rows=$rows cols=60 style="width: 100%" wrap=soft>$form->{projectdescription}</textarea>|;
   } else {
     $projectdescription = qq|<input name=projectdescription size=60 value="$form->{projectdescription}">|;
@@ -2132,25 +2134,27 @@ sub project_sales_order {
 
   PE->project_sales_order(\%myconfig, \%$form);
   
-  $form->{selectaccountingyear} = "<option>\n";
-  for (@{ $form->{all_years} }) { $form->{selectaccountingyear} .= qq|<option>$_\n| }
+  if (@{ $form->{all_years} }) {
+    $form->{selectaccountingyear} = "<option>\n";
+    for (@{ $form->{all_years} }) { $form->{selectaccountingyear} .= qq|<option>$_\n| }
 
-  $form->{selectaccountingmonth} = "<option>\n";
-  for (sort keys %{ $form->{all_month} }) { $form->{selectaccountingmonth} .= qq|<option value=$_>|.$locale->text($form->{all_month}{$_}).qq|\n| }
+    $form->{selectaccountingmonth} = "<option>\n";
+    for (sort keys %{ $form->{all_month} }) { $form->{selectaccountingmonth} .= qq|<option value=$_>|.$locale->text($form->{all_month}{$_}).qq|\n| }
 
-  $selectfrom = qq|
+    $selectfrom = qq|
         <tr>
 	  <th align=right>|.$locale->text('Period').qq|</th>
 	  <td colspan=3>
 	  <select name=month>$form->{selectaccountingmonth}</select>
 	  <select name=year>$form->{selectaccountingyear}</select>
-	  <input name=interval class=radio type=radio value=0 checked>|.$locale->text('Current').qq|
-	  <input name=interval class=radio type=radio value=1>|.$locale->text('Month').qq|
-	  <input name=interval class=radio type=radio value=3>|.$locale->text('Quarter').qq|
-	  <input name=interval class=radio type=radio value=12>|.$locale->text('Year').qq|
+	  <input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
+	  <input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
+	  <input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
+	  <input name=interval class=radio type=radio value=12>&nbsp;|.$locale->text('Year').qq|
 	  </td>
 	</tr>
 |;
+  }
 
   $fromto = qq|
         <tr>
@@ -2525,7 +2529,6 @@ sub generate_sales_orders {
       }
     }
   }
-
  
   $order = new Form;
   for (keys %{ $form->{order} }) {

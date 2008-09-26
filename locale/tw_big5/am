@@ -64,7 +64,6 @@ $self{texts} = {
   'Defaults saved!'             => '纗箇砞',
   'Delete'                      => '埃',
   'Delete Account'              => '埃眀め',
-  'Department'                  => '场',
   'Department deleted!'         => '埃场',
   'Department saved!'           => '纗场',
   'Departments'                 => '场',

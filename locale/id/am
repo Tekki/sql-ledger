@@ -48,7 +48,6 @@ $self{texts} = {
   'Defaults saved!'             => 'Default sudah disimpan!',
   'Delete'                      => 'Hapus',
   'Delete Account'              => 'Hapus Akun',
-  'Department'                  => 'Departemen',
   'Department deleted!'         => 'Departemen telah dihapus',
   'Department saved!'           => 'Departemen telah disimpan',
   'Departments'                 => 'Departemen',

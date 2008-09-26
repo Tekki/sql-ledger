@@ -67,7 +67,6 @@ $self{texts} = {
   'Project not on file!'        => '¡No se encuentra el proyecto en la base de datos!',
   'Reference'                   => 'Referencia',
   'Reports'                     => 'Informes',
-  'Save'                        => 'Guardar',
   'Select from one of the names below' => 'Seleccione uno de los nombres de la lista',
   'Select from one of the projects below' => 'Seleccione uno de los proyectos de la lista',
   'Sep'                         => 'Sep',

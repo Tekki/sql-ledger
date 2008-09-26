@@ -100,12 +100,6 @@ sub edit {
 
 sub order_links {
 
-  $form->get_partsgroup(\%myconfig);
-  if (@{ $form->{all_partsgroup} }) {
-    $form->{selectpartsgroup} = "<option>\n";
-    for (@{ $form->{all_partsgroup} }) { $form->{selectpartsgroup} .= qq|<option value="$_->{partsgroup}--$_->{id}">$_->{partsgroup}\n| }
-  }
-
   # retrieve order/quotation
   OE->retrieve(\%myconfig, \%$form);
 
@@ -114,15 +108,18 @@ sub order_links {
   
   # currencies
   @curr = split /:/, $form->{currencies};
-  chomp $curr[0];
   $form->{defaultcurrency} = $curr[0];
+  chomp $form->{defaultcurrency};
   $form->{currency} = $form->{defaultcurrency} unless $form->{currency};
   
   for (@curr) { $form->{selectcurrency} .= "<option>$_\n" }
 
   $form->{oldlanguage_code} = $form->{language_code};
   
-  $form->get_partsgroup(\%myconfig, { language_code => $form->{language_code} });
+  $l{language_code} = $form->{language_code};
+  $l{searchitems} = 'nolabor' if $form->{vc} eq 'customer';
+  
+  $form->get_partsgroup(\%myconfig, \%l);
   
   if (@{ $form->{all_partsgroup} }) {
     $form->{selectpartsgroup} = "<option>\n";
@@ -198,6 +195,7 @@ sub prepare_order {
   $form->{format} = "postscript" if $myconfig{printer};
   $form->{media} = $myconfig{printer};
   $form->{formname} = $form->{type};
+  $form->{currency} =~ s/ //g;
   $form->{oldcurrency} = $form->{currency};
   
   if ($form->{id}) {
@@ -213,7 +211,11 @@ sub prepare_order {
 
       $form->{"discount_$i"} = $form->format_amount(\%myconfig, $form->{"discount_$i"} * 100);
 
-      $form->{"sellprice_$i"} = $form->format_amount(\%myconfig, $form->{"sellprice_$i"}, 2);
+      ($dec) = ($form->{"sellprice_$i"} =~ /\.(\d+)/);
+      $dec = length $dec;
+      $decimalplaces = ($dec > 2) ? $dec : 2;
+      
+      $form->{"sellprice_$i"} = $form->format_amount(\%myconfig, $form->{"sellprice_$i"}, $decimalplaces);
       $form->{"qty_$i"} = $form->format_amount(\%myconfig, $form->{"qty_$i"});
       $form->{"oldqty_$i"} = $form->{"qty_$i"};
       
@@ -299,11 +301,16 @@ sub form_header {
     
   $form->{exchangerate} = $form->format_amount(\%myconfig, $form->{exchangerate});
 
-  $exchangerate = qq|
-<input type=hidden name=forex value=$form->{forex}>
+  $exchangerate = qq|<tr>|;
+  $exchangerate .= qq|
+                <th align=right nowrap>|.$locale->text('Currency').qq|</th>
+		<td><select name=currency>$form->{selectcurrency}</select></td> | if $form->{defaultcurrency};
+  $exchangerate .= qq|
+                <input type=hidden name=selectcurrency value="$form->{selectcurrency}">
+		<input type=hidden name=defaultcurrency value=$form->{defaultcurrency}>
 |;
 
-  if ($form->{currency} ne $form->{defaultcurrency}) {
+  if ($form->{defaultcurrency} && $form->{currency} ne $form->{defaultcurrency}) {
     if ($form->{forex}) {
       $exchangerate .= qq|<th align=right>|.$locale->text('Exchange Rate').qq|</th><td>$form->{exchangerate}</td>
       <input type=hidden name=exchangerate value=$form->{exchangerate}>
@@ -312,6 +319,11 @@ sub form_header {
       $exchangerate .= qq|<th align=right>|.$locale->text('Exchange Rate').qq|</th><td><input name=exchangerate size=10 value=$form->{exchangerate}></td>|;
     }
   }
+  $exchangerate .= qq|
+<input type=hidden name=forex value=$form->{forex}>
+</tr>
+|;
+
 
 
   $vclabel = ucfirst $form->{vc};
@@ -328,12 +340,13 @@ sub form_header {
   if ($form->{business}) {
     $business = qq|
 	      <tr>
-		<th align=right>|.$locale->text('Business').qq|</th>
-		<td>$form->{business}</td>|;
+		<th align=right nowrap>|.$locale->text('Business').qq|</th>
+		<td colspan=3>$form->{business}
+		&nbsp;&nbsp;&nbsp;|;
     $business .= qq|
-		<th align=right>|.$locale->text('Trade Discount').qq|</th>
-		<td>|.$form->format_amount(\%myconfig, $form->{tradediscount} * 100).qq| %</td>| if $form->{vc} eq 'customer';
-    $business .= qq|
+		<b>|.$locale->text('Trade Discount').qq|</b>
+		|.$form->format_amount(\%myconfig, $form->{tradediscount} * 100).qq| %| if $form->{vc} eq 'customer';
+    $business .= qq|</td>
 	      </tr>
 |;
   }
@@ -367,10 +380,10 @@ sub form_header {
 		<td colspan=3>
 		  <table>
 		    <tr>
-		      <th nowrap>|.$locale->text('Credit Limit').qq|</th>
+		      <th align=right nowrap>|.$locale->text('Credit Limit').qq|</th>
 		      <td>|.$form->format_amount(\%myconfig, $form->{creditlimit}, 0, "0").qq|</td>
-		      <td width=20%></td>
-		      <th nowrap>|.$locale->text('Remaining').qq|</th>
+		      <td width=10></td>
+		      <th align=right nowrap>|.$locale->text('Remaining').qq|</th>
 		      <td class="plus$n" nowrap>|.$form->format_amount(\%myconfig, $form->{creditremaining}, 0, "0").qq|</td>
 		    </tr>
 		  </table>
@@ -496,13 +509,7 @@ sub form_header {
 	      $creditremaining
 	      $business
 	      $department
-	      <tr>
-		<th align=right>|.$locale->text('Currency').qq|</th>
-		<td><select name=currency>$form->{selectcurrency}</select></td>
-		<input type=hidden name=selectcurrency value="$form->{selectcurrency}">
-		<input type=hidden name=defaultcurrency value=$form->{defaultcurrency}>
-		$exchangerate
-	      </tr>
+	      $exchangerate
 	      <tr>
 		<th align=right>|.$locale->text('Shipping Point').qq|</th>
 		<td colspan=3><input name=shippingpoint size=35 value="$form->{shippingpoint}"></td>
@@ -867,9 +874,15 @@ sub update {
 	
         if ($sellprice) {
 	  $form->{"sellprice_$i"} = $sellprice;
+	  
+	  ($dec) = ($form->{"sellprice_$i"} =~ /\.(\d+)/);
+	  $dec = length $dec;
+	  $decimalplaces = ($dec > 2) ? $dec : 2;
 	} else {
-	  # if there is an exchange rate adjust prices
-	  $form->{"sellprice_$i"} *= (1 - $form->{tradediscount}) if $form->{vc} eq 'customer';
+	  ($dec) = ($form->{"sellprice_$i"} =~ /\.(\d+)/);
+	  $dec = length $dec;
+	  $decimalplaces = ($dec > 2) ? $dec : 2;
+
 	  $form->{"sellprice_$i"} /= $exchangerate;
 	}
 
@@ -883,9 +896,10 @@ sub update {
 	}
 	
 	$form->{creditremaining} -= $amount;
+
+	for (qw(sellprice listprice lastcost)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}, $decimalplaces) }
 	
-	for (qw(sellprice listprice lastcost)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}, 2) }
-	
+	$form->{"oldqty_$i"} = $form->{"qty_$i"};
 	for (qw(qty discount)) { $form->{"{_}_$i"} =  $form->format_amount(\%myconfig, $form->{"${_}_$i"}) }
 
       }
@@ -1046,26 +1060,27 @@ sub search {
 |;
   }
 
-  
-  # accounting years
-  $form->{selectaccountingyear} = "<option>\n";
-  for (@{ $form->{all_years} }) { $form->{selectaccountingyear} .= qq|<option>$_\n| }
-  $form->{selectaccountingmonth} = "<option>\n";
-  for (sort keys %{ $form->{all_month} }) { $form->{selectaccountingmonth} .= qq|<option value=$_>|.$locale->text($form->{all_month}{$_}).qq|\n| }
+  if (@{ $form->{all_years} }) {
+    # accounting years
+    $form->{selectaccountingyear} = "<option>\n";
+    for (@{ $form->{all_years} }) { $form->{selectaccountingyear} .= qq|<option>$_\n| }
+    $form->{selectaccountingmonth} = "<option>\n";
+    for (sort keys %{ $form->{all_month} }) { $form->{selectaccountingmonth} .= qq|<option value=$_>|.$locale->text($form->{all_month}{$_}).qq|\n| }
 
-  $selectfrom = qq|
+    $selectfrom = qq|
         <tr>
 	<th align=right>|.$locale->text('Period').qq|</th>
 	<td colspan=3>
 	<select name=month>$form->{selectaccountingmonth}</select>
 	<select name=year>$form->{selectaccountingyear}</select>
-	<input name=interval class=radio type=radio value=0 checked>|.$locale->text('Current').qq|
-	<input name=interval class=radio type=radio value=1>|.$locale->text('Month').qq|
-	<input name=interval class=radio type=radio value=3>|.$locale->text('Quarter').qq|
-	<input name=interval class=radio type=radio value=12>|.$locale->text('Year').qq|
+	<input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
+	<input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
+	<input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
+	<input name=interval class=radio type=radio value=12>&nbsp;|.$locale->text('Year').qq|
 	</td>
       </tr>
 |;
+  }
 
   if ($form->{type} =~ /_order/) {
     $ponumber = qq|
@@ -2366,7 +2381,7 @@ sub search_transfer {
     $form->error($locale->text('Nothing to transfer!'));
   }
   
-  $form->get_partsgroup(\%myconfig, { all => 0, searchitems => 'part'});
+  $form->get_partsgroup(\%myconfig, { searchitems => 'part'});
   if (@{ $form->{all_partsgroup} }) {
     $form->{selectpartsgroup} = "<option>\n";
     for (@{ $form->{all_partsgroup} }) { $form->{selectpartsgroup} .= qq|<option value="$_->{partsgroup}--$_->{id}">$_->{partsgroup}\n| }

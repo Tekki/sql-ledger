@@ -2574,24 +2574,24 @@ sub recurring_transactions {
 
   AM->recurring_transactions(\%myconfig, \%$form);
 
+  $href = "$form->{script}?action=recurring_transactions";
+  for (qw(direction oldsort path login sessionid)) { $href .= qq|&$_=$form->{$_}| }
+  
+  $form->sort_order();
+  
   # create the logo screen
   $form->header;
 
   @column_index = qw(ndx reference description);
   
-  if ($form->{department}) {
-    push @column_index, "department";
-  }
-  
   push @column_index, qw(nextdate enddate id amount curr repeat howmany recurringemail recurringprint);
 
-  $column_header{reference} = "<th class=listheading>".$locale->text('Reference').qq"</th>";
+  $column_header{reference} = "<th><a class=listheading href=$href&sort=reference>".$locale->text('Reference').qq"</a></th>";
   $column_header{ndx} = "<th class=listheading>&nbsp;</th>";
   $column_header{id} = "<th class=listheading>".$locale->text('ID')."</th>";
   $column_header{description} = "<th class=listheading>".$locale->text('Description')."</th>";
-  $column_header{department} = "<th class=listheading>".$locale->text('Department')."</th>";
-  $column_header{nextdate} = "<th class=listheading>".$locale->text('Next')."</th>";
-  $column_header{enddate} = "<th class=listheading>".$locale->text('Ends')."</th>";
+  $column_header{nextdate} = "<th><a class=listheading href=$href&sort=nextdate>".$locale->text('Next')."</a></th>";
+  $column_header{enddate} = "<th><a class=listheading href=$href&sort=enddate>".$locale->text('Ends')."</a></th>";
   $column_header{amount} = "<th class=listheading>".$locale->text('Amount')."</th>";
   $column_header{curr} = "<th class=listheading>&nbsp;</th>";
   $column_header{repeat} = "<th class=listheading>".$locale->text('Every')."</th>";

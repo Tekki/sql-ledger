@@ -91,7 +91,6 @@ $self{texts} = {
   'Reference'                   => 'Hivatkozás',
   'Remaining'                   => 'Maradék',
   'Salesperson'                 => 'Ügynök',
-  'Save'                        => 'Mentés',
   'Screen'                      => 'Képernyõre',
   'Select from one of the names below' => 'Válasszon ki egyet az alábbi nevek közül',
   'Select postscript or PDF!'   => 'Válassza ki a postscript vagy a PDF formátumot!',

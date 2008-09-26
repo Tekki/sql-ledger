@@ -5,7 +5,6 @@ $self{texts} = {
   'Description'                 => 'Descripció',
   'E-mail'                      => 'Email',
   'Number'                      => 'Número',
-  'Save'                        => 'Guardar',
   'To'                          => 'Fins',
 };
 

@@ -120,28 +120,29 @@ sub report {
 	</tr>
 | if $form->{selectdepartment};
 
-  # accounting years
-  $form->{selectaccountingyear} = "<option>\n";
-  for (@{ $form->{all_years} }) { $form->{selectaccountingyear} .= qq|<option>$_\n| }
+  if (@{ $form->{all_years} }) {
+    # accounting years
+    $form->{selectaccountingyear} = "<option>\n";
+    for (@{ $form->{all_years} }) { $form->{selectaccountingyear} .= qq|<option>$_\n| }
 
-  $form->{selectaccountingmonth} = "<option>\n";
-  for (sort keys %{ $form->{all_month} }) { $form->{selectaccountingmonth} .= qq|<option value=$_>|.$locale->text($form->{all_month}{$_}).qq|\n| }
+    $form->{selectaccountingmonth} = "<option>\n";
+    for (sort keys %{ $form->{all_month} }) { $form->{selectaccountingmonth} .= qq|<option value=$_>|.$locale->text($form->{all_month}{$_}).qq|\n| }
 
-  $selectfrom = qq|
+    $selectfrom = qq|
         <tr>
 	  <th align=right>|.$locale->text('Period').qq|</th>
 	  <td colspan=3>
 	  <select name=month>$form->{selectaccountingmonth}</select>
 	  <select name=year>$form->{selectaccountingyear}</select>
-	  <input name=interval class=radio type=radio value=0 checked>|.$locale->text('Current').qq|
-	  <input name=interval class=radio type=radio value=1>|.$locale->text('Month').qq|
-	  <input name=interval class=radio type=radio value=3>|.$locale->text('Quarter').qq|
-	  <input name=interval class=radio type=radio value=12>|.$locale->text('Year').qq|
+	  <input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
+	  <input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
+	  <input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
+	  <input name=interval class=radio type=radio value=12>&nbsp;|.$locale->text('Year').qq|
 	  </td>
 	</tr>
 |;
 
-  $selectto = qq|
+    $selectto = qq|
         <tr>
 	  <th align=right></th>
 	  <td>
@@ -150,6 +151,7 @@ sub report {
 	  </td>
 	</tr>
 |;
+  }
 
 
   $summary = qq|
@@ -230,17 +232,26 @@ sub report {
 	  <th align=right>|.$locale->text('To').qq|</th>
 	  <td><input name=todate size=11 title="$myconfig{dateformat}"></td>
 	</tr>
+|;
+
+    if ($selectfrom) {
+      print qq|
         <tr>
 	  <th align=right>|.$locale->text('Period').qq|</th>
 	  <td colspan=3>
 	  <select name=frommonth>$form->{selectaccountingmonth}</select>
 	  <select name=fromyear>$form->{selectaccountingyear}</select>
-	  <input name=interval class=radio type=radio value=0 checked>|.$locale->text('Current').qq|
-	  <input name=interval class=radio type=radio value=1>|.$locale->text('Month').qq|
-	  <input name=interval class=radio type=radio value=3>|.$locale->text('Quarter').qq|
-	  <input name=interval class=radio type=radio value=12>|.$locale->text('Year').qq|
+	  <input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
+	  <input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
+	  <input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
+	  <input name=interval class=radio type=radio value=12>&nbsp;|.$locale->text('Year').qq|
 	  </td>
 	</tr>
+|;
+    }
+
+    print qq|
+
 	<tr>
 	  <th align=right>|.$locale->text('Compare to').qq|</th>
 	</tr>
@@ -250,6 +261,10 @@ sub report {
 	  <th align=right>|.$locale->text('To').qq|</th>
 	  <td><input name=comparetodate size=11 title="$myconfig{dateformat}"></td>
 	</tr>
+|;
+
+    if ($selectto) {
+      print qq|
         <tr>
 	  <th align=right>|.$locale->text('Period').qq|</th>
 	  <td>
@@ -257,6 +272,10 @@ sub report {
 	  <select name=compareyear>$form->{selectaccountingyear}</select>
 	  </td>
 	</tr>
+|;
+    }
+
+    print qq|
 	<tr>
 	  <th align=right>|.$locale->text('Decimalplaces').qq|</th>
 	  <td><input name=decimalplaces size=3 value=2></td>
@@ -289,19 +308,34 @@ sub report {
 	<tr>
 	  <th align=right>|.$locale->text('as at').qq|</th>
 	  <td><input name=asofdate size=11 title="$myconfig{dateformat}" value=$form->{asofdate}></td>
+|;
+
+   if ($selectfrom) {
+     print qq|
 	  <td>
 	  <select name=asofmonth>$form->{selectaccountingmonth}</select>
 	  <select name=asofyear>$form->{selectaccountingyear}</select>
 	  </td>
+|;
+   }
+
+   print qq|
 	</tr>
 
 	  <th align=right nowrap>|.$locale->text('Compare to').qq|</th>
 	  <td><input name=compareasofdate size=11 title="$myconfig{dateformat}"></td>
 	  <td>
+|;
+
+   if ($selectto) {
+     print qq|
 	  <select name=compareasofmonth>$form->{selectaccountingmonth}</select>
 	  <select name=compareasofyear>$form->{selectaccountingyear}</select>
 	  </td>
+|;
+   }
 
+   print qq|
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('Decimalplaces').qq|</th>
@@ -587,6 +621,30 @@ print qq|
 	<input type=hidden name=nextsub value=$nextsub>
 	<input type=hidden name=action value=$nextsub>
 	$summary
+	<tr>
+	  <table>
+	    <tr>
+	      <th>|.$locale->text('Include in Report').qq|</th>
+
+	      <td>
+	        <table>
+		  <tr>
+	            <td nowrap><input name=overdue type=radio class=radio value=0 checked> |.$locale->text('Aged').qq|</td>
+ 	            <td nowrap><input name=overdue type=radio class=radio value=1> |.$locale->text('Overdue').qq|</td>
+	          </tr>
+		  <tr>
+		    <td nowrap width=70><input name=c0 type=checkbox class=checkbox value=1 checked> |.$locale->text('Current').qq|</td>
+		    <td nowrap width=70><input name=c30 type=checkbox class=checkbox value=1 checked> 30</td>
+		    <td nowrap width=70><input name=c60 type=checkbox class=checkbox value=1 checked> 60</td>
+		    <td nowrap width=70><input name=c90 type=checkbox class=checkbox value=1 checked> 90</td>
+		    </td>
+		  </tr>
+		</table>
+	      </td>
+	    </tr>
+	  </table>
+	</tr>
+
 |;
   }
 
@@ -1114,10 +1172,11 @@ sub aging {
   $column_header{ordnumber} = qq|<th class=listheading>|.$locale->text('Order').qq|</th>|;
   $column_header{transdate} = qq|<th class=listheading nowrap>|.$locale->text('Date').qq|</th>|;
   $column_header{duedate} = qq|<th class=listheading nowrap>|.$locale->text('Due Date').qq|</th>|;
-  $column_header{c0} = qq|<th class=listheading width=10%>|.$locale->text('Current').qq|</th>|;
-  $column_header{c30} = qq|<th class=listheading width=10%>30</th>|;
-  $column_header{c60} = qq|<th class=listheading width=10%>60</th>|;
-  $column_header{c90} = qq|<th class=listheading width=10%>90</th>|;
+  $column_header{c0} = qq|<th class=listheading width=10% nowrap>|.$locale->text('Current').qq|</th>|;
+  $column_header{c30} = qq|<th class=listheading width=10% nowrap>30</th>|;
+  $column_header{c60} = qq|<th class=listheading width=10% nowrap>60</th>|;
+  $column_header{c90} = qq|<th class=listheading width=10% nowrap>90</th>|;
+  $column_header{total} = qq|<th class=listheading width=10% nowrap>|.$locale->text('Total').qq|</th>|;
   
   @column_index = qw(statement ct);
 
@@ -1128,12 +1187,26 @@ sub aging {
     for (@{ $form->{all_language} }) { $form->{selectlanguage} .= qq|<option value="$_->{code}">$_->{description}\n| }
   }
   
-  if ($form->{summary}) {
-    push @column_index, qw(c0 c30 c60 c90);
-  } else {
-    push @column_index, qw(invnumber ordnumber transdate duedate c0 c30 c60 c90);
+  @c = ();
+  for (qw(c0 c30 c60 c90)) {
+    if ($form->{$_}) {
+      push @c, $_;
+      $form->{callback} .= "&$_=$form->{$_}";
+    }
   }
+    
+  if (!$form->{summary}) {
+    push @column_index, qw(invnumber ordnumber transdate duedate);
+  }
+  push @column_index, @c;
+  push @column_index, "total";
 
+  $option = $locale->text('Aged');
+  if ($form->{overdue}) {
+    $option= $locale->text('Aged Overdue');
+    $form->{callback} .= "&overdue=$form->{overdue}";
+  }
+  
   if ($form->{department}) {
       $option .= "\n<br>" if $option;
       ($department) = split /--/, $form->{department};
@@ -1193,12 +1266,14 @@ sub aging {
 	$c30total = $form->format_amount(\%myconfig, $c30total, 2, "&nbsp");
 	$c60total = $form->format_amount(\%myconfig, $c60total, 2, "&nbsp");
 	$c90total = $form->format_amount(\%myconfig, $c90total, 2, "&nbsp");
+	$total = $form->format_amount(\%myconfig, $total, 2, "&nbsp");
 	
 	for (qw(ct statement language)) { $column_data{$_} = qq|<td>&nbsp;</td>| }
 	$column_data{c0} = qq|<th align=right>$c0total</th>|;
 	$column_data{c30} = qq|<th align=right>$c30total</th>|;
 	$column_data{c60} = qq|<th align=right>$c60total</th>|;
 	$column_data{c90} = qq|<th align=right>$c90total</th>|;
+	$column_data{total} = qq|<th align=right>$total</th>|;
 
 	print qq|
 	<tr class=listtotal>
@@ -1214,11 +1289,13 @@ sub aging {
 	$c30subtotal = 0;
 	$c60subtotal = 0;
 	$c90subtotal = 0;
+	$subtotal = 0;
 	
 	$c0total = 0;
 	$c30total = 0;
 	$c60total = 0;
 	$c90total = 0;
+	$total = 0;
  
       }
       
@@ -1273,17 +1350,22 @@ sub aging {
     $c30total += $ref->{c30};
     $c60total += $ref->{c60};
     $c90total += $ref->{c90};
+    
+    $ref->{total} = ($ref->{c0} + $ref->{c30} + $ref->{c60} + $ref->{c90});
+    $subtotal += $ref->{total};
+    $total += $ref->{total};
 
     $ref->{c0} = $form->format_amount(\%myconfig, $ref->{c0}, 2, "&nbsp;");
     $ref->{c30} = $form->format_amount(\%myconfig, $ref->{c30}, 2, "&nbsp;");
     $ref->{c60} = $form->format_amount(\%myconfig, $ref->{c60}, 2, "&nbsp;");
     $ref->{c90} = $form->format_amount(\%myconfig, $ref->{c90}, 2, "&nbsp;");
+    $ref->{total} = $form->format_amount(\%myconfig, $ref->{total}, 2, "&nbsp;");
 
     $href = qq|$ref->{module}.pl?path=$form->{path}&action=edit&id=$ref->{id}&login=$form->{login}&sessionid=$form->{sessionid}&callback=|.$form->escape($form->{callback});
     
     $column_data{invnumber} = qq|<td><a href=$href>$ref->{invnumber}</a></td>|;
     for (qw(ordnumber transdate duedate)) { $column_data{$_} = qq|<td>$ref->{$_}</td>| }
-    for (qw(c0 c30 c60 c90)) { $column_data{$_} = qq|<td align=right>$ref->{$_}</td>| }
+    for (qw(c0 c30 c60 c90 total)) { $column_data{$_} = qq|<td align=right>$ref->{$_}</td>| }
     
     if (!$form->{summary}) {
 
@@ -1310,6 +1392,7 @@ sub aging {
       $c30subtotal = $form->format_amount(\%myconfig, $c30subtotal, 2, "&nbsp");
       $c60subtotal = $form->format_amount(\%myconfig, $c60subtotal, 2, "&nbsp");
       $c90subtotal = $form->format_amount(\%myconfig, $c90subtotal, 2, "&nbsp");
+      $subtotal = $form->format_amount(\%myconfig, $subtotal, 2, "&nbsp");
 
       if (! $form->{$form->{ct}}) {
 	if ($form->{summary}) {
@@ -1317,6 +1400,7 @@ sub aging {
 	  $column_data{c30} = qq|<td align=right>$c30subtotal</th>|;
 	  $column_data{c60} = qq|<td align=right>$c60subtotal</th>|;
 	  $column_data{c90} = qq|<td align=right>$c90subtotal</th>|;
+	  $column_data{total} = qq|<td align=right>$subtotal</th>|;
 
 	  $j++; $j %= 2;
 	  print qq|
@@ -1337,6 +1421,7 @@ sub aging {
 	  $column_data{c30} = qq|<th class=listsubtotal align=right>$c30subtotal</th>|;
 	  $column_data{c60} = qq|<th class=listsubtotal align=right>$c60subtotal</th>|;
 	  $column_data{c90} = qq|<th class=listsubtotal align=right>$c90subtotal</th>|;
+	  $column_data{total} = qq|<th class=listsubtotal align=right>$subtotal</th>|;
 
 	  # print subtotals
 	  print qq|
@@ -1355,6 +1440,7 @@ sub aging {
       $c30subtotal = 0;
       $c60subtotal = 0;
       $c90subtotal = 0;
+      $subtotal = 0;
       
     }
   }
@@ -1370,11 +1456,13 @@ sub aging {
   $c30total = $form->format_amount(\%myconfig, $c30total, 2, "&nbsp;");
   $c60total = $form->format_amount(\%myconfig, $c60total, 2, "&nbsp;");
   $c90total = $form->format_amount(\%myconfig, $c90total, 2, "&nbsp;");
+  $total = $form->format_amount(\%myconfig, $total, 2, "&nbsp;");
   
   $column_data{c0} = qq|<th align=right class=listtotal>$c0total</th>|;
   $column_data{c30} = qq|<th align=right class=listtotal>$c30total</th>|;
   $column_data{c60} = qq|<th align=right class=listtotal>$c60total</th>|;
   $column_data{c90} = qq|<th align=right class=listtotal>$c90total</th>|;
+  $column_data{total} = qq|<th align=right class=listtotal>$total</th>|;
 
   for (@column_index) { print "$column_data{$_}\n" }
   
@@ -1402,7 +1490,7 @@ sub aging {
 
   if ($form->{arap} eq 'ar') {
 
-    $form->hide_form(qw(todate title summary callback arap ct department path login sessionid));
+    $form->hide_form(qw(todate title summary overdue c0 c30 c60 c90 callback arap ct department path login sessionid));
     
   print qq|
 <input type=hidden name=$form->{ct} value="$form->{$form->{ct}}">

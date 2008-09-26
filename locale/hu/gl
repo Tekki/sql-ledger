@@ -73,7 +73,6 @@ $self{texts} = {
   'R'                           => 'E',
   'Reference'                   => 'Hivatkozás',
   'Reports'                     => 'Jelentések',
-  'Save'                        => 'Mentés',
   'Select from one of the names below' => 'Válasszon ki egyet az alábbi nevek közül',
   'Sep'                         => 'Szept.',
   'September'                   => 'Szeptember',

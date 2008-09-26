@@ -4,6 +4,7 @@ $self{texts} = {
   'Accounting Menu'             => 'Kontçðanas izvçlne',
   'Add POS Invoice'             => 'Pievienot POS rçíinu',
   'Amount'                      => 'Summa',
+  'Business'                    => 'Komercdarbîba',
   'Cannot post transaction!'    => 'Nevar iegrâmatot transakciju!',
   'Change'                      => 'Izmainît',
   'Continue'                    => 'Turpinât',
@@ -39,6 +40,7 @@ $self{texts} = {
   'Subtotal'                    => 'Kopâ',
   'To'                          => 'uz',
   'Total'                       => 'Pavisam Kopâ',
+  'Trade Discount'              => 'Vairumtirgotâja atlaide',
   'Unit'                        => 'Vienîba',
   'Update'                      => 'Atjauninât',
 };

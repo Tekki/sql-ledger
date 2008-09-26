@@ -8,7 +8,6 @@ $self{texts} = {
   'E-mail'                      => 'E-mail',
   'Message'                     => 'Zpráva',
   'Number'                      => 'Èíslo',
-  'Save'                        => 'Ulo¾it',
   'Subject'                     => 'Pøedmìt',
   'To'                          => 'do',
 };

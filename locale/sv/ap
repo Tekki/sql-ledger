@@ -89,7 +89,6 @@ $self{texts} = {
   'Reference'                   => 'Referencia',
   'Remaining'                   => 'Faltan',
   'Salesperson'                 => 'Vendedor',
-  'Save'                        => 'Salvar',
   'Screen'                      => 'Pantalla',
   'Select from one of the names below' => 'Seleccione uno de los elementos listados',
   'Select postscript or PDF!'   => 'Seleccione postscript o PDF',

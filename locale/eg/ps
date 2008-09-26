@@ -167,7 +167,6 @@ $self{texts} = {
   'Required by'                 => 'مطلوب من قبل',
   'Sales Order'                 => 'امر بيع',
   'Salesperson'                 => 'مندوب مبيعات',
-  'Save'                        => 'تخزين',
   'Screen'                      => 'الشاشة',
   'Select all'                  => 'اختر الكل',
   'Select from one of the names below' => 'اختر اسم من الاسماء',

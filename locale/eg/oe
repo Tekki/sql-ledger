@@ -102,7 +102,6 @@ $self{texts} = {
   'Packing List Number missing!' => 'رقم بوليصة الشحن غير موجود',
   'Part'                        => 'جزء',
   'Phone'                       => 'تليفون',
-  'Post'                        => 'تسجيل',
   'Price'                       => 'سعر',
   'Print'                       => 'طباعة',
   'Project'                     => 'مشروع',

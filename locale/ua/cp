@@ -41,7 +41,6 @@ $self{texts} = {
   'Receipt'                     => 'Квитанц╕я',
   'Receipts'                    => 'Квитанц╕╖',
   'Reference'                   => 'Зсилка',
-  'Save'                        => 'Зберегти',
   'Screen'                      => 'Екран',
   'Select all'                  => 'Вибрати все',
   'Select from one of the names below' => 'Вибер╕ть одну ╕з наступних назв',

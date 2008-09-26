@@ -71,7 +71,6 @@ $self{texts} = {
   'R'                           => 'R',
   'Reference'                   => 'Referencia',
   'Reports'                     => 'Reportes',
-  'Save'                        => 'Salvar',
   'Select from one of the names below' => 'Seleccione uno de los elementos listados',
   'Sep'                         => 'Sep',
   'September'                   => 'Septiembre',

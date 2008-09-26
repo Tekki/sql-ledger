@@ -2,6 +2,7 @@ $self{texts} = {
   'Accounting Menu'             => 'Boekhoudmenu',
   'Add POS Invoice'             => 'Directe verkooporder toevoegen',
   'Amount'                      => 'Bedrag',
+  'Business'                    => 'Zaaktype',
   'Cannot post transaction!'    => 'Kan transactie niet boeken!',
   'Change'                      => 'Wijzig',
   'Continue'                    => 'Verder',
@@ -37,6 +38,7 @@ $self{texts} = {
   'Subtotal'                    => 'Subtotaal',
   'To'                          => 'Tot',
   'Total'                       => 'Totaal',
+  'Trade Discount'              => 'Handelskorting',
   'Unit'                        => 'Eenheid',
   'Update'                      => 'Bijwerken',
 };

@@ -4,6 +4,7 @@ $self{texts} = {
   'Accounting Menu'             => 'Raamatupidamise Menüü',
   'Add POS Invoice'             => 'Lisa Sularahamüügi Kviitung',
   'Amount'                      => 'Summa',
+  'Business'                    => 'Ettevõtte',
   'Cannot post transaction!'    => 'Kannet ei saa salvestada!',
   'Change'                      => 'Muuda',
   'Continue'                    => 'Edasi',

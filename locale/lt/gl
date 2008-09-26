@@ -69,7 +69,6 @@ $self{texts} = {
   'Project not on file!'        => 'Nëra tokio projekto!',
   'Reference'                   => 'Nuorodos',
   'Reports'                     => 'Ataskaitos',
-  'Save'                        => 'Iðsaugoti',
   'Select from one of the names below' => 'Iðrinkite vienà ið pavadinimø apaèioje',
   'Select from one of the projects below' => 'Iðrinkite vienà ið projektø apaèioje',
   'Sep'                         => 'Rgs',

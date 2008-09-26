@@ -144,7 +144,6 @@ $self{texts} = {
   'Report for'                  => 'Зв╕т для',
   'Required by'                 => 'Терм╕н доставки',
   'Sales Order'                 => 'Продажна Накладна',
-  'Save'                        => 'Зберегти',
   'Screen'                      => 'Екран',
   'Select all'                  => 'Вибрати все',
   'Select from one of the names below' => 'Вибер╕ть одну ╕з наступних назв',

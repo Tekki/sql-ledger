@@ -2,6 +2,7 @@ $self{texts} = {
   'Accounting Menu'             => 'Menu Akunting',
   'Add POS Invoice'             => 'Tambah Invoice Kasir',
   'Amount'                      => 'Jumlah',
+  'Business'                    => 'Bisnis',
   'Cannot post transaction!'    => 'Tidak dapat posting transaksi!',
   'Change'                      => 'Kembalian',
   'Continue'                    => 'Lanjut',

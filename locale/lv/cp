@@ -47,7 +47,6 @@ $self{texts} = {
   'Receipt posted!'             => 'Kvîtis iegrâmatotas',
   'Receipts'                    => 'Kvîtis',
   'Reference'                   => 'Norâde',
-  'Save'                        => 'Saglabât',
   'Screen'                      => 'Ekrâns',
   'Select'                      => 'Atlasît',
   'Select all'                  => 'Atlasît visu',

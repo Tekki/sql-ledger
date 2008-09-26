@@ -118,25 +118,27 @@ sub search {
   # accounting years
   $form->all_years(\%myconfig);
 
-  $form->{selectaccountingyear} = "<option>\n";
-  for (@{ $form->{all_years} }) { $form->{selectaccountingyear} .= qq|<option>$_\n| }
+  if (@{ $form->{all_years} }) {
+    $form->{selectaccountingyear} = "<option>\n";
+    for (@{ $form->{all_years} }) { $form->{selectaccountingyear} .= qq|<option>$_\n| }
 
-  $form->{selectaccountingmonth} = "<option>\n";
-  for (sort keys %{ $form->{all_month} }) { $form->{selectaccountingmonth} .= qq|<option value=$_>|.$locale->text($form->{all_month}{$_}).qq|\n| }
+    $form->{selectaccountingmonth} = "<option>\n";
+    for (sort keys %{ $form->{all_month} }) { $form->{selectaccountingmonth} .= qq|<option value=$_>|.$locale->text($form->{all_month}{$_}).qq|\n| }
 
-  $selectfrom = qq|
+    $selectfrom = qq|
         <tr>
 	  <th align=right>|.$locale->text('Period').qq|</th>
 	  <td colspan=3>
 	  <select name=month>$form->{selectaccountingmonth}</select>
 	  <select name=year>$form->{selectaccountingyear}</select>
-	  <input name=interval class=radio type=radio value=0 checked>|.$locale->text('Current').qq|
-	  <input name=interval class=radio type=radio value=1>|.$locale->text('Month').qq|
-	  <input name=interval class=radio type=radio value=3>|.$locale->text('Quarter').qq|
-	  <input name=interval class=radio type=radio value=12>|.$locale->text('Year').qq|
+	  <input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
+	  <input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
+	  <input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
+	  <input name=interval class=radio type=radio value=12>&nbsp;|.$locale->text('Year').qq|
 	  </td>
 	</tr>
 |;
+  }
 
   $fromto = qq|
 	<tr>
@@ -410,7 +412,7 @@ sub timecard_header {
     if ($myconfig{role} ne 'user') {
       $rate = qq|
 		<tr>
-		  <th align=right nowrap>|.$locale->text('Chargeout Rate').qq|</th>
+		  <th align=right nowrap>|.$locale->text('Unit Rate').qq|</th>
 		  <td><input name=sellprice value=$form->{sellprice}></td>
 		  <th align=right nowrap>|.$locale->text('Total').qq|</th>
 		  <td>$form->{amount}</td>
@@ -438,7 +440,7 @@ sub timecard_header {
     $charge = qq|<input name=qty value=$form->{qty}>|;
   }
   
-  if (($rows = $form->numtextrows($form->{notes}, 40, 6) - 1) < 2) {
+  if (($rows = $form->numtextrows($form->{notes}, 40, 6)) < 2) {
     $rows = 2;
   }
 
@@ -519,14 +521,16 @@ sub timecard_header {
 		</td>
 	      </tr>
 	      <tr>
+		<th align=right nowrap>|.$locale->text('Clocked').qq|</th>
+		<td>$form->{clocked}</td>
+              </tr>
+	      <tr>
 		<th align=right nowrap>|.$locale->text('Non-chargeable').qq|</th>
 		<td><input name=noncharge value=$form->{noncharge}></td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Chargeable').qq|</th>
 		<td>$charge</td>
-		<th align=right nowrap>|.$locale->text('Clocked').qq|</th>
-		<td>$form->{clocked}</td>
 	      </tr>
 	      $rate
 	      $notes
@@ -993,12 +997,14 @@ sub print_and_save_as_new {
 sub resave {
 
   if ($form->{print_and_save}) {
-    $action = $locale->text('Print and Save');
+    $form->{nextsub} = "print_and_save";
     $msg = $locale->text('You are printing and saving an existing transaction!');
   } else {
-    $action = $locale->text('Save');
+    $form->{nextsub} = "save";
     $msg = $locale->text('You are saving an existing transaction!');
   }
+  
+  $form->{resave} = 1;
   
   $form->header;
 
@@ -1007,7 +1013,6 @@ sub resave {
 
 <form method=post action=$form->{script}>
 
-<input type=hidden name=resave value=1>
 |;
 
   delete $form->{action};
@@ -1019,7 +1024,7 @@ sub resave {
 
 <h4>$msg</h4>
 
-<input name=action class=submit type=submit value="$action">
+<input name=action class=submit type=submit value="|.$locale->text('Continue').qq|">
 </form>
 
 </body>

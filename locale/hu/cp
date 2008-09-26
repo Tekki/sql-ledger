@@ -40,7 +40,6 @@ $self{texts} = {
   'Receipt'                     => 'Befizetés',
   'Receipts'                    => 'Befizetések',
   'Reference'                   => 'Hivatkozás',
-  'Save'                        => 'Mentés',
   'Screen'                      => 'Képernyõre',
   'Select all'                  => 'Mindent kijelöl',
   'Select from one of the names below' => 'Válasszon ki egyet az alábbi nevek közül',

@@ -20,7 +20,6 @@ $self{texts} = {
   'Number'                      => 'Número',
   'Payment'                     => 'Pagament',
   'Payments'                    => 'Pagaments',
-  'Save'                        => 'Guardar',
   'Screen'                      => 'Pantalla',
   'Source'                      => 'Font',
   'To'                          => 'Fins',

@@ -1,6 +1,7 @@
 $self{texts} = {
   'Accounting Menu'             => 'Kirjanpitovalikko',
   'Amount'                      => 'Summa',
+  'Business'                    => 'Toimiala',
   'Cannot post transaction!'    => 'Vientiä ei voi kirjata',
   'Change'                      => 'Vaihda',
   'Continue'                    => 'Jatka',

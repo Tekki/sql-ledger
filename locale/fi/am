@@ -55,7 +55,6 @@ $self{texts} = {
   'Defaults saved!'             => 'Oletusasetukset poistettu',
   'Delete'                      => 'Poista',
   'Delete Account'              => 'Poista tili',
-  'Department'                  => 'Toimipiste',
   'Department deleted!'         => 'Toimipiste poistettu',
   'Department saved!'           => 'Toimipiste tallennettu',
   'Departments'                 => 'Toimipisteet',

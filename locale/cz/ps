@@ -104,7 +104,6 @@ $self{texts} = {
   'Report for'                  => 'Výkaz za',
   'Required by'                 => 'Po¾adováno do',
   'Sales Order'                 => 'Pøijatá objednávka',
-  'Save'                        => 'Ulo¾it',
   'Screen'                      => 'Na obrazovku',
   'Sep'                         => 'Záø',
   'September'                   => 'Záøí',

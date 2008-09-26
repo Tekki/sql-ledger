@@ -4,6 +4,7 @@ $self{texts} = {
   'Accounting Menu'             => 'Μενπύ Λογιστικής',
   'Add POS Invoice'             => 'Προσθήκη απόδηξης Ταμειακής μηχανής',
   'Amount'                      => 'Ποσό',
+  'Business'                    => 'Επιχείρηση',
   'Continue'                    => 'Συνέχεια',
   'Credit Limit'                => 'Όριο Πίστωσης',
   'Currency'                    => 'Συνάλλαγμα',

@@ -75,9 +75,6 @@ siguientes conjuntos de datos no estan en uso y pueden ser borrados',
   'User deleted!'               => 'Usuario borrado!',
   'User saved!'                 => 'Usuario guardado!',
   'Version'                     => 'Versión',
-  'You must enter a host and port for local and remote connections!' => 'Debe
-introducir un servidor de base de datos y un puerto para conexiones locales y
-remotas!',
   'does not exist'              => 'No existe',
   'is already a member!'        => 'ya es miembro!',
   'localhost'                   => 'servidor local',

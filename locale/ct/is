@@ -73,7 +73,6 @@ $self{texts} = {
   'Remaining'                   => 'Remanent',
   'Required by'                 => 'Soliciat per',
   'Sales Order'                 => 'Pressupost',
-  'Save'                        => 'Guardar',
   'Screen'                      => 'Pantalla',
   'Sep'                         => 'Set',
   'September'                   => 'Setembre',

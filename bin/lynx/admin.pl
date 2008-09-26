@@ -1109,11 +1109,6 @@ sub dbselect_source {
 
   &dbdriver_defaults;
 
-  $msg{Pg} = $locale->text('Leave host and port field empty unless you want to make a remote connection.');
-  $msg{PgPP} = $msg{Pg};
-  $msg{Oracle} = $locale->text('You must enter a host and port for local and remote connections!');
-  
-
  $form->{title} = "SQL-Ledger ".$locale->text('Accounting')." / ".$locale->text('Database Administration');
   
   $form->{login} = "root login";
@@ -1180,9 +1175,6 @@ sub dbselect_source {
 <p>|.$locale->text('This is a preliminary check for existing sources. Nothing will be created or deleted at this stage!')
 
 .qq|
-<br>$msg{$form->{dbdriver}}
-
-
 </body>
 </html>
 |;

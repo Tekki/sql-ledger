@@ -106,13 +106,14 @@ sub create_links {
   
   # currencies
   @curr = split /:/, $form->{currencies};
-  chomp $curr[0];
   $form->{defaultcurrency} = $curr[0];
+  chomp $form->{defaultcurrency};
 
   for (@curr) { $form->{selectcurrency} .= "<option>$_\n" }
 
   AA->get_name(\%myconfig, \%$form);
 
+  $form->{currency} =~ s/ //g;
   $form->{duedate} = $duedate if $duedate;
   $form->{taxincluded} = $taxincluded if $form->{id};
 
@@ -328,10 +329,16 @@ sub form_header {
   # format amounts
   $form->{exchangerate} = $form->format_amount(\%myconfig, $form->{exchangerate});
   
-  $exchangerate = qq|
-<input type=hidden name=forex value=$form->{forex}>
+  $exchangerate = qq|<tr>|;
+  $exchangerate .= qq|
+                <th align=right nowrap>|.$locale->text('Currency').qq|</th>
+		<td><select name=currency>$form->{selectcurrency}</select></td> | if $form->{defaultcurrency};
+  $exchangerate .= qq|
+                <input type=hidden name=selectcurrency value="$form->{selectcurrency}">
+		<input type=hidden name=defaultcurrency value=$form->{defaultcurrency}>
 |;
-  if ($form->{currency} ne $form->{defaultcurrency}) {
+
+  if ($form->{defaultcurrency} && $form->{currency} ne $form->{defaultcurrency}) {
     if ($form->{forex}) {
       $exchangerate .= qq|
 	<th align=right>|.$locale->text('Exchange Rate').qq|</th>
@@ -344,7 +351,11 @@ sub form_header {
 |;
     }
   }
-  
+  $exchangerate .= qq|
+<input type=hidden name=forex value=$form->{forex}>
+</tr>
+|;
+ 
   $taxincluded = "";
   if ($form->{taxaccounts}) {
     $taxincluded = qq|
@@ -405,7 +416,7 @@ sub form_header {
 
 |;
 
-  $form->hide_form(qw(id printed emailed sort closedto locked oldtransdate audittrail recurring));
+  $form->hide_form(qw(id printed emailed sort closedto locked oldtransdate audittrail recurring checktax));
 
   if ($form->{vc} eq 'customer') {
     $label = $locale->text('Customer');
@@ -446,11 +457,7 @@ sub form_header {
 		  </table>
 		</td>
 	      </tr>
-	      <tr>
-		<th align=right>|.$locale->text('Currency').qq|</th>
-		<td><select name=currency>$form->{selectcurrency}</select></td>
-		$exchangerate
-	      </tr>
+	      $exchangerate
 	      $department
 	      $taxincluded
 	    </table>
@@ -794,7 +801,20 @@ sub update {
       $taxrate = 0;
       $diff = 0;
       
-      for (@taxaccounts) { $taxrate += $form->{"${_}_rate"} if ($form->{"${_}_rate"} * $ml) > 0 }
+      for (@taxaccounts) {
+	if (($form->{"${_}_rate"} * $ml) > 0) {
+	  if ($form->{"calctax_$_"}) {
+	    $taxrate += $form->{"${_}_rate"};
+	  } else {
+	    if ($form->{checktax}) {
+	      if ($form->{"tax_$_"}) {
+		$taxrate += $form->{"${_}_rate"};
+	      }
+	    }
+	  }
+	}
+      }
+      
       $taxrate *= $ml;
 
       foreach $item (@taxaccounts) {
@@ -815,6 +835,9 @@ sub update {
       $ml *= -1;
     }
     $totaltax += $form->round_amount($diff, 2);
+
+    $form->{checktax} = 1;
+    
   } else {
     foreach $item (@taxaccounts) {
       $form->{"calctax_$item"} = 1 if $form->{calctax};
@@ -1023,25 +1046,27 @@ sub search {
     $openclosed = "";
   }
 
-  # accounting years
-  $form->{selectaccountingyear} = "<option>\n";
-  for (@{ $form->{all_years} }) { $form->{selectaccountingyear} .= qq|<option>$_\n| }
-  $form->{selectaccountingmonth} = "<option>\n";
-  for (sort keys %{ $form->{all_month} }) { $form->{selectaccountingmonth} .= qq|<option value=$_>|.$locale->text($form->{all_month}{$_}).qq|\n| }
+  if (@{ $form->{all_years} }) {
+    # accounting years
+    $form->{selectaccountingyear} = "<option>\n";
+    for (@{ $form->{all_years} }) { $form->{selectaccountingyear} .= qq|<option>$_\n| }
+    $form->{selectaccountingmonth} = "<option>\n";
+    for (sort keys %{ $form->{all_month} }) { $form->{selectaccountingmonth} .= qq|<option value=$_>|.$locale->text($form->{all_month}{$_}).qq|\n| }
 
-  $selectfrom = qq|
+    $selectfrom = qq|
         <tr>
 	<th align=right>|.$locale->text('Period').qq|</th>
 	<td colspan=3>
 	<select name=month>$form->{selectaccountingmonth}</select>
 	<select name=year>$form->{selectaccountingyear}</select>
-	<input name=interval class=radio type=radio value=0 checked>|.$locale->text('Current').qq|
-	<input name=interval class=radio type=radio value=1>|.$locale->text('Month').qq|
-	<input name=interval class=radio type=radio value=3>|.$locale->text('Quarter').qq|
-	<input name=interval class=radio type=radio value=12>|.$locale->text('Year').qq|
+	<input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
+	<input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
+	<input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
+	<input name=interval class=radio type=radio value=12>&nbsp;|.$locale->text('Year').qq|
 	</td>
       </tr>
 |;
+  }
 
 
   $name = $locale->text('Customer');

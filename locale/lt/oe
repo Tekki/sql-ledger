@@ -92,7 +92,6 @@ $self{texts} = {
   'Packing List Number missing!' => 'Ápakavimo sàrağo numerio nëra!',
   'Part'                        => 'Prekë',
   'Phone'                       => 'Tel.',
-  'Post'                        => 'Patvirtinti',
   'Postscript'                  => 'Postscript(TM)',
   'Price'                       => 'Kaina',
   'Print'                       => 'Spausdinti',

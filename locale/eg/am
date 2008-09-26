@@ -46,7 +46,6 @@ $self{texts} = {
   'Debit'                       => 'مدين',
   'Delete'                      => 'الغاء',
   'Delete Account'              => 'الغاء الحساب',
-  'Department'                  => 'قسم',
   'Departments'                 => 'اقسام',
   'Description'                 => 'وصف',
   'Discount'                    => 'خصم',

@@ -41,7 +41,6 @@ $self{texts} = {
   'Receipt'                     => 'Kasos orderis',
   'Receipts'                    => 'Kasos orderiai',
   'Reference'                   => 'Nuorodos',
-  'Save'                        => 'Iðsaugoti',
   'Screen'                      => 'Ekranas',
   'Select all'                  => 'Iðrinkti viskà',
   'Select from one of the names below' => 'Iðrinkite vienà ið pavadinimø apaèioje',

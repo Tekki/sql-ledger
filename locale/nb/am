@@ -61,7 +61,6 @@ $self{texts} = {
   'Defaults saved!'             => 'Standardinnstillinger lagret',
   'Delete'                      => 'Slett',
   'Delete Account'              => 'Fjern konto',
-  'Department'                  => 'Avdeling',
   'Department deleted!'         => 'Avdeling slettet!',
   'Department saved!'           => 'Avdeling lagret',
   'Departments'                 => 'Avdelinger',

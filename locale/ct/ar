@@ -60,7 +60,6 @@ $self{texts} = {
   'Payment date missing!'       => 'Falta Data Pagament!',
   'Payments'                    => 'Pagaments',
   'Remaining'                   => 'Remanent',
-  'Save'                        => 'Guardar',
   'Screen'                      => 'Pantalla',
   'Sep'                         => 'Set',
   'September'                   => 'Setembre',

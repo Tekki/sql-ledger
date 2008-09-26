@@ -69,7 +69,6 @@ $self{texts} = {
   'Project not on file!'        => 'Проекту нема в списку!',
   'Reference'                   => 'Зсилка',
   'Reports'                     => 'Зв╕ти',
-  'Save'                        => 'Зберегти',
   'Select from one of the names below' => 'Вибер╕ть одну ╕з наступних назв',
   'Select from one of the projects below' => 'Вибер╕ть один ╕з наступних проект╕в',
   'Sep'                         => 'вересня',

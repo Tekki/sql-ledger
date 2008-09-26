@@ -62,7 +62,6 @@ $self{texts} = {
   'Defaults saved!'             => '¡Preferencias guardadas!',
   'Delete'                      => 'Borrar',
   'Delete Account'              => 'Borrar Cuenta',
-  'Department'                  => 'Centro de Costos',
   'Department deleted!'         => '¡Centro de Costos borrado!',
   'Department saved!'           => '¡Centro de Costos guardado!',
   'Departments'                 => 'Centros de Costos',

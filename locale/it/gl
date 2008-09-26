@@ -68,7 +68,6 @@ $self{texts} = {
   'Project not on file!'        => 'Progetto non archiviato!',
   'Reference'                   => 'Riferimento',
   'Reports'                     => 'Prospetti',
-  'Save'                        => 'Salva',
   'Select from one of the names below' => 'Seleziona uno dei seguenti nomi',
   'Select from one of the projects below' => 'Seleziona uno dei seguenti progetti',
   'Sep'                         => 'Set',

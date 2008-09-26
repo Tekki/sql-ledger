@@ -39,7 +39,6 @@ $self{texts} = {
   'Receipt'                     => 'Kvittun',
   'Receipts'                    => 'Kvittanir',
   'Reference'                   => 'Fylgiskjal',
-  'Save'                        => 'Geyma',
   'Screen'                      => 'Skjá',
   'Select all'                  => 'Velja allt',
   'Select from one of the names below' => 'Veljið einhvað að neðangreindum nöfnum',

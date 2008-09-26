@@ -7,15 +7,19 @@ $self{texts} = {
   'Continue'                    => '继续',
   'Customer not on file!'       => '客户未存档',
   'Date'                        => '日期',
+  'Day(s)'                      => '日',
+  'Delete Schedule'             => '删除预定',
   'Description'                 => '说明',
   'E-mail'                      => '电子邮件',
+  'E-mail message'              => '发送电邮',
   'Message'                     => '讯息',
+  'Month(s)'                    => '月',
   'Number'                      => '编号',
-  'Post'                        => '加入',
   'Print'                       => '列印',
   'Project not on file!'        => '方案内无此档案',
-  'Reference'                   => '参考资料',
-  'Save'                        => '储存',
+  'Recurring Transaction'       => '多次记录',
+  'Reference'                   => '参照',
+  'Save Schedule'               => '储存预定',
   'Select from one of the names below' => '于下列姓名中选择一个',
   'Select from one of the projects below' => '于下列方案中选择一个',
   'Startdate'                   => '开始日期',
@@ -23,7 +27,10 @@ $self{texts} = {
   'To'                          => '至',
   'Vendor not on file!'         => '档案没有此供应商',
   'Warning!'                    => '警告',
+  'Week(s)'                     => '周',
+  'Year(s)'                     => '年',
   'sent'                        => '巳送出',
+  'time(s)'                     => '次',
 };
 
 $self{subs} = {
@@ -49,6 +56,8 @@ $self{subs} = {
   'select_project'              => 'select_project',
   'vendor_invoice_'             => 'vendor_invoice_',
   '继续'                      => 'continue',
+  '删除预定'                => 'delete_schedule',
+  '储存预定'                => 'save_schedule',
 };
 
 1;

@@ -22,7 +22,6 @@ $self{texts} = {
   'Number'                      => 'Numara',
   'Payment'                     => 'Ödeme',
   'Payments'                    => 'Ödemeler',
-  'Save'                        => 'Kaydet',
   'Source'                      => 'Kaynak',
   'To'                          => 'Bitiş',
   'Vendor'                      => 'Satıcı',

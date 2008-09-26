@@ -69,7 +69,6 @@ $self{texts} = {
   'Delete'                      => 'Удалить',
   'Delete Account'              => 'Удалмть счет',
   'Deleting a language will also delete the templates for the language' => 'Удаление языка приведет к удалению шаблонов',
-  'Department'                  => 'Отдел',
   'Department deleted!'         => 'Отдел удален!',
   'Department saved!'           => 'Отдел сохранен!',
   'Departments'                 => 'Отделы',

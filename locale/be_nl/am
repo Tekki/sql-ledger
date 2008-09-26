@@ -61,7 +61,6 @@ $self{texts} = {
   'Defaults saved!'             => 'Standaarden bewaard!',
   'Delete'                      => 'Verwijder',
   'Delete Account'              => 'Rekening verwijderen',
-  'Department'                  => 'Afdeling',
   'Department deleted!'         => 'Afdeling verwijderd!',
   'Department saved!'           => 'Afdeling opgeslagen!',
   'Departments'                 => 'Afdelingen',

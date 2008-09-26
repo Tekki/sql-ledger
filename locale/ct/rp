@@ -53,7 +53,6 @@ $self{texts} = {
   'Order'                       => 'Ordre',
   'Payments'                    => 'Pagaments',
   'Report for'                  => 'Registrar per',
-  'Save'                        => 'Guardar',
   'Screen'                      => 'Pantalla',
   'Sep'                         => 'Set',
   'September'                   => 'Setembre',

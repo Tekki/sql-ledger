@@ -42,7 +42,6 @@ $self{texts} = {
   'Receipt'                     => 'الوارد',
   'Receipts'                    => 'الواردات',
   'Reference'                   => 'مرجع',
-  'Save'                        => 'تخزين',
   'Screen'                      => 'الشاشة',
   'Select all'                  => 'اختر الكل',
   'Select from one of the names below' => 'اختر اسم من الاسماء',

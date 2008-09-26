@@ -240,9 +240,7 @@ sub save {
 		WHERE id = $form->{id}|;
     my ($id, $listprice, $sellprice, $lastcost, $weight, $project_id) = $dbh->selectrow_array($query);
 
-    $form->{id} = $id;
-    
-    if ($form->{id}) {
+    if ($id) {
       
       if (!$project_id) {
 	# if item is part of an assembly adjust all assemblies
@@ -311,6 +309,10 @@ sub save {
 		  WHERE parts_id = $form->{id}|;
       $dbh->do($query) || $form->dberror($query);
       
+    } else {
+      $query = qq|INSERT INTO parts (id)
+                  VALUES ($form->{id})|;
+      $dbh->do($query) || $form->dberror($query);
     }
 
   }
@@ -582,13 +584,17 @@ sub retrieve_assemblies {
   
   my $inh;
   if ($form->{checkinventory}) {
-    $query = qq|SELECT p.id, p.onhand, a.qty FROM parts p
+    $query = qq|SELECT p.id, p.onhand, a.qty
+                FROM parts p
                 JOIN assembly a ON (a.parts_id = p.id)
-                WHERE a.id = ?|;
+		WHERE (p.inventory_accno_id > 0 OR p.assembly)
+		AND p.income_accno_id > 0
+                AND a.id = ?|;
     $inh = $dbh->prepare($query) || $form->dberror($query);
   }
   
-  my $onhand = ();
+  my %available = ();
+  my %required;
   my $ref;
   my $aref;
   my $stock;
@@ -605,12 +611,15 @@ sub retrieve_assemblies {
       if ($form->{checkinventory}) {
 	$inh->execute($ref->{id}) || $form->dberror($query);;
 	$ok = 0;
+	%required = ();
+	
 	while ($aref = $inh->fetchrow_hashref(NAME_lc)) {
-	  $onhand{$aref->{id}} = (exists $onhand{$aref->{id}}) ? $onhand{$aref->{id}} : $aref->{onhand};
+	  $available{$aref->{id}} = (exists $available{$aref->{id}}) ? $available{$aref->{id}} : $aref->{onhand};
+	  $required{$aref->{id}} = $aref->{qty};
 	  
-	  if ($aref->{onhand} >= $aref->{qty}) {
+	  if ($available{$aref->{id}} >= $aref->{qty}) {
 	    
-	    $howmany = ($aref->{qty}) ? $aref->{onhand}/$aref->{qty} : 1;
+	    $howmany = ($aref->{qty}) ? int $available{$aref->{id}}/$aref->{qty} : 1;
 	    if ($stock) {
 	      $stock = ($stock > $howmany) ? $howmany : $stock;
 	    } else {
@@ -618,15 +627,18 @@ sub retrieve_assemblies {
 	    }
 	    $ok = 1;
 
-	    $onhand{$aref->{id}} -= ($aref->{qty} * $stock);
+	    $available{$aref->{id}} -= $aref->{qty} * $stock;
 
 	  } else {
 	    $ok = 0;
+	    for (keys %required) { $available{$_} += $required{$_} * $stock }
+	    $stock = 0;
 	    last;
 	  }
 	}
 	$inh->finish;
-	$ref->{stock} = int $stock;
+	$ref->{stock} = $stock;
+	
       }
       push @{ $form->{assembly_items} }, $ref if $ok;
     }
@@ -1293,7 +1305,7 @@ sub all_parts {
   if (($form->{searchitems} eq 'assembly') && $form->{individual}) {
 
     if ($form->{sold} || $form->{ordered} || $form->{quoted}) {
-      $flds = qq|p.id, p.partnumber, p.description, a.qty AS onhand, p.unit,
+      $flds = qq|p.id, p.partnumber, p.description, p.onhand AS perassembly, p.unit,
                  p.bin, p.sellprice, p.listprice, p.lastcost, p.rop,
 		 p.avgcost,
  		 p.weight, p.priceupdate, p.image, p.drawing, p.microfiche,
@@ -1302,14 +1314,13 @@ sub all_parts {
 		 |;
     } else {
       # replace p.onhand with a.qty AS onhand
-      $flds =~ s/p.onhand/a.qty AS onhand/;
+      $flds =~ s/p.onhand/a.qty AS perassembly/;
     }
 	
     for (@{ $form->{parts} }) {
       push @a, $_;
-      $_->{onhand} = 1 if $form->{itemstatus} eq 'bom';
-      $flds =~ s/a\.qty.*AS onhand/a\.qty * $_->{onhand} AS onhand/;
-
+      $_->{perassembly} = 1;
+      $flds =~ s/p\.onhand*AS perassembly/p\.onhand, a\.qty AS perassembly/;
       push @a, &include_assembly($dbh, $myconfig, $form, $_->{id}, $flds, $makemodeljoin);
       push @a, {id => $_->{id}, assemblyitem => 1};  # this is just for
                                                      # adding a blank line

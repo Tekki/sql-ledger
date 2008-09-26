@@ -40,7 +40,6 @@ $self{texts} = {
   'Defaults saved!'             => 'Προεπιλογές αποθηκεύτηκαν',
   'Delete'                      => 'Διαγραφή',
   'Delete Account'              => 'Διαγραφή Λογαριασμού',
-  'Department'                  => 'Τμήμα',
   'Department deleted!'         => 'Τμήμα διαγράφηκε',
   'Department saved!'           => 'Τμήμα αποθηκεύτηκε',
   'Departments'                 => 'Τμήματα',

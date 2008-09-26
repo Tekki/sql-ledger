@@ -61,7 +61,6 @@ $self{texts} = {
   'Defaults saved!'             => 'Standardopsætning gemt!',
   'Delete'                      => 'Fjern',
   'Delete Account'              => 'Fjern konto',
-  'Department'                  => 'Afdeling',
   'Department deleted!'         => 'Afdeling slettet!',
   'Department saved!'           => 'Afdeling gemt!',
   'Departments'                 => 'Afdelinger',

@@ -73,7 +73,6 @@ $self{texts} = {
   'Project not on file!'        => 'المشروع ليس فى الملفات',
   'Reference'                   => 'مرجع',
   'Reports'                     => 'تقارير',
-  'Save'                        => 'تخزين',
   'Select from one of the names below' => 'اختر اسم من الاسماء',
   'Select from one of the projects below' => 'اختر  مشروع من المشروعات التالية',
   'Sep'                         => 'سبتمبر',

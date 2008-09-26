@@ -144,7 +144,6 @@ $self{texts} = {
   'Report for'                  => 'Ataskaita...',
   'Required by'                 => 'Iki kada',
   'Sales Order'                 => 'Pardavimø uþsakymas',
-  'Save'                        => 'Iðsaugoti',
   'Screen'                      => 'Ekranas',
   'Select all'                  => 'Iðrinkti viskà',
   'Select from one of the names below' => 'Iðrinkite vienà ið pavadinimø apaèioje',

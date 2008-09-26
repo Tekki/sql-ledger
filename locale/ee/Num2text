@@ -78,8 +78,8 @@ sub num2text {
     @num = split //, $numblock[$i];
     
     $numblock[$i] *= 1;
-
     $appendit = "it";
+    $hundred = 0;
     
     if ($numblock[$i] == 0) {
       pop @numblock;
@@ -89,20 +89,26 @@ sub num2text {
     if ($numblock[$i] > 99) {
       # the one from hundreds
       push @textnumber, "$self->{numbername}{$num[0]}$self->{numbername}{10**2}";
-     
       # reduce numblock
       $numblock[$i] -= $num[0] * 100;
+      @num = split //, $numblock[$i];
+      $hundred = 1;
     }
     
     if ($numblock[$i] > 19) {
       # 20 - 99
-      push @textnumber, "$self->{numbername}{$num[1]}kümmend";
+      push @textnumber, "$self->{numbername}{$num[0]}kümmend";
       @num = split //, $numblock[$i];
       push @textnumber, $self->{numbername}{$num[1]} if $num[1] > 0;
       
     } elsif ($numblock[$i] > 10) {
       # 11 - 19
-      push @textnumber, "$self->{numbername}{$num[1]}teist";
+      if ($hundred) {
+	@num = split //, $numblock[$i];
+      }
+      $num = $num[1];
+	
+      push @textnumber, "$self->{numbername}{$num}teist";
       
     } elsif ($numblock[$i] > 1) {
       # ones

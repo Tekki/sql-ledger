@@ -97,7 +97,6 @@ $self{texts} = {
   'Remaining'                   => 'Sobram',
   'Required by'                 => 'Requerido por',
   'Sales Order'                 => 'Encomenda de Venda',
-  'Save'                        => 'Guardar',
   'Screen'                      => 'Ecran',
   'Select from one of the names below' => 'Seleccione um dos nomes abaixo',
   'Select from one of the projects below' => 'Seleccione um dos projectos abaixo',

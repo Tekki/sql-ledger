@@ -171,15 +171,19 @@ sub invoice_details {
       push(@{ $form->{weight} }, $form->format_amount($myconfig, $form->{"weight_$i"}));
 
       my $sellprice = $form->parse_amount($myconfig, $form->{"sellprice_$i"});
-      my $discount = $form->round_amount($sellprice * $form->parse_amount($myconfig, $form->{"discount_$i"})/100, 2);
+      my ($dec) = ($sellprice =~ /\.(\d+)/);
+      $dec = length $dec;
+      my $decimalplaces = ($dec > 2) ? $dec : 2;
+      
+      my $discount = $form->round_amount($sellprice * $form->parse_amount($myconfig, $form->{"discount_$i"})/100, $decimalplaces);
       
       # keep a netprice as well, (sellprice - discount)
       $form->{"netprice_$i"} = $sellprice - $discount;
-      push(@{ $form->{netprice} }, ($form->{"netprice_$i"}) ? $form->format_amount($myconfig, $form->{"netprice_$i"}, 2) : " ");
+      push(@{ $form->{netprice} }, ($form->{"netprice_$i"}) ? $form->format_amount($myconfig, $form->{"netprice_$i"}, $decimalplaces) : " ");
       
       my $linetotal = $form->round_amount($form->{"qty_$i"} * $form->{"netprice_$i"}, 2);
 
-      $discount = ($discount) ? $form->format_amount($myconfig, $discount * -1, 2) : " ";
+      $discount = ($discount) ? $form->format_amount($myconfig, $discount * -1, $decimalplaces) : " ";
       $linetotal = ($linetotal) ? $linetotal : " ";
       
       push(@{ $form->{discount} }, $discount);
@@ -299,7 +303,7 @@ sub invoice_details {
   $c->init;
   my $whole;
   ($whole, $form->{decimal}) = split /\./, $form->{invtotal};
-  $form->{decimal} .= "0";
+  $form->{decimal} .= "00";
   $form->{decimal} = substr($form->{decimal}, 0, 2);
   $form->{text_decimal} = $c->num2text($form->{decimal} * 1);
   $form->{text_amount} = $c->num2text($whole);
@@ -469,11 +473,15 @@ sub post_invoice {
   my $pth = $dbh->prepare($query) || $form->dberror($query);
   
   if ($form->{id}) {
-    $query = qq|SELECT id FROM ar WHERE id = $form->{id}|;
-    ($form->{id}) = $dbh->selectrow_array($query);
+    $query = qq|SELECT id FROM ar
+                WHERE id = $form->{id}|;
 
-    if ($form->{id}) {
+    if ($dbh->selectrow_array($query)) {
       &reverse_invoice($dbh, $form);
+    } else {
+      $query = qq|INSERT INTO ar (id)
+                  VALUES ($form->{id})|;
+      $dbh->do($query) || $form->dberror($query);
     }
     
   }
@@ -512,12 +520,13 @@ sub post_invoice {
   my $tax;
   my @taxaccounts;
   my $amount;
+  my $grossamount;
   my $invamount = 0;
   my $invnetamount = 0;
   my $diff = 0;
   my $ml;
   
- 
+
   foreach $i (1 .. $form->{rowcount}) {
     $form->{"qty_$i"} = $form->parse_amount($myconfig, $form->{"qty_$i"});
     
@@ -535,14 +544,18 @@ sub post_invoice {
       }
       $project_id = $form->{"project_id_$i"} if $form->{"project_id_$i"};
 
-      # undo discount formatting
-      $form->{"discount_$i"} = $form->parse_amount($myconfig, $form->{"discount_$i"})/100;
-
       # keep entered selling price
       my $fxsellprice = $form->parse_amount($myconfig, $form->{"sellprice_$i"});
+
+      my ($dec) = ($fxsellprice =~ /\.(\d+)/);
+      $dec = length $dec;
+      my $decimalplaces = ($dec > 2) ? $dec : 2;
       
+      # undo discount formatting
+      $form->{"discount_$i"} = $form->parse_amount($myconfig, $form->{"discount_$i"})/100;
+     
       # deduct discount
-      $form->{"sellprice_$i"} = $fxsellprice - $form->round_amount($fxsellprice * $form->{"discount_$i"}, 2);
+      $form->{"sellprice_$i"} = $fxsellprice - $form->round_amount($fxsellprice * $form->{"discount_$i"}, $decimalplaces);
       
       # linetotal
       my $fxlinetotal = $form->round_amount($form->{"sellprice_$i"} * $form->{"qty_$i"}, 2);
@@ -572,10 +585,12 @@ sub post_invoice {
 	$ml = -1;
       }
 
+      $grossamount = $form->round_amount($linetotal, 2);
+      
       if ($form->{taxincluded}) {
 	$amount = $form->round_amount($tax, 2);
 	$linetotal -= $form->round_amount($tax - $diff, 2);
-	$diff = ($tax - $amount);
+	$diff = ($amount - $tax);
       }
       
       # add linetotal to income
@@ -584,9 +599,10 @@ sub post_invoice {
       push @{ $form->{acc_trans}{lineitems} }, {
         chart_id => $form->{"income_accno_id_$i"},
 	amount => $amount,
+	grossamount => $grossamount,
 	project_id => $project_id };
 
-      $form->{"sellprice_$i"} = $form->round_amount($form->{"sellprice_$i"} * $form->{exchangerate}, 2);
+      $form->{"sellprice_$i"} = $form->round_amount($form->{"sellprice_$i"} * $form->{exchangerate}, $decimalplaces);
   
       if ($form->{"inventory_accno_id_$i"} || $form->{"assembly_$i"}) {
 	
@@ -652,19 +668,31 @@ sub post_invoice {
 
   # add lineitems + tax
   $amount = 0;
-  for (@{ $form->{acc_trans}{lineitems} }) { $amount += $_->{amount} }
+  $grossamount = 0;
+  for (@{ $form->{acc_trans}{lineitems} }) {
+    $amount += $_->{amount};
+    $grossamount += $_->{grossamount};
+  }
   $invnetamount = $amount;
   
   $amount = 0;
   for (split / /, $form->{taxaccounts}) { $amount += $form->{acc_trans}{$form->{id}}{$_}{amount} = $form->round_amount($form->{acc_trans}{$form->{id}}{$_}{amount}, 2) }
   $invamount = $invnetamount + $amount;
+
+  $diff = 0;
+  if ($form->{taxincluded}) {
+    $diff = $form->round_amount($grossamount - $invamount, 2);
+    $invamount += $diff;
+  }
   
-  foreach $ref (@ { $form->{acc_trans}{lineitems} }) {
+  foreach $ref (sort { $b->{amount} <=> $a->{amount} } @ { $form->{acc_trans}{lineitems} }) {
+    $amount = $ref->{amount} + $diff;
     $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount,
 		transdate, project_id)
-		VALUES ($form->{id}, $ref->{chart_id}, $ref->{amount},
+		VALUES ($form->{id}, $ref->{chart_id}, $amount,
 	      '$form->{transdate}', $ref->{project_id})|;
     $dbh->do($query) || $form->dberror($query);
+    $diff = 0;
   }
   
   $form->{receivables} = $invamount * -1;
@@ -1184,6 +1212,10 @@ sub retrieve_invoice {
     
     while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
 
+      my ($dec) = ($ref->{fxsellprice} =~ /\.(\d+)/);
+      $dec = length $dec;
+      my $decimalplaces = ($dec > 2) ? $dec : 2;
+
       $tth->execute($ref->{id});
 
       $ref->{taxaccounts} = "";
@@ -1197,9 +1229,8 @@ sub retrieve_invoice {
       chop $ref->{taxaccounts};
 
       # price matrix
-      $ref->{pricematrix} = "";
       $ref->{sellprice} = ($ref->{fxsellprice} * $form->{$form->{currency}});
-      &price_matrix($pmh, $ref, $form->{transdate}, $form, $myconfig, 1);
+      &price_matrix($pmh, $ref, $form->{transdate}, $decimalplaces, $form, $myconfig);
       $ref->{sellprice} = $ref->{fxsellprice};
 
       $ref->{partsgroup} = $ref->{partsgrouptranslation} if $ref->{partsgrouptranslation};
@@ -1296,7 +1327,11 @@ sub retrieve_item {
   my $transdate = $form->datetonum($myconfig, $form->{transdate});
   
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-    
+
+    my ($dec) = ($ref->{sellprice} =~ /\.(\d+)/);
+    $dec = length $dec;
+    my $decimalplaces = ($dec > 2) ? $dec : 2;
+
     # get taxes for part
     $tth->execute($ref->{id});
 
@@ -1308,7 +1343,7 @@ sub retrieve_item {
     chop $ref->{taxaccounts};
 
     # get matrix
-    &price_matrix($pmh, $ref, $transdate, $form, $myconfig);
+    &price_matrix($pmh, $ref, $transdate, $decimalplaces, $form, $myconfig);
 
     $ref->{description} = $ref->{translation} if $ref->{translation};
     $ref->{partsgroup} = $ref->{grouptranslation} if $ref->{grouptranslation};
@@ -1326,7 +1361,15 @@ sub retrieve_item {
 sub price_matrix_query {
   my ($dbh, $form) = @_;
   
-  my $query = qq|SELECT p.*, g.pricegroup
+  my $query = qq|SELECT p.id AS parts_id, 0 AS customer_id, 0 AS pricegroup_id,
+              0 AS pricebreak, p.sellprice, NULL AS validfrom, NULL AS validto,
+	      '$form->{defaultcurrency}' AS curr, '' AS pricegroup
+              FROM parts p
+	      WHERE p.id = ?
+
+	      UNION
+  
+              SELECT p.*, g.pricegroup
               FROM partscustomer p
 	      LEFT JOIN pricegroup g ON (g.id = p.pricegroup_id)
 	      WHERE p.parts_id = ?
@@ -1360,16 +1403,20 @@ sub price_matrix_query {
 
 
 sub price_matrix {
-  my ($pmh, $ref, $transdate, $form, $myconfig, $init) = @_;
+  my ($pmh, $ref, $transdate, $decimalplaces, $form, $myconfig) = @_;
 
-  $pmh->execute($ref->{id}, $ref->{id}, $ref->{id});
+  $pmh->execute($ref->{id}, $ref->{id}, $ref->{id}, $ref->{id});
  
-  my $customerprice = 0;
-  my $pricegroup = 0;
+  $ref->{pricematrix} = "";
+  
+  my $customerprice;
+  my $pricegroupprice;
   my $sellprice;
+  my $baseprice;
   my $mref;
   my %p = ();
-
+  my $i = 0;
+  
   while ($mref = $pmh->fetchrow_hashref(NAME_lc)) {
 
     # check date
@@ -1381,37 +1428,44 @@ sub price_matrix {
     }
 
     # convert price
-    $sellprice = $form->round_amount($mref->{sellprice} * $form->{$mref->{curr}}, 2);
-    
+    $sellprice = $form->round_amount($mref->{sellprice} * $form->{$mref->{curr}}, $decimalplaces);
+
+    $mref->{pricebreak} *= 1;
+
     if ($mref->{customer_id}) {
-      $ref->{sellprice} = $sellprice if !$mref->{pricebreak};
       $p{$mref->{pricebreak}} = $sellprice;
       $customerprice = 1;
     }
 
     if ($mref->{pricegroup_id}) {
-      if (! $customerprice) {
-	$ref->{sellprice} = $sellprice if !$mref->{pricebreak};
+      if (!$customerprice) {
 	$p{$mref->{pricebreak}} = $sellprice;
+	$pricegroupprice = 1;
       }
-      $pricegroup = 1;
     }
 
-    if (!($customerprice && $pricegroup)) {
+    if (!$customerprice && !$pricegroupprice) {
       $p{$mref->{pricebreak}} = $sellprice;
     }
+    
+    if (($mref->{pricebreak} + $mref->{customer_id} + $mref->{pricegroup_id}) == 0) {
+      $baseprice = $sellprice;
+    }
 
+    $i++;
+ 
   }
   $pmh->finish;
 
-  if (%p) {
-    for (sort keys %p) { $ref->{pricematrix} .= "${_}:$p{$_} " }
+  if (! exists $p{0}) {
+    $p{0} = $baseprice;
+  }
+  
+  if ($i > 1) {
+    $ref->{sellprice} = $p{0};
+    for (sort { $a <=> $b } keys %p) { $ref->{pricematrix} .= "${_}:$p{$_} " }
   } else {
-    if ($init) {
-      $ref->{sellprice} = $form->round_amount($ref->{sellprice}, 2);
-    } else {
-      $ref->{sellprice} = $form->round_amount($ref->{sellprice} * (1 - $form->{tradediscount}), 2);
-    }
+    $ref->{sellprice} = $form->round_amount($p{0} * (1 - $form->{tradediscount}), $decimalplaces);
     $ref->{pricematrix} = "0:$ref->{sellprice} " if $ref->{sellprice};
   }
   chop $ref->{pricematrix};

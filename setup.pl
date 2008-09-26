@@ -25,8 +25,8 @@ $latex = `latex -version`;
 @source = (
             "http://www.sql-ledger.org/source",
             "http://www.sql-ledger.com/source",
-            "http://abacus.sql-ledger.org/source",
-	    "http://pluto.sql-ledger.org/source" );
+            "http://abacus.sql-ledger.com/source",
+	    "http://pluto.sql-ledger.com/source" );
 
 $userspath = "users";         # default for new installation
 
@@ -64,16 +64,13 @@ if (-f "VERSION") {
 
   $newinstall = !$version;
 
-  # some folks can't read
-  if (! -f sql-ledger.conf) {
+  if (! -f "sql-ledger.conf") {
     $newinstall = 1;
   }
 }
 
-$windows = ($^O =~ /MS/) ? '/windows' : '';
-
-$webowner = $<;
-$webgroup = $(;
+$webowner = "nobody";
+$webgroup = "nogroup";
 
 if ($httpd = `find /etc /usr/local/etc -type f -name 'httpd.conf'`) {
   chomp $httpd;
@@ -87,6 +84,9 @@ if ($httpd = `find /etc /usr/local/etc -type f -name 'httpd.conf'`) {
   ($null, $webgroup) = split / /, $webgroup;
 
 }
+
+$confd = `find /etc /usr/local/etc -type d -name 'conf.d'`;
+chomp $confd;
 
 system("tput clear");
 
@@ -104,10 +104,8 @@ if (!$newinstall) {
 }
 
 if ($version && $latest_version) {
-  if (!$filename && $version le $latest_version) {
-    if (substr($version, 0, rindex($version, ".")) eq substr($latest_version, 0, rindex($latest_version, "."))) {
-      $install .= "\n(u)pgrade to $latest_version\n";
-    }
+  if ($version lt $latest_version) {
+    $install .= "\n(u)pgrade to $latest_version\n";
   }
 }
 
@@ -302,6 +300,9 @@ sub install {
     $alias =~ s/.*\///g;
     
     $httpddir = `dirname $httpd`;
+    if ($confd) {
+      $httpddir = $confd;
+    }
     chomp $httpddir;
     $filename = "sql-ledger-httpd.conf";
 
@@ -316,7 +317,6 @@ Alias /$alias $absolutealias/
 <Directory $absolutealias>
   AllowOverride All
   AddHandler cgi-script .pl
-  AddDefaultCharset On
   Options ExecCGI Includes FollowSymlinks
   Order Allow,Deny
   Allow from All
@@ -341,17 +341,19 @@ This is a new installation.
       print qq|
 Webserver directives were written to $filename
       
-Copy $filename to $httpddir and add
+Copy $filename to $httpddir
 |;
 
-      print qq|
+      if (!$confd) {
+	print qq| and add
 # SQL-Ledger
 Include $httpddir/$filename
 
 to $httpd
-
-Don't forget to restart your webserver!
 |;
+      }
+
+      print qq| and restart your webserver!\n|;
 
       if (!$permset) {
 	print qq|
@@ -366,32 +368,35 @@ could not be set. Login as root and set permissions
 
     } else {
       
-      if (!(`grep "^# SQL-Ledger" $httpd`)) {
-
-	open(FH, ">>$httpd");
-
-	print FH qq|
-
-# SQL-Ledger
-Include $httpddir/$filename
-|;
-	close(FH);
-        
-        print qq|
+       print qq|
 Webserver directives were written to
 
   $httpddir/$filename
 |;
-      }
-    }
+     
+      if (!$confd) {
+	if (!(`grep "^# SQL-Ledger" $httpd`)) {
 
-    if (!$>) {
-      # send SIGHUP to httpd
-      if ($f = `find /var -type f -name 'httpd.pid'`) {
-	$pid = `cat $f`;
-	chomp $pid;
-	if ($pid) {
-	  system("kill -s HUP $pid");
+	  open(FH, ">>$httpd");
+
+	  print FH qq|
+
+# SQL-Ledger
+Include $httpddir/$filename
+|;
+	  close(FH);
+	  
+	}
+      }
+
+      if (!$>) {
+	# send SIGHUP to httpd
+	if ($f = `find /var -type f -name 'httpd.pid'`) {
+	  $pid = `cat $f`;
+	  chomp $pid;
+	  if ($pid) {
+	    system("kill -s HUP $pid");
+	  }
 	}
       }
     }
@@ -475,10 +480,6 @@ sub decompress {
         print "cleaning up ... ";
         `rm -rf sql-ledger`;
         print "done\n";
-
-        # replace shebang if this is windows
-        &shebang if $windows;
-	
       }
     }
   }
@@ -506,30 +507,5 @@ sub cleanup {
 
 
 sub remove_lockfile { unlink "$userspath/nologin" if (-f "$userspath/nologin") };
-
-
-sub shebang {
-
-  opendir DIR, ".";
-  @perlfiles = grep /\.pl/, readdir DIR;
-  closedir DIR;
-
-  foreach $file (@perlfiles) {
-    open FH, "+<$file";
-    
-    @file = <FH>;
-
-    seek(FH, 0, 0);
-    truncate(FH, 0);
-
-    $line = shift @file;
-
-    print FH "#!c:\\perl\\bin\\perl\n";
-    print FH @file;
-
-    close(FH);
-
-  }
-}
 
 

@@ -118,7 +118,6 @@ $self{texts} = {
   'Required by'                 => 'Nodig voor',
   'SKU'                         => 'SKU',
   'Sales Order'                 => 'Verkooporder',
-  'Save'                        => 'Opslaan',
   'Screen'                      => 'Scherm',
   'Select from one of the names below' => 'Kies een van de onderstaande namen',
   'Select from one of the projects below' => 'Kies een van de onderstaande projecten',

@@ -64,7 +64,6 @@ $self{texts} = {
   'Defaults saved!'             => 'Настройки по умолчании сохранены!',
   'Delete'                      => 'Удалить',
   'Delete Account'              => 'Удалмть счет',
-  'Department'                  => 'Отдел',
   'Department deleted!'         => 'Отдел удален!',
   'Department saved!'           => 'Отдел сохранен!',
   'Departments'                 => 'Отделы',

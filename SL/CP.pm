@@ -119,24 +119,30 @@ sub get_openvc {
 
   my $sth;
   my $ref;
+  my $i = 0;
 
-  # build selection list
-  if ($count < $myconfig->{vclimit}) {
-    $query = qq|SELECT DISTINCT ct.id, ct.name
-                FROM $form->{vc} ct, $arap a
-		WHERE a.$form->{vc}_id = ct.id
-		AND a.amount != a.paid
-		ORDER BY name|;
-    $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+  my $where = qq|WHERE a.$form->{vc}_id = ct.id
+                 AND a.amount != a.paid|;
 
-    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-      push @{ $form->{"all_$form->{vc}"} }, $ref;
-    }
-
-    $sth->finish;
-
+  if ($form->{$form->{vc}}) {
+    my $var = $form->like(lc $form->{$form->{vc}});
+    $where .= " AND lower(name) LIKE '$var'";
   }
+    
+  # build selection list
+  $query = qq|SELECT DISTINCT ct.*
+	      FROM $form->{vc} ct, $arap a
+	      $where
+	      ORDER BY name|;
+  $sth = $dbh->prepare($query);
+  $sth->execute || $form->dberror($query);
+
+  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    $i++;
+    push @{ $form->{name_list} }, $ref;
+  }
+
+  $sth->finish;
 
   $form->all_departments($myconfig, $dbh, $form->{vc});
   
@@ -154,13 +160,16 @@ sub get_openvc {
   $sth->finish;
 
   # get currency for first name
-  if (@{ $form->{"all_$form->{vc}"} }) {
+  if (@{ $form->{name_list} }) {
     $query = qq|SELECT curr FROM $form->{vc}
-		WHERE id = $form->{"all_$form->{vc}"}->[0]->{id}|;
+		WHERE id = $form->{name_list}->[0]->{id}|;
     ($form->{currency}) = $dbh->selectrow_array($query);
+    $form->{currency} ||= $form->{defaultcurrency};
   }
 
   $dbh->disconnect;
+
+  $i;
 
 }
 
@@ -175,8 +184,10 @@ sub get_openinvoices {
   my $dbh = $form->dbconnect($myconfig);
  
   my $where = qq|WHERE a.$form->{vc}_id = $form->{"$form->{vc}_id"}
-                 AND a.curr = '$form->{currency}'
 	         AND a.amount != a.paid|;
+
+  $where .= qq|
+                 AND a.curr = '$form->{currency}'| if $form->{currency};
   
   my $sortorder = "transdate, invnumber";
 
@@ -188,8 +199,8 @@ sub get_openinvoices {
   }
   
   if ($form->{payment} eq 'payments') {
-    $where = qq|WHERE a.curr = '$form->{currency}'
-                AND a.amount != a.paid|;
+    $where = qq|WHERE a.amount != a.paid|;
+    $where .= qq| AND a.curr = '$form->{currency}'| if $form->{currency};
 
     if ($form->{duedatefrom}) {
       $where .= qq|
@@ -373,7 +384,7 @@ sub post_payment {
 	$dbh->do($query) || $form->dberror($query);
 
         # gain/loss
-	$amount = $form->round_amount($form->{"paid_$i"} * ($exchangerate - $form->{exchangerate}) * $ml * -1, 2);
+	$amount = ($form->round_amount($form->{"paid_$i"} * $exchangerate,2) - $form->round_amount($form->{"paid_$i"} * $form->{exchangerate},2)) * $ml * -1;
 	if ($amount) {
 	  my $accno_id = ($amount > 0) ? $fxgain_accno_id : $fxloss_accno_id;
 	  $query = qq|INSERT INTO acc_trans (trans_id, chart_id, transdate,
@@ -565,7 +576,7 @@ sub post_payments {
 	$dbh->do($query) || $form->dberror($query);
 
         # gain/loss
-	$amount = $form->round_amount($paid * ($exchangerate - $form->{exchangerate}) * $ml * -1, 2);
+	$amount = ($form->round_amount($paid * $exchangerate,2) - $form->round_amount($paid * $form->{exchangerate},2)) * $ml * -1;
 	if ($amount) {
 	  $accno_id = ($amount > 0) ? $fxgain_accno_id : $fxloss_accno_id;
 	  $query = qq|INSERT INTO acc_trans (trans_id, chart_id, transdate,

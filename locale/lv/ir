@@ -120,7 +120,6 @@ $self{texts} = {
   'Required by'                 => 'Pieprasîja',
   'SKU'                         => 'SKU',
   'Sales Order'                 => 'Pârdoðanas orderis',
-  'Save'                        => 'Saglabât',
   'Screen'                      => 'Ekrâns',
   'Select from one of the names below' => 'Atlasît vienu no sekojoðiem nosaukumiem',
   'Select from one of the projects below' => 'Atlasît vienu no sekojoðiem projektiem',

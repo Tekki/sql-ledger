@@ -62,7 +62,6 @@ $self{texts} = {
   'Defaults saved!'             => 'Noklusçtâs vçrtîbas saglabâtas',
   'Delete'                      => 'Dzçst',
   'Delete Account'              => 'Izdzçst Kontu',
-  'Department'                  => 'Nodaïa',
   'Department deleted!'         => 'Nodaïa izdzçsta',
   'Department saved!'           => 'Nodaïa saglabâta',
   'Departments'                 => 'Nodaïas',

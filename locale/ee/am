@@ -55,7 +55,6 @@ $self{texts} = {
   'Defaults saved!'             => 'Vaikimisi määrangud salvestatud',
   'Delete'                      => 'Kustuta',
   'Delete Account'              => 'Kustuta konto',
-  'Department'                  => 'Osakond',
   'Department deleted!'         => 'Osakond kustutatud!',
   'Department saved!'           => 'Osakond salvestatud!',
   'Departments'                 => 'Osakonnad',

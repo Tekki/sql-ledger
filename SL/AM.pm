@@ -791,6 +791,10 @@ sub recurring_transactions {
   my $query = qq|SELECT curr FROM defaults|;
   my ($defaultcurrency) = $dbh->selectrow_array($query);
   $defaultcurrency =~ s/:.*//g;
+
+  $form->{sort} ||= "nextdate";
+  my @a = ($form->{sort});
+  my $sortorder = $form->sort_order(\@a);
   
   $query = qq|SELECT 'ar' AS module, 'ar' AS transaction, a.invoice,
                  n.name AS description, a.amount,
@@ -875,7 +879,7 @@ sub recurring_transactions {
 		      (ex.curr = a.curr AND a.transdate = ex.transdate)
 		 WHERE a.quotation = '0'
 		 
-		 ORDER BY id, nextdate|;
+		 ORDER BY $sortorder|;
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);

@@ -95,7 +95,6 @@ $self{texts} = {
   'Packing List Number missing!' => 'Szállítólevél száma hiányzik!',
   'Part'                        => 'Cikk',
   'Phone'                       => 'Telefon',
-  'Post'                        => 'Rögzítés',
   'Postscript'                  => 'Postscript',
   'Price'                       => 'Ár',
   'Print'                       => 'Nyomtatás',

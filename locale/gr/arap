@@ -9,9 +9,6 @@ $self{texts} = {
   'Message'                     => 'Μύνημα',
   'Number'                      => 'Αριθμός',
   'Print'                       => 'Εκτύπωση',
-  'Print and Post'              => 'Έκτύπωση και αποστολή',
-  'Print and Save'              => 'Εκτύπωση και αποθήκευση',
-  'Save'                        => 'Αποθήκευση',
   'Vendor not on file!'         => 'Creditor not on file!',
 };
 

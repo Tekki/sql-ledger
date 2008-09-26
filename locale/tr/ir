@@ -68,7 +68,6 @@ $self{texts} = {
   'Record in'                   => 'Kaydet',
   'Required by'                 => 'Talep tarihi:',
   'Sales Order'                 => 'Satýþ Sipariþi',
-  'Save'                        => 'Kaydet',
   'Sep'                         => 'Eyl',
   'September'                   => 'Eylül',
   'Service'                     => 'servis',

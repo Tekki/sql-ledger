@@ -7,7 +7,6 @@ $self{texts} = {
   'Description'                 => 'Açýklama',
   'E-mail'                      => 'Posta',
   'Number'                      => 'Numara',
-  'Save'                        => 'Kaydet',
   'To'                          => 'Bitiþ',
 };
 

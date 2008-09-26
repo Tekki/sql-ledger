@@ -77,7 +77,6 @@ $self{texts} = {
   'R'                           => 'R',
   'Reference'                   => 'Norâde',
   'Reports'                     => 'Atskaites',
-  'Save'                        => 'Saglabât',
   'Select from one of the names below' => 'Atlasît vienu no sekojoğiem nosaukumiem',
   'Select from one of the projects below' => 'Atlasît vienu no sekojoğiem projektiem',
   'Sep'                         => 'Sep',

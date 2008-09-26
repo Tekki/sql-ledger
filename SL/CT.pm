@@ -194,6 +194,14 @@ sub save_customer {
                 WHERE trans_id = $form->{id}|;
     $dbh->do($query) || $form->dberror($query);
 
+    $query = qq|SELECT id FROM customer
+                WHERE id = $form->{id}|;
+    if (! $dbh->selectrow_array($query)) {
+      $query = qq|INSERT INTO customer (id)
+                  VALUES ($form->{id})|;
+      $dbh->do($query) || $form->dberror($query);
+    }
+
     # retrieve enddate
     if ($form->{type} && $form->{enddate}) {
       my $now;
@@ -318,6 +326,23 @@ sub save_vendor {
     $query = qq|DELETE FROM shipto
                 WHERE trans_id = $form->{id}|;
     $dbh->do($query) || $form->dberror($query);
+    
+    $query = qq|SELECT id FROM vendor
+                WHERE id = $form->{id}|;
+    if (! $dbh->selectrow_array($query)) {
+      $query = qq|INSERT INTO vendor (id)
+                  VALUES ($form->{id})|;
+      $dbh->do($query) || $form->dberror($query);
+    }
+    
+    # retrieve enddate
+    if ($form->{type} && $form->{enddate}) {
+      my $now;
+      $query = qq|SELECT enddate, current_date AS now FROM vendor|;
+      ($form->{enddate}, $now) = $dbh->selectrow_array($query);
+      $form->{enddate} = $now if $form->{enddate} lt $now;
+    }
+
   } else {
     my $uid = time;
     $uid .= $form->{login};

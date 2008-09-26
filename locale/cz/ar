@@ -64,7 +64,6 @@ $self{texts} = {
   'Payment date missing!'       => 'Chybם datum platby!',
   'Payments'                    => 'Platby',
   'Remaining'                   => 'Zb‎vב',
-  'Save'                        => 'Ulo¾it',
   'Screen'                      => 'Na obrazovku',
   'Sep'                         => 'Zבר',
   'September'                   => 'Zברם',

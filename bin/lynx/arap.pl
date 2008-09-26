@@ -59,6 +59,7 @@ sub check_name {
       AA->get_name(\%myconfig, \%$form);
 
       $form->{$name} = $form->{"old$name"} = "$new_name--$new_id";
+      $form->{currency} =~ s/ //g;
 
       # put employee together if there is a new employee_id
       $form->{employee} = "$form->{employee}--$form->{employee_id}" if $form->{employee_id};
@@ -91,6 +92,7 @@ sub check_name {
 	
 	AA->get_name(\%myconfig, \%$form);
 	
+	$form->{currency} =~ s/ //g;
 	# put employee together if there is a new employee_id
 	$form->{employee} = "$form->{employee}--$form->{employee_id}" if $form->{employee_id};
 
@@ -448,41 +450,40 @@ sub repost {
 
   if ($form->{type} =~ /_order/) {
     if ($form->{print_and_save}) {
-      $action = $locale->text('Print and Save');
+      $form->{nextsub} = "print_and_save";
       $msg = $locale->text('You are printing and saving an existing order');
     } else {
-      $action = $locale->text('Save');
+      $form->{nextsub} = "save";
       $msg = $locale->text('You are saving an existing order');
     }
   } elsif ($form->{type} =~ /_quotation/) {
     if ($form->{print_and_save}) {
-      $action = $locale->text('Print and Save');
+      $form->{nextsub} = "print_and_save";
       $msg = $locale->text('You are printing and saving an existing quotation');
     } else {
-      $action = $locale->text('Save');
+      $form->{nextsub} = "save";
       $msg = $locale->text('You are saving an existing quotation');
     }
   } else {
     if ($form->{print_and_post}) {
-      $action = $locale->text('Print and Post');
+      $form->{nextsub} = "print_and_post";
       $msg = $locale->text('You are printing and posting an existing transaction!');
     } else {
-      $action = $locale->text('Post');
+      $form->{nextsub} = "post";
       $msg = $locale->text('You are posting an existing transaction!');
     }
   }
   
+  delete $form->{action};
+  $form->{repost} = 1;
+
   $form->header;
 
   print qq|
 <body>
 
 <form method=post action=$form->{script}>
-
-<input type=hidden name=repost value=1>
 |;
-
-  delete $form->{action};
 
   $form->hide_form;
 
@@ -491,7 +492,7 @@ sub repost {
 
 <h4>$msg</h4>
 
-<input name=action class=submit type=submit value="$action">
+<input name=action class=submit type=submit value="|.$locale->text('Continue').qq|">
 </form>
 
 </body>

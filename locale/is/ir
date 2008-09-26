@@ -98,7 +98,6 @@ $self{texts} = {
   'Remaining'                   => 'Eftir',
   'Required by'                 => 'Pantağ af',
   'Sales Order'                 => 'Sölupöntun',
-  'Save'                        => 'Geyma',
   'Screen'                      => 'Skjá',
   'Select from one of the names below' => 'Veljiğ einhvağ ağ neğangreindum nöfnum',
   'Select from one of the projects below' => 'Veljiğ einhvağ ağ neğangreindum verkefnum',

@@ -55,10 +55,7 @@ $self{texts} = {
   'Oct'                         => 'Οκτ',
   'October'                     => 'Οκτώβριος',
   'Print'                       => 'Εκτύπωση',
-  'Print and Post'              => 'Έκτύπωση και αποστολή',
-  'Print and Save'              => 'Εκτύπωση και αποθήκευση',
   'Project'                     => 'Έργο',
-  'Save'                        => 'Αποθήκευση',
   'Source'                      => 'Πηγή',
   'Vendor not on file!'         => 'Creditor not on file!',
 };

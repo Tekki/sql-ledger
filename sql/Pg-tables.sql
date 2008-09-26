@@ -66,7 +66,7 @@ CREATE TABLE defaults (
   vendornumber text,
   glnumber text
 );
-INSERT INTO defaults (version) VALUES ('2.6.1');
+INSERT INTO defaults (version) VALUES ('2.6.2');
 --
 CREATE TABLE acc_trans (
   trans_id int,

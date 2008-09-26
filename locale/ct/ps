@@ -97,7 +97,6 @@ $self{texts} = {
   'Report for'                  => 'Registrar per',
   'Required by'                 => 'Soliciat per',
   'Sales Order'                 => 'Pressupost',
-  'Save'                        => 'Guardar',
   'Screen'                      => 'Pantalla',
   'Sep'                         => 'Set',
   'September'                   => 'Setembre',

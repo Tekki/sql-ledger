@@ -37,7 +37,6 @@ $self{texts} = {
   'Receipt'                     => 'Recibo',
   'Receipts'                    => 'Recibos',
   'Reference'                   => 'Referencia',
-  'Save'                        => 'Guardar',
   'Screen'                      => 'Pantalla',
   'Select all'                  => 'Guardar todo',
   'Select from one of the names below' => 'Seleccione uno de los nombres de la lista',

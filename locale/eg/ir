@@ -108,7 +108,6 @@ $self{texts} = {
   'Remaining'                   => 'متبقى',
   'Required by'                 => 'مطلوب من قبل',
   'Sales Order'                 => 'امر بيع',
-  'Save'                        => 'تخزين',
   'Screen'                      => 'الشاشة',
   'Select from one of the names below' => 'اختر اسم من الاسماء',
   'Select from one of the projects below' => 'اختر  مشروع من المشروعات التالية',

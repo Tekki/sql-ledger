@@ -139,7 +139,6 @@ $self{texts} = {
   'Report for'                  => 'Informe para',
   'Required by'                 => 'Aceptado el',
   'Sales Order'                 => 'Presupuesto',
-  'Save'                        => 'Guardar',
   'Screen'                      => 'Pantalla',
   'Select all'                  => 'Guardar todo',
   'Select from one of the names below' => 'Seleccione uno de los nombres de la lista',

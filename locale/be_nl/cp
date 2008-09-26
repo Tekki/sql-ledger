@@ -45,7 +45,6 @@ $self{texts} = {
   'Receipt posted!'             => 'Ontvangstbewijs geboekt',
   'Receipts'                    => 'Ontvangstbewijzen',
   'Reference'                   => 'Referentie',
-  'Save'                        => 'Opslaan',
   'Screen'                      => 'Scherm',
   'Select'                      => 'Selecteer',
   'Select all'                  => 'Selecteer alles',

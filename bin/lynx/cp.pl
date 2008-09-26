@@ -61,6 +61,9 @@ sub payment {
     $form->all_vc(\%myconfig, $form->{vc}, $form->{ARAP}, undef, $form->{datepaid});
   } else {
     CP->get_openvc(\%myconfig, \%$form);
+    if ($myconfig{vclimit} > 0) {
+      $form->{"all_$form->{vc}"} = $form->{name_list};
+    }
   }
 
   $form->{"select$form->{vc}"} = "";
@@ -92,12 +95,13 @@ sub payment {
 
   # currencies
   @curr = split /:/, $form->{currencies};
-  chomp $curr[0];
   $form->{defaultcurrency} = $curr[0];
+  chomp $form->{defaultcurrency};
 
   $form->{selectcurrency} = "";
   for (@curr) { $form->{selectcurrency} .= "<option>$_\n" }
 
+  $form->{currency} = $form->{defaultcurrency};
   $form->{oldcurrency} = $form->{currency};
 
   if ($form->{currency} ne $form->{defaultcurrency}) {
@@ -158,8 +162,8 @@ sub payments {
 
   # currencies
   @curr = split /:/, $form->{currencies};
-  chomp $curr[0];
   $form->{defaultcurrency} = $curr[0];
+  chomp $form->{defaultcurrency};
 
   $form->{selectcurrency} = "";
   for (@curr) { $form->{selectcurrency} .= "<option>$_\n" }
@@ -186,26 +190,7 @@ sub payments_header {
     $form->{title} = $locale->text('Payments');
   }
 
-  $exchangerate = "";
-  if ($form->{currency} ne $form->{defaultcurrency}) {
-    $form->{exchangerate} = $form->format_amount(\%myconfig, $form->{exchangerate});
-    if ($form->{forex}) {
-      $exchangerate = qq|
- 	      <tr>
-		<th align=right nowrap>|.$locale->text('Exchange Rate').qq|</th>
-		<td colspan=3><input type=hidden name=exchangerate size=10 value=$form->{exchangerate}>$form->{exchangerate}</td>
-	      </tr>
-|;
-    } else {
-      $exchangerate = qq|
- 	      <tr>
-		<th align=right nowrap>|.$locale->text('Exchange Rate').qq|</th>
-		<td colspan=3><input name=exchangerate size=10 value=$form->{exchangerate}></td>
-	      </tr>
-|;
-    }
-  }
-  
+ 
   for ("department") {
     $form->{"select$_"} = $form->unescape($form->{"select$_"});
     $form->{"select$_"} =~ s/ selected//;
@@ -217,6 +202,37 @@ sub payments_header {
     $form->{"select$_"} =~ s/option>\Q$form->{$_}\E/option selected>$form->{$_}/;
   }
 
+  if ($form->{defaultcurrency}) {
+     $exchangerate = qq|
+	      <tr>
+		<th align=right nowrap>|.$locale->text('Currency').qq|</th>
+		<td><select name=currency>$form->{selectcurrency}</select></td>
+		<input type=hidden name=selectcurrency value="$form->{selectcurrency}">
+		<input type=hidden name=oldcurrency value=$form->{oldcurrency}>
+	      </tr>
+|;
+  }
+ 
+  if ($form->{currency} ne $form->{defaultcurrency}) {
+    $form->{exchangerate} = $form->format_amount(\%myconfig, $form->{exchangerate});
+
+    if ($form->{forex}) {
+      $exchangerate .= qq|
+ 	      <tr>
+		<th align=right nowrap>|.$locale->text('Exchange Rate').qq|</th>
+		<td colspan=3><input type=hidden name=exchangerate size=10 value=$form->{exchangerate}>$form->{exchangerate}</td>
+	      </tr>
+|;
+    } else {
+      $exchangerate .= qq|
+ 	      <tr>
+		<th align=right nowrap>|.$locale->text('Exchange Rate').qq|</th>
+		<td colspan=3><input name=exchangerate size=10 value=$form->{exchangerate}></td>
+	      </tr>
+|;
+    }
+  }
+ 
   $department = qq|
               <tr>
 	        <th align="right" nowrap>|.$locale->text('Department').qq|</th>
@@ -276,12 +292,6 @@ sub payments_header {
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Date').qq|</th>
 		<td><input name=datepaid value="$form->{datepaid}" title="$myconfig{dateformat}" size=11></td>
-	      </tr>
-	      <tr>
-		<th align=right nowrap>|.$locale->text('Currency').qq|</th>
-		<td><select name=currency>$form->{selectcurrency}</select></td>
-		<input type=hidden name=selectcurrency value="$form->{selectcurrency}">
-		<input type=hidden name=oldcurrency value=$form->{oldcurrency}>
 	      </tr>
 	      $exchangerate
 	    </table>
@@ -494,7 +504,7 @@ sub select_all {
 sub update {
   my ($new_name_selected) = @_;
 
-  &{"update_$form->{payment}"}($new_name_selected);
+  &{"update_$form->{payment}"};
   
 }
 
@@ -509,14 +519,14 @@ sub update_payments {
 
   if (($form->{oldduedatefrom} ne $form->{duedatefrom}) || ($form->{oldduedateto} ne $form->{duedateto}) || ($form->{department} ne $form->{olddepartment})) {
     CP->get_openinvoices(\%myconfig, \%$form);
-    $redo = 1;
+    $form->{redo} = 1;
   }
 
   if ($form->{currency} ne $form->{oldcurrency}) {
     $form->{oldcurrency} = $form->{currency};
-    if (!$redo) {
+    if (!$form->{redo}) {
       CP->get_openinvoices(\%myconfig, \%$form);
-      $redo = 1;
+      $form->{redo} = 1;
     }
   }
 
@@ -524,7 +534,7 @@ sub update_payments {
   
   $form->{exchangerate} = $exchangerate if ($form->{forex} = ($exchangerate = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{datepaid}, $buysell)));
 
-  if ($redo) {
+  if ($form->{redo}) {
     $form->{rowcount} = 0;
 
     $i = 0;
@@ -560,7 +570,7 @@ sub update_payments {
       }
       
       $amount += $form->{"paid_$i"};
-      $redo = 1;
+      $form->{redo} = 1;
     } else {
       $form->{"paid_$i"} = "";
     }
@@ -568,7 +578,7 @@ sub update_payments {
     for (qw(amount due paid)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}, 2) }
   }
 
-  $form->{amount} += ($amount - $form->{oldamount}) if $redo;
+  $form->{amount} += ($amount - $form->{oldamount}) if $form->{redo};
 
   &payments_header;
   &invoices_due;
@@ -586,9 +596,9 @@ sub update_payment {
   }
 
   $department = $form->{department};
-  
+
   # get customer/vendor
-  $redo = &check_name($form->{vc});
+  &check_openvc;
   $form->{department} = $department;
 
   if ($form->{datepaid} ne $form->{olddatepaid}) {
@@ -598,14 +608,19 @@ sub update_payment {
 
   if ($form->{department} ne $form->{olddepartment}) {
     $form->{olddepartment} = $form->{department};
-    $redo = 1;
+    $form->{redo} = 1;
   }
   
   # if we switched to all_vc
   if ($form->{all_vc} ne $form->{oldall_vc}) {
 
+    if ($form->{"select$form->{vc}"}) {
+      $form->{redo} = ($form->{"old$name"} ne $form->{$name});
+    } else {
+      $form->{redo} = ($form->{"old$name"} ne qq|$form->{$name}--$form->{"${name}_id"}|);
+    }
+
     $form->{"select$form->{vc}"} = "";
-    $redo = 1;
 
     if ($form->{all_vc}) {
       $form->all_vc(\%myconfig, $form->{vc}, $form->{ARAP}, undef, $form->{datepaid});
@@ -615,8 +630,16 @@ sub update_payment {
       }
       
     } else {
-      CP->get_openvc(\%myconfig, \%$form);
+      if (($myconfig{vclimit} * 1) > 0) {
+	$form->{$form->{vc}} = "";
+      }
       
+      CP->get_openvc(\%myconfig, \%$form);
+
+      if (($myconfig{vclimit} * 1) > 0) {
+	$form->{"all_$form->{vc}"} = $form->{name_list};
+      }
+
       if (@{ $form->{"all_$form->{vc}"} }) {
 	$newvc = qq|$form->{"all_$form->{vc}"}[0]->{name}--$form->{"all_$form->{vc}"}[0]->{id}|;
 	for (@{ $form->{"all_$form->{vc}"} }) { $form->{"select$form->{vc}"} .= qq|<option value="$_->{name}--$_->{id}">$_->{name}\n| }
@@ -625,7 +648,7 @@ sub update_payment {
 	# if the name is not the same
 	if ($form->{"select$form->{vc}"} !~ /$form->{$form->{vc}}/) {
 	  $form->{$form->{vc}} = $newvc;
-	  &check_name($form->{vc});
+	  &check_openvc;
 	}
       }
     }
@@ -637,25 +660,25 @@ sub update_payment {
 
   }
 
-  if ($new_name_selected || $redo) {
+  if ($new_name_selected || $form->{redo}) {
     CP->get_openinvoices(\%myconfig, \%$form);
     ($newvc) = split /--/, $form->{$form->{vc}};
     $form->{"old$form->{vc}"} = qq|$newvc--$form->{"$form->{vc}_id"}|;;
-    $redo = 1;
+    $form->{redo} = 1;
   }
 
   if ($form->{currency} ne $form->{oldcurrency}) {
     $form->{oldcurrency} = $form->{currency};
-    if (!$redo) {
+    if (!$form->{redo}) {
       CP->get_openinvoices(\%myconfig, \%$form);
-      $redo = 1;
+      $form->{redo} = 1;
     }
   }
   
   
   $form->{exchangerate} = $exchangerate if ($form->{forex} = ($exchangerate = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{datepaid}, $buysell)));
 
-  if ($redo) {
+  if ($form->{redo}) {
     $form->{rowcount} = 0;
 
     $i = 0;
@@ -691,7 +714,7 @@ sub update_payment {
       }
       
       $amount += $form->{"paid_$i"};
-      $redo = 1;
+      $form->{redo} = 1;
     } else {
       $form->{"paid_$i"} = "";
     }
@@ -699,7 +722,7 @@ sub update_payment {
     for (qw(amount due paid)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}, 2) }
   }
 
-  $form->{amount} += ($amount - $form->{oldamount}) if $redo;
+  $form->{amount} += ($amount - $form->{oldamount}) if $form->{redo};
 
   &payment_header;
   &list_invoices;
@@ -729,27 +752,7 @@ sub payment_header {
   if ($form->{$form->{vc}} eq "") {
     for (qw(address1 address2 city zipcode state country)) { $form->{$_} = "" }
   }
-
-  $exchangerate = "";
-  if ($form->{currency} ne $form->{defaultcurrency}) {
-    $form->{exchangerate} = $form->format_amount(\%myconfig, $form->{exchangerate});
-    if ($form->{forex}) {
-      $exchangerate = qq|
- 	      <tr>
-		<th align=right nowrap>|.$locale->text('Exchange Rate').qq|</th>
-		<td colspan=3><input type=hidden name=exchangerate size=10 value=$form->{exchangerate}>$form->{exchangerate}</td>
-	      </tr>
-|;
-    } else {
-      $exchangerate = qq|
- 	      <tr>
-		<th align=right nowrap>|.$locale->text('Exchange Rate').qq|</th>
-		<td colspan=3><input name=exchangerate size=10 value=$form->{exchangerate}></td>
-	      </tr>
-|;
-    }
-  }
-
+  
   for ("$form->{vc}", "department") {
     $form->{"select$_"} = $form->unescape($form->{"select$_"});
     $form->{"select$_"} =~ s/ selected//;
@@ -759,6 +762,37 @@ sub payment_header {
   for ("account", "currency", "$form->{ARAP}") {
     $form->{"select$_"} =~ s/ selected//;
     $form->{"select$_"} =~ s/option>\Q$form->{$_}\E/option selected>$form->{$_}/;
+  }
+
+  if ($form->{defaultcurrency}) {
+    $exchangerate = qq|
+	      <tr>
+		<th align=right nowrap>|.$locale->text('Currency').qq|</th>
+		<td><select name=currency>$form->{selectcurrency}</select></td>
+		<input type=hidden name=selectcurrency value="$form->{selectcurrency}">
+		<input type=hidden name=oldcurrency value=$form->{oldcurrency}>
+	      </tr>
+|;
+  }
+
+  if ($form->{currency} ne $form->{defaultcurrency}) {
+    $form->{exchangerate} = $form->format_amount(\%myconfig, $form->{exchangerate});
+
+    if ($form->{forex}) {
+      $exchangerate .= qq|
+ 	      <tr>
+		<th align=right nowrap>|.$locale->text('Exchange Rate').qq|</th>
+		<td colspan=3><input type=hidden name=exchangerate size=10 value=$form->{exchangerate}>$form->{exchangerate}</td>
+	      </tr>
+|;
+    } else {
+      $exchangerate .= qq|
+ 	      <tr>
+		<th align=right nowrap>|.$locale->text('Exchange Rate').qq|</th>
+		<td colspan=3><input name=exchangerate size=10 value=$form->{exchangerate}></td>
+	      </tr>
+|;
+    }
   }
 
   $vc = ($form->{"select$form->{vc}"}) ? qq|<select name=$form->{vc}>$form->{"select$form->{vc}"}\n</select>| : qq|<input name=$form->{vc} size=35 value="$form->{$form->{vc}}">|;
@@ -872,12 +906,6 @@ sub payment_header {
 		<th align=right nowrap>|.$locale->text('Date').qq|</th>
 		<td><input name=datepaid value="$form->{datepaid}" title="$myconfig{dateformat}" size=11></td>
 		<input type=hidden name=olddatepaid value=$form->{olddatepaid}>
-	      </tr>
-	      <tr>
-		<th align=right nowrap>|.$locale->text('Currency').qq|</th>
-		<td><select name=currency>$form->{selectcurrency}</select></td>
-		<input type=hidden name=selectcurrency value="$form->{selectcurrency}">
-		<input type=hidden name=oldcurrency value=$form->{oldcurrency}>
 	      </tr>
 	      $exchangerate
 	      <tr>
@@ -1175,7 +1203,7 @@ sub print_form {
 
   ($whole, $form->{decimal}) = split /\./, $form->{amount};
   $form->{amount} = $form->format_amount(\%myconfig, $form->{amount}, 2);
-  $form->{decimal} .= "0";
+  $form->{decimal} .= "00";
   $form->{decimal} = substr($form->{decimal}, 0, 2);
   $form->{text_decimal} = $c->num2text($form->{decimal} * 1);
   $form->{text_amount} = $c->num2text($whole);
@@ -1221,7 +1249,7 @@ sub vendor_details { IR->vendor_details(\%myconfig, \%$form) };
 
 sub check_form {
   
-  &check_name($form->{vc});
+  &check_openvc;
 
   if ($form->{currency} ne $form->{oldcurrency}) {
     &update;
@@ -1261,5 +1289,72 @@ sub check_form {
    
 }
 
+
+sub check_openvc {
+
+  $name = $form->{vc};
+  ($new_name, $new_id) = split /--/, $form->{$name};
+  
+  if ($form->{all_vc}) {
+    if ($form->{"select$name"}) {
+      $ok = ($form->{"old$name"} ne $form->{$name});
+    } else {
+      $ok = ($form->{"old$name"} ne qq|$form->{$name}--$form->{"${name}_id"}|);
+    }
+
+    if ($ok) {
+      $form->{redo} = 1;
+      if (($myconfig{vclimit} * 1) > 0) {
+	$form->{"${name}_id"} = $new_id;
+	AA->get_name(\%myconfig, \%$form);
+	$form->{$name} = $form->{"old$name"} = "$new_name--$new_id";
+      } else {
+	&check_name($form->{vc});
+      }
+    }
+    
+  } else {
+    
+    # if we use a selection
+    if ($form->{"select$name"}) {
+      if ($form->{"old$name"} ne $form->{$name}) {
+
+	$form->{"${name}_id"} = $new_id;
+	AA->get_name(\%myconfig, \%$form);
+
+	$form->{$name} = $form->{"old$name"} = "$new_name--$new_id";
+        $form->{redo} = 1;
+      }
+    } else {
+
+      # check name, combine name and id
+      if ($form->{"old$name"} ne qq|$form->{$name}--$form->{"${name}_id"}|) {
+
+	# return one name or a list of names in $form->{name_list}
+	if (($rv = CP->get_openvc(\%myconfig, \%$form)) > 1) {
+	  $form->{redo} = 1;
+	  &select_name($name);
+	  exit;
+	}
+
+	if ($rv == 1) {
+	  # we got one name
+	  $form->{"${name}_id"} = $form->{name_list}[0]->{id};
+	  $form->{$name} = $form->{name_list}[0]->{name};
+	  $form->{"old$name"} = qq|$form->{$name}--$form->{"${name}_id"}|;
+
+	  AA->get_name(\%myconfig, \%$form);
+
+	} else {
+	  # nothing open
+	  $form->error($locale->text('Nothing open!'));
+	}
+	
+	$form->{redo} = 1;
+      }
+    }
+  }
+
+}
 
 

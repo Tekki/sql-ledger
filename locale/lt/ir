@@ -98,7 +98,6 @@ $self{texts} = {
   'Remaining'                   => 'Likutis',
   'Required by'                 => 'Iki kada',
   'Sales Order'                 => 'Pardavimø uþsakymas',
-  'Save'                        => 'Iðsaugoti',
   'Screen'                      => 'Ekranas',
   'Select from one of the names below' => 'Iðrinkite vienà ið pavadinimø apaèioje',
   'Select from one of the projects below' => 'Iðrinkite vienà ið projektø apaèioje',

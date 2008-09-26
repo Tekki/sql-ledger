@@ -60,11 +60,6 @@ sub send {
     $self->{$_} =~ s/\&gt;/>/g;
     $self->{$_} =~ s/(\\|\$)//g;
     $h{$_} = $self->{$_};
-    if ($self->{$_} =~ /"(.*)" ?(<.*>)/) {
-      if ($self->{$_} =~ /([\x00-\x1F]|[\x7B-\xFFFF])/) {
-	$h{$_} = "=?$self->{charset}?B?".&encode_base64($1,"")."?= $2";
-      }
-    }
   }
  
   $h{cc} = "Cc: $h{cc}\n" if $self->{cc};

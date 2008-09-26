@@ -168,7 +168,7 @@ sub payment_transactions {
     $query .= " AND ac.transdate <= '$form->{todate}'" if $form->{todate};
     $query .= " GROUP BY ac.source, ac.transdate, ac.cleared";
     $query .= qq|
-                UNION
+                UNION ALL
 		SELECT ac.transdate, ac.source,
 		sum(ac.amount) AS amount, ac.cleared
 		FROM acc_trans ac
@@ -196,7 +196,7 @@ sub payment_transactions {
     $query .= " AND ac.transdate >= '$form->{fromdate}'" if $form->{fromdate};
     $query .= " AND ac.transdate <= '$form->{todate}'" if $form->{todate};
     $query .= qq|
-                UNION
+                UNION ALL
 		SELECT ac.transdate, ac.source, ac.fx_transaction,
 		ac.amount, ac.cleared, a.id, n.name
 		FROM acc_trans ac
@@ -209,7 +209,7 @@ sub payment_transactions {
     $query .= " AND ac.transdate >= '$form->{fromdate}'" if $form->{fromdate};
     $query .= " AND ac.transdate <= '$form->{todate}'" if $form->{todate};
     $query .= qq|
-                UNION
+                UNION ALL
 		SELECT ac.transdate, ac.source, ac.fx_transaction,
 		ac.amount, ac.cleared, a.id, n.name
 		FROM acc_trans ac

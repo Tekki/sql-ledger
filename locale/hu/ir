@@ -101,7 +101,6 @@ $self{texts} = {
   'Remaining'                   => 'Maradék',
   'Required by'                 => 'Leszállítás',
   'Sales Order'                 => 'Vevõrendelés',
-  'Save'                        => 'Mentés',
   'Screen'                      => 'Képernyõre',
   'Select from one of the names below' => 'Válasszon ki egyet az alábbi nevek közül',
   'Sep'                         => 'Szept.',

@@ -1289,10 +1289,16 @@ sub form_header {
 |;
   }
   
-  # currencies
-  for (split /:/, $form->{currencies}) { $form->{selectcurrency} .= "<option>$_\n" }
-  $form->{selectcurrency} =~ s/option>($form->{curr})/option selected>$1/;
-  
+  if ($form->{currencies}) {
+    # currencies
+    for (split /:/, $form->{currencies}) { $form->{selectcurrency} .= "<option>$_\n" }
+    $form->{selectcurrency} =~ s/option>($form->{curr})/option selected>$1/;
+    $currency = qq|
+	  <th>|.$locale->text('Currency').qq|</th>
+	  <td><select name=curr>$form->{selectcurrency}</select></td>
+|;
+  }
+ 
   foreach $item (split / /, $form->{taxaccounts}) {
     if ($form->{tax}{$item}{taxable}) {
       $taxable .= qq| <input name="tax_$item" value=1 class=checkbox type=checkbox checked>&nbsp;<b>$form->{tax}{$item}{description}</b>|;
@@ -1371,7 +1377,6 @@ sub form_header {
 |;
   }
 
- 
   $employeelabel = $locale->text('Salesperson');
   
   $form->{selectemployee} = qq|<option>\n|;
@@ -1568,8 +1573,7 @@ sub form_header {
 	<tr>
 	  $pricegroup
 	  $lang
-	  <th>|.$locale->text('Currency').qq|</th>
-	  <td><select name=curr>$form->{selectcurrency}</select></td>
+	  $currency
 	</tr>
 	<tr valign=top>
 	  $employee

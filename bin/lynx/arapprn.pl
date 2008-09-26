@@ -130,7 +130,7 @@ sub print_check {
   $c->init;
   ($whole, $form->{decimal}) = split /\./, $form->parse_amount(\%myconfig, $form->{amount});
 
-  $form->{decimal} .= "0";
+  $form->{decimal} .= "00";
   $form->{decimal} = substr($form->{decimal}, 0, 2);
   $form->{text_decimal} = $c->num2text($form->{decimal} * 1);
   $form->{text_amount} = $c->num2text($whole);
@@ -316,7 +316,7 @@ sub print_transaction {
   $c->init;
   ($whole, $form->{decimal}) = split /\./, $form->{invtotal};
 
-  $form->{decimal} .= "0";
+  $form->{decimal} .= "00";
   $form->{decimal} = substr($form->{decimal}, 0, 2);
   $form->{text_decimal} = $c->num2text($form->{decimal} * 1); 
   $form->{text_amount} = $c->num2text($whole); 

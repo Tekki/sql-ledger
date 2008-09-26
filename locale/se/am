@@ -62,7 +62,6 @@ $self{texts} = {
   'Defaults saved!'             => 'Inställningar sparade',
   'Delete'                      => 'Radera',
   'Delete Account'              => 'Radera konto',
-  'Department'                  => 'Kostnadsställe/resultatenhet',
   'Department deleted!'         => 'Kst/res.enh. borttagen',
   'Department saved!'           => 'Kst/res.enh. sparad',
   'Departments'                 => 'Avdelningar',

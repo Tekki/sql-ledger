@@ -49,7 +49,6 @@ $self{texts} = {
   'Oct'                         => 'Oct',
   'October'                     => 'Octubre',
   'Reports'                     => 'Informes',
-  'Save'                        => 'Guardar',
   'Sep'                         => 'Set',
   'September'                   => 'Setembre',
   'Source'                      => 'Font',

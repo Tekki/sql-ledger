@@ -122,7 +122,6 @@ $self{texts} = {
   'Part'                        => 'Artikel',
   'Phone'                       => 'Tel.',
   'Pick List'                   => 'Uitzoeklijst',
-  'Post'                        => 'Boek',
   'Postscript'                  => 'Postscript',
   'Price'                       => 'Prijs',
   'Print'                       => 'Afdrukken',

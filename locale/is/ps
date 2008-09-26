@@ -141,7 +141,6 @@ $self{texts} = {
   'Report for'                  => 'Skýrsla fyrir',
   'Required by'                 => 'Pantað af',
   'Sales Order'                 => 'Sölupöntun',
-  'Save'                        => 'Geyma',
   'Screen'                      => 'Skjá',
   'Select all'                  => 'Velja allt',
   'Select from one of the names below' => 'Veljið einhvað að neðangreindum nöfnum',

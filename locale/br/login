@@ -1,4 +1,5 @@
 $self{texts} = {
+  'Access Denied!'              => 'Acesso Negado',
   'Company'                     => 'Empresa',
   'Continue'                    => 'Continuar',
   'Dataset is newer than version!' => 'Conjunto de dados é mais novo que a versão!',

@@ -43,9 +43,6 @@ $sendmail = "| /usr/sbin/sendmail -t";
 
 $| = 1;
 
-# UTF8 compatibility
-eval { require utf8; };
-
 eval { require "sql-ledger.conf"; };
 
 

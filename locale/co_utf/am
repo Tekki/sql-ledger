@@ -68,7 +68,6 @@ $self{texts} = {
   'Delete'                      => 'Borrar',
   'Delete Account'              => 'Borrar cuenta',
   'Deleting a language will also delete the templates for the language' => 'Borrar la idioma tambien borra las plantillas de la idoma',
-  'Department'                  => 'Centro de Costos',
   'Department deleted!'         => 'Centro de Costos borrado!',
   'Department saved!'           => 'Centro de Costos guardado!',
   'Departments'                 => 'Centro de Costos',

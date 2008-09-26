@@ -1300,6 +1300,7 @@ sub aging {
   my $name;
   my $null;
   my $ref;
+  my $transdate = ($form->{overdue}) ? "duedate" : "transdate";
 
   if ($form->{"$form->{ct}_id"}) {
     $where .= qq| AND ct.id = $form->{"$form->{ct}_id"}|;
@@ -1321,7 +1322,7 @@ sub aging {
 	      JOIN $form->{arap} a ON (a.$form->{ct}_id = ct.id)
 	      WHERE $where
               AND a.paid != a.amount
-              AND (a.transdate <= '$form->{todate}')
+              AND (a.$transdate <= '$form->{todate}')
               ORDER BY ct.name|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror;
@@ -1350,19 +1351,23 @@ sub aging {
   
 		    
   # for each company that has some stuff outstanding
-  foreach $curr (split /:/, $form->{currencies}) {
+  $form->{currencies} ||= ":";
   
-    foreach $item (@ot) {
       
-      $where = qq|
+       $where = qq|
 	    a.paid != a.amount
-	    AND c.id = $item->{id}
-	    AND a.curr = '$curr'|;
+	    AND c.id = ?
+	    AND a.curr = ?|;
+	    
       if ($department_id) {
 	$where .= qq| AND a.department_id = $department_id|;
       }
-   
-      $query = qq|
+  
+      $query = "";
+      my $union = "";
+
+      if ($form->{c0}) {
+	$query .= qq|
 	  SELECT c.id AS ctid, c.$form->{ct}number, c.name,
 	  c.address1, c.address2, c.city, c.state, c.zipcode, c.country,
 	  c.contact, c.email,
@@ -1378,11 +1383,22 @@ sub aging {
     JOIN $form->{ct} c ON (a.$form->{ct}_id = c.id)
 	  WHERE $where
 	  AND (
-		  a.transdate <= $interval{$myconfig->{dbdriver}}{c0}
-		  AND a.transdate >= $interval{$myconfig->{dbdriver}}{c30}
+		  a.$transdate <= $interval{$myconfig->{dbdriver}}{c0}
+		  AND a.$transdate >= $interval{$myconfig->{dbdriver}}{c30}
 	      )
-	  
+|;
+
+        $union = qq|
 	  UNION
+|;
+
+      }
+	  
+      if ($form->{c30}) {
+
+	$query .= qq|
+
+	  $union
 
 	  SELECT c.id AS ctid, c.$form->{ct}number, c.name,
 	  c.address1, c.address2, c.city, c.state, c.zipcode, c.country,
@@ -1399,11 +1415,22 @@ sub aging {
     JOIN $form->{ct} c ON (a.$form->{ct}_id = c.id)
 	  WHERE $where
 	  AND (
-		  a.transdate < $interval{$myconfig->{dbdriver}}{c30}
-		  AND a.transdate >= $interval{$myconfig->{dbdriver}}{c60}
+		  a.$transdate < $interval{$myconfig->{dbdriver}}{c30}
+		  AND a.$transdate >= $interval{$myconfig->{dbdriver}}{c60}
 		  )
+|;
 
+        $union = qq|
 	  UNION
+|;
+
+      }
+
+      if ($form->{c60}) {
+
+	$query .= qq|
+
+	  $union
     
 	  SELECT c.id AS ctid, c.$form->{ct}number, c.name,
 	  c.address1, c.address2, c.city, c.state, c.zipcode, c.country,
@@ -1420,12 +1447,23 @@ sub aging {
 	  JOIN $form->{ct} c ON (a.$form->{ct}_id = c.id)
 	  WHERE $where
 	  AND (
-		  a.transdate < $interval{$myconfig->{dbdriver}}{c60}
-		  AND a.transdate >= $interval{$myconfig->{dbdriver}}{c90}
+		  a.$transdate < $interval{$myconfig->{dbdriver}}{c60}
+		  AND a.$transdate >= $interval{$myconfig->{dbdriver}}{c90}
 		  )
+|;
 
+        $union = qq|
 	  UNION
-    
+|;
+
+      }
+
+      if ($form->{c90}) {
+
+	$query .= qq|
+
+	  $union
+
 	  SELECT c.id AS ctid, c.$form->{ct}number, c.name,
 	  c.address1, c.address2, c.city, c.state, c.zipcode, c.country,
 	  c.contact, c.email,
@@ -1440,26 +1478,38 @@ sub aging {
 	  FROM $form->{arap} a
 	  JOIN $form->{ct} c ON (a.$form->{ct}_id = c.id)
 	  WHERE $where
-	  AND a.transdate < $interval{$myconfig->{dbdriver}}{c90}
-
-	  ORDER BY
-    
-   ctid, transdate, invnumber
-    
-		  |;
-
-      $sth = $dbh->prepare($query);
-      $sth->execute || $form->dberror;
-
-      while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-	$ref->{module} = ($ref->{invoice}) ? $invoice : $form->{arap};
-	$ref->{module} = 'ps' if $ref->{till};
-	$ref->{exchangerate} = 1 unless $ref->{exchangerate};
-	$ref->{language_code} = $item->{language_code};
-	push @{ $form->{AG} }, $ref;
+	  AND a.$transdate < $interval{$myconfig->{dbdriver}}{c90}
+|;
       }
-      $sth->finish;
 
+      $query .= qq|
+
+	  ORDER BY ctid, $transdate, invnumber|;
+
+      $sth = $dbh->prepare($query) || $form->dberror($query);
+
+  my @var = ();
+  
+  if ($form->{c0} + $form->{c30} + $form->{c60} + $form->{c90}) {
+    foreach $curr (split /:/, $form->{currencies}) {
+    
+      foreach $item (@ot) {
+    
+	@var = ();
+	for (qw(c0 c30 c60 c90)) { push @var, ($item->{id}, $curr) if $form->{$_} }
+	
+	$sth->execute(@var);
+
+	while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+	  $ref->{module} = ($ref->{invoice}) ? $invoice : $form->{arap};
+	  $ref->{module} = 'ps' if $ref->{till};
+	  $ref->{exchangerate} = 1 unless $ref->{exchangerate};
+	  $ref->{language_code} = $item->{language_code};
+	  push @{ $form->{AG} }, $ref;
+	}
+	$sth->finish;
+
+      }
     }
   }
 

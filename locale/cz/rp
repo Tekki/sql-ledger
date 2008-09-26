@@ -60,7 +60,6 @@ $self{texts} = {
   'Order'                       => 'Objednבvka',
   'Payments'                    => 'Platby',
   'Report for'                  => 'V‎kaz za',
-  'Save'                        => 'Ulo¾it',
   'Screen'                      => 'Na obrazovku',
   'Sep'                         => 'Zבר',
   'September'                   => 'Zברם',

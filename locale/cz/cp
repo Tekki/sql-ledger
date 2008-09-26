@@ -23,7 +23,6 @@ $self{texts} = {
   'Number'                      => 'Èíslo',
   'Payment'                     => 'Platba',
   'Payments'                    => 'Platby',
-  'Save'                        => 'Ulo¾it',
   'Screen'                      => 'Na obrazovku',
   'Source'                      => 'Zdroj',
   'Subject'                     => 'Pøedmìt',

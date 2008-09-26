@@ -101,7 +101,6 @@ $self{texts} = {
   'Remaining'                   => 'Залишилось',
   'Required by'                 => 'Терм╕н доставки',
   'Sales Order'                 => 'Продажна Накладна',
-  'Save'                        => 'Зберегти',
   'Screen'                      => 'Екран',
   'Select from one of the names below' => 'Вибер╕ть одну ╕з наступних назв',
   'Select from one of the projects below' => 'Вибер╕ть один ╕з наступних проект╕в',

@@ -36,8 +36,6 @@ sub new {
   
   my $self = {};
 
-  eval { require utf8; };
-
   read(STDIN, $_, $ENV{CONTENT_LENGTH});
   
   if ($ENV{QUERY_STRING}) {
@@ -58,10 +56,10 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.6.1";
-  $self->{dbversion} = "2.6.1";
+  $self->{version} = "2.6.2";
+  $self->{dbversion} = "2.6.2";
 
-#  $self->{debug} = 1;
+  $self->{debug} = 1;
 
   bless $self, $type;
   
@@ -355,8 +353,8 @@ sub sort_order {
   $self->{oldsort} = $self->{sort};
 
   my $sortorder = join ',', $self->sort_columns(@{$columns});
-  
-  if ($ordinal) {
+
+  if (%$ordinal) {
     for (keys %$ordinal) { $sortorder =~ s/^$_$/$ordinal->{$_}/ }
   }
   my @a = split /,/, $sortorder;
@@ -471,11 +469,11 @@ sub round_amount {
 #  $places = 4 if $places == 2;
 
   if (($places * 1) >= 0) {
-    # add 1/10^$places+3
-    $amount = sprintf("%.${places}f", $amount + (1 / (10 ** ($places + 3)))) * 1;
+    $amount = sprintf("%.${places}f", $amount + (1/10**($places+2))) * 1;
   } else {
     $places *= -1;
-    $amount = sprintf("%.f", $amount / (10 ** $places) + (($amount > 0) ? 0.1 : -0.1)) * (10 ** $places);
+    $amount = sprintf("%.0f", $amount);
+    $amount = sprintf("%.f", $amount / (10 ** $places)) * (10 ** $places);
   }
 
   $amount;
@@ -1850,41 +1848,48 @@ sub get_partsgroup {
   my $query = qq|SELECT DISTINCT pg.id, pg.partsgroup
                  FROM partsgroup pg
 		 JOIN parts p ON (p.partsgroup_id = pg.id)|;
-
+  my $where;
+  my $sortorder = "partsgroup";
+  
   if ($p->{searchitems} eq 'part') {
-    $query .= qq|
+    $where = qq|
                  WHERE (p.inventory_accno_id > 0
 		        AND p.income_accno_id > 0)|;
   }
   if ($p->{searchitems} eq 'service') {
-    $query .= qq|
+    $where = qq|
                  WHERE p.inventory_accno_id IS NULL|;
   }
   if ($p->{searchitems} eq 'assembly') {
-    $query .= qq|
+    $where = qq|
                  WHERE p.assembly = '1'|;
   }
   if ($p->{searchitems} eq 'labor') {
-    $query .= qq|
+    $where = qq|
                  WHERE p.inventory_accno_id > 0 AND p.income_accno_id IS NULL|;
   }
-
-  $query .= qq|
-		 ORDER BY partsgroup|;
+  if ($p->{searchitems} eq 'nolabor') {
+    $where = qq|
+                 WHERE p.income_accno_id > 0|;
+  }
 
   if ($p->{all}) {
-    $query = qq|SELECT id, partsgroup FROM partsgroup
-                ORDER BY partsgroup|;
+    $query = qq|SELECT id, partsgroup
+                FROM partsgroup|;
   } 
 
   if ($p->{language_code}) {
+    $sortorder = "translation";
+    
     $query = qq|SELECT DISTINCT pg.id, pg.partsgroup,
                 t.description AS translation
-                FROM partsgroup pg
+		FROM partsgroup pg
 		JOIN parts p ON (p.partsgroup_id = pg.id)
-		LEFT JOIN translation t ON (t.trans_id = pg.id AND t.language_code = '$p->{language_code}')
-		ORDER BY translation|;
+		LEFT JOIN translation t ON (t.trans_id = pg.id AND t.language_code = '$p->{language_code}')|;
   }
+  
+  $query .= qq| $where
+		 ORDER BY $sortorder|;
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $self->dberror($query);
