@@ -80,7 +80,7 @@ function sf(){
 
 |;
 
-  for (qw(script password header)) { delete $form->{$_} }
+  for (qw(script password header sessioncookie)) { delete $form->{$_} }
   $form->hide_form;
   
   print qq|

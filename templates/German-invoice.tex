@@ -1,109 +1,152 @@
-\documentclass[twoside]{scrartcl}
-\usepackage[frame]{xy}
-\usepackage{tabularx}
+\documentclass{scrartcl}
 \usepackage[latin1]{inputenc}
-\setlength{\voffset}{0.5cm}
-\setlength{\hoffset}{-2.0cm}
-\setlength{\topmargin}{0cm}
-\setlength{\headheight}{0.5cm}
-\setlength{\headsep}{1cm}
-\setlength{\topskip}{0pt}
-\setlength{\oddsidemargin}{1.0cm}
-\setlength{\evensidemargin}{1.0cm}
-\setlength{\textwidth}{19.2cm}
-\setlength{\textheight}{24.5cm}
-\setlength{\footskip}{1cm}
-\setlength{\parindent}{0pt}
-\renewcommand{\baselinestretch}{1}
+\usepackage{tabularx}
+\usepackage[letterpaper,top=2cm,bottom=-3cm,left=1.1cm,right=1.5cm]{geometry}
+\usepackage{graphicx}
+
 \begin{document}
 
-\newlength{\descrwidth}\setlength{\descrwidth}{10cm}
+\pagestyle{myheadings}
+\thispagestyle{empty}
 
-\newsavebox{\hdr}
-\sbox{\hdr}{
-  \fontfamily{cmss}\fontsize{10pt}{12pt}\selectfont
+\fontfamily{cmss}\fontsize{10pt}{12pt}\selectfont
 
+\newsavebox{\ftr}
+\sbox{\ftr}{
   \parbox{\textwidth}{
-    \parbox[b]{12cm}{
-      <%company%>
-      
-      <%address%>}\hfill
-    \begin{tabular}[b]{rr@{}}
-    Telefon & <%tel%>\\
-    Telefax & <%fax%>
-    \end{tabular}
-
-    \rule[1.5ex]{\textwidth}{0.5pt}
+  \tiny
+  \rule[1.5em]{\textwidth}{0.5pt}
+Rechnung ist bezahlbar innerhalb von <%terms%> Tagen. 
+Nach dem <%duedate%> werden Zinsen zu einem monatlichen Satz von 1.5\% verrechnet. 
+Waren bleiben im Besitz von <%company%> bis die Rechnung voll bezahlt ist. 
+Rückgaben werden mit 10 Prozent Lagergebühren belastet. 
+Beschädigte Waren und Waren ohne eine Rückgabenummer werden nicht entgegengenommen.
   }
 }
-    
-\fontfamily{cmss}\fontshape{n}\selectfont
 
-\markboth{<%company%>\hfill <%invnumber%>}{\usebox{\hdr}}
-
-\pagestyle{myheadings}
-%\thispagestyle{empty}     use this with letterhead paper
+<%include letterhead.tex%>
 
 <%pagebreak 65 27 37%>
-\end{tabular*}
+\end{tabularx}
 
   \rule{\textwidth}{2pt}
   
+  \vspace{0.2cm}
+
   \hfill
-  \begin{tabularx}{7cm}{Xr@{}}
-  \textbf{Subtotal} & \textbf{<%sumcarriedforward%>} \\
+  \begin{tabularx}{\textwidth}{Xr@{\hspace{1cm}}r@{}}
+  & Subtotal & <%sumcarriedforward%> \\
   \end{tabularx}
 
 \newpage
 
-\markright{<%company%>\hfill <%invnumber%>}
+\markboth{<%company%>\hfill <%invnumber%>}{<%company%>\hfill <%invnumber%>}
 
-\vspace*{-12pt}
-
-\begin{tabular*}{\textwidth}{@{}lp{\descrwidth}@{\extracolsep\fill}rlrrr@{}}
-  \textbf{Nummer} & \textbf{Artikel} & \textbf{Anz} &
-    \textbf{Einh} & \textbf{Preis} & \textbf{Rab} & \textbf{Total} \\
-  & Übertrag von Seite <%lastpage%> & & & & & <%sumcarriedforward%> \\
+\begin{tabularx}{\textwidth}{@{}rlXlrlrrr@{}}
+  \textbf{Pos.} & \textbf{Artikel Nr.} & \textbf{Beschreibung} & & \textbf{Anz.} &
+    \textbf{Einh.} & \textbf{Preis} & \textbf{Rabatt} & \textbf{Total} \\ [0.5em]
+  & Übertrag von Seite <%lastpage%> & & & & & & & <%sumcarriedforward%> \\ [0.5em]
 <%end pagebreak%>
 
 
-\fontfamily{cmss}\fontsize{10pt}{12pt}\selectfont
+\vspace*{0.5cm}
 
-\vspace*{2cm}
+\parbox[t]{.5\textwidth}{
+\textbf{Empfänger}
+\vspace{0.3cm}
 
 <%name%>
 
 <%address1%>
 
-<%if address2%>
 <%address2%>
-<%end address2%>
 
-<%city%> <%state%> <%zipcode%>
+<%zipcode%>
+<%city%>
 
 <%if country%>
 <%country%>
 <%end country%>
 
-\vspace{3.5cm}
+\vspace{0.3cm}
 
-\textbf{R E C H N U N G}
+<%if contact%>
+<%contact%>
+\vspace{0.2cm}
+<%end contact%>
+
+<%if customerphone%>
+Tel: <%customerphone%>
+<%end customerphone%>
+
+<%if customerfax%>
+Fax: <%customerfax%>
+<%end customerfax%>
+
+<%email%>
+}
+\parbox[t]{.5\textwidth}{
+\textbf{Lieferadresse}
+\vspace{0.3cm}
+
+<%shiptoname%>
+
+<%shiptoaddress1%>
+
+<%shiptoaddress2%>
+
+<%shiptozipcode%>
+<%shiptocity%>
+
+<%if shiptocountry%>
+<%shiptocountry%>
+<%end shiptocountry%>
+
+\vspace{0.3cm}
+
+<%if shiptocontact%>
+<%shiptocontact%>
+\vspace{0.2cm}
+<%end shiptocontact%>
+
+<%if shiptophone%>
+Tel: <%shiptophone%>
+<%end shiptophone%>
+
+<%if shiptofax%>
+Fax: <%shiptofax%>
+<%end shiptofax%>
+
+<%shiptoemail%>
+}
 \hfill
-\begin{tabular}[t]{l@{\hspace{0.3cm}}l}
-  \textbf{Datum} & <%invdate%> \\
-  \textbf{Nummer} & <%invnumber%> \\
-\end{tabular}
 
 \vspace{1cm}
 
-\begin{tabular*}{\textwidth}{@{}lp{\descrwidth}@{\extracolsep\fill}rlrrr@{}}
-  \textbf{Nummer} & \textbf{Artikel} & \textbf{Anz} &
-    \textbf{Einh} & \textbf{Preis} & \textbf{Rab} & \textbf{Total} \\
+\textbf{R E C H N U N G}
+\hfill
+
+\vspace{1cm}
+
+\begin{tabularx}{\textwidth}{*{7}{|X}|} \hline
+  \textbf{Rechnung Nr.} & \textbf{Datum} & \textbf{fällig bis} & \textbf{Bestell Nr.}
+  & \textbf{Verkäufer} & \textbf{Lieferort} & \textbf{Lieferung per} \\ [0.5em]
+  \hline
+  <%invnumber%> & <%invdate%> & <%duedate%> & <%ordnumber%> & <%employee%>
+  & <%shippingpoint%> & <%shipvia%> \\
+  \hline
+\end{tabularx}
+
+\vspace{1cm}
+
+\begin{tabularx}{\textwidth}{@{}rlXlrlrrr@{}}
+  \textbf{Pos.} & \textbf{Artikel Nr.} & \textbf{Beschreibung} & & \textbf{Anz.} &
+    \textbf{Einh.} & \textbf{Preis} & \textbf{Rabatt} & \textbf{Betrag} \\ [0.5em]
 <%foreach number%>
-  <%number%> & <%description%> & <%qty%> &
-    <%unit%> & <%sellprice%> & <%discount%> & <%linetotal%> \\
+  <%runningnumber%> & <%number%> & <%description%> & <%deliverydate%> &
+  <%qty%> & <%unit%> & <%sellprice%> & <%discountrate%> & <%linetotal%> \\
 <%end number%>
-\end{tabular*}
+\end{tabularx}
 
 
 \parbox{\textwidth}{
@@ -112,48 +155,53 @@
 \vspace{0.2cm}
 
 \hfill
-\begin{tabularx}{7cm}{Xr@{}}
-  \textbf{Zwischensumme} & \textbf{<%subtotal%>} \\
+\begin{tabularx}{7cm}{Xr@{\hspace{1cm}}r@{}}
+  & Total & <%subtotal%> \\
 <%foreach tax%>
-  <%taxdescription%> auf <%taxbase%> & <%tax%> \\
+  & <%taxdescription%> on <%taxbase%> & <%tax%> \\
 <%end tax%>
-  \hline
-  \textbf{Total} & \textbf{<%invtotal%>} \\
 <%if paid%>
-  \textbf{Bezahlt} & <%paid%> \\
+  & Bezahlt & - <%paid%> \\
 <%end paid%>
+  \hline
 <%if total%>
-  \textbf{Bezahlbar} & \textbf{<%total%>} \\
+  & geforderter Betrag & <%total%>
 <%end total%>
 \end{tabularx}
 
 \vspace{0.3cm}
 
+<%text_amount%> ***** <%decimal%>/100
 \hfill
-  Alle Preise in \textbf{<%currency%>}.
+Alle Preise in \textbf{<%currency%>}.
 
 \vspace{12pt}
 
-<%if notes%>
-  <%notes%>
-<%end if%>
-
+<%notes%>
 }
 
-%\vfill
-%\centerline{\textbf{salute}}
+\vfill
 
-\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+<%if paid_1%>
+\begin{tabularx}{10cm}{@{}lXlr@{}}
+  \textbf{Payments} & & & \\
+  \hline
+  \textbf{Datum} & & \textbf{Quelle} & \textbf{Betrag} \\
+<%end paid_1%>
+<%foreach payment%>
+  <%paymentdate%> & <%paymentaccount%> & <%paymentsource%> & <%payment%> \\
+<%end payment%>
+<%if paid_1%>
+\end{tabularx}
+<%end paid_1%>
 
-\footnotetext[1]{\tiny
-Rechnung ist bezahlbar innerhalb von <%terms%> Tagen.
-Nach dem <%duedate%> werden Zinsen zu einem
-monatlichen Satz von 1.5\% verrechnet.
-Waren bleiben im Besitz von <%company%> bis die Rechnung voll bezahlt ist.
-Rückgaben werden mit 10 Prozent Lagergebühren belastet. Beschädigte Waren
-und Waren ohne eine Rückgabenummer werden nicht entgegengenommen.
-}
+\vspace{1cm}
+
+\centerline{\textbf{Vielen Dank für Ihren Auftrag}}
+
+\rule{\textwidth}{0.5pt}
+
+\usebox{\ftr}
 
 \end{document}
-
 

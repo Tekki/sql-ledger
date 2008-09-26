@@ -56,7 +56,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.6.18";
+  $self->{version} = "2.6.19";
   $self->{dbversion} = "2.6.12";
 
   bless $self, $type;
@@ -155,7 +155,7 @@ sub error {
     delete $self->{pre};
 
     if (!$self->{header}) {
-      $self->header;
+      $self->header(0,1);
     }
 
     print qq|<body><h2 class=error>Error!</h2>
@@ -185,10 +185,9 @@ sub info {
     delete $self->{pre};
 
     if (!$self->{header}) {
-      $self->header;
+      $self->header(0,1);
       print qq|
       <body>|;
-      $self->{header} = 1;
     }
 
     print "<b>$msg</b>";
@@ -235,7 +234,7 @@ sub isblank {
   
 
 sub header {
-  my ($self, $endsession) = @_;
+  my ($self, $endsession, $nocookie) = @_;
 
   return if $self->{header};
 
@@ -261,7 +260,7 @@ sub header {
 
     $self->{titlebar} = ($self->{title}) ? "$self->{title} - $self->{titlebar}" : $self->{titlebar};
 
-    $self->set_cookie($endsession);
+    $self->set_cookie($endsession) unless $nocookie;
 
     print qq|Content-Type: text/html
 

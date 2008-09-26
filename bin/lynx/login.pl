@@ -68,7 +68,7 @@ sub login_screen {
   $form->{stylesheet} = "sql-ledger.css";
   $form->{favicon} = "sql-ledger.ico";
 
-  $form->header(1);
+  $form->header;
 
   if ($form->{login}) {
    $sf = qq|function sf() { document.login.password.focus(); }|;
@@ -319,7 +319,7 @@ sub login {
 
   # made it this far, setup callback for the menu
   $form->{callback} = "menu.pl?action=display";
-  for (qw(login path js sessioncookie)) { $form->{callback} .= "&$_=$form->{$_}" }
+  for (qw(login path password js sessioncookie)) { $form->{callback} .= "&$_=$form->{$_}" }
   
   # check for recurring transactions
   if ($user->{acs} !~ /Recurring Transactions/) {
