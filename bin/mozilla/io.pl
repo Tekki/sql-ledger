@@ -88,7 +88,7 @@ sub display_row {
   }
       
 
-  push @column_index, qw(unit sellprice markup discount linetotal);
+  push @column_index, qw(unit sellprice discount linetotal);
 
   my $colspan = $#column_index + 1;
 
@@ -98,7 +98,6 @@ sub display_row {
   $column_data{runningnumber} = qq|<th class=listheading nowrap>|.$locale->text('Item').qq|</th>|;
   $column_data{partnumber} = qq|<th class=listheading nowrap>|.$locale->text('Number').qq|</th>|;
   $column_data{itemdetail} = qq|<th class=listheading nowrap></th>|;
-  $column_data{markup} = qq|<th class=listheading nowrap></th>|;
   $column_data{description} = qq|<th class=listheading nowrap>|.$locale->text('Description').qq|</th>|;
   $column_data{qty} = qq|<th class=listheading nowrap>|.$locale->text('Qty').qq|</th>|;
   $column_data{unit} = qq|<th class=listheading nowrap>|.$locale->text('Unit').qq|</th>|;
@@ -209,13 +208,6 @@ function CheckAll(v) {
     $linetotal = $form->round_amount($form->{"sellprice_$i"} - $discount, $decimalplaces);
     $linetotal = $form->round_amount($linetotal * $form->{"qty_$i"}, $form->{precision});
 
-    $lastcost = $form->parse_amount(\%myconfig, $form->{"lastcost_$i"});
-    if ($lastcost && $myconfig{role} ne 'user') {
-      if ($lastcost) {
-	$form->{"markup_$i"} = $form->round_amount((($form->{"sellprice_$i"} / $lastcost - 1) * 100), 1);
-      }
-    }
-    
     if (($rows = $form->numtextrows($form->{"description_$i"}, 46, 6)) > 1) {
       $form->{"description_$i"} = $form->quote($form->{"description_$i"});
       $column_data{description} = qq|<td><textarea name="description_$i" rows=$rows cols=46 wrap=soft>$form->{"description_$i"}</textarea></td>|;
@@ -260,7 +252,6 @@ function CheckAll(v) {
     $column_data{ship} = qq|<td align=right><input name="ship_$i" size=8 value=|.$form->format_amount(\%myconfig, $form->{"ship_$i"}).qq|></td>|;
     $column_data{unit} = qq|<td><input name="unit_$i" size=5 value="|.$form->quote($form->{"unit_$i"}).qq|"></td>|;
     $column_data{sellprice} = qq|<td align=right><input name="sellprice_$i" size=11 value=|.$form->format_amount(\%myconfig, $form->{"sellprice_$i"}, $decimalplaces, $zero).qq|></td>|;
-    $column_data{markup} = qq|<td align=right>|.$form->format_amount(\%myconfig, $form->{"markup_$i"}, 1).qq|</td>|;
     $column_data{discount} = qq|<td align=right><input name="discount_$i" size=3 value=|.$form->format_amount(\%myconfig, $form->{"discount_$i"}).qq|></td>|;
     $column_data{linetotal} = qq|<td align=right>|.$form->format_amount(\%myconfig, $linetotal, $form->{precision}, $zero).qq|</td>|;
     $column_data{bin} = qq|<td>$form->{"bin_$i"}</td>|;

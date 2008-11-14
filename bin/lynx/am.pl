@@ -3369,7 +3369,6 @@ sub process_transactions {
       
       # process transaction
       AM->recurring_details(\%myconfig, \%$pt, $id);
-$pt->{paid};
 
       my $header = $form->{header};
       # reset $form
@@ -3489,8 +3488,6 @@ $pt->{paid};
 	    $flabel = $locale->text('Purchase Order');
 	  }
 	  require "$form->{path}/$form->{script}";
-
-# require "$form->{path}/arap.pl";
 
 	  &order_links;
 	  &prepare_order;

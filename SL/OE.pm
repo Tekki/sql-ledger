@@ -652,7 +652,8 @@ sub retrieve {
 		o.$form->{vc}_id, vc.name AS $form->{vc}, o.amount AS invtotal,
 		o.closed, o.quonumber, o.department_id,
 		d.description AS department, o.language_code, o.ponumber,
-		o.warehouse_id, w.description AS warehouse, o.description
+		o.warehouse_id, w.description AS warehouse, o.description,
+		o.aa_id
 		FROM oe o
 	        JOIN $form->{vc} vc ON (o.$form->{vc}_id = vc.id)
 	        LEFT JOIN employee e ON (o.employee_id = e.id)
