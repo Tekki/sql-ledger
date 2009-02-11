@@ -517,12 +517,11 @@ sub delete_batch {
 sub post_batch {
   my ($self, $myconfig, $form, $dbh) = @_;
 
-  my $disconnect;
+  my $disconnect = ($dbh) ? 0 : 1;
   
   # connect to database
   if (! $dbh) {
     $dbh = $form->dbconnect_noauto($myconfig);
-    $disconnect = 1;
   }
 
   my $query = qq|SELECT trans_id, id
@@ -595,9 +594,7 @@ sub post_batch {
   
   my $rc = $dbh->commit;
     
-  if ($disconnect) {
-    $dbh->disconnect;
-  }
+  $dbh->disconnect if $disconnect;
 
   $rc;
 

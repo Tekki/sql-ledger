@@ -101,11 +101,10 @@ sub retrieve_card {
 sub jcitems_links {
   my ($self, $myconfig, $form, $dbh) = @_;
   
-  my $disconnect = 0;
+  my $disconnect = ($dbh) ? 0 : 1;
 
   if (! $dbh) {
     $dbh = $form->dbconnect($myconfig);
-    $disconnect = 1;
   }
 
   my %defaults = $form->get_defaults($dbh, \@{['precision']});

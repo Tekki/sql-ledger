@@ -166,14 +166,28 @@ sub delete_account {
   # connect to database, turn off AutoCommit
   my $dbh = $form->dbconnect_noauto($myconfig);
   
-  my $query = qq|SELECT * FROM acc_trans
-                 WHERE chart_id = $form->{id}|;
-  if ($dbh->selectrow_array($query)) {
-    $dbh->disconnect;
-    return;
+  my $query;
+  
+  # set inventory_accno_id, income_accno_id, expense_accno_id to defaults
+  my %defaults = $form->get_defaults($dbh, \@{['%_accno_id']});
+
+  for (qw(inventory_accno_id income_accno_id expense_accno_id)) {
+    $query = qq|SELECT count(*)
+                FROM parts
+		WHERE $_ = $defaults{$_}|;
+    if ($dbh->selectrow_array($query)) {
+      if ($defaults{$_}) {
+	$query = qq|UPDATE parts
+	            SET $_ = $defaults{$_}
+		    WHERE $_ = $form->{id}|;
+        $dbh->do($query) || $form->dberror($query);
+      } else {
+	$dbh->disconnect;
+	return;
+      }
+    }
   }
-
-
+    
   # delete chart of account record
   $query = qq|DELETE FROM chart
               WHERE id = $form->{id}|;
@@ -191,24 +205,6 @@ sub delete_account {
               WHERE trans_id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
 
-  # set inventory_accno_id, income_accno_id, expense_accno_id to defaults
-  my %defaults = $form->get_defaults($dbh, \@{['%_accno_id']});
-  
-  $query = qq|UPDATE parts
-              SET inventory_accno_id = $defaults{inventory_accno_id}
-	      WHERE inventory_accno_id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
-  
-  $query = qq|UPDATE parts
-              SET income_accno_id = $defaults{income_accno_id}
-	      WHERE income_accno_id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
-  
-  $query = qq|UPDATE parts
-              SET expense_accno_id = $defaults{expense_accno_id}
-	      WHERE expense_accno_id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
-  
   foreach my $table (qw(partstax customertax vendortax tax)) {
     $query = qq|DELETE FROM $table
 		WHERE chart_id = $form->{id}|;
