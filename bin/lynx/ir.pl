@@ -155,6 +155,7 @@ sub invoice_links {
 	# reverse paid
 	$form->{"paid_$i"} = $form->{acc_trans}{$key}->[$i-1]->{amount} * $ml;
 	$form->{"datepaid_$i"} = $form->{acc_trans}{$key}->[$i-1]->{transdate};
+	$form->{"olddatepaid_$i"} = $form->{acc_trans}{$key}->[$i-1]->{transdate};
 	$form->{"exchangerate_$i"} = $form->{acc_trans}{$key}->[$i-1]->{exchangerate};
 	$form->{"source_$i"} = $form->{acc_trans}{$key}->[$i-1]->{source};
 	$form->{"memo_$i"} = $form->{acc_trans}{$key}->[$i-1]->{memo};
@@ -169,6 +170,7 @@ sub invoice_links {
       $form->{"AP_discount_paid"} = "$form->{acc_trans}{$key}->[0]->{accno}--$form->{acc_trans}{$key}->[0]->{description}";
       $form->{"discount_paid"} = $form->{acc_trans}{$key}->[0]->{amount} * $ml;
       $form->{"discount_datepaid"} = $form->{acc_trans}{$key}->[0]->{transdate};
+      $form->{"olddiscount_datepaid"} = $form->{acc_trans}{$key}->[0]->{transdate};
       $form->{"discount_source"} = $form->{acc_trans}{$key}->[0]->{source};
       $form->{"discount_memo"} = $form->{acc_trans}{$key}->[0]->{memo};
       $form->{"discount_exchangerate"} = $form->{acc_trans}{$key}->[0]->{exchangerate};
@@ -848,7 +850,8 @@ sub form_footer {
 	       'Print and Post as new' => { ndx => 8, key => 'W', value => $locale->text('Print and Post as new') },
 	       'Purchase Order' => { ndx => 9, key => 'L', value => $locale->text('Purchase Order') },
 	       'Schedule' => { ndx => 10, key => 'H', value => $locale->text('Schedule') },
-	       'Delete' => { ndx => 11, key => 'D', value => $locale->text('Delete') },
+	       'New Number' => { ndx => 13, key => 'M', value => $locale->text('New Number') },
+	       'Delete' => { ndx => 14, key => 'D', value => $locale->text('Delete') },
 	      );
     
     if ($form->{id}) {
@@ -866,7 +869,7 @@ sub form_footer {
     } else {
 
       if ($transdate > $form->{closedto}) {
-	for ('Update', "Ship to", "Print", "E-mail", 'Post', 'Schedule') { $a{$_} = 1 }
+	for ('Update', "Ship to", "Print", "E-mail", 'Post', 'Schedule', 'New Number') { $a{$_} = 1 }
 	$a{'Print and Post'} = 1 if $latex;
 	
       }

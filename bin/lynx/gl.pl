@@ -1146,13 +1146,14 @@ sub form_footer {
                'Post' => { ndx => 3, key => 'O', value => $locale->text('Post') },
 	       'Post as new' => { ndx => 6, key => 'N', value => $locale->text('Post as new') },
 	       'Schedule' => { ndx => 7, key => 'H', value => $locale->text('Schedule') },
-	       'Delete' => { ndx => 8, key => 'D', value => $locale->text('Delete') },
+	       'New Number' => { ndx => 10, key => 'M', value => $locale->text('New Number') },
+	       'Delete' => { ndx => 11, key => 'D', value => $locale->text('Delete') },
 	      );
     
     %a = ();
     
     if ($form->{id}) {
-      for ('Update', 'Post as new', 'Schedule') { $a{$_} = 1 }
+      for ('Update', 'Post as new', 'Schedule', 'New Number') { $a{$_} = 1 }
       
       if (! $form->{locked}) {
 	if ($transdate > $form->{closedto}) {
@@ -1162,7 +1163,7 @@ sub form_footer {
       
     } else {
       if ($transdate > $form->{closedto}) {
-	for ("Update", "Post", "Schedule") { $a{$_} = 1 }
+	for ("Update", "Post", "Schedule", "New Number") { $a{$_} = 1 }
       }
     }
 

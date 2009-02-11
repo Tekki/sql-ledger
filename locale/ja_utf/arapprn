@@ -1,0 +1,37 @@
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Account'                     => '勘定',
+  'Amount'                      => '金額',
+  'Continue'                    => '続ける',
+  'DCN missing!'                => 'DCNが必要です',
+  'Date'                        => '日付',
+  'Memo'                        => 'メモ',
+  'Nothing to print!'           => '印刷用データではありません',
+  'PDF'                         => 'PDF',
+  'Postscript'                  => 'Postscript',
+  'RVC missing!'                => 'RVCが必要です',
+  'Screen'                      => '画面',
+  'Select a Printer!'           => 'プリンタの選択',
+  'Select payment'              => '支払の選択',
+  'Select postscript or PDF!'   => 'PDF又はPostscriptを選択して下さい',
+  'Source'                      => '支払元',
+};
+
+$self{subs} = {
+  'payment_selected'            => 'payment_selected',
+  'print'                       => 'print',
+  'print_and_post'              => 'print_and_post',
+  'print_check'                 => 'print_check',
+  'print_credit_note'           => 'print_credit_note',
+  'print_debit_note'            => 'print_debit_note',
+  'print_options'               => 'print_options',
+  'print_receipt'               => 'print_receipt',
+  'print_remittance_voucher'    => 'print_remittance_voucher',
+  'print_transaction'           => 'print_transaction',
+  'select_payment'              => 'select_payment',
+  '続ける'                   => 'continue',
+};
+
+1;
+

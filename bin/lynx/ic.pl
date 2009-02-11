@@ -730,6 +730,7 @@ sub form_footer {
     
     %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
                'Save' => { ndx => 3, key => 'S', value => $locale->text('Save') },
+	       'New Number' => { ndx => 15, key => 'M', value => $locale->text('New Number') },
 	      );
     
     if ($form->{id}) {
@@ -3501,6 +3502,15 @@ sub restock_assemblies {
     $form->error($locale->text('Cannot stock assemblies!'));
   }
   
+}
+
+
+sub new_number {
+
+  $form->{partnumber} = $form->update_defaults(\%myconfig, "partnumber");
+
+  &update;
+
 }
 
 

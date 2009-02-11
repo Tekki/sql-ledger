@@ -1107,7 +1107,7 @@ sub get_name {
   $form->{currency} = ($form->{currency}) ? $form->{currency} : $form->{defaultcurrency};
   delete $form->{exchangerate};
   if ($form->{transdate} && ($form->{currency} ne $form->{defaultcurrency})) {
-    $form->{exchangerate} = $form->get_exchangerate($dbh, $form->{currency}, $form->{transdate}, $buysell);
+    $form->{exchangerate} = $form->get_exchangerate($myconfig, $dbh, $form->{currency}, $form->{transdate}, $buysell);
   }
   
   # if no employee, default to login

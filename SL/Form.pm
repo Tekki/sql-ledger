@@ -78,7 +78,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.8.20";
+  $self->{version} = "2.8.21";
   $self->{dbversion} = "2.8.9";
 
   bless $self, $type;
@@ -710,7 +710,7 @@ sub parse_template {
 	  }
 
 	  # don't parse par, we need it for each line
-	  print OUT $self->format_line($par, 1, $i);
+	  print OUT $self->format_line($par, $i);
 	  
 	}
 	next;
@@ -976,7 +976,6 @@ sub format_line {
   my $self = shift;
 
   $_ = shift;
-  my $arr = shift;
   my $i = shift;
   
   my $str;
@@ -1004,7 +1003,7 @@ sub format_line {
       }
     }
 
-    if ($arr) {
+    if (defined $i) {
       $str = $self->{$var}[$i];
     } else {
       $str = $self->{$var};
@@ -1613,7 +1612,13 @@ sub save_exchangerate {
 
 
 sub get_exchangerate {
-  my ($self, $dbh, $curr, $transdate, $fld) = @_;
+  my ($self, $myconfig, $dbh, $curr, $transdate, $fld) = @_;
+  
+  my $disconnect = ($dbh) ? 0 : 1;
+
+  if (! $dbh) {
+    $dbh = $self->dbconnect($myconfig);
+  }
   
   my $exchangerate = 1;
 
@@ -1623,6 +1628,8 @@ sub get_exchangerate {
 		   AND transdate = '$transdate'|;
     ($exchangerate) = $dbh->selectrow_array($query);
   }
+
+  $dbh->disconnect if $disconnect;
 
   $exchangerate;
 

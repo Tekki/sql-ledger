@@ -1000,3 +1000,35 @@ sub debit_invoice_ {
   &add_transaction;
 }
 
+
+sub preview {
+
+  $form->{format} = "pdf";
+  $form->{media} = "screen";
+
+  &print;
+
+}
+
+sub new_number {
+
+  $invnumber = "invnumber";
+  $numberfld = ($form->{vc} eq 'customer') ? "sinumber" : "vinumber";
+
+  if ($form->{type} =~ /order/) {
+    $invnumber = "ordnumber";
+    $numberfld = ($form->{vc} eq 'customer') ? "sonumber" : "ponumber";
+  } elsif ($form->{type} =~ /quotation/) {
+    $invnumber = "quonumber";
+    $numberfld = ($form->{vc} eq 'customer') ? "sqnumber" : "rfqnumber";
+  } elsif ($form->{script} eq 'gl.pl') {
+    $invnumber = "reference";
+    $numberfld = "glnumber";
+  }
+
+  $form->{"$invnumber"} = $form->update_defaults(\%myconfig, $numberfld);
+
+  &update;
+
+}
+

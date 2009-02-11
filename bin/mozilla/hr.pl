@@ -430,6 +430,16 @@ sub employee_links {
 }
 
 
+sub new_number {
+
+  $form->{employeenumber} = $form->update_defaults(\%myconfig, employeenumber);
+
+  &employee_header;
+  &employee_footer;
+
+}
+
+
 sub employee_header {
 
   if ($myconfig{role} ne 'user') {
@@ -642,11 +652,12 @@ sub employee_footer {
     %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
 	       'Save' => { ndx => 2, key => 'S', value => $locale->text('Save') },
 	       'Save as new' => { ndx => 5, key => 'N', value => $locale->text('Save as new') },
+	       'New Number' => { ndx => 15, key => 'M', value => $locale->text('New Number') },
 	       'Delete' => { ndx => 16, key => 'D', value => $locale->text('Delete') },
 	      );
 	     
     %a = ();
-    for ("Update", "Save") { $a{$_} = 1 }
+    for ("Update", "Save", "New Number") { $a{$_} = 1 }
     
     if ($form->{id}) {
       if ($form->{status} eq 'orphaned') {
