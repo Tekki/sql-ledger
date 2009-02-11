@@ -3163,6 +3163,7 @@ function CheckAll() {
 	  $checked = ($form->{deselect}) ? "checked" : "";
 	}
 	$column_data{ndx} = qq|<td><input name="ndx_$k" class=checkbox type=checkbox value=$ref->{id} $checked></td>|;
+	$column_data{nextdate} = qq|<td nowrap><input name="nextdate_$k" size=11 value="$ref->{nextdate}" title="$myconfig{dateformat}"></td>|;
       }
       
       $reference = ($ref->{reference}) ? $ref->{reference} : $locale->text('Next Number');
@@ -3362,13 +3363,15 @@ sub process_transactions {
   my $ordfld;
   my $flabel;
   my $ordnumber;
-  
+
   for (my $i = 1; $i <= $pt->{lastndx}; $i++) {
     if ($pt->{"ndx_$i"}) {
       my $id = $pt->{"ndx_$i"};
       
       # process transaction
       AM->recurring_details(\%myconfig, \%$pt, $id);
+
+      $pt->{nextdate} = $pt->{"nextdate_$i"} if $pt->{"nextdate_$i"};
 
       my $header = $form->{header};
       # reset $form
@@ -3430,10 +3433,6 @@ sub process_transactions {
 	      ($form->{"$form->{ARAP}_paid_$j"}) = split /--/, $form->{"$form->{ARAP}_paid_$j"};
 	      delete $form->{"cleared_$j"};
 	    }
-	    
-	    $form->{paidaccounts}++;
-	  } else {
-	    $form->{paidaccounts} = -1;
 	  }
 
 	  for (qw(id recurring printed emailed queued)) { delete $form->{$_} }

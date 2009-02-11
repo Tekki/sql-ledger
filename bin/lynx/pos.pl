@@ -486,17 +486,14 @@ sub form_footer {
 	       'Post' => { ndx => 3, key => 'O', value => $locale->text('Post') },
 	       'Print and Post' => { ndx => 4, key => 'R', value => $locale->text('Print and Post') },
 	       'Delete' => { ndx => 6, key => 'D', value => $locale->text('Delete') },
-	       'Sales Invoice' => { ndx => 5, key => 'I', value => $locale->text('Sales Invoice') },
 	      );
    
     if ($transdate > $form->{closedto}) {
 
       if (! $form->{id}) {
 	delete $button{'Delete'};
-	delete $button{'Sales Invoice'};
       }
 
-      delete $button{'Sales Invoice'} if $myconfig{acs} =~ /(AR--AR|AR--Sales Invoice)/;
       delete $button{'Print and Post'} unless $latex;
       
       for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }

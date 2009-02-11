@@ -1169,14 +1169,14 @@ sub update_recurring {
 
   my $dbh = $form->dbconnect($myconfig);
 
-  my $query = qq|SELECT nextdate, repeat, unit
+  my $query = qq|SELECT repeat, unit
                  FROM recurring
 		 WHERE id = $id|;
-  my ($nextdate, $repeat, $unit) = $dbh->selectrow_array($query);
+  my ($repeat, $unit) = $dbh->selectrow_array($query);
   
-  my %advance = ( 'Pg' => qq|(date '$nextdate' + interval '$repeat $unit')|,
-              'Sybase' => qq|dateadd($myconfig->{dateformat}, $repeat $unit, $nextdate)|,
-                 'DB2' => qq|(date ('$nextdate') + "$repeat $unit")|,
+  my %advance = ( 'Pg' => qq|(date '$form->{nextdate}' + interval '$repeat $unit')|,
+              'Sybase' => qq|dateadd($myconfig->{dateformat}, $repeat $unit, $form->{nextdate})|,
+                 'DB2' => qq|(date ('$form->{nextdate}') + "$repeat $unit")|,
 		 );
   for (qw(PgPP Oracle)) { $interval{$_} = $interval{Pg} }
 

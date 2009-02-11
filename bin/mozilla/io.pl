@@ -146,6 +146,8 @@ function CheckAll(v) {
   $deliverydate = $locale->text('Delivery Date');
   $serialnumber = $locale->text('Serial No.');
   $projectnumber = $locale->text('Project');
+  $orderxrefnumber = $locale->text('Order Number');
+  $poxrefnumber = $locale->text('PO Number');
   $group = $locale->text('Group');
   $sku = $locale->text('SKU');
   $packagenumber = $locale->text('Packaging');
@@ -222,9 +224,13 @@ function CheckAll(v) {
     
     if ($form->{selectpartsgroup}) {
       if ($i < $numrows) {
-	$partsgroup = qq|<b>$group</b>|.$form->hide_form("partsgroup_$i");
+	$partsgroup = qq|
+	        <tr>
+		  <td colspan=$colspan>
+	          <b>$group</b>|.$form->hide_form("partsgroup_$i");
 	($form->{"partsgroup_$i"}) = split /--/, $form->{"partsgroup_$i"};
-	$partsgroup .= $form->{"partsgroup_$i"};
+	$partsgroup .= qq|$form->{"partsgroup_$i"}</td>
+	        </tr>|;
 	$partsgroup = "" unless $form->{"partsgroup_$i"};
       }
     }
@@ -284,6 +290,13 @@ function CheckAll(v) {
 		.qq|</select>
 | if $form->{selectprojectnumber};
 
+    if ($form->{type} !~ /_quotation/) {
+      $orderxref = qq|
+                <b>$orderxrefnumber</b> <input name="ordernumber_$i" value="$form->{"ordernumber_$i"}"> <a href=oe.pl?action=lookup_order&ordnumber=|.$form->escape($form->{"ordernumber_$i"},1).qq|&vc=customer&path=$form->{path}&login=$form->{login} target=_blank>?</a>
+		<b>$poxrefnumber</b> <input name="customerponumber_$i" value="$form->{"customerponumber_$i"}"> <a href=oe.pl?action=lookup_order&ordnumber=|.$form->escape($form->{"customerponumber_$i"},1).qq|&vc=vendor&path=$form->{path}&login=$form->{login} target=_blank>?</a>
+|;
+    }
+
 
     if (($rows = $form->numtextrows($form->{"itemnotes_$i"}, 46, 6)) > 1) {
       $form->{"itemnotes_$i"} = $form->quote($form->{"itemnotes_$i"});
@@ -322,6 +335,7 @@ function CheckAll(v) {
 
       $serial = "";
       $project = "";
+      $orderxref = "";
       $delivery = "";
       $itemnotes = "";
       $package = "";
@@ -340,12 +354,11 @@ function CheckAll(v) {
         <tr valign=top>
 	  <td colspan=$colspan>
 	  $project
-	  $partsgroup
+	  $orderxref
 	  </td>
 	</tr>
-        <tr>
-	  $package
-	</tr>
+	$partsgroup
+	$package
 |;
     } else {
       if ($i == $numrows) {
@@ -358,7 +371,7 @@ function CheckAll(v) {
 |;
       }
       
-      $form->hide_form(map { "${_}_$i" } ("$delvar", "itemnotes", "serialnumber", "projectnumber"));
+      $form->hide_form(map { "${_}_$i" } ("$delvar", "itemnotes", "serialnumber", "ordernumber", "customerponumber", "projectnumber"));
 
       $form->hide_form(map { "${_}_$i" } qw(package netweight grossweight volume));
     }
@@ -732,7 +745,7 @@ sub check_form {
   my $count = 0;
   my $i;
   my $j;
-  my @flds = qw(id runningnumber partnumber description partsgroup qty ship unit sellprice discount oldqty oldship orderitems_id bin weight listprice lastcost taxaccounts pricematrix sku onhand assembly inventory_accno_id income_accno_id expense_accno_id itemnotes reqdate deliverydate serialnumber projectnumber package netweight grossweight lineitemdetail);
+  my @flds = qw(id runningnumber partnumber description partsgroup qty ship unit sellprice discount oldqty oldship orderitems_id bin weight listprice lastcost taxaccounts pricematrix sku onhand assembly inventory_accno_id income_accno_id expense_accno_id itemnotes reqdate deliverydate serialnumber ordernumber customerponumber projectnumber package netweight grossweight lineitemdetail);
 
   # remove any makes or model rows
   if ($form->{item} eq 'part') {
@@ -1508,7 +1521,7 @@ sub print_form {
 
   @a = ();
   foreach $i (1 .. $form->{rowcount}) {
-    push @a, map { "${_}_$i" } qw(partnumber description projectnumber partsgroup serialnumber bin unit itemnotes package);
+    push @a, map { "${_}_$i" } qw(partnumber description projectnumber partsgroup serialnumber ordernumber customerponumber bin unit itemnotes package);
   }
   for (split / /, $form->{taxaccounts}) { push @a, "${_}_description" }
 
@@ -1774,26 +1787,33 @@ sub print_form {
 sub ship_to {
 
   $title = $form->{title};
-  $form->{title} = $locale->text('Ship to');
+  $form->{title} = $locale->text('Shipping Address');
 
   for (qw(exchangerate creditlimit creditremaining)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
   for (1 .. $form->{paidaccounts}) { $form->{"paid_$_"} = $form->parse_amount(\%myconfig, $form->{"paid_$_"}) }
+  for (qw(dcn rvc)) { $temp{$_} = $form->{$_} }
 
   # get details for name
-  AA->company_details(\%myconfig, \%$form);
+  AA->ship_to(\%myconfig, \%$form);
 
-  if ($form->{vc} eq 'customer') {
-    $vcname = $locale->text('Customer');
-    $vcnumber = $locale->text('Customer Number');
-  } else {
-    $vcname = $locale->text('Vendor');
-    $vcnumber = $locale->text('Vendor Number');
-  }
-
-  $nextsub = ($form->{display_form}) ? $form->{display_form} : "display_form";
+  for (keys %temp) { $form->{$_} = $temp{$_} }
+  
+  $vcname = $locale->text('Name');
 
   $form->{rowcount}--;
 
+  %shipto = (
+          address1 => { i => 2, label => $locale->text('Address') },
+	  address2 => { i => 3, label => '' },
+	      city => { i => 4, label => $locale->text('City') },
+	     state => { i => 5, label => $locale->text('State/Province') },
+	   zipcode => { i => 6, label => $locale->text('Zip/Postal Code') },
+	   country => { i => 7, label => $locale->text('Country') },
+	   contact => { i => 8, label => $locale->text('Contact') },
+	     phone => { i => 9, label => $locale->text('Phone') },
+	       fax => { i => 10, label => $locale->text('Fax') },
+	     email => { i => 11, label => $locale->text('E-mail') } );
+  
   $form->header;
 
   print qq|
@@ -1809,73 +1829,119 @@ sub ship_to {
   <tr>
     <td>
       <table width=100%>
+        <tr>
+	  <th class=listheading colspan=3>$form->{name}</a></th>
+	</tr>
 	<tr>
+	  <td></td>
 	  <th align=right nowrap>$vcname</th>
-	  <td>$form->{name}</td>
 	  <td><input name=shiptoname size=35 maxlength=64 value="|.$form->quote($form->{shiptoname}).qq|"></td>
 	</tr>
 	<tr>
-	  <th align=right nowrap>|.$locale->text('Address').qq|</th>
-	  <td>$form->{address1}</td>
+	  <td></td>
+	  <th align=right nowrap>$shipto{address1}{label}</th>
 	  <td><input name=shiptoaddress1 size=35 maxlength=32 value="|.$form->quote($form->{shiptoaddress1}).qq|"></td>
 	</tr>
 	<tr>
-	  <th></th>
-	  <td>$form->{address2}</td>
+	  <td></td>
+	  <td></td>
 	  <td><input name=shiptoaddress2 size=35 maxlength=32 value="|.$form->quote($form->{shiptoaddress2}).qq|"></td>
 	</tr>
 	<tr>
-	  <th align=right nowrap>|.$locale->text('City').qq|</th>
-	  <td>$form->{city}</td>
+	  <td></td>
+	  <th align=right nowrap>$shipto{city}{label}</th>
 	  <td><input name=shiptocity size=35 maxlength=32 value="|.$form->quote($form->{shiptocity}).qq|"></td>
 	</tr>
 	<tr>
-	  <th align=right nowrap>|.$locale->text('State/Province').qq|</th>
-	  <td>$form->{state}</td>
+	  <td></td>
+	  <th align=right nowrap>$shipto{state}{label}</th>
 	  <td><input name=shiptostate size=35 maxlength=32 value="|.$form->quote($form->{shiptostate}).qq|"></td>
 	</tr>
 	<tr>
-	  <th align=right nowrap>|.$locale->text('Zip/Postal Code').qq|</th>
-	  <td>$form->{zipcode}</td>
+	  <td></td>
+	  <th align=right nowrap>$shipto{zipcode}{label}</th>
 	  <td><input name=shiptozipcode size=10 maxlength=10 value="|.$form->quote($form->{shiptozipcode}).qq|"></td>
 	</tr>
 	<tr>
-	  <th align=right nowrap>|.$locale->text('Country').qq|</th>
-	  <td>$form->{country}</td>
+	  <td></td>
+	  <th align=right nowrap>$shipto{country}{label}</th>
 	  <td><input name=shiptocountry size=35 maxlength=32 value="|.$form->quote($form->{shiptocountry}).qq|"></td>
 	</tr>
 	<tr>
-	  <th align=right nowrap>|.$locale->text('Contact').qq|</th>
-	  <td>$form->{contact}</td>
+	  <td></td>
+	  <th align=right nowrap>$shipto{contact}{label}</th>
 	  <td><input name=shiptocontact size=35 maxlength=64 value="|.$form->quote($form->{shiptocontact}).qq|"></td>
 	</tr>
 	<tr>
-	  <th align=right nowrap>|.$locale->text('Phone').qq|</th>
-	  <td>$form->{"$form->{vc}phone"}</td>
+	  <td></td>
+	  <th align=right nowrap>$shipto{phone}{label}</th>
 	  <td><input name=shiptophone size=20 value="$form->{shiptophone}"></td>
 	</tr>
 	<tr>
-	  <th align=right nowrap>|.$locale->text('Fax').qq|</th>
-	  <td>$form->{"$form->{vc}fax"}</td>
+	  <td></td>
+	  <th align=right nowrap>$shipto{fax}{label}</th>
 	  <td><input name=shiptofax size=20 value="$form->{shiptofax}"></td>
 	</tr>
 	<tr>
-	  <th align=right nowrap>|.$locale->text('E-mail').qq|</th>
-	  <td>$form->{email}</td>
+	  <td></td>
+	  <th align=right nowrap>$shipto{email}{label}</th>
 	  <td><input name=shiptoemail size=35 value="$form->{shiptoemail}"></td>
 	</tr>
+|;
+
+  $i = 1;
+  for $ref (@{ $form->{all_shipto} }) {
+
+    print qq|
+        <tr>
+	  <td></td>
+	  <td><hr noshade></td>
+	  <td><hr noshade></td>
+        </tr>
+
+	<tr>
+	  <td><input name="ndx_$i" type=checkbox class=checkbox>
+	  <th align=right nowrap>$vcname</th>
+	  <td>$ref->{shiptoname}</td>
+        </tr>
+|;
+
+    for (sort { $shipto{$a}{i} <=> $shipto{$b}{i} } keys %shipto) {
+      print qq|
+	<tr>
+	  <td></td>
+	  <th align=right nowrap>$shipto{$_}{label}</th>
+	  <td>$ref->{"shipto$_"}</td>
+        </tr>
+|;
+    }
+
+    for (keys %$ref) { $form->{"${_}_$i"} = $ref->{$_} }
+    $form->hide_form(map { "${_}_$i" } keys %$ref);
+
+    $i++;
+  }
+  $form->{shipto_rows} = $i - 1;
+
+  print qq|
       </table>
     </td>
   </tr>
 </table>
-
-<input type=hidden name=nextsub value=$nextsub>
 |;
 
   # delete shipto
-  for (qw(action nextsub)) { delete $form->{$_} }
-  for (qw(name address1 address2 city state zipcode country contact phone fax email)) { delete $form->{"shipto$_"} }
+  for (qw(action all_shipto)) { delete $form->{$_} }
+  for (qw(name address1 address2 city state zipcode country contact phone fax email)) {
+    delete $form->{"shipto$_"};
+    $form->{flds} .= "$_ ";
+  }
+  chop $form->{flds};
+  
   $form->{title} = $title;
+
+  $form->{nextsub} = "shipto_selected";
+  
   
   $form->hide_form;
 
@@ -1893,4 +1959,19 @@ sub ship_to {
 
 }
 
+
+sub shipto_selected {
+
+  $display_form = $form->{display_form} || "display_form";
+
+  for $i (1 .. $form->{shipto_rows}) {
+    if ($form->{"ndx_$i"}) {
+      for (split / /, $form->{flds}) { $form->{"shipto$_"} = $form->{"shipto${_}_$i"} }
+      last;
+    }
+  }
+
+  &{ "$display_form" };
+
+}
 

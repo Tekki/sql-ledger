@@ -77,6 +77,7 @@ sub edit {
     $form->{vc} = 'customer';
   }
 
+  $form->{shipto} = 1;
   &order_links;
   &prepare_order;
   &display_form;
@@ -131,7 +132,6 @@ sub order_links {
   }
   
   for (qw(terms taxincluded)) { $temp{$_} = $form->{$_} }
-  $form->{shipto} = 1 if $form->{id};
 
   # get customer / vendor
   AA->get_name(\%myconfig, \%$form);
@@ -294,6 +294,21 @@ sub prepare_order {
   $focus = "partnumber_$i";
   
   $form->{selectformname} = $form->escape($form->{selectformname},1);
+
+}
+
+
+sub lookup_order {
+
+  $form->isblank("ordnumber", $locale->text('Order Number missing!'));
+
+  if ($id = OE->lookup_order(\%myconfig, \%$form)) {
+    $type = ($form->{vc} eq 'customer') ? 'sales_order' : 'purchase_order';
+    $form->{callback} = "oe.pl?action=edit&id=$id&type=$type&vc=$form->{vc}&path=$form->{path}&login=$form->{login}";
+    $form->redirect;
+  } else {
+    $form->error($locale->text('Order not on file!'));
+  }
 
 }
 
@@ -1099,6 +1114,13 @@ sub search {
     $ordlabel = $locale->text('Order Number');
     $ordnumber = 'ordnumber';
     $employee = $locale->text('Salesperson');
+    $detail = qq|
+                <tr>
+		  <td><input name=detail type=radio class=radio value=0 checked> |.$locale->text('Summary').qq|</td>
+		  <td><input name=detail type=radio class=radio value=1> |.$locale->text('Detail').qq|
+		  </td>
+		</tr>
+|;
   }
   
   if ($form->{type} eq 'consolidate_purchase_order') {
@@ -1344,6 +1366,7 @@ sub search {
           <td colspan=3>
 	    <table>
 	      $openclosed
+	      $detail
 |;
 
   while (@a) {
@@ -1540,6 +1563,7 @@ sub transactions {
   unshift @columns, "runningnumber";
 
   $form->{l_open} = $form->{l_closed} = "Y" if ($form->{open} && $form->{closed}) ;
+  $form->{l_memo} = "Y" if $form->{detail};
 
   for (@columns) {
     if ($form->{"l_$_"} eq "Y") {
@@ -1630,6 +1654,7 @@ sub transactions {
 	$button{'Order Entry--Purchase Order'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Generate Purchase Orders').qq|"> |;
 	$button{'Order Entry--Purchase Order'}{order} = $i++;
       }
+      $callback .= "&detail=$form->{detail}";
     }
     if ($form->{type} eq 'consolidate_sales_order') {
       $form->{title} = $locale->text('Sales Orders');
@@ -1800,7 +1825,9 @@ function CheckAll() {
     $column_data{reqdate} = "<td nowrap>$ref->{reqdate}&nbsp;</td>";
 
     $column_data{runningnumber} = qq|<td align=right>$i</td>|;
-    $column_data{ndx} = qq|<td><input name="ndx_$i" class=checkbox type=checkbox value=$ref->{id} checked></td>|;
+    $id = ($ref->{orderitemsid}) ? "$ref->{id}--$ref->{orderitemsid}" : $ref->{id};
+    
+    $column_data{ndx} = qq|<td><input name="ndx_$i" class=checkbox type=checkbox value=$id checked></td>|;
     $column_data{$ordnumber} = "<td><a href=$form->{script}?path=$form->{path}&action=$action&type=$form->{type}&id=$ref->{id}&warehouse=$warehouse&vc=$form->{vc}&login=$form->{login}&callback=$callback>$ref->{$ordnumber}</a></td>";
 
     $name = $form->escape($ref->{name});
@@ -1869,7 +1896,7 @@ function CheckAll() {
 <br>
 |;
 
-  $form->hide_form(qw(callback type vc path login department ordnumber ponumber));
+  $form->hide_form(qw(callback type vc path login department ordnumber ponumber detail));
   
   print qq|
 
@@ -2234,7 +2261,7 @@ sub create_backorder {
     return;
   }
 
-  @flds = qw(partnumber description lineitemdetail qty ship unit sellprice discount oldqty oldship orderitems_id id bin weight listprice lastcost taxaccounts pricematrix sku onhand bin assembly inventory_accno_id income_accno_id expense_accno_id deliverydate reqdate itemnotes serialnumber projectnumber package netweight grossweight volume partsgroup);
+  @flds = qw(partnumber description lineitemdetail qty ship unit sellprice discount oldqty oldship orderitems_id id bin weight listprice lastcost taxaccounts pricematrix sku onhand bin assembly inventory_accno_id income_accno_id expense_accno_id deliverydate reqdate itemnotes serialnumber ordernumber customerponumber projectnumber package netweight grossweight volume partsgroup);
 
   for $i (1 .. $form->{rowcount}) {
     for (qw(qty sellprice discount)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}) }
@@ -2549,7 +2576,7 @@ sub display_ship_receive {
     print qq|
         </tr>
 |;
-    $form->hide_form(map { "${_}_$i"} qw(partnumber description sku orderitems_id id partsgroup unit bin qty));
+    $form->hide_form(map { "${_}_$i"} qw(partnumber description itemnotes lineitemdetail sku orderitems_id id partsgroup unit bin qty));
 
     if ($form->{type} eq 'ship_order') {
       print qq|
@@ -2836,7 +2863,7 @@ BLANKROW:
 <br>
 |;
 
-  $form->hide_form(qw(callback department ponumber path login employee_id vc nextsub rowcount type));
+  $form->hide_form(qw(callback department ponumber path login employee_id vc nextsub rowcount type detail));
   
   print qq|
 <input class=submit type=submit name=action value="|.$locale->text('Generate Orders').qq|">|;

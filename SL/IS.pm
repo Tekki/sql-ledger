@@ -204,7 +204,7 @@ sub invoice_details {
 	  }
     
 	  push(@{ $form->{description} }, $item->[2]);
-	  for (qw(taxrates runningnumber number sku serialnumber bin qty ship unit deliverydate projectnumber sellprice listprice netprice discount discountrate linetotal itemnotes package netweight grossweight volume countryorigin hscode barcode)) { push(@{ $form->{$_} }, "") }
+	  for (qw(taxrates runningnumber number sku serialnumber ordernumber customerponumber bin qty ship unit deliverydate projectnumber sellprice listprice netprice discount discountrate linetotal itemnotes package netweight grossweight volume countryorigin hscode barcode)) { push(@{ $form->{$_} }, "") }
 	  push(@{ $form->{lineitems} }, { amount => 0, tax => 0 });
 	}
       }
@@ -227,7 +227,7 @@ sub invoice_details {
       ($projectnumber) = split /--/, $form->{"projectnumber_$i"};
       push(@{ $form->{projectnumber} }, $projectnumber);
       
-      for (qw(sku serialnumber bin description unit deliverydate sellprice listprice package netweight grossweight volume countryorigin hscode barcode itemnotes)) { push(@{ $form->{$_} }, $form->{"${_}_$i"}) }
+      for (qw(sku serialnumber ordernumber customerponumber bin description unit deliverydate sellprice listprice package netweight grossweight volume countryorigin hscode barcode itemnotes)) { push(@{ $form->{$_} }, $form->{"${_}_$i"}) }
 	
       push(@{ $form->{qty} }, $form->format_amount($myconfig, $form->{"qty_$i"}));
       push(@{ $form->{ship} }, $form->format_amount($myconfig, $form->{"qty_$i"}));
@@ -336,7 +336,7 @@ sub invoice_details {
 	      push(@{ $form->{part} }, NULL);
 	    }
 
-	    for (qw(taxrates runningnumber number sku serialnumber bin qty ship unit deliverydate projectnumber sellprice listprice netprice discount discountrate itemnotes package netweight grossweight volume countryorigin hscode barcode)) { push(@{ $form->{$_} }, "") }
+	    for (qw(taxrates runningnumber number sku serialnumber ordernumber customerponumber bin qty ship unit deliverydate projectnumber sellprice listprice netprice discount discountrate itemnotes package netweight grossweight volume countryorigin hscode barcode)) { push(@{ $form->{$_} }, "") }
 	    
 	    push(@{ $form->{description} }, $form->{groupsubtotaldescription});
 	    
@@ -363,7 +363,7 @@ sub invoice_details {
 	      push(@{ $form->{part} }, NULL);
 	    }
 
-	    for (qw(taxrates runningnumber number sku serialnumber bin qty ship unit deliverydate projectnumber sellprice listprice netprice discount discountrate itemnotes package netweight grossweight volume countryorigin hscode barcode)) { push(@{ $form->{$_} }, "") }
+	    for (qw(taxrates runningnumber number sku serialnumber ordernumber customerponumber bin qty ship unit deliverydate projectnumber sellprice listprice netprice discount discountrate itemnotes package netweight grossweight volume countryorigin hscode barcode)) { push(@{ $form->{$_} }, "") }
 
 	    push(@{ $form->{description} }, $form->{groupsubtotaldescription});
 	    push(@{ $form->{linetotal} }, $form->format_amount($myconfig, $subtotal, $form->{precision}));
@@ -601,6 +601,10 @@ sub delete_invoice {
               WHERE trans_id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
 
+  $query = qq|UPDATE oe SET aa_id = NULL
+              WHERE aa_id = $form->{id}|;
+  $dbh->do($query) || $form->dberror($query);
+
   $form->remove_locks($myconfig, $dbh, 'ar');
 
   my $rc = $dbh->commit;
@@ -663,7 +667,7 @@ sub assembly_details {
     }
 
     if ($form->{grouppartsgroup} && $ref->{partsgroup} ne $sm) {
-      for (qw(taxrates runningnumber number sku serialnumber unit qty ship bin deliverydate projectnumber sellprice listprice netprice discount discountrate linetotal itemnotes package netweight grossweight volume countryorigin hscode barcode)) { push(@{ $form->{$_} }, "") }
+      for (qw(taxrates runningnumber number sku serialnumber ordernumber customerponumber unit qty ship bin deliverydate projectnumber sellprice listprice netprice discount discountrate linetotal itemnotes package netweight grossweight volume countryorigin hscode barcode)) { push(@{ $form->{$_} }, "") }
       $sm = ($form->{"a_partsgroup"}) ? $form->{"a_partsgroup"} : "--";
       push(@{ $form->{description} }, "$spacer$sm");
       push(@{ $form->{lineitems} }, { amount => 0, tax => 0 });
@@ -672,7 +676,7 @@ sub assembly_details {
     if ($form->{stagger}) {
       
       push(@{ $form->{description} }, $form->format_amount($myconfig, $ref->{qty} * $form->{"qty_$i"}) . qq| -- $form->{"a_partnumber"}, $form->{"a_description"}|);
-      for (qw(taxrates runningnumber number sku serialnumber unit qty ship bin deliverydate projectnumber sellprice listprice netprice discount discountrate linetotal itemnotes package netweight grossweight volume countryorigin hscode barcode)) { push(@{ $form->{$_} }, "") }
+      for (qw(taxrates runningnumber number sku serialnumber ordernumber customerponumber unit qty ship bin deliverydate projectnumber sellprice listprice netprice discount discountrate linetotal itemnotes package netweight grossweight volume countryorigin hscode barcode)) { push(@{ $form->{$_} }, "") }
       
     } else {
       
@@ -680,7 +684,7 @@ sub assembly_details {
       push(@{ $form->{number} }, $form->{"a_partnumber"});
       push(@{ $form->{sku} }, $form->{"a_partnumber"});
 
-      for (qw(taxrates runningnumber ship serialnumber reqdate projectnumber sellprice listprice netprice discount discountrate linetotal itemnotes package netweight grossweight volume countryorigin hscode barcode)) { push(@{ $form->{$_} }, "") }
+      for (qw(taxrates runningnumber ship serialnumber ordernumber customerponumber reqdate projectnumber sellprice listprice netprice discount discountrate linetotal itemnotes package netweight grossweight volume countryorigin hscode barcode)) { push(@{ $form->{$_} }, "") }
       
     }
 
@@ -997,6 +1001,8 @@ sub post_invoice {
 		  deliverydate = |.$form->dbquote($form->{"deliverydate_$i"}, SQL_DATE).qq|,
 		  project_id = $project_id,
 		  serialnumber = |.$dbh->quote($form->{"serialnumber_$i"}).qq|,
+		  ordernumber = |.$dbh->quote($form->{"ordernumber_$i"}).qq|,
+		  ponumber = |.$dbh->quote($form->{"customerponumber_$i"}).qq|,
 		  itemnotes = |.$dbh->quote($form->{"itemnotes_$i"}).qq|,
 		  lineitemdetail = '$lineitemdetail'
 		  WHERE id = $id|;
@@ -1867,8 +1873,8 @@ sub retrieve_invoice {
     # retrieve individual items
     $query = qq|SELECT i.description, i.qty, i.fxsellprice, i.sellprice,
 		i.discount, i.parts_id AS id, i.unit, i.deliverydate,
-		i.project_id, pr.projectnumber, i.serialnumber,
-		i.itemnotes, i.lineitemdetail,
+		i.project_id, pr.projectnumber, i.serialnumber, i.ordernumber,
+		i.ponumber AS customerponumber, i.itemnotes, i.lineitemdetail,
 		p.partnumber, p.assembly, p.bin,
 		pg.partsgroup, p.partsgroup_id, p.partnumber AS sku,
 		p.listprice, p.lastcost, p.weight, p.onhand,

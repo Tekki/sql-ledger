@@ -78,8 +78,8 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.8.18";
-  $self->{dbversion} = "2.8.8";
+  $self->{version} = "2.8.19";
+  $self->{dbversion} = "2.8.9";
 
   bless $self, $type;
   
@@ -644,9 +644,9 @@ sub parse_template {
 	
 	# this one we need for the count
 	chomp $var;
-	$var =~ s/.*?<%foreach (.+?)%>/$1/;
+	$var =~ s/.*?<%foreach\s+?(.+?)%>/$1/;
 	while ($_ = shift) {
-	  last if (/<%end \Q$var\E%>/);
+	  last if /<%end \Q$var\E%>/;
 
 	  # store line in $par
 	  $par .= $_;
@@ -717,24 +717,35 @@ sub parse_template {
       }
 
       # if not comes before if!
-      if (/<%if not /) {
+      if (/<%if\s+?not /) {
 	# check if it is not set and display
 	chop;
-	s/.*?<%if not (.+?)%>/$1/;
+	s/.*?<%if\s+?not\s+?(.+?)%>/$1/;
 
-	if (! $self->{$_}) {
-	  while ($_ = shift) {
-	    last if /<%end /;
+	$var = $1;
 
-	    # store line in $par
-	    $par .= $_;
+	if (! $self->{$var}) {
+	  s/^$var//;
+
+	  if (/<%end /) {
+	    s/<%end\s+?$var%>//;
+	    $par = $_;
+	  } else {
+	    $par = $_;
+	    while ($_ = shift) {
+	      last if /<%end /;
+	      # store line in $par
+	      $par .= $_;
+	    }
 	  }
 	  
-	  $_ = $par;
+	  $_ = $var = $par;
 	  
 	} else {
-	  while ($_ = shift) {
-	    last if /<%end /;
+	  if (! /<%end /) {
+	    while ($_ = shift) {
+	      last if /<%end /;
+	    }
 	  }
 	  next;
 	}
@@ -743,27 +754,38 @@ sub parse_template {
       if (/<%if /) {
 	# check if it is set and display
 	chop;
-	s/.*?<%if (.+?)%>/$1/;
+	s/.*?<%if\s+?(.+?)%>/$1/;
 
-	if (/\s/) {
-	  @a = split;
-	  $ok = eval "$self->{$a[0]} $a[1] $a[2]";
+	$var = $1;
+
+	if ($var =~ /\s/) {
+	  @a = split / /, $var, 3;
+	  $ok = eval qq|$self->{$a[0]} $a[1] "$a[2]"|;
 	} else {
-	  $ok = $self->{$_};
+	  $ok = $self->{$var};
 	}
 	  
 	if ($ok) {
-	  while ($_ = shift) {
-	    last if /<%end /;
-	    # store line in $par
-	    $par .= $_;
+	  s/^$var//;
+	  if (/<%end /) {
+	    s/<%end\s+?$var%>//;
+	    $par = $_;
+	  } else {
+	    $par = $_;
+	    while ($_ = shift) {
+	      last if /<%end /;
+	      # store line in $par
+	      $par .= $_;
+	    }
 	  }
 	  
-	  $_ = $par;
+	  $_ = $var = $par;
 	  
 	} else {
-	  while ($_ = shift) {
-	    last if /<%end /;
+	  if (! /<%end /) {
+	    while ($_ = shift) {
+	      last if /<%end /;
+	    }
 	  }
 	  next;
 	}
@@ -774,7 +796,7 @@ sub parse_template {
 	
 	# get the filename
 	chomp $var;
-	$var =~ s/.*?<%include (.+?)%>/$1/;
+	$var =~ s/.*?<%include\s+?(.+?)%>/$1/;
 
 	# remove / .. for security reasons
 	$var =~ s/(\/|\.\.)//g;
@@ -982,31 +1004,36 @@ sub format_line {
       }
     }
 
-    $str = ($arr) ? $self->{$var}[$i] : $self->{$var};
+    if ($arr) {
+      $str = $self->{$var}[$i];
+    } else {
+      $str = $self->{$var};
+    }
     $newstr = $str;
 
     $var = $1;
+
     if ($var =~ /^if\s+not\s+/) {
       if ($str) {
-	$var =~ s/if\s+not\s+//;
-	s/<%if\s+not\s+$var%>.*?(<%end\s+$var%>|$)//s;
+	$var =~ s/if\s+?not\s+?//;
+	s/<%if\s+not\s+?$var%>.*?(<%end\s+?$var%>|$)//s;
       } else {
 	s/<%$var%>//;
       }
       next;
     }
 
-    if ($var =~ /^if\s+/) {
+    if ($var =~ /^if /) {
       if ($str) {
 	s/<%$var%>//;
       } else {
-	$var =~ s/if\s+//;
-	s/<%if\s+$var%>.*?(<%end\s+$var%>|$)//s;
+	$var =~ s/if\s+?//;
+	s/<%if\s+?$var%>.*?(<%end\s+?$var%>|$)//s;
       }
       next;
     }
 
-    if ($var =~ /^end\s+/) {
+    if ($var =~ /^end /) {
       s/<%$var%>//;
       next;
     }
@@ -2334,10 +2361,9 @@ sub create_lock {
               WHERE expires < '$expires'|;
   $dbh->do($query) || $self->dberror($query);
 	      
-  $expires = time + $myconfig{timeout};
+  $expires = time + $myconfig->{timeout};
   
   if ($id) {
-    $self->{readonly} = 1;
     $query = qq|SELECT id, login FROM semaphore
 		WHERE id = $id|;
     my ($readonly, $login) = $dbh->selectrow_array($query);
@@ -2347,11 +2373,11 @@ sub create_lock {
       $query = qq|SELECT name FROM employee
 		  WHERE login = '$login'|;
       ($self->{haslock}) = $dbh->selectrow_array($query);
+      $self->{readonly} = 1;
     } else {
       $query = qq|INSERT INTO semaphore (id, login, module, expires)
 		  VALUES ($id, '$self->{login}', '$module', '$expires')|;
       $dbh->do($query) || $self->dberror($query);
-      $self->{readonly} = 0;
     }
   }
    
