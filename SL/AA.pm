@@ -21,9 +21,7 @@ sub post_transaction {
   my $disconnect = ($dbh) ? 0 : 1;
   
   # connect to database
-  if (! $dbh) {
-    $dbh = $form->dbconnect_noauto($myconfig);
-  }
+  $dbh = $form->dbconnect_noauto($myconfig) unless $dbh;
 
   my $query;
   my $sth;
@@ -254,6 +252,10 @@ sub post_transaction {
 
 
   $form->{amount} = $invamount;          # need for vr batch
+  
+  ($paymentaccno) = split /--/, $form->{"$form->{ARAP}_paid_$form->{paidaccounts}"};
+  ($null, $paymentmethod_id) = split /--/, $form->{"paymentmethod_$form->{paidaccounts}"};
+  $paymentmethod_id *= 1;
 
   if ($form->{vc} eq 'customer') {
     # dcn
@@ -268,10 +270,6 @@ sub post_transaction {
     
     for my $dcn (qw(dcn rvc)) { $form->{$dcn} = $form->format_dcn($form->{$dcn}) }
   }
-
-  ($paymentaccno) = split /--/, $form->{"$form->{ARAP}_paid_$form->{paidaccounts}"};
-  ($null, $paymentmethod_id) = split /--/, $form->{"paymentmethod_$form->{paidaccounts}"};
-  $paymentmethod_id *= 1;
 
 
   $query = qq|UPDATE $table SET
@@ -1260,7 +1258,7 @@ sub company_details {
   my $disconnect = ($dbh) ? 0 : 1;
   
   # connect to database
-  $dbh = $form->dbconnect($myconfig);
+  $dbh = $form->dbconnect($myconfig) unless $dbh;
   
   # get rest for the customer/vendor
   my $query = qq|SELECT ct.$form->{vc}number, ct.name, ad.address1, ad.address2,
@@ -1343,35 +1341,35 @@ sub ship_to {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-   AA->company_details($myconfig, $form, $dbh);
+  AA->company_details($myconfig, $form, $dbh);
 
-   my $table = ($form->{vc} eq 'customer') ? 'ar' : 'ap';
+  my $table = ($form->{vc} eq 'customer') ? 'ar' : 'ap';
 
-   my $query = qq|SELECT
-                  s.shiptoname, s.shiptoaddress1, s.shiptoaddress2,
-		  s.shiptocity, s.shiptostate, s.shiptozipcode,
-		  s.shiptocountry, s.shiptocontact, s.shiptophone,
-		  s.shiptofax, s.shiptoemail
-		  FROM shipto s
-		  WHERE trans_id = $form->{"$form->{vc}_id"}
-		  UNION
-		  SELECT
-		  s.shiptoname, s.shiptoaddress1, s.shiptoaddress2,
-		  s.shiptocity, s.shiptostate, s.shiptozipcode,
-		  s.shiptocountry, s.shiptocontact, s.shiptophone,
-		  s.shiptofax, s.shiptoemail
-		  FROM shipto s
-		  JOIN oe o ON (o.id = s.trans_id)
-		  WHERE o.$form->{vc}_id = $form->{"$form->{vc}_id"}
-		  UNION
-		  SELECT
-		  s.shiptoname, s.shiptoaddress1, s.shiptoaddress2,
-		  s.shiptocity, s.shiptostate, s.shiptozipcode,
-		  s.shiptocountry, s.shiptocontact, s.shiptophone,
-		  s.shiptofax, s.shiptoemail
-		  FROM shipto s
-		  JOIN $table a ON (a.id = s.trans_id)
-		  WHERE a.$form->{vc}_id = $form->{"$form->{vc}_id"}|;
+  my $query = qq|SELECT
+                 s.shiptoname, s.shiptoaddress1, s.shiptoaddress2,
+		 s.shiptocity, s.shiptostate, s.shiptozipcode,
+		 s.shiptocountry, s.shiptocontact, s.shiptophone,
+		 s.shiptofax, s.shiptoemail
+		 FROM shipto s
+		 WHERE trans_id = $form->{"$form->{vc}_id"}
+		 UNION
+		 SELECT
+		 s.shiptoname, s.shiptoaddress1, s.shiptoaddress2,
+		 s.shiptocity, s.shiptostate, s.shiptozipcode,
+		 s.shiptocountry, s.shiptocontact, s.shiptophone,
+		 s.shiptofax, s.shiptoemail
+		 FROM shipto s
+		 JOIN oe o ON (o.id = s.trans_id)
+		 WHERE o.$form->{vc}_id = $form->{"$form->{vc}_id"}
+		 UNION
+		 SELECT
+		 s.shiptoname, s.shiptoaddress1, s.shiptoaddress2,
+		 s.shiptocity, s.shiptostate, s.shiptozipcode,
+		 s.shiptocountry, s.shiptocontact, s.shiptophone,
+		 s.shiptofax, s.shiptoemail
+		 FROM shipto s
+		 JOIN $table a ON (a.id = s.trans_id)
+		 WHERE a.$form->{vc}_id = $form->{"$form->{vc}_id"}|;
 
   if ($form->{id}) {
     $query .= qq|

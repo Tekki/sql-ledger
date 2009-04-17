@@ -1869,7 +1869,7 @@ sub taxes {
   my $i = 0;
   foreach my $ref (@{ $form->{taxrates} }) {
     $i++;
-    $form->{"taxrate_$i"} = $form->format_amount(\%myconfig, $ref->{rate});
+    $form->{"taxrate_$i"} = $ref->{rate};
     $form->{"taxdescription_$i"} = $ref->{description};
     
     for (qw(taxnumber validto)) { $form->{"${_}_$i"} = $ref->{$_} }

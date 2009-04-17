@@ -185,7 +185,7 @@ sub add_user {
   }
   $myconfig->{vclimit} = 1000;
   $myconfig->{menuwidth} = 155;
-  $myconfig->{timeout} = 3600;
+  $myconfig->{timeout} = 10800;
   
   &form_header;
   &form_footer;

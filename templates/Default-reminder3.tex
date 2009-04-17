@@ -1,0 +1,67 @@
+<%include preamble.tex%>
+
+\begin{document}
+
+\pagestyle{myheadings}
+\thispagestyle{empty}
+
+\newlength{\descrwidth}\setlength{\descrwidth}{10cm}
+\fontfamily{cmss}\fontsize{10pt}{12pt}\selectfont
+
+\vspace*{-1.3cm}
+
+<%include letterhead.tex%>
+
+  
+\vspace*{0.5cm}
+
+\parbox[t]{.5\textwidth}{
+<%name%>
+
+<%address1%>
+
+<%address2%>
+
+<%city%>
+<%if state%>
+\hspace{-1mm}, <%state%>
+<%end state%>
+<%zipcode%>
+
+<%country%>
+}
+\parbox[t]{.5\textwidth}{
+<%if customerphone%>
+Tel: <%customerphone%>
+<%end customerphone%>
+
+<%if customerfax%>
+Fax: <%customerfax%>
+<%end customerfax%>
+
+<%email%>
+}
+\hfill
+
+\vspace{1cm}
+
+\textbf{3. R E M I N D E R} \hfill \textbf{<%statementdate%>}
+
+\vspace{2cm}
+
+\begin{tabular}{|llccr|}
+  \hline
+  \textbf{Invoice \#} & \textbf{Order \#} & \textbf{Invoice Date} & \textbf{Due Date} & \textbf{Amount}\\
+  \hline
+  <%invnumber%> & <%ordnumber%> & <%invdate%> & <%duedate%> & <%due%> \\
+  \hline
+\end{tabular}
+
+\vspace{0.5cm}
+
+Our records indicate that payment for invoice \# <%invnumber%> is past due. If the amount has already been paid, please disregard this notice.
+This is our final notice.
+If the above amount is not received within thirty (30) days collection of funds will be handed over to a collection agency.
+
+\end{document}
+

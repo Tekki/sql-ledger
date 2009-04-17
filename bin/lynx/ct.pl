@@ -1024,16 +1024,16 @@ sub list_names {
   }
   
   $i = 1;
-  if ($myconfig{acs} !~ /AR--AR/) {
+  if ($myconfig{acs} !~ /Customers--/) {
     if ($form->{db} eq 'customer') {
-      $button{'AR--Customers--Add Customer'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Customer').qq|"> |;
-      $button{'AR--Customers--Add Customer'}{order} = $i++;
+      $button{'Customers--Add Customer'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Customer').qq|"> |;
+      $button{'Customers--Add Customer'}{order} = $i++;
     }
   }
-  if ($myconfig{acs} !~ /AP--AP/) {
+  if ($myconfig{acs} !~ /Vendors--/) {
     if ($form->{db} eq 'vendor') {
-      $button{'AP--Vendors--Add Vendor'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Vendor').qq|"> |;
-      $button{'AP--Vendors--Add Vendor'}{order} = $i++;
+      $button{'Vendors--Add Vendor'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Vendor').qq|"> |;
+      $button{'Vendors--Add Vendor'}{order} = $i++;
     }
   }
   
@@ -1934,7 +1934,7 @@ sub form_footer {
   %a = ();
   
   if ($form->{db} eq 'customer') {
-    if ($myconfig{acs} !~ /AR--Customers--Add Customer/) {
+    if ($myconfig{acs} !~ /Customers--Add Customer/) {
       $a{'Save'} = 1;
       $a{'New Number'} = 1;
       $a{'Shipping Address'} = 1;
@@ -1977,7 +1977,7 @@ sub form_footer {
   }
   
   if ($form->{db} eq 'vendor') {
-    if ($myconfig{acs} !~ /AP--Vendors--Add Vendor/) {
+    if ($myconfig{acs} !~ /Vendors--Add Vendor/) {
       $a{'Save'} = 1;
       $a{'Shipping Address'} = 1;
       $a{'Update'} = 1;
@@ -1994,7 +1994,7 @@ sub form_footer {
       if ($myconfig{acs} !~ /AP--Add Transaction/) {
 	$a{'AP Transaction'} = 1;
       }
-      if ($myconfig{acs} !~ /AP--Vendor Invoice/) {
+      if ($myconfig{acs} !~ /Vendor Invoice/) {
 	$a{'Vendor Invoice'} = 1;
       }
       if ($myconfig{acs} !~ /AP--Debit Invoice/) {

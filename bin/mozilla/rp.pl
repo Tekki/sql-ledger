@@ -75,9 +75,12 @@ sub report {
 	     receipts		=> { title => 'Receipts', vc => 'customer' },
 	     payments		=> { title => 'Payments' },
 	     projects		=> { title => 'Project Transactions' },
+	     reminder           => { title => 'Reminder', vc => 'customer' },
 	   );
   
   $form->{title} = $locale->text($report{$form->{report}}->{title});
+
+  $form->{nextsub} = "generate_$form->{report}";
 
   $gifi = qq|
 <tr>
@@ -225,7 +228,6 @@ sub report {
 |;
 
   if ($form->{report} eq "projects") {
-    $form->{nextsub} = "generate_projects";
     
     print qq|
         $project
@@ -249,7 +251,6 @@ sub report {
   }
 
   if ($form->{report} eq "income_statement") {
-    $form->{nextsub} = "generate_income_statement";
     
     print qq|
 	$project
@@ -324,7 +325,6 @@ sub report {
 
 
   if ($form->{report} eq "balance_sheet") {
-    $form->{nextsub} = "generate_balance_sheet";
     
     print qq|
 	<tr>
@@ -384,7 +384,6 @@ sub report {
 
 
   if ($form->{report} eq "trial_balance") {
-    $form->{nextsub} = "generate_trial_balance";
     
     print qq|
         <tr>
@@ -488,7 +487,7 @@ sub report {
   }
   
 
-print qq|
+  print qq|
         $method
       </table>
     </td>
@@ -618,8 +617,6 @@ print qq|
     }
     $form->{sort} = ($form->{namesbynumber}) ? "$form->{vc}number" : "name";
 
-    $form->{nextsub} = "generate_$form->{report}";
-
     $form->{type} = "statement";
     $form->{format} ||= $myconfig{outputformat};
     $form->{media} ||= $myconfig{printer};
@@ -697,6 +694,58 @@ print qq|
 
   }
 
+  if ($form->{report} eq 'reminder') {
+    $gifi = "";
+
+    $vclabel = $locale->text('Customer');
+    $vcnumber = $locale->text('Customer Number');
+    $form->{vc} = 'customer';
+    $form->{sort} = "customernumber" if $form->{namesbynumber};
+    $form->{sort} = ($form->{namesbynumber}) ? "$form->{vc}number" : "name";
+
+    $form->{type} = "reminder";
+    $form->{format} ||= $myconfig{outputformat};
+    $form->{media} ||= $myconfig{printer};
+
+    # setup vc selection
+    $form->all_vc(\%myconfig, $form->{vc}, ($form->{vc} eq 'customer') ? "AR" : "AP", undef, undef, undef, 1);
+
+    if (@{ $form->{"all_$form->{vc}"} }) {
+      $vc = qq|
+           <tr>
+	     <th align=right nowrap>$vclabel</th>
+	     <td colspan=2><select name=$form->{vc}><option>\n|;
+	     
+      for (@{ $form->{"all_$form->{vc}"} }) { $vc .= qq|<option value="|.$form->quote($_->{name}).qq|--$_->{id}">$_->{name}\n| }
+
+      $vc .= qq|</select>
+             </td>
+           </tr>
+|;
+    } else {
+      $vc = qq|
+                <tr>
+		  <th align=right nowrap>$vclabel</th>
+		  <td colspan=2><input name=$form->{vc} size=35>
+		  </td>
+                </tr>
+		<tr>
+		  <th align=right nowrap>$vcnumber</th>
+		  <td colspan=3><input name="$form->{vc}number" size=35>
+		  </td>
+                </tr>
+|;
+    }
+
+    print qq|
+        $vc
+	<input type=hidden name=action value="$form->{nextsub}">
+|;
+
+    $form->hide_form(qw(type format media sort));
+
+  }
+  
 # above action can be removed if there is more than one input field
 
 
@@ -1614,7 +1663,7 @@ function CheckAll() {
 
   if ($form->{arap} eq 'ar') {
 
-    $form->hide_form(qw(todate title summary overdue callback arap vc department path login));
+    $form->hide_form(qw(todate title summary overdue callback arap vc department path login type report));
     $form->hide_form(@c, "$form->{vc}");
     
     %button = ('Select all' => { ndx => 1, key => 'A', value => $locale->text('Select all') },
@@ -1648,7 +1697,9 @@ function CheckAll() {
 }
 
 
-sub select_all {
+sub select_all { &{ "select_all_$form->{type}" } }
+
+sub select_all_statement {
 
   RP->aging(\%myconfig, \%$form);
 
@@ -1661,7 +1712,22 @@ sub select_all {
 }
 
 
-sub deselect_all {
+sub select_all_reminder {
+
+  RP->reminder(\%myconfig, \%$form);
+
+  for (@{ $form->{AG} }) { $form->{"ndx_$_->{id}"} = "checked" }
+  $form->{allbox} = "checked";
+  $form->{deselect} = 1;
+
+  &reminder;
+
+}
+
+
+sub deselect_all { &{ "deselect_all_$form->{type}" } }
+
+sub deselect_all_statement {
 
   RP->aging(\%myconfig, \%$form);
 
@@ -1669,6 +1735,293 @@ sub deselect_all {
   $form->{allbox} = "";
 
   &aging;
+
+}
+
+
+sub deselect_all_reminder {
+
+  RP->reminder(\%myconfig, \%$form);
+
+  for (@{ $form->{AG} }) { $_->{checked} = "" }
+  $form->{allbox} = "";
+
+  &reminder;
+
+}
+
+
+sub generate_reminder {
+
+  # split customer
+  ($form->{customer}) = split(/--/, $form->{customer});
+  
+  $form->{vc} = "customer";
+  $form->{arap} = "ar";
+
+  $form->{initcallback} = qq|$form->{script}?action=generate_reminder|;
+
+  RP->reminder(\%myconfig, \%$form);
+
+  &reminder;
+
+}
+
+
+sub reminder {
+
+  $form->{callback} = $form->{initcallback};
+  for (qw(path login type format)) { $form->{callback} .= "&$_=$form->{$_}" }
+  for (qw(title media report)) { $form->{callback} .= qq|&$_=|.$form->escape($form->{$_},1) }
+  $form->{callback} .= qq|&$form->{vc}=|.$form->escape($form->{"$form->{vc}"},1);
+
+  $vcnumber = $locale->text('Customer Number');
+  
+  $form->{allbox} = ($form->{allbox}) ? "checked" : "";
+  $action = ($form->{deselect}) ? "deselect_all" : "select_all";
+  $column_header{ndx} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll(); javascript:document.forms[0].submit()"><input type=hidden name=action value="$action"></th>|;
+  $column_header{vc} = qq|<th class=listheading width=60%>|.$locale->text(ucfirst $form->{vc}).qq|</th>|;
+  $column_header{"$form->{vc}number"} = qq|<th class=listheading>$vcnumber</th>|;
+  $column_header{level} = qq|<th class=listheading>|.$locale->text('Level').qq|</th>|;
+  $column_header{language} = qq|<th class=listheading>|.$locale->text('Language').qq|</th>|;
+  $column_header{invnumber} = qq|<th class=listheading>|.$locale->text('Invoice').qq|</th>|;
+  $column_header{ordnumber} = qq|<th class=listheading>|.$locale->text('Order').qq|</th>|;
+  $column_header{transdate} = qq|<th class=listheading nowrap>|.$locale->text('Date').qq|</th>|;
+  $column_header{duedate} = qq|<th class=listheading nowrap>|.$locale->text('Due Date').qq|</th>|;
+  $column_header{due} = qq|<th class=listheading nowrap>|.$locale->text('Due').qq|</th>|;
+  
+  @column_index = qw(ndx vc);
+  push @column_index, "$form->{vc}number";
+  push @column_index, "level";
+  
+  $form->{selectlevel} = "\n1\n2\n3";
+
+  if (@{ $form->{all_language} }) {
+    push @column_index, "language";
+    $form->{selectlanguage} = qq|\n|;
+    $form->{language_code} ||= "";
+
+    for (@{ $form->{all_language} }) { $form->{selectlanguage} .= qq|$_->{code}--$_->{description}\n| }
+  }
+  
+  push @column_index, qw(invnumber ordnumber transdate duedate due);
+  
+  if ($form->{department}) {
+      $option .= "\n<br>" if $option;
+      ($department) = split /--/, $form->{department};
+      $option .= $locale->text('Department')." : $department";
+      $department = $form->escape($form->{department},1);
+      $form->{callback} .= "&department=$department";
+  }
+    
+  if ($form->{customer}) {
+    $option .= "\n<br>" if $option;
+    $option .= $form->{customer};
+  }
+
+  $title = "$form->{title} / $form->{company}";
+
+  $form->header;
+ 
+  print qq|
+<script language="JavaScript">
+<!--
+
+function CheckAll() {
+
+  var frm = document.forms[0]
+  var el = frm.elements
+  var re = /statement_/;
+
+  for (i = 0; i < el.length; i++) {
+    if (el[i].type == 'checkbox' && re.test(el[i].name)) {
+      el[i].checked = frm.allbox.checked
+    }
+  }
+
+}
+// -->
+</script>
+
+<body>
+
+<form method=post action=$form->{script}>
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$title</th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>$option</td>
+  </tr>
+  <tr>
+    <td>
+      <table width=100%>
+|;
+
+  $curr = "";
+  $form->{ids} = "";
+  
+  $callback = $form->escape($form->{callback},1);
+
+  for $ref (@{ $form->{AG} }) {
+
+    if ($curr ne $ref->{curr}) {
+      
+      for (@column_index) { $column_data{$_} = qq|<th>&nbsp;</th>| }
+      
+      if ($curr) {
+
+	print qq|
+	<tr class=listtotal>
+|;
+
+	for (@column_index) { print "$column_data{$_}\n" }
+
+	print qq|
+	  </tr>
+|;
+      }
+      
+      print qq|
+        <tr>
+	  <td></td>
+	  <th>$ref->{curr}</th>
+	</tr>
+	
+	<tr class=listheading>
+|;
+
+      for (@column_index) { print "$column_header{$_}\n" }
+  
+      print qq|
+	</tr>
+|;
+    }
+    
+    $curr = $ref->{curr};
+
+    $column_data{vc} = qq|<td><a href=ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{vc_id}&db=$form->{vc}&callback=$callback>$ref->{name}</a></td>
+    <input type=hidden name="vc_$ref->{id}" value="$ref->{vc_id}">|;
+    
+    $column_data{"$form->{vc}number"} = qq|<td>$ref->{"$form->{vc}number"}</td>|;
+
+    if (exists $form->{"level_$ref->{id}"}) {
+      $ref->{level} = $form->{"level_$ref->{id}"};
+    }
+    $column_data{level} = qq|<td><select name="level_$ref->{id}">|.$form->select_option($form->{selectlevel}, $ref->{level}).qq|</select></td>|;
+
+    if ($form->{selectlanguage}) {
+      if (exists $form->{"language_code_$ref->{id}"}) {
+	$ref->{language_code} = $form->{"language_code_$ref->{id}"};
+      }
+
+      $column_data{language} = qq|<td><select name="language_code_$ref->{id}">|.$form->select_option($form->{selectlanguage}, $ref->{language_code}, undef, 1).qq|</select></td>|;
+    }
+    
+    $checked = ($form->{"ndx_$ref->{id}"}) ? "checked" : "";
+    $column_data{ndx} = qq|<td><input name="ndx_$ref->{id}" type=checkbox class=checkbox value=1 $checked></td>|;
+
+    $form->{ids} .= "$ref->{id} ";
+    
+    $href = qq|$ref->{module}.pl?path=$form->{path}&action=edit&id=$ref->{id}&login=$form->{login}&callback=|.$form->escape($form->{callback});
+    
+    $column_data{invnumber} = qq|<td><a href=$href>$ref->{invnumber}</a></td>|;
+    $column_data{ordnumber} = qq|<td>$ref->{ordnumber}</td>|;
+    for (qw(transdate duedate)) { $column_data{$_} = qq|<td nowrap>$ref->{$_}</td>| }
+    
+    $column_data{due} = qq|<td align=right>|.$form->format_amount(\%myconfig, $ref->{due} / $ref->{exchangerate}, $form->{precision}).qq|</td>|;
+
+    $j++; $j %= 2;
+    print qq|
+      <tr class=listrow$j>
+|;
+
+    for (@column_index) { print "$column_data{$_}\n" }
+
+    print qq|
+      </tr>
+|;
+
+    for (qw(vc ndx language level)) { $column_data{$_} = qq|<td>&nbsp;</td>| }
+    $column_data{"$form->{vc}number"} = qq|<td>&nbsp;</td>|;
+
+  }
+  
+  print qq|
+        </tr>
+        <tr class=listtotal>
+|;
+
+  for (@column_index) { $column_data{$_} = qq|<th>&nbsp;</th>| }
+  for (@column_index) { print "$column_data{$_}\n" }
+  
+  print qq|
+	</tr>
+      </table>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+|;
+  
+  &print_options;
+
+  print qq|
+    </td>
+  </tr>
+  <tr>
+    <td><hr size=3 noshade></td>
+  </tr>
+</table>
+|;
+
+  chop $form->{ids};
+
+  $form->hide_form(qw(title initcallback callback vc department path login ids));
+  $form->hide_form($form->{vc});
+  $form->hide_form(qw(type report));
+
+  %button = ('Select all' => { ndx => 1, key => 'A', value => $locale->text('Select all') },
+	     'Deselect all' => { ndx => 2, key => 'A', value => $locale->text('Deselect all') },
+	     'Preview' => { ndx => 3, key => 'V', value => $locale->text('Preview') },
+	     'Print' => { ndx => 4, key => 'P', value => $locale->text('Print') },
+	     'E-mail' => { ndx => 5, key => 'E', value => $locale->text('E-mail') },
+	     'Save Level' => { ndx => 6, key => 'L', value => $locale->text('Save Level') },
+	    );
+  
+  if ($form->{deselect}) {
+    delete $button{'Select all'};
+  } else {
+    delete $button{'Deselect all'};
+  }
+  
+  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+
+  if ($form->{menubar}) {
+    require "$form->{path}/menu.pl";
+    &menubar;
+  }
+
+  print qq|
+</form>
+
+</body>
+</html>
+|;
+
+}
+
+
+sub save_level {
+
+  if (RP->save_level(\%myconfig, \%$form)) {
+    $form->redirect;
+  }
+
+  $form->error($locale->text('Could not save reminder level!'));
 
 }
 
@@ -1709,9 +2062,13 @@ sub print_options {
   
   $format = qq|<select name=format>
             <option value="html">html|;
-	    
+
+  $formname{statement} = $locale->text('Statement');
+  $formname{reminder} = $locale->text('Reminder');
+  
   $type = qq|<select name=type>
-	    <option value="statement" $form->{PD}{statement}>|.$locale->text('Statement').qq|</select>|;
+	    <option value="$form->{type}" $form->{PD}{$form->{type}}>$formname{$form->{type}}
+	    </select>|;
 
   $media .= qq|</select>|;
   $media =~ s/(<option value="\Q$form->{media}\E")/$1 selected/;
@@ -1870,8 +2227,10 @@ sub send_email {
 }
 
 
+sub print { &{ "print_$form->{type}" } }
 
-sub print {
+
+sub print_statement {
 
   if ($form->{media} !~ /(screen|email)/) {
     $form->error($locale->text('Select postscript or PDF!')) if ($form->{format} !~ /(postscript|pdf)/);
@@ -1934,6 +2293,111 @@ sub print {
 }
 
 
+
+sub print_reminder {
+  
+  @ids = split / /, $form->{ids};
+  for (@ids) {
+    if ($form->{"ndx_$_"}) {
+      $selected = "ndx_$_";
+      last;
+    }
+  }
+
+  $form->error($locale->text('Nothing selected!')) unless $selected;
+  
+  if ($form->{media} eq 'screen') {
+    for (@ids) {
+      $form->{"ndx_$_"} = "";
+    }
+    $form->{$selected} = 1;
+  }
+ 
+  if ($form->{media} !~ /(screen|email)/) {
+    $form->{"$form->{vc}_id"} = "";
+    $SIG{INT} = 'IGNORE';
+  }
+
+  RP->reminder(\%myconfig, \%$form);
+  
+  if ($form->{media} !~ /(screen|email)/) {
+    $form->{OUT} = qq~| $form->{"$form->{media}_printer"}~;
+  }
+
+  &do_print_reminder;
+  
+  if ($form->{callback}) {
+    for (split / /, $form->{ids}) {
+      if ($form->{"ndx_$_"}) {
+	$form->{callback} .= qq|&ndx_$_=1&level_$_=$form->{"level_$_"}&language_code_$_=|.$form->escape($form->{"language_code_$_"},1);
+      }
+    }
+  }
+
+  $form->redirect($locale->text('Reminders sent to printer!')) if ($form->{media} !~ /(screen|email)/);
+
+}
+
+
+sub do_print_reminder {
+
+  $out = $form->{OUT};
+  
+  $form->{todate} ||= $form->current_date(\%myconfig);
+  $form->{statementdate} = $locale->date(\%myconfig, $form->{todate}, 1);
+ 
+  $form->{templates} = "$myconfig{templates}";
+
+  for (qw(name email)) { $form->{"user$_"} = $myconfig{$_} }
+  
+  # setup variables for the form
+  $form->format_string(qw(company address businessnumber username useremail tel fax));
+  
+  @a = qw(name address1 address2 city state zipcode country contact typeofcontact salutation firstname lastname);
+  push @a, "$form->{vc}number", "$form->{vc}phone", "$form->{vc}fax", "$form->{vc}taxnumber";
+  push @a, 'email' if ! $form->{media} eq 'email';
+  push @a, map { "shipto$_" } qw(name address1 address2 city state zipcode country contact phone fax email);
+
+  while (@{ $form->{AG} }) {
+
+    $ref = shift @{ $form->{AG} };
+    $form->{OUT} = $out;
+    
+    if ($form->{"ndx_$ref->{id}"}) {
+
+      for (@a) { $form->{$_} = $ref->{$_} }
+      $form->format_string(@a);
+
+      $form->{IN} = qq|$form->{type}$form->{"level_$ref->{id}"}.html|;
+
+      if ($form->{format} =~ /(ps|pdf)/) {
+	$form->{IN} =~ s/html$/tex/;
+      }
+
+      $form->{$form->{vc}} = $form->{name};
+      $form->{"$form->{vc}_id"} = $ref->{vc_id};
+      $form->{language_code} = $form->{"language_code_$ref->{id}"};
+      $form->{currency} = $ref->{curr};
+      
+      for (qw(invnumber ordnumber ponumber notes invdate duedate invdescription)) { $form->{$_} = () }
+     
+      $ref->{invdate} = $ref->{transdate};
+      my @a = qw(invnumber ordnumber ponumber notes invdate duedate invdescription);
+      for (@a) { $form->{"${_}_1"} = $ref->{$_} }
+      $form->format_string(map { "${_}_1" } qw(invnumber ordnumber ponumber notes invdescription));
+      for (@a) { $form->{$_} = $form->{"${_}_1"} }
+    
+      $ref->{exchangerate} ||= 1;
+      $form->{due} = $form->format_amount(\%myconfig, $ref->{due} / $ref->{exchangerate}, $form->{precision});
+
+      $form->parse_template(\%myconfig, $userspath);
+
+    }
+  }
+}
+
+
+
 sub print_form {
   
   $form->{statementdate} = $locale->date(\%myconfig, $form->{todate}, 1);
@@ -1976,7 +2440,7 @@ sub print_form {
 	$form->{language_code} = $form->{"language_code_$i"};
 	$form->{currency} = $form->{"curr_$i"};
 	
-	for (qw(invnumber ordnumber ponumber notes invdate duedate)) { $form->{$_} = () }
+	for (qw(invnumber ordnumber ponumber notes invdate duedate invdescription)) { $form->{$_} = () }
 	$form->{total} = 0;
 	foreach $item (qw(c0 c15 c30 c45 c60 c75 c90)) {
 	  $form->{$item} = ();
@@ -2019,9 +2483,9 @@ sub statement_details {
   my ($ref) = @_;
 
   $ref->{invdate} = $ref->{transdate};
-  my @a = qw(invnumber ordnumber ponumber notes invdate duedate);
+  my @a = qw(invnumber ordnumber ponumber notes invdate duedate invdescription);
   for (@a) { $form->{"${_}_1"} = $ref->{$_} }
-  $form->format_string(qw(invnumber_1 ordnumber_1 ponumber_1 notes_1));
+  $form->format_string(qw(invnumber_1 ordnumber_1 ponumber_1 notes_1 invdescription_1));
   for (@a) { push @{ $form->{$_} }, $form->{"${_}_1"} }
   
   foreach $item (qw(c0 c15 c30 c45 c60 c75 c90)) {

@@ -3211,6 +3211,7 @@ sub save {
       $form->{"qty_$i"} = 1 unless ($form->{"qty_$i"});
 
       for (qw(partnumber description bin unit listprice sellprice partsgroup)) { $form->{"${_}_$i"} = $newform{$_} }
+      $form->{"itemnotes_$i"} = $newform{notes};
       for (qw(inventory income expense)) {
 	$form->{"${_}_accno_id_$i"} = $newform{"IC_$_"};
 	$form->{"${_}_accno_id_$i"} =~ s/--.*//;
