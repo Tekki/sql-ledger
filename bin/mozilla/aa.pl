@@ -198,13 +198,13 @@ sub create_links {
   AA->get_name(\%myconfig, \%$form);
 
   $form->{currency} =~ s/ //g;
+  $form->{oldcurrency} = $form->{currency};
+
   $form->{duedate} = $temp{duedate} if $temp{duedate};
 
   if ($form->{id}) {
     for (@a) { $form->{$_} = $temp{$_} };
   }
-  
-  $form->{notes} = $form->{intnotes} if !$form->{id};
   
   $form->{"old$form->{vc}"} = qq|$form->{$form->{vc}}--$form->{"$form->{vc}_id"}|;
   $form->{"old$form->{vc}number"} = $form->{"$form->{vc}number"};
@@ -452,6 +452,11 @@ sub form_header {
   }
   $notes = qq|<textarea name=notes rows=$rows cols=50 wrap=soft>$form->{notes}</textarea>|;
   
+  if (($rows = $form->numtextrows($form->{intnotes}, 50) - 1) < 2) {
+    $rows = 2;
+  }
+  $intnotes = qq|<textarea name=intnotes rows=$rows cols=50 wrap=soft>$form->{intnotes}</textarea>|;
+ 
   $department = qq|
 	      <tr>
 		<th align="right" nowrap>|.$locale->text('Department').qq|</th>
@@ -618,7 +623,7 @@ sub form_header {
 		<td colspan=3>
 		  <table>
 		    <tr>
-		      <td colspan=4>$form->{city}, $form->{state} $form->{country}</td>
+		      <td colspan=4>$form->{city} $form->{state} $form->{country}</td>
 		    </tr>
 		    <tr>
 		      <th align=right nowrap>|.$locale->text('Credit Limit').qq|</th>
@@ -696,7 +701,7 @@ sub form_header {
 	  <th>|.$locale->text('Amount').qq|</th>
 	  <th></th>
 	  <th>|.$locale->text('Account').qq|</th>
-	  <th>|.$locale->text('Description').qq|</th>
+	  <th>|.$locale->text('Line Item').qq|</th>
 	  $project
 	</tr>
 |;
@@ -767,10 +772,10 @@ sub form_header {
   push @column_index, "paymentmethod" if $form->{selectpaymentmethod};
   push @column_index, "ARAP_paid";
 
-  $column_data{datepaid} = "<th nowrap>".$locale->text('Date')." <font color=red>*</font></th>";
-  $column_data{paid} = "<th>".$locale->text('Amount')." <font color=red>*</font></th>";
+  $column_data{datepaid} = "<th nowrap>".$locale->text('Date')."</th>";
+  $column_data{paid} = "<th>".$locale->text('Amount')."</th>";
   $column_data{exchangerate} = "<th>".$locale->text('Exch')." <font color=red>*</font></th>";
-  $column_data{ARAP_paid} = "<th>".$locale->text('Account')." <font color=red>*</font></th>";
+  $column_data{ARAP_paid} = "<th>".$locale->text('Account')."</th>";
   $column_data{source} = "<th>".$locale->text('Source')."</th>";
   $column_data{memo} = "<th>".$locale->text('Memo')."</th>";
   $column_data{paymentmethod} = "<th>".$locale->text('Method')."</th>";
@@ -889,10 +894,17 @@ sub form_header {
 	  .$form->select_option($form->{"select$form->{ARAP}"}, $form->{$form->{ARAP}})
 	  .qq|</select></td>
         </tr>
-	<tr>
-	  <th align=right>|.$locale->text('Notes').qq|</th>
-	  <td></td>
-	  <td colspan=3>$notes</td>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <table>
+        <tr>
+	  <td><b>|.$locale->text('Notes').qq|</b><br>
+	  $notes</td>
+	  <td><b>|.$locale->text('Internal Notes').qq|</b><br>
+	  $intnotes</td>
 	</tr>
       </table>
     </td>
@@ -1068,7 +1080,6 @@ sub update {
     $form->{discount_paid} = $form->parse_amount(\%myconfig, $form->{discount_paid});
     
     if ($newname = &check_name($form->{vc})) {
-      $form->{notes} = $form->{intnotes} unless $form->{id};
       &rebuild_vc($form->{vc}, $form->{ARAP}, $form->{transdate});
     }
     
@@ -1274,28 +1285,30 @@ sub post {
   }
   
   # add discount to payments
-  $i = $form->{paidaccounts} + 1;
-  for (qw(paid datepaid source memo exchangerate cleared)) { $form->{"${_}_$i"} = $form->{"discount_$_"} }
-  $form->{discount_index} = $i;
-  $form->{"$form->{ARAP}_paid_$i"} = $form->{"$form->{ARAP}_discount_paid"};
-  
-  if ($form->{"paid_$i"}) {
-    $form->{paidaccounts}++;
+  if ($form->{discount_paid}) {
+    $form->{paidaccounts}++ if $form->{"paid_$form->{paidaccounts}"};
+    $i = $form->{paidaccounts};
+	
+    for (qw(paid datepaid source memo exchangerate cleared)) { $form->{"${_}_$i"} = $form->{"discount_$_"} }
+    $form->{discount_index} = $i;
+    $form->{"$form->{ARAP}_paid_$i"} = $form->{"$form->{ARAP}_discount_paid"};
     
-    $datepaid = $form->datetonum(\%myconfig, $form->{"datepaid_$i"});
-    $expired = $form->datetonum(\%myconfig, $form->add_date(\%myconfig, $form->{transdate}, $form->{discountterms}, 'days'));
-    
-    $form->isblank("datepaid_$i", $locale->text('Cash Discount date missing!'));
+    if ($form->{"paid_$i"}) {
+      $datepaid = $form->datetonum(\%myconfig, $form->{"datepaid_$i"});
+      $expired = $form->datetonum(\%myconfig, $form->add_date(\%myconfig, $form->{transdate}, $form->{discountterms}, 'days'));
+      
+      $form->isblank("datepaid_$i", $locale->text('Cash Discount date missing!'));
 
-    $form->error($locale->text('Cannot post cash discount for a closed period!')) if ($datepaid <= $form->{closedto});
+      $form->error($locale->text('Cannot post cash discount for a closed period!')) if ($datepaid <= $form->{closedto});
 
-    $form->error($locale->text('Date for cash discount past due!')) if ($datepaid > $expired);
+      $form->error($locale->text('Date for cash discount past due!')) if ($datepaid > $expired);
 
-    $form->error($locale->text('Cash discount exceeds available discount!')) if $form->parse_amount(\%myconfig, $form->{"paid_$i"}) > ($form->{oldinvtotal} * $form->{cashdiscount});
-    
-    if ($form->{currency} ne $form->{defaultcurrency}) {
-      $form->{"exchangerate_$i"} = $form->{exchangerate} if ($transdate == $datepaid);
-      $form->isblank("exchangerate_$i", $locale->text('Exchange rate for cash discount missing!'));
+      $form->error($locale->text('Cash discount exceeds available discount!')) if $form->parse_amount(\%myconfig, $form->{"paid_$i"}) > ($form->{oldinvtotal} * $form->{cashdiscount});
+      
+      if ($form->{currency} ne $form->{defaultcurrency}) {
+	$form->{"exchangerate_$i"} = $form->{exchangerate} if ($transdate == $datepaid);
+	$form->isblank("exchangerate_$i", $locale->text('Exchange rate for cash discount missing!'));
+      }
     }
   }
 

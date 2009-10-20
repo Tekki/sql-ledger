@@ -214,6 +214,34 @@ sub sales_invoice {
 }
 
 
+sub delete_import {
+  my ($dbh, $form) = @_;
+
+  my $query = qq|SELECT reportid FROM report
+                 WHERE reportcode = '$form->{reportcode}'
+	         AND login = '$form->{login}'|;
+  my ($reportid) = $dbh->selectrow_array($query);
+
+  if (! $reportid) {
+    $query = qq|INSERT INTO report (reportcode, login)
+                VALUES ('$form->{reportcode}', '$form->{login}')|;
+    $dbh->do($query) || $form->dberror($query);
+
+    $query = qq|SELECT reportid FROM report
+                WHERE reportcode = '$form->{reportcode}'
+		AND login = '$form->{login}'|;
+    ($reportid) = $dbh->selectrow_array($query); 
+  }
+
+  $query = qq|DELETE FROM reportvars
+              WHERE reportid = $reportid|;
+  $dbh->do($query) || $form->dberror($query);
+
+  $reportid;
+
+}
+
+
 sub taxrates {
   my ($self, $myconfig, $form, $dbh) = @_;
   
@@ -336,6 +364,100 @@ sub paymentaccounts {
 }
 
 
+sub dataline {
+  my ($form) = @_;
+
+  my @a = ();
+  my $string = 0;
+  my $chr = "";
+  my $m = 1;
+
+  if ($form->{tabdelimited}) {
+    @a = split /\t/, $_;
+    unshift @a, "";
+  } else {
+    
+    if ($form->{stringsquoted}) {
+      foreach $chr (split //, $_) {
+	if ($chr eq '"') {
+	  if (! $string) {
+	    $string = 1;
+	    next;
+	  }
+	}
+	if ($string) {
+	  if ($chr eq '"') {
+	    $string = 0;
+	    next;
+	  }
+	}
+	if ($chr eq $form->{delimiter}) {
+	  if (! $string) {
+	    $m++;
+	    next;
+	  }
+	}
+	$a[$m] .= $chr;
+      }
+    } else {
+      @a = split /$form->{delimiter}/, $_;
+      unshift @a, "";
+    }
+  }
+
+  return @a;
+
+}
+
+
+sub prepare_import_data {
+  my ($self, $myconfig, $form) = @_;
+
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+
+  my $query;
+  my $sth;
+  my $ref;
+
+  # clean out report
+  my $reportid = &delete_import($dbh, $form);
+
+  $query = qq|DELETE FROM reportvars
+              WHERE reportid = $reportid|;
+  $dbh->do($query) || $form->dberror($query);
+
+  $query = qq|INSERT INTO reportvars (reportid, reportvariable, reportvalue)
+              VALUES ($reportid, ?, ?)|;
+  my $rth = $dbh->prepare($query) || $form->dberror($query);
+
+  my $i = 0;
+  my $j = 0;
+
+  my @d = split /\n/, $form->{data};
+  shift @d if ! $form->{mapfile};
+
+  for (@d) {
+
+    @a = &dataline($form);
+
+    if ($#a) {
+      $i++;
+      for (keys %{$form->{$form->{type}}}) {
+	$form->{"${_}_$i"} = $a[$form->{$form->{type}}->{$_}{ndx}];
+	$rth->execute("${_}_$i", $form->{"${_}_$i"});
+	$rth->finish;
+      }
+    }
+    $form->{rowcount} = $i;
+
+  }
+
+  $dbh->disconnect;
+
+}
+
+
 sub payments {
   my ($self, $myconfig, $form) = @_;
 
@@ -384,21 +506,21 @@ sub payments {
   # retrieve invoice by dcn
   $query = qq|SELECT c.name, c.customernumber AS companynumber, ad.city,
               a.id, a.invnumber, a.description, a.dcn,
+	      (a.amount - a.paid) / a.exchangerate AS amount,
 	      a.paymentmethod_id, 'customer' AS vc, 'ar' AS arap
 	      FROM ar a
 	      JOIN customer c ON (a.customer_id = c.id)
 	      LEFT JOIN address ad ON (ad.trans_id = c.id)
-	      WHERE a.amount != a.paid
-	      AND a.dcn = ?
+	      WHERE a.dcn = ?
 	      UNION
 	      SELECT c.name, c.vendornumber AS companynumber, ad.city,
               a.id, a.invnumber, a.description, a.dcn,
+	      (a.amount - a.paid) / a.exchangerate AS amount,
 	      a.paymentmethod_id, 'vendor' AS vc, 'ap' AS arap
 	      FROM ap a
 	      JOIN vendor c ON (a.vendor_id = c.id)
 	      LEFT JOIN address ad ON (ad.trans_id = c.id)
-	      WHERE a.amount != a.paid
-	      AND a.dcn = ?
+	      WHERE a.dcn = ?
 	      |;
   $sth = $dbh->prepare($query) || $form->dberror($query);
 
@@ -425,58 +547,42 @@ sub payments {
 
     if (@a) {
 
-      
       $amount = $form->format_amount($myconfig, $a[$form->{$form->{type}}->{credit}{ndx}] - $a[$form->{$form->{type}}->{debit}{ndx}], $form->{precision});
       $am = 1;
-      
+     
+      $i++;
+
+      for (keys %{$form->{$form->{type}}}) {
+	$a[$form->{$form->{type}}->{$_}{ndx}] =~ s/(^"|"$)//g;
+	$form->{"${_}_$i"} = $a[$form->{$form->{type}}->{$_}{ndx}];
+      }
+      $form->{"amount_$i"} = $amount;
+
       # dcn
       if (exists $form->{$form->{type}}->{dcn}) {
-
 	if ($a[$form->{$form->{type}}->{dcn}{ndx}]) {
 	  $am = 0;
 	  $sth->execute("$a[$form->{$form->{type}}->{dcn}{ndx}]", "$a[$form->{$form->{type}}->{dcn}{ndx}]");
 	  $ref = $sth->fetchrow_hashref(NAME_lc);
 
 	  if ($ref->{invnumber}) {
-
-	    $i++;
-
-	    for (keys %{$form->{$form->{type}}}) {
-	      $a[$form->{$form->{type}}->{$_}{ndx}] =~ s/(^"|"$)//g;
-	      $form->{"${_}_$i"} = $a[$form->{$form->{type}}->{$_}{ndx}];
-	    }
-
             $vc = $ref->{vc};
-	    for (qw(id invnumber description name companynumber vc arap city paymentmethod_id)) { $form->{"${_}_$i"} = $ref->{$_} }
-	    $form->{"amount_$i"} = $amount;
+	    $ref->{outstanding} = $ref->{amount};
+	    for (qw(id invnumber description name companynumber vc arap city paymentmethod_id outstanding)) { $form->{"${_}_$i"} = $ref->{$_} }
 	  }
 	  $sth->finish;
 	} else {
 	  $am = 1;
 	}
-	
       }
       
       if ($am) {
+	$vc = $amount{$amount}->[0]->{vc};
 	
-	if ($amount * 1) {
+	for (qw(id invnumber description name companynumber vc arap city paymentmethod_id)) { $form->{"${_}_$i"} = $amount{$amount}->[0]->{$_} }
+	$form->{"outstanding_$i"} = $a[$form->{$form->{type}}->{credit}{ndx}] - $a[$form->{$form->{type}}->{debit}{ndx}];
 
-	  if ($amount{$amount}->[0]->{vc}) {
-	      
-	    $i++;
-    
-	    for (keys %{$form->{$form->{type}}}) {
-	      $a[$form->{$form->{type}}->{$_}{ndx}] =~ s/(^"|"$)//g;
-	      $form->{"${_}_$i"} = $a[$form->{$form->{type}}->{$_}{ndx}];
-	    }
-
-            $vc = $amount{$amount}->[0]->{vc};
-	    for (qw(id invnumber description name companynumber vc arap city paymentmethod_id)) { $form->{"${_}_$i"} = $amount{$amount}->[0]->{$_} }
-	    $form->{"amount_$i"} = $amount;
-
-	    shift @{ $amount{$amount} };
-	  }
-	}
+	shift @{ $amount{$amount} };
       }
 
       # get exchangerate
@@ -501,10 +607,10 @@ sub payments {
 sub ndxline {
   my ($form) = @_;
  
- my @a = ();
- my $string = 0;
- my $chr = "";
- my $m = 0;
+  my @a = ();
+  my $string = 0;
+  my $chr = "";
+  my $m = 0;
 
   if ($form->{tabdelimited}) {
     @a = split /\t/, $_;
@@ -608,6 +714,108 @@ sub unreconciled_payments {
   $dbh->disconnect;
 
 }
+
+
+
+sub import_vc {
+  my ($self, $myconfig, $form) = @_;
+  
+  use SL::CT;
+  
+  my $newform = new Form;
+
+  # connect to database, turn off AutoCommit
+  my $dbh = $form->dbconnect_noauto($myconfig);
+
+  my $query;
+  my $ref;
+  my $new;
+
+  my $ARAP = ($form->{type} eq 'customer') ? "AR" : "AP";
+
+  $query = qq|SELECT reportid FROM report
+              WHERE reportcode = '$form->{reportcode}'
+	      AND login = '$form->{login}'|;
+  my ($reportid) = $dbh->selectrow_array($query);
+
+  $query = qq|SELECT * FROM reportvars
+              WHERE reportid = $reportid
+	      AND reportvariable LIKE ?|;
+  my $sth = $dbh->prepare($query) || $form->dberror($query);
+  
+  $query = qq|SELECT curr
+              FROM curr
+	      ORDER BY rn|;
+  ($form->{defaultcurrency}) = $dbh->selectrow_array($query);
+
+  $query = qq|SELECT id FROM $form->{type}
+              WHERE $form->{type}number = ?|;
+  my $cth = $dbh->prepare($query) || $form->dberror($query);
+
+  my %link = ( business => { fld => description },
+               pricegroup => { fld => pricegroup },
+	       paymentmethod => { fld => description },
+	       employee => { fld => name }
+	     );
+
+  for my $i (1 .. $form->{rowcount}) {
+    if ($form->{"ndx_$i"}) {
+
+      for (keys %$newform) { delete $newform->{$_} }
+
+      $new = 1;
+      $newform->{db} = $form->{type};
+      
+      $sth->execute("%\\_$i");
+      while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+	$ref->{reportvariable} =~ s/_\d+//;
+	$newform->{$ref->{reportvariable}} = $ref->{reportvalue};
+      }
+      $sth->finish;
+
+      $newform->{curr} ||= $form->{defaultcurrency};
+      $newform->{arap_accno} = $newform->{$ARAP};
+      
+      if ($newform->{"$newform->{db}number"}) {
+	$cth->execute($newform->{"$newform->{db}number"});
+	($newform->{id}) = $cth->fetchrow_array;
+	$cth->finish;
+      }
+
+      if ($newform->{id}) {
+	$new = 0;
+	for (qw(address contact)) {
+	  $query = qq|SELECT id FROM $_
+		      WHERE trans_id = $newform->{id}|;
+	  ($newform->{"${_}id"}) = $dbh->selectrow_array($query);
+	}
+      }
+
+      for (qw(employee business pricegroup paymentmethod)) {
+	$query = qq|SELECT id FROM $_
+		    WHERE $link{$_}{fld} = '$newform->{$_}'|;
+	($var) = $dbh->selectrow_array($query);
+	$newform->{$_} = "--$var";
+      }
+
+      for (split / /, $newform->{taxaccounts}) { $newform->{"tax_$_"} = 1 }
+
+      CT->save($myconfig, $newform, $dbh);
+      
+      if ($new) {
+	$form->{added} .= qq|$newform->{"$newform->{db}number"}, $newform->{name}\n|;
+      } else {
+	$form->{updated} .= qq|$newform->{"$newform->{db}number"}, $newform->{name}\n|;
+      }
+
+    }
+    $i++;
+  }
+
+  $dbh->disconnect;
+
+}
+
 
 
 1;

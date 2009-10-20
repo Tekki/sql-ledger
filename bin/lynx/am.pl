@@ -1830,8 +1830,7 @@ sub edit_template {
 <input name=type type=hidden value=template>
 
 <textarea name=body rows=25 cols=70>
-$form->{body}
-</textarea>
+$form->{body}</textarea>
 
 <br>
 <input type=submit class=submit name=action value="|.$locale->text('Save').qq|">|;
@@ -2087,6 +2086,14 @@ sub defaults {
 	  <td><input name=fax size=14 value="$form->{fax}"></td>
 	</tr>
 	<tr>
+	  <th align=right>|.$locale->text('E-Mail').qq|</th>
+	  <td><input name=companyemail size=25 value="$form->{companyemail}"></td>
+	</tr>
+	<tr>
+	  <th align=right>|.$locale->text('Website').qq|</th>
+	  <td><input name=companywebsite size=25 value="$form->{companywebsite}"></td>
+	</tr>
+	<tr>
 	  <th align=right>|.$locale->text('Business Number').qq|</th>
 	  <td><input name=businessnumber size=25 value="|.$form->quote($form->{businessnumber}).qq|"></td>
 	</tr>
@@ -2216,7 +2223,9 @@ sub defaults {
 </table>
 |;
 
-  $form->hide_form(qw(closedto revtrans audittrail aruniq apuniq gluniq souniq pouniq trackinguniq nontrackinguniq path login));
+  $form->{optional} = "company address tel fax companyemail companywebsite yearend weightunit businessnumber closedto revtrans audittrail method cdt namesbynumber typeofcontact";
+  
+  $form->hide_form(qw(optional closedto revtrans audittrail path login));
 
   print qq|
 <input type=submit class=submit name=action value="|.$locale->text('Save').qq|">|;
@@ -3449,7 +3458,7 @@ sub process_transactions {
 	      }
 	    }
 	  } else {
-	    delete $form->{paidaccounts};
+	    $form->{paidaccounts} = 1;
 	  }
 
 	  for (qw(id recurring printed emailed queued)) { delete $form->{$_} }

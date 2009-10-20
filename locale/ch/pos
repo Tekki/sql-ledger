@@ -37,7 +37,6 @@ $self{texts} = {
   'Receipts'                    => 'Quittungen',
   'Record in'                   => 'Buchen auf',
   'Remaining'                   => 'Rest',
-  'Sales Invoice'               => 'Ausgangsrechnung',
   'Salesperson'                 => 'Verkäufer',
   'Screen'                      => 'Bildschirm',
   'Select a Printer!'           => 'Drucker auswählen!',
@@ -77,7 +76,6 @@ $self{subs} = {
   'buchen'                      => 'post',
   'drucken'                     => 'print',
   'drucken_und_buchen'          => 'print_and_post',
-  'ausgangsrechnung'            => 'sales_invoice',
   'erneuern'                    => 'update',
 };
 

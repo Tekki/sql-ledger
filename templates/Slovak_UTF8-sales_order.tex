@@ -1,0 +1,182 @@
+\documentclass{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage{tabularx}
+\usepackage[letterpaper,top=2cm,bottom=-3cm,left=1.1cm,right=1.5cm]{geometry}
+\usepackage{graphicx}
+
+\begin{document}
+
+\pagestyle{myheadings}
+\thispagestyle{empty}
+
+\fontfamily{cmss}\fontsize{10pt}{12pt}\selectfont
+
+<%include letterhead.tex%>
+
+
+<%pagebreak 65 27 48%>
+\end{tabularx}
+
+  \rule{\textwidth}{2pt}
+  
+  \hfill
+  \begin{tabularx}{7cm}{Xr@{\hspace{1cm}}r@{}}
+  & \textbf{Medzisúčet} & \textbf{<%sumcarriedforward%>} \\
+  \end{tabularx}
+
+\newpage
+
+\markboth{<%company%>\hfill <%ordnumber%>}{<%company%>\hfill <%ordnumber%>}
+
+
+\begin{tabularx}{\textwidth}{@{}rlXrlrrr@{}}
+  \textbf{Položky} & \textbf{Číslo} & \textbf{Popis} & \textbf{Množ} &
+  \textbf{MJ} & \textbf{Cena} & \textbf{Zľava \%} & \textbf{Hodnota} \\
+  & carried forward from <%lastpage%> & & & & & <%sumcarriedforward%> \\
+<%end pagebreak%>
+
+
+\vspace*{0.5cm}
+
+\parbox[t]{.5\textwidth}{
+\textbf{Odberateľ}
+\vspace{0.3cm}
+  
+<%name%>
+
+<%address1%>
+
+<%address2%>
+
+<%city%>
+<%if state%>
+\hspace{-0.1cm}, <%state%>
+<%end state%>
+<%zipcode%>
+
+<%country%>
+
+\vspace{0.3cm}
+
+<%if contact%>
+<%contact%>
+\vspace{0.2cm}
+<%end contact%>
+
+<%if customerphone%>
+Tel: <%customerphone%>
+<%end customerphone%>
+
+<%if customerfax%>
+Fax: <%customerfax%>
+<%end customerfax%>
+
+<%email%>
+}
+\parbox[t]{.5\textwidth}{
+\textbf{Dodať}
+\vspace{0.3cm}
+
+<%shiptoname%>
+
+<%shiptoaddress1%>
+
+<%shiptoaddress2%>
+
+<%shiptocity%>
+<%if shiptostate%>
+\hspace{-0.1cm}, <%shiptostate%>
+<%end shiptostate%>
+<%shiptozipcode%>
+
+<%shiptocountry%>
+
+\vspace{0.3cm}
+
+<%if shiptocontact%>
+<%shiptocontact%>
+\vspace{0.2cm}
+<%end shiptocontact%>
+
+<%if shiptophone%>
+Tel: <%shiptophone%>
+<%end shiptophone%>
+
+<%if shiptofax%>
+Fax: <%shiptofax%>
+<%end shiptofax%>
+
+<%shiptoemail%>
+}
+\hfill
+
+\vspace{1cm}
+
+\textbf{P R I J A T Á} \parbox{0.3cm}{\hfill} \textbf{O B J E D N Á V K A}
+\hfill
+
+\vspace{1cm}
+
+\begin{tabularx}{\textwidth}{*{6}{|X}|} \hline
+  \textbf{Objednávka \#} & \textbf{Dátum obj.} & \textbf{Odberateľ} & \textbf{Predávajúca osoba} & \textbf{Miesto dodania} & \textbf{Spôsob dodania} \\ [0.5em]
+  \hline
+  <%ordnumber%> & <%orddate%> & <%reqdate%> & <%employee%> & <%shippingpoint%> & <%shipvia%> \\
+  \hline
+\end{tabularx}
+  
+\vspace{1cm}
+
+\begin{tabularx}{\textwidth}{@{}rlXrlrrr@{}}
+  \textbf{Položka} & \textbf{Číslo} & \textbf{Popis} & \textbf{Množ} &
+  \textbf{MJ} & \textbf{Cena} & \textbf{Zľava \%} & \textbf{Suma} \\
+<%foreach number%>
+  <%runningnumber%> & <%number%> & <%description%> & <%qty%> &
+  <%unit%> & <%sellprice%> & <%discountrate%> & <%linetotal%> \\
+<%end number%>
+\end{tabularx}
+
+
+\parbox{\textwidth}{
+\rule{\textwidth}{2pt}
+
+\vspace{0.2cm}
+
+\hfill
+\begin{tabularx}{8cm}{Xr@{\hspace{0.01cm}}r@{}}
+  & Medzisúčet & <%subtotal%> \\
+<%foreach tax%>
+  & <%taxdescription%> on <%taxbase%> & <%tax%>\\
+<%end tax%>
+  \hline
+  & Súčet & <%ordtotal%>\\
+\end{tabularx}
+
+\vspace{0.3cm}
+
+<%text_amount%> ***** <%decimal%>/100
+\hfill
+Ceny sú v \textbf{<%currency%>}.
+
+<%if terms%>
+Termín: <%terms%> dní
+<%end terms%>
+
+\vspace{12pt}
+
+<%notes%>
+
+}
+
+\vfill
+
+\centerline{\textbf{Ďakujeme za Vašu objednávku !}}
+
+\rule{\textwidth}{0.5pt}
+
+\end{document}
+
+
+
+
+
+

@@ -242,11 +242,11 @@ sub login {
       }
 
       if ($item =~ /^company=/) {
-	if ($login =~ /^$form->{login}\@/ && $found) {
+	if ($login =~ /^$form->{login}(@|$)/ && $found) {
 	  ($null, $name) = split /=/, $item, 2;
 	  $login{$login} = $name;
+	  $found = 0;
 	}
-	$found = 0;
       }
   
     }

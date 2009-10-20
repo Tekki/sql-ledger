@@ -1593,7 +1593,7 @@ sub reminder {
   my $item;
   my $curr;
 
-  my @a = qw(company address businessnumber tel fax precision);
+  my @a = qw(company companyemail companywebsite address businessnumber tel fax precision);
   my %defaults = $form->get_defaults($dbh, \@a);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
   
@@ -1657,6 +1657,7 @@ sub reminder {
   $where = qq|
 	a.paid != a.amount
 	AND a.approved = '1'
+	AND a.duedate <= current_date
 	AND c.id = ?
 	AND a.curr = ?|;
 	
@@ -1683,7 +1684,7 @@ sub reminder {
 	      JOIN address ad ON (ad.trans_id = c.id)
 	      LEFT JOIN contact ct ON (ct.trans_id = c.id)
 	      LEFT JOIN shipto s ON (a.id = s.trans_id)
-	      WHERE (a.transdate < (current_date - c.terms))
+	      WHERE a.duedate <= current_date
 	      AND $where
 	      ORDER BY vc_id, transdate, invnumber|;
   $sth = $dbh->prepare($query) || $form->dberror($query);

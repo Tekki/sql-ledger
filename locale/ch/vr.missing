@@ -1,0 +1,11 @@
+# module vr
+# add the missing texts and run locales.pl to rebuild
+
+$missing = {
+  'General Ledger Batches'      => '',
+  'Payable Batches'             => '',
+  'Payment Batches'             => '',
+  'Payment Reversal Batches'    => '',
+};
+
+1;

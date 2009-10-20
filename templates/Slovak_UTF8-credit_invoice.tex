@@ -1,0 +1,197 @@
+\documentclass{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage{tabularx}
+\usepackage[top=2.2cm,bottom=-1cm,left=1.9cm,right=0.5cm]{geometry}
+\usepackage{graphicx}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+\pagestyle{myheadings}
+\thispagestyle{empty}
+
+\fontfamily{cmss}\fontsize{10pt}{12pt}\selectfont
+
+\parbox{\textwidth}{%
+  \parbox[b]{.42\textwidth}{%
+    <%company%>
+   
+    <%address%>
+  }
+  \parbox[b]{.2\textwidth}{
+    \includegraphics[scale=0.3]{sql-ledger}
+  }\hfill
+  \begin{tabular}[b]{rr@{}}
+  Tel: & <%tel%>\\
+  Fax: & <%fax%>
+  \end{tabular}
+
+  \rule[1.5em]{\textwidth}{0.5pt}
+}
+
+<%pagebreak 90 27 37%>
+\end{tabularx}
+
+  \rule{\textwidth}{2pt}
+  
+  \hfill
+  \begin{tabularx}{7cm}{Xr@{}}
+  \textbf{Medzisucet} & \textbf{<%sumcarriedforward%>} \\
+  \end{tabularx}
+
+\newpage
+
+\markboth{<%company%>\hfill <%invnumber%>}{<%company%>\hfill <%invnumber%>}
+
+\begin{tabularx}{\textwidth}{@{}rlXlrlrrr@{}}
+  \textbf{Pol} & \textbf{Číslo} & \textbf{Popis} & & \textbf{Množ.} &
+    \textbf{Jedn} & \textbf{Cena} & \textbf{Zlava \%} & \textbf{Suma} \\ [0.5em]
+  & carried forward from page <%lastpage%> & & & & & & & <%sumcarriedforward%> \\ [0.5em]
+<%end pagebreak%>
+
+\vspace{0.5cm}
+
+\parbox[t]{.5\textwidth}{
+\textbf{Pre}
+\vspace{0.3cm}
+
+<%name%>
+
+<%address1%>
+
+<%address2%>
+
+<%city%>
+<%if state%>
+\hspace{-1mm}, <%state%>
+<%end state%>
+<%zipcode%>
+
+<%country%>
+
+\vspace{0.3cm}
+
+<%if contact%>
+<%contact%>
+\vspace{0.2cm}
+<%end contact%>
+
+<%if customerphone%>
+Tel: <%customerphone%>
+<%end customerphone%>
+
+<%if customerfax%>
+Fax: <%customerfax%>
+<%end customerfax%>
+
+<%email%>
+
+<%customertaxnumber%>
+}
+\hfill
+
+\vspace{1cm}
+
+\textbf{D O B R O B I S}
+
+\vspace{1cm}
+
+\begin{tabularx}{\textwidth}{*{8}{|X}|} \hline
+  \textbf{Faktúra} & \textbf{Dátum} & \textbf{Objecnávka} & \textbf{Pred.osoba}
+  <%if shippingpoint%>
+  & \textbf{Miesto určenia}
+  <%end shippingpoint>
+  <%if ponumber%>
+  & \textbf{PO číslo}
+  <%end ponumber%>
+  <%if shipvia%>
+  & \textbf{Spôsob dodania}
+  <%end shipvia%>
+  \\ [0.5em]
+  \hline
+  <%invnumber%> & <%invdate%> & <%ordnumber%> & <%employee%>
+  <%if shippingpoint%>
+  & <%shippingpoint%>
+  <%end shippingpoint>
+  <%if ponumber%>
+  & <%ponumber%>
+  <%end ponumber%>
+  <%if shipvia%>
+  & <%shipvia%>
+  <%end shipvia%>
+  \\
+  \hline
+\end{tabularx}
+
+\vspace{1cm}
+
+\begin{tabularx}{\textwidth}{@{}rlXlrlrrr@{}}
+  \textbf{Pol.} & \textbf{Číslo} & \textbf{Popis} & \textbf{Množ} &
+    \textbf{Jedn.} & \textbf{Cena} & \textbf{Suma} \\ [0.5em]
+<%foreach number%>
+  <%runningnumber%> & <%number%> & <%description%> &
+  <%qty%> & <%unit%> & <%sellprice%> & <%linetotal%> \\
+  <%if itemnotes%>& & <%itemnotes%> \\[1em]<%end itemnotes%>
+<%end number%>
+\end{tabularx}
+
+\parbox{\textwidth}{
+\rule{\textwidth}{2pt}
+
+\vspace{0.2cm}
+
+\hfill
+\begin{tabularx}{\textwidth}{@{}Xr@{\hspace{1cm}}r@{}}
+<%if not taxincluded%>
+ & Medzisúčet & <%subtotal%> \\
+<%end taxincluded%>
+<%if taxincluded%>
+ & Celkom & <%invtotal%> \\
+<%end taxincluded%>
+<%foreach tax%>
+ DIČ. <%taxnumber%> & <%taxdescription%> on <%taxbase%> @ <%taxrate%> \% & <%tax%> \\
+<%end tax%>
+<%if not taxincluded%>
+ & Celkom & <%invtotal%> \\
+<%end taxincluded%>
+  \cline{2-3}
+\end{tabularx}
+
+\vspace{0.3cm}
+
+<%text_amount%> ***** <%decimal%>/100
+\hfill
+Hodnoty sú v \textbf{<%currency%>}.
+
+<%if taxincluded%>
+Ceny sú s DPH.
+<%end tax included%>
+
+\vspace{1em}
+
+<%notes%>
+}
+
+\vfill
+
+<%if paid_1%>
+\begin{tabularx}{10cm}{@{}lXlr@{}}
+  \multicolumn{4}{c}{\textbf{Platby}} \\
+  \hline
+  \textbf{Dátum} & & \textbf{Doklad} & \textbf{Suma} \\
+<%end paid_1%>
+<%foreach payment%>
+  <%paymentdate%> & <%paymentaccount%> & <%paymentsource%> & <%payment%> \\
+<%end payment%>
+<%if paid_1%>
+\end{tabularx}
+<%end paid_1%>
+
+\vspace{0.5cm}
+
+\rule{\textwidth}{0.5pt}
+
+\end{document}
+
+
+

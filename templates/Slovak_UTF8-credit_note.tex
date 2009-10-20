@@ -1,0 +1,133 @@
+\documentclass{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage{tabularx}
+\usepackage[top=2.7cm,bottom=-1cm,left=1.9cm,right=0.5cm]{geometry}
+\usepackage{graphicx}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+\pagestyle{empty}
+
+\fontfamily{cmss}\fontsize{10pt}{12pt}\selectfont
+
+\parbox{\textwidth}{%
+  \parbox[b]{.42\textwidth}{%
+    <%company%>
+   
+    <%address%>
+  }
+  \parbox[b]{.2\textwidth}{
+    \includegraphics[scale=0.3]{sql-ledger}
+  }\hfill
+  \begin{tabular}[b]{rr@{}}
+  Tel: & <%tel%>\\
+  Fax: & <%fax%>
+  \end{tabular}
+
+  \rule[1.5em]{\textwidth}{0.5pt}
+}
+
+\centerline{\textbf{S T O R N O} \hspace{0.3cm} \textbf{P O H L A D A V K A}}
+
+\vspace*{0.5cm}
+
+\parbox[t]{.5\textwidth}{
+<%name%>
+
+<%address1%>
+
+<%address2%>
+
+<%city%>
+<%if state%>
+\hspace{-1mm}, <%state%>
+<%end state%>
+<%zipcode%>
+
+<%country%>
+
+\vspace{0.3cm}
+
+<%contact%>
+
+\vspace{0.2cm}
+
+<%if customerphone%>
+Tel: <%customerphone%>
+<%end customerphone%>
+
+<%if customerfax%>
+Fax: <%customerfax%>
+<%end customerfax%>
+
+<%email%>
+
+<%if customertaxnumber%>
+DIČ: <%customertaxnumber%>
+<%end customertaxnumber%>
+}
+\hfill
+\begin{tabular}[t]{ll}
+  \textbf{Faktúra} & <%invnumber%> \\
+  \textbf{Dátum} & <%invdate%> \\
+  \textbf{Splatnost} & <%duedate%> \\
+  <%if ponumber%>
+    \textbf{PO} & <%ponumber%> \\
+  <%end ponumber%>
+  <%if ordnumber%>
+    \textbf{Objednávka} & <%ordnumber%> \\
+  <%end ordnumber%>
+  \textbf{Osoba} & <%employee%> \\
+\end{tabular}
+
+\vspace{1cm}
+
+\begin{tabularx}{\textwidth}[t]{@{}llrX@{\hspace{1cm}}l@{}}
+<%foreach amount%>
+  <%accno%> & <%account%> & <%amount%> & <%description%> & <%projectnumber%> \\
+<%end amount%>
+
+  \multicolumn{2}{r}{\textbf{Medzisúčet}} & <%subtotal%> & \\
+<%foreach tax%>
+  \multicolumn{2}{r}{\textbf{<%taxdescription%> @ <%taxrate%> \%}} & <%tax%> & \\
+<%end tax%>
+
+  \multicolumn{2}{r}{\textbf{Celkom}} & <%invtotal%> & \\
+  
+\end{tabularx}
+
+\vspace{0.3cm}
+
+<%text_amount%> ***** <%decimal%>/100 <%currency%>
+
+<%if notes%>
+\vspace{0.3cm}
+<%notes%>
+<%end notes%>
+
+\vspace{0.3cm}
+
+<%if paid_1%>
+\begin{tabular}{@{}lllr@{}}
+  \multicolumn{4}{c}{\textbf{Platby}} \\
+  \hline
+  \textbf{Dátum} & & \textbf{Doklad} & \textbf{Hodnota} \\
+<%end paid_1%>
+<%foreach payment%>
+  <%paymentdate%> & <%paymentaccount%> & <%paymentsource%> & <%payment%> \\
+<%end payment%>
+<%if paid_1%>
+\end{tabular}
+<%end paid_1%>
+
+\vspace{0.5cm}
+
+<%foreach tax%>
+\textbf{\scriptsize <%taxdescription%> DIČ <%taxnumber%>} \\
+<%end tax%>
+  
+\end{document}
+
+
+

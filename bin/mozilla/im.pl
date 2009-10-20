@@ -22,11 +22,15 @@ use SL::CP;
 sub import {
 
   %title = ( sales_invoice => 'Sales Invoices',
-	     payment => 'Payments'
+	     payment => 'Payments',
+	     customer => 'Customers',
+	     vendor => 'Vendors'
 	   );
 
 # $locale->text('Import Sales Invoices')
 # $locale->text('Import Payments')
+# $locale->text('Import Customers')
+# $locale->text('Import Vendors')
 
   $msg = "Import $title{$form->{type}}";
   $form->{title} = $locale->text($msg);
@@ -36,6 +40,8 @@ sub import {
   $form->{nextsub} = "im_$form->{type}";
   $form->{action} = "continue";
 
+  $form->{delimiter} = ',';
+  
   if ($form->{type} eq 'payment') {
     IM->paymentaccounts(\%myconfig, \%$form);
     if (@{ $form->{all_paymentaccount} }) {
@@ -91,21 +97,15 @@ print qq|
 	    <table>
 	      <tr>
 	        <td><input name=filetype type=radio class=radio value=CSV checked>&nbsp;|.$locale->text('CSV').qq|</td>
-		<td width=20></td>
-		<th align=right>|.$locale->text('Delimiter').qq|</th>
-		<td><input name=delimiter size=2 value=","></td>
+		<td>|.$locale->text('Delimiter').qq|</td>
+		<td><input name=delimiter size=2 value="$form->{delimiter}"></td>
 	      </tr>
 	      <tr>
-		<th align=right colspan=2>|.$locale->text('Tab delimited file').qq|</th>
-		<td align=left><input name=tabdelimited type=checkbox class=checkbox></td>
+	        <td><input name=tabdelimited type=checkbox class=checkbox>&nbsp;|.$locale->text('Tab delimited').qq|</td>
+		<td><input name=mapfile type=checkbox value=1>&nbsp;|.$locale->text('Mapfile').qq|</td>
+		<td><input name=stringsquoted type=checkbox class=checkbox checked>&nbsp;|.$locale->text('Strings quoted').qq|</td>
 	      </tr>
 	    </table>
-	  </td>
-	</tr>
-	<tr>
-	  <th align=right>|.$locale->text('Mapfile').qq|</th>
-	  <td><input name=mapfile type=radio class=radio value=1>&nbsp;|.$locale->text('Yes').qq|&nbsp;
-	      <input name=mapfile type=radio class=radio value=0 checked>&nbsp;|.$locale->text('No').qq|
 	  </td>
 	</tr>
       </table>
@@ -442,7 +442,7 @@ sub xrefhdr {
   
   $form->{delimiter} ||= ',';
  
-  $i = 0;
+  $i = 1;
 
   if ($form->{mapfile}) {
     open(FH, "$myconfig{templates}/import.map") or $form->error($!);
@@ -471,16 +471,18 @@ sub xrefhdr {
     
   } else {
     # get first line
-    @a = split /\n/, $form->{data};
+    $str = (split /\n/, $form->{data})[0];
 
     if ($form->{tabdelimited}) {
       $form->{delimiter} = '\t';
     } else {
-      $a[0] =~ s/(^"|"$)//g;
-      $a[0] =~ s/"$form->{delimiter}"/$form->{delimiter}/g;
+      if ($form->{stringsquoted}) {
+	$str =~ s/(^"|"$)//g;
+	$str =~ s/"$form->{delimiter}"/$form->{delimiter}/g;
+      }
     }
       
-    for (split /$form->{delimiter}/, $a[0]) {
+    for (split /$form->{delimiter}/, $str) {
       $form->{$form->{type}}{$_} = { field => $_, length => "", ndx => $i++ };
     }
   }
@@ -579,7 +581,7 @@ sub im_payment {
   @flds = @column_index;
   shift @flds;
   shift @flds;
-  push @flds, qw(id source memo paymentmethod arap vc);
+  push @flds, qw(id source memo paymentmethod arap vc outstanding);
   
   $form->{callback} = "$form->{script}?action=import";
   for (qw(type login path)) { $form->{callback} .= "&$_=$form->{$_}" }
@@ -639,7 +641,11 @@ sub im_payment {
     $column_data{runningnumber} = qq|<td align=right>$i</td>|;
     $column_data{exchangerate} = qq|<td><input name="exchangerate_$i" size=10 value=|.$form->format_amount(\%myconfig, $form->{"exchangerate_$i"}).qq|></td>|;
     
-    $column_data{ndx} = qq|<td><input name="ndx_$i" type=checkbox class=checkbox checked></td>|;
+    if ($form->{"id_$i"}) {
+      $column_data{ndx} = qq|<td><input name="ndx_$i" type=checkbox class=checkbox checked></td>|;
+    } else {
+      $column_data{ndx} = qq|<td></td>|;
+    }
 
     for (@column_index) { print $column_data{$_} }
 
@@ -693,6 +699,8 @@ sub import_payments {
 
   my $m = 0;
 
+  $form->error($locale->text('Nothing to import!')) unless $form->{rowcount};
+
   $newform = new Form;
   
   for my $i (1 .. $form->{rowcount}) {
@@ -712,18 +720,31 @@ sub import_payments {
       $newform->{"paid_1"} = $form->{"amount_$i"};
       $newform->{"checked_1"} = 1;
       $newform->{"id_1"} = $form->{"id_$i"};
-      
+
       $form->info("${m}. ".$locale->text('Posting Payment ...'));
 
       if (CP->post_payment(\%myconfig, \%$newform)) {
-	$form->info(qq| $form->{"invnumber_$i"}, $form->{"description_$i"}, $form->{"companynumber_$i"}, $form->{"name_$i"}, $form->{"city_$i"}, |);
-	$form->info($form->{"amount_$i"});
-	$form->info(" ... ".$locale->text('ok')."\n");
+	$form->info(qq| $form->{"invnumber_$i"}, $form->{"description_$i"}, $form->{"companynumber_$i"}, $form->{"name_$i"}, $form->{"city_$i"}, $form->{"amount_$i"} ... | . $locale->text('ok'));
+
+	$ou = $form->round_amount($form->{"outstanding_$i"} - $form->parse_amount(\%myconfig, $form->{"amount_$i"}), $form->{precision});
+	if ($ou < 0) {
+	  $ou = $form->format_amount(\%myconfig, $ou, $form->{precision});
+	  $form->info(", $ou " . $locale->text('overpaid'));
+	}
+	if ($ou > 0) {
+	  $ou = $form->format_amount(\%myconfig, $ou, $form->{precision});
+	  $form->info(", $ou " . $locale->text('outstanding'));
+	}
+
+	$form->info("\n");
+	
       } else {
 	$form->error($locale->text('Posting failed!'));
       }
     }
   }
+
+  $form->error($locale->text('Nothing to import!')) unless $m;
 
 }
 
@@ -944,6 +965,197 @@ Content-Disposition: attachment; filename="$form->{file}.$form->{filetype}"\n\n|
   
   close(OUT);
   
+}
+
+
+sub im_customer { &im_vc }
+sub im_vendor { &im_vc }
+
+
+sub im_vc {
+  
+  $form->error($locale->text('Import File missing!')) if ! $form->{data};
+
+  $form->{callback} = "$form->{script}?action=import";
+  for (qw(type login path)) { $form->{callback} .= "&$_=$form->{$_}" }
+
+  &xrefhdr;
+    
+  @column_index = qw(runningnumber ndx);
+
+  for (sort { $form->{$form->{type}}{$a}{ndx} <=> $form->{$form->{type}}{$b}{ndx} } keys %{ $form->{$form->{type}} }) {
+    push @column_index, $_;
+  }
+
+  $column_data{runningnumber} = "&nbsp;";
+  $column_data{ndx} = "&nbsp;";
+  $column_data{name} = $locale->text('Name');
+  $column_data{customernumber} = $locale->text('Customer Number');
+  $column_data{vendornumber} = $locale->text('Vendor Number');
+  $column_data{address1} = $locale->text('Street');
+  $column_data{address2} = "&nbsp;";
+  $column_data{city} = $locale->text('City');
+  $column_data{zipcode} = $locale->text('Zipcode');
+  $column_data{state} = $locale->text('State');
+  $column_data{country} = $locale->text('Country');
+  $column_data{cc} = $locale->text('Cc');
+  $column_data{bcc} = $locale->text('Bcc');
+  $column_data{notes} = $locale->text('Notes');
+  $column_data{terms} = $locale->text('Terms');
+  $column_data{business} = $locale->text('Business');
+  $column_data{taxnumber} = $locale->text('Taxnumber');
+  $column_data{sic_code} = $locale->text('SIC');
+  $column_data{discount} = $locale->text('Discount');
+  $column_data{creditlimit} = $locale->text('Credit Limit');
+  $column_data{employee} = $locale->text('Salesperson');
+  $column_data{language_code} = $locale->text('Language');
+  $column_data{pricegroup} = $locale->text('Pricegroup');
+  $column_data{curr} = $locale->text('Currency');
+  $column_data{startdate} = $locale->text('Startdate');
+  $column_data{enddate} = $locale->text('Enddate');
+
+  $column_data{arap_accno} = ($form->{type} eq 'customer') ? $locale->text('AR') : $locale->text('AP');
+  
+  $column_data{payment_accno} = $locale->text('Payment');
+  $column_data{discount_accno} = $locale->text('Discount');
+  
+  $column_data{taxaccounts} = $locale->text('Tax');
+  
+  $column_data{cashdiscount} = $locale->text('%');
+  $column_data{discountterms} = $locale->text('Terms');
+  $column_data{threshold} = $locale->text('Threshold');
+  $column_data{paymentmethod} = $locale->text('Method');
+  $column_data{remittancevoucher} = $locale->text('RV');
+
+  $column_data{firstname} = $locale->text('Firstname');
+  $column_data{lastname} = $locale->text('Lastname');
+  $column_data{salutation} = $locale->text('Salutation');
+  $column_data{contacttitle} = $locale->text('Title');
+  $column_data{occupation} = $locale->text('Occupation');
+  $column_data{phone} = $locale->text('Phone');
+  $column_data{fax} = $locale->text('Fax');
+  $column_data{email} = $locale->text('E-mail');
+  $column_data{mobile} = $locale->text('Mobile');
+  $column_data{gender} = $locale->text('Gender');
+  $column_data{typeofcontact} = $locale->text('Type');
+  
+  $column_data{taxincluded} = $locale->text('T');
+  $column_data{iban} = $locale->text('IBAN');
+  $column_data{bic} = $locale->text('BIC');
+  $column_data{bankname} = $locale->text('Bank');
+  $column_data{bankaddress1} = $locale->text('Street');
+  $column_data{bankcity} = $locale->text('City');
+  $column_data{bankstate} = $locale->text('State');
+  $column_data{bankzipcode} = $locale->text('Zipcode');
+  $column_data{bankcountry} = $locale->text('Country');
+
+  
+  $form->header;
+ 
+  print qq|
+<body>
+
+<form method=post action=$form->{script}>
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$form->{title}</a></th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>
+      <table width=100%>
+        <tr class=listheading>
+|;
+
+  for (@column_index) { print "\n<th>$column_data{$_}</th>" }
+
+  print qq|
+        </tr>
+|;
+
+  $form->{reportcode} = "import_$form->{type}";
+  IM->prepare_import_data(\%myconfig, \%$form);
+
+  for $i (1 .. $form->{rowcount}) {
+
+    $j++; $j %= 2;
+    
+    print qq|
+	<tr class=listrow$j>
+|;
+
+    for (@column_index) {
+      $column_data{$_} = qq|<td>$form->{"${_}_$i"}</td>|;
+    }
+
+    for (qw(address1 address2 city zipcode state country)) {
+      if ($form->{"${_}_$i"}) {
+	$form->{"address_$i"} .= qq|$form->{"${_}_$i"} |;
+      }
+    }
+    chop $form->{"address_$i"};
+    $column_data{address} = qq|<td>$form->{"address_$i"}</td>|;
+    
+    $column_data{runningnumber} = qq|<td align=right>$i</td>|;
+    $column_data{ndx} = qq|<td><input name="ndx_$i" type=checkbox class=checkbox checked></td>|;
+ 
+    for (@column_index) { print $column_data{$_} }
+      
+    print qq|
+	 </tr>
+|;
+  }
+ 
+  print qq|
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td><hr size=3 noshade></td>
+  </tr>
+
+</table>
+|;
+  
+  $form->hide_form(qw(rowcount type login path callback));
+
+  if ($form->{type} eq 'customer') {
+    %button = ('Import Customers' => { ndx => 1, key => 'I', value => $locale->text('Import Customers') });
+  } else {
+    %button = ('Import Vendors' => { ndx => 1, key => 'I', value => $locale->text('Import Vendors') });
+  }
+
+  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  
+  print qq|
+</form>
+
+</body>
+</html>
+|;
+
+}
+
+
+sub import_customers { &import_vc }
+sub import_vendors { &import_vc }
+  
+sub import_vc {
+
+  $form->{reportcode} = "import_$form->{type}";
+
+  IM->import_vc(\%myconfig, \%$form);
+
+  if ($form->{added}) {
+    $form->info($locale->text('Added').":\n$form->{added}");
+  }
+  if ($form->{updated}) {
+    $form->info($locale->text('Updated').":\n$form->{updated}");
+  }
+
+  $form->info;
+
 }
 
 

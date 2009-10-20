@@ -1,0 +1,17 @@
+# module rp
+# add the missing texts and run locales.pl to rebuild
+
+$missing = {
+  'Can only send one reminder at a time!' => '',
+  'Can only send one statement at a time!' => '',
+  'Could not save reminder level!' => '',
+  'E-mail Reminder to'          => '',
+  'Level'                       => '',
+  'Preview'                     => '',
+  'Reminder'                    => '',
+  'Reminder sent to'            => '',
+  'Reminders sent to printer!'  => '',
+  'Save Level'                  => '',
+};
+
+1;

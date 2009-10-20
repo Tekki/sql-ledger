@@ -287,6 +287,7 @@ sub post_transaction {
 	      terms = $form->{terms},
 	      curr = '$form->{currency}',
 	      notes = |.$dbh->quote($form->{notes}).qq|,
+	      intnotes = |.$dbh->quote($form->{intnotes}).qq|,
 	      department_id = $form->{department_id},
 	      employee_id = $form->{employee_id},
 	      ponumber = |.$dbh->quote($form->{ponumber}).qq|,
@@ -1095,9 +1096,9 @@ sub get_name {
   for (qw(trans_id arap_accno)) { delete $ref->{$_} }
 
   if ($form->{id}) {
-    for (qw(currency employee employee_id intnotes)) { delete $ref->{$_} }
+    for (qw(currency employee employee_id)) { delete $ref->{$_} }
   }
- 
+
   for (keys %$ref) { $form->{$_} = $ref->{$_} }
   $sth->finish;
   
@@ -1296,7 +1297,7 @@ sub company_details {
               WHERE id = $id|;
   ($form->{workphone}, $form->{workfax}, $form->{workmobile}) = $dbh->selectrow_array($query);
 
-  my @a = qw(weightunit cdt company address tel fax businessnumber);
+  my @a = qw(weightunit cdt company companyemail companywebsite address tel fax businessnumber);
   my %defaults = $form->get_defaults($dbh, \@a);
   for (@a) { $form->{$_} = $defaults{$_} }
 

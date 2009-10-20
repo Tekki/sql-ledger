@@ -482,7 +482,7 @@ sub form_header {
 		<td colspan=3>
 		  <table>
 		    <tr>
-		      <td colspan=4>$form->{city}, $form->{state} $form->{country}</td>
+		      <td colspan=4>$form->{city} $form->{state} $form->{country}</td>
 		    </tr>
 		    <tr>
 		      <th align=right nowrap>|.$locale->text('Credit Limit').qq|</th>
@@ -657,10 +657,10 @@ sub form_footer {
   $form->{oldinvtotal} = $form->{invtotal};
   $form->{invtotal} = $form->format_amount(\%myconfig, $form->{invtotal}, $form->{precision}, 0);
 
-  $column_data{datepaid} = "<th>".$locale->text('Date')." <font color=red>*</font></th>";
-  $column_data{paid} = "<th>".$locale->text('Amount')." <font color=red>*</font></th>";
+  $column_data{datepaid} = "<th>".$locale->text('Date')."</th>";
+  $column_data{paid} = "<th>".$locale->text('Amount')."</th>";
   $column_data{exchangerate} = "<th>".$locale->text('Exch')." <font color=red>*</font></th>";
-  $column_data{AR_paid} = "<th>".$locale->text('Account')." <font color=red>*</font></th>";
+  $column_data{AR_paid} = "<th>".$locale->text('Account')."</th>";
   $column_data{source} = "<th>".$locale->text('Source')."</th>";
   $column_data{memo} = "<th>".$locale->text('Memo')."</th>";
   $column_data{paymentmethod} = "<th>".$locale->text('Method')."</th>";
@@ -1147,26 +1147,30 @@ sub post {
       exit;
     }
   }
- 
+
   # add discount to payments
-  $i = ++$form->{paidaccounts} if $form->{"paid_$form->{paidaccounts}"};
-  for (qw(paid datepaid source memo exchangerate cleared vr_id paymentmethod)) { $form->{"${_}_$i"} = $form->{"discount_$_"} }
-  $form->{discount_index} = $i;
-  $form->{"AR_paid_$i"} = $form->{"AR_discount_paid"};
-  $form->{"paymentmethod_$i"} = $form->{discount_paymentmethod};
+  if ($form->{discount_paid}) {
+    $form->{paidaccounts}++ if $form->{"paid_$form->{paidaccounts}"};
+    $i = $form->{paidaccounts};
 
-  if ($form->{"paid_$i"}) {
-    $datepaid = $form->datetonum(\%myconfig, $form->{"datepaid_$i"});
-    $expired = $form->datetonum(\%myconfig, $form->add_date(\%myconfig, $form->{transdate}, $form->{discountterms}, 'days'));
+    for (qw(paid datepaid source memo exchangerate cleared vr_id paymentmethod)) { $form->{"${_}_$i"} = $form->{"discount_$_"} }
+    $form->{discount_index} = $i;
+    $form->{"AR_paid_$i"} = $form->{"AR_discount_paid"};
+    $form->{"paymentmethod_$i"} = $form->{discount_paymentmethod};
 
-    $form->isblank("datepaid_$i", $locale->text('Cash discount date missing!'));
+    if ($form->{"paid_$i"}) {
+      $datepaid = $form->datetonum(\%myconfig, $form->{"datepaid_$i"});
+      $expired = $form->datetonum(\%myconfig, $form->add_date(\%myconfig, $form->{transdate}, $form->{discountterms}, 'days'));
 
-    $form->error($locale->text('Cannot post cash discount for a closed period!')) if ($datepaid <= $form->{closedto});
+      $form->isblank("datepaid_$i", $locale->text('Cash discount date missing!'));
 
-    $form->error($locale->text('Cash discount date past due!')) if ($datepaid > $expired);
+      $form->error($locale->text('Cannot post cash discount for a closed period!')) if ($datepaid <= $form->{closedto});
 
-    if ($form->{currency} ne $form->{defaultcurrency}) {
-      $form->isblank("exchangerate_$i", $locale->text('Exchange rate for cash discount missing!'));
+      $form->error($locale->text('Cash discount date past due!')) if ($datepaid > $expired);
+
+      if ($form->{currency} ne $form->{defaultcurrency}) {
+	$form->isblank("exchangerate_$i", $locale->text('Exchange rate for cash discount missing!'));
+      }
     }
   }
   

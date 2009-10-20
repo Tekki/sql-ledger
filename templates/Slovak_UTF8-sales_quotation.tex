@@ -1,0 +1,151 @@
+\documentclass{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage{tabularx}
+\usepackage[letterpaper,top=2cm,bottom=-3cm,left=1.1cm,right=1.5cm]{geometry}
+\usepackage{graphicx}
+
+\begin{document}
+
+\pagestyle{myheadings}
+\thispagestyle{empty}
+
+\fontfamily{cmss}\fontsize{10pt}{12pt}\selectfont
+
+\newsavebox{\ftr}
+\sbox{\ftr}{
+  \parbox{\textwidth}{
+  \tiny
+  \rule[1.5em]{\textwidth}{0.5pt}
+ 
+  }
+}
+
+<%include letterhead.tex%>
+
+
+<%pagebreak 65 27 48%>
+\end{tabularx}
+
+  \rule{\textwidth}{2pt}
+  
+  \hfill
+  \begin{tabularx}{7cm}{Xr@{\hspace{1cm}}r@{}}
+  & \textbf{Medzisúčet} & \textbf{<%sumcarriedforward%>} \\
+  \end{tabularx}
+
+\newpage
+
+\markboth{<%company%>\hfill <%quonumber%>}{<%company%>\hfill <%quonumber%>}
+
+\begin{tabularx}{\textwidth}{@{}lXrlrrr@{}}
+  \textbf{Číslo} & \textbf{Popis} & \textbf{Množ.} &
+    \textbf{MJ} & \textbf{Cena} & \textbf{Zľava \%} & \textbf{Suma} \\
+  & carried forward from <%lastpage%> & & & & & <%sumcarriedforward%> \\
+<%end pagebreak%>
+
+
+\vspace*{0.5cm}
+
+\parbox[t]{.5\textwidth}{
+
+<%name%>
+
+<%address1%>
+
+<%address2%>
+
+<%city%>
+<%if state%>
+\hspace{-0.1cm}, <%state%>
+<%end state%>
+<%zipcode%>
+
+<%country%>
+
+\vspace{0.3cm}
+
+<%if contact%>
+<%contact%>
+\vspace{0.2cm}
+<%end contact%>
+
+<%if customerphone%>
+Tel: <%customerphone%>
+<%end customerphone%>
+
+<%if customerfax%>
+Fax: <%customerfax%>
+<%end customerfax%>
+
+<%email%>
+}
+
+\vspace{1cm}
+
+\textbf{P O N U K O V Ý   L I S T}
+\hfill
+
+\vspace{1cm}
+
+\begin{tabularx}{\textwidth}{*{6}{|X}|} \hline
+  \textbf{Ponuka} & \textbf{Dátum} & \textbf{Platí do} & \textbf{Kontakt} & \textbf{Miesto dodania} & \textbf{Spôsob dodania} \\ [0.5ex]
+  \hline
+  <%quonumber%> & <%quodate%> & <%reqdate%> & <%employee%> & <%shippingpoint%> & <%shipvia%> \\
+  \hline
+\end{tabularx}
+  
+\vspace{1cm}
+
+\begin{tabularx}{\textwidth}{@{}lXrlrrr@{}}
+  \textbf{Číslo} & \textbf{Popis} & \textbf{Množ.} &
+    \textbf{MJ} & \textbf{Cena} & \textbf{Zľava \%} & \textbf{Suma} \\
+<%foreach number%>
+  <%number%> & <%description%> & <%qty%> &
+    <%unit%> & <%sellprice%> & <%discountrate%> & <%linetotal%> \\
+<%end number%>
+\end{tabularx}
+
+
+\parbox{\textwidth}{
+\rule{\textwidth}{2pt}
+
+\vspace{0.2cm}
+
+\hfill
+\begin{tabularx}{8cm}{Xr@{\hspace{0.01cm}}r@{}}
+  & Medzisúčet & <%subtotal%> \\
+<%foreach tax%>
+  & <%taxdescription%> on <%taxbase%> & <%tax%>\\
+<%end tax%>
+  \hline
+  & Celkom & <%quototal%>\\
+\end{tabularx}
+
+\vspace{0.3cm}
+
+\hfill
+Ceny sú v \textbf{<%currency%>}.
+
+<%if terms%>
+Termín dodania: <%terms%> dní
+<%end terms%>
+
+\vspace{12pt}
+
+<%notes%>
+
+}
+
+\vfill
+
+\hfill \parbox{7cm}{X \rule{6.5cm}{0.5pt}}
+
+\rule{\textwidth}{0.5pt}
+
+\usebox{\ftr}
+
+\end{document}
+
+
+
+

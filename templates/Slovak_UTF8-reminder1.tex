@@ -1,0 +1,68 @@
+<%include preamble.tex%>
+
+\begin{document}
+
+\pagestyle{myheadings}
+\thispagestyle{empty}
+
+\newlength{\descrwidth}\setlength{\descrwidth}{10cm}
+\fontfamily{cmss}\fontsize{10pt}{12pt}\selectfont
+
+\vspace*{-1.3cm}
+
+<%include letterhead.tex%>
+
+  
+\vspace*{0.5cm}
+
+\parbox[t]{.5\textwidth}{
+<%name%>
+
+<%address1%>
+
+<%address2%>
+
+<%city%>
+<%if state%>
+\hspace{-1mm}, <%state%>
+<%end state%>
+<%zipcode%>
+
+<%country%>
+}
+\parbox[t]{.5\textwidth}{
+<%if customerphone%>
+Tel: <%customerphone%>
+<%end customerphone%>
+
+<%if customerfax%>
+Fax: <%customerfax%>
+<%end customerfax%>
+
+<%email%>
+}
+\hfill
+
+\vspace{1cm}
+
+\textbf{1. U P O M I E N K A} \hfill \textbf{<%statementdate%>}
+
+\vspace{2cm}
+
+\begin{tabular}{|llccr|}
+  \hline
+  \textbf{Faktúra} & \textbf{Objednávka} & \textbf{Dátum faktúry} & \textbf{Dátum splatnosti} & \textbf{Suma}\\
+  \hline
+  <%invnumber%> & <%ordnumber%> & <%invdate%> & <%duedate%> & <%due%> \\
+  \hline
+\end{tabular}
+
+\vspace{0.5cm}
+
+Podľa naších záznamov faktúra číslo <%invnumber%> je po dátume splatnosti. Keď ste platbu už uskutočnili považujte upomienku zy bezpredmetnú.
+\vspace{0.5cm}
+
+
+\end{document}
+
+

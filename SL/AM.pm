@@ -1299,7 +1299,7 @@ sub save_defaults {
   }
 
   # optional
-  for (qw(company address tel fax yearend weightunit businessnumber closedto revtrans audittrail method cdt namesbynumber)) {
+  for (split / /, $form->{optional}) {
     if ($form->{$_}) {
       $sth->execute($_, $form->{$_}) || $form->dberror;
       $sth->finish;
@@ -1793,7 +1793,7 @@ sub closebooks {
   my $sth = $dbh->prepare($query) || $form->dberror($query);
 
   $form->{closedto} = $form->datetonum($myconfig, $form->{closedto});
-  for (qw(revtrans closedto audittrail aruniq apuniq gluniq souniq pouniq trackinguniq nontrackinguniq)) {
+  for (qw(revtrans closedto audittrail)) {
     $dth->execute($_) || $form->dberror;
     $dth->finish;
 
@@ -2049,10 +2049,6 @@ sub save_bank {
 		  WHERE id = $form->{id}|;
       $dbh->do($query) || $form->dberror($query);
     } else {
-      $query = qq|INSERT INTO address (trans_id)
-		  VALUES ($form->{id})|;
-      $dbh->do($query) || $form->dberror($query);
-
       $query = qq|INSERT INTO bank (id, name, iban, bic, membernumber, rvc, dcn)
 		  VALUES ($form->{id}, |
 		  .$dbh->quote(uc $form->{name}).qq|, |
@@ -2062,6 +2058,15 @@ sub save_bank {
 		  .$dbh->quote($form->{rvc}).qq|, |
 		  .$dbh->quote($form->{dcn}).qq|
 		  )|;
+      $dbh->do($query) || $form->dberror($query);
+
+      $query = qq|SELECT address_id
+                  FROM bank
+		  WHERE id = $form->{id}|;
+      ($id) = $dbh->selectrow_array($query);
+
+      $query = qq|INSERT INTO address (id, trans_id)
+		  VALUES ($id, $form->{id})|;
       $dbh->do($query) || $form->dberror($query);
     }
     

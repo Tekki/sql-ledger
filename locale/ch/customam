@@ -1,0 +1,12 @@
+$self{charset} = 'ISO-8859-1';
+
+$self{texts} = {
+};
+
+$self{subs} = {
+  'monitor'                     => 'monitor',
+  'run_sql_command'             => 'run_sql_command',
+};
+
+1;
+

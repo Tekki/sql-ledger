@@ -443,8 +443,10 @@ sub print {
 	}
 	delete $form->{paid};
 	
-	$form->{payment_accno} = $form->unescape($form->{payment_accno});
 	$arap = ($form->{vc} eq 'customer') ? "AR" : "AP";
+        $form->{payment_accno} = $form->unescape($form->{payment_accno});
+	
+        # default
         @a = split /\n/, $form->unescape($form->{"select${arap}_paid"});
 	$form->{payment_accno} ||= $a[0];
 
@@ -453,7 +455,7 @@ sub print {
 	  $form->{payment_accno} = $form->{"${arap}_paid_$_"};
 	}
 
-	$form->{"${arap}_paid_$form->{paidaccounts}"} = $form->{payment_accno};
+        $form->{"${arap}_paid_$form->{paidaccounts}"} = $form->{payment_accno};
 	$inv = 'inv'
       }
 
@@ -477,7 +479,7 @@ sub print {
 	} else {
 	  $total += $form->parse_amount(\%myconfig, $form->{"${inv}total"});
 	}
-	$myform->info(qq|, $form->{"${inv}total"}, $form->{"$form->{vc}number"}, $form->{"$form->{vc}"}, $form->{city}|);
+	$myform->info(qq|, $form->{"${inv}total"}, $form->{"$form->{vc}number"}, $form->{"$form->{vc}"} $form->{city}|);
       }
       $myform->info(" ... ".$locale->text('ok')."\n");
 
@@ -888,14 +890,14 @@ function CheckAll() {
   
   $format = qq|<select name=format>$selectformat</select>|;
   $format =~ s/(<option value="\Q$form->{format}\E")/$1 selected/;
-  $format = qq|<td>$format</td>|;
+  $format = qq|<td nowrap>$format</td>|;
  
   if ($form->{batch} eq 'email') {
     $message = qq|<tr>
-                    <td colspan=2 nowrap><b>|.$locale->text('Subject').qq|</b>&nbsp;<input name=subject size=30></td>
+                    <td nowrap><b>|.$locale->text('Subject').qq|</b>&nbsp;<input name=subject size=30></td>
                   </tr>
 		  <tr>
-                    <td colspan=2><b>|.$locale->text('Message').qq|<br><textarea name=message rows=15 cols=60 wrap=soft>$form->{message}</textarea></td>
+                    <td><b>|.$locale->text('Message').qq|<br><textarea name=message rows=15 cols=60 wrap=soft>$form->{message}</textarea></td>
       </tr>|;
       
     $media = qq|<input type="hidden" name="media" value="email">
@@ -912,10 +914,14 @@ function CheckAll() {
 <table>
   $message
   <tr>
-  $format
-  $sendmode
-  $media
-  $copies
+    <td>
+      <table>
+	$format
+	$sendmode
+	$media
+	$copies
+      </table>
+    </td>
   </tr>
 </table>
 <p>

@@ -1237,7 +1237,9 @@ sub send_email {
   
   for (keys %$form) { $old_form->{$_} = $form->{$_} }
   $old_form->{media} = $old_form->{oldmedia};
-  
+
+  $form->{from} = qq|$form->{username} <$form->{useremail}>|;
+
   &print_form($old_form);
   
 }
