@@ -72,7 +72,7 @@ $form->{charset} = $locale->{charset};
 $SIG{__WARN__} = sub { $form->info($_[0]) };
 
 # send errors to browser
-$SIG{__DIE__} = sub { $form->error($_[0]) };
+$SIG{__DIE__} = sub { eval { print qq|\n$_[0]|; exit; } };
 
 $myconfig{dbpasswd} = unpack 'u', $myconfig{dbpasswd};
 map { $form->{$_} = $myconfig{$_} } qw(stylesheet timeout) unless ($form->{type} eq 'preferences');
