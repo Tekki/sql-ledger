@@ -1,0 +1,299 @@
+UPGRADING
+---------
+This file is devided into sections describing the steps required to
+upgrade. You only have to read the sections which apply to your
+version, i.e if you are upgrading from v1.8.6 to v2.6.27 you
+should read the sections from v1.8.6 up to v2.6.27
+
+If there is no section for a range of versions no additional steps
+are required.
+
+The software can be upgraded using setup.pl from the commandline
+and/or downloading the tarball. If setup.pl cannot retrieve the file
+(proxy, missing utilities) you will have to download the file yourself
+and either use setup.pl or ungzip/untar yourself.
+
+The steps to do it yourself are:
+--------------------------------
+1. ungzip/untar SQL-Ledger over top your old installation
+   $ cd /usr/local
+   $ tar zxvf sql-ledger-x.x.x.tar.gz
+
+2. fix permissions
+   # chown -hR nobody:nogroup *
+   # chmod 711 templates users css spool
+
+   Note: replace nobody:nogroup with your web server user and group
+
+
+Using setup.pl passing filename:
+--------------------------------
+1. download sql-ledger-x.x.x.tar.gz and save in the sql-ledger folder
+
+2. change directory to
+
+   $ cd /usr/local/sql-ledger
+
+3. become the root user
+
+   $ su root
+
+4. run setup.pl from the commandline
+
+   # ./setup.pl sql-ledger-x.x.x.tar.gz
+   
+
+Upgrading Datasets:
+-------------------
+Datasets are upgraded when a user logs in. There is no need to load
+admin.pl, there is also no need to install intermediate versions, all
+the upgrade steps are included in the current version.
+
+The sections below describe additional steps if required such as
+copying templates to bring a system up to date.
+
+Before you log in read the relevant sections below.
+
+
+Version 1.6 to 1.8
+------------------
+1. copy the following templates to your template directory
+
+   $ cd sql-ledger/templates
+
+   $ cp Default-email_purchase_order.html your_template_dir/email_purchase_order.html
+   $ cp Default-purchase_order.html your_template_dir/purchase_order.html
+   $ cp Default-email_sales_order.html your_template_dir/email_sales_order.html
+   $ cp Default-sales_order.html your_template_dir/sales_order.html
+ 
+2. Two new accounts were hopefully added to your chart of accounts
+   One account for Foreign Exchange Gains and one for
+   Foreign Exchange Losses
+   edit and change to suit your COA. You can safely change
+   the account number too.
+      
+3. Edit your preferences
+
+   In field 'Stylesheet' enter -> sql-ledger.css
+   Stylesheet is in the css directory
+
+   Add your foreign currencies in the Currencies field
+   The first currency in the list is your default
+   i.e CDN:USD:EUR:YEN
+   If you used a nativecurr than it should be listed in the
+   new currencies field.
+
+4. <%nativecurr%> has changed to <%currency%>
+   edit all your templates and change nativecurr to currency
+
+5. We also added four more variables which can be used in your templates.
+   <%contact%>, <%shiptocontact%>, <%shiptophone%>, <%shiptofax%>
+   
+6. Nameing convention for templates has changed from an
+   underscore to a minus sign. If you designed your own
+   master templates rename the templates from
+   industry_invoice.html to industry-invoice.html,
+   industry_packing_list.html to industry-packing_list.html, etc.
+   The minus sign is used to separate the name and list them in
+   the setup screen.
+   
+   This change only applies to the master templates in the
+   templates root directory NOT the individual templates which
+   are used by users.
+
+
+Version 1.8.0 to 1.8.3
+----------------------
+1. copy sql-ledger.conf.default to sql-ledger.conf
+
+   $ cp sql-ledger.conf.default sql-ledger.conf
+
+   if you modified sql-ledger.conf merge the changes from the
+   .default file rather than copying over top.
+
+2. copy the following templates to your template directory
+
+   $ cd sql-ledger/templates
+
+   $ cp Default-invoice.tex your_template_dir/invoice.tex
+   $ cp Default-packing_list.tex your_template_dir/packing_list.tex
+   $ cp Default-purchase_order.tex your_template_dir/purchase_order.tex
+   $ cp Default-sales_order.tex your_template_dir/sales_order.tex
+
+3. edit sql-ledger.conf
+   instructions are in the file
+
+
+Version 1.8.4 to 1.8.7
+----------------------
+There are two new variables (<%customernumber%> and <%vendornumber%>)
+which can be used in the forms. These may be used instead of the
+internally generated customer_id and vendor_id.
+
+Typically these numbers are used to retrieve a customer, vendor
+by some ID. In most counter operations the phone number is used.
+
+
+Version 1.8.7 to 2.0.0
+----------------------
+1. copy the following templates to your template directory
+
+   $ cd sql-ledger/templates
+
+   $ cp Default-check.tex your_template_dir/check.tex
+   $ cp Default-receipt.tex your_template_dir/receipt.tex
+   $ cp Default-statement.html your_template_dir/statement.html
+   $ cp Default-statement.tex your_template_dir/statement.tex
+
+
+Version 2.0.9 to 2.2.0
+----------------------
+1. copy the following template to your template directory
+
+   $ cd sql-ledger/templates
+   
+   $ cp Default-pos_invoice.txt your_template_dir/pos_invoice.txt
+
+
+Version 2.2.7 to 2.4.0
+----------------------
+1. install the plpgsql language compiler for PostgreSQL
+   # createlang plpgsql <dataset>
+
+2. install plpgsql in template1
+   # createlang plpgsql template1
+
+Before loggin in edit Pg-upgrade-2.3.4-2.3.5.sql and change the
+way addresses are rewritten if you don't want US style addresses.
+
+North-american addresses are usually in the form of
+
+Five Star Stables
+123 Horsehoe Blvd.
+Sweetgrass, MT 19867
+U.S.A
+
+addr1 --> address1
+addr2 --> city
+addr3 --> country
+addr4 --> state
+
+addr4 was put into the state field to bring the field forward
+to the new layout. To check if there is something in the field run
+a report and sort by the "State" field.
+
+Either edit the records or run the SQL queries below to take them apart.
+
+If you have anything in the "state" field change the records to match
+the others before you run the following queries.
+
+dbname=# update customer set state = substr(city,strpos(city,' ')+1);
+dbname=# update customer set zipcode = substr(state,strpos(state,' ')+1);
+dbname=# update customer set state = substr(state,1,strpos(state,' ')-1);
+dbname=# update customer set city = substr(city,1,strpos(city,',')-1);
+
+do the same with the vendor and shipto table.
+
+3. create a new set of templates
+
+  * load admin.pl and edit one of the user's
+  * in the "New Templates" field enter "new" and save the user
+  * go back in your browser so you have the same screen again
+    as before
+  * change the template directory back to what it was before
+    the change and save the user
+
+  * drop into a shell window
+  * cd to sql-ledger/templates/new
+  * copy the additional templates to your private template directory
+
+4. Printers
+
+   printer setup has changed to multiple printers which allow
+   users to choose a printer. Printers can be defined in sql-ledger.conf
+
+5. Oracle and DB2 support no longer available due to missing upgrade scripts.
+
+
+Version 2.4.2 to 2.4.3
+----------------------
+1. copy the following templates to your template directory
+
+   $ cd sql-ledger/templates
+
+   $ cp Default-ar_transaction.html your_template_dir/ar_transaction.html
+   $ cp Default-ar_transaction.tex your_template_dir/ar_transaction.tex
+   $ cp Default-ap_transaction.html your_template_dir/ap_transaction.html
+   $ cp Default-ap_transaction.tex your_template_dir/ap_transaction.tex
+
+
+Version 2.4.16 to 2.6.0
+-----------------------
+1. copy the following templates to your template directory
+
+   $ cd sql-ledger/templates
+   
+   $ cp Default-timecard.html your_template_dir/timecard.html
+   $ cp Default-timecard.tex your_template_dir/timecard.tex
+
+
+Version 2.6.27 to 2.8.0
+-----------------------
+1. copy the following templates to your template directory
+
+   $ cd sql-ledger/templates
+   
+   $ cp Default-credit_invoice.html your_template_dir/credit_invoice.html
+   $ cp Default-credit_invoice.tex your_template_dir/credit_invoice.tex
+   $ cp Default-credit_note.html your_template_dir/credit_note.html
+   $ cp Default-credit_note.tex your_template_dir/credit_note.tex
+   $ cp Default-debit_invoice.html your_template_dir/debit_invoice.html
+   $ cp Default-debit_invoice.tex your_template_dir/debit_invoice.tex
+   $ cp Default-debit_note.html your_template_dir/debit_note.html
+   $ cp Default-debit_note.tex your_template_dir/debit_note.tex
+
+2. Go to System -> Defaults and enter your company name
+
+
+Version 2.8.0 to 2.8.2
+----------------------
+1. If you receive the following error while upgrading
+
+   ERROR:  trigger "del_recurring" for table "oe" does not exist
+
+   load admin.pl and "Unlock" the system.
+
+
+Version 2.8.2 to 2.8.4
+----------------------
+1. copy the following templates to your template directory
+
+   $ cd sql-ledger/templates
+   
+   $ cp Default-remittance_voucher.html your_template_dir/remittance_voucher.html
+   $ cp Default-remittance_voucher.tex your_template_dir/remittance_voucher.tex
+   
+
+Version 2.8.6 to 2.8.7
+----------------------
+1. go to System -> Currencies
+   and enter/edit the currencies you use.
+
+2. go to System -> Defaults
+   and enter the default precision
+      
+
+Version 2.8.23 to 2.8.24
+------------------------
+1. copy the following templates to your template directory
+
+   $ cd sql-ledger/templates
+   
+   $ cp Default-reminder1.html your_template_dir/reminder1.html
+   $ cp Default-reminder2.html your_template_dir/reminder2.html
+   $ cp Default-reminder3.html your_template_dir/reminder3.html
+   $ cp Default-reminder1.tex your_template_dir/reminder1.tex
+   $ cp Default-reminder2.tex your_template_dir/reminder2.tex
+   $ cp Default-reminder3.tex your_template_dir/reminder3.tex
+
+

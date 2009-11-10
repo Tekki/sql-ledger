@@ -3458,6 +3458,8 @@ sub process_transactions {
 	      }
 	    }
 	  } else {
+	    delete $form->{"paid_1"};
+	    ($form->{"$form->{ARAP}_paid_1"}) = split /--/, $form->{"$form->{ARAP}_paid_$form->{paidaccounts}"};
 	    $form->{paidaccounts} = 1;
 	  }
 

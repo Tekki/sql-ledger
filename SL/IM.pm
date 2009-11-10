@@ -610,7 +610,7 @@ sub ndxline {
   my @a = ();
   my $string = 0;
   my $chr = "";
-  my $m = 0;
+  my $m = 1;
 
   if ($form->{tabdelimited}) {
     @a = split /\t/, $_;

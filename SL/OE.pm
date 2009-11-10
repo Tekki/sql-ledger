@@ -458,6 +458,7 @@ sub save {
       }
 
     }
+    $form->{"discount_$i"} *= 100;
   }
 
 

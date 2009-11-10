@@ -69,7 +69,7 @@ $locale = new Locale "$myconfig{countrycode}", "$script";
 $form->{charset} = $locale->{charset};
 
 # send warnings to browser
-$SIG{__WARN__} = sub { $form->info($_[0]) };
+$SIG{__WARN__} = sub { eval { print qq|\n$_[0]|; } };
 
 # send errors to browser
 $SIG{__DIE__} = sub { eval { print qq|\n$_[0]|; exit; } };

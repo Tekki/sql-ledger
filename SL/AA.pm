@@ -1090,8 +1090,8 @@ sub get_name {
   $ref->{discount_accno} .= qq|--|;
   $ref->{discount_accno} .= ($ref->{discount_accno_translation}) ? $ref->{discount_accno_translation} : $ref->{discount_accno_description};
   $ref->{payment_method} .= qq|--$ref->{paymentmethod_id}|;
-  
-  $form->{$ARAP} = $ref->{arap_accno};
+
+  $form->{$ARAP} = $ref->{arap_accno} if $ref->{arap_accno} ne '--';
 
   for (qw(trans_id arap_accno)) { delete $ref->{$_} }
 
