@@ -569,7 +569,7 @@ sub search {
   foreach $item (@a) {
     if ($form->{$item} ne "") {
       $var = $form->like(lc $form->{$item});
-      $where .= " AND lower(ct.$item) LIKE '$var'";
+      $where .= " AND lower(c.$item) LIKE '$var'";
     }
   }
 
@@ -588,30 +588,30 @@ sub search {
   }
   
   if ($form->{startdatefrom}) {
-    $where .= " AND ct.startdate >= '$form->{startdatefrom}'";
+    $where .= " AND c.startdate >= '$form->{startdatefrom}'";
   }
   if ($form->{startdateto}) {
-    $where .= " AND ct.startdate <= '$form->{startdateto}'";
+    $where .= " AND c.startdate <= '$form->{startdateto}'";
   }
 
   if ($form->{status} eq 'active') {
-    $where .= " AND ct.enddate IS NULL";
+    $where .= " AND c.enddate IS NULL";
   }
   if ($form->{status} eq 'inactive') {
-    $where .= " AND ct.enddate <= current_date";
+    $where .= " AND c.enddate <= current_date";
   }
 
   if ($form->{status} eq 'orphaned') {
-    $where .= qq| AND ct.id NOT IN (SELECT o.$form->{db}_id
+    $where .= qq| AND c.id NOT IN (SELECT o.$form->{db}_id
                                     FROM oe o, $form->{db} vc
 		 	            WHERE vc.id = o.$form->{db}_id)|;
     if ($form->{db} eq 'customer') {
-      $where .= qq| AND ct.id NOT IN (SELECT a.customer_id
+      $where .= qq| AND c.id NOT IN (SELECT a.customer_id
                                       FROM ar a, customer vc
 				      WHERE vc.id = a.customer_id)|;
     }
     if ($form->{db} eq 'vendor') {
-      $where .= qq| AND ct.id NOT IN (SELECT a.vendor_id
+      $where .= qq| AND c.id NOT IN (SELECT a.vendor_id
                                       FROM ap a, vendor vc
 				      WHERE vc.id = a.vendor_id)|;
     }
@@ -619,20 +619,23 @@ sub search {
   }
   
 
-  my $query = qq|SELECT ct.*, b.description AS business,
+  my $query = qq|SELECT c.*, b.description AS business,
                  e.name AS employee, g.pricegroup, l.description AS language,
 		 m.name AS manager,
 		 ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
 		 ad.country,
-		 pm.description AS paymentmethod
-                 FROM $form->{db} ct
-	      LEFT JOIN address ad ON (ad.trans_id = ct.id)
-	      LEFT JOIN business b ON (ct.business_id = b.id)
-	      LEFT JOIN employee e ON (ct.employee_id = e.id)
+		 pm.description AS paymentmethod,
+		 ct.salutation, ct.firstname, ct.lastname, ct.contacttitle,
+		 ct.occupation, ct.mobile, ct.gender, ct.typeofcontact
+                 FROM $form->{db} c
+	      JOIN contact ct ON (ct.trans_id = c.id)
+	      LEFT JOIN address ad ON (ad.trans_id = c.id)
+	      LEFT JOIN business b ON (c.business_id = b.id)
+	      LEFT JOIN employee e ON (c.employee_id = e.id)
 	      LEFT JOIN employee m ON (m.id = e.managerid)
-	      LEFT JOIN pricegroup g ON (ct.pricegroup_id = g.id)
-	      LEFT JOIN language l ON (l.code = ct.language_code)
-	      LEFT JOIN paymentmethod pm ON (pm.id = ct.paymentmethod_id)
+	      LEFT JOIN pricegroup g ON (c.pricegroup_id = g.id)
+	      LEFT JOIN language l ON (l.code = c.language_code)
+	      LEFT JOIN paymentmethod pm ON (pm.id = c.paymentmethod_id)
                  WHERE $where|;
 
   # redo for invoices, orders and quotations
@@ -662,21 +665,24 @@ sub search {
       $transwhere .= " AND a.transdate <= '$form->{transdateto}'" if $form->{transdateto};
       
    
-      $query = qq|SELECT ct.*, b.description AS business,
+      $query = qq|SELECT c.*, b.description AS business,
                   a.invnumber, a.ordnumber, a.quonumber, a.id AS invid,
 		  '$ar' AS module, 'invoice' AS formtype,
 		  (a.amount = a.paid) AS closed, a.amount, a.netamount,
 		  e.name AS employee, m.name AS manager,
 		  ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
 		  ad.country,
-		  pm.description AS paymentmethod
-		  FROM $form->{db} ct
-		JOIN address ad ON (ad.trans_id = ct.id)
-		JOIN $ar a ON (a.$form->{db}_id = ct.id)
-	        LEFT JOIN business b ON (ct.business_id = b.id)
+		  pm.description AS paymentmethod,
+		  ct.salutation, ct.firstname, ct.lastname, ct.contacttitle,
+		  ct.occupation, ct.mobile, ct.gender, ct.typeofcontact
+		  FROM $form->{db} c
+	        JOIN contact ct ON (ct.trans_id = c.id)
+		JOIN address ad ON (ad.trans_id = c.id)
+		JOIN $ar a ON (a.$form->{db}_id = c.id)
+	        LEFT JOIN business b ON (c.business_id = b.id)
 		LEFT JOIN employee e ON (a.employee_id = e.id)
 		LEFT JOIN employee m ON (m.id = e.managerid)
-		LEFT JOIN paymentmethod pm ON (pm.id = ct.paymentmethod_id)
+		LEFT JOIN paymentmethod pm ON (pm.id = c.paymentmethod_id)
 		  WHERE $where
 		  AND a.invoice = '0'
 		  $transwhere
@@ -697,21 +703,24 @@ sub search {
       $transwhere .= " AND a.transdate <= '$form->{transdateto}'" if $form->{transdateto};
     
       $query .= qq|$union
-                  SELECT ct.*, b.description AS business,
-                  a.invnumber, a.ordnumber, a.quonumber, a.id AS invid,
-		  '$module' AS module, 'invoice' AS formtype,
-		  (a.amount = a.paid) AS closed, a.amount, a.netamount,
-		  e.name AS employee, m.name AS manager,
-		  ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
-		  ad.country,
-		  pm.description AS paymentmethod
-		  FROM $form->{db} ct
-		JOIN address ad ON (ad.trans_id = ct.id)
-		JOIN $ar a ON (a.$form->{db}_id = ct.id)
-	        LEFT JOIN business b ON (ct.business_id = b.id)
+		   SELECT c.*, b.description AS business,
+		   a.invnumber, a.ordnumber, a.quonumber, a.id AS invid,
+		   '$module' AS module, 'invoice' AS formtype,
+		   (a.amount = a.paid) AS closed, a.amount, a.netamount,
+		   e.name AS employee, m.name AS manager,
+		   ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
+		   ad.country,
+		   pm.description AS paymentmethod,
+		   ct.salutation, ct.firstname, ct.lastname, ct.contacttitle,
+		   ct.occupation, ct.mobile, ct.gender, ct.typeofcontact
+		   FROM $form->{db} c
+	        JOIN contact ct ON (ct.trans_id = c.id)
+		JOIN address ad ON (ad.trans_id = c.id)
+		JOIN $ar a ON (a.$form->{db}_id = c.id)
+	        LEFT JOIN business b ON (c.business_id = b.id)
 		LEFT JOIN employee e ON (a.employee_id = e.id)
 		LEFT JOIN employee m ON (m.id = e.managerid)
-		LEFT JOIN paymentmethod pm ON (pm.id = ct.paymentmethod_id)
+		LEFT JOIN paymentmethod pm ON (pm.id = c.paymentmethod_id)
 		  WHERE $where
 		  AND a.invoice = '1'
 		  $transwhere
@@ -729,21 +738,24 @@ sub search {
       $transwhere .= " AND o.transdate >= '$form->{transdatefrom}'" if $form->{transdatefrom};
       $transwhere .= " AND o.transdate <= '$form->{transdateto}'" if $form->{transdateto};
       $query .= qq|$union
-                  SELECT ct.*, b.description AS business,
-		  ' ' AS invnumber, o.ordnumber, o.quonumber, o.id AS invid,
-		  'oe' AS module, 'order' AS formtype,
-		  o.closed, o.amount, o.netamount,
-		  e.name AS employee, m.name AS manager,
-		  ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
-		  ad.country,
-		  pm.description AS paymentmethod
-		  FROM $form->{db} ct
-		JOIN address ad ON (ad.trans_id = ct.id)
-		JOIN oe o ON (o.$form->{db}_id = ct.id)
-	        LEFT JOIN business b ON (ct.business_id = b.id)
+		   SELECT c.*, b.description AS business,
+		   ' ' AS invnumber, o.ordnumber, o.quonumber, o.id AS invid,
+		   'oe' AS module, 'order' AS formtype,
+		   o.closed, o.amount, o.netamount,
+		   e.name AS employee, m.name AS manager,
+		   ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
+		   ad.country,
+		   pm.description AS paymentmethod,
+		   ct.salutation, ct.firstname, ct.lastname, ct.contacttitle,
+		   ct.occupation, ct.mobile, ct.gender, ct.typeofcontact
+		  FROM $form->{db} c
+	        JOIN contact ct ON (ct.trans_id = c.id)
+		JOIN address ad ON (ad.trans_id = c.id)
+		JOIN oe o ON (o.$form->{db}_id = c.id)
+	        LEFT JOIN business b ON (c.business_id = b.id)
 		LEFT JOIN employee e ON (o.employee_id = e.id)
 		LEFT JOIN employee m ON (m.id = e.managerid)
-		LEFT JOIN paymentmethod pm ON (pm.id = ct.paymentmethod_id)
+		LEFT JOIN paymentmethod pm ON (pm.id = c.paymentmethod_id)
 		  WHERE $where
 		  AND o.quotation = '0'
 		  $transwhere
@@ -761,21 +773,24 @@ sub search {
       $transwhere .= " AND o.transdate >= '$form->{transdatefrom}'" if $form->{transdatefrom};
       $transwhere .= " AND o.transdate <= '$form->{transdateto}'" if $form->{transdateto};
       $query .= qq|$union
-                  SELECT ct.*, b.description AS business,
-		  ' ' AS invnumber, o.ordnumber, o.quonumber, o.id AS invid,
-		  'oe' AS module, 'quotation' AS formtype,
-		  o.closed, o.amount, o.netamount,
-		  e.name AS employee, m.name AS manager,
-		  ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
-		  ad.country,
-		  pm.description AS paymentmethod
-		  FROM $form->{db} ct
-		JOIN address ad ON (ad.trans_id = ct.id)
-		JOIN oe o ON (o.$form->{db}_id = ct.id)
-	        LEFT JOIN business b ON (ct.business_id = b.id)
+		   SELECT c.*, b.description AS business,
+		   ' ' AS invnumber, o.ordnumber, o.quonumber, o.id AS invid,
+		   'oe' AS module, 'quotation' AS formtype,
+		   o.closed, o.amount, o.netamount,
+		   e.name AS employee, m.name AS manager,
+		   ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
+		   ad.country,
+		   pm.description AS paymentmethod,
+		   ct.salutation, ct.firstname, ct.lastname, ct.contacttitle,
+		   ct.occupation, ct.mobile, ct.gender, ct.typeofcontact
+		  FROM $form->{db} c
+	        JOIN contact ct ON (ct.trans_id = c.id)
+		JOIN address ad ON (ad.trans_id = c.id)
+		JOIN oe o ON (o.$form->{db}_id = c.id)
+	        LEFT JOIN business b ON (c.business_id = b.id)
 		LEFT JOIN employee e ON (o.employee_id = e.id)
 		LEFT JOIN employee m ON (m.id = e.managerid)
-		LEFT JOIN paymentmethod pm ON (pm.id = ct.paymentmethod_id)
+		LEFT JOIN paymentmethod pm ON (pm.id = c.paymentmethod_id)
 		  WHERE $where
 		  AND o.quotation = '1'
 		  $transwhere
@@ -810,7 +825,23 @@ sub search {
 	      WHERE t.$form->{db}_id = ?|;
   $tth = $dbh->prepare($query) || $form->dberror($query);
   
+  # bank
+  my $bref;
+  $query = qq|SELECT b.*, a.*
+              FROM bank b
+	      LEFT JOIN address a ON (a.trans_id = b.address_id)
+	      WHERE b.id = ?|;
+  $bth = $dbh->prepare($query) || $form->dberror($query);
+
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+      
+    $bth->execute($ref->{id});
+    $bref = $bth->fetchrow_hashref(NAME_lc);
+    for (qw(name address1 address2 city state zipcode country)) {
+      $ref->{bank} .= "$bref->{$_} " if $bref->{$_};
+    }
+    $bth->finish;
+   
     $tth->execute($ref->{id});
     while (($item) = $tth->fetchrow_array) {
       $ref->{taxaccounts} .= "$item ";
@@ -822,7 +853,9 @@ sub search {
     
     $ref->{address} = "";
     for (qw(address1 address2 city state zipcode country)) { $ref->{address} .= "$ref->{$_} " }
+    
     push @{ $form->{CT} }, $ref;
+
   }
 
   $sth->finish;
