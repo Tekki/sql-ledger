@@ -2458,7 +2458,7 @@ sub save_preferences {
     }
     $form->error($locale->text('Password may only contain alphanumeric characters!')) if $form->{new_password} =~ /\W/;
   }
-  $form->{password} = $form->{new_password}; 
+  $form->{password} = $form->{new_password};
 
   if (AM->save_preferences(\%myconfig, \%$form, $memberfile, $userspath)) {
     $form->redirect($locale->text('Preferences saved!'));

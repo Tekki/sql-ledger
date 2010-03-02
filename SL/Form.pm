@@ -78,7 +78,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.8.28";
+  $self->{version} = "2.8.29";
   $self->{dbversion} = "2.8.10";
 
   bless $self, $type;
@@ -865,8 +865,8 @@ sub parse_template {
 	last if ++$r > 4;
       }
       
-      $self->{tmpfile} =~ s/tex$/pdf/;
       $self->error($self->cleanup) if ! (-f $self->{tmpfile});
+      $self->{tmpfile} =~ s/tex$/pdf/;
     }
 
   }

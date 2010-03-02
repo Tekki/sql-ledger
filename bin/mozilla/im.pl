@@ -22,6 +22,8 @@ use SL::CP;
 sub import {
 
   %title = ( sales_invoice => 'Sales Invoices',
+             sales_order => 'Sales Orders',
+             purchase_order => 'Purchase Orders',
 	     payment => 'Payments',
 	     customer => 'Customers',
 	     vendor => 'Vendors'
@@ -91,19 +93,19 @@ print qq|
 	    <input name=data size=60 type=file>
 	  </td>
 	</tr>
-	<tr valign=top>
+	<tr>
 	  <th align=right>|.$locale->text('Type of File').qq|</th>
 	  <td>
 	    <table>
 	      <tr>
-	        <td><input name=filetype type=radio class=radio value=CSV checked>&nbsp;|.$locale->text('CSV').qq|</td>
+		<td><input name=filetype type=radio class=radio value=csv checked>&nbsp;|.$locale->text('CSV').qq|</td>
 		<td>|.$locale->text('Delimiter').qq|</td>
 		<td><input name=delimiter size=2 value="$form->{delimiter}"></td>
-	      </tr>
-	      <tr>
 	        <td><input name=tabdelimited type=checkbox class=checkbox>&nbsp;|.$locale->text('Tab delimited').qq|</td>
-		<td><input name=mapfile type=checkbox value=1>&nbsp;|.$locale->text('Mapfile').qq|</td>
 		<td><input name=stringsquoted type=checkbox class=checkbox checked>&nbsp;|.$locale->text('Strings quoted').qq|</td>
+	      </tr>
+              <tr>
+		<td><input name=mapfile type=checkbox value=1>&nbsp;|.$locale->text('Mapfile').qq|</td>
 	      </tr>
 	    </table>
 	  </td>
@@ -233,7 +235,7 @@ print qq|
 	  <td>
 	    <table>
 	      <tr>
-	        <td><input name=filetype type=radio class=radio value=CSV checked>&nbsp;|.$locale->text('CSV').qq|</td>
+	        <td><input name=filetype type=radio class=radio value=csv checked>&nbsp;|.$locale->text('CSV').qq|</td>
 		<td width=20></td>
 		<th align=right>|.$locale->text('Delimiter').qq|</th>
 		<td><input name=delimiter size=2 value=","></td>
@@ -438,6 +440,192 @@ sub im_sales_invoice {
 }
 
 
+sub im_sales_order {
+
+  $form->{vc} = "customer";
+  &im_order;
+
+}
+
+
+sub im_purchase_order {
+
+  $form->{vc} = "vendor";
+  &im_order;
+
+}
+
+
+
+sub im_order {
+
+  $form->error($locale->text('Import File missing!')) if ! $form->{data};
+
+  @column_index = qw(runningnumber ndx transdate ordnumber name);
+  push @column_index, "$form->{vc}number";
+  push @column_index, qw(city orderdescription total curr);
+  
+  $form->{callback} = "$form->{script}?action=import";
+  for (qw(type login path)) { $form->{callback} .= "&$_=$form->{$_}" }
+  
+  if ($form->{filetype} eq 'xml') {
+    &xmlorder;
+  }
+
+  &xrefhdr;
+
+  @flds = ();
+  for (keys %{ $form->{$form->{type}} }) {
+    push @flds, $_;
+  }
+  push @flds, "parts_id";
+  push @flds, "$form->{vc}_id";
+
+  $form->{reportcode} = "import_$form->{type}";
+  IM->order_links(\%myconfig, \%$form);
+
+  $column_data{runningnumber} = "&nbsp;";
+  $column_data{transdate} = $locale->text('Order Date');
+  $column_data{ordnumber} = $locale->text('Order Number');
+  $column_data{orderdescription} = $locale->text('Description');
+  $column_data{name} = ($form->{vc} eq 'customer') ? $locale->text('Customer') : $locale->text('Vendor');
+  $column_data{customernumber} = $locale->text('Customer Number');
+  $column_data{vendornumber} = $locale->text('Vendor Number');
+  $column_data{city} = $locale->text('City');
+  $column_data{total} = $locale->text('Total');
+  $column_data{curr} = $locale->text('Curr');
+
+  $form->header;
+ 
+  print qq|
+<body>
+
+<form method=post action=$form->{script}>
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$form->{title}</a></th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>
+      <table width=100%>
+        <tr class=listheading>
+|;
+
+  for (@column_index) { print "\n<th>$column_data{$_}</th>" }
+
+  print qq|
+        </tr>
+|;
+
+  @ndx = split / /, $form->{ndx};
+  $ndx = shift @ndx;
+  $k = 0;
+
+  for $i (1 .. $form->{rowcount}) {
+    
+    if ($i == $ndx) {
+      $k++;
+      $j++; $j %= 2;
+      $ndx = shift @ndx;
+   
+      print qq|
+        <tr class=listrow$j>
+|;
+
+      $total += $form->{"total_$i"};
+      
+      for (@column_index) { $column_data{$_} = qq|<td>$form->{"${_}_$i"}</td>| }
+      $column_data{total} = qq|<td align=right>|.$form->format_amount(\%myconfig, $form->{"total_$i"}, $form->{precision}).qq|</td>|;
+
+      $column_data{runningnumber} = qq|<td align=right>$k</td>|;
+      
+      if ($form->{"missing_$i"}) {
+	$column_data{ndx} = qq|<td>&nbsp;</td>|;
+      } else {
+	$column_data{ndx} = qq|<td><input name="ndx_$i" type=checkbox class=checkbox checked></td>|;
+      }
+
+      for (@column_index) { print $column_data{$_} }
+
+      print qq|
+	</tr>
+|;
+    
+    }
+
+  }
+
+  # print total
+  for (@column_index) { $column_data{$_} = qq|<td>&nbsp;</td>| }
+  $column_data{total} = qq|<th class=listtotal align=right>|.$form->format_amount(\%myconfig, $total, $form->{precision}, "&nbsp;")."</th>";
+
+  print qq|
+        <tr class=listtotal>
+|;
+
+  for (@column_index) { print "\n$column_data{$_}" }
+  
+  print qq|
+        </tr>
+      </table>
+    </td>
+  </tr>
+|;
+
+  $msg = ($form->{vc} eq 'customer') ? $locale->text('The following customers are not on file:') : $locale->text('The following vendors are not on file:');
+  
+  if ($form->{"missing$form->{vc}"}) {
+    print qq|
+    <tr>
+      <td>|;
+      $form->info("$msg\n\n");
+      for (split /\n/, $form->{"missing$form->{vc}"}) {
+	$form->info("$_\n");
+      }
+    print qq|
+      </td>
+    </tr>
+|;
+  }
+
+
+  if ($form->{missingpart}) {
+    print qq|
+    <tr>
+      <td>|;
+      $form->info($locale->text('The following parts are not on file:')."\n\n");
+      for (split /\n/, $form->{missingpart}) {
+	$form->info("$_\n");
+      }
+    print qq|
+      </td>
+    </tr>
+|;
+  }
+
+  print qq|
+  <tr>
+    <td><hr size=3 noshade></td>
+  </tr>
+
+</table>
+|;
+
+  $form->hide_form(qw(delimiter tabdelimited mapfile stringsquoted vc rowcount ndx type login path callback));
+
+  print qq|
+<input name=action class=submit type=submit value="|.$locale->text('Import Orders').qq|">
+</form>
+
+</body>
+</html>
+|;
+
+}
+
+
 sub xrefhdr {
   
   $form->{delimiter} ||= ',';
@@ -567,6 +755,72 @@ sub import_sales_invoices {
   }
 
   $myconfig{numberformat} = $numberformat;
+  $form->info("\n".$locale->text('Total:')." ".$form->format_amount(\%myconfig, $total, $form->{precision}));
+  
+}
+
+
+
+sub import_orders {
+
+  $form->{reportcode} = "import_$form->{type}";
+
+  my %ndx = ();
+  my @ndx = split / /, $form->{ndx};
+  
+  my $i;
+  my $j = shift @ndx;
+  my $k = shift @ndx;
+  $k ||= $j;
+
+  for $i (1 .. $form->{rowcount}) {
+    if ($i == $k) {
+      $j = $k;
+      $k = shift @ndx;
+    }
+    push @{$ndx{$j}}, $i;
+  }
+
+  my $total = 0;
+  
+  $newform = new Form;
+
+  my $m = 0;
+  
+  for $k (sort keys %ndx) {
+    
+    if ($form->{"ndx_$k"}) {
+
+      $m++;
+
+      for (keys %$newform) { delete $newform->{$_} };
+
+      for (qw(login reportcode type vc)) { $newform->{$_} = $form->{$_} }
+
+      # save order
+      $form->info("${m}. ".$locale->text('Saving Order ...'));
+      if (IM->import_order(\%myconfig, \%$newform, \@{ $ndx{$k} })) {
+	$form->{precision} = $newform->{precision};
+
+	$form->info(qq| $newform->{ordnumber}, $newform->{description}, $newform->{"$form->{vc}number"}, $newform->{name}, $newform->{city}, |);
+	$form->info($form->format_amount(\%myconfig, $newform->{ordtotal}, $newform->{precision}));
+	$form->info(" ... ");
+	
+	if ($newform->{updated}) {
+	  $form->info($locale->text('updated')."\n");
+	} else {
+	  $form->info($locale->text('added')."\n");
+	}
+	
+      } else {
+	$form->error($locale->text('Save failed!'));
+      }
+
+      $total += $newform->{ordtotal};
+
+    }
+  }
+
   $form->info("\n".$locale->text('Total:')." ".$form->format_amount(\%myconfig, $total, $form->{precision}));
   
 }

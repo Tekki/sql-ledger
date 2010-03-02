@@ -67,7 +67,7 @@ sub invoice_details {
   my $sortby;
   
   # sort items by project and partsgroup
-  for $i (1 .. $form->{rowcount} - 1) {
+  for my $i (1 .. $form->{rowcount} - 1) {
 
     # account numbers
     $pth->execute($form->{"id_$i"});
@@ -476,7 +476,7 @@ sub invoice_details {
   }
 
 
-  for $i (1 .. $form->{paidaccounts}) {
+  for my $i (1 .. $form->{paidaccounts}) {
     if ($form->{"paid_$i"}) {
       push(@{ $form->{payment} }, $form->{"paid_$i"});
       my ($accno, $description) = split /--/, $form->{"AP_paid_$i"};
@@ -997,7 +997,7 @@ sub post_invoice {
   }
 
   $form->{paid} = 0;
-  for $i (1 .. $form->{paidaccounts}) {
+  for my $i (1 .. $form->{paidaccounts}) {
     if ($form->{"paid_$i"}) {
       $form->{"paid_$i"} = $form->parse_amount($myconfig, $form->{"paid_$i"}) * $sw;
       $form->{paid} += $form->{"paid_$i"};
@@ -1168,7 +1168,7 @@ sub post_invoice {
   my $paymentmethod_id;
   
   # record payments and offsetting AP
-  for $i (1 .. $form->{paidaccounts}) {
+  for my $i (1 .. $form->{paidaccounts}) {
 
     if ($form->{"paid_$i"}) {
       ($accno) = split /--/, $form->{"AP_paid_$i"};
