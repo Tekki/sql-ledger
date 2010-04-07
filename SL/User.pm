@@ -106,17 +106,19 @@ sub login {
     
     my %defaults;
     my $dbversion;
+    my $audittrail;
 
     my $query = qq|SELECT * FROM defaults|;
     my $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
 
     if ($sth->{NAME}->[0] eq 'fldname') {
-      %defaults = $form->get_defaults($dbh, \@{['version']});
+      %defaults = $form->get_defaults($dbh, \@{[qw(version audittrail)]});
       $dbversion = $defaults{version};
+      $audittrail = $defaults{audittrail};
     } else {
-      $query = qq|SELECT version FROM defaults|;
-      ($dbversion) = $dbh->selectrow_array($query);
+      $query = qq|SELECT version, audittrail FROM defaults|;
+      ($dbversion, $audittrail) = $dbh->selectrow_array($query);
     }
     $sth->finish;
 
@@ -133,7 +135,18 @@ sub login {
                   VALUES ('$login', '$myconfig{name}',
 		  '$myconfig{tel}', '$myconfig{role}')|;
       $dbh->do($query);
+      
+      $query = qq|SELECT id FROM employee WHERE login = '$login'|;
+      ($id) = $dbh->selectrow_array($query);
     }
+
+    if ($audittrail) {
+      $id *= 1;
+      $query = qq|INSERT INTO audittrail (employee_id, action)
+                  VALUES ($id, 'login')|;
+      $dbh->do($query);
+    }
+    
     $dbh->disconnect;
 
     $rc = 0;
