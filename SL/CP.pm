@@ -273,6 +273,8 @@ sub retrieve {
 
   my $ml = 1;
   
+  $form->{id} *= 1;
+
   if ($form->{vc} eq 'customer') {
     $ml = -1;
   }
@@ -394,7 +396,7 @@ sub retrieve {
   ($form->{batchdescription}, $form->{vouchernumber}) = $dbh->selectrow_array($query);
     
   $form->{voucherid} = $form->{id};
-  $form->{id} = "1";
+  $form->{id} = 1;
   AA->get_name($myconfig, $form, $dbh);
 
   $form->{"old$form->{vc}"} = qq|$form->{$form->{vc}}--$form->{"$form->{vc}_id"}|;
@@ -639,6 +641,7 @@ sub post_payment {
   my $rate;
 
   # delete payments
+  $form->{voucherid} *= 1;
   if ($form->{edit} && $form->{voucherid}) {
     $query = qq|SELECT SUM(ac.amount) * $ml * -1
                 FROM acc_trans ac

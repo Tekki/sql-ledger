@@ -120,7 +120,7 @@ sub get_project {
   my $ref;
   my $where;
   
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
 
     $where = "WHERE pr.id = $form->{id}" if $form->{id};
     
@@ -183,7 +183,7 @@ sub save_project {
 
   $form->{projectnumber} = $form->update_defaults($myconfig, "projectnumber", $dbh) unless $form->{projectnumber};
 
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
 
     $query = qq|UPDATE project SET
                 projectnumber = |.$dbh->quote($form->{projectnumber}).qq|,
@@ -356,7 +356,7 @@ sub get_job {
   my %defaults = $form->get_defaults($dbh, \@{['weightunit']});
   $form->{weightunit} = $defaults{weightunit};
   
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     
     $query = qq|SELECT pr.*,
                 p.partnumber, p.description AS partdescription,
@@ -496,7 +496,7 @@ sub get_customer {
 		FROM customer
 		WHERE $where|;
 
-    if ($form->{customer_id}) {
+    if ($form->{customer_id} *= 1) {
       $query .= qq|
 		UNION SELECT id,name
 		FROM customer
@@ -531,7 +531,7 @@ sub save_job {
   my ($partsgroup, $partsgroup_id) = split /--/, $form->{partsgroup};
   $partsgroup_id ||= 'NULL';
   
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $query = qq|SELECT id FROM project
                 WHERE id = $form->{id}|;
     ($form->{id}) = $dbh->selectrow_array($query);
@@ -782,6 +782,8 @@ sub delete_project {
   
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
+
+  $form->{id} *= 1;
   
   $query = qq|DELETE FROM project
 	      WHERE id = $form->{id}|;
@@ -805,6 +807,8 @@ sub delete_partsgroup {
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
   
+  $form->{id} *= 1;
+    
   $query = qq|DELETE FROM partsgroup
 	      WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
@@ -826,6 +830,8 @@ sub delete_pricegroup {
   
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
+
+  $form->{id} *= 1;
   
   $query = qq|DELETE FROM pricegroup
 	      WHERE id = $form->{id}|;
@@ -844,7 +850,9 @@ sub delete_job {
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
- 
+
+  $form->{id} *= 1;
+  
   my %audittrail = ( tablename  => 'project',
                      reference  => $form->{id},
 		     formname   => $form->{type},
@@ -945,7 +953,7 @@ sub save_partsgroup {
   
   $form->{pos} *= 1;
 
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $query = qq|UPDATE partsgroup SET
                 partsgroup = |.$dbh->quote($form->{partsgroup}).qq|,
 		pos = '$form->{pos}'
@@ -968,6 +976,8 @@ sub get_partsgroup {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
+
+  $form->{id} *= 1;
   
   my $query = qq|SELECT *
                  FROM partsgroup
@@ -1059,7 +1069,7 @@ sub save_pricegroup {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
   
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $query = qq|UPDATE pricegroup SET
                 pricegroup = |.$dbh->quote($form->{pricegroup}).qq|
 		WHERE id = $form->{id}|;
@@ -1080,6 +1090,8 @@ sub get_pricegroup {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
+
+  $form->{id} *= 1;
   
   my $query = qq|SELECT *
                  FROM pricegroup
@@ -1116,6 +1128,8 @@ sub description_translations {
   my $where = "1 = 1";
   my $var;
   my $ref;
+
+  $form->{id} *= 1;
   
   for (qw(partnumber description)) {
     if ($form->{$_}) {
@@ -1242,6 +1256,8 @@ sub project_translations {
   my $where = "1 = 1";
   my $var;
   my $ref;
+
+  $form->{id} *= 1;
   
   for (qw(projectnumber description)) {
     if ($form->{$_}) {
@@ -1309,6 +1325,8 @@ sub chart_translations {
   my $where = "1 = 1";
   my $var;
   my $ref;
+
+  $form->{id} *= 1;
   
   for (qw(accno description)) {
     if ($form->{$_}) {
@@ -1377,6 +1395,8 @@ sub save_translation {
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
 
+  $form->{id} *= 1;
+  
   my $query = qq|DELETE FROM translation
                  WHERE trans_id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
@@ -1402,6 +1422,8 @@ sub delete_translation {
   
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
+
+  $form->{id} *= 1;
   
   my $query = qq|DELETE FROM translation
   	         WHERE trans_id = $form->{id}|;

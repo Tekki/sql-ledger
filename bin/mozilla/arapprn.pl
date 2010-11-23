@@ -85,7 +85,10 @@ sub print_check {
 
   if ($form->{"paid_$i"}) {
     @a = ();
-    
+
+    $datepaid = $form->datetonum(\%myconfig, $form->{"datepaid_$i"});
+    ($form->{yyyy}, $form->{mm}, $form->{dd}) = $datepaid =~ /(....)(..)(..)/;
+
     if (exists $form->{longformat}) {
       $form->{"datepaid_$i"} = $locale->date(\%myconfig, $form->{"datepaid_$i"}, $form->{longformat});
     }

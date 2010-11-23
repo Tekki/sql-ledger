@@ -26,7 +26,7 @@ sub create_links {
   my $description;
   my $translation;
  
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $query = qq/SELECT ct.*,
                 ad.id AS addressid, ad.address1, ad.address2, ad.city,
 		ad.state, ad.zipcode, ad.country,
@@ -242,7 +242,7 @@ sub save {
     $form->{$_} /= 100;
   }
 
-  for (qw(terms discountterms taxincluded addressid contactid remittancevoucher)) { $form->{$_} *= 1 }
+  for (qw(id terms discountterms taxincluded addressid contactid remittancevoucher)) { $form->{$_} *= 1 }
   
   for (qw(creditlimit threshold)) { $form->{$_} = $form->parse_amount($myconfig, $form->{$_}) }
  
@@ -505,6 +505,8 @@ sub delete {
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
+
+  $form->{id} *= 1;
 
   # delete customer/vendor
   my $query = qq|DELETE FROM $form->{db}
@@ -1114,6 +1116,8 @@ sub save_pricelist {
 
   my $dbh = $form->dbconnect_noauto($myconfig);
   
+  $form->{id} *= 1;
+  
   my $query = qq|DELETE FROM parts$form->{db}
                  WHERE $form->{db}_id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
@@ -1220,7 +1224,7 @@ sub ship_to {
   
   my $table = ($form->{db} eq 'customer') ? 'ar' : 'ap';
 
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $query = qq|SELECT
                 s.shiptoname, s.shiptoaddress1, s.shiptoaddress2,
                 s.shiptocity, s.shiptostate, s.shiptozipcode,

@@ -276,7 +276,7 @@ sub save {
   my $pth = $dbh->prepare($query) || $form->dberror($query);
 
  
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $query = qq|SELECT id, aa_id FROM oe
                 WHERE id = $form->{id}|;
 
@@ -591,6 +591,8 @@ sub delete {
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
 
+  $form->{id} *= 1;
+  
   # delete spool files
   my $query = qq|SELECT spoolfile FROM status
                  WHERE trans_id = $form->{id}
@@ -689,7 +691,7 @@ sub retrieve {
   
   $form->remove_locks($myconfig, $dbh, 'oe') unless $form->{readonly};
 
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     
     # retrieve order
     $query = qq|SELECT o.ordnumber, o.transdate, o.reqdate, o.terms,

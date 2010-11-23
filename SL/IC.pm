@@ -21,6 +21,8 @@ sub get_part {
   my $dbh = $form->dbconnect($myconfig);
   my $i;
 
+  $form->{id} *= 1;
+  
   my $query = qq|SELECT p.*,
                  c1.accno AS inventory_accno, c1.description AS inventory_description,
 		 c2.accno AS income_accno, c2.description AS income_description,
@@ -196,7 +198,7 @@ sub save {
   for (qw(rop weight listprice sellprice lastcost stock)) { $form->{$_} = $form->parse_amount($myconfig, $form->{$_}) }
   
   $form->{assembly} = $form->{item} eq 'assembly';
-  for (qw(alternate obsolete onhand assembly)) { $form->{$_} *= 1 }
+  for (qw(id alternate obsolete onhand assembly)) { $form->{$_} *= 1 }
   
   if ($form->{id} && $form->{changeup}) {
     
@@ -672,7 +674,7 @@ sub restock_assemblies {
     $form->{"qty_$i"} = $form->parse_amount($myconfig, $form->{"qty_$i"});
 
     if ($form->{"qty_$i"}) {
-      &adjust_inventory($dbh, $form, $form->{"id_$i"}, $form->{"qty_$i"});
+      &adjust_inventory($dbh, $form, $form->{"id_$i"} * 1, $form->{"qty_$i"});
     }
  
   }
@@ -734,6 +736,8 @@ sub delete {
 
   my $query;
 
+  $form->{id} *= 1;
+  
   $query = qq|DELETE FROM parts
  	      WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
@@ -1707,7 +1711,7 @@ sub create_links {
   $sth->finish;
 
 
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     my %defaults = $form->get_defaults($dbh, \@{[qw(weightunit precision)]});
     for (keys %defaults) { $form->{$_} = $defaults{$_} }
 

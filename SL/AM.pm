@@ -23,6 +23,8 @@ sub get_account {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
+  $form->{id} *= 1;
+  
   my $query = qq|SELECT accno, description, charttype, gifi_accno,
                  category, link, contra
                  FROM chart
@@ -94,7 +96,7 @@ sub save_account {
   $form->{contra} *= 1;
   
   # if we have an id then replace the old record
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $query = qq|UPDATE chart SET
                 accno = '$form->{accno}',
 		description = |.$dbh->quote($form->{description}).qq|,
@@ -171,6 +173,8 @@ sub delete_account {
   # set inventory_accno_id, income_accno_id, expense_accno_id to defaults
   my %defaults = $form->get_defaults($dbh, \@{['%_accno_id']});
 
+  $form->{id} *= 1;
+  
   for (qw(inventory_accno_id income_accno_id expense_accno_id)) {
     $query = qq|SELECT count(*)
                 FROM parts
@@ -252,7 +256,7 @@ sub get_gifi {
   
   my $query = qq|SELECT accno, description
                  FROM gifi
-	         WHERE accno = '$form->{accno}'|;
+	         WHERE accno = |.$dbh->quote($form->{accno});
 
   ($form->{accno}, $form->{description}) = $dbh->selectrow_array($query);
 
@@ -260,7 +264,7 @@ sub get_gifi {
   $query = qq|SELECT * FROM acc_trans a
               JOIN chart c ON (a.chart_id = c.id)
 	      JOIN gifi g ON (c.gifi_accno = g.accno)
-	      WHERE g.accno = '$form->{accno}'|;
+	      WHERE g.accno = |.$dbh->quote($form->{accno});
   ($form->{orphaned}) = $dbh->selectrow_array($query);
   $form->{orphaned} = !$form->{orphaned};
 
@@ -283,7 +287,7 @@ sub save_gifi {
   }
 
   # id is the old account number!
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $query = qq|UPDATE gifi SET
                 accno = '$form->{accno}',
 		description = |.$dbh->quote($form->{description}).qq|
@@ -310,7 +314,7 @@ sub delete_gifi {
   
   # id is the old account number!
   $query = qq|DELETE FROM gifi
-	      WHERE accno = '$form->{id}'|;
+	      WHERE accno = |.$dbh->quote($form->{id});
   $dbh->do($query) || $form->dberror($query);
   
   $dbh->disconnect;
@@ -351,6 +355,8 @@ sub get_warehouse {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
   
+  $form->{id} *= 1;
+
   my $query = qq|SELECT w.description, a.address1, a.address2, a.city,
                  a.state, a.zipcode, a.country
                  FROM warehouse w
@@ -383,7 +389,7 @@ sub save_warehouse {
   $form->{description} =~ s/-(-)+/-/g;
   $form->{description} =~ s/ ( )+/ /g;
 
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $query = qq|SELECT id
                 FROM warehouse
 		WHERE id = $form->{id}|;
@@ -438,6 +444,8 @@ sub delete_warehouse {
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
   
+  $form->{id} *= 1;
+
   my $query = qq|DELETE FROM warehouse
 	      WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
@@ -486,6 +494,8 @@ sub get_department {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
   
+  $form->{id} *= 1;
+
   my $query = qq|SELECT description, role
                  FROM department
 	         WHERE id = $form->{id}|;
@@ -511,7 +521,7 @@ sub save_department {
   $form->{description} =~ s/-(-)+/-/g;
   $form->{description} =~ s/ ( )+/ /g;
 
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $query = qq|UPDATE department SET
 		description = |.$dbh->quote($form->{description}).qq|,
 		role = '$form->{role}'
@@ -535,6 +545,8 @@ sub delete_department {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
   
+  $form->{id} *= 1;
+
   $query = qq|DELETE FROM department
 	      WHERE id = $form->{id}|;
   $dbh->do($query);
@@ -575,6 +587,8 @@ sub get_business {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
   
+  $form->{id} *= 1;
+
   my $query = qq|SELECT description, discount
                  FROM business
 	         WHERE id = $form->{id}|;
@@ -595,7 +609,7 @@ sub save_business {
   $form->{description} =~ s/ ( )+/ /g;
   $form->{discount} /= 100;
   
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $query = qq|UPDATE business SET
 		description = |.$dbh->quote($form->{description}).qq|,
 		discount = $form->{discount}
@@ -619,6 +633,8 @@ sub delete_business {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
   
+  $form->{id} *= 1;
+
   $query = qq|DELETE FROM business
 	      WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
@@ -668,6 +684,8 @@ sub get_paymentmethod {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
   
+  $form->{id} *= 1;
+
   my $query = qq|SELECT description, fee
                  FROM paymentmethod
 	         WHERE id = $form->{id}|;
@@ -687,7 +705,7 @@ sub save_paymentmethod {
   $form->{description} =~ s/-(-)+/-/g;
   $form->{description} =~ s/ ( )+/ /g;
   
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $query = qq|UPDATE paymentmethod SET
 		description = |.$dbh->quote($form->{description}).qq|,
 		fee = |.$form->parse_amount($myconfig, $form->{fee}).qq|
@@ -716,6 +734,8 @@ sub delete_paymentmethod {
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
   
+  $form->{id} *= 1;
+
   my $query = qq|SELECT rn FROM paymentmethod
                  WHERE id = $form->{id}|;
   my ($rn) = $dbh->selectrow_array($query);
@@ -1995,6 +2015,8 @@ sub get_bank {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
+  $form->{id} *= 1;
+
   $query = qq|SELECT c.accno, c.description,
               bk.name, bk.iban, bk.bic, bk.membernumber, bk.dcn, bk.rvc,
 	      ad.address1, ad.address2, ad.city,
@@ -2024,6 +2046,8 @@ sub save_bank {
   
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
+
+  $form->{id} *= 1;
 
   my $query = qq|SELECT id FROM bank
                  WHERE id = $form->{id}|;
@@ -2241,7 +2265,7 @@ sub get_currency {
   my $dbh = $form->dbconnect($myconfig);
   
   my $query = qq|SELECT * FROM curr
-	         WHERE curr = '$form->{curr}'|;
+	         WHERE curr = |.$dbh->quote($form->{curr});
   my $sth = $dbh->prepare($query) || $form->dberror($query);
   $sth->execute;
   
@@ -2270,7 +2294,7 @@ sub save_currency {
 
   $query = qq|SELECT curr
 	      FROM curr
-	      WHERE curr = '$form->{curr}'|;
+	      WHERE curr = |.$dbh->quote($form->{curr});
   my ($curr) = $dbh->selectrow_array($query);
 
   my $rn;
@@ -2288,7 +2312,7 @@ sub save_currency {
   for (qw(precision)) { $form->{$_} *= 1 }
   $query = qq|UPDATE curr SET
 	      precision = $form->{precision}
-	      WHERE curr = '$form->{curr}'|;
+	      WHERE curr = |.$dbh->quote($form->{curr});
   $dbh->do($query) || $form->dberror($query);
 
   my $rc = $dbh->commit;
@@ -2306,7 +2330,7 @@ sub delete_currency {
   my $dbh = $form->dbconnect_noauto($myconfig);
   
   my $query = qq|SELECT rn FROM curr
-                 WHERE curr = '$form->{curr}'|;
+                 WHERE curr = |.$dbh->quote($form->{curr});
   my ($rn) = $dbh->selectrow_array($query);
   
   $query = qq|UPDATE curr SET rn = rn - 1
@@ -2314,7 +2338,7 @@ sub delete_currency {
   $dbh->do($query) || $form->dberror($query);
 
   $query = qq|DELETE FROM curr
-	      WHERE curr = '$form->{curr}'|;
+	      WHERE curr = |.$dbh->quote($form->{curr});
   $dbh->do($query) || $form->dberror($query);
  
   my $rc = $dbh->commit;
@@ -2334,7 +2358,7 @@ sub move {
   my $id;
   
   my $query = qq|SELECT rn FROM $form->{db}
-                 WHERE $form->{fld} = '$form->{id}'|;
+                 WHERE $form->{fld} = |.$dbh->quote($form->{id});
   my ($rn) = $dbh->selectrow_array($query);
 
   $query = qq|SELECT MAX(rn) FROM $form->{db}|;
@@ -2346,7 +2370,7 @@ sub move {
     ($id) = $dbh->selectrow_array($query);
 
     $query = qq|UPDATE $form->{db} SET rn = $rn + 1
-                WHERE $form->{fld} = '$form->{id}'|;
+                WHERE $form->{fld} = |.$dbh->quote($form->{id});
     $dbh->do($query) || $form->dberror($query);
 
     $query = qq|UPDATE $form->{db} SET rn = $rn
@@ -2360,7 +2384,7 @@ sub move {
     ($id) = $dbh->selectrow_array($query);
 
     $query = qq|UPDATE $form->{db} SET rn = $rn - 1
-                WHERE $form->{fld} = '$form->{id}'|;
+                WHERE $form->{fld} = |.$dbh->quote($form->{id});
     $dbh->do($query) || $form->dberror($query);
 
     $query = qq|UPDATE $form->{db} SET rn = $rn

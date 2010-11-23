@@ -552,6 +552,8 @@ sub delete_invoice {
   
   &reverse_invoice($dbh, $form);
   
+  $form->{id} *= 1;
+    
   my %audittrail = ( tablename  => 'ap',
                      reference  => $form->{invnumber},
 		     formname   => $form->{type},
@@ -646,7 +648,7 @@ sub post_invoice {
   
   my %updparts = ();
   
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $keepcleared = 1;
     $query = qq|SELECT id FROM ap
 		WHERE id = $form->{id}|;
@@ -1611,7 +1613,7 @@ sub retrieve_invoice {
   }
   
 
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     
     # retrieve invoice
     $query = qq|SELECT a.invnumber, a.ordnumber, a.quonumber,

@@ -202,7 +202,7 @@ sub post_transaction {
   my $vth;
   
   # check if id really exists
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $query = qq|SELECT id
                 FROM $table
  	        WHERE id = $form->{id}|;
@@ -596,7 +596,7 @@ sub reverse_vouchers {
   $form->{voucher}{transaction} = $ref;
   $sth->finish;
 
-  if ($form->{batchid}) {
+  if ($form->{batchid} *= 1) {
     $form->update_balance($dbh,
 			  'br',
 			  'amount',
@@ -658,6 +658,8 @@ sub delete_transaction {
   
   my $table = ($form->{vc} eq 'customer') ? 'ar' : 'ap';
   
+  $form->{id} *= 1;
+
   my %audittrail = ( tablename  => $table,
                      reference  => $form->{invnumber},
 		     formname   => 'transaction',
@@ -1343,6 +1345,8 @@ sub ship_to {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
+  $form->{"$form->{vc}_id"} *= 1;
+  
   AA->company_details($myconfig, $form, $dbh);
 
   my $table = ($form->{vc} eq 'customer') ? 'ar' : 'ap';
@@ -1373,7 +1377,7 @@ sub ship_to {
 		 JOIN $table a ON (a.id = s.trans_id)
 		 WHERE a.$form->{vc}_id = $form->{"$form->{vc}_id"}|;
 
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $query .= qq|
                  EXCEPT
 		 SELECT
@@ -1382,7 +1386,7 @@ sub ship_to {
 		 s.shiptocountry, s.shiptocontact, s.shiptophone,
 		 s.shiptofax, s.shiptoemail
 		 FROM shipto s
-		 WHERE s.trans_id = '$form->{id}'|;
+		 WHERE s.trans_id = $form->{id}|;
   }
 
   my $sth = $dbh->prepare($query);
