@@ -1658,7 +1658,7 @@ sub print_form {
 		    action	=> 'printed',
 		    id		=> $form->{id} );
 
-    if (defined %$old_form) {
+    if ($old_form) {
       $old_form->{printed} = $form->{printed};
       $old_form->{audittrail} .= $form->audittrail("", \%myconfig, \%audittrail);
     }
@@ -1691,7 +1691,7 @@ sub print_form {
 		    action	=> 'emailed',
 		    id		=> $form->{id} );
    
-    if (defined %$old_form) {
+    if ($old_form) {
       $old_form->{intnotes} = qq|$old_form->{intnotes}\n\n| if $old_form->{intnotes};
       $old_form->{intnotes} .= qq|[email]\n|
       .$locale->text('Date').qq|: $now\n|
@@ -1743,7 +1743,7 @@ sub print_form {
 		    action      => 'queued',
 		    id          => $form->{id} );
 
-    if (defined %$old_form) {
+    if ($old_form) {
       $old_form->{queued} = $form->{queued};
       $old_form->{audittrail} .= $form->audittrail("", \%myconfig, \%audittrail);
     }
@@ -1760,7 +1760,7 @@ sub print_form {
 
 
   # if we got back here restore the previous form
-  if (defined %$old_form) {
+  if ($old_form) {
 
     $old_form->{"${inv}number"} = $form->{"${inv}number"};
     $old_form->{dcn} = $form->{dcn};
