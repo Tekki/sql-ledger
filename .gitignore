@@ -1,0 +1,10 @@
+users
+sql-ledger.conf
+templates/*/
+locale/*.zip
+locales*.pl
+*.missing
+*~
+.project
+.includepath
+
