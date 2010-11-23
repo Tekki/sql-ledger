@@ -306,12 +306,14 @@ sub import_sales_invoice {
   my $sth = $dbh->prepare($query) || $form->dberror($query);
   $sth->execute;
 
-  $form->{taxaccounts} = "";
+  my %tax;
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-    $form->{taxaccounts} .= "$ref->{accno} ";
+    $tax{$ref->{accno}} = 1;
     $form->{"$ref->{accno}_rate"} = $ref->{rate};
   }
   $sth->finish;
+  $form->{taxaccounts} = "";
+  for (keys %tax) { $form->{taxaccounts} .= "$_ " }
   chop $form->{taxaccounts};
 
   # post invoice

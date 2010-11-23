@@ -429,7 +429,7 @@ sub jcitems {
 	      p.partnumber,
 	      pr.projectnumber, pr.description AS projectdescription,
 	      e.employeenumber, e.name AS employee,
-	      to_char(j.checkedin, 'WW') AS workweek, pr.parts_id,
+	      to_char(j.checkedin, 'IW') AS workweek, pr.parts_id,
 	      j.sellprice, p.inventory_accno_id, p.income_accno_id,
 	      j.notes
 	      FROM jcitems j

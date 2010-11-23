@@ -1683,7 +1683,7 @@ function CheckAll() {
   $form->{vc_ids} = join ' ', (keys %vc_ids);
   chop $form->{curr};
   
-  $form->hide_form(qw(todate title summary overdue callback arap vc department path login type report vc_ids curr));
+  $form->hide_form(qw(todate title summary overdue callback initcallback arap vc department path login type report vc_ids curr));
   $form->hide_form(@c, "$form->{vc}");
     
   if ($form->{arap} eq 'ar') {

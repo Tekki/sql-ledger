@@ -1975,49 +1975,34 @@ sub update {
 
 sub update_taxes {
 
-  my @a = split / /, $form->{taxaccounts};
-  my $ndx = $#a + 1;
-  my @t;
-  my $j;
-  my $k;
-  
-  foreach my $item (@a) {
-    my ($accno, $i) = split /_/, $item;
-    push @t, $accno;
-
-    if ($form->{"validto_$i"}) {
-      $j = $i + 1;
-      if ($form->{"taxdescription_$i"} ne $form->{"taxdescription_$j"}) {
-	#insert line
-	for ($j = $ndx + 1; $j > $i; $j--) {
-	  $k = $j - 1;
-	  for (qw(taxrate taxdescription taxnumber validto)) { $form->{"${_}_$j"} = $form->{"${_}_$k"} }
-	}
-	$ndx++;
-	$k = $i + 1;
-	for (qw(taxdescription taxnumber)) { $form->{"${_}_$k"} = $form->{"${_}_$i"} }
-	for (qw(taxrate validto)) { $form->{"${_}_$k"} = "" }
-	push @t, $accno;
-      }
-    } else {
-      # remove line
-      $j = $i + 1;
-      if ($form->{"taxdescription_$i"} eq $form->{"taxdescription_$j"}) {
-	  for ($j = $i + 1; $j <= $ndx; $j++) {
-	    $k = $j + 1;
-	    for (qw(taxrate taxdescription taxnumber validto)) { $form->{"${_}_$j"} = $form->{"${_}_$k"} }
-	  }
-	  $ndx--;
-	  splice @t, $i-1, 1;
-	}
-    }
-	
+  @tax = ();
+  @flds = qw(id taxrate taxdescription taxnumber accno validto);
+  foreach $item (split / /, $form->{taxaccounts}) {
+    ($id, $i) = split /_/, $item;
+    $form->{"id_$i"} = $id;
+    push @{ $tax{$id} }, { map { $_ => $form->{"${_}_$i"} } @flds };
   }
 
-  $i = 1;
+  foreach $item (keys %tax) {
+    $i = 0;
+    for $ref (@{$tax{$item}}) {
+      push @tax, $ref;
+      $i++;
+      $validto = $ref->{validto};
+      $id = $ref->{id};
+      $accno = $ref->{accno};
+      $taxdescription = $ref->{taxdescription};
+    }
+    if ($i > 1 && $validto) {
+      push @tax, { id => $id, accno => $accno, taxdescription => $taxdescription };
+    }
+  }
+
   $form->{taxaccounts} = "";
-  for (@t) {
-    $form->{taxaccounts} .= "${_}_$i ";
+  $i = 1;
+  for $ref (sort { $a->{accno} cmp $b->{accno} } @tax) {
+    $form->{taxaccounts} .= "$ref->{id}_$i ";
+    for (@flds) { $form->{"${_}_$i"} = $ref->{$_} }
     $i++;
   }
   chop $form->{taxaccounts};
@@ -2436,6 +2421,17 @@ sub save_defaults {
 
 
 sub save_taxes {
+
+  for (split / /, $form->{taxaccounts}) {
+    ($accno, $i) = split /_/, $_;
+    if ($accno eq $sameaccno && $i > 1) {
+      $j = $i - 1;
+      if (! $form->{"validto_$j"}) {
+	$form->error($locale->text('Valid To date missing for').qq| $form->{"taxdescription_$j"}|);
+      }
+    }
+    $sameaccno = $accno;
+  }
   
   if (AM->save_taxes(\%myconfig, \%$form)) {
     $form->redirect($locale->text('Taxes saved!'));
