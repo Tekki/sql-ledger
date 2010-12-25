@@ -1,0 +1,16 @@
+#======================================================================
+# SQL-Ledger Bugfix
+# Copyright (c) 2010
+#
+# Author: Tekki
+# License: GPL
+#
+#======================================================================
+#
+# Perl 5.12 depcrecated warnings
+#
+#======================================================================
+
+In Perl 5.12 on OpenSuse 11.3 the program crashes with deprecated
+warnings at different places. This branch tries to solve it.
+
