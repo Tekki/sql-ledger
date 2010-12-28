@@ -1,7 +1,7 @@
 -- Swiss German chart of accounts UTF-8
 -- Kontenrahmen für KMU in Produktion, Handel und Dienstleistungen
 --
--- Tekki, 2010-12-27
+-- Tekki, 2010-12-28
 
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('1', 'AKTIVEN', 'H', '1', 'A', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('10', 'UMLAUFVERMÖGEN', 'H', '1', 'A', '');
@@ -17,8 +17,10 @@
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('1109', 'Delkredere', 'A', '110', 'A', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('1130', 'Kurzfristige Aktivdarlehen', 'A', '110', 'A', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('1140', 'Vorauszahlungen an Lieferanten', 'A', '110', 'A', '');
- INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('1170', 'MWST Vorsteuer auf Aufwand', 'A', '110', 'A', 'AP_tax:IC_taxpart:IC_taxservice');
- INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('1171', 'MWST Vorsteuer auf Investitionen', 'A', '110', 'A', '');
+ INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('1171', 'MWST Vorsteuer auf Aufwand 2.5 %', 'A', '110', 'A', 'AP_tax:IC_taxpart:IC_taxservice');
+ INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('1172', 'MWST Vorsteuer auf Aufwand 3.8 %', 'A', '110', 'A', 'AP_tax:IC_taxpart:IC_taxservice');
+ INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('1173', 'MWST Vorsteuer auf Aufwand 8.0 %', 'A', '110', 'A', 'AP_tax:IC_taxpart:IC_taxservice');
+ INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('1174', 'MWST Vorsteuer auf Investitionen 8.0 %', 'A', '110', 'A', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('1176', 'Verrechnungssteuer', 'A', '110', 'A', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('120', 'Vorräte', 'H', '10', 'A', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('1200', 'Handelswaren', 'A', '120', 'A', 'IC');
@@ -145,6 +147,10 @@
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('8900', 'Steuern', 'A', '89', 'I', 'AP_amount');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('9', 'ABSCHLUSS', 'H', '9', 'I', '');
 --
+ INSERT INTO tax (chart_id,rate) VALUES ((SELECT id FROM chart WHERE accno = '1071'),0.025);
+ INSERT INTO tax (chart_id,rate) VALUES ((SELECT id FROM chart WHERE accno = '1072'),0.038);
+ INSERT INTO tax (chart_id,rate) VALUES ((SELECT id FROM chart WHERE accno = '1073'),0.080);
+ INSERT INTO tax (chart_id,rate) VALUES ((SELECT id FROM chart WHERE accno = '1074'),0.080);
  INSERT INTO tax (chart_id,rate) VALUES ((SELECT id FROM chart WHERE accno = '2011'),0.025);
  INSERT INTO tax (chart_id,rate) VALUES ((SELECT id FROM chart WHERE accno = '2012'),0.038);
  INSERT INTO tax (chart_id,rate) VALUES ((SELECT id FROM chart WHERE accno = '2013'),0.080);

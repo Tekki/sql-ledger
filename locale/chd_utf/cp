@@ -2,9 +2,9 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'AP'                          => 'Kreditoren',
-  'AP account missing!'         => 'Verbindlichkeit fehlt!',
+  'AP account missing!'         => 'Kreditorenkonto fehlt!',
   'AR'                          => 'Debitoren',
-  'AR account missing!'         => 'Forderung fehlt!',
+  'AR account missing!'         => 'Debitorenkonto fehlt!',
   'Accounting Menu'             => 'Kontoverwaltung',
   'Address'                     => 'Adresse',
   'All'                         => 'Alle',

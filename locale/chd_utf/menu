@@ -151,7 +151,6 @@ $self{texts} = {
   'Time Card'                   => 'Stempelkarte',
   'Time Cards'                  => 'Stempelkarten',
   'Transactions'                => 'Buchungen',
-  'Transfer Inventory'          => 'Bestand übertragen',
   'Translations'                => 'Übersetzungen',
   'Trial Balance'               => 'Saldenbilanz',
   'Type of Business'            => 'Branche',
