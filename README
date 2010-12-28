@@ -1,17 +1,17 @@
 #======================================================================
-# SQL-Ledger Translations
-# Copyright (c) 2010
+# SQL-Ledger Additions
+# Copyright (c) 2010-2011
 #
 # Author: Tekki
 # License: GPL
 #
 #======================================================================
 #
-# Additions German/Switzerland
+# All additions from Tekki repository
 #
 #======================================================================
 
-New translation "German/Switzerland 2" in folder locale/chd_utf
+This branch includes the following branches:
 
-Swiss SMB chart of accounts (Kontenrahmen für KMU in Produktion, Handel und
-Dienstleistungen), "Swiss-DE-KMU-UTF8".
+- chd (additions German/Switzerland)
+- perl512 (patch for Perl 5.12 deprecated warnings)
