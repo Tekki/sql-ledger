@@ -147,10 +147,10 @@
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('8900', 'Steuern', 'A', '89', 'I', 'AP_amount');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('9', 'ABSCHLUSS', 'H', '9', 'I', '');
 --
- INSERT INTO tax (chart_id,rate) VALUES ((SELECT id FROM chart WHERE accno = '1071'),0.025);
- INSERT INTO tax (chart_id,rate) VALUES ((SELECT id FROM chart WHERE accno = '1072'),0.038);
- INSERT INTO tax (chart_id,rate) VALUES ((SELECT id FROM chart WHERE accno = '1073'),0.080);
- INSERT INTO tax (chart_id,rate) VALUES ((SELECT id FROM chart WHERE accno = '1074'),0.080);
+ INSERT INTO tax (chart_id,rate) VALUES ((SELECT id FROM chart WHERE accno = '1171'),0.025);
+ INSERT INTO tax (chart_id,rate) VALUES ((SELECT id FROM chart WHERE accno = '1172'),0.038);
+ INSERT INTO tax (chart_id,rate) VALUES ((SELECT id FROM chart WHERE accno = '1173'),0.080);
+ INSERT INTO tax (chart_id,rate) VALUES ((SELECT id FROM chart WHERE accno = '1174'),0.080);
  INSERT INTO tax (chart_id,rate) VALUES ((SELECT id FROM chart WHERE accno = '2011'),0.025);
  INSERT INTO tax (chart_id,rate) VALUES ((SELECT id FROM chart WHERE accno = '2012'),0.038);
  INSERT INTO tax (chart_id,rate) VALUES ((SELECT id FROM chart WHERE accno = '2013'),0.080);
