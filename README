@@ -8,5 +8,8 @@
 #
 #======================================================================
 
-The unmodified SQL-Ledger from sql-ledger.com
-
+The branches are:
+- master: the unmodified SQL-Ledger from sql-ledger.com
+- chd: new translation German/Switzerland and Swiss SMB chart of accounts
+- perl512: patch for deprecated warnings in Perl 5.12
+- full: master, chd, perl512 merged together
