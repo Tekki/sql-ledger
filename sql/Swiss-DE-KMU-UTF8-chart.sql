@@ -4,7 +4,7 @@
 -- Tekki, 2010-12-28
 
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('1', 'AKTIVEN', 'H', '1', 'A', '');
- INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('10', 'UMLAUFVERMÖGEN', 'H', '1', 'A', '');
+ INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('10', 'Umlaufvermögen', 'H', '1', 'A', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('100', 'Flüssige Mittel und Wertschriften', 'H', '10', 'A', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('1000', 'Kasse', 'A', '100', 'A', 'AR_paid:AP_paid');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('1010', 'Post', 'A', '100', 'A', 'AR_paid:AP_paid');
@@ -59,7 +59,7 @@
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link, contra) VALUES ('1719', 'WB Marken', 'A', '170', 'A', '', '1');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('1720', 'Lizenzen', 'A', '170', 'A', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link, contra) VALUES ('1729', 'WB Lizenzen', 'A', '170', 'A', '', '1');
- INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('2', 'Passiven', 'H', '2', 'L', '');
+ INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('2', 'PASSIVEN', 'H', '2', 'L', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('20', 'Kurzfristiges Fremdkapital', 'H', '2', 'L', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('200', 'Kf. Verbindlichkeiten aus Lieferungen und Leistungen', 'H', '20', 'L', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('2000', 'Kreditoren', 'A', '200', 'L', 'AP');
@@ -73,10 +73,10 @@
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('2110', 'Schuldwechsel', 'A', '210', 'L', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('2120', 'Kurzfristige Darlehen', 'A', '210', 'L', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('220', 'Andere kf. Verbindlichkeiten', 'H', '20', 'L', '');
- INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('2200', 'Dividenden', 'A', '220', 'L', '');
+ INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('2200', 'Dividenden, Tantiemen', 'A', '220', 'L', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('230', 'Passive Rechnungsabgrenzung', 'H', '20', 'L', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('2300', 'Transitorische Passiven', 'A', '230', 'L', '');
- INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('2330', 'Kurzfristige Rückstellungen', 'A', '230', 'L', '');
+ INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('2310', 'Kurzfristige Rückstellungen', 'A', '230', 'L', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('24', 'Langfristiges Fremdkapital', 'H', '2', 'L', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('240', 'Langfristige Finanzverbindlichkeiten', 'H', '24', 'L', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('2400', 'Langfristige Darlehen', 'A', '240', 'L', '');
@@ -87,6 +87,7 @@
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('28', 'Eigenkapital', 'H', '2', 'L', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('280', 'Grundkapital', 'H', '28', 'L', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('2800', 'Stammkapital', 'A', '280', 'L', '');
+ INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('2810', 'Partizipationskapital', 'A', '280', 'L', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('290', 'Reserven, Bilanzgewinn', 'H', '28', 'L', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('2900', 'Gesetzliche Reserven', 'A', '290', 'L', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('2910', 'Andere Reserven', 'A', '290', 'L', '');
@@ -94,10 +95,10 @@
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('2995', 'Jahresgewinn', 'A', '290', 'L', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('3', 'BETRIEBSERTRAG AUS LIEFERUNGEN UND LEISTUNGEN', 'H', '3', 'I', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('3000', 'Produktertrag', 'A', '3', 'I', 'AR_amount:IC_sale');
+ INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('3090', 'Beständesänderung angefangene und fertige Arbeiten', 'A', '3', 'I', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('3200', 'Handelsertrag', 'A', '3', 'I', 'AR_amount:IC_sale');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('3400', 'Dienstleistungsertrag', 'A', '3', 'I', 'AR_amount:IC_income');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('3600', 'Übriger Betriebsertrag', 'A', '3', 'I', 'AR_amount');
- INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('3800', 'Beständesänderung angefangene und fertige Arbeiten', 'A', '3', 'I', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('3900', 'Debitorenverluste', 'A', '3', 'I', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('3950', 'Wechselkursertrag', 'A', '3', 'I', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('3955', 'Wechselkursverlust', 'A', '3', 'I', '');
@@ -111,17 +112,17 @@
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('5800', 'Übriger Personalaufwand', 'A', '5', 'E', 'AP_amount');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('6', 'SONSTIGER BETRIEBSAUFWAND', 'H', '6', 'E', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('6000', 'Raumaufwand', 'A', '6', 'E', 'AP_amount');
- INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('6100', 'Unterhalt, Reparaturen, Erwatz', 'A', '6', 'E', 'AP_amount');
+ INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('6100', 'Unterhalt, Reparaturen, Ersatz', 'A', '6', 'E', 'AP_amount');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('6200', 'Fahrzeugaufwand', 'A', '6', 'E', 'AP_amount');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('6300', 'Versicherungsaufwand', 'A', '6', 'E', 'AP_amount');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('6400', 'Energie- und Entsorgungsaufwand', 'A', '6', 'E', 'AP_amount');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('6500', 'Verwaltungs- und Informatikaufwand', 'A', '6', 'E', 'AP_amount');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('6600', 'Werbeaufwand', 'A', '6', 'E', 'AP_amount');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('6700', 'Übriger Betriebsaufwand', 'A', '6', 'E', 'AP_amount');
- INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('68', 'FINANZERFOLG', 'H', '6', 'E', '');
+ INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('68', 'Finanzerfolg', 'H', '6', 'E', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('6800', 'Zinsaufwand', 'A', '68', 'E', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('6850', 'Zinsertrag', 'A', '68', 'E', '');
- INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('69', 'ABSCHREIBUNGEN', 'H', '6', 'E', '');
+ INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('69', 'Abschreibungen', 'H', '6', 'E', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('6900', 'Abschreibungen', 'A', '69', 'E', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('7', 'BETRIEBLICHE NEBENERFOLGE', 'H', '7', 'I', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('74', 'Erfolg aus Finanzanlagen', 'H', '7', 'I', '');
@@ -146,6 +147,8 @@
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('89', 'Steuern', 'H', '8', 'I', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('8900', 'Steuern', 'A', '89', 'I', 'AP_amount');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('9', 'ABSCHLUSS', 'H', '9', 'I', '');
+ INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('9000', 'Erfolgsrechnung', 'A', '9', 'I', 'AP_amount');
+ INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('9100', 'Bilanz', 'A', '9', 'I', 'AP_amount');
 --
  INSERT INTO tax (chart_id,rate) VALUES ((SELECT id FROM chart WHERE accno = '1171'),0.025);
  INSERT INTO tax (chart_id,rate) VALUES ((SELECT id FROM chart WHERE accno = '1172'),0.038);

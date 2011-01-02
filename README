@@ -13,6 +13,5 @@
 
 This branch includes the following branches:
 
-- chd (additions German/Switzerland)
-- chf (additions French/Switzerland)
+- switzerland (German, French, Italian additions for Switzerland)
 - perl512 (patch for Perl 5.12 deprecated warnings)

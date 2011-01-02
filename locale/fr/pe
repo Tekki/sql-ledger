@@ -57,7 +57,6 @@ $self{texts} = {
   'Month'                       => 'Mois',
   'No open Projects!'           => 'Aucun Projet En-cours',
   'Notes'                       => 'Notes',
-  'Nothing selected!'           => 'Pas de sélection!',
   'Number'                      => 'Numéro',
   'Orders generated!'           => 'Commande Generee!',
   'Orphaned'                    => 'Orphelin',

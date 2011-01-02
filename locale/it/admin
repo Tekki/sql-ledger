@@ -103,6 +103,7 @@ $self{subs} = {
   'pg_database_administration'  => 'pg_database_administration',
   'pgpp_database_administration' => 'pgpp_database_administration',
   'save'                        => 'save',
+  'sybase_database_administration' => 'sybase_database_administration',
   'unlock_system'               => 'unlock_system',
   'update_dataset'              => 'update_dataset',
   'aggiungi_utente'             => 'add_user',
