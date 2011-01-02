@@ -89,10 +89,10 @@
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('2995', 'Bénéfice annuel', 'A', '290', 'L', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('3', 'RENDEMENT PROVENANT DES LIVRAISONS ET DES PRESTATIONS', 'H', '3', 'I', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('3000', 'Rendement des ventes de produits', 'A', '3', 'I', 'AR_amount:IC_sale');
+ INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('3090', 'Changements de position pour produits finis et semi-fabriqués', 'A', '3', 'I', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('3200', 'Rendement de la marchandise', 'A', '3', 'I', 'AR_amount:IC_sale');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('3400', 'Rendement des services', 'A', '3', 'I', 'AR_amount:IC_income');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('3600', 'Autres rendements', 'A', '3', 'I', 'AR_amount');
- INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('3800', 'Changements de position pour produits finis et semi-fabriqués', 'A', '3', 'I', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('3900', 'Pertes sur débiteurs', 'A', '3', 'I', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('3950', 'Perte sur taux de change', 'A', '3', 'I', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('3955', 'Bénéfice sur taux de change', 'A', '3', 'I', '');
