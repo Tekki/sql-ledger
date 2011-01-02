@@ -24,7 +24,6 @@ $self{texts} = {
   'Link Accounts'               => 'Collegamenti tra Conti',
   'List Price'                  => 'Prezzo di Listino',
   'Notes'                       => 'Note',
-  'Nothing selected!'           => 'Non hai selezionato nulla!',
   'Number'                      => 'Partita IVA',
   'Orphaned'                    => 'Orfano',
   'Project'                     => 'Progetto',

@@ -122,6 +122,7 @@ $self{texts} = {
   'Time Card'                   => 'Fiche de Temps',
   'Time Cards'                  => 'Fiche de Temps',
   'Transactions'                => 'Mouvements',
+  'Transfer Inventory'          => 'Transfert inventaire',
   'Translations'                => 'Traductions',
   'Trial Balance'               => 'Balance Globale',
   'Type of Business'            => 'Type d\'affaire',

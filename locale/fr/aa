@@ -54,6 +54,7 @@ $self{texts} = {
   'From'                        => 'De',
   'ID'                          => 'ID',
   'Include in Report'           => 'Inclure dans l\'état',
+  'Internal Notes'              => 'Notes internes',
   'Invoice'                     => 'Facture',
   'Invoice Date'                => 'Date de facturation',
   'Invoice Date missing!'       => 'Date de facture manquante!',
