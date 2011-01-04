@@ -14,7 +14,6 @@
 German:
 
 - new translation "German/Switzerland 2" in folder locale/chd_utf
-
 - Swiss SMB chart of accounts (Kontenrahmen für KMU in Produktion, Handel und
   Dienstleistungen), "Swiss-DE-KMU-UTF8".
 
@@ -23,9 +22,11 @@ French:
 - Swiss SMB chart of accounts (Cadres comptables suisses pour les petites et
   moyennes entreprises dans la production, le commerce et les services),
   "Swiss-FR-PME-UTF8".
+- standard translation (90 %) converted to UTF-8 in folder locale/fr_utf
 
 Italian:
 
 - Swiss SMB chart of accounts (Sistema dei conti svizzero per piccole e medie
   imprese nell' ambito della produzione, del commercio e dei servizi),
   "Swiss-IT-PMI-UTF8".
+- standard translation (55 %) converted to UTF-8 in folder locale/it_utf
