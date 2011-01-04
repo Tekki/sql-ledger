@@ -137,7 +137,7 @@
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('8210', 'Spese estranee alla ditta', 'A', '82', 'I', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('89', 'Imposte', 'H', '8', 'I', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('8900', 'Imposte', 'A', '89', 'I', 'AP_amount');
- INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('9', 'CHSIUSURA', 'H', '9', 'I', '');
+ INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('9', 'CHIUSURA', 'H', '9', 'I', '');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('9000', 'Conto economico', 'A', '9', 'I', 'AP_amount');
  INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('9100', 'Bilancio', 'A', '9', 'I', 'AP_amount');
 --
