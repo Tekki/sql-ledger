@@ -1103,8 +1103,7 @@ sub create_form {
 
 
   for $i (1 .. $form->{rowcount}) {
-    $form->{"discount_$i"} = $form->format_amount(\%myconfig, $form->{"discount_$i"} * 100);
-    for (qw(netweight grossweight volume)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}) }
+    for (qw(netweight grossweight volume discount)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}) }
 
     ($dec) = ($form->{"sellprice_$i"} =~ /\.(\d+)/);
     $dec = length $dec;
@@ -1619,7 +1618,7 @@ sub print_form {
   
   for (qw(name email)) { $form->{"user$_"} = $myconfig{$_} }
 
-  push @a, qw(company address tel fax businessnumber username useremail dcn rvc);
+  push @a, qw(companyemail companywebsite company address tel fax businessnumber username useremail dcn rvc);
 
   for (qw(notes intnotes)) { $form->{$_} =~ s/^\s+//g }
 
@@ -1658,7 +1657,7 @@ sub print_form {
 		    action	=> 'printed',
 		    id		=> $form->{id} );
 
-    if (defined %$old_form) {
+    if ($old_form) {
       $old_form->{printed} = $form->{printed};
       $old_form->{audittrail} .= $form->audittrail("", \%myconfig, \%audittrail);
     }
@@ -1691,7 +1690,7 @@ sub print_form {
 		    action	=> 'emailed',
 		    id		=> $form->{id} );
    
-    if (defined %$old_form) {
+    if ($old_form) {
       $old_form->{intnotes} = qq|$old_form->{intnotes}\n\n| if $old_form->{intnotes};
       $old_form->{intnotes} .= qq|[email]\n|
       .$locale->text('Date').qq|: $now\n|
@@ -1743,7 +1742,7 @@ sub print_form {
 		    action      => 'queued',
 		    id          => $form->{id} );
 
-    if (defined %$old_form) {
+    if ($old_form) {
       $old_form->{queued} = $form->{queued};
       $old_form->{audittrail} .= $form->audittrail("", \%myconfig, \%audittrail);
     }
@@ -1760,7 +1759,7 @@ sub print_form {
 
 
   # if we got back here restore the previous form
-  if (defined %$old_form) {
+  if ($old_form) {
 
     $old_form->{"${inv}number"} = $form->{"${inv}number"};
     $old_form->{dcn} = $form->{dcn};
