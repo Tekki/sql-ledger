@@ -1775,7 +1775,7 @@ sub print_form {
   
   @a = ();
   push @a, qw(partnumber description projectnumber projectdescription);
-  push @a, qw(company address tel fax businessnumber username useremail);
+  push @a, qw(companyemail companywebsite company address tel fax businessnumber username useremail);
   
   $form->format_string(@a);
 
@@ -1846,7 +1846,7 @@ sub print_form {
 
   $form->parse_template(\%myconfig, $userspath);
 
-  if (defined %$old_form) {
+  if ($old_form) {
 
     for (keys %$old_form) { $form->{$_} = $old_form->{$_} }
     for (qw(printed queued audittrail)) { $form->{$_} = $status{$_} }

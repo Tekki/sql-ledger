@@ -963,7 +963,7 @@ sub generate_income_statement {
   }
 
   # setup variables for the form
-  $form->format_string(qw(company address businessnumber));
+  $form->format_string(qw(companyemail companywebsite company address businessnumber));
   $form->{address} =~ s/\n/<br>/g;
 
   $form->{templates} = $myconfig{templates};
@@ -999,7 +999,7 @@ sub generate_balance_sheet {
   $form->{IN} = "balance_sheet.html";
 
   # setup company variables for the form
-  $form->format_string(qw(company address businessnumber));
+  $form->format_string(qw(companyemail companywebsite company address businessnumber));
   $form->{address} =~ s/\n/<br>/g;
 
   $form->{templates} = $myconfig{templates};
@@ -2494,7 +2494,7 @@ sub do_print_reminder {
   for (qw(name email)) { $form->{"user$_"} = $myconfig{$_} }
   
   # setup variables for the form
-  $form->format_string(qw(company address businessnumber username useremail tel fax));
+  $form->format_string(qw(companyemail companywebsite company address businessnumber username useremail tel fax));
   
   @a = qw(name address1 address2 city state zipcode country contact typeofcontact salutation firstname lastname);
   push @a, "$form->{vc}number", "$form->{vc}phone", "$form->{vc}fax", "$form->{vc}taxnumber";
@@ -2553,7 +2553,7 @@ sub do_print_statement {
   for (qw(name email)) { $form->{"user$_"} = $myconfig{$_} }
   
   # setup variables for the form
-  $form->format_string(qw(company address businessnumber username useremail tel fax companyemail companywebsite));
+  $form->format_string(qw(companyemail companywebsite company address businessnumber username useremail tel fax));
   
   @a = qw(name address1 address2 city state zipcode country contact typeofcontact salutation firstname lastname);
   push @a, "$form->{vc}number", "$form->{vc}phone", "$form->{vc}fax", "$form->{vc}taxnumber";
