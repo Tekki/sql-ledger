@@ -7,13 +7,10 @@
 # License: GPL
 #
 #======================================================================
+#
+# Patch for Perl 5.12 systems
+#
+#======================================================================
 
-The branches are:
-- master: the unmodified SQL-Ledger from sql-ledger.com with version tags
-- full: master, switzerland, perl512 merged together
-- switzerland:
-  German: chart of accounts, new translation "German/Switzerland 2"
-  French: chart of accounts, translation converted to UTF-8
-  Italian: chart of accounts, translation converted to UTF-8
-- perl512: patch for deprecated warnings in Perl 5.12
-
+SQL-Ledger on Perl 5.12 systems like openSUSE crashes with deprecated
+warnings. This patch solves the problem.
