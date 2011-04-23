@@ -2010,7 +2010,7 @@ sub print_form {
   
   AA->company_details(\%myconfig, \%$form);
 
-  $form->format_string(qw(company address));
+  $form->format_string(qw(companyemail companywebsite company address));
 
   $form->{templates} = "$myconfig{templates}";
   $form->{IN} = "$form->{formname}.tex";

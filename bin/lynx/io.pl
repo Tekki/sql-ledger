@@ -1103,8 +1103,7 @@ sub create_form {
 
 
   for $i (1 .. $form->{rowcount}) {
-    $form->{"discount_$i"} = $form->format_amount(\%myconfig, $form->{"discount_$i"} * 100);
-    for (qw(netweight grossweight volume)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}) }
+    for (qw(netweight grossweight volume discount)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}) }
 
     ($dec) = ($form->{"sellprice_$i"} =~ /\.(\d+)/);
     $dec = length $dec;
@@ -1619,7 +1618,7 @@ sub print_form {
   
   for (qw(name email)) { $form->{"user$_"} = $myconfig{$_} }
 
-  push @a, qw(company address tel fax businessnumber username useremail dcn rvc);
+  push @a, qw(companyemail companywebsite company address tel fax businessnumber username useremail dcn rvc);
 
   for (qw(notes intnotes)) { $form->{$_} =~ s/^\s+//g }
 

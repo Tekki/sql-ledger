@@ -1775,7 +1775,7 @@ sub print_form {
   
   @a = ();
   push @a, qw(partnumber description projectnumber projectdescription);
-  push @a, qw(company address tel fax businessnumber username useremail);
+  push @a, qw(companyemail companywebsite company address tel fax businessnumber username useremail);
   
   $form->format_string(@a);
 

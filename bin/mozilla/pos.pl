@@ -737,7 +737,7 @@ sub print_form {
 
   $form->{username} = $myconfig{name};
 
-  push @a, qw(company address tel fax businessnumber username);
+  push @a, qw(companyemail companywebsite company address tel fax businessnumber username);
   $form->format_string(@a);
 
   $form->{templates} = "$myconfig{templates}";
