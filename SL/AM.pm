@@ -1748,6 +1748,7 @@ $myconfig->{dboptions};
     use SL::Mailer;
     $mail = new Mailer;
 
+    $mail->{charset} = $form->{charset};
     $mail->{to} = qq|"$myconfig->{name}" <$myconfig->{email}>|;
     $mail->{from} = qq|"$myconfig->{name}" <$myconfig->{email}>|;
     $mail->{subject} = "SQL-Ledger Backup / $myconfig->{dbname}-$form->{version}-$t[5]$t[4]$t[3].sql$suffix";

@@ -9,9 +9,14 @@
 #======================================================================
 #
 # Patch to make message id and boundary compliant with RFC 2392
+# and to encode headers correctly
 #
 #======================================================================
 
 Because the boundary is identical with the first part of the message
 id, some securiy systems mark mails sent by SQL-Ledger as spam. This
 patch constructs them in a different way. Suggested by Marcus Schopen.
+
+Secondly, the patch corrects the encoding of the mail headers; until
+now, special characters in headers weren't encoded at all and backup
+mails encoded in Latin-1 instead of the actual character set.
