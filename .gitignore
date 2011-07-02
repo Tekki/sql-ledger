@@ -7,4 +7,5 @@ locales*.pl
 *~
 .project
 .includepath
+.settings
 
