@@ -199,6 +199,7 @@ $self{texts} = {
   'Sales Invoice'               => 'Ausgangsrechnung',
   'Sales Invoices'              => 'Ausgangsrechnungen',
   'Sales Order'                 => 'Kundenauftrag',
+  'Sales Order Requirements'    => 'Bedarf für Kundenaufträge',
   'Sales Orders'                => 'Kundenaufträge',
   'Save'                        => 'Speichern',
   'Save as new'                 => 'als neu speichern',
