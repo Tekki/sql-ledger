@@ -1214,10 +1214,25 @@ sub update_recurring {
 
 }
 
+sub check_access {
+	my ($self, $form, $folders, $errormessage) = @_;
+	
+	$errormessage ||= 'Access Denied!';
+	$form->error("$form->{file}: $errormessage") unless @$folders;
+	my $folderstring = join "|^", @$folders;
+	$_ = $form->{file};
+	s|\w+/\.\./||;
+	s|~||g;
+	s|\.+/||g;
+	s|//|/|g;
+	$form->error("$_: $errormessage") unless /^$folderstring/ and -f $_;
+	$form->{file} = $_;
+}
  
 sub load_template {
   my ($self, $form) = @_;
   
+  $self->check_access(@_);
   open(TEMPLATE, "$form->{file}") or $form->error("$form->{file} : $!");
 
   while (<TEMPLATE>) {
@@ -1232,6 +1247,7 @@ sub load_template {
 sub save_template {
   my ($self, $form) = @_;
   
+  $self->check_access(@_);
   open(TEMPLATE, ">$form->{file}") or $form->error("$form->{file} : $!");
   
   # strip 

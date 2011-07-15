@@ -1,18 +1,18 @@
 #======================================================================
-# SQL-Ledger Additions
-# Copyright (c) 2010-2011
+# SQL-Ledger ERP
+# Copyright (c) 2006-2011
 #
-# Author: Tekki
+#  Author: DWS Systems Inc
+#     Web: http://www.sql-ledger.com.
 # License: GPL
 #
 #======================================================================
-#
-# All additions from Tekki repository
-#
-#======================================================================
 
-This branch includes the following branches:
-
-- switzerland (German, French, Italian additions for Switzerland)
-- perl512 (patch for Perl 5.12 deprecated warnings)
-- messageid (patch to make mail messages compliant with RFC 2392)
+The branches are:
+- master: the unmodified SQL-Ledger from sql-ledger.com with version tags
+- full: master, switzerland, perl512, messageid and security01 merged together
+- switzerland:
+  German: chart of accounts, new translation "German/Switzerland 2"
+  French: chart of accounts, translation converted to UTF-8
+  Italian: chart of accounts, translation converted to UTF-8
+- perl512: patch for deprecated warnings in Perl 5.12

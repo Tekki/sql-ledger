@@ -43,6 +43,8 @@ $ENV{PATH} .= ":/usr/local/bin";
 #$ENV{DB2INSTANCE} = "db2inst1";
 #$ENV{DB2_HOME} = "/opt/IBM/db2/V8.1/";
 
+# Folders with read and write access
+@accessfolders = qw|templates css|;
 
 1;
 
