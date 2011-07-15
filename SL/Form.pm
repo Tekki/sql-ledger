@@ -318,6 +318,7 @@ sub header {
   <title>$self->{titlebar}</title>
   <META NAME="robots" CONTENT="noindex,nofollow" />
   $favicon
+  $self->{customheader}
   $stylesheet
   $charset
 </head>
@@ -1387,7 +1388,7 @@ sub format_string {
                                tex  => [ quotemeta('\\'), '&', '\n',
 			                 '\r', '\$', '%', '_', '#',
 					 quotemeta('^'), '{', '}', '<', '>',
-					 '£' ],
+					 'ï¿½' ],
 			       utf  => [ quotemeta('\\'), '&', '\n',
 			                 '\r', '\$', '%', '_', '#',
 					 quotemeta('^'), '{', '}', '<', '>']
@@ -1401,7 +1402,7 @@ sub format_string {
 			     quotemeta('^') => '\^\\', '{' => '\{',
 			     '}' => '\}', '<' => '$<$', '>' => '$>$',
 		             '\n' => '\newline ', '\r' => '\newline ',
-		             '£' => '\pounds ', quotemeta('\\') => '/'
+		             'ï¿½' => '\pounds ', quotemeta('\\') => '/'
 			   }
 	        );
 
