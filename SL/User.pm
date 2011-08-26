@@ -350,6 +350,8 @@ sub dbsources {
 sub dbcreate {
   my ($self, $form) = @_;
 
+  for (qw(db encoding)) { $form->{$_} =~ s/;//g }
+
   my %dbcreate = ( 'Pg' => qq|CREATE DATABASE "$form->{db}"|,
                 'Sybase' => qq|CREATE DATABASE $form->{db}|,
                'Oracle' => qq|CREATE USER "$form->{db}" DEFAULT TABLESPACE USERS TEMPORARY TABLESPACE TEMP IDENTIFIED BY "$form->{db}"|);
@@ -478,6 +480,8 @@ sub process_query {
 
 sub dbdelete {
   my ($self, $form) = @_;
+
+  $form->{db} =~ s/;//g;
 
   my %dbdelete = ( 'Pg' => qq|DROP DATABASE "$form->{db}"|,
                 'Sybase' => qq|DROP DATABASE $form->{db}|,
@@ -949,7 +953,8 @@ sub save_member {
     $self->{dbpasswd} = unpack 'u', $self->{dbpasswd};
     
     # check if login is in database
-    my $dbh = DBI->connect($self->{dbconnect}, $self->{dbuser}, $self->{dbpasswd}, {AutoCommit => 0}) or $self->error($DBI::errstr);
+    my $dbh = DBI->connect($self->{dbconnect}, $self->{dbuser}, $self->{dbpasswd}, {AutoCommit => 0});
+    $self->error($DBI::errstr) unless $dbh;
     
     # add login to employee table if it does not exist
     my $login = $self->{login};

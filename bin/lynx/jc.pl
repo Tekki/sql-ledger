@@ -937,7 +937,7 @@ sub update {
     $form->{checkedin} = $hour{in} * 3600 + $form->{inmin} * 60 + $form->{insec};
     $form->{checkedout} = $hour{out} * 3600 + $form->{outmin} * 60 + $form->{outsec};
 
-    if ($form->{checkedin} > $form->{checkedout}) {
+    if ($form->{checkedout} && ($form->{checkedin} > $form->{checkedout})) {
       $form->{checkedout} = 86400 - ($form->{checkedin} - $form->{checkedout});
       $form->{checkedin} = 0;
     }
@@ -1369,6 +1369,7 @@ sub list_cards {
 	  <th align=left>
 	    $sameemployeenumber
 	  </th>
+	</tr>  
         <tr class=listheading>
 |;
 

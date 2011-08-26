@@ -131,7 +131,7 @@ sub create_links {
   $form->create_links($form->{ARAP}, \%myconfig, $form->{vc});
   $form->{readonly} ||= $readonly;
 
-  @a = qw(duedate taxincluded terms cashdiscount discountterms payment_accno payment_method);
+  @a = qw(duedate taxincluded terms cashdiscount discountterms payment_accno payment_method exchangerate);
   push @a, $form->{ARAP};
   for (@a) { $temp{$_} = $form->{$_} }
 

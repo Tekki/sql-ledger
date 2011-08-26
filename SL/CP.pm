@@ -130,8 +130,19 @@ sub get_openvc {
 		 AND a.onhold = '0'
 		 AND NOT a.id IN (SELECT id
 		                  FROM semaphore)|;
-		 
-  my $arap = ($form->{vc} eq 'customer') ? 'ar' : 'ap';
+
+  my $arap;
+  my $buysell;
+  
+  $form->{vc} =~ s/;//g;
+
+  if ($form->{vc} eq 'customer') {
+    $arap = 'ar';
+    $buysell = 'buy';
+  } else {
+    $arap = 'ap';
+    $buysell = 'sell';
+  }
 
   my %defaults = $form->get_defaults($dbh, \@{['namesbynumber']});
   
@@ -185,8 +196,6 @@ sub get_openvc {
       $where .= qq| AND lower(vc.$form->{vc}number) LIKE '$var'|;
     }
   }
-
-  my $buysell = ($arap eq 'ar') ? 'buy' : 'sell';
 
   my $sortorder = "name";
   if ($defaults{namesbynumber}) {
@@ -275,8 +284,13 @@ sub retrieve {
   
   $form->{id} *= 1;
 
+  $form->{vc} = 'vendor';
+  $form->{arap} = 'ap';
+
   if ($form->{vc} eq 'customer') {
     $ml = -1;
+    $form->{vc} = 'customer';
+    $form->{arap} = 'ar';
   }
  
   my $query = qq|SELECT a.id, a.invnumber, a.transdate, a.duedate,
@@ -424,6 +438,8 @@ sub get_openinvoices {
   # remove locks
   $form->remove_locks($myconfig, $dbh, $form->{arap});
   
+  $form->{vc} =~ s/;//g;
+
   my $where = qq|WHERE a.$form->{vc}_id = $form->{"$form->{vc}_id"}
 	         AND a.amount != a.paid
 		 AND a.approved = '1'
@@ -589,7 +605,15 @@ sub post_payment {
   
   my %defaults = $form->get_defaults($dbh, \@{['fx%_accno_id', 'cdt']});
 
-  my $buysell = ($form->{vc} eq 'customer') ? 'buy' : 'sell';
+  my $buysell;
+  
+  if ($form->{vc} eq 'customer') {
+    $form->{arap} = 'ar';
+    $buysell = 'buy';
+  } else {
+    $form->{arap} = 'ap';
+    $buysell = 'sell';
+  }
   
   my $ml;
   my $where;
@@ -995,6 +1019,8 @@ sub invoice_ids {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
+
+  $form->{vc} =~ s/;//g;
 
   my $datepaid = ($form->{datepaid}) ? "date '$form->{datepaid}'" : 'current_date';
   my $query = qq|SELECT DISTINCT a.id, a.invnumber, a.transdate, a.duedate,

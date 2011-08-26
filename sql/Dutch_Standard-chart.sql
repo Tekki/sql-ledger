@@ -1,6 +1,7 @@
 -- Nederlandstalig Rekeningschema conform het Decimaal Stelsel.
 -- Dutch Chart of Accounts following the Decimal Standards as set by the famous Philips Accounting Department
 -- PDF Tammes, Fri, 29 Mar 2002 ( remarks or questions to finance@bermuda-holding.com )
+-- Updated Sun, 23 January 2011 ( added lines to automagically insert Gifi codes, fixed some A/L errors)
 -- Just delete any accounts not needed after importing the scheme, beats entering all manually (or add -- at the beginning)
 -- Account groups (first number in accountnumber defines to which group it belongs)
 -- 0 : Vaste Activa, Eigen Vermogen, Voorzieningen en lang vreemd vermogen => Fixed Assets, Capital, Accruals and long term loans
@@ -21,19 +22,19 @@
 --
 INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('0000','Vaste Activa & Eigen Vermogen','H','0000','A','');
 INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('0010','Terreinen','A','0010','A','');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('0015','Afschrijving Terreinen','A','0015','A','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('0015','Afschrijving Terreinen','A','0015','L','');
 INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('0200','Gebouwen','A','0200','A','');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('0205','Afschrijving Gebouwen','A','0205','A','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('0205','Afschrijving Gebouwen','A','0205','L','');
 INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('0230','Inventaris','A','0230','A','');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('0235','Afschrijving Inventaris','A','0235','A','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('0235','Afschrijving Inventaris','A','0235','L','');
 INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('0240','Computers','A','0240','A','');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('0245','Afschrijving Computers','A','0245','A','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('0245','Afschrijving Computers','A','0245','L','');
 INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('0250','Auto','A','0250','A','');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('0255','Afschrijving Auto','A','0255','A','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('0255','Afschrijving Auto','A','0255','L','');
 INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('0260','Machines','A','0260','A','');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('0265','Afschrijving Machines','A','0265','A','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('0265','Afschrijving Machines','A','0265','L','');
 INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('0290','Goodwill','A','0290','A','');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('0295','Afschrijving Goodwill','A','0295','A','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('0295','Afschrijving Goodwill','A','0295','L','');
 INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('0370','Overige Leningen u/g','A','0370','A','');
 INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('0380','Aandelen & Effecten','A','0380','A','');
 INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('0381','Beleggingen Spaarbeleg','A','0381','A','');
@@ -80,31 +81,32 @@ INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES 
 INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1321','Rekening Courant < A','A','1321','A','');
 INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1322','Rekening Courant < B','A','1322','A','');
 INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1340','Goederen ontvangen / GO','A','1340','A','');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1500','Te betalen loonheffing','A','1500','A','');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1520','Te betalen Sociale Lasten','A','1520','A','');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1530','Te betalen Pensioenpremies','A','1530','A','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1500','Te betalen loonheffing','A','1500','L','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1520','Te betalen Sociale Lasten','A','1520','L','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1530','Te betalen Pensioenpremies','A','1530','L','');
 INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1600','Crediteuren','A','1600','L','AP');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1605','Nog te Ontvangen Facturen / NOF','A','1605','A','');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1610','Te betalen tantiemes','A','1610','A','');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1615','Te betalen Vennootschapsbelasting','A','1615','A','');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1620','Interimdividend','A','1620','A','');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1630','Te betalen dividend','A','1630','A','');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1640','Te betalen dividendbelasting','A','1640','A','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1605','Nog te Ontvangen Facturen / NOF','A','1605','L','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1610','Te betalen tantiemes','A','1610','L','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1615','Te betalen Vennootschapsbelasting','A','1615','L','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1620','Interimdividend','A','1620','L','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1630','Te betalen dividend','A','1630','L','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1640','Te betalen dividendbelasting','A','1640','L','');
 INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1650','Aandeelhouders nog te storten','A','1650','A','');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1700','Te betalen interest','A','1700','A','');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1710','Te betalen coupons','A','1710','A','');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1770','Uitgelote obligaties','A','1770','A','');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1800','Te vorderen BTW hoog','A','1800','L','AR_tax:AP_tax:IC_taxpart:IC_taxservice');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1801','Te vorderen BTW laag','A','1801','L','AR_tax:AP_tax:IC_taxpart:IC_taxservice');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1810','Te betalen BTW hoog','A','1810','L','AR_tax:AP_tax:IC_taxpart:IC_taxservice');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1811','Te betalen BTW laag','A','1811','L','AR_tax:AP_tax:IC_taxpart:IC_taxservice');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1850','Saldo BTW','A','1850','L','');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1941','Rekening Courant > A','A','1941','A','');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1942','Rekening Courant > B','A','1942','A','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1700','Te betalen interest','A','1700','L','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1710','Te betalen coupons','A','1710','L','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1770','Uitgelote obligaties','A','1770','L','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1800','Te vorderen BTW hoog','A','1800','A','AR_tax:AP_tax:IC_taxpart:IC_taxservice');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1801','Te vorderen BTW laag','A','1800','A','AR_tax:AP_tax:IC_taxpart:IC_taxservice');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1810','Te betalen BTW hoog','A','1800','L','AR_tax:AP_tax:IC_taxpart:IC_taxservice');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1811','Te betalen BTW laag','A','1800','L','AR_tax:AP_tax:IC_taxpart:IC_taxservice');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1850','Saldo BTW','A','1800','L','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1941','Rekening Courant > A','A','1941','L','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1942','Rekening Courant > B','A','1942','L','');
 INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1960','Vooruitbetaalde bedragen','A','1960','A','');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1970','Vooruitontvangen bedragen','A','1970','A','');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1980','Nog te ontvangen bedragen','A','1980','A','');
-INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1990','Nog te betalen bedragen','A','1990','A','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1970','Vooruitontvangen bedragen','A','1970','L','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1980','Nog te ontvangen bedragen','A','1960','A','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1990','Nog te betalen bedragen','A','1990','L','');
+INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('1991','Nog te betalen vakantiegeld','A','1970','L','');
 INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('2000','Tussenrekeningen','H','2000','L','');
 INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('2100','Vraagposten','A','2100','A','');
 INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('2400','Onbekende betalingen','A','2400','A','');
@@ -223,6 +225,40 @@ INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES 
 INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('9900','Vennootschapsbelasting','A','9900','E','');
 INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('9999','Overboekingsrekening','A','9999','I','');
 --
+INSERT INTO gifi (accno,description) VALUES ('0240','Computers');
+INSERT INTO gifi (accno,description) VALUES ('0250','Auto');
+INSERT INTO gifi (accno,description) VALUES ('0500','Eigen Vermogen');
+INSERT INTO gifi (accno,description) VALUES ('1000','Liquide Middelen');
+INSERT INTO gifi (accno,description) VALUES ('1200','Debiteuren');
+INSERT INTO gifi (accno,description) VALUES ('1600','Crediteuren');
+INSERT INTO gifi (accno,description) VALUES ('1800','BTW');
+INSERT INTO gifi (accno,description) VALUES ('1960','Transitorische Activa');
+INSERT INTO gifi (accno,description) VALUES ('1970','Transitorische Passiva');
+INSERT INTO gifi (accno,description) VALUES ('1190','Kruisposten');
+INSERT INTO gifi (accno,description) VALUES ('4500','Huisvestingskosten');
+INSERT INTO gifi (accno,description) VALUES ('4610','Autokosten');
+INSERT INTO gifi (accno,description) VALUES ('4920','Verzekeringen');
+INSERT INTO gifi (accno,description) VALUES ('4740','Reis en Verblijfkosten');
+INSERT INTO gifi (accno,description) VALUES ('4100','Loonkosten');
+INSERT INTO gifi (accno,description) VALUES ('9610','Subsidies');
+INSERT INTO gifi (accno,description) VALUES ('4900','Bureaukosten');
+INSERT INTO gifi (accno,description) VALUES ('4960','Publiciteitskosten');
+INSERT INTO gifi (accno,description) VALUES ('9600','Giften & donaties');
+INSERT INTO gifi (accno,description) VALUES ('9300','Huuropbrengsten');
+INSERT INTO gifi (accno,description) VALUES ('4940','Administratie & advieskosten');
+INSERT INTO gifi (accno,description) VALUES ('0230','Inventaris & Computers');
+INSERT INTO gifi (accno,description) VALUES ('1100','Bankrekeningen ');
+INSERT INTO gifi (accno,description) VALUES ('8520','Opbrengst Verkopen');
+INSERT INTO gifi (accno,description) VALUES ('9030','Rentebaten');
+INSERT INTO gifi (accno,description) VALUES ('9130','Rentelasten');
+INSERT INTO gifi (accno,description) VALUES ('4300','Afschrijvingen');
+INSERT INTO gifi (accno,description) VALUES ('4200','Kosten externe medewerkers');
+INSERT INTO gifi (accno,description) VALUES ('4750','Representatiekosten');
+INSERT INTO gifi (accno,description) VALUES ('4800','Kas- en betalingsverschillen');
+INSERT INTO gifi (accno,description) VALUES ('4950','Promotie & Advertentiekosten');
+INSERT INTO gifi (accno,description) VALUES ('4980','Bankkosten, porti');
+INSERT INTO gifi (accno,description) VALUES ('8020','Kostprijs Barverkopen');
+INSERT INTO gifi (accno,description) VALUES ('9810','Belasting voorgaande jaren');
 --
 insert into tax (chart_id,rate) values ((select id from chart where accno = '1800'),0.19);
 insert into tax (chart_id,rate) values ((select id from chart where accno = '1801'),0.06);
