@@ -25,7 +25,9 @@ sub create_links {
   my $accno;
   my $description;
   my $translation;
- 
+
+  $form->{db} =~ s/;//g;
+
   if ($form->{id} *= 1) {
     $query = qq/SELECT ct.*,
                 ad.id AS addressid, ad.address1, ad.address2, ad.city,
@@ -241,6 +243,8 @@ sub save {
     $form->{$_} = $form->parse_amount($myconfig, $form->{$_});
     $form->{$_} /= 100;
   }
+
+  $form->{db} =~ s/;//g;
 
   for (qw(id terms discountterms taxincluded addressid contactid remittancevoucher)) { $form->{$_} *= 1 }
   
@@ -507,6 +511,7 @@ sub delete {
   my $dbh = $form->dbconnect_noauto($myconfig);
 
   $form->{id} *= 1;
+  $form->{db} =~ s/;//g;
 
   # delete customer/vendor
   my $query = qq|DELETE FROM $form->{db}
@@ -555,6 +560,8 @@ sub search {
   $form->{sort} = ($form->{sort}) ? $form->{sort} : "name";
   my @a = qw(name);
   my $sortorder = $form->sort_order(\@a);
+
+  $form->{db} =~ s/;//g;
 
   my $ref;
   my $var;
@@ -881,6 +888,8 @@ sub get_history {
   my $var;
   my $table;
 
+  $form->{db} =~ s/;//g;
+
   # setup ASC or DESC
   $form->sort_order();
   
@@ -1041,6 +1050,8 @@ sub pricelist {
   my $sth;
   my $ref;
 
+  for (qw(id db)) { $form->{$_} =~ s/;//g }
+
   if ($form->{db} eq 'customer') {
     $query = qq|SELECT DISTINCT pg.id, pg.partsgroup
 		FROM parts p
@@ -1117,7 +1128,8 @@ sub save_pricelist {
   my $dbh = $form->dbconnect_noauto($myconfig);
   
   $form->{id} *= 1;
-  
+  $form->{db} =~ s/;//g;
+
   my $query = qq|DELETE FROM parts$form->{db}
                  WHERE $form->{db}_id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
@@ -1221,7 +1233,9 @@ sub ship_to {
   my $dbh = $form->dbconnect($myconfig);
 
   my $query;
-  
+
+  for (qw(id db)) { $form->{$_} =~ s/;//g }
+
   my $table = ($form->{db} eq 'customer') ? 'ar' : 'ap';
 
   if ($form->{id} *= 1) {

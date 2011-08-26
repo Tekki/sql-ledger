@@ -1489,12 +1489,13 @@ sub get_jcitems {
 
   my $query;
   my $ref;
+  $form->{vc} = ($form->{vc} eq 'customer') ? 'customer' : 'vendor';
 
   $query = qq|SELECT j.id, j.description, j.qty - j.allocated AS qty,
 	       j.sellprice, j.parts_id, pr.$form->{vc}_id, j.project_id,
 	       j.checkedin::date AS transdate, j.notes,
                c.name AS $form->{vc}, c.$form->{vc}number, pr.projectnumber,
-	       p.partnumber
+	       p.partnumber, e.name AS employee
                FROM jcitems j
 	       JOIN project pr ON (pr.id = j.project_id)
 	       JOIN employee e ON (e.id = j.employee_id)

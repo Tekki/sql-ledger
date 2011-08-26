@@ -64,7 +64,7 @@ function sf(){
 <table>
   <tr>
     <th align=right>|.$locale->text('Password').qq|</th>
-    <td><input type=password name=password value="$form->{password}" size=30></td>
+    <td><input type=password name=password size=30></td>
     <td><input type=submit class=submit value="|.$locale->text('Continue').qq|"></td>
   </tr>
 </table>

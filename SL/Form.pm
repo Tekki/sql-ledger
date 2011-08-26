@@ -78,7 +78,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.8.32";
+  $self->{version} = "2.8.34";
   $self->{dbversion} = "2.8.10";
 
   bless $self, $type;
@@ -94,8 +94,12 @@ sub debug {
     for (sort keys %$self) { print FH "$_ = $self->{$_}\n" }
     close(FH);
   } else {
-    print "\n";
+    if ($ENV{HTTP_USER_AGENT}) {
+      $self->header;
+      print "<pre>";
+    }
     for (sort keys %$self) { print "$_ = $self->{$_}\n" }
+    print "</pre>" if $ENV{HTTP_USER_AGENT};
   }
   
 } 
@@ -1423,33 +1427,51 @@ sub datediff {
   my ($yy1, $mm1, $dd1);
   my ($yy2, $mm2, $dd2);
   
-  if (($date1 && $date1 =~ /\D/) && ($date2 && $date2 =~ /\D/)) {
-
-    if ($myconfig->{dateformat} =~ /^yy/) {
-      ($yy1, $mm1, $dd1) = split /\D/, $date1;
-      ($yy2, $mm2, $dd2) = split /\D/, $date2;
-    }
-    if ($myconfig->{dateformat} =~ /^mm/) {
-      ($mm1, $dd1, $yy1) = split /\D/, $date1;
-      ($mm2, $dd2, $yy2) = split /\D/, $date2;
-    }
-    if ($myconfig->{dateformat} =~ /^dd/) {
-      ($dd1, $mm1, $yy1) = split /\D/, $date1;
-      ($dd2, $mm2, $yy2) = split /\D/, $date2;
-    }
+  if ($date1 && $date2) {
     
-    $dd1 *= 1;
-    $dd2 *= 1;
-    $mm1--;
-    $mm2--;
-    $mm1 *= 1;
-    $mm2 *= 1;
-    $yy1 += 2000 if length $yy1 == 2;
-    $yy2 += 2000 if length $yy2 == 2;
+    if (($date1 =~ /\D/) && ($date2 =~ /\D/)) {
 
+      if ($myconfig->{dateformat} =~ /^yy/) {
+        ($yy1, $mm1, $dd1) = split /\D/, $date1;
+        ($yy2, $mm2, $dd2) = split /\D/, $date2;
+      }
+      if ($myconfig->{dateformat} =~ /^mm/) {
+        ($mm1, $dd1, $yy1) = split /\D/, $date1;
+        ($mm2, $dd2, $yy2) = split /\D/, $date2;
+      }
+      if ($myconfig->{dateformat} =~ /^dd/) {
+        ($dd1, $mm1, $yy1) = split /\D/, $date1;
+        ($dd2, $mm2, $yy2) = split /\D/, $date2;
+      }
+      
+      $yy1 += 2000 if length $yy1 == 2;
+      $yy2 += 2000 if length $yy2 == 2;
+
+    } else {
+      # ISO
+      $date1 =~ /(....)(..)(..)/;
+      $yy1 = $1;
+      $mm1 = $2;
+      $dd1 = $3;
+
+      $date2 =~ /(....)(..)(..)/;
+      $yy2 = $1;
+      $mm2 = $2;
+      $dd2 = $3;
+
+    }
   }
 
-  sprintf("%.0f", (timelocal(0,0,12,$dd2,$mm2,$yy2) - timelocal(0,0,12,$dd1,$mm1,$yy1))/86400);
+  $dd1 *= 1;
+  $dd2 *= 1;
+  $mm1--;
+  $mm2--;
+  $mm1 *= 1;
+  $mm2 *= 1;
+
+  if ($dd1 && $dd2) {
+    sprintf("%.0f", (timelocal(0,0,12,$dd2,$mm2,$yy2) - timelocal(0,0,12,$dd1,$mm1,$yy1))/86400);
+  }
   
 }
 
@@ -1517,23 +1539,44 @@ sub add_date {
       $dd = $3;
     }
 
-    if ($unit eq 'days') {
+    if ($unit =~ /day/i) {
       $diff = $repeat * 86400;
     }
-    if ($unit eq 'weeks') {
+    if ($unit =~ /week/i) {
       $diff = $repeat * 604800;
     }
-    if ($unit eq 'months') {
-      $diff = $mm + $repeat;
+    if ($unit =~ /month/i) {
+      my $m = 0;
+      my @days = ( 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 );
+      my @d;
 
-      my $whole = int($diff / 12);
-      $yy += $whole;
+      if ($yy % 4) {
+        @days = ( 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 );
+      }
 
-      $mm = ($diff % 12) + 1;
-      $diff = 0;
+      if ($repeat < 0) {
+        if ($dd < $days[$mm-1]) {
+          @d = splice(@days,0,$mm - 1);
+        } else {
+          @d = splice(@days,0,$mm);
+        }
+      } else {
+        @d = splice(@days,0,$mm - 1);
+      }
+      push(@days, @d);
+      if ($repeat < 0) {
+        @days = reverse @days;
+      }
+      for (1 .. abs($repeat)) {
+        $diff += $days[$m] * 86400;
+        $m++;
+      }
+      $diff *= -1 if $repeat < 0;
     }
-    if ($unit eq 'years') {
-      $yy++;
+    if ($unit =~ /year/i) {
+      $yy += $repeat;
+      $dd = 29 if (!($yy % 4) && ($dd eq '28') && ($mm eq '02'));
+      $dd = 28 if (($yy % 4) && ($dd eq '29') && ($mm eq '02'));
     }
 
     $mm--;
@@ -1617,7 +1660,7 @@ sub dbconnect {
   my ($self, $myconfig) = @_;
 
   # connect to database
-  my $dbh = DBI->connect($myconfig->{dbconnect}, $myconfig->{dbuser}, $myconfig->{dbpasswd}) or $self->dberror;
+  my $dbh = DBI->connect($myconfig->{dbconnect}, $myconfig->{dbuser}, $myconfig->{dbpasswd}, {AutoCommit => 1}) or $self->dberror;
 
   # set db options
   if ($myconfig->{dboptions}) {
@@ -2157,11 +2200,11 @@ sub all_projects {
                  FROM project
 		 WHERE $where|;
 
-  if ($form->{language_code}) {
+  if ($self->{language_code}) {
     $query = qq|SELECT pr.*, t.description AS translation
                 FROM project pr
 		LEFT JOIN translation t ON (t.trans_id = pr.id)
-		WHERE t.language_code = '$form->{language_code}'|;
+		WHERE t.language_code = '$self->{language_code}'|;
   }
 
   if ($transdate) {
@@ -2871,7 +2914,7 @@ sub get_recurring {
 	      LEFT JOIN recurringprint sp ON (s.id = sp.id)
 	      WHERE s.id = $self->{id}~;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute || $self->dberror($query);
 
   for (qw(email print)) { $self->{"recurring$_"} = "" }
   
@@ -3429,7 +3472,7 @@ sub fdld {
   }
  
   $d1 = $self->format_date($myconfig->{dateformat}, "$self->{yyyy}$self->{mm}01");
-  $d2 = $self->format_date($myconfig->{dateformat}, $self->dayofmonth("yyyymmdd", "$self->{yyyy}$form->{mm}01"));
+  $d2 = $self->format_date($myconfig->{dateformat}, $self->dayofmonth("yyyymmdd", "$self->{yyyy}$self->{mm}01"));
 
   if (exists $self->{longformat}) {
     $self->{fdm} = $locale->date($myconfig, $self->{fdm}, $self->{longformat});
@@ -3652,10 +3695,10 @@ sub date {
 	$longdate = &text($self, $self->{$longmonth}[--$mm])." $dd $yy";
       }
     } else {
-	$mm++;
-	$dd = substr("0$dd", -2);
-	$mm = substr("0$mm", -2);
-	$longdate = "$mm$spc$dd$spc$yy"; 
+      $mm++;
+      $dd = substr("0$dd", -2);
+      $mm = substr("0$mm", -2);
+      $longdate = "$mm$spc$dd$spc$yy"; 
 
       if ($longformat ne "") {
 	$longdate = &text($self, $self->{$longmonth}[--$mm])." $dd $yy";

@@ -130,15 +130,6 @@ sub report {
 	</tr>
 |;
 
-    $selectto = qq|
-        <tr>
-	  <th align=right></th>
-	  <td>
-	  <select name=month>$selectaccountingmonth</select>
-	  <select name=year>$selectaccountingyear</select>
-	  </td>
-	</tr>
-|;
   }
 
 
@@ -209,6 +200,23 @@ sub report {
 	</tr>
 |;
 
+  $includeperiod = qq|
+        <tr>
+          <th></th>
+          <td colspan=3>
+          <input name=includeperiod class=radio type=radio value=month>&nbsp;|.$locale->text('Months').qq|
+          <input name=includeperiod class=radio type=radio value=quarter>&nbsp;|.$locale->text('Quarters').qq|
+          <input name=includeperiod class=radio type=radio value=year checked>&nbsp;|.$locale->text('Year').qq|
+          </td>
+        </tr>
+
+	<tr>
+	  <th align=right></th>
+	  <td colspan=3><input name=previousyear class=checkbox type=checkbox>&nbsp;|.$locale->text('Previous Year').qq|
+          <input name=reversedisplay class=checkbox type=checkbox>&nbsp;|.$locale->text('Reverse Display').qq|
+          </td>
+	</tr>
+|;
 
   $form->header;
  
@@ -278,29 +286,6 @@ sub report {
     }
 
     print qq|
-
-	<tr>
-	  <th align=right>|.$locale->text('Compare to').qq|</th>
-	</tr>
-	<tr>
-	  <th align=right>|.$locale->text('From').qq|</th>
-	  <td colspan=3><input name=comparefromdate size=11 class=date title="$myconfig{dateformat}"> <b>|.$locale->text('To').qq|</b> <input name=comparetodate size=11 class=date title="$myconfig{dateformat}"></td>
-	</tr>
-|;
-
-    if ($selectto) {
-      print qq|
-        <tr>
-	  <th align=right>|.$locale->text('Period').qq|</th>
-	  <td>
-	  <select name=comparemonth>$selectaccountingmonth</select>
-	  <select name=compareyear>$selectaccountingyear</select>
-	  </td>
-	</tr>
-|;
-    }
-
-    print qq|
 	$curr
 	<tr>
 	  <th align=right>|.$locale->text('Decimalplaces').qq|</th>
@@ -317,10 +302,12 @@ sub report {
 
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Include in Report').qq|</th>
-	  <td colspan=3><input name=l_heading class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Heading').qq|
+	  <td colspan=3><input name=l_heading class=checkbox type=checkbox value=Y checked>&nbsp;|.$locale->text('Heading').qq|
 	  <input name=l_subtotal class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Subtotal').qq|
-	  <input name=l_accno class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Account Number').qq|</td>
+	  <input name=l_accno class=checkbox type=checkbox value=Y checked>&nbsp;|.$locale->text('Account Number').qq|</td>
 	</tr>
+
+        $includeperiod
 |;
   }
 
@@ -330,30 +317,14 @@ sub report {
     print qq|
 	<tr>
 	  <th align=right>|.$locale->text('as at').qq|</th>
-	  <td><input name=asofdate size=11 class=date title="$myconfig{dateformat}" value=$form->{asofdate}></td>
+	  <td><input name=todate size=11 class=date title="$myconfig{dateformat}" value=$form->{todate}></td>
 |;
 
    if ($selectfrom) {
      print qq|
 	  <td>
-	  <select name=asofmonth>$selectaccountingmonth</select>
-	  <select name=asofyear>$selectaccountingyear</select>
-	  </td>
-|;
-   }
-
-   print qq|
-	</tr>
-
-	  <th align=right nowrap>|.$locale->text('Compare to').qq|</th>
-	  <td><input name=compareasofdate size=11 class=date title="$myconfig{dateformat}"></td>
-	  <td>
-|;
-
-   if ($selectto) {
-     print qq|
-	  <select name=compareasofmonth>$selectaccountingmonth</select>
-	  <select name=compareasofyear>$selectaccountingyear</select>
+	  <select name=tomonth>$selectaccountingmonth</select>
+	  <select name=toyear>$selectaccountingyear</select>
 	  </td>
 |;
    }
@@ -376,10 +347,12 @@ sub report {
 
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Include in Report').qq|</th>
-	  <td><input name=l_heading class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Heading').qq|
+	  <td><input name=l_heading class=checkbox type=checkbox value=Y checked>&nbsp;|.$locale->text('Heading').qq|
 	  <input name=l_subtotal class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Subtotal').qq|
-	  <input name=l_accno class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Account Number').qq|</td>
+	  <input name=l_accno class=checkbox type=checkbox value=Y checked>&nbsp;|.$locale->text('Account Number').qq|</td>
 	</tr>
+
+        $includeperiod
 |;
   }
 
@@ -658,7 +631,6 @@ sub report {
 	  <th align=right>|.$locale->text('To').qq|</th>
 	  <td><input name=todate size=11 class=date title="$myconfig{dateformat}"></td>
 	</tr>
-	$selectto
 	<input type=hidden name=action value="$form->{nextsub}">
 	$summary
 	<tr>
@@ -921,90 +893,388 @@ sub continue { &{$form->{nextsub}} };
 
 sub generate_income_statement {
 
-  $form->{padding} = "&nbsp;&nbsp;";
-  $form->{bold} = "<strong>";
-  $form->{endbold} = "</strong>";
-  $form->{br} = "<br>";
-  
-  RP->income_statement(\%myconfig, \%$form);
+  if (! ($form->{fromdate} || $form->{todate})) {
+    if ($form->{fromyear} && $form->{frommonth}) {
+      ($form->{fromdate}, $form->{todate}) = $form->from_to($form->{fromyear}, $form->{frommonth}, $form->{interval});
+    }
+  }
+
+  RP->income_statement(\%myconfig, \%$form, \%$locale);
 
   ($form->{department}) = split /--/, $form->{department};
   ($form->{projectnumber}) = split /--/, $form->{projectnumber};
-  
-  $form->{period} = $locale->date(\%myconfig, $form->current_date(\%myconfig), 1);
-  $form->{todate} = $form->current_date(\%myconfig) unless $form->{todate};
 
-  # if there are any dates construct a where
-  if ($form->{fromdate} || $form->{todate}) {
-    
-    unless ($form->{todate}) {
-      $form->{todate} = $form->current_date(\%myconfig);
-    }
-
-    $longtodate = $locale->date(\%myconfig, $form->{todate}, 1);
-    $shorttodate = $locale->date(\%myconfig, $form->{todate}, 0);
-    
-    $longfromdate = $locale->date(\%myconfig, $form->{fromdate}, 1);
-    $shortfromdate = $locale->date(\%myconfig, $form->{fromdate}, 0);
-    
-    $form->{this_period} = "$shortfromdate<br>\n$shorttodate";
-    $form->{period} = $locale->text('for Period').qq|<br>\n$longfromdate |.$locale->text('To').qq| $longtodate|;
-  }
-
-  if ($form->{comparefromdate} || $form->{comparetodate}) {
-    $longcomparefromdate = $locale->date(\%myconfig, $form->{comparefromdate}, 1);
-    $shortcomparefromdate = $locale->date(\%myconfig, $form->{comparefromdate}, 0);
-    
-    $longcomparetodate = $locale->date(\%myconfig, $form->{comparetodate}, 1);
-    $shortcomparetodate = $locale->date(\%myconfig, $form->{comparetodate}, 0);
-    
-    $form->{last_period} = "$shortcomparefromdate<br>\n$shortcomparetodate";
-    $form->{period} .= "<br>\n$longcomparefromdate ".$locale->text('To').qq| $longcomparetodate|;
-  }
-
-  # setup variables for the form
   $form->format_string(qw(companyemail companywebsite company address businessnumber));
   $form->{address} =~ s/\n/<br>/g;
 
-  $form->{templates} = $myconfig{templates};
+  $timeperiod = $locale->date(\%myconfig, $form->{fromdate}, $form->{longformat}) .qq| | .$locale->text('To') .qq| | .$locale->date(\%myconfig, $form->{todate}, $form->{longformat});
 
-  $form->{IN} = "income_statement.html";
-  
-  $form->parse_template;
+  $form->header;
+
+  print qq|
+<body>
+
+<table width=100%>
+  <tr>
+    <th>$form->{company}<br>
+    $form->{address}
+    </th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <th>|;
+
+  print $locale->text('Income Statement');
+  print qq|<br>|.$locale->text('for Period');
+
+  print qq|<br>$timeperiod
+    </th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <th>$form->{department}
+    <br>$form->{projectnumber}
+    </th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>
+      <table width=100%>
+|;
+
+
+  print qq|
+        <tr>
+          <td></td>
+|;
+
+  $this = "this";
+  $previous = "previous";
+  @periods = reverse sort { $a <=> $b } keys %{ $form->{period} };
+  pop @periods;
+  unshift @periods, "0";
+  if ($form->{reversedisplay}) {
+    @periods = reverse @periods;
+    if ($form->{previousyear}) {
+      $this = "previous";
+      $previous = "this";
+    }
+  }
+
+  $colspan = 1;
+  for $period (@periods) {
+    $colspan++;
+    print qq|<th align=right>$form->{period}{$period}{$this}{fromdate}<br>$form->{period}{$period}{$this}{todate}</th>|;
+    if ($form->{previousyear}) {
+      $colspan++;
+      print qq|<th align=right>$form->{period}{$period}{$previous}{fromdate}<br>$form->{period}{$period}{$previous}{todate}</th>|;
+    }
+  }
+
+  print qq|
+        </tr>
+|;
+
+  %accounts = ( I => $locale->text('Income'),
+                E => $locale->text('Expenses')
+              );
+
+  %spacer = ( H => '',
+              A => '&nbsp;&nbsp;&nbsp;'
+            );
+
+  $ml = 1;
+
+  for $category (qw(I E)) {
+    $ml *= -1 if $category eq 'E';
+    &section_display;
+  }
+
+  print qq|
+        <tr height="15"></tr>
+        <tr>
+          <th align=left>|.$locale->text('Income / (Loss)').qq|</th>|;
+
+    for $period (@periods) {
+      print qq|
+          <th align=right>|.$form->format_amount(\%myconfig, $total{$period}{$this}, $form->{decimalplaces}).qq|</th>|;
+      if ($form->{previousyear}) {
+        print qq|
+          <th align=right>|.$form->format_amount(\%myconfig, $total{$period}{$previous}, $form->{decimalplaces}).qq|</th>|;
+      }
+    }
+
+  print qq|
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>
+|;
+
+}
+
+
+sub section_display {
+
+  $subtotal = 0;
+
+  print qq|
+        <tr class=listheading>
+          <th align=left colspan=$colspan>$accounts{$category}</th>
+        </tr>|;
+
+  for $accno (sort keys %{ $form->{$category} }) {
+    if ($subtotal && (($form->{$category}{$accno}{$this}{0}{charttype} eq 'H') || ($form->{$category}{$accno}{$previous}{0}{charttype} eq 'H'))) {
+      &section_subtotal;
+    }
+
+    $subtotal = 1;
+
+    $i++; $i %= 2;
+    print qq|
+        <tr class=listrow$i>
+          <th align=left nowrap>$spacer{$form->{accounts}{$accno}{charttype}}|;
+          
+        if (($form->{$category}{$accno}{$this}{0}{charttype} eq 'H') || ($form->{$category}{$accno}{$previous}{0}{charttype} eq 'H')) {
+          if ($form->{l_heading}) {
+            if ($form->{l_accno}) {
+              print qq|$accno - $form->{accounts}{$accno}{description}</th>|;
+            } else {
+              print qq|$form->{accounts}{$accno}{description}</th>|;
+            }
+          }
+        } else {
+          if ($form->{l_accno}) {
+            print qq|$accno - |;
+          }
+          print qq|$form->{accounts}{$accno}{description}</th>|;
+        }
+
+        for $period (@periods) {
+          if ($form->{$category}{$accno}{$this}{$period}{charttype} eq 'H') {
+            $subtotal{accno} = $form->{accounts}{$accno}{description};
+            $subtotal{$this}{$period} = $form->{$category}{$accno}{$this}{$period}{amount} * $ml;
+            $total{$category}{$period}{$this} += $form->{$category}{$accno}{$this}{$period}{amount} * $ml;
+            $total{$period}{$this} += $form->{$category}{$accno}{$this}{$period}{amount};
+            $form->{$category}{$accno}{$this}{$period}{amount} = 0;
+          }
+
+          print qq|<td align=right>|;
+          print $form->format_amount(\%myconfig, $form->{$category}{$accno}{$this}{$period}{amount} * $ml, $form->{decimalplaces});
+          print qq|</td>|;
+          if ($form->{previousyear}) {
+            if ($form->{$category}{$accno}{$previous}{$period}{charttype} eq 'H') {
+              $subtotal{accno} = $form->{accounts}{$accno}{description};
+              $subtotal{$previous}{$period} = $form->{$category}{$accno}{$previous}{$period}{amount} * $ml;
+              $total{$category}{$period}{$previous} += $form->{$category}{$accno}{$previous}{$period}{amount} * $ml;
+              $total{$period}{$previous} += $form->{$category}{$accno}{$previous}{$period}{amount};
+              $form->{$category}{$accno}{$previous}{$period}{amount} = 0;
+            }
+
+            print qq|<td align=right>|;
+            print $form->format_amount(\%myconfig, $form->{$category}{$accno}{$previous}{$period}{amount} * $ml, $form->{decimalplaces});
+            print qq|</td>|;
+          }
+        }
+
+    print qq|
+        </tr>
+|;
+    }
+
+  &section_subtotal;
+
+  print qq|
+        <tr class=listtotal>
+          <th align=left>|.$locale->text('Total').qq| $accounts{$category}</th>
+|;
+  for $period (@periods) {
+    print qq|
+            <th align=right>|.$form->format_amount(\%myconfig, $total{$category}{$period}{$this}, $form->{decimalplaces}).qq|</th>|;
+    if ($form->{previousyear}) {
+      print qq|
+          <th align=right>|.$form->format_amount(\%myconfig, $total{$category}{$period}{$previous}, $form->{decimalplaces}).qq|</th>|;
+    }
+  }
+
+  print qq|
+        </tr>
+        <tr>
+          <td colspan=$colspan>&nbsp;</td>
+        </tr>
+|;
+
+}
+
+
+sub section_subtotal {
+
+  return unless $form->{l_subtotal};
+
+  $i++; $i %= 2;
+  print qq|
+    <tr class=listrow$i>
+      <th align=left nowrap>$subtotal{accno}</th>|;
+
+  for $period (@periods) {
+    print qq|<td align=right>|;
+    print $form->format_amount(\%myconfig, $subtotal{$this}{$period}, $form->{decimalplaces});
+    print qq|</td>|;
+    if ($form->{previousyear}) {
+      print qq|<td align=right>|;
+      print $form->format_amount(\%myconfig, $subtotal{$previous}{$period}, $form->{decimalplaces});
+      print qq|</td>|;
+    }
+    $subtotal{$this}{$period} = 0;
+    $subtotal{$previous}{$period} = 0;
+  }
+
+  print qq|
+        </tr>
+        <tr>
+          <td colspan=$colspan>&nbsp;</td>
+        </tr>
+|;
 
 }
 
 
 sub generate_balance_sheet {
 
-  $form->{padding} = "&nbsp;&nbsp;";
-  $form->{bold} = "<b>";
-  $form->{endbold} = "</b>";
-  $form->{br} = "<br>";
-  
-  RP->balance_sheet(\%myconfig, \%$form);
+  if ($form->{todate}) {
+    if ($form->{toyear} && $form->{tomonth}) {
+      if ($form->{todate} !~ /\W/) {
+        $form->{todate} = substr("0$form->{todate}", -2);
+        $form->{todate} = "$form->{toyear}$form->{tomonth}$form->{todate}";
+      }
+    }
+  } else {
+    if ($form->{toyear} && $form->{tomonth}) {
+      ($_, $form->{todate}) = $form->from_to($form->{toyear}, $form->{tomonth});
+    }
+  }
 
-  $form->{asofdate} = $form->current_date(\%myconfig) unless $form->{asofdate};
-  $form->{period} = $locale->date(\%myconfig, $form->current_date(\%myconfig), 1);
-  
+  RP->balance_sheet(\%myconfig, \%$form, \%$locale);
+
   ($form->{department}) = split /--/, $form->{department};
-  
-  # define Current Earnings account
-  $padding = ($form->{l_heading}) ? $form->{padding} : "";
-  push(@{$form->{equity_account}}, $padding.$locale->text('Current Earnings'));
-
-  $form->{this_period} = $locale->date(\%myconfig, $form->{asofdate}, 0);
-  $form->{last_period} = $locale->date(\%myconfig, $form->{compareasofdate}, 0);
-
-  $form->{IN} = "balance_sheet.html";
 
   # setup company variables for the form
   $form->format_string(qw(companyemail companywebsite company address businessnumber));
   $form->{address} =~ s/\n/<br>/g;
 
-  $form->{templates} = $myconfig{templates};
-	  
-  $form->parse_template;
+  $form->header;
+
+  print qq|
+<body>
+
+<table width=100%>
+  <tr>
+    <th>$form->{company}<br>
+    $form->{address}
+    </th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <th>|;
+
+  print $locale->text('Balance Sheet');
+  print qq|<br>|.$locale->text('as at');
+
+  print qq|<br>|;
+  print $locale->date(\%myconfig, $form->{todate}, $form->{longformat});
+  print qq|
+    </th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <th>$form->{department}
+    </th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>
+      <table width=100%>
+        <tr>
+          <td></td>
+|;
+
+  $this = "this";
+  $previous = "previous";
+  @periods = sort { $a <=> $b } keys %{ $form->{period} };
+  if ($form->{reversedisplay}) {
+    @periods = reverse @periods;
+    if ($form->{previousyear}) {
+      $this = "previous";
+      $previous = "this";
+    }
+  }
+
+  $colspan = 1;
+  for $period (@periods) {
+    $colspan++;
+    print qq|<th align=right>$form->{period}{$period}{$this}{todate}</th>|;
+    if ($form->{previousyear}) {
+      $colspan++;
+      print qq|<th align=right>$form->{period}{$period}{$previous}{todate}</th>|;
+    }
+  }
+
+  print qq|
+        </tr>
+|;
+
+  %accounts = ( A => $locale->text('Assets'),
+                L => $locale->text('Liabilities'),
+                Q => $locale->text('Equity')
+              );
+
+  %spacer = ( H => '',
+              A => '&nbsp;&nbsp;&nbsp;'
+            );  
+
+  $ml = -1;
+
+  for $category (qw(A L Q)) {
+    $ml = 1 if $category eq 'L';
+    &section_display;
+  }
+
+  print qq|
+        <tr height="5"></tr>
+        <tr>
+          <th align=left nowrap>|.$locale->text('Current Earnings').qq|</th>|;
+  for $period (@periods) {
+    $currentearnings = $total{A}{$period}{$this} - $total{L}{$period}{$this} - $total{Q}{$period}{$this};
+    print qq|
+          <td align=right>|.$form->format_amount(\%myconfig, $currentearnings, $form->{decimalplaces}).qq|</td>|;
+    if ($form->{previousyear}) {
+      $currentearnings = $total{A}{$period}{$previous} - $total{L}{$period}{$previous} - $total{Q}{$period}{$previous};
+
+    print qq|
+          <td align=right>|.$form->format_amount(\%myconfig, $currentearnings, $form->{decimalplaces}).qq|</td>|;
+    }
+  }
+
+  print qq|
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+|;
+
+  if ($form->{currency} ne $form->{defaultcurrency}) {
+    print $locale->text('All amounts in')." $form->{currency} ".$locale->text('converted to')." $form->{currency} @ $form->{exchangerate}";
+  }
+
+  print qq|
+</body>
+</html>
+|;
 
 }
 

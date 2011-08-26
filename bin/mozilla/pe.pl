@@ -2259,6 +2259,7 @@ sub project_jcitems_list {
   $i = 1;
   foreach $ref (@{ $form->{jcitems} }) {
     
+    $form->{"employee_$i"} = $ref->{employee};
     $form->{"$form->{vc}_$i"} = $ref->{$form->{vc}};
     $form->{"$form->{vc}number{_}$i"} = $ref->{"$form->{vc}number"};
 
@@ -2331,13 +2332,14 @@ sub jcitems {
   }
   push @column_index, qw(partnumber description);
   push @column_index, "itemnotes" if !$form->{summary};
-  push @column_index, qw(qty amount);
+  push @column_index, qw(employee qty amount);
 
   $column_header{id} = qq|<th>&nbsp;</th>|;
   $column_header{transdate} = qq|<th class=listheading>|.$locale->text('Date').qq|</th>|;
   $column_header{partnumber} = qq|<th class=listheading>|.$locale->text('Service Code').qq|<br>|.$locale->text('Part Number').qq|</th>|;
   $column_header{projectnumber} = qq|<th class=listheading>|.$locale->text('Project Number').qq|</th>|;
   $column_header{description} = qq|<th class=listheading>|.$locale->text('Description').qq|</th>|;
+  $column_header{employee} = qq|<th class=listheading>|.$locale->text('Employee').qq|</th>|;
   $column_header{itemnotes} = qq|<th class=listheading>|.$locale->text('Notes').qq|</th>|;
   $column_header{name} = qq|<th class=listheading>$vc</th>|;
   $column_header{"$form->{vc}number"} = qq|<th class=listheading>|.$locale->text($vcnumber).qq|</th>|;

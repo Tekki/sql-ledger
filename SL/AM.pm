@@ -1748,6 +1748,7 @@ $myconfig->{dboptions};
     use SL::Mailer;
     $mail = new Mailer;
 
+    $mail->{charset} = $form->{charset};
     $mail->{to} = qq|"$myconfig->{name}" <$myconfig->{email}>|;
     $mail->{from} = qq|"$myconfig->{name}" <$myconfig->{email}>|;
     $mail->{subject} = "SQL-Ledger Backup / $myconfig->{dbname}-$form->{version}-$t[5]$t[4]$t[3].sql$suffix";
@@ -2357,8 +2358,10 @@ sub move {
   
   my $id;
   
+  for (qw(db fld id)) { $form->{$_} =~ s/;//g }
+
   my $query = qq|SELECT rn FROM $form->{db}
-                 WHERE $form->{fld} = |.$dbh->quote($form->{id});
+                 WHERE $form->{fld} = '$form->{id}'|;
   my ($rn) = $dbh->selectrow_array($query);
 
   $query = qq|SELECT MAX(rn) FROM $form->{db}|;
@@ -2370,7 +2373,7 @@ sub move {
     ($id) = $dbh->selectrow_array($query);
 
     $query = qq|UPDATE $form->{db} SET rn = $rn + 1
-                WHERE $form->{fld} = |.$dbh->quote($form->{id});
+                WHERE $form->{fld} = '$form->{id}';
     $dbh->do($query) || $form->dberror($query);
 
     $query = qq|UPDATE $form->{db} SET rn = $rn
@@ -2384,7 +2387,7 @@ sub move {
     ($id) = $dbh->selectrow_array($query);
 
     $query = qq|UPDATE $form->{db} SET rn = $rn - 1
-                WHERE $form->{fld} = |.$dbh->quote($form->{id});
+                WHERE $form->{fld} = '$form->{id}';
     $dbh->do($query) || $form->dberror($query);
 
     $query = qq|UPDATE $form->{db} SET rn = $rn
