@@ -40,53 +40,28 @@ sub yearend_statement {
   $query = qq|DELETE FROM acc_trans
               WHERE trans_id = ?|;
   my $ath = $dbh->prepare($query) || $form->dberror($query);
-	      
+
+  $query = qq|DELETE FROM yearend
+              WHERE trans_id = ?|;
+  my $yth = $dbh->prepare($query) || $form->dberror($query);
+
   foreach $id (@trans_id) {
     $sth->execute($id);
     $ath->execute($id);
+    $yth->execute($id);
 
     $sth->finish;
     $ath->finish;
+    $yth->finish;
   }
   
-  $form->{decimalplaces} *= 1;
-
-  my @categories = qw(I E);
-
-  for (@categories) {
-    $form->{$_} = &get_accounts($form, $dbh, $form->{fromdate}, $form->{todate}, $_);
+  for (qw(I E)) {
+    %{ $form->{$_} } = &get_accounts($form, $dbh, $form->{fromdate}, $form->{todate}, $_);
   }
   
   # disconnect
   $dbh->disconnect;
 
-  # now we got $form->{I}{accno}{ }
-  # and $form->{E}{accno}{  }
-  
-  my %account = ( 'I' => { 'label' => 'income',
-                           'labels' => 'income',
-			   'ml' => 1 },
-		  'E' => { 'label' => 'expense',
-		           'labels' => 'expenses',
-			   'ml' => -1 }
-		);
-  
-  for (@categories) {
-    foreach $key (sort keys %{ $form->{$_} }) {
-      if ($form->{$_}{$key}{charttype} eq 'A') {
-	$form->{"total_$account{$_}{labels}_this_period"} += $form->{$_}{$key}{amount} * $account{$_}{ml};
-      }
-    }
-  }
-
-
-  # totals for income and expenses
-  $form->{total_income_this_period} = $form->round_amount($form->{total_income_this_period}, $form->{decimalplaces});
-  $form->{total_expenses_this_period} = $form->round_amount($form->{total_expenses_this_period}, $form->{decimalplaces});
-
-  # total for income/loss
-  $form->{total_this_period} = $form->{total_income_this_period} - $form->{total_expenses_this_period};
-  
 }
 
 

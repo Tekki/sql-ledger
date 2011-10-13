@@ -2850,9 +2850,6 @@ sub yearend {
 
 <form method=post action=$form->{script}>
 
-<input type=hidden name=decimalplaces value=$form->{precision}>
-<input type=hidden name=l_accno value=Y>
-
 <table width=100%>
   <tr>
     <th class=listtop>$form->{title}</th>
@@ -2890,10 +2887,12 @@ sub yearend {
 
 <hr size=3 noshade>
 
-<input type=hidden name=nextsub value=generate_yearend>
 |;
 
-  $form->hide_form(qw(path login));
+  $form->{l_accno} = "Y";
+  $form->{nextsub} = "generate_yearend";
+
+  $form->hide_form(qw(l_accno nextsub precision path login));
   
   print qq|
 <input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">|;
@@ -2915,8 +2914,8 @@ sub generate_yearend {
   $form->{rowcount} = 1;
   for (keys %{ $form->{I} }) {
     if ($form->{I}{$_}{charttype} eq "A") {
-      $form->{"debit_$form->{rowcount}"} = $form->{I}{$_}{this};
-      $earnings += $form->{I}{$_}{this};
+      $form->{"debit_$form->{rowcount}"} = $form->{I}{$_}{amount};
+      $earnings += $form->{I}{$_}{amount};
       $form->{"accno_$form->{rowcount}"} = $_;
       $form->{rowcount}++;
       $ok = 1;
@@ -2925,8 +2924,8 @@ sub generate_yearend {
 
   for (keys %{ $form->{E} }) {
     if ($form->{E}{$_}{charttype} eq "A") {
-      $form->{"credit_$form->{rowcount}"} = $form->{E}{$_}{this} * -1;
-      $earnings += $form->{E}{$_}{this};
+      $form->{"credit_$form->{rowcount}"} = $form->{E}{$_}{amount} * -1;
+      $earnings += $form->{E}{$_}{amount};
       $form->{"accno_$form->{rowcount}"} = $_;
       $form->{rowcount}++;
       $ok = 1;
