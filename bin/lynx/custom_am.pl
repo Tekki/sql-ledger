@@ -1,3 +1,6 @@
+# WLprinter start
+$printer{WLprinter} = "wlprinter/fileprinter.pl $form->{login}";
+# WLprinter end
 # Security hotfix to disable template editor
 
 1;
