@@ -1,6 +1,6 @@
 #======================================================================
 # SQL-Ledger ERP
-# Copyright (c) 2006-2010
+# Copyright (c) 2006-2011
 #
 #  Author: DWS Systems Inc
 #     Web: http://www.sql-ledger.com.
@@ -10,10 +10,11 @@
 
 The branches are:
 - master: the unmodified SQL-Ledger from sql-ledger.com with version tags
-- full: master, switzerland, perl512 merged together
+- full: master, switzerland, perl512, messageid merged together
 - switzerland:
   German: chart of accounts, new translation "German/Switzerland 2"
   French: chart of accounts, translation converted to UTF-8
   Italian: chart of accounts, translation converted to UTF-8
 - perl512: patch for deprecated warnings in Perl 5.12
-- perl512-x: workaround to suppress deprecated warnings in Perl 5.12
+- messageid: patch to make message id and boundary compliant with
+  RFC 2392
