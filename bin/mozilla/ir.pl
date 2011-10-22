@@ -35,6 +35,7 @@ sub add {
 
 sub edit {
 
+  $form->{shipto} = 1;
   &invoice_links;
   &prepare_invoice;
   &display_form;

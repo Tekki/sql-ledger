@@ -2047,8 +2047,24 @@ sub shipping_address {
   $form->{title} = $locale->text('Shipping Address');
 
   $form->{name} ||= "$form->{firstname} $form->{lastname}";
-  
+
+  CT->ship_to(\%myconfig, \%$form);
+
+  %shipto = (
+          address1 => { i => 2, label => $locale->text('Address') },
+	  address2 => { i => 3, label => '' },
+	  city => { i => 4, label => $locale->text('City') },
+	  state => { i => 5, label => $locale->text('State/Province') },
+	  zipcode => { i => 6, label => $locale->text('Zip/Postal Code') },
+	  country => { i => 7, label => $locale->text('Country') },
+	  contact => { i => 8, label => $locale->text('Contact') },
+	  phone => { i => 9, label => $locale->text('Phone') },
+	  fax => { i => 10, label => $locale->text('Fax') },
+	  email => { i => 11, label => $locale->text('E-mail') } );
+
   $form->header;
+
+  $vcname = $locale->text('Name');
 
   print qq|
 <body>
@@ -2064,76 +2080,142 @@ sub shipping_address {
     <td>
       <table width=100%>
 	<tr>
-	  <th class=listheading colspan=2>$form->{name}</th>
+	  <th class=listheading colspan=3>$form->{name}</th>
 	</tr>
 	<tr>
-	  <th align=right nowrap>|.$locale->text('Name').qq|</th>
+	  <td></td>
+	  <th align=right nowrap>$vcname</th>
 	  <td><input name=shiptoname size=32 maxlength=64 value="|.$form->quote($form->{shiptoname}).qq|"></td>
 	</tr>
 	<tr>
-	  <th align=right nowrap>|.$locale->text('Address').qq|</th>
+	  <td></td>
+	  <th align=right nowrap>$shipto{address1}{label}</th>
 	  <td><input name=shiptoaddress1 size=32 maxlength=32 value="|.$form->quote($form->{shiptoaddress1}).qq|"></td>
 	</tr>
 	<tr>
-	  <th></th>
+	  <td></td>
+	  <td></td>
 	  <td><input name=shiptoaddress2 size=32 maxlength=32 value="|.$form->quote($form->{shiptoaddress2}).qq|"></td>
 	</tr>
 	<tr>
-	  <th align=right nowrap>|.$locale->text('City').qq|</th>
+	  <td></td>
+	  <th align=right nowrap>$shipto{city}{label}</th>
 	  <td><input name=shiptocity size=32 maxlength=32 value="|.$form->quote($form->{shiptocity}).qq|"></td>
 	</tr>
 	<tr>
-	  <th align=right nowrap>|.$locale->text('State/Province').qq|</th>
+	  <td></td>
+	  <th align=right nowrap>$shipto{state}{label}</th>
 	  <td><input name=shiptostate size=32 maxlength=32 value="|.$form->quote($form->{shiptostate}).qq|"></td>
 	</tr>
 	<tr>
-	  <th align=right nowrap>|.$locale->text('Zip/Postal Code').qq|</th>
+	  <td></td>
+	  <th align=right nowrap>$shipto{zipcode}{label}</th>
 	  <td><input name=shiptozipcode size=11 maxlength=10 value="|.$form->quote($form->{shiptozipcode}).qq|"></td>
 	</tr>
 	<tr>
-	  <th align=right nowrap>|.$locale->text('Country').qq|</th>
+	  <td></td>
+	  <th align=right nowrap>$shipto{country}{label}</th>
 	  <td><input name=shiptocountry size=32 maxlength=32 value="|.$form->quote($form->{shiptocountry}).qq|"></td>
 	</tr>
 	<tr>
-	  <th align=right nowrap>|.$locale->text('Contact').qq|</th>
+	  <td></td>
+	  <th align=right nowrap>$shipto{contact}{label}</th>
 	  <td><input name=shiptocontact size=35 maxlength=64 value="|.$form->quote($form->{shiptocontact}).qq|"></td>
 	</tr>
 	<tr>
-	  <th align=right nowrap>|.$locale->text('Phone').qq|</th>
+	  <td></td>
+	  <th align=right nowrap>$shipto{phone}{label}</th>
 	  <td><input name=shiptophone size=22 maxlength=20 value="$form->{shiptophone}"></td>
 	</tr>
 	<tr>
-	  <th align=right nowrap>|.$locale->text('Fax').qq|</th>
+	  <td></td>
+	  <th align=right nowrap>$shipto{fax}{label}</th>
 	  <td><input name=shiptofax size=22 maxlength=20 value="$form->{shiptofax}"></td>
 	</tr>
 	<tr>
-	  <th align=right nowrap>|.$locale->text('E-mail').qq|</th>
+	  <td></td>
+	  <th align=right nowrap>$shipto{email}{label}</th>
 	  <td><input name=shiptoemail size=32 value="$form->{shiptoemail}"></td>
 	</tr>
+|;
+
+  $i = 1;
+  for $ref (@{ $form->{all_shipto} }) {
+
+    print qq|
+        <tr>
+	  <td></td>
+	  <td><hr noshade></td>
+	  <td><hr noshade></td>
+        </tr>
+
+	<tr>
+	  <td><input name="ndx_$i" type=checkbox class=checkbox>
+	  <th align=right nowrap>$vcname</th>
+	  <td>$ref->{shiptoname}</td>
+        </tr>
+|;
+
+    for (sort { $shipto{$a}{i} <=> $shipto{$b}{i} } keys %shipto) {
+      print qq|
+        <tr>
+	  <td></td>
+	  <th align=right nowrap>$shipto{$_}{label}</th>
+	  <td>$ref->{"shipto$_"}</td>
+        </tr>
+|;
+    }
+
+    for (keys %$ref) { $form->{"${_}_$i"} = $ref->{$_} }
+    $form->hide_form(map { "${_}_$i" } keys %$ref);
+
+    $i++;
+  }
+  $form->{shipto_rows} = $i - 1;
+
+  print qq|
       </table>
     </td>
-  </tr>
-  <tr>
-    <td><hr size=3 noshade></td>
   </tr>
 </table>
 |;
 
-  for (map { "shipto$_" } qw(name address1 address2 city state zipcode country contact phone fax email)) { delete $form->{$_} }
+  for (qw(name address1 address2 city state zipcode country contact phone fax email)) {
+    delete $form->{"shipto$_"};
+    $form->{flds} .= "$_ ";
+  }
+  chop $form->{flds};
 
-  $form->{nextsub} = "update";
+  $form->{nextsub} = "shipto_selected";
   $form->{action} = $form->{nextsub};
-
+  
   $form->hide_form;
   
   print qq|
-  <input type=submit class=submit name=action value="|.$locale->text('Continue').qq|">
+<hr size=3 noshade>
+
+<br>
+<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|">
   
 </form>
 
 </body>
 </html>
 |;  
+
+}
+
+
+sub shipto_selected {
+
+  for $i (1 .. $form->{shipto_rows}) {
+    if ($form->{"ndx_$i"}) {
+      for (split / /, $form->{flds}) { $form->{"shipto$_"} = $form->{"shipto${_}_$i"} }
+      last;
+    }
+  }
+
+  &update;
 
 }
 

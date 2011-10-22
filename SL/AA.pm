@@ -1255,10 +1255,12 @@ sub get_name {
 
 ############# add addressid, contactid for multiple addresses and contacts
 sub company_details {
-  my ($self, $myconfig, $form) = @_;
+  my ($self, $myconfig, $form, $dbh) = @_;
 
+  my $disconnect = ($dbh) ? 1 : 0;
+  
   # connect to database
-  my $dbh = $form->dbconnect($myconfig);
+  $dbh = $form->dbconnect($myconfig);
   
   # get rest for the customer/vendor
   my $query = qq|SELECT ct.$form->{vc}number, ct.name, ad.address1, ad.address2,
@@ -1329,6 +1331,68 @@ sub company_details {
       
     for (qw(iban bic membernumber rvc dcn)) { $form->{$_} = $form->{"bank$_"} };
   }
+
+  $dbh->disconnect if $disconnect;
+
+}
+
+
+sub ship_to {
+  my ($self, $myconfig, $form) = @_;
+
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+
+   AA->company_details($myconfig, $form, $dbh);
+
+   my $table = ($form->{vc} eq 'customer') ? 'ar' : 'ap';
+
+   my $query = qq|SELECT
+                  s.shiptoname, s.shiptoaddress1, s.shiptoaddress2,
+		  s.shiptocity, s.shiptostate, s.shiptozipcode,
+		  s.shiptocountry, s.shiptocontact, s.shiptophone,
+		  s.shiptofax, s.shiptoemail
+		  FROM shipto s
+		  WHERE trans_id = $form->{"$form->{vc}_id"}
+		  UNION
+		  SELECT
+		  s.shiptoname, s.shiptoaddress1, s.shiptoaddress2,
+		  s.shiptocity, s.shiptostate, s.shiptozipcode,
+		  s.shiptocountry, s.shiptocontact, s.shiptophone,
+		  s.shiptofax, s.shiptoemail
+		  FROM shipto s
+		  JOIN oe o ON (o.id = s.trans_id)
+		  WHERE o.$form->{vc}_id = $form->{"$form->{vc}_id"}
+		  UNION
+		  SELECT
+		  s.shiptoname, s.shiptoaddress1, s.shiptoaddress2,
+		  s.shiptocity, s.shiptostate, s.shiptozipcode,
+		  s.shiptocountry, s.shiptocontact, s.shiptophone,
+		  s.shiptofax, s.shiptoemail
+		  FROM shipto s
+		  JOIN $table a ON (a.id = s.trans_id)
+		  WHERE a.$form->{vc}_id = $form->{"$form->{vc}_id"}|;
+
+  if ($form->{id}) {
+    $query .= qq|
+                 EXCEPT
+		 SELECT
+		 s.shiptoname, s.shiptoaddress1, s.shiptoaddress2,
+		 s.shiptocity, s.shiptostate, s.shiptozipcode,
+		 s.shiptocountry, s.shiptocontact, s.shiptophone,
+		 s.shiptofax, s.shiptoemail
+		 FROM shipto s
+		 WHERE s.trans_id = '$form->{id}'|;
+  }
+
+  my $sth = $dbh->prepare($query);
+  $sth->execute || $form->dberror($query);
+  
+  my $ref;
+  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    push @{ $form->{all_shipto} }, $ref;
+  }
+  $sth->finish;
 
   $dbh->disconnect;
 

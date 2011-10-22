@@ -1177,5 +1177,56 @@ sub retrieve_item {
 }
 
 
+sub ship_to {
+  my ($self, $myconfig, $form) = @_;
+
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+
+  my $query;
+  
+  my $table = ($form->{db} eq 'customer') ? 'ar' : 'ap';
+
+  if ($form->{id}) {
+    $query = qq|SELECT
+                s.shiptoname, s.shiptoaddress1, s.shiptoaddress2,
+                s.shiptocity, s.shiptostate, s.shiptozipcode,
+		s.shiptocountry, s.shiptocontact, s.shiptophone,
+		s.shiptofax, s.shiptoemail
+	        FROM shipto s
+		JOIN oe o ON (o.id = s.trans_id)
+		WHERE o.$form->{db}_id = $form->{id}
+		UNION
+		SELECT
+                s.shiptoname, s.shiptoaddress1, s.shiptoaddress2,
+                s.shiptocity, s.shiptostate, s.shiptozipcode,
+		s.shiptocountry, s.shiptocontact, s.shiptophone,
+		s.shiptofax, s.shiptoemail
+		FROM shipto s
+		JOIN $table a ON (a.id = s.trans_id)
+	        WHERE a.$form->{db}_id = $form->{id}
+		EXCEPT
+		SELECT
+	        s.shiptoname, s.shiptoaddress1, s.shiptoaddress2,
+                s.shiptocity, s.shiptostate, s.shiptozipcode,
+		s.shiptocountry, s.shiptocontact, s.shiptophone,
+		s.shiptofax, s.shiptoemail
+		FROM shipto s
+		WHERE s.trans_id = '$form->{id}'|;
+	 
+    my $sth = $dbh->prepare($query);
+    $sth->execute || $form->dberror($query);
+
+    while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+      push @{ $form->{all_shipto} }, $ref;
+    }
+    $sth->finish;
+
+  }
+
+  $dbh->disconnect;
+
+}
+
 1;
 

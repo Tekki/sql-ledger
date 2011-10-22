@@ -63,7 +63,7 @@ CREATE TABLE defaults (
   fldvalue text
 );
 --
-INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '2.8.8');
+INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '2.8.9');
 --
 CREATE TABLE acc_trans (
   trans_id int,
@@ -96,7 +96,9 @@ CREATE TABLE invoice (
   deliverydate date,
   serialnumber text,
   itemnotes text,
-  lineitemdetail bool
+  lineitemdetail bool,
+  ordernumber text,
+  ponumber text
 );
 --
 CREATE TABLE customer (
@@ -320,7 +322,9 @@ CREATE TABLE orderitems (
   ship float,
   serialnumber text,
   itemnotes text,
-  lineitemdetail bool
+  lineitemdetail bool,
+  ordernumber text,
+  ponumber text
 );
 --
 CREATE TABLE exchangerate (
