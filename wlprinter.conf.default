@@ -1,0 +1,9 @@
+# Configuration file for WLprinter
+#
+use vars qw($version, $interval, $headlength, $serveraddress, $externalclient);
+
+$serveraddress = "";
+$externalclient = 0;  # set to 1 to start client from tekki.ch
+$interval = 10;
+$headlength = 50;
+1;
