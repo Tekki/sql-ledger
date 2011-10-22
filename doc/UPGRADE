@@ -8,11 +8,12 @@ should read the sections from v1.8.6 up to v2.6.27
 If there is no section for a range of versions no additional steps
 are required.
 
-The software can be upgraded using setup.pl from the commandline
-and/or downloading the tarball. If setup.pl cannot retrieve the file
-(proxy, missing utilities) you will have to download the file yourself
-and either use setup.pl or ungzip/untar yourself.
-
+The software can be upgraded using setup.pl. If setup.pl cannot
+download the file over the Internet (proxy, missing utilities, etc)
+download the tarball with your browser and save the file.
+You may then proceed with a manual installation or let setup.pl
+do the work for you.
+  
 The steps to do it yourself are:
 --------------------------------
 1. ungzip/untar SQL-Ledger over top your old installation
@@ -49,10 +50,10 @@ Datasets are upgraded when a user logs in. There is no need to load
 admin.pl, there is also no need to install intermediate versions, all
 the upgrade steps are included in the current version.
 
-The sections below describe additional steps if required such as
+The sections below describe additional steps required such as
 copying templates to bring a system up to date.
 
-Before you log in read the relevant sections below.
+Before you log in please read the relevant sections below.
 
 
 Version 1.6 to 1.8
@@ -80,13 +81,13 @@ Version 1.6 to 1.8
    Add your foreign currencies in the Currencies field
    The first currency in the list is your default
    i.e CDN:USD:EUR:YEN
-   If you used a nativecurr than it should be listed in the
+   If you used a nativecurr then it should be listed in the
    new currencies field.
 
 4. <%nativecurr%> has changed to <%currency%>
-   edit all your templates and change nativecurr to currency
+   edit all the templates and change nativecurr to currency
 
-5. We also added four more variables which can be used in your templates.
+5. We also added four more variables which can be used the templates.
    <%contact%>, <%shiptocontact%>, <%shiptophone%>, <%shiptofax%>
    
 6. Nameing convention for templates has changed from an
@@ -108,10 +109,10 @@ Version 1.8.0 to 1.8.3
 
    $ cp sql-ledger.conf.default sql-ledger.conf
 
-   if you modified sql-ledger.conf merge the changes from the
+   if sql-ledger.conf was modified merge the changes from the
    .default file rather than copying over top.
 
-2. copy the following templates to your template directory
+2. copy the following templates to your personal template directory
 
    $ cd sql-ledger/templates
 
@@ -127,7 +128,7 @@ Version 1.8.0 to 1.8.3
 Version 1.8.4 to 1.8.7
 ----------------------
 There are two new variables (<%customernumber%> and <%vendornumber%>)
-which can be used in the forms. These may be used instead of the
+which can be used in the templates. These can be used instead of the
 internally generated customer_id and vendor_id.
 
 Typically these numbers are used to retrieve a customer, vendor
@@ -136,7 +137,7 @@ by some ID. In most counter operations the phone number is used.
 
 Version 1.8.7 to 2.0.0
 ----------------------
-1. copy the following templates to your template directory
+1. copy the following templates to your personal template directory
 
    $ cd sql-ledger/templates
 
@@ -148,7 +149,7 @@ Version 1.8.7 to 2.0.0
 
 Version 2.0.9 to 2.2.0
 ----------------------
-1. copy the following template to your template directory
+1. copy the following template to your personal template directory
 
    $ cd sql-ledger/templates
    
@@ -163,8 +164,8 @@ Version 2.2.7 to 2.4.0
 2. install plpgsql in template1
    # createlang plpgsql template1
 
-Before loggin in edit Pg-upgrade-2.3.4-2.3.5.sql and change the
-way addresses are rewritten if you don't want US style addresses.
+Edit Pg-upgrade-2.3.4-2.3.5.sql and change the way addresses are
+rewritten if you don't want US style addresses.
 
 North-american addresses are usually in the form of
 
@@ -192,17 +193,17 @@ dbname=# update customer set zipcode = substr(state,strpos(state,' ')+1);
 dbname=# update customer set state = substr(state,1,strpos(state,' ')-1);
 dbname=# update customer set city = substr(city,1,strpos(city,',')-1);
 
-do the same with the vendor and shipto table.
+do the same with the vendor and shipto table, replace 'customer'
+with 'vendor' and 'shipto'.
 
 3. create a new set of templates
 
   * load admin.pl and edit one of the user's
   * in the "New Templates" field enter "new" and save the user
-  * go back in your browser so you have the same screen again
+  * step back in your browser so you have the same screen again
     as before
   * change the template directory back to what it was before
     the change and save the user
-
   * drop into a shell window
   * cd to sql-ledger/templates/new
   * copy the additional templates to your private template directory
@@ -212,12 +213,10 @@ do the same with the vendor and shipto table.
    printer setup has changed to multiple printers which allow
    users to choose a printer. Printers can be defined in sql-ledger.conf
 
-5. Oracle and DB2 support no longer available due to missing upgrade scripts.
-
 
 Version 2.4.2 to 2.4.3
 ----------------------
-1. copy the following templates to your template directory
+1. copy the following templates to your private template directory
 
    $ cd sql-ledger/templates
 
@@ -229,7 +228,7 @@ Version 2.4.2 to 2.4.3
 
 Version 2.4.16 to 2.6.0
 -----------------------
-1. copy the following templates to your template directory
+1. copy the following templates to your private template directory
 
    $ cd sql-ledger/templates
    
@@ -239,7 +238,7 @@ Version 2.4.16 to 2.6.0
 
 Version 2.6.27 to 2.8.0
 -----------------------
-1. copy the following templates to your template directory
+1. copy the following templates to your private template directory
 
    $ cd sql-ledger/templates
    
@@ -252,7 +251,7 @@ Version 2.6.27 to 2.8.0
    $ cp Default-debit_note.html your_template_dir/debit_note.html
    $ cp Default-debit_note.tex your_template_dir/debit_note.tex
 
-2. Go to System -> Defaults and enter your company name
+2. Go to System -> Defaults and enter the company name
 
 
 Version 2.8.0 to 2.8.2
@@ -261,12 +260,14 @@ Version 2.8.0 to 2.8.2
 
    ERROR:  trigger "del_recurring" for table "oe" does not exist
 
-   load admin.pl and "Unlock" the system.
+   load admin.pl and "Unlock" the system and log in again.
+
+NOTE: The error is intentional and may or may not show up on your system.
 
 
 Version 2.8.2 to 2.8.4
 ----------------------
-1. copy the following templates to your template directory
+1. copy the following templates to your private template directory
 
    $ cd sql-ledger/templates
    
@@ -277,15 +278,15 @@ Version 2.8.2 to 2.8.4
 Version 2.8.6 to 2.8.7
 ----------------------
 1. go to System -> Currencies
-   and enter/edit the currencies you use.
+   and enter/edit the currencies
 
 2. go to System -> Defaults
    and enter the default precision
       
 
-Version 2.8.23 to 2.8.24
+Version 2.8.23 to current
 ------------------------
-1. copy the following templates to your template directory
+1. copy the following templates to your private template directory
 
    $ cd sql-ledger/templates
    

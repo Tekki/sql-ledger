@@ -332,7 +332,7 @@ sub save {
   my $uid = localtime;
   $uid .= $$;
  
-  for my $i (1 .. $form->{rowcount}) {
+  for $i (1 .. $form->{rowcount}) {
 
     for (qw(qty ship)) { $form->{"${_}_$i"} = $form->parse_amount($myconfig, $form->{"${_}_$i"}) }
      
@@ -1067,7 +1067,7 @@ sub order_details {
   my $sortby;
   
   # sort items by project and partsgroup
-  for my $i (1 .. $form->{rowcount} - 1) {
+  for $i (1 .. $form->{rowcount} - 1) {
 
     if ($form->{"id_$i"}) {
       # account numbers
@@ -1178,7 +1178,7 @@ sub order_details {
 		AND warehouse_id = ?|;
     $sth = $dbh->prepare($query) || $form->dberror($query);
 
-    for my $i (1 .. $form->{rowcount} - 1) {
+    for $i (1 .. $form->{rowcount} - 1) {
       $sth->execute($form->{"id_$i"}, $form->{warehouse_id}) || $form->dberror;
 
       ($qty) = $sth->fetchrow_array;
@@ -1571,6 +1571,28 @@ sub project_description {
 }
 
 
+sub get_warehouses {
+  my ($self, $myconfig, $form) = @_;
+
+  my $dbh = $form->dbconnect($myconfig);
+  # setup warehouses
+  my $query = qq|SELECT id, description
+                 FROM warehouse
+		 ORDER BY 2|;
+
+  my $sth = $dbh->prepare($query);
+  $sth->execute || $form->dberror($query);
+
+  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+    push @{ $form->{all_warehouse} }, $ref;
+  }
+  $sth->finish;
+
+  $dbh->disconnect;
+
+}
+
+
 sub save_inventory {
   my ($self, $myconfig, $form) = @_;
   
@@ -1612,7 +1634,7 @@ sub save_inventory {
 	      WHERE id = ?|;
   $pth = $dbh->prepare($query) || $form->dberror($query);
 
-  for my $i (1 .. $form->{rowcount} -1) {
+  for $i (1 .. $form->{rowcount} -1) {
 
     $ship = (abs($form->{"ship_$i"}) > abs($form->{"qty_$i"})) ? $form->{"qty_$i"} : $form->{"ship_$i"};
     
@@ -1907,6 +1929,57 @@ sub get_inventory {
 }
 
 
+sub transfer {
+  my ($self, $myconfig, $form) = @_;
+  
+  my $dbh = $form->dbconnect_noauto($myconfig);
+  
+  ($form->{employee}, $form->{employee_id}) = $form->get_employee($dbh);
+  
+  my @a = localtime;
+  $a[5] += 1900;
+  $a[4]++;
+  $a[4] = substr("0$a[4]", -2);
+  $a[3] = substr("0$a[3]", -2);
+  $shippingdate = "$a[5]$a[4]$a[3]";
+
+  my %total = ();
+
+  my $query = qq|INSERT INTO inventory
+                 (warehouse_id, parts_id, qty, shippingdate, employee_id)
+		 VALUES (?, ?, ?, '$shippingdate', $form->{employee_id})|;
+  $sth = $dbh->prepare($query) || $form->dberror($query);
+
+  my $qty;
+  
+  for $i (1 .. $form->{rowcount}) {
+    $qty = $form->parse_amount($myconfig, $form->{"transfer_$i"});
+
+    $qty = $form->{"qty_$i"} if ($qty > $form->{"qty_$i"});
+
+    if ($qty > 0) {
+      # to warehouse
+      if ($form->{warehouse_id}) {
+	$sth->execute($form->{warehouse_id}, $form->{"id_$i"}, $qty) || $form->dberror;
+	$sth->finish;
+      }
+      
+      # from warehouse
+      if ($form->{"warehouse_id_$i"}) {
+	$sth->execute($form->{"warehouse_id_$i"}, $form->{"id_$i"}, $qty * -1) || $form->dberror;
+	$sth->finish;
+      }
+    }
+  }
+
+  my $rc = $dbh->commit;
+  $dbh->disconnect;
+
+  $rc;
+
+}
+
+
 sub get_soparts {
   my ($self, $myconfig, $form) = @_;
   
@@ -1918,6 +1991,7 @@ sub get_soparts {
   my $ref;
   my $id;
   my $orderitemsid;
+  my $i;
   
   my %defaults = $form->get_defaults($dbh, \@{['precision']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
@@ -1939,7 +2013,7 @@ sub get_soparts {
   }
   $sth = $dbh->prepare($query) || $form->dberror($query);
   
-  for (my $i = 1; $i <= $form->{rowcount}; $i++) {
+  for ($i = 1; $i <= $form->{rowcount}; $i++) {
 
     if ($form->{"ndx_$i"}) {
 
@@ -2046,8 +2120,9 @@ sub generate_orders {
   my %a;
   my $query;
   my $sth;
+  my $i;
   
-  for (my $i = 1; $i <= $form->{rowcount}; $i++) {
+  for ($i = 1; $i <= $form->{rowcount}; $i++) {
     for (qw(qty lastcost)) { $form->{"${_}_$i"} = $form->parse_amount($myconfig, $form->{"${_}_$i"}) }
     
     if ($form->{"qty_$i"}) {
@@ -2265,12 +2340,13 @@ sub consolidate_orders {
   my $id;
   my $ref;
   my %oe = ();
+  my $i;
   
   my $query = qq|SELECT * FROM oe
                  WHERE id = ?|;
   my $sth = $dbh->prepare($query) || $form->dberror($query);
 
-  for (my $i = 1; $i <= $form->{rowcount}; $i++) {
+  for ($i = 1; $i <= $form->{rowcount}; $i++) {
     # retrieve order
     if ($form->{"ndx_$i"}) {
       $sth->execute($form->{"ndx_$i"});

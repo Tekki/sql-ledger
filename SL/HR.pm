@@ -211,6 +211,10 @@ sub delete_employee {
   my $query = qq|DELETE FROM $form->{db}
 	         WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
+  
+  $query = qq|DELETE FROM audittrail
+	      WHERE employee_id = $form->{id}|;
+  $dbh->do($query) || $form->dberror($query);
 
   $dbh->commit;
   $dbh->disconnect;

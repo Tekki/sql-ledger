@@ -2056,7 +2056,7 @@ sub requirements_report {
   $column_data{runningnumber} = qq|<th a class=listheading>&nbsp;</th>|;
   $column_data{partnumber} = qq|<th nowrap colspan=$colspan><a class=listheading href=$href&sort=partnumber>|.$locale->text('Number').qq|</a></th>|;
   $column_data{description} = qq|<th nowrap><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</a></th>|;
-  $column_data{onhand} = qq|<th class=listheading nowrap>|.$locale->text('Onhand').qq|</th>|;
+  $column_data{onhand} = qq|<th class=listheading nowrap>|.$locale->text('On Hand').qq|</th>|;
   $column_data{so} = qq|<th class=listheading nowrap>|.$locale->text('SO').qq|</th>|;
   $column_data{po} = qq|<th class=listheading nowrap>|.$locale->text('PO').qq|</th>|;
   $column_data{order} = qq|<th class=listheading nowrap>|.$locale->text('Order').qq|</th>|;

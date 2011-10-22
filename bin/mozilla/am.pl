@@ -1025,11 +1025,11 @@ sub list_paymentmethod {
 
   AM->paymentmethod(\%myconfig, \%$form);
 
-  my $href = "$form->{script}?action=list_paymentmethod&direction=$form->{direction}&path=$form->{path}&login=$form->{login}";
+  my $href = "$form->{script}?action=list_paymentmethod&direction=$form->{direction}&oldsort=$form->{oldsort}&path=$form->{path}&login=$form->{login}";
 
   $form->sort_order();
   
-  $form->{callback} = "$form->{script}?action=list_paymentmethod&direction=$form->{direction}&path=$form->{path}&login=$form->{login}";
+  $form->{callback} = "$form->{script}?action=list_paymentmethod&direction=$form->{direction}&oldsort=$form->{oldsort}&path=$form->{path}&login=$form->{login}";
   
   my $callback = $form->escape($form->{callback});
   

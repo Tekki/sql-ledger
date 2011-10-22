@@ -646,7 +646,7 @@ sub paymentmethod {
   
   my $query = qq|SELECT *
                  FROM paymentmethod
-		 ORDER BY $sortorder $form->{direction}|;
+		 ORDER BY $sortorder|;
 
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);

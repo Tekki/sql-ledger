@@ -2690,6 +2690,260 @@ sub done {
 }
 
 
+sub search_transfer {
+  
+  OE->get_warehouses(\%myconfig, \%$form);
+
+  # warehouse
+  if (@{ $form->{all_warehouse} }) {
+    $form->{selectwarehouse} = "<option>\n";
+    $form->{warehouse} = qq|$form->{warehouse}--$form->{warehouse_id}| if $form->{warehouse_id};
+
+    for (@{ $form->{all_warehouse} }) { $form->{selectwarehouse} .= qq|<option value="$_->{description}--$_->{id}">$_->{description}\n| }
+  } else {
+    $form->error($locale->text('Nothing to transfer!'));
+  }
+  
+  $form->get_partsgroup(\%myconfig, { searchitems => 'part'});
+  if (@{ $form->{all_partsgroup} }) {
+    $form->{selectpartsgroup} = "<option>\n";
+    for (@{ $form->{all_partsgroup} }) { $form->{selectpartsgroup} .= qq|<option value="$_->{partsgroup}--$_->{id}">$_->{partsgroup}\n| }
+  }
+  
+  $form->{title} = $locale->text('Transfer Inventory');
+ 
+  $form->header;
+
+  print qq|
+<body>
+
+<form method=post action=$form->{script}>
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$form->{title}</th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>
+      <table>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Transfer from').qq|</th>
+          <td><select name=fromwarehouse>$form->{selectwarehouse}</select></td>
+        </tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Transfer to').qq|</th>
+          <td><select name=towarehouse>$form->{selectwarehouse}</select></td>
+        </tr>
+	<tr>
+	  <th align="right" nowrap="true">|.$locale->text('Part Number').qq|</th>
+	  <td><input name=partnumber size=20></td>
+	</tr>
+	<tr>
+	  <th align="right" nowrap="true">|.$locale->text('Description').qq|</th>
+	  <td><input name=description size=40></td>
+	</tr>
+	<tr>
+	  <th align=right nowrap>|.$locale->text('Group').qq|</th>
+	  <td><select name=partsgroup>$form->{selectpartsgroup}</select></td>
+	</tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td><hr size=3 noshade></td>
+  </tr>
+</table>
+
+<br>
+<input type=hidden name=nextsub value=list_transfer>
+
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">|;
+
+  $form->hide_form(qw(path login sessionid));
+
+  print qq|
+</form>
+|;
+
+  if ($form->{menubar}) {
+    require "$form->{path}/menu.pl";
+    &menubar;
+  }
+
+  print qq|
+
+</body>
+</html>
+|;
+
+}
+
+
+sub list_transfer {
+
+  $form->{sort} = "partnumber" unless $form->{sort};
+
+  OE->get_inventory(\%myconfig, \%$form);
+  
+  # construct href
+  $href = "$form->{script}?action=list_transfer";
+  for (qw(direction oldsort path login sessionid)) { $href .= "&$_=$form->{$_}" }
+  for (qw(partnumber fromwarehouse towarehouse description partsgroup)) { $href .= "&$_=".$form->escape($form->{$_}) }
+
+  $form->sort_order();
+  
+  # construct callback
+  $callback = "$form->{script}?action=list_transfer";
+  for (qw(direction oldsort path login sessionid)) { $callback .= "&$_=$form->{$_}" }
+  for (qw(partnumber fromwarehouse towarehouse description partsgroup)) { $callback .= "&$_=".$form->escape($form->{$_},1) }
+
+  @column_index = $form->sort_columns(qw(partnumber description partsgroup make model fromwarehouse qty towarehouse transfer));
+
+  $column_header{partnumber} = qq|<th><a class=listheading href=$href&sort=partnumber>|.$locale->text('Part Number').qq|</a></th>|;
+  $column_header{description} = qq|<th><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</a></th>|;
+  $column_header{partsgroup} = qq|<th><a class=listheading href=$href&sort=partsgroup>|.$locale->text('Group').qq|</a></th>|;
+  $column_header{fromwarehouse} = qq|<th><a class=listheading href=$href&sort=warehouse>|.$locale->text('From').qq|</a></th>|;
+  $column_header{towarehouse} = qq|<th class=listheading>|.$locale->text('To').qq|</th>|;
+  $column_header{qty} = qq|<th class=listheading>|.$locale->text('Qty').qq|</a></th>|;
+  $column_header{transfer} = qq|<th class=listheading>|.$locale->text('Transfer').qq|</a></th>|;
+
+  
+  ($warehouse, $warehouse_id) = split /--/, $form->{fromwarehouse};
+  
+  if ($form->{fromwarehouse}) {
+    $option .= "\n<br>";
+    $option .= $locale->text('From Warehouse')." : $warehouse";
+  }
+  ($warehouse, $warehouse_id) = split /--/, $form->{towarehouse};
+  if ($form->{towarehouse}) {
+    $option .= "\n<br>";
+    $option .= $locale->text('To Warehouse')." : $warehouse";
+  }
+  if ($form->{partnumber}) {
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Part Number')." : $form->{partnumber}";
+  }
+  if ($form->{description}) {
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Description')." : $form->{description}";
+  }
+  if ($form->{partsgroup}) {
+    ($partsgroup) = split /--/, $form->{partsgroup};
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Group')." : $partsgroup";
+  }
+
+  $form->{title} = $locale->text('Transfer Inventory');
+
+  $callback .= "&sort=$form->{sort}";
+  
+  $form->header;
+
+  print qq|
+<body>
+
+<form method=post action=$form->{script}>
+
+<input type=hidden name=warehouse_id value=$warehouse_id>
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$form->{title}</th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>$option</td>
+  </tr>
+  <tr>
+    <td>
+      <table width=100%>
+	<tr class=listheading>|;
+
+for (@column_index) { print "\n$column_header{$_}" }
+
+print qq|
+	</tr>
+|;
+
+  if (@{ $form->{all_inventory} }) {
+    $sameitem = $form->{all_inventory}->[0]->{$form->{sort}};
+  }
+
+  $i = 0;
+  foreach $ref (@{ $form->{all_inventory} }) {
+
+    $i++;
+
+    $column_data{partnumber} = qq|<td><input type=hidden name="id_$i" value=$ref->{id}>$ref->{partnumber}</td>|;
+    $column_data{description} = "<td>$ref->{description}&nbsp;</td>";
+    $column_data{partsgroup} = "<td>$ref->{partsgroup}&nbsp;</td>";
+    $column_data{fromwarehouse} = qq|<td><input type=hidden name="warehouse_id_$i" value=$ref->{warehouse_id}>$ref->{warehouse}&nbsp;</td>|;
+    $column_data{towarehouse} = qq|<td>$warehouse&nbsp;</td>|;
+    $column_data{qty} = qq|<td><input type=hidden name="qty_$i" value=$ref->{qty}>|.$form->format_amount(\%myconfig, $ref->{qty}).qq|</td>|;
+    $column_data{transfer} = qq|<td><input name="transfer_$i" size=4></td>|;
+
+    $j++; $j %= 2;
+    print "
+        <tr class=listrow$j>";
+    
+    for (@column_index) { print "\n$column_data{$_}" }
+
+    print qq|
+	</tr>
+|;
+
+  }
+  
+  print qq|
+      </table>
+    </td>
+  </tr>
+  
+  <tr>
+    <td><hr size=3 noshade></td>
+  </tr>
+</table>
+
+<br>
+
+<input name=callback type=hidden value="$callback">
+
+<input type=hidden name=rowcount value=$i>
+|;
+
+  $form->{action} = "transfer";
+  $form->hide_form(qw(path login sessionid action));
+
+  print qq|
+<input class=submit type=submit name=action value="|.$locale->text('Transfer').qq|">|;
+
+  if ($form->{menubar}) {
+    require "$form->{path}/menu.pl";
+    &menubar;
+  }
+
+  print qq|
+</form>
+
+</body>
+</html>
+|;
+
+
+}
+
+
+sub transfer {
+
+  if (OE->transfer(\%myconfig, \%$form)) {
+    $form->redirect($locale->text('Inventory transferred!'));
+  } else {
+    $form->error($locale->text('Could not transfer Inventory!'));
+  }
+
+}
+
 sub rfq_ { &add };
 sub quotation_ { &add };
 

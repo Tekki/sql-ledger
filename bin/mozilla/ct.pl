@@ -1655,7 +1655,7 @@ sub form_header {
 
     if ($myconfig{role} eq 'user') {
       if ($form->{id} && $form->{employee_id}) {
-	$form->{selectemployee} = "\n$form->{employee}";
+	$form->{selectemployee} = "$form->{employee}";
       }
     }
     

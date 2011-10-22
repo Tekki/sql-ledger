@@ -470,7 +470,7 @@ sub employee_header {
       $sales .= $form->hide_form(qw(manager));
     }
   } else {
-      $sales = $form->hide_form(qw(sales manager));
+      $sales = $form->hide_form(qw(role sales manager));
   }
 
   
