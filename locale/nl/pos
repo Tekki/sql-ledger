@@ -35,7 +35,6 @@ $self{texts} = {
   'Receipts'                    => 'Ontvangstbewijzen',
   'Record in'                   => 'Boeken op',
   'Remaining'                   => 'Resterend',
-  'Sales Invoice'               => 'Verkoopfactuur',
   'Salesperson'                 => 'Verkoper',
   'Screen'                      => 'Scherm',
   'Select a Printer!'           => 'Selecteer een Printer',
@@ -75,7 +74,6 @@ $self{subs} = {
   'inboeken'                    => 'post',
   'afdrukken'                   => 'print',
   'afdrukken_en_inboeken'       => 'print_and_post',
-  'verkoopfactuur'              => 'sales_invoice',
   'bijwerken'                   => 'update',
 };
 

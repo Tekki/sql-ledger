@@ -9,7 +9,6 @@ $self{texts} = {
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
   'RVC missing!'                => 'RVC ontbreekt!',
-  'Remittance Voucher'          => 'Betaling Voucher',
   'Screen'                      => 'Scherm',
   'Select a Printer!'           => 'Selecteer een Printer',
   'Select payment'              => 'Kies een betaling',

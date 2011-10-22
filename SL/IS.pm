@@ -573,6 +573,8 @@ sub delete_invoice {
     $dbh = $form->dbconnect_noauto($myconfig);
   }
 
+  $form->{id} *= 1;
+  
   &reverse_invoice($dbh, $form);
   
   my %audittrail = ( tablename  => 'ar',
@@ -770,7 +772,7 @@ sub post_invoice {
 	      WHERE pt.parts_id = ?|;
   my $ptt = $dbh->prepare($query) || $form->dberror($query);
  
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $keepcleared = 1;
     $query = qq|SELECT id FROM ar
                 WHERE id = $form->{id}|;
@@ -1825,7 +1827,7 @@ sub retrieve_invoice {
   
   $form->{currencies} = $form->get_currencies($dbh, $myconfig);
  
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     
     # retrieve invoice
     $query = qq|SELECT a.invnumber, a.ordnumber, a.quonumber,

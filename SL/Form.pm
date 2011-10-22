@@ -78,7 +78,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.8.31";
+  $self->{version} = "2.8.32";
   $self->{dbversion} = "2.8.10";
 
   bless $self, $type;
@@ -2353,7 +2353,7 @@ sub create_links {
  
   $self->remove_locks($myconfig, $dbh);
 
-  if ($self->{id}) {
+  if ($self->{id} *= 1) {
     
     $query = qq|SELECT a.invnumber, a.transdate,
                 a.${vc}_id, a.datepaid, a.duedate, a.ordnumber,
@@ -2775,6 +2775,7 @@ sub update_status {
   my ($self, $myconfig) = @_;
 
   # no id return
+  $self->{id} *= 1;
   return unless $self->{id};
 
   my $dbh = $self->dbconnect_noauto($myconfig);
@@ -2807,6 +2808,7 @@ sub save_status {
   my $formnames = $self->{printed};
   my $emailforms = $self->{emailed};
 
+  $self->{id} *= 1;
   my $query = qq|DELETE FROM status
 		 WHERE trans_id = $self->{id}|;
   $dbh->do($query) || $self->dberror($query);
@@ -2858,6 +2860,8 @@ sub save_status {
 
 sub get_recurring {
   my ($self, $dbh) = @_;
+
+  $self->{id} *= 1;
   
   my $query = qq~SELECT s.*, se.formname || ':' || se.format AS emaila,
               se.message,
@@ -3038,6 +3042,7 @@ sub save_intnotes {
   my ($self, $myconfig, $vc) = @_;
 
   # no id return
+  $self->{id} *= 1;
   return unless $self->{id};
 
   my $dbh = $self->dbconnect($myconfig);
@@ -3477,7 +3482,7 @@ sub audittrail {
     
   # if we have an id add audittrail, otherwise get a new timestamp
   
-  if ($audittrail->{id}) {
+  if ($audittrail->{id} *= 1) {
     
     my %defaults = $self->get_defaults($dbh, \@{['audittrail']});
     
@@ -3586,16 +3591,8 @@ sub text {
 sub findsub {
   my ($self, $text) = @_;
 
-  if (exists $self{subs}{$text}) {
-    $text = $self{subs}{$text};
-  } else {
-    if ($self->{countrycode} && $self->{NLS_file}) {
-      Form->error("$text not defined in locale/$self->{countrycode}/$self->{NLS_file}");
-    }
-  }
-
-  $text;
-
+  return (exists $self{subs}{$text}) ? $self{subs}{$text} : $text;
+  
 }
 
 

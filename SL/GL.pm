@@ -20,6 +20,8 @@ sub delete_transaction {
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
   
+  $form->{id} *= 1;
+  
   my %audittrail = ( tablename  => 'gl',
                      reference  => $form->{reference},
 		     formname   => 'transaction',
@@ -28,7 +30,7 @@ sub delete_transaction {
  
   $form->audittrail($dbh, "", \%audittrail);
 
-  if ($form->{batchid}) {
+  if ($form->{batchid} *= 1) {
     $query = qq|SELECT sum(amount)
 		FROM acc_trans
 		WHERE trans_id = $form->{id}
@@ -95,10 +97,10 @@ sub post_transaction {
   my %defaults = $form->get_defaults($dbh, \@{['precision']});
   $form->{precision} = $defaults{precision};
 
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $keepcleared = 1;
     
-    if ($form->{batchid}) {
+    if ($form->{batchid} *= 1) {
       $query = qq|SELECT * FROM vr
 		  WHERE trans_id = $form->{id}|;
       $sth = $dbh->prepare($query) || $form->dberror($query);
@@ -641,7 +643,7 @@ sub transaction {
 
   $form->{currencies} = $form->get_currencies($dbh, $myconfig);
   
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $query = qq|SELECT g.*, 
                 d.description AS department,
 		br.id AS batchid, br.description AS batchdescription
