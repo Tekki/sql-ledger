@@ -464,11 +464,10 @@ sub get_job {
 sub get_customer {
   my ($self, $myconfig, $form, $dbh) = @_;
   
-  my $disconnect = 0;
+  my $disconnect = ($dbh) ? 0 : 1;
 
   if (! $dbh) {
     $dbh = $form->dbconnect($myconfig);
-    $disconnect = 1;
   }
 
   my $query;

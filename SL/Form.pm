@@ -78,7 +78,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.8.19";
+  $self->{version} = "2.8.20";
   $self->{dbversion} = "2.8.9";
 
   bless $self, $type;
@@ -1763,11 +1763,10 @@ sub get_name {
 sub get_currencies {
   my ($self, $dbh, $myconfig) = @_;
   
-  my $disconnect = 0;
+  my $disconnect = ($dbh) ? 0 : 1;
   
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
-    $disconnect = 1;
   }
 
   my $currencies;
@@ -1829,14 +1828,14 @@ sub get_defaults {
 sub all_vc {
   my ($self, $myconfig, $vc, $module, $dbh, $transdate, $job, $openinv) = @_;
   
-  my $ref;
-  my $disconnect = 0;
+  my $disconnect = ($dbh) ? 0 : 1;
   
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
-    $disconnect = 1;
   }
+
   my $sth;
+  my $ref;
   
   my $query;
   my $arap = lc $module;
@@ -2005,6 +2004,7 @@ sub all_projects {
   my ($self, $myconfig, $dbh, $transdate, $job) = @_;
 
   my $disconnect = ($dbh) ? 0 : 1;
+
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
   }
@@ -2051,10 +2051,10 @@ sub all_projects {
 sub all_departments {
   my ($self, $myconfig, $dbh, $vc) = @_;
   
-  my $disconnect = 0;
+  my $disconnect = ($dbh) ? 0 : 1;
+  
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
-    $disconnect = 1;
   }
   
   my $where = "1 = 1";
@@ -2088,10 +2088,10 @@ sub all_departments {
 sub all_warehouses {
   my ($self, $myconfig, $dbh, $vc) = @_;
   
-  my $disconnect = 0;
+  my $disconnect = ($dbh) ? 0 : 1;
+  
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
-    $disconnect = 1;
   }
   
   my $query = qq|SELECT id, description
@@ -2115,10 +2115,10 @@ sub all_warehouses {
 sub all_years {
   my ($self, $myconfig, $dbh) = @_;
   
-  my $disconnect = 0;
+  my $disconnect = ($dbh) ? 0 : 1;
+
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
-    $disconnect = 1;
   }
  
   # get years
@@ -2346,14 +2346,12 @@ sub create_lock {
   my ($self, $myconfig, $dbh, $id, $module) = @_;
   
   my $query;
-  
-  my $disconnect = 0;
   my $expires = time;
   
+  my $disconnect = ($dbh) ? 0 : 1;
   
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
-    $disconnect = 1;
   }
  
   # remove expired locks
@@ -2389,10 +2387,10 @@ sub create_lock {
 sub remove_locks {
   my ($self, $myconfig, $dbh, $module) = @_;
   
-  my $disconnect = 0;
+  my $disconnect = ($dbh) ? 0 : 1;
+
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
-    $disconnect = 1;
   }
 
   my $query = qq|DELETE FROM semaphore
@@ -2757,10 +2755,10 @@ sub get_recurring {
 sub save_recurring {
   my ($self, $dbh, $myconfig) = @_;
 
-  my $disconnect = 0;
+  my $disconnect = ($dbh) ? 0 : 1;
+
   if (! $dbh) {
     $dbh = $self->dbconnect_noauto($myconfig);
-    $disconnect = 1;
   }
   
   my $query;
@@ -3323,11 +3321,10 @@ sub audittrail {
 
   my $query;
   my $rv;
-  my $disconnect;
+  my $disconnect = ($dbh) ? 0 : 1;
 
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
-    $disconnect = 1;
   }
     
   # if we have an id add audittrail, otherwise get a new timestamp

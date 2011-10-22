@@ -666,12 +666,11 @@ sub retrieve_assemblies {
 sub restock_assemblies {
   my ($self, $myconfig, $form, $dbh) = @_;
 
-  my $disconnect;
+  my $disconnect = ($dbh) ? 0 : 1;
   
   # connect to database
   if (!$dbh) {
     $dbh = $form->dbconnect_noauto($myconfig);
-    $disconnect = 1;
   }
    
   for my $i (1 .. $form->{rowcount}) {

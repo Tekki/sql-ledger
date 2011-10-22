@@ -1257,7 +1257,7 @@ sub get_name {
 sub company_details {
   my ($self, $myconfig, $form, $dbh) = @_;
 
-  my $disconnect = ($dbh) ? 1 : 0;
+  my $disconnect = ($dbh) ? 0 : 1;
   
   # connect to database
   $dbh = $form->dbconnect($myconfig);
