@@ -44,6 +44,8 @@ sub post_transaction {
   my $approved = ($form->{pending}) ? '0' : '1';
   my $action = ($approved) ? 'posted' : 'saved';
 
+  $form->{vc} =~ s/;//g;
+
   if ($form->{vc} eq 'vendor') {
     $table = 'ap';
     $buysell = 'sell';
@@ -736,6 +738,8 @@ sub transactions {
   my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
   
+  $form->{vc} =~ s/;//g;
+
   if ($form->{vc} eq 'vendor') {
     $ml = -1;
     $ARAP = 'AP';
@@ -1038,6 +1042,7 @@ sub get_name {
     $duedate = ($form->{transdate}) ? "to_date('$form->{transdate}', '$dateformat') + c.terms" : "current_date + c.terms";
   }
 
+  $form->{vc} =~ s/;//g;
   $form->{"$form->{vc}_id"} *= 1;
 
   my $arap = "ar";
@@ -1264,6 +1269,8 @@ sub company_details {
   # connect to database
   $dbh = $form->dbconnect($myconfig) unless $dbh;
   
+  $form->{vc} =~ s/;//g;
+
   # get rest for the customer/vendor
   my $query = qq|SELECT ct.$form->{vc}number, ct.name, ad.address1, ad.address2,
                  ad.city, ad.state, ad.zipcode, ad.country,
@@ -1345,6 +1352,7 @@ sub ship_to {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
+  $form->{vc} =~ s/;//g;
   $form->{"$form->{vc}_id"} *= 1;
   
   AA->company_details($myconfig, $form, $dbh);

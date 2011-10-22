@@ -217,6 +217,8 @@ sub sales_invoice {
 sub delete_import {
   my ($dbh, $form) = @_;
 
+  for (qw(login reportcode)) { $form->{$_} =~ s/;//g }
+
   my $query = qq|SELECT reportid FROM report
                  WHERE reportcode = '$form->{reportcode}'
 	         AND login = '$form->{login}'|;
@@ -337,6 +339,8 @@ sub import_order {
 
   my $query;
   my $ref;
+
+  for (qw(vc reportcode login)) { $form->{$_} =~ s/;//g }
 
   $query = qq|SELECT reportid FROM report
               WHERE reportcode = '$form->{reportcode}'
@@ -843,6 +847,8 @@ sub import_vc {
   my $ref;
   my $new;
 
+  for (qw(type reportcode login)) { $form->{$_} =~ s/;//g }
+
   my $ARAP = ($form->{type} eq 'customer') ? "AR" : "AP";
 
   $query = qq|SELECT reportid FROM report
@@ -942,6 +948,8 @@ sub order_links {
   my %defaults = $form->get_defaults($dbh, \@{['precision']});
   $form->{precision} = $defaults{precision};
   
+  $form->{vc} =~ s/;//g;
+
   # vendor/customer
   $query = qq|SELECT vc.id, vc.name, vc.terms,
 	      e.id AS employee_id, e.name AS employee,

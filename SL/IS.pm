@@ -745,7 +745,7 @@ sub post_invoice {
   my $keepcleared;
   my $ok;
   
-  %$form->{acc_trans} = ();
+  %{ $form->{acc_trans} } = ();
 
   ($null, $form->{employee_id}) = split /--/, $form->{employee};
   unless ($form->{employee_id}) {

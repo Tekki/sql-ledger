@@ -35,6 +35,8 @@ sub overpayment {
   my $uid = localtime;
   $uid .= $$;
 
+  $form->{vc} =~ s/;//g;
+
   # add AR/AP header transaction with a payment
   $query = qq|INSERT INTO $form->{arap} (invnumber, employee_id, approved)
 	      VALUES ('$uid', (SELECT id FROM employee

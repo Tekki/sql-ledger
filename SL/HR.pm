@@ -154,8 +154,8 @@ sub delete_employee {
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
 
-  $form->{id} *= 1;
-  
+  for (qw(id db)) { $form->{$_} =~ s/;//g }
+
   # delete employee
   my $query = qq|DELETE FROM $form->{db}
 	         WHERE id = $form->{id}|;

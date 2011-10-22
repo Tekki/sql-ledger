@@ -33,6 +33,8 @@ sub transactions {
   # remove locks
   $form->remove_locks($myconfig, $dbh, 'oe');
   
+  $form->{vc} =~ s/;//g;
+
   my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
@@ -275,6 +277,7 @@ sub save {
 	      WHERE p.id = ?|;
   my $pth = $dbh->prepare($query) || $form->dberror($query);
 
+  $form->{vc} =~ s/;//g;
  
   if ($form->{id} *= 1) {
     $query = qq|SELECT id, aa_id FROM oe
@@ -690,6 +693,8 @@ sub retrieve {
   $form->{currencies} = $form->get_currencies($dbh, $myconfig);
   
   $form->remove_locks($myconfig, $dbh, 'oe') unless $form->{readonly};
+
+  $form->{vc} =~ s/;//g;
 
   if ($form->{id} *= 1) {
     

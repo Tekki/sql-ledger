@@ -1776,6 +1776,8 @@ sub get_vc {
 
   my $dbh = $form->dbconnect($myconfig);
 
+  $form->{vc} =~ s/;//g;
+
   my $query = qq|SELECT count(*)
                  FROM $form->{vc} c
 		 JOIN oe o ON (o.$form->{vc}_id = c.id)
@@ -1818,6 +1820,8 @@ sub so_requirements {
   my $var;
   my $where = "o.closed = '0'";
   
+  $form->{vc} =~ s/;//g;
+
   if ($form->{searchitems} eq 'part') {
     $where .= " AND p.inventory_accno_id > 0 AND p.income_accno_id > 0";
   }
