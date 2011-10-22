@@ -78,7 +78,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.8.30";
+  $self->{version} = "2.8.31";
   $self->{dbversion} = "2.8.10";
 
   bless $self, $type;
@@ -2100,6 +2100,12 @@ sub all_taxaccounts {
 sub all_employees {
   my ($self, $myconfig, $dbh, $transdate, $sales) = @_;
   
+  my $disconnect = ($dbh) ? 0 : 1;
+
+  if (! $dbh) {
+    $dbh = $self->dbconnect($myconfig);
+  }
+  
   # setup employees/sales contacts
   my $query = qq|SELECT id, name
  	         FROM employee
@@ -2125,6 +2131,8 @@ sub all_employees {
     push @{ $self->{all_employee} }, $ref;
   }
   $sth->finish;
+
+  $dbh->disconnect if $disconnect;
 
 }
 

@@ -742,10 +742,6 @@ sub save {
     $form->error($locale->text('login may only contain alphanumeric characters!')) if $login =~ /\W/;
   }
   
-  if ($form->{new_password} ne $form->{old_password}) {
-    $form->error($locale->text('Password may only contain alphanumeric characters!')) if $form->{new_password} =~ /\W/;
-  }
-
   # check for duplicates
   if (!$form->{edit}) {
     $temp = new User "$memberfile", "$form->{login}";

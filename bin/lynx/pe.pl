@@ -765,11 +765,13 @@ sub list_projects {
 
   $href = "$form->{script}?";
   for (qw(action direction oldsort type path login status startdatefrom startdateto)) { $href .= "$_=$form->{$_}&" }
+  chop $href;
   
   $form->sort_order();
   
   $callback = "$form->{script}?";
   for (qw(action direction oldsort type path login status startdatefrom startdateto)) { $callback .= "$_=$form->{$_}&" }
+  chop $callback;
   
   @column_index = $form->sort_columns(qw(projectnumber description name startdate enddate));
   
@@ -868,7 +870,7 @@ sub list_projects {
   $callback = $form->escape($callback);
 
   foreach $ref (@{ $form->{all_project} }) {
-    
+
     for (qw(startdate enddate)) { $column_data{$_} = qq|<td nowrap>$ref->{$_}&nbsp;</td>| }
     for (qw(description name)) { $column_data{$_} = qq|<td>$ref->{$_}&nbsp;</td>| }
 

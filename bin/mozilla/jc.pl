@@ -1248,7 +1248,7 @@ sub list_cards {
 
   
   if ($form->{type} eq 'timecard') {
-    push @column_index, (qw(1 2 3 4 5 6 7)) if ($form->{l_qty} || $form->{l_time});
+    push @column_index, (qw(2 3 4 5 6 7 1)) if ($form->{l_qty} || $form->{l_time});
   } else {
     push @column_index, (qw(qty sellprice)) if $form->{l_qty};
   }

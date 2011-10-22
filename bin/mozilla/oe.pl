@@ -2710,6 +2710,14 @@ sub search_transfer {
   if (@{ $form->{all_partsgroup} }) {
     $form->{selectpartsgroup} = "<option>\n";
     for (@{ $form->{all_partsgroup} }) { $form->{selectpartsgroup} .= qq|<option value="$_->{partsgroup}--$_->{id}">$_->{partsgroup}\n| }
+    
+    $partsgroup = qq|
+	<tr>
+	  <th align=right nowrap>|.$locale->text('Group').qq|</th>
+	  <td><select name=partsgroup>$form->{selectpartsgroup}</select></td>
+	</tr>
+|;
+
   }
   
   $form->{title} = $locale->text('Transfer Inventory');
@@ -2745,10 +2753,7 @@ sub search_transfer {
 	  <th align="right" nowrap="true">|.$locale->text('Description').qq|</th>
 	  <td><input name=description size=40></td>
 	</tr>
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Group').qq|</th>
-	  <td><select name=partsgroup>$form->{selectpartsgroup}</select></td>
-	</tr>
+	$partsgroup
       </table>
     </td>
   </tr>
