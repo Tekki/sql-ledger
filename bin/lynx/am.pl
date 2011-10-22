@@ -3388,11 +3388,13 @@ sub process_transactions {
 	    $form->{ARAP} = "AR";
 	    $form->{module} = "ar";
 	    $invfld = "sinumber";
+	    $buysell = "buy";
 	  } else {
 	    $form->{script} = ($pt->{invoice}) ? "ir.pl" : "ap.pl";
 	    $form->{ARAP} = "AP";
 	    $form->{module} = "ap";
 	    $invfld = "vinumber";
+	    $buysell = "sell";
 	  }
 	  do "$form->{path}/$form->{script}";
 
@@ -3407,10 +3409,11 @@ sub process_transactions {
 
             $form->{type} = "transaction";
             for (1 .. $form->{rowcount} - 1) { $form->{"amount_$_"} = $form->format_amount(\%myconfig, $form->{"amount_$_"}, $form->{precision}) }
-	    for (1 .. $form->{paidaccounts}) { $form->{"paid_$_"} = $form->format_amount(\%myconfig, $form->{"paid_$_"}, $form->{precision}) }
-	    for (split / /, $form->{taxaccounts}) { $form->format_amount(\%myconfig, $form->{"tax_$_"}, $form->{precision}) }
-	    $form->{discount_paid} = $form->format_amount(\%myconfig, $form->{discount_paid}, $form->{precision});
+	    for (split / /, $form->{taxaccounts}) { $form->{"tax_$_"} = $form->format_amount(\%myconfig, $form->{"tax_$_"}, $form->{precision}) }
 	  }
+	  
+	  for (1 .. $form->{paidaccounts}) { $form->{"paid_$_"} = $form->format_amount(\%myconfig, $form->{"paid_$_"}, $form->{precision}) }
+	  $form->{discount_paid} = $form->format_amount(\%myconfig, $form->{discount_paid}, $form->{precision});
 
 	  delete $form->{"$form->{ARAP}_links"};
 	  for (qw(acc_trans invoice_details)) { delete $form->{$_} }
@@ -3419,6 +3422,12 @@ sub process_transactions {
 	  $form->{invnumber} = $pt->{reference};
 	  $form->{description} = $pt->{description};
 	  $form->{transdate} = $pt->{nextdate};
+
+          # exchangerate
+          if ($form->{currency} ne $form->{defaultcurrency}) {
+	    $exchangerate = $form->get_exchangerate(\%myconfig, undef, $form->{currency}, $form->{transdate}, $buysell);
+	    $form->{exchangerate} = $form->format_amount(\%myconfig, $exchangerate) if $exchangerate;
+	  }
 
           # tax accounts
 	  $form->all_taxaccounts(\%myconfig, undef, $form->{transdate});
@@ -3432,7 +3441,15 @@ sub process_transactions {
 	      $form->{"datepaid_$j"} = $form->add_date(\%myconfig, $form->{transdate}, $pt->{paid}, "days");
 	      ($form->{"$form->{ARAP}_paid_$j"}) = split /--/, $form->{"$form->{ARAP}_paid_$j"};
 	      delete $form->{"cleared_$j"};
+
+	      if ($form->{currency} ne $form->{defaultcurrency}) {
+		$form->{"exchangerate_$j"} = $form->{exchangerate};
+		$exchangerate = $form->get_exchangerate(\%myconfig, undef, $form->{currency}, $form->{"datepaid_$j"}, $buysell);
+		$form->{"exchangerate_$j"} = $form->format_amount(\%myconfig, $exchangerate) if $exchangerate;
+	      }
 	    }
+	  } else {
+	    delete $form->{paidaccounts};
 	  }
 
 	  for (qw(id recurring printed emailed queued)) { delete $form->{$_} }
@@ -3480,11 +3497,13 @@ sub process_transactions {
 	    $form->{type} = "sales_order";
 	    $ordfld = "sonumber";
 	    $flabel = $locale->text('Sales Order');
+	    $buysell = "buy";
 	  } else {
 	    $form->{vc} = "vendor";
 	    $form->{type} = "purchase_order";
 	    $ordfld = "ponumber";
 	    $flabel = $locale->text('Purchase Order');
+	    $buysell = "sell";
 	  }
 	  require "$form->{path}/$form->{script}";
 
@@ -3497,6 +3516,12 @@ sub process_transactions {
 	  $form->{description} = $pt->{description};
 	  $form->{transdate} = $pt->{nextdate};
 	  
+	  # exchangerate
+          if ($form->{currency} ne $form->{defaultcurrency}) {
+	    $exchangerate = $form->get_exchangerate(\%myconfig, undef, $form->{currency}, $form->{transdate}, $buysell);
+	    $form->{exchangerate} = $form->format_amount(\%myconfig, $exchangerate) if $exchangerate;
+	  }
+  
 	  # calculate reqdate
 	  $form->{reqdate} = $form->add_date(\%myconfig, $form->{transdate}, $pt->{req}, "days") if $form->{reqdate};
 
@@ -3533,6 +3558,14 @@ sub process_transactions {
 	$form->{transdate} = $pt->{nextdate};
 
 	$form->{defaultcurrency} = substr($form->{currencies},0,3);
+	
+	$buysell = "buy";
+	
+	# exchangerate
+	if ($form->{currency} ne $form->{defaultcurrency}) {
+	  $exchangerate = $form->get_exchangerate(\%myconfig, undef, $form->{currency}, $form->{transdate}, $buysell);
+	  $form->{exchangerate} = $form->format_amount(\%myconfig, $exchangerate) if $exchangerate;
+	}
 
 	$j = 1;
 	foreach $ref (@{ $form->{GL} }) {

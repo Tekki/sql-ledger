@@ -26,8 +26,7 @@ sub add {
 
   &create_links;
  
-  &form_header;
-  &form_footer;
+  &display_form;
 
 }
 
@@ -38,8 +37,7 @@ sub edit {
 
   &create_links;
   
-  &form_header;
-  &form_footer;
+  &display_form;
  
 }
 
@@ -1928,6 +1926,7 @@ sub form_footer {
 	     'Purchase Order' => { ndx => 16, key => 'O', value => $locale->text('Purchase Order') },
 	     'RFQ' => { ndx => 17, key => 'Q', value => $locale->text('RFQ') },
 	     'Pricelist' => { ndx => 18, key => 'P', value => $locale->text('Pricelist') },
+	     'New Number' => { ndx => 19, key => 'M', value => $locale->text('New Number') },
 	     'Delete' => { ndx => 19, key => 'D', value => $locale->text('Delete') },
 	    );
   
@@ -1937,6 +1936,7 @@ sub form_footer {
   if ($form->{db} eq 'customer') {
     if ($myconfig{acs} !~ /AR--Customers--Add Customer/) {
       $a{'Save'} = 1;
+      $a{'New Number'} = 1;
       $a{'Shipping Address'} = 1;
       $a{'Update'} = 1;
 
@@ -2565,8 +2565,7 @@ sub update {
 
     $form->{title} = ($form->{id}) ? 'Edit' : 'Add';
 
-    &form_header;
-    &form_footer;
+    &display_form;
 
     return;
     
@@ -2974,6 +2973,23 @@ sub delete {
   $msg .= " deleted!";
   $form->redirect($locale->text($msg));
   
+}
+
+
+sub new_number {
+
+  $form->{"$form->{db}number"} = $form->update_defaults(\%myconfig, "$form->{db}number");
+
+  &display_form;
+
+}
+
+
+sub display_form {
+
+  &form_header;
+  &form_footer;
+
 }
 
 

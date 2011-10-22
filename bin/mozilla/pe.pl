@@ -2570,7 +2570,7 @@ sub generate_sales_orders {
     $order->{transdate} = $order->current_date(\%myconfig);
     $order->{reqdate} = $order->{transdate};
     
-    for (qw(intnotes employee employee_id)) { delete $order->{$_} }
+    for (qw(employee_id)) { delete $order->{$_} }
 
     if (OE->save(\%myconfig, \%$order)) {
       if (! PE->allocate_projectitems(\%myconfig, \%$order)) {

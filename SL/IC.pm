@@ -1095,7 +1095,7 @@ sub all_parts {
 		    i.trans_id, ct.name, e.name AS employee,
 		    a.curr, a.till, p.notes, p.toolnumber,
 		    p.countryorigin, p.tariff_hscode, p.barcode
-		    $makemodelfld|;
+		    $makemodelflds|;
 
 
       if ($form->{bought}) {
@@ -1170,7 +1170,7 @@ sub all_parts {
 		 i.trans_id, ct.name, e.name AS employee,
 		 a.curr, '0' AS till, p.notes, p.toolnumber,
 		 p.countryorigin, p.tariff_hscode, p.barcode
-		 $makemodelfld|;
+		 $makemodelflds|;
 
       if ($form->{ordered}) {
 	$query .= qq|$union
@@ -1203,7 +1203,7 @@ sub all_parts {
 		   i.trans_id, ct.name, e.name AS employee,
 		   a.curr, '0' AS till, p.notes, p.toolnumber,
 		   p.countryorigin, p.tariff_hscode, p.barcode
-		   $makemodelfld|;
+		   $makemodelflds|;
 		   
 	$query .= qq|$union
 	            SELECT $flds, 'oe' AS module, 'purchase_order' AS type,
@@ -1254,7 +1254,7 @@ sub all_parts {
 		 i.trans_id, ct.name, e.name AS employee,
 		 a.curr, '0' AS till, p.notes, p.toolnumber,
 		 p.countryorigin, p.tariff_hscode, p.barcode
-		 $makemodelfld|;
+		 $makemodelflds|;
 
       if ($form->{quoted}) {
 	$query .= qq|$union
@@ -1287,7 +1287,7 @@ sub all_parts {
 		   i.trans_id, ct.name, e.name AS employee,
 		   a.curr, '0' AS till, p.notes, p.toolnumber,
 		   p.countryorigin, p.tariff_hscode, p.barcode
-		   $makemodelfld|;
+		   $makemodelflds|;
 
 	$query .= qq|$union
 	            SELECT $flds, 'oe' AS module, 'request_quotation' AS type,
@@ -1732,7 +1732,7 @@ sub create_links {
                   l.description AS translation
                   FROM chart c
 		  LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
-		  WHERE c.id = $defaults{"${_}_accno_id"}|;
+		  WHERE c.id = '$defaults{"${_}_accno_id"}'|;
       ($form->{"${_}_accno"}, $form->{"${_}_description"}, $form->{"${_}_translation"}) = $dbh->selectrow_array($query);
       $form->{"${_}_description"} = $form->{"${_}_translation"} if $form->{"${_}_translation"};
       $form->{amount}{"IC_$_"} = { accno => $form->{"${_}_accno"}, description => $form->{"${_}_description"} };

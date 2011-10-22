@@ -425,6 +425,8 @@ sub print {
 
       do "$form->{path}/$form->{script}";
 
+      $form->{shipto} = 1;
+      
       if ($myform->{"module_$i"} eq 'oe') {
 	&order_links;
 	&prepare_order;
@@ -886,7 +888,7 @@ function CheckAll() {
   
   $format = qq|<select name=format>$selectformat</select>|;
   $format =~ s/(<option value="\Q$form->{format}\E")/$1 selected/;
-  $format = qq|<td width=1%>$format</td>|;
+  $format = qq|<td>$format</td>|;
  
   if ($form->{batch} eq 'email') {
     $message = qq|<tr>
@@ -902,7 +904,7 @@ function CheckAll() {
   if ($form->{batch} eq 'queue') {
     $format = "";
     $copies = "";
-    $media = "" if ! %printer;
+    $media = "" unless %printer;
   }
 
 

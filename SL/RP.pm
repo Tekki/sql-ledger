@@ -131,7 +131,7 @@ sub income_statement {
     my $transdate = $form->{todate};
     $transdate ||= $form->current_date($myconfig);
  
-    $form->{exchangerate} = $form->get_exchangerate($dbh, $form->{currency}, $transdate, 'buy');
+    $form->{exchangerate} = $form->get_exchangerate($myconfig, $dbh, $form->{currency}, $transdate, 'buy');
   }
     
   $form->{exchangerate} ||= 1;
@@ -300,7 +300,7 @@ sub balance_sheet {
     my $transdate = $form->{asofdate};
     $transdate ||= $form->current_date($myconfig);
  
-    $form->{exchangerate} = $form->get_exchangerate($dbh, $form->{currency}, $transdate, 'buy');
+    $form->{exchangerate} = $form->get_exchangerate($myconfig, $dbh, $form->{currency}, $transdate, 'buy');
   }
     
   $form->{exchangerate} ||= 1;

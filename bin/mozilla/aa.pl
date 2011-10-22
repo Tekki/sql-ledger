@@ -279,6 +279,7 @@ sub create_links {
 	$form->{"$form->{ARAP}_paid_$i"} = "$form->{acc_trans}{$key}->[$i-1]->{accno}--$form->{acc_trans}{$key}->[$i-1]->{description}";
 	$form->{"paid_$i"} = $form->{acc_trans}{$key}->[$i-1]->{amount} * -1 * $ml;
 	$form->{"datepaid_$i"} = $form->{acc_trans}{$key}->[$i-1]->{transdate};
+	$form->{"olddatepaid_$i"} = $form->{acc_trans}{$key}->[$i-1]->{transdate};
 	$form->{"source_$i"} = $form->{acc_trans}{$key}->[$i-1]->{source};
 	$form->{"memo_$i"} = $form->{acc_trans}{$key}->[$i-1]->{memo};
 	
@@ -295,6 +296,7 @@ sub create_links {
 	$form->{"$form->{ARAP}_discount_paid"} = "$form->{acc_trans}{$key}->[$i-1]->{accno}--$form->{acc_trans}{$key}->[0]->{description}";
 	$form->{"discount_paid"} = $form->{acc_trans}{$key}->[0]->{amount} * -1 * $ml;
 	$form->{"discount_datepaid"} = $form->{acc_trans}{$key}->[0]->{transdate};
+	$form->{"olddiscount_datepaid"} = $form->{acc_trans}{$key}->[0]->{transdate};
 	$form->{"discount_source"} = $form->{acc_trans}{$key}->[0]->{source};
 	$form->{"discount_memo"} = $form->{acc_trans}{$key}->[0]->{memo};
 	
@@ -985,7 +987,8 @@ sub form_footer {
 	       'Post as new' => { ndx => 5, key => 'N', value => $locale->text('Post as new') },
 	       'Print and Post as new' => { ndx => 6, key => 'W', value => $locale->text('Print and Post as new') },
 	       'Schedule' => { ndx => 7, key => 'H', value => $locale->text('Schedule') },
-	       'Delete' => { ndx => 8, key => 'D', value => $locale->text('Delete') },
+	       'New Number' => { ndx => 10, key => 'M', value => $locale->text('New Number') },
+	       'Delete' => { ndx => 11, key => 'D', value => $locale->text('Delete') },
 	      );
 
     delete $button{'Schedule'} if $form->{batch};
