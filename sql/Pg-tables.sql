@@ -81,7 +81,7 @@ CREATE TABLE acc_trans (
 );
 --
 CREATE TABLE invoice (
-  id int DEFAULT nextval ( 'invoiceid' ),
+  id int DEFAULT nextval ( 'invoiceid' ) primary key,
   trans_id int,
   parts_id int,
   description text,

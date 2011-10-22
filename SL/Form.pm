@@ -78,7 +78,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.8.16";
+  $self->{version} = "2.8.17";
   $self->{dbversion} = "2.8.8";
 
   bless $self, $type;
@@ -646,7 +646,7 @@ sub parse_template {
 	chomp $var;
 	$var =~ s/.*?<%foreach (.+?)%>/$1/;
 	while ($_ = shift) {
-	  last if (/<%end $var%>/);
+	  last if (/<%end \Q$var\E%>/);
 
 	  # store line in $par
 	  $par .= $_;

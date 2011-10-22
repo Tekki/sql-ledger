@@ -46,7 +46,6 @@ create index gl_reference_key on gl (reference);
 create index gl_description_key on gl (lower(description));
 create index gl_employee_id_key on gl (employee_id);
 --
-create index invoice_id_key on invoice (id);
 create index invoice_trans_id_key on invoice (trans_id);
 --
 create index makemodel_parts_id_key on makemodel (parts_id);

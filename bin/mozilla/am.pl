@@ -3039,17 +3039,17 @@ sub recurring_transactions {
   
   $form->sort_order();
   
-  # create the logo screen
-  $form->header;
-
   my @column_index = qw(ndx reference description name vcnumber);
   
   push @column_index, qw(nextdate enddate id amount curr repeat howmany recurringemail recurringprint);
 
   my %column_data;
   
+  $form->{allbox} = ($form->{allbox}) ? "checked" : "";
+  $action = ($form->{deselect}) ? "deselect_all" : "select_all";
+  $column_data{ndx} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll(); javascript:document.forms[0].submit()"><input type=hidden name=action value="$action"></th>|;
+  
   $column_data{reference} = "<th><a class=listheading href=$href&sort=reference>".$locale->text('Reference').qq"</a></th>";
-  $column_data{ndx} = "<th class=listheading width=1%>&nbsp;</th>";
   $column_data{id} = "<th class=listheading>".$locale->text('ID')."</th>";
   $column_data{description} = "<th><a class=listheading href=$href&sort=description>".$locale->text('Description')."</th>";
   $column_data{name} = "<th nowrap><a class=listheading href=$href&sort=name>".$locale->text('Company Name')."</th>";
@@ -3070,7 +3070,29 @@ sub recurring_transactions {
   }
   $callback = $form->escape("$callback&sort=$form->{sort}");
   
+  # create the logo screen
+  $form->header;
+ 
 print qq|
+<script language="JavaScript">
+<!--
+
+function CheckAll() {
+
+  var frm = document.forms[0]
+  var el = frm.elements
+  var re = /ndx_/;
+
+  for (i = 0; i < el.length; i++) {
+    if (el[i].type == 'checkbox' && re.test(el[i].name)) {
+      el[i].checked = frm.allbox.checked
+    }
+  }
+
+}
+// -->
+</script>
+
 <body>
 
 <form method=post action=$form->{script}>
@@ -3135,10 +3157,15 @@ print qq|
       $column_data{ndx} = qq|<td></td>|;
       
       if (!$ref->{expired}) {
+	$k++;
+	$checked = "";
 	if ($ref->{overdue} <= 0) {
-	  $k++;
-	  $column_data{ndx} = qq|<td><input name="ndx_$k" class=checkbox type=checkbox value=$ref->{id} checked></td>|;
+	  $checked = "checked";
 	}
+	if (exists $form->{deselect}) {
+	  $checked = ($form->{deselect}) ? "checked" : "";
+	}
+	$column_data{ndx} = qq|<td><input name="ndx_$k" class=checkbox type=checkbox value=$ref->{id} $checked></td>|;
       }
       
       $reference = ($ref->{reference}) ? $ref->{reference} : $locale->text('Next Number');
@@ -3205,10 +3232,21 @@ print qq|
 <input name=lastndx type=hidden value=$k>
 |;
 
-  $form->hide_form(qw(path login));
+  $form->hide_form(qw(path login allbox));
 
-  print qq|
-<input class=submit type=submit name=action value="|.$locale->text('Process Transactions').qq|">| if $k;
+  %button = ('Select all' => { ndx => 2, key => 'A', value => $locale->text('Select all') },
+               'Deselect all' => { ndx => 3, key => 'A', value => $locale->text('Deselect all') },
+	       'Process Transactions' => { ndx => 4, key => 'P', value => $locale->text('Process Transactions') }
+	    );
+
+  if ($form->{deselect}) {
+    delete $button{'Select all'};
+  } else {
+    delete $button{'Deselect all'};
+  }
+  
+  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -3221,6 +3259,26 @@ print qq|
 </body>
 </html>
 |;
+
+}
+
+
+sub select_all {
+
+  for (1 .. $form->{rowcount}) { $form->{"ndx_$_"} = 1 }
+  $form->{allbox} = 1;
+  $form->{deselect} = 1;
+  &recurring_transactions;
+
+}
+
+
+sub deselect_all {
+
+  for (1 .. $form->{rowcount}) { $form->{"ndx_$_"} = "" }
+  $form->{allbox} = "";
+  $form->{deselect} = 0;
+  &recurring_transactions;
 
 }
 
