@@ -163,17 +163,17 @@ sub select_option {
   
   for (@a) {
     $var = $_ = $self->quote($_);
-    if (defined $rev) {
+    if ($rev ne "") {
       $_ =~ s/--.*//g;
       $var =~ s/.*--//g;
     }
-    if (defined $removeid) {
+    if ($removeid ne "") {
       $var =~ s/--.*//g;
     }
     
     $str .= qq|<option|;
     $str .= qq| value="$_"| if ($removeid || $rev);
-    $str .= qq| selected| if $_ ne "" && $_ eq $self->quote($selected);
+    $str .= qq| selected| if (($_ ne "") && ($_ eq $self->quote($selected)));
     $str .= qq|>$var\n|;
   }
 
@@ -663,7 +663,7 @@ sub parse_template {
 	  # but only if there was a <%pagebreak ...%> block before
 	  
 	  if ($var eq 'number' || $var eq 'part' || $var eq 'service') {
-	    if ($chars_per_line && defined $self->{$var}) {
+	    if ($chars_per_line && ($self->{$var} ne "")) {
 	      my $line;
 	      my $lines = 0;
 	      my $item = $self->{description}[$j];
@@ -3637,7 +3637,7 @@ sub date {
       $mm = substr("0$mm", -2);
       $longdate = "$dd$spc$mm$spc$yy";
 
-      if (defined $longformat) {
+      if ($longformat ne "") {
 	$longdate = "$dd";
 	$longdate .= ($spc eq '.') ? ". " : " ";
 	$longdate .= &text($self, $self->{$longmonth}[--$mm])." $yy";
@@ -3648,7 +3648,7 @@ sub date {
       $mm = substr("0$mm", -2);
       $longdate = "$yy$spc$mm$spc$dd"; 
 
-      if (defined $longformat) {
+      if ($longformat ne "") {
 	$longdate = &text($self, $self->{$longmonth}[--$mm])." $dd $yy";
       }
     } else {
@@ -3657,7 +3657,7 @@ sub date {
 	$mm = substr("0$mm", -2);
 	$longdate = "$mm$spc$dd$spc$yy"; 
 
-      if (defined $longformat) {
+      if ($longformat ne "") {
 	$longdate = &text($self, $self->{$longmonth}[--$mm])." $dd $yy";
       }
     }

@@ -1015,7 +1015,7 @@ sub order_links {
     if ($#dl) {
       $i++;
       for (keys %{$form->{$form->{type}}}) {
-	$form->{"${_}_$i"} = $dl[$form->{$form->{type}}->{$_}{ndx}] if defined $form->{$form->{type}}->{$_}{ndx};
+	$form->{"${_}_$i"} = $dl[$form->{$form->{type}}->{$_}{ndx}] if $form->{$form->{type}}->{$_}{ndx} >= 0;
       }
 
       if ($sameorder ne qq|$dl[$form->{$form->{type}}->{ordnumber}{ndx}]$dl[$form->{$form->{type}}->{"$form->{vc}number"}{ndx}]|) {

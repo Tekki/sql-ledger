@@ -1,14 +1,10 @@
 users
-spool
 sql-ledger.conf
-wlprinter.conf
 templates/*/
-bin/mozilla/custom/*
 locale/*.zip
+locales*.pl
 *.missing
 *~
 .project
 .includepath
 .settings
-*.patch
-

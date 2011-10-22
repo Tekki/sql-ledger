@@ -2211,7 +2211,7 @@ sub defaults {
 </table>
 |;
 
-  $form->{optional} = "company address tel fax companyemail companywebsite yearend weightunit volumeunit businessnumber closedto revtrans audittrail method cdt namesbynumber typeofcontact";
+  $form->{optional} = "companyemail companywebsite company address tel fax yearend weightunit volumeunit businessnumber closedto revtrans audittrail method cdt namesbynumber typeofcontact";
   
   $form->hide_form(qw(optional closedto revtrans audittrail path login));
 
