@@ -2207,8 +2207,8 @@ sub project_sales_order {
 	$fromto
 	<tr>
 	  <th></th>
-  	  <td><input name=summary type=radio class=radio value=1 checked> |.$locale->text('Summary').qq|
-  	  <input name=summary type=radio class=radio value=0> |.$locale->text('Detail').qq|
+  	  <td><input name=summary type=radio class=radio value=0 checked> |.$locale->text('Summary').qq|
+  	  <input name=summary type=radio class=radio value=1> |.$locale->text('Detail').qq|
   	  </td>
   	</tr>
       </table>
