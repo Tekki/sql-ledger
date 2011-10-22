@@ -954,11 +954,19 @@ sub form_header {
 
   if ($outstanding) {
     # print total
-    print qq|
+    if ($outstanding > 0) {
+      print qq|
 	  <tr>
             <td colspan=4><b>|.$locale->text('Outstanding').":</b> ".$form->format_amount(\%myconfig, $outstanding, $form->{precision}).qq|</td>
 	  </tr>
 |;
+    } else {
+      print qq|
+	  <tr>
+            <td colspan=4><b>|.$locale->text('Overpaid').":</b> ".$form->format_amount(\%myconfig, $outstanding * -1, $form->{precision}).qq|</td>
+	  </tr>
+|;
+    }
   }
  
   $form->hide_form(qw(city state country paidaccounts payment_accno discount_accno payment_method));

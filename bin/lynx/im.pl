@@ -591,6 +591,7 @@ sub im_payment {
   IM->payments(\%myconfig, \%$form);
 
   $column_data{runningnumber} = "&nbsp;";
+  $column_data{ndx} = "&nbsp;";
   $column_data{datepaid} = $locale->text('Date Paid');
   $column_data{invnumber} = $locale->text('Invoice');
   $column_data{description} = $locale->text('Description');
@@ -727,13 +728,14 @@ sub import_payments {
 	$form->info(qq| $form->{"invnumber_$i"}, $form->{"description_$i"}, $form->{"companynumber_$i"}, $form->{"name_$i"}, $form->{"city_$i"}, $form->{"amount_$i"} ... | . $locale->text('ok'));
 
 	$ou = $form->round_amount($form->{"outstanding_$i"} - $form->parse_amount(\%myconfig, $form->{"amount_$i"}), $form->{precision});
-	if ($ou < 0) {
-	  $ou = $form->format_amount(\%myconfig, $ou, $form->{precision});
-	  $form->info(", $ou " . $locale->text('overpaid'));
-	}
-	if ($ou > 0) {
-	  $ou = $form->format_amount(\%myconfig, $ou, $form->{precision});
-	  $form->info(", $ou " . $locale->text('outstanding'));
+	if ($ou) {
+	  if ($ou > 0) {
+	    $ou = $form->format_amount(\%myconfig, $ou, $form->{precision});
+	    $form->info(", $ou " . $locale->text('Outstanding'));
+	  } else {
+	    $ou = $form->format_amount(\%myconfig, $ou * -1, $form->{precision});
+	    $form->info(", $ou " . $locale->text('Overpaid'));
+	  }
 	}
 
 	$form->info("\n");

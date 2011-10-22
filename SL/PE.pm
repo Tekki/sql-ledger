@@ -1442,6 +1442,9 @@ sub get_jcitems {
   
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
+  
+  my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  $form->{precision} = $defaults{precision};
 
   my $null;
   my $var;

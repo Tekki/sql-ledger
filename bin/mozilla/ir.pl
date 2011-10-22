@@ -802,11 +802,19 @@ sub form_footer {
   $outstanding = $form->round_amount($form->{oldinvtotal} - $totalpaid, $form->{precision});
 
   if ($outstanding) {
-    print qq|
+    if ($outstanding > 0) {
+      print qq|
           <tr>
 	    <td colspan=4><b>|.$locale->text('Outstanding').":</b> ".$form->format_amount(\%myconfig, $outstanding, $form->{precision}).qq|</td>
           </tr>
 |;
+    } else {
+      print qq|
+          <tr>
+	    <td colspan=4><b>|.$locale->text('Overpaid').":</b> ".$form->format_amount(\%myconfig, $outstanding * -1, $form->{precision}).qq|</td>
+          </tr>
+|;
+    }
   }
   
   $form->{oldtotalpaid} = $totalpaid;

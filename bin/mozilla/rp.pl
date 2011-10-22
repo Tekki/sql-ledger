@@ -1343,7 +1343,7 @@ sub aging {
   for (@{ $form->{all_printer} }) { $form->{selectprinter} .= "$_->{printer}\n" }
   chomp $form->{selectprinter};
   
-  $form->{vc_ids} = "";
+  %vc_ids = ();
   $form->{curr} = "";
 
   $form->header;
@@ -1538,9 +1538,9 @@ function CheckAll() {
       }
 
       $checked = ($ref->{checked}) ? "checked" : "";
-      $column_data{ndx} = qq|<td><input name="ndx_$ref->{curr}_$ref->{vc_id}" type=checkbox class=checkbox value=1 $checked}></td>|;
+      $column_data{ndx} = qq|<td><input name="ndx_$ref->{curr}_$ref->{vc_id}" type=checkbox class=checkbox value=1 $checked></td>|;
       
-      $form->{vc_ids} .= "$ref->{vc_id} ";
+      $vc_ids{"$ref->{vc_id}"} = 1;
       $linetotal = 0;
 
     }
@@ -1680,7 +1680,7 @@ function CheckAll() {
 
   $form->{todate} = $temp{todate};
   
-  chop $form->{vc_ids};
+  $form->{vc_ids} = join ' ', (keys %vc_ids);
   chop $form->{curr};
   
   $form->hide_form(qw(todate title summary overdue callback arap vc department path login type report vc_ids curr));
@@ -2302,9 +2302,8 @@ sub send_email_statement {
 
   $form->isblank("email", $locale->text('E-mail address missing!'));
 
-  RP->aging(\%myconfig, \%$form);
-  
-  $form->{subject} = $locale->text('Statement').qq| - $form->{todate}| unless $form->{subject};
+  $todate = $form->{todate} || $form->current_date(\%myconfig);
+  $form->{subject} = $locale->text('Statement').qq| - $todate| unless $form->{subject};
 
   for $curr (split / /, $form->{curr}) {
     for (split / /, $form->{vc_ids}) {
@@ -2566,13 +2565,13 @@ sub do_print_statement {
 
     $ref = shift @{ $form->{AG} };
     $form->{OUT} = $out;
-    
+
     if ($vc_id != $ref->{vc_id}) {
       
-      $vc_id = $ref->{vc_id};
-
       if ($form->{"ndx_$ref->{curr}_$ref->{vc_id}"}) {
-	
+
+	$vc_id = $ref->{vc_id};
+      
 	for (@a) { $form->{$_} = $ref->{$_} }
 	$form->format_string(@a);
 
@@ -2597,12 +2596,11 @@ sub do_print_statement {
 	&statement_details($ref);
 
         while ($ref) {
-
 	  if (scalar (@{ $form->{AG} }) > 0) {
 	    # one or more left to go
 	    if ($vc_id == $form->{AG}->[0]->{vc_id}) {
 	      $ref = shift @{ $form->{AG} };
-	      &statement_details($ref);
+	      &statement_details($ref) if $ref->{curr} eq $form->{currency};
 	      # any more?
 	      $ref = scalar (@{ $form->{AG} });
 	    } else {
@@ -2612,7 +2610,6 @@ sub do_print_statement {
 	    # set initial ref to 0
 	    $ref = 0;
 	  }
-
 	}
 	
 	for ("c0", "c15", "c30", "c45", "c60", "c75", "c90", "") { $form->{"${_}total"} = $form->format_amount(\%myconfig, $form->{"${_}total"}, $form->{precision}) }
