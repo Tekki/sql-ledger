@@ -82,8 +82,25 @@ if ($form->{path} !~ /^bin\//) {
   $form->error($locale->text('Invalid path!')."\n");
 }
 
-# did sysadmin lock us out
+# global lock out
 if (-f "$userspath/nologin") {
+  if (-s "$userspath/nologin") {
+    open(FH, "$userspath/nologin");
+    $message = <FH>;
+    close(FH);
+    $form->error($message);
+  }
+  $form->error($locale->text('System currently down for maintenance!'));
+}
+
+# dataset lock out
+if (-f "$userspath/$myconfig{dbname}.nologin") {
+  if (-s "$userspath/$myconfig{dbname}.nologin") {
+    open(FH, "$userspath/$myconfig{dbname}.nologin");
+    $message = <FH>;
+    close(FH);
+    $form->error($message);
+  }
   $form->error($locale->text('System currently down for maintenance!'));
 }
 
@@ -198,4 +215,20 @@ sub check_password {
   }
 }
 
+
+sub error {
+  my ($msg) = @_;
+
+  if ($ENV{HTTP_USER_AGENT}) {
+    print qq|Content-Type: text/html
+
+<body><h2 class=error>Error!</h2>
+    <p><b>$msg</b>|;
+
+    exit;
+  }
+
+  die "Error: $msg\n";
+
+}
 

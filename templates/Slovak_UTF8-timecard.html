@@ -1,0 +1,126 @@
+<body bgcolor=ffffff>
+
+<table width=100%>
+
+  <%include letterhead.html%>
+  
+  <tr>
+    <td width=10>&nbsp;</td>
+
+    <th colspan=3>
+      <h4>Č A S O V Á &nbsp;&nbsp; K A R T A</h4>
+    </th>
+  </tr>
+
+  <tr>
+    <td>&nbsp;</td>
+
+    <td>
+      <table width=100% callspacing=0 cellpadding=0>
+        <tr valign=top>
+	  <td>
+	    <table>
+	      <tr>
+		<th align=left>Zamestnanec</th>
+		<td><%employee%></td>
+	      </tr>
+	      <tr>
+		<th align=left>ID</th>
+		<td><%employee_id%></td>
+	      </tr>
+	    </table>
+	  </td>
+   
+	  <td align=right>
+	    <table>
+	      <tr>
+		<th align=left nowrap>ID karty</th>
+		<td><%id%></td>
+	      </tr>
+	      <tr>
+		<th align=left nowrap>Dátum</th>
+		<td><%transdate%></td>
+	      </tr>
+	      <tr>
+		<th align=left nowrap>Vstup</th>
+		<td><%checkedin%></td>
+	      </tr>
+              <tr>
+                <th align=left>Výstup</th>
+		<td><%checkedout%></td>
+	      </tr>
+	      <tr>
+		<th align=left nowrap>Hodiny</th>
+		<td><%qty%></td>
+	      </tr>
+	    </table>
+	  </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <tr height=5></tr>
+  
+  <tr>
+    <td>&nbsp;</td>
+  
+    <td>
+      <table width=100%>
+        <tr valign=bottom>
+	  <td>
+	    <table>
+	      <tr valign=top>
+	        <th align=left>Práca/Projekt</th>
+		<td><%projectnumber%></td>
+	      </tr>
+	      <tr>
+	        <th align=left>Popis</th>
+		<td><%projectdescription%></td>
+	      </tr>
+	      <tr valign=top>
+	        <th align=left>Práca/Servis kód</th>
+		<td><%partnumber%></td>
+	      </tr>
+	      <tr>
+	        <th align=left>Popis</th>
+		<td><%description%></td>
+	      </tr>
+	    </table>
+	  </td>
+	  <td align=right>
+	    <table>
+	      <tr>
+	        <th align=right>Kurz</th>
+		<td><%sellprice%></td>
+	      </tr>
+	      <tr>
+		<th align=right>Celkom</th>
+		<td><%total%></td>
+	      </tr>
+	    </table>
+	  </td>
+	</tr>
+      </table>
+    </td>
+  </tr>
+
+  <%if notes%>
+  <tr height=5></tr>
+  
+  <tr>
+    <td>&nbsp;</td>
+
+    <td>
+      <%notes%>
+    </td>
+  </tr>
+  <%end notes%>
+
+</table>
+
+</body>
+</html>
+
+
+

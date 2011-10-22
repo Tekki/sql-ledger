@@ -793,7 +793,7 @@ sub list_names {
   $column_header{fax} = qq|<th><a class=listheading href=$href&sort=fax>|.$locale->text('Fax').qq|</a></th>|;
   $column_header{email} = qq|<th><a class=listheading href=$href&sort=email>|.$locale->text('E-mail').qq|</a></th>|;
   $column_header{cc} = qq|<th><a class=listheading href=$href&sort=cc>|.$locale->text('Cc').qq|</a></th>|;
-  $column_header{bcc} = qq|<th><a class=listheading href=$href&sort=cc>|.$locale->text('Bcc').qq|</a></th>|;
+  $column_header{bcc} = qq|<th><a class=listheading href=$href&sort=bcc>|.$locale->text('Bcc').qq|</a></th>|;
   $column_header{notes} = qq|<th><a class=listheading href=$href&sort=notes>|.$locale->text('Notes').qq|</a></th>|;
   $column_header{discount} = qq|<th class=listheading>%</th>|;
   $column_header{terms} = qq|<th class=listheading>|.$locale->text('Terms').qq|</th>|;
@@ -1631,8 +1631,8 @@ sub form_header {
               <input type=hidden name=action value="update">
 	      <tr>
 	        <td align=center><b>|.$locale->text('Type').qq|</b>
-		<input name=typeofcontact type=radio value="company" $typeofcontact{company} onChange="javascript:document.forms[0].submit()">|.$locale->text('Company').qq|
-		<input name=typeofcontact type=radio value="person" $typeofcontact{person} onChange="javascript:document.forms[0].submit()">|.$locale->text('Person').qq|
+		<input name=typeofcontact type=radio value="company" $typeofcontact{company} onClick="javascript:document.forms[0].submit()">|.$locale->text('Company').qq|
+		<input name=typeofcontact type=radio value="person" $typeofcontact{person} onClick="javascript:document.forms[0].submit()">|.$locale->text('Person').qq|
 		</td>
 	      </tr>
 |;

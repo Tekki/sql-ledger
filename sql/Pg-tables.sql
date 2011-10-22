@@ -63,7 +63,7 @@ CREATE TABLE defaults (
   fldvalue text
 );
 --
-INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '2.8.9');
+INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '2.8.10');
 --
 CREATE TABLE acc_trans (
   trans_id int,
@@ -670,3 +670,16 @@ CREATE TABLE curr (
   precision int2
 );
 --
+CREATE TABLE report (
+  reportid int primary key default nextval('id'),
+  reportcode text,
+  reportdescription text,
+  login text
+);
+--
+CREATE TABLE reportvars (
+  reportid int not null,
+  reportvariable text,
+  reportvalue text
+);
+

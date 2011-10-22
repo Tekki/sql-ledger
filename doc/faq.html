@@ -58,9 +58,9 @@ template1 and when SQL-Ledger tries to create them you'll get an error that
 the tables already exist.
 
 
-<p><li><h4>PostgreSQL 8.0+</h4>
-To use SQL-Ledger with 8.0+ you have to modify Pg-tables.sql The file
-is in the sql directory.
+<p><li><h4>PostgreSQL 8.0+ and SQL-Ledger v2.6.3 and older</h4>
+To use SQL-Ledger < v2.6.3 with 8.0+ you have to modify the Pg-tables.sql file.
+The file is in the sql directory.
 
 <pre>
 CREATE TABLE orderitems (
@@ -97,7 +97,7 @@ CREATE TABLE assembly (
 ) WITH OIDS;
 </pre>
 
-This change is only required for SQL-Ledger versions 2.6.3 and older.
+This change is only required for SQL-Ledger versions 2.6.3 and older!
 
 <p>If you already built a dataset without this change you will get
 an error when you try to save a PO or assembly.
@@ -657,9 +657,7 @@ can be changed by setting the language in your Preferences.
 
 <p>
 <hr>
-<a name=security>
 <h1>SQL-Ledger security</h1>
-</a>
 
 <ul>
 <li>The security features built into SQL-Ledger provide password

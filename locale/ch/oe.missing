@@ -1,0 +1,8 @@
+# module oe
+# add the missing texts and run locales.pl to rebuild
+
+$missing = {
+  'Order not on file!'          => '',
+};
+
+1;

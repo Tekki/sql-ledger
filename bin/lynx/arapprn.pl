@@ -119,17 +119,18 @@ sub print_check {
   use SL::CP;
   $c = CP->new(($form->{language_code}) ? $form->{language_code} : $myconfig{countrycode}); 
   $c->init;
-  ($whole, $form->{decimal}) = split /\./, $form->parse_amount(\%myconfig, $form->{amount});
 
-  $form->{decimal} = substr("$form->{decimal}00", 0, 2);
-  $form->{text_decimal} = $c->num2text($form->{decimal} * 1);
+  ($whole, $decimal) = split /\./, $form->parse_amount(\%myconfig, $form->{amount});
+
+  $form->{decimal} = substr("${decimal}00", 0, 2);
+  $form->{text_decimal} = $c->num2text($decimal * 1);
   $form->{text_amount} = $c->num2text($whole);
   $form->{integer_amount} = $whole;
 
   if ($form->{cd_amount}) {
-    ($whole, $form->{cd_decimal}) = split /\./, $form->{cd_invtotal};
-    $form->{cd_decimal} = substr("$form->{cd_decimal}00", 0, 2);
-    $form->{text_cd_decimal} = $c->num2text($form->{cd_decimal} * 1);
+    ($whole, $decimal) = split /\./, $form->{cd_invtotal};
+    $form->{cd_decimal} = substr("${decimal}00", 0, 2);
+    $form->{text_cd_decimal} = $c->num2text(${decimal} * 1);
     $form->{text_cd_invtotal} = $c->num2text($whole);
     $form->{integer_cd_invtotal} = $whole;
   }
@@ -145,9 +146,7 @@ sub print_check {
 
   for (qw(employee paymentmethod)) { ($form->{$_}, $form->{"${_}_id"}) = split /--/, $form->{$_} };
   
-  $form->{notes} =~ s/^\s+//g;
-  
-  push @a, qw(employee paymentmethod notes company address tel fax businessnumber);
+  push @a, qw(employee paymentmethod notes intnotes company address tel fax businessnumber);
   
   $form->format_string(@a);
 
@@ -236,7 +235,7 @@ sub print_transaction {
   my ($old_form) = @_;
  
   $display_form = ($form->{display_form}) ? $form->{display_form} : "display_form";
- 
+
   AA->company_details(\%myconfig, \%$form);
 
   @a = qw(name address1 address2 city state zipcode country);
@@ -311,28 +310,27 @@ sub print_transaction {
   $form->format_string(@a);
 
   $form->{paid} = 0;
-  for $i (1 .. $form->{paidaccounts} - 1) {
+  for $i (1 .. $form->{paidaccounts}) {
 
     if ($form->{"paid_$i"}) {
-    @a = ();
-    $form->{paid} += $form->parse_amount(\%myconfig, $form->{"paid_$i"});
-    
-    if (exists $form->{longformat}) {
-      $form->{"datepaid_$i"} = $locale->date(\%myconfig, $form->{"datepaid_$i"}, $form->{longformat});
-    }
+      @a = ();
+      $form->{paid} += $form->parse_amount(\%myconfig, $form->{"paid_$i"});
+      
+      if (exists $form->{longformat}) {
+	$form->{"datepaid_$i"} = $locale->date(\%myconfig, $form->{"datepaid_$i"}, $form->{longformat});
+      }
 
-    push @a, "$form->{ARAP}_paid_$i", "source_$i", "memo_$i";
-    $form->format_string(@a);
-    
-    ($accno, $account) = split /--/, $form->{"$form->{ARAP}_paid_$i"};
-    
-    push(@{ $form->{payment} }, $form->{"paid_$i"});
-    push(@{ $form->{paymentdate} }, $form->{"datepaid_$i"});
-    push(@{ $form->{paymentaccount} }, $account);
-    push(@{ $form->{paymentsource} }, $form->{"source_$i"});
-    push(@{ $form->{paymentmemo} }, $form->{"memo_$i"});
+      push @a, "$form->{ARAP}_paid_$i", "source_$i", "memo_$i";
+      $form->format_string(@a);
+      
+      ($accno, $account) = split /--/, $form->{"$form->{ARAP}_paid_$i"};
+      
+      push(@{ $form->{payment} }, $form->{"paid_$i"});
+      push(@{ $form->{paymentdate} }, $form->{"datepaid_$i"});
+      push(@{ $form->{paymentaccount} }, $account);
+      push(@{ $form->{paymentsource} }, $form->{"source_$i"});
+      push(@{ $form->{paymentmemo} }, $form->{"memo_$i"});
     }
-    
   }
 
   if ($form->{formname} eq 'remittance_voucher') {
@@ -353,13 +351,18 @@ sub print_transaction {
   use SL::CP;
   $c = CP->new(($form->{language_code}) ? $form->{language_code} : $myconfig{countrycode}); 
   $c->init;
-  ($whole, $form->{decimal}) = split /\./, $form->{invtotal};
-
-  $form->{decimal} .= "00";
-  $form->{decimal} = substr($form->{decimal}, 0, 2);
+  
+  ($whole, $decimal) = split /\./, $form->{invtotal};
+  $form->{decimal} = substr("${decimal}00", 0, 2);
   $form->{text_decimal} = $c->num2text($form->{decimal} * 1); 
   $form->{text_amount} = $c->num2text($whole);
   $form->{integer_amount} = $whole;
+  
+  ($whole, $decimal) = split /\./, $form->{total};
+  $form->{out_decimal} = substr("${decimal}00", 0, 2);
+  $form->{text_out_decimal} = $c->num2text($form->{out_decimal} * 1);
+  $form->{text_out_amount} = $c->num2text($whole);
+  $form->{integer_out_amount} = $whole;
   
   for (qw(cd_subtotal cd_amount cd_invtotal invtotal subtotal paid total)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, $form->{precision}) }
 
@@ -378,13 +381,11 @@ sub print_transaction {
   }
 
   # before we format replace <%var%>
-  for ("description", "notes", "intnotes") { $form->{$_} =~ s/<%(.*?)%>/$fld = lc $1; $form->{$fld}/ge }
+  for (qw(description notes intnotes)) { $form->{$_} =~ s/<%(.*?)%>/$fld = lc $1; $form->{$fld}/ge }
   
-  $form->{notes} =~ s/^\s+//g;
-  
-  @a = qw(employee paymentmethod invnumber transdate duedate notes dcn rvc);
+  @a = qw(employee paymentmethod invnumber transdate duedate notes intnotes ndcn rvc);
 
-  push @a, qw(company address tel fax businessnumber text_amount text_decimal);
+  push @a, qw(company address tel fax businessnumber text_amount text_decimal text_out_decimal text_out_amount);
   
   $form->format_string(@a);
 

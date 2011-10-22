@@ -389,7 +389,7 @@ sub form_header {
 		<td>
 		  <table>
 		    <tr>
-		      <td colspan=4>$form->{city}, $form->{state} $form->{country}</td>
+		      <td colspan=4>$form->{city} $form->{state} $form->{country}</td>
 		    </tr>
 		  </table>
 		</td>
@@ -425,7 +425,7 @@ sub form_header {
 		<td>
 		  <table>
 		    <tr>
-		      <td colspan=4>$form->{city}, $form->{state} $form->{country}</td>
+		      <td colspan=4>$form->{city} $form->{state} $form->{country}</td>
 		    </tr>
 		    <tr>
 		      <th align=right nowrap>|.$locale->text('Credit Limit').qq|</th>

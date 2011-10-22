@@ -512,21 +512,29 @@ sub invoice_details {
   $form->{totaltax} = $form->format_amount($myconfig, $tax, $form->{precision}, "");
 
   my $whole;
-  ($whole, $form->{decimal}) = split /\./, $form->{invtotal};
-  $form->{decimal} = substr("$form->{decimal}00", 0, 2);
+  my $decimal;
+  
+  ($whole, $decimal) = split /\./, $form->{invtotal};
+  $form->{decimal} = substr("${decimal}00", 0, 2);
   $form->{text_decimal} = $c->num2text($form->{decimal} * 1);
   $form->{text_amount} = $c->num2text($whole);
   $form->{integer_amount} = $whole;
 
+  ($whole, $decimal) = split /\./, $form->{total};
+  $form->{out_decimal} = substr("${decimal}00", 0, 2);
+  $form->{text_out_decimal} = $c->num2text($form->{out_decimal} * 1);
+  $form->{text_out_amount} = $c->num2text($whole);
+  $form->{integer_out_amount} = $whole;
+
   if ($form->{cd_amount}) {
-    ($whole, $form->{cd_decimal}) = split /\./, $form->{cd_invtotal};
-    $form->{cd_decimal} = substr("$form->{cd_decimal}00", 0, 2);
+    ($whole, $decimal) = split /\./, $form->{cd_invtotal};
+    $form->{cd_decimal} = substr("${decimal}00", 0, 2);
     $form->{text_cd_decimal} = $c->num2text($form->{cd_decimal} * 1);
     $form->{text_cd_invtotal} = $c->num2text($whole);
     $form->{integer_cd_invtotal} = $whole;
   }
  
-  $form->format_string(qw(text_amount text_decimal text_cd_invtotal text_cd_decimal));
+  $form->format_string(qw(text_amount text_decimal text_cd_invtotal text_cd_decimal text_out_amount text_out_decimal));
 
   for (qw(cd_amount paid)) { $form->{$_} = $form->format_amount($myconfig, $form->{$_}, $form->{precision}) }
   for (qw(cd_subtotal cd_invtotal invtotal subtotal total totalparts totalservices)) { $form->{$_} = $form->format_amount($myconfig, $form->{$_}, $form->{precision}, "0") }

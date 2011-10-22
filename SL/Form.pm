@@ -78,8 +78,8 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.8.24";
-  $self->{dbversion} = "2.8.9";
+  $self->{version} = "2.8.25";
+  $self->{dbversion} = "2.8.10";
 
   bless $self, $type;
   
@@ -653,10 +653,10 @@ sub parse_template {
 	}
 
 	# display contents of $self->{number}[] array
-	for my $i (0 .. $#{ $self->{$var} }) {
+	for my $j (0 .. $#{ $self->{$var} }) {
 
 	  if ($var =~ /^(part|service)$/) {
-	    next if $self->{$var}[$i] eq 'NULL';
+	    next if $self->{$var}[$j] eq 'NULL';
 	  }
 
 	  # Try to detect whether a manual page break is necessary
@@ -666,8 +666,8 @@ sub parse_template {
 	    if ($chars_per_line && defined $self->{$var}) {
 	      my $line;
 	      my $lines = 0;
-	      my $item = $self->{description}[$i];
-	      $item .= "\n".$self->{itemnotes}[$i] if $self->{itemnotes}[$i];
+	      my $item = $self->{description}[$j];
+	      $item .= "\n".$self->{itemnotes}[$j] if $self->{itemnotes}[$j];
 	      
 	      foreach $line (split /\r?\n/, $item) {
 		$lines++;
@@ -706,11 +706,11 @@ sub parse_template {
 	      }
 	      $current_line += $lines;
 	    }
-	    $sum += $self->parse_amount($myconfig, $self->{linetotal}[$i]);
+	    $sum += $self->parse_amount($myconfig, $self->{linetotal}[$j]);
 	  }
 
 	  # don't parse par, we need it for each line
-	  print OUT $self->format_line($par, $i);
+	  print OUT $self->format_line($par, $j);
 	  
 	}
 	next;
@@ -986,33 +986,72 @@ sub format_line {
   my $line;
   my $var = "";
   my %a;
+  my @a;
   my $offset;
   my $pad;
   my $item;
+  my $key;
+  my $value;
 
   while (/<%(.+?)%>/) {
 
+    $var = $1;
+    $newstr = "";
+    
     %a = ();
-
-    foreach $item (split / /, $1) {
-      my ($key, $value) = split /=/, $item;
-      if ($value ne "") {
-	$a{$key} = $value;
-      } else {
-	$var = $item;
+    if ($var =~ /(align|width|offset|group)\s*?=/) {
+      @a = split / /, $var;
+      $var = $a[0];
+      foreach $item (@a) {
+	($key, $value) = split /=/, $item;
+	if ($value ne "") {
+	  $a{$key} = $value;
+	}
       }
     }
 
-    if (defined $i) {
-      $str = $self->{$var}[$i];
+    if ($var =~ /\s/) {
+      $str = "";
+
+      @a = split / /, $var, 3;
+      if ($var =~ /^if\s+?not /) {
+	$a[1] = $a[2];
+	pop @a;
+      }
+
+      if ($#a == 2) {
+	for $j (0 .. 2) {
+	  $item = $a[$j];
+	  if ($item !~ /'/) {
+	    if (defined $i) {
+	      if (exists $self->{$item}[$i]) {
+		$a[$j] = qq|'$self->{$item}[$i]'|;
+	      }
+	    } else {
+	      if (exists $self->{$item}) {
+		$a[$j] = qq|'$self->{$item}'|;
+	      }
+	    }
+	  }
+	}
+	$str = eval qq|$a[0] $a[1] $a[2]|;
+      } else {
+	if (defined $i) {
+	  $str = $self->{$a[1]}[$i];
+	} else {
+	  $str = $self->{$a[1]};
+	}
+      }
     } else {
-      $str = $self->{$var};
+      if (defined $i) {
+	$str = $self->{$var}[$i];
+      } else {
+	$str = $self->{$var};
+      }
     }
     $newstr = $str;
 
-    $var = $1;
-
-    if ($var =~ /^if\s+not\s+/) {
+    if ($var =~ /^if\s+not /) {
       if ($str) {
 	$var =~ s/if\s+?not\s+?//;
 	s/<%if\s+not\s+?$var%>.*?(<%end\s+?$var%>|$)//s;
@@ -1027,11 +1066,21 @@ sub format_line {
 	s/<%$var%>//;
       } else {
 	$var =~ s/if\s+?//;
-	s/<%if\s+?$var%>.*?(<%end\s+?$var%>|$)//s;
+	s/<%if\s+?$var%>.*?(<%(end|else)\s+?$var%>|$)//s;
       }
       next;
     }
 
+    if ($var =~ /^else /) {
+      if ($str) {
+	$var =~ s/else\s+?//;
+	s/<%else\s+?$var%>.*?(<%end\s+?$var%>|$)//s;
+      } else {
+	s/<%$var%>//;
+      }
+      next;
+    }
+    
     if ($var =~ /^end /) {
       s/<%$var%>//;
       next;
@@ -1042,6 +1091,10 @@ sub format_line {
       $newstr = "";
       $offset = 0;
       $lf = "";
+
+      chomp $str;
+      $str .= "\n";
+      
       foreach $str (split /\n/, $str) {
 
 	$line = $str;
@@ -1112,6 +1165,29 @@ sub format_line {
 
       if ($a{group} =~ /right/i) {
 	$newstr = reverse split //, $newstr;
+      }
+    }
+
+    if ($a{ASCII}) {
+      my $carret;
+      my $nn;
+      $n = 0;
+      if ($a{ASCII} =~ /^\^/) {
+	$carret = '^';
+      }
+      if ($a{ASCII} =~ /\d+/) {
+	$n = length $&;
+	$nn = $&;
+      }
+
+      $newstr = "";
+      for (split //, $str) {
+	$newstr .= "$carret";
+	if ($n) {
+	  $newstr .= substr($nn . ord, -$n);
+	} else {
+	  $newstr .= ord;
+	}
       }
     }
 
@@ -1190,10 +1266,11 @@ sub format_dcn {
     $modulo = $1;
 
     while (/\x01(modulo.+?)\x01/) {
-
+      
       $param = $1;
 
       @e = split //, $modulo;
+      $str = "";
 
       if ($param eq 'modulo10') {
 	$e = 0;
@@ -1203,8 +1280,8 @@ sub format_dcn {
 	}
 	$str = substr(10 - $e, -1);
       }
-      
-      if ($param =~ /modulo(1\d+)?_/) {
+
+      if ($param =~ /modulo(1\d+)+?_/) {
 	($n, $w, $lr) = split /_/, $param;
 	$cd = 0;
 	$m = $1;
@@ -1243,6 +1320,9 @@ sub format_dcn {
       }
 
       s/\x01$param\x01/$str/;
+      
+      /(.+?)\x01modulo/;
+      $modulo = $1;
 
     }
 
@@ -2490,8 +2570,8 @@ sub lastname_used {
   $query = qq|SELECT ct.name AS $vc, ct.${vc}number, a.curr AS currency,
               a.${vc}_id,
               $duedate AS duedate, a.department_id,
-	      d.description AS department, ct.notes, ct.curr AS currency,
-	      ct.remittancevoucher
+	      d.description AS department, ct.notes AS intnotes,
+	      ct.curr AS currency, ct.remittancevoucher
 	      FROM $arap a
 	      JOIN $vc ct ON (a.${vc}_id = ct.id)
 	      LEFT JOIN department d ON (a.department_id = d.id)

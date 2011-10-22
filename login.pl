@@ -63,9 +63,16 @@ if (grep !/^\Q$form{script}\E/, @scripts) {
   exit;
 }
 
-if (-e "$userspath/nologin" && $script ne 'admin.pl') {
+if (-f "$userspath/nologin" && $script ne 'admin.pl') {
   print "Content-Type: text/html\n\n" if $ENV{HTTP_USER_AGENT};
-  print "\nLogin disabled!\n";
+  if (-s "$userspath/nologin") {
+    open(FH, "$userspath/nologin");
+    $message = <FH>;
+    close(FH);
+    print "\n$message\n";
+  } else {
+    print "\nLogin disabled!\n";
+  }
   exit;
 }
 

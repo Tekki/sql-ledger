@@ -1,0 +1,8 @@
+# module im
+# add the missing texts and run locales.pl to rebuild
+
+$missing = {
+  'Nothing to import!'          => '',
+};
+
+1;

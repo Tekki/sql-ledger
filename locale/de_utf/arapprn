@@ -11,11 +11,11 @@ $self{texts} = {
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
   'RVC missing!'                => 'Codierzeile fehlt!',
-  'Remittance Voucher'          => 'Überweisungsbeleg',
+  'Remittance Voucher'          => 'Ãœberweisungsbeleg',
   'Screen'                      => 'Bildschirm',
-  'Select a Printer!'           => 'Drucker auswählen!',
-  'Select payment'              => 'Zahlung auswählen',
-  'Select postscript or PDF!'   => 'Postscript oder PDF auswählen!',
+  'Select a Printer!'           => 'Drucker auswÃ¤hlen!',
+  'Select payment'              => 'Zahlung auswÃ¤hlen',
+  'Select postscript or PDF!'   => 'Postscript oder PDF auswÃ¤hlen!',
   'Source'                      => 'Beleg',
 };
 
