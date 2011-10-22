@@ -1512,6 +1512,7 @@ sub aging {
     c.contact, c.email,
     c.phone as $form->{vc}phone, c.fax as $form->{vc}fax,
     c.$form->{vc}number, c.taxnumber as $form->{vc}taxnumber,
+    a.description AS invdescription,
     a.invnumber, a.transdate, a.till, a.ordnumber, a.ponumber, a.notes,
     $c{$_}{flds},
     a.duedate, a.invoice, a.id, a.curr,
@@ -1577,6 +1578,194 @@ sub aging {
 
   # disconnect
   $dbh->disconnect;
+
+}
+
+
+sub reminder {
+  my ($self, $myconfig, $form) = @_;
+
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+
+  my $query;
+
+  my $item;
+  my $curr;
+
+  my @a = qw(company address businessnumber tel fax precision);
+  my %defaults = $form->get_defaults($dbh, \@a);
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+  
+  $form->{currencies} = $form->get_currencies($dbh, $myconfig);
+  
+  my $where = "a.approved = '1'";
+  my $name;
+  my $null;
+  my $ref;
+
+  if ($form->{"$form->{vc}_id"}) {
+    $where .= qq| AND vc.id = $form->{"$form->{vc}_id"}|;
+  } else {
+    if ($form->{$form->{vc}} ne "") {
+      $name = $form->like(lc $form->{$form->{vc}});
+      $where .= qq| AND lower(vc.name) LIKE '$name'|;
+    }
+    if ($form->{"$form->{vc}number"} ne "") {
+      $name = $form->like(lc $form->{"$form->{vc}number"});
+      $where .= qq| AND lower(vc.$form->{vc}number) LIKE '$name'|;
+    }
+  }
+
+  if ($form->{department}) {
+    ($null, $department_id) = split /--/, $form->{department};
+    $where .= qq| AND a.department_id = $department_id|;
+  }
+  
+  $form->{sort} =~ s/;//g;
+  my $sortorder = ($form->{sort}) ? "vc.$form->{sort}" : "vc.name";
+  
+  # select outstanding customers
+  $query = qq|SELECT DISTINCT vc.id, vc.name, vc.$form->{vc}number,
+              vc.language_code
+              FROM $form->{vc} vc
+	      JOIN ar a ON (a.$form->{vc}_id = vc.id)
+	      WHERE $where
+              AND a.paid != a.amount
+              ORDER BY $sortorder|;
+  my $sth = $dbh->prepare($query);
+  $sth->execute || $form->dberror;
+
+  my @ot = ();
+  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    push @ot, $ref;
+  }
+  $sth->finish;
+
+  $query = qq|SELECT s.formname
+              FROM status s
+	      JOIN ar a ON (a.id = s.trans_id)
+	      WHERE s.formname LIKE 'reminder_'
+	      AND s.trans_id = ?
+	      AND a.curr = ?
+	      ORDER BY s.formname DESC|;
+  my $rth = $dbh->prepare($query);
+
+  # for each company that has some stuff outstanding
+  $form->{currencies} ||= ":";
+  
+  $where = qq|
+	a.paid != a.amount
+	AND a.approved = '1'
+	AND c.id = ?
+	AND a.curr = ?|;
+	
+  if ($department_id) {
+    $where .= qq| AND a.department_id = $department_id|;
+  }
+
+  $query = qq|SELECT c.id AS vc_id, c.$form->{vc}number, c.name, c.terms,
+              ad.address1, ad.address2, ad.city, ad.state, ad.zipcode, ad.country,
+	      c.contact, c.email,
+	      c.phone as $form->{vc}phone, c.fax as $form->{vc}fax,
+	      c.$form->{vc}number, c.taxnumber as $form->{vc}taxnumber,
+	      a.description AS invdescription,
+	      a.invnumber, a.transdate, a.till, a.ordnumber, a.ponumber, a.notes,
+	      a.amount - a.paid AS due,
+	      a.duedate, a.invoice, a.id, a.curr,
+		(SELECT exchangerate FROM exchangerate e
+		 WHERE a.curr = e.curr
+		 AND e.transdate = a.transdate) AS exchangerate,
+	      ct.firstname, ct.lastname, ct.salutation, ct.typeofcontact,
+	      s.*
+	      FROM ar a
+	      JOIN $form->{vc} c ON (a.$form->{vc}_id = c.id)
+	      JOIN address ad ON (ad.trans_id = c.id)
+	      LEFT JOIN contact ct ON (ct.trans_id = c.id)
+	      LEFT JOIN shipto s ON (a.id = s.trans_id)
+	      WHERE (a.transdate < (current_date - c.terms))
+	      AND $where
+	      ORDER BY vc_id, transdate, invnumber|;
+  $sth = $dbh->prepare($query) || $form->dberror($query);
+
+  $form->{AG} = ();
+  
+  for $curr (split /:/, $form->{currencies}) {
+  
+    for $item (@ot) {
+
+      $sth->execute($item->{id}, $curr);
+
+      while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+	$ref->{module} = ($ref->{invoice}) ? 'is' : 'ar';
+	$ref->{module} = 'ps' if $ref->{till};
+	$ref->{exchangerate} ||= 1;
+	$ref->{language_code} = $item->{language_code};
+
+	$rth->execute($ref->{id}, $curr);
+	$found = 0;
+	while (($reminder) = $rth->fetchrow_array) {
+	  $ref->{level} = substr($reminder, -1);
+	  $ref->{level}++;
+	  push @{ $form->{AG} }, $ref;
+	  $found = 1;
+	}
+	$rth->finish;
+
+        if (! $found) {
+	  $ref->{level}++;
+	  push @{ $form->{AG} }, $ref;
+	}
+      }
+      $sth->finish;
+
+    }
+  }
+
+  # get language
+  $form->all_languages($myconfig, $dbh);
+
+  # disconnect
+  $dbh->disconnect;
+
+}
+
+
+sub save_level {
+  my ($self, $myconfig, $form) = @_;
+  
+  # connect to database
+  my $dbh = $form->dbconnect_noauto($myconfig);
+
+  my $query;
+
+  $query = qq|DELETE FROM status
+              WHERE trans_id = ?
+	      AND formname LIKE 'reminder_'|;
+  my $dth = $dbh->prepare($query) || $form->dberror($query);
+
+  $query = qq|INSERT INTO status (trans_id, formname)
+              VALUES (?,?)|;
+  my $ath = $dbh->prepare($query) || $form->dberror($query);
+  
+  for (split / /, $form->{ids}) {
+    if ($form->{"ndx_$_"}) {
+
+      $dth->execute($_) || $form->dberror;
+      $dth->finish;
+
+      if ($form->{"level_$_"} *= 1) {
+	$ath->execute($_, qq|reminder$form->{"level_$_"}|) || $form->dberror;
+	$ath->finish;
+      }
+    }
+  }
+  
+  my $rc = $dbh->commit;
+
+  $dbh->disconnect;
+  
+  $rc;
 
 }
 

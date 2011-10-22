@@ -475,13 +475,12 @@ sub invoice_details {
     }
   }
 
-  my ($paymentaccno) = split /--/, $form->{"AR_paid_1"};
+  my ($paymentaccno) = split /--/, $form->{"AR_paid_$form->{paidaccounts}"};
   
   for $i (1 .. $form->{paidaccounts}) {
     if ($form->{"paid_$i"}) {
       push(@{ $form->{payment} }, $form->{"paid_$i"});
       my ($accno, $description) = split /--/, $form->{"AR_paid_$i"};
-      $paymentaccno = $accno;
       push(@{ $form->{paymentaccount} }, $description); 
       push(@{ $form->{paymentdate} }, $form->{"datepaid_$i"});
       push(@{ $form->{paymentsource} }, $form->{"source_$i"});

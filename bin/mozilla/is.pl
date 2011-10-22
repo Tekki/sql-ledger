@@ -331,7 +331,7 @@ sub form_header {
                 <td colspan=3><select name="$form->{vc}" onChange="javascript:document.forms[0].submit()">|.$form->select_option($form->{"select$form->{vc}"}, $form->{$form->{vc}}, 1).qq|</select>
 		</td>
 	      </tr>
-|;
+| . $form->hide_form("$form->{vc}number");
   } else {
     $vc .= qq|
                 <td colspan=3><input name="$form->{vc}" value="|.$form->quote($form->{$form->{vc}}).qq|" size=35>

@@ -18,6 +18,7 @@ use $0 from the command line";
 }
 
 $lynx = `lynx -version`;      # if LWP is not installed use lynx
+$wget = `wget --version 2>&1`;
 $gzip = `gzip -V 2>&1`;            # gz decompression utility
 $tar = `tar --version 2>&1`;       # tar archiver
 $latex = `latex -version`;
@@ -42,8 +43,8 @@ $newinstall = 1;
 eval { require LWP::Simple; };
 $lwp = !($@);
 
-unless ($lwp || $lynx || $filename) {
-  die "You must have either lynx or LWP installed or specify a filename.
+unless ($lwp || $wget || $lynx || $filename) {
+  die "You must have either lynx, wget or LWP installed or specify a filename.
 perl $0 <filename>\n";
 }
 
@@ -193,7 +194,7 @@ sub download {
 
 sub get_latest_version {
   
-  print "Checking for latest version number .... ";
+  print "Checking for latest version number ....\n";
 
   if ($filename) {
     print "skipping, filename supplied\n";
@@ -201,33 +202,59 @@ sub get_latest_version {
   }
 
   if ($lwp) {
+    $found = 0;
     foreach $source (qw(www abacus)) {
       $url = $source{$checkversion{$source}}{url};
-      print "\n$source{$checkversion{$source}}{site} ... ";
+      print "$source{$checkversion{$source}}{site} ... ";
 
       $latest_version = LWP::Simple::get("$url/latest_version");
       
       if ($latest_version) {
+	$found = 1;
 	last;
       } else {
-	print "not found";
+	print "not found\n";
       }
     }
+    
+    if (! $found) {
+      $lwp = 0;
+      &get_latest_version;
+    }
+    
+  } elsif ($wget) {
+    $found = 0;
+    foreach $source (qw(www abacus)) {
+      $url = $source{$checkversion{$source}}{url};
+      print "$source{$checkversion{$source}}{site} ... ";
+      if ($latest_version = `wget -q -O - $url/latest_version`) {
+	$found = 1;
+	last;
+      } else {
+	print "not found\n";
+      }
+    }
+    
+    if (! $found) {
+      $wget = 0;
+      &get_latest_version;
+    }
+    
   } else {
     if (!$lynx) {
-      print "\nYou must have either lynx or LWP installed";
+      print "\nYou must have either wget, lynx or LWP installed";
       exit 1;
     }
 
     foreach $source (qw(www abacus)) {
       $url = $source{$checkversion{$source}}{url};
-      print "\n$source{$checkversion{$source}}{site} ... ";
+      print "$source{$checkversion{$source}}{site} ... ";
       $ok = `lynx -dump -head $url/latest_version`;
       if ($ok = ($ok =~ s/HTTP.*?200 //)) {
 	$latest_version = `lynx -dump $url/latest_version`;
 	last;
       } else {
-	print "not found";
+	print "not found\n";
       }
     }
     die unless $ok;
@@ -235,7 +262,6 @@ sub get_latest_version {
 
   if ($latest_version) {
     print "ok\n";
-    1;
   }
 
 }
@@ -265,6 +291,11 @@ sub get_source_code {
       if ($lwp) {
 	$err = LWP::Simple::getstore("$source{$key}{url}/$latest_version", "$latest_version");
 	$err -= 200;
+      } elsif ($wget) {
+	$ok = `wget -Sqc $source{$key}{url}/$latest_version`;
+	if ($ok =~ /HTTP.*?(20|416)/) {
+	  $err = 0;
+	}
       } else {
 	$ok = `lynx -dump -head $source{$key}{url}/$latest_version`;
 	$err = !($ok =~ s/HTTP.*?200 //);
@@ -289,7 +320,7 @@ sub get_source_code {
   if ($err) {
     die "Cannot get $latest_version";
   } else {
-    print "ok!\n";
+    print "ok\n";
   }
 
   $latest_version;

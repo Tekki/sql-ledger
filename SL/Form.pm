@@ -78,7 +78,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.8.23";
+  $self->{version} = "2.8.24";
   $self->{dbversion} = "2.8.9";
 
   bless $self, $type;
@@ -1099,11 +1099,11 @@ sub format_line {
 	@a = reverse @a;
       }
 
-      $i = $n - 1;
+      my $j = $n - 1;
       $newstr = "";
       foreach $str (@a) {
-	$i++;
-	if (! ($i % $n)) {
+	$j++;
+	if (! ($j % $n)) {
 	  $newstr .= " $str";
 	} else {
 	  $newstr .= $str;
@@ -1142,6 +1142,13 @@ sub format_dcn {
   my @e;
   my $i;
 
+  my $d;
+  my @n;
+  my $n;
+  my $w;
+  my $cd;
+  my $lr;
+
   for (0 .. $#m) {
     @{ $m{$_} } = @m;
     $m = shift @m;
@@ -1155,7 +1162,7 @@ sub format_dcn {
       $param = $1;
       $str = $param;
 
-      ($var, $padl) = split / /, $1;
+      ($var, $padl) = split / /, $param;
       $padl *= 1;
 
       if ($var eq 'membernumber') {
@@ -1185,19 +1192,55 @@ sub format_dcn {
     while (/\x01(modulo.+?)\x01/) {
 
       $param = $1;
-      
+
+      @e = split //, $modulo;
+
       if ($param eq 'modulo10') {
-	@e = split //, $modulo;
 	$e = 0;
 
-	for (@e) {
-	  $e = $m{$e}[$_];
+	for $n (@e) {
+	  $e = $m{$e}[$n];
 	}
 	$str = substr(10 - $e, -1);
       }
       
-      /\x01modulo.+?\x01(.+?)\x01modulo.+?\x01/;
-      $modulo = $1;
+      if ($param =~ /modulo(1\d+)?_/) {
+	($n, $w, $lr) = split /_/, $param;
+	$cd = 0;
+	$m = $1;
+	
+	if ($lr eq 'right') {
+	  @e = reverse @e;
+	}
+
+	if ($w eq '12' || $w eq '21') {
+	  @n = split //, $w;
+
+	  for $i (0 .. $#e) {
+	    $n = $i % 2;
+	    if (($d = $e[$i] * $n[$n]) > 9) {
+	      for $n (split //, $d) {
+		$cd += $n;
+	      }
+	    } else {
+	      $cd += $d;
+	    }
+	  }
+	} else {
+	  @n = split //, $w;
+	  for $i (0 .. $#e) {
+	    $n = $i % 2;
+	    $cd += $e[$i] * $n[$n];
+	  }
+	}
+	
+	$str = $cd % $m;
+	if ($m eq '10') {
+	  if ($str > 0) {
+	    $str = $m - $str;
+	  }
+	}
+      }
 
       s/\x01$param\x01/$str/;
 
