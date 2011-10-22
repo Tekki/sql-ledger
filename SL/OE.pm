@@ -1067,7 +1067,7 @@ sub order_details {
   my $sortby;
   
   # sort items by project and partsgroup
-  for $i (1 .. $form->{rowcount} - 1) {
+  for my $i (1 .. $form->{rowcount} - 1) {
 
     if ($form->{"id_$i"}) {
       # account numbers
@@ -1178,7 +1178,7 @@ sub order_details {
 		AND warehouse_id = ?|;
     $sth = $dbh->prepare($query) || $form->dberror($query);
 
-    for $i (1 .. $form->{rowcount} - 1) {
+    for my $i (1 .. $form->{rowcount} - 1) {
       $sth->execute($form->{"id_$i"}, $form->{warehouse_id}) || $form->dberror;
 
       ($qty) = $sth->fetchrow_array;
@@ -2043,12 +2043,11 @@ sub add_items_required {
 sub generate_orders {
   my ($self, $myconfig, $form) = @_;
 
-  my $i;
   my %a;
   my $query;
   my $sth;
   
-  for ($i = 1; $i <= $form->{rowcount}; $i++) {
+  for (my $i = 1; $i <= $form->{rowcount}; $i++) {
     for (qw(qty lastcost)) { $form->{"${_}_$i"} = $form->parse_amount($myconfig, $form->{"${_}_$i"}) }
     
     if ($form->{"qty_$i"}) {
@@ -2263,7 +2262,6 @@ sub consolidate_orders {
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
   
-  my $i;
   my $id;
   my $ref;
   my %oe = ();
@@ -2272,7 +2270,7 @@ sub consolidate_orders {
                  WHERE id = ?|;
   my $sth = $dbh->prepare($query) || $form->dberror($query);
 
-  for ($i = 1; $i <= $form->{rowcount}; $i++) {
+  for (my $i = 1; $i <= $form->{rowcount}; $i++) {
     # retrieve order
     if ($form->{"ndx_$i"}) {
       $sth->execute($form->{"ndx_$i"});

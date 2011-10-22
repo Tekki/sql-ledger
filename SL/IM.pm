@@ -324,6 +324,116 @@ sub import_sales_invoice {
 }
 
 
+
+sub import_order {
+  my ($self, $myconfig, $form, $ndx) = @_;
+  
+  use SL::OE;
+
+  # connect to database, turn off AutoCommit
+  my $dbh = $form->dbconnect_noauto($myconfig);
+
+  my $query;
+  my $ref;
+
+  $query = qq|SELECT reportid FROM report
+              WHERE reportcode = '$form->{reportcode}'
+	      AND login = '$form->{login}'|;
+  my ($reportid) = $dbh->selectrow_array($query);
+
+  $query = qq|SELECT * FROM reportvars
+              WHERE reportid = $reportid
+	      AND reportvariable LIKE ?|;
+  my $sth = $dbh->prepare($query) || $form->dberror($query);
+  
+  # retrieve order
+  my $i = 1;
+  my $j;
+  for $j (@{$ndx}) {
+    $sth->execute("%\\_$j") || $form->dberror($query);
+    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+      $ref->{reportvariable} =~ s/_$j/_$i/;
+      $form->{$ref->{reportvariable}} = $ref->{reportvalue};
+    }
+    $sth->finish;
+
+    $form->{"id_$i"} = $form->{"parts_id_$i"};
+
+    for (qw(qty)) { $form->{"${_}_$i"} = $form->format_amount($myconfig, $form->{"${_}_$i"}) }
+    $form->{"sellprice_$i"} = $form->format_amount($myconfig, $form->{"sellprice_$i"}, $form->{precision});
+    
+    $i++;
+  }
+  $form->{rowcount} = $i;
+
+  for (qw(ordnumber quonumber ponumber transdate name reqdate shippingpoint shipvia waybill terms notes intnotes curr exchangerate language_code taxincluded shiptoname shiptoaddress1 shiptoaddress2 shiptocity shiptostate shiptozipcode shiptocountry shiptocontact shiptophone shiptofax shiptoemail)) { $form->{$_} = $form->{"${_}_1"} }
+  $form->{"$form->{vc}_id"} = $form->{"$form->{vc}_id_1"};
+  $form->{description} = $form->{"orderdescription_1"};
+  $form->{"$form->{vc}"} = $form->{"name_1"};
+
+  # check if order exists
+  if ($form->{ordnumber}) {
+    $query = qq|SELECT id
+		FROM oe
+		WHERE ordnumber = '$form->{ordnumber}'|;
+    ($form->{id}) = $dbh->selectrow_array($query);
+
+    if ($form->{id}) {
+      $form->{updated} = "$form->{ordnumber}";
+    }
+    
+  }
+ 
+  $query = qq|SELECT curr
+              FROM curr
+	      ORDER BY rn|;
+  ($form->{defaultcurrency}) = $dbh->selectrow_array($query);
+  
+  $form->{curr} ||= $form->{defaultcurrency};
+  $form->{currency} = $form->{curr};
+
+  my $language_code;
+
+  $query = qq|SELECT c.$form->{vc}number, c.language_code, a.city
+              FROM $form->{vc} c
+	      JOIN address a ON (a.trans_id = c.id)
+	      WHERE c.id = $form->{"$form->{vc}_id"}|;
+  ($form->{"$form->{vc}number"}, $language_code, $form->{city}) = $dbh->selectrow_array($query);
+
+  $form->{language_code} ||= $language_code;
+
+  $query = qq|SELECT c.accno, t.rate
+              FROM $form->{vc}tax ct
+              JOIN chart c ON (c.id = ct.chart_id)
+	      JOIN tax t ON (t.chart_id = c.id)
+              WHERE ct.$form->{vc}_id = $form->{"$form->{vc}_id"}
+	      AND (validto > '$form->{transdate}' OR validto IS NULL)
+	      ORDER BY validto DESC|;
+  $sth = $dbh->prepare($query) || $form->dberror($query);
+  $sth->execute;
+
+  $form->{taxaccounts} = "";
+  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    $form->{taxaccounts} .= "$ref->{accno} ";
+    $form->{"$ref->{accno}_rate"} = $ref->{rate};
+  }
+  $sth->finish;
+  chop $form->{taxaccounts};
+
+  $form->{employee} = qq|--$form->{"employee_id_1"}|;
+  $form->{department} = qq|--$form->{"department_id_1"}|;
+  $form->{warehouse} = qq|--$form->{"warehouse_id_1"}|;
+
+  # save order
+  my $rc = OE->save($myconfig, $form, $dbh);
+
+  $dbh->disconnect;
+
+  $rc;
+
+}
+
+
 sub paymentaccounts {
   my ($self, $myconfig, $form) = @_;
 
@@ -816,6 +926,210 @@ sub import_vc {
 
 }
 
+
+sub order_links {
+  my ($self, $myconfig, $form) = @_;
+
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+
+  my $query;
+  my $sth;
+  my $ref;
+  
+  my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  $form->{precision} = $defaults{precision};
+  
+  # vendor/customer
+  $query = qq|SELECT vc.id, vc.name, vc.terms,
+	      e.id AS employee_id, e.name AS employee,
+	      c.accno AS taxaccount,
+	      ad.city
+	      FROM $form->{vc} vc
+	      JOIN address ad ON (ad.trans_id = vc.id)
+	      LEFT JOIN employee e ON (e.id = vc.employee_id)
+	      LEFT JOIN $form->{vc}tax ct ON (vc.id = ct.$form->{vc}_id)
+	      LEFT JOIN chart c ON (c.id = ct.chart_id)
+	      WHERE $form->{vc}number = ?|;
+  my $cth = $dbh->prepare($query) || $form->dberror($query);
+  
+  # employee
+  $query = qq|SELECT id, name
+              FROM employee
+	      WHERE employeenumber = ?|;
+  my $eth = $dbh->prepare($query) || $form->dberror($query);
+  
+  # parts
+  $query = qq|SELECT p.id, p.unit, p.description,
+              c.accno
+              FROM parts p
+              LEFT JOIN partstax pt ON (p.id = pt.parts_id)
+	      LEFT JOIN chart c ON (c.id = pt.chart_id)
+              WHERE partnumber = ?|;
+  my $pth = $dbh->prepare($query) || $form->dberror($query);
+  
+  # department
+  $query = qq|SELECT id
+              FROM department
+              WHERE description = ?|;
+  my $dth = $dbh->prepare($query) || $form->dberror($query);
+
+  # warehouse
+  $query = qq|SELECT id
+              FROM warehouse
+              WHERE description = ?|;
+  my $wth = $dbh->prepare($query) || $form->dberror($query);
+  
+  # project
+  $query = qq|SELECT id
+              FROM project
+              WHERE projectnumber = ?|;
+  my $ptth = $dbh->prepare($query) || $form->dberror($query);
+
+  # clean out report
+  my $reportid = &delete_import($dbh, $form);
+
+  $query = qq|INSERT INTO reportvars (reportid, reportvariable, reportvalue)
+              VALUES ($reportid, ?, ?)|;
+  my $rth = $dbh->prepare($query) || $form->dberror($query);
+
+
+  my $terms;
+  my $i = 0;
+  my $j = 0;
+  my %vctax;
+  my $sameorder = "\x01";
+  my $parts_id;
+
+  my @d = split /\n/, $form->{data};
+  shift @d if ! $form->{mapfile};
+
+  my @dl;
+  
+  for (@d) {
+
+    @dl = &dataline($form);
+
+    if ($#dl) {
+      $i++;
+      for (keys %{$form->{$form->{type}}}) {
+	$form->{"${_}_$i"} = $dl[$form->{$form->{type}}->{$_}{ndx}] if defined $form->{$form->{type}}->{$_}{ndx};
+      }
+
+      if ($sameorder ne qq|$dl[$form->{$form->{type}}->{ordnumber}{ndx}]$dl[$form->{$form->{type}}->{"$form->{vc}number"}{ndx}]|) {
+	
+	$sameorder = qq|$dl[$form->{$form->{type}}->{ordnumber}{ndx}]$dl[$form->{$form->{type}}->{"$form->{vc}number"}{ndx}]|;
+	
+        # employee
+	if ($dl[$form->{$form->{type}}->{employeenumber}{ndx}]) {
+	  $eth->execute("$dl[$form->{$form->{type}}->{employeenumber}{ndx}]");
+	  ($form->{"employee_id_$i"}, $form->{"employee_$i"}) = $eth->fetchrow_array;
+	  $eth->finish;
+	}
+	
+	$j = $i;
+	$form->{ndx} .= "$i ";
+
+	$terms = 0;
+	%vctax = ();
+
+	$cth->execute(qq|$dl[$form->{$form->{type}}->{"$form->{vc}number"}{ndx}]|);
+	
+	while ($ref = $cth->fetchrow_hashref(NAME_lc)) {
+	  $terms = $ref->{terms};
+	  $form->{"$form->{vc}_id_$i"} = $ref->{id};
+	  $form->{"name_$i"} = $ref->{name};
+	  $form->{"city_$i"} = $ref->{city};
+	  $form->{"employeename_$i"} ||= $ref->{employee};
+	  $form->{"employee_id_$i"} ||= $ref->{employee_id};
+	  $vctax{$ref->{taxaccount}} = 1;
+	}
+	$cth->finish;
+
+	
+	if (! $form->{"$form->{vc}_id_$i"}) {
+	  $form->{"missing_$i"} = 1;
+	  $form->{"missing$form->{vc}"} .= qq|$dl[$form->{$form->{type}}->{ordnumber}{ndx}] : $dl[$form->{$form->{type}}->{"$form->{vc}number"}{ndx}]\n|;
+	}
+
+        $form->{"transdate_$i"} ||= $form->current_date($myconfig);
+	  
+	# terms and reqdate
+	if ($form->{"reqdate_$i"}) {
+	  $form->{"terms_$i"} = $form->datediff($myconfig, $form->{"transdate_$i"}, $form->{"reqdate_$i"});
+	} else {
+	  $form->{"terms_$i"} = $terms * 1;
+	  $form->{"reqdate_$i"} ||= $form->{"transdate_$i"};
+
+	  if ($form->{"terms_$i"} > 0) {
+	    $form->{"reqdate_$i"} = $form->add_date($myconfig, $form->{"transdate_$i"}, $form->{"terms_$i"}, 'days');
+	  }
+	}
+	
+	$dth->execute("$dl[$form->{$form->{type}}->{department}{ndx}]");
+	($form->{"department_id_$i"}) = $dth->fetchrow_array;
+	$dth->finish;
+	
+	$wth->execute("$dl[$form->{$form->{type}}->{warehouse}{ndx}]");
+	($form->{"warehouse_id_$i"}) = $wth->fetchrow_array;
+	$wth->finish;
+
+      }
+      
+      $form->{transdate} = $form->{"transdate_$i"};
+      %tax = &taxrates("", $myconfig, $form, $dbh);
+
+      $pth->execute("$dl[$form->{$form->{type}}->{partnumber}{ndx}]");
+
+      
+      $parts_id = 0;
+      while ($ref = $pth->fetchrow_hashref(NAME_lc)) {
+	$form->{"parts_id_$i"} = $ref->{id};
+	for (qw(unit description)) { $form->{"${_}_$i"} ||= $ref->{$_} }
+
+	$parts_id = 1;
+	if ($vctax{$ref->{accno}}) {
+	  $form->{"tax_$i"} += $dl[$form->{$form->{type}}->{sellprice}{ndx}] * $dl[$form->{$form->{type}}->{qty}{ndx}] * $tax{$ref->{accno}};
+	}
+      }
+      $pth->finish;
+
+      $ptth->execute("$dl[$form->{$form->{type}}->{projectnumber}{ndx}]");
+      ($form->{"projectnumber_$i"}) = $ptth->fetchrow_array;
+      $ptth->finish;
+      
+      $form->{"projectnumber_$i"} = qq|--$form->{"projectnumber_$i"}| if $form->{"projectnumber_$i"};
+      
+      if (! $parts_id) {
+	$form->{"missing_$j"} = 1;
+	$form->{missingpart} .= "$dl[$form->{$form->{type}}->{ordnumber}{ndx}] : $dl[$form->{$form->{type}}->{partnumber}{ndx}]\n";
+      }
+
+      $form->{"total_$j"} += $dl[$form->{$form->{type}}->{sellprice}{ndx}] * $dl[$form->{$form->{type}}->{qty}{ndx}] + $form->{"tax_$i"};
+     
+      for (qw(name city employee employee_id department_id warehouse_id transdate reqdate terms parts_id unit description)) {
+	$form->{$form->{type}}->{$_}{ndx} == 0;
+      }
+      $form->{$form->{type}}->{"$form->{vc}_id"}{ndx} == 0;
+     
+      for (keys %{$form->{$form->{type}}}) {
+	if ($form->{"${_}_$i"}) {
+	  $rth->execute("${_}_$i", $form->{"${_}_$i"});
+	  $rth->finish;
+	}
+      }
+
+    }
+
+    $form->{rowcount} = $i;
+
+  }
+
+  $dbh->disconnect;
+
+  chop $form->{ndx};
+
+}
 
 
 1;

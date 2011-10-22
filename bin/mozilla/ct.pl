@@ -327,20 +327,18 @@ sub include_in_report {
   
   push @a, qq|<input name="l_ndx" type=checkbox class=checkbox value=Y> |.$locale->text('No.');
   push @a, qq|<input name="l_id" type=checkbox class=checkbox value=Y> |.$locale->text('ID');
+  push @a, qq|<input name="l_typeofcontact" type=checkbox class=checkbox value=Y> |.$locale->text('Type');
   push @a, qq|<input name="l_name" type=checkbox class=checkbox value=Y $form->{l_name}> $vcname|;
   push @a, qq|<input name="l_$form->{db}number" type=checkbox class=checkbox value=Y> $vcnumber|;
+  push @a, qq|<input name="l_address" type=checkbox class=checkbox value=Y> |.$locale->text('Address');
   push @a, qq|<input name="l_salutation" type=checkbox class=checkbox value=Y $form->{l_salutation}> |.$locale->text('Salutation');
-  push @a, qq|<input name="l_contacttitle" type=checkbox class=checkbox value=Y $form->{l_contacttitle}> |.$locale->text('Titel');
   push @a, qq|<input name="l_contact" type=checkbox class=checkbox value=Y $form->{l_contact}> |.$locale->text('Contact');
+  push @a, qq|<input name="l_contacttitle" type=checkbox class=checkbox value=Y $form->{l_contacttitle}> |.$locale->text('Titel');
   push @a, qq|<input name="l_gender" type=checkbox class=checkbox value=Y $form->{l_gender}> |.$locale->text('Gender');
   push @a, qq|<input name="l_occupation" type=checkbox class=checkbox value=Y $form->{l_occupation}> |.$locale->text('Occupation');
   push @a, qq|<input name="l_email" type=checkbox class=checkbox value=Y $form->{l_email}> |.$locale->text('E-mail');
-  push @a, qq|<input name="l_address" type=checkbox class=checkbox value=Y> |.$locale->text('Address');
-  push @a, qq|<input name="l_city" type=checkbox class=checkbox value=Y> |.$locale->text('City');
-  push @a, qq|<input name="l_state" type=checkbox class=checkbox value=Y> |.$locale->text('State/Province');
-  push @a, qq|<input name="l_zipcode" type=checkbox class=checkbox value=Y> |.$locale->text('Zip/Postal Code');
-  push @a, qq|<input name="l_country" type=checkbox class=checkbox value=Y> |.$locale->text('Country');
   push @a, qq|<input name="l_phone" type=checkbox class=checkbox value=Y $form->{l_phone}> |.$locale->text('Phone');
+  push @a, qq|<input name="l_mobile" type=checkbox class=checkbox value=Y $form->{l_mobile}> |.$locale->text('Mobile');
   push @a, qq|<input name="l_fax" type=checkbox class=checkbox value=Y> |.$locale->text('Fax');
   push @a, qq|<input name="l_cc" type=checkbox class=checkbox value=Y> |.$locale->text('Cc');
   
@@ -368,13 +366,17 @@ sub include_in_report {
   }
 
   push @a, qq|<input name="l_sic_code" type=checkbox class=checkbox value=Y> |.$locale->text('SIC');
-  push @a, qq|<input name="l_bank" type=checkbox class=checkbox value=Y> |.$locale->text('Bank');
+  push @a, qq|<input name="l_bankname" type=checkbox class=checkbox value=Y> |.$locale->text('Bank');
+  push @a, qq|<input name="l_bankaddress" type=checkbox class=checkbox value=Y> |.$locale->text('Address');
+
   push @a, qq|<input name="l_iban" type=checkbox class=checkbox value=Y> |.$locale->text('IBAN');
   push @a, qq|<input name="l_bic" type=checkbox class=checkbox value=Y> |.$locale->text('BIC');
+  
   push @a, qq|<input name="l_business" type=checkbox class=checkbox value=Y> |.$locale->text('Type of Business');
   push @a, qq|<input name="l_creditlimit" type=checkbox class=checkbox value=Y> |.$locale->text('Credit Limit');
   push @a, qq|<input name="l_terms" type=checkbox class=checkbox value=Y> |.$locale->text('Terms');
   push @a, qq|<input name="l_language" type=checkbox class=checkbox value=Y> |.$locale->text('Language');
+  push @a, qq|<input name="l_curr" type=checkbox class=checkbox value=Y> |.$locale->text('Currency');
   push @a, qq|<input name="l_remittancevoucher" type=checkbox class=checkbox value=Y> |.$locale->text('Remittance Voucher');
   push @a, qq|<input name="l_startdate" type=checkbox class=checkbox value=Y> |.$locale->text('Startdate');
   push @a, qq|<input name="l_enddate" type=checkbox class=checkbox value=Y> |.$locale->text('Enddate');
@@ -601,9 +603,18 @@ sub list_names {
     $vcnumber = $locale->text('Vendor Number');
   }
   
-  @columns = (id, name, "$form->{db}number", address,
-             city, state, zipcode, country,
-	     salutation);
+  @columns = (id, name, typeofcontact, "$form->{db}number");
+  
+  if ($form->{l_address}) {
+    for (address1, address2, city, state, zipcode, country) {
+      $form->{"l_$_"} = "Y";
+      push @columns, $_;
+    }
+    $callback .= "&l_address=Y";
+    $href .= "&l_address=Y";
+  }
+  
+  push @columns, (salutation);
   
   if ($form->{l_contact}) {
     for (firstname, lastname) {
@@ -614,8 +625,8 @@ sub list_names {
     $href .= "&l_contact=Y";
   }
   
-  push@ columns, (contacttitle, gender, occupation,
-	     phone, fax, email, cc, bcc, employee,
+  push @columns, (contacttitle, gender, occupation,
+	     phone, mobile, fax, email, cc, bcc, employee,
 	     manager, notes, discount, terms, creditlimit);
 
   if ($form->{l_accounts}) {
@@ -627,10 +638,20 @@ sub list_names {
     $href .= "&l_accounts=Y";
   }
 
+  push @columns, (paymentmethod, threshold, taxnumber, gifi_accno, sic_code,
+             business, pricegroup, language, curr, bankname);
+  
+  if ($form->{l_bankaddress}) {
+    for (bankaddress1, bankaddress2, bankcity, bankstate, bankzipcode, bankcountry) {
+      $form->{"l_$_"} = "Y";
+      push @columns, $_;
+    }
+    $callback .= "&l_bankaddress=Y";
+    $href .= "&l_bankaddress=Y";
+  }
+  
   push @columns, (
-	     paymentmethod,
-	     threshold, taxnumber, gifi_accno, sic_code, business,
-	     pricegroup, language, bank, iban, bic, remittancevoucher,
+	     iban, bic, remittancevoucher,
 	     startdate, enddate,
 	     invnumber, invamount, invtax, invtotal,
 	     ordnumber, ordamount, ordtax, ordtotal,
@@ -638,7 +659,7 @@ sub list_names {
   @columns = $form->sort_columns(@columns);
   
   if ($form->{sort} eq 'contact') {
-    grep { s/(firstname|lastname|contact)$// } @columns;
+    grep { s/^(firstname|lastname|contact)$// } @columns;
     unshift @columns, (firstname, lastname);
   }
   unshift @columns, "ndx";
@@ -803,26 +824,29 @@ sub list_names {
   
   $column_header{ndx} = qq|<th class=listheading width=1%>&nbsp;</th>|;
   $column_header{id} = qq|<th class=listheading>|.$locale->text('ID').qq|</th>|;
+  $column_header{typeofcontact} = qq|<th class=listheading>|.$locale->text('Type').qq|</th>|;
   $column_header{"$form->{db}number"} = qq|<th><a class=listheading href=$href&sort=$form->{db}number>$vcnumber</a></th>|;
   $column_header{name} = qq|<th><a class=listheading href=$href&sort=name>$vcname</a></th>|;
-  $column_header{address} = qq|<th class=listheading>|.$locale->text('Address').qq|</th>|;
+  $column_header{address1} = qq|<th class=listheading>|.$locale->text('Address').qq|</th>|;
+  $column_header{address2} = qq|<th class=listheading>&nbsp;</th>|;
   $column_header{city} = qq|<th><a class=listheading href=$href&sort=city>|.$locale->text('City').qq|</a></th>|;
   $column_header{state} = qq|<th><a class=listheading href=$href&sort=state>|.$locale->text('State/Province').qq|</a></th>|;
   $column_header{zipcode} = qq|<th><a class=listheading href=$href&sort=zipcode>|.$locale->text('Zip/Postal Code').qq|</a></th>|;
   $column_header{country} = qq|<th><a class=listheading href=$href&sort=country>|.$locale->text('Country').qq|</a></th>|;
   $column_header{salutation} = qq|<th>|.$locale->text('Salutation').qq|</th>|;
-  $column_header{lastname} = qq|<th>&nbsp;</th>|;
-  $column_header{firstname} = qq|<th><a class=listheading href=$href&sort=contact>|.$locale->text('Contact').qq|</a></th>|;
+  $column_header{firstname} = qq|<th>&nbsp;</th>|;
+  $column_header{lastname} = qq|<th><a class=listheading href=$href&sort=contact>|.$locale->text('Contact').qq|</a></th>|;
   $column_header{contacttitle} = qq|<th>|.$locale->text('Title').qq|</th>|;
-  $column_header{gender} = qq|<th>|.$locale->text('G').qq|</th>|;
+  $column_header{gender} = qq|<th>|.$locale->text('Gender').qq|</th>|;
   $column_header{occupation} = qq|<th><a class=listheading href=$href&sort=occupation>|.$locale->text('Occupation').qq|</a></th>|;
-  $column_header{phone} = qq|<th><a class=listheading href=$href&sort=phone>|.$locale->text('Phone').qq|</a></th>|;
-  $column_header{fax} = qq|<th><a class=listheading href=$href&sort=fax>|.$locale->text('Fax').qq|</a></th>|;
+  $column_header{phone} = qq|<th>|.$locale->text('Phone').qq|</th>|;
+  $column_header{mobile} = qq|<th>|.$locale->text('Mobile').qq|</th>|;
+  $column_header{fax} = qq|<th>|.$locale->text('Fax').qq|</th>|;
   $column_header{email} = qq|<th><a class=listheading href=$href&sort=email>|.$locale->text('E-mail').qq|</a></th>|;
   $column_header{cc} = qq|<th><a class=listheading href=$href&sort=cc>|.$locale->text('Cc').qq|</a></th>|;
   $column_header{bcc} = qq|<th><a class=listheading href=$href&sort=bcc>|.$locale->text('Bcc').qq|</a></th>|;
   $column_header{notes} = qq|<th><a class=listheading href=$href&sort=notes>|.$locale->text('Notes').qq|</a></th>|;
-  $column_header{discount} = qq|<th class=listheading>%</th>|;
+  $column_header{discount} = qq|<th class=listheading>|.$locale->text('Discount').qq|</th>|;
   $column_header{terms} = qq|<th class=listheading>|.$locale->text('Terms').qq|</th>|;
   $column_header{threshold} = qq|<th class=listheading>|.$locale->text('Threshold').qq|</th>|;
   $column_header{paymentmethod} = qq|<th><a class=listheading href=$href&sort=paymentmethod>|.$locale->text('Payment Method').qq|</a></th>|;
@@ -841,7 +865,13 @@ sub list_names {
   $column_header{sic_code} = qq|<th><a class=listheading href=$href&sort=sic_code>|.$locale->text('SIC').qq|</a></th>|;
   $column_header{business} = qq|<th><a class=listheading href=$href&sort=business>|.$locale->text('Type of Business').qq|</a></th>|;
 
-  $column_header{bank} = qq|<th class=listheading>|.$locale->text('Bank').qq|</th>|;
+  $column_header{bankname} = qq|<th class=listheading>|.$locale->text('Bank').qq|</th>|;
+  $column_header{bankaddress1} = qq|<th class=listheading>|.$locale->text('Address').qq|</th>|;
+  $column_header{bankaddress2} = qq|<th class=listheading>&nbsp;</th>|;
+  $column_header{bankcity} = qq|<th class=listheading>|.$locale->text('City').qq|</th>|;
+  $column_header{bankstate} = qq|<th class=listheading>|.$locale->text('State/Province').qq|</th>|;
+  $column_header{bankzipcode} = qq|<th class=listheading>|.$locale->text('Zip/Postal Code').qq|</th>|;
+  $column_header{bankcountry} = qq|<th class=listheading>|.$locale->text('Country').qq|</th>|;
   $column_header{iban} = qq|<th class=listheading>|.$locale->text('IBAN').qq|</th>|;
   $column_header{bic} = qq|<th class=listheading>|.$locale->text('BIC').qq|</th>|;
   $column_header{remittancevoucher} = qq|<th class=listheading>|.$locale->text('RV').qq|</th>|;
@@ -861,6 +891,7 @@ sub list_names {
 
   $column_header{pricegroup} = qq|<th><a class=listheading href=$href&sort=pricegroup>|.$locale->text('Pricegroup').qq|</a></th>|;
   $column_header{language} = qq|<th><a class=listheading href=$href&sort=language>|.$locale->text('Language').qq|</a></th>|;
+  $column_header{curr} = qq|<th><a class=listheading href=$href&sort=curr>|.$locale->text('Currency').qq|</a></th>|;
   
 
   $amount = $locale->text('Amount');
@@ -943,7 +974,6 @@ sub list_names {
 	$column_data{$form->{sort}} = "<td>&nbsp;</td>";
       }
 	
-      $column_data{address} = "<td>$ref->{address1} $ref->{address2}&nbsp;</td>";
       $column_data{name} = "<td><a href=$form->{script}?action=edit&id=$ref->{id}&db=$form->{db}&path=$form->{path}&login=$form->{login}&status=$form->{status}&callback=$callback>$ref->{name}&nbsp;</td>";
 
       $email = "";

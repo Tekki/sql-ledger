@@ -131,13 +131,13 @@ sub order_links {
     }
   }
   
-  for (qw(terms taxincluded)) { $temp{$_} = $form->{$_} }
+  for (qw(terms taxincluded intnotes)) { $temp{$_} = $form->{$_} }
 
   # get customer / vendor
   AA->get_name(\%myconfig, \%$form);
-
+  
   if ($form->{id}) {
-    for (qw(terms taxincluded)) { $form->{$_} = $temp{$_} }
+    for (keys %temp) { $form->{$_} = $temp{$_} }
   }
 
   $form->{terms} = "" if ! $form->{terms};

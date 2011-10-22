@@ -838,7 +838,7 @@ sub search {
     $bth->execute($ref->{id});
     $bref = $bth->fetchrow_hashref(NAME_lc);
     for (qw(name address1 address2 city state zipcode country)) {
-      $ref->{bank} .= "$bref->{$_} " if $bref->{$_};
+      $ref->{"bank$_"} = $bref->{$_};
     }
     $bth->finish;
    
