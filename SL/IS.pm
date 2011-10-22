@@ -172,6 +172,7 @@ sub invoice_details {
   my $ok;
 
   @{ $form->{lineitems} } = ();
+  @{ $form->{taxrates} } = ();
 
   foreach $item (@sortlist) {
 

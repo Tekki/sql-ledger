@@ -1151,6 +1151,7 @@ sub order_details {
   my $j = 0;
 
   @{ $form->{lineitems} } = ();
+  @{ $form->{taxrates} } = ();
   
   foreach $item (@sortlist) {
     $i = $item->[0];
@@ -1991,6 +1992,7 @@ sub generate_orders {
   my $unit;
 
   my $sellprice;
+  my $uid;
   
   foreach $vendor_id (keys %a) {
     
@@ -2025,7 +2027,7 @@ sub generate_orders {
       $form->{precision} = $defaults{precision};
     }
     
-    my $uid = localtime;
+    $uid = localtime;
     $uid .= $$;
  
     $query = qq|INSERT INTO oe (ordnumber)
@@ -2038,6 +2040,27 @@ sub generate_orders {
     $sth->execute || $form->dberror($query);
     my ($id) = $sth->fetchrow_array;
     $sth->finish;
+
+    
+    # get default shipto
+    $query = qq|SELECT * FROM shipto
+                WHERE trans_id = $vendor_id|;
+    $sth = $dbh->prepare($query);
+    $sth->execute || $form->dberror($query);
+    $ref = $sth->fetchrow_hashref(NAME_lc);
+
+    $query = qq|INSERT INTO shipto (trans_id, shiptoname, shiptoaddress1,
+                shiptoaddress2, shiptocity, shiptostate, shiptozipcode,
+		shiptocountry, shiptocontact, shiptophone, shiptofax,
+		shiptoemail) VALUES ($id, '$ref->{shiptoname}',
+		'$ref->{shiptoaddress1}', '$ref->{shiptoaddress2}',
+		'$ref->{shiptocity}', '$ref->{shiptostate}',
+		'$ref->{shiptozipcode}', '$ref->{shiptocountry}',
+		'$ref->{shiptocontact}', '$ref->{shiptophone}',
+		'$ref->{shiptofax}', '$ref->{shiptoemail}')|;
+    $dbh->do($query) || $form->dberror($query);
+    $sth->finish;  
+   
 
     $amount = 0;
     $netamount = 0;
@@ -2110,7 +2133,6 @@ sub generate_orders {
 		ponumber = |.$dbh->quote($form->{ponumber}).qq|
 		WHERE id = $id|;
     $dbh->do($query) || $form->dberror($query);
-    
   }
 
   my $rc = $dbh->commit;

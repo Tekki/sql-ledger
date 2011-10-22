@@ -2177,8 +2177,8 @@ sub save_exchangerate {
       $dth->execute($form->{transdate}, $_) || $form->dberror;
       $dth->finish;
       
-      $form->{"${_}buy"} *= 1;
-      $form->{"${_}sell"} *= 1;
+      $form->{"${_}buy"} = $form->parse_amount($myconfig, $form->{"${_}buy"});
+      $form->{"${_}sell"} = $form->parse_amount($myconfig, $form->{"${_}sell"});
       
       if ($form->{"${_}buy"} || $form->{"${_}sell"}) {
 	$sth->execute($form->{transdate}, $form->{"${_}buy"}, $form->{"${_}sell"}, $_) || $form->dberror;
