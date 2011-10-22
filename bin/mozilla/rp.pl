@@ -1304,12 +1304,10 @@ sub generate_ar_aging {
   $form->{vc} = "customer";
   $form->{arap} = "ar";
 
-  RP->aging(\%myconfig, \%$form);
-
   $form->{initcallback} = qq|$form->{script}?action=generate_ar_aging&todate=$form->{todate}|;
-
-  RP->aging(\%myconfig, \%$form);
   
+  RP->aging(\%myconfig, \%$form);
+
   &aging;
   
 }
@@ -1473,7 +1471,7 @@ function CheckAll() {
   $l = $#{ $form->{AG} };
   
   $callback = $form->escape($form->{callback},1);
-  
+
   foreach $ref (@{ $form->{AG} }) {
 
     if ($curr ne $ref->{curr}) {
@@ -1539,7 +1537,7 @@ function CheckAll() {
 	$column_data{language} = qq|<td><select name="language_code_$ref->{curr}_$ref->{vc_id}">|.$form->select_option($form->{selectlanguage}, $ref->{language_code}, undef, 1).qq|</select></td>|;
       }
 
-      $checked = ($form->{"ndx_$ref->{curr}_$ref->{vc_id}"}) ? "checked" : "";
+      $checked = ($ref->{checked}) ? "checked" : "";
       $column_data{ndx} = qq|<td><input name="ndx_$ref->{curr}_$ref->{vc_id}" type=checkbox class=checkbox value=1 $checked}></td>|;
       
       $form->{vc_ids} .= "$ref->{vc_id} ";

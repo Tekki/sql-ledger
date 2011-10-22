@@ -78,7 +78,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.8.25";
+  $self->{version} = "2.8.26";
   $self->{dbversion} = "2.8.10";
 
   bless $self, $type;
@@ -1449,7 +1449,7 @@ sub datediff {
 
   }
 
-  sprintf("%.0f", (timelocal(0,0,0,$dd2,$mm2,$yy2) - timelocal(0,0,0,$dd1,$mm1,$yy1))/86400);
+  sprintf("%.0f", (timelocal(0,0,12,$dd2,$mm2,$yy2) - timelocal(0,0,12,$dd1,$mm1,$yy1))/86400);
   
 }
 
@@ -1538,7 +1538,7 @@ sub add_date {
 
     $mm--;
 
-    @t = localtime(timelocal(0,0,0,$dd,$mm,$yy) + $diff);
+    @t = localtime(timelocal(0,0,12,$dd,$mm,$yy) + $diff);
 
     $t[4]++;
     $mm = substr("0$t[4]",-2);
@@ -3053,8 +3053,18 @@ sub update_defaults {
     $dbh = $self->dbconnect_noauto($myconfig);
   }
   
-  my $query = qq|SELECT fldvalue FROM defaults
-                 WHERE fldname = '$fld' FOR UPDATE|;
+  my $query = qq|SELECT fldname FROM defaults
+                 WHERE fldname = '$fld'|;
+
+  if (! $dbh->selectrow_array($query)) {
+    $query = qq|INSERT INTO defaults (fldname)
+                VALUES ('$fld')|;
+    $dbh->do($query) || $self->dberror($query);
+    $dbh->commit;
+  }
+
+  $query = qq|SELECT fldvalue FROM defaults
+              WHERE fldname = '$fld' FOR UPDATE|;
   ($_) = $dbh->selectrow_array($query);
 
   $_ = "0" unless $_;
