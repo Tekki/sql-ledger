@@ -39,12 +39,10 @@ sub print {
   if (! $form->{invnumber}) {
     $invfld = 'sinumber';
     $invfld = 'vinumber' if $form->{ARAP} eq 'AP';
+    $form->{invnumber} = $form->update_defaults(\%myconfig, $invfld);
     if ($form->{media} eq 'screen') {
-      $form->{invnumber} = $form->update_defaults(\%myconfig, $invfld);
-      if ($form->{media} eq 'screen') {
-	&update;
-	exit;
-      }
+      &update;
+      exit;
     }
   }
 

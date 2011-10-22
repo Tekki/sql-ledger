@@ -1285,7 +1285,8 @@ sub order_details {
 	$ml *= -1;
       }
 
-      push(@{ $form->{lineitems} }, { amount => $linetotal, tax => $form->round_amount($tax, $form->{precision}) });
+      $tax = $form->round_amount($tax, $form->{precision});
+      push(@{ $form->{lineitems} }, { amount => $linetotal, tax => $tax });
       push(@{ $form->{taxrates} }, join ' ', sort { $a <=> $b } @taxrates);
 	
       if ($form->{"assembly_$i"}) {

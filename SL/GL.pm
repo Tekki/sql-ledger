@@ -238,18 +238,19 @@ sub post_transaction {
 
 	$amount = $form->round_amount($amount * ($exchangerate - 1), $form->{precision});
 	
-	$query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount, transdate,
-		    source, project_id, fx_transaction, memo, cleared, approved)
-		    VALUES
-		    ($form->{id}, (SELECT id
-				   FROM chart
-				   WHERE accno = '$accno'),
-		     $amount, '$form->{transdate}', |.
-		     $dbh->quote($form->{"source_$i"}) .qq|,
-		    $project_id, '1', |.$dbh->quote($form->{"memo_$i"}).qq|,
-		    $cleared, '$approved')|;
-	$dbh->do($query) || $form->dberror($query);
-
+	if ($amount) {
+	  $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount, transdate,
+		      source, project_id, fx_transaction, memo, cleared, approved)
+		      VALUES
+		      ($form->{id}, (SELECT id
+				     FROM chart
+				     WHERE accno = '$accno'),
+		       $amount, '$form->{transdate}', |.
+		       $dbh->quote($form->{"source_$i"}) .qq|,
+		      $project_id, '1', |.$dbh->quote($form->{"memo_$i"}).qq|,
+		      $cleared, '$approved')|;
+	  $dbh->do($query) || $form->dberror($query);
+	}
       }
     }
   }

@@ -375,7 +375,7 @@ sub edit {
 # $locale->text('Edit Deduction')
 
   $label = ucfirst $form->{db};
-  $form->{title} = "Edit $label";
+  $form->{title} = $locale->text("Edit $label");
 
   &{ "$form->{db}_links" };
   

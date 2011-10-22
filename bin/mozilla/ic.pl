@@ -1616,7 +1616,7 @@ sub generate_report {
   $callback = $form->escape($callback);
 
 
-  $k = $#{@{ $form->{parts} }};
+  $k = $#{ $form->{parts} };
   @groupby = ($form->{sort});
   
   if ($form->{summary}) {
