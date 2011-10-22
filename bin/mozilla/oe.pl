@@ -989,9 +989,11 @@ sub update {
 	
 	$form->{"oldqty_$i"} = $form->{"qty_$i"};
 
-	for (qw(netweight grossweight)) { $form->{"${_}_$i"} = $form->{"weight_$i"} * $form->{"qty_$i"} }
+	$form->{"netweight_$i"} = $form->{"weight_$i"} * $form->{"qty_$i"};
+	$form->{"grossweight_$i"} = $form->{"gweight_$i"} * $form->{"qty_$i"};
+	$form->{"volume_$i"} = $form->{"pvolume_$i"} * $form->{"qty_$i"};
 
-	for (qw(qty discount netweight grossweight)) { $form->{"{_}_$i"} =  $form->format_amount(\%myconfig, $form->{"${_}_$i"}) }
+	for (qw(qty discount netweight grossweight volume)) { $form->{"${_}_$i"} =  $form->format_amount(\%myconfig, $form->{"${_}_$i"}) }
 
       }
       
@@ -2230,7 +2232,7 @@ sub create_backorder {
     return;
   }
 
-  @flds = qw(partnumber description lineitemdetail qty ship unit sellprice discount oldqty oldship orderitems_id id bin weight listprice lastcost taxaccounts pricematrix sku onhand bin assembly inventory_accno_id income_accno_id expense_accno_id deliverydate reqdate itemnotes serialnumber projectnumber package netweight grossweight volume partsgroup);
+  @flds = qw(partnumber description lineitemdetail qty ship unit sellprice discount oldqty oldship orderitems_id id bin weight gweight pvolume listprice lastcost taxaccounts pricematrix sku onhand bin assembly inventory_accno_id income_accno_id expense_accno_id deliverydate reqdate itemnotes serialnumber projectnumber package netweight grossweight volume partsgroup);
 
   for $i (1 .. $form->{rowcount}) {
     for (qw(qty sellprice discount)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}) }

@@ -635,7 +635,7 @@ sub retrieve {
   my $var;
   my $ref;
 
-  my %defaults = $form->get_defaults($dbh, \@{[qw(weightunit closedto precision)]});
+  my %defaults = $form->get_defaults($dbh, \@{[qw(weightunit volumeunit closedto precision)]});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
   
   $form->{currencies} = $form->get_currencies($dbh, $myconfig);
@@ -698,7 +698,7 @@ sub retrieve {
 		o.itemnotes, o.lineitemdetail,
 		pr.projectnumber,
 		pg.partsgroup, p.partsgroup_id, p.partnumber AS sku,
-		p.listprice, p.lastcost, p.weight, p.onhand,
+		p.listprice, p.lastcost, p.weight, p.gweight, p.pvolume, p.onhand,
 		p.inventory_accno_id, p.income_accno_id, p.expense_accno_id,
 		t.description AS partsgrouptranslation,
 		c.package, c.netweight, c.grossweight, c.volume

@@ -353,15 +353,15 @@ sub get_job {
   my $sth;
   my $ref;
 
-  my %defaults = $form->get_defaults($dbh, \@{['weightunit']});
-  $form->{weightunit} = $defaults{weightunit};
+  my %defaults = $form->get_defaults($dbh, \@{['weightunit', 'volumeunit']});
+    for (keys %defaults) { $form->{$_} = $defaults{$_} }
   
   if ($form->{id}) {
     
     $query = qq|SELECT pr.*,
                 p.partnumber, p.description AS partdescription,
 		p.unit, p.listprice,
-		p.sellprice, p.priceupdate, p.weight, p.notes, p.bin,
+		p.sellprice, p.priceupdate, p.weight, p.gweight, p.pvolume, p.notes, p.bin,
 		p.partsgroup_id,
 		ch.accno AS income_accno, ch.description AS income_description,
 		pr.customer_id, c.name AS customer,
@@ -585,6 +585,8 @@ sub save_job {
 	      listprice = |.$form->parse_amount($myconfig, $form->{listprice}).qq|,
 	      sellprice = |.$form->parse_amount($myconfig, $form->{sellprice}).qq|,
 	      weight = |.$form->parse_amount($myconfig, $form->{weight}).qq|,
+	      gweight = |.$form->parse_amount($myconfig, $form->{gweight}).qq|,
+	      pvolume = |.$form->parse_amount($myconfig, $form->{pvolume}).qq|,
 	      bin = '$form->{bin}',
 	      unit = |.$dbh->quote($form->{unit}).qq|,
 	      notes = |.$dbh->quote($form->{notes}).qq|,
@@ -728,6 +730,8 @@ sub stock_assembly {
 		  sellprice = $sellprice,
 		  lastcost = $lastcost,
 		  weight = $pref->{weight},
+		  gweight = $pref->{gweight},
+		  pvolume = $pref->{pvolume},
 		  onhand = $stock,
 		  notes = '$pref->{notes}',
 		  assembly = '1',

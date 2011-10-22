@@ -2115,7 +2115,10 @@ sub defaults {
 	  <th align=right>|.$locale->text('Weight Unit').qq|</th>
 	  <td><input name=weightunit size=5 value="$form->{weightunit}"></td>
 	</tr>
-
+	<tr>
+	  <th align=right>|.$locale->text('Volume Unit').qq|</th>
+	  <td><input name=volumeunit size=5 value="$form->{volumeunit}"></td>
+	</tr>
       </table>
     </td>
   </tr>

@@ -1866,7 +1866,7 @@ sub retrieve_invoice {
 		i.itemnotes, i.lineitemdetail,
 		p.partnumber, p.assembly, p.bin,
 		pg.partsgroup, p.partsgroup_id, p.partnumber AS sku,
-		p.listprice, p.lastcost, p.weight, p.onhand,
+		p.listprice, p.lastcost, p.weight, p.gweight, p.pvolume, p.onhand,
 		p.inventory_accno_id, p.income_accno_id, p.expense_accno_id,
 		t.description AS partsgrouptranslation,
 		c.package, c.netweight, c.grossweight, c.volume
@@ -1986,7 +1986,7 @@ sub retrieve_item {
 		 p.unit, p.assembly, p.bin, p.onhand, p.notes AS itemnotes,
 		 p.inventory_accno_id, p.income_accno_id, p.expense_accno_id,
 		 pg.partsgroup, p.partsgroup_id, p.partnumber AS sku,
-		 p.weight,
+		 p.weight, p.gweight, p.pvolume,
 		 t1.description AS translation,
 		 t2.description AS grouptranslation
                  FROM parts p

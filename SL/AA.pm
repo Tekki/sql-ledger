@@ -1296,7 +1296,7 @@ sub company_details {
               WHERE id = $id|;
   ($form->{workphone}, $form->{workfax}, $form->{workmobile}) = $dbh->selectrow_array($query);
 
-  my @a = qw(weightunit cdt company address tel fax businessnumber);
+  my @a = qw(weightunit volumeunit cdt company address tel fax businessnumber);
   my %defaults = $form->get_defaults($dbh, \@a);
   for (@a) { $form->{$_} = $defaults{$_} }
 

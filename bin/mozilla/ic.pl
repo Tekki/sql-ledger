@@ -273,7 +273,7 @@ sub form_header {
  
   for (qw(lastcost avgcost)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, $form->{decimalplacescost}) }
   
-  for (qw(weight rop stock)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}) }
+  for (qw(weight gweight pvolume rop stock)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}) }
   
   for (qw(partnumber description unit notes)) { $form->{$_} = $form->quote($form->{$_}) }
 
@@ -349,7 +349,68 @@ sub form_header {
 	      </tr>
 |;
 
+    $weight_editable = qq|
+  	      <tr>
+            <th align="right" nowrap="true">|.$locale->text('N.W.').qq|</th>
+            <td>
+              <input name=weight size=11 value=$form->{weight}>
+              &nbsp;$form->{weightunit}
+              |
+              .$form->hide_form(qw(weightunit))
+              .qq|
+            </td>
+          </tr>
+          <tr>
+            <th align="right" nowrap="true">|.$locale->text('G.W.').qq|</th>
+            <td>
+              <input name=gweight size=11 value=$form->{gweight}>
+		      &nbsp;$form->{weightunit}
+		    </td>
+		  </tr>
+|;
 
+    $weight_displayed = qq|
+  	      <tr>
+            <th align="right" nowrap="true">|.$locale->text('N.W.').qq|</th>
+            <td>
+              $form->{weight}&nbsp;$form->{weightunit}
+              |
+              .$form->hide_form(qw(weightunit weight gweight))
+              .qq|
+            </td>
+          </tr>
+          <tr>
+            <th align="right" nowrap="true">|.$locale->text('G.W.').qq|</th>
+            <td>
+              $form->{gweight}&nbsp;$form->{weightunit}
+		    </td>
+		  </tr>
+|;
+
+    $volume_editable = qq|
+  	      <tr>
+            <th align="right" nowrap="true">|.$locale->text('Volume').qq|</th>
+            <td>
+              <input name=pvolume size=11 value=$form->{pvolume}>
+              &nbsp;$form->{volumeunit}
+              |
+              .$form->hide_form(qw(volumeunit))
+              .qq|
+            </td>
+          </tr>
+|;
+
+    $volume_displayed = qq|
+  	      <tr>
+            <th align="right" nowrap="true">|.$locale->text('Volume').qq|</th>
+            <td>
+              $form->{pvolume}&nbsp;$form->{volumeunit}
+              |
+              .$form->hide_form(qw(volumeunit pvolume))
+              .qq|
+            </td>
+          </tr>
+|;
   if ($form->{item} =~ /(part|assembly)/) {
     $n = ($form->{onhand} > 0) ? "1" : "0";
     $onhand = qq|
@@ -434,26 +495,8 @@ sub form_header {
 |;
     }
   
-    $weight = qq|
-	      <tr>
-		<th align="right" nowrap="true">|.$locale->text('Weight').qq|</th>
-		<td>
-		  <table>
-		    <tr>
-		      <td>
-			<input name=weight size=11 value=$form->{weight}>
-		      </td>
-		      <th>
-			&nbsp;
-			$form->{weightunit}|
-			.$form->hide_form(qw(weightunit))
-			.qq|
-		      </th>
-		    </tr>
-		  </table>
-		</td>
-	      </tr>
-|;
+    $weight =  $weight_editable;
+    $volume= $volume_editable;
     
   }
 
@@ -463,49 +506,13 @@ sub form_header {
     $avgcost = "";
     
     if ($form->{project_id}) {
-      $weight = qq|
-	      <tr>
-		<th align="right" nowrap="true">|.$locale->text('Weight').qq|</th>
-		<td>
-		  <table>
-		    <tr>
-		      <td>
-			<input name=weight size=11 value=$form->{weight}>
-		      </td>
-		      <th>
-			&nbsp;
-			$form->{weightunit}|
-			.$form->hide_form(qw(weightunit))
-			.qq|
-		      </th>
-		    </tr>
-		  </table>
-		</td>
-	      </tr>
-|;
+      $weight = $weight_editable;
+      $volume = $volume_editable;
+
     } else {
-   
-      $weight = qq|
-	      <tr>
-		<th align="right" nowrap="true">|.$locale->text('Weight').qq|</th>
-		<td>
-		  <table>
-		    <tr>
-		      <td>
-			&nbsp;$form->{weight}
-			<input type=hidden name=weight value=$form->{weight}>
-		      </td>
-		      <th>
-			&nbsp;
-			$form->{weightunit}|
-			.$form->hide_form(qw(weightunit))
-			.qq|
-		      </th>
-		    </tr>
-		  </table>
-		</td>
-	      </tr>
-|;
+      $weight = $weight_displayed;
+      $volume = $volume_displayed;
+
     }
     
 
@@ -682,11 +689,12 @@ sub form_header {
 		<th align="right" nowrap="true">|.$locale->text('Unit').qq|</th>
 		<td><input name=unit size=5 value="|.$form->quote($form->{unit}).qq|"></td>
 	      </tr>
-	      $weight
 	      $onhand
 	      $stock
 	      $rop
 	      $bin
+	      $weight
+	      $volume
 	      $obsolete
 	    </table>
 	  </td>
@@ -894,7 +902,9 @@ sub search {
 
     $l_rop = qq|<input name=l_rop class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('ROP');
 
-    $l_weight = qq|<input name=l_weight class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Weight');
+    $l_weight = qq|<input name=l_weight class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('N.W.');
+    $l_gweight = qq|<input name=l_gweight class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('G.W.');
+    $l_pvolume = qq|<input name=l_pvolume class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Volume');
 
     $l_countryorigin = qq|<input name=l_countryorigin class=checkbox type=checkbox value=Y> |.$locale->text('Country of Origin');
     $l_tariff_hscode = qq|<input name=l_tariff_hscode class=checkbox type=checkbox value=Y> |.$locale->text('HS Code');
@@ -1009,6 +1019,8 @@ sub search {
   push @a, $l_bin if $l_bin;
   push @a, $l_rop if $l_rop;
   push @a, $l_weight if $l_weight;
+  push @a, $l_gweight if $l_gweight;
+  push @a, $l_pvolume if $l_pvolume;
   push @a, qq|<input name=l_notes class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Notes');
   push @a, $l_image if $l_image;
   push @a, $l_drawing if $l_drawing;
@@ -1395,7 +1407,7 @@ sub generate_report {
     $form->{l_avgcostmarkup} = "Y" if $form->{l_avgcost};
   }
 
-  @columns = $form->sort_columns(qw(partnumber description notes assemblypartnumber partsgroup make model bin onhand perassembly rop unit sellprice linetotalsellprice listprice linetotallistprice lastcost linetotallastcost lastcostmarkup avgcost linetotalavgcost avgcostmarkup curr priceupdate weight image drawing toolnumber barcode microfiche invnumber ordnumber quonumber name employee serialnumber warehouse countryorigin tariff_hscode));
+  @columns = $form->sort_columns(qw(partnumber description notes assemblypartnumber partsgroup make model bin onhand perassembly rop unit sellprice linetotalsellprice listprice linetotallistprice lastcost linetotallastcost lastcostmarkup avgcost linetotalavgcost avgcostmarkup curr priceupdate weight gweight pvolume image drawing toolnumber barcode microfiche invnumber ordnumber quonumber name employee serialnumber warehouse countryorigin tariff_hscode));
   unshift @columns, "runningnumber";
 
   if ($form->{l_linetotal}) {
@@ -1404,8 +1416,8 @@ sub generate_report {
   }
 
   if ($form->{searchitems} eq 'service') {
-    # remove bin, weight and rop from list
-    for (qw(bin weight rop)) { $form->{"l_$_"} = "" }
+    # remove bin, weight, gweight, pvolume and rop from list
+    for (qw(bin weight gweight pvolume rop)) { $form->{"l_$_"} = "" }
 
     $form->{l_onhand} = "";
     # qty is irrelevant unless bought or sold
@@ -1500,7 +1512,9 @@ sub generate_report {
   $column_data{lastcost} = qq|<th class=listheading nowrap>|.$locale->text('Last Cost').qq|</th>|;
   $column_data{avgcost} = qq|<th class=listheading nowrap>|.$locale->text('Avg Cost').qq|</th>|;
   $column_data{rop} = qq|<th class=listheading nowrap>|.$locale->text('ROP').qq|</th>|;
-  $column_data{weight} = qq|<th class=listheading nowrap>|.$locale->text('Weight').qq|</th>|;
+  $column_data{weight} = qq|<th class=listheading nowrap>|.$locale->text('N.W.').qq|</th>|;
+  $column_data{gweight} = qq|<th class=listheading nowrap>|.$locale->text('G.W.').qq|</th>|;
+  $column_data{pvolume} = qq|<th class=listheading nowrap>|.$locale->text('Volume').qq|</th>|;
   $column_data{avgcostmarkup} = qq|<th class=listheading nowrap>%</th>|;
   $column_data{lastcostmarkup} = qq|<th class=listheading nowrap>%</th>|;
 
@@ -1753,7 +1767,7 @@ sub generate_report {
       $subtotallistprice += $onhand * $ref->{listprice};
     }
 
-    for (qw(rop weight)) { $column_data{$_} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{$_}, undef, "&nbsp;")."</td>" }
+    for (qw(rop weight gweight pvolume)) { $column_data{$_} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{$_}, undef, "&nbsp;")."</td>" }
     for (qw(unit bin)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
     $column_data{priceupdate} = "<td nowrap>$ref->{priceupdate}&nbsp;</td>";
     
@@ -2724,11 +2738,8 @@ sub assembly_row {
 
   @column_index = qw(runningnumber qty unit bom adj partnumber description sellprice listprice lastcost);
 
-  $form->{sellprice} = 0;
-  $form->{listprice} = 0;
-  $form->{lastcost} = 0;
-  $form->{weight} = 0;
-
+  for (qw(sellprice listprice lastcost weight gweight pvolume)) { $form->{$_} = 0 }
+  
   $column_data{runningnumber} = qq|<th nowrap width=5%>|.$locale->text('Item').qq|</th>|;
   $column_data{qty} = qq|<th align=left nowrap width=10%>|.$locale->text('Qty').qq|</th>|;
   $column_data{unit} = qq|<th align=left nowrap width=5%>|.$locale->text('Unit').qq|</th>|;
@@ -2815,7 +2826,7 @@ sub assembly_row {
     print qq|
         </tr>
 |;
-    $form->hide_form(map { "${_}_$i" } qw(id sellprice listprice lastcost weight assembly));
+    $form->hide_form(map { "${_}_$i" } qw(id sellprice listprice lastcost weight gweight pvolume assembly));
     
   }
 
@@ -3186,27 +3197,28 @@ sub save {
     if ($form->{item} eq 'assembly') {
 
       # undo number formatting
-      for (qw(weight listprice sellprice lastcost rop)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
+      for (qw(weight gweight pvolume listprice sellprice lastcost rop)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
 
       $form->{assembly_rows}-- if $olditem;
       $i = $newform{rowcount};
       $form->{"qty_$i"} = 1 unless ($form->{"qty_$i"});
 
-      $form->{listprice} -= $form->{"listprice_$i"} * $form->{"qty_$i"};
-      $form->{sellprice} -= $form->{"sellprice_$i"} * $form->{"qty_$i"};
-      $form->{lastcost} -= $form->{"lastcost_$i"} * $form->{"qty_$i"};
-      $form->{weight} -= $form->{"weight_$i"} * $form->{"qty_$i"};
+      foreach $item (qw(listprice sellprice lastcost weight gweight pvolume)) {
+        $form->{$item} += $form->{"${item}_$i"} * $form->{"qty_$i"};
+      }
 
       # change/add values for assembly item
-      for (qw(partnumber description bin unit weight listprice sellprice lastcost)) { $form->{"${_}_$i"} = $newform{$_} }
+      for (qw(partnumber description bin unit weight gweight pvolume listprice sellprice lastcost)) { $form->{"${_}_$i"} = $newform{$_} }
 
       foreach $item (qw(listprice sellprice lastcost)) {
 	$form->{$item} += $form->{"${item}_$i"} * $form->{"qty_$i"};
 	$form->{$item} = $form->round_amount($form->{$item}, $form->{precision});
       }
 	
-      $form->{weight} += $form->{"weight_$i"} * $form->{"qty_$i"};
-
+      foreach $item (qw(weight gweight pvolume)) {
+        $form->{$item} += $form->{"${item}_$i"} * $form->{"qty_$i"};
+      }
+       
       $form->{"adj_$i"} = 1 if !$olditem;
 
       $form->{customer_rows}--;

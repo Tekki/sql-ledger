@@ -117,7 +117,7 @@ sub job_header {
 
   for (qw(partnumber partdescription description notes unit)) { $form->{$_} = $form->quote($form->{$_}) }
 
-  for (qw(production weight)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}) }
+  for (qw(production weight gweight pvolume)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}) }
   for (qw(listprice sellprice)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}) }
   
   if (($rows = $form->numtextrows($form->{partdescription}, 60)) > 1) {
@@ -1942,7 +1942,7 @@ sub update {
 # $locale->text('Customer not on file!')
 # $locale->text('Vendor not on file!')
 
-    for (qw(production listprice sellprice weight)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
+    for (qw(production listprice sellprice weight gweight pvolume)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
 
     $form->{projectnumber} = $form->update_defaults(\%myconfig, "projectnumber") unless $form->{projectnumber};
     

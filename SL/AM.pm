@@ -1303,7 +1303,7 @@ sub save_defaults {
   }
 
   # optional
-  for (qw(company address tel fax yearend weightunit businessnumber closedto revtrans audittrail method cdt namesbynumber)) {
+  for (qw(company address tel fax yearend weightunit volumeunit businessnumber closedto revtrans audittrail method cdt namesbynumber)) {
     if ($form->{$_}) {
       $sth->execute($_, $form->{$_}) || $form->dberror;
       $sth->finish;

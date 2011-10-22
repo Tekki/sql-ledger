@@ -59,7 +59,7 @@ sub get_part {
 
     # retrieve assembly items
     $query = qq|SELECT p.id, p.partnumber, p.description,
-                p.sellprice, p.weight, a.qty, a.bom, a.adj, p.unit,
+                p.sellprice, p.weight, p.gweight, p.pvolume, a.qty, a.bom, a.adj, p.unit,
 		p.lastcost, p.listprice,
 		pg.partsgroup, p.assembly, p.partsgroup_id
                 FROM parts p
@@ -193,7 +193,7 @@ sub save {
   my $dbh = $form->dbconnect_noauto($myconfig);
 
   # undo amount formatting
-  for (qw(rop weight listprice sellprice lastcost stock)) { $form->{$_} = $form->parse_amount($myconfig, $form->{$_}) }
+  for (qw(rop weight gweight pvolume listprice sellprice lastcost stock)) { $form->{$_} = $form->parse_amount($myconfig, $form->{$_}) }
   
   $form->{assembly} = $form->{item} eq 'assembly';
   for (qw(alternate obsolete onhand assembly)) { $form->{$_} *= 1 }
@@ -238,10 +238,10 @@ sub save {
   if ($form->{id}) {
 
     # get old price
-    $query = qq|SELECT id, listprice, sellprice, lastcost, weight, project_id
+    $query = qq|SELECT id, listprice, sellprice, lastcost, weight, gweight, pvolume, project_id
                 FROM parts
 		WHERE id = $form->{id}|;
-    my ($id, $listprice, $sellprice, $lastcost, $weight, $project_id) = $dbh->selectrow_array($query);
+    my ($id, $listprice, $sellprice, $lastcost, $weight, $gweight, $pvolume, $project_id) = $dbh->selectrow_array($query);
 
     if ($id) {
       
@@ -253,7 +253,7 @@ sub save {
 	$sth = $dbh->prepare($query);
 	$sth->execute || $form->dberror($query);
 	while (my ($id, $qty, $adj) = $sth->fetchrow_array) {
-	  &update_assembly($dbh, $form, $id, $qty, $adj, $listprice * 1, $sellprice * 1, $lastcost * 1, $weight * 1);
+	  &update_assembly($dbh, $form, $id, $qty, $adj, $listprice * 1, $sellprice * 1, $lastcost * 1, $weight * 1, $gweight * 1, $pvolume * 1);
 	}
 	$sth->finish;
       }
@@ -357,6 +357,8 @@ sub save {
 	      sellprice = $form->{sellprice},
 	      lastcost = $form->{lastcost},
 	      weight = $form->{weight},
+	      gweight = $form->{gweight},
+	      pvolume = $form->{pvolume},
 	      priceupdate = |.$form->dbquote($form->{priceupdate}, SQL_DATE).qq|,
 	      unit = |.$dbh->quote($form->{unit}).qq|,
 	      notes = |.$dbh->quote($form->{notes}).qq|,
@@ -500,7 +502,7 @@ sub save {
 
 
 sub update_assembly {
-  my ($dbh, $form, $id, $qty, $adj, $listprice, $sellprice, $lastcost, $weight) = @_;
+  my ($dbh, $form, $id, $qty, $adj, $listprice, $sellprice, $lastcost, $weight, $gweight, $pvolume) = @_;
 
   my $formlistprice = $form->{listprice};
   my $formsellprice = $form->{sellprice};
@@ -519,7 +521,7 @@ sub update_assembly {
   $form->{$id} = 1;
   
   while (my ($pid, $aqty, $aadj) = $sth->fetchrow_array) {
-    &update_assembly($dbh, $form, $pid, $aqty * $qty, $aadj, $listprice, $sellprice, $lastcost, $weight) if !$form->{$pid};
+    &update_assembly($dbh, $form, $pid, $aqty * $qty, $aadj, $listprice, $sellprice, $lastcost, $weight, $gweight, $pvolume) if !$form->{$pid};
   }
   $sth->finish;
 
@@ -531,7 +533,11 @@ sub update_assembly {
 		  lastcost = lastcost +
 		  $qty * ($form->{lastcost} - $lastcost),
                   weight = weight +
-		  $qty * ($form->{weight} - $weight)
+		  $qty * ($form->{weight} - $weight),
+                  gweight = gweight +
+                    $qty * $form->{gweight} - $gweight),
+                  pvolume = pvolume +
+                    $qty * $form->{pvolume} - $pvolume)
 	      WHERE id = $id|;
   $dbh->do($query) || $form->dberror($query);
 
@@ -825,7 +831,7 @@ sub assembly_item {
   my $dbh = $form->dbconnect($myconfig);
 
   my $query = qq|SELECT p.id, p.partnumber, p.description, p.sellprice,
-                 p.weight, p.onhand, p.unit, p.lastcost,
+                 p.weight, p.gweight, p.pvolume, p.onhand, p.unit, p.lastcost,
 		 pg.partsgroup, p.partsgroup_id
 		 FROM parts p
 		 LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
@@ -976,8 +982,8 @@ sub all_parts {
   my $flds = qq|p.id, p.partnumber, p.description, p.onhand, p.unit,
                 p.bin, p.sellprice, p.listprice, p.lastcost, p.rop,
 		p.avgcost,
-		p.weight, p.priceupdate, p.image, p.drawing, p.microfiche,
-		p.assembly, pg.partsgroup, '$curr' AS curr,
+		p.weight, p.gweight, p.pvolume, p.priceupdate, p.image, p.drawing,
+		p.microfiche, p.assembly, pg.partsgroup, '$curr' AS curr,
 		c1.accno AS inventory, c2.accno AS income, c3.accno AS expense,
 		p.notes, p.toolnumber, p.countryorigin, p.tariff_hscode,
 		p.barcode
@@ -1083,7 +1089,7 @@ sub all_parts {
       my $flds = qq|p.id, p.partnumber, i.description, i.serialnumber,
                     i.qty AS onhand, i.unit, p.bin, i.sellprice,
 		    p.listprice, p.lastcost, p.rop, p.weight,
-		    p.avgcost,
+		    p.gweight, p.pvolume, p.avgcost,
 		    p.priceupdate, p.image, p.drawing, p.microfiche,
 		    p.assembly,
 		    pg.partsgroup, a.invnumber, a.ordnumber, a.quonumber,
@@ -1158,7 +1164,7 @@ sub all_parts {
       $flds = qq|p.id, p.partnumber, i.description, i.serialnumber,
                  i.qty AS onhand, i.unit, p.bin, i.sellprice,
 	         p.listprice, p.lastcost, p.rop, p.weight,
-		 p.avgcost,
+		 p.gweight, p.pvolume, p.avgcost,
 		 p.priceupdate, p.image, p.drawing, p.microfiche,
 		 p.assembly,
 		 pg.partsgroup, '' AS invnumber, a.ordnumber, a.quonumber,
@@ -1191,7 +1197,7 @@ sub all_parts {
         $flds = qq|p.id, p.partnumber, i.description, i.serialnumber,
                    i.qty AS onhand, i.unit, p.bin, i.sellprice,
 		   p.listprice, p.lastcost, p.rop, p.weight,
-		   p.avgcost,
+		   p.gweight, p.pvolume, p.avgcost,
 		   p.priceupdate, p.image, p.drawing, p.microfiche,
 		   p.assembly,
 		   pg.partsgroup, '' AS invnumber, a.ordnumber, a.quonumber,
@@ -1242,7 +1248,7 @@ sub all_parts {
       $flds = qq|p.id, p.partnumber, i.description, i.serialnumber,
                  i.qty AS onhand, i.unit, p.bin, i.sellprice,
 	         p.listprice, p.lastcost, p.rop, p.weight,
-		 p.avgcost,
+	         p.gweight, p.pvolume, p.avgcost,
 		 p.priceupdate, p.image, p.drawing, p.microfiche,
 		 p.assembly,
 		 pg.partsgroup, '' AS invnumber, a.ordnumber, a.quonumber,
@@ -1275,7 +1281,7 @@ sub all_parts {
         $flds = qq|p.id, p.partnumber, i.description, i.serialnumber,
                    i.qty AS onhand, i.unit, p.bin, i.sellprice,
 		   p.listprice, p.lastcost, p.rop, p.weight,
-		   p.avgcost,
+		   p.gweight, p.pvolume, p.avgcost,
 		   p.priceupdate, p.image, p.drawing, p.microfiche,
 		   p.assembly,
 		   pg.partsgroup, '' AS invnumber, a.ordnumber, a.quonumber,
@@ -1337,8 +1343,8 @@ sub all_parts {
     if ($form->{sold} || $form->{ordered} || $form->{quoted}) {
       $flds = qq|p.id, p.partnumber, p.description, p.onhand AS perassembly, p.unit,
                  p.bin, p.sellprice, p.listprice, p.lastcost, p.rop,
-		 p.avgcost,
- 		 p.weight, p.priceupdate, p.image, p.drawing, p.microfiche,
+                 p.weight, p.gweight, p.pvolume, p.avgcost,
+ 		 p.priceupdate, p.image, p.drawing, p.microfiche,
 		 p.assembly, pg.partsgroup, p.notes, p.toolnumber, p.barcode
 		 $makemodelflds $assemblyflds
 		 |;
@@ -1709,7 +1715,7 @@ sub create_links {
 
 
   if ($form->{id}) {
-    my %defaults = $form->get_defaults($dbh, \@{[qw(weightunit precision)]});
+    my %defaults = $form->get_defaults($dbh, \@{[qw(weightunit volumeunit precision)]});
     for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
     $form->{currencies} = $form->get_currencies($dbh, $myconfig);
@@ -1717,8 +1723,8 @@ sub create_links {
   } else {
     $form->{priceupdate} = $form->current_date($myconfig);
     
-    my %defaults = $form->get_defaults($dbh, \@{['weightunit', '%_accno_id', 'precision']});
-    for (qw(weightunit precision)) { $form->{$_} = $defaults{$_} }
+    my %defaults = $form->get_defaults($dbh, \@{['weightunit', 'volumeunit', '%_accno_id', 'precision']});
+    for (qw(weightunit volumeunit precision)) { $form->{$_} = $defaults{$_} }
 
     $form->{currencies} = $form->get_currencies($dbh, $myconfig);
 

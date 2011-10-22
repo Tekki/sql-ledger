@@ -110,7 +110,8 @@ sub display_row {
   $column_data{lineitemdetail} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll();"></th>|;
 
   $form->hide_form(qw(weightunit));
-
+  $form->hide_form(qw(volumeunit));
+  
   print qq|
 <script language="JavaScript">
 <!--
@@ -179,10 +180,14 @@ function CheckAll(v) {
     if ($form->{type} =~ /_order/) {
       if ($form->{"ship_$i"} != $form->{"oldship_$i"} || $form->{"qty_$i"} != $form->{"oldqty_$i"}) {
 	$form->{"netweight_$i"} = $form->{"weight_$i"} * $form->{"ship_$i"};
+	$form->{"grossweight_$i"} = $form->{"gweight_$i"} * $form->{"ship_$i"};
+	$form->{"volume_$i"} = $form->{"pvolume_$i"} * $form->{"ship_$i"};
       }
     } else {
       if ($form->{"qty_$i"} != $form->{"oldqty_$i"}) {
 	$form->{"netweight_$i"} = $form->{"weight_$i"} * $form->{"qty_$i"};
+	$form->{"grossweight_$i"} = $form->{"gweight_$i"} * $form->{"qty_$i"};
+	$form->{"volume_$i"} = $form->{"pvolume_$i"} * $form->{"qty_$i"};
       }
     }
 
@@ -264,7 +269,7 @@ function CheckAll(v) {
 <input type=hidden name="oldship_$i" value="$form->{"ship_$i"}">
 |;
 
-    $form->hide_form(map { "${_}_$i" } qw(orderitems_id id weight listprice lastcost taxaccounts pricematrix sku onhand bin assembly inventory_accno_id income_accno_id expense_accno_id));
+    $form->hide_form(map { "${_}_$i" } qw(orderitems_id id weight gweight pvolume listprice lastcost taxaccounts pricematrix sku onhand bin assembly inventory_accno_id income_accno_id expense_accno_id));
   
     $project = qq|
                 <b>$projectnumber</b>
@@ -292,9 +297,9 @@ function CheckAll(v) {
 		  <b>$netweight</b>
 		  <input name="netweight_$i" size=8 value=|.$form->format_amount(\%myconfig, $form->{"netweight_$i"}).qq|>
 		  <b>$grossweight</b>
-		  <input name="grossweight_$i" size=8 value=|.$form->format_amount(\%myconfig, $form->{"grossweight_$i"}).qq|> ($form->{weightunit})
+		  <input name="grossweight_$i" size=8 value=|.$form->format_amount(\%myconfig, $form->{"grossweight_$i"}).qq|> $form->{weightunit}
 		  <b>$volume</b>
-		  <input name="volume_$i" size=8 value=|.$form->format_amount(\%myconfig, $form->{"volume_$i"}).qq|>
+		  <input name="volume_$i" size=8 value=|.$form->format_amount(\%myconfig, $form->{"volume_$i"}).qq|> $form->{volumeunit}
 		  </td>
 |;
     
@@ -468,7 +473,7 @@ function CheckAll() {
         </tr>
 |;
 
-    for (qw(partnumber sku description partsgroup partsgroup_id bin weight sellprice listprice lastcost onhand unit assembly taxaccounts inventory_accno_id income_accno_id expense_accno_id pricematrix id itemnotes)) {
+    for (qw(partnumber sku description partsgroup partsgroup_id bin weight gweight pvolume sellprice listprice lastcost onhand unit assembly taxaccounts inventory_accno_id income_accno_id expense_accno_id pricematrix id itemnotes)) {
       print qq|<input type=hidden name="new_${_}_$i" value="|.$form->quote($ref->{$_}).qq|">\n|;
     }
   }
@@ -524,12 +529,13 @@ sub item_selected {
       $form->{"discount_$i"} ||= $form->{discount} * 100;
       $form->{"reqdate_$i"} = $form->{reqdate} if $form->{type} !~ /_quotation/;
 
-      for (qw(id partnumber sku description sellprice listprice lastcost bin unit weight assembly taxaccounts pricematrix onhand itemnotes inventory_accno_id income_accno_id expense_accno_id)) {
+      for (qw(id partnumber sku description sellprice listprice lastcost bin unit weight gweight pvolume assembly taxaccounts pricematrix onhand itemnotes inventory_accno_id income_accno_id expense_accno_id)) {
 	$form->{"${_}_$i"} = $form->{"new_${_}_$j"};
       }
 
       $form->{"netweight_$i"} = $form->{"weight_$i"};
-      $form->{"grossweight_$i"} = $form->{"weight_$i"};
+      $form->{"grossweight_$i"} = $form->{"gweight_$i"};
+      $form->{"volume_$i"} = $form->{"pvolume_$i"};
 
       $form->{"partsgroup_$i"} = qq|$form->{"new_partsgroup_$j"}--$form->{"new_partsgroup_id_$j"}|;
 
@@ -552,10 +558,12 @@ sub item_selected {
       if ($form->{item} eq 'assembly') {
 	$form->{"adj_$i"} = 1;
 	
-	for (qw(sellprice listprice weight)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
+	for (qw(sellprice listprice weight gweight pvolume)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
 
-	$form->{sellprice} += ($form->{"sellprice_$i"} * $form->{"qty_$i"});
-	$form->{weight} += ($form->{"weight_$i"} * $form->{"qty_$i"});
+      foreach $item (qw(sellprice weight gweight pvolume)) {
+        $form->{$item} += $form->{"${item}_$i"} * $form->{"qty_$i"};
+      }
+
       }
 
       $linetotal = $form->{"sellprice_$i"} * (1 - $form->{"discount_$i"} / 100) * $form->{"qty_$i"};
@@ -591,7 +599,7 @@ sub item_selected {
 
   # delete all the new_ variables
   for $i (1 .. $form->{lastndx}) {
-    for (qw(id partnumber sku description sellprice listprice lastcost bin unit weight assembly taxaccounts pricematrix onhand itemnotes inventory_accno_id income_accno_id expense_accno_id)) {
+    for (qw(id partnumber sku description sellprice listprice lastcost bin unit weight gweight pvolume assembly taxaccounts pricematrix onhand itemnotes inventory_accno_id income_accno_id expense_accno_id)) {
       delete $form->{"new_${_}_$i"};
     }
   }
@@ -720,11 +728,11 @@ sub check_form {
   my $count = 0;
   my $i;
   my $j;
-  my @flds = qw(id runningnumber partnumber description partsgroup qty ship unit sellprice discount oldqty oldship orderitems_id bin weight listprice lastcost taxaccounts pricematrix sku onhand assembly inventory_accno_id income_accno_id expense_accno_id itemnotes reqdate deliverydate serialnumber projectnumber package netweight grossweight lineitemdetail);
+  my @flds = qw(id runningnumber partnumber description partsgroup qty ship unit sellprice discount oldqty oldship orderitems_id bin weight gweight pvolume listprice lastcost taxaccounts pricematrix sku onhand assembly inventory_accno_id income_accno_id expense_accno_id itemnotes reqdate deliverydate serialnumber projectnumber package netweight grossweight lineitemdetail);
 
   # remove any makes or model rows
   if ($form->{item} eq 'part') {
-    for (qw(listprice sellprice lastcost avgcost weight rop markup)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
+    for (qw(listprice sellprice lastcost avgcost weight gweight pvolume rop markup)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
     
     &calc_markup;
     
@@ -766,11 +774,13 @@ sub check_form {
       $form->{listprice} = 0;
       $form->{lastcost} = 0;
       $form->{weight} = 0;
+      $form->{gweight} = 0;
+      $form->{pvolume} = 0;
     }
     
     for (qw(rop stock markup)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
    
-    @flds = qw(id qty unit bom adj partnumber description sellprice listprice lastcost weight assembly runningnumber);
+    @flds = qw(id qty unit bom adj partnumber description sellprice listprice lastcost weight gweight pvolume assembly runningnumber);
     $count = 0;
     @a = ();
     
@@ -784,7 +794,7 @@ sub check_form {
 	for (@flds) { $a[$j]->{$_} = $form->{"${_}_$i"} }
 
         if (! $form->{project_id}) {
-	  for (qw(sellprice listprice weight lastcost)) { $form->{$_} += ($form->{"${_}_$i"} * $form->{"qty_$i"}) }
+	  for (qw(sellprice listprice weight gweight pvolume lastcost)) { $form->{$_} += ($form->{"${_}_$i"} * $form->{"qty_$i"}) }
 	}
 	
 	$count++;

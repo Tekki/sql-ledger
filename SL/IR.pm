@@ -218,6 +218,7 @@ sub invoice_details {
       $form->{totalship} += $form->{"qty_$i"};
       $form->{totalnetweight} += $form->parse_amount($myconfig, $form->{"netweight_$i"});
       $form->{totalgrossweight} += $form->parse_amount($myconfig, $form->{"grossweight_$i"});
+      $form->{totalvolume} += $form->parse_amount($myconfig, $form->{"volume_$i"});
 
       # add number, description and qty to $form->{number}, ....
       push(@{ $form->{runningnumber} }, $runningnumber++);
@@ -526,7 +527,7 @@ sub invoice_details {
 
   for (qw(cd_amount paid)) { $form->{$_} = $form->format_amount($myconfig, $form->{$_}, $form->{precision}) }
   for (qw(cd_subtotal cd_invtotal invtotal subtotal total totalparts totalservices)) { $form->{$_} = $form->format_amount($myconfig, $form->{$_}, $form->{precision}, "0") }
-  for (qw(totalqty totalship totalnetweight totalgrossweight)) { $form->{$_} = $form->format_amount($myconfig, $form->{$_}) }
+  for (qw(totalqty totalship totalnetweight totalgrossweight totalvolume)) { $form->{$_} = $form->format_amount($myconfig, $form->{$_}) }
 
 
   $dbh->disconnect;
@@ -1660,7 +1661,7 @@ sub retrieve_invoice {
                 i.project_id, i.serialnumber, i.discount,
 		i.itemnotes, i.lineitemdetail,
 		pg.partsgroup, p.partsgroup_id, p.partnumber AS sku,
-		p.weight, p.onhand,
+		p.weight, p.gweight, p.pvolume, p.onhand,
 		p.inventory_accno_id, p.income_accno_id, p.expense_accno_id,
 		t.description AS partsgrouptranslation,
 		c.package, c.netweight, c.grossweight, c.volume
@@ -1784,7 +1785,7 @@ sub retrieve_item {
                  p.lastcost AS sellprice, p.unit, p.bin, p.onhand,
 		 p.notes AS itemnotes,
 		 p.inventory_accno_id, p.income_accno_id, p.expense_accno_id,
-		 p.partnumber AS sku, p.weight,
+		 p.partnumber AS sku, p.weight, p.gweight, p.pvolume,
 		 t1.description AS translation,
 		 t2.description AS grouptranslation
                  FROM parts p
@@ -1800,7 +1801,7 @@ sub retrieve_item {
                  p.lastcost AS sellprice, p.unit, p.bin, p.onhand,
 		 p.notes AS itemnotes,
 		 p.inventory_accno_id, p.income_accno_id, p.expense_accno_id,
-		 p.partnumber AS sku, p.weight,
+		 p.partnumber AS sku, p.weight, p.gweight, p.pvolume,
 		 t1.description AS translation,
 		 t2.description AS grouptranslation
                  FROM parts p

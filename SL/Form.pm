@@ -2151,7 +2151,7 @@ sub create_links {
 
   my %xkeyref = ();
 
-  my %defaults = $self->get_defaults($dbh, \@{[qw(closedto revtrans weightunit cdt precision)]});
+  my %defaults = $self->get_defaults($dbh, \@{[qw(closedto revtrans weightunit volumeunit cdt precision)]});
   for (keys %defaults) { $self->{$_} = $defaults{$_} }
 
   # now get the account numbers
