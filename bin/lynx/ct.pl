@@ -329,7 +329,11 @@ sub include_in_report {
   push @a, qq|<input name="l_id" type=checkbox class=checkbox value=Y> |.$locale->text('ID');
   push @a, qq|<input name="l_name" type=checkbox class=checkbox value=Y $form->{l_name}> $vcname|;
   push @a, qq|<input name="l_$form->{db}number" type=checkbox class=checkbox value=Y> $vcnumber|;
+  push @a, qq|<input name="l_salutation" type=checkbox class=checkbox value=Y $form->{l_salutation}> |.$locale->text('Salutation');
+  push @a, qq|<input name="l_contacttitle" type=checkbox class=checkbox value=Y $form->{l_contacttitle}> |.$locale->text('Titel');
   push @a, qq|<input name="l_contact" type=checkbox class=checkbox value=Y $form->{l_contact}> |.$locale->text('Contact');
+  push @a, qq|<input name="l_gender" type=checkbox class=checkbox value=Y $form->{l_gender}> |.$locale->text('Gender');
+  push @a, qq|<input name="l_occupation" type=checkbox class=checkbox value=Y $form->{l_occupation}> |.$locale->text('Occupation');
   push @a, qq|<input name="l_email" type=checkbox class=checkbox value=Y $form->{l_email}> |.$locale->text('E-mail');
   push @a, qq|<input name="l_address" type=checkbox class=checkbox value=Y> |.$locale->text('Address');
   push @a, qq|<input name="l_city" type=checkbox class=checkbox value=Y> |.$locale->text('City');
@@ -364,6 +368,7 @@ sub include_in_report {
   }
 
   push @a, qq|<input name="l_sic_code" type=checkbox class=checkbox value=Y> |.$locale->text('SIC');
+  push @a, qq|<input name="l_bank" type=checkbox class=checkbox value=Y> |.$locale->text('Bank');
   push @a, qq|<input name="l_iban" type=checkbox class=checkbox value=Y> |.$locale->text('IBAN');
   push @a, qq|<input name="l_bic" type=checkbox class=checkbox value=Y> |.$locale->text('BIC');
   push @a, qq|<input name="l_business" type=checkbox class=checkbox value=Y> |.$locale->text('Type of Business');
@@ -597,7 +602,19 @@ sub list_names {
   }
   
   @columns = (id, name, "$form->{db}number", address,
-             city, state, zipcode, country, contact,
+             city, state, zipcode, country,
+	     salutation);
+  
+  if ($form->{l_contact}) {
+    for (firstname, lastname) {
+      $form->{"l_$_"} = "Y";
+      push @columns, $_;
+    }
+    $callback .= "&l_contact=Y";
+    $href .= "&l_contact=Y";
+  }
+  
+  push@ columns, (contacttitle, gender, occupation,
 	     phone, fax, email, cc, bcc, employee,
 	     manager, notes, discount, terms, creditlimit);
 
@@ -613,12 +630,17 @@ sub list_names {
   push @columns, (
 	     paymentmethod,
 	     threshold, taxnumber, gifi_accno, sic_code, business,
-	     pricegroup, language, iban, bic, remittancevoucher,
+	     pricegroup, language, bank, iban, bic, remittancevoucher,
 	     startdate, enddate,
 	     invnumber, invamount, invtax, invtotal,
 	     ordnumber, ordamount, ordtax, ordtotal,
 	     quonumber, quoamount, quotax, quototal);
   @columns = $form->sort_columns(@columns);
+  
+  if ($form->{sort} eq 'contact') {
+    grep { s/(firstname|lastname|contact)$// } @columns;
+    unshift @columns, (firstname, lastname);
+  }
   unshift @columns, "ndx";
 
   $form->{l_invnumber} = "Y" if $form->{l_transnumber};
@@ -788,7 +810,12 @@ sub list_names {
   $column_header{state} = qq|<th><a class=listheading href=$href&sort=state>|.$locale->text('State/Province').qq|</a></th>|;
   $column_header{zipcode} = qq|<th><a class=listheading href=$href&sort=zipcode>|.$locale->text('Zip/Postal Code').qq|</a></th>|;
   $column_header{country} = qq|<th><a class=listheading href=$href&sort=country>|.$locale->text('Country').qq|</a></th>|;
-  $column_header{contact} = qq|<th><a class=listheading href=$href&sort=contact>|.$locale->text('Contact').qq|</a></th>|;
+  $column_header{salutation} = qq|<th>|.$locale->text('Salutation').qq|</th>|;
+  $column_header{lastname} = qq|<th>&nbsp;</th>|;
+  $column_header{firstname} = qq|<th><a class=listheading href=$href&sort=contact>|.$locale->text('Contact').qq|</a></th>|;
+  $column_header{contacttitle} = qq|<th>|.$locale->text('Title').qq|</th>|;
+  $column_header{gender} = qq|<th>|.$locale->text('G').qq|</th>|;
+  $column_header{occupation} = qq|<th><a class=listheading href=$href&sort=occupation>|.$locale->text('Occupation').qq|</a></th>|;
   $column_header{phone} = qq|<th><a class=listheading href=$href&sort=phone>|.$locale->text('Phone').qq|</a></th>|;
   $column_header{fax} = qq|<th><a class=listheading href=$href&sort=fax>|.$locale->text('Fax').qq|</a></th>|;
   $column_header{email} = qq|<th><a class=listheading href=$href&sort=email>|.$locale->text('E-mail').qq|</a></th>|;
@@ -813,6 +840,8 @@ sub list_names {
   $column_header{gifi_accno} = qq|<th><a class=listheading href=$href&sort=gifi_accno>|.$locale->text('GIFI').qq|</a></th>|;
   $column_header{sic_code} = qq|<th><a class=listheading href=$href&sort=sic_code>|.$locale->text('SIC').qq|</a></th>|;
   $column_header{business} = qq|<th><a class=listheading href=$href&sort=business>|.$locale->text('Type of Business').qq|</a></th>|;
+
+  $column_header{bank} = qq|<th class=listheading>|.$locale->text('Bank').qq|</th>|;
   $column_header{iban} = qq|<th class=listheading>|.$locale->text('IBAN').qq|</th>|;
   $column_header{bic} = qq|<th class=listheading>|.$locale->text('BIC').qq|</th>|;
   $column_header{remittancevoucher} = qq|<th class=listheading>|.$locale->text('RV').qq|</th>|;
@@ -1593,8 +1622,9 @@ sub form_header {
 
 
   if ($form->{selectemployee}) {
+
     if ($myconfig{role} eq 'user') {
-      if ($form->{id}) {
+      if ($form->{id} && $form->{employee_id}) {
 	$form->{selectemployee} = "\n$form->{employee}";
       }
     }
@@ -1638,9 +1668,9 @@ sub form_header {
 |;
    
 
+  for (qw(M F)) { $gender{$_} = "checked" if $form->{gender} eq $_ }
+  
   if ($form->{typeofcontact} eq 'person') {
- 
-    for (qw(M F)) { $gender{$_} = "checked" if $form->{gender} eq $_ }
       
     $name = qq|
 	      <tr>
@@ -1696,7 +1726,17 @@ sub form_header {
 		<th align=right nowrap>|.$locale->text('Title').qq|</th>
 		<td><input name=contacttitle size=32 maxlength=32 value="|.$form->quote($form->{contacttitle}).qq|"></td>
 	      </tr>
-|.$form->hide_form(qw(gender occupation));
+	      <tr>
+		<th align=right nowrap>|.$locale->text('Occupation').qq|</th>
+		<td><input name=occupation size=32 maxlength=32 value="|.$form->quote($form->{occupation}).qq|"></td>
+	      </tr>
+	      <tr>
+		<th align=right></th>
+		<td><input name=gender type=radio value="M" $gender{M}>|.$locale->text('Male').qq|
+		<input name=gender type=radio value="F" $gender{F}>|.$locale->text('Female').qq|
+		</td>
+	      </tr>
+|;
 
   } 
 

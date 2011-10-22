@@ -2171,7 +2171,8 @@ sub invoice {
     $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->current_date(\%myconfig), $buysell);
   }
   
-  for (qw(id subject message cc bcc printed emailed queued)) { delete $form->{$_} }
+  for (qw(id subject message printed emailed queued)) { delete $form->{$_} }
+
   $form->{$form->{vc}} =~ s/--.*//g;
   $form->{type} = "invoice";
   $form->{formname} = "invoice";
@@ -2211,7 +2212,7 @@ sub invoice {
     for (qw(qty sellprice discount)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}) }
   }
 
-  for (qw(id subject message cc bcc printed emailed queued audittrail recurring)) { delete $form->{$_} }
+  for (qw(audittrail recurring)) { delete $form->{$_} }
 
   &display_form;
 

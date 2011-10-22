@@ -3459,7 +3459,8 @@ sub process_transactions {
 	    }
 	  } else {
 	    delete $form->{"paid_1"};
-	    ($form->{"$form->{ARAP}_paid_1"}) = split /--/, $form->{"$form->{ARAP}_paid_$form->{paidaccounts}"};
+	    $form->{"$form->{ARAP}_paid_1"} = $form->{payment_accno};
+	    $form->{"paymentmethod_1"} = $form->{payment_method};
 	    $form->{paidaccounts} = 1;
 	  }
 
@@ -3488,7 +3489,7 @@ sub process_transactions {
 	  } else {
 	    $form->info($locale->text('failed'));
 	  }
-	  
+
 	  # print form
 	  if ($latex && $ok) {
 	    $ok = &print_recurring(\%$pt, $defaultprinter);
@@ -3632,16 +3633,16 @@ sub print_recurring {
       $media ||= $myconfig->{printer} if $printer{$myconfig->{printer}};
       $media ||= $defaultprinter;
       
-      $form->info("\n".$locale->text('Printing')." ".$locale->text($f{$f[$j]})." $form->{reference}");
+      $form->info("\n".$locale->text('Printing')." ".$locale->text($f{$f[$j]})." $form->{reference} ... ");
 
       @a = ("perl", "$form->{script}", "action=reprint&module=$form->{module}&type=$form->{type}&login=$form->{login}&path=$form->{path}&id=$form->{id}&formname=$f[$j]&format=$f[$j+1]&media=$media&vc=$form->{vc}&ARAP=$form->{ARAP}");
 
       $ok = !(system(@a));
       
       if ($ok) {
-	$form->info(" ... ".$locale->text('ok'));
+	$form->info($locale->text('ok'));
       } else {
-	$form->info(" ... ".$locale->text('failed'));
+	$form->info($locale->text('failed'));
 	last;
       }
     }
@@ -3678,9 +3679,9 @@ sub email_recurring {
       $ok = !(system(@a));
       
       if ($ok) {
-	$form->info(" ... ".$locale->text('ok'));
+	$form->info($locale->text('ok'));
       } else {
-	$form->info(" ... ".$locale->text('failed'));
+	$form->info($locale->text('failed'));
 	last;
       }
     }

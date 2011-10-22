@@ -957,6 +957,7 @@ sub transactions {
   my $sameid;
  
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+    $ref->{exchangerate} ||= 1;
     if ($ref->{linetotal} <= 0) {
       $ref->{debit} = $ref->{linetotal} * -1;
       $ref->{credit} = 0;

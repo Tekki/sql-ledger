@@ -931,11 +931,13 @@ sub reprint {
   for (keys %temp) { $form->{$_} = $temp{$_} }
   
   $form->{rowcount}++;
-  $form->{paidaccounts}++;
+  $form->{paidaccounts}++ ;
 
   delete $form->{paid};
 
   for (1 .. $form->{paidaccounts}) { $form->{"paid_$_"} = $form->format_amount(\%myconfig, $form->{"paid_$_"}, $form->{precision}) }
+  $form->{"$form->{ARAP}_paid_$form->{paidaccounts}"} = $form->{payment_accno};
+  $form->{"paymentmethod_$form->{paidaccounts}"} = $form->{payment_method};
 
   $form->{copies} = 1;
 

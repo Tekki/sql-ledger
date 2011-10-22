@@ -326,8 +326,6 @@ sub create_links {
 	    $netamount += $form->{"${akey}_$i"};
 
             $form->{"projectnumber_$i"} = "$form->{acc_trans}{$key}->[$i-1]->{projectnumber}--$form->{acc_trans}{$key}->[$i-1]->{project_id}" if $form->{acc_trans}{$key}->[$i-1]->{project_id};
-	  } else {
-	    $form->{invtotal} = $form->{acc_trans}{$key}->[$i-1]->{amount} * -1 * $ml;
 	  }
 	  $form->{"${key}_$i"} = "$form->{acc_trans}{$key}->[$i-1]->{accno}--$form->{acc_trans}{$key}->[$i-1]->{description}";
 	}
