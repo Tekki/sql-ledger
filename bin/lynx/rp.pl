@@ -1940,8 +1940,10 @@ sub print_form {
 
   $form->{templates} = "$myconfig{templates}";
 
+  for (qw(name email)) { $form->{"user$_"} = $myconfig{$_} }
+  
   # setup variables for the form
-  $form->format_string(qw(company address businessnumber tel fax));
+  $form->format_string(qw(company address businessnumber username useremail tel fax));
   
   $form->{IN} = "$form->{type}.html";
 

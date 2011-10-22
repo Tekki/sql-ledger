@@ -78,7 +78,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "2.8.17";
+  $self->{version} = "2.8.18";
   $self->{dbversion} = "2.8.8";
 
   bless $self, $type;
@@ -710,7 +710,7 @@ sub parse_template {
 	  }
 
 	  # don't parse par, we need it for each line
-	  print OUT $self->format_line($par, $i);
+	  print OUT $self->format_line($par, 1, $i);
 	  
 	}
 	next;
@@ -954,6 +954,7 @@ sub format_line {
   my $self = shift;
 
   $_ = shift;
+  my $arr = shift;
   my $i = shift;
   
   my $str;
@@ -981,7 +982,7 @@ sub format_line {
       }
     }
 
-    $str = (defined $i) ? $self->{$var}[$i] : $self->{$var};
+    $str = ($arr) ? $self->{$var}[$i] : $self->{$var};
     $newstr = $str;
 
     $var = $1;

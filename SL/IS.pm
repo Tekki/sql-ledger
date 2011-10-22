@@ -487,6 +487,9 @@ sub invoice_details {
       push(@{ $form->{paymentsource} }, $form->{"source_$i"});
       push(@{ $form->{paymentmemo} }, $form->{"memo_$i"});
 
+      ($description) = split /--/, $form->{"paymentmethod_$i"};
+      push(@{ $form->{paymentmethod} }, $description);
+
       $form->{paid} += $form->parse_amount($myconfig, $form->{"paid_$i"});
     }
   }
