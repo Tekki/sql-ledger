@@ -58,7 +58,6 @@ $self{texts} = {
   'Oracle Database Administration' => 'Oracle Database Administratie',
   'Password'                    => 'Wachtwoord',
   'Password changed!'           => 'Wachtwoord gewijzigd!',
-  'Password may only contain alphanumeric characters!' => 'Wachtwoord mag alleen alfa-numerieke tekens bevatten',
   'Passwords do not match!'     => 'Wachtwoorden komen niet overeen!',
   'Pg Database Administration'  => 'Pg Database Administratie',
   'PgPP Database Administration' => 'PgPP Database Administratie',

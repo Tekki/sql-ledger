@@ -399,12 +399,9 @@ sub print {
     delete $form->{$_};
   }
 
-  %msg = ( print => 'Printing',
-           email => 'E-mailing',
+  %msg = ( print => $locale->text('Printing'),
+           email => $locale->text('E-mailing'),
 	   );
-
-# $locale->text('Printing')
-# $locale->text('E-mailing')
 
   $ok = 0;
   $myconfig{vclimit} = 0;
@@ -416,75 +413,98 @@ sub print {
     if ($myform->{"ndx_$i"}) {
 
       $ok = 1;
-      
-      for (keys %$form) { delete $form->{$_} }
-      
-      for (qw(id vc)) { $form->{$_} = $myform->{"${_}_$i"} }
-      $form->{script} = qq|$myform->{"module_$i"}.pl|;
-      for (qw(login path media sendmode subject message format type header)) { $form->{$_} = $myform->{$_} }
 
-      do "$form->{path}/$form->{script}";
+      if ($myform->{batch} eq 'queue') {
+        if (open(FH, qq|$spool/$myform->{"spoolfile_$i"}|)) {
+          binmode FH;
 
-      $form->{shipto} = 1;
-      
-      if ($myform->{"module_$i"} eq 'oe') {
-	&order_links;
-	&prepare_order;
-	$form->{formname} = $myform->{type};
-	$inv = 'ord'
-      } elsif ($myform->{"module_$i"} eq 'jc') {
-	&{"prepare_$myform->{type}"};
-	$form->{formname} = $myform->{type};
+          if (open(OUT, qq~| $printer{$myform->{media}}~)) {
+            binmode OUT;
+
+            $myform->info(qq|$msg{print} ... $myform->{"spoolfile_$i"}\n|);
+
+            while (<FH>) {
+              print OUT $_;
+            }
+
+            close(OUT);
+            close(FH);
+          } else {
+            $myform->info($!);
+          }
+        } else {
+          $myform->info($!);
+        }
       } else {
-	&invoice_links;
-	&prepare_invoice;
-	if ($myform->{type} ne 'invoice') {
-	  $form->{formname} = $myform->{type};
-	}
-	delete $form->{paid};
-	
-	$arap = ($form->{vc} eq 'customer') ? "AR" : "AP";
-        $form->{payment_accno} = $form->unescape($form->{payment_accno});
-	
-        # default
-        @a = split /\n/, $form->unescape($form->{"select${arap}_paid"});
-	$form->{payment_accno} ||= $a[0];
-
-	for (2 .. $form->{paidaccounts}) {
-	  $form->{"paid_$_"} = $form->format_amount(\%myconfig, $form->{"paid_$_"}, $form->{precision});
-	  $form->{payment_accno} = $form->{"${arap}_paid_$_"};
-	}
-
-        $form->{"${arap}_paid_$form->{paidaccounts}"} = $form->{payment_accno};
-	$inv = 'inv'
-      }
-
-      $form->{rowcount}++;
-
-      # unquote variables
-      if ($form->{media} eq 'email' || $form->{media} eq 'queue') {
-	for (keys %$form) { $form->{$_} = $form->unquote($form->{$_}) }
-      }
-
-      $myform->{description} = $form->{description};
-
-      &print_form;
-
-      $myform->info("${r}. ".$locale->text($msg{$myform->{batch}}).qq| ... $myform->{"reference_$i"}|);
-      $myform->info(qq|, $myform->{description}|) if $myform->{description};
-
-      if ($myform->{"module_$i"} ne 'jc') {
-	if ($form->{formname} =~ /_invoice/) {
-	  $total -= $form->parse_amount(\%myconfig, $form->{"${inv}total"});
-	} else {
-	  $total += $form->parse_amount(\%myconfig, $form->{"${inv}total"});
-	}
-	$myform->info(qq|, $form->{"${inv}total"}, $form->{"$form->{vc}number"}, $form->{"$form->{vc}"} $form->{city}|);
-      }
-      $myform->info(" ... ".$locale->text('ok')."\n");
-
-      $r++;
       
+        for (keys %$form) { delete $form->{$_} }
+        
+        for (qw(id vc)) { $form->{$_} = $myform->{"${_}_$i"} }
+        $form->{script} = qq|$myform->{"module_$i"}.pl|;
+        for (qw(login path media sendmode subject message format type header)) { $form->{$_} = $myform->{$_} }
+
+        do "$form->{path}/$form->{script}";
+
+        $form->{shipto} = 1;
+        
+        if ($myform->{"module_$i"} eq 'oe') {
+          &order_links;
+          &prepare_order;
+          $form->{formname} = $myform->{type};
+          $inv = 'ord'
+        } elsif ($myform->{"module_$i"} eq 'jc') {
+          &{"prepare_$myform->{type}"};
+          $form->{formname} = $myform->{type};
+        } else {
+          &invoice_links;
+          &prepare_invoice;
+          if ($myform->{type} ne 'invoice') {
+            $form->{formname} = $myform->{type};
+          }
+          delete $form->{paid};
+          
+          $arap = ($form->{vc} eq 'customer') ? "AR" : "AP";
+          $form->{payment_accno} = $form->unescape($form->{payment_accno});
+          
+          # default
+          @a = split /\n/, $form->unescape($form->{"select${arap}_paid"});
+          $form->{payment_accno} ||= $a[0];
+
+          for (2 .. $form->{paidaccounts}) {
+            $form->{"paid_$_"} = $form->format_amount(\%myconfig, $form->{"paid_$_"}, $form->{precision});
+            $form->{payment_accno} = $form->{"${arap}_paid_$_"};
+          }
+
+          $form->{"${arap}_paid_$form->{paidaccounts}"} = $form->{payment_accno};
+          $inv = 'inv'
+        }
+
+        $form->{rowcount}++;
+
+        # unquote variables
+        if ($form->{media} eq 'email' || $form->{media} eq 'queue') {
+          for (keys %$form) { $form->{$_} = $form->unquote($form->{$_}) }
+        }
+
+        $myform->{description} = $form->{description};
+
+        &print_form;
+
+        $myform->info("${r}. ".$locale->text($msg{$myform->{batch}}).qq| ... $myform->{"reference_$i"}|);
+        $myform->info(qq|, $myform->{description}|) if $myform->{description};
+
+        if ($myform->{"module_$i"} ne 'jc') {
+          if ($form->{formname} =~ /_invoice/) {
+            $total -= $form->parse_amount(\%myconfig, $form->{"${inv}total"});
+          } else {
+            $total += $form->parse_amount(\%myconfig, $form->{"${inv}total"});
+          }
+          $myform->info(qq|, $form->{"${inv}total"}, $form->{"$form->{vc}number"}, $form->{"$form->{vc}"} $form->{city}|);
+        }
+        $myform->info(" ... ".$locale->text('ok')."\n");
+
+        $r++;
+      }
     }
   }
   
