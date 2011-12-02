@@ -1,4 +1,5 @@
 users
+spool
 sql-ledger.conf
 templates/*/
 locale/*.zip
