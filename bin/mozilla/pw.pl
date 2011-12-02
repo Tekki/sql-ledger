@@ -15,6 +15,8 @@
 sub getpassword {
   my ($s) = @_;
 
+  $locale = new Locale "$myconfig{countrycode}", "pw";
+
   if (-f "$form->{path}/custom_pw.pl") {
     require "$form->{path}/custom_pw.pl";
   }

@@ -310,6 +310,15 @@ sub invoice_details {
 	$ml *= -1;
       }
 
+      # process 0 taxes
+      for (@taxaccounts) {
+        if ($form->{"${_}_rate"} eq "0") {
+          push @taxrates, 0;
+          $taxaccounts{$_} = 0;
+          $taxbase{$_} += $linetotal;
+        }
+      }
+
       $tax = $form->round_amount($tax, $form->{precision});
       push(@{ $form->{lineitems} }, { amount => $linetotal, tax => $tax });
       push(@{ $form->{taxrates} }, join ' ', sort { $a <=> $b } @taxrates);
@@ -378,18 +387,17 @@ sub invoice_details {
   $taxrate = 0;
   
   for (sort keys %taxaccounts) {
-    if ($taxaccounts{$_} = $form->round_amount($taxaccounts{$_}, $form->{precision})) {
-      $tax += $taxaccounts{$_};
+    $taxaccounts{$_} = $form->round_amount($taxaccounts{$_}, $form->{precision});
+    $tax += $taxaccounts{$_};
 
-      $form->{"${_}_taxbaseinclusive"} = $taxbase{$_} + $taxaccounts{$_};
-      
-      push(@{ $form->{taxdescription} }, $form->{"${_}_description"});
+    $form->{"${_}_taxbaseinclusive"} = $taxbase{$_} + $taxaccounts{$_};
+    
+    push(@{ $form->{taxdescription} }, $form->{"${_}_description"});
 
-      $taxrate += $form->{"${_}_rate"};
-      
-      push(@{ $form->{taxrate} }, $form->format_amount($myconfig, $form->{"${_}_rate"} * 100));
-      push(@{ $form->{taxnumber} }, $form->{"${_}_taxnumber"});
-    }
+    $taxrate += $form->{"${_}_rate"};
+    
+    push(@{ $form->{taxrate} }, $form->format_amount($myconfig, $form->{"${_}_rate"} * 100, undef, 0));
+    push(@{ $form->{taxnumber} }, $form->{"${_}_taxnumber"});
   }
 
  
@@ -407,7 +415,7 @@ sub invoice_details {
   }
   $i = 1;
   for (@{ $form->{lineitems} }) {
-    push(@{ $form->{linetax} }, $form->format_amount($myconfig, $_->{tax}, $form->{precision}, ""));
+    push(@{ $form->{linetax} }, $form->format_amount($myconfig, $_->{tax}, $form->{precision}, 0));
   }
   
   
@@ -434,45 +442,42 @@ sub invoice_details {
   
   for (sort keys %taxaccounts) {
     
-    if ($taxaccounts{$_}) {
+    $amount = 0;
 
-      $amount = 0;
-
-      if ($form->{cdt} && !$form->{taxincluded}) {
-	$amount = $taxbase{$_} * $cashdiscount;
-      }
-      
-      if ($form->{cd_amount}) {
-	$form->{"cd_${_}_taxbase"} = $taxbase{$_} - $amount;
-	
-	push(@{ $form->{cd_taxbase} }, $form->format_amount($myconfig, $form->{"cd_${_}_taxbase"}, $form->{precision}));
-
-	$cd_tax += $form->{"cd_${_}_tax"} = $form->round_amount(($taxbase{$_} - $amount) * $form->{"${_}_rate"}, $form->{precision});
-
-	push(@{ $form->{cd_tax} }, $form->format_amount($myconfig, $form->{"cd_${_}_tax"}, $form->{precision}));
-	
-	$form->{"cd_${_}_taxbase"} = $form->format_amount($myconfig, $form->{"cd_${_}_taxbase"}, $form->{precision});
-	$form->{"cd_${_}_taxbaseinclusive"} = $form->format_amount($myconfig, $form->{"${_}_taxbaseinclusive"} - $amount, $form->{precision});
-      }
-
-      if ($form->{cdt} && $form->{discount_paid}) {
-	$form->{"${_}_taxbaseinclusive"} -= $amount;
-	$taxbase{$_} -= $amount;
-	$taxaccounts{$_} -= ($taxaccounts{$_} - $form->{"cd_${_}_tax"});
-      }
-      
-      # need formatting here
-      push(@{ $form->{taxbaseinclusive} }, $form->format_amount($myconfig, $form->{"${_}_taxbaseinclusive"}, $form->{precision}));
-      push(@{ $form->{taxbase} }, $form->format_amount($myconfig, $taxbase{$_}, $form->{precision}));
-      push(@{ $form->{tax} }, $form->format_amount($myconfig, $taxaccounts{$_}, $form->{precision}));
-
-      $form->{"${_}_taxbaseinclusive"} = $form->format_amount($myconfig, $form->{"${_}_taxbaseinclusive"}, $form->{precision});
-      $form->{"${_}_taxbase"} = $form->format_amount($myconfig, $taxbase{$_}, $form->{precision});
-      $form->{"${_}_tax"} = $form->format_amount($myconfig, $form->{"${_}_tax"}, $form->{precision});
-      
-      $form->{"${_}_taxrate"} = $form->format_amount($myconfig, $form->{"${_}_rate"} * 100);
-      
+    if ($form->{cdt} && !$form->{taxincluded}) {
+      $amount = $taxbase{$_} * $cashdiscount;
     }
+    
+    if ($form->{cd_amount}) {
+      $form->{"cd_${_}_taxbase"} = $taxbase{$_} - $amount;
+      
+      push(@{ $form->{cd_taxbase} }, $form->format_amount($myconfig, $form->{"cd_${_}_taxbase"}, $form->{precision}));
+
+      $cd_tax += $form->{"cd_${_}_tax"} = $form->round_amount(($taxbase{$_} - $amount) * $form->{"${_}_rate"}, $form->{precision});
+
+      push(@{ $form->{cd_tax} }, $form->format_amount($myconfig, $form->{"cd_${_}_tax"}, $form->{precision}));
+      
+      $form->{"cd_${_}_taxbase"} = $form->format_amount($myconfig, $form->{"cd_${_}_taxbase"}, $form->{precision});
+      $form->{"cd_${_}_taxbaseinclusive"} = $form->format_amount($myconfig, $form->{"${_}_taxbaseinclusive"} - $amount, $form->{precision});
+    }
+
+    if ($form->{cdt} && $form->{discount_paid}) {
+      $form->{"${_}_taxbaseinclusive"} -= $amount;
+      $taxbase{$_} -= $amount;
+      $taxaccounts{$_} -= ($taxaccounts{$_} - $form->{"cd_${_}_tax"});
+    }
+    
+    # need formatting here
+    push(@{ $form->{taxbaseinclusive} }, $form->format_amount($myconfig, $form->{"${_}_taxbaseinclusive"}, $form->{precision}));
+    push(@{ $form->{taxbase} }, $form->format_amount($myconfig, $taxbase{$_}, $form->{precision}));
+    push(@{ $form->{tax} }, $form->format_amount($myconfig, $taxaccounts{$_}, $form->{precision}, 0));
+
+    $form->{"${_}_taxbaseinclusive"} = $form->format_amount($myconfig, $form->{"${_}_taxbaseinclusive"}, $form->{precision});
+    $form->{"${_}_taxbase"} = $form->format_amount($myconfig, $taxbase{$_}, $form->{precision});
+    $form->{"${_}_tax"} = $form->format_amount($myconfig, $form->{"${_}_tax"}, $form->{precision}, 0);
+    
+    $form->{"${_}_taxrate"} = $form->format_amount($myconfig, $form->{"${_}_rate"} * 100, 0);
+      
   }
 
   my ($paymentaccno) = split /--/, $form->{"AR_paid_$form->{paidaccounts}"};
@@ -693,7 +698,7 @@ sub assembly_details {
       push(@{ $form->{number} }, $form->{"a_partnumber"});
       push(@{ $form->{sku} }, $form->{"a_partnumber"});
 
-      for (qw(taxrates runningnumber ship serialnumber ordernumber customerponumber reqdate projectnumber sellprice listprice netprice discount discountrate linetotal itemnotes package netweight grossweight volume countryorigin hscode barcode)) { push(@{ $form->{$_} }, "") }
+      for (qw(taxrates runningnumber ship serialnumber ordernumber customerponumber deliverydate projectnumber sellprice listprice netprice discount discountrate linetotal itemnotes package netweight grossweight volume countryorigin hscode barcode)) { push(@{ $form->{$_} }, "") }
       
     }
 
