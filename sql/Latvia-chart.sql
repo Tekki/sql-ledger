@@ -3,6 +3,8 @@
 -- Sept. 14, 2003
 -- checked and edited Sept. 20, 2003, D. Simader
 --
+SET client_encoding = 'ISO-8859-13';
+--
 INSERT INTO chart (accno,description,charttype,category,link,gifi_accno) VALUES ('1','Ilgtermiòa ieguldîjumi','H','A','','');
 INSERT INTO chart (accno,description,charttype,category,link,gifi_accno) VALUES ('2','Apgrozâmie lîdzekïi','H','A','','');
 INSERT INTO chart (accno,description,charttype,category,link,gifi_accno) VALUES ('11','Nemateriâlie ieguldîjumi','H','A','','');

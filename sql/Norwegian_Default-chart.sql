@@ -3,6 +3,9 @@
 --   http://www.nif.idrett.no/ftp/Lover/doc/kontoplan.htm
 --   http://www.legemiddelverket.no/rundskriv/frahtil/1999/ik-1499.htm
 -- sample only
+--
+SET client_encoding = 'ISO-8859-4';
+--
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('10', 'Immaterielle eiendeler', 'H', '', 'A', '');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1000', 'Forskning og utvikling', 'A','', 'A', '');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1030', 'Patenter', 'A','', 'A', '');

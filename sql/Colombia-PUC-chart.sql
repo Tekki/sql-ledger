@@ -4,6 +4,8 @@
 -- Lourdes Mejía Martinez (CaribeNet S.A.) y Dirk Enrique Seiffert (CaribeNet S.A.) 
 -- Si quieres aportar: Contactenos www.caribenet.com - info@caribenet.com
 --
+SET client_encoding = 'ISO-8859-1';
+--
 
 INSERT INTO chart (accno, description, charttype, category, link, gifi_accno) VALUES ('1', 'ACTIVO', 'H', 'A', '', '1');
 INSERT INTO chart (accno, description, charttype, category, link, gifi_accno) VALUES ('11', 'ACTIVO DISPONIBLE', 'H', 'A', '', '11');

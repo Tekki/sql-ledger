@@ -4,6 +4,7 @@
 -- Submitted by: Mario L. Epp
 -- Date: 2005-01-03
 --
+SET client_encoding = 'ISO-8859-1';
 --
 INSERT INTO chart (accno, description, charttype, category, link, gifi_accno) VALUES ('1.000','ACTIVO','H','A','','');
 INSERT INTO chart (accno, description, charttype, category, link, gifi_accno) VALUES ('1.100','ACTIVO CORRIENTE','H','A','','');

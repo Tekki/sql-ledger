@@ -2,6 +2,8 @@
 --
 -- Data for Plan Único de Cuentas (PUC) Gifi Table
 --
+SET client_encoding = 'ISO-8859-1';
+--
 
 INSERT INTO gifi (accno,description) VALUES ('1', 'ACTIVO ');
 INSERT INTO gifi (accno,description) VALUES ('11', 'DISPONIBLE ');

@@ -12,6 +12,9 @@
 -- ('2001111'5 Invertito i ruoli di ('6470005' e ('6470010' (erano sbagliati)
 -- ('2001111'5 Eliminata l'applicabilita' della RA al cliente test
 -- ('2001112'0 Aggiunto IC_expense al conto ('7005005' (mancava un conto di default per i servizi)
+--
+SET client_encoding = 'ISO-8859-1';
+--
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('2010000','COSTI DI RICERCA, DI SVILUPPO E DI PUBBLICITA\'','H','','A','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('2010005','Spese di ricerca e di sviluppo','A','','A','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('2010010','Spese di pubblicita\'','A','','A','');

@@ -1,5 +1,7 @@
 -- Kontenrahmen für Deutschland
 --
+SET client_encoding = 'ISO-8859-1';
+--
 INSERT INTO gifi (accno,description) VALUES ('0001', 'Aufw. f. die Ingangsetzung u. Erweit. des Geschäftsbetr.');
 INSERT INTO gifi (accno,description) VALUES ('0002', 'Aufw. f. die Währungsumstellung auf den EURO');
 INSERT INTO gifi (accno,description) VALUES ('0010', 'Konzess., gew. Schutzr. u. ähnl. Rechte/Werte sowie Liz.');

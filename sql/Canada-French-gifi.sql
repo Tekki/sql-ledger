@@ -2,6 +2,8 @@
 -- Céline des Ligneris
 -- checked DS. March 3, 2004
 --
+SET client_encoding = 'ISO-8859-1';
+--
 INSERT INTO gifi (accno,description) VALUES ('1000','Encaisse et dépôts');
 INSERT INTO gifi (accno,description) VALUES ('1001','Encaisse');
 INSERT INTO gifi (accno,description) VALUES ('1002','Dépôts dans des banques et des institutions canadiennes ­ monnaie canadienne');

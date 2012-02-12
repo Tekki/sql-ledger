@@ -3,6 +3,8 @@
 -- Oct 13, 2003
 -- updated Daniele Giacomini, daniele@swlibero.org (extended some descriptions, to avoid ambiguities)
 --
+SET client_encoding = 'ISO-8859-1';
+--
 INSERT INTO gifi (accno,description) VALUES ('1', 'ATTIVO');
 INSERT INTO gifi (accno,description) VALUES ('1.A', 'CREDITI VERSO I SOCI PER VERSAMENTI ANCORA DOVUTI');
 INSERT INTO gifi (accno,description) VALUES ('1.B', 'IMMOBILIZZAZIONI');

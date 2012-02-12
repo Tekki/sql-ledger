@@ -1,7 +1,8 @@
 -- Venezuela General COA
 -- modify as needed
 --
-
+SET client_encoding = 'ISO-8859-4';
+--
 -- ACTIVO
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1000','ACTIVO','H','','A','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1050','Caja','A','','A','AR_paid:AP_paid');

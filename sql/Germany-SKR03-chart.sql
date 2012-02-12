@@ -1,5 +1,7 @@
 -- General COA
 --
+SET client_encoding = 'ISO-8859-1';
+--
 INSERT INTO chart (accno,description,charttype,category,link,gifi_accno) VALUES ('420','Büroeinrichtung','A','A','','420');
 INSERT INTO chart (accno,description,charttype,category,link,gifi_accno) VALUES ('430','Ladeneinrichtung','A','A','','430');
 INSERT INTO chart (accno,description,charttype,category,link,gifi_accno) VALUES ('440','Werkzeuge','A','A','','440');

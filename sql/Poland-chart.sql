@@ -1,6 +1,9 @@
 -- Chart of Account for Poland
 -- From: Peter Dabrowski <meritage@mail.com>
 -- Sun, 23 March 2003
+--
+SET client_encoding = 'ISO-8859-2';
+--
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('000000000','Aktywa Trwa³e','H','','A','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('001000000','¦rodki Trwa³e','A','','A','AP');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('001010000','Grunty w³asne i prawa wieczystego u¿ytkowania gruntów','A','','A','AP_amount');

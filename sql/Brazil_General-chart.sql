@@ -1,5 +1,8 @@
 -- General Brazilien Portuguese COA
 -- sample only
+--
+SET client_encoding = 'ISO-8859-1';
+--
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1000','RECURSOS ATUAIS','H','','A','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1060','Checando Cliente','A','','A','AR_paid:AP_paid');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1065','Caixa Baixo','A','','A','AR_paid:AP_paid');

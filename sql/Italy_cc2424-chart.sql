@@ -24,6 +24,8 @@
 --
 -- E' disponibile un cliente, un fornitore e un articolo di prova.
 --
+SET client_encoding = 'ISO-8859-1';
+--
 INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('100000', 'ATTIVO', 'H', '', 'A', '');
 INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('101000', 'IMMOBILIZZAZIONI IMMATERIALI', 'H', '', 'A', '');
 INSERT INTO chart (accno,description,charttype,gifi_accno,category,link) VALUES ('101001', 'Costi di impianto e ampliamento', 'A', '1.B.I.1', 'A', '');

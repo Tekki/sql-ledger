@@ -2,6 +2,8 @@
 -- Johan Hambraeus
 -- May 7, 2006
 --
+SET client_encoding = 'ISO-8859-4';
+--
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('075','Observationskonton','H','','','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('0750','Uttagna förmåner ','A','','L','AP_amount:IC_cogs:IC_expense');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('0751','Bostadsförmåner ','A','','A','AP_amount:IC_cogs:IC_expense');

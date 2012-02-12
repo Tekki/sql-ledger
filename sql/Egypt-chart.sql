@@ -1,4 +1,6 @@
 --
+SET client_encoding = 'UTF-8';
+--
 INSERT INTO chart (accno,description,charttype,category,link,gifi_accno) VALUES ('2210','Workers Comp Payable','A','L','','');
 INSERT INTO chart (accno,description,charttype,category,link,gifi_accno) VALUES ('2220','Vacation Pay Payable','A','L','','');
 INSERT INTO chart (accno,description,charttype,category,link,gifi_accno) VALUES ('2250','Pension Plan Payable','A','L','','');

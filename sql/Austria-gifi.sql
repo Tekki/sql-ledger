@@ -1,5 +1,7 @@
 -- Österreichischer Einheitskontenrahmen / Kontenplan (ÖSV Österreichischer Steuerverein)
 --
+SET client_encoding = 'ISO-8859-1';
+--
 INSERT INTO gifi (accno, description) VALUES ('0', 'Anlagevermögen und Aufwendungen für das Ingangsetzen und Erweitern eines Betriebes');
 --
 INSERT INTO gifi (accno, description) VALUES ('00', 'Aufwendungen für das Ingangsetzen und Erweitern eines Betriebes');

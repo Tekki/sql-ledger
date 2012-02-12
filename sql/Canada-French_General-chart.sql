@@ -7,6 +7,8 @@
 
 -- Some provisions have been made for Québec-specifics, namely:
 -- TVQ/TPS terminology, CSST, Assurance-emploi, RRQ
+--
+SET client_encoding = 'ISO-8859-1';
 
 INSERT INTO chart (accno,description,charttype,category,link,gifi_accno) VALUES ('1060', 'Compte chèque', 'A', 'A', 'AR_paid:AP_paid', '1002');
 INSERT INTO chart (accno,description,charttype,category,link,gifi_accno) VALUES ('1065', 'Petite caisse', 'A', 'A', 'AR_paid:AP_paid', '1001');

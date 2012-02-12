@@ -1,4 +1,7 @@
 -- Swedish-gifi.sql
+--
+SET client_encoding = 'ISO-8859-4';
+--
 INSERT  INTO gifi (accno,description) VALUES ('200','Kassa och bank ');
 INSERT  INTO gifi (accno,description) VALUES ('202','Aktier och andelar ');
 INSERT  INTO gifi (accno,description) VALUES ('203','Övriga kortfristiga placeringar');

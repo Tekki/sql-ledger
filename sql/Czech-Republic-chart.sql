@@ -3,6 +3,8 @@
 --    Kompletní úètová osnova platná v roce 2001
 --    Osnova má 2 místa pro tvorbu analytik
 --
+SET client_encoding = 'ISO-8859-2';
+--
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1000', 'Dlouhodobý nehmotný majetek','A','','A','AP_amount');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1100', 'Zøizovací výdaje','A','','A','AP_amount');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1200', 'Nehmotné výsledky výzkumu a vývoje','A','','A','AP_amount');

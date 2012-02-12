@@ -1,6 +1,8 @@
 --Hungarian chart of accounts 
 -- Magyar fõkönyvi számlák, amelyek csak példaként szolgálnak
 --
+SET client_encoding = 'ISO-8859-2';
+--
 INSERT INTO chart (accno,description,charttype,category,link,gifi_accno) VALUES ('1140','Irodai eszközök','A','A','','114');
 INSERT INTO chart (accno,description,charttype,category,link,gifi_accno) VALUES ('1199','Irodai eszközök ÉCS','A','A','','119');
 INSERT INTO chart (accno,description,charttype,category,link,gifi_accno) VALUES ('2610','Áruk ','A','A','IC','261');

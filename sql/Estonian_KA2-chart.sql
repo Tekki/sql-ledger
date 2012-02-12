@@ -1,5 +1,8 @@
 -- Default chart of accounts
 -- sample only
+--
+SET client_encoding = 'ISO-8859-13';
+--
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('11','Raha','H','','A','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1101','Kassa','A','','A','AR_paid:AP_paid');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1102','Pangakonto','A','','A','AR_paid:AP_paid');

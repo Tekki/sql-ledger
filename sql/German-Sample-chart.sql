@@ -27,6 +27,9 @@
 -- P4	= Passive Rechnungsabgrenzung	/ Closing Account results 
 --
 -- A0
+--
+SET client_encoding = 'ISO-8859-1';
+--
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('0000','ANLAGEVERMÖGEN','H','A0','A','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('0100','Konzessionen & Lizenzen','A','A0','A','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('0135','EDV-Programme','A','A0','A','');

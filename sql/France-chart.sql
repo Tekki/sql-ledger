@@ -2,6 +2,8 @@
 -- From: Oscar Buijten <oscar@elbie.com>
 -- Mon, 6 Aug 2001
 --
+SET client_encoding = 'ISO-8859-1';
+--
 INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('101000', 'CAPITAL', 'A', '', '', '');
 INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('101100', 'CAPITAL SOUSCRIT NON APPELE', 'A', '', '', '');
 INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('101200', 'CAPITAL SOUSCRIT APPELE NON VERSE', 'A', '', '', '');

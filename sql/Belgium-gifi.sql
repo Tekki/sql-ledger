@@ -1,5 +1,7 @@
 -- contribué par Jens-Ingo Brodesser, jens-ingo@all2all.org, Moving Art Studio ASBL, ALL2ALL The Independent Network
 -- le 15/07/2003
+--
+SET client_encoding = 'ISO-8859-1';
 
 INSERT INTO gifi (accno,description) VALUES ('10','Capital');
 INSERT INTO gifi (accno,description) VALUES ('30','Approvisionnements - Matières premières');

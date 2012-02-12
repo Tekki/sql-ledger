@@ -2,6 +2,8 @@
 -- contribu. par Jens-Ingo Brodesser, jens-ingo@all2all.org
 -- verified May 19, 2006
 --
+SET client_encoding = 'ISO-8859-1';
+--
 INSERT INTO chart (accno, description, charttype, category, link, gifi_accno, contra) VALUES ('756000', 'Produits financiers divers', 'A', 'I', 'AR_paid:AP_paid', '75', '0');
 INSERT INTO chart (accno, description, charttype, category, link, gifi_accno, contra) VALUES ('555000', 'DEX02', 'A', 'A', 'AR_paid:AP_paid', '55', '0');
 INSERT INTO chart (accno, description, charttype, category, link, gifi_accno, contra) VALUES ('499200', 'Compte de repartition NDC - Verdelingsrekening CN', 'A', 'L', 'AR_paid:AP_paid', '', '0');

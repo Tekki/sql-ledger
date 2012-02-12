@@ -1,6 +1,8 @@
 -- May 7, 2006
 -- Johan Hambraeus
 --
+SET client_encoding = 'ISO-8859-4';
+--
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1','Tillgångar ','H','','','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('10','Immateriella anläggningstillgångar ','H','','','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1010','Balanserade utgifter ','A','234','A','');

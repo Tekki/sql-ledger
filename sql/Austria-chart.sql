@@ -2,6 +2,8 @@
 -- Ferdinand Gassauer, Tue, 5 Feb 2002
 -- checked and completed, Thu, 7 Feb 2002, Dieter Simader
 --
+SET client_encoding = 'ISO-8859-1';
+--
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('0000','AUFWENDUNGEN FÜR INGANGSETZEN UND ERWEITERN DES BETRIEBES','H','00','A','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('0010','Firmenwert','A','015','A','AP_amount');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('0100','IMMATERIELLE VERMÖGENSGEGENSTÄNDE','H','01','A','');

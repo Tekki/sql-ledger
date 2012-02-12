@@ -1,5 +1,7 @@
 -- Einfacher Kontoplan für Deutschland
 --
+SET client_encoding = 'ISO-8859-1';
+--
 INSERT INTO gifi (accno,description) VALUES ('A0', 'Anlagevermögen');
 INSERT INTO gifi (accno,description) VALUES ('A1-1', 'Warenbestand');
 INSERT INTO gifi (accno,description) VALUES ('A1-2', 'Forderungen');

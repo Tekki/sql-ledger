@@ -1,5 +1,8 @@
 -- Default chart of accounts
 -- sample only
+--
+SET client_encoding = 'ISO-8859-1';
+--
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1000','KORTFRISTEDE AKTIVER','H','','A','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1061','Bank','A','','A','AR_paid:AP_paid');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1065','Kasse','A','','A','AR_paid:AP_paid');
