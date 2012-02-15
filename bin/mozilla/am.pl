@@ -1871,7 +1871,7 @@ sub taxes {
     $form->{"taxrate_$i"} = $ref->{rate};
     $form->{"taxdescription_$i"} = $ref->{description};
     
-    for (qw(taxnumber validto)) { $form->{"${_}_$i"} = $ref->{$_} }
+    for (qw(accno taxnumber validto)) { $form->{"${_}_$i"} = $ref->{$_} }
     $form->{taxaccounts} .= "$ref->{id}_$i ";
   }
   chop $form->{taxaccounts};
@@ -1900,12 +1900,15 @@ sub display_taxes {
     <td>
       <table>
 	<tr>
-	  <th></th>
+          <th>|.$locale->text('Account').qq|</th>
+          <th>|.$locale->text('Description').qq|</th>
 	  <th>|.$locale->text('Rate').qq| (%)</th>
 	  <th>|.$locale->text('Number').qq|</th>
 	  <th>|.$locale->text('Valid To').qq|</th>
 	</tr>
 |;
+
+  my $sametax;
 
   for (split(/ /, $form->{taxaccounts})) {
     
@@ -1913,25 +1916,27 @@ sub display_taxes {
 
     $form->{"taxrate_$i"} = $form->format_amount(\%myconfig, $form->{"taxrate_$i"}, undef, 0);
     
-    $form->hide_form("taxdescription_$i");
+    $form->hide_form(map { "${_}_$i" } qw(taxdescription accno));
     
     print qq|
-	<tr>
-	  <th align=right>|;
+	<tr>|;
 	  
-    if ($form->{"taxdescription_$i"} eq $sametax) {
-      print "";
+    if ($form->{"accno_$i"} eq $sametax) {
+      print qq|
+          <th></th>
+          <th></th>|;
     } else {
-      print qq|$form->{"taxdescription_$i"}|;
+      print qq|<th align=left>$form->{"accno_$i"}</th>|;
+      print qq|<th align=left>$form->{"taxdescription_$i"}</th>|;
     }
     
-    print qq|</th>
+    print qq|
 	  <td><input name="taxrate_$i" size=6 value=$form->{"taxrate_$i"}></td>
 	  <td><input name="taxnumber_$i" value="$form->{"taxnumber_$i"}"></td>
 	  <td><input name="validto_$i" size=11 class=date value="$form->{"validto_$i"}" title="$myconfig{dateformat}"></td>
 	</tr>
 |;
-    my $sametax = $form->{"taxdescription_$i"};
+    $sametax = $form->{"accno_$i"};
     
   }
 
@@ -1984,16 +1989,15 @@ sub update_taxes {
   }
 
   foreach $item (keys %tax) {
-    $i = 0;
     for $ref (@{$tax{$item}}) {
       push @tax, $ref;
-      $i++;
       $validto = $ref->{validto};
       $id = $ref->{id};
       $accno = $ref->{accno};
       $taxdescription = $ref->{taxdescription};
+      last unless $validto;
     }
-    if ($i > 1 && $validto) {
+    if ($validto) {
       push @tax, { id => $id, accno => $accno, taxdescription => $taxdescription };
     }
   }

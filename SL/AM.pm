@@ -1423,7 +1423,7 @@ sub taxes {
               FROM chart c
 	      JOIN tax t ON (c.id = t.chart_id)
 	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
-	      ORDER BY 3, 6|;
+	      ORDER BY 2, 6|;
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
