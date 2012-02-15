@@ -300,7 +300,7 @@ sub print_transaction {
       
       push(@{ $form->{taxdescription} }, $form->{"${_}_description"});
 
-      $form->{"${_}_taxrate"} = $form->format_amount($myconfig, $form->{"${_}_rate"} * 100);
+      $form->{"${_}_taxrate"} = $form->format_amount($myconfig, $form->{"${_}_rate"} * 100, undef, 0);
 
       push(@{ $form->{taxrate} }, $form->{"${_}_taxrate"});
       
