@@ -188,6 +188,8 @@ sub jcitems_links {
   }
   $sth->finish;
   
+  ($form->{employee}, $form->{employee_id}) = $form->get_employee($dbh) unless $form->{employee_id};
+
   $dbh->disconnect if $disconnect;
   
 }

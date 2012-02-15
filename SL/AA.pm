@@ -1194,7 +1194,7 @@ sub get_name {
     if ($form->{type} =~ /_(order|quotation)/) {
       $query = qq|SELECT MAX(o.id),
                   o.department_id, d.description AS department,
-		  o.warehouse_id, d.description AS warehouse
+		  o.warehouse_id, w.description AS warehouse
 		  FROM oe o
 		  LEFT JOIN department d ON (d.id = o.department_id)
 		  LEFT JOIN warehouse w ON (w.id = o.warehouse_id)
@@ -1205,7 +1205,7 @@ sub get_name {
     } elsif ($form->{type} =~ /invoice/) {
       $query = qq|SELECT c.accno, c.description,
 		  a.department_id, d.description AS department,
-		  a.warehouse_id, d.description AS warehouse,
+		  a.warehouse_id, w.description AS warehouse,
 		  l.description AS translation
 		  FROM chart c
 		  JOIN acc_trans ac ON (ac.chart_id = c.id)

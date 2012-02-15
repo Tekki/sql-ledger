@@ -1342,6 +1342,15 @@ sub order_details {
 	$ml *= -1;
       }
 
+      # process 0 taxes
+      for (@taxaccounts) {
+        if ($form->{"${_}_rate"} eq "0") {
+          push @taxrates, 0;
+          $taxaccounts{$_} = 0;
+          $taxbase{$_} += $linetotal;
+        }
+      }
+
       $tax = $form->round_amount($tax, $form->{precision});
       push(@{ $form->{lineitems} }, { amount => $linetotal, tax => $tax });
       push(@{ $form->{taxrates} }, join ' ', sort { $a <=> $b } @taxrates);
@@ -1408,22 +1417,12 @@ sub order_details {
 
 
   $tax = 0;
-  foreach $item (sort keys %taxaccounts) {
-    if ($form->round_amount($taxaccounts{$item}, $form->{precision})) {
-      $tax += $taxamount = $form->round_amount($taxaccounts{$item}, $form->{precision});
-
-      push(@{ $form->{taxbaseinclusive} }, $form->{"${item}_taxbaseinclusive"} = $form->round_amount($taxbase{$item} + $taxamount, $form->{precision}));
-      push(@{ $form->{taxbase} }, $form->{"${item}_taxbase"} = $form->format_amount($myconfig, $taxbase{$item}, $form->{precision}));
-      push(@{ $form->{tax} }, $form->{"${item}_tax"} = $form->format_amount($myconfig, $taxamount, $form->{precision}));
-      
-      push(@{ $form->{taxdescription} }, $form->{"${item}_description"});
-      
-      $form->{"${item}_taxrate"} = $form->format_amount($myconfig, $form->{"${item}_rate"} * 100);
-      push(@{ $form->{taxrate} }, $form->{"${item}_taxrate"});
-      
-      push(@{ $form->{taxnumber} }, $form->{"${item}_taxnumber"});
-    }
+  for (sort keys %taxaccounts) {
+    $taxaccounts{$_} = $form->round_amount($taxaccounts{$_}, $form->{precision});
+    $tax += $taxaccounts{$_};
+    $form->{"${_}_taxbaseinclusive"} = $taxbase{$_} + $taxaccounts{$_};
   }
+
 
   # adjust taxes for lineitems
   my $total = 0;
@@ -1439,7 +1438,7 @@ sub order_details {
   }
   $i = 1;
   for (@{ $form->{lineitems} }) {
-    push(@{ $form->{linetax} }, $form->format_amount($myconfig, $_->{tax}, $form->{precision}, ""));
+    push(@{ $form->{linetax} }, $form->format_amount($myconfig, $_->{tax}, $form->{precision}, 0));
   }
   
   $form->{totaltax} = $form->format_amount($myconfig, $tax, $form->{precision}, "");
@@ -1453,7 +1452,23 @@ sub order_details {
     $form->{subtotal} = $form->{ordtotal};
     $form->{ordtotal} = $form->{ordtotal} + $tax;
   }
-  
+
+  for (sort keys %taxaccounts) {
+    push(@{ $form->{taxdescription} }, $form->{"${_}_description"});
+    push(@{ $form->{taxnumber} }, $form->{"${_}_taxnumber"});
+    push(@{ $form->{taxrate} }, $form->format_amount($myconfig, $form->{"${_}_rate"} * 100, undef, 0));
+
+    push(@{ $form->{taxbaseinclusive} }, $form->format_amount($myconfig, $form->{"${_}_taxbaseinclusive"}, $form->{precision}));
+    push(@{ $form->{taxbase} }, $form->format_amount($myconfig, $taxbase{$_}, $form->{precision}));
+    push(@{ $form->{tax} }, $form->format_amount($myconfig, $taxaccounts{$_}, $form->{precision}, 0));
+
+    $form->{"${_}_taxbaseinclusive"} = $form->format_amount($myconfig, $form->{"${_}_taxbaseinclusive"}, $form->{precision});
+    $form->{"${_}_taxbase"} = $form->format_amount($myconfig, $taxbase{$_}, $form->{precision});
+    $form->{"${_}_tax"} = $form->format_amount($myconfig, $form->{"${_}_tax"}, $form->{precision}, 0);
+
+    $form->{"${_}_taxrate"} = $form->format_amount($myconfig, $form->{"${_}_rate"} * 100, undef, 0);
+  }
+
   $form->{subtotal} = $form->format_amount($myconfig, $form->{subtotal}, $form->{precision}, 0);
 
   my $whole;
@@ -2393,7 +2408,7 @@ sub consolidate_orders {
   }
 
   
-  my $ordnumber = $form->{ordnumber};
+  my $ordnumber;
   my $numberfld = ($form->{vc} eq 'customer') ? 'sonumber' : 'ponumber';
   
   my ($department, $department_id) = $form->{department};
@@ -2442,7 +2457,7 @@ sub consolidate_orders {
 	    
       }
 
-      $ordnumber ||= $form->update_defaults($myconfig, $numberfld, $dbh);
+      $ordnumber = $form->{ordnumber} || $form->update_defaults($myconfig, $numberfld, $dbh);
     
       $query = qq|INSERT INTO oe (ordnumber)
 		  VALUES ('$uid')|;

@@ -620,7 +620,7 @@ sub form_footer {
 	$tax .= qq|
 	      <tr>
 		<th align=right>$form->{"${_}_description"}</th>
-		<td align=right>|.$form->format_amount(\%myconfig, $form->{"${_}_total"}, $form->{precision}).qq|</td>
+		<td align=right>|.$form->format_amount(\%myconfig, $form->{"${_}_total"}, $form->{precision}, 0).qq|</td>
 	      </tr>
 |;
       }
