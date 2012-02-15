@@ -3445,9 +3445,6 @@ sub list_payments {
 </table>
 |;
 
-################
-#  &print_report_options;
-
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
     &menubar;
@@ -3481,63 +3478,6 @@ sub payment_subtotal {
   }
 
   $subtotalpaid = 0;
-
-}
-
-
-sub print_report_options {
-
-  $form->{format} ||= "pdf";
-  $form->{media} ||= "screen";
-  
-  $media = qq|<select name=media>
-	    <option value=screen $form->{MD}{screen}>|.$locale->text('Screen').qq|
-	    <option value=file $form->{MD}{file}>|.$locale->text('File');
-
-  $format = qq|<select name=format>
-            <option value=csv $form->{DF}{csv}>CSV|;
-	    
-  $media =~ s/(<option value="\Q$form->{media}\E")/$1 selected/;
-  $media .= qq|</select>|;
-
-  if ($latex) {
-    $format .= qq|
-	    <option value=pdf $form->{DF}{pdf}>|.$locale->text('PDF').qq|
-            <option value=postscript $form->{DF}{postscript}>|.$locale->text('Postscript');
-  }
-  $format .= qq|</select>|;
-  
-  print qq|
-<form method=post action=$form->{script}>
-
-<table>
-  <tr>
-    <td>$format</td>
-    <td>$media</td>
-|;
-
-  print qq|
-  </tr>
-</table>
-
-<p>
-<input class=submit type=submit name=action value="|.$locale->text('Print Report').qq|">|;
-
-  $form->{action} = "print_report";
-  $form->{nextsub} = "";
-  
-  $form->hide_form;
-
-  print qq|
-</form>
-|;
-
-}
-
-
-sub print_report {
-
-  $form->debug;
 
 }
 

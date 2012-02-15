@@ -743,7 +743,7 @@ sub form_header {
 
     $form->{"calctax_$item"} = ($form->{"calctax_$item"}) ? "checked" : "";
 
-    $form->{"tax_$item"} = $form->format_amount(\%myconfig, $form->{"tax_$item"}, $form->{precision});
+    $form->{"tax_$item"} = $form->format_amount(\%myconfig, $form->{"tax_$item"}, $form->{precision}, 0);
 
     print qq|
         <tr>

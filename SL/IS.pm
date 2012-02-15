@@ -391,13 +391,6 @@ sub invoice_details {
     $tax += $taxaccounts{$_};
 
     $form->{"${_}_taxbaseinclusive"} = $taxbase{$_} + $taxaccounts{$_};
-    
-    push(@{ $form->{taxdescription} }, $form->{"${_}_description"});
-
-    $taxrate += $form->{"${_}_rate"};
-    
-    push(@{ $form->{taxrate} }, $form->format_amount($myconfig, $form->{"${_}_rate"} * 100, undef, 0));
-    push(@{ $form->{taxnumber} }, $form->{"${_}_taxnumber"});
   }
 
  
@@ -468,6 +461,10 @@ sub invoice_details {
     }
     
     # need formatting here
+    push(@{ $form->{taxdescription} }, $form->{"${_}_description"});
+    push(@{ $form->{taxnumber} }, $form->{"${_}_taxnumber"});
+    push(@{ $form->{taxrate} }, $form->format_amount($myconfig, $form->{"${_}_rate"} * 100, undef, 0));
+
     push(@{ $form->{taxbaseinclusive} }, $form->format_amount($myconfig, $form->{"${_}_taxbaseinclusive"}, $form->{precision}));
     push(@{ $form->{taxbase} }, $form->format_amount($myconfig, $taxbase{$_}, $form->{precision}));
     push(@{ $form->{tax} }, $form->format_amount($myconfig, $taxaccounts{$_}, $form->{precision}, 0));
@@ -476,7 +473,7 @@ sub invoice_details {
     $form->{"${_}_taxbase"} = $form->format_amount($myconfig, $taxbase{$_}, $form->{precision});
     $form->{"${_}_tax"} = $form->format_amount($myconfig, $form->{"${_}_tax"}, $form->{precision}, 0);
     
-    $form->{"${_}_taxrate"} = $form->format_amount($myconfig, $form->{"${_}_rate"} * 100, 0);
+    $form->{"${_}_taxrate"} = $form->format_amount($myconfig, $form->{"${_}_rate"} * 100, undef, 0);
       
   }
 

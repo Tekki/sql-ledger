@@ -674,7 +674,7 @@ sub form_footer {
     for (split / /, $form->{taxaccounts}) {
       if ($form->{"${_}_base"}) {
 	$form->{invtotal} += $form->{"${_}_total"} = $form->round_amount($form->{"${_}_base"} * $form->{"${_}_rate"}, $form->{precision});
-	$form->{"${_}_total"} = $form->format_amount(\%myconfig, $form->{"${_}_total"}, $form->{precision});
+	$form->{"${_}_total"} = $form->format_amount(\%myconfig, $form->{"${_}_total"}, $form->{precision}, 0);
 	
 	$tax .= qq|
 	      <tr>
@@ -2304,6 +2304,9 @@ sub create_backorder {
 sub save_as_new {
 
   for (qw(closed id printed emailed queued)) { delete $form->{$_} }
+  for $i (1 .. $form->{rowcount}) {
+    for (qw(ship oldship)) { delete $form->{"${_}_$i"} }
+  }
   &save;
 
 }
@@ -2312,6 +2315,9 @@ sub save_as_new {
 sub print_and_save_as_new {
 
   for (qw(closed id printed emailed queued)) { delete $form->{$_} }
+  for $i (1 .. $form->{rowcount}) {
+    for (qw(ship oldship)) { delete $form->{"${_}_$i"} }
+  }
   &print_and_save;
 
 }
