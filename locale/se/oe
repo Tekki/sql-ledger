@@ -15,6 +15,7 @@ $self{texts} = {
   'Attachment'                  => 'Bilaga',
   'Aug'                         => 'Aug',
   'August'                      => 'Augusti',
+  'Barcode'                     => 'Streckkod',
   'Bcc'                         => 'Dold kopia till',
   'Bin'                         => 'Antal i lager',
   'Bin List'                    => 'Lager lista',
@@ -268,6 +269,7 @@ $self{texts} = {
   'days'                        => 'dagar',
   'ea'                          => 'st',
   'for'                         => 'under',
+  'html'                        => 'html',
   'sent'                        => 'Skickad',
   'time(s)'                     => 'gång(er)',
 };

@@ -11,6 +11,7 @@ $self{texts} = {
   'Attachment'                  => 'Bilaga',
   'Aug'                         => 'aug',
   'August'                      => 'augusti',
+  'Barcode'                     => 'Streckkod',
   'Bcc'                         => 'Bankgiro',
   'Bin'                         => 'Antal i lager',
   'Bin List'                    => 'Lager lista',
@@ -113,6 +114,7 @@ $self{texts} = {
   'Volume'                      => 'Volym',
   'Work Order'                  => 'Arbetsorder',
   'Zip/Postal Code'             => 'Postnr',
+  'html'                        => 'html',
   'sent'                        => 'Skickad',
 };
 

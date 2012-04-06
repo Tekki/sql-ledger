@@ -222,6 +222,7 @@ $self{subs} = {
   'システムのロック'    => 'lock_system',
   'システムのロックを消す' => 'unlock_system',
   'パスワード変更'       => 'change_password',
+  'メーンメニュー'       => 'main_menu',
   'ログアウト'             => 'logout',
   'ログイン'                => 'login',
   '削除'                      => 'delete',

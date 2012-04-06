@@ -140,6 +140,7 @@ $self{texts} = {
   'You are saving an existing order' => 'Du sparar en redan sparad order',
   'You are saving an existing quotation' => 'Du sparar en redan sparad offert',
   'for'                         => 'under',
+  'html'                        => 'html',
   'sent'                        => 'Skickad',
   'time(s)'                     => 'gång(er)',
 };

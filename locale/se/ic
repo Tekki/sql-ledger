@@ -244,6 +244,7 @@ $self{texts} = {
   'Year'                        => 'År',
   'Zip/Postal Code'             => 'Postnr',
   'days'                        => 'dagar',
+  'html'                        => 'html',
   'sent'                        => 'Skickad',
 };
 
