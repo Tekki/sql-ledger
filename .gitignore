@@ -3,8 +3,6 @@ spool
 sql-ledger.conf
 wlprinter.conf
 templates/*/
-locale/*.zip
-locales*.pl
 *.missing
 *~
 .project

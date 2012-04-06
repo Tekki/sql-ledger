@@ -275,6 +275,7 @@ sub list_datasets {
 
   $form->header;
 
+  # Tekki: Software Administration
   print qq|
 <body class=admin>
 
@@ -337,6 +338,7 @@ $dbdrivers
 <input type=submit class=submit name=action value="|.$locale->text('Add Dataset').qq|">
 <input type=submit class=submit name=action value="|.$locale->text('Change Password').qq|">
 $nologin
+<input type=submit class=submit name=action value="|.$locale->text('Software Administration').qq|">
 <input type=submit class=submit name=action value="|.$locale->text('Logout').qq|">
 
 </form>
@@ -344,6 +346,7 @@ $nologin
 </body>
 </html>
 |;
+  # Tekki_end
 
 }
 

@@ -1,7 +1,3 @@
-# WLprinter start
-$printer{WLprinter} = "wlprinter/fileprinter.pl $form->{login}";
-# WLprinter end
-
 1;
 
 # Tekki: Logo screen with branch info
