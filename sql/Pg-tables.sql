@@ -63,7 +63,7 @@ CREATE TABLE defaults (
   fldvalue text
 );
 --
-INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '2.8.10');
+INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '3.0.0');
 --
 CREATE TABLE acc_trans (
   trans_id int,
@@ -119,8 +119,6 @@ CREATE TABLE customer (
   sic_code varchar(6),
   discount float4,
   creditlimit float DEFAULT 0,
-  iban varchar(34),
-  bic varchar(11),
   employee_id int,
   language_code varchar(6),
   pricegroup_id int,
@@ -330,36 +328,32 @@ CREATE TABLE orderitems (
 CREATE TABLE exchangerate (
   curr char(3),
   transdate date,
-  buy float,
-  sell float
+  exchangerate float
 );
 --
 CREATE TABLE employee (
-  id int DEFAULT nextval('id'),
+  id int primary key DEFAULT nextval('id'),
   login text,
   name varchar(64),
-  address1 varchar(32),
-  address2 varchar(32),
-  city varchar(32),
-  state varchar(32),
-  zipcode varchar(10),
-  country varchar(32),
   workphone varchar(20),
   workfax varchar(20),
   workmobile varchar(20),
   homephone varchar(20),
+  homemobile varchar(20),
   startdate date DEFAULT current_date,
   enddate date,
   notes text,
-  role varchar(20),
   sales bool DEFAULT 'f',
   email text,
   ssn varchar(20),
-  iban varchar(34),
-  bic varchar(11),
-  managerid int,
   employeenumber varchar(32),
-  dob date
+  dob date,
+  payperiod int2,
+  apid int,
+  paymentid int,
+  paymentmethod_id int,
+  acsrole_id int,
+  acs text
 );
 --
 CREATE TABLE shipto (
@@ -396,8 +390,6 @@ CREATE TABLE vendor (
   sic_code varchar(6),
   discount float4,
   creditlimit float DEFAULT 0,
-  iban varchar(34),
-  bic varchar(11),
   employee_id int,
   language_code varchar(6),
   pricegroup_id int,
@@ -429,7 +421,9 @@ CREATE TABLE project (
 CREATE TABLE partsgroup (
   id int DEFAULT nextval('id'),
   partsgroup text,
-  pos bool DEFAULT 't'
+  pos bool DEFAULT 't',
+  code text,
+  image text
 );
 --
 CREATE TABLE status (
@@ -643,7 +637,8 @@ CREATE TABLE paymentmethod (
   id int primary key default nextval('id'),
   description text,
   fee float,
-  rn int
+  rn int,
+  roundchange float4
 );
 --
 CREATE TABLE bank (
@@ -654,7 +649,8 @@ CREATE TABLE bank (
   address_id int default nextval('addressid'),
   dcn text,
   rvc text,
-  membernumber text
+  membernumber text,
+  clearingnumber text
 );
 --
 CREATE TABLE payment (
@@ -665,9 +661,9 @@ CREATE TABLE payment (
 );
 --
 CREATE TABLE curr (
-  rn int,
+  rn int2,
   curr char(3) primary key,
-  precision int2
+  prec int2
 );
 --
 CREATE TABLE report (
@@ -682,4 +678,85 @@ CREATE TABLE reportvars (
   reportvariable text,
   reportvalue text
 );
+--
+CREATE TABLE employeededuction (
+  id int,
+  employee_id int,
+  deduction_id int,
+  exempt float,
+  maximum float
+);
+--
+CREATE TABLE pay_trans (
+  trans_id int,
+  id int,
+  glid int,
+  qty float,
+  amount float
+);
+--
+CREATE TABLE deduction (
+  id int default nextval('id') primary key,
+  description text,
+  employee_accno_id int,
+  employeepays float4,
+  employer_accno_id int,
+  employerpays float4,
+  fromage int2,
+  toage int2,
+  agedob bool,
+  basedon int
+);
+--
+CREATE TABLE deduct (
+  trans_id int,
+  deduction_id int,
+  withholding bool,
+  percent float4
+);
+--
+CREATE TABLE deductionrate (
+  rn int2,
+  trans_id int,
+  rate float,
+  amount float,
+  above float,
+  below float
+);
+--
+CREATE TABLE wage (
+  id int default nextval('id') primary key,
+  description text,
+  amount float,
+  defer int,
+  exempt bool default 'f',
+  chart_id int
+);
+--
+CREATE TABLE payrate (
+  trans_id int,
+  id int,
+  rate float,
+  over float
+);
+--
+CREATE TABLE employeewage (
+  id int,
+  employee_id int,
+  wage_id int
+);
+--
+CREATE TABLE reference (
+  id int,
+  trans_id int,
+  description text
+);
+--
+CREATE TABLE acsrole (
+  id int default nextval('id') primary key,
+  description text,
+  acs text,
+  rn int2
+);
+--
 

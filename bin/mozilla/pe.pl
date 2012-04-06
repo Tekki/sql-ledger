@@ -17,10 +17,40 @@
 use SL::PE;
 use SL::AA;
 use SL::OE;
- 
+use SL::JS;
+
+require "$form->{path}/sr.pl";
+
 1;
 # end of main
 
+# this is for our long dates
+# $locale->text('January')
+# $locale->text('February')
+# $locale->text('March')
+# $locale->text('April')
+# $locale->text('May ')
+# $locale->text('June')
+# $locale->text('July')
+# $locale->text('August')
+# $locale->text('September')
+# $locale->text('October')
+# $locale->text('November')
+# $locale->text('December')
+
+# this is for our short month
+# $locale->text('Jan')
+# $locale->text('Feb')
+# $locale->text('Mar')
+# $locale->text('Apr')
+# $locale->text('May')
+# $locale->text('Jun')
+# $locale->text('Jul')
+# $locale->text('Aug')
+# $locale->text('Sep')
+# $locale->text('Oct')
+# $locale->text('Nov')
+# $locale->text('Dec')
 
 
 sub add {
@@ -56,6 +86,8 @@ sub prepare_job {
  
   PE->get_job(\%myconfig, \%$form);
 
+  $form->helpref("jobs", $myconfig{countrycode});
+  
   $form->{taxaccounts} = "";
   for (keys %{ $form->{IC_links} }) {
 
@@ -126,11 +158,11 @@ sub job_header {
     $partdescription = qq|<input name=partdescription size=60 value="|.$form->quote($form->{partdescription}).qq|">|;
   }
   
-  if (($rows = $form->numtextrows($form->{description}, 60)) > 1) {
-    $description = qq|<textarea name="description" rows=$rows cols=60 style="width: 100%" wrap=soft>$form->{description}</textarea>|;
-  } else {
-    $description = qq|<input name=description size=60 value="|.$form->quote($form->{description}).qq|">|;
+  if (($rows = $form->numtextrows($form->{description}, 60)) < 2) {
+    $rows = 1;
   }
+
+  $description = qq|<textarea name="description" rows=$rows cols=60 style="width: 100%" wrap=soft>$form->{description}</textarea>|;
   
   if (($rows = $form->numtextrows($form->{notes}, 40)) < 2) {
     $rows = 2;
@@ -144,7 +176,7 @@ sub job_header {
 	<tr>
 	  <th align=right nowrap>|.$locale->text($label).qq|</th>
 	  <td colspan=3><select name="$form->{vc}">|
-	  .$form->select_option($form->{"select$form->{vc}"}, $form->{vc}, 1)
+	  .$form->select_option($form->{"select$form->{vc}"}, $form->{"$form->{vc}"}, 1)
 	  .qq|</select>
 	  </td>
 	</tr>
@@ -163,9 +195,9 @@ sub job_header {
     $production = qq|
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Production').qq|</th>
-	  <td><input name=production size=11 value="$form->{production}"></td>
+	  <td><input name=production class="inputright" size=11 value="$form->{production}"></td>
 	  <th align=right nowrap>|.$locale->text('Completed').qq|</th>
-	  <td>$form->{completed}</td>
+	  <td align=right>$form->{completed}</td>
 	</tr>
 |;
 
@@ -228,7 +260,7 @@ sub job_header {
 		<th align=left>|.$locale->text('Description').qq|</th>
 		<th align=left>$group</th>
 	      </tr>
-	      <tr valign=top>
+	      <tr valign=top valign=top>
 	        <td><input name=partnumber value="|.$form->quote($form->{partnumber}).qq|" size=20></td>
 		<td>$partdescription</td>
 		<td>$partsgroup</td>
@@ -258,13 +290,13 @@ sub job_header {
   
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
     <td>
       <table>
-	<tr>
+	<tr valign=top>
 	  <th align=right>|.$locale->text('Number').qq|</th>
 	  <td><input name=projectnumber size=20 value="|.$form->quote($form->{projectnumber}).qq|"></td>
 	  <th align=right>|.$locale->text('Description').qq|</th>
@@ -316,11 +348,11 @@ sub job_header {
 		    </tr>
 		    <tr>
 		      <th align="right" nowrap="true">|.$locale->text('List Price').qq|</th>
-		      <td><input name=listprice size=11 value=$form->{listprice}></td>
+		      <td><input name=listprice class="inputright" size=11 value=$form->{listprice}></td>
 		    </tr>
 		    <tr>
 		      <th align="right" nowrap="true">|.$locale->text('Sell Price').qq|</th>
-		      <td><input name=sellprice size=11 value=$form->{sellprice}></td>
+		      <td><input name=sellprice class="inputright" size=11 value=$form->{sellprice}></td>
 		    </tr>
 		    <tr>
 		      <th align="right" nowrap="true">|.$locale->text('Weight').qq|</th>
@@ -328,7 +360,7 @@ sub job_header {
 			<table>
 			  <tr>
 			    <td>
-			      <input name=weight size=11 value=$form->{weight}>
+			      <input name=weight class="inputright" size=11 value=$form->{weight}>
 			    </td>
 			    <th>
 			      &nbsp;
@@ -434,6 +466,8 @@ sub list_stock {
   $column_header{stock} = "<th class=listheading>" . $locale->text('Add') . "</a></th>";
 
 
+  $form->helpref("list_stock", $myconfig{countrycode});
+  
   $form->header;
   
   if (@{ $form->{all_project} }) {
@@ -447,7 +481,7 @@ sub list_stock {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -479,7 +513,7 @@ sub list_stock {
     for (qw(startdate enddate)) { $column_data{$_} = qq|<td nowrap>$ref->{$_}&nbsp;</td>| }
     for (qw(projectnumber description partnumber)) { $column_data{$_} = qq|<td>$ref->{$_}&nbsp;</td>| }
     for (qw(production completed)) { $column_data{$_} = qq|<td align=right>|.$form->format_amount(\%myconfig, $ref->{$_}).qq|</td>| }
-    $column_data{stock} = qq|<td><input name="stock_$i" size=6></td>|;
+    $column_data{stock} = qq|<td><input name="stock_$i" class="inputright" size=6></td>|;
     
     $j++; $j %= 2;
     
@@ -537,6 +571,8 @@ sub prepare_project {
 
   PE->get_project(\%myconfig, \%$form);
 
+  $form->helpref("projects", $myconfig{countrycode});
+  
   $form->{title} = ($form->{id}) ? $locale->text('Edit Project') : $locale->text('Add Project');
   
   $form->{"old$form->{vc}"} = qq|$form->{"$form->{vc}"}--$form->{"$form->{vc}_id"}|;
@@ -556,10 +592,16 @@ sub search {
   $form->all_years(\%myconfig);
 
   if (@{ $form->{all_years} }) {
-    $selectaccountingyear = "<option>\n";
-    for (@{ $form->{all_years} }) { $selectaccountingyear .= qq|<option>$_\n| }
-    $selectaccountingmonth = "<option>\n";
-    for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|<option value=$_>|.$locale->text($form->{all_month}{$_}).qq|\n| }
+    $selectaccountingyear = "\n";
+    for (@{ $form->{all_years} }) { $selectaccountingyear .= qq|$_\n| }
+    $selectaccountingmonth = "\n";
+    for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|$_--|.$locale->text($form->{all_month}{$_}).qq|\n| }
+
+####### make user configurable option
+#    if (($form->{month} = (localtime)[4] + 1) < 10) {
+#      $form->{month} = substr("0$form->{month}", -2);
+#    }
+#    $form->{year} = $form->{all_years}[0];
 
     $fromto = qq|
  	<tr>
@@ -573,8 +615,8 @@ sub search {
         <tr>
 	  <th align=right>|.$locale->text('Period').qq|</th>
 	  <td colspan=3>
-	  <select name=month>$selectaccountingmonth</select>
-	  <select name=year>$selectaccountingyear</select>
+	  <select name=month>|.$form->select_option($selectaccountingmonth, $form->{month}, 1, 1).qq|</select>
+	  <select name=year>|.$form->select_option($selectaccountingyear, $form->{year}).qq|</select>
 	  <input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
 	  <input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
 	  <input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
@@ -589,8 +631,8 @@ sub search {
 	  <input name=status class=radio type=radio value=orphaned>&nbsp;|.$locale->text('Orphaned');
 	  
   if ($form->{type} eq 'project') {
-    $report = "project_report";
-    $sort = "projectnumber";
+    $form->{nextsub} = "project_report";
+    $form->{sort} = "projectnumber";
     $form->{title} = $locale->text('Projects');
 
     $number = qq|
@@ -604,9 +646,12 @@ sub search {
 	</tr>
 |;
   }
+
+  $form->{reportcode} = $form->{type};
+  $form->reports(\%myconfig, undef, $form->{login});
   
   if ($form->{type} eq 'stock') {
-    $report = "list_stock";
+    $form->{nextsub} = "list_stock";
     $form->{title} = $locale->text('Stock Finished Goods');
     PE->list_stock(\%myconfig, \%$form);
 
@@ -615,7 +660,7 @@ sub search {
     $fromto = qq|
         <tr>
 	  <th align=right nowrap>|.$locale->text('As of').qq|</th>
-	  <td><input name=stockingdate size=11 class=date title="$myconfig{dateformat}"></td>
+	  <td><input name=stockingdate size=11 class=date title="$myconfig{dateformat}" value=$form->{stockingdate}></td>
 	</tr>
 |;
 
@@ -629,11 +674,17 @@ sub search {
 	  <td><input name=description size=60></td>
 	</tr>
 |;
+
+    @input = qw(projectnumber description stockingdate sort direction reportlogin);
+
+    %radio = ( status => { all => 0, active => 1, inactive => 2 }
+	     );
+
   }
     
   if ($form->{type} eq 'job') {
-    $report = "job_report";
-    $sort = "projectnumber";
+    $form->{nextsub} = "job_report";
+    $form->{sort} = "projectnumber";
     $form->{title} = $locale->text('Jobs');
 
     $number = qq|
@@ -646,11 +697,18 @@ sub search {
 	  <td><input name=description size=60></td>
 	</tr>
 |;
+
+    @input = qw(projectnumber description startdatefrom startdateto month year sort direction reportlogin);
+
+    %radio = ( interval => { 0 => 0, 1 => 1, 3 => 2, 12 => 3 },
+               status => { all => 0, active => 1, inactive => 2, orphaned => 3 }
+	     );
+
   }
 
   if ($form->{type} eq 'partsgroup') {
-    $report = "partsgroup_report";
-    $sort = 'partsgroup';
+    $form->{nextsub} = "partsgroup_report";
+    $form->{sort} = 'partsgroup';
     $form->{title} = $locale->text('Groups');
     
     $fromto = "";
@@ -660,12 +718,16 @@ sub search {
 	  <th align=right>|.$locale->text('Group').qq|</th>
 	  <td><input name=partsgroup size=20></td>
 	</tr>
+	<tr>
+	  <th align=right>|.$locale->text('Code').qq|</th>
+	  <td><input name=partsgroupcode size=20></td>
+	</tr>
 |;
   }
 
   if ($form->{type} eq 'pricegroup') {
-    $report = "pricegroup_report";
-    $sort = 'pricegroup';
+    $form->{nextsub} = "pricegroup_report";
+    $form->{sort} = 'pricegroup';
     $form->{title} = $locale->text('Pricegroups');
     
     $fromto = "";
@@ -678,25 +740,41 @@ sub search {
 |;
   }
 
-
+  if (@{ $form->{all_report} }) {
+    $form->{selectreportform} = "\n";
+    for (@{ $form->{all_report} }) { $form->{selectreportform} .= qq|$_->{reportdescription}--$_->{reportid}\n| }
+    
+    $reportform = qq|
+      <tr>
+        <th align=right>|.$locale->text('Report').qq|</th>
+	<td>
+	  <select name=report onChange="ChangeReport();">|.$form->select_option($form->{selectreportform}, undef, 1)
+	  .qq|</select>
+        </td>
+      </tr>
+|;
+  }
+  
+  $form->helpref("search_$form->{type}", $myconfig{countrycode});
+  
   $form->header;
+
+  JS->change_report(\%$form, \@input, \@checked, \%radio);
 
   print qq|
 <body>
 
 <form method=post action=$form->{script}>
 
-<input type=hidden name=sort value=$sort>
-<input type=hidden name=type value=$form->{type}>
-
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
     <td>
       <table width=100%>
+        $reportform
         $number
 	$fromto
 	$selectperiod
@@ -715,10 +793,9 @@ sub search {
   </tr>
 </table>
 
-<input type=hidden name=nextsub value=$report>
 |;
 
-  $form->hide_form(qw(path login title));
+  $form->hide_form(qw(path login title sort direction type nextsub reportcode reportlogin));
 
   print qq|
 <input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">
@@ -764,14 +841,12 @@ sub project_report {
 sub list_projects {
 
   $href = "$form->{script}?";
-  for (qw(action direction oldsort type path login status startdatefrom startdateto)) { $href .= "$_=$form->{$_}&" }
-  chop $href;
+  for (qw(action sort direction oldsort type path login status startdatefrom startdateto)) { $href .= "$_=$form->{$_}&" }
   
   $form->sort_order();
   
   $callback = "$form->{script}?";
-  for (qw(action direction oldsort type path login status startdatefrom startdateto)) { $callback .= "$_=$form->{$_}&" }
-  chop $callback;
+  for (qw(action sort direction oldsort type path login status startdatefrom startdateto)) { $callback .= "$_=$form->{$_}&" }
   
   @column_index = $form->sort_columns(qw(projectnumber description name startdate enddate));
   
@@ -833,7 +908,8 @@ sub list_projects {
   $column_header{completed} = "<th width=10 class=listheading>" . $locale->text('Completed') . "</th>";
   $column_header{name} = "<th class=listheading>" . $locale->text('Customer') . "</th>";
   
-  
+  $form->helpref("list_$form->{type}", $myconfig{countrycode});
+ 
   $form->header;
   
   if (@{ $form->{all_project} }) {
@@ -845,7 +921,7 @@ sub list_projects {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -870,7 +946,7 @@ sub list_projects {
   $callback = $form->escape($callback);
 
   foreach $ref (@{ $form->{all_project} }) {
-
+    
     for (qw(startdate enddate)) { $column_data{$_} = qq|<td nowrap>$ref->{$_}&nbsp;</td>| }
     for (qw(description name)) { $column_data{$_} = qq|<td>$ref->{$_}&nbsp;</td>| }
 
@@ -891,28 +967,34 @@ sub list_projects {
         </tr>
 ";
   }
-  
+
+
   $i = 1;
   if ($form->{type} eq 'project') {
     if ($myconfig{acs} !~ /Projects--Projects/) {
-      $button{'Projects--Add Project'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Project').qq|"> |;
-      $button{'Projects--Add Project'}{order} = $i++;
-
-      for (split /;/, $myconfig{acs}) {
-	delete $button{$_};
-      }
+      $button{'Projects--Add Project'} = { ndx => $i++, key => 'A',  value => $locale->text('Add Project') };
     }
   } else {
     if ($myconfig{acs} !~ /Job Costing--Job Costing/) {
-      $button{'Job Costing--Add Job'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Job').qq|"> |;
-      $button{'Job Costing--Add Job'}{order} = $i++;
+      $button{'Job Costing--Add Job'} = { ndx => $i++, key => 'A',  value => $locale->text('Add Job') };
+    }
+  }
+  
+  $button{'Save Report'} = { ndx => $i++, key => 'S', value => $locale->text('Save Report') };
 
-      for (split /;/, $myconfig{acs}) {
-	delete $button{$_};
+  if (!$form->{admin}) {
+    if ($form->{reportid}) {
+      $login = $form->{login};
+      $login =~ s/\@.*//;
+      if ($form->{reportlogin} ne $login) {
+	delete $button{'Save Report'};
       }
     }
   }
   
+  for (split /;/, $myconfig{acs}) { delete $button{$_} }
+
+ 
   print qq|
       </table>
     </td>
@@ -926,11 +1008,18 @@ sub list_projects {
 <form method=post action=$form->{script}>
 |;
 
-  $form->hide_form(qw(callback type path login));
+  if ($form->{year} && $form->{month}) {
+    for (qw(startdatefrom startdateto)) { delete $form->{$_} }
+  }
+  $form->hide_form(qw(projectnumber description startdatefrom startdateto month year sort direction status interval));
+  
+  $form->hide_form(qw(callback type path login report reportcode reportlogin));
 
   foreach $item (sort { $a->{order} <=> $b->{order} } %button) {
     print $item->{code};
   }
+  
+  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
   
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -987,12 +1076,12 @@ sub project_header {
 |;
 
   $form->hide_form("select$form->{vc}", "old$form->{vc}", "$form->{vc}_id");
-  $form->hide_form(qw(id type orphaned vc title));
+  $form->hide_form(qw(id type orphaned vc title helpref));
 
   print qq|
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1064,7 +1153,7 @@ sub project_footer {
 
 
 sub save {
-  
+
   if ($form->{translation}) {
     PE->save_translation(\%myconfig, \%$form);
     $form->redirect($locale->text('Translations saved!'));
@@ -1135,6 +1224,14 @@ sub save {
 }
 
 
+sub save_as_new {
+
+  delete $form->{id};
+  &save;
+
+}
+
+
 sub delete {
 
   if ($form->{translation}) {
@@ -1166,14 +1263,14 @@ sub delete {
 
 sub partsgroup_report {
 
-  $form->{partsgroup} = $form->unescape($form->{partsgroup});
+  for (qw(partsgroup partsgroupcode)) { $form->{$_} = $form->unescape($form->{$_}) }
   PE->partsgroups(\%myconfig, \%$form);
 
-  $href = "$form->{script}?action=partsgroup_report&direction=$form->{direction}&oldsort=$form->{oldsort}&type=$form->{type}&path=$form->{path}&login=$form->{login}&status=$form->{status}";
+  $href = "$form->{script}?action=partsgroup_report&sort=$form->{sort}&direction=$form->{direction}&oldsort=$form->{oldsort}&type=$form->{type}&path=$form->{path}&login=$form->{login}&status=$form->{status}";
   
   $form->sort_order();
 
-  $callback = "$form->{script}?action=partsgroup_report&direction=$form->{direction}&oldsort=$form->{oldsort}&type=$form->{type}&path=$form->{path}&login=$form->{login}&status=$form->{status}";
+  $callback = "$form->{script}?action=partsgroup_report&sort=$form->{sort}&direction=$form->{direction}&oldsort=$form->{oldsort}&type=$form->{type}&path=$form->{path}&login=$form->{login}&status=$form->{status}";
   
   if ($form->{status} eq 'all') {
     $option = $locale->text('All');
@@ -1182,18 +1279,27 @@ sub partsgroup_report {
     $option .= $locale->text('Orphaned');
   }
   if ($form->{partsgroup}) {
+    $href .= "&partsgroup=".$form->escape($form->{partsgroup});
     $callback .= "&partsgroup=$form->{partsgroup}";
     $option .= "\n<br>".$locale->text('Group')." : $form->{partsgroup}";
   }
-   
+  if ($form->{partsgroupcode}) {
+    $href .= "&partsgroupcode=".$form->escape($form->{partsgroupcode});
+    $callback .= "&partsgroupcode=$form->{partsgroupcode}";
+    $option .= "\n<br>".$locale->text('Code')." : $form->{partsgroupcode}";
+  }
 
-  @column_index = $form->sort_columns(qw(partsgroup pos));
+  @column_index = $form->sort_columns(qw(partsgroup code image pos));
 
   $column_header{partsgroup} = qq|<th><a class=listheading href=$href&sort=partsgroup width=90%>|.$locale->text('Group').qq|</a></th>|;
+  $column_header{code} = qq|<th><a class=listheading href=$href&sort=code>|.$locale->text('Code').qq|</a></th>|;
   $column_header{pos} = qq|<th class=listheading>|.$locale->text('POS').qq|</th>|;
+  $column_header{image} = qq|<th class=listheading>|.$locale->text('Image').qq|</th>|;
 
   $form->{title} = $locale->text('Groups') . " / $form->{company}";
 
+  $form->helpref("partsgroup_report", $myconfig{countrycode});
+  
   $form->header;
  
   print qq|
@@ -1201,7 +1307,7 @@ sub partsgroup_report {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1234,8 +1340,11 @@ sub partsgroup_report {
 |;
     
     $column_data{partsgroup} = qq|<td><a href=$form->{script}?action=edit&type=$form->{type}&status=$form->{status}&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{partsgroup}</td>|;
+    $column_data{code} = qq|<td>$ref->{code}</td>|;
     $pos = ($ref->{pos}) ? "*" : "&nbsp;";
     $column_data{pos} = qq|<td align=center>$pos</td>|;
+    $column_data{image} = ($ref->{image}) ? "<td><a href=$ref->{image}><img src=$ref->{image} height=32 border=0></a></td>" : "<td>&nbsp;</td>";
+    
     for (@column_index) { print "$column_data{$_}\n" }
     
     print "
@@ -1295,8 +1404,10 @@ sub partsgroup_header {
 # $locale->text('Add Group')
 # $locale->text('Edit Group')
 
-  $form->{partsgroup} = $form->quote($form->{partsgroup});
+  for (qw(partsgroup code)) { $form->{$_} = $form->quote($form->{$_}) }
   $form->{pos} = ($form->{pos}) ? "checked" : "";
+  
+  $form->helpref("partsgroup", $myconfig{countrycode});
   
   $form->header;
 
@@ -1307,7 +1418,7 @@ sub partsgroup_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1316,7 +1427,15 @@ sub partsgroup_header {
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Group').qq| <font color=red>*</font></th>
 
-          <td><input name=partsgroup size=30 value="|.$form->quote($form->{partsgroup}).qq|"></td>
+          <td><input name=partsgroup size=30 value="$form->{partsgroup}"></td>
+	</tr>
+	<tr>
+	  <th align=right nowrap>|.$locale->text('Code').qq|</th>
+          <td><input name=code size=10 value="$form->{code}"></td>
+	</tr>
+	<tr>
+	  <th align=right nowrap>|.$locale->text('Image').qq|</th>
+	  <td><input name=image size=40 value="$form->{image}"></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('POS Button').qq|</th>
@@ -1343,6 +1462,7 @@ sub partsgroup_footer {
   if ($myconfig{acs} !~ /Goods \& Services--Add Group/) {
     print qq|
 <input type=submit class=submit name=action value="|.$locale->text('Save').qq|">
+<input type=submit class=submit name=action value="|.$locale->text('Save as new').qq|">
 |;
 
     if ($form->{id} && $form->{orphaned}) {
@@ -1371,11 +1491,11 @@ sub pricegroup_report {
   $form->{pricegroup} = $form->unescape($form->{pricegroup});
   PE->pricegroups(\%myconfig, \%$form);
 
-  $href = "$form->{script}?action=pricegroup_report&direction=$form->{direction}&oldsort=$form->{oldsort}&type=$form->{type}&path=$form->{path}&login=$form->{login}&status=$form->{status}";
+  $href = "$form->{script}?action=pricegroup_report&sort=$form->{sort}&direction=$form->{direction}&oldsort=$form->{oldsort}&type=$form->{type}&path=$form->{path}&login=$form->{login}&status=$form->{status}";
   
   $form->sort_order();
 
-  $callback = "$form->{script}?action=pricegroup_report&direction=$form->{direction}&oldsort=$form->{oldsort}&type=$form->{type}&path=$form->{path}&login=$form->{login}&status=$form->{status}";
+  $callback = "$form->{script}?action=pricegroup_report&sort=$form->{sort}&direction=$form->{direction}&oldsort=$form->{oldsort}&type=$form->{type}&path=$form->{path}&login=$form->{login}&status=$form->{status}";
   
   if ($form->{status} eq 'all') {
     $option = $locale->text('All');
@@ -1395,6 +1515,8 @@ sub pricegroup_report {
 
   $form->{title} = $locale->text('Pricegroups') . " / $form->{company}";
 
+  $form->helpref("pricegroup_report", $myconfig{countrycode});
+  
   $form->header;
  
   print qq|
@@ -1402,7 +1524,7 @@ sub pricegroup_report {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1495,6 +1617,7 @@ sub pricegroup_header {
 
   $form->{pricegroup} = $form->quote($form->{pricegroup});
 
+  $form->helpref("pricegroup", $myconfig{countrycode});
   
   $form->header;
 
@@ -1505,7 +1628,7 @@ sub pricegroup_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1564,6 +1687,8 @@ sub translation {
 
   if ($form->{translation} eq 'description') {
     $form->{title} = $locale->text('Description Translations');
+    $form->helpref("item_translation", $myconfig{countrycode});
+    
     $sort = qq|<input type=hidden name=sort value=partnumber>|;
     $form->{number} = "partnumber";
     $number = qq|
@@ -1577,10 +1702,12 @@ sub translation {
   if ($form->{translation} eq 'partsgroup') {
     $form->{title} = $locale->text('Group Translations');
     $sort = qq|<input type=hidden name=sort value=partsgroup>|;
+    $form->helpref("group_translation", $myconfig{countrycode});
   }
   
   if ($form->{translation} eq 'project') {
     $form->{title} = $locale->text('Project Description Translations');
+    $form->helpref("project_translation", $myconfig{countrycode});
     $form->{number} = "projectnumber";
     $sort = qq|<input type=hidden name=sort value=projectnumber>|;
     $number = qq|
@@ -1593,6 +1720,7 @@ sub translation {
 
   if ($form->{translation} eq 'chart') {
     $form->{title} = $locale->text('Chart of Accounts Translations');
+    $form->helpref("coa_translation", $myconfig{countrycode});
     $form->{number} = "accno";
     $sort = qq|<input type=hidden name=sort value=accno>|;
     $number = qq|
@@ -1617,7 +1745,7 @@ sub translation {
   print qq|
   
 <table width="100%">
-  <tr><th class=listtop>$form->{title}</th></tr>
+  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
   <tr height="5"></tr>
   <tr valign=top>
     <td>
@@ -1693,12 +1821,14 @@ sub list_translations {
 
   $form->header;
 
+  $form->helpref("list_$form->{translation}_translations", $myconfig{countrycode});
+  
   print qq|
 <body>
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
 
@@ -1786,6 +1916,8 @@ sub edit_translation {
 
   $form->error($locale->text('Languages not defined!')) unless @{ $form->{all_language} };
 
+  $form->helpref("$form->{translation}_translations", $myconfig{countrycode});
+  
   $form->{selectlanguage} = qq|\n|;
   for (@{ $form->{all_language} }) { $form->{selectlanguage} .= qq|$_->{code}--$_->{description}\n| }
 
@@ -1830,12 +1962,12 @@ sub translation_header {
 |;
 
   $form->hide_form("$form->{number}", "description");
-  $form->hide_form(qw(id trans_id selectlanguage translation_rows number translation title));
+  $form->hide_form(qw(id trans_id selectlanguage translation_rows number translation title helpref));
 
   print qq|
   
 <table width="100%">
-  <tr><th class=listtop>$form->{title}</th></tr>
+  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
   <tr height="5"></tr>
   <tr valign=top>
     <td>
@@ -1919,17 +2051,17 @@ sub update {
   if ($form->{translation}) {
     @flds = qw(language translation);
     $count = 0;
-    @a = ();
+    @f = ();
     for $i (1 .. $form->{translation_rows}) {
       if ($form->{"language_code_$i"} ne "") {
-	push @a, {};
-	$j = $#a;
+	push @f, {};
+	$j = $#f;
 
-	for (@flds) { $a[$j]->{$_} = $form->{"${_}_$i"} }
+	for (@flds) { $f[$j]->{$_} = $form->{"${_}_$i"} }
 	$count++;
       }
     }
-    $form->redo_rows(\@flds, \@a, $count, $form->{translation_rows});
+    $form->redo_rows(\@flds, \@f, $count, $form->{translation_rows});
     $form->{translation_rows} = $count;
 
     &translation_header;
@@ -2132,17 +2264,17 @@ sub project_sales_order {
   PE->project_sales_order(\%myconfig, \%$form);
   
   if (@{ $form->{all_years} }) {
-    $selectaccountingyear = "<option>\n";
-    for (@{ $form->{all_years} }) { $selectaccountingyear .= qq|<option>$_\n| }
-    $selectaccountingmonth = "<option>\n";
-    for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|<option value=$_>|.$locale->text($form->{all_month}{$_}).qq|\n| }
+    $selectaccountingyear = "\n";
+    for (@{ $form->{all_years} }) { $selectaccountingyear .= qq|$_\n| }
+    $selectaccountingmonth = "\n";
+    for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|$_--|.$locale->text($form->{all_month}{$_}).qq|\n| }
 
     $selectfrom = qq|
         <tr>
 	  <th align=right>|.$locale->text('Period').qq|</th>
 	  <td colspan=3>
-	  <select name=month>$selectaccountingmonth</select>
-	  <select name=year>$selectaccountingyear</select>
+	  <select name=month>|.$form->select_option($selectaccountingmonth, undef, 1, 1).qq|</select>
+	  <select name=year>|.$form->select_option($selectaccountingyear).qq|</select>
 	  <input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
 	  <input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
 	  <input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
@@ -2162,20 +2294,24 @@ sub project_sales_order {
 |;
 
   if (@{ $form->{all_project} }) {
-    $form->{selectprojectnumber} = "<option>\n";
-    for (@{ $form->{all_project} }) { $form->{selectprojectnumber} .= qq|<option value="|.$form->quote($_->{projectnumber}).qq|--$_->{id}">$_->{projectnumber}\n| }
+    $form->{selectprojectnumber} = "\n";
+    $form->{projectnumber} ||= "";
+    for (@{ $form->{all_project} }) { $form->{selectprojectnumber} .= qq|$_->{projectnumber}--$_->{id}\n| }
   } else {
     $form->error($locale->text('No open Projects!'));
   }
 
   if (@{ $form->{all_employee} }) {
-    $form->{selectemployee} = "<option>\n";
-    for (@{ $form->{all_employee} }) { $form->{selectemployee} .= qq|<option value="|.$form->quote($_->{name}).qq|--$_->{id}">$_->{name}\n| }
+    $form->{selectemployee} = "\n";
+    $form->{employee} ||= "";
+    for (@{ $form->{all_employee} }) { $form->{selectemployee} .= qq|$_->{name}--$_->{id}\n| }
 
     $employee = qq|
               <tr>
 	        <th align=right nowrap>|.$locale->text('Employee').qq|</th>
-		<td><select name=employee>$form->{selectemployee}</select></td>
+		<td><select name=employee>|
+		.$form->select_option($form->{selectemployee}, $form->{employee}, 1)
+		.qq|</select></td>
 	      </tr>
 |;
   }
@@ -2201,7 +2337,9 @@ sub project_sales_order {
       <table>
         <tr>
 	  <th align=right>|.$locale->text('Project').qq|</th>
-	  <td colspan=3><select name=projectnumber>$form->{selectprojectnumber}</select></td>
+	  <td colspan=3><select name=projectnumber>|
+	  .$form->select_option($form->{selectprojectnumber}, $form->{"projectnumber"}, 1)
+	  .qq|</select></td>
 	</tr>
 	$employee
 	$fromto
@@ -2259,7 +2397,6 @@ sub project_jcitems_list {
   $i = 1;
   foreach $ref (@{ $form->{jcitems} }) {
     
-    $form->{"employee_$i"} = $ref->{employee};
     $form->{"$form->{vc}_$i"} = $ref->{$form->{vc}};
     $form->{"$form->{vc}number{_}$i"} = $ref->{"$form->{vc}number"};
 
@@ -2332,14 +2469,13 @@ sub jcitems {
   }
   push @column_index, qw(partnumber description);
   push @column_index, "itemnotes" if !$form->{summary};
-  push @column_index, qw(employee qty amount);
+  push @column_index, qw(qty amount);
 
   $column_header{id} = qq|<th>&nbsp;</th>|;
   $column_header{transdate} = qq|<th class=listheading>|.$locale->text('Date').qq|</th>|;
   $column_header{partnumber} = qq|<th class=listheading>|.$locale->text('Service Code').qq|<br>|.$locale->text('Part Number').qq|</th>|;
   $column_header{projectnumber} = qq|<th class=listheading>|.$locale->text('Project Number').qq|</th>|;
   $column_header{description} = qq|<th class=listheading>|.$locale->text('Description').qq|</th>|;
-  $column_header{employee} = qq|<th class=listheading>|.$locale->text('Employee').qq|</th>|;
   $column_header{itemnotes} = qq|<th class=listheading>|.$locale->text('Notes').qq|</th>|;
   $column_header{name} = qq|<th class=listheading>$vc</th>|;
   $column_header{"$form->{vc}number"} = qq|<th class=listheading>|.$locale->text($vcnumber).qq|</th>|;
@@ -2375,7 +2511,7 @@ sub jcitems {
 
   for $i (1 .. $form->{rowcount}) {
 
-    for (qw(description itemnotes)) { $form->{"${_}_$i"} =~ s/\n/<br>/g }
+    for (qw(description itemnotes)) { $form->{"${_}_$i"} =~ s/\r?\n/<br>/g }
     for (@column_index) { $column_data{$_} = qq|<td>$form->{"${_}_$i"}</td>| }
     for (qw(qty amount)) { $column_data{$_} = qq|<td align=right>$form->{"${_}_$i"}</td>| }
     
@@ -2385,7 +2521,7 @@ sub jcitems {
     if ($form->{"$form->{vc}_id_$i"}) {
 
       $column_data{name} = qq|<td>$form->{"$form->{vc}_$i"}</td>|;
-      $column_data{"$form->{vc}number"} = qq|<td>$form->{"$form->{vc}number{_}$i"}</td>|;
+      $column_data{"$form->{vc}number"} = qq|<td>$form->{"$form->{vc}number_$i"}</td>|;
       $form->hide_form("$form->{vc}_id_$i", "$form->{vc}_$i");
     } else {
       $column_data{name} = qq|<td><input name="ndx_$i" class=checkbox type=checkbox value="1"></td>|;
@@ -2508,7 +2644,7 @@ sub customer_selected {
 
 
 sub sales_order_header {
-  
+
   for (1 .. $form->{rowcount}) {
     if ($form->{"ndx_$_"}) {
       $form->{"$form->{vc}_id_$_"} = $form->{"$form->{vc}_id"};
@@ -2530,6 +2666,7 @@ sub generate_sales_orders {
 
   for $i (1 .. $form->{rowcount}) {
     if ($form->{"checked_$i"}) {
+      for (qw(description itemnotes)) { $form->{"${_}_$i"} =~ s/<br>/\r\n/g }
       push @{ $form->{order}{qq|$form->{"customer_id_$i"}|} }, {
 	partnumber => $form->{"partnumber_$i"},
 	id => $form->{"parts_id_$i"},
@@ -2574,7 +2711,7 @@ sub generate_sales_orders {
     $order->{transdate} = $order->current_date(\%myconfig);
     $order->{reqdate} = $order->{transdate};
     
-    for (qw(employee_id)) { delete $order->{$_} }
+    for (qw(employee employee_id)) { delete $order->{$_} }
 
     if (OE->save(\%myconfig, \%$order)) {
       if (! PE->allocate_projectitems(\%myconfig, \%$order)) {

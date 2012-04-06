@@ -1,0 +1,50 @@
+$self{charset} = 'ISO-8859-1';
+
+$self{texts} = {
+  'Accounting Menu'             => 'Kontoverwaltung',
+  'Add Column'                  => 'Spalte hinzufügen',
+  'Align'                       => 'Ausrichten',
+  'Delete Column'               => 'Spalte löschen',
+  'Delete Report'               => 'Rapport löschen',
+  'Description'                 => 'Beschreibung',
+  'Edit Column'                 => 'Spalte bearbeiten',
+  'Edit Column Header'          => 'Spaltenüberschrift bearbeiten',
+  'Edit Column Total'           => 'Spaltentotal bearbeiten',
+  'Fill'                        => 'Ausfüllen',
+  'Fixed value'                 => 'Fixer Wert',
+  'Heading'                     => 'Überschrift',
+  'Left'                        => 'Links',
+  'Private'                     => 'Privat',
+  'Right'                       => 'Rechts',
+  'Save Column'                 => 'Spalte speichern',
+  'Save Report'                 => 'Rapport speichern',
+  'Save Report as new'          => 'Rapport als neu speichern',
+  'Width'                       => 'Breite',
+};
+
+$self{subs} = {
+  'acc_menu'                    => 'acc_menu',
+  'add_column'                  => 'add_column',
+  'delete_column'               => 'delete_column',
+  'delete_report'               => 'delete_report',
+  'display'                     => 'display',
+  'display_frame'               => 'display_frame',
+  'do_save_report'              => 'do_save_report',
+  'edit_column'                 => 'edit_column',
+  'jsmenu'                      => 'jsmenu',
+  'jsmenu_frame'                => 'jsmenu_frame',
+  'menubar'                     => 'menubar',
+  'mlmenu'                      => 'mlmenu',
+  'save_column'                 => 'save_column',
+  'save_report'                 => 'save_report',
+  'save_report_as_new'          => 'save_report_as_new',
+  'section_menu'                => 'section_menu',
+  'spalte_löschen'              => 'delete_column',
+  'rapport_löschen'             => 'delete_report',
+  'spalte_speichern'            => 'save_column',
+  'rapport_speichern'           => 'save_report',
+  'rapport_als_neu_speichern'   => 'save_report_as_new',
+};
+
+1;
+

@@ -1,4 +1,4 @@
-#!/usr/bin/perl -X
+#!/usr/bin/perl
 #
 ######################################################################
 # SQL-Ledger ERP
@@ -63,10 +63,10 @@ if (grep !/^\Q$form{script}\E/, @scripts) {
   exit;
 }
 
-if (-f "$userspath/nologin" && $script ne 'admin.pl') {
+if (-f "$userspath/nologin.LCK" && $script ne 'admin.pl') {
   print "Content-Type: text/html\n\n" if $ENV{HTTP_USER_AGENT};
-  if (-s "$userspath/nologin") {
-    open(FH, "$userspath/nologin");
+  if (-s "$userspath/nologin.LCK") {
+    open(FH, "$userspath/nologin.LCK");
     $message = <FH>;
     close(FH);
     print "\n$message\n";
@@ -127,5 +127,6 @@ if ($form{path}) {
 
 }
 
+1;
 # end of main
 

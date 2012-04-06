@@ -284,7 +284,7 @@ Version 2.8.6 to 2.8.7
    and enter the default precision
       
 
-Version 2.8.23 to current
+Version 2.8.23 to 2.8.30
 ------------------------
 1. copy the following templates to your private template directory
 
@@ -296,5 +296,27 @@ Version 2.8.23 to current
    $ cp Default-reminder1.tex your_template_dir/reminder1.tex
    $ cp Default-reminder2.tex your_template_dir/reminder2.tex
    $ cp Default-reminder3.tex your_template_dir/reminder3.tex
+
+
+Version 2.8.30 to 3.0
+---------------------
+1. edit the members file and add the name of the dataset
+   to every login so the logins are 'login@dataset'
+2. make a copy of the section of one user and change the
+   login to 'admin@dataset'
+3. create a directory with the same name as the dataset
+   in the spool and templates directory
+4. move the private templates to the dataset directory
+5. move the spoolfiles to the dataset directory
+6. copy the following template to your dataset directory
+
+   $ cd sql-ledger/templates
+   
+   $ cp Default-payslip.tex dataset/payslip.tex
+   $ cp Default-barcode.tex dataset/barcode.tex
+
+7. set up printers in System -> Workstations
+
+Note: replace 'dataset' with the name of your dataset.
 
 

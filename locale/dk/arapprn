@@ -8,7 +8,6 @@ $self{texts} = {
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
   'Screen'                      => 'Skærm',
-  'Select a Printer!'           => 'Vælg en printer!',
   'Select payment'              => 'Vælg betaling',
   'Select postscript or PDF!'   => 'Vælg postscript eller PDF',
   'Source'                      => 'Bilag',

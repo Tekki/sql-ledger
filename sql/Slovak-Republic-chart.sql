@@ -375,7 +375,7 @@ INSERT INTO defaults (fldname, fldvalue) VALUES ('fxloss_accno_id', (SELECT id F
 INSERT INTO defaults (fldname, fldvalue) VALUES ('weightunit', 'kg');
 INSERT INTO defaults (fldname, fldvalue) VALUES ('precision', '2');
 --
-INSERT INTO curr (rn, curr, precision) VALUES (1,'SKK',2);
-INSERT INTO curr (rn, curr, precision) VALUES (2,'EUR',2);
-INSERT INTO curr (rn, curr, precision) VALUES (3,'CZK',2);
+INSERT INTO curr (rn, curr, prec) VALUES (1,'SKK',2);
+INSERT INTO curr (rn, curr, prec) VALUES (2,'EUR',2);
+INSERT INTO curr (rn, curr, prec) VALUES (3,'CZK',2);
 

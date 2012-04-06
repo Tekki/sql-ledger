@@ -1,6 +1,6 @@
 #======================================================================
 # SQL-Ledger ERP
-# Copyright (c) 2006-2011
+# Copyright (c) 2006-2012
 #
 #  Author: DWS Systems Inc
 #     Web: http://www.sql-ledger.com.
@@ -8,12 +8,13 @@
 #
 #======================================================================
 
+Warning: Don't upgrade a version 2 system to version 3 without detailed
+instructions!
+
 The branches are:
 - master: the unmodified SQL-Ledger from sql-ledger.com with version tags
-- full: master, switzerland, perl512, messageid and security01 merged together
-- security01: patch for security leak in template editor
-- switzerland:
-  German: chart of accounts, new translation "German/Switzerland 2"
-  French: chart of accounts, translation converted to UTF-8
-  Italian: chart of accounts, translation converted to UTF-8
-- perl512: patch for deprecated warnings in Perl 5.12
+
+- full: the master branch with additions by Tekki: security patch for
+  template editor, WLprinter, Swiss German, French and Italian charts
+  of accounts, updated languages.
+

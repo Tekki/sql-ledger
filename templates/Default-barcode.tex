@@ -1,0 +1,30 @@
+<%include preamble.tex%>
+
+\begin{document}
+
+\newlength{\descrwidth}\setlength{\descrwidth}{10cm}
+\fontfamily{cmss}\fontsize{10pt}{12pt}\selectfont
+
+\pagestyle{myheadings}
+\thispagestyle{empty}
+
+<%include letterhead.tex%>
+
+\textbf{B A R C O D E S}
+
+\vspace{1cm}
+
+<%foreach number * ship%>
+\begin{pspicture}(5,0.4in)
+\psbarcode{^104<%sku%><%sell%>}{height=0.4 includetext}{code128}
+\end{pspicture} \\[1em]
+<%end number * ship%>
+
+\parbox{\textwidth}{
+\rule{\textwidth}{2pt}
+}
+
+\end{document}
+
+
+

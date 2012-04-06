@@ -61,17 +61,17 @@ sub reconciliation {
 
   if (@{ $form->{all_years} }) {
     # accounting years
-    $selectaccountingyear = "<option>\n";
-    for (@{ $form->{all_years} }) { $selectaccountingyear .= qq|<option>$_\n| }
-    $selectaccountingmonth = "<option>\n";
-    for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|<option value=$_>|.$locale->text($form->{all_month}{$_}).qq|\n| }
+    $selectaccountingyear = "\n";
+    for (@{ $form->{all_years} }) { $selectaccountingyear .= qq|$_\n| }
+    $selectaccountingmonth = "\n";
+    for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|$_--| . $locale->text($form->{all_month}{$_}).qq|\n| }
 
     $selectfrom = qq|
         <tr>
 	  <th align=right>|.$locale->text('Period').qq|</th>
 	  <td colspan=3>
-	  <select name=month>$selectaccountingmonth</select>
-	  <select name=year>$selectaccountingyear</select>
+	  <select name=month>|.$form->select_option($selectaccountingmonth, $form->{month}, 1, 1).qq|</select>
+	  <select name=year>|.$form->select_option($selectaccountingyear, $form->{year}).qq|</select>
 	  <input name=interval class=radio type=radio value=0>&nbsp;|.$locale->text('Current').qq|
 	  <input name=interval class=radio type=radio value=1 checked>&nbsp;|.$locale->text('Month').qq|
 	  <input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
@@ -82,6 +82,8 @@ sub reconciliation {
   }
 
 
+  $form->helpref("reconciliation", $myconfig{countrycode});
+  
   $form->header;
 
   print qq|
@@ -91,7 +93,7 @@ sub reconciliation {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -201,10 +203,12 @@ sub display_form {
 
   $form->{title} = "$form->{accno}--$form->{account} / $form->{company}";
   
+  $form->helpref("rec_list", $myconfig{countrycode});
+  
   $form->header;
 
   print qq|
-<script language="JavaScript">
+<script language="javascript">
 <!--
 
 function CheckAll() {
@@ -229,7 +233,7 @@ function CheckAll() {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -426,13 +430,13 @@ function CheckAll() {
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Statement Balance').qq|</th>
 		<td width=10%></td>
-		<td align=right><input name=statementbalance size=11 value=$form->{statementbalance}></td>
+		<td align=right><input name=statementbalance class="inputright" size=11 value=$form->{statementbalance}></td>
 	      </tr>
 
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Difference').qq|</th>
 		<td width=10%></td>
-		<td align=right><input name=null size=11 value=$difference></td>
+		<td align=right><input name=null class="inputright" size=11 value=$difference></td>
 		<input type=hidden name=difference value=$difference>
 	      </tr>
 	    </table>

@@ -25,24 +25,16 @@ if (-f "$form->{path}/$form->{login}_arapprn.pl") {
 sub print {
 
   if ($form->{media} !~ /screen/) {
-    $form->error($locale->text('Select postscript or PDF!')) if $form->{format} !~ /(postscript|pdf)/;
-    $old_form = new Form;
-    for (keys %$form) { $old_form->{$_} = $form->{$_} }
+    $oldform = new Form;
+    for (keys %$form) { $oldform->{$_} = $form->{$_} }
   }
  
-  if ($form->{formname} =~ /(check|receipt)/) {
-    if ($form->{media} eq 'screen') {
-      $form->error($locale->text('Select postscript or PDF!')) if $form->{format} !~ /(postscript|pdf)/;
-    }
-  }
-
   if (! $form->{invnumber}) {
     $invfld = 'sinumber';
     $invfld = 'vinumber' if $form->{ARAP} eq 'AP';
-    $form->{invnumber} = $form->update_defaults(\%myconfig, $invfld);
-    if ($form->{media} eq 'screen') {
-      &update;
-      exit;
+    $form->{invnumber} ||= '-';
+    if ($form->{media} ne 'screen') {
+      $form->{invnumber} = $form->update_defaults(\%myconfig, $invfld);
     }
   }
 
@@ -73,22 +65,19 @@ sub print {
     
   }
 
-  &{ "print_$form->{formname}" }($old_form, 1);
+  &{ "print_$form->{formname}" }($oldform, 1);
 
 }
 
 
 sub print_check {
-  my ($old_form, $i) = @_;
+  my ($oldform, $i) = @_;
   
   $display_form = ($form->{display_form}) ? $form->{display_form} : "display_form";
 
   if ($form->{"paid_$i"}) {
     @a = ();
-
-    $datepaid = $form->datetonum(\%myconfig, $form->{"datepaid_$i"});
-    ($form->{yyyy}, $form->{mm}, $form->{dd}) = $datepaid =~ /(....)(..)(..)/;
-
+    
     if (exists $form->{longformat}) {
       $form->{"datepaid_$i"} = $locale->date(\%myconfig, $form->{"datepaid_$i"}, $form->{longformat});
     }
@@ -122,18 +111,17 @@ sub print_check {
   use SL::CP;
   $c = CP->new(($form->{language_code}) ? $form->{language_code} : $myconfig{countrycode}); 
   $c->init;
+  ($whole, $form->{decimal}) = split /\./, $form->parse_amount(\%myconfig, $form->{amount});
 
-  ($whole, $decimal) = split /\./, $form->parse_amount(\%myconfig, $form->{amount});
-
-  $form->{decimal} = substr("${decimal}00", 0, 2);
-  $form->{text_decimal} = $c->num2text($decimal * 1);
+  $form->{decimal} = substr("$form->{decimal}00", 0, 2);
+  $form->{text_decimal} = $c->num2text($form->{decimal} * 1);
   $form->{text_amount} = $c->num2text($whole);
   $form->{integer_amount} = $whole;
 
   if ($form->{cd_amount}) {
-    ($whole, $decimal) = split /\./, $form->{cd_invtotal};
-    $form->{cd_decimal} = substr("${decimal}00", 0, 2);
-    $form->{text_cd_decimal} = $c->num2text(${decimal} * 1);
+    ($whole, $form->{cd_decimal}) = split /\./, $form->{cd_invtotal};
+    $form->{cd_decimal} = substr("$form->{cd_decimal}00", 0, 2);
+    $form->{text_cd_decimal} = $c->num2text($form->{cd_decimal} * 1);
     $form->{text_cd_invtotal} = $c->num2text($whole);
     $form->{integer_cd_invtotal} = $whole;
   }
@@ -149,19 +137,19 @@ sub print_check {
 
   for (qw(employee paymentmethod)) { ($form->{$_}, $form->{"${_}_id"}) = split /--/, $form->{$_} };
   
-  push @a, qw(employee paymentmethod notes intnotes companyemail companywebsite company address tel fax businessnumber);
+  push @a, qw(employee paymentmethod notes intnotes company address tel fax businessnumber);
   
   $form->format_string(@a);
 
-  $form->{templates} = "$myconfig{templates}";
-  $form->{IN} = ($form->{formname} eq 'transaction') ? lc $form->{ARAP} . "_$form->{formname}.html" : "$form->{formname}.html";
+  $form->{templates} = "$templates/$myconfig{dbname}";
+  $form->{IN} = "$form->{formname}.$form->{format}";
 
-  if ($form->{format} =~ /(postscript|pdf)/) {
-    $form->{IN} =~ s/html$/tex/;
+  if ($form->{format} =~ /(ps|pdf)/) {
+    $form->{IN} =~ s/$&$/tex/;
   }
 
   if ($form->{media} !~ /(screen)/) {
-    $form->{OUT} = "| $printer{$form->{media}}";
+    $form->{OUT} = qq~| $form->{"$form->{media}_printer"}~;
     
     if ($form->{printed} !~ /$form->{formname}/) {
 
@@ -220,25 +208,25 @@ sub print_check {
 
 
 sub print_receipt {
-  my ($old_form, $i) = @_;
+  my ($oldform, $i) = @_;
   
-  &print_check($old_form, $i);
+  &print_check($oldform, $i);
 
 }
 
 sub print_remittance_voucher {
-  my ($old_form) = @_;
+  my ($oldform) = @_;
 
-  &print_transaction($old_form);
+  &print_transaction($oldform);
 
 }
 
 
 sub print_transaction {
-  my ($old_form) = @_;
+  my ($oldform) = @_;
  
   $display_form = ($form->{display_form}) ? $form->{display_form} : "display_form";
-
+ 
   AA->company_details(\%myconfig, \%$form);
 
   @a = qw(name address1 address2 city state zipcode country);
@@ -300,7 +288,7 @@ sub print_transaction {
       
       push(@{ $form->{taxdescription} }, $form->{"${_}_description"});
 
-      $form->{"${_}_taxrate"} = $form->format_amount($myconfig, $form->{"${_}_rate"} * 100, undef, 0);
+      $form->{"${_}_taxrate"} = $form->format_amount($myconfig, $form->{"${_}_rate"} * 100);
 
       push(@{ $form->{taxrate} }, $form->{"${_}_taxrate"});
       
@@ -311,6 +299,15 @@ sub print_transaction {
 
   push @a, $form->{ARAP};
   $form->format_string(@a);
+
+  $form->{roundto} = 0;
+  if ($form->{roundchange}) {
+    %roundchange = split /[=;]/, $form->unescape($form->{roundchange});
+    $form->{roundto} = $roundchange{''};
+    if ($form->{selectpaymentmethod}) {
+      $form->{roundto} = $roundchange{$form->{"paymentmethod_$form->{paidaccounts}"}};
+    }
+  }
 
   $form->{paid} = 0;
   for $i (1 .. $form->{paidaccounts}) {
@@ -333,6 +330,14 @@ sub print_transaction {
       push(@{ $form->{paymentaccount} }, $account);
       push(@{ $form->{paymentsource} }, $form->{"source_$i"});
       push(@{ $form->{paymentmemo} }, $form->{"memo_$i"});
+
+      ($description) = split /--/, $form->{"paymentmethod_$i"};
+      push(@{ $form->{paymentmethod} }, $description);
+
+      if ($form->{selectpaymentmethod}) {
+	$form->{roundto} = $roundchange{$form->{"paymentmethod_$i"}};
+      }
+      
     }
   }
 
@@ -348,22 +353,27 @@ sub print_transaction {
 
   $form->{invtotal} = $form->{subtotal} + $tax;
   $form->{cd_invtotal} = $form->{cd_subtotal} + $cd_tax;
-  $form->{total} = $form->{invtotal} - $form->{paid};
 
-  
   use SL::CP;
   $c = CP->new(($form->{language_code}) ? $form->{language_code} : $myconfig{countrycode}); 
   $c->init;
-  
+
   ($whole, $decimal) = split /\./, $form->{invtotal};
   $form->{decimal} = substr("${decimal}00", 0, 2);
-  $form->{text_decimal} = $c->num2text($form->{decimal} * 1); 
+  $form->{text_decimal} = $c->num2text($form->{decimal} * 1);
   $form->{text_amount} = $c->num2text($whole);
   $form->{integer_amount} = $whole;
-  
+
+  if ($form->{roundto} > 0.01) {
+    $form->{total} = $form->round_amount($form->round_amount(($form->{invtotal} - $form->{paid}) / $form->{roundto}, 0) * $form->{roundto}, $form->{precision});
+    $form->{roundingdifference} = $form->round_amount($form->{paid} + $form->{total} - $form->{invtotal}, $form->{precision});
+  } else {
+    $form->{total} = $form->{invtotal} - $form->{paid};
+  }
+
   ($whole, $decimal) = split /\./, $form->{total};
   $form->{out_decimal} = substr("${decimal}00", 0, 2);
-  $form->{text_out_decimal} = $c->num2text($form->{out_decimal} * 1);
+  $form->{text_out_decimal} = $c->num2text($form->{out_decimal} * 1); 
   $form->{text_out_amount} = $c->num2text($whole);
   $form->{integer_out_amount} = $whole;
   
@@ -386,23 +396,26 @@ sub print_transaction {
   # before we format replace <%var%>
   for (qw(description notes intnotes)) { $form->{$_} =~ s/<%(.*?)%>/$fld = lc $1; $form->{$fld}/ge }
   
-  @a = qw(employee paymentmethod invnumber transdate duedate notes intnotes ndcn rvc);
+  @a = qw(employee paymentmethod invnumber transdate duedate notes intnotes dcn rvc);
 
-  push @a, qw(companyemail companywebsite company address tel fax businessnumber text_amount text_decimal text_out_decimal text_out_amount);
+  push @a, qw(company address tel fax businessnumber text_amount text_decimal text_out_decimal text_out_amount);
   
   $form->format_string(@a);
 
   $form->{invdate} = $form->{transdate};
 
-  $form->{templates} = "$myconfig{templates}";
-  $form->{IN} = ($form->{formname} eq 'transaction') ? lc $form->{ARAP} . "_$form->{formname}.html" : "$form->{formname}.html";
+  $form->{templates} = "$templates/$myconfig{dbname}";
+  $form->{IN} = "$form->{formname}.$form->{format}";
+  $form->{IN} = lc $form->{ARAP} . "_$form->{formname}.$form->{format}" if $form->{formname} eq 'transaction';
 
-  if ($form->{format} =~ /(postscript|pdf)/) {
-    $form->{IN} =~ s/html$/tex/;
+  if ($form->{format} =~ /(ps|pdf)/) {
+    $form->{IN} =~ s/$&$/tex/;
   }
 
+  $form->{pre} = "<body bgcolor=#ffffff>\n<pre>" if $form->{format} eq 'txt';
+
   if ($form->{media} !~ /(screen)/) {
-    $form->{OUT} = "| $printer{$form->{media}}";
+    $form->{OUT} = qq~| $form->{"$form->{media}_printer"}~;
     
     if ($form->{printed} !~ /$form->{formname}/) {
 
@@ -412,7 +425,7 @@ sub print_transaction {
       $form->update_status(\%myconfig);
     }
 
-    $old_form->{printed} = $form->{printed} if %$old_form;
+    $oldform->{printed} = $form->{printed} if %$oldform;
     
     %audittrail = ( tablename   => lc $form->{ARAP},
                     reference   => $form->{"invnumber"},
@@ -420,7 +433,7 @@ sub print_transaction {
 		    action      => 'printed',
 		    id          => $form->{id} );
     
-    $old_form->{audittrail} .= $form->audittrail("", \%myconfig, \%audittrail) if %$old_form;
+    $oldform->{audittrail} .= $form->audittrail("", \%myconfig, \%audittrail) if %$oldform;
 
   }
 
@@ -429,12 +442,12 @@ sub print_transaction {
 
   $form->parse_template(\%myconfig, $userspath);
 
-  if (%$old_form) {
-    $old_form->{invnumber} = $form->{invnumber};
-    $old_form->{invtotal} = $form->{invtotal};
+  if (%$oldform) {
+    $oldform->{invnumber} = $form->{invnumber};
+    $oldform->{invtotal} = $form->{invtotal};
 
     for (keys %$form) { delete $form->{$_} }
-    for (keys %$old_form) { $form->{$_} = $old_form->{$_} }
+    for (keys %$oldform) { $form->{$_} = $oldform->{$_} }
 
     if (! $form->{printandpost}) {
       for (qw(exchangerate creditlimit creditremaining)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
@@ -458,11 +471,111 @@ sub print_credit_note { &print_transaction };
 sub print_debit_note { &print_transaction };
 
 
+sub print_payslip {
+  my ($oldform) = @_;
+
+  for (qw(ap payment paymentmethod withheld)) { $temp{$_} = $form->{$_} }
+
+  HR->get_employee(\%myconfig, \%$form);
+
+  for (keys %temp) { $form->{$_} = $temp{$_} };
+  
+  $display_form = ($form->{display_form}) ? $form->{display_form} : "display_form";
+ 
+  @a = ();
+  $form->{paid} = $form->parse_amount(\%myconfig, $form->{paid});
+  
+  if (exists $form->{longformat}) {
+    $form->{dateto} = $locale->date(\%myconfig, $form->{dateto}, $form->{longformat});
+    $form->{transdate} = $locale->date(\%myconfig, $form->{transdate}, $form->{longformat});
+    $form->{datepaid} = $form->{transdate};
+  }
+  
+  for (qw(employee paymentmethod department project)) { ($form->{$_}, $form->{"${_}_id"}) = split /--/, $form->{$_} };
+ 
+  push @a, qw(ap payment employee paymentmethod department project gldescription source memo);
+  $form->format_string(@a);
+  
+
+  use SL::CP;
+  $c = CP->new(($form->{language_code}) ? $form->{language_code} : $myconfig{countrycode}); 
+  $c->init;
+  ($whole, $form->{decimal}) = split /\./, $form->{paid};
+
+  $form->{decimal} .= "00";
+  $form->{decimal} = substr($form->{decimal}, 0, 2);
+  $form->{text_decimal} = $c->num2text($form->{decimal} * 1); 
+  $form->{text_amount} = $c->num2text($whole);
+  $form->{integer_amount} = $whole;
+  
+ 
+  # before we format replace <%var%>
+  $form->{description} =~ s/<%(.*?)%>/$fld = lc $1; $form->{$fld}/ge;
+  
+  @a = qw(description);
+
+  push @a, qw(company address tel fax businessnumber text_amount text_decimal);
+   
+  for $i (1 .. $form->{wage_rows}) {
+    if ($form->{"qty_$i"}) {
+      push @a, "wage_$i";
+
+      push @{ $form->{wage} }, $form->{"wage_$i"};
+      $form->{"pay_$i"} =~ s/-//;
+      push @{ $form->{pay} }, $form->{"pay_$i"};
+      push @{ $form->{qty} }, $form->{"qty_$i"};
+      push @{ $form->{amount} }, $form->{"amount_$i"};
+    }
+  }
+
+  delete $form->{deduct};
+  
+  for $i (1 .. $form->{deduction_rows}) {
+    if ($form->{"deduct_$i"}) {
+      push @a, "deduction_$i";
+
+      push @{ $form->{deduction} }, $form->{"deduction_$i"};
+      $form->{"deduct_$i"} =~ s/-//;
+      push @{ $form->{deduct} }, $form->{"deduct_$i"};
+    }
+  }
+
+  $form->format_string(@a);
+
+  $form->{templates} = "$templates/$myconfig{dbname}";
+  $form->{IN} = "$form->{formname}.$form->{format}";
+
+  if ($form->{format} =~ /(ps|pdf)/) {
+    $form->{IN} =~ s/$&$/tex/;
+  }
+
+  $form->{pre} = "<body bgcolor=#ffffff>\n<pre>" if $form->{format} eq 'txt';
+
+  if ($form->{media} !~ /(screen)/) {
+    $form->{OUT} = qq~| $form->{"$form->{media}_printer"}~;
+  }
+
+  $form->parse_template(\%myconfig, $userspath);
+
+  if (%$oldform) {
+    for (keys %$form) { delete $form->{$_} }
+    for (keys %$oldform) { $form->{$_} = $oldform->{$_} }
+
+    &{ "$display_form" };
+  }
+
+}
+
+
+
 sub select_payment {
 
   @column_index = qw(ndx datepaid source memo paid);
   push @column_index, "$form->{ARAP}_paid";
 
+  $helpref = $form->{helpref};
+  $form->helpref("select_payment", $myconfig{countrycode});
+  
   # list payments with radio button on a form
   $form->header;
 
@@ -482,7 +595,7 @@ sub select_payment {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$title</th>
+    <th class=listtop>$form->{helpref}$title</a></th>
   </tr>
   <tr space=5></tr>
   <tr>
@@ -533,7 +646,8 @@ sub select_payment {
 |;
 
   for (qw(action nextsub)) { delete $form->{$_} }
-
+  $form->{helpref} = $helpref;
+  
   $form->hide_form;
   
   print qq|
@@ -574,16 +688,18 @@ sub print_options {
   $media = qq|<select name=media>
           <option value="screen">|.$locale->text('Screen');
 
-  $selectformat = qq|<option value="html">html|;
-  
-  if (%printer && $latex) {
-    for (sort keys %printer) { $media .= qq| 
+  $selectformat = qq|<option value="html">|.$locale->text('html').qq|
+<option value="xml">|.$locale->text('XML').qq|
+<option value="txt">|.$locale->text('Text');
+			
+  if ($form->{selectprinter} && $latex) {
+    for (split /\n/, $form->unescape($form->{selectprinter})) { $media .= qq| 
           <option value="$_">$_| }
   }
 
   if ($latex) {
     $selectformat .= qq|
-<option value="postscript">|.$locale->text('Postscript').qq|
+<option value="ps">|.$locale->text('Postscript').qq|
 <option value="pdf">|.$locale->text('PDF');
   }
 
@@ -627,12 +743,11 @@ sub print_options {
 
 sub print_and_post {
 
-  $form->error($locale->text('Select postscript or PDF!')) if $form->{format} !~ /(postscript|pdf)/;
   $form->error($locale->text('Select a Printer!')) if $form->{media} eq 'screen';
 
   $form->{printandpost} = 1;
   $form->{display_form} = "post";
-  
+
   if (! $form->{invnumber}) {
     $invfld = 'sinumber';
     $invfld = 'vinumber' if $form->{ARAP} eq 'AP';

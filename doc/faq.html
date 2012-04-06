@@ -1,4 +1,19 @@
 <ul>
+
+<p><li><h4>Attempt to copy freed scalar</h4>
+Perl 5 with thread support has a bug.
+To get rid of panic errors and other issues the compiler can't handle,
+recompile perl without thread support.
+
+<p><li><h4>preamble.tex : No such file or directory</h4>
+templates are provided as is, some templates may have links to other files
+which are not included.
+The preample.tex file is simply a separate file which holds
+the header information for a template. Find a template with the header,
+that is everything up to \begin document, and put the stuff into a file
+called preamble.tex or simply cut and paste the header into the file and
+remove the <%include preamble.tex%> directive.
+
 <p><li><h4>wrong papersize</h4>
 If the papersize for postscript and PDF does not match set the proper
 size with texconfig-sys

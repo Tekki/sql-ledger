@@ -19,9 +19,8 @@ sub new {
   my $self = {};
 
   if ($login ne "") {
-    &error("", "$memfile locked!") if (-f "${memfile}.LCK");
     
-    open(MEMBER, "$memfile") or &error("", "$memfile : $!");
+    open(MEMBER, "$memfile");
     
     while (<MEMBER>) {
       if (/^\[$login\]/) {
@@ -49,6 +48,7 @@ sub new {
   }
   
   bless $self, $type;
+
 }
 
 
@@ -85,22 +85,24 @@ sub login {
   if ($self->{login} ne "") {
 
     if ($self->{password} ne "") {
+      return -2 unless $form->{password};
+      chomp $self->{password};
+      srand( time() ^ ($$ + ($$ << 15)) );
+
       my $password = crypt $form->{password}, substr($self->{login}, 0, 2);
       if ($self->{password} ne $password) {
-	return -1;
+	return -2;
       }
     }
 
     $self->{password} = $form->{password};
+
     $self->create_config("$userspath/$self->{login}.conf");
     
-    $self->{password} = $form->{password};
-      
-    do "$userspath/$self->{login}.conf";
-    $myconfig{dbpasswd} = unpack 'u', $myconfig{dbpasswd};
+    $self->{dbpasswd} = unpack 'u', $self->{dbpasswd};
   
     # check if database is down
-    my $dbh = DBI->connect($myconfig{dbconnect}, $myconfig{dbuser}, $myconfig{dbpasswd}) or $self->error($DBI::errstr);
+    my $dbh = DBI->connect($self->{dbconnect}, $self->{dbuser}, $self->{dbpasswd}) or $form->dberror;
 
     # we got a connection, check the version
     
@@ -110,7 +112,7 @@ sub login {
 
     my $query = qq|SELECT * FROM defaults|;
     my $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute;
 
     if ($sth->{NAME}->[0] eq 'fldname') {
       %defaults = $form->get_defaults($dbh, \@{[qw(version audittrail)]});
@@ -121,24 +123,15 @@ sub login {
       ($dbversion, $audittrail) = $dbh->selectrow_array($query);
     }
     $sth->finish;
-
-    # add login to employee table if it does not exist
-    # no error check for employee table, ignore if it does not exist
+  
     my $login = $self->{login};
     $login =~ s/@.*//;
-    $query = qq|SELECT id FROM employee WHERE login = '$login'|;
-    my ($id) = $dbh->selectrow_array($query);
-
-    if (! $id) {
-      $query = qq|INSERT INTO employee (login, name, workphone,
-                  role)
-                  VALUES ('$login', '$myconfig{name}',
-		  '$myconfig{tel}', '$myconfig{role}')|;
-      $dbh->do($query);
-      
-      $query = qq|SELECT id FROM employee WHERE login = '$login'|;
-      ($id) = $dbh->selectrow_array($query);
-    }
+    
+    # no error check for employee table, ignore if it does not exist
+    $query = qq|SELECT id
+                FROM employee
+		WHERE login = '$login'|;
+    ($id) = $dbh->selectrow_array($query);
 
     if ($audittrail) {
       $id *= 1;
@@ -146,23 +139,22 @@ sub login {
                   VALUES ($id, 'login')|;
       $dbh->do($query);
     }
-    
+
     $dbh->disconnect;
 
     $rc = 0;
-
     
-    if ($form->{dbversion} ne $dbversion) {
-      $rc = -3;
+    if (($form->{dbversion} ne $dbversion) && $dbversion) {
+      $rc = -4;
       $dbupdate = (calc_version($dbversion) < calc_version($form->{dbversion}));
     }
 
     if ($dbupdate) {
-      $rc = -4;
+      $rc = -5;
 
       # if DB2 bale out
       if ($myconfig{dbdriver} eq 'DB2') {
-	$rc = -2;
+	$rc = -3;
       }
     }
   }
@@ -172,10 +164,36 @@ sub login {
 }
 
 
+sub logout {
+  my ($self, $myconfig, $form) = @_;
+
+  my $dbh = $form->dbconnect($myconfig);
+  my $query;
+  
+  my %defaults = $form->get_defaults($dbh, \@{['audittrail']});
+
+  if ($defaults{audittrail}) {
+    $login = $form->{login};
+    $login =~ s/\@.*//;
+    $query = qq|SELECT id
+                FROM employee
+		WHERE login = '$login'|;
+    ($id) = $dbh->selectrow_array($query);
+    $id *= 1;
+    $query = qq|INSERT INTO audittrail (action, employee_id)
+                VALUES ('logout', $id)|;
+    $dbh->do($query);
+  }
+
+  $form->remove_locks($myconfig, $dbh);
+  
+  $dbh->disconnect;
+
+}
+
+
 sub check_recurring {
   my ($self, $form) = @_;
-
-  $self->{dbpasswd} = unpack 'u', $self->{dbpasswd};
 
   my $dbh = DBI->connect($self->{dbconnect}, $self->{dbuser}, $self->{dbpasswd}) or $form->dberror;
 
@@ -350,8 +368,6 @@ sub dbsources {
 sub dbcreate {
   my ($self, $form) = @_;
 
-  for (qw(db encoding)) { $form->{$_} =~ s/;//g }
-
   my %dbcreate = ( 'Pg' => qq|CREATE DATABASE "$form->{db}"|,
                 'Sybase' => qq|CREATE DATABASE $form->{db}|,
                'Oracle' => qq|CREATE USER "$form->{db}" DEFAULT TABLESPACE USERS TEMPORARY TABLESPACE TEMP IDENTIFIED BY "$form->{db}"|);
@@ -377,7 +393,6 @@ sub dbcreate {
     $form->{dbuser} = $form->{db};
     $form->{dbpasswd} = $form->{db};
   }
-  
   
   &dbconnect_vars($form, $form->{db});
   
@@ -407,15 +422,18 @@ sub dbcreate {
   $self->process_query($form, $dbh, $filename);
 
   # create custom tables and functions
-  my $item;
-  foreach $item (qw(tables functions)) {
-    $filename = "sql/${dbdriver}-custom_${item}.sql";
-    if (-f "$filename") {
-      $self->process_query($form, $dbh, $filename);
-    }
+  for (qw(tables functions)) {
+    $filename = "sql/${dbdriver}-custom_${_}.sql";
+    $self->process_query($form, $dbh, $filename);
   }
-  
+
+  $query = qq|INSERT INTO defaults (fldname, fldvalue)
+              VALUES ('company', '$form->{company}')|;
+  $dbh->do($query);
+ 
   $dbh->disconnect;
+
+  1;
 
 }
 
@@ -429,18 +447,12 @@ sub process_query {
   open(FH, "$filename") or $form->error("$filename : $!\n");
   my $query = "";
   my $loop = 0;
-  my $sth;
   
-
   while (<FH>) {
 
     if ($loop && /^--\s*end\s*(procedure|function|trigger)/i) {
       $loop = 0;
-
-      $sth = $dbh->prepare($query);
-      $sth->execute || $form->dberror($query);
-      $sth->finish;
-      
+      $dbh->do($query) || $form->dberror("$filename : $query");
       $query = "";
       next;
     }
@@ -464,24 +476,20 @@ sub process_query {
       $query =~ s/;\s*$//;
       $query =~ s/\\'/''/g;
 
-      $sth = $dbh->prepare($query);
-      $sth->execute || $form->dberror($query);
-      $sth->finish;
+      $dbh->do($query) || $form->dberror("$filename : $query");
 
       $query = "";
     }
 
   }
   close FH;
- 
+
 }
 
 
 
 sub dbdelete {
   my ($self, $form) = @_;
-
-  $form->{db} =~ s/;//g;
 
   my %dbdelete = ( 'Pg' => qq|DROP DATABASE "$form->{db}"|,
                 'Sybase' => qq|DROP DATABASE $form->{db}|,
@@ -497,202 +505,6 @@ sub dbdelete {
   $dbh->disconnect;
 
 }
-  
-
-
-sub dbsources_unused {
-  my ($self, $form, $memfile) = @_;
-
-  my @dbexcl = ();
-  my @dbsources = ();
-  
-  $form->error("$memfile locked!") if (-f "${memfile}.LCK");
-  
-  # open members file
-  open(FH, "$memfile") or $form->error("$memfile : $!");
-
-  while (<FH>) {
-    if (/^dbname=/) {
-      my ($null,$item) = split /=/;
-      push @dbexcl, $item;
-    }
-  }
-
-  close FH;
-
-  $form->{only_acc_db} = 1;
-  my @db = &dbsources("", $form);
-
-  push @dbexcl, $form->{dbdefault};
-
-  foreach $item (@db) {
-    unless (grep /$item$/, @dbexcl) {
-      push @dbsources, $item;
-    }
-  }
-
-  return @dbsources;
-
-}
-
-
-sub dbneedsupdate {
-  my ($self, $form) = @_;
-
-  my %dbsources = ();
-  my $query;
-
-  $form->{sid} = $form->{dbdefault};
-  &dbconnect_vars($form, $form->{dbdefault});
-
-  my $dbh = DBI->connect($form->{dbconnect}, $form->{dbuser}, $form->{dbpasswd}) or $form->dberror;
-
-  my $sth;
-  my $version;
-  my %defaults;
-
-  if ($form->{dbdriver} =~ /Pg/) {
-
-    $query = qq|SELECT d.datname FROM pg_database d, pg_user u
-                WHERE d.datdba = u.usesysid
-		AND u.usename = '$form->{dbuser}'|;
-
-    $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
-
-    while (my ($db) = $sth->fetchrow_array) {
-      
-      next if ($db =~ /^template/);
-      
-      &dbconnect_vars($form, $db);
-     
-      my $dbh = DBI->connect($form->{dbconnect}, $form->{dbuser}, $form->{dbpasswd}) or $form->dberror;
-
-      $query = qq|SELECT tablename FROM pg_tables
-		  WHERE tablename = 'defaults'|;
-
-      if ($dbh->selectrow_array($query)) {
-	$query = qq|SELECT * FROM defaults|;
-	my $sth = $dbh->prepare($query);
-	$sth->execute || $form->dberror($query);
-
-	if ($sth->{NAME}->[0] eq 'fldname') {
-	  %defaults = $form->get_defaults($dbh, \@{['version']});
-	  $version = $defaults{version};
-	} else {
-	  $query = qq|SELECT version FROM defaults|;
-	  ($version) = $dbh->selectrow_array($query);
-	}
-	$sth->finish;
-
-	$dbsources{$db} = $version if $version;
-      }
-      
-      $dbh->disconnect;
-    }
-    $sth->finish;
-  }
-
-
-  if ($form->{dbdriver} eq 'Oracle') {
-    $query = qq|SELECT owner FROM dba_objects
-		WHERE object_name = 'DEFAULTS'
-		AND object_type = 'TABLE'|;
-
-    $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
-
-    while (my ($db) = $sth->fetchrow_array) {
-      
-      $form->{dbuser} = $db;
-      &dbconnect_vars($form, $db);
-      
-      my $dbh = DBI->connect($form->{dbconnect}, $form->{dbuser}, $form->{dbpasswd}) or $form->dberror;
-      
-      $query = qq|SELECT * FROM defaults|;
-      my $sth->execute || $form->dberror($query);
-      
-      if ($sth->{NAME}->[0] eq 'fldname') {
-	%defaults = $form->get_defaults($dbh, \@{['version']});
-	$version = $defaults{version};
-      } else {
-	$query = qq|SELECT version FROM defaults|;
-	($version) = $dbh->selectrow_array($query);
-      }
-      $sth->finish;
-
-      $dbsources{$db} = $version if $version;
-      
-      $dbh->disconnect;
-    }
-    $sth->finish;
-  }
-
-  if ($form->{dbdriver} eq 'Sybase') {
-    $query = qq|SELECT tabschema FROM syscat.tables WHERE tabname = 'DEFAULTS'|;
-    $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
- 
-    while (my ($db) = $sth->fetchrow_array) {
-      
-      &dbconnect_vars($form, $db);
-     
-      my $dbh = DBI->connect($form->{dbconnect}, $form->{dbuser}, $form->{dbpasswd}) or $form->dberror;
-
-      $query = qq|SELECT * FROM defaults|;
-      my $sth = $dbh->prepare($query);
-      $sth->execute || $form->dberror($query);
-
-      if ($sth->{NAME}->[0] eq 'fldname') {
-	%defaults = $form->get_defaults($dbh, \@{['version']});
-	$version = $defaults{version};
-      } else {
-	$query = qq|SELECT version FROM defaults|;
-	($version) = $dbh->selectrow_array($query);
-      }
-      $sth->finish;
-
-      $dbsources{$db} = $version if $version;
-      
-      $dbh->disconnect;
-    }
-    $sth->finish;
-  }
-
-
-# JJR
-  if ($form->{dbdriver} eq 'DB2') {
-    $query = qq|SELECT tabschema FROM syscat.tables WHERE tabname = 'DEFAULTS'|;
-
-    $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
-
-    while (my ($db) = $sth->fetchrow_array) {
-
-      &dbconnect_vars($form, $db);
-
-      my $dbh = DBI->connect($form->{dbconnect}, $form->{dbuser}, $form->{dbpasswd}) or $form->dberror;
-
-      my %defaults = $form->get_defaults($dbh, \@{['version']});
-      
-      if (my $version = $defaults{version}) {
-	$dbsources{$db} = $version;
-      }
-
-      $dbh->disconnect;
-    }
-    $sth->finish;
-  }
-# End JJR
-  
-# code for DB2 is not used, keep for future reference
-# DS, Oct. 28, 2003
-  
-  $dbh->disconnect;
-  
-  %dbsources;
-
-}
 
 
 sub dbupdate {
@@ -702,74 +514,57 @@ sub dbupdate {
   
   my @upgradescripts = ();
   my $query;
-  my $rc = -2;
   
-  if ($form->{dbupdate}) {
-    # read update scripts into memory
-    opendir SQLDIR, "sql/." or $form->error($!);
-    @upgradescripts = sort script_version grep /$form->{dbdriver}-upgrade-.*?\.sql$/, readdir SQLDIR;
-    closedir SQLDIR;
+  # read update scripts into memory
+  opendir SQLDIR, "sql/." or $form->error($!);
+  @upgradescripts = sort script_version grep /$form->{dbdriver}-upgrade-.*?\.sql$/, readdir SQLDIR;
+  closedir SQLDIR;
+
+  &dbconnect_vars($form, $form->{dbname});
+  
+  my $dbh = DBI->connect($form->{dbconnect}, $form->{dbuser}, $form->{dbpasswd}) or $form->dberror;
+
+  # check version
+  $query = qq|SELECT * FROM defaults|;
+  my $sth = $dbh->prepare($query);
+  $sth->execute || $form->dberror($query);
+  
+  my %defaults;
+  my $version;
+
+  if ($sth->{NAME}->[0] eq 'fldname') {
+    %defaults = $form->get_defaults($dbh, \@{['version']});
+    $version = $defaults{version};
+  } else {
+    $query = qq|SELECT version FROM defaults|;
+    ($version) = $dbh->selectrow_array($query);
   }
+  $sth->finish;
+  
+  $version = calc_version($version);
+  my $dbversion = calc_version($form->{dbversion});
 
-
-  foreach my $db (split / /, $form->{dbupdate}) {
-
-    next unless $form->{$db};
-
-    # strip db from dataset
-    $db =~ s/^db//;
-    &dbconnect_vars($form, $db);
+  foreach my $upgradescript (@upgradescripts) {
+    my $us = $upgradescript;
+    $us =~ s/(^$form->{dbdriver}-upgrade-|\.sql$)//g;
     
-    my $dbh = DBI->connect($form->{dbconnect}, $form->{dbuser}, $form->{dbpasswd}) or $form->dberror;
+    my ($mindb, $maxdb) = split /-/, $us;
+    $mindb = calc_version($mindb);
+    $maxdb = calc_version($maxdb);
 
-    # check version
-    $query = qq|SELECT * FROM defaults|;
-    my $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
-    
-    my %defaults;
-    my $version;
+    next if ($version >= $maxdb);
 
-    if ($sth->{NAME}->[0] eq 'fldname') {
-      %defaults = $form->get_defaults($dbh, \@{['version']});
-      $version = $defaults{version};
-    } else {
-      $query = qq|SELECT version FROM defaults|;
-      ($version) = $dbh->selectrow_array($query);
-    }
-    $sth->finish;
-    
-    next unless $version;
+    # exit if there is no upgrade script or version == mindb
+    last if ($version < $mindb || $version >= $dbversion);
 
-    $version = calc_version($version);
-    my $dbversion = calc_version($form->{dbversion});
+    # apply upgrade
+    $self->process_query($form, $dbh, "sql/$upgradescript");
 
-    foreach my $upgradescript (@upgradescripts) {
-      my $a = $upgradescript;
-      $a =~ s/(^$form->{dbdriver}-upgrade-|\.sql$)//g;
-      
-      my ($mindb, $maxdb) = split /-/, $a;
-      $mindb = calc_version($mindb);
-      $maxdb = calc_version($maxdb);
+    $version = $maxdb;
 
-      next if ($version >= $maxdb);
-
-      # exit if there is no upgrade script or version == mindb
-      last if ($version < $mindb || $version >= $dbversion);
-
-      # apply upgrade
-      $self->process_query($form, $dbh, "sql/$upgradescript");
-
-      $version = $maxdb;
- 
-    }
-    
-    $rc = 0;
-    $dbh->disconnect;
-    
   }
-
-  $rc;
+  
+  $dbh->disconnect;
 
 }
   
@@ -819,8 +614,33 @@ sub script_version {
 sub create_config {
   my ($self, $filename) = @_;
 
-  @config = &config_vars;
+  $self->{dbpasswd} = unpack 'u', $self->{dbpasswd};
+
+  my $dbh = DBI->connect($self->{dbconnect}, $self->{dbuser}, $self->{dbpasswd}) or $self->error($DBI::errstr);
   
+  my $id;
+  my %acs;
+  my $login = $self->{login};
+  $login =~ s/@.*//;
+  
+  $query = qq|SELECT e.acs, a.acs
+	      FROM employee e
+	      LEFT JOIN acsrole a ON (e.acsrole_id = a.id)
+	      WHERE login = '$login'|;
+  ($acs{acs}, $acs{role}) = $dbh->selectrow_array($query);
+
+  $dbh->disconnect;
+
+  $acs{acs} .= ";$acs{role}";
+  for (split /;/, $acs{acs}) {
+    $acs{$_} = 1;
+  }
+  delete $acs{""};
+  delete $acs{acs};
+  delete $acs{role};
+
+  $self->{acs} = join ';', keys %acs;
+
   my $password = $self->{password};
   my $key = "";
 
@@ -850,6 +670,9 @@ sub create_config {
     $self->{password} = crypt $self->{password}, substr($self->{login}, 0, 2) if ! $self->{encrypted};
   }
 
+  $self->{dbpasswd} = pack 'u', $self->{dbpasswd};
+  chomp $self->{dbpasswd};
+  
   umask(002);
   open(CONF, ">$filename") or $self->error("$filename : $!");
   
@@ -859,24 +682,22 @@ sub create_config {
 \%myconfig = (
 |;
 
-  foreach $key (sort @config) {
-    $self->{$key} =~ s/\\/\\\\/g;
-    $self->{$key} =~ s/'/\\'/g;
-    print CONF qq|  $key => '$self->{$key}',\n|;
-  }
+  for (&config_vars) {
 
+    $self->{$_} =~ s/\\/\\\\/g;
+    $self->{$_} =~ s/'/\\'/g;
+
+    print CONF qq|  $_ => '$self->{$_}',\n| if $self->{$_};
+    $self->{$_} =~ s/\\\\/\\/g;
+    $self->{$_} =~ s/\\'/'/g;
+  }
    
   print CONF qq|);\n\n|;
 
   close CONF;
-  
-  foreach $key (sort @config) {
-    $self->{$key} =~ s/\\\\/\\/g;
-    $self->{$key} =~ s/\\'/'/g;
-  }
 
   $self->{password} = $password;
-  
+
 }
 
 
@@ -921,12 +742,15 @@ sub save_member {
   
   if ($self->{packpw}) {
     $self->{dbpasswd} = pack 'u', $self->{dbpasswd};
-    chop $self->{dbpasswd};
+    chomp $self->{dbpasswd};
   }
 
   my $password = $self->{password};
   if (!$self->{encrypted}) {
-    $self->{password} = crypt $self->{password}, substr($self->{login}, 0, 2) if $self->{password};
+    if ($self->{password}) {
+      srand( time() ^ ($$ + ($$ << 15)) );
+      $self->{password} = crypt $self->{password}, substr($self->{login}, 0, 2);
+    }
   }
 
   if ($self->{'root login'}) {
@@ -939,50 +763,16 @@ sub save_member {
   # replace \r\n with \n
   $self->{signature} =~ s/\r?\n/\\n/g;
 
-  for (sort @config) { print CONF qq|$_=$self->{$_}\n| }
+  for (sort @config) { print CONF qq|$_=$self->{$_}\n| if $self->{$_} }
 
   print CONF "\n";
   close CONF;
   unlink "${memberfile}.LCK";
 
-  # create conf file
+  # unlink conf file
   if (! $self->{'root login'}) {
     $self->{password} = $password;
     $self->create_config("$userspath/$self->{login}.conf");
-
-    $self->{dbpasswd} = unpack 'u', $self->{dbpasswd};
-    
-    # check if login is in database
-    my $dbh = DBI->connect($self->{dbconnect}, $self->{dbuser}, $self->{dbpasswd}, {AutoCommit => 0});
-    $self->error($DBI::errstr) unless $dbh;
-    
-    # add login to employee table if it does not exist
-    my $login = $self->{login};
-    $login =~ s/@.*//;
-    my $query = qq|SELECT id FROM employee WHERE login = '$login'|;
-    my ($id) = $dbh->selectrow_array($query);
-
-    if ($id) {
-      $query = qq|UPDATE employee SET
-                  role = '$self->{role}',
-		  email = '$self->{email}',
-		  workphone = '$self->{tel}',
-		  workfax = '$self->{fax}',
-		  name = '$self->{name}'
-                  WHERE login = '$login'|;
-
-    } else {
-      $query = qq|INSERT INTO employee (login, name, workphone, workfax,
-                  role, email, sales)
-		  VALUES ('$login', '$self->{name}',
-		  '$self->{tel}', '$self->{fax}', '$self->{role}',
-		  '$self->{email}', '1')|;
-    }
-    
-    $dbh->do($query);
-    $dbh->commit;
-    $dbh->disconnect;
-
   }
 
 }
@@ -1004,6 +794,11 @@ sub delete_login {
 		 enddate = current_date
 		 WHERE login = '$login'|;
   $dbh->do($query);
+  
+  $query = qq|UPDATE report SET
+		 login = ''
+		 WHERE login = '$login'|;
+  $dbh->do($query);
  
   $dbh->commit;
   $dbh->disconnect;
@@ -1015,9 +810,9 @@ sub config_vars {
 
   my @conf = qw(acs company countrycode dateformat
              dbconnect dbdriver dbhost dbname dboptions dbpasswd
-	     dbport dbuser email fax menuwidth name numberformat password
-	     outputformat printer role sessionkey sid signature
-	     stylesheet tel templates timeout vclimit);
+	     dbport dbuser menuwidth name email numberformat password
+	     outputformat printer sessionkey sid
+	     signature stylesheet timeout vclimit);
 
   @conf;
 
@@ -1027,18 +822,8 @@ sub config_vars {
 sub error {
   my ($self, $msg) = @_;
 
-  if ($ENV{HTTP_USER_AGENT}) {
-    print qq|Content-Type: text/html
+  die $msg;
 
-<body bgcolor=ffffff>
-
-<h2><font color=red>Error!</font></h2>
-<p><b>$msg</b>|;
-
-  }
-  
-  die "Error: $msg\n";
-  
 }
 
 

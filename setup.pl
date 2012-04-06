@@ -530,7 +530,7 @@ sub decompress {
 sub create_lockfile {
 
   if (-d "$userspath") {
-    open(FH, ">$userspath/nologin");
+    open(FH, ">$userspath/nologin.LCK");
     close(FH);
   }
   
@@ -547,6 +547,6 @@ sub cleanup {
 }
 
 
-sub remove_lockfile { unlink "$userspath/nologin" if (-f "$userspath/nologin") };
+sub remove_lockfile { unlink "$userspath/nologin.LCK" if (-f "$userspath/nologin.LCK") };
 
 

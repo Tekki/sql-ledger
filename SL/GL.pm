@@ -20,8 +20,6 @@ sub delete_transaction {
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
   
-  $form->{id} *= 1;
-  
   my %audittrail = ( tablename  => 'gl',
                      reference  => $form->{reference},
 		     formname   => 'transaction',
@@ -30,7 +28,7 @@ sub delete_transaction {
  
   $form->audittrail($dbh, "", \%audittrail);
 
-  if ($form->{batchid} *= 1) {
+  if ($form->{batchid}) {
     $query = qq|SELECT sum(amount)
 		FROM acc_trans
 		WHERE trans_id = $form->{id}
@@ -51,9 +49,18 @@ sub delete_transaction {
   $query = qq|DELETE FROM gl WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
 
-  for (qw(acc_trans dpt_trans yearend)) {
-    $query = qq|DELETE FROM $_ WHERE trans_id = $form->{id}|;
-    $dbh->do($query) || $form->dberror($query);
+  $query = qq|SELECT trans_id FROM pay_trans
+              WHERE glid = $form->{id}|;
+  ($form->{apid}) = $dbh->selectrow_array($query);
+  
+  my $id;
+  for $id (qw(id apid)) {
+    for (qw(acc_trans dpt_trans yearend pay_trans status reference)) {
+      if ($form->{$id}) {
+	$query = qq|DELETE FROM $_ WHERE trans_id = $form->{$id}|;
+	$dbh->do($query) || $form->dberror($query);
+      }
+    }
   }
   
   for (qw(recurring recurringemail recurringprint)) {
@@ -97,10 +104,10 @@ sub post_transaction {
   my %defaults = $form->get_defaults($dbh, \@{['precision']});
   $form->{precision} = $defaults{precision};
 
-  if ($form->{id} *= 1) {
+  if ($form->{id}) {
     $keepcleared = 1;
     
-    if ($form->{batchid} *= 1) {
+    if ($form->{batchid}) {
       $query = qq|SELECT * FROM vr
 		  WHERE trans_id = $form->{id}|;
       $sth = $dbh->prepare($query) || $form->dberror($query);
@@ -134,7 +141,7 @@ sub post_transaction {
 
     if ($form->{id}) {
       # delete individual transactions
-      for (qw(acc_trans dpt_trans)) {
+      for (qw(acc_trans dpt_trans reference)) {
 	$query = qq|DELETE FROM $_ WHERE trans_id = $form->{id}|;
 	$dbh->do($query) || $form->dberror($query);
       }
@@ -161,12 +168,10 @@ sub post_transaction {
   $department_id *= 1;
 
   $form->{reference} = $form->update_defaults($myconfig, 'glnumber', $dbh) unless $form->{reference};
-  $form->{reference} ||= $form->{id};
 
   $form->{currency} ||= $form->{defaultcurrency};
 
-  my $exchangerate = $form->parse_amount($myconfig, $form->{exchangerate});
-  $exchangerate ||= 1;
+  $form->{exchangerate} = $form->parse_amount($myconfig, $form->{exchangerate}) || 1;
 
   $query = qq|UPDATE gl SET 
 	      reference = |.$dbh->quote($form->{reference}).qq|,
@@ -175,7 +180,7 @@ sub post_transaction {
 	      transdate = '$form->{transdate}',
 	      department_id = $department_id,
 	      curr = '$form->{currency}',
-	      exchangerate = $exchangerate
+	      exchangerate = $form->{exchangerate}
 	      WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
 
@@ -184,6 +189,9 @@ sub post_transaction {
                 VALUES ($form->{id}, $department_id)|;
     $dbh->do($query) || $form->dberror($query);
   }
+  
+  # update exchangerate
+  $form->update_exchangerate($dbh, $form->{currency}, $form->{transdate}, $form->{exchangerate});
 
   my $amount;
   my $debit;
@@ -204,7 +212,7 @@ sub post_transaction {
     
     if ($credit) {
       $amount = $credit;
-      $bramount += $form->round_amount($amount * $exchangerate, $form->{precision});
+      $bramount += $form->round_amount($amount * $form->{exchangerate}, $form->{precision});
     }
     if ($debit) {
       $amount = $debit * -1;
@@ -238,7 +246,7 @@ sub post_transaction {
 
       if ($form->{currency} ne $form->{defaultcurrency}) {
 
-	$amount = $form->round_amount($amount * ($exchangerate - 1), $form->{precision});
+	$amount = $form->round_amount($amount * ($form->{exchangerate} - 1), $form->{precision});
 	
 	if ($amount) {
 	  $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount, transdate,
@@ -274,7 +282,10 @@ sub post_transaction {
 			  $bramount);
    
   }
-  
+
+  # save reference documents
+  $form->save_reference($dbh);
+    
   my %audittrail = ( tablename  => 'gl',
                      reference  => $form->{reference},
 		     formname   => 'transaction',
@@ -379,8 +390,30 @@ sub transactions {
   my $where;
 
   if ($form->{accnofrom}) {
+    $query = qq|SELECT c.description,
+                l.description AS translation
+		FROM chart c
+		LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+		WHERE c.accno = '$form->{accnofrom}'|;
+    ($form->{accnofrom_description}, $form->{accnofrom_translation}) = $dbh->selectrow_array($query);
+      $form->{accnofrom_description} = $form->{accnofrom_translation} if $form->{accnofrom_translation};
+ 
     $where = " AND c.accno >= '$form->{accnofrom}'";
-    $where .= " AND c.accno <= '$form->{accnoto}'" if $form->{accnoto};
+    $glwhere .= $where;
+    $arwhere .= $where;
+    $apwhere .= $where;
+  }
+
+  if ($form->{accnoto}) {
+    $query = qq|SELECT c.description,
+                l.description AS translation
+		FROM chart c
+		LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+		WHERE c.accno = '$form->{accnoto}'|;
+    ($form->{accnoto_description}, $form->{accnoto_translation}) = $dbh->selectrow_array($query);
+      $form->{accnoto_description} = $form->{accnoto_translation} if $form->{accnoto_translation};
+ 
+    $where = " AND c.accno <= '$form->{accnoto}'";
     $glwhere .= $where;
     $arwhere .= $where;
     $apwhere .= $where;
@@ -523,8 +556,8 @@ sub transactions {
 		  name => 20,
 		  vcnumber => 21);
   
-  my @a = qw(id transdate reference accno);
-  my $sortorder = $form->sort_order(\@a, \%ordinal);
+  my @sf = qw(id transdate reference accno);
+  my $sortorder = $form->sort_order(\@sf, \%ordinal);
   
   my $query = qq|SELECT g.id, 'gl' AS type, $false AS invoice, g.reference,
                  g.description, ac.transdate, ac.source,
@@ -578,6 +611,9 @@ sub transactions {
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
+  my %trans;
+  my $i = 0;
+  
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
 
     # gl
@@ -614,13 +650,151 @@ sub transactions {
     }
 
     for (qw(address1 address2 city zipcode country)) { $ref->{address} .= "$ref->{$_} " }
-    
+
+    $trans{$ref->{id}}{$i} = {
+                      link => $ref->{link},
+                      type => $ref->{type},
+                     accno => $ref->{accno},
+                gifi_accno => $ref->{gifi_accno},
+                     debit => $ref->{debit},
+                    credit => $ref->{credit},
+                    amount => $ref->{debit} + $ref->{credit}
+		             };
     push @{ $form->{GL} }, $ref;
     
+    $i++;
+    
   }
-
   $sth->finish;
+
+  if ($form->{initreport}) {
+    $form->retrieve_report($myconfig, $dbh);
+  }
+  
+  $form->report_level($myconfig, $dbh);
+
   $dbh->disconnect;
+
+  if (! ($form->{accnofrom} || $form->{accnoto}) ) {
+    for my $id (keys %trans) {
+
+      my $arap = "";
+      my $ARAP;
+      my $gifi_arap = "";
+      my $paid = "";
+      my $gifi_paid = "";
+      my $accno = "";
+      my $gifi_accno = "";
+      my @arap = ();
+      my @paid = ();
+      my @accno = ();
+      my %accno = ();
+      my $aa = 0;
+      my $j;
+      my %seen = ();
+
+      for $i (reverse sort { $trans{$id}{$a}{amount} <=> $trans{$id}{$b}{amount} } keys %{$trans{$id}}) {
+
+	if ($trans{$id}{$i}{type} =~ /(ar|ap)/) {
+	  $ARAP = uc $trans{$id}{$i}{type};
+	  $aa = 1;
+	  if ($trans{$id}{$i}{link} eq $ARAP) {
+	    $arap = $trans{$id}{$i}{accno};
+	    $gifi_arap = $trans{$id}{$i}{gifi_accno};
+	    push @arap, $i;
+	  } elsif ($trans{$id}{$i}{link} =~ /${ARAP}_paid/) {
+	    $paid = $trans{$id}{$i}{accno};
+	    $gifi_paid = $trans{$id}{$i}{gifi_accno};
+	    push @paid, $i;
+	  } else {
+	    push @accno, { accno => $trans{$id}{$i}{accno},
+		      gifi_accno => $trans{$id}{$i}{gifi_accno},
+			       i => $i };
+	  }
+	}
+      }
+
+      if ($aa) {
+	for (@paid) {
+	  $form->{GL}[$_]{contra} = $arap;
+	  $form->{GL}[$_]{gifi_contra} = $gifi_arap;
+	}
+	if (@paid) {
+	  $i = pop @arap;
+	  $form->{GL}[$i]{contra} = $paid;
+	  $form->{GL}[$i]{gifi_contra} = $gifi_paid;
+	}
+	for (@arap) {
+	  $i = 0;
+	  for $ref (@accno) {
+	    $form->{GL}[$_]{contra} .= "$ref->{accno} " unless $seen{$ref->{accno}};
+	    $seen{$ref->{accno}} = 1;
+	    $form->{GL}[$_]{gifi_contra} .= "$ref->{gifi_accno} " unless $seen{$ref->{gifi_accno}};
+	    $seen{$ref->{gifi_accno}} = 1;
+	  }
+	  $i++;
+	}
+	for $ref (@accno) {
+	  $form->{GL}[$ref->{i}]{contra} = $arap;
+	  $form->{GL}[$ref->{i}]{gifi_contra} = $gifi_arap;
+	}
+      } else {
+	
+	%accno = %{$trans{$id}};
+	$j = 0;
+	
+	for $i (reverse sort { $trans{$id}{$a}{amount} <=> $trans{$id}{$b}{amount} } keys %{$trans{$id}}) {
+	  $found = 0;
+	  $amount = $trans{$id}{$i}{amount};
+	  $accno = $trans{$id}{$i}{accno};
+	  $gifi_accno = $trans{$id}{$i}{gifi_accno};
+	  $j = $i;
+	  
+	  if ($trans{$id}{$i}{debit}) {
+	    $amt = "debit";
+	    $rev = "credit";
+	  } else {
+	    $amt = "credit";
+	    $rev = "debit";
+	  }
+	  
+	  if ($trans{$id}{$i}{$amt}) {
+	    for (keys %accno) {
+	      if ($accno{$_}{$rev} == $trans{$id}{$i}{$amt}) {
+		$form->{GL}[$_]{contra} = $trans{$id}{$i}{accno};
+		$form->{GL}[$_]{gifi_contra} = $trans{$id}{$i}{gifi_accno};
+		$found = 1;
+		last;
+	      }
+	    }
+	  }
+
+	  if (!$found) {
+	    delete $accno{$j};
+	    delete $trans{$id}{$j};
+	    
+	    if ($amount) {
+	      for $i (reverse sort { $a{amount} <=> $b{amount} } keys %accno) {
+		if ($accno{$i}{amount} <= $amount) {
+		  $form->{GL}[$i]{contra} = $accno;
+		  $form->{GL}[$i]{gifi_contra} = $gifi_accno;
+		  $amount = $form->round_amount($amount - $accno{$i}{amount}, 10);
+		  last if $amount < 0;
+
+		  $form->{GL}[$j]{contra} .= "$accno{$i}{accno} " unless $seen{$accno{$i}{accno}};
+		  $seen{$accno{$i}{accno}};
+		  $form->{GL}[$j]{gifi_contra} .= "$accno{$i}{gifi_accno} " unless $seen{$accno{$i}{gifi_accno}};
+		  $seen{$accno{$i}{gifi_accno}};
+		  delete $accno{$i};
+		  delete $trans{$id}{$i};
+		}
+	      }
+	    }
+	  }
+	}
+      }
+    }
+  }
 
 }
 
@@ -631,19 +805,19 @@ sub transaction {
   my $query;
   my $sth;
   my $ref;
-  my @a;
+  my @gl;
   
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
   $form->remove_locks($myconfig, $dbh, 'gl');
   
-  my %defaults = $form->get_defaults($dbh, \@{[qw(closedto revtrans precision)]});
+  my %defaults = $form->get_defaults($dbh, \@{[qw(closedto revtrans precision referenceurl)]});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   $form->{currencies} = $form->get_currencies($dbh, $myconfig);
   
-  if ($form->{id} *= 1) {
+  if ($form->{id}) {
     $query = qq|SELECT g.*, 
                 d.description AS department,
 		br.id AS batchid, br.description AS batchdescription
@@ -674,7 +848,7 @@ sub transaction {
     
     while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
       $ref->{description} = $ref->{translation} if $ref->{translation};
-      push @a, $ref;
+      push @gl, $ref;
       if ($ref->{fx_transaction}) {
 	$fxdr += $ref->{amount} if $ref->{amount} < 0;
 	$fxcr += $ref->{amount} if $ref->{amount} > 0;
@@ -687,9 +861,9 @@ sub transaction {
     }
 
     if ($form->{fxadj}) {
-      @{ $form->{GL} } = @a;
+      @{ $form->{GL} } = @gl;
     } else {
-      foreach $ref (@a) {
+      foreach $ref (@gl) {
 	if (! $ref->{fx_transaction}) {
 	  push @{ $form->{GL} }, $ref;
 	}
@@ -698,6 +872,8 @@ sub transaction {
     
     # get recurring transaction
     $form->get_recurring($dbh);
+
+    $form->get_reference($dbh);
 
     $form->create_lock($myconfig, $dbh, $form->{id}, 'gl');
 

@@ -32,7 +32,6 @@ create index customer_customernumber_key on customer (customernumber);
 create index customer_contact_key on customer (lower(contact));
 create index customer_customer_id_key on customertax (customer_id);
 --
-create index employee_id_key on employee (id);
 create unique index employee_login_key on employee (login);
 create index employee_name_key on employee (lower(name));
 --

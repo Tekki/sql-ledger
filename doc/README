@@ -1,5 +1,5 @@
                    SQL-Ledger ERP
-                    Version 2.8
+                    Version 3.0
 
 
 DESCRIPTION:
@@ -21,17 +21,15 @@ Configuration files let you specify to which SQL database server
 to connect to, personal preferences such as company name,
 language, number and date format, etc.
 
-With the admin script you can create, edit or delete users,
-create and delete datasets and set up the Chart of Accounts
-and templates needed for the system.
+System administrators can create, lock or delete datasets.
 
-You can have a group of users using the same dataset and
-templates for generating Invoices, Income Statements and
-Balance Sheets or a different set altogether.
+Each company (dataset) has their own admin with full rights
+to access the dataset and to create additional logins.
 
 Templates are supplied in html, text and tex format to
 generate most of the forms. Forms can be printed to screen,
-sent to a printer or e-mailed.
+sent to a printer or e-mailed. In addition to the supplied
+templates users may also create other formats such as xml.
 
 
 LATEST VERSION:
@@ -86,14 +84,14 @@ other file.
 If you cannot use setup.pl because of a proxy or firewall
 download the tar.gz file and pass the filename to setup.pl
 
-  perl setup.pl sql-ledger-2.8.0.tar.gz
+  perl setup.pl sql-ledger-3.0.0.tar.gz
   
 
 INSTALLATION WITHOUT setup.pl:
 --------------------------------
 unpack the tar.gz file in /usr/local
 
-  tar xzvf sql-ledger-2.8.0.tar.gz
+  tar xzvf sql-ledger-3.0.0.tar.gz
 
 you should now have everything in /usr/local/sql-ledger
 
@@ -146,7 +144,7 @@ SET PERMISSION:
 ---------------
 change directory to /usr/local/sql-ledger
 
-# chown -hR nobody:nogroup users templates css spool
+# chown -hR nobody:nogroup users templates css spool doc
 
 replace nobody:nogroup with the web server user and group.
 Some systems use apache:apache, www, www-data, ...
@@ -165,7 +163,7 @@ You can control this with an .htaccess file
   Options +ExecCGI
   DirectoryIndex login.pl
 
-c) protect the users directory with an .htpasswd file
+c) protect the users, template and spool directory with an .htpasswd file
 
 AuthGroupFile /dev/null
 AuthName "Unauthorized"
@@ -173,47 +171,8 @@ AuthType Basic
 AuthUserFile /home/host.domain/private_html/sql-ledger/users/.htpasswd
 require valid-user
 
-d) protect the templates directory with an .htpasswd file
-
-AuthGroupFile /dev/null
-AuthName "Templates"
-AuthType Basic
-AuthUserFile /home/host.domain/private_html/sql-ledger/templates/.htpasswd
-require valid-user
-
-e) set up your PostgreSQL database and the tables.
-
-You will most likely only have access to PostgreSQL with
-some other tools like pgadmin.
-
-1) create a database user or use an assigned database user
-2) create a blank database or use one which was created for you
-3) load your web browser and connect to
-http://host.domain.com/private_html/sql-ledger/admin.pl
-to create the tables.
-
-There is no password so just hit the Enter key or click
-on "Continue".
-
-Select the "Database Administration" link
-
-Host [database host]               Port [      ]
-User [database user]           Password [for your database]
-Connect to [your database]
-
-click on "Create Dataset"
-
-The next screen is for choosing a Chart of Accounts
-
-Create Dataset [your database]
-Multibyte Encoding [                 ]
-
-Select a chart of accounts and click on "Continue".
-
-Your tables will now be created and the chart of accounts
-will be loaded.
-
-Go to the next step, "SET UP A USER"
+replace 'users' with 'templates' and 'spool' to protect the
+other directories
 
 
 PREPARE YOUR SQL DATABASE SERVER:
@@ -232,38 +191,54 @@ PREPARE YOUR SQL DATABASE SERVER:
   $ createuser -d -P sql-ledger
 
 
-SET UP A DATABASE AND TABLES:
------------------------------
+Note: If you cannot create a database directly go to
+CREATE A DATASET WITHOUT CREATE PRIVILEGES.
+
+
+CREATE DATASET:
+---------------
 Load your web browser and connect to
 http://localhost/sql-ledger/admin.pl
 
-Select the "Database Administration" link,
-enter the user you created in the previous step.
+There is no password so just hit the Enter key or click
+on "Continue".
 
-The "Create Dataset" link queries the server
-for existing datasets and displays them in a
-table. Enter a name for the new dataset (use
-lowercase letters only!) and select one of the
-Chart of Accounts and click on Continue.
+Check the appropriate database driver if there is more
+than one installed.
 
-You cannot manage any other datasets from this
-interface, only the datasets used by SQL-Ledger.
+Click on "Add Dataset"
 
-POSTGRESQL: template1 is only used to query
-the server, none of the information stored
-in template1 is manipulated in any way.
-You can connect to any other database you
-own, template1 is only a default.
+Host [database host]               Port [      ]
+User [database user]           Password [database password]
+Connect to [template1 or your_database]
+
+Note: template1 or your_database is required to make a connection
+to access the database, nothing will be created yet.
+
+Click on "Continue"
+
+Dataset [your_dataset]
+Company [name of the company]
+Templates [template set to create]
+Multibyte Encoding [                 ]
+
+Select a chart of accounts and click on "Continue".
+
+Your tables will now be created and the chart of accounts
+will be loaded.
 
 
-SET UP A USER:
--------------
-Load your web browser and connect to
-http://localhost/sql-ledger/admin.pl
+CREATE DATASET WITHOUT CREATE PRIVILEGES:
+-----------------------------------------
+If you cannot create a database, most ISPs won't let you
+directly access the database, you can still create the
+neccessary files to run SQL-Ledger.
 
-Click on "Add User". In the Database
-section select the driver and enter
-the user you used to create the dataset.
+1) use your database manager (pgadmin, etc) and log in with the
+database user your ISP has assigned to you
+2) create a blank database
+3) go to the previous step CREATE DATASET and enter
+the name of the database in the field "Dataset".
 
 
 LOAD THE PROGRAM:
@@ -272,32 +247,43 @@ Load your web browser and connect to
 http://localhost/sql-ledger/login.pl
 
 
+SET UP USERS:
+-------------
+Log into SQL-Ledger as user 'admin'
+
+If you have more than one dataset you can either
+choose from a list of datasets or log in directly
+to the dataset by appending @dataset to admin
+
+Go HR -> Add Employee
+
+In the field 'login' assign a login for the employee.
+
+Note: The same interface is used to remove a login,
+simply remove the login and the employee will no
+longer be able to log in.
+
+
 UPGRADING TO A NEWER VERSION:
 -----------------------------
 1. load admin.pl and lock the system
 2. untar the new version over top
 3. check the doc directory for specific notes
 4. load admin.pl and unlock the system
-5. log in
 
-NOTE: datasets are upgraded when you log in for
-the first time. During the upgrade process the
-dataset is locked so nobody can do any work.
-If an error occurs the system will remain locked.
-Track down the error, fix it, load admin.pl,
-unlock the system and log in again.
+Please read the UPGRADE file in the doc directory
+for further instructions.
 
 
 INSTALLATION CHECKLIST:
 -----------------------
 1. untar SQL-Ledger somewhere (i.e /usr/local, /opt)
-2. change permission for the users, templates, css and spool directory
+2. change permission for the users, templates, css, doc and spool directory
 3. edit httpd.conf
 4. edit sql-ledger.conf
-5. add the database user sql-ledger
+5. add the database user sql-ledger (or some other name)
 6. load admin.pl
 7. create datasets for companies
-8. add users
 
    In the Database section enter
    
