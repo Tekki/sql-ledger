@@ -1,0 +1,34 @@
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Account'                     => 'Konto',
+  'Amount'                      => 'Kwota',
+  'Continue'                    => 'Kontynuj',
+  'Date'                        => 'Data',
+  'Memo'                        => 'Notatka',
+  'Nothing to print!'           => 'Nic do wydrukowania!',
+  'PDF'                         => 'PDF',
+  'Postscript'                  => 'Postscript',
+  'Screen'                      => 'Ekran',
+  'Select payment'              => 'Wybierz płatność',
+  'Source'                      => 'Żródło',
+};
+
+$self{subs} = {
+  'payment_selected'            => 'payment_selected',
+  'print'                       => 'print',
+  'print_and_post'              => 'print_and_post',
+  'print_check'                 => 'print_check',
+  'print_credit_note'           => 'print_credit_note',
+  'print_debit_note'            => 'print_debit_note',
+  'print_options'               => 'print_options',
+  'print_payslip'               => 'print_payslip',
+  'print_receipt'               => 'print_receipt',
+  'print_remittance_voucher'    => 'print_remittance_voucher',
+  'print_transaction'           => 'print_transaction',
+  'select_payment'              => 'select_payment',
+  'kontynuj'                    => 'continue',
+};
+
+1;
+

@@ -1,0 +1,19 @@
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Continue'                    => 'Devam',
+  'From'                        => 'Başlangıç',
+  'To'                          => 'Bitiş',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'delete_invoices'             => 'delete_invoices',
+  'do_delete_invoices'          => 'do_delete_invoices',
+  'do_repost_invoices'          => 'do_repost_invoices',
+  'repost_invoices'             => 'repost_invoices',
+  'devam'                       => 'continue',
+};
+
+1;
+

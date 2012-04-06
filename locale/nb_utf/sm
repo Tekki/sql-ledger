@@ -1,0 +1,20 @@
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Continue'                    => 'Fortsett',
+  'From'                        => 'Fra',
+  'To'                          => 'Til',
+  'done'                        => 'gjort',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'delete_invoices'             => 'delete_invoices',
+  'do_delete_invoices'          => 'do_delete_invoices',
+  'do_repost_invoices'          => 'do_repost_invoices',
+  'repost_invoices'             => 'repost_invoices',
+  'fortsett'                    => 'continue',
+};
+
+1;
+

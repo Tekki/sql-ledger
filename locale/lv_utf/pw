@@ -1,0 +1,14 @@
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Continue'                    => 'Turpināt',
+  'Password'                    => 'Parole',
+};
+
+$self{subs} = {
+  'getpassword'                 => 'getpassword',
+  'turpināt'                    => 'continue',
+};
+
+1;
+

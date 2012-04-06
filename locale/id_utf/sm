@@ -1,0 +1,20 @@
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Continue'                    => 'Lanjut',
+  'From'                        => 'Dari',
+  'To'                          => 'Sampai',
+  'done'                        => 'selesai',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'delete_invoices'             => 'delete_invoices',
+  'do_delete_invoices'          => 'do_delete_invoices',
+  'do_repost_invoices'          => 'do_repost_invoices',
+  'repost_invoices'             => 'repost_invoices',
+  'lanjut'                      => 'continue',
+};
+
+1;
+

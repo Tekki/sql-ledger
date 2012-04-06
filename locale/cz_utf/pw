@@ -1,0 +1,14 @@
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Continue'                    => 'Pokračování',
+  'Password'                    => 'Heslo',
+};
+
+$self{subs} = {
+  'getpassword'                 => 'getpassword',
+  'pokračování'                 => 'continue',
+};
+
+1;
+

@@ -1,0 +1,1 @@
+../de/locales.pl

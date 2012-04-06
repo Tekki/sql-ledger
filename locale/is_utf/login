@@ -1,0 +1,23 @@
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Company'                     => 'Fyritćki',
+  'Continue'                    => 'Áfram',
+  'Incorrect Dataset version!'  => 'Röng útgáfa af gagnasfni!',
+  'Login'                       => 'Tengjast',
+  'Name'                        => 'Nafn',
+  'Password'                    => 'Ađgangsorđ',
+  'Version'                     => 'Útgáfa',
+  'You did not enter a name!'   => 'Ţú gafst ekki upp nafn',
+};
+
+$self{subs} = {
+  'login'                       => 'login',
+  'login_screen'                => 'login_screen',
+  'logout'                      => 'logout',
+  'selectdataset'               => 'selectdataset',
+  'tengjast'                    => 'login',
+};
+
+1;
+
