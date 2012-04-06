@@ -9,7 +9,6 @@ $self{texts} = {
   'Upgrading to Version'        => 'Opgraderer til version',
   'Version'                     => 'Version',
   'You did not enter a name!'   => 'Du angav ikke et navn',
-  'done'                        => 'færdig',
 };
 
 $self{subs} = {

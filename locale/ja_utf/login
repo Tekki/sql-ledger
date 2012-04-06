@@ -1,7 +1,6 @@
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Access Denied!'              => 'アクセス拒否',
   'Company'                     => '会社',
   'Continue'                    => '続ける',
   'Dataset is newer than version!' => 'デタセットはバージョンより新しい',
@@ -12,7 +11,6 @@ $self{texts} = {
   'Upgrading to Version'        => '更新的のバージョン',
   'Version'                     => 'バージョン',
   'You did not enter a name!'   => '名前を入力して下さい',
-  'done'                        => '済',
 };
 
 $self{subs} = {

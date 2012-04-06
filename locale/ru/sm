@@ -1,0 +1,19 @@
+$self{charset} = 'ISO-8859-5';
+
+$self{texts} = {
+  'Continue'                    => 'Продолжить',
+  'From'                        => 'с',
+  'To'                          => 'по',
+  'done'                        => 'выполнено',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'delete_invoices'             => 'delete_invoices',
+  'do_delete_invoices'          => 'do_delete_invoices',
+  'do_repost_invoices'          => 'do_repost_invoices',
+  'repost_invoices'             => 'repost_invoices',
+};
+
+1;
+

@@ -1,7 +1,6 @@
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Access Denied!'              => 'Отказан достъп!',
   'Company'                     => 'Фирма',
   'Continue'                    => 'Продължение',
   'Dataset is newer than version!' => 'Базата-данни е нова версия!',
@@ -12,7 +11,6 @@ $self{texts} = {
   'Upgrading to Version'        => 'Обнови версията',
   'Version'                     => 'Версия',
   'You did not enter a name!'   => 'Не сте въвели име!',
-  'done'                        => 'Готов',
 };
 
 $self{subs} = {

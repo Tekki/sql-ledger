@@ -1,0 +1,11 @@
+$self{charset} = 'BIG5';
+
+$self{texts} = {
+};
+
+$self{subs} = {
+  'reference_documents'         => 'reference_documents',
+};
+
+1;
+

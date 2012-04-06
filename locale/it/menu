@@ -26,7 +26,6 @@ $self{texts} = {
   'Description'                 => 'Descrizione',
   'General Ledger'              => 'Contabilit&agrave; generale',
   'Goods & Services'            => 'Beni e Servizi',
-  'HTML Templates'              => 'Modelli HTML',
   'Income Statement'            => 'Conto Economico',
   'LaTeX Templates'             => 'Modelli LaTeX',
   'Language'                    => 'Lingua',
@@ -72,8 +71,11 @@ $self{texts} = {
 $self{subs} = {
   'acc_menu'                    => 'acc_menu',
   'display'                     => 'display',
-  'js_menu'                     => 'js_menu',
+  'display_frame'               => 'display_frame',
+  'jsmenu'                      => 'jsmenu',
+  'jsmenu_frame'                => 'jsmenu_frame',
   'menubar'                     => 'menubar',
+  'mlmenu'                      => 'mlmenu',
   'section_menu'                => 'section_menu',
 };
 

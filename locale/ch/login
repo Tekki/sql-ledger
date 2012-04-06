@@ -1,7 +1,6 @@
 $self{charset} = 'ISO-8859-1';
 
 $self{texts} = {
-  'Access Denied!'              => 'Zugriff fehlgeschlagen!',
   'Company'                     => 'Firmenname',
   'Continue'                    => 'Weiter',
   'Dataset is newer than version!' => 'Datenset ist neuer als installierte Version',
@@ -12,7 +11,6 @@ $self{texts} = {
   'Upgrading to Version'        => 'Datenset wird erneuert auf Version',
   'Version'                     => 'Version',
   'You did not enter a name!'   => 'Sie haben keinen Namen eingegeben!',
-  'done'                        => 'fertig',
 };
 
 $self{subs} = {

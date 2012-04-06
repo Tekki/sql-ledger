@@ -1,0 +1,11 @@
+$self{charset} = 'ISO-8859-1';
+
+$self{texts} = {
+};
+
+$self{subs} = {
+  'open'                        => 'open',
+};
+
+1;
+

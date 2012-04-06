@@ -113,7 +113,6 @@ $self{texts} = {
   'To'                          => 'Bis',
   'Translation not on file!'    => 'Übersetzung nicht in der Datenbank',
   'Unit'                        => 'Einheit',
-  'Val'                         => 'TP',
   'Volume'                      => 'Beleg',
   'Work Order'                  => 'Arbeitsblatt',
   'XML'                         => 'XML',

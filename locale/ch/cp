@@ -75,7 +75,6 @@ $self{texts} = {
   'Print'                       => 'Drucken',
   'Printing check for'          => 'Printing check for',
   'Printing receipt for'        => 'Printing receipt for',
-  'Private'                     => 'Privat',
   'Project not on file!'        => 'Dieses Projekt ist nicht in der Datenbank!',
   'Receipt'                     => 'Quittung',
   'Receipts'                    => 'Quittungen',

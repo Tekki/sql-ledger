@@ -14,7 +14,6 @@ $self{texts} = {
   'Fixed value'                 => 'Fixer Wert',
   'Heading'                     => 'Überschrift',
   'Left'                        => 'Links',
-  'Private'                     => 'Privat',
   'Right'                       => 'Rechts',
   'Save Column'                 => 'Spalte speichern',
   'Save Report'                 => 'Rapport speichern',

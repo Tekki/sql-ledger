@@ -12,8 +12,8 @@ $self{texts} = {
   'Screen'                      => 'Ekraan',
   'Select a Printer!'           => 'Valida printer',
   'Select payment'              => 'Valida makse',
-  'Select postscript or PDF!'   => 'Vali kas postscript või PDF',
   'Source'                      => 'Allikas',
+  'Text'                        => 'Tekst',
 };
 
 $self{subs} = {
@@ -24,6 +24,7 @@ $self{subs} = {
   'print_credit_note'           => 'print_credit_note',
   'print_debit_note'            => 'print_debit_note',
   'print_options'               => 'print_options',
+  'print_payslip'               => 'print_payslip',
   'print_receipt'               => 'print_receipt',
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',

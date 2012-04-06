@@ -1,0 +1,19 @@
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Continue'                    => 'Weiter',
+  'From'                        => 'Von',
+  'To'                          => 'Bis',
+  'done'                        => 'fertig',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'delete_invoices'             => 'delete_invoices',
+  'do_delete_invoices'          => 'do_delete_invoices',
+  'do_repost_invoices'          => 'do_repost_invoices',
+  'repost_invoices'             => 'repost_invoices',
+};
+
+1;
+

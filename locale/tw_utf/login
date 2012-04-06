@@ -1,7 +1,6 @@
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Access Denied!'              => '拒絕存取！',
   'Company'                     => '公司',
   'Continue'                    => '繼續',
   'Dataset is newer than version!' => '較新資料集！',
@@ -12,7 +11,6 @@ $self{texts} = {
   'Upgrading to Version'        => '正升級至新版',
   'Version'                     => '版本',
   'You did not enter a name!'   => '你並未鍵入名稱！',
-  'done'                        => '完成',
 };
 
 $self{subs} = {

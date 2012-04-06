@@ -26,6 +26,7 @@ $self{texts} = {
   'Fax'                         => 'Fax',
   'Feb'                         => 'Feb',
   'February'                    => 'Febbraio',
+  'Image'                       => 'Immagine',
   'In-line'                     => 'In-line',
   'Invoice'                     => 'Fattura',
   'Invoice Date missing!'       => 'Manca la data della Fattura!',

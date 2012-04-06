@@ -6,7 +6,6 @@ $self{texts} = {
   'Name'                        => 'Nama',
   'Version'                     => 'Versi',
   'You did not enter a name!'   => 'Anda tidak memasukkan nama!',
-  'done'                        => 'selesai',
 };
 
 $self{subs} = {

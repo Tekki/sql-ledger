@@ -1,7 +1,6 @@
 $self{charset} = 'ISO-8859-2';
 
 $self{texts} = {
-  'Access Denied!'              => 'Prístup odmietnutý!',
   'Company'                     => 'Firma',
   'Continue'                    => 'Pokraèovanie',
   'Dataset is newer than version!' => 'Verzia databáz je nov¹ia ako programová!',
@@ -12,7 +11,6 @@ $self{texts} = {
   'Upgrading to Version'        => 'Aktualizacia na novú verziu',
   'Version'                     => 'Verzia',
   'You did not enter a name!'   => 'Nezadali ste meno!',
-  'done'                        => 'hotovo',
 };
 
 $self{subs} = {

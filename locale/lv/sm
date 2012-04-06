@@ -1,0 +1,19 @@
+$self{charset} = 'ISO-8859-13';
+
+$self{texts} = {
+  'Continue'                    => 'Turpinât',
+  'From'                        => 'No',
+  'To'                          => 'uz',
+  'done'                        => 'izdarîts',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'delete_invoices'             => 'delete_invoices',
+  'do_delete_invoices'          => 'do_delete_invoices',
+  'do_repost_invoices'          => 'do_repost_invoices',
+  'repost_invoices'             => 'repost_invoices',
+};
+
+1;
+

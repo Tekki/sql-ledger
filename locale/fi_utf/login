@@ -1,7 +1,6 @@
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Access Denied!'              => 'Pääsy kielletty',
   'Company'                     => 'Yritys',
   'Continue'                    => 'Jatka',
   'Dataset is newer than version!' => 'Tietokanta on uudempi kuin sovelluksen versio',
@@ -12,7 +11,6 @@ $self{texts} = {
   'Upgrading to Version'        => 'Päivitetään versioon',
   'Version'                     => 'Versio',
   'You did not enter a name!'   => 'Et kirjoittanut nimeä',
-  'done'                        => 'valmis',
 };
 
 $self{subs} = {

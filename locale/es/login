@@ -9,7 +9,6 @@ $self{texts} = {
   'Upgrading to Version'        => 'Actulaizando a versión',
   'Version'                     => 'Versión',
   'You did not enter a name!'   => 'No ha introducido el nombre',
-  'done'                        => 'hecho',
 };
 
 $self{subs} = {

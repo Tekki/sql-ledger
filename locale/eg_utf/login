@@ -9,7 +9,6 @@ $self{texts} = {
   'Password'                    => 'كلمة السر',
   'Version'                     => 'نسخة',
   'You did not enter a name!'   => 'لم يتم ادخال الاسم',
-  'done'                        => 'نفذ',
 };
 
 $self{subs} = {

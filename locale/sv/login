@@ -8,7 +8,6 @@ $self{texts} = {
   'Password'                    => 'Contraseña',
   'Version'                     => 'Versión',
   'You did not enter a name!'   => 'No introdujo un nombre!',
-  'done'                        => 'Hecho',
 };
 
 $self{subs} = {

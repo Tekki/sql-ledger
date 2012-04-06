@@ -189,6 +189,7 @@ $self{subs} = {
   'project_selected'            => 'project_selected',
   'rebuild_formnames'           => 'rebuild_formnames',
   'rebuild_vc'                  => 'rebuild_vc',
+  'reference_documents'         => 'reference_documents',
   'repost'                      => 'repost',
   'reprint'                     => 'reprint',
   'sales_invoice_'              => 'sales_invoice_',

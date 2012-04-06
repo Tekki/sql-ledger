@@ -110,7 +110,6 @@ $self{texts} = {
   'Pricegroup missing!'         => 'Preisgruppe fehlt!',
   'Pricegroup saved!'           => 'Preisgruppe gespeichert!',
   'Pricegroups'                 => 'Preisgruppen',
-  'Private'                     => 'Privat',
   'Production'                  => 'Produktion',
   'Project'                     => 'Projekt',
   'Project Description Translations' => 'Übersetzung für Projektbeschreibungen',

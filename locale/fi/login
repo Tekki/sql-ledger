@@ -9,7 +9,6 @@ $self{texts} = {
   'Upgrading to Version'        => 'Päivitetään',
   'Version'                     => 'Versio',
   'You did not enter a name!'   => 'Et kirjoittanut nimeä',
-  'done'                        => 'valmis',
 };
 
 $self{subs} = {
