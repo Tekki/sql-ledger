@@ -1205,7 +1205,7 @@ sub update_recurring {
 }
 
 sub check_access {
-	my ($self, $form, $folders, $errormessage) = @_;
+	my ($self, undef, $form, $folders, $errormessage) = @_;
 	
 	$errormessage ||= 'Access Denied!';
 	$form->error("$form->{file}: $errormessage") unless @$folders;
