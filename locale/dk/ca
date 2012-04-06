@@ -1,5 +1,4 @@
 $self{texts} = {
-  'AR/AP'                       => 'Kreditor/Debitor',
   'Account'                     => 'Konto',
   'Apr'                         => 'apr',
   'April'                       => 'april',

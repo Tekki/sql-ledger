@@ -24,8 +24,9 @@ sub add {
 
   $form->{callback} = "$form->{script}?action=add&db=$form->{db}&typeofcontact=$form->{typeofcontact}&path=$form->{path}&login=$form->{login}" unless $form->{callback};
 
+  $form->helpref("$form->{db}", $myconfig{countrycode});
   &create_links;
- 
+
   &display_form;
 
 }
@@ -35,17 +36,22 @@ sub edit {
 
   $form->{title} = "Edit";
 
+  $form->helpref("$form->{db}", $myconfig{countrycode});
   &create_links;
-  
+
   &display_form;
- 
+  
 }
 
 
 sub create_links {
-  
-  $form->{ARAP} = ($form->{db} eq 'customer') ? 'AR' : 'AP';
-  
+
+  if ($form->{db} eq 'customer') {
+    $form->{ARAP} = 'AR';
+  } else {
+    $form->{ARAP} = 'AP';
+  }
+
   CT->create_links(\%myconfig, \%$form);
 
   for (keys %$form) { $form->{$_} = $form->quote($form->{$_}) }
@@ -107,6 +113,14 @@ sub create_links {
     $form->{selectemployee} = $form->escape($form->{selectemployee},1);
   }
 
+  $i = 0;
+  for (@{ $form->{all_reference} }) {
+    $i++;
+    $form->{"referencedescription_$i"} = $_->{description};
+    $form->{"referenceid_$i"} = $_->{id};
+  }
+  $form->{reference_rows} = $i;
+
 }
 
  
@@ -120,10 +134,14 @@ sub history {
   $label .= " History";
 
   if ($form->{db} eq 'customer') {
+    $form->helpref("customer_history", $myconfig{countrycode});
+    
     $invlabel = $locale->text('Sales Invoices');
     $ordlabel = $locale->text('Sales Orders');
     $quolabel = $locale->text('Quotations');
   } else {
+    $form->helpref("vendor_history", $myconfig{countrycode});
+    
     $invlabel = $locale->text('Vendor Invoices');
     $ordlabel = $locale->text('Purchase Orders');
     $quolabel = $locale->text('Request for Quotations');
@@ -323,63 +341,64 @@ sub include_in_report {
     $vcnumber = $locale->text('Vendor Number');
   }
 
-  @a = ();
+  @f = ();
   
-  push @a, qq|<input name="l_ndx" type=checkbox class=checkbox value=Y> |.$locale->text('No.');
-  push @a, qq|<input name="l_id" type=checkbox class=checkbox value=Y> |.$locale->text('ID');
-  push @a, qq|<input name="l_typeofcontact" type=checkbox class=checkbox value=Y> |.$locale->text('Type');
-  push @a, qq|<input name="l_name" type=checkbox class=checkbox value=Y $form->{l_name}> $vcname|;
-  push @a, qq|<input name="l_$form->{db}number" type=checkbox class=checkbox value=Y> $vcnumber|;
-  push @a, qq|<input name="l_address" type=checkbox class=checkbox value=Y> |.$locale->text('Address');
-  push @a, qq|<input name="l_salutation" type=checkbox class=checkbox value=Y $form->{l_salutation}> |.$locale->text('Salutation');
-  push @a, qq|<input name="l_contact" type=checkbox class=checkbox value=Y $form->{l_contact}> |.$locale->text('Contact');
-  push @a, qq|<input name="l_contacttitle" type=checkbox class=checkbox value=Y $form->{l_contacttitle}> |.$locale->text('Titel');
-  push @a, qq|<input name="l_gender" type=checkbox class=checkbox value=Y $form->{l_gender}> |.$locale->text('Gender');
-  push @a, qq|<input name="l_occupation" type=checkbox class=checkbox value=Y $form->{l_occupation}> |.$locale->text('Occupation');
-  push @a, qq|<input name="l_email" type=checkbox class=checkbox value=Y $form->{l_email}> |.$locale->text('E-mail');
-  push @a, qq|<input name="l_phone" type=checkbox class=checkbox value=Y $form->{l_phone}> |.$locale->text('Phone');
-  push @a, qq|<input name="l_mobile" type=checkbox class=checkbox value=Y $form->{l_mobile}> |.$locale->text('Mobile');
-  push @a, qq|<input name="l_fax" type=checkbox class=checkbox value=Y> |.$locale->text('Fax');
-  push @a, qq|<input name="l_cc" type=checkbox class=checkbox value=Y> |.$locale->text('Cc');
-  
-  if ($myconfig{role} =~ /(admin|manager)/) {
-    push @a, qq|<input name="l_bcc" type=checkbox class=checkbox value=Y> |.$locale->text('Bcc');
-  }
-
-  push @a, qq|<input name="l_notes" type=checkbox class=checkbox value=Y> |.$locale->text('Notes');
-  push @a, qq|<input name="l_discount" type=checkbox class=checkbox value=Y> |.$locale->text('Discount');
-  push @a, qq|<input name="l_threshold" type=checkbox class=checkbox value=Y> |.$locale->text('Threshold');
-  push @a, qq|<input name="l_accounts" type=checkbox class=checkbox value=Y> |.$locale->text('Accounts');
-  push @a, qq|<input name="l_paymentmethod" type=checkbox class=checkbox value=Y> |.$locale->text('Payment Method');
-  push @a, qq|<input name="l_taxnumber" type=checkbox class=checkbox value=Y> |.$locale->text('Tax Number');
+  push @f, qq|<input name="l_ndx" type=checkbox class=checkbox value=Y> |.$locale->text('No.');
+  push @f, qq|<input name="l_id" type=checkbox class=checkbox value=Y> |.$locale->text('ID');
+  push @f, qq|<input name="l_typeofcontact" type=checkbox class=checkbox value=Y> |.$locale->text('Type');
+  push @f, qq|<input name="l_name" type=checkbox class=checkbox value=Y $form->{l_name}> $vcname|;
+  push @f, qq|<input name="l_$form->{db}number" type=checkbox class=checkbox value=Y> $vcnumber|;
+  push @f, qq|<input name="l_address" type=checkbox class=checkbox value=Y> |.$locale->text('Address');
+  push @f, qq|<input name="l_salutation" type=checkbox class=checkbox value=Y $form->{l_salutation}> |.$locale->text('Salutation');
+  push @f, qq|<input name="l_contact" type=checkbox class=checkbox value=Y $form->{l_contact}> |.$locale->text('Contact');
+  push @f, qq|<input name="l_contacttitle" type=checkbox class=checkbox value=Y $form->{l_contacttitle}> |.$locale->text('Titel');
+  push @f, qq|<input name="l_gender" type=checkbox class=checkbox value=Y $form->{l_gender}> |.$locale->text('Gender');
+  push @f, qq|<input name="l_occupation" type=checkbox class=checkbox value=Y $form->{l_occupation}> |.$locale->text('Occupation');
+  push @f, qq|<input name="l_email" type=checkbox class=checkbox value=Y $form->{l_email}> |.$locale->text('E-mail');
+  push @f, qq|<input name="l_cc" type=checkbox class=checkbox value=Y> |.$locale->text('Cc');
+  push @f, qq|<input name="l_bcc" type=checkbox class=checkbox value=Y> |.$locale->text('Bcc');
+  push @f, qq|<input name="l_city" type=checkbox class=checkbox value=Y> |.$locale->text('City');
+  push @f, qq|<input name="l_state" type=checkbox class=checkbox value=Y> |.$locale->text('State/Province');
+  push @f, qq|<input name="l_zipcode" type=checkbox class=checkbox value=Y> |.$locale->text('Zip/Postal Code');
+  push @f, qq|<input name="l_country" type=checkbox class=checkbox value=Y> |.$locale->text('Country');
+  push @f, qq|<input name="l_phone" type=checkbox class=checkbox value=Y $form->{l_phone}> |.$locale->text('Phone');
+  push @f, qq|<input name="l_fax" type=checkbox class=checkbox value=Y> |.$locale->text('Fax');
+  push @f, qq|<input name="l_notes" type=checkbox class=checkbox value=Y> |.$locale->text('Notes');
+  push @f, qq|<input name="l_discount" type=checkbox class=checkbox value=Y> |.$locale->text('Discount');
+  push @f, qq|<input name="l_threshold" type=checkbox class=checkbox value=Y> |.$locale->text('Threshold');
+  push @f, qq|<input name="l_accounts" type=checkbox class=checkbox value=Y> |.$locale->text('Accounts');
+  push @f, qq|<input name="l_paymentmethod" type=checkbox class=checkbox value=Y> |.$locale->text('Payment Method');
+  push @f, qq|<input name="l_taxnumber" type=checkbox class=checkbox value=Y> |.$locale->text('Tax Number');
   
   if ($form->{db} eq 'customer') {
-    push @a, qq|<input name="l_employee" type=checkbox class=checkbox value=Y> |.$locale->text('Salesperson');
-    push @a, qq|<input name="l_manager" type=checkbox class=checkbox value=Y> |.$locale->text('Manager');
-    push @a, qq|<input name="l_pricegroup" type=checkbox class=checkbox value=Y> |.$locale->text('Pricegroup');
+    push @f, qq|<input name="l_employee" type=checkbox class=checkbox value=Y> |.$locale->text('Salesperson');
+    push @f, qq|<input name="l_pricegroup" type=checkbox class=checkbox value=Y> |.$locale->text('Pricegroup');
 
   } else {
-    push @a, qq|<input name="l_employee" type=checkbox class=checkbox value=Y> |.$locale->text('Employee');
-    push @a, qq|<input name="l_manager" type=checkbox class=checkbox value=Y> |.$locale->text('Manager');
-    push @a, qq|<input name="l_gifi_accno" type=checkbox class=checkbox value=Y> |.$locale->text('GIFI');
+    push @f, qq|<input name="l_employee" type=checkbox class=checkbox value=Y> |.$locale->text('Employee');
+    push @f, qq|<input name="l_gifi_accno" type=checkbox class=checkbox value=Y> |.$locale->text('GIFI');
 
   }
 
-  push @a, qq|<input name="l_sic_code" type=checkbox class=checkbox value=Y> |.$locale->text('SIC');
-  push @a, qq|<input name="l_bankname" type=checkbox class=checkbox value=Y> |.$locale->text('Bank');
-  push @a, qq|<input name="l_bankaddress" type=checkbox class=checkbox value=Y> |.$locale->text('Address');
-
-  push @a, qq|<input name="l_iban" type=checkbox class=checkbox value=Y> |.$locale->text('IBAN');
-  push @a, qq|<input name="l_bic" type=checkbox class=checkbox value=Y> |.$locale->text('BIC');
-  
-  push @a, qq|<input name="l_business" type=checkbox class=checkbox value=Y> |.$locale->text('Type of Business');
-  push @a, qq|<input name="l_creditlimit" type=checkbox class=checkbox value=Y> |.$locale->text('Credit Limit');
-  push @a, qq|<input name="l_terms" type=checkbox class=checkbox value=Y> |.$locale->text('Terms');
-  push @a, qq|<input name="l_language" type=checkbox class=checkbox value=Y> |.$locale->text('Language');
-  push @a, qq|<input name="l_curr" type=checkbox class=checkbox value=Y> |.$locale->text('Currency');
-  push @a, qq|<input name="l_remittancevoucher" type=checkbox class=checkbox value=Y> |.$locale->text('Remittance Voucher');
-  push @a, qq|<input name="l_startdate" type=checkbox class=checkbox value=Y> |.$locale->text('Startdate');
-  push @a, qq|<input name="l_enddate" type=checkbox class=checkbox value=Y> |.$locale->text('Enddate');
+  push @f, qq|<input name="l_sic_code" type=checkbox class=checkbox value=Y> |.$locale->text('SIC');
+  push @f, qq|<input name="l_bankname" type=checkbox class=checkbox value=Y> |.$locale->text('Bank');
+  push @f, qq|<input name="l_bankaddress" type=checkbox class=checkbox value=Y> |.$locale->text('Address');
+  push @f, qq|<input name="l_bankcity" type=checkbox class=checkbox value=Y> |.$locale->text('City');
+  push @f, qq|<input name="l_bankstate" type=checkbox class=checkbox value=Y> |.$locale->text('State/Province');
+  push @f, qq|<input name="l_bankzipcode" type=checkbox class=checkbox value=Y> |.$locale->text('Zip/Postal Code');
+  push @f, qq|<input name="l_bankcountry" type=checkbox class=checkbox value=Y> |.$locale->text('Country');
+ 
+  push @f, qq|<input name="l_iban" type=checkbox class=checkbox value=Y> |.$locale->text('IBAN');
+  push @f, qq|<input name="l_bic" type=checkbox class=checkbox value=Y> |.$locale->text('BIC');
+  push @f, qq|<input name="l_membernumber" type=checkbox class=checkbox value=Y> |.$locale->text('Member Number');
+  push @f, qq|<input name="l_clearingnumber" type=checkbox class=checkbox value=Y> |.$locale->text('BC Number');
+  push @f, qq|<input name="l_business" type=checkbox class=checkbox value=Y> |.$locale->text('Type of Business');
+  push @f, qq|<input name="l_creditlimit" type=checkbox class=checkbox value=Y> |.$locale->text('Credit Limit');
+  push @f, qq|<input name="l_terms" type=checkbox class=checkbox value=Y> |.$locale->text('Terms');
+  push @f, qq|<input name="l_language" type=checkbox class=checkbox value=Y> |.$locale->text('Language');
+  push @f, qq|<input name="l_remittancevoucher" type=checkbox class=checkbox value=Y> |.$locale->text('Remittance Voucher');
+  push @f, qq|<input name="l_startdate" type=checkbox class=checkbox value=Y> |.$locale->text('Startdate');
+  push @f, qq|<input name="l_enddate" type=checkbox class=checkbox value=Y> |.$locale->text('Enddate');
 
    
   $include = qq|
@@ -389,10 +408,10 @@ sub include_in_report {
 	    <table>
 |;
 
-  while (@a) {
+  while (@f) {
     $include .= qq|<tr>\n|;
     for (1 .. 5) {
-      $include .= qq|<td nowrap>|. shift @a;
+      $include .= qq|<td nowrap>|. shift @f;
       $include .= qq|</td>\n|;
     }
     $include .= qq|</tr>\n|;
@@ -469,7 +488,11 @@ sub search_name {
 	  <td><input name=employee size=32></td>
 |;
   }
- 
+  
+  if (! $form->{helpref}) {
+    $form->helpref("search_$form->{db}", $myconfig{countrycode});
+  }
+
   $focus = "name";
 
   $form->header;
@@ -481,7 +504,7 @@ sub search_name {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
   <tr valign=top>
@@ -578,6 +601,9 @@ sub search_name {
 
   print qq|
 </form>
+
+</body>
+</html>
 |;
 
 }
@@ -606,7 +632,7 @@ sub list_names {
   @columns = (id, name, typeofcontact, "$form->{db}number");
   
   if ($form->{l_address}) {
-    for (address1, address2, city, state, zipcode, country) {
+    for (address1, address2) {
       $form->{"l_$_"} = "Y";
       push @columns, $_;
     }
@@ -614,7 +640,7 @@ sub list_names {
     $href .= "&l_address=Y";
   }
   
-  push @columns, (salutation);
+  push @columns, (city, state, zipcode, country, salutation);
   
   if ($form->{l_contact}) {
     for (firstname, lastname) {
@@ -625,10 +651,10 @@ sub list_names {
     $href .= "&l_contact=Y";
   }
   
-  push @columns, (contacttitle, gender, occupation,
-	     phone, mobile, fax, email, cc, bcc, employee,
-	     manager, notes, discount, terms, creditlimit);
-
+  push@ columns, (contacttitle, gender, occupation,
+             phone, fax, email, cc, bcc, employee,
+	     notes, discount, terms, creditlimit);
+  
   if ($form->{l_accounts}) {
     for (arap_accno, payment_accno, discount_accno, taxaccounts) {
       $form->{"l_$_"} = "Y";
@@ -639,25 +665,20 @@ sub list_names {
   }
 
   push @columns, (paymentmethod, threshold, taxnumber, gifi_accno, sic_code,
-             business, pricegroup, language, curr, bankname);
+             business, pricegroup, language, bankname);
   
   if ($form->{l_bankaddress}) {
-    for (bankaddress1, bankaddress2, bankcity, bankstate, bankzipcode, bankcountry) {
+    for (bankaddress1, bankaddress2) {
       $form->{"l_$_"} = "Y";
       push @columns, $_;
     }
     $callback .= "&l_bankaddress=Y";
     $href .= "&l_bankaddress=Y";
   }
-  
-  push @columns, (
-	     iban, bic, remittancevoucher,
-	     startdate, enddate,
-	     invnumber, invamount, invtax, invtotal,
-	     ordnumber, ordamount, ordtax, ordtotal,
-	     quonumber, quoamount, quotax, quototal);
+
+  push @columns, qw(bankcity bankstate bankzipcode bankcountry iban bic remittancevoucher membernumber clearingnumber startdate enddate invnumber invamount invtax invtotal ordnumber ordamount ordtax ordtotal quonumber quoamount quotax quototal);
   @columns = $form->sort_columns(@columns);
-  
+
   if ($form->{sort} eq 'contact') {
     grep { s/^(firstname|lastname|contact)$// } @columns;
     unshift @columns, (firstname, lastname);
@@ -675,19 +696,19 @@ sub list_names {
   $form->{open} = $form->{closed} = "" if !$openclosed;
 
 
-  foreach $item (@columns) {
-    if ($form->{"l_$item"} eq "Y") {
-      push @column_index, $item;
+  for (@columns) {
+    if ($form->{"l_$_"} eq "Y") {
+      push @column_index, $_;
       # add column to href and callback
-      $callback .= "&l_$item=Y";
-      $href .= "&l_$item=Y";
+      $callback .= "&l_$_=Y";
+      $href .= "&l_$_=Y";
     }
   }
   
-  foreach $item (qw(amount tax total transnumber)) {
-    if ($form->{"l_$item"} eq "Y") { 
-      $callback .= "&l_$item=Y"; 
-      $href .= "&l_$item=Y"; 
+  for (qw(amount tax total transnumber)) {
+    if ($form->{"l_$_"} eq "Y") { 
+      $callback .= "&l_$_=Y"; 
+      $href .= "&l_$_=Y"; 
     }
   }
 
@@ -817,7 +838,8 @@ sub list_names {
     $option .= "\n<br>" if ($option);
     $option .= $locale->text('Closed');
   }
-  
+
+  $form->helpref("list_$form->{db}", $myconfig{countrycode});
 
   $form->{callback} = "$callback&sort=$form->{sort}";
   $callback = $form->escape($form->{callback});
@@ -834,19 +856,18 @@ sub list_names {
   $column_header{zipcode} = qq|<th><a class=listheading href=$href&sort=zipcode>|.$locale->text('Zip/Postal Code').qq|</a></th>|;
   $column_header{country} = qq|<th><a class=listheading href=$href&sort=country>|.$locale->text('Country').qq|</a></th>|;
   $column_header{salutation} = qq|<th>|.$locale->text('Salutation').qq|</th>|;
-  $column_header{firstname} = qq|<th>&nbsp;</th>|;
-  $column_header{lastname} = qq|<th><a class=listheading href=$href&sort=contact>|.$locale->text('Contact').qq|</a></th>|;
+  $column_header{firstname} = qq|<th><a class=listheading href=$href&sort=contact>|.$locale->text('Contact').qq|</a></th>|;
+  $column_header{lastname} = qq|<th>&nbsp;</th>|;
   $column_header{contacttitle} = qq|<th>|.$locale->text('Title').qq|</th>|;
-  $column_header{gender} = qq|<th>|.$locale->text('Gender').qq|</th>|;
+  $column_header{gender} = qq|<th>|.$locale->text('G').qq|</th>|;
   $column_header{occupation} = qq|<th><a class=listheading href=$href&sort=occupation>|.$locale->text('Occupation').qq|</a></th>|;
-  $column_header{phone} = qq|<th>|.$locale->text('Phone').qq|</th>|;
-  $column_header{mobile} = qq|<th>|.$locale->text('Mobile').qq|</th>|;
-  $column_header{fax} = qq|<th>|.$locale->text('Fax').qq|</th>|;
+  $column_header{phone} = qq|<th><a class=listheading href=$href&sort=phone>|.$locale->text('Phone').qq|</a></th>|;
+  $column_header{fax} = qq|<th><a class=listheading href=$href&sort=fax>|.$locale->text('Fax').qq|</a></th>|;
   $column_header{email} = qq|<th><a class=listheading href=$href&sort=email>|.$locale->text('E-mail').qq|</a></th>|;
   $column_header{cc} = qq|<th><a class=listheading href=$href&sort=cc>|.$locale->text('Cc').qq|</a></th>|;
   $column_header{bcc} = qq|<th><a class=listheading href=$href&sort=bcc>|.$locale->text('Bcc').qq|</a></th>|;
   $column_header{notes} = qq|<th><a class=listheading href=$href&sort=notes>|.$locale->text('Notes').qq|</a></th>|;
-  $column_header{discount} = qq|<th class=listheading>|.$locale->text('Discount').qq|</th>|;
+  $column_header{discount} = qq|<th class=listheading>%</th>|;
   $column_header{terms} = qq|<th class=listheading>|.$locale->text('Terms').qq|</th>|;
   $column_header{threshold} = qq|<th class=listheading>|.$locale->text('Threshold').qq|</th>|;
   $column_header{paymentmethod} = qq|<th><a class=listheading href=$href&sort=paymentmethod>|.$locale->text('Payment Method').qq|</a></th>|;
@@ -857,7 +878,7 @@ sub list_names {
 
   $column_header{arap_accno} = qq|<th class=listheading>|.$locale->text($form->{ARAP}).qq|</th>|;
   $column_header{payment_accno} = qq|<th class=listheading>|.$locale->text('Payment').qq|</th>|;
-  $column_header{discount_accno} = qq|<th class=listheading>|.$locale->text('Discount').qq|</th>|;
+  $column_header{discount_accno} = qq|<th class=listheading>|.$locale->text('Cash Discount').qq|</th>|;
   $column_header{taxaccounts} = qq|<th class=listheading>|.$locale->text('Tax').qq|</th>|;
 
   $column_header{taxnumber} = qq|<th><a class=listheading href=$href&sort=taxnumber>|.$locale->text('Tax Number').qq|</a></th>|;
@@ -874,6 +895,8 @@ sub list_names {
   $column_header{bankcountry} = qq|<th class=listheading>|.$locale->text('Country').qq|</th>|;
   $column_header{iban} = qq|<th class=listheading>|.$locale->text('IBAN').qq|</th>|;
   $column_header{bic} = qq|<th class=listheading>|.$locale->text('BIC').qq|</th>|;
+  $column_header{membernumber} = qq|<th class=listheading>|.$locale->text('Member Number').qq|</th>|;
+  $column_header{clearingnumber} = qq|<th class=listheading>|.$locale->text('BC Number').qq|</th>|;
   $column_header{remittancevoucher} = qq|<th class=listheading>|.$locale->text('RV').qq|</th>|;
   $column_header{startdate} = qq|<th><a class=listheading href=$href&sort=startdate>|.$locale->text('Startdate').qq|</a></th>|;
   $column_header{enddate} = qq|<th><a class=listheading href=$href&sort=enddate>|.$locale->text('Enddate').qq|</a></th>|;
@@ -887,11 +910,9 @@ sub list_names {
   } else {
     $column_header{employee} = qq|<th><a class=listheading href=$href&sort=employee>|.$locale->text('Employee').qq|</a></th>|;
   }
-  $column_header{manager} = qq|<th><a class=listheading href=$href&sort=manager>|.$locale->text('Manager').qq|</a></th>|;
 
   $column_header{pricegroup} = qq|<th><a class=listheading href=$href&sort=pricegroup>|.$locale->text('Pricegroup').qq|</a></th>|;
   $column_header{language} = qq|<th><a class=listheading href=$href&sort=language>|.$locale->text('Language').qq|</a></th>|;
-  $column_header{curr} = qq|<th><a class=listheading href=$href&sort=curr>|.$locale->text('Currency').qq|</a></th>|;
   
 
   $amount = $locale->text('Amount');
@@ -914,6 +935,7 @@ sub list_names {
   if ($form->{status}) {
     $form->{title} = ($form->{db} eq 'customer') ? $locale->text('Customers') : $locale->text('Vendors');
   } else {
+    $label = $vcname;
     $form->{title} = ($form->{db} eq 'customer') ? $locale->text('Customer Transactions') : $locale->text('Vendor Transactions');
   }
 
@@ -926,7 +948,7 @@ sub list_names {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$title</th>
+    <th class=listtop>$form->{helpref}$title</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1042,13 +1064,13 @@ sub list_names {
 	$column_data{discount} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{discount} * 100, undef, "&nbsp;")."</td>";
       }
       if ($form->{l_terms}) {
-	@a = ();
-	push @a, $form->format_amount(\%myconfig, $ref->{cashdiscount} * 100, undef) if $ref->{cashdiscount};
-	push @a, $ref->{discountterms} if $ref->{discountterms};
-	push @a, $ref->{terms} if $ref->{terms};
+	@f = ();
+	push @f, $form->format_amount(\%myconfig, $ref->{cashdiscount} * 100, undef) if $ref->{cashdiscount};
+	push @f, $ref->{discountterms} if $ref->{discountterms};
+	push @f, $ref->{terms} if $ref->{terms};
 	
-	$a = join '/', @a;
-	$column_data{terms} = "<td>&nbsp;$a</td>";
+	$x = join '/', @f;
+	$column_data{terms} = "<td>&nbsp;$x</td>";
       }
       if ($form->{l_threshold}) {
 	$column_data{threshold} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{threshold}, 0, "&nbsp;")."</td>";
@@ -1083,13 +1105,13 @@ sub list_names {
   }
   
   $i = 1;
-  if ($myconfig{acs} !~ /Customers--/) {
+  if ($myconfig{acs} !~ /AR--AR/) {
     if ($form->{db} eq 'customer') {
       $button{'Customers--Add Customer'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Customer').qq|"> |;
       $button{'Customers--Add Customer'}{order} = $i++;
     }
   }
-  if ($myconfig{acs} !~ /Vendors--/) {
+  if ($myconfig{acs} !~ /AP--AP/) {
     if ($form->{db} eq 'vendor') {
       $button{'Vendors--Add Vendor'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Vendor').qq|"> |;
       $button{'Vendors--Add Vendor'}{order} = $i++;
@@ -1179,14 +1201,18 @@ sub list_history {
   
   CT->get_history(\%myconfig, \%$form);
   
-  $href = "$form->{script}?action=list_history&direction=$form->{direction}&oldsort=$form->{oldsort}&db=$form->{db}&path=$form->{path}&login=$form->{login}&type=$form->{type}&transdatefrom=$form->{transdatefrom}&transdateto=$form->{transdateto}&history=$form->{history}";
+  $href = "$form->{script}?action=list_history";
+  for (qw(oldsort db path login type transdatefrom transdateto history)) { $href .= "&$_=$form->{$_}" }
+  
+  $callback = $href;
+  $href .= "&direction=$form->{direction}";
 
   $form->sort_order();
   
-  $callback = "$form->{script}?action=list_history&direction=$form->{direction}&oldsort=$form->{oldsort}&db=$form->{db}&path=$form->{path}&login=$form->{login}&type=$form->{type}&transdatefrom=$form->{transdatefrom}&transdateto=$form->{transdateto}&history=$form->{history}";
+  $callback .= "&direction=$form->{direction}";
   
   $form->{l_fxsellprice} = $form->{l_curr};
-  @columns = $form->sort_columns(partnumber, description, qty, unit, sellprice, fxsellprice, total, curr, discount, deliverydate, projectnumber, serialnumber);
+  @columns = $form->sort_columns(qw(partnumber description qty unit sellprice fxsellprice total curr discount deliverydate projectnumber serialnumber));
 
   if ($form->{db} eq 'customer') {
     $vcname = $locale->text('Customer');
@@ -1197,7 +1223,7 @@ sub list_history {
   }
   
   if ($form->{history} eq 'summary') {
-    @columns = $form->sort_columns(partnumber, description, qty, unit, sellprice, total, discount);
+    @columns = $form->sort_columns(qw(partnumber description qty unit sellprice total discount));
   }
   $form->{l_total} = "Y" if $form->{l_sellprice};
 
@@ -1236,6 +1262,11 @@ sub list_history {
     $callback .= "&email=".$form->escape($form->{email},1);
     $href .= "&email=".$form->escape($form->{email});
     $option .= "\n<br>".$locale->text('E-mail')." : $form->{email}";
+  }
+  if ($form->{employee}) {
+    $callback .= "&employee=".$form->escape($form->{employee},1);
+    $href .= "&employee=".$form->escape($form->{employee});
+    $option .= "\n<br>".$locale->text('Salesperson')." : $form->{employee}";
   }
   if ($form->{transdatefrom}) {
     $callback .= "&transdatefrom=$form->{transdatefrom}";
@@ -1294,6 +1325,8 @@ sub list_history {
 
   $colspan = $#column_index + 1;
 
+  $form->helpref("list_$form->{db}_history", $myconfig{countrycode});
+
   $form->header;
 
   print qq|
@@ -1301,7 +1334,7 @@ sub list_history {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1361,6 +1394,7 @@ sub list_history {
 |;
     }
 
+    $ref->{sellprice} = $ref->{sellprice} * (1 - $ref->{discount});
     $ref->{fxsellprice} = $ref->{sellprice};
     if ($form->{type} ne 'invoice') {
       $ref->{fxsellprice} = $ref->{sellprice};
@@ -1395,8 +1429,6 @@ sub list_history {
       $qty = 0;
     }
 
-    $j++;
-    
     if ($form->{history} eq 'detail' and $ref->{invid} ne $sameinvid) {
       # print inv, ord, quo number
       $i++; $i %= 2;
@@ -1446,12 +1478,37 @@ sub list_history {
         </tr>
 |;
     
+    $total += $ref->{sellprice} * $ref->{qty} * $ml;
+
+    # check next item for subtotal
+    if ($j < $lastndx) {
+      if ($ref->{id} ne $form->{CT}[$j+1]->{id}) {
+	# print subtotal
+	print qq|
+	    <tr class=listtotal>
+|;
+	for (@column_index) { $column_data{$_} = "<td>&nbsp;</td>" }
+	$column_data{total} = qq|<th align=right>|.$form->format_amount(\%myconfig, $total, $form->{precision})."</th>";
+	for (@column_index) { print "\n$column_data{$_}" }
+	$total = 0;
+      }
+    } else {
+      # print subtotal
+      print qq|
+	    <tr class=listtotal>
+|;
+      for (@column_index) { $column_data{$_} = "<td>&nbsp;</td>" }
+      $column_data{total} = qq|<th align=right>|.$form->format_amount(\%myconfig, $total, $form->{precision})."</th>";
+      for (@column_index) { print "\n$column_data{$_}" }
+    }
+    
     $sameid = $ref->{id};
     $sameinvid = $ref->{invid};
+   
+    $j++;
 
   }
 
- 
   print qq|
       </table>
     </td>
@@ -1485,15 +1542,6 @@ sub form_header {
   for (qw(discount cashdiscount)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, undef) }
  
   for (qw(terms discountterms)) { $form->{$_} = "" if ! $form->{$_} }
-  
-  if ($myconfig{role} =~ /(admin|manager)/) {
-    $bcc = qq|
-        <tr>
-	  <th align=right nowrap>|.$locale->text('Bcc').qq|</th>
-	  <td><input name=bcc size=35 value="$form->{bcc}"></td>
-	</tr>
-|;
-  }
 
   if ($form->{selectcurrency}) {
     $currency = qq|
@@ -1543,7 +1591,7 @@ sub form_header {
 	  .qq|</select>
 	  </td>
 	  <th align=right>|.$locale->text('Credit Limit').qq|</th>
-	  <td><input name=creditlimit size=11 value="$form->{creditlimit}"></td>
+	  <td><input name=creditlimit class="inputright" size=11 value="$form->{creditlimit}"></td>
 	</tr>
 |;
 
@@ -1552,7 +1600,7 @@ sub form_header {
   $discountaccount = qq|
         <tr>
 	  <th align=right>|.$locale->text('Terms').qq|</th>
-	  <td><b>|.$locale->text('Net').qq|</b> <input name=terms size=3 value="$form->{terms}"> <b>|.$locale->text('days').qq|</b></td>
+	  <td><b>|.$locale->text('Net').qq|</b> <input name=terms class="inputright" size=3 value="$form->{terms}"> <b>|.$locale->text('days').qq|</b></td>
 	</tr>
 |.$form->hide_form(qw(discount_accno cashdiscount discountterms));
 
@@ -1566,7 +1614,7 @@ sub form_header {
 	  .qq|</select>
 	  </td>
 	  <th align=right>|.$locale->text('Terms').qq|</th>
-	  <td><input name=cashdiscount size=3 value=$form->{cashdiscount}>% / <input name=discountterms size=3 value=$form->{discountterms}> <b>|.$locale->text('Net').qq|</b> <input name=terms size=3 value="$form->{terms}"> <b>|.$locale->text('days').qq|</b></td>
+	  <td><input name=cashdiscount class="inputright" size=3 value=$form->{cashdiscount}>% / <input name=discountterms class="inputright" size=3 value=$form->{discountterms}> <b>|.$locale->text('Net').qq|</b> <input name=terms class="inputright" size=3 value="$form->{terms}"> <b>|.$locale->text('days').qq|</b></td>
 	</tr>
 |;
   }
@@ -1592,7 +1640,7 @@ sub form_header {
 	  .qq|</select>
 	  </td>
 	  <th align=right>|.$locale->text('Threshold').qq|</th>
-	  <td><input name=threshold size=11 value="$form->{threshold}">
+	  <td><input name=threshold class="inputright" size=11 value="$form->{threshold}">
 	  $paymentmethod
 	  </td>
 	</tr>
@@ -1652,13 +1700,6 @@ sub form_header {
 
 
   if ($form->{selectemployee}) {
-
-    if ($myconfig{role} eq 'user') {
-      if ($form->{id} && $form->{employee_id}) {
-	$form->{selectemployee} = "$form->{employee}";
-      }
-    }
-    
     $employee = qq|
 	        <th align=right>$employeelabel</th>
 		<td><select name=employee>|
@@ -1772,6 +1813,8 @@ sub form_header {
 
   $form->{remittancevoucher} = ($form->{remittancevoucher}) ? "checked" : "";
 
+  $reference_documents = &reference_documents;
+
   $form->header;
 
   print qq|
@@ -1781,7 +1824,7 @@ sub form_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr>
     <td>
@@ -1850,7 +1893,10 @@ sub form_header {
 		<th align=right nowrap>|.$locale->text('Cc').qq|</th>
 		<td><input name=cc size=32 value="$form->{cc}"></td>
 	      </tr>
-	      $bcc
+    	      <tr>
+		<th align=right nowrap>|.$locale->text('Bcc').qq|</th>
+		<td><input name=bcc size=35 value="$form->{bcc}"></td>
+	      </tr>
 	    </table>
 	  </td>
 	</tr>
@@ -1878,26 +1924,31 @@ sub form_header {
     <td>
       <table>
 	<tr>
+	  $currency
 	  <th align=right>|.$locale->text('Startdate').qq|</th>
 	  <td><input name=startdate size=11 class=date title="$myconfig{dateformat}" value=$form->{startdate}></td>
-	  <th align=right>|.$locale->text('Enddate').qq|</th>
-	  <td><input name=enddate size=11 class=date title="$myconfig{dateformat}" value=$form->{enddate}></td>
-	  <th align=right>|.$locale->text('Discount').qq|</th>
-	  <td><input name=discount size=4 value="$form->{discount}">
-	  <b>%</b></td>
 	</tr>
 	<tr>
 	  $pricegroup
-	  <th align=right>|.$locale->text('Tax Number / SSN').qq|</th>
-	  <td><input name=taxnumber size=20 value="|.$form->quote($form->{taxnumber}).qq|"></td>
-	  $gifi
-	  <th align=right>|.$locale->text('SIC').qq|</th>
-	  <td><input name=sic_code size=6 maxlength=6 value="|.$form->quote($form->{sic_code}).qq|"></td>
+	  <th align=right>|.$locale->text('Enddate').qq|</th>
+	  <td><input name=enddate size=11 class=date title="$myconfig{dateformat}" value=$form->{enddate}></td>
+	</tr>
+	<tr>
+	  <th align=right>|.$locale->text('Discount').qq|</th>
+	  <td><input name=discount class="inputright" size=4 value="$form->{discount}">
+	  <b>%</b></td>
+
+	  $lang
 	</tr>
 	<tr>
 	  $typeofbusiness
-	  $lang
-	  $currency
+	  $gifi
+	</tr>
+	<tr>
+	  <th align=right>|.$locale->text('Tax Number / SSN').qq|</th>
+	  <td><input name=taxnumber size=20 value="|.$form->quote($form->{taxnumber}).qq|"></td>
+	  <th align=right>|.$locale->text('SIC').qq|</th>
+	  <td><input name=sic_code size=6 maxlength=6 value="|.$form->quote($form->{sic_code}).qq|"></td>
 	</tr>
 	<tr valign=top>
 	  $employee
@@ -1912,22 +1963,6 @@ sub form_header {
 	</tr>
 	<tr valign=top>
 	  <td colspan=2>
-	    <table>
-	      <tr>
-		<th align=right>|.$locale->text('IBAN').qq|</th>
-		<td><input name=iban size=34 maxlength=34 value="$form->{iban}"></td>
-	      </tr>
-	      <tr>
-		<th align=right>|.$locale->text('BIC').qq|</th>
-		<td><input name=bic size=11 maxlength=11 value="$form->{bic}"></td>
-	      </tr>
-	      <tr>
-		<td align=right><input name=remittancevoucher class=checkbox type=checkbox value=1 $form->{remittancevoucher}></td>
-		<th align=left>|.$locale->text('Remittance Voucher').qq|</th>
-	      </tr>
-	    </table>
-	  </td>
-	  <td colspan=4>
 	    <table>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Bank').qq|</th>
@@ -1959,6 +1994,35 @@ sub form_header {
 	      </tr>
 	    </table>
 	  </td>
+	  <td colspan=4>
+	    <table>
+	      <tr>
+		<th align=right>|.$locale->text('IBAN').qq|</th>
+		<td><input name=iban size=34 maxlength=34 value="$form->{iban}"></td>
+	      </tr>
+	      <tr>
+		<th align=right>|.$locale->text('BIC').qq|</th>
+		<td><input name=bic size=11 maxlength=11 value="$form->{bic}"></td>
+	      </tr>
+	      <tr>
+		<th align=right nowrap>|.$locale->text('Member Number').qq|</th>
+		<td><input name=membernumber size=20 value="$form->{membernumber}"></td>
+	      </tr>
+	      <tr>
+		<th align=right nowrap>|.$locale->text('BC Number').qq|</th>
+		<td><input name=clearingnumber size=20 value="$form->{clearingnumber}"></td>
+	      </tr>
+	      <tr>
+		<td align=right><input name=remittancevoucher class=checkbox type=checkbox value=1 $form->{remittancevoucher}></td>
+		<th align=left>|.$locale->text('Remittance Voucher').qq|</th>
+	      </tr>
+	    </table>
+	  </td>
+	</tr>
+	<tr>
+	  <td colspan=4>
+	    $reference_documents
+	  </td>
 	</tr>
       </table>
     </td>
@@ -1985,100 +2049,109 @@ sub form_footer {
              'Shipping Address' => { ndx => 3, key => 'H', value => $locale->text('Shipping Address') },
              'Save as new' => { ndx => 4, key => 'N', value => $locale->text('Save as new') },
 	     'AR Transaction' => { ndx => 7, key => 'A', value => $locale->text('AR Transaction') },
-	     'AP Transaction' => { ndx => 8, key => 'A', value => $locale->text('AP Transaction') },
-	     'Sales Invoice' => { ndx => 9, key => 'I', value => $locale->text('Sales Invoice') },
-	     'Credit Invoice' => { ndx => 10, key => 'R', value => $locale->text('Credit Invoice') },
-	     'POS' => { ndx => 11, key => 'C', value => $locale->text('POS') },
-	     'Sales Order' => { ndx => 12, key => 'O', value => $locale->text('Sales Order') },
-	     'Quotation' => { ndx => 13, key => 'Q', value => $locale->text('Quotation') },
-	     'Vendor Invoice' => { ndx => 14, key => 'I', value => $locale->text('Vendor Invoice') },
-	     'Debit Invoice' => { ndx => 15, key => 'R', value => $locale->text('Debit Invoice') },
-	     'Purchase Order' => { ndx => 16, key => 'O', value => $locale->text('Purchase Order') },
-	     'RFQ' => { ndx => 17, key => 'Q', value => $locale->text('RFQ') },
-	     'Pricelist' => { ndx => 18, key => 'P', value => $locale->text('Pricelist') },
-	     'New Number' => { ndx => 19, key => 'M', value => $locale->text('New Number') },
-	     'Delete' => { ndx => 19, key => 'D', value => $locale->text('Delete') },
+	     'Credit Note' => { ndx => 8, key => 'E', value => $locale->text('Credit Note') },
+	     'AP Transaction' => { ndx => 9, key => 'A', value => $locale->text('AP Transaction') },
+	     'Debit Note' => { ndx => 10, key => 'E', value => $locale->text('Debit Note') },
+	     'Sales Invoice' => { ndx => 11, key => 'I', value => $locale->text('Sales Invoice') },
+	     'Credit Invoice' => { ndx => 12, key => 'R', value => $locale->text('Credit Invoice') },
+	     'POS' => { ndx => 13, key => 'C', value => $locale->text('POS') },
+	     'Sales Order' => { ndx => 14, key => 'O', value => $locale->text('Sales Order') },
+	     'Quotation' => { ndx => 15, key => 'Q', value => $locale->text('Quotation') },
+	     'Vendor Invoice' => { ndx => 16, key => 'I', value => $locale->text('Vendor Invoice') },
+	     'Debit Invoice' => { ndx => 17, key => 'R', value => $locale->text('Debit Invoice') },
+	     'Purchase Order' => { ndx => 18, key => 'O', value => $locale->text('Purchase Order') },
+	     'RFQ' => { ndx => 19, key => 'Q', value => $locale->text('RFQ') },
+	     'Pricelist' => { ndx => 20, key => 'P', value => $locale->text('Pricelist') },
+	     'New Number' => { ndx => 21, key => 'M', value => $locale->text('New Number') },
+	     'Delete' => { ndx => 22, key => 'D', value => $locale->text('Delete') },
 	    );
   
   
-  %a = ();
+  %f = ();
   
   if ($form->{db} eq 'customer') {
     if ($myconfig{acs} !~ /Customers--Add Customer/) {
-      $a{'Save'} = 1;
-      $a{'New Number'} = 1;
-      $a{'Shipping Address'} = 1;
-      $a{'Update'} = 1;
+      $f{'Save'} = 1;
+      $f{'New Number'} = 1;
+      $f{'Shipping Address'} = 1;
+      $f{'Update'} = 1;
 
       if ($form->{id}) {
-	$a{'Save as new'} = 1;
+	$f{'Save as new'} = 1;
 	if ($form->{status} eq 'orphaned') {
-	  $a{'Delete'} = 1;
+	  $f{'Delete'} = 1;
 	}
       }
     }
     
     if ($myconfig{acs} !~ /AR--AR/) {
       if ($myconfig{acs} !~ /AR--Add Transaction/) {
-	$a{'AR Transaction'} = 1;
+	$f{'AR Transaction'} = 1;
+      }
+      if ($myconfig{acs} !~ /AR--Credit Note/) {
+	$f{'Credit Note'} = 1;
       }
       if ($myconfig{acs} !~ /AR--Sales Invoice/) {
-	$a{'Sales Invoice'} = 1;
+	$f{'Sales Invoice'} = 1;
       }
       if ($myconfig{acs} !~ /AR--Credit Invoice/) {
-	$a{'Credit Invoice'} = 1;
+	$f{'Credit Invoice'} = 1;
       }
     }
     if ($myconfig{acs} !~ /POS--POS/) {
       if ($myconfig{acs} !~ /POS--Sale/) {
-	$a{'POS'} = 1;
+	$f{'POS'} = 1;
       }
     }
     if ($myconfig{acs} !~ /Order Entry--Order Entry/) {
       if ($myconfig{acs} !~ /Order Entry--Sales Order/) {
-	$a{'Sales Order'} = 1;
+	$f{'Sales Order'} = 1;
       }
     }
     if ($myconfig{acs} !~ /Quotations--Quotations/) {
       if ($myconfig{acs} !~ /Quotations--Quotation/) {
-	$a{'Quotation'} = 1;
+	$f{'Quotation'} = 1;
       }
     }
   }
   
   if ($form->{db} eq 'vendor') {
     if ($myconfig{acs} !~ /Vendors--Add Vendor/) {
-      $a{'Save'} = 1;
-      $a{'Shipping Address'} = 1;
-      $a{'Update'} = 1;
+      $f{'Save'} = 1;
+      $f{'New Number'} = 1;
+      $f{'Shipping Address'} = 1;
+      $f{'Update'} = 1;
 
       if ($form->{id}) {
-	$a{'Save as new'} = 1;
+	$f{'Save as new'} = 1;
 	if ($form->{status} eq 'orphaned') {
-	  $a{'Delete'} = 1;
+	  $f{'Delete'} = 1;
 	}
       }
     }
  
     if ($myconfig{acs} !~ /AP--AP/) {
       if ($myconfig{acs} !~ /AP--Add Transaction/) {
-	$a{'AP Transaction'} = 1;
+	$f{'AP Transaction'} = 1;
       }
-      if ($myconfig{acs} !~ /Vendor Invoice/) {
-	$a{'Vendor Invoice'} = 1;
+      if ($myconfig{acs} !~ /AP--Debit Note/) {
+	$f{'Debit Note'} = 1;
+      }
+      if ($myconfig{acs} !~ /AP--Vendor Invoice/) {
+	$f{'Vendor Invoice'} = 1;
       }
       if ($myconfig{acs} !~ /AP--Debit Invoice/) {
-	$a{'Debit Invoice'} = 1;
+	$f{'Debit Invoice'} = 1;
       }
     }
     if ($myconfig{acs} !~ /Order Entry--Order Entry/) {
       if ($myconfig{acs} !~ /Order Entry--Purchase Order/) {
-	$a{'Purchase Order'} = 1;
+	$f{'Purchase Order'} = 1;
       }
     }
     if ($myconfig{acs} !~ /Quotations--Quotations/) {
       if ($myconfig{acs} !~ /Quotations--RFQ/) {
-	$a{'RFQ'} = 1;
+	$f{'RFQ'} = 1;
       }
     }
   }
@@ -2086,14 +2159,14 @@ sub form_footer {
   if ($myconfig{acs} !~ /Goods & Services--Goods & Services/) {
     $myconfig{acs} =~ s/(Goods & Services--)Add (Service|Assembly).*;/$1--Add Part/g;
     if ($myconfig{acs} !~ /Goods & Services--Add Part/) {
-      $a{'Pricelist'} = 1;
+      $f{'Pricelist'} = 1;
     }
   }
 
   $form->{update_contact} = 1;
-  $form->hide_form(qw(id ARAP update_contact addressid contactid taxaccounts path login callback db status));
+  $form->hide_form(qw(id ARAP update_contact addressid contactid taxaccounts path login callback db status reference_rows referenceurl));
   
-  for (keys %button) { delete $button{$_} if ! $a{$_} }
+  for (keys %button) { delete $button{$_} if ! $f{$_} }
   for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
   
   if ($form->{menubar}) {
@@ -2115,27 +2188,28 @@ sub form_footer {
 sub shipping_address {
 
   $form->{title} = $locale->text('Shipping Address');
-
+  $form->helpref("$form->{db}_shipping_address", $myconfig{countrycode});
+  
   $form->{name} ||= "$form->{firstname} $form->{lastname}";
 
   CT->ship_to(\%myconfig, \%$form);
 
   %shipto = (
           address1 => { i => 2, label => $locale->text('Address') },
-	  address2 => { i => 3, label => '' },
-	  city => { i => 4, label => $locale->text('City') },
-	  state => { i => 5, label => $locale->text('State/Province') },
-	  zipcode => { i => 6, label => $locale->text('Zip/Postal Code') },
-	  country => { i => 7, label => $locale->text('Country') },
-	  contact => { i => 8, label => $locale->text('Contact') },
-	  phone => { i => 9, label => $locale->text('Phone') },
-	  fax => { i => 10, label => $locale->text('Fax') },
-	  email => { i => 11, label => $locale->text('E-mail') } );
-
+          address2 => { i => 3, label => '' },
+          city => { i => 4, label => $locale->text('City') },
+          state => { i => 5, label => $locale->text('State/Province') },
+          zipcode => { i => 6, label => $locale->text('Zip/Postal Code') },
+          country => { i => 7, label => $locale->text('Country') },
+          contact => { i => 8, label => $locale->text('Contact') },
+          phone => { i => 9, label => $locale->text('Phone') },
+          fax => { i => 10, label => $locale->text('Fax') },
+          email => { i => 11, label => $locale->text('E-mail') } );
+  
   $form->header;
 
   $vcname = $locale->text('Name');
-
+  
   print qq|
 <body>
 
@@ -2143,7 +2217,7 @@ sub shipping_address {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -2242,7 +2316,7 @@ sub shipping_address {
     $i++;
   }
   $form->{shipto_rows} = $i - 1;
-
+	 
   print qq|
       </table>
     </td>
@@ -2255,10 +2329,10 @@ sub shipping_address {
     $form->{flds} .= "$_ ";
   }
   chop $form->{flds};
-
+  
   $form->{nextsub} = "shipto_selected";
   $form->{action} = $form->{nextsub};
-  
+
   $form->hide_form;
   
   print qq|
@@ -2266,7 +2340,6 @@ sub shipping_address {
 
 <br>
 <input type=submit class=submit name=action value="|.$locale->text('Continue').qq|">
-  
 </form>
 
 </body>
@@ -2360,21 +2433,21 @@ sub customer_pricelist {
 
       for (qw(pricebreak sellprice)) { $form->{"${_}_$i"} = $form->parse_amount(\%myconfig, $form->{"${_}_$i"}) }
       
-      ($a, $b) = split /\./, $form->{"pricebreak_$i"};
-      $a = length $a;
-      $b = length $b;
-      $whole = ($whole > $a) ? $whole : $a;
-      $dec = ($dec > $b) ? $dec : $b;
+      ($x, $y) = split /\./, $form->{"pricebreak_$i"};
+      $x = length $x;
+      $y = length $y;
+      $whole = ($whole > $x) ? $whole : $x;
+      $dec = ($dec > $y) ? $dec : $y;
     }
     $pad1 = '0' x $whole;
     $pad2 = '0' x $dec;
 
     foreach $i (1 .. $form->{rowcount}) {
-      ($a, $b) = split /\./, $form->{"pricebreak_$i"};
+      ($x, $y) = split /\./, $form->{"pricebreak_$i"};
       
-      $a = substr("$pad1$a", -$whole);
-      $b = substr("$b$pad2", 0, $dec);
-      $ndx{qq|$form->{"partnumber_$i"}_$form->{"id_$i"}_$a$b|} = $i;
+      $x = substr("$pad1$x", -$whole);
+      $y = substr("$y$pad2", 0, $dec);
+      $ndx{qq|$form->{"partnumber_$i"}_$form->{"id_$i"}_$x$y|} = $i;
     }
     
     $i = 1;
@@ -2387,16 +2460,16 @@ sub customer_pricelist {
 	  next if ($form->{"id_$j"} eq $sameid && !$form->{"pricebreak_$i"});
 	}
 	
-	push @a, {};
-	$j = $#a;
+	push @f, {};
+	$j = $#f;
 
-	for (@flds) { $a[$j]->{$_} = $form->{"${_}_$i"} }
+	for (@flds) { $f[$j]->{$_} = $form->{"${_}_$i"} }
 	$count++;
       }
       $sameid = $form->{"id_$i"};
     }
    
-    $form->redo_rows(\@flds, \@a, $count, $form->{rowcount});
+    $form->redo_rows(\@flds, \@f, $count, $form->{rowcount});
     $form->{rowcount} = $count;
 
   }
@@ -2432,15 +2505,15 @@ sub vendor_pricelist {
 
     foreach $i (1 .. $form->{rowcount}) {
       if ($form->{"sku_$i"}) {
-	push @a, {};
-	$j = $#a;
+	push @f, {};
+	$j = $#f;
 
-	for (@flds) { $a[$j]->{$_} = $form->{"${_}_$i"} }
+	for (@flds) { $f[$j]->{$_} = $form->{"${_}_$i"} }
 	$count++;
       }
     }
    
-    $form->redo_rows(\@flds, \@a, $count, $form->{rowcount});
+    $form->redo_rows(\@flds, \@f, $count, $form->{rowcount});
     $form->{rowcount} = $count;
 
   }
@@ -2468,6 +2541,8 @@ sub pricelist_header {
   
   $form->{title} = ($form->{typeofcontact} ne 'company') ? "$form->{firstname} $form->{lastname}" : $form->{name};
  
+  $form->helpref("pricelist", $myconfig{countrycode});
+  
   $form->header;
 
   print qq|
@@ -2477,7 +2552,7 @@ sub pricelist_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
 |;
@@ -2564,16 +2639,16 @@ sub pricelist_header {
 
     if ($form->{db} eq 'customer') {
       
-      $column_data{pricebreak} = qq|<td align=right><input name="pricebreak_$i" size=5 value=|.$form->format_amount(\%myconfig, $form->{"pricebreak_$i"}).qq|></td>|;
-      $column_data{sellprice} = qq|<td align=right><input name="sellprice_$i" size=11 value=|.$form->format_amount(\%myconfig, $form->{"sellprice_$i"}).qq|></td>|;
+      $column_data{pricebreak} = qq|<td><input name="pricebreak_$i" class="inputright" size=5 value=|.$form->format_amount(\%myconfig, $form->{"pricebreak_$i"}).qq|></td>|;
+      $column_data{sellprice} = qq|<td><input name="sellprice_$i" class="inputright" size=11 value=|.$form->format_amount(\%myconfig, $form->{"sellprice_$i"}).qq|></td>|;
       
       $column_data{validfrom} = qq|<td nowrap><input name="validfrom_$i" size=11 value=$form->{"validfrom_$i"}></td>|;
       $column_data{validto} = qq|<td nowrap><input name="validto_$i" size=11 value=$form->{"validto_$i"}></td>|;
     }
     
     if ($form->{db} eq 'vendor') {
-      $column_data{leadtime} = qq|<td align=right><input name="leadtime_$i" size=5 value=|.$form->format_amount(\%myconfig, $form->{"leadtime_$i"}).qq|></td>|;
-      $column_data{lastcost} = qq|<td align=right><input name="lastcost_$i" size=11 value=|.$form->format_amount(\%myconfig, $form->{"lastcost_$i"}).qq|></td>|;
+      $column_data{leadtime} = qq|<td><input name="leadtime_$i" class="inputright" size=5 value=|.$form->format_amount(\%myconfig, $form->{"leadtime_$i"}).qq|></td>|;
+      $column_data{lastcost} = qq|<td><input name="lastcost_$i" class="inputright" size=11 value=|.$form->format_amount(\%myconfig, $form->{"lastcost_$i"}).qq|></td>|;
     }
       
 
@@ -2634,9 +2709,9 @@ sub update {
   if ($form->{update_contact}) {
 
     $form->{title} = ($form->{id}) ? 'Edit' : 'Add';
-
+  
     &display_form;
-
+  
     return;
     
   }
@@ -2731,6 +2806,9 @@ sub select_item {
   $column_data{sellprice} = qq|<th class=listheading>|.$locale->text('Sell Price').qq|</th>|;
   $column_data{lastcost} = qq|<th class=listheading>|.$locale->text('Cost').qq|</th>|;
   
+  $helpref = $form->{helpref};
+  $form->helpref("select_item", $myconfig{countrycode});
+  
   $form->header;
   
   $title = $locale->text('Select items');
@@ -2742,7 +2820,7 @@ sub select_item {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$title</th>
+    <th class=listtop>$form->{helpref}$title</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -2804,6 +2882,7 @@ sub select_item {
   # delete action variable
   for (qw(nextsub item_list)) { delete $form->{$_} }
   
+  $form->{helpref} = $helpref;
   $form->{action} = "item_selected";
 
   $form->hide_form;
@@ -2908,6 +2987,17 @@ sub ap_transaction {
 
   $form->{script} = "ap.pl";
   $form->{type} = "transaction";
+  $form->{ARAP} = "AP";
+  &add_transaction;
+
+}
+
+
+sub debit_note {
+
+  $form->{script} = "ap.pl";
+  $form->{type} = "debit_note";
+  $form->{ARAP} = "AP";
   &add_transaction;
 
 }
@@ -2917,6 +3007,17 @@ sub ar_transaction {
 
   $form->{script} = "ar.pl";
   $form->{type} = "transaction";
+  $form->{ARAP} = "AR";
+  &add_transaction;
+
+}
+
+
+sub credit_note {
+
+  $form->{script} = "ar.pl";
+  $form->{type} = "credit_note";
+  $form->{ARAP} = "AR";
   &add_transaction;
 
 }
@@ -3049,7 +3150,7 @@ sub delete {
 sub new_number {
 
   $form->{"$form->{db}number"} = $form->update_defaults(\%myconfig, "$form->{db}number");
-
+  
   &display_form;
 
 }
@@ -3068,3 +3169,42 @@ sub continue { &{ $form->{nextsub} } };
 sub add_customer { &add };
 sub add_vendor { &add };
 
+
+sub reference_documents {
+
+  $form->{reference_rows} ||= 1;
+  $form->{reference_rows}++ if $form->{"referenceid_$form->{reference_rows}"};
+
+  $_ = qq|
+	    <table>
+	      <tr class=listheading>
+		<th class=listheading colspan=2>|.$locale->text('Reference Documents').qq|</th>
+	      </tr>
+|;
+
+  for $i (1 .. $form->{reference_rows}) {
+    $_ .= qq|
+	      <tr>
+		<td><input name="referencedescription_$i" size=20 value="|.$form->quote($form->{"referencedescription_$i"}).qq|"></td>
+		<td><input name="referenceid_$i" size=10 value="$form->{"referenceid_$i"}">
+|;
+
+    if ($form->{referenceurl}) {
+      $_ .= qq|
+		<a href=$form->{referenceurl}$form->{"referenceid_$i"} target=_blank>?</a>
+|;
+    }
+
+    $_ .= qq|
+		</td>
+	      </tr>
+|;
+  }
+
+  $_ .= qq|
+	    </table>
+|;
+
+  $_;
+
+}

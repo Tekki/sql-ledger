@@ -86,7 +86,7 @@ sub add_batch {
 
 <table width=100%>
   <tr class=listtop>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
   <tr valign=top>
@@ -138,6 +138,8 @@ sub payable_batch {
   $form->{script} = "ap.pl";
   $form->{nextsub} = "add";
  
+  $form->helpref("payable_batch", $myconfig{countrycode});
+  
   &add_batch;
 
 }
@@ -154,6 +156,8 @@ sub general_ledger_batch {
   $form->{script} = "gl.pl";
   $form->{nextsub} = "add";
 
+  $form->helpref("gl_batch", $myconfig{countrycode});
+  
   &add_batch;
 
 }
@@ -168,6 +172,8 @@ sub payment_batch {
   $form->{title} = $locale->text('Add Payment Batch');
   $form->{script} = "cp.pl";
   $form->{nextsub} = "payment";
+  
+  $form->helpref("payment_batch", $myconfig{countrycode});
   
   &add_batch;
 
@@ -186,6 +192,8 @@ sub payments_batch {
   $form->{script} = "cp.pl";
   $form->{nextsub} = "payments";
   
+  $form->helpref("payments_batch", $myconfig{countrycode});
+  
   &add_batch;
 
 }
@@ -200,6 +208,8 @@ sub payment_reversal_batch {
   $form->{script} = "vr.pl";
   $form->{nextsub} = "edit_payment_reversal";
   $form->{batch} = "payment_reversal";
+
+  $form->helpref("payment_reversal", $myconfig{countrycode});
 
   &add_batch;
 
@@ -227,6 +237,8 @@ sub edit_payment_reversal {
     $form->{title} .= " / $form->{batchdescription}";
   }
 
+  $form->helpref("payment_reversal", $myconfig{countrycode});
+
   $form->header;
   
   print qq|
@@ -236,7 +248,7 @@ sub edit_payment_reversal {
 
 <table width=100%>
   <tr class=listtop>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -390,7 +402,7 @@ sub search {
 
   $employeelabel = $locale->text('Employee');
   
-  if ($myconfig{role} ne 'user') {
+  if ($form->{admin}) {
     if (@{ $form->{all_employee} }) {
       $form->{selectemployee} = "<option>\n";
       for (@{ $form->{all_employee} }) { $form->{selectemployee} .= qq|<option value="|.$form->quote($_->{name}).qq|--$_->{id}">$_->{name}\n| }
@@ -407,21 +419,19 @@ sub search {
   
   $l_employee = qq|<input name="l_employee" class=checkbox type=checkbox value=Y checked> $employeelabel|;
 
-  $l_manager = qq|<input name="l_manager" class=checkbox type=checkbox value=Y> |.$locale->text('Manager');
-
   if (@{ $form->{all_years} }) {
     # accounting years
-    $selectaccountingyear = "<option>\n";
-    for (@{ $form->{all_years} }) { $selectaccountingyear .= qq|<option>$_\n| }
+    $selectaccountingyear = "\n";
+    for (@{ $form->{all_years} }) { $selectaccountingyear .= qq|$_\n| }
     $selectaccountingmonth = "<option>\n";
-    for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|<option value=$_>|.$locale->text($form->{all_month}{$_}).qq|\n| }
+    for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|$_--|.$locale->text($form->{all_month}{$_}).qq|\n| }
 
     $selectfrom = qq|
         <tr>
 	<th align=right>|.$locale->text('Period').qq|</th>
 	<td colspan=3>
-	<select name=month>$selectaccountingmonth</select>
-	<select name=year>$selectaccountingyear</select>
+	<select name=month>|.$form->select_option($selectaccountingmonth, undef, 1, 1).qq|</select>
+	<select name=year>|.$form->select_option($selectaccountingyear).qq|</select>
 	<input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
 	<input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
 	<input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
@@ -440,7 +450,6 @@ sub search {
   push @a, qq|<input name="l_transdate" class=checkbox type=checkbox value=Y checked> |.$locale->text('Posting Date');
   push @a, qq|<input name="l_apprdate" class=checkbox type=checkbox value=Y> |.$locale->text('Approved');
   push @a, $l_employee;
-  push @a, $l_manager;
 
   %title = ( '' => 'All Batches',
              ap => 'Payable Batches',
@@ -457,6 +466,12 @@ sub search {
 
   $form->{title} = $locale->text($title{$form->{batch}});
 
+  if ($form->{batch}) {
+    $form->helpref("$form->{batch}_batch", $myconfig{countrycode});
+  } else {
+    $form->helpref("all_batch", $myconfig{countrycode});
+  }
+  
   $form->header;
   
   print qq|
@@ -465,7 +480,7 @@ sub search {
 <form method=post action=$form->{script}>
 
 <table width=100%>
-  <tr><th class=listtop>$form->{title}</th></tr>
+  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
   <tr height="5"></tr>
   <tr>
     <td>
@@ -479,7 +494,6 @@ sub search {
 	  <td colspan=3><input name=description size=40></td>
 	</tr>
 	$employee
-	$manager
 	<tr>
 	  <th align=right nowrap>|.$locale->text('From').qq|</th>
 	  <td colspan=3><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}"> <b>|.$locale->text('To').qq|</b> <input name=transdateto size=11 class=date title="$myconfig{dateformat}"></td>
@@ -496,10 +510,6 @@ sub search {
 	  <td>
 	    <table width=100%>
 |;
-
-  $form->{sort} = "batchnumber";
-  $form->hide_form(qw(title sort));
-  
 
   while (@a) {
     print qq|<tr>\n|;
@@ -526,10 +536,13 @@ sub search {
 </table>
 
 <br>
-<input type=hidden name=action value=continue>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">|;
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">
+|;
 
-  $form->hide_form(qw(batch nextsub path login));
+  $form->{sort} = "batchnumber";
+  $form->{action} = $form->{nextsub};
+  
+  $form->hide_form(qw(title sort helpref action batch nextsub path login));
   
   print qq|
 </form>
@@ -556,12 +569,14 @@ sub list_batches {
   $href = "$form->{script}?action=list_batches";
   for (qw(direction oldsort path login batch)) { $href .= qq|&$_=$form->{$_}| }
   $href .= "&title=".$form->escape($form->{title});
+  $href .= "&helpref=".$form->escape($form->{helpref});
 
   $form->sort_order();
   
   $callback = "$form->{script}?action=list_batches";
   for (qw(direction oldsort path login batch)) { $callback .= qq|&$_=$form->{$_}| }
   $callback .= "&title=".$form->escape($form->{title},1);
+  $callback .= "&helpref=".$form->escape($form->{helpref},1);
 
   $option = "";
   
@@ -600,7 +615,7 @@ sub list_batches {
     $option .= $locale->text('To')."&nbsp;".$locale->date(\%myconfig, $form->{transdateto}, 1);
   }
 
-  @columns = $form->sort_columns(qw(batchid batchnumber description transdate employee apprdate manager amount));
+  @columns = $form->sort_columns(qw(batchid batchnumber description transdate employee apprdate amount));
   unshift @columns, "runningnumber";
 
   @column_index = (qw(ndx));
@@ -628,7 +643,6 @@ sub list_batches {
   $column_header{amount} = "<th class=listheading>" . $locale->text('Total') . "</th>";
   $column_header{description} = "<th><a class=listheading href=$href&sort=description>".$locale->text('Description')."</a></th>";
   $column_header{employee} = "<th><a class=listheading href=$href&sort=employee>".$locale->text('Employee')."</th>";
-  $column_header{manager} = "<th><a class=listheading href=$href&sort=manager>".$locale->text('Manager')."</th>";
   
   $title = "$form->{title} / $form->{company}";
   
@@ -641,7 +655,7 @@ sub list_batches {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$title</th>
+    <th class=listtop>$form->{helpref}$title</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -705,7 +719,7 @@ sub list_batches {
 
     for (qw(description)) { $ref->{$_} =~ s/\r?\n/<br>/g }
     for (qw(transdate apprdate)) { $column_data{$_} = "<td nowrap>$ref->{$_}&nbsp;</td>" }
-    for (qw(description employee manager)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
+    for (qw(description employee)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
     for (qw(id)) { $column_data{$_} = "<td>$ref->{$_}</td>" }
 
     if ($ref->{id} != $sameid) {
@@ -781,7 +795,7 @@ sub list_batches {
 <br>
 |;
 
-  $form->hide_form(qw(callback path login rowcount));
+  $form->hide_form(qw(helpref callback path login rowcount));
   
   for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
   
@@ -914,6 +928,8 @@ sub list_vouchers {
   }
     
  
+  $form->helpref("list_vouchers", $myconfig{countrycode});
+  
   $form->header;
 
   print qq|
@@ -921,7 +937,7 @@ sub list_vouchers {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1008,7 +1024,7 @@ sub list_vouchers {
       
       if (! $form->{apprdate}) {
 	$button{'Add Voucher'} = { ndx => 1, key => 'A', value => $locale->text('Add Voucher') };
-	if ($myconfig{role} ne 'user') {
+	if ($form->{admin}) {
 	  $button{'Post Batch'} = { ndx => 2, key => 'O', value => $locale->text('Post Batch') };
 	}
       }

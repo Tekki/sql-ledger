@@ -25,10 +25,10 @@ sub send {
   my ($self, $out) = @_;
 
   my $boundary = time;
+  $boundary = "SL-$self->{version}-$boundary";
   my $domain = $self->{from};
   $domain =~ s/(.*?\@|>)//g;
   my $msgid = "$boundary\@$domain";
-  $boundary = "SL-$self->{version}-$boundary";
   
   $self->{charset} ||= "ISO-8859-1";
 
@@ -45,7 +45,6 @@ sub send {
     $self->{$_} =~ s/\&lt;/</g;
     $self->{$_} =~ s/\&gt;/>/g;
     $self->{$_} =~ s/(\/|\\|\$)//g;
-    $self->{$_} =~ s/["]?(.*?)["]? (<.*>)/"=?$self->{charset}?B?".&encode_base64($1,"")."?= $2"/e if $self->{$_} =~ m/[\x00-\x1F]|[\x7B-\xFFFF]/;
     $h{$_} = $self->{$_};
   }
  

@@ -11,12 +11,12 @@ $self{texts} = {
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
   'RVC missing!'                => 'Codierzeile fehlt!',
-  'Remittance Voucher'          => 'Überweisungsbeleg',
   'Screen'                      => 'Bildschirm',
   'Select a Printer!'           => 'Drucker auswählen!',
   'Select payment'              => 'Zahlung auswählen',
-  'Select postscript or PDF!'   => 'Postscript oder PDF auswählen!',
   'Source'                      => 'Beleg',
+  'Text'                        => 'Text',
+  'html'                        => 'HTML',
 };
 
 $self{subs} = {

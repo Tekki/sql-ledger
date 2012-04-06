@@ -24,8 +24,7 @@ sub menuitem {
   my $action = ($self->{$item}{action}) ? $self->{$item}{action} : "section_menu";
   my $target = ($self->{$item}{target}) ? $self->{$item}{target} : "";
 
-  my $level = $form->escape($item);
-  my $str = qq|<a href=$module?path=$form->{path}&action=$action&level=$level&login=$form->{login}&js=$form->{js}|;
+  my $str = qq|<a href=$module?path=$form->{path}&action=$action&login=$form->{login}&js=$form->{js}|;
 
   my @vars = qw(module action target href);
   
@@ -69,18 +68,15 @@ sub access_control {
     @menu = grep { /^${menulevel}--/; } @{ $self->{ORDER} };
   }
 
-  my @a = split /;/, $myconfig->{acs};
+  my @acs = split /;/, $myconfig->{acs};
   my $excl = ();
-
-  # remove --AR, --AP from array
-  grep { ($a, $b) = split /--/; s/--$a$//; } @a;
-
-  for (@a) { $excl{$_} = 1 }
-
-  @a = ();
-  for (@menu) { push @a, $_ unless $excl{$_} }
-
-  @a;
+  
+  grep { ($a, $b) = split /--/; s/--$a$//; } @acs;
+  for (@acs) { $excl{$_} = 1 }
+  @acs = ();
+  for (@menu) { push @acs, $_ unless $excl{$_} }
+  
+  @acs;
 
 }
 

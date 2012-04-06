@@ -59,6 +59,7 @@ use SL::RP;
 # $locale->text('Project Transactions')
 # $locale->text('Non-taxable Sales')
 # $locale->text('Non-taxable Purchases')
+# $locale->text('Reminder')
 
 
 sub report {
@@ -75,12 +76,14 @@ sub report {
 	     receipts		=> { title => 'Receipts', vc => 'customer' },
 	     payments		=> { title => 'Payments' },
 	     projects		=> { title => 'Project Transactions' },
-	     reminder           => { title => 'Reminder', vc => 'customer' },
+	     reminder		=> { title => 'Reminder', vc => 'customer' },
 	   );
   
-  $form->{title} = $locale->text($report{$form->{report}}->{title});
+  $form->{title} = $locale->text($report{$form->{reportcode}}->{title});
 
-  $form->{nextsub} = "generate_$form->{report}";
+  $form->{nextsub} = "generate_$form->{reportcode}";
+
+  $form->helpref("rp_$form->{reportcode}", $myconfig{countrycode});
 
   $gifi = qq|
 <tr>
@@ -93,35 +96,38 @@ sub report {
 |;
   
 
-  RP->create_links(\%myconfig, \%$form, $report{$form->{report}}->{vc});
-  
+  RP->create_links(\%myconfig, \%$form, $report{$form->{reportcode}}->{vc});
+
   # departments
   if (@{ $form->{all_department} }) {
-    $form->{selectdepartment} = "<option>\n";
+    $form->{selectdepartment} = "\n";
 
-    for (@{ $form->{all_department} }) { $form->{selectdepartment} .= qq|<option value="|.$form->quote($_->{description}).qq|--$_->{id}">$_->{description}\n| }
+    for (@{ $form->{all_department} }) { $form->{selectdepartment} .= qq|$_->{description}--$_->{id}\n| }
   }
  
   $department = qq|
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Department').qq|</th>
-	  <td colspan=3><select name=department>$form->{selectdepartment}</select></td>
+	  <td colspan=3><select name=department>|
+	  .$form->select_option($form->{selectdepartment}, $form->{department}, 1)
+	  .qq|
+	  </select></td>
 	</tr>
 | if $form->{selectdepartment};
 
   if (@{ $form->{all_years} }) {
     # accounting years
-    $selectaccountingyear = "<option>\n";
-    for (@{ $form->{all_years} }) { $selectaccountingyear .= qq|<option>$_\n| }
-    $selectaccountingmonth = "<option>\n";
-    for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|<option value=$_>|.$locale->text($form->{all_month}{$_}).qq|\n| }
+    $selectaccountingyear = "\n";
+    for (@{ $form->{all_years} }) { $selectaccountingyear .= qq|$_\n| }
+    $selectaccountingmonth = "\n";
+    for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|$_--|.$locale->text($form->{all_month}{$_}).qq|\n| }
 
     $selectfrom = qq|
         <tr>
 	  <th align=right>|.$locale->text('Period').qq|</th>
 	  <td colspan=3>
-	  <select name=month>$selectaccountingmonth</select>
-	  <select name=year>$selectaccountingyear</select>
+	  <select name=month>|.$form->select_option($selectaccountingmonth, $form->{month}, 1, 1).qq|</select>
+	  <select name=year>|.$form->select_option($selectaccountingyear, $form->{year}, 1).qq|</select>
 	  <input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
 	  <input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
 	  <input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
@@ -130,6 +136,15 @@ sub report {
 	</tr>
 |;
 
+    $selectto = qq|
+        <tr>
+	  <th align=right></th>
+	  <td>
+	  <select name=month>|.$form->select_option($selectaccountingmonth, $month, 1, 1).qq|</select>
+	  <select name=year>|.$form->select_option($selectaccountingyear, $form->{all_years}[0]).qq|</select>
+	  </td>
+	</tr>
+|;
   }
 
 
@@ -144,36 +159,54 @@ sub report {
 
   # projects
   if (@{ $form->{all_project} }) {
-    $form->{selectproject} = "<option>\n";
-    for (@{ $form->{all_project} }) { $form->{selectproject} .= qq|<option value="|.$form->quote($_->{projectnumber}).qq|--$_->{id}">$_->{projectnumber}\n| }
+    $form->{selectprojectnumber} = "\n";
+    for (@{ $form->{all_project} }) { $form->{selectprojectnumber} .= qq|$_->{projectnumber}--$_->{id}\n| }
 
     $project = qq|
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Project').qq|</th>
-	  <td colspan=3><select name=projectnumber>$form->{selectproject}</select></td>
+	  <td colspan=3><select name=projectnumber>|
+	  .$form->select_option($form->{selectprojectnumber}, $form->{projectnumber}, 1)
+	  .qq|</select></td>
 	</tr>|;
 
   }
   
   if (@{ $form->{all_language} }) {
     $form->{language_code} = $myconfig{countrycode};
-    $form->{selectlanguage} = "\n";
-    for (@{ $form->{all_language} }) { $form->{selectlanguage} .= qq|$_->{code}--$_->{description}\n| }
+    $form->{selectlanguage_code} = "\n";
+    for (@{ $form->{all_language} }) { $form->{selectlanguage_code} .= qq|$_->{code}--$_->{description}\n| }
     
     $lang = qq|
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Language').qq|</th>
-	  <td colspan=3><select name=language_code>|.$form->select_option($form->{selectlanguage}, $form->{language_code}, undef, 1).qq|</select></td>
+	  <td colspan=3><select name=language_code>|.$form->select_option($form->{selectlanguage_code}, $form->{language_code}, undef, 1).qq|</select></td>
 	</tr>|;
 
   }
-  
+
+  if (@{ $form->{all_report} }) {
+    $form->{selectreportform} = "\n";
+    for (@{ $form->{all_report} }) { $form->{selectreportform} .= qq|$_->{reportdescription}--$_->{reportid}\n| }
+
+    $reportform = qq|
+      <tr>
+        <th align=right>|.$locale->text('Report').qq|</th>
+	<td>
+	  <select name=report onChange="ChangeReport();">|.$form->select_option($form->{selectreportform}, undef, 1)
+	  .qq|</select>
+	</td>
+      </tr>
+|;
+  }
+
+
   $form->{decimalplaces} = $form->{precision};
  
   $method{accrual} = "checked" if $form->{method} eq 'accrual';
   $method{cash} = "checked" if $form->{method} eq 'cash';
 
-  if ($form->{report} eq 'balance_sheet' || $form->{report} eq 'income_statement') {
+  if ($form->{reportcode} eq 'balance_sheet' || $form->{reportcode} eq 'income_statement') {
     $form->{currencies} = $form->get_currencies(undef, \%myconfig);
 
     if ($form->{currencies}) {
@@ -191,7 +224,8 @@ sub report {
 	    .$form->hide_form(defaultcurrency);
     }
   }
-  
+
+
   $method = qq|
 	<tr>
 	  <th align=right>|.$locale->text('Method').qq|</th>
@@ -200,26 +234,191 @@ sub report {
 	</tr>
 |;
 
-  $includeperiod = qq|
-        <tr>
-          <th></th>
-          <td colspan=3>
-          <input name=includeperiod class=radio type=radio value=month>&nbsp;|.$locale->text('Months').qq|
-          <input name=includeperiod class=radio type=radio value=quarter>&nbsp;|.$locale->text('Quarters').qq|
-          <input name=includeperiod class=radio type=radio value=year checked>&nbsp;|.$locale->text('Year').qq|
-          </td>
-        </tr>
 
-	<tr>
-	  <th align=right></th>
-	  <td colspan=3><input name=previousyear class=checkbox type=checkbox>&nbsp;|.$locale->text('Previous Year').qq|
-          <input name=reversedisplay class=checkbox type=checkbox>&nbsp;|.$locale->text('Reverse Display').qq|
-          </td>
-	</tr>
-|;
+  if ($form->{reportcode} eq 'trial_balance') {
+    @checked = qw(l_heading l_subtotal all_accounts);
+    @input = qw(fromdate todate month year reportlogin);
+    for (qw(department language_code)) {
+      push @input, $_ if $form->{"select$_"};
+    }
+    %radio = ( interval => { 0 => 0, 1 => 1, 3 => 2, 12 => 3 },
+	       accounttype => { standard => 0, gifi => 1 }
+	     );
+  }
+  
+  if ($form->{reportcode} eq 'projects') {
+    @checked = qw(l_heading l_subtotal);
+    @input = qw(fromdate todate month year reportlogin);
+    for (qw(department projectnumber)) {
+      push @input, $_ if $form->{"select$_"};
+    }
+    %radio = ( interval => { 0 => 0, 1 => 1, 3 => 2, 12 => 3 },
+	       accounttype => { standard => 0, gifi => 1 }
+	     );
+  }
+
+  if ($form->{reportcode} =~ /_aging/) {
+    $form->{month} = "";
+    $form->{year} = "";
+    for (qw(c0 c30 c60 c90)) { $form->{$_} = 1 }
+
+    @checked = qw(c0 c30 c60 c90 c15 c45 c75);
+    @input = qw(todate month year reportlogin);
+    for (qw(department)) {
+      push @input, $_ if $form->{"select$_"};
+    }
+    push @input, $report{$form->{reportcode}}->{vc};
+    push @input, "$report{$form->{reportcode}}->{vc}number" unless $myconfig{vclimit};
+
+    %radio = ( summary => { 1 => 0, 0 => 1 },
+	       overdue => { 0 => 0, 1 => 1 }
+	     );
+  }
+
+  
+  if ($form->{reportcode} eq 'reminder') {
+    $form->{month} = "";
+    $form->{year} = "";
+
+    @input = qw(reportlogin);
+    for (qw(department)) {
+      push @input, $_ if $form->{"select$_"};
+    }
+    push @input, $report{$form->{reportcode}}->{vc};
+    push @input, "$report{$form->{reportcode}}->{vc}number" unless $myconfig{vclimit};
+  }
+
+
+  if ($form->{reportcode} =~ /^tax_/) {
+    $gifi = "";
+
+    $form->{db} = ($form->{reportcode} =~ /_collected/) ? "ar" : "ap";
+    
+    RP->get_taxaccounts(\%myconfig, \%$form);
+    
+    $form->{sort} ||= "transdate";
+
+    for (qw(invnumber transdate description name netamount tax)) { $form->{"l_$_"} = 1 }
+
+    @checked = map { "l_$_" } qw(id invnumber transdate description name netamount tax subtotal);
+    if ($form->{db} eq 'ar') {
+      push @checked, "l_customernumber";
+    } else {
+      push @checked, "l_vendornumber";
+    }
+    
+    @input = qw(fromdate todate month year reportlogin);
+    for (qw(department)) {
+      push @input, $_ if $form->{"select$_"};
+    }
+
+    %radio = ( interval => { 0 => 0, 1 => 1, 3 => 2, 12 => 3 },
+	       summary => { 1 => 0, 0 => 1 },
+	       method => { accrual => 0, cash => 1 }
+	     );
+
+    $i = 0;
+    foreach $ref (@{ $form->{taxaccounts} }) {
+      $accno = $form->quote($ref->{accno});
+      $radio{accno}{$accno} = $i++;
+    }
+    foreach $ref (@{ $form->{gifi_taxaccounts} }) {
+      $accno = $form->quote($ref->{accno});
+      $radio{accno}{"gifi_$accno"} = $i++;
+    }
+
+  }
+
+
+  if ($form->{reportcode} =~ /^nontaxable_/) {
+
+    $form->{sort} ||= "transdate";
+
+    for (qw(invnumber transdate description name netamount)) { $form->{"l_$_"} = 1 }
+
+    @checked = map { "l_$_" } qw(id invnumber transdate description name netamount subtotal);
+    $form->{db} = ($form->{reportcode} =~ /_sales/) ? "ar" : "ap";
+
+    if ($form->{db} eq 'ar') {
+      push @checked, "l_customernumber";
+    } else {
+      push @checked, "l_vendornumber";
+    }
+    
+    @input = qw(fromdate todate month year reportlogin);
+    for (qw(department)) {
+      push @input, $_ if $form->{"select$_"};
+    }
+
+    %radio = ( interval => { 0 => 0, 1 => 1, 3 => 2, 12 => 3 },
+	       summary => { 1 => 0, 0 => 1 },
+	       method => { accrual => 0, cash => 1 }
+	     );
+
+  }
+
+
+  if ($form->{reportcode} =~ /(receipts|payments)$/) {
+    
+    $form->{db} = ($form->{reportcode} =~ /payments/) ? "ap" : "ar";
+    $form->{vc} = ($form->{db} eq 'ar') ? 'customer' : 'vendor';
+
+    for (qw(transdate reference description name paid source memo)) { $form->{"l_$_"} = 1 }
+
+    @checked = qw(fx_transaction);
+    push @checked, map { "l_$_" } qw(transdate reference name description paid source memo subtotal);
+    push @checked, "l_$form->{vc}number";
+
+    @input = qw(account description source memo fromdate todate month year reportlogin);
+    for (qw(department)) {
+      push @input, $_ if $form->{"select$_"};
+    }
+    push @input, $form->{vc};
+    push @input, "$form->{vc}number" unless $myconfig{vclimit};
+
+    %radio = ( interval => { 0 => 0, 1 => 1, 3 => 2, 12 => 3 }
+	     );
+
+  }
+
+
+  if ($form->{reportcode} eq 'balance_sheet') {
+    
+    @checked = qw(l_heading l_subtotal l_accno);
+
+    @input = qw(asofdate asofmonth asofyear compareasofdate compareasofmonth compareasofyear decimalplaces reportlogin);
+    for (qw(department currency language_code)) {
+      push @input, $_ if $form->{"select$_"};
+    }
+
+    %radio = ( method => { accrual => 0, cash => 1 },
+          accounttype => { standard => 0, gifi => 1 }
+	     );
+
+  }
+
+
+  if ($form->{reportcode} eq 'income_statement') {
+    
+    @checked = qw(l_heading l_subtotal l_accno);
+
+    @input = qw(fromdate todate frommonth fromyear comparefromdate comparetodate comparemonth compareyear decimalplaces reportlogin);
+    for (qw(projectnumber department currency language_code)) {
+      push @input, $_ if $form->{"select$_"};
+    }
+
+    %radio = ( interval => { 0 => 0, 1 => 1, 3 => 2, 12 => 3 },
+                 method => { accrual => 0, cash => 1 },
+            accounttype => { standard => 0, gifi => 1 }
+	     );
+
+  }
+
 
   $form->header;
- 
+
+  JS->change_report(\%$form, \@input, \@checked, \%radio);
+
   print qq|
 <body>
 
@@ -227,16 +426,17 @@ sub report {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
     <td>
       <table>
+      $reportform
       $department
 |;
 
-  if ($form->{report} eq "projects") {
+  if ($form->{reportcode} eq "projects") {
     
     print qq|
         $project
@@ -259,7 +459,7 @@ sub report {
 |;
   }
 
-  if ($form->{report} eq "income_statement") {
+  if ($form->{reportcode} eq "income_statement") {
     
     print qq|
 	$project
@@ -274,12 +474,35 @@ sub report {
         <tr>
 	  <th align=right>|.$locale->text('Period').qq|</th>
 	  <td colspan=3>
-	  <select name=frommonth>$selectaccountingmonth</select>
-	  <select name=fromyear>$selectaccountingyear</select>
+	  <select name=frommonth>|.$form->select_option($selectaccountingmonth, undef, 1, 1).qq|</select>
+	  <select name=fromyear>|.$form->select_option($selectaccountingyear).qq|</select>
 	  <input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
 	  <input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
 	  <input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
 	  <input name=interval class=radio type=radio value=12>&nbsp;|.$locale->text('Year').qq|
+	  </td>
+	</tr>
+|;
+    }
+
+    print qq|
+
+	<tr>
+	  <th align=right>|.$locale->text('Compare to').qq|</th>
+	</tr>
+	<tr>
+	  <th align=right>|.$locale->text('From').qq|</th>
+	  <td colspan=3><input name=comparefromdate size=11 class=date title="$myconfig{dateformat}"> <b>|.$locale->text('To').qq|</b> <input name=comparetodate size=11 class=date title="$myconfig{dateformat}"></td>
+	</tr>
+|;
+
+    if ($selectto) {
+      print qq|
+        <tr>
+	  <th align=right>|.$locale->text('Period').qq|</th>
+	  <td>
+	  <select name=comparemonth>|.$form->select_option($selectaccountingmonth, undef, 1, 1).qq|</select>
+	  <select name=compareyear>|.$form->select_option($selectaccountingyear).qq|</select>
 	  </td>
 	</tr>
 |;
@@ -302,29 +525,43 @@ sub report {
 
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Include in Report').qq|</th>
-	  <td colspan=3><input name=l_heading class=checkbox type=checkbox value=Y checked>&nbsp;|.$locale->text('Heading').qq|
+	  <td colspan=3><input name=l_heading class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Heading').qq|
 	  <input name=l_subtotal class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Subtotal').qq|
-	  <input name=l_accno class=checkbox type=checkbox value=Y checked>&nbsp;|.$locale->text('Account Number').qq|</td>
+	  <input name=l_accno class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Account Number').qq|</td>
 	</tr>
-
-        $includeperiod
 |;
   }
 
 
-  if ($form->{report} eq "balance_sheet") {
+  if ($form->{reportcode} eq 'balance_sheet') {
     
     print qq|
 	<tr>
 	  <th align=right>|.$locale->text('as at').qq|</th>
-	  <td><input name=todate size=11 class=date title="$myconfig{dateformat}" value=$form->{todate}></td>
+	  <td><input name=asofdate size=11 class=date title="$myconfig{dateformat}" value=$form->{asofdate}></td>
 |;
 
    if ($selectfrom) {
      print qq|
 	  <td>
-	  <select name=tomonth>$selectaccountingmonth</select>
-	  <select name=toyear>$selectaccountingyear</select>
+	  <select name=asofmonth>|.$form->select_option($selectaccountingmonth, undef, 1, 1).qq|</select>
+	  <select name=asofyear>|.$form->select_option($selectaccountingyear).qq|</select>
+	  </td>
+|;
+   }
+
+   print qq|
+	</tr>
+
+	  <th align=right nowrap>|.$locale->text('Compare to').qq|</th>
+	  <td><input name=compareasofdate size=11 class=date title="$myconfig{dateformat}"></td>
+	  <td>
+|;
+
+   if ($selectto) {
+     print qq|
+	  <select name=compareasofmonth>|.$form->select_option($selectaccountingmonth, undef, 1, 1).qq|</select>
+	  <select name=compareasofyear>|.$form->select_option($selectaccountingyear).qq|</select>
 	  </td>
 |;
    }
@@ -347,17 +584,15 @@ sub report {
 
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Include in Report').qq|</th>
-	  <td><input name=l_heading class=checkbox type=checkbox value=Y checked>&nbsp;|.$locale->text('Heading').qq|
+	  <td><input name=l_heading class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Heading').qq|
 	  <input name=l_subtotal class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Subtotal').qq|
-	  <input name=l_accno class=checkbox type=checkbox value=Y checked>&nbsp;|.$locale->text('Account Number').qq|</td>
+	  <input name=l_accno class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Account Number').qq|</td>
 	</tr>
-
-        $includeperiod
 |;
   }
 
 
-  if ($form->{report} eq "trial_balance") {
+  if ($form->{reportcode} eq "trial_balance") {
     
     print qq|
         <tr>
@@ -382,12 +617,7 @@ sub report {
   }
 
   
-  if ($form->{report} =~ /^tax_/) {
-    $gifi = "";
-
-    $form->{db} = ($form->{report} =~ /_collected/) ? "ar" : "ap";
-    
-    RP->get_taxaccounts(\%myconfig, \%$form);
+  if ($form->{reportcode} =~ /^tax_/) {
 
     $form->{nextsub} = "generate_tax_report";
     
@@ -414,10 +644,11 @@ sub report {
 
   }
 
+  $form->{sort} ||= "transdate";
+  
+  $form->hide_form(qw(sort db));
+  
   print qq|
-<input type=hidden name=db value=$form->{db}>
-<input type=hidden name=sort value=transdate>
-
 	  </td>
 	</tr>
 |;
@@ -461,7 +692,7 @@ sub report {
   }
   
 
-  print qq|
+print qq|
         $method
       </table>
     </td>
@@ -506,10 +737,10 @@ sub report {
   }
 
   
-  if ($form->{report} =~ /^nontaxable_/) {
+  if ($form->{reportcode} =~ /^nontaxable_/) {
     $gifi = "";
 
-    $form->{db} = ($form->{report} =~ /_sales/) ? "ar" : "ap";
+    $form->{db} = ($form->{reportcode} =~ /_sales/) ? "ar" : "ap";
 
     $form->{nextsub} = "generate_tax_report";
 
@@ -529,13 +760,11 @@ sub report {
       <td>|.$locale->text('Vendor Number').qq|</td>|;
     }
    
-  
+    $form->{sort} ||= "transdate";
+
+    $form->hide_form(qw(db sort));
+    
     print qq|
-
-        <input type=hidden name=db value=$form->{db}>
-        <input type=hidden name=sort value=transdate>
-        <input type=hidden name=report value=$form->{report}>
-
 	<tr>
 	  <th align=right>|.$locale->text('From').qq|</th>
 	  <td colspan=3><input name=fromdate size=11 class=date title="$myconfig{dateformat}" value=$form->{fromdate}> <b>|.$locale->text('To').qq|</b> <input name=todate size=11 class=date title="$myconfig{dateformat}"></td>
@@ -576,10 +805,10 @@ sub report {
   }
 
 
-  if (($form->{report} eq "ar_aging") || ($form->{report} eq "ap_aging")) {
+  if ($form->{reportcode} =~ /(ar|ap)_aging/) {
     $gifi = "";
 
-    if ($form->{report} eq 'ar_aging') {
+    if ($form->{reportcode} eq 'ar_aging') {
       $vclabel = $locale->text('Customer');
       $vcnumber = $locale->text('Customer Number');
       $form->{vc} = 'customer';
@@ -631,6 +860,13 @@ sub report {
 	  <th align=right>|.$locale->text('To').qq|</th>
 	  <td><input name=todate size=11 class=date title="$myconfig{dateformat}"></td>
 	</tr>
+        <tr>
+	  <th align=right></th>
+	  <td>
+	  <select name=month>|.$form->select_option($selectaccountingmonth, undef, 1, 1).qq|</select>
+	  <select name=year>|.$form->select_option($selectaccountingyear, undef).qq|</select>
+	  </td>
+	</tr>
 	<input type=hidden name=action value="$form->{nextsub}">
 	$summary
 	<tr>
@@ -663,11 +899,12 @@ sub report {
 
 |;
 
-    $form->hide_form(qw(nextsub type format media sort));
+    $form->hide_form(qw(type format media sort));
 
   }
 
-  if ($form->{report} eq 'reminder') {
+  
+  if ($form->{reportcode} eq 'reminder') {
     $gifi = "";
 
     $vclabel = $locale->text('Customer');
@@ -679,7 +916,7 @@ sub report {
     $form->{type} = "reminder";
     $form->{format} ||= $myconfig{outputformat};
     $form->{media} ||= $myconfig{printer};
-
+    
     # setup vc selection
     $form->all_vc(\%myconfig, $form->{vc}, ($form->{vc} eq 'customer') ? "AR" : "AP", undef, undef, undef, 1);
 
@@ -693,7 +930,7 @@ sub report {
 
       $vc .= qq|</select>
              </td>
-           </tr>
+	   </tr>
 |;
     } else {
       $vc = qq|
@@ -701,15 +938,15 @@ sub report {
 		  <th align=right nowrap>$vclabel</th>
 		  <td colspan=2><input name=$form->{vc} size=35>
 		  </td>
-                </tr>
+		</tr>
 		<tr>
 		  <th align=right nowrap>$vcnumber</th>
 		  <td colspan=3><input name="$form->{vc}number" size=35>
 		  </td>
-                </tr>
+		</tr>
 |;
     }
-
+		  
     print qq|
         $vc
 	<input type=hidden name=action value="$form->{nextsub}">
@@ -718,18 +955,15 @@ sub report {
     $form->hide_form(qw(type format media sort));
 
   }
-  
+
 # above action can be removed if there is more than one input field
 
 
-  if ($form->{report} =~ /(receipts|payments)$/) {
+  if ($form->{reportcode} =~ /(receipts|payments)$/) {
     
     $form->{nextsub} = "list_payments";
 
     $gifi = "";
-
-    $form->{db} = ($form->{report} =~ /payments/) ? "ap" : "ar";
-    $form->{vc} = ($form->{db} eq 'ar') ? 'customer' : 'vendor';
 
     RP->paymentaccounts(\%myconfig, \%$form);
 
@@ -867,7 +1101,7 @@ sub report {
 <input type=submit class=submit name=action value="|.$locale->text('Continue').qq|">
 |;
 
-  $form->hide_form(qw(title nextsub path login));
+  $form->hide_form(qw(helpref reportcode reportlogin title nextsub path login));
 
   print qq|
 
@@ -893,123 +1127,98 @@ sub continue { &{$form->{nextsub}} };
 
 sub generate_income_statement {
 
-  if (! ($form->{fromdate} || $form->{todate})) {
-    if ($form->{fromyear} && $form->{frommonth}) {
-      ($form->{fromdate}, $form->{todate}) = $form->from_to($form->{fromyear}, $form->{frommonth}, $form->{interval});
-    }
-  }
+  $form->{callback} = "$form->{script}?action=generate_income_statement";
+  for (qw(path login accounttype comparefromdate comparemonth compareyear currency decimalplaces fromdate frommonth fromyear interval method todate reportcode reportlogin)) { $form->{callback} .= "&$_=$form->{$_}" }
+  for (qw(department language_code projectnumber report)) { $form->{callback} .= "&$_=".$form->escape($form->{$_},1) }
+  for (qw(l_heading l_subtotal l_accno)) { $form->{callback} .= "&$_=$form->{$_}" }
 
-  RP->income_statement(\%myconfig, \%$form, \%$locale);
+    
+  $form->{padding} = "&nbsp;&nbsp;";
+  $form->{bold} = "<strong>";
+  $form->{endbold} = "</strong>";
+  $form->{br} = "<br>";
+
+  ($form->{reportdescription}, $form->{reportid}) = split /--/, $form->{report};
+
+  RP->income_statement(\%myconfig, \%$form);
 
   ($form->{department}) = split /--/, $form->{department};
   ($form->{projectnumber}) = split /--/, $form->{projectnumber};
+  
+  $form->{period} = $locale->date(\%myconfig, $form->current_date(\%myconfig), 1);
+  $form->{todate} = $form->current_date(\%myconfig) unless $form->{todate};
 
-  $form->format_string(qw(companyemail companywebsite company address businessnumber));
+  # if there are any dates construct a where
+  if ($form->{fromdate} || $form->{todate}) {
+    
+    unless ($form->{todate}) {
+      $form->{todate} = $form->current_date(\%myconfig);
+    }
+
+    $longtodate = $locale->date(\%myconfig, $form->{todate}, 1);
+    $shorttodate = $locale->date(\%myconfig, $form->{todate}, 0);
+    
+    $longfromdate = $locale->date(\%myconfig, $form->{fromdate}, 1);
+    $shortfromdate = $locale->date(\%myconfig, $form->{fromdate}, 0);
+    
+    $form->{this_period} = "$shortfromdate<br>\n$shorttodate";
+    $form->{period} = $locale->text('for Period').qq|<br>\n$longfromdate |.$locale->text('To').qq| $longtodate|;
+  }
+
+  if ($form->{comparefromdate} || $form->{comparetodate}) {
+    $longcomparefromdate = $locale->date(\%myconfig, $form->{comparefromdate}, 1);
+    $shortcomparefromdate = $locale->date(\%myconfig, $form->{comparefromdate}, 0);
+    
+    $longcomparetodate = $locale->date(\%myconfig, $form->{comparetodate}, 1);
+    $shortcomparetodate = $locale->date(\%myconfig, $form->{comparetodate}, 0);
+    
+    $form->{last_period} = "$shortcomparefromdate<br>\n$shortcomparetodate";
+    $form->{period} .= "<br>\n$longcomparefromdate ".$locale->text('To').qq| $longcomparetodate|;
+  }
+
+  # setup variables for the form
+  $form->format_string(qw(company address businessnumber));
   $form->{address} =~ s/\n/<br>/g;
 
-  $timeperiod = $locale->date(\%myconfig, $form->{fromdate}, $form->{longformat}) .qq| | .$locale->text('To') .qq| | .$locale->date(\%myconfig, $form->{todate}, $form->{longformat});
+  $form->{templates} = "$templates/$myconfig{dbname}";
 
-  $form->header;
-
-  print qq|
-<body>
-
-<table width=100%>
-  <tr>
-    <th>$form->{company}<br>
-    $form->{address}
-    </th>
-  </tr>
-  <tr height="5"></tr>
-  <tr>
-    <th>|;
-
-  print $locale->text('Income Statement');
-  print qq|<br>|.$locale->text('for Period');
-
-  print qq|<br>$timeperiod
-    </th>
-  </tr>
-  <tr height="5"></tr>
-  <tr>
-    <th>$form->{department}
-    <br>$form->{projectnumber}
-    </th>
-  </tr>
-  <tr height="5"></tr>
-  <tr>
-    <td>
-      <table width=100%>
-|;
-
-
-  print qq|
-        <tr>
-          <td></td>
-|;
-
-  $this = "this";
-  $previous = "previous";
-  @periods = reverse sort { $a <=> $b } keys %{ $form->{period} };
-  pop @periods;
-  unshift @periods, "0";
-  if ($form->{reversedisplay}) {
-    @periods = reverse @periods;
-    if ($form->{previousyear}) {
-      $this = "previous";
-      $previous = "this";
-    }
-  }
-
-  $colspan = 1;
-  for $period (@periods) {
-    $colspan++;
-    print qq|<th align=right>$form->{period}{$period}{$this}{fromdate}<br>$form->{period}{$period}{$this}{todate}</th>|;
-    if ($form->{previousyear}) {
-      $colspan++;
-      print qq|<th align=right>$form->{period}{$period}{$previous}{fromdate}<br>$form->{period}{$period}{$previous}{todate}</th>|;
-    }
-  }
-
-  print qq|
-        </tr>
-|;
-
-  %accounts = ( I => $locale->text('Income'),
-                E => $locale->text('Expenses')
-              );
-
-  %spacer = ( H => '',
-              A => '&nbsp;&nbsp;&nbsp;'
+  $form->{IN} = "income_statement.html";
+  
+  $form->parse_template(\%myconfig, $userspath);
+  
+  %button = ('Save Report' => { ndx => 8, key => 'S', value => $locale->text('Save Report') }
             );
+  
+  if (!$form->{admin}) {
+    delete $button{'Save Report'} unless $form->{savereport};
+  }
+  
+  if ($form->{fromyear} && $form->{frommonth}) {
+    for (qw(fromdate todate)) { delete $form->{$_} }
+  }
+  if ($form->{compareyear} && $form->{comparemonth}) {
+    for (qw(comparefromdate comparetodate)) { delete $form->{$_} }
+  }
+ 
+  print qq|
+  <p>
+  
+<form method=post action=$form->{script}>
+|;
+ 
+  $form->hide_form(qw(department projectnumber fromdate todate frommonth fromyear comparefromdate comparemonth compareyear interval currency decimalplaces language_code l_heading l_subtotal l_accno accounttype method));
+  
+  $form->hide_form(qw(callback path login report reportid reportcode reportdescription reportlogin column_index flds sort direction));
 
-  $ml = 1;
+  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
 
-  for $category (qw(I E)) {
-    $ml *= -1 if $category eq 'E';
-    &section_display;
+  if ($form->{menubar}) {
+    require "$form->{path}/menu.pl";
+    &menubar;
   }
 
   print qq|
-        <tr height="15"></tr>
-        <tr>
-          <th align=left>|.$locale->text('Income / (Loss)').qq|</th>|;
-
-    for $period (@periods) {
-      print qq|
-          <th align=right>|.$form->format_amount(\%myconfig, $total{$period}{$this}, $form->{decimalplaces}).qq|</th>|;
-      if ($form->{previousyear}) {
-        print qq|
-          <th align=right>|.$form->format_amount(\%myconfig, $total{$period}{$previous}, $form->{decimalplaces}).qq|</th>|;
-      }
-    }
-
-  print qq|
-        </tr>
-      </table>
-    </td>
-  </tr>
-</table>
+</form>
 
 </body>
 </html>
@@ -1018,260 +1227,79 @@ sub generate_income_statement {
 }
 
 
-sub section_display {
-
-  $subtotal = 0;
-
-  print qq|
-        <tr class=listheading>
-          <th align=left colspan=$colspan>$accounts{$category}</th>
-        </tr>|;
-
-  for $accno (sort keys %{ $form->{$category} }) {
-    if ($subtotal && (($form->{$category}{$accno}{$this}{0}{charttype} eq 'H') || ($form->{$category}{$accno}{$previous}{0}{charttype} eq 'H'))) {
-      &section_subtotal;
-    }
-
-    $subtotal = 1;
-
-    $i++; $i %= 2;
-    print qq|
-        <tr class=listrow$i>
-          <th align=left nowrap>$spacer{$form->{accounts}{$accno}{charttype}}|;
-          
-        if (($form->{$category}{$accno}{$this}{0}{charttype} eq 'H') || ($form->{$category}{$accno}{$previous}{0}{charttype} eq 'H')) {
-          if ($form->{l_heading}) {
-            if ($form->{l_accno}) {
-              print qq|$accno - $form->{accounts}{$accno}{description}</th>|;
-            } else {
-              print qq|$form->{accounts}{$accno}{description}</th>|;
-            }
-          }
-        } else {
-          if ($form->{l_accno}) {
-            print qq|$accno - |;
-          }
-          print qq|$form->{accounts}{$accno}{description}</th>|;
-        }
-
-        for $period (@periods) {
-          if ($form->{$category}{$accno}{$this}{$period}{charttype} eq 'H') {
-            $subtotal{accno} = $form->{accounts}{$accno}{description};
-            $subtotal{$this}{$period} = $form->{$category}{$accno}{$this}{$period}{amount} * $ml;
-            $total{$category}{$period}{$this} += $form->{$category}{$accno}{$this}{$period}{amount} * $ml;
-            $total{$period}{$this} += $form->{$category}{$accno}{$this}{$period}{amount};
-            $form->{$category}{$accno}{$this}{$period}{amount} = 0;
-          }
-
-          print qq|<td align=right>|;
-          print $form->format_amount(\%myconfig, $form->{$category}{$accno}{$this}{$period}{amount} * $ml, $form->{decimalplaces});
-          print qq|</td>|;
-          if ($form->{previousyear}) {
-            if ($form->{$category}{$accno}{$previous}{$period}{charttype} eq 'H') {
-              $subtotal{accno} = $form->{accounts}{$accno}{description};
-              $subtotal{$previous}{$period} = $form->{$category}{$accno}{$previous}{$period}{amount} * $ml;
-              $total{$category}{$period}{$previous} += $form->{$category}{$accno}{$previous}{$period}{amount} * $ml;
-              $total{$period}{$previous} += $form->{$category}{$accno}{$previous}{$period}{amount};
-              $form->{$category}{$accno}{$previous}{$period}{amount} = 0;
-            }
-
-            print qq|<td align=right>|;
-            print $form->format_amount(\%myconfig, $form->{$category}{$accno}{$previous}{$period}{amount} * $ml, $form->{decimalplaces});
-            print qq|</td>|;
-          }
-        }
-
-    print qq|
-        </tr>
-|;
-    }
-
-  &section_subtotal;
-
-  print qq|
-        <tr class=listtotal>
-          <th align=left>|.$locale->text('Total').qq| $accounts{$category}</th>
-|;
-  for $period (@periods) {
-    print qq|
-            <th align=right>|.$form->format_amount(\%myconfig, $total{$category}{$period}{$this}, $form->{decimalplaces}).qq|</th>|;
-    if ($form->{previousyear}) {
-      print qq|
-          <th align=right>|.$form->format_amount(\%myconfig, $total{$category}{$period}{$previous}, $form->{decimalplaces}).qq|</th>|;
-    }
-  }
-
-  print qq|
-        </tr>
-        <tr>
-          <td colspan=$colspan>&nbsp;</td>
-        </tr>
-|;
-
-}
-
-
-sub section_subtotal {
-
-  return unless $form->{l_subtotal};
-
-  $i++; $i %= 2;
-  print qq|
-    <tr class=listrow$i>
-      <th align=left nowrap>$subtotal{accno}</th>|;
-
-  for $period (@periods) {
-    print qq|<td align=right>|;
-    print $form->format_amount(\%myconfig, $subtotal{$this}{$period}, $form->{decimalplaces});
-    print qq|</td>|;
-    if ($form->{previousyear}) {
-      print qq|<td align=right>|;
-      print $form->format_amount(\%myconfig, $subtotal{$previous}{$period}, $form->{decimalplaces});
-      print qq|</td>|;
-    }
-    $subtotal{$this}{$period} = 0;
-    $subtotal{$previous}{$period} = 0;
-  }
-
-  print qq|
-        </tr>
-        <tr>
-          <td colspan=$colspan>&nbsp;</td>
-        </tr>
-|;
-
-}
-
-
 sub generate_balance_sheet {
+  
+  $form->{callback} = "$form->{script}?action=generate_balance_sheet";
+  for (qw(path login asofdate asofmonth asofyear compareasofdate compareasofmonth compareasofyear currency decimalplaces accounttype method reportcode reportlogin)) { $form->{callback} .= "&$_=$form->{$_}" }
+  for (qw(department language_code report)) { $form->{callback} .= "&$_=".$form->escape($form->{$_},1) }
+  for (qw(l_heading l_subtotal l_accno)) { $form->{callback} .= "&$_=$form->{$_}" }
 
-  if ($form->{todate}) {
-    if ($form->{toyear} && $form->{tomonth}) {
-      if ($form->{todate} !~ /\W/) {
-        $form->{todate} = substr("0$form->{todate}", -2);
-        $form->{todate} = "$form->{toyear}$form->{tomonth}$form->{todate}";
-      }
-    }
-  } else {
-    if ($form->{toyear} && $form->{tomonth}) {
-      ($_, $form->{todate}) = $form->from_to($form->{toyear}, $form->{tomonth});
-    }
-  }
 
-  RP->balance_sheet(\%myconfig, \%$form, \%$locale);
+  $form->{padding} = "&nbsp;&nbsp;";
+  $form->{bold} = "<b>";
+  $form->{endbold} = "</b>";
+  $form->{br} = "<br>";
+  
+  ($form->{reportdescription}, $form->{reportid}) = split /--/, $form->{report};
+  
+  RP->balance_sheet(\%myconfig, \%$form);
 
+  $form->{asofdate} = $form->current_date(\%myconfig) unless $form->{asofdate};
+  $form->{period} = $locale->date(\%myconfig, $form->current_date(\%myconfig), 1);
+  
   ($form->{department}) = split /--/, $form->{department};
+  
+  # define Current Earnings account
+  $padding = ($form->{l_heading}) ? $form->{padding} : "";
+  push(@{$form->{equity_account}}, $padding.$locale->text('Current Earnings'));
+
+  $form->{this_period} = $locale->date(\%myconfig, $form->{asofdate}, 0);
+  $form->{last_period} = $locale->date(\%myconfig, $form->{compareasofdate}, 0);
+
+  $form->{IN} = "balance_sheet.html";
 
   # setup company variables for the form
-  $form->format_string(qw(companyemail companywebsite company address businessnumber));
+  $form->format_string(qw(company address businessnumber));
   $form->{address} =~ s/\n/<br>/g;
 
-  $form->header;
+  $form->{templates} = "$templates/$myconfig{dbname}";
 
+  $form->parse_template(\%myconfig, $userspath);
+
+  %button = ('Save Report' => { ndx => 8, key => 'S', value => $locale->text('Save Report') }
+            );
+  
+  if (!$form->{admin}) {
+    delete $button{'Save Report'} unless $form->{savereport};
+  }
+  
+  if ($form->{asofyear} && $form->{asofmonth}) {
+    delete $form->{asofdate};
+  }
+  if ($form->{compareasofyear} && $form->{compareasofmonth}) {
+    delete $form->{compareasofdate};
+  }
+ 
   print qq|
-<body>
-
-<table width=100%>
-  <tr>
-    <th>$form->{company}<br>
-    $form->{address}
-    </th>
-  </tr>
-  <tr height="5"></tr>
-  <tr>
-    <th>|;
-
-  print $locale->text('Balance Sheet');
-  print qq|<br>|.$locale->text('as at');
-
-  print qq|<br>|;
-  print $locale->date(\%myconfig, $form->{todate}, $form->{longformat});
-  print qq|
-    </th>
-  </tr>
-  <tr height="5"></tr>
-  <tr>
-    <th>$form->{department}
-    </th>
-  </tr>
-  <tr height="5"></tr>
-  <tr>
-    <td>
-      <table width=100%>
-        <tr>
-          <td></td>
+  <p>
+  
+<form method=post action=$form->{script}>
 |;
+ 
+  $form->hide_form(qw(department asofdate asofmonth asofyear compareasofdate compareasofmonth compareasofyear currency decimalplaces language_code l_heading l_subtotal l_accno accounttype method));
+  
+  $form->hide_form(qw(callback path login report reportcode reportlogin column_index flds sort direction));
 
-  $this = "this";
-  $previous = "previous";
-  @periods = sort { $a <=> $b } keys %{ $form->{period} };
-  if ($form->{reversedisplay}) {
-    @periods = reverse @periods;
-    if ($form->{previousyear}) {
-      $this = "previous";
-      $previous = "this";
-    }
-  }
+  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
 
-  $colspan = 1;
-  for $period (@periods) {
-    $colspan++;
-    print qq|<th align=right>$form->{period}{$period}{$this}{todate}</th>|;
-    if ($form->{previousyear}) {
-      $colspan++;
-      print qq|<th align=right>$form->{period}{$period}{$previous}{todate}</th>|;
-    }
+  if ($form->{menubar}) {
+    require "$form->{path}/menu.pl";
+    &menubar;
   }
 
   print qq|
-        </tr>
-|;
+</form>
 
-  %accounts = ( A => $locale->text('Assets'),
-                L => $locale->text('Liabilities'),
-                Q => $locale->text('Equity')
-              );
-
-  %spacer = ( H => '',
-              A => '&nbsp;&nbsp;&nbsp;'
-            );  
-
-  $ml = -1;
-
-  for $category (qw(A L Q)) {
-    $ml = 1 if $category eq 'L';
-    &section_display;
-  }
-
-  print qq|
-        <tr height="5"></tr>
-        <tr>
-          <th align=left nowrap>|.$locale->text('Current Earnings').qq|</th>|;
-  for $period (@periods) {
-    $currentearnings = $total{A}{$period}{$this} - $total{L}{$period}{$this} - $total{Q}{$period}{$this};
-    print qq|
-          <td align=right>|.$form->format_amount(\%myconfig, $currentearnings, $form->{decimalplaces}).qq|</td>|;
-    if ($form->{previousyear}) {
-      $currentearnings = $total{A}{$period}{$previous} - $total{L}{$period}{$previous} - $total{Q}{$period}{$previous};
-
-    print qq|
-          <td align=right>|.$form->format_amount(\%myconfig, $currentearnings, $form->{decimalplaces}).qq|</td>|;
-    }
-  }
-
-  print qq|
-        </tr>
-      </table>
-    </td>
-  </tr>
-</table>
-|;
-
-  if ($form->{currency} ne $form->{defaultcurrency}) {
-    print $locale->text('All amounts in')." $form->{currency} ".$locale->text('converted to')." $form->{currency} @ $form->{exchangerate}";
-  }
-
-  print qq|
 </body>
 </html>
 |;
@@ -1281,9 +1309,15 @@ sub generate_balance_sheet {
 
 sub generate_projects {
 
-  $form->{nextsub} = "generate_projects";
   $form->{title} = $locale->text('Project Transactions');
+  
+  $form->{callback} = "$form->{script}?action=generate_projects";
+  for (qw(login path nextsub fromdate todate month year interval l_heading l_subtotal accounttype reportcode reportlogin)) { $form->{callback} .= "&$_=$form->{$_}" }
+  for (qw(department projectnumber title report)) { $form->{callback} .= "&$_=".$form->escape($form->{$_},1) }
 
+
+  ($form->{reportdescription}, $form->{reportid}) = split /--/, $form->{report};
+  
   RP->trial_balance(\%myconfig, \%$form);
   
   &list_accounts;
@@ -1291,26 +1325,20 @@ sub generate_projects {
 }
 
 
-# Antonio Gallardo
-#
-# D.S. Feb 16, 2001
-# included links to display transactions for period entered
-# added headers and subtotals
-#
 sub generate_trial_balance {
+
+  ($form->{reportdescription}, $form->{reportid}) = split /--/, $form->{report};
 
   # get for each account initial balance, debits and credits
   RP->trial_balance(\%myconfig, \%$form);
 
-  $form->{nextsub} = "generate_trial_balance";
   $form->{title} = $locale->text('Trial Balance') . " / $form->{company}";
+  $form->helpref("trial_balance", $myconfig{countrycode});
 
   $form->{callback} = "$form->{script}?action=generate_trial_balance";
-  for (qw(login path nextsub fromdate todate month year interval l_heading l_subtotal all_accounts accounttype)) { $form->{callback} .= "&$_=$form->{$_}" }
-  for (qw(department title)) { $form->{callback} .= "&$_=".$form->escape($form->{$_},1) }
+  for (qw(login path nextsub fromdate todate month year interval l_heading l_subtotal all_accounts accounttype reportcode reportlogin)) { $form->{callback} .= "&$_=$form->{$_}" }
+  for (qw(department title report)) { $form->{callback} .= "&$_=".$form->escape($form->{$_},1) }
 
-  $form->{callback} = $form->escape($form->{callback});
-  
   &list_accounts;
 
 }
@@ -1370,7 +1398,7 @@ sub list_accounts {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1388,13 +1416,16 @@ sub list_accounts {
 |;
 
 
+  $callback = $form->escape($form->{callback});
   
   # sort the whole thing by account numbers and display
   foreach $ref (sort { $a->{accno} cmp $b->{accno} } @{ $form->{TB} }) {
 
     $description = $form->escape($ref->{description});
     
-    $href = qq|ca.pl?path=$form->{path}&action=list_transactions&accounttype=$form->{accounttype}&login=$form->{login}&fromdate=$form->{fromdate}&todate=$form->{todate}&sort=transdate&l_heading=$form->{l_heading}&l_subtotal=$form->{l_subtotal}&department=$department&projectnumber=$projectnumber&project_id=$form->{project_id}&title=$title&nextsub=$form->{nextsub}&prevreport=$form->{callback}|;
+    $href = qq|ca.pl?action=list_transactions|;
+    for (qw(path accounttype login fromdate todate l_heading l_subtotal project_id nextsub)) { $href .= "&$_=$form->{$_}" }
+    $href .= "&sort=transdate&prevreport=$callback&department=$department&projectnumber=$projectnumber&title=$title";
     
     if ($form->{accounttype} eq 'gifi') {
       $href .= "&gifi_accno=$ref->{accno}&gifi_description=$description";
@@ -1556,6 +1587,35 @@ sub list_accounts {
   </tr>
 </table>
 
+<form method=post action=$form->{script}>
+|;
+
+  %button = ('Save Report' => { ndx => 8, key => 'S', value => $locale->text('Save Report') }
+            );
+  
+  if (!$form->{admin}) {
+    delete $button{'Save Report'} unless $form->{savereport};
+  }
+  
+  if ($form->{year} && $form->{month}) {
+    for (qw(fromdate todate)) { delete $form->{$_} }
+  }
+  
+  $form->hide_form(qw(department projectnumber fromdate todate month year interval language_code l_heading l_subtotal all_accounts accounttype));
+  
+  $form->hide_form(qw(callback path login report reportcode reportlogin sort direction));
+
+  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+
+  if ($form->{menubar}) {
+    require "$form->{path}/menu.pl";
+    &menubar;
+  }
+
+  print qq|
+</form>
+
+
 </body>
 </html>
 |;
@@ -1567,13 +1627,12 @@ sub generate_ar_aging {
 
   # split customer
   ($form->{customer}) = split(/--/, $form->{customer});
-  $customer = $form->escape($form->{customer},1);
-  $title = $form->escape($form->{title},1);
-  $media = $form->escape($form->{media},1);
 
   $form->{vc} = "customer";
   $form->{arap} = "ar";
 
+  ($form->{reportdescription}, $form->{reportid}) = split /--/, $form->{report};
+  
   $form->{initcallback} = qq|$form->{script}?action=generate_ar_aging&todate=$form->{todate}|;
   
   RP->aging(\%myconfig, \%$form);
@@ -1594,10 +1653,12 @@ sub generate_ap_aging {
   $form->{vc} = "vendor";
   $form->{arap} = "ap";
   
+  ($form->{reportdescription}, $form->{reportid}) = split /--/, $form->{report};
+  
   $form->{initcallback} = qq|$form->{script}?action=generate_ap_aging&todate=$form->{todate}|;
   
   RP->aging(\%myconfig, \%$form);
-  
+ 
   &aging;
   
 }
@@ -1606,13 +1667,13 @@ sub generate_ap_aging {
 sub aging {
 
   $form->{callback} = $form->{initcallback};
-  for (qw(path login type format summary)) { $form->{callback} .= "&$_=$form->{$_}" }
+  for (qw(path login type format summary reportcode reportlogin)) { $form->{callback} .= "&$_=$form->{$_}" }
   for (qw(title media report)) { $form->{callback} .= qq|&$_=|.$form->escape($form->{$_},1) }
   $form->{callback} .= qq|&$form->{vc}=|.$form->escape($form->{"$form->{vc}"},1);
   $form->{selectprinter} = "";
   for (@{ $form->{all_printer} }) { $form->{selectprinter} .= "$_->{printer}\n" }
   chomp $form->{selectprinter};
-  
+
   %vc_ids = ();
   $form->{curr} = "";
 
@@ -1641,7 +1702,7 @@ sub aging {
   
   @column_index = qw(ndx vc);
   push @column_index, "$form->{vc}number";
-
+  
   if (@{ $form->{all_language} } && $form->{arap} eq 'ar') {
     push @column_index, "language";
     $form->{selectlanguage} = qq|\n|;
@@ -1697,34 +1758,17 @@ sub aging {
   $option .= $locale->text('for Period')." ".$locale->text('To')." $todate";
 
   $title = "$form->{title} / $form->{company}";
-  
+
+  JS->check_all(qw(allbox ndx_));
+
   print qq|
-<script language="JavaScript">
-<!--
-
-function CheckAll() {
-
-  var frm = document.forms[0]
-  var el = frm.elements
-  var re = /ndx_/;
-
-  for (i = 0; i < el.length; i++) {
-    if (el[i].type == 'checkbox' && re.test(el[i].name)) {
-      el[i].checked = frm.allbox.checked
-    }
-  }
-
-}
-// -->
-</script>
-
 <body>
 
 <form method=post action=$form->{script}>
 
 <table width=100%>
   <tr>
-    <th class=listtop>$title</th>
+    <th class=listtop>$form->{helpref}$title</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1771,7 +1815,7 @@ function CheckAll() {
 	$total = 0;
  
       }
-
+      
       $form->{curr} .= "$ref->{curr} ";
       
       print qq|
@@ -1794,22 +1838,21 @@ function CheckAll() {
     $k++;
     
     if ($vc_id != $ref->{vc_id}) {
-      $i++;
 
       $column_data{vc} = qq|<td><a href=ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{vc_id}&db=$form->{vc}&callback=$callback>$ref->{name}</a></td>|;
       $column_data{"$form->{vc}number"} = qq|<td>$ref->{"$form->{vc}number"}</td>|;
-      
+
       if ($form->{selectlanguage}) {
 	if (exists $form->{"language_code_$ref->{curr}_$ref->{vc_id}"}) {
 	  $ref->{language_code} = $form->{"language_code_$ref->{curr}_$ref->{vc_id}"};
 	}
-	
+
 	$column_data{language} = qq|<td><select name="language_code_$ref->{curr}_$ref->{vc_id}">|.$form->select_option($form->{selectlanguage}, $ref->{language_code}, undef, 1).qq|</select></td>|;
       }
-
-      $checked = ($ref->{checked}) ? "checked" : "";
-      $column_data{ndx} = qq|<td><input name="ndx_$ref->{curr}_$ref->{vc_id}" type=checkbox class=checkbox value=1 $checked></td>|;
       
+      $checked = ($form->{"ndx_$ref->{curr}_$ref->{vc_id}"}) ? "checked" : "";
+      $column_data{ndx} = qq|<td><input name="ndx_$ref->{curr}_$ref->{vc_id}" type=checkbox class=checkbox value=1 $checked></td>|;
+
       $vc_ids{"$ref->{vc_id}"} = 1;
       $linetotal = 0;
 
@@ -1852,6 +1895,7 @@ function CheckAll() {
 |;
 
       for (qw(vc ndx language)) { $column_data{$_} = qq|<td>&nbsp;</td>| }
+      $column_data{"$form->{vc}number"} = qq|<td>&nbsp;</td>|;
       
     }
    
@@ -1866,7 +1910,7 @@ function CheckAll() {
       }
     }
 
-    if ($vc_id != $nextid || $curr ne $nextcurr) {
+    if (($vc_id != $nextid) || ($curr ne $nextcurr)) {
      
       for (@c) {
 	$c{$_}{subtotal} = $form->format_amount(\%myconfig, $c{$_}{subtotal}, $form->{precision}, "&nbsp");
@@ -1936,7 +1980,7 @@ function CheckAll() {
   <tr>
     <td>
 |;
-
+  
   &print_options if ($form->{arap} eq 'ar');
 
   print qq|
@@ -1952,15 +1996,18 @@ function CheckAll() {
   
   $form->{vc_ids} = join ' ', (keys %vc_ids);
   chop $form->{curr};
-  
-  $form->hide_form(qw(todate title summary overdue callback initcallback arap vc department path login type report vc_ids curr));
+
+  $form->hide_form(qw(month year todate title summary overdue initcallback callback arap vc department path login vc_ids curr));
   $form->hide_form(@c, "$form->{vc}");
-    
+  
+  $form->hide_form(qw(report reportcode reportlogin));
+
   if ($form->{arap} eq 'ar') {
-    
+
     %button = ('Select all' => { ndx => 1, key => 'A', value => $locale->text('Select all') },
                'Deselect all' => { ndx => 2, key => 'A', value => $locale->text('Deselect all') },
                'Print' => { ndx => 3, key => 'P', value => $locale->text('Print') },
+               'Preview' => { ndx => 4, key => 'V', value => $locale->text('Preview') },
 	       'E-mail' => { ndx => 5, key => 'E', value => $locale->text('E-mail') },
 	      );
     
@@ -1969,10 +2016,16 @@ function CheckAll() {
     } else {
       delete $button{'Deselect all'};
     }
-
-    for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
     
   }
+
+  $button{'Save Report'} = { ndx => 8, key => 'S', value => $locale->text('Save Report') };
+
+  if (!$form->{admin}) {
+    delete $button{'Save Report'} unless $form->{savereport};
+  }
+
+  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -1992,10 +2045,10 @@ function CheckAll() {
 sub select_all { &{ "select_all_$form->{type}" } }
 
 sub select_all_statement {
-
+  
   RP->aging(\%myconfig, \%$form);
 
-  for (@{ $form->{AG} }) { $_->{checked} = "checked" }
+  for (@{ $form->{AG} }) { $form->{"ndx_$_->{curr}_$_->{vc_id}"} = "checked" }
   $form->{allbox} = "checked";
   $form->{deselect} = 1;
 
@@ -2005,7 +2058,7 @@ sub select_all_statement {
 
 
 sub select_all_reminder {
-
+  
   RP->reminder(\%myconfig, \%$form);
 
   for (@{ $form->{AG} }) { $form->{"ndx_$_->{id}"} = "checked" }
@@ -2020,10 +2073,10 @@ sub select_all_reminder {
 sub deselect_all { &{ "deselect_all_$form->{type}" } }
 
 sub deselect_all_statement {
-
+  
   RP->aging(\%myconfig, \%$form);
 
-  for (@{ $form->{AG} }) { $_->{checked} = "" }
+  for (@{ $form->{AG} }) { $form->{"ndx_$_->{curr}_$_->{vc_id}"} = "" }
   $form->{allbox} = "";
 
   &aging;
@@ -2032,10 +2085,10 @@ sub deselect_all_statement {
 
 
 sub deselect_all_reminder {
-
+  
   RP->reminder(\%myconfig, \%$form);
 
-  for (@{ $form->{AG} }) { $_->{checked} = "" }
+  for (@{ $form->{AG} }) { $form->{"ndx_$_->{id}"} = "" }
   $form->{allbox} = "";
 
   &reminder;
@@ -2045,28 +2098,33 @@ sub deselect_all_reminder {
 
 sub generate_reminder {
 
-  # split customer
-  ($form->{customer}) = split(/--/, $form->{customer});
-  
   $form->{vc} = "customer";
   $form->{arap} = "ar";
 
+  ($form->{reportdescription}, $form->{reportid}) = split /--/, $form->{report};
+  
   $form->{initcallback} = qq|$form->{script}?action=generate_reminder|;
-
+  
   RP->reminder(\%myconfig, \%$form);
-
+  
   &reminder;
-
+  
 }
 
 
 sub reminder {
 
   $form->{callback} = $form->{initcallback};
-  for (qw(path login type format)) { $form->{callback} .= "&$_=$form->{$_}" }
+  for (qw(path login type format reportcode reportlogin)) { $form->{callback} .= "&$_=$form->{$_}" }
   for (qw(title media report)) { $form->{callback} .= qq|&$_=|.$form->escape($form->{$_},1) }
   $form->{callback} .= qq|&$form->{vc}=|.$form->escape($form->{"$form->{vc}"},1);
+  $form->{selectprinter} = "";
+  for (@{ $form->{all_printer} }) { $form->{selectprinter} .= "$_->{printer}\n" }
+  chomp $form->{selectprinter};
 
+
+  $form->header;
+  
   $vcnumber = $locale->text('Customer Number');
   
   $form->{allbox} = ($form->{allbox}) ? "checked" : "";
@@ -2091,7 +2149,6 @@ sub reminder {
   if (@{ $form->{all_language} }) {
     push @column_index, "language";
     $form->{selectlanguage} = qq|\n|;
-    $form->{language_code} ||= "";
 
     for (@{ $form->{all_language} }) { $form->{selectlanguage} .= qq|$_->{code}--$_->{description}\n| }
   }
@@ -2108,40 +2165,24 @@ sub reminder {
     
   if ($form->{customer}) {
     $option .= "\n<br>" if $option;
-    $option .= $form->{customer};
+    ($customer) = split /--/, $form->{customer};
+    $option .= $locale->text('Customer')." : $customer";
+    $customer = $form->escape($form->{customer},1);
+    $form->{callback} .= "&customer=$customer";
   }
 
   $title = "$form->{title} / $form->{company}";
 
-  $form->header;
- 
+  JS->check_all(qw(allbox ndx_));
+
   print qq|
-<script language="JavaScript">
-<!--
-
-function CheckAll() {
-
-  var frm = document.forms[0]
-  var el = frm.elements
-  var re = /ndx_/;
-
-  for (i = 0; i < el.length; i++) {
-    if (el[i].type == 'checkbox' && re.test(el[i].name)) {
-      el[i].checked = frm.allbox.checked
-    }
-  }
-
-}
-// -->
-</script>
-
 <body>
 
 <form method=post action=$form->{script}>
 
 <table width=100%>
   <tr>
-    <th class=listtop>$title</th>
+    <th class=listtop>$form->{helpref}$title</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -2274,7 +2315,7 @@ function CheckAll() {
 
   $form->hide_form(qw(title initcallback callback vc department path login ids));
   $form->hide_form($form->{vc});
-  $form->hide_form(qw(type report));
+  $form->hide_form(qw(report reportcode reportlogin));
 
   %button = ('Select all' => { ndx => 1, key => 'A', value => $locale->text('Select all') },
 	     'Deselect all' => { ndx => 2, key => 'A', value => $locale->text('Deselect all') },
@@ -2290,6 +2331,12 @@ function CheckAll() {
     delete $button{'Deselect all'};
   }
   
+  $button{'Save Report'} = { ndx => 8, key => 'S', value => $locale->text('Save Report') };
+
+  if (!$form->{admin}) {
+    delete $button{'Save Report'} unless $form->{savereport};
+  }
+
   for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
 
   if ($form->{menubar}) {
@@ -2322,16 +2369,13 @@ sub print_options {
 
   $form->{copies} ||= 1;
   $form->{PD}{$form->{type}} = "selected";
-  
+
   if ($myconfig{printer}) {
-    $form->{format} ||= "postscript";
-  } else {
-    $form->{format} ||= "pdf";
+    $form->{format} ||= "ps";
   }
   $form->{media} ||= $myconfig{printer};
 
   $form->{sendmode} = "attachment";
-  $form->{format} = "pdf" if ($latex && $form->{media} eq 'email');
 
   if ($form->{media} eq 'email') {
     $media = qq|<select name=sendmode>
@@ -2346,18 +2390,20 @@ sub print_options {
     $media = qq|<select name=media>
 	    <option value=screen>|.$locale->text('Screen');
 
-    if (%printer && $latex) {
-      for (sort keys %printer) { $media .= qq|
+    if ($form->{selectprinter} && $latex) {
+      for (split /\n/, $form->{selectprinter}) { $media .= qq|
             <option value="$_">$_| }
     }
   }
   
   $format = qq|<select name=format>
-            <option value="html">html|;
-
+            <option value="html">|.$locale->text('html').qq|
+	    <option value="xml">|.$locale->text('XML').qq|
+	    <option value="txt">|.$locale->text('Text');
+	    
   $formname{statement} = $locale->text('Statement');
   $formname{reminder} = $locale->text('Reminder');
-  
+	    
   $type = qq|<select name=type>
 	    <option value="$form->{type}" $form->{PD}{$form->{type}}>$formname{$form->{type}}
 	    </select>|;
@@ -2367,7 +2413,7 @@ sub print_options {
 
   if ($latex) {
     $format .= qq|
-            <option value="postscript">|.$locale->text('Postscript').qq|
+            <option value="ps">|.$locale->text('Postscript').qq|
 	    <option value="pdf">|.$locale->text('PDF');
   }
 
@@ -2384,7 +2430,7 @@ sub print_options {
     <td>$media</td>
 |;
 
-  if (%printer && $latex && $form->{media} ne 'email') {
+  if ($form->{selectprinter} && $latex && $form->{media} ne 'email') {
     print qq|
       <td nowrap>|.$locale->text('Copies').qq| 
       <input name=copies size=2 value=$form->{copies}></td>
@@ -2434,15 +2480,17 @@ sub e_mail_statement {
   }
 
   $form->error($locale->text('Nothing selected!')) unless $selected;
-  
 
-  if ($myconfig{role} =~ /(admin|manager)/) {
+ 
+  if ($form->{admin}) {
     $bcc = qq|
           <th align=right nowrap=true>|.$locale->text('Bcc').qq|</th>
 	  <td><input name=bcc size=30 value="$form->{bcc}"></td>
 |;
   }
 
+  $form->helpref("e_mail_$form->{arap}_statement", $myconfig{countrycode});
+  
   $title = $locale->text('E-mail Statement to')." $form->{$form->{vc}}";
 
   &prepare_e_mail;
@@ -2451,14 +2499,14 @@ sub e_mail_statement {
 
 
 sub e_mail_reminder {
-
+  
   $found = 0;
   for (split / /, $form->{ids}) {
     if ($form->{"ndx_$_"}) {
       $found++;
     }
   }
-
+ 
   $form->error($locale->text('Can only send one reminder at a time!')) if $found > 1;
 
   # get name and email addresses
@@ -2473,14 +2521,16 @@ sub e_mail_reminder {
   }
 
   $form->error($locale->text('Nothing selected!')) unless $selected;
-
-  if ($myconfig{role} =~ /(admin|manager)/) {
+ 
+  if ($form->{admin}) {
     $bcc = qq|
           <th align=right nowrap=true>|.$locale->text('Bcc').qq|</th>
 	  <td><input name=bcc size=30 value="$form->{bcc}"></td>
 |;
   }
 
+  $form->helpref("e_mail_reminder", $myconfig{countrycode});
+  
   $title = $locale->text('E-mail Reminder to')." $form->{$form->{vc}}";
 
   &prepare_e_mail;
@@ -2488,10 +2538,14 @@ sub e_mail_reminder {
 }
 
 
+
 sub prepare_e_mail {
 
+  for (qw(media format)) { $form->{"old$_"} = $form->{$_} }
+  
   $form->{media} = "email";
-
+  $form->{format} = "pdf";
+  
   $form->header;
 
   print qq|
@@ -2512,12 +2566,12 @@ sub prepare_e_mail {
 	  <td><input name=email size=30 value="$form->{email}"></td>
 	  <th align=right nowrap>|.$locale->text('Cc').qq|</th>
 	  <td><input name=cc size=30 value="$form->{cc}"></td>
-        </tr>
+	</tr>
 	<tr>
-          <th align=right nowrap>|.$locale->text('Subject').qq|</th>
+	  <th align=right nowrap>|.$locale->text('Subject').qq|</th>
 	  <td><input name=subject size=30 value="|.$form->quote($form->{subject}).qq|"></td>
 	  $bcc
-        </tr>
+	</tr>
       </table>
     </td>
   </tr>
@@ -2526,10 +2580,10 @@ sub prepare_e_mail {
       <table width=100%>
         <tr>
 	  <th align=left nowrap>|.$locale->text('Message').qq|</th>
-        </tr>
+	</tr>
 	<tr>
 	  <td><textarea name=message rows=15 cols=60 wrap=soft>$form->{message}</textarea></td>
-        </tr>
+	</tr>
       </table>
     </td>
   </tr>
@@ -2544,7 +2598,7 @@ sub prepare_e_mail {
   for (qw(language_code email cc bcc subject message type sendmode format action nextsub)) { delete $form->{$_} }
 
   $form->hide_form;
-  
+
   print qq|
     </td>
   </tr>
@@ -2567,14 +2621,15 @@ sub prepare_e_mail {
 
 
 sub send_email_statement {
-
+  
   $form->{OUT} = "$sendmail";
 
   $form->isblank("email", $locale->text('E-mail address missing!'));
 
-  $todate = $form->{todate} || $form->current_date(\%myconfig);
-  $form->{subject} = $locale->text('Statement').qq| - $todate| unless $form->{subject};
-
+  RP->aging(\%myconfig, \%$form);
+  
+  $form->{subject} = $locale->text('Statement').qq| - $form->{todate}| unless $form->{subject};
+  
   for $curr (split / /, $form->{curr}) {
     for (split / /, $form->{vc_ids}) {
       if ($form->{"ndx_${curr}_$_"}) {
@@ -2582,7 +2637,7 @@ sub send_email_statement {
       }
     }
   }
-
+  
   &print_statement;
 
   if ($form->{callback}) {
@@ -2601,13 +2656,13 @@ sub send_email_statement {
 
 
 sub send_email_reminder {
-  
+
   $form->{OUT} = "$sendmail";
 
   $form->isblank("email", $locale->text('E-mail address missing!'));
 
   RP->reminder(\%myconfig, \%$form);
-
+  
   $form->{subject} = $locale->text('Reminder') unless $form->{subject};
   
   for (split / /, $form->{ids}) {
@@ -2617,7 +2672,7 @@ sub send_email_reminder {
   }
 
   &print_reminder;
-
+  
   if ($form->{callback}) {
     for (split / /, $form->{ids}) {
       if ($form->{"ndx_$_"}) {
@@ -2625,7 +2680,7 @@ sub send_email_reminder {
       }
     }
   }
-
+ 
   $form->redirect($locale->text('Reminder sent to')." $form->{$form->{vc}}");
 
 }
@@ -2635,7 +2690,7 @@ sub print { &{ "print_$form->{type}" } }
 
 
 sub print_statement {
-
+  
   @vc_ids = split / /, $form->{vc_ids};
   for $curr (split / /, $form->{curr}) {
     last if $selected;
@@ -2657,18 +2712,18 @@ sub print_statement {
     }
     $form->{$selected} = 1;
   }
-  
+
   if ($form->{media} !~ /(screen|email)/) {
     $form->{"$form->{vc}_id"} = "";
     $SIG{INT} = 'IGNORE';
   }
 
   RP->aging(\%myconfig, \%$form);
-
-  if ($form->{media} !~ /(screen|email)/) {
-    $form->{OUT} = qq~| $printer{$form->{media}}~;
-  }
   
+  if ($form->{media} !~ /(screen|email)/) {
+    $form->{OUT} = qq~| $form->{"$form->{media}_printer"}~;
+  }
+
   @c = qw(c0 c15 c30 c45 c60 c75 c90);
   $item = $c[0];
   @{$ag} = ();
@@ -2691,7 +2746,7 @@ sub print_statement {
   }
 
   &do_print_statement;
-
+  
   if ($form->{callback}) {
     for $curr (split / /, $form->{curr}) {
       for (split / /, $form->{vc_ids}) {
@@ -2701,7 +2756,7 @@ sub print_statement {
       }
     }
   }
-  
+ 
   $form->redirect($locale->text('Statements sent to printer!')) if ($form->{media} !~ /(screen|email)/);
 
 }
@@ -2734,7 +2789,7 @@ sub print_reminder {
   RP->reminder(\%myconfig, \%$form);
   
   if ($form->{media} !~ /(screen|email)/) {
-    $form->{OUT} = qq~| $printer{$form->{media}}~;
+    $form->{OUT} = qq~| $form->{"$form->{media}_printer"}~;
   }
 
   &do_print_reminder;
@@ -2759,15 +2814,15 @@ sub do_print_reminder {
   $form->{todate} ||= $form->current_date(\%myconfig);
   $form->{statementdate} = $locale->date(\%myconfig, $form->{todate}, 1);
  
-  $form->{templates} = "$myconfig{templates}";
+  $form->{templates} = "$templates/$myconfig{dbname}";
 
   for (qw(name email)) { $form->{"user$_"} = $myconfig{$_} }
   
   # setup variables for the form
-  $form->format_string(qw(companyemail companywebsite company address businessnumber username useremail tel fax));
+  $form->format_string(qw(company address businessnumber username useremail tel fax));
   
-  @a = qw(name address1 address2 city state zipcode country contact typeofcontact salutation firstname lastname);
-  push @a, "$form->{vc}number", "$form->{vc}phone", "$form->{vc}fax", "$form->{vc}taxnumber";
+  @a = qw(name address1 address2 city state zipcode country contact typeofcontact salutation firstname lastname dcn rvc);
+  push @a, map { "$form->{vc}$_" } qw(number phone fax taxnumber);
   push @a, 'email' if ! $form->{media} eq 'email';
   push @a, map { "shipto$_" } qw(name address1 address2 city state zipcode country contact phone fax email);
 
@@ -2777,15 +2832,19 @@ sub do_print_reminder {
     $form->{OUT} = $out;
     
     if ($form->{"ndx_$ref->{id}"}) {
-
+      
       for (@a) { $form->{$_} = $ref->{$_} }
+      $form->{rvc} = $form->format_dcn($ref->{rvc});
+      
       $form->format_string(@a);
 
-      $form->{IN} = qq|$form->{type}$form->{"level_$ref->{id}"}.html|;
+      $form->{IN} = qq|$form->{type}$form->{"level_$ref->{id}"}.$form->{format}|;
 
-      if ($form->{format} =~ /(postscript|pdf)/) {
-	$form->{IN} =~ s/html$/tex/;
+      if ($form->{format} =~ /(ps|pdf)/) {
+	$form->{IN} =~ s/$&$/tex/;
       }
+
+      $form->{pre} = "<body bgcolor=#ffffff>\n<pre>" if $form->{format} eq 'txt';
 
       $form->{$form->{vc}} = $form->{name};
       $form->{"$form->{vc}_id"} = $ref->{vc_id};
@@ -2810,20 +2869,19 @@ sub do_print_reminder {
 }
 
 
-
 sub do_print_statement {
 
   $out = $form->{OUT};
-
+  
   $form->{todate} ||= $form->current_date(\%myconfig);
   $form->{statementdate} = $locale->date(\%myconfig, $form->{todate}, 1);
-
-  $form->{templates} = "$myconfig{templates}";
+ 
+  $form->{templates} = "$templates/$myconfig{dbname}";
 
   for (qw(name email)) { $form->{"user$_"} = $myconfig{$_} }
   
   # setup variables for the form
-  $form->format_string(qw(companyemail companywebsite company address businessnumber username useremail tel fax));
+  $form->format_string(qw(company address businessnumber username useremail tel fax companyemail companywebsite));
   
   @a = qw(name address1 address2 city state zipcode country contact typeofcontact salutation firstname lastname);
   push @a, "$form->{vc}number", "$form->{vc}phone", "$form->{vc}fax", "$form->{vc}taxnumber";
@@ -2835,21 +2893,23 @@ sub do_print_statement {
 
     $ref = shift @{ $form->{AG} };
     $form->{OUT} = $out;
-
+    
     if ($vc_id != $ref->{vc_id}) {
       
       if ($form->{"ndx_$ref->{curr}_$ref->{vc_id}"}) {
-
+	
 	$vc_id = $ref->{vc_id};
-      
+	
 	for (@a) { $form->{$_} = $ref->{$_} }
 	$form->format_string(@a);
 
-        $form->{IN} = qq|$form->{type}.html|;
+	$form->{IN} = qq|$form->{type}.$form->{format}|;
 
-	if ($form->{format} =~ /(postscript|pdf)/) {
-	  $form->{IN} =~ s/html$/tex/;
+	if ($form->{format} =~ /(ps|pdf)/) {
+	  $form->{IN} =~ s/$&$/tex/;
 	}
+
+	$form->{pre} = "<body bgcolor=#ffffff>\n<pre>" if $form->{format} eq 'txt';
 
 	$form->{$form->{vc}} = $form->{name};
 	$form->{"$form->{vc}_id"} = $ref->{vc_id};
@@ -2866,6 +2926,7 @@ sub do_print_statement {
 	&statement_details($ref);
 
         while ($ref) {
+
 	  if (scalar (@{ $form->{AG} }) > 0) {
 	    # one or more left to go
 	    if ($vc_id == $form->{AG}->[0]->{vc_id}) {
@@ -2880,6 +2941,7 @@ sub do_print_statement {
 	    # set initial ref to 0
 	    $ref = 0;
 	  }
+
 	}
 	
 	for ("c0", "c15", "c30", "c45", "c60", "c75", "c90", "") { $form->{"${_}total"} = $form->format_amount(\%myconfig, $form->{"${_}total"}, $form->{precision}) }
@@ -2915,6 +2977,10 @@ sub statement_details {
 
 sub generate_tax_report {
 
+  ($form->{reportdescription}, $form->{reportid}) = split /--/, $form->{report};
+
+  for (qw(fromdate todate)) { $temp{$_} = $form->{$_} };
+
   RP->tax_report(\%myconfig, \%$form);
 
   $descvar = "$form->{accno}_description";
@@ -2925,18 +2991,22 @@ sub generate_tax_report {
     $description = $form->escape($form->{$descvar});
   }
   
-  $department = $form->escape($form->{department});
-  
   # construct href
-  $href = "$form->{script}?path=$form->{path}&direction=$form->{direction}&oldsort=$form->{oldsort}&action=generate_tax_report&login=$form->{login}&fromdate=$form->{fromdate}&todate=$form->{todate}&db=$form->{db}&method=$form->{method}&summary=$form->{summary}&accno=$form->{accno}&$descvar=$description&department=$department&report=$form->{report}";
+  $href = "$form->{script}?action=generate_tax_report";
+  
+  for (qw(path direction oldsort login fromdate todate db method summary accno reportcode reportlogin)) { $href .= "&$_=$form->{$_}" }
+  $href .= "&$descvar=$description";
+  for (qw(department report helpref)) { $href .= "&$_=".$form->escape($form->{$_}) }
 
   # construct callback
   $description = $form->escape($form->{$descvar},1);
-  $department = $form->escape($form->{department},1);
 
   $form->sort_order();
 
-  $callback = "$form->{script}?path=$form->{path}&direction=$form->{direction}&oldsort=$form->{oldsort}&action=generate_tax_report&login=$form->{login}&fromdate=$form->{fromdate}&todate=$form->{todate}&db=$form->{db}&method=$form->{method}&summary=$form->{summary}&accno=$form->{accno}&$descvar=$description&department=$department&report=$form->{report}";
+  $callback = "$form->{script}?action=generate_tax_report";
+  for (qw(path direction oldsort login fromdate todate db method summary accno reportcode reportlogin)) { $callback .= "&$_=$form->{$_}" }
+  $callback .= "&$descvar=$description";
+  for (qw(department report)) { $callback .= "&$_=".$form->escape($form->{$_},1) };
 
   $form->{title} = $locale->text('GIFI')." - " if ($form->{accno} =~ /^gifi_/);
 
@@ -3030,7 +3100,7 @@ sub generate_tax_report {
 
 <table width=100%>
   <tr>
-    <th class=listtop colspan=$colspan>$form->{title}</th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -3049,7 +3119,8 @@ sub generate_tax_report {
 |;
 
   # add sort and escape callback
-  $callback = $form->escape($callback . "&sort=$form->{sort}");
+  $form->{callback} = "${callback}&sort=$form->{sort}";
+  $callback = $form->escape($callback);
     
   if (@{ $form->{TR} }) {
     $sameitem = $form->{TR}->[0]->{$form->{sort}};
@@ -3130,6 +3201,31 @@ sub generate_tax_report {
   </tr>
 </table>
 
+<form method=post action=$form->{script}>
+|;
+
+  $form->hide_form(map { "l_$_" } qw(id invnumber transdate description name netamount tax subtotal));
+
+  for (keys %temp) { $form->{$_} = $temp{$_} }
+  $form->hide_form(qw(department fromdate todate month year interval summary accno method vc callback path login));
+  $form->hide_form(qw(report reportcode reportlogin));
+  
+  $button{'Save Report'} = { ndx => 8, key => 'S', value => $locale->text('Save Report') };
+  
+  if (!$form->{admin}) {
+    delete $button{'Save Report'} unless $form->{savereport};
+  }
+  
+  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+
+  if ($form->{menubar}) {
+    require "$form->{path}/menu.pl";
+    &menubar;
+  }
+
+  print qq|
+</form>
+
 </body>
 </html>
 |;
@@ -3165,6 +3261,10 @@ sub tax_subtotal {
 
 sub list_payments {
 
+  ($form->{reportdescription}, $form->{reportid}) = split /--/, $form->{report};
+
+  for (qw(fromdate todate)) { $temp{$_} = $form->{$_} };
+
 
   if ($form->{account}) {
     ($form->{paymentaccounts}) = split /--/, $form->{account};
@@ -3187,7 +3287,7 @@ sub list_payments {
     push @columns, "$form->{vc}number";
     push @columns, (qw(description paid curr source till));
     
-    if ($myconfig{role} ne 'user') {
+    if ($form->{admin}) {
       push @columns, "employee";
     }
   }
@@ -3196,15 +3296,15 @@ sub list_payments {
   $form->{paymentaccounts} =~ s/ /%20/g;
  
   $href = "$form->{script}?action=list_payments";
-  @a = (qw(path direction sort oldsort till login fromdate todate fx_transaction db l_subtotal prepayment paymentaccounts vc db));
+  @a = (qw(path direction sort oldsort till login fromdate todate fx_transaction db l_subtotal prepayment paymentaccounts vc db reportcode reportlogin));
   for (@a) { $href .= "&$_=$form->{$_}" }
-  $href .= "&title=".$form->escape($form->{title});
+  for (qw(title report helpref)) { $href .= "&$_=".$form->escape($form->{$_}) }
   
   $form->sort_order();
 
   $callback = "$form->{script}?action=list_payments";
   for (@a) { $callback .= "&$_=$form->{$_}" }
-  $callback .= "&title=".$form->escape($form->{title},1);
+  for (qw(title report helpref)) { $callback .= "&$_=".$form->escape($form->{$_},1) }
   
   if ($form->{account}) {
     $callback .= "&account=".$form->escape($form->{account},1);
@@ -3308,7 +3408,7 @@ sub list_payments {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$title</th>
+    <th class=listtop>$form->{helpref}$title</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -3443,7 +3543,28 @@ sub list_payments {
     <td><hr size=3 noshade></td>
   </tr>
 </table>
+
+<form method=post action=$form->{script}>
 |;
+
+################
+#  &print_report_options;
+
+  $form->hide_form(map { "l_$_" } qw(transdate reference name description paid source memo subtotal));
+  $form->hide_form($form->{vc});
+  $form->hide_form("$form->{vc}number");
+  
+  for (keys %temp) { $form->{$_} = $temp{$_} }
+  $form->hide_form(qw(fx_transaction department fromdate todate month year interval account payment accounts vc db callback path login));
+  $form->hide_form(qw(report reportcode reportlogin));
+  
+  $button{'Save Report'} = { ndx => 8, key => 'S', value => $locale->text('Save Report') };
+  
+  if (!$form->{admin}) {
+    delete $button{'Save Report'} unless $form->{savereport};
+  }
+  
+  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -3451,7 +3572,8 @@ sub list_payments {
   }
 
   print qq|
- 
+</form>
+
 </body>
 </html>
 |;
@@ -3478,6 +3600,63 @@ sub payment_subtotal {
   }
 
   $subtotalpaid = 0;
+
+}
+
+
+sub print_report_options {
+
+  $form->{format} ||= "pdf";
+  $form->{media} ||= "screen";
+  
+  $media = qq|<select name=media>
+	    <option value=screen $form->{MD}{screen}>|.$locale->text('Screen').qq|
+	    <option value=file $form->{MD}{file}>|.$locale->text('File');
+
+  $format = qq|<select name=format>
+            <option value=csv $form->{DF}{csv}>CSV|;
+	    
+  $media =~ s/(<option value="\Q$form->{media}\E")/$1 selected/;
+  $media .= qq|</select>|;
+
+  if ($latex) {
+    $format .= qq|
+	    <option value=pdf $form->{DF}{pdf}>|.$locale->text('PDF').qq|
+            <option value=ps $form->{DF}{ps}>|.$locale->text('Postscript');
+  }
+  $format .= qq|</select>|;
+  
+  print qq|
+<form method=post action=$form->{script}>
+
+<table>
+  <tr>
+    <td>$format</td>
+    <td>$media</td>
+|;
+
+  print qq|
+  </tr>
+</table>
+
+<p>
+<input class=submit type=submit name=action value="|.$locale->text('Print Report').qq|">|;
+
+  $form->{action} = "print_report";
+  $form->{nextsub} = "";
+  
+  $form->hide_form;
+
+  print qq|
+</form>
+|;
+
+}
+
+
+sub print_report {
+
+  $form->debug;
 
 }
 

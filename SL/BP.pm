@@ -164,6 +164,8 @@ sub get_spoolfiles {
 
   my %defaults = $form->get_defaults($dbh, \@{['precision']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
+
+  $form->get_peripherals($dbh);
     
   my $query;
   my $invnumber = "invnumber";
@@ -203,9 +205,10 @@ sub get_spoolfiles {
 		  to_char(j.checkedin, '$dateformat') AS transdate,
 		  '' AS ordnumber, '' AS quonumber, '0' AS invoice,
 		  'jc' AS module, s.spoolfile, j.description,
-		  j.sellprice * j.qty AS amount, e.city, e.id AS employee_id
+		  j.sellprice * j.qty AS amount, ad.city, e.id AS employee_id
 		  FROM jcitems j
 		  JOIN employee e ON (e.id = j.employee_id)
+		  JOIN address ad ON (ad.trans_id = e.id)
 		  JOIN status s ON (s.trans_id = j.id)
 		  WHERE s.formname = '$form->{type}'
 		  AND s.spoolfile IS NOT NULL|;
@@ -239,9 +242,10 @@ sub get_spoolfiles {
 		  to_char(j.checkedin, '$dateformat') AS transdate,
 		  '' AS ordnumber, '' AS quonumber, '0' AS invoice,
 		  'jc' AS module, '' AS spoolfile, j.description, 
-		  j.sellprice * j.qty AS amount, e.city, e.id AS employee_id
+		  j.sellprice * j.qty AS amount, ad.city, e.id AS employee_id
 		  FROM jcitems j
 		  JOIN employee e ON (e.id = j.employee_id)
+		  JOIN address ad ON (ad.trans_id = e.id)
 		  WHERE $where|;
     }
 
@@ -274,7 +278,7 @@ sub get_spoolfiles {
 
     foreach $item (keys %{ $arap{$form->{type}} }) {
 
-      $where = "1=1";
+      $where = "1 = 1";
       
       $invoice = "a.invoice";
       $invnumber = "invnumber";
@@ -292,7 +296,8 @@ sub get_spoolfiles {
 
       if ($form->{type} eq 'remittance_voucher') {
 	$where .= qq| AND vc.remittancevoucher = '1'|;
-
+      }
+      if ($form->{type} eq 'remittance_voucher' || $form->{type} eq 'invoice') {
 	if ($form->{paymentmethod}) {
 	  ($var, $paymentmethod_id) = split /--/, $form->{paymentmethod};
 	  $where .= qq| AND a.paymentmethod_id = $paymentmethod_id|;
@@ -346,19 +351,19 @@ sub get_spoolfiles {
 	      if ($form->{$_}) {
 		if (!$form->{"not$_"}) {
 		  $where .= qq| AND a.id IN (SELECT s.trans_id
-					      FROM status s
-					      WHERE s.trans_id = a.id
-					      AND s.$_ = '1'
-					      AND s.formname LIKE '$wildcard$form->{type}')|;
+					     FROM status s
+					     WHERE s.trans_id = a.id
+					     AND s.$_ = '1'
+					     AND s.formname LIKE '$wildcard$form->{type}')|;
 		}
 	      }
 	      if ($form->{"not$_"}) {
 		if (!$form->{$_}) {
 		  $where .= qq| AND NOT a.id IN (SELECT s.trans_id
-					      FROM status s
-					      WHERE s.trans_id = a.id
-					      AND s.$_ = '1'
-					      AND s.formname LIKE '$wildcard$form->{type}')|;
+					     FROM status s
+					     WHERE s.trans_id = a.id
+					     AND s.$_ = '1'
+					     AND s.formname LIKE '$wildcard$form->{type}')|;
 		}
 	      }
 	    }
@@ -433,19 +438,38 @@ sub get_spoolfiles {
 		  description => 11
 		);
 
-  my @a = ();
-  push @a, ("transdate", "$invnumber", "name");
-  my $sortorder = $form->sort_order(\@a, \%ordinal);
+  my @sf = ("transdate", "$invnumber", "name");
+  my $sortorder = $form->sort_order(\@sf, \%ordinal);
   $query .= " ORDER by $sortorder";
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
+  my %id;
+  
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+    $id{"$ref->{id}"} = 1;
     push @{ $form->{SPOOL} }, $ref;
   }
-  
   $sth->finish;
+
+  # include spoolfiles only
+  if ($form->{batch} eq 'queue') {
+    $query = qq|SELECT s.*, s.trans_id AS id
+                FROM status s
+                WHERE s.formname = '$form->{type}'
+                AND s.spoolfile IS NOT NULL|;
+    $sth = $dbh->prepare($query);
+
+    $sth->execute || $form->dberror($query);
+    while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+      if (!$id{$ref->{id}}) {
+	push @{ $form->{SPOOL} }, $ref;
+      }
+    }
+    $sth->finish;
+  }
+
   $dbh->disconnect;
 
 }
@@ -497,7 +521,7 @@ sub delete_spool {
 
   if ($rc) {
     foreach my $i (1 .. $form->{rowcount}) {
-      $_ = qq|$spool/$form->{"spoolfile_$i"}|;
+      $_ = qq|$spool/$myconfig->{dbname}/$form->{"spoolfile_$i"}|;
       if ($form->{"ndx_$i"}) {
 	unlink;
       }
@@ -533,7 +557,7 @@ sub print_spool {
   open(OUT, $form->{OUT}) or $form->error("$form->{OUT} : $!");
   binmode(OUT);
   
-  $spoolfile = qq|$spool/$form->{spoolfile}|;
+  $spoolfile = qq|$spool/$myconfig->{dbname}/$form->{spoolfile}|;
   
   # send file to printer
   open(IN, $spoolfile) or $form->error("$spoolfile : $!");
@@ -565,6 +589,31 @@ sub print_spool {
   $dbh->disconnect;
 
   $rc;
+
+}
+
+
+sub spoolfile {
+  my ($self, $myconfig, $form) = @_;
+
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+
+  my $filename = time;
+  $filename .= int rand 10000;
+  $filename .= ".$form->{format}";
+
+  my $query = qq|SELECT nextval('id')|;
+  my ($id) = $dbh->selectrow_array($query);
+
+  $query = qq|INSERT INTO status (trans_id, printed, emailed,
+              spoolfile, formname) VALUES ($id, '0', '0',
+	      '$filename', '$form->{type}')|;
+  $dbh->do($query) || $form->dberror($query);
+
+  $dbh->disconnect;
+
+  $filename;
 
 }
 

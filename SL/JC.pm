@@ -35,7 +35,7 @@ sub retrieve_card {
  
   $form->remove_locks($myconfig, $dbh, 'jcitems');
   
-  if ($form->{id} *= 1) {
+  if ($form->{id}) {
     # retrieve timecard/storescard
     $query = qq|SELECT j.*, to_char(j.checkedin, 'HH24:MI:SS') AS checkedina,
                 to_char(j.checkedout, 'HH24:MI:SS') AS checkedouta,
@@ -101,15 +101,18 @@ sub retrieve_card {
 sub jcitems_links {
   my ($self, $myconfig, $form, $dbh) = @_;
   
-  my $disconnect = ($dbh) ? 0 : 1;
+  my $disconnect = 0;
 
   if (! $dbh) {
     $dbh = $form->dbconnect($myconfig);
+    $disconnect = 1;
   }
 
   my %defaults = $form->get_defaults($dbh, \@{['precision']});
-  for (keys %defaults) { $form->{$_} = $defaults{$_} }
-    
+  $form->{precision} = $defaults{precision};
+
+  $form->get_peripherals($dbh);
+
   my $query;
 
   if ($form->{project_id}) {
@@ -187,9 +190,9 @@ sub jcitems_links {
     push @{ $form->{all_project} }, $ref;
   }
   $sth->finish;
-  
-  ($form->{employee}, $form->{employee_id}) = $form->get_employee($dbh) unless $form->{employee_id};
 
+  $form->reports($myconfig, $dbh, $form->{login});
+  
   $dbh->disconnect if $disconnect;
   
 }
@@ -278,9 +281,7 @@ sub delete_timecard {
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
-
-  $form->{id} *= 1;
-  
+ 
   my %audittrail = ( tablename  => 'jcitems',
                      reference  => $form->{id},
 		     formname   => $form->{type},
@@ -321,7 +322,9 @@ sub delete_timecard {
 
   if ($rc) {
     foreach $spoolfile (@spoolfiles) {
-      unlink "$spool/$spoolfile" if $spoolfile;
+      if (-f "$spool/$myconfig->{dbname}/$spoolfile") {
+	unlink "$spool/$myconfig->{dbname}/$spoolfile";
+      }
     }
   }
 
@@ -402,8 +405,8 @@ sub jcitems {
 		  projectdescription => 12,
 		);
   
-  my @a = qw(transdate projectnumber);
-  my $sortorder = $form->sort_order(\@a, \%ordinal);
+  my @sf = qw(transdate projectnumber);
+  my $sortorder = $form->sort_order(\@sf, \%ordinal);
   
   my $dateformat = $myconfig->{dateformat};
   $dateformat =~ s/yy$/yyyy/;
@@ -433,7 +436,7 @@ sub jcitems {
 	      p.partnumber,
 	      pr.projectnumber, pr.description AS projectdescription,
 	      e.employeenumber, e.name AS employee,
-	      to_char(j.checkedin, 'IW') AS workweek, pr.parts_id,
+	      to_char(j.checkedin, 'WW') AS workweek, pr.parts_id,
 	      j.sellprice, p.inventory_accno_id, p.income_accno_id,
 	      j.notes
 	      FROM jcitems j
@@ -461,6 +464,9 @@ sub jcitems {
     push @{ $form->{transactions} }, $ref;
   }
   $sth->finish;
+
+  my %defaults = $form->get_defaults($dbh, \@{[qw(company precision)]});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
   
   $dbh->disconnect;
 
@@ -478,7 +484,7 @@ sub save {
   
   my ($null, $project_id) = split /--/, $form->{projectnumber};
 
-  if ($form->{id} *= 1) {
+  if ($form->{id}) {
     # check if it was a job
     $query = qq|SELECT pr.parts_id, pr.production - pr.completed
 		FROM project pr
@@ -623,6 +629,17 @@ sub company_defaults {
   my %defaults = $form->get_defaults($dbh, \@{['company','address','tel','fax','businessnumber']});
 
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
+
+  %defaults = $form->get_defaults($dbh, \@{['printer_%']});
+
+  my $label;
+  my $command;
+  for (keys %defaults) {
+    if ($_ =~ /printer_/) {
+      ($label, $command) = split /=/, $defaults{$_};
+      $form->{"${label}_printer"} = $command;
+    }
+  }
 
   $dbh->disconnect;
 

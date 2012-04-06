@@ -38,7 +38,6 @@ $self{texts} = {
   'Sales Invoice'               => 'Salgsfaktura',
   'Salesperson'                 => 'Sælger',
   'Screen'                      => 'Skærm',
-  'Select a Printer!'           => 'Vælg en printer!',
   'Source'                      => 'Bilag',
   'Subtotal'                    => 'Subtotal',
   'Tax Included'                => 'Inkl. afgifter og moms',

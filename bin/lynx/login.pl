@@ -1,15 +1,15 @@
-######################################################################
+#=====================================================================
 # SQL-Ledger ERP
 # Copyright (c) 2006
 #
 #  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.com
 #
-######################################################################
+#=====================================================================
 #
 # login frontend
 #
-#######################################################################
+#=====================================================================
 
 
 use DBI;
@@ -36,7 +36,7 @@ if (-f "$form->{path}/$form->{login}_$form->{script}") {
 }
 
 # window title bar
-$form->{titlebar} = "SQL-Ledger ".$locale->text('Version');
+$form->{titlebar} = "SQL-Ledger";
 
 if ($form->{action}) {
   &{ $locale->findsub($form->{action}) };
@@ -62,7 +62,7 @@ sub login_screen {
   }
 
   print qq|
-<script language="JavaScript" type="text/javascript">
+<script language="javascript" type="text/javascript">
 <!--
 var agt = navigator.userAgent.toLowerCase();
 var is_major = parseInt(navigator.appVersion);
@@ -73,7 +73,7 @@ var is_nav4lo = (is_nav && (is_major <= 4));
 
 function jsp() {
   if (is_nav4lo)
-    document.forms[0].js.value = "0"
+    document.forms[0].js.value = ""
   else
     document.forms[0].js.value = "1"
 }
@@ -93,13 +93,12 @@ $sf
 <center>
 <table class=login border=3 cellpadding=20>
   <tr>
-    <td class=login align=center><a href="http://www.sql-ledger.org" target=_blank><img src=$images/sql-ledger.gif border=0></a>
-<h1 class=login align=center>|.$locale->text('Version').qq| $form->{version}
-</h1>
+    <td class=login align=center><a href="http://www.sql-ledger.com" target=_blank><img src=$images/sql-ledger.gif border=0></a>
+<h1 class=login align=center>|.$locale->text('Version').qq| $form->{version}</h1>
 
 <p>
 
-<form method=post action=$form->{script}>
+      <form method=post action=$form->{script}>
 
       <table width=100%>
 	<tr>
@@ -107,7 +106,7 @@ $sf
 	    <table>
 	      <tr>
 		<th align=right>|.$locale->text('Name').qq|</th>
-		<td><input class=login name=login size=30 value=$form->{login}></td>
+		<td><input class=login name=login size=30></td>
 	      </tr> 
 	      <tr>
 		<th align=right>|.$locale->text('Password').qq|</th>
@@ -122,10 +121,10 @@ $sf
       </table>
 |;
 
-      $form->hide_form(qw(js path));
+    $form->hide_form(qw(js path));
 
-      print qq|
-</form>
+  print qq|
+      </form>
 
     </td>
   </tr>
@@ -161,9 +160,8 @@ sub selectdataset {
 <center>
 <table class=login border=3 cellpadding=20>
   <tr>
-    <td class=login align=center><a href="http://www.sql-ledger.org" target=_blank><img src=$images/sql-ledger.gif border=0></a>
-<h1 class=login align=center>|.$locale->text('Version').qq| $form->{version}
-</h1>
+    <td class=login align=center><a href="http://www.sql-ledger.com" target=_blank><img src=$images/sql-ledger.gif border=0></a>
+<h1 class=login align=center>|.$locale->text('Version').qq| $form->{version}</h1>
 
 <p>
 
@@ -190,9 +188,9 @@ sub selectdataset {
 		$form->hide_form(qw(js path));
 	      
 		$checked = "checked";
-		foreach $login (sort { $login{$a} cmp $login{$b} } keys %{ $login }) {
+		for (sort { $login{$a} cmp $login{$b} } keys %{ $login }) {
 		  print qq|
-		  <br><input class=login type=radio name=login value=$login $checked>$login{$login}
+		  <br><input class=login type=radio name=login value=$_ $checked>$login->{$_}
 		  |;
 		  $checked = "";
 		}
@@ -228,35 +226,40 @@ sub login {
   
   $form->error($locale->text('You did not enter a name!')) unless ($form->{login});
 
-
   if (! $form->{beenthere}) {
     open(FH, "$memberfile") or $form->error("$memberfile : $!");
-    @a = <FH>;
+    @members = <FH>;
     close(FH);
-    
-    foreach $item (@a) {
 
-      if ($item =~ /^\[(.*?)\]/) {
+    while (@members) {
+      $_ = shift @members;
+      if (/^\[(.*\@.*)\]/) {
 	$login = $1;
-	$found = 1;
-      }
+	if ($login =~ /^$form->{login}(\@|$)/) {
+	  ($name, $dbname) = split /\@/, $login;
+	  $login{$login} = $dbname;
 
-      if ($item =~ /^company=/) {
-	if ($login =~ /^$form->{login}(@|$)/ && $found) {
-	  ($null, $name) = split /=/, $item, 2;
-	  $login{$login} = $name;
-	  $found = 0;
+	  do {
+	    if (/^company=/) {
+	      ($null, $company) = split /=/, $_, 2;
+	      chop $company;
+	      $login{$login} = $company if $company;
+	    }
+	    $_ = shift @members;
+	  } until /^\s+$/;
 	}
       }
-  
     }
 
     if (keys %login > 1) {
       &selectdataset(\%login);
       exit;
+    } else {
+      if ($form->{login} !~ /\@/) {
+	$form->{login} .= "\@$dbname";
+      }
     }
   }
-
 
   $user = new User $memberfile, $form->{login};
 
@@ -264,49 +267,69 @@ sub login {
   if (($errno = $user->login(\%$form, $userspath)) <= -1) {
 
     $errno *= -1;
-    $err[1] = $locale->text('Access Denied!');
-    $err[2] = $locale->text('Incorrect Dataset version!');
-    $err[3] = $locale->text('Dataset is newer than version!');
-    
-    if ($errno == 4) {
-      # upgrade dataset and log in again
-      open FH, ">$userspath/nologin" or $form->error($!);
+    $err[1] = $locale->text('Incorrect Username!');
+    $err[2] = $locale->text('Incorrect Password!');
+    $err[3] = $locale->text('Incorrect Dataset version!');
+    $err[4] = $locale->text('Dataset is newer than version!');
 
-      for (qw(dbname dbhost dbport dbdriver dbuser dbpasswd)) { $form->{$_} = $user->{$_} }
 
-      $form->{dbpasswd} = unpack 'u', $form->{dbpasswd};
+    if ($errno == 1 && $form->{admin}) {
+      $err[1] = $locale->text('admin does not exist!');
+    }
+
+    if ($errno == 5) {
+      if (-f "$userspath/$user->{dbname}.LCK") {
+	if (-s "$userspath/$user->{dbname}.LCK") {
+	  open(FH, "$userspath/$user->{dbname}.LCK");
+	  $msg = <FH>;
+	  close(FH);
+	  if ($form->{admin}) {
+	    $form->info($msg);
+	  } else {
+	    $form->error($msg);
+	  }
+	} else {
+	  $msg = $locale->text('Dataset locked!');
+	  if ($form->{admin}) {
+	    $form->info($msg);
+	  } else {
+	    $form->error($msg);
+	  }
+	}
+
+      } else {
       
-      $form->{dbupdate} = "db$user->{dbname}";
-      $form->{$form->{dbupdate}} = 1;
+	# upgrade dataset and log in again
+	open FH, ">$userspath/$user->{dbname}.LCK" or $form->error($!);
 
-      $form->header;
-      print $locale->text('Upgrading to Version')." $form->{version} ... ";
+	for (qw(dbname dbhost dbport dbdriver dbuser dbpasswd)) { $form->{$_} = $user->{$_} }
 
-      # required for Oracle
-      $form->{dbdefault} = $sid;
+	$form->info($locale->text('Upgrading to Version')." $form->{version} ... ");
 
-      $user->dbupdate(\%$form);
+	# required for Oracle
+	$form->{dbdefault} = $sid;
 
-      # remove lock file
-      unlink "$userspath/nologin";
+	$user->dbupdate(\%$form);
 
-      print $locale->text('done');
+	# remove lock file
+	unlink "$userspath/$user->{dbname}.LCK";
+	
+      }
 
-      print "<p><a href=menu.pl?login=$form->{login}&path=$form->{path}&action=display&main=company_logo&js=$form->{js}&password=$form->{password}>".$locale->text('Continue')."</a>";
-
+      $form->info("<p><a href=menu.pl?login=$form->{login}&path=$form->{path}&action=display&main=company_logo&js=$form->{js}&password=$form->{password}>".$locale->text('Continue')."</a>");
+      
       exit;
+      
     }
     
     $form->error($err[$errno]);
-  } else {
-
-    # remove stale locks
-    for (qw(dbconnect dbuser dbpasswd)) { $myconfig{$_} = $user->{$_} }
-    $myconfig{dbpasswd} = unpack 'u', $myconfig{dbpasswd};
-
-    $form->remove_locks(\%myconfig);
-
+    
   }
+
+  for (qw(dbconnect dbhost dbport dbname dbuser dbpasswd)) { $myconfig{$_} = $user->{$_} }
+
+  # remove stale locks
+  $form->remove_locks(\%myconfig);
 
   $form->{timeout} = $user->{timeout};
   $form->{sessioncookie} = $user->{sessioncookie};
@@ -337,8 +360,8 @@ sub logout {
   require "$userspath/$form->{login}.conf";
   $myconfig{dbpasswd} = unpack 'u', $myconfig{dbpasswd};
 
-  $form->{callback} = "$form->{script}?path=$form->{path}&login=$form->{login}&endsession=1";
-  $form->remove_locks(\%myconfig);
+  $form->{callback} = "$form->{script}?path=$form->{path}&endsession=1";
+  User->logout(\%myconfig, \%$form);
 
   $form->redirect;
 

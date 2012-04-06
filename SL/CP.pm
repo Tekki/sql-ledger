@@ -115,6 +115,8 @@ sub paymentaccounts {
   }
   $sth->finish;
 
+  $form->get_peripherals($dbh);
+
   $dbh->disconnect if $disconnect;
 
 }
@@ -130,19 +132,8 @@ sub get_openvc {
 		 AND a.onhold = '0'
 		 AND NOT a.id IN (SELECT id
 		                  FROM semaphore)|;
-
-  my $arap;
-  my $buysell;
-  
-  $form->{vc} =~ s/;//g;
-
-  if ($form->{vc} eq 'customer') {
-    $arap = 'ar';
-    $buysell = 'buy';
-  } else {
-    $arap = 'ap';
-    $buysell = 'sell';
-  }
+		 
+  my $arap = ($form->{vc} eq 'customer') ? 'ar' : 'ap';
 
   my %defaults = $form->get_defaults($dbh, \@{['namesbynumber']});
   
@@ -282,15 +273,8 @@ sub retrieve {
 
   my $ml = 1;
   
-  $form->{id} *= 1;
-
-  $form->{vc} = 'vendor';
-  $form->{arap} = 'ap';
-
   if ($form->{vc} eq 'customer') {
     $ml = -1;
-    $form->{vc} = 'customer';
-    $form->{arap} = 'ar';
   }
  
   my $query = qq|SELECT a.id, a.invnumber, a.transdate, a.duedate,
@@ -410,7 +394,7 @@ sub retrieve {
   ($form->{batchdescription}, $form->{vouchernumber}) = $dbh->selectrow_array($query);
     
   $form->{voucherid} = $form->{id};
-  $form->{id} = 1;
+  $form->{id} = "1";
   AA->get_name($myconfig, $form, $dbh);
 
   $form->{"old$form->{vc}"} = qq|$form->{$form->{vc}}--$form->{"$form->{vc}_id"}|;
@@ -438,8 +422,6 @@ sub get_openinvoices {
   # remove locks
   $form->remove_locks($myconfig, $dbh, $form->{arap});
   
-  $form->{vc} =~ s/;//g;
-
   my $where = qq|WHERE a.$form->{vc}_id = $form->{"$form->{vc}_id"}
 	         AND a.amount != a.paid
 		 AND a.approved = '1'
@@ -492,8 +474,6 @@ sub get_openinvoices {
   }
   
   my $datepaid = ($form->{datepaid}) ? "date '$form->{datepaid}'" : 'current_date';
-  my $buysell = ($form->{arap} eq 'ar') ? 'buy' : 'sell';
-  
   my $query = qq|SELECT DISTINCT a.id, a.invnumber, a.transdate, a.duedate,
                  a.description AS invdescription,
 		 a.amount, a.paid, a.curr, vc.$form->{vc}number, vc.name,
@@ -502,7 +482,7 @@ sub get_openinvoices {
 		 a.$form->{vc}_id,
 		 a.discountterms, a.cashdiscount, a.netamount,
 		 $datepaid <= a.transdate + a.discountterms AS calcdiscount,
-		 a.exchangerate, ex.$buysell AS vcexch,
+		 a.exchangerate, ex.exchangerate AS vcexch,
 		 a.taxincluded
 		 FROM acc_trans ac
 		 JOIN $form->{arap} a ON (a.id = ac.trans_id)
@@ -580,11 +560,7 @@ sub post_payment {
   if ($form->{currency} ne $form->{defaultcurrency}) {
     $form->{exchangerate} = $form->parse_amount($myconfig, $form->{exchangerate});
 
-    if ($form->{vc} eq 'customer') {
-      $form->update_exchangerate($dbh, $form->{currency}, $form->{datepaid}, $form->{exchangerate}, 0);
-    } else {
-      $form->update_exchangerate($dbh, $form->{currency}, $form->{datepaid}, 0, $form->{exchangerate});
-    }
+    $form->update_exchangerate($dbh, $form->{currency}, $form->{datepaid}, $form->{exchangerate});
   } else {
     $form->{exchangerate} = 1;
   }
@@ -605,16 +581,6 @@ sub post_payment {
   
   my %defaults = $form->get_defaults($dbh, \@{['fx%_accno_id', 'cdt']});
 
-  my $buysell;
-  
-  if ($form->{vc} eq 'customer') {
-    $form->{arap} = 'ar';
-    $buysell = 'buy';
-  } else {
-    $form->{arap} = 'ap';
-    $buysell = 'sell';
-  }
-  
   my $ml;
   my $where;
   
@@ -665,7 +631,6 @@ sub post_payment {
   my $rate;
 
   # delete payments
-  $form->{voucherid} *= 1;
   if ($form->{edit} && $form->{voucherid}) {
     $query = qq|SELECT SUM(ac.amount) * $ml * -1
                 FROM acc_trans ac
@@ -854,6 +819,7 @@ sub post_payment {
 		    $voucherid)|;
 	$dbh->do($query) || $form->dberror($query);
       }
+
       
       # deduct tax for cash discount
       if ($form->{"discount_$i"}) {
@@ -1019,8 +985,6 @@ sub invoice_ids {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
-
-  $form->{vc} =~ s/;//g;
 
   my $datepaid = ($form->{datepaid}) ? "date '$form->{datepaid}'" : 'current_date';
   my $query = qq|SELECT DISTINCT a.id, a.invnumber, a.transdate, a.duedate,

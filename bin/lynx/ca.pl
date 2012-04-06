@@ -58,7 +58,8 @@ sub chart_of_accounts {
   $column_header{debit} = qq|<th class=listtop>|.$locale->text('Debit').qq|</th>\n|;
   $column_header{credit} = qq|<th class=listtop>|.$locale->text('Credit').qq|</th>\n|;
   
-
+  $form->helpref("coa", $myconfig{countrycode});
+  
   $form->{title} = $locale->text('Chart of Accounts') . " / $form->{company}";
 
   $colspan = $#column_index + 1;
@@ -69,7 +70,9 @@ sub chart_of_accounts {
 <body>
   
 <table border=0 width=100%>
-  <tr><th class=listtop colspan=$colspan>$form->{title}</th></tr>
+  <tr>
+    <th class=listtop colspan=$colspan>$form->{helpref}$form->{title}</a></th>
+  </tr>
   <tr height="5"></tr>
   <tr class=listheading>|;
 
@@ -161,17 +164,17 @@ sub list {
 
   if (@{ $form->{all_years} }) {
     # accounting years
-    $selectaccountingyear = "<option>\n";
-    for (@{ $form->{all_years} }) { $selectaccountingyear .= qq|<option>$_\n| }
-    $selectaccountingmonth = "<option>\n";
-    for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|<option value=$_>|.$locale->text($form->{all_month}{$_}).qq|\n| }
+    $selectaccountingyear = "\n";
+    for (@{ $form->{all_years} }) { $selectaccountingyear .= qq|$_\n| }
+    $selectaccountingmonth = "\n";
+    for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|$_--|.$locale->text($form->{all_month}{$_}).qq|\n| }
 
     $selectfrom = qq|
         <tr>
 	<th align=right>|.$locale->text('Period').qq|</th>
 	<td colspan=3>
-	<select name=month>$selectaccountingmonth</select>
-	<select name=year>$selectaccountingyear</select>
+	<select name=month>|.$form->select_option($selectaccountingmonth, undef, 1, 1).qq|</select>
+	<select name=year>|.$form->select_option($selectaccountingyear).qq|</select>
 	<input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
 	<input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
 	<input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
@@ -182,6 +185,8 @@ sub list {
   }
 
 
+  $form->helpref("account_transactions", $myconfig{countrycode});
+  
   $form->header;
   
   print qq|
@@ -197,7 +202,7 @@ sub list {
 <input type=hidden name=oldsort value=transdate>
 
 <table border=0 width=100%>
-  <tr><th class=listtop>$form->{title}</th></tr>
+  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
   <tr height="5"></tr>
   <tr valign=top>
     <td>
@@ -325,7 +330,8 @@ sub list_transactions {
  
   $form->{callback} = "$form->{script}?action=list_transactions&department=$department&projectnumber=$projectnumber&title=$title";
   for (qw(path direction oldsort accno login fromdate todate accounttype gifi_accno l_heading l_subtotal l_accno prevreport)) { $form->{callback} .= "&$_=$form->{$_}" }
- 
+
+  $form->helpref("account_transactions", $myconfig{countrycode});
   
   $form->header;
 
@@ -334,7 +340,7 @@ sub list_transactions {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>

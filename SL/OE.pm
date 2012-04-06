@@ -33,8 +33,6 @@ sub transactions {
   # remove locks
   $form->remove_locks($myconfig, $dbh, 'oe');
   
-  $form->{vc} =~ s/;//g;
-
   my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
@@ -42,13 +40,11 @@ sub transactions {
     $orderitems_description = ", oi.description AS memo";
     $orderitems_join = qq|JOIN orderitems oi ON (oi.trans_id = o.id)|;
   }
-
+  
   if ($form->{detail}) {
-    $orderitems_description .= ", oi.description AS memo, oi.sellprice, oi.qty, oi.id AS orderitemsid";
+    $orderitems_description = ", oi.description AS memo, oi.sellprice, oi.qty, oi.id AS orderitemsid, oi.ordernumber, oi.ponumber";
     $orderitems_join = qq|JOIN orderitems oi ON (oi.trans_id = o.id)| unless $orderitems_join;
   }
-
-  my $rate = ($form->{vc} eq 'customer') ? 'buy' : 'sell';
 
   ($form->{transdatefrom}, $form->{transdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
 
@@ -70,16 +66,15 @@ sub transactions {
   my $query = qq|SELECT o.id, o.ordnumber, o.transdate, o.reqdate,
                  o.amount, ct.name, ct.$form->{vc}number, o.netamount,
 		 o.$form->{vc}_id,
-		 ex.$rate AS exchangerate,
+		 ex.exchangerate AS exchangerate,
 		 o.closed, o.quonumber, o.shippingpoint, o.shipvia, o.waybill,
-		 e.name AS employee, m.name AS manager, o.curr, o.ponumber,
+		 e.name AS employee, o.curr, o.ponumber,
 		 o.notes, w.description AS warehouse, o.description
 		 $orderitems_description
 	         FROM oe o
 	         JOIN $form->{vc} ct ON (o.$form->{vc}_id = ct.id)
 		 $orderitems_join
 	         LEFT JOIN employee e ON (o.employee_id = e.id)
-		 LEFT JOIN employee m ON (e.managerid = m.id)
 	         LEFT JOIN warehouse w ON (o.warehouse_id = w.id)
 	         LEFT JOIN exchangerate ex ON (ex.curr = o.curr
 		                               AND ex.transdate = o.transdate)
@@ -95,19 +90,20 @@ sub transactions {
 		  shipvia => 14,
 		  waybill => 15,
 		  employee => 16,
-		  manager => 17,
-		  curr => 18,
-		  ponumber => 19,
-		  warehouse => 21,
-		  description => 22
+		  curr => 17,
+		  ponumber => 18,
+		  warehouse => 20,
+		  description => 21
 		);
 
-  my @a = (transdate, $ordnumber, name);
-  push @a, "employee" if $form->{l_employee};
-  if ($form->{type} !~ /(ship|receive)_order/) {
-    push @a, "manager" if $form->{l_manager};
+  if ($form->{detail}) {
+    $ordinal{ponumber} = 28;
+    $ordinal{ordnumber} = 27;
   }
-  my $sortorder = $form->sort_order(\@a, \%ordinal);
+
+  my @sf = (transdate, $ordnumber, name);
+  push @sf, "employee" if $form->{l_employee};
+  my $sortorder = $form->sort_order(\@sf, \%ordinal);
   
   
   # build query if type eq (ship|receive)_order
@@ -133,12 +129,24 @@ sub transactions {
   }
 
   if ($form->{$ordnumber} ne "") {
-    $query .= " AND lower($ordnumber) LIKE '$number'";
-    $form->{open} = 1;
-    $form->{closed} = 1;
+    if ($form->{detail}) {
+      $query .= " AND lower(oi.ordernumber) LIKE '$number'";
+    } else {
+      $query .= " AND lower($ordnumber) LIKE '$number'";
+    }
+     
+    if ($form->{type} !~ /(generate|consolidate)_/) {
+      $form->{open} = 1;
+      $form->{closed} = 1;
+    }
   }
   if ($form->{ponumber} ne "") {
-    $query .= " AND lower(ponumber) LIKE '$form->{ponumber}'";
+    $var = $form->like(lc $form->{ponumber});
+    if ($form->{detail}) {
+      $query .= " AND lower(oi.ponumber) LIKE '$var'";
+    } else {
+      $query .= " AND lower(ponumber) LIKE '$var'";
+    }
   }
 
   if (!$form->{open} && !$form->{closed}) {
@@ -188,6 +196,7 @@ sub transactions {
     if ($form->{detail}) {
       $i++;
       $ml = 1;
+      $ref->{ordnumber} = $ref->{ordernumber} if $ref->{ordernumber};
       if ($ref->{netamount}) {
 	$ml = $ref->{amount} / $ref->{netamount};
       }
@@ -210,11 +219,13 @@ sub transactions {
 
   $dbh->disconnect;
 
+  my @d;
+  
   if ($form->{type} =~ /^consolidate_/) {
-    @a = ();
-    foreach $ref (@{ $form->{OE} }) { push @a, $ref if $objid{vc}{$ref->{curr}}{$ref->{"$form->{vc}_id"}} > 1 }
+    @d = ();
+    foreach $ref (@{ $form->{OE} }) { push @d, $ref if $objid{vc}{$ref->{curr}}{$ref->{"$form->{vc}_id"}} > 1 }
 
-    @{ $form->{OE} } = @a;
+    @{ $form->{OE} } = @d;
   }
   
 }
@@ -222,21 +233,21 @@ sub transactions {
 
 sub lookup_order {
   my ($self, $myconfig, $form) = @_;
-
+  
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
-
+ 
   my $query;
   my $ordnumber = $dbh->quote($form->{ordnumber});
-
+  
   if ($form->{vc} eq 'customer') {
     $query = qq|SELECT id
-                FROM oe
-                WHERE ordnumber = $ordnumber
-                AND customer_id > 0|;
+		FROM oe
+		WHERE ordnumber = $ordnumber
+		AND customer_id > 0|;
   } else {
     $query = qq|SELECT id
-                FROM oe
+		FROM oe
 		WHERE ordnumber = $ordnumber
 		AND vendor_id > 0|;
   }
@@ -245,9 +256,9 @@ sub lookup_order {
   $dbh->disconnect;
 
   $id;
-
+  
 }
-									
+
 
 sub save {
   my ($self, $myconfig, $form) = @_;
@@ -258,7 +269,6 @@ sub save {
   my $query;
   my $sth;
   my $null;
-  my $exchangerate = 0;
   my $ok;
 
   my %defaults = $form->get_defaults($dbh, \@{['precision']});
@@ -277,18 +287,24 @@ sub save {
 	      WHERE p.id = ?|;
   my $pth = $dbh->prepare($query) || $form->dberror($query);
 
-  $form->{vc} =~ s/;//g;
- 
-  if ($form->{id} *= 1) {
+  $query = qq|SELECT c.accno
+              FROM partstax pt
+	      JOIN chart c ON (c.id = pt.chart_id)
+	      WHERE pt.parts_id = ?|;
+  my $ptt = $dbh->prepare($query) || $form->dberror($query);
+
+  if ($form->{id}) {
     $query = qq|SELECT id, aa_id FROM oe
                 WHERE id = $form->{id}|;
 
     ($form->{id}, $form->{aa_id}) = $dbh->selectrow_array($query);
     
     if ($form->{id}) {
-      &adj_onhand($dbh, $form, $sw) if $form->{type} =~ /_order$/ && ! $form->{aa_id};
+      if ($form->{type} =~ /_order$/) {
+	&adj_onhand($dbh, $form, $sw) if ! $form->{aa_id};
+      }
 
-      for (qw(dpt_trans orderitems shipto cargo)) {
+      for (qw(dpt_trans orderitems shipto cargo reference)) {
 	$query = qq|DELETE FROM $_
 		    WHERE trans_id = $form->{id}|;
 	$dbh->do($query) || $form->dberror($query);
@@ -334,14 +350,14 @@ sub save {
 
   my $uid = localtime;
   $uid .= $$;
- 
+
   for $i (1 .. $form->{rowcount}) {
 
     for (qw(qty ship)) { $form->{"${_}_$i"} = $form->parse_amount($myconfig, $form->{"${_}_$i"}) }
      
     $form->{"discount_$i"} = $form->parse_amount($myconfig, $form->{"discount_$i"}) / 100;
     $form->{"sellprice_$i"} = $form->parse_amount($myconfig, $form->{"sellprice_$i"});
- 
+
     if ($form->{"qty_$i"}) {
 
       $pth->execute($form->{"id_$i"});
@@ -349,11 +365,20 @@ sub save {
       for (keys %$ref) { $form->{"${_}_$i"} = $ref->{$_} }
       $pth->finish;
 
-      $fxsellprice = $form->{"sellprice_$i"};
-
+      if (! $form->{"taxaccounts_$i"}) {
+	$ptt->execute($form->{"id_$i"});
+	while ($ref = $ptt->fetchrow_hashref(NAME_lc)) {
+	  $form->{"taxaccounts_$i"} .= "$ref->{accno} ";
+	}
+	$ptt->finish;
+	chop $form->{"taxaccounts_$i"};
+      }
+      
       my ($dec) = ($form->{"sellprice_$i"} =~ /\.(\d+)/);
       $dec = length $dec;
       my $decimalplaces = ($dec > $form->{precision}) ? $dec : $form->{precision};
+
+      $fxsellprice = $form->round_amount($form->{"sellprice_$i"}, $decimalplaces);
 
       $discount = $form->round_amount($form->{"sellprice_$i"} * $form->{"discount_$i"}, $decimalplaces);
       $form->{"sellprice_$i"} = $form->round_amount($form->{"sellprice_$i"} - $discount, $decimalplaces);
@@ -373,7 +398,7 @@ sub save {
 	$taxamount = $linetotal * $taxrate / (1 + $taxrate);
 	$taxbase = ($linetotal - $taxamount);
 	
-	foreach $item (@taxaccounts) {
+	for my $item (@taxaccounts) {
 	  if (($form->{"${item}_rate"} * $ml) > 0) {
 
 	    if ($form->{taxincluded}) {
@@ -459,7 +484,6 @@ sub save {
 	  $dbh->do($query) || $form->dberror($query);
 	}
       }
-
     }
     $form->{"discount_$i"} *= 100;
   }
@@ -476,13 +500,7 @@ sub save {
   $amount = $form->round_amount($netamount + $tax, $form->{precision});
   $netamount = $form->round_amount($netamount, $form->{precision});
 
-  if ($form->{currency} eq $form->{defaultcurrency}) {
-    $form->{exchangerate} = 1;
-  } else {
-    $exchangerate = $form->check_exchangerate($myconfig, $form->{currency}, $form->{transdate}, ($form->{vc} eq 'customer') ? 'buy' : 'sell');
-  }
-  
-  $form->{exchangerate} = ($exchangerate) ? $exchangerate : $form->parse_amount($myconfig, $form->{exchangerate});
+  $form->{exchangerate} = $form->parse_amount($myconfig, $form->{exchangerate}) || 1;
   
   my $quotation;
   my $ordnumber;
@@ -545,15 +563,12 @@ sub save {
 
   # save printed, emailed, queued
   $form->save_status($dbh); 
-    
-  if (($form->{currency} ne $form->{defaultcurrency}) && !$exchangerate) {
-    if ($form->{vc} eq 'customer') {
-      $form->update_exchangerate($dbh, $form->{currency}, $form->{transdate}, $form->{exchangerate}, 0);
-    }
-    if ($form->{vc} eq 'vendor') {
-      $form->update_exchangerate($dbh, $form->{currency}, $form->{transdate}, 0, $form->{exchangerate});
-    }
-  }
+
+  # save references
+  $form->save_reference($dbh);
+  
+  # update exchangerate
+  $form->update_exchangerate($dbh, $form->{currency}, $form->{transdate}, $form->{exchangerate});
   
   if ($form->{department_id}) {
     $query = qq|INSERT INTO dpt_trans (trans_id, department_id)
@@ -594,8 +609,6 @@ sub delete {
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
 
-  $form->{id} *= 1;
-  
   # delete spool files
   my $query = qq|SELECT spoolfile FROM status
                  WHERE trans_id = $form->{id}
@@ -666,7 +679,9 @@ sub delete {
 
   if ($rc) {
     foreach $spoolfile (@spoolfiles) {
-      unlink "$spool/$spoolfile" if $spoolfile;
+      if (-f "$spool/$myconfig->{dbname}/$spoolfile") {
+	unlink "$spool/$myconfig->{dbname}/$spoolfile";
+      }
     }
   }
   
@@ -687,16 +702,16 @@ sub retrieve {
   my $var;
   my $ref;
 
-  my %defaults = $form->get_defaults($dbh, \@{[qw(weightunit closedto precision)]});
+  my %defaults = $form->get_defaults($dbh, \@{[qw(weightunit closedto precision referenceurl)]});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
+
+  $form->get_peripherals($dbh);
   
   $form->{currencies} = $form->get_currencies($dbh, $myconfig);
   
   $form->remove_locks($myconfig, $dbh, 'oe') unless $form->{readonly};
 
-  $form->{vc} =~ s/;//g;
-
-  if ($form->{id} *= 1) {
+  if ($form->{id}) {
     
     # retrieve order
     $query = qq|SELECT o.ordnumber, o.transdate, o.reqdate, o.terms,
@@ -745,6 +760,18 @@ sub retrieve {
     $sth->finish;
     for (qw(printed emailed queued)) { $form->{$_} =~ s/ +$//g }
 
+    # get document references
+    $query = qq|SELECT *
+                FROM reference
+		WHERE trans_id = $form->{id}|;
+    $sth = $dbh->prepare($query);
+    $sth->execute || $form->dberror($query);
+
+    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+      push @{ $form->{referencedocument} }, $ref;
+    }
+    $sth->finish;
+
     # retrieve individual items
     $query = qq|SELECT o.id AS orderitems_id,
                 p.partnumber, p.assembly, o.description, o.qty,
@@ -754,7 +781,8 @@ sub retrieve {
 		o.ponumber AS customerponumber,
 		pr.projectnumber,
 		pg.partsgroup, p.partsgroup_id, p.partnumber AS sku,
-		p.listprice, p.lastcost, p.weight, p.onhand,
+		p.listprice, p.lastcost, p.sellprice AS sell, p.weight,
+		p.onhand,
 		p.inventory_accno_id, p.income_accno_id, p.expense_accno_id,
 		t.description AS partsgrouptranslation,
 		c.package, c.netweight, c.grossweight, c.volume
@@ -806,9 +834,15 @@ sub retrieve {
 
       # preserve prices
       $sellprice = $ref->{sellprice};
-      
+
       # multiply by exchangerate
       $ref->{sellprice} = $form->round_amount($ref->{sellprice} * $form->{$form->{currency}}, $decimalplaces);
+      
+      # sell for barcodes
+      if ($form->{vc} eq 'customer') {
+	$ref->{sell} = $ref->{sellprice};
+      }
+
       for (qw(listprice lastcost)) { $ref->{$_} = $form->round_amount($ref->{$_} / $form->{$form->{currency}}, $decimalplaces) }
       
       # partnumber and price matrix
@@ -996,20 +1030,20 @@ sub exchangerate_defaults {
 
   my $var;
   my $query;
-  my $buysell = ($form->{vc} eq "customer") ? "buy" : "sell";
   
   # get default currencies
   $form->{currencies} = $form->get_currencies($dbh, $myconfig);
   $form->{defaultcurrency} = substr($form->{currencies},0,3);
 
-  $query = qq|SELECT $buysell
+  $query = qq|SELECT exchangerate
               FROM exchangerate
 	      WHERE curr = ?
 	      AND transdate = ?|;
   my $eth1 = $dbh->prepare($query) || $form->dberror($query);
-  $query = qq~SELECT max(transdate || ' ' || $buysell || ' ' || curr)
+  $query = qq|SELECT transdate, exchangerate
               FROM exchangerate
-	      WHERE curr = ?~;
+	      WHERE curr = ?
+	      ORDER BY transdate DESC|;
   my $eth2 = $dbh->prepare($query) || $form->dberror($query);
 
   # get exchange rates for transdate or max
@@ -1019,18 +1053,17 @@ sub exchangerate_defaults {
     if (! $form->{$var} ) {
       $eth2->execute($var);
       
-      ($form->{$var}) = $eth2->fetchrow_array;
-      ($null, $form->{$var}) = split / /, $form->{$var};
-      $form->{$var} = 1 unless $form->{$var};
+      ($null, $form->{$var}) = $eth2->fetchrow_array;
       $eth2->finish;
+      
+      $form->{$var} ||= 1;
     }
     $eth1->finish;
   }
 
-  $form->{$form->{currency}} = $form->{exchangerate} if $form->{exchangerate};
-  $form->{$form->{currency}} ||= 1;
+  $form->{$form->{currency}} = $form->{exchangerate} || 1;
   $form->{$form->{defaultcurrency}} = 1;
-      
+
 }
 
 
@@ -1041,8 +1074,8 @@ sub order_details {
   my $dbh = $form->dbconnect($myconfig);
   my $query;
   my $sth;
+  my $ref;
     
-  my $item;
   my $i;
   my @sortlist = ();
   my $projectnumber;
@@ -1169,8 +1202,8 @@ sub order_details {
   $form->format_amount($myconfig, $form->{packages});
 
   $form->{orddescription} = $form->{quodescription} = $form->{description};
-  $form->{description} = ();
-  $form->{projectnumber} = ();
+
+  for (qw(description projectnumber)) { delete $form->{$_} }
 
   # sort the whole thing by project and group
   @sortlist = sort { $a->[5] cmp $b->[5] } @sortlist;
@@ -1208,8 +1241,8 @@ sub order_details {
 
   @{ $form->{lineitems} } = ();
   @{ $form->{taxrates} } = ();
-  
-  foreach $item (@sortlist) {
+
+  for my $item (@sortlist) {
     $i = $item->[0];
     $j++;
 
@@ -1236,7 +1269,7 @@ sub order_details {
 	  }
 
 	  push(@{ $form->{description} }, $item->[2]);
-	  for (qw(taxrates runningnumber number sku qty ship unit bin serialnumber ordernumber customerponumber requiredate projectnumber sellprice listprice netprice discount discountrate linetotal itemnotes lineitemdetail package netweight grossweight volume countryorigin hscode drawing toolnumber barcode)) { push(@{ $form->{$_} }, "") }
+	  for (qw(taxrates runningnumber number sku qty ship unit bin serialnumber ordernumber customerponumber requiredate projectnumber sell sellprice listprice netprice discount discountrate linetotal itemnotes lineitemdetail package netweight grossweight volume countryorigin hscode drawing toolnumber barcode)) { push(@{ $form->{$_} }, "") }
 	  push(@{ $form->{lineitems} }, { amount => 0, tax => 0 });
 	}
       }
@@ -1246,7 +1279,7 @@ sub order_details {
     $form->{"ship_$i"} = $form->parse_amount($myconfig, $form->{"ship_$i"});
     
     if ($form->{"qty_$i"}) {
-
+      
       $form->{totalqty} += $form->{"qty_$i"};
       $form->{totalship} += $form->{"ship_$i"};
       $form->{totalnetweight} += $form->parse_amount($myconfig, $form->{"netweight_$i"});
@@ -1257,7 +1290,7 @@ sub order_details {
       push(@{ $form->{number} }, $form->{"partnumber_$i"});
       push(@{ $form->{requiredate} }, $form->{"reqdate_$i"});
 
-      for (qw(sku description unit bin serialnumber ordernumber customerponumber sellprice listprice package netweight grossweight volume countryorigin hscode drawing toolnumber barcode itemnotes lineitemdetail)) { push(@{ $form->{$_} }, $form->{"${_}_$i"}) }
+      for (qw(sku description unit bin serialnumber ordernumber customerponumber sell sellprice listprice itemnotes lineitemdetail package netweight grossweight volume countryorigin hscode drawing toolnumber barcode)) { push(@{ $form->{$_} }, $form->{"${_}_$i"}) }
 
       # if not grouped remove id
       ($projectnumber) = split /--/, $form->{"projectnumber_$i"};
@@ -1318,7 +1351,7 @@ sub order_details {
 	$taxamount = $linetotal * $taxrate / (1 + $taxrate);
 	$taxbase = ($linetotal - $taxamount);
 	
-	foreach $item (@taxaccounts) {
+	for my $item (@taxaccounts) {
 	  if (($form->{"${item}_rate"} * $ml) > 0) {
 
 	    push @taxrates, $form->{"${item}_rate"} * 100;
@@ -1340,15 +1373,6 @@ sub order_details {
 	}
 	
 	$ml *= -1;
-      }
-
-      # process 0 taxes
-      for (@taxaccounts) {
-        if ($form->{"${_}_rate"} eq "0") {
-          push @taxrates, 0;
-          $taxaccounts{$_} = 0;
-          $taxbase{$_} += $linetotal;
-        }
       }
 
       $tax = $form->round_amount($tax, $form->{precision});
@@ -1377,7 +1401,7 @@ sub order_details {
 	      push(@{ $form->{part} }, NULL);
 	    }
 
-	    for (qw(taxrates runningnumber number sku qty ship unit bin serialnumber ordernumber customerponumber requiredate projectnumber sellprice listprice netprice discount discountrate itemnotes package netweight grossweight volume countryorigin hscode drawing toolnumber barcode)) { push(@{ $form->{$_} }, "") }
+	    for (qw(taxrates runningnumber number sku qty ship unit bin serialnumber ordernumber customerponumber requiredate projectnumber sell sellprice listprice netprice discount discountrate itemnotes lineitemdetail package netweight grossweight volume countryorigin hscode drawing toolnumber barcode)) { push(@{ $form->{$_} }, "") }
 
 	    push(@{ $form->{description} }, $form->{groupsubtotaldescription});
 
@@ -1404,7 +1428,7 @@ sub order_details {
 	      push(@{ $form->{part} }, NULL);
 	    } 
 	   
-	    for (qw(taxrates runningnumber number sku qty ship unit bin serialnumber ordernumber customerponumber requiredate projectnumber sellprice listprice netprice discount discountrate itemnotes lineitemdetail package netweight grossweight volume countryorigin hscode drawing toolnumber barcode)) { push(@{ $form->{$_} }, "") }
+	    for (qw(taxrates runningnumber number sku qty ship unit bin serialnumber ordernumber customerponumber requiredate projectnumber sell sellprice listprice netprice discount discountrate itemnotes lineitemdetail package netweight grossweight volume countryorigin hscode drawing toolnumber barcode)) { push(@{ $form->{$_} }, "") }
 
 	    push(@{ $form->{description} }, $form->{groupsubtotaldescription});
 	    push(@{ $form->{linetotal} }, $form->format_amount($myconfig, $subtotal, $form->{precision}));
@@ -1417,12 +1441,22 @@ sub order_details {
 
 
   $tax = 0;
-  for (sort keys %taxaccounts) {
-    $taxaccounts{$_} = $form->round_amount($taxaccounts{$_}, $form->{precision});
-    $tax += $taxaccounts{$_};
-    $form->{"${_}_taxbaseinclusive"} = $taxbase{$_} + $taxaccounts{$_};
-  }
+  for my $item (sort keys %taxaccounts) {
+    if ($form->round_amount($taxaccounts{$item}, $form->{precision})) {
+      $tax += $taxamount = $form->round_amount($taxaccounts{$item}, $form->{precision});
 
+      push(@{ $form->{taxbaseinclusive} }, $form->{"${item}_taxbaseinclusive"} = $form->round_amount($taxbase{$item} + $taxamount, $form->{precision}));
+      push(@{ $form->{taxbase} }, $form->{"${item}_taxbase"} = $form->format_amount($myconfig, $taxbase{$item}, $form->{precision}));
+      push(@{ $form->{tax} }, $form->{"${item}_tax"} = $form->format_amount($myconfig, $taxamount, $form->{precision}));
+      
+      push(@{ $form->{taxdescription} }, $form->{"${item}_description"});
+      
+      $form->{"${item}_taxrate"} = $form->format_amount($myconfig, $form->{"${item}_rate"} * 100);
+      push(@{ $form->{taxrate} }, $form->{"${item}_taxrate"});
+      
+      push(@{ $form->{taxnumber} }, $form->{"${item}_taxnumber"});
+    }
+  }
 
   # adjust taxes for lineitems
   my $total = 0;
@@ -1437,8 +1471,8 @@ sub order_details {
     }
   }
   $i = 1;
-  for (@{ $form->{lineitems} }) {
-    push(@{ $form->{linetax} }, $form->format_amount($myconfig, $_->{tax}, $form->{precision}, 0));
+  for $ref (@{ $form->{lineitems} }) {
+    push(@{ $form->{linetax} }, $form->format_amount($myconfig, $ref->{tax}, $form->{precision}, ""));
   }
   
   $form->{totaltax} = $form->format_amount($myconfig, $tax, $form->{precision}, "");
@@ -1452,23 +1486,7 @@ sub order_details {
     $form->{subtotal} = $form->{ordtotal};
     $form->{ordtotal} = $form->{ordtotal} + $tax;
   }
-
-  for (sort keys %taxaccounts) {
-    push(@{ $form->{taxdescription} }, $form->{"${_}_description"});
-    push(@{ $form->{taxnumber} }, $form->{"${_}_taxnumber"});
-    push(@{ $form->{taxrate} }, $form->format_amount($myconfig, $form->{"${_}_rate"} * 100, undef, 0));
-
-    push(@{ $form->{taxbaseinclusive} }, $form->format_amount($myconfig, $form->{"${_}_taxbaseinclusive"}, $form->{precision}));
-    push(@{ $form->{taxbase} }, $form->format_amount($myconfig, $taxbase{$_}, $form->{precision}));
-    push(@{ $form->{tax} }, $form->format_amount($myconfig, $taxaccounts{$_}, $form->{precision}, 0));
-
-    $form->{"${_}_taxbaseinclusive"} = $form->format_amount($myconfig, $form->{"${_}_taxbaseinclusive"}, $form->{precision});
-    $form->{"${_}_taxbase"} = $form->format_amount($myconfig, $taxbase{$_}, $form->{precision});
-    $form->{"${_}_tax"} = $form->format_amount($myconfig, $form->{"${_}_tax"}, $form->{precision}, 0);
-
-    $form->{"${_}_taxrate"} = $form->format_amount($myconfig, $form->{"${_}_rate"} * 100, undef, 0);
-  }
-
+  
   $form->{subtotal} = $form->format_amount($myconfig, $form->{subtotal}, $form->{precision}, 0);
 
   my $whole;
@@ -1499,7 +1517,7 @@ sub assembly_details {
   if ($form->{format} eq 'html') {
     $spacer = "&nbsp;" x (3 * ($form->{stagger} - 1)) if $form->{stagger} > 1;
   }
-  if ($form->{format} =~ /(postscript|pdf)/) {
+  if ($form->{format} =~ /(ps|pdf)/) {
     if ($form->{stagger} > 1) {
       $spacer = ($form->{stagger} - 1) * 3;
       $spacer = '\rule{'.$spacer.'mm}{0mm}';
@@ -1529,14 +1547,14 @@ sub assembly_details {
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
-  my @a;
-  
+  my @sf;
+
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
     
-    @a = qw(partnumber description partsgroup itemnotes drawing toolnumber barcode unit bin);
+    @sf = qw(partnumber description partsgroup itemnotes drawing toolnumber barcode unit bin);
 
-    for (@a) { $form->{"a_$_"} = $ref->{$_} }
-    $form->format_string(map { "a_$_" } @a);
+    for (@sf) { $form->{"a_$_"} = $ref->{$_} }
+    $form->format_string(map { "a_$_" } @sf);
    
     if ($form->{grouppartsgroup} && $ref->{partsgroup} ne $sm) {
       for (qw(taxrates number sku unit qty runningnumber ship bin serialnumber ordernumber customerponumber requiredate projectnumber sellprice listprice netprice discount discountrate linetotal itemnotes lineitemdetail package netweight grossweight volume countryorigin hscode drawing toolnumber barcode)) { push(@{ $form->{$_} }, "") }
@@ -1600,7 +1618,7 @@ sub get_warehouses {
   # setup warehouses
   my $query = qq|SELECT id, description
                  FROM warehouse
-		 ORDER BY 2|;
+                 ORDER BY 2|;
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -1891,8 +1909,8 @@ sub get_inventory {
 		  warehouse => 6,
 		);
 
-  my @a = (partnumber, warehouse);
-  my $sortorder = $form->sort_order(\@a, \%ordinal);
+  my @sf = (partnumber, warehouse);
+  my $sortorder = $form->sort_order(\@sf, \%ordinal);
   
   if ($fromwarehouse_id) {
     if ($towarehouse_id) {
@@ -2013,7 +2031,6 @@ sub get_soparts {
   my $ref;
   my $id;
   my $orderitemsid;
-  my $i;
   
   my %defaults = $form->get_defaults($dbh, \@{['precision']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
@@ -2021,21 +2038,21 @@ sub get_soparts {
   # store required items from selected sales orders
   if ($form->{detail}) {
     $query = qq|SELECT p.id, oi.qty - oi.ship AS required,
-                  p.assembly, oi.id AS orderitemsid
+		  p.assembly, oi.id AS orderitemsid
 		  FROM orderitems oi
 		  JOIN parts p ON (p.id = oi.parts_id)
 		  WHERE oi.trans_id = ?
 		  AND oi.id = ?|;
   } else {
     $query = qq|SELECT p.id, oi.qty - oi.ship AS required,
-                p.assembly, oi.id AS orderitemsid
-                FROM orderitems oi
-	        JOIN parts p ON (p.id = oi.parts_id)
-	        WHERE oi.trans_id = ?|;
+		p.assembly, oi.id AS orderitemsid
+		FROM orderitems oi
+		JOIN parts p ON (p.id = oi.parts_id)
+		WHERE oi.trans_id = ?|;
   }
   $sth = $dbh->prepare($query) || $form->dberror($query);
-  
-  for ($i = 1; $i <= $form->{rowcount}; $i++) {
+
+  for (my $i = 1; $i <= $form->{rowcount}; $i++) {
 
     if ($form->{"ndx_$i"}) {
 
@@ -2048,7 +2065,7 @@ sub get_soparts {
       }
       
       while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-	&add_items_required("", $dbh, $form, $id, $ref->{id}, $ref->{required}, $ref->{assembly}, $ref->{orderitemsid});
+	&add_items_required("", $dbh, $form, $id, $ref->{id}, $ref->{required}, $ref->{assembly}, $ref->{orderitemsid}, $i);
       }
       $sth->finish;
     }
@@ -2066,8 +2083,8 @@ sub get_soparts {
 
 
 sub add_items_required {
-  my ($self, $dbh, $form, $id, $parts_id, $required, $assembly, $orderitemsid) = @_;
-  
+  my ($self, $dbh, $form, $id, $parts_id, $required, $assembly, $orderitemsid, $ndx) = @_;
+
   my $query;
   my $sth;
   my $ref;
@@ -2082,7 +2099,7 @@ sub add_items_required {
     $sth->execute || $form->dberror($query);
     
     while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-      &add_items_required("", $dbh, $form, $id, $ref->{id}, $required * $ref->{qty}, $ref->{assembly}, $orderitemsid);
+      &add_items_required("", $dbh, $form, $id, $ref->{id}, $required * $ref->{qty}, $ref->{assembly}, $orderitemsid, $ndx);
     }
     $sth->finish;
     
@@ -2100,7 +2117,7 @@ sub add_items_required {
 		  FROM parts
 		  WHERE id = $parts_id|;
     }
-    
+
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
     $ref = $sth->fetchrow_hashref(NAME_lc);
@@ -2110,7 +2127,8 @@ sub add_items_required {
     } else {
       $ph = $parts_id;
     }
-    
+    $ref->{ndx} = ++$ndx;
+      
     for (keys %$ref) { $form->{orderitems}{$ph}{$_} = $ref->{$_} }
     $sth->finish;
 
@@ -2127,6 +2145,7 @@ sub add_items_required {
     $sth->execute($parts_id);
 
     while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+      $ref->{ndx} = ++$ndx;
       for (keys %$ref) { $form->{orderitems}{$ph}{partsvendor}{$ref->{vendor_id}}{$_} = $ref->{$_} }
     }
     $sth->finish;
@@ -2139,27 +2158,27 @@ sub add_items_required {
 sub generate_orders {
   my ($self, $myconfig, $form) = @_;
 
-  my %a;
+  my %v;
   my $query;
   my $sth;
-  my $i;
   
-  for ($i = 1; $i <= $form->{rowcount}; $i++) {
+  for (my $i = 1; $i <= $form->{rowcount}; $i++) {
     for (qw(qty lastcost)) { $form->{"${_}_$i"} = $form->parse_amount($myconfig, $form->{"${_}_$i"}) }
     
     if ($form->{"qty_$i"}) {
       ($vendor, $vendor_id) = split /--/, $form->{"vendor_$i"};
-
+      
       if ($vendor_id) {
-	$a{$vendor_id}{$form->{"id_$i"}}{qty} += $form->{"qty_$i"};
-	for (qw(curr lastcost)) { $a{$vendor_id}{$form->{"id_$i"}}{$_} = $form->{"${_}_$i"} }
+	$v{$vendor_id}{$form->{"id_$i"}}{qty} += $form->{"qty_$i"};
+	$v{$vendor_id}{$form->{"id_$i"}}{ndx} = $i;
+	for (qw(curr lastcost)) { $v{$vendor_id}{$form->{"id_$i"}}{$_} = $form->{"${_}_$i"} }
       }
     }
   }
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
-  
+
   # foreign exchange rates
   &exchangerate_defaults($dbh, $myconfig, $form);
 
@@ -2177,10 +2196,10 @@ sub generate_orders {
 
   my $sellprice;
   my $uid;
-
+  
   my $rc;
   
-  foreach $vendor_id (keys %a) {
+  foreach $vendor_id (keys %v) {
     
     %tax = ();
     
@@ -2201,10 +2220,10 @@ sub generate_orders {
 
     $curr ||= $form->{defaultcurrency};
     $taxincluded *= 1;
-
+    
     # get precision
     $form->{precision} = "";
-    $query = qq|SELECT precision FROM curr
+    $query = qq|SELECT prec FROM curr
                 WHERE curr = '$curr'|;
     ($form->{precision}) = $dbh->selectrow_array($query);
     
@@ -2212,7 +2231,7 @@ sub generate_orders {
       my %defaults = $form->get_defaults($dbh, \@{[qw(precision)]});
       $form->{precision} = $defaults{precision};
     }
-    
+
     $uid = localtime;
     $uid .= $$;
  
@@ -2226,7 +2245,6 @@ sub generate_orders {
     $sth->execute || $form->dberror($query);
     my ($id) = $sth->fetchrow_array;
     $sth->finish;
-
     
     # get default shipto
     $query = qq|SELECT * FROM shipto
@@ -2245,41 +2263,41 @@ sub generate_orders {
 		'$ref->{shiptocontact}', '$ref->{shiptophone}',
 		'$ref->{shiptofax}', '$ref->{shiptoemail}')|;
     $dbh->do($query) || $form->dberror($query);
-    $sth->finish;  
-   
+    $sth->finish;
+
 
     $amount = 0;
     $netamount = 0;
-    
-    foreach my $parts_id (keys %{ $a{$vendor_id} }) {
 
-      if (($form->{$curr} * $form->{$a{$vendor_id}{$parts_id}{curr}}) > 0) {
-	$sellprice = $a{$vendor_id}{$parts_id}{lastcost} / $form->{$curr} * $form->{$a{$vendor_id}{$parts_id}{curr}};
+    foreach my $parts_id (sort { $v{$vendor_id}{$a}{ndx} <=> $v{$vendor_id}{$b}{ndx} } keys %{ $v{$vendor_id} }) {
+
+      if (($form->{$curr} * $form->{$v{$vendor_id}{$parts_id}{curr}}) > 0) {
+	$sellprice = $v{$vendor_id}{$parts_id}{lastcost} / $form->{$curr} * $form->{$v{$vendor_id}{$parts_id}{curr}};
       } else {
-	$sellprice = $a{$vendor_id}{$parts_id}{lastcost};
+	$sellprice = $v{$vendor_id}{$parts_id}{lastcost};
       }
       $sellprice = $form->round_amount($sellprice, $form->{precision});
       
-      my $linetotal = $form->round_amount($sellprice * $a{$vendor_id}{$parts_id}{qty}, $form->{precision});
-
+      my $linetotal = $form->round_amount($sellprice * $v{$vendor_id}{$parts_id}{qty}, $form->{precision});
+      
       my ($ph, $trans_id, $orderitemsid) = split /--/, $parts_id;
-
+      
       $query = qq|SELECT c.accno FROM chart c
                   JOIN partstax pt ON (pt.chart_id = c.id)
 		  WHERE pt.parts_id = $ph|;
       $sth = $dbh->prepare($query);
       $sth->execute || $form->dberror($query);
-
+      
       my $rate = 0;
       while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
 	$rate += $tax{$ref->{accno}};
       }
       $sth->finish;
-      
+
       if ($form->{detail}) {
 	$query = qq|SELECT oi.description, oi.itemnotes AS notes, p.unit,
-	            oi.ordernumber
-		    FROM parts p
+	            oi.ordernumber, oi.ponumber
+	            FROM parts p
 		    JOIN orderitems oi ON (oi.parts_id = p.id)
 		    WHERE oi.parts_id = $ph
 		    AND oi.trans_id = $trans_id
@@ -2289,16 +2307,18 @@ sub generate_orders {
 	            FROM parts p
 		    WHERE p.id = $ph|;
       }
-
+      
       $sth = $dbh->prepare($query);
       $sth->execute || $form->dberror($query);
-
+      
       $ref = $sth->fetchrow_hashref(NAME_lc);
       
       $description = $dbh->quote($ref->{description});
       $itemnotes = $dbh->quote($ref->{notes});
       $unit = $dbh->quote($ref->{unit});
       $ordernumber = $dbh->quote($ref->{ordernumber});
+      $ponumber = $dbh->quote($ref->{ponumber}) || $dbh->quote($form->{ponumber});
+      
       $sth->finish;
 
       $netamount += $linetotal;
@@ -2307,12 +2327,13 @@ sub generate_orders {
       } else {
 	$amount += $form->round_amount($linetotal * (1 + $rate), $form->{precision});
       }
-
+	
       $query = qq|INSERT INTO orderitems (trans_id, parts_id, description,
-                  qty, ship, sellprice, unit, itemnotes, ordernumber) VALUES
+                  qty, ship, sellprice, unit, itemnotes, ordernumber,
+		  ponumber) VALUES
 		  ($id, $ph, $description,
-		  $a{$vendor_id}{$parts_id}{qty}, 0, $sellprice, $unit,
-		  $itemnotes, $ordernumber)|;
+		  $v{$vendor_id}{$parts_id}{qty}, 0, $sellprice, $unit,
+		  $itemnotes, $ordernumber, $ponumber)|;
       $dbh->do($query) || $form->dberror($query);
 
     }
@@ -2341,7 +2362,7 @@ sub generate_orders {
 		ponumber = |.$dbh->quote($form->{ponumber}).qq|
 		WHERE id = $id|;
     $dbh->do($query) || $form->dberror($query);
-  
+    
     $rc = $dbh->commit;
     
   }
@@ -2362,13 +2383,12 @@ sub consolidate_orders {
   my $id;
   my $ref;
   my %oe = ();
-  my $i;
   
   my $query = qq|SELECT * FROM oe
                  WHERE id = ?|;
   my $sth = $dbh->prepare($query) || $form->dberror($query);
 
-  for ($i = 1; $i <= $form->{rowcount}; $i++) {
+  for (my $i = 1; $i <= $form->{rowcount}; $i++) {
     # retrieve order
     if ($form->{"ndx_$i"}) {
       $sth->execute($form->{"ndx_$i"});
@@ -2408,7 +2428,7 @@ sub consolidate_orders {
   }
 
   
-  my $ordnumber;
+  my $ordnumber = $form->{ordnumber};
   my $numberfld = ($form->{vc} eq 'customer') ? 'sonumber' : 'ponumber';
   
   my ($department, $department_id) = $form->{department};
@@ -2428,7 +2448,7 @@ sub consolidate_orders {
       $form->{"$form->{vc}_id"} = $vc_id;
       $amount = 0;
       $netamount = 0;
-      
+
       foreach $id (@{ $oe{orders}{$curr}{$vc_id} }) {
 
         # header
@@ -2457,7 +2477,7 @@ sub consolidate_orders {
 	    
       }
 
-      $ordnumber = $form->{ordnumber} || $form->update_defaults($myconfig, $numberfld, $dbh);
+      $ordnumber ||= $form->update_defaults($myconfig, $numberfld, $dbh);
     
       $query = qq|INSERT INTO oe (ordnumber)
 		  VALUES ('$uid')|;
@@ -2488,14 +2508,18 @@ sub consolidate_orders {
 		  waybill = |.$dbh->quote($ref->{waybill}).qq|,
 		  language_code = '$ref->{language_code}',
 		  ponumber = |.$dbh->quote($form->{ponumber}).qq|,
-		  department_id = $department_id
+		  department_id = $department_id,
+		  description = |.$dbh->quote($form->{orddescription}).qq|
 		  WHERE id = $id|;
       $dbh->do($query) || $form->dberror($query);
 	  
+      my $sortorder = $form->{sort};
+      $sortorder = "customerponumber" if $form->{sort} eq 'ponumber';
 
       # add items
-      foreach $item (@orderitems) {
+      for my $item (sort { $a->{$sortorder} cmp $b->{$sortorder} } @orderitems) {
 	for (qw(qty sellprice discount project_id ship)) { $item->{$_} *= 1 }
+
 	$query = qq|INSERT INTO orderitems (
 		    trans_id, parts_id, description,
 		    qty, sellprice, discount,
@@ -2508,13 +2532,13 @@ sub consolidate_orders {
 		    .$dbh->quote($item->{unit}).qq|, |
 		    .$form->dbquote($item->{reqdate}, SQL_DATE)
 		    .qq|, $item->{project_id}, $item->{ship}, |
-		    .$dbh->quote($item->{serialnumber}) .qq|, |
+		    .$dbh->quote($item->{serialnumber}).qq|, |
 		    .$dbh->quote($item->{ordernumber}).qq|, |
 		    .$dbh->quote($item->{customerponumber}).qq|, |
 		    .$dbh->quote($item->{itemnotes}).qq|)|;
 
-      $dbh->do($query) || $form->dberror($query);
-		    
+	$dbh->do($query) || $form->dberror($query);
+
       }
     }
   }

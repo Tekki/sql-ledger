@@ -1,4 +1,4 @@
-#!/usr/bin/perl -X
+#!/usr/bin/perl
 #
 ######################################################################
 # SQL-Ledger ERP
@@ -26,16 +26,14 @@ $latex = 0;
 %printer = ();
 ########## end ###########################################
 
-
 $| = 1;
 
 use SL::Form;
 
 eval { require "sql-ledger.conf"; };
 
-$form = new Form;
+$form = new Form $userspath;
 
-  
 # name of this script
 $0 =~ tr/\\/\//;
 $pos = rindex $0, '/';
@@ -72,7 +70,7 @@ $form->{charset} = $locale->{charset};
 $SIG{__WARN__} = sub { eval { $form->info($_[0]); } };
 
 # send errors to browser
-$SIG{__DIE__} = sub { eval { $form->error($_[0]); } };
+$SIG{__DIE__} = sub { eval { $form->error($_[0]); exit; } };
 
 $myconfig{dbpasswd} = unpack 'u', $myconfig{dbpasswd};
 map { $form->{$_} = $myconfig{$_} } qw(stylesheet timeout) unless ($form->{type} eq 'preferences');
@@ -83,9 +81,9 @@ if ($form->{path} !~ /^bin\//) {
 }
 
 # global lock out
-if (-f "$userspath/nologin") {
-  if (-s "$userspath/nologin") {
-    open(FH, "$userspath/nologin");
+if (-f "$userspath/nologin.LCK") {
+  if (-s "$userspath/nologin.LCK") {
+    open(FH, "$userspath/nologin.LCK");
     $message = <FH>;
     close(FH);
     $form->error($message);
@@ -94,15 +92,15 @@ if (-f "$userspath/nologin") {
 }
 
 # dataset lock out
-if (-f "$userspath/$myconfig{dbname}.nologin") {
-  if (-s "$userspath/$myconfig{dbname}.nologin") {
-    open(FH, "$userspath/$myconfig{dbname}.nologin");
+if (-f "$userspath/$myconfig{dbname}.LCK" && $form->{login} ne "admin\@$myconfig{dbname}") {
+  if (-s "$userspath/$myconfig{dbname}.LCK") {
+    open(FH, "$userspath/$myconfig{dbname}.LCK");
     $message = <FH>;
     close(FH);
     $form->error($message);
   }
-  $form->error($locale->text('System currently down for maintenance!'));
-}
+  $form->error($locale->text('Dataset currently down for maintenance!'));
+} 
 
 # pull in the main code
 require "$form->{path}/$form->{script}";
@@ -215,20 +213,4 @@ sub check_password {
   }
 }
 
-
-sub error {
-  my ($msg) = @_;
-
-  if ($ENV{HTTP_USER_AGENT}) {
-    print qq|Content-Type: text/html
-
-<body><h2 class=error>Error!</h2>
-    <p><b>$msg</b>|;
-
-    exit;
-  }
-
-  die "Error: $msg\n";
-
-}
 

@@ -44,7 +44,6 @@ $self{texts} = {
   'Home Phone'                  => 'Telefon privat',
   'IBAN'                        => 'IBAN',
   'ID'                          => 'ID',
-  'Inactive'                    => 'Inaktiv',
   'Include in Report'           => 'Inkludér i rapport',
   'Login'                       => 'Log på',
   'Manager'                     => 'Leder',
@@ -69,7 +68,6 @@ $self{texts} = {
   'Update'                      => 'Opdatér',
   'User'                        => 'Bruger',
   'Work Phone'                  => 'Telefon arbejde',
-  'Zip/Postal Code'             => 'Postnummer',
 };
 
 $self{subs} = {

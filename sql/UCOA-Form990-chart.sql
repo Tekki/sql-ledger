@@ -233,5 +233,5 @@ INSERT INTO defaults (fldname, fldvalue) VALUES ('fxloss_accno_id', (SELECT id F
 INSERT INTO defaults (fldname, fldvalue) VALUES ('weightunit', 'lbs');
 INSERT INTO defaults (fldname, fldvalue) VALUES ('precision', '2');
 --
-INSERT INTO curr (rn, curr, precision) VALUES (1,'USD',2);
+INSERT INTO curr (rn, curr, prec) VALUES (1,'USD',2);
 

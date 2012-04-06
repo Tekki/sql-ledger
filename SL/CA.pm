@@ -53,7 +53,7 @@ sub all_accounts {
   $sth->finish;
 
   $query = qq|SELECT c.id, c.accno, c.description, c.charttype, c.gifi_accno,
-              c.category, c.link,
+              c.category, c.link, c.contra,
 	      l.description AS translation
               FROM chart c
 	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
@@ -129,8 +129,8 @@ sub all_transactions {
 		  reference => 2,
 		  description => 3 );
 
-  my @a = qw(transdate reference description);
-  my $sortorder = $form->sort_order(\@a, \%ordinal);
+  my @sf = qw(transdate reference description);
+  my $sortorder = $form->sort_order(\@sf, \%ordinal);
 
   my $null;
   my $department_id;

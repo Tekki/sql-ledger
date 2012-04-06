@@ -22,13 +22,13 @@ sub projects {
   my $dbh = $form->dbconnect($myconfig);
 
   $form->{sort} = "projectnumber" unless $form->{sort};
-  my @a = ($form->{sort});
+  my @sf = ($form->{sort});
   my %ordinal = ( projectnumber	=> 2,
                   description	=> 3,
 		  startdate => 4,
 		  enddate => 5,
 		);
-  my $sortorder = $form->sort_order(\@a, \%ordinal);
+  my $sortorder = $form->sort_order(\@sf, \%ordinal);
 
   my $query;
   my $where = "WHERE 1=1";
@@ -100,8 +100,8 @@ sub projects {
     push @{ $form->{all_project} }, $ref;
     $i++;
   }
-
   $sth->finish;
+
   $dbh->disconnect;
   
   $i;
@@ -120,7 +120,7 @@ sub get_project {
   my $ref;
   my $where;
   
-  if ($form->{id} *= 1) {
+  if ($form->{id}) {
 
     $where = "WHERE pr.id = $form->{id}" if $form->{id};
     
@@ -183,7 +183,7 @@ sub save_project {
 
   $form->{projectnumber} = $form->update_defaults($myconfig, "projectnumber", $dbh) unless $form->{projectnumber};
 
-  if ($form->{id} *= 1) {
+  if ($form->{id}) {
 
     $query = qq|UPDATE project SET
                 projectnumber = |.$dbh->quote($form->{projectnumber}).qq|,
@@ -240,11 +240,11 @@ sub list_stock {
   }
   
   $form->{sort} = "projectnumber" unless $form->{sort};
-  my @a = ($form->{sort});
+  my @sf = ($form->{sort});
   my %ordinal = ( projectnumber => 2,
                   description   => 3
 		);
-  my $sortorder = $form->sort_order(\@a, \%ordinal);
+  my $sortorder = $form->sort_order(\@sf, \%ordinal);
  
   my $query = qq|SELECT pr.*, p.partnumber
 	         FROM project pr
@@ -274,12 +274,12 @@ sub jobs {
   my $dbh = $form->dbconnect($myconfig);
  
   $form->{sort} = "projectnumber" unless $form->{sort};
-  my @a = ($form->{sort});
+  my @sf = ($form->{sort});
   my %ordinal = ( projectnumber => 2,
                   description   => 3,
 		  startdate => 4,
 		);
-  my $sortorder = $form->sort_order(\@a, \%ordinal);
+  my $sortorder = $form->sort_order(\@sf, \%ordinal);
   
   my $query = qq|SELECT pr.*, p.partnumber, p.onhand, c.name
 	         FROM project pr
@@ -335,9 +335,8 @@ sub jobs {
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
     push @{ $form->{all_project} }, $ref;
   }
-
   $sth->finish;
-  
+
   $dbh->disconnect;
   
 }
@@ -356,7 +355,7 @@ sub get_job {
   my %defaults = $form->get_defaults($dbh, \@{['weightunit']});
   $form->{weightunit} = $defaults{weightunit};
   
-  if ($form->{id} *= 1) {
+  if ($form->{id}) {
     
     $query = qq|SELECT pr.*,
                 p.partnumber, p.description AS partdescription,
@@ -464,10 +463,11 @@ sub get_job {
 sub get_customer {
   my ($self, $myconfig, $form, $dbh) = @_;
   
-  my $disconnect = ($dbh) ? 0 : 1;
+  my $disconnect = 0;
 
   if (! $dbh) {
     $dbh = $form->dbconnect($myconfig);
+    $disconnect = 1;
   }
 
   my $query;
@@ -496,7 +496,7 @@ sub get_customer {
 		FROM customer
 		WHERE $where|;
 
-    if ($form->{customer_id} *= 1) {
+    if ($form->{customer_id}) {
       $query .= qq|
 		UNION SELECT id,name
 		FROM customer
@@ -531,7 +531,7 @@ sub save_job {
   my ($partsgroup, $partsgroup_id) = split /--/, $form->{partsgroup};
   $partsgroup_id ||= 'NULL';
   
-  if ($form->{id} *= 1) {
+  if ($form->{id}) {
     $query = qq|SELECT id FROM project
                 WHERE id = $form->{id}|;
     ($form->{id}) = $dbh->selectrow_array($query);
@@ -782,8 +782,6 @@ sub delete_project {
   
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
-
-  $form->{id} *= 1;
   
   $query = qq|DELETE FROM project
 	      WHERE id = $form->{id}|;
@@ -807,8 +805,6 @@ sub delete_partsgroup {
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
   
-  $form->{id} *= 1;
-    
   $query = qq|DELETE FROM partsgroup
 	      WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
@@ -830,8 +826,6 @@ sub delete_pricegroup {
   
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
-
-  $form->{id} *= 1;
   
   $query = qq|DELETE FROM pricegroup
 	      WHERE id = $form->{id}|;
@@ -850,9 +844,7 @@ sub delete_job {
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
-
-  $form->{id} *= 1;
-  
+ 
   my %audittrail = ( tablename  => 'project',
                      reference  => $form->{id},
 		     formname   => $form->{type},
@@ -899,8 +891,8 @@ sub partsgroups {
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
   
   $form->{sort} ||= "partsgroup";
-  my @a = qw(partsgroup);
-  my $sortorder = $form->sort_order(\@a);
+  my @sf = qw(partsgroup);
+  my $sortorder = $form->sort_order(\@sf);
 
   my $query = qq|SELECT g.*
                  FROM partsgroup g|;
@@ -911,6 +903,11 @@ sub partsgroups {
     $var = $form->like(lc $form->{partsgroup});
     $where .= " AND lower(partsgroup) LIKE '$var'";
   }
+  if ($form->{partsgroupcode} ne "") {
+    $var = $form->like(lc $form->{partsgroupcode});
+    $where .= " AND lower(code) LIKE '$var'";
+  }
+
   $query .= qq|
                WHERE $where
 	       ORDER BY $sortorder|;
@@ -950,22 +947,27 @@ sub save_partsgroup {
   
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
+  my $query;
   
   $form->{pos} *= 1;
 
-  if ($form->{id} *= 1) {
+  if ($form->{id}) {
     $query = qq|UPDATE partsgroup SET
                 partsgroup = |.$dbh->quote($form->{partsgroup}).qq|,
+                code = |.$dbh->quote($form->{code}).qq|,
+		image = |.$dbh->quote($form->{image}).qq|,
 		pos = '$form->{pos}'
 		WHERE id = $form->{id}|;
   } else {
     $query = qq|INSERT INTO partsgroup
-                (partsgroup, pos)
-                VALUES (|.$dbh->quote($form->{partsgroup}).qq|,
+                (partsgroup, code, image, pos)
+                VALUES (|.$dbh->quote($form->{partsgroup}).qq|,|
+                .$dbh->quote($form->{code}).qq|,|
+                .$dbh->quote($form->{image}).qq|,
 		'$form->{pos}')|;
   }
   $dbh->do($query) || $form->dberror($query);
-  
+
   $dbh->disconnect;
 
 }
@@ -976,8 +978,6 @@ sub get_partsgroup {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
-
-  $form->{id} *= 1;
   
   my $query = qq|SELECT *
                  FROM partsgroup
@@ -1020,8 +1020,8 @@ sub pricegroups {
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   $form->{sort} = "pricegroup" unless $form->{sort};
-  my @a = (pricegroup);
-  my $sortorder = $form->sort_order(\@a);
+  my @sf = (pricegroup);
+  my $sortorder = $form->sort_order(\@sf);
 
   my $query = qq|SELECT g.*
                  FROM pricegroup g|;
@@ -1069,7 +1069,7 @@ sub save_pricegroup {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
   
-  if ($form->{id} *= 1) {
+  if ($form->{id}) {
     $query = qq|UPDATE pricegroup SET
                 pricegroup = |.$dbh->quote($form->{pricegroup}).qq|
 		WHERE id = $form->{id}|;
@@ -1090,8 +1090,6 @@ sub get_pricegroup {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
-
-  $form->{id} *= 1;
   
   my $query = qq|SELECT *
                  FROM pricegroup
@@ -1128,8 +1126,6 @@ sub description_translations {
   my $where = "1 = 1";
   my $var;
   my $ref;
-
-  $form->{id} *= 1;
   
   for (qw(partnumber description)) {
     if ($form->{$_}) {
@@ -1148,8 +1144,8 @@ sub description_translations {
                   'description' => 3
 		);
   
-  my @a = qw(partnumber description);
-  my $sortorder = $form->sort_order(\@a, \%ordinal);
+  my @sf = qw(partnumber description);
+  my $sortorder = $form->sort_order(\@sf, \%ordinal);
 
   my $query = qq|SELECT l.description AS language, t.description AS translation,
                  l.code
@@ -1256,8 +1252,6 @@ sub project_translations {
   my $where = "1 = 1";
   my $var;
   my $ref;
-
-  $form->{id} *= 1;
   
   for (qw(projectnumber description)) {
     if ($form->{$_}) {
@@ -1275,8 +1269,8 @@ sub project_translations {
                   'description' => 3
 		);
   
-  my @a = qw(projectnumber description);
-  my $sortorder = $form->sort_order(\@a, \%ordinal);
+  my @sf = qw(projectnumber description);
+  my $sortorder = $form->sort_order(\@sf, \%ordinal);
 
   my $query = qq|SELECT l.description AS language, t.description AS translation,
                  l.code
@@ -1325,8 +1319,6 @@ sub chart_translations {
   my $where = "1 = 1";
   my $var;
   my $ref;
-
-  $form->{id} *= 1;
   
   for (qw(accno description)) {
     if ($form->{$_}) {
@@ -1344,8 +1336,8 @@ sub chart_translations {
                   'description' => 3
 		);
   
-  my @a = qw(accno description);
-  my $sortorder = $form->sort_order(\@a, \%ordinal);
+  my @sf = qw(accno description);
+  my $sortorder = $form->sort_order(\@sf, \%ordinal);
 
   my $query = qq|SELECT l.description AS language, t.description AS translation,
                  l.code
@@ -1395,8 +1387,6 @@ sub save_translation {
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
 
-  $form->{id} *= 1;
-  
   my $query = qq|DELETE FROM translation
                  WHERE trans_id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
@@ -1422,8 +1412,6 @@ sub delete_translation {
   
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
-
-  $form->{id} *= 1;
   
   my $query = qq|DELETE FROM translation
   	         WHERE trans_id = $form->{id}|;
@@ -1460,7 +1448,7 @@ sub get_jcitems {
   
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
-  
+
   my %defaults = $form->get_defaults($dbh, \@{['precision']});
   $form->{precision} = $defaults{precision};
 
@@ -1489,13 +1477,12 @@ sub get_jcitems {
 
   my $query;
   my $ref;
-  $form->{vc} = ($form->{vc} eq 'customer') ? 'customer' : 'vendor';
 
   $query = qq|SELECT j.id, j.description, j.qty - j.allocated AS qty,
 	       j.sellprice, j.parts_id, pr.$form->{vc}_id, j.project_id,
 	       j.checkedin::date AS transdate, j.notes,
                c.name AS $form->{vc}, c.$form->{vc}number, pr.projectnumber,
-	       p.partnumber, e.name AS employee
+	       p.partnumber
                FROM jcitems j
 	       JOIN project pr ON (pr.id = j.project_id)
 	       JOIN employee e ON (e.id = j.employee_id)
