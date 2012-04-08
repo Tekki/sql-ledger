@@ -8,12 +8,13 @@
 #
 #======================================================================
 
-Warning: Don't upgrade a version 2 system to version 3 without detailed
-instructions!
+Warning: Don't upgrade a version 2 system to version 3 before you have
+read the instructions in doc/UPGRADE!
 
 The branches are:
 - master: the unmodified SQL-Ledger from sql-ledger.com with version tags
 
 - full: the master branch with additions by Tekki: security patch for
   template editor, WLprinter, Swiss German, French and Italian charts
-  of accounts, updated languages.
+  of accounts, updated languages, full UTF-8 support.
+
