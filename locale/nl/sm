@@ -1,8 +1,14 @@
 $self{texts} = {
+  'Beginning date'              => 'Begin datum',
   'Continue'                    => 'Verder',
+  'Date missing'                => 'Datum ontbreekt',
+  'Delete Open Invoices'        => 'Verwijder open facturen',
+  'Deleting Invoices ... '      => 'Facturen worden verwijderd...',
   'From'                        => 'Van',
+  'Repost Invoices'             => 'Facturen opnieuw boeken',
   'To'                          => 'Tot',
   'done'                        => 'gebeurd',
+  'please wait'                 => 'even geduld',
 };
 
 $self{subs} = {

@@ -113,6 +113,7 @@ $self{texts} = {
   'Unit'                        => 'Eenheid',
   'Volume'                      => 'Volume',
   'Work Order'                  => 'Werkorder',
+  'XML'                         => 'XML',
   'Zip/Postal Code'             => 'Postcode',
   'html'                        => 'html',
   'sent'                        => 'verzonden',

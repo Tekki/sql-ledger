@@ -827,8 +827,6 @@ sub form_footer {
 
   for $i (1 .. $form->{paidaccounts}) {
 
-    $form->{"paid_$i"} = $form->parse_amount(\%myconfig, $form->{"paid_$i"});
-
     print qq|
 	<tr>
 |;
