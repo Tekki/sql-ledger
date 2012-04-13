@@ -1,0 +1,10 @@
+$self{texts} = {
+  'Reference Documents'         => 'Referentie Documenten',
+};
+
+$self{subs} = {
+  'reference_documents'         => 'reference_documents',
+};
+
+1;
+

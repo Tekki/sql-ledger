@@ -9,12 +9,13 @@ $self{texts} = {
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
   'RVC missing!'                => 'RVC ontbreekt!',
-  'Remittance Voucher'          => 'Betaling Voucher',
   'Screen'                      => 'Scherm',
   'Select a Printer!'           => 'Selecteer een Printer',
   'Select payment'              => 'Kies een betaling',
-  'Select postscript or PDF!'   => 'Kies postscript of PDF!',
   'Source'                      => 'Herkomst',
+  'Text'                        => 'Tekst',
+  'XML'                         => 'XML',
+  'html'                        => 'html',
 };
 
 $self{subs} = {
@@ -25,6 +26,7 @@ $self{subs} = {
   'print_credit_note'           => 'print_credit_note',
   'print_debit_note'            => 'print_debit_note',
   'print_options'               => 'print_options',
+  'print_payslip'               => 'print_payslip',
   'print_receipt'               => 'print_receipt',
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',
