@@ -737,7 +737,7 @@ CREATE TABLE payrate (
   trans_id int,
   id int,
   rate float,
-  over float
+  above float
 );
 --
 CREATE TABLE employeewage (

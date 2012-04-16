@@ -225,7 +225,7 @@ sub get_employee {
   # get acsrole
   $query = qq|SELECT id, description
               FROM acsrole
-	      WHERE rn >= $rnl
+	      WHERE rn > $rnl
 	      ORDER BY rn|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
