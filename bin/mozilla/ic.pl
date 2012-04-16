@@ -3100,9 +3100,11 @@ sub update {
     if ($form->{partsgroupcode} ne $form->{oldpartsgroupcode}) {
       $form->{partsgroup} = "";
       $form->{oldpartsgroup} = "";
+      $form->{oldpartsgroupcode} = "";
     }
     if ($form->{partsgroup} ne $form->{oldpartsgroup}) {
       $form->{partsgroupcode} = "";
+      $form->{oldpartsgroupcode} = "";
     }
 
     $form->get_partsgroup(\%myconfig, { all => 1 });

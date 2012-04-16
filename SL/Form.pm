@@ -111,11 +111,11 @@ sub new {
   my $login = $self->{login};
   $login =~ s/@.*//;
 
-  $self->{admin} = 1 if $login eq 'admin';
+  $self->{admin} = ($login eq 'admin') ? 1 : 0;
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "3.0.0";
+  $self->{version} = "3.0.2";
   $self->{dbversion} = "3.0.0";
 
   bless $self, $type;

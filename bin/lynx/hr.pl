@@ -421,7 +421,12 @@ sub prepare_employee {
   
   for $key (qw(wage deduction acsrole paymentmethod)) {
     if (@{ $form->{"all_$key"} }) {
-      $form->{"select$key"} = "\n";
+      if ($form->{login} eq "admin\@$myconfig{dbname}") {
+        $form->{"select$key"} = "\n";
+      } else {
+        $form->{"select$key"} = ($key eq "acsrole") ? "" : "\n";
+      }
+
       for (@{ $form->{"all_$key"} }) { $form->{"select$key"} .= qq|$_->{description}--$_->{id}\n| }
       
       $form->{$key} = qq|$form->{$key}--$form->{"${key}_id"}|;
@@ -558,11 +563,15 @@ sub employee_header {
   } else {
     $sales = ($form->{sales}) ? "x" : "";
     ($acsrole) = split /--/, $form->{acsrole};
-    $login = qq|
+    if ($form->{selectacsrole}) {
+      $login = qq|
 	      <tr>
 		<th align=right>|.$locale->text('Role').qq|</th>
 		<td>$acsrole</td>
 	      </tr>
+|;
+    }
+    $login .= qq|
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Login').qq|</th>
 		<td>$form->{employeelogin}</td>
