@@ -17,4 +17,5 @@ The branches are:
 - full: the master branch with additions by Tekki: security patch for
   template editor, WLprinter, Swiss German, French and Italian charts
   of accounts, updated languages, full UTF-8 support.
+  To use WLprinter, add a printer with command "wlprinter".
 
