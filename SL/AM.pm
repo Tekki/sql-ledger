@@ -2542,7 +2542,9 @@ sub move {
   my $dbh = $form->dbconnect($myconfig);
   
   my $id;
-  
+
+  for (qw(db fld id)) { $form->{$_} =~ s/;//g }
+
   my $query = qq|SELECT rn FROM $form->{db}
                  WHERE $form->{fld} = '$form->{id}'|;
   my ($rn) = $dbh->selectrow_array($query);
