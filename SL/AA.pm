@@ -1297,6 +1297,9 @@ sub company_details {
   for (keys %defaults) {
     if ($_ =~ /printer_/) {
       ($label, $command) = split /=/, $defaults{$_};
+      # Tekki: wlprinter
+      $command = "wlprinter/fileprinter.pl $form->{login}" if lc $command eq 'wlprinter';
+      # Tekki_end
       $form->{"${label}_printer"} = $command;
     }
   }
