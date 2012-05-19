@@ -422,8 +422,8 @@ sub dbcreate {
   $self->process_query($form, $dbh, $filename);
 
   # create custom tables and functions
-  for (qw(tables functions)) {
-    $filename = "sql/${dbdriver}-custom_${_}.sql";
+  for my $item (qw(tables functions)) {
+    $filename = "sql/${dbdriver}-custom_${item}.sql";
     $self->process_query($form, $dbh, $filename);
   }
 
