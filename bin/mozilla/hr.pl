@@ -32,7 +32,7 @@ sub add {
   $form->{callback} = "$form->{script}?action=add&db=$form->{db}&path=$form->{path}&login=$form->{login}" unless $form->{callback};
 
   &{ "prepare_$form->{db}" };
-  
+
   &display_form;
   
 }
@@ -424,7 +424,11 @@ sub prepare_employee {
       if ($form->{login} eq "admin\@$myconfig{dbname}") {
         $form->{"select$key"} = "\n";
       } else {
-        $form->{"select$key"} = ($key eq "acsrole") ? "" : "\n";
+        if ($form->{id}) {
+          $form->{"select$key"} = ($key eq "acsrole") ? "" : "\n";
+        } else {
+          $form->{"select$key"} = "\n";
+        }
       }
 
       for (@{ $form->{"all_$key"} }) { $form->{"select$key"} .= qq|$_->{description}--$_->{id}\n| }

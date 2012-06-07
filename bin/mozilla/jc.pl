@@ -1948,7 +1948,7 @@ sub print_form {
 
   $form->parse_template(\%myconfig, $userspath);
 
-  if (defined %$oldform) {
+  if (%$oldform) {
 
     for (keys %$oldform) { $form->{$_} = $oldform->{$_} }
     for (qw(printed queued audittrail)) { $form->{$_} = $status{$_} }

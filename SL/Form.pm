@@ -115,7 +115,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "3.0.2";
+  $self->{version} = "3.0.3";
   $self->{dbversion} = "3.0.0";
 
   bless $self, $type;
@@ -2033,7 +2033,7 @@ sub format_date {
 sub print_button {
   my ($self, $button, $name) = @_;
 
-  print qq|<input class=submit type=submit name=action value="$button->{$name}{value}" accesskey="$button->{$name}{key}" title="$button->{$name}{value} [Alt-$button->{$name}{key}]">\n|;
+  print qq|<input class=submit type=submit name=action value="$button->{$name}{value}" accesskey="$button->{$name}{key}" title="$button->{$name}{value} [$button->{$name}{key}]">\n|;
 
 }
   

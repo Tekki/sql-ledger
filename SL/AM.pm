@@ -1631,7 +1631,7 @@ sub backup {
   
   print OUT qq|-- SQL-Ledger Backup
 -- Dataset: $myconfig->{dbname}
--- Version: $form->{version}
+-- Version: $form->{dbversion}
 -- Host: $myconfig->{dbhost}
 -- Login: $form->{login}
 -- User: $myconfig->{name}
@@ -2244,7 +2244,7 @@ sub save_exchangerate {
 }
 
 
-sub remove_semaphores {
+sub remove_locks {
   my ($self, $myconfig, $form, $userspath) = @_;
   
   my $dbh = $form->dbconnect($myconfig);

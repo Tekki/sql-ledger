@@ -3025,7 +3025,7 @@ sub assembly_row {
  
       for (qw(runningnumber unit bom adj)) { $column_data{$_} = qq|<td></td>| }
 
-      $column_data{qty} = qq|<td><input name="qty_$i" class="inputright" size=6 value="$form->{"qty_$i"}" accesskey="$i" title="[Alt-$i]"></td>|;
+      $column_data{qty} = qq|<td><input name="qty_$i" class="inputright" size=6 value="$form->{"qty_$i"}" accesskey="$i" title="[$i]"></td>|;
       $column_data{partnumber} = qq|<td><input name="partnumber_$i" size=15></td>|;
       $column_data{description} = qq|<td><input name="description_$i" size=30></td>|;
 
@@ -3040,7 +3040,7 @@ sub assembly_row {
       $column_data{partnumber} = qq|<td><a href="$form->{script}?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"id_$i"}" target=_blank>$form->{"partnumber_$i"}</a></td>|;
 
       $column_data{runningnumber} = qq|<td><input name="runningnumber_$i" class="inputright" size=3 value="$i"></td>|;
-      $column_data{qty} = qq|<td><input name="qty_$i" class="inputright" size=6 value="$form->{"qty_$i"}" accesskey="$i" title="[Alt-$i]"></td>|;
+      $column_data{qty} = qq|<td><input name="qty_$i" class="inputright" size=6 value="$form->{"qty_$i"}" accesskey="$i" title="[$i]"></td>|;
 
       for (qw(bom adj)) { $form->{"${_}_$i"} = ($form->{"${_}_$i"}) ? "checked" : "" }
       $column_data{bom} = qq|<td align=center><input name="bom_$i" type=checkbox class=checkbox value=1 $form->{"bom_$i"}></td>|;
