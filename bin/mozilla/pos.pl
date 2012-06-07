@@ -626,19 +626,19 @@ sub form_footer {
 
   } else {
 
-    %button = ('Main Groups' => { ndx => 0, key => 'M', value => $locale->text('Main Groups') },
+    %button = (
                'Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
-	       'Print' => { ndx => 2, key => 'P', value => $locale->text('Print') },
-	       'Open Drawer' => { ndx => 3, key => 'C', value => $locale->text('Open Drawer') },
-	       'Preview' => { ndx => 4, key => 'V', value => $locale->text('Preview') },
-	       'Post' => { ndx => 5, key => 'O', value => $locale->text('Post') },
-	       'Print and Post' => { ndx => 6, key => 'R', value => $locale->text('Print and Post') },
-	       'Assign Number' => { ndx => 7, key => 'A', value => $locale->text('Assign Number') },
-	       'Delete' => { ndx => 8, key => 'D', value => $locale->text('Delete') }
+               'Main Groups' => { ndx => 2, key => 'M', value => $locale->text('Main Groups') },
+	       'Print' => { ndx => 3, key => 'P', value => $locale->text('Print') },
+	       'Open Drawer' => { ndx => 4, key => 'C', value => $locale->text('Open Drawer') },
+	       'Preview' => { ndx => 5, key => 'V', value => $locale->text('Preview') },
+	       'Post' => { ndx => 6, key => 'O', value => $locale->text('Post') },
+	       'Print and Post' => { ndx => 7, key => 'R', value => $locale->text('Print and Post') },
+	       'Assign Number' => { ndx => 8, key => 'A', value => $locale->text('Assign Number') },
+	       'Delete' => { ndx => 9, key => 'D', value => $locale->text('Delete') }
 	      );
 
-# for translation and function
-    delete $button{'Main Groups'};
+    delete $button{'Main Groups'} if $form->{parentgroups};
     
     if ($transdate > $form->{closedto}) {
 
@@ -649,11 +649,11 @@ sub form_footer {
       delete $button{'Print and Post'} unless $latex;
       
       for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) {
-	print qq|<input class=pos type=submit name=action value="$button{$_}{value}" accesskey="$button{$_}{key}" title="$button{$_}{value} [Alt-$button{$_}{key}]">\n|;
+	print qq|<input class=pos type=submit name=action value="$button{$_}{value}" accesskey="$button{$_}{key}" title="$button{$_}{value} [$button{$_}{key}]">\n|;
       }
 
       print qq|<p>
-      <input class=pos type=text size=1 value="B" accesskey="B" title="[Alt-B]">\n|;
+      <input class=pos type=text size=1 value="B" accesskey="B" title="[B]">\n|;
 
       if ($form->{lookup}) {
 	$spc = ($form->{path} =~ /lynx/) ? "." : " ";
@@ -661,17 +661,12 @@ sub form_footer {
         $form->{nextsub} = "lookup_partsgroup";
 	$form->hide_form(qw(lookup nextsub));
 
-        if (! $form->{parentgroups}) {
-	  $form->{lookup} =~ s/.*\n?//;
-	  print qq| <input class=pos type=submit name=action value="$&">\n|;
-	}
-	
 	$form->{lookup} =~ s/\r//g;
 	foreach $item (split /\n/, $form->{lookup}) {
 	  ($partsgroup, $translation, $image) = split /--/, $item;
 	  $item = ($translation) ? $translation : $partsgroup;
 	  $item = $form->quote($item);
-	  print qq| <input class="pos" type="image" height="32" name="action" src="$image" alt="$item" value="$spc$item" title="$item">\n| if $item;
+          print qq| <button name="action" value="$spc$item" type="submit" class="pos" title="$item"><img src="$image" height="32" alt="$item"></button>\n| if $item;
 	}
       }
     }
@@ -861,7 +856,7 @@ sub display_row {
 
     for (qw(partnumber sku description partsgroup unit)) { $form->{"${_}_$i"} = $form->quote($form->{"${_}_$i"}); }
     
-    $column_data{partnumber} = qq|<td><input name="partnumber_$i" size=20 value="|.$form->quote($form->{"partnumber_$i"}).qq|" accesskey="$i" title="[Alt-$i]"></td>|;
+    $column_data{partnumber} = qq|<td><input name="partnumber_$i" size=20 value="|.$form->quote($form->{"partnumber_$i"}).qq|" accesskey="$i" title="[$i]"></td>|;
 
     if (($rows = $form->numtextrows($form->{"description_$i"}, 40, 6)) > 1) {
       $column_data{description} = qq|<td><textarea name="description_$i" rows=$rows cols=46 wrap=soft>$form->{"description_$i"}</textarea></td>|;
@@ -869,7 +864,7 @@ sub display_row {
       $column_data{description} = qq|<td><input name="description_$i" size=48 value="|.$form->quote($form->{"description_$i"}).qq|"></td>|;
     }
 
-    $column_data{qty} = qq|<td align=right><input name="qty_$i" class="inputright" size="8" value="$form->{"qty_$i"}"></td>|;
+    $column_data{qty} = qq|<td align=right><input name="qty_$i" class="inputright" size="8" value="$form->{"qty_$i"}" title="$form->{"onhand_$i"}"></td>|;
     $column_data{unit} = qq|<td>$form->{"unit_$i"}</td>|;
     $column_data{sellprice} = qq|<td align=right><input name="sellprice_$i" class="inputright" size="11" value="$form->{"sellprice_$i"}"></td>|;
     $column_data{linetotal} = qq|<td align=right>$form->{"linetotal_$i"}</td>|;
@@ -883,7 +878,7 @@ sub display_row {
         </tr>
 |;
 
-    for (qw(id linetotal listprice lastcost taxaccounts pricematrix sku partsgroup unit inventory_accno_id income_accno_id expense_accno_id)) { $form->hide_form("${_}_$i") }
+    for (qw(id linetotal listprice lastcost taxaccounts pricematrix sku partsgroup unit onhand inventory_accno_id income_accno_id expense_accno_id)) { $form->hide_form("${_}_$i") }
     
   }
 

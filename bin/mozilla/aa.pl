@@ -1094,18 +1094,17 @@ sub form_footer {
 	for ("Post", "Print and Post", "Delete") { delete $button{$_} }
       }
 	
-      if (!$latex) {
-	for ("Preview", "Print and Post", "Print and Post as new") { delete $button{$_} }
-      }
-
     } else {
       
       for ("Post as new", "Print and Post as new", "Delete") { delete $button{$_} }
-      delete $button{"Print and Post"} if ! $latex;
       
       if ($transdate <= $form->{closedto}) {
 	for ("Post", "Print and Post") { delete $button{$_} }
       }
+    }
+
+    if (!$latex) {
+      for ("Preview", "Print and Post", "Print and Post as new") { delete $button{$_} }
     }
 
     for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }

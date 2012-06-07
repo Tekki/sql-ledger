@@ -2988,7 +2988,7 @@ print qq|
 
 sub get_dataset {
 
-  if ($form->{"content-type"} =~ /application\/gzip/) {
+  if ($form->{"content-type"} =~ /application\/.*?gzip/) {
     if ($gzip) {
       ($gzip) = split / /, $gzip;
     } else {
@@ -3028,7 +3028,7 @@ sub get_dataset {
   close(SP);
 
   unlink "$userspath/$form->{tmpfile}";
-  
+
   unless ($form->{restoredbversion} && $form->{restoredbname}) {
     unlink "$spool/$myconfig{dbname}/$form->{filename}";
     $form->error($locale->text('Not a SQL-Ledger backup!'));

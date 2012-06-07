@@ -247,7 +247,7 @@ function CheckAll(v) {
     }
 
     $column_data{runningnumber} = qq|<td><input name="runningnumber_$i" class="inputright" size="3" value="$i"></td>|;
-    $column_data{partnumber} = qq|<td nowrap><input name="partnumber_$i" size="15" value="|.$form->quote($form->{"partnumber_$i"}).qq|" accesskey="$i" title="[Alt-$i]">$skunumber$itemhref</td>|;
+    $column_data{partnumber} = qq|<td nowrap><input name="partnumber_$i" size="15" value="|.$form->quote($form->{"partnumber_$i"}).qq|" accesskey="$i" title="[$i]">$skunumber$itemhref</td>|;
     $column_data{qty} = qq|<td><input name="qty_$i" class="inputright" title="$form->{"onhand_$i"}" size="5" value="|.$form->format_amount(\%myconfig, $form->{"qty_$i"}).qq|"></td>|;
     $column_data{ship} = qq|<td><input name="ship_$i" class="inputright" size="5" value="|.$form->format_amount(\%myconfig, $form->{"ship_$i"}).qq|"></td>|;
     $column_data{unit} = qq|<td><input name="unit_$i" size="5" maxlength="5" value="|.$form->quote($form->{"unit_$i"}).qq|"></td>|;
@@ -1247,6 +1247,7 @@ sub send_email {
   
   for (keys %$form) { $oldform->{$_} = $form->{$_} }
   for (qw(media format)) { $oldform->{$_} = $form->{"old$_"} }
+  for (1 .. $oldform->{paidaccounts}) { $oldform->{"paid_$_"} = $form->parse_amount(\%myconfig, $form->{"paid_$_"}) }
 
   &print_form($oldform);
   
@@ -1673,7 +1674,7 @@ sub print_form {
 		    action	=> 'printed',
 		    id		=> $form->{id} );
 
-    if (defined %$oldform) {
+    if (%$oldform) {
       $oldform->{printed} = $form->{printed};
       $oldform->{audittrail} .= $form->audittrail("", \%myconfig, \%audittrail);
     }
@@ -1705,7 +1706,7 @@ sub print_form {
 		    action	=> 'emailed',
 		    id		=> $form->{id} );
    
-    if (defined %$oldform) {
+    if (%$oldform) {
       $oldform->{intnotes} = qq|$oldform->{intnotes}\n\n| if $oldform->{intnotes};
       $oldform->{intnotes} .= qq|[email]\n|
       .$locale->text('Date').qq|: $now\n|
@@ -1754,7 +1755,7 @@ sub print_form {
 		    action      => 'queued',
 		    id          => $form->{id} );
 
-    if (defined %$oldform) {
+    if (%$oldform) {
       $oldform->{queued} = $form->{queued};
       $oldform->{audittrail} .= $form->audittrail("", \%myconfig, \%audittrail);
     }
@@ -1770,7 +1771,7 @@ sub print_form {
 
 
   # if we got back here restore the previous form
-  if (defined %$oldform) {
+  if (%$oldform) {
 
     $oldform->{"${inv}number"} = $form->{"${inv}number"};
     $oldform->{dcn} = $form->{dcn};
