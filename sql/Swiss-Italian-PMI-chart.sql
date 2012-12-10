@@ -108,9 +108,9 @@ INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VA
 INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('5700', 'Prestazioni sociali', 'A', '5', 'E', 'AP_amount');
 INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('5800', 'Altre spese di personale', 'A', '5', 'E', 'AP_amount');
 INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('6', 'ALTRE SPESE AZIENDALI', 'H', '6', 'E', '');
-INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('6000', 'Spese per l\'uso di immobili', 'A', '6', 'E', 'AP_amount');
+INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('6000', 'Spese per l''uso di immobili', 'A', '6', 'E', 'AP_amount');
 INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('6100', 'Manutenzione e riparazioni', 'A', '6', 'E', 'AP_amount');
-INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('6200', 'Spese per l\'uso di veicoli', 'A', '6', 'E', 'AP_amount');
+INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('6200', 'Spese per l''uso di veicoli', 'A', '6', 'E', 'AP_amount');
 INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('6300', 'Spese assicurative', 'A', '6', 'E', 'AP_amount');
 INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('6400', 'Spese di energia e di smaltimento dei rifiuti', 'A', '6', 'E', 'AP_amount');
 INSERT INTO chart (accno, description, charttype, gifi_accno, category, link) VALUES ('6500', 'Spese amministrative e IT', 'A', '6', 'E', 'AP_amount');
