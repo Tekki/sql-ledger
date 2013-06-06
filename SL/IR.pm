@@ -770,7 +770,6 @@ sub post_invoice {
       }
  
       # undo discount formatting
-      my $discount = $form->{"discount_$i"};
       $form->{"discount_$i"} = $form->parse_amount($myconfig, $form->{"discount_$i"}) / 100;
       
       # keep entered selling price
@@ -780,7 +779,7 @@ sub post_invoice {
       $dec = length $dec;
       my $decimalplaces = ($dec > $form->{precision}) ? $dec : $form->{precision};
       
-      $discount = $form->round_amount($fxsellprice * $discount/100, $decimalplaces);
+      my $discount = $form->round_amount($fxsellprice * $form->{"discount_$i"}, $decimalplaces);
 
       # deduct discount
       $form->{"sellprice_$i"} = $fxsellprice - $discount;

@@ -1,0 +1,13 @@
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+};
+
+$self{subs} = {
+  'export_to_csv'               => 'export_to_csv',
+  'export_to_xls'               => 'export_to_xls',
+  'ref_to_csv'                  => 'ref_to_csv',
+};
+
+1;
+

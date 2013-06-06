@@ -1566,11 +1566,11 @@ sub dataline {
   my $chr = "";
   my $m = 0;
 
+  chomp;
+
   if ($form->{tabdelimited}) {
     @dl = split /\t/, $_;
-    unshift @dl, "";
   } else {
-    
     if ($form->{stringsquoted}) {
       foreach $chr (split //, $_) {
 	if ($chr eq '"') {
@@ -1595,10 +1595,10 @@ sub dataline {
       }
     } else {
       @dl = split /$form->{delimiter}/, $_;
-      unshift @dl, "";
     }
   }
 
+  unshift @dl, "";
   return @dl;
 
 }

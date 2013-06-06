@@ -1,0 +1,17 @@
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+};
+
+$self{subs} = {
+  'gl_autocomplete'             => 'gl_autocomplete',
+  'gl_data'                     => 'gl_data',
+  'partdescription_data'        => 'partdescription_data',
+  'partnumber_data'             => 'partnumber_data',
+  'partnumber_partdescription_autocomplete' => 'partnumber_partdescription_autocomplete',
+  'vc_autocomplete'             => 'vc_autocomplete',
+  'vc_data'                     => 'vc_data',
+};
+
+1;
+

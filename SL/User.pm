@@ -811,7 +811,7 @@ sub config_vars {
   my @conf = qw(acs company countrycode dateformat
              dbconnect dbdriver dbhost dbname dboptions dbpasswd
 	     dbport dbuser menuwidth name email numberformat password
-	     outputformat printer sessionkey sid
+	     outputformat pin printer sessionkey sid
 	     signature stylesheet timeout vclimit);
 
   @conf;
@@ -822,7 +822,11 @@ sub config_vars {
 sub error {
   my ($self, $msg) = @_;
 
-  die $msg;
+  if ($ENV{HTTP_USER_AGENT}) {
+    print "Content-Type: text/html\n\n";
+  }
+  print $msg;
+  die "Error: $msg\n";
 
 }
 

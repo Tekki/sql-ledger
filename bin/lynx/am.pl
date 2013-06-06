@@ -2902,7 +2902,8 @@ sub save_preferences {
       $form->error($locale->text('Password does not match!'));
     }
   }
-  $form->{password} = $form->{new_password}; 
+  $form->{password} = $form->{new_password};
+  $form->{pin} = $myconfig{pin};
 
   if (AM->save_preferences(\%$form, $memberfile, $userspath)) {
     $form->redirect($locale->text('Preferences saved!'));
@@ -3634,7 +3635,7 @@ sub company_logo {
 
 </pre>
 <center>
-<a href="http://www.sql-ledger.org" target=_blank><img src=$images/sql-ledger.gif border=0></a>
+<a href="http://www.sql-ledger.com" target=_blank><img src=$images/sql-ledger.png border=0></a>
 <h1 class=login>|.$locale->text('Version').qq| $form->{version}</h1>
 
 <p>

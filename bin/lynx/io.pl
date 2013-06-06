@@ -1640,7 +1640,7 @@ sub print_form {
 
   push @f, ("${inv}number", "${inv}date", "${due}date", "${inv}description");
   
-  push @f, qw(company address tel fax businessnumber username useremail dcn rvc);
+  push @f, qw(company address tel fax businessnumber username useremail);
 
   for (qw(notes intnotes)) { $form->{$_} =~ s/^\s+//g }
 

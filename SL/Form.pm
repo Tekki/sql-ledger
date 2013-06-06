@@ -115,7 +115,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "3.0.4";
+  $self->{version} = "3.0.5";
   $self->{dbversion} = "3.0.0";
 
   bless $self, $type;
@@ -2978,6 +2978,7 @@ sub create_lock {
       $query = qq|SELECT name FROM employee
 		  WHERE login = '$login'|;
       ($self->{haslock}) = $dbh->selectrow_array($query);
+      $self->{haslock} ||= 'admin';
       $self->{readonly} = 1;
     } else {
       $query = qq|INSERT INTO semaphore (id, login, module, expires)

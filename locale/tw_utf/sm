@@ -1,0 +1,20 @@
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Continue'                    => '繼續',
+  'From'                        => '從',
+  'Repost Invoices'             => '再貼憑單',
+  'To'                          => '至',
+  'done'                        => '完成',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'delete_invoices'             => 'delete_invoices',
+  'do_delete_invoices'          => 'do_delete_invoices',
+  'do_repost_invoices'          => 'do_repost_invoices',
+  'repost_invoices'             => 'repost_invoices',
+};
+
+1;
+

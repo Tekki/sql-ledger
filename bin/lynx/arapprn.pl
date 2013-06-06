@@ -135,9 +135,9 @@ sub print_check {
     $form->{dcn} = $form->format_dcn($form->{dcn});
   }
 
-  for (qw(employee paymentmethod)) { ($form->{$_}, $form->{"${_}_id"}) = split /--/, $form->{$_} };
+  for (qw(employee)) { ($form->{$_}, $form->{"${_}_id"}) = split /--/, $form->{$_} };
   
-  push @a, qw(employee paymentmethod notes intnotes company address tel fax businessnumber);
+  push @a, qw(employee notes intnotes company address tel fax businessnumber);
   
   $form->format_string(@a);
 
@@ -385,7 +385,7 @@ sub print_transaction {
     $form->{dcn} = $form->format_dcn($form->{dcn});
   }
   
-  for (qw(employee paymentmethod)) { ($form->{$_}, $form->{"${_}_id"}) = split /--/, $form->{$_} };
+  for (qw(employee)) { ($form->{$_}, $form->{"${_}_id"}) = split /--/, $form->{$_} };
   
   $form->fdld(\%myconfig, \%$locale);
 
@@ -396,7 +396,7 @@ sub print_transaction {
   # before we format replace <%var%>
   for (qw(description notes intnotes)) { $form->{$_} =~ s/<%(.*?)%>/$fld = lc $1; $form->{$fld}/ge }
   
-  @a = qw(employee paymentmethod invnumber transdate duedate notes intnotes dcn rvc);
+  @a = qw(employee invnumber transdate duedate notes intnotes dcn rvc);
 
   push @a, qw(company address tel fax businessnumber text_amount text_decimal text_out_decimal text_out_amount);
   
