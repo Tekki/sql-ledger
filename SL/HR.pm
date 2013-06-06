@@ -327,17 +327,43 @@ sub save_employee {
   $form->remove_locks($myconfig, $dbh, 'hr');
 
   my $bank_address_id;
-  
-  if ($form->{id}) {
-    $query = qq|SELECT login
-		FROM employee
-		WHERE id = $form->{id}|;
-    my ($login) = $dbh->selectrow_array($query);
-    
-    if ($login) {
+  my $null;
+  my $employeelogin;
+  my $sales;
+  my $acsrole_id;
+  my $rn;
+
+  for (qw(paymentmethod acsrole)) { ($null, $form->{"${_}_id"}) = split /--/, $form->{$_} }
+
+  if ($form->{id} *= 1) {
+    $query = qq|SELECT e.login, e.sales, e.acsrole_id, a.rn
+		FROM employee e
+                LEFT JOIN acsrole a ON (e.acsrole_id = a.id)
+		WHERE e.id = $form->{id}|;
+    ($employeelogin, $sales, $acsrole_id, $rn) = $dbh->selectrow_array($query);
+
+    my $login = $form->{login};
+    $login =~ s/@.*//;
+
+    $query = qq|SELECT a.rn
+                FROM acsrole a
+                JOIN employee e ON (e.acsrole_id = a.id)
+                WHERE e.login = '$login'|;
+    my ($loginrn) = $dbh->selectrow_array($query);
+
+    unless ($form->{admin}) {
+      if ($rn <= $loginrn) {
+        $form->{acsrole_id} *= 1;
+        $form->{sales} = $sales;
+        $form->{acsrole} = qq|--$acsrole_id|;
+        $form->{nochange} = 1;
+      }
+    }
+
+    if ($employeelogin) {
       $query = qq|UPDATE report SET
                   login = '$form->{employeelogin}'
-		  WHERE login = '$login'|;
+		  WHERE login = '$employeelogin'|;
       $dbh->do($query) || $form->dberror($query);
     }
   
@@ -388,11 +414,11 @@ sub save_employee {
   $form->{employeenumber} = $form->update_defaults($myconfig, "employeenumber", $dbh) if ! $form->{employeenumber};
 
   for (qw(ap payment)) { ($form->{$_}) = split /--/, $form->{$_} }
-  for (qw(paymentmethod acsrole)) { ($null, $form->{"${_}_id"}) = split /--/, $form->{$_} }
+
   $form->{acsrole_id} ||= 'NULL';
   $form->{sales} *= 1;
   
-  my $employeelogin = ($form->{employeelogin}) ? $dbh->quote($form->{employeelogin}) : 'NULL';
+  $employeelogin = ($form->{employeelogin}) ? $dbh->quote($form->{employeelogin}) : 'NULL';
 	      
   $query = qq|UPDATE employee SET
               employeenumber = |.$dbh->quote($form->{employeenumber}).qq|,

@@ -24,6 +24,8 @@ sub getpassword {
   my @d = split / +/, scalar gmtime(time);
   my $today = "$d[0], $d[2]-$d[1]-$d[4] $d[3] GMT";
   
+  $pwt = $locale->text('Password');
+
   if ($form->{stylesheet} && (-f "css/$form->{stylesheet}")) {
     $stylesheet = qq|<LINK REL="stylesheet" HREF="css/$form->{stylesheet}" TYPE="text/css" TITLE="SQL-Ledger stylesheet">
 |;
@@ -63,7 +65,7 @@ function sf(){
 
 <table>
   <tr>
-    <th align=right>|.$locale->text('Password').qq|</th>
+    <th align=right>$pwt</th>
     <td><input type=password name=password value="$form->{password}" size=30></td>
     <td><input type=submit class=submit value="|.$locale->text('Continue').qq|"></td>
   </tr>

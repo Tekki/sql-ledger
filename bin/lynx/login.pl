@@ -93,7 +93,7 @@ $sf
 <center>
 <table class=login border=3 cellpadding=20>
   <tr>
-    <td class=login align=center><a href="http://www.sql-ledger.com" target=_blank><img src=$images/sql-ledger.gif border=0></a>
+    <td class=login align=center><a href="http://www.sql-ledger.com" target=_blank><img src=$images/sql-ledger.png border=0></a>
 <h1 class=login align=center>|.$locale->text('Version').qq| $form->{version}</h1>
 
 <p>
@@ -160,7 +160,7 @@ sub selectdataset {
 <center>
 <table class=login border=3 cellpadding=20>
   <tr>
-    <td class=login align=center><a href="http://www.sql-ledger.com" target=_blank><img src=$images/sql-ledger.gif border=0></a>
+    <td class=login align=center><a href="http://www.sql-ledger.com" target=_blank><img src=$images/sql-ledger.png border=0></a>
 <h1 class=login align=center>|.$locale->text('Version').qq| $form->{version}</h1>
 
 <p>
@@ -328,6 +328,11 @@ sub login {
 
   for (qw(dbconnect dbhost dbport dbname dbuser dbpasswd)) { $myconfig{$_} = $user->{$_} }
 
+  if ($user->{pin} && $sendmail) {
+    &email_pin;
+    exit;
+  }
+
   # remove stale locks
   $form->remove_locks(\%myconfig);
 
@@ -367,4 +372,125 @@ sub logout {
 
 }
 
+
+sub email_pin {
+
+  $form->error($locale->text('No email address for')." $user->{name}") unless ($user->{email});
+
+  use SL::Mailer;
+  $mail = new Mailer;
+
+  $mail->{from} = $mail->{to} = qq|"$user->{name}" <$user->{email}>|;
+  $mail->{subject} = "SQL-Ledger $form->{version} / $user->{company}";
+
+  srand( time() ^ ($$ + ($$ << 15)) );
+  $digits = "123456789";
+  $letters = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+  $pin = "";
+  while (length($pin) < 6) {
+    if ($d = !$d) {
+      $pin .= substr($letters, (int(rand(length($letters)))), 1);
+    } else {
+      $pin .= substr($digits, (int(rand(length($digits)))), 1);
+    }
+  }
+
+  $mail->{message} = $locale->text('PIN').": $pin";
+
+  $form->error($err) if ($err = $mail->send($sendmail));
+
+  $form->{stylesheet} = $user->{stylesheet};
+  $form->{favicon} = "sql-ledger.ico";
+  $form->{nextsub} = "pin_login";
+
+  $user->{password} = $pin;
+
+  $user->create_config("$userspath/$form->{login}.conf");
+
+
+  $form->header;
+
+  print qq|
+
+<body class=login>
+
+<pre>
+
+</pre>
+
+<center>
+<table class=login border=3 cellpadding=20>
+  <tr>
+    <td class=login align=center><a href="http://www.sql-ledger.com" target=_blank><img src=$images/sql-ledger.png border=0></a>
+<h1 class=login align=center>|.$locale->text('Version').qq| $form->{version}</h1>
+<h1 class=login align=center>$user->{company}</h1>
+
+<p>
+
+      <form method=post action=$form->{script}>
+
+      <table width=100%>
+	<tr>
+	  <td align=center>
+	    <table>
+	      <tr>
+		<th align=right>|.$locale->text('PIN').qq|</th>
+		<td><input class=login type=password name=password size=30></td>
+	      </tr>
+	    </table>
+	    <br>
+	    <input type=submit name=action value="|.$locale->text('Continue').qq|">
+	  </td>
+	</tr>
+      </table>
+|;
+
+
+    $form->hide_form(qw(nextsub js login path));
+
+  print qq|
+      </form>
+
+    </td>
+  </tr>
+</table>
+  
+</body>
+</html>
+|;
+
+}
+
+
+sub pin_login {
+
+  $form->{login} =~ s/(\.\.|\/|\\|\x00)//g;
+
+  # check for user config file, could be missing or ???
+  eval { require("$userspath/$form->{login}.conf"); };
+
+  if ($@) {
+    $form->error($locale->text('Configuration file missing!'));
+    exit;
+  }
+
+  if ((crypt $form->{password}, substr($form->{login}, 0, 2)) ne $myconfig{password}) {
+    $form->error($locale->text('Invalid PIN'));
+  } else {
+
+    # remove stale locks
+    $form->remove_locks(\%myconfig);
+
+    $form->{callback} = "menu.pl?action=display";
+    for (qw(login path js password)) { $form->{callback} .= "&$_=$form->{$_}" }
+    $form->{callback} .= "&main=company_logo";
+
+    $form->redirect;
+   
+  }
+
+}
+
+
+sub continue { &{ $form->{nextsub} } };
 

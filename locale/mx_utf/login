@@ -3,14 +3,18 @@ $self{charset} = 'UTF-8';
 $self{texts} = {
   'Company'                     => 'Empresa',
   'Continue'                    => 'Continuar',
-  'Dataset is newer than version!' => '”El conjunto de datos es mas reciente que la versión del programa!',
-  'Incorrect Dataset version!'  => '”La Versión del conjunto de datos es incorrecta!',
-  'Login'                       => 'Entrada al sistema',
+  'Dataset is newer than version!' => '¡El conjunto de datos es mas reciente que la versión del programa!',
+  'Dataset locked!'             => '¡Conjunto de datos bloqueado"',
+  'Incorrect Dataset version!'  => '¡La Versión del conjunto de datos es incorrecta!',
+  'Incorrect Password!'         => '¡Contraseña Incorrecta!',
+  'Incorrect Username!'         => '¡Usuario Incorrecto!',
+  'Login'                       => 'Usuario',
   'Name'                        => 'Nombre',
-  'Password'                    => 'Contraseńa',
+  'Password'                    => 'Contraseña',
   'Upgrading to Version'        => 'Actualizando a versión',
   'Version'                     => 'Versión',
-  'You did not enter a name!'   => '”No ingresó un nombre!',
+  'You did not enter a name!'   => '¡No ingresó un nombre!',
+  'admin does not exist!'       => '¡No existe admin!',
 };
 
 $self{subs} = {
@@ -18,7 +22,7 @@ $self{subs} = {
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
-  'entrada_al_sistema'          => 'login',
+  'usuario'                     => 'login',
 };
 
 1;

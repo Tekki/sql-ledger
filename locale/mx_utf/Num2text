@@ -51,7 +51,7 @@ sub init {
 		   18 => 'dieciocho',
 		   19 => 'diecinueve',
 		   20 => 'veinte',
-		   21 => 'veintiśn',
+		   21 => 'veintiún',
 	        '21o' => 'veintiuno',
 		   22 => 'veintidós',
 		   23 => 'veintitrés',

@@ -39,6 +39,7 @@ $self{texts} = {
   'November'                    => '十一月',
   'Oct'                         => '十月',
   'October'                     => '十月',
+  'Payment Reversal'            => '退票',
   'Period'                      => '期間',
   'Post'                        => '加入',
   'Quarter'                     => '季',

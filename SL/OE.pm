@@ -477,9 +477,9 @@ sub save {
       }
       
       if ($form->{type} =~ /_order/) {
-	if ($form->{"netweight_$i"}) {
+	if ($form->{"netweight_$i"} && $form->{"ship_$i"}) {
 	  $query = qq|UPDATE parts SET
-	              weight = abs($form->{"netweight_$i"} / $form->{"qty_$i"} * 1.0)
+	              weight = abs($form->{"netweight_$i"} / $form->{"ship_$i"} * 1.0)
 		      WHERE id = $form->{"id_$i"}|;
 	  $dbh->do($query) || $form->dberror($query);
 	}

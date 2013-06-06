@@ -1,9 +1,25 @@
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Accounting Menu'             => 'Menś de contabilidad',
+  'Accounting Menu'             => 'Menú de contabilidad',
+  'Add Column'                  => 'Nueva Columna',
+  'Align'                       => 'Alinear',
+  'Delete Column'               => 'Eliminar Columna',
+  'Delete Report'               => 'Eliminar Reporte',
   'Description'                 => 'Descripción',
+  'Edit Column'                 => 'Editar Columna',
+  'Edit Column Header'          => 'Editar Encabezado de Columna',
+  'Edit Column Total'           => 'Editar Total de Columna',
+  'Fill'                        => 'Rellenar',
+  'Fixed value'                 => 'Valor fijo',
   'Heading'                     => 'Encabezado',
+  'Left'                        => 'Izquierda',
+  'Public'                      => 'Público',
+  'Right'                       => 'Derecha',
+  'Save Column'                 => 'Guardar Columna',
+  'Save Report'                 => 'Guardar Reporte',
+  'Save Report as new'          => 'Guardar Reporte como nuevo',
+  'Width'                       => 'Ancho',
 };
 
 $self{subs} = {
@@ -23,6 +39,11 @@ $self{subs} = {
   'save_report'                 => 'save_report',
   'save_report_as_new'          => 'save_report_as_new',
   'section_menu'                => 'section_menu',
+  'eliminar_columna'            => 'delete_column',
+  'eliminar_reporte'            => 'delete_report',
+  'guardar_columna'             => 'save_column',
+  'guardar_reporte'             => 'save_report',
+  'guardar_reporte_como_nuevo'  => 'save_report_as_new',
 };
 
 1;

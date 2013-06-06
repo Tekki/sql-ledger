@@ -1,10 +1,16 @@
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
+  'Beginning date'              => 'Fecha de inicio',
   'Continue'                    => 'Continuar',
+  'Date missing'                => 'Falta fecha',
+  'Delete Open Invoices'        => 'Eliminar Facturas Abiertas',
+  'Deleting Invoices ... '      => 'Eliminando Facturas ...',
   'From'                        => 'De',
+  'Repost Invoices'             => 'Volver a registrar Facturas',
   'To'                          => 'A',
   'done'                        => 'listo',
+  'please wait'                 => 'por favor espere',
 };
 
 $self{subs} = {
@@ -13,7 +19,6 @@ $self{subs} = {
   'do_delete_invoices'          => 'do_delete_invoices',
   'do_repost_invoices'          => 'do_repost_invoices',
   'repost_invoices'             => 'repost_invoices',
-  'continuar'                   => 'continue',
 };
 
 1;

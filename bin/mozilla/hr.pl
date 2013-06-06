@@ -450,13 +450,15 @@ sub prepare_employee {
 
       while (@member) {
 	$_ = shift @member;
-	next if ! /\[$form->{employeelogin}(\@|\])??/;
+	next if ! /\[$form->{employeelogin}\@$myconfig{dbname}\]/;
 	do {
+          if (/pin/) {
+            chomp;
+            ($null, $form->{pin}) = split /=/, $_, 2;
+          }
 	  if (/password/) {
             chomp;
 	    ($null, $form->{employeepassword}) = split /=/, $_, 2;
-	    $form->{oldemployeepassword} = $form->{employeepassword};
-	    last;
 	  }
 	  $_ = shift @member;
 	} until /^\s/;
@@ -533,12 +535,14 @@ sub employee_header {
 <form method=post action=$form->{script}>
 |;
 
-  $form->hide_form(qw(acs payrate_rows wage_rows deduction_rows reference_rows referenceurl status title helpref oldemployeelogin oldemployeepassword company));
+  $form->hide_form(qw(acs payrate_rows wage_rows deduction_rows reference_rows referenceurl status title helpref oldemployeelogin company));
   $form->hide_form(map { "select$_" } qw(paymentmethod payment ap wage deduction acsrole));
   
+  $login = "";
+
   if ($form->{admin}) {
     $sales = ($form->{sales}) ? "checked" : "";
-    $login = "";
+    $pin = ($form->{pin}) ? "checked" : "";
     
     if ($form->{selectacsrole}) {
       $login = qq|
@@ -561,12 +565,15 @@ sub employee_header {
 		<td><input name=employeepassword size=20 value="$form->{employeepassword}"></td>
 	      </tr>
 	      <tr>
+		<th align=right>|.$locale->text('E-mail PIN').qq|</th>
+		<td><input name=pin class=checkbox type=checkbox value=1 $pin></td>
+	      </tr>
+	      <tr>
 		<th align=right>|.$locale->text('Sales').qq|</th>
 		<td><input name=sales class=checkbox type=checkbox value=1 $sales></td>
 	      </tr>
 |;
   } else {
-    $sales = ($form->{sales}) ? "x" : "";
     ($acsrole) = split /--/, $form->{acsrole};
     if ($form->{selectacsrole}) {
       $login = qq|
@@ -576,18 +583,33 @@ sub employee_header {
 	      </tr>
 |;
     }
-    $login .= qq|
+
+    if ($form->{employeelogin}) {
+      $login .= qq|
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Login').qq|</th>
 		<td>$form->{employeelogin}</td>
 	      </tr>
+|;
+    }
+    if ($form->{pin}) {
+      $login .= qq|
 	      <tr>
-		<th align=right>|.$locale->text('Sales').qq|</th>
-		<td>$sales</td>
+		<th align=right nowrap>|.$locale->text('E-mail PIN').qq|</th>
+		<td>x</td>
 	      </tr>
 |;
+    }
+    if ($form->{sales}) {
+      $login .= qq|
+	      <tr>
+		<th align=right>|.$locale->text('Sales').qq|</th>
+		<td>x</td>
+	      </tr>
+|;
+    }
 
-    $form->hide_form(qw(acsrole employeelogin sales employeepassword));
+    $form->hide_form(qw(acsrole employeelogin sales pin employeepassword));
   }
 
   print qq|
@@ -1120,30 +1142,36 @@ sub save_memberfile {
   }
 
   if ($form->{employeelogin}) {
-    $employeelogin = $form->{employeelogin};
-    $employeelogin .= "\@$myconfig{dbname}";  # new format
+    $employeelogin = "$form->{employeelogin}\@$myconfig{dbname}";
     
     # assign values from old entries
-    $oldlogin = $form->{oldemployeelogin};
-    $oldlogin .= "\@$myconfig{dbname}";
+    $oldlogin = "$form->{oldemployeelogin}\@$myconfig{dbname}";
 
     srand( time() ^ ($$ + ($$ << 15)) );
     
     if (@{ $member{$oldlogin} }) {
-      @memberlogin = grep !/password=/, @{ $member{$oldlogin} };
+      @memberlogin = grep !/^(name=|email=|password=|pin=)/, @{ $member{$oldlogin} };
+      ($oldemployeepassword) = grep /^password=/, @{ $member{$oldlogin} };
       pop @memberlogin;
 
-      if ($form->{employeepassword} ne $form->{oldemployeepassword}) {
+      $oldemployeepassword =~ s/password=//;
+      chomp $oldemployeepassword;
+
+      $form->{employeepassword} = $oldemployeepassword if $form->{nochange};
+
+      if ($form->{employeepassword} ne $oldemployeepassword) {
 	if ($form->{employeepassword}) {
 	  $password = crypt $form->{employeepassword}, substr($form->{employeelogin}, 0, 2);
 	  push @memberlogin, "password=$password\n";
 	}
       } else {
-	if ($form->{oldemployeepassword}) {
-	  push @memberlogin, "password=$form->{oldemployeepassword}\n";
+	if ($oldemployeepassword) {
+	  push @memberlogin, "password=$oldemployeepassword\n";
 	}
       }
-      
+
+      for (qw(name email pin)) { push @memberlogin, "$_=$form->{$_}\n" if $form->{$_} }
+
       @{ $member{$employeelogin} } = ();
       
       for (@memberlogin) {
@@ -1151,9 +1179,9 @@ sub save_memberfile {
       }
       
     } else {
-      for (qw(company dateformat dbconnect dbdriver dbname dbhost dboptions dbpasswd dbuser numberformat)) {
-	$m{$_} = $myconfig{$_};
-      }
+      for (qw(company dateformat dbconnect dbdriver dbname dbhost dboptions dbpasswd dbuser numberformat)) { $m{$_} = $myconfig{$_} }
+      for (qw(name email pin)) { $m{$_} = $form->{$_} }
+
       $m{dbpasswd} = pack 'u', $myconfig{dbpasswd};
       chop $m{dbpasswd};
       $m{stylesheet} = 'sql-ledger.css';

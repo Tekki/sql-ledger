@@ -2144,7 +2144,7 @@ sub reminder {
   push @column_index, "$form->{vc}number";
   push @column_index, "level";
   
-  $form->{selectlevel} = "\n1\n2\n3";
+  $form->{selectlevel} = "1\n2\n3";
 
   if (@{ $form->{all_language} }) {
     push @column_index, "language";

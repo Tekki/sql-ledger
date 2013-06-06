@@ -1,13 +1,14 @@
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
+  'AR/AP'                       => 'CxC/CxP',
   'Account'                     => 'Cuenta',
   'Apr'                         => 'Abr',
   'April'                       => 'Abril',
   'Aug'                         => 'Ago',
   'August'                      => 'Agosto',
   'Balance'                     => 'Saldo',
-  'Chart of Accounts'           => 'Catįlogo de cuentas',
+  'Chart of Accounts'           => 'Catálogo de cuentas',
   'Credit'                      => 'Abono',
   'Current'                     => 'Actual',
   'Date'                        => 'Fecha',
@@ -37,8 +38,8 @@ $self{texts} = {
   'November'                    => 'Noviembre',
   'Oct'                         => 'Oct',
   'October'                     => 'Octubre',
-  'Period'                      => 'Perķodo',
-  'Project Number'              => 'Nśmero de proyecto',
+  'Period'                      => 'Período',
+  'Project Number'              => 'Número de proyecto',
   'Quarter'                     => 'Trimestre',
   'R'                           => 'C',
   'Reference'                   => 'Referencia',
@@ -47,7 +48,7 @@ $self{texts} = {
   'Source'                      => 'Referencia',
   'Subtotal'                    => 'Subtotal',
   'To'                          => 'A',
-  'Year'                        => 'Ańo',
+  'Year'                        => 'Año',
 };
 
 $self{subs} = {
