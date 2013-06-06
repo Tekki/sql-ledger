@@ -212,8 +212,12 @@ function CheckAll(v) {
       $rows = 1;
     }
     
-    $form->{"description_$i"} = $form->quote($form->{"description_$i"});
-    $column_data{description} = qq|<td><textarea name="description_$i" rows=$rows cols=46 wrap=soft>$form->{"description_$i"}</textarea></td>|;
+    if ($i == $numrows) {
+      $column_data{description} = qq|<td><input name="description_$i" size=46></td>|;
+    } else {
+      $form->{"description_$i"} = $form->quote($form->{"description_$i"});
+      $column_data{description} = qq|<td><textarea name="description_$i" rows=$rows cols=46 wrap=soft>$form->{"description_$i"}</textarea></td>|;
+    }
 
     $skunumber = qq|
                 <br><b>$sku</b> $form->{"sku_$i"}| if ($form->{vc} eq 'vendor' && $form->{"sku_$i"});

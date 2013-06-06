@@ -1058,6 +1058,7 @@ sub add_payment_method {
   
   $form->{callback} = "$form->{script}?action=add_payment_method&path=$form->{path}&login=$form->{login}" unless $form->{callback};
 
+  $form->{roundchange} = 0;
   &paymentmethod_header;
   &form_footer;
 

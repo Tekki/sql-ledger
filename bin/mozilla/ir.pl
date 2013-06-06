@@ -689,7 +689,7 @@ sub form_footer {
 
   $column_data{datepaid} = "<th>".$locale->text('Date')."</th>";
   $column_data{paid} = "<th>".$locale->text('Amount')."</th>";
-  $column_data{exchangerate} = "<th>".$locale->text('Exch')." <font color=red>*</font></th>";
+  $column_data{exchangerate} = "<th>".$locale->text('Exch')."</th>";
   $column_data{AP_paid} = "<th>".$locale->text('Account')."</th>";
   $column_data{source} = "<th>".$locale->text('Source')."</th>";
   $column_data{memo} = "<th>".$locale->text('Memo')."</th>";

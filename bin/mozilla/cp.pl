@@ -373,6 +373,7 @@ sub payments {
 
   for (@{ $form->{PR}{"$form->{ARAP}_paid"} }) { $form->{"select$form->{ARAP}_paid"} .= "$_->{accno}--$_->{description}\n" }
   for (@{ $form->{PR}{"$form->{ARAP}_discount"} }) { $form->{"select$form->{ARAP}_discount"} .= "$_->{accno}--$_->{description}\n" }
+  $form->{"select$form->{ARAP}"} = "\n";
   for (@{ $form->{PR}{$form->{ARAP}} }) { $form->{"select$form->{ARAP}"} .= "$_->{accno}--$_->{description}\n" }
 
   $form->{selectprinter} = "";
@@ -758,8 +759,9 @@ sub payments_footer {
   %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
 	     'Select all' => { ndx => 3, key => 'A', value => $locale->text('Select all') },
 	     'Deselect all' => { ndx => 4, key => 'A', value => $locale->text('Deselect all') },
-             'Print' => { ndx => 5, key => 'P', value => $locale->text('Print') },
-	     'Post' => { ndx => 6, key => 'O', value => $locale->text('Post') },
+             'Preview' => { ndx => 5, key => 'V', value => $locale->text('Preview') },
+             'Print' => { ndx => 6, key => 'P', value => $locale->text('Print') },
+	     'Post' => { ndx => 7, key => 'O', value => $locale->text('Post') },
 	    ); 
 
   if ($form->{deselect}) {
@@ -1679,6 +1681,7 @@ sub payment_footer {
     %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
 	       'Select all' => { ndx => 2, key => 'A', value => $locale->text('Select all') },
 	       'Deselect all' => { ndx => 3, key => 'A', value => $locale->text('Deselect all') },
+               'Preview' => { ndx => 4, key => 'V', value => $locale->text('Preview') },
 	       'Print' => { ndx => 5, key => 'P', value => $locale->text('Print') },
 	       'Post' => { ndx => 6, key => 'O', value => $locale->text('Post') },
 	       'Back' => { ndx => 7, key => 'B', value => $locale->text('Back') }
@@ -2021,6 +2024,8 @@ sub print_payments {
 
   for (keys %$form) { $form->{$_} = "" }
   for (keys %oldform) { $form->{$_} = $oldform{$_} }
+
+  &update unless $ok;
 
 }
 

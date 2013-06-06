@@ -1079,7 +1079,7 @@ sub xrefhdr {
   
   $form->{delimiter} ||= ',';
  
-  $i = 0;
+  $i = 1;
 
   if ($form->{mapfile}) {
     open(FH, "$templates/$myconfig{dbname}/import.map") or $form->error($!);
@@ -1109,6 +1109,7 @@ sub xrefhdr {
   } else {
     # get first line
     $str = (split /\n/, $form->{data})[0];
+    chomp $str;
 
     if ($form->{tabdelimited}) {
       $form->{delimiter} = '\t';
