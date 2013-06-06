@@ -453,6 +453,7 @@ sub prepare_employee {
 	next if ! /\[$form->{employeelogin}(\@|\])??/;
 	do {
 	  if (/password/) {
+            chomp;
 	    ($null, $form->{employeepassword}) = split /=/, $_, 2;
 	    $form->{oldemployeepassword} = $form->{employeepassword};
 	    last;
@@ -483,7 +484,7 @@ sub prepare_employee {
   $i = 0;
   foreach $ref (@{ $form->{all_payrate} }) {
     $i++;
-    for (qw(rate over)) { $form->{"${_}_$i"} = $ref->{$_} }
+    for (qw(rate above)) { $form->{"${_}_$i"} = $ref->{$_} }
   }
   $form->{payrate_rows} = $i;
 
@@ -855,7 +856,7 @@ sub employee_header {
     print qq|
 	      <tr>
 		<td><input name="rate_$i" size=10 class="inputright" value=|.$form->format_amount(\%myconfig, $form->{"rate_$i"}, $form->{precision}).qq|></td>
-		<td><input name="over_$i" size=10 class="inputright" value=|.$form->format_amount(\%myconfig, $form->{"over_$i"}).qq|></td>
+		<td><input name="above_$i" size=10 class="inputright" value=|.$form->format_amount(\%myconfig, $form->{"above_$i"}).qq|></td>
 	      </tr>
 |;
   }
@@ -1359,7 +1360,7 @@ sub prepare_payroll {
 
     for $i (1 .. $form->{payrate_rows}) {
       $form->{"rate_$i"} = $form->format_amount(\%myconfig, $form->{"rate_$i"}, $form->{precision});
-      $form->{"over_$i"} = $form->format_amount(\%myconfig, $form->{"over_$i"});
+      $form->{"above_$i"} = $form->format_amount(\%myconfig, $form->{"above_$i"});
     }
     
     $form->{paid} = $form->format_amount(\%myconfig, $form->{paid}, $form->{precision});
@@ -1455,7 +1456,7 @@ sub payroll_header {
       print qq|
 	      <tr>
 		<td></td>
-		<td>$form->{"rate_$i"} > $form->{"over_$i"}</td>
+		<td>$form->{"rate_$i"} > $form->{"above_$i"}</td>
 	      </tr>
 |;
     }
@@ -1811,7 +1812,7 @@ sub update_payroll {
   for $ref (@{ $form->{all_payrate} }) {
     $i++;
     $form->{"rate_$i"} = $form->format_amount(\%myconfig, $ref->{rate}, $form->{precision});
-    $form->{"over_$i"} = $form->format_amount(\%myconfig, $ref->{over});
+    $form->{"above_$i"} = $form->format_amount(\%myconfig, $ref->{above});
   }
   $form->{payrate_rows} = $i;
 
@@ -2207,7 +2208,7 @@ sub payroll_transactions {
   }
   
   # total
-  for (@column_index) { $column_data{$_} = "<td>&nbsp;</td" }
+  for (@column_index) { $column_data{$_} = "<th>&nbsp;</th>" }
 
   $column_data{paid} = "<th align=right>".$form->format_amount(\%myconfig, $form->{"totalpaid"}, $form->{precision}, "&nbsp;")."</th>";
   
@@ -2976,7 +2977,7 @@ sub update_employee {
   $form->{deduction_rows} = $count;
 
 
-  @flds = qw(rate over);
+  @flds = qw(rate above);
   $count = 0;
   @f = ();
   for $i (1 .. $form->{payrate_rows}) {

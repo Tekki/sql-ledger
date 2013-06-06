@@ -77,7 +77,7 @@ sub add {
 
   $form->{transdate} = $transdate if $transdate;
 
-  $form->{rowcount} = ($form->{fxadj}) ? 2 : 9;
+  $form->{rowcount} = ($form->{fxadj}) ? 3 : 9;
   $form->{oldtransdate} = $form->{transdate};
   $form->{focus} = "reference";
 

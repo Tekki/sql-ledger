@@ -115,7 +115,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "3.0.3";
+  $self->{version} = "3.0.4";
   $self->{dbversion} = "3.0.0";
 
   bless $self, $type;
@@ -746,7 +746,7 @@ sub parse_template {
       }
     }
 
-    print OUT $self->process_template(@template);
+    print OUT $self->process_template($myconfig, @template);
 
   }
 
@@ -823,6 +823,7 @@ sub parse_template {
 
 sub process_template {
   my $self = shift;
+  my $myconfig = shift;
 
   my $var;
   my $par;
@@ -1085,7 +1086,7 @@ sub process_template {
 	  $self->cleanup;
 	  $self->error("$tmpfile : $err");
 	}
-	print INC $self->process_template(@include);
+	print INC $self->process_template($myconfig, @include);
 	close(INC);
 
 	$tmpfile =~ s/.*?\///;

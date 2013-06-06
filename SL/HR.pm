@@ -45,7 +45,8 @@ sub get_employee {
     $query = qq|SELECT e.*,
                 ad.id AS addressid, ad.address1, ad.address2, ad.city,
 		ad.state, ad.zipcode, ad.country,
-		bk.name AS bankname, bk.iban, bk.bic,
+		bk.name AS bankname, bk.iban, bk.bic, bk.membernumber,
+                bk.clearingnumber,
 		ad1.address1 AS bankaddress1,
 		ad1.address2 AS bankaddress2,
 		ad1.city AS bankcity,
@@ -1151,6 +1152,126 @@ sub payroll_transactions {
   $dbh->disconnect;
 
 }
+
+
+
+sub payslip_details {
+  my ($self, $myconfig, $form) = @_;
+
+  my $dbh = $form->dbconnect($myconfig);
+
+  my $query;
+  my $sth;
+  my $ref;
+  
+  my %defaults = $form->get_defaults($dbh, \@{['company', 'address', 'tel', 'fax', 'companyemail', 'companywebsite', 'businessnumber', 'precision', 'referenceurl']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+
+  %defaults = $form->get_defaults($dbh, \@{['printer_%']});
+  
+  my ($null, $id) = split /--/, $form->{employee};
+
+  if ($id *= 1) {
+    $query = qq|SELECT e.*,
+                ad.address1, ad.address2, ad.city,
+                ad.state, ad.zipcode, ad.country,
+		bk.name AS employeebankname, bk.iban AS employeebankiban,
+                bk.bic AS employeebankbic,
+                bk.membernumber AS employeebankmembernumber,
+                bk.clearingnumber AS employeebankclearingnumber,
+		ad1.address1 AS employeebankaddress1,
+		ad1.address2 AS employeebankaddress2,
+		ad1.city AS employeebankcity,
+		ad1.state AS employeebankstate,
+		ad1.zipcode AS employeebankzipcode,
+		ad1.country AS employeebankcountry
+                FROM employee e
+		JOIN address ad ON (e.id = ad.trans_id)
+
+		LEFT JOIN bank bk ON (bk.id = e.id)
+		LEFT JOIN address ad1 ON (bk.address_id = ad1.id)
+
+                WHERE e.id = $id|;
+
+    $sth = $dbh->prepare($query);
+    $sth->execute || $form->dberror($query);
+  
+    $ref = $sth->fetchrow_hashref(NAME_lc);
+    $ref->{employeelogin} = $ref->{login};
+    delete $ref->{login};
+    for (keys %$ref) { $form->{$_} = $ref->{$_} }
+
+    $sth->finish;
+  }
+
+  ($null, $id) = split /--/, $form->{paymentmethod};
+  if ($id *= 1) {
+    $query = qq|SELECT fee, roundchange
+                FROM paymentmethod
+                WHERE id = $id|;
+
+    $sth = $dbh->prepare($query);
+    $sth->execute || $form->dberror($query);
+  
+    $ref = $sth->fetchrow_hashref(NAME_lc);
+    for (keys %$ref) { $form->{$_} = $ref->{$_} }
+
+    $sth->finish;
+  }
+
+  ($id) = split /--/, $form->{payment};
+
+  if ($id *= 1) {
+    $query = qq|SELECT
+		c2.accno AS payment, c2.description AS payment_description,
+		tr2.description AS payment_translation,
+		bk.name AS bankname, bk.iban, bk.bic, bk.dcn, bk.rvc,
+                bk.membernumber, bk.clearingnumber,
+		ad1.address1 AS bankaddress1,
+		ad1.address2 AS bankaddress2,
+		ad1.city AS bankcity,
+		ad1.state AS bankstate,
+		ad1.zipcode AS bankzipcode,
+		ad1.country AS bankcountry
+                FROM chart c2
+                LEFT JOIN bank bk ON (bk.id = c2.id)
+		LEFT JOIN address ad1 ON (bk.id = ad1.trans_id)
+		LEFT JOIN translation tr2 ON (tr2.trans_id = c2.id AND tr2.language_code = '$myconfig->{countrycode}')
+                WHERE c2.accno = '$id'|;
+
+    $sth = $dbh->prepare($query);
+    $sth->execute || $form->dberror($query);
+  
+    $ref = $sth->fetchrow_hashref(NAME_lc);
+    for (keys %$ref) { $form->{$_} = $ref->{$_} }
+
+    $sth->finish;
+  }
+
+
+  ($id) = split /--/, $form->{ap};
+
+  if ($id *= 1) {
+    $query = qq|SELECT
+		c1.accno AS ap, c1.description AS ap_description,
+		tr1.description AS ap_translation
+                FROM chart c1
+		LEFT JOIN translation tr1 ON (tr1.trans_id = c1.id AND tr1.language_code = '$myconfig->{countrycode}')
+                WHERE c1.accno = '$id'|;
+
+    $sth = $dbh->prepare($query);
+    $sth->execute || $form->dberror($query);
+  
+    $ref = $sth->fetchrow_hashref(NAME_lc);
+    for (keys %$ref) { $form->{$_} = $ref->{$_} }
+
+    $sth->finish;
+  }
+
+  $dbh->disconnect;
+
+}
+
 
 
 sub post_transaction {

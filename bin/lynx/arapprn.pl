@@ -474,14 +474,10 @@ sub print_debit_note { &print_transaction };
 sub print_payslip {
   my ($oldform) = @_;
 
-  for (qw(ap payment paymentmethod withheld)) { $temp{$_} = $form->{$_} }
+  HR->payslip_details(\%myconfig, \%$form);
 
-  HR->get_employee(\%myconfig, \%$form);
-
-  for (keys %temp) { $form->{$_} = $temp{$_} };
-  
   $display_form = ($form->{display_form}) ? $form->{display_form} : "display_form";
- 
+
   @a = ();
   $form->{paid} = $form->parse_amount(\%myconfig, $form->{paid});
   
@@ -521,7 +517,6 @@ sub print_payslip {
       push @a, "wage_$i";
 
       push @{ $form->{wage} }, $form->{"wage_$i"};
-      $form->{"pay_$i"} =~ s/-//;
       push @{ $form->{pay} }, $form->{"pay_$i"};
       push @{ $form->{qty} }, $form->{"qty_$i"};
       push @{ $form->{amount} }, $form->{"amount_$i"};

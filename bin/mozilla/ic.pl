@@ -2069,6 +2069,14 @@ sub print_ {
       $form->{IN} =~ s/$&$/tex/;
     }
 
+    for $temp (qw(description notes)) {
+      for (@{ $form->{$temp} }) {
+        $form->{"temp_$temp"} = $_;
+        $form->format_string("temp_$temp");
+        $_ = $form->{"temp_$temp"};
+      }
+    }
+
     $form->parse_template(\%myconfig, $userspath);
 
   } else {
