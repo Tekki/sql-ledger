@@ -115,7 +115,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "3.0.5";
+  $self->{version} = "3.0.6";
   $self->{dbversion} = "3.0.0";
 
   bless $self, $type;
@@ -1779,7 +1779,7 @@ sub format_string {
                                tex  => [ quotemeta('\\'), '&', '\n',
 			                 '\r', '\$', '%', '_', '#',
 					 quotemeta('^'), '{', '}', '<', '>',
-					 '�' ],
+					 '£' ],
 			       utf  => [ quotemeta('\\'), '&', '\n',
 			                 '\r', '\$', '%', '_', '#',
 					 quotemeta('^'), '{', '}', '<', '>']
@@ -1793,7 +1793,7 @@ sub format_string {
 			     quotemeta('^') => '\^\\', '{' => '\{',
 			     '}' => '\}', '<' => '$<$', '>' => '$>$',
 		             '\n' => '\newline ', '\r' => '\newline ',
-		             '�' => '\pounds ', quotemeta('\\') => '/'
+		             '£' => '\pounds ', quotemeta('\\') => '/'
 			   }
 	        );
 
@@ -2046,7 +2046,7 @@ sub dbconnect {
   my ($self, $myconfig) = @_;
 
   # connect to database
-  my $dbh = DBI->connect($myconfig->{dbconnect}, $myconfig->{dbuser}, $myconfig->{dbpasswd}) or $self->dberror;
+  my $dbh = DBI->connect($myconfig->{dbconnect}, $myconfig->{dbuser}, $myconfig->{dbpasswd}, {AutoCommit => 1, pg_enable_utf8 => 0}) or $self->dberror;
 
   # set db options
   if ($myconfig->{dboptions}) {
@@ -2062,7 +2062,7 @@ sub dbconnect_noauto {
   my ($self, $myconfig) = @_;
 
   # connect to database
-  $dbh = DBI->connect($myconfig->{dbconnect}, $myconfig->{dbuser}, $myconfig->{dbpasswd}, {AutoCommit => 0}) or $self->dberror;
+  $dbh = DBI->connect($myconfig->{dbconnect}, $myconfig->{dbuser}, $myconfig->{dbpasswd}, {AutoCommit => 0, pg_enable_utf8 => 0}) or $self->dberror;
 
   # set db options
   if ($myconfig->{dboptions}) {
