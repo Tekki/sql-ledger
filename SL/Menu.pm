@@ -25,6 +25,9 @@ sub menuitem {
   my $target = ($self->{$item}{target}) ? $self->{$item}{target} : "";
 
   my $str = qq|<a href=$module?path=$form->{path}&action=$action&login=$form->{login}&js=$form->{js}|;
+  if ($form->{path} =~ /lynx/) {
+    $str .= "&level=".$form->escape($item);
+  }
 
   my @vars = qw(module action target href);
   

@@ -1115,6 +1115,23 @@ sub post_invoice {
 		  WHERE id = $form->{"id_$i"}|;
       $dbh->do($query) || $form->dberror($query);
 
+      # add difference for sale/cost for refunds
+      if ($form->{"qty_$i"} < 0 && $form->{"inventory_accno_id_$i"}) {
+        # record difference between selling price and cost in acc_trans table
+        if ($amount = &cogs_difference($dbh, $form, $i)) {
+          $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount,
+                      transdate, project_id)
+                      VALUES ($form->{id}, $form->{"income_accno_id_$i"}, $amount * -1,
+                      '$form->{transdate}', $project_id)|;
+          $dbh->do($query) || $form->dberror($query);
+
+          $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount,
+                      transdate, project_id)
+                      VALUES ($form->{id}, $form->{"inventory_accno_id_$i"}, $amount,
+                      '$form->{transdate}', $project_id)|;
+          $dbh->do($query) || $form->dberror($query);
+        }
+      }
     }
   }
 
@@ -1700,6 +1717,52 @@ sub cogs_returns {
   $allocated;
   
 }
+
+
+sub cogs_difference {
+  my ($dbh, $form, $i) = @_;
+
+  my $query;
+  my $sth;
+
+  my $amount;
+  my $qty;
+  my $ref;
+  
+  my $allocated;
+  my $totalqty = $form->{"qty_$i"} * -1;
+
+  # check last cost of allocated item
+  $query = qq|SELECT trans_id, allocated, sellprice
+	      FROM invoice
+	      WHERE parts_id = $form->{"id_$i"}
+              AND allocated > 0
+	      ORDER BY trans_id DESC|;
+  $sth = $dbh->prepare($query);
+  $sth->execute || $form->dberror($query);
+
+  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+
+    $qty = $ref->{allocated};
+    if ($qty > $totalqty) {
+      $qty = $totalqty;
+    }
+    
+    $amount += $form->round_amount($ref->{sellprice} * $qty, $form->{precision});
+    
+    $allocated += $qty;
+    
+    last if (($totalqty -= $qty) <= 0);
+
+  }
+  $sth->finish;
+
+  # return difference
+  $amount = $form->round_amount($amount / $allocated, $form->{precision});
+  $form->round_amount(($form->{"sellprice_$i"} - $amount) * $form->{"qty_$i"} * -1, $form->{precision});
+
+}
+
 
 
 sub reverse_invoice {

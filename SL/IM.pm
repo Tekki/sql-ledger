@@ -486,7 +486,7 @@ sub taxrates {
   my $query = qq|SELECT c.accno, t.rate
               FROM chart c
 	      JOIN tax t ON (c.id = t.chart_id)
-	      WHERE c.link LIKE '%$form->{ARAP}\\_tax%'
+	      WHERE c.link LIKE '%$form->{ARAP}_tax%'
 	      AND (t.validto >= ? OR t.validto IS NULL)
 	      ORDER BY accno, validto|;
   my $sth = $dbh->prepare($query);
@@ -939,7 +939,7 @@ sub import_item {
   my ($defaultcurrency) = $dbh->selectrow_array($query);
   
   $query = qq|SELECT accno FROM chart
-              WHERE link LIKE '%IC\\_tax%'|;
+              WHERE link LIKE '%IC_tax%'|;
   my $tth = $dbh->prepare($query) || $form->dberror($query);
   $tth->execute || $form->dberror($query);
   

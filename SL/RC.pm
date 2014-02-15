@@ -98,7 +98,7 @@ sub payment_transactions {
   $cleared = "";
   if ($form->{todate}) {
     $transdate = qq| AND ac.transdate <= date '$form->{todate}'|;
-    $cleared = qq| AND (ac.cleared <= date '$form->{todate}' OR ac.cleared IS NULL)|;
+    $cleared = qq| AND ac.cleared <= date '$form->{todate}'|;
   }
  
   # get statement balance
@@ -308,12 +308,15 @@ sub reconcile {
     if ($form->{"datecleared_$i"} ne $form->{"oldcleared_$i"}) {
 
       $cleared = ($form->{"cleared_$i"}) ? $form->{recdate} : '';
+
       foreach $trans_id (split / /, $form->{"id_$i"}) {
 	$query = qq|UPDATE acc_trans SET
 	            cleared = |.$form->dbquote($cleared, SQL_DATE).qq|
                     WHERE trans_id = $trans_id 
 	            AND transdate = '$form->{"transdate_$i"}'
-	            AND chart_id = $chart_id|;
+                    AND source = '$form->{"source_$i"}'
+	            AND chart_id = $chart_id
+                    $source|;
         $dbh->do($query) || $form->dberror($query);
       }
       

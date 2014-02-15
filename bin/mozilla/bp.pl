@@ -530,12 +530,11 @@ sub list_spool {
   
   for (qw(customer vendor employee)) {
     if ($form->{$_}) {
-      $var = $form->{$_};
-      $var =~ s/--.*//;
+      $var = qq|$form->{$_}--$form->{"${_}_id"}|;
       $callback .= "&$_=".$form->escape($var,1);
       $href .= "&$_=".$form->escape($var);
       $option .= "\n<br>" if ($option);
-      $option .= $locale->text($vc{$_}{name})." : $var";
+      $option .= $locale->text($vc{$_}{name})." : $form->{$_}";
     }
     if ($form->{"${_}number"}) {
       $callback .= qq|&${_}number=|.$form->escape($form->{$form->{"${_}number"}},1);
