@@ -1891,6 +1891,7 @@ sub tax_report {
       $accno = qq| AND ch.accno = '$accno'|;
     }
   }
+  $accno =~ s/ AND \(\)/ AND (ch.accno = '0')/;
 
   my $vc;
   my $ARAP;

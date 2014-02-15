@@ -59,7 +59,7 @@ sub import {
   $form->{nextsub} = "im_$form->{type}";
 
   $form->{delimiter} = ",";
-  
+
   if ($form->{type} eq 'payment') {
     IM->paymentaccounts(\%myconfig, \%$form);
     if (@{ $form->{all_paymentaccount} }) {
@@ -92,6 +92,17 @@ sub import {
 	        <td><input name=filetype type=radio class=radio value=v11>&nbsp;|.$locale->text('.v11').qq|</td>
 	</tr>
 |;
+  }
+  
+  $form->all_languages(\%myconfig);
+
+  if (@{ $form->{all_language} }) {
+    $form->{language_code} = $myconfig{countrycode};
+    $form->{selectlanguage_code} = "\n";
+    for (@{ $form->{all_language} }) { $form->{selectlanguage_code} .= qq|$_->{code}--$_->{description}\n| }
+
+    $lang = qq|
+            <select name=language_code>|.$form->select_option($form->{selectlanguage_code}, $form->{language_code}, undef, 1).qq|</select>|;
   }
   
 print qq|
@@ -132,7 +143,7 @@ print qq|
 	      </tr>
 -->
 	      <tr>
-		<td><input name=mapfile type=checkbox value=1>&nbsp;|.$locale->text('Mapfile').qq|</td>
+		<td><input name=mapfile type=checkbox value=1>&nbsp;|.$locale->text('Mapfile').qq|</td><td colspan=3>$lang</td>
 	      </tr>
 	    </table>
 	  </td>
@@ -1082,7 +1093,7 @@ sub xrefhdr {
   $i = 1;
 
   if ($form->{mapfile}) {
-    open(FH, "$templates/$myconfig{dbname}/import.map") or $form->error($!);
+    open(FH, "$templates/$myconfig{dbname}/$form->{language_code}/import.map") or $form->error($!);
 
     while (<FH>) {
       next if /^(#|;|\s)/;
@@ -1104,6 +1115,7 @@ sub xrefhdr {
 	$form->{$form->{type}}{$f[0]} = { field => $key, length => $f[1], ndx => $i++ };
       }
     }
+    delete $form->{$form->{type}}{''};
     close FH;
     
   } else {

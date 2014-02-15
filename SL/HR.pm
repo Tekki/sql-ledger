@@ -277,7 +277,7 @@ sub get_employee {
   $sth->finish;
   
   my %ae = ( ap => { category => 'L', link => qq| AND c.link = 'AP' | },
-	payment => { category => 'A', link => qq| AND c.link LIKE '%AP\_paid%' | } );
+	payment => { category => 'A', link => qq| AND c.link LIKE '%AP_paid%' | } );
   for (qw(ap payment)) {
     $query = qq|SELECT c.accno, c.description,
 		l.description AS translation
@@ -759,7 +759,7 @@ sub employees {
   $query = qq|SELECT c.accno, c.description, l.description AS translation
 	      FROM chart c
 	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
-	      WHERE c.link LIKE '%AP\_paid%'
+	      WHERE c.link LIKE '%AP_paid%'
 	      ORDER BY c.accno|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -814,6 +814,8 @@ sub payroll_links {
 
   my $query = qq|SELECT *
                  FROM employee
+                 WHERE id IN (SELECT employee_id FROM employeewage)
+                 AND enddate IS NULL
 		 ORDER BY $sortorder|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -980,7 +982,7 @@ sub payroll_links {
   $query = qq|SELECT c.accno, c.description, l.description AS translation
 	      FROM chart c
 	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
-	      WHERE c.link LIKE '%AP\_paid%'
+	      WHERE c.link LIKE '%AP_paid%'
 	      ORDER BY c.accno|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -1030,6 +1032,7 @@ sub search_payroll {
 
   my $query = qq|SELECT id, name, employeenumber
                  FROM employee
+                 WHERE id IN (SELECT employee_id FROM employeewage)
 		 ORDER BY $sortorder|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -1366,7 +1369,8 @@ sub post_transaction {
 		startdate, enddate, arap_accno_id,
 		payment_accno_id, paymentmethod_id)
                 VALUES (
-                $employee_id, '$employee', '$ref->{workphone}',
+                $employee_id, |
+                .$dbh->quote($employee).qq|, '$ref->{workphone}',
 		'$ref->{workfax}', '$ref->{email}', '$ref->{notes}',
 		$vendornumber, $user_id, '$ap->{currency}',|
 		.$form->dbquote($ref->{startdate}, SQL_DATE).qq|, |
@@ -1378,7 +1382,7 @@ sub post_transaction {
 
     $query = qq|INSERT INTO contact (trans_id, typeofcontact,
                 phone, fax, mobile, email)
-                VALUES ($employee_id, 'company',
+                VALUES ($employee_id, 'person',
 		'$ref->{workphone}', '$ref->{workfax}', '$ref->{workmobile}',
 		'$ref->{email}')|;
     $dbh->do($query) || $form->dberror($query);
@@ -1696,7 +1700,7 @@ sub get_deduction {
 	      FROM chart c
 	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 	      WHERE c.charttype = 'A'
-	      AND c.link LIKE '%AP\_amount%'
+	      AND c.link LIKE '%AP_amount%'
 	      ORDER BY c.accno|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -1922,7 +1926,7 @@ sub get_wage {
 	      FROM chart c
 	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 	      WHERE c.charttype = 'A'
-	      AND c.link LIKE '%AP\_amount%'
+	      AND c.link LIKE '%AP_amount%'
 	      ORDER BY c.accno|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);

@@ -1,18 +1,29 @@
 <ul>
 
-<p><li><h4>Attempt to copy freed scalar</h4>
-Perl 5 with thread support has a bug.
-To get rid of panic errors and other issues the compiler can't handle,
-recompile perl without thread support.
+<p><li><h4>Apache 2.4 configuration</h4>
+<pre>
+AddHandler cgi-script .pl
+AddDefaultCharset On
+Alias /sql-ledger /usr/local/sql-ledger/
+&lt;Directory /usr/local/sql-ledger&gt;
+  Options ExecCGI Includes FollowSymlinks
+&lt;/Directory&gt;
+
+&lt;Directory /usr/local/sql-ledger/&gt;
+  AllowOverride None
+  Require all granted
+&lt;/Directory&gt;
+</pre>
 
 <p><li><h4>preamble.tex : No such file or directory</h4>
 templates are provided as is, some templates may have links to other files
 which are not included.
-The preample.tex file is simply a separate file which holds
+The preample.tex file is a separate file which holds
 the header information for a template. Find a template with the header,
 that is everything up to \begin document, and put the stuff into a file
 called preamble.tex or simply cut and paste the header into the file and
 remove the <%include preamble.tex%> directive.
+
 
 <p><li><h4>wrong papersize</h4>
 If the papersize for postscript and PDF does not match set the proper
@@ -20,6 +31,7 @@ size with texconfig-sys
 <pre>
 texconfig-sys pdftex paper letter
 </pre>
+
 
 <p><li><h4>Install Notes for Lighttpd</h4>
 <ol>
@@ -307,7 +319,8 @@ postgres will come back with an authentication error because you tried
 to connect to a host.
 
 <p><b>WARNING!</b> DO NOT just put a 'host all all trust' in pg_hba.conf
-unless you know what you are doing.
+and leave your computer hooked up to the Internet. It's ok for trusted
+internal networks but NOT when you are hooked up to the Internet.
 
 
 <p><li><h4>DBD-Pg for Mandrake 9.0</h4>

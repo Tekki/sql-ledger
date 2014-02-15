@@ -1,0 +1,227 @@
+/* stylesheet for apple scheme*/
+
+/* general stuff */
+A:link { color: #00004d; text-decoration: none; }
+A:visited { color: #2d7ba0; text-decoration: none; }
+A:active { color: #2d7ba0; text-decoration: underline; }
+A:hover { color: white;
+  background-color: #bbbbbb;
+  text-decoration: none;
+}
+
+body {
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  color: #444444;
+  font-size: 11px;
+  background-color: #f2f2f2;
+}
+
+td {
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 11px;
+}
+
+th {
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 11px;
+}
+
+/* login and admin */
+.login {
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+body.login {
+  background: #5a7d9b;
+  color: black;
+}
+h1.login {
+  font-size: 18px;
+}
+table.login {
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+
+/* Not Known */
+body.admin {
+  background-color: #f7a0a0;
+  color: black;
+}
+
+/* Left hand side menu */
+body.menu {
+  background-color: white;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  color: black;
+}
+
+/* Each menu item on left hand side */
+.menuOut {
+  cursor: pointer;
+  background-color: white;
+  font-size: 11px;
+  color: #00004d;
+  border: 1px solid white;
+  padding: 2px;
+  text-align: left;
+  font-weight: bold;
+}
+
+/* When the mouse moves over a menu item */
+.menuOver {
+  cursor: pointer;
+  background-color: #cbcbcb;
+  font-size: 11px;
+  color: #00004d;
+  border: 1px solid #f2f2f2;
+  padding: 2px;
+  text-align: left;
+  font-weight: bold;
+}
+
+/* When a menu item is clicked and the menu below appears */
+.submenu {
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  padding-left: 5px;
+}
+
+/* Menu items that do not have a sub menu */
+.menuOut a {
+  cursor: pointer;
+  margin: 0px;
+  background-color: white;
+  font-size: 11px;
+  color: #00004d;
+  border: 0px solid #000000;
+  padding: 0px;
+  text-align: left;
+  font-weight: bold;
+}
+
+/* When the mouse moves over a menu item, which does not have a sub menu */
+.menuOver a {
+  cursor: pointer;
+  margin: 0px;
+  background-color: #cbcbcb;
+  font-size: 11px;
+  color: #00004d;
+  border: 0px solid #000000;
+  padding: 0px;
+  text-align: left;
+  font-weight: bold;
+}
+
+/* Text of the sub menu items */
+.submenu a {
+  color: #3336b4;
+  text-decoration: none;
+}
+
+/* Text of the sub menu items when the mouse moves over it */
+.submenu a:hover {
+  color: #141414;
+  text-decoration: none;
+}
+
+.listtop { font-size: 11px; background-color: #5a7d9b; color: white; }
+A.listtop:link, A.listtop:active, A.listtop:visited {
+  color: black;
+  text-decoration: none; }
+.listheading { font-size: 11px; background-color: #5a7d9b; color: white; }
+.undefined { font-size: 11px; background-color: white; color: #444444; }
+A.listheading:link, A.listheading:active, A.listheading:visited {
+  color: white;
+  text-decoration: none; }
+.listrow1 { font-size: 11px; background-color: #e8e8e8; color: black; vertical-align: top; }
+.listrow0 { font-size: 11px; background-color: #cbcbcb; color: black; vertical-align: top; }
+.listsubtotal { font-size: 11px; background-color: #686868; color: white; }
+A.listsubtotal:link, A.listsubtotal:active, A.listsubtotal:visited {
+  color: white;
+  text-decoration: none; }
+.listtotal { font-size: 11px; background-color: #686868; color: white; }
+A.listtotal:link, A.listtotal:active, A.listtotal:visited {
+  color: white;
+  text-decoration: none; }
+.help { font-size: 11px; background-color: #686868; color: black; vertical-align: top; }
+
+textarea {
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  border: 1px solid #888888;
+  font-size: 11px;
+  background-color: white;
+  font-weight: bold;
+  width: 100%;
+}
+
+input {
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  border: 1px solid #888888;
+  font-size: 11px;
+  background-color: white;
+  font-weight: bold;
+}
+
+/* .inputright {
+  text-align:right;
+} */
+
+select {
+  background-color: white;
+  border: 1px solid #888888;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 11px;
+}
+
+.submit {
+  background-color: #cbcbcb;
+  font-size: 11px;
+  color: #00004d;
+  font-weight: normal;
+}
+
+.pos {
+  font-size: 14px;
+  color: #000000;
+  font-weight: normal;
+}
+
+.checkbox, .radio {
+  background-color: white;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 11px;
+}
+
+.plus0 {    /* font color for negative numbers */
+  color: red;
+}
+
+.plus1 {
+  color: green;
+}
+
+h2.confirm {
+  color: blue;
+  font-size: 14px;
+}
+
+h2.error {
+  color: red;
+  font-size: 14px;
+}
+
+
+/* media stuff */
+
+@media screen {
+  .noscreen {   /* items with this class won't display */
+    display: none;
+  }
+}
+
+@media print {
+  .noprint {   /* items with this class won't print */
+    display: none;
+  }
+}
