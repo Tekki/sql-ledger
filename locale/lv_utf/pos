@@ -78,11 +78,11 @@ $self{subs} = {
   'print_options'               => 'print_options',
   'receipts'                    => 'receipts',
   'section_menu'                => 'section_menu',
-  'turpināt'                    => 'continue',
-  'dzēst'                       => 'delete',
-  'iegrāmatot'                  => 'post',
-  'drukāt'                      => 'print',
-  'atjaunināt'                  => 'update',
+  'turpināt'                   => 'continue',
+  'dzēst'                      => 'delete',
+  'iegrāmatot'                 => 'post',
+  'drukāt'                     => 'print',
+  'atjaunināt'                 => 'update',
 };
 
 1;

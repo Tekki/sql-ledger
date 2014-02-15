@@ -75,7 +75,7 @@ $self{subs} = {
   'section_menu'                => 'section_menu',
   'select_all'                  => 'select_all',
   'yes'                         => 'yes',
-  'pokračování'                 => 'continue',
+  'pokračování'              => 'continue',
   'e_mail'                      => 'e_mail',
   'ano'                         => 'yes',
 };

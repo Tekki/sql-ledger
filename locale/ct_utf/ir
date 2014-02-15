@@ -177,7 +177,7 @@ $self{subs} = {
   'esborrar'                    => 'delete',
   'email'                       => 'e_mail',
   'ordre_de_compra'             => 'purchase_order',
-  'sí'                          => 'yes',
+  'sí'                         => 'yes',
 };
 
 1;

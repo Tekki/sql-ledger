@@ -136,11 +136,11 @@ $self{subs} = {
   'update_payment'              => 'update_payment',
   'update_payments'             => 'update_payments',
   'vendor_invoice_'             => 'vendor_invoice_',
-  'turpināt'                    => 'continue',
-  'iegrāmatot'                  => 'post',
-  'drukāt'                      => 'print',
-  'atlasīt_visu'                => 'select_all',
-  'atjaunināt'                  => 'update',
+  'turpināt'                   => 'continue',
+  'iegrāmatot'                 => 'post',
+  'drukāt'                     => 'print',
+  'atlasīt_visu'               => 'select_all',
+  'atjaunināt'                 => 'update',
 };
 
 1;

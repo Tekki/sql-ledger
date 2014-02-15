@@ -48,7 +48,7 @@ $self{subs} = {
   'chart_of_accounts'           => 'chart_of_accounts',
   'list'                        => 'list',
   'list_transactions'           => 'list_transactions',
-  'sýna_fćrslur'                => 'list_transactions',
+  'sýna_fćrslur'              => 'list_transactions',
 };
 
 1;

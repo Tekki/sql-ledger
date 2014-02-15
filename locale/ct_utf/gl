@@ -125,7 +125,7 @@ $self{subs} = {
   'yes'                         => 'yes',
   'continuar'                   => 'continue',
   'esborrar'                    => 'delete',
-  'sí'                          => 'yes',
+  'sí'                         => 'yes',
 };
 
 1;

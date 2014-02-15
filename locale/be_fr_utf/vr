@@ -98,7 +98,7 @@ $self{subs} = {
   'continuer'                   => 'continue',
   'supprimer'                   => 'delete',
   'enregistrer'                 => 'post',
-  'tout_sélectionner'           => 'select_all',
+  'tout_sélectionner'          => 'select_all',
   'oui'                         => 'yes',
 };
 

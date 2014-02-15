@@ -183,8 +183,8 @@ $self{subs} = {
   'statement_details'           => 'statement_details',
   'tax_subtotal'                => 'tax_subtotal',
   'vendor_invoice_'             => 'vendor_invoice_',
-  'Áfram'                       => 'continue',
-  'r_póstur'                    => 'e_mail',
+  'Áfram'                      => 'continue',
+  'r_póstur'                   => 'e_mail',
   'prenta'                      => 'print',
   'velja_allt'                  => 'select_all',
 };

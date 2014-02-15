@@ -1,8 +1,8 @@
 # These are all the texts to build the translations files.
 # to build unique strings edit the module files instead
 # this file is just a shortcut to build strings which are the same
-
 $self{charset} = 'UTF-8';
+
 
 $self{texts} = {
   '%'                           => '',
@@ -280,6 +280,7 @@ $self{texts} = {
   'Compare to'                  => 'Comparar amb',
   'Completed'                   => '',
   'Components'                  => '',
+  'Configuration file missing!' => '',
   'Confirm'                     => '',
   'Confirm!'                    => 'Confirmar!',
   'Connect to'                  => 'Connectar a',
@@ -421,6 +422,7 @@ $self{texts} = {
   'Due Date missing!'           => 'Falta la Data Venciment!',
   'E-Mail'                      => '',
   'E-mail'                      => 'Email',
+  'E-mail PIN'                  => '',
   'E-mail Reminder to'          => '',
   'E-mail Statement to'         => '',
   'E-mail address missing!'     => 'Falta Email!',
@@ -618,6 +620,7 @@ $self{texts} = {
   'Incorrect Username!'         => '',
   'Individual Items'            => 'Elements Individuals',
   'Internal Notes'              => '',
+  'Invalid PIN'                 => '',
   'Inventory'                   => 'Inventari',
   'Inventory Value'             => '',
   'Inventory account does not exist!' => '',
@@ -701,6 +704,7 @@ $self{texts} = {
   'Main Groups'                 => '',
   'Main Menu'                   => '',
   'Maintainance'                => '',
+  'Maintenance'                 => '',
   'Make'                        => 'Fer',
   'Male'                        => '',
   'Mapfile'                     => '',
@@ -815,6 +819,7 @@ $self{texts} = {
   'Overdue'                     => '',
   'Overpaid'                    => '',
   'PDF'                         => '',
+  'PIN'                         => '',
   'PO'                          => '',
   'PO Number'                   => '',
   'POS'                         => '',

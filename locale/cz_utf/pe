@@ -119,9 +119,9 @@ $self{subs} = {
   'translation_footer'          => 'translation_footer',
   'translation_header'          => 'translation_header',
   'update'                      => 'update',
-  'pokračování'                 => 'continue',
+  'pokračování'              => 'continue',
   'vymazat'                     => 'delete',
-  'uložit'                      => 'save',
+  'uložit'                     => 'save',
 };
 
 1;

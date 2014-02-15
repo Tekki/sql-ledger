@@ -97,7 +97,7 @@ $self{subs} = {
   'yes_delete_batch'            => 'yes_delete_batch',
   'fortsett'                    => 'continue',
   'slett'                       => 'delete',
-  'bokfųr'                      => 'post',
+  'bokfųr'                     => 'post',
   'velg_alt'                    => 'select_all',
   'ja'                          => 'yes',
 };

@@ -165,13 +165,13 @@ $self{subs} = {
   'yes'                         => 'yes',
   'kp_transakcija'              => 'ap_transaction',
   'dp_transakcija'              => 'ar_transaction',
-  'turpināt'                    => 'continue',
-  'dzēst'                       => 'delete',
-  'virsgrāmatas_transakcija'    => 'gl_transaction',
-  'iegrāmatot'                  => 'post',
-  'iegrāmatot_kā_jaunu'         => 'post_as_new',
-  'atjaunināt'                  => 'update',
-  'jā'                          => 'yes',
+  'turpināt'                   => 'continue',
+  'dzēst'                      => 'delete',
+  'virsgrāmatas_transakcija'   => 'gl_transaction',
+  'iegrāmatot'                 => 'post',
+  'iegrāmatot_kā_jaunu'       => 'post_as_new',
+  'atjaunināt'                 => 'update',
+  'jā'                         => 'yes',
 };
 
 1;

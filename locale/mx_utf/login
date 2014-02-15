@@ -10,6 +10,7 @@ $self{texts} = {
   'Incorrect Username!'         => '¡Usuario Incorrecto!',
   'Login'                       => 'Usuario',
   'Name'                        => 'Nombre',
+  'No email address for'        => 'Falta dirección de correo-e para',
   'Password'                    => 'Contraseña',
   'Upgrading to Version'        => 'Actualizando a versión',
   'Version'                     => 'Versión',
@@ -18,10 +19,14 @@ $self{texts} = {
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_pin'                   => 'email_pin',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
+  'pin_login'                   => 'pin_login',
   'selectdataset'               => 'selectdataset',
+  'continuar'                   => 'continue',
   'usuario'                     => 'login',
 };
 

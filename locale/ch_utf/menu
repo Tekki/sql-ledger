@@ -70,7 +70,6 @@ $self{texts} = {
   'List Accounts'               => 'Kontenliste',
   'List GIFI'                   => 'GIFI auflisten',
   'Logout'                      => 'Abmelden',
-  'Maintainance'                => 'Wartungsarbeiten',
   'Mapfile'                     => 'Mapdatei',
   'Non-taxable'                 => 'MWST-frei',
   'Open'                        => 'Offen',

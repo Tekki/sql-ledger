@@ -136,11 +136,11 @@ $self{subs} = {
   'translation_footer'          => 'translation_footer',
   'translation_header'          => 'translation_header',
   'update'                      => 'update',
-  'pridėti_proektą'             => 'add_project',
-  'tęsti'                       => 'continue',
-  'ištrinti'                    => 'delete',
-  'išsaugoti'                   => 'save',
-  'išsaugoti_kaip_naują'        => 'save_as_new',
+  'pridėti_proektą'           => 'add_project',
+  'tęsti'                      => 'continue',
+  'ištrinti'                   => 'delete',
+  'išsaugoti'                  => 'save',
+  'išsaugoti_kaip_naują'      => 'save_as_new',
   'atnaujinti'                  => 'update',
 };
 

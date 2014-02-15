@@ -7,6 +7,7 @@ $self{texts} = {
   'Incorrect Dataset version!'  => 'Nepareiza datukopas versija!',
   'Login'                       => 'Pieteikties',
   'Name'                        => 'Nosaukums',
+  'No email address for'        => 'Nav e-pasta adrese',
   'Password'                    => 'Parole',
   'Upgrading to Version'        => 'Uzlabot līdz versijai',
   'Version'                     => 'Versija',
@@ -14,10 +15,14 @@ $self{texts} = {
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_pin'                   => 'email_pin',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
+  'pin_login'                   => 'pin_login',
   'selectdataset'               => 'selectdataset',
+  'turpināt'                   => 'continue',
   'pieteikties'                 => 'login',
 };
 

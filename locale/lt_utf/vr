@@ -89,10 +89,10 @@ $self{subs} = {
   'subtotal'                    => 'subtotal',
   'yes'                         => 'yes',
   'yes_delete_batch'            => 'yes_delete_batch',
-  'tęsti'                       => 'continue',
-  'ištrinti'                    => 'delete',
+  'tęsti'                      => 'continue',
+  'ištrinti'                   => 'delete',
   'patvirtinti'                 => 'post',
-  'išrinkti_viską'              => 'select_all',
+  'išrinkti_viską'            => 'select_all',
   'taip'                        => 'yes',
 };
 

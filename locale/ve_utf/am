@@ -387,7 +387,7 @@ $self{subs} = {
   'agregar_tasa_de_cambio'      => 'add_exchange_rate',
   'agregar_idioma'              => 'add_language',
   'agregar_sic'                 => 'add_sic',
-  'agregar_almacén'             => 'add_warehouse',
+  'agregar_almacén'            => 'add_warehouse',
   'continuar'                   => 'continue',
   'copiar_al_plan_de_cuentas'   => 'copy_to_coa',
   'borrar'                      => 'delete',
@@ -397,7 +397,7 @@ $self{subs} = {
   'guardar_como_nuevo'          => 'save_as_new',
   'seleccionar_todos'           => 'select_all',
   'actualizar'                  => 'update',
-  'sí'                          => 'yes',
+  'sí'                         => 'yes',
 };
 
 1;

@@ -204,8 +204,8 @@ $self{subs} = {
   'générer_commandes_de_ventes' => 'generate_sales_orders',
   'enregistrer'                 => 'save',
   'enregistrer_comme_nouveau'   => 'save_as_new',
-  'séléctionner_client'         => 'select_customer',
-  'mettre_à_jour'               => 'update',
+  'séléctionner_client'       => 'select_customer',
+  'mettre_à_jour'              => 'update',
 };
 
 1;

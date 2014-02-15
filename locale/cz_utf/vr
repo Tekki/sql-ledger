@@ -83,7 +83,7 @@ $self{subs} = {
   'subtotal'                    => 'subtotal',
   'yes'                         => 'yes',
   'yes_delete_batch'            => 'yes_delete_batch',
-  'pokračování'                 => 'continue',
+  'pokračování'              => 'continue',
   'vymazat'                     => 'delete',
   'ano'                         => 'yes',
 };

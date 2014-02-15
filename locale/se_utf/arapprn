@@ -32,7 +32,7 @@ $self{subs} = {
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',
   'select_payment'              => 'select_payment',
-  'fortsфtt'                    => 'continue',
+  'fortsфtt'                   => 'continue',
 };
 
 1;

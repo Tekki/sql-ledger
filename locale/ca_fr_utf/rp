@@ -212,7 +212,7 @@ $self{subs} = {
   'continuer'                   => 'continue',
   'e_mail'                      => 'e_mail',
   'imprimer'                    => 'print',
-  'tout_sélectionner'           => 'select_all',
+  'tout_sélectionner'          => 'select_all',
 };
 
 1;

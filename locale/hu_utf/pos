@@ -84,12 +84,12 @@ $self{subs} = {
   'print_options'               => 'print_options',
   'receipts'                    => 'receipts',
   'section_menu'                => 'section_menu',
-  'folytatás'                   => 'continue',
-  'törlés'                      => 'delete',
-  'rögzítés'                    => 'post',
-  'nyomtatás'                   => 'print',
-  'számlát_nyomtat'             => 'print_and_post',
-  'frissítés'                   => 'update',
+  'folytatás'                  => 'continue',
+  'törlés'                    => 'delete',
+  'rögzítés'                 => 'post',
+  'nyomtatás'                  => 'print',
+  'számlát_nyomtat'           => 'print_and_post',
+  'frissítés'                 => 'update',
 };
 
 1;

@@ -139,12 +139,12 @@ $self{subs} = {
   'wage_footer'                 => 'wage_footer',
   'wage_header'                 => 'wage_header',
   'yes'                         => 'yes',
-  'control_d\'accés'            => 'access_control',
-  'afegir_transacció'           => 'add_transaction',
+  'control_d\'accés'           => 'access_control',
+  'afegir_transacció'          => 'add_transaction',
   'continuar'                   => 'continue',
   'esborrar'                    => 'delete',
   'guardar'                     => 'save',
-  'sí'                          => 'yes',
+  'sí'                         => 'yes',
 };
 
 1;

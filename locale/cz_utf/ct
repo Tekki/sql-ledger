@@ -115,13 +115,13 @@ $self{subs} = {
   'update'                      => 'update',
   'vendor_invoice'              => 'vendor_invoice',
   'vendor_pricelist'            => 'vendor_pricelist',
-  'nový_zákazník'               => 'add_customer',
-  'nový_dodavatel'              => 'add_vendor',
-  'pokračování'                 => 'continue',
+  'nový_zákazník'            => 'add_customer',
+  'nový_dodavatel'             => 'add_vendor',
+  'pokračování'              => 'continue',
   'vymazat'                     => 'delete',
-  'vystavená_objednávka'        => 'purchase_order',
-  'přijatá_objednávka'          => 'sales_order',
-  'uložit'                      => 'save',
+  'vystavená_objednávka'      => 'purchase_order',
+  'přijatá_objednávka'       => 'sales_order',
+  'uložit'                     => 'save',
 };
 
 1;

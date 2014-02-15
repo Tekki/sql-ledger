@@ -182,8 +182,8 @@ $self{subs} = {
   'update'                      => 'update',
   'vendor_invoice'              => 'vendor_invoice',
   'vendor_pricelist'            => 'vendor_pricelist',
-  'Écriture_dépenses'           => 'ap_transaction',
-  'Écriture_recettes'           => 'ar_transaction',
+  'Écriture_dépenses'         => 'ap_transaction',
+  'Écriture_recettes'          => 'ar_transaction',
   'ajouter_client'              => 'add_customer',
   'ajouter_fournisseur'         => 'add_vendor',
   'continuer'                   => 'continue',
@@ -199,7 +199,7 @@ $self{subs} = {
   'enregistrer_la_liste_de_prix' => 'save_pricelist',
   'enregistrer_comme_nouveau'   => 'save_as_new',
   'adresse_d\'envoi'            => 'shipping_address',
-  'mettre_à_jour'               => 'update',
+  'mettre_à_jour'              => 'update',
   'facture_d\'achat'            => 'vendor_invoice',
 };
 

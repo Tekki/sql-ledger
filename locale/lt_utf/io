@@ -100,9 +100,9 @@ $self{subs} = {
   'ship_to'                     => 'ship_to',
   'shipto_selected'             => 'shipto_selected',
   'validate_items'              => 'validate_items',
-  'pridėti_prekę'               => 'add_part',
-  'pridėti_paslaugą'            => 'add_service',
-  'tęsti'                       => 'continue',
+  'pridėti_prekę'             => 'add_part',
+  'pridėti_paslaugą'          => 'add_service',
+  'tęsti'                      => 'continue',
 };
 
 1;

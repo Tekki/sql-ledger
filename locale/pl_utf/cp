@@ -138,10 +138,10 @@ $self{subs} = {
   'update_payments'             => 'update_payments',
   'vendor_invoice_'             => 'vendor_invoice_',
   'kontynuj'                    => 'continue',
-  'zatwierdż'                   => 'post',
+  'zatwierdż'                  => 'post',
   'wydrukuj'                    => 'print',
   'wybierz_wszystko'            => 'select_all',
-  'uzupełnij'                   => 'update',
+  'uzupełnij'                  => 'update',
 };
 
 1;

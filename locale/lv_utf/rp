@@ -204,10 +204,10 @@ $self{subs} = {
   'statement_details'           => 'statement_details',
   'tax_subtotal'                => 'tax_subtotal',
   'vendor_invoice_'             => 'vendor_invoice_',
-  'turpināt'                    => 'continue',
+  'turpināt'                   => 'continue',
   'e_pasts'                     => 'e_mail',
-  'drukāt'                      => 'print',
-  'atlasīt_visu'                => 'select_all',
+  'drukāt'                     => 'print',
+  'atlasīt_visu'               => 'select_all',
 };
 
 1;

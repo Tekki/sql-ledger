@@ -210,7 +210,7 @@ $self{subs} = {
   'tax_subtotal'                => 'tax_subtotal',
   'vendor_invoice_'             => 'vendor_invoice_',
   'continuar'                   => 'continue',
-  'correo_electrónico'          => 'e_mail',
+  'correo_electrónico'         => 'e_mail',
   'imprimir'                    => 'print',
   'seleccione_todo'             => 'select_all',
 };

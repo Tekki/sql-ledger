@@ -121,7 +121,7 @@ $self{subs} = {
   'ship_to'                     => 'ship_to',
   'shipto_selected'             => 'shipto_selected',
   'validate_items'              => 'validate_items',
-  'agregar_artículo'            => 'add_part',
+  'agregar_artículo'           => 'add_part',
   'agregar_servicio'            => 'add_service',
   'continuar'                   => 'continue',
 };

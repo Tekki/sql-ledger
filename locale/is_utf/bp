@@ -83,11 +83,11 @@ $self{subs} = {
   'section_menu'                => 'section_menu',
   'select_all'                  => 'select_all',
   'yes'                         => 'yes',
-  'Áfram'                       => 'continue',
-  'r_póstur'                    => 'e_mail',
+  'Áfram'                      => 'continue',
+  'r_póstur'                   => 'e_mail',
   'prenta'                      => 'print',
   'velja_allt'                  => 'select_all',
-  'já'                          => 'yes',
+  'já'                         => 'yes',
 };
 
 1;

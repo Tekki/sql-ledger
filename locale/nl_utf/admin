@@ -105,7 +105,6 @@ $self{texts} = {
   'Login'                       => 'Aanmelden',
   'Logout'                      => 'Afmelden',
   'Main Menu'                   => 'Hoofdmenu',
-  'Maintainance'                => 'Onderhoud',
   'Mapfile'                     => 'Mapfile',
   'Monitor'                     => 'Monitor',
   'Multibyte Encoding'          => 'Unicode',

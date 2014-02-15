@@ -179,12 +179,12 @@ $self{subs} = {
   'validate_items'              => 'validate_items',
   'vendor_invoice_'             => 'vendor_invoice_',
   'yes'                         => 'yes',
-  'příjem_zboží'                => 'add_part',
-  'nový_druh_služby'            => 'add_service',
-  'pokračování'                 => 'continue',
+  'příjem_zboží'            => 'add_part',
+  'nový_druh_služby'          => 'add_service',
+  'pokračování'              => 'continue',
   'vymazat'                     => 'delete',
   'e_mail'                      => 'e_mail',
-  'přijatá_objednávka'          => 'sales_order',
+  'přijatá_objednávka'       => 'sales_order',
   'ano'                         => 'yes',
 };
 

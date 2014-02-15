@@ -1,8 +1,8 @@
 # These are all the texts to build the translations files.
 # to build unique strings edit the module files instead
 # this file is just a shortcut to build strings which are the same
-
 $self{charset} = 'UTF-8';
+
 
 $self{texts} = {
   '%'                           => '',
@@ -303,6 +303,7 @@ $self{texts} = {
   'Compare to'                  => 'Sammenlign med',
   'Completed'                   => '',
   'Components'                  => 'Komponenter',
+  'Configuration file missing!' => '',
   'Confirm'                     => 'Bekræft',
   'Confirm!'                    => 'Bekræft!',
   'Connect to'                  => 'Forbind til',
@@ -446,6 +447,7 @@ $self{texts} = {
   'Due Date missing!'           => 'Forfaldsdato mangler!',
   'E-Mail'                      => '',
   'E-mail'                      => 'E-post',
+  'E-mail PIN'                  => '',
   'E-mail Reminder to'          => '',
   'E-mail Statement to'         => 'Send opgørelse til',
   'E-mail address missing!'     => 'E-post-adresse mangler!',
@@ -652,6 +654,7 @@ $self{texts} = {
   'Increase'                    => 'Forøg',
   'Individual Items'            => 'Individuelle enheder',
   'Internal Notes'              => 'Interne noter',
+  'Invalid PIN'                 => '',
   'Inventory'                   => 'Artikler',
   'Inventory Value'             => '',
   'Inventory account does not exist!' => 'Lagerkonto findes ikke!',
@@ -743,6 +746,7 @@ $self{texts} = {
   'Main Groups'                 => '',
   'Main Menu'                   => '',
   'Maintainance'                => '',
+  'Maintenance'                 => '',
   'Make'                        => 'Fabrikat',
   'Male'                        => '',
   'Manager'                     => 'Leder',
@@ -861,6 +865,7 @@ $self{texts} = {
   'Overdue'                     => '',
   'Overpaid'                    => '',
   'PDF'                         => 'PDF',
+  'PIN'                         => '',
   'PO'                          => '',
   'PO Number'                   => '',
   'POS'                         => 'POS',

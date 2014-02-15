@@ -108,12 +108,12 @@ $self{subs} = {
   'update'                      => 'update',
   'vendor_invoice'              => 'vendor_invoice',
   'vendor_pricelist'            => 'vendor_pricelist',
-  'alıcı_ekle'                  => 'add_customer',
-  'satıcı_ekle'                 => 'add_vendor',
+  'alıcı_ekle'                => 'add_customer',
+  'satıcı_ekle'               => 'add_vendor',
   'devam'                       => 'continue',
   'sil'                         => 'delete',
-  'satınalma_siparişi'          => 'purchase_order',
-  'satış_siparişi'              => 'sales_order',
+  'satınalma_siparişi'        => 'purchase_order',
+  'satış_siparişi'           => 'sales_order',
   'kaydet'                      => 'save',
 };
 

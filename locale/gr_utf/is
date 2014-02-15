@@ -171,11 +171,11 @@ $self{subs} = {
   'validate_items'              => 'validate_items',
   'vendor_invoice_'             => 'vendor_invoice_',
   'yes'                         => 'yes',
-  'Προσθήκη_υπηρεσίας'          => 'add_service',
-  'Συνέχεια'                    => 'continue',
-  'Διαγραφή'                    => 'delete',
-  'Εκτύπωση'                    => 'print',
-  'Έκτύπωση_και_αποστολή'       => 'print_and_post',
+  'Προσθήκη_υπηρεσίας' => 'add_service',
+  'Συνέχεια'            => 'continue',
+  'Διαγραφή'            => 'delete',
+  'Εκτύπωση'            => 'print',
+  'Έκτύπωση_και_αποστολή' => 'print_and_post',
 };
 
 1;

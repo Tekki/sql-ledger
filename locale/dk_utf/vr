@@ -99,11 +99,11 @@ $self{subs} = {
   'subtotal'                    => 'subtotal',
   'yes'                         => 'yes',
   'yes_delete_batch'            => 'yes_delete_batch',
-  'fortsæt'                     => 'continue',
+  'fortsæt'                    => 'continue',
   'fjern'                       => 'delete',
-  'fravælg_alle'                => 'deselect_all',
-  'bogfør'                      => 'post',
-  'vælg_alt'                    => 'select_all',
+  'fravælg_alle'               => 'deselect_all',
+  'bogfør'                     => 'post',
+  'vælg_alt'                   => 'select_all',
   'ja'                          => 'yes',
 };
 

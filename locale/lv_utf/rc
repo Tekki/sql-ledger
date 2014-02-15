@@ -68,10 +68,10 @@ $self{subs} = {
   'section_menu'                => 'section_menu',
   'select_all'                  => 'select_all',
   'update'                      => 'update',
-  'turpināt'                    => 'continue',
-  'izdarīts'                    => 'done',
-  'atlasīt_visu'                => 'select_all',
-  'atjaunināt'                  => 'update',
+  'turpināt'                   => 'continue',
+  'izdarīts'                   => 'done',
+  'atlasīt_visu'               => 'select_all',
+  'atjaunināt'                 => 'update',
 };
 
 1;

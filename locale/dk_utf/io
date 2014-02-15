@@ -131,7 +131,7 @@ $self{subs} = {
   'validate_items'              => 'validate_items',
   'ny_vare'                     => 'add_part',
   'ny_tjeneste'                 => 'add_service',
-  'fortsæt'                     => 'continue',
+  'fortsæt'                    => 'continue',
 };
 
 1;

@@ -76,8 +76,8 @@ $self{subs} = {
   'ship_to'                     => 'ship_to',
   'shipto_selected'             => 'shipto_selected',
   'validate_items'              => 'validate_items',
-  'Προσθήκη_υπηρεσίας'          => 'add_service',
-  'Συνέχεια'                    => 'continue',
+  'Προσθήκη_υπηρεσίας' => 'add_service',
+  'Συνέχεια'            => 'continue',
 };
 
 1;

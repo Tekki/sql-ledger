@@ -248,13 +248,13 @@ $self{subs} = {
   'yes'                         => 'yes',
   'yes_delete_language'         => 'yes_delete_language',
   'Προσθήκη_τιμής_συναλάγματος' => 'add_exchange_rate',
-  'Προσθήκη_γλώσσας'            => 'add_language',
-  'Προσθήκη_Αποθήκης'           => 'add_warehouse',
-  'Συνέχεια'                    => 'continue',
-  'Διαγραφή'                    => 'delete',
-  'Επεξεργασία'                 => 'edit',
-  'Αποθήκευση'                  => 'save',
-  'Επιλογή_όλων'                => 'select_all',
+  'Προσθήκη_γλώσσας' => 'add_language',
+  'Προσθήκη_Αποθήκης' => 'add_warehouse',
+  'Συνέχεια'            => 'continue',
+  'Διαγραφή'            => 'delete',
+  'Επεξεργασία'      => 'edit',
+  'Αποθήκευση'        => 'save',
+  'Επιλογή_όλων'     => 'select_all',
 };
 
 1;

@@ -10,6 +10,7 @@ $self{texts} = {
   'Incorrect Username!'         => 'Onjuiste gebruikersnaam',
   'Login'                       => 'Aanmelden',
   'Name'                        => 'Naam',
+  'No email address for'        => 'Geen e-mailadres voor',
   'Password'                    => 'Wachtwoord',
   'Upgrading to Version'        => 'Opwaarderen naar Versie',
   'Version'                     => 'Versie',
@@ -18,10 +19,14 @@ $self{texts} = {
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_pin'                   => 'email_pin',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
+  'pin_login'                   => 'pin_login',
   'selectdataset'               => 'selectdataset',
+  'verder'                      => 'continue',
   'aanmelden'                   => 'login',
 };
 

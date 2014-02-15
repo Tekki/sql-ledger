@@ -84,11 +84,11 @@ $self{subs} = {
   'print_options'               => 'print_options',
   'receipts'                    => 'receipts',
   'section_menu'                => 'section_menu',
-  'fortsфtt'                    => 'continue',
+  'fortsфtt'                   => 'continue',
   'radera'                      => 'delete',
-  'bokfіr'                      => 'post',
+  'bokfіr'                     => 'post',
   'skriv_ut'                    => 'print',
-  'skriv_och_bokfіr'            => 'print_and_post',
+  'skriv_och_bokfіr'           => 'print_and_post',
   'uppdatera'                   => 'update',
 };
 

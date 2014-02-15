@@ -95,10 +95,10 @@ $self{subs} = {
   'subtotal'                    => 'subtotal',
   'yes'                         => 'yes',
   'yes_delete_batch'            => 'yes_delete_batch',
-  'folytatás'                   => 'continue',
-  'törlés'                      => 'delete',
-  'rögzítés'                    => 'post',
-  'mindent_kijelöl'             => 'select_all',
+  'folytatás'                  => 'continue',
+  'törlés'                    => 'delete',
+  'rögzítés'                 => 'post',
+  'mindent_kijelöl'            => 'select_all',
   'igen'                        => 'yes',
 };
 

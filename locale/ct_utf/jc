@@ -81,7 +81,7 @@ $self{subs} = {
   'continuar'                   => 'continue',
   'esborrar'                    => 'delete',
   'guardar'                     => 'save',
-  'sí'                          => 'yes',
+  'sí'                         => 'yes',
 };
 
 1;

@@ -258,15 +258,15 @@ $self{subs} = {
   'update'                      => 'update',
   'validate_items'              => 'validate_items',
   'vendor_row'                  => 'vendor_row',
-  'pievienot_komplektāciju'     => 'add_assembly',
+  'pievienot_komplektāciju'    => 'add_assembly',
   'pievienot_darbu_izmaksas'    => 'add_labor_overhead',
-  'pievienot_daļu'              => 'add_part',
+  'pievienot_daļu'             => 'add_part',
   'pievienot_pakalpojumu'       => 'add_service',
-  'turpināt'                    => 'continue',
-  'dzēst'                       => 'delete',
-  'saglabāt'                    => 'save',
-  'saglabāt_kā_jaunu'           => 'save_as_new',
-  'atjaunināt'                  => 'update',
+  'turpināt'                   => 'continue',
+  'dzēst'                      => 'delete',
+  'saglabāt'                   => 'save',
+  'saglabāt_kā_jaunu'         => 'save_as_new',
+  'atjaunināt'                 => 'update',
 };
 
 1;

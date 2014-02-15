@@ -185,15 +185,15 @@ $self{subs} = {
   'update'                      => 'update',
   'vendor_invoice_'             => 'vendor_invoice_',
   'yes'                         => 'yes',
-  'innkaupafćrsla'              => 'ap_transaction',
-  'sölufćrsla'                  => 'ar_transaction',
-  'Áfram'                       => 'continue',
-  'eyđa'                        => 'delete',
-  'bókfćra'                     => 'post',
-  'bókfćra_sem_nýjan'           => 'post_as_new',
+  'innkaupafćrsla'             => 'ap_transaction',
+  'sölufćrsla'                => 'ar_transaction',
+  'Áfram'                      => 'continue',
+  'eyđa'                       => 'delete',
+  'bókfćra'                   => 'post',
+  'bókfćra_sem_nýjan'        => 'post_as_new',
   'prenta'                      => 'print',
-  'uppfćrsla'                   => 'update',
-  'já'                          => 'yes',
+  'uppfćrsla'                  => 'update',
+  'já'                         => 'yes',
 };
 
 1;

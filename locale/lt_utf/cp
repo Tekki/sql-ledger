@@ -127,10 +127,10 @@ $self{subs} = {
   'update_payment'              => 'update_payment',
   'update_payments'             => 'update_payments',
   'vendor_invoice_'             => 'vendor_invoice_',
-  'tęsti'                       => 'continue',
+  'tęsti'                      => 'continue',
   'patvirtinti'                 => 'post',
   'spausdinti'                  => 'print',
-  'išrinkti_viską'              => 'select_all',
+  'išrinkti_viską'            => 'select_all',
   'atnaujinti'                  => 'update',
 };
 

@@ -183,7 +183,7 @@ $self{subs} = {
   'esborrar'                    => 'delete',
   'email'                       => 'e_mail',
   'pressupost'                  => 'sales_order',
-  'sí'                          => 'yes',
+  'sí'                         => 'yes',
 };
 
 1;

@@ -80,9 +80,9 @@ $self{subs} = {
   'subtotal'                    => 'subtotal',
   'yes'                         => 'yes',
   'yes_delete_batch'            => 'yes_delete_batch',
-  'Συνέχεια'                    => 'continue',
-  'Διαγραφή'                    => 'delete',
-  'Επιλογή_όλων'                => 'select_all',
+  'Συνέχεια'            => 'continue',
+  'Διαγραφή'            => 'delete',
+  'Επιλογή_όλων'     => 'select_all',
 };
 
 1;

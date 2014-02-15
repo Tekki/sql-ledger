@@ -63,9 +63,9 @@ $self{subs} = {
   'section_menu'                => 'section_menu',
   'select_all'                  => 'select_all',
   'update'                      => 'update',
-  'tęsti'                       => 'continue',
-  'Įvykdyta'                    => 'done',
-  'išrinkti_viską'              => 'select_all',
+  'tęsti'                      => 'continue',
+  'Įvykdyta'                   => 'done',
+  'išrinkti_viską'            => 'select_all',
   'atnaujinti'                  => 'update',
 };
 

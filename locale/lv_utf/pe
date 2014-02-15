@@ -172,11 +172,11 @@ $self{subs} = {
   'pievienot_grupu'             => 'add_group',
   'pieviento_cenu_grupu'        => 'add_pricegroup',
   'pievienot_projektu'          => 'add_project',
-  'turpināt'                    => 'continue',
-  'dzēst'                       => 'delete',
-  'saglabāt'                    => 'save',
-  'saglabāt_kā_jaunu'           => 'save_as_new',
-  'atjaunināt'                  => 'update',
+  'turpināt'                   => 'continue',
+  'dzēst'                      => 'delete',
+  'saglabāt'                   => 'save',
+  'saglabāt_kā_jaunu'         => 'save_as_new',
+  'atjaunināt'                 => 'update',
 };
 
 1;

@@ -97,7 +97,7 @@ $self{subs} = {
   'yes_delete_batch'            => 'yes_delete_batch',
   'continuar'                   => 'continue',
   'apagar'                      => 'delete',
-  'lançar'                      => 'post',
+  'lançar'                     => 'post',
   'selecionar_todos'            => 'select_all',
   'sim'                         => 'yes',
 };

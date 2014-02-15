@@ -301,8 +301,8 @@ $self{subs} = {
   'commande_de_vente'           => 'sales_order',
   'enregistrer_transaction_planifiée' => 'save_schedule',
   'planification'               => 'schedule',
-  'expédier_à'                  => 'ship_to',
-  'mettre_à_jour'               => 'update',
+  'expédier_à'                => 'ship_to',
+  'mettre_à_jour'              => 'update',
   'oui'                         => 'yes',
 };
 

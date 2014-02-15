@@ -164,7 +164,7 @@ $self{subs} = {
   'programar'                   => 'schedule',
   'actualizar'                  => 'update',
   'factura_de_compra_'          => 'vendor_invoice_',
-  'sí'                          => 'yes',
+  'sí'                         => 'yes',
 };
 
 1;

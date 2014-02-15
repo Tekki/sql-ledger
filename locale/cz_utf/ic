@@ -181,12 +181,12 @@ $self{subs} = {
   'update'                      => 'update',
   'validate_items'              => 'validate_items',
   'vendor_row'                  => 'vendor_row',
-  'nový_výrobek'                => 'add_assembly',
-  'příjem_zboží'                => 'add_part',
-  'nový_druh_služby'            => 'add_service',
-  'pokračování'                 => 'continue',
+  'nový_výrobek'              => 'add_assembly',
+  'příjem_zboží'            => 'add_part',
+  'nový_druh_služby'          => 'add_service',
+  'pokračování'              => 'continue',
   'vymazat'                     => 'delete',
-  'uložit'                      => 'save',
+  'uložit'                     => 'save',
 };
 
 1;

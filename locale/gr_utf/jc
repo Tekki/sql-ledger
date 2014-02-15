@@ -79,11 +79,11 @@ $self{subs} = {
   'update'                      => 'update',
   'yes'                         => 'yes',
   'yes_delete_timecard'         => 'yes_delete_timecard',
-  'Συνέχεια'                    => 'continue',
-  'Διαγραφή'                    => 'delete',
-  'Εκτύπωση'                    => 'print',
-  'Εκτύπωση_και_αποθήκευση'     => 'print_and_save',
-  'Αποθήκευση'                  => 'save',
+  'Συνέχεια'            => 'continue',
+  'Διαγραφή'            => 'delete',
+  'Εκτύπωση'            => 'print',
+  'Εκτύπωση_και_αποθήκευση' => 'print_and_save',
+  'Αποθήκευση'        => 'save',
 };
 
 1;

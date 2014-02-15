@@ -252,8 +252,8 @@ $self{subs} = {
   'imprimer'                    => 'print',
   'imprimer_et_imputer'         => 'print_and_post',
   'commande_d\'achat'           => 'purchase_order',
-  'expédier_à'                  => 'ship_to',
-  'mettre_à_jour'               => 'update',
+  'expédier_à'                => 'ship_to',
+  'mettre_à_jour'              => 'update',
   'oui'                         => 'yes',
 };
 

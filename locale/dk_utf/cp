@@ -163,12 +163,12 @@ $self{subs} = {
   'update_payment'              => 'update_payment',
   'update_payments'             => 'update_payments',
   'vendor_invoice_'             => 'vendor_invoice_',
-  'fortsæt'                     => 'continue',
-  'fravælg_alle'                => 'deselect_all',
-  'bogfør'                      => 'post',
+  'fortsæt'                    => 'continue',
+  'fravælg_alle'               => 'deselect_all',
+  'bogfør'                     => 'post',
   'udskriv'                     => 'print',
-  'vælg_alt'                    => 'select_all',
-  'opdatér'                     => 'update',
+  'vælg_alt'                   => 'select_all',
+  'opdatér'                    => 'update',
 };
 
 1;

@@ -78,9 +78,9 @@ $self{subs} = {
   'update'                      => 'update',
   'yes'                         => 'yes',
   'yes_delete_timecard'         => 'yes_delete_timecard',
-  'pokračování'                 => 'continue',
+  'pokračování'              => 'continue',
   'vymazat'                     => 'delete',
-  'uložit'                      => 'save',
+  'uložit'                     => 'save',
   'ano'                         => 'yes',
 };
 

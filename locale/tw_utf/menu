@@ -63,7 +63,6 @@ $self{texts} = {
   'List GIFI'                   => '列出 GIFI',
   'Lock Dataset'                => '鎖上資料集',
   'Logout'                      => '登出',
-  'Maintainance'                => '維護',
   'Mapfile'                     => '映射檔案',
   'Monitor'                     => '監視',
   'Non-taxable'                 => '不應課稅',

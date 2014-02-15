@@ -121,7 +121,6 @@ $self{texts} = {
   'June'                        => 'Juni',
   'Left'                        => 'Links',
   'Locked by'                   => 'Gesperrt von',
-  'Main Groups'                 => 'Hauptgruppen',
   'Mar'                         => 'Mär',
   'March'                       => 'März',
   'May'                         => 'Mai',

@@ -143,8 +143,8 @@ $self{subs} = {
   'shipto_selected'             => 'shipto_selected',
   'validate_items'              => 'validate_items',
   'ny_vara'                     => 'add_part',
-  'lфgg_till_tjфnst'            => 'add_service',
-  'fortsфtt'                    => 'continue',
+  'lфgg_till_tjфnst'          => 'add_service',
+  'fortsфtt'                   => 'continue',
 };
 
 1;

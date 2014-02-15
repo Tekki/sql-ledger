@@ -167,10 +167,10 @@ $self{subs} = {
   'update'                      => 'update',
   'validate_items'              => 'validate_items',
   'vendor_row'                  => 'vendor_row',
-  'Προσθήκη_υπηρεσίας'          => 'add_service',
-  'Συνέχεια'                    => 'continue',
-  'Διαγραφή'                    => 'delete',
-  'Αποθήκευση'                  => 'save',
+  'Προσθήκη_υπηρεσίας' => 'add_service',
+  'Συνέχεια'            => 'continue',
+  'Διαγραφή'            => 'delete',
+  'Αποθήκευση'        => 'save',
 };
 
 1;

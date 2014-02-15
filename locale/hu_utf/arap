@@ -98,9 +98,9 @@ $self{subs} = {
   'select_name'                 => 'select_name',
   'select_project'              => 'select_project',
   'vendor_invoice_'             => 'vendor_invoice_',
-  'folytatás'                   => 'continue',
-  'Ütemezés_törlése'            => 'delete_schedule',
-  'Ütemezés_mentése'            => 'save_schedule',
+  'folytatás'                  => 'continue',
+  'Ütemezés_törlése'        => 'delete_schedule',
+  'Ütemezés_mentése'         => 'save_schedule',
 };
 
 1;

@@ -161,10 +161,10 @@ $self{subs} = {
   'update_payments'             => 'update_payments',
   'vendor_invoice_'             => 'vendor_invoice_',
   'continuar'                   => 'continue',
-  'apagar_a_programação'        => 'delete_schedule',
-  'lançar'                      => 'post',
+  'apagar_a_programação'      => 'delete_schedule',
+  'lançar'                     => 'post',
   'imprimir'                    => 'print',
-  'salvar_a_programação'        => 'save_schedule',
+  'salvar_a_programação'      => 'save_schedule',
   'selecionar_todos'            => 'select_all',
   'atualizar'                   => 'update',
 };

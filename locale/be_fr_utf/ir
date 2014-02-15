@@ -288,8 +288,8 @@ $self{subs} = {
   'commande_d\'achat'           => 'purchase_order',
   'enregistrer_transaction_planifiée' => 'save_schedule',
   'planification'               => 'schedule',
-  'expédier_à'                  => 'ship_to',
-  'mettre_à_jour'               => 'update',
+  'expédier_à'                => 'ship_to',
+  'mettre_à_jour'              => 'update',
   'oui'                         => 'yes',
 };
 

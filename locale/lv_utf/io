@@ -119,9 +119,9 @@ $self{subs} = {
   'ship_to'                     => 'ship_to',
   'shipto_selected'             => 'shipto_selected',
   'validate_items'              => 'validate_items',
-  'pievienot_daļu'              => 'add_part',
+  'pievienot_daļu'             => 'add_part',
   'pievienot_pakalpojumu'       => 'add_service',
-  'turpināt'                    => 'continue',
+  'turpināt'                   => 'continue',
 };
 
 1;

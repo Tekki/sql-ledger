@@ -88,13 +88,13 @@ $self{subs} = {
   'update'                      => 'update',
   'yes'                         => 'yes',
   'yes_delete_timecard'         => 'yes_delete_timecard',
-  'Áfram'                       => 'continue',
-  'eyđa'                        => 'delete',
+  'Áfram'                      => 'continue',
+  'eyđa'                       => 'delete',
   'prenta'                      => 'print',
   'geyma'                       => 'save',
-  'geyma_sem_nýtt'              => 'save_as_new',
-  'uppfćrsla'                   => 'update',
-  'já'                          => 'yes',
+  'geyma_sem_nýtt'             => 'save_as_new',
+  'uppfćrsla'                  => 'update',
+  'já'                         => 'yes',
 };
 
 1;

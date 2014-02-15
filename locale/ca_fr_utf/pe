@@ -180,7 +180,7 @@ $self{subs} = {
   'supprimer'                   => 'delete',
   'enregistrer'                 => 'save',
   'enregistrer_comme_nouveau'   => 'save_as_new',
-  'mettre_à_jour'               => 'update',
+  'mettre_à_jour'              => 'update',
 };
 
 1;

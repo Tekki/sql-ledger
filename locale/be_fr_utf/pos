@@ -89,7 +89,7 @@ $self{subs} = {
   'enregistrer'                 => 'post',
   'imprimer'                    => 'print',
   'imprimer_et_imputer'         => 'print_and_post',
-  'mettre_à_jour'               => 'update',
+  'mettre_à_jour'              => 'update',
 };
 
 1;

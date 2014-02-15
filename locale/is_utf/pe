@@ -136,12 +136,12 @@ $self{subs} = {
   'translation_footer'          => 'translation_footer',
   'translation_header'          => 'translation_header',
   'update'                      => 'update',
-  'nýt_verkefni'                => 'add_project',
-  'Áfram'                       => 'continue',
-  'eyđa'                        => 'delete',
+  'nýt_verkefni'               => 'add_project',
+  'Áfram'                      => 'continue',
+  'eyđa'                       => 'delete',
   'geyma'                       => 'save',
-  'geyma_sem_nýtt'              => 'save_as_new',
-  'uppfćrsla'                   => 'update',
+  'geyma_sem_nýtt'             => 'save_as_new',
+  'uppfćrsla'                  => 'update',
 };
 
 1;

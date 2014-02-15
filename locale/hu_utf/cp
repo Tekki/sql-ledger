@@ -160,13 +160,13 @@ $self{subs} = {
   'update_payment'              => 'update_payment',
   'update_payments'             => 'update_payments',
   'vendor_invoice_'             => 'vendor_invoice_',
-  'folytatás'                   => 'continue',
-  'Ütemezés_törlése'            => 'delete_schedule',
-  'rögzítés'                    => 'post',
-  'nyomtatás'                   => 'print',
-  'Ütemezés_mentése'            => 'save_schedule',
-  'mindent_kijelöl'             => 'select_all',
-  'frissítés'                   => 'update',
+  'folytatás'                  => 'continue',
+  'Ütemezés_törlése'        => 'delete_schedule',
+  'rögzítés'                 => 'post',
+  'nyomtatás'                  => 'print',
+  'Ütemezés_mentése'         => 'save_schedule',
+  'mindent_kijelöl'            => 'select_all',
+  'frissítés'                 => 'update',
 };
 
 1;

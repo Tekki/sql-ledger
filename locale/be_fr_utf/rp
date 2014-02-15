@@ -239,7 +239,7 @@ $self{subs} = {
   'e_mail'                      => 'e_mail',
   'imprimer'                    => 'print',
   'enregistrer_transaction_planifiée' => 'save_schedule',
-  'tout_sélectionner'           => 'select_all',
+  'tout_sélectionner'          => 'select_all',
 };
 
 1;

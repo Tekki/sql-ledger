@@ -6,6 +6,7 @@ $self{texts} = {
   'Incorrect Password!'         => 'Felaktigt lösenord',
   'Login'                       => 'Logga in',
   'Name'                        => 'Namn',
+  'No email address for'        => 'Ingen E-Postadress för',
   'Password'                    => 'Lösenord',
   'Upgrading to Version'        => 'Uppgradera till version',
   'Version'                     => 'Version',
@@ -13,10 +14,14 @@ $self{texts} = {
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_pin'                   => 'email_pin',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
+  'pin_login'                   => 'pin_login',
   'selectdataset'               => 'selectdataset',
+  'fortsätt'                    => 'continue',
   'logga_in'                    => 'login',
 };
 

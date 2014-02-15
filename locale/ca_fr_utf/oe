@@ -330,9 +330,9 @@ $self{subs} = {
   'commande_de_vente'           => 'sales_order',
   'enregistrer'                 => 'save',
   'enregistrer_comme_nouveau'   => 'save_as_new',
-  'expédier_à'                  => 'ship_to',
+  'expédier_à'                => 'ship_to',
   'transfert'                   => 'transfer',
-  'mettre_à_jour'               => 'update',
+  'mettre_à_jour'              => 'update',
   'facture_d\'achat'            => 'vendor_invoice',
   'oui'                         => 'yes',
 };

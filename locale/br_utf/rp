@@ -235,10 +235,10 @@ $self{subs} = {
   'tax_subtotal'                => 'tax_subtotal',
   'vendor_invoice_'             => 'vendor_invoice_',
   'continuar'                   => 'continue',
-  'apagar_a_programação'        => 'delete_schedule',
+  'apagar_a_programação'      => 'delete_schedule',
   'e_mail'                      => 'e_mail',
   'imprimir'                    => 'print',
-  'salvar_a_programação'        => 'save_schedule',
+  'salvar_a_programação'      => 'save_schedule',
   'selecionar_todos'            => 'select_all',
 };
 

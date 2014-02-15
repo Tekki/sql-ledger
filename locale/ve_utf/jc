@@ -134,7 +134,7 @@ $self{subs} = {
   'guardar'                     => 'save',
   'guardar_como_nuevo'          => 'save_as_new',
   'actualizar'                  => 'update',
-  'sí'                          => 'yes',
+  'sí'                         => 'yes',
 };
 
 1;

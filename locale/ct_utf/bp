@@ -75,7 +75,7 @@ $self{subs} = {
   'yes'                         => 'yes',
   'continuar'                   => 'continue',
   'email'                       => 'e_mail',
-  'sí'                          => 'yes',
+  'sí'                         => 'yes',
 };
 
 1;

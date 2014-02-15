@@ -99,7 +99,7 @@ $self{subs} = {
   'transactions'                => 'transactions',
   'update'                      => 'update',
   'yes'                         => 'yes',
-  'pokračování'                 => 'continue',
+  'pokračování'              => 'continue',
   'vymazat'                     => 'delete',
   'ano'                         => 'yes',
 };

@@ -89,11 +89,11 @@ $self{subs} = {
   'subtotal'                    => 'subtotal',
   'yes'                         => 'yes',
   'yes_delete_batch'            => 'yes_delete_batch',
-  'Áfram'                       => 'continue',
-  'eyđa'                        => 'delete',
-  'bókfćra'                     => 'post',
+  'Áfram'                      => 'continue',
+  'eyđa'                       => 'delete',
+  'bókfćra'                   => 'post',
   'velja_allt'                  => 'select_all',
-  'já'                          => 'yes',
+  'já'                         => 'yes',
 };
 
 1;

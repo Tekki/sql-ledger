@@ -84,12 +84,12 @@ $self{subs} = {
   'print_options'               => 'print_options',
   'receipts'                    => 'receipts',
   'section_menu'                => 'section_menu',
-  'fortsæt'                     => 'continue',
+  'fortsæt'                    => 'continue',
   'fjern'                       => 'delete',
-  'bogfør'                      => 'post',
+  'bogfør'                     => 'post',
   'udskriv'                     => 'print',
   'udskriv_og_send'             => 'print_and_post',
-  'opdatér'                     => 'update',
+  'opdatér'                    => 'update',
 };
 
 1;

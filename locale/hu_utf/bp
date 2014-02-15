@@ -114,11 +114,11 @@ $self{subs} = {
   'section_menu'                => 'section_menu',
   'select_all'                  => 'select_all',
   'yes'                         => 'yes',
-  'folytatás'                   => 'continue',
+  'folytatás'                  => 'continue',
   'e_mail'                      => 'e_mail',
-  'nyomtatás'                   => 'print',
-  'kitörlés'                    => 'remove',
-  'mindent_kijelöl'             => 'select_all',
+  'nyomtatás'                  => 'print',
+  'kitörlés'                  => 'remove',
+  'mindent_kijelöl'            => 'select_all',
   'igen'                        => 'yes',
 };
 

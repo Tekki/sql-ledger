@@ -1,8 +1,8 @@
 # These are all the texts to build the translations files.
 # to build unique strings edit the module files instead
 # this file is just a shortcut to build strings which are the same
-
 $self{charset} = 'UTF-8';
+
 
 $self{texts} = {
   '%'                           => '',
@@ -295,6 +295,7 @@ $self{texts} = {
   'Compare to'                  => 'Comparar a',
   'Completed'                   => 'Concluído',
   'Components'                  => 'Componentes',
+  'Configuration file missing!' => '',
   'Confirm'                     => 'Confirmar',
   'Confirm!'                    => 'Confirmar!',
   'Connect to'                  => 'Conectar a',
@@ -439,6 +440,7 @@ $self{texts} = {
   'Due Date missing!'           => 'Data de Vencimento faltando!',
   'E-Mail'                      => '',
   'E-mail'                      => 'E-mail',
+  'E-mail PIN'                  => '',
   'E-mail Reminder to'          => '',
   'E-mail Statement to'         => 'Declaração enviada por e-mail para',
   'E-mail address missing!'     => 'Endereço de e-mail faltando!',
@@ -643,6 +645,7 @@ $self{texts} = {
   'Increase'                    => 'Incrementar',
   'Individual Items'            => 'Ítens individuais',
   'Internal Notes'              => 'Notas internas',
+  'Invalid PIN'                 => '',
   'Inventory'                   => 'Inventário',
   'Inventory Value'             => '',
   'Inventory account does not exist!' => 'Não existe conta de inventário',
@@ -733,6 +736,7 @@ $self{texts} = {
   'Main Groups'                 => '',
   'Main Menu'                   => '',
   'Maintainance'                => '',
+  'Maintenance'                 => '',
   'Make'                        => 'Marca',
   'Male'                        => '',
   'Manager'                     => 'Gerente',
@@ -855,6 +859,7 @@ $self{texts} = {
   'Overdue'                     => 'Vencido',
   'Overpaid'                    => '',
   'PDF'                         => 'PDF',
+  'PIN'                         => '',
   'PO'                          => 'OC',
   'PO Number'                   => 'Número da OC',
   'POS'                         => 'PDV',

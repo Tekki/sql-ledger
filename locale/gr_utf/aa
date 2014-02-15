@@ -101,12 +101,12 @@ $self{subs} = {
   'transactions'                => 'transactions',
   'update'                      => 'update',
   'yes'                         => 'yes',
-  'Κινήση_Αγοράς'               => 'ap_transaction',
-  'Κινήσεις_Πωλήσεων'           => 'ar_transaction',
-  'Συνέχεια'                    => 'continue',
-  'Διαγραφή'                    => 'delete',
-  'Εκτύπωση'                    => 'print',
-  'Έκτύπωση_και_αποστολή'       => 'print_and_post',
+  'Κινήση_Αγοράς'   => 'ap_transaction',
+  'Κινήσεις_Πωλήσεων' => 'ar_transaction',
+  'Συνέχεια'            => 'continue',
+  'Διαγραφή'            => 'delete',
+  'Εκτύπωση'            => 'print',
+  'Έκτύπωση_και_αποστολή' => 'print_and_post',
 };
 
 1;

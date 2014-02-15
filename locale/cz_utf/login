@@ -6,17 +6,22 @@ $self{texts} = {
   'Incorrect Dataset version!'  => 'Špatná verze dat!',
   'Login'                       => 'Uživatelské jméno',
   'Name'                        => 'Jméno',
+  'No email address for'        => 'Chybí emailová adresy pro',
   'Password'                    => 'Heslo',
   'Version'                     => 'Verze',
   'You did not enter a name!'   => 'Nezadal jste jméno!',
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_pin'                   => 'email_pin',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
+  'pin_login'                   => 'pin_login',
   'selectdataset'               => 'selectdataset',
-  'uživatelské_jméno'           => 'login',
+  'pokračování'              => 'continue',
+  'uživatelské_jméno'        => 'login',
 };
 
 1;

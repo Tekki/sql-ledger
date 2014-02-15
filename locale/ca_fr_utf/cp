@@ -140,8 +140,8 @@ $self{subs} = {
   'continuer'                   => 'continue',
   'enregistrer'                 => 'post',
   'imprimer'                    => 'print',
-  'tout_sélectionner'           => 'select_all',
-  'mettre_à_jour'               => 'update',
+  'tout_sélectionner'          => 'select_all',
+  'mettre_à_jour'              => 'update',
 };
 
 1;

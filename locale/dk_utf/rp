@@ -234,12 +234,12 @@ $self{subs} = {
   'statement_details'           => 'statement_details',
   'tax_subtotal'                => 'tax_subtotal',
   'vendor_invoice_'             => 'vendor_invoice_',
-  'fortsæt'                     => 'continue',
-  'fravælg_alle'                => 'deselect_all',
+  'fortsæt'                    => 'continue',
+  'fravælg_alle'               => 'deselect_all',
   'e_post'                      => 'e_mail',
   'udskriv'                     => 'print',
   'udskriv_rapport'             => 'print_report',
-  'vælg_alt'                    => 'select_all',
+  'vælg_alt'                   => 'select_all',
 };
 
 1;

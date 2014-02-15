@@ -388,7 +388,7 @@ $self{subs} = {
   'ajouter_taux_de_change'      => 'add_exchange_rate',
   'ajouter_langue'              => 'add_language',
   'ajouter_code_secteur_économique' => 'add_sic',
-  'ajouter_entrepôt'            => 'add_warehouse',
+  'ajouter_entrepôt'           => 'add_warehouse',
   'continuer'                   => 'continue',
   'copier_dans_le_plan_comptable' => 'copy_to_coa',
   'supprimer'                   => 'delete',
@@ -396,8 +396,8 @@ $self{subs} = {
   'traiter_transactions'        => 'process_transactions',
   'enregistrer'                 => 'save',
   'enregistrer_comme_nouveau'   => 'save_as_new',
-  'tout_sélectionner'           => 'select_all',
-  'mettre_à_jour'               => 'update',
+  'tout_sélectionner'          => 'select_all',
+  'mettre_à_jour'              => 'update',
   'oui'                         => 'yes',
 };
 

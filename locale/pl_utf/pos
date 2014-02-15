@@ -84,11 +84,11 @@ $self{subs} = {
   'receipts'                    => 'receipts',
   'section_menu'                => 'section_menu',
   'kontynuj'                    => 'continue',
-  'usuń'                        => 'delete',
-  'zatwierdż'                   => 'post',
+  'usuń'                       => 'delete',
+  'zatwierdż'                  => 'post',
   'wydrukuj'                    => 'print',
-  'wydrukuj_i_zatwierdż'        => 'print_and_post',
-  'uzupełnij'                   => 'update',
+  'wydrukuj_i_zatwierdż'       => 'print_and_post',
+  'uzupełnij'                  => 'update',
 };
 
 1;

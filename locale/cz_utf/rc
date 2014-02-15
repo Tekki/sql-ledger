@@ -54,7 +54,7 @@ $self{subs} = {
   'section_menu'                => 'section_menu',
   'select_all'                  => 'select_all',
   'update'                      => 'update',
-  'pokračování'                 => 'continue',
+  'pokračování'              => 'continue',
 };
 
 1;

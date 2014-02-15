@@ -250,10 +250,10 @@ $self{subs} = {
   'yearend'                     => 'yearend',
   'yes'                         => 'yes',
   'yes_delete_language'         => 'yes_delete_language',
-  'pokračování'                 => 'continue',
+  'pokračování'              => 'continue',
   'zkopírovat_do_účtového_rozvrhu' => 'copy_to_coa',
   'vymazat'                     => 'delete',
-  'uložit'                      => 'save',
+  'uložit'                     => 'save',
   'ano'                         => 'yes',
 };
 

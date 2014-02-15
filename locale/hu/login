@@ -7,6 +7,7 @@ $self{texts} = {
   'Incorrect Dataset version!'  => 'Érvénytelen adatbázisverzió!',
   'Login'                       => 'Belépés',
   'Name'                        => 'Név',
+  'No email address for'        => 'Nincs e-mail címe:',
   'Password'                    => 'Jelszó',
   'Upgrading to Version'        => 'Verzió karbantartás',
   'Version'                     => 'Verzió',
@@ -14,10 +15,14 @@ $self{texts} = {
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_pin'                   => 'email_pin',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
+  'pin_login'                   => 'pin_login',
   'selectdataset'               => 'selectdataset',
+  'folytatás'                   => 'continue',
   'belépés'                     => 'login',
 };
 

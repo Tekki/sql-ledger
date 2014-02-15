@@ -94,7 +94,6 @@ $self{texts} = {
   'Login'                       => 'Login',
   'Logout'                      => 'Abmelden',
   'Main Menu'                   => 'Hauptmenü',
-  'Maintainance'                => 'Wartungsarbeiten',
   'Mapfile'                     => 'Mapdatei',
   'Multibyte Encoding'          => 'Zeichensatz',
   'Non-taxable'                 => 'MWST-frei',

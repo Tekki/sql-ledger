@@ -165,8 +165,8 @@ $self{subs} = {
   'enregistrer'                 => 'post',
   'imprimer'                    => 'print',
   'enregistrer_transaction_planifiée' => 'save_schedule',
-  'tout_sélectionner'           => 'select_all',
-  'mettre_à_jour'               => 'update',
+  'tout_sélectionner'          => 'select_all',
+  'mettre_à_jour'              => 'update',
 };
 
 1;

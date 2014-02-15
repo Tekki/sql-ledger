@@ -8,7 +8,7 @@ $self{texts} = {
 
 $self{subs} = {
   'getpassword'                 => 'getpassword',
-  'fortsфtt'                    => 'continue',
+  'fortsфtt'                   => 'continue',
 };
 
 1;

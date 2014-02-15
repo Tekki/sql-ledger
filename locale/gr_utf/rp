@@ -158,9 +158,9 @@ $self{subs} = {
   'statement_details'           => 'statement_details',
   'tax_subtotal'                => 'tax_subtotal',
   'vendor_invoice_'             => 'vendor_invoice_',
-  'Συνέχεια'                    => 'continue',
-  'Εκτύπωση'                    => 'print',
-  'Επιλογή_όλων'                => 'select_all',
+  'Συνέχεια'            => 'continue',
+  'Εκτύπωση'            => 'print',
+  'Επιλογή_όλων'     => 'select_all',
 };
 
 1;

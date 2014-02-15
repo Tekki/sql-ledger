@@ -1,8 +1,8 @@
 # These are all the texts to build the translations files.
 # to build unique strings edit the module files instead
 # this file is just a shortcut to build strings which are the same
-
 $self{charset} = 'UTF-8';
+
 
 $self{texts} = {
   '%'                           => '',
@@ -305,6 +305,7 @@ $self{texts} = {
   'Compare to'                  => 'Jфmfіr med',
   'Completed'                   => 'Utfіrd',
   'Components'                  => 'Komponenter',
+  'Configuration file missing!' => '',
   'Confirm'                     => 'Bekrфfta',
   'Confirm!'                    => 'Bekrфfta!',
   'Connect to'                  => 'Anslut till',
@@ -449,6 +450,7 @@ $self{texts} = {
   'Due Date missing!'           => 'Fіrfallodatum saknas',
   'E-Mail'                      => 'E-post',
   'E-mail'                      => 'E-Post',
+  'E-mail PIN'                  => '',
   'E-mail Reminder to'          => '',
   'E-mail Statement to'         => 'E-Posta rapport till',
   'E-mail address missing!'     => 'E-Postadress saknas',
@@ -658,6 +660,7 @@ $self{texts} = {
   'Increase'                    => 'жka',
   'Individual Items'            => 'Individuella varor',
   'Internal Notes'              => 'Egna anteckningar',
+  'Invalid PIN'                 => '',
   'Inventory'                   => 'Lager',
   'Inventory Account'           => 'Lagerkonto',
   'Inventory Value'             => '',
@@ -755,6 +758,7 @@ $self{texts} = {
   'Main Groups'                 => '',
   'Main Menu'                   => 'Huvudmeny',
   'Maintainance'                => '',
+  'Maintenance'                 => '',
   'Make'                        => 'Produkt',
   'Male'                        => 'Man',
   'Manager'                     => 'Direktіr',
@@ -883,6 +887,7 @@ $self{texts} = {
   'Overdue'                     => 'жverskriden',
   'Overpaid'                    => '',
   'PDF'                         => 'Fіrtryckt blankett',
+  'PIN'                         => '',
   'PO'                          => 'Fakturamфrkning',
   'PO Number'                   => 'Inkіps order nr',
   'POS'                         => 'Fіrsфljning',

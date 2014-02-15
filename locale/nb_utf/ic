@@ -272,7 +272,7 @@ $self{subs} = {
   'slett'                       => 'delete',
   'lagre'                       => 'save',
   'lagre_som_ny'                => 'save_as_new',
-  'oppdatér'                    => 'update',
+  'oppdatér'                   => 'update',
 };
 
 1;

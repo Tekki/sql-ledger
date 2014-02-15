@@ -208,7 +208,7 @@ $self{subs} = {
   'ordre_de_compra'             => 'purchase_order',
   'pressupost'                  => 'sales_order',
   'guardar'                     => 'save',
-  'sí'                          => 'yes',
+  'sí'                         => 'yes',
 };
 
 1;

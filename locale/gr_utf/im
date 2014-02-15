@@ -112,7 +112,7 @@ $self{subs} = {
   'xmlorder'                    => 'xmlorder',
   'xrefhdr'                     => 'xrefhdr',
   'yes__reconcile_payments'     => 'yes__reconcile_payments',
-  'Συνέχεια'                    => 'continue',
+  'Συνέχεια'            => 'continue',
 };
 
 1;

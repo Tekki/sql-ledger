@@ -111,7 +111,7 @@ $self{subs} = {
   'kontynuj'                    => 'continue',
   'e_mail'                      => 'e_mail',
   'wydrukuj'                    => 'print',
-  'usuń'                        => 'remove',
+  'usuń'                       => 'remove',
   'wybierz_wszystko'            => 'select_all',
   'tak'                         => 'yes',
 };

@@ -7,6 +7,7 @@ $self{texts} = {
   'Incorrect Dataset version!'  => 'Ungültige Datensatzversion',
   'Login'                       => 'Anmelden',
   'Name'                        => 'Name',
+  'No email address for'        => 'Keine eMailadresse für',
   'Password'                    => 'Passwort',
   'Upgrading to Version'        => 'Datensatz wird erneuert auf Version',
   'Version'                     => 'Version',
@@ -14,10 +15,14 @@ $self{texts} = {
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_pin'                   => 'email_pin',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
+  'pin_login'                   => 'pin_login',
   'selectdataset'               => 'selectdataset',
+  'weiter'                      => 'continue',
   'anmelden'                    => 'login',
 };
 

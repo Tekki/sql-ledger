@@ -78,9 +78,9 @@ $self{subs} = {
   'section_menu'                => 'section_menu',
   'select_all'                  => 'select_all',
   'yes'                         => 'yes',
-  'Συνέχεια'                    => 'continue',
-  'Εκτύπωση'                    => 'print',
-  'Επιλογή_όλων'                => 'select_all',
+  'Συνέχεια'            => 'continue',
+  'Εκτύπωση'            => 'print',
+  'Επιλογή_όλων'     => 'select_all',
 };
 
 1;

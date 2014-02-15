@@ -6,16 +6,21 @@ $self{texts} = {
   'Incorrect Dataset version!'  => 'Versione del Dataset non corretta!',
   'Login'                       => 'Login',
   'Name'                        => 'Nome',
+  'No email address for'        => 'Manca l\'indirizzo e-mail per',
   'Password'                    => 'Password',
   'Version'                     => 'Versione',
   'You did not enter a name!'   => 'Non hai inserito il nome!',
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_pin'                   => 'email_pin',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
+  'pin_login'                   => 'pin_login',
   'selectdataset'               => 'selectdataset',
+  'continua'                    => 'continue',
   'login'                       => 'login',
 };
 

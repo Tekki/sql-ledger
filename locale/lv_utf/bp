@@ -100,12 +100,12 @@ $self{subs} = {
   'section_menu'                => 'section_menu',
   'select_all'                  => 'select_all',
   'yes'                         => 'yes',
-  'turpināt'                    => 'continue',
+  'turpināt'                   => 'continue',
   'e_pasts'                     => 'e_mail',
-  'drukāt'                      => 'print',
-  'izdzēst'                     => 'remove',
-  'atlasīt_visu'                => 'select_all',
-  'jā'                          => 'yes',
+  'drukāt'                     => 'print',
+  'izdzēst'                    => 'remove',
+  'atlasīt_visu'               => 'select_all',
+  'jā'                         => 'yes',
 };
 
 1;

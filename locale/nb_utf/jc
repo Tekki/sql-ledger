@@ -104,7 +104,7 @@ $self{subs} = {
   'skriv_ut_og_lagre'           => 'print_and_save',
   'lagre'                       => 'save',
   'lagre_som_ny'                => 'save_as_new',
-  'oppdatér'                    => 'update',
+  'oppdatér'                   => 'update',
   'ja'                          => 'yes',
 };
 

@@ -276,15 +276,15 @@ $self{subs} = {
   'yearend'                     => 'yearend',
   'yes'                         => 'yes',
   'yes_delete_language'         => 'yes_delete_language',
-  'Áfram'                       => 'continue',
-  'afrita_í_coa'                => 'copy_to_coa',
-  'eyđa'                        => 'delete',
+  'Áfram'                      => 'continue',
+  'afrita_í_coa'               => 'copy_to_coa',
+  'eyđa'                       => 'delete',
   'breyta'                      => 'edit',
   'geyma'                       => 'save',
-  'geyma_sem_nýtt'              => 'save_as_new',
+  'geyma_sem_nýtt'             => 'save_as_new',
   'velja_allt'                  => 'select_all',
-  'uppfćrsla'                   => 'update',
-  'já'                          => 'yes',
+  'uppfćrsla'                  => 'update',
+  'já'                         => 'yes',
 };
 
 1;

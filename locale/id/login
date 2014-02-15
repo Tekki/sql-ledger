@@ -4,15 +4,20 @@ $self{texts} = {
   'Dataset is newer than version!' => 'Dataset lebih baru daripada versi!',
   'Incorrect Dataset version!'  => 'Versi Dataset tidak benar!',
   'Name'                        => 'Nama',
+  'No email address for'        => 'Tidak ada alamat email untuk',
   'Version'                     => 'Versi',
   'You did not enter a name!'   => 'Anda tidak memasukkan nama!',
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_pin'                   => 'email_pin',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
+  'pin_login'                   => 'pin_login',
   'selectdataset'               => 'selectdataset',
+  'lanjut'                      => 'continue',
 };
 
 1;

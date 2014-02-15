@@ -85,7 +85,7 @@ $self{subs} = {
   'yes_delete_batch'            => 'yes_delete_batch',
   'continuar'                   => 'continue',
   'esborrar'                    => 'delete',
-  'sí'                          => 'yes',
+  'sí'                         => 'yes',
 };
 
 1;

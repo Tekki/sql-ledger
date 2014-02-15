@@ -263,14 +263,14 @@ $self{subs} = {
   'validate_items'              => 'validate_items',
   'vendor_invoice_'             => 'vendor_invoice_',
   'yes'                         => 'yes',
-  'Κινήση_Αγοράς'               => 'ap_transaction',
-  'Κινήσεις_Πωλήσεων'           => 'ar_transaction',
-  'Προσθήκη_υπηρεσίας'          => 'add_service',
-  'Συνέχεια'                    => 'continue',
-  'Διαγραφή'                    => 'delete',
-  'Εκτύπωση'                    => 'print',
-  'Έκτύπωση_και_αποστολή'       => 'print_and_post',
-  'Επιλογή_όλων'                => 'select_all',
+  'Κινήση_Αγοράς'   => 'ap_transaction',
+  'Κινήσεις_Πωλήσεων' => 'ar_transaction',
+  'Προσθήκη_υπηρεσίας' => 'add_service',
+  'Συνέχεια'            => 'continue',
+  'Διαγραφή'            => 'delete',
+  'Εκτύπωση'            => 'print',
+  'Έκτύπωση_και_αποστολή' => 'print_and_post',
+  'Επιλογή_όλων'     => 'select_all',
 };
 
 1;

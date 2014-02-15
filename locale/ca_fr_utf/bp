@@ -112,7 +112,7 @@ $self{subs} = {
   'e_mail'                      => 'e_mail',
   'imprimer'                    => 'print',
   'effacer'                     => 'remove',
-  'tout_sélectionner'           => 'select_all',
+  'tout_sélectionner'          => 'select_all',
   'oui'                         => 'yes',
 };
 

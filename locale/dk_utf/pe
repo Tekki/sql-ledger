@@ -196,13 +196,13 @@ $self{subs} = {
   'nyt_job'                     => 'add_job',
   'ny_prisgruppe'               => 'add_pricegroup',
   'nyt_projekt'                 => 'add_project',
-  'fortsæt'                     => 'continue',
+  'fortsæt'                    => 'continue',
   'fjern'                       => 'delete',
-  'gererér_salgsordrer'         => 'generate_sales_orders',
+  'gererér_salgsordrer'        => 'generate_sales_orders',
   'gem'                         => 'save',
   'gem_som_ny'                  => 'save_as_new',
-  'vælg_kunde'                  => 'select_customer',
-  'opdatér'                     => 'update',
+  'vælg_kunde'                 => 'select_customer',
+  'opdatér'                    => 'update',
 };
 
 1;

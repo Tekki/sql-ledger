@@ -7,6 +7,7 @@ $self{texts} = {
   'Incorrect Dataset version!'  => 'Коригирай версията на базата-данни!',
   'Login'                       => 'Влизане',
   'Name'                        => 'Име',
+  'No email address for'        => 'Липсва ел.адрес за',
   'Password'                    => 'Парола',
   'Upgrading to Version'        => 'Обнови версията',
   'Version'                     => 'Версия',
@@ -14,10 +15,14 @@ $self{texts} = {
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_pin'                   => 'email_pin',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
+  'pin_login'                   => 'pin_login',
   'selectdataset'               => 'selectdataset',
+  'Продължение'      => 'continue',
   'Влизане'              => 'login',
 };
 

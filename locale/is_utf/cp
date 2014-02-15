@@ -127,11 +127,11 @@ $self{subs} = {
   'update_payment'              => 'update_payment',
   'update_payments'             => 'update_payments',
   'vendor_invoice_'             => 'vendor_invoice_',
-  'Áfram'                       => 'continue',
-  'bókfćra'                     => 'post',
+  'Áfram'                      => 'continue',
+  'bókfćra'                   => 'post',
   'prenta'                      => 'print',
   'velja_allt'                  => 'select_all',
-  'uppfćrsla'                   => 'update',
+  'uppfćrsla'                  => 'update',
 };
 
 1;

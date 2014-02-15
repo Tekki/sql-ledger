@@ -70,7 +70,7 @@ $self{subs} = {
   'select_name'                 => 'select_name',
   'select_project'              => 'select_project',
   'vendor_invoice_'             => 'vendor_invoice_',
-  'Áfram'                       => 'continue',
+  'Áfram'                      => 'continue',
 };
 
 1;

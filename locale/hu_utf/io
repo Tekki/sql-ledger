@@ -133,9 +133,9 @@ $self{subs} = {
   'ship_to'                     => 'ship_to',
   'shipto_selected'             => 'shipto_selected',
   'validate_items'              => 'validate_items',
-  'Új_cikk'                     => 'add_part',
-  'Új_szolgáltatás'             => 'add_service',
-  'folytatás'                   => 'continue',
+  'Új_cikk'                    => 'add_part',
+  'Új_szolgáltatás'          => 'add_service',
+  'folytatás'                  => 'continue',
 };
 
 1;

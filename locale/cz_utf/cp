@@ -104,7 +104,7 @@ $self{subs} = {
   'update_payment'              => 'update_payment',
   'update_payments'             => 'update_payments',
   'vendor_invoice_'             => 'vendor_invoice_',
-  'pokračování'                 => 'continue',
+  'pokračování'              => 'continue',
 };
 
 1;

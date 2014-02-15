@@ -74,10 +74,10 @@ $self{subs} = {
   'section_menu'                => 'section_menu',
   'select_all'                  => 'select_all',
   'update'                      => 'update',
-  'fortsфtt'                    => 'continue',
+  'fortsфtt'                   => 'continue',
   'avmarkera_alla'              => 'deselect_all',
   'klart'                       => 'done',
-  'vфlj_alla'                   => 'select_all',
+  'vфlj_alla'                  => 'select_all',
   'uppdatera'                   => 'update',
 };
 

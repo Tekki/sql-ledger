@@ -126,12 +126,12 @@ $self{subs} = {
   'section_menu'                => 'section_menu',
   'select_all'                  => 'select_all',
   'yes'                         => 'yes',
-  'fortsфtt'                    => 'continue',
+  'fortsфtt'                   => 'continue',
   'avmarkera_alla'              => 'deselect_all',
   'e_post'                      => 'e_mail',
   'skriv_ut'                    => 'print',
   'ta_bort'                     => 'remove',
-  'vфlj_alla'                   => 'select_all',
+  'vфlj_alla'                  => 'select_all',
   'ja'                          => 'yes',
 };
 

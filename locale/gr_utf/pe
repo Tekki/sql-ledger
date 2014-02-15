@@ -131,11 +131,11 @@ $self{subs} = {
   'translation_footer'          => 'translation_footer',
   'translation_header'          => 'translation_header',
   'update'                      => 'update',
-  'Προσθήκη_ομάδας'             => 'add_group',
-  'Προσθήκη_έργου'              => 'add_project',
-  'Συνέχεια'                    => 'continue',
-  'Διαγραφή'                    => 'delete',
-  'Αποθήκευση'                  => 'save',
+  'Προσθήκη_ομάδας' => 'add_group',
+  'Προσθήκη_έργου' => 'add_project',
+  'Συνέχεια'            => 'continue',
+  'Διαγραφή'            => 'delete',
+  'Αποθήκευση'        => 'save',
 };
 
 1;

@@ -123,14 +123,14 @@ $self{subs} = {
   'yes'                         => 'yes',
   'yes_delete_timecard'         => 'yes_delete_timecard',
   'ny_timeseddel'               => 'add_time_card',
-  'fortsæt'                     => 'continue',
+  'fortsæt'                    => 'continue',
   'fjern'                       => 'delete',
   'udskriv'                     => 'print',
   'udskriv_og_gem'              => 'print_and_save',
   'udskriv_og_gem_som_ny'       => 'print_and_save_as_new',
   'gem'                         => 'save',
   'gem_som_ny'                  => 'save_as_new',
-  'opdatér'                     => 'update',
+  'opdatér'                    => 'update',
   'ja'                          => 'yes',
 };
 

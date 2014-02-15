@@ -165,14 +165,14 @@ $self{subs} = {
   'wage_footer'                 => 'wage_footer',
   'wage_header'                 => 'wage_header',
   'yes'                         => 'yes',
-  'Έλεγχος_πρόσβασης'           => 'access_control',
-  'Προσθήκη_υπαλλήλου'          => 'add_employee',
-  'Προσθήκη_συναλλαγής'         => 'add_transaction',
-  'Συνέχεια'                    => 'continue',
-  'Διαγραφή'                    => 'delete',
-  'Εκτύπωση'                    => 'print',
-  'Έκτύπωση_και_αποστολή'       => 'print_and_post',
-  'Αποθήκευση'                  => 'save',
+  'Έλεγχος_πρόσβασης' => 'access_control',
+  'Προσθήκη_υπαλλήλου' => 'add_employee',
+  'Προσθήκη_συναλλαγής' => 'add_transaction',
+  'Συνέχεια'            => 'continue',
+  'Διαγραφή'            => 'delete',
+  'Εκτύπωση'            => 'print',
+  'Έκτύπωση_και_αποστολή' => 'print_and_post',
+  'Αποθήκευση'        => 'save',
 };
 
 1;

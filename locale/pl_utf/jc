@@ -99,12 +99,12 @@ $self{subs} = {
   'yes'                         => 'yes',
   'yes_delete_timecard'         => 'yes_delete_timecard',
   'kontynuj'                    => 'continue',
-  'usuń'                        => 'delete',
+  'usuń'                       => 'delete',
   'wydrukuj'                    => 'print',
   'wydrukuj_i_zapisz'           => 'print_and_save',
   'zapisz'                      => 'save',
   'zapisz_jako_nowe'            => 'save_as_new',
-  'uzupełnij'                   => 'update',
+  'uzupełnij'                  => 'update',
   'tak'                         => 'yes',
 };
 

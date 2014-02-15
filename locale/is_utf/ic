@@ -211,14 +211,14 @@ $self{subs} = {
   'update'                      => 'update',
   'validate_items'              => 'validate_items',
   'vendor_row'                  => 'vendor_row',
-  'ný_samsetning'               => 'add_assembly',
-  'ný_vara'                     => 'add_part',
-  'ný_ţjónusta'                 => 'add_service',
-  'Áfram'                       => 'continue',
-  'eyđa'                        => 'delete',
+  'ný_samsetning'              => 'add_assembly',
+  'ný_vara'                    => 'add_part',
+  'ný_ţjónusta'              => 'add_service',
+  'Áfram'                      => 'continue',
+  'eyđa'                       => 'delete',
   'geyma'                       => 'save',
-  'geyma_sem_nýtt'              => 'save_as_new',
-  'uppfćrsla'                   => 'update',
+  'geyma_sem_nýtt'             => 'save_as_new',
+  'uppfćrsla'                  => 'update',
 };
 
 1;

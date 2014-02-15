@@ -176,13 +176,13 @@ $self{subs} = {
   'update_payments'             => 'update_payments',
   'vendor_invoice_'             => 'vendor_invoice_',
   'tillbaka'                    => 'back',
-  'fortsфtt'                    => 'continue',
-  'ta_bort_schemalфggning'      => 'delete_schedule',
+  'fortsфtt'                   => 'continue',
+  'ta_bort_schemalфggning'     => 'delete_schedule',
   'avmarkera_alla'              => 'deselect_all',
-  'bokfіr'                      => 'post',
+  'bokfіr'                     => 'post',
   'skriv_ut'                    => 'print',
-  'spara_schemalфggning'        => 'save_schedule',
-  'vфlj_alla'                   => 'select_all',
+  'spara_schemalфggning'       => 'save_schedule',
+  'vфlj_alla'                  => 'select_all',
   'uppdatera'                   => 'update',
 };
 

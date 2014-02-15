@@ -130,7 +130,7 @@ $self{subs} = {
   'shipto_selected'             => 'shipto_selected',
   'validate_items'              => 'validate_items',
   'adicionar_item'              => 'add_part',
-  'adicionar_serviço'           => 'add_service',
+  'adicionar_serviço'          => 'add_service',
   'continuar'                   => 'continue',
 };
 

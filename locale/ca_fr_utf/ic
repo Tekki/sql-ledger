@@ -275,14 +275,14 @@ $self{subs} = {
   'validate_items'              => 'validate_items',
   'vendor_row'                  => 'vendor_row',
   'ajouter_produit'             => 'add_assembly',
-  'ajouter_coût_de_production'  => 'add_labor_overhead',
+  'ajouter_coût_de_production' => 'add_labor_overhead',
   'ajouter_marchandise'         => 'add_part',
   'ajouter_prestation'          => 'add_service',
   'continuer'                   => 'continue',
   'supprimer'                   => 'delete',
   'enregistrer'                 => 'save',
   'enregistrer_comme_nouveau'   => 'save_as_new',
-  'mettre_à_jour'               => 'update',
+  'mettre_à_jour'              => 'update',
 };
 
 1;

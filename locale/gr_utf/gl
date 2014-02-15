@@ -125,10 +125,10 @@ $self{subs} = {
   'update'                      => 'update',
   'vendor_invoice_'             => 'vendor_invoice_',
   'yes'                         => 'yes',
-  'Κινήση_Αγοράς'               => 'ap_transaction',
-  'Κινήσεις_Πωλήσεων'           => 'ar_transaction',
-  'Συνέχεια'                    => 'continue',
-  'Διαγραφή'                    => 'delete',
+  'Κινήση_Αγοράς'   => 'ap_transaction',
+  'Κινήσεις_Πωλήσεων' => 'ar_transaction',
+  'Συνέχεια'            => 'continue',
+  'Διαγραφή'            => 'delete',
 };
 
 1;

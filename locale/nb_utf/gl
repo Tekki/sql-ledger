@@ -175,11 +175,11 @@ $self{subs} = {
   'fortsett'                    => 'continue',
   'slett'                       => 'delete',
   'postering_i_hovedbok'        => 'gl_transaction',
-  'bokfųr'                      => 'post',
-  'bokfųr_som_ny'               => 'post_as_new',
+  'bokfųr'                     => 'post',
+  'bokfųr_som_ny'              => 'post_as_new',
   'salgsfaktura_'               => 'sales_invoice_',
-  'oppdatér'                    => 'update',
-  'leverandųrfaktura_'          => 'vendor_invoice_',
+  'oppdatér'                   => 'update',
+  'leverandųrfaktura_'         => 'vendor_invoice_',
   'ja'                          => 'yes',
 };
 

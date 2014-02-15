@@ -147,7 +147,7 @@ $self{subs} = {
   'xmlorder'                    => 'xmlorder',
   'xrefhdr'                     => 'xrefhdr',
   'yes__reconcile_payments'     => 'yes__reconcile_payments',
-  'folytatás'                   => 'continue',
+  'folytatás'                  => 'continue',
 };
 
 1;

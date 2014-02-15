@@ -99,8 +99,8 @@ $self{subs} = {
   'select_project'              => 'select_project',
   'vendor_invoice_'             => 'vendor_invoice_',
   'continuar'                   => 'continue',
-  'apagar_a_programação'        => 'delete_schedule',
-  'salvar_a_programação'        => 'save_schedule',
+  'apagar_a_programação'      => 'delete_schedule',
+  'salvar_a_programação'      => 'save_schedule',
 };
 
 1;

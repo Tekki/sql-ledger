@@ -1,8 +1,8 @@
 # These are all the texts to build the translations files.
 # to build unique strings edit the module files instead
 # this file is just a shortcut to build strings which are the same
-
 $self{charset} = 'UTF-8';
+
 
 $self{texts} = {
   '%'                           => '%',
@@ -309,6 +309,7 @@ $self{texts} = {
   'Compare to'                  => 'Vergelijk met',
   'Completed'                   => 'Voltooid',
   'Components'                  => 'Componenten',
+  'Configuration file missing!' => '',
   'Confirm'                     => 'Bevestig',
   'Confirm!'                    => 'Bevestig!',
   'Connect to'                  => 'Verbinden met',
@@ -456,6 +457,7 @@ $self{texts} = {
   'Due Date missing!'           => 'Vervaldatum ontbreekt!',
   'E-Mail'                      => 'E-mail',
   'E-mail'                      => 'E-mail',
+  'E-mail PIN'                  => '',
   'E-mail Reminder to'          => 'E-mail herinnering aan',
   'E-mail Statement to'         => 'E-mail Overzicht aan',
   'E-mail address missing!'     => 'E-mailadres ontbreekt!',
@@ -663,6 +665,7 @@ $self{texts} = {
   'Increase'                    => 'Toename',
   'Individual Items'            => 'Afzonderlijke Onderdelen',
   'Internal Notes'              => 'Interne Opmerkingen',
+  'Invalid PIN'                 => '',
   'Inventory'                   => 'Voorraad',
   'Inventory Value'             => 'Voorraad waarde',
   'Inventory account does not exist!' => 'Rekening Voorraad bestaat niet!',
@@ -756,6 +759,7 @@ $self{texts} = {
   'Main Groups'                 => 'Hoofd Groepen',
   'Main Menu'                   => 'Hoofdmenu',
   'Maintainance'                => 'Onderhoud',
+  'Maintenance'                 => '',
   'Make'                        => 'Fabrikant',
   'Male'                        => 'Man',
   'Manager'                     => 'Manager',
@@ -880,6 +884,7 @@ $self{texts} = {
   'Overdue'                     => 'Achterstallig',
   'Overpaid'                    => 'Teveel betaald!',
   'PDF'                         => 'PDF',
+  'PIN'                         => '',
   'PO'                          => 'PO',
   'PO Number'                   => 'PO code',
   'POS'                         => 'Kassa',

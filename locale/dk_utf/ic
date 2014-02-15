@@ -282,15 +282,15 @@ $self{subs} = {
   'update'                      => 'update',
   'validate_items'              => 'validate_items',
   'vendor_row'                  => 'vendor_row',
-  'ny_sammensætning'            => 'add_assembly',
+  'ny_sammensætning'           => 'add_assembly',
   'nyt_arbejde_overhead'        => 'add_labor_overhead',
   'ny_vare'                     => 'add_part',
   'ny_tjeneste'                 => 'add_service',
-  'fortsæt'                     => 'continue',
+  'fortsæt'                    => 'continue',
   'fjern'                       => 'delete',
   'gem'                         => 'save',
   'gem_som_ny'                  => 'save_as_new',
-  'opdatér'                     => 'update',
+  'opdatér'                    => 'update',
 };
 
 1;

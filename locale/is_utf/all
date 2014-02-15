@@ -1,8 +1,8 @@
 # These are all the texts to build the translations files.
 # to build unique strings edit the module files instead
 # this file is just a shortcut to build strings which are the same
-
 $self{charset} = 'UTF-8';
+
 
 $self{texts} = {
   '%'                           => '',
@@ -298,6 +298,7 @@ $self{texts} = {
   'Compare to'                  => 'Bera saman viđ',
   'Completed'                   => '',
   'Components'                  => '',
+  'Configuration file missing!' => '',
   'Confirm'                     => '',
   'Confirm!'                    => 'Stađfesta!',
   'Connect to'                  => 'Tengjast viđ',
@@ -441,6 +442,7 @@ $self{texts} = {
   'Due Date missing!'           => 'Vantar dags. lokiđ!',
   'E-Mail'                      => '',
   'E-mail'                      => 'R-póstur',
+  'E-mail PIN'                  => '',
   'E-mail Reminder to'          => '',
   'E-mail Statement to'         => 'Senda yfirlit til',
   'E-mail address missing!'     => 'R-póst vantar!',
@@ -646,6 +648,7 @@ $self{texts} = {
   'Increase'                    => '',
   'Individual Items'            => 'Sjálfstćđir hlutir',
   'Internal Notes'              => '',
+  'Invalid PIN'                 => '',
   'Inventory'                   => 'Lager',
   'Inventory Value'             => '',
   'Inventory account does not exist!' => '',
@@ -735,6 +738,7 @@ $self{texts} = {
   'Main Groups'                 => '',
   'Main Menu'                   => '',
   'Maintainance'                => '',
+  'Maintenance'                 => '',
   'Make'                        => 'Tegund',
   'Male'                        => '',
   'Manager'                     => '',
@@ -853,6 +857,7 @@ $self{texts} = {
   'Overdue'                     => '',
   'Overpaid'                    => '',
   'PDF'                         => 'PDF',
+  'PIN'                         => '',
   'PO'                          => '',
   'PO Number'                   => '',
   'POS'                         => '',

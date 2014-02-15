@@ -66,11 +66,11 @@ $self{subs} = {
   'print_options'               => 'print_options',
   'receipts'                    => 'receipts',
   'section_menu'                => 'section_menu',
-  'Áfram'                       => 'continue',
-  'eyđa'                        => 'delete',
-  'bókfćra'                     => 'post',
+  'Áfram'                      => 'continue',
+  'eyđa'                       => 'delete',
+  'bókfćra'                   => 'post',
   'prenta'                      => 'print',
-  'uppfćrsla'                   => 'update',
+  'uppfćrsla'                  => 'update',
 };
 
 1;

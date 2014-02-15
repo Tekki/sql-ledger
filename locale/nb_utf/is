@@ -259,13 +259,13 @@ $self{subs} = {
   'fortsett'                    => 'continue',
   'slett'                       => 'delete',
   'epost'                       => 'e_mail',
-  'bokfųr'                      => 'post',
-  'bokfųr_som_ny'               => 'post_as_new',
+  'bokfųr'                     => 'post',
+  'bokfųr_som_ny'              => 'post_as_new',
   'skriv_ut'                    => 'print',
-  'skriv_ut_og_bokfųr'          => 'print_and_post',
+  'skriv_ut_og_bokfųr'         => 'print_and_post',
   'salgsordre'                  => 'sales_order',
   'send_til'                    => 'ship_to',
-  'oppdatér'                    => 'update',
+  'oppdatér'                   => 'update',
   'ja'                          => 'yes',
 };
 

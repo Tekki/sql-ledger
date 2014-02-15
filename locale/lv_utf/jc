@@ -93,13 +93,13 @@ $self{subs} = {
   'update'                      => 'update',
   'yes'                         => 'yes',
   'yes_delete_timecard'         => 'yes_delete_timecard',
-  'turpināt'                    => 'continue',
-  'dzēst'                       => 'delete',
-  'drukāt'                      => 'print',
-  'saglabāt'                    => 'save',
-  'saglabāt_kā_jaunu'           => 'save_as_new',
-  'atjaunināt'                  => 'update',
-  'jā'                          => 'yes',
+  'turpināt'                   => 'continue',
+  'dzēst'                      => 'delete',
+  'drukāt'                     => 'print',
+  'saglabāt'                   => 'save',
+  'saglabāt_kā_jaunu'         => 'save_as_new',
+  'atjaunināt'                 => 'update',
+  'jā'                         => 'yes',
 };
 
 1;

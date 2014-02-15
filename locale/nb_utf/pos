@@ -85,10 +85,10 @@ $self{subs} = {
   'section_menu'                => 'section_menu',
   'fortsett'                    => 'continue',
   'slett'                       => 'delete',
-  'bokfųr'                      => 'post',
+  'bokfųr'                     => 'post',
   'skriv_ut'                    => 'print',
-  'skriv_ut_og_bokfųr'          => 'print_and_post',
-  'oppdatér'                    => 'update',
+  'skriv_ut_og_bokfųr'         => 'print_and_post',
+  'oppdatér'                   => 'update',
 };
 
 1;

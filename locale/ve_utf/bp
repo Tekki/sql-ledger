@@ -116,7 +116,7 @@ $self{subs} = {
   'imprimir'                    => 'print',
   'eliminar'                    => 'remove',
   'seleccionar_todos'           => 'select_all',
-  'sí'                          => 'yes',
+  'sí'                         => 'yes',
 };
 
 1;

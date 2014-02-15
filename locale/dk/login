@@ -5,6 +5,7 @@ $self{texts} = {
   'Incorrect Dataset version!'  => 'Forkert version af datasæt!',
   'Login'                       => 'Log på',
   'Name'                        => 'Navn',
+  'No email address for'        => 'Ingen epostadresse for',
   'Password'                    => 'Adgangskode',
   'Upgrading to Version'        => 'Opgraderer til version',
   'Version'                     => 'Version',
@@ -12,10 +13,14 @@ $self{texts} = {
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_pin'                   => 'email_pin',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
+  'pin_login'                   => 'pin_login',
   'selectdataset'               => 'selectdataset',
+  'fortsæt'                     => 'continue',
   'log_på'                      => 'login',
 };
 

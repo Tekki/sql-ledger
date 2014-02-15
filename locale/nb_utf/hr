@@ -220,13 +220,13 @@ $self{subs} = {
   'ny_postering'                => 'add_transaction',
   'fortsett'                    => 'continue',
   'slett'                       => 'delete',
-  'bokfųr'                      => 'post',
-  'bokfųr_som_ny'               => 'post_as_new',
+  'bokfųr'                     => 'post',
+  'bokfųr_som_ny'              => 'post_as_new',
   'skriv_ut'                    => 'print',
-  'skriv_ut_og_bokfųr'          => 'print_and_post',
+  'skriv_ut_og_bokfųr'         => 'print_and_post',
   'lagre'                       => 'save',
   'lagre_som_ny'                => 'save_as_new',
-  'oppdatér'                    => 'update',
+  'oppdatér'                   => 'update',
   'ja'                          => 'yes',
 };
 

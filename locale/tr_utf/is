@@ -169,12 +169,12 @@ $self{subs} = {
   'validate_items'              => 'validate_items',
   'vendor_invoice_'             => 'vendor_invoice_',
   'yes'                         => 'yes',
-  'parça_ekle'                  => 'add_part',
+  'parça_ekle'                 => 'add_part',
   'hizmet_ekle'                 => 'add_service',
   'devam'                       => 'continue',
   'sil'                         => 'delete',
   'posta'                       => 'e_mail',
-  'satış_siparişi'              => 'sales_order',
+  'satış_siparişi'           => 'sales_order',
   'evet'                        => 'yes',
 };
 

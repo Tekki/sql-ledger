@@ -243,14 +243,14 @@ $self{subs} = {
   'statement_details'           => 'statement_details',
   'tax_subtotal'                => 'tax_subtotal',
   'vendor_invoice_'             => 'vendor_invoice_',
-  'fortsфtt'                    => 'continue',
-  'ta_bort_schemalфggning'      => 'delete_schedule',
+  'fortsфtt'                   => 'continue',
+  'ta_bort_schemalфggning'     => 'delete_schedule',
   'avmarkera_alla'              => 'deselect_all',
   'e_post'                      => 'e_mail',
   'skriv_ut'                    => 'print',
   'skriv_ut_rapport'            => 'print_report',
-  'spara_schemalфggning'        => 'save_schedule',
-  'vфlj_alla'                   => 'select_all',
+  'spara_schemalфggning'       => 'save_schedule',
+  'vфlj_alla'                  => 'select_all',
 };
 
 1;

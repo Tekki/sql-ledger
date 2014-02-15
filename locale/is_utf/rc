@@ -63,10 +63,10 @@ $self{subs} = {
   'section_menu'                => 'section_menu',
   'select_all'                  => 'select_all',
   'update'                      => 'update',
-  'Áfram'                       => 'continue',
-  'búiđ'                        => 'done',
+  'Áfram'                      => 'continue',
+  'búiđ'                      => 'done',
   'velja_allt'                  => 'select_all',
-  'uppfćrsla'                   => 'update',
+  'uppfćrsla'                  => 'update',
 };
 
 1;

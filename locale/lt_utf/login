@@ -6,16 +6,21 @@ $self{texts} = {
   'Incorrect Dataset version!'  => 'Neteisinga duomenų aibės versija!',
   'Login'                       => 'Prisijungimas',
   'Name'                        => 'Vardas',
+  'No email address for'        => 'Nėra e-pašto adreso...',
   'Password'                    => 'Slaptažodis',
   'Version'                     => 'Versija',
   'You did not enter a name!'   => 'Neįvedėte vardo!',
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_pin'                   => 'email_pin',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
+  'pin_login'                   => 'pin_login',
   'selectdataset'               => 'selectdataset',
+  'tęsti'                      => 'continue',
   'prisijungimas'               => 'login',
 };
 

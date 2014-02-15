@@ -101,9 +101,9 @@ $self{subs} = {
   'select_name'                 => 'select_name',
   'select_project'              => 'select_project',
   'vendor_invoice_'             => 'vendor_invoice_',
-  'fortsфtt'                    => 'continue',
-  'ta_bort_schemalфggning'      => 'delete_schedule',
-  'spara_schemalфggning'        => 'save_schedule',
+  'fortsфtt'                   => 'continue',
+  'ta_bort_schemalфggning'     => 'delete_schedule',
+  'spara_schemalфggning'       => 'save_schedule',
 };
 
 1;

@@ -101,7 +101,7 @@ $self{subs} = {
   'form_footer'                 => 'form_footer',
   'form_header'                 => 'form_header',
   'getpassword'                 => 'getpassword',
-  'giriş'                       => 'login',
+  'giriş'                      => 'login',
   'list_datasets'               => 'list_datasets',
   'lock_dataset'                => 'lock_dataset',
   'lock_system'                 => 'lock_system',
@@ -115,7 +115,7 @@ $self{subs} = {
   'unlock_system'               => 'unlock_system',
   'update_software'             => 'update_software',
   'yes'                         => 'yes',
-  'Şifre_değiştir'              => 'change_password',
+  'Şifre_değiştir'           => 'change_password',
 };
   
 1;

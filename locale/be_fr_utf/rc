@@ -74,8 +74,8 @@ $self{subs} = {
   'update'                      => 'update',
   'continuer'                   => 'continue',
   'fait!'                       => 'done',
-  'tout_sélectionner'           => 'select_all',
-  'mettre_à_jour'               => 'update',
+  'tout_sélectionner'          => 'select_all',
+  'mettre_à_jour'              => 'update',
 };
 
 1;

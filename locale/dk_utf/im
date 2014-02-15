@@ -161,10 +161,10 @@ $self{subs} = {
   'xmlorder'                    => 'xmlorder',
   'xrefhdr'                     => 'xrefhdr',
   'yes__reconcile_payments'     => 'yes__reconcile_payments',
-  'fortsæt'                     => 'continue',
-  'eksportér_betalinger'        => 'export_payments',
-  'importér_betalinger'         => 'import_payments',
-  'importér_salgsfakturaer'     => 'import_sales_invoices',
+  'fortsæt'                    => 'continue',
+  'eksportér_betalinger'       => 'export_payments',
+  'importér_betalinger'        => 'import_payments',
+  'importér_salgsfakturaer'    => 'import_sales_invoices',
 };
 
 1;

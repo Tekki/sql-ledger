@@ -72,10 +72,10 @@ $self{subs} = {
   'section_menu'                => 'section_menu',
   'select_all'                  => 'select_all',
   'update'                      => 'update',
-  'folytatás'                   => 'continue',
-  'elvégezve'                   => 'done',
-  'mindent_kijelöl'             => 'select_all',
-  'frissítés'                   => 'update',
+  'folytatás'                  => 'continue',
+  'elvégezve'                  => 'done',
+  'mindent_kijelöl'            => 'select_all',
+  'frissítés'                 => 'update',
 };
 
 1;

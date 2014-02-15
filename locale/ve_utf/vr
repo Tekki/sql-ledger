@@ -99,7 +99,7 @@ $self{subs} = {
   'borrar'                      => 'delete',
   'registrar'                   => 'post',
   'seleccionar_todos'           => 'select_all',
-  'sí'                          => 'yes',
+  'sí'                         => 'yes',
 };
 
 1;

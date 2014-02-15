@@ -172,8 +172,8 @@ $self{subs} = {
   'do_change_password'          => 'do_change_password',
   'do_delete'                   => 'do_delete',
   'do_lock_system'              => 'do_lock_system',
-  'déconnexion'                 => 'logout',
-  'déverrouiller_le_système'    => 'unlock_system',
+  'déconnexion'                => 'logout',
+  'déverrouiller_le_système'  => 'unlock_system',
   'edit'                        => 'edit',
   'form_footer'                 => 'form_footer',
   'form_header'                 => 'form_header',
@@ -192,7 +192,7 @@ $self{subs} = {
   'unlock_dataset'              => 'unlock_dataset',
   'unlock_system'               => 'unlock_system',
   'update_software'             => 'update_software',
-  'verrouiller_le_système'      => 'lock_system',
+  'verrouiller_le_système'     => 'lock_system',
   'yes'                         => 'yes',
 };
   

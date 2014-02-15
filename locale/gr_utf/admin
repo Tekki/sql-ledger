@@ -114,11 +114,11 @@ $self{subs} = {
   'unlock_system'               => 'unlock_system',
   'update_software'             => 'update_software',
   'yes'                         => 'yes',
-  'Αλλαγή_κωδικού'              => 'change_password',
-  'Διαγραφή'                    => 'delete',
-  'Εισαγωγή'                    => 'login',
-  'Εξαγωγή'                     => 'logout',
-  'Συνέχεια'                    => 'continue',
+  'Αλλαγή_κωδικού' => 'change_password',
+  'Διαγραφή'            => 'delete',
+  'Εισαγωγή'            => 'login',
+  'Εξαγωγή'              => 'logout',
+  'Συνέχεια'            => 'continue',
 };
   
 1;

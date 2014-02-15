@@ -262,10 +262,10 @@ $self{subs} = {
   'tax_subtotal'                => 'tax_subtotal',
   'vendor_invoice_'             => 'vendor_invoice_',
   'weiter'                      => 'continue',
-  'spalte_löschen'              => 'delete_column',
-  'rapport_löschen'             => 'delete_report',
-  'zeitplan_löschen'            => 'delete_schedule',
-  'alle_abwählen'               => 'deselect_all',
+  'spalte_löschen'             => 'delete_column',
+  'rapport_löschen'            => 'delete_report',
+  'zeitplan_löschen'           => 'delete_schedule',
+  'alle_abwählen'              => 'deselect_all',
   'e_mail'                      => 'e_mail',
   'vorschau'                    => 'preview',
   'drucken'                     => 'print',
@@ -274,7 +274,7 @@ $self{subs} = {
   'rapport_speichern'           => 'save_report',
   'rapport_als_neu_speichern'   => 'save_report_as_new',
   'zeitplan_speichern'          => 'save_schedule',
-  'alle_auswählen'              => 'select_all',
+  'alle_auswählen'             => 'select_all',
 };
 
 1;

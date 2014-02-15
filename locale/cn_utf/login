@@ -7,6 +7,7 @@ $self{texts} = {
   'Incorrect Dataset version!'  => '资料集版本错误!',
   'Login'                       => '登入',
   'Name'                        => '名称',
+  'No email address for'        => '未指明电子邮件位置',
   'Password'                    => '密码',
   'Upgrading to Version'        => '正升级至新版',
   'Version'                     => '版本',
@@ -14,10 +15,14 @@ $self{texts} = {
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_pin'                   => 'email_pin',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
+  'pin_login'                   => 'pin_login',
   'selectdataset'               => 'selectdataset',
+  '继续'                      => 'continue',
   '登入'                      => 'login',
 };
 

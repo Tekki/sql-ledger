@@ -234,12 +234,12 @@ $self{subs} = {
   'statement_details'           => 'statement_details',
   'tax_subtotal'                => 'tax_subtotal',
   'vendor_invoice_'             => 'vendor_invoice_',
-  'folytatás'                   => 'continue',
-  'Ütemezés_törlése'            => 'delete_schedule',
+  'folytatás'                  => 'continue',
+  'Ütemezés_törlése'        => 'delete_schedule',
   'e_mail'                      => 'e_mail',
-  'nyomtatás'                   => 'print',
-  'Ütemezés_mentése'            => 'save_schedule',
-  'mindent_kijelöl'             => 'select_all',
+  'nyomtatás'                  => 'print',
+  'Ütemezés_mentése'         => 'save_schedule',
+  'mindent_kijelöl'            => 'select_all',
 };
 
 1;

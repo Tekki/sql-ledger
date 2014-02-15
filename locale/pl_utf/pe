@@ -173,14 +173,14 @@ $self{subs} = {
   'translation_footer'          => 'translation_footer',
   'translation_header'          => 'translation_header',
   'update'                      => 'update',
-  'dodaj_grupę'                 => 'add_group',
-  'dodaj_grupę_cenową'          => 'add_pricegroup',
+  'dodaj_grupę'                => 'add_group',
+  'dodaj_grupę_cenową'        => 'add_pricegroup',
   'dodaj_projekt'               => 'add_project',
   'kontynuj'                    => 'continue',
-  'usuń'                        => 'delete',
+  'usuń'                       => 'delete',
   'zapisz'                      => 'save',
   'zapisz_jako_nowe'            => 'save_as_new',
-  'uzupełnij'                   => 'update',
+  'uzupełnij'                  => 'update',
 };
 
 1;

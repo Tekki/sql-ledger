@@ -199,16 +199,16 @@ $self{subs} = {
   'asiento_de_cxc'              => 'ar_transaction',
   'continuar'                   => 'continue',
   'borrar'                      => 'delete',
-  'eliminar_programación'       => 'delete_schedule',
+  'eliminar_programación'      => 'delete_schedule',
   'asiento_de_libro_mayor_general' => 'gl_transaction',
   'registrar'                   => 'post',
   'registrar_como_nuevo'        => 'post_as_new',
   'factura_de_ventas_'          => 'sales_invoice_',
-  'guardar_programación'        => 'save_schedule',
+  'guardar_programación'       => 'save_schedule',
   'programar'                   => 'schedule',
   'actualizar'                  => 'update',
   'factura_de_compra_'          => 'vendor_invoice_',
-  'sí'                          => 'yes',
+  'sí'                         => 'yes',
 };
 
 1;

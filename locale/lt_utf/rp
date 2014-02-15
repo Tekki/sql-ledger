@@ -184,10 +184,10 @@ $self{subs} = {
   'statement_details'           => 'statement_details',
   'tax_subtotal'                => 'tax_subtotal',
   'vendor_invoice_'             => 'vendor_invoice_',
-  'tęsti'                       => 'continue',
-  'e_paštas'                    => 'e_mail',
+  'tęsti'                      => 'continue',
+  'e_paštas'                   => 'e_mail',
   'spausdinti'                  => 'print',
-  'išrinkti_viską'              => 'select_all',
+  'išrinkti_viską'            => 'select_all',
 };
 
 1;

@@ -75,7 +75,7 @@ $self{subs} = {
   'fortsett'                    => 'continue',
   'ferdig'                      => 'done',
   'velg_alt'                    => 'select_all',
-  'oppdatér'                    => 'update',
+  'oppdatér'                   => 'update',
 };
 
 1;

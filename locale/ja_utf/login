@@ -7,6 +7,7 @@ $self{texts} = {
   'Incorrect Dataset version!'  => '間違えたデタセットバージョン',
   'Login'                       => 'ログイン',
   'Name'                        => '名字',
+  'No email address for'        => '宛先メールアドレスではありません：',
   'Password'                    => 'パスワード',
   'Upgrading to Version'        => '更新的のバージョン',
   'Version'                     => 'バージョン',
@@ -14,10 +15,14 @@ $self{texts} = {
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_pin'                   => 'email_pin',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
+  'pin_login'                   => 'pin_login',
   'selectdataset'               => 'selectdataset',
+  '続ける'                   => 'continue',
   'ログイン'                => 'login',
 };
 

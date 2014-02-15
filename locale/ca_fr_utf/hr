@@ -219,10 +219,10 @@ $self{subs} = {
   'wage_footer'                 => 'wage_footer',
   'wage_header'                 => 'wage_header',
   'yes'                         => 'yes',
-  'contrôle_d\'accès'           => 'access_control',
-  'ajouter_prélèvement'         => 'add_deduction',
-  'ajouter_employé'             => 'add_employee',
-  'saisie_d\'écriture'          => 'add_transaction',
+  'contrôle_d\'accès'         => 'access_control',
+  'ajouter_prélèvement'       => 'add_deduction',
+  'ajouter_employé'            => 'add_employee',
+  'saisie_d\'écriture'         => 'add_transaction',
   'continuer'                   => 'continue',
   'supprimer'                   => 'delete',
   'enregistrer'                 => 'post',
@@ -231,7 +231,7 @@ $self{subs} = {
   'imprimer_et_imputer'         => 'print_and_post',
   'enregistrer'                 => 'save',
   'enregistrer_comme_nouveau'   => 'save_as_new',
-  'mettre_à_jour'               => 'update',
+  'mettre_à_jour'              => 'update',
   'oui'                         => 'yes',
 };
 
