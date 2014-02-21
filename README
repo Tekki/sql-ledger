@@ -17,7 +17,7 @@ The branches are:
 - full: the master branch with additions by Tekki: security patch for
   template editor, WLprinter, Swiss German, French and Italian charts
   of accounts, updated languages, full UTF-8 support. Includes the
-  improved 'de' translation by Mike Wagner.
+  improved 'de' translation by Maik Wagner.
   To use WLprinter, add a printer with command "wlprinter".
 
 "full" is the default branch that will be checked out by "git clone".
