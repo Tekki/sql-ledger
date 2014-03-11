@@ -2,8 +2,24 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Accounting Menu'             => 'Kontoverwaltung',
+  'Add Column'                  => 'Spalte hinzufügen',
+  'Align'                       => 'Ausrichtung',
+  'Delete Column'               => 'Spalte löschen',
+  'Delete Report'               => 'Bericht löschen',
   'Description'                 => 'Beschreibung',
+  'Edit Column'                 => 'Spalte bearbeiten',
+  'Edit Column Header'          => 'Spaltentitel bearbeiten',
+  'Edit Column Total'           => 'Spaltentotal bearbeiten',
+  'Fill'                        => 'Ausfüllen',
+  'Fixed value'                 => 'Fixer Wert',
   'Heading'                     => 'Überschrift',
+  'Left'                        => 'Links',
+  'Public'                      => 'Öffentlich',
+  'Right'                       => 'Rechts',
+  'Save Column'                 => 'Spalte speichern',
+  'Save Report'                 => 'Abfrage speichern',
+  'Save Report as new'          => 'Abfrage als neu speichern',
+  'Width'                       => 'Breite',
 };
 
 $self{subs} = {
@@ -23,6 +39,11 @@ $self{subs} = {
   'save_report'                 => 'save_report',
   'save_report_as_new'          => 'save_report_as_new',
   'section_menu'                => 'section_menu',
+  'spalte_löschen'             => 'delete_column',
+  'bericht_löschen'            => 'delete_report',
+  'spalte_speichern'            => 'save_column',
+  'abfrage_speichern'           => 'save_report',
+  'abfrage_als_neu_speichern'   => 'save_report_as_new',
 };
 
 1;
