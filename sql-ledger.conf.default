@@ -13,7 +13,7 @@ $templates = "templates";
 $memberfile = "users/members";
 
 # location of sendmail
-$sendmail = "| /usr/sbin/sendmail -t";
+$sendmail = "| /usr/sbin/sendmail -f <%from%> -t";
 
 # location for images
 $images = "images";

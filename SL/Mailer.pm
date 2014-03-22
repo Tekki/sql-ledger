@@ -32,12 +32,6 @@ sub send {
   
   $self->{charset} ||= "ISO-8859-1";
 
-  if ($out) {
-    open(OUT, $out) or return "$out : $!";
-  } else {
-    open(OUT, ">-") or return "STDOUT : $!";
-  }
-
   $self->{contenttype} ||= "text/plain";
   
   my %h;
@@ -60,7 +54,17 @@ sub send {
       $h{notify} = "Disposition-Notification-To: $h{from}\n";
     }
   }
-  
+
+  if ($out) {
+    $self->{from} =~ /<(.*)>/;
+    my $envelope = $1;
+    $envelope =~ s/@/%/;
+    $out =~ s/<%from%>/$envelope/;
+    open(OUT, $out) or return "$out : $!";
+  } else {
+    open(OUT, ">-") or return "STDOUT : $!";
+  }
+
   print OUT qq|From: $h{from}
 To: $h{to}
 $h{cc}$h{bcc}$h{subject}
