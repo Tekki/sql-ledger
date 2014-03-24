@@ -51,7 +51,7 @@ if ($form->{action}) {
 sub login_screen {
 
   $form->{stylesheet} = "sql-ledger.css";
-  $form->{favicon} = "sql-ledger.ico";
+  $form->{favicon} = "favicon.ico";
 
   $form->header;
 
@@ -143,8 +143,8 @@ sub selectdataset {
   if (-f "css/sql-ledger.css") {
     $form->{stylesheet} = "sql-ledger.css";
   }
-  if (-f sql-ledger.ico) {
-    $form->{favicon} = "sql-ledger.ico";
+  if (-f 'favicon.ico') {
+    $form->{favicon} = "favicon.ico";
   }
 
   delete $self->{sessioncookie};
@@ -222,7 +222,7 @@ sub selectdataset {
 sub login {
 
   $form->{stylesheet} = "sql-ledger.css";
-  $form->{favicon} = "sql-ledger.ico";
+  $form->{favicon} = "favicon.ico";
   
   $form->error($locale->text('You did not enter a name!')) unless ($form->{login});
 
@@ -400,7 +400,7 @@ sub email_pin {
   $form->error($err) if ($err = $mail->send($sendmail));
 
   $form->{stylesheet} = $user->{stylesheet};
-  $form->{favicon} = "sql-ledger.ico";
+  $form->{favicon} = "favicon.ico";
   $form->{nextsub} = "pin_login";
 
   $user->{password} = $pin;
