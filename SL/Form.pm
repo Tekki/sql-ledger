@@ -118,6 +118,8 @@ sub new {
   $self->{version} = "3.0.6";
   $self->{dbversion} = "3.0.0";
 
+  $self->{favicon} = 'favicon.ico';
+
   bless $self, $type;
   
 }
