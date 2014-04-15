@@ -1651,6 +1651,11 @@ sub print_form {
 
   $form->format_string(@f);
 
+  my $i = 10;
+  for (reverse split //, 100 * $form->parse_amount(\%myconfig, $form->{total})) {
+    $form->{'total'.$i--} = $_;
+  }
+
   $form->{templates} = "$templates/$myconfig{dbname}";
   $form->{IN} = "$form->{formname}.$form->{format}";
 
