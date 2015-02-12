@@ -20,6 +20,7 @@ $self{texts} = {
   'Bcc'                         => 'Bcc',
   'Below'                       => 'Zemâk',
   'Cannot delete transaction!'  => 'Transakciju nevar izdzçst!',
+  'Cannot post transaction for a closed period!' => 'Nevar iegrâmatot transakciju par slçgtu periodu!',
   'Cc'                          => 'Cc',
   'City'                        => 'Pilsçta',
   'Confirm!'                    => 'Apstiprinât!',

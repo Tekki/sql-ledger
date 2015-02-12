@@ -18,6 +18,7 @@ $self{texts} = {
   'Bcc'                         => 'Copie cachée',
   'Below'                       => 'En dessous',
   'Cannot delete transaction!'  => 'Impossible de supprimer l\'écriture!',
+  'Cannot post transaction for a closed period!' => 'Impossible d\'enregistrer l\'écriture sur un exercice clos!',
   'Cc'                          => 'Copie',
   'City'                        => 'Ville',
   'Confirm!'                    => 'Confirmer!',

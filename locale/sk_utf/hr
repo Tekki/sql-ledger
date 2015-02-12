@@ -21,6 +21,7 @@ $self{texts} = {
   'Bcc'                         => 'Tajná kópia',
   'Below'                       => 'Pod',
   'Cannot delete transaction!'  => 'Nie je možné mazať transakciu!',
+  'Cannot post transaction for a closed period!' => 'Do uzavretého obdobia nemôžete účtovať transakciu!',
   'Cc'                          => 'Kópia',
   'City'                        => 'Mesto',
   'Confirm!'                    => 'Potvrďte!',

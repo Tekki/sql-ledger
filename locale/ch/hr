@@ -24,6 +24,7 @@ $self{texts} = {
   'Bcc'                         => 'Bcc',
   'Below'                       => 'Unter',
   'Cannot delete transaction!'  => 'Buchung kann nicht gelöscht werden!',
+  'Cannot post transaction for a closed period!' => 'Buchung kann nicht erfasst werden, weil die Periode bereits abgeschlossen ist!',
   'Cc'                          => 'E-Mailkopie',
   'City'                        => 'Ort',
   'Clearing No.'                => 'Ausgleichsnummer',

@@ -13,6 +13,7 @@ $self{texts} = {
   'Are you sure you want to delete Transaction' => 'Ert ţú viss um ađ ţú viljir eyđa fćrslunni',
   'Bcc'                         => 'Blint afrit',
   'Cannot delete transaction!'  => 'Get ekki eytt fćrslu!',
+  'Cannot post transaction for a closed period!' => 'Get ekki bókađ fćrslu á lokađ tímabil!',
   'Cc'                          => 'Afrit',
   'Confirm!'                    => 'Stađfesta!',
   'Continue'                    => 'Áfram',

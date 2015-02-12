@@ -13,6 +13,7 @@ $self{texts} = {
   'Are you sure you want to delete Transaction' => 'Ви певн╕, що хочете видалити дану проводку?',
   'Bcc'                         => 'Приватна коп╕я до',
   'Cannot delete transaction!'  => 'Не можливо видалити проводку!',
+  'Cannot post transaction for a closed period!' => 'Не можливо виставити проводку для закритого пер╕оду!',
   'Cc'                          => 'Коп╕я до',
   'Confirm!'                    => 'П╕дтверд╕ть!',
   'Continue'                    => 'Продовжити',

@@ -21,6 +21,7 @@ $self{texts} = {
   'Bcc'                         => 'Bcc',
   'Below'                       => '下記',
   'Cannot delete transaction!'  => 'トランザクションを削除出来ません',
+  'Cannot post transaction for a closed period!' => '決済期間で、トランザクションを登録出来ません',
   'Cc'                          => 'Cc',
   'City'                        => '市',
   'Confirm!'                    => '確認',

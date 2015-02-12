@@ -19,6 +19,7 @@ $self{texts} = {
   'Bcc'                         => 'Dold kopia',
   'Below'                       => 'Under',
   'Cannot delete transaction!'  => 'Kan inte radera händelse',
+  'Cannot post transaction for a closed period!' => 'Kan inte bokföra under en stängd period',
   'Cc'                          => 'Kopia',
   'City'                        => 'Stad',
   'Confirm!'                    => 'Bekräfta!',

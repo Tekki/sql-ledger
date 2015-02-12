@@ -15,6 +15,7 @@ $self{texts} = {
   'Based on'                    => 'Perustuen',
   'Bcc'                         => 'Näkymätön kopio',
   'Cannot delete transaction!'  => 'Vientiä ei voi poistaa!',
+  'Cannot post transaction for a closed period!' => 'Viennin kirjaus suljetulle ajanjaksolle kielletty!',
   'Cc'                          => 'Kopio',
   'City'                        => 'Kaupunki',
   'Confirm!'                    => 'Vahvista!',

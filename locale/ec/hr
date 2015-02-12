@@ -18,6 +18,7 @@ $self{texts} = {
   'Bcc'                         => 'Bcc',
   'Below'                       => 'Abajo',
   'Cannot delete transaction!'  => '¡No se puede borrar la transacción!',
+  'Cannot post transaction for a closed period!' => '¡No se puede registrar una transacción para un periodo cerrado',
   'Cc'                          => 'Cc',
   'City'                        => 'Ciudad',
   'Confirm!'                    => 'Confirmar',

@@ -18,6 +18,7 @@ $self{texts} = {
   'Based on'                    => 'Berdasarkan',
   'Below'                       => 'Dibawah',
   'Cannot delete transaction!'  => 'Tidak dapat menghapus Transaksi!',
+  'Cannot post transaction for a closed period!' => 'Tidak dapat posting transaksi untuk perioda yang sudah ditutup!',
   'City'                        => 'Kota',
   'Confirm!'                    => 'Konfirmasi!',
   'Continue'                    => 'Lanjut',

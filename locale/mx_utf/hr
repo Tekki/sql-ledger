@@ -26,6 +26,7 @@ $self{texts} = {
   'Below'                       => 'Debajo de',
   'Cannot delete employee!'     => '¡No se puede eliminar empleado!',
   'Cannot delete transaction!'  => '¡No se puede borrar el movimiento!',
+  'Cannot post transaction for a closed period!' => '¡No se puede registrar un movimiento para un periodo cerrado!',
   'Cc'                          => 'Cc',
   'City'                        => 'Cuidad',
   'Clearing No.'                => 'Liquidación Núm.',

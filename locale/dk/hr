@@ -19,6 +19,7 @@ $self{texts} = {
   'Bcc'                         => 'Blind kopi',
   'Below'                       => 'Under',
   'Cannot delete transaction!'  => 'Kan ikke slette postering!',
+  'Cannot post transaction for a closed period!' => 'Kan ikke bogføre postering for en afsluttet periode!',
   'Cc'                          => 'Kopi',
   'City'                        => 'By',
   'Confirm!'                    => 'Bekræft!',

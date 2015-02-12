@@ -130,11 +130,11 @@ $self{subs} = {
   'yes'                         => 'yes',
   'kombinieren'                 => 'combine',
   'weiter'                      => 'continue',
-  'alles_abwählen'              => 'deselect_all',
+  'alles_abwählen'             => 'deselect_all',
   'email'                       => 'e_mail',
   'drucken'                     => 'print',
   'entfernen'                   => 'remove',
-  'alle_auswählen'              => 'select_all',
+  'alle_auswählen'             => 'select_all',
   'ja'                          => 'yes',
 };
 

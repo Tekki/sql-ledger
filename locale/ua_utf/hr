@@ -20,6 +20,7 @@ $self{texts} = {
   'Bcc'                         => 'Прих.копія',
   'Below'                       => 'Нижче',
   'Cannot delete transaction!'  => 'Не вдається видалити проводку!',
+  'Cannot post transaction for a closed period!' => 'Не вдається виставити проводку для закритого періоду!',
   'Cc'                          => 'Копія до',
   'City'                        => 'Місто',
   'Confirm!'                    => 'Підтвердіть!',

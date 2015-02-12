@@ -10,6 +10,7 @@ $self{texts} = {
   'All'                         => 'V¹e',
   'Amount'                      => 'Èástka',
   'Are you sure you want to delete Transaction' => 'Opravdu chcete vymazat transakci?',
+  'Cannot post transaction for a closed period!' => 'Do uzavøeného období nelze úètovat!',
   'Confirm!'                    => 'Podtvrïte!',
   'Continue'                    => 'Pokraèování',
   'Date'                        => 'Datum',

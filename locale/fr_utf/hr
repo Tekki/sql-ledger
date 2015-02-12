@@ -20,6 +20,7 @@ $self{texts} = {
   'Bcc'                         => 'Copie à',
   'Below'                       => 'En dessous',
   'Cannot delete transaction!'  => 'Echec suppression saisie!',
+  'Cannot post transaction for a closed period!' => 'Echec enregistrement la transaction sur un exercice clos!',
   'Cc'                          => 'Copie',
   'City'                        => 'Ville',
   'Confirm!'                    => 'Confirmer !',

@@ -14,6 +14,7 @@ $self{texts} = {
   'Are you sure you want to delete Transaction' => 'żEstá usted seguro de que desea suprimir la transacción?',
   'Bcc'                         => 'Bcc',
   'Cannot delete transaction!'  => 'No puede borrar transacción!',
+  'Cannot post transaction for a closed period!' => 'No se puede registrar una transacción para un periodo cerrado',
   'Cc'                          => 'Cc',
   'Confirm!'                    => 'Confirmar!',
   'Continue'                    => 'Continuar',

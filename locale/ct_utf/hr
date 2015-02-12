@@ -10,6 +10,7 @@ $self{texts} = {
   'All'                         => 'Tots',
   'Amount'                      => 'Total',
   'Are you sure you want to delete Transaction' => 'Segur que voleu esborrar la Transacció',
+  'Cannot post transaction for a closed period!' => 'No es pot registrar una transacció per un període tancat',
   'Confirm!'                    => 'Confirmar!',
   'Continue'                    => 'Continuar',
   'Date'                        => 'Data',

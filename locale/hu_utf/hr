@@ -16,6 +16,7 @@ $self{texts} = {
   'BIC'                         => 'Bank Azonosító Kód',
   'Bcc'                         => 'Titkos másolat',
   'Cannot delete transaction!'  => 'A tranzakciót nem lehet törölni!',
+  'Cannot post transaction for a closed period!' => 'A lezárt időszakban nem lehet tranzakciót rögzíteni!!',
   'Cc'                          => 'Másolat',
   'City'                        => 'Ország',
   'Confirm!'                    => 'Megerősítés:',

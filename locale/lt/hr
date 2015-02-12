@@ -13,6 +13,7 @@ $self{texts} = {
   'Are you sure you want to delete Transaction' => 'Ar Jus tikrai norite iðtrinti operacijà?',
   'Bcc'                         => 'Bcc',
   'Cannot delete transaction!'  => 'Neámanoma iðtrinti operacijos!',
+  'Cannot post transaction for a closed period!' => 'Neámanoma patvirtinti operacijos uþdarajam periodui!',
   'Cc'                          => 'Cc',
   'Confirm!'                    => 'Patvirtinti!',
   'Continue'                    => 'Tæsti',

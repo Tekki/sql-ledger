@@ -11,6 +11,7 @@ $self{texts} = {
   'Are you sure you want to delete Transaction' => 'Ert þú viss um að þú viljir eyða færslunni',
   'Bcc'                         => 'Blint afrit',
   'Cannot delete transaction!'  => 'Get ekki eytt færslu!',
+  'Cannot post transaction for a closed period!' => 'Get ekki bókað færslu á lokað tímabil!',
   'Cc'                          => 'Afrit',
   'Confirm!'                    => 'Staðfesta!',
   'Continue'                    => 'Áfram',

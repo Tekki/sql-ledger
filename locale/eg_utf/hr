@@ -14,6 +14,7 @@ $self{texts} = {
   'Are you sure you want to delete Transaction' => 'هل انت متأكد انك تريد الغاء الحركة',
   'Bcc'                         => 'نسخة غير مرئية',
   'Cannot delete transaction!'  => 'لا يمكن الغاء الحركة',
+  'Cannot post transaction for a closed period!' => 'لا يمكن تسجيل الحركة لفترة مغلقة',
   'Cc'                          => 'نسخة اخرى',
   'City'                        => 'مدينة',
   'Confirm!'                    => 'تاكيد',

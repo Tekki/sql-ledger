@@ -139,13 +139,13 @@ $self{subs} = {
   'zahlungsbelege_stornieren'   => 'add_payment_reversal_batch',
   'beleg_anlegen'               => 'add_voucher',
   'weiter'                      => 'continue',
-  'löschen'                     => 'delete',
+  'löschen'                    => 'delete',
   'unterschriftenmappe_löschen' => 'delete_batch',
-  'alle_abwählen'               => 'deselect_all',
+  'alle_abwählen'              => 'deselect_all',
   'buchen'                      => 'post',
   'beleg_buchen'                => 'post_batch',
   'belege_buchen'               => 'post_batches',
-  'alle_auswählen'              => 'select_all',
+  'alle_auswählen'             => 'select_all',
   'ja'                          => 'yes',
 };
 
