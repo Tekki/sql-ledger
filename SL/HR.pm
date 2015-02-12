@@ -27,7 +27,8 @@ sub get_employee {
   my $notid = "";
   my $rne;
   
-  my %defaults = $form->get_defaults($dbh, \@{['company', 'address', 'tel', 'fax', 'businessnumber', 'precision', 'referenceurl']});
+  my @df = qw(closedto revtrans company address tel fax businessnumber precision referenceurl);
+  my %defaults = $form->get_defaults($dbh, \@df);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   %defaults = $form->get_defaults($dbh, \@{['printer_%']});
@@ -83,22 +84,19 @@ sub get_employee {
   
     # check if employee can be deleted, orphaned
     $form->{status} = "";
-    if (!$form->{employeelogin}) {
-      $query = qq|SELECT count(*) FROM ap
-                  WHERE vendor_id = $form->{id}|;
+    $query = qq|SELECT count(*) FROM ap
+                WHERE vendor_id = $form->{id}|;
+    if (! $dbh->selectrow_array($query)) {
+      $form->{status} = "orphaned";
+    }
+                
+    if (! $form->{status}) {
+      $query = qq|SELECT count(*) FROM jcitems
+                  WHERE employee_id = $form->{id}|;
       if (! $dbh->selectrow_array($query)) {
-	$form->{status} = "orphaned";
-      }
-		  
-      if (! $form->{status}) {
-	$query = qq|SELECT count(*) FROM jcitems
-		    WHERE employee_id = $form->{id}|;
-	if (! $dbh->selectrow_array($query)) {
-	  $form->{status} = "orphaned";
-	}
+        $form->{status} = "orphaned";
       }
     }
-
    
     $query = qq|SELECT *
 		FROM payrate
@@ -177,6 +175,18 @@ sub get_employee {
       $query = qq|SELECT to_char(current_date, 'YYYY')|;
       ($cd) = $dbh->selectrow_array($query);
     }
+
+    if ($form->{trans_id}) {
+      $query = qq|SELECT *
+                  FROM pay_trans
+                  WHERE trans_id = $form->{trans_id}|;
+      my $tth = $dbh->prepare($query);
+      $tth->execute;
+      while ($ref = $tth->fetchrow_hashref(NAME_lc)) {
+        $deduct{$ref->{id}} = $ref->{amount};
+      }
+      $tth->finish;
+    }
     
     $query = qq|SELECT SUM(pt.amount)
 		FROM pay_trans pt
@@ -190,6 +200,8 @@ sub get_employee {
     for $ref (@{ $form->{all_employeededuction} }) {
       $sth->execute($ref->{id});
       ($form->{total}{$ref->{id}}) = $sth->fetchrow_array;
+      $form->{total}{$ref->{id}} -= $deduct{$ref->{id}} if $deduct{$ref->{id}};
+      $form->{total}{$ref->{id}} *= -1;
       $sth->finish;
     }
     
@@ -304,7 +316,7 @@ sub get_employee {
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
-  @{ $fiorm->{"all_paymentmethod"} } = ();
+  @{ $form->{"all_paymentmethod"} } = ();
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     push @{ $form->{"all_paymentmethod"} }, $ref;
   }
@@ -685,10 +697,9 @@ sub employees {
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   my $where = "1 = 1";
+
   $form->{sort} ||= "name";
-  my @sf = qw(name);
-  my $sortorder = $form->sort_order(\@sf);
-  
+
   my $var;
   
   for (qw(name employeenumber notes)) {
@@ -729,8 +740,11 @@ sub employees {
 		 LEFT JOIN address ad ON (ad.trans_id = e.id)
 		 LEFT JOIN bank bk ON (bk.id = e.id)
 		 LEFT JOIN acsrole r ON (r.id = e.acsrole_id)
-                 WHERE $where
-		 ORDER BY $sortorder|;
+                 WHERE $where|;
+
+  my @sf = qw(name);
+  my %ordinal = $form->ordinal_order($dbh, $query);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -803,14 +817,13 @@ sub payroll_links {
   $form->remove_locks($myconfig, $dbh);
   
   my @var;
-
-  my %defaults = $form->get_defaults($dbh, \@{['company', 'precision', 'namesbynumber', 'referenceurl']});
+  
+  my @df = qw(closedto revtrans company precision namesbynumber referenceurl);
+  my %defaults = $form->get_defaults($dbh, \@df);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
   
   my $sortorder = "name";
-  if ($defaults{namesbynumber}) {
-     $sortorder = "employeenumber";
-  }
+  $sortorder = "employeenumber" if $form->{namesbynumber};
 
   my $query = qq|SELECT *
                  FROM employee
@@ -1073,26 +1086,26 @@ sub payroll_transactions {
 
   my $where = "1 = 1";
   my $acwhere = "1 = 1";
-  my $sortorder = "employee" || $form->{sort};
 
-  my $null;
+  $form->{sort} ||= "employee";
+
   my $id;
  
   $form->report_level($myconfig, $dbh);
   
   if ($form->{employee}) {
-    ($null, $id) = split /--/, $form->{employee};
+    (undef, $id) = split /--/, $form->{employee};
     $where .= qq|
                 AND v.id = $id|;
   }
   
   if ($form->{department}) {
-    ($null, $id) = split /--/, $form->{department};
+    (undef, $id) = split /--/, $form->{department};
     $where .= qq|
                 AND a.department_id = $id|;
   }
   if ($form->{paymentmethod}) {
-    ($null, $id) = split /--/, $form->{paymentmethod};
+    (undef, $id) = split /--/, $form->{paymentmethod};
     $where .= qq|
                 AND a.paymentmethod_id = $id|;
   }
@@ -1107,13 +1120,17 @@ sub payroll_transactions {
                  FROM pay_trans pt
 		 JOIN ap a ON (a.id = pt.trans_id)
 		 JOIN vendor v ON (v.id = a.vendor_id)
-		 WHERE $where
-		 ORDER BY $sortorder|;
+		 WHERE $where|;
+
+  my @sf = qw(employee);
+  my %ordinal = $form->ordinal_order($dbh, $query);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
+
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   # project ?
-  ($null, $id) = split /--/, $form->{projectnumber};
+  (undef, $id) = split /--/, $form->{projectnumber};
   $query = qq|SELECT trans_id
 	      FROM acc_trans
 	      WHERE project_id = $id

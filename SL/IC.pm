@@ -574,22 +574,16 @@ sub retrieve_assemblies {
   $where .= qq| AND p.obsolete = '0'
                 AND p.project_id IS NULL|;
 
-  my %ordinal = ( 'partnumber' => 2,
-                  'description' => 3,
-		  'bin' => 4
-		);
-
-  my @sf = qw(partnumber description bin);
-  my $sortorder = $form->sort_order(\@sf, \%ordinal);
-  
-  
   # retrieve assembly items
   my $query = qq|SELECT p.id, p.partnumber, p.description,
                  p.bin, p.onhand, p.rop
                  FROM parts p
  		 WHERE $where
-		 AND p.assembly = '1'
-		 ORDER BY $sortorder|;
+		 AND p.assembly = '1'|;
+
+  my @sf = qw(partnumber description bin);
+  my %ordinal = $form->ordinal_order($dbh, $query);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -980,25 +974,7 @@ sub all_parts {
     }
   }
 
-  my %ordinal = ( 'partnumber' => 2,
-                  'description' => 3,
-		  'bin' => 6,
-		  'priceupdate' => 13,
-		  'drawing' => 15,
-		  'microfiche' => 16,
-		  'partsgroup' => 18,
-		  'partsgroupcode' => 19,
-		  'toolnumber' => 25,
-		  'countryorigin' => 26,
-		  'tariff_hscode' => 27,
-		  'barcode' => 28,
-		  'make' => 29,
-		  'model' => 30,
-		  'assemblypartnumber' => 31
-		);
-  
   my @sf = qw(partnumber description);
-  my $sortorder = $form->sort_order(\@sf, \%ordinal);
 
   my $query;
   
@@ -1028,8 +1004,7 @@ sub all_parts {
 	      LEFT JOIN chart c3 ON (c3.id = p.expense_accno_id)
 	      $makemodeljoin
 	      $invoicejoin
-  	      WHERE $where
-	      ORDER BY $sortorder|;
+  	      WHERE $where|;
 
   # redo query for components report
   if ($form->{searchitems} eq 'component') {
@@ -1057,29 +1032,6 @@ sub all_parts {
     push @sf, "invnumber" if ($form->{bought} || $form->{sold});
     push @sf, "ordnumber" if ($form->{onorder} || $form->{ordered});
     push @sf, "quonumber" if ($form->{rfq} || $form->{quoted});
-
-    %ordinal = ( 'partnumber' => 2,
-                 'description' => 3,
-		 'serialnumber' => 4,
-		 'bin' => 7,
-		 'priceupdate' => 14,
-		 'partsgroup' => 19,
-		 'partsgroupcode' => 20,
-		 'invnumber' => 21,
-		 'ordnumber' => 22,
-		 'quonumber' => 23,
-		 'name' => 25,
-		 'employee' => 26,
-		 'curr' => 27,
-		 'toolnumber' => 30,
-		 'countryorigin' => 31,
-		 'tariff_hscode' => 32,
-		 'barcode' => 33,
-		 'make' => 34,
-		 'model' => 35
-	       );
-    
-    $sortorder = $form->sort_order(\@sf, \%ordinal);
 
     my $union = "";
     $query = "";
@@ -1360,11 +1312,10 @@ sub all_parts {
 
       }
     }
-
-    $query .= qq|
-		 ORDER BY $sortorder|;
-
   }
+
+  my %ordinal = $form->ordinal_order($dbh, $query);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -1373,7 +1324,7 @@ sub all_parts {
               FROM chart c
 	      JOIN partstax pt ON (pt.chart_id = c.id)
 	      WHERE pt.parts_id = ?
-	      ORDER BY accno|;
+	      ORDER BY c.accno|;
   my $pth = $dbh->prepare($query) || $form->dberror($query);
   
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
@@ -1495,7 +1446,7 @@ sub include_assembly {
     $sortorder = "a.id";
   } else {
     @sf = grep !/$form->{sort}/, @sf;
-    $sortorder = "$form->{sort} $form->{direction}, ". join ',', @sf;
+    $sortorder = "p.$form->{sort} $form->{direction}, ". join ',p.', @sf;
   }
   
   @sf = ();
@@ -1846,7 +1797,7 @@ sub get_vc {
 		  FROM $form->{vc} c
 		  JOIN oe o ON (o.$form->{vc}_id = c.id)
 		  WHERE o.closed = '0'
-		  ORDER BY name|;
+		  ORDER BY c.name|;
 
       my $sth = $dbh->prepare($query);
       $sth->execute || $form->dberror($query);
@@ -1910,18 +1861,6 @@ sub so_requirements {
   $where .= " AND o.reqdate >= '$form->{reqdatefrom}'" if $form->{reqdatefrom};
   $where .= " AND o.reqdate <= '$form->{reqdateto}'" if $form->{reqdateto};
   
-  my @sf = qw(partnumber ordnumber reqdate);
-  my %ordinal = ( 'partnumber' => 1,
- 	          'description' => 10,
-	          'ordnumber' => 7,
-	          'name' => 4,
-	          'customernumber' => 5,
-	          'vendornumber' => 5,
-	          'reqdate' => 8
-	        );
-  
-  my $sortorder = $form->sort_order(\@sf, \%ordinal);
- 
   my $query = qq|SELECT p.partnumber, p.id as parts_id,
                  c.id AS $form->{vc}_id, c.name, c.$form->{vc}number,
 		 o.id, o.ordnumber, o.reqdate,
@@ -1930,8 +1869,12 @@ sub so_requirements {
 		 JOIN orderitems oi ON (oi.trans_id = o.id)
 		 JOIN parts p ON (p.id = oi.parts_id)
 		 JOIN $form->{vc} c ON (o.$form->{vc}_id = c.id)
-		 WHERE $where
-		 ORDER BY $sortorder|;
+		 WHERE $where|;
+
+  my @sf = qw(partnumber ordnumber reqdate);
+  my %ordinal = $form->ordinal_order($dbh, $query);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
+
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 

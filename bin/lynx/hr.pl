@@ -452,11 +452,11 @@ sub prepare_employee {
 	$_ = shift @member;
 	next if ! /\[$form->{employeelogin}\@$myconfig{dbname}\]/;
 	do {
-          if (/pin/) {
+          if (/^tan=/) {
             chomp;
-            ($null, $form->{pin}) = split /=/, $_, 2;
+            ($null, $form->{tan}) = split /=/, $_, 2;
           }
-	  if (/password/) {
+	  if (/^password=/) {
             chomp;
 	    ($null, $form->{employeepassword}) = split /=/, $_, 2;
 	  }
@@ -542,7 +542,7 @@ sub employee_header {
 
   if ($form->{admin}) {
     $sales = ($form->{sales}) ? "checked" : "";
-    $pin = ($form->{pin}) ? "checked" : "";
+    $tan = ($form->{tan}) ? "checked" : "";
     
     if ($form->{selectacsrole}) {
       $login = qq|
@@ -565,8 +565,8 @@ sub employee_header {
 		<td><input name=employeepassword size=20 value="$form->{employeepassword}"></td>
 	      </tr>
 	      <tr>
-		<th align=right>|.$locale->text('E-mail PIN').qq|</th>
-		<td><input name=pin class=checkbox type=checkbox value=1 $pin></td>
+		<th align=right>|.$locale->text('E-mail TAN').qq|</th>
+		<td><input name=tan class=checkbox type=checkbox value=1 $tan></td>
 	      </tr>
 	      <tr>
 		<th align=right>|.$locale->text('Sales').qq|</th>
@@ -592,10 +592,10 @@ sub employee_header {
 	      </tr>
 |;
     }
-    if ($form->{pin}) {
+    if ($form->{tan}) {
       $login .= qq|
 	      <tr>
-		<th align=right nowrap>|.$locale->text('E-mail PIN').qq|</th>
+		<th align=right nowrap>|.$locale->text('Use TAN').qq|</th>
 		<td>x</td>
 	      </tr>
 |;
@@ -609,7 +609,7 @@ sub employee_header {
 |;
     }
 
-    $form->hide_form(qw(acsrole employeelogin sales pin employeepassword));
+    $form->hide_form(qw(acsrole employeelogin sales tan employeepassword));
   }
 
   print qq|
@@ -1150,7 +1150,7 @@ sub save_memberfile {
     srand( time() ^ ($$ + ($$ << 15)) );
     
     if (@{ $member{$oldlogin} }) {
-      @memberlogin = grep !/^(name=|email=|password=|pin=)/, @{ $member{$oldlogin} };
+      @memberlogin = grep !/^(name=|email=|password=|tan=)/, @{ $member{$oldlogin} };
       ($oldemployeepassword) = grep /^password=/, @{ $member{$oldlogin} };
       pop @memberlogin;
 
@@ -1170,7 +1170,7 @@ sub save_memberfile {
 	}
       }
 
-      for (qw(name email pin)) { push @memberlogin, "$_=$form->{$_}\n" if $form->{$_} }
+      for (qw(name email tan)) { push @memberlogin, "$_=$form->{$_}\n" if $form->{$_} }
 
       @{ $member{$employeelogin} } = ();
       
@@ -1180,7 +1180,7 @@ sub save_memberfile {
       
     } else {
       for (qw(company dateformat dbconnect dbdriver dbname dbhost dboptions dbpasswd dbuser numberformat)) { $m{$_} = $myconfig{$_} }
-      for (qw(name email pin)) { $m{$_} = $form->{$_} }
+      for (qw(name email tan)) { $m{$_} = $form->{$_} }
 
       $m{dbpasswd} = pack 'u', $myconfig{dbpasswd};
       chop $m{dbpasswd};
@@ -1365,6 +1365,8 @@ sub prepare_payroll {
     $form->{selectemployee} = "\n";
     for (@{ $form->{all_employee} }) { $form->{selectemployee} .= qq|$_->{name}--$_->{id}\n| }
   }
+
+  $form->{locked} = ($form->{revtrans}) ? '1' : ($form->datetonum(\%myconfig, $form->{transdate}) <= $form->{closedto});
 
   if (! $form->{readonly}) {
     $form->{readonly} = 1 if $myconfig{acs} =~ /Payroll--Add Transaction/;
@@ -1617,7 +1619,9 @@ sub payroll_header {
 
 sub payroll_footer {
 
-  $form->hide_form(qw(oldemployee db path login callback));
+  $form->hide_form(qw(closedto oldemployee db path login callback));
+
+  $transdate = $form->datetonum(\%myconfig, $form->{transdate});
   
   if ($form->{readonly}) {
 
@@ -1641,6 +1645,14 @@ sub payroll_footer {
 
     if (! $form->{id}) {
       for ('Delete', 'Post as new', 'Print and Post as new') { delete $button{$_} }
+    }
+
+    if ($form->{locked} || $transdate <= $form->{closedto}) {
+      for ("Preview", "Print", "Post", "Print and Post", "Delete") { delete $button{$_} }
+    }
+
+    if (!$latex) {
+      for ("Preview", "Print and Post", "Print and Post as new") { delete $button{$_} }
     }
 
     for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
@@ -1669,11 +1681,13 @@ sub update_payroll {
   $ap = $form->{ap};
   $pa = $form->{payment};
   $pm = $form->{paymentmethod};
-  $id = $form->{id};
-  
+  $form->{trans_id} = $id = $form->{id};
+
   ($employee, $form->{id}) = split /--/, $form->{employee};
   HR->get_employee(\%myconfig, \%$form, 1);
-  
+
+  $form->{locked} = ($form->{revtrans}) ? '1' : ($form->datetonum(\%myconfig, $form->{transdate}) <= $form->{closedto});
+
   $form->{oldemployee} = $form->{employee};
   $form->{id} = $id;
 
@@ -1748,27 +1762,26 @@ sub update_payroll {
 	  if (($ref->{trans_id} == $ed->{id}) && $ok) {
             $fromwithholding = 0;
             $fromincome = 0;
+            $form->{"deduct_$i"} = $ref->{amount};
 
-            if ($#{$form->{deduct}{$ref->{trans_id}}}) {
-	      $j = 0;
-	      for (@{ $form->{deduct}{$ref->{trans_id}} }) {
-		if ($form->{deduct}{$ed->{id}}[$j]{trans_id} == $ref->{trans_id}) {
-		  $form->{deduct}{$ed->{id}}[$j]{percent} ||= 1;
-		  if ($form->{deduct}{$ed->{id}}[$j]{withholding}) {
-		    $fromwithholding += $temp{$form->{deduct}{$ed->{id}}[$j]{id}} * $form->{deduct}{$ed->{id}}[$j]{percent};
-		  } else {
-		    $fromincome += $temp{$form->{deduct}{$ed->{id}}[$j]{id}} * $form->{deduct}{$ed->{id}}[$j]{percent};
-		  }
-		}
-		$j++;
-	      }
-	    }
+            $j = 0;
+            for (@{ $form->{deduct}{$ref->{trans_id}} }) {
+              if ($form->{deduct}{$ed->{id}}[$j]{trans_id} == $ref->{trans_id}) {
+                $form->{deduct}{$ed->{id}}[$j]{percent} ||= 1;
+                if ($form->{deduct}{$ed->{id}}[$j]{withholding}) {
+                  $fromwithholding += $temp{$form->{deduct}{$ed->{id}}[$j]{id}} * $form->{deduct}{$ed->{id}}[$j]{percent};
+                } else {
+                  $fromincome += $temp{$form->{deduct}{$ed->{id}}[$j]{id}} * $form->{deduct}{$ed->{id}}[$j]{percent};
+                }
+              }
+              $j++;
+            }
 
-	    if ($form->{payrolldeduction}{$ed->{id}}{basedon}) {
-	      $amount = $temp{$form->{payrolldeduction}{$ed->{id}}{basedon}} - $fromincome;
-	    } else {
-	      $amount = $temp{gross} - $fromincome;
-	    }
+            if ($form->{payrolldeduction}{$ed->{id}}{basedon}) {
+              $amount = $temp{$form->{payrolldeduction}{$ed->{id}}{basedon}} - $fromincome;
+            } else {
+              $amount = $temp{gross} - $fromincome;
+            }
 
 	    if (($amount * $form->{payperiod}) > $ref->{above}) {
 	      if (($amount * $form->{payperiod}) < $ref->{below}) {
@@ -1853,14 +1866,19 @@ sub post {
 
   $form->error($locale->text('Employee missing!')) unless $employee_id;
   $form->isblank("transdate", $locale->text('Date missing!'));
+
+  $transdate = $form->datetonum(\%myconfig, $form->{transdate});
+  $form->error($locale->text('Cannot post transaction for a closed period!')) if ($transdate <= $form->{closedto});
   
   if (! $form->{repost}) {
     if ($form->{id}) {
       &repost;
       exit;
+    } else {
+      delete $form->{invnumber};
     }
   }
-    
+
   if (HR->post_transaction(\%myconfig, \%$form)) {
     $form->redirect($locale->text('Transaction posted!'));
   }

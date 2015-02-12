@@ -1108,8 +1108,6 @@ sub create_form {
   $form->{rowcount}-- if $form->{rowcount};
   $form->{rowcount} = 0 if ! $form->{"$form->{vc}_id"};
 
-  $locale = new Locale "$myconfig{countrycode}", "oe";
-
   do "$form->{path}/$form->{script}";
 
   for ("$form->{vc}", "currency") { $form->{"select$_"} = "" }

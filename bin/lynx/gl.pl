@@ -1288,6 +1288,13 @@ sub form_header {
 
 sub form_footer {
 
+  $difference = $form->{totaldebit} - $form->{totalcredit};
+  if ($difference > 0) {
+    $form->{differencecredit} = $form->format_amount(\%myconfig, $difference, $form->{precision}, "&nbsp;");
+  } else {
+    $form->{differencedebit} = $form->format_amount(\%myconfig, $difference * -1, $form->{precision}, "&nbsp;");
+  }
+
   for (qw(totaldebit totalcredit)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, $form->{precision}, "&nbsp;") }
 
 
@@ -1301,6 +1308,22 @@ sub form_footer {
 |;
   }
 
+  if ($difference) {
+    $difference = qq|
+        <tr>
+          <th>&nbsp;</th>
+	  $fx_transaction
+          <th align=right>$form->{differencedebit}</th>
+          <th align=right>$form->{differencecredit}</th>
+          <th>&nbsp;</th>
+          <th>&nbsp;</th>
+	  $project
+        </tr>
+|;
+  } else {
+    $difference = "";
+  }
+
   print qq|
         <tr class=listtotal>
 	  <th>&nbsp;</th>
@@ -1311,6 +1334,7 @@ sub form_footer {
 	  <th>&nbsp;</th>
 	  $project
         </tr>
+        $difference
       </table>
     </td>
   </tr>

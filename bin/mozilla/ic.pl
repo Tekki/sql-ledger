@@ -2048,7 +2048,7 @@ sub print_ {
     $ref->{ship} = $ref->{onhand};
 
     for (qw(sell sellprice listprice lastcost avgcost)) { $ref->{$_} = $form->format_amount(\%myconfig, $ref->{$_}, $form->{precision}) }
-    for (qw(qty rop)) { $ref->{$_} = $form->format_amount(\%myconfig, $ref->{$_}) }
+    for (qw(qty rop ship onhand weight)) { $ref->{$_} = $form->format_amount(\%myconfig, $ref->{$_}) }
 
     # build arrays
     for (@columns) {

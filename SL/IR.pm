@@ -1499,7 +1499,7 @@ sub reverse_invoice {
 	            FROM invoice i
 		    WHERE i.parts_id = $ref->{parts_id}
 		    AND i.allocated < 0
-		    ORDER BY trans_id DESC|;
+		    ORDER BY i.trans_id DESC|;
 	my $sth = $dbh->prepare($query);
 	$sth->execute || $form->dberror($query);
 
@@ -1548,7 +1548,7 @@ sub reverse_invoice {
 	            FROM invoice i
 		    WHERE i.parts_id = $ref->{parts_id}
 		    AND i.allocated > 0
-		    ORDER BY trans_id DESC|;
+		    ORDER BY i.trans_id DESC|;
 	my $sth = $dbh->prepare($query);
 	$sth->execute || $form->dberror($query);
 

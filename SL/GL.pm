@@ -544,21 +544,6 @@ sub transactions {
 
   my $false = ($myconfig->{dbdriver} =~ /Pg/) ? FALSE : q|'0'|;
 
-  my %ordinal = ( id => 1,
-                  reference => 4,
-		  description => 5,
-                  transdate => 6,
-                  source => 7,
-                  accno => 9,
-		  department => 15,
-		  memo => 16,
-		  lineitem => 19,
-		  name => 20,
-		  vcnumber => 21);
-  
-  my @sf = qw(id transdate reference accno);
-  my $sortorder = $form->sort_order(\@sf, \%ordinal);
-  
   my $query = qq|SELECT g.id, 'gl' AS type, $false AS invoice, g.reference,
                  g.description, ac.transdate, ac.source,
 		 ac.amount, c.accno, c.gifi_accno, g.notes, c.link,
@@ -605,8 +590,11 @@ sub transactions {
 		 JOIN vendor ct ON (a.vendor_id = ct.id)
 		 JOIN address ad ON (ad.trans_id = ct.id)
 		 LEFT JOIN department d ON (d.id = a.department_id)
-		 WHERE $apwhere
-	         ORDER BY $sortorder|;
+		 WHERE $apwhere|;
+
+  my @sf = qw(id transdate reference accno);
+  my %ordinal = $form->ordinal_order($dbh, $query);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -842,7 +830,7 @@ sub transaction {
 	        LEFT JOIN project p ON (p.id = ac.project_id)
 		LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 	        WHERE ac.trans_id = $form->{id}
-	        ORDER BY accno|;
+	        ORDER BY c.accno|;
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
     

@@ -723,9 +723,9 @@ sub assembly_details {
   my $sortorder = "";
 
   if ($form->{grouppartsgroup}) {
-    $sortorder = qq|ORDER BY pg.partsgroup, a.id|;
+    $sortorder = qq| ORDER BY pg.partsgroup, a.id|;
   } else {
-    $sortorder = qq|ORDER BY a.id|;
+    $sortorder = qq| ORDER BY a.id|;
   }
   
   my $query = qq|SELECT p.partnumber, p.description, p.unit, a.qty,
@@ -2296,8 +2296,7 @@ sub price_matrix_query {
 	      AND p.pricegroup_id = 0
 	      AND p.parts_id = ?
 
-	      ORDER BY customer_id DESC, pricegroup_id DESC, pricebreak
-	      
+	      ORDER BY 2 DESC, 3 DESC, 4
 	      |;
   $dbh->prepare($query) || $form->dberror($query);
 
@@ -2473,7 +2472,7 @@ sub generate_invoice {
 	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$form->{language_code}')
 	      WHERE c.link LIKE '%AR_tax%'
 	      AND (t.validto >= '$form->{transdate}' OR t.validto IS NULL)
-	      ORDER BY accno, validto|;
+	      ORDER BY c.accno, t.validto|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 

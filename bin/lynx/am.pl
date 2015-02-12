@@ -2903,7 +2903,7 @@ sub save_preferences {
     }
   }
   $form->{password} = $form->{new_password};
-  $form->{pin} = $myconfig{pin};
+  $form->{tan} = $myconfig{tan};
 
   if (AM->save_preferences(\%$form, $memberfile, $userspath)) {
     $form->redirect($locale->text('Preferences saved!'));
