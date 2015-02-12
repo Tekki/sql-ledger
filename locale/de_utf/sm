@@ -1,0 +1,25 @@
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Beginning date'              => 'Anfangsdatum',
+  'Continue'                    => 'Weiter',
+  'Date missing'                => 'Datum fehlt',
+  'Delete Open Invoices'        => 'Offene Rechnungen löschen',
+  'Deleting Invoices ... '      => 'Lösche Rechnungen ...',
+  'From'                        => 'Von',
+  'Repost Invoices'             => 'Rechnungen neu posten',
+  'To'                          => 'An',
+  'done'                        => 'fertig',
+  'please wait'                 => 'bitte warten',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'delete_invoices'             => 'delete_invoices',
+  'do_delete_invoices'          => 'do_delete_invoices',
+  'do_repost_invoices'          => 'do_repost_invoices',
+  'repost_invoices'             => 'repost_invoices',
+};
+
+1;
+

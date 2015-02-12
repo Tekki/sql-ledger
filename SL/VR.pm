@@ -89,19 +89,6 @@ sub list_batches {
 	      LEFT JOIN employee e ON (a.employee_id = e.id)
 	      |;
 
-  my %ordinal = ( id => 1,
-                  batchnumber => 2,
-		  description => 3,
-		  transdate => 4,
-		  apprdate => 5,
-		  employee => 7
-		);
-
-  
-  my @sf = (batchnumber, transdate, apprdate);
-  push @sf, "employee" if $form->{l_employee};
-  my $sortorder = $form->sort_order(\@sf, \%ordinal);
-
   my $where = "1 = 1";
   $where .= " AND a.batch = '$form->{batch}'" if $form->{batch};
 
@@ -126,9 +113,12 @@ sub list_batches {
     $where .= " AND a.apprdate IS NULL";
   }
 
-  $query .= "
-             WHERE $where
-             ORDER by $sortorder";
+  $query .= " WHERE $where";
+
+  my @sf = (batchnumber, transdate, apprdate);
+  push @sf, "employee" if $form->{l_employee};
+  my %ordinal = $form->ordinal_order($dbh, $query);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -216,16 +206,6 @@ sub list_vouchers {
   $form->remove_locks($myconfig, $dbh, 'br');
   $form->create_lock($myconfig, $dbh, $form->{batchid}, 'br');
   
-  my %ordinal = ( id => 1,
-                  invnumber => 2,
-		  name => 3,
-		  vendornumber => 4,
-		  vouchernumber => 6
-		);
-
-  my @sf = (vouchernumber);
-  my $sortorder = $form->sort_order(\@sf, \%ordinal);
-
   if ($form->{batch} eq 'ap') {
     
     $query = qq|SELECT a.id, a.invnumber, v.name, v.vendornumber,
@@ -252,8 +232,7 @@ sub list_vouchers {
 		WHERE vr.br_id = $form->{batchid}
 		AND c.link LIKE '%AP_paid%'
 		GROUP BY vr.id, v.name, v.$form->{vc}number, vr.vouchernumber,
-		a.$form->{vc}_id
-                ORDER by $sortorder|;
+		a.$form->{vc}_id|;
 		
   } elsif ($form->{batch} eq 'payment_reversal') {
 
@@ -273,8 +252,7 @@ sub list_vouchers {
 		WHERE vr.br_id = $form->{batchid}
 		AND c.link LIKE '%AP_paid%'
 		GROUP BY vr.id, v.name, v.$form->{vc}number, vr.vouchernumber,
-		a.$form->{vc}_id, ac.source
-                ORDER by $sortorder|;
+		a.$form->{vc}_id, ac.source|;
 
   } elsif ($form->{batch} eq 'gl') {
     
@@ -286,10 +264,13 @@ sub list_vouchers {
 		WHERE vr.br_id = $form->{batchid}
 		AND ac.amount >= 0
 		GROUP BY g.id, g.reference, g.description, vr.id,
-		vr.vouchernumber
-                ORDER by $sortorder|;
+		vr.vouchernumber|;
 		 
   }
+
+  my @sf = (vouchernumber);
+  my %ordinal = $form->ordinal_order($dbh, $query);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -609,7 +590,7 @@ sub payment_reversal {
                  FROM chart c
 		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 		 WHERE c.link LIKE '%AP_paid%'
-		 ORDER BY accno|;
+		 ORDER BY c.accno|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 

@@ -21,14 +21,7 @@ sub projects {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  $form->{sort} = "projectnumber" unless $form->{sort};
-  my @sf = ($form->{sort});
-  my %ordinal = ( projectnumber	=> 2,
-                  description	=> 3,
-		  startdate => 4,
-		  enddate => 5,
-		);
-  my $sortorder = $form->sort_order(\@sf, \%ordinal);
+  $form->{sort} ||= "projectnumber";
 
   my $query;
   my $where = "WHERE 1=1";
@@ -88,9 +81,10 @@ sub projects {
     $where .= qq| AND pr.enddate <= current_date|;
   }
 
-  $query .= qq|
-		 $where
-		 ORDER BY $sortorder|;
+  $query .= qq| $where|;
+  my @sf = ($form->{sort});
+  my %ordinal = $form->ordinal_order($dbh, $query);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
 
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -239,20 +233,18 @@ sub list_stock {
     $where .= " AND lower(pr.description) LIKE '$var'";
   }
   
-  $form->{sort} = "projectnumber" unless $form->{sort};
-  my @sf = ($form->{sort});
-  my %ordinal = ( projectnumber => 2,
-                  description   => 3
-		);
-  my $sortorder = $form->sort_order(\@sf, \%ordinal);
+  $form->{sort} ||= "projectnumber";
  
   my $query = qq|SELECT pr.*, p.partnumber
 	         FROM project pr
 		 JOIN parts p ON (p.id = pr.parts_id)
-		 WHERE $where
-                 ORDER BY $sortorder|;
+		 WHERE $where|;
 
-  $sth = $dbh->prepare($query);
+  my @sf = ($form->{sort});
+  my %ordinal = $form->ordinal_order($dbh, $query);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
+
+  my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
@@ -273,13 +265,7 @@ sub jobs {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
  
-  $form->{sort} = "projectnumber" unless $form->{sort};
-  my @sf = ($form->{sort});
-  my %ordinal = ( projectnumber => 2,
-                  description   => 3,
-		  startdate => 4,
-		);
-  my $sortorder = $form->sort_order(\@sf, \%ordinal);
+  $form->{sort} ||= "projectnumber";
   
   my $query = qq|SELECT pr.*, p.partnumber, p.onhand, c.name
 	         FROM project pr
@@ -326,10 +312,11 @@ sub jobs {
 				    )|;
   }
 
-  $query .= qq|
-                 ORDER BY $sortorder|;
+  my @sf = ($form->{sort});
+  my %ordinal = $form->ordinal_order($dbh, $query);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
 
-  $sth = $dbh->prepare($query);
+  my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
@@ -503,8 +490,7 @@ sub get_customer {
 		WHERE id = $form->{customer_id}|;
     }
 
-    $query .= qq|
-		ORDER BY name|;
+    $query .= qq| ORDER BY name|;
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
 
@@ -650,7 +636,7 @@ sub stock_assembly {
               JOIN parts p ON (p.id = j.parts_id)
               WHERE j.project_id = ?
 	      AND j.checkedin <= '$form->{stockingdate}'
-	      ORDER BY parts_id|;
+	      ORDER BY j.parts_id|;
   my $jth = $dbh->prepare($query) || $form->dberror($query);
 
   $query = qq|INSERT INTO assembly (id, parts_id, qty, bom, adj)
@@ -891,8 +877,6 @@ sub partsgroups {
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
   
   $form->{sort} ||= "partsgroup";
-  my @sf = qw(partsgroup);
-  my $sortorder = $form->sort_order(\@sf);
 
   my $query = qq|SELECT g.*
                  FROM partsgroup g|;
@@ -908,10 +892,8 @@ sub partsgroups {
     $where .= " AND lower(code) LIKE '$var'";
   }
 
-  $query .= qq|
-               WHERE $where
-	       ORDER BY $sortorder|;
-  
+  $query .= qq| WHERE $where|;
+
   if ($form->{status} eq 'orphaned') {
     $query = qq|SELECT g.*
                 FROM partsgroup g
@@ -921,11 +903,14 @@ sub partsgroups {
                 SELECT g.*
 	        FROM partsgroup g
 	        JOIN parts p ON (p.partsgroup_id = g.id)
-	        WHERE $where
-		ORDER BY $sortorder|;
+	        WHERE $where|;
   }
 
-  $sth = $dbh->prepare($query);
+  my @sf = qw(partsgroup);
+  my %ordinal = $form->ordinal_order($dbh, $query);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
+
+  my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   my $i = 0;
@@ -1019,10 +1004,8 @@ sub pricegroups {
   my %defaults = $form->get_defaults($dbh, \@{['company']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
-  $form->{sort} = "pricegroup" unless $form->{sort};
-  my @sf = (pricegroup);
-  my $sortorder = $form->sort_order(\@sf);
-
+  $form->{sort} ||= "pricegroup";
+  
   my $query = qq|SELECT g.*
                  FROM pricegroup g|;
 
@@ -1032,9 +1015,7 @@ sub pricegroups {
     $var = $form->like(lc $form->{pricegroup});
     $where .= " AND lower(pricegroup) LIKE '$var'";
   }
-  $query .= qq|
-               WHERE $where
-	       ORDER BY $sortorder|;
+  $query .= qq| WHERE $where|;
   
   if ($form->{status} eq 'orphaned') {
     $query = qq|SELECT g.*
@@ -1042,11 +1023,14 @@ sub pricegroups {
 		WHERE $where
 		AND g.id NOT IN (SELECT DISTINCT pricegroup_id
 		                 FROM partscustomer
-				 WHERE pricegroup_id > 0)
-		ORDER BY $sortorder|;
+				 WHERE pricegroup_id > 0)|;
   }
 
-  $sth = $dbh->prepare($query);
+  my @sf = (pricegroup);
+  my %ordinal = $form->ordinal_order($dbh, $query);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
+
+  my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   my $i = 0;
@@ -1538,7 +1522,7 @@ sub get_jcitems {
               FROM tax t
 	      JOIN chart c ON (c.id = t.chart_id)
 	      $where
-	      ORDER BY accno, validto|;
+	      ORDER BY c.accno, t.validto|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {

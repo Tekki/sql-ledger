@@ -620,8 +620,6 @@ sub search {
     
   my $where = "1 = 1";
   $form->{sort} = ($form->{sort}) ? $form->{sort} : "name";
-  my @sf = qw(name);
-  my $sortorder = $form->sort_order(\@sf);
 
   my $ref;
   my $var;
@@ -864,10 +862,16 @@ sub search {
       $sortorder .= ", invid";
   }
 
-  $query .= qq|
-		 ORDER BY $sortorder|;
-		 
-  my $sth = $dbh->prepare($query);
+  my @sf = qw(name);
+  my %ordinal = $form->ordinal_order($dbh, $query);
+  my $sortorder = $form->sort_order(\@sf, \%ordinal);
+  if ($sortorder) {
+    $sortorder .= ", $ordinal{invid}" if $ordinal{invid};
+  }
+
+  $query .= qq| ORDER BY $sortorder|;
+
+  $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   # accounts
@@ -936,9 +940,6 @@ sub get_history {
   my $query;
   my $where = "1 = 1";
   $form->{sort} = "partnumber" unless $form->{sort};
-  $form->{sort} =~ s/;//g;
-  my $sortorder = $form->{sort};
-  my %ordinal = ();
   my $var;
   my $table;
 
@@ -1044,17 +1045,6 @@ sub get_history {
     $where .= qq| AND a.quotation = '1'|;
   }
 
-
-  %ordinal = ( partnumber	=> 8,
-	       description	=> 12,
-	       "$deldate"	=> 16,
-	       serialnumber	=> 17,
-	       projectnumber	=> 18
-	      );
-
-  $form->{direction} =~ s/;//g;
-  $sortorder = "2 $form->{direction}, 1, $ordinal{$sortorder} $form->{direction}";
-    
   $query = qq|SELECT ct.id AS ctid, ct.name, ad.address1,
 	      ad.address2, ad.city, ad.state,
 	      p.id AS pid, p.partnumber, a.id AS invid,
@@ -1072,8 +1062,10 @@ sub get_history {
 	      JOIN parts p ON (p.id = i.parts_id)
 	      LEFT JOIN project pr ON (pr.id = i.project_id)
 	      LEFT JOIN employee e ON (e.id = a.employee_id)
-	      WHERE $where
-	      ORDER BY $sortorder|;
+	      WHERE $where|;
+
+  my %ordinal = $form->ordinal_order($dbh, $query);
+  $sortorder = "2 $form->{direction}, 1, $ordinal{$form->{sort}} $form->{direction}";
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -1126,7 +1118,7 @@ sub pricelist {
 		JOIN parts p ON (p.id = m.parts_id)
 		LEFT JOIN partsgroup pg ON (pg.id = p.partsgroup_id)
 		WHERE m.customer_id = $form->{id}
-		ORDER BY partnumber|;
+		ORDER BY p.partnumber|;
   }
   if ($form->{db} eq 'vendor') {
     $query = qq|SELECT DISTINCT pg.id, pg.partsgroup
@@ -1259,7 +1251,7 @@ sub retrieve_item {
 		 FROM parts p
 		 LEFT JOIN partsgroup pg ON (pg.id = p.partsgroup_id)
 		 $where
-		 ORDER BY partnumber|;
+		 ORDER BY p.partnumber|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
   my $ref;

@@ -1,0 +1,50 @@
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Accounting Menu'             => 'Buchhaltungsmenü',
+  'Add Column'                  => 'Spalte hinzufügen',
+  'Align'                       => 'Ausrichten',
+  'Delete Column'               => 'Spalte löschen',
+  'Delete Report'               => 'Bericht löschen',
+  'Description'                 => 'Beschreibung',
+  'Edit Column'                 => 'Spalte bearbeiten',
+  'Edit Column Header'          => 'Spalten Header bearbeiten',
+  'Edit Column Total'           => 'Spalten Summe bearbeiten',
+  'Fill'                        => 'Füllen',
+  'Fixed value'                 => 'Gesetzter Wert',
+  'Heading'                     => 'Überschrift',
+  'Left'                        => 'Links',
+  'Public'                      => 'Öffentlich',
+  'Right'                       => 'Rechts',
+  'Save Column'                 => 'Spalte sichern',
+  'Save Report'                 => 'Bericht sichern',
+  'Save Report as new'          => 'Bericht als neu sichern',
+  'Width'                       => 'Breite',
+};
+
+$self{subs} = {
+  'acc_menu'                    => 'acc_menu',
+  'add_column'                  => 'add_column',
+  'delete_column'               => 'delete_column',
+  'delete_report'               => 'delete_report',
+  'display'                     => 'display',
+  'display_frame'               => 'display_frame',
+  'do_save_report'              => 'do_save_report',
+  'edit_column'                 => 'edit_column',
+  'jsmenu'                      => 'jsmenu',
+  'jsmenu_frame'                => 'jsmenu_frame',
+  'menubar'                     => 'menubar',
+  'mlmenu'                      => 'mlmenu',
+  'save_column'                 => 'save_column',
+  'save_report'                 => 'save_report',
+  'save_report_as_new'          => 'save_report_as_new',
+  'section_menu'                => 'section_menu',
+  'spalte_löschen'             => 'delete_column',
+  'bericht_löschen'            => 'delete_report',
+  'spalte_sichern'              => 'save_column',
+  'bericht_sichern'             => 'save_report',
+  'bericht_als_neu_sichern'     => 'save_report_as_new',
+};
+
+1;
+

@@ -124,14 +124,6 @@ sub all_transactions {
 
   my $false = ($myconfig->{dbdriver} =~ /Pg/) ? FALSE : q|'0'|;
   
-  # Oracle workaround, use ordinal positions
-  my %ordinal = ( transdate => 4,
-		  reference => 2,
-		  description => 3 );
-
-  my @sf = qw(transdate reference description);
-  my $sortorder = $form->sort_order(\@sf, \%ordinal);
-
   my $null;
   my $department_id;
   my $dpt_where;
@@ -306,8 +298,9 @@ sub all_transactions {
                  |;
   }
 
-  $query .= qq|
-      ORDER BY $sortorder|;
+  my @sf = qw(transdate reference description);
+  my %ordinal = $form->ordinal_order($dbh, $query);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
 
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);

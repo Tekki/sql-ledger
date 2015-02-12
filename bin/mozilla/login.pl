@@ -328,8 +328,8 @@ sub login {
 
   for (qw(dbconnect dbhost dbport dbname dbuser dbpasswd)) { $myconfig{$_} = $user->{$_} }
 
-  if ($user->{pin} && $sendmail) {
-    &email_pin;
+  if ($user->{tan} && $sendmail) {
+    &email_tan;
     exit;
   }
 
@@ -373,37 +373,36 @@ sub logout {
 }
 
 
-sub email_pin {
+sub email_tan {
 
   $form->error($locale->text('No email address for')." $user->{name}") unless ($user->{email});
 
   use SL::Mailer;
   $mail = new Mailer;
 
-  $mail->{from} = $mail->{to} = qq|"$user->{name}" <$user->{email}>|;
-  $mail->{subject} = "SQL-Ledger $form->{version} / $user->{company}";
-
   srand( time() ^ ($$ + ($$ << 15)) );
   $digits = "123456789";
   $letters = "ABCDEFGHJKLMNPQRSTUVWXYZ";
-  $pin = "";
-  while (length($pin) < 6) {
+  $tan = "";
+  while (length($tan) < 6) {
     if ($d = !$d) {
-      $pin .= substr($letters, (int(rand(length($letters)))), 1);
+      $tan .= substr($letters, (int(rand(length($letters)))), 1);
     } else {
-      $pin .= substr($digits, (int(rand(length($digits)))), 1);
+      $tan .= substr($digits, (int(rand(length($digits)))), 1);
     }
   }
 
-  $mail->{message} = $locale->text('PIN').": $pin";
+  $mail->{message} = $locale->text('TAN').": $tan";
+  $mail->{from} = $mail->{to} = qq|"$user->{name}" <$user->{email}>|;
+  $mail->{subject} = "SQL-Ledger $form->{version} $user->{company} $mail->{message}";
 
   $form->error($err) if ($err = $mail->send($sendmail));
 
   $form->{stylesheet} = $user->{stylesheet};
   $form->{favicon} = "sql-ledger.ico";
-  $form->{nextsub} = "pin_login";
+  $form->{nextsub} = "tan_login";
 
-  $user->{password} = $pin;
+  $user->{password} = $tan;
 
   $user->create_config("$userspath/$form->{login}.conf");
 
@@ -434,7 +433,7 @@ sub email_pin {
 	  <td align=center>
 	    <table>
 	      <tr>
-		<th align=right>|.$locale->text('PIN').qq|</th>
+		<th align=right>|.$locale->text('TAN').qq|</th>
 		<td><input class=login type=password name=password size=30></td>
 	      </tr>
 	    </table>
@@ -462,7 +461,7 @@ sub email_pin {
 }
 
 
-sub pin_login {
+sub tan_login {
 
   $form->{login} =~ s/(\.\.|\/|\\|\x00)//g;
 
@@ -475,7 +474,7 @@ sub pin_login {
   }
 
   if ((crypt $form->{password}, substr($form->{login}, 0, 2)) ne $myconfig{password}) {
-    $form->error($locale->text('Invalid PIN'));
+    $form->error($locale->text('Invalid TAN'));
   } else {
 
     # remove stale locks

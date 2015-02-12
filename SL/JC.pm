@@ -127,7 +127,7 @@ sub jcitems_links {
 		    WHERE parts_id > 0
 		    AND production > completed
 		    AND id = $form->{project_id}|;
-	($form->{orphaned}) = $dbh->selectrow_array($q);
+	($form->{orphaned}) = $dbh->selectrow_array($query);
       }
     } else {
       $form->{orphaned} = 1;
@@ -148,40 +148,39 @@ sub jcitems_links {
   
   if ($form->{project} eq 'job') {
     $query = qq|
-		 SELECT pr.*
-		 FROM project pr
-		 WHERE pr.parts_id > 0
-		 AND pr.production > pr.completed
+		 SELECT *
+		 FROM project
+		 WHERE parts_id > 0
+		 AND production > completed
 		 $where|;
   } elsif ($form->{project} eq 'project') {
     $query = qq|
-		 SELECT pr.*
-		 FROM project pr
-		 WHERE pr.parts_id IS NULL
+		 SELECT *
+		 FROM project
+		 WHERE parts_id IS NULL
 		 $where|;
   } else {
     $query = qq|
-    		 SELECT pr.*
-		 FROM project pr
+    		 SELECT *
+		 FROM project
 		 WHERE 1=1
 		 $where
 		 EXCEPT
-		 SELECT pr.*
-		 FROM project pr
-		 WHERE pr.parts_id > 0
-		 AND pr.production = pr.completed|;
+		 SELECT *
+		 FROM project
+		 WHERE parts_id > 0
+		 AND production = completed|;
   }
 
   if ($form->{project_id}) {
     $query .= qq|
 	       UNION
-	       SELECT pr.*
-	       FROM project pr
+	       SELECT *
+	       FROM project
 	       WHERE id = $form->{project_id}|;
   }
 
-  $query .= qq|
-                 ORDER BY projectnumber|;
+  $query .= qq| ORDER BY projectnumber|;
 
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -254,8 +253,7 @@ sub retrieve_item {
 		$where|;
   }
   
-  $query .= qq|
-		 ORDER BY 2|;
+  $query .= qq| ORDER BY 2|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
@@ -396,18 +394,7 @@ sub jcitems {
   
   $where .= " AND j.checkedin >= '$form->{startdatefrom}'" if $form->{startdatefrom};
   $where .= " AND j.checkedout < date '$form->{startdateto}' + 1" if $form->{startdateto};
-
-  my %ordinal = ( id => 1,
-                  description => 2,
-		  transdate => 7,
-		  partnumber => 10,
-		  projectnumber => 11,
-		  projectdescription => 12,
-		);
-  
-  my @sf = qw(transdate projectnumber);
-  my $sortorder = $form->sort_order(\@sf, \%ordinal);
-  
+ 
   my $dateformat = $myconfig->{dateformat};
   $dateformat =~ s/yy$/yyyy/;
   $dateformat =~ s/yyyyyy/yyyy/;
@@ -424,8 +411,6 @@ sub jcitems {
   if ($form->{project} eq 'project') {
     $where .= " AND pr.parts_id IS NULL";
   }
-  
-  $sortorder = qq|employee, employeenumber, $sortorder| if $form->{type} eq 'timecard';
 
   $query = qq|SELECT j.id, j.description, j.qty, j.allocated,
 	      to_char(j.checkedin, 'HH24:MI') AS checkedin,
@@ -443,8 +428,20 @@ sub jcitems {
 	      JOIN parts p ON (p.id = j.parts_id)
 	      JOIN project pr ON (pr.id = j.project_id)
 	      JOIN employee e ON (e.id = j.employee_id)
-	      WHERE $where
-	      ORDER BY $sortorder|;
+	      WHERE $where|;
+
+  my @sf = qw(transdate projectnumber);
+  my %ordinal = $form->ordinal_order($dbh, $query);
+  my $sortorder;
+
+  if ($form->{type} eq 'timecard') {
+    $sortorder = join ',', ($ordinal{employee}, $ordinal{employeenumber});
+  }
+  if ($sortorder) {
+    $query .= qq| ORDER BY $sortorder,| .$form->sort_order(\@sf, \%ordinal);
+  } else {
+    $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
+  }
 
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -611,7 +608,7 @@ sub price_matrix_query {
 	      AND p.pricegroup_id = 0
 	      AND p.parts_id = ?
 
-	      ORDER BY customer_id DESC, pricegroup_id DESC, pricebreak
+	      ORDER BY p.customer_id DESC, p.pricegroup_id DESC, p.pricebreak
 	      
 	      |;
 

@@ -947,17 +947,6 @@ sub recurring_transactions {
   my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
-  my %ordinal = ( reference => 10,
-                  description => 4,
-		  name => 5,
-		  vcnumber => 6,
-		  nextdate => 12,
-		  enddate => 13 );
-  
-  $form->{sort} ||= "nextdate";
-  my @sf = ($form->{sort});
-  my $sortorder = $form->sort_order(\@sf, \%ordinal);
-
   # get default currency
   $query = qq|SELECT curr FROM curr
               ORDER BY rn|;
@@ -1044,9 +1033,12 @@ sub recurring_transactions {
                  LEFT JOIN recurringprint sp ON (sp.id = s.id)
 		 LEFT JOIN exchangerate ex ON
 		      (ex.curr = a.curr AND a.transdate = ex.transdate)
-		 WHERE a.quotation = '0'
+		 WHERE a.quotation = '0'|;
 		 
-		 ORDER BY $sortorder|;
+  $form->{sort} ||= "nextdate";
+  my @sf = ($form->{sort});
+  my %ordinal = $form->ordinal_order($dbh, $query);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -1439,7 +1431,7 @@ sub taxes {
               FROM chart c
 	      JOIN tax t ON (c.id = t.chart_id)
 	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
-	      ORDER BY 3, 6|;
+	      ORDER BY 2, 6|;
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -2175,9 +2167,6 @@ sub get_exchangerates {
 
   my $where = "1 = 1";
 
-  my @sf = qw(transdate);
-  my $sortorder = $form->sort_order(\@sf);
-
   $form->{currencies} = $form->get_currencies($dbh, $myconfig);
 
   ($form->{transdatefrom}, $form->{transdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
@@ -2185,7 +2174,14 @@ sub get_exchangerates {
   $where .= " AND transdate >= '$form->{transdatefrom}'" if $form->{transdatefrom};
   $where .= " AND transdate <= '$form->{transdateto}'" if $form->{transdateto};   
   $where .= " AND curr = '$form->{currency}'" if $form->{currency};
-  
+
+  my @sf = qw(transdate);
+  my %ordinal = ( curr => 1,
+                  transdate => 2,
+                  exchangerate => 3
+                );
+  my $sortorder = $form->sort_order(\@sf, \%ordinal);
+
   my $query = qq|SELECT * FROM exchangerate
                  WHERE $where
 		 ORDER BY $sortorder|;

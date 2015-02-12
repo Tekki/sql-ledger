@@ -429,18 +429,9 @@ sub get_spoolfiles {
     }
   }
 
-  my %ordinal = ( name => 2,
-                  vcnumber => 3,
-                  invnumber => 4,
-                  transdate => 5,
-		  ordnumber => 6,
-		  quonumber => 7,
-		  description => 11
-		);
-
   my @sf = ("transdate", "$invnumber", "name");
-  my $sortorder = $form->sort_order(\@sf, \%ordinal);
-  $query .= " ORDER by $sortorder";
+  my %ordinal = $form->ordinal_order($dbh, $query);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);

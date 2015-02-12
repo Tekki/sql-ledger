@@ -302,19 +302,21 @@ sub reconcile {
   my $i;
   my $trans_id;
   my $cleared;
+  my $source;
 
   # clear flags
   for $i (1 .. $form->{rowcount}) {
     if ($form->{"datecleared_$i"} ne $form->{"oldcleared_$i"}) {
 
       $cleared = ($form->{"cleared_$i"}) ? $form->{recdate} : '';
+      $cleared = $form->dbquote($cleared, SQL_DATE);
+      $source = ($form->{"source_$i"}) ? qq|AND source = |.$dbh->quote($form->{"source_$i"}) : qq|AND (source = '' OR source IS NULL)|;
 
       foreach $trans_id (split / /, $form->{"id_$i"}) {
 	$query = qq|UPDATE acc_trans SET
-	            cleared = |.$form->dbquote($cleared, SQL_DATE).qq|
+	            cleared = $cleared
                     WHERE trans_id = $trans_id 
-	            AND transdate = '$form->{"transdate_$i"}'
-                    AND source = '$form->{"source_$i"}'
+	            AND transdate = |.$form->dbquote($form->{"transdate_$i"}, SQL_DATE).qq|
 	            AND chart_id = $chart_id
                     $source|;
         $dbh->do($query) || $form->dberror($query);

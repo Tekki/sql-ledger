@@ -19,7 +19,7 @@ package CP;
 sub new {
   my ($type, $countrycode) = @_;
 
-  $self = {};
+  my $self = {};
 
   if ($countrycode) {
     if (-f "locale/$countrycode/Num2text") {
@@ -206,7 +206,7 @@ sub get_openvc {
 	      JOIN address ad ON (ad.trans_id = vc.id)
 	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 	      WHERE $where
-	      ORDER BY $sortorder|;
+	      ORDER BY vc.$sortorder|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
@@ -269,8 +269,6 @@ sub retrieve {
   my %defaults = $form->get_defaults($dbh, \@{['precision']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
     
-  my $sortorder = "transdate, invnumber";
-
   my $ml = 1;
   
   if ($form->{vc} eq 'customer') {
@@ -301,8 +299,11 @@ sub retrieve {
                  GROUP BY a.id, a.invnumber, a.transdate, a.duedate,
 		 a.amount, a.paid, a.discountterms, a.cashdiscount, a.netamount,
 		 a.$form->{vc}_id, a.curr, ac.transdate, calcdiscount,
-		 ac.approved, exchangerate, ac.trans_id, ac.source, ac.memo
-		 ORDER BY $sortorder|;
+		 ac.approved, a.exchangerate, ac.trans_id, ac.source, ac.memo|;
+
+  my @sf = qw(transdate invnumber);
+  my %ordinal = $form->ordinal_order($dbh, $query);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -429,11 +430,11 @@ sub get_openinvoices {
 		 AND NOT a.id IN (SELECT id
 		                  FROM semaphore)|;
 
-  my $sortorder = "transdate, invnumber";
-
   my %defaults = $form->get_defaults($dbh, \@{[qw(namesbynumber cdt precision)]});
 
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
+
+  my @sf = qw(transdate invnumber);
 
   if ($form->{payment} eq 'payments') {
     $where = qq|WHERE a.amount != a.paid
@@ -441,9 +442,9 @@ sub get_openinvoices {
 		AND a.onhold = '0'
 		AND NOT a.id IN (SELECT id
 		                 FROM semaphore)|;
-    $sortorder = "name, transdate";
+    @sf = qw(name transdate);
     if ($defaults{namesbynumber}) {
-      $sortorder = "$form->{vc}number, transdate";
+      @sf = ("$form->{vc}number", "transdate");
     }
   }
   
@@ -489,8 +490,10 @@ sub get_openinvoices {
 		 JOIN $form->{vc} vc ON (vc.id = a.$form->{vc}_id)
 		 JOIN chart ch ON (ch.id = ac.chart_id)
 		 LEFT JOIN exchangerate ex ON (ex.curr = vc.curr AND ex.transdate = a.transdate)
-		 $where
-		 ORDER BY $sortorder|;
+		 $where|;
+
+  my %ordinal = $form->ordinal_order($dbh, $query);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -576,7 +579,7 @@ sub post_payment {
 	      WHERE c.link LIKE '%$form->{ARAP}_tax%'
 	      AND ac.trans_id = ?
 	      AND (t.validto >= ? OR t.validto IS NULL)
-	      ORDER BY validto DESC|;
+	      ORDER BY t.validto DESC|;
   my $tth = $dbh->prepare($query) || $form->dberror($query);
   
   my %defaults = $form->get_defaults($dbh, \@{['fx%_accno_id', 'cdt']});

@@ -1214,7 +1214,7 @@ sub trial_balance {
 		$dpt_where
 		$project
 		GROUP BY g.accno, g.description, c.category, c.contra
-		ORDER BY accno|;
+		ORDER BY g.accno|;
     
   } else {
 
@@ -1229,7 +1229,7 @@ sub trial_balance {
 		$dpt_where
 		$project
 		GROUP BY c.accno, c.description, c.category, c.contra, translation
-                ORDER BY accno|;
+                ORDER BY c.accno|;
 
   }
 
@@ -1423,7 +1423,7 @@ sub aging {
   }
   
   $form->{sort} =~ s/;//g;
-  my $sortorder = ($form->{sort}) ? "vc.$form->{sort}" : "vc.name";
+  my $sortorder = $form->{sort} || "name";
   
   # select outstanding vendors or customers
   $query = qq|SELECT DISTINCT vc.id, vc.name, vc.$form->{vc}number,
@@ -1433,7 +1433,7 @@ sub aging {
 	      WHERE $where
               AND a.paid != a.amount
               AND (a.$transdate <= '$form->{todate}')
-              ORDER BY $sortorder|;
+              ORDER BY vc.sortorder|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror;
   
@@ -1498,6 +1498,14 @@ sub aging {
     }
   }
 
+  my %ordinal = ( 'vc_id' => 1,
+                  'invnumber' => 17,
+                  'transdate' => 18
+                );
+
+  my @sf = qw(vc_id transdate invnumber);
+  my $sortorder = $form->sort_order(\@sf, \%ordinal);
+
   if (@c) {
     
     $item = $#c;
@@ -1550,8 +1558,7 @@ sub aging {
 |;
     }
 	    
-    $query .= qq|
-	ORDER BY vc_id, $transdate, invnumber|;
+    $query .= qq| ORDER BY $sortorder|;
 
     $sth = $dbh->prepare($query) || $form->dberror($query);
 
@@ -1639,7 +1646,7 @@ sub reminder {
   }
   
   $form->{sort} =~ s/;//g;
-  my $sortorder = ($form->{sort}) ? "vc.$form->{sort}" : "vc.name";
+  my $sortorder = $form->{sort} || "name";
   
   # select outstanding customers
   $query = qq|SELECT DISTINCT vc.id, vc.name, vc.$form->{vc}number,
@@ -1648,7 +1655,7 @@ sub reminder {
 	      JOIN ar a ON (a.$form->{vc}_id = vc.id)
 	      WHERE $where
               AND a.paid != a.amount
-              ORDER BY $sortorder|;
+              ORDER BY vc.$sortorder|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror;
 
@@ -1681,6 +1688,14 @@ sub reminder {
     $where .= qq| AND a.department_id = $department_id|;
   }
 
+  my %ordinal = ( 'vc_id' => 1,
+                  'invnumber' => 20,
+                  'transdate' => 21
+                );
+
+  my @sf = qw(vc_id transdate invnumber);
+  my $sortorder = $form->sort_order(\@sf, \%ordinal);
+
   $query = qq|SELECT c.id AS vc_id, c.$form->{vc}number, c.name, c.terms,
               ad.address1, ad.address2, ad.city, ad.state, ad.zipcode, ad.country,
 	      c.contact, c.email,
@@ -1702,7 +1717,7 @@ sub reminder {
 	      LEFT JOIN shipto s ON (a.id = s.trans_id)
 	      WHERE a.duedate <= current_date
 	      AND $where
-	      ORDER BY vc_id, transdate, invnumber|;
+	      ORDER BY $sortorder|;
   $sth = $dbh->prepare($query) || $form->dberror($query);
 
   $query = qq|SELECT rvc
@@ -1842,7 +1857,7 @@ sub get_taxaccounts {
 		 JOIN chart c ON (c.gifi_accno= g.accno)
 		 JOIN tax t ON (c.id = t.chart_id)
 		 WHERE c.link LIKE '%${ARAP}_tax%'
-                 ORDER BY accno|;
+                 ORDER BY g.accno|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror;
 
@@ -1946,16 +1961,6 @@ sub tax_report {
     
   my $ml = ($form->{db} eq 'ar') ? 1 : -1;
   
-  my %ordinal = ( 'transdate' => 3,
-                  'invnumber' => 4,
-		  'name' => 5,
-		  "${vc}number" => 6,
-		  'description' => 8
-		);
-  
-  my @sf = qw(transdate invnumber name);
-  my $sortorder = $form->sort_order(\@sf, \%ordinal);
-
   if ($form->{summary}) {
     
     $query = qq|SELECT a.id, a.invoice, $transdate AS transdate,
@@ -2023,7 +2028,7 @@ sub tax_report {
 		i.sellprice * i.qty * $ml AS netamount,
 		i.description,
 		i.sellprice * i.qty * $ml *
-		(SELECT tx.rate FROM tax tx WHERE tx.chart_id = ch.id AND (tx.validto > $transdate OR tx.validto IS NULL) ORDER BY validto LIMIT 1) AS tax,
+		(SELECT tx.rate FROM tax tx WHERE tx.chart_id = ch.id AND (tx.validto > $transdate OR tx.validto IS NULL) ORDER BY tx.validto LIMIT 1) AS tax,
 		a.till, n.id AS vc_id
 		FROM acc_trans ac
 	      JOIN $form->{db} a ON (a.id = ac.trans_id)
@@ -2065,7 +2070,7 @@ sub tax_report {
 		i.sellprice * i.qty * $ml AS netamount,
 		i.description,
 		i.sellprice * i.qty * $ml *
-		(SELECT tx.rate FROM tax tx WHERE tx.chart_id = ch.id AND (tx.validto > $transdate OR tx.validto IS NULL) ORDER BY validto LIMIT 1) AS tax,
+		(SELECT tx.rate FROM tax tx WHERE tx.chart_id = ch.id AND (tx.validto > $transdate OR tx.validto IS NULL) ORDER BY tx.validto LIMIT 1) AS tax,
 		a.till, n.id AS vc_id
 		FROM acc_trans ac
 	      JOIN $form->{db} a ON (a.id = ac.trans_id)
@@ -2215,9 +2220,12 @@ sub tax_report {
     }
   }
 
-  
-  $query .= qq|
-	      ORDER by $sortorder|;
+  my @sf = qw(transdate invnumber name);
+  my %ordinal = $form->ordinal_order($dbh, $query);
+  my $sortorder = $form->sort_order(\@sf, \%ordinal);
+  $sortorder = "$ordinal{accno} ASC, $sortorder" if $form->{reportcode} !~ /nontaxable/;
+
+  $query .= qq| ORDER by $sortorder|;
 
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -2331,21 +2339,6 @@ sub payments {
     $gl = 0;
   }
 
-
-  my %ordinal = ( 'description' => 1,
-                  'name' => 2,
-		  'transdate' => 3,
-		  'source' => 5,
-		  'employee' => 7,
-		  'till' => 8,
-		  'customernumber' => 14,
-		  'vendornumber' => 14,
-		  'reference' => 15
-		);
-
-  my @sf = qw(name transdate employee);
-  my $sortorder = $form->sort_order(\@sf, \%ordinal);
-  
   # cycle through each id
   foreach my $accno (split(/ /, $form->{paymentaccounts})) {
 
@@ -2411,8 +2404,9 @@ sub payments {
 
     }
 
-    $query .= qq|
-                ORDER BY $sortorder|;
+    my @sf = qw(name transdate employee);
+    my %ordinal = $form->ordinal_order($dbh, $query);
+    $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
 
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);

@@ -488,7 +488,7 @@ sub taxrates {
 	      JOIN tax t ON (c.id = t.chart_id)
 	      WHERE c.link LIKE '%$form->{ARAP}_tax%'
 	      AND (t.validto >= ? OR t.validto IS NULL)
-	      ORDER BY accno, validto|;
+	      ORDER BY c.accno, t.validto|;
   my $sth = $dbh->prepare($query);
   $sth->execute($form->{transdate}) || $form->dberror($query);
   
@@ -612,7 +612,7 @@ sub import_sales_invoice {
 	      JOIN tax t ON (t.chart_id = c.id)
               WHERE ct.customer_id = $form->{customer_id}
 	      AND (validto > '$form->{transdate}' OR validto IS NULL)
-	      ORDER BY validto DESC|;
+	      ORDER BY t.validto DESC|;
   $sth = $dbh->prepare($query) || $form->dberror($query);
   $sth->execute;
 
@@ -721,7 +721,7 @@ sub import_order {
 	      JOIN tax t ON (t.chart_id = c.id)
               WHERE ct.$form->{vc}_id = $form->{"$form->{vc}_id"}
 	      AND (validto > '$form->{transdate}' OR validto IS NULL)
-	      ORDER BY validto DESC|;
+	      ORDER BY t.validto DESC|;
   $sth = $dbh->prepare($query) || $form->dberror($query);
   $sth->execute;
 

@@ -81,31 +81,6 @@ sub transactions {
 	         WHERE o.quotation = '$quotation'
 		 $where|;
 
-  my %ordinal = ( id => 1,
-                  ordnumber => 2,
-                  transdate => 3,
-		  reqdate => 4,
-		  name => 6,
-		  quonumber => 12,
-		  shipvia => 14,
-		  waybill => 15,
-		  employee => 16,
-		  curr => 17,
-		  ponumber => 18,
-		  warehouse => 20,
-		  description => 21
-		);
-
-  if ($form->{detail}) {
-    $ordinal{ponumber} = 28;
-    $ordinal{ordnumber} = 27;
-  }
-
-  my @sf = (transdate, $ordnumber, name);
-  push @sf, "employee" if $form->{l_employee};
-  my $sortorder = $form->sort_order(\@sf, \%ordinal);
-  
-  
   # build query if type eq (ship|receive)_order
   if ($form->{type} =~ /(ship|receive)_order/) {
     
@@ -184,7 +159,11 @@ sub transactions {
     $query .= " AND o.transdate <= '$form->{transdateto}'";
   }
 
-  $query .= " ORDER by $sortorder";
+  my @sf = (transdate, $ordnumber, name);
+  push @sf, "employee" if $form->{l_employee};
+  my %ordinal = $form->ordinal_order($dbh, $query);
+
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -1776,7 +1755,7 @@ sub adj_onhand {
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
-  $query = qq|SELECT sum(p.inventory_accno_id), p.assembly
+  $query = qq|SELECT sum(p.inventory_accno_id), p.assembly, '1'
 	      FROM parts p
 	      JOIN assembly a ON (a.parts_id = p.id)
 	      WHERE a.aid = ?
@@ -1793,10 +1772,12 @@ sub adj_onhand {
       if ($ref->{assembly}) {
 	$ath->execute($ref->{parts_id}) || $form->dberror($query);
 
-        my ($inv, $assembly) = $ath->fetchrow_array;
+        my ($inv, $assembly, $items) = $ath->fetchrow_array;
 	$ath->finish;
 
-	next unless ($inv || $assembly);
+        if ($items) {
+          next unless ($inv || $assembly);
+        }
 	
       }
 

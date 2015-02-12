@@ -793,38 +793,8 @@ sub transactions {
 	      $acc_trans_join
 	      |;
 
-  my %ordinal = ( id => 1,
-                  invnumber => 2,
-		  ordnumber => 3,
-		  transdate => 4,
-		  duedate => 5,
-		  datepaid => 10,
-		  shipvia => 13,
-		  waybill => 14,
-		  shippingpoint => 15,
-		  employee => 16,
-		  name => 17,
-		  customernumber => 18,
-		  vendornumber => 18,
-		  curr => 20,
-		  department => 22,
-		  ponumber => 23,
-		  warehouse => 25,
-		  description => 27,
-		  dcn => 28,
-		  paymentmethod => 29,
-		  paymentdiff => 30,
-		  accno => 36,
-		  source => 37,
-		  project => 38
-		);
-
-  
-  my @sf = (transdate, invnumber, name);
-  push @sf, "employee" if $form->{l_employee};
-  my $sortorder = $form->sort_order(\@sf, \%ordinal);
-
   my $where = "a.approved = '1'";
+
   if ($form->{"$form->{vc}_id"}) {
     $where .= qq| AND a.$form->{vc}_id = $form->{"$form->{vc}_id"}|;
   } else {
@@ -927,9 +897,12 @@ sub transactions {
 				WHERE lower(description) LIKE '$var'))|;
   }
 
-  $query .= "
-             WHERE $where
-             ORDER by $sortorder";
+  $query .= " WHERE $where";
+
+  my @sf = (transdate, invnumber, name);
+  push @sf, "employee" if $form->{l_employee};
+  my %ordinal = $form->ordinal_order($dbh, $query);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -1144,7 +1117,7 @@ sub get_name {
 	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 	      WHERE c.link LIKE '%$form->{ARAP}_tax%'
 	      $where
-	      ORDER BY accno, validto|;
+	      ORDER BY c.accno, t.validto|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
@@ -1464,25 +1437,6 @@ sub all_names {
     }
   }
 
-  my %ordinal = (
-		  name => 2,
-		  "$form->{vc}number" => 3,
-		  startdate => 4,
-		  enddate => 5,
-		  city => 6,
-		  state => 7,
-		  zipcode => 8,
-		  country => 9,
-		  employee => 10,
-		  business => 11,
-		  pricegroup => 12,
-		  paymentmethod => 13,
-		  curr => 14
-		);
-  
-  my @sf = (name);
-  my $sortorder = $form->sort_order(\@sf, \%ordinal);
-
   $query = qq|SELECT vc.id, vc.name, vc.$form->{vc}number, vc.startdate,
               vc.enddate,
               ad.city, ad.state, ad.zipcode, ad.country,
@@ -1497,8 +1451,11 @@ sub all_names {
 	      LEFT JOIN paymentmethod pm ON (pm.id = vc.paymentmethod_id)
 	      LEFT JOIN business b ON (b.id = vc.business_id)
 	      LEFT JOIN pricegroup pg ON (pg.id = vc.pricegroup_id)
-	      WHERE $where
-	      ORDER BY $sortorder|;
+	      WHERE $where|;
+
+  my @sf = (name);
+  my %ordinal = $form->ordinal_order($dbh, $query);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);

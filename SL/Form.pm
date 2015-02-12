@@ -115,7 +115,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "3.0.6";
+  $self->{version} = "3.0.7";
   $self->{dbversion} = "3.0.0";
 
   bless $self, $type;
@@ -554,6 +554,22 @@ sub sort_order {
   $sortorder = join ',', @sf;
 
   $sortorder;
+
+}
+
+
+sub ordinal_order {
+  my ($self, $dbh, $query) = @_;
+
+  return unless ($dbh && $query);
+  my %ordinal = ();
+
+  my $sth = $dbh->prepare($query);
+  $sth->execute || $self->dberror($query);
+  for (0 .. $sth->{NUM_OF_FIELDS} - 1) { $ordinal{$sth->{NAME_lc}->[$_]} = $_ + 1 }
+  $sth->finish;
+
+  %ordinal;
 
 }
 
@@ -1292,10 +1308,8 @@ sub gentex {
     $line = "";
     for (@{$column}) {
       $self->{temp} = $self->{$_}[$i];
-      if ($hdr->{$_}{type} eq 'n') {
-	$self->{temp} = $self->format_amount($myconfig, $self->{temp}, $hdr->{$_}{precision});
-      } else {
-	$self->format_string(temp);
+      if ($self->{temp} && $hdr->{$_}{type} ne 'n') {
+        $self->format_string(temp) unless $hdr->{$_}{image};
       }
       $line .= qq|$self->{temp} \& |;
     }
@@ -2264,7 +2278,7 @@ sub get_name {
 
   my %defaults = $self->get_defaults($dbh, \@{['namesbynumber']});
   
-  my $sortorder = "name";
+  my $sortorder = "ct.name";
   $sortorder = $self->{searchby} if $self->{searchby};
    
   my $var;
@@ -2287,7 +2301,7 @@ sub get_name {
                  FROM $table ct
 		 JOIN address ad ON (ad.trans_id = ct.id)
 		 WHERE $where
-		 ORDER BY $sortorder|;
+		 ORDER BY ct.$sortorder|;
 
   my $sth = $dbh->prepare($query);
 
@@ -2321,7 +2335,8 @@ sub get_currencies {
   my $curr;
   my $precision;
   
-  my $query = qq|SELECT curr, prec FROM curr
+  my $query = qq|SELECT curr, prec
+                 FROM curr
                  ORDER BY rn|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $self->dberror($query);
@@ -2408,7 +2423,7 @@ sub all_vc {
 		UNION SELECT vc.id, vc.name
 		FROM $vc vc
 		WHERE vc.id = $self->{"${vc}_id"}
-		ORDER BY name|;
+		ORDER BY 2|;
     $sth = $dbh->prepare($query);
     $sth->execute || $self->dberror($query);
 
@@ -2495,7 +2510,7 @@ sub all_taxaccounts {
 		JOIN chart c ON (c.id = t.chart_id)
 		WHERE c.accno = ?
 		$where
-		ORDER BY accno, validto|;
+		ORDER BY c.accno, t.validto|;
     $sth = $dbh->prepare($query) || $self->dberror($query);
    
     foreach my $accno (split / /, $self->{taxaccounts}) {
@@ -2529,8 +2544,8 @@ sub all_employees {
     $query .= qq| AND sales = '1'|;
   }
 
-  $query .= qq|
-	         ORDER BY name|;
+  $query .= qq| ORDER BY name|;
+
   my $sth = $dbh->prepare($query);
   $sth->execute || $self->dberror($query);
 
@@ -2558,7 +2573,7 @@ sub all_projects {
 			 WHERE project_id > 0)| if ! $job;
 			 
   my $query = qq|SELECT *
-                 FROM project
+                 FROM project pr
 		 WHERE $where|;
 
   if ($form->{language_code}) {
@@ -2569,12 +2584,11 @@ sub all_projects {
   }
 
   if ($transdate) {
-    $query .= qq| AND (startdate IS NULL OR startdate <= '$transdate')
-                  AND (enddate IS NULL OR enddate >= '$transdate')|;
+    $query .= qq| AND (pr.startdate IS NULL OR pr.startdate <= '$transdate')
+                  AND (pr.enddate IS NULL OR pr.enddate >= '$transdate')|;
   }
 
-  $query .= qq|
-	         ORDER BY projectnumber|;
+  $query .= qq| ORDER BY pr.projectnumber|;
 
   $sth = $dbh->prepare($query);
   $sth->execute || $self->dberror($query);
@@ -3214,7 +3228,7 @@ sub get_partsgroup {
 
   if ($p->{all}) {
     $query = qq|SELECT *
-                FROM partsgroup|;
+                FROM partsgroup pg|;
     $where = "";
   }
 
@@ -3866,7 +3880,7 @@ sub reports {
   }
 
   $query .= qq|
-		 ORDER BY reportdescription|;
+		 ORDER BY r.reportdescription|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $self->dberror($query);
 
@@ -3885,7 +3899,7 @@ sub reports {
               AND (r.login = '$login' OR r.login = '')|;
   }
   $query .= qq|
-	      ORDER BY reportid|;
+	      ORDER BY r.reportid|;
   $sth = $dbh->prepare($query);
   $sth->execute || $self->dberror($query);
 
@@ -4030,7 +4044,11 @@ sub save_report {
     $sth = $dbh->prepare($query);
 
     my %newform;
-    for (keys %$self) { $newform{$_} = $self->{$_} unless $_ =~ /ndx_\d+$/ }
+    for (keys %$self) {
+      if ($self->{$_} !~ /(HASH|ARRAY)/) {
+        $newform{$_} = $self->{$_} unless $_ =~ /ndx_\d+$/;
+      }
+    }
     for (qw(path login stylesheet dbversion report reportid reportcode reportdescription action script nextsub allbox charset timeout sessioncookie callback title titlebar version rowcount flds defaultcurrency selectlanguage savereport admin)) { delete $newform{$_} }
 
     for (keys %newform) {
