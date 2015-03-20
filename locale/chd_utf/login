@@ -1,7 +1,7 @@
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Company'                     => 'Firmenname',
+  'Company'                     => 'Firma',
   'Configuration file missing!' => 'Konfigurationsdatei fehlt!',
   'Continue'                    => 'Weiter',
   'Dataset is newer than version!' => 'Datenbank ist neuer als installierte Version',
