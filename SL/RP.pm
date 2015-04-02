@@ -1433,7 +1433,7 @@ sub aging {
 	      WHERE $where
               AND a.paid != a.amount
               AND (a.$transdate <= '$form->{todate}')
-              ORDER BY vc.sortorder|;
+              ORDER BY vc.$sortorder|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror;
   
@@ -1967,7 +1967,7 @@ sub tax_report {
 		a.invnumber, n.name, n.${vc}number, a.netamount,
 		a.description,
 		sum(ac.amount) * $ml AS tax,
-		a.till, n.id AS vc_id
+		a.till, n.id AS vc_id, ch.accno
 		FROM acc_trans ac
 	      JOIN $form->{db} a ON (a.id = ac.trans_id)
 	      JOIN chart ch ON (ch.id = ac.chart_id)
@@ -1976,7 +1976,7 @@ sub tax_report {
 		$accno
 		$cashwhere
 	GROUP BY a.id, a.invoice, $transdate, a.invnumber, n.name,
-	a.netamount, a.till, n.id, a.description, n.${vc}number
+	a.netamount, a.till, n.id, a.description, n.${vc}number, ch.accno
 		|;
 
       if ($form->{fromdate}) {
@@ -1989,7 +1989,7 @@ sub tax_report {
 		a.invnumber, n.name, n.${vc}number, a.netamount,
 		a.description,
 		sum(ac.amount) * $ml AS tax,
-		a.till, n.id AS vc_id
+		a.till, n.id AS vc_id, ch.accno
 		FROM acc_trans ac
 	      JOIN $form->{db} a ON (a.id = ac.trans_id)
 	      JOIN chart ch ON (ch.id = ac.chart_id)
@@ -1998,7 +1998,7 @@ sub tax_report {
 		$accno
 		$cashwhere
 	GROUP BY a.id, a.invoice, $transdate, a.invnumber, n.name,
-	a.netamount, a.till, n.id, a.description, n.${vc}number
+	a.netamount, a.till, n.id, a.description, n.${vc}number, ch.accno
 		|;
 	}
       }
@@ -2010,7 +2010,7 @@ sub tax_report {
 		a.invnumber, n.name, n.${vc}number, a.netamount,
 		ac.memo AS description,
 		ac.amount * $ml AS tax,
-		a.till, n.id AS vc_id
+		a.till, n.id AS vc_id, ch.accno
 		FROM acc_trans ac
 	      JOIN $form->{db} a ON (a.id = ac.trans_id)
 	      JOIN chart ch ON (ch.id = ac.chart_id)
@@ -2029,7 +2029,7 @@ sub tax_report {
 		i.description,
 		i.sellprice * i.qty * $ml *
 		(SELECT tx.rate FROM tax tx WHERE tx.chart_id = ch.id AND (tx.validto > $transdate OR tx.validto IS NULL) ORDER BY tx.validto LIMIT 1) AS tax,
-		a.till, n.id AS vc_id
+		a.till, n.id AS vc_id, ch.accno
 		FROM acc_trans ac
 	      JOIN $form->{db} a ON (a.id = ac.trans_id)
 	      JOIN chart ch ON (ch.id = ac.chart_id)
@@ -2052,7 +2052,7 @@ sub tax_report {
 		a.invnumber, n.name, n.${vc}number, a.netamount,
 		ac.memo AS description,
 		ac.amount * $ml AS tax,
-		a.till, n.id AS vc_id
+		a.till, n.id AS vc_id, ch.accno
 		FROM acc_trans ac
 	      JOIN $form->{db} a ON (a.id = ac.trans_id)
 	      JOIN chart ch ON (ch.id = ac.chart_id)
@@ -2071,7 +2071,7 @@ sub tax_report {
 		i.description,
 		i.sellprice * i.qty * $ml *
 		(SELECT tx.rate FROM tax tx WHERE tx.chart_id = ch.id AND (tx.validto > $transdate OR tx.validto IS NULL) ORDER BY tx.validto LIMIT 1) AS tax,
-		a.till, n.id AS vc_id
+		a.till, n.id AS vc_id, ch.accno
 		FROM acc_trans ac
 	      JOIN $form->{db} a ON (a.id = ac.trans_id)
 	      JOIN chart ch ON (ch.id = ac.chart_id)
