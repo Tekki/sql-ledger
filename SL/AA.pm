@@ -1122,15 +1122,12 @@ sub get_name {
   $sth->execute || $form->dberror($query);
 
   $form->{taxaccounts} = "";
-  my %trans = ();
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     if ($tax{$ref->{accno}}) {
-      if (not exists $trans{$ref->{accno}}) {
-	$ref->{description} = $ref->{translation} if $ref->{translation};
-	for (qw(rate description taxnumber)) { $form->{"$ref->{accno}_$_"} = $ref->{$_} }
-	$form->{taxaccounts} .= "$ref->{accno} ";
-	$trans{$ref->{accno}} = 1;
-      }
+      $ref->{description} = $ref->{translation} if $ref->{translation};
+      for (qw(rate description taxnumber)) { $form->{"$ref->{accno}_$_"} = $ref->{$_} }
+      $form->{taxaccounts} .= "$ref->{accno} ";
+      $tax{$ref->{accno}} = 0;
     }
   }
   $sth->finish;

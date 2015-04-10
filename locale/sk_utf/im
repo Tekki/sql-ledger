@@ -87,7 +87,6 @@ $self{texts} = {
   'Pricegroup'                  => 'Cenová skupina',
   'Qty'                         => 'Množstvo',
   'ROP'                         => 'Miesto pre novú objednávku',
-  'RV'                          => 'RV',
   'SIC'                         => 'Triadiaci kód',
   'SKU'                         => 'Identifikácia neznámeho',
   'Salesperson'                 => 'Predávajúca osoba',

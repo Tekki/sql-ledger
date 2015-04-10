@@ -1,8 +1,8 @@
 $self{charset} = 'ISO-8859-2';
 
 $self{texts} = {
-  'AP'                          => 'SZÁLLÍTÓK',
-  'AR'                          => 'VEVÕK',
+  'AP'                          => 'Szállítók',
+  'AR'                          => 'Vevõk',
   'Account'                     => 'Számla',
   'Account Number'              => 'Számlaszám',
   'Accounting Menu'             => 'Menü',
@@ -67,7 +67,7 @@ $self{texts} = {
   'Posting failed!'             => 'A rögzítés nem sikerült!',
   'Pricegroup'                  => 'Árcsoport',
   'Qty'                         => 'Menny.',
-  'ROP'                         => 'Rendelési pont',
+  'ROP'                         => 'Újrarendelési pont',
   'SIC'                         => 'OsztályozóKód',
   'SKU'                         => 'Idegen azonosító',
   'Salesperson'                 => 'Ügynök',
@@ -81,7 +81,7 @@ $self{texts} = {
   'Unit'                        => 'Egység',
   'Updated'                     => 'Frissítve',
   'Vendor'                      => 'Szállító',
-  'Vendor Number'               => 'Szállító szám',
+  'Vendor Number'               => 'Szállítószám',
   'Weight'                      => 'Súly',
   'Zip/Postal Code'             => 'Irányítószám',
 };

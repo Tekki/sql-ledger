@@ -3,7 +3,7 @@ $self{charset} = 'UTF-8';
 $self{texts} = {
   'Accounting Menu'             => '会计选单',
   'Description'                 => '说明',
-  'Heading'                     => '标题, ',
+  'Heading'                     => '标题',
 };
 
 $self{subs} = {

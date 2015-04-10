@@ -214,7 +214,6 @@ $self{texts} = {
   'Zip/Postal Code'             => 'Código Postal',
   'account cannot be set to any other type of account' => 'No se puede cambiar a otro tipo de cuenta',
   'done'                        => 'hecho',
-  'localhost'                   => 'máquina local',
 };
 
 $self{subs} = {

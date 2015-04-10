@@ -7,7 +7,6 @@ $self{texts} = {
   'AR'                          => 'Myyntireskontra',
   'AR Aging'                    => 'Erääntyvät myyntilaskut',
   'AR Transaction'              => 'Myyntireskontravienti',
-  'Accounting'                  => 'Kirjanpito',
   'Accounting Menu'             => 'Kirjanpitovalikko',
   'Add Account'                 => 'Lisää tili',
   'Add Assembly'                => 'Lisää tuote',
@@ -196,15 +195,11 @@ $self{subs} = {
   'login'                       => 'login',
   'logout'                      => 'logout',
   'lukitse_järjestelmä'       => 'lock_system',
-  'main_menu'                   => 'main_menu',
   'muuta_salasana'              => 'change_password',
   'nimi'                        => 'login',
   'poista'                      => 'delete',
-  'software_administration'     => 'software_administration',
-  'switch_branch'               => 'switch_branch',
   'unlock_dataset'              => 'unlock_dataset',
   'unlock_system'               => 'unlock_system',
-  'update_software'             => 'update_software',
   'yes'                         => 'yes',
 };
   

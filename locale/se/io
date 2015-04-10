@@ -11,7 +11,6 @@ $self{texts} = {
   'Attachment'                  => 'Bilaga',
   'Aug'                         => 'aug',
   'August'                      => 'augusti',
-  'Barcode'                     => 'Streckkod',
   'Bcc'                         => 'Bankgiro',
   'Bin'                         => 'Antal i lager',
   'Bin List'                    => 'Lager lista',
@@ -72,7 +71,7 @@ $self{texts} = {
   'Order Number'                => 'Ordernummer',
   'Order Number missing!'       => 'Ordernummer saknas',
   'PDF'                         => 'PDF',
-  'PO Number'                   => 'Inköps order nr',
+  'PO Number'                   => 'Fakturamärkning',
   'Packaging'                   => 'Packning',
   'Packing List'                => 'Packsedel',
   'Packing List Date missing!'  => 'Packsedelsdatum saknas',
@@ -114,7 +113,6 @@ $self{texts} = {
   'Volume'                      => 'Volym',
   'Work Order'                  => 'Arbetsorder',
   'Zip/Postal Code'             => 'Postnr',
-  'html'                        => 'html',
   'sent'                        => 'Skickad',
 };
 

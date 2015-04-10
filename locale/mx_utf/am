@@ -9,7 +9,6 @@ $self{texts} = {
   'AR Payment'                  => 'Pago de CxC',
   'About'                       => 'Acerca de',
   'Access Control'              => 'Control de acceso',
-  'Access Denied!'              => '¡Acceso Denegado!',
   'Account'                     => 'Cuenta',
   'Account Number'              => 'Número de cuenta',
   'Account Number missing!'     => '¡Falta el número de cuenta!',
@@ -356,7 +355,6 @@ $self{texts} = {
   'failed!'                     => 'falló!',
   'gzip failed!'                => 'falló gzip!',
   'html'                        => 'html',
-  'localhost'                   => 'localhost',
   'ok'                          => 'ok',
   'will be restored with data from' => 'será restaurado con datos de',
 };

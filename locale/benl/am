@@ -201,7 +201,6 @@ $self{texts} = {
   'Yes'                         => 'Ja',
   'account cannot be set to any other type of account' => 'Rekening kan niet omgezet worden naar ander type Rekening',
   'done'                        => 'gebeurd',
-  'localhost'                   => 'localhost',
 };
 
 $self{subs} = {

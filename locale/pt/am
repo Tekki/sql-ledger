@@ -133,7 +133,6 @@ $self{texts} = {
   'Version'                     => 'Versão',
   'Weight Unit'                 => 'Unidade de Peso',
   'Yes'                         => 'Sim',
-  'localhost'                   => 'localhost',
 };
 
 $self{subs} = {

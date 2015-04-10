@@ -212,7 +212,6 @@ $self{texts} = {
   'Yes'                         => 'Tak',
   'account cannot be set to any other type of account' => 'konto nie może być ustawione do wszelkich innych kont',
   'done'                        => 'wykonane',
-  'localhost'                   => 'serwer lokalny',
 };
 
 $self{subs} = {

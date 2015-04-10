@@ -112,7 +112,6 @@ $self{texts} = {
   'Version'                     => 'Verze',
   'Weight Unit'                 => 'Jednotka váhy',
   'Yes'                         => 'Ano',
-  'localhost'                   => 'lokální server',
 };
 
 $self{subs} = {

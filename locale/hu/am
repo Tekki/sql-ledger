@@ -5,7 +5,6 @@ $self{texts} = {
   'AR'                          => 'Vevõk',
   'About'                       => ' ',
   'Access Control'              => 'Hozzáférési jogok',
-  'Access Denied!'              => 'Hozzáférés megtagadva!',
   'Account'                     => 'Számla',
   'Account Number'              => 'Számlaszám',
   'Account Number missing!'     => 'Számlaszám hiányzik!',
@@ -213,8 +212,8 @@ $self{texts} = {
   'Stylesheet'                  => 'Stíluslap',
   'System Defaults'             => 'Rendszer alapértelmezés',
   'Tax'                         => 'Adó',
-  'Tax collected'               => 'Fizetendõ ÁFA',
-  'Tax paid'                    => 'Levonható ÁFA',
+  'Tax collected'               => 'FizetendõÁFA',
+  'Tax paid'                    => 'LevonhatóÁFA',
   'Taxable'                     => 'Adó:',
   'Taxes'                       => 'Adók',
   'Taxes saved!'                => 'Adók elmentve!',
@@ -252,7 +251,6 @@ $self{texts} = {
   'account cannot be set to any other type of account' => 'gyûjtõszámlát nem lehet más típusú tranzakcióhoz beállítani',
   'done'                        => 'elvégezve',
   'failed'                      => 'nem sikerült',
-  'localhost'                   => 'localhost',
 };
 
 $self{subs} = {

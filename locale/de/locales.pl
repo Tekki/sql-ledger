@@ -119,7 +119,6 @@ foreach $file (@progfiles) {
     if (!$text) {
       $notext++;
       push @missing, $keytext;
-      $all{$keytext} = '';
       next;
     }
     
@@ -362,7 +361,7 @@ sub scanfile {
 	  $locale{$string} = 1;
 
           # is it a submit button before $locale->
-          if (/type="?submit/i) {
+          if (/type=submit/i) {
 	    $submit{$string} = 1;
           }
 

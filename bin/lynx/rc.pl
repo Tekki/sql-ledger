@@ -12,6 +12,7 @@
 #======================================================================
 
 use SL::RC;
+use SL::JS;
 
 1;
 # end of main
@@ -207,26 +208,9 @@ sub display_form {
   
   $form->header;
 
-  print qq|
-<script language="javascript">
-<!--
+  JS->check_all(qw(allbox checked_));
 
-function CheckAll() {
-
-  var frm = document.forms[0]
-  var el = frm.elements
-  var re = /checked_/;
-
-  for (i = 0; i < el.length; i++) {
-    if (el[i].type == 'checkbox' && re.test(el[i].name)) {
-      el[i].checked = frm.allbox.checked
-    }
-  }
-
-}
-// -->
-</script>
-  
+  print qq| 
 <body>
 
 <form method=post action=$form->{script}>
@@ -509,6 +493,7 @@ sub select_all {
   }
 
   $form->{deselect} = 1;
+  $form->{allbox} = 1;
 
   &display_form;
   
@@ -520,6 +505,8 @@ sub deselect_all {
   RC->payment_transactions(\%myconfig, \%$form);
 
   for (@{ $form->{PR} }) { $_->{cleared} = "" }
+
+  $form->{allbox} = 0;
 
   &display_form;
   

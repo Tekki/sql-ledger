@@ -1,7 +1,7 @@
 $self{charset} = 'ISO-8859-15';
 
 $self{texts} = {
-  'Continue'                    => 'Edasi',
+  'Continue'                    => 'Jätka',
   'From'                        => 'Alates',
   'To'                          => 'Kuni',
   'done'                        => 'tehtud',
@@ -13,7 +13,6 @@ $self{subs} = {
   'do_delete_invoices'          => 'do_delete_invoices',
   'do_repost_invoices'          => 'do_repost_invoices',
   'repost_invoices'             => 'repost_invoices',
-  'edasi'                       => 'continue',
 };
 
 1;

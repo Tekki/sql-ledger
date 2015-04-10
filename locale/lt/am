@@ -137,7 +137,6 @@ $self{texts} = {
   'Version'                     => 'Versija',
   'Weight Unit'                 => 'Svorio vienetas.',
   'Yes'                         => 'Taip',
-  'localhost'                   => 'lokalhostas',
 };
 
 $self{subs} = {

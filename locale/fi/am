@@ -199,7 +199,6 @@ $self{texts} = {
   'Zip/Postal Code'             => 'Postinumero',
   'account cannot be set to any other type of account' => 'tilityyppiä ei voi muuttaa',
   'done'                        => 'valmis',
-  'localhost'                   => 'paikallinen tietokone',
 };
 
 $self{subs} = {

@@ -5,7 +5,6 @@ $self{texts} = {
   'AR'                          => 'Müügireskontro',
   'About'                       => 'Programmi Info',
   'Access Control'              => 'Ligipääsukontroll',
-  'Access Denied!'              => 'Ligipääs Keelatud!',
   'Account'                     => 'Konto',
   'Account Number'              => 'Konto Number',
   'Account Number missing!'     => 'Konto Number puudu!',
@@ -201,7 +200,7 @@ $self{texts} = {
   'Save'                        => 'Salvesta',
   'Save as new'                 => 'Salvesta uuena',
   'Saving'                      => 'Salvestab',
-  'Select all'                  => 'Vali kõik',
+  'Select all'                  => 'Valida kõik',
   'Sending'                     => 'Saadab',
   'Sep'                         => 'Sept',
   'September'                   => 'September',
@@ -248,7 +247,6 @@ $self{texts} = {
   'account cannot be set to any other type of account' => 'konto tüüpi ei saa muuta',
   'done'                        => 'valmis',
   'failed'                      => 'nurjus',
-  'localhost'                   => 'localhost',
 };
 
 $self{subs} = {
@@ -399,7 +397,7 @@ $self{subs} = {
   'viia_läbi_tehing'           => 'process_transactions',
   'salvesta'                    => 'save',
   'salvesta_uuena'              => 'save_as_new',
-  'vali_kõik'                  => 'select_all',
+  'valida_kõik'                => 'select_all',
   'värskenda'                  => 'update',
   'jah'                         => 'yes',
 };

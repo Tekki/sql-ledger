@@ -100,7 +100,6 @@ $self{texts} = {
   'Version'                     => 'Versiyon',
   'Weight Unit'                 => 'Aðýrlýk Birimi',
   'Yes'                         => 'Evet',
-  'localhost'                   => 'Yerelhost',
 };
 
 $self{subs} = {

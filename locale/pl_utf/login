@@ -5,7 +5,7 @@ $self{texts} = {
   'Continue'                    => 'Kontynuj',
   'Dataset is newer than version!' => 'Baza Danych jest nowsza niż wersja!',
   'Incorrect Dataset version!'  => 'Nieprawidłowa wersja Zbioru Danych',
-  'Login'                       => 'Zarejestrój się',
+  'Login'                       => 'Zarejestruj się',
   'Name'                        => 'Nazwa',
   'No email address for'        => 'Brak adresu email',
   'Password'                    => 'Hasło',
@@ -23,7 +23,7 @@ $self{subs} = {
   'selectdataset'               => 'selectdataset',
   'tan_login'                   => 'tan_login',
   'kontynuj'                    => 'continue',
-  'zarejestrój_się'           => 'login',
+  'zarejestruj_się'            => 'login',
 };
 
 1;

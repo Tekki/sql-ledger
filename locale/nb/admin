@@ -5,7 +5,6 @@ $self{texts} = {
   'AR'                          => 'Debitorer',
   'AR Aging'                    => 'Aldersfordeling',
   'AR Transaction'              => 'Debitorpostering',
-  'Accounting'                  => 'Bokføring',
   'Accounting Menu'             => 'Konto-meny',
   'Add Account'                 => 'Ny konto',
   'Add Assembly'                => 'Ny sammensetning',
@@ -182,13 +181,9 @@ $self{subs} = {
   'logout'                      => 'logout',
   'lås_opp_systemet'            => 'unlock_system',
   'lås_systemet'                => 'lock_system',
-  'main_menu'                   => 'main_menu',
   'slett'                       => 'delete',
-  'software_administration'     => 'software_administration',
-  'switch_branch'               => 'switch_branch',
   'unlock_dataset'              => 'unlock_dataset',
   'unlock_system'               => 'unlock_system',
-  'update_software'             => 'update_software',
   'yes'                         => 'yes',
 };
   

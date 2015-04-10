@@ -5,7 +5,6 @@ $self{texts} = {
   'AR'                          => '應收帳款',
   'About'                       => '關於',
   'Access Control'              => '權限控制',
-  'Access Denied!'              => '拒絕存取！',
   'Account'                     => '帳戶',
   'Account Number'              => '帳戶編號',
   'Account Number missing!'     => '未指明帳戶編號！',
@@ -251,7 +250,6 @@ $self{texts} = {
   'account cannot be set to any other type of account' => '帳戶不能被設置為其他類型帳戶',
   'done'                        => '完成',
   'failed'                      => '失敗',
-  'localhost'                   => '本地寄主',
 };
 
 $self{subs} = {

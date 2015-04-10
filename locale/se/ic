@@ -159,7 +159,7 @@ $self{texts} = {
   'Orphaned'                    => 'Fristående',
   'PDF'                         => 'PDF',
   'PO'                          => 'Fakturamärkning',
-  'PO Number'                   => 'Faktura märkning',
+  'PO Number'                   => 'Inköps order nr',
   'Packaging'                   => 'Packning',
   'Packing List'                => 'Packsedel',
   'Packing List Date missing!'  => 'Packsedelsdatum saknas',
@@ -244,7 +244,6 @@ $self{texts} = {
   'Year'                        => 'År',
   'Zip/Postal Code'             => 'Postnr',
   'days'                        => 'dagar',
-  'html'                        => 'html',
   'sent'                        => 'Skickad',
 };
 

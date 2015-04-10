@@ -3,7 +3,6 @@ $self{texts} = {
   'AR'                          => 'CxC',
   'About'                       => 'Acerca de',
   'Access Control'              => 'Control de Acceso',
-  'Access Denied!'              => 'Acceso Denegado!',
   'Account'                     => 'Cuenta',
   'Account Number'              => 'Número de Cuenta',
   'Account Number missing!'     => 'Falta el Número de la Cuenta',
@@ -242,7 +241,6 @@ $self{texts} = {
   'account cannot be set to any other type of account' => 'La cuenta no puede ser cambiada a otro tipo de cuenta',
   'done'                        => 'hecho',
   'failed'                      => 'falló',
-  'localhost'                   => 'servidor local',
 };
 
 $self{subs} = {

@@ -202,7 +202,6 @@ $self{texts} = {
   'Yes'                         => 'Jâ',
   'account cannot be set to any other type of account' => 'kontu nevar nomainît uz jebkuru citu konta tipu',
   'done'                        => 'izdarîts',
-  'localhost'                   => 'localhost',
 };
 
 $self{subs} = {

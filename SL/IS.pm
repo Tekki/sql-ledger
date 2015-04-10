@@ -1758,7 +1758,7 @@ sub cogs_difference {
   $sth->finish;
 
   # return difference
-  $amount = $form->round_amount($amount / $allocated, $form->{precision});
+  $amount = $form->round_amount($amount / $allocated, $form->{precision}) if $allocated;
   $form->round_amount(($form->{"sellprice_$i"} - $amount) * $form->{"qty_$i"} * -1, $form->{precision});
 
 }

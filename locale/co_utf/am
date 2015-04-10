@@ -5,7 +5,6 @@ $self{texts} = {
   'AR'                          => 'CPC',
   'About'                       => 'Acerca de',
   'Access Control'              => 'Control de Acceso',
-  'Access Denied!'              => 'Acceso negado',
   'Account'                     => 'Cuenta',
   'Account Number'              => 'Número de Cuenta',
   'Account Number missing!'     => 'No se ha definido el número de la cuenta',
@@ -213,7 +212,7 @@ $self{texts} = {
   'Stylesheet'                  => 'Hoja de Estilo',
   'System Defaults'             => 'Predeterminados del Sistema',
   'Tax'                         => 'Impuestos',
-  'Tax collected'               => 'Impuestos Cobrados Clientes',
+  'Tax collected'               => 'Impuestos Cobrados',
   'Tax paid'                    => 'Impuestos Pagados',
   'Taxable'                     => 'Impuestos Gravables',
   'Taxes'                       => 'Impuestos',
@@ -252,7 +251,6 @@ $self{texts} = {
   'account cannot be set to any other type of account' => 'No se puede cambiar a otro tipo de Cuenta',
   'done'                        => 'hecho',
   'failed'                      => 'falló',
-  'localhost'                   => 'máquina local',
 };
 
 $self{subs} = {

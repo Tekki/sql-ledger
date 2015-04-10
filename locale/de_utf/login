@@ -5,10 +5,10 @@ $self{texts} = {
   'Configuration file missing!' => 'Konfigurationsdatei fehlt!',
   'Continue'                    => 'Weiter',
   'Dataset is newer than version!' => 'Datensatz ist jünger als installierte Version',
-  'Dataset locked!'             => 'Datenset gesperrt',
+  'Dataset locked!'             => 'Datenset gesperrt!',
   'Incorrect Dataset version!'  => 'Ungültige Datensatzversion',
-  'Incorrect Password!'         => 'Falsches Passwort',
-  'Incorrect Username!'         => 'Falscher Benutzername',
+  'Incorrect Password!'         => 'Falsches Passwort!',
+  'Incorrect Username!'         => 'Falscher Benutzername!',
   'Login'                       => 'Anmelden',
   'Name'                        => 'Name',
   'No email address for'        => 'Keine eMailadresse für',
@@ -16,7 +16,7 @@ $self{texts} = {
   'Upgrading to Version'        => 'Datensatz wird erneuert auf Version',
   'Version'                     => 'Version',
   'You did not enter a name!'   => 'Sie haben keinen Namen eingegeben!',
-  'admin does not exist!'       => 'admin existiert nicht!',
+  'admin does not exist!'       => 'admin existiert nicht',
 };
 
 $self{subs} = {

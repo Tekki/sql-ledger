@@ -1,7 +1,7 @@
 $self{texts} = {
   'Continue'                    => 'Continuer',
   'From'                        => 'De',
-  'To'                          => 'À',
+  'To'                          => 'Jusqu\'au',
   'done'                        => 'fait',
 };
 

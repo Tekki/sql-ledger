@@ -1,6 +1,6 @@
 ######################################################################
 # SQL-Ledger Accounting
-# Copyright (c) 2015-02-12
+# Copyright (C) 2002
 #
 # German texts:
 #
@@ -10,7 +10,6 @@
 #          Doris Messmer
 #          Wolfgang Foerster
 #          Michael Strecker
-#          Maik Wagner
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

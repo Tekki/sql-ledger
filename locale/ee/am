@@ -5,7 +5,6 @@ $self{texts} = {
   'AR'                          => 'Nõuded',
   'About'                       => 'Programmi Info',
   'Access Control'              => 'Ligipääsukontroll',
-  'Access Denied!'              => 'Ligipääs Keelatud!',
   'Account'                     => 'Konto',
   'Account Number'              => 'Konto number',
   'Account Number missing!'     => 'Konto number puudub',
@@ -248,7 +247,6 @@ $self{texts} = {
   'account cannot be set to any other type of account' => 'konto tüüpi ei saa muuta',
   'done'                        => 'tehtud',
   'failed'                      => 'nurjus',
-  'localhost'                   => 'localhost',
 };
 
 $self{subs} = {

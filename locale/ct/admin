@@ -3,7 +3,6 @@ $self{texts} = {
   'AP Aging'                    => 'Diari de Despeses',
   'AR'                          => 'Ingressos',
   'AR Aging'                    => 'Diari d\'Ingressos',
-  'Accounting'                  => 'Comptabilitat',
   'Accounting Menu'             => 'Menú Comptable',
   'Add Account'                 => 'Afegir Compta',
   'Add Assembly'                => 'Afegir Compost',
@@ -114,13 +113,9 @@ $self{subs} = {
   'lock_system'                 => 'lock_system',
   'login'                       => 'login',
   'logout'                      => 'logout',
-  'main_menu'                   => 'main_menu',
-  'software_administration'     => 'software_administration',
-  'switch_branch'               => 'switch_branch',
   'sí'                          => 'yes',
   'unlock_dataset'              => 'unlock_dataset',
   'unlock_system'               => 'unlock_system',
-  'update_software'             => 'update_software',
   'yes'                         => 'yes',
 };
   

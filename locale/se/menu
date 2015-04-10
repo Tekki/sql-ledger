@@ -67,7 +67,6 @@ $self{texts} = {
   'List Accounts'               => 'Lista konton',
   'List GIFI'                   => 'Lista SRU-koder',
   'Logout'                      => 'Logga ut',
-  'Mapfile'                     => 'Kopplingsfil',
   'Non-taxable'                 => 'Momsfri',
   'Open'                        => 'Aktuell',
   'Order Entry'                 => 'Beställningar',

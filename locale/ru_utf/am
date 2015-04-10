@@ -5,7 +5,6 @@ $self{texts} = {
   'AR'                          => 'Продажи',
   'About'                       => 'О программе',
   'Access Control'              => 'Контроль доступа',
-  'Access Denied!'              => 'Доступ запрещен',
   'Account'                     => 'Счет',
   'Account Number'              => 'Код счета',
   'Account Number missing!'     => 'Не указан номер счета!',
@@ -245,7 +244,6 @@ $self{texts} = {
   'account cannot be set to any other type of account' => 'счету не может быть присвоен другой тип',
   'done'                        => 'выполнено',
   'failed'                      => 'ошибка',
-  'localhost'                   => 'localhost',
 };
 
 $self{subs} = {

@@ -12,7 +12,6 @@ $self{subs} = {
   'do_delete_invoices'          => 'do_delete_invoices',
   'do_repost_invoices'          => 'do_repost_invoices',
   'repost_invoices'             => 'repost_invoices',
-  'pokraèování'                 => 'continue',
 };
 
 1;

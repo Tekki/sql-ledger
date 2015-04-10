@@ -8,17 +8,17 @@ $self{texts} = {
   'Delete Report'               => 'Bericht löschen',
   'Description'                 => 'Beschreibung',
   'Edit Column'                 => 'Spalte bearbeiten',
-  'Edit Column Header'          => 'Spaltenüberschrift bearbeiten',
-  'Edit Column Total'           => 'Spaltensumme bearbeiten',
+  'Edit Column Header'          => 'Spalten Header bearbeiten',
+  'Edit Column Total'           => 'Spalten Summe bearbeiten',
   'Fill'                        => 'Füllen',
-  'Fixed value'                 => 'Fixierter Wert',
+  'Fixed value'                 => 'Gesetzter Wert',
   'Heading'                     => 'Überschrift',
   'Left'                        => 'Links',
   'Public'                      => 'Öffentlich',
   'Right'                       => 'Rechts',
-  'Save Column'                 => 'Spalte speichern',
-  'Save Report'                 => 'Bericht speichern',
-  'Save Report as new'          => 'Bericht als neu speichern',
+  'Save Column'                 => 'Spalte sichern',
+  'Save Report'                 => 'Bericht sichern',
+  'Save Report as new'          => 'Bericht als neu sichern',
   'Width'                       => 'Breite',
 };
 
@@ -41,9 +41,9 @@ $self{subs} = {
   'section_menu'                => 'section_menu',
   'spalte_löschen'             => 'delete_column',
   'bericht_löschen'            => 'delete_report',
-  'spalte_speichern'            => 'save_column',
-  'bericht_speichern'           => 'save_report',
-  'bericht_als_neu_speichern'   => 'save_report_as_new',
+  'spalte_sichern'              => 'save_column',
+  'bericht_sichern'             => 'save_report',
+  'bericht_als_neu_sichern'     => 'save_report_as_new',
 };
 
 1;

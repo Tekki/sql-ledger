@@ -154,7 +154,6 @@ $self{texts} = {
   'as at'                       => 'som vid',
   'for'                         => 'under',
   'for Period'                  => 'för perioden',
-  'html'                        => 'html',
   'sent'                        => 'Skickad',
   'time(s)'                     => 'gång(er)',
 };

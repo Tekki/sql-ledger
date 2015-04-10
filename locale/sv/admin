@@ -5,7 +5,6 @@ $self{texts} = {
   'AR'                          => 'Ctas X Cobrar',
   'AR Aging'                    => 'Antiguedad de Saldos - CxC ',
   'AR Transaction'              => 'Transaccion - CxC',
-  'Accounting'                  => 'Contabilidad',
   'Accounting Menu'             => 'Menú de Contabilidad',
   'Add Account'                 => 'Agregar Cuenta',
   'Add Assembly'                => 'Agregar Ensamble',
@@ -145,15 +144,11 @@ $self{subs} = {
   'lock_system'                 => 'lock_system',
   'login'                       => 'login',
   'logout'                      => 'logout',
-  'main_menu'                   => 'main_menu',
   'nombre_de_acceso'            => 'login',
   'salir'                       => 'logout',
   'si'                          => 'yes',
-  'software_administration'     => 'software_administration',
-  'switch_branch'               => 'switch_branch',
   'unlock_dataset'              => 'unlock_dataset',
   'unlock_system'               => 'unlock_system',
-  'update_software'             => 'update_software',
   'yes'                         => 'yes',
 };
   
