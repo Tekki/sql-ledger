@@ -1,0 +1,11 @@
+$self{charset} = 'ISO-8859-13';
+
+$self{texts} = {
+};
+
+$self{subs} = {
+  'reference_documents'         => 'reference_documents',
+};
+
+1;
+

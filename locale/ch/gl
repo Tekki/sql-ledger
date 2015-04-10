@@ -111,7 +111,6 @@ $self{texts} = {
   'Post as new'                 => 'Als neu buchen',
   'Postscript'                  => 'Postscript',
   'Print'                       => 'Drucken',
-  'Private'                     => 'Privat',
   'Project'                     => 'Projekt',
   'Project not on file!'        => 'Dieses Projekt ist nicht in der Datenbank!',
   'Quarter'                     => 'Quartal',

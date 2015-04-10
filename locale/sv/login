@@ -5,17 +5,21 @@ $self{texts} = {
   'Incorrect Dataset version!'  => '!Version incorrecta de conjunto de datos!',
   'Login'                       => 'Nombre de Acceso',
   'Name'                        => 'Nombre',
+  'No email address for'        => 'Falta email para',
   'Password'                    => 'Contraseña',
   'Version'                     => 'Versión',
   'You did not enter a name!'   => 'No introdujo un nombre!',
-  'done'                        => 'Hecho',
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_tan'                   => 'email_tan',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
+  'tan_login'                   => 'tan_login',
+  'continuar'                   => 'continue',
   'nombre_de_acceso'            => 'login',
 };
 

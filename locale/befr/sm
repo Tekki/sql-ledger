@@ -1,0 +1,17 @@
+$self{texts} = {
+  'Continue'                    => 'Continuer',
+  'From'                        => 'De',
+  'To'                          => 'Jusqu\'au',
+  'done'                        => 'fait',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'delete_invoices'             => 'delete_invoices',
+  'do_delete_invoices'          => 'do_delete_invoices',
+  'do_repost_invoices'          => 'do_repost_invoices',
+  'repost_invoices'             => 'repost_invoices',
+};
+
+1;
+

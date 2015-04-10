@@ -21,6 +21,7 @@ $self{texts} = {
   'Exchange rate missing!'      => 'Wechselkurs fehlt!',
   'Extended'                    => 'Summe',
   'From'                        => 'Von',
+  'Invoice Date'                => 'Rechnungsdatum',
   'Invoice Number'              => 'Rechnungsnummer',
   'Language'                    => 'Sprache',
   'Memo'                        => 'Vermerk',

@@ -317,7 +317,6 @@ $self{texts} = {
   'Type'                        => 'Type',
   'Type of Business'            => 'Branche',
   'Type of Contact'             => 'Type contact',
-  'Unauthorized!'               => 'Niet toegestaan!',
   'Unlock dataset?'             => 'Dataset ontgrendelen?',
   'Update'                      => 'Bijwerken',
   'Upgrading to Version'        => 'Opwaarderen naar Versie',

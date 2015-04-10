@@ -61,7 +61,6 @@ $self{texts} = {
   'Unit'                        => 'Einheit',
   'Unknown Error!'              => 'Fehler!',
   'Update'                      => 'Erneuern',
-  'Val'                         => 'TP',
   'Warehouse'                   => 'Warenlager',
   'Year'                        => 'Jahr',
 };

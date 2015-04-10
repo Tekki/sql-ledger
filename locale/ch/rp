@@ -115,7 +115,6 @@ $self{texts} = {
   'Preview'                     => 'Vorschau',
   'Print'                       => 'Drucken',
   'Print Report'                => 'Rapport drucken',
-  'Private'                     => 'Privat',
   'Project'                     => 'Projekt',
   'Project Number'              => 'Projektnummer',
   'Project Transactions'        => 'Projektbuchungen',

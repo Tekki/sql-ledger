@@ -49,7 +49,6 @@ $self{texts} = {
   'July'                        => 'Juli',
   'Jun'                         => 'Jun',
   'June'                        => 'Juni',
-  'Manager'                     => 'Geschäftsführer',
   'Mar'                         => 'Mär',
   'March'                       => 'März',
   'May'                         => 'Mai',

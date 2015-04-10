@@ -2,7 +2,6 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   '1.Reminder'                  => '1er Recordatorio',
-  '123'                         => '123',
   '2.Reminder'                  => '2o Recordatorio',
   '3.Reminder'                  => '3er Recordatorio',
   'AP'                          => 'Ctas. x pagar',
@@ -69,7 +68,6 @@ $self{texts} = {
   'History'                     => 'Historia',
   'Import'                      => 'Importar',
   'Income Statement'            => 'Estado de resultados',
-  'Kakuta1'                     => 'Kakuta1',
   'LaTeX Templates'             => 'Plantillas LaTeX',
   'Labor/Overhead'              => 'Mano de obra/Indirecto',
   'Language'                    => 'Lenguaje',
@@ -130,7 +128,6 @@ $self{texts} = {
   'Sales Order'                 => 'Orden de venta',
   'Sales Orders'                => 'Ordenes de venta',
   'Save to File'                => 'Guardar en un archivo',
-  'Saved Reports'               => 'Reportes Guardados',
   'Search'                      => 'Buscar',
   'Send by E-Mail'              => 'Enviar por correo-e',
   'Service'                     => 'Servicio',
@@ -167,8 +164,6 @@ $self{texts} = {
   'XML Templates'               => 'Plantillas XML',
   'Yearend'                     => 'Cierre de periodo',
   'html Templates'              => 'Plantillas html',
-  'kakuta'                      => 'kakuta',
-  'pedrogzz'                    => 'pedrogzz',
 };
 
 $self{subs} = {

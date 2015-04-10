@@ -1,0 +1,18 @@
+$self{charset} = 'ISO-8859-9';
+
+$self{texts} = {
+  'Continue'                    => 'Devam',
+  'From'                        => 'Baþlangýç',
+  'To'                          => 'Bitiþ',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'delete_invoices'             => 'delete_invoices',
+  'do_delete_invoices'          => 'do_delete_invoices',
+  'do_repost_invoices'          => 'do_repost_invoices',
+  'repost_invoices'             => 'repost_invoices',
+};
+
+1;
+

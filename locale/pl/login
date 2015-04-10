@@ -7,18 +7,22 @@ $self{texts} = {
   'Incorrect Dataset version!'  => 'Nieprawid³owa wersja Zbioru Danych',
   'Login'                       => 'Zarejestrój siê',
   'Name'                        => 'Nazwa',
+  'No email address for'        => 'Brak adresu email',
   'Password'                    => 'Has³o',
   'Upgrading to Version'        => 'Uaktualnienie do nowej wersji',
   'Version'                     => 'Wersja',
   'You did not enter a name!'   => 'Nie wstawiono nazwy!',
-  'done'                        => 'wykonane',
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_tan'                   => 'email_tan',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
+  'tan_login'                   => 'tan_login',
+  'kontynuj'                    => 'continue',
   'zarejestrój_siê'             => 'login',
 };
 

@@ -12,8 +12,9 @@ $self{texts} = {
   'Screen'                      => 'Obrazovka',
   'Select a Printer!'           => 'Vyberte tlaèiareò',
   'Select payment'              => 'Vyberte spôsob platby',
-  'Select postscript or PDF!'   => 'Vyberte postscript alebo PDF!',
   'Source'                      => 'Doklad',
+  'Text'                        => 'Text',
+  'html'                        => 'html',
 };
 
 $self{subs} = {
@@ -24,6 +25,7 @@ $self{subs} = {
   'print_credit_note'           => 'print_credit_note',
   'print_debit_note'            => 'print_debit_note',
   'print_options'               => 'print_options',
+  'print_payslip'               => 'print_payslip',
   'print_receipt'               => 'print_receipt',
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',

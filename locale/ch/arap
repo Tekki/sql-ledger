@@ -37,7 +37,6 @@ $self{texts} = {
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
   'Print'                       => 'Drucken',
-  'Private'                     => 'Privat',
   'Project not on file!'        => 'Dieses Projekt ist nicht in der Datenbank!',
   'Recurring Transaction'       => 'Wiederkehrende Buchung',
   'Reference'                   => 'Referenz',

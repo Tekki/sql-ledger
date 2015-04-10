@@ -5,18 +5,22 @@ $self{texts} = {
   'Incorrect Dataset version!'  => 'Forkert version af datasæt!',
   'Login'                       => 'Log på',
   'Name'                        => 'Navn',
+  'No email address for'        => 'Ingen epostadresse for',
   'Password'                    => 'Adgangskode',
   'Upgrading to Version'        => 'Opgraderer til version',
   'Version'                     => 'Version',
   'You did not enter a name!'   => 'Du angav ikke et navn',
-  'done'                        => 'færdig',
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_tan'                   => 'email_tan',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
+  'tan_login'                   => 'tan_login',
+  'fortsæt'                     => 'continue',
   'log_på'                      => 'login',
 };
 

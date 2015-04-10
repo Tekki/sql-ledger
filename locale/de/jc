@@ -140,6 +140,7 @@ $self{subs} = {
   'new_item'                    => 'new_item',
   'prepare_storescard'          => 'prepare_storescard',
   'prepare_timecard'            => 'prepare_timecard',
+  'preview'                     => 'preview',
   'print'                       => 'print',
   'print_and_save'              => 'print_and_save',
   'print_and_save_as_new'       => 'print_and_save_as_new',

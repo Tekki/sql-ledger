@@ -9,7 +9,6 @@ $self{texts} = {
   'PDF'                         => 'PDF',
   'Postscript'                  => 'PostScript',
   'Screen'                      => '显示器',
-  'Select postscript or PDF!'   => '于PostScript或PDF中选一',
   'Source'                      => '来源',
 };
 
@@ -21,6 +20,7 @@ $self{subs} = {
   'print_credit_note'           => 'print_credit_note',
   'print_debit_note'            => 'print_debit_note',
   'print_options'               => 'print_options',
+  'print_payslip'               => 'print_payslip',
   'print_receipt'               => 'print_receipt',
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',

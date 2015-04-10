@@ -6,16 +6,21 @@ $self{texts} = {
   'Incorrect Dataset version!'  => 'Neteisinga duomenø aibës versija!',
   'Login'                       => 'Prisijungimas',
   'Name'                        => 'Vardas',
+  'No email address for'        => 'Nëra e-paðto adreso...',
   'Password'                    => 'Slaptaþodis',
   'Version'                     => 'Versija',
   'You did not enter a name!'   => 'Neávedëte vardo!',
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_tan'                   => 'email_tan',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
+  'tan_login'                   => 'tan_login',
+  'tæsti'                       => 'continue',
   'prisijungimas'               => 'login',
 };
 

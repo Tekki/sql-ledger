@@ -59,6 +59,7 @@ $self{texts} = {
   'Group saved!'                => 'Gruppe gespeichert!',
   'Groups'                      => 'Gruppen',
   'Heading'                     => 'Überschrift',
+  'Image'                       => 'Bild',
   'Inactive'                    => 'Inaktiv',
   'Income'                      => 'Einnahmen',
   'Jan'                         => 'Jan',

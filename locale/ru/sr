@@ -1,0 +1,29 @@
+$self{charset} = 'ISO-8859-5';
+
+$self{texts} = {
+  'Accounting Menu'             => 'Бухгалтерское меню',
+  'Description'                 => 'Описание',
+  'Heading'                     => 'Раздел',
+};
+
+$self{subs} = {
+  'acc_menu'                    => 'acc_menu',
+  'add_column'                  => 'add_column',
+  'delete_column'               => 'delete_column',
+  'delete_report'               => 'delete_report',
+  'display'                     => 'display',
+  'display_frame'               => 'display_frame',
+  'do_save_report'              => 'do_save_report',
+  'edit_column'                 => 'edit_column',
+  'jsmenu'                      => 'jsmenu',
+  'jsmenu_frame'                => 'jsmenu_frame',
+  'menubar'                     => 'menubar',
+  'mlmenu'                      => 'mlmenu',
+  'save_column'                 => 'save_column',
+  'save_report'                 => 'save_report',
+  'save_report_as_new'          => 'save_report_as_new',
+  'section_menu'                => 'section_menu',
+};
+
+1;
+

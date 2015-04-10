@@ -115,7 +115,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "3.0.7";
+  $self->{version} = "3.0.8";
   $self->{dbversion} = "3.0.0";
 
   bless $self, $type;
@@ -2278,7 +2278,7 @@ sub get_name {
 
   my %defaults = $self->get_defaults($dbh, \@{['namesbynumber']});
   
-  my $sortorder = "ct.name";
+  my $sortorder = "name";
   $sortorder = $self->{searchby} if $self->{searchby};
    
   my $var;
@@ -3709,7 +3709,7 @@ sub save_intnotes {
 
 
 sub update_defaults {
-  my ($self, $myconfig, $fld, $dbh) = @_;
+  my ($self, $myconfig, $fld, $dbh, $ini) = @_;
 
   my $disconnect = ($dbh) ? 0 : 1;
   
@@ -3720,13 +3720,28 @@ sub update_defaults {
   my $query = qq|SELECT fldname FROM defaults
                    WHERE fldname = '$fld'|;
 
+  $ini =~ s/;.*//g;
+
   if (! $dbh->selectrow_array($query)) {
-    $query = qq|INSERT INTO defaults (fldname)
-                VALUES ('$fld')|;
+    if ($ini) {
+      $query = qq|INSERT INTO defaults (fldname, fldvalue)
+                  VALUES ('$fld', '$ini')|;
+    } else {
+      $query = qq|INSERT INTO defaults (fldname)
+                  VALUES ('$fld')|;
+    }
     $dbh->do($query) || $self->dberror($query);
     $dbh->commit;
+  } else {
+    if ($ini) {
+      $query = qq|UPDATE defaults SET
+                  fldvalue = '$ini'
+                  WHERE fldname = '$fld'|;
+      $dbh->do($query) || $self->dberror($query);
+      $dbh->commit;
+    }
   }
-  
+
   $query = qq|SELECT fldvalue FROM defaults
               WHERE fldname = '$fld' FOR UPDATE|;
   ($_) = $dbh->selectrow_array($query);
@@ -3776,7 +3791,7 @@ sub update_defaults {
       
       if ($param =~ /<%date%>/i) {
 	$str = ($self->split_date($myconfig->{dateformat}, $self->{transdate}))[0];
-	$var =~ s/$param/$str/;
+	$var =~ s/$param/$str/i;
       }
 
       if ($param =~ /<%(name|business|description|item|partsgroup|phone|custom)/i) {
@@ -3816,7 +3831,7 @@ sub update_defaults {
 	  my @p = ();
 
 	  my @date = $self->split_date($myconfig->{dateformat}, $self->{transdate});
-	  for (sort keys %d) { push @p, $date[$d{$_}] if ($p =~ /$_/) }
+	  for (sort keys %d) { push @p, $date[$d{$_}] if ($p =~ /$_/i) }
 	  $str = join $spc, @p;
 	}
 
@@ -4185,12 +4200,14 @@ sub split_date {
   my $mm;
   my $dd;
   my $yy;
+  my $yyyy;
   my $rv;
 
   if (! $date) {
     $dd = $t[3];
     $mm = ++$t[4];
     $yy = substr($t[5],-2);
+    $yyyy = substr($t[5]+1900,-4);
     $mm = substr("0$mm", -2);
     $dd = substr("0$dd", -2);
   }
@@ -4201,7 +4218,12 @@ sub split_date {
 	($yy, $mm, $dd) = split /\D/, $date;
 	$mm *= 1;
 	$dd *= 1;
-	$rv = "$yy$mm$dd";
+        $mm = substr("0$mm", -2);
+        $dd = substr("0$dd", -2);
+        $yyyy = substr($yy, -4);
+        $yy = substr($yy, -2);
+
+	$rv = "$yyyy$mm$dd";
       } else {
 	$rv = $date;
 	$date =~ /(....)(..)(..)/;
@@ -4213,7 +4235,7 @@ sub split_date {
       $dd = substr("0$dd", -2);
       $yy = substr($yy, -2);
     } else {
-      $rv = "$yy$mm$dd";
+      $rv = "$yyyy$mm$dd";
     }
   }
   
@@ -4225,13 +4247,14 @@ sub split_date {
 	$dd *= 1;
 	$mm = substr("0$mm", -2);
 	$dd = substr("0$dd", -2);
+	$yyyy = substr($yy, -4);
 	$yy = substr($yy, -2);
-	$rv = "$mm$dd$yy";
+	$rv = "$mm$dd$yyyy";
       } else {
 	$rv = $date;
       }
     } else {
-      $rv = "$mm$dd$yy";
+      $rv = "$mm$dd$yyyy";
     }
   }
   
@@ -4243,13 +4266,14 @@ sub split_date {
 	$dd *= 1;
 	$mm = substr("0$mm", -2);
 	$dd = substr("0$dd", -2);
+	$yyyy = substr($yy, -4);
 	$yy = substr($yy, -2);
-	$rv = "$dd$mm$yy";
+	$rv = "$dd$mm$yyyy";
       } else {
 	$rv = $date;
       }
     } else {
-      $rv = "$dd$mm$yy";
+      $rv = "$dd$mm$yyyy";
     }
   }
 

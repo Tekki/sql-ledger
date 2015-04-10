@@ -14,8 +14,9 @@ $self{texts} = {
   'Screen'                      => '画面',
   'Select a Printer!'           => 'プリンタの選択',
   'Select payment'              => '支払の選択',
-  'Select postscript or PDF!'   => 'PDF又はPostscriptを選択して下さい',
   'Source'                      => '支払元',
+  'Text'                        => 'テキスト',
+  'html'                        => 'html',
 };
 
 $self{subs} = {
@@ -26,6 +27,7 @@ $self{subs} = {
   'print_credit_note'           => 'print_credit_note',
   'print_debit_note'            => 'print_debit_note',
   'print_options'               => 'print_options',
+  'print_payslip'               => 'print_payslip',
   'print_receipt'               => 'print_receipt',
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',

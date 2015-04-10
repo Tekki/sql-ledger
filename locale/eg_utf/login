@@ -9,14 +9,17 @@ $self{texts} = {
   'Password'                    => 'كلمة السر',
   'Version'                     => 'نسخة',
   'You did not enter a name!'   => 'لم يتم ادخال الاسم',
-  'done'                        => 'نفذ',
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_tan'                   => 'email_tan',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
+  'tan_login'                   => 'tan_login',
+  'تابع'                    => 'continue',
   'دخول'                    => 'login',
 };
 

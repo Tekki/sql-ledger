@@ -85,7 +85,6 @@ $self{texts} = {
   'Lockfile removed!'           => '已移除上鎖檔案！',
   'Login'                       => '登入',
   'Logout'                      => '登出',
-  'Maintainance'                => '維護',
   'Mapfile'                     => '映射檔案',
   'Monitor'                     => '監視',
   'Multibyte Encoding'          => '多字元編碼',

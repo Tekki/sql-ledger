@@ -20,6 +20,7 @@ $self{texts} = {
   'Bcc'                         => '不顯示抄送',
   'Below'                       => '以下',
   'Cannot delete transaction!'  => '不能刪除交易！',
+  'Cannot post transaction for a closed period!' => '不能在已關閉的時段內加入交易！',
   'Cc'                          => '抄送',
   'City'                        => '城市',
   'Confirm!'                    => '入帳成功！',

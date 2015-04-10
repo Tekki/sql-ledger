@@ -608,7 +608,7 @@ sub price_matrix_query {
 	      AND p.pricegroup_id = 0
 	      AND p.parts_id = ?
 
-	      ORDER BY p.customer_id DESC, p.pricegroup_id DESC, p.pricebreak
+	      ORDER BY 2 DESC, 3 DESC, 4
 	      
 	      |;
 

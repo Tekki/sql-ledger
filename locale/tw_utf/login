@@ -7,6 +7,7 @@ $self{texts} = {
   'Incorrect Dataset version!'  => '資料集版本錯誤！',
   'Login'                       => '登入',
   'Name'                        => '名稱',
+  'No email address for'        => '未指明電子郵件地址',
   'Password'                    => '密碼',
   'Upgrading to Version'        => '正升級至新版',
   'Version'                     => '版本',
@@ -14,10 +15,14 @@ $self{texts} = {
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_tan'                   => 'email_tan',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
+  'tan_login'                   => 'tan_login',
+  '繼續'                      => 'continue',
   '登入'                      => 'login',
 };
 
