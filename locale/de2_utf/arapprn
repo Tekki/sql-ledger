@@ -1,0 +1,40 @@
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Account'                     => 'Konto',
+  'Amount'                      => 'Betrag',
+  'Continue'                    => 'Weiter',
+  'DCN missing!'                => 'Dokumentkontrollnummer fehlt!',
+  'Date'                        => 'Datum',
+  'Memo'                        => 'Vermerk',
+  'Nothing to print!'           => 'Es konnte nichts gedruckt werden!',
+  'PDF'                         => 'PDF',
+  'Postscript'                  => 'Postscript',
+  'RVC missing!'                => 'Codierzeile fehlt!',
+  'Screen'                      => 'Bildschirm',
+  'Select a Printer!'           => 'Drucker auswählen!',
+  'Select payment'              => 'Zahlung auswählen',
+  'Source'                      => 'Beleg',
+  'Text'                        => 'Text',
+  'XML'                         => 'XML',
+  'html'                        => 'HTML',
+};
+
+$self{subs} = {
+  'payment_selected'            => 'payment_selected',
+  'print'                       => 'print',
+  'print_and_post'              => 'print_and_post',
+  'print_check'                 => 'print_check',
+  'print_credit_note'           => 'print_credit_note',
+  'print_debit_note'            => 'print_debit_note',
+  'print_options'               => 'print_options',
+  'print_payslip'               => 'print_payslip',
+  'print_receipt'               => 'print_receipt',
+  'print_remittance_voucher'    => 'print_remittance_voucher',
+  'print_transaction'           => 'print_transaction',
+  'select_payment'              => 'select_payment',
+  'weiter'                      => 'continue',
+};
+
+1;
+
