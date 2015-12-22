@@ -45,6 +45,7 @@ $self{texts} = {
   'Open'                        => 'Otevøené',
   'Order'                       => 'Objednávka',
   'Order Number'                => 'Objednávka èíslo',
+  'Paid'                        => 'Zaplaceno',
   'Purchase Orders'             => 'Vystavené objednávky',
   'Sales Orders'                => 'Pøijaté objednávky',
   'Sep'                         => 'Záø',

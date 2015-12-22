@@ -9,6 +9,7 @@ $self{texts} = {
   'AR Payment'                  => 'AP Payment',
   'About'                       => 'Über',
   'Access Control'              => 'Zugriffskontrolle',
+  'Access Denied!'              => 'Zugriff fehlgeschlagen!',
   'Account'                     => 'Konto',
   'Account Number'              => 'Kontonummer',
   'Account Number missing!'     => 'Kontonummer fehlt!',
@@ -325,7 +326,9 @@ $self{texts} = {
   'account cannot be set to any other type of account' => 'Dieses Konto kann nicht auf andere Typen eingestellt werden',
   'done'                        => 'fertig',
   'failed'                      => 'fehlgeschlagen',
+  'failed!'                     => 'fehlgeschlagen!',
   'html'                        => 'html',
+  'localhost'                   => 'localhost',
   'ok'                          => 'ok',
 };
 

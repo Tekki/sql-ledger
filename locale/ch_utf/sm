@@ -1,10 +1,16 @@
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
+  'Beginning date'              => 'Startdatum',
   'Continue'                    => 'Weiter',
+  'Date missing'                => 'Datum fehlt',
+  'Delete Open Invoices'        => 'Offene Rechnungen löschen',
+  'Deleting Invoices ... '      => 'Rechnungen werden gelöscht',
   'From'                        => 'Von',
+  'Repost Invoices'             => 'Rechnungen neu buchen',
   'To'                          => 'Bis',
   'done'                        => 'fertig',
+  'please wait'                 => 'bitte warten',
 };
 
 $self{subs} = {

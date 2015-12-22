@@ -207,7 +207,6 @@ $self{subs} = {
   'form_header'                 => 'form_header',
   'fortsфtt'                   => 'continue',
   'getpassword'                 => 'getpassword',
-  'huvudmeny'                   => 'main_menu',
   'ja'                          => 'yes',
   'list_datasets'               => 'list_datasets',
   'lock_dataset'                => 'lock_dataset',

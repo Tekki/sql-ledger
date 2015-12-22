@@ -68,6 +68,7 @@ $self{texts} = {
   'Order Number'                => 'Číslo objednávky',
   'PDF'                         => 'PDF',
   'Packing Lists'               => 'Dodacie listy',
+  'Paid'                        => 'Zaplatené',
   'Payment Method'              => 'Metoda platby',
   'Period'                      => 'Obdobie',
   'Pick Lists'                  => 'Výbery',

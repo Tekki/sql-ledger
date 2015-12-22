@@ -36,6 +36,7 @@ $self{texts} = {
   'October'                     => 'Oktober',
   'Order'                       => 'No. Pesanan',
   'Order Number'                => 'Nomor Pesanan',
+  'Paid'                        => 'Dibayar',
   'Period'                      => 'Perioda',
   'Print'                       => 'Cetak',
   'Printed'                     => 'Sudah dicetak',

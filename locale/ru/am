@@ -217,6 +217,7 @@ $self{texts} = {
   'Zip/Postal Code'             => 'Индекс',
   'account cannot be set to any other type of account' => 'счету не может быть присвоен другой тип',
   'done'                        => 'выполнено',
+  'localhost'                   => 'localhost',
 };
 
 $self{subs} = {

@@ -5,6 +5,7 @@ $self{texts} = {
   'AR'                          => 'Покупки',
   'About'                       => 'Информация',
   'Access Control'              => 'Контрол на достъпа',
+  'Access Denied!'              => 'Отказан достъп!',
   'Account'                     => 'Сметка',
   'Account Number'              => 'Номер на сметка',
   'Account Number missing!'     => 'Липсва номер на сметка!',
@@ -247,6 +248,7 @@ $self{texts} = {
   'account cannot be set to any other type of account' => 'не е възможно да се зададе друг тип на тази сметка',
   'done'                        => 'Готов',
   'failed'                      => 'грешка',
+  'localhost'                   => 'този компютър',
 };
 
 $self{subs} = {

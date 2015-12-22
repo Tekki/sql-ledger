@@ -105,6 +105,7 @@ $self{texts} = {
   'Version'                     => 'Versió',
   'Weight Unit'                 => 'Unitat Pes',
   'Yes'                         => 'Sí',
+  'localhost'                   => 'màquina local',
 };
 
 $self{subs} = {

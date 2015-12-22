@@ -115,6 +115,7 @@ $self{texts} = {
   'Unit'                        => 'Einheit',
   'Volume'                      => 'Beleg',
   'Work Order'                  => 'Arbeitsblatt',
+  'XML'                         => 'XML',
   'Zip/Postal Code'             => 'PLZ',
   'html'                        => 'html',
   'sent'                        => 'verschickt',

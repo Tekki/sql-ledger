@@ -60,6 +60,7 @@ $self{texts} = {
   'Order Number'                => 'Поръчка номер',
   'PDF'                         => 'PDF',
   'Packing Lists'               => 'Опъковъчни листи',
+  'Paid'                        => 'Платено',
   'Period'                      => 'Период',
   'Pick Lists'                  => 'Товарителници',
   'Postscript'                  => 'Postscript',

@@ -3,6 +3,7 @@ $self{texts} = {
   'AR'                          => 'Recettes',
   'About'                       => 'À propos',
   'Access Control'              => 'Contrôle d\'accès',
+  'Access Denied!'              => 'Accès interdit!',
   'Account'                     => 'Compte',
   'Account Number'              => 'Numéro de compte',
   'Account Number missing!'     => 'Numéro de compte manquant!',
@@ -242,6 +243,7 @@ $self{texts} = {
   'account cannot be set to any other type of account' => 'compte ne peut pas être changé vers un autre type de compte',
   'done'                        => 'fait',
   'failed'                      => 'échec',
+  'localhost'                   => 'hôte local',
 };
 
 $self{subs} = {

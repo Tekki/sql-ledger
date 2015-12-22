@@ -5,6 +5,7 @@ $self{texts} = {
   'AR'                          => 'Facturas de Ventas',
   'AR Aging'                    => 'Diario resumido de cobros ',
   'AR Transaction'              => 'Gestión de cobro',
+  'Accounting'                  => 'Contabilidad',
   'Accounting Menu'             => 'Menú general',
   'Add Account'                 => 'Añadir cuenta',
   'Add Assembly'                => 'Añadir compuesto',
@@ -182,11 +183,15 @@ $self{subs} = {
   'lock_system'                 => 'lock_system',
   'login'                       => 'login',
   'logout'                      => 'logout',
+  'main_menu'                   => 'main_menu',
   'salir'                       => 'logout',
   'si'                          => 'yes',
+  'software_administration'     => 'software_administration',
+  'switch_branch'               => 'switch_branch',
   'unlock_dataset'              => 'unlock_dataset',
   'unlock_sistema'              => 'unlock_system',
   'unlock_system'               => 'unlock_system',
+  'update_software'             => 'update_software',
   'yes'                         => 'yes',
 };
   

@@ -59,6 +59,7 @@ $self{texts} = {
   'Order Number'                => '订单编号',
   'PDF'                         => 'PDF',
   'Packing Lists'               => '出货单',
+  'Paid'                        => '已付',
   'Period'                      => '时期',
   'Pick Lists'                  => '拣货清单',
   'Postscript'                  => 'PostScript',

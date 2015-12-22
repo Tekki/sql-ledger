@@ -7,6 +7,7 @@ $self{texts} = {
   'AR'                          => 'Nõuded',
   'AR Aging'                    => 'Võlglased',
   'AR Transaction'              => 'Nõuete kanne',
+  'Accounting'                  => 'Raamatupidamisarvestus',
   'Accounting Menu'             => 'Raamatupidamise Menüü',
   'Add Account'                 => 'Lisa konto',
   'Add Assembly'                => 'Lisa komplekt',
@@ -193,10 +194,14 @@ $self{subs} = {
   'logi_välja'                  => 'logout',
   'login'                       => 'login',
   'logout'                      => 'logout',
+  'main_menu'                   => 'main_menu',
   'muuda_parool'                => 'change_password',
+  'software_administration'     => 'software_administration',
+  'switch_branch'               => 'switch_branch',
   'süstemi_lukustamine'         => 'lock_system',
   'unlock_dataset'              => 'unlock_dataset',
   'unlock_system'               => 'unlock_system',
+  'update_software'             => 'update_software',
   'yes'                         => 'yes',
 };
   

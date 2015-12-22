@@ -38,6 +38,7 @@ $self{texts} = {
   'October'                     => 'Ekim',
   'Order'                       => 'Sipariþ',
   'Order Number'                => 'Sipariþ No',
+  'Paid'                        => 'Ödendi',
   'Purchase Orders'             => 'Satýnalma Sipariþleri',
   'Sales Orders'                => 'Satýþ Sipariþleri',
   'Sep'                         => 'Eyl',

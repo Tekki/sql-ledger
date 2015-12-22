@@ -49,6 +49,7 @@ $self{texts} = {
   'Open'                        => 'Abierto',
   'Order'                       => 'Orden',
   'Order Number'                => 'Número de orden',
+  'Paid'                        => 'Pagado',
   'Print'                       => 'Imprimir',
   'Purchase Orders'             => 'Pedidos',
   'Sales Orders'                => 'Presupuestos',

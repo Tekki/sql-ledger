@@ -50,6 +50,7 @@ $self{texts} = {
   'Order'                       => 'Pöntun',
   'Order Number'                => 'Pöntun númer',
   'PDF'                         => 'PDF',
+  'Paid'                        => 'Greitt',
   'Postscript'                  => 'Postscript',
   'Print'                       => 'Prenta',
   'Purchase Orders'             => 'Innkaupspantanir',

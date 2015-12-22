@@ -5,6 +5,7 @@ $self{texts} = {
   'AR'                          => 'Myynnit',
   'About'                       => 'Lisätietoja',
   'Access Control'              => 'Kulunvalvonta',
+  'Access Denied!'              => 'Pääsy kielletty',
   'Account'                     => 'Tili',
   'Account Number'              => 'Tilinumero',
   'Account Number missing!'     => 'Tilinumero puuttuu',
@@ -251,6 +252,7 @@ $self{texts} = {
   'account cannot be set to any other type of account' => 'tilityyppiä ei voi muuttaa',
   'done'                        => 'valmis',
   'failed'                      => 'epäonnistui',
+  'localhost'                   => 'paikallinen tietokone',
 };
 
 $self{subs} = {

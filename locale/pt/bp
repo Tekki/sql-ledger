@@ -47,6 +47,7 @@ $self{texts} = {
   'Order'                       => 'Encomenda',
   'Order Number'                => 'Encomenda Número',
   'PDF'                         => 'PDF',
+  'Paid'                        => 'Total Pago',
   'Postscript'                  => 'PostScript',
   'Print'                       => 'Imprimir',
   'Purchase Orders'             => 'Ordens de Compra',

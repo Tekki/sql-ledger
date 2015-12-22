@@ -5,6 +5,7 @@ $self{texts} = {
   'AR'                          => 'Cuentas por Cobrar',
   'AR Aging'                    => 'Vencimiento Cuentas por Cobrar',
   'AR Transaction'              => 'Movimiento de Cuentas por Cobrar',
+  'Accounting'                  => 'Contabilidad',
   'Accounting Menu'             => 'Menú de Contabilidad',
   'Add Account'                 => 'Agregar Cuenta',
   'Add Assembly'                => 'Agregar Ensamblaje',
@@ -183,10 +184,14 @@ $self{subs} = {
   'lock_system'                 => 'lock_system',
   'login'                       => 'login',
   'logout'                      => 'logout',
+  'main_menu'                   => 'main_menu',
   'salir_del_sistema'           => 'logout',
   'si'                          => 'yes',
+  'software_administration'     => 'software_administration',
+  'switch_branch'               => 'switch_branch',
   'unlock_dataset'              => 'unlock_dataset',
   'unlock_system'               => 'unlock_system',
+  'update_software'             => 'update_software',
   'yes'                         => 'yes',
 };
   

@@ -5,6 +5,7 @@ $self{texts} = {
   'AR'                          => 'Pohľadávky',
   'About'                       => 'O programu',
   'Access Control'              => 'Prístupové práva',
+  'Access Denied!'              => 'Prístup odmietnutý!',
   'Account'                     => 'Účet',
   'Account Number'              => 'Čislo účtu',
   'Account Number missing!'     => 'Čislo účtu chýba!',
@@ -298,6 +299,7 @@ $self{texts} = {
   'done'                        => 'hotovo',
   'failed'                      => 'chyba',
   'html'                        => 'html',
+  'localhost'                   => 'localhost',
   'ok'                          => 'ok',
 };
 

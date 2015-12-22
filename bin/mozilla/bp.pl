@@ -239,6 +239,15 @@ sub search {
 	    for (@{ $form->{all_paymentmethod} }) { $paymentmethod .= qq|<option value="$_->{description}--$_->{id}">$_->{description}\n| }
 	    $paymentmethod .= qq|</select></tr>|;
     }
+    if ($form->{batch} eq 'print') {
+      $datepaid = qq|
+  <tr>
+    <th align=right nowrap>|.$locale->text('Paid').' '.$locale->text('From').qq|</th>
+    <td><input name=datepaidfrom size=11 class=date title="$myconfig{dateformat}">
+    <b>|.$locale->text('To').qq|</b>
+    <input name=datepaidto size=11 class=date title="$myconfig{dateformat}"></td>
+  </tr>|;
+    }
   }
  
   # accounting years
@@ -305,6 +314,7 @@ sub search {
 	  <b>|.$locale->text('To').qq|</b>
 	  <input name=transdateto size=11 class=date title="$myconfig{dateformat}"></td>
 	</tr>
+	$datepaid
 	$selectfrom
 	$openclosed
       </table>
@@ -587,6 +597,18 @@ sub list_spool {
     $href .= "&transdateto=$form->{transdateto}";
     $option .= "\n<br>" if ($option);
     $option .= $locale->text('To')."&nbsp;".$locale->date(\%myconfig, $form->{transdateto}, 1);
+  }
+  if ($form->{datepaidfrom}) {
+    $callback .= "&datepaidfrom=$form->{datepaidfrom}";
+    $href .= "&datepaidfrom=$form->{datepaidfrom}";
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Paid').' '.$locale->text('From')."&nbsp;".$locale->date(\%myconfig, $form->{datepaidfrom}, 1);
+  }
+  if ($form->{datepaidto}) {
+    $callback .= "&datepaidto=$form->{datepaidto}";
+    $href .= "&datepaidto=$form->{datepaidto}";
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Paid').' '.$locale->text('To')."&nbsp;".$locale->date(\%myconfig, $form->{datepaidto}, 1);
   }
   if ($form->{open}) {
     $callback .= "&open=$form->{open}";

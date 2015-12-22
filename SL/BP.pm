@@ -271,7 +271,11 @@ sub get_spoolfiles {
     $query .= " AND j.checkedin < date '$form->{transdateto}' + 1" if $form->{transdateto};
 
   } else {
-    
+    if ($form->{datepaidfrom} or $form->{datepaidto}) {
+      delete $form->{open};
+      delete $form->{closed};
+      $form->{printed} = $form->{notprinted} = 1;
+    }
     foreach $item (keys %{ $arap{$form->{type}} }) {
       ($form->{$arap{$form->{type}}{$item}}, $form->{"$arap{$form->{type}}{$item}_id"}) = split /--/, $form->{$arap{$form->{type}}{$item}};
     }
@@ -423,6 +427,8 @@ sub get_spoolfiles {
 
       $query .= " AND a.transdate >= '$form->{transdatefrom}'" if $form->{transdatefrom};
       $query .= " AND a.transdate <= '$form->{transdateto}'" if $form->{transdateto};
+      $query .= " AND a.datepaid >= '$form->{datepaidfrom}'" if $form->{datepaidfrom};
+      $query .= " AND a.datepaid <= '$form->{datepaidto}'" if $form->{datepaidto};
 
       $union = "UNION";
 

@@ -269,6 +269,7 @@ $self{texts} = {
   'days'                        => 'dagar',
   'ea'                          => 'st',
   'for'                         => 'under',
+  'html'                        => 'html',
   'sent'                        => 'Skickad',
   'time(s)'                     => 'gång(er)',
 };

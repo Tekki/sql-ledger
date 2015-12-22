@@ -50,6 +50,7 @@ $self{texts} = {
   'Order'                       => 'Ordine',
   'Order Number'                => 'Numero Fattura Fornitore',
   'PDF'                         => 'PDF',
+  'Paid'                        => 'Importo Pagato',
   'Postscript'                  => 'Postscript',
   'Print'                       => 'Stampa',
   'Purchase Orders'             => 'Ordini di acquisto',

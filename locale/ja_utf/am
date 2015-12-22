@@ -5,6 +5,7 @@ $self{texts} = {
   'AR'                          => '売掛',
   'About'                       => '情報',
   'Access Control'              => 'アクセス管理',
+  'Access Denied!'              => 'アクセス拒否',
   'Account'                     => '勘定',
   'Account Number'              => '勘定番号',
   'Account Number missing!'     => '勘定番号が必要です',
@@ -298,6 +299,7 @@ $self{texts} = {
   'done'                        => '済',
   'failed'                      => '失敗',
   'html'                        => 'html',
+  'localhost'                   => 'localhost',
   'ok'                          => 'ok',
 };
 

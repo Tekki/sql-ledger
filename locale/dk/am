@@ -3,6 +3,7 @@ $self{texts} = {
   'AR'                          => 'Debitorer',
   'About'                       => 'Om',
   'Access Control'              => 'Adgangskontrol',
+  'Access Denied!'              => 'Adgang Nægtet!',
   'Account'                     => 'Konto',
   'Account Number'              => 'Kontonummer',
   'Account Number missing!'     => 'Kontonummer mangler!',
@@ -253,6 +254,7 @@ $self{texts} = {
   'account cannot be set to any other type of account' => 'konto kan ikke sættes til nogen anden type konto',
   'done'                        => 'færdig',
   'failed'                      => 'fejlet',
+  'localhost'                   => 'lokalt',
   'ok'                          => 'ok',
 };
 

@@ -60,6 +60,7 @@ $self{texts} = {
   'Order Number'                => 'Rendelés száma',
   'PDF'                         => 'PDF',
   'Packing Lists'               => 'Csomagolás lista',
+  'Paid'                        => 'Fizetve',
   'Period'                      => 'Időszak',
   'Pick Lists'                  => 'Kiszedés lista',
   'Postscript'                  => 'Postscript',

@@ -5,6 +5,7 @@ $self{texts} = {
   'AR'                          => 'CPC',
   'About'                       => 'Acerca de',
   'Access Control'              => 'Control de Acceso',
+  'Access Denied!'              => 'Acceso negado',
   'Account'                     => 'Cuenta',
   'Account Number'              => 'Número de Cuenta',
   'Account Number missing!'     => 'No se ha definido el número de la cuenta',
@@ -251,6 +252,7 @@ $self{texts} = {
   'account cannot be set to any other type of account' => 'No se puede cambiar a otro tipo de Cuenta',
   'done'                        => 'hecho',
   'failed'                      => 'falló',
+  'localhost'                   => 'localhost',
 };
 
 $self{subs} = {

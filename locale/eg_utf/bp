@@ -52,6 +52,7 @@ $self{texts} = {
   'Order'                       => 'امر',
   'Order Number'                => 'رقم الامر',
   'Packing Lists'               => 'قوائم تعبئة',
+  'Paid'                        => 'المدفوع',
   'Print'                       => 'طباعة',
   'Project Number'              => 'رقم المشروع',
   'Purchase Orders'             => 'اوامر شراء',

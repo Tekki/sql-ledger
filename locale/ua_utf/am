@@ -230,6 +230,7 @@ $self{texts} = {
   'Zip/Postal Code'             => 'Поштовий код',
   'done'                        => 'завершено',
   'failed'                      => 'зазнало невдачі',
+  'localhost'                   => 'localhost',
 };
 
 $self{subs} = {

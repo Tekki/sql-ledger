@@ -50,6 +50,7 @@ $self{texts} = {
   'Order'                       => 'Užsakymas',
   'Order Number'                => 'Užsakymo numeris',
   'PDF'                         => 'PDF',
+  'Paid'                        => 'Apmokėta',
   'Postscript'                  => 'Postscript(TM)',
   'Print'                       => 'Spausdinti',
   'Purchase Orders'             => 'Pirkimo užsakymai',
