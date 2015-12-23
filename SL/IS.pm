@@ -488,7 +488,14 @@ sub invoice_details {
       $form->{roundto} = $roundchange{$form->{"paymentmethod_$form->{paidaccounts}"}};
     }
   }
-  
+
+  for $i (1 .. $form->{reference_rows}) {
+    if ($form->{"referenceid_$i"}) {
+      push @{ $form->{referenceid} }, $form->{"referenceid_$i"};
+      push @{ $form->{reference} }, $form->{"referencedescription_$i"};
+    }
+  }
+
   for $i (1 .. $form->{paidaccounts}) {
     if ($form->{"paid_$i"}) {
       push(@{ $form->{payment} }, $form->{"paid_$i"});

@@ -1,0 +1,13 @@
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+};
+
+$self{subs} = {
+  'add_reference'               => 'add_reference',
+  'invoice_details'             => 'invoice_details',
+  'list_accounts'               => 'list_accounts',
+};
+
+1;
+
