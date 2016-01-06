@@ -5,7 +5,7 @@
 #  Author: Tekki at Cubulon
 #     Web: https://cubulon.ch
 #
-#  Version: 0.1
+#  Version: 0.3
 #
 #======================================================================
 #
