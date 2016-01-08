@@ -1028,8 +1028,8 @@ sub combine {
   if ($files) {
     chdir("$spool/$myconfig{dbname}");
     if ($filename = BP->spoolfile(\%myconfig, \%$form)) {
-      @args = ("cat $files > $filename");
-      system(@args) == 0 or $form->error("@args : $?");
+      @args = ("pdftk $files cat output $filename");
+      system(@args) % 256 == 0 or $form->error("@args : $?");
     }
   } else {
     $form->error($locale->text('Nothing selected!'));
