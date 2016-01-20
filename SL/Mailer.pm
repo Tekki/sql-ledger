@@ -25,10 +25,10 @@ sub send {
   my ($self, $out) = @_;
 
   my $boundary = time;
-  $boundary = "SL-$self->{version}-$boundary";
   my $domain = $self->{from};
   $domain =~ s/(.*?\@|>)//g;
   my $msgid = "$boundary\@$domain";
+  $boundary = "SL-$self->{version}-$boundary";
   
   $self->{charset} ||= "ISO-8859-1";
 
@@ -71,12 +71,11 @@ MIME-Version: 1.0
 
 
   if (@{ $self->{attachments} }) {
-    print OUT qq|Content-Type: multipart/mixed; boundary="$boundary"
+    print OUT qq|Content-Type: multipart/mixed; boundary=$boundary\n\n|;
 
-|;
     if ($self->{message} ne "") {
       print OUT qq|--${boundary}
-Content-Type: $self->{contenttype}; charset="$self->{charset}"
+Content-Type: $self->{contenttype}; charset=$self->{charset}
 
 $self->{message}
 
@@ -99,9 +98,9 @@ $self->{message}
       $filename =~ s/(.*\/|$self->{fileid})//g;
       
       print OUT qq|--${boundary}
-Content-Type: $application/$self->{format}; name="$filename"; charset="$self->{charset}"
+Content-Type: $application/$self->{format}; name=${filename}; charset=$self->{charset}
 Content-Transfer-Encoding: BASE64
-Content-Disposition: attachment; filename="$filename"\n\n|;
+Content-Disposition: attachment; filename=$filename\n\n|;
 
       my $msg = "";
       while (<IN>) {;
@@ -115,7 +114,7 @@ Content-Disposition: attachment; filename="$filename"\n\n|;
     print OUT qq|--${boundary}--\n|;
 
   } else {
-    print OUT qq|Content-Type: $self->{contenttype}; charset="$self->{charset}"
+    print OUT qq|Content-Type: $self->{contenttype}; charset=$self->{charset}
 
 $self->{message}
 |;

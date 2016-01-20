@@ -1,6 +1,6 @@
 #=====================================================================
-# SQL-Ledger ERP
-# Copyright (c) 2006
+# SQL-Ledger
+# Copyright (c) DWS Systems Inc.
 #
 #  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.com
@@ -26,13 +26,17 @@ require "$form->{path}/arapprn.pl";
 
 sub add {
 
+# $locale->text('Add Employee')
+# $locale->text('Add Deduction')
+# $locale->text('Add Payroll')
+
   $label = "Add ".ucfirst $form->{db};
   $form->{title} = $locale->text($label);
 
   $form->{callback} = "$form->{script}?action=add&db=$form->{db}&path=$form->{path}&login=$form->{login}" unless $form->{callback};
 
   &{ "prepare_$form->{db}" };
-
+  
   &display_form;
   
 }
@@ -42,6 +46,24 @@ sub search { &{ "search_$form->{db}" } };
   
 
 sub search_employee {
+
+  $form->all_roles(\%myconfig);
+
+  if (@{ $form->{all_acsrole} }) {
+    $selectrole = "\n";
+    
+    for (@{ $form->{all_acsrole} }) { $selectrole .= qq|$_->{description}--$_->{id}\n| }
+
+    $role = qq|
+      <tr>
+        <th align=right nowrap>|.$locale->text('Role').qq|</th>
+                  <td><select name=acsrole>|
+                  .$form->select_option($selectrole, undef, 1)
+                  .qq|</select>
+                  </td>
+      </tr>
+|;
+  }
 
   $form->{title} = $locale->text('Employees');
 
@@ -67,6 +89,7 @@ sub search_employee {
   push @f, qq|<input name="l_enddate" type=checkbox class=checkbox value=Y checked> |.$locale->text('Enddate');
   push @f, qq|<input name="l_acsrole" type=checkbox class=checkbox value=Y checked> |.$locale->text('Role');
   push @f, qq|<input name="l_sales" type=checkbox class=checkbox value=Y> |.$locale->text('Sales');
+  push @f, qq|<input name="l_payroll" type=checkbox class=checkbox value=Y> |.$locale->text('Payroll');
   push @f, qq|<input name="l_login" type=checkbox class=checkbox value=Y checked> |.$locale->text('Login');
   push @f, qq|<input name="l_email" type=checkbox class=checkbox value=Y> |.$locale->text('E-mail');
   push @f, qq|<input name="l_ssn" type=checkbox class=checkbox value=Y> |.$locale->text('SSN');
@@ -78,10 +101,12 @@ sub search_employee {
 
   $form->header;
   
+  &calendar;
+  
   print qq|
 <body>
 
-<form method=post action=$form->{script}>
+<form method="post" name="main" action="$form->{script}" />
 
 <table width=100%>
   <tr>
@@ -100,8 +125,13 @@ sub search_employee {
 	  <td colspan=3><input name=employeenumber size=35></td>
 	</tr>
 	<tr>
+	  <th align=right nowrap>|.$locale->text('Employee Login').qq|</th>
+	  <td colspan=3><input name=employeelogin size=35></td>
+	</tr>
+        $role
+	<tr>
 	  <th align=right nowrap>|.$locale->text('Startdate').qq|</th>
-	  <td>|.$locale->text('From').qq| <input name=startdatefrom size=11 class=date title="$myconfig{dateformat}"> |.$locale->text('To').qq| <input name=startdateto size=11 class=date title="$myconfig{dateformat}"></td>
+	  <td>|.$locale->text('From').qq| <input name=startdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "startdatefrom").$locale->text('To').qq| <input name=startdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "startdateto").qq|</td>
 	</tr>
 	<tr valign=top>
 	  <th align=right nowrap>|.$locale->text('Notes').qq|</th>
@@ -114,6 +144,7 @@ sub search_employee {
 	  <input name=status class=radio type=radio value=inactive>&nbsp;|.$locale->text('Inactive').qq|
 	  <input name=status class=radio type=radio value=orphaned>&nbsp;|.$locale->text('Orphaned').qq|
 	  <input name=status class=radio type=radio value=sales>&nbsp;|.$locale->text('Sales').qq|
+	  <input name=status class=radio type=radio value=payroll>&nbsp;|.$locale->text('Payroll').qq|
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Include in Report').qq|</th>
@@ -178,8 +209,10 @@ sub list_employees {
   $callback = "$form->{script}?action=list_employees";
   for (qw(direction oldsort db path login status)) { $callback .= "&$_=$form->{$_}" }
   
-  @columns = $form->sort_columns(qw(id employeenumber name address city state zipcode country workphone workfax workmobile homephone homemobile email startdate enddate ssn dob iban bic sales acsrole login notes));
+  @columns = $form->sort_columns(qw(id employeenumber name address city state zipcode country workphone workfax workmobile homephone homemobile email startdate enddate ssn dob iban bic sales payroll acsrole login notes));
   unshift @columns, "ndx";
+
+  $form->{l_acsrole} = "" if $form->{acsrole};
 
   for (@columns) {
     if ($form->{"l_$_"} eq "Y") {
@@ -205,6 +238,7 @@ sub list_employees {
 
   if ($form->{status} eq 'sales') {
     $option = $locale->text('Sales');
+    @column_index = grep !/sales/, @column_index;
   }
   if ($form->{status} eq 'orphaned') {
     $option = $locale->text('Orphaned');
@@ -214,6 +248,10 @@ sub list_employees {
   }
   if ($form->{status} eq 'inactive') {
     $option = $locale->text('Inactive');
+  }
+  if ($form->{status} eq 'payroll') {
+    $option = $locale->text('Payroll');
+    @column_index = grep !/payroll/, @column_index;
   }
   
   if ($form->{employeenumber}) {
@@ -225,6 +263,18 @@ sub list_employees {
     $callback .= "&name=".$form->escape($form->{name},1);
     $href .= "&name=".$form->escape($form->{name});
     $option .= "\n<br>".$locale->text('Employee Name')." : $form->{name}";
+  }
+  if ($form->{employeelogin}) {
+    $callback .= "&employeelogin=".$form->escape($form->{employeelogin},1);
+    $href .= "&employeelogin=".$form->escape($form->{employeelogin});
+    $option .= "\n<br>".$locale->text('Employee Login')." : $form->{employeelogin}";
+  }
+  if ($form->{acsrole}) {
+    $callback .= "&acsrole=".$form->escape($form->{acsrole},1);
+    $href .= "&acsrole=".$form->escape($form->{acsrole});
+    $acsrole = $form->{acsrole};
+    $acsrole =~ s/--.*//g;
+    $option .= "\n<br>".$locale->text('Role')." : $acsrole";
   }
   if ($form->{startdatefrom}) {
     $callback .= "&startdatefrom=$form->{startdatefrom}";
@@ -278,6 +328,7 @@ sub list_employees {
   $column_header{login} = qq|<th><a class=listheading href=$href&sort=login>|.$locale->text('Login').qq|</a></th>|;
   
   $column_header{sales} = qq|<th class=listheading>|.$locale->text('S').qq|</th>|;
+  $column_header{payroll} = qq|<th class=listheading>|.$locale->text('P').qq|</th>|;
   $column_header{email} = qq|<th><a class=listheading href=$href&sort=email>|.$locale->text('E-mail').qq|</a></th>|;
   $column_header{ssn} = qq|<th><a class=listheading href=$href&sort=ssn>|.$locale->text('SSN').qq|</a></th>|;
   $column_header{dob} = qq|<th><a class=listheading href=$href&sort=dob>|.$locale->text('DOB').qq|</a></th>|;
@@ -321,7 +372,9 @@ sub list_employees {
 
     $column_data{ndx} = "<td align=right>$i</td>";
 
-    $column_data{sales} = ($ref->{sales}) ? "<td>x</td>" : "<td>&nbsp;</td>";
+    for (qw(sales payroll)) {
+      $column_data{$_} = ($ref->{$_}) ? "<td>x</td>" : "<td>&nbsp;</td>";
+    }
     $column_data{acsrole} = qq|<td>$ref->{acsrole}&nbsp;</td>|;
 
     $column_data{name} = "<td><a href=$form->{script}?action=edit&db=employee&id=$ref->{id}&path=$form->{path}&login=$form->{login}&status=$form->{status}&callback=$callback>$ref->{name}&nbsp;</td>";
@@ -404,15 +457,6 @@ sub edit {
 }
 
 
-sub new_number {
-
-  $form->{employeenumber} = $form->update_defaults(\%myconfig, employeenumber);
-
-  &display_form;
-
-}
-
-
 sub prepare_employee {
 
   HR->get_employee(\%myconfig, \%$form);
@@ -421,15 +465,7 @@ sub prepare_employee {
   
   for $key (qw(wage deduction acsrole paymentmethod)) {
     if (@{ $form->{"all_$key"} }) {
-      if ($form->{login} eq "admin\@$myconfig{dbname}") {
-        $form->{"select$key"} = "\n";
-      } else {
-        if ($form->{id}) {
-          $form->{"select$key"} = ($key eq "acsrole") ? "" : "\n";
-        } else {
-          $form->{"select$key"} = "\n";
-        }
-      }
+      $form->{"select$key"} = "\n";
 
       for (@{ $form->{"all_$key"} }) { $form->{"select$key"} .= qq|$_->{description}--$_->{id}\n| }
       
@@ -452,13 +488,13 @@ sub prepare_employee {
 	$_ = shift @member;
 	next if ! /\[$form->{employeelogin}\@$myconfig{dbname}\]/;
 	do {
-          if (/^tan=/) {
+          if (/^tan/) {
             chomp;
-            ($null, $form->{tan}) = split /=/, $_, 2;
+            (undef, $form->{tan}) = split /=/, $_, 2;
           }
-	  if (/^password=/) {
-            chomp;
-	    ($null, $form->{employeepassword}) = split /=/, $_, 2;
+	  if (/^password/) {
+	    chomp;
+	    (undef, $form->{employeepassword}) = split /=/, $_, 2;
 	  }
 	  $_ = shift @member;
 	} until /^\s/;
@@ -500,13 +536,7 @@ sub prepare_employee {
     $form->{$key} = qq|$form->{$key}--$form->{"${key}_description"}|;
   }
 
-  $i = 0;
-  for (@{ $form->{all_reference} }) {
-    $i++;
-    $form->{"referencedescription_$i"} = $_->{description};
-    $form->{"referenceid_$i"} = $_->{id};
-  }
-  $form->{reference_rows} = $i;
+  &all_references;
 
   for (qw(paymentmethod payment ap wage deduction acsrole)) { $form->{"select$_"} = $form->escape($form->{"select$_"},1) }
 
@@ -521,7 +551,7 @@ sub prepare_employee {
 
 sub employee_header {
 
-  $reference_documents = &reference_documents;
+  $reference_documents = &references;
 
   $form->{deduction_rows}++;
   $form->{payrate_rows}++;
@@ -529,15 +559,17 @@ sub employee_header {
 
   $form->header;
 
+  &calendar;
+  
   print qq|
 <body>
 
-<form method=post action=$form->{script}>
+<form method="post" name="main" action="$form->{script}" />
 |;
 
   $form->hide_form(qw(acs payrate_rows wage_rows deduction_rows reference_rows referenceurl status title helpref oldemployeelogin company));
   $form->hide_form(map { "select$_" } qw(paymentmethod payment ap wage deduction acsrole));
-  
+
   $login = "";
 
   if ($form->{admin}) {
@@ -564,10 +596,10 @@ sub employee_header {
 		<th align=right nowrap>|.$locale->text('Password').qq|</th>
 		<td><input name=employeepassword size=20 value="$form->{employeepassword}"></td>
 	      </tr>
-	      <tr>
-		<th align=right>|.$locale->text('E-mail TAN').qq|</th>
-		<td><input name=tan class=checkbox type=checkbox value=1 $tan></td>
-	      </tr>
+              <tr>
+                <th align=right>|.$locale->text('E-mail TAN').qq|</th>
+                <td><input name=tan class=checkbox type=checkbox value=1 $tan></td>
+              </tr>
 	      <tr>
 		<th align=right>|.$locale->text('Sales').qq|</th>
 		<td><input name=sales class=checkbox type=checkbox value=1 $sales></td>
@@ -583,7 +615,6 @@ sub employee_header {
 	      </tr>
 |;
     }
-
     if ($form->{employeelogin}) {
       $login .= qq|
 	      <tr>
@@ -594,17 +625,17 @@ sub employee_header {
     }
     if ($form->{tan}) {
       $login .= qq|
-	      <tr>
-		<th align=right nowrap>|.$locale->text('Use TAN').qq|</th>
-		<td>x</td>
-	      </tr>
+              <tr>
+                <th align=right nowrap>|.$locale->text('E-mail TAN').qq|</th>
+                <td>x</td>
+              </tr>
 |;
     }
     if ($form->{sales}) {
       $login .= qq|
 	      <tr>
 		<th align=right>|.$locale->text('Sales').qq|</th>
-		<td>x</td>
+		<td>$sales</td>
 	      </tr>
 |;
     }
@@ -688,11 +719,11 @@ sub employee_header {
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Startdate').qq|</th>
-		<td><input name=startdate size=11 class=date title="$myconfig{dateformat}" value=$form->{startdate}></td>
+		<td><input name=startdate size=11 class=date title="$myconfig{dateformat}" value=$form->{startdate}>|.&js_calendar("main", "startdate").qq|</td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Enddate').qq|</th>
-		<td><input name=enddate size=11 class=date title="$myconfig{dateformat}" value=$form->{enddate}></td>
+		<td><input name=enddate size=11 class=date title="$myconfig{dateformat}" value=$form->{enddate}>|.&js_calendar("main", "enddate").qq|</td>
 	      </tr>
 
 	      <tr>
@@ -919,14 +950,20 @@ sub employee_footer {
 	     
     %f = ();
     for ("Update", "Save", "New Number") { $f{$_} = 1 }
-    
+
     if ($form->{id}) {
       if ($form->{status} eq 'orphaned') {
 	$f{'Delete'} = 1;
       }
       $f{'Save as new'} = 1;
     }
-    $f{'Access Control'} = 1 if $form->{admin};
+    if ($form->{admin}) {
+      $f{'Access Control'} = 1;
+    } else {
+      if ($form->{employeelogin}) {
+	for ("Save as new", "Delete") { delete $f{$_} }
+      }
+    }
 
     for (keys %button) { delete $button{$_} if ! $f{$_} }
     for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
@@ -954,7 +991,7 @@ sub access_control {
   $menufile = "menu.ini";
 
   $form->helpref("access_control", $myconfig{countrycode});
-  
+
   $form->header;
 
   print qq|
@@ -975,7 +1012,7 @@ sub access_control {
   @f = <FH>;
   close(FH);
 
-  if (open(FH, "custom_$menufile")) {
+  if (open(FH, "$form->{path}/custom/$menufile")) {
     push @f, <FH>;
   }
   close(FH);
@@ -985,7 +1022,7 @@ sub access_control {
     next if $item =~ /\#/;
 
     $item =~ s/(\[|\])//g;
-    chop $item;
+    chomp $item;
 
     if ($item =~ /--/) {
       ($level, $menuitem) = split /--/, $item, 2;
@@ -999,6 +1036,11 @@ sub access_control {
 
   }
 
+  foreach $item (split /;/, HR->acsrole(\%myconfig, \%$form)) {
+    ($key, $value) = split /--/, $item, 2;
+    $disabled{$key}{$value} = 1;
+  }
+
   foreach $item (split /;/, $form->{acs}) {
     ($key, $value) = split /--/, $item, 2;
     $excl{$key}{$value} = 1;
@@ -1006,6 +1048,7 @@ sub access_control {
 
   foreach $key (@acsorder) {
     
+    next if $disabled{$key}{$key};
     $checked = ($excl{$key}{$key}) ? "" : "checked";
 
     # can't have variable names with & and spaces
@@ -1023,6 +1066,12 @@ sub access_control {
     
     foreach $item (@{ $acs{$key} }) {
       next if ($key eq $item);
+      if ($disabled{$key}{$item}) {
+	$skipitem = "$item--";
+	next;
+      }
+      next if $skipitem && $item =~ /$skipitem/;
+      $skipitem = "";
       
       $checked = ($excl{$key}{$item}) ? "" : "checked";
       
@@ -1077,12 +1126,27 @@ sub save_acs {
   $form->{acs} = "";
   for (split /;/, $form->{access}) {
     $item = $form->escape($_,1);
-
     if (!$form->{$item}) {
-      $item = $form->unescape($_);
-      $form->{acs} .= "${item};";
+      if ($heading) {
+	if ($item !~ /^$heading/) {
+	  $form->{acs} .= $form->unescape($_).";";
+	  $heading = "$item--";
+	}
+      } else {
+	$form->{acs} .= $form->unescape($_).";";
+	($item1, $item2) = split /--/, $item;
+	if ($item1 eq $item2) {
+	  $heading = "$item1--";
+	} else {
+	  $heading = "$item--";
+	}
+      }
     }
   }
+  
+  $form->{deduction_rows}--;
+  $form->{payrate_rows}--;
+  $form->{wage_rows}--;
 
   &display_form;
 
@@ -1104,6 +1168,8 @@ sub save_employee {
 
   $form->isblank("name", $locale->text("Name missing!"));
   $form->error("$memberfile : ".$locale->text('locked!')) if (-f ${memberfile}.LCK);
+
+  $form->{userspath} = $userspath;
   
   if (HR->save_employee(\%myconfig, \%$form)) {
     &save_memberfile;
@@ -1142,10 +1208,12 @@ sub save_memberfile {
   }
 
   if ($form->{employeelogin}) {
-    $employeelogin = "$form->{employeelogin}\@$myconfig{dbname}";
+    $employeelogin = $form->{employeelogin};
+    $employeelogin .= "\@$myconfig{dbname}";  # new format
     
     # assign values from old entries
-    $oldlogin = "$form->{oldemployeelogin}\@$myconfig{dbname}";
+    $oldlogin = $form->{oldemployeelogin};
+    $oldlogin .= "\@$myconfig{dbname}";
 
     srand( time() ^ ($$ + ($$ << 15)) );
     
@@ -1169,12 +1237,12 @@ sub save_memberfile {
 	  push @memberlogin, "password=$oldemployeepassword\n";
 	}
       }
-
+      
       for (qw(name email tan)) { push @memberlogin, "$_=$form->{$_}\n" if $form->{$_} }
 
       @{ $member{$employeelogin} } = ();
       
-      for (@memberlogin) {
+      for (sort @memberlogin) {
 	push @{ $member{$employeelogin} }, $_;
       }
       
@@ -1328,7 +1396,11 @@ sub prepare_payroll {
   
   if (@{ $form->{all_department} }) {
     $form->{selectdepartment} = "\n";
-    for (@{ $form->{all_department} }) { $form->{selectdepartment} .= qq|$_->{description}--$_->{id}\n| }
+    for (@{ $form->{all_department} }) {
+      if ($_->{description} !~ /:/) {
+        $form->{selectdepartment} .= qq|$_->{description}--$_->{id}\n|;
+      }
+    }
   }
   
   if (@{ $form->{all_project} }) {
@@ -1336,13 +1408,7 @@ sub prepare_payroll {
     for (@{ $form->{all_project} }) { $form->{selectproject} .= qq|$_->{projectnumber}--$_->{id}\n| }
   }
 
-  $i = 0;
-  for (@{ $form->{all_reference} }) {
-    $i++;
-    $form->{"referencedescription_$i"} = $_->{description};
-    $form->{"referenceid_$i"} = $_->{id};
-  }
-  $form->{reference_rows} = $i;
+  &all_references;
   
   $form->{selectprinter} = "";
   for (@{ $form->{all_printer} }) { $form->{selectprinter} .= "$_->{printer}\n" }
@@ -1365,8 +1431,6 @@ sub prepare_payroll {
     $form->{selectemployee} = "\n";
     for (@{ $form->{all_employee} }) { $form->{selectemployee} .= qq|$_->{name}--$_->{id}\n| }
   }
-
-  $form->{locked} = ($form->{revtrans}) ? '1' : ($form->datetonum(\%myconfig, $form->{transdate}) <= $form->{closedto});
 
   if (! $form->{readonly}) {
     $form->{readonly} = 1 if $myconfig{acs} =~ /Payroll--Add Transaction/;
@@ -1425,20 +1489,24 @@ sub payroll_header {
   $department = qq|
 		    <tr>
 		      <th align=right nowrap>|.$locale->text('Department').qq|</th>
-		      <td><select name=department>|
+		      <td><select name=department onChange="javascript:document.main.submit()">|
 		      .$form->select_option($form->{selectdepartment}, $form->{department}, 1)
 		      .qq|</select></td>
 		    </tr>
 | if $form->{selectdepartment};
 
-  $reference_documents = &reference_documents;
+  $reference_documents = &references;
 
+  ($null, $employee_id) = split /--/, $form->{oldemployee};
+  
   $form->header;
 
+  &calendar;
+  
   print qq|
 <body>
 
-<form method=post action=$form->{script}>
+<form method="post" name="main" action="$form->{script}" />
 |;
 
   $form->{ARAP} = "AP";
@@ -1466,7 +1534,9 @@ sub payroll_header {
 		<th align=right nowrap>|.$locale->text('Employee').qq| <font color=red>*</font></th>
 		<td><select name=employee onChange="javascript:document.forms[0].submit()">|
 		.$form->select_option($form->{selectemployee}, $form->{employee}, 1)
-		.qq|</select></td>
+		.qq|</select>
+		<a href=hr.pl?action=edit&id=$employee_id&db=employee&login=$form->{login}&path=$form->{path} target=_blank>?</a>
+		</td>
 	      </tr>
 |;
 
@@ -1495,7 +1565,7 @@ sub payroll_header {
   print qq|
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Pay Period Ending').qq|
-		<td><input name=transdate size=11 class=date title="$myconfig{dateformat}" value=$form->{transdate}></td>
+		<td><input name=transdate size=11 class=date title="$myconfig{dateformat}" value=$form->{transdate}>|.&js_calendar("main", "transdate").qq|</td>
 	      </tr>
 |;
 
@@ -1541,7 +1611,7 @@ sub payroll_header {
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Date').qq|
-		<td><input name=datepaid size=11 class=date title="$myconfig{dateformat}" value=$form->{datepaid}></td>
+		<td><input name=datepaid size=11 class=date title="$myconfig{dateformat}" value=$form->{datepaid}>|.&js_calendar("main", "datepaid").qq|</td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Payment').qq|</th>
@@ -1558,11 +1628,21 @@ sub payroll_header {
 	      </tr>
 	    </table>
 	  </td>
-    
+
 	  <td align=right>
 	    <table>
-	      $gross
 |;
+
+  if ($form->{invnumber}) {
+    print qq|
+	      <tr>
+		<th align=right nowrap>|.$locale->text('Pay Slip').qq|</th>
+		<td>$form->{invnumber}</td>
+	      </tr>
+|;
+  }
+
+  print $gross;
 
   for $i (1 .. $form->{wage_rows}) {
     if ($form->{"pay_$i"}) {
@@ -1619,10 +1699,10 @@ sub payroll_header {
 
 sub payroll_footer {
 
-  $form->hide_form(qw(closedto oldemployee db path login callback));
-
-  $transdate = $form->datetonum(\%myconfig, $form->{transdate});
+  $form->hide_form(qw(closedto oldemployee olddepartment db path login callback));
   
+  $transdate = $form->datetonum(\%myconfig, $form->{transdate});
+
   if ($form->{readonly}) {
 
     &islocked;
@@ -1686,12 +1766,12 @@ sub update_payroll {
   ($employee, $form->{id}) = split /--/, $form->{employee};
   HR->get_employee(\%myconfig, \%$form, 1);
 
-  $form->{locked} = ($form->{revtrans}) ? '1' : ($form->datetonum(\%myconfig, $form->{transdate}) <= $form->{closedto});
-
   $form->{oldemployee} = $form->{employee};
   $form->{id} = $id;
 
   $form->{paid} = $form->parse_amount(\%myconfig, $form->{paid});
+
+  &rebuild_departments if $form->{department} ne $form->{olddepartment};
 
   if ($upd) {
     for (qw(ap payment)) { $form->{$_} = qq|$form->{$_}--$form->{"${_}_description"}| }
@@ -1727,11 +1807,11 @@ sub update_payroll {
       }
     }
 
-    $amount = $form->round_amount($form->{"qty_$i"} * $form->{"amount_$i"}, 10);
+    $amount = $form->round_amount($form->{"qty_$i"} * $form->{"amount_$i"}, $form->{precision});
     $temp{gross} += $amount unless $ref->{exempt};
     $temp{net} += $amount unless $ref->{defer};
-    
-    $form->{"pay_$i"} = $form->format_amount(\%myconfig, $form->{"qty_$i"} * $form->{"amount_$i"}, $form->{precision});
+
+    $form->{"pay_$i"} = $form->format_amount(\%myconfig, $amount, $form->{precision});
 
     $form->{"amount_$i"} = $form->format_amount(\%myconfig, $form->{"amount_$i"}, $form->{precision});
     
@@ -1748,6 +1828,7 @@ sub update_payroll {
   $i = 0;
   $amount = 0;
 
+  $form->{payperiod} ||= 1;
   
   if ($temp{gross}) {
     for $ed (@{ $form->{all_employeededuction} }) {
@@ -1768,10 +1849,11 @@ sub update_payroll {
             for (@{ $form->{deduct}{$ref->{trans_id}} }) {
               if ($form->{deduct}{$ed->{id}}[$j]{trans_id} == $ref->{trans_id}) {
                 $form->{deduct}{$ed->{id}}[$j]{percent} ||= 1;
+                $amount = $form->round_amount($temp{$form->{deduct}{$ed->{id}}[$j]{id}} * $form->{deduct}{$ed->{id}}[$j]{percent}, $form->{precision});
                 if ($form->{deduct}{$ed->{id}}[$j]{withholding}) {
-                  $fromwithholding += $temp{$form->{deduct}{$ed->{id}}[$j]{id}} * $form->{deduct}{$ed->{id}}[$j]{percent};
+                  $fromwithholding += $amount;
                 } else {
-                  $fromincome += $temp{$form->{deduct}{$ed->{id}}[$j]{id}} * $form->{deduct}{$ed->{id}}[$j]{percent};
+                  $fromincome += $amount;
                 }
               }
               $j++;
@@ -1783,22 +1865,24 @@ sub update_payroll {
               $amount = $temp{gross} - $fromincome;
             }
 
-	    if (($amount * $form->{payperiod}) > $ref->{above}) {
-	      if (($amount * $form->{payperiod}) < $ref->{below}) {
-		$form->{"deduct_$i"} += (($amount * $form->{payperiod}) - $ref->{above}) * $ref->{rate} / $form->{payperiod};
+            $m = $form->round_amount($amount * $form->{payperiod}, $form->{precision});
+	    if ($m > $ref->{above}) {
+	      if ($m < $ref->{below}) {
+		$form->{"deduct_$i"} += $form->round_amount((($amount * $form->{payperiod}) - $ref->{above}) * $ref->{rate} / $form->{payperiod}, $form->{precision});
 		$ok = 0;
 	      } else {
 		if ($ref->{below}) {
-		  $form->{"deduct_$i"} += ($ref->{below} - $ref->{above}) * $ref->{rate} / $form->{payperiod};
+		  $form->{"deduct_$i"} += $form->round_amount(($ref->{below} - $ref->{above}) * $ref->{rate} / $form->{payperiod}, $form->{precision});
 		} else {
-		  $form->{"deduct_$i"} += (($amount * $form->{payperiod}) - $ref->{above}) * $ref->{rate} / $form->{payperiod};
+		  $form->{"deduct_$i"} += $form->round_amount((($amount * $form->{payperiod}) - $ref->{above}) * $ref->{rate} / $form->{payperiod}, $form->{precision});
 		}
 	      }
 	    }
 	  }
 	}
 
-        $amount = ($form->{"deduct_$i"} - $fromwithholding - $ed->{exempt} / $form->{payperiod}) * $form->{payrolldeduction}{$ed->{id}}{employeepays};
+        $m = $form->round_amount($ed->{exempt} / $form->{payperiod}, $form->{precision});
+        $amount = $form->round_amount(($form->{"deduct_$i"} - $fromwithholding - $m) * $form->{payrolldeduction}{$ed->{id}}{employeepays}, $form->{precision});
 	$amount = 0 if $amount < 0;
 
         # check if amount is over maximum
@@ -1831,9 +1915,7 @@ sub update_payroll {
 	  }
 	}
 
-	$form->{"deduct_$i"} = $form->round_amount($amount, $form->{precision});
-
-	$temp{$ed->{id}} = $form->{"deduct_$i"};
+	$temp{$ed->{id}} = $form->{"deduct_$i"} = $amount;;
 	$temp{net} -= $form->{"deduct_$i"};
       }
     }
@@ -1869,7 +1951,7 @@ sub post {
 
   $transdate = $form->datetonum(\%myconfig, $form->{transdate});
   $form->error($locale->text('Cannot post transaction for a closed period!')) if ($transdate <= $form->{closedto});
-  
+
   if (! $form->{repost}) {
     if ($form->{id}) {
       &repost;
@@ -2019,12 +2101,14 @@ sub search_payroll {
 
   $form->header;
   
-  JS->change_report(\%$form, \@input, \@checked, \%radio);
+  &change_report(\%$form, \@input, \@checked, \%radio);
+  
+  &calendar;
   
   print qq|
 <body>
 
-<form method=post action=$form->{script}>
+<form method="post" name="main" action="$form->{script}" />
 
 <table width=100%>
   <tr>
@@ -2040,7 +2124,7 @@ sub search_payroll {
 	$project
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Date').qq|</th>
-	  <td>|.$locale->text('From').qq| <input name=transdatefrom size=11 class=date title="$myconfig{dateformat}"> |.$locale->text('To').qq| <input name=transdateto size=11 class=date title="$myconfig{dateformat}"></td>
+	  <td>|.$locale->text('From').qq| <input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdatefrom").$locale->text('To').qq| <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
 	</tr>
 	$selectfrom
 	$paymentmethod
@@ -2139,24 +2223,32 @@ sub payroll_transactions {
     $option .= $locale->text('To')."&nbsp;".$locale->date(\%myconfig, $form->{transdateto}, 1);
   }
   
-  @column_index = qw(employee transdate payslip invnumber reference paid);
+  if ($form->{summary}) {
+    @column_index = qw(employee paid);
+  } else {
+    @column_index = qw(employee transdate payslip invnumber reference paid);
+  }
   
-  $column_data{employee} = "<th class=listheading>".$locale->text('Employee')."</a></th>";
-  $column_data{transdate} = "<th class=listheading>".$locale->text('Date')."</a></th>";
-  $column_data{invnumber} = "<th class=listheading>".$locale->text('AP')."</a></th>";
-  $column_data{reference} = "<th class=listheading>".$locale->text('GL')."</a></th>";
+  $column_data{employee} = "<th class=listheading>".$locale->text('Employee')."</th>";
+  $column_data{transdate} = "<th class=listheading>".$locale->text('Date')."</th>";
+  $column_data{invnumber} = "<th class=listheading>".$locale->text('AP')."</th>";
+  $column_data{reference} = "<th class=listheading>".$locale->text('GL')."</th>";
   $column_data{payslip} = "<th>".$locale->text('Pay Slip')."</th>";
   $column_data{paid} = "<th class=listheading>" . $locale->text('Paid') . "</th>";
   
+  $column_data{wages} = "<th class=listheading>".$locale->text('Wages')."</th>";
   for (@{ $form->{all_wage} }) {
     $column_data{$_->{id}} = "<th class=listheading>$_->{description}</th>";
     push @column_index, $_->{id};
   }
+  push @column_index, "wages";
 
+  $column_data{deductions} = "<th class=listheading>".$locale->text('Deductions')."</th>";
   for (@{ $form->{all_deduction} }) {
     $column_data{$_->{id}} = "<th class=listheading>$_->{description}</th>";
     push @column_index, $_->{id};
   }
+  push @column_index, "deductions";
 
   $form->{title} = ($form->{title}) ? $form->{title} : $locale->text('Payroll Transactions');
   $form->{title} .= " / $form->{company}";
@@ -2203,16 +2295,23 @@ sub payroll_transactions {
       $form->{"total$_"} += $ref->{$_};
     }
     
+    $amount = 0;
     for (@{ $form->{all_wage} }) {
       $column_data{$_->{id}} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{$_->{id}}, $form->{precision}, "&nbsp;")."</td>";
       $form->{"subtotal$_->{id}"} += $ref->{$_->{id}};
       $form->{"total$_->{id}"} += $ref->{$_->{id}};
+      $amount += $ref->{$_->{id}};
     }
+    $column_data{wages} = "<td align=right>".$form->format_amount(\%myconfig, $amount, $form->{precision}, "&nbsp;")."</td>";
+
+    $amount = 0;
     for (@{ $form->{all_deduction} }) {
       $column_data{$_->{id}} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{$_->{id}}, $form->{precision}, "&nbsp;")."</td>";
       $form->{"subtotal$_->{id}"} += $ref->{$_->{id}};
       $form->{"total$_->{id}"} += $ref->{$_->{id}};
+      $amount += $ref->{$_->{id}};
     }
+    $column_data{deductions} = "<td align=right>".$form->format_amount(\%myconfig, $amount, $form->{precision}, "&nbsp;")."</td>";
 
     $column_data{invnumber} = "<td><a href=ap.pl?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{invnumber}&nbsp;</a></td>";
     $column_data{reference} = "<td><a href=gl.pl?action=edit&id=$ref->{glid}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{reference}&nbsp;</a></td>";
@@ -2220,21 +2319,92 @@ sub payroll_transactions {
     $column_data{transdate} = "<td nowrap>$ref->{transdate}</td>";
     $column_data{employee} = "<td>$ref->{employee}</td>";
 
-    if ($ref->{$form->{sort}} eq $sameitem) {
-      $column_data{$form->{sort}} = "<td>&nbsp;</td>";
-    }
 
-    $j++; $j %= 2;
+    if ($form->{summary}) {
+      if ($i < $l) {
+	if ($ref->{$form->{sort}} ne $form->{transactions}->[$i+1]->{$form->{sort}}) {
+          $column_data{paid} = "<td align=right>".$form->format_amount(\%myconfig, $form->{"subtotalpaid"}, $form->{precision}, "&nbsp;")."</td>";
+          
+          $amount = 0;
+          for (@{ $form->{all_wage} }) {
+            $column_data{$_->{id}} = "<td align=right>".$form->format_amount(\%myconfig, $form->{"subtotal$_->{id}"}, $form->{precision}, "&nbsp;")."</td>";
+            $amount += $form->{"subtotal$_->{id}"};
+            $form->{"subtotal$_->{id}"} = 0 unless $form->{l_subtotal};
+          }
 
-    print "
-        <tr class=listrow$j>
+          $column_data{wages} = "<td align=right>".$form->format_amount(\%myconfig, $amount, $form->{precision}, "&nbsp;")."</td>";
+
+          $amount = 0;
+          for (@{ $form->{all_deduction} }) {
+            $column_data{$_->{id}} = "<td align=right>".$form->format_amount(\%myconfig, $form->{"subtotal$_->{id}"}, $form->{precision}, "&nbsp;")."</td>";
+            $amount += $form->{"subtotal$_->{id}"};
+            $form->{"subtotal$_->{id}"} = 0 unless $form->{l_subtotal};
+          }
+
+          $column_data{deductions} = "<td align=right>".$form->format_amount(\%myconfig, $amount, $form->{precision}, "&nbsp;")."</td>";
+
+          $j++; $j %= 2;
+          print "
+              <tr class=listrow$j>
 ";
 
-    for (@column_index) { print "\n$column_data{$_}" }
+          for (@column_index) { print "\n$column_data{$_}" }
 
-    print qq|
+          print qq|
         </tr>
 |;
+
+	}
+      } else {
+        $column_data{paid} = "<td align=right>".$form->format_amount(\%myconfig, $form->{"subtotalpaid"}, $form->{precision}, "&nbsp;")."</td>";
+        
+        $amount = 0;
+        for (@{ $form->{all_wage} }) {
+          $column_data{$_->{id}} = "<td align=right>".$form->format_amount(\%myconfig, $form->{"subtotal$_->{id}"}, $form->{precision}, "&nbsp;")."</td>";
+          $amount += $form->{"subtotal$_->{id}"};
+          $form->{"subtotal$_->{id}"} = 0 unless $form->{l_subtotal};
+        }
+
+        $column_data{wages} = "<td align=right>".$form->format_amount(\%myconfig, $amount, $form->{precision}, "&nbsp;")."</td>";
+
+        $amount = 0;
+        for (@{ $form->{all_deduction} }) {
+          $column_data{$_->{id}} = "<td align=right>".$form->format_amount(\%myconfig, $form->{"subtotal$_->{id}"}, $form->{precision}, "&nbsp;")."</td>";
+          $amount += $form->{"subtotal$_->{id}"};
+          $form->{"subtotal$_->{id}"} = 0 unless $form->{l_subtotal};
+        }
+
+        $column_data{deductions} = "<td align=right>".$form->format_amount(\%myconfig, $amount, $form->{precision}, "&nbsp;")."</td>";
+
+        $j++; $j %= 2;
+        print "
+              <tr class=listrow$j>
+";
+
+        for (@column_index) { print "\n$column_data{$_}" }
+
+        print qq|
+        </tr>
+|;
+
+      }
+    } else {
+      if ($ref->{$form->{sort}} eq $sameitem) {
+        $column_data{$form->{sort}} = "<td>&nbsp;</td>";
+      }
+
+      $j++; $j %= 2;
+      print "
+              <tr class=listrow$j>
+";
+
+      for (@column_index) { print "\n$column_data{$_}" }
+      
+      print qq|
+        </tr>
+|;
+
+    }
 
 
     if ($form->{l_subtotal} eq 'Y') {
@@ -2256,15 +2426,21 @@ sub payroll_transactions {
   # total
   for (@column_index) { $column_data{$_} = "<th>&nbsp;</th>" }
 
-  $column_data{paid} = "<th align=right>".$form->format_amount(\%myconfig, $form->{"totalpaid"}, $form->{precision}, "&nbsp;")."</th>";
+  $column_data{paid} = "<th align=right nowrap>".$form->format_amount(\%myconfig, $form->{"totalpaid"}, $form->{precision}, "&nbsp;")."</th>";
   
+  $amount = 0;
   for (@{ $form->{all_wage} }) {
-    $column_data{$_->{id}} = "<th align=right>".$form->format_amount(\%myconfig, $form->{"total$_->{id}"}, $form->{precision}, "&nbsp;")."</th>";
+    $column_data{$_->{id}} = "<th align=right nowrap>".$form->format_amount(\%myconfig, $form->{"total$_->{id}"}, $form->{precision}, "&nbsp;")."</th>";
+    $amount += $form->{"total$_->{id}"};
   }
+  $column_data{wages} = "<th align=right>".$form->format_amount(\%myconfig, $amount, $form->{precision}, "&nbsp;")."</th>";
 
+  $amount = 0;
   for (@{ $form->{all_deduction} }) {
-    $column_data{$_->{id}} = "<th align=right>".$form->format_amount(\%myconfig, $form->{"total$_->{id}"}, $form->{precision}, "&nbsp;")."</th>";
+    $column_data{$_->{id}} = "<th align=right nowrap>".$form->format_amount(\%myconfig, $form->{"total$_->{id}"}, $form->{precision}, "&nbsp;")."</th>";
+    $amount += $form->{"total$_->{id}"};
   }
+  $column_data{deductions} = "<th align=right>".$form->format_amount(\%myconfig, $amount, $form->{precision}, "&nbsp;")."</th>";
   
   print "
         <tr class=listtotal>
@@ -2326,9 +2502,10 @@ sub payroll_transactions {
 
 sub payroll_subtotal {
 
-  for (@column_index) { $column_data{$_} = "<td>&nbsp;</td" }
+  for (@column_index) { $column_data{$_} = "<td>&nbsp;</td>" }
   
   $column_data{paid} = "<th align=right>".$form->format_amount(\%myconfig, $form->{"subtotalpaid"}, $form->{precision}, "&nbsp;")."</th>";
+  $form->{"subtotalpaid"} = 0;
   
   for (@{ $form->{all_wage} }) {
     $column_data{$_->{id}} = "<td align=right>".$form->format_amount(\%myconfig, $form->{"subtotal$_->{id}"}, $form->{precision}, "&nbsp;")."</td>";
@@ -2957,8 +3134,10 @@ sub wage_footer {
 
 
 sub update {
+
   &{ "update_$form->{db}" };
   &display_form;
+
 }
 
 
@@ -3053,6 +3232,8 @@ sub update_employee {
   }
   $form->redo_rows(\@flds, \@f, $count, $form->{wage_rows});
   $form->{wage_rows} = $count;
+
+  HR->isadmin(\%myconfig, \%$form);
 
 }
  

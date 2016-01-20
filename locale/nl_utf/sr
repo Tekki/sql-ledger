@@ -1,0 +1,48 @@
+$self{texts} = {
+  'Accounting Menu'             => 'Boekhoudmenu',
+  'Add Column'                  => 'Kolom toevoegen',
+  'Align'                       => 'Uitlijnen',
+  'Delete Column'               => 'Verwijder Kolom',
+  'Delete Report'               => 'Verwijder Rapport',
+  'Description'                 => 'Omschrijving',
+  'Edit Column'                 => 'Bewerk Kolom',
+  'Edit Column Header'          => 'Bewerk Kolom Titel',
+  'Edit Column Total'           => 'Bewerk Kolom Totaal',
+  'Fill'                        => 'Vul',
+  'Fixed value'                 => 'Vaste waarde',
+  'Heading'                     => 'Kopregel',
+  'Left'                        => 'Links',
+  'Public'                      => 'Openbaar',
+  'Right'                       => 'Rechts',
+  'Save Column'                 => 'Bewaar Kolom',
+  'Save Report'                 => 'Bewaar Rapport',
+  'Save Report as new'          => 'Bewaar Rapport als nieuw',
+  'Width'                       => 'Breedte',
+};
+
+$self{subs} = {
+  'acc_menu'                    => 'acc_menu',
+  'add_column'                  => 'add_column',
+  'delete_column'               => 'delete_column',
+  'delete_report'               => 'delete_report',
+  'display'                     => 'display',
+  'display_frame'               => 'display_frame',
+  'do_save_report'              => 'do_save_report',
+  'edit_column'                 => 'edit_column',
+  'jsmenu'                      => 'jsmenu',
+  'jsmenu_frame'                => 'jsmenu_frame',
+  'menubar'                     => 'menubar',
+  'mlmenu'                      => 'mlmenu',
+  'save_column'                 => 'save_column',
+  'save_report'                 => 'save_report',
+  'save_report_as_new'          => 'save_report_as_new',
+  'section_menu'                => 'section_menu',
+  'verwijder_kolom'             => 'delete_column',
+  'verwijder_rapport'           => 'delete_report',
+  'bewaar_kolom'                => 'save_column',
+  'bewaar_rapport'              => 'save_report',
+  'bewaar_rapport_als_nieuw'    => 'save_report_as_new',
+};
+
+1;
+

@@ -1,5 +1,5 @@
 #=====================================================================
-# SQL-Ledger ERP
+# SQL-Ledger
 # Copyright (c) DWS Systems Inc.
 #
 #  Author: DWS Systems Inc.
@@ -11,17 +11,17 @@
 #
 
 use SL::AA;
-use SL::JS;
 
 require "$form->{path}/sr.pl";
-require "$form->{path}/rd.pl";
+require "$form->{path}/cm.pl";
+require "$form->{path}/js.pl";
 
 # any custom scripts for this one   
-if (-f "$form->{path}/custom_arap.pl") {
-    eval { require "$form->{path}/custom_arap.pl"; };
+if (-f "$form->{path}/custom/arap.pl") {
+    eval { require "$form->{path}/custom/arap.pl"; };
 }
-if (-f "$form->{path}/$form->{login}_arap.pl") {
-    eval { require "$form->{path}/$form->{login}_arap.pl"; };
+if (-f "$form->{path}/custom/$form->{login}/arap.pl") {
+    eval { require "$form->{path}/custom/$form->{login}/arap.pl"; };
 }
  
 
@@ -324,6 +324,34 @@ sub rebuild_vc {
 }
 
 
+sub rebuild_departments {
+
+  $form->all_departments(\%myconfig, undef, $form->{vc});
+
+  ($subset) = split /--/, $form->{department};
+  $subset =~ s/:.*//g;
+
+  $form->{selectdepartment} = "\n" if @{ $form->{all_department} };
+  $form->{olddepartment} = $form->{department};
+
+  for (@{ $form->{all_department} }) { 
+    if ($subset) {
+      if ($_->{description} =~ /:/) {
+        if ($_->{description} =~ /${subset}:/) {
+          $form->{selectdepartment} .= qq|$_->{description}--$_->{id}\n|;
+        }
+      } else {
+        $form->{selectdepartment} .= qq|$_->{description}--$_->{id}\n|;
+      }
+    } else {
+      if ($_->{description} !~ /:/) {
+        $form->{selectdepartment} .= qq|$_->{description}--$_->{id}\n|;
+      }
+    }
+  }
+
+}
+
 
 sub add_transaction {
 
@@ -497,6 +525,7 @@ sub project_selected {
 sub post_as_new {
 
   for (qw(id printed emailed queued)) { delete $form->{$_} }
+  $form->{postasnew} = 1;
   &post;
 
 }
@@ -595,7 +624,7 @@ sub schedule {
     $nextdate = qq|
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Next Date').qq|</th>
-		<td><input name=recurringnextdate size=11 class=date title="$myconfig{'dateformat'}" value=$form->{recurringnextdate}></td>
+		<td><input name=recurringnextdate size=11 class=date title="$myconfig{'dateformat'}" value=$form->{recurringnextdate}>|.&js_calendar("main", "recurringnextdate").qq|</td>
 	      </tr>
 |;
   }
@@ -779,10 +808,12 @@ pdf--|.$locale->text('PDF');
   
   $form->header;
 
+  &calendar;
+  
   print qq|
 <body>
 
-<form method=post action=$form->{script}>
+<form method="post" name="main" action="$form->{script}">
 
 <table width=100%>
   <tr class=listtop>
@@ -806,7 +837,7 @@ pdf--|.$locale->text('PDF');
 
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Startdate').qq|</th>
-		<td><input name=recurringstartdate size=11 class=date title="$myconfig{'dateformat'}" value=$form->{recurringstartdate}></td>
+		<td><input name=recurringstartdate size=11 class=date title="$myconfig{'dateformat'}" value=$form->{recurringstartdate}>|.&js_calendar("main", "recurringstartdate").qq|</td>
 	      </tr>
 	      $nextdate
 	    </table>
@@ -1053,6 +1084,9 @@ sub new_number {
   } elsif ($form->{script} eq 'gl.pl') {
     $invnumber = "reference";
     $numberfld = "glnumber";
+  } elsif ($form->{script} eq 'hr.pl') {
+    $numberfld = $invnumber = "employeenumber";
+    HR->isadmin(\%myconfig, \%$form);
   }
 
   $form->{"$invnumber"} = $form->update_defaults(\%myconfig, $numberfld);

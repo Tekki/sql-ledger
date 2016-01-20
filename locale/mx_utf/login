@@ -1,33 +1,26 @@
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
+  'Access Denied!'              => '¡Acceso Denegado!',
   'Company'                     => 'Empresa',
   'Continue'                    => 'Continuar',
   'Dataset is newer than version!' => '¡El conjunto de datos es mas reciente que la versión del programa!',
-  'Dataset locked!'             => '¡Conjunto de datos bloqueado"',
   'Incorrect Dataset version!'  => '¡La Versión del conjunto de datos es incorrecta!',
-  'Incorrect Password!'         => '¡Contraseña Incorrecta!',
-  'Incorrect Username!'         => '¡Usuario Incorrecto!',
-  'Login'                       => 'Usuario',
+  'Login'                       => 'Entrada al sistema',
   'Name'                        => 'Nombre',
-  'No email address for'        => 'Falta dirección de correo-e para',
   'Password'                    => 'Contraseña',
   'Upgrading to Version'        => 'Actualizando a versión',
   'Version'                     => 'Versión',
   'You did not enter a name!'   => '¡No ingresó un nombre!',
-  'admin does not exist!'       => '¡No existe admin!',
+  'done'                        => 'listo',
 };
 
 $self{subs} = {
-  'continue'                    => 'continue',
-  'email_tan'                   => 'email_tan',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
-  'tan_login'                   => 'tan_login',
-  'continuar'                   => 'continue',
-  'usuario'                     => 'login',
+  'entrada_al_sistema'          => 'login',
 };
 
 1;

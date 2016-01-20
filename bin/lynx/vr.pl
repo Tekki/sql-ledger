@@ -1,6 +1,6 @@
 #=====================================================================
-# SQL-Ledger ERP
-# Copyright (c) 2006
+# SQL-Ledger
+# Copyright (c) DWS Systems Inc.
 #
 #  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.com
@@ -12,6 +12,8 @@
 #======================================================================
 
 use SL::VR;
+
+require "$form->{path}/js.pl";
 
 1;
 # end of main
@@ -74,15 +76,17 @@ sub add_batch {
     $focus = "batchdescription";
     
     $transdate .= qq|
-	  <td><input name=transdate size=11 class=date title="$myconfig{'dateformat'}" value=$form->{transdate}></td>
+	  <td><input name=transdate size=11 class=date title="$myconfig{'dateformat'}" value=$form->{transdate}>|.&js_calendar("main", "transdate").qq|</td>
 	</tr>
 |;
   }
   
+  &calendar;
+  
   print qq|
 <body onload="document.forms[0].${focus}.focus()" />
 
-<form method=post action=$form->{script}>
+<form method="post" name="main" action="$form->{script}" />
 
 <table width=100%>
   <tr class=listtop>
@@ -474,10 +478,12 @@ sub search {
   
   $form->header;
   
+  &calendar;
+
   print qq|
 <body>
 
-<form method=post action=$form->{script}>
+<form method="post" name="main" action="$form->{script}" />
 
 <table width=100%>
   <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
@@ -496,7 +502,7 @@ sub search {
 	$employee
 	<tr>
 	  <th align=right nowrap>|.$locale->text('From').qq|</th>
-	  <td colspan=3><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}"> <b>|.$locale->text('To').qq|</b> <input name=transdateto size=11 class=date title="$myconfig{dateformat}"></td>
+	  <td colspan=3><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdatefrom").qq|<b>|.$locale->text('To').qq|</b> <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
 	</tr>
 	$selectfrom
       </table>

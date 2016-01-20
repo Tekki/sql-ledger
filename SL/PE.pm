@@ -22,7 +22,7 @@ sub projects {
   my $dbh = $form->dbconnect($myconfig);
 
   $form->{sort} ||= "projectnumber";
-
+  
   my $query;
   my $where = "WHERE 1=1";
   
@@ -114,7 +114,7 @@ sub get_project {
   my $ref;
   my $where;
   
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
 
     $where = "WHERE pr.id = $form->{id}" if $form->{id};
     
@@ -160,8 +160,10 @@ sub get_project {
     $form->{orphaned} = !$form->{orphaned};
   }
 
-  PE->get_customer($myconfig, $form, $dbh);
+  &get_customer("", $myconfig, $form, $dbh);
 
+  $form->all_references($dbh);
+  
   $dbh->disconnect;
 
 }
@@ -171,35 +173,43 @@ sub save_project {
   my ($self, $myconfig, $form) = @_;
   
   # connect to database
-  my $dbh = $form->dbconnect($myconfig);
+  my $dbh = $form->dbconnect_noauto($myconfig);
   
   $form->{customer_id} ||= 'NULL';
+  
+  if ($form->{id} *= 1) {
+    $query = qq|SELECT id FROM project
+                WHERE id = $form->{id}|;
+    ($form->{id}) = $dbh->selectrow_array($query);
+  }
+
+  if (!$form->{id}) {
+    my $uid = localtime;
+    $uid .= $$;
+    
+    $query = qq|INSERT INTO project (projectnumber)
+                VALUES ('$uid')|;
+    $dbh->do($query) || $form->dberror($query);
+
+    $query = qq|SELECT id FROM project
+                WHERE projectnumber = '$uid'|;
+    ($form->{id}) = $dbh->selectrow_array($query);
+  }
 
   $form->{projectnumber} = $form->update_defaults($myconfig, "projectnumber", $dbh) unless $form->{projectnumber};
 
-  if ($form->{id}) {
-
-    $query = qq|UPDATE project SET
-                projectnumber = |.$dbh->quote($form->{projectnumber}).qq|,
-		description = |.$dbh->quote($form->{description}).qq|,
-		startdate = |.$form->dbquote($form->{startdate}, SQL_DATE).qq|,
-		enddate = |.$form->dbquote($form->{enddate}, SQL_DATE).qq|,
-		customer_id = $form->{customer_id}
-		WHERE id = $form->{id}|;
-  } else {
-   
-    $query = qq|INSERT INTO project
-                (projectnumber, description, startdate, enddate, customer_id)
-                VALUES (|
-		.$dbh->quote($form->{projectnumber}).qq|, |
-		.$dbh->quote($form->{description}).qq|, |
-		.$form->dbquote($form->{startdate}, SQL_DATE).qq|, |
-		.$form->dbquote($form->{enddate}, SQL_DATE).qq|,
-		$form->{customer_id}
-		)|;
-  }
+  $query = qq|UPDATE project SET
+	      projectnumber = |.$dbh->quote($form->{projectnumber}).qq|,
+	      description = |.$dbh->quote($form->{description}).qq|,
+	      startdate = |.$form->dbquote($form->{startdate}, SQL_DATE).qq|,
+	      enddate = |.$form->dbquote($form->{enddate}, SQL_DATE).qq|,
+	      customer_id = $form->{customer_id}
+	      WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
-  
+
+  $form->save_reference($dbh, 'project');
+
+  $dbh->commit;
   $dbh->disconnect;
 
 }
@@ -234,7 +244,7 @@ sub list_stock {
   }
   
   $form->{sort} ||= "projectnumber";
- 
+
   my $query = qq|SELECT pr.*, p.partnumber
 	         FROM project pr
 		 JOIN parts p ON (p.id = pr.parts_id)
@@ -265,8 +275,8 @@ sub jobs {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
  
-  $form->{sort} ||= "projectnumber";
-  
+  $form->{sort} = "projectnumber" unless $form->{sort};
+
   my $query = qq|SELECT pr.*, p.partnumber, p.onhand, c.name
 	         FROM project pr
 	         JOIN parts p ON (p.id = pr.parts_id)
@@ -299,13 +309,14 @@ sub jobs {
   }
   if ($form->{status} eq 'orphaned') {
     $query .= qq| AND pr.completed = 0
-                  AND (pr.id NOT IN SELECT DISTINCT project_id
+                  AND pr.id NOT IN (SELECT DISTINCT project_id
                                     FROM invoice
-				    WHERE project_id > 0)
+				    WHERE project_id > 0
 		                    UNION
 				    SELECT DISTINCT project_id
 				    FROM orderitems
 				    WHERE project_id > 0
+                                    UNION
 				    SELECT DISTINCT project_id
 				    FROM jcitems
 				    WHERE project_id > 0
@@ -315,7 +326,7 @@ sub jobs {
   my @sf = ($form->{sort});
   my %ordinal = $form->ordinal_order($dbh, $query);
   $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
-
+ 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
@@ -342,7 +353,7 @@ sub get_job {
   my %defaults = $form->get_defaults($dbh, \@{['weightunit']});
   $form->{weightunit} = $defaults{weightunit};
   
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     
     $query = qq|SELECT pr.*,
                 p.partnumber, p.description AS partdescription,
@@ -440,8 +451,10 @@ sub get_job {
     $sth->finish;
   }
   
-  PE->get_customer($myconfig, $form, $dbh);
+  &get_customer("", $myconfig, $form, $dbh);
 
+  $form->all_references($dbh);
+  
   $dbh->disconnect;
 
 }
@@ -483,7 +496,7 @@ sub get_customer {
 		FROM customer
 		WHERE $where|;
 
-    if ($form->{customer_id}) {
+    if ($form->{customer_id} *= 1) {
       $query .= qq|
 		UNION SELECT id,name
 		FROM customer
@@ -517,7 +530,7 @@ sub save_job {
   my ($partsgroup, $partsgroup_id) = split /--/, $form->{partsgroup};
   $partsgroup_id ||= 'NULL';
   
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $query = qq|SELECT id FROM project
                 WHERE id = $form->{id}|;
     ($form->{id}) = $dbh->selectrow_array($query);
@@ -597,6 +610,8 @@ sub save_job {
       $dbh->do($query) || $form->dberror($query);
     }
   }
+  
+  $form->save_reference($dbh, 'job');
   
   $dbh->commit;
   $dbh->disconnect;
@@ -769,6 +784,8 @@ sub delete_project {
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
   
+  $form->{id} *= 1;
+  
   $query = qq|DELETE FROM project
 	      WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
@@ -776,6 +793,8 @@ sub delete_project {
   $query = qq|DELETE FROM translation
 	      WHERE trans_id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
+
+  $form->delete_references($dbh);
 
   my $rc = $dbh->commit;
   $dbh->disconnect;
@@ -790,6 +809,8 @@ sub delete_partsgroup {
   
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
+  
+  $form->{id} *= 1;
   
   $query = qq|DELETE FROM partsgroup
 	      WHERE id = $form->{id}|;
@@ -813,6 +834,8 @@ sub delete_pricegroup {
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
   
+  $form->{id} *= 1;
+  
   $query = qq|DELETE FROM pricegroup
 	      WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
@@ -830,7 +853,9 @@ sub delete_job {
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
- 
+  
+  $form->{id} *= 1;
+  
   my %audittrail = ( tablename  => 'project',
                      reference  => $form->{id},
 		     formname   => $form->{type},
@@ -857,6 +882,8 @@ sub delete_job {
 	      WHERE project_id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
 
+  $form->delete_references($dbh);
+  
   my $rc = $dbh->commit;
   $dbh->disconnect;
 
@@ -885,15 +912,15 @@ sub partsgroups {
   
   if ($form->{partsgroup} ne "") {
     $var = $form->like(lc $form->{partsgroup});
-    $where .= " AND lower(partsgroup) LIKE '$var'";
+    $where .= " AND lower(g.partsgroup) LIKE '$var'";
   }
   if ($form->{partsgroupcode} ne "") {
     $var = $form->like(lc $form->{partsgroupcode});
-    $where .= " AND lower(code) LIKE '$var'";
+    $where .= " AND lower(g.code) LIKE '$var'";
   }
 
   $query .= qq| WHERE $where|;
-
+ 
   if ($form->{status} eq 'orphaned') {
     $query = qq|SELECT g.*
                 FROM partsgroup g
@@ -935,8 +962,8 @@ sub save_partsgroup {
   my $query;
   
   $form->{pos} *= 1;
-
-  if ($form->{id}) {
+  
+  if ($form->{id} *= 1) {
     $query = qq|UPDATE partsgroup SET
                 partsgroup = |.$dbh->quote($form->{partsgroup}).qq|,
                 code = |.$dbh->quote($form->{code}).qq|,
@@ -963,6 +990,8 @@ sub get_partsgroup {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
+  
+  $form->{id} *= 1;
   
   my $query = qq|SELECT *
                  FROM partsgroup
@@ -1005,7 +1034,7 @@ sub pricegroups {
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   $form->{sort} ||= "pricegroup";
-  
+
   my $query = qq|SELECT g.*
                  FROM pricegroup g|;
 
@@ -1013,7 +1042,7 @@ sub pricegroups {
   
   if ($form->{pricegroup} ne "") {
     $var = $form->like(lc $form->{pricegroup});
-    $where .= " AND lower(pricegroup) LIKE '$var'";
+    $where .= " AND lower(g.pricegroup) LIKE '$var'";
   }
   $query .= qq| WHERE $where|;
   
@@ -1053,7 +1082,7 @@ sub save_pricegroup {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
   
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $query = qq|UPDATE pricegroup SET
                 pricegroup = |.$dbh->quote($form->{pricegroup}).qq|
 		WHERE id = $form->{id}|;
@@ -1074,6 +1103,8 @@ sub get_pricegroup {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
+  
+  $form->{id} *= 1;
   
   my $query = qq|SELECT *
                  FROM pricegroup
@@ -1110,6 +1141,8 @@ sub description_translations {
   my $where = "1 = 1";
   my $var;
   my $ref;
+  
+  $form->{id} *= 1;
   
   for (qw(partnumber description)) {
     if ($form->{$_}) {
@@ -1179,6 +1212,8 @@ sub partsgroup_translations {
   my $ref;
   my $var;
 
+  $form->{id} *= 1;
+  
   if ($form->{description}) {
     $var = $form->like(lc $form->{description});
     $where .= " AND lower(p.partsgroup) LIKE '$var'";
@@ -1236,6 +1271,8 @@ sub project_translations {
   my $where = "1 = 1";
   my $var;
   my $ref;
+  
+  $form->{id} *= 1;
   
   for (qw(projectnumber description)) {
     if ($form->{$_}) {
@@ -1304,6 +1341,8 @@ sub chart_translations {
   my $var;
   my $ref;
   
+  $form->{id} *= 1;
+  
   for (qw(accno description)) {
     if ($form->{$_}) {
       $var = $form->like(lc $form->{$_});
@@ -1371,6 +1410,8 @@ sub save_translation {
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
 
+  $form->{id} *= 1;
+  
   my $query = qq|DELETE FROM translation
                  WHERE trans_id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
@@ -1396,6 +1437,8 @@ sub delete_translation {
   
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
+  
+  $form->{id} *= 1;
   
   my $query = qq|DELETE FROM translation
   	         WHERE trans_id = $form->{id}|;
@@ -1461,12 +1504,13 @@ sub get_jcitems {
 
   my $query;
   my $ref;
+  $form->{vc} = ($form->{vc} eq 'customer') ? 'customer' : 'vendor';
 
   $query = qq|SELECT j.id, j.description, j.qty - j.allocated AS qty,
 	       j.sellprice, j.parts_id, pr.$form->{vc}_id, j.project_id,
 	       j.checkedin::date AS transdate, j.notes,
                c.name AS $form->{vc}, c.$form->{vc}number, pr.projectnumber,
-	       p.partnumber
+	       p.partnumber, e.name AS employee
                FROM jcitems j
 	       JOIN project pr ON (pr.id = j.project_id)
 	       JOIN employee e ON (e.id = j.employee_id)
@@ -1510,8 +1554,8 @@ sub get_jcitems {
 
   $sth->finish;
 
-  $form->{currency} = substr($form->get_currencies($dbh, $myconfig),0,3);
-  $form->{defaultcurrency} = $form->{currency};
+  $form->{currencies} = substr($form->get_currencies($myconfig, $dbh),0,3);
+  $form->{defaultcurrency} = $form->{currencies};
 
   $where = "";
   if ($form->{transdateto}) {

@@ -1,5 +1,5 @@
 #=====================================================================
-# SQL-Ledger ERP
+# SQL-Ledger
 # Copyright (c) DWS Systems Inc.
 #
 #  Author: DWS Systems Inc.
@@ -15,7 +15,8 @@
 use SL::IC;
 
 require "$form->{path}/io.pl";
-require "$form->{path}/rd.pl";
+require "$form->{path}/cm.pl";
+require "$form->{path}/js.pl";
 
 1;
 # end of main
@@ -27,11 +28,13 @@ sub add {
   %label = ( part	=> 'Part',
              service	=> 'Service',
 	     assembly	=> 'Assembly',
+             kit        => 'Kit',
 	     labor	=> 'Labor/Overhead', );
 
 # $locale->text('Add Part')
 # $locale->text('Add Service')
 # $locale->text('Add Assembly')
+# $locale->text('Add Kit')
 # $locale->text('Add Labor/Overhead')
 
   $label = "Add $label{$form->{item}}";
@@ -54,10 +57,11 @@ sub add {
 
 sub edit {
   
- %label = ( part	=> 'Part',
-            service	=> 'Service',
-            assembly	=> 'Assembly',
-	    labor	=> 'Labor/Overhead', );
+  %label = ( part	=> 'Part',
+             service	=> 'Service',
+             assembly	=> 'Assembly',
+             kit        => 'Kit',
+	     labor	=> 'Labor/Overhead', );
 
 # $locale->text('Edit Part')
 # $locale->text('Edit Service')
@@ -93,6 +97,8 @@ sub link_part {
 
   $form->{partsgroupcode} = $partsgroupcode;
   $form->{oldpartsgroupcode} = $partsgroupcode;
+  
+  $form->{oldonhand} = $form->{onhand};
 
   # currencies
   $form->{selectcurrency} = "";
@@ -124,12 +130,18 @@ sub link_part {
     $form->{readonly} = 1 if $myconfig{acs} =~ /Goods \& Services--Add Assembly/;
     $form->error($locale->text('Cannot create Assembly').";".$locale->text('Income account does not exist!')) if ! @{ $form->{IC_links}{IC_income} };
   }
+  if ($form->{item} eq 'kit') {
+    $form->{readonly} = 1 if $myconfig{acs} =~ /Goods \& Services--Add Kit/;
+    $form->error($locale->text('Cannot create Kit').";".$locale->text('Income account does not exist!')) if ! @{ $form->{IC_links}{IC_income} };
+  }
+
   if ($form->{item} eq 'labor') {
     $form->{readonly} = 1 if $myconfig{acs} =~ /Goods \& Services--Add Labor\/Overhead/;
     $form->error($locale->text('Cannot create Labor').";".$locale->text('Inventory account does not exist!')) if ! @{ $form->{IC_links}{IC} };
     $form->error($locale->text('Cannot create Labor').";".$locale->text('COGS account does not exist!')) if ! @{ $form->{IC_links}{IC_cogs} };
   }
 
+  $form->{readonly} = 1 if $myconfig{acs} =~ /Goods \& Services--Goods \& Services/;
   
   # parts, assemblies , labor and overhead have the same links
   $taxpart = ($form->{item} eq 'service') ? "service" : "part";
@@ -191,26 +203,35 @@ sub link_part {
     delete $form->{all_partsgroup};
   }
 
+  # references
+  &all_references;
 
-  if ($form->{item} eq 'assembly') {
-
+  if ($form->{item} =~ /(assembly|kit)/) {
     for (1 .. $form->{assembly_rows}) {
       if ($form->{"partsgroup_id_$_"}) {
 	$form->{"partsgroup_$_"} = qq|$form->{"partsgroup_$_"}--$form->{"partsgroup_id_$_"}|;
       }
     }
-    
   }
   
   # setup make and models
-  $i = 1;
+  $i = 0;
   foreach $ref (@{ $form->{makemodels} }) {
-    for (qw(make model)) { $form->{"${_}_$i"} = $ref->{$_} }
     $i++;
+    for (qw(make model)) { $form->{"${_}_$i"} = $ref->{$_} }
   }
-  $form->{makemodel_rows} = $i - 1;
+  $form->{makemodel_rows} = $i;
   delete $form->{makemodels};
 
+  # onhand in warehouse
+  $i = 0;
+  foreach $ref (@{ $form->{inventory} }) {
+    $i++;
+    $form->{"warehouse_$i"} = $ref->{warehouse};
+    $form->{"wonhand_$i"} = $form->format_amount(\%myconfig, $ref->{onhand});
+  }
+  $form->{inventory_rows} = $i;
+  delete $form->{inventory};
   
   # setup vendors
   if (@{ $form->{all_vendor} }) {
@@ -220,14 +241,14 @@ sub link_part {
   }
 
   # vendor matrix
-  $i = 1;
+  $i = 0;
   foreach $ref (@{ $form->{vendormatrix} }) {
+    $i++;
     $form->{"vendor_$i"} = qq|$ref->{name}--$ref->{id}|;
 
     for (qw(partnumber lastcost leadtime vendorcurr)) { $form->{"${_}_$i"} = $ref->{$_} }
-    $i++;
   }
-  $form->{vendor_rows} = $i - 1;
+  $form->{vendor_rows} = $i;
   delete $form->{vendormatrix};
   
   # setup customers and groups
@@ -243,19 +264,17 @@ sub link_part {
     delete $form->{all_pricegroup};
   }
 
-  $i = 1;
+  $i = 0;
   # customer matrix
   foreach $ref (@{ $form->{customermatrix} }) {
-
+    $i++;
     $form->{"customer_$i"} = "$ref->{name}--$ref->{cid}" if $ref->{cid};
     $form->{"pricegroup_$i"} = "$ref->{pricegroup}--$ref->{gid}" if $ref->{gid};
 
     for (qw(validfrom validto pricebreak customerprice customercurr)) { $form->{"${_}_$i"} = $ref->{$_} }
 
-    $i++;
-    
   }
-  $form->{customer_rows} = $i - 1;
+  $form->{customer_rows} = $i;
   delete $form->{customermatrix};
 
   for (qw(currency partsgroup assemblypartsgroup vendor customer pricegroup IC_inventory IC_income IC_expense)) { $form->{"select$_"} = $form->escape($form->{"select$_"},1) }
@@ -283,13 +302,13 @@ sub form_header {
  
   for (qw(lastcost avgcost)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, $form->{decimalplacescost}) }
 
-  for (qw(weight rop stock)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}) }
+  for (qw(weight rop onhand)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}) }
   
   for (qw(partnumber description unit notes)) { $form->{$_} = $form->quote($form->{$_}) }
 
   for (qw(description notes)) {
     if (($rows = $form->numtextrows($form->{$_}, 40)) < 2) {
-      $rows = 1;
+      $rows = 2;
     }
     
     $fld{$_} = qq|<textarea name=$_ rows=$rows cols=40 wrap=soft>$form->{$_}</textarea>|;
@@ -325,12 +344,12 @@ sub form_header {
       <br>|.$form->hide_form("IC_tax_${item}_description");
   }
 
-  $reference_documents = &reference_documents;
+  $reference_documents = &references;
 
   $sellprice = qq|
 	      <tr>
 		<th align="right" nowrap="true">|.$locale->text('Sell Price').qq|</th>
-		<td><input name=sellprice class="inputright" size=11 value=$form->{sellprice}></td>
+		<td><input name=sellprice class="inputright" size=11 value=$form->{sellprice}> <a href=ic.pl?action=history&login=$form->{login}&path=$form->{path}&pickvar=sellprice&id=$form->{id} target=popup>?</a></td>
 	      </tr>
 	      <tr>
 		<th align="right" nowrap="true">|.$locale->text('List Price').qq|</th>
@@ -357,15 +376,34 @@ sub form_header {
 	      </tr>
 |;
 
-
   if ($form->{item} =~ /(part|assembly)/) {
-    $n = ($form->{onhand} > 0) ? "1" : "0";
     $onhand = qq|
 	      <tr>
 		<th align="right" nowrap>|.$locale->text('On Hand').qq|</th>
-		<th align=left nowrap class="plus$n">&nbsp;|.$form->format_amount(\%myconfig, $form->{onhand}).qq|</th>
+|;
+
+    if ($form->{admin}) {
+      $onhand .= qq|
+		<td><input name=onhand class="inputright" size=8 value=$form->{onhand}></td>
+|;
+    } else {
+      $onhand .= qq|
+		<td>$form->{onhand}</td>|
+      .$form->hide_form(onhand);
+    }
+
+    $onhand .= qq|
 	      </tr>
 |;
+
+    for $i (1 .. $form->{inventory_rows}) {
+      $onhand .= qq|
+            <tr>
+              <th align=right nowrap>$form->{"warehouse_$i"}</th>
+              <td>$form->{"wonhand_$i"}</td>
+            </tr>|
+      .$form->hide_form("wonhand_$i", "warehouse_$i");
+    }
 
     $rop = qq|
 	      <tr>
@@ -381,13 +419,16 @@ sub form_header {
 	      </tr>
 |;
     
-    $imagelinks = qq|
+  }
+
+  $preview = ($form->{image}) ? " <a href=images/$myconfig{dbname}/$form->{image}>?" : "";
+  $imagelinks = qq|
   <tr>
     <td>
       <table width=100%>
         <tr>
 	  <th align=right nowrap>|.$locale->text('Image').qq|</th>
-	  <td><input name=image size=40 value="$form->{image}"></td>
+	  <td><input name=image size=40 value="$form->{image}">$preview</td>
 	  
 	  <th align=right nowrap>|.$locale->text('Country of Origin').qq|</th>
 	  <td><input name=countryorigin size=20 value="$form->{countryorigin}"></td>
@@ -413,7 +454,6 @@ sub form_header {
     </td>
   </tr>
 |;
-  }
 
 
   if ($form->{item} eq "part") {
@@ -466,7 +506,7 @@ sub form_header {
   }
 
 
-  if ($form->{item} eq "assembly") {
+  if ($form->{item} =~ /(assembly|kit)/) {
 
     $avgcost = "";
     
@@ -524,13 +564,6 @@ sub form_header {
       $rop = "";
 
     } else {
-      $stock = qq|
-              <tr>
-	        <th align="right" nowrap>|.$locale->text('Stock').qq|</th>
-		<td><input name=stock class="inputright" size=8 value=$form->{stock}></td>
-	      </tr>
-|;
-
       $lastcost = qq|
               <tr>
 	        <th align="right" nowrap="true">|.$locale->text('Last Cost').qq|</th> 
@@ -545,20 +578,22 @@ sub form_header {
 
     }
 
-    $linkaccounts = qq|
+    if ($form->{item} eq 'assembly') {
+      $linkaccounts = qq|
 	      <tr>
 		<th align=right>|.$locale->text('Income').qq|</th>
 		<td><select name=IC_income>$select{IC_income}</select></td>
 	      </tr>
 |;
   
-    if ($tax) {
-      $linkaccounts .= qq|
+      if ($tax) {
+        $linkaccounts .= qq|
 	      <tr>
 		<th align=right>|.$locale->text('Tax').qq|</th>
 		<td>$tax</td>
 	      </tr>
 |;
+      }
     }
   
   }
@@ -591,11 +626,19 @@ sub form_header {
   if ($form->{item} eq 'labor') {
     $avgcost = "";
     
-    $n = ($form->{onhand} > 0) ? "1" : "0";
     $onhand = qq|
 	      <tr>
 		<th align="right" nowrap>|.$locale->text('On Hand').qq|</th>
-		<th align=left nowrap class="plus$n">&nbsp;|.$form->format_amount(\%myconfig, $form->{onhand}).qq|</th>
+|;
+    if ($form->{admin}) {
+      $onhand .= qq|
+		<td><input name=onhand class="inputright" size=8 value=$form->{onhand}></td>
+|;
+    } else {
+      $onhand .= $form->hide_form(onhand);
+    }
+
+    $onhand .= qq|
 	      </tr>
 |;
    
@@ -628,16 +671,23 @@ sub form_header {
   $s = ($s > 20) ? $s : 20;
   $fld{partnumber} = qq|<input name=partnumber value="|.$form->quote($form->{partnumber}).qq|" size=$s>|;
 
+  $linkaccounts = qq|$linkaccounts
+              <tr class="listheading">
+                <th class="listheading" align="center" colspan=2>|.$locale->text('Link Accounts').qq|</th>
+              </tr>
+| if $linkaccounts;
 
   $form->header;
 
+  &calendar;
+  
   print qq|
 <body>
 
-<form method=post action="$form->{script}">
+<form method="post" name="main" action="$form->{script}">
 |;
 
-  $form->hide_form(qw(id item title makemodel alternate onhand orphaned taxaccounts rowcount project_id precision changeup oldpartsgroup oldpartsgroupcode helpref));
+  $form->hide_form(qw(id item title makemodel alternate oldonhand orphaned taxaccounts rowcount project_id precision changeup oldpartsgroup oldpartsgroupcode helpref reference_rows referenceurl));
   
   print qq|
 <input type=hidden name=action value="update">
@@ -651,9 +701,9 @@ sub form_header {
     <td>
       <table width="100%">
         <tr valign=top>
-          <th align=left>|.$locale->text('Number').qq|</th>
-          <th align=left>|.$locale->text('Description').qq|</th>
-	  <th align=left>$group</th>
+          <th align=left width=20%>|.$locale->text('Number').qq|</th>
+          <th align=left width=50%>|.$locale->text('Description').qq|</th>
+	  <th align=left width=30%>$group</th>
 	</tr>
 	<tr valign=top>
 	  <td>$fld{partnumber}</td>
@@ -669,9 +719,6 @@ sub form_header {
         <tr valign=top>
           <td width=70%>
             <table width="100%" height="100%">
-              <tr class="listheading">
-                <th class="listheading" align="center" colspan=2>|.$locale->text('Link Accounts').qq|</th>
-              </tr>
               $linkaccounts
 	      <tr>
 	        <td colspan=2>
@@ -692,7 +739,7 @@ sub form_header {
 	    <table width="100%">
 	      <tr>
 		<th align="right" nowrap="true">|.$locale->text('Updated').qq|</th>
-		<td><input name=priceupdate size=11 class=date title="$myconfig{dateformat}" value=$form->{priceupdate}></td>    
+		<td><input name=priceupdate size=11 class=date title="$myconfig{dateformat}" value=$form->{priceupdate}>|.&js_calendar("main", "priceupdate").qq|</td>    
 	      </tr>
 	      $sellprice
 	      $lastcost
@@ -703,7 +750,6 @@ sub form_header {
 	      </tr>
 	      $weight
 	      $onhand
-	      $stock
 	      $rop
 	      $bin
 	      $obsolete
@@ -722,9 +768,9 @@ sub form_header {
 
 
 sub form_footer {
-  
+
   if (! $form->{project_id}) {
-    if ($form->{item} eq 'assembly') {
+    if ($form->{item} =~ /(assembly|kit)/) {
       &assembly_row(++$form->{assembly_rows});
     }
   }
@@ -736,20 +782,12 @@ sub form_footer {
 </table>
 |;
 
-  $form->hide_form(qw(customer_rows));
-
-  if ($form->{item} =~ /(part|assembly)/) {
-    $form->hide_form(qw(makemodel_rows));
-  }
-  
-  if ($form->{item} =~ /(part|service)/) {
-    $form->hide_form(qw(vendor_rows));
-  }
+  $form->hide_form(map { "${_}_rows" } qw(customer vendor makemodel inventory));
 
   if (! $form->{readonly}) {
     
     %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
-               'Save' => { ndx => 3, key => 'S', value => $locale->text('Save') },
+               'Save' => { ndx => 2, key => 'S', value => $locale->text('Save') },
 	       'New Number' => { ndx => 15, key => 'M', value => $locale->text('New Number') },
 	      );
     
@@ -813,7 +851,6 @@ sub search {
   $l{avgcost} = qq|<input name=l_avgcost class=checkbox type=checkbox value=Y checked> |.$locale->text('Average Cost');
   $l{markup} = qq|<input name=l_markup class=checkbox type=checkbox value=Y> |.$locale->text('Markup');
   $l{account} = qq|<input name=l_account class=checkbox type=checkbox value=Y> |.$locale->text('Accounts');
-
  
   $bought = qq|
           <td>
@@ -857,10 +894,7 @@ sub search {
 	  <td>
 	    <table>
 	      <tr>
-		<td nowrap><b>|.$locale->text('From').qq|</b>
-		<input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">
-		<b>|.$locale->text('To').qq|</b>
-		<input name=transdateto size=11 class=date title="$myconfig{dateformat}"></td>
+		<td nowrap><b>|.$locale->text('From').qq|</b> <input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdatefrom").qq|<b>|.$locale->text('To').qq|</b> <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
 	      </tr>
 	      <tr>
 		<td nowrap><input name=method class=radio type=radio value=accrual $method{accrual}>|.$locale->text('Accrual').qq|
@@ -891,7 +925,10 @@ sub search {
   $orphaned = qq|
             <input name=itemstatus class=radio type=radio value=orphaned>&nbsp;|.$locale->text('Orphaned');
 
-  if ($form->{searchitems} =~ /(all|part|assembly)/) {
+  $stocklevel = qq|
+            <input name=itemstatus class=radio type=radio value=stocklevel>&nbsp;|.$locale->text('Stock level') if $form->{searchitems} eq 'part';
+
+  if ($form->{searchitems} =~ /(all|part|assembly|kit)/) {
     
     $onhand = qq|
             <input name=itemstatus class=radio type=radio value=onhand>&nbsp;|.$locale->text('On Hand').qq|
@@ -920,13 +957,16 @@ sub search {
     $l{tariff_hscode} = qq|<input name=l_tariff_hscode class=checkbox type=checkbox value=Y> |.$locale->text('HS Code');
 
     if (@{ $form->{all_warehouse} }) {
-      $selectwarehouse = "<option>\n";
+      $selectwarehouse = "\n";
 
-      for (@{ $form->{all_warehouse} }) { $selectwarehouse .= qq|<option value="|.$form->quote($_->{description}).qq|--$_->{id}">$_->{description}\n| }
+      for (@{ $form->{all_warehouse} }) { $selectwarehouse .= qq|$_->{description}--$_->{id}\n| }
       
       $warehouse = qq|
           <th align=right nowrap>|.$locale->text('Warehouse').qq|</th>
-          <td><select name=warehouse>$selectwarehouse</select></td>
+          <td><select name=warehouse>|
+          .$form->select_option($selectwarehouse, undef, 1)
+          .qq|</select>
+          </td>
 |;
 
       $l{warehouse} = qq|<input name=l_warehouse class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Warehouse');
@@ -960,7 +1000,7 @@ sub search {
     $l{cost} = qq|<input name=l_cost class=checkbox type=checkbox value=Y> |.$locale->text('Cost');
   }
 
-  if ($form->{searchitems} eq 'assembly') {
+  if ($form->{searchitems} =~ /(assembly|kit)/) {
 
     $bought = "";
  
@@ -974,7 +1014,12 @@ sub search {
         </tr>
 |;
     $bom = qq|<input name=itemstatus type=radio value=bom>&nbsp;|.$locale->text('BOM');
-    
+
+    if ($form->{searchitems} eq 'kit') {
+      $onhand = "";
+      $l{rop} = "";
+    }
+   
     if ($form->{changeup}) {
 
       $sold = "";
@@ -1010,6 +1055,7 @@ sub search {
   
   @f = ();
   push @f, qq|<input name=l_runningnumber class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('No.');
+  push @f, qq|<input name=l_id class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('ID');
   push @f, qq|<input name=l_partnumber class=checkbox type=checkbox value=Y checked>&nbsp;|.$locale->text('Number');
   push @f, qq|<input name=l_description class=checkbox type=checkbox value=Y checked>&nbsp;|.$locale->text('Description');
   push @f, qq|<input name=l_qty class=checkbox type=checkbox value=Y checked>&nbsp;|.$locale->text('Qty');
@@ -1022,7 +1068,7 @@ sub search {
   
   push @f, qq|<input name=l_notes class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Notes');
 
-  for (qw(image drawing toolnumber microfiche make model warehouse account name curr employee serialnumber countryorigin tariff_hscode barcode)) {
+  for (qw(image drawing toolnumber microfiche make model warehouse account name transdate curr employee serialnumber countryorigin tariff_hscode barcode)) {
     push @f, $l{$_} if $l{$_};
   }
   
@@ -1032,6 +1078,7 @@ sub search {
 	     labor	=> 'Labor/Overhead',
 	     service	=> 'Services',
 	     assembly	=> 'Assemblies',
+             kit        => 'Kits',
 	     component	=> 'Components'
 	   );
 
@@ -1040,6 +1087,7 @@ sub search {
 # $locale->text('Labor/Overhead')
 # $locale->text('Services')
 # $locale->text('Assemblies')
+# $locale->text('Kits')
 # $locale->text('Components')
 # $locale->text('Barcodes')
 # $locale->text('Changeup Parts')
@@ -1056,11 +1104,13 @@ sub search {
   }
    
   $form->header;
+
+  &calendar;
   
   print qq|
-<body>
+<body onLoad="document.main.partnumber.focus()" />
 
-<form method=post action=$form->{script}>
+<form method="post" name="main" action="$form->{script}">
 |;
 
   $form->hide_form(qw(changeup searchitems title));
@@ -1098,6 +1148,7 @@ sub search {
 	    $onhand
             <input name=itemstatus class=radio type=radio value=obsolete>&nbsp;|.$locale->text('Obsolete').qq|
 	    $orphaned
+            $stocklevel
 	    $bom
 	  </td>
 	</tr>
@@ -1178,7 +1229,6 @@ sub search {
 
 sub generate_report {
   
-  # setup $form->{sort}
   unless ($form->{sort}) {
     if ($form->{description} && !($form->{partnumber})) {
       $form->{sort} = "description";
@@ -1186,7 +1236,7 @@ sub generate_report {
       $form->{sort} = "partnumber";
     }
   }
-  
+
   if ($form->{itemstatus} eq 'bom') {
     $form->{l_perassembly} = "Y" if $form->{l_qty} eq "Y";
     $form->{individual} = 1;
@@ -1242,14 +1292,21 @@ sub generate_report {
     $form->{warehouse} = "";
     $form->{l_warehouse} = 0;
   }
-  
+
+  if ($form->{itemstatus} eq 'stocklevel') {
+    $form->{option} .= $locale->text('Stock level')." : ";
+    $form->{l_onhand} = "Y";
+    for (qw(onhand short onorder ordered rfq quoted)) { $form->{$_} = 0 }
+    for (qw(bought sold open closed)) { $form->{$_} = 1 }
+  }
+ 
   if ($form->{l_account}) {
     for (qw(l_name l_curr l_employee)) { delete $form->{$_} }
   } else {
     $ok = 0;
-    foreach $l (qw(l_name l_curr l_employee)) {
+    for $l (qw(l_name l_curr l_employee)) {
       if ($form->{$l}) {
-	foreach $v (qw(onorder ordered rfq quoted bought sold)) {
+	for $v (qw(onorder ordered rfq quoted bought sold)) {
 	  if ($form->{$v}) {
 	    $ok = 1;
 	    last;
@@ -1331,8 +1388,10 @@ sub generate_report {
       $form->{l_ordnumber} = "";
       $form->{l_quonumber} = "";
       $form->{l_invnumber} = "";
+      $form->{l_transdate} = "";
     } else {
       $form->{option} .= " : ".$locale->text('Detail');
+      $form->{l_transdate} = "Y";
     }
  
     if ($form->{transdatefrom}) {
@@ -1350,10 +1409,10 @@ sub generate_report {
     $form->{option} .= "<br>".$locale->text('Warehouse')." : $warehouse";
     $form->{l_warehouse} = 0;
   }
- 
+
   $form->{option} .= "<br>";
   
-  if ($form->{partnumber}) {
+  if ($form->{partnumber} ne "") {
     $callback .= "&partnumber=".$form->escape($form->{partnumber},1);
     $form->{option} .= $locale->text('Number').qq| : $form->{partnumber}<br>|;
   }
@@ -1361,37 +1420,37 @@ sub generate_report {
     ($partsgroup) = split /--/, $form->{partsgroup};
     $form->{option} .= $locale->text('Group').qq| : $partsgroup<br>|;
   }
-  if ($form->{serialnumber}) {
+  if ($form->{serialnumber} ne "") {
     $callback .= "&serialnumber=".$form->escape($form->{serialnumber},1);
     $form->{option} .= $locale->text('Serial Number').qq| : $form->{serialnumber}<br>|;
   }
-  if ($form->{description}) {
+  if ($form->{description} ne "") {
     $callback .= "&description=".$form->escape($form->{description},1);
     $description = $form->{description};
     $description =~ s/\r?\n/<br>/g;
     $form->{option} .= $locale->text('Description').qq| : $form->{description}<br>|;
   }
-  if ($form->{make}) {
+  if ($form->{make} ne "") {
     $callback .= "&make=".$form->escape($form->{make},1);
     $form->{option} .= $locale->text('Make').qq| : $form->{make}<br>|;
   }
-  if ($form->{model}) {
+  if ($form->{model} ne "") {
     $callback .= "&model=".$form->escape($form->{model},1);
     $form->{option} .= $locale->text('Model').qq| : $form->{model}<br>|;
   }
-  if ($form->{drawing}) {
+  if ($form->{drawing} ne "") {
     $callback .= "&drawing=".$form->escape($form->{drawing},1);
     $form->{option} .= $locale->text('Drawing').qq| : $form->{drawing}<br>|;
   }
-  if ($form->{toolnumber}) {
+  if ($form->{toolnumber} ne "") {
     $callback .= "&toolnumber=".$form->escape($form->{toolnumber},1);
     $form->{option} .= $locale->text('Tool Number').qq| : $form->{toolnumber}<br>|;
   }
-  if ($form->{microfiche}) {
+  if ($form->{microfiche} ne "") {
     $callback .= "&microfiche=".$form->escape($form->{microfiche},1);
     $form->{option} .= $locale->text('Microfiche').qq| : $form->{microfiche}<br>|;
   }
-  if ($form->{barcode}) {
+  if ($form->{barcode} ne "") {
     $callback .= "&barcode=".$form->escape($form->{barcode},1);
     $form->{option} .= $locale->text('Barcode').qq| : $form->{barcode}<br>|;
   }
@@ -1402,8 +1461,8 @@ sub generate_report {
     $form->{l_avgcostmarkup} = "Y" if $form->{l_avgcost};
   }
 
-  @columns = $form->sort_columns(qw(partnumber description notes assemblypartnumber partsgroup partsgroupcode make model bin onhand perassembly rop unit cost linetotalcost sellprice linetotalsellprice listprice linetotallistprice lastcost linetotallastcost lastcostmarkup avgcost linetotalavgcost avgcostmarkup curr priceupdate weight image drawing toolnumber barcode microfiche invnumber ordnumber quonumber name employee serialnumber warehouse countryorigin tariff_hscode));
-  unshift @columns, "runningnumber";
+  @columns = $form->sort_columns(qw(partnumber description notes assemblypartnumber assemblydescription partsgroup partsgroupcode make model bin onhand perassembly rop unit cost linetotalcost sellprice linetotalsellprice listprice linetotallistprice lastcost linetotallastcost lastcostmarkup avgcost linetotalavgcost avgcostmarkup curr priceupdate weight image drawing toolnumber barcode microfiche invnumber ordnumber quonumber transdate name employee serialnumber warehouse countryorigin tariff_hscode));
+  unshift @columns, qw(runningnumber id);
 
   if ($form->{l_linetotal}) {
     $form->{l_onhand} = "Y";
@@ -1440,7 +1499,7 @@ sub generate_report {
       push @column_index, (qw(inventory income expense tax));
     } elsif ($form->{searchitems} eq 'service') {
       push @column_index, (qw(income expense tax));
-    } elsif ($form->{searchitems} eq 'assembly') {
+    } elsif ($form->{searchitems} =~ /(assembly|kit)/) {
       push @column_index, (qw(income tax));
     } else {
       push @column_index, (qw(inventory expense));
@@ -1473,7 +1532,7 @@ sub generate_report {
   
   $callback =~ s/(direction=).*?\&/$1$form->{direction}\&/;
 
-  if ($form->{searchitems} eq 'assembly') {
+  if ($form->{searchitems} =~ /(assembly|kit)/) {
     if ($form->{l_partnumber}) {
       # replace partnumber with partnumber_
       $ndx = 0;
@@ -1482,6 +1541,8 @@ sub generate_report {
 	last if $item eq 'partnumber';
       }
 
+      for (1 .. $form->{pncol}) { $hdr{"partnumber_$_"} = { align => l } }
+
       splice @column_index, $ndx, 0, map { "partnumber_$_" } (1 .. $form->{pncol});
       $colspan = $form->{pncol} + 1;
     }
@@ -1489,26 +1550,25 @@ sub generate_report {
 
   if ($form->{searchitems} eq 'component') {
     if ($form->{l_partnumber}) {
-      # splice it in after the partnumber
-      $ndx = 0;
-      foreach $item (@column_index) {
-	$ndx++;
-	last if $item eq 'partnumber';
-      }
-      
-      @f = splice @column_index, 0, $ndx;
-      unshift @column_index, "assemblypartnumber";
-      unshift @column_index, @f;
+      push @column_index, "assemblypartnumber";
     }
+
+    if ($form->{l_description}) {
+      push @column_index, "assemblydescription";
+    }
+
   }
   
   $column_data{runningnumber} = qq|<th a class=listheading>&nbsp;</th>|;
   $hdr{partnumber} = { label => $locale->text('Number'), align => l };
   $column_data{partnumber} = qq|<th nowrap colspan=$colspan><a class=listheading href=$href&sort=partnumber>$hdr{partnumber}{label}</a></th>|;
+  $hdr{id} = { label => $locale->text('ID'), align => l };
+  $column_data{id} = qq|<th><a class=listheading href=$href&sort=id>$hdr{id}{label}</a></th>|;
+
   $hdr{description} = { label => $locale->text('Description'), align => p };
   $column_data{description} = qq|<th nowrap><a class=listheading href=$href&sort=description>$hdr{description}{label}</a></th>|;
   $hdr{notes} = { label => $locale->text('Notes'), align => p };
-  $column_data{notes} = qq|<th nowrap class=listheading>$hdr{notes}{label}</th>|;
+  $column_data{notes} = qq|<th nowrap><a class=listheading href=$href&sort=notes>$hdr{notes}{label}</a></th>|;
   $hdr{partsgroup} = { label => $locale->text('Group'), align => l };
   $column_data{partsgroup} = qq|<th nowrap><a class=listheading href=$href&sort=partsgroup>$hdr{partsgroup}{label}</a></th>|;
   $hdr{partsgroupcode} = { label => $locale->text('Group Code'), align => l };
@@ -1520,7 +1580,8 @@ sub generate_report {
   $column_data{priceupdate} = qq|<th nowrap><a class=listheading href=$href&sort=priceupdate>$hdr{priceupdate}{label}</a></th>|;
   $hdr{onhand} = { label => $locale->text('Qty'), align => r, type => n };
   $column_data{onhand} = qq|<th class=listheading nowrap>$hdr{onhand}{label}</th>|;
-  $column_data{perassembly} = qq|<th>&nbsp;</th>|;
+  $hdr{perassembly} = { label => $locale->text('BOM'), align => r, type => n };
+  $column_data{perassembly} = qq|<th class=listheading nowrap>$hdr{perassembly}{label}</th>|;
   $hdr{unit} = { label => $locale->text('Unit'), align => l };
   $column_data{unit} = qq|<th class=listheading nowrap>$hdr{unit}{label}</th>|;
   $hdr{cost} = { label => $locale->text('Cost'), align => r, type => n, precision => $form->{precision} };
@@ -1555,6 +1616,9 @@ sub generate_report {
   $hdr{name} = { label => $locale->text('Name'), align => l };
   $column_data{name} = qq|<th nowrap><a class=listheading href=$href&sort=name>$hdr{name}{label}</a></th>|;
   
+  $hdr{transdate} = { label => $locale->text('Date'), align => l };
+  $column_data{transdate} = qq|<th nowrap><a class=listheading href=$href&sort=transdate>$hdr{transdate}{label}</a></th>|;
+
   $hdr{employee} = { label => $locale->text('Employee'), align => l };
   $column_data{employee} = qq|<th nowrap><a class=listheading href=$href&sort=employee>$hdr{employee}{label}</a></th>|;
   
@@ -1570,7 +1634,7 @@ sub generate_report {
   $hdr{curr} = { label => $locale->text('Curr'), align => l };
   $column_data{curr} = qq|<th nowrap><a class=listheading href=$href&sort=curr>$hdr{curr}{label}</a></th>|;
   
-  $hdr{image} = { label => $locale->text('Image'), align => l };
+  $hdr{image} = { label => $locale->text('Image'), align => l, image => 1 };
   $column_data{image} = qq|<th class=listheading nowrap>$hdr{image}{label}</th>|;
   $hdr{drawing} = { label => $locale->text('Drawing'), align => l };
   $column_data{drawing} = qq|<th nowrap><a class=listheading href=$href&sort=drawing>$hdr{drawing}{label}</a></th>|;
@@ -1593,6 +1657,7 @@ sub generate_report {
   
   $hdr{assemblypartnumber} = { label => $locale->text('Assembly'), align => l };
   $column_data{assemblypartnumber} = qq|<th nowrap><a class=listheading href=$href&sort=assemblypartnumber>$hdr{assemblypartnumber}{label}</a></th>|;
+  $column_data{assemblydescription} = qq|<th nowrap><a class=listheading href=$href&sort=assemblydescription>$hdr{description}{label}</a></th>|;
   
   $hdr{warehouse} = { label => $locale->text('Warehouse'), align => l };
   $column_data{warehouse} = qq|<th nowrap class=listheading>$hdr{warehouse}{label}</th>|;
@@ -1624,6 +1689,10 @@ sub generate_report {
     if ($form->{searchitems} eq 'assembly') {  
       $button{'Goods & Services--Add Assembly'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Assembly').qq|"> |;
       $button{'Goods & Services--Add Assembly'}{order} = $i++;
+    }
+    if ($form->{searchitems} eq 'kit') {  
+      $button{'Goods & Services--Add Kit'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Kit').qq|"> |;
+      $button{'Goods & Services--Add Kit'}{order} = $i++;
     }
     if ($form->{searchitems} eq 'labor') {  
       $button{'Goods & Services--Add Labor/Overhead'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Labor/Overhead').qq|"> |;
@@ -1663,7 +1732,7 @@ sub generate_report {
   $form->{column_index} = "";
   for (@column_index) {
     print "\n$column_data{$_}";
-    $form->{column_index} .= "$_--label=$hdr{$_}{label}:align=$hdr{$_}{align}:type=$hdr{$_}{type}:precision=$hdr{$_}{precision};";
+    $form->{column_index} .= "$_--label=$hdr{$_}{label}:align=$hdr{$_}{align}:type=$hdr{$_}{type}:precision=$hdr{$_}{precision}:image=$hdr{$_}{image};";
   }
   chop $form->{column_index};
   
@@ -1684,7 +1753,7 @@ sub generate_report {
   
   if ($form->{summary}) {
     @groupby = ();
-    for (qw(partnumber description notes partsgroup partsgroupcode make model bin curr priceupdate image drawing toolnumber barcode microfiche invnumber ordnumber quonumber name employee serialnumber warehouse countryorigin tariff_hscode)) { $f{$_} = 1 };
+    for (qw(partnumber id description notes partsgroup partsgroupcode make model bin curr priceupdate image drawing toolnumber barcode microfiche invnumber ordnumber quonumber transdate name employee serialnumber warehouse countryorigin tariff_hscode)) { $f{$_} = 1 };
 
     for (@column_index) {
       if ($f{$_}) {
@@ -1698,14 +1767,18 @@ sub generate_report {
     $samegroup = "";
     for (@groupby) { $samegroup .= $form->{parts}->[0]->{$_} }
   }
-
+  
   $i = 0;
   $n = 0;
-
+  
   foreach $ref (@{ $form->{parts} }) {
 
     $ref->{exchangerate} ||= 1;
     $ref->{discount} *= 1;
+
+    if ($form->{itemstatus} eq 'stocklevel') {
+      $ref->{onhand} *= -1 if $ref->{module} eq 'is';
+    }
 
     if ($form->{summary}) {
 
@@ -1740,9 +1813,9 @@ sub generate_report {
     }
     
     if ($form->{l_subtotal} eq 'Y' && !$ref->{assemblyitem}) {
-      if ($sameitem ne $ref->{$form->{sort}}) {
+      if ($sameid ne $ref->{id}) {
 	&parts_subtotal;
-	$sameitem = $ref->{$form->{sort}};
+	$sameid = $ref->{id};
       }
     }
     
@@ -1773,17 +1846,20 @@ sub generate_report {
     # use this for assemblies
     $onhand = $ref->{onhand};
 
-    for (qw(description notes)) { $ref->{$_} =~ s/\r?\n/<br>/g }
+    for (qw(description assemblydescription notes)) { $ref->{$_} =~ s/\r?\n/<br>/g }
     
     for (1 .. $form->{pncol}) { $column_data{"partnumber_$_"} = "<td>&nbsp;</td>" }
 
     $column_data{runningnumber} = "<td align=right>$i</td>";
     $column_data{partnumber} = "<td><a href=$form->{script}?action=edit&id=$ref->{id}&changeup=$form->{changeup}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{partnumber}&nbsp;</a></td>";
+    $column_data{id} = "<td>$ref->{id}</td>";
+
+    for (qw(description assemblydescription notes partsgroup partsgroupcode employee curr)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
 
     if ($ref->{assemblypartnumber}) {
       if ($sameid eq $ref->{id}) {
 	$i--;
-	for (qw(runningnumber partnumber)) { $column_data{$_} = "<td>&nbsp;</td>" }
+	for (qw(runningnumber partnumber id description)) { $column_data{$_} = "<td>&nbsp;</td>" }
       }
     }
     
@@ -1799,8 +1875,6 @@ sub generate_report {
       $column_data{"partnumber_$ref->{stagger}"} = "<td><a href=$form->{script}?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{partnumber}&nbsp;</a></td>";
 
     }
-    
-    for (qw(description notes partsgroup partsgroupcode employee curr)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
 
     $column_data{onhand} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{onhand}, undef, "&nbsp;")."</td>";
     $column_data{perassembly} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{perassembly}, undef, "&nbsp;")."</td>";
@@ -1846,13 +1920,14 @@ sub generate_report {
     $column_data{ordnumber} = ($ref->{module} eq 'oe') ? "<td><a href=$ref->{module}.pl?action=edit&type=$ref->{type}&id=$ref->{trans_id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{ordnumber}&nbsp;</a></td>" : "<td>$ref->{ordnumber}&nbsp;</td>";
     $column_data{quonumber} = ($ref->{module} eq 'oe' && !$ref->{ordnumber}) ? "<td><a href=$ref->{module}.pl?action=edit&type=$ref->{type}&id=$ref->{trans_id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{quonumber}&nbsp;</a></td>" : "<td>$ref->{quonumber}&nbsp;</td>";
 
-    $column_data{name} = "<td>$ref->{name}&nbsp;</td>";
+    $column_data{name} = "<td>$ref->{name}</td>";
+    $column_data{transdate} = "<td>$ref->{transdate}</td>";
 
     if ($ref->{vc_id}) {
       $column_data{name} = qq|<td><a href=ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{vc_id}&db=$ref->{vc}&callback=$callback>$ref->{name}</a></td>|;
     }
    
-    $column_data{image} = ($ref->{image}) ? "<td><a href=$ref->{image}><img src=$ref->{image} height=32 border=0></a></td>" : "<td>&nbsp;</td>";
+    $column_data{image} = ($ref->{image}) ? "<td><a href=images/$myconfig{dbname}/$ref->{image}><img src=images/$myconfig{dbname}/$ref->{image} height=32 border=0></a></td>" : "<td>&nbsp;</td>";
     $column_data{drawing} = ($ref->{drawing}) ? "<td><a href=$ref->{drawing}>$ref->{drawing}</a></td>" : "<td>&nbsp;</td>";
     $column_data{microfiche} = ($ref->{microfiche}) ? "<td><a href=$ref->{microfiche}>$ref->{microfiche}</a></td>" : "<td>&nbsp;</td>";
     
@@ -1910,7 +1985,7 @@ sub generate_report {
 
   $form->hide_form(qw(column_index callback path login option));
 
-  &ic_print_options;
+  &ic_print_options unless $form->{changeup};
 
   foreach $item (sort { $a->{order} <=> $b->{order} } %button) {
     print $item->{code};
@@ -1975,9 +2050,10 @@ sub ic_print_options {
   $format = qq|<select name=format>|;
 
   $type = qq|<select name=formname>
-	    <option value="partsreport" $form->{PD}{partsreport}>|.$locale->text('Parts Report').qq|
-	    <option value="barcode" $form->{PD}{barcode}>|.$locale->text('Barcode')
-	    .qq|</select>|;
+	    <option value="partsreport" $form->{PD}{partsreport}>|.$locale->text('Parts Report');
+  $type .= qq|
+	    <option value="barcode" $form->{PD}{barcode}>|.$locale->text('Barcode') if $dvipdf;
+  $type .= qq|</select>|;
 
   if ($latex) {
     $format .= qq|
@@ -2019,7 +2095,9 @@ sub print_ {
   }
 
   IC->all_parts(\%myconfig, \%$form);
- 
+
+  $form->error($locale->text('Nothing to print')) unless $form->{parts};
+
   @columns = ();
   for (split /;/, $form->{column_index}) {
     ($column, $vars) = split /--/, $_;
@@ -2037,11 +2115,17 @@ sub print_ {
   $hdr{number} = $hdr{sku};
   $hdr{ship} = { label => $hdr{onhand}{label}, $hdr{onhand}{align}, type => n };
 
+  $sameid = "";
+  
   foreach $ref (@{ $form->{parts} }) {
     $ref->{sku} = $ref->{partnumber};
     $ref->{number} = $ref->{sku};
     $ref->{sell} = $ref->{sellprice};
-    
+
+    $ref->{image} =~ s/\..*$/.eps/;
+    $filename = "images/$myconfig{dbname}/$ref->{image}";
+    $ref->{image} = (-f $filename) ? "\\includegraphics*\{../$filename\}" : "";
+
     if ($form->{formname} eq 'barcode') {
       $ref->{onhand} = 1 if $ref->{onhand} <= 0;
     }
@@ -2050,12 +2134,33 @@ sub print_ {
     for (qw(sell sellprice listprice lastcost avgcost)) { $ref->{$_} = $form->format_amount(\%myconfig, $ref->{$_}, $form->{precision}) }
     for (qw(qty rop ship onhand weight)) { $ref->{$_} = $form->format_amount(\%myconfig, $ref->{$_}) }
 
+    if ($form->{searchitems} eq 'assembly') {
+      if ($form->{l_partnumber}) {
+	if ($ref->{assemblyitem}) {
+	  $ref->{"partnumber_$ref->{stagger}"} = $ref->{partnumber};
+	  $ref->{partnumber} = "";
+	}
+      }
+    }
+
+    if ($form->{searchitems} eq 'component') {
+      if ($ref->{assemblypartnumber}) {
+	$ref->{partnumber} = "" if $ref->{id} == $sameid;
+      }
+    }
+    
     # build arrays
     for (@columns) {
       push @{ $form->{$_} }, $ref->{$_};
     }
+
+    $sameid = $ref->{id};
+
   }
   delete $form->{parts};
+
+  push @a, qw(company companyemail companywebsite address tel fax businessnumber);
+  $form->format_string(@a);
 
   if ($form->{media} !~ /screen/) {
     $form->{OUT} = qq~| $form->{"$form->{media}_printer"}~;
@@ -2077,11 +2182,11 @@ sub print_ {
       }
     }
 
-    $form->parse_template(\%myconfig, $userspath);
+    $form->parse_template(\%myconfig, $userspath, $dvipdf);
 
   } else {
     
-    $form->gentex(\%myconfig, $templates, $userspath, \@colndx, \%hdr);
+    $form->gentex(\%myconfig, $templates, $userspath, $dvipdf, \@colndx, \%hdr);
 
   }
 
@@ -2123,7 +2228,7 @@ sub parts_subtotal {
 }
 
 
-sub requirements {
+sub supply_demand {
 
   $form->get_partsgroup(\%myconfig, { searchitems => 'parts'});
   $form->all_years(\%myconfig);
@@ -2187,8 +2292,8 @@ sub requirements {
     $form->error($locale->text('No History!'));
   }
 
-  $form->{title} = $locale->text('Parts Requirements');
-  $form->helpref("parts_requirements", $myconfig{countrycode});
+  $form->{title} = $locale->text('Supply & Demand');
+  $form->helpref("supply_demand", $myconfig{countrycode});
 
   $form->header;
   
@@ -2228,7 +2333,7 @@ sub requirements {
   </tr>
 </table>
 
-<input type=hidden name=nextsub value=requirements_report>
+<input type=hidden name=nextsub value=supply_demand_report>
 <input type=hidden name=sort value=partnumber>
 
 <br>
@@ -2255,15 +2360,15 @@ sub requirements {
 
 
 
-sub requirements_report {
+sub supply_demand_report {
 
-  $callback = "$form->{script}?action=requirements_report";
+  $callback = "$form->{script}?action=supply_demand_report";
   for (qw(path login year)) { $callback .= qq|&$_=$form->{$_}| }
   for (qw(partsgroup)) { $callback .= qq|&$_=|.$form->escape($form->{$_},1) }
   
   if ($form->{partnumber}) {
     $callback .= "&partnumber=".$form->escape($form->{partnumber},1);
-    $option .= $locale->text('Number').qq| : $form->{partnumber}<br>|;
+    $option = $locale->text('Number').qq| : $form->{partnumber}<br>|;
   }
   if ($form->{partsgroup}) {
     ($partsgroup) = split /--/, $form->{partsgroup};
@@ -2273,7 +2378,7 @@ sub requirements_report {
     $callback .= "&description=".$form->escape($form->{description},1);
     $description = $form->{description};
     $description =~ s/\r?\n/<br>/g;
-    $option .= $locale->text('Description').qq| : $form->{description}<br>|;
+    $option .= $locale->text('Description').qq| : $description<br>|;
   }
   
  
@@ -2289,9 +2394,9 @@ sub requirements_report {
   }
   
   push @column_index, "year" unless %month;
-  push @column_index, qw(onhand so po order);
+  push @column_index, qw(onhand rop so po required);
 
-  IC->requirements(\%myconfig, \%$form);
+  IC->supply_demand(\%myconfig, \%$form);
 
   $form->sort_order();
   
@@ -2310,16 +2415,23 @@ sub requirements_report {
   $column_data{partnumber} = qq|<th nowrap colspan=$colspan><a class=listheading href=$href&sort=partnumber>|.$locale->text('Number').qq|</a></th>|;
   $column_data{description} = qq|<th nowrap><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</a></th>|;
   $column_data{onhand} = qq|<th class=listheading nowrap>|.$locale->text('On Hand').qq|</th>|;
+  $column_data{rop} = qq|<th class=listheading nowrap>|.$locale->text('ROP').qq|</th>|;
   $column_data{so} = qq|<th class=listheading nowrap>|.$locale->text('SO').qq|</th>|;
   $column_data{po} = qq|<th class=listheading nowrap>|.$locale->text('PO').qq|</th>|;
-  $column_data{order} = qq|<th class=listheading nowrap>|.$locale->text('Order').qq|</th>|;
-  $column_data{year} = qq|<th class=listheading nowrap>$form->{year}</th>|;
+  $column_data{required} = qq|<th class=listheading nowrap>|.$locale->text('Reqd').qq|</th>|;
+  $column_data{year} = qq|<th class=listheading nowrap>|;
+  if ($form->{year}) {
+    $column_data{year} .= $form->{year};
+  } else {
+    $column_data{year} .= $locale->text('Total');
+  }
+  $column_data{year} .= qq|</th>|;
 
   for (sort { $a <=> $b } keys %month) { $column_data{$_} = qq|<th class=listheading nowrap>|.$locale->text($locale->{SHORT_MONTH}[$_-1]).qq|</th>| }
   
-  $form->{title} = $locale->text('Parts Requirements');
+  $form->{title} = $locale->text('Supply & Demand');
   
-  $form->helpref("requirements_report", $myconfig{countrycode});
+  $form->helpref("supply_demand_report", $myconfig{countrycode});
   
   $form->header;
 
@@ -2368,8 +2480,8 @@ sub requirements_report {
       $i++;
       $column_data{runningnumber} = "<td align=right>$i</td>";
       
-      $order = 0 if $order < 0;
-      $column_data{order} = "<td align=right>".$form->format_amount(\%myconfig, $order, undef, "-")."</td>";
+      $required = 0 if $required < 0;
+      $column_data{required} = "<td align=right>".$form->format_amount(\%myconfig, $required, undef, "-")."</td>";
       $j++; $j %= 2;
       print "<tr class=listrow$j>";
 
@@ -2392,6 +2504,7 @@ sub requirements_report {
     $column_data{description} = "<td>$ref->{description}&nbsp;</td>";
 
     $column_data{onhand} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{onhand}, undef, "&nbsp;")."</td>";
+    $column_data{rop} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{rop}, undef, "&nbsp;")."</td>";
     $column_data{so} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{so}, undef, "&nbsp;")."</td>";
     $column_data{po} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{po}, undef, "&nbsp;")."</td>";
 
@@ -2406,7 +2519,7 @@ sub requirements_report {
     
     $column_data{year} = "<td align=right>".$form->format_amount(\%myconfig, $qty, undef, "&nbsp;")."</td>";
 
-    $order = $qty + $ref->{so} - $ref->{po} - $ref->{onhand};
+    $required = $qty + $ref->{so} - $ref->{po} - $ref->{onhand} + $ref->{rop};
 
     $sameid = $ref->{id};
 
@@ -2416,8 +2529,8 @@ sub requirements_report {
     $i++;
     $column_data{runningnumber} = "<td align=right>$i</td>";
 
-    $order = 0 if $order < 0;
-    $column_data{order} = "<td align=right>".$form->format_amount(\%myconfig, $order, undef, "-")."</td>";
+    $required = 0 if $required < 0;
+    $column_data{required} = "<td align=right>".$form->format_amount(\%myconfig, $required, undef, "-")."</td>";
     $j++; $j %= 2;
     print "<tr class=listrow$j>";
 
@@ -2462,14 +2575,252 @@ sub requirements_report {
 }
 
 
+sub requirements {
+
+  $form->get_partsgroup(\%myconfig, { searchitems => 'parts'});
+
+  if (@{ $form->{all_partsgroup} }) {
+    $partsgroup = qq|<option>\n|;
+
+    for (@{ $form->{all_partsgroup} }) { $partsgroup .= qq|<option value="|.$form->quote($_->{partsgroup}).qq|--$_->{id}">$_->{partsgroup}\n| }
+
+    $partsgroup = qq| 
+        <th align=right nowrap>|.$locale->text('Group').qq|</th>
+	<td><select name=partsgroup>$partsgroup</select></td>
+|;
+
+    $l{partsgroup} = qq|<input name=l_partsgroup class=checkbox type=checkbox value=Y> |.$locale->text('Group');
+  }
+
+  $form->{title} = $locale->text('Requirements');
+  $form->helpref("requirements", $myconfig{countrycode});
+
+  $form->header;
+  
+  print qq|
+<body>
+
+<form method=post action=$form->{script}>
+
+|;
+
+  print qq|
+
+<table width="100%">
+
+  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
+  <tr height="5"></tr>
+  <tr valign=top>
+    <td>
+      <table>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Number').qq|</th>
+          <td><input name=partnumber size=20></td>
+        </tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Description').qq|</th>
+          <td colspan=3><input name=description size=40></td>
+        </tr>
+	<tr>
+	  $partsgroup
+	</tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td><hr size=3 noshade></td>
+  </tr>
+</table>
+
+<input type=hidden name=nextsub value=requirements_report>
+<input type=hidden name=sort value=partnumber>
+
+<br>
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">|;
+
+  $form->hide_form(qw(path login));
+  
+  print qq|
+</form>
+|;
+
+  if ($form->{menubar}) {
+    require "$form->{path}/menu.pl";
+    &menubar;
+  }
+
+  print qq|
+  
+</body>
+</html>
+|;
+
+}
+
+
+sub requirements_report {
+
+  $callback = "$form->{script}?action=requirements_report";
+  for (qw(path login)) { $callback .= qq|&$_=$form->{$_}| }
+  for (qw(partsgroup)) { $callback .= qq|&$_=|.$form->escape($form->{$_},1) }
+  
+  if ($form->{partnumber}) {
+    $callback .= "&partnumber=".$form->escape($form->{partnumber},1);
+    $option .= $locale->text('Number').qq| : $form->{partnumber}<br>|;
+  }
+  if ($form->{partsgroup}) {
+    ($partsgroup) = split /--/, $form->{partsgroup};
+    $option .= $locale->text('Group').qq| : $partsgroup<br>|;
+  }
+  if ($form->{description}) {
+    $callback .= "&description=".$form->escape($form->{description},1);
+    $description = $form->{description};
+    $description =~ s/\r?\n/<br>/g;
+    $option .= $locale->text('Description').qq| : $form->{description}<br>|;
+  }
+  
+  @column_index = $form->sort_columns(qw(partnumber description));
+  unshift @column_index, "runningnumber";
+  
+  push @column_index, qw(onhand rop amb so po required);
+
+  IC->requirements(\%myconfig, \%$form);
+
+  $form->sort_order();
+  
+  $callback .= "&direction=$form->{direction}&oldsort=$form->{oldsort}";
+  
+  $href = $callback;
+  
+  $callback =~ s/(direction=).*?\&/$1$form->{direction}\&/;
+    
+  $column_data{runningnumber} = qq|<th a class=listheading>&nbsp;</th>|;
+  $column_data{partnumber} = qq|<th nowrap colspan=$colspan><a class=listheading href=$href&sort=partnumber>|.$locale->text('Number').qq|</a></th>|;
+  $column_data{description} = qq|<th nowrap><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</a></th>|;
+  $column_data{onhand} = qq|<th class=listheading nowrap>|.$locale->text('On Hand').qq|</th>|;
+  $column_data{rop} = qq|<th class=listheading nowrap>|.$locale->text('ROP').qq|</th>|;
+  $column_data{amb} = qq|<th class=listheading nowrap>|.$locale->text('Assembly').qq|</th>|;
+  $column_data{so} = qq|<th class=listheading nowrap>|.$locale->text('SO').qq|</th>|;
+  $column_data{po} = qq|<th class=listheading nowrap>|.$locale->text('PO').qq|</th>|;
+  $column_data{required} = qq|<th class=listheading nowrap>|.$locale->text('Total').qq|</th>|;
+
+  $form->{title} = $locale->text('Requirements');
+  
+  $form->helpref("requirements_report", $myconfig{countrycode});
+  
+  $form->header;
+
+  print qq|
+<body>
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+  </tr>
+  <tr height="5"></tr>
+
+  <tr><td>$option</td></tr>
+
+  <tr>
+    <td>
+      <table width=100%>
+        <tr class=listheading>
+|;
+
+  for (@column_index) { print "\n$column_data{$_}" }
+  
+  print qq|
+        </tr>
+  |;
+
+
+  # add order to callback
+  $form->{callback} = $callback .= "&sort=$form->{sort}";
+
+  # escape callback for href
+  $callback = $form->escape($callback);
+
+  $i = 0;
+
+  foreach $ref (@{ $form->{parts} }) {
+
+    $required = $ref->{amb} + $ref->{so} - $ref->{po} - $ref->{onhand} + $ref->{rop};
+    $required = 0 if $required < 0;
+    
+    if ($required) {
+      
+      $i++;
+      $column_data{runningnumber} = "<td align=right>$i</td>";
+      
+      $column_data{partnumber} = "<td><a href=$form->{script}?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{partnumber}&nbsp;</a></td>";
+
+      $ref->{description} =~ s/\r?\n/<br>/g;
+      $column_data{description} = "<td>$ref->{description}&nbsp;</td>";
+
+      $column_data{onhand} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{onhand}, undef, "&nbsp;")."</td>";
+      $column_data{rop} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{rop}, undef, "&nbsp;")."</td>";
+      $column_data{amb} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{amb}, undef, "&nbsp;")."</td>";
+      $column_data{so} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{so}, undef, "&nbsp;")."</td>";
+      $column_data{po} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{po}, undef, "&nbsp;")."</td>";
+      $column_data{required} = "<td align=right>".$form->format_amount(\%myconfig, $required, undef, "-")."</td>";
+     
+      $j++; $j %= 2;
+      print "<tr class=listrow$j>";
+
+      for (@column_index) {
+	print "\n$column_data{$_}";
+	$column_data{$_} = "<td>&nbsp;</td>";
+      }
+
+      print qq|
+    </tr>
+|;
+
+
+    }
+  }
+  
+ 
+  print qq|
+      </table>
+    </td>
+  </tr>
+  <tr><td><hr size=3 noshade></td></tr>
+</table>
+
+|;
+ 
+  print qq|
+
+<br>
+
+<form method=post action=$form->{script}>
+
+|;
+
+  $form->hide_form(qw(callback path login));
+
+  if ($form->{menubar}) {
+    require "$form->{path}/menu.pl";
+    &menubar;
+  }
+
+  print qq|
+  </form>
+
+</body>
+</html>
+|;
+
+}
+
+
 sub so_requirements {
   
   $form->{vc} = "customer";
   
-  if (! IC->get_vc(\%myconfig, \%$form)) {
-    $form->error($locale->text('No open Sales Orders!'));
-  }
-  
+  $form->all_vc(\%myconfig, $form->{vc}, "AR", undef, undef, undef, undef, 1);
+
   $form->all_years(\%myconfig);
 
   $vcname = $locale->text('Customer');
@@ -2534,10 +2885,12 @@ sub so_requirements {
   
   $form->header;
   
+  &calendar;
+  
   print qq|
 <body>
 
-<form method=post action=$form->{script}>
+<form method="post" name="main" action="$form->{script}">
 
 |;
 
@@ -2563,7 +2916,7 @@ sub so_requirements {
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('From').qq|</th>
-	  <td colspan=3><input name=reqdatefrom size=11 class=date title="$myconfig{dateformat}"> <b>|.$locale->text('To').qq|</b> <input name=reqdateto size=11 class=date title="$myconfig{dateformat}"></td>
+	  <td colspan=3 nowrap><input name=reqdatefrom size=11 class=date title="$myconfig{dateformat}"><b>|.&js_calendar("main", "reqdatefrom").qq|<b>|.$locale->text('To').qq| <input name=reqdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "reqdateto").qq|</td>
 	</tr>
 	  $selectfrom
 	<tr>
@@ -2609,7 +2962,7 @@ sub so_requirements {
 </html>
 |;
 
-}   
+}
 
 
 sub so_requirements_report {
@@ -2722,11 +3075,6 @@ sub so_requirements_report {
   # escape callback for href
   $callback = $form->escape($callback);
   
-  if (@{ $form->{all_parts} }) {
-    $sameitem = $form->{all_parts}->[0]->{$form->{sort}};
-  }
-  
-  #
   $i = 0;
   foreach $ref (@{ $form->{all_parts} }) {
 
@@ -2960,8 +3308,8 @@ sub customer_row {
 	  <td><input name="pricebreak_$i" class="inputright" size=5 value=|.$form->format_amount(\%myconfig, $form->{"pricebreak_$i"}).qq|></td>
 	  <td><input name="customerprice_$i" class="inputright" size=11 value=|.$form->format_amount(\%myconfig, $form->{"customerprice_$i"}, $form->{decimalplacessell}).qq|></td>
 	  $currency
-	  <td><input name="validfrom_$i" size=11 class=date title="$myconfig{dateformat}" value="$form->{"validfrom_$i"}"></td>
-	  <td><input name="validto_$i" size=11 class=date title="$myconfig{dateformat}" value="$form->{"validto_$i"}"></td>
+	  <td><input name="validfrom_$i" size=11 class=date title="$myconfig{dateformat}" value=$form->{"validfrom_$i"}>|.&js_calendar("main", "validfrom_$i").qq|</td>
+	  <td><input name="validto_$i" size=11 class=date title="$myconfig{dateformat}" value=$form->{"validto_$i"}>|.&js_calendar("main", "validto_$i").qq|</td>
 	</tr>
 |;
   }
@@ -2979,7 +3327,7 @@ sub customer_row {
 sub assembly_row {
   my ($numrows) = @_;
 
-  @column_index = qw(runningnumber qty unit bom adj partnumber description sellprice listprice lastcost);
+  @column_index = qw(runningnumber qty unit onhand bom adj partnumber description sellprice listprice lastcost);
 
   $form->{sellprice} = 0;
   $form->{listprice} = 0;
@@ -2996,6 +3344,7 @@ sub assembly_row {
   $column_data{lastcost} = qq|<th align=right nowrap>|.$locale->text('Cost').qq|</th>|;
   $column_data{bom} = qq|<th>|.$locale->text('BOM').qq|</th>|;
   $column_data{adj} = qq|<th>|.$locale->text('A').qq|</th>|;
+  $column_data{onhand} = qq|<th>|.$locale->text('OH').qq|</th>|;
   
   print qq|
   <tr>
@@ -3031,11 +3380,21 @@ sub assembly_row {
     if ($i == $numrows) {
       $linetotalsellprice = $linetotallistprice = $linetotallastcost = "";
  
-      for (qw(runningnumber unit bom adj)) { $column_data{$_} = qq|<td></td>| }
+      for (qw(runningnumber unit onhand bom adj)) { $column_data{$_} = qq|<td></td>| }
 
-      $column_data{qty} = qq|<td><input name="qty_$i" class="inputright" size=6 value="$form->{"qty_$i"}" accesskey="$i" title="[$i]"></td>|;
-      $column_data{partnumber} = qq|<td><input name="partnumber_$i" size=15></td>|;
-      $column_data{description} = qq|<td><input name="description_$i" size=30></td>|;
+      if ($form->{changeup}) {
+        $column_data{qty} = qq|<td><input name="qty_$i" class="inputright" size=6 value="$form->{"qty_$i"}" accesskey="$i" title="[$i]"></td>|;
+        $column_data{partnumber} = qq|<td><input name="partnumber_$i" size=15></td>|;
+        $column_data{description} = qq|<td><input name="description_$i" size=30></td>|;
+      } else {
+        if ($form->{orphaned}) {
+          $column_data{qty} = qq|<td><input name="qty_$i" class="inputright" size=6 value="$form->{"qty_$i"}" accesskey="$i" title="[$i]"></td>|;
+          $column_data{partnumber} = qq|<td><input name="partnumber_$i" size=15></td>|;
+          $column_data{description} = qq|<td><input name="description_$i" size=30></td>|;
+        } else {
+          for (qw(qty partnumber description)) { $column_data{$_} = qq|<td></td>| }
+        }
+      }
 
     } else {
 
@@ -3048,16 +3407,27 @@ sub assembly_row {
       $column_data{partnumber} = qq|<td><a href="$form->{script}?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"id_$i"}" target=_blank>$form->{"partnumber_$i"}</a></td>|;
 
       $column_data{runningnumber} = qq|<td><input name="runningnumber_$i" class="inputright" size=3 value="$i"></td>|;
-      $column_data{qty} = qq|<td><input name="qty_$i" class="inputright" size=6 value="$form->{"qty_$i"}" accesskey="$i" title="[$i]"></td>|;
+
+      if ($form->{changeup}) {
+        $column_data{qty} = qq|<td><input name="qty_$i" class="inputright" size=6 value="$form->{"qty_$i"}" accesskey="$i" title="[$i]"></td>|;
+      } else {
+        if ($form->{orphaned}) {
+          $column_data{qty} = qq|<td><input name="qty_$i" class="inputright" size=6 value="$form->{"qty_$i"}" accesskey="$i" title="[$i]"></td>|;
+        } else {
+          $column_data{qty} = qq|<td>$form->{"qty_$i"}</td>|;
+          $form->hide_form("qty_$i");
+        }
+      }
 
       for (qw(bom adj)) { $form->{"${_}_$i"} = ($form->{"${_}_$i"}) ? "checked" : "" }
       $column_data{bom} = qq|<td align=center><input name="bom_$i" type=checkbox class=checkbox value=1 $form->{"bom_$i"}></td>|;
       $column_data{adj} = qq|<td align=center><input name="adj_$i" type=checkbox class=checkbox value=1 $form->{"adj_$i"}></td>|;
 
       $column_data{unit} = qq|<td>$form->{"unit_$i"}</td>|;
+      $column_data{onhand} = qq|<td>|.$form->format_amount(\%myconfig, $form->{"onhand_$i"}).qq|</td>|;
       $column_data{description} = qq|<td>$form->{"description_$i"}</td>|;
 
-      $form->hide_form(map { "${_}_$i" } qw(partnumber description unit));
+      $form->hide_form(map { "${_}_$i" } qw(partnumber description unit onhand));
     }
     
     $column_data{sellprice} = qq|<td align=right>$linetotalsellprice</td>|;
@@ -3127,7 +3497,7 @@ sub update {
   }
 
 
-  if ($form->{item} eq "assembly") {
+  if ($form->{item} =~ /(assembly|kit)/) {
 
     $i = $form->{assembly_rows};
    
@@ -3152,7 +3522,7 @@ sub update {
 	  exit;
 	} else {
 	  $form->{"qty_$i"} = 1;
-	  $form->{"adj_$i"} = 1;
+          $form->{"bom_$i"} = 1 if $form->{item} eq 'kit';
 	  for (qw(partnumber description unit)) { $form->{item_list}[$i]{$_} = $form->quote($form->{item_list}[$i]{$_}) }
 	  for (keys %{ $form->{item_list}[0] }) { $form->{"${_}_$i"} = $form->{item_list}[0]{$_} }
 
@@ -3432,18 +3802,9 @@ sub name_selected {
 
 sub save {
 
-# $locale->text('Inventory quantity must be zero before you can set this part obsolete!')
-# $locale->text('Inventory quantity must be zero before you can set this assembly obsolete!')
-
-  $msg = "Inventory quantity must be zero before you can set this $form->{item} obsolete!";
-
-  if ($form->{obsolete}) {
-    if (! $form->{changeup}) {
-      $form->error($locale->text($msg)) if $form->{onhand};
-    }
-  }
-
   $olditem = $form->{id};
+
+  $form->{userspath} = $userspath;
 
   # save part
   $rc = IC->save(\%myconfig, \%$form);
@@ -3467,10 +3828,10 @@ sub save {
       $form->{$key} = $value;
     }
 
-    if ($form->{item} eq 'assembly') {
+    if ($form->{item} =~ /(assembly|kit)/) {
 
       # undo number formatting
-      for (qw(weight listprice sellprice lastcost rop)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
+      for (qw(weight listprice sellprice lastcost rop onhand)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
 
       $form->{assembly_rows}-- if $olditem;
       $i = $newform{rowcount};
@@ -3491,7 +3852,10 @@ sub save {
 	
       $form->{weight} += $form->{"weight_$i"} * $form->{"qty_$i"};
 
-      $form->{"adj_$i"} = 1 if !$olditem;
+      if (!$olditem) {
+        $form->{"adj_$i"} = 1;
+        $form->{"bom_$i"} = 1 if $form->{item} eq 'kit';
+      }
 
       $form->{customer_rows}--;
       
@@ -3564,7 +3928,7 @@ sub save {
   }
 
   # redirect
-  $form->redirect;
+  $form->redirect($locale->text('Item saved!'));
 
 }
 
@@ -3572,6 +3936,7 @@ sub save {
 sub save_as_new {
 
   $form->{id} = 0;
+  $form->{oldonhand} = 0;
   &save;
 
 }
@@ -3589,12 +3954,25 @@ sub delete {
 }
 
 
+sub stock_adjustment {
 
-sub stock_assembly {
-
-  $form->{title} = $locale->text('Stock Assembly');
+  $form->{title} = $locale->text('Stock Adjustment');
   
-  $form->helpref("stock_assembly", $myconfig{countrycode});
+  $form->helpref("stock_adjustment", $myconfig{countrycode});
+
+  $form->get_partsgroup(\%myconfig, { searchitems => 'noservice', subgroup => 1 });
+
+  if (@{ $form->{all_partsgroup} }) {
+    $form->{selectpartsgroup} = "<option>\n";
+    for (@{ $form->{all_partsgroup} }) { $form->{selectpartsgroup} .= qq|<option value="$_->{partsgroup}--$_->{id}">$_->{partsgroup}\n| }
+
+    $partsgroup = qq|
+ 	<tr>
+	  <th align=right nowrap>|.$locale->text('Group').qq|</th>
+	  <td><select name=partsgroup>$form->{selectpartsgroup}</select></td>
+	</tr>
+|;
+  }
 
   $form->header;
   
@@ -3620,9 +3998,226 @@ sub stock_assembly {
           <th align="right" nowrap="true">|.$locale->text('Description').qq|</th>
           <td><input name=description size=40></td>
         </tr>
+        $partsgroup
+      </table>
+    </td>
+  </tr>
+  <tr><td><hr size=3 noshade></td></tr>
+</table>
+
+<input type=hidden name=sort value=partnumber>
+|;
+
+  $form->hide_form(qw(path login));
+
+  print qq|
+<input type=hidden name=nextsub value=list_inventory>
+
+<br>
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">
+</form>
+|;
+
+  if ($form->{menubar}) {
+    require "$form->{path}/menu.pl";
+    &menubar;
+  }
+
+  print qq|
+ 
+</body>
+</html>
+|;
+
+}
+
+
+sub list_inventory {
+
+  IC->retrieve_items(\%myconfig, \%$form);
+
+  $form->sort_order();
+
+  $callback = "$form->{script}?action=list_inventory&direction=$form->{direction}&oldsort=$form->{oldsort}&path=$form->{path}&login=$form->{login}";
+  
+  $form->sort_order();
+  
+  $href = "$form->{script}?action=list_inventory&direction=$form->{direction}&oldsort=$form->{oldsort}&path=$form->{path}&login=$form->{login}";
+  
+  for (qw(partnumber description partsgroup)) {
+    if ($form->{$_}) {
+      $callback .= "&$_=".$form->escape($form->{$_},1);
+      $href .= "&$_=".$form->escape($form->{$_});
+      $form->{sort} ||= "$_";
+    }
+  }
+ 
+  $column_data{partnumber} = qq|<th><a class=listheading href=$href&sort=partnumber>|.$locale->text('Number').qq|</th>|;
+  $column_data{description} = qq|<th><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</th>|;
+  $column_data{bin} = qq|<th><a class=listheading href=$href&sort=bin>|.$locale->text('Bin').qq|</th>|;
+  $column_data{onhand} = qq|<th class=listheading>|.$locale->text('Qty').qq|</th>|;
+  $column_data{rop} = qq|<th class=listheading>|.$locale->text('ROP').qq|</th>|;
+  $column_data{warehouse} = qq|<th class=listheading>|.$locale->text('Warehouse').qq|</th>|;
+
+  @column_index = $form->sort_columns(qw(partnumber description warehouse bin rop onhand));
+  
+  $form->{title} = $locale->text('Inventory Count');
+
+  $form->helpref("inventory_count", $myconfig{countrycode});
+  
+  $form->header;
+  
+  print qq|
+<body>
+
+<form method=post action=$form->{script}>
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+  </tr>
+  <tr size=5></tr>
+  <tr>
+    <td>
+      <table width=100%>
+	<tr class=listheading>
+|;
+
+  for (@column_index) { print "\n$column_data{$_}" }
+
+  print qq|
+	</tr>
+|;
+
+  # add sort and escape callback
+  $form->{callback} = $callback .= "&sort=$form->{sort}";
+
+  # escape callback for href
+  $callback = $form->escape($callback);
+
+
+  $i = 1;
+  foreach $ref (@{ $form->{all_items} }) {
+
+    for (qw(partnumber description warehouse)) { $ref->{$_} = $form->quote($ref->{$_}) }
+   
+    $column_data{partnumber} = "<td width=20%><a href=$form->{script}?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{partnumber}&nbsp;</a></td>";
+    
+    $column_data{description} = qq|<td width=50%>$ref->{description}&nbsp;</td>|;
+    $column_data{warehouse} = qq|<td>$ref->{warehouse}&nbsp;</td>|;
+    $column_data{bin} = qq|<td>$ref->{bin}&nbsp;</td>|;
+    $column_data{rop} = qq|<td align=right>|.$form->format_amount(\%myconfig, $ref->{rop}, undef, "&nbsp;").qq|</td>|;
+
+    $onhand = $form->format_amount(\%myconfig, $ref->{onhand});
+    
+    $column_data{onhand} = qq|<td width=10%><input name="onhand_$i" class="inputright" size="8" value="$onhand"></td>|;
+
+    
+    $j++; $j %= 2;
+    print qq|<tr class=listrow$j>
+    <input name="id_$i" type="hidden" value="$ref->{id}">
+    <input name="oldonhand_$i" type="hidden" value="$ref->{onhand}">
+    <input name="warehouseid_$i" type="hidden" value="$ref->{warehouse_id}">
+|;
+    
+    for (@column_index) { print "\n$column_data{$_}" }
+    
+    print qq|
+	</tr>
+|;
+
+    $i++;
+
+  }
+  
+  $i--;
+  print qq|
+      </td>
+    </table>
+  <tr>
+    <td><hr size=3 noshade>
+  </tr>
+</table>
+|;
+
+  $form->hide_form(qw(path login callback));
+
+  print qq|
+<input type=hidden name=rowcount value="$i">
+<input type=hidden name=nextsub value=adjust_onhand>
+
+<br>
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">
+
+</form>
+
+</body>
+</html>
+|;
+ 
+}
+
+
+sub adjust_onhand {
+
+  IC->adjust_onhand(\%myconfig, \%$form);
+  $form->redirect($locale->text('Items stocked!'));
+ 
+}
+
+
+sub stock_assembly {
+
+  $form->all_warehouses(\%myconfig);
+  
+  if (@{ $form->{all_warehouse} }) {
+    $selectwarehouse = "\n";
+
+    for (@{ $form->{all_warehouse} }) { $selectwarehouse .= qq|$_->{description}--$_->{id}\n| }
+    
+    $warehouse = qq|
+      <tr>
+	<th align=right nowrap>|.$locale->text('Warehouse').qq|</th>
+	<td><select name=warehouse>|
+        .$form->select_option($selectwarehouse, undef, 1)
+        .qq|</select>
+        </td>
+      </tr>
+|;
+  }
+
+  $form->{title} = $locale->text('Stock Assembly');
+  
+  $form->helpref("stock_assembly", $myconfig{countrycode});
+
+  $form->header;
+  
+  print qq|
+<body>
+
+<form method=post action=$form->{script}>
+
+<table width="100%">
+  <tr>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+  </tr>
+  <tr height="5"></tr>
+  <tr valign=top>
+    <td>
+      <table>
+        $warehouse
+        <tr>
+          <th align="right" nowrap="true">|.$locale->text('Number').qq|</th>
+          <td><input name=partnumber size=20></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <th align="right" nowrap="true">|.$locale->text('Description').qq|</th>
+          <td><input name=description size=40></td>
+        </tr>
         <tr>
           <td></td>
-	  <td><input name=checkinventory class=checkbox type=checkbox value=1>&nbsp;|.$locale->text('Check Inventory').qq|</td>
+	  <td><input name=checkinventory class=checkbox type=checkbox value=1 checked>&nbsp;|.$locale->text('Check Inventory').qq|</td>
         </tr>
       </table>
     </td>
@@ -3657,28 +4252,38 @@ sub stock_assembly {
 }
 
 
-
-
 sub list_assemblies {
 
   IC->retrieve_assemblies(\%myconfig, \%$form);
 
+  $form->sort_order();
+  
   $callback = "$form->{script}?action=list_assemblies&direction=$form->{direction}&oldsort=$form->{oldsort}&path=$form->{path}&login=$form->{login}&checkinventory=$form->{checkinventory}";
   
   $form->sort_order();
+
   $href = "$form->{script}?action=list_assemblies&direction=$form->{direction}&oldsort=$form->{oldsort}&path=$form->{path}&login=$form->{login}&checkinventory=$form->{checkinventory}";
   
+  if ($form->{warehouse}) {
+    $callback .= "&warehouse=".$form->escape($form->{warehouse},1);
+    $href .= "&warehouse=".$form->escape($form->{warehouse});
+    $form->{sort} ||= "warehouse";
+    ($warehouse) = split /--/, $form->{warehouse};
+    $option = $locale->text('Warehouse').qq| : $warehouse<br>|;
+  }
   if ($form->{partnumber}) {
     $callback .= "&partnumber=".$form->escape($form->{partnumber},1);
     $href .= "&partnumber=".$form->escape($form->{partnumber});
-    $form->{sort} = "partnumber" unless $form->{sort};
+    $form->{sort} ||= "partnumber";
+    $option .= $locale->text('Number').qq| : $form->{partnumber}<br>|;
   }
   if ($form->{description}) {
     $callback .= "&description=".$form->escape($form->{description},1);
     $href .= "&description=".$form->escape($form->{description});
-    $form->{sort} = "description" unless $form->{sort};
+    $form->{sort} ||= "description";
+    $option .= $locale->text('Description').qq| : $form->{description}<br>|;
   }
- 
+
   $column_data{partnumber} = qq|<th><a class=listheading href=$href&sort=partnumber>|.$locale->text('Number').qq|</th>|;
   $column_data{description} = qq|<th><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</th>|;
   $column_data{bin} = qq|<th><a class=listheading href=$href&sort=bin>|.$locale->text('Bin').qq|</th>|;
@@ -3686,7 +4291,9 @@ sub list_assemblies {
   $column_data{rop} = qq|<th class=listheading>|.$locale->text('ROP').qq|</th>|;
   $column_data{stock} = qq|<th class=listheading>|.$locale->text('Add').qq|</th>|;
 
-  @column_index = $form->sort_columns(qw(partnumber description bin onhand rop stock));
+  @columns = qw(partnumber description);
+  push @columns, qw(bin onhand rop stock);
+  @column_index = $form->sort_columns(@columns);
   
   $form->{title} = $locale->text('Stock Assembly');
 
@@ -3704,6 +4311,9 @@ sub list_assemblies {
     <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr size=5></tr>
+
+  <tr><td>$option</td></tr>
+
   <tr>
     <td>
       <table width=100%>
@@ -3722,7 +4332,6 @@ sub list_assemblies {
   # escape callback for href
   $callback = $form->escape($callback);
 
-
   $i = 1;
   foreach $ref (@{ $form->{assembly_items} }) {
 
@@ -3734,11 +4343,11 @@ sub list_assemblies {
     $column_data{bin} = qq|<td>$ref->{bin}&nbsp;</td>|;
     $column_data{onhand} = qq|<td align=right>|.$form->format_amount(\%myconfig, $ref->{onhand}, undef, "&nbsp;").qq|</td>|;
     $column_data{rop} = qq|<td align=right>|.$form->format_amount(\%myconfig, $ref->{rop}, undef, "&nbsp;").qq|</td>|;
-    $column_data{stock} = qq|<td width=10%><input name="qty_$i" class="inputright" size=8 value=|.$form->format_amount(\%myconfig, $ref->{stock}).qq|></td>
-    <input type=hidden name="stock_$i" value=$ref->{stock}>|;
+    $column_data{stock} = qq|<td width=10%><input name="qty_$i" class="inputright" size=8 value="|.$form->format_amount(\%myconfig, $ref->{stock}).qq|"></td>
+    <input type=hidden name="stock_$i" value="$ref->{stock}">|;
 
     $j++; $j %= 2;
-    print qq|<tr class=listrow$j><input name="id_$i" type=hidden value=$ref->{id}>\n|;
+    print qq|<tr class=listrow$j><input name="id_$i" type="hidden" value="$ref->{id}">\n|;
     
     for (@column_index) { print "\n$column_data{$_}" }
     
@@ -3760,7 +4369,7 @@ sub list_assemblies {
 </table>
 |;
 
-  $form->hide_form(qw(checkinventory path login callback));
+  $form->hide_form(qw(warehouse checkinventory path login callback));
 
   print qq|
 <input type=hidden name=rowcount value="$i">
@@ -3780,21 +4389,897 @@ sub list_assemblies {
 
 sub restock_assemblies {
 
-
   if ($form->{checkinventory}) {
     for (1 .. $form->{rowcount}) { $form->error($locale->text('Quantity exceeds available units to stock!')) if $form->parse_amount($myconfig, $form->{"qty_$_"}) > $form->{"stock_$_"} }
   }
 
-  if (IC->restock_assemblies(\%myconfig, \%$form)) {
-    if ($form->{callback} =~ /(direction=)(.*?)\&/) {
-      $direction = ($2 eq 'ASC') ? 'DESC' : 'ASC';
-    }
-    $form->{callback} =~ s/direction=(.*?)\&/direction=$direction\&/;
-    $form->redirect($locale->text('Assemblies restocked!'));
+  if (IC->stock_assemblies(\%myconfig, \%$form)) {
+    $form->redirect($locale->text('Assemblies stocked!'));
   } else {
     $form->error($locale->text('Cannot stock assemblies!'));
   }
   
+}
+
+
+sub history {
+
+  IC->history(\%myconfig, \%$form);
+  
+  @column_index = qw(partnumber description name trn transdate sellprice);
+  $colspan = $#column_index + 1;
+
+  $hdr{ar} = $locale->text('Sales Invoices');
+  $hdr{ap} = $locale->text('Vendor Invoices');
+  $hdr{so} = $locale->text('Sales Orders');
+  $hdr{po} = $locale->text('Purchase Orders');
+  $hdr{sq} = $locale->text('Quotations');
+  $hdr{rfq} = $locale->text('RFQs');
+  
+  $mdl{ar} = 'is.pl';
+  $mdl{ap} = 'ir.pl';
+  for (qw(so po sq rfq)) { $mdl{$_} = 'oe.pl' }
+  
+  $form->{title} = $locale->text('History');
+  
+  $form->header;
+
+  $title = "$form->{title} / $form->{company}";
+
+  &resize;
+  
+  &pickvalue;
+  
+  print qq|
+<body>
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$title</th>
+  </tr>
+  <tr height="5"></tr>
+
+  <tr>
+    <td>
+      <table width=100%>
+|;
+
+  foreach $ref (@{ $form->{all_parts} }) {
+
+    if ($ref->{module} ne $module) {
+      print qq|
+         <tr class=listheading>
+	   <th colspan=$colspan>$hdr{$ref->{module}}</th>
+         </tr>
+|;
+    }
+
+    $module = $ref->{module};
+    $ref->{description} =~ s/\r?\n/<br>/g;
+    
+    for (@column_index) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
+
+    $amount = $form->format_amount(\%myconfig, $ref->{sellprice}, $form->{precision});
+    $column_data{sellprice} = qq|<td align=right><a href="#" onClick="pickvalue('$form->{pickvar}','$amount'); window.close()">${amount}&nbsp;</a></td>|;
+    
+    $column_data{trn} = qq|<td><a href="$mdl{$ref->{module}}?action=edit&type=$ref->{type}&id=$ref->{id}&path=$form->{path}&login=$form->{login}&readonly=1">$ref->{trn}&nbsp;</a></td>|;
+    
+    $j++; $j %= 2;
+    print "<tr class=listrow$j>";
+
+    for (@column_index) { print "\n$column_data{$_}" }
+
+    print qq|
+    </tr>
+|;
+
+  }
+  
+  print qq|
+      </table>
+    </td>
+  </tr>
+  <tr><td><hr size=3 noshade></td></tr>
+</table>
+
+x <a href="javascript:window.close();">|.$locale->text('Close Window').qq|</a>
+|;
+ 
+}
+
+
+
+sub search_transfer {
+
+  $form->{searchitems} = 'partandassembly';
+  
+  IC->get_warehouses(\%myconfig, \%$form);
+
+  if (@{ $form->{all_warehouse} }) {
+    $selectwarehouse = "\n";
+    for (@{ $form->{all_warehouse} }) { $selectwarehouse .= qq|$_->{description}--$_->{id}\n| }
+
+    $warehouse = qq|
+        <tr>
+          <th align=right nowrap>|.$locale->text('Warehouse').qq|</th>
+          <td><select name=warehouse>|
+          .$form->select_option($selectwarehouse, undef, 1)
+          .qq|</select>
+          </td>
+        </tr>
+|;
+
+  }
+ 
+  if (@{ $form->{all_partsgroup} }) {
+    $form->{selectpartsgroup} = "\n";
+    for (@{ $form->{all_partsgroup} }) { $form->{selectpartsgroup} .= qq|$_->{partsgroup}--$_->{id}\n| }
+
+    $partsgroup = qq|
+ 	<tr>
+	  <th align=right nowrap>|.$locale->text('Group').qq|</th>
+	  <td><select name=partsgroup>|
+          .$form->select_option($form->{selectpartsgroup}, undef, 1)
+          .qq|</select>
+          </td>
+	</tr>
+|;
+  }
+
+  if ($form->{nextsub} eq 'transfer_report') {
+    
+    $transferreport = qq|
+          <tr>
+	    <th align=right>|.$locale->text('From').qq|</th>
+	    <td colspan=3 nowrap><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}" value=$form->{transdatefrom}>|.&js_calendar("main", "transdatefrom").qq| <b>|.$locale->text('To').qq|</b> <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
+	  </tr>
+|;
+
+    if (@{ $form->{all_years} }) {
+      $selectaccountingyear = "\n";
+      for (@{ $form->{all_years} }) { $selectaccountingyear .= qq|$_\n| }
+      $selectaccountingmonth = "\n";
+      for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|$_--|.$locale->text($form->{all_month}{$_}).qq|\n| }
+
+      $transferreport .= qq|
+          <tr>
+	    <th align=right>|.$locale->text('Period').qq|</th>
+	    <td colspan=3>
+	    <select name=month>|.$form->select_option($selectaccountingmonth, $form->{month}, 1, 1).qq|</select>
+	    <select name=year>|.$form->select_option($selectaccountingyear, $form->{year}, 1).qq|</select>
+	    <input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
+	    <input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
+	    <input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
+	    <input name=interval class=radio type=radio value=12>&nbsp;|.$locale->text('Year').qq|
+	    </td>
+	  </tr>
+|; 
+    }
+
+  }
+    
+  $form->{title} = $locale->text('Warehouse Transfer');
+  if ($form->{nextsub} eq 'transfer_report') {
+    $form->helpref("warehouse_transfer_report", $myconfig{countrycode});
+  } elsif ($form->{nextsub} eq 'transfer_list') {
+    $form->helpref("warehouse_transfer", $myconfig{countrycode});
+  }
+ 
+  $form->header;
+
+  &calendar;
+  
+  print qq|
+<body onLoad="document.main.partnumber.focus()" />
+
+<form method="post" name="main" action="$form->{script}">
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>
+      <table>
+        $warehouse
+	<tr>
+	  <th align="right" nowrap="true">|.$locale->text('Part Number').qq|</th>
+	  <td><input name=partnumber size=20></td>
+	</tr>
+	<tr>
+	  <th align="right" nowrap="true">|.$locale->text('Description').qq|</th>
+	  <td><input name=description size=40></td>
+	</tr>
+	$partsgroup
+	$transferreport
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td><hr size=3 noshade></td>
+  </tr>
+</table>
+
+<br>
+
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">|;
+
+  $form->hide_form(qw(nextsub path login));
+
+  print qq|
+</form>
+|;
+
+  if ($form->{menubar}) {
+    require "$form->{path}/menu.pl";
+    &menubar;
+  }
+
+  print qq|
+
+</body>
+</html>
+|;
+
+}
+
+
+sub transfer_list {
+
+  $form->{sort} ||= "partnumber";
+
+  IC->get_inventory(\%myconfig, \%$form);
+  
+  # warehouses
+  if (@{ $form->{all_warehouse} }) {
+    $form->{selectwarehouse} = "\n";
+
+    for (@{ $form->{all_warehouse} }) { $form->{selectwarehouse} .= qq|$_->{description}--$_->{id}\n| }
+  } else {
+    $form->error($locale->text('No warehouses!'));
+  }
+  
+  # construct href
+  $href = "$form->{script}?action=transfer_list";
+  for (qw(direction oldsort path login)) { $href .= "&$_=$form->{$_}" }
+  for (qw(partnumber description unit partsgroup warehouse)) { $href .= "&$_=".$form->escape($form->{$_}) }
+
+  $form->sort_order();
+
+  # construct callback
+  $callback = "$form->{script}?action=transfer_list";
+  for (qw(direction oldsort path login)) { $callback .= "&$_=$form->{$_}" }
+  for (qw(partnumber description unit partsgroup warehouse)) { $callback .= "&$_=".$form->escape($form->{$_},1) }
+
+  @column_index = $form->sort_columns(qw(partnumber description partsgroup qty unit warehouse transfer towarehouse));
+
+  $column_header{partnumber} = qq|<th><a class=listheading href=$href&sort=partnumber>|.$locale->text('Part Number').qq|</a></th>|;
+  $column_header{description} = qq|<th><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</a></th>|;
+  $column_header{partsgroup} = qq|<th><a class=listheading href=$href&sort=partsgroup>|.$locale->text('Group').qq|</a></th>|;
+  $column_header{warehouse} = qq|<th><a class=listheading href=$href&sort=warehouse>|.$locale->text('Warehouse').qq|</a></th>|;
+  $column_header{towarehouse} = qq|<th class=listheading>|.$locale->text('To').qq|</th>|;
+  $column_header{qty} = qq|<th class=listheading>|.$locale->text('Qty').qq|</a></th>|;
+  $column_header{unit} = qq|<th class=listheading>|.$locale->text('Unit').qq|</a></th>|;
+  $column_header{transfer} = qq|<th class=listheading>|.$locale->text('Transfer').qq|</a></th>|;
+
+  
+  if ($form->{partnumber}) {
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Part Number')." : $form->{partnumber}";
+  }
+  if ($form->{description}) {
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Description')." : $form->{description}";
+  }
+  if ($form->{partsgroup}) {
+    ($partsgroup) = split /--/, $form->{partsgroup};
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Group')." : $partsgroup";
+  }
+  if ($form->{warehouse}) {
+    ($warehouse) = split /--/, $form->{warehouse};
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Warehouse')." : $warehouse";
+
+    $column_header{warehouse} = qq|<th class=listheading>|.$locale->text('Warehouse').qq|</th>|;
+  }
+
+
+  $form->{title} = $locale->text('Transfer Inventory');
+
+  $callback .= "&sort=$form->{sort}";
+  $form->{callback} = $callback;
+  $callback = $form->escape($callback);
+  
+  $form->{shippingdate} = $form->current_date(\%myconfig);
+
+  $form->header;
+
+  &calendar;
+
+  print qq|
+<body>
+
+<form method="post" name="main" action="$form->{script}" />
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$form->{title}</th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>$option</td>
+  </tr>
+  <tr>
+    <td>
+      <table width=100%>
+	<tr class=listheading>|;
+
+  for (@column_index) { print "\n$column_header{$_}" }
+
+  print qq|
+	</tr>
+|;
+
+  if (@{ $form->{all_inventory} }) {
+    $sameitem = $form->{all_inventory}->[0]->{$form->{sort}};
+  }
+
+  $selectwarehouse = $form->select_option($form->{selectwarehouse}, "", 1);
+  
+  $i = 0;
+  foreach $ref (@{ $form->{all_inventory} }) {
+
+    $i++;
+
+    if ($sameid != $ref->{id}) {
+      $column_data{partnumber} = qq|<td><input type=hidden name="id_$i" value=$ref->{id}><a href=ic.pl?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{partnumber}</td>|;
+      $column_data{description} = "<td>$ref->{description}&nbsp;</td>";
+      $column_data{unit} = "<td>$ref->{unit}&nbsp;</td>";
+      $column_data{partsgroup} = "<td>$ref->{partsgroup}&nbsp;</td>";
+    } else {
+      $column_data{partnumber} = qq|<td><input type=hidden name="id_$i" value=$ref->{id}></td>|;
+      for (qw(description unit partsgroup)) { $column_data{$_} = "<td>&nbsp;</td>" }
+    }
+    $column_data{warehouse} = qq|<td><input type=hidden name="warehouse_id_$i" value=$ref->{warehouse_id}><input type=hidden name="warehouse_$i" value="$ref->{warehouse}">$ref->{warehouse}&nbsp;</td>|;
+    $column_data{towarehouse} = qq|<td><select name="towarehouse_$i">$selectwarehouse
+    </select>
+    </td>|;
+    $column_data{qty} = qq|<td align=right>|.$form->format_amount(\%myconfig, $ref->{qty}).qq|</td>|;
+    $column_data{transfer} = qq|<td><input class="inputright" name="transfer_$i" size=4></td>|;
+    $j++; $j %= 2;
+    print "
+        <tr class=listrow$j>";
+    
+    for (@column_index) { print "\n$column_data{$_}" }
+
+    print qq|
+	</tr>
+|;
+
+    $sameid = $ref->{id};
+
+  }
+  
+  print qq|
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td><hr size=3 noshade></td>
+  </tr>
+  <tr>
+    <td nowrap>|.$locale->text('Date').qq| <input name=shippingdate size=11 value="$form->{shippingdate}" class="date" title="$myconfig{dateformat}">|.&js_calendar("main", "shippingdate").qq|
+    </td>
+  </tr>
+  <tr>
+    <td><hr size=3 noshade></td>
+  </tr>
+</table>
+
+<br>
+
+|;
+
+  $form->{action} = "transfer";
+  $form->{rowcount} = $i;
+
+  $form->hide_form(qw(employee path login action rowcount callback));
+  
+  %button = (
+	     'Transfer' => { ndx => 11, key => 'T', value => $locale->text('Transfer') },
+	    );
+
+  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+
+  if ($form->{menubar}) {
+    require "$form->{path}/menu.pl";
+    &menubar;
+  }
+
+  print qq|
+</form>
+
+</body>
+</html>
+|;
+
+
+}
+
+
+sub transfer {
+
+  for $i (1 .. $form->{rowcount}) {
+    if ($form->{"transfer_$i"}) {
+      $ok = 1;
+      last;
+    }
+  }
+
+  $form->error($locale->text('Nothing to transfer!')) unless $ok;
+
+  if (IC->transfer(\%myconfig, \%$form)) {
+    $form->redirect($locale->text('Inventory transferred!'));
+  }
+
+  $form->error($locale->text('Could not transfer Inventory!'));
+
+}
+
+
+sub transfer_report {
+
+  $form->{sort} ||= "shippingdate";
+
+  IC->transfer_report(\%myconfig, \%$form);
+  
+  $href = "$form->{script}?action=transfer_report";
+  for (qw(direction oldsort path login)) { $href .= qq|&$_=$form->{$_}| }
+
+  $form->sort_order();
+
+  $callback = "$form->{script}?action=transfer_report";
+  for (qw(direction oldsort path login)) { $callback .= qq|&$_=$form->{$_}| }
+
+  if ($form->{partnumber}) {
+    $callback .= "&partnumber=".$form->escape($form->{partnumber},1);
+    $href .= "&partnumber=".$form->escape($form->{partnumber});
+    $option = $locale->text('Part Number').qq| : $form->{partnumber}|;
+  }
+  if ($form->{description}) {
+    $callback .= "&description=".$form->escape($form->{description},1);
+    $href .= "&description=".$form->escape($form->{description});
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Description').qq| : $form->{description}|;
+  }
+  if ($form->{warehouse}) {
+    $callback .= "&warehouse=".$form->escape($form->{warehouse},1);
+    $href .= "&warehouse=".$form->escape($form->{warehouse});
+    ($warehouse) = split /--/, $form->{warehouse};
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Warehouse').qq| : $warehouse|;
+  }
+  if ($form->{partsgroup}) {
+    $callback .= "&partsgroup=".$form->escape($form->{partsgroup},1);
+    $href .= "&partsgroup=".$form->escape($form->{partsgroup});
+    ($partsgroup) = split /--/, $form->{partsgroup};
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Group').qq| : $partsgroup|;
+  }
+  if ($form->{transdatefrom}) {
+    $callback .= "&transdatefrom=$form->{transdatefrom}";
+    $href .= "&transdatefrom=$form->{transdatefrom}";
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('From')."&nbsp;".$locale->date(\%myconfig, $form->{transdatefrom}, 1);
+  }
+  if ($form->{transdateto}) {
+    $callback .= "&transdateto=$form->{transdateto}";
+    $href .= "&transdateto=$form->{transdateto}";
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('To')."&nbsp;".$locale->date(\%myconfig, $form->{transdateto}, 1);
+  }
+
+  @column_index = $form->sort_columns(qw(shippingdate partnumber description fromwarehouse towarehouse qty unit employee));
+
+  $column_data{shippingdate} = "<th><a class=listheading href=$href&sort=shippingdate>".$locale->text('Date')."</a></th>";
+  $column_data{partnumber} = "<th><a class=listheading href=$href&sort=partnumber>".$locale->text('Part Number')."</a></th>";
+  $column_data{description} = "<th><a class=listheading href=$href&sort=description>".$locale->text('Description')."</a></th>";
+  $column_data{employee} = "<th><a class=listheading href=$href&sort=employee>".$locale->text('Employee')."</a></th>";
+  $column_data{qty} = "<th class=listheading>" . $locale->text('Qty') . "</th>";
+  $column_data{unit} = "<th class=listheading>" . $locale->text('Unit') . "</th>";
+  $column_data{fromwarehouse} = "<th>".$locale->text('From')."</a></th>";
+  $column_data{towarehouse} = "<th>".$locale->text('To')."</a></th>";
+  
+  $form->{title} = $locale->text('Warehouse Transfer Report');
+
+  $form->helpref("warehouse_transfer_report", $myconfig{countrycode});
+  
+  $form->header;
+
+  print qq|
+<body>
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>$option</td>
+  </tr>
+  <tr>
+    <td>
+      <table width=100%>
+        <tr class=listheading>
+|;
+
+  for (@column_index) { print "\n$column_data{$_}" }
+
+  print qq|
+        </tr>
+|;
+
+  $callback .= "&sort=$form->{sort}";
+
+  # escape callback for href
+  $callback = $form->escape($callback);
+  
+  foreach $ref (@{ $form->{inventory_transfer} }) {
+
+    $ref->{description} =~ s/\r?\n/<br>/g;
+    $column_data{shippingdate} = "<td nowrap>$ref->{shippingdate}</td>";
+    for (qw(description towarehouse employee unit fromwarehouse)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
+    $column_data{partnumber} = qq|<td><a href=ic.pl?action=edit&id=$ref->{id}&login=$form->{login}&path=$form->{path}&callback=$callback>$ref->{partnumber}</a></td>|;
+    $column_data{qty} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{qty});
+    
+    $j++; $j %= 2;
+
+    print "
+        <tr class=listrow$j>
+";
+
+    for (@column_index) { print "\n$column_data{$_}" }
+
+    print qq|
+        </tr>
+|;
+
+  }
+
+  print qq|
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td><hr size=3 noshade></td>
+  </tr>
+</table>
+
+</body>
+</html>
+|;
+
+}
+
+
+sub assembly_bom_transfer {
+
+  $form->{searchitems} = 'assembly';
+
+  IC->get_warehouses(\%myconfig, \%$form);
+
+  if (@{ $form->{all_warehouse} }) {
+    $selecttowarehouse = "";
+
+    for (@{ $form->{all_warehouse} }) { $selecttowarehouse .= qq|$_->{description}--$_->{id}\n| }
+    $selectfromwarehouse = "\n$selecttowarehouse";
+
+    $warehouse = qq|
+      <tr>
+	<th align=right nowrap>|.$locale->text('From Warehouse').qq|</th>
+	<td><select name=fromwarehouse>|
+        .$form->select_option($selectfromwarehouse, undef, 1)
+        .qq|</select>
+	<b>|.$locale->text('To Warehouse').qq|</b>
+	<select name=towarehouse>|
+        .$form->select_option($selecttowarehouse, undef, 1)
+        .qq|</select>
+        </td>
+      </tr>
+|;
+  } else {
+    $form->error($locale->text('No warehouses!'));
+  }
+
+  if (@{ $form->{all_partsgroup} }) {
+    $form->{selectpartsgroup} = "\n";
+    for (@{ $form->{all_partsgroup} }) { $form->{selectpartsgroup} .= qq|$_->{partsgroup}--$_->{id}\n| }
+
+    $partsgroup = qq|
+ 	<tr>
+	  <th align=right nowrap>|.$locale->text('Group').qq|</th>
+	  <td><select name=partsgroup>|
+          .$form->select_option($form->{selectpartsgroup}, undef, 1)
+          .qq|</select>
+          </td>
+	</tr>
+|;
+  }
+
+  $form->{title} = $locale->text('Assembly BOM Transfer');
+  
+  $form->helpref("assembly_bom_transfer", $myconfig{countrycode});
+
+  $form->header;
+  
+  print qq|
+<body onLoad="document.main.partnumber.focus()" />
+
+<form method=post name=main action=$form->{script}>
+
+<table width="100%">
+  <tr>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+  </tr>
+  <tr height="5"></tr>
+  <tr valign=top>
+    <td>
+      <table>
+        $warehouse
+        <tr>
+          <th align="right" nowrap="true">|.$locale->text('Number').qq|</th>
+          <td><input name=partnumber size=20></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <th align="right" nowrap="true">|.$locale->text('Description').qq|</th>
+          <td><input name=description size=40></td>
+        </tr>
+        $partsgroup
+        <tr>
+          <th align="right" nowrap="true">|.$locale->text('Qty').qq|</th>
+          <td><input name=qty size=4></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr><td><hr size=3 noshade></td></tr>
+</table>
+
+|;
+
+  $form->hide_form(qw(path login));
+
+  print qq|
+<input type=hidden name=nextsub value=list_assembly_bom_transfer>
+
+<br>
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">
+</form>
+|;
+
+  if ($form->{menubar}) {
+    require "$form->{path}/menu.pl";
+    &menubar;
+  }
+
+  print qq|
+ 
+</body>
+</html>
+|;
+
+}
+
+
+sub list_assembly_bom_transfer {
+
+  $form->{sort} = "partnumber";
+
+  $form->error($locale->text('Cannot transfer to the same warehouse!')) if $form->{fromwarehouse} eq $form->{towarehouse};
+
+  $form->{qty} ||= 1;
+
+  IC->get_assembly_bom_transfer(\%myconfig, \%$form);
+
+  $callback = "$form->{script}?action=list_assembly_bom_transfer";
+  for (qw(path login towarehouse)) { $callback .= qq|&$_=$form->{$_}| }
+ 
+  @column_index = qw(assemblynumber qty partnumber description partsgroup fromwarehouse fromonhand towarehouse toonhand unit transfer);
+
+  $column_header{assemblynumber} = qq|<th class=listheading>|.$locale->text('Assembly Number').qq|</th>|;
+  $column_header{partnumber} = qq|<th class=listheading>|.$locale->text('Part Number').qq|</th>|;
+  $column_header{description} = qq|<th class=listheading>|.$locale->text('Description').qq|</th>|;
+  $column_header{partsgroup} = qq|<th class=listheading>|.$locale->text('Group').qq|</th>|;
+  $column_header{fromwarehouse} = qq|<th class=listheading>|.$locale->text('From').qq|</th>|;
+  $column_header{towarehouse} = qq|<th class=listheading>|.$locale->text('To').qq|</th>|;
+  $column_header{fromonhand} = qq|<th class=listheading>|.$locale->text('OH').qq|</th>|;
+  $column_header{toonhand} = qq|<th class=listheading>|.$locale->text('OH').qq|</th>|;
+  $column_header{unit} = qq|<th class=listheading>|.$locale->text('Unit').qq|</th>|;
+  $column_header{transfer} = qq|<th class=listheading>|.$locale->text('Transfer').qq|</th>|;
+  $column_header{qty} = qq|<th class=listheading>|.$locale->text('Qty').qq|</th>|;
+
+  if (($warehouse) = split /--/, $form->{fromwarehouse}) {
+    $option = $locale->text('From Warehouse')." : $warehouse";
+    $callback .= qq|&fromwarehouse=$form->{fromwarehouse}|;
+  }
+
+  if ($form->{towarehouse}) {
+    ($warehouse) = split /--/, $form->{towarehouse};
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('To Warehouse')." : $warehouse";
+    $callback .= qq|&towarehouse=$form->{towarehouse}|;
+  }
+
+  if ($form->{partnumber}) {
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Part Number')." : $form->{partnumber}";
+    $callback .= qq|&partnumber=$form->{partnumber}|;
+  }
+  if ($form->{description}) {
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Description')." : $form->{description}";
+    $callback .= qq|&description=$form->{description}|;
+  }
+
+  $option .= "\n<br>" if ($option);
+  $option .= $locale->text('Quantity')." : $form->{qty}";
+  $callback .= qq|&qty=$form->{qty}|;
+
+  $form->{title} = $locale->text('Assembly BOM Transfer');
+
+#  $form->{callback} = $callback;
+  $callback = $form->escape($callback);
+  
+  $form->{shippingdate} = $form->current_date(\%myconfig);
+
+  unless (@{ $form->{all_inventory} }) {
+    $form->error($locale->text('Nothing to transfer!'));
+  }
+
+  $form->header;
+
+  &calendar;
+
+  print qq|
+<body>
+
+<form method="post" name="main" action="$form->{script}" />
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$form->{title}</th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>$option</td>
+  </tr>
+  <tr>
+    <td>
+      <table width=100%>
+	<tr class=listheading>|;
+
+  for (@column_index) { print "\n$column_header{$_}" }
+
+  print qq|
+	</tr>
+|;
+
+  $sameitem = $form->{all_inventory}->[0]->{$form->{sort}};
+
+  $i = 0;
+  foreach $ref (@{ $form->{all_inventory} }) {
+
+    $i++;
+
+    if ($sameid != $ref->{id}) {
+      for (qw(assemblynumber partnumber fromonhand toonhand)) { $column_data{$_} = "<td>&nbsp;</td>" }
+      if ($ref->{assemblyitem}) {
+        $column_data{partnumber} = qq|<td><input type=hidden name="id_$i" value=$ref->{id}><a href=ic.pl?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{partnumber}</td>|;
+      } else {
+        $column_data{assemblynumber} = qq|<td><input type=hidden name="id_$i" value=$ref->{id}><a href=ic.pl?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{partnumber}</td>|;
+      }
+      $column_data{description} = "<td>$ref->{description}&nbsp;</td>";
+      $column_data{unit} = "<td>$ref->{unit}&nbsp;</td>";
+      $column_data{partsgroup} = "<td>$ref->{partsgroup}&nbsp;</td>";
+    } else {
+      $column_data{partnumber} = qq|<td><input type=hidden name="id_$i" value=$ref->{id}></td>|;
+      for (qw(description unit partsgroup)) { $column_data{$_} = "<td>&nbsp;</td>" }
+    }
+    
+    $column_data{fromwarehouse} = qq|<td><input type=hidden name="warehouse_id_$i" value=$ref->{fromwarehouse_id}><input type=hidden name="warehouse_$i" value="$ref->{fromwarehouse}">$ref->{fromwarehouse}</td>|;
+    $pm = "";
+    if ($ref->{assemblyitem}) {
+      $pm = "<font color=";
+      if ($ref->{fromonhand} >= $ref->{transfer}) {
+        $pm .= "green";
+      } else {
+        $pm .= "red";
+        if ($ref->{fromonhand} <= 0) {
+          $ref->{transfer} = 0;
+        } else {
+          $ref->{transfer} = $ref->{fromonhand};
+        }
+      }
+      $pm .= ">";
+    }
+    $column_data{fromonhand} = qq|<td align=right>$pm|.$form->format_amount(\%myconfig, $ref->{fromonhand}, undef, "0");
+    $column_data{fromonhand} .= "</font>" if $pm;
+    $column_data{fromonhand} .= qq|</td>|;
+    
+    $column_data{towarehouse} = qq|<td><input type=hidden name="towarehouse_$i" value="$ref->{towarehouse}--$ref->{towarehouse_id}">$ref->{towarehouse}</td>|;
+    $column_data{toonhand} = qq|<td align=right>|.$form->format_amount(\%myconfig, $ref->{toonhand}, undef, "0").qq|</td>|;
+
+    $column_data{qty} = qq|<td align=right>|.$form->format_amount(\%myconfig, $ref->{qty}, undef, "0").qq|</td>|;
+
+
+    if ($ref->{assemblyitem}) {
+      $column_data{transfer} = qq|<td><input class="inputright" name="transfer_$i" size=4 value=|.$form->format_amount(\%myconfig, $ref->{transfer}).qq|></td>|;
+    } else {
+      $column_data{qty} = qq|<td align=right>|.$form->format_amount(\%myconfig, $form->{qty}, undef, "0").qq|</td>| unless $ref->{assemblyitem};
+      $column_data{transfer} = qq|<td>&nbsp;</td>|;
+    }
+
+    $j++; $j %= 2;
+    print "
+        <tr class=listrow$j>";
+    
+    for (@column_index) { print "\n$column_data{$_}" }
+
+    print qq|
+	</tr>
+|;
+
+    $sameid = $ref->{id};
+
+  }
+  
+  print qq|
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td><hr size=3 noshade></td>
+  </tr>
+   <tr>
+    <td nowrap>|.$locale->text('Date').qq| <input name=shippingdate size=11 value="$form->{shippingdate}" class="date" title="$myconfig{dateformat}">|.&js_calendar("main", "shippingdate").qq|
+    </td>
+  </tr>
+  <tr>
+    <td><hr size=3 noshade></td>
+  </tr>
+</table>
+
+<br>
+
+|;
+
+  $form->{action} = "transfer";
+  $form->{rowcount} = $i;
+
+  $form->hide_form(qw(employee path login action rowcount callback));
+  
+  %button = (
+	     'Transfer' => { ndx => 11, key => 'T', value => $locale->text('Transfer') },
+	    );
+
+  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+
+  if ($form->{menubar}) {
+    require "$form->{path}/menu.pl";
+    &menubar;
+  }
+
+  print qq|
+</form>
+
+</body>
+</html>
+|;
+
 }
 
 
@@ -3829,4 +5314,8 @@ sub add_labor_overhead {
   &add;
 }
 
+sub add_kit {
+  $form->{item} = 'kit';
+  &add;
+}
 

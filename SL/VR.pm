@@ -213,8 +213,7 @@ sub list_vouchers {
                 FROM vr
 		JOIN ap a ON (a.id = vr.trans_id)
 		JOIN vendor v ON (v.id = a.vendor_id)
-		WHERE vr.br_id = $form->{batchid}
-                ORDER by $sortorder|;
+		WHERE vr.br_id = $form->{batchid}|;
 
   } elsif ($form->{batch} eq 'payment') {
 
@@ -295,6 +294,8 @@ sub delete_transaction {
   my $table = "ap";
   $table = "gl" if $form->{batch} eq 'gl';
   
+  $form->{id} *= 1;
+
   $query = qq|SELECT amount
               FROM $table
 	      WHERE id = $form->{id}|;
@@ -338,7 +339,9 @@ sub delete_payment_reversal {
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
   my $query;
- 
+
+  $form->{id} *= 1;
+  
   $query = qq|SELECT ac.trans_id, ac.amount * -1
               FROM acc_trans ac
 	      JOIN vr ON (vr.id = ac.vr_id)
@@ -391,6 +394,8 @@ sub delete_batch {
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
+  
+  $form->{batchid} *= 1;
   
   my $query = qq|SELECT vr.id, vr.trans_id
                  FROM vr
@@ -499,6 +504,8 @@ sub post_batch {
     $disconnect = 1;
   }
 
+  $form->{batchid} *= 1;
+  
   my $query = qq|SELECT trans_id, id
                  FROM vr
 	         WHERE br_id = $form->{batchid}|;
@@ -606,7 +613,7 @@ sub payment_reversal {
   my $description;
   my $translation;
 
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     # get payment account and vouchernumber
     $query = qq|SELECT ac.source, ac.memo, c.accno, c.description,
                 l.description
@@ -637,7 +644,9 @@ sub post_payment_reversal {
   
   $form->{vouchernumber} = $form->update_defaults($myconfig, 'vouchernumber', $dbh) unless $form->{vouchernumber};
   
-  if ($form->{id}) {
+  $form->{batchid} *= 1;
+  
+  if ($form->{id} *= 1) {
 
     $query = qq|SELECT ac.amount
 		FROM acc_trans ac

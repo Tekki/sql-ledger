@@ -1,38 +1,39 @@
 $self{texts} = {
-  'Check'                       => 'Cheque',
 };
 
 $self{subs} = {
-  'Oracle'                      => 'Oracle',
-  'Pg'                          => 'Pg',
-  'PgPP'                        => 'PgPP',
-  'Sybase'                      => 'Sybase',
-  'add_dataset'                 => 'add_dataset',
+  'add_user'                    => 'add_user',
   'adminlogin'                  => 'adminlogin',
+  'change_admin_password'       => 'change_admin_password',
   'change_password'             => 'change_password',
   'check_password'              => 'check_password',
   'continue'                    => 'continue',
   'create_config'               => 'create_config',
   'create_dataset'              => 'create_dataset',
   'dbcreate'                    => 'dbcreate',
+  'dbdelete'                    => 'dbdelete',
   'dbdriver_defaults'           => 'dbdriver_defaults',
   'dbselect_source'             => 'dbselect_source',
+  'dbupdate'                    => 'dbupdate',
   'delete'                      => 'delete',
-  'do_change_password'          => 'do_change_password',
-  'do_delete'                   => 'do_delete',
-  'do_lock_system'              => 'do_lock_system',
+  'delete_dataset'              => 'delete_dataset',
   'edit'                        => 'edit',
   'form_footer'                 => 'form_footer',
   'form_header'                 => 'form_header',
   'getpassword'                 => 'getpassword',
-  'list_datasets'               => 'list_datasets',
-  'lock_dataset'                => 'lock_dataset',
+  'list_users'                  => 'list_users',
   'lock_system'                 => 'lock_system',
   'login'                       => 'login',
+  'login_name'                  => 'login_name',
   'logout'                      => 'logout',
-  'unlock_dataset'              => 'unlock_dataset',
+  'main_menu'                   => 'main_menu',
+  'oracle_database_administration' => 'oracle_database_administration',
+  'pg_database_administration'  => 'pg_database_administration',
+  'pgpp_database_administration' => 'pgpp_database_administration',
+  'save'                        => 'save',
   'unlock_system'               => 'unlock_system',
-  'yes'                         => 'yes',
+  'update_dataset'              => 'update_dataset',
 };
-  
+
 1;
+

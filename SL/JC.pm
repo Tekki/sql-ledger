@@ -14,7 +14,7 @@
 
 package JC;
 
-use SL::IS;
+use SL::PM;
 
 
 sub retrieve_card {
@@ -35,7 +35,7 @@ sub retrieve_card {
  
   $form->remove_locks($myconfig, $dbh, 'jcitems');
   
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     # retrieve timecard/storescard
     $query = qq|SELECT j.*, to_char(j.checkedin, 'HH24:MI:SS') AS checkedina,
                 to_char(j.checkedout, 'HH24:MI:SS') AS checkedouta,
@@ -77,12 +77,11 @@ sub retrieve_card {
     for (qw(printed queued)) { $form->{$_} =~ s/ +$//g }
 
     if ($form->{customer_id}) {
-      my $pmh = price_matrix_query($dbh, $form, $form->{project_id}, $form->{customer_id});
+      $form->exchangerate_defaults($dbh, $myconfig, $form);
+      my $pmh = PM->price_matrix_query($dbh, $form);
       %ref = ();
       $ref->{id} = $form->{parts_id};
-      
-      IS::exchangerate_defaults($dbh, $myconfig, $form);
-      IS::price_matrix($pmh, $ref, $form->datetonum($myconfig, $form->{transdate}), 4, $form, $myconfig);
+      PM->price_matrix($pmh, $ref, $form->datetonum($myconfig, $form->{transdate}), 4, $form, $myconfig);
     }
 
   }
@@ -92,6 +91,8 @@ sub retrieve_card {
   JC->jcitems_links($myconfig, $form, $dbh);
 
   $form->all_languages($myconfig, $dbh);
+  
+  $form->all_references($dbh, $form->{type});
 
   $dbh->disconnect;
 
@@ -115,7 +116,7 @@ sub jcitems_links {
 
   my $query;
 
-  if ($form->{project_id}) {
+  if ($form->{project_id} *= 1) {
     $query = qq|SELECT parts_id
                 FROM project
 	        WHERE id = $form->{project_id}|;
@@ -191,7 +192,7 @@ sub jcitems_links {
   $sth->finish;
 
   $form->reports($myconfig, $dbh, $form->{login});
-  
+
   $dbh->disconnect if $disconnect;
   
 }
@@ -208,8 +209,8 @@ sub retrieve_item {
   my $query = qq|SELECT customer_id
                  FROM project
 		 WHERE id = $project_id|;
-  ($customer_id) = $dbh->selectrow_array($query);
-  $customer_id *= 1;
+  ($form->{customer_id}) = $dbh->selectrow_array($query);
+  $form->{customer_id} *= 1;
   
   my $var;
   my $where;
@@ -257,12 +258,12 @@ sub retrieve_item {
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
-  my $pmh = price_matrix_query($dbh, $form, $project_id, $customer_id);
-  IS::exchangerate_defaults($dbh, $myconfig, $form);
+  $form->exchangerate_defaults($dbh, $myconfig, $form);
+  my $pmh = PM->price_matrix_query($dbh, $form);
 
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
     $ref->{description} = $ref->{translation} if $ref->{translation};
-    IS::price_matrix($pmh, $ref, $form->datetonum($myconfig, $form->{transdate}), 4, $form, $myconfig);
+    PM->price_matrix($pmh, $ref, $form->datetonum($myconfig, $form->{transdate}), 4, $form, $myconfig);
     $ref->{parts_id} = $ref->{id};
     delete $ref->{id};
     push @{ $form->{item_list} }, $ref;
@@ -274,12 +275,14 @@ sub retrieve_item {
 }
 
 
-sub delete_timecard {
+sub delete {
   my ($self, $myconfig, $form) = @_;
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
- 
+  
+  $form->{id} *= 1;
+  
   my %audittrail = ( tablename  => 'jcitems',
                      reference  => $form->{id},
 		     formname   => $form->{type},
@@ -314,6 +317,8 @@ sub delete_timecard {
 	      AND trans_id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
 
+  $form->delete_references($dbh);
+  
   $form->remove_locks($myconfig, $dbh, 'jcitems');
 
   my $rc = $dbh->commit;
@@ -394,7 +399,7 @@ sub jcitems {
   
   $where .= " AND j.checkedin >= '$form->{startdatefrom}'" if $form->{startdatefrom};
   $where .= " AND j.checkedout < date '$form->{startdateto}' + 1" if $form->{startdateto};
- 
+
   my $dateformat = $myconfig->{dateformat};
   $dateformat =~ s/yy$/yyyy/;
   $dateformat =~ s/yyyyyy/yyyy/;
@@ -411,7 +416,7 @@ sub jcitems {
   if ($form->{project} eq 'project') {
     $where .= " AND pr.parts_id IS NULL";
   }
-
+  
   $query = qq|SELECT j.id, j.description, j.qty, j.allocated,
 	      to_char(j.checkedin, 'HH24:MI') AS checkedin,
 	      to_char(j.checkedout, 'HH24:MI') AS checkedout,
@@ -421,7 +426,7 @@ sub jcitems {
 	      p.partnumber,
 	      pr.projectnumber, pr.description AS projectdescription,
 	      e.employeenumber, e.name AS employee,
-	      to_char(j.checkedin, 'WW') AS workweek, pr.parts_id,
+	      to_char(j.checkedin, 'IW') AS workweek, pr.parts_id,
 	      j.sellprice, p.inventory_accno_id, p.income_accno_id,
 	      j.notes
 	      FROM jcitems j
@@ -457,7 +462,7 @@ sub jcitems {
     
     $ref->{transdate} = $ref->{transdatea};
     delete $ref->{transdatea};
-    
+
     push @{ $form->{transactions} }, $ref;
   }
   $sth->finish;
@@ -480,8 +485,9 @@ sub save {
   my $sth;
   
   my ($null, $project_id) = split /--/, $form->{projectnumber};
-
-  if ($form->{id}) {
+  $project_id *= 1;
+  
+  if ($form->{id} *= 1) {
     # check if it was a job
     $query = qq|SELECT pr.parts_id, pr.production - pr.completed
 		FROM project pr
@@ -554,6 +560,9 @@ sub save {
 
   # save printed, queued
   $form->save_status($dbh);
+  
+  # save references
+  $form->save_reference($dbh, $form->{type});
 
   my %audittrail = ( tablename  => 'jcitems',
                      reference  => $form->{id},
@@ -562,57 +571,12 @@ sub save {
 		     id         => $form->{id} );
 
   $form->audittrail($dbh, "", \%audittrail);
-  
+
   $form->remove_locks($myconfig, $dbh, 'jcitems');
 
   my $rc = $dbh->commit;
   
   $rc;
-
-}
-
-
-sub price_matrix_query {
-  my ($dbh, $form, $project_id, $customer_id) = @_;
-  
-  my $curr = substr($form->get_currencies($dbh, $myconfig),0,3);
-  
-  my $query = qq|SELECT p.id AS parts_id, 0 AS customer_id, 0 AS pricegroup_id,
-              0 AS pricebreak, p.sellprice, NULL AS validfrom, NULL AS validto,
-	      '$curr' AS curr, '' AS pricegroup
-              FROM parts p
-	      WHERE p.id = ?
-
-	      UNION
-  
-              SELECT p.*, g.pricegroup
-              FROM partscustomer p
-	      LEFT JOIN pricegroup g ON (g.id = p.pricegroup_id)
-	      WHERE p.parts_id = ?
-	      AND p.customer_id = $customer_id
-	      
-	      UNION
-
-	      SELECT p.*, g.pricegroup 
-	      FROM partscustomer p 
-	      LEFT JOIN pricegroup g ON (g.id = p.pricegroup_id)
-	      JOIN customer c ON (c.pricegroup_id = g.id)
-	      WHERE p.parts_id = ?
-	      AND c.id = $customer_id
-	      
-	      UNION
-
-	      SELECT p.*, '' AS pricegroup
-	      FROM partscustomer p
-	      WHERE p.customer_id = 0
-	      AND p.pricegroup_id = 0
-	      AND p.parts_id = ?
-
-	      ORDER BY 2 DESC, 3 DESC, 4
-	      
-	      |;
-
-  $dbh->prepare($query) || $form->dberror($query);
 
 }
 

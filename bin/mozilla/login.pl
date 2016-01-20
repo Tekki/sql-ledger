@@ -1,6 +1,6 @@
 #=====================================================================
-# SQL-Ledger ERP
-# Copyright (c) 2006
+# SQL-Ledger
+# Copyright (c) DWS Systems Inc.
 #
 #  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.com
@@ -24,14 +24,14 @@ $locale = new Locale $language, "login";
 $form->{charset} = $locale->{charset};
 
 # customization
-if (-f "$form->{path}/custom_$form->{script}") {
-  eval { require "$form->{path}/custom_$form->{script}"; };
+if (-f "$form->{path}/custom/$form->{script}") {
+  eval { require "$form->{path}/custom/$form->{script}"; };
   $form->error($@) if ($@);
 }
 
 # per login customization
-if (-f "$form->{path}/$form->{login}_$form->{script}") {
-  eval { require "$form->{path}/$form->{login}_$form->{script}"; };
+if (-f "$form->{path}/custom/$form->{login}/$form->{script}") {
+  eval { require "$form->{path}/custom/$form->{login}/$form->{script}"; };
   $form->error($@) if ($@);
 }
 
@@ -55,11 +55,7 @@ sub login_screen {
 
   $form->header;
 
-  if ($form->{login}) {
-   $sf = qq|function sf() { document.forms[0].password.focus(); }|;
-  } else {
-   $sf = qq|function sf() { document.forms[0].login.focus(); }|;
-  }
+  $focus = ($form->{login}) ? "password" : "login";
 
   print qq|
 <script language="javascript" type="text/javascript">
@@ -77,16 +73,17 @@ function jsp() {
   else
     document.forms[0].js.value = "1"
 }
-$sf
 // End -->
 </script>
-|;
 
-  print qq|
-
-<body class=login onload="jsp(); sf()">
+<body class=login onload="jsp(); document.forms[0].${focus}.focus()">
 
 <pre>
+
+
+
+
+
 
 </pre>
 
@@ -98,7 +95,7 @@ $sf
 
 <p>
 
-      <form method=post action=$form->{script}>
+    <form method=post name=main action=$form->{script}>
 
       <table width=100%>
 	<tr>
@@ -235,8 +232,8 @@ sub login {
       $_ = shift @members;
       if (/^\[(.*\@.*)\]/) {
 	$login = $1;
-	if ($login =~ /^$form->{login}(\@|$)/) {
-	  ($name, $dbname) = split /\@/, $login;
+	if ($login =~ /^\Q$form->{login}\E(\@|$)/) {
+	  ($name, $dbname) = split /\@/, $login, 2;
 	  $login{$login} = $dbname;
 
 	  do {
@@ -359,14 +356,16 @@ sub login {
 }
 
 
-
 sub logout {
 
-  require "$userspath/$form->{login}.conf";
-  $myconfig{dbpasswd} = unpack 'u', $myconfig{dbpasswd};
-
   $form->{callback} = "$form->{script}?path=$form->{path}&endsession=1";
-  User->logout(\%myconfig, \%$form);
+
+  if (-f "$userspath/$form->{login}.conf") {
+    require "$userspath/$form->{login}.conf";
+    $myconfig{dbpasswd} = unpack 'u', $myconfig{dbpasswd};
+
+    User->logout(\%myconfig, \%$form);
+  }
 
   $form->redirect;
 
@@ -395,6 +394,7 @@ sub email_tan {
   $mail->{message} = $locale->text('TAN').": $tan";
   $mail->{from} = $mail->{to} = qq|"$user->{name}" <$user->{email}>|;
   $mail->{subject} = "SQL-Ledger $form->{version} $user->{company} $mail->{message}";
+
 
   $form->error($err) if ($err = $mail->send($sendmail));
 

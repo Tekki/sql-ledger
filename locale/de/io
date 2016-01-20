@@ -1,6 +1,7 @@
 $self{charset} = 'ISO-8859-1';
 
 $self{texts} = {
+  'ZW' => 'Zwischen',
   'Add Part'                    => 'Ware anlegen',
   'Add Purchase Order'          => 'Einkaufsbeleg anlegen',
   'Add Quotation'               => 'Angebot erstellen',
@@ -121,6 +122,8 @@ $self{texts} = {
 };
 
 $self{subs} = {
+  'api_email_invoice'           => 'api_email_invoice',
+  'api_quit'                    => 'api_quit',
   'calc_markup'                 => 'calc_markup',
   'check_form'                  => 'check_form',
   'create_form'                 => 'create_form',

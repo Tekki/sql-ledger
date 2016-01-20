@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# -n do not include custom_ scripts
+# -n do not include custom scripts
 # -a build all file
 # -m do not generate missing files
 
@@ -24,21 +24,15 @@ $language =~ s/\((.*)\)/$1/;
 $charset = $1;
 
 opendir DIR, "$bindir" or die "$!";
-@progfiles = grep { /\.pl/; !/(_|^\.|temp)/ } readdir DIR;
-seekdir DIR, 0;
-@customfiles = grep /_/, readdir DIR;
+@progfiles = grep { /\.pl/ } readdir DIR;
 closedir DIR;
 
-# put customized files into @customfiles
-@customfiles = () if ($arg{n});
-
-if ($arg{n}) {
-  @menufiles = ($menufile);
-} else {
-  opendir DIR, "$basedir" or die "$!";
-  @menufiles = grep { /.*?_$menufile$/ } readdir DIR;
-  closedir DIR;
-  unshift @menufiles, $menufile;
+# custom logins
+if (!$arg{n}) {
+  if (opendir DIR, "$bindir/custom") {
+    @customlogins = grep !/(\.pl|\.)/, readdir DIR;
+    closedir DIR;
+  }
 }
 
 if (-f "all") {
@@ -57,8 +51,6 @@ if (-f 'missing') {
   unlink "missing";
 }
 
-#goto NEW;
-
 foreach $file (@progfiles) {
   
   %locale = ();
@@ -69,19 +61,20 @@ foreach $file (@progfiles) {
   
   &scanfile("$bindir/$file");
 
-  # scan custom_{module}.pl or {login}_{module}.pl files
-  foreach $customfile (@customfiles) {
-    if ($customfile =~ /_$file/) {
-      if (-f "$bindir/$customfile") {
-	&scanfile("$bindir/$customfile");
-      }
-    }
+  # scan custom/{module}.pl and custom/{login}/{module}.pl files
+  &scanfile("$bindir/custom/$file");
+
+  foreach $customlogin (@customlogins) {
+    &scanfile("$bindir/custom/$customlogin/$file");
   }
   
   # if this is the menu.pl file
   if ($file eq 'menu.pl') {
-    foreach $item (@menufiles) {
-      &scanmenu("$basedir/$item");
+    &scanmenu("$basedir/$menufile");
+    &scanmenu("$bindir/custom/$menufile");
+
+    foreach $customlogin (@customlogins) {
+      &scanmenu("$bindir/custom/$customlogin/$menufile");
     }
   }
   
@@ -294,7 +287,7 @@ sub scanfile {
   my ($file, $level) = @_;
 
   my $fh = new FileHandle;
-  open $fh, "$file" or die "$! : $file";
+  return unless open $fh, "$file";
 
   $file =~ s/\.pl//;
   $file =~ s/$bindir\///;
@@ -329,7 +322,10 @@ sub scanfile {
       my $newfile = $&;
       $newfile =~ s/require\s+\W//;
       $newfile =~ s/\$form->{path}\///;
-      &scanfile("$bindir/$newfile", 1) if $newfile !~ /_/;
+
+      if ($newfile !~ /(custom|\$form->{login})/) {
+	&scanfile("$bindir/$newfile", 1);
+      }
     }
    
     # is this a sub ?
@@ -389,7 +385,7 @@ sub scanmenu {
   my $file = shift;
 
   my $fh = new FileHandle;
-  open $fh, "$file" or die "$! : $file";
+  retunr unless open $fh, "$file";
 
   my @a = grep /^\[/, <$fh>;
   close($fh);

@@ -7,7 +7,6 @@ $self{texts} = {
   'Incorrect Dataset version!'  => 'Ungültige Datensatzversion',
   'Login'                       => 'Anmelden',
   'Name'                        => 'Name',
-  'No email address for'        => 'Keine eMailadresse für',
   'Password'                    => 'Passwort',
   'Upgrading to Version'        => 'Datensatz wird erneuert auf Version',
   'Version'                     => 'Version',
@@ -15,14 +14,10 @@ $self{texts} = {
 };
 
 $self{subs} = {
-  'continue'                    => 'continue',
-  'email_tan'                   => 'email_tan',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
-  'tan_login'                   => 'tan_login',
-  'weiter'                      => 'continue',
   'anmelden'                    => 'login',
 };
 

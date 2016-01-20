@@ -444,23 +444,6 @@ sub get_spoolfiles {
   }
   $sth->finish;
 
-  # include spoolfiles only
-  if ($form->{batch} eq 'queue') {
-    $query = qq|SELECT s.*, s.trans_id AS id
-                FROM status s
-                WHERE s.formname = '$form->{type}'
-                AND s.spoolfile IS NOT NULL|;
-    $sth = $dbh->prepare($query);
-
-    $sth->execute || $form->dberror($query);
-    while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
-      if (!$id{$ref->{id}}) {
-	push @{ $form->{SPOOL} }, $ref;
-      }
-    }
-    $sth->finish;
-  }
-
   $dbh->disconnect;
 
 }

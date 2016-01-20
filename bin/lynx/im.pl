@@ -1,6 +1,6 @@
 #=====================================================================
-# SQL-Ledger ERP
-# Copyright (c) 2007
+# SQL-Ledger
+# Copyright (c) DWS Systems Inc.
 #
 #  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.com
@@ -14,9 +14,9 @@
 
 use SL::IM;
 use SL::CP;
-use SL::JS;
 
 require "$form->{path}/sr.pl";
+require "$form->{path}/js.pl";
 
 1;
 # end of main
@@ -59,7 +59,7 @@ sub import {
   $form->{nextsub} = "im_$form->{type}";
 
   $form->{delimiter} = ",";
-
+  
   if ($form->{type} eq 'payment') {
     IM->paymentaccounts(\%myconfig, \%$form);
     if (@{ $form->{all_paymentaccount} }) {
@@ -93,7 +93,7 @@ sub import {
 	</tr>
 |;
   }
-  
+
   $form->all_languages(\%myconfig);
 
   if (@{ $form->{all_language} }) {
@@ -341,12 +341,14 @@ sub export {
   }
 
 
-  JS->change_report(\%$form, \@input, \@checked, \%radio);
+  &change_report(\%$form, \@input, \@checked, \%radio);
+
+  &calendar;
   
   print qq|
 <body>
 
-<form method=post action=$form->{script}>
+<form method="post" name="main" action="$form->{script}">
 
 <table width=100%>
   <tr>
@@ -363,7 +365,7 @@ sub export {
 	<tr>
 	  <th align="right">|.$locale->text('Date Prepared').qq|</th>
 	  <td>
-	    <input name=dateprepared value="$form->{dateprepared}" title="$myconfig{dateformat}">
+	    <input name=dateprepared value="$form->{dateprepared}" title="$myconfig{dateformat}">|.&js_calendar("main", "dateprepared").qq|
 	  </td>
 	  <td>$includeinreport{dateprepared}->{html}</td>
 	</tr>
@@ -505,9 +507,13 @@ sub im_sales_invoice {
   $column_data{duedate} = $locale->text('Due Date');
   $column_data{employee} = $locale->text('Salesperson');
 
-  $form->helpref("import_$form->{type}", $myconfig{countrycode});
+  $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
   
+  $form->helpref("import_$form->{type}", $myconfig{countrycode});
+
   $form->header;
+  
+  &check_all(qw(allbox ndx_));
  
   print qq|
 <body>
@@ -690,10 +696,14 @@ sub im_order {
   $column_data{total} = $locale->text('Total');
   $column_data{curr} = $locale->text('Curr');
 
+  $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
+
   $form->helpref("import_$form->{type}", $myconfig{countrycode});
   
   $form->header;
  
+  &check_all(qw(allbox ndx_));
+
   print qq|
 <body>
 
@@ -848,12 +858,16 @@ sub im_coa {
   $column_data{gifi_accno} = $locale->text('GIFI');
   $column_data{contra} = $locale->text('C');
   
+  $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
+  
   IM->prepare_import_data(\%myconfig, \%$form);
  
   $form->helpref("import_$form->{type}", $myconfig{countrycode});
   
   $form->header;
  
+  &check_all(qw(allbox ndx_));
+  
   print qq|
 <body>
 
@@ -1349,11 +1363,15 @@ sub im_csv_payment {
   $column_data{dcn} = $locale->text('DCN');
   $column_data{amount} = $locale->text('Paid');
   $column_data{exchangerate} = $locale->text('Exch');
-
+  
+  $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
+  
   $form->helpref("import_$form->{type}", $myconfig{countrycode});
 
   $form->header;
- 
+  
+  &check_all(qw(allbox ndx_));
+
   print qq|
 <body>
 
@@ -1597,10 +1615,17 @@ sub im_vc {
   $column_data{bankzipcode} = $locale->text('Zipcode');
   $column_data{bankcountry} = $locale->text('Country');
 
+  $column_data{clearingnumber} = $locale->text('Clearing Number');
+  $column_data{membernumber} = $locale->text('Member Number');
+  
+  $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
+
   $form->helpref("import_$form->{type}", $myconfig{countrycode});
   
   $form->header;
  
+  &check_all(qw(allbox ndx_));
+
   print qq|
 <body>
 
@@ -1721,7 +1746,7 @@ sub im_item {
   for (qw(type login path)) { $form->{callback} .= "&$_=$form->{$_}" }
 
   &xrefhdr;
-    
+   
   @column_index = qw(runningnumber ndx);
 
   for (sort { $form->{$form->{type}}{$a}{ndx} <=> $form->{$form->{type}}{$b}{ndx} } keys %{ $form->{$form->{type}} }) {
@@ -1761,11 +1786,15 @@ sub im_item {
   $column_data{vendorpartnumber} = $locale->text('Part Number');
   $column_data{leadtime} = $locale->text('Leadtime');
   $column_data{vendorcurr} = $locale->text('Curr');
+  
+  $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
 
   $form->helpref("import_$form->{type}", $myconfig{countrycode});
   
   $form->header;
  
+  &check_all(qw(allbox ndx_));
+  
   print qq|
 <body>
 
@@ -1846,7 +1875,7 @@ sub im_item {
 
 sub import_parts { &import_items }
 sub import_services { &import_items }
-sub import_labor { &import_items }
+sub import_labor_overhead { &import_items }
 
 
 sub import_items {
@@ -1885,15 +1914,18 @@ sub im_partsgroup {
   }
 
   $column_data{runningnumber} = "&nbsp;";
-  $column_data{ndx} = "&nbsp;";
   $column_data{partsgroup} = $locale->text('Group');
   $column_data{code} = $locale->text('Code');
   $column_data{pos} = $locale->text('POS');
   
+  $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
+
   $form->helpref("import_$form->{type}", $myconfig{countrycode});
 
   $form->header;
  
+  &check_all(qw(allbox ndx_));
+
   print qq|
 <body>
 
@@ -2128,7 +2160,7 @@ sub ex_payment {
   
   $form->header;
 
-  JS->check_all(qw(allbox ndx_));
+  &check_all(qw(allbox ndx_));
 
   print qq|
   
@@ -2698,7 +2730,7 @@ sub export_payments {
   binmode(OUT);
 
   print qq|Content-Type: application/file;
-Content-Disposition: attachment; filename="$form->{filename}.$form->{filetype}"\n\n|;
+Content-Disposition: attachment; filename=$form->{filename}.$form->{filetype}\n\n|;
 
 
   if ($form->{filetype} eq 'csv') {

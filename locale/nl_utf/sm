@@ -1,0 +1,23 @@
+$self{texts} = {
+  'Beginning date'              => 'Begin datum',
+  'Continue'                    => 'Verder',
+  'Date missing'                => 'Datum ontbreekt',
+  'Delete Open Invoices'        => 'Verwijder open facturen',
+  'Deleting Invoices ... '      => 'Facturen worden verwijderd...',
+  'From'                        => 'Van',
+  'Repost Invoices'             => 'Facturen opnieuw boeken',
+  'To'                          => 'Tot',
+  'done'                        => 'gebeurd',
+  'please wait'                 => 'even geduld',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'delete_invoices'             => 'delete_invoices',
+  'do_delete_invoices'          => 'do_delete_invoices',
+  'do_repost_invoices'          => 'do_repost_invoices',
+  'repost_invoices'             => 'repost_invoices',
+};
+
+1;
+

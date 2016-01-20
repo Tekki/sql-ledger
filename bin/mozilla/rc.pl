@@ -1,6 +1,6 @@
 #=====================================================================
-# SQL-Ledger ERP
-# Copyright (c) 2006
+# SQL-Ledger
+# Copyright (c) DWS Systems Inc.
 #
 #  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.com
@@ -12,7 +12,8 @@
 #======================================================================
 
 use SL::RC;
-use SL::JS;
+
+require "$form->{path}/js.pl";
 
 1;
 # end of main
@@ -50,8 +51,8 @@ sub reconciliation {
   
   RC->paymentaccounts(\%myconfig, \%$form);
 
-  $selection = "";
-  for (@{ $form->{PR} }) { $selection .= "<option>$_->{accno}--$_->{description}\n" }
+  $selectaccno = "";
+  for (@{ $form->{PR} }) { $selectaccno .= "$_->{accno}--$_->{description}\n" }
 
   $form->{title} = $locale->text('Reconciliation');
 
@@ -67,30 +68,40 @@ sub reconciliation {
     $selectaccountingmonth = "\n";
     for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|$_--| . $locale->text($form->{all_month}{$_}).qq|\n| }
 
+    $form->{interval} = "1" unless exists $form->{interval};
+    $checked{"$form->{interval}"} = "checked";
+    
     $selectfrom = qq|
         <tr>
 	  <th align=right>|.$locale->text('Period').qq|</th>
 	  <td colspan=3>
 	  <select name=month>|.$form->select_option($selectaccountingmonth, $form->{month}, 1, 1).qq|</select>
 	  <select name=year>|.$form->select_option($selectaccountingyear, $form->{year}).qq|</select>
-	  <input name=interval class=radio type=radio value=0>&nbsp;|.$locale->text('Current').qq|
-	  <input name=interval class=radio type=radio value=1 checked>&nbsp;|.$locale->text('Month').qq|
-	  <input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
-	  <input name=interval class=radio type=radio value=12>&nbsp;|.$locale->text('Year').qq|
+	  <input name=interval class=radio type=radio value=0 $checked{0}>&nbsp;|.$locale->text('Current').qq|
+	  <input name=interval class=radio type=radio value=1 $checked{1}>&nbsp;|.$locale->text('Month').qq|
+	  <input name=interval class=radio type=radio value=3 $checked{3}>&nbsp;|.$locale->text('Quarter').qq|
+	  <input name=interval class=radio type=radio value=12 $checked{12}>&nbsp;|.$locale->text('Year').qq|
 	  </td>
 	</tr>
 |;
   }
 
+  %checked = ();
+  $form->{summary} = "1" unless exists $form->{summary};
+  $checked{"$form->{summary}"} = "checked";
+
+  $form->{fx_transaction} = "checked" unless exists $form->{fx_transaction};
 
   $form->helpref("reconciliation", $myconfig{countrycode});
   
   $form->header;
 
+  &calendar;
+  
   print qq|
 <body>
 
-<form method=post action=$form->{script}>
+<form method="post" name="main" action="$form->{script}">
 
 <table width=100%>
   <tr>
@@ -102,21 +113,21 @@ sub reconciliation {
       <table>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Account').qq|</th>
-	  <td colspan=3><select name=accno>$selection</select></td>
+	  <td colspan=3><select name=accno>|.$form->select_option($selectaccno, $form->{accno}).qq|</select></td>
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('From').qq|</th>
-	  <td colspan=3><input name=fromdate size=11 class=date title="$myconfig{dateformat}"> <b>|.$locale->text('To').qq|</b> <input name=todate size=11 class=date title="$myconfig{dateformat}"></td>
+	  <td colspan=3><input name=fromdate size=11 class=date title="$myconfig{dateformat}" value="$form->{fromdate}"> |.&js_calendar("main", "fromdate").qq|<b>|.$locale->text('To').qq|</b> <input name=todate size=11 class=date title="$myconfig{dateformat}" value="$form->{todate}">|.&js_calendar("main", "todate").qq|</td>
 	</tr>
 	$selectfrom
         <tr>
 	  <td></td>
-	  <td colspan=3><input type=radio style=radio name=summary value=1 checked> |.$locale->text('Summary').qq|
-	  <input type=radio style=radio name=summary value=0> |.$locale->text('Detail').qq|</td>
+	  <td colspan=3><input type=radio style=radio name=summary value=1 $checked{1}> |.$locale->text('Summary').qq|
+	  <input type=radio style=radio name=summary value=0 $checked{0}> |.$locale->text('Detail').qq|</td>
 	</tr>
 	<tr>
 	  <td></td>
-	  <td colspan=3><input type=checkbox class=checkbox name=fx_transaction value=1 checked> |.$locale->text('Include Exchange Rate Difference').qq|</td>
+	  <td colspan=3><input type=checkbox class=checkbox name=fx_transaction value=1 $form->{fx_transaction}> |.$locale->text('Include Exchange Rate Difference').qq|</td>
 	</tr>
       </table>
     </td>
@@ -207,10 +218,10 @@ sub display_form {
   $form->helpref("rec_list", $myconfig{countrycode});
   
   $form->header;
-
-  JS->check_all(qw(allbox checked_));
-
-  print qq| 
+  
+  &check_all(qw(allbox checked_));
+  
+  print qq|
 <body>
 
 <form method=post action=$form->{script}>
@@ -435,7 +446,7 @@ sub display_form {
 </table>
 |;
 
-    $form->hide_form(qw(recdate fx_transaction summary rowcount accno account fromdate todate path login));
+    $form->hide_form(qw(recdate fx_transaction summary rowcount accno account fromdate todate month year interval path login));
     
     %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
 	       'Select all' => { ndx => 2, key => 'A', value => $locale->text('Select all') },
@@ -515,7 +526,15 @@ sub deselect_all {
 
 sub done {
 
-  $form->{callback} = "$form->{script}?path=$form->{path}&action=reconciliation&login=$form->{login}";
+  $form->{callback} = "$form->{script}?path=$form->{path}&action=reconciliation";
+  if ($form->{month} && $form->{year}) {
+    for (qw(fromdate todate)) { delete $form->{$_} }
+  }
+
+  for (qw(login fromdate todate month year interval)) {
+    $form->{callback} .= "&$_=$form->{$_}";
+  }
+  $form->{callback} .= "&accno=".$form->escape("$form->{accno}--$form->{account}",1);
 
   $form->error($locale->text('Out of balance!')) if ($form->{difference} *= 1);
 

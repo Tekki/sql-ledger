@@ -1,0 +1,38 @@
+$self{texts} = {
+  'Account'                     => 'Rekening',
+  'Amount'                      => 'Bedrag',
+  'Continue'                    => 'Verder',
+  'DCN missing!'                => 'DCN ontbreekt!',
+  'Date'                        => 'Datum',
+  'Memo'                        => 'Memo',
+  'Nothing to print!'           => 'Niets af te drukken!',
+  'PDF'                         => 'PDF',
+  'Postscript'                  => 'Postscript',
+  'RVC missing!'                => 'RVC ontbreekt!',
+  'Screen'                      => 'Scherm',
+  'Select a Printer!'           => 'Selecteer een Printer',
+  'Select payment'              => 'Kies een betaling',
+  'Source'                      => 'Herkomst',
+  'Text'                        => 'Tekst',
+  'XML'                         => 'XML',
+  'html'                        => 'html',
+};
+
+$self{subs} = {
+  'payment_selected'            => 'payment_selected',
+  'print'                       => 'print',
+  'print_and_post'              => 'print_and_post',
+  'print_check'                 => 'print_check',
+  'print_credit_note'           => 'print_credit_note',
+  'print_debit_note'            => 'print_debit_note',
+  'print_options'               => 'print_options',
+  'print_payslip'               => 'print_payslip',
+  'print_receipt'               => 'print_receipt',
+  'print_remittance_voucher'    => 'print_remittance_voucher',
+  'print_transaction'           => 'print_transaction',
+  'select_payment'              => 'select_payment',
+  'verder'                      => 'continue',
+};
+
+1;
+

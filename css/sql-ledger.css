@@ -11,7 +11,7 @@ A:hover { color: white;
 
 body {
   font-family: Verdana, Arial, Helvetica, sans-serif;
-  color: #444444;
+  color: black;
   font-size: 11px;
   background-color: #ffffff;
 }
@@ -154,9 +154,9 @@ input {
   font-weight: bold;
 }
 
-/* .inputright {
+.inputright {
   text-align:right;
-} */
+}
 
 select {
   font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -212,4 +212,3 @@ h2.error {
     display: none;
   }
 }
-

@@ -1,6 +1,6 @@
 #=====================================================================
-# SQL-Ledger ERP
-# Copyright (C) 2006
+# SQL-Ledger
+# Copyright (c) DWS Systems Inc.
 #
 #  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.com
@@ -13,6 +13,8 @@
 #======================================================================
 
 use SL::CA;
+require "$form->{path}/js.pl";
+
 
 1;
 # end of main
@@ -189,10 +191,12 @@ sub list {
   
   $form->header;
   
+  &calendar;
+ 
   print qq|
 <body>
 
-<form method=post action=$form->{script}>
+<form method="post" name="main" action="$form->{script}">
 |;
 
   $form->hide_form(qw(accno description accounttype gifi_accno gifi_description login path));
@@ -210,9 +214,8 @@ sub list {
         $department
 	<tr>
 	  <th align=right>|.$locale->text('From').qq|</th>
-	  <td><input name=fromdate size=11 class=date title="$myconfig{dateformat}"></td>
-	  <th align=right>|.$locale->text('To').qq|</th>
-	  <td><input name=todate size=11 class=date title="$myconfig{dateformat}"></td>
+	  <td><input name=fromdate size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "fromdate").qq|<b>|.$locale->text('To').qq|</b>
+	  <input name=todate size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "todate").qq|</td>
 	</tr>
 	$selectfrom
 	<tr>

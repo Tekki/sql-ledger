@@ -122,7 +122,7 @@ sub sales_invoice_links {
     if ($#dl) {
       $i++;
       for (keys %{$form->{$form->{type}}}) {
-	$form->{"${_}_$i"} = $dl[$form->{$form->{type}}->{$_}{ndx}] if defined $form->{$form->{type}}->{$_}{ndx};
+	$form->{"${_}_$i"} = $dl[$form->{$form->{type}}->{$_}{ndx}] if $form->{$form->{type}}->{$_}{ndx} >= 0;
       }
 
       if ($sameinvoice ne "$dl[$form->{$form->{type}}->{invnumber}{ndx}]$dl[$form->{$form->{type}}->{customernumber}{ndx}]") {
@@ -258,6 +258,8 @@ sub order_links {
   my %defaults = $form->get_defaults($dbh, \@{['precision']});
   $form->{precision} = $defaults{precision};
   
+  $form->{vc} =~ s/;//g;
+
   # vendor/customer
   $query = qq|SELECT vc.id, vc.name, vc.terms,
 	      e.id AS employee_id, e.name AS employee,
@@ -331,7 +333,7 @@ sub order_links {
     if ($#dl) {
       $i++;
       for (keys %{$form->{$form->{type}}}) {
-	$form->{"${_}_$i"} = $dl[$form->{$form->{type}}->{$_}{ndx}] if defined $form->{$form->{type}}->{$_}{ndx};
+	$form->{"${_}_$i"} = $dl[$form->{$form->{type}}->{$_}{ndx}] if $form->{$form->{type}}->{$_}{ndx} >= 0;
       }
 
       if ($sameorder ne qq|$dl[$form->{$form->{type}}->{ordnumber}{ndx}]$dl[$form->{$form->{type}}->{"$form->{vc}number"}{ndx}]|) {
@@ -454,6 +456,8 @@ sub order_links {
 sub delete_import {
   my ($dbh, $form) = @_;
 
+  for (qw(login reportcode)) { $form->{$_} =~ s/;//g }
+
   my $query = qq|SELECT reportid FROM report
                  WHERE reportcode = '$form->{reportcode}'
 	         AND login = '$form->{login}'|;
@@ -517,6 +521,8 @@ sub import_sales_invoice {
   my $query;
   my $ref;
 
+  for (qw(login reportcode)) { $form->{$_} =~ s/;//g }
+
   $query = qq|SELECT reportid FROM report
               WHERE reportcode = '$form->{reportcode}'
 	      AND login = '$form->{login}'|;
@@ -556,7 +562,7 @@ sub import_sales_invoice {
     my $paid;
     $query = qq|SELECT id, paid
 		FROM ar
-		WHERE invnumber = '$form->{invnumber}'|;
+		WHERE invnumber = |.$dbh->quote($form->{invnumber});
     ($form->{id}, $paid) = $dbh->selectrow_array($query);
 
     if ($form->{id}) {
@@ -586,7 +592,7 @@ sub import_sales_invoice {
   if ($form->{paymentmethod_1}) {
     $query = qq|SELECT id
                 FROM paymentmethod
-		WHERE description = '$form->{paymentmethod_1}'|;
+		WHERE description = |.$dbh->quote($form->{paymentmethod_1});
     ($paymentmethod_id) = $dbh->selectrow_array($query);
 
     $form->{paymentmethod_1} .= "--$paymentmethod_id";
@@ -598,7 +604,7 @@ sub import_sales_invoice {
 	      JOIN address a ON (a.trans_id = c.id)
 	      LEFT JOIN chart ch ON (ch.id = c.payment_accno_id)
 	      LEFT JOIN paymentmethod pm ON (pm.id = c.paymentmethod_id)
-	      WHERE c.id = $form->{customer_id}|;
+	      WHERE c.id = |.$dbh->quote($form->{customer_id});
   ($form->{customernumber}, $language_code, $form->{city}, $paymentaccno, $paymentmethod_id) = $dbh->selectrow_array($query);
 
   $form->{language_code} ||= $language_code;
@@ -614,14 +620,16 @@ sub import_sales_invoice {
 	      AND (validto > '$form->{transdate}' OR validto IS NULL)
 	      ORDER BY t.validto DESC|;
   $sth = $dbh->prepare($query) || $form->dberror($query);
-  $sth->execute;
+  $sth->execute || $form->dberror($query);
 
-  $form->{taxaccounts} = "";
+  my %tax;
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-    $form->{taxaccounts} .= "$ref->{accno} ";
+    $tax{$ref->{accno}} = 1;
     $form->{"$ref->{accno}_rate"} = $ref->{rate};
   }
   $sth->finish;
+  $form->{taxaccounts} = "";
+  for (keys %tax) { $form->{taxaccounts} .= "$_ " }
   chop $form->{taxaccounts};
 
   $form->{employee} = qq|--$form->{"employee_id_1"}|;
@@ -648,6 +656,8 @@ sub import_order {
 
   my $query;
   my $ref;
+
+  for (qw(vc reportcode login)) { $form->{$_} =~ s/;//g }
 
   $query = qq|SELECT reportid FROM report
               WHERE reportcode = '$form->{reportcode}'
@@ -761,7 +771,7 @@ sub import_vc {
   my $ref;
   my $new;
 
-  my $ARAP = ($form->{type} eq 'customer') ? "AR" : "AP";
+  for (qw(type reportcode login)) { $form->{$_} =~ s/;//g }
 
   $query = qq|SELECT reportid FROM report
               WHERE reportcode = '$form->{reportcode}'
@@ -804,7 +814,6 @@ sub import_vc {
       $sth->finish;
 
       $newform->{curr} ||= $form->{defaultcurrency};
-      $newform->{arap_accno} = $newform->{$ARAP};
       
       if ($newform->{"$newform->{db}number"}) {
 	$cth->execute($newform->{"$newform->{db}number"});
@@ -867,7 +876,9 @@ sub import_item {
               FROM defaults
 	      WHERE fldname = 'version'|;
   my ($today) = $dbh->selectrow_array($query);
-  
+ 
+  for (qw(login reportcode)) { $form->{$_} =~ s/;//g }
+
   $query = qq|SELECT reportid FROM report
               WHERE reportcode = '$form->{reportcode}'
 	      AND login = '$form->{login}'|;
@@ -934,7 +945,8 @@ sub import_item {
     ($form->{"IC_$_"}) = $dbh->selectrow_array($query);
   }
 
-  $query = qq|SELECT curr FROM curr
+  $query = qq|SELECT curr
+              FROM curr
               ORDER BY rn|;
   my ($defaultcurrency) = $dbh->selectrow_array($query);
   
@@ -1194,6 +1206,8 @@ sub import_coa {
   my $query;
   my $ref;
 
+  for (qw(login reportcode)) { $form->{$_} =~ s/;//g }
+
   $query = qq|SELECT reportid FROM report
               WHERE reportcode = '$form->{reportcode}'
 	      AND login = '$form->{login}'|;
@@ -1247,7 +1261,7 @@ sub import_coa {
 
 
 
-sub import_group {
+sub import_groups {
   my ($self, $myconfig, $form) = @_;
   
   my $newform = new Form;
@@ -1258,6 +1272,8 @@ sub import_group {
   my $query;
   my $ref;
   my $id;
+
+  for (qw(login reportcode)) { $form->{$_} =~ s/;//g }
 
   $query = qq|SELECT reportid FROM report
               WHERE reportcode = '$form->{reportcode}'
@@ -1356,7 +1372,7 @@ sub prepare_import_data {
     if ($#dl) {
       $i++;
       for (keys %{$form->{$form->{type}}}) {
-	if (defined $form->{$form->{type}}->{$_}{ndx}) {
+	if ($form->{$form->{type}}->{$_}{ndx} >= 0) {
 	  $form->{"${_}_$i"} = $dl[$form->{$form->{type}}->{$_}{ndx}];
 	  if ($form->{"${_}_$i"}) {
 	    $rth->execute("${_}_$i", $form->{"${_}_$i"});
@@ -1400,11 +1416,11 @@ sub paymentaccounts {
   }
   $sth->finish;
 
-  $form->{currencies} = $form->get_currencies($dbh, $myconfig);
+  $form->{currencies} = $form->get_currencies($myconfig, $dbh);
 
   $query = qq|SELECT *
               FROM paymentmethod
-	      ORDER BY 2|;
+	      ORDER BY rn|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
@@ -1446,6 +1462,7 @@ sub payment_links {
 	      a.transdate, a.paymentmethod_id, 'vendor' AS vc,
 	      'ap' AS arap
 	      FROM ap a
+	      JOIN bank b ON (b.id = a.bank_id)
 	      JOIN vendor c ON (a.vendor_id = c.id)
 	      JOIN address ad ON (ad.trans_id = c.id)
 	      WHERE a.amount != a.paid|;
@@ -1508,7 +1525,7 @@ sub payment_links {
       $i++;
 
       for (keys %{$form->{$form->{type}}}) {
-	if (defined $form->{$form->{type}}->{$_}{ndx}) {
+	if ($form->{$form->{type}}->{$_}{ndx} >= 0) {
 	  $dl[$form->{$form->{type}}->{$_}{ndx}] =~ s/(^"|"$)//g;
 	  $form->{"${_}_$i"} = $dl[$form->{$form->{type}}->{$_}{ndx}];
 	}
@@ -1516,7 +1533,7 @@ sub payment_links {
       $form->{"amount_$i"} = $amount;
       
       # dcn
-      if (defined $form->{$form->{type}}->{dcn}{ndx}) {
+      if ($form->{$form->{type}}->{dcn}{ndx} >= 0) {
 	$am = 0;
 	$sth->execute("$dl[$form->{$form->{type}}->{dcn}{ndx}]", "$dl[$form->{$form->{type}}->{dcn}{ndx}]");
 	$ref = $sth->fetchrow_hashref(NAME_lc);
@@ -1716,7 +1733,7 @@ sub reconcile_payments {
   my $query;
   
   $query = qq|SELECT id FROM chart
-              WHERE accno = '$paymentaccount'|;
+              WHERE accno = |.$dbh->quote($paymentaccount);
   my ($paymentaccount_id) = $dbh->selectrow_array($query);
 	      
   $query = qq|UPDATE acc_trans SET

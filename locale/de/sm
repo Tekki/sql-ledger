@@ -3,7 +3,7 @@ $self{charset} = 'ISO-8859-1';
 $self{texts} = {
   'Continue'                    => 'Weiter',
   'From'                        => 'Von',
-  'To'                          => 'Bis',
+  'To'                          => 'An',
   'done'                        => 'fertig',
 };
 

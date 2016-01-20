@@ -158,7 +158,8 @@ sub repost_invoices {
   
   # delete invoices
   foreach $item (qw(ar ap)) {
-    $query = qq|SELECT id FROM $item$tid
+    $query = qq|SELECT id
+                FROM $item$tid
 		ORDER BY transdate, id|;
     $sth = $dbh->prepare($query);
     $sth->execute || &dberror($form, $query, $userspath);

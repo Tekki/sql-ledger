@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 #
 ######################################################################
-# SQL-Ledger ERP
-# Copyright (C) 2006
+# SQL-Ledger
+# Copyright (c) DWS Systems Inc.
 #
 #  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.com
@@ -23,7 +23,6 @@ $templates = "templates";
 $images = "images";
 $memberfile = "users/members";
 $sendmail = "| /usr/sbin/sendmail -t";
-%printer = ();
 ########## end ###########################################
 
 
@@ -55,7 +54,7 @@ $0 =~ tr/\\/\//;
 $pos = rindex $0, '/';
 $script = substr($0, $pos + 1);
 
-@scripts = qw(login.pl admin.pl custom_login.pl custom_admin.pl);
+@scripts = qw(login.pl admin.pl custom/login.pl custom/admin.pl);
 
 if (grep !/^\Q$form{script}\E/, @scripts) {
   print "Content-Type: text/html\n\n" if $ENV{HTTP_USER_AGENT};
