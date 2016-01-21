@@ -1,0 +1,13 @@
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Reference Documents'         => 'Zugehörige Dokumente',
+};
+
+$self{subs} = {
+  'all_references'              => 'all_references',
+  'references'                  => 'references',
+};
+
+1;
+

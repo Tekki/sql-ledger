@@ -3,9 +3,6 @@ $self{charset} = 'UTF-8';
 $self{texts} = {
   'April'                       => 'April',
   'August'                      => 'August',
-  'Beginning date'              => 'Startdatum',
-  'Continue'                    => 'Weiter',
-  'Date missing'                => 'Datum fehlt',
   'December'                    => 'Dezember',
   'February'                    => 'Februar',
   'January'                     => 'Januar',
@@ -15,7 +12,6 @@ $self{texts} = {
   'May'                         => 'Mai',
   'November'                    => 'November',
   'October'                     => 'Oktober',
-  'Repost Invoices'             => 'Rechnungen neu buchen',
   'September'                   => 'September',
 };
 
@@ -24,14 +20,8 @@ $self{subs} = {
   'change_report'               => 'change_report',
   'check_all'                   => 'check_all',
   'clock'                       => 'clock',
-  'continue'                    => 'continue',
-  'do_repost_invoices'          => 'do_repost_invoices',
-  'fld_config'                  => 'fld_config',
-  'fld_edit'                    => 'fld_edit',
-  'fld_save'                    => 'fld_save',
   'js_calendar'                 => 'js_calendar',
   'pickvalue'                   => 'pickvalue',
-  'repost_invoices'             => 'repost_invoices',
   'resize'                      => 'resize',
 };
 
