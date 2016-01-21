@@ -1,9 +1,12 @@
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
+  'Accepted format is'          => 'Erlaubtes Format ist',
   'Accounting Menu'             => 'Kontoverwaltung',
   'Add Column'                  => 'Spalte hinzufügen',
   'Align'                       => 'Ausrichtung',
+  'Allowed range for selected month is' => 'Erlaubter Bereich für Monat ist',
+  'Allowed range is'            => 'Erlaubter Bereich ist',
   'April'                       => 'April',
   'August'                      => 'August',
   'December'                    => 'Dezember',
@@ -16,7 +19,11 @@ $self{texts} = {
   'February'                    => 'Februar',
   'Fill'                        => 'Ausfüllen',
   'Fixed value'                 => 'Fixer Wert',
+  'Fr'                          => 'Fr',
   'Heading'                     => 'Überschrift',
+  'Invalid date:'               => 'Ungültiges Datum:',
+  'Invalid day:'                => 'Ungültiger Tag:',
+  'Invalid month:'              => 'Ungültiger Monat:',
   'January'                     => 'Januar',
   'July'                        => 'Juli',
   'June'                        => 'Juni',
@@ -27,9 +34,14 @@ $self{texts} = {
   'October'                     => 'Oktober',
   'Public'                      => 'Öffentlich',
   'Right'                       => 'Rechts',
+  'Sa'                          => 'Sa',
   'Save Column'                 => 'Spalte speichern',
   'Save Report'                 => 'Abfrage speichern',
   'September'                   => 'September',
+  'Su'                          => 'So',
+  'Th'                          => 'Do',
+  'Tu'                          => 'Di',
+  'We'                          => 'Mi',
   'Width'                       => 'Breite',
 };
 

@@ -1,10 +1,17 @@
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
+  'Accepted format is'          => 'Erlaubtes Format ist',
+  'Allowed range for selected month is' => 'Erlaubter Bereich für Monat ist',
+  'Allowed range is'            => 'Erlaubter Bereich ist',
   'April'                       => 'April',
   'August'                      => 'August',
   'December'                    => 'Dezember',
   'February'                    => 'Februar',
+  'Fr'                          => 'Fr',
+  'Invalid date:'               => 'Ungültiges Datum:',
+  'Invalid day:'                => 'Ungültiger Tag:',
+  'Invalid month:'              => 'Ungültiger Monat:',
   'January'                     => 'Januar',
   'July'                        => 'Juli',
   'June'                        => 'Juni',
@@ -12,7 +19,12 @@ $self{texts} = {
   'May'                         => 'Mai',
   'November'                    => 'November',
   'October'                     => 'Oktober',
+  'Sa'                          => 'Sa',
   'September'                   => 'September',
+  'Su'                          => 'So',
+  'Th'                          => 'Do',
+  'Tu'                          => 'Di',
+  'We'                          => 'Mi',
 };
 
 $self{subs} = {
