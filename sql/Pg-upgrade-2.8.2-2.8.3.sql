@@ -12,6 +12,7 @@ drop trigger del_department on gl;
 drop trigger del_department on ar;
 drop trigger del_department on ap;
 drop trigger del_department on oe;
+drop function del_department();
 --
 drop trigger check_department on ar;
 drop trigger check_department on ap;

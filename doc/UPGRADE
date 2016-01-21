@@ -302,21 +302,30 @@ Version 2.8.30 to 3.0
 ---------------------
 1. edit the members file and add the name of the dataset
    to every login so the logins are 'login@dataset'
-2. make a copy of the section of one user and change the
-   login to 'admin@dataset'
+2. copy one of the users and change the login to 'admin@dataset'
+   and remove the password
 3. create a directory with the same name as the dataset
    in the spool and templates directory
 4. move the private templates to the dataset directory
 5. move the spoolfiles to the dataset directory
-6. copy the following template to your dataset directory
+6. if there are customizations create a 'custom' directory
+   in bin/mozilla and move all the custom_ files without the
+   custom_ prefix to the directory.
+7. if there are any user specific customizations create a
+   directory for each user in the 'custom' directory and move
+   all the files without the login_ prefix to the directory.
+8. copy the following template to your dataset directory
 
    $ cd sql-ledger/templates
    
    $ cp Default-payslip.tex dataset/payslip.tex
    $ cp Default-barcode.tex dataset/barcode.tex
 
-7. set up printers in System -> Workstations
+9. set up printers in System -> Workstations
 
 Note: replace 'dataset' with the name of your dataset.
 
+
+Version 3.0.8 to 3.2
+---------------------
 

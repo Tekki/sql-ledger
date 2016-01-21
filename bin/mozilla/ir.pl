@@ -1,6 +1,6 @@
 #=====================================================================
-# SQL-Ledger ERP
-# Copyright (c) 2006
+# SQL-Ledger
+# Copyright (c) DWS Systems Inc.
 #
 #  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.com
@@ -35,7 +35,7 @@ sub add {
 
 sub edit {
 
-  $form->{shipto} = 1;
+  $form->{linkshipto} = 1;
   &invoice_links;
   &prepare_invoice;
   &display_form;
@@ -76,8 +76,6 @@ sub invoice_links {
 
   $ml = ($form->{type} eq 'invoice') ? 1 : -1;
 
-  $form->{oldlanguage_code} = $form->{language_code};
-
   $l{language_code} = $form->{language_code};
   $l{all} = 1;
   $l{parentgroup} = 1;
@@ -112,16 +110,12 @@ sub invoice_links {
   }
 
   # departments
-  if (@{ $form->{all_department} }) {
-    $form->{selectdepartment} = "\n";
-    $form->{department} = "$form->{department}--$form->{department_id}" if $form->{department_id};
-
-    for (@{ $form->{all_department} }) { $form->{selectdepartment} .= qq|$_->{description}--$_->{id}\n| }
-  }
+  $form->{department} = "$form->{department}--$form->{department_id}" if $form->{department_id};
+  &rebuild_departments;
 
   # warehouses
   if (@{ $form->{all_warehouse} }) {
-    $form->{selectwarehouse} = "\n"; 
+    $form->{selectwarehouse} = ""; 
     $form->{warehouse} = "$form->{warehouse}--$form->{warehouse_id}" if $form->{warehouse_id};
 
     for (@{ $form->{all_warehouse} }) { $form->{selectwarehouse} .= qq|$_->{description}--$_->{id}\n| }
@@ -153,14 +147,8 @@ sub invoice_links {
     }
   }
   
-  # reference documents
-  $i = 0;
-  for (@{ $form->{all_reference} }) {
-    $i++;
-    $form->{"referencedescription_$i"} = $_->{description};
-    $form->{"referenceid_$i"} = $_->{id};
-  }
-  $form->{reference_rows} = $i;
+  # references
+  &all_references;
 
   $form->{"select$form->{vc}"} = $form->escape($form->{"select$form->{vc}"},1);
   for (qw(partsgroup projectnumber department warehouse employee language paymentmethod printer)) { $form->{"select$_"} = $form->escape($form->{"select$_"},1) }
@@ -263,8 +251,8 @@ sub prepare_invoice {
 
   if ($form->{type} eq 'invoice') {
     $form->{selectformname} = qq|vendor_invoice--|.$locale->text('Invoice')
-.qq|\nbin_list--|.$locale->text('Bin List')
-.qq|\nbarcode--|.$locale->text('Barcode');
+.qq|\nbin_list--|.$locale->text('Bin List');
+    $form->{selectformname} .= qq|\nbarcode--|.$locale->text('Barcode') if $dvipdf;
   }
   if ($form->{type} eq 'debit_invoice') {
     $ml = -1;
@@ -284,6 +272,8 @@ sub prepare_invoice {
 
     foreach $ref (@{ $form->{invoice_details} }) {
       for (keys %$ref) { $form->{"${_}_$i"} = $ref->{$_} }
+
+      $form->{"onhand_$i"} = $form->format_amount(\%myconfig, $form->{"onhand_$i"}, undef, " ");
 
       $form->{"projectnumber_$i"} = qq|$ref->{projectnumber}--$ref->{project_id}| if $ref->{project_id};
       $form->{"partsgroup_$i"} = qq|$ref->{partsgroup}--$ref->{partsgroup_id}| if $ref->{partsgroup_id};
@@ -327,7 +317,7 @@ sub form_header {
 		  <table>
 		    <tr>
 		    
-		<td><select name=currency onchange="javascript:document.forms[0].submit()">|
+		<td><select name=currency onChange="javascript:main.submit()">|
 		.$form->select_option($form->{selectcurrency}, $form->{currency})
 		.qq|</select></td>|;
 
@@ -356,7 +346,7 @@ sub form_header {
 
   if ($form->{"select$form->{vc}"}) {
     $vc .= qq|
-               <td nowrap><select name="$form->{vc}" onchange="javascript:document.forms[0].submit()">|.$form->select_option($form->{"select$form->{vc}"}, $form->{$form->{vc}}, 1).qq|</select>
+               <td nowrap><select name="$form->{vc}" onChange="javascript:main.submit()">|.$form->select_option($form->{"select$form->{vc}"}, $form->{$form->{vc}}, 1).qq|</select>
 	       $vcref
 	       </td>
 	     </tr>
@@ -381,7 +371,7 @@ sub form_header {
   $department = qq|
               <tr>
 	      <th align="right" nowrap>|.$locale->text('Department').qq|</th>
-	      <td><select name=department>|
+	      <td><select name=department onChange="javascript:document.main.submit()">|
 	      .$form->select_option($form->{selectdepartment}, $form->{department}, 1)
 	      .qq|</select>
 	      </td>
@@ -391,13 +381,14 @@ sub form_header {
   $warehouse = qq|
               <tr>
 	        <th align="right" nowrap>|.$locale->text('Warehouse').qq|</th>
-		<td><select name=warehouse>|
+		<td><select name=warehouse onChange="javascript:document.main.submit()">|
 		.$form->select_option($form->{selectwarehouse}, $form->{warehouse}, 1).qq|
 		</select>
 		</td>
 	      </tr>
 | if $form->{selectwarehouse};
 
+  $form->{oldwarehouse} = $form->{warehouse};
 
   $n = ($form->{creditremaining} < 0) ? "0" : "1";
 
@@ -424,6 +415,7 @@ sub form_header {
               </tr>
 | if $form->{selectemployee};
 
+  $reference_documents = &references;
 
   if (($rows = $form->numtextrows($form->{description}, 60, 5)) > 1) {
     $description = qq|<textarea name="description" rows=$rows cols=60 wrap=soft>$form->{description}</textarea>|;
@@ -437,28 +429,27 @@ sub form_header {
               </tr>
 |;
 
-  $reference_documents = &reference_documents;
-
   %title = ( bin_list => $locale->text('Bin List'),
 	     pick_list => $locale->text('Pick List'),
-	     packing_list => $locale->text('Packing List')
+	     packing_list => $locale->text('Packing List'),
+	     barcode => $locale->text('Barcode')
 	   );
   $title = " / $title{$form->{formname}}" if $form->{formname} !~ /invoice/;
   
   for (qw(terms discountterms)) { $form->{$_} = "" if ! $form->{$_} }
   
-  $form->{onhold} = ($form->{onhold}) ? "checked" : "";
-
 
   $form->header;
 
+  &calendar;
+  
   print qq|
-<body onLoad="document.forms[0].${focus}.focus()" />
+<body onLoad="document.main.${focus}.focus()" />
 
-<form method=post action="$form->{script}">
+<form method="post" name="main" action="$form->{script}">
 |;
 
-  $form->hide_form(qw(id type printed emailed queued title vc creditlimit creditremaining business closedto locked shipped oldtransdate oldduedate recurring defaultcurrency duedate oldterms cdt precision order_id reference_rows referenceurl));
+  $form->hide_form(qw(id type printed emailed queued title vc creditlimit creditremaining business closedto locked shipped oldtransdate oldduedate recurring defaultcurrency oldterms cdt precision order_id reference_rows referenceurl oldwarehouse olddepartment));
 
   $form->hide_form(map { "select$_" } ("$form->{vc}", "AP", "AP_paid", "AP_discount"));
   $form->hide_form(map { "select$_" } qw(formname currency partsgroup projectnumber department warehouse employee language paymentmethod printer));
@@ -511,10 +502,10 @@ sub form_header {
 		<td>
 		  <table>
 		    <tr>
-		      <td>|.$form->format_amount(\%myconfig, $form->{creditlimit}, 0, "0").qq|</td>
+		      <td>|.$form->format_amount(\%myconfig, $form->{creditlimit}, $form->{precision}, "0").qq|</td>
 		      <td width=10></td>
 		      <th align=right nowrap>|.$locale->text('Remaining').qq|</th>
-		      <td class="plus$n">|.$form->format_amount(\%myconfig, $form->{creditremaining}, 0, "0").qq|</td>
+		      <td class="plus$n">|.$form->format_amount(\%myconfig, $form->{creditremaining}, $form->{precision}, "0").qq|</td>
 		    </tr>
 		  </table>
 		</td>
@@ -540,10 +531,6 @@ sub form_header {
 	        <th align=right nowrap>|.$locale->text('Waybill').qq|</th>
 		<td><input name=waybill size=35 value="|.$form->quote($form->{waybill}).qq|"></td>
 	      </tr>
-	      <tr>
-	        <td align=right><input name=onhold type=checkbox class=checkbox value=1 $form->{onhold}></td>
-		<th align=left nowrap>|.$locale->text('On Hold').qq|</font></th>
-	      </tr>
 	    </table>
 	  </td>
 	  <td align=right>
@@ -560,11 +547,11 @@ sub form_header {
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Invoice Date').qq| <font color=red>*</font></th>
-		<td><input name=transdate size=11 class=date title="$myconfig{dateformat}" value=$form->{transdate}></td>
+		<td nowrap><input name=transdate size=11 class=date title="$myconfig{dateformat}" value=$form->{transdate}>|.&js_calendar("main", "transdate").qq|</td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Due Date').qq|</th>
-		<td><input name=duedate size=11 class=date title="$myconfig{dateformat}" value=$form->{duedate}></td>
+		<td nowrap><input name="duedate" size=11 class=date title="$myconfig{dateformat}" value="$form->{duedate}">|.&js_calendar("main", "duedate").qq|</td>
 	      </tr>
 	      $terms
 	      <tr>
@@ -650,7 +637,7 @@ sub form_footer {
 	$tax .= qq|
 		<tr>
 		  <th align=right>$form->{"${_}_description"}</th>
-		  <td align=right>|.$form->format_amount(\%myconfig, $form->{"${_}_total"}, $form->{precision}).qq|</td>
+		  <td align=right>|.$form->format_amount(\%myconfig, $form->{"${_}_total"}, $form->{precision}, 0).qq|</td>
 		</tr>
 |;
       }
@@ -727,7 +714,7 @@ sub form_footer {
 
     $column_data{paid} = qq|<td align=center><input name="discount_paid" class="inputright" size=11 value=|.$form->format_amount(\%myconfig, $form->{"discount_paid"}, $form->{precision}).qq|></td>|;
     $column_data{AP_paid} = qq|<td align=center><select name="AP_discount_paid">|.$form->select_option($form->{"selectAP_discount"}, $form->{"AP_discount_paid"}).qq|</select></td>|;
-    $column_data{datepaid} = qq|<td align=center><input name="discount_datepaid" class="inputright" size=11 class=date value=$form->{"discount_datepaid"}></td>|;
+    $column_data{datepaid} = qq|<td align=center nowrap><input name="discount_datepaid" class="inputright" size=11 class=date value=$form->{"discount_datepaid"}>|.&js_calendar("main", "discount_datepaid").qq|</td>|;
     $column_data{exchangerate} = qq|<td align=center>$exchangerate</td>|;
     $column_data{source} = qq|<td align=center><input name="discount_source" size=11 value="|.$form->quote($form->{"discount_source"}).qq|"></td>|;
     $column_data{memo} = qq|<td align=center><input name="discount_memo" size=11 value="|.$form->quote($form->{"discount_memo"}).qq|"></td>|;
@@ -779,11 +766,11 @@ sub form_footer {
     <td>
       <table width=100%>
 	<tr valign=bottom>
-	  <td>
-	    <table>
+	  <td width=75%>
+	    <table width=100%>
 	      <tr>
-		<th align=left>|.$locale->text('Notes').qq|</th>
-		<th align=left>|.$locale->text('Internal Notes').qq|</th>
+		<th align=left width=50%>|.$locale->text('Notes').qq|</th>
+		<th align=left width=50%>|.$locale->text('Internal Notes').qq|</th>
 	      </tr>
 	      <tr valign=top>
 		<td>$notes</td>
@@ -791,7 +778,7 @@ sub form_footer {
 	      </tr>
 	    </table>
 	  </td>
-	  <td align=right>
+	  <td align=right width=25%>
 	    <table>
 	      $taxincluded
 	      $subtotal
@@ -847,7 +834,7 @@ sub form_footer {
     $column_data{paid} = qq|<td align=center><input name="paid_$i" class="inputright" size=11 value=$form->{"paid_$i"}></td>|;
     $column_data{exchangerate} = qq|<td align=center>$exchangerate</td>|;
     $column_data{AP_paid} = qq|<td align=center><select name="AP_paid_$i">|.$form->select_option($form->{"selectAP_paid"}, $form->{"AP_paid_$i"}).qq|</select></td>|;
-    $column_data{datepaid} = qq|<td align=center><input name="datepaid_$i" size=11 class=date title="$myconfig{dateformat}" value=$form->{"datepaid_$i"}></td>|;
+    $column_data{datepaid} = qq|<td align=center nowrap><input name="datepaid_$i" size=11 class=date title="$myconfig{dateformat}" value=$form->{"datepaid_$i"}>|.&js_calendar("main", "datepaid_$i").qq|</td>|;
     $column_data{source} = qq|<td align=center><input name="source_$i" size=11 value="|.$form->quote($form->{"source_$i"}).qq|"></td>|;
     $column_data{memo} = qq|<td align=center><input name="memo_$i" size=11 value="|.$form->quote($form->{"memo_$i"}).qq|"></td>|;
 
@@ -978,7 +965,7 @@ sub form_footer {
     &menubar;
   }
   
-  $form->hide_form(qw(rowcount callback path login));
+  $form->hide_form(qw(rowcount readonly callback path login));
   
 print qq|
 </form>
@@ -993,8 +980,12 @@ print qq|
 
 sub update {
 
+  $form->get_onhand(\%myconfig) if $form->{warehouse} ne $form->{oldwarehouse};
+
   for (qw(exchangerate cashdiscount discount_paid)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
   
+  &rebuild_departments if $form->{department} ne $form->{olddepartment};
+
   if ($newname = &check_name(vendor)) {
     &rebuild_vc(vendor, AP, $form->{transdate}, 1);
   }
@@ -1147,7 +1138,7 @@ sub update {
 	$ml = ($form->{type} eq 'invoice') ? 1 : -1;
 	$form->{creditremaining} -= ($amount * $ml);
 	
-	for (qw(sell sellprice listprice, lastcost)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}, $decimalplaces) }
+	for (qw(sell sellprice listprice lastcost)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}, $decimalplaces) }
 	
         $form->{"oldqty_$i"} = $form->{"qty_$i"};
 
@@ -1285,6 +1276,8 @@ sub post {
   $i = ++$form->{paidaccounts};
   $form->{"AP_paid_$i"} = $AP_paid;
   $form->{"paymentmethod_$i"} = $paymentmethod;
+
+  $form->{userspath} = $userspath;
 
   if (IR->post_invoice(\%myconfig, \%$form)) {
     $form->redirect($locale->text('Invoice')." $form->{invnumber} ".$locale->text('posted!'));

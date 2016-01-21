@@ -23,7 +23,7 @@ sub new {
     open(MEMBER, "$memfile");
     
     while (<MEMBER>) {
-      if (/^\[$login\]/) {
+      if (/^\[\Q$login\E\]/) {
 	while (<MEMBER>) {
 	  last if /^\[/;
 	  next if /^(#|\s)/;
@@ -40,6 +40,8 @@ sub new {
 	}
 	
 	$self->{login} = $login;
+        $self->{lat} = "1";
+        $self->{long} = "1";
 
 	last;
       }
@@ -97,7 +99,7 @@ sub login {
 
     $self->{password} = $form->{password};
 
-    $self->create_config("$userspath/$self->{login}.conf");
+    return -1 unless $self->create_config("$userspath/$self->{login}.conf");
     
     $self->{dbpasswd} = unpack 'u', $self->{dbpasswd};
   
@@ -135,8 +137,9 @@ sub login {
 
     if ($audittrail) {
       $id *= 1;
-      $query = qq|INSERT INTO audittrail (employee_id, action)
-                  VALUES ($id, 'login')|;
+      my $ref = "$ENV{REMOTE_ADDR}";
+      $query = qq|INSERT INTO audittrail (trans_id, reference, action, employee_id)
+                  VALUES ($id, '$ref', 'login', $id)|;
       $dbh->do($query);
     }
 
@@ -173,15 +176,25 @@ sub logout {
   my %defaults = $form->get_defaults($dbh, \@{['audittrail']});
 
   if ($defaults{audittrail}) {
-    $login = $form->{login};
+    my $login = $form->{login};
     $login =~ s/\@.*//;
     $query = qq|SELECT id
                 FROM employee
 		WHERE login = '$login'|;
-    ($id) = $dbh->selectrow_array($query);
+    my ($id) = $dbh->selectrow_array($query);
     $id *= 1;
-    $query = qq|INSERT INTO audittrail (action, employee_id)
-                VALUES ('logout', $id)|;
+
+    $query = qq|SELECT reference
+                FROM audittrail
+                WHERE employee_id = $id
+                AND action = 'login'
+                ORDER BY transdate DESC
+                LIMIT 1|;
+    my ($ref) = $dbh->selectrow_array($query);
+    $ref ||= $ENV{REMOTE_ADDR};
+    
+    $query = qq|INSERT INTO audittrail (trans_id, reference, action, employee_id)
+                VALUES ($id, '$ref', 'logout', $id)|;
     $dbh->do($query);
   }
 
@@ -368,6 +381,8 @@ sub dbsources {
 sub dbcreate {
   my ($self, $form) = @_;
 
+  for (qw(db encoding)) { $form->{$_} =~ s/;//g }
+
   my %dbcreate = ( 'Pg' => qq|CREATE DATABASE "$form->{db}"|,
                 'Sybase' => qq|CREATE DATABASE $form->{db}|,
                'Oracle' => qq|CREATE USER "$form->{db}" DEFAULT TABLESPACE USERS TEMPORARY TABLESPACE TEMP IDENTIFIED BY "$form->{db}"|);
@@ -417,6 +432,10 @@ sub dbcreate {
   $filename = qq|sql/$form->{chart}-chart.sql|;
   $self->process_query($form, $dbh, $filename);
 
+  # load mimetypes
+  $filename = qq|sql/Mimetype.sql|;
+  $self->process_query($form, $dbh, $filename);
+
   # create indices
   $filename = qq|sql/${dbdriver}-indices.sql|;
   $self->process_query($form, $dbh, $filename);
@@ -428,9 +447,15 @@ sub dbcreate {
   }
 
   $query = qq|INSERT INTO defaults (fldname, fldvalue)
-              VALUES ('company', '$form->{company}')|;
-  $dbh->do($query);
- 
+              VALUES (?, ?)|;
+  my $sth = $dbh->prepare($query);
+  
+  $sth->execute('company', $form->{company});
+  $sth->finish;
+
+  $sth->execute('roundchange', 0.01);
+  $sth->finish;
+  
   $dbh->disconnect;
 
   1;
@@ -490,6 +515,8 @@ sub process_query {
 
 sub dbdelete {
   my ($self, $form) = @_;
+
+  $form->{db} =~ s/;//g;
 
   my %dbdelete = ( 'Pg' => qq|DROP DATABASE "$form->{db}"|,
                 'Sybase' => qq|DROP DATABASE $form->{db}|,
@@ -616,21 +643,26 @@ sub create_config {
 
   $self->{dbpasswd} = unpack 'u', $self->{dbpasswd};
 
-  my $dbh = DBI->connect($self->{dbconnect}, $self->{dbuser}, $self->{dbpasswd}) or $self->error($DBI::errstr);
+  my $dbh = DBI->connect($self->{dbconnect}, $self->{dbuser}, $self->{dbpasswd});
+  $self->error($DBI::errstr) unless $dbh;
   
   my $id;
   my %acs;
   my $login = $self->{login};
   $login =~ s/@.*//;
   
-  $query = qq|SELECT e.acs, a.acs
+  $query = qq|SELECT e.id, e.acs, a.acs
 	      FROM employee e
 	      LEFT JOIN acsrole a ON (e.acsrole_id = a.id)
 	      WHERE login = '$login'|;
-  ($acs{acs}, $acs{role}) = $dbh->selectrow_array($query);
+  ($id, $acs{acs}, $acs{role}) = $dbh->selectrow_array($query);
 
   $dbh->disconnect;
 
+  if (!$id) {
+    return if $login ne 'admin';
+  }
+ 
   $acs{acs} .= ";$acs{role}";
   for (split /;/, $acs{acs}) {
     $acs{$_} = 1;
@@ -675,7 +707,7 @@ sub create_config {
   
   umask(002);
   open(CONF, ">$filename") or $self->error("$filename : $!");
-  
+
   # create the config file
   print CONF qq|# configuration file for $self->{login}
 
@@ -697,6 +729,8 @@ sub create_config {
   close CONF;
 
   $self->{password} = $password;
+
+  1;
 
 }
 

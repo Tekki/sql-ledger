@@ -20,6 +20,8 @@ sub delete_transaction {
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
   
+  $form->{id} *= 1;
+  
   my %audittrail = ( tablename  => 'gl',
                      reference  => $form->{reference},
 		     formname   => 'transaction',
@@ -28,7 +30,7 @@ sub delete_transaction {
  
   $form->audittrail($dbh, "", \%audittrail);
 
-  if ($form->{batchid}) {
+  if ($form->{batchid} *= 1) {
     $query = qq|SELECT sum(amount)
 		FROM acc_trans
 		WHERE trans_id = $form->{id}
@@ -55,8 +57,8 @@ sub delete_transaction {
   
   my $id;
   for $id (qw(id apid)) {
-    for (qw(acc_trans dpt_trans yearend pay_trans status reference)) {
-      if ($form->{$id}) {
+    for (qw(acc_trans dpt_trans yearend pay_trans status)) {
+      if ($form->{$id} *= 1) {
 	$query = qq|DELETE FROM $_ WHERE trans_id = $form->{$id}|;
 	$dbh->do($query) || $form->dberror($query);
       }
@@ -67,7 +69,9 @@ sub delete_transaction {
     $query = qq|DELETE FROM $_ WHERE id = $form->{id}|;
     $dbh->do($query) || $form->dberror($query);
   }
-  
+
+  $form->delete_references($dbh);
+
   $form->remove_locks($myconfig, $dbh, 'gl');
 
   # commit and redirect
@@ -104,10 +108,10 @@ sub post_transaction {
   my %defaults = $form->get_defaults($dbh, \@{['precision']});
   $form->{precision} = $defaults{precision};
 
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $keepcleared = 1;
     
-    if ($form->{batchid}) {
+    if ($form->{batchid} *= 1) {
       $query = qq|SELECT * FROM vr
 		  WHERE trans_id = $form->{id}|;
       $sth = $dbh->prepare($query) || $form->dberror($query);
@@ -141,7 +145,7 @@ sub post_transaction {
 
     if ($form->{id}) {
       # delete individual transactions
-      for (qw(acc_trans dpt_trans reference)) {
+      for (qw(acc_trans dpt_trans)) {
 	$query = qq|DELETE FROM $_ WHERE trans_id = $form->{id}|;
 	$dbh->do($query) || $form->dberror($query);
       }
@@ -265,7 +269,7 @@ sub post_transaction {
     }
   }
 
-  if ($form->{batchid}) {
+  if ($form->{batchid} *= 1) {
     # add voucher
     $form->{voucher}{transaction}{vouchernumber} = $form->update_defaults($myconfig, 'vouchernumber', $dbh) unless $form->{voucher}{transaction}{vouchernumber};
 
@@ -284,7 +288,7 @@ sub post_transaction {
   }
 
   # save reference documents
-  $form->save_reference($dbh);
+  $form->save_reference($dbh, 'gl');
     
   my %audittrail = ( tablename  => 'gl',
                      reference  => $form->{reference},
@@ -543,7 +547,7 @@ sub transactions {
   
 
   my $false = ($myconfig->{dbdriver} =~ /Pg/) ? FALSE : q|'0'|;
-
+ 
   my $query = qq|SELECT g.id, 'gl' AS type, $false AS invoice, g.reference,
                  g.description, ac.transdate, ac.source,
 		 ac.amount, c.accno, c.gifi_accno, g.notes, c.link,
@@ -591,7 +595,7 @@ sub transactions {
 		 JOIN address ad ON (ad.trans_id = ct.id)
 		 LEFT JOIN department d ON (d.id = a.department_id)
 		 WHERE $apwhere|;
-
+ 
   my @sf = qw(id transdate reference accno);
   my %ordinal = $form->ordinal_order($dbh, $query);
   $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
@@ -803,9 +807,9 @@ sub transaction {
   my %defaults = $form->get_defaults($dbh, \@{[qw(closedto revtrans precision referenceurl)]});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
-  $form->{currencies} = $form->get_currencies($dbh, $myconfig);
+  $form->{currencies} = $form->get_currencies($myconfig, $dbh);
   
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $query = qq|SELECT g.*, 
                 d.description AS department,
 		br.id AS batchid, br.description AS batchdescription
@@ -861,7 +865,7 @@ sub transaction {
     # get recurring transaction
     $form->get_recurring($dbh);
 
-    $form->get_reference($dbh);
+    $form->all_references($dbh);
 
     $form->create_lock($myconfig, $dbh, $form->{id}, 'gl');
 
@@ -873,9 +877,10 @@ sub transaction {
   $query = qq|SELECT c.accno, c.description,
               l.description AS translation
               FROM chart c
-	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
-	      WHERE c.charttype = 'A'
-              ORDER by c.accno|;
+              LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+              WHERE c.charttype = 'A'
+              AND c.closed = '0'
+              ORDER by 1|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
   

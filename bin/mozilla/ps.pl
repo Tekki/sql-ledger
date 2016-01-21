@@ -1,6 +1,6 @@
 #=====================================================================
-# SQL-Ledger ERP
-# Copyright (c) 2006
+# SQL-Ledger
+# Copyright (c) DWS Systems Inc.
 #
 #  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.com
@@ -21,11 +21,11 @@ require "$form->{path}/rp.pl";
 require "$form->{path}/pos.pl";
 
 # customizations
-if (-f "$form->{path}/custom_pos.pl") {
-  eval { require "$form->{path}/custom_pos.pl"; };
+if (-f "$form->{path}/custom/pos.pl") {
+  eval { require "$form->{path}/custom/pos.pl"; };
 }
-if (-f "$form->{path}/$form->{login}_pos.pl") {
-  eval { require "$form->{path}/$form->{login}_pos.pl"; };
+if (-f "$form->{path}/custom/$form->{login}/pos.pl") {
+  eval { require "$form->{path}/custom/$form->{login}/pos.pl"; };
 }
 
 1;

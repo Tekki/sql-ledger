@@ -1,6 +1,6 @@
 #=====================================================================
-# SQL-Ledger ERP
-# Copyright (c) 2006
+# SQL-Ledger
+# Copyright (c) DWS Systems Inc.
 #
 #  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.com
@@ -17,9 +17,10 @@
 use SL::PE;
 use SL::AA;
 use SL::OE;
-use SL::JS;
 
+require "$form->{path}/cm.pl";
 require "$form->{path}/sr.pl";
+require "$form->{path}/js.pl";
 
 1;
 # end of main
@@ -141,7 +142,9 @@ sub prepare_job {
   $form->{locked} = ($form->{revtrans}) ? '1' : ($form->datetonum(\%myconfig, $form->{transdate}) <= $form->{closedto});
 
   $form->{readonly} = 1 if $myconfig{acs} =~ /Job Costing--Add Job/;
-  
+
+  &all_references;
+
 }
 
 
@@ -152,6 +155,8 @@ sub job_header {
   for (qw(production weight)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}) }
   for (qw(listprice sellprice)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}) }
   
+  $reference_documents = &references;
+ 
   if (($rows = $form->numtextrows($form->{partdescription}, 60)) > 1) {
     $partdescription = qq|<textarea name="partdescription" rows=$rows cols=60 style="width: 100%" wrap=soft>$form->{partdescription}</textarea>|;
   } else {
@@ -274,10 +279,12 @@ sub job_header {
 
   $form->header;
 
+  &calendar;
+  
   print qq|
 <body>
 
-<form method=post action=$form->{script}>
+<form method="post" name="main" action="$form->{script}" />
 |;
 
   for (qw(partnumber startdate enddate)) { $form->{"old$_"} = $form->{$_} }
@@ -305,9 +312,9 @@ sub job_header {
 	$name
 	<tr>
 	  <th align=right>|.$locale->text('Startdate').qq|</th>
-	  <td><input name=startdate size=11 class=date title="$myconfig{dateformat}" value=$form->{startdate}></td>
+	  <td><input name=startdate size=11 class=date title="$myconfig{dateformat}" value=$form->{startdate}>|.&js_calendar("main", "startdate").qq|</td>
 	  <th align=right>|.$locale->text('Enddate').qq|</th>
-	  <td><input name=enddate size=11 class=date title="$myconfig{dateformat}" value=$form->{enddate}></td>
+	  <td><input name=enddate size=11 class=date title="$myconfig{dateformat}" value=$form->{enddate}>|.&js_calendar("main", "enddate").qq|</td>
 	</tr>
 	$production
       </table>
@@ -389,6 +396,11 @@ sub job_header {
     </td>
   </tr>
   <tr>
+    <td>
+      $reference_documents
+    </td>
+  </tr>
+  <tr>
     <td><hr size=3 noshade></td>
   </tr>
 </table>
@@ -399,7 +411,7 @@ sub job_header {
 
 sub job_footer {
 
-  $form->hide_form(qw(callback path login));
+  $form->hide_form(qw(reference_rows callback path login));
   
   %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
 	    );
@@ -583,6 +595,8 @@ sub prepare_project {
     for (@{ $form->{"all_$form->{vc}"} }) { $form->{"select$form->{vc}"} .= qq|$_->{name}--$_->{id}\n| }
   }
 
+  &all_references;
+
 }
 
 
@@ -597,17 +611,11 @@ sub search {
     $selectaccountingmonth = "\n";
     for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|$_--|.$locale->text($form->{all_month}{$_}).qq|\n| }
 
-####### make user configurable option
-#    if (($form->{month} = (localtime)[4] + 1) < 10) {
-#      $form->{month} = substr("0$form->{month}", -2);
-#    }
-#    $form->{year} = $form->{all_years}[0];
-
     $fromto = qq|
  	<tr>
 	  <th align=right>|.$locale->text('Startdate').qq|</th>
-	  <td>|.$locale->text('From').qq| <input name=startdatefrom size=11 class=date title="$myconfig{'dateformat'}">|.$locale->text('To').qq|
-	  <input name=startdateto size=11 class=date title="$myconfig{'dateformat'}"></td>
+	  <td>|.$locale->text('From').qq| <input name=startdatefrom size=11 class=date title="$myconfig{'dateformat'}">|.&js_calendar("main", "startdatefrom")
+	  .$locale->text('To').qq| <input name=startdateto size=11 class=date title="$myconfig{'dateformat'}">|.&js_calendar("main", "startdateto").qq|</td>
 	</tr>
 |;
 
@@ -759,12 +767,14 @@ sub search {
   
   $form->header;
 
-  JS->change_report(\%$form, \@input, \@checked, \%radio);
+  &calendar;
+  
+  &change_report(\%$form, \@input, \@checked, \%radio);
 
   print qq|
 <body>
 
-<form method=post action=$form->{script}>
+<form method=post name=main action=$form->{script}>
 
 <table width=100%>
   <tr>
@@ -842,11 +852,13 @@ sub list_projects {
 
   $href = "$form->{script}?";
   for (qw(action sort direction oldsort type path login status startdatefrom startdateto)) { $href .= "$_=$form->{$_}&" }
+  chop $href;
   
   $form->sort_order();
   
   $callback = "$form->{script}?";
   for (qw(action sort direction oldsort type path login status startdatefrom startdateto)) { $callback .= "$_=$form->{$_}&" }
+  chop $callback;
   
   @column_index = $form->sort_columns(qw(projectnumber description name startdate enddate));
   
@@ -950,6 +962,10 @@ sub list_projects {
     for (qw(startdate enddate)) { $column_data{$_} = qq|<td nowrap>$ref->{$_}&nbsp;</td>| }
     for (qw(description name)) { $column_data{$_} = qq|<td>$ref->{$_}&nbsp;</td>| }
 
+    if ($ref->{name}) {
+      $column_data{name} = qq|<td><a href=ct.pl?action=edit&db=customer&id=$ref->{customer_id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{name}</td>|;
+    }
+    
     for (qw(production completed)) { $column_data{$_} = qq|<td align=right>|.$form->format_amount(\%myconfig, $ref->{$_}) }
 
     $column_data{projectnumber} = qq|<td><a href=$form->{script}?action=edit&type=$form->{type}&status=$form->{status}&id=$ref->{id}&path=$form->{path}&login=$form->{login}&project=$form->{project}&callback=$callback>$ref->{projectnumber}</td>|;
@@ -1038,6 +1054,8 @@ sub list_projects {
 
 sub project_header {
 
+  $reference_documents = &references;
+  
   $form->{description} = $form->quote($form->{description});
   
   if (($rows = $form->numtextrows($form->{description}, 60)) > 1) {
@@ -1069,10 +1087,12 @@ sub project_header {
 
   $form->header;
 
+  &calendar;
+  
   print qq|
 <body>
 
-<form method=post action=$form->{script}>
+<form method="post" name="main" action="$form->{script}" />
 |;
 
   $form->hide_form("select$form->{vc}", "old$form->{vc}", "$form->{vc}_id");
@@ -1101,14 +1121,19 @@ sub project_header {
 	  <td>
 	  <table>
 	    <tr>
-	      <td><input name=startdate size=11 class=date title="$myconfig{dateformat}" value=$form->{startdate}></td>
+	      <td><input name=startdate size=11 class=date title="$myconfig{dateformat}" value=$form->{startdate}>|.&js_calendar("main", "startdate").qq|</td>
 	      <th align=right>|.$locale->text('Enddate').qq|</th>
-	      <td><input name=enddate size=11 class=date title="$myconfig{dateformat}" value=$form->{enddate}></td>
+	      <td><input name=enddate size=11 class=date title="$myconfig{dateformat}" value=$form->{enddate}>|.&js_calendar("main", "enddate").qq|</td>
 	      </tr>
 	    </table>
 	  </td>
 	</tr>
       </table>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      $reference_documents
     </td>
   </tr>
   <tr>
@@ -1122,7 +1147,7 @@ sub project_header {
 
 sub project_footer {
 
-  $form->hide_form(qw(callback path login));
+  $form->hide_form(qw(reference_rows callback path login));
   
   %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
 	    );
@@ -1153,6 +1178,8 @@ sub project_footer {
 
 
 sub save {
+  
+  $form->{userspath} = $userspath;
 
   if ($form->{translation}) {
     PE->save_translation(\%myconfig, \%$form);
@@ -1375,7 +1402,8 @@ sub partsgroup_report {
 <form method=post action=$form->{script}>
 |;
 
-  $form->hide_form(qw(callback type path login));
+  $form->{code} = $form->{partsgroupcode};
+  $form->hide_form(qw(partsgroup code callback type path login));
 
   foreach $item (sort { $a->{order} <=> $b->{order} } %button) {
     print $item->{code};
@@ -1462,12 +1490,17 @@ sub partsgroup_footer {
   if ($myconfig{acs} !~ /Goods \& Services--Add Group/) {
     print qq|
 <input type=submit class=submit name=action value="|.$locale->text('Save').qq|">
-<input type=submit class=submit name=action value="|.$locale->text('Save as new').qq|">
 |;
 
-    if ($form->{id} && $form->{orphaned}) {
+    if ($form->{id}) {
+      
       print qq|
+<input type=submit class=submit name=action value="|.$locale->text('Save as new').qq|">
+|;
+      if ($form->{orphaned}) {
+        print qq|
 <input type=submit class=submit name=action value="|.$locale->text('Delete').qq|">|;
+      }
     }
   }
 
@@ -2158,7 +2191,7 @@ sub select_name {
 	</tr>
 |;
 
-  push @column_index, (ndx, name, "$form->{vc}number", address, city, state, zipcode, country);
+  push @column_index, (city, state, zipcode, country);
 
   my $i = 0;
   foreach $ref (@{ $form->{name_list} }) {
@@ -2287,8 +2320,8 @@ sub project_sales_order {
   $fromto = qq|
         <tr>
 	  <th align=right nowrap>|.$locale->text('Transaction Dates').qq|</th>
-	  <td>|.$locale->text('From').qq| <input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">
-	  |.$locale->text('To').qq| <input name=transdateto size=11 class=date title="$myconfig{dateformat}"></td>
+	  <td>|.$locale->text('From').qq| <input name=transdatefrom size=11 class=date title="$myconfig{dateformat}" value=$form->{transdatefrom}>|.&js_calendar("main", "transdatefrom")
+	  .qq| |.$locale->text('To').qq| <input name=transdateto size=11 class=date title="$myconfig{dateformat}" value=$form->{transdateto}>|.&js_calendar("main", "transdateto").qq|</td>
 	</tr>
 	$selectfrom
 |;
@@ -2322,10 +2355,12 @@ sub project_sales_order {
 
   $form->header;
 
+  &calendar;
+  
   print qq|
 <body>
 
-<form method=post action=$form->{script}>
+<form method="post" name="main" action="$form->{script}" />
 
 <table width=100%>
   <tr>
@@ -2397,6 +2432,7 @@ sub project_jcitems_list {
   $i = 1;
   foreach $ref (@{ $form->{jcitems} }) {
     
+    $form->{"employee_$i"} = $ref->{employee};
     $form->{"$form->{vc}_$i"} = $ref->{$form->{vc}};
     $form->{"$form->{vc}number{_}$i"} = $ref->{"$form->{vc}number"};
 
@@ -2469,12 +2505,13 @@ sub jcitems {
   }
   push @column_index, qw(partnumber description);
   push @column_index, "itemnotes" if !$form->{summary};
-  push @column_index, qw(qty amount);
+  push @column_index, qw(employee qty amount);
 
   $column_header{id} = qq|<th>&nbsp;</th>|;
   $column_header{transdate} = qq|<th class=listheading>|.$locale->text('Date').qq|</th>|;
   $column_header{partnumber} = qq|<th class=listheading>|.$locale->text('Service Code').qq|<br>|.$locale->text('Part Number').qq|</th>|;
   $column_header{projectnumber} = qq|<th class=listheading>|.$locale->text('Project Number').qq|</th>|;
+  $column_header{employee} = qq|<th class=listheading>|.$locale->text('Employee').qq|</th>|;
   $column_header{description} = qq|<th class=listheading>|.$locale->text('Description').qq|</th>|;
   $column_header{itemnotes} = qq|<th class=listheading>|.$locale->text('Notes').qq|</th>|;
   $column_header{name} = qq|<th class=listheading>$vc</th>|;
@@ -2705,8 +2742,7 @@ sub generate_sales_orders {
     }
     $order->{rowcount} = $i;
     
-    for (qw(currency)) { $order->{$_} = $form->{$_} }
-
+    $order->{currency} = $form->{currency};
     $order->{ordnumber} = $order->update_defaults(\%myconfig, 'sonumber');
     $order->{transdate} = $order->current_date(\%myconfig);
     $order->{reqdate} = $order->{transdate};

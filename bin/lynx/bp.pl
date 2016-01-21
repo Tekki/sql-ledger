@@ -1,6 +1,6 @@
 #=====================================================================
-# SQL-Ledger ERP
-# Copyright (c) 2006
+# SQL-Ledger
+# Copyright (c) DWS Systems Inc.
 #
 #  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.com
@@ -13,6 +13,7 @@
 
 
 use SL::BP;
+require "$form->{path}/js.pl";
 
 1;
 # end of main
@@ -271,10 +272,12 @@ sub search {
 
   $form->header;
 
+  &calendar;
+  
   print qq|
 <body>
 
-<form method=post action=$form->{script}>
+<form method="post" name="main" action="$form->{script}">
 |;
 
   $form->hide_form(qw(batch sort nextsub type title));
@@ -301,9 +304,9 @@ sub search {
 	$paymentmethod
 	<tr>
 	  <th align=right nowrap>|.$locale->text('From').qq|</th>
-	  <td><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">
+	  <td><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdatefrom").qq|
 	  <b>|.$locale->text('To').qq|</b>
-	  <input name=transdateto size=11 class=date title="$myconfig{dateformat}"></td>
+	  <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
 	</tr>
 	$selectfrom
 	$openclosed
@@ -400,12 +403,9 @@ sub print {
     delete $form->{$_};
   }
 
-  %msg = ( print => 'Printing',
-           email => 'E-mailing',
+  %msg = ( print => $locale->text('Printing'),
+           email => $locale->text('E-mailing'),
 	   );
-
-# $locale->text('Printing')
-# $locale->text('E-mailing')
 
   $ok = 0;
   $myconfig{vclimit} = 0;
@@ -417,75 +417,98 @@ sub print {
     if ($myform->{"ndx_$i"}) {
 
       $ok = 1;
-      
-      for (keys %$form) { delete $form->{$_} }
-      
-      for (qw(id vc)) { $form->{$_} = $myform->{"${_}_$i"} }
-      $form->{script} = qq|$myform->{"module_$i"}.pl|;
-      for (qw(login path media sendmode subject message format type header copies)) { $form->{$_} = $myform->{$_} }
 
-      do "$form->{path}/$form->{script}";
-      
-      $form->{shipto} = 1;
+      if ($myform->{batch} eq 'queue') {
+        if (open(FH, qq|$spool/$myconfig{dbname}/$myform->{"spoolfile_$i"}|)) {
+          binmode FH;
 
-      if ($myform->{"module_$i"} eq 'oe') {
-	&order_links;
-	&prepare_order;
-	$form->{formname} = $myform->{type};
-	$inv = 'ord'
-      } elsif ($myform->{"module_$i"} eq 'jc') {
-	&{"prepare_$myform->{type}"};
-	$form->{formname} = $myform->{type};
+          if (open(OUT, qq~| $myform->{"$myform->{media}_printer"}~)) {
+            binmode OUT;
+
+            $myform->info(qq|$msg{print} ... $myform->{"spoolfile_$i"}\n|);
+
+            while (<FH>) {
+              print OUT $_;
+            }
+
+            close(OUT);
+            close(FH);
+          } else {
+            $myform->info($!);
+          }
+        } else {
+          $myform->info($!);
+        }
       } else {
-	&invoice_links;
-	&prepare_invoice;
-	if ($myform->{type} ne 'invoice') {
-	  $form->{formname} = $myform->{type};
-	}
-	delete $form->{paid};
-	
-	$arap = ($form->{vc} eq 'customer') ? "AR" : "AP";
-	$form->{payment_accno} = $form->unescape($form->{payment_accno});
-	
-	# default
-        @f = split /\n/, $form->unescape($form->{"select${arap}_paid"});
-	$form->{payment_accno} ||= $f[0];
-
-	for (2 .. $form->{paidaccounts}) {
-	  $form->{"paid_$_"} = $form->format_amount(\%myconfig, $form->{"paid_$_"}, $form->{precision});
-	  $form->{payment_accno} = $form->{"${arap}_paid_$_"};
-	}
-
-	$form->{"${arap}_paid_$form->{paidaccounts}"} = $form->{payment_accno};
-	$inv = 'inv'
-      }
-
-      $form->{rowcount}++;
-
-      # unquote variables
-      if ($form->{media} eq 'email' || $form->{media} eq 'queue') {
-	for (keys %$form) { $form->{$_} = $form->unquote($form->{$_}) }
-      }
-
-      $myform->{description} = $form->{description};
-
-      &print_form;
-
-      $myform->info("${r}. ".$locale->text($msg{$myform->{batch}}).qq| ... $myform->{"reference_$i"}|);
-      $myform->info(qq|, $myform->{description}|) if $myform->{description};
-
-      if ($myform->{"module_$i"} ne 'jc') {
-	if ($form->{formname} =~ /_invoice/) {
-	  $total -= $form->parse_amount(\%myconfig, $form->{"${inv}total"});
-	} else {
-	  $total += $form->parse_amount(\%myconfig, $form->{"${inv}total"});
-	}
-	$myform->info(qq|, $form->{"${inv}total"}, $form->{"$form->{vc}number"}, $form->{"$form->{vc}"} $form->{city}|);
-      }
-      $myform->info(" ... ".$locale->text('ok')."\n");
-
-      $r++;
       
+        for (keys %$form) { delete $form->{$_} }
+        
+        for (qw(id vc)) { $form->{$_} = $myform->{"${_}_$i"} }
+        $form->{script} = qq|$myform->{"module_$i"}.pl|;
+        for (qw(login path media sendmode subject message format type header copies)) { $form->{$_} = $myform->{$_} }
+
+        do "$form->{path}/$form->{script}";
+        
+        $form->{linkshipto} = 1;
+
+        if ($myform->{"module_$i"} eq 'oe') {
+          &order_links;
+          &prepare_order;
+          $form->{formname} = $myform->{type};
+          $inv = 'ord'
+        } elsif ($myform->{"module_$i"} eq 'jc') {
+          &{"prepare_$myform->{type}"};
+          $form->{formname} = $myform->{type};
+        } else {
+          &invoice_links;
+          &prepare_invoice;
+          if ($myform->{type} ne 'invoice') {
+            $form->{formname} = $myform->{type};
+          }
+          delete $form->{paid};
+          
+          $arap = ($form->{vc} eq 'customer') ? "AR" : "AP";
+          $form->{payment_accno} = $form->unescape($form->{payment_accno});
+          
+          # default
+          @f = split /\n/, $form->unescape($form->{"select${arap}_paid"});
+          $form->{payment_accno} ||= $f[0];
+
+          for (1 .. $form->{paidaccounts}) {
+            $form->{"paid_$_"} = $form->format_amount(\%myconfig, $form->{"paid_$_"}, $form->{precision});
+            $form->{payment_accno} = $form->{"${arap}_paid_$_"};
+          }
+
+          $form->{"${arap}_paid_$form->{paidaccounts}"} = $form->{payment_accno};
+          $inv = 'inv';
+        }
+
+        $form->{rowcount}++;
+
+        # unquote variables
+        if ($form->{media} eq 'email' || $form->{media} eq 'queue') {
+          for (keys %$form) { $form->{$_} = $form->unquote($form->{$_}) }
+        }
+
+        $myform->{description} = $form->{description};
+
+        &print_form;
+
+        $myform->info(qq|${r}. $msg{$myform->{batch}} ... $myform->{"reference_$i"}|);
+        $myform->info(qq|, $myform->{description}|) if $myform->{description};
+
+        if ($myform->{"module_$i"} ne 'jc') {
+          if ($form->{formname} =~ /_invoice/) {
+            $total -= $form->parse_amount(\%myconfig, $form->{"${inv}total"});
+          } else {
+            $total += $form->parse_amount(\%myconfig, $form->{"${inv}total"});
+          }
+          $myform->info(qq|, $form->{"${inv}total"}, $form->{"$form->{vc}number"}, $form->{"$form->{vc}"} $form->{city}|);
+        }
+        $myform->info(" ... ".$locale->text('ok')."\n");
+
+        $r++;
+      }
     }
   }
   
@@ -677,29 +700,12 @@ sub list_spool {
   
   $form->header;
   
-  print qq|
-<script language="javascript">
-<!--
+  &check_all(qw(allbox ndx_));
 
-function CheckAll() {
-
-  var frm = document.forms[0]
-  var el = frm.elements
-  var re = /ndx_/;
-  
-  for (i = 0; i < el.length; i++) {
-    if (el[i].type == 'checkbox' && re.test(el[i].name)) {
-      el[i].checked = frm.allbox.checked
-    }
-  }
-
-}
-// -->
-</script>
-
+print qq|
 <body>
 
-<form method=post action=$form->{script}>
+<form method="post" name="main" action="$form->{script}">
 
 <table width=100%>
   <tr>
@@ -860,10 +866,7 @@ function CheckAll() {
       $media .= qq|<option value="$_->{printer}">$_->{printer}|;
     }
 
-    $copies = qq|
-      <td nowrap>|.$locale->text('Copies').qq|
-      <input name=copies size=2 value=$form->{copies}></td>
-|;
+    $copies = $locale->text('Copies').qq|<input name=copies size=2 value=$form->{copies}>|;
 
   }
 
@@ -874,28 +877,24 @@ function CheckAll() {
   }
 	    
   if ($form->{batch} ne 'email') {
-    $media .= qq|
-          <option value="queue">|.$locale->text('Queue') if $form->{batch} eq 'print';
+    $media .= qq|<option value="queue">|.$locale->text('Queue') if $form->{batch} eq 'print';
   }
  
   $media .= qq|</select>|;
 
   $media =~ s/(<option value="\Q$form->{media}\E")/$1 selected/;
-  $media = qq|<td width=1%>$media</td>|;
   
   $format = qq|<select name=format>$selectformat</select>|;
   $format =~ s/(<option value="\Q$form->{format}\E")/$1 selected/;
-  $format = qq|<td width=1%>$format</td>|;
  
   if ($form->{batch} eq 'email') {
     $sendmode =~ s/(<option value="\Q$form->{sendmode}\E")/$1 selected/;
-    $sendmode = qq|<td>$sendmode</td>|;
 
     $message = qq|<tr>
-                    <td colspan=2 nowrap><b>|.$locale->text('Subject').qq|</b>&nbsp;<input name=subject size=30></td>
+                    <td nowrap><b>|.$locale->text('Subject').qq|</b>&nbsp;<input name=subject size=60></td>
 		  </tr>
 		  <tr>
-                    <td colspan=2><b>|.$locale->text('Message').qq|<br><textarea name=message rows=15 cols=60 wrap=soft>$form->{message}</textarea></td>
+                    <td><b>|.$locale->text('Message').qq|</b><br><textarea name=message rows=15 cols=60 wrap=soft>$form->{message}</textarea></td>
       </tr>|;
       
     $media = qq|<input type="hidden" name="media" value="email">
@@ -912,20 +911,21 @@ function CheckAll() {
 <table>
   $message
   <tr>
-  $format
-  $sendmode
-  $media
-  $copies
+    <td nowrap=1>$format $sendmode $media $copies</td>
   </tr>
 </table>
 <p>
 |;
-  
+
+  for (@{ $form->{all_printer} }) {
+    $form->{"$_->{printer}_printer"} = $_->{command};
+    $form->hide_form("$_->{printer}_printer");
+  }
+ 
   %button = ('Select all' => { ndx => 2, key => 'A', value => $locale->text('Select all') },
                'Deselect all' => { ndx => 3, key => 'A', value => $locale->text('Deselect all') },
                'Print' => { ndx => 5, key => 'P', value => $locale->text('Print') },
                'E-mail' => { ndx => 6, key => 'E', value => $locale->text('E-mail') },
-               'Combine' => { ndx => 7, key => 'C', value => $locale->text('Combine') },
 	       'Remove' => { ndx => 8, key => 'R', value => $locale->text('Remove') },
 	      );
 
@@ -941,6 +941,7 @@ function CheckAll() {
   }
   if ($form->{batch} ne 'queue') {
     delete $button{'Remove'};
+    delete $button{'Combine'};
   }
   if ($form->{batch} eq 'email') {
     delete $button{'Print'};
@@ -983,39 +984,6 @@ sub deselect_all {
   for (1 .. $form->{rowcount}) { $form->{"ndx_$_"} = "" }
   $form->{allbox} = "";
   &list_spool;
-  
-}
-
-
-sub combine {
-
-  use Cwd;
-  $dir = cwd();
-  $files = "";
-
-  for (1 .. $form->{rowcount}) {
-    if ($form->{"ndx_$_"}) {
-      if ($form->{"spoolfile_$_"} =~ /\.pdf$/) {
-	$files .= qq|$form->{"spoolfile_$_"} |;
-      }
-    }
-  }
-
-  $form->{format} = "pdf";
-  
-  if ($files) {
-    chdir("$spool/$myconfig{dbname}");
-    if ($filename = BP->spoolfile(\%myconfig, \%$form)) {
-      @args = ("cat $files > $filename");
-      system(@args) == 0 or $form->error("@args : $?");
-    }
-  } else {
-    $form->error($locale->text('Nothing selected!'));
-  }
-
-  chdir("$dir");
-
-  $form->redirect;
   
 }
 

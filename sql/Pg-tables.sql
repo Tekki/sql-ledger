@@ -23,6 +23,12 @@ SELECT nextval ('inventoryid');
 CREATE SEQUENCE contactid;
 SELECT nextval ('contactid');
 --
+CREATE SEQUENCE referenceid;
+SELECT nextval('referenceid');
+--
+CREATE SEQUENCE archiveid;
+SELECT nextval('archiveid');
+--
 CREATE TABLE makemodel (
   parts_id int,
   make text,
@@ -50,7 +56,8 @@ CREATE TABLE chart (
   category char(1),
   link text,
   gifi_accno text,
-  contra bool DEFAULT 'f'
+  contra bool DEFAULT 'f',
+  closed bool DEFAULT 'f'
 );
 --
 CREATE TABLE gifi (
@@ -63,7 +70,7 @@ CREATE TABLE defaults (
   fldvalue text
 );
 --
-INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '3.0.0');
+INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '3.1.3');
 --
 CREATE TABLE acc_trans (
   trans_id int,
@@ -98,7 +105,11 @@ CREATE TABLE invoice (
   itemnotes text,
   lineitemdetail bool,
   ordernumber text,
-  ponumber text
+  ponumber text,
+  cost float,
+  vendor text,
+  vendor_id int,
+  kititem bool DEFAULT 'f'
 );
 --
 CREATE TABLE customer (
@@ -132,7 +143,8 @@ CREATE TABLE customer (
   discountterms int2,
   threshold float,
   paymentmethod_id int,
-  remittancevoucher bool
+  remittancevoucher bool,
+  prepayment_accno_id int
 );
 --
 CREATE TABLE parts (
@@ -322,7 +334,10 @@ CREATE TABLE orderitems (
   itemnotes text,
   lineitemdetail bool,
   ordernumber text,
-  ponumber text
+  ponumber text,
+  cost float,
+  vendor text,
+  vendor_id int
 );
 --
 CREATE TABLE exchangerate (
@@ -403,7 +418,8 @@ CREATE TABLE vendor (
   discountterms int2,
   threshold float,
   paymentmethod_id int,
-  remittancevoucher bool
+  remittancevoucher bool,
+  prepayment_accno_id int
 );
 --
 CREATE TABLE project (
@@ -437,7 +453,8 @@ CREATE TABLE status (
 CREATE TABLE department (
   id int DEFAULT nextval('id'),
   description text,
-  role char(1) DEFAULT 'P'
+  role char(1) DEFAULT 'P',
+  rn int
 );
 --
 -- department transaction table
@@ -450,7 +467,8 @@ CREATE TABLE dpt_trans (
 CREATE TABLE business (
   id int DEFAULT nextval('id'),
   description text,
-  discount float4
+  discount float4,
+  rn int
 );
 --
 -- SIC
@@ -462,7 +480,8 @@ CREATE TABLE sic (
 --
 CREATE TABLE warehouse (
   id int DEFAULT nextval('id'),
-  description text
+  description text,
+  rn int
 );
 --
 CREATE TABLE inventory (
@@ -747,9 +766,14 @@ CREATE TABLE employeewage (
 );
 --
 CREATE TABLE reference (
-  id int,
+  id int default nextval('referenceid') primary key,
+  code text,
   trans_id int,
-  description text
+  description text,
+  archive_id int,
+  login text,
+  formname text,
+  folder text
 );
 --
 CREATE TABLE acsrole (
@@ -759,4 +783,18 @@ CREATE TABLE acsrole (
   rn int2
 );
 --
-
+CREATE TABLE archive (
+  id int default nextval('archiveid') primary key,
+  filename text
+);
+--
+CREATE TABLE archivedata (
+  archive_id int references archive (id) on delete cascade,
+  bt text
+);
+--
+CREATE TABLE mimetype (
+  extension varchar(32) primary key,
+  contenttype varchar(64)
+);
+--

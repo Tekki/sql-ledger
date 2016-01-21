@@ -1,6 +1,6 @@
 #=====================================================================
-# SQL-Ledger ERP
-# Copyright (c) 2006
+# SQL-Ledger
+# Copyright (c) DWS Systems Inc.
 #
 #  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.com
@@ -12,6 +12,9 @@
 #======================================================================
 
 use SL::CT;
+
+require "$form->{path}/cm.pl";
+require "$form->{path}/js.pl";
 
 1;
 # end of main
@@ -113,13 +116,7 @@ sub create_links {
     $form->{selectemployee} = $form->escape($form->{selectemployee},1);
   }
 
-  $i = 0;
-  for (@{ $form->{all_reference} }) {
-    $i++;
-    $form->{"referencedescription_$i"} = $_->{description};
-    $form->{"referenceid_$i"} = $_->{id};
-  }
-  $form->{reference_rows} = $i;
+  &all_references;
 
 }
 
@@ -174,9 +171,9 @@ sub history {
 		  <table>
 		    <tr>
 		      <th>|.$locale->text('From').qq|</th>
-		      <td><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}"></td>
+		      <td><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdatefrom").qq|</td>
 		      <th>|.$locale->text('To').qq|</th>
-		      <td><input name=transdateto size=11 class=date title="$myconfig{dateformat}"></td>
+                      <td><input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
 		    </tr>
 		    <tr>
 		      <td></td>
@@ -245,13 +242,22 @@ sub history {
 |;
 
   &search_name;
+
+  %button = ('Continue' => { ndx => 1, key => 'C', value => $locale->text('Continue') }
+  );
   
+  $form->print_button(\%button, 'Continue');
+  
+  $form->hide_form(qw(ARAP db nextsub path login));
+
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
     &menubar;
   }
 
   print qq|
+</form>
+
 </body>
 </html>
 |;
@@ -300,9 +306,9 @@ sub transactions {
 		  <table>
 		    <tr>
 		      <th>|.$locale->text('From').qq|</th>
-		      <td><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}"></td>
+		      <td nowrap><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdatefrom").qq|</td>
 		      <th>|.$locale->text('To').qq|</th>
-		      <td><input name=transdateto size=11 class=date title="$myconfig{dateformat}"></td>
+		      <td nowrap><input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
 		    </tr>
 		    <tr>
 		      <td></td>
@@ -394,6 +400,8 @@ sub include_in_report {
   push @f, qq|<input name="l_clearingnumber" type=checkbox class=checkbox value=Y> |.$locale->text('BC Number');
   push @f, qq|<input name="l_business" type=checkbox class=checkbox value=Y> |.$locale->text('Type of Business');
   push @f, qq|<input name="l_creditlimit" type=checkbox class=checkbox value=Y> |.$locale->text('Credit Limit');
+  push @f, qq|<input name="l_outstanding" type=checkbox class=checkbox value=Y> |.$locale->text('Outstanding');
+  push @f, qq|<input name="l_availablecredit" type=checkbox class=checkbox value=Y> |.$locale->text('Avalable Credit');
   push @f, qq|<input name="l_terms" type=checkbox class=checkbox value=Y> |.$locale->text('Terms');
   push @f, qq|<input name="l_language" type=checkbox class=checkbox value=Y> |.$locale->text('Language');
   push @f, qq|<input name="l_remittancevoucher" type=checkbox class=checkbox value=Y> |.$locale->text('Remittance Voucher');
@@ -437,20 +445,28 @@ sub search {
 
   $form->{nextsub} = "list_names";
 
+  %checked = ( all => 'checked' );
+  
   $orphan = qq|
         <tr>
           <td></td>
-	  <td><input name=status class=radio type=radio value=all checked>&nbsp;|.$locale->text('All').qq|
-	  <input name=status class=radio type=radio value=active>&nbsp;|.$locale->text('Active').qq|
-	  <input name=status class=radio type=radio value=inactive>&nbsp;|.$locale->text('Inactive').qq|
-	  <input name=status class=radio type=radio value=orphaned>&nbsp;|.$locale->text('Orphaned').qq|</td>
+	  <td><input name=status class=radio type=radio value=all $checked{all}>&nbsp;|.$locale->text('All').qq|
+	  <input name=status class=radio type=radio value=active $checked{active}>&nbsp;|.$locale->text('Active').qq|
+	  <input name=status class=radio type=radio value=inactive $checked{inactive}>&nbsp;|.$locale->text('Inactive').qq|
+	  <input name=status class=radio type=radio value=orphaned $checked{orphaned}>&nbsp;|.$locale->text('Orphaned').qq|</td>
 	</tr>
 |;
-
 
   &transactions;
   &include_in_report;
   &search_name;
+
+  %button = ('Continue' => { ndx => 1, key => 'C', value => $locale->text('Continue') }
+  );
+  
+  $form->print_button(\%button, 'Continue');
+  
+  $form->hide_form(qw(ARAP db nextsub path login));
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -458,7 +474,8 @@ sub search {
   }
 
   print qq|
-	      
+</form>
+
 </body>
 </html>
 |;
@@ -496,11 +513,13 @@ sub search_name {
   $focus = "name";
 
   $form->header;
+
+  &calendar;
   
   print qq|
-<body onLoad="document.forms[0].${focus}.focus()" />
+<body onLoad="main.${focus}.focus()" />
 
-<form method=post action=$form->{script}>
+<form method="post" name="main" action=$form->{script}>
 
 <table width=100%>
   <tr>
@@ -530,12 +549,16 @@ sub search_name {
 		<td><input name=phone size=20></td>
 	      </tr>
 	      <tr>
-		$employee
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Notes').qq|</th>
 		<td colspan=3><textarea name=notes rows=3 cols=32></textarea></td>
 	      </tr>
+		$employee
+		<tr>
+		  <th align=right nowrap>|.$locale->text('Type of Business').qq|</th>
+		  <td><input name=business size=32></td>
+		</tr>
 	    </table>
 	  </td>
 
@@ -567,7 +590,7 @@ sub search_name {
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Startdate').qq|</th>
-		<td>|.$locale->text('From').qq| <input name=startdatefrom size=11 class=date title="$myconfig{dateformat}"> |.$locale->text('To').qq| <input name=startdateto size=11 class=date title="$myconfig{dateformat}"></td>
+		<td nowrap>|.$locale->text('From').qq| <input name=startdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "startdatefrom").$locale->text('To').qq| <input name=startdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "startdateto").qq|</td>
 	      </tr>
 	    </table>
 	  </td>
@@ -594,16 +617,6 @@ sub search_name {
 </table>
 
 <br>
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|">
-|;
-
-  $form->hide_form(qw(ARAP db nextsub path login));
-
-  print qq|
-</form>
-
-</body>
-</html>
 |;
 
 }
@@ -653,7 +666,7 @@ sub list_names {
   
   push@ columns, (contacttitle, gender, occupation,
              phone, fax, email, cc, bcc, employee,
-	     notes, discount, terms, creditlimit);
+	     notes, discount, terms, creditlimit, outstanding, availablecredit);
   
   if ($form->{l_accounts}) {
     for (arap_accno, payment_accno, discount_accno, taxaccounts) {
@@ -718,6 +731,7 @@ sub list_names {
   }
   if ($form->{status} eq 'orphaned') {
     $option = $locale->text('Orphaned');
+    unshift @column_index, "delete";
   }
   if ($form->{status} eq 'active') {
     $option = $locale->text('Active');
@@ -772,6 +786,11 @@ sub list_names {
       $option .= $locale->text('Employee');
     }
     $option .= " : $form->{employee}";
+  }
+  if ($form->{business}) {
+    $callback .= "&business=".$form->escape($form->{business},1);
+    $href .= "&business=".$form->escape($form->{business});
+    $option .= "\n<br>".$locale->text('Type of Business')." : $form->{business}";
   }
 
   $fromdate = "";
@@ -844,6 +863,7 @@ sub list_names {
   $form->{callback} = "$callback&sort=$form->{sort}";
   $callback = $form->escape($form->{callback});
   
+  $column_header{delete} = qq|<th class=listheading width=1%><input name="allbox_delete" type=checkbox class=checkbox value="1" onChange="CheckAll();"></th>|;
   $column_header{ndx} = qq|<th class=listheading width=1%>&nbsp;</th>|;
   $column_header{id} = qq|<th class=listheading>|.$locale->text('ID').qq|</th>|;
   $column_header{typeofcontact} = qq|<th class=listheading>|.$locale->text('Type').qq|</th>|;
@@ -872,6 +892,8 @@ sub list_names {
   $column_header{threshold} = qq|<th class=listheading>|.$locale->text('Threshold').qq|</th>|;
   $column_header{paymentmethod} = qq|<th><a class=listheading href=$href&sort=paymentmethod>|.$locale->text('Payment Method').qq|</a></th>|;
   $column_header{creditlimit} = qq|<th class=listheading>|.$locale->text('Credit Limit').qq|</th>|;
+  $column_header{outstanding} = qq|<th class=listheading>|.$locale->text('Outstanding').qq|</th>|;
+  $column_header{availablecredit} = qq|<th class=listheading>|.$locale->text('Available Credit').qq|</th>|;
 
 # $locale->text('AR')
 # $locale->text('AP')
@@ -943,8 +965,12 @@ sub list_names {
   
   $form->header;
 
+  &check_all(qw(allbox_delete id_));
+
   print qq|
 <body>
+
+<form method=post name="main" action="$form->{script}">
 
 <table width=100%>
   <tr>
@@ -991,6 +1017,7 @@ sub list_names {
       for (@column_index) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
 
       $column_data{ndx} = "<td align=right>$i</td>";
+      $column_data{delete} = qq|<td><input name="id_$i" class=checkbox type=checkbox value=$ref->{id}></td>|;
       
       if ($ref->{$form->{sort}} eq $sameitem) {
 	$column_data{$form->{sort}} = "<td>&nbsp;</td>";
@@ -1026,6 +1053,8 @@ sub list_names {
       $column_data{invamount} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{netamount}, $form->{precision}, "&nbsp;")."</td>";
       $column_data{invtax} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{amount} - $ref->{netamount}, $form->{precision}, "&nbsp;")."</td>";
       $column_data{invtotal} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{amount}, $form->{precision}, "&nbsp;")."</td>";
+      
+      $column_data{employee} = "<td>$ref->{employee}&nbsp;</td>" if $ref->{employee} ne $sameemployee;
 
       $invamountsubtotal += $ref->{netamount};
       $invtaxsubtotal += ($ref->{amount} - $ref->{netamount});
@@ -1040,6 +1069,8 @@ sub list_names {
       $column_data{ordtax} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{amount} - $ref->{netamount}, $form->{precision}, "&nbsp;")."</td>";
       $column_data{ordtotal} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{amount}, $form->{precision}, "&nbsp;")."</td>";
 
+      $column_data{employee} = "<td>$ref->{employee}&nbsp;</td>" if $ref->{employee} ne $sameemployee;
+      
       $ordamountsubtotal += $ref->{netamount};
       $ordtaxsubtotal += ($ref->{amount} - $ref->{netamount});
       $ordtotalsubtotal += $ref->{amount};
@@ -1053,6 +1084,8 @@ sub list_names {
       $column_data{quotax} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{amount} - $ref->{netamount}, $form->{precision}, "&nbsp;")."</td>";
       $column_data{quototal} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{amount}, $form->{precision}, "&nbsp;")."</td>";
 
+      $column_data{employee} = "<td>$ref->{employee}&nbsp;</td>" if $ref->{employee} ne $sameemployee;
+ 
       $quoamountsubtotal += $ref->{netamount};
       $quotaxsubtotal += ($ref->{amount} - $ref->{netamount});
       $quototalsubtotal += $ref->{amount};
@@ -1076,7 +1109,13 @@ sub list_names {
 	$column_data{threshold} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{threshold}, 0, "&nbsp;")."</td>";
       }
       if ($form->{l_creditlimit}) {
-	$column_data{creditlimit} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{creditlimit}, 0, "&nbsp;")."</td>";
+	$column_data{creditlimit} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{creditlimit}, $form->{precision}, "&nbsp;")."</td>";
+      }
+      if ($form->{l_outstanding}) {
+	$column_data{outstanding} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{outstanding}, $form->{precision}, "&nbsp;")."</td>";
+      }
+      if ($form->{l_availablecredit}) {
+	$column_data{availablecredit} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{creditlimit} - $ref->{outstanding}, $form->{precision}, "&nbsp;")."</td>";
       }
       if ($form->{l_remittancevoucher}) {
 	$column_data{remittancevoucher} = "<td align=center>". (($ref->{remittancevoucher}) ? "*" : "&nbsp;") . "</td>";
@@ -1096,6 +1135,7 @@ sub list_names {
     
     $sameitem = "$ref->{$form->{sort}}";
     $sameid = $ref->{id};
+    $sameemployee = $ref->{employee};
 
   }
 
@@ -1104,6 +1144,8 @@ sub list_names {
     &list_subtotal;
   }
   
+  $form->{rowcount} = $i;
+
   $i = 1;
   if ($myconfig{acs} !~ /AR--AR/) {
     if ($form->{db} eq 'customer') {
@@ -1117,7 +1159,17 @@ sub list_names {
       $button{'Vendors--Add Vendor'}{order} = $i++;
     }
   }
-  
+
+  if ($form->{status} eq 'orphaned') {
+    if ($form->{db} eq 'customer') {
+      $button{'Customer--Delete'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Delete Customers').qq|"> |;
+      $button{'Customer--Delete'}{order} = $i++;
+    } else {
+      $button{'Vendor--Delete'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Delete Vendors').qq|"> |;
+      $button{'Vendor--Delete'}{order} = $i++;
+    }
+  }
+ 
   foreach $item (split /;/, $myconfig{acs}) {
     delete $button{$item};
   }
@@ -1132,10 +1184,9 @@ sub list_names {
 </table>
 
 <br>
-<form method=post action=$form->{script}>
 |;
 
-  $form->hide_form(qw(callback db path login));
+  $form->hide_form(qw(rowcount callback db path login));
   
   if ($form->{status}) {
     foreach $item (sort { $a->{order} <=> $b->{order} } %button) {
@@ -1538,8 +1589,8 @@ sub list_history {
 
 sub form_header {
 
-  for (qw(creditlimit threshold)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, 0) }
-  for (qw(discount cashdiscount)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, undef) }
+  for (qw(creditlimit threshold)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, $form->{precision}) }
+  for (qw(discount cashdiscount)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}) }
  
   for (qw(terms discountterms)) { $form->{$_} = "" if ! $form->{$_} }
 
@@ -1571,7 +1622,7 @@ sub form_header {
 	      <table>
 	        <tr>
 		  <td>$taxable</td>
-		  <td><input name=taxincluded class=checkbox type=checkbox value=1 $form->{taxincluded}> <b>|.$locale->text('Tax Included').qq|</td>
+		  <td><input name=taxincluded class=checkbox type=checkbox value=1 $form->{taxincluded}> <b>|.$locale->text('Tax Included').qq|</b></td>
 		</tr>
 	      </table>
 	    </td>
@@ -1591,10 +1642,16 @@ sub form_header {
 	  .qq|</select>
 	  </td>
 	  <th align=right>|.$locale->text('Credit Limit').qq|</th>
-	  <td><input name=creditlimit class="inputright" size=11 value="$form->{creditlimit}"></td>
+	  <td><input name=creditlimit class="inputright" size=11 value="$form->{creditlimit}">
+
+ 	  &nbsp;<b>|.$locale->text('Pre-Payment').qq|</b>
+	  &nbsp;<select name="prepayment_accno">|
+	  .$form->select_option($form->{selectarap}, $form->{prepayment_accno})
+	  .qq|</select>
+	  </td>
 	</tr>
 |;
-
+ 
   }
   
   $discountaccount = qq|
@@ -1646,7 +1703,8 @@ sub form_header {
 	</tr>
 |;
   }
-  
+ 
+ 
   $typeofbusiness = qq|
           <th></th>
 	  <td></td>
@@ -1664,6 +1722,8 @@ sub form_header {
 
   }
   
+  $pricegroup = qq|<th></th><td></td>|;
+
   if ($form->{selectpricegroup} && $form->{db} eq 'customer') {
     
     $pricegroup = qq|
@@ -1732,8 +1792,8 @@ sub form_header {
               <input type=hidden name=action value="update">
 	      <tr>
 	        <td align=center><b>|.$locale->text('Type').qq|</b>
-		<input name=typeofcontact type=radio value="company" $typeofcontact{company} onClick="javascript:document.forms[0].submit()">|.$locale->text('Company').qq|
-		<input name=typeofcontact type=radio value="person" $typeofcontact{person} onClick="javascript:document.forms[0].submit()">|.$locale->text('Person').qq|
+		<input name=typeofcontact type=radio value="company" $typeofcontact{company} onClick="javascript:main.submit()">|.$locale->text('Company').qq|
+		<input name=typeofcontact type=radio value="person" $typeofcontact{person} onClick="javascript:main.submit()">|.$locale->text('Person').qq|
 		</td>
 	      </tr>
 |;
@@ -1813,14 +1873,15 @@ sub form_header {
 
   $form->{remittancevoucher} = ($form->{remittancevoucher}) ? "checked" : "";
 
-  $reference_documents = &reference_documents;
+  $reference_documents = &references;
 
   $form->header;
 
-  print qq|
-<body>
+  &calendar;
 
-<form method=post action=$form->{script}>
+  print qq|
+
+<form method="post" name="main" action="$form->{script}">
 
 <table width=100%>
   <tr>
@@ -1926,12 +1987,12 @@ sub form_header {
 	<tr>
 	  $currency
 	  <th align=right>|.$locale->text('Startdate').qq|</th>
-	  <td><input name=startdate size=11 class=date title="$myconfig{dateformat}" value=$form->{startdate}></td>
+	  <td nowrap><input name=startdate size=11 class=date title="$myconfig{dateformat}" value=$form->{startdate}>|.&js_calendar("main", "startdate").qq|</td>
 	</tr>
 	<tr>
 	  $pricegroup
 	  <th align=right>|.$locale->text('Enddate').qq|</th>
-	  <td><input name=enddate size=11 class=date title="$myconfig{dateformat}" value=$form->{enddate}></td>
+	  <td nowrap><input name=enddate size=11 class=date title="$myconfig{dateformat}" value=$form->{enddate}>|.&js_calendar("main", "enddate").qq|</td>
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('Discount').qq|</th>
@@ -1953,9 +2014,9 @@ sub form_header {
 	<tr valign=top>
 	  $employee
 	  <td colspan=4>
-	    <table>
+	    <table width=100%>
 	      <tr valign=top>
-		<th align=left nowrap>|.$locale->text('Notes').qq|</th>
+		<th width=1% align=left nowrap>|.$locale->text('Notes').qq|</th>
 		<td><textarea name=notes rows=3 cols=40 wrap=soft>$form->{notes}</textarea></td>
 	      </tr>
 	    </table>
@@ -2164,7 +2225,7 @@ sub form_footer {
   }
 
   $form->{update_contact} = 1;
-  $form->hide_form(qw(id ARAP update_contact addressid contactid taxaccounts path login callback db status reference_rows referenceurl));
+  $form->hide_form(qw(id ARAP update_contact addressid contactid taxaccounts path login callback db status reference_rows referenceurl precision));
   
   for (keys %button) { delete $button{$_} if ! $f{$_} }
   for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
@@ -2382,6 +2443,7 @@ sub pricelist {
   $form->{rowcount} = $i;
 
   # currencies
+  $form->{selectcurrency} = "";
   for (split /:/, $form->{currencies}) { $form->{selectcurrency} .= "$_\n" }
   $form->{selectcurrency} = $form->escape($form->{selectcurrency},1);
   
@@ -2955,7 +3017,7 @@ sub save_pricelist {
   $form->{callback} = "$form->{script}?action=edit";
   for (qw(db id login path)) { $form->{callback} .= "&$_=$form->{$_}" }
   $form->{callback} .= "&callback=".$form->escape($callback,1);
-  
+
   if (CT->save_pricelist(\%myconfig, \%$form)) {
     $form->redirect;
   } else {
@@ -2972,6 +3034,8 @@ sub add_transaction {
     $form->error($locale->text("Name missing!"));
   }
 
+  $form->{enddate} = "" if $form->{enddate};
+
   CT->save(\%myconfig, \%$form);
   
   $form->{callback} = $form->escape($form->{callback},1);
@@ -2982,6 +3046,7 @@ sub add_transaction {
   $form->redirect;
   
 }
+
 
 sub ap_transaction {
 
@@ -3124,6 +3189,10 @@ sub save {
     $form->error($locale->text("Name missing!"));
   }
 
+  &references;
+  
+  $form->{userspath} = $userspath;
+
   CT->save(\%myconfig, \%$form);
   
   $form->redirect($locale->text($msg));
@@ -3170,41 +3239,118 @@ sub add_customer { &add };
 sub add_vendor { &add };
 
 
-sub reference_documents {
+sub lookup_name {
 
-  $form->{reference_rows} ||= 1;
-  $form->{reference_rows}++ if $form->{"referenceid_$form->{reference_rows}"};
+  CT->search(\%myconfig, \%$form);
 
-  $_ = qq|
-	    <table>
-	      <tr class=listheading>
-		<th class=listheading colspan=2>|.$locale->text('Reference Documents').qq|</th>
-	      </tr>
-|;
+  @column_index = qw(name city);
 
-  for $i (1 .. $form->{reference_rows}) {
-    $_ .= qq|
-	      <tr>
-		<td><input name="referencedescription_$i" size=20 value="|.$form->quote($form->{"referencedescription_$i"}).qq|"></td>
-		<td><input name="referenceid_$i" size=10 value="$form->{"referenceid_$i"}">
-|;
+  $form->{title} = $locale->text('Vendor');
 
-    if ($form->{referenceurl}) {
-      $_ .= qq|
-		<a href=$form->{referenceurl}$form->{"referenceid_$i"} target=_blank>?</a>
-|;
-    }
-
-    $_ .= qq|
-		</td>
-	      </tr>
-|;
+  if ($form->{db} eq 'customer') {
+    $form->{title} = $locale->text('Customer');
   }
 
-  $_ .= qq|
-	    </table>
+  $form->header;
+
+  &resize;
+
+  &pickvalue;
+
+  print qq|
+<body>
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$form->{title}</th>
+  </tr>
+  <tr height="5"></tr>
+
+  <tr>
+    <td>
+      <table width=100%>
 |;
 
-  $_;
+  foreach $ref (@{ $form->{CT} }) {
+
+    for (@column_index) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
+
+    $column_data{name} = qq|<td><a href="#" onClick="pickvalue('$form->{pickvar}','$ref->{name}'); pickvalue('$form->{pickid}','$ref->{id}'); window.close();">$ref->{name}</a></td>|;
+
+    $j++; $j %= 2;
+    print "<tr class=listrow$j>";
+
+    for (@column_index) { print "\n$column_data{$_}" }
+
+    print qq|
+  </tr>
+|;
+
+  }
+
+  print qq|
+      </table>
+    </td>
+  </tr>
+  <tr><td><hr size=3 noshade></td></tr>
+</table>
+
+x <a href="javascript:window.close();">|.$locale->text('Close Window').qq|</a>
+|;
+
 
 }
+
+
+sub delete_customers { &retrieve_names };
+sub delete_vendors { &retrieve_names };
+
+
+sub retrieve_names {
+  
+  CT->retrieve_names(\%myconfig, \%$form);
+
+  $form->error($locale->text('Nothing selected!')) unless @{$form->{names}};
+
+  $form->header;
+
+  print qq|
+
+<body>
+
+<form method=post action=$form->{script}>
+|;
+
+  $form->hide_form;
+
+  print qq|
+<h2 class=confirm>|.$locale->text('Confirm!').qq|</h2>
+
+<h4>|.$locale->text('Are you sure you want to delete').qq|</h4>
+<p>
+|;
+
+  for (@{$form->{names}}) {
+    print "$_<br>\n";
+  }
+
+  print qq|
+<p>  
+<input name=action class=submit type=submit value="|.$locale->text('Yes, delete').qq|">
+</form>
+
+</body>
+</html>
+|;
+
+}
+
+sub yes__delete {
+
+  CT->batch_delete(\%myconfig, \%$form);
+
+  $form->redirect;
+
+}
+
+

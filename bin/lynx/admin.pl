@@ -1,6 +1,6 @@
 #=====================================================================
-# SQL-Ledger ERP
-# Copyright (c) 2006
+# SQL-Ledger
+# Copyright (c) DWS Systems Inc.
 #
 #  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.com
@@ -33,8 +33,8 @@ $form->{"root login"} = 1;
 require "$form->{path}/pw.pl";
 
 # customization
-if (-f "$form->{path}/custom_$form->{script}") {
-  eval { require "$form->{path}/custom_$form->{script}"; };
+if (-f "$form->{path}/custom/$form->{script}") {
+  eval { require "$form->{path}/custom/$form->{script}"; };
   $form->error($@) if ($@);
 }
 
@@ -42,7 +42,7 @@ if (-f "$form->{path}/custom_$form->{script}") {
 if ($form->{action}) {
 
   &check_password unless $form->{action} eq $locale->text('logout');
-  
+
   &{ $locale->findsub($form->{action}) };
     
 } else {
@@ -119,7 +119,7 @@ sub create_config {
   if ($form->{password}) {
     my $t = time + $form->{timeout};
     srand( time() ^ ($$ + ($$ << 15)) );
-    $key = "root login$form->{password}$t";
+    $key = "root$form->{password}$t";
 
     my $i = 0;
     my $l = length $key;
@@ -138,10 +138,10 @@ sub create_config {
   }
 
   open(CONF, ">$userspath/root login.conf") or $form->error("root login.conf : $!");
-  print CONF qq|# configuration file for root login
+  print CONF qq|# configuration file for root
 
 \%rootconfig = (
-sessionkey => '$form->{sessionkey}'
+  sessionkey => '$form->{sessionkey}'
 );\n\n|;
 
   close CONF;
@@ -168,7 +168,7 @@ sub logout {
 sub edit {
 
   $form->{title} = "SQL-Ledger ".$locale->text('Administration');
-  
+
   if (-f "$userspath/$form->{dbname}.LCK") {
     open(FH, "$userspath/$form->{dbname}.LCK") or $form->error("$userspath/$form->{dbname}.LCK : $!");
     $form->{lock} = <FH>;
@@ -355,6 +355,8 @@ sub form_header {
 
   $form->header;
 
+  $focus = "lock";
+
   if ($form->{locked}) {
     $locked = qq|
           <td>$form->{lock}</td>|;
@@ -364,9 +366,9 @@ sub form_header {
   }
 
   print qq|
-<body class=admin>
+<body class=admin onload="document.main.${focus}.focus()" />
 
-<form method=post action=$form->{script}>
+<form name=main method=post action=$form->{script}>
 
 <table>
   <tr class=listheading><th>$form->{title}</th></tr>
@@ -539,12 +541,14 @@ sub change_password {
 
   $form->{title} = $locale->text('Change Password');
 
+  $focus = "new_password";
+
   $form->header;
 
   print qq|
-<body class=admin>
+<body class=admin onload="document.main.${focus}.focus()" />
 
-<form method=post action=$form->{script}>
+<form method=post name=main action=$form->{script}>
 
 <table>
   <tr>
@@ -590,7 +594,12 @@ sub change_password {
 
 sub do_change_password {
 
-  $form->error($locale->text('Passwords do not match!')) if $form->{new_password} ne $form->{confirm_password};
+  if ($form->{new_password}) {
+    $form->error('Password may not contain ? or &') if $form->{new_password} =~ /\?|\&/;
+    if ($form->{new_password} ne $form->{confirm_password}) {
+      $form->error($locale->text('Password does not match!'));
+    }
+  }
 
   $root->{password} = $form->{new_password};
   
@@ -625,7 +634,7 @@ sub check_password {
   eval { require "$userspath/${rootname}.conf"; };
 
   if ($root->{password}) {
-      
+
     if ($form->{password}) {
       $form->{callback} .= "&password=$form->{password}" if $form->{callback};
       if ($root->{password} ne crypt $form->{password}, 'ro') {
@@ -637,7 +646,7 @@ sub check_password {
       &create_config;
       
     } else {
-      
+
       if ($ENV{HTTP_USER_AGENT}) {
 	$ENV{HTTP_COOKIE} =~ s/;\s*/;/g;
 	@cookies = split /;/, $ENV{HTTP_COOKIE};
@@ -646,8 +655,8 @@ sub check_password {
 	  ($name,$value) = split /=/, $_, 2;
 	  $cookie{$name} = $value;
 	}
-	
-	$cookie = ($form->{path} eq 'bin/lynx') ? $cookie{login} : $cookie{"SL-root login"};
+
+	$cookie = ($form->{path} eq 'bin/lynx') ? $cookie{login} : $cookie{"SL-root"};
 
         if ($cookie) {
 	  $form->{sessioncookie} = $cookie;
@@ -665,16 +674,15 @@ sub check_password {
 	    $s .= $ndx{$_};
 	  }
 
-	  $l = length 'root login';
+	  $l = 4;
 	  $login = substr($s, 0, $l);
 	  $time = substr($s, -10);
 	  $password = substr($s, $l, (length $s) - ($l + 10));
-	  
-	  if ((time > $time) || ($login ne 'root login') || ($root->{password} ne crypt $password, 'ro')) {
+
+	  if ((time > $time) || ($login ne 'root') || ($root->{password} ne crypt $password, 'ro')) {
 	    &getpassword;
 	    exit;
 	  }
-
 	} else {
 	  &getpassword;
 	  exit;
@@ -733,12 +741,14 @@ sub dbselect_source {
   
   $form->{callback} = "$form->{script}?action=list_datasets&path=$form->{path}";
   
+  $focus = "dbhost";
+
   $form->header;
 
   print qq|
-<body class=admin>
+<body class=admin onLoad="document.main.${focus}.focus()" />
 
-<form method=post action=$form->{script}>
+<form name=main method=post action=$form->{script}>
 
 <table>
   <tr class=listheading>
@@ -901,7 +911,19 @@ sub create_dataset {
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Company').qq|</th>
-	  <td><input name=company size=25></td>
+	  <td><input name=company size=35></td>
+	</tr>
+	<tr>
+	  <th align=right nowrap>|.$locale->text('Administrator').qq|</th>
+	  <td><input name=name size=35></td>
+	</tr>
+	<tr>
+	  <th align=right nowrap>|.$locale->text('E-mail').qq|</th>
+	  <td><input name=email size=35></td>
+	</tr>
+	<tr>
+	  <th align=right nowrap>|.$locale->text('Password').qq|</th>
+	  <td><input name=adminpassword type=password size=25></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Templates').qq|</th>
@@ -996,8 +1018,6 @@ sub dbcreate {
     
     if (mkdir "$form->{templates}", oct("771")) {
       
-      umask(007);
-      
       # copy templates to the directory
       opendir TEMPLATEDIR, "$templates/." or $form->error("$templates : $!");
       @templates = grep /$form->{mastertemplates}-/, readdir TEMPLATEDIR;
@@ -1042,8 +1062,13 @@ sub dbcreate {
     $form->{dbpasswd} = pack 'u', $form->{dbpasswd};
     chomp $form->{dbpasswd};
   }
+
+  if ($form->{adminpassword}) {
+    srand( time() ^ ($$ + ($$ << 15)) );
+    $form->{password} = crypt $form->{adminpassword}, 'ad';
+  }
   
-  for (qw(company dbconnect dbdriver dbhost dbname dboptions dbpasswd dbport dbuser stylesheet)) {
+  for (qw(company name email dbconnect dbdriver dbhost dbname dboptions dbpasswd dbport dbuser stylesheet password)) {
     print FH "$_=$form->{$_}\n" if $form->{$_};
   }
   print FH "\n";
@@ -1051,6 +1076,8 @@ sub dbcreate {
 
   unlink "${memberfile}.LCK";
  
+  delete $form->{password};
+
   &list_datasets;
 
 }
@@ -1079,20 +1106,22 @@ sub lock_dataset { &do_lock_system }
 
 sub lock_system {
   
-   $form->{title} = "SQL-Ledger / ";
-   
-   if ($form->{dbname}) {
-     $form->{title} .= $locale->text('Lock Dataset')." / ".$form->{dbname};
-   } else {
-     $form->{title} .= $locale->text('Lock System');
-   }
+  $form->{title} = "SQL-Ledger / ";
   
+  if ($form->{dbname}) {
+    $form->{title} .= $locale->text('Lock Dataset')." / ".$form->{dbname};
+  } else {
+    $form->{title} .= $locale->text('Lock System');
+  }
+
+  $focus = "lock";
+
   $form->header;
 
   print qq|
-<body class=admin>
+<body class=admin onLoad="document.main.${focus}.focus()" />
 
-<form method=post action=$form->{script}>
+<form name=main method=post action=$form->{script}>
 
 <table>
   <tr class=listheading>

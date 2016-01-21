@@ -1,6 +1,6 @@
 #=====================================================================
-# SQL-Ledger ERP
-# Copyright (c) 2007
+# SQL-Ledger
+# Copyright (c) DWS Systems Inc.
 #
 #  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.com
@@ -77,7 +77,6 @@ print qq|
   %button = ('Save Report' => { ndx => 1, key => 'S', value => $locale->text('Save Report') });
   
   if ($form->{reportid}) {
-    $button{'Save Report as new'} = { ndx => 2, key => 'N', value => $locale->text('Save Report as new') };
     $button{'Delete Report'} = { ndx => 3, key => 'D', value => $locale->text('Delete Report') };
   }
 
@@ -123,14 +122,6 @@ sub do_save_report {
     
   $form->redirect;
   
-}
-
-
-sub save_report_as_new {
-
-  delete $form->{reportid};
-  &do_save_report;
-
 }
 
 

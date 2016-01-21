@@ -1,5 +1,5 @@
                    SQL-Ledger ERP
-                    Version 3.0
+                    Version 3.2
 
 
 DESCRIPTION:
@@ -44,7 +44,7 @@ Non specific, see requirements.
 
 REQUIREMENTS:
 -------------
-1 - Perl, 5+
+1 - Perl, 5+ (non threaded versions)
 2 - http server (Apache, NCSA, httpi, thttpd, ...)
 3 - SQL Server (PostgreSQL 7.1+)
 4 - DBD (DBD-Pg)
@@ -91,7 +91,7 @@ INSTALLATION WITHOUT setup.pl:
 --------------------------------
 unpack the tar.gz file in /usr/local
 
-  tar xzvf sql-ledger-3.0.0.tar.gz
+  tar xzvf sql-ledger-3.2.x.tar.gz
 
 you should now have everything in /usr/local/sql-ledger
 
@@ -134,7 +134,7 @@ restart your web server.
 Note: /usr/local/sql-ledger is only a suggested
 path, you can install in any directory.
 
-Some versions of Apache 2 use a confd directory for
+Newer versions of Apache use a confd directory for
 configuration files. If this is the case copy
 sql-ledger-httpd.conf into this directory and leave
 httpd.conf as is. Restart Apache.

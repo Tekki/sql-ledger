@@ -1,6 +1,6 @@
 #=====================================================================
-# SQL-Ledger ERP
-# Copyright (c) 2006
+# SQL-Ledger
+# Copyright (c) DWS Systems Inc.
 #
 #  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.com
@@ -30,7 +30,8 @@ sub add {
   for (qw(cashdrawer poledisplay)) { $form->{$_} = $form->escape($form->{$_},1) }
   
   $form->{format} = "txt";
-  $form->{media} = ($myconfig{printer}) ? $myconfig{printer} : "screen";
+  $form->{media} = "screen";
+  $form->{media} = $myconfig{printer} if $form->{selectprinter} =~ /$myconfig{printer}/;
   $form->{rowcount} = 0;
 
   $form->{readonly} = ($myconfig{acs} =~ /POS--Sale/) ? 1 : 0;
@@ -116,7 +117,7 @@ sub form_header {
 		  <table>
 		    <tr>
 		    
-		<td><select name=currency onChange="javascript:document.forms[0].submit()">|
+		<td><select name=currency onChange="javascript:main.submit()">|
 		.$form->select_option($form->{selectcurrency}, $form->{currency})
 		.qq|</select></td>|;
 
@@ -139,7 +140,7 @@ sub form_header {
     $customer = qq|
               <tr>
 	        <th align=right nowrap>|.$locale->text('Customer').qq| <font color=red>*</font></th>
-		<td><select name=customer onChange="javascript:document.forms[0].submit()">|.$form->select_option($form->{selectcustomer}, $form->{customer}, 1).qq|</select>
+		<td><select name=customer onChange="javascript:main.submit()">|.$form->select_option($form->{selectcustomer}, $form->{customer}, 1).qq|</select>
 		$vcref
 		</td>
 	      </tr>
@@ -170,7 +171,7 @@ sub form_header {
   $department = qq|
               <tr>
 	        <th align="right" nowrap>|.$locale->text('Department').qq|</th>
-		<td><select name=department>|
+		<td><select name=department onChange="javascript:document.main.submit()">|
 		.$form->select_option($form->{selectdepartment}, $form->{department}, 1)
 		.qq|</select>
 		</td>
@@ -180,12 +181,14 @@ sub form_header {
   $warehouse = qq|
               <tr>
 	        <th align="right" nowrap>|.$locale->text('Warehouse').qq|</th>
-		<td><select name=warehouse>|
+		<td><select name=warehouse onChange="javascript:document.main.submit()">|
 		.$form->select_option($form->{selectwarehouse}, $form->{warehouse}, 1).qq|
 		</select>
 		</td>
               </tr>
 | if $form->{selectwarehouse};
+
+   $form->{oldwarehouse} = $form->{warehouse};
 
    $employee = qq|
 	      <tr>
@@ -271,7 +274,7 @@ sub form_header {
   print qq|
 <body onLoad="document.forms[0].${focus}.focus()" />
 
-<form method=post action="$form->{script}">
+<form method="post" name="main" action="$form->{script}" />
 |;
 
   $form->hide_form(map { "select$_" } qw(currency customer department warehouse employee language AR AR_paid paymentmethod printer));
@@ -303,10 +306,10 @@ sub form_header {
 		<td>
 		  <table>
 		    <tr>
-		      <td>$form->{creditlimit}</td>
+		      <td>|.$form->format_amount(\%myconfig, $form->{creditlimit}, $form->{precision}, "0").qq|</td>
 		      <td width=10></td>
 		      <th align=right nowrap>|.$locale->text('Remaining').qq|</th>
-		      <td class="plus$n" width=99%>|.$form->format_amount(\%myconfig, $form->{creditremaining}, 0, "0").qq|</font></td>
+		      <td class="plus$n" width=99%>|.$form->format_amount(\%myconfig, $form->{creditremaining}, $form->{precision}, "0").qq|</font></td>
 		    </tr>
 		  </table>
 		</td>
@@ -351,7 +354,7 @@ sub form_header {
   </tr>
 |;
 
-  $form->hide_form(qw(city state country taxaccounts duedate invnumber transdate defaultcurrency));
+  $form->hide_form(qw(city state country taxaccounts duedate invnumber transdate defaultcurrency oldwarehouse olddepartment));
 
   foreach $accno (split / /, $form->{taxaccounts}) { $form->hide_form(map {"${accno}_$_" } qw(rate description taxnumber)) }
 
@@ -626,8 +629,7 @@ sub form_footer {
 
   } else {
 
-    %button = (
-               'Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
+    %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
                'Main Groups' => { ndx => 2, key => 'M', value => $locale->text('Main Groups') },
 	       'Print' => { ndx => 3, key => 'P', value => $locale->text('Print') },
 	       'Open Drawer' => { ndx => 4, key => 'C', value => $locale->text('Open Drawer') },
@@ -639,7 +641,7 @@ sub form_footer {
 	      );
 
     delete $button{'Main Groups'} if $form->{parentgroups};
-    
+
     if ($transdate > $form->{closedto}) {
 
       if (! $form->{id}) {
@@ -666,7 +668,7 @@ sub form_footer {
 	  ($partsgroup, $translation, $image) = split /--/, $item;
 	  $item = ($translation) ? $translation : $partsgroup;
 	  $item = $form->quote($item);
-          print qq| <button name="action" value="$spc$item" type="submit" class="pos" title="$item"><img src="$image" height="32" alt="$item"></button>\n| if $item;
+	  print qq| <button name="action" value="$spc$item" type="submit" class="pos" title="$item"><img src="$image" height="32" alt="$item">\n| if $item;
 	}
       }
     }
@@ -779,7 +781,7 @@ sub post {
 sub display_row {
   my $numrows = shift;
 
-  @column_index = qw(partnumber itemhref description partsgroup qty unit sellprice discount linetotal);
+  @column_index = qw(partnumber itemhref description partsgroup qty onhand unit sellprice discount linetotal);
     
   $form->{invsubtotal} = 0;
 
@@ -788,6 +790,7 @@ sub display_row {
   $column_data{partnumber} = qq|<th class=listheading>|.$locale->text('Number').qq|</th>|;
   $column_data{description} = qq|<th class=listheading>|.$locale->text('Description').qq|</th>|;
   $column_data{qty} = qq|<th class=listheading>|.$locale->text('Qty').qq|</th>|;
+  $column_data{onhand} = qq|<th class=listheading>|.$locale->text('OH').qq|</th>|;
   $column_data{unit} = qq|<th class=listheading>|.$locale->text('Unit').qq|</th>|;
   $column_data{sellprice} = qq|<th class=listheading>|.$locale->text('Price').qq|</th>|;
   $column_data{linetotal} = qq|<th class=listheading>|.$locale->text('Extended').qq|</th>|;
@@ -836,10 +839,14 @@ sub display_row {
     
     if ($i < $numrows) {
       $column_data{discount} = qq|<td align=right><input name="discount_$i" class="inputright" size="3" value="|.$form->format_amount(\%myconfig, $form->{"discount_$i"}).qq|"></td>|;
+      
       $column_data{itemhref} = qq|<td><a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"id_$i"}" target=_blank>?</a></td>|;
+      
+      $itemhistory = qq| <a href="ic.pl?action=history&login=$form->{login}&path=$form->{path}&pickvar=sellprice_$i&id=$form->{"id_$i"}" target=popup>?</a>|;
     } else {
       $column_data{discount} = qq|<td></td>|;
       $column_data{itemhref} = qq|<td></td>|;
+      $itemhistory = "";
     }
     
     $discount = $form->round_amount($form->{"sellprice_$i"} * $form->{"discount_$i"}/100, $decimalplaces);
@@ -854,7 +861,7 @@ sub display_row {
     $form->{"sellprice_$i"} = $form->format_amount(\%myconfig, $form->{"sellprice_$i"}, $decimalplaces);
     $form->{"qty_$i"} = $form->format_amount(\%myconfig, $form->{"qty_$i"});
 
-    for (qw(partnumber sku description partsgroup unit)) { $form->{"${_}_$i"} = $form->quote($form->{"${_}_$i"}); }
+    for (qw(partnumber sku barcode description partsgroup unit)) { $form->{"${_}_$i"} = $form->quote($form->{"${_}_$i"}); }
     
     $column_data{partnumber} = qq|<td><input name="partnumber_$i" size=20 value="|.$form->quote($form->{"partnumber_$i"}).qq|" accesskey="$i" title="[$i]"></td>|;
 
@@ -865,8 +872,9 @@ sub display_row {
     }
 
     $column_data{qty} = qq|<td align=right><input name="qty_$i" class="inputright" size="8" value="$form->{"qty_$i"}" title="$form->{"onhand_$i"}"></td>|;
+    $column_data{onhand} = qq|<td align=right>$form->{"onhand_$i"}</td>|;
     $column_data{unit} = qq|<td>$form->{"unit_$i"}</td>|;
-    $column_data{sellprice} = qq|<td align=right><input name="sellprice_$i" class="inputright" size="11" value="$form->{"sellprice_$i"}"></td>|;
+    $column_data{sellprice} = qq|<td align=right nowrap><input name="sellprice_$i" class="inputright" size="11" value="$form->{"sellprice_$i"}">$itemhistory</td>|;
     $column_data{linetotal} = qq|<td align=right>$form->{"linetotal_$i"}</td>|;
     
     print qq|
@@ -878,7 +886,7 @@ sub display_row {
         </tr>
 |;
 
-    for (qw(id linetotal listprice lastcost taxaccounts pricematrix sku partsgroup unit onhand inventory_accno_id income_accno_id expense_accno_id)) { $form->hide_form("${_}_$i") }
+    for (qw(id linetotal listprice lastcost taxaccounts pricematrix sku barcode partsgroup unit onhand inventory_accno_id income_accno_id expense_accno_id)) { $form->hide_form("${_}_$i") }
     
   }
 
@@ -903,7 +911,7 @@ sub assign_number {
 
 
 sub main_groups {
-  
+
   # rebuild partsgroup
   $form->get_partsgroup(\%myconfig, { language_code => $form->{language_code}, searchitems => 'nolabor', parentgroup => 1, pos => 1});
   $form->{lookup} = "";
@@ -1051,7 +1059,7 @@ sub print_form {
 
   $form->{username} = $myconfig{name};
 
-  push @a, qw(company address tel fax businessnumber username);
+  push @a, qw(company address tel fax businessnumber companyemail companywebsite username);
   $form->format_string(@a);
 
   $form->{templates} = "$templates/$myconfig{dbname}";
@@ -1071,7 +1079,7 @@ sub print_form {
   $form->{pre} = "<body bgcolor=#ffffff>\n<pre>";
   delete $form->{stylesheet};
 
-  $form->parse_template(\%myconfig, $userspath);
+  $form->parse_template(\%myconfig, $userspath, $dvipdf);
 
   if ($form->{printed} !~ /$form->{formname}/) {
     $form->{printed} .= " $form->{formname}";
@@ -1215,10 +1223,12 @@ sub receipts {
 
   $form->header;
   
+  &calendar;
+  
   print qq|
 <body>
 
-<form method=post action=$form->{script}>
+<form method="post" name="main" action="$form->{script}">
 |;
 
   $form->{sort} = "transdate";	  
@@ -1248,9 +1258,9 @@ sub receipts {
 	  <td colspan=3>
 	    <table>
 	      <tr>
-		<td><input name=fromdate size=11 class=date title="$myconfig{dateformat}" value=$form->{fromdate}></td>
+		<td nowrap><input name=fromdate size=11 class=date title="$myconfig{dateformat}" value=$form->{fromdate}>|.&js_calendar("main", "fromdate").qq|</td>
 		<th align=right>|.$locale->text('To').qq|</th>
-		<td><input name=todate size=11 class=date title="$myconfig{dateformat}"></td>
+		<td nowrap><input name=todate size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "todate").qq|</td>
 	      </tr>
 	    </table>
 	  </td>

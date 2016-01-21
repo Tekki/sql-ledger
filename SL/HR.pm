@@ -26,7 +26,7 @@ sub get_employee {
   my $ref;
   my $notid = "";
   my $rne;
-  
+
   my @df = qw(closedto revtrans company address tel fax businessnumber precision referenceurl);
   my %defaults = $form->get_defaults($dbh, \@df);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
@@ -42,12 +42,12 @@ sub get_employee {
     }
   }
 
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $query = qq|SELECT e.*,
                 ad.id AS addressid, ad.address1, ad.address2, ad.city,
 		ad.state, ad.zipcode, ad.country,
-		bk.name AS bankname, bk.iban, bk.bic, bk.membernumber,
-                bk.clearingnumber,
+		bk.name AS bankname, bk.iban, bk.bic,
+                bk.membernumber, bk.clearingnumber,
 		ad1.address1 AS bankaddress1,
 		ad1.address2 AS bankaddress2,
 		ad1.city AS bankcity,
@@ -85,16 +85,16 @@ sub get_employee {
     # check if employee can be deleted, orphaned
     $form->{status} = "";
     $query = qq|SELECT count(*) FROM ap
-                WHERE vendor_id = $form->{id}|;
+		WHERE vendor_id = $form->{id}|;
     if (! $dbh->selectrow_array($query)) {
       $form->{status} = "orphaned";
     }
-                
+		
     if (! $form->{status}) {
       $query = qq|SELECT count(*) FROM jcitems
-                  WHERE employee_id = $form->{id}|;
+		  WHERE employee_id = $form->{id}|;
       if (! $dbh->selectrow_array($query)) {
-        $form->{status} = "orphaned";
+	$form->{status} = "orphaned";
       }
     }
    
@@ -176,6 +176,7 @@ sub get_employee {
       ($cd) = $dbh->selectrow_array($query);
     }
 
+    %deduct = ();
     if ($form->{trans_id}) {
       $query = qq|SELECT *
                   FROM pay_trans
@@ -205,13 +206,7 @@ sub get_employee {
       $sth->finish;
     }
     
-    $query = qq|SELECT a.rn
-		FROM acsrole a
-		JOIN employee e ON (e.acsrole_id = a.id)
-		WHERE e.id = $form->{id}|;
-    ($rne) = $dbh->selectrow_array($query);
-   
-    $form->get_reference($dbh);
+    $form->all_references($dbh);
 
     $form->create_lock($myconfig, $dbh, $form->{id}, 'hr') unless $nolock;
  
@@ -221,33 +216,7 @@ sub get_employee {
   
   }
 
-  my $login = $form->{login};
-  $login =~ s/\@.*//;
-  $query = qq|SELECT a.rn
-              FROM acsrole a
-	      JOIN employee e ON (e.acsrole_id = a.id)
-	      WHERE e.login = '$login'|;
-  my ($rnl) = $dbh->selectrow_array($query);
-
-  $rnl *= 1;
-  if ($rnl) {
-    $form->{admin} = ($rne) ? $rnl < $rne : 1;
-  }
-  $form->{admin} = 1 if $login eq 'admin';
-
-  # get acsrole
-  $query = qq|SELECT id, description
-              FROM acsrole
-	      WHERE rn > $rnl
-	      ORDER BY rn|;
-  $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
-
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-    push @{ $form->{all_acsrole} }, $ref;
-  }
-  $sth->finish;
-
+  HR->isadmin($myconfig, $form, $dbh);
   
   # get wages
   $query = qq|SELECT *
@@ -327,7 +296,75 @@ sub get_employee {
 }
 
 
+sub isadmin {
+  my ($self, $myconfig, $form, $dbh) = @_;
 
+  my $disconnect = ($dbh) ? 0 : 1;;
+  
+  # connect to database
+  $dbh = $form->dbconnect($myconfig) unless $dbh;
+
+  $form->{id} *= 1;
+  my $rne;
+
+  my $query = qq|SELECT a.rn
+		 FROM acsrole a
+		 JOIN employee e ON (e.acsrole_id = a.id)
+		 WHERE e.id = $form->{id}|;
+  ($rne) = $dbh->selectrow_array($query);
+   
+  my $login = $form->{login};
+  $login =~ s/\@.*//;
+  $query = qq|SELECT a.rn
+              FROM acsrole a
+	      JOIN employee e ON (e.acsrole_id = a.id)
+	      WHERE e.login = '$login'|;
+  my ($rnl) = $dbh->selectrow_array($query);
+
+  $rnl *= 1;
+  if ($rnl) {
+    $form->{admin} = ($rne) ? $rnl < $rne : 1;
+  }
+  $form->{admin} = 1 if $login eq 'admin';
+
+  # get acsrole
+  $query = qq|SELECT id, description
+              FROM acsrole
+	      WHERE rn > $rnl
+	      ORDER BY rn|;
+  $sth = $dbh->prepare($query);
+  $sth->execute || $form->dberror($query);
+
+  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    push @{ $form->{all_acsrole} }, $ref;
+  }
+  $sth->finish;
+
+  $dbh->disconnect if $disconnect;
+
+}
+
+
+sub acsrole {
+  my ($self, $myconfig, $form) = @_;
+  
+  my $dbh = $form->dbconnect($myconfig);
+  
+  my ($null, $id) = split /--/, $form->{acsrole};
+  $id *= 1;
+  
+  my $query = qq|SELECT acs
+	         FROM acsrole
+	         WHERE id = $id|;
+  ($_) = $dbh->selectrow_array($query);
+
+  $dbh->disconnect;
+
+  $_;
+
+}
+
+ 
 sub save_employee {
   my ($self, $myconfig, $form) = @_;
 
@@ -346,12 +383,13 @@ sub save_employee {
   my $rn;
 
   for (qw(paymentmethod acsrole)) { ($null, $form->{"${_}_id"}) = split /--/, $form->{$_} }
-
+  
   if ($form->{id} *= 1) {
     $query = qq|SELECT e.login, e.sales, e.acsrole_id, a.rn
-		FROM employee e
+                FROM employee e
                 LEFT JOIN acsrole a ON (e.acsrole_id = a.id)
-		WHERE e.id = $form->{id}|;
+                WHERE e.id = $form->{id}|;
+
     ($employeelogin, $sales, $acsrole_id, $rn) = $dbh->selectrow_array($query);
 
     my $login = $form->{login};
@@ -402,10 +440,6 @@ sub save_employee {
                 WHERE trans_id = $form->{id}|;
     $dbh->do($query) || $form->dberror($query);
     
-    $query = qq|DELETE FROM reference
-                WHERE trans_id = $form->{id}|;
-    $dbh->do($query) || $form->dberror($query);
-    
   } else {
     my $uid = localtime;
     $uid .= $$;
@@ -426,7 +460,6 @@ sub save_employee {
   $form->{employeenumber} = $form->update_defaults($myconfig, "employeenumber", $dbh) if ! $form->{employeenumber};
 
   for (qw(ap payment)) { ($form->{$_}) = split /--/, $form->{$_} }
-
   $form->{acsrole_id} ||= 'NULL';
   $form->{sales} *= 1;
   
@@ -619,8 +652,17 @@ sub save_employee {
     }
   }
   $sth->finish;
-
-  $form->save_reference($dbh);
+  
+  my %audittrail = ( tablename  => 'employee',
+                     reference => $form->{name},
+		     formname => '',
+		     action     => 'saved',
+		     id => $form->{id}
+		   );
+  
+  $form->audittrail($dbh, "", \%audittrail);
+ 
+  $form->save_reference($dbh, 'employee');
   
   my $rc = $dbh->commit;
   $dbh->disconnect;
@@ -638,6 +680,8 @@ sub delete_employee {
 
   my $query;
 
+  for (qw(id db)) { $form->{$_} =~ s/;//g }
+  
   $query = qq|SELECT address_id
               FROM bank
               WHERE id = $form->{id}|;
@@ -669,16 +713,19 @@ sub delete_employee {
               WHERE trans_id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
   
-  $query = qq|DELETE FROM reference
-              WHERE trans_id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
- 
-  $query = qq|DELETE FROM audittrail
-	      WHERE employee_id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
-
+  $form->delete_references($dbh);
+  
   $form->remove_locks($myconfig, $dbh, 'hr');
- 
+
+  my %audittrail = ( tablename  => 'employee',
+                     reference => $login,
+		     formname => '',
+		     action     => 'deleted',
+		     id => $form->{id}
+		   );
+  
+  $form->audittrail($dbh, "", \%audittrail);
+  
   my $rc = $dbh->commit;
   $dbh->disconnect;
 
@@ -699,7 +746,7 @@ sub employees {
   my $where = "1 = 1";
 
   $form->{sort} ||= "name";
-
+  
   my $var;
   
   for (qw(name employeenumber notes)) {
@@ -708,7 +755,10 @@ sub employees {
       $where .= " AND lower(e.$_) LIKE '$var'";
     }
   }
- 
+  if ($form->{employeelogin} ne "") {
+    $var = $form->like(lc $form->{employeelogin});
+    $where .= " AND lower(e.login) LIKE '$var'";
+  }
   if ($form->{startdatefrom}) {
     $where .= " AND e.startdate >= '$form->{startdatefrom}'";
   }
@@ -730,17 +780,29 @@ sub employees {
   if ($form->{status} eq 'inactive') {
     $where .= qq| AND e.enddate <= current_date|;
   }
+  if ($form->{acsrole}) {
+    (undef, $var) = split /--/, $form->{acsrole};
+    $where .= qq| AND r.id = $var|;
+  }
 
-  my $query = qq|SELECT e.*, 
-                 ad.address1, ad.address2, ad.city, ad.state,
-		 ad.zipcode, ad.country,
-		 bk.iban, bk.bic,
-		 r.description AS acsrole
-                 FROM employee e
-		 LEFT JOIN address ad ON (ad.trans_id = e.id)
-		 LEFT JOIN bank bk ON (bk.id = e.id)
-		 LEFT JOIN acsrole r ON (r.id = e.acsrole_id)
-                 WHERE $where|;
+  my $payrolljoin = qq|LEFT JOIN employeewage ew ON (e.id = ew.employee_id)|;
+
+  if ($form->{status} eq 'payroll') {
+    $payrolljoin = qq|JOIN employeewage ew ON (e.id = ew.employee_id)|;
+  }
+
+  $query = qq|SELECT DISTINCT e.*, 
+              ad.address1, ad.address2, ad.city, ad.state,
+              ad.zipcode, ad.country,
+              bk.iban, bk.bic,
+              r.description AS acsrole,
+              ew.employee_id AS payroll
+              FROM employee e
+              LEFT JOIN address ad ON (ad.trans_id = e.id)
+              LEFT JOIN bank bk ON (bk.id = e.id)
+              LEFT JOIN acsrole r ON (r.id = e.acsrole_id)
+              $payrolljoin
+              WHERE $where|;
 
   my @sf = qw(name);
   my %ordinal = $form->ordinal_order($dbh, $query);
@@ -817,7 +879,7 @@ sub payroll_links {
   $form->remove_locks($myconfig, $dbh);
   
   my @var;
-  
+
   my @df = qw(closedto revtrans company precision namesbynumber referenceurl);
   my %defaults = $form->get_defaults($dbh, \@df);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
@@ -840,7 +902,7 @@ sub payroll_links {
 
   $form->{datepaid} = $form->{transdate} = $form->current_date($myconfig);
 
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $query = qq|SELECT a.*, e.name AS employee, e.payperiod,
                 d.description AS department,
 		c1.accno AS ap_accno, c1.description AS ap_accno_description,
@@ -972,7 +1034,7 @@ sub payroll_links {
     $sth->finish;
     $form->{payrate_rows} = $i;
 
-    $form->get_reference($dbh);
+    $form->all_references($dbh);
 
     $form->create_lock($myconfig, $dbh, $form->{id}, 'hr');
     
@@ -1086,7 +1148,7 @@ sub payroll_transactions {
 
   my $where = "1 = 1";
   my $acwhere = "1 = 1";
-
+  
   $form->{sort} ||= "employee";
 
   my $id;
@@ -1130,7 +1192,7 @@ sub payroll_transactions {
   $sth->execute || $form->dberror($query);
 
   # project ?
-  (undef, $id) = split /--/, $form->{projectnumber};
+  ($null, $id) = split /--/, $form->{projectnumber};
   $query = qq|SELECT trans_id
 	      FROM acc_trans
 	      WHERE project_id = $id
@@ -1158,7 +1220,7 @@ sub payroll_transactions {
 
     while ($dref = $wth->fetchrow_hashref(NAME_lc)) {
       $ref->{glid} = $dref->{glid};
-      if ($ref->{$dref->{id}} = $dref->{amount} * $dref->{qty}) {
+      if ($ref->{$dref->{id}} = $form->round_amount($dref->{amount} * $dref->{qty}, $form->{precision})) {
 	$form->{$dref->{id}} = 1;
 	$ok = 1;
       }
@@ -1198,7 +1260,6 @@ sub payroll_transactions {
   $dbh->disconnect;
 
 }
-
 
 
 sub payslip_details {
@@ -1319,7 +1380,6 @@ sub payslip_details {
 }
 
 
-
 sub post_transaction {
   my ($self, $myconfig, $form) = @_;
   
@@ -1407,7 +1467,7 @@ sub post_transaction {
     $sth->finish;
   }
   
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $query = qq|SELECT pt.glid, g.reference
 		FROM pay_trans pt
 		JOIN ap a ON (a.id = pt.trans_id)
@@ -1419,18 +1479,15 @@ sub post_transaction {
                 WHERE trans_id = $form->{id}|;
     $dbh->do($query) || $form->dberror($query);
   }
- 
-  $ap->{login} = $form->{login};
-  $ap->{id} = $form->{id};
-  $ap->{invnumber} = $form->{invnumber};
+
+  delete $form->{invnumber} if $form->{postasnew};
+  for (qw(login id invnumber department transdate description language_code)) { $ap->{$_} = $form->{$_} }
+
   $ap->{vendor_id} = $employee_id; 
   $ap->{defaultcurrency} = $ap->{currency};
-  $ap->{department} = $form->{department};
   $ap->{vc} = 'vendor';
-  $ap->{transdate} = $form->{transdate};
   $ap->{duedate} = $form->{transdate};
   $ap->{AP} = $form->{ap};
-  $ap->{description} = $form->{description};
   
   my $i = 0;
   my $j;
@@ -1455,8 +1512,8 @@ sub post_transaction {
 	($defer) = $cth->fetchrow_array;
 	$cth->finish;
 	
-	if ($amount = $form->round_amount($form->{"pay_$j"}, 10)) {
-	  push @employerpays, { employeraccno => $defer, employeeaccno => $accno, description => $form->{"wage_$j"}, amount => $amount };
+	if ($form->{"pay_$j"}) {
+	  push @employerpays, { employeraccno => $defer, employeeaccno => $accno, description => $form->{"wage_$j"}, amount => $form->{"pay_$j"} };
 	}
 	
       } else {
@@ -1471,7 +1528,6 @@ sub post_transaction {
       }
       $wth->finish;
 
-      
     }
   }
   
@@ -1507,7 +1563,7 @@ sub post_transaction {
       $amount = $form->parse_amount($myconfig, $form->{"deduct_$j"}) * $ref->{employerpays};
 
       if ($amount) {
-	push @employerpays, { employeraccno => $employeraccno, employeeaccno => $accno, description => $form->{"deduction_$j"}, amount => $amount };
+	push @employerpays, { employeraccno => $employeraccno, employeeaccno => $accno, description => $form->{"deduction_$j"}, amount => $form->format_amount($myconfig, $amount, $form->{precision}) };
       }
       
     }
@@ -1525,18 +1581,14 @@ sub post_transaction {
   $ap->{"memo_1"} = $form->{memo};
   $ap->{"paymentmethod_1"} = $form->{paymentmethod};
 
-  $i = 0;
-  for (1 .. $form->{reference_rows}) {
-    if ($form->{"referenceid_$_"}) {
-      $i++;
-      $ap->{"referenceid_$i"} = $form->{"referenceid_$_"};
-      $ap->{"referencedescription_$i"} = $form->{"referencedescription_$_"};
-      $gl->{"referenceid_$i"} = $form->{"referenceid_$_"};
-      $gl->{"referencedescription_$i"} = $form->{"referencedescription_$_"};
+  for $i (1 .. $form->{reference_rows}) {
+    for $item (qw(description id archive_id filename confidential)) {
+      $ap->{"reference${item}_$i"} = $form->{"reference${item}_$i"};
+      $gl->{"reference${item}_$i"} = $form->{"reference${item}_$i"};
     }
   }
-  $ap->{reference_rows} = $i;
-  $gl->{reference_rows} = $i;
+  $ap->{reference_rows} = $form->{reference_rows};
+  $gl->{reference_rows} = $form->{reference_rows};
   
   AA->post_transaction($myconfig, $ap, $dbh);
   
@@ -1544,7 +1596,7 @@ sub post_transaction {
   for $j (1 .. $form->{wage_rows}) {
     for (qw(qty amount)) { $form->{"${_}_$j"} = $form->parse_amount($myconfig, $form->{"${_}_$j"}) }
 
-    if ($form->round_amount($form->{"qty_$j"} * $form->{"amount_$j"},10)) {
+    if ($form->round_amount($form->{"qty_$j"} * $form->{"amount_$j"}, 10)) {
       $pth->execute($ap->{id}, $form->{"wage_id_$j"}, $form->{"qty_$j"}, $form->{"amount_$j"});
       $pth->finish;
     }
@@ -1571,15 +1623,17 @@ sub post_transaction {
     $i = 1;
     for (@employerpays) {
 
-      if ($_->{amount}) {
+      $amount = $form->parse_amount($myconfig, $_->{amount});
+
+      if ($amount) {
 	$gl->{"accno_$i"} = $_->{employeeaccno} || $form->{expense};
 	$gl->{"memo_$i"} = $_->{description};
 	$gl->{"projectnumber_$i"} = $form->{projectnumber};
 
-	if ($_->{amount} < 0) {
-	  $gl->{"debit_$i"} = $form->format_amount($myconfig, $_->{amount}, $form->{precision});
+	if ($amount < 0) {
+	  $gl->{"debit_$i"} = $form->format_amount($myconfig, $amount, $form->{precision});
 	} else {
-	  $gl->{"credit_$i"} = $form->format_amount($myconfig, $_->{amount} * -1, $form->{precision});
+	  $gl->{"credit_$i"} = $form->format_amount($myconfig, $amount * -1, $form->{precision});
 	}
 	$i++;
 	
@@ -1587,10 +1641,10 @@ sub post_transaction {
 	$gl->{"memo_$i"} = $_->{description};
 	$gl->{"projectnumber_$i"} = $form->{projectnumber};
 
-	if ($_->{amount} < 0) {
-	  $gl->{"credit_$i"} = $form->format_amount($myconfig, $_->{amount}, $form->{precision});
+	if ($amount < 0) {
+	  $gl->{"credit_$i"} = $form->format_amount($myconfig, $amount, $form->{precision});
 	} else {
-	  $gl->{"debit_$i"} = $form->format_amount($myconfig, $_->{amount} * -1, $form->{precision});
+	  $gl->{"debit_$i"} = $form->format_amount($myconfig, $amount * -1, $form->{precision});
 	}
 	  
 	$i++;
@@ -1631,7 +1685,7 @@ sub get_deduction {
   my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $query = qq|SELECT d.*,
 		 c1.accno AS employee_accno,
 		 c1.description AS employee_accno_description,
@@ -1771,6 +1825,8 @@ sub save_deduction {
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
 
+  $form->{id} *= 1;
+  
   my $null;
   my $deduction_id;
   my $query;
@@ -1870,6 +1926,8 @@ sub delete_deduction {
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
 
+  $form->{id} *= 1;
+  
   # delete deduction
   my $query = qq|DELETE FROM deduction
 	         WHERE id = $form->{id}|;
@@ -1904,7 +1962,7 @@ sub get_wage {
   my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $query = qq|SELECT w.*,
 		 c.accno, c.description AS accno_description,
 		 l.description AS accno_translation,
@@ -2044,6 +2102,8 @@ sub delete_wage {
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
 
+  $form->{id} *= 1;
+  
   # delete deduction
   my $query = qq|DELETE FROM wage
 	         WHERE id = $form->{id}|;

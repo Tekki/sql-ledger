@@ -23,8 +23,8 @@ use SL::Menu;
 sub display {
 
   $menu = new Menu "$menufile";
-  $menu->add_file("custom_$menufile") if -f "custom_$menufile";
-  $menu->add_file("$form->{login}_$menufile") if -f "$form->{login}_$menufile";
+  $menu->add_file("$form->{path}/custom/$menufile") if -f "$form->{path}/custom/$menufile";
+  $menu->add_file("$form->{path}/custom/$form->{login}/$menufile") if -f "$form->{path}/custom/$form->{login}/$menufile";
   
   @menuorder = $menu->access_control(\%myconfig);
 
@@ -56,8 +56,8 @@ sub section_menu {
 
   $menu = new Menu "$menufile", $form->{level};
   
-  $menu->add_file("custom_$menufile") if -f "custom_$menufile";
-  $menu->add_file("$form->{login}_$menufile") if -f "$form->{login}_$menufile";
+  $menu->add_file("$form->{path}/custom/$menufile") if -f "$form->{path}/custom/$menufile";
+  $menu->add_file("$form->{path}/custom/$form->{login}/$menufile") if -f "$form->{path}/custom/$form->{login}/$menufile";
   
   # build tiered menus
   @menuorder = $menu->access_control(\%myconfig, $form->{level});

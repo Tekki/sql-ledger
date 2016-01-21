@@ -1,6 +1,6 @@
 #=====================================================================
-# SQL-Ledger ERP
-# Copyright (c) 2006
+# SQL-Ledger
+# Copyright (c) DWS Systems Inc.
 #
 #  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.com
@@ -12,9 +12,10 @@
 #======================================================================
 
 use SL::JC;
-use SL::JS;
 
+require "$form->{path}/cm.pl";
 require "$form->{path}/sr.pl";
+require "$form->{path}/js.pl";
 
 1;
 # end of main
@@ -118,8 +119,8 @@ sub search {
   $fromto = qq|
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Startdate').qq|</th>
-	  <td>|.$locale->text('From').qq| <input name=startdatefrom size=11 class=date title="$myconfig{dateformat}">
-	  |.$locale->text('To').qq| <input name=startdateto size=11 class=date title="$myconfig{dateformat}"></td>
+	  <td>|.$locale->text('From').qq| <input name=startdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "startdatefrom")
+	  .$locale->text('To').qq| <input name=startdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "startdateto").qq|</td>
 	</tr>
 	$selectfrom
 |;
@@ -266,12 +267,14 @@ sub search {
   
   $form->header;
 
-  JS->change_report(\%$form, \@input, \@checked, \%radio);
+  &calendar;
+  
+  &change_report(\%$form, \@input, \@checked, \%radio);
   
   print qq|
 <body>
 
-<form method=post action=$form->{script}>
+<form method=post name=main action=$form->{script}>
 
 <table width=100%>
   <tr>
@@ -411,7 +414,7 @@ sub prepare_timecard {
   $form->{checkedin} = $form->{inhour} * 3600 + $form->{inmin} * 60 + $form->{insec};
   $form->{checkedout} = $form->{outhour} * 3600 + $form->{outmin} * 60 + $form->{outsec};
 
-  if ($form->{checkedin} > $form->{checkedout}) {
+  if ($form->{checkedout} && ($form->{checkedin} > $form->{checkedout})) {
     $form->{checkedout} = 86400 - ($form->{checkedin} - $form->{checkedout});
     $form->{checkedin} = 0;
   }
@@ -452,16 +455,21 @@ sub prepare_timecard {
   }
 
   for (qw(formname language printer)) { $form->{"select$_"} = $form->escape($form->{"select$_"}, 1) }
+  
+  # references
+  &all_references;
 
 }
 
 
 sub timecard_header {
+  
+  $reference_documents = &references;
 
   for (qw(transdate checkedin checkedout partnumber)) { $form->{"old$_"} = $form->{$_} }
 
   if (($rows = $form->numtextrows($form->{description}, 50, 8)) < 2) {
-    $rows = 1;
+    $rows = 2;
   }
   
   $description = qq|<textarea name=description rows=$rows cols=46 wrap=soft>$form->{description}</textarea>|;
@@ -531,15 +539,17 @@ sub timecard_header {
 	  <td>$form->{clocked}</td>
 	</tr>
 |;
-   
+
   $form->helpref($form->{type}, $myconfig{countrycode});
   
   $form->header;
-
+  
+  &calendar;
+  
   print qq|
 <body>
 
-<form method=post action="$form->{script}">
+<form method="post" name="main" action="$form->{script}">
 |;
 
   $form->hide_form(map { "select$_" } qw(projectnumber employee formname language printer));
@@ -574,7 +584,7 @@ sub timecard_header {
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Date worked').qq| <font color=red>*</font></th>
-	  <td><input name=transdate size=11 class=date title="$myconfig{dateformat}" value=$form->{transdate}></td>
+	  <td nowrap><input name=transdate size=11 class=date title="$myconfig{dateformat}" value=$form->{transdate}>|.&js_calendar("main", "transdate").qq|</td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>$laborlabel <font color=red>*</font></th>
@@ -619,6 +629,9 @@ sub timecard_header {
 	</tr>
 	$rate
 	$notes
+	<tr>
+	$reference_documents
+	</tr>
 |;
 
 }
@@ -655,9 +668,11 @@ sub timecard_footer {
   } else {
 
   %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
-             'Preview' => { ndx => 2, key => 'V', value => $locale->text('Preview') },
-             'Print' => { ndx => 3, key => 'P', value => $locale->text('Print') },
-	     'Save' => { ndx => 4, key => 'S', value => $locale->text('Save') },
+             'Check In' => { ndx => 2, key => 'C', value => $locale->text('Check In') },
+             'Check Out' => { ndx => 2, key => 'C', value => $locale->text('Check Out') },
+             'Preview' => { ndx => 3, key => 'V', value => $locale->text('Preview') },
+             'Print' => { ndx => 4, key => 'P', value => $locale->text('Print') },
+	     'Save' => { ndx => 5, key => 'S', value => $locale->text('Save') },
 	     'Print and Save' => { ndx => 6, key => 'R', value => $locale->text('Print and Save') },
 	     'Save as new' => { ndx => 7, key => 'N', value => $locale->text('Save as new') },
 	     'Print and Save as new' => { ndx => 8, key => 'W', value => $locale->text('Print and Save as new') },
@@ -666,7 +681,15 @@ sub timecard_footer {
 	    );
 
     %a = ();
-    
+
+    if ($form->{inhour} + $form->{inmin} + $form->{insec}) {
+      if (! ($form->{outhour} + $form->{outmin} + $form->{outsec}) ) {
+	$a{'Check Out'} = 1;
+      }
+    } else {
+      $a{'Check In'} = 1;
+    }
+
     if ($form->{id}) {
     
       if (!$form->{locked}) {
@@ -704,7 +727,7 @@ sub timecard_footer {
     &menubar;
   }
 
-  $form->hide_form(qw(callback path login));
+  $form->hide_form(qw(reference_rows callback path login));
   
   print qq|
 
@@ -714,6 +737,21 @@ sub timecard_footer {
 </html>
 |;
 
+}
+
+
+sub check_in {
+
+  ($form->{insec},$form->{inmin},$form->{inhour}) = localtime;
+  &update;
+  
+}
+
+sub check_out {
+
+  ($form->{outsec},$form->{outmin},$form->{outhour}) = localtime;
+  &update;
+  
 }
 
 
@@ -762,15 +800,20 @@ sub prepare_storescard {
 
   for (qw(formname language printer)) { $form->{"select$_"} = $form->escape($form->{"select$_"}, 1) }
 
+  # references
+  &all_references;
+
 }
 
 
 sub storescard_header {
 
+  $reference_documents = &references;
+
   for (qw(transdate partnumber)) { $form->{"old$_"} = $form->{$_} }
 
   if (($rows = $form->numtextrows($form->{description}, 50, 8)) < 2) {
-    $rows = 1;
+    $rows = 2;
   }
   
   $description = qq|<textarea name=description rows=$rows cols=46 wrap=soft>$form->{description}</textarea>|;
@@ -790,7 +833,7 @@ sub storescard_header {
   print qq|
 <body>
 
-<form method=post action="$form->{script}">
+<form method="post" name="main" action="$form->{script}">
 |;
 
   $form->hide_form(map { "select$_" } qw(projectnumber formname language printer));
@@ -835,6 +878,9 @@ sub storescard_header {
 	  <td><input name=qty class="inputright" size=6 value=$form->{qty}></td>
 	</tr>
 	$cost
+	<tr>
+	$reference_documents
+	</tr>
 |;
 
 }
@@ -911,7 +957,7 @@ sub storescard_footer {
     &menubar;
   }
 
-  $form->hide_form(qw(callback path login));
+  $form->hide_form(qw(reference_rows callback path login));
   
   print qq|
 
@@ -1096,7 +1142,8 @@ sub save {
       exit;
     }
   }
-  
+
+  $form->{userspath} = $userspath;
   
   $rc = JC->save(\%myconfig, \%$form);
   
@@ -1243,6 +1290,35 @@ sub delete_timecard {
 }
 
 
+sub delete_storescard {
+
+  $form->header;
+
+  print qq|
+<body>
+
+<form method=post action=$form->{script}>
+|;
+
+  delete $form->{action};
+
+  $form->hide_form;
+
+  print qq|
+<h2 class=confirm>|.$locale->text('Confirm!').qq|</h2>
+
+<h4>|.$locale->text('Are you sure you want to delete stores card').qq|
+</h4>
+
+<p>
+<input name=action class=submit type=submit value="|.$locale->text('Yes').qq|">
+</form>
+|;
+
+}
+
+
+
 sub delete {
   
   if ($form->{save_report}) {
@@ -1259,10 +1335,21 @@ sub yes { &{ "yes_delete_$form->{type}" } };
 
 sub yes_delete_timecard {
   
-  if (JC->delete_timecard(\%myconfig, \%$form)) {
+  if (JC->delete(\%myconfig, \%$form)) {
     $form->redirect($locale->text('Time Card deleted!'));
   } else {
     $form->error($locale->text('Cannot delete time card!'));
+  }
+
+}
+
+
+sub yes_delete_storescard {
+
+  if (JC->delete(\%myconfig, \%$form)) {
+    $form->redirect($locale->text('Stores Card deleted!'));
+  } else {
+    $form->error($locale->text('Cannot delete stores card!'));
   }
 
 }
@@ -1412,16 +1499,16 @@ sub list_cards {
 
   if ($form->{type} eq 'timecard') {
 
-    %weekday = ( 1 => $locale->text('Sunday'),
-		 2 => $locale->text('Monday'),
-		 3 => $locale->text('Tuesday'),
-		 4 => $locale->text('Wednesday'),
-		 5 => $locale->text('Thursday'),
-		 6 => $locale->text('Friday'),
-		 7 => $locale->text('Saturday'),
+    %weekday = ( 1 => $locale->text('Su'),
+                 2 => $locale->text('Mo'),
+		 3 => $locale->text('Tu'),
+		 4 => $locale->text('We'),
+		 5 => $locale->text('Th'),
+		 6 => $locale->text('Fr'),
+		 7 => $locale->text('Sa')
 	       );
     
-    for (keys %weekday) { $column_header{$_} = "<th class=listheading width=25>".substr($weekday{$_},0,3)."</th>" }
+    for (keys %weekday) { $column_header{$_} = "<th class=listheading width=25>$weekday{$_}</th>" }
   }
   
   $column_header{id} = "<th><a class=listheading href=$href&sort=id>".$locale->text('ID')."</a></th>";
@@ -1875,7 +1962,7 @@ sub print_form {
   
   @a = ();
   push @a, qw(partnumber description projectnumber projectdescription);
-  push @a, qw(company address tel fax businessnumber username useremail);
+  push @a, qw(company address tel fax businessnumber companyemail companywebsite username useremail);
   
   $form->format_string(@a);
 
@@ -1946,9 +2033,9 @@ sub print_form {
     $status{audittrail} .= $form->audittrail("", \%myconfig, \%audittrail);
   }
 
-  $form->parse_template(\%myconfig, $userspath);
+  $form->parse_template(\%myconfig, $userspath, $dvipdf);
 
-  if (%$oldform) {
+  if ($oldform) {
 
     for (keys %$oldform) { $form->{$_} = $oldform->{$_} }
     for (qw(printed queued audittrail)) { $form->{$_} = $status{$_} }

@@ -40,55 +40,28 @@ sub yearend_statement {
   $query = qq|DELETE FROM acc_trans
               WHERE trans_id = ?|;
   my $ath = $dbh->prepare($query) || $form->dberror($query);
+
+  $query = qq|DELETE FROM yearend
+              WHERE trans_id = ?|;
+  my $yth = $dbh->prepare($query) || $form->dberror($query);
 	      
   foreach $id (@trans_id) {
     $sth->execute($id);
     $ath->execute($id);
+    $yth->execute($id);
 
     $sth->finish;
     $ath->finish;
+    $yth->finish;
   }
   
-  
-  my $last_period = 0;
-  my @categories = qw(I E);
-  my $category;
-
-  $form->{decimalplaces} *= 1;
-
-  &get_accounts($dbh, 0, $form->{fromdate}, $form->{todate}, $form, \@categories);
+  for (qw(I E)) {
+    %{ $form->{$_} } = &get_accounts($form, $dbh, $form->{fromdate}, $form->{todate}, $_);
+  }
   
   # disconnect
   $dbh->disconnect;
 
-
-  # now we got $form->{I}{accno}{ }
-  # and $form->{E}{accno}{  }
-  
-  my %account = ( 'I' => { 'label' => 'income',
-                           'labels' => 'income',
-			   'ml' => 1 },
-		  'E' => { 'label' => 'expense',
-		           'labels' => 'expenses',
-			   'ml' => -1 }
-		);
-  
-  foreach $category (@categories) {
-    foreach $key (sort keys %{ $form->{$category} }) {
-      if ($form->{$category}{$key}{charttype} eq 'A') {
-	$form->{"total_$account{$category}{labels}_this_period"} += $form->{$category}{$key}{this} * $account{$category}{ml};
-      }
-    }
-  }
-
-
-  # totals for income and expenses
-  $form->{total_income_this_period} = $form->round_amount($form->{total_income_this_period}, $form->{decimalplaces});
-  $form->{total_expenses_this_period} = $form->round_amount($form->{total_expenses_this_period}, $form->{decimalplaces});
-
-  # total for income/loss
-  $form->{total_this_period} = $form->{total_income_this_period} - $form->{total_expenses_this_period};
-  
 }
 
 
@@ -110,225 +83,289 @@ sub create_links {
 
 
 sub income_statement {
-  my ($self, $myconfig, $form) = @_;
+  my ($self, $myconfig, $form, $locale) = @_;
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  my $last_period = 0;
-  my @categories = qw(I E);
-  my $category;
-
-  $form->{decimalplaces} *= 1;
-
-  if (! ($form->{fromdate} || $form->{todate})) {
-    if ($form->{fromyear} && $form->{frommonth}) {
-      ($form->{fromdate}, $form->{todate}) = $form->from_to($form->{fromyear}, $form->{frommonth}, $form->{interval});
-    }
+  if (!$form->{fromdate}) {
+    ($form->{fromdate}) = $dbh->selectrow_array(qq|SELECT transdate FROM acc_trans ORDER BY transdate LIMIT 1|);
   }
-  
+  $form->{todate} ||= $form->current_date($myconfig);
+
+  for (qw(fromdate todate)) { $form->{$_} = $form->datetonum($myconfig, $form->{$_}) }
+
+  my $dateformat = $myconfig->{dateformat};
+  $myconfig->{dateformat} = "yyyymmdd";
+
+  $form->{transdate} = $form->{fromdate};
+  $form->fdld($myconfig, $locale);
+
   if ($form->{currency} ne $form->{defaultcurrency}) {
-    my $transdate = $form->{todate};
-    $transdate ||= $form->current_date($myconfig);
- 
-    $form->{exchangerate} = $form->get_exchangerate($myconfig, $dbh, $form->{currency}, $transdate);
+    $form->{exchangerate} = $form->get_exchangerate($myconfig, $dbh, $form->{currency}, $form->{todate});
   }
-    
+
   $form->{exchangerate} ||= 1;
- 
-  &get_accounts($dbh, $last_period, $form->{fromdate}, $form->{todate}, $form, \@categories, 1);
-  
-  if (! ($form->{comparefromdate} || $form->{comparetodate})) {
-    if ($form->{compareyear} && $form->{comparemonth}) {
-      ($form->{comparefromdate}, $form->{comparetodate}) = $form->from_to($form->{compareyear}, $form->{comparemonth}, $form->{interval});
+  $form->{longformat} *= 1;
+
+  my @categories = qw(I E);
+  my $fromdate;
+  my $todate;
+  my $i;
+  my $j;
+  my $k;
+  my %c;
+  my $interval;
+  my $done;
+
+  for (@categories) {
+    $fromdate = $form->{fromdate};
+    $todate = $form->{todate};
+
+    $form->{period}{0}{this} = { fromdate => $locale->date($myconfig, $fromdate, $form->{longformat}), todate => $locale->date($myconfig, $todate, $form->{longformat}) };
+
+    %c = &get_accounts($form, $dbh, $fromdate, $todate, $_, 1);
+    &add_accounts($form, \%c, 'this', '0', $_);
+
+    if ($form->{includeperiod} eq 'month') {
+      $todate = $form->add_date($myconfig, $form->{ldm}, $form->{dd} - 1, "days");
+      next if ($todate ge $form->{todate});
+      
+      $form->{period}{1}{this} = { fromdate => $locale->date($myconfig, $fromdate, $form->{longformat}), todate => $locale->date($myconfig, $todate, $form->{longformat}) };
+
+      %c = &get_accounts($form, $dbh, $fromdate, $todate, $_, 1);
+      &add_accounts($form, \%c, 'this', '1', $_);
+
+      $interval = $form->{interval} || 12;
+      $done = 0;
+
+      for $i (1 .. $interval - 1) {
+        last if $done;
+
+        $fromdate = $form->add_date($myconfig, $form->{"fdm+$i"}, $form->{dd} - 1, "days");
+        $todate = $form->add_date($myconfig, $form->{"ldm+$i"}, $form->{dd} - 1, "days");
+        $j = $i + 1;
+
+        if ($todate ge $form->{todate}) {
+          $todate = $form->{todate};
+          $done = 1;
+        }
+
+        $form->{period}{$j}{this} = { fromdate => $locale->date($myconfig, $fromdate, $form->{longformat}), todate => $locale->date($myconfig, $todate, $form->{longformat}) };
+
+        %c = &get_accounts($form, $dbh, $fromdate, $todate, $_, 1);
+        &add_accounts($form, \%c, 'this', $j, $_);
+
+      }
+    }
+
+    if ($form->{includeperiod} eq 'quarter') {
+      $todate = $form->add_date($myconfig, $form->{"ldm+2"}, $form->{dd} - 1, "days");
+      next if ($todate ge $form->{todate});
+
+      $form->{period}{1}{this} = { fromdate => $locale->date($myconfig, $fromdate, $form->{longformat}), todate => $locale->date($myconfig, $todate, $form->{longformat}) };
+
+      %c = &get_accounts($form, $dbh, $fromdate, $todate, $_, 1);
+      &add_accounts($form, \%c, 'this', '1', $_);
+
+      $interval = ($form->{interval} / 3) || 4;
+      $done = 0;
+
+      for $i (1 .. $interval - 1) {
+        last if $done;
+
+        $j = $i * 3;
+        $k = $j + 2;
+        $fromdate = $form->add_date($myconfig, $form->{"fdm+$j"}, $form->{dd} - 1, "days");
+        $todate = $form->add_date($myconfig, $form->{"ldm+$k"}, $form->{dd} - 1, "days");
+        $j = $i + 1;
+
+        if ($todate ge $form->{todate}) {
+          $todate = $form->{todate};
+          $done = 1;
+        }
+
+        $form->{period}{$j}{this} = { fromdate => $locale->date($myconfig, $fromdate, $form->{longformat}), todate => $locale->date($myconfig, $todate, $form->{longformat}) };
+
+        %c = &get_accounts($form, $dbh, $fromdate, $todate, $_, 1);
+        &add_accounts($form, \%c, 'this', $j, $_);
+
+      }
     }
   }
 
-  # if there are any compare dates
-  if ($form->{comparefromdate} || $form->{comparetodate}) {
-    $last_period = 1;
+  if ($form->{previousyear} && $form->{fromdate}) {
+    for (@categories) {
+      $fromdate = $form->add_date($myconfig, $form->{fromdate}, -1, "year");
+      $todate = $form->add_date($myconfig, $form->{todate}, -1, "year");
+      $form->{previousfromdate} = $fromdate;
+      $form->{previoustodate} = $todate;
 
-    &get_accounts($dbh, $last_period, $form->{comparefromdate}, $form->{comparetodate}, $form, \@categories, 1);
-  }  
+      $form->{period}{0}{previous} = { fromdate => $locale->date($myconfig, $fromdate, $form->{longformat}), todate => $locale->date($myconfig, $todate, $form->{longformat}) };
+
+      %c = &get_accounts($form, $dbh, $fromdate, $todate, $_, 1);
+      &add_accounts($form, \%c, 'previous', '0', $_);
+
+      if ($form->{includeperiod} eq 'month') {
+        $todate = $form->add_date($myconfig, $form->{ldm}, -1, "year");
+        $todate = $form->add_date($myconfig, $todate, $form->{dd} - 1, "days");
+
+        next if ($todate ge $form->{previoustodate});
+
+        $form->{period}{1}{previous} = { fromdate => $locale->date($myconfig, $fromdate, $form->{longformat}), todate => $locale->date($myconfig, $todate, $form->{longformat}) };
+
+        %c = &get_accounts($form, $dbh, $fromdate, $todate, $_, 1);
+        &add_accounts($form, \%c, 'previous', '1', $_);
+
+        $interval = $form->{interval} || 12;
+        $done = 0;
+
+        for $i (1 .. $interval - 1) {
+          last if $done;
+
+          $fromdate = $form->add_date($myconfig, $form->{"fdm+$i"}, -1, "year");
+          $fromdate = $form->add_date($myconfig, $fromdate, $form->{dd} - 1, "days");
+          $todate = $form->add_date($myconfig, $form->{"ldm+$i"}, -1, "year");
+          $todate = $form->add_date($myconfig, $todate, $form->{dd} - 1, "days");
+
+          $j = $i + 1;
+
+          if ($todate ge $form->{previoustodate}) {
+            $todate = $form->{previoustodate};
+            $done = 1;
+          }
+
+          $form->{period}{$j}{previous} = { fromdate => $locale->date($myconfig, $fromdate, $form->{longformat}), todate => $locale->date($myconfig, $todate, $form->{longformat}) };
+
+          %c = &get_accounts($form, $dbh, $fromdate, $todate, $_, 1);
+          &add_accounts($form, \%c, 'previous', $j, $_);
+
+        }
+      }
+
+      if ($form->{includeperiod} eq 'quarter') {
+        $todate = $form->add_date($myconfig, $form->{"ldm+2"}, -1, "year");
+        $todate = $form->add_date($myconfig, $todate, $form->{dd} - 1, "days");
+
+        next if ($todate ge $form->{previoustodate});
+
+        $form->{period}{1}{previous} = { fromdate => $locale->date($myconfig, $fromdate, $form->{longformat}), todate => $locale->date($myconfig, $todate, $form->{longformat}) };
+
+        %c = &get_accounts($form, $dbh, $fromdate, $todate, $_, 1);
+        &add_accounts($form, \%c, 'previous', '1', $_);
+
+        $interval = ($form->{interval} / 3) || 4;
+        $done = 0;
+
+        for $i (1 .. $interval - 1) {
+          last if $done;
+
+          $j = $i * 3;
+          $k = $j + 2;
+          $fromdate = $form->add_date($myconfig, $form->{"fdm+$j"}, -1, "year");
+          $fromdate = $form->add_date($myconfig, $fromdate, $form->{dd} - 1, "days");
+          $todate = $form->add_date($myconfig, $form->{"ldm+$k"}, -1, "year");
+          $todate = $form->add_date($myconfig, $todate, $form->{dd} - 1, "days");
+
+          $j = $i + 1;
+
+          if ($todate ge $form->{previoustodate}) {
+            $todate = $form->{previoustodate};
+            $done = 1;
+          }
+
+          $form->{period}{$j}{previous} = { fromdate => $locale->date($myconfig, $fromdate, $form->{longformat}), todate => $locale->date($myconfig, $todate, $form->{longformat}) };
+
+          %c = &get_accounts($form, $dbh, $fromdate, $todate, $_, 1);
+          &add_accounts($form, \%c, 'previous', $j, $_);
+
+        }
+      }
+    }
+  }
 
   my %defaults = $form->get_defaults($dbh, \@{['company','address','businessnumber']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
-
+  
   $form->report_level($myconfig, $dbh);
 
   # disconnect
   $dbh->disconnect;
 
-
-  # now we got $form->{I}{accno}{ }
-  # and $form->{E}{accno}{  }
-  
-  my %account = ( 'I' => { 'label' => 'income',
-                           'labels' => 'income',
-			   'ml' => 1 },
-		  'E' => { 'label' => 'expense',
-		           'labels' => 'expenses',
-			   'ml' => -1 }
-		);
-  
-  my $str;
-  
-  foreach $category (@categories) {
-    
-    foreach $key (sort keys %{ $form->{$category} }) {
-      # push description onto array
-      
-      $str = ($form->{l_heading}) ? $form->{padding} : "";
-      
-      if ($form->{$category}{$key}{charttype} eq "A") {
-	$str .= ($form->{l_accno}) ? "$form->{$category}{$key}{accno} - $form->{$category}{$key}{description}" : "$form->{$category}{$key}{description}";
-      }
-      if ($form->{$category}{$key}{charttype} eq "H") {
-	if ($account{$category}{subtotal} && $form->{l_subtotal}) {
-	  $dash = "- ";
-	  push(@{$form->{"$account{$category}{label}_account"}}, "$str$form->{bold}$account{$category}{subdescription}$form->{endbold}");
-	  push(@{$form->{"$account{$category}{labels}_this_period"}}, $form->format_amount($myconfig, $account{$category}{subthis} * $account{$category}{ml}, $form->{decimalplaces}, $dash));
-	  
-	  if ($last_period) {
-	    push(@{$form->{"$account{$category}{labels}_last_period"}}, $form->format_amount($myconfig, $account{$category}{sublast} * $account{$category}{ml}, $form->{decimalplaces}, $dash));
-	  }
-	  
-	}
-	
-	$str = "$form->{br}$form->{bold}$form->{$category}{$key}{description}$form->{endbold}";
-
-	$account{$category}{subthis} = $form->{$category}{$key}{this};
-	$account{$category}{sublast} = $form->{$category}{$key}{last};
-	$account{$category}{subdescription} = $form->{$category}{$key}{description};
-	$account{$category}{subtotal} = 1;
-
-	$form->{$category}{$key}{this} = 0;
-	$form->{$category}{$key}{last} = 0;
-
-	next unless $form->{l_heading};
-
-	$dash = " ";
-      }
-      
-      push(@{$form->{"$account{$category}{label}_account"}}, $str);
-      
-      if ($form->{$category}{$key}{charttype} eq 'A') {
-	$form->{"total_$account{$category}{labels}_this_period"} += $form->{$category}{$key}{this} * $account{$category}{ml};
-	$dash = "- ";
-      }
-      
-      push(@{$form->{"$account{$category}{labels}_this_period"}}, $form->format_amount($myconfig, $form->{$category}{$key}{this} * $account{$category}{ml}, $form->{decimalplaces}, $dash));
-      
-      # add amount or - for last period
-      if ($last_period) {
-	$form->{"total_$account{$category}{labels}_last_period"} += $form->{$category}{$key}{last} * $account{$category}{ml};
-
-	push(@{$form->{"$account{$category}{labels}_last_period"}}, $form->format_amount($myconfig,$form->{$category}{$key}{last} * $account{$category}{ml}, $form->{decimalplaces}, $dash));
-      }
-    }
-
-    $str = ($form->{l_heading}) ? $form->{padding} : "";
-    if ($account{$category}{subtotal} && $form->{l_subtotal}) {
-      push(@{$form->{"$account{$category}{label}_account"}}, "$str$form->{bold}$account{$category}{subdescription}$form->{endbold}");
-      push(@{$form->{"$account{$category}{labels}_this_period"}}, $form->format_amount($myconfig, $account{$category}{subthis} * $account{$category}{ml}, $form->{decimalplaces}, $dash));
-
-      if ($last_period) {
-	push(@{$form->{"$account{$category}{labels}_last_period"}}, $form->format_amount($myconfig, $account{$category}{sublast} * $account{$category}{ml}, $form->{decimalplaces}, $dash));
-      }
-    }
-      
-  }
-
-
-  # totals for income and expenses
-  $form->{total_income_this_period} = $form->round_amount($form->{total_income_this_period}, $form->{decimalplaces});
-  $form->{total_expenses_this_period} = $form->round_amount($form->{total_expenses_this_period}, $form->{decimalplaces});
-
-  # total for income/loss
-  $form->{total_this_period} = $form->{total_income_this_period} - $form->{total_expenses_this_period};
-  
-  if ($last_period) {
-    # total for income/loss
-    $form->{total_last_period} = $form->format_amount($myconfig, $form->{total_income_last_period} - $form->{total_expenses_last_period}, $form->{decimalplaces}, "- ");
-    
-    # totals for income and expenses for last_period
-    $form->{total_income_last_period} = $form->format_amount($myconfig, $form->{total_income_last_period}, $form->{decimalplaces}, "- ");
-    $form->{total_expenses_last_period} = $form->format_amount($myconfig, $form->{total_expenses_last_period}, $form->{decimalplaces}, "- ");
-
-  }
-
-  $form->{total_income_this_period} = $form->format_amount($myconfig,$form->{total_income_this_period}, $form->{decimalplaces}, "- ");
-  $form->{total_expenses_this_period} = $form->format_amount($myconfig,$form->{total_expenses_this_period}, $form->{decimalplaces}, "- ");
-  $form->{total_this_period} = $form->format_amount($myconfig,$form->{total_this_period}, $form->{decimalplaces}, "- ");
+  $myconfig->{dateformat} = $dateformat;
 
 }
 
 
 sub balance_sheet {
-  my ($self, $myconfig, $form) = @_;
+  my ($self, $myconfig, $form, $locale) = @_;
   
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  my $last_period = 0;
-  my @categories = qw(A L Q);
+  $form->{todate} = $form->datetonum($myconfig, $form->{todate});
 
-  my $null;
-  
-  if ($form->{asofdate}) {
-    if ($form->{asofyear} && $form->{asofmonth}) {
-      if ($form->{asofdate} !~ /\W/) {
-	$form->{asofdate} = "$form->{asofyear}$form->{asofmonth}$form->{asofdate}";
-      }
-    }
-  } else {
-    if ($form->{asofyear} && $form->{asofmonth}) {
-      ($null, $form->{asofdate}) = $form->from_to($form->{asofyear}, $form->{asofmonth});
-    }
-  }
-  
-  # if there are any dates construct a where
-  if ($form->{asofdate}) {
-    
-    $form->{this_period} = "$form->{asofdate}";
-    $form->{period} = "$form->{asofdate}";
-    
-  }
+  my $dateformat = $myconfig->{dateformat};
+  $myconfig->{dateformat} = "yyyymmdd";
 
   $form->{decimalplaces} *= 1;
+  $form->{longformat} *= 1;
+
+  $form->{todate} ||= $form->current_date($myconfig);
 
   if ($form->{currency} ne $form->{defaultcurrency}) {
-    my $transdate = $form->{asofdate};
-    $transdate ||= $form->current_date($myconfig);
- 
-    $form->{exchangerate} = $form->get_exchangerate($myconfig, $dbh, $form->{currency}, $transdate);
+    $form->{exchangerate} = $form->get_exchangerate($myconfig, $dbh, $form->{currency}, $form->{todate});
   }
-    
+
   $form->{exchangerate} ||= 1;
-  
-  &get_accounts($dbh, $last_period, "", $form->{asofdate}, $form, \@categories, 1);
-  
-  if ($form->{compareasofdate}) {
-    if ($form->{compareasofyear} && $form->{compareasofmonth}) {
-      if ($form->{compareasofdate} !~ /\W/) {
-	$form->{compareasofdate} = "$form->{compareasofyear}$form->{compareasofmonth}$form->{compareasofdate}";
+
+  my $var;
+  my %c;
+  my $p = 1;
+  my $i;
+  my $j;
+  my $k;
+
+  $form->{period}{0}{this} = { todate => $locale->date($myconfig, $form->{todate}, $form->{longformat}) };
+
+  $todate = $form->add_date($myconfig, $form->{todate}, -1, "year");
+  $form->{period}{0}{previous} = { todate => $locale->date($myconfig, $todate, $form->{longformat}) };
+
+  for (qw(A L Q)) {
+    %c = &get_accounts($form, $dbh, undef, $form->{todate}, $_);
+    &add_accounts($form, \%c, 'this', '0', $_);
+
+    if ($form->{includeperiod} eq 'month') {
+      $k = 11;
+    }
+    if ($form->{includeperiod} eq 'quarter') {
+      $k = 3;
+      $p = 3;
+    }
+
+    if ($form->{previousyear}) {
+      $todate = $form->add_date($myconfig, $form->{todate}, -1, "year");
+
+      %c = &get_accounts($form, $dbh, undef, $todate, $_);
+      &add_accounts($form, \%c, 'previous', '0', $_);
+    }
+
+    for $i (1 .. $k) {
+      $todate = $form->add_date($myconfig, $form->{todate}, ($i*$p*-1), "month");
+      $form->{period}{$i}{this} = { todate => $locale->date($myconfig, $todate, $form->{longformat}) };
+
+      %c = &get_accounts($form, $dbh, undef, $todate, $_);
+      &add_accounts($form, \%c, 'this', $i, $_);
+
+      if ($form->{previousyear}) {
+        $todate = $form->add_date($myconfig, $todate, -1, "year");
+        $form->{period}{$i}{previous} = { todate => $locale->date($myconfig, $todate, $form->{longformat}) };
+
+        %c = &get_accounts($form, $dbh, undef, $todate, $_);
+        &add_accounts($form, \%c, 'previous', $i, $_);
       }
     }
-  } else {
-    if ($form->{compareasofyear} && $form->{compareasofmonth}) {
-      ($null, $form->{compareasofdate}) = $form->from_to($form->{compareasofyear}, $form->{compareasofmonth});
-    }
   }
-  
-  # if there are any compare dates
-  if ($form->{compareasofdate}) {
-   
-    $last_period = 1;
-    &get_accounts($dbh, $last_period, "", $form->{compareasofdate}, $form, \@categories, 1);
-  
-    $form->{last_period} = "$form->{compareasofdate}";
-
-  }  
 
   my %defaults = $form->get_defaults($dbh, \@{['company','address','businessnumber']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
@@ -338,147 +375,35 @@ sub balance_sheet {
   # disconnect
   $dbh->disconnect;
 
+  $myconfig->{dateformat} = $dateformat;
 
-  # now we got $form->{A}{accno}{ }    assets
-  # and $form->{L}{accno}{ }           liabilities
-  # and $form->{Q}{accno}{ }           equity
-  # build asset accounts
-  
-  my $str;
-  my $key;
-  
-  my %account  = ( 'A' => { 'label' => 'asset',
-                            'labels' => 'assets',
-			    'ml' => -1 },
-		   'L' => { 'label' => 'liability',
-		            'labels' => 'liabilities',
-			    'ml' => 1 },
-		   'Q' => { 'label' => 'equity',
-		            'labels' => 'equity',
-			    'ml' => 1 }
-		);	    
+}
 
 
-   foreach $category (@categories) {			    
+sub add_accounts {
+  my ($form, $c, $year, $period, $category) = @_;
 
-    foreach $key (sort keys %{ $form->{$category} }) {
+  for my $var (keys %{$c}) {
+    next unless $form->round_amount($c->{$var}{amount}, $form->{decimalplaces});
 
-      $str = ($form->{l_heading}) ? $form->{padding} : "";
+    $form->{accounts}{$var}{description} = $c->{$var}{description};
+    $form->{accounts}{$var}{charttype} = $c->{$var}{charttype};
 
-      if ($form->{$category}{$key}{charttype} eq "A") {
-	$str .= ($form->{l_accno}) ? "$form->{$category}{$key}{accno} - $form->{$category}{$key}{description}" : "$form->{$category}{$key}{description}";
-      }
-      if ($form->{$category}{$key}{charttype} eq "H") {
-	if ($account{$category}{subtotal} && $form->{l_subtotal}) {
-	  $dash = "- ";
-	  push(@{$form->{"$account{$category}{label}_account"}}, "$str$form->{bold}$account{$category}{subdescription}$form->{endbold}");
-	  push(@{$form->{"$account{$category}{label}_this_period"}}, $form->format_amount($myconfig, $account{$category}{subthis} * $account{$category}{ml}, $form->{decimalplaces}, $dash));
-	  
-	  if ($last_period) {
-	    push(@{$form->{"$account{$category}{label}_last_period"}}, $form->format_amount($myconfig, $account{$category}{sublast} * $account{$category}{ml}, $form->{decimalplaces}, $dash));
-	  }
-	}
-
-	$str = "$form->{bold}$form->{$category}{$key}{description}$form->{endbold}";
-	
-	$account{$category}{subthis} = $form->{$category}{$key}{this};
-	$account{$category}{sublast} = $form->{$category}{$key}{last};
-	$account{$category}{subdescription} = $form->{$category}{$key}{description};
-	$account{$category}{subtotal} = 1;
-	
-	$form->{$category}{$key}{this} = 0;
-	$form->{$category}{$key}{last} = 0;
-
-	next unless $form->{l_heading};
-
-	$dash = " ";
-      }
-      
-      # push description onto array
-      push(@{$form->{"$account{$category}{label}_account"}}, $str);
-      
-      if ($form->{$category}{$key}{charttype} eq 'A') {
-	$form->{"total_$account{$category}{labels}_this_period"} += $form->{$category}{$key}{this} * $account{$category}{ml};
-	$dash = "- ";
-      }
-
-      push(@{$form->{"$account{$category}{label}_this_period"}}, $form->format_amount($myconfig, $form->{$category}{$key}{this} * $account{$category}{ml}, $form->{decimalplaces}, $dash));
-      
-      if ($last_period) {
-	$form->{"total_$account{$category}{labels}_last_period"} += $form->{$category}{$key}{last} * $account{$category}{ml};
-
-	push(@{$form->{"$account{$category}{label}_last_period"}}, $form->format_amount($myconfig, $form->{$category}{$key}{last} * $account{$category}{ml}, $form->{decimalplaces}, $dash));
-      }
+    for my $key (keys %{ $c->{$var} }) {
+      $form->{$category}{$var}{$year}{$period}{$key} = $c->{$var}{$key};
     }
-
-    $str = ($form->{l_heading}) ? $form->{padding} : "";
-    if ($account{$category}{subtotal} && $form->{l_subtotal}) {
-      push(@{$form->{"$account{$category}{label}_account"}}, "$str$form->{bold}$account{$category}{subdescription}$form->{endbold}");
-      push(@{$form->{"$account{$category}{label}_this_period"}}, $form->format_amount($myconfig, $account{$category}{subthis} * $account{$category}{ml}, $form->{decimalplaces}, $dash));
-      
-      if ($last_period) {
-	push(@{$form->{"$account{$category}{label}_last_period"}}, $form->format_amount($myconfig, $account{$category}{sublast} * $account{$category}{ml}, $form->{decimalplaces}, $dash));
-      }
-    }
-
   }
-
-  
-  # totals for assets, liabilities
-  $form->{total_assets_this_period} = $form->round_amount($form->{total_assets_this_period}, $form->{decimalplaces});
-  $form->{total_liabilities_this_period} = $form->round_amount($form->{total_liabilities_this_period}, $form->{decimalplaces});
-  $form->{total_equity_this_period} = $form->round_amount($form->{total_equity_this_period}, $form->{decimalplaces});
-
-  # calculate earnings
-  $form->{earnings_this_period} = $form->{total_assets_this_period} - $form->{total_liabilities_this_period} - $form->{total_equity_this_period};
-
-  push(@{$form->{equity_this_period}}, $form->format_amount($myconfig, $form->{earnings_this_period}, $form->{decimalplaces}, "- "));
-  
-  $form->{total_equity_this_period} = $form->round_amount($form->{total_equity_this_period} + $form->{earnings_this_period}, $form->{decimalplaces});
-  
-  # add liability + equity
-  $form->{total_this_period} = $form->format_amount($myconfig, $form->{total_liabilities_this_period} + $form->{total_equity_this_period}, $form->{decimalplaces}, "- ");
-
-
-  if ($last_period) {
-    # totals for assets, liabilities
-    $form->{total_assets_last_period} = $form->round_amount($form->{total_assets_last_period}, $form->{decimalplaces});
-    $form->{total_liabilities_last_period} = $form->round_amount($form->{total_liabilities_last_period}, $form->{decimalplaces});
-    $form->{total_equity_last_period} = $form->round_amount($form->{total_equity_last_period}, $form->{decimalplaces});
-
-    # calculate retained earnings
-    $form->{earnings_last_period} = $form->{total_assets_last_period} - $form->{total_liabilities_last_period} - $form->{total_equity_last_period};
-
-    push(@{$form->{equity_last_period}}, $form->format_amount($myconfig,$form->{earnings_last_period}, $form->{decimalplaces}, "- "));
-    
-    $form->{total_equity_last_period} = $form->round_amount($form->{total_equity_last_period} + $form->{earnings_last_period}, $form->{decimalplaces});
-
-    # add liability + equity
-    $form->{total_last_period} = $form->format_amount($myconfig, $form->{total_liabilities_last_period} + $form->{total_equity_last_period}, $form->{decimalplaces}, "- ");
-
-  }
-
-  
-  $form->{total_liabilities_last_period} = $form->format_amount($myconfig, $form->{total_liabilities_last_period}, $form->{decimalplaces}, "- ") if ($form->{total_liabilities_last_period});
-  
-  $form->{total_equity_last_period} = $form->format_amount($myconfig, $form->{total_equity_last_period}, $form->{decimalplaces}, "- ") if ($form->{total_equity_last_period});
-  
-  $form->{total_assets_last_period} = $form->format_amount($myconfig, $form->{total_assets_last_period}, $form->{decimalplaces}, "- ") if ($form->{total_assets_last_period});
-  
-  $form->{total_assets_this_period} = $form->format_amount($myconfig, $form->{total_assets_this_period}, $form->{decimalplaces}, "- ");
-  
-  $form->{total_liabilities_this_period} = $form->format_amount($myconfig, $form->{total_liabilities_this_period}, $form->{decimalplaces}, "- ");
-  
-  $form->{total_equity_this_period} = $form->format_amount($myconfig, $form->{total_equity_this_period}, $form->{decimalplaces}, "- ");
 
 }
 
 
 sub get_accounts {
-  my ($dbh, $last_period, $fromdate, $todate, $form, $categories, $excludeyearend) = @_;
+  my ($form, $dbh, $fromdate, $todate, $category, $excludeyearend) = @_;
 
+  my %c;
   my $department_id;
   my $project_id;
+  my $null;
   
   ($null, $department_id) = split /--/, $form->{department};
   ($null, $project_id) = split /--/, $form->{projectnumber};
@@ -493,30 +418,31 @@ sub get_accounts {
   my $yearendwhere = "1 = 1";
   my $item;
  
-  my $category = "AND (";
-  foreach $item (@{ $categories }) {
-    $category .= qq|c.category = '$item' OR |;
-  }
-  $category =~ s/OR $/\)/;
-
-
   # get headings
   $query = qq|SELECT c.accno, c.description, c.category,
               l.description AS translation
 	      FROM chart c
 	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$form->{language_code}')
 	      WHERE c.charttype = 'H'
-	      $category
+	      AND c.category = '$category'
 	      ORDER by c.accno|;
 
   if ($form->{accounttype} eq 'gifi')
   {
-    $query = qq|SELECT g.accno, g.description, c.category
+    $query = qq|SELECT g.accno, g.description, c.category,
+                '' AS translation
 		FROM gifi g
 		JOIN chart c ON (c.gifi_accno = g.accno)
 		WHERE c.charttype = 'H'
-		$category
-		ORDER BY g.accno|;
+		AND c.category = '$category'
+                UNION
+                SELECT c.accno, c.description, c.category,
+                l.description AS translation
+                FROM chart c
+                LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$form->{language_code}')
+                WHERE c.charttype = 'H'
+                AND c.category = '$category'
+		ORDER BY 1|;
   }
 
   $sth = $dbh->prepare($query);
@@ -527,10 +453,10 @@ sub get_accounts {
   {
     $ref->{description} = $ref->{translation} if $ref->{translation};
     
-    $form->{$ref->{category}}{$ref->{accno}}{description} = "$ref->{description}";
-    $form->{$ref->{category}}{$ref->{accno}}{charttype} = "H";
-    $form->{$ref->{category}}{$ref->{accno}}{accno} = $ref->{accno};
-    
+    $c{$ref->{accno}}{description} = $ref->{description};
+    $c{$ref->{accno}}{charttype} = "H";
+    $c{$ref->{accno}}{accno} = $ref->{accno};
+
     push @headingaccounts, $ref->{accno};
   }
 
@@ -609,9 +535,9 @@ sub get_accounts {
 	         $dpt_join
 		 WHERE $where
 		 AND a.approved = '1'
+		 AND c.category = '$category'
 		 $ywhere
 		 $dpt_where
-		 $category
 		 AND ac.trans_id IN
 		   (
 		     SELECT trans_id
@@ -634,9 +560,9 @@ sub get_accounts {
 	         $dpt_join
 		 WHERE $where
 		 AND ac.approved = '1'
+                 AND c.category = '$category'
 		 $ywhere
 		 $dpt_where
-		 $category
 		 AND c.gifi_accno = ''
 		 AND ac.trans_id IN
 		   (
@@ -661,9 +587,9 @@ sub get_accounts {
 	         $dpt_join
 		 WHERE $where
 		 AND a.approved = '1'
+                 AND c.category = '$category'
 		 $ywhere
 		 $dpt_where
-		 $category
 		 AND ac.trans_id IN
 		   (
 		     SELECT ac.trans_id
@@ -686,9 +612,9 @@ sub get_accounts {
 	         $dpt_join
 		 WHERE $where
 		 AND a.approved = '1'
+                 AND c.category = '$category'
 		 $ywhere
 		 $dpt_where
-		 $category
 		 AND c.gifi_accno = ''
 		 AND ac.trans_id IN
 		   (
@@ -715,10 +641,10 @@ sub get_accounts {
 	         $dpt_join
 		 WHERE $where
 		 AND a.approved = '1'
+                 AND c.category = '$category'
 		 $ywhere
 		 $glwhere
 		 $dpt_where
-		 $category
 		 AND NOT (c.link = 'AR' OR c.link = 'AP')
 		 $project
 		 GROUP BY g.accno, g.description, c.category
@@ -733,39 +659,15 @@ sub get_accounts {
 	         $dpt_join
 		 WHERE $where
 		 AND a.approved = '1'
+                 AND c.category = '$category'
 		 $ywhere
 		 $glwhere
 		 $dpt_where
-		 $category
 		 AND c.gifi_accno = ''
 		 AND NOT (c.link = 'AR' OR c.link = 'AP')
 		 $project
 		 GROUP BY c.category
 		 |;
-
-      if ($excludeyearend) {
-
-         # this is for the yearend
-
-	 $query .= qq|
-
-       UNION ALL
-       
-	         SELECT g.accno, sum(ac.amount) AS amount,
-		 g.description, c.category
-		 FROM yearend y
-		 JOIN gl a ON (a.id = y.trans_id)
-		 JOIN acc_trans ac ON (ac.trans_id = y.trans_id)
-		 JOIN chart c ON (c.id = ac.chart_id)
-		 JOIN gifi g ON (g.accno = c.gifi_accno)
-	         $dpt_join
-		 WHERE $yearendwhere
-		 AND c.category = 'Q'
-		 $dpt_where
-		 $project
-		 GROUP BY g.accno, g.description, c.category
-		 |;
-      }
 
     } else {
 
@@ -788,9 +690,9 @@ sub get_accounts {
 	      $dpt_join
 	      WHERE $where
 	      AND ac.approved = '1'
+              AND c.category = '$category'
 	      $ywhere
 	      $dpt_where
-	      $category
 	      $project
 	      GROUP BY g.accno, g.description, c.category
 	      
@@ -803,37 +705,14 @@ sub get_accounts {
 	      $dpt_join
 	      WHERE $where
 	      AND ac.approved = '1'
+              AND c.category = '$category'
 	      $ywhere
 	      $dpt_where
-	      $category
 	      AND c.gifi_accno = ''
 	      $project
 	      GROUP BY c.category
 	      |;
 
-	if ($excludeyearend) {
-
-	  # this is for the yearend
-
-	  $query .= qq|
-
-       UNION ALL
-       
-	         SELECT g.accno, sum(ac.amount) AS amount,
-		 g.description, c.category
-		 FROM yearend y
-		 JOIN gl a ON (a.id = y.trans_id)
-		 JOIN acc_trans ac ON (ac.trans_id = y.trans_id)
-		 JOIN chart c ON (c.id = ac.chart_id)
-		 JOIN gifi g ON (g.accno = c.gifi_accno)
-	         $dpt_join
-		 WHERE $yearendwhere
-		 AND c.category = 'Q'
-		 $dpt_where
-		 $project
-		 GROUP BY g.accno, g.description, c.category
-	      |;
-	}
     }
     
   } else {    # standard account
@@ -852,9 +731,9 @@ sub get_accounts {
 		 $dpt_join
 		 WHERE $where
 		 AND ac.approved = '1'
+                 AND c.category = '$category'
 	         $ywhere
 		 $dpt_where
-		 $category
 		 AND ac.trans_id IN
 		   (
 		     SELECT ac.trans_id
@@ -880,9 +759,9 @@ sub get_accounts {
 		 $dpt_join
 		 WHERE $where
 		 AND a.approved = '1'
+                 AND c.category = '$category'
 	         $ywhere
 		 $dpt_where
-		 $category
 		 AND ac.trans_id IN
 		   (
 		     SELECT ac.trans_id
@@ -908,39 +787,14 @@ sub get_accounts {
 		 $dpt_join
 		 WHERE $where
 		 AND a.approved = '1'
+                 AND c.category = '$category'
 	         $ywhere
 		 $glwhere
 		 $dpt_where
-		 $category
 		 AND NOT (c.link = 'AR' OR c.link = 'AP')
 		 $project
 		 GROUP BY c.accno, c.description, c.category, translation
 		 |;
-
-      if ($excludeyearend) {
-
-        # this is for the yearend
-	
-	$query .= qq|
-
-       UNION ALL
-       
-	         SELECT c.accno, sum(ac.amount) AS amount,
-		 c.description, c.category,
-		 l.description AS translation
-		 FROM yearend y
-		 JOIN gl a ON (a.id = y.trans_id)
-		 JOIN acc_trans ac ON (ac.trans_id = y.trans_id)
-		 JOIN chart c ON (c.id = ac.chart_id)
-		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$form->{language_code}')
-	         $dpt_join
-		 WHERE $yearendwhere
-		 AND c.category = 'Q'
-		 $dpt_where
-		 $project
-		 GROUP BY c.accno, c.description, c.category, translation
-		 |;
-      }
 
     } else {
      
@@ -965,37 +819,13 @@ sub get_accounts {
 		 $dpt_join
 		 WHERE $where
 		 AND ac.approved = '1'
+                 AND c.category = '$category'
 	         $ywhere
 		 $dpt_where
-		 $category
 		 $project
 		 GROUP BY c.accno, c.description, c.category, translation
 		 |;
 
-      if ($excludeyearend) {
-
-        # this is for the yearend
-	
-	$query .= qq|
-
-       UNION ALL
-       
-	         SELECT c.accno, sum(ac.amount) AS amount,
-		 c.description, c.category,
-		 l.description AS translation
-		 FROM yearend y
-		 JOIN gl a ON (a.id = y.trans_id)
-		 JOIN acc_trans ac ON (ac.trans_id = y.trans_id)
-		 JOIN chart c ON (c.id = ac.chart_id)
-		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$form->{language_code}')
-	         $dpt_join
-		 WHERE $yearendwhere
-		 AND c.category = 'Q'
-		 $dpt_where
-		 $project
-		 GROUP BY c.accno, c.description, c.category, translation
-		 |;
-      }
     }
   }
 
@@ -1017,38 +847,20 @@ sub get_accounts {
     $ref->{amount} /= $form->{exchangerate};
 
     if ($accno && ($accno ne $ref->{accno}) ) {
-      if ($last_period)
-      {
-	$form->{$ref->{category}}{$accno}{last} += $ref->{amount};
-      } else {
-	$form->{$ref->{category}}{$accno}{this} += $ref->{amount};
-      }
+      $c{$accno}{amount} += $ref->{amount};
     }
     
     $ref->{description} = $ref->{translation} if $ref->{translation};
-    
-    $form->{$ref->{category}}{$ref->{accno}}{accno} = $ref->{accno};
-    $form->{$ref->{category}}{$ref->{accno}}{description} = $ref->{description};
-    $form->{$ref->{category}}{$ref->{accno}}{charttype} = "A";
-    
-    if ($last_period) {
-      $form->{$ref->{category}}{$ref->{accno}}{last} += $ref->{amount};
-    } else {
-      $form->{$ref->{category}}{$ref->{accno}}{this} += $ref->{amount};
-    }
+
+    $c{$ref->{accno}}{accno} = $ref->{accno};
+    $c{$ref->{accno}}{description} = $ref->{description};
+    $c{$ref->{accno}}{charttype} = "A";
+
+    $c{$ref->{accno}}{amount} += $ref->{amount};
   }
   $sth->finish;
 
-  
-  # remove accounts with zero balance
-  foreach $category (@{ $categories }) {
-    foreach $accno (keys %{ $form->{$category} }) {
-      $form->{$category}{$accno}{last} = $form->round_amount($form->{$category}{$accno}{last}, $form->{decimalplaces});
-      $form->{$category}{$accno}{this} = $form->round_amount($form->{$category}{$accno}{this}, $form->{decimalplaces});
-
-      delete $form->{$category}{$accno} if ($form->{$category}{$accno}{this} == 0 && $form->{$category}{$accno}{last} == 0);
-    }
-  }
+  %c;
 
 }
 
@@ -1350,8 +1162,6 @@ sub trial_balance {
     
   }
 
-  $form->retrieve_report($myconfig, $dbh);
-
   $form->report_level($myconfig, $dbh);
 
   $dbh->disconnect;
@@ -1381,7 +1191,7 @@ sub aging {
   my $item;
   my $curr;
   
-  my @df = qw(company address businessnumber tel fax precision);
+  my @df = qw(company address businessnumber tel fax precision companyemail companywebsite);
   my %defaults = $form->get_defaults($dbh, \@df);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
   
@@ -1390,7 +1200,7 @@ sub aging {
     $form->{"$_->{printer}_printer"} = $_->{command};
   }
 
-  $form->{currencies} = $form->get_currencies($dbh, $myconfig);
+  $form->{currencies} = $form->get_currencies($myconfig, $dbh);
   
   ($null, $form->{todate}) = $form->from_to($form->{year}, $form->{month}) if $form->{year} && $form->{month};
   
@@ -1403,6 +1213,8 @@ sub aging {
   my $null;
   my $ref;
   my $transdate = ($form->{overdue}) ? "duedate" : "transdate";
+
+  $form->{vc} =~ s/;//g;
 
   if ($form->{"$form->{vc}_id"}) {
     $where .= qq| AND vc.id = $form->{"$form->{vc}_id"}|;
@@ -1499,13 +1311,13 @@ sub aging {
   }
 
   my %ordinal = ( 'vc_id' => 1,
-                  'invnumber' => 17,
-                  'transdate' => 18
+                  'invnumber' => 16,
+                  'transdate' => 17
                 );
 
   my @sf = qw(vc_id transdate invnumber);
   my $sortorder = $form->sort_order(\@sf, \%ordinal);
-
+      
   if (@c) {
     
     $item = $#c;
@@ -1532,7 +1344,7 @@ sub aging {
       $query .= qq|$union
       SELECT c.id AS vc_id, c.$form->{vc}number, c.name,
       ad.address1, ad.address2, ad.city, ad.state, ad.zipcode, ad.country,
-      c.contact, c.email,
+      c.contact,
       c.phone as $form->{vc}phone, c.fax as $form->{vc}fax,
       c.$form->{vc}number, c.taxnumber as $form->{vc}taxnumber,
       a.description AS invdescription,
@@ -1572,24 +1384,25 @@ sub aging {
 	@var = ();
 	for (@c) { push @var, ($item->{id}, $curr) }
 	
-	$sth->execute(@var);
+        $sth->execute(@var);
 
-	while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-	  $ref->{module} = ($ref->{invoice}) ? $invoice : $form->{arap};
-	  $ref->{module} = 'ps' if $ref->{till};
-	  $ref->{exchangerate} ||= 1;
-	  $ref->{language_code} = $item->{language_code};
+        while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+          $ref->{module} = ($ref->{invoice}) ? $invoice : $form->{arap};
+          $ref->{module} = 'ps' if $ref->{till};
+          $ref->{exchangerate} ||= 1;
+          $ref->{language_code} = $item->{language_code};
 
-	  push @{ $form->{AG} }, $ref;
-	}
-	$sth->finish;
-
+          push @{ $form->{AG} }, $ref;
+        }
+        $sth->finish;
       }
     }
   }
 
   # get language
   $form->all_languages($myconfig, $dbh);
+  
+  $form->report_level($myconfig, $dbh);
 
   # disconnect
   $dbh->disconnect;
@@ -1617,13 +1430,15 @@ sub reminder {
     $form->{"$_->{printer}_printer"} = $_->{command};
   }
 
-  $form->{currencies} = $form->get_currencies($dbh, $myconfig);
+  $form->{currencies} = $form->get_currencies($myconfig, $dbh);
   
   my $where = "a.approved = '1'";
   my $name;
   my $null;
   my $vc_id;
   my $ref;
+
+  $form->{vc} =~ s/;//g;
 
   ($null, $vc_id) = split /--/, $form->{$form->{vc}};
       
@@ -1689,16 +1504,16 @@ sub reminder {
   }
 
   my %ordinal = ( 'vc_id' => 1,
-                  'invnumber' => 20,
-                  'transdate' => 21
+                  'invnumber' => 19,
+                  'transdate' => 20
                 );
 
   my @sf = qw(vc_id transdate invnumber);
   my $sortorder = $form->sort_order(\@sf, \%ordinal);
-
+      
   $query = qq|SELECT c.id AS vc_id, c.$form->{vc}number, c.name, c.terms,
               ad.address1, ad.address2, ad.city, ad.state, ad.zipcode, ad.country,
-	      c.contact, c.email,
+	      c.contact,
 	      c.phone as $form->{vc}phone, c.fax as $form->{vc}fax,
 	      c.$form->{vc}number, c.taxnumber as $form->{vc}taxnumber,
 	      a.dcn, a.bank_id, a.description AS invdescription,
@@ -1718,12 +1533,15 @@ sub reminder {
 	      WHERE a.duedate <= current_date
 	      AND $where
 	      ORDER BY $sortorder|;
+
   $sth = $dbh->prepare($query) || $form->dberror($query);
 
-  $query = qq|SELECT rvc
-              FROM bank
-	      WHERE id = ?|;
+  $query = qq|SELECT b.*, a.*
+              FROM bank b
+	      LEFT JOIN address a ON (a.id = b.address_id)
+	      WHERE b.id = ?|;
   my $bth = $dbh->prepare($query) || $form->dberror($query);
+  my $bank;
   
   $form->{AG} = ();
   
@@ -1740,7 +1558,14 @@ sub reminder {
 	$ref->{language_code} = $item->{language_code};
 
 	$bth->execute($ref->{bank_id});
-	($ref->{rvc}) = $bth->fetchrow_array;
+	$bank = $bth->fetchrow_hashref(NAME_lc);
+	for (qw(rvc iban bic membernumber clearingnumber)) {
+	  $ref->{$_} = $bank->{$_};
+	  delete $bank->{$_};
+	}
+	for (keys %$bank) {
+	  $ref->{"bank$_"} = $bank->{$_};
+	}
 	$bth->finish;
 
 	$rth->execute($ref->{id}, $curr);
@@ -1765,6 +1590,8 @@ sub reminder {
 
   # get language
   $form->all_languages($myconfig, $dbh);
+
+  $form->report_level($myconfig, $dbh);
 
   # disconnect
   $dbh->disconnect;
@@ -1817,6 +1644,8 @@ sub get_customer {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
+  $form->{vc} =~ s/;//g;
+
   my $query = qq|SELECT name, email, cc, bcc
                  FROM $form->{vc} ct
 		 WHERE ct.id = $form->{"$form->{vc}_id"}|;
@@ -1841,6 +1670,7 @@ sub get_taxaccounts {
 		 JOIN tax t ON (c.id = t.chart_id)
 		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 		 WHERE c.link LIKE '%${ARAP}_tax%'
+                 AND c.closed = '0'
                  ORDER BY c.accno|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror;
@@ -1896,21 +1726,43 @@ sub tax_report {
   my $query;
   my $sth;
   my $accno;
-  
-  if ($form->{accno}) {
-    if ($form->{accno} =~ /^gifi_/) {
-      ($null, $accno) = split /_/, $form->{accno};
-      $accno = qq| AND ch.gifi_accno = '$accno'|;
-    } else {
-      $accno = $form->{accno};
-      $accno = qq| AND ch.accno = '$accno'|;
+  my $l_gifi;
+  my @gifi = split / /, $form->{gifi_taxaccounts};
+  my @c;
+ 
+  for (@gifi) {
+    if ($form->{"gifi_$_"}) {
+      $l_gifi = 1;
+      last;
     }
+  }
+
+  if ($l_gifi) {
+    $accno = qq| AND (|;
+    for (@gifi) {
+      if ($form->{"gifi_$_"}) {
+	push @c, qq| ch.gifi_accno = '$_' |;
+      }
+    }
+    $accno = qq| AND (| . join 'OR', @c;
+    $accno .= qq|)|;
+  } else {
+    $accno = qq| AND (|;
+    for (split / /, $form->{taxaccounts}) {
+      if ($form->{"accno_$_"}) {
+	push @c, qq| ch.accno = '$_' |;
+      }
+    }
+    $accno = qq| AND (| . join 'OR', @c;
+    $accno .= qq|)|;
   }
   $accno =~ s/ AND \(\)/ AND (ch.accno = '0')/;
 
   my $vc;
   my $ARAP;
   
+  $form->{db} =~ s/;//g;
+
   if ($form->{db} eq 'ar') {
     $vc = "customer";
     $ARAP = "AR";
@@ -1979,32 +1831,31 @@ sub tax_report {
 	a.netamount, a.till, n.id, a.description, n.${vc}number, ch.accno
 		|;
 
-      if ($form->{fromdate}) {
-	# include open transactions from previous period
-	if ($cashwhere) {
-	  $query .= qq|
-              UNION
-	      
-                SELECT a.id, a.invoice, $transdate AS transdate,
-		a.invnumber, n.name, n.${vc}number, a.netamount,
-		a.description,
-		sum(ac.amount) * $ml AS tax,
-		a.till, n.id AS vc_id, ch.accno
-		FROM acc_trans ac
-	      JOIN $form->{db} a ON (a.id = ac.trans_id)
-	      JOIN chart ch ON (ch.id = ac.chart_id)
-	      JOIN $vc n ON (n.id = a.${vc}_id)
-		WHERE a.datepaid >= '$form->{fromdate}'
-		$accno
-		$cashwhere
-	GROUP BY a.id, a.invoice, $transdate, a.invnumber, n.name,
-	a.netamount, a.till, n.id, a.description, n.${vc}number, ch.accno
-		|;
-	}
+    if ($form->{fromdate}) {
+      # include open transactions from previous period
+      if ($cashwhere) {
+	$query .= qq|
+	    UNION
+	    
+	      SELECT a.id, a.invoice, $transdate AS transdate,
+	      a.invnumber, n.name, n.${vc}number, a.netamount,
+	      a.description,
+	      sum(ac.amount) * $ml AS tax,
+	      a.till, n.id AS vc_id, ch.accno
+	      FROM acc_trans ac
+	    JOIN $form->{db} a ON (a.id = ac.trans_id)
+	    JOIN chart ch ON (ch.id = ac.chart_id)
+	    JOIN $vc n ON (n.id = a.${vc}_id)
+	      WHERE a.datepaid >= '$form->{fromdate}'
+	      $accno
+	      $cashwhere
+      GROUP BY a.id, a.invoice, $transdate, a.invnumber, n.name,
+      a.netamount, a.till, n.id, a.description, n.${vc}number, ch.accno
+	      |;
       }
+    }
  
-		
-    } else {
+  } else {
       
      $query = qq|SELECT a.id, '0' AS invoice, $transdate AS transdate,
 		a.invnumber, n.name, n.${vc}number, a.netamount,
@@ -2043,50 +1894,50 @@ sub tax_report {
 		$cashwhere
 		|;
 
-      if ($form->{fromdate}) {
-	if ($cashwhere) {
-	 $query .= qq|
-	      UNION
+    if ($form->{fromdate}) {
+      if ($cashwhere) {
+       $query .= qq|
+	    UNION
+	    
+	      SELECT a.id, '0' AS invoice, $transdate AS transdate,
+	      a.invnumber, n.name, n.${vc}number, a.netamount,
+	      ac.memo AS description,
+	      ac.amount * $ml AS tax,
+	      a.till, n.id AS vc_id, ch.accno
+	      FROM acc_trans ac
+	    JOIN $form->{db} a ON (a.id = ac.trans_id)
+	    JOIN chart ch ON (ch.id = ac.chart_id)
+	    JOIN $vc n ON (n.id = a.${vc}_id)
+	      WHERE a.datepaid >= '$form->{fromdate}'
+	      $accno
+	      AND a.invoice = '0'
+	      AND NOT (ch.link LIKE '%_paid' OR ch.link = '$ARAP')
+	      $cashwhere
 	      
-	        SELECT a.id, '0' AS invoice, $transdate AS transdate,
-		a.invnumber, n.name, n.${vc}number, a.netamount,
-		ac.memo AS description,
-		ac.amount * $ml AS tax,
-		a.till, n.id AS vc_id, ch.accno
-		FROM acc_trans ac
-	      JOIN $form->{db} a ON (a.id = ac.trans_id)
-	      JOIN chart ch ON (ch.id = ac.chart_id)
-	      JOIN $vc n ON (n.id = a.${vc}_id)
-		WHERE a.datepaid >= '$form->{fromdate}'
-		$accno
-		AND a.invoice = '0'
-		AND NOT (ch.link LIKE '%_paid' OR ch.link = '$ARAP')
-		$cashwhere
-		
-	      UNION
-	      
-		SELECT a.id, '1' AS invoice, $transdate AS transdate,
-		a.invnumber, n.name, n.${vc}number,
-		i.sellprice * i.qty * $ml AS netamount,
-		i.description,
-		i.sellprice * i.qty * $ml *
-		(SELECT tx.rate FROM tax tx WHERE tx.chart_id = ch.id AND (tx.validto > $transdate OR tx.validto IS NULL) ORDER BY tx.validto LIMIT 1) AS tax,
-		a.till, n.id AS vc_id, ch.accno
-		FROM acc_trans ac
-	      JOIN $form->{db} a ON (a.id = ac.trans_id)
-	      JOIN chart ch ON (ch.id = ac.chart_id)
-	      JOIN $vc n ON (n.id = a.${vc}_id)
-	      JOIN ${vc}tax t ON (t.${vc}_id = n.id AND t.chart_id = ch.id)
-	      JOIN invoice i ON (i.trans_id = a.id)
-	      JOIN partstax pt ON (pt.parts_id = i.parts_id AND pt.chart_id = ch.id)
-		WHERE a.datepaid >= '$form->{fromdate}'
-		$accno
-		AND a.invoice = '1'
-		$cashwhere
-		|;
-	}
+	    UNION
+	    
+	      SELECT a.id, '1' AS invoice, $transdate AS transdate,
+	      a.invnumber, n.name, n.${vc}number,
+	      i.sellprice * i.qty * $ml AS netamount,
+	      i.description,
+	      i.sellprice * i.qty * $ml *
+	      (SELECT tx.rate FROM tax tx WHERE tx.chart_id = ch.id AND (tx.validto > $transdate OR tx.validto IS NULL) ORDER BY tx.validto LIMIT 1) AS tax,
+	      a.till, n.id AS vc_id, ch.accno
+	      FROM acc_trans ac
+	    JOIN $form->{db} a ON (a.id = ac.trans_id)
+	    JOIN chart ch ON (ch.id = ac.chart_id)
+	    JOIN $vc n ON (n.id = a.${vc}_id)
+	    JOIN ${vc}tax t ON (t.${vc}_id = n.id AND t.chart_id = ch.id)
+	    JOIN invoice i ON (i.trans_id = a.id)
+	    JOIN partstax pt ON (pt.parts_id = i.parts_id AND pt.chart_id = ch.id)
+	      WHERE a.datepaid >= '$form->{fromdate}'
+	      $accno
+	      AND a.invoice = '1'
+	      $cashwhere
+	      |;
       }
     }
+  }
 
 
   if ($form->{reportcode} =~ /nontaxable/) {
@@ -2240,6 +2091,9 @@ sub tax_report {
   }
 
   $sth->finish;
+
+  $form->report_level($myconfig, $dbh);
+  
   $dbh->disconnect;
 
 }
@@ -2281,6 +2135,8 @@ sub payments {
 
   # connect to database, turn AutoCommit off
   my $dbh = $form->dbconnect_noauto($myconfig);
+
+  for (qw(db vc)) { $form->{$_} =~ s/;//g }
 
   my $ml = ($form->{db} eq 'ar') ? -1 : 1;
   my $query;

@@ -18,6 +18,10 @@ sub create_links {
   my ($self, $myconfig, $form) = @_;
 
   my $dbh = $form->dbconnect($myconfig);
+
+  my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+ 
   my $query;
   my $sth;
   my $ref;
@@ -25,8 +29,10 @@ sub create_links {
   my $accno;
   my $description;
   my $translation;
- 
-  if ($form->{id}) {
+
+  $form->{db} =~ s/;//g;
+
+  if ($form->{id} *= 1) {
     $query = qq|SELECT ct.*,
                 ad.id AS addressid, ad.address1, ad.address2, ad.city,
 		ad.state, ad.zipcode, ad.country,
@@ -111,7 +117,7 @@ sub create_links {
     }
     $sth->finish;
 
-    for (qw(arap payment discount)) {
+    for (qw(arap payment discount prepayment)) {
       $form->{"${_}_accno_id"} *= 1;
       $query = qq|SELECT c.accno, c.description,
                   l.description AS translation
@@ -124,7 +130,7 @@ sub create_links {
       $form->{"${_}_accno"} = "${accno}--$description";
     }
 
-    $form->get_reference($dbh);
+    $form->all_references($dbh);
 
   } else {
 
@@ -134,16 +140,17 @@ sub create_links {
 
   }
 
-  # ARAP, payment and discount account
+  # ARAP, payment, prepayment and discount account
   $query = qq|SELECT c.accno, c.description, c.link,
               l.description AS translation
               FROM chart c
 	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 	      WHERE c.link LIKE '%$form->{ARAP}%'
+              AND c.closed = '0'
 	      ORDER BY c.accno|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
-  
+
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     $ref->{description} = $ref->{translation} if $ref->{translation};
 
@@ -161,7 +168,7 @@ sub create_links {
   
   # get tax labels
   $query = qq|SELECT DISTINCT c.accno, c.description,
-              l.description AS translation
+              l.description AS translation, c.closed
               FROM chart c
 	      JOIN tax t ON (t.chart_id = c.id)
 	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
@@ -172,8 +179,14 @@ sub create_links {
 
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     $ref->{description} = $ref->{translation} if $ref->{translation};
-    $form->{taxaccounts} .= "$ref->{accno} ";
-    $form->{"tax_$ref->{accno}_description"} = $ref->{description};
+    $ok = 1;
+    if ($ref->{closed}) {
+      $ok = $form->{"tax_$ref->{accno}"}
+    }
+    if ($ok) {
+      $form->{taxaccounts} .= "$ref->{accno} ";
+      $form->{"tax_$ref->{accno}_description"} = $ref->{description};
+    }
   }
   $sth->finish;
   chop $form->{taxaccounts};
@@ -182,7 +195,7 @@ sub create_links {
   # get business types
   $query = qq|SELECT *
               FROM business
-	      ORDER BY 2|;
+	      ORDER BY rn|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
   
@@ -221,7 +234,7 @@ sub create_links {
   $sth->finish;
  
   # get currencies
-  $form->{currencies} = $form->get_currencies($dbh, $myconfig);
+  $form->{currencies} = $form->get_currencies($myconfig, $dbh);
 
   my %defaults = $form->get_defaults($dbh, \@{[qw(typeofcontact referenceurl)]});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
@@ -262,13 +275,15 @@ sub save {
     $form->{$_} /= 100;
   }
 
-  for (qw(terms discountterms taxincluded addressid contactid remittancevoucher)) { $form->{$_} *= 1 }
+  $form->{db} =~ s/;//g;
+
+  for (qw(id terms discountterms taxincluded addressid contactid remittancevoucher)) { $form->{$_} *= 1 }
   
   for (qw(creditlimit threshold)) { $form->{$_} = $form->parse_amount($myconfig, $form->{$_}) }
  
   my $bank_address_id;
   
-  if ($form->{id}) {
+  if ($form->{id} *= 1) {
     $query = qq|DELETE FROM $form->{db}tax
                 WHERE $form->{db}_id = $form->{id}|;
     $dbh->do($query) || $form->dberror($query);
@@ -277,10 +292,6 @@ sub save {
                 WHERE trans_id = $form->{id}|;
     $dbh->do($query) || $form->dberror($query);
     
-    $query = qq|DELETE FROM reference
-                WHERE trans_id = $form->{id}|;
-    $dbh->do($query) || $form->dberror($query);
-   
     $query = qq|DELETE FROM contact
                 WHERE id = $form->{contactid}|;
     $dbh->do($query) || $form->dberror($query);
@@ -441,7 +452,7 @@ sub save {
     $rec{"${_}_id"} *= 1;
   }
   
-  for (qw(arap payment discount)) {
+  for (qw(arap payment discount prepayment)) {
     ($rec{"${_}_accno"}) = split /--/, $form->{"${_}_accno"};
   }
 
@@ -477,6 +488,7 @@ sub save {
 	      arap_accno_id = (SELECT id FROM chart WHERE accno = '$rec{arap_accno}'),
 	      payment_accno_id = (SELECT id FROM chart WHERE accno = '$rec{payment_accno}'),
 	      discount_accno_id = (SELECT id FROM chart WHERE accno = '$rec{discount_accno}'),
+              prepayment_accno_id = (SELECT id FROM chart WHERE accno = '$rec{prepayment_accno}'),
 	      cashdiscount = $form->{cashdiscount},
 	      threshold = $form->{threshold},
 	      discountterms = $form->{discountterms},
@@ -544,7 +556,7 @@ sub save {
   # add shipto
   $form->add_shipto($dbh, $form->{id});
 
-  $form->save_reference($dbh);
+  $form->save_reference($dbh, $form->{db});
 
   my $rc = $dbh->commit;
   
@@ -557,14 +569,19 @@ sub save {
 
 
 sub delete {
-  my ($self, $myconfig, $form) = @_;
+  my ($self, $myconfig, $form, $dbh) = @_;
+
+  my $disconnect = ($dbh) ? 0 : 1;
 
   # connect to database
-  my $dbh = $form->dbconnect_noauto($myconfig);
+  $dbh = $form->dbconnect_noauto($myconfig) unless $dbh;
+
+  $form->{id} *= 1;
+  $form->{db} =~ s/;//g;
 
   # delete customer/vendor
   my $query = qq|DELETE FROM $form->{db}
-	         WHERE id = $form->{id}|;
+              WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
   
   $query = qq|DELETE FROM $form->{db}tax WHERE $form->{db}_id = $form->{id}|;
@@ -583,7 +600,7 @@ sub delete {
                 WHERE id = $form->{id}|;
     if ($dbh->selectrow_array($query)) {
       $dbh->commit;
-      $dbh->disconnect;
+      $dbh->disconnect if $disconnect;
       return;
     }
   }
@@ -603,8 +620,18 @@ sub delete {
   $query = qq|DELETE FROM bank WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
 
+  $form->delete_references($dbh);
+
+  my %audittrail = ( tablename  => $form->{db},
+                     reference  => $form->{name},
+		     formname   => '',
+		     action     => 'deleted',
+		     id         => $form->{id} );
+
+  $form->audittrail($dbh, "", \%audittrail);
+  
   $dbh->commit;
-  $dbh->disconnect;
+  $dbh->disconnect if $disconnect;
 
 }
 
@@ -625,12 +652,19 @@ sub search {
   my $var;
   my $item;
 
+  $form->{db} =~ s/;//g;
+
   @sf = ("$form->{db}number");
   push @sf, qw(name contact notes phone email);
 
   if ($form->{employee}) {
     $var = $form->like(lc $form->{employee});
     $where .= " AND lower(e.name) LIKE '$var'";
+  }
+  
+  if ($form->{business}) {
+    $var = $form->like(lc $form->{business});
+    $where .= " AND lower(b.description) LIKE '$var'";
   }
  
   foreach $item (@sf) {
@@ -684,7 +718,6 @@ sub search {
     $form->{l_invnumber} = $form->{l_ordnumber} = $form->{l_quonumber} = "";
   }
   
-
   my $query = qq|SELECT c.*, b.description AS business,
                  e.name AS employee, g.pricegroup, l.description AS language,
 		 ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
@@ -730,6 +763,7 @@ sub search {
       
    
       $query = qq|SELECT c.*, b.description AS business,
+                  g.pricegroup, l.description AS language,
                   a.invnumber, a.ordnumber, a.quonumber, a.id AS invid,
 		  '$ar' AS module, 'invoice' AS formtype,
 		  (a.amount = a.paid) AS closed, a.amount, a.netamount,
@@ -745,6 +779,8 @@ sub search {
 		JOIN $ar a ON (a.$form->{db}_id = c.id)
 	        LEFT JOIN business b ON (c.business_id = b.id)
 		LEFT JOIN employee e ON (a.employee_id = e.id)
+ 	        LEFT JOIN pricegroup g ON (c.pricegroup_id = g.id)
+	        LEFT JOIN language l ON (l.code = c.language_code)
 		LEFT JOIN paymentmethod pm ON (pm.id = c.paymentmethod_id)
 		  WHERE $where
 		  AND a.invoice = '0'
@@ -767,6 +803,7 @@ sub search {
     
       $query .= qq|$union
                   SELECT c.*, b.description AS business,
+                  g.pricegroup, l.description AS language,
                   a.invnumber, a.ordnumber, a.quonumber, a.id AS invid,
 		  '$module' AS module, 'invoice' AS formtype,
 		  (a.amount = a.paid) AS closed, a.amount, a.netamount,
@@ -782,6 +819,8 @@ sub search {
 		JOIN $ar a ON (a.$form->{db}_id = c.id)
 	        LEFT JOIN business b ON (c.business_id = b.id)
 		LEFT JOIN employee e ON (a.employee_id = e.id)
+ 	        LEFT JOIN pricegroup g ON (c.pricegroup_id = g.id)
+	        LEFT JOIN language l ON (l.code = c.language_code)
 		LEFT JOIN paymentmethod pm ON (pm.id = c.paymentmethod_id)
 		  WHERE $where
 		  AND a.invoice = '1'
@@ -801,6 +840,7 @@ sub search {
       $transwhere .= " AND o.transdate <= '$form->{transdateto}'" if $form->{transdateto};
       $query .= qq|$union
                   SELECT c.*, b.description AS business,
+                  g.pricegroup, l.description AS language,
 		  ' ' AS invnumber, o.ordnumber, o.quonumber, o.id AS invid,
 		  'oe' AS module, 'order' AS formtype,
 		  o.closed, o.amount, o.netamount,
@@ -816,6 +856,8 @@ sub search {
 		JOIN oe o ON (o.$form->{db}_id = c.id)
 	        LEFT JOIN business b ON (c.business_id = b.id)
 		LEFT JOIN employee e ON (o.employee_id = e.id)
+ 	        LEFT JOIN pricegroup g ON (c.pricegroup_id = g.id)
+	        LEFT JOIN language l ON (l.code = c.language_code)
 		LEFT JOIN paymentmethod pm ON (pm.id = c.paymentmethod_id)
 		  WHERE $where
 		  AND o.quotation = '0'
@@ -835,6 +877,7 @@ sub search {
       $transwhere .= " AND o.transdate <= '$form->{transdateto}'" if $form->{transdateto};
       $query .= qq|$union
                   SELECT c.*, b.description AS business,
+                  g.pricegroup, l.description AS language,
 		  ' ' AS invnumber, o.ordnumber, o.quonumber, o.id AS invid,
 		  'oe' AS module, 'quotation' AS formtype,
 		  o.closed, o.amount, o.netamount,
@@ -850,6 +893,8 @@ sub search {
 		JOIN oe o ON (o.$form->{db}_id = c.id)
 	        LEFT JOIN business b ON (c.business_id = b.id)
 		LEFT JOIN employee e ON (o.employee_id = e.id)
+ 	        LEFT JOIN pricegroup g ON (c.pricegroup_id = g.id)
+	        LEFT JOIN language l ON (l.code = c.language_code)
 		LEFT JOIN paymentmethod pm ON (pm.id = c.paymentmethod_id)
 		  WHERE $where
 		  AND o.quotation = '1'
@@ -858,8 +903,6 @@ sub search {
 		  |;
 
     }
-
-      $sortorder .= ", invid";
   }
 
   my @sf = qw(name);
@@ -871,9 +914,16 @@ sub search {
 
   $query .= qq| ORDER BY $sortorder|;
 
-  $sth = $dbh->prepare($query);
+  my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
+  # outstanding
+  $query = qq|SELECT SUM(amount) - SUM(paid)
+              FROM $form->{ARAP}
+	      WHERE amount != paid
+	      AND $form->{db}_id = ?|;
+  my $oth = $dbh->prepare($query);
+  
   # accounts
   my %accno;
   $query = qq|SELECT id, accno FROM chart
@@ -918,6 +968,12 @@ sub search {
     $tth->finish;
     chop $ref->{taxaccount};
     
+    if ($form->{l_outstanding} || $form->{l_availablecredit}) {
+      $oth->execute($ref->{id});
+      $ref->{outstanding} = $oth->fetchrow_array;
+      $oth->finish;
+    }
+  
     for (qw(arap payment discount)) { $ref->{"${_}_accno"} = $accno{$ref->{"${_}_accno_id"}} }
     
     $ref->{address} = "";
@@ -942,6 +998,8 @@ sub get_history {
   $form->{sort} = "partnumber" unless $form->{sort};
   my $var;
   my $table;
+
+  $form->{db} =~ s/;//g;
 
   # setup ASC or DESC
   $form->sort_order();
@@ -1067,6 +1125,8 @@ sub get_history {
   my %ordinal = $form->ordinal_order($dbh, $query);
   $sortorder = "2 $form->{direction}, 1, $ordinal{$form->{sort}} $form->{direction}";
 
+  $query .= qq| ORDER BY $sortorder|;
+
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
@@ -1093,6 +1153,8 @@ sub pricelist {
   my $query;
   my $sth;
   my $ref;
+
+  for (qw(id db)) { $form->{$_} =~ s/;//g }
 
   if ($form->{db} eq 'customer') {
     $query = qq|SELECT DISTINCT pg.id, pg.partsgroup
@@ -1157,7 +1219,7 @@ sub pricelist {
     $sth->finish;
   }
 
-  $form->{currencies} = $form->get_currencies($dbh, $myconfig);
+  $form->{currencies} = $form->get_currencies($myconfig, $dbh);
  
   $dbh->disconnect;
 
@@ -1169,6 +1231,8 @@ sub save_pricelist {
 
   my $dbh = $form->dbconnect_noauto($myconfig);
   
+  for (qw(id db)) { $form->{$_} =~ s/;//g }
+
   my $query = qq|DELETE FROM parts$form->{db}
                  WHERE $form->{db}_id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
@@ -1274,8 +1338,10 @@ sub ship_to {
   my $query;
   
   my $table = ($form->{db} eq 'customer') ? 'ar' : 'ap';
-  
-  if ($form->{id}) {
+
+  for (qw(id db)) { $form->{$_} =~ s/;//g }
+
+  if ($form->{id} *= 1) {
     $query = qq|SELECT
                 s.shiptoname, s.shiptoaddress1, s.shiptoaddress2,
                 s.shiptocity, s.shiptostate, s.shiptozipcode,
@@ -1315,6 +1381,54 @@ sub ship_to {
   $dbh->disconnect;
 
 }
+
+
+sub retrieve_names {
+  my ($self, $myconfig, $form) = @_;
+
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+
+  $form->{db} =~ s/;//g;
+
+  my $query = qq|SELECT name
+                 FROM $form->{db}
+                 WHERE id = ?|;
+  my $sth = $dbh->prepare($query) || $form->dberror($query);
+
+  my $name;
+
+  for (1 .. $form->{rowcount}) {
+    if ($form->{"id_$_"}) {
+      $sth->execute($form->{"id_$_"});
+      ($name) = $sth->fetchrow_array;
+      $sth->finish;
+      push @{$form->{names}}, $name;
+    }
+  }
+
+  $dbh->disconnect;
+
+}
+
+
+sub batch_delete {
+  my ($self, $myconfig, $form) = @_;
+
+  # connect to database
+  my $dbh = $form->dbconnect_noauto($myconfig);
+
+  for (1 .. $form->{rowcount}) {
+    if ($form->{"id_$_"}) {
+      $form->{id} = $form->{"id_$_"};
+      &delete("", $myconfig, $form, $dbh);
+    }
+  }
+
+  $dbh->disconnect;
+
+}
+
 
 1;
 

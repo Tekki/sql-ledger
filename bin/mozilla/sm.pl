@@ -1,6 +1,6 @@
 #=====================================================================
-# SQL-Ledger ERP
-# Copyright (c) 2009
+# SQL-Ledger
+# Copyright (c) DWS Systems Inc.
 #
 #  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.com
@@ -14,6 +14,7 @@
 use SL::SM;
 use SL::IS;
 use SL::IR;
+require "$form->{path}/js.pl";
 
 1;
 # end of main
@@ -31,10 +32,12 @@ sub repost_invoices {
   
   $form->header;
 
+  &calendar;
+  
   print qq|
 <body>
 
-<form method=post action=$form->{script}>
+<form method="post" name="main" action="$form->{script}">
 
 <table width=100%>
   <tr class=listtop>
@@ -45,9 +48,8 @@ sub repost_invoices {
     <td>
       <table>
 	<tr>
-	  <td>|.$locale->text('Beginning date').qq|
-	  
-          <td><input name="transdate" size="11" class="date" title="$myconfig{dateformat}"></td>
+	  <th>|.$locale->text('Beginning date').qq|</th>
+          <td><input name="transdate" size="11" class="date" title="$myconfig{dateformat}">|.&js_calendar("main", "transdate").qq|</td>
 	</tr>
       </table>
     </td>
@@ -106,76 +108,23 @@ sub do_repost_invoices {
 }
 
 
-sub delete_invoices {
-  
-  $form->{title} = $locale->text('Delete Open Invoices');
-  
-  $form->helpref("delete_open_invoices", $myconfig{countrycode});
-  
-  $form->header;
+sub fld_config {
 
-  print qq|
-<body>
+# list formnames
 
-<form method=post action=$form->{script}>
+# pick one to edit
 
-<table width=100%>
-  <tr class=listtop>
-    <th>$form->{helpref}$form->{title}</a></th>
-  </tr>
-  <tr height="5"></tr>
-  <tr>
-    <td>
-      <table>
-	<tr>
-	  <td>|.$locale->text('From').qq|
-	  
-          <td><input name="transdatefrom" size="11" class="date" title="$myconfig{dateformat}"></td>
-	  <td>|.$locale->text('To').qq|
-	  
-          <td><input name="transdateto" size="11" class="date" title="$myconfig{dateformat}"></td>
-	</tr>
-      </table>
-    </td>
-  </tr>
-</table>
 
-<hr size=3 noshade>
-
-<br>
-<input class="submit" type="submit" name=action value="|.$locale->text('Continue').qq|">|;
-  
-  $form->{nextsub} = "do_delete_invoices";
-  
-  $form->hide_form(qw(nextsub path login));
-
-  print qq|
-</form>
-
-</body>
-</html>
-|;
 }
 
 
-sub do_delete_invoices {
+sub fld_edit {
 
-  $form->header;
-  
-  print $locale->text('Deleting Invoices ... ');
-  
-  if ($ENV{HTTP_USER_AGENT}) {
-    print "<blink><font color=red>".$locale->text('please wait')."</font></blink>\n";
-  } else {
-    print $locale->text('please wait')."\n";
-  }
-  
-  $SIG{INT} = 'IGNORE';
-  
-  IS->delete_invoices(\%myconfig, \%$form, $spool);
-  
-  print "... ".$locale->text('done');
-  
+}
+
+
+sub fld_save {
+
 }
 
 

@@ -24,10 +24,8 @@ sub menuitem {
   my $action = ($self->{$item}{action}) ? $self->{$item}{action} : "section_menu";
   my $target = ($self->{$item}{target}) ? $self->{$item}{target} : "";
 
-  my $str = qq|<a href=$module?path=$form->{path}&action=$action&login=$form->{login}&js=$form->{js}|;
-  if ($form->{path} =~ /lynx/) {
-    $str .= "&level=".$form->escape($item);
-  }
+  my $level = $form->escape($item);
+  my $str = qq|<a href=$module?path=$form->{path}&action=$action&level=$level&login=$form->{login}&js=$form->{js}|;
 
   my @vars = qw(module action target href);
   
@@ -77,7 +75,27 @@ sub access_control {
   grep { ($a, $b) = split /--/; s/--$a$//; } @acs;
   for (@acs) { $excl{$_} = 1 }
   @acs = ();
-  for (@menu) { push @acs, $_ unless $excl{$_} }
+
+  my @item;
+  my $acs;
+  my $n;
+
+  for (@menu) {
+    $acs = "";
+    $n = 0;
+    for $item (split /--/, $_) {
+      $acs .= $item;
+      if ($excl{$acs}) {
+	$n = 1;
+	last;
+      }
+      $acs .= "--";
+    }
+    next if $n;
+    
+    push @acs, $_;
+    
+  }
   
   @acs;
 

@@ -1,6 +1,6 @@
 #=====================================================================
-# SQL-Ledger ERP
-# Copyright (c) 2006
+# SQL-Ledger
+# Copyright (c) DWS Systems Inc.
 #
 #  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.com
@@ -11,11 +11,11 @@
 #
 
 # any custom scripts for this one
-if (-f "$form->{path}/custom_arapprn.pl") {
-      eval { require "$form->{path}/custom_arapprn.pl"; };
+if (-f "$form->{path}/custom/arapprn.pl") {
+      eval { require "$form->{path}/custom/arapprn.pl"; };
 }
-if (-f "$form->{path}/$form->{login}_arapprn.pl") {
-      eval { require "$form->{path}/$form->{login}_arapprn.pl"; };
+if (-f "$form->{path}/custom/$form->{login}/arapprn.pl") {
+      eval { require "$form->{path}/custom/$form->{login}/arapprn.pl"; };
 }
 
 1;
@@ -78,6 +78,9 @@ sub print_check {
   if ($form->{"paid_$i"}) {
     @a = ();
     
+    $datepaid = $form->datetonum(\%myconfig, $form->{"datepaid_$i"});
+    ($form->{yyyy}, $form->{mm}, $form->{dd}) = $datepaid =~ /(....)(..)(..)/;
+
     if (exists $form->{longformat}) {
       $form->{"datepaid_$i"} = $locale->date(\%myconfig, $form->{"datepaid_$i"}, $form->{longformat});
     }
@@ -137,7 +140,7 @@ sub print_check {
 
   for (qw(employee)) { ($form->{$_}, $form->{"${_}_id"}) = split /--/, $form->{$_} };
   
-  push @a, qw(employee notes intnotes company address tel fax businessnumber);
+  push @a, qw(employee notes intnotes company address tel fax businessnumber companyemail companywebsite);
   
   $form->format_string(@a);
 
@@ -175,7 +178,7 @@ sub print_check {
   $form->{fileid} = $invnumber;
   $form->{fileid} =~ s/(\s|\W)+//g;
 
-  $form->parse_template(\%myconfig, $userspath);
+  $form->parse_template(\%myconfig, $userspath, $dvipdf);
 
   if ($form->{previousform}) {
   
@@ -288,7 +291,7 @@ sub print_transaction {
       
       push(@{ $form->{taxdescription} }, $form->{"${_}_description"});
 
-      $form->{"${_}_taxrate"} = $form->format_amount($myconfig, $form->{"${_}_rate"} * 100);
+      $form->{"${_}_taxrate"} = $form->format_amount($myconfig, $form->{"${_}_rate"} * 100, undef, 0);
 
       push(@{ $form->{taxrate} }, $form->{"${_}_taxrate"});
       
@@ -310,6 +313,7 @@ sub print_transaction {
   }
 
   $form->{paid} = 0;
+
   for $i (1 .. $form->{paidaccounts}) {
 
     if ($form->{"paid_$i"}) {
@@ -398,7 +402,7 @@ sub print_transaction {
   
   @a = qw(employee invnumber transdate duedate notes intnotes dcn rvc);
 
-  push @a, qw(company address tel fax businessnumber text_amount text_decimal text_out_decimal text_out_amount);
+  push @a, qw(company address tel fax businessnumber companyemail companywebsite text_amount text_decimal text_out_decimal text_out_amount);
   
   $form->format_string(@a);
 
@@ -422,13 +426,18 @@ sub print_transaction {
       $form->{printed} .= " $form->{formname}";
       $form->{printed} =~ s/^ //;
 
+      $form->{"$form->{formname}_printed"} = 1;
+
       $form->update_status(\%myconfig);
     }
 
-    $oldform->{printed} = $form->{printed} if %$oldform;
-    
+    if (%$oldform) {
+      $oldform->{printed} = $form->{printed};
+      $oldform->{"$form->{formname}_printed"} = 1;
+    }
+
     %audittrail = ( tablename   => lc $form->{ARAP},
-                    reference   => $form->{"invnumber"},
+                    reference   => $form->{invnumber},
 		    formname    => $form->{formname},
 		    action      => 'printed',
 		    id          => $form->{id} );
@@ -440,7 +449,7 @@ sub print_transaction {
   $form->{fileid} = $form->{invnumber};
   $form->{fileid} =~ s/(\s|\W)+//g;
 
-  $form->parse_template(\%myconfig, $userspath);
+  $form->parse_template(\%myconfig, $userspath, $dvipdf);
 
   if (%$oldform) {
     $oldform->{invnumber} = $form->{invnumber};
@@ -477,7 +486,7 @@ sub print_payslip {
   HR->payslip_details(\%myconfig, \%$form);
 
   $display_form = ($form->{display_form}) ? $form->{display_form} : "display_form";
-
+ 
   @a = ();
   $form->{paid} = $form->parse_amount(\%myconfig, $form->{paid});
   
@@ -510,7 +519,7 @@ sub print_payslip {
   
   @a = qw(description);
 
-  push @a, qw(company address tel fax businessnumber text_amount text_decimal);
+  push @a, qw(company address tel fax businessnumber companyemail companywebsite text_amount text_decimal);
    
   for $i (1 .. $form->{wage_rows}) {
     if ($form->{"qty_$i"}) {
@@ -550,7 +559,7 @@ sub print_payslip {
     $form->{OUT} = qq~| $form->{"$form->{media}_printer"}~;
   }
 
-  $form->parse_template(\%myconfig, $userspath);
+  $form->parse_template(\%myconfig, $userspath, $dvipdf);
 
   if (%$oldform) {
     for (keys %$form) { delete $form->{$_} }
@@ -704,6 +713,29 @@ sub print_options {
   $media .= qq|</select>|;
   $media =~ s/(<option value="\Q$form->{media}\E")/$1 selected/;
 
+  $checked{printed} = "checked" if $form->{"$form->{formname}_printed"};
+  $checked{onhold} = "checked" if $form->{onhold};
+
+  if (!$form->{nohold}) {
+    $status = qq|
+             <tr>
+	       <td align=right><input name="onhold" type="checkbox" class="checkbox" value="1" $checked{onhold}></td>
+	       <th align=left nowrap>|.$locale->text('On Hold').qq|</font></th>
+	       <td align=right><input name="$form->{formname}_printed" type="checkbox" class="checkbox" value="1" $checked{printed}></td>
+	       <th align=left nowrap>|.$locale->text('Printed').qq|</th>
+	     </tr>
+|;
+  }
+
+  if ($form->{recurring}) {
+    $recurring = qq|
+             <tr>
+	       <td></td>
+	       <th align=left nowrap>|.$locale->text('Scheduled').qq|</th>
+	     </tr>
+|;
+  }
+
   print qq|
   <table width=100%>
     <tr>
@@ -711,23 +743,11 @@ sub print_options {
       <td>$lang</td>
       <td>$format</td>
       <td>$media</td>
-|;
-
-  %status = ( printed => 'Printed',
-	      recurring => 'Scheduled' );
-  
-  print qq|<td align=right width=90%>|;
-
-  for (qw(printed)) {
-    if ($form->{$_} =~ /$form->{formname}/) {
-      print $locale->text($status{$_}).qq|<br>|;
-    }
-  }
-  if ($form->{recurring}) {
-    print $locale->text($status{recurring}).qq|<br>|;
-  }
-  
-  print qq|
+      <td align=right width=90%>
+        <table>
+      $status
+      $recurring
+	</table>
       </td>
     </tr>
   </table>
