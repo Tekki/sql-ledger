@@ -5,16 +5,21 @@ $self{texts} = {
   'Continue'                    => 'Continuar',
   'Login'                       => 'Entrar',
   'Name'                        => 'Nombre',
+  'No email address for'        => 'Falta la dirección de correo electrónico de',
   'Password'                    => 'Contraseña',
   'Version'                     => 'Versión',
   'You did not enter a name!'   => 'No ha introducido el nombre',
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_tan'                   => 'email_tan',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
+  'tan_login'                   => 'tan_login',
+  'continuar'                   => 'continue',
   'entrar'                      => 'login',
 };
 

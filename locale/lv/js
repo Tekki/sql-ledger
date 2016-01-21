@@ -1,0 +1,29 @@
+$self{charset} = 'ISO-8859-13';
+
+$self{texts} = {
+  'April'                       => 'Aprîlî',
+  'August'                      => 'Augustâ',
+  'December'                    => 'Decembrî',
+  'February'                    => 'Februârî',
+  'January'                     => 'Janvârî',
+  'July'                        => 'Jûlijâ',
+  'June'                        => 'Jûnijâ',
+  'March'                       => 'Martâ',
+  'May'                         => 'Mai',
+  'November'                    => 'Novembrî',
+  'October'                     => 'Oktobrî',
+  'September'                   => 'Septembrî',
+};
+
+$self{subs} = {
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'js_calendar'                 => 'js_calendar',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
+};
+
+1;
+

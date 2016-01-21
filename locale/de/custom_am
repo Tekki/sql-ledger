@@ -1,0 +1,18 @@
+$self{charset} = 'ISO-8859-1';
+
+$self{texts} = {
+  'About'                       => 'Über',
+  'Database Host'               => 'Datenbank-Rechner',
+  'Dataset'                     => 'Datensatz',
+  'Licensed to'                 => 'Lizensiert für',
+  'User'                        => 'Benutzer',
+  'Version'                     => 'Version',
+  'localhost'                   => 'localhost',
+};
+
+$self{subs} = {
+  'company_logo'                => 'company_logo',
+};
+
+1;
+

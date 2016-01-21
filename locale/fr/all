@@ -1,8 +1,6 @@
 # These are all the texts to build the translations files.
 # to build unique strings edit the module files instead
 # this file is just a shortcut to build strings which are the same
-$self{charset} = 'ISO-8859-1';
-
 
 $self{texts} = {
   '%'                           => '%',
@@ -631,8 +629,8 @@ $self{texts} = {
   'Leave host and port field empty unless you want to make a remote connection.' => 'Laisser "port" et "hôte" vide, sauf si vous voulez vous connecter à  distance (par réseau)',
   'Ledger'                      => 'Grand-Livre',
   'Level'                       => 'Rang',
-  'Liability'                   => 'Passif',
   'Liabilities'                 => 'Dettes',
+  'Liability'                   => 'Passif',
   'Licensed to'                 => 'Licence a',
   'Line Item'                   => 'Ligne Item',
   'Line Total'                  => 'Total ligne',
@@ -968,7 +966,6 @@ $self{texts} = {
   'Salesperson'                 => 'Collaborateur',
   'Salutation'                  => 'Salutation',
   'Saturday'                    => 'Samedi',
-  
   'Save'                        => 'Enregistrer',
   'Save Level'                  => 'Rang-Enregistrement',
   'Save Pricelist'              => 'Enregistrer Tarifs',
@@ -1080,9 +1077,9 @@ $self{texts} = {
   'The following Datasets are not in use and can be deleted' => 'Les fichiers de données suivants ne sont pas utilisés et peuvent etre supprimés.',
   'The following Datasets need to be updated' => 'Les fichiers de données suivants doivent être mis a jour',
   'The following customers are not on file:' => 'Tiers-Client suivant absents sur fichier:',
-  'The following vendors are not on file:' => 'Tiers-Fournisseurs suivant absent sur fichier:',
   'The following parts are not on file:' => 'Produits suivant absent sur fichier:',
   'The following parts could not be found:' => 'Produits suivant non trouves:',
+  'The following vendors are not on file:' => 'Tiers-Fournisseurs suivant absent sur fichier:',
   'This is a preliminary check for existing sources. Nothing will be created or deleted at this stage!' => 'Ceci est un test préliminaire des sources existantes. Aucune modification Ã  ce stade!',
   'Threshold'                   => 'Rappel',
   'Thursday'                    => 'Jeudi',
@@ -1241,5 +1238,3 @@ $self{texts} = {
 };
 
 1;
-
-

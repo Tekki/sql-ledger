@@ -1,25 +1,28 @@
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Access Denied!'              => 'Ligipääs Keelatud!',
   'Company'                     => 'Firma',
   'Continue'                    => 'Edasi',
   'Dataset is newer than version!' => 'Andmestiku versioon on uuem, kui süsteemi oma!',
   'Incorrect Dataset version!'  => 'Vale Andmestiku versioon!',
   'Login'                       => 'Logi sisse:',
   'Name'                        => 'Nimi',
+  'No email address for'        => 'E-posti aadress puudu',
   'Password'                    => 'Parool',
   'Upgrading to Version'        => 'Uuendus Versioonini',
   'Version'                     => 'Versioon',
   'You did not enter a name!'   => 'Nimi jäi sisestamata!',
-  'done'                        => 'valmis',
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_tan'                   => 'email_tan',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
+  'tan_login'                   => 'tan_login',
+  'edasi'                       => 'continue',
   'logi_sisse:'                 => 'login',
 };
 

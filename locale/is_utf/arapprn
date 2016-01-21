@@ -1,3 +1,5 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'Account'                     => 'Reikningur',
   'Amount'                      => 'Upphæð',
@@ -6,7 +8,6 @@ $self{texts} = {
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
   'Screen'                      => 'Skjá',
-  'Select postscript or PDF!'   => 'Veljið postscript eða PDF',
   'Source'                      => 'Frálag',
 };
 
@@ -18,11 +19,12 @@ $self{subs} = {
   'print_credit_note'           => 'print_credit_note',
   'print_debit_note'            => 'print_debit_note',
   'print_options'               => 'print_options',
+  'print_payslip'               => 'print_payslip',
   'print_receipt'               => 'print_receipt',
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',
   'select_payment'              => 'select_payment',
-  'Áfram'                       => 'continue',
+  'Áfram'                      => 'continue',
 };
 
 1;

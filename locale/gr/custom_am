@@ -1,0 +1,12 @@
+$self{charset} = 'ISO-8859-7';
+
+$self{texts} = {
+  'Licensed to'                 => 'Αδεια σε',
+};
+
+$self{subs} = {
+  'company_logo'                => 'company_logo',
+};
+
+1;
+

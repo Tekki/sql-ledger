@@ -9,11 +9,9 @@ $self{texts} = {
   'Incorrect Dataset version!'  => 'Ungültige Datensatzversion',
   'Incorrect Password!'         => 'Falsches Passwort!',
   'Incorrect Username!'         => 'Falscher Benutzername!',
-  'Invalid PIN'                 => 'Üngültige PIN',
   'Login'                       => 'Anmelden',
   'Name'                        => 'Name',
   'No email address for'        => 'Keine eMailadresse für',
-  'PIN'                         => 'PIN',
   'Password'                    => 'Passwort',
   'Upgrading to Version'        => 'Datensatz wird erneuert auf Version',
   'Version'                     => 'Version',
@@ -23,12 +21,12 @@ $self{texts} = {
 
 $self{subs} = {
   'continue'                    => 'continue',
-  'email_pin'                   => 'email_pin',
+  'email_tan'                   => 'email_tan',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
-  'pin_login'                   => 'pin_login',
   'selectdataset'               => 'selectdataset',
+  'tan_login'                   => 'tan_login',
   'weiter'                      => 'continue',
   'anmelden'                    => 'login',
 };

@@ -5,16 +5,21 @@ $self{texts} = {
   'Continue'                    => 'Devam',
   'Login'                       => 'Giriþ',
   'Name'                        => 'Ýsim',
+  'No email address for'        => 'E-posta adresi yok: ',
   'Password'                    => 'Þifre',
   'Version'                     => 'Versiyon',
   'You did not enter a name!'   => 'Ýsim girmediniz!',
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_tan'                   => 'email_tan',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
+  'tan_login'                   => 'tan_login',
+  'devam'                       => 'continue',
   'giriþ'                       => 'login',
 };
 

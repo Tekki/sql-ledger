@@ -1,0 +1,16 @@
+$self{texts} = {
+  'About'                       => 'Lisätietoja',
+  'Database Host'               => 'Tietokannan osoite',
+  'Dataset'                     => 'Tietokanta',
+  'Licensed to'                 => 'Lisenssin omistaja',
+  'User'                        => 'Käyttäjä',
+  'Version'                     => 'Versio',
+  'localhost'                   => 'paikallinen tietokone',
+};
+
+$self{subs} = {
+  'company_logo'                => 'company_logo',
+};
+
+1;
+

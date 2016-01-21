@@ -1,0 +1,11 @@
+$self{texts} = {
+  'Licensed to'                 => 'Lisensi kepada',
+  'Version'                     => 'Versi',
+};
+
+$self{subs} = {
+  'company_logo'                => 'company_logo',
+};
+
+1;
+

@@ -1,0 +1,10 @@
+$self{texts} = {
+};
+
+$self{subs} = {
+  'all_references'              => 'all_references',
+  'references'                  => 'references',
+};
+
+1;
+

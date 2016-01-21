@@ -6,16 +6,21 @@ $self{texts} = {
   'Incorrect Dataset version!'  => 'Нев╕рна верс╕я Бази Даних!',
   'Login'                       => 'Початок Сеансу',
   'Name'                        => 'Назва',
+  'No email address for'        => 'Не вказана адреса ел. пошти для',
   'Password'                    => 'Пароль',
   'Version'                     => 'Верс╕я',
   'You did not enter a name!'   => 'Не введено назву',
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_tan'                   => 'email_tan',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
+  'tan_login'                   => 'tan_login',
+  'Продовжити'                  => 'continue',
   'Початок_Сеансу'              => 'login',
 };
 

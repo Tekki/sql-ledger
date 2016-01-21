@@ -31,12 +31,8 @@ $self{subs} = {
   'lock_system'                 => 'lock_system',
   'login'                       => 'login',
   'logout'                      => 'logout',
-  'main_menu'                   => 'main_menu',
-  'software_administration'     => 'software_administration',
-  'switch_branch'               => 'switch_branch',
   'unlock_dataset'              => 'unlock_dataset',
   'unlock_system'               => 'unlock_system',
-  'update_software'             => 'update_software',
   'yes'                         => 'yes',
 };
   

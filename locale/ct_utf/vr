@@ -1,3 +1,5 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'Account'                     => 'Compta',
   'Accounting Menu'             => 'Menú Comptable',
@@ -51,6 +53,10 @@ $self{subs} = {
   'add_payment_reversal_batch'  => 'add_payment_reversal_batch',
   'add_payments_batch'          => 'add_payments_batch',
   'add_voucher'                 => 'add_voucher',
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
   'continue'                    => 'continue',
   'delete'                      => 'delete',
   'delete_batch'                => 'delete_batch',
@@ -60,7 +66,9 @@ $self{subs} = {
   'edit_batch'                  => 'edit_batch',
   'edit_payment_reversal'       => 'edit_payment_reversal',
   'general_ledger_batch'        => 'general_ledger_batch',
-  'js_menu'                     => 'js_menu',
+  'js_calendar'                 => 'js_calendar',
+  'jsmenu'                      => 'jsmenu',
+  'jsmenu_frame'                => 'jsmenu_frame',
   'list_batches'                => 'list_batches',
   'list_vouchers'               => 'list_vouchers',
   'menubar'                     => 'menubar',
@@ -68,9 +76,11 @@ $self{subs} = {
   'payment_batch'               => 'payment_batch',
   'payment_reversal_batch'      => 'payment_reversal_batch',
   'payments_batch'              => 'payments_batch',
+  'pickvalue'                   => 'pickvalue',
   'post'                        => 'post',
   'post_batch'                  => 'post_batch',
   'post_batches'                => 'post_batches',
+  'resize'                      => 'resize',
   'save_batch'                  => 'save_batch',
   'search'                      => 'search',
   'section_menu'                => 'section_menu',
@@ -80,7 +90,7 @@ $self{subs} = {
   'yes_delete_batch'            => 'yes_delete_batch',
   'continuar'                   => 'continue',
   'esborrar'                    => 'delete',
-  'sí'                          => 'yes',
+  'sí'                         => 'yes',
 };
 
 1;

@@ -1,0 +1,9 @@
+$self{texts} = {
+};
+
+$self{subs} = {
+  'company_logo'                => 'company_logo',
+};
+
+1;
+

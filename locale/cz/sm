@@ -1,17 +1,35 @@
 $self{charset} = 'ISO-8859-2';
 
 $self{texts} = {
+  'April'                       => 'Duben',
+  'August'                      => 'Srpen',
   'Continue'                    => 'Pokraèování',
-  'From'                        => 'z',
-  'To'                          => 'do',
+  'December'                    => 'Prosinec',
+  'February'                    => 'Únor',
+  'January'                     => 'Leden',
+  'July'                        => 'Èervenec',
+  'June'                        => 'Èerven',
+  'March'                       => 'Bøezen',
+  'May'                         => 'Kvìten',
+  'November'                    => 'Listopad',
+  'October'                     => 'Øíjen',
+  'September'                   => 'Záøí',
 };
 
 $self{subs} = {
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
   'continue'                    => 'continue',
-  'delete_invoices'             => 'delete_invoices',
-  'do_delete_invoices'          => 'do_delete_invoices',
   'do_repost_invoices'          => 'do_repost_invoices',
+  'fld_config'                  => 'fld_config',
+  'fld_edit'                    => 'fld_edit',
+  'fld_save'                    => 'fld_save',
+  'js_calendar'                 => 'js_calendar',
+  'pickvalue'                   => 'pickvalue',
   'repost_invoices'             => 'repost_invoices',
+  'resize'                      => 'resize',
 };
 
 1;

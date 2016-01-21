@@ -1,0 +1,16 @@
+$self{texts} = {
+  'About'                       => 'Acerca de',
+  'Database Host'               => 'Servidor de base de datos',
+  'Dataset'                     => 'Conjunto de datos',
+  'Licensed to'                 => 'Licenciado a',
+  'User'                        => 'Usuario',
+  'Version'                     => 'Versión',
+  'localhost'                   => 'localhost',
+};
+
+$self{subs} = {
+  'company_logo'                => 'company_logo',
+};
+
+1;
+

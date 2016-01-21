@@ -1,7 +1,6 @@
 $self{charset} = 'ISO-8859-1';
 
 $self{texts} = {
-  'ZW' => 'Zwischen',
   'Add Part'                    => 'Ware anlegen',
   'Add Purchase Order'          => 'Einkaufsbeleg anlegen',
   'Add Quotation'               => 'Angebot erstellen',
@@ -24,6 +23,7 @@ $self{texts} = {
   'Contact'                     => 'Kontakt',
   'Continue'                    => 'Weiter',
   'Copies'                      => 'Kopien',
+  'Cost'                        => 'Kosten',
   'Country'                     => 'Land',
   'Credit Invoice'              => 'Rechnungsbezogene Gutschrift',
   'DCN missing!'                => 'Dokumentkontrollnummer fehlt!',
@@ -71,6 +71,7 @@ $self{texts} = {
   'OH'                          => 'LU',
   'Oct'                         => 'Okt',
   'October'                     => 'Oktober',
+  'On Hold'                     => 'Zurückhalten',
   'Order Date missing!'         => 'Bestelldatum fehlt!',
   'Order Number'                => 'Bestellnummer',
   'Order Number missing!'       => 'Bestellnummer fehlt!',
@@ -114,16 +115,16 @@ $self{texts} = {
   'To'                          => 'An',
   'Translation not on file!'    => 'Übersetzung nicht verfügbar',
   'Unit'                        => 'Einh.',
+  'Vendor'                      => 'Lieferant',
   'Volume'                      => 'Volumen',
   'Work Order'                  => 'Arbeitsblatt',
+  'XML'                         => 'XML',
   'Zip/Postal Code'             => 'Postleitzahl',
   'html'                        => 'HTML',
   'sent'                        => 'verschickt',
 };
 
 $self{subs} = {
-  'api_email_invoice'           => 'api_email_invoice',
-  'api_quit'                    => 'api_quit',
   'calc_markup'                 => 'calc_markup',
   'check_form'                  => 'check_form',
   'create_form'                 => 'create_form',

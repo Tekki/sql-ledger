@@ -1,0 +1,29 @@
+$self{charset} = 'ISO-8859-9';
+
+$self{texts} = {
+  'April'                       => 'Nisan',
+  'August'                      => 'Aðustos',
+  'December'                    => 'Aralýk',
+  'February'                    => 'Þubat',
+  'January'                     => 'Ocak',
+  'July'                        => 'Temmuz',
+  'June'                        => 'Haziran',
+  'March'                       => 'Mart',
+  'May'                         => 'May',
+  'November'                    => 'Kasým',
+  'October'                     => 'Ekim',
+  'September'                   => 'Eylül',
+};
+
+$self{subs} = {
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'js_calendar'                 => 'js_calendar',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
+};
+
+1;
+

@@ -1,0 +1,18 @@
+$self{charset} = 'ISO-8859-13';
+
+$self{texts} = {
+  'About'                       => 'Par',
+  'Database Host'               => 'Datubâzes serveris',
+  'Dataset'                     => 'Datukopa',
+  'Licensed to'                 => 'Licencçts firmai',
+  'User'                        => 'Lietotâjs',
+  'Version'                     => 'Versija',
+  'localhost'                   => 'localhost',
+};
+
+$self{subs} = {
+  'company_logo'                => 'company_logo',
+};
+
+1;
+

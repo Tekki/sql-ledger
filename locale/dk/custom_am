@@ -1,0 +1,16 @@
+$self{texts} = {
+  'About'                       => 'Om',
+  'Database Host'               => 'Database-vært',
+  'Dataset'                     => 'Datasæt',
+  'Licensed to'                 => 'Udført for',
+  'User'                        => 'Bruger',
+  'Version'                     => 'Version',
+  'localhost'                   => 'lokalt',
+};
+
+$self{subs} = {
+  'company_logo'                => 'company_logo',
+};
+
+1;
+

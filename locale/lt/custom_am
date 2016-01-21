@@ -1,0 +1,18 @@
+$self{charset} = 'ISO-8859-13';
+
+$self{texts} = {
+  'About'                       => 'Apie...',
+  'Database Host'               => 'Duomenø bazës hostas',
+  'Dataset'                     => 'Duomenø aibë',
+  'Licensed to'                 => 'Licenzijuota...',
+  'User'                        => 'Vartotojas',
+  'Version'                     => 'Versija',
+  'localhost'                   => 'lokalhostas',
+};
+
+$self{subs} = {
+  'company_logo'                => 'company_logo',
+};
+
+1;
+

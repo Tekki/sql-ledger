@@ -1,0 +1,18 @@
+$self{charset} = 'ISO-8859-5';
+
+$self{texts} = {
+  'About'                       => 'О программе',
+  'Database Host'               => 'Сервер базы данных',
+  'Dataset'                     => 'База данных',
+  'Licensed to'                 => 'Лицензией обладает:',
+  'User'                        => 'Сотрудник',
+  'Version'                     => 'Версия',
+  'localhost'                   => 'localhost',
+};
+
+$self{subs} = {
+  'company_logo'                => 'company_logo',
+};
+
+1;
+

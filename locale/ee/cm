@@ -1,0 +1,12 @@
+$self{charset} = 'ISO-8859-15';
+
+$self{texts} = {
+};
+
+$self{subs} = {
+  'all_references'              => 'all_references',
+  'references'                  => 'references',
+};
+
+1;
+

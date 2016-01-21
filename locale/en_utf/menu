@@ -5,12 +5,17 @@ $self{texts} = {
 
 $self{subs} = {
   'acc_menu'                    => 'acc_menu',
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
   'display'                     => 'display',
-  'display_frame'               => 'display_frame',
+  'js_calendar'                 => 'js_calendar',
   'jsmenu'                      => 'jsmenu',
   'jsmenu_frame'                => 'jsmenu_frame',
   'menubar'                     => 'menubar',
-  'mlmenu'                      => 'mlmenu',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
   'section_menu'                => 'section_menu',
 };
 

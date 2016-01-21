@@ -1,3 +1,5 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'Company'                     => 'Bedrijf',
   'Continue'                    => 'Verder',
@@ -8,6 +10,7 @@ $self{texts} = {
   'Incorrect Username!'         => 'Onjuiste gebruikersnaam',
   'Login'                       => 'Aanmelden',
   'Name'                        => 'Naam',
+  'No email address for'        => 'Geen e-mailadres voor',
   'Password'                    => 'Wachtwoord',
   'Upgrading to Version'        => 'Opwaarderen naar Versie',
   'Version'                     => 'Versie',
@@ -16,10 +19,14 @@ $self{texts} = {
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_tan'                   => 'email_tan',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
+  'tan_login'                   => 'tan_login',
+  'verder'                      => 'continue',
   'aanmelden'                   => 'login',
 };
 

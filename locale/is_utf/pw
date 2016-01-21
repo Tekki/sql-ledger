@@ -1,3 +1,5 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'Continue'                    => 'Áfram',
   'Password'                    => 'Aðgangsorð',
@@ -5,7 +7,7 @@ $self{texts} = {
 
 $self{subs} = {
   'getpassword'                 => 'getpassword',
-  'Áfram'                       => 'continue',
+  'Áfram'                      => 'continue',
 };
 
 1;

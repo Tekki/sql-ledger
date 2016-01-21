@@ -1,25 +1,28 @@
 $self{charset} = 'ISO-8859-2';
 
 $self{texts} = {
-  'Access Denied!'              => 'Prístup odmietnutý!',
   'Company'                     => 'Firma',
   'Continue'                    => 'Pokraèovanie',
   'Dataset is newer than version!' => 'Verzia databáz je nov¹ia ako programová!',
   'Incorrect Dataset version!'  => 'Chybná verzia databáz!',
   'Login'                       => 'Vstup',
   'Name'                        => 'Meno',
+  'No email address for'        => 'Nie je email adresa pre',
   'Password'                    => 'Heslo',
   'Upgrading to Version'        => 'Aktualizacia na novú verziu',
   'Version'                     => 'Verzia',
   'You did not enter a name!'   => 'Nezadali ste meno!',
-  'done'                        => 'hotovo',
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_tan'                   => 'email_tan',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
+  'tan_login'                   => 'tan_login',
+  'pokraèovanie'                => 'continue',
   'vstup'                       => 'login',
 };
 

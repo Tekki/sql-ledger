@@ -1,0 +1,29 @@
+$self{charset} = 'ISO-8859-2';
+
+$self{texts} = {
+  'April'                       => 'Duben',
+  'August'                      => 'Srpen',
+  'December'                    => 'Prosinec',
+  'February'                    => 'Únor',
+  'January'                     => 'Leden',
+  'July'                        => 'Èervenec',
+  'June'                        => 'Èerven',
+  'March'                       => 'Bøezen',
+  'May'                         => 'Kvìten',
+  'November'                    => 'Listopad',
+  'October'                     => 'Øíjen',
+  'September'                   => 'Záøí',
+};
+
+$self{subs} = {
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'js_calendar'                 => 'js_calendar',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
+};
+
+1;
+
