@@ -67,7 +67,6 @@ $self{texts} = {
   'Order Number'                => 'Referentie',
   'PDF'                         => 'PDF',
   'Packing Lists'               => 'Pakbonnen',
-  'Paid'                        => 'Betaald',
   'Payment Method'              => 'Betaalwijze',
   'Period'                      => 'Periode',
   'Pick Lists'                  => 'Uitsorteerbonnen',

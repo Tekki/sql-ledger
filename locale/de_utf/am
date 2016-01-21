@@ -9,7 +9,6 @@ $self{texts} = {
   'AR Payment'                  => 'Debitorenbetrag',
   'About'                       => 'Über',
   'Access Control'              => 'Zugriffkontrolle',
-  'Access Denied!'              => 'Zugang verweigert!',
   'Account'                     => 'Konto',
   'Account Number'              => 'Kontonummer',
   'Account Number missing!'     => 'Kontonummer fehlt!',
@@ -356,7 +355,6 @@ $self{texts} = {
   'failed!'                     => 'fehl geschlagen!',
   'gzip failed!'                => 'gzip fehl geschlagen',
   'html'                        => 'HTML',
-  'localhost'                   => 'localhost',
   'ok'                          => 'OK',
   'will be restored with data from' => 'wird wieder hergestellt mit Daten von',
 };

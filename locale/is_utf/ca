@@ -1,5 +1,3 @@
-$self{charset} = 'UTF-8';
-
 $self{texts} = {
   'Account'                     => 'Reikningur',
   'Apr'                         => 'apr',
@@ -9,7 +7,7 @@ $self{texts} = {
   'Balance'                     => 'Afstemming',
   'Chart of Accounts'           => 'Listi yfir lykkla/reikninga',
   'Credit'                      => 'Kredit',
-  'Current'                     => 'Núvirđi',
+  'Current'                     => 'Núvirði',
   'Date'                        => 'Dagsetning',
   'Debit'                       => 'Debit',
   'Dec'                         => 'des',
@@ -26,7 +24,7 @@ $self{texts} = {
   'July'                        => 'júlí',
   'Jun'                         => 'jún',
   'June'                        => 'júní',
-  'List Transactions'           => 'Sýna fćrslur',
+  'List Transactions'           => 'Sýna færslur',
   'Mar'                         => 'mar',
   'March'                       => 'mars',
   'May'                         => 'maí',
@@ -48,7 +46,7 @@ $self{subs} = {
   'chart_of_accounts'           => 'chart_of_accounts',
   'list'                        => 'list',
   'list_transactions'           => 'list_transactions',
-  'sýna_fćrslur'              => 'list_transactions',
+  'sýna_færslur'                => 'list_transactions',
 };
 
 1;

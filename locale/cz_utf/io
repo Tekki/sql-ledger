@@ -15,6 +15,7 @@ $self{texts} = {
   'Contact'                     => 'Kontakt',
   'Continue'                    => 'Pokračování',
   'Copies'                      => 'Kopie',
+  'Customer'                    => 'Odběratel',
   'Date'                        => 'Datum',
   'Dec'                         => 'Pro',
   'December'                    => 'Prosinec',
@@ -40,7 +41,6 @@ $self{texts} = {
   'May'                         => 'Květen',
   'May '                        => 'Kvě',
   'Message'                     => 'Zpráva',
-  'Name'                        => 'Jméno',
   'Nov'                         => 'Lis',
   'November'                    => 'Listopad',
   'Number'                      => 'Číslo',
@@ -48,7 +48,6 @@ $self{texts} = {
   'Oct'                         => 'Říj',
   'October'                     => 'Říjen',
   'Order Date missing!'         => 'Chybí datum objednávky!',
-  'Order Number'                => 'Objednávka číslo',
   'Order Number missing!'       => 'Chybí číslo objednávky!',
   'Packing List'                => 'Dodací list',
   'Packing List Date missing!'  => 'Chybí datum dodacího listu',
@@ -66,6 +65,7 @@ $self{texts} = {
   'Subtotal'                    => 'Mezisoučet',
   'To'                          => 'do',
   'Unit'                        => 'Jednotka',
+  'Vendor'                      => 'Dodavatel',
 };
 
 $self{subs} = {
@@ -88,11 +88,10 @@ $self{subs} = {
   'select_item'                 => 'select_item',
   'send_email'                  => 'send_email',
   'ship_to'                     => 'ship_to',
-  'shipto_selected'             => 'shipto_selected',
   'validate_items'              => 'validate_items',
-  'příjem_zboží'            => 'add_part',
-  'nový_druh_služby'          => 'add_service',
-  'pokračování'              => 'continue',
+  'příjem_zboží'                => 'add_part',
+  'nový_druh_služby'            => 'add_service',
+  'pokračování'                 => 'continue',
 };
 
 1;

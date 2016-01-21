@@ -2,16 +2,18 @@ $self{texts} = {
   'Account'                     => 'Compte',
   'Amount'                      => 'Montant',
   'Continue'                    => 'Continuer',
+  'DCN missing!'                => 'N° Contrôle Document Manquant!',
   'Date'                        => 'Date',
   'Memo'                        => 'Mémo',
   'Nothing to print!'           => 'Rien à imprimer',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postcript',
+  'RVC missing!'                => 'RVC manquant',
   'Screen'                      => 'Écran',
   'Select a Printer!'           => 'Choisir une imprimante',
   'Select payment'              => 'Sélectionner le payement',
+  'Select postscript or PDF!'   => 'Sélectionner Postscript ou PDF!',
   'Source'                      => 'Source',
-  'Text'                        => 'Texte',
 };
 
 $self{subs} = {
@@ -22,7 +24,6 @@ $self{subs} = {
   'print_credit_note'           => 'print_credit_note',
   'print_debit_note'            => 'print_debit_note',
   'print_options'               => 'print_options',
-  'print_payslip'               => 'print_payslip',
   'print_receipt'               => 'print_receipt',
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',

@@ -1,5 +1,3 @@
-$self{charset} = 'UTF-8';
-
 $self{texts} = {
   'AP'                          => 'Crediteuren',
   'AP Amount'                   => 'Crediteur Bedrag',
@@ -9,7 +7,6 @@ $self{texts} = {
   'AR Payment'                  => 'Debiteur Betaling',
   'About'                       => 'Over',
   'Access Control'              => 'Toegangsbeheer',
-  'Access Denied!'              => 'Toegang Geweigerd!',
   'Account'                     => 'Rekening',
   'Account Number'              => 'Rekeningnummer',
   'Account Number missing!'     => 'Rekeningnummer Ontbreekt!',
@@ -320,6 +317,7 @@ $self{texts} = {
   'Type'                        => 'Type',
   'Type of Business'            => 'Branche',
   'Type of Contact'             => 'Type contact',
+  'Unauthorized!'               => 'Niet toegestaan!',
   'Unlock dataset?'             => 'Dataset ontgrendelen?',
   'Update'                      => 'Bijwerken',
   'Upgrading to Version'        => 'Opwaarderen naar Versie',
@@ -356,7 +354,6 @@ $self{texts} = {
   'failed!'                     => 'mislukt!',
   'gzip failed!'                => 'gzip mislukt!',
   'html'                        => 'html',
-  'localhost'                   => 'localhost',
   'ok'                          => 'ok',
   'will be restored with data from' => 'zal worden teruggezet met data van',
 };

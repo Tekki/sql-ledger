@@ -68,7 +68,6 @@ $self{texts} = {
   'Order Number'                => 'Bestell Nr.',
   'PDF'                         => 'PDF',
   'Packing Lists'               => 'Lieferscheine',
-  'Paid'                        => 'Bezahlt',
   'Payment Method'              => 'Zahlungsart',
   'Period'                      => 'Zeitraum',
   'Pick Lists'                  => 'Picklisten',
@@ -111,7 +110,6 @@ $self{texts} = {
 
 $self{subs} = {
   'acc_menu'                    => 'acc_menu',
-  'combine'                     => 'combine',
   'continue'                    => 'continue',
   'deselect_all'                => 'deselect_all',
   'display'                     => 'display',

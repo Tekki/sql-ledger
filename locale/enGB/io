@@ -1,4 +1,8 @@
 $self{texts} = {
+  'Customer'                    => 'Debtor',
+  'Customer Number'             => 'Debtor Number',
+  'Vendor'                      => 'Creditor',
+  'Vendor Number'               => 'Creditor Number',
 };
 
 $self{subs} = {
@@ -21,7 +25,6 @@ $self{subs} = {
   'select_item'                 => 'select_item',
   'send_email'                  => 'send_email',
   'ship_to'                     => 'ship_to',
-  'shipto_selected'             => 'shipto_selected',
   'validate_items'              => 'validate_items',
 };
 

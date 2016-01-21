@@ -1,5 +1,3 @@
-$self{charset} = 'UTF-8';
-
 $self{texts} = {
   'Account'                     => 'Konto',
   'Accounting Menu'             => 'Konto-meny',
@@ -11,7 +9,7 @@ $self{texts} = {
   'Beginning Balance'           => 'Startbalanse',
   'Continue'                    => 'Fortsett',
   'Credit'                      => 'Kredit',
-  'Current'                     => 'Nåvęrende',
+  'Current'                     => 'Nåværende',
   'Date'                        => 'Dato',
   'Debit'                       => 'Debet',
   'Dec'                         => 'des',
@@ -42,13 +40,13 @@ $self{texts} = {
   'Out of balance!'             => 'Ute av balanse!',
   'Period'                      => 'Periode',
   'Quarter'                     => 'Kvartal',
-  'Reconciliation'              => 'Bankoppgjųr',
-  'Reconciliation Report'       => 'Bankoppgjųrsrapport',
+  'Reconciliation'              => 'Bankoppgjør',
+  'Reconciliation Report'       => 'Bankoppgjørsrapport',
   'Select all'                  => 'Velg alt',
   'Sep'                         => 'sep',
   'September'                   => 'september',
   'Source'                      => 'Bilag',
-  'Statement Balance'           => 'Balanseoppgjųr',
+  'Statement Balance'           => 'Balanseoppgjør',
   'Summary'                     => 'Oppsummert',
   'To'                          => 'Til',
   'Update'                      => 'Oppdatér',
@@ -61,13 +59,10 @@ $self{subs} = {
   'deselect_all'                => 'deselect_all',
   'display'                     => 'display',
   'display_form'                => 'display_form',
-  'display_frame'               => 'display_frame',
   'done'                        => 'done',
   'get_payments'                => 'get_payments',
-  'jsmenu'                      => 'jsmenu',
-  'jsmenu_frame'                => 'jsmenu_frame',
+  'js_menu'                     => 'js_menu',
   'menubar'                     => 'menubar',
-  'mlmenu'                      => 'mlmenu',
   'reconciliation'              => 'reconciliation',
   'section_menu'                => 'section_menu',
   'select_all'                  => 'select_all',
@@ -75,7 +70,7 @@ $self{subs} = {
   'fortsett'                    => 'continue',
   'ferdig'                      => 'done',
   'velg_alt'                    => 'select_all',
-  'oppdatér'                   => 'update',
+  'oppdatér'                    => 'update',
 };
 
 1;

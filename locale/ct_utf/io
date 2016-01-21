@@ -1,5 +1,3 @@
-$self{charset} = 'UTF-8';
-
 $self{texts} = {
   'Add Part'                    => 'Afegir Article',
   'Add Purchase Order'          => 'Afegir Ordre Compra',
@@ -15,6 +13,7 @@ $self{texts} = {
   'Contact'                     => 'Contacte',
   'Continue'                    => 'Continuar',
   'Copies'                      => 'Còpies',
+  'Customer'                    => 'Client',
   'Date'                        => 'Data',
   'Dec'                         => 'Des',
   'December'                    => 'Desembre',
@@ -39,7 +38,6 @@ $self{texts} = {
   'March'                       => 'Març',
   'May'                         => 'Mai',
   'May '                        => 'Maig',
-  'Name'                        => 'Nom',
   'Nov'                         => 'Nov',
   'November'                    => 'Novembre',
   'Number'                      => 'Número',
@@ -47,7 +45,6 @@ $self{texts} = {
   'Oct'                         => 'Oct',
   'October'                     => 'Octubre',
   'Order Date missing!'         => 'Falta Data Ordre!',
-  'Order Number'                => 'Número Ordre',
   'Order Number missing!'       => 'Falta Número Ordre!',
   'Packing List'                => 'Albarà',
   'Packing List Date missing!'  => 'Falta Data Albarà!',
@@ -64,6 +61,7 @@ $self{texts} = {
   'Subtotal'                    => 'Subtotal',
   'To'                          => 'Fins',
   'Unit'                        => 'Unitat',
+  'Vendor'                      => 'Proveïdor',
 };
 
 $self{subs} = {
@@ -86,7 +84,6 @@ $self{subs} = {
   'select_item'                 => 'select_item',
   'send_email'                  => 'send_email',
   'ship_to'                     => 'ship_to',
-  'shipto_selected'             => 'shipto_selected',
   'validate_items'              => 'validate_items',
   'afegir_article'              => 'add_part',
   'afegir_servei'               => 'add_service',

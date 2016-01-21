@@ -24,7 +24,6 @@ $self{texts} = {
   'Below'                       => 'Onder',
   'Cannot delete employee!'     => 'Kan werknemer niet verwijderen!',
   'Cannot delete transaction!'  => 'Kan boeking niet verwijderen!',
-  'Cannot post transaction for a closed period!' => 'Kan geen boeking maken in afgesloten periode',
   'Cc'                          => 'Cc',
   'City'                        => 'Stad',
   'Clearing No.'                => 'Clearing No.',

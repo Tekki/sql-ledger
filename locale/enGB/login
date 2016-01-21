@@ -2,13 +2,10 @@ $self{texts} = {
 };
 
 $self{subs} = {
-  'continue'                    => 'continue',
-  'email_tan'                   => 'email_tan',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
-  'tan_login'                   => 'tan_login',
 };
 
 1;

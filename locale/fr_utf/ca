@@ -1,12 +1,12 @@
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'AR/AP'                       => 'Crences/Dettes',
+  'AR/AP'                       => 'Créances/Dettes',
   'Account'                     => 'Compte',
   'Apr'                         => 'Avril',
   'April'                       => 'Avril',
   'Aug'                         => 'Août',
-  'August'                      => 'Août',
+  'August'                      => 'Aout',
   'Balance'                     => 'Solde',
   'Chart of Accounts'           => 'Plan Comptable',
   'Credit'                      => 'Crédit',
@@ -15,20 +15,20 @@ $self{texts} = {
   'Debit'                       => 'Débit',
   'Dec'                         => 'Déc.',
   'December'                    => 'Décembre',
-  'Department'                  => 'Département',
+  'Department'                  => 'Service-Département',
   'Description'                 => 'Libellé',
   'Feb'                         => 'Fév.',
   'February'                    => 'Février',
   'From'                        => 'Du',
   'GIFI'                        => 'Code GIFI-TDFC',
-  'Include in Report'           => 'Inclure dans l\'état',
+  'Include in Report'           => 'Inclure dans l\'Etat',
   'Jan'                         => 'Jan.',
   'January'                     => 'Janvier',
   'Jul'                         => 'Juill.',
   'July'                        => 'Juillet',
   'Jun'                         => 'Juin',
   'June'                        => 'Juin',
-  'List Transactions'           => 'Afficher écritures',
+  'List Transactions'           => 'Afficher Ecritures',
   'Mar'                         => 'Mars',
   'March'                       => 'Mars',
   'May'                         => 'Mai',
@@ -46,7 +46,7 @@ $self{texts} = {
   'Sep'                         => 'Sept.',
   'September'                   => 'Septembre',
   'Source'                      => 'Source',
-  'Subtotal'                    => 'Sous total',
+  'Subtotal'                    => 'Sous-total',
   'To'                          => 'au',
   'Year'                        => 'Année',
 };
@@ -56,7 +56,7 @@ $self{subs} = {
   'chart_of_accounts'           => 'chart_of_accounts',
   'list'                        => 'list',
   'list_transactions'           => 'list_transactions',
-  'afficher_écritures'         => 'list_transactions',
+  'afficher_ecritures'          => 'list_transactions',
 };
 
 1;

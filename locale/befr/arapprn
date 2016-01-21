@@ -10,8 +10,8 @@ $self{texts} = {
   'Screen'                      => 'Écran',
   'Select a Printer!'           => 'Sélectionner une imprimante!',
   'Select payment'              => 'Sélectionner le payement',
+  'Select postscript or PDF!'   => 'Sélectionner Postscript ou PDF!',
   'Source'                      => 'Source',
-  'Text'                        => 'Texte',
 };
 
 $self{subs} = {
@@ -22,7 +22,6 @@ $self{subs} = {
   'print_credit_note'           => 'print_credit_note',
   'print_debit_note'            => 'print_debit_note',
   'print_options'               => 'print_options',
-  'print_payslip'               => 'print_payslip',
   'print_receipt'               => 'print_receipt',
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',

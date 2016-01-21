@@ -1,0 +1,39 @@
+$self{charset} = 'ISO-8859-1';
+
+$self{texts} = {
+  'Accepted format is'          => 'Akzeptiertes Datumsformat',
+  'Allowed range for selected month is' => 'Erlaubte Tage für ausgewählten Monat sind',
+  'Allowed range is'            => 'Gültige Zahlen sind',
+  'April'                       => 'April',
+  'August'                      => 'August',
+  'December'                    => 'Dezember',
+  'February'                    => 'Februar',
+  'Fr'                          => 'Fr',
+  'Invalid date:'               => 'Ungültiges Datum:',
+  'Invalid day:'                => 'Ungültiger Tag:',
+  'Invalid month:'              => 'Ungültiger Monat:',
+  'January'                     => 'Januar',
+  'July'                        => 'Juli',
+  'June'                        => 'Juni',
+  'March'                       => 'März',
+  'May'                         => 'Mai',
+  'Mo'                          => 'Mo',
+  'November'                    => 'November',
+  'October'                     => 'Oktober',
+  'Sa'                          => 'Sa',
+  'September'                   => 'September',
+  'Su'                          => 'So',
+  'Th'                          => 'Do',
+  'Tu'                          => 'Di',
+  'We'                          => 'Mi',
+};
+
+$self{subs} = {
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'js_calendar'                 => 'js_calendar',
+};
+
+1;
+

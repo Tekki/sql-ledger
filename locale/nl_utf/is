@@ -1,5 +1,3 @@
-$self{charset} = 'UTF-8';
-
 $self{texts} = {
   'Account'                     => 'Rekening',
   'Accounting Menu'             => 'Boekhoudmenu',
@@ -121,6 +119,7 @@ $self{texts} = {
   'June'                        => 'juni',
   'Left'                        => 'Links',
   'Locked by'                   => 'Geblokkeerd door',
+  'Main Groups'                 => 'Hoofd Groepen',
   'Mar'                         => 'mrt',
   'March'                       => 'maart',
   'May'                         => 'mei',

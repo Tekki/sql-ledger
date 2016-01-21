@@ -1,5 +1,3 @@
-$self{charset} = 'UTF-8';
-
 $self{texts} = {
   'AP Transaction'              => 'Crediteurenboeking',
   'AR Transaction'              => 'Debiteurenboeking',

@@ -5,25 +5,21 @@ $self{texts} = {
   'Continue'                    => 'Kontynuj',
   'Dataset is newer than version!' => 'Baza Danych jest nowsza niż wersja!',
   'Incorrect Dataset version!'  => 'Nieprawidłowa wersja Zbioru Danych',
-  'Login'                       => 'Zarejestruj się',
+  'Login'                       => 'Zarejestrój się',
   'Name'                        => 'Nazwa',
-  'No email address for'        => 'Brak adresu email',
   'Password'                    => 'Hasło',
   'Upgrading to Version'        => 'Uaktualnienie do nowej wersji',
   'Version'                     => 'Wersja',
   'You did not enter a name!'   => 'Nie wstawiono nazwy!',
+  'done'                        => 'wykonane',
 };
 
 $self{subs} = {
-  'continue'                    => 'continue',
-  'email_tan'                   => 'email_tan',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
-  'tan_login'                   => 'tan_login',
-  'kontynuj'                    => 'continue',
-  'zarejestruj_się'            => 'login',
+  'zarejestrój_się'             => 'login',
 };
 
 1;

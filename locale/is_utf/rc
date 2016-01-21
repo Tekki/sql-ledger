@@ -1,5 +1,3 @@
-$self{charset} = 'UTF-8';
-
 $self{texts} = {
   'Account'                     => 'Reikningur',
   'Accounting Menu'             => 'Bókhalds valmynd',
@@ -10,14 +8,14 @@ $self{texts} = {
   'Balance'                     => 'Afstemming',
   'Continue'                    => 'Áfram',
   'Credit'                      => 'Kredit',
-  'Current'                     => 'Núvirđi',
+  'Current'                     => 'Núvirði',
   'Date'                        => 'Dagsetning',
   'Debit'                       => 'Debit',
   'Dec'                         => 'des',
   'December'                    => 'desember',
   'Description'                 => 'Skýringar',
   'Difference'                  => 'Mismunur',
-  'Done'                        => 'Búiđ',
+  'Done'                        => 'Búið',
   'Feb'                         => 'feb',
   'February'                    => 'febrúar',
   'From'                        => 'Frá',
@@ -35,7 +33,7 @@ $self{texts} = {
   'November'                    => 'nóvember',
   'Oct'                         => 'ókt',
   'October'                     => 'óktóber',
-  'Out of balance!'             => 'Ekki jafnvćgi!',
+  'Out of balance!'             => 'Ekki jafnvægi!',
   'Reconciliation'              => 'Afstemingar',
   'Select all'                  => 'Velja allt',
   'Sep'                         => 'sep',
@@ -43,7 +41,7 @@ $self{texts} = {
   'Source'                      => 'Frálag',
   'Statement Balance'           => 'jöfnunaruppgjör',
   'To'                          => 'til',
-  'Update'                      => 'Uppfćrsla',
+  'Update'                      => 'Uppfærsla',
 };
 
 $self{subs} = {
@@ -52,21 +50,18 @@ $self{subs} = {
   'deselect_all'                => 'deselect_all',
   'display'                     => 'display',
   'display_form'                => 'display_form',
-  'display_frame'               => 'display_frame',
   'done'                        => 'done',
   'get_payments'                => 'get_payments',
-  'jsmenu'                      => 'jsmenu',
-  'jsmenu_frame'                => 'jsmenu_frame',
+  'js_menu'                     => 'js_menu',
   'menubar'                     => 'menubar',
-  'mlmenu'                      => 'mlmenu',
   'reconciliation'              => 'reconciliation',
   'section_menu'                => 'section_menu',
   'select_all'                  => 'select_all',
   'update'                      => 'update',
-  'Áfram'                      => 'continue',
-  'búiđ'                      => 'done',
+  'Áfram'                       => 'continue',
+  'búið'                        => 'done',
   'velja_allt'                  => 'select_all',
-  'uppfćrsla'                  => 'update',
+  'uppfærsla'                   => 'update',
 };
 
 1;

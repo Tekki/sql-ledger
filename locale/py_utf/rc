@@ -1,5 +1,3 @@
-$self{charset} = 'UTF-8';
-
 $self{texts} = {
   'Account'                     => 'Cuenta',
   'Accounting Menu'             => 'Menú de Contabilidad',
@@ -39,7 +37,7 @@ $self{texts} = {
   'November'                    => 'Noviembre',
   'Oct'                         => 'Oct',
   'October'                     => 'Octubre',
-  'Out of balance!'             => 'ĄFuera de balance!',
+  'Out of balance!'             => '¡Fuera de balance!',
   'Period'                      => 'Periodo',
   'Quarter'                     => 'Trimestre',
   'Reconciliation'              => 'Reconciliación',
@@ -52,7 +50,7 @@ $self{texts} = {
   'Summary'                     => 'Resúmen',
   'To'                          => 'Hasta',
   'Update'                      => 'Actualizar',
-  'Year'                        => 'Ańo',
+  'Year'                        => 'Año',
 };
 
 $self{subs} = {
@@ -61,13 +59,10 @@ $self{subs} = {
   'deselect_all'                => 'deselect_all',
   'display'                     => 'display',
   'display_form'                => 'display_form',
-  'display_frame'               => 'display_frame',
   'done'                        => 'done',
   'get_payments'                => 'get_payments',
-  'jsmenu'                      => 'jsmenu',
-  'jsmenu_frame'                => 'jsmenu_frame',
+  'js_menu'                     => 'js_menu',
   'menubar'                     => 'menubar',
-  'mlmenu'                      => 'mlmenu',
   'reconciliation'              => 'reconciliation',
   'section_menu'                => 'section_menu',
   'select_all'                  => 'select_all',

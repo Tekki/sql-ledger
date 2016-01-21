@@ -1,5 +1,3 @@
-$self{charset} = 'UTF-8';
-
 $self{texts} = {
   'Account'                     => 'Konto',
   'Apr'                         => 'apr',
@@ -9,7 +7,7 @@ $self{texts} = {
   'Balance'                     => 'Balanse',
   'Chart of Accounts'           => 'Kontoplan',
   'Credit'                      => 'Kredit',
-  'Current'                     => 'Nåvęrende',
+  'Current'                     => 'Nåværende',
   'Date'                        => 'Dato',
   'Debit'                       => 'Debet',
   'Dec'                         => 'des',
@@ -27,7 +25,7 @@ $self{texts} = {
   'July'                        => 'juli',
   'Jun'                         => 'jun',
   'June'                        => 'juni',
-  'List Transactions'           => 'Vis bokfųringer',
+  'List Transactions'           => 'Vis bokføringer',
   'Mar'                         => 'mar',
   'March'                       => 'mars',
   'May'                         => 'mai',
@@ -55,7 +53,7 @@ $self{subs} = {
   'chart_of_accounts'           => 'chart_of_accounts',
   'list'                        => 'list',
   'list_transactions'           => 'list_transactions',
-  'vis_bokfųringer'            => 'list_transactions',
+  'vis_bokføringer'             => 'list_transactions',
 };
 
 1;

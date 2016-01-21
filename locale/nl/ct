@@ -136,6 +136,7 @@ $self{texts} = {
   'Tax Number / SSN'            => 'Belastingnummer / Sofinummer',
   'Terms'                       => 'Betalingstermijn',
   'Threshold'                   => 'Drempel',
+  'Titel'                       => 'Titel',
   'Title'                       => 'Titel',
   'To'                          => 'Tot',
   'Total'                       => 'Totaal',

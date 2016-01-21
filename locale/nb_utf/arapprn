@@ -1,8 +1,6 @@
-$self{charset} = 'UTF-8';
-
 $self{texts} = {
   'Account'                     => 'Konto',
-  'Amount'                      => 'Belųp',
+  'Amount'                      => 'Beløp',
   'Continue'                    => 'Fortsett',
   'Date'                        => 'Dato',
   'Memo'                        => 'Notat',
@@ -10,6 +8,7 @@ $self{texts} = {
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
   'Screen'                      => 'Skjerm',
+  'Select postscript or PDF!'   => 'Velg postscript eller PDF!',
   'Source'                      => 'Bilag',
 };
 
@@ -21,7 +20,6 @@ $self{subs} = {
   'print_credit_note'           => 'print_credit_note',
   'print_debit_note'            => 'print_debit_note',
   'print_options'               => 'print_options',
-  'print_payslip'               => 'print_payslip',
   'print_receipt'               => 'print_receipt',
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',

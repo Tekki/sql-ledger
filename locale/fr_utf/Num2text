@@ -31,7 +31,7 @@ sub init {
   my $self = shift;
 
   %{ $self->{numbername} } =
-                   (0 => 'ZÃ©ro',
+                   (0 => 'Zéro',
                     1 => 'Un',
                     2 => 'Deux',
 	            3 => 'Trois',

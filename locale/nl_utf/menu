@@ -1,5 +1,3 @@
-$self{charset} = 'UTF-8';
-
 $self{texts} = {
   '1.Reminder'                  => '1. Aanmaning',
   '2.Reminder'                  => '2. Aanmaning',
@@ -75,6 +73,7 @@ $self{texts} = {
   'List GIFI'                   => 'GIFI Weergeven',
   'Lock Dataset'                => 'Vergrendel dataset',
   'Logout'                      => 'Afmelden',
+  'Maintainance'                => 'Onderhoud',
   'Mapfile'                     => 'Mapfile',
   'Monitor'                     => 'Monitor',
   'Non-taxable'                 => 'Onbelast',
