@@ -948,6 +948,7 @@ print qq|
                'Deselect all' => { ndx => 3, key => 'A', value => $locale->text('Deselect all') },
                'Print' => { ndx => 5, key => 'P', value => $locale->text('Print') },
                'E-mail' => { ndx => 6, key => 'E', value => $locale->text('E-mail') },
+               'Combine' => { ndx => 7, key => 'C', value => $locale->text('Combine') },
 	       'Remove' => { ndx => 8, key => 'R', value => $locale->text('Remove') },
 	      );
 
@@ -1006,6 +1007,39 @@ sub deselect_all {
   for (1 .. $form->{rowcount}) { $form->{"ndx_$_"} = "" }
   $form->{allbox} = "";
   &list_spool;
+  
+}
+
+
+sub combine {
+
+  use Cwd;
+  $dir = cwd();
+  $files = "";
+
+  for (1 .. $form->{rowcount}) {
+    if ($form->{"ndx_$_"}) {
+      if ($form->{"spoolfile_$_"} =~ /\.pdf$/) {
+  $files .= qq|$form->{"spoolfile_$_"} |;
+      }
+    }
+  }
+
+  $form->{format} = "pdf";
+  
+  if ($files) {
+    chdir("$spool/$myconfig{dbname}");
+    if ($filename = BP->spoolfile(\%myconfig, \%$form)) {
+      @args = ("pdftk $files cat output $filename");
+      system(@args) % 256 == 0 or $form->error("@args : $?");
+    }
+  } else {
+    $form->error($locale->text('Nothing selected!'));
+  }
+
+  chdir("$dir");
+
+  $form->redirect;
   
 }
 
