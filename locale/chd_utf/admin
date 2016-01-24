@@ -39,6 +39,7 @@ $self{texts} = {
   'Are you sure you want to delete dataset' => 'Soll die Datenbank wirklich gelöscht werden',
   'Assemblies'                  => 'Erzeugnisse',
   'Audit Control'               => 'Protokollierung',
+  'Audit Log'                   => 'Protokoll',
   'August'                      => 'August',
   'Backup'                      => 'Datensicherung',
   'Balance Sheet'               => 'Bilanz',

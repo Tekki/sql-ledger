@@ -42,6 +42,7 @@ $self{texts} = {
   'April'                       => 'April',
   'Asset'                       => 'Aktiva/Mittelverwendung',
   'Audit Control'               => 'Protokollierung',
+  'Audit Log'                   => 'Protokoll',
   'Audit trail disabled'        => 'Protokoll deaktiviert',
   'Audit trail enabled'         => 'Protokoll aktiviert',
   'Audit trail removed up to'   => 'Protokoll gelöscht bis zum',

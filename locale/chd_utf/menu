@@ -35,6 +35,7 @@ $self{texts} = {
   'April'                       => 'April',
   'Assemblies'                  => 'Erzeugnisse',
   'Audit Control'               => 'Protokollierung',
+  'Audit Log'                   => 'Protokoll',
   'August'                      => 'August',
   'Backup'                      => 'Datensicherung',
   'Balance Sheet'               => 'Bilanz',
