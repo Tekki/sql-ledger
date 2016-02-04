@@ -2,7 +2,7 @@
 -- based on US_Service_Company modified by info@linuxandlanguages.com
 --
 
-SET client_encoding = 'ISO-8859-1';
+SET client_encoding = 'UTF-8';
 
 
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1000','AKTIVA','H','','A','');
