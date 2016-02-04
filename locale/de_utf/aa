@@ -17,9 +17,8 @@ $self{texts} = {
   'Add Credit Note'             => 'Gutschrift hinzufügen',
   'Add Debit Note'              => 'Belastungsanzeige hinzufügen',
   'Address'                     => 'Adresse',
-  'Allowed range for selected month is' => 'Erlaubter Rahmen für den 
-gewählten Monat ist',
-  'Allowed range is'            => 'Erlaubter Rahmen is',
+  'Allowed range for selected month is' => 'Erlaubter Rahmen für den gewählten Monat lautet',
+  'Allowed range is'            => 'Erlaubter Rahmen lautet',
   'Amount'                      => 'Betrag',
   'Apr'                         => 'Apr',
   'April'                       => 'April',
