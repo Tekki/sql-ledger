@@ -78,5 +78,4 @@ INSERT INTO defaults (fldname, fldvalue) VALUES ('precision', '2');
 --
 INSERT INTO curr (rn, curr, prec) VALUES (1,'EUR',2);
 INSERT INTO curr (rn, curr, prec) VALUES (2,'USD',2);
-INSERT INTO curr (rn, curr, prec) VALUES (3,'CAD',2);
 
