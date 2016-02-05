@@ -112,6 +112,7 @@ foreach $file (@progfiles) {
     if (!$text) {
       $notext++;
       push @missing, $keytext;
+      $all{$keytext} = '';
       next;
     }
     

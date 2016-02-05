@@ -1,8 +1,12 @@
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
+  'Accepted format is'          => 'Akzeptiertes Format lautet',
   'Account'                     => 'Konto',
   'Accounting Menu'             => 'Buchhaltungsmenü',
+  'Allowed range for selected month is' => 'Erlaubter Rahmen für den 
+gewählten Monat ist',
+  'Allowed range is'            => 'Erlaubter Rahmen is',
   'Apr'                         => 'Apr',
   'April'                       => 'April',
   'Aug'                         => 'Aug',
@@ -23,8 +27,12 @@ $self{texts} = {
   'Done'                        => 'Fertig',
   'Feb'                         => 'Feb',
   'February'                    => 'Februar',
+  'Fr'                          => 'Fr',
   'From'                        => 'Von',
   'Include Exchange Rate Difference' => 'Wechselkursunterschied aufnehmen',
+  'Invalid date:'               => 'Ungültiges Datum:',
+  'Invalid day:'                => 'Ungültiger Tag:',
+  'Invalid month:'              => 'Ungültiger Monat:',
   'Jan'                         => 'Jan',
   'January'                     => 'Januar',
   'Jul'                         => 'Jul',
@@ -35,6 +43,7 @@ $self{texts} = {
   'March'                       => 'März',
   'May'                         => 'Mai',
   'May '                        => 'Mai',
+  'Mo'                          => 'Mo',
   'Month'                       => 'Monat',
   'Nov'                         => 'Nov',
   'November'                    => 'November',
@@ -46,14 +55,19 @@ $self{texts} = {
   'Reconciliation'              => 'Kontenabgleich',
   'Reconciliation Date'         => 'Ausgleichsdatum',
   'Reconciliation Report'       => 'Kontenabgleichungsbericht',
+  'Sa'                          => 'Sa',
   'Select all'                  => 'Alle auswählen',
   'Sep'                         => 'Sep',
   'September'                   => 'September',
   'Source'                      => 'Beleg',
   'Statement Balance'           => 'Auszugsbilanz',
+  'Su'                          => 'So',
   'Summary'                     => 'Zusammenfassung',
+  'Th'                          => 'Do',
   'To'                          => 'An',
+  'Tu'                          => 'Di',
   'Update'                      => 'Erneuern',
+  'We'                          => 'Mi',
   'Year'                        => 'Jahr',
 };
 

@@ -1,6 +1,10 @@
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
+  'Accepted format is'          => 'Akzeptiertes Format lautet',
+  'Allowed range for selected month is' => 'Erlaubter Rahmen für den 
+gewählten Monat ist',
+  'Allowed range is'            => 'Erlaubter Rahmen is',
   'April'                       => 'April',
   'August'                      => 'August',
   'Beginning date'              => 'Anfangsdatum',
@@ -8,15 +12,25 @@ $self{texts} = {
   'Date missing'                => 'Datum fehlt',
   'December'                    => 'Dezember',
   'February'                    => 'Februar',
+  'Fr'                          => 'Fr',
+  'Invalid date:'               => 'Ungültiges Datum:',
+  'Invalid day:'                => 'Ungültiger Tag:',
+  'Invalid month:'              => 'Ungültiger Monat:',
   'January'                     => 'Januar',
   'July'                        => 'Juli',
   'June'                        => 'Juni',
   'March'                       => 'März',
   'May'                         => 'Mai',
+  'Mo'                          => 'Mo',
   'November'                    => 'November',
   'October'                     => 'Oktober',
   'Repost Invoices'             => 'Rechnungen neu posten',
+  'Sa'                          => 'Sa',
   'September'                   => 'September',
+  'Su'                          => 'So',
+  'Th'                          => 'Do',
+  'Tu'                          => 'Di',
+  'We'                          => 'Mi',
 };
 
 $self{subs} = {
