@@ -163,6 +163,7 @@ $self{texts} = {
   'Vendors'                     => 'Lieferanten',
   'Version'                     => 'Version',
   'Vouchers'                    => 'Belege',
+  'WLprinter'                   => 'WLprinter',
   'Wages'                       => 'Löhne',
   'Warehouses'                  => 'Warenlager',
   'Work Order'                  => 'Arbeitsblatt',

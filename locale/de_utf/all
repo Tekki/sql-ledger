@@ -134,7 +134,7 @@ $self{texts} = {
   'Allowances'                  => 'Freibeträge',
   'Allowed range for selected month is' => 'Erlaubter Rahmen für den 
 gewählten Monat ist',
-  'Allowed range is'            => 'Erlaubter Rahmen is',
+  'Allowed range is'            => 'Erlaubter Rahmen ist',
   'Amount'                      => 'Betrag',
   'Amount Due'                  => 'Betrag fällig',
   'Amount missing!'             => 'Betrag fehlt!',
