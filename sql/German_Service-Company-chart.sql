@@ -9,12 +9,12 @@ insert into chart (accno,description,charttype,gifi_accno,category,link) values 
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1060','Bankkonto','A','','A','AR_paid:AP_paid');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1065','Barkasse','A','','A','AR_paid:AP_paid');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1200','Debitoren','A','','A','AR');
-insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1205','Rückstellung fuer zweifelhafte Konten','A','','A','');
+insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1205','Rückstellung für zweifelhafte Konten','A','','A','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1500','INVENTAR AKTIVA','H','','A','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1520','Inventar','A','','A','IC');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1800','KAPITAL AKTIVA','H','','A','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1820','Büromöbel und Ausrüstung','A','','A','');
-insert into chart (accno,description,charttype,gifi_accno,category,link,contra) values ('1825','Angesamm. Abschreib. Bueromöbel und Ausr.','A','','A','','1');
+insert into chart (accno,description,charttype,gifi_accno,category,link,contra) values ('1825','Angesamm. Abschreib. Büromöbel und Ausr.','A','','A','','1');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1840','Fuhrpark','A','','A','');
 insert into chart (accno,description,charttype,gifi_accno,category,link,contra) values ('1845','Accum. Amort. -Vehicle','A','','A','','1');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('2000','VERBINDLICHKEITEN','H','','L','');
@@ -24,8 +24,8 @@ insert into chart (accno,description,charttype,gifi_accno,category,link) values 
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('2680','Kredite von Anteilshabern','A','','L','AP_paid');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3300','AKTIENKAPITAL','H','','Q','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3350','Normale Aktien','A','','Q','');
-insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3500','RUECKGESTELLTE ERÖSE','H','','Q','');
-insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3590','Rueckgestellte Erlöse aus vorherigen Jahren','A','','Q','');
+insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3500','RÜCKGESTELLTE ERÖSE','H','','Q','');
+insert into chart (accno,description,charttype,gifi_accno,category,link) values ('3590','Rückgestellte Erlöse aus vorherigen Jahren','A','','Q','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('4000','BERATUNGSEINNAHME','H','','I','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('4020','Beratung','A','','I','AR_amount:IC_income');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('4400','WEITERE Einnahmen','H','','I','');
@@ -40,7 +40,7 @@ insert into chart (accno,description,charttype,gifi_accno,category,link) values 
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('5610','Buchführung und Recht','A','','E','AP_amount');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('5615','Werbungsaktionen','A','','E','AP_amount');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('5620','Nicht bezahlte Schulden','A','','E','');
-insert into chart (accno,description,charttype,gifi_accno,category,link) values ('5660','Aufwendungen fuer Abschreibung','A','','E','');
+insert into chart (accno,description,charttype,gifi_accno,category,link) values ('5660','Aufwendungen für Abschreibung','A','','E','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('5685','Versicherung','A','','E','AP_amount');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('5690','Zinsen und Nebenkosten des Geldverkehrs','A','','E','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('5700','Büromaterial','A','','E','AP_amount');
@@ -61,7 +61,7 @@ insert into chart (accno,description,charttype,gifi_accno,category,link) values 
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('2210','Angesammelte Gehälter','A','','L','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('5510','Einkommenssteueraufwendungen - Bundesland','A','','E','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('5520','Einkommenssteueraufwendungen - Staat','A','','E','');
-insert into chart (accno,description,charttype,gifi_accno,category,link) values ('5530','Steuern - Land und Gebauede','A','','E','');
+insert into chart (accno,description,charttype,gifi_accno,category,link) values ('5530','Steuern - Land und Gebäuede','A','','E','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('5540','Steuern - Eigentum','A','','E','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('5550','Steuern - Franchise','A','','E','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('5560','Steuern - Ausland vorbehalten','A','','E','');
@@ -78,4 +78,3 @@ INSERT INTO defaults (fldname, fldvalue) VALUES ('precision', '2');
 --
 INSERT INTO curr (rn, curr, prec) VALUES (1,'EUR',2);
 INSERT INTO curr (rn, curr, prec) VALUES (2,'USD',2);
-
