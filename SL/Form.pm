@@ -761,7 +761,7 @@ sub parse_template {
       if ($i == 1) {
 	@_ = ();
 	while ($_ = shift @template) {
-	  if (/\\end{document}/) {
+	  if (/\\end\{document}/) {
 	    push @_, qq|\\newpage\n|;
 	    last;
 	  }
@@ -772,7 +772,7 @@ sub parse_template {
 
       if ($i == 2) {
 	while ($_ = shift @template) {
-	  last if /\\begin{document}/;
+	  last if /\\begin\{document}/;
 	}
       }
 
@@ -1266,7 +1266,7 @@ sub gentex {
       close(INC);
       next;
     }
-    last if $_ =~ /begin{document}/;
+    last if $_ =~ /begin\{document}/;
     push @h, $_;
   }
   
@@ -1387,7 +1387,7 @@ sub process_tex {
 
     # launch application
     print qq|Content-Type: application/$self->{format}
-Content-Disposition: inline; filename=$self->{tmpfile}\n\n|;
+Content-Disposition: attachment; filename=$self->{tmpfile}\n\n|;
 
     unless (open(OUT, ">-")) {
       $err = $!;
