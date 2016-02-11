@@ -484,7 +484,7 @@ sub print {
           @f = split /\n/, $form->unescape($form->{"select${arap}_paid"});
           $form->{payment_accno} ||= $f[0];
 
-          for (1 .. $form->{paidaccounts}) {
+          for (1 .. $form->{paidaccounts} - 1) {
             $form->{"paid_$_"} = $form->format_amount(\%myconfig, $form->{"paid_$_"}, $form->{precision});
             $form->{payment_accno} = $form->{"${arap}_paid_$_"};
           }
