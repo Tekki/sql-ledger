@@ -2658,12 +2658,14 @@ sub generate_invoice {
 
   if ($form->{employee}) {
     $query = qq|SELECT vc.name AS $form->{vc},
+                vc.$form->{vc}number, vc.language_code,
                 ad.city
 		FROM $form->{vc} vc
 		JOIN address ad ON (ad.trans_id = vc.id)
 		WHERE vc.id = $form->{"$form->{vc}_id"}|;
   } else {
     $query = qq|SELECT vc.name AS $form->{vc},
+                vc.$form->{vc}number, vc.language_code,
                 ad.city,
                 e.name AS employee, vc.employee_id
 		FROM $form->{vc} vc
