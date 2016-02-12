@@ -2148,7 +2148,7 @@ sub valid_date {
 sub print_button {
   my ($self, $button, $name) = @_;
 
-  print qq|<input class=submit type=submit name=action value="$button->{$name}{value}" accesskey="$button->{$name}{key}" title="$button->{$name}{value} [$button->{$name}{key}]">\n|;
+  print qq|<input class="submit noprint" type=submit name=action value="$button->{$name}{value}" accesskey="$button->{$name}{key}" title="$button->{$name}{value} [$button->{$name}{key}]">\n|;
 
 }
   
