@@ -244,9 +244,9 @@ sub search {
       $datepaid = qq|
   <tr>
     <th align=right nowrap>|.$locale->text('Paid').' '.$locale->text('From').qq|</th>
-    <td><input name=datepaidfrom size=11 class=date title="$myconfig{dateformat}">
+    <td><input name=datepaidfrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "datepaidfrom").qq|
     <b>|.$locale->text('To').qq|</b>
-    <input name=datepaidto size=11 class=date title="$myconfig{dateformat}"></td>
+    <input name=datepaidto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "datepaidto").qq|</td>
   </tr>|;
     }
   }
