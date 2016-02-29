@@ -63,7 +63,7 @@ sub invoice_details {
     AA->get_name(\%myconfig, $form);
     delete $form->{notes};
     IS->retrieve_invoice(\%myconfig, $form);
-    $form->get_reference($form->dbconnect(\%myconfig));
+    $form->all_references($form->dbconnect(\%myconfig));
   }
   my %new_form = map { $_ => $form->{$_} } keys %$form;
 

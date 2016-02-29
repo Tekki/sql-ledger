@@ -519,8 +519,8 @@ sub invoice_details {
   }
 
   for $i (1 .. $form->{reference_rows}) {
-    if ($form->{"referenceid_$i"}) {
-      push @{ $form->{referenceid} }, $form->{"referenceid_$i"};
+    if ($form->{"referencecode_$i"}) {
+      push @{ $form->{referenceid} }, $form->{"referencecode_$i"};
       push @{ $form->{reference} }, $form->{"referencedescription_$i"};
     }
   }

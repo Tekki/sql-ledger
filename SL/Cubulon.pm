@@ -18,13 +18,13 @@ package Cubulon;
 sub add_reference {
   my ($self, $myconfig, $form) = @_;
 
-  if ($form->{id} and $form->{referenceid} and $form->{referencedescription}) {
+  if ($form->{id} and $form->{referencecode} and $form->{referencedescription}) {
     my $dbh = $form->dbconnect($myconfig);
     my $query
-      = q|INSERT INTO reference (id, trans_id, description) VALUES (?,?,?)|;
+      = q|INSERT INTO reference (code, trans_id, description, formname) VALUES (?,?,?,?)|;
     my $sth = $dbh->prepare($query) || $form->dberror($query);
-    $sth->execute($form->{referenceid}, $form->{id},
-      $form->{referencedescription})
+    $sth->execute($form->{referencecode}, $form->{id},
+      $form->{referencedescription}, 'ar_invoice')
       || $form->dberror($query);
 
     $form->{result} = 'success';
