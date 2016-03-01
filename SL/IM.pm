@@ -1481,6 +1481,7 @@ sub payment_links {
   # retrieve invoice by dcn
   $query = qq|SELECT c.name, c.customernumber AS companynumber, ad.city,
               a.id, a.invnumber, a.description, a.dcn,
+              (a.amount - a.paid) / a.exchangerate AS amount,
 	      a.paymentmethod_id, 'customer' AS vc, 'ar' AS arap
 	      FROM ar a
 	      JOIN customer c ON (a.customer_id = c.id)
@@ -1489,6 +1490,7 @@ sub payment_links {
 	      UNION
 	      SELECT c.name, c.vendornumber AS companynumber, ad.city,
               a.id, a.invnumber, a.description, a.dcn,
+              (a.amount - a.paid) / a.exchangerate AS amount,
 	      a.paymentmethod_id, 'vendor' AS vc, 'ap' AS arap
 	      FROM ap a
 	      JOIN vendor c ON (a.vendor_id = c.id)
