@@ -28,6 +28,7 @@ $self{texts} = {
   'June'                        => 'Juni',
   'March'                       => 'März',
   'May'                         => 'Mai',
+  'No data!'                    => 'Keine Daten',
   'November'                    => 'November',
   'October'                     => 'Oktober',
   'Part'                        => 'Ware',

@@ -234,6 +234,7 @@ $self{texts} = {
   'Rate'                        => 'Tarifa',
   'Recurring Transactions'      => 'Transacciones Recurrentes',
   'Reference'                   => 'Referencia',
+  'Reference Documents'         => 'Documentos de Referencia',
   'Remittance Voucher'          => 'Comprobante de Remesa',
   'Remove Audit trail up to'    => 'Eliminar pistas de auditoría hasta',
   'Reporting Method'            => 'Método de Reporte',

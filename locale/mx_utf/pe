@@ -120,6 +120,7 @@ $self{texts} = {
   'Public'                      => 'Público',
   'Qty'                         => 'Cant.',
   'Quarter'                     => 'Trimestre',
+  'Reference Documents'         => 'Documentos de Referencia',
   'Right'                       => 'Derecha',
   'Save'                        => 'Guardar',
   'Save Column'                 => 'Guardar Columna',

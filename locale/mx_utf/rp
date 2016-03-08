@@ -132,6 +132,7 @@ $self{texts} = {
   'Receipts'                    => 'Cobros',
   'Recurring Transaction'       => 'Transacción Recurrente',
   'Reference'                   => 'Referencia',
+  'Reference Documents'         => 'Documentos de Referencia',
   'Reminder'                    => 'Recordatorio',
   'Reminder sent to'            => 'Recordatorio enviado a',
   'Reminders sent to printer!'  => '¡Recordatorios enviados a impresora!',

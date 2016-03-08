@@ -111,6 +111,7 @@ $self{texts} = {
   'Deselect all'                => 'Avmarkera alla',
   'Discount'                    => 'Rabatt',
   'Dropdown Limit'              => 'Brytpunkts gräns',
+  'E-Mail'                      => 'E-post',
   'E-mail'                      => 'E-Post',
   'E-mail address missing!'     => 'E-Postadress saknas',
   'Edit'                        => 'Redigera',
@@ -263,6 +264,7 @@ $self{texts} = {
   'Taxes saved!'                => 'Moms sparad',
   'Template saved!'             => 'Mall sparad',
   'Text'                        => 'Text',
+  'Time'                        => 'Tid',
   'Times'                       => 'Gånger',
   'To'                          => 'Till',
   'Tracking Items'              => 'Spårbara varor',
@@ -297,6 +299,7 @@ $self{texts} = {
   'account cannot be set to any other type of account' => 'kontot kan ej ändras till någon annan typ av konto',
   'done'                        => 'Färdigt',
   'failed'                      => 'misslyckats',
+  'html'                        => 'html',
   'ok'                          => 'OK',
 };
 

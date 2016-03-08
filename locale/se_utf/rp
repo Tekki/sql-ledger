@@ -44,6 +44,7 @@ $self{texts} = {
   'Description'                 => 'Beskrivning',
   'Deselect all'                => 'Avmarkera alla',
   'Detail'                      => 'Detalj',
+  'Due'                         => 'Förfallen',
   'Due Date'                    => 'Förfallodatum',
   'E-mail'                      => 'E-Post',
   'E-mail Statement to'         => 'E-Posta rapport till',
@@ -157,6 +158,7 @@ $self{texts} = {
   'as at'                       => 'som vid',
   'for'                         => 'under',
   'for Period'                  => 'för perioden',
+  'html'                        => 'html',
   'sent'                        => 'Skickad',
   'time(s)'                     => 'gång(er)',
 };

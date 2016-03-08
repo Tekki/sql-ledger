@@ -107,6 +107,7 @@ $self{texts} = {
   'Receipts'                    => 'Cobros',
   'Recurring Transaction'       => 'Transacción Recurrente',
   'Reference'                   => 'Referencia',
+  'Reference Documents'         => 'Documentos de Referencia',
   'Remittance Voucher'          => 'Comprobante de Remesa',
   'Repeat'                      => 'Repetir',
   'Right'                       => 'Derecha',

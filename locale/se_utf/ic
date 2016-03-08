@@ -155,6 +155,7 @@ $self{texts} = {
   'Oct'                         => 'Okt',
   'October'                     => 'Oktober',
   'On Hand'                     => 'I lager',
+  'On Hold'                     => 'Avvakta',
   'Open'                        => 'Aktuell',
   'Order'                       => 'Order',
   'Order Date missing!'         => 'Orderdatum saknas',
@@ -252,6 +253,7 @@ $self{texts} = {
   'Year'                        => 'År',
   'Zip/Postal Code'             => 'Postnr',
   'days'                        => 'dagar',
+  'html'                        => 'html',
   'sent'                        => 'Skickad',
 };
 

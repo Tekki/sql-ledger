@@ -3,6 +3,7 @@ $self{charset} = 'UTF-8';
 $self{texts} = {
   'Accounting'                  => 'Bokföring',
   'Continue'                    => 'Fortsätt',
+  'Main Menu'                   => 'Huvudmeny',
 };
 
 $self{subs} = {

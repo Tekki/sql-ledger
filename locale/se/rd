@@ -18,6 +18,7 @@ $self{texts} = {
   'Employee'                    => 'Anställd',
   'February'                    => 'Februari',
   'File'                        => 'Fil',
+  'Filename'                    => 'Filnamn',
   'GL Transaction'              => 'Verifikat',
   'ID'                          => 'ID',
   'January'                     => 'Januari',

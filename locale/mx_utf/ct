@@ -118,6 +118,7 @@ $self{texts} = {
   'Quotations'                  => 'Cotizaciones',
   'RFQ'                         => 'Sol. de Cot.',
   'RV'                          => 'RV',
+  'Reference Documents'         => 'Documentos de Referencia',
   'Remittance Voucher'          => 'Comprobante de Remesa',
   'Request for Quotations'      => 'Solicitudes de cotización',
   'SIC'                         => 'SIC',

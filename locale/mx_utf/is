@@ -183,6 +183,7 @@ $self{texts} = {
   'Record in'                   => 'Registrar en',
   'Recurring Transaction'       => 'Transacción Recurrente',
   'Reference'                   => 'Referencia',
+  'Reference Documents'         => 'Documentos de Referencia',
   'Remaining'                   => 'Disponible',
   'Remittance Voucher'          => 'Comprobante de Remesa',
   'Repeat'                      => 'Repetir',

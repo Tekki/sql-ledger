@@ -329,6 +329,7 @@ $self{texts} = {
   'account cannot be set to any other type of account' => 'Dieses Konto kann nicht auf andere Typen eingestellt werden',
   'done'                        => 'fertig',
   'failed'                      => 'fehlgeschlagen',
+  'failed!'                     => 'fehlgeschlagen!',
   'html'                        => 'html',
   'ok'                          => 'ok',
 };

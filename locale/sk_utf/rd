@@ -20,6 +20,7 @@ $self{texts} = {
   'Employee'                    => 'Zamestnanec',
   'February'                    => 'Február',
   'File'                        => 'Súbor',
+  'Filename'                    => 'Meno súboru',
   'GL Transaction'              => 'Transakcia hlavnej knihy',
   'ID'                          => 'ID',
   'January'                     => 'Január',

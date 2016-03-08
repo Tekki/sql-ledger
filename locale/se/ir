@@ -216,6 +216,7 @@ $self{texts} = {
   'days'                        => 'dagar',
   'ea'                          => 'st',
   'for'                         => 'under',
+  'html'                        => 'html',
   'posted!'                     => 'Bokförd!',
   'sent'                        => 'Skickad',
   'time(s)'                     => 'gång(er)',

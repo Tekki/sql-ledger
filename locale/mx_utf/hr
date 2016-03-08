@@ -135,6 +135,7 @@ $self{texts} = {
   'Rate missing!'               => '¡Falta la tarifa!',
   'Recurring Transaction'       => 'Transacción Recurrente',
   'Reference'                   => 'Referencia',
+  'Reference Documents'         => 'Documentos de Referencia',
   'Remittance Voucher'          => 'Comprobante de Remesa',
   'Repeat'                      => 'Repetir',
   'Right'                       => 'Derecha',

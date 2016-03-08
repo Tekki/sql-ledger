@@ -20,6 +20,41 @@ use SL::Cubulon;
 use SL::IS;
 use SL::OE;
 
+sub add_payment {
+
+  my $result       = 'error';
+  my $invoice_form = Form->new;
+  $invoice_form->{$_} = $form->{$_} for qw|id dcn invnumber|;
+  Cubulon->find_invoice(\%myconfig, $invoice_form);
+
+  if ($invoice_form->{id}) {
+
+    $invoice_form->{vc} = 'customer';
+    AA->get_name(\%myconfig, $invoice_form);
+    delete $invoice_form->{notes};
+    IS->retrieve_invoice(\%myconfig, $invoice_form);
+
+    my $payment_form = Form->new;
+    $payment_form->{$_} = $invoice_form->{$_}
+      for qw|ARAP defaultcurrency precision vc|;
+    $payment_form->{currency} = $form->{currency}
+      || $invoice_form->{defaultcurrency};
+    $payment_form->{$_} = $form->{$_}
+      for qw|amount datepaid exchangerate memo paymentmethod source|;
+    $payment_form->{rowcount}                     = 1;
+    $payment_form->{"$payment_form->{ARAP}_paid"} = $form->{paymentaccount};
+    $payment_form->{id_1}                         = $form->{id};
+    $payment_form->{paid_1}                       = $form->{amount};
+    $payment_form->{checked_1}                    = 1;
+
+    CP->post_payment(\%myconfig, $payment_form) and $result = 'success';
+  }
+
+  print qq|Content-Type: application/json; charset=$form->{charset}
+
+| . JSON::PP->new->utf8(0)->encode({result => $result});
+}
+
 sub add_reference {
 
   Cubulon->find_invoice(\%myconfig, $form);
@@ -43,8 +78,7 @@ sub customer_details {
   $form->{typeofcontact} ||= "company";
   $form->{$_} = $form->{all_contact}->[0]->{$_}
     for
-    qw|email phone fax mobile salutation firstname lastname gender contacttitle occupation|
-    ;
+    qw|email phone fax mobile salutation firstname lastname gender contacttitle occupation|;
   $form->{gender} ||= 'M';
 
   my %new_form = map { $_ => $form->{$_} } keys %$form;
@@ -95,7 +129,7 @@ sub search_order {
 
   $form->{open} //= 1;
   $form->{type} ||= 'sales_order';
-  $form->{vc} ||= 'customer';
+  $form->{vc}   ||= 'customer';
   OE->transactions(\%myconfig, $form);
 
   print qq|Content-Type: application/json; charset=$form->{charset}
@@ -105,7 +139,7 @@ sub search_order {
 
 sub search_transaction {
 
-  $form->{open} //= 1;
+  $form->{open}    //= 1;
   $form->{summary} //= 1;
   $form->{vc} = 'customer';
   AA->transactions(\%myconfig, $form);

@@ -164,6 +164,7 @@ $self{texts} = {
   'You are saving an existing quotation' => 'Du sparar en redan sparad offert',
   'Zip/Postal Code'             => 'Postnr',
   'for'                         => 'under',
+  'html'                        => 'html',
   'locked!'                     => 'Låst!',
   'sent'                        => 'Skickad',
   'time(s)'                     => 'gång(er)',

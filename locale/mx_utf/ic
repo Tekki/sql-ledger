@@ -198,6 +198,7 @@ $self{texts} = {
   'ROP'                         => 'Pto. de Reord.',
   'RVC missing!'                => '¡Falta RVC!',
   'Recd'                        => 'Recb.',
+  'Reference Documents'         => 'Documentos de Referencia',
   'Required by'                 => 'Vencimiento',
   'Requirements'                => 'Requerimientos',
   'SKU'                         => 'SKU',

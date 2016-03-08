@@ -4,6 +4,7 @@ $self{texts} = {
 };
 
 $self{subs} = {
+  'add_payment'                 => 'add_payment',
   'add_reference'               => 'add_reference',
   'customer_details'            => 'customer_details',
   'invoice_details'             => 'invoice_details',
