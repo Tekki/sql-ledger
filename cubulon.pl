@@ -50,6 +50,9 @@ $form->{login} =~ s/(\.\.|\/|\\|\x00)//g;
 
 # check for user config file, could be missing or ???
 eval { require("$userspath/$form->{login}.conf"); };
+$myconfig{dateformat}   = 'yyyy-mm-dd';
+$myconfig{dboptions}    = '';
+$myconfig{numberformat} = '1000.00';
 
 if ($@) {
   $locale = new Locale "$language", "$script";
