@@ -94,12 +94,13 @@ sub invoice_details {
 
   if ($form->{id}) {
     $form->{vc} = 'customer';
+    $form->create_links('AR', \%myconfig, 'customer', 1);
     AA->get_name(\%myconfig, $form);
     delete $form->{notes};
     IS->retrieve_invoice(\%myconfig, $form);
     $form->all_references($form->dbconnect(\%myconfig));
   }
-  my %new_form = map { $_ => $form->{$_} } keys %$form;
+  my %new_form = map { $_ => $form->{$_} } grep !/^all_/, keys %$form;
 
   print qq|Content-Type: application/json; charset=$form->{charset}
 
