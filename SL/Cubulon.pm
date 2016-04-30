@@ -48,7 +48,7 @@ sub find_invoice {
     $where = 'invnumber = ' . $dbh->quote($form->{invnumber});
   }
 
-  my $query = qq|SELECT id, customer_id FROM ar WHERE $where|;
+  my $query = qq|SELECT id, customer_id FROM ar WHERE $where ORDER BY id DESC LIMIT 1|;
 
   if (my $ref = $dbh->selectrow_arrayref($query)) {
     ($form->{id}, $form->{customer_id}) = @$ref;
