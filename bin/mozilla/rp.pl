@@ -2616,7 +2616,7 @@ sub reminder {
 
   $form->hide_form(qw(title initcallback callback vc department path login ids));
   $form->hide_form($form->{vc});
-  $form->hide_form(qw(report reportcode reportlogin));
+  $form->hide_form(qw(report reportcode reportlogin subject message));
 
   %button = ('Select all' => { ndx => 1, key => 'A', value => $locale->text('Select all') },
 	     'Deselect all' => { ndx => 2, key => 'A', value => $locale->text('Deselect all') },
@@ -2980,6 +2980,9 @@ sub send_email_reminder {
 	$form->{callback} .= qq|&ndx_$_=1&level_$_=$form->{"level_$_"}&language_code_$_=|.$form->escape($form->{language_code},1);
       }
     }
+    for (qw|subject message|) {
+      $form->{callback} .= qq|&$_=|.$form->escape($form->{$_}, 1) if $form->{$_};
+    }
   }
  
   $form->redirect($locale->text('Reminder sent to')." $form->{$form->{vc}}");
@@ -3122,7 +3125,7 @@ sub do_print_reminder {
   # setup variables for the form
   $form->format_string(qw(company address businessnumber companyemail companywebsite username useremail tel fax));
   
-  @a = qw(name address1 address2 city state zipcode country contact typeofcontact salutation firstname lastname email);
+  @a = qw(name address1 address2 city state zipcode country contact typeofcontact salutation firstname lastname);
   push @a, map { "$form->{vc}$_" } qw(number phone fax taxnumber);
   push @a, map { "shipto$_" } qw(name address1 address2 city state zipcode country contact phone fax email);
   push @a, qw(dcn rvc iban bic membernumber clearingnumber);
