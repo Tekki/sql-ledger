@@ -411,7 +411,10 @@ sub create_links {
 
   $form->{cashdiscount} *= 100;
 
-  $form->{rowcount}++ if ($form->{id} || !$form->{rowcount});
+  if ($form->{id} || !$form->{rowcount}) {
+    $i = $form->{rowcount}++;
+    $form->{"$form->{ARAP}_amount_$form->{rowcount}"} = $form->{"$form->{ARAP}_amount_$i"};
+  }
 
   $form->{$form->{ARAP}} ||= $form->{"$form->{ARAP}_1"};
   $form->{rowcount} = 1 unless $form->{"$form->{ARAP}_amount_1"};
@@ -614,7 +617,7 @@ sub form_header {
   
 print qq|
 
-<body onload="document.forms[0].${focus}.focus()" />
+<body onload="document.main.${focus}.focus()" />
 
 <form method="post" name="main" action="$form->{script}">
 
@@ -1232,8 +1235,10 @@ sub update {
       $taxrate *= $ml;
 
       foreach $item (@taxaccounts) {
-	if (($form->{"${item}_rate"} * $ml) > 0) {
+        $form->{"select$form->{ARAP}_tax_$item"} = qq|$item--$form->{"${item}_description"}|;
+        $form->{"calctax_$item"} = 1 if $form->{calctax};
 
+	if (($form->{"${item}_rate"} * $ml) > 0) {
 	  if ($taxrate) {
 	    $x = ($form->{cdt}) ? ($form->{invtotal} - $form->{discount_paid}) : $form->{invtotal};
 	    $x *= $form->{"${item}_rate"} / (1 + $taxrate);
@@ -1243,7 +1248,6 @@ sub update {
 	  }
 	  $form->{"tax_$item"} = $tax if $form->{"calctax_$item"};
 
-	  $form->{"select$form->{ARAP}_tax_$item"} = qq|$item--$form->{"${item}_description"}|;
 	  $totaltax += $form->{"tax_$item"};
 	}
       }
@@ -1520,6 +1524,7 @@ sub search {
   
   $vclabel = $locale->text('Customer');
   $vcnumber = $locale->text('Customer Number');
+  $vctaxnumber = $locale->text('Taxnumber');
   $l_name = qq|<input name="l_name" class=checkbox type=checkbox value=Y checked> $vclabel|;
   $l_customernumber = qq|<input name="l_customernumber" class=checkbox type=checkbox value=Y> $vcnumber|;
   $l_till = qq|<input name="l_till" class=checkbox type=checkbox value=Y> |.$locale->text('Till');
@@ -1527,6 +1532,7 @@ sub search {
   if ($form->{vc} eq 'vendor') {
     $vclabel = $locale->text('Vendor');
     $vcnumber = $locale->text('Vendor Number');
+    $vctaxnumber = $locale->text('SSN');
     $l_till = "";
     $l_customernumber = "";
     $l_name = qq|<input name="l_name" class=checkbox type=checkbox value=Y checked> $vclabel|;
@@ -1728,7 +1734,11 @@ sub search {
   push @f, $l_name;
   push @f, $l_customernumber if $l_customernumber;
   push @f, $l_vendornumber if $l_vendornumber;
+  push @f, qq|<input name="l_taxnumber" class=checkbox type=checkbox value=Y>$vctaxnumber|;
   push @f, qq|<input name="l_address" class=checkbox type=checkbox value=Y> |.$locale->text('Address');
+  push @f, qq|<input name="l_city" class=checkbox type=checkbox value=Y> |.$locale->text('City');
+  push @f, qq|<input name="l_zipcode" class=checkbox type=checkbox value=Y> |.$locale->text('Zipcode');
+  push @f, qq|<input name="l_country" class=checkbox type=checkbox value=Y> |.$locale->text('Country');
   push @f, $l_employee if $l_employee;
   push @f, $l_department if $l_department;
   push @f, qq|<input name="l_netamount" class=checkbox type=checkbox value=Y> |.$locale->text('Amount');
@@ -2040,7 +2050,7 @@ sub transactions {
   }
 
 
-  @columns = $form->sort_columns(qw(transdate id invnumber ordnumber ponumber description name customernumber vendornumber address netamount tax amount paid paymentaccount paymentmethod due curr datepaid duedate memo notes till employee warehouse shippingpoint shipvia waybill dcn paymentdiff department));
+  @columns = $form->sort_columns(qw(transdate id invnumber ordnumber ponumber description name customernumber vendornumber taxnumber address city zipcode country netamount tax amount paid paymentaccount paymentmethod due curr datepaid duedate memo notes till employee warehouse shippingpoint shipvia waybill dcn paymentdiff department));
   unshift @columns, "runningnumber";
 
   @column_index = qw(delete);
@@ -2077,11 +2087,13 @@ sub transactions {
     $name = $locale->text('Customer');
     $namenumber = $locale->text('Customer Number');
     $namefld = "customernumber";
+    $vcnumber = $locale->text('Taxnumber');
   } else {
     $employee = $locale->text('Employee');
     $name = $locale->text('Vendor');
     $namenumber = $locale->text('Vendor Number');
     $namefld = "vendornumber";
+    $vcnumber = $locale->text('SSN');
   }
   
   $column_data{delete} = qq|<th class=listheading width=1%><input name="allbox_delete" type=checkbox class=checkbox value="1" onChange="CheckAll();"></th>|;
@@ -2094,7 +2106,11 @@ sub transactions {
   $column_data{ponumber} = "<th><a class=listheading href=$href&sort=ponumber>".$locale->text('PO Number')."</a></th>";
   $column_data{name} = "<th><a class=listheading href=$href&sort=name>$name</a></th>";
   $column_data{$namefld} = "<th><a class=listheading href=$href&sort=$namefld>$namenumber</a></th>";
+  $column_data{taxnumber} = "<th><a class=listheading href=$href&sort=taxnumber>$vcnumber</th>";
   $column_data{address} = "<th class=listheading>" . $locale->text('Address') . "</th>";
+  $column_data{city} = "<th><a class=listheading href=$href&sort=city>" . $locale->text('City') . "</th>";
+  $column_data{zipcode} = "<th><a class=listheading href=$href&sort=zipcode>" . $locale->text('Zipcode') . "</th>";
+  $column_data{country} = "<th><a class=listheading href=$href&sort=country>" . $locale->text('Country') . "</th>";
   $column_data{netamount} = "<th class=listheading>" . $locale->text('Amount') . "</th>";
   $column_data{tax} = "<th class=listheading>" . $locale->text('Tax') . "</th>";
   $column_data{amount} = "<th class=listheading>" . $locale->text('Total') . "</th>";
@@ -2182,8 +2198,8 @@ sub transactions {
     
     if ($form->{l_subtotal} eq 'Y') {
       if ($sameitem ne $ref->{$form->{sort}}) {
-	&subtotal;
-	$sameitem = $ref->{$form->{sort}};
+        &subtotal;
+        $sameitem = $ref->{$form->{sort}};
       }
     }
 
@@ -2193,20 +2209,20 @@ sub transactions {
       }
 
       if ($form->{defaultcurrency} ne $ref->{curr}) {
-	for (qw(netamount amount paid)) { $ref->{"$ref->{curr}_$_"} = $ref->{$_}/$ref->{exchangerate} }
+        for (qw(netamount amount paid)) { $ref->{"$ref->{curr}_$_"} = $ref->{$_}/$ref->{exchangerate} }
 
-	for (qw(netamount amount paid)) { $column_data{"$ref->{curr}_$_"} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{"$ref->{curr}_$_"}, $form->{precision}, "&nbsp;")."</td>" }
-	
-	$column_data{"$ref->{curr}_tax"} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{"$ref->{curr}_amount"} - $ref->{"$ref->{curr}_netamount"}, $form->{precision}, "&nbsp;")."</td>";
-	$column_data{"$ref->{curr}_due"} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{"$ref->{curr}_amount"} - $ref->{"$ref->{curr}_paid"}, $form->{precision}, "&nbsp;")."</td>";
+        for (qw(netamount amount paid)) { $column_data{"$ref->{curr}_$_"} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{"$ref->{curr}_$_"}, $form->{precision}, "&nbsp;")."</td>" }
+        
+        $column_data{"$ref->{curr}_tax"} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{"$ref->{curr}_amount"} - $ref->{"$ref->{curr}_netamount"}, $form->{precision}, "&nbsp;")."</td>";
+        $column_data{"$ref->{curr}_due"} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{"$ref->{curr}_amount"} - $ref->{"$ref->{curr}_paid"}, $form->{precision}, "&nbsp;")."</td>";
 
-	$subtotal{$ref->{curr}}{netamount} += $ref->{"$ref->{curr}_netamount"};
-	$subtotal{$ref->{curr}}{amount} += $ref->{"$ref->{curr}_amount"};
-	$subtotal{$ref->{curr}}{paid} += $ref->{"$ref->{curr}_paid"};
-	
-	$total{$ref->{curr}}{netamount} += $ref->{"$ref->{curr}_netamount"};
-	$total{$ref->{curr}}{amount} += $ref->{"$ref->{curr}_amount"};
-	$total{$ref->{curr}}{paid} += $ref->{"$ref->{curr}_paid"};
+        $subtotal{$ref->{curr}}{netamount} += $ref->{"$ref->{curr}_netamount"};
+        $subtotal{$ref->{curr}}{amount} += $ref->{"$ref->{curr}_amount"};
+        $subtotal{$ref->{curr}}{paid} += $ref->{"$ref->{curr}_paid"};
+        
+        $total{$ref->{curr}}{netamount} += $ref->{"$ref->{curr}_netamount"};
+        $total{$ref->{curr}}{amount} += $ref->{"$ref->{curr}_amount"};
+        $total{$ref->{curr}}{paid} += $ref->{"$ref->{curr}_paid"};
       }
       
     }
@@ -2246,7 +2262,7 @@ sub transactions {
     
     for (qw(notes description memo)) { $ref->{$_} =~ s/\r?\n/<br>/g }
     for (qw(transdate datepaid duedate)) { $column_data{$_} = "<td nowrap>$ref->{$_}&nbsp;</td>" }
-    for (qw(department ordnumber ponumber notes warehouse shippingpoint shipvia waybill employee till source memo description projectnumber address dcn paymentaccount paymentmethod)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
+    for (qw(department ordnumber ponumber notes warehouse shippingpoint shipvia waybill employee till source memo description projectnumber taxnumber address city zipcode country dcn paymentaccount paymentmethod)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
     $column_data{$namefld} = "<td>$ref->{$namefld}&nbsp;</td>";
     
     if ($ref->{paymentdiff} <= 0) {

@@ -1,28 +1,28 @@
-$self{charset} = 'ISO-8859-9';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'AP'                          => 'Borçlar',
-  'Accounting Menu'             => 'Muhasebe Menüsü',
+  'AP'                          => 'BorÃ§lar',
+  'Accounting Menu'             => 'Muhasebe MenÃ¼sÃ¼',
   'Address'                     => 'Adres',
   'Administrator'               => 'Administrator',
   'All'                         => 'Hepsi',
   'Amount'                      => 'Miktar',
   'Continue'                    => 'Devam',
   'Delete'                      => 'Sil',
-  'Description'                 => 'Açıklama',
+  'Description'                 => 'AÃ§Ä±klama',
   'E-mail'                      => 'Posta',
   'Expense'                     => 'Gider',
-  'From'                        => 'Başlangıç',
+  'From'                        => 'BaÅŸlangÄ±Ã§',
   'Include in Report'           => 'Raporla',
-  'Login'                       => 'Giriş',
-  'Name'                        => 'İsim',
+  'Login'                       => 'GiriÅŸ',
+  'Name'                        => 'Ä°sim',
   'Notes'                       => 'Notlar:',
   'Number'                      => 'Numara',
   'Rate'                        => 'Oran',
-  'Sales'                       => 'Satışlar',
+  'Sales'                       => 'SatÄ±ÅŸlar',
   'Save'                        => 'Kaydet',
-  'To'                          => 'Bitiş',
-  'User'                        => 'Kullanıcı',
+  'To'                          => 'BitiÅŸ',
+  'User'                        => 'KullanÄ±cÄ±',
 };
 
 $self{subs} = {

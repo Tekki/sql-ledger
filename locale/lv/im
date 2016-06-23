@@ -1,28 +1,28 @@
-$self{charset} = 'ISO-8859-13';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Account'                     => 'Konts',
-  'City'                        => 'Pilsçta',
-  'Company'                     => 'Uzòçmums',
-  'Continue'                    => 'Turpinât',
+  'City'                        => 'PilsÄ“ta',
+  'Company'                     => 'UzÅ†Ä“mums',
+  'Continue'                    => 'TurpinÄt',
   'Curr'                        => 'Val.',
-  'Currency'                    => 'Valûta',
+  'Currency'                    => 'ValÅ«ta',
   'Customer'                    => 'Klients',
   'Customer Number'             => 'Klienta numurs',
-  'Date Paid'                   => 'Maksâjuma datums',
+  'Date Paid'                   => 'MaksÄjuma datums',
   'Description'                 => 'Apraksts',
-  'Due Date'                    => 'Apmaksas termiòð',
+  'Due Date'                    => 'Apmaksas termiÅ†Å¡',
   'Exch'                        => 'Kurss',
-  'Invoice'                     => 'Rçíins',
-  'Invoice Date'                => 'Rçíina datums',
-  'Invoice Number'              => 'Rçíina numurs',
-  'No'                          => 'Nç',
-  'Paid'                        => 'Apmaksâts',
+  'Invoice'                     => 'RÄ“Ä·ins',
+  'Invoice Date'                => 'RÄ“Ä·ina datums',
+  'Invoice Number'              => 'RÄ“Ä·ina numurs',
+  'No'                          => 'NÄ“',
+  'Paid'                        => 'ApmaksÄts',
   'Qty'                         => 'Skaits',
-  'Salesperson'                 => 'Pârdevçjs',
-  'Total'                       => 'Pavisam Kopâ',
-  'Unit'                        => 'Vienîba',
-  'Yes'                         => 'Jâ',
+  'Salesperson'                 => 'PÄrdevÄ“js',
+  'Total'                       => 'Pavisam KopÄ',
+  'Unit'                        => 'VienÄ«ba',
+  'Yes'                         => 'JÄ',
 };
 
 $self{subs} = {
@@ -33,7 +33,7 @@ $self{subs} = {
   'import_payments'             => 'import_payments',
   'import_sales_invoices'       => 'import_sales_invoices',
   'xrefhdr'                     => 'xrefhdr',
-  'turpinât'                    => 'continue',
+  'turpinÄt'                    => 'continue',
 };
 
 1;

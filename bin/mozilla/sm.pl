@@ -77,7 +77,7 @@ sub repost_invoices {
 
 sub do_repost_invoices {
 
-  $form->isblank('transdate', $locale->text('Date missing'));
+  $form->isblank('transdate', $locale->text('Date missing!'));
   
   $form->header;
   print "Reposting Invoices ... ";

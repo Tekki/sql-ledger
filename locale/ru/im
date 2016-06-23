@@ -1,28 +1,29 @@
-$self{charset} = 'ISO-8859-5';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Account'                     => 'óÞÅÔ',
-  'City'                        => 'çÏÒÏÄ',
-  'Company'                     => 'ïÒÇÁÎÉÚÁÃÉÑ',
-  'Continue'                    => 'ðÒÏÄÏÌÖÉÔØ',
-  'Curr'                        => '÷ÁÌÀÔÁ',
-  'Currency'                    => '÷ÁÌÀÔÁ',
-  'Customer'                    => 'ëÌÉÅÎÔ',
-  'Customer Number'             => 'ëÏÄ ËÌÉÅÎÔÁ',
-  'Date Paid'                   => 'äÁÔÁ ÏÐÌÁÔÙ',
-  'Description'                 => 'ïÐÉÓÁÎÉÅ',
-  'Due Date'                    => 'ïÐÌÁÔÉÔØ ÄÏ',
-  'Exch'                        => 'ëÕÒÓ',
-  'Invoice'                     => 'óÞÅÔ-ÆÁËÔÕÒÁ',
-  'Invoice Date'                => 'äÁÔÁ ×ÙÓÔÁ×ÌÅÎÉÑ',
-  'Invoice Number'              => 'îÏÍÅÒ ÓÞÅÔÁ-ÆÁËÔÕÒÙ',
-  'No'                          => 'îÅÔ',
-  'Paid'                        => 'ïÐÌÁÞÅÎÏ',
-  'Qty'                         => 'ëÏÌÉÞÅÓÔ×Ï',
-  'Salesperson'                 => 'ðÒÏÄÁ×ÅÃ',
-  'Total'                       => '÷ÓÅÇÏ',
-  'Unit'                        => 'åÄÉÎÉÃÁ',
-  'Yes'                         => 'äÁ',
+  'Account'                     => 'Ð¡Ñ‡ÐµÑ‚',
+  'City'                        => 'Ð“Ð¾Ñ€Ð¾Ð´',
+  'Company'                     => 'ÐžÑ€Ð³Ð°Ð½Ð¸Ð·Ð°Ñ†Ð¸Ñ',
+  'Continue'                    => 'ÐŸÑ€Ð¾Ð´Ð¾Ð»Ð¶Ð¸Ñ‚ÑŒ',
+  'Curr'                        => 'Ð’Ð°Ð»ÑŽÑ‚Ð°',
+  'Currency'                    => 'Ð’Ð°Ð»ÑŽÑ‚Ð°',
+  'Customer'                    => 'ÐšÐ»Ð¸ÐµÐ½Ñ‚',
+  'Customer Number'             => 'ÐšÐ¾Ð´ ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð°',
+  'Date Paid'                   => 'Ð”Ð°Ñ‚Ð° Ð¾Ð¿Ð»Ð°Ñ‚Ñ‹',
+  'Description'                 => 'ÐžÐ¿Ð¸ÑÐ°Ð½Ð¸Ðµ',
+  'Due Date'                    => 'ÐžÐ¿Ð»Ð°Ñ‚Ð¸Ñ‚ÑŒ Ð´Ð¾',
+  'Exch'                        => 'ÐšÑƒÑ€Ñ',
+  'Invoice'                     => 'Ð¡Ñ‡ÐµÑ‚-Ñ„Ð°ÐºÑ‚ÑƒÑ€Ð°',
+  'Invoice Date'                => 'Ð”Ð°Ñ‚Ð° Ð²Ñ‹ÑÑ‚Ð°Ð²Ð»ÐµÐ½Ð¸Ñ',
+  'Invoice Number'              => 'ÐÐ¾Ð¼ÐµÑ€ ÑÑ‡ÐµÑ‚Ð°-Ñ„Ð°ÐºÑ‚ÑƒÑ€Ñ‹',
+  'No'                          => 'ÐÐµÑ‚',
+  'Paid'                        => 'ÐžÐ¿Ð»Ð°Ñ‡ÐµÐ½Ð¾',
+  'Posting failed!'             => 'ÐžÑˆÐ¸Ð±ÐºÐ° ÑÐ¾Ñ…Ñ€Ð°Ð½ÐµÐ½Ð¸Ñ',
+  'Qty'                         => 'ÐšÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ð¾',
+  'Salesperson'                 => 'ÐŸÑ€Ð¾Ð´Ð°Ð²ÐµÑ†',
+  'Total'                       => 'Ð’ÑÐµÐ³Ð¾',
+  'Unit'                        => 'Ð•Ð´Ð¸Ð½Ð¸Ñ†Ð°',
+  'Yes'                         => 'Ð”Ð°',
 };
 
 $self{subs} = {
@@ -33,7 +34,7 @@ $self{subs} = {
   'import_payments'             => 'import_payments',
   'import_sales_invoices'       => 'import_sales_invoices',
   'xrefhdr'                     => 'xrefhdr',
-  'ðÒÏÄÏÌÖÉÔØ'                  => 'continue',
+  'ÐŸÑ€Ð¾Ð´Ð¾Ð»Ð¶Ð¸Ñ‚ÑŒ'        => 'continue',
 };
 
 1;

@@ -1,15 +1,18 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'Account'                     => 'Cuenta',
   'Amount'                      => 'Total',
   'Continue'                    => 'Continuar',
   'Date'                        => 'Fecha',
   'Memo'                        => 'Memo',
-  'Nothing to print!'           => '¡No hay nada que imprimir!',
+  'Nothing to print!'           => 'Â¡No hay nada que imprimir!',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
   'Screen'                      => 'Pantalla',
-  'Select payment'              => '¡Seleccione Pago!',
-  'Select postscript or PDF!'   => '¡Seleccione postscript o PDF',
+  'Select a Printer!'           => 'Selecciona Impresora!',
+  'Select payment'              => 'Â¡Seleccione Pago!',
+  'Select postscript or PDF!'   => 'Â¡Seleccione postscript o PDF',
   'Source'                      => 'Fuente',
 };
 

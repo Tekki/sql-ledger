@@ -1,33 +1,33 @@
-$self{charset} = 'ISO-8859-2';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Account'                     => 'Úèet',
-  'Accounting Menu'             => 'Menu úèetnictví',
-  'Add'                         => 'Pøidat',
+  'Account'                     => 'ÃšÄet',
+  'Accounting Menu'             => 'Menu ÃºÄetnictvÃ­',
+  'Add'                         => 'PÅ™idat',
   'Address'                     => 'Adresa',
-  'All'                         => 'V¹e',
-  'Amount'                      => 'Èástka',
+  'All'                         => 'VÅ¡e',
+  'Amount'                      => 'ÄŒÃ¡stka',
   'Bin'                         => 'Paleta',
-  'Continue'                    => 'Pokraèování',
-  'Customer'                    => 'Odbìratel',
+  'Continue'                    => 'PokraÄovÃ¡nÃ­',
+  'Customer'                    => 'OdbÄ›ratel',
   'Date'                        => 'Datum',
   'Delete'                      => 'Vymazat',
   'Description'                 => 'Popis',
   'From'                        => 'z',
   'Language'                    => 'Jazyk',
-  'Link Accounts'               => 'Vazby mezi úèty',
-  'List Price'                  => 'Vırobní cena',
-  'Notes'                       => 'Poznámky',
-  'Number'                      => 'Èíslo',
-  'Orphaned'                    => 'Neprodejné',
-  'Qty'                         => 'Mno¾ství',
-  'Save'                        => 'Ulo¾it',
-  'Sell Price'                  => 'Prodejní cena',
-  'Tax'                         => 'Daò',
+  'Link Accounts'               => 'Vazby mezi ÃºÄty',
+  'List Price'                  => 'VÃ½robnÃ­ cena',
+  'Notes'                       => 'PoznÃ¡mky',
+  'Number'                      => 'ÄŒÃ­slo',
+  'Orphaned'                    => 'NeprodejnÃ©',
+  'Qty'                         => 'MnoÅ¾stvÃ­',
+  'Save'                        => 'UloÅ¾it',
+  'Sell Price'                  => 'ProdejnÃ­ cena',
+  'Tax'                         => 'DaÅˆ',
   'To'                          => 'do',
   'Unit'                        => 'Jednotka',
   'Vendor'                      => 'Dodavatel',
-  'Weight'                      => 'Váha',
+  'Weight'                      => 'VÃ¡ha',
 };
 
 $self{subs} = {
@@ -82,9 +82,9 @@ $self{subs} = {
   'translation_footer'          => 'translation_footer',
   'translation_header'          => 'translation_header',
   'update'                      => 'update',
-  'pokraèování'                 => 'continue',
+  'pokraÄovÃ¡nÃ­'                 => 'continue',
   'vymazat'                     => 'delete',
-  'ulo¾it'                      => 'save',
+  'uloÅ¾it'                      => 'save',
 };
 
 1;

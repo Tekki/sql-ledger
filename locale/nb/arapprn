@@ -1,10 +1,10 @@
 $self{texts} = {
   'Account'                     => 'Konto',
-  'Amount'                      => 'Beløp',
+  'Amount'                      => 'BelÃ¸p',
   'Continue'                    => 'Fortsett',
   'Date'                        => 'Dato',
   'Memo'                        => 'Notat',
-  'Nothing to print!'           => 'Ingenting å skrive ut!',
+  'Nothing to print!'           => 'Ingenting Ã¥ skrive ut!',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
   'Screen'                      => 'Skjerm',

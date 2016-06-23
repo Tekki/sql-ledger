@@ -1,4 +1,4 @@
-$self{charset} = 'ISO-8859-9';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Account'                     => 'Hesap',

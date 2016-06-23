@@ -1,13 +1,13 @@
-$self{charset} = 'ISO-8859-7';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Account'                     => 'Λογαριασμός',
-  'Amount'                      => 'Ποσό',
-  'Continue'                    => 'Συνέχεια',
-  'Date'                        => 'Ημερομηνία',
-  'Nothing to print!'           => 'Δεν υπάρχει τίποτα για εκτύπωση',
-  'Screen'                      => 'Οθόνη',
-  'Source'                      => 'Πηγή',
+  'Account'                     => 'Ξ›ΞΏΞ³Ξ±ΟΞΉΞ±ΟƒΞΌΟΟ‚',
+  'Amount'                      => 'Ξ ΞΏΟƒΟ',
+  'Continue'                    => 'Ξ£Ο…Ξ½Ξ­Ο‡ΞµΞΉΞ±',
+  'Date'                        => 'Ξ—ΞΌΞµΟΞΏΞΌΞ·Ξ½Ξ―Ξ±',
+  'Nothing to print!'           => 'Ξ”ΞµΞ½ Ο…Ο€Ξ¬ΟΟ‡ΞµΞΉ Ο„Ξ―Ο€ΞΏΟ„Ξ± Ξ³ΞΉΞ± ΞµΞΊΟ„ΟΟ€Ο‰ΟƒΞ·',
+  'Screen'                      => 'ΞΞΈΟΞ½Ξ·',
+  'Source'                      => 'Ξ Ξ·Ξ³Ξ®',
 };
 
 $self{subs} = {
@@ -22,7 +22,7 @@ $self{subs} = {
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',
   'select_payment'              => 'select_payment',
-  'Συνέχεια'                    => 'continue',
+  'Ξ£Ο…Ξ½Ξ­Ο‡ΞµΞΉΞ±'                    => 'continue',
 };
 
 1;

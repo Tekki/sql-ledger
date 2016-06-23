@@ -1,31 +1,31 @@
-$self{charset} = 'ISO-8859-13';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Address'                     => 'Adrese',
   'Bcc'                         => 'Bcc',
   'Cc'                          => 'Cc',
-  'Continue'                    => 'Turpinât',
+  'Continue'                    => 'TurpinÄt',
   'Customer Number'             => 'Klienta numurs',
-  'Customer not on file!'       => 'Nav tâda klienta!',
+  'Customer not on file!'       => 'Nav tÄda klienta!',
   'Date'                        => 'Datums',
   'Description'                 => 'Apraksts',
   'E-mail'                      => 'E-pasts',
-  'Message'                     => 'Paziòojums',
+  'Message'                     => 'PaziÅ†ojums',
   'Number'                      => 'Numurs',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
-  'Print'                       => 'Drukât',
-  'Project not on file!'        => 'Nav tâda projekta!',
-  'Reference'                   => 'Norâde',
-  'Select from one of the names below' => 'Atlasît vienu no sekojoðiem nosaukumiem',
-  'Select from one of the projects below' => 'Atlasît vienu no sekojoðiem projektiem',
-  'Startdate'                   => 'Sâkuma datums',
+  'Print'                       => 'DrukÄt',
+  'Project not on file!'        => 'Nav tÄda projekta!',
+  'Reference'                   => 'NorÄde',
+  'Select from one of the names below' => 'AtlasÄ«t vienu no sekojoÅ¡iem nosaukumiem',
+  'Select from one of the projects below' => 'AtlasÄ«t vienu no sekojoÅ¡iem projektiem',
+  'Startdate'                   => 'SÄkuma datums',
   'Subject'                     => 'Temats',
   'To'                          => 'uz',
-  'Vendor Number'               => 'Pârdevçja numurs',
-  'Vendor not on file!'         => 'Nav tâda pârdevçja!',
-  'Warning!'                    => 'Brîdinâjums!',
-  'sent'                        => 'nosûtîts',
+  'Vendor Number'               => 'PÄrdevÄ“ja numurs',
+  'Vendor not on file!'         => 'Nav tÄda pÄrdevÄ“ja!',
+  'Warning!'                    => 'BrÄ«dinÄjums!',
+  'sent'                        => 'nosÅ«tÄ«ts',
 };
 
 $self{subs} = {
@@ -54,7 +54,7 @@ $self{subs} = {
   'select_name'                 => 'select_name',
   'select_project'              => 'select_project',
   'vendor_invoice_'             => 'vendor_invoice_',
-  'turpinât'                    => 'continue',
+  'turpinÄt'                    => 'continue',
 };
 
 1;

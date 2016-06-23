@@ -5,18 +5,18 @@ $self{texts} = {
   'Currency'                    => 'Moneda',
   'Customer'                    => 'Client',
   'Date Paid'                   => 'Data Pagament',
-  'Description'                 => 'Descripció',
+  'Description'                 => 'DescripciÃ³',
   'Due Date'                    => 'Data Venciment',
   'Exch'                        => 'Canvi',
   'Invoice'                     => 'Factura',
   'Invoice Date'                => 'Data Fra.',
-  'Invoice Number'              => 'Núm Fra.',
+  'Invoice Number'              => 'NÃºm Fra.',
   'No'                          => 'No',
   'Paid'                        => 'Pagat',
   'Qty'                         => 'Quantitat',
   'Total'                       => 'Total',
   'Unit'                        => 'Unitat',
-  'Yes'                         => 'Sí',
+  'Yes'                         => 'SÃ­',
 };
 
 $self{subs} = {

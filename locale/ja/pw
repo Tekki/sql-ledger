@@ -1,0 +1,15 @@
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Continue'                    => '続ける',
+  'Password'                    => 'パスワード',
+  'Session expired!'            => 'セッションを切れた',
+};
+
+$self{subs} = {
+  'getpassword'                 => 'getpassword',
+  '続ける'                   => 'continue',
+};
+
+1;
+

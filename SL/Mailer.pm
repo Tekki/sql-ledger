@@ -30,7 +30,7 @@ sub send {
   my $msgid = "$boundary\@$domain";
   $boundary = "SL-$self->{version}-$boundary";
   
-  $self->{charset} ||= "ISO-8859-1";
+  $self->{charset} ||= "UTF8";
 
   if ($out) {
     open(OUT, $out) or return "$out : $!";

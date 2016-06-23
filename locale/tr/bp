@@ -1,26 +1,26 @@
-$self{charset} = 'ISO-8859-9';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Accounting Menu'             => 'Muhasebe Menüsü',
+  'Accounting Menu'             => 'Muhasebe MenÃ¼sÃ¼',
   'Amount'                      => 'Miktar',
   'Confirm!'                    => 'Onayla!',
   'Continue'                    => 'Devam',
-  'Customer'                    => 'Alýcý',
+  'Customer'                    => 'AlÄ±cÄ±',
   'Date'                        => 'Tarih',
-  'Description'                 => 'Açýklama',
+  'Description'                 => 'AÃ§Ä±klama',
   'E-mail'                      => 'Posta',
-  'From'                        => 'Baþlangýç',
+  'From'                        => 'BaÅŸlangÄ±Ã§',
   'Invoice'                     => 'Fatura',
   'Invoice Number'              => 'Fatura No',
-  'Name'                        => 'Ýsim',
+  'Name'                        => 'Ä°sim',
   'Number'                      => 'Numara',
-  'Order'                       => 'Sipariþ',
-  'Order Number'                => 'Sipariþ No',
-  'Purchase Orders'             => 'Satýnalma Sipariþleri',
-  'Sales Orders'                => 'Satýþ Sipariþleri',
-  'To'                          => 'Bitiþ',
+  'Order'                       => 'SipariÅŸ',
+  'Order Number'                => 'SipariÅŸ No',
+  'Purchase Orders'             => 'SatÄ±nalma SipariÅŸleri',
+  'Sales Orders'                => 'SatÄ±ÅŸ SipariÅŸleri',
+  'To'                          => 'BitiÅŸ',
   'Total'                       => 'Toplam',
-  'Vendor'                      => 'Satýcý',
+  'Vendor'                      => 'SatÄ±cÄ±',
   'Yes'                         => 'Evet',
 };
 

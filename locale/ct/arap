@@ -1,10 +1,10 @@
 $self{texts} = {
-  'Address'                     => 'Adreça',
+  'Address'                     => 'AdreÃ§a',
   'Continue'                    => 'Continuar',
   'Date'                        => 'Data',
-  'Description'                 => 'Descripció',
+  'Description'                 => 'DescripciÃ³',
   'E-mail'                      => 'Email',
-  'Number'                      => 'Número',
+  'Number'                      => 'NÃºmero',
   'To'                          => 'Fins',
 };
 

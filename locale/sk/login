@@ -1,15 +1,15 @@
-$self{charset} = 'ISO-8859-2';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Access Denied!'              => 'Prístup odmietnutý!',
+  'Access Denied!'              => 'PrÃ­stup odmietnutÃ½!',
   'Company'                     => 'Firma',
-  'Continue'                    => 'Pokraèovanie',
-  'Dataset is newer than version!' => 'Verzia databáz je nov¹ia ako programová!',
-  'Incorrect Dataset version!'  => 'Chybná verzia databáz!',
+  'Continue'                    => 'PokraÄovanie',
+  'Dataset is newer than version!' => 'Verzia databÃ¡z je novÅ¡ia ako programovÃ¡!',
+  'Incorrect Dataset version!'  => 'ChybnÃ¡ verzia databÃ¡z!',
   'Login'                       => 'Vstup',
   'Name'                        => 'Meno',
   'Password'                    => 'Heslo',
-  'Upgrading to Version'        => 'Aktualizacia na novú verziu',
+  'Upgrading to Version'        => 'Aktualizacia na novÃº verziu',
   'Version'                     => 'Verzia',
   'You did not enter a name!'   => 'Nezadali ste meno!',
   'done'                        => 'hotovo',

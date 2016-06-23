@@ -1,26 +1,26 @@
-$self{charset} = 'ISO-8859-13';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Address'                     => 'Adresas',
   'Bcc'                         => 'Bcc',
   'Cc'                          => 'Cc',
-  'Continue'                    => 'Tæsti',
-  'Customer not on file!'       => 'Tokio kliento nëra!',
+  'Continue'                    => 'TÄ™sti',
+  'Customer not on file!'       => 'Tokio kliento nÄ—ra!',
   'Date'                        => 'Data',
-  'Description'                 => 'Apraðymas',
-  'E-mail'                      => 'E-paðtas',
-  'Message'                     => 'Þinutë',
+  'Description'                 => 'ApraÅ¡ymas',
+  'E-mail'                      => 'E-paÅ¡tas',
+  'Message'                     => 'Å½inutÄ—',
   'Number'                      => 'Numeris',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript(TM)',
   'Print'                       => 'Spausdinti',
-  'Project not on file!'        => 'Nëra tokio projekto!',
+  'Project not on file!'        => 'NÄ—ra tokio projekto!',
   'Reference'                   => 'Nuorodos',
-  'Select from one of the names below' => 'Iðrinkite vienà ið pavadinimø apaèioje',
-  'Select from one of the projects below' => 'Iðrinkite vienà ið projektø apaèioje',
+  'Select from one of the names below' => 'IÅ¡rinkite vienÄ… iÅ¡ pavadinimÅ³ apaÄioje',
+  'Select from one of the projects below' => 'IÅ¡rinkite vienÄ… iÅ¡ projektÅ³ apaÄioje',
   'Subject'                     => 'Dalykas',
   'To'                          => 'iki',
-  'Vendor not on file!'         => 'Tokio tiekëjo nëra!',
+  'Vendor not on file!'         => 'Tokio tiekÄ—jo nÄ—ra!',
 };
 
 $self{subs} = {
@@ -49,7 +49,7 @@ $self{subs} = {
   'select_name'                 => 'select_name',
   'select_project'              => 'select_project',
   'vendor_invoice_'             => 'vendor_invoice_',
-  'tæsti'                       => 'continue',
+  'tÄ™sti'                       => 'continue',
 };
 
 1;

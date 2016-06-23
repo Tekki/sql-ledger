@@ -1,22 +1,22 @@
-$self{charset} = 'ISO-8859-7';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Account'                     => 'Ëïãáñéáóìüò',
-  'City'                        => 'Ðüëç',
-  'Company'                     => 'Åôáéñßá',
-  'Continue'                    => 'ÓõíÝ÷åéá',
-  'Currency'                    => 'ÓõíÜëëáãìá',
-  'Customer'                    => 'ÐåëÜôçò',
-  'Customer Number'             => 'Êùäéêüò ÐåëÜôç',
-  'Date Paid'                   => 'Çì. ÐëçñùìÞò',
-  'Description'                 => 'ÐåñéãñáöÞ',
-  'Due Date'                    => 'Çìåñïìçíßá ëÞîçò',
-  'Exch'                        => 'Óõíáëë',
-  'Invoice'                     => 'Ôéìïëüãéï',
-  'Invoice Date'                => 'Çì. ôéìïëïãßïõ',
-  'Invoice Number'              => 'Áñ. ôéìïëïãßïõ',
-  'No'                          => '¼÷é',
-  'Qty'                         => 'Ðïó.',
+  'Account'                     => 'Î›Î¿Î³Î±ÏÎ¹Î±ÏƒÎ¼ÏŒÏ‚',
+  'City'                        => 'Î ÏŒÎ»Î·',
+  'Company'                     => 'Î•Ï„Î±Î¹ÏÎ¯Î±',
+  'Continue'                    => 'Î£Ï…Î½Î­Ï‡ÎµÎ¹Î±',
+  'Currency'                    => 'Î£Ï…Î½Î¬Î»Î»Î±Î³Î¼Î±',
+  'Customer'                    => 'Î ÎµÎ»Î¬Ï„Î·Ï‚',
+  'Customer Number'             => 'ÎšÏ‰Î´Î¹ÎºÏŒÏ‚ Î ÎµÎ»Î¬Ï„Î·',
+  'Date Paid'                   => 'Î—Î¼. Î Î»Î·ÏÏ‰Î¼Î®Ï‚',
+  'Description'                 => 'Î ÎµÏÎ¹Î³ÏÎ±Ï†Î®',
+  'Due Date'                    => 'Î—Î¼ÎµÏÎ¿Î¼Î·Î½Î¯Î± Î»Î®Î¾Î·Ï‚',
+  'Exch'                        => 'Î£Ï…Î½Î±Î»Î»',
+  'Invoice'                     => 'Î¤Î¹Î¼Î¿Î»ÏŒÎ³Î¹Î¿',
+  'Invoice Date'                => 'Î—Î¼. Ï„Î¹Î¼Î¿Î»Î¿Î³Î¯Î¿Ï…',
+  'Invoice Number'              => 'Î‘Ï. Ï„Î¹Î¼Î¿Î»Î¿Î³Î¯Î¿Ï…',
+  'No'                          => 'ÎŒÏ‡Î¹',
+  'Qty'                         => 'Î Î¿Ïƒ.',
 };
 
 $self{subs} = {
@@ -27,7 +27,7 @@ $self{subs} = {
   'import_payments'             => 'import_payments',
   'import_sales_invoices'       => 'import_sales_invoices',
   'xrefhdr'                     => 'xrefhdr',
-  'ÓõíÝ÷åéá'                    => 'continue',
+  'Î£Ï…Î½Î­Ï‡ÎµÎ¹Î±'                    => 'continue',
 };
 
 1;

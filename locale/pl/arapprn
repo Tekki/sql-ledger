@@ -1,4 +1,4 @@
-$self{charset} = 'ISO-8859-2';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Account'                     => 'Konto',
@@ -10,9 +10,9 @@ $self{texts} = {
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
   'Screen'                      => 'Ekran',
-  'Select payment'              => 'Wybierz p≥atno∂Ê',
+  'Select payment'              => 'Wybierz p≈Çatno≈õƒá',
   'Select postscript or PDF!'   => 'Wybierz postscript lub PDF',
-  'Source'                      => 'ØrÛd≥o',
+  'Source'                      => '≈ªr√≥d≈Ço',
 };
 
 $self{subs} = {

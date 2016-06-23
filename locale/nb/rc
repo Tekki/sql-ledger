@@ -9,7 +9,7 @@ $self{texts} = {
   'Beginning Balance'           => 'Startbalanse',
   'Continue'                    => 'Fortsett',
   'Credit'                      => 'Kredit',
-  'Current'                     => 'Nåværende',
+  'Current'                     => 'NÃ¥vÃ¦rende',
   'Date'                        => 'Dato',
   'Debit'                       => 'Debet',
   'Dec'                         => 'des',
@@ -32,7 +32,7 @@ $self{texts} = {
   'March'                       => 'mars',
   'May'                         => 'mai',
   'May '                        => 'mai ',
-  'Month'                       => 'Måned',
+  'Month'                       => 'MÃ¥ned',
   'Nov'                         => 'nov',
   'November'                    => 'november',
   'Oct'                         => 'okt',
@@ -40,17 +40,17 @@ $self{texts} = {
   'Out of balance!'             => 'Ute av balanse!',
   'Period'                      => 'Periode',
   'Quarter'                     => 'Kvartal',
-  'Reconciliation'              => 'Bankoppgjør',
-  'Reconciliation Report'       => 'Bankoppgjørsrapport',
+  'Reconciliation'              => 'BankoppgjÃ¸r',
+  'Reconciliation Report'       => 'BankoppgjÃ¸rsrapport',
   'Select all'                  => 'Velg alt',
   'Sep'                         => 'sep',
   'September'                   => 'september',
   'Source'                      => 'Bilag',
-  'Statement Balance'           => 'Balanseoppgjør',
+  'Statement Balance'           => 'BalanseoppgjÃ¸r',
   'Summary'                     => 'Oppsummert',
   'To'                          => 'Til',
-  'Update'                      => 'Oppdatér',
-  'Year'                        => 'År',
+  'Update'                      => 'OppdatÃ©r',
+  'Year'                        => 'Ã…r',
 };
 
 $self{subs} = {
@@ -70,7 +70,7 @@ $self{subs} = {
   'fortsett'                    => 'continue',
   'ferdig'                      => 'done',
   'velg_alt'                    => 'select_all',
-  'oppdatér'                    => 'update',
+  'oppdatÃ©r'                    => 'update',
 };
 
 1;

@@ -1,7 +1,7 @@
 $self{texts} = {
   'Account'                     => 'Konto',
   'Amount'                      => 'Belopp',
-  'Continue'                    => 'Fortsätt',
+  'Continue'                    => 'FortsÃ¤tt',
   'DCN missing!'                => 'Deklarationsnummer saknas',
   'Date'                        => 'Datum',
   'Memo'                        => 'Anteckning',
@@ -9,11 +9,11 @@ $self{texts} = {
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
   'RVC missing!'                => 'RVC saknas',
-  'Screen'                      => 'Skärm',
-  'Select a Printer!'           => 'Välj skrivare',
-  'Select payment'              => 'Välj betalningssätt',
-  'Select postscript or PDF!'   => 'Välj Postscript eller PDF',
-  'Source'                      => 'Källa',
+  'Screen'                      => 'SkÃ¤rm',
+  'Select a Printer!'           => 'VÃ¤lj skrivare',
+  'Select payment'              => 'VÃ¤lj betalningssÃ¤tt',
+  'Select postscript or PDF!'   => 'VÃ¤lj Postscript eller PDF',
+  'Source'                      => 'KÃ¤lla',
 };
 
 $self{subs} = {
@@ -28,7 +28,7 @@ $self{subs} = {
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',
   'select_payment'              => 'select_payment',
-  'fortsätt'                    => 'continue',
+  'fortsÃ¤tt'                    => 'continue',
 };
 
 1;

@@ -1,8 +1,8 @@
-$self{charset} = 'ISO-8859-9';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Continue'                    => 'Devam',
-  'Password'                    => 'Þifre',
+  'Password'                    => 'Åžifre',
 };
 
 $self{subs} = {

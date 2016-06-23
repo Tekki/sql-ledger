@@ -18,19 +18,19 @@ $self{texts} = {
   'February'                    => 'februar',
   'From'                        => 'Fra',
   'GIFI'                        => 'GIFI',
-  'Include in Report'           => 'Inkludér i rapport',
+  'Include in Report'           => 'InkludÃ©r i rapport',
   'Jan'                         => 'jan',
   'January'                     => 'januar',
   'Jul'                         => 'jul',
   'July'                        => 'juli',
   'Jun'                         => 'jun',
   'June'                        => 'juni',
-  'List Transactions'           => 'Vís bogføringer',
+  'List Transactions'           => 'VÃ­s bogfÃ¸ringer',
   'Mar'                         => 'mar',
   'March'                       => 'marts',
   'May'                         => 'maj',
   'May '                        => 'maj ',
-  'Month'                       => 'Måned',
+  'Month'                       => 'MÃ¥ned',
   'Nov'                         => 'nov',
   'November'                    => 'november',
   'Oct'                         => 'okt',
@@ -45,7 +45,7 @@ $self{texts} = {
   'Source'                      => 'Bilag',
   'Subtotal'                    => 'Subtotal',
   'To'                          => 'til',
-  'Year'                        => 'År',
+  'Year'                        => 'Ã…r',
 };
 
 $self{subs} = {
@@ -53,7 +53,7 @@ $self{subs} = {
   'chart_of_accounts'           => 'chart_of_accounts',
   'list'                        => 'list',
   'list_transactions'           => 'list_transactions',
-  'vís_bogføringer'             => 'list_transactions',
+  'vÃ­s_bogfÃ¸ringer'             => 'list_transactions',
 };
 
 1;

@@ -1,28 +1,28 @@
-$self{charset} = 'ISO-8859-2';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Account'                     => 'Számla',
-  'City'                        => 'Ország',
-  'Company'                     => 'Társaság',
-  'Continue'                    => 'Folytatás',
+  'Account'                     => 'SzÃ¡mla',
+  'City'                        => 'OrszÃ¡g',
+  'Company'                     => 'TÃ¡rsasÃ¡g',
+  'Continue'                    => 'FolytatÃ¡s',
   'Curr'                        => 'Dev',
   'Currency'                    => 'Deviza',
-  'Customer'                    => 'Vevõ',
-  'Customer Number'             => 'Ügyfél szám',
-  'Date Paid'                   => 'Fizetés napja',
-  'Description'                 => 'Szöveges leírás',
-  'Due Date'                    => 'Esedékesség',
-  'Exch'                        => 'Árf',
-  'Invoice'                     => 'Számla',
-  'Invoice Date'                => 'Teljesítés dátuma',
-  'Invoice Number'              => 'Számlaszám',
+  'Customer'                    => 'VevÅ‘',
+  'Customer Number'             => 'ÃœgyfÃ©l szÃ¡m',
+  'Date Paid'                   => 'FizetÃ©s napja',
+  'Description'                 => 'SzÃ¶veges leÃ­rÃ¡s',
+  'Due Date'                    => 'EsedÃ©kessÃ©g',
+  'Exch'                        => 'Ãrf',
+  'Invoice'                     => 'SzÃ¡mla',
+  'Invoice Date'                => 'TeljesÃ­tÃ©s dÃ¡tuma',
+  'Invoice Number'              => 'SzÃ¡mlaszÃ¡m',
   'No'                          => 'Nem',
   'Paid'                        => 'Fizetve',
-  'Posting failed!'             => 'A rögzítés nem sikerült!',
+  'Posting failed!'             => 'A rÃ¶gzÃ­tÃ©s nem sikerÃ¼lt!',
   'Qty'                         => 'Menny.',
-  'Salesperson'                 => 'Ügynök',
-  'Total'                       => 'Végösszeg',
-  'Unit'                        => 'Egység',
+  'Salesperson'                 => 'ÃœgynÃ¶k',
+  'Total'                       => 'VÃ©gÃ¶sszeg',
+  'Unit'                        => 'EgysÃ©g',
   'Yes'                         => 'Igen',
 };
 
@@ -34,7 +34,7 @@ $self{subs} = {
   'import_payments'             => 'import_payments',
   'import_sales_invoices'       => 'import_sales_invoices',
   'xrefhdr'                     => 'xrefhdr',
-  'folytatás'                   => 'continue',
+  'folytatÃ¡s'                   => 'continue',
 };
 
 1;

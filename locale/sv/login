@@ -1,12 +1,12 @@
 $self{texts} = {
-  'Company'                     => 'Compañía',
+  'Company'                     => 'CompaÃ±Ã­a',
   'Continue'                    => 'Continuar',
   'Dataset is newer than version!' => 'El conjunto de datos es mas nuevo que la version!!',
   'Incorrect Dataset version!'  => '!Version incorrecta de conjunto de datos!',
   'Login'                       => 'Nombre de Acceso',
   'Name'                        => 'Nombre',
-  'Password'                    => 'Contraseña',
-  'Version'                     => 'Versión',
+  'Password'                    => 'ContraseÃ±a',
+  'Version'                     => 'VersiÃ³n',
   'You did not enter a name!'   => 'No introdujo un nombre!',
   'done'                        => 'Hecho',
 };

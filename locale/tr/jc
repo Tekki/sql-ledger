@@ -1,22 +1,22 @@
-$self{charset} = 'ISO-8859-9';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Accounting Menu'             => 'Muhasebe Menüsü',
+  'Accounting Menu'             => 'Muhasebe MenÃ¼sÃ¼',
   'Amount'                      => 'Miktar',
   'Confirm!'                    => 'Onayla!',
   'Continue'                    => 'Devam',
   'Date'                        => 'Tarih',
   'Delete'                      => 'Sil',
-  'Description'                 => 'Açýklama',
-  'From'                        => 'Baþlangýç',
+  'Description'                 => 'AÃ§Ä±klama',
+  'From'                        => 'BaÅŸlangÄ±Ã§',
   'Include in Report'           => 'Raporla',
   'Notes'                       => 'Notlar:',
   'Number'                      => 'Numara',
   'Qty'                         => 'Adet',
   'Save'                        => 'Kaydet',
-  'Sell Price'                  => 'Satýþ Fiyatý',
+  'Sell Price'                  => 'SatÄ±ÅŸ FiyatÄ±',
   'Subtotal'                    => 'Aratoplam',
-  'To'                          => 'Bitiþ',
+  'To'                          => 'BitiÅŸ',
   'Total'                       => 'Toplam',
   'Yes'                         => 'Evet',
 };

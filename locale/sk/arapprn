@@ -1,17 +1,19 @@
-$self{charset} = 'ISO-8859-2';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Account'                     => 'Úèet',
-  'Amount'                      => 'Èiastka',
-  'Continue'                    => 'Pokraèovanie',
-  'Date'                        => 'Dátum',
+  'Account'                     => 'ÃšÄet',
+  'Amount'                      => 'ÄŒiastka',
+  'Continue'                    => 'PokraÄovanie',
+  'DCN missing!'                => 'DCN chÃ½ba !',
+  'Date'                        => 'DÃ¡tum',
   'Memo'                        => 'Memo',
-  'Nothing to print!'           => 'Neni èo tlaèi»!',
+  'Nothing to print!'           => 'Neni Äo tlaÄiÅ¥!',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
+  'RVC missing!'                => 'RVC chÃ½ba !',
   'Screen'                      => 'Obrazovka',
-  'Select a Printer!'           => 'Vyberte tlaèiareò',
-  'Select payment'              => 'Vyberte spôsob platby',
+  'Select a Printer!'           => 'Vyberte tlaÄiareÅˆ',
+  'Select payment'              => 'Vyberte spÃ´sob platby',
   'Select postscript or PDF!'   => 'Vyberte postscript alebo PDF!',
   'Source'                      => 'Doklad',
 };
@@ -28,7 +30,7 @@ $self{subs} = {
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',
   'select_payment'              => 'select_payment',
-  'pokraèovanie'                => 'continue',
+  'pokraÄovanie'               => 'continue',
 };
 
 1;

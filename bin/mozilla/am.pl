@@ -62,6 +62,7 @@ sub delete { &{ "delete_$form->{type}" } };
 
 sub save_as_new {
 
+  $form->{copydir} = $form->{id};
   delete $form->{id};
 
   &save;
@@ -318,28 +319,28 @@ sub list_account {
 
   my %dropdown = ( AR => $locale->text('AR'),
                    AP => $locale->text('AP'),
-		   AR_paid => $locale->text('AR Payment'),
-		   AR_amount => $locale->text('AR Amount'),
-		   AR_tax => $locale->text('Tax collected'),
-		   AR_discount => $locale->text('Early Payment Discount given'),
-		   AP_paid => $locale->text('AP Payment'),
-		   AP_amount => $locale->text('AP Amount'),
-		   AP_tax => $locale->text('Tax paid'),
-		   AP_discount => $locale->text('Early Payment Discount received'),
-		   IC => $locale->text('Inventory'),
-		   IC_sale => $locale->text('Tracking Item Income'),
-		   IC_income => $locale->text('Non-tracking Item Income'),
-		   IC_cogs => $locale->text('COGS'),
-		   IC_expense => $locale->text('Non-tracking Item Expense'),
-		   IC_taxpart => $locale->text('Tracking Item Tax'),
-		   IC_taxservice => $locale->text('Non-tracking Item Tax')
+                   AR_paid => $locale->text('AR Payment'),
+                   AR_amount => $locale->text('AR Amount'),
+                   AR_tax => $locale->text('Tax collected'),
+                   AR_discount => $locale->text('Early Payment Discount given'),
+                   AP_paid => $locale->text('AP Payment'),
+                   AP_amount => $locale->text('AP Amount'),
+                   AP_tax => $locale->text('Tax paid'),
+                   AP_discount => $locale->text('Early Payment Discount received'),
+                   IC => $locale->text('Inventory'),
+                   IC_sale => $locale->text('Tracking Item Income'),
+                   IC_income => $locale->text('Non-tracking Item Income'),
+                   IC_cogs => $locale->text('COGS'),
+                   IC_expense => $locale->text('Non-tracking Item Expense'),
+                   IC_taxpart => $locale->text('Tracking Item Tax'),
+                   IC_taxservice => $locale->text('Non-tracking Item Tax')
 		 );
 
   my %category = ( A => $locale->text('Asset'),
                    L => $locale->text('Liability'),
-		   Q => $locale->text('Equity'),
-		   I => $locale->text('Income'),
-		   E => $locale->text('Expense')
+                   Q => $locale->text('Equity'),
+                   I => $locale->text('Income'),
+                   E => $locale->text('Expense')
 		 );
   my @column_index = qw(accno gifi_accno description category contra dropdown closed);
 
@@ -350,8 +351,8 @@ sub list_account {
   $column_data{description} = qq|<th class=listtop>|.$locale->text('Description').qq|</a></th>|;
   $column_data{dropdown} = qq|<th class=listtop>|.$locale->text('Drop-down').qq|</a></th>|;
   $column_data{category} = qq|<th class=listtop>|.$locale->text('Type').qq|</a></th>|;
-  $column_data{contra} = qq|<th class=listtop>|.$locale->text('Contra').qq|</a></th>|;
-  $column_data{closed} = qq|<th class=listtop>|.$locale->text('Closed').qq|</a></th>|;
+  $column_data{contra} = qq|<th width=1% class=listtop>|.$locale->text('Contra').qq|</a></th>|;
+  $column_data{closed} = qq|<th width=1% class=listtop>|.$locale->text('Closed').qq|</a></th>|;
 
   $form->helpref("list_account", $myconfig{countrycode});
   
@@ -389,7 +390,7 @@ sub list_account {
       print qq|<tr class=listheading>|;
 
       $column_data{accno} = qq|<th><a class=listheading href=$form->{script}?action=edit_account&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{accno}</a></th>|;
-      $column_data{gifi_accno} = qq|<th class=listheading><a href=$form->{script}?action=edit_gifi&accno=$gifi_accno&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{gifi_accno}</a>&nbsp;</th>|;
+      $column_data{gifi_accno} = qq|<th><a class=listheading href=$form->{script}?action=edit_gifi&accno=$gifi_accno&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{gifi_accno}</a>&nbsp;</th>|;
       $column_data{description} = qq|<th class=listheading>$ref->{description}&nbsp;</th>|;
       $column_data{dropdown} = qq|<th>&nbsp;</th>|;
       $column_data{category} = qq|<th class=listheading>$category{$ref->{category}}&nbsp;</th>|;
@@ -407,9 +408,9 @@ sub list_account {
       $column_data{category} = qq|<td>$category{$ref->{category}}&nbsp;</td>|;
       
       $ref->{contra} = ($ref->{contra}) ? '*' : '&nbsp;';
-      $column_data{contra} = qq|<td>$ref->{contra}</td>|;
+      $column_data{contra} = qq|<td align=center>$ref->{contra}</td>|;
       $ref->{closed} = ($ref->{closed}) ? '*' : '&nbsp;';
-      $column_data{closed} = qq|<td>$ref->{closed}</td>|;
+      $column_data{closed} = qq|<td align=center>$ref->{closed}</td>|;
     }
 
     for (@column_index) { print "$column_data{$_}\n" }
@@ -1661,39 +1662,46 @@ sub save_language {
   $form->isblank("description", $locale->text('Description missing!'));
 
   $form->{code} =~ s/(\.\.|\*)//g;
-  
+
   AM->save_language(\%myconfig, \%$form);
 
-  if (! -d "$templates/$myconfig{dbname}/$form->{code}") {
-      
-    umask(002);
-    
-    if (mkdir "$templates/$myconfig{dbname}/$form->{code}", oct("771")) {
-      
-      umask(007);
+  $basedir = "$templates/$myconfig{dbname}";
+  $basedir = "$templates/$myconfig{dbname}/$form->{copydir}" if $form->{copydir};
+  $targetdir = "$templates/$myconfig{dbname}/$form->{code}";
 
-      opendir TEMPLATEDIR, "$templates/$myconfig{dbname}" or $form->error("$templates/$myconfig{dbname} : $!");
-      my @templates = grep !/^(\.|\.\.)/, readdir TEMPLATEDIR;
-      closedir TEMPLATEDIR;
+  umask(002);
 
-      foreach my $file (@templates) {
-	if (-f "$templates/$myconfig{dbname}/$file") {
-	  open(TEMP, "$templates/$myconfig{dbname}/$file") or $form->error("$templates/$myconfig{dbname}/$file : $!");
+  if (mkdir "$targetdir", oct("771")) {
+    opendir TEMPLATEDIR, "$basedir" or $form->error("$basedir : $!");
 
-	  open(NEW, ">$templates/$myconfig{dbname}/$form->{code}/$file") or $form->error("$templates/$myconfig{dbname}/$form->{code}/$file : $!");
+    @templates = grep !/^\.\.?$/, readdir TEMPLATEDIR;
+    closedir TEMPLATEDIR;
 
-	  while (my $line = <TEMP>) {
-	    print NEW $line;
-	  }
-	  close(TEMP);
-	  close(NEW);
-	}
+    umask(007);
+
+    for (@templates) {
+      if (-f "$basedir/$_") {
+        open(TEMP, "$basedir/$_") or $form->error("$basedir/$_ : $!");
+
+        open(NEW, ">$targetdir/$_") or $form->error("$targetdir/$_ : $!");
+
+        while ($line = <TEMP>) {
+          print NEW $line;
+        }
+        close(TEMP);
+        close(NEW);
       }
-    } else {
-      $form->error("${templates}/$form->{code} : $!");
     }
   }
-    
+
+  unless ($form->{copydir}) {
+    if ($form->{id} && ($form->{id} ne $form->{code})) {
+      # remove old directory
+      unlink "<$templates/$myconfig{dbname}/$form->{id}/*>";
+      rmdir "$templates/$myconfig{dbname}/$form->{id}";
+    }
+  }
+
   $form->redirect($locale->text('Language saved!'));
 
 }
@@ -2458,7 +2466,7 @@ sub defaults {
 		<td><input name=fax size=14 value="$form->{fax}"></td>
 	      </tr>
 	      <tr>
-		<th align=right>|.$locale->text('E-Mail').qq|</th>
+		<th align=right>|.$locale->text('E-mail').qq|</th>
 		<td><input name=companyemail size=25 value="$form->{companyemail}"></td>
 	      </tr>
 	      <tr>
@@ -2992,11 +3000,14 @@ pdf--PDF|;
 |;
   }
 
+
   $form->{title} = $locale->text('Edit Preferences');
 
   $form->helpref("user_preferences", $myconfig{countrycode});
 
   $form->{type} = "preferences";
+
+  $selectencoding = User->encoding($myconfig{dbdriver});
   
   $form->header;
 
@@ -3046,6 +3057,10 @@ pdf--PDF|;
 		.$form->select_option($form->{selectnumberformat}, $myconfig{numberformat})
 		.qq|</select></td>
 	      </tr>
+              <tr>
+                <th align=right nowrap>|.$locale->text('Multibyte Encoding').qq|</th>
+                <td><select name=encoding>|.$form->select_option($selectencoding, $myconfig{charset},1,1).qq|</select></td>
+              </tr>
 	      <tr>
 		<th align=right>|.$locale->text('Dropdown Limit').qq|</th>
 		<td><input name=vclimit class="inputright" size=10 value="$myconfig{vclimit}"></td>
@@ -3156,6 +3171,7 @@ sub save_preferences {
   }
   $form->{password} = $form->{new_password}; 
   $form->{tan} = $myconfig{tan};
+  $form->{charset} = $form->{encoding};
 
   if (AM->save_preferences(\%$form, $memberfile, $userspath)) {
     $form->redirect($locale->text('Preferences saved!'));
@@ -3242,7 +3258,7 @@ print qq|
 
 sub get_dataset {
 
-  if ($form->{"contenttype"} =~ /application\/.*?gzip/) {
+  if ($form->{tmpfile} =~ /\.gz$/) {
     if ($gzip) {
       ($gzip) = split / /, $gzip;
     } else {
@@ -3259,7 +3275,6 @@ sub get_dataset {
     if (@e) {
       $form->{filename} = join '.', @e;
     }
-
   }
 
   open(FH, "$userspath/$form->{tmpfile}") or $form->error("$userspath/$form->{tmpfile} : $!");
@@ -3832,10 +3847,10 @@ sub list_warehouse {
 
   my %column_data;
   
-  $column_data{description} = qq|<th width=30% class=listheading>|.$locale->text('Description').qq|</th>|;
+  $column_data{description} = qq|<th class=listheading>|.$locale->text('Description').qq|</th>|;
   $column_data{address} = qq|<th class=listheading>|.$locale->text('Address').qq|</th>|;
-  $column_data{up} = qq|<th class=listheading>&nbsp;</th>|;
-  $column_data{down} = qq|<th class=listheading>&nbsp;</th>|;
+  $column_data{up} = qq|<th width=1% class=listheading>&nbsp;</th>|;
+  $column_data{down} = qq|<th width=1% class=listheading>&nbsp;</th>|;
 
   $form->helpref("list_warehouse", $myconfig{countrycode});
 
@@ -4160,7 +4175,8 @@ sub company_logo {
   </tr>
 |;
   }
- 
+
+
   # create the logo screen
   $form->header;
 
@@ -4239,7 +4255,7 @@ sub recurring_transactions {
 
   $form->{allbox} = ($form->{allbox}) ? "checked" : "";
   $action = ($form->{deselect}) ? "deselect_all" : "select_all";
-  $column_data{ndx} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll(); javascript:document.forms[0].submit()"><input type=hidden name=action value="$action"></th>|;
+  $column_data{ndx} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll(); javascript:document.main.submit()"><input type=hidden name=action value="$action"></th>|;
   
   $column_data{reference} = "<th><a class=listheading href=$href&sort=reference>".$locale->text('Reference').qq"</a></th>";
   $column_data{id} = "<th class=listheading>".$locale->text('ID')."</th>";

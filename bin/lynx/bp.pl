@@ -115,13 +115,13 @@ sub search {
   
   $label{print}{title} = "Print";
   $label{queue}{title} = "Queued";
-  $label{email}{title} = "E-Mail";
+  $label{email}{title} = "E-mail";
 
   $checked{$form->{batch}} = "checked";
 
 # $locale->text('Print')
 # $locale->text('Queued')
-# $locale->text('E-Mail')
+# $locale->text('E-mail')
 
   $form->{title} = $locale->text($label{$form->{batch}}{title})." ".$locale->text($label{$form->{type}}{title});
 
@@ -680,7 +680,7 @@ sub list_spool {
   $column_header{runningnumber} = "<th><a class=listheading>&nbsp;</th>";
   $form->{allbox} = ($form->{allbox}) ? "checked" : "";
   $action = ($form->{deselect}) ? "deselect_all" : "select_all";
-  $column_header{ndx} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll(); Javascript:document.forms[0].submit()"><input type=hidden name=action value="$action"></th>|;
+  $column_header{ndx} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll(); Javascript:document.main.submit()"><input type=hidden name=action value="$action"></th>|;
   $column_header{transdate} = "<th><a class=listheading href=$href&sort=transdate>".$locale->text('Date')."</a></th>";
   $column_header{invnumber} = "<th><a class=listheading href=$href&sort=invnumber>".$locale->text('Invoice')."</a></th>";
   $column_header{ordnumber} = "<th><a class=listheading href=$href&sort=ordnumber>".$locale->text('Order')."</a></th>";

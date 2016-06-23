@@ -1,29 +1,29 @@
 $self{texts} = {
-  'Accounting Menu'             => 'Menú Comptable',
+  'Accounting Menu'             => 'MenÃº Comptable',
   'Amount'                      => 'Total',
   'Closed'                      => 'Tancat',
   'Confirm!'                    => 'Confirmar!',
   'Continue'                    => 'Continuar',
-  'Copies'                      => 'Còpies',
+  'Copies'                      => 'CÃ²pies',
   'Customer'                    => 'Client',
   'Date'                        => 'Data',
-  'Description'                 => 'Descripció',
+  'Description'                 => 'DescripciÃ³',
   'E-mail'                      => 'Email',
   'From'                        => 'De',
   'ID'                          => 'ID',
   'Invoice'                     => 'Factura',
-  'Invoice Number'              => 'Núm Fra.',
+  'Invoice Number'              => 'NÃºm Fra.',
   'Name'                        => 'Nom',
-  'Number'                      => 'Número',
+  'Number'                      => 'NÃºmero',
   'Open'                        => 'Obert',
   'Order'                       => 'Ordre',
-  'Order Number'                => 'Número Ordre',
+  'Order Number'                => 'NÃºmero Ordre',
   'Purchase Orders'             => 'Ordres de Compra',
   'Sales Orders'                => 'Pressupostos',
   'To'                          => 'Fins',
   'Total'                       => 'Total',
-  'Vendor'                      => 'Proveïdor',
-  'Yes'                         => 'Sí',
+  'Vendor'                      => 'ProveÃ¯dor',
+  'Yes'                         => 'SÃ­',
 };
 
 $self{subs} = {
@@ -43,7 +43,7 @@ $self{subs} = {
   'yes'                         => 'yes',
   'continuar'                   => 'continue',
   'email'                       => 'e_mail',
-  'sí'                          => 'yes',
+  'sÃ­'                          => 'yes',
 };
 
 1;

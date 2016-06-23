@@ -1,13 +1,14 @@
-$self{charset} = 'ISO-8859-5';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Continue'                    => 'ðÒÏÄÏ×ÖÉÔÉ',
-  'Password'                    => 'ðÁÒÏÌØ',
+  'Continue'                    => 'ÐŸÑ€Ð¾Ð´Ð¾Ð²Ð¶Ð¸Ñ‚Ð¸',
+  'Password'                    => 'ÐŸÐ°Ñ€Ð¾Ð»ÑŒ',
+  'Session expired!'            => 'Ð¡ÐµÐ°Ð½Ñ Ð·Ð°ÑÑ‚Ð°Ñ€Ñ–Ð²!',
 };
 
 $self{subs} = {
   'getpassword'                 => 'getpassword',
-  'ðÒÏÄÏ×ÖÉÔÉ'                  => 'continue',
+  'ÐŸÑ€Ð¾Ð´Ð¾Ð²Ð¶Ð¸Ñ‚Ð¸'        => 'continue',
 };
 
 1;

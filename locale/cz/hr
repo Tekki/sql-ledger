@@ -1,30 +1,30 @@
-$self{charset} = 'ISO-8859-2';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'AP'                          => 'Závazky',
-  'Accounting Menu'             => 'Menu úèetnictví',
+  'AP'                          => 'ZÃ¡vazky',
+  'Accounting Menu'             => 'Menu ÃºÄetnictvÃ­',
   'Address'                     => 'Adresa',
   'Administrator'               => 'Administrator',
-  'All'                         => 'V¹e',
-  'Amount'                      => 'Èástka',
-  'Continue'                    => 'Pokraèování',
+  'All'                         => 'VÅ¡e',
+  'Amount'                      => 'ÄŒÃ¡stka',
+  'Continue'                    => 'PokraÄovÃ¡nÃ­',
   'Delete'                      => 'Vymazat',
   'Description'                 => 'Popis',
   'E-mail'                      => 'E-mail',
-  'Expense'                     => 'Náklady',
+  'Expense'                     => 'NÃ¡klady',
   'From'                        => 'z',
   'ID'                          => 'ID',
-  'Include in Report'           => 'Zahrnovat v sestavì',
-  'Login'                       => 'U¾ivatelské jméno',
-  'Name'                        => 'Jméno',
-  'Notes'                       => 'Poznámky',
-  'Number'                      => 'Èíslo',
-  'Orphaned'                    => 'Neprodejné',
+  'Include in Report'           => 'Zahrnovat v sestavÄ›',
+  'Login'                       => 'UÅ¾ivatelskÃ© jmÃ©no',
+  'Name'                        => 'JmÃ©no',
+  'Notes'                       => 'PoznÃ¡mky',
+  'Number'                      => 'ÄŒÃ­slo',
+  'Orphaned'                    => 'NeprodejnÃ©',
   'Rate'                        => 'Sazba',
-  'Sales'                       => 'Pøíjmy z prodeje',
-  'Save'                        => 'Ulo¾it',
+  'Sales'                       => 'PÅ™Ã­jmy z prodeje',
+  'Save'                        => 'UloÅ¾it',
   'To'                          => 'do',
-  'User'                        => 'U¾ivatel',
+  'User'                        => 'UÅ¾ivatel',
 };
 
 $self{subs} = {
@@ -58,9 +58,9 @@ $self{subs} = {
   'update'                      => 'update',
   'update_deduction'            => 'update_deduction',
   'update_employee'             => 'update_employee',
-  'pokraèování'                 => 'continue',
+  'pokraÄovÃ¡nÃ­'                 => 'continue',
   'vymazat'                     => 'delete',
-  'ulo¾it'                      => 'save',
+  'uloÅ¾it'                      => 'save',
 };
 
 1;

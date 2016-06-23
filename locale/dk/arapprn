@@ -1,15 +1,15 @@
 $self{texts} = {
   'Account'                     => 'Konto',
-  'Amount'                      => 'Beløb',
-  'Continue'                    => 'Fortsæt',
+  'Amount'                      => 'BelÃ¸b',
+  'Continue'                    => 'FortsÃ¦t',
   'Date'                        => 'Dato',
   'Memo'                        => 'Note',
   'Nothing to print!'           => 'Ingenting at udskrive!',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
-  'Screen'                      => 'Skærm',
-  'Select payment'              => 'Vælg betaling',
-  'Select postscript or PDF!'   => 'Vælg postscript eller PDF',
+  'Screen'                      => 'SkÃ¦rm',
+  'Select payment'              => 'VÃ¦lg betaling',
+  'Select postscript or PDF!'   => 'VÃ¦lg postscript eller PDF',
   'Source'                      => 'Bilag',
 };
 
@@ -25,7 +25,7 @@ $self{subs} = {
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',
   'select_payment'              => 'select_payment',
-  'fortsæt'                     => 'continue',
+  'fortsÃ¦t'                     => 'continue',
 };
 
 1;

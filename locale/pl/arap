@@ -1,4 +1,4 @@
-$self{charset} = 'ISO-8859-2';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Address'                     => 'Adres',
@@ -11,22 +11,22 @@ $self{texts} = {
   'Description'                 => 'Opis',
   'E-mail'                      => 'E-mail',
   'Employee Number'             => 'Numer Pracownika',
-  'Message'                     => 'Wiadomo∂Ê',
+  'Message'                     => 'Wiadomo≈õƒá',
   'Number'                      => 'Numer Katalogu',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
   'Print'                       => 'Wydrukuj',
   'Project not on file!'        => 'Brak Projektu w zbiorze danych!',
-  'Reference'                   => 'Odno∂nik',
-  'Select from one of the names below' => 'Wybierz nazwÍ z poniøszych',
-  'Select from one of the projects below' => 'Wybierz z projektÛw',
-  'Startdate'                   => 'DzieÒ Zatrudnienia',
-  'Subject'                     => 'Tre∂Ê',
+  'Reference'                   => 'Odno≈õnik',
+  'Select from one of the names below' => 'Wybierz nazwƒô z poni≈ºszych',
+  'Select from one of the projects below' => 'Wybierz z projekt√≥w',
+  'Startdate'                   => 'Dzie≈Ñ Zatrudnienia',
+  'Subject'                     => 'Tre≈õƒá',
   'To'                          => 'do',
   'Vendor Number'               => 'Numer Dostawcy',
   'Vendor not on file!'         => 'Brak Dostawcy w bazie danych',
-  'Warning!'                    => 'Ostrzeøenie',
-  'sent'                        => 'wys≥ane',
+  'Warning!'                    => 'Ostrze≈ºenie',
+  'sent'                        => 'wys≈Çane',
 };
 
 $self{subs} = {

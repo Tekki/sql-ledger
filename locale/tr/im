@@ -1,20 +1,20 @@
-$self{charset} = 'ISO-8859-9';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Account'                     => 'Hesap',
-  'Company'                     => 'Þirket',
+  'Company'                     => 'Åžirket',
   'Continue'                    => 'Devam',
   'Currency'                    => 'Para Birimi',
-  'Customer'                    => 'Alýcý',
-  'Date Paid'                   => 'Ödendiði Tarih',
-  'Description'                 => 'Açýklama',
+  'Customer'                    => 'AlÄ±cÄ±',
+  'Date Paid'                   => 'Ã–dendiÄŸi Tarih',
+  'Description'                 => 'AÃ§Ä±klama',
   'Due Date'                    => 'Vade Tarihi',
   'Exch'                        => 'D.Kuru',
   'Invoice'                     => 'Fatura',
   'Invoice Date'                => 'Fatura Tarihi',
   'Invoice Number'              => 'Fatura No',
-  'No'                          => 'Hayýr',
-  'Paid'                        => 'Ödendi',
+  'No'                          => 'HayÄ±r',
+  'Paid'                        => 'Ã–dendi',
   'Qty'                         => 'Adet',
   'Total'                       => 'Toplam',
   'Unit'                        => 'Birim',

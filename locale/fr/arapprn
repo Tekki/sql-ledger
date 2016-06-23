@@ -1,18 +1,20 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'Account'                     => 'Compte',
   'Amount'                      => 'Montant',
   'Continue'                    => 'Continuer',
-  'DCN missing!'                => 'N° Contrôle Document Manquant!',
+  'DCN missing!'                => 'NÂ° ContrÃ´le Document Manquant!',
   'Date'                        => 'Date',
-  'Memo'                        => 'Mémo',
-  'Nothing to print!'           => 'Rien à imprimer',
+  'Memo'                        => 'MÃ©mo',
+  'Nothing to print!'           => 'Rien Ã Â  imprimer',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postcript',
   'RVC missing!'                => 'RVC manquant',
-  'Screen'                      => 'Écran',
+  'Screen'                      => 'ÃƒÂ©cran',
   'Select a Printer!'           => 'Choisir une imprimante',
-  'Select payment'              => 'Sélectionner le payement',
-  'Select postscript or PDF!'   => 'Sélectionner Postscript ou PDF!',
+  'Select payment'              => 'SÃ©lectionner le paiement',
+  'Select postscript or PDF!'   => 'SÃ©lectionner Postscript ou PDF!',
   'Source'                      => 'Source',
 };
 

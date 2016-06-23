@@ -1,17 +1,18 @@
-$self{charset} = 'ISO-8859-5';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Company'                     => 'ïÒÇÁÎÉÚÁÃÉÑ',
-  'Continue'                    => 'ðÒÏÄÏÌÖÉÔØ',
-  'Dataset is newer than version!' => 'âÁÚÁ ÄÁÎÎÙÈ ÎÏ×ÅÅ, ÞÅÍ ÔÅËÕÝÁÑ ×ÅÒÓÉÑ!',
-  'Incorrect Dataset version!'  => 'îÅ×ÅÒÎÁÑ ×ÅÒÓÉÑ ÂÁÚÙ ÄÁÎÎÙÈ!',
-  'Login'                       => 'ðÏÌØÚÏ×ÁÔÅÌØ',
-  'Name'                        => 'îÁÉÍÅÎÏ×ÁÎÉÅ',
-  'Password'                    => 'ðÁÒÏÌØ',
-  'Upgrading to Version'        => 'ïÂÎÏ×ÌÅÎÉÅ ÄÏ ×ÅÒÓÉÉ',
-  'Version'                     => '÷ÅÒÓÉÑ',
-  'You did not enter a name!'   => '÷Ù ÎÅ ××ÅÌÉ (ÉÍÑ)ÎÁÉÍÅÎÏ×ÁÎÉÅ!',
-  'done'                        => '×ÙÐÏÌÎÅÎÏ',
+  'Access Denied!'              => 'Ð”Ð¾ÑÑ‚ÑƒÐ¿ Ð·Ð°Ð¿Ñ€ÐµÑ‰ÐµÐ½',
+  'Company'                     => 'ÐžÑ€Ð³Ð°Ð½Ð¸Ð·Ð°Ñ†Ð¸Ñ',
+  'Continue'                    => 'ÐŸÑ€Ð¾Ð´Ð¾Ð»Ð¶Ð¸Ñ‚ÑŒ',
+  'Dataset is newer than version!' => 'Ð‘Ð°Ð·Ð° Ð´Ð°Ð½Ð½Ñ‹Ñ… Ð½Ð¾Ð²ÐµÐµ, Ñ‡ÐµÐ¼ Ñ‚ÐµÐºÑƒÑ‰Ð°Ñ Ð²ÐµÑ€ÑÐ¸Ñ!',
+  'Incorrect Dataset version!'  => 'ÐÐµÐ²ÐµÑ€Ð½Ð°Ñ Ð²ÐµÑ€ÑÐ¸Ñ Ð±Ð°Ð·Ñ‹ Ð´Ð°Ð½Ð½Ñ‹Ñ…!',
+  'Login'                       => 'ÐŸÐ¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒ',
+  'Name'                        => 'ÐÐ°Ð¸Ð¼ÐµÐ½Ð¾Ð²Ð°Ð½Ð¸Ðµ',
+  'Password'                    => 'ÐŸÐ°Ñ€Ð¾Ð»ÑŒ',
+  'Upgrading to Version'        => 'ÐžÐ±Ð½Ð¾Ð²Ð»ÐµÐ½Ð¸Ðµ Ð´Ð¾ Ð²ÐµÑ€ÑÐ¸Ð¸',
+  'Version'                     => 'Ð’ÐµÑ€ÑÐ¸Ñ',
+  'You did not enter a name!'   => 'Ð’Ñ‹ Ð½Ðµ Ð²Ð²ÐµÐ»Ð¸ (Ð¸Ð¼Ñ)Ð½Ð°Ð¸Ð¼ÐµÐ½Ð¾Ð²Ð°Ð½Ð¸Ðµ!',
+  'done'                        => 'Ð²Ñ‹Ð¿Ð¾Ð»Ð½ÐµÐ½Ð¾',
 };
 
 $self{subs} = {
@@ -19,7 +20,7 @@ $self{subs} = {
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
-  'ðÏÌØÚÏ×ÁÔÅÌØ'                => 'login',
+  'ÐŸÐ¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒ'    => 'login',
 };
 
 1;

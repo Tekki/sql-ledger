@@ -108,7 +108,9 @@ sub all_transactions {
   my $fromdate_where;
   my $todate_where;
 
-  ($form->{fromdate}, $form->{todate}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
+  unless ($form->{fromdate} || $form->{todate}) {
+    ($form->{fromdate}, $form->{todate}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
+  }
   
   if ($form->{fromdate}) {
     $fromdate_where = qq|

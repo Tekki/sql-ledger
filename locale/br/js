@@ -1,0 +1,29 @@
+$self{charset} = 'UTF8';
+
+$self{texts} = {
+  'April'                       => 'Abril',
+  'August'                      => 'Agosto',
+  'December'                    => 'Dezembro',
+  'February'                    => 'Fevereiro',
+  'January'                     => 'Janeiro',
+  'July'                        => 'Julho',
+  'June'                        => 'Junho',
+  'March'                       => 'Março',
+  'May'                         => 'Mai',
+  'November'                    => 'Novembro',
+  'October'                     => 'Outubro',
+  'September'                   => 'Setembro',
+};
+
+$self{subs} = {
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'js_calendar'                 => 'js_calendar',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
+};
+
+1;
+

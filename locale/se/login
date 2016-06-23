@@ -1,16 +1,16 @@
 $self{texts} = {
-  'Access Denied!'              => 'Fel kod eller användarnamn!',
-  'Company'                     => 'Företag',
-  'Continue'                    => 'Fortsätt',
-  'Dataset is newer than version!' => 'Dataset är nyare än programversionen',
+  'Access Denied!'              => 'Fel kod eller anvÃ¤ndarnamn!',
+  'Company'                     => 'FÃ¶retag',
+  'Continue'                    => 'FortsÃ¤tt',
+  'Dataset is newer than version!' => 'Dataset Ã¤r nyare Ã¤n programversionen',
   'Incorrect Dataset version!'  => 'Felaktig databasversion',
   'Login'                       => 'Logga in',
   'Name'                        => 'Namn',
-  'Password'                    => 'Lösenord',
+  'Password'                    => 'LÃ¶senord',
   'Upgrading to Version'        => 'Uppgradera till version',
   'Version'                     => 'Version',
-  'You did not enter a name!'   => 'Du skrev inte in något namn',
-  'done'                        => 'Färdigt',
+  'You did not enter a name!'   => 'Du skrev inte in nÃ¥got namn',
+  'done'                        => 'FÃ¤rdigt',
 };
 
 $self{subs} = {

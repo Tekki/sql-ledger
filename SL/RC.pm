@@ -53,7 +53,9 @@ sub payment_transactions {
                  WHERE accno = '$form->{accno}'|;
   ($form->{category}) = $dbh->selectrow_array($query);
 
-  ($form->{fromdate}, $form->{todate}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
+  unless ($form->{fromdate} || $form->{todate}) {
+    ($form->{fromdate}, $form->{todate}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
+  }
 
   my $cleared;
   if ($form->{todate}) {

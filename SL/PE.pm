@@ -46,7 +46,9 @@ sub projects {
     $where .= " AND lower(pr.description) LIKE '$var'";
   }
 
-  ($form->{startdatefrom}, $form->{startdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
+  unless ($form->{startdatefrom} || $form->{startdateto}) {
+    ($form->{startdatefrom}, $form->{startdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
+  }
   
   if ($form->{startdatefrom}) {
     $where .= " AND (pr.startdate IS NULL OR pr.startdate >= '$form->{startdatefrom}')";
@@ -292,7 +294,9 @@ sub jobs {
     $query .= " AND lower(pr.description) LIKE '$var'";
   }
 
-  ($form->{startdatefrom}, $form->{startdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
+  unless ($form->{startdatefrom} || $form->{startdateto}) {
+    ($form->{startdatefrom}, $form->{startdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
+  }
   
   if ($form->{startdatefrom}) {
     $query .= " AND pr.startdate >= '$form->{startdatefrom}'";
@@ -1493,7 +1497,9 @@ sub get_jcitems {
     $where .= " AND j.employee_id = $var";
   }
 
-  ($form->{transdatefrom}, $form->{transdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
+  unless ($form->{transdatefrom} || $form->{transdateto}) {
+    ($form->{transdatefrom}, $form->{transdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
+  }
   
   if ($form->{transdatefrom}) {
     $where .= " AND j.checkedin >= '$form->{transdatefrom}'";
@@ -1509,9 +1515,9 @@ sub get_jcitems {
   $query = qq|SELECT j.id, j.description, j.qty - j.allocated AS qty,
 	       j.sellprice, j.parts_id, pr.$form->{vc}_id, j.project_id,
 	       j.checkedin::date AS transdate, j.notes,
-               c.name AS $form->{vc}, c.$form->{vc}number, pr.projectnumber,
-	       p.partnumber, e.name AS employee
-               FROM jcitems j
+         c.name AS $form->{vc}, c.$form->{vc}number, pr.projectnumber,
+	       p.partnumber, p.unit, e.name AS employee
+         FROM jcitems j
 	       JOIN project pr ON (pr.id = j.project_id)
 	       JOIN employee e ON (e.id = j.employee_id)
 	       JOIN parts p ON (p.id = j.parts_id)
@@ -1532,8 +1538,8 @@ sub get_jcitems {
   # tax accounts
   $query = qq|SELECT c.accno
               FROM chart c
-	      JOIN partstax pt ON (pt.chart_id = c.id)
-	      WHERE pt.parts_id = ?|;
+              JOIN partstax pt ON (pt.chart_id = c.id)
+              WHERE pt.parts_id = ?|;
   my $tth = $dbh->prepare($query) || $form->dberror($query);
   my $ptref;
 
@@ -1564,9 +1570,9 @@ sub get_jcitems {
     
   $query = qq|SELECT c.accno, t.rate
               FROM tax t
-	      JOIN chart c ON (c.id = t.chart_id)
-	      $where
-	      ORDER BY c.accno, t.validto|;
+              JOIN chart c ON (c.id = t.chart_id)
+              $where
+              ORDER BY c.accno, t.validto|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {

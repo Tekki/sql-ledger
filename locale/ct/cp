@@ -1,15 +1,15 @@
 $self{texts} = {
   'AP'                          => 'Despeses',
   'AR'                          => 'Ingressos',
-  'Accounting Menu'             => 'Men˙ Comptable',
-  'Address'                     => 'AdreÁa',
+  'Accounting Menu'             => 'Men√∫ Comptable',
+  'Address'                     => 'Adre√ßa',
   'All'                         => 'Tots',
   'Amount'                      => 'Total',
   'Continue'                    => 'Continuar',
   'Currency'                    => 'Moneda',
   'Customer'                    => 'Client',
   'Date'                        => 'Data',
-  'Description'                 => 'DescripciÛ',
+  'Description'                 => 'Descripci√≥',
   'Discount'                    => 'Descompte',
   'Due Date'                    => 'Data Venciment',
   'E-mail'                      => 'Email',
@@ -18,7 +18,7 @@ $self{texts} = {
   'Invoice'                     => 'Factura',
   'Invoice Date'                => 'Data Fra.',
   'Language'                    => 'Idioma',
-  'Number'                      => 'N˙mero',
+  'Number'                      => 'N√∫mero',
   'Paid'                        => 'Pagat',
   'Payment'                     => 'Pagament',
   'Payments'                    => 'Pagaments',
@@ -26,7 +26,7 @@ $self{texts} = {
   'Source'                      => 'Font',
   'To'                          => 'Fins',
   'Total'                       => 'Total',
-  'Vendor'                      => 'ProveÔdor',
+  'Vendor'                      => 'Prove√Ødor',
 };
 
 $self{subs} = {

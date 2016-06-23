@@ -1,14 +1,14 @@
-$self{charset} = 'ISO-8859-2';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Company'                     => 'Firma',
-  'Continue'                    => 'Pokraèování',
-  'Incorrect Dataset version!'  => '©patná verze dat!',
-  'Login'                       => 'U¾ivatelské jméno',
-  'Name'                        => 'Jméno',
+  'Continue'                    => 'PokraÄovÃ¡nÃ­',
+  'Incorrect Dataset version!'  => 'Å patnÃ¡ verze dat!',
+  'Login'                       => 'UÅ¾ivatelskÃ© jmÃ©no',
+  'Name'                        => 'JmÃ©no',
   'Password'                    => 'Heslo',
   'Version'                     => 'Verze',
-  'You did not enter a name!'   => 'Nezadal jste jméno!',
+  'You did not enter a name!'   => 'Nezadal jste jmÃ©no!',
 };
 
 $self{subs} = {
@@ -16,7 +16,7 @@ $self{subs} = {
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
-  'u¾ivatelské_jméno'           => 'login',
+  'uÅ¾ivatelskÃ©_jmÃ©no'           => 'login',
 };
 
 1;

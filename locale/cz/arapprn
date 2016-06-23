@@ -1,9 +1,9 @@
-$self{charset} = 'ISO-8859-2';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Account'                     => 'Úèet',
-  'Amount'                      => 'Èástka',
-  'Continue'                    => 'Pokraèování',
+  'Account'                     => 'ÃšÄet',
+  'Amount'                      => 'ÄŒÃ¡stka',
+  'Continue'                    => 'PokraÄovÃ¡nÃ­',
   'Date'                        => 'Datum',
   'Screen'                      => 'Na obrazovku',
   'Source'                      => 'Zdroj',
@@ -21,7 +21,7 @@ $self{subs} = {
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',
   'select_payment'              => 'select_payment',
-  'pokraèování'                 => 'continue',
+  'pokraÄovÃ¡nÃ­'                 => 'continue',
 };
 
 1;

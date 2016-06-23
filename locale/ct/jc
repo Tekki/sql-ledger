@@ -1,17 +1,17 @@
 $self{texts} = {
-  'Accounting Menu'             => 'Menú Comptable',
+  'Accounting Menu'             => 'MenÃº Comptable',
   'Amount'                      => 'Total',
   'Closed'                      => 'Tancat',
   'Confirm!'                    => 'Confirmar!',
   'Continue'                    => 'Continuar',
   'Date'                        => 'Data',
   'Delete'                      => 'Esborrar',
-  'Description'                 => 'Descripció',
+  'Description'                 => 'DescripciÃ³',
   'From'                        => 'De',
   'ID'                          => 'ID',
   'Include in Report'           => 'Incloure en l\'Informe',
   'Notes'                       => 'Notes',
-  'Number'                      => 'Número',
+  'Number'                      => 'NÃºmero',
   'Open'                        => 'Obert',
   'Qty'                         => 'Quantitat',
   'Save'                        => 'Guardar',
@@ -20,7 +20,7 @@ $self{texts} = {
   'Subtotal'                    => 'Subtotal',
   'To'                          => 'Fins',
   'Total'                       => 'Total',
-  'Yes'                         => 'Sí',
+  'Yes'                         => 'SÃ­',
 };
 
 $self{subs} = {
@@ -66,7 +66,7 @@ $self{subs} = {
   'continuar'                   => 'continue',
   'esborrar'                    => 'delete',
   'guardar'                     => 'save',
-  'sí'                          => 'yes',
+  'sÃ­'                          => 'yes',
 };
 
 1;

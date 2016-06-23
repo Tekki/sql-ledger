@@ -1,18 +1,18 @@
-$self{charset} = 'ISO-8859-2';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Access Denied!'              => 'Hozzáférés megtagadva!',
-  'Company'                     => 'Társaság',
-  'Continue'                    => 'Folytatás',
-  'Dataset is newer than version!' => 'A Cégadatbázis verziója újabb, mint a programé!',
-  'Incorrect Dataset version!'  => 'Érvénytelen adatbázisverzió!',
-  'Login'                       => 'Belépés',
-  'Name'                        => 'Név',
-  'Password'                    => 'Jelszó',
-  'Upgrading to Version'        => 'Verzió karbantartás',
-  'Version'                     => 'Verzió',
-  'You did not enter a name!'   => 'Nem írt be nevet!',
-  'done'                        => 'elvégezve',
+  'Access Denied!'              => 'HozzÃ¡fÃ©rÃ©s megtagadva!',
+  'Company'                     => 'TÃ¡rsasÃ¡g',
+  'Continue'                    => 'FolytatÃ¡s',
+  'Dataset is newer than version!' => 'A CÃ©gadatbÃ¡zis verziÃ³ja Ãºjabb, mint a programÃ©!',
+  'Incorrect Dataset version!'  => 'Ã‰rvÃ©nytelen adatbÃ¡zisverziÃ³!',
+  'Login'                       => 'BelÃ©pÃ©s',
+  'Name'                        => 'NÃ©v',
+  'Password'                    => 'JelszÃ³',
+  'Upgrading to Version'        => 'VerziÃ³ karbantartÃ¡s',
+  'Version'                     => 'VerziÃ³',
+  'You did not enter a name!'   => 'Nem Ã­rt be nevet!',
+  'done'                        => 'elvÃ©gezve',
 };
 
 $self{subs} = {
@@ -20,7 +20,7 @@ $self{subs} = {
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
-  'belépés'                     => 'login',
+  'belÃ©pÃ©s'                     => 'login',
 };
 
 1;

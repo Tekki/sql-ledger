@@ -1,23 +1,28 @@
+$self{charset} = 'UTF8';
+
 $self{texts} = {
-  'Access Denied!'              => 'Acesso Negado',
   'Company'                     => 'Empresa',
   'Continue'                    => 'Continuar',
-  'Dataset is newer than version!' => 'Conjunto de dados é mais novo que a versão!',
-  'Incorrect Dataset version!'  => 'Versão incorreta de grupos de dados!',
+  'Dataset is newer than version!' => 'Conjunto de dados Ã© mais novo que a versÃ£o!',
+  'Incorrect Dataset version!'  => 'VersÃ£o incorreta de grupos de dados!',
   'Login'                       => 'Entrar',
   'Name'                        => 'Nome',
+  'No email address for'        => 'Nenhum endereÃ§o de e-mail para',
   'Password'                    => 'Senha',
-  'Upgrading to Version'        => 'Atualizado para versão',
-  'Version'                     => 'Versão',
-  'You did not enter a name!'   => 'Você não entrou com um nome',
-  'done'                        => 'feito',
+  'Upgrading to Version'        => 'Atualizado para versÃ£o',
+  'Version'                     => 'VersÃ£o',
+  'You did not enter a name!'   => 'VocÃª nÃ£o entrou com um nome',
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_tan'                   => 'email_tan',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
+  'tan_login'                   => 'tan_login',
+  'continuar'                   => 'continue',
   'entrar'                      => 'login',
 };
 

@@ -1,29 +1,29 @@
-$self{charset} = 'BIG5';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Account'                     => '±b¤á',
-  'City'                        => '«°¥«',
-  'Company'                     => '¤½¥q',
-  'Continue'                    => 'Ä~Äò',
-  'Curr'                        => '¥Ø«e',
-  'Currency'                    => '¹ô§O',
-  'Customer'                    => '«È¤á',
-  'Customer Number'             => '«È¤á½s¸¹',
-  'Date Paid'                   => '¥I´Ú¤é´Á',
-  'Description'                 => '»¡©ú',
-  'Due Date'                    => '¨ì´Á¤é',
-  'Exch'                        => '¶×²v',
-  'Invoice'                     => 'µo²¼',
-  'Invoice Date'                => 'µo²¼¤é´Á',
-  'Invoice Number'              => 'µo²¼½s¸¹',
-  'No'                          => '§_',
-  'Paid'                        => '¤w¥I',
-  'Posting failed!'             => '¥[¤J¥¢±Ñ¡I',
-  'Qty'                         => '¼Æ¶q',
-  'Salesperson'                 => '¾P°â¤H­û',
-  'Total'                       => 'Á`­p',
-  'Unit'                        => '³æ¦ì',
-  'Yes'                         => '¬O',
+  'Account'                     => 'å¸³æˆ¶',
+  'City'                        => 'åŸŽå¸‚',
+  'Company'                     => 'å…¬å¸',
+  'Continue'                    => 'ç¹¼çºŒ',
+  'Curr'                        => 'ç›®å‰',
+  'Currency'                    => 'å¹£åˆ¥',
+  'Customer'                    => 'å®¢æˆ¶',
+  'Customer Number'             => 'å®¢æˆ¶ç·¨è™Ÿ',
+  'Date Paid'                   => 'ä»˜æ¬¾æ—¥æœŸ',
+  'Description'                 => 'èªªæ˜Ž',
+  'Due Date'                    => 'åˆ°æœŸæ—¥',
+  'Exch'                        => 'åŒ¯çŽ‡',
+  'Invoice'                     => 'ç™¼ç¥¨',
+  'Invoice Date'                => 'ç™¼ç¥¨æ—¥æœŸ',
+  'Invoice Number'              => 'ç™¼ç¥¨ç·¨è™Ÿ',
+  'No'                          => 'å¦',
+  'Paid'                        => 'å·²ä»˜',
+  'Posting failed!'             => 'åŠ å…¥å¤±æ•—ï¼',
+  'Qty'                         => 'æ•¸é‡',
+  'Salesperson'                 => 'éŠ·å”®äººå“¡',
+  'Total'                       => 'ç¸½è¨ˆ',
+  'Unit'                        => 'å–®ä½',
+  'Yes'                         => 'æ˜¯',
 };
 
 $self{subs} = {
@@ -34,7 +34,7 @@ $self{subs} = {
   'import_payments'             => 'import_payments',
   'import_sales_invoices'       => 'import_sales_invoices',
   'xrefhdr'                     => 'xrefhdr',
-  'Ä~Äò'                        => 'continue',
+  'ç¹¼çºŒ'                      => 'continue',
 };
 
 1;

@@ -1,12 +1,12 @@
-$self{charset} = 'ISO-8859-7';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Continue'                    => 'Συνέχεια',
+  'Continue'                    => 'Ξ£Ο…Ξ½Ξ­Ο‡ΞµΞΉΞ±',
 };
 
 $self{subs} = {
   'getpassword'                 => 'getpassword',
-  'Συνέχεια'                    => 'continue',
+  'Ξ£Ο…Ξ½Ξ­Ο‡ΞµΞΉΞ±'                    => 'continue',
 };
 
 1;

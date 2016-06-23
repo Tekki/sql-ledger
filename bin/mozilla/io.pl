@@ -1061,22 +1061,39 @@ sub purchase_order {
   $form->{type} = 'purchase_order';
   $form->{formname} = 'purchase_order';
 
+  # remove payment
+	for $i (1 .. $form->{paidaccounts}) {
+		for (qw(olddatepaid cleared vr_id source memo paid exchangerate paymentmethod AP_paid)) { delete $form->{"${_}_$i"} }
+	}
+
+
   &create_form;
 
 }
 
  
 sub sales_order {
-  
+
   if ($form->{type} eq 'sales_quotation') {
     $form->{closed} = 1;
     OE->save(\%myconfig, \%$form);
+    # format amounts
+    for $i (1 .. $form->{rowcount}) {
+      for (qw(qty discount sellprice cost netweight grossweight volume)) {
+        $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"});
+      }
+    }
   }
 
   $form->{title} = $locale->text('Add Sales Order');
   $form->{vc} = 'customer';
   $form->{type} = 'sales_order';
   $form->{formname} = 'sales_order';
+
+  # remove payment
+	for $i (1 .. $form->{paidaccounts}) {
+		for (qw(olddatepaid cleared vr_id source memo paid exchangerate paymentmethod AR_paid)) { delete $form->{"${_}_$i"} }
+	}
 
   &create_form;
 
@@ -1847,7 +1864,7 @@ sub print_form {
 
   $form->format_string(qw(email cc bcc));
 
-  $form->parse_template(\%myconfig, $userspath, $dvipdf) if $form->{copies};
+  $form->parse_template(\%myconfig, $userspath, $dvipdf, $xelatex) if $form->{copies};
 
 
   # if we got back here restore the previous form

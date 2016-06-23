@@ -1,27 +1,27 @@
 --
 CREATE SEQUENCE id start 10000;
-SELECT nextval ('id');
+SELECT nextval('id');
 --
 CREATE SEQUENCE invoiceid;
-SELECT nextval ('invoiceid');
+SELECT nextval('invoiceid');
 --
 CREATE SEQUENCE orderitemsid;
-SELECT nextval ('orderitemsid');
+SELECT nextval('orderitemsid');
 --
 CREATE SEQUENCE jcitemsid;
-SELECT nextval ('jcitemsid');
+SELECT nextval('jcitemsid');
 --
 CREATE SEQUENCE addressid;
-SELECT nextval ('addressid');
+SELECT nextval('addressid');
 --
 CREATE SEQUENCE assemblyid;
-SELECT nextval ('assemblyid');
+SELECT nextval('assemblyid');
 --
 CREATE SEQUENCE inventoryid;
-SELECT nextval ('inventoryid');
+SELECT nextval('inventoryid');
 --
 CREATE SEQUENCE contactid;
-SELECT nextval ('contactid');
+SELECT nextval('contactid');
 --
 CREATE SEQUENCE referenceid;
 SELECT nextval('referenceid');
@@ -36,7 +36,7 @@ CREATE TABLE makemodel (
 );
 --
 CREATE TABLE gl (
-  id int DEFAULT nextval ( 'id' ),
+  id int DEFAULT nextval('id'),
   reference text,
   description text,
   transdate date DEFAULT current_date,
@@ -49,7 +49,7 @@ CREATE TABLE gl (
 );
 --
 CREATE TABLE chart (
-  id int DEFAULT nextval ( 'id' ),
+  id int DEFAULT nextval('id'),
   accno text NOT NULL,
   description text,
   charttype char(1) DEFAULT 'A',
@@ -70,7 +70,7 @@ CREATE TABLE defaults (
   fldvalue text
 );
 --
-INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '3.1.3');
+INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '3.2.0');
 --
 CREATE TABLE acc_trans (
   trans_id int,
@@ -88,7 +88,7 @@ CREATE TABLE acc_trans (
 );
 --
 CREATE TABLE invoice (
-  id int DEFAULT nextval ( 'invoiceid' ) primary key,
+  id int DEFAULT nextval('invoiceid') primary key,
   trans_id int,
   parts_id int,
   description text,
@@ -148,7 +148,7 @@ CREATE TABLE customer (
 );
 --
 CREATE TABLE parts (
-  id int DEFAULT nextval ( 'id' ),
+  id int DEFAULT nextval('id'),
   partnumber text,
   description text,
   unit varchar(5),
@@ -191,7 +191,7 @@ CREATE TABLE assembly (
 );
 --
 CREATE TABLE ar (
-  id int DEFAULT nextval ( 'id' ),
+  id int DEFAULT nextval('id'),
   invnumber text,
   transdate date DEFAULT current_date,
   customer_id int,
@@ -229,7 +229,7 @@ CREATE TABLE ar (
 );
 --
 CREATE TABLE ap (
-  id int DEFAULT nextval ( 'id' ),
+  id int DEFAULT nextval('id'),
   invnumber text,
   transdate date DEFAULT current_date,
   vendor_id int,

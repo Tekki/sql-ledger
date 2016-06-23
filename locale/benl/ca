@@ -6,6 +6,7 @@ $self{texts} = {
   'August'                      => 'Augustus',
   'Balance'                     => 'Saldo',
   'Chart of Accounts'           => 'Rekeningstelsel',
+  'Closed'                      => 'Afgesloten',
   'Credit'                      => 'Credit',
   'Current'                     => 'Huidig',
   'Date'                        => 'Datum',
@@ -46,9 +47,16 @@ $self{texts} = {
 
 $self{subs} = {
   'ca_subtotal'                 => 'ca_subtotal',
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
   'chart_of_accounts'           => 'chart_of_accounts',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'js_calendar'                 => 'js_calendar',
   'list'                        => 'list',
   'list_transactions'           => 'list_transactions',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
   'boekingen_tonen'             => 'list_transactions',
 };
 

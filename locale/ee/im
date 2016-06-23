@@ -1,28 +1,28 @@
-$self{charset} = 'ISO-8859-15';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Account'                     => 'Konto',
   'City'                        => 'Linn',
-  'Company'                     => 'Ettevõte',
+  'Company'                     => 'EttevÃµte',
   'Continue'                    => 'Edasi',
   'Curr'                        => 'Val.',
   'Currency'                    => 'Valuuta',
   'Customer'                    => 'Klient',
-  'Customer Number'             => 'Kliendi number',
-  'Date Paid'                   => 'Maksekuupäev',
+  'Customer Number'             => 'Kliendi Number',
+  'Date Paid'                   => 'MaksekuupÃ¤ev',
   'Description'                 => 'Selgitus',
-  'Due Date'                    => 'Maksetähtaeg',
+  'Due Date'                    => 'MaksetÃ¤htaeg',
   'Exch'                        => 'Kurss',
   'Invoice'                     => 'Arve',
-  'Invoice Date'                => 'Arve kuupäev',
+  'Invoice Date'                => 'Arve kuupÃ¤ev',
   'Invoice Number'              => 'Arve number',
   'No'                          => 'Ei',
   'Paid'                        => 'Makstud',
-  'Posting failed!'             => 'Postitamine ebaõnnestus',
+  'Posting failed!'             => 'Saatmine ebaÃµnnestus',
   'Qty'                         => 'Kogus',
-  'Salesperson'                 => 'Müügiesindaja',
+  'Salesperson'                 => 'MÃ¼Ã¼giesindaja',
   'Total'                       => 'Kokku',
-  'Unit'                        => 'Ühik',
+  'Unit'                        => 'Komponent',
   'Yes'                         => 'Jah',
 };
 

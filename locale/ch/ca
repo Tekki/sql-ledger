@@ -1,5 +1,3 @@
-$self{charset} = 'ISO-8859-1';
-
 $self{texts} = {
   'AR/AP'                       => 'OF/OV',
   'Account'                     => 'Konto',
@@ -8,7 +6,8 @@ $self{texts} = {
   'Aug'                         => 'Aug',
   'August'                      => 'August',
   'Balance'                     => 'Bilanz',
-  'Chart of Accounts'           => 'Kontenübersicht',
+  'Chart of Accounts'           => 'Kontenbersicht',
+  'Closed'                      => 'Geschlossen',
   'Credit'                      => 'Haben',
   'Current'                     => 'Aktuell',
   'Date'                        => 'Datum',
@@ -29,8 +28,8 @@ $self{texts} = {
   'Jun'                         => 'Jun',
   'June'                        => 'Juni',
   'List Transactions'           => 'Buchungsliste',
-  'Mar'                         => 'Mär',
-  'March'                       => 'März',
+  'Mar'                         => 'MÃ¤r',
+  'March'                       => 'MÃ¤rz',
   'May'                         => 'Mai',
   'May '                        => 'Mai',
   'Month'                       => 'Monat',
@@ -53,9 +52,16 @@ $self{texts} = {
 
 $self{subs} = {
   'ca_subtotal'                 => 'ca_subtotal',
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
   'chart_of_accounts'           => 'chart_of_accounts',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'js_calendar'                 => 'js_calendar',
   'list'                        => 'list',
   'list_transactions'           => 'list_transactions',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
   'buchungsliste'               => 'list_transactions',
 };
 

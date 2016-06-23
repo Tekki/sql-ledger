@@ -2,7 +2,7 @@ $self{texts} = {
   'Address'                     => 'Adresse',
   'Bcc'                         => 'Blind kopi',
   'Cc'                          => 'Kopi',
-  'Continue'                    => 'Fortsæt',
+  'Continue'                    => 'FortsÃ¦t',
   'Customer Number'             => 'Kundenummer',
   'Customer not on file!'       => 'Kunde ikke i databasen!',
   'Date'                        => 'Dato',
@@ -16,13 +16,13 @@ $self{texts} = {
   'Print'                       => 'Udskriv',
   'Project not on file!'        => 'Projekt ikke i databasen!',
   'Reference'                   => 'Reference',
-  'Select from one of the names below' => 'Vælg en af navnene nedenfor',
-  'Select from one of the projects below' => 'Vælg et af projekterne nedenfor',
+  'Select from one of the names below' => 'VÃ¦lg en af navnene nedenfor',
+  'Select from one of the projects below' => 'VÃ¦lg et af projekterne nedenfor',
   'Startdate'                   => 'Startdato',
   'Subject'                     => 'Emne',
   'To'                          => 'til',
-  'Vendor Number'               => 'Leverandørnummer',
-  'Vendor not on file!'         => 'Leverandør ikke i databasen!',
+  'Vendor Number'               => 'LeverandÃ¸rnummer',
+  'Vendor not on file!'         => 'LeverandÃ¸r ikke i databasen!',
   'Warning!'                    => 'Advarsel!',
   'sent'                        => 'sendt',
 };
@@ -53,7 +53,7 @@ $self{subs} = {
   'select_name'                 => 'select_name',
   'select_project'              => 'select_project',
   'vendor_invoice_'             => 'vendor_invoice_',
-  'fortsæt'                     => 'continue',
+  'fortsÃ¦t'                     => 'continue',
 };
 
 1;

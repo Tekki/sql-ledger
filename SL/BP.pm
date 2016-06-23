@@ -184,8 +184,10 @@ sub get_spoolfiles {
 	       sales_quotation => { oe => customer },
 	       request_quotation => { oe => vendor }
 	     );
- 
-  ($form->{transdatefrom}, $form->{transdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
+
+  unless ($form->{transdatefrom} || $form->{transdateto}) {
+    ($form->{transdatefrom}, $form->{transdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
+  }
 
   my $where;
 

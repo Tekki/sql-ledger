@@ -2,7 +2,7 @@ $self{texts} = {
   'Account'                     => 'Konto',
   'City'                        => 'By',
   'Company'                     => 'Firma',
-  'Continue'                    => 'Fortsæt',
+  'Continue'                    => 'FortsÃ¦t',
   'Curr'                        => 'Val',
   'Currency'                    => 'Valuta',
   'Customer'                    => 'Kunde',
@@ -16,8 +16,8 @@ $self{texts} = {
   'Invoice Number'              => 'Fakturanummer',
   'No'                          => 'Nej',
   'Paid'                        => 'Betalt',
-  'Qty'                         => 'Mængde',
-  'Salesperson'                 => 'Sælger',
+  'Qty'                         => 'MÃ¦ngde',
+  'Salesperson'                 => 'SÃ¦lger',
   'Total'                       => 'I alt',
   'Unit'                        => 'Enhed',
   'Yes'                         => 'Ja',
@@ -31,7 +31,7 @@ $self{subs} = {
   'import_payments'             => 'import_payments',
   'import_sales_invoices'       => 'import_sales_invoices',
   'xrefhdr'                     => 'xrefhdr',
-  'fortsæt'                     => 'continue',
+  'fortsÃ¦t'                     => 'continue',
 };
 
 1;

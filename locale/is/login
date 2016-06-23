@@ -1,12 +1,12 @@
 $self{texts} = {
-  'Company'                     => 'Fyritæki',
-  'Continue'                    => 'Áfram',
-  'Incorrect Dataset version!'  => 'Röng útgáfa af gagnasfni!',
+  'Company'                     => 'FyritÃ¦ki',
+  'Continue'                    => 'Ãfram',
+  'Incorrect Dataset version!'  => 'RÃ¶ng ÃºtgÃ¡fa af gagnasfni!',
   'Login'                       => 'Tengjast',
   'Name'                        => 'Nafn',
-  'Password'                    => 'Ağgangsorğ',
-  'Version'                     => 'Útgáfa',
-  'You did not enter a name!'   => 'Şú gafst ekki upp nafn',
+  'Password'                    => 'AÃ°gangsorÃ°',
+  'Version'                     => 'ÃštgÃ¡fa',
+  'You did not enter a name!'   => 'ÃÃº gafst ekki upp nafn',
 };
 
 $self{subs} = {

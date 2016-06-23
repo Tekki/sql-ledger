@@ -328,4 +328,6 @@ Note: replace 'dataset' with the name of your dataset.
 
 Version 3.0.8 to 3.2
 ---------------------
+1. add the mimetypes to your dataset with
+   psql -U dbuser dataset < Mimetype.sql
 

@@ -1,25 +1,43 @@
+$self{charset} = 'UTF8';
+
 $self{texts} = {
   'Accounting Menu'             => 'Menu de Contabilidade',
-  'Description'                 => 'Descrição',
-  'Heading'                     => 'Cabeçalho',
+  'April'                       => 'Abril',
+  'August'                      => 'Agosto',
+  'December'                    => 'Dezembro',
+  'Description'                 => 'DescriÃ§Ã£o',
+  'February'                    => 'Fevereiro',
+  'Heading'                     => 'CabeÃ§alho',
+  'January'                     => 'Janeiro',
+  'July'                        => 'Julho',
+  'June'                        => 'Junho',
+  'March'                       => 'MarÃ§o',
+  'May'                         => 'Mai',
+  'November'                    => 'Novembro',
+  'October'                     => 'Outubro',
+  'September'                   => 'Setembro',
 };
 
 $self{subs} = {
   'acc_menu'                    => 'acc_menu',
   'add_column'                  => 'add_column',
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
   'delete_column'               => 'delete_column',
   'delete_report'               => 'delete_report',
   'display'                     => 'display',
-  'display_frame'               => 'display_frame',
   'do_save_report'              => 'do_save_report',
   'edit_column'                 => 'edit_column',
+  'js_calendar'                 => 'js_calendar',
   'jsmenu'                      => 'jsmenu',
   'jsmenu_frame'                => 'jsmenu_frame',
   'menubar'                     => 'menubar',
-  'mlmenu'                      => 'mlmenu',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
   'save_column'                 => 'save_column',
   'save_report'                 => 'save_report',
-  'save_report_as_new'          => 'save_report_as_new',
   'section_menu'                => 'section_menu',
 };
 

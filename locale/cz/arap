@@ -1,14 +1,14 @@
-$self{charset} = 'ISO-8859-2';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Address'                     => 'Adresa',
-  'Continue'                    => 'Pokraèování',
+  'Continue'                    => 'PokraÄovÃ¡nÃ­',
   'Date'                        => 'Datum',
   'Description'                 => 'Popis',
   'E-mail'                      => 'E-mail',
-  'Message'                     => 'Zpráva',
-  'Number'                      => 'Èíslo',
-  'Subject'                     => 'Pøedmìt',
+  'Message'                     => 'ZprÃ¡va',
+  'Number'                      => 'ÄŒÃ­slo',
+  'Subject'                     => 'PÅ™edmÄ›t',
   'To'                          => 'do',
 };
 
@@ -38,7 +38,7 @@ $self{subs} = {
   'select_name'                 => 'select_name',
   'select_project'              => 'select_project',
   'vendor_invoice_'             => 'vendor_invoice_',
-  'pokraèování'                 => 'continue',
+  'pokraÄovÃ¡nÃ­'                 => 'continue',
 };
 
 1;

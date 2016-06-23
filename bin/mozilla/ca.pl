@@ -52,13 +52,14 @@ sub chart_of_accounts {
 
   CA->all_accounts(\%myconfig, \%$form);
 
-  @column_index = qw(accno gifi_accno description debit credit);
+  @column_index = qw(accno gifi_accno description debit credit closed);
 
   $column_header{accno} = qq|<th class=listtop>|.$locale->text('Account').qq|</th>\n|;
   $column_header{gifi_accno} = qq|<th class=listtop>|.$locale->text('GIFI').qq|</th>\n|;
   $column_header{description} = qq|<th class=listtop>|.$locale->text('Description').qq|</th>\n|;
   $column_header{debit} = qq|<th class=listtop>|.$locale->text('Debit').qq|</th>\n|;
   $column_header{credit} = qq|<th class=listtop>|.$locale->text('Credit').qq|</th>\n|;
+  $column_header{closed} = qq|<th width=1% class=listtop>|.$locale->text('Closed').qq|</th>\n|;
   
   $form->helpref("coa", $myconfig{countrycode});
   
@@ -106,6 +107,7 @@ sub chart_of_accounts {
       
     $column_data{debit} = "<td align=right>".$form->format_amount(\%myconfig, $ca->{debit}, $form->{precision}, "&nbsp;")."</td>\n";
     $column_data{credit} = "<td align=right>".$form->format_amount(\%myconfig, $ca->{credit}, $form->{precision}, "&nbsp;")."</td>\n";
+    $column_data{closed} = ($ca->{closed}) ? "<td align=center>*</td>" : "<td></td>";
     
     $totaldebit += $ca->{debit};
     $totalcredit += $ca->{credit};

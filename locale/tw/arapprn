@@ -1,19 +1,19 @@
-$self{charset} = 'BIG5';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Account'                     => '±b¤á',
-  'Amount'                      => 'ª÷ÃB',
-  'Continue'                    => 'Ä~Äò',
-  'Date'                        => '¤é´Á',
-  'Memo'                        => '³Æ§Ñ¿ý',
-  'Nothing to print!'           => '¨S¦³¥i¦C¦Lªº¶µ¥Ø¡I',
+  'Account'                     => 'å¸³æˆ¶',
+  'Amount'                      => 'ç¸½è¨ˆ',
+  'Continue'                    => 'ç¹¼çºŒ',
+  'Date'                        => 'æ—¥æœŸ',
+  'Memo'                        => 'å‚™å¿˜éŒ„',
+  'Nothing to print!'           => 'æ²’æœ‰å¯åˆ—å°çš„é …ç›®ï¼',
   'PDF'                         => 'PDF',
-  'Postscript'                  => 'Postscript',
-  'Screen'                      => '¿Ã¹õ',
-  'Select a Printer!'           => '¿ï¾Ü¦Lªí¾÷¡I',
-  'Select payment'              => '¿ï¾Ü¥I´Ú',
-  'Select postscript or PDF!'   => '¿ï¾Üpostscript©ÎPDF¡I',
-  'Source'                      => '¨Ó·½',
+  'Postscript'                  => 'PostScript',
+  'Screen'                      => 'é¡¯ç¤ºå™¨',
+  'Select a Printer!'           => 'é¸æ“‡å°è¡¨æ©Ÿï¼',
+  'Select payment'              => 'é¸æ“‡ä»˜æ¬¾',
+  'Select postscript or PDF!'   => 'æ–¼PostScriptæˆ–PDFä¸­é¸ä¸€',
+  'Source'                      => 'ä¾†æº',
 };
 
 $self{subs} = {
@@ -28,7 +28,7 @@ $self{subs} = {
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',
   'select_payment'              => 'select_payment',
-  'Ä~Äò'                        => 'continue',
+  'ç¹¼çºŒ'                      => 'continue',
 };
 
 1;

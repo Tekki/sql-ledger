@@ -1,13 +1,15 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
-  'Access Denied!'              => 'Acces Refuse!',
-  'Company'                     => 'Société',
+  'Access Denied!'              => 'AccÃ©s RefusÃ©!',
+  'Company'                     => 'EntitÃ©',
   'Continue'                    => 'Continuer',
-  'Dataset is newer than version!' => 'Fichier de données plus récent que le logiciel!',
-  'Incorrect Dataset version!'  => 'Fichier de données incorrect!',
+  'Dataset is newer than version!' => 'Fichier de donnÃ©es plus rÃ©cent que le logiciel!',
+  'Incorrect Dataset version!'  => 'Fichier de donnÃ©es incorrect!',
   'Login'                       => 'Login',
   'Name'                        => 'Nom',
   'Password'                    => 'Mot de passe',
-  'Upgrading to Version'        => 'Mise à jour à la version',
+  'Upgrading to Version'        => 'Mise Ã Â  jour vers la version',
   'Version'                     => 'Version',
   'You did not enter a name!'   => 'Vous n\'avez pas saisi de nom!',
   'done'                        => 'fait',

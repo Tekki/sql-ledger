@@ -1,16 +1,34 @@
 $self{texts} = {
+  'April'                       => 'Avril',
+  'August'                      => 'Août',
   'Continue'                    => 'Continuer',
-  'From'                        => 'De',
-  'To'                          => 'À',
-  'done'                        => 'fait',
+  'Date missing!'               => 'Date manquante!',
+  'December'                    => 'Décembre',
+  'February'                    => 'Février',
+  'January'                     => 'Janvier',
+  'July'                        => 'Juillet',
+  'June'                        => 'Juin',
+  'March'                       => 'Mars',
+  'May'                         => 'Mai',
+  'November'                    => 'Novembre',
+  'October'                     => 'Octobre',
+  'September'                   => 'Septembre',
 };
 
 $self{subs} = {
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
   'continue'                    => 'continue',
-  'delete_invoices'             => 'delete_invoices',
-  'do_delete_invoices'          => 'do_delete_invoices',
   'do_repost_invoices'          => 'do_repost_invoices',
+  'fld_config'                  => 'fld_config',
+  'fld_edit'                    => 'fld_edit',
+  'fld_save'                    => 'fld_save',
+  'js_calendar'                 => 'js_calendar',
+  'pickvalue'                   => 'pickvalue',
   'repost_invoices'             => 'repost_invoices',
+  'resize'                      => 'resize',
 };
 
 1;

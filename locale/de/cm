@@ -1,0 +1,11 @@
+$self{texts} = {
+  'Reference Documents'         => 'Referenzdokumente',
+};
+
+$self{subs} = {
+  'all_references'              => 'all_references',
+  'references'                  => 'references',
+};
+
+1;
+

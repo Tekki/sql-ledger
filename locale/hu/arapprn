@@ -1,19 +1,19 @@
-$self{charset} = 'ISO-8859-2';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Account'                     => 'Számla',
-  'Amount'                      => 'Összeg',
-  'Continue'                    => 'Folytatás',
-  'Date'                        => 'Dátum',
+  'Account'                     => 'SzÃ¡mla',
+  'Amount'                      => 'Ã–sszeg',
+  'Continue'                    => 'FolytatÃ¡s',
+  'Date'                        => 'DÃ¡tum',
   'Memo'                        => 'Memo',
   'Nothing to print!'           => 'Nincs mit nyomtatni!',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
-  'Screen'                      => 'Képernyõre',
-  'Select a Printer!'           => 'Válasszon Nyomtatót',
-  'Select payment'              => 'Válasszon fizetési módot',
-  'Select postscript or PDF!'   => 'Válassza ki a postscript vagy a PDF formátumot!',
-  'Source'                      => 'Bizonylatszám',
+  'Screen'                      => 'KÃ©pernyÅ‘re',
+  'Select a Printer!'           => 'VÃ¡lasszon NyomtatÃ³t',
+  'Select payment'              => 'VÃ¡lasszon fizetÃ©si mÃ³dot',
+  'Select postscript or PDF!'   => 'VÃ¡lassza ki a postscript vagy a PDF formÃ¡tumot!',
+  'Source'                      => 'BizonylatszÃ¡m',
 };
 
 $self{subs} = {
@@ -28,7 +28,7 @@ $self{subs} = {
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',
   'select_payment'              => 'select_payment',
-  'folytatás'                   => 'continue',
+  'folytatÃ¡s'                   => 'continue',
 };
 
 1;

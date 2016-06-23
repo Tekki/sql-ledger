@@ -1,15 +1,15 @@
-$self{charset} = 'ISO-8859-13';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Account'                     => 'Konts',
   'Amount'                      => 'Summa',
-  'Continue'                    => 'Turpinât',
+  'Continue'                    => 'TurpinÄt',
   'Date'                        => 'Datums',
   'Memo'                        => 'Memorands',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
-  'Screen'                      => 'Ekrâns',
-  'Select postscript or PDF!'   => 'Izvçlçties postscript vai PDF!',
+  'Screen'                      => 'EkrÄns',
+  'Select postscript or PDF!'   => 'IzvÄ“lÄ“ties postscript vai PDF!',
   'Source'                      => 'Dokuments',
 };
 
@@ -25,7 +25,7 @@ $self{subs} = {
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',
   'select_payment'              => 'select_payment',
-  'turpinât'                    => 'continue',
+  'turpinÄt'                    => 'continue',
 };
 
 1;

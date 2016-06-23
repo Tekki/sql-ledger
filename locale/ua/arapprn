@@ -1,15 +1,18 @@
-$self{charset} = 'ISO-8859-5';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Account'                     => 'òÁÈÕÎÏË',
-  'Amount'                      => 'óÕÍÁ',
-  'Continue'                    => 'ðÒÏÄÏ×ÖÉÔÉ',
-  'Date'                        => 'äÁÔÁ',
-  'PDF'                         => 'PDF ÆÁÊÌ ÆÏÒÍÁÔ',
+  'Account'                     => 'Ð Ð°Ñ…ÑƒÐ½Ð¾Ðº',
+  'Amount'                      => 'Ð¡ÑƒÐ¼Ð°',
+  'Continue'                    => 'ÐŸÑ€Ð¾Ð´Ð¾Ð²Ð¶Ð¸Ñ‚Ð¸',
+  'Date'                        => 'Ð”Ð°Ñ‚Ð°',
+  'Memo'                        => 'ÐÐ¾Ñ‚Ð°Ñ‚ÐºÐ°',
+  'Nothing to print!'           => 'ÐÐµÐ¼Ð° Ñ‰Ð¾ Ð´Ñ€ÐºÑƒÐ²Ð°Ñ‚Ð¸!',
+  'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
-  'Screen'                      => 'åËÒÁÎ',
-  'Select postscript or PDF!'   => '÷ÉÂÅÒ¦ÔØ postscript ÁÂÏ PDF',
-  'Source'                      => 'äÖÅÒÅÌÏ',
+  'Screen'                      => 'Ð•ÐºÑ€Ð°Ð½',
+  'Select payment'              => 'Ð’Ð¸Ð±ÐµÑ€Ñ–Ñ‚ÑŒ Ð¿Ð»Ð°Ñ‚Ñ–Ð¶',
+  'Select postscript or PDF!'   => 'Ð’Ð¸Ð±ÐµÑ€Ñ–Ñ‚ÑŒ postscript Ð°Ð±Ð¾ PDF',
+  'Source'                      => 'Ð”Ð¶ÐµÑ€ÐµÐ»Ð¾',
 };
 
 $self{subs} = {
@@ -24,7 +27,7 @@ $self{subs} = {
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',
   'select_payment'              => 'select_payment',
-  'ðÒÏÄÏ×ÖÉÔÉ'                  => 'continue',
+  'ÐŸÑ€Ð¾Ð´Ð¾Ð²Ð¶Ð¸Ñ‚Ð¸'        => 'continue',
 };
 
 1;

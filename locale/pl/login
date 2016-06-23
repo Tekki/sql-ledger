@@ -1,13 +1,13 @@
-$self{charset} = 'ISO-8859-2';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Company'                     => 'Firma',
   'Continue'                    => 'Kontynuj',
-  'Dataset is newer than version!' => 'Baza Danych jest nowsza ni¿ wersja!',
-  'Incorrect Dataset version!'  => 'Nieprawid³owa wersja Zbioru Danych',
-  'Login'                       => 'Zarejestrój siê',
+  'Dataset is newer than version!' => 'Baza Danych jest nowsza niÅ¼ wersja!',
+  'Incorrect Dataset version!'  => 'NieprawidÅ‚owa wersja Zbioru Danych',
+  'Login'                       => 'ZarejestrÃ³j siÄ™',
   'Name'                        => 'Nazwa',
-  'Password'                    => 'Has³o',
+  'Password'                    => 'HasÅ‚o',
   'Upgrading to Version'        => 'Uaktualnienie do nowej wersji',
   'Version'                     => 'Wersja',
   'You did not enter a name!'   => 'Nie wstawiono nazwy!',
@@ -19,7 +19,7 @@ $self{subs} = {
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
-  'zarejestrój_siê'             => 'login',
+  'zarejestrÃ³j_siÄ™'             => 'login',
 };
 
 1;

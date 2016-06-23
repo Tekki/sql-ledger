@@ -1,0 +1,40 @@
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Account'                     => 'حساب',
+  'City'                        => 'مدينة',
+  'Company'                     => 'شركة',
+  'Continue'                    => 'تابع',
+  'Curr'                        => 'عملة',
+  'Currency'                    => 'عملة',
+  'Customer'                    => 'العميل',
+  'Customer Number'             => 'رقم العميل',
+  'Date Paid'                   => 'تاريخ الدفع',
+  'Description'                 => 'وصف',
+  'Due Date'                    => 'تاريخ الاستحقاق',
+  'Exch'                        => 'سعر  الصرف',
+  'Invoice'                     => 'فاتورة',
+  'Invoice Date'                => 'تاريخ الفاتورة',
+  'Invoice Number'              => 'رقم الفاتورة',
+  'No'                          => 'لا',
+  'Paid'                        => 'المدفوع',
+  'Qty'                         => 'الكمية',
+  'Salesperson'                 => 'مندوب مبيعات',
+  'Total'                       => 'مجموع',
+  'Unit'                        => 'وحدة',
+  'Yes'                         => 'نعم',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'display_payment'             => 'display_payment',
+  'display_sales_invoice'       => 'display_sales_invoice',
+  'import'                      => 'import',
+  'import_payments'             => 'import_payments',
+  'import_sales_invoices'       => 'import_sales_invoices',
+  'xrefhdr'                     => 'xrefhdr',
+  'تابع'                    => 'continue',
+};
+
+1;
+

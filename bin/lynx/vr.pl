@@ -84,7 +84,7 @@ sub add_batch {
   &calendar;
   
   print qq|
-<body onload="document.forms[0].${focus}.focus()" />
+<body onload="document.main.${focus}.focus()" />
 
 <form method="post" name="main" action="$form->{script}" />
 
@@ -246,7 +246,7 @@ sub edit_payment_reversal {
   $form->header;
   
   print qq|
-<body onload="document.forms[0].account.focus()" />
+<body onload="document.main.account.focus()" />
 
 <form method=post action=$form->{script}>
 

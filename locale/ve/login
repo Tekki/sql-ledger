@@ -1,15 +1,15 @@
 $self{texts} = {
   'Access Denied!'              => 'Acceso Denegado!',
-  'Company'                     => 'Compa耥a',
+  'Company'                     => 'Compa帽铆a',
   'Continue'                    => 'Continuar',
-  'Dataset is newer than version!' => 'La versi髇 de la Base de Datos es m醩 reciente que la versi髇 del programa',
-  'Incorrect Dataset version!'  => 'Versi髇 de Base de Datos incorrecta',
+  'Dataset is newer than version!' => 'La versi贸n de la Base de Datos es m谩s reciente que la versi贸n del programa',
+  'Incorrect Dataset version!'  => 'Versi贸n de Base de Datos incorrecta',
   'Login'                       => 'Login',
   'Name'                        => 'Nombre',
-  'Password'                    => 'Contrase馻',
-  'Upgrading to Version'        => 'Actualizando Versi髇',
-  'Version'                     => 'Versi髇',
-  'You did not enter a name!'   => 'd. no ha introducido un nombre!',
+  'Password'                    => 'Contrase帽a',
+  'Upgrading to Version'        => 'Actualizando Versi贸n',
+  'Version'                     => 'Versi贸n',
+  'You did not enter a name!'   => '隆Ud. no ha introducido un nombre!',
   'done'                        => 'hecho',
 };
 

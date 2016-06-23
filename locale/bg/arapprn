@@ -1,0 +1,38 @@
+$self{charset} = 'UTF8';
+
+$self{texts} = {
+  'Account'                     => 'Сметка',
+  'Amount'                      => 'Сума',
+  'Continue'                    => 'Продължение',
+  'Date'                        => 'Дата',
+  'Memo'                        => 'Бележка',
+  'Nothing to print!'           => 'Няма за печатане!',
+  'PDF'                         => 'PDF',
+  'Postscript'                  => 'Postscript',
+  'Printed'                     => 'Разпечатано',
+  'Scheduled'                   => 'Зададено разписание',
+  'Screen'                      => 'Екран',
+  'Select a Printer!'           => 'Избери принтер!',
+  'Select payment'              => 'Избери плащане',
+  'Source'                      => 'Оригинал',
+  'Text'                        => 'Текст',
+};
+
+$self{subs} = {
+  'payment_selected'            => 'payment_selected',
+  'print'                       => 'print',
+  'print_and_post'              => 'print_and_post',
+  'print_check'                 => 'print_check',
+  'print_credit_note'           => 'print_credit_note',
+  'print_debit_note'            => 'print_debit_note',
+  'print_options'               => 'print_options',
+  'print_payslip'               => 'print_payslip',
+  'print_receipt'               => 'print_receipt',
+  'print_remittance_voucher'    => 'print_remittance_voucher',
+  'print_transaction'           => 'print_transaction',
+  'select_payment'              => 'select_payment',
+  'Продължение'      => 'continue',
+};
+
+1;
+

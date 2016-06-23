@@ -1,18 +1,18 @@
-$self{charset} = 'BIG5';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Access Denied!'              => '©Úµ´¦s¨ú¡I',
-  'Company'                     => '¤½¥q',
-  'Continue'                    => 'Ä~Äò',
-  'Dataset is newer than version!' => '¸û·s¸ê®Æ¶°¡I',
-  'Incorrect Dataset version!'  => '¸ê®Æ¶°ª©¥»¿ù»~¡I',
-  'Login'                       => 'µn¤J',
-  'Name'                        => '¦WºÙ',
-  'Password'                    => '±K½X',
-  'Upgrading to Version'        => '¥¿¤É¯Å¦Ü·sª©',
-  'Version'                     => 'ª©¥»',
-  'You did not enter a name!'   => '§A¨Ã¥¼Áä¤J¦WºÙ¡I',
-  'done'                        => '§¹¦¨',
+  'Access Denied!'              => 'æ‹’çµ•å­˜å–ï¼',
+  'Company'                     => 'å…¬å¸',
+  'Continue'                    => 'ç¹¼çºŒ',
+  'Dataset is newer than version!' => 'è¼ƒæ–°è³‡æ–™é›†ï¼',
+  'Incorrect Dataset version!'  => 'è³‡æ–™é›†ç‰ˆæœ¬éŒ¯èª¤ï¼',
+  'Login'                       => 'ç™»å…¥',
+  'Name'                        => 'åç¨±',
+  'Password'                    => 'å¯†ç¢¼',
+  'Upgrading to Version'        => 'æ­£å‡ç´šè‡³æ–°ç‰ˆ',
+  'Version'                     => 'ç‰ˆæœ¬',
+  'You did not enter a name!'   => 'ä½ ä¸¦æœªéµå…¥åç¨±ï¼',
+  'done'                        => 'å®Œæˆ',
 };
 
 $self{subs} = {
@@ -20,7 +20,7 @@ $self{subs} = {
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
-  'µn¤j'                        => 'login',
+  'ç™»å…¥'                      => 'login',
 };
 
 1;

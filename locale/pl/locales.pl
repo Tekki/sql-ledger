@@ -3,9 +3,9 @@
 # -n do not include custom scripts
 # -a build all file
 # -m do not generate missing files
+# -c character set
 
 use FileHandle;
-
 
 $basedir = "../..";
 $bindir = "$basedir/bin/mozilla";
@@ -21,7 +21,8 @@ $language = <FH>;
 close(FH);
 chomp $language;
 $language =~ s/\((.*)\)/$1/;
-$charset = $1;
+$c = $1 || 'UTF8';
+$charset = ($arg{c}) ? $c : "";
 
 opendir DIR, "$bindir" or die "$!";
 @progfiles = grep { /\.pl/ } readdir DIR;
@@ -167,9 +168,9 @@ $self{subs} = {
 |;
 
       foreach $text (@missing) {
-	$text =~ s/'/\\'/g;
-	$text =~ s/\\$/\\\\/;
-	print FH qq|  '$text'|.(' ' x (27-length($text))).qq| => '',\n|;
+				$text =~ s/'/\\'/g;
+				$text =~ s/\\$/\\\\/;
+				print FH qq|  '$text'|.(' ' x (27-length($text))).qq| => '',\n|;
       }
 
       print FH q|};
@@ -303,9 +304,9 @@ sub scanfile {
     for (keys %{$self{texts}}) {
       $all{$_} ||= $self{texts}{$_};
       if ($level) {
-	$temp{$_} ||= $self{texts}{$_};
+				$temp{$_} ||= $self{texts}{$_};
       } else {
-	$temp{$_} = $self{texts}{$_};
+				$temp{$_} = $self{texts}{$_};
       }
     }
   }
@@ -321,10 +322,10 @@ sub scanfile {
     if (/require\s+\W.*\.pl/) {
       my $newfile = $&;
       $newfile =~ s/require\s+\W//;
-      $newfile =~ s/\$form->{path}\///;
+      $newfile =~ s/\$form->\{path\}\///;
 
-      if ($newfile !~ /(custom|\$form->{login})/) {
-	&scanfile("$bindir/$newfile", 1);
+      if ($newfile !~ /(custom|\$form->\{login\})/) {
+				&scanfile("$bindir/$newfile", 1);
       }
     }
    
@@ -339,34 +340,34 @@ sub scanfile {
     
     while ($rc) {
       if (/Locale/) {
-	if (!/^use /) {
-	  my ($null, $country) = split /,/;
-	  $country =~ s/^ +["']//;
-	  $country =~ s/["'].*//;
-	}
+				if (!/^use /) {
+					my ($null, $country) = split /,/;
+					$country =~ s/^ +["']//;
+					$country =~ s/["'].*//;
+				}
       }
 
       if (/\$locale->text.*?\W\)/) {
-	my $string = $&;
-	$string =~ s/\$locale->text\(\s*['"(q|qq)]['\/\\\|~]*//;
-	$string =~ s/\W\)+.*$//;
+				my $string = $&;
+				$string =~ s/\$locale->text\(\s*['"(q|qq)]['\/\\\|~]*//;
+				$string =~ s/\W\)+.*$//;
 
         # if there is no $ in the string record it
-	unless ($string =~ /\$\D.*/) {
-	  # this guarantees one instance of string
-	  $locale{$string} = 1;
+				unless ($string =~ /\$\D.*/) {
+					# this guarantees one instance of string
+					$locale{$string} = 1;
 
           # is it a submit button before $locale->
           if (/type=submit/i) {
-	    $submit{$string} = 1;
+				    $submit{$string} = 1;
           }
 
           # is it a value before $locale->
           if (/value => \$locale/) {
-	    $submit{$string} = 1;
+	    			$submit{$string} = 1;
           }
 
-	}
+				}
       }
 
       # exit loop if there are no more locales on this line
@@ -399,7 +400,7 @@ sub scanmenu {
     foreach $string (@b) {
       chomp $string;
       if ($string !~ /^\s*$/) {
-	$locale{$string} = 1;
+        $locale{$string} = 1;
       }
     }
   }

@@ -178,7 +178,7 @@ sub print_check {
   $form->{fileid} = $invnumber;
   $form->{fileid} =~ s/(\s|\W)+//g;
 
-  $form->parse_template(\%myconfig, $userspath, $dvipdf);
+  $form->parse_template(\%myconfig, $userspath, $dvipdf, $xelatex);
 
   if ($form->{previousform}) {
   
@@ -449,7 +449,7 @@ sub print_transaction {
   $form->{fileid} = $form->{invnumber};
   $form->{fileid} =~ s/(\s|\W)+//g;
 
-  $form->parse_template(\%myconfig, $userspath, $dvipdf);
+  $form->parse_template(\%myconfig, $userspath, $dvipdf, $xelatex);
 
   if (%$oldform) {
     $oldform->{invnumber} = $form->{invnumber};
@@ -559,7 +559,7 @@ sub print_payslip {
     $form->{OUT} = qq~| $form->{"$form->{media}_printer"}~;
   }
 
-  $form->parse_template(\%myconfig, $userspath, $dvipdf);
+  $form->parse_template(\%myconfig, $userspath, $dvipdf, $xelatex);
 
   if (%$oldform) {
     for (keys %$form) { delete $form->{$_} }

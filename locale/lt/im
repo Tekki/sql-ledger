@@ -1,23 +1,23 @@
-$self{charset} = 'ISO-8859-13';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Account'                     => 'Sàskaita',
+  'Account'                     => 'SÄ…skaita',
   'Company'                     => 'Firma',
-  'Continue'                    => 'Tæsti',
+  'Continue'                    => 'TÄ™sti',
   'Curr'                        => 'Val.',
-  'Currency'                    => 'Valiûta',
+  'Currency'                    => 'ValiÅ«ta',
   'Customer'                    => 'Klientas',
-  'Date Paid'                   => 'Mokëjimo Data',
-  'Description'                 => 'Apraðymas',
+  'Date Paid'                   => 'MokÄ—jimo Data',
+  'Description'                 => 'ApraÅ¡ymas',
   'Due Date'                    => 'Iki Data',
   'Exch'                        => 'Kurs.',
-  'Invoice'                     => 'Sàskaita-faktûra',
-  'Invoice Date'                => 'Sàskaitos-faktûros data',
-  'Invoice Number'              => 'Sàskaitos-faktûros numeris',
+  'Invoice'                     => 'SÄ…skaita-faktÅ«ra',
+  'Invoice Date'                => 'SÄ…skaitos-faktÅ«ros data',
+  'Invoice Number'              => 'SÄ…skaitos-faktÅ«ros numeris',
   'No'                          => 'Ne',
-  'Paid'                        => 'Apmokëta',
+  'Paid'                        => 'ApmokÄ—ta',
   'Qty'                         => 'Kks',
-  'Total'                       => 'Ið viso',
+  'Total'                       => 'IÅ¡ viso',
   'Unit'                        => 'Vienetas',
   'Yes'                         => 'Taip',
 };
@@ -30,7 +30,7 @@ $self{subs} = {
   'import_payments'             => 'import_payments',
   'import_sales_invoices'       => 'import_sales_invoices',
   'xrefhdr'                     => 'xrefhdr',
-  'tæsti'                       => 'continue',
+  'tÄ™sti'                       => 'continue',
 };
 
 1;

@@ -1,16 +1,16 @@
-$self{charset} = 'ISO-8859-7';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Address'                     => 'ÄéÝõèõíóç',
-  'Continue'                    => 'ÓõíÝ÷åéá',
-  'Customer Number'             => 'Êùäéêüò ÐåëÜôç',
+  'Address'                     => 'Î”Î¹Î­Ï…Î¸Ï…Î½ÏƒÎ·',
+  'Continue'                    => 'Î£Ï…Î½Î­Ï‡ÎµÎ¹Î±',
+  'Customer Number'             => 'ÎšÏ‰Î´Î¹ÎºÏŒÏ‚ Î ÎµÎ»Î¬Ï„Î·',
   'Customer not on file!'       => 'Debtor not on file!',
-  'Date'                        => 'Çìåñïìçíßá',
-  'Description'                 => 'ÐåñéãñáöÞ',
-  'Employee Number'             => 'Áñ. ÕðáëëÞëïõ',
-  'Message'                     => 'Ìýíçìá',
-  'Number'                      => 'Áñéèìüò',
-  'Print'                       => 'Åêôýðùóç',
+  'Date'                        => 'Î—Î¼ÎµÏÎ¿Î¼Î·Î½Î¯Î±',
+  'Description'                 => 'Î ÎµÏÎ¹Î³ÏÎ±Ï†Î®',
+  'Employee Number'             => 'Î‘Ï. Î¥Ï€Î±Î»Î»Î®Î»Î¿Ï…',
+  'Message'                     => 'ÎœÏÎ½Î·Î¼Î±',
+  'Number'                      => 'Î‘ÏÎ¹Î¸Î¼ÏŒÏ‚',
+  'Print'                       => 'Î•ÎºÏ„ÏÏ€Ï‰ÏƒÎ·',
   'Vendor Number'               => 'Creditor Number',
   'Vendor not on file!'         => 'Creditor not on file!',
 };
@@ -41,7 +41,7 @@ $self{subs} = {
   'select_name'                 => 'select_name',
   'select_project'              => 'select_project',
   'vendor_invoice_'             => 'vendor_invoice_',
-  'ÓõíÝ÷åéá'                    => 'continue',
+  'Î£Ï…Î½Î­Ï‡ÎµÎ¹Î±'                    => 'continue',
 };
 
 1;

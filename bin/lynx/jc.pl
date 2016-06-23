@@ -589,7 +589,7 @@ sub timecard_header {
 	<tr>
 	  <th align=right nowrap>$laborlabel <font color=red>*</font></th>
 	  <td><input name=partnumber value="|.$form->quote($form->{partnumber})
-	  .qq|">
+	  .qq|"> <a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"parts_id"}" target=_blank>?</a>
 	  </td>
 	</tr>
 	<tr valign=top>
@@ -830,6 +830,8 @@ sub storescard_header {
 
   $form->header;
 
+  &calendar;
+
   print qq|
 <body>
 
@@ -861,12 +863,12 @@ sub storescard_header {
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Date').qq| <font color=red>*</font></th>
-	  <td colspan=3><input name=transdate size=11 class=date title="$myconfig{dateformat}" value=$form->{transdate}></td>
+	  <td colspan=3><input name=transdate size=11 class=date title="$myconfig{dateformat}" value=$form->{transdate}>|.&js_calendar("main", "transdate").qq|</td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Part Number').qq| <font color=red>*</font></th>
 	  <td colspan=3><input name=partnumber value="|.$form->quote($form->{partnumber})
-	  .qq|">
+	  .qq|"> <a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"parts_id"}" target=_blank>?</a>
 	  </td>
 	</tr>
 	<tr valign=top>
@@ -2033,7 +2035,7 @@ sub print_form {
     $status{audittrail} .= $form->audittrail("", \%myconfig, \%audittrail);
   }
 
-  $form->parse_template(\%myconfig, $userspath, $dvipdf);
+  $form->parse_template(\%myconfig, $userspath, $dvipdf, $xelatex);
 
   if ($oldform) {
 

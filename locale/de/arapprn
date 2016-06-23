@@ -1,22 +1,23 @@
-$self{charset} = 'ISO-8859-1';
-
 $self{texts} = {
   'Account'                     => 'Konto',
   'Amount'                      => 'Betrag',
   'Continue'                    => 'Weiter',
-  'DCN missing!'                => 'Dokumentkontrollnummer fehlt!',
+  'DCN missing!'                => 'DCN fehlt!',
   'Date'                        => 'Datum',
-  'Memo'                        => 'Vermerk',
-  'Nothing to print!'           => 'Es konnte nichts gedruckt werden!',
+  'Memo'                        => 'Notiz',
+  'Nothing to print!'           => 'Es wurde nichts gedruckt!',
+  'On Hold'                     => 'vorlÃ¤ufig',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
+  'Printed'                     => 'Gedruckt',
   'RVC missing!'                => 'Codierzeile fehlt!',
+  'Scheduled'                   => 'geplant',
   'Screen'                      => 'Bildschirm',
-  'Select a Printer!'           => 'Drucker auswählen!',
-  'Select payment'              => 'Zahlung auswählen',
+  'Select a Printer!'           => 'Drucker auswÃ¤hlen!',
+  'Select payment'              => 'Zahlung auswÃ¤hlen',
   'Source'                      => 'Beleg',
   'Text'                        => 'Text',
-  'html'                        => 'HTML',
+  'html'                        => 'html',
 };
 
 $self{subs} = {

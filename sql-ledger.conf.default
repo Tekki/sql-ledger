@@ -1,4 +1,4 @@
-use vars qw($userspath $spool $memberfile $templates $sendmail $images $language $sid $latex $gzip $dvipdf);
+use vars qw($userspath $spool $memberfile $templates $sendmail $images $language $sid $latex $gzip $dvipdf $xelatex);
 
 # path to user configuration files
 $userspath = "users";
@@ -32,7 +32,10 @@ $latex = 1;
 $gzip = "gzip -S .gz";
 
 # use dvipdf instead of pdflatex for PDF
-$dvipdf = 1;
+#$dvipdf = 1;
+
+# use xelatex instead of pdflatex for PDF
+#$xelatex = 1;
 
 # if the server can't find gzip or latex add the path
 $ENV{PATH} .= ":/usr/local/bin";

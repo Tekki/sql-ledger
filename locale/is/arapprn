@@ -1,13 +1,13 @@
 $self{texts} = {
   'Account'                     => 'Reikningur',
-  'Amount'                      => 'Upphæð',
-  'Continue'                    => 'Áfram',
+  'Amount'                      => 'UpphÃ¦Ã°',
+  'Continue'                    => 'Ãfram',
   'Date'                        => 'Dagsetning',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
-  'Screen'                      => 'Skjá',
-  'Select postscript or PDF!'   => 'Veljið postscript eða PDF',
-  'Source'                      => 'Frálag',
+  'Screen'                      => 'SkjÃ¡',
+  'Select postscript or PDF!'   => 'VeljiÃ° postscript eÃ°a PDF',
+  'Source'                      => 'FrÃ¡lag',
 };
 
 $self{subs} = {
@@ -22,7 +22,7 @@ $self{subs} = {
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',
   'select_payment'              => 'select_payment',
-  'Áfram'                       => 'continue',
+  'Ãfram'                       => 'continue',
 };
 
 1;

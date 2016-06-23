@@ -1,14 +1,14 @@
 $self{texts} = {
-  'Address'                     => 'DirecciÛn',
+  'Address'                     => 'Direcci√≥n',
   'Bcc'                         => 'Bcc',
   'Cc'                          => 'Cc',
   'Continue'                    => 'Continuar',
   'Customer not on file!'       => 'Cliente no existe en archivo!',
   'Date'                        => 'Fecha',
-  'Description'                 => 'DescripciÛn',
-  'E-mail'                      => 'Correo ElectrÛnico',
+  'Description'                 => 'Descripci√≥n',
+  'E-mail'                      => 'Correo Electr√≥nico',
   'Message'                     => 'Mensaje',
-  'Number'                      => 'N˙mero',
+  'Number'                      => 'N√∫mero',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
   'Print'                       => 'Imprimir',
@@ -16,7 +16,7 @@ $self{texts} = {
   'Select from one of the names below' => 'Seleccione uno de los elementos listados',
   'Subject'                     => 'Asunto',
   'To'                          => 'Hasta ',
-  'Vendor not on file!'         => 'Proveedor no est· en archivo!',
+  'Vendor not on file!'         => 'Proveedor no est√° en archivo!',
 };
 
 $self{subs} = {

@@ -244,6 +244,10 @@ sub dbconnect_vars {
 
   $form->{dboptions} = $dboptions{$form->{dbdriver}}{$form->{dateformat}};
 
+  if ($form->{encoding}) {
+    $form->{dboptions} .= ';set client_encoding to \''.$form->{encoding}."'";
+  }
+
   if ($form->{dbdriver} =~ /(Pg|Sybase)/) {
     $form->{dbconnect} = "dbi:$form->{dbdriver}:dbname=$db";
   }
@@ -472,12 +476,18 @@ sub process_query {
   open(FH, "$filename") or $form->error("$filename : $!\n");
   my $query = "";
   my $loop = 0;
+  my $i;
   
   while (<FH>) {
+    $i++;
 
     if ($loop && /^--\s*end\s*(procedure|function|trigger)/i) {
       $loop = 0;
-      $dbh->do($query) || $form->dberror("$filename : $query");
+      $dbh->do($query);
+      
+      if ($errstr = $DBI::errstr) {
+        $form->info("$filename:$i - $errstr\n");
+      }
       $query = "";
       next;
     }
@@ -501,7 +511,11 @@ sub process_query {
       $query =~ s/;\s*$//;
       $query =~ s/\\'/''/g;
 
-      $dbh->do($query) || $form->dberror("$filename : $query");
+      $dbh->do($query);
+      
+      if ($errstr = $DBI::errstr) {
+        $form->info("$filename:$i - $errstr\n");
+      }
 
       $query = "";
     }
@@ -594,7 +608,29 @@ sub dbupdate {
   $dbh->disconnect;
 
 }
-  
+
+
+sub dbpassword {
+  my ($self, $form) = @_;
+
+  &dbconnect_vars($form, $form->{dbname});
+
+  my $dbh = DBI->connect($form->{dbconnect}, $form->{dbuser}, $form->{dbpasswd}) or $form->dberror;
+
+  my $query;
+
+  if ($form->{new_password}) {
+    $query = qq|ALTER ROLE $form->{dbuser} WITH PASSWORD '$form->{new_password}'|;
+  } else {
+    $query = qq|ALTER ROLE $form->{dbuser} WITH PASSWORD NULL|;
+  }
+
+  $dbh->do($query) or $form->dberror($query);
+
+  $dbh->disconnect;
+
+}
+
 
 sub calc_version {
   
@@ -842,13 +878,66 @@ sub delete_login {
 
 sub config_vars {
 
-  my @conf = qw(acs company countrycode dateformat
+  my @conf = qw(acs company countrycode charset dateformat
              dbconnect dbdriver dbhost dbname dboptions dbpasswd
 	     dbport dbuser menuwidth name email numberformat password
 	     outputformat printer sessionkey sid
 	     signature stylesheet tan timeout vclimit);
 
   @conf;
+
+}
+
+
+sub encoding {
+  my ($self, $dbdriver) = @_;
+
+  my %encoding = ( Pg => qq|
+SQL_ASCII--ASCII
+UTF8--Unicode (UTF-8)
+EUC_JP--Japanese (EUC_JP)
+EUC_JP--Japanese (EUC_JIS_2004)
+SJIS--Japanese (SJIS)
+SHIFT_JIS_2004--Japanese (SHIFT_JIS_2004)
+EUC_KR--Korean
+JOHAB--Korean (Hangul)
+UHC--Korean (Unified Hangul Code)
+EUC_TW--Taiwanese
+BIG5--Traditional Chinese (BIG5)
+EUC_CN--Simplified Chinese (GB18030)
+GBK--Simplified Chinese (GBK)
+GB18030--Chinese
+KOI8R--Cyrillic (Russian)
+KOI8U--Cyrillic (Ukrainian)
+LATIN1--ISO 8859-1 Western Europe
+LATIN2--ISO 8859-2 Central Europe
+LATIN3--ISO 8859-3 South Europe
+LATIN4--ISO 8859-4 North Europe
+LATIN5--ISO 8859-9 Turkish
+LATIN6--ISO 8859-10 Nordic
+LATIN7--ISO 8859-13 Baltic
+LATIN8--ISO 8859-14 Celtic
+LATIN9--ISO 8859-15 (Latin 1 with Euro and accents)
+LATIN10--ISO 8859-16 Romanian
+ISO_8859_5--ISO 8859-5/ECMA 113 (Latin/Cyrillic)
+ISO_8859_6--ISO 8859-6/ECMA 114 (Latin/Arabic)
+ISO_8859_7--ISO 8859-7/ECMA 118 (Latin/Greek)
+ISO_8859_8--ISO 8859-8/ECMA 121 (Latin/Hebrew)
+MULE_INTERNAL--Multilingual Emacs
+WIN866--Windows CP866 (Cyrillic)
+WIN874--Windows CP874 (Thai)
+WIN1250--Windows CP1250 (Central Euope)
+WIN--Windows CP1251 (Cyrillic)
+WIN1252--Windows CP1252 (Western European)
+WIN1253--Windows CP1253 (Greek)
+WIN1254--Windows CP1254 (Turkish)
+WIN1255--Windows CP1255 (Hebrew)
+WIN1256--Windows CP1256 (Arabic)
+WIN1257--Windows CP1257 (Baltic)
+WIN1258--Windows CP1258 (Vietnamese)|
+  );
+
+  $encoding{$dbdriver};
 
 }
 

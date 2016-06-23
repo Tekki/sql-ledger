@@ -7,7 +7,7 @@ $self{texts} = {
   'Balance'                     => 'Balanse',
   'Chart of Accounts'           => 'Kontoplan',
   'Credit'                      => 'Kredit',
-  'Current'                     => 'Nåværende',
+  'Current'                     => 'NÃ¥vÃ¦rende',
   'Date'                        => 'Dato',
   'Debit'                       => 'Debet',
   'Dec'                         => 'des',
@@ -18,19 +18,19 @@ $self{texts} = {
   'February'                    => 'februar',
   'From'                        => 'Fra',
   'GIFI'                        => 'GIFI',
-  'Include in Report'           => 'Inkludér i rapport',
+  'Include in Report'           => 'InkludÃ©r i rapport',
   'Jan'                         => 'jan',
   'January'                     => 'januar',
   'Jul'                         => 'jul',
   'July'                        => 'juli',
   'Jun'                         => 'jun',
   'June'                        => 'juni',
-  'List Transactions'           => 'Vis bokføringer',
+  'List Transactions'           => 'Vis bokfÃ¸ringer',
   'Mar'                         => 'mar',
   'March'                       => 'mars',
   'May'                         => 'mai',
   'May '                        => 'mai ',
-  'Month'                       => 'Måned',
+  'Month'                       => 'MÃ¥ned',
   'Nov'                         => 'nov',
   'November'                    => 'november',
   'Oct'                         => 'okt',
@@ -45,7 +45,7 @@ $self{texts} = {
   'Source'                      => 'Bilag',
   'Subtotal'                    => 'Subtotal',
   'To'                          => 'Til',
-  'Year'                        => 'År',
+  'Year'                        => 'Ã…r',
 };
 
 $self{subs} = {
@@ -53,7 +53,7 @@ $self{subs} = {
   'chart_of_accounts'           => 'chart_of_accounts',
   'list'                        => 'list',
   'list_transactions'           => 'list_transactions',
-  'vis_bokføringer'             => 'list_transactions',
+  'vis_bokfÃ¸ringer'             => 'list_transactions',
 };
 
 1;

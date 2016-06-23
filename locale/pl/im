@@ -1,4 +1,4 @@
-$self{charset} = 'ISO-8859-2';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Account'                     => 'Konto',
@@ -9,18 +9,18 @@ $self{texts} = {
   'Currency'                    => 'Waluta',
   'Customer'                    => 'Odbiorca',
   'Customer Number'             => 'Numer Odbiorcy',
-  'Date Paid'                   => 'Data Zap³aty',
+  'Date Paid'                   => 'Data ZapÅ‚aty',
   'Description'                 => 'Opis',
-  'Due Date'                    => 'Termin P³atno¶ci',
+  'Due Date'                    => 'Termin PÅ‚atnoÅ›ci',
   'Exch'                        => 'Kurs Walut',
   'Invoice'                     => 'Faktura',
   'Invoice Date'                => 'Data Wystawienia',
   'Invoice Number'              => 'Numer Faktury',
   'No'                          => 'Nie',
-  'Paid'                        => 'Zap³acono',
-  'Qty'                         => 'Ilo¶æ',
+  'Paid'                        => 'ZapÅ‚acono',
+  'Qty'                         => 'IloÅ›Ä‡',
   'Salesperson'                 => 'Sprzedawca',
-  'Total'                       => 'Warto¶æ Brutto',
+  'Total'                       => 'WartoÅ›Ä‡ Brutto',
   'Unit'                        => 'Jednostka',
   'Yes'                         => 'Tak',
 };

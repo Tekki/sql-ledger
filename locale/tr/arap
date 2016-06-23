@@ -1,13 +1,13 @@
-$self{charset} = 'ISO-8859-9';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Address'                     => 'Adres',
   'Continue'                    => 'Devam',
   'Date'                        => 'Tarih',
-  'Description'                 => 'AÁ˝klama',
+  'Description'                 => 'A√ßƒ±klama',
   'E-mail'                      => 'Posta',
   'Number'                      => 'Numara',
-  'To'                          => 'Biti˛',
+  'To'                          => 'Biti≈ü',
 };
 
 $self{subs} = {

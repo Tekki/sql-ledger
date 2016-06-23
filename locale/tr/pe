@@ -1,31 +1,31 @@
-$self{charset} = 'ISO-8859-9';
+$self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Account'                     => 'Hesap',
-  'Accounting Menu'             => 'Muhasebe Menüsü',
+  'Accounting Menu'             => 'Muhasebe MenÃ¼sÃ¼',
   'Add'                         => 'Ekle',
   'Address'                     => 'Adres',
   'All'                         => 'Hepsi',
   'Amount'                      => 'Miktar',
   'Continue'                    => 'Devam',
-  'Customer'                    => 'Alıcı',
+  'Customer'                    => 'AlÄ±cÄ±',
   'Date'                        => 'Tarih',
   'Delete'                      => 'Sil',
-  'Description'                 => 'Açıklama',
-  'From'                        => 'Başlangıç',
+  'Description'                 => 'AÃ§Ä±klama',
+  'From'                        => 'BaÅŸlangÄ±Ã§',
   'Language'                    => 'Dil',
-  'Link Accounts'               => 'Bağlı Hesaplar',
-  'List Price'                  => 'Liste Fiyatı',
+  'Link Accounts'               => 'BaÄŸlÄ± Hesaplar',
+  'List Price'                  => 'Liste FiyatÄ±',
   'Notes'                       => 'Notlar:',
   'Number'                      => 'Numara',
   'Qty'                         => 'Adet',
   'Save'                        => 'Kaydet',
-  'Sell Price'                  => 'Satış Fiyatı',
+  'Sell Price'                  => 'SatÄ±ÅŸ FiyatÄ±',
   'Tax'                         => 'Vergi',
-  'To'                          => 'Bitiş',
+  'To'                          => 'BitiÅŸ',
   'Unit'                        => 'Birim',
-  'Vendor'                      => 'Satıcı',
-  'Weight'                      => 'Ağırlık',
+  'Vendor'                      => 'SatÄ±cÄ±',
+  'Weight'                      => 'AÄŸÄ±rlÄ±k',
 };
 
 $self{subs} = {

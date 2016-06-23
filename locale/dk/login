@@ -1,15 +1,15 @@
 $self{texts} = {
   'Company'                     => 'Firma',
-  'Continue'                    => 'Fortsæt',
-  'Dataset is newer than version!' => 'Datasæt er nyere end version!',
-  'Incorrect Dataset version!'  => 'Forkert version af datasæt!',
-  'Login'                       => 'Log på',
+  'Continue'                    => 'FortsÃ¦t',
+  'Dataset is newer than version!' => 'DatasÃ¦t er nyere end version!',
+  'Incorrect Dataset version!'  => 'Forkert version af datasÃ¦t!',
+  'Login'                       => 'Log pÃ¥',
   'Name'                        => 'Navn',
   'Password'                    => 'Adgangskode',
   'Upgrading to Version'        => 'Opgraderer til version',
   'Version'                     => 'Version',
   'You did not enter a name!'   => 'Du angav ikke et navn',
-  'done'                        => 'færdig',
+  'done'                        => 'fÃ¦rdig',
 };
 
 $self{subs} = {
@@ -17,7 +17,7 @@ $self{subs} = {
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
-  'log_på'                      => 'login',
+  'log_pÃ¥'                      => 'login',
 };
 
 1;

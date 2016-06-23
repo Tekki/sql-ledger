@@ -4,14 +4,14 @@ $self{texts} = {
   'Continue'                    => 'Continuar',
   'Date'                        => 'Fecha',
   'Memo'                        => 'Memo',
-  'Nothing to print!'           => '¡No hay nada que imprimir!',
+  'Nothing to print!'           => 'Â¡No hay nada que imprimir!',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
   'Screen'                      => 'Pantalla',
-  'Select a Printer!'           => '¡Seleccione una impresora!',
-  'Select payment'              => '¡Seleccione Pago!',
-  'Select postscript or PDF!'   => '¡Seleccione postscript o PDF!',
-  'Source'                      => 'Cheque N°',
+  'Select a Printer!'           => 'Â¡Seleccione una impresora!',
+  'Select payment'              => 'Â¡Seleccione Pago!',
+  'Select postscript or PDF!'   => 'Â¡Seleccione postscript o PDF!',
+  'Source'                      => 'Cheque NÂ°',
 };
 
 $self{subs} = {

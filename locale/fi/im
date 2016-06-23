@@ -1,3 +1,5 @@
+$self{charset} = 'UTF-8';
+
 $self{texts} = {
   'Account'                     => 'Tili',
   'City'                        => 'Kaupunki',
@@ -7,20 +9,21 @@ $self{texts} = {
   'Currency'                    => 'Valuutta',
   'Customer'                    => 'Asiakas',
   'Customer Number'             => 'Asiakasnumero',
-  'Date Paid'                   => 'Maksup‰iv‰',
+  'Date Paid'                   => 'Maksup√§iv√§',
   'Description'                 => 'Kuvaus',
-  'Due Date'                    => 'Er‰p‰iv‰',
+  'Due Date'                    => 'Er√§p√§iv√§',
   'Exch'                        => 'Vaihtokurssi',
   'Invoice'                     => 'Lasku',
-  'Invoice Date'                => 'Laskun p‰iv‰ys',
+  'Invoice Date'                => 'Laskun p√§iv√§ys',
   'Invoice Number'              => 'Laskun numero',
   'No'                          => 'Ei',
   'Paid'                        => 'Maksettu',
-  'Qty'                         => 'M‰‰r‰',
-  'Salesperson'                 => 'Myyj‰',
-  'Total'                       => 'Yhteens‰',
-  'Unit'                        => 'Yksikkˆ',
-  'Yes'                         => 'Kyll‰',
+  'Posting failed!'             => 'Kirjaus ei onnistunut',
+  'Qty'                         => 'M√§√§r√§',
+  'Salesperson'                 => 'Myyj√§',
+  'Total'                       => 'Yhteens√§',
+  'Unit'                        => 'Yksikk√∂',
+  'Yes'                         => 'Kyll√§',
 };
 
 $self{subs} = {

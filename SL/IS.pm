@@ -531,7 +531,7 @@ sub invoice_details {
       push(@{ $form->{paymentmethod} }, $description);
       
       if ($form->{selectpaymentmethod}) {
-	$form->{roundto} = $roundchange{$form->{"paymentmethod_$i"}};
+        $form->{roundto} = $roundchange{$form->{"paymentmethod_$i"}};
       }
 
       $form->{paid} += $form->parse_amount($myconfig, $form->{"paid_$i"});
@@ -596,9 +596,9 @@ sub invoice_details {
 
   # dcn
   $query = qq|SELECT bk.iban, bk.bic, bk.membernumber, bk.dcn, bk.rvc
-	      FROM bank bk
-	      JOIN chart c ON (c.id = bk.id)
-	      WHERE c.accno = '$paymentaccno'|;
+              FROM bank bk
+              JOIN chart c ON (c.id = bk.id)
+              WHERE c.accno = '$paymentaccno'|;
   ($form->{iban}, $form->{bic}, $form->{membernumber}, $form->{dcn}, $form->{rvc}) = $dbh->selectrow_array($query);
 
   for my $dcn (qw(dcn rvc)) { $form->{$dcn} = $form->format_dcn($form->{$dcn}) }
@@ -1252,12 +1252,13 @@ sub post_invoice {
   }
 
   foreach $ref (sort { $b->{amount} <=> $a->{amount} } @ { $form->{acc_trans}{lineitems} }) {
-    $amount = $ref->{amount} + $diff + $fxdiff;
-    $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount,
-                transdate, project_id, id)
-                VALUES ($form->{id}, $ref->{chart_id}, $amount,
-              '$form->{transdate}', $ref->{project_id}, $ref->{id})|;
-    $dbh->do($query) || $form->dberror($query);
+    if ($amount = $ref->{amount} + $diff + $fxdiff) {
+      $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount,
+                  transdate, project_id, id)
+                  VALUES ($form->{id}, $ref->{chart_id}, $amount,
+                '$form->{transdate}', $ref->{project_id}, $ref->{id})|;
+      $dbh->do($query) || $form->dberror($query);
+    }
     $diff = 0;
     $fxdiff = 0;
   }
@@ -2646,23 +2647,24 @@ sub generate_invoice {
   my $query;
   my $sth;
   my $ref;
+  my $tref;
 
   $form->{"$form->{vc}_id"} *= 1;
 
   if ($form->{employee}) {
     $query = qq|SELECT vc.name AS $form->{vc},
                 ad.city
-		FROM $form->{vc} vc
-		JOIN address ad ON (ad.trans_id = vc.id)
-		WHERE vc.id = $form->{"$form->{vc}_id"}|;
+                FROM $form->{vc} vc
+                JOIN address ad ON (ad.trans_id = vc.id)
+                WHERE vc.id = $form->{"$form->{vc}_id"}|;
   } else {
     $query = qq|SELECT vc.name AS $form->{vc},
                 ad.city,
                 e.name AS employee, vc.employee_id
-		FROM $form->{vc} vc
-		LEFT JOIN employee e ON (e.id = vc.employee_id)
-		JOIN address ad ON (ad.trans_id = vc.id)
-		WHERE vc.id = $form->{"$form->{vc}_id"}|;
+                FROM $form->{vc} vc
+                LEFT JOIN employee e ON (e.id = vc.employee_id)
+                JOIN address ad ON (ad.trans_id = vc.id)
+                WHERE vc.id = $form->{"$form->{vc}_id"}|;
   }
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -2671,42 +2673,33 @@ sub generate_invoice {
   for (keys %$ref) { $form->{$_} = $ref->{$_} }
   $sth->finish;
 
+  # tax rate
+  $query = qq|SELECT c.description, t.rate, t.taxnumber,
+              l.description AS translation
+              FROM chart c
+              JOIN tax t ON (c.id = t.chart_id)
+              LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$form->{language_code}')
+              WHERE c.accno = ?|;
+  my $tth = $dbh->prepare($query);
+
   $query = qq|SELECT c.accno
               FROM chart c
-	      JOIN $form->{vc}tax ct ON (ct.chart_id = c.id)
-	      WHERE ct.$form->{vc}_id = $form->{"$form->{vc}_id"}|;
+              JOIN $form->{vc}tax ct ON (ct.chart_id = c.id)
+              WHERE ct.$form->{vc}_id = $form->{"$form->{vc}_id"}|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   $form->{taxaccounts} = "";
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     $form->{taxaccounts} .= "$ref->{accno} ";
+    $tth->execute($ref->{accno});
+    $tref = $tth->fetchrow_hashref(NAME_lc);
+    $tref->{description} = $tref->{translation} if $tref->{translation};
+    for (qw(rate description taxnumber)) { $form->{"$ref->{accno}_$_"} = $tref->{$_} }
+    $tth->finish;
   }
   $sth->finish;
   chop $form->{taxaccounts};
-
-  # tax rates
-  $query = qq|SELECT c.accno, c.description, t.rate, t.taxnumber,
-              l.description AS translation
-	      FROM chart c
-	      JOIN tax t ON (c.id = t.chart_id)
-	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$form->{language_code}')
-	      WHERE c.link LIKE '%AR_tax%'
-	      AND (t.validto >= '$form->{transdate}' OR t.validto IS NULL)
-	      ORDER BY c.accno, t.validto|;
-  $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
-
-  my %tax = ();
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-    if (not exists $tax{$ref->{accno}}) {
-      $ref->{description} = $ref->{translation} if $ref->{translation};
-      for (qw(rate description taxnumber)) { $form->{"$ref->{accno}_$_"} = $ref->{$_} }
-      $tax{$ref->{accno}} = 1;
-    }
-  }
-  $sth->finish;
-  
 
   my $rc = IS->post_invoice($myconfig, $form, $dbh);
 
