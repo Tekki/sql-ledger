@@ -1513,6 +1513,7 @@ $self{texts} = {
   'failed!'                     => 'fehlgeschlagen!',
   'for'                         => 'für',
   'for Period'                  => 'für den Zeitraum',
+  'get copies'                  => 'Kopien an mich',
   'gzip failed!'                => 'Zippen fehlgeschlagen!',
   'html'                        => 'html',
   'html Templates'              => 'HTML-Vorlagen',

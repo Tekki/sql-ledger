@@ -1535,6 +1535,7 @@ sub save_preferences {
   for (keys %$form) {
     $config->{$_} = $form->{$_};
   }
+  delete $config->{emailcopy} unless $form->{emailcopy};
 
   if ($form->{oldpassword} eq $form->{new_password}) {
     $config->{encrypted} = 1;

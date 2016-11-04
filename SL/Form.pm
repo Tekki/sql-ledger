@@ -816,6 +816,11 @@ sub parse_template {
       $mail->{from} = qq|"$myconfig->{name}" <$myconfig->{email}>|;
       $mail->{fileid} = "${fileid}.";
 
+      if ($myconfig->{emailcopy} && $mail->{bcc} !~ /$myconfig->{email}/) {
+        $mail->{bcc} .= ', ' if $mail->{bcc};
+        $mail->{bcc} .= $myconfig->{email};
+      }
+
       # if we send html or plain text inline
       if (($self->{format} =~ /(html|txt|xml)/) && ($self->{sendmode} eq 'inline')) {
 	my $br = "";

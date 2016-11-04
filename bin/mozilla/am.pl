@@ -2927,6 +2927,9 @@ sub config {
   $form->{signature} =~ s/\\n/\n/g;
   $form->{oldpassword} = $myconfig{password};
 
+  my %checked;
+  $checked{emailcopy} = "checked" if $myconfig{emailcopy};
+
   my %countrycodes = User->country_codes;
   
   for (sort { $countrycodes{$a} cmp $countrycodes{$b} } keys %countrycodes) {
@@ -3026,6 +3029,13 @@ pdf--PDF|;
 		<td><input type=password name=confirm_password value="$myconfig{password}" size=10></td>
 	      </tr>
               $adminname
+        <tr>
+    <th align=right>|.$locale->text('E-Mail').qq|</th>
+    <td>
+      <input name=emailcopy type=checkbox class=checkbox value=1 $checked{emailcopy}>
+      |.$locale->text('get copies').qq|
+    </td>
+        </tr>
 	      <tr valign=top>
 	        <th align=right>|.$locale->text('Signature').qq|</th>
 		<td><textarea name="signature" rows="3" cols="35">$form->{signature}</textarea></td>

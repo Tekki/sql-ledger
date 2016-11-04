@@ -391,6 +391,7 @@ $self{texts} = {
   'done'                        => 'fertig',
   'failed'                      => 'fehlgeschlagen',
   'failed!'                     => 'fehlgeschlagen!',
+  'get copies'                  => 'Kopien an mich',
   'gzip failed!'                => 'Zippen fehlgeschlagen!',
   'html'                        => 'html',
   'ok'                          => 'ok',
