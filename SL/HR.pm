@@ -1275,6 +1275,15 @@ sub payslip_details {
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   %defaults = $form->get_defaults($dbh, \@{['printer_%']});
+  # Tekki: wlprinter
+  for (keys %defaults) {
+    if ($_ =~ /printer_/) {
+      ($label, $command) = split /=/, $defaults{$_};
+      $command = "wlprinter/fileprinter.pl $form->{login}" if lc $command eq 'wlprinter';
+      $form->{"${label}_printer"} = $command;
+    }
+  }
+  # Tekki_end
   
   my ($null, $id) = split /--/, $form->{employee};
 

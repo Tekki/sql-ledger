@@ -488,7 +488,6 @@ sub print_payslip {
   $display_form = ($form->{display_form}) ? $form->{display_form} : "display_form";
  
   @a = ();
-  $form->{paid} = $form->parse_amount(\%myconfig, $form->{paid});
   
   if (exists $form->{longformat}) {
     $form->{dateto} = $locale->date(\%myconfig, $form->{dateto}, $form->{longformat});
@@ -505,7 +504,7 @@ sub print_payslip {
   use SL::CP;
   $c = CP->new(($form->{language_code}) ? $form->{language_code} : $myconfig{countrycode}); 
   $c->init;
-  ($whole, $form->{decimal}) = split /\./, $form->{paid};
+  ($whole, $form->{decimal}) = split /\./, $form->parse_amount(\%myconfig, $form->{paid});
 
   $form->{decimal} .= "00";
   $form->{decimal} = substr($form->{decimal}, 0, 2);

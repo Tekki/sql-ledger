@@ -1427,7 +1427,11 @@ sub reminder {
   
   $form->get_peripherals($dbh);
   for (@{ $form->{all_printer} }) {
-    $form->{"$_->{printer}_printer"} = $_->{command};
+    # Tekki: wlprinter
+    $form->{"$_->{printer}_printer"} = $_->{command} eq 'wlprinter'
+      ? "wlprinter/fileprinter.pl $form->{login}"
+      : $_->{command};
+    # Tekki_end
   }
 
   $form->{currencies} = $form->get_currencies($myconfig, $dbh);
