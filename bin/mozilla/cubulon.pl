@@ -140,7 +140,7 @@ sub search_order {
 
 sub search_transaction {
 
-  $form->{open}    //= 1;
+  $form->{open}    //= 1 unless $form->{outstanding};
   $form->{summary} //= 1;
   $form->{vc} = 'customer';
   AA->transactions(\%myconfig, $form);
