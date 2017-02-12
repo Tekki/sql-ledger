@@ -1,0 +1,89 @@
+
+<body>
+
+<h4 align=center>
+<%company%>
+<br><%address%>
+
+<p>INCOME STATEMENT
+<%if method eq 'cash'%>
+<br>CASH Method
+<%end method eq 'cash'%>
+<br><%period%>
+</h4>
+
+<%if department%>
+<h4>Department: <%department%></h4>
+<%end department%>
+
+<%if projectnumber%>
+<h4>Project Number: <%projectnumber%></h4>
+<%end projectnumber%>
+
+<table width=100% border=0>
+<tr>
+  <th width=400 align=left colspan=2>INCOME<br><hr width=300 size=5 align=left noshade></th>
+  <th><%this_period%></th>
+  <th><%previous_period%></th>
+</tr>
+
+<%foreach income_account%>
+<tr>
+  <td width=4> </td>
+  <td><%income_account%></td>
+  <td align=right><%income_this_period%></td>
+  <td align=right><%income_previous_period%></td>
+</tr>
+<%end income_account%>
+
+<tr>
+  <td colspan=2> </td>
+  <td><hr noshade size=1></td>
+  <td><hr noshade size=1></td>
+</tr>
+
+<tr valign=top>
+  <td> </td>
+  <th align=left>TOTAL INCOME</th>
+  <td align=right><%total_income_this_period%><hr noshade size=2></td>
+  <td align=right><%total_income_previous_period%><hr noshade size=2></td>
+</tr>
+
+<tr>
+  <th align=left colspan=2>EXPENSES<br><hr width=300 size=5 align=left noshade></th>
+</tr>
+
+<%foreach expense_account%>
+<tr>
+  <td> </td>
+  <td><%expense_account%></td>
+  <td align=right><%expense_this_period%></td>
+  <td align=right><%expense_previous_period%></td>
+</tr>
+<%end expense_account%>
+
+<tr>
+  <td colspan=2> </td>
+  <td><hr noshade size=1></td>
+  <td><hr noshade size=1></td>
+</tr>
+
+<tr valign=top>
+  <td> </td>
+  <th align=left>TOTAL EXPENSES</th>
+  <td align=right><%total_expense_this_period%><br><hr noshade size=2</td>
+  <td align=right><%total_expense_previous_period%><br><hr noshade size=2</td>
+</tr>
+
+<tr valign=top>
+  <th align=left colspan=2>INCOME / (LOSS)</th>
+  <td align=right><%total_this_period%><br><hr noshade size=2></td>
+  <td align=right><%total_previous_period%><br><hr noshade size=2></td>
+</tr>
+
+</table>
+
+All amounts in <%currency%>
+<%if currency ne 'CAD'%>
+ converted at <%exchangerate%>
+<%end currency ne 'CAD'%>.

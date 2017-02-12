@@ -86,7 +86,6 @@ sub delete_transaction {
 sub post_transaction {
   my ($self, $myconfig, $form, $dbh) = @_;
   
-  my $null;
   my $project_id;
   my $department_id;
   my $i;
@@ -168,7 +167,7 @@ sub post_transaction {
     ($form->{id}) = $dbh->selectrow_array($query);
   }
   
-  ($null, $department_id) = split /--/, $form->{department};
+  (undef, $department_id) = split /--/, $form->{department};
   $department_id *= 1;
 
   $form->{reference} = $form->update_defaults($myconfig, 'glnumber', $dbh) unless $form->{reference};
@@ -223,7 +222,7 @@ sub post_transaction {
     }
 
     # add the record
-    ($null, $project_id) = split /--/, $form->{"projectnumber_$i"};
+    (undef, $project_id) = split /--/, $form->{"projectnumber_$i"};
     $project_id ||= 'NULL';
     
     if ($keepcleared) {
@@ -323,7 +322,6 @@ sub transactions {
   my $query;
   my $sth;
   my $var;
-  my $null;
   
   my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
@@ -355,7 +353,7 @@ sub transactions {
     $apwhere .= " AND lower(ct.vendornumber) LIKE '$var'";
   }
   if ($form->{department}) {
-    ($null, $var) = split /--/, $form->{department};
+    (undef, $var) = split /--/, $form->{department};
     $glwhere .= " AND g.department_id = $var";
     $arwhere .= " AND a.department_id = $var";
     $apwhere .= " AND a.department_id = $var";

@@ -1,5 +1,5 @@
 \documentclass{scrartcl}
-\usepackage[latin2]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage{tabularx}
 \usepackage[letterpaper,top=2cm,bottom=-3cm,left=1.1cm,right=1.5cm]{geometry}
 \usepackage{graphicx}
@@ -14,7 +14,7 @@
 
 <%include letterhead.tex%>
 
-\centerline{\textbf{ } \hspace{0.3cm} \textbf{Z¡VAZOK}}
+\centerline{\textbf{ } \hspace{0.3cm} \textbf{Z√ÅVAZOK}}
 
 \vspace*{0.5cm}
 
@@ -50,19 +50,19 @@ Fax: <%vendorfax%>
 <%email%>
 
 <%if vendortaxnumber%>
-I» DPH: <%vendortaxnumber%>
+Iƒå DPH: <%vendortaxnumber%>
 <%end vendortaxnumber%>
 }
 \hfill
 \begin{tabular}[t]{ll}
-  \textbf{Fakt˙ra \#} & <%invnumber%> \\
-  \textbf{D·tum} & <%invdate%> \\
-  \textbf{Splatnosª} & <%duedate%> \\
+  \textbf{Fakt√∫ra \#} & <%invnumber%> \\
+  \textbf{D√°tum} & <%invdate%> \\
+  \textbf{Splatnos≈•} & <%duedate%> \\
   <%if ponumber%>
-    \textbf{Objedn·vka \#} & <%ponumber%> \\
+    \textbf{Objedn√°vka \#} & <%ponumber%> \\
   <%end ponumber%>
   <%if ordnumber%>
-    \textbf{Objedn·vka \#} & <%ordnumber%> \\
+    \textbf{Objedn√°vka \#} & <%ordnumber%> \\
   <%end ordnumber%>
   \textbf{Vystavil} & <%employee%> \\
 \end{tabular}
@@ -74,7 +74,7 @@ I» DPH: <%vendortaxnumber%>
   <%accno%> & <%account%> & <%amount%> & <%description%> & <%projectnumber%> \\
 <%end amount%>
 
-  \multicolumn{2}{r}{\textbf{Medzis˙Ëet}} & <%subtotal%> & \\
+  \multicolumn{2}{r}{\textbf{Medzis√∫ƒçet}} & <%subtotal%> & \\
 <%foreach tax%>
   \multicolumn{2}{r}{\textbf{<%taxdescription%> @ <%taxrate%> \%}} & <%tax%> & \\
 <%end tax%>
@@ -98,7 +98,7 @@ I» DPH: <%vendortaxnumber%>
 \begin{tabular}{@{}llllr@{}}
   \multicolumn{5}{c}{\textbf{Platby}} \\
   \hline
-  \textbf{D·tum} & & \textbf{Doklad} & \textbf{Pozn·mka} & \textbf{Suma} \\
+  \textbf{D√°tum} & & \textbf{Doklad} & \textbf{Pozn√°mka} & \textbf{Suma} \\
 <%end paid_1%>
 <%foreach payment%>
   <%paymentdate%> & <%paymentaccount%> & <%paymentsource%> & <%paymentmemo%> & <%payment%> \\
@@ -108,5 +108,6 @@ I» DPH: <%vendortaxnumber%>
 <%end paid_1%>
 
 \end{document}
+
 
 

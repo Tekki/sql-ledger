@@ -1,5 +1,5 @@
 \documentclass{scrartcl}
-\usepackage[latin2]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage{tabularx}
 \usepackage[letterpaper,top=2cm,bottom=-3cm,left=1.1cm,right=1.5cm]{geometry}
 \usepackage{graphicx}
@@ -22,15 +22,15 @@
 \markboth{<%company%>\hfill <%ordnumber%>}{<%company%>\hfill <%ordnumber%>}
 
 \begin{tabularx}{\textwidth}{@{}rlXrcll@{}}
-  \textbf{Poloæka} & \textbf{»Ìslo} & \textbf{Popis} &
-  \textbf{Mnoæ} & \textbf{DodanÈ} & & \textbf{Reg·l} \\
+  \textbf{Polo≈æka} & \textbf{ƒå√≠slo} & \textbf{Popis} &
+  \textbf{Mno≈æ} & \textbf{Dodan√©} & & \textbf{Reg√°l} \\
 
 <%end pagebreak%>
 
 \vspace*{0.5cm}
 
 \parbox[t]{.5\textwidth}{
-  \textbf{Odberateµ}
+  \textbf{Odberateƒæ}
 } \hfill
 
 \vspace{0.3cm}
@@ -68,14 +68,14 @@
 
 \vspace{1cm}
 
-\textbf{V › B E R O V ›} \parbox{0.3cm}{\hfill} \textbf{L I S T}
+\textbf{V √ù B E R O V √ù} \parbox{0.3cm}{\hfill} \textbf{L I S T}
 \hfill
 
 \vspace{1cm}
 
 \begin{tabularx}{\textwidth}{*{7}{|X}|} \hline
-  \textbf{Fakt˙ra \#} & \textbf{Objedn·vka \#} & \textbf{D·tum} & \textbf{Kontakt}
-  & \textbf{Sklad} & \textbf{Miesto dodania} & \textbf{SpÙsob dodania} \\ [0.5em]
+  \textbf{Fakt√∫ra \#} & \textbf{Objedn√°vka \#} & \textbf{D√°tum} & \textbf{Kontakt}
+  & \textbf{Sklad} & \textbf{Miesto dodania} & \textbf{Sp√¥sob dodania} \\ [0.5em]
   \hline
   <%invnumber%> & <%ordnumber%>
   <%if shippingdate%>
@@ -91,8 +91,8 @@
 \vspace{1cm}
 
 \begin{tabularx}{\textwidth}{@{}rlXrcll@{}}
-  \textbf{Poloæka} & \textbf{»Ìslo} & \textbf{Popis} &
-  \textbf{Mnoæ} & \textbf{DodanÈ} & & \textbf{Reg·l} \\
+  \textbf{Polo≈æka} & \textbf{ƒå√≠slo} & \textbf{Popis} &
+  \textbf{Mno≈æ} & \textbf{Dodan√©} & & \textbf{Reg√°l} \\
 <%foreach number%>
   <%runningnumber%> & <%number%> & <%description%> &
   <%qty%> & [\hspace{1cm}] & <%unit%> & <%bin%> \\
@@ -105,5 +105,6 @@
 }
 
 \end{document}
+
 
 

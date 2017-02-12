@@ -306,7 +306,7 @@ sub edit_payment_reversal {
 
   delete $button{'Delete'} unless $form->{id};
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
   
   print qq|
 </form>
@@ -427,7 +427,7 @@ sub search {
     # accounting years
     $selectaccountingyear = "\n";
     for (@{ $form->{all_years} }) { $selectaccountingyear .= qq|$_\n| }
-    $selectaccountingmonth = "<option>\n";
+    $selectaccountingmonth = "\n";
     for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|$_--|.$locale->text($form->{all_month}{$_}).qq|\n| }
 
     $selectfrom = qq|
@@ -803,7 +803,7 @@ sub list_batches {
 
   $form->hide_form(qw(helpref callback path login rowcount));
   
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
   
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -1060,7 +1060,7 @@ sub list_vouchers {
 
   $form->hide_form(qw(transdate batchid batchnumber batchdescription batch callback path login));
   
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
   
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";

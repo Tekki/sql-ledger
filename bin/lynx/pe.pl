@@ -152,7 +152,7 @@ sub job_header {
 
   for (qw(partnumber partdescription description notes unit)) { $form->{$_} = $form->quote($form->{$_}) }
 
-  for (qw(production weight)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}) }
+  for (qw(production completed weight)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}) }
   for (qw(listprice sellprice)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}) }
   
   $reference_documents = &references;
@@ -202,9 +202,10 @@ sub job_header {
 	  <th align=right nowrap>|.$locale->text('Production').qq|</th>
 	  <td><input name=production class="inputright" size=11 value="$form->{production}"></td>
 	  <th align=right nowrap>|.$locale->text('Completed').qq|</th>
-	  <td align=right>$form->{completed}</td>
+	  <td>$form->{completed}</td>
 	</tr>
 |;
+    $production .= $form->hide_form(completed);
 
   } else {
     
@@ -213,11 +214,12 @@ sub job_header {
     $production = qq|
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Production').qq|</th>
-	  <td><input type=hidden name=production value="$form->{production}">$form->{production}</td>
+	  <td>$form->{production}</td>
 	  <th align=right nowrap>|.$locale->text('Completed').qq|</th>
 	  <td>$form->{completed}</td>
 	</tr>
 |;
+    $production .= $form->hide_form(qw(production completed));
 
   }
   
@@ -424,7 +426,7 @@ sub job_footer {
     }
   }
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
   
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -1031,11 +1033,7 @@ sub list_projects {
   
   $form->hide_form(qw(callback type path login report reportcode reportlogin));
 
-  foreach $item (sort { $a->{order} <=> $b->{order} } %button) {
-    print $item->{code};
-  }
-  
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
   
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -1160,7 +1158,7 @@ sub project_footer {
     }
   }
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -1190,7 +1188,7 @@ sub save {
   if ($form->{type} eq 'project') {
 
     if ($form->{"select$form->{vc}"}) {
-      ($null, $form->{"$form->{vc}_id"}) = split /--/, $form->{"$form->{vc}"};
+      (undef, $form->{"$form->{vc}_id"}) = split /--/, $form->{"$form->{vc}"};
     } else {
       if ($form->{"old$form->{vc}"} ne qq|$form->{"$form->{vc}"}--$form->{"$form->{vc}_id"}|) {
 	
@@ -1227,7 +1225,8 @@ sub save {
   if ($form->{type} eq 'job') {
   
     if ($form->{"select$form->{vc}"}) {
-      ($null, $form->{"$form->{vc}_id"}) = split /--/, $form->{"$form->{vc}"};
+      (undef, $form->{"$form->{vc}_id"}) = split /--/, $form->{"$form->{vc}"};
+      $form->error($locale->text('Customer missing!')) unless $form->{"$form->{vc}_id"};
     } else {
       if ($form->{"old$form->{vc}"} ne qq|$form->{"$form->{vc}"}--$form->{"$form->{vc}_id"}|) {
 	
@@ -1379,10 +1378,8 @@ sub partsgroup_report {
 ";
   }
 
-  $i = 1;
   if ($myconfig{acs} !~ /Goods \& Services--Goods \& Services/) {
-    $button{'Goods & Services--Add Group'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Group').qq|"> |;
-    $button{'Goods & Services--Add Group'}{order} = $i++;
+    $button{'Goods & Services--Add Group'} = { ndx => 1, key => 'A', value => $locale->text('Add Group') };
 
     foreach $item (split /;/, $myconfig{acs}) {
       delete $button{$item};
@@ -1405,9 +1402,7 @@ sub partsgroup_report {
   $form->{code} = $form->{partsgroupcode};
   $form->hide_form(qw(partsgroup code callback type path login));
 
-  foreach $item (sort { $a->{order} <=> $b->{order} } %button) {
-    print $item->{code};
-  }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -1597,10 +1592,8 @@ sub pricegroup_report {
 ";
   }
 
-  $i = 1;
   if ($myconfig{acs} !~ /Goods \& Services--Goods \& Services/) {
-    $button{'Goods & Services--Add Pricegroup'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Pricegroup').qq|"> |;
-    $button{'Goods & Services--Add Pricegroup'}{order} = $i++;
+    $button{'Goods & Services--Add Pricegroup'} = { ndx => 1, key => 'A', value => $locale->text('Add Pricegroup') };
 
     foreach $item (split /;/, $myconfig{acs}) {
       delete $button{$item};
@@ -1622,9 +1615,7 @@ sub pricegroup_report {
 
   $form->hide_form(qw(callback type path login));
   
-  foreach $item (sort { $a->{order} <=> $b->{order} } %button) {
-    print $item->{code};
-  }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -2061,7 +2052,7 @@ sub translation_footer {
     delete $button{'Delete'};
   }
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -2109,10 +2100,8 @@ sub update {
 # $locale->text('Customer not on file!')
 # $locale->text('Vendor not on file!')
 
-    for (qw(production listprice sellprice weight)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
+    for (qw(production completed listprice sellprice weight)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
 
-    $form->{projectnumber} = $form->update_defaults(\%myconfig, "projectnumber") unless $form->{projectnumber};
-    
     if ($form->{"select$form->{vc}"}) {
       if ($form->{startdate} ne $form->{oldstartdate} || $form->{enddate} ne $form->{oldenddate}) {
 	
@@ -2126,7 +2115,7 @@ sub update {
       }
 
       $form->{"old$form->{vc}"} = $form->{"$form->{vc}"};
-      ($null, $form->{"$form->{vc}_id"}) = split /--/, $form->{"$form->{vc}"};
+      (undef, $form->{"$form->{vc}_id"}) = split /--/, $form->{"$form->{vc}"};
 
     } else {
 

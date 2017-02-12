@@ -966,7 +966,8 @@ sub employee_footer {
     }
 
     for (keys %button) { delete $button{$_} if ! $f{$_} }
-    for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+    
+    $form->print_button(\%button);
    
   }
 
@@ -1108,7 +1109,7 @@ sub access_control {
   %button = ('Continue' => { ndx => 1, key => 'C', value => $locale->text('Continue') }
 	      );
 	     
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
    
   print qq|
  
@@ -1168,6 +1169,7 @@ sub save_employee {
 
   $form->isblank("name", $locale->text("Name missing!"));
   $form->error("$memberfile : ".$locale->text('locked!')) if (-f ${memberfile}.LCK);
+  $form->error($locale->text('Cannot use admin as login!')) if $form->{employeelogin} eq 'admin';
 
   $form->{userspath} = $userspath;
   
@@ -1499,7 +1501,7 @@ sub payroll_header {
 
   $reference_documents = &references;
 
-  ($null, $employee_id) = split /--/, $form->{oldemployee};
+  (undef, $employee_id) = split /--/, $form->{oldemployee};
   
   $form->header;
 
@@ -1737,7 +1739,7 @@ sub payroll_footer {
       for ("Preview", "Print and Post", "Print and Post as new") { delete $button{$_} }
     }
 
-    for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+    $form->print_button(\%button);
     
   }
 
@@ -1946,7 +1948,7 @@ sub update_payroll {
 
 sub post {
 
-  ($null, $employee_id) = split /--/, $form->{employee};
+  (undef, $employee_id) = split /--/, $form->{employee};
 
   $form->error($locale->text('Employee missing!')) unless $employee_id;
   $form->isblank("transdate", $locale->text('Date missing!'));
@@ -2484,7 +2486,7 @@ sub payroll_transactions {
     delete $button{'Save Report'} unless $form->{savereport};
   }
   
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -2643,7 +2645,7 @@ sub search_deduction {
 
   $form->hide_form(qw(db callback path login));
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
   
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -2875,7 +2877,8 @@ sub deduction_footer {
     }
 
     for (keys %button) { delete $button{$_} if ! $f{$_} }
-    for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+
+    $form->print_button(\%button);
     
   }
 
@@ -2990,7 +2993,7 @@ sub search_wage {
 
   $form->hide_form(qw(db callback path login));
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
   
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -3115,7 +3118,8 @@ sub wage_footer {
     }
 
     for (keys %button) { delete $button{$_} if ! $f{$_} }
-    for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+
+    $form->print_button(\%button);
     
   }
 

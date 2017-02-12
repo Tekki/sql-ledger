@@ -1,5 +1,5 @@
 \documentclass{scrartcl}
-\usepackage[latin2]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage{tabularx}
 \usepackage[top=2.7cm,bottom=-1cm,left=1.9cm,right=0.5cm]{geometry}
 \usepackage{graphicx}
@@ -64,19 +64,19 @@ Fax: <%customerfax%>
 <%email%>
 
 <%if customertaxnumber%>
-DI»: <%customertaxnumber%>
+DIƒå: <%customertaxnumber%>
 <%end customertaxnumber%>
 }
 \hfill
 \begin{tabular}[t]{ll}
-  \textbf{Fakt˙ra} & <%invnumber%> \\
-  \textbf{D·tum} & <%invdate%> \\
+  \textbf{Fakt√∫ra} & <%invnumber%> \\
+  \textbf{D√°tum} & <%invdate%> \\
   \textbf{Splatnost} & <%duedate%> \\
   <%if ponumber%>
     \textbf{PO} & <%ponumber%> \\
   <%end ponumber%>
   <%if ordnumber%>
-    \textbf{Objedn·vka} & <%ordnumber%> \\
+    \textbf{Objedn√°vka} & <%ordnumber%> \\
   <%end ordnumber%>
   \textbf{Osoba} & <%employee%> \\
 \end{tabular}
@@ -88,7 +88,7 @@ DI»: <%customertaxnumber%>
   <%accno%> & <%account%> & <%amount%> & <%description%> & <%projectnumber%> \\
 <%end amount%>
 
-  \multicolumn{2}{r}{\textbf{Medzis˙Ëet}} & <%subtotal%> & \\
+  \multicolumn{2}{r}{\textbf{Medzis√∫ƒçet}} & <%subtotal%> & \\
 <%foreach tax%>
   \multicolumn{2}{r}{\textbf{<%taxdescription%> @ <%taxrate%> \%}} & <%tax%> & \\
 <%end tax%>
@@ -112,7 +112,7 @@ DI»: <%customertaxnumber%>
 \begin{tabular}{@{}lllr@{}}
   \multicolumn{4}{c}{\textbf{Platby}} \\
   \hline
-  \textbf{D·tum} & & \textbf{Doklad} & \textbf{Hodnota} \\
+  \textbf{D√°tum} & & \textbf{Doklad} & \textbf{Hodnota} \\
 <%end paid_1%>
 <%foreach payment%>
   <%paymentdate%> & <%paymentaccount%> & <%paymentsource%> & <%payment%> \\
@@ -124,9 +124,10 @@ DI»: <%customertaxnumber%>
 \vspace{0.5cm}
 
 <%foreach tax%>
-\textbf{\scriptsize <%taxdescription%> DI» <%taxnumber%>} \\
+\textbf{\scriptsize <%taxdescription%> DIƒå <%taxnumber%>} \\
 <%end tax%>
   
 \end{document}
+
 
 

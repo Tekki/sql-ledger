@@ -1,5 +1,5 @@
 \documentclass{scrartcl}
-\usepackage[latin2]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage{tabularx}
 \usepackage[top=2.7cm,bottom=-1cm,left=1.9cm,right=0.5cm]{geometry}
 \usepackage{graphicx}
@@ -21,7 +21,7 @@
   
   \hfill
   \begin{tabularx}{7cm}{Xr@{}}
-  \textbf{Medzis˙Ëet} & \textbf{<%sumcarriedforward%>} \\
+  \textbf{Medzis√∫ƒçet} & \textbf{<%sumcarriedforward%>} \\
   \end{tabularx}
 
 \newpage
@@ -29,7 +29,7 @@
 \markright{<%company%>\hfill <%invnumber%>}
 
 \begin{tabularx}{\textwidth}{@{}rlXlrlrrr@{}}
-  \textbf{Pol} & \textbf{»Ìslo} & \textbf{Popis} & & \textbf{Mnoû} &
+  \textbf{Pol} & \textbf{ƒå√≠slo} & \textbf{Popis} & & \textbf{Mno¬û} &
     \textbf{Jedn} & \textbf{Cena} & \textbf{Zlava \%} & \textbf{Suma} \\ [0.5em]
   & carried forward from page <%lastpage%> & & & & & & & <%sumcarriedforward%> \\ [0.5em]
 <%end pagebreak%>
@@ -112,12 +112,12 @@ Fax: <%shiptofax%>
 
 \vspace{1cm}
 
-\textbf{D O D ¡ V A T E L S K ¡ \hspace{0.3cm} F A K T ⁄ R A}
+\textbf{D O D √Å V A T E L S K √Å \hspace{0.3cm} F A K T √ö R A}
 
 \vspace{1cm}
 
 \begin{tabularx}{\textwidth}{*{8}{|X}|} \hline
-  \textbf{Fakt˙ra} & \textbf{D·tum} & \textbf{Splatnosù} & \textbf{Objedn·vka}
+  \textbf{Fakt√∫ra} & \textbf{D√°tum} & \textbf{Splatnos¬ù} & \textbf{Objedn√°vka}
   & \textbf{Kontakt}
   <%if shippingpoint%>
   & \textbf{Miesto dodania}
@@ -126,7 +126,7 @@ Fax: <%shiptofax%>
   & \textbf{PO}
   <%end ponumber%>
   <%if shipvia%>
-  & \textbf{SpÙsob dodania}
+  & \textbf{Sp√¥sob dodania}
   <%end shipvia%>
   \\ [0.5em]
   \hline
@@ -147,7 +147,7 @@ Fax: <%shiptofax%>
 \vspace{1cm}
 
 \begin{tabularx}{\textwidth}{@{}rlXlrlrrr@{}}
-  \textbf{Pol} & \textbf{»Ìslo} & \textbf{Popis} & & \textbf{Mnoû} &
+  \textbf{Pol} & \textbf{ƒå√≠slo} & \textbf{Popis} & & \textbf{Mno¬û} &
     \textbf{Jedn} & \textbf{Cena} & \textbf{Zlava \%} & \textbf{Suma} \\ [0.5em]
 <%foreach number%>
   <%runningnumber%> & <%number%> & <%description%> & <%deliverydate%> &
@@ -164,7 +164,7 @@ Fax: <%shiptofax%>
 \hfill
 \begin{tabularx}{\textwidth}{@{}Xr@{\hspace{1cm}}r@{}}
 <%if not taxincluded%>
- & Medzis˙Ëet & <%subtotal%> \\
+ & Medzis√∫ƒçet & <%subtotal%> \\
 <%end taxincluded%>
 <%if taxincluded%>
  & Celkom & <%invtotal%> \\
@@ -176,7 +176,7 @@ Fax: <%shiptofax%>
  & Celkom & <%invtotal%> \\
 <%end taxincluded%>
 <%if paid%>
- & PlatenÈ & - <%paid%> \\
+ & Platen√© & - <%paid%> \\
 <%end paid%>
   \cline{2-3}
 <%if total%>
@@ -188,10 +188,10 @@ Fax: <%shiptofax%>
 
 <%text_amount%> ***** <%decimal%>/100
 \hfill
-Ceny s˙ v \textbf{<%currency%>}.
+Ceny s√∫ v \textbf{<%currency%>}.
 
 <%if taxincluded%>
-Ceny s˙ s DPH.
+Ceny s√∫ s DPH.
 <%end tax included%>
 
 \vspace{1em}
@@ -205,7 +205,7 @@ Ceny s˙ s DPH.
 \begin{tabularx}{10cm}{@{}lXlr@{}}
   \multicolumn{4}{c}{\textbf{Platby}} \\
   \hline
-  \textbf{D·tum} & & \textbf{Doklad} & \textbf{Suma} \\
+  \textbf{D√°tum} & & \textbf{Doklad} & \textbf{Suma} \\
 <%end paid_1%>
 <%foreach payment%>
   <%paymentdate%> & <%paymentaccount%> & <%paymentsource%> & <%payment%> \\
@@ -219,4 +219,5 @@ Ceny s˙ s DPH.
 \rule{\textwidth}{0.5pt}
 
 \end{document}
+
 

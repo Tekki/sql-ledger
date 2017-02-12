@@ -460,7 +460,7 @@ sub display_form {
       delete $button{'Deselect all'};
     }
   
-    for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+    $form->print_button(\%button);
   
   }
 
@@ -490,6 +490,8 @@ sub update {
     $ref->{cleared} = ($form->{"cleared_$i"}) ? $cleared : "";
   }
 
+  $form->{deselect} = 1 if $form->{allbox};
+
   &display_form;
   
 }
@@ -517,7 +519,7 @@ sub deselect_all {
 
   for (@{ $form->{PR} }) { $_->{cleared} = "" }
 
-  $form->{allbox} = 0;
+  $form->{allbox} = "";
 
   &display_form;
   

@@ -198,7 +198,7 @@ sub form_footer {
 
   $form->hide_form(qw(company dbname dbhost dbdriver dbuser path callback));
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   print qq|
 
@@ -339,7 +339,7 @@ $dbdrivers
     $button{'Lock System'} = { ndx => 3, key => 'L', value => $locale->text('Lock System') };
   }
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
   
   print qq|
 

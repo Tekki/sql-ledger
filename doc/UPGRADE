@@ -326,8 +326,20 @@ Version 2.8.30 to 3.0
 Note: replace 'dataset' with the name of your dataset.
 
 
-Version 3.0.8 to 3.2
+Version 3.0.8 to 3.2.2
 ---------------------
 1. add the mimetypes to your dataset with
+
    psql -U dbuser dataset < Mimetype.sql
+
+   Mimetype.sql is in the sql directory
+
+Version 3.2.2 to 3.2.3
+---------------------
+1. copy income_statement.html and balance_sheet.html
+   from the doc/templates/Default directory to your
+   privat templates directory
+
+   private templates are in templates/dataset
+   replace dataset with the name of your dataset
 

@@ -22,6 +22,8 @@ sub create_links {
   # employees
   $form->all_employees($myconfig, $dbh, undef, 0);
 
+  $form->all_years($myconfig, $dbh);
+
   $form->remove_locks($myconfig, $dbh, 'br');
 
   $dbh->disconnect;
@@ -74,7 +76,6 @@ sub list_batches {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
-  my $null;
   my $var;
 
   my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
@@ -95,7 +96,7 @@ sub list_batches {
   $where .= " AND a.batch = '$form->{batch}'" if $form->{batch};
 
   if ($form->{employee}) {
-    ($null, $var) = split /--/, $form->{employee};
+    (undef, $var) = split /--/, $form->{employee};
     $where .= " AND a.employee_id = $var";
   }
 
@@ -599,6 +600,7 @@ sub payment_reversal {
                  FROM chart c
 		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 		 WHERE c.link LIKE '%AP_paid%'
+                 AND c.closed = '0'
 		 ORDER BY c.accno|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);

@@ -6,7 +6,7 @@
   <%include letterhead.html%>
   
   <tr>
-    <td width=10>Â </td>
+    <td width=10> </td>
 
     <th colspan=3>
       <h4>A R V E</h4>
@@ -14,7 +14,7 @@
   </tr>
 
   <tr>
-    <td>Â </td>
+    <td> </td>
 
     <td>
       <table width=100% callspacing=0 cellpadding=0>
@@ -97,16 +97,16 @@
   <tr height=5></tr>
   
   <tr>
-    <td>Â </td>
+    <td> </td>
   
     <td>
       <table width=100% border=1>
         <tr>
 	  <th width=14% align=left nowrap>Arve NR.</th>
-	  <th width=14% align=left nowrap>KuupÃ€ev</th>
-	  <th width=14% align=left nowrap>MaksetÃ€htaeg</th>
+	  <th width=14% align=left nowrap>Kuupäev</th>
+	  <th width=14% align=left nowrap>Maksetähtaeg</th>
 	  <th width=14% align=left>Tellimus NR.</th>
-	  <th width=14% align=left nowrap>MÃŒÃŒja</th>
+	  <th width=14% align=left nowrap>Müüja</th>
 	  <th width=14% align=left nowrap>Arve aadress</th>
 	  <th width=14% align=left nowrap>Tarneviis</th>
 	</tr>
@@ -115,17 +115,17 @@
 	  <td><%invnumber%></td>
 	  <td><%invdate%></td>
 	  <td><%duedate%></td>
-	  <td><%ordnumber%>Â </td>
-	  <td><%employee%>Â </td>
-	  <td><%shippingpoint%>Â </td>
-	  <td><%shipvia%>Â </td>
+	  <td><%ordnumber%> </td>
+	  <td><%employee%> </td>
+	  <td><%shippingpoint%> </td>
+	  <td><%shipvia%> </td>
 	</tr>
       </table>
     </td>
   </tr>
 
   <tr>
-    <td>Â </td>
+    <td> </td>
   
     <td>
       <table width=100%>
@@ -133,10 +133,10 @@
           <th align=right><font color=ffffff>AR.</th>
           <th align=left><font color=ffffff>Number</th>
           <th align=left><font color=ffffff>Nimetus</th>
-          <th>Â </th>
+          <th> </th>
           <th align=right><font color=ffffff>Kogus</th>
-          <th>Â </th>
-          <th align=right><font color=ffffff>Ãhiku Hind</th>
+          <th> </th>
+          <th align=right><font color=ffffff>Ühiku Hind</th>
           <th align=right><font color=ffffff>Ale %</th>
           <th align=right><font color=ffffff>Summa</th>
         </tr>
@@ -186,13 +186,13 @@
         <%end paid%>
 
         <tr>
-          <td colspan=5>Â </td>
+          <td colspan=5> </td>
           <td colspan=4><hr noshade></td>
         </tr>
 
         <%if total%>
         <tr>
-          <td colspan=5>Â </td>
+          <td colspan=5> </td>
           <th colspan=2 align=right nowrap>Deebetsaldo</th>
           <th colspan=2 align=right><%total%></th>
         </tr>
@@ -204,7 +204,7 @@
   </tr>
 
   <tr>
-    <td>Â </td>
+    <td> </td>
 
     <td>
       <table width=100%>
@@ -216,7 +216,7 @@
 	  <td><%text_amount%> ***** <%decimal%>/100</td>
 	  
           <td align=right nowrap>
-          KÃµik hinnad <b><%currency%></b> vÃ€Ã€ringus.
+          Kõik hinnad <b><%currency%></b> vääringus.
           </td>
         </tr>
       </table>
@@ -225,7 +225,7 @@
 
   <%if paid_1%>
   <tr>
-    <td>Â </td>
+    <td> </td>
 
     <td colspan=9>
       <table width=60%>
@@ -241,7 +241,7 @@
         </tr>
 
         <tr>
-          <th align=left>KuupÃ€ev</th>
+          <th align=left>Kuupäev</th>
           <th align=left>Konto</th>
           <th align=left>Alus</th>
           <th align=left>Summa</th>
@@ -266,7 +266,7 @@
   <tr height=10></tr>
 
   <tr>
-    <td>Â </td>
+    <td> </td>
 
     <th>
     Thank you for your valued business!
@@ -274,13 +274,13 @@
   </tr>
 
   <tr>
-    <td>Â </td>
+    <td> </td>
 
     <td>
       <table width=100%>
         <tr valign=top>
           <td width=60%><font size=-3>
-          MaksetÃ€htaeg <%duedate%> kuupÃ€evaks.
+          Maksetähtaeg <%duedate%> kuupäevaks.
           Items returned are subject to a 10% restocking charge. A return authorization must be obtained from <%company%> before goods are returned. Returns must be shipped prepaid and properly insured. <%company%> will not be responsible for damages during transit.
           </font>
           </td>
@@ -295,19 +295,19 @@
 
   <%foreach tax%>
   <tr>
-    <td>Â </td>
+    <td> </td>
 
-    <th colspan=9 align=left><font size=-2><%taxdescription%> KÃ€ibemaksukohuslase number: <%taxnumber%></th>
+    <th colspan=9 align=left><font size=-2><%taxdescription%> Käibemaksukohuslase number: <%taxnumber%></th>
   </tr>
   <%end tax%>
 
   <%if taxincluded%>
   <tr>
-    <td>Â </td>
+    <td> </td>
   </tr>
 
   <tr>
-    <th colspan=8 align=left><font size=-2>Hind sisaldab kÃ€ibemaksu.</th>
+    <th colspan=8 align=left><font size=-2>Hind sisaldab käibemaksu.</th>
   </tr>
   <%end taxincluded%>
 

@@ -421,7 +421,7 @@ sub search {
 
   %button = ('Continue' => { ndx => 1, key => 'C', value => $locale->text('Continue') } );
   
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
   
   $form->{sort} ||= "transdate";
   $form->{direction} ||= "ASC";
@@ -948,7 +948,7 @@ sub transactions {
   
   $form->hide_form(qw(callback path login report reportcode reportlogin column_index flds sort direction));
   
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
   
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -1382,7 +1382,8 @@ sub form_footer {
     $f{'Schedule'} = 0 if $form->{batch};
     
     for (keys %button) { delete $button{$_} if ! $f{$_} }
-    for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+
+    $form->print_button(\%button);
     
   }
   

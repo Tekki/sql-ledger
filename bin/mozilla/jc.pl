@@ -720,7 +720,8 @@ sub timecard_footer {
   }
 
   for (keys %button) { delete $button{$_} if ! $a{$_} }
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+
+  $form->print_button(\%button);
   
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -950,7 +951,8 @@ sub storescard_footer {
     }
 
     for (keys %button) { delete $button{$_} if ! $a{$_} }
-    for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+
+    $form->print_button(\%button);
     
   }
 
@@ -975,7 +977,7 @@ sub storescard_footer {
 
 sub update {
 
-  ($null, $form->{project_id}) = split /--/, $form->{projectnumber};
+  (undef, $form->{project_id}) = split /--/, $form->{projectnumber};
 
   for (qw(transdate project_id)) {
     if ($form->{"old$_"} ne $form->{$_}) {
@@ -1835,7 +1837,7 @@ sub list_cards {
   
   $form->hide_form(qw(callback path login project report reportcode reportlogin));
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
   
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";

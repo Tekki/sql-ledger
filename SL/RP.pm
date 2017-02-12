@@ -288,7 +288,7 @@ sub income_statement {
     }
   }
 
-  my %defaults = $form->get_defaults($dbh, \@{['company','address','businessnumber']});
+  my %defaults = $form->get_defaults($dbh, \@{['company','address','businessnumber','companywebsite','companyemail','tel','fax']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
   
   $form->report_level($myconfig, $dbh);
@@ -371,7 +371,8 @@ sub balance_sheet {
     }
   }
 
-  my %defaults = $form->get_defaults($dbh, \@{['company','address','businessnumber']});
+  my %defaults = $form->get_defaults($dbh, \@{['company','address','businessnumber','companywebsite','companyemail','tel','fax']});
+
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
   
   $form->report_level($myconfig, $dbh);
@@ -2106,7 +2107,7 @@ sub tax_report {
     $ref->{tax} = $form->round_amount($ref->{tax}, $form->{precision});
     $ref->{total} = $ref->{netamount} + $ref->{tax};
 
-    map { $ref->{address} .= "$ref->{$_} " if $ref->{$_} } qw(address1 address2 city zipcode country);
+    map { $ref->{address} .= "$ref->{$_} " if $ref->{$_} } qw(address1 address2 city zipcode);
     chomp $ref->{address};
 
     if ($form->{reportcode} =~ /nontaxable/) {

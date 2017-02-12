@@ -93,8 +93,8 @@
       <table width=100% border=1>
 	<tr>
 	  <th width=17% align=left>Tellimus #</th>
-	  <th width=17% align=left>Tellimuse KuupÃ€ev</th>
-	  <th width=17% align=left>Tarne TÃ€htaeg</th>
+	  <th width=17% align=left>Tellimuse Kuupäev</th>
+	  <th width=17% align=left>Tarne Tähtaeg</th>
 	  <th width=17% align=left>Kontakt</th>
 	  <th width=17% align=left>Tarneaadress</th>
 	  <th width=15% align=left>Tarneviis</th>
@@ -150,7 +150,7 @@
           <%end taxincluded%>
 	 
           <%if not taxincluded%>
-	  <th colspan=7 align=right>VahekokkuvÃµte</th>
+	  <th colspan=7 align=right>Vahekokkuvõte</th>
 	  <td colspan=1 align=right><%subtotal%></td>
           <%end taxincluded%>
 	</tr>
@@ -174,7 +174,7 @@
 
         <%if terms%>
 	<tr>
-	  <td colspan=4>Maksetingimus <b><%terms%></b> pÃ€eva</td>
+	  <td colspan=4>Maksetingimus <b><%terms%></b> päeva</td>
 	  <th colspan=3 align=right>Kokku</th>
 	  <th colspan=1 align=right><%ordtotal%></th>
 	</tr>
@@ -182,7 +182,7 @@
 
         <%if taxincluded%>
 	<tr>
-	  <td colspan=2>Sisaldab kÃ€ibemaksu</td>
+	  <td colspan=2>Sisaldab käibemaksu</td>
 	</tr>
         <%end taxincluded%>
 
@@ -193,7 +193,7 @@
         <%if ordtotal%>
 	<tr>
 	  <td colspan=8 align=right>
-	  KÃµik hinnad toodud <b><%currency%></b> vÃ€Ã€ringus
+	  Kõik hinnad toodud <b><%currency%></b> vääringus
 	  </td>
 	</tr>
         <%end ordtotal%>

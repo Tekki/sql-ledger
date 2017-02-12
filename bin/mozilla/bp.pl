@@ -973,8 +973,11 @@ print qq|
     delete $button{'E-mail'};
     delete $button{'Print'} if ! @{ $form->{all_printer} };
   }
+  if (!$pdftk) {
+    delete $button{'Combine'};
+  }
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
     
 
   if ($form->{menubar}) {
@@ -1020,13 +1023,13 @@ sub combine {
   for (1 .. $form->{rowcount}) {
     if ($form->{"ndx_$_"}) {
       if ($form->{"spoolfile_$_"} =~ /\.pdf$/) {
-  $files .= qq|$form->{"spoolfile_$_"} |;
+        $files .= qq|$form->{"spoolfile_$_"} |;
       }
     }
   }
 
   $form->{format} = "pdf";
-  
+
   if ($files) {
     chdir("$spool/$myconfig{dbname}");
     if ($filename = BP->spoolfile(\%myconfig, \%$form)) {
@@ -1040,7 +1043,7 @@ sub combine {
   chdir("$dir");
 
   $form->redirect;
-  
+
 }
 
 

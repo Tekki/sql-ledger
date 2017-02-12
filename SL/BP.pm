@@ -213,7 +213,8 @@ sub get_spoolfiles {
 		  JOIN address ad ON (ad.trans_id = e.id)
 		  JOIN status s ON (s.trans_id = j.id)
 		  WHERE s.formname = '$form->{type}'
-		  AND s.spoolfile IS NOT NULL|;
+		  AND s.spoolfile IS NOT NULL
+                  AND s.spoolfile <> ''|;
 		  
     } else {
       
@@ -325,6 +326,7 @@ sub get_spoolfiles {
 		  JOIN address ad ON (ad.trans_id = vc.id)
 		  JOIN status s ON (s.trans_id = a.id)
 		  WHERE s.spoolfile IS NOT NULL
+                  AND s.spoolfile <> ''
 		  AND s.formname LIKE '$wildcard$form->{type}'|;
       } else {
 	
@@ -444,10 +446,7 @@ sub get_spoolfiles {
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
-  my %id;
-  
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
-    $id{"$ref->{id}"} = 1;
     push @{ $form->{SPOOL} }, $ref;
   }
   $sth->finish;
@@ -457,16 +456,31 @@ sub get_spoolfiles {
     $query = qq|SELECT s.*, s.trans_id AS id
                 FROM status s
                 WHERE s.formname = '$form->{type}'
-                AND s.spoolfile IS NOT NULL|;
-    $sth = $dbh->prepare($query);
+                AND s.spoolfile IS NOT NULL
+                AND s.spoolfile <> ''|;
 
-    $sth->execute || $form->dberror($query);
-    while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
-      if (!$id{$ref->{id}}) {
-	push @{ $form->{SPOOL} }, $ref;
-      }
-    }
-    $sth->finish;
+     if ($form->{type} eq 'timecard') {
+       $query .= qq|AND s.trans_id NOT IN (SELECT id FROM jcitems)|;
+
+     } else {
+       $query .= qq|
+                AND s.trans_id NOT IN (SELECT id
+                                       FROM ar
+                                       UNION
+                                       SELECT id
+                                       FROM ap
+                                       UNION
+                                       SELECT id
+                                       FROM oe
+                                       )|;
+     }
+     $sth = $dbh->prepare($query);
+
+     $sth->execute || $form->dberror($query);
+     while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+       push @{ $form->{SPOOL} }, $ref;
+     }
+     $sth->finish;
   }
 
   $dbh->disconnect;

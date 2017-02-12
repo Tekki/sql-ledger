@@ -1,5 +1,5 @@
 \documentclass{scrartcl}
-\usepackage[latin2]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage{tabularx}
 \usepackage[letterpaper,top=2cm,bottom=-3cm,left=1.1cm,right=1.5cm]{geometry}
 \usepackage{graphicx}
@@ -30,7 +30,7 @@
   
   \hfill
   \begin{tabularx}{7cm}{Xr@{\hspace{1cm}}r@{}}
-  & \textbf{Medzis˙Ëet} & \textbf{<%sumcarriedforward%>} \\
+  & \textbf{Medzis√∫ƒçet} & \textbf{<%sumcarriedforward%>} \\
   \end{tabularx}
 
 \newpage
@@ -38,8 +38,8 @@
 \markboth{<%company%>\hfill <%quonumber%>}{<%company%>\hfill <%quonumber%>}
 
 \begin{tabularx}{\textwidth}{@{}lXrlrrr@{}}
-  \textbf{»Ìslo} & \textbf{Popis} & \textbf{Mnoæ.} &
-    \textbf{MJ} & \textbf{Cena} & \textbf{Zµava \%} & \textbf{Suma} \\
+  \textbf{ƒå√≠slo} & \textbf{Popis} & \textbf{Mno≈æ.} &
+    \textbf{MJ} & \textbf{Cena} & \textbf{Zƒæava \%} & \textbf{Suma} \\
   & carried forward from <%lastpage%> & & & & & <%sumcarriedforward%> \\
 <%end pagebreak%>
 
@@ -82,13 +82,13 @@ Fax: <%customerfax%>
 
 \vspace{1cm}
 
-\textbf{P O N U K O V ›   L I S T}
+\textbf{P O N U K O V √ù   L I S T}
 \hfill
 
 \vspace{1cm}
 
 \begin{tabularx}{\textwidth}{*{6}{|X}|} \hline
-  \textbf{Ponuka} & \textbf{D·tum} & \textbf{PlatÌ do} & \textbf{Kontakt} & \textbf{Miesto dodania} & \textbf{SpÙsob dodania} \\ [0.5ex]
+  \textbf{Ponuka} & \textbf{D√°tum} & \textbf{Plat√≠ do} & \textbf{Kontakt} & \textbf{Miesto dodania} & \textbf{Sp√¥sob dodania} \\ [0.5ex]
   \hline
   <%quonumber%> & <%quodate%> & <%reqdate%> & <%employee%> & <%shippingpoint%> & <%shipvia%> \\
   \hline
@@ -97,8 +97,8 @@ Fax: <%customerfax%>
 \vspace{1cm}
 
 \begin{tabularx}{\textwidth}{@{}lXrlrrr@{}}
-  \textbf{»Ìslo} & \textbf{Popis} & \textbf{Mnoæ.} &
-    \textbf{MJ} & \textbf{Cena} & \textbf{Zµava \%} & \textbf{Suma} \\
+  \textbf{ƒå√≠slo} & \textbf{Popis} & \textbf{Mno≈æ.} &
+    \textbf{MJ} & \textbf{Cena} & \textbf{Zƒæava \%} & \textbf{Suma} \\
 <%foreach number%>
   <%number%> & <%description%> & <%qty%> &
     <%unit%> & <%sellprice%> & <%discountrate%> & <%linetotal%> \\
@@ -113,7 +113,7 @@ Fax: <%customerfax%>
 
 \hfill
 \begin{tabularx}{8cm}{Xr@{\hspace{0.01cm}}r@{}}
-  & Medzis˙Ëet & <%subtotal%> \\
+  & Medzis√∫ƒçet & <%subtotal%> \\
 <%foreach tax%>
   & <%taxdescription%> on <%taxbase%> & <%tax%>\\
 <%end tax%>
@@ -124,10 +124,10 @@ Fax: <%customerfax%>
 \vspace{0.3cm}
 
 \hfill
-Ceny s˙ v \textbf{<%currency%>}.
+Ceny s√∫ v \textbf{<%currency%>}.
 
 <%if terms%>
-TermÌn dodania: <%terms%> dnÌ
+Term√≠n dodania: <%terms%> dn√≠
 <%end terms%>
 
 \vspace{12pt}
@@ -145,6 +145,7 @@ TermÌn dodania: <%terms%> dnÌ
 \usebox{\ftr}
 
 \end{document}
+
 
 
 

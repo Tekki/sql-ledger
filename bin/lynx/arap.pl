@@ -306,7 +306,7 @@ sub rebuild_formnames {
 sub rebuild_vc {
   my ($vc, $ARAP, $transdate, $job) = @_;
 
-  ($null, $form->{employee_id}) = split /--/, $form->{employee};
+  (undef, $form->{employee_id}) = split /--/, $form->{employee};
   $form->all_vc(\%myconfig, $vc, $ARAP, undef, $transdate, $job);
   $form->{"select$vc"} = ($form->{generate}) ? "\n" : "";
   for (@{ $form->{"all_$vc"} }) { $form->{"select$vc"} .= qq|$_->{name}--$_->{id}\n| }
@@ -881,11 +881,11 @@ pdf--|.$locale->text('PDF');
              'Delete Schedule' => { ndx => 16, key => 'D', value => $locale->text('Delete Schedule') },
 	    );
   
-  $form->print_button(\%button, 'Save Schedule');
-  
-  if ($form->{recurring}) {
-    $form->print_button(\%button, 'Delete Schedule');
+  unless ($form->{recurring}) {
+    delete $button{'Delete Schedule'};
   }
+
+  $form->print_button(\%button);
 
   # delete variables
   for (qw(action recurring)) { delete $form->{$_} }

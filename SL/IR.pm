@@ -606,10 +606,13 @@ sub invoice_details {
 sub delete_invoice {
   my ($self, $myconfig, $form, $spool, $dbh) = @_;
 
-  my $disconnect = ($dbh) ? 0 : 1;
+  my $disconnect;
 
   # connect to database, turn off autocommit
-  $dbh = $form->dbconnect_noauto($myconfig) unless $dbh;
+  if (! $dbh) {
+    $dbh = $form->dbconnect_noauto($myconfig);
+    $disconnect = 1;
+  }
   
   $form->{id} *= 1;
   
@@ -686,11 +689,12 @@ sub delete_invoice {
 sub post_invoice {
   my ($self, $myconfig, $form, $dbh) = @_;
   
-  my $disconnect = ($dbh) ? 0 : 1;
+  my $disconnect;
   
   # connect to database, turn off autocommit
   if (! $dbh) {
     $dbh = $form->dbconnect_noauto($myconfig);
+    $disconnect = 1;
   }
 
   my $query;

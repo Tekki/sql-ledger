@@ -1483,17 +1483,16 @@ sub get_jcitems {
   my %defaults = $form->get_defaults($dbh, \@{['precision']});
   $form->{precision} = $defaults{precision};
 
-  my $null;
   my $var;
   my $where;
   
   if ($form->{projectnumber}) {
-    ($null, $var) = split /--/, $form->{projectnumber};
+    (undef, $var) = split /--/, $form->{projectnumber};
     $where .= " AND j.project_id = $var";
   }
   
   if ($form->{employee}) {
-    ($null, $var) = split /--/, $form->{employee};
+    (undef, $var) = split /--/, $form->{employee};
     $where .= " AND j.employee_id = $var";
   }
 

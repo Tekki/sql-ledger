@@ -1,5 +1,5 @@
 \documentclass{scrartcl}
-\usepackage[latin2]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage{tabularx}
 \usepackage[letterpaper,top=2cm,bottom=-3cm,left=1.1cm,right=1.5cm]{geometry}
 \usepackage{graphicx}
@@ -22,7 +22,7 @@
   
   \hfill
   \begin{tabularx}{7cm}{Xr@{\hspace{1cm}}r@{}}
-  & Medzis˙Ëet & <%sumcarriedforward%> \\
+  & Medzis√∫ƒçet & <%sumcarriedforward%> \\
   \end{tabularx}
 
 \newpage
@@ -30,7 +30,7 @@
 \markboth{<%company%>\hfill <%ordnumber%>}{<%company%>\hfill <%ordnumber%>}
 
 \begin{tabularx}{\textwidth}{@{}lXrlrr@{}}
-  \textbf{»Ìslo} & \textbf{Popis} & \textbf{Mnoæ} &
+  \textbf{ƒå√≠slo} & \textbf{Popis} & \textbf{Mno≈æ} &
     \textbf{MJ} & \textbf{Cena} & \textbf{Suma} \\
   & carried forward from <%lastpage%> & & & & <%sumcarriedforward%> \\
 <%end pagebreak%>
@@ -39,7 +39,7 @@
 \vspace*{0.5cm}
 
 \parbox[t]{.5\textwidth}{
-\textbf{Dodavateµ}
+\textbf{Dodavateƒæ}
 \vspace{0.3cm}
   
 <%name%>
@@ -74,7 +74,7 @@ Fax: <%vendorfax%>
 <%email%>
 }
 \parbox[t]{.5\textwidth}{
-\textbf{Dodaª}
+\textbf{Doda≈•}
 \vspace{0.3cm}
 
 <%shiptoname%>
@@ -112,12 +112,12 @@ Fax: <%shiptofax%>
 
 \vspace{1cm}
 
-\textbf{V Y S T A V E N ¡} \parbox{0.3cm}{\hfill} \textbf{O B J E D N ¡ V K A}
+\textbf{V Y S T A V E N √Å} \parbox{0.3cm}{\hfill} \textbf{O B J E D N √Å V K A}
 \hfill
 
 \vspace{1cm}
 \begin{tabularx}{\textwidth}{*{6}{|X}|} \hline
-  \textbf{Objedn·vka} & \textbf{D·tum} & \textbf{Æiadateµ} & \textbf{Kontakt} & \textbf{Miesto dodania} & \textbf{SpÙsob dodania} \\ [0.5ex]
+  \textbf{Objedn√°vka} & \textbf{D√°tum} & \textbf{≈Ωiadateƒæ} & \textbf{Kontakt} & \textbf{Miesto dodania} & \textbf{Sp√¥sob dodania} \\ [0.5ex]
   \hline
   <%ordnumber%> & <%orddate%> & <%reqdate%> & <%employee%> & <%shippingpoint%> & <%shipvia%> \\
   \hline
@@ -126,7 +126,7 @@ Fax: <%shiptofax%>
 \vspace{1cm}
 
 \begin{tabularx}{\textwidth}{@{}lXrlrr@{}}
-  \textbf{»Ìslo} & \textbf{Popis} & \textbf{Mnoæ} &
+  \textbf{ƒå√≠slo} & \textbf{Popis} & \textbf{Mno≈æ} &
     \textbf{MJ} & \textbf{Cena} & \textbf{Suma} \\
 <%foreach number%>
   <%number%> & <%description%> & <%qty%> &
@@ -142,7 +142,7 @@ Fax: <%shiptofax%>
 
 \hfill
 \begin{tabularx}{8cm}{Xr@{\hspace{0.01cm}}r@{}}
-  & Medzis˙Ëet & <%subtotal%> \\
+  & Medzis√∫ƒçet & <%subtotal%> \\
 <%foreach tax%>
   & <%taxdescription%> on <%taxbase%> & <%tax%>\\
 <%end tax%>
@@ -153,7 +153,7 @@ Fax: <%shiptofax%>
 \vspace{0.3cm}
 
 \hfill
-  Ceny s˙ v \textbf{<%currency%>}.
+  Ceny s√∫ v \textbf{<%currency%>}.
 
 \vspace{12pt}
 
@@ -167,5 +167,6 @@ Fax: <%shiptofax%>
 %\footnotetext[1]{\tiny }
 
 \end{document}
+
 
 

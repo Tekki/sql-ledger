@@ -50,6 +50,8 @@ require "$form->{path}/js.pl";
 
 sub chart_of_accounts {
 
+  $form->{excludeclosed} = 1;
+
   CA->all_accounts(\%myconfig, \%$form);
 
   @column_index = qw(accno gifi_accno description debit credit closed);

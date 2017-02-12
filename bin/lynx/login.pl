@@ -239,7 +239,7 @@ sub login {
 
 	  do {
 	    if (/^company=/) {
-	      ($null, $company) = split /=/, $_, 2;
+	      (undef, $company) = split /=/, $_, 2;
 	      chop $company;
 	      $login{$login} = $company if $company;
 	    }

@@ -1853,7 +1853,7 @@ sub im_vc {
     %button = ('Import Vendors' => { ndx => 1, key => 'I', value => $locale->text('Import Vendors') });
   }
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
   
   print qq|
 </form>
@@ -2014,7 +2014,9 @@ sub im_item {
 	     'labor' => { ndx => 1, key => 'I', value => $locale->text('Import Labor/Overhead') }
             );
 
-  $form->print_button(\%button, $form->{type});
+  for (qw(part service labor)) { delete $button{$_} unless $_ eq $form->{type} }
+
+  $form->print_button(\%button);
   
   print qq|
 </form>
@@ -2650,7 +2652,7 @@ sub ex_payment {
 
   delete $button{'Export Payments'} if ! $form->{rowcount};
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
