@@ -121,7 +121,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "3.2.2";
+  $self->{version} = "3.2.3";
   $self->{dbversion} = "3.2.0";
 
   bless $self, $type;
@@ -410,6 +410,8 @@ sub numtextrows {
   my ($self, $str, $cols, $maxrows) = @_;
 
   my $rows = 0;
+
+  $str =~ s/<br>/\n/g;
 
   for (split /\n/, $str) { $rows += int (((length) - 2)/$cols) + 1 }
   $maxrows = $rows unless defined $maxrows;
@@ -898,7 +900,6 @@ sub process_template {
       chomp;
       s/.*?<%foreach\s+?(.+?)%>/$1/;
       $var = $1;
-
       while ($_ = shift) {
 	last if /<%end\s+?\Q$var\E%>/;
 	
@@ -992,7 +993,7 @@ sub process_template {
       chomp;
       s/.*?<%else\s+?(.+?)%>/$1/;
       $var = $1;
-      
+
       if (! $self->{$var}) {
 	s/^$var//;
 	if (/<%end /) {
@@ -1447,7 +1448,6 @@ sub format_line {
 
     if ($var =~ /\s/) {
       $str = "";
-      
       @kw = split / /, $var, 3;
       if ($var =~ /^if\s+?not /) {
 	$kw[1] = $kw[2];
@@ -2143,12 +2143,14 @@ sub valid_date {
 
 
 sub print_button {
-  my ($self, $button, $name) = @_;
+  my ($self, $button) = @_;
 
-  print qq|<input class=submit type=submit name=action value="$button->{$name}{value}" accesskey="$button->{$name}{key}" title="$button->{$name}{value} [$button->{$name}{key}]">\n|;
+  for (sort { $button->{$a}->{ndx} <=> $button->{$b}->{ndx} } keys %{$button}) {
+    print qq|<input class=submit type=submit name=action value="$button->{$_}{value}" accesskey="$button->{$_}{key}" title="$button->{$_}{value} [$button->{$_}{key}]">\n|;
+  }
 
 }
-  
+
 
 # Database routines used throughout
 
@@ -2266,10 +2268,11 @@ sub save_exchangerate {
 sub get_exchangerate {
   my ($self, $myconfig, $dbh, $curr, $transdate) = @_;
   
-  my $disconnect = ($dbh) ? 0 : 1;
+  my $disconnect;
 
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
+    $disconnect = 1;
   }
   
   my $exchangerate;
@@ -2513,7 +2516,7 @@ sub get_name {
 sub get_currencies {
   my ($self, $myconfig, $dbh) = @_;
   
-  my $disconnect = 0;
+  my $disconnect;
   
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
@@ -2549,7 +2552,7 @@ sub get_currencies {
 sub get_onhand {
   my ($self, $myconfig, $dbh) = @_;
   
-  my $disconnect = 0;
+  my $disconnect;
   
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
@@ -2615,7 +2618,7 @@ sub all_vc {
   my ($self, $myconfig, $vc, $module, $dbh, $transdate, $job, $openinv, $openord) = @_;
   
   my $ref;
-  my $disconnect = 0;
+  my $disconnect;
   
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
@@ -2698,10 +2701,11 @@ sub all_vc {
 sub all_languages {
   my ($self, $myconfig, $dbh) = @_;
   
-  my $disconnect = ($dbh) ? 0 : 1;
+  my $disconnect;
 
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
+    $disconnect = 1;
   }
   my $sth;
   my $query;
@@ -2726,10 +2730,11 @@ sub all_languages {
 sub all_taxaccounts {
   my ($self, $myconfig, $dbh, $transdate) = @_;
   
-  my $disconnect = ($dbh) ? 0 : 1;
+  my $disconnect;
 
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
+    $disconnect = 1;
   }
   my $sth;
   my $query;
@@ -2764,10 +2769,11 @@ sub all_taxaccounts {
 sub all_employees {
   my ($self, $myconfig, $dbh, $transdate, $sales) = @_;
   
-  my $disconnect = ($dbh) ? 0 : 1;
+  my $disconnect;
 
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
+    $disconnect = 1;
   }
  
   # setup employees/sales contacts
@@ -2805,10 +2811,11 @@ sub all_employees {
 sub all_projects {
   my ($self, $myconfig, $dbh, $transdate, $job) = @_;
 
-  my $disconnect = ($dbh) ? 0 : 1;
+  my $disconnect;
 
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
+    $disconnect = 1;
   }
   
   my $where = "1 = 1";
@@ -2853,7 +2860,7 @@ sub all_projects {
 sub all_departments {
   my ($self, $myconfig, $dbh, $vc) = @_;
   
-  my $disconnect = 0;
+  my $disconnect;
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
     $disconnect = 1;
@@ -2892,7 +2899,7 @@ sub all_departments {
 sub all_warehouses {
   my ($self, $myconfig, $dbh) = @_;
   
-  my $disconnect = 0;
+  my $disconnect;
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
     $disconnect = 1;
@@ -2918,7 +2925,7 @@ sub all_warehouses {
 sub all_roles {
   my ($self, $myconfig, $dbh) = @_;
   
-  my $disconnect = 0;
+  my $disconnect;
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
     $disconnect = 1;
@@ -2944,7 +2951,7 @@ sub all_roles {
 sub all_years {
   my ($self, $myconfig, $dbh) = @_;
   
-  my $disconnect = 0;
+  my $disconnect;
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
     $disconnect = 1;
@@ -3001,10 +3008,11 @@ sub all_years {
 sub all_countries {
   my ($self, $myconfig, $db, $dbh) = @_;
   
-  my $disconnect = ($dbh) ? 0 : 1;
+  my $disconnect;
 
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
+    $disconnect = 1;
   }
   my $sth;
   my $query;
@@ -3031,10 +3039,11 @@ sub all_countries {
 sub all_business {
   my ($self, $myconfig, $dbh) = @_;
 
-  my $disconnect = ($dbh) ? 0 : 1;
+  my $disconnect;
 
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
+    $disconnect = 1;
   }
   my $sth;
   my $query;
@@ -3329,7 +3338,7 @@ sub create_lock {
 
   my $query;
   
-  my $disconnect = 0;
+  my $disconnect;
   my $expires = time;
   
   
@@ -3372,7 +3381,7 @@ sub create_lock {
 sub remove_locks {
   my ($self, $myconfig, $dbh, $module) = @_;
   
-  my $disconnect = 0;
+  my $disconnect;
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
     $disconnect = 1;
@@ -4158,7 +4167,7 @@ sub get_recurring {
 sub save_recurring {
   my ($self, $dbh, $myconfig) = @_;
 
-  my $disconnect = 0;
+  my $disconnect;
   if (! $dbh) {
     $dbh = $self->dbconnect_noauto($myconfig);
     $disconnect = 1;
@@ -4321,10 +4330,11 @@ sub save_intnotes {
 sub update_defaults {
   my ($self, $myconfig, $fld, $dbh, $ini) = @_;
 
-  my $disconnect = ($dbh) ? 0 : 1;
+  my $disconnect;
   
   if (! $dbh) {
     $dbh = $self->dbconnect_noauto($myconfig);
+    $disconnect = 1;
   }
   
   my $query = qq|SELECT fldname FROM defaults

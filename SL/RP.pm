@@ -288,7 +288,7 @@ sub income_statement {
     }
   }
 
-  my %defaults = $form->get_defaults($dbh, \@{['company','address','businessnumber']});
+  my %defaults = $form->get_defaults($dbh, \@{['company','address','businessnumber','companywebsite','companyemail','tel','fax']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
   
   $form->report_level($myconfig, $dbh);
@@ -371,7 +371,8 @@ sub balance_sheet {
     }
   }
 
-  my %defaults = $form->get_defaults($dbh, \@{['company','address','businessnumber']});
+  my %defaults = $form->get_defaults($dbh, \@{['company','address','businessnumber','companywebsite','companyemail','tel','fax']});
+
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
   
   $form->report_level($myconfig, $dbh);

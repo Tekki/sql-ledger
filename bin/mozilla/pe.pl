@@ -426,7 +426,7 @@ sub job_footer {
     }
   }
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
   
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -1033,11 +1033,7 @@ sub list_projects {
   
   $form->hide_form(qw(callback type path login report reportcode reportlogin));
 
-  foreach $item (sort { $a->{order} <=> $b->{order} } %button) {
-    print $item->{code};
-  }
-  
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
   
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -1162,7 +1158,7 @@ sub project_footer {
     }
   }
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -1382,10 +1378,8 @@ sub partsgroup_report {
 ";
   }
 
-  $i = 1;
   if ($myconfig{acs} !~ /Goods \& Services--Goods \& Services/) {
-    $button{'Goods & Services--Add Group'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Group').qq|"> |;
-    $button{'Goods & Services--Add Group'}{order} = $i++;
+    $button{'Goods & Services--Add Group'} = { ndx => 1, key => 'A', value => $locale->text('Add Group') };
 
     foreach $item (split /;/, $myconfig{acs}) {
       delete $button{$item};
@@ -1408,9 +1402,7 @@ sub partsgroup_report {
   $form->{code} = $form->{partsgroupcode};
   $form->hide_form(qw(partsgroup code callback type path login));
 
-  foreach $item (sort { $a->{order} <=> $b->{order} } %button) {
-    print $item->{code};
-  }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -1600,10 +1592,8 @@ sub pricegroup_report {
 ";
   }
 
-  $i = 1;
   if ($myconfig{acs} !~ /Goods \& Services--Goods \& Services/) {
-    $button{'Goods & Services--Add Pricegroup'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Pricegroup').qq|"> |;
-    $button{'Goods & Services--Add Pricegroup'}{order} = $i++;
+    $button{'Goods & Services--Add Pricegroup'} = { ndx => 1, key => 'A', value => $locale->text('Add Pricegroup') };
 
     foreach $item (split /;/, $myconfig{acs}) {
       delete $button{$item};
@@ -1625,9 +1615,7 @@ sub pricegroup_report {
 
   $form->hide_form(qw(callback type path login));
   
-  foreach $item (sort { $a->{order} <=> $b->{order} } %button) {
-    print $item->{code};
-  }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -2064,7 +2052,7 @@ sub translation_footer {
     delete $button{'Delete'};
   }
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";

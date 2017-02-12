@@ -1,0 +1,120 @@
+
+<body>
+
+<h4 align=center>
+<%company%>
+<br><%address%>
+
+<p>BALANCE SHEET
+<%if method eq 'cash'%>
+<br>CASH Method
+<%end method eq 'cash'%>
+<br>as at <%this_period%>
+</h4>
+
+<%if department%>
+<h4>Department: <%department%></h4>
+<%end department%>
+
+<table border=0>
+<tr>
+  <th align=left width=400 colspan=2>ASSETS<br><hr align=left width=250 size=5 noshade></th>
+  <th><%this_period%></th>
+<th width=70></th>
+  <th><%previous_period%></th>
+</tr>
+
+<%foreach asset_account%>
+<tr>
+  <td> </td>
+  <td><%asset_account%></td>
+  <td align=right><%asset_this_period%></td>
+<td></td>
+  <td align=right><%asset_previous_period%></td>
+</tr>
+<%end asset_account%>
+
+<tr>
+  <td colspan=2> </td>
+  <td><hr noshade size=1></td>
+<td></td>
+  <td><hr noshade size=1></td>
+</tr>
+
+<tr valign=top>
+  <th align=left colspan=2>TOTAL ASSETS</th>
+  <td align=right><%total_asset_this_period%><hr noshade size=2></td>
+<td></td>
+  <td align=right><%total_asset_previous_period%><hr noshade size=2></td>
+</tr>
+
+<tr>
+  <th align=left colspan=4>LIABILITIES<b><hr align=left width=250 size=5 noshade></th>
+</tr>
+
+<%foreach liability_account%>
+<tr>
+  <td></td>
+  <td><%liability_account%></td>
+  <td align=right><%liability_this_period%></td>
+<td></td>
+  <td align=right><%liability_previous_period%></td>
+</tr>
+<%end liability_account%>
+
+<tr>
+  <td colspan=2> </td>
+  <td><hr noshade size=1></td>
+<td></td>
+  <td><hr noshade size=1></td>
+</tr>
+
+<tr valign=top>
+  <td></td>
+  <th align=left>TOTAL LIABILITIES</th>
+  <td align=right><%total_liability_this_period%><br><hr noshade size=2</td>
+<td></td>
+  <td align=right><%total_liability_previous_period%><br><hr noshade size=2</td>
+</tr>
+
+<tr>
+  <th align=left colspan=4>SHAREHOLDER'S EQUITY<br><hr align=left width=250 size=5 noshade></th>
+</tr>
+
+<%foreach equity_account%>
+<tr>
+  <td></td>
+  <td><%equity_account%></td>
+  <td align=right><%equity_this_period%></td>
+<td></td>
+  <td align=right><%equity_previous_period%></td>
+</tr>
+<%end equity_account%>
+
+<tr>
+  <td colspan=2> </td>
+  <td><hr noshade size=1></td>
+<td></td>
+  <td><hr noshade size=1></td>
+</tr>
+
+<tr valign=top>
+  <td></td>
+  <th align=left>TOTAL EQUITY</th>
+  <td align=right><%total_equity_this_period%><br><hr noshade size=2</td>
+<td></td>
+  <td align=right><%total_equity_previous_period%><br><hr noshade size=2</td>
+</tr>
+
+<tr valign=top>
+  <th align=left colspan=2>TOTAL LIABILITIES & EQUITY</th>
+  <td align=right><%total_this_period%><br><hr noshade size=2></td>
+<td></td>
+  <td align=right><%total_previous_period%><br><hr noshade size=2></td>
+</tr>
+</table>
+
+All amounts in <%currency%>
+<%if currency ne 'CAD'%>
+ converted at <%exchangerate%>
+<%end currency ne 'CAD'%>

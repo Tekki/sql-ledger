@@ -1,5 +1,5 @@
 \documentclass{scrartcl}
-\usepackage[latin2]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage{tabularx}
 \usepackage[top=2.7cm,bottom=-1cm,left=1.9cm,right=0.5cm]{geometry}
 \usepackage{graphicx}
@@ -28,7 +28,7 @@
   \rule[1.5em]{\textwidth}{0.5pt}
 }
 
-\centerline{\textbf{S T O R N O} \hspace{0.3cm} \textbf{Z ¡ V A Z O K}}
+\centerline{\textbf{S T O R N O} \hspace{0.3cm} \textbf{Z √Å V A Z O K}}
 
 \vspace*{0.5cm}
 
@@ -63,19 +63,19 @@ Fax: <%vendorfax%>
 <%email%>
 
 <%if vendortaxnumber%>
-DI»: <%vendortaxnumber%>
+DIƒå: <%vendortaxnumber%>
 <%end vendortaxnumber%>
 }
 \hfill
 \begin{tabular}[t]{ll}
-  \textbf{Fakt˙ra} & <%invnumber%> \\
-  \textbf{D·tum} & <%invdate%> \\
-  \textbf{Splatnosª} & <%duedate%> \\
+  \textbf{Fakt√∫ra} & <%invnumber%> \\
+  \textbf{D√°tum} & <%invdate%> \\
+  \textbf{Splatnos≈•} & <%duedate%> \\
   <%if ponumber%>
     \textbf{PO} & <%ponumber%> \\
   <%end ponumber%>
   <%if ordnumber%>
-    \textbf{Objedn·vka} & <%ordnumber%> \\
+    \textbf{Objedn√°vka} & <%ordnumber%> \\
   <%end ordnumber%>
   \textbf{Kontakt} & <%employee%> \\
 \end{tabular}
@@ -87,7 +87,7 @@ DI»: <%vendortaxnumber%>
   <%accno%> & <%account%> & <%amount%> & <%description%> & <%projectnumber%> \\
 <%end amount%>
 
-  \multicolumn{2}{r}{\textbf{Medzis˙Ëet}} & <%subtotal%> & \\
+  \multicolumn{2}{r}{\textbf{Medzis√∫ƒçet}} & <%subtotal%> & \\
 <%foreach tax%>
   \multicolumn{2}{r}{\textbf{<%taxdescription%> @ <%taxrate%> \%}} & <%tax%> & \\
 <%end tax%>
@@ -111,7 +111,7 @@ DI»: <%vendortaxnumber%>
 \begin{tabular}{@{}llllr@{}}
   \multicolumn{5}{c}{\textbf{Platby}} \\
   \hline
-  \textbf{D·tum} & & \textbf{Doklad} & \textbf{Pozn·mka} & \textbf{Hodnota} \\
+  \textbf{D√°tum} & & \textbf{Doklad} & \textbf{Pozn√°mka} & \textbf{Hodnota} \\
 <%end paid_1%>
 <%foreach payment%>
   <%paymentdate%> & <%paymentaccount%> & <%paymentsource%> & <%paymentmemo%> & <%payment%> \\
@@ -121,5 +121,6 @@ DI»: <%vendortaxnumber%>
 <%end paid_1%>
 
 \end{document}
+
 
 

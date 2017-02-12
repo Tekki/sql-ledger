@@ -22,6 +22,8 @@ sub create_links {
   # employees
   $form->all_employees($myconfig, $dbh, undef, 0);
 
+  $form->all_years($myconfig, $dbh);
+
   $form->remove_locks($myconfig, $dbh, 'br');
 
   $dbh->disconnect;
@@ -598,6 +600,7 @@ sub payment_reversal {
                  FROM chart c
 		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 		 WHERE c.link LIKE '%AP_paid%'
+                 AND c.closed = '0'
 		 ORDER BY c.accno|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);

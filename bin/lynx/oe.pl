@@ -1129,7 +1129,8 @@ sub form_footer {
   }
 
   for (keys %button) { delete $button{$_} if ! $f{$_} }
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -3026,18 +3027,16 @@ sub display_ship_receive {
   %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
              'Preview' => { ndx => 2, key => 'V', value => $locale->text('Preview') },
              'Print' => { ndx => 3, key => 'P', value => $locale->text('Print') },
-	     'Ship to' => { ndx => 4, key => 'T', value => $locale->text('Ship to') },
-	     'E-mail' => { ndx => 5, key => 'E', value => $locale->text('E-mail') },
-	     'Done' => { ndx => 11, key => 'D', value => $locale->text('Done') },
 	    );
   
-  for ("Update", "Print", "Preview") { $form->print_button(\%button, $_) }
-  
   if ($form->{type} eq 'ship_order') {
-    for ('Ship to', 'E-mail') { $form->print_button(\%button, $_) }
+    $button{'Ship to'} = { ndx => 4, key => 'T', value => $locale->text('Ship to') };
+    $button{'E-mail'} = { ndx => 5, key => 'E', value => $locale->text('E-mail') };
   }
   
-  $form->print_button(\%button, 'Done');
+  $button{'Done'} = { ndx => 11, key => 'D', value => $locale->text('Done') };
+
+  $form->print_button(\%button);
   
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -3053,7 +3052,6 @@ sub display_ship_receive {
 </body>
 </html>
 |;
-
 
 }
 

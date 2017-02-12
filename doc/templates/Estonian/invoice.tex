@@ -129,8 +129,8 @@ Fax: <%shiptofax%>
 \vspace{1cm}
 
 \begin{tabularx}{\textwidth}{*{7}{|X}|} \hline
-  \textbf{Arve NR.} & \textbf{KuupÃ€ev} & \textbf{MaksetÃ€htaeg} & \textbf{Tellimus NR.}
-  & \textbf{MÃŒÃŒja} & \textbf{Tarneaadress} & \textbf{Tarneviis} \\ [0.5em]
+  \textbf{Arve NR.} & \textbf{Kuupäev} & \textbf{Maksetähtaeg} & \textbf{Tellimus NR.}
+  & \textbf{Müüja} & \textbf{Tarneaadress} & \textbf{Tarneviis} \\ [0.5em]
   \hline
   <%invnumber%> & <%invdate%> & <%duedate%> & <%ordnumber%> & <%employee%>
   & <%shippingpoint%> & <%shipvia%> \\
@@ -141,7 +141,7 @@ Fax: <%shiptofax%>
 
 \begin{tabularx}{\textwidth}{@{}rlXlrlrrr@{}}
   \textbf{AR.} & \textbf{Number} & \textbf{Kirjeldus} & & \textbf{Kogus} &
-    \textbf{Ãhik} & \textbf{Hind} & \textbf{AlH \%} & \textbf{Summa} \\ [0.5em]
+    \textbf{Ühik} & \textbf{Hind} & \textbf{AlH \%} & \textbf{Summa} \\ [0.5em]
 <%foreach number%>
   <%runningnumber%> & <%number%> & <%description%> & <%deliverydate%> &
   <%qty%> & <%unit%> & <%sellprice%> & <%discountrate%> & <%linetotal%> \\
@@ -186,7 +186,7 @@ All prices in \textbf{<%currency%>}.
 \begin{tabularx}{10cm}{@{}lXlr@{}}
   \textbf{Maksed} & & & \\
   \hline
-  \textbf{KuupÃ€ev} & & \textbf{Alus} & \textbf{Summa} \\
+  \textbf{Kuupäev} & & \textbf{Alus} & \textbf{Summa} \\
 <%end paid_1%>
 <%foreach payment%>
   <%paymentdate%> & <%paymentaccount%> & <%paymentsource%> & <%payment%> \\

@@ -710,7 +710,7 @@ sub new_item {
   for (qw(partnumber description)) { $form->{$_} = $form->{"${_}_$i"} }
   $form->hide_form(qw(partnumber description previousform rowcount path login));
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
   
   print qq|
 </form>

@@ -262,7 +262,7 @@ sub form_footer {
     $button{'Save'} = { ndx => 3, key => 'S', value => $locale->text('Save') };
   }
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -620,7 +620,7 @@ sub gifi_footer {
     $button{'Copy to COA'} = { ndx => 7, key => 'C', value => $locale->text('Copy to COA') };
   }
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -1917,7 +1917,7 @@ sub mimetype_header {
     $button{'Delete'} = { ndx => 16, key => 'D', value => $locale->text('Delete') };
   }
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -4442,7 +4442,7 @@ print qq|
     delete $button{'Deselect all'};
   }
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
   
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -5282,7 +5282,7 @@ sub bank_footer {
   
   $form->hide_form(qw(id type login path account callback));
   
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -6289,7 +6289,7 @@ $reportform
   
   $button{'Delete SQL command'} = { ndx => 3, key => 'D', value => $locale->text('Delete SQL command') } if $form->{report};
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   $form->hide_form(qw(sqlcommand path login));
 
@@ -6402,7 +6402,7 @@ sub save_sql_command {
 
   %button = ('Save' => { ndx => 1, key => 'S', value => $locale->text('Save') } );
 
-  $form->print_button(\%button, 'Save');
+  $form->print_button(\%button);
 
   $form->{type} = "sql";
   $form->{sql} =~ s/"/\\"/g;

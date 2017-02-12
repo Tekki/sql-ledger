@@ -263,8 +263,8 @@ sub report {
 
         <tr>
           <th align=right></th>
-          <td colspan=3><input name=previousyear class=checkbox type=checkbox $checked{previousyear}>&nbsp;|.$locale->text('Previous Year').qq|
-          <input name=reversedisplay class=checkbox type=checkbox $checked{reversedisplay}>&nbsp;|.$locale->text('Reverse Display').qq|
+          <td colspan=3><input name=previousyear class=checkbox type=checkbox value=Y $checked{previousyear}>&nbsp;|.$locale->text('Previous Year').qq|
+          <input name=reversedisplay class=checkbox type=checkbox value=Y $checked{reversedisplay}>&nbsp;|.$locale->text('Reverse Display').qq|
           </td>
         </tr>
 |;
@@ -415,7 +415,7 @@ sub report {
 
   if ($form->{reportcode} eq 'balance_sheet') {
     
-    @checked = qw(l_heading l_subtotal l_accno previousyear);
+    @checked = qw(l_heading l_subtotal l_accno previousyear reversedisplay usetemplate);
 
     @input = qw(todate tomonth toyear decimalplaces reportlogin);
     for (qw(department currency language_code)) {
@@ -424,7 +424,7 @@ sub report {
 
     %radio = ( method => { accrual => 0, cash => 1 },
           accounttype => { standard => 0, gifi => 1 },
-        includeperiod => { month => 0, quarter => 1, year => 3 }
+        includeperiod => { month => 0, quarter => 1, year => 2 }
 	     );
 
   }
@@ -432,7 +432,7 @@ sub report {
 
   if ($form->{reportcode} eq 'income_statement') {
     
-    @checked = qw(l_heading l_subtotal l_accno previousyear);
+    @checked = qw(l_heading l_subtotal l_accno previousyear reversedisplay usetemplate);
 
     @input = qw(fromdate todate frommonth fromyear decimalplaces reportlogin);
     for (qw(projectnumber department currency language_code)) {
@@ -535,6 +535,11 @@ sub report {
 	  <td><input name=decimalplaces size=3 value=$form->{decimalplaces}></td>
 	</tr>
 	$lang
+        <tr>
+          <th align=right>|.$locale->text('Template').qq|</th>
+	  <td><input name=usetemplate class=checkbox type=checkbox value=Y $checked{usetemplate}>
+          </td>
+        </tr>
       </table>
     </td>
   </tr>
@@ -574,7 +579,7 @@ sub report {
    }
 
    %checked = ( l_heading => "checked", l_accno => "checked" );
-   for (qw(l_heading l_subtotal l_accno)) {
+   for (qw(l_heading l_subtotal l_accno reversedisplay usetemplate)) {
      $checked{$_} = ($form->{$_}) ? "checked" : "";
    }
 
@@ -586,6 +591,11 @@ sub report {
 	  <td><input name=decimalplaces size=3 value=$form->{precision}></td>
 	</tr>
 	$lang
+        <tr>
+          <th align=right>|.$locale->text('Template').qq|</th>
+	  <td><input name=usetemplate class=checkbox type=checkbox value=Y $checked{usetemplate}>
+          </td>
+        </tr>
       </table>
     </td>
   </tr>
@@ -1162,9 +1172,8 @@ sub continue { &{$form->{nextsub}} };
 sub generate_income_statement {
 
   $form->{callback} = "$form->{script}?action=generate_income_statement";
-  for (qw(path login accounttype currency decimalplaces fromdate frommonth fromyear interval method todate reportcode reportlogin)) { $form->{callback} .= "&$_=$form->{$_}" if $form->{$_} }
+  for (qw(path login accounttype currency decimalplaces fromdate frommonth fromyear interval method todate reportcode reportlogin l_heading l_subtotal l_accno includeperiod previousyear reversedisplay usetemplate)) { $form->{callback} .= "&$_=$form->{$_}" if $form->{$_} }
   for (qw(department language_code projectnumber report)) { $form->{callback} .= "&$_=".$form->escape($form->{$_},1) if $form->{$_} }
-  for (qw(l_heading l_subtotal l_accno includeperiod previousyear)) { $form->{callback} .= "&$_=$form->{$_}" if $form->{$_} }
 
   ($form->{reportdescription}, $form->{reportid}) = split /--/, $form->{report};
 
@@ -1172,7 +1181,6 @@ sub generate_income_statement {
 
   ($form->{department}) = split /--/, $form->{department};
   ($form->{projectnumber}) = split /--/, $form->{projectnumber};
-  
 
   $form->format_string(qw(company address businessnumber companyemail companywebsite));
   $form->{address} =~ s/\n/<br>/g;
@@ -1186,9 +1194,31 @@ sub generate_income_statement {
     delete $button{'Save Report'} unless $form->{savereport};
   }
 
-  if ($form->{fromyear} && $form->{frommonth}) {
-    delete $form->{fromdate};
+  $this = "this";
+  $previous = "previous";
+  @periods = reverse sort { $a <=> $b } keys %{ $form->{period} };
+  pop @periods;
+  unshift @periods, "0";
+  if ($form->{reversedisplay}) {
+    @periods = reverse @periods;
+    if ($form->{previousyear}) {
+      $this = "previous";
+      $previous = "this";
+    }
   }
+
+  # this section applies to the old template
+  if ($form->{usetemplate}) {
+    $form->{templates} = "$templates/$myconfig{dbname}";
+    $form->{IN} = "income_statement.html";
+
+    &build_report(qw(I E));
+  }
+
+
+  if ($form->{usetemplate}) {
+    $form->parse_template(\%myconfig, $userspath);
+  } else {
 
   $form->header;
 
@@ -1228,19 +1258,6 @@ sub generate_income_statement {
         <tr>
           <td></td>
 |;
-
-  $this = "this";
-  $previous = "previous";
-  @periods = reverse sort { $a <=> $b } keys %{ $form->{period} };
-  pop @periods;
-  unshift @periods, "0";
-  if ($form->{reversedisplay}) {
-    @periods = reverse @periods;
-    if ($form->{previousyear}) {
-      $this = "previous";
-      $previous = "this";
-    }
-  }
 
   $colspan = 1;
   for $period (@periods) {
@@ -1289,15 +1306,27 @@ sub generate_income_statement {
     </td>
   </tr>
 </table>
+|;
+}
 
+  $form->header;
+
+print qq|
+<p>
 <form method="post" name="main" action="$form->{script}" />
 |;
+
+  # created in RP.pm
+  if ($form->{fromyear} && $form->{frommonth}) {
+    delete $form->{fromdate};
+    delete $form->{todate};
+  }
  
-  $form->hide_form(qw(department projectnumber fromdate todate frommonth fromyear comparefromdate comparemonth compareyear interval currency decimalplaces language_code l_heading l_subtotal l_accno accounttype method));
+  $form->hide_form(qw(department projectnumber fromdate todate frommonth fromyear previousyear interval includeperiod currency decimalplaces language_code l_heading l_subtotal l_accno accounttype method reversedisplay usetemplate));
   
   $form->hide_form(qw(callback path login report reportid reportcode reportdescription reportlogin column_index flds sort direction));
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -1441,12 +1470,151 @@ sub section_subtotal {
 }
 
 
+sub build_report {
+  my @category = @_;
+
+  $form->{padding} = "&nbsp;&nbsp;";
+  $form->{bold} = "<strong>";
+  $form->{endbold} = "</strong>";
+  $form->{br} = "<br>";
+
+  %account = ( 'I' => { 'type' => 'income',
+                        'ml' => 1 },
+               'E' => { 'type' => 'expense',
+                        'ml' => -1 },
+               'A' => { 'type' => 'asset',
+                        'ml' => -1 },
+               'L' => { 'type' => 'liability',
+                        'ml' => 1 },
+               'Q' => { 'type' => 'equity',
+                        'ml' => 1 }
+               );
+
+  for $category (@category) {
+
+    for $accno (sort keys %{ $form->{$category} }) {
+
+      $str = ($form->{l_heading}) ? $form->{padding} : "";
+
+      $account{charttype} = $form->{$category}{$accno}{$this}{0}{charttype} || $form->{$category}{$accno}{$previous}{0}{charttype};
+      $account{description} = $form->{$category}{$accno}{$this}{0}{description} || $form->{$category}{$accno}{$previous}{0}{description};
+
+      if ($account{charttype} eq "A") {
+        $str .= ($form->{l_accno}) ? "$accno - $account{description}" : "$account{description}";
+      }
+      if ($account{charttype} eq "H") {
+        if ($account{subtotal} && $form->{l_subtotal}) {
+          $dash = "- ";
+          push(@{$form->{"${type}_account"}}, "$str$form->{bold}$account{subdescription}$form->{endbold}");
+          push(@{$form->{"${type}_${this}_period"}}, $form->format_amount(\%myconfig, $account{"sub$this"} * $account{ml}, $form->{decimalplaces}, $dash));
+
+          if ($form->{previousyear}) {
+            push(@{$form->{"${type}_${previous}_period"}}, $form->format_amount(\%myconfig, $account{"sub$previous"} * $account{ml}, $form->{decimalplaces}, $dash));
+          }
+        }
+
+        $str = "$form->{br}$form->{bold}$account{description}$form->{endbold}";
+
+        $account{"sub$this"} = $form->{$category}{$accno}{$this}{0}{amount};
+        $account{"sub$previous"} = $form->{$category}{$accno}{$previous}{0}{amount};
+        $account{subdescription} = $account{description};
+
+        $account{subtotal} = 1;
+        $account{ml} = $account{$category}{ml};
+
+        $form->{$category}{$accno}{$this}{0}{amount} = 0;
+        $form->{$category}{$accno}{$previous}{0}{amount} = 0;
+
+        next unless $form->{l_heading};
+        
+        $dash = " ";
+      }
+
+      push(@{$form->{"$account{$category}{type}_account"}}, $str);
+
+      if ($account{charttype} eq 'A') {
+        $form->{"total_$account{$category}{type}_${this}_period"} += $form->{$category}{$accno}{$this}{0}{amount} * $account{$category}{ml};
+        $dash = "- ";
+      }
+
+      push(@{$form->{"$account{$category}{type}_${this}_period"}}, $form->format_amount(\%myconfig, $form->{$category}{$accno}{$this}{0}{amount} * $account{$category}{ml}, $form->{decimalplaces}, $dash));
+
+      if ($form->{previousyear}) {
+        $form->{"total_$account{$category}{type}_${previous}_period"} += $form->{$category}{$accno}{$previous}{0}{amount} * $account{$category}{ml};
+        push(@{$form->{"$account{$category}{type}_${previous}_period"}}, $form->format_amount(\%myconfig, $form->{$category}{$accno}{$previous}{0}{amount} * $account{$category}{ml}, $form->{decimalplaces}, $dash));
+      }
+
+      $type = $account{$category}{type};
+      $ml = $account{$category}{ml};
+
+    }
+  }
+
+  $str = ($form->{l_heading}) ? $form->{padding} : "";
+
+  # period dates
+  $form->{this_period} = qq|$form->{period}{0}{$this}{fromdate}<br>\n$form->{period}{0}{$this}{todate}|;
+  $form->{previous_period} = qq|$form->{period}{0}{$previous}{fromdate}<br>\n$form->{period}{0}{$previous}{todate}|;
+
+  if (grep /I/, @category) {
+    # total for income/loss
+    $form->{total_this_period} = $form->format_amount(\%myconfig, $form->{total_income_this_period} - $form->{total_expense_this_period}, $form->{decimalplaces}, $dash);
+    $form->{total_previous_period} = $form->format_amount(\%myconfig, $form->{total_income_previous_period} - $form->{total_expense_previous_period}, $form->{decimalplaces}, $dash);
+
+    $form->{total_income_this_period} = $form->format_amount(\%myconfig, $form->{total_income_this_period}, $form->{decimalplaces}, $dash);
+    $form->{total_expense_this_period} = $form->format_amount(\%myconfig, $form->{total_expense_this_period}, $form->{decimalplaces}, $dash);
+
+    $form->{total_income_previous_period} = $form->format_amount(\%myconfig, $form->{total_income_previous_period}, $form->{decimalplaces}, $dash);
+    $form->{total_expense_previous_period} = $form->format_amount(\%myconfig, $form->{total_expense_previous_period}, $form->{decimalplaces}, $dash);
+
+  } else {
+
+    $currentearnings = $form->round_amount($form->{"total_asset_${this}_period"} - $form->{"total_liability_${this}_period"} - $form->{"total_equity_${this}_period"}, $form->{decimalplaces});
+
+    $previousearnings = $form->round_amount($form->{"total_asset_${previous}_period"} - $form->{"total_liability_${previous}_period"} - $form->{"total_equity_${previous}_period"}, $form->{decimalplaces});
+
+    $form->{total_this_period} = $form->format_amount(\%myconfig, $form->{total_liability_this_period} + $form->{total_equity_this_period} + $currentearnings, $form->{decimalplaces}, $dash);
+    $form->{total_previous_period} = $form->format_amount(\%myconfig, $form->{total_liability_previous_period} + $form->{total_equity_previous_period} + $previousearnings, $form->{decimalplaces}, $dash);
+
+    # totals for assets, liabilities
+    $form->{total_asset_this_period} = $form->format_amount(\%myconfig, $form->{total_asset_this_period}, $form->{decimalplaces}, $dash);
+    $form->{total_asset_previous_period} = $form->format_amount(\%myconfig, $form->{total_asset_previous_period}, $form->{decimalplaces}, $dash);
+
+    $form->{total_liability_this_period} = $form->format_amount(\%myconfig, $form->{total_liability_this_period}, $form->{decimalplaces}, $dash);
+    $form->{total_liability_previous_period} = $form->format_amount(\%myconfig, $form->{total_liability_previous_period}, $form->{decimalplaces}, $dash);
+
+    $form->{total_equity_this_period} = $form->format_amount(\%myconfig, $form->{total_equity_this_period} + $currentearnings, $form->{decimalplaces}, $dash);
+    $form->{total_equity_previous_period} = $form->format_amount(\%myconfig, $form->{total_equity_previous_period} + $previousearnings, $form->{decimalplaces}, $dash);
+  }
+
+  # last subtotal
+  if ($account{subtotal} && $form->{l_subtotal}) {
+    push(@{$form->{"${type}_account"}}, "$str$form->{bold}$account{subdescription}$form->{endbold}");
+    push(@{$form->{"${type}_${this}_period"}}, $form->format_amount(\%myconfig, $account{"sub$this"} * $ml, $form->{decimalplaces}, $dash));
+    push(@{$form->{"${type}_${previous}_period"}}, $form->format_amount(\%myconfig, $account{"sub$previous"} * $ml, $form->{decimalplaces}, $dash));
+  }
+
+  if (grep /Q/, @category) {
+    if ($currentearnings || $previousearnings) {
+      # define Current Earnings account
+      push(@{$form->{equity_account}}, $locale->text('Current Earnings'));
+
+      push(@{$form->{"equity_${this}_period"}}, $form->format_amount(\%myconfig, $currentearnings, $form->{decimalplaces}, $dash));
+
+      push(@{$form->{"equity_${previous}_period"}}, $form->format_amount(\%myconfig, $previousearnings, $form->{decimalplaces}, $dash));
+    }
+  }
+
+  $form->{period} = $timeperiod;
+
+}
+
+
 sub generate_balance_sheet {
-  
+
   $form->{callback} = "$form->{script}?action=generate_balance_sheet";
-  for (qw(path login todate tomonth toyear currency decimalplaces accounttype method reportcode reportlogin)) { $form->{callback} .= "&$_=$form->{$_}" }
+  for (qw(path login todate tomonth toyear currency decimalplaces accounttype method reportcode reportlogin l_heading l_subtotal l_accno includeperiod previousyear reversedisplay usetemplate)) { $form->{callback} .= "&$_=$form->{$_}" }
   for (qw(department language_code report)) { $form->{callback} .= "&$_=".$form->escape($form->{$_},1) }
-  for (qw(l_heading l_subtotal l_accno includeperiod previousyear)) { $form->{callback} .= "&$_=$form->{$_}" }
 
   if ($form->{todate}) {
     if ($form->{toyear} && $form->{tomonth}) {
@@ -1457,7 +1625,7 @@ sub generate_balance_sheet {
     }
   } else {
     if ($form->{toyear} && $form->{tomonth}) {
-      ($_, $form->{todate}) = $form->from_to($form->{toyear}, $form->{tomonth});
+      (undef, $form->{todate}) = $form->from_to($form->{toyear}, $form->{tomonth});
     }
   }
 
@@ -1478,10 +1646,38 @@ sub generate_balance_sheet {
     delete $button{'Save Report'} unless $form->{savereport};
   }
   
-  $todate = $form->{todate};
-  if ($form->{toyear} && $form->{tomonth}) {
-    delete $form->{todate};
+  $this = "this";
+  $previous = "previous";
+  @periods = sort { $a <=> $b } keys %{ $form->{period} };
+  if ($form->{reversedisplay}) {
+    @periods = reverse @periods;
+    if ($form->{previousyear}) {
+      $this = "previous";
+      $previous = "this";
+    }
   }
+
+  %accounts = ( A => $locale->text('Assets'),
+                L => $locale->text('Liabilities'),
+                Q => $locale->text('Equity')
+              );
+
+  %spacer = ( H => '',
+              A => '&nbsp;&nbsp;&nbsp;'
+            );
+
+  if ($form->{usetemplate}) {
+
+    $form->{templates} = "$templates/$myconfig{dbname}";
+    $form->{IN} = "balance_sheet.html";
+
+    &build_report(qw(A L Q));
+  }
+
+
+  if ($form->{usetemplate}) {
+    $form->parse_template(\%myconfig, $userspath);
+  } else {
 
   $form->header;
 
@@ -1502,7 +1698,7 @@ sub generate_balance_sheet {
   print qq|<br>|.$locale->text('as at');
 
   print qq|<br>|;
-  print $locale->date(\%myconfig, $todate, $form->{longformat});
+  print $locale->date(\%myconfig, $form->{todate}, $form->{longformat});
   print qq|
     </th>
   </tr>
@@ -1519,17 +1715,6 @@ sub generate_balance_sheet {
           <td></td>
 |;
 
-  $this = "this";
-  $previous = "previous";
-  @periods = sort { $a <=> $b } keys %{ $form->{period} };
-  if ($form->{reversedisplay}) {
-    @periods = reverse @periods;
-    if ($form->{previousyear}) {
-      $this = "previous";
-      $previous = "this";
-    }
-  }
-
   $colspan = 1;
   for $period (@periods) {
     $colspan++;
@@ -1542,15 +1727,6 @@ sub generate_balance_sheet {
   print qq|
         </tr>
 |;
-
-  %accounts = ( A => $locale->text('Assets'),
-                L => $locale->text('Liabilities'),
-                Q => $locale->text('Equity')
-              );
-
-  %spacer = ( H => '',
-              A => '&nbsp;&nbsp;&nbsp;'
-            );
 
   for $category (qw(A L Q)) {
     $ml = ($category eq 'A') ? -1 : 1;
@@ -1586,17 +1762,25 @@ sub generate_balance_sheet {
     print $locale->text('All amounts in')." $form->{currency} ".$locale->text('converted to')." $form->{currency} @ $form->{exchangerate}";
   }
 
+}
+
+  $form->header;
+
   print qq|
   <p>
   
 <form method="post" name="main" action="$form->{script}" />
 |;
- 
-  $form->hide_form(qw(department todate tomonth toyear includeperiod currency decimalplaces language_code l_heading l_subtotal l_accno previousyear accounttype method));
+
+  if ($form->{toyear} && $form->{tomonth}) {
+    delete $form->{todate};
+  }
+
+  $form->hide_form(qw(department todate tomonth toyear includeperiod currency decimalplaces language_code l_heading l_subtotal l_accno previousyear reversedisplay accounttype method usetemplate));
   
   $form->hide_form(qw(callback path login report reportcode reportlogin column_index flds sort direction));
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -1911,7 +2095,7 @@ sub list_accounts {
   
   $form->hide_form(qw(callback path login report reportcode reportlogin sort direction));
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -2331,7 +2515,7 @@ sub aging {
     delete $button{'Save Report'} unless $form->{savereport};
   }
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -2643,7 +2827,7 @@ sub reminder {
     delete $button{'Save Report'} unless $form->{savereport};
   }
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -3553,7 +3737,7 @@ sub generate_tax_report {
     delete $button{'Save Report'} unless $form->{savereport};
   }
   
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -3906,7 +4090,7 @@ sub list_payments {
     delete $button{'Save Report'} unless $form->{savereport};
   }
   
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";

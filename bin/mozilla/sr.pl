@@ -80,7 +80,7 @@ print qq|
     $button{'Delete Report'} = { ndx => 3, key => 'D', value => $locale->text('Delete Report') };
   }
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -215,7 +215,7 @@ sub edit_column {
              'Delete Column' => { ndx => 2, key => 'D', value => $locale->text('Delete Column') }
 	    );
   
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -343,7 +343,7 @@ sub add_column {
   %button = ('Save Column' => { ndx => 1, key => 'S', value => $locale->text('Save Column') }
 	    );
   
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";

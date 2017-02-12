@@ -966,7 +966,8 @@ sub employee_footer {
     }
 
     for (keys %button) { delete $button{$_} if ! $f{$_} }
-    for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+    
+    $form->print_button(\%button);
    
   }
 
@@ -1108,7 +1109,7 @@ sub access_control {
   %button = ('Continue' => { ndx => 1, key => 'C', value => $locale->text('Continue') }
 	      );
 	     
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
    
   print qq|
  
@@ -1738,7 +1739,7 @@ sub payroll_footer {
       for ("Preview", "Print and Post", "Print and Post as new") { delete $button{$_} }
     }
 
-    for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+    $form->print_button(\%button);
     
   }
 
@@ -2485,7 +2486,7 @@ sub payroll_transactions {
     delete $button{'Save Report'} unless $form->{savereport};
   }
   
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -2644,7 +2645,7 @@ sub search_deduction {
 
   $form->hide_form(qw(db callback path login));
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
   
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -2876,7 +2877,8 @@ sub deduction_footer {
     }
 
     for (keys %button) { delete $button{$_} if ! $f{$_} }
-    for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+
+    $form->print_button(\%button);
     
   }
 
@@ -2991,7 +2993,7 @@ sub search_wage {
 
   $form->hide_form(qw(db callback path login));
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
   
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -3116,7 +3118,8 @@ sub wage_footer {
     }
 
     for (keys %button) { delete $button{$_} if ! $f{$_} }
-    for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+
+    $form->print_button(\%button);
     
   }
 

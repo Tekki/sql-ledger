@@ -437,7 +437,7 @@ sub list_documents {
               'Delete Documents' => { ndx => 3, key => 'D', value => $locale->text('Delete Documents') },
 	    );
   
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   $form->hide_form(qw(rowcount folder formname callback login path));
 
@@ -543,7 +543,7 @@ sub edit {
 
   delete $button{'Delete'} unless $form->{id};
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";

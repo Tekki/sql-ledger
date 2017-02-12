@@ -881,11 +881,11 @@ pdf--|.$locale->text('PDF');
              'Delete Schedule' => { ndx => 16, key => 'D', value => $locale->text('Delete Schedule') },
 	    );
   
-  $form->print_button(\%button, 'Save Schedule');
-  
-  if ($form->{recurring}) {
-    $form->print_button(\%button, 'Delete Schedule');
+  unless ($form->{recurring}) {
+    delete $button{'Delete Schedule'};
   }
+
+  $form->print_button(\%button);
 
   # delete variables
   for (qw(action recurring)) { delete $form->{$_} }

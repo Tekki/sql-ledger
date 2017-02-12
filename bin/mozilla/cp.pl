@@ -793,7 +793,7 @@ sub payments_footer {
     delete $button{'Back'};
   }
   
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   $media =~ s/(<option value="\Q$form->{media}\E")/$1 selected/;
 
@@ -1746,7 +1746,7 @@ sub payment_footer {
       delete $button{'Back'};
     }
 
-    for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+    $form->print_button(\%button);
   }
 
   $form->hide_form(qw(helpref callback rowcount path login));
@@ -2328,6 +2328,7 @@ sub payment_register {
 	</tr>
 |;
 
+
   if (@{ $form->{all_years} }) {
     # accounting years
     $selectaccountingyear = "\n";
@@ -2335,7 +2336,7 @@ sub payment_register {
     $selectaccountingmonth = "\n";
     for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|$_--|.$locale->text($form->{all_month}{$_}).qq|\n| }
 
-    $form->{interval} ||= 1;
+    $form->{interval} = "1" unless exists $form->{interval};
     $checked{$form->{interval}} = "checked";
 
     $selectfrom = qq|
@@ -2344,7 +2345,6 @@ sub payment_register {
 	<td>
 	<select name=month>|.$form->select_option($selectaccountingmonth, undef, 1, 1).qq|</select>
 	<select name=year>|.$form->select_option($selectaccountingyear, undef, 1).qq|</select>
-	<br>
 	<input name=interval class=radio type=radio value=0 $checked{0}>&nbsp;|.$locale->text('Current').qq|
 	<input name=interval class=radio type=radio value=1 $checked{1}>&nbsp;|.$locale->text('Month').qq|
 	<input name=interval class=radio type=radio value=3 $checked{3}>&nbsp;|.$locale->text('Quarter').qq|
@@ -2696,7 +2696,7 @@ sub list_checks {
   $form->hide_form("$form->{vc}", "$form->{vc}_id");
   $form->hide_form(qw(ARAP void reissue rowcount helpref callback path login));
   
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";

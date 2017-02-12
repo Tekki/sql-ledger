@@ -1,4 +1,4 @@
-use vars qw($userspath $spool $memberfile $templates $sendmail $images $language $charset $sid $latex $gzip $dvipdf $xelatex);
+use vars qw($userspath $spool $memberfile $templates $sendmail $images $language $charset $sid $latex $gzip $dvipdf $pdftk $xelatex);
 
 # path to user configuration files
 $userspath = "users";
@@ -34,6 +34,9 @@ $gzip = "gzip -S .gz";
 
 # use dvipdf instead of pdflatex for PDF
 #$dvipdf = 1;
+
+# if you have pdftk installed and want to combine PDFs set to 1
+$pdftk = 1;
 
 # use xelatex instead of pdflatex for PDF
 #$xelatex = 1;

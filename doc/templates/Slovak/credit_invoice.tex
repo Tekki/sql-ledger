@@ -1,5 +1,5 @@
 \documentclass{scrartcl}
-\usepackage[latin2]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage{tabularx}
 \usepackage[top=2.2cm,bottom=-1cm,left=1.9cm,right=0.5cm]{geometry}
 \usepackage{graphicx}
@@ -44,7 +44,7 @@
 \markboth{<%company%>\hfill <%invnumber%>}{<%company%>\hfill <%invnumber%>}
 
 \begin{tabularx}{\textwidth}{@{}rlXlrlrrr@{}}
-  \textbf{Pol} & \textbf{»Ìslo} & \textbf{Popis} & & \textbf{Mnoæ.} &
+  \textbf{Pol} & \textbf{ƒå√≠slo} & \textbf{Popis} & & \textbf{Mno≈æ.} &
     \textbf{Jedn} & \textbf{Cena} & \textbf{Zlava \%} & \textbf{Suma} \\ [0.5em]
   & carried forward from page <%lastpage%> & & & & & & & <%sumcarriedforward%> \\ [0.5em]
 <%end pagebreak%>
@@ -97,15 +97,15 @@ Fax: <%customerfax%>
 \vspace{1cm}
 
 \begin{tabularx}{\textwidth}{*{8}{|X}|} \hline
-  \textbf{Fakt˙ra} & \textbf{D·tum} & \textbf{Objecn·vka} & \textbf{Pred.osoba}
+  \textbf{Fakt√∫ra} & \textbf{D√°tum} & \textbf{Objecn√°vka} & \textbf{Pred.osoba}
   <%if shippingpoint%>
-  & \textbf{Miesto urËenia}
+  & \textbf{Miesto urƒçenia}
   <%end shippingpoint>
   <%if ponumber%>
-  & \textbf{PO ËÌslo}
+  & \textbf{PO ƒç√≠slo}
   <%end ponumber%>
   <%if shipvia%>
-  & \textbf{SpÙsob dodania}
+  & \textbf{Sp√¥sob dodania}
   <%end shipvia%>
   \\ [0.5em]
   \hline
@@ -126,7 +126,7 @@ Fax: <%customerfax%>
 \vspace{1cm}
 
 \begin{tabularx}{\textwidth}{@{}rlXlrlrrr@{}}
-  \textbf{Pol.} & \textbf{»Ìslo} & \textbf{Popis} & \textbf{Mnoæ} &
+  \textbf{Pol.} & \textbf{ƒå√≠slo} & \textbf{Popis} & \textbf{Mno≈æ} &
     \textbf{Jedn.} & \textbf{Cena} & \textbf{Suma} \\ [0.5em]
 <%foreach number%>
   <%runningnumber%> & <%number%> & <%description%> &
@@ -143,13 +143,13 @@ Fax: <%customerfax%>
 \hfill
 \begin{tabularx}{\textwidth}{@{}Xr@{\hspace{1cm}}r@{}}
 <%if not taxincluded%>
- & Medzis˙Ëet & <%subtotal%> \\
+ & Medzis√∫ƒçet & <%subtotal%> \\
 <%end taxincluded%>
 <%if taxincluded%>
  & Celkom & <%invtotal%> \\
 <%end taxincluded%>
 <%foreach tax%>
- DI». <%taxnumber%> & <%taxdescription%> on <%taxbase%> @ <%taxrate%> \% & <%tax%> \\
+ DIƒå. <%taxnumber%> & <%taxdescription%> on <%taxbase%> @ <%taxrate%> \% & <%tax%> \\
 <%end tax%>
 <%if not taxincluded%>
  & Celkom & <%invtotal%> \\
@@ -161,10 +161,10 @@ Fax: <%customerfax%>
 
 <%text_amount%> ***** <%decimal%>/100
 \hfill
-Hodnoty s˙ v \textbf{<%currency%>}.
+Hodnoty s√∫ v \textbf{<%currency%>}.
 
 <%if taxincluded%>
-Ceny s˙ s DPH.
+Ceny s√∫ s DPH.
 <%end tax included%>
 
 \vspace{1em}
@@ -178,7 +178,7 @@ Ceny s˙ s DPH.
 \begin{tabularx}{10cm}{@{}lXlr@{}}
   \multicolumn{4}{c}{\textbf{Platby}} \\
   \hline
-  \textbf{D·tum} & & \textbf{Doklad} & \textbf{Suma} \\
+  \textbf{D√°tum} & & \textbf{Doklad} & \textbf{Suma} \\
 <%end paid_1%>
 <%foreach payment%>
   <%paymentdate%> & <%paymentaccount%> & <%paymentsource%> & <%payment%> \\
@@ -192,5 +192,6 @@ Ceny s˙ s DPH.
 \rule{\textwidth}{0.5pt}
 
 \end{document}
+
 
 

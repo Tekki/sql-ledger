@@ -1108,7 +1108,7 @@ sub form_footer {
       for ("Preview", "Print and Post", "Print and Post as new") { delete $button{$_} }
     }
 
-    for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+    $form->print_button(\%button);
     
   }
 
@@ -1712,7 +1712,6 @@ sub search {
 	<td>
 	<select name=month>|.$form->select_option($selectaccountingmonth, undef, 1, 1).qq|</select>
 	<select name=year>|.$form->select_option($selectaccountingyear, undef, 1).qq|</select>
-	<br>
 	<input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
 	<input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
 	<input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
@@ -2604,7 +2603,7 @@ sub consolidate {
   $form->hide_form(qw(ids callback path login));
   
   if ($form->{ids}) {
-    for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+    $form->print_button(\%button);
   } else {
     $form->info($locale->text('Nothing to consolidate!'));
   }

@@ -802,7 +802,7 @@ sub form_footer {
       }
     }
     
-    for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+    $form->print_button(\%button);
     
   }
 
@@ -839,6 +839,38 @@ sub search {
 
     $l{partsgroup} = qq|<input name=l_partsgroup class=checkbox type=checkbox value=Y> |.$locale->text('Group');
     $l{partsgroupcode} = qq|<input name=l_partsgroupcode class=checkbox type=checkbox value=Y> |.$locale->text('Group Code');
+  }
+
+
+  if (@{ $form->{all_years} }) {
+    # accounting years
+    $selectaccountingyear = "\n";
+    for (@{ $form->{all_years} }) { $selectaccountingyear .= qq|$_\n| }
+    $selectaccountingmonth = "\n";
+    for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|$_--| . $locale->text($form->{all_month}{$_}).qq|\n| }
+
+    $form->{interval} = "1" unless exists $form->{interval};
+    $checked{"$form->{interval}"} = "checked";
+    
+    $selectfrom = qq|
+        <tr>
+          <td>
+            <table>
+              <tr>
+                <th align=right>|.$locale->text('Period').qq|</th>
+                <td>
+                <select name=month>|.$form->select_option($selectaccountingmonth, $form->{month}, 1, 1).qq|</select>
+                <select name=year>|.$form->select_option($selectaccountingyear, $form->{year}).qq|</select>
+                <input name=interval class=radio type=radio value=0 $checked{0}>&nbsp;|.$locale->text('Current').qq|
+                <input name=interval class=radio type=radio value=1 $checked{1}>&nbsp;|.$locale->text('Month').qq|
+                <input name=interval class=radio type=radio value=3 $checked{3}>&nbsp;|.$locale->text('Quarter').qq|
+                <input name=interval class=radio type=radio value=12 $checked{12}>&nbsp;|.$locale->text('Year').qq|
+                </td>
+              </tr>
+            </table>
+          </td>
+	</tr>
+|;
   }
 
   $method{accrual} = "checked" if $form->{method} eq 'accrual';
@@ -896,6 +928,7 @@ sub search {
 	      <tr>
 		<td nowrap><b>|.$locale->text('From').qq|</b> <input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdatefrom").qq|<b>|.$locale->text('To').qq|</b> <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
 	      </tr>
+              $selectfrom
 	      <tr>
 		<td nowrap><input name=method class=radio type=radio value=accrual $method{accrual}>|.$locale->text('Accrual').qq|
 		<input name=method class=radio type=radio value=cash $method{cash}>|.$locale->text('Cash').qq|</td>
@@ -1393,7 +1426,11 @@ sub generate_report {
       $form->{option} .= " : ".$locale->text('Detail');
       $form->{l_transdate} = "Y";
     }
- 
+
+    if ($form->{year} && $form->{month}) {
+      ($form->{transdatefrom}, $form->{transdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval});
+    }
+
     if ($form->{transdatefrom}) {
       $callback .= "&transdatefrom=$form->{transdatefrom}";
       $form->{option} .= "\n<br>".$locale->text('From')."&nbsp;".$locale->date(\%myconfig, $form->{transdatefrom}, 1);
@@ -4792,7 +4829,7 @@ sub transfer_list {
 	     'Transfer' => { ndx => 11, key => 'T', value => $locale->text('Transfer') },
 	    );
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -5267,7 +5304,7 @@ sub list_assembly_bom_transfer {
 	     'Transfer' => { ndx => 11, key => 'T', value => $locale->text('Transfer') },
 	    );
 
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";

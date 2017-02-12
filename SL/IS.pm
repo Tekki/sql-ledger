@@ -801,11 +801,12 @@ sub project_description {
 sub post_invoice {
   my ($self, $myconfig, $form, $dbh) = @_;
   
-  my $disconnect = ($dbh) ? 0 : 1;
+  my $disconnect;
   
   # connect to database, turn off autocommit
   if (! $dbh) {
     $dbh = $form->dbconnect_noauto($myconfig);
+    $disconnect = 1;
   }
 
   my $query;
@@ -1955,19 +1956,21 @@ sub cogs_returns {
 			  qq|id = $ref->{id}|,
 			  $qty * -1);
 
-    # debit COGS
-    $query = qq|INSERT INTO acc_trans (trans_id, chart_id,
-                amount, transdate, project_id)
-                VALUES ($ref->{trans_id}, $ref->{expense_accno_id},
-		$linetotal * -1, '$form->{transdate}', $project_id)|;
-    $dbh->do($query) || $form->dberror($query);
+    if ($linetotal) {
+      # debit COGS
+      $query = qq|INSERT INTO acc_trans (trans_id, chart_id,
+                  amount, transdate, project_id)
+                  VALUES ($ref->{trans_id}, $ref->{expense_accno_id},
+                  $linetotal * -1, '$form->{transdate}', $project_id)|;
+      $dbh->do($query) || $form->dberror($query);
 
-    # credit inventory
-    $query = qq|INSERT INTO acc_trans (trans_id, chart_id,
-                amount, transdate, project_id)
-                VALUES ($ref->{trans_id}, $ref->{inventory_accno_id},
-		$linetotal, '$form->{transdate}', $project_id)|;
-    $dbh->do($query) || $form->dberror($query);
+      # credit inventory
+      $query = qq|INSERT INTO acc_trans (trans_id, chart_id,
+                  amount, transdate, project_id)
+                  VALUES ($ref->{trans_id}, $ref->{inventory_accno_id},
+                  $linetotal, '$form->{transdate}', $project_id)|;
+      $dbh->do($query) || $form->dberror($query);
+    }
 
     $allocated += $qty;
     

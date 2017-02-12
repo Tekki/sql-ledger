@@ -1,11 +1,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%                                           %%%
 %%%      Faktura - LaTeX sablona v. 1.01      %%%
-%%%  Peter MÈsz·ros -- peterm@insypo.sk       %%%
+%%%  Peter M√©sz√°ros -- peterm@insypo.sk       %%%
 %%%                                           %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%
-%%% 27.09.2006
+%%% 27.4.2009
 %%%
 %%%
 
@@ -15,7 +15,7 @@
 % \usepackage[frame]{xy}
 \usepackage{tabularx}
 %\usepackage{graphicx}
-\usepackage[latin2]{inputenc}
+\usepackage[utf8]{inputenc}
 
 
 
@@ -47,7 +47,7 @@
   \parbox{\textwidth}{
    \begin{center}
 %     \includegraphics[scale=1.0]{/tmp/logo_04.eps} \\[.3cm]
-     {\large\bfseries FAKT⁄RA} \\
+     {\large\bfseries FAKT√öRA} \\
    \end{center}
 
    \mbox{}\hfill <%copysum%>  \\
@@ -82,7 +82,7 @@
   
   \hfill
   \begin{tabularx}{7cm}{X@{ }r@{}}
-  \textbf{Medzis˙Ëet} & <%sumcarriedforward%> \cr
+  \textbf{Medzis√∫ƒçet} & <%sumcarriedforward%> \cr
   \end{tabularx}
 
 \newpage
@@ -109,8 +109,8 @@
             >{\hsize=2.0cm\raggedleft}X@{\ }
             >{\hsize=2.0cm\raggedleft}X@{}
            }
-  \textbf{pol} & \textbf{Skup} & \textbf{»Ìslo} & \centering\textbf{Popis} &
-  \textbf{Reg·l} & \textbf{Mno&#65533;.} & \textbf{MJ} & 
+  \textbf{pol} & \textbf{Skup} & \textbf{ƒå√≠slo} & \centering\textbf{Popis} &
+  \textbf{Reg√°l} & \textbf{MnoÔøΩ.} & \textbf{MJ} & 
   \textbf{Cena bez DPH} & \textbf{Suma bez DPH} & \textbf{DPH\%} & 
   \textbf{Suma DPH} & \textbf{Suma}
   \cr
@@ -129,16 +129,16 @@
 
 \hbox to\hsize{
 \begin{minipage}[t]{9.5cm}
-\textbf{Pred·vaj˙ci:} \\
+\textbf{Pred√°vaj√∫ci:} \\
 <%company%>\\
 <%address%>\\
-I» DPH: <%businessnumber%>\\
+Iƒå DPH: <%businessnumber%>\\
 tel: <%tel%>\\
 fax: <%fax%>
 \end{minipage}
 \hfill \
 \begin{minipage}[t]{9.5cm}
-\textbf{Kupuj˙ci:} \\
+\textbf{Kupuj√∫ci:} \\
 <%name%>\\
 <%address1%>\\
 <%if address2%>
@@ -166,8 +166,8 @@ fax: <%fax%>
                              >{\hsize=3.4cm\centering}X@{\ }
                              >{\hsize=2.5cm\centering}X@{\ }
                              >{\hsize=2.0cm\raggedleft}X@{}}
-  \textbf{Miesto dodania} & \textbf{D·tum} & \textbf{ } &
-  \textbf{Splatnosª} & \textbf{».objedn·vky} & \textbf{Vystavil} & \textbf{».fakt˙ry} 
+  \textbf{Miesto dodania} & \textbf{D√°tum} & \textbf{ } &
+  \textbf{Splatnos≈•} & \textbf{ƒå.objedn√°vky} & \textbf{Vystavil} & \textbf{ƒå.fakt√∫ry} 
   \cr
   <%shippingpoint%> & <%invdate%> & <%crdate%> &
   <%duedate%> & <%ordnumber%> & <%employee%> & <%invnumber%>
@@ -184,8 +184,8 @@ fax: <%fax%>
 {\scriptsize
 
 \begin{tabularx}{\textwidth}{@{}rlXlrlrrr@{}}
-  \textbf{Pol.} & \textbf{»Ìslo} & \textbf{Popis} & & \textbf{Mnoæstvo} &
-    \textbf{MJ} & \textbf{Cena} & \textbf{Zµava \%} & \textbf{Suma} \\ [0.5em]
+  \textbf{Pol.} & \textbf{ƒå√≠slo} & \textbf{Popis} & & \textbf{Mno≈æstvo} &
+    \textbf{MJ} & \textbf{Cena} & \textbf{Zƒæava \%} & \textbf{Suma} \\ [0.5em]
 <%foreach number%>
   <%runningnumber%> & <%number%> & <%description%> & <%deliverydate%> &
   <%qty%> & <%unit%> & <%sellprice%> & <%discountrate%> & <%linetotal%> \\
@@ -207,16 +207,16 @@ fax: <%fax%>
 %\textbf{Total} & <%invtotal%> \cr
 \textbf{Suma celkom} & <%subtotal%> \cr
 <%foreach tax%>
-\textbf{Z·klad:} <%taxbase%> \textbf{DPH:} <%taxrate%> & <%tax%> \cr
+\textbf{Z√°klad:} <%taxbase%> \textbf{DPH:} <%taxrate%> & <%tax%> \cr
 <%end tax%>
 <%if paid%>
-\textbf{ZaplatenÈ:} & -<%paid%>
+\textbf{Zaplaten√©:} & -<%paid%>
 <%end paid%>
 \end{tabularx}
 
 \rule{10.6cm}{1.5pt}
 \begin{tabularx}{10cm}{>{\hsize=7cm\raggedleft}X>{\hsize=3cm\raggedleft}X}
-\textbf{K ˙hrade} & <%total%> \textbf{Sk}
+\textbf{K √∫hrade} & <%total%> \textbf{EUR}
 \end{tabularx}
 
 \end{minipage}
@@ -226,7 +226,7 @@ fax: <%fax%>
 \vfill
 \vspace{1cm}
 <%if notes%>
-\textbf{Pozn·mka:} <%notes%>
+\textbf{Pozn√°mka:} <%notes%>
 \vspace{1cm}
 <%end if%>
 
@@ -242,7 +242,7 @@ fax: <%fax%>
                        >{\hsize=2.9cm\centering}X@{\ }
                        >{\hsize=2.9cm\centering}X@{\ }
                        >{\hsize=2.9cm\raggedleft}X@{}}
-  \textbf{D·tum} & \textbf{⁄Ëet} & \textbf{».dokladu} & \textbf{Suma} 
+  \textbf{D√°tum} & \textbf{√öƒçet} & \textbf{ƒå.dokladu} & \textbf{Suma} 
   \cr
 <%end paid%>
 <%foreach payment%>
@@ -258,6 +258,8 @@ fax: <%fax%>
 <%intnotes%>
 
 \end{document}
+
+
 
 
 

@@ -270,7 +270,7 @@ sub history {
   %button = ('Continue' => { ndx => 1, key => 'C', value => $locale->text('Continue') }
   );
   
-  $form->print_button(\%button, 'Continue');
+  $form->print_button(\%button);
   
   $form->hide_form(qw(ARAP db nextsub path login));
 
@@ -510,7 +510,7 @@ sub search {
   %button = ('Continue' => { ndx => 1, key => 'C', value => $locale->text('Continue') }
   );
   
-  $form->print_button(\%button, 'Continue');
+  $form->print_button(\%button);
   
   $form->hide_form(qw(ARAP db nextsub path login));
 
@@ -2337,7 +2337,8 @@ sub form_footer {
   $form->hide_form(qw(id ARAP update_contact addressid contactid taxaccounts path login callback db status reference_rows referenceurl precision));
   
   for (keys %button) { delete $button{$_} if ! $f{$_} }
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+
+  $form->print_button(\%button);
   
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -2861,7 +2862,7 @@ sub pricelist_footer {
              'Save Pricelist' => { ndx => 3, key => 'S', value => $locale->text('Save Pricelist') },
 	    ); 
 	     
-  for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) { $form->print_button(\%button, $_) }
+  $form->print_button(\%button);
   
   print qq|
 </form>
