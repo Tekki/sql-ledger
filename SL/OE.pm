@@ -25,7 +25,6 @@ sub transactions {
   my $dbh = $form->dbconnect($myconfig);
  
   my $query;
-  my $null;
   my $var;
   my $ordnumber = 'ordnumber';
   my $quotation = '0';
@@ -67,7 +66,7 @@ sub transactions {
   
   for (qw(department warehouse employee)) {
     if ($form->{$_}) {
-      ($null, $var) = split /--/, $form->{$_};
+      (undef, $var) = split /--/, $form->{$_};
       $where .= " AND o.${_}_id = $var";
     }
   }
@@ -260,20 +259,19 @@ sub save {
 
   my $query;
   my $sth;
-  my $null;
   my $ok;
 
   my %defaults = $form->get_defaults($dbh, \@{['precision']});
   $form->{precision} = $defaults{precision};
   
-  ($null, $form->{employee_id}) = split /--/, $form->{employee};
+  (undef, $form->{employee_id}) = split /--/, $form->{employee};
   if (! $form->{employee_id}) {
     ($form->{employee}, $form->{employee_id}) = $form->get_employee($dbh);
     $form->{employee} = "$form->{employee}--$form->{employee_id}";
   }
 
   for (qw(department warehouse)) { 
-    ($null, $form->{"${_}_id"}) = split(/--/, $form->{$_});
+    (undef, $form->{"${_}_id"}) = split(/--/, $form->{$_});
     $form->{"${_}_id"} *= 1;
   }
  
@@ -1751,7 +1749,8 @@ sub get_warehouses {
 sub save_inventory {
   my ($self, $myconfig, $form) = @_;
   
-  my ($null, $warehouse_id) = split /--/, $form->{warehouse};
+  my $warehouse_id;
+  (undef, $warehouse_id) = split /--/, $form->{warehouse};
   $warehouse_id *= 1;
 
   my $ml = ($form->{type} eq 'ship_order') ? -1 : 1;
@@ -1764,9 +1763,10 @@ sub save_inventory {
   my $serialnumber;
   my $ship;
   my $cargobjid;
+  my $employee_id;
   
-  my ($null, $employee_id) = split /--/, $form->{employee};
-  ($null, $employee_id) = $form->get_employee($dbh) if ! $employee_id;
+  (undef, $employee_id) = split /--/, $form->{employee};
+  (undef, $employee_id) = $form->get_employee($dbh) unless $employee_id;
  
   $query = qq|SELECT oi.serialnumber, oi.ship
               FROM orderitems oi
@@ -2310,12 +2310,11 @@ sub generate_orders {
 
     my $ordnumber = $form->update_defaults($myconfig, 'ponumber');
 
-    my $null;
     my $employee_id;
     my $department_id;
     
-    ($null, $employee_id) = $form->get_employee($dbh);
-    ($null, $department_id) = split /--/, $form->{department};
+    (undef, $employee_id) = $form->get_employee($dbh);
+    (undef, $department_id) = split /--/, $form->{department};
     $department_id *= 1;
     
     $query = qq|UPDATE oe SET

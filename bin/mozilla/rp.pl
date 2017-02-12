@@ -472,9 +472,7 @@ sub report {
 
   %checked = ( l_heading => "checked", l_subtotal => "checked" );
   for (qw(l_heading l_subtotal)) {
-    if (defined $form->{$_}) {
-      $checked{$_} = ($form->{$_}) ? "checked" : "";
-    }
+    $checked{$_} = ($form->{$_}) ? "checked" : "";
   }
 
   if ($form->{reportcode} eq "projects") {
@@ -527,9 +525,7 @@ sub report {
 
     %checked = ( l_heading => "checked", l_accno => "checked" );
     for (qw(l_heading l_subtotal l_accno)) {
-      if (defined $form->{$_}) {
-        $checked{$_} = ($form->{$_}) ? "checked" : "";
-      }
+      $checked{$_} = ($form->{$_}) ? "checked" : "";
     }
 
     print qq|
@@ -579,9 +575,7 @@ sub report {
 
    %checked = ( l_heading => "checked", l_accno => "checked" );
    for (qw(l_heading l_subtotal l_accno)) {
-     if (defined $form->{$_}) {
-       $checked{$_} = ($form->{$_}) ? "checked" : "";
-     }
+     $checked{$_} = ($form->{$_}) ? "checked" : "";
    }
 
    print qq|
@@ -616,9 +610,7 @@ sub report {
 
     %checked = ();
     for (qw(l_heading l_subtotal all_accounts)) {
-      if (defined $form->{$_}) {
-        $checked{$_} = ($form->{$_}) ? "checked" : "";
-      }
+      $checked{$_} = ($form->{$_}) ? "checked" : "";
     }
    
     print qq|
@@ -748,11 +740,13 @@ print qq|
 	        $vc
 	  <td><input name="l_address" class=checkbox type=checkbox value=Y></td>
           <td>|.$locale->text('Address').qq|</td>
+	  <td><input name="l_country" class=checkbox type=checkbox value=Y></td>
+          <td>|.$locale->text('Country').qq|</td>
+	      </tr>
+	      
+	      <tr>
 	  <td><input name="l_taxnumber" class=checkbox type=checkbox value=Y></td>
           <td>|.$locale->text('Taxnumber').qq|</td>
-              </tr>
-
-              <tr>
           <td><input name="l_netamount" class=checkbox type=checkbox value=Y checked></td>
           <td>|.$locale->text('Amount').qq|</td>
           
@@ -828,6 +822,11 @@ print qq|
 	  <td><input name="l_address" class=checkbox type=checkbox value=Y></td>
           <td>|.$locale->text('Address').qq|</td>
 
+	  <td><input name="l_country" class=checkbox type=checkbox value=Y></td>
+          <td>|.$locale->text('Country').qq|</td>
+
+	      </tr>
+	      <tr>
           <td><input name="l_netamount" class=checkbox type=checkbox value=Y checked></td>
       		<td>|.$locale->text('Amount').qq|</td>
 	      </tr>
@@ -3348,7 +3347,7 @@ sub generate_tax_report {
 
   @columns = qw(id transdate invnumber description name);
   push @columns, "$form->{vc}number";
-  push @columns, qw(address taxnumber netamount tax total);
+  push @columns, qw(address country taxnumber netamount tax total);
   @columns = $form->sort_columns(@columns);
 
   foreach $item (@columns) {
@@ -3402,6 +3401,7 @@ sub generate_tax_report {
   $column_data{name} = qq|<th><a class=listheading href=$href&sort=name>$name</th>|;
   $column_data{"$form->{vc}number"} = qq|<th><a class=listheading href=$href&sort=$form->{vc}number>$vcnumber</th>|;
   $column_data{address} = qq|<th class=listheading>|.$locale->text('Address').qq|</th>|;
+  $column_data{country} = qq|<th><a class=listheading href=$href&sort=country>|.$locale->text('Country').qq|</th>|;
   $column_data{taxnumber} = qq|<th class=listheading>|.$locale->text('Taxnumber').qq|</th>|;
   
   $column_data{description} = qq|<th><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</th>|;
@@ -3482,7 +3482,7 @@ sub generate_tax_report {
     $column_data{invnumber} = qq|<td><a href=$module?path=$form->{path}&action=edit&id=$ref->{id}&login=$form->{login}&callback=$callback>$ref->{invnumber}</a></td>|;
 
     $column_data{transdate} = qq|<td nowrap>$ref->{transdate}</td>|;
-    for (qw(id partnumber description taxnumber address)) { $column_data{$_} = qq|<td>$ref->{$_}</td>| }
+    for (qw(id partnumber description taxnumber address country)) { $column_data{$_} = qq|<td>$ref->{$_}</td>| }
 
     $column_data{"$form->{vc}number"} = qq|<td>$ref->{"$form->{vc}number"}</td>|;
     $column_data{name} = qq|<td><a href=ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{vc_id}&db=$form->{vc}&callback=$callback>$ref->{name}</a></td>|;

@@ -3294,10 +3294,11 @@ sub audit_log {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
+  my $id;
   my $where = "WHERE 1 = 1";
 
   if ($form->{employee}) {
-    my ($null, $id) = split /--/, $form->{employee};
+    (undef, $id) = split /--/, $form->{employee};
     $where .= qq| AND a.employee_id = $id|;
   }
   if ($form->{transdatefrom}) {

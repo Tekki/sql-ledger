@@ -121,7 +121,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "3.2.1";
+  $self->{version} = "3.2.2";
   $self->{dbversion} = "3.2.0";
 
   bless $self, $type;
@@ -756,7 +756,7 @@ sub parse_template {
       if ($i == 1) {
 	@_ = ();
 	while ($_ = shift @template) {
-	  if (/\\end{document}/) {
+	  if (/\\end\{document\}/) {
 	    push @_, qq|\\newpage\n|;
 	    last;
 	  }
@@ -767,12 +767,12 @@ sub parse_template {
 
       if ($i == 2) {
 	while ($_ = shift @template) {
-	  last if /\\begin{document}/;
+	  last if /\\begin\{document\}/;
 	}
       }
 
       if ($i == $self->{copies}) {
-	push @template, q|\end{document}|;
+	push @template, q|\end\{document\}|;
       }
     }
 
@@ -1263,7 +1263,7 @@ sub gentex {
       close(INC);
       next;
     }
-    last if $_ =~ /begin{document}/;
+    last if $_ =~ /begin\{document\}/;
     push @h, $_;
   }
   
@@ -2998,6 +2998,63 @@ sub all_years {
 }
 
 
+sub all_countries {
+  my ($self, $myconfig, $db, $dbh) = @_;
+  
+  my $disconnect = ($dbh) ? 0 : 1;
+
+  if (! $dbh) {
+    $dbh = $self->dbconnect($myconfig);
+  }
+  my $sth;
+  my $query;
+
+  $query = qq|SELECT DISTINCT country
+              FROM address a
+              JOIN $db vc ON (vc.id = a.trans_id)
+              WHERE country != ''
+	      ORDER BY 1|;
+  $sth = $dbh->prepare($query);
+  $sth->execute || $self->dberror($query);
+
+  $self->{all_countries} = ();
+  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    push @{ $self->{all_countries} }, $ref;
+  }
+  $sth->finish;
+
+  $dbh->disconnect if $disconnect;
+
+}
+
+
+sub all_business {
+  my ($self, $myconfig, $dbh) = @_;
+
+  my $disconnect = ($dbh) ? 0 : 1;
+
+  if (! $dbh) {
+    $dbh = $self->dbconnect($myconfig);
+  }
+  my $sth;
+  my $query;
+
+  $query = qq|SELECT *
+              FROM business
+              ORDER BY rn|;
+  $sth = $dbh->prepare($query);
+  $sth->execute || $self->dberror($query);
+
+  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    push @{ $self->{all_business} }, $ref;
+  }
+  $sth->finish;
+
+  $dbh->disconnect if $disconnect;
+
+}
+
+
 sub create_links {
   my ($self, $module, $myconfig, $vc, $job) = @_;
  
@@ -3221,10 +3278,12 @@ sub get_peripherals {
 
   my @df = map { "${_}_$self->{workstation}" } qw(workstation cashdrawer poledisplay poledisplayon);
   push @df, "printer_$self->{workstation}_%";
+  push @df, "printer_$self->{login}_%";
   my %defaults = $self->get_defaults($dbh, \@df);
-    
+
   my $label;
   my $command;
+  my %printer;
 
   @{ $self->{all_printer} } = ();
 
@@ -3232,7 +3291,10 @@ sub get_peripherals {
     for (sort keys %defaults) {
       if ($_ =~ /printer_/) {
 	($label, $command) = split /=/, $defaults{$_};
-	push @{ $self->{all_printer} }, { printer => $label, command => $command };
+        unless ($printer{$label}) {
+          push @{ $self->{all_printer} }, { printer => $label, command => $command };
+        }
+        $printer{$label} = 1;
       } else {
 	$label = $_;
 	$label =~ s/_.*//;
@@ -3246,7 +3308,10 @@ sub get_peripherals {
     for (sort keys %defaults) {
       if ($_ =~ /printer_\d+$/) {
 	($label, $command) = split /=/, $defaults{$_};
-	push @{ $self->{all_printer} }, { printer => $label, command => $command };
+        unless ($printer{$label}) {
+          push @{ $self->{all_printer} }, { printer => $label, command => $command };
+        }
+        $printer{$label} = 1;
       } else {
 	if ($_ !~ /printer_/) {
 	  $self->{$_} = $defaults{$_};
@@ -5045,7 +5110,8 @@ sub audittrail {
     my %defaults = $self->get_defaults($dbh, \@{['audittrail']});
     
     if ($defaults{audittrail}) {
-      my ($null, $employee_id) = $self->get_employee($dbh);
+      my $employee_id;
+      (undef, $employee_id) = $self->get_employee($dbh);
 
       if ($self->{audittrail} && !$myconfig) {
         chop $self->{audittrail};

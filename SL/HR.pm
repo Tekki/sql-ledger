@@ -267,6 +267,7 @@ sub get_employee {
 		WHERE c.charttype = 'A'
 		AND c.category = '$ae{$_}{category}'
 		$ae{$_}{link}
+                AND c.closed = '0'
 		ORDER BY c.accno|;
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
@@ -350,7 +351,8 @@ sub acsrole {
   
   my $dbh = $form->dbconnect($myconfig);
   
-  my ($null, $id) = split /--/, $form->{acsrole};
+  my $id;
+  (undef, $id) = split /--/, $form->{acsrole};
   $id *= 1;
   
   my $query = qq|SELECT acs
@@ -376,13 +378,12 @@ sub save_employee {
   $form->remove_locks($myconfig, $dbh, 'hr');
 
   my $bank_address_id;
-  my $null;
   my $employeelogin;
   my $sales;
   my $acsrole_id;
   my $rn;
 
-  for (qw(paymentmethod acsrole)) { ($null, $form->{"${_}_id"}) = split /--/, $form->{$_} }
+  for (qw(paymentmethod acsrole)) { (undef, $form->{"${_}_id"}) = split /--/, $form->{$_} }
   
   if ($form->{id} *= 1) {
     $query = qq|SELECT e.login, e.sales, e.acsrole_id, a.rn
@@ -616,7 +617,7 @@ sub save_employee {
   my $sth = $dbh->prepare($query) || $form->dberror($query);
 
   for ($i = 1; $i <= $form->{wage_rows}; $i++) {
-    ($null, $wage_id) = split /--/, $form->{"wage_$i"};
+    (undef, $wage_id) = split /--/, $form->{"wage_$i"};
     if ($wage_id) {
       $sth->execute($i,$wage_id) || $form->dberror($query);
     }
@@ -633,7 +634,7 @@ sub save_employee {
 
   for ($i = 1; $i <= $form->{deduction_rows}; $i++) {
     for (qw(exempt maximum)) { $form->{"${_}_$i"} = $form->parse_amount($myconfig, $form->{"${_}_$i"}) }
-    ($null, $deduction_id) = split /--/, $form->{"deduction_$i"};
+    (undef, $deduction_id) = split /--/, $form->{"deduction_$i"};
     if ($deduction_id) {
       $sth->execute($i, $deduction_id, $form->{"exempt_$i"}, $form->{"maximum_$i"}) || $form->dberror($query);
     }
@@ -1044,6 +1045,7 @@ sub payroll_links {
 	      FROM chart c
 	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 	      WHERE c.link = 'AP'
+              AND c.closed = '0'
 	      ORDER BY c.accno|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -1058,6 +1060,7 @@ sub payroll_links {
 	      FROM chart c
 	      LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 	      WHERE c.link LIKE '%AP_paid%'
+              AND c.closed = '0'
 	      ORDER BY c.accno|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -1194,7 +1197,7 @@ sub payroll_transactions {
   $sth->execute || $form->dberror($query);
 
   # project ?
-  ($null, $id) = split /--/, $form->{projectnumber};
+  (undef, $id) = split /--/, $form->{projectnumber};
   $query = qq|SELECT trans_id
 	      FROM acc_trans
 	      WHERE project_id = $id
@@ -1272,13 +1275,14 @@ sub payslip_details {
   my $query;
   my $sth;
   my $ref;
+  my $id;
   
   my %defaults = $form->get_defaults($dbh, \@{['company', 'address', 'tel', 'fax', 'companyemail', 'companywebsite', 'businessnumber', 'precision', 'referenceurl']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   %defaults = $form->get_defaults($dbh, \@{['printer_%']});
   
-  my ($null, $id) = split /--/, $form->{employee};
+  (undef, $id) = split /--/, $form->{employee};
 
   if ($id *= 1) {
     $query = qq|SELECT e.*,
@@ -1313,7 +1317,7 @@ sub payslip_details {
     $sth->finish;
   }
 
-  ($null, $id) = split /--/, $form->{paymentmethod};
+  (undef, $id) = split /--/, $form->{paymentmethod};
   if ($id *= 1) {
     $query = qq|SELECT fee, roundchange
                 FROM paymentmethod
@@ -1439,7 +1443,7 @@ sub post_transaction {
 
     $ref = $sth->fetchrow_hashref(NAME_lc);
 
-    ($null, $user_id) = $form->get_employee($dbh);
+    (undef, $user_id) = $form->get_employee($dbh);
     my $vendornumber = $form->update_defaults($myconfig, 'vendornumber');
     
     $query = qq|INSERT INTO vendor (id, name, phone,
@@ -1450,8 +1454,8 @@ sub post_transaction {
                 VALUES (
                 $employee_id, |
                 .$dbh->quote($employee).qq|, '$ref->{workphone}',
-		'$ref->{workfax}', '$ref->{email}', '$ref->{notes}',
-		$vendornumber, $user_id, '$ap->{currency}',|
+		'$ref->{workfax}', '$ref->{email}', '$ref->{notes}', |
+		.$dbh->quote($vendornumber).qq|, $user_id, '$ap->{currency}',|
 		.$form->dbquote($ref->{startdate}, SQL_DATE).qq|, |
 		.$form->dbquote($ref->{enddate}, SQL_DATE).qq|, |
 		.$dbh->quote($ref->{apid}).qq|, |
@@ -1829,12 +1833,11 @@ sub save_deduction {
 
   $form->{id} *= 1;
   
-  my $null;
   my $deduction_id;
   my $query;
   my $sth;
 
-  ($null, $form->{basedon}) = split /--/, $form->{basedon};
+  (undef, $form->{basedon}) = split /--/, $form->{basedon};
   
   if (! $form->{id}) {
     my $uid = localtime;
@@ -1904,7 +1907,7 @@ sub save_deduction {
   $sth = $dbh->prepare($query) || $form->dberror($query);
 
   for ($i = 1; $i <= $form->{deduct_rows}; $i++) {
-    ($null, $deduction_id) = split /--/, $form->{"deduct_$i"};
+    (undef, $deduction_id) = split /--/, $form->{"deduct_$i"};
     if ($deduction_id) {
       $form->{"percent_$i"} = $form->parse_amount($myconfig, $form->{"percent_$i"});
       $form->{"percent_$i"} /= 100;

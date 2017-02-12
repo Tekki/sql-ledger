@@ -203,7 +203,8 @@ sub retrieve_item {
   
   my $dbh = $form->dbconnect($myconfig);
   
-  my ($null, $project_id) = split /--/, $form->{projectnumber};
+  my $project_id;
+  (undef, $project_id) = split /--/, $form->{projectnumber};
   $project_id *= 1;
   
   my $query = qq|SELECT customer_id
@@ -346,11 +347,10 @@ sub jcitems {
   
   my $query;
   my $where = "1 = 1";
-  my $null;
   my $var;
   
   if ($form->{projectnumber}) {
-    ($null, $var) = split /--/, $form->{projectnumber};
+    (undef, $var) = split /--/, $form->{projectnumber};
     $where .= " AND j.project_id = $var";
 
     $query = qq|SELECT parts_id
@@ -376,7 +376,7 @@ sub jcitems {
     }
   }
   if ($form->{employee}) {
-    ($null, $var) = split /--/, $form->{employee};
+    (undef, $var) = split /--/, $form->{employee};
     $where .= " AND j.employee_id = $var";
   }
   if ($form->{description}) {
@@ -485,8 +485,9 @@ sub save {
 
   my $query;
   my $sth;
+  my $project_id;
   
-  my ($null, $project_id) = split /--/, $form->{projectnumber};
+  (undef, $project_id) = split /--/, $form->{projectnumber};
   $project_id *= 1;
   
   if ($form->{id} *= 1) {
@@ -539,7 +540,7 @@ sub save {
     $outdate = $form->add_date($myconfig, $form->{transdate}, 1, 'days');
   }
 
-  ($null, $form->{employee_id}) = split /--/, $form->{employee};
+  (undef, $form->{employee_id}) = split /--/, $form->{employee};
   unless ($form->{employee_id}) {
     ($form->{employee}, $form->{employee_id}) = $form->get_employee($dbh);
   } 

@@ -2162,6 +2162,8 @@ sub print_ {
   push @a, qw(company companyemail companywebsite address tel fax businessnumber);
   $form->format_string(@a);
 
+  for (@{ $form->{all_printer} }) { $form->{"$_->{printer}_printer"} = $_->{command} }
+
   if ($form->{media} !~ /screen/) {
     $form->{OUT} = qq~| $form->{"$form->{media}_printer"}~;
   }

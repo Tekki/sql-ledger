@@ -975,7 +975,7 @@ sub storescard_footer {
 
 sub update {
 
-  ($null, $form->{project_id}) = split /--/, $form->{projectnumber};
+  (undef, $form->{project_id}) = split /--/, $form->{projectnumber};
 
   for (qw(transdate project_id)) {
     if ($form->{"old$_"} ne $form->{$_}) {

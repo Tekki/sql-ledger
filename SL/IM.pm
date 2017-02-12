@@ -1778,7 +1778,6 @@ sub unreconciled_payments {
   
   my $query;
   my $ref;
-  my $null;
 
   my ($accno) = split /--/, $form->{paymentaccount};
 
@@ -1796,7 +1795,7 @@ sub unreconciled_payments {
 
   my $paymentmethod_id;
   if ($form->{paymentmethod}) {
-    ($null, $paymentmethod_id) = split /--/, $form->{paymentmethod};
+    (undef, $paymentmethod_id) = split /--/, $form->{paymentmethod};
     $where .= " AND pm.paymentmethod_id = $paymentmethod_id";
   }
   

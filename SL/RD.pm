@@ -22,7 +22,6 @@ sub all_documents {
   my $login = $form->{login};
   $login =~ s/\@.*//;
 
-  my $null;
   my $var;
   
   # get reference documents
@@ -49,7 +48,7 @@ sub all_documents {
 	      AND lower(r.folder) LIKE '$var'|;
   }
   if ($form->{formname}) {
-    ($null, $var) = split /--/, $form->{formname};
+    (undef, $var) = split /--/, $form->{formname};
     
     $query .= qq|
 	      AND r.formname = '$var'|;

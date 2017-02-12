@@ -126,13 +126,12 @@ sub all_transactions {
 
   my $false = ($myconfig->{dbdriver} =~ /Pg/) ? FALSE : q|'0'|;
   
-  my $null;
   my $department_id;
   my $dpt_where;
   my $dpt_join;
   my $union;
   
-  ($null, $department_id) = split /--/, $form->{department};
+  (undef, $department_id) = split /--/, $form->{department};
   
   if ($department_id) {
     $dpt_join = qq|
@@ -146,7 +145,7 @@ sub all_transactions {
   my $project;
   my $project_id;
   if ($form->{projectnumber}) {
-    ($null, $project_id) = split /--/, $form->{projectnumber};
+    (undef, $project_id) = split /--/, $form->{projectnumber};
     $project = qq|
                  AND ac.project_id = $project_id
 		 |;

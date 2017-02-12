@@ -570,7 +570,7 @@ sub detach {
 
 sub attach {
 
-  ($null, $form->{formname}) = split /--/, $form->{formname} if $form->{formname} =~ /--/;
+  (undef, $form->{formname}) = split /--/, $form->{formname} if $form->{formname} =~ /--/;
 
   %m = &formnames;
   $selectformname = "";

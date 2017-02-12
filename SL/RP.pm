@@ -2102,7 +2102,7 @@ sub tax_report {
     $ref->{tax} = $form->round_amount($ref->{tax}, $form->{precision});
     $ref->{total} = $ref->{netamount} + $ref->{tax};
 
-    map { $ref->{address} .= "$ref->{$_} " if $ref->{$_} } qw(address1 address2 city zipcode country);
+    map { $ref->{address} .= "$ref->{$_} " if $ref->{$_} } qw(address1 address2 city zipcode);
     chomp $ref->{address};
 
     if ($form->{reportcode} =~ /nontaxable/) {

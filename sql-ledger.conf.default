@@ -1,4 +1,4 @@
-use vars qw($userspath $spool $memberfile $templates $sendmail $images $language $sid $latex $gzip $dvipdf $xelatex);
+use vars qw($userspath $spool $memberfile $templates $sendmail $images $language $charset $sid $latex $gzip $dvipdf $xelatex);
 
 # path to user configuration files
 $userspath = "users";
@@ -18,8 +18,9 @@ $sendmail = "| /usr/sbin/sendmail -t";
 # location for images
 $images = "images";
 
-# set language for login and admin
+# set language and charset for login and admin
 $language = "";
+$charset = "UTF8";
 
 # Oracle
 #$sid = "T80509";

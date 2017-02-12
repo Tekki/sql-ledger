@@ -193,19 +193,10 @@ sub create_links {
 
     
   # get business types
-  $query = qq|SELECT *
-              FROM business
-	      ORDER BY rn|;
-  $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
-  
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-    push @{ $form->{all_business} }, $ref;
-  }
-  $sth->finish;
+  $form->all_business($myconfig, $dbh);
 
   # employees/salespersons
-  $form->all_employees($myconfig, $dbh, undef, ($form->{vc} eq 'customer') ? 1 : 0);
+  $form->all_employees($myconfig, $dbh, undef, 1);
 
   $form->all_languages($myconfig, $dbh);
  
@@ -257,7 +248,6 @@ sub save {
 
   my $query;
   my $sth;
-  my $null;
   
   $form->{name} ||= "$form->{lastname} $form->{firstname}";
   $form->{contact} = "$form->{firstname} $form->{lastname}";
@@ -448,7 +438,7 @@ sub save {
  
   my %rec;
   for (qw(employee pricegroup business paymentmethod)) {
-    ($null, $rec{"${_}_id"}) = split /--/, $form->{$_};
+    (undef, $rec{"${_}_id"}) = split /--/, $form->{$_};
     $rec{"${_}_id"} *= 1;
   }
   
@@ -658,13 +648,13 @@ sub search {
   push @sf, qw(name contact notes phone email);
 
   if ($form->{employee}) {
-    $var = $form->like(lc $form->{employee});
-    $where .= " AND lower(e.name) LIKE '$var'";
+    (undef, $var) = split /--/, $form->{employee};
+    $where .= " AND e.id = $var";
   }
   
   if ($form->{business}) {
-    $var = $form->like(lc $form->{business});
-    $where .= " AND lower(b.description) LIKE '$var'";
+    (undef, $var) = split /--/, $form->{business};
+    $where .= " AND b.id = $var";
   }
  
   foreach $item (@sf) {
@@ -674,7 +664,7 @@ sub search {
     }
   }
 
-  @sf = qw(city state zipcode country);
+  @sf = qw(city state zipcode);
   foreach $item (@sf) {
     if ($form->{$item} ne "") {
       $var = $form->like(lc $form->{$item});
@@ -686,7 +676,11 @@ sub search {
     $var = $form->like(lc $form->{address});
     $where .= " AND (lower(ad.address1) LIKE '$var' OR lower(ad.address2) LIKE '$var')";
   }
-  
+
+  if ($form->{country} ne "") {
+    $where .= " AND (ad.country) LIKE '$form->{country}'";
+  }
+
   if ($form->{startdatefrom}) {
     $where .= " AND c.startdate >= '$form->{startdatefrom}'";
   }
@@ -718,6 +712,8 @@ sub search {
     $form->{l_invnumber} = $form->{l_ordnumber} = $form->{l_quonumber} = "";
   }
   
+  ($form->{transdatefrom}, $form->{transdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
+
   my $query = qq|SELECT c.*, b.description AS business,
                  e.name AS employee, g.pricegroup, l.description AS language,
 		 ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
@@ -1021,17 +1017,28 @@ sub get_history {
       $where .= " AND lower(ct.$_) LIKE '$var'";
     }
   }
-  for (qw(city state zipcode country)) {
+  for (qw(city state zipcode)) {
     if ($form->{$_} ne "") {
       $var = $form->like(lc $form->{$_});
       $where .= " AND lower(ad.$_) LIKE '$var'";
     }
   }
-     
-  if ($form->{employee} ne "") {
-    $var = $form->like(lc $form->{employee});
-    $where .= " AND lower(e.name) LIKE '$var'";
+
+  if ($form->{country} ne "") {
+    $where .= " AND (ad.country) LIKE '$form->{country}'";
   }
+
+  if ($form->{employee}) {
+    (undef, $var) = split /--/, $form->{employee};
+    $where .= " AND e.id = $var";
+  }
+  
+  if ($form->{business}) {
+    (undef, $var) = split /--/, $form->{business};
+    $where .= " AND b.id = $var";
+  }
+ 
+  ($form->{transdatefrom}, $form->{transdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
 
   $where .= " AND a.transdate >= '$form->{transdatefrom}'" if $form->{transdatefrom};
   $where .= " AND a.transdate <= '$form->{transdateto}'" if $form->{transdateto};
@@ -1120,6 +1127,7 @@ sub get_history {
 	      JOIN parts p ON (p.id = i.parts_id)
 	      LEFT JOIN project pr ON (pr.id = i.project_id)
 	      LEFT JOIN employee e ON (e.id = a.employee_id)
+              LEFT JOIN business b ON (b.id = ct.business_id)
 	      WHERE $where|;
 
   my %ordinal = $form->ordinal_order($dbh, $query);
@@ -1281,7 +1289,6 @@ sub retrieve_item {
 
   my $i = $form->{rowcount};
   my $var;
-  my $null;
 
   my $where = "WHERE p.obsolete = '0'";
 
@@ -1304,7 +1311,7 @@ sub retrieve_item {
   }
 
   if ($form->{"partsgroup_$i"} ne "") {
-    ($null, $var) = split /--/, $form->{"partsgroup_$i"};
+    (undef, $var) = split /--/, $form->{"partsgroup_$i"};
     $var *= 1;
     $where .= qq| AND p.partsgroup_id = $var|;
   }

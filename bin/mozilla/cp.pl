@@ -2762,6 +2762,9 @@ sub void_checks {
 }
 
 
+sub yes__void_checks { &yes__void_payments }
+sub yes__void_receipts { &yes__void_payments }
+
 sub yes__void_payments {
 
   if (CP->void_payments(\%myconfig, \%$form)) {

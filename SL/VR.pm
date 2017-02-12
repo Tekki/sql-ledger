@@ -74,7 +74,6 @@ sub list_batches {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
-  my $null;
   my $var;
 
   my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
@@ -95,7 +94,7 @@ sub list_batches {
   $where .= " AND a.batch = '$form->{batch}'" if $form->{batch};
 
   if ($form->{employee}) {
-    ($null, $var) = split /--/, $form->{employee};
+    (undef, $var) = split /--/, $form->{employee};
     $where .= " AND a.employee_id = $var";
   }
 

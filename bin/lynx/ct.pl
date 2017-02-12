@@ -143,7 +143,32 @@ sub history {
     $ordlabel = $locale->text('Purchase Orders');
     $quolabel = $locale->text('Request for Quotations');
   }
-  
+
+  $form->all_years(\%myconfig);
+
+  if (@{ $form->{all_years} }) {
+    # accounting years
+    $selectaccountingyear = "\n";
+    for (@{ $form->{all_years} }) { $selectaccountingyear .= qq|$_\n| }
+    $selectaccountingmonth = "\n";
+    for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|$_--|.$locale->text($form->{all_month}{$_}).qq|\n| }
+
+    $selectfrom = qq|
+      <tr>
+        <th align=right>|.$locale->text('Period').qq|</th>
+        <td>
+        <select name=month>|.$form->select_option($selectaccountingmonth, undef, 1, 1).qq|</select>
+        <select name=year>|.$form->select_option($selectaccountingyear, undef, 1).qq|</select>
+        <input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
+        <input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
+        <input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
+        <input name=interval class=radio type=radio value=12>&nbsp;|.$locale->text('Year').qq|
+      </td>
+    </tr>
+|;
+  }
+ 
+
   $form->{title} = $locale->text($label);
   
   $form->{nextsub} = "list_history";
@@ -171,10 +196,9 @@ sub history {
 		  <table>
 		    <tr>
 		      <th>|.$locale->text('From').qq|</th>
-		      <td><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdatefrom").qq|</td>
-		      <th>|.$locale->text('To').qq|</th>
-                      <td><input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
+		      <td><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}"> <b>|.&js_calendar("main", "transdatefrom").$locale->text('To').qq|</b> <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
 		    </tr>
+                    $selectfrom
 		    <tr>
 		      <td></td>
 		      <td colspan=3>
@@ -279,6 +303,29 @@ sub transactions {
     $quolabel = $locale->text('Request for Quotations');
   }
 
+  $form->all_years(\%myconfig);
+
+  if (@{ $form->{all_years} }) {
+    # accounting years
+    $selectaccountingyear = "\n";
+    for (@{ $form->{all_years} }) { $selectaccountingyear .= qq|$_\n| }
+    $selectaccountingmonth = "\n";
+    for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|$_--|.$locale->text($form->{all_month}{$_}).qq|\n| }
+
+    $selectfrom = qq|
+      <tr>
+        <th align=right>|.$locale->text('Period').qq|</th>
+        <td>
+        <select name=month>|.$form->select_option($selectaccountingmonth, undef, 1, 1).qq|</select>
+        <select name=year>|.$form->select_option($selectaccountingyear, undef, 1).qq|</select>
+        <input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
+        <input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
+        <input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
+        <input name=interval class=radio type=radio value=12>&nbsp;|.$locale->text('Year').qq|
+      </td>
+    </tr>
+|;
+  }
  
   $transactions = qq|
  	<tr>
@@ -306,10 +353,9 @@ sub transactions {
 		  <table>
 		    <tr>
 		      <th>|.$locale->text('From').qq|</th>
-		      <td nowrap><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdatefrom").qq|</td>
-		      <th>|.$locale->text('To').qq|</th>
-		      <td nowrap><input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
+		      <td nowrap><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}"> <b>|.&js_calendar("main", "transdatefrom").$locale->text('To').qq|</b> <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
 		    </tr>
+                    $selectfrom
 		    <tr>
 		      <td></td>
 		      <td colspan=3>
@@ -485,27 +531,76 @@ sub search {
 
 sub search_name {
 
+  $form->all_employees(\%myconfig, undef, undef, 1);
+  
+  if (@{ $form->{all_employee} }) {
+    $form->{selectemployee} = "\n";
+    for (@{ $form->{all_employee} }) { $form->{selectemployee} .= qq|$_->{name}--$_->{id}\n| }
+  }
+
   if ($form->{db} eq 'customer') {
     $vcname = $locale->text('Customer');
     $vcnumber = $locale->text('Customer Number');
+    $label = $locale->text('Salesperson');
     
     $form->{ARAP} = "AR";
-    $employee = qq|
- 	  <th align=right nowrap>|.$locale->text('Salesperson').qq|</th>
-	  <td><input name=employee size=32></td>
-|;
+
   }
   if ($form->{db} eq 'vendor') {
     $vcname = $locale->text('Vendor');
     $vcnumber = $locale->text('Vendor Number');
+    $label = $locale->text('Employee');
     
     $form->{ARAP} = "AP";
+  }
+
+  if ($form->{selectemployee}) {
     $employee = qq|
- 	  <th align=right nowrap>|.$locale->text('Employee').qq|</th>
-	  <td><input name=employee size=32></td>
+        <tr>
+ 	  <th align=right nowrap>$label</th>
+	  <td><select name=employee>|
+          .$form->select_option($form->{selectemployee}, undef, 1)
+          .qq|
+          </select>
+          </td>
+        </tr>
 |;
   }
-  
+
+  $form->all_business(\%myconfig);
+
+  if (@{ $form->{all_business} }) {
+    $form->{selectbusiness} = "\n";
+    for (@{ $form->{all_business} }) { $form->{selectbusiness} .= qq|$_->{description}--$_->{id}\n| }
+
+    $typeofbusiness = qq|
+          <tr>
+            <th align=right nowrap>|.$locale->text('Type of Business').qq|</th>
+            <td><select name=business>|
+            .$form->select_option($form->{selectbusiness}, undef, 1)
+            .qq|
+            </select>
+            </td>
+          </tr>
+|;
+  }
+
+  $form->all_countries(\%myconfig, $form->{db});
+
+  if ($form->{all_countries}) {
+    $form->{selectcountry} = "\n";
+    for (@{ $form->{all_countries} }) { $form->{selectcountry} .= qq|$_->{country}\n| }
+
+    $selectcountry = qq|
+	      <tr>
+		<th align=right nowrap>|.$locale->text('Country').qq|</th>
+		<td><select name=country>|
+                .$form->select_option($form->{selectcountry})
+                .qq|</select></td>
+	      </tr>
+|;
+  }
+
   if (! $form->{helpref}) {
     $form->helpref("search_$form->{db}", $myconfig{countrycode});
   }
@@ -555,10 +650,7 @@ sub search_name {
 		<td colspan=3><textarea name=notes rows=3 cols=32></textarea></td>
 	      </tr>
 		$employee
-		<tr>
-		  <th align=right nowrap>|.$locale->text('Type of Business').qq|</th>
-		  <td><input name=business size=32></td>
-		</tr>
+                $typeofbusiness
 	    </table>
 	  </td>
 
@@ -584,10 +676,7 @@ sub search_name {
 		<th align=right nowrap>|.$locale->text('Zip/Postal Code').qq|</th>
 		<td><input name=zipcode size=10></td>
 	      </tr>
-	      <tr>
-		<th align=right nowrap>|.$locale->text('Country').qq|</th>
-		<td><input name=country size=32></td>
-	      </tr>
+              $selectcountry
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Startdate').qq|</th>
 		<td nowrap>|.$locale->text('From').qq| <input name=startdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "startdatefrom").$locale->text('To').qq| <input name=startdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "startdateto").qq|</td>
@@ -785,12 +874,16 @@ sub list_names {
     if ($form->{db} eq 'vendor') {
       $option .= $locale->text('Employee');
     }
-    $option .= " : $form->{employee}";
+    $var = $form->{employee};
+    $var =~ s/--.*//;
+    $option .= " : $var";
   }
   if ($form->{business}) {
     $callback .= "&business=".$form->escape($form->{business},1);
     $href .= "&business=".$form->escape($form->{business});
-    $option .= "\n<br>".$locale->text('Type of Business')." : $form->{business}";
+    $var = $form->{business};
+    $var =~ s/--.*//;
+    $option .= "\n<br>".$locale->text('Type of Business')." : $var";
   }
 
   $fromdate = "";
@@ -1317,7 +1410,23 @@ sub list_history {
   if ($form->{employee}) {
     $callback .= "&employee=".$form->escape($form->{employee},1);
     $href .= "&employee=".$form->escape($form->{employee});
-    $option .= "\n<br>".$locale->text('Salesperson')." : $form->{employee}";
+    $option .= "\n<br>";
+    if ($form->{db} eq 'customer') {
+      $option .= $locale->text('Salesperson');
+    }
+    if ($form->{db} eq 'vendor') {
+      $option .= $locale->text('Employee');
+    }
+    $var = $form->{employee};
+    $var =~ s/--.*//;
+    $option .= " : $var";
+  }
+  if ($form->{business}) {
+    $callback .= "&business=".$form->escape($form->{business},1);
+    $href .= "&business=".$form->escape($form->{business});
+    $var = $form->{business};
+    $var =~ s/--.*//;
+    $option .= "\n<br>".$locale->text('Type of Business')." : $var";
   }
   if ($form->{transdatefrom}) {
     $callback .= "&transdatefrom=$form->{transdatefrom}";

@@ -154,9 +154,9 @@ sub display_row {
   $spc = substr($myconfig{numberformat},-3,1);
   for $i (1 .. $numrows) {
     if ($spc eq '.') {
-      ($null, $dec) = split /\./, $form->{"sellprice_$i"};
+      (undef, $dec) = split /\./, $form->{"sellprice_$i"};
     } else {
-      ($null, $dec) = split /,/, $form->{"sellprice_$i"};
+      (undef, $dec) = split /,/, $form->{"sellprice_$i"};
     }
     $dec = length $dec;
     $decimalplaces = ($dec > $form->{precision}) ? $dec : $form->{precision};
@@ -980,9 +980,9 @@ sub invoicetotal {
     
     $spc = substr($myconfig{numberformat},-3,1);
     if ($spc eq '.') {
-      ($null, $dec) = split /\./, $form->{"sellprice_$i"};
+      (undef, $dec) = split /\./, $form->{"sellprice_$i"};
     } else {
-      ($null, $dec) = split /,/, $form->{"sellprice_$i"};
+      (undef, $dec) = split /,/, $form->{"sellprice_$i"};
     }
     $dec = length $dec;
     $decimalplaces = ($dec > $form->{precision}) ? $dec : $form->{precision};

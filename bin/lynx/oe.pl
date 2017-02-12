@@ -3095,7 +3095,7 @@ sub generate_purchase_orders {
 
   $form->error($locale->text('Nothing selected!')) unless $ok;
   
-  ($null, $argv) = split /\?/, $form->{callback};
+  (undef, $argv) = split /\?/, $form->{callback};
   
   for (split /\&/, $argv) {
     ($key, $value) = split /=/, $_;
@@ -3322,7 +3322,7 @@ sub consolidate_orders {
   
   $form->error($locale->text('Nothing selected!')) unless $ok;
 
-  ($null, $argv) = split /\?/, $form->{callback};
+  (undef, $argv) = split /\?/, $form->{callback};
   
   for (split /\&/, $argv) {
     ($key, $value) = split /=/, $_;
