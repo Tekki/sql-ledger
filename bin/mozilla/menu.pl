@@ -48,7 +48,7 @@ sub acc_menu {
   my $menu = new Menu "$menufile";
   $menu->add_file("$form->{path}/custom/$menufile") if -f "$form->{path}/custom/$menufile";
   $menu->add_file("$form->{path}/custom/$form->{login}/$menufile") if -f "$form->{path}/custom/$form->{login}/$menufile";
-  
+
   $form->{title} = $locale->text('Accounting Menu');
 
   $form->header;

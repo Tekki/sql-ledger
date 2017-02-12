@@ -1210,7 +1210,9 @@ sub save_memberfile {
   if ($form->{employeelogin}) {
     $employeelogin = $form->{employeelogin};
     $employeelogin .= "\@$myconfig{dbname}";  # new format
-    
+
+    unlink "$userspath/${employeelogin}.tan";
+
     # assign values from old entries
     $oldlogin = $form->{oldemployeelogin};
     $oldlogin .= "\@$myconfig{dbname}";
@@ -1228,14 +1230,14 @@ sub save_memberfile {
       $form->{employeepassword} = $oldemployeepassword if $form->{nochange};
 
       if ($form->{employeepassword} ne $oldemployeepassword) {
-	if ($form->{employeepassword}) {
-	  $password = crypt $form->{employeepassword}, substr($form->{employeelogin}, 0, 2);
-	  push @memberlogin, "password=$password\n";
-	}
+        if ($form->{employeepassword}) {
+          $password = crypt $form->{employeepassword}, substr($form->{employeelogin}, 0, 2);
+          push @memberlogin, "password=$password\n";
+        }
       } else {
-	if ($oldemployeepassword) {
-	  push @memberlogin, "password=$oldemployeepassword\n";
-	}
+        if ($oldemployeepassword) {
+          push @memberlogin, "password=$oldemployeepassword\n";
+        }
       }
       
       for (qw(name email tan)) { push @memberlogin, "$_=$form->{$_}\n" if $form->{$_} }
@@ -1243,7 +1245,7 @@ sub save_memberfile {
       @{ $member{$employeelogin} } = ();
       
       for (sort @memberlogin) {
-	push @{ $member{$employeelogin} }, $_;
+        push @{ $member{$employeelogin} }, $_;
       }
       
     } else {
@@ -1256,13 +1258,13 @@ sub save_memberfile {
       $m{timeout} = 86400;
 
       if ($form->{employeepassword}) {
-	$m{password} = crypt $form->{employeepassword}, substr($form->{employeelogin}, 0, 2);
+        $m{password} = crypt $form->{employeepassword}, substr($form->{employeelogin}, 0, 2);
       }
 
       @{ $member{$employeelogin} } = ();
       
       for (sort keys %m) {
-	push @{ $member{$employeelogin} }, "$_=$m{$_}\n" if $m{$_};
+        push @{ $member{$employeelogin} }, "$_=$m{$_}\n" if $m{$_};
       }
     }
     push @{ $member{$employeelogin} }, "\n";
@@ -1293,9 +1295,9 @@ sub save_memberfile {
     if ($form->{oldemployeelogin}) {
       for ("$form->{oldemployeelogin}.conf", "$form->{oldemployeelogin}\@$myconfig{dbname}.conf") {
 	$filename = "$userspath/$_";
-	if (-f $filename) {
-	  unlink "$filename";
-	}
+        if (-f $filename) {
+          unlink "$filename";
+        }
       }
     }
   }
@@ -1532,7 +1534,7 @@ sub payroll_header {
 	    <table>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Employee').qq| <font color=red>*</font></th>
-		<td><select name=employee onChange="javascript:document.forms[0].submit()">|
+		<td><select name=employee onChange="javascript:document.main.submit()">|
 		.$form->select_option($form->{selectemployee}, $form->{employee}, 1)
 		.qq|</select>
 		<a href=hr.pl?action=edit&id=$employee_id&db=employee&login=$form->{login}&path=$form->{path} target=_blank>?</a>

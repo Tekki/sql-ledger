@@ -1,0 +1,45 @@
+$self{charset} = 'UTF8';
+
+$self{texts} = {
+  'Accounting Menu'             => 'Меню Сметкоплан',
+  'April'                       => 'Април',
+  'August'                      => 'Август',
+  'December'                    => 'Декември',
+  'Description'                 => 'Обяснение',
+  'February'                    => 'Февруари',
+  'Heading'                     => 'Заглавие',
+  'January'                     => 'Януари',
+  'July'                        => 'Юли',
+  'June'                        => 'Юни',
+  'March'                       => 'Март',
+  'May'                         => 'Май',
+  'November'                    => 'Ноември',
+  'October'                     => 'Октомври',
+  'September'                   => 'Септември',
+};
+
+$self{subs} = {
+  'acc_menu'                    => 'acc_menu',
+  'add_column'                  => 'add_column',
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'delete_column'               => 'delete_column',
+  'delete_report'               => 'delete_report',
+  'display'                     => 'display',
+  'do_save_report'              => 'do_save_report',
+  'edit_column'                 => 'edit_column',
+  'js_calendar'                 => 'js_calendar',
+  'jsmenu'                      => 'jsmenu',
+  'jsmenu_frame'                => 'jsmenu_frame',
+  'menubar'                     => 'menubar',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
+  'save_column'                 => 'save_column',
+  'save_report'                 => 'save_report',
+  'section_menu'                => 'section_menu',
+};
+
+1;
+

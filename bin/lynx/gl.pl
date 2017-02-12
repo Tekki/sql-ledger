@@ -606,6 +606,8 @@ sub transactions {
 
   push @columns, "gifi_contra";
   $column_data{gifi_contra} = $column_data{contra};
+  $form->{l_gifi_contra} = "Y" if ($form->{l_gifi_accno} && $form->{l_contra});
+  delete $form->{l_contra} unless $form->{l_accno};
   
   $columns{debit} = 1;
   $columns{credit} = 1;

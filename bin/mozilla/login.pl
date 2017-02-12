@@ -21,7 +21,8 @@ $form = new Form;
 
 
 $locale = new Locale $language, "login";
-$form->{charset} = $locale->{charset};
+
+$form->{charset} = $charset;
 
 # customization
 if (-f "$form->{path}/custom/$form->{script}") {
@@ -185,7 +186,7 @@ sub selectdataset {
 		$form->hide_form(qw(js path));
 	      
 		$checked = "checked";
-		for (sort { $login{$a} cmp $login{$b} } keys %{ $login }) {
+		for (sort { lc $login{$a} cmp lc $login{$b} } keys %{ $login }) {
 		  print qq|
 		  <br><input class=login type=radio name=login value=$_ $checked>$login->{$_}
 		  |;
@@ -272,6 +273,16 @@ sub login {
 
     if ($errno == 1 && $form->{admin}) {
       $err[1] = $locale->text('admin does not exist!');
+    }
+
+    if ($errno == 4 && $form->{admin}) {
+
+      $form->info($err[4]);
+
+      $form->info("<p><a href=menu.pl?login=$form->{login}&path=$form->{path}&action=display&main=company_logo&js=$form->{js}&password=$form->{password}>".$locale->text('Continue')."</a>");
+      
+      exit;
+ 
     }
 
     if ($errno == 5) {
@@ -380,15 +391,10 @@ sub email_tan {
   $mail = new Mailer;
 
   srand( time() ^ ($$ + ($$ << 15)) );
-  $digits = "123456789";
-  $letters = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+  $digits = "0123456789";
   $tan = "";
-  while (length($tan) < 6) {
-    if ($d = !$d) {
-      $tan .= substr($letters, (int(rand(length($letters)))), 1);
-    } else {
-      $tan .= substr($digits, (int(rand(length($digits)))), 1);
-    }
+  while (length($tan) < 4) {
+    $tan .= substr($digits, (int(rand(length($digits)))), 1);
   }
 
   $mail->{message} = $locale->text('TAN').": $tan";
@@ -474,11 +480,35 @@ sub tan_login {
   }
 
   if ((crypt $form->{password}, substr($form->{login}, 0, 2)) ne $myconfig{password}) {
+    if (-f "$userspath/$form->{login}.tan") {
+      open(FH, "+<$userspath/$form->{login}.tan") or $form->error("$userspath/$form->{login}.tan : $!");
+
+      $tries = <FH>;
+      $tries++;
+
+      seek(FH, 0, 0);
+      truncate(FH, 0);
+      print FH $tries;
+      close(FH);
+
+      if ($tries > 3) {
+        unlink "$userspath/$form->{login}.conf";
+        unlink "$userspath/$form->{login}.tan";
+        $form->error($locale->text('Maximum tries exceeded!'));
+      }
+    } else {
+      open(FH, ">$userspath/$form->{login}.tan") or $form->error("$userspath/$form->{login}.tan : $!");
+      print FH "1";
+      close(FH);
+    }
+
     $form->error($locale->text('Invalid TAN'));
   } else {
 
     # remove stale locks
     $form->remove_locks(\%myconfig);
+
+    unlink "$userspath/$form->{login}.tan";
 
     $form->{callback} = "menu.pl?action=display";
     for (qw(login path js password)) { $form->{callback} .= "&$_=$form->{$_}" }

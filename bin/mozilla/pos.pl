@@ -272,7 +272,7 @@ sub form_header {
   $form->header;
  
   print qq|
-<body onLoad="document.forms[0].${focus}.focus()" />
+<body onLoad="document.main.${focus}.focus()" />
 
 <form method="post" name="main" action="$form->{script}" />
 |;
@@ -374,7 +374,7 @@ sub form_footer {
               <tr height="5"></tr>
 	      <tr>
 	        <td align=right>
-		<input name=taxincluded class=checkbox type=checkbox value=1 $form->{taxincluded}></td><th align=left>|.$locale->text('Tax Included').qq|</th>
+		<input name=taxincluded class=checkbox type=checkbox value=1 $form->{taxincluded} onChange="javascript:document.main.submit()"></td><th align=left>|.$locale->text('Tax Included').qq|</th>
 	      </tr>
 |;
   }
@@ -738,7 +738,7 @@ sub post {
   # deduct change
   if ($paid > $total) {
 
-    $change = $paid - $total;
+    $change = $form->round_amount($paid - $total, $form->{precision});
     if ($roundto > 0.01) {
       $invtotal = $form->round_amount($total / $roundto, 0) * $roundto;
       $change = $form->round_amount($paid - $invtotal, $form->{precision});
@@ -757,7 +757,7 @@ sub post {
       }
     }
   }
-  
+
   if ($cashover) {
     # add payment
     $i = ++$form->{paidaccounts};
@@ -1079,7 +1079,7 @@ sub print_form {
   $form->{pre} = "<body bgcolor=#ffffff>\n<pre>";
   delete $form->{stylesheet};
 
-  $form->parse_template(\%myconfig, $userspath, $dvipdf);
+  $form->parse_template(\%myconfig, $userspath, $dvipdf, $xelatex);
 
   if ($form->{printed} !~ /$form->{formname}/) {
     $form->{printed} .= " $form->{formname}";

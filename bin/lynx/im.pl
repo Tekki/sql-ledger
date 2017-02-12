@@ -27,14 +27,15 @@ sub import {
   %title = ( sales_invoice => 'Sales Invoices',
              sales_order => 'Sales Orders',
              purchase_order => 'Purchase Orders',
-	     payment => 'Payments',
-	     customer => 'Customers',
-	     vendor => 'Vendors',
-	     part => 'Parts',
-	     service => 'Services',
-	     labor => 'Labor/Overhead',
-	     partsgroup => 'Groups',
-	     coa => 'Chart of Accounts'
+             payment => 'Payments',
+             customer => 'Customers',
+             vendor => 'Vendors',
+             part => 'Parts',
+             service => 'Services',
+             labor => 'Labor/Overhead',
+             partsgroup => 'Groups',
+             coa => 'Chart of Accounts',
+             gl => 'General Ledger'
 	   );
 
 # $locale->text('Import Sales Invoices')
@@ -73,39 +74,46 @@ sub import {
       for (@{ $form->{all_paymentaccount} }) { $selectpaymentaccount .= qq|$_->{accno}--$_->{description}\n| }
       $paymentaccount = qq|
          <tr>
-	  <th align="right">|.$locale->text('Account').qq|</th>
-	  <td>
-	    <select name=paymentaccount>|.$form->select_option($selectpaymentaccount)
-	    .qq|</select>
-	  </td>
-	</tr>
-	<tr>
-	  <th align="right" nowrap>|.$locale->text('Currency').qq|</th>
-	  <td><select name=currency>|
-	  .$form->select_option($form->{selectcurrency}, $form->{currency})
-	  .qq|</select></td>
-	</tr>
+          <th align="right">|.$locale->text('Account').qq|</th>
+          <td>
+            <select name=paymentaccount>|.$form->select_option($selectpaymentaccount)
+            .qq|</select>
+          </td>
+        </tr>
+        <tr>
+          <th align="right" nowrap>|.$locale->text('Currency').qq|</th>
+          <td><select name=currency>|
+          .$form->select_option($form->{selectcurrency}, $form->{currency})
+          .qq|</select></td>
+        </tr>
 |;
     }
     $v11 = qq|
         <tr>
 	        <td><input name=filetype type=radio class=radio value=v11>&nbsp;|.$locale->text('.v11').qq|</td>
-	</tr>
+        </tr>
 |;
   }
 
   $form->all_languages(\%myconfig);
 
   if (@{ $form->{all_language} }) {
-    $form->{language_code} = $myconfig{countrycode};
-    $form->{selectlanguage_code} = "\n";
-    for (@{ $form->{all_language} }) { $form->{selectlanguage_code} .= qq|$_->{code}--$_->{description}\n| }
+    $form->{mapfile} = $myconfig{countrycode};
+    $form->{selectmapfile} = "\n";
+    for (@{ $form->{all_language} }) { $form->{selectmapfile} .= qq|$_->{code}--$_->{description}\n| }
 
-    $lang = qq|
-            <select name=language_code>|.$form->select_option($form->{selectlanguage_code}, $form->{language_code}, undef, 1).qq|</select>|;
+    $mapfile = qq|
+        <tr>
+          <th align="right">|.$locale->text('Mapfile').qq|</th>
+          <td colspan=3>
+            <select name=mapfile>|.$form->select_option($form->{selectmapfile}, $form->{mapfile}, undef, 1).qq|</select>
+          </td>
+        </tr>
+|;
+
   }
   
-print qq|
+  print qq|
 <body>
 
 <form enctype="multipart/form-data" method=post action=$form->{script}>
@@ -120,34 +128,32 @@ print qq|
       <table>
         $paymentaccount
         <tr>
-	  <th align="right">|.$locale->text('File to Import').qq|</th>
-	  <td>
-	    <input name=data size=60 type=file>
-	  </td>
-	</tr>
-	<tr>
-	  <th align="right">|.$locale->text('Type of File').qq|</th>
-	  <td>
-	    <table>
-	      <tr>
-	        <td><input name=filetype type=radio class=radio value=csv checked>&nbsp;|.$locale->text('csv').qq|</td>
-		<td>|.$locale->text('Delimiter').qq|</td>
-		<td><input name=delimiter size=2 value="$form->{delimiter}"></td>
-		<td><input name=tabdelimited type=checkbox class=checkbox>&nbsp;|.$locale->text('Tab delimited').qq|</td>
-		<td><input name=stringsquoted type=checkbox class=checkbox checked>&nbsp;|.$locale->text('Strings quoted').qq|</td>
-	      </tr>
-		$v11
+	        <th align="right">|.$locale->text('File to Import').qq|</th>
+          <td>
+            <input name=data size=60 type=file>
+          </td>
+        </tr>
+        <tr>
+          <th align="right">|.$locale->text('Type of File').qq|</th>
+          <td>
+            <table>
+              <tr>
+                <td><input name=filetype type=radio class=radio value=csv checked>&nbsp;|.$locale->text('csv').qq|</td>
+                <td>|.$locale->text('Delimiter').qq|</td>
+                <td><input name=delimiter size=2 value="$form->{delimiter}"></td>
+                <td><input name=tabdelimited type=checkbox class=checkbox>&nbsp;|.$locale->text('Tab delimited').qq|</td>
+                <td><input name=stringsquoted type=checkbox class=checkbox checked>&nbsp;|.$locale->text('Strings quoted').qq|</td>
+              </tr>
+              $v11
 <!--
-	      <tr>
-	        <td><input name=filetype type=radio class=radio value=xml>&nbsp;|.$locale->text('xml').qq|</td>
-	      </tr>
+              <tr>
+                <td><input name=filetype type=radio class=radio value=xml>&nbsp;|.$locale->text('xml').qq|</td>
+              </tr>
 -->
-	      <tr>
-		<td><input name=mapfile type=checkbox value=1>&nbsp;|.$locale->text('Mapfile').qq|</td><td colspan=3>$lang</td>
-	      </tr>
-	    </table>
-	  </td>
-	</tr>
+            </table>
+          </td>
+        </tr>
+        $mapfile
       </table>
     </td>
   </tr>
@@ -203,12 +209,11 @@ sub export {
     for (@{ $form->{all_report} }) { $form->{selectreportform} .= qq|$_->{reportdescription}--$_->{reportid}\n| }
     
     $reportform = qq|
-       <tr>
-	<th align="right">|.$locale->text('Report').qq|</th>
-	<td>
-	  <select name=report onChange="ChangeReport();">|.$form->select_option($form->{selectreportform}, undef, 1)
-	  .qq|</select>
-	</td>
+      <tr>
+        <th align="right">|.$locale->text('Report').qq|</th>
+        <td>
+        <select name=report onChange="ChangeReport();">|.$form->select_option($form->{selectreportform}, undef, 1).qq|</select>
+        </td>
       </tr>
 |;
   }
@@ -283,16 +288,16 @@ sub export {
       $form->{paymentaccount} = @{ $form->{all_paymentaccount} }[0]->{accno}.qq|--|.@{ $form->{all_paymentaccount} }[0]->{description};
 
       if (@{ $form->{all_paymentmethod} }) {
-	$form->{selectpaymentmethod} = "\n";
-	for (@{ $form->{all_paymentmethod} }) { $form->{selectpaymentmethod} .= qq|$_->{description}--$_->{id}\n| }
+        $form->{selectpaymentmethod} = "\n";
+          for (@{ $form->{all_paymentmethod} }) { $form->{selectpaymentmethod} .= qq|$_->{description}--$_->{id}\n| }
       }
 
       $paymentaccount = qq|
-         <tr>
-	  <th align="right">|.$locale->text('Account').qq|</th>
-	  <td>
-	    <select name=paymentaccount>|.$form->select_option($form->{selectpaymentaccount})
-	    .qq|</select>
+        <tr>
+          <th align="right">|.$locale->text('Account').qq|</th>
+        <td>
+          <select name=paymentaccount>|.$form->select_option($form->{selectpaymentaccount})
+	        .qq|</select>
 	  </td>
 	  <td>$includeinreport{accountnumber}->{html}</td>
 |;
@@ -360,23 +365,23 @@ sub export {
       <table>
         $reportform
         $paymentaccount
-	$currency
-	$paymentmethod
-	<tr>
-	  <th align="right">|.$locale->text('Date Prepared').qq|</th>
-	  <td>
-	    <input name=dateprepared value="$form->{dateprepared}" title="$myconfig{dateformat}">|.&js_calendar("main", "dateprepared").qq|
-	  </td>
-	  <td>$includeinreport{dateprepared}->{html}</td>
-	</tr>
+        $currency
+        $paymentmethod
         <tr>
-	  <th align="right">|.$locale->text('Date Format').qq|</th>
-	  <td>
-	    <select name=dateformat>|
-	    .$form->select_option($selectdateformat, $form->{dateformat})
-	    .qq|
-	  </td>
-	</tr>
+          <th align="right">|.$locale->text('Date Prepared').qq|</th>
+          <td>
+            <input name=dateprepared size=11 value="$form->{dateprepared}" title="$myconfig{dateformat}">|.&js_calendar("main", "dateprepared").qq|
+          </td>
+          <td>$includeinreport{dateprepared}->{html}</td>
+        </tr>
+        <tr>
+          <th align="right">|.$locale->text('Date Format').qq|</th>
+          <td>
+            <select name=dateformat>|
+            .$form->select_option($selectdateformat, $form->{dateformat})
+            .qq|
+          </td>
+        </tr>
       </table>
     </td>
   </tr>
@@ -405,10 +410,10 @@ sub export {
 	  <td>
 	    <table>
 	      <tr>
-		<td><input name=linefeed type=radio class=radio value="UNIX" $form->{UNIX}>&nbsp;|.$locale->text('UNIX').qq|</td>
-		<td><input name=linefeed type=radio class=radio value="MAC" $form->{CR}>&nbsp;|.$locale->text('MAC').qq|</td>
-		<td><input name=linefeed type=radio class=radio value="DOS" $form->{DOS}>&nbsp;|.$locale->text('DOS').qq|</td>
-		<td><input name=linefeed type=radio class=radio value="noLF" $form->{noLF}>&nbsp;|.$locale->text('None').qq|</td>
+          <td><input name=linefeed type=radio class=radio value="UNIX" $form->{UNIX}>&nbsp;|.$locale->text('UNIX').qq|</td>
+          <td><input name=linefeed type=radio class=radio value="MAC" $form->{CR}>&nbsp;|.$locale->text('MAC').qq|</td>
+          <td><input name=linefeed type=radio class=radio value="DOS" $form->{DOS}>&nbsp;|.$locale->text('DOS').qq|</td>
+          <td><input name=linefeed type=radio class=radio value="noLF" $form->{noLF}>&nbsp;|.$locale->text('None').qq|</td>
 	      </tr>
 	    </td>
 	  </table>
@@ -559,11 +564,10 @@ sub im_sales_invoice {
       $column_data{totalqty} = qq|<td align=right>|.$form->format_amount(\%myconfig, $form->{"totalqty_$i"}).qq|</td>|;
 
       $column_data{runningnumber} = qq|<td align=right>$k</td>|;
-      
-      if ($form->{"missing_$i"}) {
-	$column_data{ndx} = qq|<td>&nbsp;</td>|;
+      if ($form->{"missingpart_$i"} || $form->{"missing$form->{vc}_$i"}) {
+        $column_data{ndx} = qq|<td>&nbsp;</td>|;
       } else {
-	$column_data{ndx} = qq|<td><input name="ndx_$i" type=checkbox class=checkbox checked></td>|;
+        $column_data{ndx} = qq|<td><input name="ndx_$i" type=checkbox class=checkbox checked></td>|;
       }
 
       for (@column_index) { print $column_data{$_} }
@@ -598,9 +602,9 @@ sub im_sales_invoice {
     <tr>
       <td>|;
       $form->info($locale->text('The following customers are not on file:')."\n\n");
-      for (split /\n/, $form->{missingcustomer}) {
-	$form->info("$_\n");
-      }
+    for (split /\n/, $form->{missingcustomer}) {
+	    $form->info("$_\n");
+    }
     print qq|
       </td>
     </tr>
@@ -748,10 +752,10 @@ sub im_order {
 
       $column_data{runningnumber} = qq|<td align=right>$k</td>|;
       
-      if ($form->{"missing_$i"}) {
-	$column_data{ndx} = qq|<td>&nbsp;</td>|;
+      if ($form->{"missingpart_$i"} || $form->{"missing$form->{vc}_$i"}) {
+        $column_data{ndx} = qq|<td>&nbsp;</td>|;
       } else {
-	$column_data{ndx} = qq|<td><input name="ndx_$i" type=checkbox class=checkbox checked></td>|;
+        $column_data{ndx} = qq|<td><input name="ndx_$i" type=checkbox class=checkbox checked></td>|;
       }
 
       for (@column_index) { print $column_data{$_} }
@@ -789,14 +793,13 @@ sub im_order {
       <td>|;
       $form->info("$msg\n\n");
       for (split /\n/, $form->{"missing$form->{vc}"}) {
-	$form->info("$_\n");
+        $form->info("$_\n");
       }
     print qq|
       </td>
     </tr>
 |;
   }
-
 
   if ($form->{missingpart}) {
     print qq|
@@ -952,6 +955,163 @@ sub import_chart_of_accounts {
 }
 
 
+sub im_gl {
+
+  &import_file;
+
+  $form->{callback} = "$form->{script}?action=import";
+  for (qw(type login path)) { $form->{callback} .= "&$_=$form->{$_}" }
+
+  &xrefhdr;
+  
+  @column_index = (ndx);
+
+  for (sort { $form->{$form->{type}}{$a}{ndx} <=> $form->{$form->{type}}{$b}{ndx} } keys %{ $form->{$form->{type}} }) {
+    push @column_index, $_;
+  }
+
+  $form->{reportcode} = "import_$form->{type}";
+
+  $column_data{reference} = $locale->text('Reference');
+  $column_data{description} = $locale->text('Description');
+  $column_data{transdate} = $locale->text('Date');
+  $column_data{accno} = $locale->text('Account');
+  $column_data{debit} = $locale->text('Debit');
+  $column_data{credit} = $locale->text('Credit');
+  $column_data{memo} = $locale->text('Memo');
+  $column_data{notes} = $locale->text('Notes');
+  $column_data{department} = $locale->text('Department');
+  $column_data{approved} = $locale->text('A');
+  $column_data{curr} = $locale->text('Curr');
+  $column_data{exchangerate} = $locale->text('Rate');
+  $column_data{source} = $locale->text('Source');
+  $column_data{project} = $locale->text('Project');
+  
+  $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
+  
+  IM->prepare_import_data(\%myconfig, \%$form);
+
+  $sameitem = "";
+
+  for $i (1 .. $form->{rowcount}) {
+		unless ($form->{"reference_$i"}) {
+      $form->error($locale->text('Reference missing!'));
+			exit;
+		}
+		
+    if ($form->{"reference_$i"} ne $sameitem) {
+      $ndx{$form->{"reference_$i"}} = 1;
+      $debit{$form->{"reference_$i"}} = $form->{"debit_$i"};
+      $credit{$form->{"reference_$i"}} = $form->{"credit_$i"};
+    } else {
+      $debit{$form->{"reference_$i"}} += $form->{"debit_$i"};
+      $credit{$form->{"reference_$i"}} += $form->{"credit_$i"};
+    }
+    $sameitem = $form->{"reference_$i"};
+  }
+
+  $form->helpref("import_$form->{type}", $myconfig{countrycode});
+  
+  $form->header;
+ 
+  &check_all(qw(allbox ndx_));
+  
+  print qq|
+<body>
+
+<form method=post action=$form->{script}>
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>
+      <table width=100%>
+        <tr class=listheading>
+|;
+
+  for (@column_index) { print "\n<th>$column_data{$_}</th>" }
+
+  print qq|
+        </tr>
+|;
+
+  @c = (qw(ndx reference transdate description notes department approved curr exchangerate));
+
+  $sameitem = "";
+
+  for $i (1 .. $form->{rowcount}) {
+
+    $j++; $j %= 2;
+ 
+    print qq|
+        <tr class=listrow$j>
+|;
+
+    for (@column_index) { $column_data{$_} = qq|<td>$form->{"${_}_$i"}</td>| }
+
+    $column_data{ndx} = qq|<td><input name="ndx_$i" type=checkbox class=checkbox checked></td>| if $debit{$form->{"reference_$i"}} == $credit{$form->{"reference_$i"}};
+    for (qw(debit credit)) { $column_data{$_} = qq|<td align=right>|.$form->format_amount(\%myconfig, $form->{"${_}_$i"}, $form->{precision}).qq|</td>| }
+    $column_data{approved} = ($form->{"approved_$i"}) ? qq|<td>*</td>| : qq|<td>&nbsp;</td>|;
+
+    if ($form->{"reference_$i"} eq $sameitem) {
+      for (@c) { $column_data{$_} = qq|<td>&nbsp;</td>| }
+    }
+    $sameitem = $form->{"reference_$i"};
+
+    $form->hide_form("reference_$i");
+    
+    for (@column_index) { print $column_data{$_} }
+
+    print qq|
+	</tr>
+|;
+
+  }
+
+  print qq|
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td><hr size=3 noshade></td>
+  </tr>
+
+</table>
+|;
+
+  $form->hide_form(qw(delimiter tabdelimited mapfile stringsquoted type rowcount login path callback));
+
+  print qq|
+<input name=action class=submit type=submit value="|.$locale->text('Import General Ledger').qq|">
+</form>
+
+</body>
+</html>
+|;
+
+}
+
+
+sub import_general_ledger {
+
+  $form->{reportcode} = "import_$form->{type}";
+  IM->import_gl(\%myconfig, \%$form);
+
+  if ($form->{added}) {
+    $form->info($locale->text('Added').":\n$form->{added}\n");
+  }
+  if ($form->{failed}) {
+    $form->info($locale->text('Failed').":\n$form->{failed}\n");
+  }
+
+  $form->info;
+
+}
+
+
 sub xmlorder {
 
   @data = split /\n/, $form->{data};
@@ -983,13 +1143,6 @@ sub xmlorder {
     }
   }
   
-#  for (keys %data) {
-#    warn "$_";
-#    for $item (@{$data{$_}}) {
-#      warn $item;
-#    }
-#  }
-
 }
 
 
@@ -1107,7 +1260,7 @@ sub xrefhdr {
   $i = 1;
 
   if ($form->{mapfile}) {
-    open(FH, "$templates/$myconfig{dbname}/$form->{language_code}/import.map") or $form->error($!);
+    open(FH, "$templates/$myconfig{dbname}/$form->{mapfile}/import.map") or $form->error($!);
 
     while (<FH>) {
       next if /^(#|;|\s)/;
@@ -1119,14 +1272,14 @@ sub xrefhdr {
       last if $xrefhdr && $_ =~ /^\[/;
 
       if (/^\[$form->{type}\]/) {
-	$xrefhdr = 1;
-	next;
+        $xrefhdr = 1;
+        next;
       }
 
       if ($xrefhdr) {
-	($key, $value) = split /=/, $_;
-	@f = split /,/, $value;
-	$form->{$form->{type}}{$f[0]} = { field => $key, length => $f[1], ndx => $i++ };
+        ($key, $value) = split /=/, $_;
+        @f = split /,/, $value;
+        $form->{$form->{type}}{$f[0]} = { field => $key, length => $f[1], ndx => $i++ };
       }
     }
     delete $form->{$form->{type}}{''};
@@ -1141,8 +1294,8 @@ sub xrefhdr {
       $form->{delimiter} = '\t';
     } else {
       if ($form->{stringsquoted}) {
-	$str =~ s/(^"|"$)//g;
-	$str =~ s/"$form->{delimiter}"/$form->{delimiter}/g;
+        $str =~ s/(^"|"$)//g;
+        $str =~ s/"$form->{delimiter}"/$form->{delimiter}/g;
       }
     }
       
@@ -1208,7 +1361,7 @@ sub import_sales_invoices {
 	} else {
 	  $form->info($locale->text('added')."\n");
 	}
-	
+				
       } else {
 	$form->error($locale->text('Posting failed!'));
       }
@@ -1263,20 +1416,20 @@ sub import_orders {
       # save order
       $form->info("${m}. ".$locale->text('Saving Order ...'));
       if (IM->import_order(\%myconfig, \%$newform, \@{ $ndx{$k} })) {
-	$form->{precision} = $newform->{precision};
+        $form->{precision} = $newform->{precision};
 
-	$form->info(qq| $newform->{ordnumber}, $newform->{description}, $newform->{"$form->{vc}number"}, $newform->{name}, $newform->{city}, |);
-	$form->info($form->format_amount(\%myconfig, $newform->{ordtotal}, $newform->{precision}));
-	$form->info(" ... ");
-	
-	if ($newform->{updated}) {
-	  $form->info($locale->text('updated')."\n");
-	} else {
-	  $form->info($locale->text('added')."\n");
-	}
-	
+        $form->info(qq| $newform->{ordnumber}, $newform->{description}, $newform->{"$form->{vc}number"}, $newform->{name}, $newform->{city}, |);
+        $form->info($form->format_amount(\%myconfig, $newform->{ordtotal}, $newform->{precision}));
+        $form->info(" ... ");
+				
+        if ($newform->{updated}) {
+          $form->info($locale->text('updated')."\n");
+        } else {
+          $form->info($locale->text('added')."\n");
+        }
+        
       } else {
-	$form->error($locale->text('Save failed!'));
+        $form->error($locale->text('Save failed!'));
       }
 
       $total += $newform->{ordtotal};

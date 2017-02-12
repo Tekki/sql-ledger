@@ -1059,9 +1059,9 @@ sub save_language {
   my $dbh = $form->dbconnect($myconfig);
 
   $form->{code} =~ s/ //g;
-  foreach my $item (qw(code description)) {
-    $form->{$item} =~ s/-(-)+/-/g;
-    $form->{$item} =~ s/ ( )+/-/g;
+  for (qw(code description)) {
+    $form->{$_} =~ s/-(-)+/-/g;
+    $form->{$_} =~ s/ ( )+/-/g;
   }
   
   # if there is an id
@@ -2533,7 +2533,9 @@ sub get_exchangerates {
 
   $form->{currencies} = $form->get_currencies($myconfig, $dbh);
 
-  ($form->{transdatefrom}, $form->{transdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
+  unless ($form->{transdatefrom} || $form->{transdateto}) {
+    ($form->{transdatefrom}, $form->{transdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
+  }
   
   $where .= " AND transdate >= '$form->{transdatefrom}'" if $form->{transdatefrom};
   $where .= " AND transdate <= '$form->{transdateto}'" if $form->{transdateto};   
@@ -3169,7 +3171,7 @@ sub restore {
   my @sql = <FH>;
   close(FH);
   
-  $file = "$myconfig->{dbdriver}-custom_tables.sql";
+  $file = "sql/$myconfig->{dbdriver}-custom_tables.sql";
   if (open(FH, "$file")) {
     push @sql, <FH>;
     close(FH);
@@ -3182,7 +3184,7 @@ sub restore {
 
   for (@sql) {
     
-    if (/references (\w+)/i) {
+    if (/references /i) {
       $references{$el} = 1;
     }
     
@@ -3205,10 +3207,13 @@ sub restore {
     return 0;
   }
 
+  $dbh->{PrintError} = 0;
+
   for ($dbh->tables) {
     if ($myconfig->{dbdriver} =~ /Pg/) {
       if (!/(pg_catalog|information_schema)/) {
-	$tables{$_} = 1;
+        $_ =~ s/public\.//;
+        $tables{$_} = 1;
       }
     } else {
       $tables{$_} = 1;
@@ -3220,11 +3225,13 @@ sub restore {
     $query = qq|DROP TABLE $_;|;
     $dbh->do($query);
   }
-  
+
   # drop tables and sequences
   for (keys %tables) {
-    $query = qq|DROP TABLE $_;|;
-    $dbh->do($query);
+    unless ($references{$_}) {
+      $query = qq|DROP TABLE $_;|;
+      $dbh->do($query);
+    }
   }
 
   # drop sequences
@@ -3238,24 +3245,31 @@ sub restore {
   close(FH);
   
   for (@sql) {
-    next if /--/;
+    next if /^--/;
 
     $query .= $_;
     
     if (/create function/i) {
       while (!/-- end function/i) {
-	$_ = shift @sql;
-	$query .= $_;
+        $_ = shift @sql;
+        $query .= $_;
       }
     }
     
     if (/;\s*$/) {
       if ($query =~ /VALUES/) {
-	next if $query !~ /\);$/;
+        next if $query !~ /\);$/;
       }
-      $query =~ s/;\s*$//;
+      $query =~ s/;(\s*)$//;
 
-      $dbh->do($query) or $form->info($DBI::errstr);
+      if ($query =~ /^DROP /) {
+        (undef, undef, $el) = split / /, $query;
+        if ($tables{$el} || $references{$el}) {
+          $query = "";
+          next;
+        }
+      }
+      $dbh->do($query) if $query;
       $query = "";
     }
   }

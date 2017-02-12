@@ -1089,12 +1089,13 @@ sub post_invoice {
   }
  
   foreach $ref (sort { $b->{amount} <=> $a->{amount} } @ { $form->{acc_trans}{lineitems} }) {
-    $amount = $ref->{amount} + $diff + $fxdiff;
-    $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount,
-                transdate, project_id, id)
-                VALUES ($form->{id}, $ref->{chart_id}, $amount * -1,
-		'$form->{transdate}', $ref->{project_id}, $ref->{id})|;
-    $dbh->do($query) || $form->dberror($query);
+    if ($amount = $ref->{amount} + $diff + $fxdiff) {
+      $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount,
+                  transdate, project_id, id)
+                  VALUES ($form->{id}, $ref->{chart_id}, $amount * -1,
+                  '$form->{transdate}', $ref->{project_id}, $ref->{id})|;
+      $dbh->do($query) || $form->dberror($query);
+    }
     $diff = 0;
     $fxdiff = 0;
   }

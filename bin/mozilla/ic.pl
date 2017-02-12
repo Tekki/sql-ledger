@@ -332,7 +332,7 @@ sub form_header {
   }
 
   if ($form->{selectpartsgroup}) {
-    $selectpartsgroup = qq|<select name=partsgroup onChange="javascript:document.forms[0].submit()">|.$form->select_option($form->{selectpartsgroup}, $form->{partsgroup}, 1).qq|</select>
+    $selectpartsgroup = qq|<select name=partsgroup onChange="javascript:document.main.submit()">|.$form->select_option($form->{selectpartsgroup}, $form->{partsgroup}, 1).qq|</select>
     <br><input name=partsgroupcode size=10 value="$form->{partsgroupcode}">|;
     $group = $locale->text('Group');
   }
@@ -1813,9 +1813,9 @@ sub generate_report {
     }
     
     if ($form->{l_subtotal} eq 'Y' && !$ref->{assemblyitem}) {
-      if ($sameid ne $ref->{id}) {
+      if ($sameitem ne $ref->{$form->{sort}}) {
 	&parts_subtotal;
-	$sameid = $ref->{id};
+	$sameitem = $ref->{$form->{sort}};
       }
     }
     
@@ -2182,11 +2182,11 @@ sub print_ {
       }
     }
 
-    $form->parse_template(\%myconfig, $userspath, $dvipdf);
+    $form->parse_template(\%myconfig, $userspath, $dvipdf, $xelatex);
 
   } else {
     
-    $form->gentex(\%myconfig, $templates, $userspath, $dvipdf, \@colndx, \%hdr);
+    $form->gentex(\%myconfig, $templates, $userspath, $dvipdf, $xelatex, \@colndx, \%hdr);
 
   }
 
@@ -3936,7 +3936,6 @@ sub save {
 sub save_as_new {
 
   $form->{id} = 0;
-  $form->{oldonhand} = 0;
   &save;
 
 }

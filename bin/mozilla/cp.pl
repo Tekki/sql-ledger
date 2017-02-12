@@ -170,7 +170,17 @@ sub payment {
     if ($myconfig{vclimit} > 0) {
       $form->{"all_$form->{vc}"} = $form->{name_list};
     }
-    $form->{"$form->{vc}_id"} = $form->{"all_$form->{vc}"}->[0]->{id} if @{ $form->{"all_$form->{vc}"} };
+    if (@{ $form->{"all_$form->{vc}"} }) {
+      $form->{$form->{vc}} = qq|$form->{"all_$form->{vc}"}->[0]->{name}--$form->{"all_$form->{vc}"}->[0]->{id}|;
+      $form->{"old$form->{vc}"} = $form->{$form->{vc}};
+
+      $form->{"$form->{vc}_id"} = $form->{"all_$form->{vc}"}->[0]->{id};
+
+      for (qw(address1 address2 city zipcode state country)) {
+        $form->{$_} = $form->{"all_$form->{vc}"}->[0]->{$_};
+      }
+    }
+
   }
 
   $form->{"select$form->{vc}"} = "";
@@ -267,7 +277,7 @@ sub prepare_payments_header {
       $form->{"old$form->{vc}number"} = $form->{"$form->{vc}number_$i"};
       $form->{"old$form->{vc}"} = qq|$form->{"name_$i"}--$form->{"$form->{vc}_id_$i"}|;
       $form->{"select$form->{vc}"} = $form->escape($form->{$form->{vc}},1);
-      
+
       for (qw(datepaid duedatefrom duedateto)) { $form->{"old$_"} = $form->{$_} }
       last;
     }
@@ -275,7 +285,7 @@ sub prepare_payments_header {
 
   $form->{payment} = "payment";
   $form->{allbox} = 1;
-  
+
   CP->get_openinvoices(\%myconfig, \%$form);
 
   for ("currency","$form->{ARAP}","$form->{ARAP}_paid","$form->{ARAP}_discount","department","business","paymentmethod") {
@@ -285,7 +295,11 @@ sub prepare_payments_header {
   $exchangerate = $form->{exchangerate};
   
   AA->get_name(\%myconfig, \%$form);
-  
+
+  for ("currency","$form->{ARAP}","$form->{ARAP}_paid","$form->{ARAP}_discount","department","business","paymentmethod") {
+    $form->{$_} = $form->{"old$_"};
+  }
+
   $form->{$form->{vc}} = qq|$form->{"$form->{vc}"}--$form->{"$form->{vc}_id"}|;
 
   $form->{exchangerate} = $exchangerate;
@@ -550,46 +564,46 @@ javascript:window.history.forward(1);
 	  <td>
 	    <table>
 	      <tr>
-		<th align=right>|.$locale->text('Due Date').qq|</th>
-		<td>
-		  <table>
-		    <tr>
-		<th align=right>|.$locale->text('From').qq|</th>
-		<td><input name=duedatefrom value="$form->{duedatefrom}" title="$myconfig{dateformat}" size=11 class=date>|.&js_calendar("main", "duedatefrom").qq|</td>
-		<th align=right>|.$locale->text('To').qq|</th>
-		<td><input name=duedateto value="$form->{duedateto}" title="$myconfig{dateformat}" size=11 class=date>|.&js_calendar("main", "duedateto").qq|</td>
-		    </tr>
-		  </table>
-		</td>
-	      </tr>
-	      $department
-	      $business
-	    </table>
-	  </td>
-	  <td>
-	    <table>
-	      <tr>
-	        <th align=right nowrap>|.$locale->text($form->{ARAP}).qq|</th>
-		<td colspan=3><select name=$form->{ARAP} onChange="javascript:document.main.submit()">|
-		.$form->select_option($form->{"select$form->{ARAP}"}, $form->{"$form->{ARAP}"}).qq|</select>
-		</td>
-	      </tr>
-	      <tr>
-		<th align=right nowrap>|.$locale->text('Payment').qq|</th>
-		<td colspan=3><select name="$form->{ARAP}_paid" onChange="javascript:document.main.submit()">|
-		.$form->select_option($form->{"select$form->{ARAP}_paid"}, $form->{"$form->{ARAP}_paid"}).qq|</select>
-		</td>
-	      </tr>
-	      $paymentmethod
-	      $cashdiscount
-	      <tr>
-		<th align=right nowrap>|.$locale->text('Date').qq|</th>
-		$datepaid
-	      </tr>
-	      $exchangerate
-	    </table>
-	  </td>
-	</tr>
+          <th align=right>|.$locale->text('Due Date').qq|</th>
+          <td>
+            <table>
+              <tr>
+                <th align=right>|.$locale->text('From').qq|</th>
+                <td><input name=duedatefrom value="$form->{duedatefrom}" title="$myconfig{dateformat}" size=11 class=date>|.&js_calendar("main", "duedatefrom").qq|</td>
+                <th align=right>|.$locale->text('To').qq|</th>
+                <td><input name=duedateto value="$form->{duedateto}" title="$myconfig{dateformat}" size=11 class=date>|.&js_calendar("main", "duedateto").qq|</td>
+              </tr>
+            </table>
+          </td>
+              </tr>
+              $department
+              $business
+            </table>
+          </td>
+          <td>
+            <table>
+              <tr>
+                <th align=right nowrap>|.$locale->text($form->{ARAP}).qq|</th>
+                <td colspan=3><select name=$form->{ARAP} onChange="javascript:document.main.submit()">|
+                .$form->select_option($form->{"select$form->{ARAP}"}, $form->{"$form->{ARAP}"}).qq|</select>
+                </td>
+              </tr>
+              <tr>
+                <th align=right nowrap>|.$locale->text('Payment').qq|</th>
+                <td colspan=3><select name="$form->{ARAP}_paid" onChange="javascript:document.main.submit()">|
+                .$form->select_option($form->{"select$form->{ARAP}_paid"}, $form->{"$form->{ARAP}_paid"}).qq|</select>
+                </td>
+              </tr>
+              $paymentmethod
+              $cashdiscount
+              <tr>
+                <th align=right nowrap>|.$locale->text('Date').qq|</th>
+                $datepaid
+              </tr>
+              $exchangerate
+            </table>
+          </td>
+        </tr>
       </table>
     </td>
   </tr>
@@ -622,9 +636,9 @@ sub invoices_due {
   <tr>
     <td>
       <table width=100%>
-	<tr>
-	  <th class=listheading colspan=$colspan>$invoice</th>
-	</tr>
+        <tr>
+          <th class=listheading colspan=$colspan>$invoice</th>
+        </tr>
 |;
 
   $column_data{detail} = qq|<th></th>|;
@@ -857,12 +871,7 @@ sub deselect_all {
 }
 
 
-sub update {
-  my ($new_name_selected) = @_;
-
-  &{"update_$form->{payment}"}($new_name_selected);
-  
-}
+sub update { &{"update_$form->{payment}"} }
 
 
 sub update_payments {
@@ -899,8 +908,8 @@ sub update_payments {
     foreach $ref (@{ $form->{PR} }) {
 
       if ($ref->{"$form->{vc}_id"} != $sameid) {
-	chop $form->{"id_$i"};
-	$i++;
+        chop $form->{"id_$i"};
+        $i++;
       }
 
       $amount = $form->round_amount($ref->{amount} / $ref->{exchangerate}, $form->{precision});
@@ -972,19 +981,19 @@ sub update_payments {
 
 
 sub update_payment {
-  my ($new_name_selected) = @_;
 
-  if ($new_name_selected) {
-    for ("$form->{ARAP}", "$form->{ARAP}_paid", "department", "business", "currency", "paymentmethod") {
-      $form->{$_} = $form->{"old$_"};
-    }
-  }
   if ($form->{"$form->{vc}"}) {
     if ($form->{"$form->{vc}"} !~ /--/) {
       $name = qq|$form->{"$form->{vc}"}--$form->{"$form->{vc}_id"}|;
       $new_name_selected = 1 if $name ne $form->{"old$form->{vc}"};
     } else {
       $new_name_selected = 1 if $form->{"$form->{vc}"} ne $form->{"old$form->{vc}"};
+    }
+  }
+
+  if ($new_name_selected) {
+    for ("$form->{ARAP}", "$form->{ARAP}_paid", "department", "business", "currency", "paymentmethod") {
+      $form->{$_} = $form->{"old$_"};
     }
   }
 
@@ -1003,7 +1012,7 @@ sub update_payment {
   if (! $form->{all_vc}) {
 
     if ($form->{$form->{ARAP}} ne $form->{"old$form->{ARAP}"} ||
-	$form->{business} ne $form->{oldbusiness} ||
+        $form->{business} ne $form->{oldbusiness} ||
         $form->{department} ne $form->{olddepartment}) {
 
       for ("$form->{ARAP}", "business", "department") { $form->{"old$_"} = $form->{$_}}
@@ -1014,37 +1023,37 @@ sub update_payment {
       $rv = CP->get_openvc(\%myconfig, \%$form);
       
       if ($myconfig{vclimit} > 0) {
-	$form->{"all_$form->{vc}"} = $form->{name_list};
+        $form->{"all_$form->{vc}"} = $form->{name_list};
       } else {
 
-	if ($rv > 1) {
+        if ($rv > 1) {
           # assign old values
           for ("$form->{ARAP}", "department", "business", "currency") {
-	    $form->{"old$_"} = $form->{$_};
-	  }
-	  &select_name($form->{vc});
-	  exit;
-	}
+            $form->{"old$_"} = $form->{$_};
+          }
+          &select_name($form->{vc});
+          exit;
+        }
 	
-	if ($rv == 1) {
-	  # we got one name
-	  $form->{"$form->{vc}_id"} = $form->{name_list}[0]->{id};
-	  $form->{$form->{vc}} = $form->{name_list}[0]->{name};
-	  $form->{"$form->{vc}number"} = $form->{name_list}[0]->{"$form->{vc}number"};
-	  $form->{"old$form->{vc}"} = "";
-	  $form->{"old$form->{vc}number"} = "";
-	} else {
-	  # nothing open
-	  $form->{"$form->{vc}"} = "";
-	  $form->{"$form->{vc}_id"} = 0;
-	  $form->{"$form->{vc}number"} = "";
-	}
+        if ($rv == 1) {
+          # we got one name
+          $form->{"$form->{vc}_id"} = $form->{name_list}[0]->{id};
+          $form->{$form->{vc}} = $form->{name_list}[0]->{name};
+          $form->{"$form->{vc}number"} = $form->{name_list}[0]->{"$form->{vc}number"};
+          $form->{"old$form->{vc}"} = "";
+          $form->{"old$form->{vc}number"} = "";
+        } else {
+          # nothing open
+          $form->{"$form->{vc}"} = "";
+          $form->{"$form->{vc}_id"} = 0;
+          $form->{"$form->{vc}number"} = "";
+        }
 
       }
 
       $form->{"select$form->{vc}"} = "";
       if (@{ $form->{"all_$form->{vc}"} }) {
-	for (@{ $form->{"all_$form->{vc}"} }) { $form->{"select$form->{vc}"} .= qq|$_->{name}--$_->{id}\n| }
+        for (@{ $form->{"all_$form->{vc}"} }) { $form->{"select$form->{vc}"} .= qq|$_->{name}--$_->{id}\n| }
       }
       $form->{"select$form->{vc}"} = $form->escape($form->{"select$form->{vc}"},1);
     }
@@ -1096,14 +1105,14 @@ sub update_payment {
       $form->all_vc(\%myconfig, $form->{vc}, $form->{ARAP}, undef, $form->{datepaid});
       
       if (@{ $form->{"all_$form->{vc}"} }) {
-	for (@{ $form->{"all_$form->{vc}"} }) { $form->{"select$form->{vc}"} .= qq|$_->{name}--$_->{id}\n| }
-	$form->{"select$form->{vc}"} = $form->escape($form->{"select$form->{vc}"},1);
+        for (@{ $form->{"all_$form->{vc}"} }) { $form->{"select$form->{vc}"} .= qq|$_->{name}--$_->{id}\n| }
+        $form->{"select$form->{vc}"} = $form->escape($form->{"select$form->{vc}"},1);
       }
       
     } else {
       if ($myconfig{vclimit} > 0) {
-	$form->{$form->{vc}} = "";
-	$form->{"$form->{vc}number"} = "";
+        $form->{$form->{vc}} = "";
+        $form->{"$form->{vc}number"} = "";
       }
      
       $form->remove_locks(\%myconfig, undef, $form->{arap}) unless $form->{locks_removed};
@@ -1111,29 +1120,29 @@ sub update_payment {
       CP->get_openvc(\%myconfig, \%$form);
 
       if ($myconfig{vclimit} > 0) {
-	$form->{"all_$form->{vc}"} = $form->{name_list};
+        $form->{"all_$form->{vc}"} = $form->{name_list};
       }
 
       if (@{ $form->{"all_$form->{vc}"} }) {
-	$newvc = qq|$form->{"all_$form->{vc}"}[0]->{name}--$form->{"all_$form->{vc}"}[0]->{id}|;
-	for (@{ $form->{"all_$form->{vc}"} }) { $form->{"select$form->{vc}"} .= qq|$_->{name}--$_->{id}\n| }
+        $newvc = qq|$form->{"all_$form->{vc}"}[0]->{name}--$form->{"all_$form->{vc}"}[0]->{id}|;
+        for (@{ $form->{"all_$form->{vc}"} }) { $form->{"select$form->{vc}"} .= qq|$_->{name}--$_->{id}\n| }
 
-	# if the name is not the same
-	if ($form->{"select$form->{vc}"} !~ /$form->{$form->{vc}}/) {
-	  $form->{$form->{vc}} = $newvc;
-	  &check_openvc;
-	}
+        # if the name is not the same
+        if ($form->{"select$form->{vc}"} !~ /$form->{$form->{vc}}/) {
+          $form->{$form->{vc}} = $newvc;
+          &check_openvc;
+        }
 
-	$form->{"select$form->{vc}"} = $form->escape($form->{"select$form->{vc}"},1);
+        $form->{"select$form->{vc}"} = $form->escape($form->{"select$form->{vc}"},1);
       }
 
       foreach $item (qw(business paymentmethod)) {
-	if (@{ $form->{"all_$item"} }) { 
-	  $form->{"select$item"} = "\n";
-	  $form->{$item} = qq|$form->{$item}--$form->{"${item}_id"}| if $form->{$item};
+        if (@{ $form->{"all_$item"} }) { 
+          $form->{"select$item"} = "\n";
+          $form->{$item} = qq|$form->{$item}--$form->{"${item}_id"}| if $form->{$item};
 
-	  for (@{ $form->{"all_$item"} }) { $form->{"select$item"} .= qq|$_->{description}--$_->{id}\n| }
-	}
+          for (@{ $form->{"all_$item"} }) { $form->{"select$item"} .= qq|$_->{description}--$_->{id}\n| }
+        }
       }
 
     }
@@ -1193,15 +1202,15 @@ sub update_payment {
       $ok = 1;
       # calculate discount
       if ($form->{"calcdiscount_$i"}) {
-	if (! $form->{"olddiscount_$i"}) {
-	  $form->{"discount_$i"} = $form->parse_amount(\%myconfig, $form->{"netamount_$i"}) * $form->{"cashdiscount_$i"};
-	  $form->{"olddiscount_$i"} = $form->{"discount_$i"};
-	}
+        if (! $form->{"olddiscount_$i"}) {
+          $form->{"discount_$i"} = $form->parse_amount(\%myconfig, $form->{"netamount_$i"}) * $form->{"cashdiscount_$i"};
+          $form->{"olddiscount_$i"} = $form->{"discount_$i"};
+        }
       }
 
       # calculate paid_$i
       if (!$form->{"paid_$i"}) {
-	$form->{"paid_$i"} = $form->{"due_$i"} - $form->{"discount_$i"};
+        $form->{"paid_$i"} = $form->{"due_$i"} - $form->{"discount_$i"};
       }
       
       $amount += $form->{"paid_$i"};
@@ -1470,11 +1479,11 @@ javascript:window.history.forward(1);
 
 	      $duedate
 	      
-              $vc
+        $vc
 
 	      <tr valign=top>
-		<th align=right nowrap>|.$locale->text('Address').qq|</th>
-		<td colspan=2>
+          <th align=right nowrap>|.$locale->text('Address').qq|</th>
+          <td colspan=2>
 		  <table>
 		    <tr>
 		      <td>$form->{address1}</td>
@@ -1497,46 +1506,46 @@ javascript:window.history.forward(1);
 		</td>
 	      </tr>
 	      <tr>
-		<th align=right>|.$locale->text('Memo').qq|</th>
-		<td colspan=2><input name="memo" size=30 value="|.$form->quote($form->{memo}).qq|"></td>
-	      </tr>
-	    </table>
-	  </td>
-	  <td align=right>
-	    <table>
-	      $department
-	      $business
-	      <tr>
-	        <th align=right nowrap>|.$locale->text($form->{ARAP}).qq|</th>
-		<td colspan=3><select name=$form->{ARAP} onChange="javascript:document.main.submit()">|
-		.$form->select_option($form->{"select$form->{ARAP}"}, $form->{"$form->{ARAP}"}).qq|</select>
-		</td>
-	      </tr>
-	      <tr>
-		<th align=right nowrap>|.$locale->text('Payment').qq|</th>
-		<td colspan=3><select name="$form->{ARAP}_paid" onChange="javascript:document.main.submit()">|
-		.$form->select_option($form->{"select$form->{ARAP}_paid"}, $form->{"$form->{ARAP}_paid"}).qq|</select>
-		</td>
-		$paymentmethod
-	      </tr>
-	      $cashdiscount
-	      <tr>
-		<th align=right nowrap>|.$locale->text('Date').qq|</th>
-		$datepaid
-	      </tr>
-	      $exchangerate
-	      <tr>
-		<th align=right nowrap>|.$locale->text('Source').qq|</th>
-		<td colspan=3><input name=source value="|.$form->quote($form->{source}).qq|" size=11></td>
-	      </tr>
-	      <tr>
-		<th align=right nowrap>|.$locale->text('Amount').qq|</th>
-		<td colspan=3><input name=amount class="inputright" size=11 value=|.$form->format_amount(\%myconfig, $form->{amount}, $form->{precision}).qq|></td>
-		<input type=hidden name=oldamount value=|.$form->round_amount($form->{amount}, $form->{precision}).qq|>
-	      </tr>
-	    </table>
-	  </td>
-	</tr>
+          <th align=right>|.$locale->text('Memo').qq|</th>
+          <td colspan=2><input name="memo" size=30 value="|.$form->quote($form->{memo}).qq|"></td>
+              </tr>
+            </table>
+          </td>
+          <td align=right>
+            <table>
+              $department
+              $business
+              <tr>
+                <th align=right nowrap>|.$locale->text($form->{ARAP}).qq|</th>
+                <td colspan=3><select name=$form->{ARAP} onChange="javascript:document.main.submit()">|
+                .$form->select_option($form->{"select$form->{ARAP}"}, $form->{"$form->{ARAP}"}).qq|</select>
+                </td>
+              </tr>
+              <tr>
+                <th align=right nowrap>|.$locale->text('Payment').qq|</th>
+                <td colspan=3><select name="$form->{ARAP}_paid" onChange="javascript:document.main.submit()">|
+                .$form->select_option($form->{"select$form->{ARAP}_paid"}, $form->{"$form->{ARAP}_paid"}).qq|</select>
+                </td>
+                $paymentmethod
+              </tr>
+              $cashdiscount
+              <tr>
+                <th align=right nowrap>|.$locale->text('Date').qq|</th>
+                $datepaid
+              </tr>
+              $exchangerate
+              <tr>
+                <th align=right nowrap>|.$locale->text('Source').qq|</th>
+                <td colspan=3><input name=source value="|.$form->quote($form->{source}).qq|" size=11></td>
+              </tr>
+              <tr>
+                <th align=right nowrap>|.$locale->text('Amount').qq|</th>
+                <td colspan=3><input name=amount class="inputright" size=11 value=|.$form->format_amount(\%myconfig, $form->{amount}, $form->{precision}).qq|></td>
+                <input type=hidden name=oldamount value=|.$form->round_amount($form->{amount}, $form->{precision}).qq|>
+              </tr>
+            </table>
+          </td>
+        </tr>
       </table>
     </td>
   </tr>
@@ -1677,8 +1686,8 @@ sub payment_footer {
    
     if ($latex) {
       if ($form->{selectlanguage}) {
-	$lang = qq|<select name=language_code>|.$form->select_option($form->{"selectlanguage"}, $form->{language_code}, undef, 1).qq|</select>|;
-	$form->hide_form(qw(selectlanguage));
+        $lang = qq|<select name=language_code>|.$form->select_option($form->{"selectlanguage"}, $form->{language_code}, undef, 1).qq|</select>|;
+        $form->hide_form(qw(selectlanguage));
       }
       
       $format .= qq|
@@ -2000,9 +2009,9 @@ sub print_payments {
       for (1 .. $j) { $form->{"id_$_"} = $temp{"id_$_"} }
 
       if ($ok) {
-	&print_form;
-	$oldform{header} = 1;
-	$form->info(qq|$msg $form->{name} $form->{"$form->{vc}number"}\n|);
+        &print_form;
+        $oldform{header} = 1;
+        $form->info(qq|$msg $form->{name} $form->{"$form->{vc}number"}\n|);
       }
 
       $ok = 0;
@@ -2068,7 +2077,7 @@ sub print_form {
     $form->{OUT} = qq~| $form->{"$form->{media}_printer"}~;
   }
 
-  $form->parse_template(\%myconfig, $userspath, $dvipdf);
+  $form->parse_template(\%myconfig, $userspath, $dvipdf, $xelatex);
 
 }
 
@@ -2142,11 +2151,6 @@ sub check_openvc {
   ($new_name, $new_id) = split /--/, $form->{$form->{vc}};
   $new_id ||= $form->{"$form->{vc}_id"};
 
-  $arap_accno = $form->{$form->{ARAP}};
-  $payment_accno = $form->{"$form->{ARAP}_paid"};
-  $discount_accno = $form->{"$form->{ARAP}_discount"};
-  $form->{id} = 1;
-  
   if ($form->{all_vc}) {
     if ($form->{"select$form->{vc}"}) {
       $redo = ($form->{"old$form->{vc}"} ne $form->{$form->{vc}});
@@ -2161,11 +2165,11 @@ sub check_openvc {
       $form->{locks_removed} = 1;
 
       if ($form->{"select$form->{vc}"}) {
-	$form->{"$form->{vc}_id"} = $new_id;
-	AA->get_name(\%myconfig, \%$form);
-	$form->{$form->{vc}} = $form->{"old$form->{vc}"} = "$new_name--$new_id";
+        $form->{"$form->{vc}_id"} = $new_id;
+        AA->get_name(\%myconfig, \%$form);
+        $form->{$form->{vc}} = $form->{"old$form->{vc}"} = "$new_name--$new_id";
       } else {
-	&check_name($form->{vc});
+        &check_name($form->{vc});
       }
     }
     
@@ -2176,19 +2180,19 @@ sub check_openvc {
 
       if ($form->{"old$form->{vc}"} ne $form->{$form->{vc}}) {
 
-	for (qw(address1 address2 city state zipcode country)) { $form->{$_} = "" }
+        for (qw(address1 address2 city state zipcode country)) { $form->{$_} = "" }
 
-	$form->remove_locks(\%myconfig, undef, $form->{arap});
-	$form->{locks_removed} = 1;
-	  
-	$form->{"$form->{vc}_id"} = $new_id;
-	AA->get_name(\%myconfig, \%$form);
+        $form->remove_locks(\%myconfig, undef, $form->{arap});
+        $form->{locks_removed} = 1;
+          
+        $form->{"$form->{vc}_id"} = $new_id;
+        AA->get_name(\%myconfig, \%$form);
 
         if ($form->{"$form->{vc}_id"}) {
-	  $form->{$form->{vc}} = $form->{"old$form->{vc}"} = "$new_name--$new_id";
-	} else {
-	  $form->{$form->{vc}} = $form->{"old$form->{vc}"} = "";
-	}
+          $form->{$form->{vc}} = $form->{"old$form->{vc}"} = "$new_name--$new_id";
+        } else {
+          $form->{$form->{vc}} = $form->{"old$form->{vc}"} = "";
+        }
 
         $form->{redo} = 1;
       }
@@ -2196,54 +2200,55 @@ sub check_openvc {
 
       # check name, combine name and id
       if ($form->{"old$form->{vc}"} ne qq|$form->{$form->{vc}}--$form->{"$form->{vc}_id"}|) {
-	if ($form->{"$form->{vc}number"} eq $form->{"old$form->{vc}number"}) {
-	  $form->{"$form->{vc}number"} = $form->{"old$form->{vc}number"} = "";
-	}
-	$redo = 1;
+        if ($form->{"$form->{vc}number"} eq $form->{"old$form->{vc}number"}) {
+          $form->{"$form->{vc}number"} = $form->{"old$form->{vc}number"} = "";
+        }
+        $redo = 1;
       }
       
       if ($form->{"old$form->{vc}number"} ne $form->{"$form->{vc}number"}) {
-	$form->{$form->{vc}} = "";
-	$redo = 1;
+        $form->{$form->{vc}} = "";
+        $redo = 1;
       }
 	
       if ($redo) {
 
-	$form->remove_locks(\%myconfig, undef, $form->{arap});
-	$form->{locks_removed} = 1;
+        $form->remove_locks(\%myconfig, undef, $form->{arap});
+        $form->{locks_removed} = 1;
 
-	# return one name or a list of names in $form->{name_list}
-	if (($rv = CP->get_openvc(\%myconfig, \%$form)) > 1) {
-	  $form->{redo} = 1;
-	  &select_name($form->{vc});
-	  exit;
-	}
+        # return one name or a list of names in $form->{name_list}
+        if (($rv = CP->get_openvc(\%myconfig, \%$form)) > 1) {
+          $form->{redo} = 1;
+          &select_name($form->{vc});
+          exit;
+        }
 
-	if ($rv == 1) {
-	  # we got one name
-	  $form->{"$form->{vc}_id"} = $form->{name_list}[0]->{id};
-	  $form->{$form->{vc}} = $form->{name_list}[0]->{name};
-	  $form->{"old$form->{vc}"} = qq|$form->{$form->{vc}}--$form->{"$form->{vc}_id"}|;
-	  $form->{"old$form->{vc}number"} = $form->{name_list}[0]->{"$form->{vc}number"};
+        if ($rv == 1) {
+          # we got one name
+          $form->{"$form->{vc}_id"} = $form->{name_list}[0]->{id};
+          $form->{$form->{vc}} = $form->{name_list}[0]->{name};
+          $form->{"old$form->{vc}"} = qq|$form->{$form->{vc}}--$form->{"$form->{vc}_id"}|;
+          $form->{"old$form->{vc}number"} = $form->{name_list}[0]->{"$form->{vc}number"};
 
-	  AA->get_name(\%myconfig, \%$form);
+          AA->get_name(\%myconfig, \%$form);
 
-	} else {
-	  # nothing open
-	  $form->{$form->{vc}} = "";
-	  $form->{"$form->{vc}number"} = "";
-	  $form->{"$form->{vc}_id"} = 0;
-	}
-	
-	$form->{redo} = 1;
+        } else {
+          # nothing open
+          $form->{$form->{vc}} = "";
+          $form->{"$form->{vc}number"} = "";
+          $form->{"$form->{vc}_id"} = 0;
+        }
+        
+        $form->{redo} = 1;
       }
     }
   }
 
   if ($form->{redo}) {
-    $form->{$form->{ARAP}} = $form->{arap_accno} || $arap_accno;
-    $form->{"$form->{ARAP}_paid"} = $form->{payment_accno} || $payment_accno;
-    $form->{"$form->{ARAP}_discount"} = $form->{discount_accno} || $discount_accno;
+    $form->{$form->{ARAP}} = $form->{"old$form->{ARAP}"};
+    $form->{"$form->{ARAP}_paid"} = $form->{"old$form->{ARAP}_paid"};
+    $form->{paymentmethod} = $form->{oldpaymentmethod};
+    $form->{"$form->{ARAP}_discount"} = $form->{"old$form->{ARAP}_discount"};
   }
 
 }

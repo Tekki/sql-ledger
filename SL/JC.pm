@@ -39,15 +39,15 @@ sub retrieve_card {
     # retrieve timecard/storescard
     $query = qq|SELECT j.*, to_char(j.checkedin, 'HH24:MI:SS') AS checkedina,
                 to_char(j.checkedout, 'HH24:MI:SS') AS checkedouta,
-		to_char(j.checkedin, '$dateformat') AS transdate,
-		e.name AS employee, p.partnumber,
-		pr.projectnumber, pr.description AS projectdescription,
-		pr.production, pr.completed, pr.parts_id AS project,
-		pr.customer_id
+                to_char(j.checkedin, '$dateformat') AS transdate,
+                e.name AS employee, p.partnumber, p.id AS parts_id,
+                pr.projectnumber, pr.description AS projectdescription,
+                pr.production, pr.completed, pr.parts_id AS project,
+                pr.customer_id
                 FROM jcitems j
-		JOIN employee e ON (e.id = j.employee_id)
-		JOIN parts p ON (p.id = j.parts_id)
-		JOIN project pr ON (pr.id = j.project_id)
+                JOIN employee e ON (e.id = j.employee_id)
+                JOIN parts p ON (p.id = j.parts_id)
+                JOIN project pr ON (pr.id = j.project_id)
                 WHERE j.id = $form->{id}|;
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
@@ -64,8 +64,8 @@ sub retrieve_card {
 
     $query = qq|SELECT s.printed, s.spoolfile, s.formname
                 FROM status s
-		WHERE s.formname = '$form->{type}'
-		AND s.trans_id = $form->{id}|;
+                WHERE s.formname = '$form->{type}'
+                AND s.trans_id = $form->{id}|;
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
 
@@ -123,12 +123,12 @@ sub jcitems_links {
     if ($dbh->selectrow_array($query)) {
       $form->{project} = 'job';
       if (! exists $form->{orphaned}) {
-	$query = qq|SELECT id
+        $query = qq|SELECT id
 		    FROM project
 		    WHERE parts_id > 0
 		    AND production > completed
 		    AND id = $form->{project_id}|;
-	($form->{orphaned}) = $dbh->selectrow_array($query);
+        ($form->{orphaned}) = $dbh->selectrow_array($query);
       }
     } else {
       $form->{orphaned} = 1;
@@ -395,7 +395,9 @@ sub jcitems {
     }
   }
   
-  ($form->{startdatefrom}, $form->{startdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
+  unless ($form->{startdatefrom} || $form->{startdateto}) {
+    ($form->{startdatefrom}, $form->{startdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
+  }
   
   $where .= " AND j.checkedin >= '$form->{startdatefrom}'" if $form->{startdatefrom};
   $where .= " AND j.checkedout < date '$form->{startdateto}' + 1" if $form->{startdateto};
@@ -490,9 +492,9 @@ sub save {
   if ($form->{id} *= 1) {
     # check if it was a job
     $query = qq|SELECT pr.parts_id, pr.production - pr.completed
-		FROM project pr
-		JOIN jcitems j ON (j.project_id = pr.id)
-		WHERE j.id = $form->{id}|;
+                FROM project pr
+                JOIN jcitems j ON (j.project_id = pr.id)
+                WHERE j.id = $form->{id}|;
     my ($job_id, $qty) = $dbh->selectrow_array($query);
 
     if ($job_id && $qty == 0) {
@@ -503,13 +505,13 @@ sub save {
     # check if new one belongs to a job
     if ($project_id) {
       $query = qq|SELECT pr.parts_id, pr.production - pr.completed
-		  FROM project pr
-		  WHERE pr.id = $project_id|;
+                  FROM project pr
+                  WHERE pr.id = $project_id|;
       my ($job_id, $qty) = $dbh->selectrow_array($query);
 
       if ($job_id && $qty == 0) {
-	$dbh->disconnect;
-	return -2;
+        $dbh->disconnect;
+        return -2;
       }
     }
     
@@ -544,18 +546,18 @@ sub save {
 
   $query = qq|UPDATE jcitems SET
               project_id = $project_id,
-	      parts_id = $form->{parts_id},
-	      description = |.$dbh->quote($form->{description}).qq|,
-	      qty = $form->{qty},
-	      allocated = $form->{allocated},
-	      sellprice = $form->{sellprice},
-	      fxsellprice = $form->{sellprice},
-	      serialnumber = |.$dbh->quote($form->{serialnumber}).qq|,
-	      checkedin = timestamp '$form->{transdate} $form->{inhour}:$form->{inmin}:$form->{insec}',
-	      checkedout = timestamp '$outdate $form->{outhour}:$form->{outmin}:$form->{outsec}',
-	      employee_id = $form->{employee_id},
-	      notes = |.$dbh->quote($form->{notes}).qq|
-	      WHERE id = $form->{id}|;
+              parts_id = $form->{parts_id},
+              description = |.$dbh->quote($form->{description}).qq|,
+              qty = $form->{qty},
+              allocated = $form->{allocated},
+              sellprice = $form->{sellprice},
+              fxsellprice = $form->{sellprice},
+              serialnumber = |.$dbh->quote($form->{serialnumber}).qq|,
+              checkedin = timestamp '$form->{transdate} $form->{inhour}:$form->{inmin}:$form->{insec}',
+              checkedout = timestamp '$outdate $form->{outhour}:$form->{outmin}:$form->{outsec}',
+              employee_id = $form->{employee_id},
+              notes = |.$dbh->quote($form->{notes}).qq|
+              WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
 
   # save printed, queued

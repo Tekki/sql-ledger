@@ -33,6 +33,8 @@ sub getpassword {
 |;
   }
 
+  my $charset;
+
   if ($form->{charset}) {
     $charset = qq|<META HTTP-EQUIV="Content-Type" CONTENT="text/plain; charset=$form->{charset}">
 |;

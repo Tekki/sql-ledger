@@ -1,0 +1,29 @@
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Account'                     => 'حساب',
+  'Amount'                      => 'الكمية',
+  'Continue'                    => 'تابع',
+  'Date'                        => 'التاريخ',
+  'Memo'                        => 'ملاحظات',
+  'Screen'                      => 'الشاشة',
+  'Source'                      => 'مصدر',
+};
+
+$self{subs} = {
+  'payment_selected'            => 'payment_selected',
+  'print'                       => 'print',
+  'print_and_post'              => 'print_and_post',
+  'print_check'                 => 'print_check',
+  'print_credit_note'           => 'print_credit_note',
+  'print_debit_note'            => 'print_debit_note',
+  'print_options'               => 'print_options',
+  'print_receipt'               => 'print_receipt',
+  'print_remittance_voucher'    => 'print_remittance_voucher',
+  'print_transaction'           => 'print_transaction',
+  'select_payment'              => 'select_payment',
+  'تابع'                    => 'continue',
+};
+
+1;
+

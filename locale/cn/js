@@ -1,0 +1,27 @@
+$self{texts} = {
+  'April'                       => '四月',
+  'August'                      => '八月',
+  'December'                    => '十二月',
+  'February'                    => '二月',
+  'January'                     => '一月',
+  'July'                        => '七月',
+  'June'                        => '六月',
+  'March'                       => '三月',
+  'May'                         => '五月',
+  'November'                    => '十一月',
+  'October'                     => '十月',
+  'September'                   => '九月',
+};
+
+$self{subs} = {
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'js_calendar'                 => 'js_calendar',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
+};
+
+1;
+

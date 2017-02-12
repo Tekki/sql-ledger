@@ -1,0 +1,31 @@
+$self{texts} = {
+  'Account'                     => '帐户',
+  'Amount'                      => '总计',
+  'Continue'                    => '继续',
+  'Date'                        => '日期',
+  'Memo'                        => '备忘录',
+  'PDF'                         => 'PDF',
+  'Postscript'                  => '附言',
+  'Printed'                     => '巳列印',
+  'Screen'                      => '萤幕',
+  'Source'                      => '来源',
+};
+
+$self{subs} = {
+  'payment_selected'            => 'payment_selected',
+  'print'                       => 'print',
+  'print_and_post'              => 'print_and_post',
+  'print_check'                 => 'print_check',
+  'print_credit_note'           => 'print_credit_note',
+  'print_debit_note'            => 'print_debit_note',
+  'print_options'               => 'print_options',
+  'print_payslip'               => 'print_payslip',
+  'print_receipt'               => 'print_receipt',
+  'print_remittance_voucher'    => 'print_remittance_voucher',
+  'print_transaction'           => 'print_transaction',
+  'select_payment'              => 'select_payment',
+  '继续'                      => 'continue',
+};
+
+1;
+

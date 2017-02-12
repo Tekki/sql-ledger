@@ -1,0 +1,43 @@
+$self{texts} = {
+  'Accounting Menu'             => '会计选单',
+  'April'                       => '四月',
+  'August'                      => '八月',
+  'December'                    => '十二月',
+  'Description'                 => '说明',
+  'February'                    => '二月',
+  'Heading'                     => '标题, ',
+  'January'                     => '一月',
+  'July'                        => '七月',
+  'June'                        => '六月',
+  'March'                       => '三月',
+  'May'                         => '五月',
+  'November'                    => '十一月',
+  'October'                     => '十月',
+  'September'                   => '九月',
+};
+
+$self{subs} = {
+  'acc_menu'                    => 'acc_menu',
+  'add_column'                  => 'add_column',
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'delete_column'               => 'delete_column',
+  'delete_report'               => 'delete_report',
+  'display'                     => 'display',
+  'do_save_report'              => 'do_save_report',
+  'edit_column'                 => 'edit_column',
+  'js_calendar'                 => 'js_calendar',
+  'jsmenu'                      => 'jsmenu',
+  'jsmenu_frame'                => 'jsmenu_frame',
+  'menubar'                     => 'menubar',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
+  'save_column'                 => 'save_column',
+  'save_report'                 => 'save_report',
+  'section_menu'                => 'section_menu',
+};
+
+1;
+

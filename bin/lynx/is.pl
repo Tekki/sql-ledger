@@ -143,7 +143,7 @@ sub invoice_links {
 
   # warehouses
   if (@{ $form->{all_warehouse} }) {
-    $form->{selectwarehouse} = ""; 
+    $form->{selectwarehouse} = "\n"; 
     $form->{oldwarehouse} = $form->{warehouse} = "$form->{warehouse}--$form->{warehouse_id}" if $form->{warehouse_id};
 
     for (@{ $form->{all_warehouse} }) { $form->{selectwarehouse} .= qq|$_->{description}--$_->{id}\n| }
@@ -710,9 +710,9 @@ sub form_footer {
     $taxincluded = qq|
               <tr height="5"></tr>
               <tr>
-	        <td align=right><input name="taxincluded" class="checkbox" type="checkbox" value="1" $form->{taxincluded}></td>
-		<th align=left>|.$locale->text('Tax Included').qq|</th>
-	     </tr>
+                <td align=right><input name="taxincluded" class="checkbox" type="checkbox" value="1" $form->{taxincluded} onChange="javascript:document.main.submit()"></td>
+              <th align=left>|.$locale->text('Tax Included').qq|</th>
+             </tr>
 |;
   }
   
@@ -1619,12 +1619,11 @@ sub generate_invoices {
     $fldlabel{employee} = $locale->text('Salesperson');
     $includeinreport{employee} = { ndx => $i++, sort => employee, checkbox => 1, html => qq|<input name="l_employee" class="checkbox" type="checkbox" value="Y" $form->{l_employee}>|, label => $fldlabel{employee} };
     
-    $selectemployee = "\n$form->{selectemployee}";
     $employee = qq|
 	      <tr>
 	        <th align=right nowrap>$fldlabel{employee}</th>
 		<td><select name=employee>|
-		.$form->select_option($selectemployee, $form->{employee}, 1)
+		.$form->select_option($form->{selectemployee}, $form->{employee}, 1)
 		.qq|</select>
 		</td>
 	      </tr>
@@ -1645,7 +1644,9 @@ sub generate_invoices {
 
 
   $form->header;
-  
+ 
+  &calendar;
+
   for (qw(name vcnumber city state zipcode country employee)) { delete $form->{$_} }
   for (qw(AR AR_discount AR_paid currency customer department employee formname language partsgroup paymentmethod projectnumber warehouse reportform)) { delete $form->{"select$_"} }
   for (qw(business pricegroup)) { delete $form->{"all_$_"} }
@@ -1658,9 +1659,9 @@ sub generate_invoices {
   for (keys %radio) { delete $form->{$_} }
 
   print qq|
-<body onLoad="document.forms[0].${focus}.focus()" />
+<body onLoad="document.main.${focus}.focus()" />
 
-<form method=post action=$form->{script}>
+<form method=post name="main" action=$form->{script}>
 
 <table width=100%>
   <tr>
@@ -1671,43 +1672,43 @@ sub generate_invoices {
     <td>
       <table>
         $reportform
-	<tr>
-	  <th align=right nowrap>$fldlabel{name}</th>
-	  <td><input name="name" size="32"></td>
-	</tr>
-	<tr>
-	  <th align=right nowrap>$fldlabel{vcnumber}</th>
-	  <td><input name="vcnumber" size="32"></td>
-	</tr>
-	<tr>
-	  <th align=right nowrap>$fldlabel{city}</th>
-	  <td><input name="city" size="32"></td>
-	</tr>
-	<tr>
-	  <th align=right nowrap>$fldlabel{state}</th>
-	  <td><input name="state" size="32"></td>
-	</tr>
-	<tr>
-	  <th align=right nowrap>$fldlabel{zipcode}</th>
-	  <td><input name="zipcode" size="10"></td>
-	</tr>
-	<tr>
-	  <th align=right nowrap>$fldlabel{country}</th>
-	  <td><input name="country" size="32"></td>
-	</tr>
-	<tr>
-	  <th align=right nowrap>$fldlabel{startdate}</th>
-	  <td>|.$locale->text('From').qq| <input name="startdatefrom" size="11" class="date" title="$myconfig{dateformat}"> |.$locale->text('To').qq| <input name="startdateto" size="11" class="date" title="$myconfig{dateformat}"></td>
-	</tr>
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Enddate').qq|</th>
-	  <td>|.$locale->text('From').qq| <input name="enddatefrom" size="11" class="date" title="$myconfig{dateformat}"> |.$locale->text('To').qq| <input name="enddateto" size="11" class="date" title="$myconfig{dateformat}"></td>
-	</tr>
-	$employee
-	$paymentmethod
-	$currency
-	$pricegroup
-	$business
+        <tr>
+          <th align=right nowrap>$fldlabel{name}</th>
+          <td><input name="name" size="32"></td>
+        </tr>
+        <tr>
+          <th align=right nowrap>$fldlabel{vcnumber}</th>
+          <td><input name="vcnumber" size="32"></td>
+        </tr>
+        <tr>
+          <th align=right nowrap>$fldlabel{city}</th>
+          <td><input name="city" size="32"></td>
+        </tr>
+        <tr>
+          <th align=right nowrap>$fldlabel{state}</th>
+          <td><input name="state" size="32"></td>
+        </tr>
+        <tr>
+          <th align=right nowrap>$fldlabel{zipcode}</th>
+          <td><input name="zipcode" size="10"></td>
+        </tr>
+        <tr>
+          <th align=right nowrap>$fldlabel{country}</th>
+          <td><input name="country" size="32"></td>
+        </tr>
+        <tr>
+          <th align=right nowrap>$fldlabel{startdate}</th>
+          <td>|.$locale->text('From').qq| <input name="startdatefrom" size="11" class="date" title="$myconfig{dateformat}">|.&js_calendar("main", "startdatefrom").$locale->text('To').qq| <input name="startdateto" size="11" class="date" title="$myconfig{dateformat}">|.&js_calendar("main", "startdateto").qq|</td>
+        </tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Enddate').qq|</th>
+          <td>|.$locale->text('From').qq| <input name="enddatefrom" size="11" class="date" title="$myconfig{dateformat}">|.&js_calendar("main", "enddatefrom").$locale->text('To').qq| <input name="enddateto" size="11" class="date" title="$myconfig{dateformat}">|.&js_calendar("main", "enddateto").qq|</td>
+        </tr>
+        $employee
+        $paymentmethod
+        $currency
+        $pricegroup
+        $business
       </table>
     </td>
   </tr>
@@ -1930,9 +1931,9 @@ sub do_generate_invoices {
       $total += $myform->{invamount};
       
       if ($ok) {
-	$form->info($locale->text('ok'));
+      	$form->info($locale->text('ok'));
       } else {
-	$form->info($locale->text('failed!'));
+      	$form->info($locale->text('failed!'));
       }
       $form->info("\n");
 

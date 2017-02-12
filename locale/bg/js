@@ -1,0 +1,29 @@
+$self{charset} = 'UTF8';
+
+$self{texts} = {
+  'April'                       => 'Април',
+  'August'                      => 'Август',
+  'December'                    => 'Декември',
+  'February'                    => 'Февруари',
+  'January'                     => 'Януари',
+  'July'                        => 'Юли',
+  'June'                        => 'Юни',
+  'March'                       => 'Март',
+  'May'                         => 'Май',
+  'November'                    => 'Ноември',
+  'October'                     => 'Октомври',
+  'September'                   => 'Септември',
+};
+
+$self{subs} = {
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'js_calendar'                 => 'js_calendar',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
+};
+
+1;
+
