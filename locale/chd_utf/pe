@@ -101,6 +101,7 @@ $self{texts} = {
   'Month'                       => 'Monat',
   'No open Projects!'           => 'Keine offenen Projekte!',
   'Notes'                       => 'Bemerkungen',
+  'Nothing to generate!'        => 'Es wurde nichts erzeugt!',
   'Nov'                         => 'Nov',
   'November'                    => 'November',
   'Number'                      => 'Nummer',

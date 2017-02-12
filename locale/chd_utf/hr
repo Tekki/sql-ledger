@@ -33,6 +33,7 @@ $self{texts} = {
   'Cannot delete employee!'     => 'Mitarbeiter kann nicht gelöscht werden!',
   'Cannot delete transaction!'  => 'Buchung kann nicht gelöscht werden!',
   'Cannot post transaction for a closed period!' => 'Buchung kann nicht erfasst werden, weil die Periode bereits abgeschlossen ist!',
+  'Cannot use admin as login!'  => 'Benutzername admin nicht erlaubt!',
   'Cc'                          => 'E-Mailkopie',
   'City'                        => 'Ort',
   'Clearing No.'                => 'Clearingnummer',

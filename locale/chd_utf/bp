@@ -28,7 +28,6 @@ $self{texts} = {
   'December'                    => 'Dezember',
   'Description'                 => 'Beschreibung',
   'Deselect all'                => 'Alle abwählen',
-  'E-Mail'                      => 'E-Mail',
   'E-mail'                      => 'E-Mail',
   'E-mailed'                    => 'E-Mail gesendet',
   'E-mailing'                   => 'E-Mail ',

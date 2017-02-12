@@ -98,6 +98,7 @@ $self{texts} = {
   'May'                         => 'Mai',
   'Merchandise'                 => 'Handelsware',
   'Mimetypes'                   => 'MIME-Typen',
+  'New Window'                  => 'Neues Fenster',
   'Non-taxable'                 => 'MWST-frei',
   'November'                    => 'November',
   'October'                     => 'Oktober',

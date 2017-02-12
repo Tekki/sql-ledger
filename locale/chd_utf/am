@@ -241,6 +241,7 @@ $self{texts} = {
   'Mimetypes'                   => 'MIME-Typen',
   'Month'                       => 'Monat',
   'Months'                      => 'Monate',
+  'Multibyte Encoding'          => 'Zeichensatz',
   'Must be logged in as admin!' => 'Nur für Admins erlaubt!',
   'Name'                        => 'Benutzername',
   'Next'                        => 'Nächste',

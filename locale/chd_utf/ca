@@ -12,6 +12,7 @@ $self{texts} = {
   'August'                      => 'August',
   'Balance'                     => 'Bilanz',
   'Chart of Accounts'           => 'Kontenplan',
+  'Closed'                      => 'Geschlossen',
   'Credit'                      => 'Haben',
   'Current'                     => 'Aktuell',
   'Date'                        => 'Datum',
