@@ -460,7 +460,8 @@ sub header {
     }
 
     if ($self->{charset}) {
-      $charset = qq|<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=$self->{charset}">
+      my $encoding = $self->{charset} eq 'UTF8' ? 'UTF-8' : $self->{charset};
+      $charset = qq|<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=$encoding">
   |;
     }
 
