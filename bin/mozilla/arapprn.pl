@@ -521,9 +521,17 @@ sub print_payslip {
   push @a, qw(company address tel fax businessnumber companyemail companywebsite text_amount text_decimal);
    
   for $i (1 .. $form->{wage_rows}) {
-    if ($form->{"qty_$i"}) {
-      push @a, "wage_$i";
+    push @a, "wage_$i" if $form->{"qty_$i"};
+  }
 
+  for $i (1 .. $form->{deduction_rows}) {
+    push @a, "deduction_$i" if $form->{"deduct_$i"};
+  }
+
+  $form->format_string(@a);
+
+  for $i (1 .. $form->{wage_rows}) {
+    if ($form->{"qty_$i"}) {
       push @{ $form->{wage} }, $form->{"wage_$i"};
       push @{ $form->{pay} }, $form->{"pay_$i"};
       push @{ $form->{qty} }, $form->{"qty_$i"};
@@ -535,15 +543,11 @@ sub print_payslip {
   
   for $i (1 .. $form->{deduction_rows}) {
     if ($form->{"deduct_$i"}) {
-      push @a, "deduction_$i";
-
       push @{ $form->{deduction} }, $form->{"deduction_$i"};
       $form->{"deduct_$i"} =~ s/-//;
       push @{ $form->{deduct} }, $form->{"deduct_$i"};
     }
   }
-
-  $form->format_string(@a);
 
   $form->{templates} = "$templates/$myconfig{dbname}";
   $form->{IN} = "$form->{formname}.$form->{format}";
