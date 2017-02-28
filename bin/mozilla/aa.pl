@@ -1668,7 +1668,7 @@ sub search {
   $openclosed = qq|
 	      <tr>
 		<td nowrap><input name=open class=checkbox type=checkbox value=Y checked> |.$locale->text('Open').qq|</td>
-		<td nowrap><input name=closed class=checkbox type=checkbox value=Y> |.$locale->text('Closed').qq|</td>
+		<td nowrap><input name=closed class=checkbox type=checkbox value=Y checked> |.$locale->text('Closed').qq|</td>
 		<td nowrap><input name=onhold class=checkbox type=checkbox value=Y> |.$locale->text('On Hold').qq|</td>
 		<td nowrap><input name=paidlate class=checkbox type=checkbox value=Y> |.$locale->text('Paid Late').qq|</td>
 		<td nowrap><input name=paidearly class=checkbox type=checkbox value=Y> |.$locale->text('Paid Early').qq|</td>
