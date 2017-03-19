@@ -959,12 +959,12 @@ sub trial_balance {
 
       $ref->{description} = $ref->{translation} if $ref->{translation};
 
-      if ($form->{all_accounts}) {
+      # if ($form->{all_accounts}) {
 	$trb{$ref->{accno}}{description} = $ref->{description};
 	$trb{$ref->{accno}}{charttype} = 'A';
 	$trb{$ref->{accno}}{category} = $ref->{category};
 	$trb{$ref->{accno}}{contra} = $ref->{contra};
-      }
+      # }
 
     }
     $sth->finish;
@@ -1151,7 +1151,7 @@ sub trial_balance {
       $ref->{credit} = $form->round_amount($ref->{credit}, $form->{precision});
     
       if (!$form->{all_accounts}) {
-	next if $form->round_amount($ref->{debit} + $ref->{credit}, $form->{precision}) == 0;
+	next if $ref->{balance} == 0 && $ref->{debit} == 0 && $ref->{credit} == 0;
       }
     }
 
