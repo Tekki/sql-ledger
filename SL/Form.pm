@@ -1855,7 +1855,7 @@ sub format_string {
 
   if ($self->{format} =~ /(ps|pdf)/) {
     for (@fields) {
-      $self->{$_} =~ s~(https?://)(\S+)~\\href{$1$2}{$2}~g;
+      $self->{$_} =~ s~(https?://)([^\f\t\n\r ?]+)(\S*)~\\href{$1$2$3}{$2}~g;
     }
   }
 
