@@ -707,7 +707,7 @@ sub create_config {
   delete $acs{acs};
   delete $acs{role};
 
-  $self->{acs} = join ';', keys %acs;
+  $self->{acs} = join ';', sort keys %acs;
 
   my $password = $self->{password};
   my $key = "";

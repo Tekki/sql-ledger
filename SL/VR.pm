@@ -425,8 +425,7 @@ sub delete_batch {
 		AND ac.approved = '0'
 		AND (c.link LIKE '%AP_paid%'
 		     OR c.link LIKE '%AP_discount%')
-		AND NOT (ac.chart_id = $defaults{fxgain_accno_id}
-		      OR ac.chart_id = $defaults{fxloss_accno_id})
+		AND NOT ac.chart_id = $defaults{fxgainloss_accno_id}
 		|;
     $pth = $dbh->prepare($query) || $form->dberror($query);
     

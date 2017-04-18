@@ -45,7 +45,7 @@ sub retrieve_card {
                 pr.production, pr.completed, pr.parts_id AS project,
                 pr.customer_id
                 FROM jcitems j
-                JOIN employee e ON (e.id = j.employee_id)
+                LEFT JOIN employee e ON (e.id = j.employee_id)
                 JOIN parts p ON (p.id = j.parts_id)
                 JOIN project pr ON (pr.id = j.project_id)
                 WHERE j.id = $form->{id}|;
@@ -226,24 +226,22 @@ sub retrieve_item {
       $where .= " AND p.inventory_accno_id > 0
                   AND p.income_accno_id > 0";
     } else {
-      $where .= " AND p.income_accno_id IS NULL";
+      $where .= " AND p.income_accno_id IS NULL
+                  AND p.inventory_accno_id > 0";
     }
     
     $query = qq|SELECT p.id, p.partnumber, p.description,
-                p.lastcost AS sellprice,
+                p.sellprice,
                 p.unit, t.description AS translation
                 FROM parts p
 		LEFT JOIN translation t ON (t.trans_id = p.id AND t.language_code = '$form->{language_code}')
 	        WHERE p.obsolete = '0'
 		$where|;
   }
-  
+
   if ($form->{project} eq 'project') {
-    if ($form->{type} eq 'storescard') {
-      $where .= " AND p.inventory_accno_id > 0";
-    } else {
-      $where .= " AND p.inventory_accno_id IS NULL";
-    }
+    $where .= " AND p.inventory_accno_id IS NULL
+                AND p.income_accno_id > 0";
     
     $query = qq|SELECT p.id, p.partnumber, p.description,
                 p.sellprice,
@@ -434,7 +432,7 @@ sub jcitems {
 	      FROM jcitems j
 	      JOIN parts p ON (p.id = j.parts_id)
 	      JOIN project pr ON (pr.id = j.project_id)
-	      JOIN employee e ON (e.id = j.employee_id)
+	      LEFT JOIN employee e ON (e.id = j.employee_id)
 	      WHERE $where|;
 
   my @sf = qw(transdate projectnumber);

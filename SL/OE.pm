@@ -77,14 +77,15 @@ sub transactions {
       $where .= " AND oi.ship > 0";
     }
   }
-   
+
   my $query = qq|SELECT o.id, o.ordnumber, o.transdate, o.reqdate,
                  o.amount, ct.name, ct.$form->{vc}number, o.netamount,
                  o.$form->{vc}_id,
                  o.exchangerate,
                  o.closed, o.quonumber, o.shippingpoint, o.shipvia, o.waybill,
                  e.name AS employee, o.curr, o.ponumber,
-                 o.notes, w.description AS warehouse, o.description
+                 o.notes, w.description AS warehouse, o.description,
+                 o.backorder
                  $orderitems_description
                  FROM oe o
                  JOIN $form->{vc} ct ON (o.$form->{vc}_id = ct.id)
@@ -184,6 +185,11 @@ sub transactions {
   my $i = -1;
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
     $ref->{exchangerate} ||= 1;
+    if ($form->{open} && $form->{closed}) {
+      unless ($form->{l_backorder}) {
+        next if $ref->{backorder};
+      }
+    }
     if ($form->{detail}) {
       $i++;
       $ml = 1;
@@ -574,7 +580,7 @@ sub save {
 
   $form->{$ordnumber} = $form->update_defaults($myconfig, $numberfld, $dbh) unless $form->{$ordnumber}; 
   
- 
+  $form->{backorder} *= 1;
   $form->{terms} *= 1;
 
   # save OE record
@@ -603,7 +609,8 @@ sub save {
               ponumber = |.$dbh->quote($form->{ponumber}).qq|,
               terms = $form->{terms},
               warehouse_id = $form->{warehouse_id},
-              exchangerate = $form->{exchangerate}
+              exchangerate = $form->{exchangerate},
+              backorder = '$form->{backorder}'
               WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
 
@@ -830,7 +837,7 @@ sub retrieve {
 		o.closed, o.quonumber, o.department_id,
 		d.description AS department, o.language_code, o.ponumber,
 		o.warehouse_id, w.description AS warehouse, o.description,
-		o.aa_id
+		o.aa_id, o.backorder
 		FROM oe o
 	        JOIN $form->{vc} vc ON (o.$form->{vc}_id = vc.id)
 	        LEFT JOIN employee e ON (o.employee_id = e.id)

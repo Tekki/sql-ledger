@@ -135,10 +135,7 @@ sub payment_transactions {
   if ($form->{fx_transaction}) {
    
     $fx_transaction = qq|
-	      AND NOT
-		 (ac.chart_id = $defaults{fxgain_accno_id}
-		  OR ac.chart_id = $defaults{fxloss_accno_id}
-		 )|;
+	      AND NOT ac.chart_id = $defaults{fxgainloss_accno_id}|;
 		 
   } else {
     $fx_transaction = qq|

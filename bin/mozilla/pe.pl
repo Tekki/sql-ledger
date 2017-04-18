@@ -152,8 +152,8 @@ sub job_header {
 
   for (qw(partnumber partdescription description notes unit)) { $form->{$_} = $form->quote($form->{$_}) }
 
-  for (qw(production completed weight)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}) }
-  for (qw(listprice sellprice)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}) }
+  for (qw(production completed weight)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, $form->{precision}) }
+  for (qw(listprice sellprice)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, $form->{precision}) }
   
   $reference_documents = &references;
  

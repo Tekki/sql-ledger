@@ -509,7 +509,7 @@ sub form_header {
   if ($form->{item} =~ /(assembly|kit)/) {
 
     $avgcost = "";
-    
+
     if ($form->{project_id}) {
       $weight = qq|
 	      <tr>
@@ -556,11 +556,25 @@ sub form_header {
 |;
     }
     
-
     if ($form->{project_id}) {
-      $lastcost = "";
+
+      $lastcost = qq|
+ 	      <tr>
+                <th align="right" nowrap="true">|.$locale->text('Last Cost').qq|</th>
+                <td>$form->{lastcost}</td>
+		<input type=hidden name=lastcost value=$form->{lastcost}>
+              </tr>
+|;
+
+      $onhand = qq|
+ 	      <tr>
+                <th align="right" nowrap="true">|.$locale->text('On Hand').qq|</th>
+                <td>$form->{onhand}</td>
+		<input type=hidden name=onhand value=$form->{onhand}>
+              </tr>
+|;
+
       $avgcost = "";
-      $onhand = "";
       $rop = "";
 
     } else {
