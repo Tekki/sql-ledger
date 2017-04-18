@@ -886,7 +886,7 @@ sub display_row {
         </tr>
 |;
 
-    for (qw(id linetotal listprice lastcost taxaccounts pricematrix sku barcode partsgroup unit onhand inventory_accno_id income_accno_id expense_accno_id)) { $form->hide_form("${_}_$i") }
+    for (qw(id linetotal listprice lastcost taxaccounts pricematrix sku barcode partsgroup unit onhand assembly inventory_accno_id income_accno_id expense_accno_id)) { $form->hide_form("${_}_$i") }
     
   }
 

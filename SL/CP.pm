@@ -591,7 +591,7 @@ sub post_payment {
 	      ORDER BY t.validto DESC|;
   my $tth = $dbh->prepare($query) || $form->dberror($query);
   
-  my %defaults = $form->get_defaults($dbh, \@{['fx%_accno_id', 'cdt']});
+  my %defaults = $form->get_defaults($dbh, \@{['fxgainloss_accno_id', 'cdt']});
 
   my $ml = ($form->{ARAP} eq 'AR') ? 1 : -1;
 
@@ -647,8 +647,7 @@ sub post_payment {
 		WHERE ac.trans_id = ?
 		AND ac.vr_id = $form->{voucherid}
 		AND c.link LIKE '%$form->{ARAP}_paid%'
-		AND NOT (ac.chart_id = $defaults{fxgain_accno_id}
-		      OR ac.chart_id = $defaults{fxloss_accno_id})|;
+		AND NOT (ac.chart_id = $defaults{fxgainloss_accno_id})|;
     $sth = $dbh->prepare($query) || $form->dberror($query);
 
     # discount
@@ -820,10 +819,9 @@ sub post_payment {
       # gain/loss
       $amount = $form->round_amount(($form->round_amount($form->{"paid_$i"} * $trans{$form->{"id_$i"}}{exchangerate}, $form->{precision}) - $form->round_amount($form->{"paid_$i"} * $form->{exchangerate}, $form->{precision})) * $ml * -1, $form->{precision});
       if ($amount) {
-	my $accno_id = ($amount > 0) ? $defaults{fxgain_accno_id} : $defaults{fxloss_accno_id};
 	$query = qq|INSERT INTO acc_trans (trans_id, chart_id, transdate,
 		    amount, fx_transaction, approved, vr_id)
-		    VALUES ($form->{"id_$i"}, $accno_id,
+		    VALUES ($form->{"id_$i"}, $defaults{fxgainloss_accno_id},
 		    '$form->{datepaid}', $amount, '1', '$approved',
 		    $voucherid)|;
 	$dbh->do($query) || $form->dberror($query);
@@ -909,10 +907,9 @@ sub post_payment {
 	    $amount = $form->round_amount(($form->round_amount($cdt{$_} * $trans{$form->{"id_$i"}}{exchangerate}, $form->{precision}) - $form->round_amount($cdt{$_} * $form->{exchangerate}, $form->{precision})) * $ml * -1, $form->{precision});
 	    
 	    if ($amount) {
-	      my $accno_id = ($amount > 0) ? $defaults{fxgain_accno_id} : $defaults{fxloss_accno_id};
 	      $query = qq|INSERT INTO acc_trans (trans_id, chart_id, transdate,
 			  amount, fx_transaction, approved, vr_id, id)
-			  VALUES ($form->{"id_$i"}, $accno_id,
+			  VALUES ($form->{"id_$i"}, $defaults{fxgainloss_accno_id},
 			  '$form->{datepaid}', $amount, '1', '$approved',
 			  $voucherid, $form->{"id_$i"})|;
 	      $dbh->do($query) || $form->dberror($query);

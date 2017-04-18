@@ -127,6 +127,7 @@ sub display_row {
 
   $deliverydate = $locale->text('Delivery Date');
   $serialnumber = $locale->text('Serial No.');
+  $batchnumber = $locale->text('Batch No.');
   $projectnumber = $locale->text('Project');
   $orderxrefnumber = $locale->text('Order Number');
   $poxrefnumber = $locale->text('PO Number');
@@ -297,6 +298,14 @@ sub display_row {
                 <b>$poxrefnumber</b>
 		<input name="customerponumber_$i" value="$form->{"customerponumber_$i"}">&nbsp;<a href=oe.pl?action=lookup_order&ordnumber=|.$form->escape($form->{"customerponumber_$i"},1).qq|&vc=vendor&type=purchase_order&pickvar=customerponumber_$i&path=$form->{path}&login=$form->{login} target=popup>?</a>
 |;
+
+      $serial = qq|
+                <td colspan=6><b>$serialnumber</b>
+                <input name="serialnumber_$i" value="|.$form->quote($form->{"serialnumber_$i"}).qq|"><br>|;
+                
+#                <b>$batchnumber</b>
+#                <input name="batchnumber_$i" value="|.$form->quote($form->{"batchnumber_$i"}).qq|"></td>|;
+
     }
 
     $costprice = "";
@@ -337,10 +346,6 @@ sub display_row {
     
     $form->{"itemnotes_$i"} = $form->quote($form->{"itemnotes_$i"});
     $itemnotes = qq|<td><textarea name="itemnotes_$i" rows=$rows cols=46 wrap=soft>$form->{"itemnotes_$i"}</textarea></td>|;
-
-    $serial = qq|
-                <td colspan=6><b>$serialnumber</b>
-                <input name="serialnumber_$i" value="|.$form->quote($form->{"serialnumber_$i"}).qq|"></td>| if $form->{type} !~ /_quotation/;
 
     $package = qq|
                 <tr>
@@ -1043,6 +1048,12 @@ sub validate_items {
     if ($form->{"kit_$i"}) {
       $form->error($locale->text('Same kit in Row') . " $i") if $samekit{$form->{"id_$i"}};
       $samekit{$form->{"id_$i"}} = 1;
+    }
+
+    if ($form->{"assembly_$i"}) {
+      if (($form->{type} =~ /invoice/ && $form->{"qty_$i"} < 0) || $form->{type} eq 'credit_invoice') {
+        $form->error($locale->text('Cannot return assembly!'));
+      }
     }
   }
 

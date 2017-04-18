@@ -651,7 +651,7 @@ sub form_header {
 		</select>
 		</td>
 	      </tr>
-| if $form->{selectwarehouse};
+| if $form->{selectwarehouse} && $form->{type} !~ /_quotation/;
 
   $form->{oldwarehouse} = $form->{warehouse};
 
@@ -1137,7 +1137,7 @@ sub form_footer {
     &menubar;
   }
 
-  $form->hide_form(qw(rowcount readonly callback path login));
+  $form->hide_form(qw(backorder rowcount readonly callback path login));
   
   print qq| 
 </form>
@@ -1488,12 +1488,13 @@ sub search {
 
   # warehouse
   if (@{ $form->{all_warehouse} }) {
-    $form->{selectwarehouse} = "\n";
-    $form->{warehouse} = qq|$form->{warehouse}--$form->{warehouse_id}|;
+    if ($form->{type} !~ /_quotation/) {
+      $form->{selectwarehouse} = "\n";
+      $form->{warehouse} = qq|$form->{warehouse}--$form->{warehouse_id}|;
 
-    for (@{ $form->{all_warehouse} }) { $form->{selectwarehouse} .= qq|$_->{description}--$_->{id}\n| }
+      for (@{ $form->{all_warehouse} }) { $form->{selectwarehouse} .= qq|$_->{description}--$_->{id}\n| }
 
-    $warehouse = qq|
+      $warehouse = qq|
 	    <tr>
 	      <th align=right>|.$locale->text('Warehouse').qq|</th>
 	      <td><select name=warehouse>|
@@ -1505,7 +1506,8 @@ sub search {
 	    </tr>
 |;
 
-    $l_warehouse = qq|<input name="l_warehouse" class=checkbox type=checkbox value=Y> |.$locale->text('Warehouse');
+      $l_warehouse = qq|<input name="l_warehouse" class=checkbox type=checkbox value=Y> |.$locale->text('Warehouse');
+    }
 
   }
 
@@ -1587,6 +1589,8 @@ sub search {
 
 
     $l_ponumber = qq|<input name="l_ponumber" class=checkbox type=checkbox value=Y> |.$locale->text('PO Number');
+
+    $l_backorder = qq|<input name="l_backorder" class=checkbox type=checkbox value=Y> |.$locale->text('Backorder');
   }
 
   @a = ();
@@ -1610,6 +1614,7 @@ sub search {
   push @a, qq|<input name="l_curr" class=checkbox type=checkbox value=Y checked> |.$locale->text('Currency');
   push @a, qq|<input name="l_memo" class=checkbox type=checkbox value=Y> |.$locale->text('Line Item');
   push @a, qq|<input name="l_notes" class=checkbox type=checkbox value=Y> |.$locale->text('Notes');
+  push @a, $l_backorder if $l_backorder;
 
   $form->helpref("search_$form->{type}", $myconfig{countrycode});
 
@@ -2638,6 +2643,8 @@ sub create_backorder {
 
   # clear flags
   for (qw(id subject message cc bcc printed emailed queued audittrail closed)) { delete $form->{$_} }
+
+  $form->{backorder} = 1;
 
   OE->save(\%myconfig, \%$form);
  

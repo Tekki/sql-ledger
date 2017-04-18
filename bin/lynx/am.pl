@@ -63,6 +63,9 @@ sub delete { &{ "delete_$form->{type}" } };
 sub save_as_new {
 
   $form->{copydir} = $form->{id};
+  $form->{oldIC_taxpart} = "";
+  $form->{oldIC_taxservice} = "";
+
   delete $form->{id};
 
   &save;
@@ -107,6 +110,9 @@ sub account_header {
   $checked{contra} = "checked" if $form->{contra};
   $checked{"$form->{category}_"} = "checked";
   $checked{closed} = "checked" if $form->{closed};
+
+  $form->{oldIC_taxpart} = $form->{IC_taxpart};
+  $form->{oldIC_taxservice} = $form->{IC_taxservice};
   
   for (qw(accno description)) { $form->{$_} = $form->quote($form->{$_}) }
 
@@ -124,8 +130,8 @@ sub account_header {
 <input type=hidden name=type value=account>
 |;
 
-  $form->hide_form(qw(id type));
-  $form->hide_form(map { "${_}_accno_id" } qw(inventory income expense fxgain fxloss));
+  $form->hide_form(qw(id type oldIC_taxpart oldIC_taxservice));
+  $form->hide_form(map { "${_}_accno_id" } qw(inventory income expense fxgainloss));
 
   print qq|
 <table border=0 width=100%>
@@ -433,7 +439,7 @@ sub delete_account {
 
   $form->{title} = $locale->text('Delete Account');
 
-  for (qw(inventory_accno_id income_accno_id expense_accno_id fxgain_accno_id fxloss_accno_id)) {
+  for (qw(inventory_accno_id income_accno_id expense_accno_id fxgainloss_accno_id)) {
     if ($form->{id} == $form->{$_}) {
       $form->error($locale->text('Cannot delete default account!'));
     }
@@ -2544,16 +2550,12 @@ sub defaults {
 	  <td><select name=IC_expense>|.$form->select_option($form->{"selectIC_expense"}, $form->{IC_expense}).qq|</select></td>
 	</tr>
 	<tr>
-	  <th align=right nowrap>|.$locale->text('Foreign Exchange Gain').qq|</th>
-	  <td><select name=FX_gain>|.$form->select_option($form->{"selectFX_gain"}, $form->{FX_gain}).qq|</select></td>
-	</tr>
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Foreign Exchange Loss').qq|</th>
-	  <td><select name=FX_loss>|.$form->select_option($form->{"selectFX_loss"}, $form->{FX_loss}).qq|</select></td>
+	  <th align=right nowrap>|.$locale->text('Foreign Exchange Gain/Loss').qq|</th>
+	  <td><select name=fxgainloss>|.$form->select_option($form->{"selectfxgainloss"}, $form->{fxgainloss}).qq|</select></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Cash Over/Short').qq|</th>
-	  <td><select name=cashovershort>|.$form->select_option($form->{"selectFX_gain"}, $form->{cashovershort}).qq|</select></td>
+	  <td><select name=cashovershort>|.$form->select_option($form->{"selectfxgainloss"}, $form->{cashovershort}).qq|</select></td>
 	</tr>
       </table>
     </td>
@@ -3652,6 +3654,18 @@ sub list_audit_log {
     $callback .= "&employee=".$form->escape($form->{employee},1);
     $href .= "&employee=".$form->escape($form->{employee});
     $option = $locale->text('Employee')." : $employee";
+  }
+  if ($form->{logaction}) {
+    $callback .= "&logaction=$form->{logaction}";
+    $href .= "&logaction=$form->{logaction}";
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Action')." : $form->{logaction}";
+  }
+  if ($form->{reference}) {
+    $callback .= "&reference=".$form->escape($form->{reference},1);
+    $href .= "&reference=".$form->escape($form->{reference});
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Reference')." : $form->{reference}";
   }
   if ($form->{transdatefrom}) {
     $callback .= "&transdatefrom=$form->{transdatefrom}";

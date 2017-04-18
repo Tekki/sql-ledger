@@ -434,7 +434,7 @@ sub prepare_timecard {
   $form->{allocated} = $form->format_amount(\%myconfig, $form->{allocated}, 4);
 
   $form->{employee} .= "--$form->{employee_id}";
-  $form->{projectnumber} .= "--$form->{project_id}";
+  $form->{projectnumber} .= "--$form->{project_id}" unless $form->{projectnumber} =~ /--/;
   $form->{oldpartnumber} = $form->{partnumber};
   $form->{oldproject_id} = $form->{project_id};
 
@@ -480,7 +480,7 @@ sub timecard_header {
   if ($form->{project} eq 'job') {
     $projectlabel = $locale->text('Job Number');
     $laborlabel = $locale->text('Labor Code');
-    $chargeoutlabel = $locale->text('Cost');
+    $chargeoutlabel = $locale->text('Amount');
   }
   
   if ($form->{project} eq 'project') {
@@ -540,8 +540,13 @@ sub timecard_header {
 	</tr>
 |;
 
+  $lookup = qq|
+          <a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"parts_id"}" target=_blank>?</a>| if $form->{"parts_id"};
+
   $form->helpref($form->{type}, $myconfig{countrycode});
-  
+
+  $form->{action} = "update";
+ 
   $form->header;
   
   &calendar;
@@ -553,8 +558,9 @@ sub timecard_header {
 |;
 
   $form->hide_form(map { "select$_" } qw(projectnumber employee formname language printer));
-  $form->hide_form(qw(id type printed queued title closedto locked project pricematrix parts_id precision orphaned));
+  $form->hide_form(qw(id type printed queued title closedto locked project pricematrix parts_id precision orphaned action));
   $form->hide_form(map { "old$_" } qw(transdate checkedin checkedout partnumber qty noncharge project_id));
+
 
   print qq|
 <table width=100%>
@@ -574,7 +580,7 @@ sub timecard_header {
 	</tr>
 	<tr>
 	  <th align=right nowrap>$projectlabel <font color=red>*</font></th>
-	  <td><select name=projectnumber>|
+	  <td><select name=projectnumber onChange="javascript:document.main.submit()">|
 	  .$form->select_option($form->{selectprojectnumber}, $form->{projectnumber}, 1)
 	  .qq|</select>
 	  </td>
@@ -589,7 +595,8 @@ sub timecard_header {
 	<tr>
 	  <th align=right nowrap>$laborlabel <font color=red>*</font></th>
 	  <td><input name=partnumber value="|.$form->quote($form->{partnumber})
-	  .qq|"> <a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"parts_id"}" target=_blank>?</a>
+	  .qq|">
+          $lookup
 	  </td>
 	</tr>
 	<tr valign=top>
@@ -765,7 +772,7 @@ sub prepare_storescard {
   if ($myconfig{printer}) {
     $form->{format} ||= "ps";
   }
-  
+
   JC->retrieve_card(\%myconfig, \%$form);
 
   $form->{selectprinter} = "";
@@ -777,9 +784,9 @@ sub prepare_storescard {
   $form->{amount} = $form->{sellprice} * $form->{qty};
   for (qw(sellprice amount)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, $form->{precision}) }
   $form->{qty} = $form->format_amount(\%myconfig, $form->{qty});
- 
+
   $form->{employee} .= "--$form->{employee_id}";
-  $form->{projectnumber} .= "--$form->{project_id}";
+  $form->{projectnumber} .= "--$form->{project_id}" unless $form->{projectnumber} =~ /--/;
   $form->{oldpartnumber} = $form->{partnumber};
   $form->{oldproject_id} = $form->{project_id};
 
@@ -819,15 +826,22 @@ sub storescard_header {
   
   $description = qq|<textarea name=description rows=$rows cols=46 wrap=soft>$form->{description}</textarea>|;
 
-  $cost = qq|<tr>
-                 <th align=right nowrap>|.$locale->text('Cost').qq|</th>
+  $charge = qq|<tr>
+                 <th align=right nowrap>|.$locale->text('Amount').qq|</th>
                  <td><input name=sellprice class="inputright" size=10 value=$form->{sellprice}></td>|;
-    $cost .= qq|<th align=right nowrap>|.$locale->text('Total').qq|</th>
+    $charge .= qq|<th align=right nowrap>|.$locale->text('Total').qq|</th>
                <td>$form->{amount}</td>| if $form->{amount};
-    $cost .= qq|
+    $charge .= qq|
 	       </tr>|;
 
+  $lookup = qq|
+          <a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"parts_id"}" target=_blank>?</a>| if $form->{"parts_id"};
+
   $form->helpref("storescard", $myconfig{countrycode});
+
+  $form->{action} = "update";
+
+  delete $form->{allocated} unless $form->{allocated};
 
   $form->header;
 
@@ -840,7 +854,7 @@ sub storescard_header {
 |;
 
   $form->hide_form(map { "select$_" } qw(projectnumber formname language printer));
-  $form->hide_form(qw(id type printed queued title closedto locked project parts_id employee precision orphaned));
+  $form->hide_form(qw(id type printed queued title closedto locked project parts_id employee precision orphaned action));
   $form->hide_form(map { "old$_" } qw(transdate partnumber));
 
   print qq|
@@ -854,7 +868,7 @@ sub storescard_header {
       <table>
         <tr>
 	  <th align=right nowrap>|.$locale->text('Job Number').qq| <font color=red>*</font></th>
-	  <td colspan=2><select name=projectnumber>|
+	  <td colspan=2><select name=projectnumber onChange="javascript:document.main.submit()">|
 	  .$form->select_option($form->{selectprojectnumber}, $form->{projectnumber}, 1)
 	  .qq|</select>
 	  </td>
@@ -868,8 +882,8 @@ sub storescard_header {
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Part Number').qq| <font color=red>*</font></th>
-	  <td colspan=3><input name=partnumber value="|.$form->quote($form->{partnumber})
-	  .qq|"> <a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"parts_id"}" target=_blank>?</a>
+	  <td colspan=3><input name=partnumber value="|.$form->quote($form->{partnumber}) .qq|"> 
+	  $lookup
 	  </td>
 	</tr>
 	<tr valign=top>
@@ -880,7 +894,11 @@ sub storescard_header {
 	  <th align=right nowrap>|.$locale->text('Qty').qq|</th>
 	  <td><input name=qty class="inputright" size=6 value=$form->{qty}></td>
 	</tr>
-	$cost
+	<tr>
+	  <th align=right nowrap>|.$locale->text('Allocated').qq|</th>
+	  <td><input name=allocated class="inputright" size=6 value=$form->{allocated}></td>
+	</tr>
+	$charge
 	<tr>
 	$reference_documents
 	</tr>
@@ -1360,7 +1378,7 @@ sub yes_delete_storescard {
 
 
 sub list_cards {
-  
+
   JC->jcitems(\%myconfig, \%$form);
 
   if (! exists $form->{title}) {
@@ -1779,7 +1797,7 @@ sub list_cards {
       }
     } elsif ($form->{type} eq 'storescard') {
       if ($myconfig{acs} !~ /Production--Add Stores Card/) {
-	$button{'Production--Add Stores Card'} = { ndx => $i++, key => 'T',  value => $locale->text('Add Store Card') };
+	$button{'Production--Add Stores Card'} = { ndx => $i++, key => 'T',  value => $locale->text('Add Stores Card') };
       }
     } else {
       $i = 1;
@@ -1788,7 +1806,7 @@ sub list_cards {
       }
       
       if ($myconfig{acs} !~ /Production--Add Stores Card/) {
-	$button{'Production--Add Stores Card'} = { ndx => $i++, key => 'T',  value => $locale->text('Add Store Card') };
+	$button{'Production--Add Stores Card'} = { ndx => $i++, key => 'T',  value => $locale->text('Add Stores Card') };
       }
     }
   } elsif ($form->{project} eq 'project') {

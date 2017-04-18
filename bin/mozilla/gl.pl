@@ -132,6 +132,7 @@ sub edit {
   }
 
   $form->{rowcount} = $i;
+  $form->{oldtransdate} = $form->{transdate};
   $form->{focus} = "debit_$i";
 
   # readonly
@@ -1021,7 +1022,7 @@ sub update {
   @flds = qw(accno debit credit projectnumber source memo cleared fx_transaction);
 
   for $i (1 .. $form->{rowcount}) {
-    unless (($form->{"debit_$i"} eq "") && ($form->{"credit_$i"} eq "")) {
+    if ($form->{"debit_$i"} || $form->{"credit_$i"}) {
       for (qw(debit credit)) { $form->{"${_}_$i"} = $form->parse_amount(\%myconfig, $form->{"${_}_$i"}) }
       
       push @f, {};

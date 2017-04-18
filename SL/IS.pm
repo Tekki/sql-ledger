@@ -1096,7 +1096,7 @@ sub post_invoice {
 				  $form->{"qty_$i"} * -1) unless $form->{shipped};
 	  }
 
-	  &process_assembly($dbh, $form, $form->{"id_$i"}, $form->{"qty_$i"}, $project_id, $i);
+          &process_assembly($dbh, $form, $form->{"id_$i"}, $form->{"qty_$i"}, $project_id);
 	
 	} elsif ($form->{"kit_$i"}) {
 
@@ -1118,7 +1118,7 @@ sub post_invoice {
 	  } else {
 	   
 	    # returns
-	    $allocated = &cogs_returns($dbh, $form, $form->{"id_$i"}, $form->{"qty_$i"}, $project_id, $i);
+	    $allocated = &cogs_returns($dbh, $form, $form->{"id_$i"}, $form->{"qty_$i"}, $project_id, $form->{"sellprice_$i"});
 	    
 	    # change account to inventory
 	    $form->{acc_trans}{lineitems}[$ndx]->{chart_id} = $form->{"inventory_accno_id_$i"};
@@ -1486,10 +1486,9 @@ sub post_invoice {
       $amount = $form->round_amount(($form->round_amount($form->{"paid_$i"} * $form->{exchangerate}, $form->{precision}) - $form->round_amount($form->{"paid_$i"} * $form->{"exchangerate_$i"}, $form->{precision})) * -1, $form->{precision});
 
       if ($amount) {
-	my $accno_id = ($amount > 0) ? $defaults{fxgain_accno_id} : $defaults{fxloss_accno_id};
 	$query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount,
 	            transdate, fx_transaction, cleared, approved, vr_id)
-	            VALUES ($form->{id}, $accno_id,
+	            VALUES ($form->{id}, $defaults{fxgainloss_accno_id},
 		    $amount, '$form->{"datepaid_$i"}', '1', $cleared,
 		    '$approved', $voucherid)|;
 	$dbh->do($query) || $form->dberror($query);
@@ -1610,7 +1609,7 @@ sub post_invoice {
 
 
 sub process_assembly {
-  my ($dbh, $form, $id, $qty, $project_id, $i) = @_;
+  my ($dbh, $form, $id, $qty, $project_id) = @_;
 
   my $query = qq|SELECT a.parts_id, a.qty, p.assembly,
                  p.partnumber, p.description, p.unit,
@@ -1632,15 +1631,11 @@ sub process_assembly {
     $ref->{qty} *= $qty;
 
     if ($ref->{assembly}) {
-      &process_assembly($dbh, $form, $ref->{parts_id}, $ref->{qty}, $project_id, $i);
+      &process_assembly($dbh, $form, $ref->{parts_id}, $ref->{qty}, $project_id);
       next;
     } else {
       if ($ref->{inventory_accno_id}) {
-	if ($ref->{qty} > 0) {
-	  $allocated = &cogs($dbh, $form, $ref->{parts_id}, $ref->{qty}, $project_id);
-	} else {
-	  $allocated = &cogs_returns($dbh, $form, $ref->{parts_id}, $ref->{qty}, $project_id, $i);
-	}
+        $allocated = &cogs($dbh, $form, $ref->{parts_id}, $ref->{qty}, $project_id);
       }
     }
 
@@ -1713,7 +1708,7 @@ sub process_kit {
       if ($form->{"qty_$i"} > 0) {
         $kit{$j}{allocated} = &cogs($dbh, $form, $ref->{parts_id}, $ref->{qty} * $form->{"qty_$i"}, $project_id);
       } elsif ($form->{"qty_$i"} < 0) {
-        $kit{$j}{allocated} = &cogs_returns($dbh, $form, $ref->{parts_id}, $ref->{qty} * $form->{"qty_$i"}, $project_id, $i);
+        $kit{$j}{allocated} = &cogs_returns($dbh, $form, $ref->{parts_id}, $ref->{qty} * $form->{"qty_$i"}, $project_id, $form->{"sellprice_$i"});
       }
 
       # update onhand
@@ -1917,19 +1912,18 @@ sub cogs {
 
 
 sub cogs_returns {
-  my ($dbh, $form, $id, $totalqty, $project_id, $i) = @_;
+  my ($dbh, $form, $id, $totalqty, $project_id, $sellprice) = @_;
 
   my $query;
   my $sth;
 
   my $linetotal;
   my $qty;
-  my $ref;
   
   $totalqty *= -1;
   my $allocated = 0;
 
-  # check if we can apply cogs against sold items
+  # check if we can reduce allocated items
   $query = qq|SELECT i.id, i.trans_id, i.qty, i.allocated,
 	      p.inventory_accno_id, p.expense_accno_id
 	      FROM invoice i
@@ -1940,15 +1934,14 @@ sub cogs_returns {
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
-  
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
 
     $qty = $ref->{qty} + $ref->{allocated};
     if ($qty > $totalqty) {
       $qty = $totalqty;
     }
-    
-    $linetotal = $form->round_amount($form->{"sellprice_$i"} * $qty, $form->{precision});
+
+    $linetotal = $form->round_amount($sellprice * $qty, $form->{precision});
     
     $form->update_balance($dbh,
 			  "invoice",
@@ -2193,8 +2186,7 @@ sub reverse_invoice {
 	      WHERE ac.trans_id = $form->{id}
 	      AND ac.vr_id = ?
 	      AND c.link LIKE '%AR_paid%'
-	      AND NOT (ac.chart_id = $defaults{fxgain_accno_id}
-	            OR ac.chart_id = $defaults{fxloss_accno_id})
+	      AND NOT (ac.chart_id = $defaults{fxgainloss_accno_id})
 	      GROUP BY ac.approved|;
   my $ath = $dbh->prepare($query) || $form->dberror($query);
   
@@ -2277,6 +2269,13 @@ sub retrieve_invoice {
     $ref = $sth->fetchrow_hashref(NAME_lc);
     for (keys %$ref) { $form->{$_} = $ref->{$_} }
     $sth->finish;
+
+    $form->{warehouse_id} *= 1;
+    $query = qq|SELECT SUM(qty)
+                FROM inventory
+                WHERE parts_id = ?
+                AND warehouse_id = $form->{warehouse_id}|;
+    my $wth = $dbh->prepare($query) || $form->dberror($query);
 
     $form->{payment_accno} = "";
     if ($form->{bank_accno}) {
@@ -2374,6 +2373,12 @@ sub retrieve_invoice {
       }
       $tth->finish;
       chop $ref->{taxaccounts};
+
+      if ($form->{warehouse_id}) {
+        $wth->execute($ref->{id});
+        $ref->{onhand} = $wth->fetchrow_array;
+        $wth->finish;
+      }
 
       $ref->{sellprice} = $form->round_amount($ref->{fxsellprice} * $form->{$form->{currency}}, $decimalplaces);
       

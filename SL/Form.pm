@@ -121,8 +121,8 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "3.2.4";
-  $self->{dbversion} = "3.2.0";
+  $self->{version} = "3.2.5";
+  $self->{dbversion} = "3.2.1";
 
   bless $self, $type;
   
@@ -2818,11 +2818,11 @@ sub all_projects {
     $disconnect = 1;
   }
   
-  my $where = "1 = 1";
+  my $where = "pr.parts_id = 0 OR pr.parts_id IS NULL";
 
-  $where = qq|id NOT IN (SELECT id
+  $where = qq|pr.id NOT IN (SELECT DISTINCT id
                          FROM parts
-			 WHERE project_id > 0)| if ! $job;
+			 WHERE project_id > 0)| if $job;
 			 
   my $query = qq|SELECT *
                  FROM project pr
@@ -4450,6 +4450,10 @@ sub update_defaults {
 	  my @p = ();
 
 	  my @date = $self->split_date($myconfig->{dateformat}, $self->{transdate});
+          if ($p =~ /yyyy/i) {
+            $date[1] += 2000;
+          }
+
 	  for (sort keys %d) {
             push @p, $date[$d{$_}] if ($p =~ /$_/i);
             }

@@ -492,6 +492,8 @@ sub print {
 
         $myform->{description} = $form->{description};
 
+        $form->fdld(\%myconfig, \%$locale);
+
         &print_form;
 
         $myform->info(qq|${r}. $msg{$myform->{batch}} ... $myform->{"reference_$i"}|);

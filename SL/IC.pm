@@ -1728,8 +1728,10 @@ sub all_parts {
           }
         } else {
           while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-            $ref->{id} = $_->{id};
-            push @tp, $ref;
+            if ($ref->{onhand}) {
+              $ref->{id} = $_->{id};
+              push @tp, $ref;
+            }
           }
         }
       }
@@ -2799,7 +2801,7 @@ sub so_requirements {
   my $query = qq|SELECT p.partnumber, p.id as parts_id,
                  c.id AS $form->{vc}_id, c.name, c.$form->{vc}number,
 		 o.id, o.ordnumber, o.reqdate,
-		 oi.qty, oi.description
+		 oi.qty - oi.ship AS qty, oi.description
                  FROM oe o
 		 JOIN orderitems oi ON (oi.trans_id = o.id)
 		 JOIN parts p ON (p.id = oi.parts_id)
