@@ -15,6 +15,10 @@
 #
 #######################################################################
 
+BEGIN {
+  push @INC, '.';
+}
+
 # setup defaults, DO NOT CHANGE
 $userspath = "users";
 $spool = "spool";
