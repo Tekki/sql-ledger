@@ -9,11 +9,12 @@
 
 package Form;
 
+use Encode qw|decode encode|;
 
 sub new {
   my ($type, $userspath) = @_;
   
-  my $self = {};
+  my $self = { charset => 'UTF-8' };
 
   read(STDIN, $_, $ENV{CONTENT_LENGTH});
 
@@ -159,6 +160,7 @@ sub escape {
     $str = $self->escape($str, 1) if $1 == 0 && $2 < 44;
   }
 
+  $str = encode 'UTF-8', $str;
   $str =~ s/([^a-zA-Z0-9_.-])/sprintf("%%%02x", ord($1))/ge;
   $str;
 
@@ -173,6 +175,7 @@ sub unescape {
 
   $str =~ s/%([0-9a-fA-Z]{2})/pack("c",hex($1))/eg;
   $str =~ s/\r?\n/\n/g;
+  $str = decode 'UTF-8', $str;
 
   $str;
 

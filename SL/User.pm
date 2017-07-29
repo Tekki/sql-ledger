@@ -892,50 +892,51 @@ sub config_vars {
 sub encoding {
   my ($self, $dbdriver) = @_;
 
-  my %encoding = ( Pg => qq|
-SQL_ASCII--ASCII
-UTF8--Unicode (UTF-8)
-EUC_JP--Japanese (EUC_JP)
-EUC_JP--Japanese (EUC_JIS_2004)
-SJIS--Japanese (SJIS)
-SHIFT_JIS_2004--Japanese (SHIFT_JIS_2004)
-EUC_KR--Korean
-JOHAB--Korean (Hangul)
-UHC--Korean (Unified Hangul Code)
-EUC_TW--Taiwanese
-BIG5--Traditional Chinese (BIG5)
-EUC_CN--Simplified Chinese (GB18030)
-GBK--Simplified Chinese (GBK)
-GB18030--Chinese
-KOI8R--Cyrillic (Russian)
-KOI8U--Cyrillic (Ukrainian)
-LATIN1--ISO 8859-1 Western Europe
-LATIN2--ISO 8859-2 Central Europe
-LATIN3--ISO 8859-3 South Europe
-LATIN4--ISO 8859-4 North Europe
-LATIN5--ISO 8859-9 Turkish
-LATIN6--ISO 8859-10 Nordic
-LATIN7--ISO 8859-13 Baltic
-LATIN8--ISO 8859-14 Celtic
-LATIN9--ISO 8859-15 (Latin 1 with Euro and accents)
-LATIN10--ISO 8859-16 Romanian
-ISO_8859_5--ISO 8859-5/ECMA 113 (Latin/Cyrillic)
-ISO_8859_6--ISO 8859-6/ECMA 114 (Latin/Arabic)
-ISO_8859_7--ISO 8859-7/ECMA 118 (Latin/Greek)
-ISO_8859_8--ISO 8859-8/ECMA 121 (Latin/Hebrew)
-MULE_INTERNAL--Multilingual Emacs
-WIN866--Windows CP866 (Cyrillic)
-WIN874--Windows CP874 (Thai)
-WIN1250--Windows CP1250 (Central Euope)
-WIN--Windows CP1251 (Cyrillic)
-WIN1252--Windows CP1252 (Western European)
-WIN1253--Windows CP1253 (Greek)
-WIN1254--Windows CP1254 (Turkish)
-WIN1255--Windows CP1255 (Hebrew)
-WIN1256--Windows CP1256 (Arabic)
-WIN1257--Windows CP1257 (Baltic)
-WIN1258--Windows CP1258 (Vietnamese)|
-  );
+  my %encoding = ( Pg => 'UTF8--Unicode (UTF-8)' );
+  # qq|
+# SQL_ASCII--ASCII
+# UTF8--Unicode (UTF-8)
+# EUC_JP--Japanese (EUC_JP)
+# EUC_JP--Japanese (EUC_JIS_2004)
+# SJIS--Japanese (SJIS)
+# SHIFT_JIS_2004--Japanese (SHIFT_JIS_2004)
+# EUC_KR--Korean
+# JOHAB--Korean (Hangul)
+# UHC--Korean (Unified Hangul Code)
+# EUC_TW--Taiwanese
+# BIG5--Traditional Chinese (BIG5)
+# EUC_CN--Simplified Chinese (GB18030)
+# GBK--Simplified Chinese (GBK)
+# GB18030--Chinese
+# KOI8R--Cyrillic (Russian)
+# KOI8U--Cyrillic (Ukrainian)
+# LATIN1--ISO 8859-1 Western Europe
+# LATIN2--ISO 8859-2 Central Europe
+# LATIN3--ISO 8859-3 South Europe
+# LATIN4--ISO 8859-4 North Europe
+# LATIN5--ISO 8859-9 Turkish
+# LATIN6--ISO 8859-10 Nordic
+# LATIN7--ISO 8859-13 Baltic
+# LATIN8--ISO 8859-14 Celtic
+# LATIN9--ISO 8859-15 (Latin 1 with Euro and accents)
+# LATIN10--ISO 8859-16 Romanian
+# ISO_8859_5--ISO 8859-5/ECMA 113 (Latin/Cyrillic)
+# ISO_8859_6--ISO 8859-6/ECMA 114 (Latin/Arabic)
+# ISO_8859_7--ISO 8859-7/ECMA 118 (Latin/Greek)
+# ISO_8859_8--ISO 8859-8/ECMA 121 (Latin/Hebrew)
+# MULE_INTERNAL--Multilingual Emacs
+# WIN866--Windows CP866 (Cyrillic)
+# WIN874--Windows CP874 (Thai)
+# WIN1250--Windows CP1250 (Central Euope)
+# WIN--Windows CP1251 (Cyrillic)
+# WIN1252--Windows CP1252 (Western European)
+# WIN1253--Windows CP1253 (Greek)
+# WIN1254--Windows CP1254 (Turkish)
+# WIN1255--Windows CP1255 (Hebrew)
+# WIN1256--Windows CP1256 (Arabic)
+# WIN1257--Windows CP1257 (Baltic)
+# WIN1258--Windows CP1258 (Vietnamese)|
+#  );
 
   $encoding{$dbdriver};
 

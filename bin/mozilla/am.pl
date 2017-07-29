@@ -3013,6 +3013,7 @@ pdf--PDF|;
   $form->{type} = "preferences";
 
   $selectencoding = User->encoding($myconfig{dbdriver});
+  $myconfig{charset} = 'UTF8';
   
   $form->header;
 
