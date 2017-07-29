@@ -20,7 +20,7 @@ $form = new Form;
 
 $locale = new Locale $language, "admin";
 
-$form->{charset} = $charset;
+# $form->{charset} = $charset;
 
 eval { require DBI; };
 $form->error($locale->text('DBI not installed!')) if ($@);

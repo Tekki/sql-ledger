@@ -22,7 +22,7 @@ $form = new Form;
 
 $locale = new Locale $language, "login";
 
-$form->{charset} = $charset;
+# $form->{charset} = $charset;
 
 # customization
 if (-f "$form->{path}/custom/$form->{script}") {

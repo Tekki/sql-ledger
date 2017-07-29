@@ -14,7 +14,7 @@ use Encode qw|decode encode|;
 sub new {
   my ($type, $userspath) = @_;
   
-  my $self = { charset => 'UTF-8' };
+  my $self = {};
 
   read(STDIN, $_, $ENV{CONTENT_LENGTH});
 
@@ -121,6 +121,8 @@ sub new {
   $self->{admin} = ($login eq 'admin') ? 1 : 0;
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
+
+  $self->{charset} = 'UTF-8';
 
   $self->{version} = "3.2.5";
   $self->{dbversion} = "3.2.1";
@@ -463,8 +465,7 @@ sub header {
     }
 
     if ($self->{charset}) {
-      my $encoding = $self->{charset} eq 'UTF8' ? 'UTF-8' : $self->{charset};
-      $charset = qq|<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=$encoding">
+      $charset = qq|<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=$self->{charset}">
   |;
     }
 

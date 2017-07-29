@@ -76,7 +76,7 @@ if ($@) {
 
 # locale messages
 $locale = new Locale "$myconfig{countrycode}", "$script";
-$form->{charset} = $locale->{charset};
+# $form->{charset} = $locale->{charset};
 
 # send warnings to browser
 $SIG{__WARN__} = sub { eval { print qq|\n$_[0]|; } };
