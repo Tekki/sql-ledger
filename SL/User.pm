@@ -62,7 +62,7 @@ sub country_codes {
   # scan the locale directory and read in the LANGUAGE files
   opendir DIR, "locale";
 
-  my @dir = grep !/(^\.\.?$|\..*)/, readdir DIR;
+  my @dir = grep /_utf/, readdir DIR;
   
   foreach my $dir (@dir) {
     next unless open(FH, "locale/$dir/LANGUAGE");
