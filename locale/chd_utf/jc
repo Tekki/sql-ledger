@@ -1,10 +1,11 @@
+use utf8;
+
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Accepted format is'          => 'Erlaubtes Format ist',
   'Accounting Menu'             => 'Kontoverwaltung',
   'Add Column'                  => 'Spalte hinzufügen',
-  'Add Store Card'              => 'Artikelkarte erfassen',
   'Add Stores Card'             => 'Artikelkarte erfassen',
   'Add Time Card'               => 'Stempelkarte erfassen',
   'Align'                       => 'Ausrichtung',
@@ -204,6 +205,7 @@ $self{subs} = {
   'search'                      => 'search',
   'section_menu'                => 'section_menu',
   'select_item'                 => 'select_item',
+  'show_progress'               => 'show_progress',
   'storescard_footer'           => 'storescard_footer',
   'storescard_header'           => 'storescard_header',
   'timecard_footer'             => 'timecard_footer',
@@ -212,7 +214,7 @@ $self{subs} = {
   'yes'                         => 'yes',
   'yes_delete_storescard'       => 'yes_delete_storescard',
   'yes_delete_timecard'         => 'yes_delete_timecard',
-  'artikelkarte_erfassen'       => 'add_store_card',
+  'artikelkarte_erfassen'       => 'add_stores_card',
   'stempelkarte_erfassen'       => 'add_time_card',
   'einchecken'                  => 'check_in',
   'auschecken'                  => 'check_out',

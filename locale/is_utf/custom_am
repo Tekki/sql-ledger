@@ -1,0 +1,20 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'About'                       => 'Um',
+  'Database Host'               => 'Gagnagrunns-netţjónn',
+  'Dataset'                     => 'Gagnasafn',
+  'Licensed to'                 => 'Skráđ á',
+  'User'                        => 'Notandi',
+  'Version'                     => 'Útgáfa',
+  'localhost'                   => 'lokal',
+};
+
+$self{subs} = {
+  'company_logo'                => 'company_logo',
+};
+
+1;
+

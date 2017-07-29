@@ -1,0 +1,32 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'April'                       => 'СавХЬи',
+  'August'                      => 'СзЧегд',
+  'December'                    => 'ФХЫСТви',
+  'February'                    => 'ЦХзвСЬи',
+  'January'                     => 'бЮзСви',
+  'July'                        => 'ЩРЬи',
+  'June'                        => 'ЩРЮи',
+  'March'                       => 'ЭСвд',
+  'May'                         => 'ЭСЪ',
+  'November'                    => 'ЮЯбТви',
+  'October'                     => 'ЯЫдбТви',
+  'September'                   => 'гХЮдбТви',
+};
+
+$self{subs} = {
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'js_calendar'                 => 'js_calendar',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
+};
+
+1;
+

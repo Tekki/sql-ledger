@@ -1,3 +1,5 @@
+use utf8;
+
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
@@ -112,6 +114,7 @@ $self{subs} = {
   'save'                        => 'save',
   'search_documents'            => 'search_documents',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
   'upload'                      => 'upload',
   'upload_file'                 => 'upload_file',
   'dokument_hinzufügen'        => 'add_document',

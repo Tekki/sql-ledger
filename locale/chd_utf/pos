@@ -1,3 +1,5 @@
+use utf8;
+
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
@@ -122,6 +124,7 @@ $self{subs} = {
   'receipts'                    => 'receipts',
   'resize'                      => 'resize',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
   'nummer_zuweisen'             => 'assign_number',
   'weiter'                      => 'continue',
   'löschen'                    => 'delete',

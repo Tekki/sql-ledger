@@ -1,3 +1,5 @@
+use utf8;
+
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
@@ -186,8 +188,6 @@ $self{texts} = {
   'Feb'                         => 'Feb',
   'February'                    => 'Februar',
   'Fee'                         => 'Gebühr',
-  'Foreign Exchange Gain'       => 'Wechselkurserträge',
-  'Foreign Exchange Loss'       => 'Wechselkursverluste',
   'Form'                        => 'Formular',
   'Fr'                          => 'Fr',
   'From'                        => 'Von',
@@ -504,6 +504,7 @@ $self{subs} = {
   'monitor'                     => 'monitor',
   'move'                        => 'move',
   'paymentmethod_header'        => 'paymentmethod_header',
+  'pg_dump'                     => 'pg_dump',
   'pickvalue'                   => 'pickvalue',
   'print_recurring'             => 'print_recurring',
   'process_transactions'        => 'process_transactions',
@@ -538,6 +539,7 @@ $self{subs} = {
   'search_exchangerates'        => 'search_exchangerates',
   'section_menu'                => 'section_menu',
   'select_all'                  => 'select_all',
+  'show_progress'               => 'show_progress',
   'sic_header'                  => 'sic_header',
   'taxes'                       => 'taxes',
   'unlock_dataset'              => 'unlock_dataset',

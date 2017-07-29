@@ -1,3 +1,5 @@
+use utf8;
+
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
@@ -260,6 +262,7 @@ $self{subs} = {
   'select_item'                 => 'select_item',
   'shipping_address'            => 'shipping_address',
   'shipto_selected'             => 'shipto_selected',
+  'show_progress'               => 'show_progress',
   'transactions'                => 'transactions',
   'update'                      => 'update',
   'vendor_invoice'              => 'vendor_invoice',

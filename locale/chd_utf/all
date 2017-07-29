@@ -1,3 +1,5 @@
+use utf8;
+
 # These are all the texts to build the translations files.
 # to build unique strings edit the module files instead
 # this file is just a shortcut to build strings which are the same
@@ -185,6 +187,7 @@ $self{texts} = {
   'BIC'                         => 'BIC',
   'BOM'                         => 'Stückliste',
   'Back'                        => 'Zurück',
+  'Backorder'                   => '',
   'Backorder from Orders: '     => '',
   'Backup'                      => 'Datensicherung',
   'Backup File'                 => 'Backup-Datei',
@@ -200,6 +203,7 @@ $self{texts} = {
   'Barcodes'                    => 'Barcodes',
   'Based on'                    => 'Basierend auf',
   'Batch'                       => 'Massenverarbeitung',
+  'Batch No.'                   => '',
   'Batch Number'                => 'Massennummer',
   'Batch Posting failed!'       => 'Massenversand fehlgeschlagen',
   'Batch deleted!'              => 'Voucher gelöscht!',
@@ -262,6 +266,7 @@ $self{texts} = {
   'Cannot post voucher!'        => 'Voucher kann nicht gebucht werden!',
   'Cannot process gzipped file!' => 'Zip-Datei kann nicht verarbeitet werden!',
   'Cannot remove files!'        => 'Dateien können nicht gelöscht werden!',
+  'Cannot return assembly!'     => '',
   'Cannot save Batch'           => 'Voucher kann nicht gespeichert werden!',
   'Cannot save account!'        => 'Konto kann nicht gespeichert werden!',
   'Cannot save defaults!'       => 'Standardeinstellungen können nicht gespeichert werden!',
@@ -493,6 +498,7 @@ $self{texts} = {
   'Document saved!'             => 'Dokument gespeichert!',
   'Documents deleted!'          => 'Dokument gelöscht?',
   'Done'                        => 'Fertig',
+  'Download Dump'               => '',
   'Drawing'                     => 'Zeichnung',
   'Driver'                      => 'Treiber',
   'Drop-down'                   => 'Dropdown',
@@ -641,6 +647,7 @@ $self{texts} = {
   'Folder'                      => 'Ordner',
   'For'                         => 'für',
   'Foreign Exchange Gain'       => 'Wechselkurserträge',
+  'Foreign Exchange Gain/Loss'  => '',
   'Foreign Exchange Loss'       => 'Wechselkursverluste',
   'Form'                        => 'Formular',
   'Fr'                          => 'Fr',

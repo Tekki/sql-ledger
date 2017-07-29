@@ -1,3 +1,5 @@
+use utf8;
+
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
@@ -143,6 +145,7 @@ $self{subs} = {
   'search'                      => 'search',
   'section_menu'                => 'section_menu',
   'select_all'                  => 'select_all',
+  'show_progress'               => 'show_progress',
   'yes'                         => 'yes',
   'kombinieren'                 => 'combine',
   'weiter'                      => 'continue',

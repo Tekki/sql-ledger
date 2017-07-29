@@ -1,0 +1,20 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'About'                       => 'å³äº',
+  'Database Host'               => 'èµæåºä¸»æº',
+  'Dataset'                     => 'èµæé',
+  'Licensed to'                 => 'ææäº',
+  'User'                        => 'ä½¿ç¨è',
+  'Version'                     => 'çæ¬',
+  'localhost'                   => 'æ¬å°å¯ä¸»',
+};
+
+$self{subs} = {
+  'company_logo'                => 'company_logo',
+};
+
+1;
+

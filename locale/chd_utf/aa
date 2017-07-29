@@ -1,3 +1,5 @@
+use utf8;
+
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
@@ -209,6 +211,7 @@ $self{subs} = {
   'resize'                      => 'resize',
   'search'                      => 'search',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
   'subtotal'                    => 'subtotal',
   'transactions'                => 'transactions',
   'update'                      => 'update',

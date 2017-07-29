@@ -1,0 +1,32 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Company'                     => 'Yritys',
+  'Continue'                    => 'Jatka',
+  'Dataset is newer than version!' => 'Tietokanta on uudempi kuin sovelluksen versio',
+  'Incorrect Dataset version!'  => 'V��r� tietokannan versio!',
+  'Login'                       => 'Nimi',
+  'Name'                        => 'Nimi',
+  'No email address for'        => 'S�hk�postiosoite puuttuu',
+  'Password'                    => 'Salasana',
+  'Upgrading to Version'        => 'P�ivitet��n',
+  'Version'                     => 'Versio',
+  'You did not enter a name!'   => 'Et kirjoittanut nime�',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'email_tan'                   => 'email_tan',
+  'login'                       => 'login',
+  'login_screen'                => 'login_screen',
+  'logout'                      => 'logout',
+  'selectdataset'               => 'selectdataset',
+  'tan_login'                   => 'tan_login',
+  'jatka'                       => 'continue',
+  'nimi'                        => 'login',
+};
+
+1;
+

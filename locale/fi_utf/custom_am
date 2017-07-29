@@ -1,0 +1,20 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'About'                       => 'Lis�tietoja',
+  'Database Host'               => 'Tietokannan osoite',
+  'Dataset'                     => 'Tietokanta',
+  'Licensed to'                 => 'Lisenssin omistaja',
+  'User'                        => 'K�ytt�j�',
+  'Version'                     => 'Versio',
+  'localhost'                   => 'paikallinen tietokone',
+};
+
+$self{subs} = {
+  'company_logo'                => 'company_logo',
+};
+
+1;
+
