@@ -475,6 +475,8 @@ sub header {
 
     print qq|Content-Type: text/html
 
+<!DOCTYPE html>
+<html>
 <head>
   <title>$self->{titlebar}</title>
   <META NAME="robots" CONTENT="noindex,nofollow" />

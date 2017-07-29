@@ -36,8 +36,7 @@ sub display {
 
 </FRAMESET>
 
-</BODY>
-</HTML>
+</html>
 |;
 
 }
