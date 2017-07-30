@@ -722,9 +722,9 @@ sub parse_template {
   my $ok;
 
   if (-f "$self->{templates}/$self->{language_code}/$self->{IN}") {
-    open(IN, "$self->{templates}/$self->{language_code}/$self->{IN}") or $self->error("$self->{templates}/$self->{language_code}/$self->{IN} : $!");
+    open(IN, '<:utf8', "$self->{templates}/$self->{language_code}/$self->{IN}") or $self->error("$self->{templates}/$self->{language_code}/$self->{IN} : $!");
   } else {
-    open(IN, "$self->{templates}/$self->{IN}") or $self->error("$self->{templates}/$self->{IN} : $!");
+    open(IN, '<:utf8', "$self->{templates}/$self->{IN}") or $self->error("$self->{templates}/$self->{IN} : $!");
   }
 
   my @template = <IN>;
@@ -740,11 +740,11 @@ sub parse_template {
   
   if ($self->{format} =~ /(ps|pdf)/ || $self->{media} eq 'email') {
     $out = $self->{OUT};
-    $self->{OUT} = ">$self->{tmpfile}";
+    $self->{OUT} = $self->{tmpfile};
   }
 
   if ($self->{OUT}) {
-    open(OUT, "$self->{OUT}") or $self->error("$self->{OUT} : $!");
+    open(OUT, '>:utf8', $self->{OUT}) or $self->error("$self->{OUT} : $!");
   } else {
     open(OUT, ">-") or $self->error("STDOUT : $!");
 
