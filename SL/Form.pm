@@ -10,6 +10,7 @@
 package Form;
 
 use Encode qw|decode encode|;
+use utf8;
 
 sub new {
   my ($type, $userspath) = @_;
@@ -177,7 +178,7 @@ sub unescape {
 
   $str =~ s/%([0-9a-fA-Z]{2})/pack("c",hex($1))/eg;
   $str =~ s/\r?\n/\n/g;
-  $str = decode 'UTF-8', $str;
+  $str = decode 'UTF-8', $str if utf8::valid($str) && !utf8::is_utf8($str);
 
   $str;
 
