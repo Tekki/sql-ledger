@@ -13,6 +13,8 @@
 
 package Mailer;
 
+use utf8;
+
 sub new {
   my ($type) = @_;
   my $self = {};
@@ -30,11 +32,12 @@ sub send {
   my $msgid = "$boundary\@$domain";
   $boundary = "SL-$self->{version}-$boundary";
   
-  $self->{charset} ||= 'UTF-8';
-  $self->{charset} = 'UTF-8' if $self->{charset} eq 'UTF8';
+  $self->{charset} = 'UTF-8';
 
   $self->{contenttype} ||= "text/plain";
-  
+
+  utf8::encode $self->{$_} for qw|from to cc bcc subject message|;
+
   my %h;
   for (qw(from to cc bcc)) {
     $self->{$_} =~ s/\&lt;/</g;
