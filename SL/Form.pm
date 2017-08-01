@@ -9,7 +9,6 @@
 
 package Form;
 
-use Encode qw|decode encode|;
 use utf8;
 
 sub new {
@@ -163,7 +162,7 @@ sub escape {
     $str = $self->escape($str, 1) if $1 == 0 && $2 < 44;
   }
 
-  $str = encode 'UTF-8', $str;
+  utf8::encode $str;
   $str =~ s/([^a-zA-Z0-9_.-])/sprintf("%%%02x", ord($1))/ge;
   $str;
 
@@ -178,7 +177,7 @@ sub unescape {
 
   $str =~ s/%([0-9a-fA-Z]{2})/pack("c",hex($1))/eg;
   $str =~ s/\r?\n/\n/g;
-  $str = decode 'UTF-8', $str if utf8::valid($str) && !utf8::is_utf8($str);
+  utf8::decode $str;
 
   $str;
 
