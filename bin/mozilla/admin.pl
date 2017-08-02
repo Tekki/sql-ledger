@@ -218,7 +218,7 @@ sub list_datasets {
 # type=submit $locale->text('Oracle')
 # type=submit $locale->text('Sybase')
 
-  open(FH, "$memberfile") or $form->error("$memberfile : $!");
+  open(FH, '<:utf8', $memberfile) or $form->error("$memberfile : $!");
 
   my %member;
   my $member;
