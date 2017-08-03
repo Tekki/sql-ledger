@@ -4216,7 +4216,7 @@ sub company_logo {
 
 </pre>
 <center>
-<a href="http://www.sql-ledger.com" target=_blank><img src=$images/sql-ledger.png border=0></a>
+<a href="https://github.com/Tekki/sql-ledger" target=_blank><img src=$images/sql-ledger.png border=0></a>
 <h1 class=login>|.$locale->text('Version').qq| $form->{version}</h1>
 
 <p>
