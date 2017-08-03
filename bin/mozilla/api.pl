@@ -1,22 +1,22 @@
 #=====================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2015
+# Copyright (C) 2015-2017
 #
-#  Author: Tekki at Cubulon
-#     Web: https://cubulon.ch
+#  Author: Tekki
+#     Web: https://tekki.ch
 #
-#  Version: 0.3
+#  Version: 0.4
 #
 #======================================================================
 #
-# Cubulon connector
+# JSON API
 #
 #======================================================================
 
 use JSON::PP;
 use SL::AA;
+use SL::API;
 use SL::CT;
-use SL::Cubulon;
 use SL::IS;
 use SL::OE;
 
@@ -25,7 +25,7 @@ sub add_payment {
   my $result       = 'error';
   my $invoice_form = Form->new;
   $invoice_form->{$_} = $form->{$_} for qw|id dcn invnumber|;
-  Cubulon->find_invoice(\%myconfig, $invoice_form);
+  API->find_invoice(\%myconfig, $invoice_form);
 
   if ($invoice_form->{id}) {
 
@@ -52,17 +52,17 @@ sub add_payment {
 
   print qq|Content-Type: application/json; charset=$form->{charset}
 
-| . JSON::PP->new->utf8(0)->encode({result => $result});
+| . JSON::PP->new->encode({result => $result});
 }
 
 sub add_reference {
 
-  Cubulon->find_invoice(\%myconfig, $form);
-  Cubulon->add_reference(\%myconfig, $form);
+  API->find_invoice(\%myconfig, $form);
+  API->add_reference(\%myconfig, $form);
 
   print qq|Content-Type: application/json; charset=$form->{charset}
 
-| . JSON::PP->new->utf8(0)->encode({result => $form->{result}});
+| . JSON::PP->new->encode({result => $form->{result}});
 }
 
 sub customer_details {
@@ -85,12 +85,12 @@ sub customer_details {
 
   print qq|Content-Type: application/json; charset=$form->{charset}
 
-| . JSON::PP->new->utf8(0)->encode(\%new_form);
+| . JSON::PP->new->encode(\%new_form);
 }
 
 sub invoice_details {
 
-  Cubulon->find_invoice(\%myconfig, $form);
+  API->find_invoice(\%myconfig, $form);
 
   if ($form->{id}) {
     $form->{vc} = 'customer';
@@ -104,16 +104,16 @@ sub invoice_details {
 
   print qq|Content-Type: application/json; charset=$form->{charset}
 
-| . JSON::PP->new->utf8(0)->encode(\%new_form);
+| . JSON::PP->new->encode(\%new_form);
 }
 
 sub list_accounts {
 
-  Cubulon->list_accounts(\%myconfig, $form);
+  API->list_accounts(\%myconfig, $form);
 
   print qq|Content-Type: application/json; charset=$form->{charset}
 
-| . JSON::PP->new->utf8(0)->encode({accounts => $form->{accounts}});
+| . JSON::PP->new->encode({accounts => $form->{accounts}});
 }
 
 sub search_customer {
@@ -123,7 +123,7 @@ sub search_customer {
 
   print qq|Content-Type: application/json; charset=$form->{charset}
 
-| . JSON::PP->new->utf8(0)->encode({customers => $form->{CT}});
+| . JSON::PP->new->encode({customers => $form->{CT}});
 }
 
 sub search_order {
@@ -135,7 +135,7 @@ sub search_order {
 
   print qq|Content-Type: application/json; charset=$form->{charset}
 
-| . JSON::PP->new->utf8(0)->encode({orders => $form->{OE}});
+| . JSON::PP->new->encode({orders => $form->{OE}});
 }
 
 sub search_transaction {
@@ -147,7 +147,7 @@ sub search_transaction {
 
   print qq|Content-Type: application/json; charset=$form->{charset}
 
-| . JSON::PP->new->utf8(0)->encode({transactions => $form->{transactions}});
+| . JSON::PP->new->encode({transactions => $form->{transactions}});
 }
 
 1;

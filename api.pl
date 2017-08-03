@@ -19,8 +19,6 @@ BEGIN {
   push @INC, '.';
 }
 
-use open ':std' => ':utf8';
-
 # setup defaults, DO NOT CHANGE
 $userspath = "users";
 $spool = "spool";

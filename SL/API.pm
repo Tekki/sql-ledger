@@ -1,19 +1,19 @@
 #=====================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2015
+# Copyright (C) 2015-2017
 #
-#  Author: Tekki at Cubulon
-#     Web: https://cubulon.ch
+#  Author: Tekki
+#     Web: https://tekki.ch
 #
-#  Version: 0.3
+#  Version: 0.4
 #
 #======================================================================
 #
-# Cubulon connector
+# JSON API
 #
 #======================================================================
 
-package Cubulon;
+package API;
 
 sub add_reference {
   my ($self, $myconfig, $form) = @_;
