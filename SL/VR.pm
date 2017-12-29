@@ -199,6 +199,9 @@ sub list_vouchers {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
+  my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  $form->{precision} = $defaults{precision};
+
   my $ml = 1;
   
   my $query = qq|SELECT batchnumber, description, transdate, apprdate, batch

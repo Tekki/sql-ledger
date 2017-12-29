@@ -489,11 +489,27 @@ sub form_header {
   if ($form->{vc} eq 'customer') {
     $vclabel = $locale->text('Customer');
     $vcnumber = $locale->text('Customer Number');
+    $lock = 'lock_sinumber';
   } else {
     $vclabel = $locale->text('Vendor');
     $vcnumber = $locale->text('Vendor Number');
   }
   
+  if ($form->{id} && $form->{$lock}) {
+    $invnumber = qq|
+	      <tr>
+		<th align=right nowrap>|.$locale->text('Invoice Number').qq|</th>
+		<td>|.$form->quote($form->{invnumber}).qq|</td>
+	      </tr>|.$form->hide_form("invnumber", "$lock");
+  } else {
+    $invnumber = qq|
+	      <tr>
+		<th align=right nowrap>|.$locale->text('Invoice Number').qq|</th>
+		<td><input name=invnumber size=20 value="|.$form->quote($form->{invnumber}).qq|"></td>
+	      </tr>|;
+
+  }
+
   $vcref = qq|<a href=ct.pl?action=edit&db=$form->{vc}&id=$form->{"$form->{vc}_id"}&login=$form->{login}&path=$form->{path} target=_blank>?</a>|;
   
   $vc = qq|<input type=hidden name=action value="Update">
@@ -611,6 +627,7 @@ sub form_header {
 
   $checked{onhold} = ($form->{onhold}) ? "checked" : "";
 
+
   $form->header;
   
   &calendar;
@@ -677,10 +694,7 @@ print qq|
 	    <table>
 	      $department
 	      $employee
-	      <tr>
-		<th align=right nowrap>|.$locale->text('Invoice Number').qq|</th>
-		<td><input name=invnumber size=20 value="|.$form->quote($form->{invnumber}).qq|"></td>
-	      </tr>
+              $invnumber
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Order Number').qq|</th>
 		<td><input name=ordnumber size=20 value="|.$form->quote($form->{ordnumber}).qq|"></td>
@@ -2094,8 +2108,15 @@ sub transactions {
     $namefld = "vendornumber";
     $vcnumber = $locale->text('SSN');
   }
-  
-  $column_data{delete} = qq|<th class=listheading width=1%><input name="allbox_delete" type=checkbox class=checkbox value="1" onChange="CheckAll();"></th>|;
+
+  for $i (1 .. $form->{rowcount}) {
+############
+;
+  }
+
+  $form->{allbox} = ($form->{allbox}) ? "checked" : "";
+  $action = ($form->{deselect}) ? "deselect_all" : "select_all";
+  $column_data{delete} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll(); javascript:main.submit()"><input type=hidden name=action value="$action"></th>|;
   $column_data{runningnumber} = qq|<th class=listheading>&nbsp;</th>|;
   $column_data{id} = "<th><a class=listheading href=$href&sort=id>".$locale->text('ID')."</a></th>";
   $column_data{transdate} = "<th><a class=listheading href=$href&sort=transdate>".$locale->text('Date')."</a></th>";
@@ -2152,7 +2173,7 @@ sub transactions {
 
   $form->header;
 
-  &check_all(qw(allbox_delete id_));
+  &check_all(qw(allbox id_));
 
   print qq|
 <body>
@@ -2194,6 +2215,7 @@ sub transactions {
   foreach $ref (@{ $form->{transactions} }) {
 
     $i++;
+    $checked{$i} = ($form->{"checked_$i"}) ? "checked" : "";
     
     if ($form->{l_subtotal} eq 'Y') {
       if ($sameitem ne $ref->{$form->{sort}}) {
@@ -2231,7 +2253,7 @@ sub transactions {
     if ($ref->{paid}) {
       $column_data{delete} = qq|<td>&nbsp;</td>|;
     } else {
-      $column_data{delete} = qq|<td><input name="id_$i" class=checkbox type=checkbox value=$ref->{id}></td>
+      $column_data{delete} = qq|<td><input name="id_$i" class=checkbox type=checkbox value=$ref->{id} $checked{$i}></td>
       <input name="reference_$i" type="hidden" value="$ref->{invnumber}">
 |;
     }
@@ -2325,11 +2347,20 @@ sub transactions {
 
   if ($myconfig{acs} !~ /$form->{ARAP}--$form->{ARAP}/) {
     $i = 1;
+
+    $button{'Select all'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Select all').qq|"> |;
+    $button{'Select all'}{order} = $i++;
+
+    $button{'Deselect all'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Deselect all').qq|"> |;
+    $button{'Deselect all'}{order} = $i++;
+
     if ($form->{ARAP} eq 'AR') {
-      $button{'AR--Add Transaction'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('AR Transaction').qq|"> |;
-      $button{'AR--Add Transaction'}{order} = $i++;
-      $button{'AR--Sales Invoice'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Sales Invoice.').qq|"> |;
-      $button{'AR--Sales Invoice'}{order} = $i++;
+      unless ($form->{till}) {
+        $button{'AR--Add Transaction'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('AR Transaction').qq|"> |;
+        $button{'AR--Add Transaction'}{order} = $i++;
+        $button{'AR--Sales Invoice'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Sales Invoice.').qq|"> |;
+        $button{'AR--Sales Invoice'}{order} = $i++;
+      }
 
       $button{'AR--Delete Transactions'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Delete Transactions').qq|"> |;
       $button{'AR--Delete Transactions'}{order} = $i++;
@@ -2351,6 +2382,12 @@ sub transactions {
         $myconfig{acs} .= ";AP--Delete Transactions";
       }
 
+    }
+
+    if ($form->{deselect}) {
+      delete $button{'Select all'};
+    } else {
+      delete $button{'Deselect all'};
     }
 
     foreach $item (split /;/, $myconfig{acs}) {
@@ -2376,12 +2413,9 @@ sub transactions {
   $form->hide_form("$form->{vc}", "$form->{vc}_id");
   $form->hide_form(qw(rowcount helpref callback path login));
   
-  if (! $form->{till}) {
-    foreach $item (sort { $a->{order} <=> $b->{order} } %button) {
-      print $item->{code};
-    }
+  foreach $item (sort { $a->{order} <=> $b->{order} } %button) {
+    print $item->{code};
   }
-
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -2441,6 +2475,18 @@ print "
   }
  
 }
+
+
+sub select_all {
+
+  $form->{callback} .= "&allbox=1&deselect=1";
+  for $i (1 .. $form->{rowcount}) { $form->{callback} .= "&checked_$i=1" }
+  $form->redirect;
+
+}
+
+
+sub deselect_all { $form->redirect }
 
 
 sub consolidate {

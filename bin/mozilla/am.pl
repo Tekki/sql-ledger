@@ -63,10 +63,8 @@ sub delete { &{ "delete_$form->{type}" } };
 sub save_as_new {
 
   $form->{copydir} = $form->{id};
-  $form->{oldIC_taxpart} = "";
-  $form->{oldIC_taxservice} = "";
 
-  delete $form->{id};
+  for (qw(id oldIC_taxpart oldIC_taxservice)) { delete $form->{$_} }
 
   &save;
 
@@ -1671,13 +1669,17 @@ sub save_language {
 
   AM->save_language(\%myconfig, \%$form);
 
-  $basedir = "$templates/$myconfig{dbname}";
-  $basedir = "$templates/$myconfig{dbname}/$form->{copydir}" if $form->{copydir};
-  $targetdir = "$templates/$myconfig{dbname}/$form->{code}";
+  $targetdir = "$templates/$myconfig{templates}/$form->{code}";
+  $basedir = "$myconfig{templates}/$form->{copydir}" if $form->{copydir};
+  $basedir = "$templates/$basedir";
 
   umask(002);
 
   if (mkdir "$targetdir", oct("771")) {
+    unless (-d $basedir) {
+      $basedir = "$templates/$myconfig{templates}";
+    }
+
     opendir TEMPLATEDIR, "$basedir" or $form->error("$basedir : $!");
 
     @templates = grep !/^\.\.?$/, readdir TEMPLATEDIR;
@@ -1689,13 +1691,16 @@ sub save_language {
       if (-f "$basedir/$_") {
         open(TEMP, "$basedir/$_") or $form->error("$basedir/$_ : $!");
 
-        open(NEW, ">$targetdir/$_") or $form->error("$targetdir/$_ : $!");
+        unless (-f $targetdir/$_) {
+          open(NEW, ">$targetdir/$_") or $form->error("$targetdir/$_ : $!");
 
-        while ($line = <TEMP>) {
-          print NEW $line;
+          while ($line = <TEMP>) {
+            print NEW $line;
+          }
+          close(NEW);
         }
+
         close(TEMP);
-        close(NEW);
       }
     }
   }
@@ -1703,8 +1708,9 @@ sub save_language {
   unless ($form->{copydir}) {
     if ($form->{id} && ($form->{id} ne $form->{code})) {
       # remove old directory
-      unlink "<$templates/$myconfig{dbname}/$form->{id}/*>";
-      rmdir "$templates/$myconfig{dbname}/$form->{id}";
+      $dir = "$templates/$myconfig{templates}/$form->{id}";
+      unlink <$dir/*>;
+      rmdir "$dir";
     }
   }
 
@@ -1732,7 +1738,7 @@ sub delete_language {
   print qq|
 <h2 class=confirm>$form->{title}</h2>
 
-<h4>|.$locale->text('Deleting a language will also delete the templates for the language').qq| $form->{invnumber}</h4>
+<h4>|.$locale->text('Are you sure you want to delete language: ').qq| $form->{code}</h4>
 
 <input type=hidden name=action value=continue>
 <input type=hidden name=nextsub value=yes_delete_language>
@@ -1747,14 +1753,45 @@ sub delete_language {
 
 
 sub yes_delete_language {
-  
+ 
+  # check if template dir is used by another dataset
+  open(FH, "$memberfile") or $form->error("$memberfile : $!\n");
+  @member = <FH>;
+  close(FH);
+
+  %templates = ();
+
+  while (@member) {
+    $_ = shift @member;
+    if (/^\[admin\@(.*)\]/) {
+      $db = $1;
+      do {
+        if (/^templates=(.*)/) {
+          $templates{$1}++;
+        }
+        $_ = shift @member;
+      } until /^\s/;
+    }
+  }
+
+  $ok = 1;
+
+  for (keys %templates) {
+    if ($templates{$_} > 1) {
+      $ok = 0;
+      last;
+    }
+  }
+
   AM->delete_language(\%myconfig, \%$form);
 
-  # delete templates
-  my $dir = "$templates/$myconfig{dbname}/$form->{code}";
-  if (-d $dir) {
-    unlink <$dir/*>;
-    rmdir "$templates/$myconfig{dbname}/$form->{code}";
+  if ($ok) {
+    # delete templates
+    $dir = "$templates/$myconfig{templates}/$form->{code}";
+    if (-d $dir) {
+      unlink <$dir/*>;
+      rmdir "$dir";
+    }
   }
   $form->redirect($locale->text('Language deleted!'));
 
@@ -1975,7 +2012,7 @@ sub list_templates {
   AM->language(\%myconfig, \%$form);
 
   if (! @{ $form->{ALL} }) {
-    $form->{file} = "$templates/$myconfig{dbname}/$form->{file}";
+    $form->{file} = "$templates/$form->{file}";
     &display_form;
     exit;
   }
@@ -1986,9 +2023,7 @@ sub list_templates {
   
   $form->sort_order();
 
-  chomp $myconfig{dbname};
-  $form->{file} =~ s/$templates\/$myconfig{dbname}//;
-  $form->{file} =~ s/\///;
+  $form->{file} =~ s/$myconfig{templates}\///;
   $form->{title} = $form->{file};
 
   my @column_index = $form->sort_columns(qw(code description));
@@ -2032,7 +2067,7 @@ sub list_templates {
         <tr valign=top class=listrow$i>
 |;
 
-    $column_data{code} = qq|<td><a href=$form->{script}?action=display_form&file=$templates/$myconfig{dbname}/$ref->{code}/$form->{file}&path=$form->{path}&login=$form->{login}>$ref->{code}</td>|;
+    $column_data{code} = qq|<td><a href=$form->{script}?action=display_form&file=$templates/$myconfig{templates}/$ref->{code}/$form->{file}&path=$form->{path}&login=$form->{login}>$ref->{code}</td>|;
     $column_data{description} = qq|<td>$ref->{description}</td>|;
     
    for (@column_index) { print "$column_data{$_}\n" }
@@ -2089,7 +2124,7 @@ sub display_form {
   $form->{body} =~ s/<%include\s+?(\S+)?\s+?(\S+)?%>/$1 <%include $2%>/g;
   $form->{body} =~ s/<%include\s+?(\S+)?%>/<a href=$form->{script}\?action=display_form&file=$basedir\/$1&path=$form->{path}&login=$form->{login}&callback=$callback>$1<\/a>/g;
 
-  $form->{body} =~ s/<%templates%>/$templates\/$myconfig{dbname}/g;
+  $form->{body} =~ s/<%templates%>/$templates\/$myconfig{templates}/g;
   $form->{body} =~ s/<%language_code%>/$form->{language_code}/g;
   $form->{body} =~ s/<%if .*?%>|<%foreach .*?%>|<%end .*?%>//g;
 
@@ -2432,7 +2467,11 @@ sub defaults {
   $checked{person} = "checked" if $form->{typeofcontact} eq 'person';
   
   $roundchange{$form->{roundchange}} = "checked";
-    
+
+  for (qw(glnumber sinumber sonumber ponumber sqnumber rfqnumber employeenumber customernumber vendornumber)) {
+    $checked{"lock_$_"} = "checked" if $form->{"lock_$_"};
+  }
+
   $form->{title} = $locale->text('System Defaults');
   
   $form->helpref("system_defaults", $myconfig{countrycode});
@@ -2500,6 +2539,18 @@ sub defaults {
 		<td><input name=precision class="inputright" size=5 value="$form->{precision}"></td>
 	      </tr>
 	      <tr>
+		<th align=right>|.$locale->text('Annual Interest').qq|</th>
+		<td><input name=annualinterest class="inputright" size=5 value="$form->{annualinterest}">&nbsp;%</td>
+	      </tr>
+	      <tr>
+		<th align=right>|.$locale->text('Late Payment Fee').qq|</th>
+		<td><input name=latepaymentfee class="inputright" size=5 value="$form->{latepaymentfee}">&nbsp;%</td>
+	      </tr>
+	      <tr>
+		<th align=right>|.$locale->text('Restocking Charge').qq|</th>
+		<td><input name=restockingcharge class="inputright" size=5 value="$form->{restockingcharge}">&nbsp;%</td>
+	      </tr>
+	      <tr>
 		<th align=right>|.$locale->text('Round').qq|</th>
 		<td>
 		  <input name=roundchange type=radio class=radio value="0.01" $roundchange{0.01}>0.01
@@ -2532,7 +2583,7 @@ sub defaults {
     </td>
   </tr>
   <tr>
-    <th class=listheading>|.$locale->text('Last Numbers & Default Accounts').qq|</th>
+    <th class=listheading>|.$locale->text('Default Accounts').qq|</th>
   </tr>
   <tr>
     <td>
@@ -2561,19 +2612,30 @@ sub defaults {
     </td>
   </tr>
   <tr>
+    <th class=listheading>|.$locale->text('Last Numbers').qq|</th>
+  </tr>
+  <tr>
     <td>
       <table>
 	<tr>
+	  <th></th>
+	  <td></td>
+          <th>|.$locale->text('Lock').qq|</th>
+	</tr>
+	<tr>
 	  <th align=right nowrap>|.$locale->text('GL Reference Number').qq|</th>
 	  <td><input name=glnumber size=40 value="$form->{glnumber}"></td>
+	  <td><input name=lock_glnumber class=checkbox type=checkbox value=1 $checked{lock_glnumber}></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Sales Invoice/AR Transaction Number').qq|</th>
 	  <td><input name=sinumber size=40 value="$form->{sinumber}"></td>
+	  <td><input name=lock_sinumber class=checkbox type=checkbox value=1 $checked{lock_sinumber}></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Sales Order Number').qq|</th>
 	  <td><input name=sonumber size=40 value="$form->{sonumber}"></td>
+	  <td><input name=lock_sonumber class=checkbox type=checkbox value=1 $checked{lock_sonumber}></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Vendor Invoice/AP Transaction Number').qq|</th>
@@ -2590,14 +2652,17 @@ sub defaults {
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Purchase Order Number').qq|</th>
 	  <td><input name=ponumber size=40 value="$form->{ponumber}"></td>
+	  <td><input name=lock_ponumber class=checkbox type=checkbox value=1 $checked{lock_ponumber}></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Sales Quotation Number').qq|</th>
 	  <td><input name=sqnumber size=40 value="$form->{sqnumber}"></td>
+	  <td><input name=lock_sqnumber class=checkbox type=checkbox value=1 $checked{lock_sqnumber}></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('RFQ Number').qq|</th>
 	  <td><input name=rfqnumber size=40 value="$form->{rfqnumber}"></td>
+	  <td><input name=lock_rfqnumber class=checkbox type=checkbox value=1 $checked{lock_rfqnumber}></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Part Number').qq|</th>
@@ -2610,14 +2675,17 @@ sub defaults {
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Employee Number').qq|</th>
 	  <td><input name=employeenumber size=40 value="$form->{employeenumber}"></td>
+	  <td><input name=lock_employeenumber class=checkbox type=checkbox value=1 $checked{lock_employeenumber}></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Customer Number').qq|</th>
 	  <td><input name=customernumber size=40 value="$form->{customernumber}"></td>
+	  <td><input name=lock_customernumber class=checkbox type=checkbox value=1 $checked{lock_customernumber}></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Vendor Number').qq|</th>
 	  <td><input name=vendornumber size=40 value="$form->{vendornumber}"></td>
+	  <td><input name=lock_vendornumber class=checkbox type=checkbox value=1 $checked{lock_vendornumber}></td>
 	</tr>
       </table>
     </td>
@@ -2628,7 +2696,9 @@ sub defaults {
 </table>
 |;
 
-  $form->{optional} = "company address tel fax companyemail companywebsite yearend weightunit businessnumber closedto revtrans audittrail method cdt namesbynumber typeofcontact roundchange referenceurl";
+  $form->{optional} = "company address tel fax companyemail companywebsite yearend weightunit businessnumber closedto revtrans audittrail method cdt namesbynumber typeofcontact roundchange referenceurl annualinterest latepaymentfee restockingcharge";
+
+  for (qw(gl si so po sq rfq employee customer vendor)) { $form->{optional} .= " lock_${_}number" }
 
   @f = qw(closedto revtrans audittrail);
   

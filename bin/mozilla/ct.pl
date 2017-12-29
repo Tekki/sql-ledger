@@ -1980,6 +1980,21 @@ sub form_header {
 
   } 
 
+  if ($form->{id} && $form->{"lock_$form->{db}number"}) {
+    $number = qq|
+	      <tr>
+		<th align=right nowrap>$vcnumber</th>
+		<td>|.$form->quote($form->{"$form->{db}number"}).qq|</td>
+	      </tr>|.$form->hide_form("lock_$form->{db}number")
+              .$form->hide_form("$form->{db}number");
+  } else {
+    $number = qq|
+	      <tr>
+		<th align=right nowrap>$vcnumber</th>
+		<td><input name="$form->{db}number" size=32 maxlength=32 value="|.$form->quote($form->{"$form->{db}number"}).qq|"></td>
+	      </tr>|;
+  }
+
   $form->{remittancevoucher} = ($form->{remittancevoucher}) ? "checked" : "";
 
   $reference_documents = &references;
@@ -2006,10 +2021,9 @@ sub form_header {
         <tr valign=top>
 	  <td width=50%>
 	    <table>
-	      <tr>
-		<th align=right nowrap>$vcnumber</th>
-		<td><input name="$form->{db}number" size=32 maxlength=32 value="|.$form->quote($form->{"$form->{db}number"}).qq|"></td>
-	      </tr>
+
+              $number
+
 
 	      $name
 	      
@@ -3282,6 +3296,11 @@ sub purchase_order {
 sub save_as_new {
   
   for (qw(id contactid)) { delete $form->{$_} }
+
+  if ($form->{"lock_$form->{db}number"}) {
+    delete $form->{"$form->{db}number"};
+  }
+
   &save;
   
 }

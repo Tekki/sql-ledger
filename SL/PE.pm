@@ -264,6 +264,8 @@ sub list_stock {
   }
   $sth->finish;
 
+  $form->all_warehouses($myconfig, $dbh);
+
   $form->{stockingdate} ||= $form->current_date($myconfig);
   
   $dbh->disconnect;
@@ -665,6 +667,11 @@ sub stock_assembly {
               VALUES (?, ?, ?, '0', '0')|;
   my $ath = $dbh->prepare($query) || $form->dberror($query);
 
+  (undef, $form->{employee_id}) = $form->get_employee($dbh);
+  $query = qq|INSERT INTO inventory (warehouse_id, parts_id, qty, shippingdate, employee_id)
+              VALUES (?, ?, ?, '$form->{stockingdate}', $form->{employee_id})|;
+  my $ith = $dbh->prepare($query) || $form->dberror($query);
+
   my $i = 0;
   my $sold;
   my $ship;
@@ -758,7 +765,13 @@ sub stock_assembly {
 	  $ath->finish;
 	}
       }
-      
+
+      if ($form->{"warehouse_$i"}) {
+        (undef, $form->{warehouse_id}) = split /--/, $form->{"warehouse_$i"};
+        $ith->execute($form->{warehouse_id}, $uid, $stock);
+        $ith->finish;
+      }
+     
       $form->update_balance($dbh,
                             "project",
 			    "completed",
@@ -775,7 +788,6 @@ sub stock_assembly {
       $sth->finish;
       
     }
-
   }
 
   my $rc = $dbh->commit;

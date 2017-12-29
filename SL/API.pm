@@ -46,6 +46,8 @@ sub find_invoice {
     $where = 'dcn = ' . $dbh->quote($form->{dcn});
   } elsif ($form->{invnumber}) {
     $where = 'invnumber = ' . $dbh->quote($form->{invnumber});
+  } elsif ($form->{waybill}) {
+    $where = 'waybill = ' . $dbh->quote($form->{waybill});
   }
 
   my $query = qq|SELECT id, customer_id FROM ar WHERE $where ORDER BY id DESC LIMIT 1|;

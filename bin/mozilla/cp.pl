@@ -2070,7 +2070,7 @@ sub print_form {
 
   $form->format_string(qw(company address companyemail companywebsite));
 
-  $form->{templates} = "$templates/$myconfig{dbname}";
+  $form->{templates} = "$templates/$myconfig{templates}";
   $form->{IN} = "$form->{formname}.tex";
 
   if ($form->{media} ne 'screen') {

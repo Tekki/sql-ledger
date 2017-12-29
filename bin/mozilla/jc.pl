@@ -60,7 +60,7 @@ sub edit {
 sub jcitems_links {
 
   if (@{ $form->{all_project} }) {
-    $form->{selectprojectnumber} = "\n";
+    $form->{selectprojectnumber} = "";
     $form->{projectnumber} ||= "";
     foreach $ref (@{ $form->{all_project} }) {
       $form->{selectprojectnumber} .= qq|$ref->{projectnumber}--$ref->{id}\n|;
@@ -1993,7 +1993,7 @@ sub print_form {
   
   ($form->{employee}, $form->{employee_id}) = split /--/, $form->{employee};
 
-  $form->{templates} = "$templates/$myconfig{dbname}";
+  $form->{templates} = "$templates/$myconfig{templates}";
   $form->{IN} = "$form->{formname}.$form->{format}";
 
   if ($form->{format} =~ /(ps|pdf)/) {

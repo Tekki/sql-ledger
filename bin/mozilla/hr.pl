@@ -488,12 +488,11 @@ sub prepare_employee {
 	$_ = shift @member;
 	next if ! /\[$form->{employeelogin}\@$myconfig{dbname}\]/;
 	do {
+          chomp;
           if (/^tan/) {
-            chomp;
             (undef, $form->{tan}) = split /=/, $_, 2;
           }
 	  if (/^password/) {
-	    chomp;
 	    (undef, $form->{employeepassword}) = split /=/, $_, 2;
 	  }
 	  $_ = shift @member;
@@ -643,6 +642,20 @@ sub employee_header {
     $form->hide_form(qw(acsrole employeelogin sales tan employeepassword));
   }
 
+  if ($form->{id} && $form->{lock_employeenumber}) {
+    $employeenumber = qq|
+	      <tr>
+		<th align=right nowrap>|.$locale->text('Employee Number').qq|</th>
+		<td>|.$form->quote($form->{employeenumber}).qq|</td>
+	      </tr>|.$form->hide_form(qw(employeenumber lock_employeenumber));
+  } else {
+    $employeenumber = qq|
+	      <tr>
+		<th align=right nowrap>|.$locale->text('Employee Number').qq|</th>
+		<td><input name=employeenumber size=32 maxlength=32 value="|.$form->quote($form->{employeenumber}).qq|"></td>
+	      </tr>|;
+  }
+
   print qq|
 
 <table width=100%>
@@ -656,10 +669,7 @@ sub employee_header {
         <tr valign=top>
 	  <td>
 	    <table>
-	      <tr>
-		<th align=right nowrap>|.$locale->text('Employee Number').qq|</th>
-		<td><input name=employeenumber size=32 maxlength=32 value="|.$form->quote($form->{employeenumber}).qq|"></td>
-	      </tr>
+              $employeenumber
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Name').qq| <font color=red>*</font></th>
 		<td><input name=name size=35 maxlength=64 value="|.$form->quote($form->{name}).qq|"></td>
@@ -949,19 +959,18 @@ sub employee_footer {
 	      );
 	     
     %f = ();
-    for ("Update", "Save", "New Number") { $f{$_} = 1 }
+    for ("Update", "Save", "Save as new", "New Number") { $f{$_} = 1 }
 
     if ($form->{id}) {
       if ($form->{status} eq 'orphaned') {
 	$f{'Delete'} = 1;
       }
-      $f{'Save as new'} = 1;
     }
     if ($form->{admin}) {
       $f{'Access Control'} = 1;
     } else {
       if ($form->{employeelogin}) {
-	for ("Save as new", "Delete") { delete $f{$_} }
+        delete $f{Delete};
       }
     }
 
@@ -1172,7 +1181,7 @@ sub save_employee {
   $form->error($locale->text('Cannot use admin as login!')) if $form->{employeelogin} eq 'admin';
 
   $form->{userspath} = $userspath;
-  
+
   if (HR->save_employee(\%myconfig, \%$form)) {
     &save_memberfile;
   }
@@ -1209,6 +1218,11 @@ sub save_memberfile {
     }
   }
 
+  ($form->{templates}) = grep /^templates=/, @{ $member{"admin\@$myconfig{dbname}"} };
+  $form->{templates} =~ s/templates=//;
+  chomp $form->{templates};
+  $form->{templates} ||= $myconfig{dbname};
+
   if ($form->{employeelogin}) {
     $employeelogin = $form->{employeelogin};
     $employeelogin .= "\@$myconfig{dbname}";  # new format
@@ -1222,7 +1236,7 @@ sub save_memberfile {
     srand( time() ^ ($$ + ($$ << 15)) );
     
     if (@{ $member{$oldlogin} }) {
-      @memberlogin = grep !/^(name=|email=|password=|tan=)/, @{ $member{$oldlogin} };
+      @memberlogin = grep !/^(name|email|password|tan|templates)=/, @{ $member{$oldlogin} };
       ($oldemployeepassword) = grep /^password=/, @{ $member{$oldlogin} };
       pop @memberlogin;
 
@@ -1242,7 +1256,7 @@ sub save_memberfile {
         }
       }
       
-      for (qw(name email tan)) { push @memberlogin, "$_=$form->{$_}\n" if $form->{$_} }
+      for (qw(name email tan templates)) { push @memberlogin, "$_=$form->{$_}\n" if $form->{$_} }
 
       @{ $member{$employeelogin} } = ();
       
@@ -1252,7 +1266,7 @@ sub save_memberfile {
       
     } else {
       for (qw(company dateformat dbconnect dbdriver dbname dbhost dboptions dbpasswd dbuser numberformat)) { $m{$_} = $myconfig{$_} }
-      for (qw(name email tan)) { $m{$_} = $form->{$_} }
+      for (qw(name email tan templates)) { $m{$_} = $form->{$_} }
 
       $m{dbpasswd} = pack 'u', $myconfig{dbpasswd};
       chop $m{dbpasswd};
@@ -3247,6 +3261,9 @@ sub update_employee {
 sub save_as_new {
 
   for (qw(id addressid)) { delete $form->{$_} }
+  if ($form->{lock_employeenumber}) {
+    delete $form->{employeenumber};
+  }
 
   &save;
 
