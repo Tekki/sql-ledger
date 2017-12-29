@@ -566,14 +566,6 @@ sub form_header {
               </tr>
 |;
 
-      $onhand = qq|
- 	      <tr>
-                <th align="right" nowrap="true">|.$locale->text('On Hand').qq|</th>
-                <td>$form->{onhand}</td>
-		<input type=hidden name=onhand value=$form->{onhand}>
-              </tr>
-|;
-
       $avgcost = "";
       $rop = "";
 
@@ -2220,7 +2212,7 @@ sub print_ {
   }
 
   if ($form->{formname} eq 'barcode') {
-    $form->{templates} = "$templates/$myconfig{dbname}";
+    $form->{templates} = "$templates/$myconfig{templates}";
     $form->{IN} = "$form->{formname}.$form->{format}";
     
     if ($form->{format} =~ /(ps|pdf)/) {

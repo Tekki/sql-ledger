@@ -167,7 +167,7 @@ sub order_links {
 
   # warehouses
   if (@{ $form->{all_warehouse} }) {
-    $form->{selectwarehouse} = "\n";
+    $form->{selectwarehouse} = "";
     $form->{warehouse} = "$form->{warehouse}--$form->{warehouse_id}" if $form->{warehouse_id};
 
     for (@{ $form->{all_warehouse} }) { $form->{selectwarehouse} .= qq|$_->{description}--$_->{id}\n| }
@@ -432,14 +432,14 @@ x <a href="javascript:window.close();">|.$locale->text('Close Window').qq|</a>
 
 sub form_header {
 
-  $checkedopen = ($form->{closed}) ? "" : "checked";
-  $checkedclosed = ($form->{closed}) ? "checked" : "";
+  $checked{open} = ($form->{closed}) ? "" : "checked";
+  $checked{closed} = ($form->{closed}) ? "checked" : "";
 
   if ($form->{id}) {
     $openclosed = qq|
       <tr>
-	<th nowrap align=right><input name=closed type=radio class=radio value=0 $checkedopen> |.$locale->text('Open').qq|</th>
-	<th nowrap align=left><input name=closed type=radio class=radio value=1 $checkedclosed> |.$locale->text('Closed').qq|</th>
+	<th nowrap align=right><input name=closed type=radio class=radio value=0 $checked{open}> |.$locale->text('Open').qq|</th>
+	<th nowrap align=left><input name=closed type=radio class=radio value=1 $checked{closed}> |.$locale->text('Closed').qq|</th>
       </tr>
 |;
   }
@@ -506,12 +506,26 @@ sub form_header {
 
 
   if ($form->{type} !~ /_quotation$/) {
-    $ordnumber = qq|
+
+    $lockordnumber = ($form->{vc} eq 'customer') ? 'lock_sonumber' : 'lock_ponumber';
+
+    if ($form->{id} && $form->{$lockordnumber}) {
+      $ordnumber = qq|
+	      <tr>
+		<th width=70% align=right nowrap>|.$locale->text('Order Number').qq|</th>
+                <td>|.$form->quote($form->{ordnumber}).qq|</td>|
+		.$form->hide_form("ordnumber", "quonumber", "$lockordnumber").qq|
+	      </tr>|;
+    } else {
+      $ordnumber = qq|
 	      <tr>
 		<th width=70% align=right nowrap>|.$locale->text('Order Number').qq|</th>
                 <td><input name=ordnumber size=20 value="|.$form->quote($form->{ordnumber}).qq|"></td>|
 		.$form->hide_form(qw(quonumber)).qq|
-	      </tr>
+	      </tr>|;
+    }
+
+    $ordnumber .= qq|
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Order Date').qq| <font color=red>*</font></th>
 		<td><input name=transdate size=11 class=date title="$myconfig{dateformat}" value=$form->{transdate}>|.&js_calendar("main", "transdate").qq|</td>
@@ -546,7 +560,17 @@ sub form_header {
   } else {
     $reqlabel = ($form->{type} eq 'sales_quotation') ? $locale->text('Valid until') : $locale->text('Required by');
     if ($form->{type} eq 'sales_quotation') {
-      $ordnumber = qq|
+      if ($form->{id} && $form->{lock_sqnumber}) {
+        $ordnumber = qq|
+	      <tr>
+		<th width=70% align=right nowrap>|.$locale->text('Quotation Number').qq|</th>
+		<td>|.$form->quote($form->{quonumber}).qq|</td>|
+		.$form->hide_form(qw(ordnumber quonumber lock_sqnumber))
+		.qq|
+	      </tr>
+|;
+      } else {
+        $ordnumber = qq|
 	      <tr>
 		<th width=70% align=right nowrap>|.$locale->text('Quotation Number').qq|</th>
 		<td><input name=quonumber size=20 value="|.$form->quote($form->{quonumber}).qq|"></td>|
@@ -554,8 +578,20 @@ sub form_header {
 		.qq|
 	      </tr>
 |;
+      }
     } else {
-      $ordnumber = qq|
+      if ($form->{id} && $form->{lock_rfqnumber}) {
+        $ordnumber = qq|
+	      <tr>
+		<th width=70% align=right nowrap>|.$locale->text('RFQ Number').qq|</th>
+		<td>|.$form->quote($form->{quonumber}).qq|</td>
+		|
+		.$form->hide_form(qw(ordnumber quonumber lock_rfqnumber))
+		.qq|
+	      </tr>
+|;
+      } else {
+        $ordnumber = qq|
 	      <tr>
 		<th width=70% align=right nowrap>|.$locale->text('RFQ Number').qq|</th>
 		<td><input name=quonumber size=20 value="|.$form->quote($form->{quonumber}).qq|"></td>
@@ -564,6 +600,7 @@ sub form_header {
 		.qq|
 	      </tr>
 |;
+      }
 
       $terms = "";
     }
@@ -2679,6 +2716,20 @@ sub save_as_new {
   for $i (1 .. $form->{rowcount}) {
     for (qw(ship oldship)) { delete $form->{"${_}_$i"} }
   }
+  if ($form->{vc} eq 'customer') {
+    if ($form->{type} eq 'sales_order') {
+      delete $form->{ordnumber} if $form->{lock_sonumber};
+    } else {
+      delete $form->{quonumber} if $form->{lock_sqnumber};
+    }
+  } else {
+    if ($form->{type} eq 'purchase_order') {
+      delete $form->{ordnumber} if $form->{lock_ponumber};
+    } else {
+      delete $form->{quonumber} if $form->{lock_rfqnumber};
+    }
+  }
+
   &save;
 
 }
@@ -2690,6 +2741,20 @@ sub print_and_save_as_new {
   for $i (1 .. $form->{rowcount}) {
     for (qw(ship oldship)) { delete $form->{"${_}_$i"} }
   }
+  if ($form->{vc} eq 'customer') {
+    if ($form->{type} eq 'sales_order') {
+      delete $form->{ordnumber} if $form->{lock_sonumber};
+    } else {
+      delete $form->{quonumber} if $form->{lock_sqnumber};
+    }
+  } else {
+    if ($form->{type} eq 'purchase_order') {
+      delete $form->{ordnumber} if $form->{lock_ponumber};
+    } else {
+      delete $form->{quonumber} if $form->{lock_rfqnumber};
+    }
+  }
+
   &print_and_save;
 
 }
@@ -2703,7 +2768,7 @@ sub ship_receive {
 
   # warehouse
   if (@{ $form->{all_warehouse} }) {
-    $form->{selectwarehouse} = "\n";
+    $form->{selectwarehouse} = "";
     for (@{ $form->{all_warehouse} }) { $form->{selectwarehouse} .= qq|$_->{description}--$_->{id}\n| }
     $form->{selectwarehouse} = $form->escape($form->{selectwarehouse},1);
   }

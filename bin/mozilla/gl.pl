@@ -1174,7 +1174,7 @@ sub form_header {
 
 
   if (!$form->{fxadj}) {
-    $exchangerate = qq|<input type=hidden name=action value="Update">
+    $exchangerate = qq|
                 <th align=right nowrap>|.$locale->text('Currency').qq|</th>
 		<td>
 		  <table>
@@ -1224,6 +1224,18 @@ sub form_header {
 |;
   }
 
+  if ($form->{id} && $form->{lock_glnumber}) {
+    $reference = qq|
+	  <th align=right>|.$locale->text('Reference').qq|</th>
+	  <td>|.$form->quote($form->{reference}).qq|</td>
+	  <th align=right>|.$locale->text('Date').qq| <font color=red>*</font></th>|.$form->hide_form(qw(reference lock_glnumber));
+  } else {
+    $reference = qq|
+	  <th align=right>|.$locale->text('Reference').qq|</th>
+	  <td><input name=reference size=20 value="|.$form->quote($form->{reference}).qq|"></td>
+	  <th align=right>|.$locale->text('Date').qq| <font color=red>*</font></th>|;
+  }
+
   $form->header;
   
   &calendar;
@@ -1249,9 +1261,7 @@ sub form_header {
     <td>
       <table>
 	<tr>
-	  <th align=right>|.$locale->text('Reference').qq|</th>
-	  <td><input name=reference size=20 value="|.$form->quote($form->{reference}).qq|"></td>
-	  <th align=right>|.$locale->text('Date').qq| <font color=red>*</font></th>
+          $reference
 	  $transdate
 	</tr>
 	<tr>
@@ -1345,7 +1355,9 @@ sub form_footer {
 </table>
 |;
 
-  $form->hide_form(qw(path login callback));
+  $form->{action} = "Update";
+
+  $form->hide_form(qw(action path login callback));
   
   $transdate = $form->datetonum(\%myconfig, $form->{transdate});
 

@@ -468,6 +468,7 @@ sub list_stock {
   }
   if ($form->{stockingdate}) {
     $href .= "&stockingdate=$form->{stockingdate}";
+    $callback .= "&stockingdate=$form->{stockingdate}";
     $option .= "\n<br>".$locale->text('As of')." : ".$locale->date(\%myconfig, $form->{stockingdate}, 1);
   }
 
@@ -475,9 +476,10 @@ sub list_stock {
   $column_header{description} = qq|<th width=50%><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</a></th>|;
   $column_header{startdate} = qq|<th width=10%><a class=listheading href=$href&sort=startdate>|.$locale->text('Startdate').qq|</a></th>|;
   $column_header{partnumber} = "<th><a class=listheading href=$href&sort=partnumber>" . $locale->text('Assembly') . "</a></th>";
-  $column_header{production} = "<th class=listheading>" . $locale->text('Production') . "</a></th>";
-  $column_header{completed} = "<th class=listheading>" . $locale->text('Completed') . "</a></th>";
-  $column_header{stock} = "<th class=listheading>" . $locale->text('Add') . "</a></th>";
+  $column_header{production} = "<th class=listheading>" . $locale->text('Production') . "</th>";
+  $column_header{completed} = "<th class=listheading>" . $locale->text('Completed') . "</th>";
+  $column_header{stock} = "<th class=listheading>" . $locale->text('Add') . "</th>";
+  $column_header{warehouse} = "<th class=listheading>" . $locale->text('Warehouse') . "</th>";
 
 
   $form->helpref("list_stock", $myconfig{countrycode});
@@ -487,7 +489,13 @@ sub list_stock {
   if (@{ $form->{all_project} }) {
     $sameitem = $form->{all_project}->[0]->{$form->{sort}};
   }
- 
+
+  if (@{ $form->{all_warehouse} }) {
+    push @column_index, "warehouse";
+    $form->{selectwarehouse} = "";
+    for (@{ $form->{all_warehouse} }) { $form->{selectwarehouse} .= qq|$_->{description}--$_->{id}\n| }
+  }
+
   print qq|
 <body>
 
@@ -528,6 +536,7 @@ sub list_stock {
     for (qw(projectnumber description partnumber)) { $column_data{$_} = qq|<td>$ref->{$_}&nbsp;</td>| }
     for (qw(production completed)) { $column_data{$_} = qq|<td align=right>|.$form->format_amount(\%myconfig, $ref->{$_}).qq|</td>| }
     $column_data{stock} = qq|<td><input name="stock_$i" class="inputright" size=6></td>|;
+    $column_data{warehouse} = qq|<td><select name="warehouse_$i">|.$form->select_option($form->{selectwarehouse}, undef, 1).qq|</td>|;
     
     $j++; $j %= 2;
     
@@ -553,7 +562,7 @@ sub list_stock {
 </table>
 |;
 
-  $form->hide_form(qw(callback type path login status));
+  $form->hide_form(qw(callback type path login status stockingdate));
 
   print qq|
 <input type=hidden name=nextsub value="stock">

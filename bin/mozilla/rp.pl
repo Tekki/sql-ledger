@@ -1209,7 +1209,7 @@ sub generate_income_statement {
 
   # this section applies to the old template
   if ($form->{usetemplate}) {
-    $form->{templates} = "$templates/$myconfig{dbname}";
+    $form->{templates} = "$templates/$myconfig{templates}";
     $form->{IN} = "income_statement.html";
 
     &build_report(qw(I E));
@@ -1668,7 +1668,7 @@ sub generate_balance_sheet {
 
   if ($form->{usetemplate}) {
 
-    $form->{templates} = "$templates/$myconfig{dbname}";
+    $form->{templates} = "$templates/$myconfig{templates}";
     $form->{IN} = "balance_sheet.html";
 
     &build_report(qw(A L Q));
@@ -2692,19 +2692,19 @@ sub reminder {
 
     if ($curr ne $ref->{curr}) {
       
-      for (@column_index) { $column_data{$_} = qq|<th>&nbsp;</th>| }
-      
       if ($curr) {
 
 	print qq|
 	<tr class=listtotal>
 |;
 
+        for (@column_index) { $column_data{$_} = qq|<th>&nbsp;</th>| }
 	for (@column_index) { print "$column_data{$_}\n" }
 
 	print qq|
 	  </tr>
 |;
+
       }
       
       print qq|
@@ -3304,7 +3304,7 @@ sub do_print_reminder {
   $form->{todate} ||= $form->current_date(\%myconfig);
   $form->{statementdate} = $locale->date(\%myconfig, $form->{todate}, 1);
  
-  $form->{templates} = "$templates/$myconfig{dbname}";
+  $form->{templates} = "$templates/$myconfig{templates}";
 
   for (qw(name email)) { $form->{"user$_"} = $myconfig{$_} }
 
@@ -3380,7 +3380,7 @@ sub do_print_statement {
   $form->{todate} ||= $form->current_date(\%myconfig);
   $form->{statementdate} = $locale->date(\%myconfig, $form->{todate}, 1);
  
-  $form->{templates} = "$templates/$myconfig{dbname}";
+  $form->{templates} = "$templates/$myconfig{templates}";
 
   for (qw(name email)) { $form->{"user$_"} = $myconfig{$_} }
   

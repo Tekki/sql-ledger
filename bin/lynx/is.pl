@@ -143,7 +143,7 @@ sub invoice_links {
 
   # warehouses
   if (@{ $form->{all_warehouse} }) {
-    $form->{selectwarehouse} = "\n"; 
+    $form->{selectwarehouse} = ""; 
     $form->{oldwarehouse} = $form->{warehouse} = "$form->{warehouse}--$form->{warehouse_id}" if $form->{warehouse_id};
 
     for (@{ $form->{all_warehouse} }) { $form->{selectwarehouse} .= qq|$_->{description}--$_->{id}\n| }
@@ -380,6 +380,20 @@ sub form_header {
 
   $vcname = $locale->text('Customer');
   $vcnumber = $locale->text('Customer Number');
+
+  if ($form->{id} && $form->{"lock_sinumber"}) {
+     $invnumber = qq|
+	      <tr>
+		<th align=right nowrap>|.$locale->text('Invoice Number').qq|</th>
+		<td>|.$form->quote($form->{invnumber}).qq|</td>
+	      </tr>|.$form->hide_form(qw(invnumber lock_sinumber));
+  } else {
+    $invnumber = qq|
+	      <tr>
+		<th align=right nowrap>|.$locale->text('Invoice Number').qq|</th>
+		<td><input name="invnumber" size="20" value="|.$form->quote($form->{invnumber}).qq|"></td>
+	      </tr>|;
+  }
 
   $vcref = qq|<a href="ct.pl?action=edit&db=$form->{vc}&id=$form->{"$form->{vc}_id"}&login=$form->{login}&path=$form->{path}" target=_blank>?</a>|;
 
@@ -634,10 +648,7 @@ sub form_header {
 	    <table>
 	      $department
 	      $employee
-	      <tr>
-		<th align=right nowrap>|.$locale->text('Invoice Number').qq|</th>
-		<td><input name="invnumber" size="20" value="|.$form->quote($form->{invnumber}).qq|"></td>
-	      </tr>
+              $invnumber
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Order Number').qq|</th>
 		<td><input name="ordnumber" size="20" value="|.$form->quote($form->{ordnumber}).qq|"></td>

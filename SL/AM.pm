@@ -1546,6 +1546,8 @@ sub save_preferences {
   my ($self, $form, $memberfile, $userspath) = @_;
 
   my $config = new User $memberfile, $form->{login};
+  my $admin = new User $memberfile, "admin\@$config->{dbname}";
+  $config->{templates} = $admin->{templates};
 
   for (keys %$form) {
     $config->{$_} = $form->{$_};
@@ -1599,10 +1601,13 @@ sub save_defaults {
     $dbh->do($query) || $form->dberror($query);
   }
  
-  for (qw(glnumber sinumber vinumber batchnumber vouchernumber sonumber ponumber sqnumber rfqnumber partnumber employeenumber customernumber vendornumber projectnumber precision)) {
+  for (qw(glnumber sinumber sonumber vinumber batchnumber vouchernumber ponumber sqnumber rfqnumber employeenumber customernumber vendornumber)) {
     $sth->execute($_, $form->{$_}) || $form->dberror;
     $sth->finish;
   }
+  $sth->execute("precision", $form->{precision}) || $form->dberror;
+  $sth->finish;
+
 
   # optional
   for (split / /, $form->{optional}) {

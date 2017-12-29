@@ -640,8 +640,10 @@ sub list_batches {
     $href .= "&l_subtotal=Y";
   }
 
+  $form->{allbox} = ($form->{allbox}) ? "checked" : "";
+  $action = ($form->{deselect}) ? "deselect_all" : "select_all";
   $column_header{runningnumber} = qq|<th class=listheading>&nbsp;</th>|;
-  $column_header{ndx} = "<th class=listheading width=1%>&nbsp;</th>";
+  $column_header{ndx} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll(); javascript:main.submit()"><input type=hidden name=action value="$action"></th>|;
   $column_header{batchid} = "<th><a class=listheading href=$href&sort=id>".$locale->text('ID')."</a></th>";
   $column_header{transdate} = "<th><a class=listheading href=$href&sort=transdate>".$locale->text('Posting Date')."</a></th>";
   $column_header{apprdate} = "<th><a class=listheading href=$href&sort=apprdate>".$locale->text('Approved')."</a></th>";
@@ -654,10 +656,12 @@ sub list_batches {
   
   $form->header;
 
+  &check_all(qw(allbox checked_));
+
   print qq|
 <body>
 
-<form method=post action="$form->{script}">
+<form method=post name=main action="$form->{script}">
 
 <table width=100%>
   <tr>
@@ -774,7 +778,7 @@ sub list_batches {
       %button = %b;
     }
 
-    if ($form->{unselect}) {
+    if ($form->{deselect}) {
       $button{'Deselect all'} = { ndx => 1, key => 'S', value => $locale->text('Deselect all') };
     } else {
       $button{'Select all'} = { ndx => 1, key => 'S', value => $locale->text('Select all') };
@@ -1145,6 +1149,7 @@ sub post_batches {
 
   for $i (1 .. $form->{rowcount}) {
     if ($form->{"checked_$i"}) {
+      $ok = 1;
       $form->{batchid} = $form->{"batchid_$i"};
       $form->{batch} = $form->{"batch_$i"};
 	
@@ -1157,7 +1162,7 @@ sub post_batches {
     }
   }
 
-  $form->{callback} .= "&header=1";
+  $form->{callback} .= "&header=1" if $ok;
   $form->redirect;
 
 }
@@ -1181,10 +1186,8 @@ sub post_batch {
 
 sub select_all {
 
-  for (1 .. $form->{rowcount}) {
-    $form->{callback} .= "&checked_$_=1";
-  }
-  $form->{callback} .= "&unselect=1";
+  for (1 .. $form->{rowcount}) { $form->{callback} .= "&checked_$_=1" }
+  $form->{callback} .= "&allbox=checked&deselect=1";
   
   $form->redirect;
 

@@ -42,6 +42,7 @@ sub new {
 	$self->{login} = $login;
         $self->{lat} = "1";
         $self->{long} = "1";
+        $self->{templates} ||= $self->{dbname};
 
 	last;
       }
@@ -740,7 +741,7 @@ sub create_config {
 
   $self->{dbpasswd} = pack 'u', $self->{dbpasswd};
   chomp $self->{dbpasswd};
-  
+
   umask(002);
   open(CONF, ">$filename") or $self->error("$filename : $!");
 
@@ -882,7 +883,7 @@ sub config_vars {
              dbconnect dbdriver dbhost dbname dboptions dbpasswd
 	     dbport dbuser menuwidth name email numberformat password
 	     outputformat printer sessionkey sid
-	     signature stylesheet tan timeout vclimit);
+	     signature stylesheet tan templates timeout vclimit);
 
   @conf;
 
