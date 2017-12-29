@@ -133,8 +133,11 @@ sub price_matrix {
     }
     
     if ($i > 1) {
-      $ref->{sellprice} = $p{0};
-      for (sort { $a <=> $b } keys %p) { $ref->{pricematrix} .= "${_}:$p{$_} " }
+      $ref->{sellprice} = $form->round_amount($p{0} * (1 - $form->{tradediscount}), $decimalplaces);
+      for (sort { $a <=> $b } keys %p) {
+        $p{$_} = $form->round_amount($p{$_} * (1 - $form->{tradediscount}), $decimalplaces);
+        $ref->{pricematrix} .= "${_}:$p{$_} ";
+      }
     } else {
       $ref->{sellprice} = $form->round_amount($p{0} * (1 - $form->{tradediscount}), $decimalplaces);
       $ref->{pricematrix} = "0:$ref->{sellprice} " if $ref->{sellprice};

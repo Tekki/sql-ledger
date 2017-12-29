@@ -2339,7 +2339,7 @@ sub retrieve_item {
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
 
     if ($n = $ref->{inventory_accno_id} + $ref->{income_accno_id} + $ref->{expense_accno_id}) {
-      next unless $ref->{income_accno_id};
+#      next unless $ref->{income_accno_id};
     }
 
     if (!$n) {

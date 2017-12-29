@@ -144,7 +144,7 @@ sub print_check {
   
   $form->format_string(@a);
 
-  $form->{templates} = "$templates/$myconfig{dbname}";
+  $form->{templates} = "$templates/$myconfig{templates}";
   $form->{IN} = "$form->{formname}.$form->{format}";
 
   if ($form->{format} =~ /(ps|pdf)/) {
@@ -408,7 +408,7 @@ sub print_transaction {
 
   $form->{invdate} = $form->{transdate};
 
-  $form->{templates} = "$templates/$myconfig{dbname}";
+  $form->{templates} = "$templates/$myconfig{templates}";
   $form->{IN} = "$form->{formname}.$form->{format}";
   $form->{IN} = lc $form->{ARAP} . "_$form->{formname}.$form->{format}" if $form->{formname} eq 'transaction';
 
@@ -546,7 +546,7 @@ sub print_payslip {
 
   $form->format_string(@a);
 
-  $form->{templates} = "$templates/$myconfig{dbname}";
+  $form->{templates} = "$templates/$myconfig{templates}";
   $form->{IN} = "$form->{formname}.$form->{format}";
 
   if ($form->{format} =~ /(ps|pdf)/) {

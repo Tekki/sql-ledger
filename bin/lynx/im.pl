@@ -1260,7 +1260,7 @@ sub xrefhdr {
   $i = 1;
 
   if ($form->{mapfile}) {
-    open(FH, "$templates/$myconfig{dbname}/$form->{mapfile}/import.map") or $form->error($!);
+    open(FH, "$templates/$myconfig{templates}/$form->{mapfile}/import.map") or $form->error($!);
 
     while (<FH>) {
       next if /^(#|;|\s)/;

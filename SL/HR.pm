@@ -27,7 +27,7 @@ sub get_employee {
   my $notid = "";
   my $rne;
 
-  my @df = qw(closedto revtrans company address tel fax businessnumber precision referenceurl);
+  my @df = qw(closedto revtrans company address tel fax businessnumber precision referenceurl lock_%);
   my %defaults = $form->get_defaults($dbh, \@df);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
@@ -924,7 +924,14 @@ sub payroll_links {
     $sth->execute || $form->dberror($query);
     $ref = $sth->fetchrow_hashref(NAME_lc);
     delete $ref->{id};
-    
+
+    # projectnumber
+    $query = qq~SELECT p.projectnumber || '--' || p.id
+                FROM project p
+                JOIN acc_trans a ON (a.project_id = p.id)
+                WHERE a.trans_id = $form->{id}~;
+    ($form->{project}) = $dbh->selectrow_array($query);
+
     for (qw(ap payment)) {
       $ref->{$_} = qq|$ref->{"${_}_accno"}--$ref->{"${_}_accno_description"}|;
       $ref->{$_} = qq|$ref->{"${_}_accno"}--$ref->{"${_}_accno_description"}| if $ref->{"${_}_accno_translation"};

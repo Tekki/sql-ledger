@@ -38,7 +38,6 @@ if (-f "$form->{path}/custom/$form->{script}") {
   $form->error($@) if ($@);
 }
 
-
 if ($form->{action}) {
 
   &check_password unless $form->{action} eq $locale->text('logout');
@@ -234,10 +233,10 @@ sub list_datasets {
       }
     }
     if ($new) {
-      if (/^(company|dbname|dbdriver|dbhost|dbuser)=/) {
-        chop ($var = $&);
+      if (/^(company|dbname|dbdriver|dbhost|dbuser|templates)=/) {
+        $var = $1;
         (undef, $member{$member}{$var}) = split /=/, $_, 2;
-        chop $member{$member}{$var};
+        $member{$member}{$var} =~ s/(\r\n|\n)//;
       }
     }
   }
@@ -255,9 +254,10 @@ sub list_datasets {
   $column_data{dbhost} = qq|<th>|.$locale->text('Host').qq|</th>|;
   $column_data{dbuser} = qq|<th>|.$locale->text('User').qq|</th>|;
   $column_data{dbname} = qq|<th>|.$locale->text('Dataset').qq|</th>|;
+  $column_data{templates} = qq|<th>|.$locale->text('Templates').qq|</th>|;
   $column_data{locked} = qq|<th width=1%>|.$locale->text('Locked').qq|</th>|;
 
-  @column_index = qw(dbname company locked dbdriver dbuser dbhost);
+  @column_index = qw(dbname company templates locked dbdriver dbuser dbhost);
   
   $dbdriver ||= "Pg";
   $dbdriver{$dbdriver} = "checked";
@@ -296,10 +296,10 @@ sub list_datasets {
   foreach $key (sort keys %member) {
     $href = "$script?action=edit&dbname=$key&path=$form->{path}&locked=$member{$key}{locked}&dbhost=$member{$key}{dbhost}&dbdriver=$member{$key}{dbdriver}&dbuser=$member{$key}{dbuser}";
     $href .= "&company=".$form->escape($member{$key}{company},1);
-    
+
     $member{$key}{dbname} = $member{$key}{dbuser} if ($member{$key}{dbdriver} eq 'Oracle');
 
-    for (qw(company dbdriver dbhost dbuser)) { $column_data{$_} = qq|<td>$member{$key}{$_}</td>| }
+    for (qw(company dbdriver dbhost dbuser templates)) { $column_data{$_} = qq|<td>$member{$key}{$_}</td>| }
     $column_data{dbname} = qq|<td><a href=$href>$member{$key}{dbname}</a></td>|;
     $column_data{locked} = qq|<td align=center>$member{$key}{locked}</td>|;
     
@@ -484,7 +484,7 @@ sub do_delete {
 
   $form->{dbdriver} = $db{$form->{dbname}}{dbdriver};
   &dbdriver_defaults;
-  for (qw(dbconnect dbuser dbhost dbport)) { $form->{$_} = $db{$form->{dbname}}{$_} }
+  for (qw(dbconnect dbuser dbhost dbport templates)) { $form->{$_} = $db{$form->{dbname}}{$_} }
   $form->{dbpasswd} = unpack 'u', $db{$form->{dbname}}{dbpasswd};
 
   # delete dataset
@@ -517,26 +517,38 @@ sub do_delete {
   }
   close(FH);
   
-  unlink "${memberfile}.LCK";
-  unlink "$userspath/$form->{dbname}.LCK";
+  # delete spool and template directory if it is not shared
+  # compare dbname and templates
+  for (qw(dbname spool)) {
 
-  # delete spool and template directory
-  for $dir ("$templates/$form->{dbname}", "$spool/$form->{dbname}") {
-    if (-d "$dir") {
+    if ($_ eq "dbname") {
+      $dir = "$templates/$form->{dbname}";
+      $form->{templates} ||= $form->{dbname};
+      next if ($form->{dbname} ne $form->{templates});
+    }
+
+    if ($_ eq "spool") {
+      $dir = "$spool/$form->{dbname}";
+    }
+
+    if (-d $dir) {
       opendir DIR, $dir;
       @all = grep !/^\./, readdir DIR;
       closedir DIR;
       for $subdir (@all) {
-	if (-d "$dir/$subdir") {
-	  unlink <$dir/$subdir/*>;
-	  rmdir "$dir/$subdir";
-	}
+        if (-d "$dir/$subdir") {
+          unlink <$dir/$subdir/*>;
+          rmdir "$dir/$subdir";
+        }
       }
       unlink <$dir/*>;
       rmdir "$dir";
     }
   }
   
+  unlink "${memberfile}.LCK";
+  unlink "$userspath/$form->{dbname}.LCK";
+
   $form->redirect($locale->text('Dataset deleted!'));
 
 }
@@ -1047,12 +1059,34 @@ sub create_dataset {
     @alldir = sort grep !/Default/, @alldir;
     unshift @alldir, 'Default' if -d "$templatedir/Default";
 
-    for (@alldir) { $selectusetemplates .= qq|$_\n| }
+    for (@alldir) { $selecttemplates .= qq|$_\n| }
 
   }
 
   $selectencoding = User->encoding($form->{dbdriver});
   $form->{charset} = $charset;
+
+  # get subdirectories from templates directory
+  if (-d $templates) {
+    opendir TEMPLATEDIR, "$templates" or $form->error("$templates : $!");
+    @d = grep !/^\./, readdir TEMPLATEDIR;
+    closedir TEMPLATEDIR;
+    for (@d) { push @dir, $_ if -d "$templates/$_" }
+
+    if (@dir) {
+      $selectusetemplates = "\n";
+      for (sort @dir) { $selectusetemplates .= "$_\n" }
+      chop $selectusetemplates;
+
+      $usetemplates = qq|
+        <tr>
+          <th align=right nowrap>|.$locale->text('Use Templates').qq|</th>
+          <td><select name=usetemplates>|.$form->select_option($selectusetemplates).qq|</select></td>
+        </tr>
+|;
+    }
+
+  }
 
   $form->{title} = "SQL-Ledger / ".$locale->text('Create Dataset');
   
@@ -1103,8 +1137,9 @@ sub create_dataset {
         </tr>
         <tr>
           <th align=right nowrap>|.$locale->text('Templates').qq|</th>
-          <td><select name=mastertemplates>|.$form->select_option($selectusetemplates).qq|</select></td>
+          <td><select name=mastertemplates>|.$form->select_option($selecttemplates).qq|</select></td>
         </tr>
+        $usetemplates
 |;
 
   if ($selectencoding) {
@@ -1187,39 +1222,42 @@ sub dbcreate {
     mkdir "$templates", oct("771") or $form->error("$templates : $!");
   }
 
-  $form->{company} = $form->{db} unless $form->{company};
+  $form->{company} ||= $form->{db};
   
   # create user template directory and copy master files
-  $form->{templates} = "$templates/$form->{db}";
+  $form->{templates} = ($form->{usetemplates}) ? "$form->{usetemplates}" : "$form->{db}";
 
-  if (! -d "$form->{templates}") {
+  # get templates from master
+  opendir TEMPLATEDIR, "$templatedir/$form->{mastertemplates}" or $form->error("$templates : $!");
+  @templates = grep !/^\./, readdir TEMPLATEDIR;
+  closedir TEMPLATEDIR;
 
-    mkdir "$form->{templates}", oct("771") or $form->error("$form->{templates} : $!");
-      
-    # copy templates to the directory
-    opendir TEMPLATEDIR, "$templatedir/$form->{mastertemplates}" or $form->error("$templates : $!");
-    @templates = grep !/^\./, readdir TEMPLATEDIR;
-    closedir TEMPLATEDIR;
+  if (! -d "$templates/$form->{templates}") {
+    mkdir "$templates/$form->{templates}", oct("771") or $form->error("$templates/$form->{templates} : $!");
+  }
 
-    foreach $file (@templates) {
+  foreach $file (@templates) {
+    if (! -f "$templates/$form->{templates}/$file") {
       open(TEMP, "$templatedir/$form->{mastertemplates}/$file") or $form->error("$templatedir/$form->{mastertemplates}/$file : $!");
-      open(NEW, ">$form->{templates}/$file") or $form->error("$form->{templates}/$file : $!");
-        
+      open(NEW, ">$templates/$form->{templates}/$file") or $form->error("$templates/$form->{templates}/$file : $!");
+      
       for (<TEMP>) { print NEW $_ }
-      close(TEMP);
       close(NEW);
-    }
-
-    # copy logo files
-    for $ext (qw(eps png)) {
-      open(TEMP, "$userspath/sql-ledger.$ext");
-      open(NEW, ">$form->{templates}/logo.$ext");
-      for (<TEMP>) { print NEW $_ }
       close(TEMP);
-      close(NEW);
     }
   }
-  
+
+  # copy logo files
+  for $ext (qw(eps png)) {
+    if (! -f "$templates/$form->{templates}/logo.$ext") {
+      open(TEMP, "$userspath/sql-ledger.$ext");
+      open(NEW, ">$templates/$form->{templates}/logo.$ext");
+      for (<TEMP>) { print NEW $_ }
+      close(NEW);
+      close(TEMP);
+    }
+  }
+
   if (! -d "$spool/$form->{db}") {
     mkdir "$spool/$form->{db}", oct("771") or $form->error("$spool/$form->{db} : $!");
   }
@@ -1235,7 +1273,7 @@ sub dbcreate {
 
   $form->{charset} = $form->{encoding};
   $form->{dbname} = $form->{db};
-  $form->{login} = "admin\@$form->{dbname}";
+  $form->{login} = "admin\@$form->{db}";
   $form->{stylesheet} = "sql-ledger.css";
   $form->{dateformat} = "mm-dd-yy";
   $form->{numberformat} = "1,000.00";
@@ -1255,7 +1293,7 @@ sub dbcreate {
     $form->{password} = crypt $form->{adminpassword}, 'ad';
   }
   
-  for (sort (qw(company name email dbconnect dbdriver dbhost dbname dboptions dbpasswd dbport dbuser stylesheet password dateformat numberformat charset vclimit))) {
+  for (sort (qw(company name email dbconnect dbdriver dbhost dbname dboptions dbpasswd dbport dbuser stylesheet password dateformat numberformat charset vclimit templates))) {
     print FH "$_=$form->{$_}\n" if $form->{$_};
   }
   print FH "\n";

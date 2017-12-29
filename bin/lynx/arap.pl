@@ -526,6 +526,12 @@ sub post_as_new {
 
   for (qw(id printed emailed queued)) { delete $form->{$_} }
   $form->{postasnew} = 1;
+  if ($form->{lock_sinumber}) {
+    delete $form->{invnumber};
+  }
+  if ($form->{lock_glnumber}) {
+    delete $form->{reference};
+  }
   &post;
 
 }
@@ -534,6 +540,9 @@ sub post_as_new {
 sub print_and_post_as_new {
 
   for (qw(id printed emailed queued)) { delete $form->{$_} }
+  if ($form->{lock_sinumber}) {
+    delete $form->{invnumber};
+  }
   &print_and_post;
 
 }

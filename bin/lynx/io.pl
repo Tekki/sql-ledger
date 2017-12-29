@@ -1749,7 +1749,8 @@ sub print_form {
 
   $form->format_string(@f);
 
-  $form->{templates} = "$templates/$myconfig{dbname}";
+  $form->{templates} = "$templates/$myconfig{templates}";
+
   $form->{IN} = "$form->{formname}.$form->{format}";
 
   if ($form->{format} =~ /(ps|pdf)/) {

@@ -33,7 +33,7 @@ $latex = 1;
 $gzip = "gzip -S .gz";
 
 # use dvipdf instead of pdflatex for PDF
-#$dvipdf = 1;
+$dvipdf = 1;
 
 # if you have pdftk installed and want to combine PDFs set to 1
 $pdftk = 1;

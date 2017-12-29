@@ -121,7 +121,7 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "3.2.5";
+  $self->{version} = "3.2.6";
   $self->{dbversion} = "3.2.1";
 
   $self->{favicon} = 'favicon.ico';
@@ -391,7 +391,7 @@ sub info {
 
     delete $self->{pre};
 
-    if (!$self->{header}) {
+    unless ($self->{header}) {
       $self->header(0,1);
       print qq|
       <body>|;
@@ -2700,7 +2700,7 @@ sub all_vc {
 
   $self->all_departments($myconfig, $dbh, $vc);
   
-  $self->all_warehouses($myconfig, $dbh, $vc);
+  $self->all_warehouses($myconfig, $dbh);
   
   $self->all_projects($myconfig, $dbh, $transdate, $job);
 
@@ -3091,6 +3091,7 @@ sub create_links {
   my %xkeyref = ();
 
   my @df = qw(closedto revtrans weightunit cdt precision roundchange cashovershort_accno_id referenceurl);
+  push @df, "lock_%";
   my %defaults = $self->get_defaults($dbh, \@df);
   for (keys %defaults) { $self->{$_} = $defaults{$_} }
 

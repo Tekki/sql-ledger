@@ -801,7 +801,7 @@ sub transaction {
 
   $form->remove_locks($myconfig, $dbh, 'gl');
   
-  my %defaults = $form->get_defaults($dbh, \@{[qw(closedto revtrans precision referenceurl)]});
+  my %defaults = $form->get_defaults($dbh, \@{[qw(closedto revtrans precision referenceurl lock_%)]});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   $form->{currencies} = $form->get_currencies($myconfig, $dbh);

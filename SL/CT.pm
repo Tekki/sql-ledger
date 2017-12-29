@@ -19,7 +19,7 @@ sub create_links {
 
   my $dbh = $form->dbconnect($myconfig);
 
-  my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  my %defaults = $form->get_defaults($dbh, \@{['precision','lock_%']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
  
   my $query;
