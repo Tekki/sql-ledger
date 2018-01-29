@@ -39,7 +39,7 @@ function ChangeReport() {
   my $item;
   my $found;
   my %column_index;
-  
+
   for my $ref (@{ $form->{all_report} }) {
     for (@{$input}, @{$checked}) {
       print qq|  ${_}[$i] = "$form->{all_reportvars}{$ref->{reportid}}{"report_$_"}";\n|;
@@ -57,7 +57,7 @@ function ChangeReport() {
       }
     }
     print "\n";
-    
+
     %column_index = split /[,=]/, $form->{all_reportvars}{$ref->{reportid}}{report_column_index};
     for (@{$checked}) {
       $s = $_;
@@ -129,7 +129,7 @@ sub resize {
 
   $width ||= 600;
   $height ||= 600;
-  
+
   print qq|
 <script language="javascript" type="text/javascript">
 <!--
@@ -142,7 +142,7 @@ self.resizeTo($width,$height);
 
 
 sub calendar {
-  
+
 print qq|
   <script language="javascript" src="js/calendar.js"></script>
   <link rel="stylesheet" href="css/calendar.css">
@@ -181,7 +181,7 @@ print qq|
 print q|
   // date parsing function
   function f_tcalParseDate (s_date) {|;
-  
+
 if ($myconfig{dateformat} =~ /yy$/i) {
   print q|
     var re_date = /^\s*(\d{1,2})\W(\d{1,2})\W(\d{2,4})\s*$/;|
@@ -312,9 +312,9 @@ sub clock {
 
   my @gmt = gmtime;
   my @lct = localtime;
-  
+
   my $tz = ((24 - $lct[2]) + $gmt[2]) * -1;
-  
+
 print qq|
 <script type="text/javascript">
 function jsClock() {
@@ -359,5 +359,99 @@ function showProgress() {
 |;
 }
 
-1;
+sub quick_calculation {
+  print qq|
+<script>
+var fields = ['labor_time', 'labor_rate', 'labor_total',
+  'material_cost', 'material_markup', 'material_total',
+  'external_cost', 'external_markup', 'external_total',
+  'quick_total'];
 
+function quickcalcChanged(i) {
+  if (document.main['quickcalc_' + i].checked) {
+    document.main['itemnotes_' + i].value = '{}';
+  } else {
+    document.main['itemnotes_' + i].value = '';
+  }
+  document.main.submit();
+}
+
+function factorChanged(context, i) {
+  setNumber(context + '_total', i,
+    getNumber(context + '_cost', i)
+      * (100 + getNumber(context + '_markup', i))
+      / 100
+  );
+  updateTotal(i);
+}
+
+function getNumber(field, i) {
+  return parseFloat(document.main[field + '_' + i].value);
+}
+
+function laborChanged(i) {
+  setNumber('labor_total', i,
+    getNumber('labor_time', i) * getNumber('labor_rate', i)
+  );
+  updateTotal(i);
+}
+
+function setNumber(field, i, value) {
+  if (isNaN(value)) { value = 0; }
+  document.main[field + '_' + i].value = Math.round( 100 * value) / 100;
+}
+
+function totalChanged(context, i) {
+  if (context === 'labor') {
+    setNumber('labor_rate', i,
+      getNumber('labor_total', i) / getNumber('labor_time', i)
+    );
+  } else {
+    setNumber(context + '_markup', i,
+      100 * getNumber(context + '_total', i) / getNumber(context + '_cost', i)
+      - 100
+    );
+  }
+  updateTotal(i);
+}
+
+function updateTotal(i) {
+  setNumber('quick_total', i, getNumber('labor_total', i)
+    + getNumber('material_total', i) + getNumber('external_total', i));
+  setNumber('cost', i,
+    getNumber('material_cost', i) + getNumber('external_cost', i)
+  );
+  setNumber('sellprice', i,
+    getNumber('labor_total', i) + getNumber('material_total', i)
+    + getNumber('external_total', i)
+  );
+
+  var data = {};
+  fields.forEach(function (field) {
+    data[field] = getNumber(field, i);
+  });
+  console.log(JSON.stringify(data));
+  document.main['itemnotes_' + i].value = JSON.stringify(data);
+}
+
+for (var i = 1; i < document.main.rowcount.value; i++) {
+  if (!document.main['lineitemdetail_' + i].checked) {
+    continue;
+  }
+  var data;
+  try {
+    data = JSON.parse(document.main['itemnotes_' + i].value);
+  }
+  catch (e) {
+    continue;
+  }
+
+  fields.forEach(function (field) {
+    setNumber(field, i, data[field]);
+  })
+}
+</script>
+|;
+}
+
+1;

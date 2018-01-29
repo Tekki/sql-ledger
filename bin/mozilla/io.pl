@@ -141,6 +141,16 @@ sub display_row {
   $netweight = $locale->text('N.W.');
   $grossweight = $locale->text('G.W.');
   $volume = $locale->text('Volume');
+  # quick calculation
+  $costlabel = $locale->text('Cost');
+  $laborlabel = $locale->text('Labor');
+  $markuplabel = $locale->text('Markup');
+  $materiallabel = $locale->text('Material');
+  $quickcalclabel = $locale->text('Quick Calculation');
+  $ratelabel = $locale->text('Chargeout Rate');
+  $thirdpartylabel = $locale->text('Third-party');
+  $timelabel = $locale->text('Time');
+  $totallabel = $locale->text('Total');
 
   $delvar = 'deliverydate';
 
@@ -308,6 +318,52 @@ sub display_row {
 
     }
 
+    # quick calculation
+    $form->{"quickcalc_$i"} = '';
+    if ($form->{"itemnotes_$i"} =~ /^{.*}$/) {
+      $form->{"quickcalc_$i"} = 'checked';
+      $quickcalc_script = 1;
+      $quick_calculation = qq|
+<table>
+  <tr class="listheading">
+    <th></th>
+    <th class="listheading">$timelabel</th>
+    <th class="listheading">$ratelabel</th>
+    <th class="listheading">$totallabel</th>
+  </tr>
+  <tr>
+    <td>$laborlabel</td>
+    <td><input name="labor_time_$i" class="inputright" size="10" onChange="laborChanged($i)"></td>
+    <td><input name="labor_rate_$i" class="inputright" size="10" onChange="laborChanged($i)"></td>
+    <td><input name="labor_total_$i" class="inputright" size="10" onChange="totalChanged('labor', $i)"></td>
+  </tr>
+  <tr>
+    <th></th>
+    <th class="listheading">$costlabel</th>
+    <th class="listheading">$markuplabel</th>
+  </tr>
+  <tr>
+    <td>$materiallabel</td>
+    <td><input name="material_cost_$i" class="inputright" size="10" onChange="factorChanged('material', $i)"></td>
+    <td><input name="material_markup_$i" class="inputright" size="7" onChange="factorChanged('material', $i)"> %</td>
+    <td><input name="material_total_$i" class="inputright" size="10" onChange="totalChanged('material', $i)"></td>
+  </tr>
+  <tr>
+    <td>$thirdpartylabel</td>
+    <td><input name="external_cost_$i" class="inputright" size="10" onChange="factorChanged('external', $i)"></td>
+    <td><input name="external_markup_$i" class="inputright" size="7" onChange="factorChanged('external', $i)"> %</td>
+    <td><input name="external_total_$i" class="inputright" size="10" onChange="totalChanged('external', $i)"></td>
+  </tr>
+  <tr class="listtotal">
+    <td>$totallabel</td>
+    <td></td>
+    <td></td>
+    <td><input name="quick_total_$i" class="inputright" size="10" readonly></td>
+  </tr>
+</table>
+|;
+    }
+
     $costprice = "";
 
     if ($form->{vc} eq 'customer') {
@@ -332,6 +388,8 @@ sub display_row {
                 $margin
 | if ($margin && $form->{"cost_$i"});
         $costprice .= qq|
+          <input name="quickcalc_$i" type="checkbox" class="checkbox" onChange="quickcalcChanged($i)" $form->{"quickcalc_$i"}>
+          <b>$quickcalclabel</b>
           </td>
         </tr>
 |;
@@ -345,7 +403,12 @@ sub display_row {
     }
 
     $form->{"itemnotes_$i"} = $form->quote($form->{"itemnotes_$i"});
-    $itemnotes = qq|<td><textarea name="itemnotes_$i" rows=$rows cols=46 wrap=soft>$form->{"itemnotes_$i"}</textarea></td>|;
+    if ($quick_calculation) {
+      $itemnotes = qq|<td>$quick_calculation <input name="itemnotes_$i" type="hidden" value="$form->{"itemnotes_$i"}"></td>|;
+    } else {
+      $itemnotes = qq|<td><textarea name="itemnotes_$i" rows=$rows cols=46 wrap=soft>$form->{"itemnotes_$i"}</textarea></td>|;
+    }
+
 
     $package = qq|
                 <tr>
