@@ -1,7 +1,7 @@
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Reference Documents'         => 'Zugehörige Dokumente',
+  'Reference Documents'         => 'Dokumente',
 };
 
 $self{subs} = {
