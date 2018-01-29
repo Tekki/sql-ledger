@@ -34,7 +34,9 @@ $self{subs} = {
   'clock'                       => 'clock',
   'js_calendar'                 => 'js_calendar',
   'pickvalue'                   => 'pickvalue',
+  'quick_calculation'           => 'quick_calculation',
   'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
 };
 
 1;

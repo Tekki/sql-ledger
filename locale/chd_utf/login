@@ -11,6 +11,7 @@ $self{texts} = {
   'Incorrect Username!'         => 'Ungültiger Benutzername!',
   'Invalid TAN'                 => 'Ungültige TAN',
   'Login'                       => 'Login',
+  'Maximum tries exceeded!'     => 'Maximale Anzahl Versuche überschritten!',
   'Name'                        => 'Benutzername',
   'No email address for'        => 'Keine E-Mailadresse für',
   'Password'                    => 'Passwort',
