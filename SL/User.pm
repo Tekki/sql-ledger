@@ -881,7 +881,7 @@ sub config_vars {
 
   my @conf = qw(acs company countrycode charset dateformat
              dbconnect dbdriver dbhost dbname dboptions dbpasswd
-	     dbport dbuser menuwidth name email numberformat password
+	     dbport dbuser menuwidth name email emailcopy numberformat password
 	     outputformat printer sessionkey sid
 	     signature stylesheet tan templates timeout vclimit);
 
