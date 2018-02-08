@@ -528,7 +528,7 @@ sub print_payslip {
     push @a, "deduction_$i" if $form->{"deduct_$i"};
   }
 
-  # $form->format_string(@a);
+  $form->format_string(@a);
 
   for $i (1 .. $form->{wage_rows}) {
     if ($form->{"qty_$i"}) {
@@ -549,7 +549,7 @@ sub print_payslip {
     }
   }
 
-  $form->format_string(@a);
+  # $form->format_string(@a);
 
   $form->{templates} = "$templates/$myconfig{templates}";
   $form->{IN} = "$form->{formname}.$form->{format}";
