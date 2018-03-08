@@ -72,27 +72,27 @@ sub save_as_new {
 
 
 sub add_account {
-  
+
   $form->{title} = $locale->text('Add Account');
   $form->{charttype} = "A";
-  
+
   $form->{callback} = "$form->{script}?action=list_account&path=$form->{path}&login=$form->{login}" unless $form->{callback};
 
   &account_header;
   &form_footer;
-  
+
 }
 
 
 sub edit_account {
-  
+
   $form->{title} = $locale->text('Edit Account');
-  
+
   $form->{accno} =~ s/\\'/'/g;
   $form->{accno} =~ s/\\\\/\\/g;
- 
+
   AM->get_account(\%myconfig, \%$form);
-  
+
   for (split(/:/, $form->{link})) { $form->{$_} = "checked" }
 
   &account_header;
@@ -111,13 +111,13 @@ sub account_header {
 
   $form->{oldIC_taxpart} = $form->{IC_taxpart};
   $form->{oldIC_taxservice} = $form->{IC_taxservice};
-  
+
   for (qw(accno description)) { $form->{$_} = $form->quote($form->{$_}) }
 
   $form->{type} = "account";
-  
+
   $form->helpref("account", $myconfig{countrycode});
-  
+
   $form->header;
 
   print qq|
@@ -227,8 +227,8 @@ if ($form->{charttype} eq "A") {
 		</td>
 	      </tr>
 	    </table>
-	  </td>  
-	</tr>  
+	  </td>
+	</tr>
 |;
 }
 
@@ -254,11 +254,11 @@ sub form_footer {
   $form->hide_form(qw(callback path login));
 
   my %button;
-  
+
   if ($form->{id}) {
     $button{'Save'} = { ndx => 3, key => 'S', value => $locale->text('Save') };
     $button{'Save as new'} = { ndx => 7, key => 'N', value => $locale->text('Save as new') } if $form->{type} ne 'currency';
-    
+
     if ($form->{orphaned}) {
       $button{'Delete'} = { ndx => 16, key => 'D', value => $locale->text('Delete') };
     }
@@ -282,12 +282,12 @@ sub form_footer {
 
 }
 
-  
+
 sub save_account {
 
   $form->isblank("accno", $locale->text('Account Number missing!'));
   $form->isblank("category", $locale->text('Account Type missing!'));
-  
+
   # check for conflicting accounts
   if ($form->{AR} || $form->{AP} || $form->{IC}) {
     my $a = "";
@@ -302,7 +302,7 @@ sub save_account {
     for ("${item}_amount", "${item}_paid", "${item}_discount", "${item}_tax") { $i++ if $form->{$_} }
     $form->error($locale->text('Cannot set multiple options for')." $item") if $i > 1;
   }
-  
+
   if (AM->save_account(\%myconfig, \%$form)) {
     $form->redirect($locale->text('Account saved!'));
   } else {
@@ -317,7 +317,7 @@ sub list_account {
   CA->all_accounts(\%myconfig, \%$form);
 
   $form->{title} = $locale->text('Chart of Accounts');
-  
+
   # construct callback
   my $callback = "$form->{script}?action=list_account&path=$form->{path}&login=$form->{login}";
 
@@ -349,7 +349,7 @@ sub list_account {
   my @column_index = qw(accno gifi_accno description category contra dropdown closed);
 
   my %column_data;
-  
+
   $column_data{accno} = qq|<th class=listtop>|.$locale->text('Account').qq|</a></th>|;
   $column_data{gifi_accno} = qq|<th class=listtop>|.$locale->text('GIFI').qq|</a></th>|;
   $column_data{description} = qq|<th class=listtop>|.$locale->text('Description').qq|</a></th>|;
@@ -359,9 +359,9 @@ sub list_account {
   $column_data{closed} = qq|<th width=1% class=listtop>|.$locale->text('Closed').qq|</a></th>|;
 
   $form->helpref("list_account", $myconfig{countrycode});
-  
+
   $form->header;
-  
+
   my $colspan = $#column_index + 1;
 
   print qq|
@@ -376,20 +376,20 @@ sub list_account {
 |;
 
   for (@column_index) { print "$column_data{$_}\n" }
-  
+
   print qq|
 </tr>
 |;
 
   # escape callback
   $callback = $form->escape($callback);
-  
+
   foreach my $ref (@{ $form->{CA} }) {
-    
+
     $ref->{dropdown} = join '<br>', map { $dropdown{$_} } split /:/, $ref->{link};
 
     my $gifi_accno = $form->escape($ref->{gifi_accno});
-    
+
     if ($ref->{charttype} eq "H") {
       print qq|<tr class=listheading>|;
 
@@ -410,7 +410,7 @@ sub list_account {
       $column_data{description} = qq|<td>$ref->{description}&nbsp;</td>|;
       $column_data{dropdown} = qq|<td>$ref->{dropdown}&nbsp;</td>|;
       $column_data{category} = qq|<td>$category{$ref->{category}}&nbsp;</td>|;
-      
+
       $ref->{contra} = ($ref->{contra}) ? '*' : '&nbsp;';
       $column_data{contra} = qq|<td align=center>$ref->{contra}</td>|;
       $ref->{closed} = ($ref->{closed}) ? '*' : '&nbsp;';
@@ -418,10 +418,10 @@ sub list_account {
     }
 
     for (@column_index) { print "$column_data{$_}\n" }
-    
+
     print "</tr>\n";
   }
-  
+
   print qq|
   <tr><td colspan=$colspan><hr size=3 noshade></td></tr>
 </table>
@@ -456,23 +456,23 @@ sub list_gifi {
 
   @{ $form->{fields} } = qw(accno description);
   $form->{table} = "gifi";
-  
+
   AM->gifi_accounts(\%myconfig, \%$form);
 
   $form->{title} = $locale->text('GIFI');
-  
+
   # construct callback
   my $callback = "$form->{script}?action=list_gifi&path=$form->{path}&login=$form->{login}";
 
   my @column_index = qw(accno description);
 
   my %column_data;
-  
+
   $column_data{accno} = qq|<th class=listheading>|.$locale->text('GIFI').qq|</a></th>|;
   $column_data{description} = qq|<th class=listheading>|.$locale->text('Description').qq|</a></th>|;
 
   $form->helpref("list_gifi", $myconfig{countrycode});
-  
+
   $form->header;
 
   my $colspan = $#column_index + 1;
@@ -489,32 +489,32 @@ sub list_gifi {
 |;
 
   for (@column_index) { print "$column_data{$_}\n" }
-  
+
   print qq|
 </tr>
 |;
 
   # escape callback
   $callback = $form->escape($callback);
-  
+
   my $i;
-  
+
   foreach my $ref (@{ $form->{ALL} }) {
-    
+
     $i++; $i %= 2;
-    
+
     print qq|
 <tr valign=top class=listrow$i>|;
-    
+
     my $accno = $form->escape($ref->{accno});
     $column_data{accno} = qq|<td><a href=$form->{script}?action=edit_gifi&coa=1&accno=$accno&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{accno}</td>|;
     $column_data{description} = qq|<td>$ref->{description}&nbsp;</td>|;
-    
+
     for (@column_index) { print "$column_data{$_}\n" }
-    
+
     print "</tr>\n";
   }
-  
+
   print qq|
   <tr>
     <td colspan=$colspan><hr size=3 noshade></td>
@@ -524,27 +524,27 @@ sub list_gifi {
 </body>
 </html>
 |;
-  
+
 }
 
 
 sub add_gifi {
-  
+
   $form->{title} = $locale->text('Add GIFI');
-  
+
   # construct callback
   $form->{callback} = "$form->{script}?action=list_gifi&path=$form->{path}&login=$form->{login}" unless $form->{callback};
 
   $form->{coa} = 1;
-  
+
   &gifi_header;
   &gifi_footer;
-  
+
 }
 
 
 sub edit_gifi {
-  
+
   $form->{title} = $locale->text('Edit GIFI');
 
   $accno = $form->{accno};
@@ -558,7 +558,7 @@ sub edit_gifi {
     $form->{accno} = $accno;
     add_gifi;
   }
-  
+
 }
 
 
@@ -609,17 +609,17 @@ sub gifi_header {
 sub gifi_footer {
 
   $form->hide_form(qw(callback path login));
-  
+
   my %button;
-  
+
   $button{'Save'} = { ndx => 3, key => 'S', value => $locale->text('Save') };
-  
+
   if ($form->{accno}) {
     if ($form->{orphaned}) {
       $button{'Delete'} = { ndx => 16, key => 'D', value => $locale->text('Delete') };
     }
   }
-    
+
   if ($form->{coa}) {
     $button{'Copy to COA'} = { ndx => 7, key => 'C', value => $locale->text('Copy to COA') };
   }
@@ -658,13 +658,13 @@ sub copy_to_coa {
 
   delete $form->{id};
   $form->{gifi_accno} = $form->{accno};
-  
+
   $form->{title} = "Add";
   $form->{charttype} = "A";
-  
+
   &account_header;
   &form_footer;
-  
+
 }
 
 
@@ -680,7 +680,7 @@ sub add_department {
 
   $form->{title} = $locale->text('Add Department');
   $form->{role} = "P";
-  
+
   $form->{callback} = "$form->{script}?action=add_department&path=$form->{path}&login=$form->{login}" unless $form->{callback};
 
   &department_header;
@@ -706,17 +706,17 @@ sub list_department {
   AM->departments(\%myconfig, \%$form);
 
   $form->{callback} = "$form->{script}?action=list_department";
-  
+
   for (qw(path login)) { $form->{callback} .= "&$_=$form->{$_}" }
 
   my $callback = $form->escape($form->{callback});
-  
+
   $form->{title} = $locale->text('Departments');
 
   my @column_index = qw(description cost profit up down);
 
   my %column_data;
-  
+
   $column_data{description} = qq|<th width=90% class=listheading>|.$locale->text('Description').qq|</th>|;
   $column_data{cost} = qq|<th class=listheading nowrap>|.$locale->text('Cost Center').qq|</th>|;
   $column_data{profit} = qq|<th class=listheading nowrap>|.$locale->text('Profit Center').qq|</th>|;
@@ -724,7 +724,7 @@ sub list_department {
   $column_data{down} = qq|<th class=listheading>&nbsp;</th>|;
 
   $form->helpref("list_department", $myconfig{countrycode});
-  
+
   $form->header;
 
   print qq|
@@ -750,18 +750,18 @@ sub list_department {
   my $i;
   my $costcenter;
   my $profitcenter;
-  
+
   foreach my $ref (@{ $form->{ALL} }) {
-    
+
     $i++; $i %= 2;
-    
+
     print qq|
         <tr valign=top class=listrow$i>
 |;
 
    $costcenter = ($ref->{role} eq "C") ? "*" : "&nbsp;";
    $profitcenter = ($ref->{role} eq "P") ? "*" : "&nbsp;";
-   
+
    $column_data{description} = qq|<td><a href=$form->{script}?action=edit_department&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{description}</td>|;
    $column_data{cost} = qq|<td align=center>$costcenter</td>|;
    $column_data{profit} = qq|<td align=center>$profitcenter</td>|;
@@ -789,9 +789,9 @@ sub list_department {
 |;
 
   $form->{type} = "department";
-  
+
   $form->hide_form(qw(type callback path login));
-  
+
   print qq|
 <input class=submit type=submit name=action value="|.$locale->text('Add Department').qq|">|;
 
@@ -816,7 +816,7 @@ sub department_header {
 
   my $rows;
   my $description;
-  
+
   if (($rows = $form->numtextrows($form->{description}, 60)) > 1) {
     $description = qq|<textarea name="description" rows=$rows cols=60 wrap=soft>$form->{description}</textarea>|;
   } else {
@@ -824,12 +824,12 @@ sub department_header {
   }
 
   my %checked;
-  
+
   $checked{C} = "checked" if $form->{role} eq "C";
   $checked{P} = "checked" if $form->{role} eq "P";
-  
+
   $form->helpref("department", $myconfig{countrycode});
-  
+
   $form->header;
 
   print qq|
@@ -884,7 +884,7 @@ sub delete_department {
 sub add_business {
 
   $form->{title} = $locale->text('Add Business');
-  
+
   $form->{callback} = "$form->{script}?action=add_business&path=$form->{path}&login=$form->{login}" unless $form->{callback};
 
   &business_header;
@@ -912,24 +912,24 @@ sub list_business {
   AM->business(\%myconfig, \%$form);
 
   $form->{callback} = "$form->{script}?action=list_business";
-  
+
   for (qw(path login)) { $form->{callback} .= "&$_=$form->{$_}" }
 
   my $callback = $form->escape($form->{callback});
-  
+
   $form->{title} = $locale->text('Type of Business');
 
   my @column_index = qw(description discount up down);
 
   my %column_data;
-  
+
   $column_data{description} = qq|<th width=90% class=listheading>|.$locale->text('Description').qq|</th>|;
   $column_data{discount} = qq|<th class=listheading>|.$locale->text('Discount').qq| %</th>|;
   $column_data{up} = qq|<th class=listheading>&nbsp;</th>|;
   $column_data{down} = qq|<th class=listheading>&nbsp;</th>|;
-   
+
   $form->helpref("list_business", $myconfig{countrycode});
-  
+
   $form->header;
 
   print qq|
@@ -954,17 +954,17 @@ sub list_business {
 
   my $i;
   my $discount;
-  
+
   foreach my $ref (@{ $form->{ALL} }) {
-    
+
     $i++; $i %= 2;
-    
+
     print qq|
         <tr valign=top class=listrow$i>
 |;
 
    $discount = $form->format_amount(\%myconfig, $ref->{discount} * 100, $form->{precision}, "&nbsp");
-   
+
    $column_data{description} = qq|<td><a href=$form->{script}?action=edit_business&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{description}</td>|;
    $column_data{discount} = qq|<td align=right>$discount</td>|;
    $column_data{up} = qq|<td><a href=$form->{script}?action=move&db=business&fld=id&id=$ref->{id}&move=up&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$images/up.png alt="+" border=0></td>|;
@@ -991,7 +991,7 @@ sub list_business {
 |;
 
   $form->{type} = "business";
-  
+
   $form->hide_form(qw(type callback path login));
 
   print qq|
@@ -1018,7 +1018,7 @@ sub business_header {
   $form->{discount} = $form->format_amount(\%myconfig, $form->{discount} * 100);
 
   $form->helpref("business", $myconfig{countrycode});
-  
+
   $form->header;
 
   print qq|
@@ -1078,7 +1078,7 @@ sub delete_business {
 sub add_payment_method {
 
   $form->{title} = $locale->text('Add Payment Method');
-  
+
   $form->{callback} = "$form->{script}?action=add_payment_method&path=$form->{path}&login=$form->{login}" unless $form->{callback};
 
   $form->{roundchange} = 0;
@@ -1109,26 +1109,26 @@ sub list_paymentmethod {
   my $href = "$form->{script}?action=list_paymentmethod&direction=$form->{direction}&oldsort=$form->{oldsort}&path=$form->{path}&login=$form->{login}";
 
   $form->sort_order();
-  
+
   $form->{callback} = "$form->{script}?action=list_paymentmethod&direction=$form->{direction}&oldsort=$form->{oldsort}&path=$form->{path}&login=$form->{login}";
-  
+
   my $callback = $form->escape($form->{callback});
-  
+
   $form->{title} = $locale->text('Method of Payment');
 
   my @column_index = qw(rn description fee roundchange up down);
 
   my %column_data;
-  
+
   $column_data{rn} = qq|<th><a class=listheading href=$href&sort=rn>|.$locale->text('No.').qq|</a></th>|;
   $column_data{description} = qq|<th width=99%><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</a></th>|;
   $column_data{fee} = qq|<th class=listheading>|.$locale->text('Fee').qq|</th>|;
   $column_data{roundchange} = qq|<th class=listheading>|.$locale->text('Round').qq|</th>|;
   $column_data{up} = qq|<th class=listheading>&nbsp;</th>|;
   $column_data{down} = qq|<th class=listheading>&nbsp;</th>|;
-  
+
   $form->helpref("list_paymentmethod", $myconfig{countrycode});
-  
+
   $form->header;
 
   print qq|
@@ -1153,25 +1153,25 @@ sub list_paymentmethod {
 
   my $i;
   my $fee;
-  
+
   foreach my $ref (@{ $form->{ALL} }) {
-    
+
     $i++; $i %= 2;
-    
+
     print qq|
         <tr valign=top class=listrow$i>
 |;
 
    $fee = $form->format_amount(\%myconfig, $ref->{fee}, $form->{precision}, "&nbsp");
    $roundchange = $form->format_amount(\%myconfig, $ref->{roundchange}, $form->{precision}, "&nbsp");
-   
+
    $column_data{rn} = qq|<td align=right>$ref->{rn}</td>|;
    $column_data{description} = qq|<td><a href=$form->{script}?action=edit_paymentmethod&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{description}</td>|;
    $column_data{fee} = qq|<td align=right>$fee</td>|;
    $column_data{roundchange} = qq|<td align=right>$roundchange</td>|;
    $column_data{up} = qq|<td><a href=$form->{script}?action=move&db=paymentmethod&fld=id&id=$ref->{id}&move=up&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$images/up.png alt="+" border=0></td>|;
    $column_data{down} = qq|<td><a href=$form->{script}?action=move&db=paymentmethod&fld=id&id=$ref->{id}&move=down&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$images/down.png alt="-" border=0></td>|;
-  
+
    for (@column_index) { print "$column_data{$_}\n" }
 
    print qq|
@@ -1193,7 +1193,7 @@ sub list_paymentmethod {
 |;
 
   $form->{type} = "paymentmethod";
-  
+
   $form->hide_form(qw(type callback path login));
 
   print qq|
@@ -1218,11 +1218,11 @@ sub paymentmethod_header {
 
   $form->{description} = $form->quote($form->{description});
   $form->{fee} = $form->format_amount(\%myconfig, $form->{fee}, $form->{precision});
-  
+
   $roundchange{$form->{roundchange}} = "checked";
 
   $form->helpref("paymentmethod", $myconfig{countrycode});
-  
+
   $form->header;
 
   print qq|
@@ -1293,7 +1293,7 @@ sub delete_paymentmethod {
 sub add_sic {
 
   $form->{title} = $locale->text('Add SIC');
-  
+
   $form->{callback} = "$form->{script}?action=add_sic&path=$form->{path}&login=$form->{login}" unless $form->{callback};
 
   &sic_header;
@@ -1308,7 +1308,7 @@ sub edit_sic {
 
   $form->{code} =~ s/\\'/'/g;
   $form->{code} =~ s/\\\\/\\/g;
-  
+
   AM->get_sic(\%myconfig, \%$form);
   $form->{id} = $form->{code};
 
@@ -1325,24 +1325,24 @@ sub list_sic {
   AM->sic(\%myconfig, \%$form);
 
   my $href = "$form->{script}?action=list_sic&direction=$form->{direction}&oldsort=$form->{oldsort}&path=$form->{path}&login=$form->{login}";
-  
+
   $form->sort_order();
 
   $form->{callback} = "$form->{script}?action=list_sic&direction=$form->{direction}&oldsort=$form->{oldsort}&path=$form->{path}&login=$form->{login}";
-  
+
   my $callback = $form->escape($form->{callback});
-  
+
   $form->{title} = $locale->text('Standard Industrial Codes');
 
   my @column_index = $form->sort_columns(qw(code description));
 
   my %column_data;
-  
+
   $column_data{code} = qq|<th><a class=listheading href=$href&sort=code>|.$locale->text('Code').qq|</a></th>|;
   $column_data{description} = qq|<th><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</a></th>|;
 
   $form->helpref("list_sic", $myconfig{countrycode});
-  
+
   $form->header;
 
   print qq|
@@ -1366,18 +1366,18 @@ sub list_sic {
 |;
 
   my $i;
-  
+
   foreach my $ref (@{ $form->{ALL} }) {
-    
+
     $i++; $i %= 2;
-    
+
     if ($ref->{sictype} eq 'H') {
       print qq|
         <tr valign=top class=listheading>
 |;
       $column_data{code} = qq|<th><a href=$form->{script}?action=edit_sic&code=$ref->{code}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{code}</th>|;
       $column_data{description} = qq|<th>$ref->{description}</th>|;
-     
+
     } else {
       print qq|
         <tr valign=top class=listrow$i>
@@ -1387,7 +1387,7 @@ sub list_sic {
       $column_data{description} = qq|<td>$ref->{description}</td>|;
 
    }
-    
+
    for (@column_index) { print "$column_data{$_}\n" }
 
    print qq|
@@ -1409,9 +1409,9 @@ sub list_sic {
 |;
 
   $form->{type} = "sic";
-  
+
   $form->hide_form(qw(type callback path login));
-  
+
   print qq|
 <input class=submit type=submit name=action value="|.$locale->text('Add SIC').qq|">|;
 
@@ -1438,7 +1438,7 @@ sub sic_header {
   $checked{H} = ($form->{sictype} eq 'H') ? "checked" : "";
 
   $form->helpref("sic", $myconfig{countrycode});
-  
+
   $form->header;
 
   print qq|
@@ -1496,7 +1496,7 @@ sub delete_sic {
 sub add_language {
 
   $form->{title} = $locale->text('Add Language');
-  
+
   $form->{callback} = "$form->{script}?action=add_language&path=$form->{path}&login=$form->{login}" unless $form->{callback};
 
   &language_header;
@@ -1511,7 +1511,7 @@ sub edit_language {
 
   $form->{code} =~ s/\\'/'/g;
   $form->{code} =~ s/\\\\/\\/g;
-  
+
   AM->get_language(\%myconfig, \%$form);
   $form->{id} = $form->{code};
 
@@ -1528,24 +1528,24 @@ sub list_language {
   AM->language(\%myconfig, \%$form);
 
   my $href = "$form->{script}?action=list_language&direction=$form->{direction}&oldsort=$form->{oldsort}&path=$form->{path}&login=$form->{login}";
-  
+
   $form->sort_order();
 
   $form->{callback} = "$form->{script}?action=list_language&direction=$form->{direction}&oldsort=$form->{oldsort}&path=$form->{path}&login=$form->{login}";
-  
+
   my $callback = $form->escape($form->{callback});
-  
+
   $form->{title} = $locale->text('Languages');
 
   my @column_index = $form->sort_columns(qw(code description));
 
   my %column_data;
-  
+
   $column_data{code} = qq|<th><a class=listheading href=$href&sort=code>|.$locale->text('Code').qq|</a></th>|;
   $column_data{description} = qq|<th><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</a></th>|;
 
   $form->helpref("list_language", $myconfig{countrycode});
-  
+
   $form->header;
 
   print qq|
@@ -1569,9 +1569,9 @@ sub list_language {
 |;
 
   my $i;
-  
+
   foreach my $ref (@{ $form->{ALL} }) {
-    
+
     $i++; $i %= 2;
 
     print qq|
@@ -1580,7 +1580,7 @@ sub list_language {
 
     $column_data{code} = qq|<td><a href=$form->{script}?action=edit_language&code=$ref->{code}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{code}</td>|;
     $column_data{description} = qq|<td>$ref->{description}</td>|;
-    
+
    for (@column_index) { print "$column_data{$_}\n" }
 
    print qq|
@@ -1604,7 +1604,7 @@ sub list_language {
   $form->{type} = "language";
 
   $form->hide_form(qw(type callback path login));
-  
+
   print qq|
 <input class=submit type=submit name=action value="|.$locale->text('Add Language').qq|">|;
 
@@ -1628,7 +1628,7 @@ sub language_header {
   for (qw(code description)) { $form->{$_} = $form->quote($form->{$_}) }
 
   $form->helpref("language", $myconfig{countrycode});
-  
+
   $form->header;
 
   print qq|
@@ -1732,7 +1732,7 @@ sub delete_language {
 |;
 
   for (qw(action nextsub)) { delete $form->{$_} }
-  
+
   $form->hide_form;
 
   print qq|
@@ -1753,7 +1753,7 @@ sub delete_language {
 
 
 sub yes_delete_language {
- 
+
   # check if template dir is used by another dataset
   open(FH, "$memberfile") or $form->error("$memberfile : $!\n");
   @member = <FH>;
@@ -1803,24 +1803,24 @@ sub list_mimetypes {
   AM->mimetypes(\%myconfig, \%$form);
 
   my $href = "$form->{script}?action=list_mimetypes&direction=$form->{direction}&oldsort=$form->{oldsort}&path=$form->{path}&login=$form->{login}";
-  
+
   $form->sort_order();
 
   $form->{callback} = "$form->{script}?action=list_mimetypes&direction=$form->{direction}&oldsort=$form->{oldsort}&path=$form->{path}&login=$form->{login}";
-  
+
   my $callback = $form->escape($form->{callback});
-  
+
   $form->{title} = $locale->text('Mimetypes');
 
   my @column_index = $form->sort_columns(qw(extension contenttype));
 
   my %column_data;
-  
+
   $column_data{extension} = qq|<th><a class=listheading href=$href&sort=extension>|.$locale->text('Extension').qq|</a></th>|;
   $column_data{contenttype} = qq|<th><a class=listheading href=$href&sort=contenttype>|.$locale->text('Content-Type').qq|</a></th>|;
 
   $form->helpref("list_mimetypes", $myconfig{countrycode});
-  
+
   $form->header;
 
   print qq|
@@ -1844,9 +1844,9 @@ sub list_mimetypes {
 |;
 
   my $i;
-  
+
   foreach my $ref (@{ $form->{ALL} }) {
-    
+
     $i++; $i %= 2;
 
     print qq|
@@ -1855,7 +1855,7 @@ sub list_mimetypes {
 
     $column_data{extension} = qq|<td><a href=$form->{script}?action=edit_mimetype&extension=$ref->{extension}&contenttype=$ref->{contenttype}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{extension}</td>|;
     $column_data{contenttype} = qq|<td>$ref->{contenttype}</td>|;
-    
+
    for (@column_index) { print "$column_data{$_}\n" }
 
    print qq|
@@ -1879,7 +1879,7 @@ sub list_mimetypes {
   $form->{type} = "mimetype";
 
   $form->hide_form(qw(type callback path login));
-  
+
   print qq|
 <input class=submit type=submit name=action value="|.$locale->text('Add Mimetype').qq|">|;
 
@@ -1910,7 +1910,7 @@ sub edit_mimetype {
 sub add_mimetype {
 
   $form->{title} = $locale->text('Add Mimetype');
-  
+
   $form->{callback} = "$form->{script}?action=add_mimetype&path=$form->{path}&login=$form->{login}" unless $form->{callback};
 
   &mimetype_header;
@@ -1921,7 +1921,7 @@ sub add_mimetype {
 sub mimetype_header {
 
   $form->helpref("mimetype", $myconfig{countrycode});
-  
+
   $form->header;
 
   print qq|
@@ -1953,9 +1953,9 @@ sub mimetype_header {
   $form->hide_form(qw(callback path login));
 
   my %button;
- 
+
   $button{'Save'} = { ndx => 3, key => 'S', value => $locale->text('Save') };
-  
+
   if ($form->{extension}) {
     $button{'Delete'} = { ndx => 16, key => 'D', value => $locale->text('Delete') };
   }
@@ -1991,7 +1991,7 @@ sub save_mimetype {
 
 
 sub delete_mimetype {
-  
+
   AM->delete_mimetype(\%myconfig, \%$form);
 
   $form->redirect($locale->text('Mimetype deleted!'));
@@ -2000,10 +2000,10 @@ sub delete_mimetype {
 
 
 sub display_stylesheet {
-  
+
   $form->{file} = "css/$myconfig{stylesheet}";
   &display_form;
-  
+
 }
 
 
@@ -2018,9 +2018,9 @@ sub list_templates {
   }
 
   unshift @{ $form->{ALL} }, { code => '.', description => $locale->text('Default Template') };
-  
+
   my $href = "$form->{script}?action=list_templates&direction=$form->{direction}&oldsort=$form->{oldsort}&file=$form->{file}&path=$form->{path}&login=$form->{login}";
-  
+
   $form->sort_order();
 
   $form->{file} =~ s/$myconfig{templates}\///;
@@ -2029,7 +2029,7 @@ sub list_templates {
   my @column_index = $form->sort_columns(qw(code description));
 
   my %column_data;
-  
+
   $column_data{code} = qq|<th><a class=listheading href=$href&sort=code>|.$locale->text('Code').qq|</a></th>|;
   $column_data{description} = qq|<th><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</a></th>|;
 
@@ -2058,9 +2058,9 @@ sub list_templates {
 |;
 
   my $i;
-  
+
   foreach my $ref (@{ $form->{ALL} }) {
-    
+
     $i++; $i %= 2;
 
     print qq|
@@ -2069,7 +2069,7 @@ sub list_templates {
 
     $column_data{code} = qq|<td><a href=$form->{script}?action=display_form&file=$templates/$myconfig{templates}/$ref->{code}/$form->{file}&path=$form->{path}&login=$form->{login}>$ref->{code}</td>|;
     $column_data{description} = qq|<td>$ref->{description}</td>|;
-    
+
    for (@column_index) { print "$column_data{$_}\n" }
 
    print qq|
@@ -2107,8 +2107,8 @@ sub display_form {
 
   $form->{callback} = qq|$form->{script}?action=display_form&file=$form->{file}&path=$form->{path}&login=$form->{login}| unless $form->{callback};
   my $callback = $form->escape($form->{callback});
-  
-  $form->{file} =~ s/^(.:)*?\/|\.\.\/|\.\///g; 
+
+  $form->{file} =~ s/^(.:)*?\/|\.\.\/|\.\///g;
   $form->{file} =~ s/^\/*//g;
   $form->{file} =~ s/$userspath//;
   $form->{file} =~ s/$memberfile//;
@@ -2136,34 +2136,34 @@ sub display_form {
       $pos = $rpos + 2;
 
       $tmpstr = substr $str, $lpos, $rpos - $lpos + 2;
-      
+
       if ($tmpstr =~ /(align|width|offset)=/) {
 	$var = substr $tmpstr, 2;
 	$var =~ s/\s.*//;
 	$form->{temp} = $var;
 	$tmpstr =~ s/$var/temp/;
 	$tmpstr = $form->format_line($tmpstr);
-	
+
 	$form->{body} =~ s/<%((.*?) (align|width|offset)=.*?)%>/$tmpstr/;
       }
       $str = substr $str, $pos;
     }
   }
-  
+
   $form->{body} =~ s/<%(.*?)%>/$1/g;
 
   if ($form->{file} !~ /\.(html|xml)$/) {
     $form->{body} = "<pre>\n$form->{body}\n</pre>";
   }
-  
+
   $form->{edit} = 1;
-  
+
   if ($form->{file} =~ /\/help\//) {
     $form->{edit} = $form->{admin};
   }
-    
+
   $form->helpref("display_form", $myconfig{countrycode});
-  
+
   $form->header;
 
   print qq|
@@ -2188,7 +2188,7 @@ $form->{body}
   $form->{type} = "template";
 
   $form->hide_form(qw(file type path login callback));
-  
+
   print qq|
 <p>
 <input name=action type=submit class=submit value="|.$locale->text('Edit').qq|">| if $form->{edit};
@@ -2218,15 +2218,15 @@ sub edit_template {
   $form->{title} = $form->{file};
   # convert &nbsp to &amp;nbsp;
   $form->{body} =~ s/&nbsp;/&amp;nbsp;/gi;
-  
+
   $form->{callback} = "$form->{script}?action=display_form&file=$form->{file}&path=$form->{path}&login=$form->{login}" unless $form->{callback};
-  
+
   $form->helpref("edit_form", $myconfig{countrycode});
-  
+
   $form->header;
-  
+
   $form->{type} = "template";
-  
+
   print qq|
 <body>
 
@@ -2272,12 +2272,12 @@ sub save_template {
 
   AM->save_template(\%$form, \@accessfolders, $locale->text('Access Denied!'));
   $form->redirect($locale->text('Template saved!'));
-  
+
 }
 
 
 sub taxes {
-  
+
   # get tax account numbers
   AM->taxes(\%myconfig, \%$form);
 
@@ -2286,29 +2286,29 @@ sub taxes {
     $i++;
     $form->{"taxrate_$i"} = $ref->{rate};
     $form->{"taxdescription_$i"} = $ref->{description};
-    
+
     for (qw(accno taxnumber validto closed)) { $form->{"${_}_$i"} = $ref->{$_} }
     $form->{taxaccounts} .= "$ref->{id}_$i ";
   }
   chop $form->{taxaccounts};
-  
+
   &display_taxes;
 
 }
 
 
 sub display_taxes {
-  
+
   $form->{title} = $locale->text('Taxes');
-  
+
   $form->{type} = "taxes";
 
   $form->helpref("display_taxes", $myconfig{countrycode});
-  
+
   $form->header;
 
   &calendar;
-  
+
   print qq|
 <body>
 
@@ -2330,15 +2330,15 @@ sub display_taxes {
 |;
 
   my $sametax;
-  
+
   for (split(/ /, $form->{taxaccounts})) {
-    
+
     my ($id, $i) = split /_/, $_;
 
     $form->{"taxrate_$i"} = $form->format_amount(\%myconfig, $form->{"taxrate_$i"}, undef, 0);
-    
+
     $form->hide_form(map { "${_}_$i" } qw(taxdescription accno));
-    
+
     print qq|
 	<tr>|;
 
@@ -2354,7 +2354,7 @@ sub display_taxes {
       $closed = ($form->{"closed_$i"}) ? "checked" : "";
       print qq|<td><input name="closed_$id" type=checkbox value=1 $closed></td>|;
     }
-    
+
     print qq|
 	  <td><input name="taxrate_$i" class="inputright" size=6 value=$form->{"taxrate_$i"}></td>
 	  <td><input name="taxnumber_$i" value="$form->{"taxnumber_$i"}"></td>
@@ -2362,7 +2362,7 @@ sub display_taxes {
 	</tr>
 |;
     $sametax = $form->{"accno_$i"};
-    
+
   }
 
   print qq|
@@ -2413,7 +2413,7 @@ sub update_taxes {
     $form->{"closed_$i"} = $form->{"closed_$id"};
     push @{ $tax{$id} }, { map { $_ => $form->{"${_}_$i"} } @flds };
   }
-  
+
   foreach $item (keys %tax) {
     for $ref (@{$tax{$item}}) {
       push @tax, $ref;
@@ -2438,12 +2438,12 @@ sub update_taxes {
   chop $form->{taxaccounts};
 
   &display_taxes;
-  
+
 }
 
 
 sub defaults {
-  
+
   # get defaults for account numbers and last numbers
   AM->defaultaccounts(\%myconfig, \%$form);
 
@@ -2456,7 +2456,7 @@ sub defaults {
     }
   }
 
- 
+
   for (qw(accno defaults)) { delete $form->{$_} }
 
   my %checked;
@@ -2465,7 +2465,7 @@ sub defaults {
   $checked{namesbynumber} = "checked" if $form->{namesbynumber};
   $checked{company} = "checked" unless $form->{typeofcontact};
   $checked{person} = "checked" if $form->{typeofcontact} eq 'person';
-  
+
   $roundchange{$form->{roundchange}} = "checked";
 
   for (qw(glnumber sinumber sonumber ponumber sqnumber rfqnumber employeenumber customernumber vendornumber)) {
@@ -2473,11 +2473,11 @@ sub defaults {
   }
 
   $form->{title} = $locale->text('System Defaults');
-  
+
   $form->helpref("system_defaults", $myconfig{countrycode});
-  
+
   $form->header;
-  
+
   print qq|
 <body>
 
@@ -2701,7 +2701,7 @@ sub defaults {
   for (qw(gl si so po sq rfq employee customer vendor)) { $form->{optional} .= " lock_${_}number" }
 
   @f = qw(closedto revtrans audittrail);
-  
+
   for (qw(printer opendrawer poledisplay poledisplayon)) {
     if ($form->{$_}) {
       push @f, $_;
@@ -2716,9 +2716,9 @@ sub defaults {
   }
 
   $form->hide_form(@f) if @f;
-  
+
   $form->hide_form(qw(optional path login));
-  
+
   print qq|
 <input type=submit class=submit name=action value="|.$locale->text('Save').qq|">|;
 
@@ -2738,7 +2738,7 @@ sub defaults {
 
 
 sub workstations {
-  
+
   # get printers etc.
   if (! $form->{have}) {
     AM->workstations(\%myconfig, \%$form);
@@ -2751,9 +2751,9 @@ sub workstations {
   $form->{numprinters_1} ||= 1;
 
   $form->helpref("workstations", $myconfig{countrycode});
-  
+
   $form->header;
-  
+
   print qq|
 <body>
 
@@ -2813,7 +2813,7 @@ sub workstations {
       </table>
     </td>
   </tr>
-  
+
   <tr>
     <th class=listheading>|.$locale->text('Workstations').qq|</th>
   </tr>
@@ -2886,7 +2886,7 @@ sub workstations {
 
   $form->hide_form(qw(numprinters numworkstations path login));
   $form->hide_form(map { "numprinters_$_" } (1 .. $form->{numworkstations}));
-  
+
   print qq|
 <input type=submit class=submit name=action value="|.$locale->text('Update').qq|">
 <input type=submit class=submit name=action value="|.$locale->text('Save').qq|">|;
@@ -2936,10 +2936,10 @@ sub update_workstations {
       $ws{$j}{poledisplayon} = $form->{"poledisplayon_$i"};
       $ws{$j}{cashdrawer} = $form->{"cashdrawer_$i"};
       $ws{$j}{poledisplay} = $form->{"poledisplay_$i"};
-      
+
       @{$ws{$j}{p}} = ();
       $form->{"numprinters_$i"}++;
-      
+
       for (1 .. $form->{"numprinters_$i"}) {
 	if ($form->{"printer_${i}_$_"} && $form->{"command_${i}_$_"}) {
 	  push @{$ws{$j}{p}}, { printer => $form->{"printer_${i}_$_"},
@@ -2961,7 +2961,7 @@ sub update_workstations {
   $i = 1;
   for $j (sort { $a <=> $b } keys %ws) {
     $form->{"workstation_$i"} = $ws{$j}{workstation};
-    
+
     $form->{"poledisplayon_$i"} = $ws{$j}{poledisplayon};
     $form->{"cashdrawer_$i"} = $ws{$j}{cashdrawer};
     $form->{"poledisplay_$i"} = $ws{$j}{poledisplay};
@@ -2976,7 +2976,7 @@ sub update_workstations {
     $i++;
   }
   $form->{numworkstations} = $i;
-      
+
   $form->{have} = 1;
 
   &workstations;
@@ -2991,14 +2991,14 @@ sub save_workstations {
   } else {
     $form->error($locale->text('Failed to save workstations!'));
   }
-  
+
 }
 
 
 sub config {
 
   AM->get_defaults(\%myconfig, \%$form);
-  
+
   for (qw(mm-dd-yy mm/dd/yy dd-mm-yy dd/mm/yy dd.mm.yy yyyy-mm-dd)) { $form->{selectdateformat} .= "$_\n" }
 
   for (qw(1,000.00 1000.00 1.000,00 1000,00 1'000.00)) { $form->{selectnumberformat} .= "$_\n" }
@@ -3011,7 +3011,7 @@ sub config {
   $checked{emailcopy} = "checked" if $myconfig{emailcopy};
 
   my %countrycodes = User->country_codes;
-  
+
   for (sort { $countrycodes{$a} cmp $countrycodes{$b} } keys %countrycodes) {
     $form->{selectcountrycode} .= qq|${_}--$countrycodes{$_}|;
   }
@@ -3028,7 +3028,7 @@ sub config {
     $form->{selectprinter} = "\n";
     for (@{ $form->{all_printer} }) { $form->{selectprinter} .= "$_->{printer}\n" }
     chomp $form->{selectprinter};
-      
+
     $printer = qq|
               <tr>
 	        <th align=right>|.$locale->text('Printer').qq|</th>
@@ -3037,10 +3037,10 @@ sub config {
 		.qq|</select></td>
               </tr>
 |;
-      
+
     $myconfig{outputformat} ||= "Postscript";
   }
-    
+
   my $selectoutputformat = qq|html--|.$locale->text('html').qq|
 xml--|.$locale->text('XML').qq|
 txt--|.$locale->text('Text');
@@ -3050,7 +3050,7 @@ txt--|.$locale->text('Text');
 ps--Postscript
 pdf--PDF|;
   }
-  
+
   my $outputformat = qq|
  	      <tr>
 		<th align=right>|.$locale->text('Output Format').qq|</th>
@@ -3083,7 +3083,7 @@ pdf--PDF|;
   $form->{type} = "preferences";
 
   $selectencoding = User->encoding($myconfig{dbdriver});
-  
+
   $form->header;
 
   print qq|
@@ -3181,7 +3181,7 @@ pdf--PDF|;
 |;
 
   $form->hide_form(qw(type oldpassword path login));
-  
+
   if ($form->{login} ne "admin\@$myconfig{dbname}") {
     $form->hide_form(qw(name email));
   }
@@ -3251,7 +3251,7 @@ sub save_preferences {
       }
     }
   }
-  $form->{password} = $form->{new_password}; 
+  $form->{password} = $form->{new_password};
   $form->{tan} = $myconfig{tan};
   $form->{charset} = $form->{encoding};
 
@@ -3268,7 +3268,7 @@ sub backup {
 
   if ($form->{media} eq 'email') {
     $form->error($locale->text('No email address for')." $myconfig{name}") unless ($myconfig{email});
-    
+
     $form->{OUT} = "$sendmail";
 
   }
@@ -3361,7 +3361,7 @@ sub get_dataset {
 
   open(FH, "$userspath/$form->{tmpfile}") or $form->error("$userspath/$form->{tmpfile} : $!");
   open(SP, ">$spool/$myconfig{dbname}/$form->{filename}") or $form->error("$spool/$myconfig{dbname}/$form->{filename} : $!");
-  
+
   for (<FH>) {
     print SP $_;
     if (/-- Version:/) {
@@ -3379,12 +3379,12 @@ sub get_dataset {
   close(SP);
 
   unlink "$userspath/$form->{tmpfile}";
-  
+
   unless ($form->{restoredbversion} && $form->{restoredbname}) {
     unlink "$spool/$myconfig{dbname}/$form->{filename}";
     $form->error($locale->text('Not a SQL-Ledger backup!'));
   }
-  
+
   if ($myconfig{dbname} ne $form->{restoredbname}) {
     $dbname = qq|
   <tr>
@@ -3425,7 +3425,7 @@ $locale->text('will be restored with data from').qq| <b>$form->{restoredbname}</
   $form->{title} = $locale->text('Restore');
 
   $form->helpref("restore", $myconfig{countrycode});
-  
+
   $form->header;
 
 print qq|
@@ -3469,7 +3469,7 @@ sub do_restore {
 
   open FH, ">$userspath/$myconfig{dbname}.LCK" or $form->error($!);
   close(FH);
-  
+
   $form->info($locale->text('Restoring dataset version')." $form->{restoredbversion}\n");
 
   if ($ok = AM->restore(\%myconfig, \%$form, "$spool/$myconfig{dbname}/$form->{filename}")) {
@@ -3485,9 +3485,9 @@ sub do_restore {
       &upgrade_dataset;
     }
   }
-  
+
   unlink "$userspath/$myconfig{dbname}.LCK";
-  
+
 }
 
 
@@ -3496,12 +3496,12 @@ sub upgrade_dataset {
   $user = new User $memberfile, $form->{login};
 
   open FH, ">$userspath/$myconfig{dbname}.LCK" or $form->error($!);
-  
+
   for (qw(dbname dbhost dbport dbdriver dbuser)) { $form->{$_} = $myconfig{$_} }
   $form->{dbpasswd} = unpack 'u', $myconfig{dbpasswd};
-  
+
   $form->info($locale->text('Upgrading to Version')." $form->{dbversion} ... \n");
-  
+
   # required for Oracle
   $form->{dbdefault} = $sid;
 
@@ -3519,18 +3519,18 @@ sub audit_control {
   $form->{title} = $locale->text('Audit Control');
 
   $form->error($locale->text('Must be logged in as admin!')) unless $form->{admin};
-  
+
   AM->closedto(\%myconfig, \%$form);
-  
+
   my %checked;
   for (qw(revtrans audittrail)) { $checked{$_} = "checked" if $form->{$_} }
- 
+
   $form->helpref("audit_control", $myconfig{countrycode});
-  
+
   $form->header;
 
   &calendar;
-  
+
   print qq|
 <body>
 
@@ -3594,7 +3594,7 @@ sub doclose {
   if ($form->{revtrans}) {
     $msg = $locale->text('Transaction reversal enforced for all dates');
   } else {
-    
+
     if ($form->{closedto}) {
       $msg = $locale->text('Books closed up to')
       ." ".$locale->date(\%myconfig, $form->{closedto}, 1);
@@ -3617,14 +3617,14 @@ sub doclose {
   }
 
   $form->redirect($msg);
-  
+
 }
 
 
 sub audit_log {
 
   AM->audit_log_links(\%myconfig, \%$form);
-  
+
   if (@{ $form->{all_employee} }) {
     $form->{selectemployee} = "\n";
     for (@{ $form->{all_employee} }) { $form->{selectemployee} .= qq|$_->{name}--$_->{id}\n| }
@@ -3637,7 +3637,7 @@ sub audit_log {
 	  .qq|</select>
 	  </td>
 |;
-  
+
   }
 
   if (@{ $form->{all_action} }) {
@@ -3654,7 +3654,7 @@ sub audit_log {
 |;
   }
 
-	  
+
   $form->{title} = $locale->text('Audit Log');
 
   $form->helpref("audit_log", $myconfig{countrycode});
@@ -3717,7 +3717,7 @@ sub list_audit_log {
   AM->audit_log(\%myconfig, \%$form);
 
   $form->helpref("audit_trail", $myconfig{countrycode});
-  
+
   # construct href
   $href = qq|$form->{script}?action=list_audit_log|;
   for (qw(oldsort direction path login)) { $href .= qq|&$_=$form->{$_}| }
@@ -3725,7 +3725,7 @@ sub list_audit_log {
   # construct callback
 
   $form->sort_order();
-  
+
   $callback = qq|$form->{script}?action=list_audit_log|;
   for (qw(oldsort direction path login)) { $callback .= qq|&$_=$form->{$_}| }
 
@@ -3761,7 +3761,7 @@ sub list_audit_log {
   }
 
   @column_index = $form->sort_columns("transdate", "transtime", "tablename", "reference", "trans_id", "formname", "action", "name", "employeenumber", "login");
-  
+
   $column_header{transdate} = qq|<th><a class=listheading href=$href&sort=transdate>|.$locale->text('Date').qq|</a></th>|;
   $column_header{transtime} = qq|<th class=listheading>|.$locale->text('Time').qq|</th>|;
   $column_header{name} = qq|<th><a class=listheading href=$href&sort=name>|.$locale->text('Employee').qq|</a></th>|;
@@ -3772,7 +3772,7 @@ sub list_audit_log {
   $column_header{formname} = qq|<th><a class=listheading href=$href&sort=formname>|.$locale->text('Form').qq|</a></th>|;
   $column_header{action} = qq|<th><a class=listheading href=$href&sort=action>|.$locale->text('Action').qq|</a></th>|;
   $column_header{login} = qq|<th><a class=listheading href=$href&sort=login>|.$locale->text('Login').qq|</a></th>|;
-  
+
   $form->{title} = $locale->text('Audit Log');
 
 
@@ -3797,7 +3797,7 @@ sub list_audit_log {
         <tr class=listheading>|;
 
   for (@column_index) { print "\n$column_header{$_}" }
-  
+
   print qq|
         </tr>
 |;
@@ -3818,8 +3818,8 @@ sub list_audit_log {
 	      debit_note => { ap => { module => 'ap', param => [ 'type=debit_note' ] } },
 	      invoice => { ar => { module => 'is', param => [ 'type=invoice' ] },
 	                   ap => { module => 'ir', param => [ 'type=invoice' ] } },
-	      deposit => { ar => { module => 'ar', param => [ 'type=transaction' ] } },		   
-	      'pre-payment' => { ap => { module => 'ap', param => [ 'type=transaction' ] } },		   
+	      deposit => { ar => { module => 'ar', param => [ 'type=transaction' ] } },
+	      'pre-payment' => { ap => { module => 'ap', param => [ 'type=transaction' ] } },
               pos_invoice => { ar => { module => 'ps' } },
 	      credit_invoice => { ar => { module => 'is', param => [ 'type=credit_invoice' ] } },
 	      debit_invoice => { ap => { module => 'ir', param => [ 'type=debit_invoice' ] } },
@@ -3848,7 +3848,7 @@ sub list_audit_log {
 	$column_data{trans_id} = qq|<td><a href=$href>$ref->{trans_id}</td>|;
       }
     }
-    
+
     if ($ref->{login} ne 'admin') {
       $href = "hr.pl?action=edit&db=employee&id=$ref->{employee_id}";
       for (qw(path login)) {
@@ -3857,7 +3857,7 @@ sub list_audit_log {
       $href .= "&callback=$callback";
       $column_data{name} = qq|<td><a href=$href>$ref->{name}</td>|;
     }
-    
+
     $j++; $j %= 2;
 
     print "
@@ -3902,7 +3902,7 @@ sub list_audit_log {
 sub add_warehouse {
 
   $form->{title} = $locale->text('Add Warehouse');
-  
+
   $form->{callback} = "$form->{script}?action=add_warehouse&path=$form->{path}&login=$form->{login}" unless $form->{callback};
 
   &warehouse_header;
@@ -3932,15 +3932,15 @@ sub list_warehouse {
   $form->{callback} = "$form->{script}?action=list_warehouse";
 
   for (qw(path login)) { $form->{callback} .= "&$_=$form->{$_}" }
-  
+
   my $callback = $form->escape($form->{callback});
-  
+
   $form->{title} = $locale->text('Warehouses');
 
   my @column_index = $form->sort_columns(qw(description address up down));
 
   my %column_data;
-  
+
   $column_data{description} = qq|<th class=listheading>|.$locale->text('Description').qq|</th>|;
   $column_data{address} = qq|<th class=listheading>|.$locale->text('Address').qq|</th>|;
   $column_data{up} = qq|<th width=1% class=listheading>&nbsp;</th>|;
@@ -3971,11 +3971,11 @@ sub list_warehouse {
 |;
 
   my $i;
-  
+
   foreach my $ref (@{ $form->{ALL} }) {
-    
+
     $i++; $i %= 2;
-    
+
     print qq|
         <tr valign=top class=listrow$i>
 |;
@@ -4008,7 +4008,7 @@ sub list_warehouse {
   $form->{type} = "warehouse";
 
   $form->hide_form(qw(type callback path login));
-  
+
   print qq|
 <input class=submit type=submit name=action value="|.$locale->text('Add Warehouse').qq|">|;
 
@@ -4034,7 +4034,7 @@ sub warehouse_header {
 
   my $description;
   my $rows;
-  
+
   if (($rows = $form->numtextrows($form->{description}, 60)) > 1) {
     $description = qq|<textarea name="description" rows=$rows cols=60 wrap=soft>$form->{description}</textarea>|;
   } else {
@@ -4042,7 +4042,7 @@ sub warehouse_header {
   }
 
   $form->helpref("warehouse", $myconfig{countrycode});
-  
+
   $form->header;
 
   print qq|
@@ -4101,7 +4101,7 @@ sub save_warehouse {
   if (AM->save_warehouse(\%myconfig, \%$form)) {
     $form->redirect($locale->text('Warehouse saved!'));
   }
-  
+
   $form->error($locale->text('Failed to save Warehouse!'));
 
 }
@@ -4112,7 +4112,7 @@ sub delete_warehouse {
   if (AM->delete_warehouse(\%myconfig, \%$form)) {
     $form->redirect($locale->text('Warehouse deleted!'));
   }
-  
+
   $form->error($locale->text('Failed to delete Warehouse!'));
 
 }
@@ -4121,20 +4121,20 @@ sub delete_warehouse {
 sub yearend {
 
   AM->earningsaccounts(\%myconfig, \%$form);
-  
+
   for (@{ $form->{chart} }) { $form->{selectchart} .= "$_->{accno}--$_->{description}\n" }
-  
+
   $checked{accrual} = "checked" if $form->{method} eq 'accrual';
   $checked{cash} = "checked" if $form->{method} eq 'cash';
-  
+
   $form->{title} = $locale->text('Yearend');
-  
+
   $form->helpref("yearend", $myconfig{countrycode});
-  
+
   $form->header;
 
   &calendar;
-  
+
   print qq|
 <body>
 
@@ -4183,7 +4183,7 @@ sub yearend {
   $form->{nextsub} = "generate_yearend";
 
   $form->hide_form(qw(l_accno nextsub precision path login));
-  
+
   print qq|
 <input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">|;
 
@@ -4195,7 +4195,7 @@ sub generate_yearend {
   $form->isblank("todate", $locale->text('Yearend date missing!'));
 
   RP->yearend_statement(\%myconfig, \%$form);
-  
+
   $form->{transdate} = $form->{todate};
 
   my $earnings = 0;
@@ -4238,7 +4238,7 @@ sub generate_yearend {
   } else {
     $form->error('Nothing to do!');
   }
-  
+
 }
 
 
@@ -4247,7 +4247,7 @@ sub company_logo {
 
   AM->company_defaults(\%myconfig, \%$form);
   $form->{address} =~ s/\n/<br>/g;
-  
+
   $form->{stylesheet} = $myconfig{stylesheet};
 
   $form->{title} = $locale->text('About');
@@ -4287,7 +4287,7 @@ sub company_logo {
 <center>
 <a href="http://www.sql-ledger.com" target=_blank><img src=$images/sql-ledger.png border=0></a>
 <h1 class=login>|.$locale->text('Version').qq| $form->{version}</h1>
-
+<p>$form->{version2}</p>
 <p>
 |.$locale->text('Licensed to').qq|
 <p>
@@ -4338,11 +4338,11 @@ sub recurring_transactions {
   for (qw(path login)) { $href .= qq|&$_=$form->{$_}| }
   my $callback = $href;
   for (qw(direction oldsort)) { $href .= qq|&$_=$form->{$_}| }
-  
+
   $form->sort_order();
-  
+
   my @column_index = qw(ndx reference description name vcnumber);
-  
+
   push @column_index, qw(nextdate enddate id amount curr repeat howmany recurringemail recurringprint);
 
   my %column_data;
@@ -4350,7 +4350,7 @@ sub recurring_transactions {
   $form->{allbox} = ($form->{allbox}) ? "checked" : "";
   $action = ($form->{deselect}) ? "deselect_all" : "select_all";
   $column_data{ndx} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll(); javascript:document.main.submit()"><input type=hidden name=action value="$action"></th>|;
-  
+
   $column_data{reference} = "<th><a class=listheading href=$href&sort=reference>".$locale->text('Reference').qq"</a></th>";
   $column_data{id} = "<th class=listheading>".$locale->text('ID')."</th>";
   $column_data{description} = "<th><a class=listheading href=$href&sort=description>".$locale->text('Description')."</th>";
@@ -4373,7 +4373,7 @@ sub recurring_transactions {
   $callback = $form->escape("$callback&sort=$form->{sort}");
 
   $form->helpref("recurring_transactions", $myconfig{countrycode});
-  
+
   # create the logo screen
   $form->header;
 
@@ -4421,20 +4421,20 @@ print qq|
   my $reference;
   my $module;
   my $type;
-  
+
   foreach my $transaction (sort keys %{ $form->{transactions} }) {
     print qq|
         <tr>
 	  <th class=listheading colspan=$colspan>$tr{$transaction}</th>
 	</tr>
 |;
-    
+
     foreach $ref (@{ $form->{transactions}{$transaction} }) {
 
       for (@column_index) { $column_data{$_} = "<td>$ref->{$_}</td>" }
 
       for (qw(nextdate enddate)) { $column_data{$_} = "<td nowrap>$ref->{$_}</td>" }
-      
+
       if ($ref->{repeat} > 1) {
 	$unit = $locale->text(ucfirst $ref->{unit});
 	$repeat = "$ref->{repeat} $unit";
@@ -4445,7 +4445,7 @@ print qq|
       }
 
       $column_data{ndx} = qq|<td></td>|;
-      
+
       if (!$ref->{expired}) {
 	$k++;
 	$checked = "";
@@ -4458,13 +4458,13 @@ print qq|
 	$column_data{ndx} = qq|<td><input name="ndx_$k" class=checkbox type=checkbox value=$ref->{id} $checked></td>|;
 	$column_data{nextdate} = qq|<td nowrap><input name="nextdate_$k" size=11 value="$ref->{nextdate}" title="$myconfig{dateformat}">|.&js_calendar("main", "nextdate_$k").qq|</td>|;
       }
-      
+
       $reference = ($ref->{reference}) ? $ref->{reference} : $locale->text('Next Number');
       $column_data{reference} = qq|<td nowrap><a href=$form->{script}?action=edit_recurring&id=$ref->{id}&vc=$ref->{vc}&path=$form->{path}&login=$form->{login}&module=$ref->{module}&invoice=$ref->{invoice}&transaction=$ref->{transaction}&recurringnextdate=$ref->{nextdate}&callback=$callback>$reference</a></td>|;
 
       $module = "$ref->{module}.pl";
       $type = "";
-      
+
       if ($ref->{module} eq 'ar') {
 	$module = "is.pl" if $ref->{invoice};
 	$ref->{amount} /= $ref->{exchangerate};
@@ -4482,16 +4482,16 @@ print qq|
 
       $column_data{vcnumber} = qq|<td>$ref->{vcnumber}&nbsp;</td>|;
       $column_data{id} = qq|<td><a href=$module?action=edit&id=$ref->{id}&vc=$ref->{vc}&path=$form->{path}&login=$form->{login}&type=$type&callback=$callback>$ref->{id}</a></td>|;
-      
+
       $column_data{repeat} = "<td align=right nowrap>$repeat</td>";
       $column_data{howmany} = "<td align=right nowrap>".$form->format_amount(\%myconfig, $ref->{howmany})."</td>";
       $column_data{amount} = "<td align=right nowrap>".$form->format_amount(\%myconfig, $ref->{amount}, $form->{precision})."</td>";
-      
+
       $column_data{recurringemail} = "<td nowrap>";
       @f = split /:/, $ref->{recurringemail};
       for (0 .. $#f) { $column_data{recurringemail} .= $locale->text($f{$f[$_]})."<br>" }
       $column_data{recurringemail} .= "</td>";
-      
+
       $column_data{recurringprint} = "<td nowrap>";
       @f = split /:/, $ref->{recurringprint};
       for (0 .. $#f) { $column_data{recurringprint} .= $locale->text($f{$f[$_]})."<br>" }
@@ -4522,7 +4522,7 @@ print qq|
 |;
 
   $form->{lastndx} = $k;
-  
+
   $form->hide_form(qw(lastndx path login allbox));
 
   %button = ('Select all' => { ndx => 2, key => 'A', value => $locale->text('Select all') },
@@ -4537,12 +4537,12 @@ print qq|
   }
 
   $form->print_button(\%button);
-  
+
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
     &menubar;
   }
-  
+
   print qq|
 </form>
 
@@ -4588,7 +4588,7 @@ sub edit_recurring {
              );
 
   $form->{type} = "transaction";
-  
+
   if ($form->{module} eq 'ar') {
     if ($form->{invoice}) {
       $form->{type} = "invoice";
@@ -4601,12 +4601,12 @@ sub edit_recurring {
       $form->{module} = "ir";
     }
   }
-  
+
   if ($form->{module} eq 'oe') {
     %tr = ( so => sales_order,
             po => purchase_order,
 	  );
-	    
+
     $form->{type} = $tr{$form->{transaction}};
   }
 
@@ -4614,14 +4614,14 @@ sub edit_recurring {
   do "$form->{path}/$form->{script}";
 
   &{ $links{$form->{module}} };
-  
+
   # return if transaction doesn't exist
   $form->redirect unless $form->{recurring};
- 
+
   if ($prepare{$form->{module}}) {
     &{ $prepare{$form->{module}} };
   }
-  
+
   $form->{selectformat} = qq|html--|.$locale->text('html').qq|
 xml--|.$locale->text('XML').qq|
 txt--|.$locale->text('Text');
@@ -4633,7 +4633,7 @@ pdf--|.$locale->text('PDF');
   }
 
   &schedule;
-    
+
 }
 
 
@@ -4657,14 +4657,14 @@ sub process_transactions {
   for (my $i = 1; $i <= $pt->{lastndx}; $i++) {
     if ($pt->{"ndx_$i"}) {
       my $id = $pt->{"ndx_$i"};
-      
+
       # process transaction
       AM->recurring_details(\%myconfig, \%$pt, $id);
 
       $pt->{nextdate} = $pt->{"nextdate_$i"} if $pt->{"nextdate_$i"};
 
       $header = $form->{header};
-      
+
       # reset $form
       for (keys %$form) { delete $form->{$_}; }
       for (qw(login path stylesheet timeout precision)) { $form->{$_} = $pt->{$_}; }
@@ -4690,7 +4690,7 @@ sub process_transactions {
           if ($pt->{invoice}) {
 	    &invoice_links;
 	    &prepare_invoice;
-	    
+
 	    for (keys %$form) { $form->{$_} = $form->unquote($form->{$_}) }
 
 	  } else {
@@ -4709,7 +4709,7 @@ sub process_transactions {
 	  delete $form->{"$form->{ARAP}_links"};
 	  for (qw(acc_trans invoice_details)) { delete $form->{$_} }
 	  for (qw(department employee language month partsgroup project years printer)) { delete $form->{"all_$_"} }
-	  
+
 	  $form->{invnumber} = $pt->{reference};
 	  $form->{description} = $pt->{description};
 	  $form->{transdate} = $pt->{nextdate};
@@ -4722,7 +4722,7 @@ sub process_transactions {
 
           # tax accounts
 	  $form->all_taxaccounts(\%myconfig, undef, $form->{transdate});
-	  
+
 	  # calculate duedate
 	  $form->{duedate} = $form->add_date(\%myconfig, $form->{transdate}, $pt->{overdue}, "days");
 
@@ -4732,7 +4732,7 @@ sub process_transactions {
 	      $form->{"datepaid_$j"} = $form->add_date(\%myconfig, $form->{transdate}, $pt->{paid}, "days");
 	      ($form->{"$form->{ARAP}_paid_$j"}) = split /--/, $form->{"$form->{ARAP}_paid_$j"};
 	      delete $form->{"cleared_$j"};
-	      
+
 	      if ($form->{currency} ne $form->{defaultcurrency}) {
 		$form->{"exchangerate_$j"} = $form->{exchangerate};
 		$exchangerate = $form->get_exchangerate(\%myconfig, undef, $form->{currency}, $form->{"datepaid_$j"});
@@ -4771,14 +4771,14 @@ sub process_transactions {
 	  } else {
 	    $form->info($locale->text('failed'));
 	  }
-	  
+
 	  # print form
 	  if ($latex && $ok) {
 	    $ok = &print_recurring(\%$pt, $defaultprinter);
 	  }
-	  
+
 	  &email_recurring(\%$pt) if $ok;
-	  
+
 	} else {
 
 	  # order
@@ -4801,15 +4801,15 @@ sub process_transactions {
 
 	  &order_links;
 	  &prepare_order;
-	  
+
 	  $defaultprinter = $form->{all_printer}[0]->{printer};
 
 	  for (keys %$form) { $form->{$_} = $form->unquote($form->{$_}) }
-	  
+
 	  $form->{$ordnumber} = $pt->{reference};
 	  $form->{description} = $pt->{description};
 	  $form->{transdate} = $pt->{nextdate};
-	  
+
 	  # exchangerate
 	  if ($form->{currency} ne $form->{defaultcurrency}) {
 	    $exchangerate = $form->get_exchangerate(\%myconfig, undef, $form->{currency}, $form->{transdate});
@@ -4846,13 +4846,13 @@ sub process_transactions {
       } else {
 	# GL transaction
 	GL->transaction(\%myconfig, \%$form);
-	
+
 	$form->{reference} = $pt->{reference};
 	$form->{description} = $pt->{description};
 	$form->{transdate} = $pt->{nextdate};
 
 	$form->{defaultcurrency} = substr($form->{currencies},0,3);
-	
+
 	# exchangerate
 	if ($form->{currency} ne $form->{defaultcurrency}) {
 	  $exchangerate = $form->get_exchangerate(\%myconfig, undef, $form->{currency}, $form->{transdate});
@@ -4874,7 +4874,7 @@ sub process_transactions {
 
 	  $j++;
 	}
-	
+
 	$form->{rowcount} = $j;
 
 	for (qw(id recurring)) { delete $form->{$_} }
@@ -4890,7 +4890,7 @@ sub process_transactions {
 
     }
   }
-  
+
   $form->{callback} = "am.pl?action=recurring_transactions&path=$form->{path}&login=$form->{login}&header=$form->{header}";
   $form->redirect;
 
@@ -4905,20 +4905,20 @@ sub print_recurring {
   my $ok = 1;
   my $media;
   my @a;
-  
+
   if ($pt->{recurringprint}) {
     @f = split /:/, $pt->{recurringprint};
     for ($j = 0; $j <= $#f; $j += 3) {
       $media = $f[$j+2];
       $media ||= $myconfig->{printer};
       $media ||= $defaultprinter;
-      
+
       $form->info("\n".$locale->text('Printing')." ".$locale->text($f{$f[$j]})." $form->{reference} ... ");
 
       @a = ("perl", "$form->{script}", "action=reprint&module=$form->{module}&type=$form->{type}&login=$form->{login}&path=$form->{path}&id=$form->{id}&formname=$f[$j]&format=$f[$j+1]&media=$media&vc=$form->{vc}&ARAP=$form->{ARAP}");
 
       $ok = !(system(@a));
-      
+
       if ($ok) {
 	$form->info($locale->text('ok'));
       } else {
@@ -4929,7 +4929,7 @@ sub print_recurring {
   }
 
   $ok;
-  
+
 }
 
 
@@ -4938,12 +4938,12 @@ sub email_recurring {
 
   my %f = &formnames;
   my $ok = 1;
-  
+
   if ($pt->{recurringemail}) {
 
     my @f = split /:/, $pt->{recurringemail};
     for (my $j = 0; $j <= $#f; $j += 2) {
-      
+
       $form->info("\n".$locale->text('Sending')." ".$locale->text($f{$f[$j]})." $form->{reference} ... ");
 
       # no email, bail out
@@ -4951,13 +4951,13 @@ sub email_recurring {
 	$form->info($locale->text('E-mail address missing!'));
 	last;
       }
-      
+
       $message = $form->escape($pt->{message},1);
-      
+
       @a = ("perl", "$form->{script}", "action=reprint&module=$form->{module}&type=$form->{type}&login=$form->{login}&path=$form->{path}&id=$form->{id}&formname=$f[$j]&format=$f[$j+1]&media=email&vc=$form->{vc}&ARAP=$form->{ARAP}&message=$message");
 
       $ok = !(system(@a));
-      
+
       if ($ok) {
 	$form->info($locale->text('ok'));
       } else {
@@ -4968,13 +4968,13 @@ sub email_recurring {
   }
 
   $ok;
-  
+
 }
 
 
 
 sub formnames {
-  
+
 # $locale->text('Transaction')
 # $locale->text('Invoice')
 # $locale->text('Credit Invoice')
@@ -4989,7 +4989,7 @@ sub formnames {
 # $locale->text('Bin List')
 # $locale->text('Barcode')
 # $locale->text('Remittance Voucher')
- 
+
   return ( transaction => 'Transaction',
        	       invoice => 'Invoice',
         credit_invoice => 'Credit Invoice',
@@ -5016,9 +5016,9 @@ sub yes { &{ $form->{nextsub} } }
 sub clear_semaphores {
 
   $form->{title} = $locale->text('Confirm!');
-  
+
   $form->header;
-  
+
   print qq|
 <body>
 
@@ -5027,7 +5027,7 @@ sub clear_semaphores {
 
   $form->{nextsub} = "remove_locks";
   $form->hide_form;
-  
+
   print qq|
 <h2 class=confirm>$form->{title}</h2>
 
@@ -5048,7 +5048,7 @@ sub remove_locks {
   AM->remove_locks(\%myconfig, \%$form, $userspath);
 
   $form->info($locale->text('Locks removed!'));
-  
+
 }
 
 
@@ -5056,7 +5056,7 @@ sub lock_dataset {
 
   $form->{title} = $locale->text('Lock Dataset');
   $form->helpref("lock_dataset", $myconfig{countrycode});
-  
+
   $form->error($locale->text('Must be logged in as admin!')) unless $form->{admin};
 
   if (-f "$userspath/$myconfig{dbname}.LCK") {
@@ -5066,7 +5066,7 @@ sub lock_dataset {
   }
 
   $form->header;
-  
+
   $form->{nextsub} = "do_lock_dataset";
   $form->{action} = "continue";
 
@@ -5120,9 +5120,9 @@ sub do_lock_dataset {
     print FH $form->{msg};
   }
   close(FH);
-  
+
   $form->redirect($locale->text('Dataset locked!'));
-  
+
 }
 
 
@@ -5133,7 +5133,7 @@ sub unlock_dataset {
   $form->{title} = $locale->text('Confirm!');
 
   $form->header;
-  
+
   print qq|
 <body>
 
@@ -5142,7 +5142,7 @@ sub unlock_dataset {
 
   $form->{nextsub} = "do_unlock_dataset";
   $form->hide_form;
-  
+
   print qq|
 <h2 class=confirm>$form->{title}</h2>
 
@@ -5159,7 +5159,7 @@ sub unlock_dataset {
 
 
 sub do_unlock_dataset {
-  
+
   if (-f "$userspath/$myconfig{dbname}.LCK") {
     unlink "$userspath/$myconfig{dbname}.LCK";
   }
@@ -5174,12 +5174,12 @@ sub bank_accounts {
   AM->bank_accounts(\%myconfig, \%$form);
 
   $form->{title} = $locale->text('Bank Accounts');
-  
+
   $callback = "$form->{script}?action=bank_accounts";
   for (qw(path login)) { $callback .= "&$_=$form->{$_}" }
-  
+
   @column_index = qw(accno description name iban bic membernumber clearingnumber rvc dcn closed);
-  
+
   $callback = $form->escape($callback);
 
   $column_header{accno} = qq|<th class=listheading>|.$locale->text('Account').qq|</th>|;
@@ -5194,7 +5194,7 @@ sub bank_accounts {
   $column_header{closed} = qq|<th class=listheading>|.$locale->text('Closed').qq|</th>|;
 
   $form->helpref("bank_accounts", $myconfig{countrycode});
-  
+
   $form->header;
 
   print qq|
@@ -5218,7 +5218,7 @@ sub bank_accounts {
 |;
 
   foreach $ref (@{ $form->{ALL} }) {
-    
+
     for (qw(name description)) { $column_data{$_} = "<td nowrap>$ref->{$_}&nbsp;</td>" }
     for (qw(membernumber clearingnumber rvc dcn)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
     for (qw(iban bic)) { $column_data{$_} = "<td nowrap>$ref->{$_}&nbsp;</td>" }
@@ -5256,7 +5256,7 @@ sub bank_accounts {
 
 
 sub edit_bank {
-  
+
   AM->get_bank(\%myconfig, \%$form);
 
   &bank_header;
@@ -5266,13 +5266,13 @@ sub edit_bank {
 
 
 sub bank_header {
-  
+
   $form->{title} = $locale->text('Bank Account Details');
-  
+
   $form->helpref("bank", $myconfig{countrycode});
 
   $checked{closed} = ($form->{closed}) ? "checked" : "";
-  
+
   $form->header;
 
   print qq|
@@ -5371,11 +5371,11 @@ sub bank_footer {
   %button = (
              'Save' => { ndx => 2, key => 'S', value => $locale->text('Save') }
 	    );
-  
+
   $form->{type} = "bank";
-  
+
   $form->hide_form(qw(id type login path account callback));
-  
+
   $form->print_button(\%button);
 
   if ($form->{menubar}) {
@@ -5408,7 +5408,7 @@ sub save_bank {
 sub search_exchangerates {
 
   $form->{title} = $locale->text('Exchange Rates');
-  
+
   AM->exchangerates(\%myconfig, $form);
 
   $form->{nextsub} = "list_exchangerates";
@@ -5419,7 +5419,7 @@ sub search_exchangerates {
   shift @curr;
   $selectcurrency = "\n";
   for (@curr) { $selectcurrency .= "$_\n" }
-  
+
   if (@curr) {
     $selectcurrency = qq|<tr>
     <th align=right nowrap>|.$locale->text('Currency').qq|</th>
@@ -5429,7 +5429,7 @@ sub search_exchangerates {
   } else {
     $form->error($locale->text('No foreign currencies!'));
   }
-    
+
   if (@{ $form->{all_years} }) {
     $selectaccountingyear = "\n";
     for (@{ $form->{all_years} }) { $selectaccountingyear .= qq|$_\n| }
@@ -5450,13 +5450,13 @@ sub search_exchangerates {
       </tr>
 |;
   }
-  
+
   $form->helpref("search_exchangerates", $myconfig{countrycode});
-  
+
   $form->header;
 
   &calendar;
-  
+
   print qq|
 <body>
 
@@ -5517,7 +5517,7 @@ sub list_exchangerates {
 
   $callback = "$form->{script}?action=list_exchangerates";
   for (qw(direction oldsort path login)) { $callback .= qq|&$_=$form->{$_}| }
-  
+
   if ($form->{currency}) {
     $callback .= "&currency=".$form->escape($form->{currency},1);
     $href .= "&currency=".$form->escape($form->{currency});
@@ -5538,7 +5538,7 @@ sub list_exchangerates {
   }
 
   @column_index = qw(transdate);
-  
+
   if ($form->{currency}) {
     @curr = ($form->{currency});
     $form->{currencies} = $form->{currency};
@@ -5553,14 +5553,14 @@ sub list_exchangerates {
       $column_header{$curr} = "<th class=listheading>$curr</th>";
     }
   }
- 
+
   $form->{title} = $locale->text('Exchange Rates');
 
   $column_header{transdate} = "<th><a class=listheading href=$href&sort=$form->{sort}>".$locale->text('Date')."</a></th>";
 
 
   $form->helpref("list_exchangerates", $myconfig{countrycode});
-  
+
   $form->header;
 
   print qq|
@@ -5587,7 +5587,7 @@ sub list_exchangerates {
 |;
 
   @column_index = qw(transdate);
-  
+
   if ($form->{currency}) {
     push @column_index, "$form->{currency}exchangerate";
   } else {
@@ -5595,10 +5595,10 @@ sub list_exchangerates {
       push @column_index, "${curr}exchangerate";
     }
   }
- 
+
   # escape callback for href
   $form->{callback} = $callback .= "&sort=$form->{sort}";
-  
+
   $callback = $form->escape($callback);
 
   if (@{ $form->{transactions} }) {
@@ -5621,7 +5621,7 @@ sub list_exchangerates {
       print qq|
         <tr class=listrow$j>
 |;
-    
+
       for (@column_index) { print "\n$column_data{$_}" }
 
       print qq|
@@ -5631,17 +5631,17 @@ sub list_exchangerates {
       foreach $curr (@curr) {
 	$column_data{"${curr}exchangerate"} = "<td>&nbsp;</td>";
       }
-      
+
       $href = "$form->{script}?action=edit_exchangerate&transdate=$ref->{transdate}&currencies=$form->{currencies}&path=$form->{path}&login=$form->{login}&callback=$callback";
       $column_data{transdate} = "<td><a href=$href>$ref->{transdate}</td>";
       $column_data{"$ref->{curr}exchangerate"} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{exchangerate}, undef, "&nbsp;").qq|</td>|;
-     
+
       $samedate = $ref->{transdate};
 
     }
 
   }
-  
+
   $j++; $j %= 2;
 
   print qq|
@@ -5649,7 +5649,7 @@ sub list_exchangerates {
 |;
 
   for (@column_index) { print "\n$column_data{$_}" }
-   
+
   print qq|
         </tr>
       </table>
@@ -5683,17 +5683,17 @@ sub list_exchangerates {
 
 
 sub edit_exchangerate {
-  
+
   $form->{title} = $locale->text('Edit Exchange Rate');
-  
+
   $form->{callback} = "$form->{script}?action=edit_exchangerate&transdate=$form->{transdate}&currencies=$form->{currencies}&path=$form->{path}&login=$form->{login}" unless $form->{callback};
 
   for (qw(transdatefrom transdateto)) { $form->{$_} = $form->{transdate} };
-  
+
   $currencies = $form->{currencies};
   for (split /:/, $form->{currencies}) { $curr{$_} = 1 };
   AM->get_exchangerates(\%myconfig, \%$form);
-  
+
   for $ref (@{ $form->{transactions} }) {
     $form->{"$ref->{curr}exchangerate"} = $ref->{exchangerate};
     $curr{$ref->{curr}} = 1;
@@ -5704,7 +5704,7 @@ sub edit_exchangerate {
   } else {
     $form->{currencies} = join ':', sort keys %curr;
   }
-    
+
   &exchangerate_header;
   &form_footer;
 
@@ -5712,9 +5712,9 @@ sub edit_exchangerate {
 
 
 sub add_exchange_rate {
-  
+
   $form->{title} = $locale->text('Add Exchange Rate');
-  
+
   $form->{callback} = "$form->{script}?action=add_exchange_rate&currencies=$form->{currencies}&path=$form->{path}&login=$form->{login}" unless $form->{callback};
 
   &exchangerate_header;
@@ -5726,7 +5726,7 @@ sub add_exchange_rate {
 sub exchangerate_header {
 
   $form->helpref("exchangerates", $myconfig{countrycode});
-  
+
   $form->header;
 
   print qq|
@@ -5758,7 +5758,7 @@ sub exchangerate_header {
 	</tr>
 |;
   }
-  
+
   print qq|
       </table>
     </td>
@@ -5794,19 +5794,19 @@ sub list_currencies {
   for (qw(direction oldsort path login)) { $href .= qq|&$_=$form->{$_}| }
 
   $form->sort_order();
-  
+
   my $callback = "$form->{script}?action=list_currencies";
   for (qw(direction oldsort path login)) { $callback .= qq|&$_=$form->{$_}| }
 
   $form->{callback} = $callback .= "&sort=$form->{sort}";
   $callback = $form->escape($callback);
-  
+
   $form->{title} = $locale->text('Currencies');
 
   my @column_index = $form->sort_columns(qw(rn curr prec up down));
 
   my %column_data;
-  
+
   $column_data{rn} = qq|<th><a class=listheading href=$href&sort=rn>|.$locale->text('No.').qq|</a></th>|;
   $column_data{curr} = qq|<th width=99%><a class=listheading href=$href&sort=curr>|.$locale->text('Currency').qq|</a></th>|;
   $column_data{prec} = qq|<th class=listheading>|.$locale->text('Precision').qq|</th>|;
@@ -5814,7 +5814,7 @@ sub list_currencies {
   $column_data{down} = qq|<th class=listheading>&nbsp;</th>|;
 
   $form->helpref("list_currencies", $myconfig{countrycode});
-  
+
   $form->header;
 
   print qq|
@@ -5838,11 +5838,11 @@ sub list_currencies {
 |;
 
   my $i;
-  
+
   foreach my $ref (@{ $form->{ALL} }) {
-    
+
     $i++; $i %= 2;
-    
+
     print qq|
         <tr valign=top class=listrow$i>
 |;
@@ -5853,7 +5853,7 @@ sub list_currencies {
    $column_data{prec} = qq|<td align=right>$ref->{prec}</td>|;
    $column_data{up} = qq|<td align=center><a href=$form->{script}?action=move&db=curr&fld=curr&id=$ref->{curr}&move=up&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$images/up.png alt="+" border=0></td>|;
    $column_data{down} = qq|<td align=center><a href=$form->{script}?action=move&db=curr&fld=curr&id=$ref->{curr}&move=down&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$images/down.png alt="-" border=0></td>|;
-   
+
 
    for (@column_index) { print "$column_data{$_}\n" }
 
@@ -5879,7 +5879,7 @@ sub list_currencies {
   $form->{type} = "currency";
 
   $form->hide_form(qw(type callback path login));
-  
+
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
     &menubar;
@@ -5891,14 +5891,14 @@ sub list_currencies {
 </body>
 </html>
 |;
-  
+
 }
 
 
 sub add_currency {
 
   $form->{title} = $locale->text('Add Currency');
-  
+
   $form->{callback} = "$form->{script}?action=add_currency&path=$form->{path}&login=$form->{login}" unless $form->{callback};
 
   &currency_header;
@@ -5925,7 +5925,7 @@ sub delete_currency {
   if (AM->delete_currency(\%myconfig, \%$form)) {
     $form->redirect($locale->text('Currency deleted!'));
   }
-  
+
   $form->error($locale->text('Failed to delete Currency!'));
 
 }
@@ -5935,18 +5935,18 @@ sub move {
 
   AM->move(\%myconfig, \%$form);
   $form->redirect;
-  
+
 }
 
 
 sub currency_header {
 
   $form->helpref("currency", $myconfig{countrycode});
-  
+
   $form->header;
 
   $form->{type} = "currency";
-  
+
   print qq|
 <body>
 
@@ -5986,7 +5986,7 @@ sub save_currency {
   if (AM->save_currency(\%myconfig, \%$form)) {
     $form->redirect($locale->text('Currency saved!'));
   }
-  
+
   $form->error($locale->text('Failed to save Currency!'));
 
 }
@@ -6000,21 +6000,21 @@ sub list_roles {
 
   my $href = "$form->{script}?action=list_roles";
   for (qw(direction oldsort path login)) { $href .= "&$_=$form->{$_}" }
-  
+
   $form->sort_order();
-  
+
   my $callback = "$form->{script}?action=list_roles";
   for (qw(direction oldsort path login)) { $callback .= "&$_=$form->{$_}" }
 
   $form->{callback} = $callback;
   $callback = $form->escape($form->{callback});
-  
+
   $form->{title} = $locale->text('Roles');
 
   my @column_index = $form->sort_columns(qw(description acs up down));
 
   my %column_data;
-  
+
   $column_data{rn} = qq|<th><a class=listheading href=$href&sort=rn>|.$locale->text('No.').qq|</a></th>|;
   $column_data{description} = qq|<th width=99%><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</a></th>|;
   $column_data{acs} = qq|<th class=listheading nowrap>|.$locale->text('Disable').qq|</th>|;
@@ -6052,9 +6052,9 @@ sub list_roles {
   $lastitem = @{ $form->{ALL} };
 
   foreach my $ref (@{ $form->{ALL} }) {
-    
+
     $i++; $i %= 2;
-    
+
     print qq|
         <tr valign=top class=listrow$i>
 |;
@@ -6069,7 +6069,7 @@ sub list_roles {
     } else {
      $column_data{description} = qq|<td>$ref->{description}</td>|;
     }
-  
+
    chop $ref->{acs};
    $acs = "";
    for (split /;/, $ref->{acs}) {
@@ -6078,7 +6078,7 @@ sub list_roles {
      s/ /&nbsp;/g;
 
      @acs = split /--/, $_;
-    
+
      $acs .= join '--', map { $locale->text($_) } @acs;
      $acs .= "<br>";
    }
@@ -6089,11 +6089,11 @@ sub list_roles {
    $edit = 0;
    $edit = 1 if $ref->{rn} > 1 && ($form->{role} && $form->{rn}{$form->{role}} < $ref->{rn} - 1);
    $edit = 1 if $form->{admin};
-     
+
    if ($edit) {
      $column_data{up} = qq|<td align=center><a href=$form->{script}?action=move&db=acsrole&fld=id&id=$ref->{id}&move=up&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$images/up.png alt="+" border=0></td>|;
    }
-   
+
    $edit = 0;
    $edit = 1 if $ref->{rn} < $lastitem && ($form->{role} && $form->{rn}{$form->{role}} < $ref->{rn});
    $edit = 1 if $form->{admin};
@@ -6177,7 +6177,7 @@ sub role_header {
   $menufile = "menu.ini";
 
   $form->{type} = "role";
-  
+
   $form->helpref("roles", $myconfig{countrycode});
 
   $locale = new Locale "$myconfig{countrycode}", "menu";
@@ -6250,47 +6250,47 @@ sub role_header {
   }
 
   foreach $key (@acsorder) {
-    
+
     $checked = ($excl{$key}{$key}) ? "" : "checked";
 
     # can't have variable names with & and spaces
     $item = $form->escape("${key}--$key",1);
-    
+
     $acsheading = $key;
     $acsheading =~ s/ /&nbsp;/g;
-    
+
     $acsheading = qq|
     <th align=left nowrap><input name="ndx_$item" class=checkbox type=checkbox value=1 $checked>&nbsp;|.$locale->text($acsheading).qq|</th>\n|;
     $menuitems .= "$item;";
-    
+
     $acsdata = qq|
     <td>|;
-    
+
     foreach $item (@{ $acs{$key} }) {
       next if ($key eq $item);
-      
+
       $checked = ($excl{$key}{$item}) ? "" : "checked";
-     
+
       @acs = split /--/, $item;
       $acs = join '--', map { $locale->text($_) } @acs;
 
       $acsitem = $form->escape("${key}--$item",1);
-      
+
       $acsdata .= qq|
       <br><input name="$acsitem" class=checkbox type=checkbox value=1 $checked>&nbsp;$acs|;
       $menuitems .= "$acsitem;";
     }
     $acsdata .= qq|
     </td>|;
-    
+
     print qq|
     <tr valign=top>$acsheading $acsdata
     </tr>
 |;
   }
-  
+
   $form->{acs} = "$menuitems";
-  
+
   print qq|
   <tr>
     <td colspan=2><hr size=3 noshade></td>
@@ -6319,20 +6319,20 @@ sub save_role {
   if (AM->save_role(\%myconfig, \%$form)) {
     $form->redirect($locale->text('Role saved!'));
   }
-  
+
   $form->error($locale->text('Failed to save Role!'));
-  
+
 }
 
 
 sub delete_role {
-  
+
   if (AM->delete_role(\%myconfig, \%$form)) {
     $form->redirect($locale->text('Role deleted!'));
   }
 
   $form->error($locale->text('Failed to delete Role!'));
-  
+
 }
 
 
@@ -6344,7 +6344,7 @@ sub monitor {
 
   $form->{reportcode} = 'monitor';
   $form->reports(\%myconfig);
-  
+
   if (@{ $form->{all_report} }) {
     $form->{selectreportform} = "\n";
     for (@{ $form->{all_report} }) { $form->{selectreportform} .= qq|$_->{reportdescription}--$_->{reportid}\n| }
@@ -6380,7 +6380,7 @@ $reportform
   $button{'Run SQL command'} = { ndx => 1, key => 'R', value => $locale->text('Run SQL command') };
 
   $button{'Save SQL command'} = { ndx => 2, key => 'S', value => $locale->text('Save SQL command') } if $form->{sqlcommand};
-  
+
   $button{'Delete SQL command'} = { ndx => 3, key => 'D', value => $locale->text('Delete SQL command') } if $form->{report};
 
   $form->print_button(\%button);
@@ -6402,19 +6402,19 @@ sub run_sql_command {
   $form->isblank("sql", $locale->text('SQL statement missing'));
 
   $form->error($locale->text('Must be logged in as admin!')) unless $form->{admin};
-  
+
   $form->{callback} = "$form->{script}?action=monitor&path=$form->{path}&login=$form->{login}&report=$form->{report}&header=1&sqlcommand=".$form->escape($form->{sql},1);
-  
+
   # connect to database
   $dbh = $form->dbconnect(\%myconfig);
-  
+
   $form->{title} = $locale->text('SQL Run');
-  
+
   $form->header;
 
   if ($form->{sql} =~ /^select/i) {
     $sth = $dbh->prepare($form->{sql});
-    
+
     if ($sth->execute) {
 
       $form->info($form->{sql});
@@ -6442,7 +6442,7 @@ sub run_sql_command {
     }
 
     $sth->finish;
-    
+
   } else {
     if ($dbh->do($form->{sql})) {
       $form->info($form->{sql});
@@ -6452,7 +6452,7 @@ sub run_sql_command {
   $dbh->disconnect;
 
   $form->redirect;
-  
+
 }
 
 
@@ -6461,11 +6461,11 @@ sub save_sql_command {
   $form->isblank("sql", $locale->text('SQL statement missing'));
 
   $form->error($locale->text('Must be logged in as admin!')) unless $form->{admin};
-  
+
   ($form->{reportdescription}, $form->{reportid}) = split /--/, $form->{report};
- 
+
   $form->{title} = $locale->text('Save SQL command');
-  
+
   $form->header;
 
   print qq|
@@ -6518,7 +6518,7 @@ sub delete_sql_command {
   $form->isblank("sql", $locale->text('SQL statement missing'));
 
   $form->error($locale->text('Must be logged in as admin!')) unless $form->{admin};
-  
+
   $form->{reportcode} = 'monitor';
   (undef, $form->{reportid}) = split /--/, $form->{report};
 
@@ -6543,5 +6543,3 @@ sub save_sql {
   $form->redirect;
 
 }
-
-
