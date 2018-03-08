@@ -122,7 +122,7 @@ sub new {
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
   $self->{version} = "3.2.6";
-  $self->{version2} = "tekki";
+  $self->{version2} = "tekki-extended";
   $self->{dbversion} = "3.2.1";
 
   $self->{favicon} = 'favicon.ico';
