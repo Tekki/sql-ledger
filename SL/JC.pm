@@ -527,8 +527,21 @@ sub save {
     ($form->{id}) = $dbh->selectrow_array($query);
   }
 
+  for (qw(qty noncharge sellprice allocated)) { $form->{$_} = $form->parse_amount($myconfig, $form->{$_}) }
+
+  # pseudo-time for noncharge
+  if ($form->{noncharge} && !($form->{outhour} || $form->{outmin} || $form->{outsec})) {
+
+    $form->{inhour} = 1;
+    my $clocked = 1 + $form->{noncharge} + $form->{qty};
+
+    for (qw|hour min sec|) {
+      $form->{"out$_"} = int($clocked);
+      $clocked = 60 * ($clocked - int($clocked));
+    }
+  }
+
   for (qw(inhour inmin insec outhour outmin outsec)) { $form->{$_} = substr("00$form->{$_}", -2) }
-  for (qw(qty sellprice allocated)) { $form->{$_} = $form->parse_amount($myconfig, $form->{$_}) }
 
   my $checkedin = "$form->{inhour}$form->{inmin}$form->{insec}";
   my $checkedout = "$form->{outhour}$form->{outmin}$form->{outsec}";
