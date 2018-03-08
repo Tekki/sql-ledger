@@ -28,13 +28,13 @@ sub retrieve_card {
   $form->{transdate} = $form->current_date($myconfig);
 
   ($form->{employee}, $form->{employee_id}) = $form->get_employee($dbh);
-  
+
   my $dateformat = $myconfig->{dateformat};
   $dateformat =~ s/yy/yyyy/;
   $dateformat =~ s/yyyyyy/yyyy/;
- 
+
   $form->remove_locks($myconfig, $dbh, 'jcitems');
-  
+
   if ($form->{id} *= 1) {
     # retrieve timecard/storescard
     $query = qq|SELECT j.*, to_char(j.checkedin, 'HH24:MI:SS') AS checkedina,
@@ -53,7 +53,7 @@ sub retrieve_card {
     $sth->execute || $form->dberror($query);
 
     $ref = $sth->fetchrow_hashref(NAME_lc);
-    
+
     for (keys %$ref) { $form->{$_} = $ref->{$_} }
     $sth->finish;
     $form->{project} = ($form->{project}) ? "job" : "project";
@@ -87,11 +87,11 @@ sub retrieve_card {
   }
 
   $form->create_lock($myconfig, $dbh, $form->{id}, 'jcitems');
-  
+
   JC->jcitems_links($myconfig, $form, $dbh);
 
   $form->all_languages($myconfig, $dbh);
-  
+
   $form->all_references($dbh, $form->{type});
 
   $dbh->disconnect;
@@ -101,7 +101,7 @@ sub retrieve_card {
 
 sub jcitems_links {
   my ($self, $myconfig, $form, $dbh) = @_;
-  
+
   my $disconnect = 0;
 
   if (! $dbh) {
@@ -137,16 +137,16 @@ sub jcitems_links {
   }
 
   $form->all_employees($myconfig, $dbh, $form->{transdate});
-  
+
   my $where;
-  
+
   if ($form->{transdate}) {
     $where .= qq| AND (enddate IS NULL
                        OR enddate >= '$form->{transdate}')
                   AND (startdate <= '$form->{transdate}'
 		       OR startdate IS NULL)|;
   }
-  
+
   if ($form->{project} eq 'job') {
     $query = qq|
 		 SELECT *
@@ -194,28 +194,28 @@ sub jcitems_links {
   $form->reports($myconfig, $dbh, $form->{login});
 
   $dbh->disconnect if $disconnect;
-  
+
 }
 
 
 sub retrieve_item {
   my ($self, $myconfig, $form) = @_;
-  
+
   my $dbh = $form->dbconnect($myconfig);
-  
+
   my $project_id;
   (undef, $project_id) = split /--/, $form->{projectnumber};
   $project_id *= 1;
-  
+
   my $query = qq|SELECT customer_id
                  FROM project
 		 WHERE id = $project_id|;
   ($form->{customer_id}) = $dbh->selectrow_array($query);
   $form->{customer_id} *= 1;
-  
+
   my $var;
   my $where;
-  
+
   if ($form->{partnumber} ne "") {
     $var = $form->like(lc $form->{partnumber});
     $where .= qq| AND lower(p.partnumber) LIKE '$var'|;
@@ -229,7 +229,7 @@ sub retrieve_item {
       $where .= " AND p.income_accno_id IS NULL
                   AND p.inventory_accno_id > 0";
     }
-    
+
     $query = qq|SELECT p.id, p.partnumber, p.description,
                 p.sellprice,
                 p.unit, t.description AS translation
@@ -242,17 +242,17 @@ sub retrieve_item {
   if ($form->{project} eq 'project') {
     $where .= " AND p.inventory_accno_id IS NULL
                 AND p.income_accno_id > 0";
-    
+
     $query = qq|SELECT p.id, p.partnumber, p.description,
                 p.sellprice,
-                p.unit, t.description AS translation 
-		FROM parts p 
+                p.unit, t.description AS translation
+		FROM parts p
 		LEFT JOIN translation t ON (t.trans_id = p.id AND t.language_code = '$form->{language_code}')
 		WHERE p.obsolete = '0'
 		AND p.assembly = '0'
 		$where|;
   }
-  
+
   $query .= qq| ORDER BY 2|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -270,7 +270,7 @@ sub retrieve_item {
   $sth->finish;
 
   $dbh->disconnect;
-  
+
 }
 
 
@@ -279,9 +279,9 @@ sub delete {
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
-  
+
   $form->{id} *= 1;
-  
+
   my %audittrail = ( tablename  => 'jcitems',
                      reference  => $form->{id},
 		     formname   => $form->{type},
@@ -289,7 +289,7 @@ sub delete {
 		     id         => $form->{id} );
 
   $form->audittrail($dbh, "", \%audittrail);
- 
+
   my $query = qq|DELETE FROM jcitems
                  WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
@@ -317,7 +317,7 @@ sub delete {
   $dbh->do($query) || $form->dberror($query);
 
   $form->delete_references($dbh);
-  
+
   $form->remove_locks($myconfig, $dbh, 'jcitems');
 
   my $rc = $dbh->commit;
@@ -342,11 +342,11 @@ sub jcitems {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
-  
+
   my $query;
   my $where = "1 = 1";
   my $var;
-  
+
   if ($form->{projectnumber}) {
     (undef, $var) = split /--/, $form->{projectnumber};
     $where .= " AND j.project_id = $var";
@@ -392,18 +392,18 @@ sub jcitems {
       $where .= " AND j.qty = j.allocated" if $form->{closed};
     }
   }
-  
+
   unless ($form->{startdatefrom} || $form->{startdateto}) {
     ($form->{startdatefrom}, $form->{startdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
   }
-  
+
   $where .= " AND j.checkedin >= '$form->{startdatefrom}'" if $form->{startdatefrom};
   $where .= " AND j.checkedout < date '$form->{startdateto}' + 1" if $form->{startdateto};
 
   my $dateformat = $myconfig->{dateformat};
   $dateformat =~ s/yy$/yyyy/;
   $dateformat =~ s/yyyyyy/yyyy/;
-  
+
   if ($form->{project} eq 'job') {
     $where .= " AND pr.parts_id > 0";
     if ($form->{type} eq 'timecard') {
@@ -416,7 +416,7 @@ sub jcitems {
   if ($form->{project} eq 'project') {
     $where .= " AND pr.parts_id IS NULL";
   }
-  
+
   $query = qq|SELECT j.id, j.description, j.qty, j.allocated,
 	      to_char(j.checkedin, 'HH24:MI') AS checkedin,
 	      to_char(j.checkedout, 'HH24:MI') AS checkedout,
@@ -435,7 +435,7 @@ sub jcitems {
 	      LEFT JOIN employee e ON (e.id = j.employee_id)
 	      WHERE $where|;
 
-  my @sf = qw(transdate projectnumber);
+  my @sf = qw(transdate projectnumber id);
   my %ordinal = $form->ordinal_order($dbh, $query);
   my $sortorder;
 
@@ -459,7 +459,7 @@ sub jcitems {
       $ref->{project} = 'project';
       $ref->{type} = 'timecard';
     }
-    
+
     $ref->{transdate} = $ref->{transdatea};
     delete $ref->{transdatea};
 
@@ -469,7 +469,7 @@ sub jcitems {
 
   my %defaults = $form->get_defaults($dbh, \@{[qw(company precision)]});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
-  
+
   $dbh->disconnect;
 
 }
@@ -477,17 +477,17 @@ sub jcitems {
 
 sub save {
   my ($self, $myconfig, $form) = @_;
-  
+
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
 
   my $query;
   my $sth;
   my $project_id;
-  
+
   (undef, $project_id) = split /--/, $form->{projectnumber};
   $project_id *= 1;
-  
+
   if ($form->{id} *= 1) {
     # check if it was a job
     $query = qq|SELECT pr.parts_id, pr.production - pr.completed
@@ -500,7 +500,7 @@ sub save {
       $dbh->disconnect;
       return -1;
     }
-    
+
     # check if new one belongs to a job
     if ($project_id) {
       $query = qq|SELECT pr.parts_id, pr.production - pr.completed
@@ -513,7 +513,7 @@ sub save {
         return -2;
       }
     }
-    
+
   } else {
     my $uid = localtime;
     $uid .= $$;
@@ -527,12 +527,25 @@ sub save {
     ($form->{id}) = $dbh->selectrow_array($query);
   }
 
+  for (qw(qty noncharge sellprice allocated)) { $form->{$_} = $form->parse_amount($myconfig, $form->{$_}) }
+
+  # pseudo-time for noncharge
+  if ($form->{noncharge} && !($form->{outhour} || $form->{outmin} || $form->{outsec})) {
+
+    $form->{inhour} = 1;
+    my $clocked = 1 + $form->{noncharge} + $form->{qty};
+
+    for (qw|hour min sec|) {
+      $form->{"out$_"} = int($clocked);
+      $clocked = 60 * ($clocked - int($clocked));
+    }
+  }
+
   for (qw(inhour inmin insec outhour outmin outsec)) { $form->{$_} = substr("00$form->{$_}", -2) }
-  for (qw(qty sellprice allocated)) { $form->{$_} = $form->parse_amount($myconfig, $form->{$_}) }
 
   my $checkedin = "$form->{inhour}$form->{inmin}$form->{insec}";
   my $checkedout = "$form->{outhour}$form->{outmin}$form->{outsec}";
-  
+
   my $outdate = $form->{transdate};
   if ($checkedout < $checkedin) {
     $outdate = $form->add_date($myconfig, $form->{transdate}, 1, 'days');
@@ -541,7 +554,7 @@ sub save {
   (undef, $form->{employee_id}) = split /--/, $form->{employee};
   unless ($form->{employee_id}) {
     ($form->{employee}, $form->{employee_id}) = $form->get_employee($dbh);
-  } 
+  }
 
   $query = qq|UPDATE jcitems SET
               project_id = $project_id,
@@ -561,7 +574,7 @@ sub save {
 
   # save printed, queued
   $form->save_status($dbh);
-  
+
   # save references
   $form->save_reference($dbh, $form->{type});
 
@@ -576,7 +589,7 @@ sub save {
   $form->remove_locks($myconfig, $dbh, 'jcitems');
 
   my $rc = $dbh->commit;
-  
+
   $rc;
 
 }
@@ -609,4 +622,3 @@ sub company_defaults {
 
 
 1;
-
