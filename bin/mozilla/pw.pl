@@ -22,12 +22,12 @@ sub getpassword {
   }
 
   my $login = ($form->{"root login"}) ? "root login" : $form->{login};
-  
+
   my @d = split / +/, scalar gmtime(time);
   my $today = "$d[0], $d[2]-$d[1]-$d[4] $d[3] GMT";
 
   $pwt = $locale->text('Password');
-  
+
   if ($form->{stylesheet} && (-f "css/$form->{stylesheet}")) {
     $stylesheet = qq|<LINK REL="stylesheet" HREF="css/$form->{stylesheet}" TYPE="text/css" TITLE="SQL-Ledger stylesheet">
 |;
@@ -43,15 +43,17 @@ sub getpassword {
   print qq|Set-Cookie: SL-$login=; expires=$today; path=/;
 Content-Type: text/html
 
+<!DOCTYPE HTML>
 <head>
   <title>$form->{titlebar}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   $stylesheet
   $charset
 </head>
 |;
-  
+
   $sessionexpired = qq|<b><font color=red><blink>|.$locale->text('Session expired!').qq|</blink></font></b><p>| if $s;
-  
+
   print qq|
 <script language="javascript" type="text/javascript">
 <!--
@@ -89,7 +91,7 @@ function sf(){
   }
 
   $form->hide_form;
-  
+
   print qq|
 </form>
 
@@ -98,5 +100,3 @@ function sf(){
 |;
 
 }
-
-
