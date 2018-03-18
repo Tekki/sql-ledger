@@ -21,23 +21,23 @@ require "$form->{path}/js.pl";
 
 
 sub display {
-  
-  $menuwidth = ($ENV{HTTP_USER_AGENT} =~ /links/i) ? "240" : "155";
-  $menuwidth = $myconfig{menuwidth} if $myconfig{menuwidth};
 
+  $menuwidth = $myconfig{menuwidth} || 155;
+  $menuwidth = '25%' if $form->{small_device};
+
+  $form->{frameset} = 1;
   $form->header;
 
   print qq|
 
-<FRAMESET COLS="$menuwidth,*" BORDER="1">
+<frameset id="menu_frames" cols="$menuwidth,*" border="1">
 
-  <FRAME NAME="acc_menu" SRC="$form->{script}?login=$form->{login}&action=acc_menu&path=$form->{path}&js=$form->{js}">
-  <FRAME NAME="main_window" SRC="am.pl?login=$form->{login}&action=$form->{main}&path=$form->{path}">
+  <frame name="acc_menu" src="$form->{script}?login=$form->{login}&action=acc_menu&path=$form->{path}&js=$form->{js}">
+  <frame name="main_window" src="am.pl?login=$form->{login}&action=$form->{main}&path=$form->{path}">
 
-</FRAMESET>
+</frameset>
 
-</BODY>
-</HTML>
+</html>
 |;
 
 }
@@ -114,7 +114,7 @@ sub section_menu {
     $label =~ s/ /&nbsp;/g if $label !~ /<img /i;
 
     $menu->{$item}{target} = "main_window" unless $menu->{$item}{target};
-    
+
     if ($menu->{$item}{submenu}) {
 
       $menu->{$item}{$item} = !$form->{$item};
@@ -126,7 +126,7 @@ sub section_menu {
 
 	# remove same level items
 	map { shift @menuorder } grep /^$item/, @menuorder;
-	
+
 	&section_menu($menu, $item);
 
 	print qq|<br>\n|;
@@ -139,19 +139,19 @@ sub section_menu {
 	map { shift @menuorder } grep /^$item/, @menuorder;
 
       }
-      
+
     } else {
-    
+
       if ($menu->{$item}{module}) {
 
 	print qq|<br>\n$spacer|.$menu->menuitem(\%myconfig, \%$form, $item, $level).qq|$label</a>|;
-	
+
       } else {
 
         $form->{tag}++;
 	print qq|<a name="id$form->{tag}"></a>
 	<p><b>$label</b>|;
-	
+
 	&section_menu($menu, $item);
 
 	print qq|<br>\n|;
@@ -179,18 +179,18 @@ sub jsmenu_frame {
     $menu->{$item}{target} = "main_window" unless $menu->{$item}{target};
 
     if ($menu->{$item}{submenu}) {
-      
+
 	$display = "display: none;" unless $level eq ' ';
 
 	print qq|
         <div id="menu$i" class="menuOut" onclick="SwitchMenu('sub$i')" onmouseover="ChangeClass('menu$i','menuOver')" onmouseout="ChangeClass('menu$i','menuOut')">$label</div>
 	<div class="submenu" id="sub$i" style="$display">|;
-	
+
 	# remove same level items
 	map { shift @menuorder } grep /^$item/, @menuorder;
 
 	&jsmenu_frame($menu, $item);
-	
+
 	print qq|
 	</div>
 |;
@@ -199,7 +199,7 @@ sub jsmenu_frame {
 
       if ($menu->{$item}{module}) {
 	if ($level eq "") {
-	  print qq|<div id="menu$i" class="menuOut" onmouseover="ChangeClass('menu$i','menuOver')" onmouseout="ChangeClass('menu$i','menuOut')"> |. 
+	  print qq|<div id="menu$i" class="menuOut" onmouseover="ChangeClass('menu$i','menuOver')" onmouseout="ChangeClass('menu$i','menuOut')"> |.
 	  $menu->menuitem(\%myconfig, \%$form, $item, $level).qq|$label</a></div>|;
 
 	  # remove same level items
@@ -208,7 +208,7 @@ sub jsmenu_frame {
           &jsmenu_frame($menu, $item);
 
 	} else {
-	
+
 	  print qq|<div class="submenu"> |.
           $menu->menuitem(\%myconfig, \%$form, $item, $level).qq|$label</a></div>|;
 	}
@@ -220,9 +220,9 @@ sub jsmenu_frame {
 	print qq|
 <div id="menu$i" class="menuOut" onclick="SwitchMenu('sub$i')" onmouseover="ChangeClass('menu$i','menuOver')" onmouseout="ChangeClass('menu$i','menuOut')">$label</div>
 	<div class="submenu" id="sub$i" style="$display">|;
-	
+
 	&jsmenu_frame($menu, $item);
-	
+
 	print qq|
 	</div>
 |;
@@ -238,7 +238,7 @@ sub jsmenu_frame {
 
 sub jsmenu {
   my ($menu, $level) = @_;
-  
+
   # build menu_{login}.js for user
   my @menuorder = $menu->access_control(\%myconfig, $level);
 
@@ -251,17 +251,17 @@ sub jsmenu {
     if ($menu->{$item}{submenu}) {
 
       $form->{items} = 1;
-      
+
       $form->{jsmenu} .= $form->{stagger};
       $form->{jsmenu} .= qq|['$label', null, null,\n|;
-      
+
       # remove same level items
       map { shift @menuorder } grep /^$item/, @menuorder;
 
       $form->{stagger} .= "\t";
 
       &jsmenu($menu, $item);
-      
+
       chop $form->{stagger};
       $form->{jsmenu} .= qq|$form->{stagger}],\n|;
 
@@ -269,7 +269,7 @@ sub jsmenu {
 
       if ($menu->{$item}{module}) {
 	$form->{items} = 1;
-	
+
 	if ($level eq "") {
 
 	  $menu->{$item}{jsmenu} = 1;
@@ -279,16 +279,16 @@ sub jsmenu {
 
           $form->{jsmenu} .= $form->{stagger};
 	  $form->{jsmenu} .= qq|['$label', '$str'],\n|;
-	  
+
 	  # remove same level items
 	  map { shift @menuorder } grep /^$item/, @menuorder;
 
           &jsmenu($menu, $item);
 
 	  $form->{jsmenu} .= qq|$form->{stagger}],\n|;
-	  
+
 	} else {
-	
+
 	  $menu->{$item}{jsmenu} = 1;
 	  $str = $menu->menuitem(\%myconfig, \%$form, $item, $level);
 	  $str =~ s/^<a href=//;
@@ -303,7 +303,7 @@ sub jsmenu {
         $form->{jsmenu} .= $form->{stagger};
 	$form->{jsmenu} .= qq|['$label', null, null,\n|;
 	$form->{stagger} .= "\t";
-        
+
 	&jsmenu($menu, $item);
 
 	chop $form->{stagger};
@@ -327,5 +327,3 @@ sub menubar {
   1;
 
 }
-
-

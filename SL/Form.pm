@@ -450,21 +450,25 @@ sub header {
   if ($ENV{HTTP_USER_AGENT}) {
 
     if ($self->{stylesheet} && (-f "css/$self->{stylesheet}")) {
-      $stylesheet = qq|<LINK REL="stylesheet" HREF="css/$self->{stylesheet}" TYPE="text/css" TITLE="SQL-Ledger stylesheet">
+      $stylesheet = qq|<link rel="stylesheet" href="css/$self->{stylesheet}" type="text/css" title="SQL-Ledger stylesheet">
   |;
     }
 
     if ($self->{favicon} && (-f "$self->{favicon}")) {
-      $favicon = qq|<LINK REL="icon" HREF="$self->{favicon}" TYPE="image/x-icon">
-<LINK REL="shortcut icon" HREF="$self->{favicon}" TYPE="image/x-icon">
+      $favicon = qq|<link rel="icon" href="$self->{favicon}" type="image/x-icon">
+<link rel="shortcut icon" href="$self->{favicon}" type="image/x-icon">
   |;
     }
 
     if ($self->{charset}) {
       my $encoding = $self->{charset} eq 'UTF8' ? 'UTF-8' : $self->{charset};
-      $charset = qq|<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=$encoding">
+      $charset = qq|<meta http-equiv="Content-Type" content="text/html; charset=$encoding">
   |;
     }
+
+    my $doctype = $self->{frameset}
+      ? q|HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd"|
+      : 'HTML';
 
     $self->{titlebar} = ($self->{title}) ? "$self->{title} - $self->{titlebar}" : $self->{titlebar};
 
@@ -472,9 +476,11 @@ sub header {
 
     print qq|Content-Type: text/html
 
+<!DOCTYPE $doctype>
 <head>
   <title>$self->{titlebar}</title>
-  <META NAME="robots" CONTENT="noindex,nofollow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" CONTENT="noindex,nofollow">
   $favicon
   $self->{customheader}
   $stylesheet

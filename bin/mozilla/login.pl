@@ -59,24 +59,6 @@ sub login_screen {
   $focus = ($form->{login}) ? "password" : "login";
 
   print qq|
-<script language="javascript" type="text/javascript">
-<!--
-var agt = navigator.userAgent.toLowerCase();
-var is_major = parseInt(navigator.appVersion);
-var is_nav = ((agt.indexOf('mozilla') != -1) && (agt.indexOf('spoofer') == -1)
-           && (agt.indexOf('compatible') == -1) && (agt.indexOf('opera') == -1)
-	   && (agt.indexOf('webtv') == -1));
-var is_nav4lo = (is_nav && (is_major <= 4));
-
-function jsp() {
-  if (is_nav4lo)
-    document.forms[0].js.value = ""
-  else
-    document.forms[0].js.value = "1"
-}
-// End -->
-</script>
-
 <body class=login onload="jsp(); document.forms[0].${focus}.focus()">
 
 <pre>
@@ -105,7 +87,7 @@ function jsp() {
 	      <tr>
 		<th align=right>|.$locale->text('Name').qq|</th>
 		<td><input class=login name=login size=30></td>
-	      </tr> 
+	      </tr>
 	      <tr>
 		<th align=right>|.$locale->text('Password').qq|</th>
 		<td><input class=login type=password name=password size=30></td>
@@ -119,7 +101,7 @@ function jsp() {
       </table>
 |;
 
-    $form->hide_form(qw(js path));
+    $form->hide_form(qw(js path small_device));
 
   print qq|
       </form>
@@ -127,7 +109,37 @@ function jsp() {
     </td>
   </tr>
 </table>
-  
+
+<script>
+<!--
+var agt = navigator.userAgent.toLowerCase();
+var is_major = parseInt(navigator.appVersion);
+var is_nav = ((agt.indexOf('mozilla') != -1) && (agt.indexOf('spoofer') == -1)
+           && (agt.indexOf('compatible') == -1) && (agt.indexOf('opera') == -1)
+	   && (agt.indexOf('webtv') == -1));
+var is_nav4lo = (is_nav && (is_major <= 4));
+
+function jsp() {
+  if (is_nav4lo)
+    document.forms[0].js.value = ""
+  else
+    document.forms[0].js.value = "1"
+}
+
+function checkWidth(window_x) {
+  if (window_x.matches) {
+    document.forms[0].small_device.value = 1;
+  } else {
+    document.forms[0].small_device.value = 0;
+  }
+}
+
+var window_x = window.matchMedia("(max-width: 700px)");
+checkWidth(window_x);
+window_x.addListener(checkWidth);
+// End -->
+</script>
+
 </body>
 </html>
 |;
@@ -137,7 +149,7 @@ function jsp() {
 
 sub selectdataset {
   my ($login) = @_;
-  
+
   if (-f "css/sql-ledger.css") {
     $form->{stylesheet} = "sql-ledger.css";
   }
@@ -174,7 +186,7 @@ sub selectdataset {
 	      <tr>
 		<th align=right>|.$locale->text('Name').qq|</th>
 		<td>$form->{login}</td>
-	      </tr> 
+	      </tr>
 	      <tr>
 		<th align=right>|.$locale->text('Password').qq|</th>
 		<td><input class=login type=password name=password size=30 value=$form->{password}></td>
@@ -182,9 +194,9 @@ sub selectdataset {
 	      <tr>
 		<th align=right>|.$locale->text('Company').qq|</th>
 		<td>|;
-		
+
 		$form->hide_form(qw(js path));
-	      
+
 		$checked = "checked";
 		for (sort { lc $login{$a} cmp lc $login{$b} } keys %{ $login }) {
 		  print qq|
@@ -208,7 +220,7 @@ sub selectdataset {
     </td>
   </tr>
 </table>
-  
+
 </body>
 </html>
 |;
@@ -221,7 +233,7 @@ sub login {
 
   $form->{stylesheet} = "sql-ledger.css";
   $form->{favicon} = "favicon.ico";
-  
+
   $form->error($locale->text('You did not enter a name!')) unless ($form->{login});
 
   if (! $form->{beenthere}) {
@@ -280,9 +292,9 @@ sub login {
       $form->info($err[4]);
 
       $form->info("<p><a href=menu.pl?login=$form->{login}&path=$form->{path}&action=display&main=company_logo&js=$form->{js}&password=$form->{password}>".$locale->text('Continue')."</a>");
-      
+
       exit;
- 
+
     }
 
     if ($errno == 5) {
@@ -306,7 +318,7 @@ sub login {
 	}
 
       } else {
-      
+
 	# upgrade dataset and log in again
 	open FH, ">$userspath/$user->{dbname}.LCK" or $form->error($!);
 
@@ -321,17 +333,17 @@ sub login {
 
 	# remove lock file
 	unlink "$userspath/$user->{dbname}.LCK";
-	
+
       }
 
       $form->info("<p><a href=menu.pl?login=$form->{login}&path=$form->{path}&action=display&main=company_logo&js=$form->{js}&password=$form->{password}>".$locale->text('Continue')."</a>");
-      
+
       exit;
-      
+
     }
-    
+
     $form->error($err[$errno]);
-    
+
   }
 
   for (qw(dbconnect dbhost dbport dbname dbuser dbpasswd)) { $myconfig{$_} = $user->{$_} }
@@ -349,8 +361,8 @@ sub login {
 
   # made it this far, setup callback for the menu
   $form->{callback} = "menu.pl?action=display";
-  for (qw(login path password js sessioncookie)) { $form->{callback} .= "&$_=$form->{$_}" }
-  
+  for (qw(login path password js sessioncookie small_device)) { $form->{callback} .= "&$_=$form->{$_}" }
+
   # check for recurring transactions
   if ($user->{acs} !~ /Recurring Transactions/) {
     if ($user->check_recurring(\%$form)) {
@@ -363,7 +375,7 @@ sub login {
   }
 
   $form->redirect;
-  
+
 }
 
 
@@ -459,7 +471,7 @@ sub email_tan {
     </td>
   </tr>
 </table>
-  
+
 </body>
 </html>
 |;
@@ -515,11 +527,10 @@ sub tan_login {
     $form->{callback} .= "&main=company_logo";
 
     $form->redirect;
-   
+
   }
 
 }
 
 
 sub continue { &{ $form->{nextsub} } };
-
