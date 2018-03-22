@@ -80,11 +80,11 @@ sub do_repost_invoices {
   $form->isblank('transdate', $locale->text('Date missing!'));
   
   $form->header;
-  print "Reposting Invoices ... ";
+  print $locale->text('Reposting Invoices ... ');
   if ($ENV{HTTP_USER_AGENT}) {
-    print "<blink><font color=red>please wait</font></blink>\n";
+    print "<blink><font color=red>".$locale->text('please wait')."</font></blink>\n";
   } else {
-    print "please wait\n";
+    print $locale->text('please wait')."\n";
   }
 
   $SIG{INT} = 'IGNORE';
@@ -97,13 +97,13 @@ sub do_repost_invoices {
   unlink "$userspath/$myconfig{dbname}.LCK";
 
   if ($err == -1) {
-    $form->error('AR account does not exist!');
+    $form->error($locale->text('AR account does not exist!'));
   }
   if ($err == -2) {
-    $form->error('AP account does not exist!');
+    $form->error($locale->text('AP account does not exist!'));
   }
 
-  print "... done\n";
+  print "... ".$locale->text('done')."\n";
 
 }
 
