@@ -384,6 +384,7 @@ sub logout {
   $form->{callback} = "$form->{script}?path=$form->{path}&endsession=1";
 
   if (-f "$userspath/$form->{login}.conf") {
+    $form->{callback} .= "&login=$form->{login}";
     require "$userspath/$form->{login}.conf";
     $myconfig{dbpasswd} = unpack 'u', $myconfig{dbpasswd};
 
