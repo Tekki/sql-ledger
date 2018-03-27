@@ -75,7 +75,7 @@ function ChangeClass(menu, newClass) {
 document.onselectstart = new Function("return false");
 </script>
 
-<body class=menu />
+<body class=menu>
 
 <img src=$images/sql-ledger.gif width=80 border=0>
 

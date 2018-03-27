@@ -1147,7 +1147,7 @@ sub search {
   &calendar;
   
   print qq|
-<body onLoad="document.main.partnumber.focus()" />
+<body onLoad="document.main.partnumber.focus()">
 
 <form method="post" name="main" action="$form->{script}">
 |;
@@ -4614,7 +4614,7 @@ sub search_transfer {
   &calendar;
   
   print qq|
-<body onLoad="document.main.partnumber.focus()" />
+<body onLoad="document.main.partnumber.focus()">
 
 <form method="post" name="main" action="$form->{script}">
 
@@ -5060,7 +5060,7 @@ sub assembly_bom_transfer {
   $form->header;
   
   print qq|
-<body onLoad="document.main.partnumber.focus()" />
+<body onLoad="document.main.partnumber.focus()">
 
 <form method=post name=main action=$form->{script}>
 

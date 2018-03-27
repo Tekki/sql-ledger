@@ -2633,7 +2633,7 @@ sub select_customer {
   $form->header;
 
   print qq|
-<body onLoad="document.main.$form->{vc}.focus()" />
+<body onLoad="document.main.$form->{vc}.focus()">
 
 <form method=post name=main action=$form->{script}>
 

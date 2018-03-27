@@ -558,7 +558,7 @@ sub form_header {
   &calendar;
 
   print qq|
-<body onLoad="document.main.${focus}.focus()" />
+<body onLoad="document.main.${focus}.focus()">
 
 <form method=post name="main" action="$form->{script}">
 |;
@@ -1670,7 +1670,7 @@ sub generate_invoices {
   for (keys %radio) { delete $form->{$_} }
 
   print qq|
-<body onLoad="document.main.${focus}.focus()" />
+<body onLoad="document.main.${focus}.focus()">
 
 <form method=post name="main" action=$form->{script}>
 

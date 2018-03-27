@@ -161,7 +161,7 @@ sub selectdataset {
   $form->header(1);
 
   print qq|
-<body class=login onload="document.forms[0].password.focus()" />
+<body class=login onload="document.forms[0].password.focus()">
 
 <pre>
 
