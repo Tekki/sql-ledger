@@ -161,7 +161,7 @@ sub selectdataset {
   $form->header(1);
 
   print qq|
-<body class=login onload="document.forms[0].password.focus()" />
+<body class=login onload="document.forms[0].password.focus()">
 
 <pre>
 
@@ -384,6 +384,7 @@ sub logout {
   $form->{callback} = "$form->{script}?path=$form->{path}&endsession=1";
 
   if (-f "$userspath/$form->{login}.conf") {
+    $form->{callback} .= "&login=$form->{login}";
     require "$userspath/$form->{login}.conf";
     $myconfig{dbpasswd} = unpack 'u', $myconfig{dbpasswd};
 

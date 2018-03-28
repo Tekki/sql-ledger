@@ -734,7 +734,7 @@ sub form_header {
   &calendar;
   
   print qq|
-<body onLoad="document.main.${focus}.focus()" />
+<body onLoad="document.main.${focus}.focus()">
 
 <form method="post" name="main" action="$form->{script}">
 |;
@@ -2880,7 +2880,7 @@ sub display_ship_receive {
   $form->{action} = "update";
 
   print qq|
-<body onLoad="document.main.${focus}.focus()" />
+<body onLoad="document.main.${focus}.focus()">
 
 <form method="post" name="main" action="$form->{script}">
 
@@ -3507,7 +3507,7 @@ sub select_vendor {
   $form->header;
   
   print qq|
-<body onload="document.main.vendor.focus()" />
+<body onload="document.main.vendor.focus()">
 
 <form method=post name=main action=$form->{script}>
 

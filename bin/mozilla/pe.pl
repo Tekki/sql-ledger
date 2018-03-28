@@ -1431,7 +1431,7 @@ sub partsgroup_report {
 sub partsgroup_header {
 
   $form->{action} =~ s/_.*//g;
-  $form->{title} = $locale->text(ucfirst $form->{action}." Group");
+  $form->{title} = $locale->text(ucfirst $form->{action}." ".$locale->text('Group'));
 
 # $locale->text('Add Group')
 # $locale->text('Edit Group')
@@ -1643,7 +1643,7 @@ sub pricegroup_report {
 
 sub pricegroup_header {
 
-  $form->{title} = $locale->text(ucfirst $form->{action}." Pricegroup");
+  $form->{title} = $locale->text(ucfirst $form->{action}." ".$locale->text('Pricegroup'));
 
 # $locale->text('Add Pricegroup')
 # $locale->text('Edit Pricegroup')
@@ -2633,7 +2633,7 @@ sub select_customer {
   $form->header;
 
   print qq|
-<body onLoad="document.main.$form->{vc}.focus()" />
+<body onLoad="document.main.$form->{vc}.focus()">
 
 <form method=post name=main action=$form->{script}>
 

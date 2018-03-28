@@ -634,7 +634,7 @@ sub form_header {
   
 print qq|
 
-<body onload="document.main.${focus}.focus()" />
+<body onload="document.main.${focus}.focus()">
 
 <form method="post" name="main" action="$form->{script}">
 

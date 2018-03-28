@@ -612,7 +612,7 @@ sub search_name {
   &calendar;
   
   print qq|
-<body onLoad="main.${focus}.focus()" />
+<body onLoad="main.${focus}.focus()">
 
 <form method="post" name="main" action=$form->{script}>
 

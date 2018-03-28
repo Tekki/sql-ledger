@@ -370,7 +370,7 @@ sub form_header {
   }
 
   print qq|
-<body class=admin onload="document.main.${focus}.focus()" />
+<body class=admin onload="document.main.${focus}.focus()">
 
 <form name=main method=post action=$form->{script}>
 
@@ -567,7 +567,7 @@ sub change_password {
   $form->header;
 
   print qq|
-<body class=admin onload="document.main.${focus}.focus()" />
+<body class=admin onload="document.main.${focus}.focus()">
 
 <form method=post name=main action=$form->{script}>
 
@@ -733,7 +733,7 @@ sub change_host {
   $form->header;
 
   print qq|
-<body class=admin onload="document.main.${focus}.focus()" />
+<body class=admin onload="document.main.${focus}.focus()">
 
 <form method=post name=main action=$form->{script}>
 
@@ -975,7 +975,7 @@ sub dbselect_source {
   $form->header;
 
   print qq|
-<body class=admin onLoad="document.main.${focus}.focus()" />
+<body class=admin onLoad="document.main.${focus}.focus()">
 
 <form name=main method=post action=$form->{script}>
 
@@ -1344,7 +1344,7 @@ sub lock_system {
   $form->header;
 
   print qq|
-<body class=admin onLoad="document.main.${focus}.focus()" />
+<body class=admin onLoad="document.main.${focus}.focus()">
 
 <form name=main method=post action=$form->{script}>
 
