@@ -88,7 +88,6 @@ $self{subs} = {
   'jsmenu_frame'                => 'jsmenu_frame',
   'menubar'                     => 'menubar',
   'pickvalue'                   => 'pickvalue',
-  'quick_calculation'           => 'quick_calculation',
   'reconciliation'              => 'reconciliation',
   'resize'                      => 'resize',
   'section_menu'                => 'section_menu',
@@ -96,9 +95,9 @@ $self{subs} = {
   'show_progress'               => 'show_progress',
   'update'                      => 'update',
   'weiter'                      => 'continue',
-  'alle_abwählen'              => 'deselect_all',
+  'alle_abwählen'               => 'deselect_all',
   'fertig'                      => 'done',
-  'alle_auswählen'             => 'select_all',
+  'alle_auswählen'              => 'select_all',
   'aktualisieren'               => 'update',
 };
 

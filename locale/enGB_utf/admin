@@ -33,6 +33,7 @@ $self{texts} = {
   'Port'                        => 'Port',
   'Templates'                   => 'Templates',
   'Unlock System'               => 'Unlock System',
+  'Use Templates'               => 'Use Templates',
   'Vendor Invoice'              => 'Creditor Invoice',
   'Vendors'                     => 'Creditors',
   'website'                     => 'website',

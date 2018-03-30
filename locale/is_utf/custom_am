@@ -4,9 +4,9 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'About'                       => 'Um',
-  'Database Host'               => 'Gagnagrunns-netţjónn',
+  'Database Host'               => 'Gagnagrunns-netþjónn',
   'Dataset'                     => 'Gagnasafn',
-  'Licensed to'                 => 'Skráđ á',
+  'Licensed to'                 => 'Skráð á',
   'User'                        => 'Notandi',
   'Version'                     => 'Útgáfa',
   'localhost'                   => 'lokal',

@@ -5,15 +5,15 @@ $self{charset} = 'UTF-8';
 $self{texts} = {
   'Company'                     => 'Empresa',
   'Continue'                    => 'Continuar',
-  'Dataset is newer than version!' => 'Conjunto de dados � mais novo que a vers�o!',
-  'Incorrect Dataset version!'  => 'Vers�o incorreta de grupos de dados!',
+  'Dataset is newer than version!' => 'Conjunto de dados é mais novo que a versão!',
+  'Incorrect Dataset version!'  => 'Versão incorreta de grupos de dados!',
   'Login'                       => 'Entrar',
   'Name'                        => 'Nome',
-  'No email address for'        => 'Nenhum endere�o de e-mail para',
+  'No email address for'        => 'Nenhum endereço de e-mail para',
   'Password'                    => 'Senha',
-  'Upgrading to Version'        => 'Atualizado para vers�o',
-  'Version'                     => 'Vers�o',
-  'You did not enter a name!'   => 'Voc� n�o entrou com um nome',
+  'Upgrading to Version'        => 'Atualizado para versão',
+  'Version'                     => 'Versão',
+  'You did not enter a name!'   => 'Você não entrou com um nome',
 };
 
 $self{subs} = {

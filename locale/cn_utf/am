@@ -127,7 +127,6 @@ $self{texts} = {
   'Language deleted!'           => 'å·³å é¤è¯­è¨',
   'Language saved!'             => 'å·³å¨å­è¯­è¨',
   'Languages'                   => 'è¯­è¨',
-  'Last Numbers & Default Accounts' => 'ä¸ä¸ç¬ç¼å·åé¢è®¾å¸æ·',
   'Liability'                   => 'è´åº',
   'Licensed to'                 => 'ææäº',
   'Login'                       => 'ç»å¥',

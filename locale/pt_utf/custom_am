@@ -8,7 +8,7 @@ $self{texts} = {
   'Dataset'                     => 'Dataset',
   'Licensed to'                 => 'Licenciado a',
   'User'                        => 'Utilizador',
-  'Version'                     => 'Versăo',
+  'Version'                     => 'Versão',
   'localhost'                   => 'localhost',
 };
 

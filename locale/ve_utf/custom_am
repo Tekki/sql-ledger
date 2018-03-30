@@ -8,7 +8,7 @@ $self{texts} = {
   'Dataset'                     => 'Base de Datos',
   'Licensed to'                 => 'Licencia otorgada a',
   'User'                        => 'Usuario',
-  'Version'                     => 'Versiѓn',
+  'Version'                     => 'Versión',
   'localhost'                   => 'servidor local',
 };
 

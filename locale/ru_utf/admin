@@ -146,6 +146,7 @@ $self{texts} = {
   'Trial Balance'               => '№вХФзСвЩдХЬиЮйЪ ТСЬСЮг',
   'Type of Business'            => 'єЩа ТЩкЮХгС',
   'Unlock System'               => 'ђСкТЬЯЫЩвЯзСди гЩгдХЭе',
+  'Use Templates'               => 'щгаЯЬикЯзСди лСТЬЯЮй',
   'User'                        => 'ѓЯдвеФЮЩЫ',
   'Vendor Invoice'              => 'цСЫдевС аЯгдСзнЩЫС',
   'Vendor Invoices'             => 'цСЫдевй аЯгдСзнЩЫС',

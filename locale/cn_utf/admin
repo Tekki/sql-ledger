@@ -148,6 +148,7 @@ $self{texts} = {
   'Trial Balance'               => 'è¯ç®è¡¨',
   'Type of Business'            => 'ä¸å¡ç§ç±»',
   'Unlock System'               => 'å¼å¯ç³»ç»',
+  'Use Templates'               => 'ä½¿ç¨æ¨¡ç',
   'User'                        => 'ä½¿ç¨è',
   'Vendor Invoice'              => 'ä¾åºååç¥¨',
   'Vendor Invoices'             => 'ä¾åºååç¥¨',

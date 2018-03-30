@@ -128,7 +128,6 @@ $self{texts} = {
   'Language deleted!'           => 'Idioma Borrada!',
   'Language saved!'             => 'Idioma Guardada!',
   'Languages'                   => 'Idiomas',
-  'Last Numbers & Default Accounts' => 'Últimos números y cuentas por omisión',
   'Liability'                   => 'Pasivo',
   'Licensed to'                 => 'Adaptado para',
   'Login'                       => 'Entrar',

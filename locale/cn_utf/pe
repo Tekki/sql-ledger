@@ -108,6 +108,7 @@ $self{texts} = {
   'Vendor'                      => 'ä¾åºå',
   'Vendor Number'               => 'ä¾åºåå·ç ',
   'Vendor not on file!'         => 'æ¡£æ¡æ²¡ææ­¤ä¾åºå',
+  'Warehouse'                   => 'ä»åº',
   'Weight'                      => 'éé',
   'Year'                        => 'å¹´ä»½',
 };

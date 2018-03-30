@@ -60,7 +60,6 @@ $self{texts} = {
   'Jun'                         => 'Haz',
   'June'                        => 'Haziran',
   'Language'                    => 'Dil',
-  'Last Numbers & Default Accounts' => 'Son Numaralar ve Öntanımlı Hesaplar',
   'Liability'                   => 'Pasif',
   'Licensed to'                 => 'Lisans Sahibi:',
   'Login'                       => 'Giriş',

@@ -126,7 +126,6 @@ $self{texts} = {
   'Language deleted!'           => 'Taal verwijderd!',
   'Language saved!'             => 'Taal opgeslagen!',
   'Languages'                   => 'Talen',
-  'Last Numbers & Default Accounts' => 'Laatst toegekende nummers & Standaard Rekeningen',
   'Liability'                   => 'Passiva',
   'Licensed to'                 => 'Gelicenseerd aan',
   'Login'                       => 'Login',

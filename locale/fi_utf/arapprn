@@ -6,14 +6,14 @@ $self{texts} = {
   'Account'                     => 'Tili',
   'Amount'                      => 'Summa',
   'Continue'                    => 'Jatka',
-  'Date'                        => 'P�iv�ys',
+  'Date'                        => 'Päiväys',
   'Nothing to print!'           => 'Ei tulostettavaa!',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
   'Printed'                     => 'Tulostettu',
-  'Screen'                      => 'N�ytt�',
+  'Screen'                      => 'Näyttö',
   'Select payment'              => 'Valitse maksutapa',
-  'Source'                      => 'L�hde',
+  'Source'                      => 'Lähde',
 };
 
 $self{subs} = {

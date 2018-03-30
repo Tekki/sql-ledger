@@ -72,7 +72,6 @@ $self{texts} = {
   'Jun'                         => 'Čer',
   'June'                        => 'Červen',
   'Language'                    => 'Jazyk',
-  'Last Numbers & Default Accounts' => 'Poslední čísla a standardní čísla účtů',
   'Liability'                   => 'Závazek',
   'Licensed to'                 => 'Licencováno pro',
   'Login'                       => 'Uživatelské jméno',

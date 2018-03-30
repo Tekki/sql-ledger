@@ -24,7 +24,7 @@ $self{texts} = {
   'Dec'                         => 'Dez',
   'December'                    => 'Dezembro',
   'Delete'                      => 'Remover',
-  'Description'                 => 'Descriçăo',
+  'Description'                 => 'Descrição',
   'Edit Project'                => 'Editar Projecto',
   'Employee'                    => 'Funcionário',
   'Feb'                         => 'Fev',
@@ -51,7 +51,7 @@ $self{texts} = {
   'Number'                      => 'Número',
   'Oct'                         => 'Out',
   'October'                     => 'Outubro',
-  'Orphaned'                    => 'Órfăo',
+  'Orphaned'                    => 'Órfão',
   'Project'                     => 'Projecto',
   'Project deleted!'            => 'Projecto apagado',
   'Project saved!'              => 'Projecto guardado',
@@ -69,7 +69,7 @@ $self{texts} = {
   'Update'                      => 'Actualizar',
   'Updated'                     => 'Actualizado',
   'Vendor'                      => 'Fornecedor',
-  'Vendor not on file!'         => 'Fornecedor năo existe',
+  'Vendor not on file!'         => 'Fornecedor não existe',
   'Weight'                      => 'Peso',
 };
 

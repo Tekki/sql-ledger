@@ -10,9 +10,9 @@ $self{texts} = {
   'August'                      => 'ágúst',
   'Balance'                     => 'Afstemming',
   'Chart of Accounts'           => 'Listi yfir lykkla/reikninga',
-  'Closed'                      => 'Lokađ',
+  'Closed'                      => 'Lokað',
   'Credit'                      => 'Kredit',
-  'Current'                     => 'Núvirđi',
+  'Current'                     => 'Núvirði',
   'Date'                        => 'Dagsetning',
   'Debit'                       => 'Debit',
   'Dec'                         => 'des',
@@ -29,7 +29,7 @@ $self{texts} = {
   'July'                        => 'júlí',
   'Jun'                         => 'jún',
   'June'                        => 'júní',
-  'List Transactions'           => 'Sýna fćrslur',
+  'List Transactions'           => 'Sýna færslur',
   'Mar'                         => 'mar',
   'March'                       => 'mars',
   'May'                         => 'maí',
@@ -59,7 +59,7 @@ $self{subs} = {
   'pickvalue'                   => 'pickvalue',
   'resize'                      => 'resize',
   'show_progress'               => 'show_progress',
-  'sýna_fćrslur'                => 'list_transactions',
+  'sýna_færslur'                => 'list_transactions',
 };
 
 1;

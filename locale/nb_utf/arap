@@ -39,8 +39,8 @@ $self{texts} = {
   'Startdate'                   => 'Startdato',
   'Subject'                     => 'Emne',
   'To'                          => 'Til',
-  'Vendor Number'               => 'Leverandųrnummer',
-  'Vendor not on file!'         => 'Leverandųr mangler i database!',
+  'Vendor Number'               => 'Leverandørnummer',
+  'Vendor not on file!'         => 'Leverandør mangler i database!',
   'Warning!'                    => 'Advarsel',
   'sent'                        => 'sent',
 };

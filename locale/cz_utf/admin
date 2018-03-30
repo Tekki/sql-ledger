@@ -90,6 +90,7 @@ $self{texts} = {
   'Transactions'                => 'Položky',
   'Trial Balance'               => 'Obratová předvaha',
   'Unlock System'               => 'Unlock System',
+  'Use Templates'               => 'Využít šablony',
   'User'                        => 'Uživatel',
   'Version'                     => 'Verze',
   'Yes'                         => 'Ano',

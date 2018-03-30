@@ -87,7 +87,6 @@ $self{texts} = {
   'Jun'                         => 'Giu',
   'June'                        => 'Giugno',
   'Language'                    => 'Lingua',
-  'Last Numbers & Default Accounts' => 'Ultimi numeri e Conti di Default',
   'Liability'                   => 'PassivitÃ ',
   'Licensed to'                 => 'Dato in Licenza a',
   'Login'                       => 'Login',

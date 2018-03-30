@@ -17,6 +17,7 @@ $self{texts} = {
   'November'                    => '11月',
   'October'                     => '10月',
   'September'                   => '9月',
+  'done'                        => '済',
 };
 
 $self{subs} = {

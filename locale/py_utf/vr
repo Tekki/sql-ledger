@@ -9,7 +9,7 @@ $self{texts} = {
   'April'                       => 'Abril',
   'Aug'                         => 'Ago',
   'August'                      => 'Agosto',
-  'Confirm!'                    => 'ĄConfirmar!',
+  'Confirm!'                    => '¡Confirmar!',
   'Continue'                    => 'Continuar',
   'Current'                     => 'Actual',
   'Date'                        => 'Fecha',
@@ -36,7 +36,7 @@ $self{texts} = {
   'May '                        => 'Mayo',
   'Memo'                        => 'Nota',
   'Month'                       => 'Mes',
-  'No.'                         => 'Nş',
+  'No.'                         => 'Nº',
   'Nov'                         => 'Nov',
   'November'                    => 'Noviembre',
   'Oct'                         => 'Oct',
@@ -54,7 +54,7 @@ $self{texts} = {
   'Total'                       => 'Total',
   'Vendor'                      => 'Proveedor',
   'Vendor Number'               => 'Código de Proveedor',
-  'Year'                        => 'Ańo',
+  'Year'                        => 'Año',
   'Yes'                         => 'Si',
 };
 

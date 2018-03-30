@@ -106,6 +106,7 @@ $self{texts} = {
   'Transactions'                => 'Operacijos',
   'Trial Balance'               => 'Bandomasis balansas',
   'Unlock System'               => 'Unlock System',
+  'Use Templates'               => 'Naudoti šablonus',
   'User'                        => 'Vartotojas',
   'Vendors'                     => 'Tiekėjai',
   'Version'                     => 'Versija',

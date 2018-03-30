@@ -3,8 +3,8 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Accounting'                  => 'Bokfіring',
-  'Continue'                    => 'Fortsфtt',
+  'Accounting'                  => 'Bokföring',
+  'Continue'                    => 'Fortsätt',
   'Main Menu'                   => 'Huvudmeny',
 };
 

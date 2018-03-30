@@ -4,8 +4,8 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Continue'                    => 'Continuar',
-  'Password'                    => 'Contraseёa',
-  'Session expired!'            => 'ЁSesiѓn Expirѓ!',
+  'Password'                    => 'Contraseña',
+  'Session expired!'            => '¡Sesión Expiró!',
 };
 
 $self{subs} = {

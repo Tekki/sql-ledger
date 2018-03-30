@@ -28,16 +28,16 @@ $self{texts} = {
   'October'                     => 'oktober',
   'Part'                        => 'Del',
   'Project'                     => 'Prosjekt',
-  'Purchase Order'              => 'Innkjųpsordre',
+  'Purchase Order'              => 'Innkjøpsordre',
   'Quotation'                   => 'Tilbud',
-  'RFQ'                         => 'Tilbudsforespųrsel',
+  'RFQ'                         => 'Tilbudsforespørsel',
   'Sales Invoice'               => 'Salgsfaktura',
   'Sales Order'                 => 'Salgsordre',
   'Save'                        => 'Lagre',
   'September'                   => 'september',
   'Service'                     => 'Tjeneste',
-  'Vendor'                      => 'Leverandųr',
-  'Vendor Invoice'              => 'Leverandųrfaktura',
+  'Vendor'                      => 'Leverandør',
+  'Vendor Invoice'              => 'Leverandørfaktura',
 };
 
 $self{subs} = {

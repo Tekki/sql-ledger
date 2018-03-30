@@ -127,6 +127,7 @@ $self{texts} = {
   'Vendor'                      => '供應商',
   'Vendor Number'               => '供應商號碼',
   'Vendor not on file!'         => '沒有此供應商的記錄！',
+  'Warehouse'                   => '倉庫',
   'Weight'                      => '重量',
   'Year'                        => '年',
 };

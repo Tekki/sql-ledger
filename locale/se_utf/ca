@@ -3,7 +3,7 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'AR/AP'                       => 'Intфkter/utgifter',
+  'AR/AP'                       => 'Intäkter/utgifter',
   'Account'                     => 'Konto',
   'Apr'                         => 'apr',
   'April'                       => 'april',
@@ -22,7 +22,7 @@ $self{texts} = {
   'Description'                 => 'Beskrivning',
   'Feb'                         => 'Feb',
   'February'                    => 'Februari',
-  'From'                        => 'Frхn',
+  'From'                        => 'Från',
   'GIFI'                        => 'SRU-kod',
   'Include in Report'           => 'Inkludera i rapport',
   'Jan'                         => 'Jan',
@@ -36,7 +36,7 @@ $self{texts} = {
   'March'                       => 'Mars',
   'May'                         => 'Maj',
   'May '                        => 'Maj',
-  'Month'                       => 'Mхnad',
+  'Month'                       => 'Månad',
   'Nov'                         => 'Nov',
   'November'                    => 'November',
   'Oct'                         => 'Okt',
@@ -48,10 +48,10 @@ $self{texts} = {
   'Reference'                   => 'Referens',
   'Sep'                         => 'Sep',
   'September'                   => 'September',
-  'Source'                      => 'Kфlla',
+  'Source'                      => 'Källa',
   'Subtotal'                    => 'Subtotal',
   'To'                          => 'Till',
-  'Year'                        => 'Хr',
+  'Year'                        => 'År',
 };
 
 $self{subs} = {

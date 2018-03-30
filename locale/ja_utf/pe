@@ -134,6 +134,7 @@ $self{texts} = {
   'Vendor'                      => '仕入先',
   'Vendor Number'               => '仕入先番号',
   'Vendor not on file!'         => '仕入先ではありません',
+  'Warehouse'                   => '倉庫',
   'Weight'                      => '重量',
   'Year'                        => '年',
 };

@@ -211,7 +211,6 @@ $self{subs} = {
   'menubar'                     => 'menubar',
   'pickvalue'                   => 'pickvalue',
   'post'                        => 'post',
-  'quick_calculation'           => 'quick_calculation',
   'resize'                      => 'resize',
   'search'                      => 'search',
   'section_menu'                => 'section_menu',
@@ -227,9 +226,9 @@ $self{subs} = {
   'rechnungen_konsolidieren'    => 'consolidate_invoices',
   'buchungen_konsolidieren'     => 'consolidate_transactions',
   'weiter'                      => 'continue',
-  'löschen'                    => 'delete',
-  'buchungen_löschen'          => 'delete_transactions',
-  'alle_abwählen'              => 'deselect_all',
+  'löschen'                     => 'delete',
+  'buchungen_löschen'           => 'delete_transactions',
+  'alle_abwählen'               => 'deselect_all',
   'neue_nummer'                 => 'new_number',
   'buchen'                      => 'post',
   'als_neu_buchen'              => 'post_as_new',
@@ -239,11 +238,12 @@ $self{subs} = {
   'drucken_und_als_neu_buchen'  => 'print_and_post_as_new',
   'ausgangsrechnung_'           => 'sales_invoice_',
   'buchungstermine'             => 'schedule',
-  'alle_auswählen'             => 'select_all',
+  'alle_auswählen'              => 'select_all',
   'aktualisieren'               => 'update',
   'lieferantenrechnung_'        => 'vendor_invoice_',
   'ja'                          => 'yes',
-  'ja__buchungen_löschen'      => 'yes__delete_transactions',
+  'ja__buchungen_löschen'       => 'yes__delete_transactions',
 };
 
 1;
+

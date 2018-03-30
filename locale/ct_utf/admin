@@ -88,6 +88,7 @@ $self{texts} = {
   'Transactions'                => 'Transaccions',
   'Trial Balance'               => 'Balanç de Comprovació',
   'Unlock System'               => 'Unlock System',
+  'Use Templates'               => 'Emprar Plantilles',
   'User'                        => 'Usuari',
   'Version'                     => 'Versió',
   'Yes'                         => 'Sí',

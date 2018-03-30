@@ -129,6 +129,7 @@ $self{texts} = {
   'Vendor'                      => 'Szállító',
   'Vendor Number'               => 'Szállító szám',
   'Vendor not on file!'         => 'Szállító nincs az adatbázisban!',
+  'Warehouse'                   => 'Raktár',
   'Weight'                      => 'Súly',
   'Year'                        => 'Év',
 };

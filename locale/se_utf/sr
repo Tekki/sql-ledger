@@ -3,13 +3,13 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Accounting Menu'             => 'Bokfіrings-meny',
+  'Accounting Menu'             => 'Bokförings-meny',
   'April'                       => 'April',
   'August'                      => 'Augusti',
   'December'                    => 'December',
   'Description'                 => 'Beskrivning',
   'February'                    => 'Februari',
-  'Heading'                     => 'жverskrift',
+  'Heading'                     => 'Överskrift',
   'January'                     => 'Januari',
   'July'                        => 'Juli',
   'June'                        => 'Juni',

@@ -12,7 +12,7 @@ $self{texts} = {
   'Chart of Accounts'           => 'Kontoplan',
   'Closed'                      => 'Avsluttet',
   'Credit'                      => 'Kredit',
-  'Current'                     => 'Nåvęrende',
+  'Current'                     => 'Nåværende',
   'Date'                        => 'Dato',
   'Debit'                       => 'Debet',
   'Dec'                         => 'des',
@@ -30,7 +30,7 @@ $self{texts} = {
   'July'                        => 'juli',
   'Jun'                         => 'jun',
   'June'                        => 'juni',
-  'List Transactions'           => 'Vis bokfųringer',
+  'List Transactions'           => 'Vis bokføringer',
   'Mar'                         => 'mar',
   'March'                       => 'mars',
   'May'                         => 'mai',
@@ -66,7 +66,7 @@ $self{subs} = {
   'pickvalue'                   => 'pickvalue',
   'resize'                      => 'resize',
   'show_progress'               => 'show_progress',
-  'vis_bokfųringer'             => 'list_transactions',
+  'vis_bokføringer'             => 'list_transactions',
 };
 
 1;

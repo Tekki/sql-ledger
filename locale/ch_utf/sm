@@ -19,6 +19,8 @@ $self{texts} = {
   'October'                     => 'Oktober',
   'Repost Invoices'             => 'Rechnungen neu buchen',
   'September'                   => 'September',
+  'done'                        => 'fertig',
+  'please wait'                 => 'bitte warten',
 };
 
 $self{subs} = {

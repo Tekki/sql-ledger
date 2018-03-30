@@ -41,7 +41,7 @@ $self{texts} = {
   'Oct'                         => 'Oct',
   'October'                     => 'Octubre',
   'Period'                      => 'Periodo',
-  'Project Number'              => 'Nśmero del Proyecto',
+  'Project Number'              => 'Número del Proyecto',
   'Quarter'                     => 'Trimestre',
   'R'                           => 'R',
   'Reference'                   => 'Referencia',
@@ -50,7 +50,7 @@ $self{texts} = {
   'Source'                      => 'Origen',
   'Subtotal'                    => 'Subtotal',
   'To'                          => 'Hasta',
-  'Year'                        => 'Ańo',
+  'Year'                        => 'Año',
 };
 
 $self{subs} = {

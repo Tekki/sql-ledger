@@ -12,11 +12,12 @@ $self{texts} = {
   'January'                     => 'Janeiro',
   'July'                        => 'Julho',
   'June'                        => 'Junho',
-  'March'                       => 'Mar�o',
+  'March'                       => 'Março',
   'May'                         => 'Mai',
   'November'                    => 'Novembro',
   'October'                     => 'Outubro',
   'September'                   => 'Setembro',
+  'done'                        => 'feito',
 };
 
 $self{subs} = {

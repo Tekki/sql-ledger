@@ -41,7 +41,7 @@ $self{texts} = {
   'November'                    => 'Noviembre',
   'Oct'                         => 'Oct',
   'October'                     => 'Octubre',
-  'Out of balance!'             => 'ĄFuera de balance!',
+  'Out of balance!'             => '¡Fuera de balance!',
   'Period'                      => 'Periodo',
   'Quarter'                     => 'Trimestre',
   'Reconciliation'              => 'Reconciliación',
@@ -54,7 +54,7 @@ $self{texts} = {
   'Summary'                     => 'Resúmen',
   'To'                          => 'Hasta',
   'Update'                      => 'Actualizar',
-  'Year'                        => 'Ańo',
+  'Year'                        => 'Año',
 };
 
 $self{subs} = {

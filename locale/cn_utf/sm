@@ -17,6 +17,7 @@ $self{texts} = {
   'November'                    => 'åä¸æ',
   'October'                     => 'åæ',
   'September'                   => 'ä¹æ',
+  'done'                        => 'å®æ',
 };
 
 $self{subs} = {

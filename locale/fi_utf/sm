@@ -6,17 +6,18 @@ $self{texts} = {
   'April'                       => 'Huhtikuu',
   'August'                      => 'Elokuu',
   'Continue'                    => 'Jatka',
-  'Date missing!'               => 'P�iv�ys puuttuu',
+  'Date missing!'               => 'Päiväys puuttuu',
   'December'                    => 'Joulukuu',
   'February'                    => 'Helmikuu',
   'January'                     => 'Tammikuu',
-  'July'                        => 'Hein�kuu',
-  'June'                        => 'Kes�kuu',
+  'July'                        => 'Heinäkuu',
+  'June'                        => 'Kesäkuu',
   'March'                       => 'Maaliskuu',
   'May'                         => 'Tou',
   'November'                    => 'Marraskuu',
   'October'                     => 'Lokakuu',
   'September'                   => 'Syyskuu',
+  'done'                        => 'valmis',
 };
 
 $self{subs} = {

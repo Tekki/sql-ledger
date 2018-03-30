@@ -4,7 +4,7 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Account'                     => 'Cuenta',
-  'Accounting Menu'             => 'Menś de contabilidad',
+  'Accounting Menu'             => 'Menú de contabilidad',
   'Apr'                         => 'Abr',
   'April'                       => 'Abril',
   'Aug'                         => 'Ago',
@@ -25,7 +25,7 @@ $self{texts} = {
   'Feb'                         => 'Feb',
   'February'                    => 'Febrero',
   'From'                        => 'De',
-  'Include Exchange Rate Difference' => 'Incluķr la diferencia por tipo de cambio',
+  'Include Exchange Rate Difference' => 'Incluír la diferencia por tipo de cambio',
   'Jan'                         => 'Ene',
   'January'                     => 'Enero',
   'Jul'                         => 'Jul',
@@ -41,8 +41,8 @@ $self{texts} = {
   'November'                    => 'Noviembre',
   'Oct'                         => 'Oct',
   'October'                     => 'Octubre',
-  'Out of balance!'             => '”Desbalanceado!',
-  'Period'                      => 'Perķodo',
+  'Out of balance!'             => '¡Desbalanceado!',
+  'Period'                      => 'Período',
   'Quarter'                     => 'Trimestre',
   'Reconciliation'              => 'Conciliación',
   'Reconciliation Report'       => 'Reporte de conciliación',
@@ -54,7 +54,7 @@ $self{texts} = {
   'Summary'                     => 'Resumen',
   'To'                          => 'A',
   'Update'                      => 'Actualizar',
-  'Year'                        => 'Ańo',
+  'Year'                        => 'Año',
 };
 
 $self{subs} = {

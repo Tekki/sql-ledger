@@ -129,6 +129,7 @@ $self{texts} = {
   'Vendor'                      => 'Доставчик',
   'Vendor Number'               => 'Доставчик номер',
   'Vendor not on file!'         => 'Липсва доствчика в базата',
+  'Warehouse'                   => 'Склад',
   'Weight'                      => 'Тегло',
   'Year'                        => 'Година',
 };

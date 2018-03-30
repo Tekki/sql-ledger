@@ -120,6 +120,7 @@ $self{texts} = {
   'Translations'                => 'ترجمات',
   'Trial Balance'               => 'ميزان المراجعة',
   'Type of Business'            => 'نوع العمل',
+  'Use Templates'               => 'استخدم العينات',
   'User'                        => 'مستخدم',
   'Vendor Invoice'              => 'فاتورة المورد ',
   'Vendor Invoices'             => 'فواتير الموردين',

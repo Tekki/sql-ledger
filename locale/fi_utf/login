@@ -6,14 +6,14 @@ $self{texts} = {
   'Company'                     => 'Yritys',
   'Continue'                    => 'Jatka',
   'Dataset is newer than version!' => 'Tietokanta on uudempi kuin sovelluksen versio',
-  'Incorrect Dataset version!'  => 'V��r� tietokannan versio!',
+  'Incorrect Dataset version!'  => 'Väärä tietokannan versio!',
   'Login'                       => 'Nimi',
   'Name'                        => 'Nimi',
-  'No email address for'        => 'S�hk�postiosoite puuttuu',
+  'No email address for'        => 'Sähköpostiosoite puuttuu',
   'Password'                    => 'Salasana',
-  'Upgrading to Version'        => 'P�ivitet��n',
+  'Upgrading to Version'        => 'Päivitetään',
   'Version'                     => 'Versio',
-  'You did not enter a name!'   => 'Et kirjoittanut nime�',
+  'You did not enter a name!'   => 'Et kirjoittanut nimeä',
 };
 
 $self{subs} = {

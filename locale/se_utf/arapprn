@@ -5,7 +5,7 @@ $self{charset} = 'UTF-8';
 $self{texts} = {
   'Account'                     => 'Konto',
   'Amount'                      => 'Belopp',
-  'Continue'                    => 'Fortsфtt',
+  'Continue'                    => 'Fortsätt',
   'DCN missing!'                => 'Deklarationsnummer saknas',
   'Date'                        => 'Datum',
   'Memo'                        => 'Anteckning',
@@ -16,10 +16,10 @@ $self{texts} = {
   'Printed'                     => 'Utskriven',
   'RVC missing!'                => 'RVC saknas',
   'Scheduled'                   => 'Schemalagd',
-  'Screen'                      => 'Skфrm',
-  'Select a Printer!'           => 'Vфlj skrivare',
-  'Select payment'              => 'Vфlj betalningssфtt',
-  'Source'                      => 'Kфlla',
+  'Screen'                      => 'Skärm',
+  'Select a Printer!'           => 'Välj skrivare',
+  'Select payment'              => 'Välj betalningssätt',
+  'Source'                      => 'Källa',
   'Text'                        => 'Text',
   'html'                        => 'html',
 };
@@ -37,7 +37,7 @@ $self{subs} = {
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',
   'select_payment'              => 'select_payment',
-  'fortsфtt'                    => 'continue',
+  'fortsätt'                    => 'continue',
 };
 
 1;

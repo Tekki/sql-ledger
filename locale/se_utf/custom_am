@@ -4,10 +4,10 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'About'                       => 'Om',
-  'Database Host'               => 'Databasvфrd',
+  'Database Host'               => 'Databasvärd',
   'Dataset'                     => 'Dataset',
   'Licensed to'                 => 'Licensierad till',
-  'User'                        => 'Anvфndare',
+  'User'                        => 'Användare',
   'Version'                     => 'Version',
   'localhost'                   => 'localhost',
 };

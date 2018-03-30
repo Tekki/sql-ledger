@@ -131,6 +131,7 @@ $self{texts} = {
   'Vendor'                      => 'Dodavateľ',
   'Vendor Number'               => 'Číslo dodavateľa',
   'Vendor not on file!'         => 'Dodavateľ nie je v zozname!',
+  'Warehouse'                   => 'Sklad',
   'Weight'                      => 'Váha',
   'Year'                        => 'Rok',
 };

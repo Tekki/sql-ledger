@@ -140,6 +140,7 @@ $self{texts} = {
   'Trial Balance'               => 'Kontu bilance',
   'Type of Business'            => 'Komercdarbības veids',
   'Unlock System'               => 'Unlock System',
+  'Use Templates'               => 'Lietot šablonu',
   'User'                        => 'Lietotājs',
   'Vendor Invoice'              => 'Pārdevēja rēķins',
   'Vendor Invoices'             => 'Pārdevēja rēķini',

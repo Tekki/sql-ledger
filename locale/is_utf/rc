@@ -12,14 +12,14 @@ $self{texts} = {
   'Balance'                     => 'Afstemming',
   'Continue'                    => 'Áfram',
   'Credit'                      => 'Kredit',
-  'Current'                     => 'Núvirđi',
+  'Current'                     => 'Núvirði',
   'Date'                        => 'Dagsetning',
   'Debit'                       => 'Debit',
   'Dec'                         => 'des',
   'December'                    => 'desember',
   'Description'                 => 'Skýringar',
   'Difference'                  => 'Mismunur',
-  'Done'                        => 'Búiđ',
+  'Done'                        => 'Búið',
   'Feb'                         => 'feb',
   'February'                    => 'febrúar',
   'From'                        => 'Frá',
@@ -37,7 +37,7 @@ $self{texts} = {
   'November'                    => 'nóvember',
   'Oct'                         => 'ókt',
   'October'                     => 'óktóber',
-  'Out of balance!'             => 'Ekki jafnvćgi!',
+  'Out of balance!'             => 'Ekki jafnvægi!',
   'Reconciliation'              => 'Afstemingar',
   'Select all'                  => 'Velja allt',
   'Sep'                         => 'sep',
@@ -45,7 +45,7 @@ $self{texts} = {
   'Source'                      => 'Frálag',
   'Statement Balance'           => 'jöfnunaruppgjör',
   'To'                          => 'til',
-  'Update'                      => 'Uppfćrsla',
+  'Update'                      => 'Uppfærsla',
 };
 
 $self{subs} = {
@@ -72,9 +72,9 @@ $self{subs} = {
   'show_progress'               => 'show_progress',
   'update'                      => 'update',
   'áfram'                       => 'continue',
-  'búiđ'                        => 'done',
+  'búið'                        => 'done',
   'velja_allt'                  => 'select_all',
-  'uppfćrsla'                   => 'update',
+  'uppfærsla'                   => 'update',
 };
 
 1;

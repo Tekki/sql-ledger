@@ -4,7 +4,7 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Account'                     => 'Cuenta',
-  'Accounting Menu'             => 'Menś de Contabilidad',
+  'Accounting Menu'             => 'Menú de Contabilidad',
   'Apr'                         => 'Abr',
   'April'                       => 'Abril',
   'Aug'                         => 'Ago',
@@ -41,7 +41,7 @@ $self{texts} = {
   'November'                    => 'Noviembre',
   'Oct'                         => 'Oct',
   'October'                     => 'Octubre',
-  'Out of balance!'             => '”Fuera de balance!',
+  'Out of balance!'             => '¡Fuera de balance!',
   'Period'                      => 'Periodo',
   'Quarter'                     => 'Trimestre',
   'Reconciliation'              => 'Reconciliación',
@@ -51,10 +51,10 @@ $self{texts} = {
   'September'                   => 'Septiembre',
   'Source'                      => 'Origen',
   'Statement Balance'           => 'Saldo bancario',
-  'Summary'                     => 'Resśmen',
+  'Summary'                     => 'Resúmen',
   'To'                          => 'Hasta',
   'Update'                      => 'Actualizar',
-  'Year'                        => 'Ańo',
+  'Year'                        => 'Año',
 };
 
 $self{subs} = {

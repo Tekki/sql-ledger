@@ -100,6 +100,7 @@ $self{texts} = {
   'Templates'                   => 'Modelli',
   'Transactions'                => 'Transazioni',
   'Trial Balance'               => 'Bilancio di Verifica',
+  'Use Templates'               => 'Usa Modelli',
   'User'                        => 'Utente',
   'Vendors'                     => 'Fornitori',
   'Version'                     => 'Versione',

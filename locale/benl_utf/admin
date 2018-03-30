@@ -142,6 +142,7 @@ $self{texts} = {
   'Trial Balance'               => 'Proefbalans',
   'Type of Business'            => 'Zaaktype',
   'Unlock System'               => 'Unlock System',
+  'Use Templates'               => 'Gebruik templates',
   'User'                        => 'Gebruiker',
   'Vendor Invoice'              => 'Inkoopfaktuur',
   'Vendor Invoices'             => 'Leverancier inkoopfacturen',

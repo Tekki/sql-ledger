@@ -4,7 +4,7 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Account'                     => 'Konto',
-  'Amount'                      => 'Belųp',
+  'Amount'                      => 'Beløp',
   'Continue'                    => 'Fortsett',
   'Date'                        => 'Dato',
   'Memo'                        => 'Notat',

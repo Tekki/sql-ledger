@@ -145,6 +145,7 @@ $self{texts} = {
   'Trial Balance'               => 'Balance de comprobación',
   'Type of Business'            => 'Tipo de Negocio',
   'Unlock System'               => 'Unlock sistema',
+  'Use Templates'               => 'Plantillas de usuarios',
   'User'                        => 'Usuario',
   'Vendor Invoice'              => 'Factura de proveedor',
   'Vendor Invoices'             => 'Facturas de proveedor',

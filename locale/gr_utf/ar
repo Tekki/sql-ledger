@@ -83,6 +83,7 @@ $self{texts} = {
   'Project'                     => 'Έργο',
   'Receipt'                     => 'Απόδειξη',
   'Screen'                      => 'Οθόνη',
+  'Select all'                  => 'Επιλογή όλων',
   'Source'                      => 'Πηγή',
   'Tax'                         => 'Φόρος',
   'Vendor'                      => 'Creditor',
@@ -115,6 +116,7 @@ $self{subs} = {
   'delete_report'               => 'delete_report',
   'delete_schedule'             => 'delete_schedule',
   'delete_transactions'         => 'delete_transactions',
+  'deselect_all'                => 'deselect_all',
   'display'                     => 'display',
   'display_form'                => 'display_form',
   'do_save_report'              => 'do_save_report',
@@ -161,6 +163,7 @@ $self{subs} = {
   'schedule'                    => 'schedule',
   'search'                      => 'search',
   'section_menu'                => 'section_menu',
+  'select_all'                  => 'select_all',
   'select_name'                 => 'select_name',
   'select_payment'              => 'select_payment',
   'select_project'              => 'select_project',
@@ -177,6 +180,7 @@ $self{subs} = {
   'διαγραφή'                    => 'delete',
   'εκτύπωση'                    => 'print',
   'έκτύπωση_και_αποστολή'       => 'print_and_post',
+  'επιλογή_όλων'                => 'select_all',
 };
 
 1;

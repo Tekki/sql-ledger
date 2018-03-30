@@ -129,6 +129,7 @@ $self{texts} = {
   'Vendor'                      => 'Hankija',
   'Vendor Number'               => 'Hankija number',
   'Vendor not on file!'         => 'Hankijat pole failis!',
+  'Warehouse'                   => 'Ladu',
   'Weight'                      => 'Kaal',
   'Year'                        => 'Aasta',
 };

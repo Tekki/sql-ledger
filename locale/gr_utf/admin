@@ -83,6 +83,7 @@ $self{texts} = {
   'Search'                      => 'Αναζήτηση',
   'Templates'                   => 'Templates',
   'Unlock System'               => 'Unlock System',
+  'Use Templates'               => 'Use Templates',
   'Vendor Invoice'              => 'Creditor Invoice',
   'Vendors'                     => 'Creditors',
   'website'                     => 'website',

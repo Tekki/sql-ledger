@@ -3,13 +3,13 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Accounting Menu'             => 'Menu de comptabilit�',
+  'Accounting Menu'             => 'Menu de comptabilité',
   'April'                       => 'Avril',
-  'August'                      => 'Ao�t',
-  'December'                    => 'D�cembre',
+  'August'                      => 'Août',
+  'December'                    => 'Décembre',
   'Description'                 => 'Description',
-  'February'                    => 'F�vrier',
-  'Heading'                     => 'En-t�te',
+  'February'                    => 'Février',
+  'Heading'                     => 'En-tête',
   'January'                     => 'Janvier',
   'July'                        => 'Juillet',
   'June'                        => 'Juin',

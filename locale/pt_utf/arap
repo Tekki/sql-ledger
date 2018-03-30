@@ -13,7 +13,7 @@ $self{texts} = {
   'Customer not on file!'       => 'Cliente inexistente!',
   'Date'                        => 'Data',
   'December'                    => 'Dezembro',
-  'Description'                 => 'Descriçăo',
+  'Description'                 => 'Descrição',
   'E-mail'                      => 'E-Mail',
   'February'                    => 'Fevereiro',
   'Heading'                     => 'Cabeçalho',
@@ -29,14 +29,14 @@ $self{texts} = {
   'PDF'                         => 'PDF',
   'Postscript'                  => 'PostScript',
   'Print'                       => 'Imprimir',
-  'Project not on file!'        => 'Projecto năo existe',
-  'Reference'                   => 'Referęncia',
+  'Project not on file!'        => 'Projecto não existe',
+  'Reference'                   => 'Referência',
   'Select from one of the names below' => 'Seleccione um dos nomes abaixo',
   'Select from one of the projects below' => 'Seleccione um dos projectos abaixo',
   'September'                   => 'Setembro',
   'Subject'                     => 'Assunto',
   'To'                          => 'Até',
-  'Vendor not on file!'         => 'Fornecedor năo existe',
+  'Vendor not on file!'         => 'Fornecedor não existe',
 };
 
 $self{subs} = {

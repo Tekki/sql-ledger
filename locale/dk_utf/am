@@ -149,7 +149,6 @@ $self{texts} = {
   'Language deleted!'           => 'Sprog slettet!',
   'Language saved!'             => 'Sprog gemt!',
   'Languages'                   => 'Sprog',
-  'Last Numbers & Default Accounts' => 'Løbenumre og standardkonti',
   'Liability'                   => 'Passiv',
   'Licensed to'                 => 'Udført for',
   'Login'                       => 'Log på',

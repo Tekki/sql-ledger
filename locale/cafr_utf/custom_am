@@ -3,13 +3,13 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'About'                       => '� propos',
-  'Database Host'               => 'H�te de base de donn�es',
-  'Dataset'                     => 'Fichier de donn�es',
-  'Licensed to'                 => 'Licence �',
+  'About'                       => 'À propos',
+  'Database Host'               => 'Hôte de base de données',
+  'Dataset'                     => 'Fichier de données',
+  'Licensed to'                 => 'Licence à',
   'User'                        => 'Utilisateur',
   'Version'                     => 'Version',
-  'localhost'                   => 'h�te local',
+  'localhost'                   => 'hôte local',
 };
 
 $self{subs} = {

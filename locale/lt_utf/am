@@ -86,7 +86,6 @@ $self{texts} = {
   'Jun'                         => 'Bir',
   'June'                        => 'Birželis',
   'Language'                    => 'Kalba',
-  'Last Numbers & Default Accounts' => 'Paskutinieji numeriai ir sąskaitos pagal nutylėjimą',
   'Liability'                   => 'Nuosavybė',
   'Licensed to'                 => 'Licenzijuota...',
   'Login'                       => 'Prisijungimas',

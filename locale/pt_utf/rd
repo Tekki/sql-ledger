@@ -3,8 +3,8 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'AP Transaction'              => 'Transacçăo Fornecedores',
-  'AR Transaction'              => 'Transacçăo Clientes',
+  'AP Transaction'              => 'Transacção Fornecedores',
+  'AR Transaction'              => 'Transacção Clientes',
   'Accounting Menu'             => 'Menu de Contabilidade',
   'April'                       => 'Abril',
   'August'                      => 'Agosto',
@@ -12,10 +12,10 @@ $self{texts} = {
   'Customer'                    => 'Cliente',
   'December'                    => 'Dezembro',
   'Delete'                      => 'Remover',
-  'Description'                 => 'Descriçăo',
+  'Description'                 => 'Descrição',
   'Employee'                    => 'Funcionário',
   'February'                    => 'Fevereiro',
-  'GL Transaction'              => 'Transacçăo Livro Razăo',
+  'GL Transaction'              => 'Transacção Livro Razão',
   'ID'                          => 'ID',
   'January'                     => 'Janeiro',
   'July'                        => 'Julho',

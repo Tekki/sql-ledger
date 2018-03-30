@@ -7,13 +7,13 @@ $self{texts} = {
   'Amount'                      => 'Montant',
   'Continue'                    => 'Continuer',
   'Date'                        => 'Date',
-  'Memo'                        => 'M�mo',
-  'Nothing to print!'           => 'Rien � imprimer',
+  'Memo'                        => 'Mémo',
+  'Nothing to print!'           => 'Rien à imprimer',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postcript',
-  'Printed'                     => 'Imprim�',
-  'Screen'                      => '�cran',
-  'Select payment'              => 'S�lectionner le payement',
+  'Printed'                     => 'Imprimé',
+  'Screen'                      => 'Écran',
+  'Select payment'              => 'Sélectionner le payement',
   'Source'                      => 'Source',
 };
 

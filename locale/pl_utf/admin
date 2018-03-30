@@ -142,6 +142,7 @@ $self{texts} = {
   'Trial Balance'               => 'Bilans Porównawczy',
   'Type of Business'            => 'Rodzaj Działalności',
   'Unlock System'               => 'Unlock System',
+  'Use Templates'               => 'Użyj Szablony',
   'User'                        => 'Użytkownik',
   'Vendor Invoice'              => 'Faktura VAT Zakupu',
   'Vendor Invoices'             => 'Faktury VAT Zakupu',

@@ -106,6 +106,7 @@ $self{texts} = {
   'Transactions'                => '№вЯзЯФЫЩ',
   'Trial Balance'               => '№вЯТЮЩЪ тСЬСЮг',
   'Unlock System'               => 'Unlock System',
+  'Use Templates'               => 'їЩЫЯвЩгдЯзезСдЩ ћСТЬЯЮЩ',
   'User'                        => 'ыЯвЩгдезСо',
   'Vendor Invoice'              => 'ђСШеЮЯЫ-ЦСЫдевС',
   'Vendors'                     => '№ЯгдСоСЬиЮЩЫЩ',

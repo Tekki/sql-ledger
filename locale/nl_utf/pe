@@ -150,6 +150,7 @@ $self{texts} = {
   'Vendor'                      => 'Leverancier',
   'Vendor Number'               => 'Leveranciercode',
   'Vendor not on file!'         => 'Leverancier bestaat niet!',
+  'Warehouse'                   => 'Magazijn',
   'Weight'                      => 'Gewicht',
   'Width'                       => 'Breedte',
   'Year'                        => 'Jaar',

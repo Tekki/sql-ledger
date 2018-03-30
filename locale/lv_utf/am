@@ -125,7 +125,6 @@ $self{texts} = {
   'Language deleted!'           => 'Valoda izdzēsta',
   'Language saved!'             => 'Valoda saglabāta',
   'Languages'                   => 'Valodas',
-  'Last Numbers & Default Accounts' => 'Pēdējais numurs un noklusētais konts',
   'Liability'                   => 'Saistības',
   'Licensed to'                 => 'Licencēts firmai',
   'Login'                       => 'Pieteikties',

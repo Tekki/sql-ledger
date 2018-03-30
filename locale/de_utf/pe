@@ -162,6 +162,7 @@ $self{texts} = {
   'Vendor'                      => 'Lieferant',
   'Vendor Number'               => 'Lieferantennummer',
   'Vendor not on file!'         => 'Lieferant ist nicht in der Datenbank!',
+  'Warehouse'                   => 'Warenlager',
   'We'                          => 'Mi',
   'Weight'                      => 'Gewicht',
   'Width'                       => 'Breite',

@@ -4,9 +4,9 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'April'                       => 'Avril',
-  'August'                      => 'Ao�t',
-  'December'                    => 'D�cembre',
-  'February'                    => 'F�vrier',
+  'August'                      => 'Août',
+  'December'                    => 'Décembre',
+  'February'                    => 'Février',
   'January'                     => 'Janvier',
   'July'                        => 'Juillet',
   'June'                        => 'Juin',

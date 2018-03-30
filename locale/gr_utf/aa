@@ -76,6 +76,7 @@ $self{texts} = {
   'Print and Post'              => 'Έκτύπωση και αποστολή',
   'Project'                     => 'Έργο',
   'Receipt'                     => 'Απόδειξη',
+  'Select all'                  => 'Επιλογή όλων',
   'Source'                      => 'Πηγή',
   'Tax'                         => 'Φόρος',
   'Vendor'                      => 'Creditor',
@@ -94,6 +95,7 @@ $self{subs} = {
   'create_links'                => 'create_links',
   'delete'                      => 'delete',
   'delete_transactions'         => 'delete_transactions',
+  'deselect_all'                => 'deselect_all',
   'display'                     => 'display',
   'display_form'                => 'display_form',
   'edit'                        => 'edit',
@@ -108,6 +110,7 @@ $self{subs} = {
   'resize'                      => 'resize',
   'search'                      => 'search',
   'section_menu'                => 'section_menu',
+  'select_all'                  => 'select_all',
   'show_progress'               => 'show_progress',
   'subtotal'                    => 'subtotal',
   'transactions'                => 'transactions',
@@ -120,6 +123,7 @@ $self{subs} = {
   'διαγραφή'                    => 'delete',
   'εκτύπωση'                    => 'print',
   'έκτύπωση_και_αποστολή'       => 'print_and_post',
+  'επιλογή_όλων'                => 'select_all',
 };
 
 1;

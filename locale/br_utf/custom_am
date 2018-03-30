@@ -7,8 +7,8 @@ $self{texts} = {
   'Database Host'               => 'Servidor de Banco de Dados',
   'Dataset'                     => 'Conjunto de dados',
   'Licensed to'                 => 'Licenciado a',
-  'User'                        => 'Usu�rio',
-  'Version'                     => 'Vers�o',
+  'User'                        => 'Usuário',
+  'Version'                     => 'Versão',
   'localhost'                   => 'servidor local',
 };
 

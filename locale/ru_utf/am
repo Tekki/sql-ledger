@@ -128,7 +128,6 @@ $self{texts} = {
   'Language deleted!'           => 'ёкйЫ еФСЬХЮ',
   'Language saved!'             => 'ёкйЫ гЯШвСЮХЮ',
   'Languages'                   => 'ёкйЫЩ',
-  'Last Numbers & Default Accounts' => '№ЯгЬХФЮЩХ ЮЯЭХвС ФЯЫеЭХЮдЯз Щ гоХдС аЯ-еЭЯЬоСЮЩЩ',
   'Liability'                   => '№СггЩз',
   'Licensed to'                 => 'ьЩУХЮкЩХЪ ЯТЬСФСХд:',
   'Login'                       => '№ЯЬикЯзСдХЬи',

@@ -13,6 +13,7 @@ $self{texts} = {
   'June'                        => 'Juni',
   'March'                       => 'Maret',
   'October'                     => 'Oktober',
+  'done'                        => 'selesai',
 };
 
 $self{subs} = {

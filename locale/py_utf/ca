@@ -50,7 +50,7 @@ $self{texts} = {
   'Source'                      => 'Origen',
   'Subtotal'                    => 'Subtotal',
   'To'                          => 'Hasta',
-  'Year'                        => 'Ańo',
+  'Year'                        => 'Año',
 };
 
 $self{subs} = {

@@ -32,6 +32,8 @@ $self{texts} = {
   'Th'                          => 'Do',
   'Tu'                          => 'Di',
   'We'                          => 'Mi',
+  'done'                        => 'fertig',
+  'please wait'                 => 'bitte warten',
 };
 
 $self{subs} = {

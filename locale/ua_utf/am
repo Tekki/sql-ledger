@@ -86,7 +86,6 @@ $self{texts} = {
   'Jun'                         => 'оХвзЮб',
   'June'                        => 'ўХвзХЮи',
   'Language'                    => 'эЯзС',
-  'Last Numbers & Default Accounts' => 'ягдСЮЮІ юЯЭХвЩ І єЩаЯзІ ђСШеЮЫЩ',
   'Liability'                   => '№СггЩз',
   'Licensed to'                 => 'ьІУХЮкІЄР зЯЬЯФІЄ:',
   'Login'                       => '№ЯоСдЯЫ ѓХСЮге',

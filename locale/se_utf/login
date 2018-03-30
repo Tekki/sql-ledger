@@ -3,18 +3,18 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Company'                     => 'Fіretag',
-  'Continue'                    => 'Fortsфtt',
-  'Dataset is newer than version!' => 'Dataset фr nyare фn programversionen',
+  'Company'                     => 'Företag',
+  'Continue'                    => 'Fortsätt',
+  'Dataset is newer than version!' => 'Dataset är nyare än programversionen',
   'Incorrect Dataset version!'  => 'Felaktig databasversion',
-  'Incorrect Password!'         => 'Felaktigt lіsenord',
+  'Incorrect Password!'         => 'Felaktigt lösenord',
   'Login'                       => 'Logga in',
   'Name'                        => 'Namn',
-  'No email address for'        => 'Ingen E-Postadress fіr',
-  'Password'                    => 'Lіsenord',
+  'No email address for'        => 'Ingen E-Postadress för',
+  'Password'                    => 'Lösenord',
   'Upgrading to Version'        => 'Uppgradera till version',
   'Version'                     => 'Version',
-  'You did not enter a name!'   => 'Du skrev inte in nхgot namn',
+  'You did not enter a name!'   => 'Du skrev inte in något namn',
 };
 
 $self{subs} = {
@@ -25,7 +25,7 @@ $self{subs} = {
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
   'tan_login'                   => 'tan_login',
-  'fortsфtt'                    => 'continue',
+  'fortsätt'                    => 'continue',
   'logga_in'                    => 'login',
 };
 

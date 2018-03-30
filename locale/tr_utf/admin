@@ -81,6 +81,7 @@ $self{texts} = {
   'Transactions'                => 'İşlemler',
   'Trial Balance'               => 'Proforma Bilanço',
   'Unlock System'               => 'Unlock System',
+  'Use Templates'               => 'Şablon Kullan',
   'User'                        => 'Kullanıcı',
   'Version'                     => 'Versiyon',
   'Yes'                         => 'Evet',

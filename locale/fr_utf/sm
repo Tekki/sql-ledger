@@ -4,11 +4,11 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'April'                       => 'Avril',
-  'August'                      => 'Ao�t',
+  'August'                      => 'Août',
   'Continue'                    => 'Continuer',
   'Date missing!'               => 'Date manquante!',
-  'December'                    => 'D�cembre',
-  'February'                    => 'F�vrier',
+  'December'                    => 'Décembre',
+  'February'                    => 'Février',
   'January'                     => 'Janvier',
   'July'                        => 'Juillet',
   'June'                        => 'Juin',
@@ -17,6 +17,7 @@ $self{texts} = {
   'November'                    => 'Novembre',
   'October'                     => 'Octobre',
   'September'                   => 'Septembre',
+  'done'                        => 'fait',
 };
 
 $self{subs} = {

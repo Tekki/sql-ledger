@@ -89,7 +89,6 @@ $self{texts} = {
   'June'                        => 'يونية',
   'Language'                    => 'اللغة',
   'Languages'                   => 'اللغات',
-  'Last Numbers & Default Accounts' => 'اخر رقم و الحساب الرئيسي',
   'Liability'                   => 'التزامات',
   'Licensed to'                 => 'ترخيص',
   'Login'                       => 'دخول',

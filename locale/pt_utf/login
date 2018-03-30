@@ -5,13 +5,13 @@ $self{charset} = 'UTF-8';
 $self{texts} = {
   'Company'                     => 'Companhia',
   'Continue'                    => 'Continuar',
-  'Incorrect Dataset version!'  => 'Versăo Dataset incorrecta!',
+  'Incorrect Dataset version!'  => 'Versão Dataset incorrecta!',
   'Login'                       => 'Login',
   'Name'                        => 'Nome',
-  'No email address for'        => 'Năo existe endereço de email para',
+  'No email address for'        => 'Não existe endereço de email para',
   'Password'                    => 'Password',
-  'Version'                     => 'Versăo',
-  'You did not enter a name!'   => 'Năo indicou nome!',
+  'Version'                     => 'Versão',
+  'You did not enter a name!'   => 'Não indicou nome!',
 };
 
 $self{subs} = {

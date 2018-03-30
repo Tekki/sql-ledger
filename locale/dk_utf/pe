@@ -126,6 +126,7 @@ $self{texts} = {
   'Vendor'                      => 'Leverandør',
   'Vendor Number'               => 'Leverandørnummer',
   'Vendor not on file!'         => 'Leverandør ikke i databasen!',
+  'Warehouse'                   => 'Varehus',
   'Weight'                      => 'Vægt',
   'Year'                        => 'År',
 };

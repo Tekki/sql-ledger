@@ -4,14 +4,14 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Accounting Menu'             => 'Konto-meny',
-  'Amount'                      => 'Belųp',
+  'Amount'                      => 'Beløp',
   'April'                       => 'april',
   'August'                      => 'august',
   'Closed'                      => 'Avsluttet',
   'Confirm!'                    => 'Bekreft!',
   'Continue'                    => 'Fortsett',
   'Cost'                        => 'Kostpris',
-  'Current'                     => 'Nåvęrende',
+  'Current'                     => 'Nåværende',
   'Date'                        => 'Dato',
   'Date missing!'               => 'Dato mangler!',
   'December'                    => 'desember',

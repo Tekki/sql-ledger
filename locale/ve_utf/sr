@@ -3,11 +3,11 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Accounting Menu'             => 'Menњ de Contabilidad',
+  'Accounting Menu'             => 'Menú de Contabilidad',
   'April'                       => 'Abril',
   'August'                      => 'Agosto',
   'December'                    => 'Diciembre',
-  'Description'                 => 'Descripciѓn',
+  'Description'                 => 'Descripción',
   'February'                    => 'Febrero',
   'Heading'                     => 'Encabezado',
   'January'                     => 'Enero',

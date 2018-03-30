@@ -3,20 +3,20 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'AP Transaction'              => 'Innkaupafćrsla',
-  'AR Transaction'              => 'Sölufćrsla',
+  'AP Transaction'              => 'Innkaupafærsla',
+  'AR Transaction'              => 'Sölufærsla',
   'Accounting Menu'             => 'Bókhalds valmynd',
   'April'                       => 'apríl',
   'August'                      => 'ágúst',
   'C'                           => 'C',
   'Continue'                    => 'Áfram',
-  'Customer'                    => 'Viđskiptavinur',
+  'Customer'                    => 'Viðskiptavinur',
   'December'                    => 'desember',
-  'Delete'                      => 'Eyđa',
+  'Delete'                      => 'Eyða',
   'Description'                 => 'Skýringar',
   'Employee'                    => 'Starfsmenn',
   'February'                    => 'febrúar',
-  'GL Transaction'              => 'Fćrslur í ađalbók',
+  'GL Transaction'              => 'Færslur í aðalbók',
   'ID'                          => 'ID',
   'January'                     => 'janúar',
   'July'                        => 'júlí',
@@ -32,7 +32,7 @@ $self{texts} = {
   'Sales Order'                 => 'Sölupöntun',
   'Save'                        => 'Geyma',
   'September'                   => 'september',
-  'Service'                     => 'Ţjónusta',
+  'Service'                     => 'Þjónusta',
   'Vendor'                      => 'Byrgir',
   'Vendor Invoice'              => 'Innkaupsreikningur',
 };
@@ -68,7 +68,7 @@ $self{subs} = {
   'upload'                      => 'upload',
   'upload_file'                 => 'upload_file',
   'áfram'                       => 'continue',
-  'eyđa'                        => 'delete',
+  'eyða'                        => 'delete',
   'geyma'                       => 'save',
 };
 

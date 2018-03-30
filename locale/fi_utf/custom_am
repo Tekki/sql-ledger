@@ -3,11 +3,11 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'About'                       => 'Lis�tietoja',
+  'About'                       => 'Lisätietoja',
   'Database Host'               => 'Tietokannan osoite',
   'Dataset'                     => 'Tietokanta',
   'Licensed to'                 => 'Lisenssin omistaja',
-  'User'                        => 'K�ytt�j�',
+  'User'                        => 'Käyttäjä',
   'Version'                     => 'Versio',
   'localhost'                   => 'paikallinen tietokone',
 };

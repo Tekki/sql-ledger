@@ -5,7 +5,7 @@ $self{charset} = 'UTF-8';
 $self{texts} = {
   'April'                       => 'April',
   'August'                      => 'Augusti',
-  'Continue'                    => 'Fortsфtt',
+  'Continue'                    => 'Fortsätt',
   'Date missing!'               => 'Datum saknas',
   'December'                    => 'December',
   'February'                    => 'Februari',
@@ -17,6 +17,7 @@ $self{texts} = {
   'November'                    => 'November',
   'October'                     => 'Oktober',
   'September'                   => 'September',
+  'done'                        => 'Färdigt',
 };
 
 $self{subs} = {

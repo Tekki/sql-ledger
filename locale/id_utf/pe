@@ -74,6 +74,7 @@ $self{texts} = {
   'Vendor'                      => 'Supplier',
   'Vendor Number'               => 'Nomor Supplier',
   'Vendor not on file!'         => 'Data Supplier tidak ditemukan!',
+  'Warehouse'                   => 'Gudang',
   'Weight'                      => 'Berat',
   'Year'                        => 'Tahun',
 };

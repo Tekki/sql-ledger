@@ -3,16 +3,16 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Company'                     => 'Compa��a',
+  'Company'                     => 'Compañía',
   'Continue'                    => 'Continuar',
-  'Dataset is newer than version!' => 'La base de datos est� m�s actual que la versi�n del programa',
-  'Incorrect Dataset version!'  => 'Versi�n de base de datos incorrecta',
+  'Dataset is newer than version!' => 'La base de datos está más actual que la versión del programa',
+  'Incorrect Dataset version!'  => 'Versión de base de datos incorrecta',
   'Login'                       => 'Entrar',
   'Name'                        => 'Nombre',
-  'No email address for'        => 'Falta la direcci�n de correo electr�nico de',
-  'Password'                    => 'Contrase�a',
-  'Upgrading to Version'        => 'Actulaizando a versi�n',
-  'Version'                     => 'Versi�n',
+  'No email address for'        => 'Falta la dirección de correo electrónico de',
+  'Password'                    => 'Contraseña',
+  'Upgrading to Version'        => 'Actulaizando a versión',
+  'Version'                     => 'Versión',
   'You did not enter a name!'   => 'No ha introducido el nombre',
 };
 

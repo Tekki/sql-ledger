@@ -6,7 +6,7 @@ $self{texts} = {
   'April'                       => 'Abril',
   'August'                      => 'Agosto',
   'Continue'                    => 'Continuar',
-  'Date missing!'               => 'ЁFalta fecha!',
+  'Date missing!'               => '¡Falta fecha!',
   'December'                    => 'Diciembre',
   'February'                    => 'Febrero',
   'January'                     => 'Enero',
@@ -17,6 +17,7 @@ $self{texts} = {
   'November'                    => 'Noviembre',
   'October'                     => 'Octubre',
   'September'                   => 'Septiembre',
+  'done'                        => 'hecho',
 };
 
 $self{subs} = {

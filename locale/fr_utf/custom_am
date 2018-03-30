@@ -4,12 +4,12 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'About'                       => 'A propos',
-  'Database Host'               => 'Serveur h�bergeant la base de donn�es',
-  'Dataset'                     => 'Fichier de donn�es',
+  'Database Host'               => 'Serveur hébergeant la base de données',
+  'Dataset'                     => 'Fichier de données',
   'Licensed to'                 => 'Licence a',
   'User'                        => 'Utilisateur',
   'Version'                     => 'Version',
-  'localhost'                   => 'h�te local',
+  'localhost'                   => 'hôte local',
 };
 
 $self{subs} = {
