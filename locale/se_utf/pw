@@ -1,0 +1,17 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Continue'                    => 'Fortsфtt',
+  'Password'                    => 'Lіsenord',
+  'Session expired!'            => 'Sessionen avslutad',
+};
+
+$self{subs} = {
+  'getpassword'                 => 'getpassword',
+  'fortsфtt'                    => 'continue',
+};
+
+1;
+

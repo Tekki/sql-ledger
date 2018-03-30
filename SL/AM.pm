@@ -1516,7 +1516,7 @@ sub load_template {
   my ($self, $form) = @_;
   
   $self->check_access(@_);
-  open(TEMPLATE, "$form->{file}") or $form->error("$form->{file} : $!");
+  open(TEMPLATE, '<:utf8', $form->{file}) or $form->error("$form->{file} : $!");
 
   while (<TEMPLATE>) {
     $form->{body} .= $_;
@@ -1546,7 +1546,7 @@ sub save_template {
   }
   
   $self->check_access(@_);
-  open(TEMPLATE, ">$form->{file}") or $form->error("$form->{file} : $!");
+  open(TEMPLATE, '>:utf8', $form->{file}) or $form->error("$form->{file} : $!");
   
   # strip 
   $form->{body} =~ s/\r//g;

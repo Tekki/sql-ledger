@@ -1,0 +1,17 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Continue'                    => '№вЯФЯЬжЩди',
+  'Password'                    => '№СвЯЬи',
+  'Session expired!'            => '№вХзйлХЮЯ звХЭб кСФХвжЫЩ гХггЩЩ',
+};
+
+$self{subs} = {
+  'getpassword'                 => 'getpassword',
+  '№вяфяьжщди'                  => 'continue',
+};
+
+1;
+

@@ -1197,7 +1197,7 @@ sub save_memberfile {
   open(FH, ">${memberfile}.LCK") or $form->error("${memberfile}.LCK : $!");
   close(FH);
 
-  if (! open(FH, "+<$memberfile")) {
+  if (! open(FH, '+<:utf8', $memberfile)) {
     unlink "${memberfile}.LCK";
     $form->error("$memberfile : $!");
   }

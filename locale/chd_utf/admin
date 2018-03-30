@@ -1,3 +1,5 @@
+use utf8;
+
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
@@ -284,15 +286,15 @@ $self{subs} = {
   'form_footer'                 => 'form_footer',
   'form_header'                 => 'form_header',
   'getpassword'                 => 'getpassword',
-  'host_ändern'                => 'change_host',
+  'host_ändern'                 => 'change_host',
   'ja'                          => 'yes',
   'list_datasets'               => 'list_datasets',
   'lock_dataset'                => 'lock_dataset',
   'lock_system'                 => 'lock_system',
   'login'                       => 'login',
   'logout'                      => 'logout',
-  'löschen'                    => 'delete',
-  'passwort_ändern'            => 'change_password',
+  'löschen'                     => 'delete',
+  'passwort_ändern'             => 'change_password',
   'system_entsperren'           => 'unlock_system',
   'system_sperren'              => 'lock_system',
   'unlock_dataset'              => 'unlock_dataset',
@@ -300,5 +302,5 @@ $self{subs} = {
   'weiter'                      => 'continue',
   'yes'                         => 'yes',
 };
-  
+
 1;

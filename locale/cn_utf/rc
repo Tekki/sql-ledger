@@ -1,0 +1,90 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Account'                     => 'å¸æ·',
+  'Accounting Menu'             => 'ä¼è®¡éå',
+  'Apr'                         => 'åæ',
+  'April'                       => 'åæ',
+  'Aug'                         => 'å«æ',
+  'August'                      => 'å«æ',
+  'Balance'                     => 'ä½é¢',
+  'Beginning Balance'           => 'èµ·å§ä½é¢',
+  'Continue'                    => 'ç»§ç»­',
+  'Credit'                      => 'è´·æ¹',
+  'Current'                     => 'ç°æ',
+  'Date'                        => 'æ¥æ',
+  'Debit'                       => 'åæ¹',
+  'Dec'                         => 'åäºæ',
+  'December'                    => 'åäºæ',
+  'Description'                 => 'è¯´æ',
+  'Detail'                      => 'è¯¦æ',
+  'Difference'                  => 'å·®å¼',
+  'Done'                        => 'å·³å®æ',
+  'Feb'                         => 'äºæ',
+  'February'                    => 'äºæ',
+  'From'                        => 'ä»',
+  'Include Exchange Rate Difference' => 'åå«å¤æ±å·®è·',
+  'Jan'                         => 'ä¸æ',
+  'January'                     => 'ä¸æ',
+  'Jul'                         => 'ä¸æ',
+  'July'                        => 'ä¸æ',
+  'Jun'                         => 'å­æ',
+  'June'                        => 'å­æ',
+  'Mar'                         => 'ä¸æ',
+  'March'                       => 'ä¸æ',
+  'May'                         => 'äºæ',
+  'May '                        => 'äºæ',
+  'Month'                       => 'æä»½',
+  'Nov'                         => 'åä¸æ',
+  'November'                    => 'åä¸æ',
+  'Oct'                         => 'åæ',
+  'October'                     => 'åæ',
+  'Out of balance!'             => 'ä¸åè°',
+  'Period'                      => 'æ¶æ',
+  'Quarter'                     => 'å­£åº¦',
+  'Reconciliation'              => 'è°å',
+  'Reconciliation Report'       => 'è°åæ¥å',
+  'Select all'                  => 'å¨é',
+  'Sep'                         => 'ä¹æ',
+  'September'                   => 'ä¹æ',
+  'Source'                      => 'æ¥æº',
+  'Statement Balance'           => 'ä¼è®¡å¸ä½é¢',
+  'Summary'                     => 'æè¦',
+  'To'                          => 'è³',
+  'Update'                      => 'æ´æ°',
+  'Year'                        => 'å¹´ä»½',
+};
+
+$self{subs} = {
+  'acc_menu'                    => 'acc_menu',
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'continue'                    => 'continue',
+  'deselect_all'                => 'deselect_all',
+  'display'                     => 'display',
+  'display_form'                => 'display_form',
+  'done'                        => 'done',
+  'get_payments'                => 'get_payments',
+  'js_calendar'                 => 'js_calendar',
+  'jsmenu'                      => 'jsmenu',
+  'jsmenu_frame'                => 'jsmenu_frame',
+  'menubar'                     => 'menubar',
+  'pickvalue'                   => 'pickvalue',
+  'reconciliation'              => 'reconciliation',
+  'resize'                      => 'resize',
+  'section_menu'                => 'section_menu',
+  'select_all'                  => 'select_all',
+  'show_progress'               => 'show_progress',
+  'update'                      => 'update',
+  'ç»§ç»­'                      => 'continue',
+  'å·³å®æ'                   => 'done',
+  'å¨é'                      => 'select_all',
+  'æ´æ°'                      => 'update',
+};
+
+1;
+

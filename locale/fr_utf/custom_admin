@@ -1,0 +1,19 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Accounting'                  => 'Comptabilit�',
+  'Continue'                    => 'Continuer',
+  'Main Menu'                   => 'Sommaire principal',
+};
+
+$self{subs} = {
+  'main_menu'                   => 'main_menu',
+  'software_administration'     => 'software_administration',
+  'switch_branch'               => 'switch_branch',
+  'update_software'             => 'update_software',
+};
+
+1;
+

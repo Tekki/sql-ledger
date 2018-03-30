@@ -9,6 +9,7 @@
 
 package Form;
 
+use utf8;
 
 sub new {
   my ($type, $userspath) = @_;
@@ -121,6 +122,8 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
+  $self->{charset} = 'UTF-8';
+
   $self->{version} = "3.2.6";
   $self->{version2} = "tekki";
   $self->{dbversion} = "3.2.1";
@@ -160,6 +163,7 @@ sub escape {
     $str = $self->escape($str, 1) if $1 == 0 && $2 < 44;
   }
 
+  utf8::encode $str;
   $str =~ s/([^a-zA-Z0-9_.-])/sprintf("%%%02x", ord($1))/ge;
   $str;
 
@@ -174,6 +178,7 @@ sub unescape {
 
   $str =~ s/%([0-9a-fA-Z]{2})/pack("c",hex($1))/eg;
   $str =~ s/\r?\n/\n/g;
+  utf8::decode $str;
 
   $str;
 
@@ -456,13 +461,11 @@ sub header {
 
     if ($self->{favicon} && (-f "$self->{favicon}")) {
       $favicon = qq|<link rel="icon" href="$self->{favicon}" type="image/x-icon">
-<link rel="shortcut icon" href="$self->{favicon}" type="image/x-icon">
   |;
     }
 
     if ($self->{charset}) {
-      my $encoding = $self->{charset} eq 'UTF8' ? 'UTF-8' : $self->{charset};
-      $charset = qq|<meta http-equiv="Content-Type" content="text/html; charset=$encoding">
+      $charset = qq|<meta http-equiv="Content-Type" content="text/html; charset=$self->{charset}">
   |;
     }
 
@@ -477,6 +480,7 @@ sub header {
     print qq|Content-Type: text/html
 
 <!DOCTYPE $doctype>
+<html>
 <head>
   <title>$self->{titlebar}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -723,9 +727,9 @@ sub parse_template {
   my $ok;
 
   if (-f "$self->{templates}/$self->{language_code}/$self->{IN}") {
-    open(IN, "$self->{templates}/$self->{language_code}/$self->{IN}") or $self->error("$self->{templates}/$self->{language_code}/$self->{IN} : $!");
+    open(IN, '<:utf8', "$self->{templates}/$self->{language_code}/$self->{IN}") or $self->error("$self->{templates}/$self->{language_code}/$self->{IN} : $!");
   } else {
-    open(IN, "$self->{templates}/$self->{IN}") or $self->error("$self->{templates}/$self->{IN} : $!");
+    open(IN, '<:utf8', "$self->{templates}/$self->{IN}") or $self->error("$self->{templates}/$self->{IN} : $!");
   }
 
   my @template = <IN>;
@@ -741,11 +745,11 @@ sub parse_template {
 
   if ($self->{format} =~ /(ps|pdf)/ || $self->{media} eq 'email') {
     $out = $self->{OUT};
-    $self->{OUT} = ">$self->{tmpfile}";
+    $self->{OUT} = $self->{tmpfile};
   }
 
   if ($self->{OUT}) {
-    open(OUT, "$self->{OUT}") or $self->error("$self->{OUT} : $!");
+    open(OUT, '>:utf8', $self->{OUT}) or $self->error("$self->{OUT} : $!");
   } else {
     open(OUT, ">-") or $self->error("STDOUT : $!");
 
@@ -1125,7 +1129,7 @@ sub process_template {
 	# get the filename
 	$var = $k[2];
 
-	unless (open(INC, "$self->{templates}/$self->{language_code}/$var")) {
+	unless (open(INC, '<:utf8', "$self->{templates}/$self->{language_code}/$var")) {
 	  $err = $!;
 	  $self->cleanup;
 	  $self->error("$self->{templates}/$self->{language_code}/$var : $err");
@@ -1139,7 +1143,7 @@ sub process_template {
 	$tmpfile =~ s/\.\w+$//g;
 	$tmpfile .= qq|.$include{"include$var"}|;
 
-	unless (open(INC, ">$tmpfile")) {
+	unless (open(INC, '>:utf8', $tmpfile)) {
 	  $err = $!;
 	  $self->cleanup;
 	  $self->error("$tmpfile : $err");
@@ -1168,7 +1172,7 @@ sub process_template {
       # assume loop after 10 includes of the same file
       next if $include{$var} > 10;
 
-      unless (open(INC, "$self->{templates}/$self->{language_code}/$var")) {
+      unless (open(INC, '<:utf8', "$self->{templates}/$self->{language_code}/$var")) {
 	$err = $!;
 	$self->cleanup;
 	$self->error("$self->{templates}/$self->{language_code}/$var : $err");
@@ -2180,7 +2184,7 @@ sub dbconnect {
   my ($self, $myconfig) = @_;
 
   # connect to database
-  my $dbh = DBI->connect($myconfig->{dbconnect}, $myconfig->{dbuser}, $myconfig->{dbpasswd}, {AutoCommit => 1, pg_enable_utf8 => 0}) or $self->dberror;
+  my $dbh = DBI->connect($myconfig->{dbconnect}, $myconfig->{dbuser}, $myconfig->{dbpasswd}, {AutoCommit => 1}) or $self->dberror;
 
   # set db options
   if ($myconfig->{dboptions}) {
@@ -2196,7 +2200,7 @@ sub dbconnect_noauto {
   my ($self, $myconfig) = @_;
 
   # connect to database
-  my $dbh = DBI->connect($myconfig->{dbconnect}, $myconfig->{dbuser}, $myconfig->{dbpasswd}, {AutoCommit => 0, pg_enable_utf8 => 0}) or $self->dberror;
+  my $dbh = DBI->connect($myconfig->{dbconnect}, $myconfig->{dbuser}, $myconfig->{dbpasswd}, {AutoCommit => 0}) or $self->dberror;
 
   # set db options
   if ($myconfig->{dboptions}) {

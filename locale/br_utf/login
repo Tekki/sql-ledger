@@ -1,0 +1,32 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Company'                     => 'Empresa',
+  'Continue'                    => 'Continuar',
+  'Dataset is newer than version!' => 'Conjunto de dados � mais novo que a vers�o!',
+  'Incorrect Dataset version!'  => 'Vers�o incorreta de grupos de dados!',
+  'Login'                       => 'Entrar',
+  'Name'                        => 'Nome',
+  'No email address for'        => 'Nenhum endere�o de e-mail para',
+  'Password'                    => 'Senha',
+  'Upgrading to Version'        => 'Atualizado para vers�o',
+  'Version'                     => 'Vers�o',
+  'You did not enter a name!'   => 'Voc� n�o entrou com um nome',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'email_tan'                   => 'email_tan',
+  'login'                       => 'login',
+  'login_screen'                => 'login_screen',
+  'logout'                      => 'logout',
+  'selectdataset'               => 'selectdataset',
+  'tan_login'                   => 'tan_login',
+  'continuar'                   => 'continue',
+  'entrar'                      => 'login',
+};
+
+1;
+

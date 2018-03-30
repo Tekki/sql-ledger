@@ -1,0 +1,20 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'About'                       => 'A propos',
+  'Database Host'               => 'Serveur h�bergeant la base de donn�es',
+  'Dataset'                     => 'Fichier de donn�es',
+  'Licensed to'                 => 'Licence a',
+  'User'                        => 'Utilisateur',
+  'Version'                     => 'Version',
+  'localhost'                   => 'h�te local',
+};
+
+$self{subs} = {
+  'company_logo'                => 'company_logo',
+};
+
+1;
+

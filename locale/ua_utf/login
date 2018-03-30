@@ -1,0 +1,30 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Company'                     => '№ІФавЩЄЭгдзЯ',
+  'Continue'                    => '№вЯФЯзжЩдЩ',
+  'Incorrect Dataset version!'  => 'юХзІвЮС зХвгІб тСкЩ фСЮЩШ!',
+  'Login'                       => '№ЯоСдЯЫ ѓХСЮге',
+  'Name'                        => 'юСкзС',
+  'No email address for'        => 'юХ зЫСкСЮС СФвХгС ХЬ. аЯлдЩ ФЬб',
+  'Password'                    => '№СвЯЬи',
+  'Version'                     => 'їХвгІб',
+  'You did not enter a name!'   => 'юХ ззХФХЮЯ ЮСкзе',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'email_tan'                   => 'email_tan',
+  'login'                       => 'login',
+  'login_screen'                => 'login_screen',
+  'logout'                      => 'logout',
+  'selectdataset'               => 'selectdataset',
+  'tan_login'                   => 'tan_login',
+  '№вяфязжщдщ'                  => 'continue',
+  '№яосдяы_ѓхсюге'              => 'login',
+};
+
+1;
+
