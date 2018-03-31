@@ -1,3 +1,5 @@
+use utf8;
+
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
@@ -142,7 +144,6 @@ $self{subs} = {
   'post'                        => 'post',
   'post_batch'                  => 'post_batch',
   'post_batches'                => 'post_batches',
-  'quick_calculation'           => 'quick_calculation',
   'resize'                      => 'resize',
   'save_batch'                  => 'save_batch',
   'search'                      => 'search',
@@ -158,13 +159,13 @@ $self{subs} = {
   'storno_voucher_erfassen'     => 'add_payment_reversal_batch',
   'beleg_voucher_erfassen'      => 'add_voucher',
   'weiter'                      => 'continue',
-  'löschen'                    => 'delete',
-  'beleg_voucher_löschen'      => 'delete_batch',
-  'alle_abwählen'              => 'deselect_all',
+  'löschen'                     => 'delete',
+  'beleg_voucher_löschen'       => 'delete_batch',
+  'alle_abwählen'               => 'deselect_all',
   'buchen'                      => 'post',
   'voucher_buchen'              => 'post_batch',
   'voucher_buchen'              => 'post_batches',
-  'alle_auswählen'             => 'select_all',
+  'alle_auswählen'              => 'select_all',
   'ja'                          => 'yes',
 };
 

@@ -1,3 +1,5 @@
+use utf8;
+
 # These are all the texts to build the translations files.
 # to build unique strings edit the module files instead
 # this file is just a shortcut to build strings which are the same
@@ -20,6 +22,7 @@ $self{texts} = {
   'AP Payment'                  => 'Zahlung an Lieferant',
   'AP Transaction'              => 'Eingangsbuchung',
   'AP Transactions'             => 'Eingangsbuchungen',
+  'AP account does not exist!'  => '',
   'AP account missing!'         => 'Kreditorenkonto fehlt!',
   'AR'                          => 'Debitoren',
   'AR Aging'                    => 'Debitorenspiegel',
@@ -28,6 +31,7 @@ $self{texts} = {
   'AR Payment'                  => 'Zahlung von Kunde',
   'AR Transaction'              => 'Ausgangsbuchung',
   'AR Transactions'             => 'Ausgangsbuchungen',
+  'AR account does not exist!'  => '',
   'AR account missing!'         => 'Debitorenkonto fehlt!',
   'AR/AP'                       => 'OF/OV',
   'About'                       => 'Über',
@@ -1179,6 +1183,7 @@ $self{texts} = {
   'Reporting Method'            => 'Abrechnungsmethode',
   'Reports'                     => 'Berichte',
   'Repost Invoices'             => 'Rechnungen neu buchen',
+  'Reposting Invoices ... '     => '',
   'Req'                         => 'Ben.',
   'Reqd'                        => 'Ben.',
   'Request for Quotation'       => 'Offertanfrage',

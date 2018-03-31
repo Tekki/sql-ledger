@@ -1,3 +1,5 @@
+use utf8;
+
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
@@ -218,7 +220,6 @@ $self{subs} = {
   'jsmenu_frame'                => 'jsmenu_frame',
   'menubar'                     => 'menubar',
   'pickvalue'                   => 'pickvalue',
-  'quick_calculation'           => 'quick_calculation',
   'resize'                      => 'resize',
   'section_menu'                => 'section_menu',
   'show_progress'               => 'show_progress',

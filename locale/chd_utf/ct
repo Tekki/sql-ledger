@@ -1,3 +1,5 @@
+use utf8;
+
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
@@ -244,7 +246,6 @@ $self{subs} = {
   'pricelist_footer'            => 'pricelist_footer',
   'pricelist_header'            => 'pricelist_header',
   'purchase_order'              => 'purchase_order',
-  'quick_calculation'           => 'quick_calculation',
   'quotation'                   => 'quotation',
   'references'                  => 'references',
   'resize'                      => 'resize',
@@ -276,9 +277,9 @@ $self{subs} = {
   'gutschrift'                  => 'credit_note',
   'lastschriftrechnung'         => 'debit_invoice',
   'lastschrift'                 => 'debit_note',
-  'löschen'                    => 'delete',
-  'kunden_löschen'             => 'delete_customers',
-  'lieferanten_löschen'        => 'delete_vendors',
+  'löschen'                     => 'delete',
+  'kunden_löschen'              => 'delete_customers',
+  'lieferanten_löschen'         => 'delete_vendors',
   'neue_nummer'                 => 'new_number',
   'kasse'                       => 'pos',
   'preisliste'                  => 'pricelist',
@@ -293,7 +294,7 @@ $self{subs} = {
   'lieferadresse'               => 'shipping_address',
   'aktualisieren'               => 'update',
   'lieferantenrechnung'         => 'vendor_invoice',
-  'ja__löschen'                => 'yes__delete',
+  'ja__löschen'                 => 'yes__delete',
 };
 
 1;

@@ -20,7 +20,7 @@ $form = new Form;
 
 $locale = new Locale $language, "admin";
 
-$form->{charset} = $charset;
+# $form->{charset} = $charset;
 
 eval { require DBI; };
 $form->error($locale->text('DBI not installed!')) if ($@);
@@ -82,7 +82,7 @@ function sf(){
 
 <div align=center>
 
-<a href="http://www.sql-ledger.com"><img src=$images/sql-ledger.gif border=0 target=_blank></a>
+<a href="https://github.com/Tekki/sql-ledger"><img src=$images/sql-ledger.gif border=0 target=_blank></a>
 <h1 class=login>|.$locale->text('Version').qq| $form->{version}<p>|.$locale->text('Administration').qq|</h1>
 
 <form method=post name=main action="$form->{script}">
@@ -217,7 +217,7 @@ sub list_datasets {
 # type=submit $locale->text('Oracle')
 # type=submit $locale->text('Sybase')
 
-  open(FH, "$memberfile") or $form->error("$memberfile : $!");
+  open(FH, '<:utf8', $memberfile) or $form->error("$memberfile : $!");
 
   my %member;
   my $member;

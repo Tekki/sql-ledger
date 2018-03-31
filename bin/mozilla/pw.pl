@@ -29,14 +29,14 @@ sub getpassword {
   $pwt = $locale->text('Password');
 
   if ($form->{stylesheet} && (-f "css/$form->{stylesheet}")) {
-    $stylesheet = qq|<LINK REL="stylesheet" HREF="css/$form->{stylesheet}" TYPE="text/css" TITLE="SQL-Ledger stylesheet">
+    $stylesheet = qq|<link rel="stylesheet" href="css/$form->{stylesheet}" type="text/css" title="SQL-Ledger stylesheet">
 |;
   }
 
   my $charset;
 
   if ($form->{charset}) {
-    $charset = qq|<META HTTP-EQUIV="Content-Type" CONTENT="text/plain; charset=$form->{charset}">
+    $charset = qq|<meta http-equiv="Content-Type" content="text/html; charset=$form->{charset}">
 |;
   }
 
@@ -44,6 +44,7 @@ sub getpassword {
 Content-Type: text/html
 
 <!DOCTYPE HTML>
+<html>
 <head>
   <title>$form->{titlebar}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">

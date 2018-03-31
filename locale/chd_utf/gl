@@ -1,3 +1,5 @@
+use utf8;
+
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
@@ -222,7 +224,6 @@ $self{subs} = {
   'preview'                     => 'preview',
   'print_and_post_as_new'       => 'print_and_post_as_new',
   'project_selected'            => 'project_selected',
-  'quick_calculation'           => 'quick_calculation',
   'rebuild_departments'         => 'rebuild_departments',
   'rebuild_formnames'           => 'rebuild_formnames',
   'rebuild_vc'                  => 'rebuild_vc',
@@ -249,10 +250,10 @@ $self{subs} = {
   'weiter'                      => 'continue',
   'gutschriftrechnung'          => 'credit_invoice_',
   'lastschriftrechnung'         => 'debit_invoice_',
-  'löschen'                    => 'delete',
-  'spalte_löschen'             => 'delete_column',
-  'bericht_löschen'            => 'delete_report',
-  'zeitplan_löschen'           => 'delete_schedule',
+  'löschen'                     => 'delete',
+  'spalte_löschen'              => 'delete_column',
+  'bericht_löschen'             => 'delete_report',
+  'zeitplan_löschen'            => 'delete_schedule',
   'hauptbuchbuchung'            => 'gl_transaction',
   'neue_nummer'                 => 'new_number',
   'buchen'                      => 'post',

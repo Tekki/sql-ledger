@@ -1,0 +1,16 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Continue'                    => 'Áfram',
+  'Password'                    => 'Aðgangsorð',
+};
+
+$self{subs} = {
+  'getpassword'                 => 'getpassword',
+  'áfram'                       => 'continue',
+};
+
+1;
+

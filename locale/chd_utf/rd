@@ -1,3 +1,5 @@
+use utf8;
+
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
@@ -110,7 +112,6 @@ $self{subs} = {
   'list_documents'              => 'list_documents',
   'menubar'                     => 'menubar',
   'pickvalue'                   => 'pickvalue',
-  'quick_calculation'           => 'quick_calculation',
   'resize'                      => 'resize',
   'save'                        => 'save',
   'search_documents'            => 'search_documents',
@@ -118,11 +119,11 @@ $self{subs} = {
   'show_progress'               => 'show_progress',
   'upload'                      => 'upload',
   'upload_file'                 => 'upload_file',
-  'dokument_hinzufügen'        => 'add_document',
-  'hinzufügen'                 => 'attach',
+  'dokument_hinzufügen'         => 'add_document',
+  'hinzufügen'                  => 'attach',
   'weiter'                      => 'continue',
-  'löschen'                    => 'delete',
-  'dokumente_löschen'          => 'delete_documents',
+  'löschen'                     => 'delete',
+  'dokumente_löschen'           => 'delete_documents',
   'entfernen'                   => 'detach',
   'speichern'                   => 'save',
 };

@@ -1,3 +1,5 @@
+use utf8;
+
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
@@ -245,7 +247,6 @@ $self{subs} = {
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',
   'project_selected'            => 'project_selected',
-  'quick_calculation'           => 'quick_calculation',
   'rebuild_departments'         => 'rebuild_departments',
   'rebuild_formnames'           => 'rebuild_formnames',
   'rebuild_vc'                  => 'rebuild_vc',
@@ -277,19 +278,19 @@ $self{subs} = {
   'yes__void_checks'            => 'yes__void_checks',
   'yes__void_payments'          => 'yes__void_payments',
   'yes__void_receipts'          => 'yes__void_receipts',
-  'zurück'                     => 'back',
+  'zurück'                      => 'back',
   'weiter'                      => 'continue',
-  'spalte_löschen'             => 'delete_column',
-  'bericht_löschen'            => 'delete_report',
-  'zeitplan_löschen'           => 'delete_schedule',
-  'alle_abwählen'              => 'deselect_all',
+  'spalte_löschen'              => 'delete_column',
+  'bericht_löschen'             => 'delete_report',
+  'zeitplan_löschen'            => 'delete_schedule',
+  'alle_abwählen'               => 'deselect_all',
   'buchen'                      => 'post',
   'vorschau'                    => 'preview',
   'drucken'                     => 'print',
   'spalte_speichern'            => 'save_column',
   'abfrage_speichern'           => 'save_report',
   'zeitplan_speichern'          => 'save_schedule',
-  'alle_auswählen'             => 'select_all',
+  'alle_auswählen'              => 'select_all',
   'aktualisieren'               => 'update',
 };
 

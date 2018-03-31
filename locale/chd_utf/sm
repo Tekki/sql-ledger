@@ -1,3 +1,5 @@
+use utf8;
+
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
@@ -29,6 +31,8 @@ $self{texts} = {
   'Th'                          => 'Do',
   'Tu'                          => 'Di',
   'We'                          => 'Mi',
+  'done'                        => 'fertig',
+  'please wait'                 => 'bitte warten',
 };
 
 $self{subs} = {
@@ -43,7 +47,6 @@ $self{subs} = {
   'fld_save'                    => 'fld_save',
   'js_calendar'                 => 'js_calendar',
   'pickvalue'                   => 'pickvalue',
-  'quick_calculation'           => 'quick_calculation',
   'repost_invoices'             => 'repost_invoices',
   'resize'                      => 'resize',
   'show_progress'               => 'show_progress',

@@ -1,3 +1,5 @@
+use utf8;
+
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
@@ -62,14 +64,13 @@ $self{subs} = {
   'jsmenu_frame'                => 'jsmenu_frame',
   'menubar'                     => 'menubar',
   'pickvalue'                   => 'pickvalue',
-  'quick_calculation'           => 'quick_calculation',
   'resize'                      => 'resize',
   'save_column'                 => 'save_column',
   'save_report'                 => 'save_report',
   'section_menu'                => 'section_menu',
   'show_progress'               => 'show_progress',
-  'spalte_löschen'             => 'delete_column',
-  'bericht_löschen'            => 'delete_report',
+  'spalte_löschen'              => 'delete_column',
+  'bericht_löschen'             => 'delete_report',
   'spalte_speichern'            => 'save_column',
   'abfrage_speichern'           => 'save_report',
 };

@@ -1,0 +1,48 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Accounting Menu'             => 'ä¼è®¡éå',
+  'April'                       => 'åæ',
+  'August'                      => 'å«æ',
+  'December'                    => 'åäºæ',
+  'Description'                 => 'è¯´æ',
+  'February'                    => 'äºæ',
+  'Heading'                     => 'æ é¢, ',
+  'January'                     => 'ä¸æ',
+  'July'                        => 'ä¸æ',
+  'June'                        => 'å­æ',
+  'March'                       => 'ä¸æ',
+  'May'                         => 'äºæ',
+  'November'                    => 'åä¸æ',
+  'October'                     => 'åæ',
+  'September'                   => 'ä¹æ',
+};
+
+$self{subs} = {
+  'acc_menu'                    => 'acc_menu',
+  'add_column'                  => 'add_column',
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'delete_column'               => 'delete_column',
+  'delete_report'               => 'delete_report',
+  'display'                     => 'display',
+  'do_save_report'              => 'do_save_report',
+  'edit_column'                 => 'edit_column',
+  'js_calendar'                 => 'js_calendar',
+  'jsmenu'                      => 'jsmenu',
+  'jsmenu_frame'                => 'jsmenu_frame',
+  'menubar'                     => 'menubar',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
+  'save_column'                 => 'save_column',
+  'save_report'                 => 'save_report',
+  'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
+};
+
+1;
+
