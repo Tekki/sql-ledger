@@ -196,6 +196,7 @@ $self{subs} = {
   'print_and_save_as_new'       => 'print_and_save_as_new',
   'print_form'                  => 'print_form',
   'print_options'               => 'print_options',
+  'quick_calculation'           => 'quick_calculation',
   'references'                  => 'references',
   'resave'                      => 'resave',
   'resize'                      => 'resize',

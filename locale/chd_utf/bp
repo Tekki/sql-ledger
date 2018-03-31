@@ -140,6 +140,7 @@ $self{subs} = {
   'menubar'                     => 'menubar',
   'pickvalue'                   => 'pickvalue',
   'print'                       => 'print',
+  'quick_calculation'           => 'quick_calculation',
   'remove'                      => 'remove',
   'resize'                      => 'resize',
   'search'                      => 'search',

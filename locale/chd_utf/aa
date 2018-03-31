@@ -211,6 +211,7 @@ $self{subs} = {
   'menubar'                     => 'menubar',
   'pickvalue'                   => 'pickvalue',
   'post'                        => 'post',
+  'quick_calculation'           => 'quick_calculation',
   'resize'                      => 'resize',
   'search'                      => 'search',
   'section_menu'                => 'section_menu',

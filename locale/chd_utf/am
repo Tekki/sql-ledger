@@ -513,6 +513,7 @@ $self{subs} = {
   'pickvalue'                   => 'pickvalue',
   'print_recurring'             => 'print_recurring',
   'process_transactions'        => 'process_transactions',
+  'quick_calculation'           => 'quick_calculation',
   'recurring_transactions'      => 'recurring_transactions',
   'remove_locks'                => 'remove_locks',
   'resize'                      => 'resize',

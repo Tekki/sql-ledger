@@ -133,6 +133,7 @@ $self{subs} = {
   'preview'                     => 'preview',
   'print_and_post_as_new'       => 'print_and_post_as_new',
   'project_selected'            => 'project_selected',
+  'quick_calculation'           => 'quick_calculation',
   'rebuild_departments'         => 'rebuild_departments',
   'rebuild_formnames'           => 'rebuild_formnames',
   'rebuild_vc'                  => 'rebuild_vc',

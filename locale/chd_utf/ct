@@ -246,6 +246,7 @@ $self{subs} = {
   'pricelist_footer'            => 'pricelist_footer',
   'pricelist_header'            => 'pricelist_header',
   'purchase_order'              => 'purchase_order',
+  'quick_calculation'           => 'quick_calculation',
   'quotation'                   => 'quotation',
   'references'                  => 'references',
   'resize'                      => 'resize',

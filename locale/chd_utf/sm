@@ -47,6 +47,7 @@ $self{subs} = {
   'fld_save'                    => 'fld_save',
   'js_calendar'                 => 'js_calendar',
   'pickvalue'                   => 'pickvalue',
+  'quick_calculation'           => 'quick_calculation',
   'repost_invoices'             => 'repost_invoices',
   'resize'                      => 'resize',
   'show_progress'               => 'show_progress',

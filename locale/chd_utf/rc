@@ -88,6 +88,7 @@ $self{subs} = {
   'jsmenu_frame'                => 'jsmenu_frame',
   'menubar'                     => 'menubar',
   'pickvalue'                   => 'pickvalue',
+  'quick_calculation'           => 'quick_calculation',
   'reconciliation'              => 'reconciliation',
   'resize'                      => 'resize',
   'section_menu'                => 'section_menu',

@@ -222,6 +222,7 @@ $self{subs} = {
   'project_jcitems_list'        => 'project_jcitems_list',
   'project_report'              => 'project_report',
   'project_sales_order'         => 'project_sales_order',
+  'quick_calculation'           => 'quick_calculation',
   'references'                  => 'references',
   'resize'                      => 'resize',
   'sales_order_footer'          => 'sales_order_footer',

@@ -112,6 +112,7 @@ $self{subs} = {
   'list_documents'              => 'list_documents',
   'menubar'                     => 'menubar',
   'pickvalue'                   => 'pickvalue',
+  'quick_calculation'           => 'quick_calculation',
   'resize'                      => 'resize',
   'save'                        => 'save',
   'search_documents'            => 'search_documents',

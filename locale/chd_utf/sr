@@ -64,6 +64,7 @@ $self{subs} = {
   'jsmenu_frame'                => 'jsmenu_frame',
   'menubar'                     => 'menubar',
   'pickvalue'                   => 'pickvalue',
+  'quick_calculation'           => 'quick_calculation',
   'resize'                      => 'resize',
   'save_column'                 => 'save_column',
   'save_report'                 => 'save_report',

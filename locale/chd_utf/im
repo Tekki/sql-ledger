@@ -284,6 +284,7 @@ $self{subs} = {
   'jsmenu_frame'                => 'jsmenu_frame',
   'menubar'                     => 'menubar',
   'pickvalue'                   => 'pickvalue',
+  'quick_calculation'           => 'quick_calculation',
   'reconcile_payments'          => 'reconcile_payments',
   'resize'                      => 'resize',
   'save_column'                 => 'save_column',
