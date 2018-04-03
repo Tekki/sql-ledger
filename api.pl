@@ -19,6 +19,8 @@ BEGIN {
   push @INC, '.';
 }
 
+use open ':std' => ':utf8';
+
 # setup defaults, DO NOT CHANGE
 $userspath = "users";
 $spool = "spool";
@@ -60,7 +62,7 @@ $myconfig{numberformat} = '1000.00';
 
 if ($@) {
   $locale = new Locale "$language", "$script";
-  
+
   $form->{callback} = "";
   $msg1 = $locale->text('You are logged out!');
   $msg2 = $locale->text('Login');
@@ -106,7 +108,7 @@ if (-f "$userspath/$myconfig{dbname}.LCK" && $form->{login} ne "admin\@$myconfig
     $form->error($message);
   }
   $form->error($locale->text('Dataset currently down for maintenance!'));
-} 
+}
 
 # pull in the main code
 require "$form->{path}/$form->{script}";
@@ -218,5 +220,3 @@ sub check_password {
     }
   }
 }
-
-
