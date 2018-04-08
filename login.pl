@@ -102,14 +102,14 @@ if ($form{path}) {
       # web browser
       $form{terminal} = "lynx";
       if ($ENV{HTTP_USER_AGENT} !~ /lynx/i) {
-	$form{terminal} = "mozilla";
+        $form{terminal} = "mozilla";
       }
     } else {
       if ($ENV{TERM} =~ /xterm/) {
-	$form{terminal} = "xterm";
+        $form{terminal} = "xterm";
       }
       if ($ENV{TERM} =~ /(console|linux|vt.*)/i) {
-	$form{terminal} = "console";
+        $form{terminal} = "console";
       }
     }
   }
@@ -123,7 +123,7 @@ if ($form{path}) {
     map { $ARGV[0] .= "&${_}=$form{$_}" } keys %form;
 
     require "bin/$form{terminal}/$script";
-    
+
   } else {
 
     print "Content-Type: text/html\n\n" if $ENV{HTTP_USER_AGENT};

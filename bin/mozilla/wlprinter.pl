@@ -7,7 +7,7 @@
 #
 #======================================================================
 #
-# bin/mozilla/wlprinter.pl - the page that redirects to JNLP
+# Download and start WLprinter JAVA client
 #
 #======================================================================
 
@@ -18,31 +18,31 @@ my $tekkiserver = "http://tekki.ch/software/Wlprinter.jar";
 1;
 
 sub open {
-	my $username  = $form->{login};
-	my $tokenfile = "$userspath/wlprinter-tokens";
-	my $userid    = sprintf "%.0f", ( rand 10 ) * 100000000000;
-	my %tokens;
+        my $username  = $form->{login};
+        my $tokenfile = "$userspath/wlprinter-tokens";
+        my $userid    = sprintf "%.0f", ( rand 10 ) * 100000000000;
+        my %tokens;
 
-	if ( -e "$tokenfile" ) {
-		%tokens = %{ retrieve($tokenfile) };
-		while ( ( $key, $value ) = each %tokens ) {
-			if ( $value eq $username ) {
-				delete $tokens{$key};
-			}
-		}
-	}
-	$tokens{"$userid"} = $username;
+        if ( -e "$tokenfile" ) {
+                %tokens = %{ retrieve($tokenfile) };
+                while ( ( $key, $value ) = each %tokens ) {
+                        if ( $value eq $username ) {
+                                delete $tokens{$key};
+                        }
+                }
+        }
+        $tokens{"$userid"} = $username;
 
-	store \%tokens, $tokenfile;
-	unless ($serveraddress) {
-		$ENV{HTTP_REFERER} =~ m|/\w+\.pl|;
-		$serveraddress = $` . "/wlprinter";
-	}
-	my $serverUrl = "$serveraddress/server.pl?id=$userid";
-	my $jarUrl    = $externalclient ? $tekkiserver : "Wlprinter.jar";
+        store \%tokens, $tokenfile;
+        unless ($serveraddress) {
+                $ENV{HTTP_REFERER} =~ m|/\w+\.pl|;
+                $serveraddress = $` . "/wlprinter";
+        }
+        my $serverUrl = "$serveraddress/server.pl?id=$userid";
+        my $jarUrl    = $externalclient ? $tekkiserver : "Wlprinter.jar";
 
-	#print "Content-Type: text/plain\n\n";
-	print qq|Content-Type: application/x-java-jnlp-file
+        #print "Content-Type: text/plain\n\n";
+        print qq|Content-Type: application/x-java-jnlp-file
 Content-disposition: attachment; filename=\"wlprinter.jnlp\"
 
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -68,3 +68,32 @@ Content-disposition: attachment; filename=\"wlprinter.jnlp\"
 </jnlp>
 |;
 }
+
+=encoding utf8
+
+=head1 NAME
+
+bin/mozilla/wlprinter.pl - Download and start WLprinter JAVA client
+
+=head1 DESCRIPTION
+
+L<bin::mozilla::wlprinter> contains functions to download and start the WLprinter JAVA client.
+
+=head1 DEPENDENCIES
+
+L<bin::mozilla::wlprinter>
+
+=over
+
+=item * uses
+L<Storable>
+
+=back
+
+=head1 FUNCTIONS
+
+L<bin::mozilla::wlprinter> implements the following functions:
+
+=head2 open
+
+=cut

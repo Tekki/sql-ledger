@@ -28,39 +28,39 @@ sub menuitem {
   my $str = qq|<a href=$module?path=$form->{path}&action=$action&level=$level&login=$form->{login}&js=$form->{js}|;
 
   my @vars = qw(module action target href);
-  
+
   if ($self->{$item}{href}) {
     $str = qq|<a href=$self->{$item}{href}|;
     @vars = qw(module target href);
   }
 
   for (@vars) { delete $self->{$item}{$_} }
-  
+
   delete $self->{$item}{submenu};
- 
+
   # add other params
   foreach my $key (keys %{ $self->{$item} }) {
     $str .= "&".$form->escape($key)."=";
     ($value, $conf) = split /=/, $self->{$item}{$key}, 2;
     $value = "$myconfig->{$value}$conf" if $self->{$item}{$key} =~ /=/;
-    
+
     $str .= $form->escape($value);
   }
 
   $str .= qq|#id$form->{tag}| if $target eq 'acc_menu';
-  
+
   if ($target) {
     $str .= qq| target=$target|;
   }
-  
+
   $str .= qq|>|;
-  
+
 }
 
 
 sub access_control {
   my ($self, $myconfig, $menulevel) = @_;
-  
+
   my @menu = ();
 
   if ($menulevel eq "") {
@@ -71,7 +71,7 @@ sub access_control {
 
   my @acs = split /;/, $myconfig->{acs};
   my $excl = ();
-  
+
   grep { ($a, $b) = split /--/; s/--$a$//; } @acs;
   for (@acs) { $excl{$_} = 1 }
   @acs = ();
@@ -86,17 +86,17 @@ sub access_control {
     for $item (split /--/, $_) {
       $acs .= $item;
       if ($excl{$acs}) {
-	$n = 1;
-	last;
+        $n = 1;
+        last;
       }
       $acs .= "--";
     }
     next if $n;
-    
+
     push @acs, $_;
-    
+
   }
-  
+
   @acs;
 
 }
@@ -104,3 +104,27 @@ sub access_control {
 
 1;
 
+
+=encoding utf8
+
+=head1 NAME
+
+Menu - Routines for menu items
+
+=head1 DESCRIPTION
+
+L<SL::Menu> contains the routines for menu items.
+
+=head1 METHODS
+
+L<SL::Menu> implements all methods from L<SL::Inifile> and the following new ones:
+
+=head2 access_control
+
+  $menu->access_control($myconfig, $menulevel);
+
+=head2 menuitem
+
+  $menu->menuitem($myconfig, $form, $item);
+
+=cut

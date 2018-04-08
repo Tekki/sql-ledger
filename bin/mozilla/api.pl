@@ -5,8 +5,6 @@
 #  Author: Tekki
 #     Web: https://tekki.ch
 #
-#  Version: 0.4
-#
 #======================================================================
 #
 # JSON API
@@ -151,3 +149,51 @@ sub search_transaction {
 }
 
 1;
+
+=encoding utf8
+
+=head1 NAME
+
+bin/mozilla/api.pl - JSON API
+
+=head1 DESCRIPTION
+
+L<bin::mozilla::api> contains functions for json api.
+
+=head1 DEPENDENCIES
+
+L<bin::mozilla::api>
+
+=over
+
+=item * uses
+L<JSON::PP>,
+L<SL::AA>,
+L<SL::API>,
+L<SL::CT>,
+L<SL::IS>,
+L<SL::OE>
+
+=back
+
+=head1 FUNCTIONS
+
+L<bin::mozilla::api> implements the following functions:
+
+=head2 add_payment
+
+=head2 add_reference
+
+=head2 customer_details
+
+=head2 invoice_details
+
+=head2 list_accounts
+
+=head2 search_customer
+
+=head2 search_order
+
+=head2 search_transaction
+
+=cut

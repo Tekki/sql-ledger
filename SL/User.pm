@@ -24,27 +24,27 @@ sub new {
 
     while (<MEMBER>) {
       if (/^\[\Q$login\E\]/) {
-	while (<MEMBER>) {
-	  last if /^\[/;
-	  next if /^(#|\s)/;
+        while (<MEMBER>) {
+          last if /^\[/;
+          next if /^(#|\s)/;
 
-	  # remove comments
-	  s/^\s*#.*//g;
+          # remove comments
+          s/^\s*#.*//g;
 
-	  # remove any trailing whitespace
-	  s/^\s*(.*?)\s*$/$1/;
+          # remove any trailing whitespace
+          s/^\s*(.*?)\s*$/$1/;
 
-	  ($key, $value) = split /=/, $_, 2;
+          ($key, $value) = split /=/, $_, 2;
 
-	  $self->{$key} = $value;
-	}
+          $self->{$key} = $value;
+        }
 
-	$self->{login} = $login;
+        $self->{login} = $login;
         $self->{lat} = "1";
         $self->{long} = "1";
         $self->{templates} ||= $self->{dbname};
 
-	last;
+        last;
       }
     }
     close MEMBER;
@@ -94,7 +94,7 @@ sub login {
 
       my $password = crypt $form->{password}, substr($self->{login}, 0, 2);
       if ($self->{password} ne $password) {
-	return -2;
+        return -2;
       }
     }
 
@@ -133,7 +133,7 @@ sub login {
     # no error check for employee table, ignore if it does not exist
     $query = qq|SELECT id
                 FROM employee
-		WHERE login = '$login'|;
+                WHERE login = '$login'|;
     ($id) = $dbh->selectrow_array($query);
 
     if ($audittrail) {
@@ -158,7 +158,7 @@ sub login {
 
       # if DB2 bale out
       if ($myconfig{dbdriver} eq 'DB2') {
-	$rc = -3;
+        $rc = -3;
       }
     }
   }
@@ -181,7 +181,7 @@ sub logout {
     $login =~ s/\@.*//;
     $query = qq|SELECT id
                 FROM employee
-		WHERE login = '$login'|;
+                WHERE login = '$login'|;
     my ($id) = $dbh->selectrow_array($query);
     $id *= 1;
 
@@ -228,12 +228,12 @@ sub dbconnect_vars {
   my %dboptions = (
      'Pg' => {
         'yy-mm-dd' => 'set DateStyle to \'ISO\'',
-	'mm/dd/yy' => 'set DateStyle to \'SQL, US\'',
-	'mm-dd-yy' => 'set DateStyle to \'POSTGRES, US\'',
-	'dd/mm/yy' => 'set DateStyle to \'SQL, EUROPEAN\'',
-	'dd-mm-yy' => 'set DateStyle to \'POSTGRES, EUROPEAN\'',
-	'dd.mm.yy' => 'set DateStyle to \'GERMAN\''
-	     }
+        'mm/dd/yy' => 'set DateStyle to \'SQL, US\'',
+        'mm-dd-yy' => 'set DateStyle to \'POSTGRES, US\'',
+        'dd/mm/yy' => 'set DateStyle to \'SQL, EUROPEAN\'',
+        'dd-mm-yy' => 'set DateStyle to \'POSTGRES, EUROPEAN\'',
+        'dd.mm.yy' => 'set DateStyle to \'GERMAN\''
+             }
      );
 
   if ($form->{dbdriver} eq 'Oracle') {
@@ -299,23 +299,23 @@ sub dbsources {
 
       if ($form->{only_acc_db}) {
 
-	next if ($db =~ /^template/);
+        next if ($db =~ /^template/);
 
-	&dbconnect_vars($form, $db);
-	my $dbh = DBI->connect($form->{dbconnect}, $form->{dbuser}, $form->{dbpasswd}) or $form->dberror;
+        &dbconnect_vars($form, $db);
+        my $dbh = DBI->connect($form->{dbconnect}, $form->{dbuser}, $form->{dbpasswd}) or $form->dberror;
 
-	$query = qq|SELECT tablename FROM pg_tables
-		    WHERE tablename = 'defaults'
-		    AND tableowner = '$form->{dbuser}'|;
-	my $sth = $dbh->prepare($query);
-	$sth->execute || $form->dberror($query);
+        $query = qq|SELECT tablename FROM pg_tables
+                    WHERE tablename = 'defaults'
+                    AND tableowner = '$form->{dbuser}'|;
+        my $sth = $dbh->prepare($query);
+        $sth->execute || $form->dberror($query);
 
-	if ($sth->fetchrow_array) {
-	  push @dbsources, $db;
-	}
-	$sth->finish;
-	$dbh->disconnect;
-	next;
+        if ($sth->fetchrow_array) {
+          push @dbsources, $db;
+        }
+        $sth->finish;
+        $dbh->disconnect;
+        next;
       }
       push @dbsources, $db;
     }
@@ -324,8 +324,8 @@ sub dbsources {
   if ($form->{dbdriver} eq 'Oracle') {
     if ($form->{only_acc_db}) {
       $query = qq|SELECT owner FROM dba_objects
-		  WHERE object_name = 'DEFAULTS'
-		  AND object_type = 'TABLE'|;
+                  WHERE object_name = 'DEFAULTS'
+                  AND object_type = 'TABLE'|;
     } else {
       $query = qq|SELECT username FROM dba_users|;
     }
@@ -536,7 +536,7 @@ sub dbdelete {
   my %dbdelete = ( 'Pg' => qq|DROP DATABASE "$form->{db}"|,
                 'Sybase' => qq|DROP DATABASE $form->{db}|,
                'Oracle' => qq|DROP USER $form->{db} CASCADE|
-	         );
+                 );
 
   $form->{sid} = $form->{dbdefault};
   &dbconnect_vars($form, $form->{dbdefault});
@@ -689,9 +689,9 @@ sub create_config {
   $login =~ s/@.*//;
 
   $query = qq|SELECT e.id, e.acs, a.acs
-	      FROM employee e
-	      LEFT JOIN acsrole a ON (e.acsrole_id = a.id)
-	      WHERE login = '$login'|;
+              FROM employee e
+              LEFT JOIN acsrole a ON (e.acsrole_id = a.id)
+              WHERE login = '$login'|;
   ($id, $acs{acs}, $acs{role}) = $dbh->selectrow_array($query);
 
   $dbh->disconnect;
@@ -862,14 +862,14 @@ sub delete_login {
   my ($id) = $dbh->selectrow_array($query);
 
   my $query = qq|UPDATE employee SET
-		 login = NULL,
-		 enddate = current_date
-		 WHERE login = '$login'|;
+                 login = NULL,
+                 enddate = current_date
+                 WHERE login = '$login'|;
   $dbh->do($query);
 
   $query = qq|UPDATE report SET
-		 login = ''
-		 WHERE login = '$login'|;
+                 login = ''
+                 WHERE login = '$login'|;
   $dbh->do($query);
 
   $dbh->commit;
@@ -882,9 +882,9 @@ sub config_vars {
 
   my @conf = qw(acs company countrycode charset dateformat
              dbconnect dbdriver dbhost dbname dboptions dbpasswd
-	     dbport dbuser menuwidth name email emailcopy numberformat password
-	     outputformat printer sessionkey sid
-	     signature stylesheet tan templates timeout vclimit);
+             dbport dbuser menuwidth name email emailcopy numberformat password
+             outputformat printer sessionkey sid
+             signature stylesheet tan templates timeout vclimit);
 
   @conf;
 
@@ -958,3 +958,108 @@ sub error {
 
 
 1;
+
+=encoding utf8
+
+=head1 NAME
+
+User - User related functions
+
+=head1 DESCRIPTION
+
+L<SL::User> contains the user related functions.
+
+
+=head1 CONSTRUCTOR
+
+L<SL::User> uses the following constructor:
+
+=head2 new
+
+  $user = User->new($memfile, $login);
+
+=head1 METHODS
+
+L<SL::User> implements the following methods:
+
+=head2 calc_version
+
+  User::calc_version($version);
+
+=head2 check_recurring
+
+  $user->check_recurring($form);
+
+=head2 config_vars
+
+  User::config_vars;
+
+=head2 country_codes
+
+  User::country_codes;
+
+=head2 create_config
+
+  $user->create_config($filename);
+
+=head2 dbconnect_vars
+
+  User::dbconnect_vars($form, $db);
+
+=head2 dbcreate
+
+  $user->dbcreate($form);
+
+=head2 dbdelete
+
+  $user->dbdelete($form);
+
+=head2 dbdrivers
+
+  User::dbdrivers;
+
+=head2 dbpassword
+
+  $user->dbpassword($form);
+
+=head2 dbsources
+
+  $user->dbsources($form);
+
+=head2 dbupdate
+
+  $user->dbupdate($form);
+
+=head2 delete_login
+
+  $user->delete_login($form);
+
+=head2 encoding
+
+  $user->encoding($dbdriver);
+
+=head2 error
+
+  $user->error($msg);
+
+=head2 login
+
+  $user->login($form, $userspath);
+
+=head2 logout
+
+  $user->logout($myconfig, $form);
+
+=head2 process_query
+
+  $user->process_query($form, $dbh, $filename);
+
+=head2 save_member
+
+  $user->save_member($memberfile, $userspath);
+
+=head2 script_version
+
+  User::script_version($my_a, $my_b);
+
+=cut

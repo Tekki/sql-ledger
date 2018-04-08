@@ -68,7 +68,7 @@ sub jcitems_links {
     foreach $ref (@{ $form->{all_project} }) {
       $form->{selectprojectnumber} .= qq|$ref->{projectnumber}--$ref->{id}\n|;
       if ($form->{projectnumber} eq "$ref->{projectnumber}--$ref->{id}") {
-	$form->{projectdescription} = $ref->{description};
+        $form->{projectdescription} = $ref->{description};
       }
     }
   } else {
@@ -106,26 +106,26 @@ sub search {
 
     $selectfrom = qq|
         <tr>
-	  <th align=right>|.$locale->text('Period').qq|</th>
-	  <td colspan=3>
-	  <select name=month>|.$form->select_option($selectaccountingmonth, $form->{month}, 1, 1).qq|</select>
-	  <select name=year>|.$form->select_option($selectaccountingyear, $form->{year}).qq|</select>
-	  <input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
-	  <input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
-	  <input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
-	  <input name=interval class=radio type=radio value=12>&nbsp;|.$locale->text('Year').qq|
-	  </td>
-	</tr>
+          <th align=right>|.$locale->text('Period').qq|</th>
+          <td colspan=3>
+          <select name=month>|.$form->select_option($selectaccountingmonth, $form->{month}, 1, 1).qq|</select>
+          <select name=year>|.$form->select_option($selectaccountingyear, $form->{year}).qq|</select>
+          <input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
+          <input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
+          <input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
+          <input name=interval class=radio type=radio value=12>&nbsp;|.$locale->text('Year').qq|
+          </td>
+        </tr>
 |;
   }
 
   $fromto = qq|
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Startdate').qq|</th>
-	  <td>|.$locale->text('From').qq| <input name=startdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "startdatefrom")
-	  .$locale->text('To').qq| <input name=startdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "startdateto").qq|</td>
-	</tr>
-	$selectfrom
+        <tr>
+          <th align=right nowrap>|.$locale->text('Startdate').qq|</th>
+          <td>|.$locale->text('From').qq| <input name=startdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "startdatefrom")
+          .$locale->text('To').qq| <input name=startdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "startdateto").qq|</td>
+        </tr>
+        $selectfrom
 |;
 
   $form->{title} = $locale->text('Time & Stores Cards');
@@ -153,9 +153,9 @@ sub search {
     $projectdescriptionlabel = $locale->text('Job Name');
     if ($form->{type}) {
       if ($form->{type} eq 'timecard') {
-	$partnumberlabel = $locale->text('Labor Code');
+        $partnumberlabel = $locale->text('Labor Code');
       } else {
-	$partnumberlabel = $locale->text('Part Number');
+        $partnumberlabel = $locale->text('Part Number');
       }
     } else {
       $partnumberlabel = $locale->text('Part Number')."/".$locale->text('Labor Code');
@@ -178,17 +178,17 @@ sub search {
   if ($form->{selectprojectnumber}) {
     $projectnumber = qq|
       <tr>
-	<th align=right nowrap>$projectnumberlabel</th>
-	<td colspan=3><select name=projectnumber>|.$form->select_option($form->{selectprojectnumber}, $form->{"projectnumber"}, 1)
-	.qq|</select></td>
+        <th align=right nowrap>$projectnumberlabel</th>
+        <td colspan=3><select name=projectnumber>|.$form->select_option($form->{selectprojectnumber}, $form->{"projectnumber"}, 1)
+        .qq|</select></td>
       </tr>
 |;
   }
 
   $partnumber = qq|
-	<tr>
-	  <th align=right nowrap>$partnumberlabel</th>
-	  <td colspan=3><input name=partnumber></td>
+        <tr>
+          <th align=right nowrap>$partnumberlabel</th>
+          <td colspan=3><input name=partnumber></td>
         </tr>
 |;
 
@@ -204,12 +204,12 @@ sub search {
     }
 
     $employee = qq|
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Employee').qq|</th>
-	  <td colspan=3><select name=employee>|
-	  .$form->select_option($form->{selectemployee}, $form->{employee}, 1)
-	  .qq|
-	  </select></td>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Employee').qq|</th>
+          <td colspan=3><select name=employee>|
+          .$form->select_option($form->{selectemployee}, $form->{employee}, 1)
+          .qq|
+          </select></td>
         </tr>
 |;
 
@@ -224,9 +224,9 @@ sub search {
     $reportform = qq|
       <tr>
         <th align=right>|.$locale->text('Report').qq|</th>
-	<td>
-	  <select name=report onChange="ChangeReport();">|.$form->select_option($form->{selectreportform}, undef, 1)
-	  .qq|</select>
+        <td>
+          <select name=report onChange="ChangeReport();">|.$form->select_option($form->{selectreportform}, undef, 1)
+          .qq|</select>
         </td>
       </tr>
 |;
@@ -289,28 +289,28 @@ sub search {
       <table>
         $reportform
         $projectnumber
-	$partnumber
-	$employee
+        $partnumber
+        $employee
 
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Description').qq|</th>
-	  <td><input name=description size=40></td>
-	</tr>
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Notes').qq|</th>
-	  <td><input name=notes size=40></td>
-	</tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Description').qq|</th>
+          <td><input name=description size=40></td>
+        </tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Notes').qq|</th>
+          <td><input name=notes size=40></td>
+        </tr>
 
-	$fromto
+        $fromto
 
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Include in Report').qq|</th>
-	  <td>
-	    <table>
-	      <tr>
-       		<td nowrap><input name=open class=checkbox type=checkbox value=Y checked> |.$locale->text('Open').qq|</td>
-		<td nowrap><input name=closed class=checkbox type=checkbox value=Y> |.$locale->text('Closed').qq|</td>
-	      </tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Include in Report').qq|</th>
+          <td>
+            <table>
+              <tr>
+                       <td nowrap><input name=open class=checkbox type=checkbox value=Y checked> |.$locale->text('Open').qq|</td>
+                <td nowrap><input name=closed class=checkbox type=checkbox value=Y> |.$locale->text('Closed').qq|</td>
+              </tr>
 |;
 
   while (@a) {
@@ -323,11 +323,11 @@ sub search {
   }
 
   print qq|
-	      <tr>
-	        <td><input name=l_subtotal class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Subtotal').qq|</td>
-	      </tr>
-	    </table>
-	  </td>
+              <tr>
+                <td><input name=l_subtotal class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Subtotal').qq|</td>
+              </tr>
+            </table>
+          </td>
         </tr>
       </table>
     </td>
@@ -409,7 +409,7 @@ sub prepare_timecard {
       if (($form->{"$item$_"} *= 1) > 0) {
         $form->{"$item$_"} = substr(qq|0$form->{"$item$_"}|,-2);
       } else {
-	$form->{"$item$_"} ||= "";
+        $form->{"$item$_"} ||= "";
       }
     }
   }
@@ -495,32 +495,32 @@ sub timecard_header {
 
   if ($form->{type} eq 'timecard') {
     $rate = qq|
-	    <tr>
-	      <th align=right nowrap>$chargeoutlabel</th>
-	      <td><input name=sellprice class="inputright" size=10 value=$form->{sellprice}></td>|;
+            <tr>
+              <th align=right nowrap>$chargeoutlabel</th>
+              <td><input name=sellprice class="inputright" size=10 value=$form->{sellprice}></td>|;
     $rate .= qq|<th align=right nowrap>|.$locale->text('Total').qq|</th>
-	      <td>$form->{amount}</td>| if $form->{amount};
+              <td>$form->{amount}</td>| if $form->{amount};
     $rate .= qq|
-	    </tr>
-	    <tr>
-	      <th align=right nowrap>|.$locale->text('Allocated').qq|</th>
-	      <td><input name=allocated class="inputright" size=10 value=$form->{allocated}></td>
-	    </tr>
+            </tr>
+            <tr>
+              <th align=right nowrap>|.$locale->text('Allocated').qq|</th>
+              <td><input name=allocated class="inputright" size=10 value=$form->{allocated}></td>
+            </tr>
 |;
   } else {
     $rate = qq|
-	    <tr>
-	      <th align=right nowrap>$chargeoutlabel</th>
-	      <td><input name=sellprice class="inputright" size=10 value=$form->{sellprice}></td>|;
+            <tr>
+              <th align=right nowrap>$chargeoutlabel</th>
+              <td><input name=sellprice class="inputright" size=10 value=$form->{sellprice}></td>|;
     $rate .= qq|<th align=right nowrap>|.$locale->text('Total').qq|</th>
-	      <td>$form->{amount}</td>| if $form->{amount};
+              <td>$form->{amount}</td>| if $form->{amount};
     $rate .= qq|
-	    </tr>
-	    <tr>
-	      <th align=right nowrap>|.$locale->text('Allocated').qq|</th>
-	      <td>$form->{allocated}</td>
-	    </tr>|
-	    .$form->hide_form(qw(allocated));
+            </tr>
+            <tr>
+              <th align=right nowrap>|.$locale->text('Allocated').qq|</th>
+              <td>$form->{allocated}</td>
+            </tr>|
+            .$form->hide_form(qw(allocated));
   }
 
   $charge = qq|<input name=qty class="inputright" size=10 value=$form->{qty}>|;
@@ -530,17 +530,17 @@ sub timecard_header {
   }
 
   $notes = qq|<tr>
-		<th align=right>|.$locale->text('Notes').qq|</th>
+                <th align=right>|.$locale->text('Notes').qq|</th>
                   <td colspan=3><textarea name="notes" rows=$rows cols=46 wrap=soft>$form->{notes}</textarea>
-		</td>
-	      </tr>
+                </td>
+              </tr>
 |;
 
   $clocked = qq|
- 	<tr>
-	  <th align=right nowrap>|.$locale->text('Clocked').qq|</th>
-	  <td>$form->{clocked}</td>
-	</tr>
+         <tr>
+          <th align=right nowrap>|.$locale->text('Clocked').qq|</th>
+          <td>$form->{clocked}</td>
+        </tr>
 |;
 
   $lookup = qq|
@@ -575,74 +575,74 @@ sub timecard_header {
   <tr>
     <td>
       <table>
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Employee').qq| <font color=red>*</font></th>
-	  <td colspan=3><select name=employee>|
-	  .$form->select_option($form->{selectemployee}, $form->{employee}, 1)
-	  .qq|</select>
-	  </td>
-	</tr>
-	<tr>
-	  <th align=right nowrap>$projectlabel <font color=red>*</font></th>
-	  <td><select name=projectnumber onChange="javascript:document.main.submit()">|
-	  .$form->select_option($form->{selectprojectnumber}, $form->{projectnumber}, 1)
-	  .qq|</select>
-	  </td>
-	  <td colspan=2>$form->{projectdescription}</td>|
-	  .$form->hide_form(qw(projectdescription))
-	  .qq|
-	</tr>
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Date worked').qq| <font color=red>*</font></th>
-	  <td nowrap><input name=transdate size=11 class=date title="$myconfig{dateformat}" value=$form->{transdate}>|.&js_calendar("main", "transdate").qq|</td>
-	</tr>
-	<tr>
-	  <th align=right nowrap>$laborlabel <font color=red>*</font></th>
-	  <td><input name=partnumber value="|.$form->quote($form->{partnumber})
-	  .qq|">
+        <tr>
+          <th align=right nowrap>|.$locale->text('Employee').qq| <font color=red>*</font></th>
+          <td colspan=3><select name=employee>|
+          .$form->select_option($form->{selectemployee}, $form->{employee}, 1)
+          .qq|</select>
+          </td>
+        </tr>
+        <tr>
+          <th align=right nowrap>$projectlabel <font color=red>*</font></th>
+          <td><select name=projectnumber onChange="javascript:document.main.submit()">|
+          .$form->select_option($form->{selectprojectnumber}, $form->{projectnumber}, 1)
+          .qq|</select>
+          </td>
+          <td colspan=2>$form->{projectdescription}</td>|
+          .$form->hide_form(qw(projectdescription))
+          .qq|
+        </tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Date worked').qq| <font color=red>*</font></th>
+          <td nowrap><input name=transdate size=11 class=date title="$myconfig{dateformat}" value=$form->{transdate}>|.&js_calendar("main", "transdate").qq|</td>
+        </tr>
+        <tr>
+          <th align=right nowrap>$laborlabel <font color=red>*</font></th>
+          <td><input name=partnumber value="|.$form->quote($form->{partnumber})
+          .qq|">
           $lookup
-	  </td>
-	</tr>
-	<tr valign=top>
-	  <th align=right nowrap>|.$locale->text('Description').qq|</th>
-	  <td colspan=3>$description</td>
-	</tr>
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Time In').qq|</th>
-	  <td>
-	    <table>
-	      <tr>
-		<td><input name=inhour class="inputright" title="hh" size=3 maxlength=2 value=$form->{inhour}></td>
-		<td><input name=inmin class="inputright" title="mm" size=3 maxlength=2 value=$form->{inmin}></td>
-		<td><input name=insec class="inputright" title="ss" size=3 maxlength=2 value=$form->{insec}></td>
-	      </tr>
-	    </table>
-	  </td>
-	  <th align=right nowrap>|.$locale->text('Time Out').qq|</th>
-	  <td>
-	    <table>
-	      <tr>
-		<td><input name=outhour class="inputright" title="hh" size=3 maxlength=2 value=$form->{outhour}></td>
-		<td><input name=outmin class="inputright" title="mm" size=3 maxlength=2 value=$form->{outmin}></td>
-		<td><input name=outsec class="inputright" title="ss" size=3 maxlength=2 value=$form->{outsec}></td>
-	      </tr>
-	    </table>
-	  </td>
-	</tr>
-	$clocked
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Non-chargeable').qq|</th>
-	  <td><input name=noncharge class="inputright" size=10 value=$form->{noncharge}></td>
-	</tr>
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Chargeable').qq|</th>
-	  <td>$charge</td>
-	</tr>
-	$rate
-	$notes
-	<tr>
-	$reference_documents
-	</tr>
+          </td>
+        </tr>
+        <tr valign=top>
+          <th align=right nowrap>|.$locale->text('Description').qq|</th>
+          <td colspan=3>$description</td>
+        </tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Time In').qq|</th>
+          <td>
+            <table>
+              <tr>
+                <td><input name=inhour class="inputright" title="hh" size=3 maxlength=2 value=$form->{inhour}></td>
+                <td><input name=inmin class="inputright" title="mm" size=3 maxlength=2 value=$form->{inmin}></td>
+                <td><input name=insec class="inputright" title="ss" size=3 maxlength=2 value=$form->{insec}></td>
+              </tr>
+            </table>
+          </td>
+          <th align=right nowrap>|.$locale->text('Time Out').qq|</th>
+          <td>
+            <table>
+              <tr>
+                <td><input name=outhour class="inputright" title="hh" size=3 maxlength=2 value=$form->{outhour}></td>
+                <td><input name=outmin class="inputright" title="mm" size=3 maxlength=2 value=$form->{outmin}></td>
+                <td><input name=outsec class="inputright" title="ss" size=3 maxlength=2 value=$form->{outsec}></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        $clocked
+        <tr>
+          <th align=right nowrap>|.$locale->text('Non-chargeable').qq|</th>
+          <td><input name=noncharge class="inputright" size=10 value=$form->{noncharge}></td>
+        </tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Chargeable').qq|</th>
+          <td>$charge</td>
+        </tr>
+        $rate
+        $notes
+        <tr>
+        $reference_documents
+        </tr>
 |;
 
 }
@@ -683,19 +683,19 @@ sub timecard_footer {
              'Check Out' => { ndx => 2, key => 'C', value => $locale->text('Check Out') },
              'Preview' => { ndx => 3, key => 'V', value => $locale->text('Preview') },
              'Print' => { ndx => 4, key => 'P', value => $locale->text('Print') },
-	     'Save' => { ndx => 5, key => 'S', value => $locale->text('Save') },
-	     'Print and Save' => { ndx => 6, key => 'R', value => $locale->text('Print and Save') },
-	     'Save as new' => { ndx => 7, key => 'N', value => $locale->text('Save as new') },
-	     'Print and Save as new' => { ndx => 8, key => 'W', value => $locale->text('Print and Save as new') },
+             'Save' => { ndx => 5, key => 'S', value => $locale->text('Save') },
+             'Print and Save' => { ndx => 6, key => 'R', value => $locale->text('Print and Save') },
+             'Save as new' => { ndx => 7, key => 'N', value => $locale->text('Save as new') },
+             'Print and Save as new' => { ndx => 8, key => 'W', value => $locale->text('Print and Save as new') },
 
-	     'Delete' => { ndx => 16, key => 'D', value => $locale->text('Delete') },
-	    );
+             'Delete' => { ndx => 16, key => 'D', value => $locale->text('Delete') },
+            );
 
     %a = ();
 
     if ($form->{inhour} + $form->{inmin} + $form->{insec}) {
       if (! ($form->{outhour} + $form->{outmin} + $form->{outsec}) ) {
-	$a{'Check Out'} = 1;
+        $a{'Check Out'} = 1;
       }
     } else {
       $a{'Check In'} = 1;
@@ -704,15 +704,15 @@ sub timecard_footer {
     if ($form->{id}) {
 
       if (!$form->{locked}) {
-	for ('Update', 'Print', 'Save', 'Save as new') { $a{$_} = 1 }
+        for ('Update', 'Print', 'Save', 'Save as new') { $a{$_} = 1 }
 
-	if ($latex) {
-	  for ('Preview', 'Print and Save', 'Print and Save as new') { $a{$_} = 1 }
-	}
+        if ($latex) {
+          for ('Preview', 'Print and Save', 'Print and Save as new') { $a{$_} = 1 }
+        }
 
-	if ($form->{orphaned}) {
-	  $a{'Delete'} = 1;
-	}
+        if ($form->{orphaned}) {
+          $a{'Delete'} = 1;
+        }
 
       }
 
@@ -720,11 +720,11 @@ sub timecard_footer {
 
       if ($transdate > $form->{closedto}) {
 
-	for ('Update', 'Print', 'Save') { $a{$_} = 1 }
+        for ('Update', 'Print', 'Save') { $a{$_} = 1 }
 
-	if ($latex) {
-	  for ('Print and Save', 'Preview') { $a{$_}  = 1 }
-	}
+        if ($latex) {
+          for ('Print and Save', 'Preview') { $a{$_}  = 1 }
+        }
 
       }
     }
@@ -836,7 +836,7 @@ sub storescard_header {
     $charge .= qq|<th align=right nowrap>|.$locale->text('Total').qq|</th>
                <td>$form->{amount}</td>| if $form->{amount};
     $charge .= qq|
-	       </tr>|;
+               </tr>|;
 
   $lookup = qq|
           <a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"parts_id"}" target=_blank>?</a>| if $form->{"parts_id"};
@@ -871,41 +871,41 @@ sub storescard_header {
     <td>
       <table>
         <tr>
-	  <th align=right nowrap>|.$locale->text('Job Number').qq| <font color=red>*</font></th>
-	  <td colspan=2><select name=projectnumber onChange="javascript:document.main.submit()">|
-	  .$form->select_option($form->{selectprojectnumber}, $form->{projectnumber}, 1)
-	  .qq|</select>
-	  </td>
-	  <td>$form->{projectdescription}</td>|
-	  .$form->hide_form(qw(projectdescription))
-	  .qq|
-	</tr>
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Date').qq| <font color=red>*</font></th>
-	  <td colspan=3><input name=transdate size=11 class=date title="$myconfig{dateformat}" value=$form->{transdate}>|.&js_calendar("main", "transdate").qq|</td>
-	</tr>
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Part Number').qq| <font color=red>*</font></th>
-	  <td colspan=3><input name=partnumber value="|.$form->quote($form->{partnumber}) .qq|">
-	  $lookup
-	  </td>
-	</tr>
-	<tr valign=top>
-	  <th align=right nowrap>|.$locale->text('Description').qq|</th>
-	  <td colspan=3>$description</td>
-	</tr>
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Qty').qq|</th>
-	  <td><input name=qty class="inputright" size=6 value=$form->{qty}></td>
-	</tr>
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Allocated').qq|</th>
-	  <td><input name=allocated class="inputright" size=6 value=$form->{allocated}></td>
-	</tr>
-	$charge
-	<tr>
-	$reference_documents
-	</tr>
+          <th align=right nowrap>|.$locale->text('Job Number').qq| <font color=red>*</font></th>
+          <td colspan=2><select name=projectnumber onChange="javascript:document.main.submit()">|
+          .$form->select_option($form->{selectprojectnumber}, $form->{projectnumber}, 1)
+          .qq|</select>
+          </td>
+          <td>$form->{projectdescription}</td>|
+          .$form->hide_form(qw(projectdescription))
+          .qq|
+        </tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Date').qq| <font color=red>*</font></th>
+          <td colspan=3><input name=transdate size=11 class=date title="$myconfig{dateformat}" value=$form->{transdate}>|.&js_calendar("main", "transdate").qq|</td>
+        </tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Part Number').qq| <font color=red>*</font></th>
+          <td colspan=3><input name=partnumber value="|.$form->quote($form->{partnumber}) .qq|">
+          $lookup
+          </td>
+        </tr>
+        <tr valign=top>
+          <th align=right nowrap>|.$locale->text('Description').qq|</th>
+          <td colspan=3>$description</td>
+        </tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Qty').qq|</th>
+          <td><input name=qty class="inputright" size=6 value=$form->{qty}></td>
+        </tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Allocated').qq|</th>
+          <td><input name=allocated class="inputright" size=6 value=$form->{allocated}></td>
+        </tr>
+        $charge
+        <tr>
+        $reference_documents
+        </tr>
 |;
 
 }
@@ -940,35 +940,35 @@ sub storescard_footer {
     %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
                'Preview' => { ndx => 2, key => 'V', value => $locale->text('Preview') },
                'Print' => { ndx => 3, key => 'P', value => $locale->text('Print') },
-	       'Save' => { ndx => 4, key => 'S', value => $locale->text('Save') },
-	       'Print and Save' => { ndx => 6, key => 'R', value => $locale->text('Print and Save') },
-	       'Save as new' => { ndx => 7, key => 'N', value => $locale->text('Save as new') },
-	       'Print and Save as new' => { ndx => 8, key => 'W', value => $locale->text('Print and Save as new') },
-	       'Delete' => { ndx => 16, key => 'D', value => $locale->text('Delete') },
-	      );
+               'Save' => { ndx => 4, key => 'S', value => $locale->text('Save') },
+               'Print and Save' => { ndx => 6, key => 'R', value => $locale->text('Print and Save') },
+               'Save as new' => { ndx => 7, key => 'N', value => $locale->text('Save as new') },
+               'Print and Save as new' => { ndx => 8, key => 'W', value => $locale->text('Print and Save as new') },
+               'Delete' => { ndx => 16, key => 'D', value => $locale->text('Delete') },
+              );
 
     %a = ();
 
     if ($form->{id}) {
 
       if (!$form->{locked}) {
-	for ('Update', 'Print', 'Save', 'Save as new') { $a{$_} = 1 }
-	if ($latex) {
-	  for ('Preview', 'Print and Save', 'Print and Save as new') { $a{$_} = 1 }
-	}
-	if ($form->{orphaned}) {
-	  $a{'Delete'} = 1;
-	}
+        for ('Update', 'Print', 'Save', 'Save as new') { $a{$_} = 1 }
+        if ($latex) {
+          for ('Preview', 'Print and Save', 'Print and Save as new') { $a{$_} = 1 }
+        }
+        if ($form->{orphaned}) {
+          $a{'Delete'} = 1;
+        }
       }
 
     } else {
 
       if ($transdate > $form->{closedto}) {
-	for ('Update', 'Print', 'Save') { $a{$_} = 1 }
+        for ('Update', 'Print', 'Save') { $a{$_} = 1 }
 
-	if ($latex) {
-	  for ('Preview', 'Print and Save') { $a{$_} = 1 }
-	}
+        if ($latex) {
+          for ('Preview', 'Print and Save') { $a{$_} = 1 }
+        }
       }
     }
 
@@ -1025,16 +1025,16 @@ sub update {
     if ($rows) {
 
       if ($rows > 1) {
-	&select_item;
-	exit;
+        &select_item;
+        exit;
       } else {
-	for (keys %{ $form->{item_list}[0] }) { $form->{$_} = $form->{item_list}[0]{$_} }
+        for (keys %{ $form->{item_list}[0] }) { $form->{$_} = $form->{item_list}[0]{$_} }
 
-	($dec) = ($form->{sellprice} =~ /\.(\d+)/);
-	$dec = length $dec;
-	$decimalplaces = ($dec > $form->{precision}) ? $dec : $form->{precision};
+        ($dec) = ($form->{sellprice} =~ /\.(\d+)/);
+        $dec = length $dec;
+        $decimalplaces = ($dec > $form->{precision}) ? $dec : $form->{precision};
 
-	$form->{sellprice} = $form->format_amount(\%myconfig, $form->{sellprice}, $decimalplaces);
+        $form->{sellprice} = $form->format_amount(\%myconfig, $form->{sellprice}, $decimalplaces);
       }
 
     } else {
@@ -1049,12 +1049,12 @@ sub update {
     %hour = ( in => 0, out => 0 );
     for $t (qw(in out)) {
       if ($form->{"${t}sec"} > 60) {
-	$form->{"${t}sec"} -= 60;
-	$form->{"${t}min"}++;
+        $form->{"${t}sec"} -= 60;
+        $form->{"${t}min"}++;
       }
       if ($form->{"${t}min"} > 60) {
-	$form->{"${t}min"} -= 60;
-	$form->{"${t}hour"}++;
+        $form->{"${t}min"} -= 60;
+        $form->{"${t}hour"}++;
       }
       $hour{$t} = $form->{"${t}hour"};
     }
@@ -1092,12 +1092,12 @@ sub update {
     if ($checkmatrix) {
       @a = split / /, $form->{pricematrix};
       if (scalar @a > 2) {
-	for (@a) {
-	  ($q, $p) = split /:/, $_;
-	  if (($p * 1) && ($form->{qty} >= ($q * 1))) {
-	    $form->{sellprice} = $p;
-	  }
-	}
+        for (@a) {
+          ($q, $p) = split /:/, $_;
+          if (($p * 1) && ($form->{qty} >= ($q * 1))) {
+            $form->{sellprice} = $p;
+          }
+        }
       }
     }
 
@@ -1117,12 +1117,12 @@ sub update {
     if ($form->{oldqty} != $form->{qty}) {
       @a = split / /, $form->{pricematrix};
       if (scalar @a > 2) {
-	for (@a) {
-	  ($q, $p) = split /:/, $_;
-	  if (($p * 1) && ($form->{qty} >= ($q * 1))) {
-	    $form->{sellprice} = $p;
-	  }
-	}
+        for (@a) {
+          ($q, $p) = split /:/, $_;
+          if (($p * 1) && ($form->{qty} >= ($q * 1))) {
+            $form->{sellprice} = $p;
+          }
+        }
       }
     }
 
@@ -1530,12 +1530,12 @@ sub list_cards {
 
     %weekday = ( 1 => $locale->text('Su'),
                  2 => $locale->text('Mo'),
-		 3 => $locale->text('Tu'),
-		 4 => $locale->text('We'),
-		 5 => $locale->text('Th'),
-		 6 => $locale->text('Fr'),
-		 7 => $locale->text('Sa')
-	       );
+                 3 => $locale->text('Tu'),
+                 4 => $locale->text('We'),
+                 5 => $locale->text('Th'),
+                 6 => $locale->text('Fr'),
+                 7 => $locale->text('Sa')
+               );
 
     for (keys %weekday) { $column_header{$_} = "<th class=listheading width=25>$weekday{$_}</th>" }
   }
@@ -1570,13 +1570,13 @@ sub list_cards {
   <tr>
     <td>
       <table width=100%>
-	<tr>
-	  <th colspan=2 align=left>
-	    $employee
-	  </th>
-	  <th align=left>
-	    $sameemployeenumber
-	  </th>
+        <tr>
+          <th colspan=2 align=left>
+            $employee
+          </th>
+          <th align=left>
+            $sameemployeenumber
+          </th>
         <tr class=listheading>
 |;
 
@@ -1598,60 +1598,60 @@ sub list_cards {
 
     if ($form->{type} eq 'timecard') {
       if ($sameemployeenumber ne $ref->{employeenumber}) {
-	$sameemployeenumber = $ref->{employeenumber};
-	$sameweek = $ref->{workweek};
+        $sameemployeenumber = $ref->{employeenumber};
+        $sameweek = $ref->{workweek};
 
-	if ($form->{l_subtotal}) {
-	  print qq|
+        if ($form->{l_subtotal}) {
+          print qq|
         <tr class=listsubtotal>
 |;
 
-	  for (@column_index) { $column_data{$_} = "<td>&nbsp;</td>" }
+          for (@column_index) { $column_data{$_} = "<td>&nbsp;</td>" }
 
-	  $weektotal = 0;
-	  for (keys %weekday) {
-	    $column_data{$_} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{$_}, undef, "&nbsp;")."</th>";
-	    $weektotal += $subtotal{$_};
-	    $subtotal{$_} = 0;
-	  }
+          $weektotal = 0;
+          for (keys %weekday) {
+            $column_data{$_} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{$_}, undef, "&nbsp;")."</th>";
+            $weektotal += $subtotal{$_};
+            $subtotal{$_} = 0;
+          }
 
-	  $column_data{$form->{sort}} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $weektotal, undef, "&nbsp;")."</th>";
+          $column_data{$form->{sort}} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $weektotal, undef, "&nbsp;")."</th>";
 
-	  for (@column_index) { print "\n$column_data{$_}" }
-	}
+          for (@column_index) { print "\n$column_data{$_}" }
+        }
 
-	# print total
-	print qq|
+        # print total
+        print qq|
         <tr class=listtotal>
 |;
 
-	for (@column_index) { $column_data{$_} = "<td>&nbsp;</td>" }
+        for (@column_index) { $column_data{$_} = "<td>&nbsp;</td>" }
 
-	$total = 0;
-	for (keys %weekday) {
-	  $column_data{$_} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $total{$_}, undef, "&nbsp;")."</th>";
-	  $total += $total{$_};
-	  $total{$_} = 0;
-	}
+        $total = 0;
+        for (keys %weekday) {
+          $column_data{$_} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $total{$_}, undef, "&nbsp;")."</th>";
+          $total += $total{$_};
+          $total{$_} = 0;
+        }
 
-	$column_data{$form->{sort}} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $total, undef, "&nbsp;")."</th>";
+        $column_data{$form->{sort}} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $total, undef, "&nbsp;")."</th>";
 
-	for (@column_index) { print "\n$column_data{$_}" }
+        for (@column_index) { print "\n$column_data{$_}" }
 
-	print qq|
-	<tr height=30 valign=bottom>
-	  <th colspan=2 align=left>
-	    $ref->{employee}
-	  </th>
-	  <th align=left>
-	    $ref->{employeenumber}
-	  </th>
+        print qq|
+        <tr height=30 valign=bottom>
+          <th colspan=2 align=left>
+            $ref->{employee}
+          </th>
+          <th align=left>
+            $ref->{employeenumber}
+          </th>
         <tr class=listheading>
 |;
 
-	for (@column_index) { print "\n$column_header{$_}" }
+        for (@column_index) { print "\n$column_header{$_}" }
 
-	print qq|
+        print qq|
         </tr>
 |;
 
@@ -1662,44 +1662,44 @@ sub list_cards {
       for (@column_index) { $column_data{$_} = "<td>&nbsp;</td>" }
 
       if ($form->{type} eq 'timecard') {
-	if ($ref->{workweek} != $sameweek) {
-	  $weektotal = 0;
-	  for (keys %weekday) {
-	    $column_data{$_} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{$_}, undef, "&nbsp;")."</th>";
-	    $weektotal += $subtotal{$_};
-	    $subtotal{$_} = 0
-	  }
-	  $column_data{$form->{sort}} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $weektotal, undef, "&nbsp;")."</th>";
-	  $sameweek = $ref->{workweek};
+        if ($ref->{workweek} != $sameweek) {
+          $weektotal = 0;
+          for (keys %weekday) {
+            $column_data{$_} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{$_}, undef, "&nbsp;")."</th>";
+            $weektotal += $subtotal{$_};
+            $subtotal{$_} = 0
+          }
+          $column_data{$form->{sort}} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $weektotal, undef, "&nbsp;")."</th>";
+          $sameweek = $ref->{workweek};
 
-	  print qq|
-	  <tr class=listsubtotal>
+          print qq|
+          <tr class=listsubtotal>
 |;
-	  for (@column_index) { print "\n$column_data{$_}" }
+          for (@column_index) { print "\n$column_data{$_}" }
 
-	  print qq|
+          print qq|
         </tr>
 |;
-	}
+        }
 
       } else {
-	if ($sameitem ne $ref->{$form->{sort}}) {
-	  $column_data{qty} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{qty}, undef, "&nbsp;")."</th>";
-	  $column_data{sellprice} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{sellprice}, $form->{precision})."</th>";
+        if ($sameitem ne $ref->{$form->{sort}}) {
+          $column_data{qty} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{qty}, undef, "&nbsp;")."</th>";
+          $column_data{sellprice} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{sellprice}, $form->{precision})."</th>";
 
-	  $sameitem = $ref->{$form->{sort}};
-	  $subtotal{qty} = 0;
-	  $subtotal{sellprice} = 0;
+          $sameitem = $ref->{$form->{sort}};
+          $subtotal{qty} = 0;
+          $subtotal{sellprice} = 0;
 
           print qq|
         <tr class=listsubtotal>
 |;
-	  for (@column_index) { print "\n$column_data{$_}" }
+          for (@column_index) { print "\n$column_data{$_}" }
 
-	  print qq|
+          print qq|
         </tr>
 |;
-	}
+        }
       }
     }
 
@@ -1755,8 +1755,8 @@ sub list_cards {
     if ($form->{type} eq 'timecard') {
       $weektotal = 0;
       for (keys %weekday) {
-	$column_data{$_} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{$_}, undef, "&nbsp;")."</th>";
-	$weektotal += $subtotal{$_};
+        $column_data{$_} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{$_}, undef, "&nbsp;")."</th>";
+        $weektotal += $subtotal{$_};
       }
 
       $column_data{$form->{sort}} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $weektotal, undef, "&nbsp;")."</th>";
@@ -1800,20 +1800,20 @@ sub list_cards {
   if ($form->{project} eq 'job') {
     if ($form->{type} eq 'timecard') {
       if ($myconfig{acs} !~ /Production--Add Time Card/) {
-	$button{'Production--Add Time Card'} = { ndx => $i++, key => 'T',  value => $locale->text('Add Time Card') };
+        $button{'Production--Add Time Card'} = { ndx => $i++, key => 'T',  value => $locale->text('Add Time Card') };
       }
     } elsif ($form->{type} eq 'storescard') {
       if ($myconfig{acs} !~ /Production--Add Stores Card/) {
-	$button{'Production--Add Stores Card'} = { ndx => $i++, key => 'T',  value => $locale->text('Add Stores Card') };
+        $button{'Production--Add Stores Card'} = { ndx => $i++, key => 'T',  value => $locale->text('Add Stores Card') };
       }
     } else {
       $i = 1;
       if ($myconfig{acs} !~ /Production--Add Time Card/) {
-	$button{'Production--Add Time Card'} = { ndx => $i++, key => 'T',  value => $locale->text('Add Time Card') };
+        $button{'Production--Add Time Card'} = { ndx => $i++, key => 'T',  value => $locale->text('Add Time Card') };
       }
 
       if ($myconfig{acs} !~ /Production--Add Stores Card/) {
-	$button{'Production--Add Stores Card'} = { ndx => $i++, key => 'T',  value => $locale->text('Add Stores Card') };
+        $button{'Production--Add Stores Card'} = { ndx => $i++, key => 'T',  value => $locale->text('Add Stores Card') };
       }
     }
   } elsif ($form->{project} eq 'project') {
@@ -1834,7 +1834,7 @@ sub list_cards {
       $login = $form->{login};
       $login =~ s/\@.*//;
       if ($form->{reportlogin} ne $login) {
-	delete $button{'Save Report'};
+        delete $button{'Save Report'};
       }
     }
   }
@@ -1921,7 +1921,7 @@ sub print_options {
 
     $form->{selectformat} .= qq|
             <option value="ps">|.$locale->text('Postscript').qq|
-	    <option value="pdf">|.$locale->text('PDF');
+            <option value="pdf">|.$locale->text('PDF');
   }
 
   $format = qq|<select name=format>$form->{selectformat}</select>|;
@@ -2021,9 +2021,9 @@ sub print_form {
 
     %audittrail = ( tablename   => jcitems,
                     reference   => $form->{id},
-		    formname    => $form->{formname},
-		    action      => 'printed',
-		    id          => $form->{id} );
+                    formname    => $form->{formname},
+                    action      => 'printed',
+                    id          => $form->{id} );
 
     %status = ();
     for (qw(printed queued audittrail)) { $status{$_} = $form->{$_} }
@@ -2052,9 +2052,9 @@ sub print_form {
 
     %audittrail = ( tablename   => jcitems,
                     reference   => $form->{id},
-		    formname    => $form->{formname},
-		    action      => 'queued',
-		    id          => $form->{id} );
+                    formname    => $form->{formname},
+                    action      => 'queued',
+                    id          => $form->{id} );
 
     %status = ();
     for (qw(printed queued audittrail)) { $status{$_} = $form->{$_} }
@@ -2256,3 +2256,120 @@ sub preview {
   &print;
 
 }
+
+=encoding utf8
+
+=head1 NAME
+
+bin/mozilla/jc.pl - Job Costing module
+
+=head1 DESCRIPTION
+
+L<bin::mozilla::jc> contains the job costing module.
+
+=head1 DEPENDENCIES
+
+L<bin::mozilla::jc>
+
+=over
+
+=item * uses
+L<SL::JC>
+
+=item * requires
+L<bin::mozilla::cm>,
+L<bin::mozilla::js>,
+L<bin::mozilla::menu>,
+L<bin::mozilla::sr>
+
+=back
+
+=head1 FUNCTIONS
+
+L<bin::mozilla::jc> implements the following functions:
+
+=head2 add
+
+=head2 add_stores_card
+
+=head2 add_time_card
+
+=head2 check_in
+
+=head2 check_out
+
+=head2 continue
+
+Calls C<< &{ $form->{nextsub} } >>.
+
+=head2 delete
+
+=head2 delete_storescard
+
+=head2 delete_timecard
+
+=head2 display_form
+
+=head2 edit
+
+=head2 form_footer
+
+=head2 form_header
+
+=head2 islocked
+
+=head2 item_selected
+
+=head2 jcitems_links
+
+=head2 list_cards
+
+=head2 new_item
+
+=head2 prepare_storescard
+
+=head2 prepare_timecard
+
+=head2 preview
+
+=head2 print
+
+=head2 print_and_save
+
+=head2 print_and_save_as_new
+
+=head2 print_form
+
+  &print_form($oldform);
+
+=head2 print_options
+
+=head2 resave
+
+=head2 save
+
+=head2 save_as_new
+
+=head2 search
+
+=head2 select_item
+
+=head2 storescard_footer
+
+=head2 storescard_header
+
+=head2 timecard_footer
+
+=head2 timecard_header
+
+=head2 update
+
+=head2 yes
+
+Calls C<< &{ "yes_delete_$form->{type}" } >>.
+
+=head2 yes_delete_storescard
+
+=head2 yes_delete_timecard
+
+=cut

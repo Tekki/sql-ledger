@@ -178,32 +178,32 @@ sub job_header {
   $label = ucfirst $form->{vc};
   if ($form->{"select$form->{vc}"}) {
     $name = qq|
-	<tr>
-	  <th align=right nowrap>|.$locale->text($label).qq|</th>
-	  <td colspan=3><select name="$form->{vc}">|
-	  .$form->select_option($form->{"select$form->{vc}"}, $form->{"$form->{vc}"}, 1)
-	  .qq|</select>
-	  </td>
-	</tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text($label).qq|</th>
+          <td colspan=3><select name="$form->{vc}">|
+          .$form->select_option($form->{"select$form->{vc}"}, $form->{"$form->{vc}"}, 1)
+          .qq|</select>
+          </td>
+        </tr>
 |;
   } else {
     $name = qq|
-	<tr>
-	  <th align=right nowrap>|.$locale->text($label).qq|</th>
-	  <td colspan=3><input name="$form->{vc}" value="|.$form->quote($form->{"$form->{vc}"}).qq|" size=35></td>
-	</tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text($label).qq|</th>
+          <td colspan=3><input name="$form->{vc}" value="|.$form->quote($form->{"$form->{vc}"}).qq|" size=35></td>
+        </tr>
 |;
   }
 
   if ($form->{orphaned}) {
 
     $production = qq|
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Production').qq|</th>
-	  <td><input name=production class="inputright" size=11 value="$form->{production}"></td>
-	  <th align=right nowrap>|.$locale->text('Completed').qq|</th>
-	  <td>$form->{completed}</td>
-	</tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Production').qq|</th>
+          <td><input name=production class="inputright" size=11 value="$form->{production}"></td>
+          <th align=right nowrap>|.$locale->text('Completed').qq|</th>
+          <td>$form->{completed}</td>
+        </tr>
 |;
     $production .= $form->hide_form(completed);
 
@@ -212,12 +212,12 @@ sub job_header {
     $form->{selectIC_income} = $form->{IC_income};
 
     $production = qq|
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Production').qq|</th>
-	  <td>$form->{production}</td>
-	  <th align=right nowrap>|.$locale->text('Completed').qq|</th>
-	  <td>$form->{completed}</td>
-	</tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Production').qq|</th>
+          <td>$form->{production}</td>
+          <th align=right nowrap>|.$locale->text('Completed').qq|</th>
+          <td>$form->{completed}</td>
+        </tr>
 |;
     $production .= $form->hide_form(qw(production completed));
 
@@ -233,48 +233,48 @@ sub job_header {
     }
 
     $linkaccounts = qq|
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Income').qq|</th>
-	  <td><select name=IC_income>|
-	  .$form->select_option($form->{selectIC_income}, $form->{IC_income})
-	  .qq|</select>
-	  </td>
-	</tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Income').qq|</th>
+          <td><select name=IC_income>|
+          .$form->select_option($form->{selectIC_income}, $form->{IC_income})
+          .qq|</select>
+          </td>
+        </tr>
 |;
 
     for (split / /, $form->{taxaccounts}) {
       $tax .= qq|
         <input class=checkbox type=checkbox name="IC_tax_$_" value=1 $form->{"IC_tax_$_"}>&nbsp;<b>$form->{"IC_tax_${_}_description"}</b>
-	<br><input type=hidden name=IC_tax_${_}_description value="|.$form->quote($form->{"IC_tax_${_}_description"}).qq|">
+        <br><input type=hidden name=IC_tax_${_}_description value="|.$form->quote($form->{"IC_tax_${_}_description"}).qq|">
 |;
     }
 
     if ($tax) {
       $linkaccounts .= qq|
               <tr>
-	        <th align=right>|.$locale->text('Tax').qq|</th>
-		<td>$tax</td>
-	      </tr>
+                <th align=right>|.$locale->text('Tax').qq|</th>
+                <td>$tax</td>
+              </tr>
 |;
     }
 
     $partnumber = qq|
-	<tr>
-	  <td>
-	    <table>
-	      <tr valign=top>
-	        <th align=left>|.$locale->text('Number').qq|</th>
+        <tr>
+          <td>
+            <table>
+              <tr valign=top>
+                <th align=left>|.$locale->text('Number').qq|</th>
           <th align=left>|.$locale->text('Description').qq|</th>
           <th align=left>$group</th>
-	      </tr>
-	      <tr valign=top valign=top>
-	        <td><input name=partnumber value="|.$form->quote($form->{partnumber}).qq|" size=20></td>
+              </tr>
+              <tr valign=top valign=top>
+                <td><input name=partnumber value="|.$form->quote($form->{partnumber}).qq|" size=20></td>
           <td>$partdescription</td>
           <td>$partsgroup</td>
-	      </tr>
-	    </table>
-	  </td>
-	</tr>
+              </tr>
+            </table>
+          </td>
+        </tr>
 |;
 
   $form->{title} = ($form->{id}) ? $locale->text('Edit Job') : $locale->text('Add Job');
@@ -416,7 +416,7 @@ sub job_footer {
   $form->hide_form(qw(reference_rows callback path login));
 
   %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
-	    );
+            );
 
   if ($myconfig{acs} !~ /Job Costing--Add Job/) {
     $button{'Save'} = { ndx => 3, key => 'S', value => $locale->text('Save') };
@@ -512,7 +512,7 @@ sub list_stock {
   <tr>
     <td>
       <table width=100%>
-	<tr class=listheading>
+        <tr class=listheading>
 |;
 
   for (@column_index) { print "$column_header{$_}\n" }
@@ -623,11 +623,11 @@ sub search {
     for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|$_--|.$locale->text($form->{all_month}{$_}).qq|\n| }
 
     $fromto = qq|
- 	<tr>
-	  <th align=right>|.$locale->text('Startdate').qq|</th>
-	  <td>|.$locale->text('From').qq| <input name=startdatefrom size=11 class=date title="$myconfig{'dateformat'}">|.&js_calendar("main", "startdatefrom")
-	  .$locale->text('To').qq| <input name=startdateto size=11 class=date title="$myconfig{'dateformat'}">|.&js_calendar("main", "startdateto").qq|</td>
-	</tr>
+         <tr>
+          <th align=right>|.$locale->text('Startdate').qq|</th>
+          <td>|.$locale->text('From').qq| <input name=startdatefrom size=11 class=date title="$myconfig{'dateformat'}">|.&js_calendar("main", "startdatefrom")
+          .$locale->text('To').qq| <input name=startdateto size=11 class=date title="$myconfig{'dateformat'}">|.&js_calendar("main", "startdateto").qq|</td>
+        </tr>
 |;
 
   $selectperiod = qq|
@@ -647,7 +647,7 @@ sub search {
 
 
   $orphaned = qq|
-	  <input name=status class=radio type=radio value=orphaned>&nbsp;|.$locale->text('Orphaned');
+          <input name=status class=radio type=radio value=orphaned>&nbsp;|.$locale->text('Orphaned');
 
   if ($form->{type} eq 'project') {
     $form->{nextsub} = "project_report";
@@ -655,14 +655,14 @@ sub search {
     $form->{title} = $locale->text('Projects');
 
     $number = qq|
-	<tr>
-	  <th align=right>|.$locale->text('Project Number').qq|</th>
-	  <td><input name=projectnumber size=20></td>
-	</tr>
-	<tr>
-	  <th align=right>|.$locale->text('Description').qq|</th>
-	  <td><input name=description size=60></td>
-	</tr>
+        <tr>
+          <th align=right>|.$locale->text('Project Number').qq|</th>
+          <td><input name=projectnumber size=20></td>
+        </tr>
+        <tr>
+          <th align=right>|.$locale->text('Description').qq|</th>
+          <td><input name=description size=60></td>
+        </tr>
 |;
   }
 
@@ -697,7 +697,7 @@ sub search {
     @input = qw(projectnumber description stockingdate sort direction reportlogin);
 
     %radio = ( status => { all => 0, active => 1, inactive => 2 }
-	     );
+             );
 
   }
 
@@ -721,7 +721,7 @@ sub search {
 
     %radio = ( interval => { 0 => 0, 1 => 1, 3 => 2, 12 => 3 },
                status => { all => 0, active => 1, inactive => 2, orphaned => 3 }
-	     );
+             );
 
   }
 
@@ -953,7 +953,7 @@ sub list_projects {
   <tr>
     <td>
       <table width=100%>
-	<tr class=listheading>
+        <tr class=listheading>
 |;
 
   for (@column_index) { print "$column_header{$_}\n" }
@@ -1074,20 +1074,20 @@ sub project_header {
   $label = ucfirst $form->{vc};
   if ($form->{"select$form->{vc}"}) {
     $name = qq|
-	<tr>
-	  <th align=right nowrap>|.$locale->text($label).qq|</th>
-	  <td colspan=3><select name="$form->{vc}">|
-	  .$form->select_option($form->{"select$form->{vc}"}, $form->{$form->{vc}}, 1)
-	  .qq|</select>
-	  </td>
-	</tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text($label).qq|</th>
+          <td colspan=3><select name="$form->{vc}">|
+          .$form->select_option($form->{"select$form->{vc}"}, $form->{$form->{vc}}, 1)
+          .qq|</select>
+          </td>
+        </tr>
 |;
   } else {
     $name = qq|
-	<tr>
-	  <th align=right nowrap>|.$locale->text($label).qq|</th>
-	  <td colspan=3><input name="$form->{vc}" value="|.$form->quote($form->{"$form->{vc}"}).qq|" size=35></td>
-	</tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text($label).qq|</th>
+          <td colspan=3><input name="$form->{vc}" value="|.$form->quote($form->{"$form->{vc}"}).qq|" size=35></td>
+        </tr>
 |;
   }
 
@@ -1157,7 +1157,7 @@ sub project_footer {
   $form->hide_form(qw(reference_rows callback path login));
 
   %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
-	    );
+            );
 
   if ($myconfig{acs} !~ /Projects--Add Project/) {
     $button{'Save'} = { ndx => 3, key => 'S', value => $locale->text('Save') };
@@ -1351,7 +1351,7 @@ sub partsgroup_report {
   <tr>
     <td>
       <table width=100%>
-	<tr class=listheading>
+        <tr class=listheading>
 |;
 
   for (@column_index) { print "$column_header{$_}\n" }
@@ -2025,13 +2025,13 @@ sub translation_header {
     }
 
     print qq|
-	<tr valign=top>
-	  <td><select name="language_code_$i">|
-	  .$form->select_option($form->{selectlanguage}, $form->{"language_code_$i"}, undef, 1)
-	  .qq|</select>
-	  </td>
-	  <td>$translation</td>
-	</tr>
+        <tr valign=top>
+          <td><select name="language_code_$i">|
+          .$form->select_option($form->{selectlanguage}, $form->{"language_code_$i"}, undef, 1)
+          .qq|</select>
+          </td>
+          <td>$translation</td>
+        </tr>
 |;
   }
 
@@ -2053,9 +2053,9 @@ sub translation_footer {
   $form->hide_form(qw(path login callback));
 
   %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
-	     'Save' => { ndx => 3, key => 'S', value => $locale->text('Save') },
-	     'Delete' => { ndx => 16, key => 'D', value => $locale->text('Delete') },
-	    );
+             'Save' => { ndx => 3, key => 'S', value => $locale->text('Save') },
+             'Delete' => { ndx => 16, key => 'D', value => $locale->text('Delete') },
+            );
 
   if (! $form->{trans_id}) {
     delete $button{'Delete'};
@@ -2186,7 +2186,7 @@ sub select_name {
   for (@column_index) { print "\n$column_data{$_}" }
 
   print qq|
-	</tr>
+        </tr>
 |;
 
   push @column_index, (city, state, zipcode, country);
@@ -2206,12 +2206,12 @@ sub select_name {
 
     $j++; $j %= 2;
     print qq|
-	<tr class=listrow$j>|;
+        <tr class=listrow$j>|;
 
     for (@column_index) { print "\n$column_data{$_}" }
 
     print qq|
-	</tr>
+        </tr>
 
 <input name="new_id_$i" type=hidden value=$ref->{id}>
 
@@ -2769,3 +2769,136 @@ sub generate_sales_orders {
   $form->redirect($locale->text('Orders generated!'));
 
 }
+
+=encoding utf8
+
+=head1 NAME
+
+bin/mozilla/pe.pl - Project/job administration
+
+=head1 DESCRIPTION
+
+L<bin::mozilla::pe> contains functions for project/job administration,
+partsgroup administration,
+translation maintainance.
+
+=head1 DEPENDENCIES
+
+L<bin::mozilla::pe>
+
+=over
+
+=item * uses
+L<SL::AA>,
+L<SL::OE>,
+L<SL::PE>
+
+=item * requires
+L<bin::mozilla::cm>,
+L<bin::mozilla::js>,
+L<bin::mozilla::menu>,
+L<bin::mozilla::sr>
+
+=back
+
+=head1 FUNCTIONS
+
+L<bin::mozilla::pe> implements the following functions:
+
+=head2 add
+
+=head2 add_group
+
+=head2 add_job
+
+=head2 add_pricegroup
+
+=head2 add_project
+
+=head2 continue
+
+Calls C<< &{ $form->{nextsub} } >>.
+
+=head2 customer_selected
+
+=head2 delete
+
+=head2 display_form
+
+=head2 edit
+
+=head2 edit_translation
+
+=head2 generate_sales_orders
+
+=head2 jcitems
+
+=head2 job_footer
+
+=head2 job_header
+
+=head2 job_report
+
+=head2 list_projects
+
+=head2 list_stock
+
+=head2 list_translations
+
+=head2 name_selected
+
+=head2 partsgroup_footer
+
+=head2 partsgroup_header
+
+=head2 partsgroup_report
+
+=head2 prepare_job
+
+=head2 prepare_partsgroup
+
+=head2 prepare_pricegroup
+
+=head2 prepare_project
+
+=head2 pricegroup_footer
+
+=head2 pricegroup_header
+
+=head2 pricegroup_report
+
+=head2 project_footer
+
+=head2 project_header
+
+=head2 project_jcitems_list
+
+=head2 project_report
+
+=head2 project_sales_order
+
+=head2 sales_order_footer
+
+=head2 sales_order_header
+
+=head2 save
+
+=head2 save_as_new
+
+=head2 search
+
+=head2 select_customer
+
+=head2 select_name
+
+=head2 stock
+
+=head2 translation
+
+=head2 translation_footer
+
+=head2 translation_header
+
+=head2 update
+
+=cut

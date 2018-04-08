@@ -15,29 +15,29 @@ sub save_report {
     &do_save_report;
     exit;
   }
-  
+
   $form->{title} = $locale->text('Save Report');
 
   $public = ($form->{reportlogin}) ? "" : "checked";
   $form->{savereport} = 1;
 
   ($form->{reportdescription}, $form->{reportid}) = split /--/, $form->{report};
-  
+
   if ($form->{admin}) {
     $publicreport = qq|
       <tr>
-	<th align=right>|.$locale->text('Public').qq|</th>
-	<td>
-	  <input name=public type=checkbox style=checkbox value=1 $public>
-	</td>
+        <th align=right>|.$locale->text('Public').qq|</th>
+        <td>
+          <input name=public type=checkbox style=checkbox value=1 $public>
+        </td>
       </tr>
 |;
   } else {
     $publicreport = $form->hide_form(qw(reportlogin public));
   }
-    
+
   $form->helpref("save_report", $myconfig{countrycode});
-  
+
   $form->header;
 
 print qq|
@@ -54,12 +54,12 @@ print qq|
     <td>
       <table>
         <tr>
-	  <th align=right>|.$locale->text('Description').qq|</th>
-	  <td>
-	    <input name=reportdescription value="$form->{reportdescription}">
-	  </td>
-	</tr>
-	$publicreport
+          <th align=right>|.$locale->text('Description').qq|</th>
+          <td>
+            <input name=reportdescription value="$form->{reportdescription}">
+          </td>
+        </tr>
+        $publicreport
       </table>
     </td>
   </tr>
@@ -75,7 +75,7 @@ print qq|
   $form->hide_form;
 
   %button = ('Save Report' => { ndx => 1, key => 'S', value => $locale->text('Save Report') });
-  
+
   if ($form->{reportid}) {
     $button{'Delete Report'} = { ndx => 3, key => 'D', value => $locale->text('Delete Report') };
   }
@@ -86,7 +86,7 @@ print qq|
     require "$form->{path}/menu.pl";
     &menubar;
   }
-  
+
   print qq|
 </form>
 
@@ -110,18 +110,18 @@ sub do_save_report {
   } else {
     $form->{reportlogin} ||= $login;
   }
-  
+
   $form->save_report(\%myconfig);
 
   $form->{report} = qq|$form->{reportdescription}--$form->{reportid}|;
-  
+
   if ($form->{callback}) {
     $form->{callback} .= qq|&report=|.$form->escape($form->{report},1);
     for (qw(reportcode reportlogin)) { $form->{callback} .= qq|&$_=$form->{$_}| }
   }
-    
+
   $form->redirect;
-  
+
 }
 
 
@@ -136,7 +136,7 @@ sub delete_report {
 sub edit_column {
 
   %flds = split /[=,]/, $form->{flds};
-  
+
   ($fld, $ndx, $t) = split /,/, $form->{editcolumn};
 
   $title = $form->{title};
@@ -156,15 +156,15 @@ sub edit_column {
   for (qw(a w f)) {
     $temp{$_} = "$t${_}_$ndx";
   }
-  
+
   $form->{$temp{a}} ||= 'left';
   for (qw(left right center)) { $checked{$_} = "checked" if $form->{$temp{a}} eq $_ }
 
   $helpref = $form->{helpref};
   $form->helpref("edit_column", $myconfig{countrycode});
-  
+
   $form->header;
-  
+
   print qq|
 <body>
 
@@ -177,21 +177,21 @@ sub edit_column {
   <tr height="5"></tr>
     <td>
       <table>
-	<tr>
-	  <th align=right>|.$locale->text('Width').qq|</th>
-	  <td><input name="$temp{w}" value="$form->{$temp{w}}" size=3>
-	</tr>
-	<tr>
-	  <th align=right>|.$locale->text('Align').qq|</th>
-	  <td>
-	  <input name="$temp{a}" type=radio value=left $checked{left}> <b>|.$locale->text('Left').qq|</b>
-	  <input name="$temp{a}" type=radio value=right $checked{right}> <b>|.$locale->text('Right').qq|</b>
-	  </td>
-	</tr>
-	<tr>
-	  <th align=right>|.$locale->text('Fill').qq|</th>
-	  <td><input name="$temp{f}" value="$form->{$temp{f}}"></td>
-	</tr>
+        <tr>
+          <th align=right>|.$locale->text('Width').qq|</th>
+          <td><input name="$temp{w}" value="$form->{$temp{w}}" size=3>
+        </tr>
+        <tr>
+          <th align=right>|.$locale->text('Align').qq|</th>
+          <td>
+          <input name="$temp{a}" type=radio value=left $checked{left}> <b>|.$locale->text('Left').qq|</b>
+          <input name="$temp{a}" type=radio value=right $checked{right}> <b>|.$locale->text('Right').qq|</b>
+          </td>
+        </tr>
+        <tr>
+          <th align=right>|.$locale->text('Fill').qq|</th>
+          <td><input name="$temp{f}" value="$form->{$temp{f}}"></td>
+        </tr>
       </table>
     </td>
   </tr>
@@ -202,9 +202,9 @@ sub edit_column {
 |;
 
   for (keys %temp) { delete $form->{$temp{$_}} }
-  
+
   for (qw(stylesheet)) { delete $form->{$_} }
-  
+
   $form->{title} = $title;
   $form->{ndx} = $ndx;
   $form->{helpref} = $helpref;
@@ -213,15 +213,15 @@ sub edit_column {
 
   %button = ('Save Column' => { ndx => 1, key => 'S', value => $locale->text('Save Column') },
              'Delete Column' => { ndx => 2, key => 'D', value => $locale->text('Delete Column') }
-	    );
-  
+            );
+
   $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
     &menubar;
   }
-  
+
   print qq|
 </form>
 
@@ -235,7 +235,7 @@ sub edit_column {
 sub add_column {
 
   %flds = split /[=,]/, $form->{flds};
-  
+
   %column_index = split /[=,]/, $form->{column_index};
 
   $ndx = 1;
@@ -249,9 +249,9 @@ sub add_column {
 
   $helpref = $form->{helpref};
   $form->helpref("column", $myconfig{countrycode});
- 
+
   $form->header;
-  
+
   print qq|
 <body>
 
@@ -271,25 +271,25 @@ sub add_column {
   for (sort { $flds{$a} cmp $flds{$b} } keys %flds) {
 
     print qq|
-    
-	<tr>
-	  <th class=listheading colspan=2>$flds{$_}</th>
-	</tr>
-	<tr>
-	  <th align=right>|.$locale->text('Width').qq|</th>
-	  <td><input name="new_w_$ndx" size=3>
-	</tr>
-	<tr>
-	  <th align=right>|.$locale->text('Align').qq|</th>
-	  <td>
-	  <input name="new_a_$ndx" type=radio value=left checked> <b>|.$locale->text('Left').qq|</b>
-	  <input name="new_a_$ndx" type=radio value=right> <b>|.$locale->text('Right').qq|</b>
-	  </td>
-	</tr>
-	<tr>
-	  <th align=right>|.$locale->text('Fill').qq|</th>
-	  <td><input name="new_f_$ndx"></td>
-	</tr>
+
+        <tr>
+          <th class=listheading colspan=2>$flds{$_}</th>
+        </tr>
+        <tr>
+          <th align=right>|.$locale->text('Width').qq|</th>
+          <td><input name="new_w_$ndx" size=3>
+        </tr>
+        <tr>
+          <th align=right>|.$locale->text('Align').qq|</th>
+          <td>
+          <input name="new_a_$ndx" type=radio value=left checked> <b>|.$locale->text('Left').qq|</b>
+          <input name="new_a_$ndx" type=radio value=right> <b>|.$locale->text('Right').qq|</b>
+          </td>
+        </tr>
+        <tr>
+          <th align=right>|.$locale->text('Fill').qq|</th>
+          <td><input name="new_f_$ndx"></td>
+        </tr>
 |;
 
     $form->{"new_fld_$ndx"} = $_;
@@ -297,33 +297,33 @@ sub add_column {
 
     $ndx++;
   }
-  
+
   $form->{ndxend} = $ndx;
- 
+
   print qq|
-    
-	<tr>
-	  <th class=listheading colspan=2>|.$locale->text('Fixed value').qq|</th>
-	</tr>
-	<tr>
-	  <th align=right>|.$locale->text('Heading').qq|</th>
-	  <td><input name="new_fld" size=20></td>
-	</tr>
-	<tr>
-	  <th align=right>|.$locale->text('Width').qq|</th>
-	  <td><input name="new_w_$ndx" size=3>
-	</tr>
-	<tr>
-	  <th align=right>|.$locale->text('Align').qq|</th>
-	  <td>
-	  <input name="new_a_$ndx" type=radio value=left checked> <b>|.$locale->text('Left').qq|</b>
-	  <input name="new_a_$ndx" type=radio value=right> <b>|.$locale->text('Right').qq|</b>
-	  </td>
-	</tr>
-	<tr>
-	  <th align=right>|.$locale->text('Fill').qq|</th>
-	  <td><input name="new_f_$ndx"></td>
-	</tr>
+
+        <tr>
+          <th class=listheading colspan=2>|.$locale->text('Fixed value').qq|</th>
+        </tr>
+        <tr>
+          <th align=right>|.$locale->text('Heading').qq|</th>
+          <td><input name="new_fld" size=20></td>
+        </tr>
+        <tr>
+          <th align=right>|.$locale->text('Width').qq|</th>
+          <td><input name="new_w_$ndx" size=3>
+        </tr>
+        <tr>
+          <th align=right>|.$locale->text('Align').qq|</th>
+          <td>
+          <input name="new_a_$ndx" type=radio value=left checked> <b>|.$locale->text('Left').qq|</b>
+          <input name="new_a_$ndx" type=radio value=right> <b>|.$locale->text('Right').qq|</b>
+          </td>
+        </tr>
+        <tr>
+          <th align=right>|.$locale->text('Fill').qq|</th>
+          <td><input name="new_f_$ndx"></td>
+        </tr>
       </table>
     </td>
   </tr>
@@ -334,22 +334,22 @@ sub add_column {
 |;
 
   for (qw(stylesheet)) { delete $form->{$_} }
-  
+
   $form->{title} = $title;
   $form->{helpref} = $helpref;
-  
+
   $form->hide_form;
 
   %button = ('Save Column' => { ndx => 1, key => 'S', value => $locale->text('Save Column') }
-	    );
-  
+            );
+
   $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
     &menubar;
   }
-  
+
   print qq|
 </form>
 
@@ -380,17 +380,17 @@ sub save_column {
   for $i ($form->{ndxstart} .. $form->{ndxend}) {
     if ($form->{"new_w_$i"}) {
       if (! $form->{"new_fld_$i"}) {
-	$form->{"new_fld_$i"} = $form->{new_fld};
-	$form->{"new_fld_$i"} =~ s/ /_/g;
-	$form->{flds} .= qq|,$form->{"new_fld_$i"}=$form->{new_fld}|;
+        $form->{"new_fld_$i"} = $form->{new_fld};
+        $form->{"new_fld_$i"} =~ s/ /_/g;
+        $form->{flds} .= qq|,$form->{"new_fld_$i"}=$form->{new_fld}|;
       }
 
       $form->{column_index} .= qq|,$form->{"new_fld_$i"}=|;
       delete $form->{"new_fld_$i"};
-	
+
       for (@t) {
-	$form->{"${_}_$j"} = $form->{"new_${_}_$i"};
-	delete $form->{"new_${_}_$i"};
+        $form->{"${_}_$j"} = $form->{"new_${_}_$i"};
+        delete $form->{"new_${_}_$i"};
       }
       $j++;
     }
@@ -404,19 +404,19 @@ sub save_column {
 sub delete_column {
 
   %flds = split /[=,]/, $form->{flds};
-  
+
   ($fld, $ndx) = split /,/, $form->{editcolumn};
   delete $form->{editcolumn};
 
   %column_index = ();
-  
+
   $i = 1;
   for (split /,/, $form->{column_index}) {
     ($l, $v) = split /=/, $_;
     $column_index{$i} = { l => $l, v => $v };
     $i++;
   }
-  
+
   delete $column_index{$ndx};
 
   $form->{column_index} = join ',', map { "$column_index{$_}{l}=$column_index{$_}{v}" } sort { $a <=> $b } keys %column_index;
@@ -431,7 +431,7 @@ sub delete_column {
       $form->{"h_${_}_$i"} = $form->{"h_${_}_$k"};
     }
   }
-  
+
   for (qw(a w f)) {
     delete $form->{"${_}_$k"};
     delete $form->{"t_${_}_$k"};
@@ -446,3 +446,44 @@ sub delete_column {
 1;
 # end of main
 
+
+=encoding utf8
+
+=head1 NAME
+
+bin/mozilla/sr.pl - Save reports
+
+=head1 DESCRIPTION
+
+L<bin::mozilla::sr> contains functions to save reports.
+
+=head1 DEPENDENCIES
+
+L<bin::mozilla::sr>
+
+=over
+
+=item * requires
+L<bin::mozilla::menu>
+
+=back
+
+=head1 FUNCTIONS
+
+L<bin::mozilla::sr> implements the following functions:
+
+=head2 add_column
+
+=head2 delete_column
+
+=head2 delete_report
+
+=head2 do_save_report
+
+=head2 edit_column
+
+=head2 save_column
+
+=head2 save_report
+
+=cut

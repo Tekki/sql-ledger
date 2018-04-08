@@ -101,3 +101,34 @@ function sf(){
 |;
 
 }
+
+=encoding utf8
+
+=head1 NAME
+
+bin/mozilla/pw.pl - Password dialog
+
+=head1 DESCRIPTION
+
+L<bin::mozilla::pw> contains functions for the password dialog.
+
+=head1 DEPENDENCIES
+
+L<bin::mozilla::pw>
+
+=over
+
+=item * optionally requires
+F<bin/mozilla/custom/pw.pl>
+
+=back
+
+=head1 FUNCTIONS
+
+L<bin::mozilla::pw> implements the following functions:
+
+=head2 getpassword
+
+  &getpassword($s);
+
+=cut

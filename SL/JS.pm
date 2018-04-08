@@ -41,7 +41,7 @@ function ChangeReport() {
   my $item;
   my $found;
   my %column_index;
-  
+
   for my $ref (@{ $form->{all_report} }) {
     for (@{$input}, @{$checked}) {
       print qq|  ${_}[$i] = "$form->{all_reportvars}{$ref->{reportid}}{"report_$_"}";\n|;
@@ -49,23 +49,23 @@ function ChangeReport() {
     for $item (keys %{$radio}) {
       $found = 0;
       for (keys %{ $radio->{$item} }) {
-	if ($form->{all_reportvars}{$ref->{reportid}}{"report_$item"} eq $_) {
-	  print qq|  ${item}\[$i\] = "$radio->{$item}{$_}";\n|;
-	  $found = 1;
-	}
+        if ($form->{all_reportvars}{$ref->{reportid}}{"report_$item"} eq $_) {
+          print qq|  ${item}\[$i\] = "$radio->{$item}{$_}";\n|;
+          $found = 1;
+        }
       }
       if (!$found) {
-	print qq|  ${item}\[$i\] = "0";\n|;
+        print qq|  ${item}\[$i\] = "0";\n|;
       }
     }
     print "\n";
-    
+
     %column_index = split /[,=]/, $form->{all_reportvars}{$ref->{reportid}}{report_column_index};
     for (@{$checked}) {
       $s = $_;
       $s =~ s/l_//;
       if (exists $column_index{$s}) {
-	print qq|  ${_}[$i] = "1";\n|;
+        print qq|  ${_}[$i] = "1";\n|;
       }
     }
     $i++;
@@ -128,3 +128,27 @@ function CheckAll() {
 
 1;
 
+
+=encoding utf8
+
+=head1 NAME
+
+JS - Routines to create javascript functions
+
+=head1 DESCRIPTION
+
+L<SL::JS> contains the routines to create javascript functions.
+
+=head1 FUNCTIONS
+
+L<SL::JS> implements the following functions:
+
+=head2 change_report
+
+  JS->change_report($form, $input, $checked, $radio);
+
+=head2 check_all
+
+  JS->check_all($checkbox, $match);
+
+=cut

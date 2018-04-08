@@ -9,6 +9,7 @@
 #
 # printing routines for ar, ap
 #
+#======================================================================
 
 # any custom scripts for this one
 if (-f "$form->{path}/custom/arapprn.pl") {
@@ -44,8 +45,8 @@ sub print {
       $form->{invtotal} = $form->{oldinvtotal};
 
       foreach $key (keys %$form) {
-	$form->{$key} =~ s/&/%26/g;
-	$form->{previousform} .= qq|$key=$form->{$key}&|;
+        $form->{$key} =~ s/&/%26/g;
+        $form->{previousform} .= qq|$key=$form->{$key}&|;
       }
       chop $form->{previousform};
       $form->{previousform} = $form->escape($form->{previousform}, 1);
@@ -53,11 +54,11 @@ sub print {
 
     if ($form->{paidaccounts} > 1) {
       if ($form->{"paid_$form->{paidaccounts}"}) {
-	&update;
-	exit;
+        &update;
+        exit;
       } elsif ($form->{paidaccounts} > 2) {
-	&select_payment;
-	exit;
+        &select_payment;
+        exit;
       }
     } else {
       $form->error($locale->text('Nothing to print!'));
@@ -164,9 +165,9 @@ sub print_check {
 
     %audittrail = ( tablename   => lc $form->{ARAP},
                     reference   => $form->{invnumber},
-		    formname    => $form->{formname},
-		    action      => 'printed',
-		    id          => $form->{id} );
+                    formname    => $form->{formname},
+                    action      => 'printed',
+                    id          => $form->{id} );
 
     %status = ();
     for (qw(printed audittrail)) { $status{$_} = $form->{$_} }
@@ -282,11 +283,11 @@ sub print_transaction {
       push(@{ $form->{tax} }, $form->{"tax_$_"});
 
       if ($form->{cdt}) {
-	$cdt = ($form->{discount_paid}) ? $form->{"tax_$_"} : $amount * (1 - $cashdiscount);
-	$cd_tax += $form->round_amount($cdt, $form->{precision});
-	push(@{ $form->{cd_tax} }, $form->format_amount(\%myconfig, $cdt, $form->{precision}));
+        $cdt = ($form->{discount_paid}) ? $form->{"tax_$_"} : $amount * (1 - $cashdiscount);
+        $cd_tax += $form->round_amount($cdt, $form->{precision});
+        push(@{ $form->{cd_tax} }, $form->format_amount(\%myconfig, $cdt, $form->{precision}));
       } else {
-	push(@{ $form->{cd_tax} }, $form->{"tax_$_"});
+        push(@{ $form->{cd_tax} }, $form->{"tax_$_"});
       }
 
       push(@{ $form->{taxdescription} }, $form->{"${_}_description"});
@@ -321,7 +322,7 @@ sub print_transaction {
       $form->{paid} += $form->parse_amount(\%myconfig, $form->{"paid_$i"});
 
       if (exists $form->{longformat}) {
-	$form->{"datepaid_$i"} = $locale->date(\%myconfig, $form->{"datepaid_$i"}, $form->{longformat});
+        $form->{"datepaid_$i"} = $locale->date(\%myconfig, $form->{"datepaid_$i"}, $form->{longformat});
       }
 
       push @a, "$form->{ARAP}_paid_$i", "source_$i", "memo_$i";
@@ -339,7 +340,7 @@ sub print_transaction {
       push(@{ $form->{paymentmethod} }, $description);
 
       if ($form->{selectpaymentmethod}) {
-	$form->{roundto} = $roundchange{$form->{"paymentmethod_$i"}};
+        $form->{roundto} = $roundchange{$form->{"paymentmethod_$i"}};
       }
 
     }
@@ -438,9 +439,9 @@ sub print_transaction {
 
     %audittrail = ( tablename   => lc $form->{ARAP},
                     reference   => $form->{invnumber},
-		    formname    => $form->{formname},
-		    action      => 'printed',
-		    id          => $form->{id} );
+                    formname    => $form->{formname},
+                    action      => 'printed',
+                    id          => $form->{id} );
 
     $oldform->{audittrail} .= $form->audittrail("", \%myconfig, \%audittrail) if %$oldform;
 
@@ -465,7 +466,7 @@ sub print_transaction {
       for (split / /, $form->{taxaccounts}) { $form->{"tax_$_"} = $form->parse_amount(\%myconfig, $form->{"tax_$_"}) }
 
       for $i (1 .. $form->{paidaccounts}) {
-	for (qw(paid exchangerate)) { $form->{"${_}_$i"} = $form->parse_amount(\%myconfig, $form->{"${_}_$i"}) }
+        for (qw(paid exchangerate)) { $form->{"${_}_$i"} = $form->parse_amount(\%myconfig, $form->{"${_}_$i"}) }
       }
     }
 
@@ -610,12 +611,12 @@ sub select_payment {
   <tr>
     <td>
       <table width=100%>
-	<tr class=listheading>|;
+        <tr class=listheading>|;
 
   for (@column_index) { print "\n$column_data{$_}" }
 
   print qq|
-	</tr>
+        </tr>
 |;
 
   $checked = "checked";
@@ -634,12 +635,12 @@ sub select_payment {
 
     $j++; $j %= 2;
     print qq|
-	<tr class=listrow$j>|;
+        <tr class=listrow$j>|;
 
     for (@column_index) { print "\n$column_data{$_}" }
 
     print qq|
-	</tr>
+        </tr>
 |;
 
   }
@@ -724,20 +725,20 @@ sub print_options {
   if (!$form->{nohold}) {
     $status = qq|
              <tr>
-	       <td align=right><input name="onhold" type="checkbox" class="checkbox" value="1" $checked{onhold}></td>
-	       <th align=left nowrap>|.$locale->text('On Hold').qq|</font></th>
-	       <td align=right><input name="$form->{formname}_printed" type="checkbox" class="checkbox" value="1" $checked{printed}></td>
-	       <th align=left nowrap>|.$locale->text('Printed').qq|</th>
-	     </tr>
+               <td align=right><input name="onhold" type="checkbox" class="checkbox" value="1" $checked{onhold}></td>
+               <th align=left nowrap>|.$locale->text('On Hold').qq|</font></th>
+               <td align=right><input name="$form->{formname}_printed" type="checkbox" class="checkbox" value="1" $checked{printed}></td>
+               <th align=left nowrap>|.$locale->text('Printed').qq|</th>
+             </tr>
 |;
   }
 
   if ($form->{recurring}) {
     $recurring = qq|
              <tr>
-	       <td></td>
-	       <th align=left nowrap>|.$locale->text('Scheduled').qq|</th>
-	     </tr>
+               <td></td>
+               <th align=left nowrap>|.$locale->text('Scheduled').qq|</th>
+             </tr>
 |;
   }
 
@@ -752,7 +753,7 @@ sub print_options {
         <table>
       $status
       $recurring
-	</table>
+        </table>
       </td>
     </tr>
   </table>
@@ -777,3 +778,65 @@ sub print_and_post {
   &print;
 
 }
+
+=encoding utf8
+
+=head1 NAME
+
+bin/mozilla/arapprn.pl - Printing routines for ar, ap
+
+=head1 DESCRIPTION
+
+L<bin::mozilla::arapprn> contains printing routines for ar, ap.
+
+=head1 DEPENDENCIES
+
+L<bin::mozilla::arapprn>
+
+=over
+
+=item * optionally requires
+F<< bin/mozilla/custom/$form->{login}/arapprn.pl >>,
+F<bin/mozilla/custom/arapprn.pl>
+
+=back
+
+=head1 FUNCTIONS
+
+L<bin::mozilla::arapprn> implements the following functions:
+
+=head2 payment_selected
+
+=head2 print
+
+=head2 print_and_post
+
+=head2 print_check
+
+  &print_check($oldform, $i);
+
+=head2 print_credit_note
+
+=head2 print_debit_note
+
+=head2 print_options
+
+=head2 print_payslip
+
+  &print_payslip($oldform);
+
+=head2 print_receipt
+
+  &print_receipt($oldform, $i);
+
+=head2 print_remittance_voucher
+
+  &print_remittance_voucher($oldform);
+
+=head2 print_transaction
+
+  &print_transaction($oldform);
+
+=head2 select_payment
+
+=cut

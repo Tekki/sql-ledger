@@ -48,7 +48,7 @@ require "$form->{path}/js.pl";
 
 
 sub reconciliation {
-  
+
   RC->paymentaccounts(\%myconfig, \%$form);
 
   $selectaccno = "";
@@ -70,19 +70,19 @@ sub reconciliation {
 
     $form->{interval} = "1" unless exists $form->{interval};
     $checked{"$form->{interval}"} = "checked";
-    
+
     $selectfrom = qq|
         <tr>
-	  <th align=right>|.$locale->text('Period').qq|</th>
-	  <td colspan=3>
-	  <select name=month>|.$form->select_option($selectaccountingmonth, $form->{month}, 1, 1).qq|</select>
-	  <select name=year>|.$form->select_option($selectaccountingyear, $form->{year}).qq|</select>
-	  <input name=interval class=radio type=radio value=0 $checked{0}>&nbsp;|.$locale->text('Current').qq|
-	  <input name=interval class=radio type=radio value=1 $checked{1}>&nbsp;|.$locale->text('Month').qq|
-	  <input name=interval class=radio type=radio value=3 $checked{3}>&nbsp;|.$locale->text('Quarter').qq|
-	  <input name=interval class=radio type=radio value=12 $checked{12}>&nbsp;|.$locale->text('Year').qq|
-	  </td>
-	</tr>
+          <th align=right>|.$locale->text('Period').qq|</th>
+          <td colspan=3>
+          <select name=month>|.$form->select_option($selectaccountingmonth, $form->{month}, 1, 1).qq|</select>
+          <select name=year>|.$form->select_option($selectaccountingyear, $form->{year}).qq|</select>
+          <input name=interval class=radio type=radio value=0 $checked{0}>&nbsp;|.$locale->text('Current').qq|
+          <input name=interval class=radio type=radio value=1 $checked{1}>&nbsp;|.$locale->text('Month').qq|
+          <input name=interval class=radio type=radio value=3 $checked{3}>&nbsp;|.$locale->text('Quarter').qq|
+          <input name=interval class=radio type=radio value=12 $checked{12}>&nbsp;|.$locale->text('Year').qq|
+          </td>
+        </tr>
 |;
   }
 
@@ -93,11 +93,11 @@ sub reconciliation {
   $form->{fx_transaction} = "checked" unless exists $form->{fx_transaction};
 
   $form->helpref("reconciliation", $myconfig{countrycode});
-  
+
   $form->header;
 
   &calendar;
-  
+
   print qq|
 <body>
 
@@ -111,24 +111,24 @@ sub reconciliation {
   <tr>
     <td>
       <table>
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Account').qq|</th>
-	  <td colspan=3><select name=accno>|.$form->select_option($selectaccno, $form->{accno}).qq|</select></td>
-	</tr>
-	<tr>
-	  <th align=right>|.$locale->text('From').qq|</th>
-	  <td colspan=3><input name=fromdate size=11 class=date title="$myconfig{dateformat}" value="$form->{fromdate}"> |.&js_calendar("main", "fromdate").qq|<b>|.$locale->text('To').qq|</b> <input name=todate size=11 class=date title="$myconfig{dateformat}" value="$form->{todate}">|.&js_calendar("main", "todate").qq|</td>
-	</tr>
-	$selectfrom
         <tr>
-	  <td></td>
-	  <td colspan=3><input type=radio style=radio name=summary value=1 $checked{1}> |.$locale->text('Summary').qq|
-	  <input type=radio style=radio name=summary value=0 $checked{0}> |.$locale->text('Detail').qq|</td>
-	</tr>
-	<tr>
-	  <td></td>
-	  <td colspan=3><input type=checkbox class=checkbox name=fx_transaction value=1 $form->{fx_transaction}> |.$locale->text('Include Exchange Rate Difference').qq|</td>
-	</tr>
+          <th align=right nowrap>|.$locale->text('Account').qq|</th>
+          <td colspan=3><select name=accno>|.$form->select_option($selectaccno, $form->{accno}).qq|</select></td>
+        </tr>
+        <tr>
+          <th align=right>|.$locale->text('From').qq|</th>
+          <td colspan=3><input name=fromdate size=11 class=date title="$myconfig{dateformat}" value="$form->{fromdate}"> |.&js_calendar("main", "fromdate").qq|<b>|.$locale->text('To').qq|</b> <input name=todate size=11 class=date title="$myconfig{dateformat}" value="$form->{todate}">|.&js_calendar("main", "todate").qq|</td>
+        </tr>
+        $selectfrom
+        <tr>
+          <td></td>
+          <td colspan=3><input type=radio style=radio name=summary value=1 $checked{1}> |.$locale->text('Summary').qq|
+          <input type=radio style=radio name=summary value=0 $checked{0}> |.$locale->text('Detail').qq|</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td colspan=3><input type=checkbox class=checkbox name=fx_transaction value=1 $form->{fx_transaction}> |.$locale->text('Include Exchange Rate Difference').qq|</td>
+        </tr>
       </table>
     </td>
   </tr>
@@ -171,28 +171,28 @@ sub get_payments {
   ($form->{accno}, $form->{account}) = split /--/, $form->{accno};
 
   RC->payment_transactions(\%myconfig, \%$form);
-  
+
   $ml = ($form->{category} eq 'A') ? -1 : 1;
   $form->{statementbalance} = $form->{endingbalance} * $ml;
   if (! $form->{fx_transaction}) {
     $form->{statementbalance} = ($form->{endingbalance} - $form->{fx_endingbalance}) * $ml;
   }
-  
+
   $form->{statementbalance} = $form->format_amount(\%myconfig, $form->{statementbalance}, $form->{precision}, 0);
-  
+
   &display_form;
 
 }
 
 
 sub display_form {
-  
+
   if ($form->{report}) {
     @column_index = qw(transdate source name debit credit);
   } else {
     @column_index = qw(transdate source name cleared debit credit balance);
   }
-  
+
   $form->{allbox} = ($form->{allbox}) ? "checked" : "";
   $action = ($form->{deselect}) ? "deselect_all" : "select_all";
   $column_header{cleared} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll(); javascript:document.main.submit()"><input type=hidden name=action value="$action"></th>|;
@@ -214,13 +214,13 @@ sub display_form {
   }
 
   $form->{title} = "$form->{accno}--$form->{account} / $form->{company}";
-  
+
   $form->helpref("rec_list", $myconfig{countrycode});
-  
+
   $form->header;
-  
+
   &check_all(qw(allbox checked_));
-  
+
   print qq|
 <body>
 
@@ -237,7 +237,7 @@ sub display_form {
   <tr>
     <td>
       <table width=100%>
-	<tr class=listheading>
+        <tr class=listheading>
 |;
 
   for (@column_index) { print "\n$column_header{$_}" }
@@ -249,28 +249,28 @@ sub display_form {
   $ml = ($form->{category} eq 'A') ? -1 : 1;
   $form->{beginningbalance} *= $ml;
   $form->{fx_balance} *= $ml;
-  
+
   if (! $form->{fx_transaction}) {
     $form->{beginningbalance} -= $form->{fx_balance};
   }
   $balance = $form->{beginningbalance};
-  
+
   $i = 0;
   $j = 0;
-  
+
   for (qw(cleared transdate source debit credit)) { $column_data{$_} = "<td>&nbsp;</td>" }
 
   if (! $form->{report}) {
     $column_data{name} = qq|<td>|.$locale->text('Beginning Balance').qq|</td>|;
     $column_data{balance} = "<td align=right>".$form->format_amount(\%myconfig, $balance, $form->{precision}, 0)."</td>";
     print qq|
-	<tr class=listrow$j>
+        <tr class=listrow$j>
 |;
 
   for (@column_index) { print "\n$column_data{$_}" }
 
   print qq|
-	</tr>
+        </tr>
 |;
   }
 
@@ -288,7 +288,7 @@ sub display_form {
     $checked = "";
     if ($ref->{cleared}) {
       if ($form->datetonum(\%myconfig, $ref->{cleared}) <= $recdate) {
-	$checked = "checked";
+        $checked = "checked";
       }
     }
 
@@ -296,30 +296,30 @@ sub display_form {
     if (!$ref->{fx_transaction}) {
       for (qw(name source transdate)) { $temp{$_} = $ref->{$_} }
     }
-      
+
     $column_data{name} = "<td>";
     for (@{ $temp{name} }) { $column_data{name} .= "$_<br>" }
     $column_data{name} .= "</td>";
     $column_data{source} = qq|<td>$temp{source}&nbsp;</td>
     <input type=hidden name="id_$i" value="$ref->{id}">|;
-    
+
     $column_data{debit} = "<td>&nbsp;</td>";
     $column_data{credit} = "<td>&nbsp;</td>";
-    
+
     $balance += $ref->{amount} * $ml;
 
     if ($ref->{amount} < 0) {
-      
+
       $totaldebits += $ref->{amount} * -1;
 
       $column_data{debit} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{amount} * -1, $form->{precision}, "&nbsp;")."</td>";
-      
+
     } else {
-      
+
       $totalcredits += $ref->{amount};
 
       $column_data{credit} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{amount}, $form->{precision}, "&nbsp;")."</td>";
-      
+
     }
 
     $column_data{balance} = "<td align=right>".$form->format_amount(\%myconfig, $balance, $form->{precision}, 0)."</td>";
@@ -328,73 +328,73 @@ sub display_form {
 
       $column_data{cleared} = ($clearfx) ? qq|<td align=center>*</td>| : qq|<td>&nbsp;</td>|;
       $cleared += $ref->{amount} * $ml if $clearfx;
-      
+
     } else {
-      
+
       if ($form->{report}) {
-	
-	if ($ref->{cleared}) {
-	  $column_data{cleared} = qq|<td align=center>*</td>|;
-	  $clearfx = 1;
-	} else {
-	  $column_data{cleared} = qq|<td>&nbsp;</td>|;
-	  $clearfx = 0;
-	}
-	
+
+        if ($ref->{cleared}) {
+          $column_data{cleared} = qq|<td align=center>*</td>|;
+          $clearfx = 1;
+        } else {
+          $column_data{cleared} = qq|<td>&nbsp;</td>|;
+          $clearfx = 0;
+        }
+
       } else {
 
-	$cleared += $ref->{amount} * $ml if $checked;
-	$clearfx = ($checked) ? 1 : 0;
-	$column_data{cleared} = qq|<td align=center><input name="cleared_$i" type=checkbox class=checkbox value=1 $checked></td>
-	<input type=hidden name="source_$i" value="|.$form->quote($ref->{source}).qq|">
-	<input type=hidden name="datecleared_$i" value="$ref->{cleared}">
-	<input type=hidden name="oldcleared_$i" value="$ref->{oldcleared}">|;
-	
+        $cleared += $ref->{amount} * $ml if $checked;
+        $clearfx = ($checked) ? 1 : 0;
+        $column_data{cleared} = qq|<td align=center><input name="cleared_$i" type=checkbox class=checkbox value=1 $checked></td>
+        <input type=hidden name="source_$i" value="|.$form->quote($ref->{source}).qq|">
+        <input type=hidden name="datecleared_$i" value="$ref->{cleared}">
+        <input type=hidden name="oldcleared_$i" value="$ref->{oldcleared}">|;
+
       }
     }
-    
+
     $column_data{transdate} = qq|<td nowrap>$temp{transdate}&nbsp;</td>
     <input type=hidden name="transdate_$i" value=$ref->{transdate}>|;
 
     $j++; $j %= 2;
     print qq|
-	<tr class=listrow$j>
+        <tr class=listrow$j>
 |;
 
     for (@column_index) { print "\n$column_data{$_}" }
 
     print qq|
-	</tr>
+        </tr>
 |;
 
   }
 
   $form->{rowcount} = $i;
-  
+
   # print totals
   for (@column_index) { $column_data{$_} = "<td>&nbsp;</td>" }
 
   $column_data{debit} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $totaldebits, $form->{precision}, "&nbsp;")."</th>";
   $column_data{credit} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $totalcredits, $form->{precision}, "&nbsp;")."</th>";
-   
+
   print qq|
-	<tr class=listtotal>
+        <tr class=listtotal>
 |;
 
   for (@column_index) { print "\n$column_data{$_}" }
- 
+
   $form->{statementbalance} = $form->parse_amount(\%myconfig, $form->{statementbalance});
   $difference = $form->format_amount(\%myconfig, $form->{beginningbalance} + $cleared - $form->{statementbalance}, $form->{precision}, 0);
   $form->{statementbalance} = $form->format_amount(\%myconfig, $form->{statementbalance}, $form->{precision}, 0);
 
   print qq|
-	</tr>
+        </tr>
       </table>
     </td>
   </tr>
 |;
 
-  
+
   if ($form->{report}) {
 
     print qq|
@@ -403,40 +403,40 @@ sub display_form {
 |;
 
   } else {
-    
+
     print qq|
-   
+
   <tr>
     <td>
       <table width=100%>
         <tr valign=top>
-	  <td>
-	    <table>
-	      <tr>
-		<th align=right nowrap>|.$locale->text('Reconciliation Date').qq|</th>
-		<td width=10%></td>
-		<td align=right>$form->{recdate}</td>
-	      </tr>
-	    </table>
-	  </td>
+          <td>
+            <table>
+              <tr>
+                <th align=right nowrap>|.$locale->text('Reconciliation Date').qq|</th>
+                <td width=10%></td>
+                <td align=right>$form->{recdate}</td>
+              </tr>
+            </table>
+          </td>
 
-	  <td align=right>
-	    <table>
-	      <tr>
-		<th align=right nowrap>|.$locale->text('Statement Balance').qq|</th>
-		<td width=10%></td>
-		<td align=right><input name=statementbalance class="inputright" size=11 value=$form->{statementbalance}></td>
-	      </tr>
+          <td align=right>
+            <table>
+              <tr>
+                <th align=right nowrap>|.$locale->text('Statement Balance').qq|</th>
+                <td width=10%></td>
+                <td align=right><input name=statementbalance class="inputright" size=11 value=$form->{statementbalance}></td>
+              </tr>
 
-	      <tr>
-		<th align=right nowrap>|.$locale->text('Difference').qq|</th>
-		<td width=10%></td>
-		<td align=right><input name=null class="inputright" size=11 value=$difference></td>
-		<input type=hidden name=difference value=$difference>
-	      </tr>
-	    </table>
-	  </td>
-	</tr>
+              <tr>
+                <th align=right nowrap>|.$locale->text('Difference').qq|</th>
+                <td width=10%></td>
+                <td align=right><input name=null class="inputright" size=11 value=$difference></td>
+                <input type=hidden name=difference value=$difference>
+              </tr>
+            </table>
+          </td>
+        </tr>
       </table>
     </td>
   </tr>
@@ -447,21 +447,21 @@ sub display_form {
 |;
 
     $form->hide_form(qw(recdate fx_transaction summary rowcount accno account fromdate todate month year interval path login));
-    
+
     %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
-	       'Select all' => { ndx => 2, key => 'A', value => $locale->text('Select all') },
-	       'Deselect all' => { ndx => 3, key => 'A', value => $locale->text('Deselect all') },
-	       'Done' => { ndx => 4, key => 'O', value => $locale->text('Done') },
-	      );
+               'Select all' => { ndx => 2, key => 'A', value => $locale->text('Select all') },
+               'Deselect all' => { ndx => 3, key => 'A', value => $locale->text('Deselect all') },
+               'Done' => { ndx => 4, key => 'O', value => $locale->text('Done') },
+              );
 
     if ($form->{deselect}) {
       delete $button{'Select all'};
     } else {
       delete $button{'Deselect all'};
     }
-  
+
     $form->print_button(\%button);
-  
+
   }
 
   if ($form->{menubar}) {
@@ -480,7 +480,7 @@ sub display_form {
 
 
 sub update {
-  
+
   RC->payment_transactions(\%myconfig, \%$form);
 
   $i = 0;
@@ -493,12 +493,12 @@ sub update {
   $form->{deselect} = 1 if $form->{allbox};
 
   &display_form;
-  
+
 }
 
 
 sub select_all {
-  
+
   RC->payment_transactions(\%myconfig, \%$form);
 
   foreach $ref (@{ $form->{PR} }) {
@@ -509,12 +509,12 @@ sub select_all {
   $form->{allbox} = 1;
 
   &display_form;
-  
+
 }
 
 
 sub deselect_all {
-  
+
   RC->payment_transactions(\%myconfig, \%$form);
 
   for (@{ $form->{PR} }) { $_->{cleared} = "" }
@@ -522,7 +522,7 @@ sub deselect_all {
   $form->{allbox} = "";
 
   &display_form;
-  
+
 }
 
 
@@ -542,7 +542,56 @@ sub done {
 
   RC->reconcile(\%myconfig, \%$form);
   $form->redirect;
-  
+
 }
 
 
+
+=encoding utf8
+
+=head1 NAME
+
+bin/mozilla/rc.pl - Account reconciliation module
+
+=head1 DESCRIPTION
+
+L<bin::mozilla::rc> contains the account reconciliation module.
+
+=head1 DEPENDENCIES
+
+L<bin::mozilla::rc>
+
+=over
+
+=item * uses
+L<SL::RC>
+
+=item * requires
+L<bin::mozilla::js>,
+L<bin::mozilla::menu>
+
+=back
+
+=head1 FUNCTIONS
+
+L<bin::mozilla::rc> implements the following functions:
+
+=head2 continue
+
+Calls C<< &{ $form->{nextsub} } >>.
+
+=head2 deselect_all
+
+=head2 display_form
+
+=head2 done
+
+=head2 get_payments
+
+=head2 reconciliation
+
+=head2 select_all
+
+=head2 update
+
+=cut

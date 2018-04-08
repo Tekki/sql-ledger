@@ -29,11 +29,11 @@ sub repost_invoices {
   $form->helpref("repost_invoices", $myconfig{countrycode});
 
   $form->{title} = $locale->text('Repost Invoices');
-  
+
   $form->header;
 
   &calendar;
-  
+
   print qq|
 <body>
 
@@ -47,10 +47,10 @@ sub repost_invoices {
   <tr>
     <td>
       <table>
-	<tr>
-	  <th>|.$locale->text('Beginning date').qq|</th>
+        <tr>
+          <th>|.$locale->text('Beginning date').qq|</th>
           <td><input name="transdate" size="11" class="date" title="$myconfig{dateformat}">|.&js_calendar("main", "transdate").qq|</td>
-	</tr>
+        </tr>
       </table>
     </td>
   </tr>
@@ -62,7 +62,7 @@ sub repost_invoices {
 <input class="submit" type="submit" name="action" value="|.$locale->text('Continue').qq|">|;
 
   $form->{nextsub} = "do_repost_invoices";
-  
+
   $form->hide_form(qw(nextsub path login));
 
   print qq|
@@ -78,7 +78,7 @@ sub repost_invoices {
 sub do_repost_invoices {
 
   $form->isblank('transdate', $locale->text('Date missing!'));
-  
+
   $form->header;
   print $locale->text('Reposting Invoices ... ');
   if ($ENV{HTTP_USER_AGENT}) {
@@ -88,12 +88,12 @@ sub do_repost_invoices {
   }
 
   $SIG{INT} = 'IGNORE';
-  
+
   open(FH, ">$userspath/$myconfig{dbname}.LCK") or $form->error($!);
   close(FH);
 
   $err = SM->repost_invoices(\%myconfig, \%$form, $userspath);
-  
+
   unlink "$userspath/$myconfig{dbname}.LCK";
 
   if ($err == -1) {
@@ -131,3 +131,49 @@ sub fld_save {
 sub continue { &{ $form->{nextsub} } };
 
 
+
+=encoding utf8
+
+=head1 NAME
+
+bin/mozilla/sm.pl - Maintainance module
+
+=head1 DESCRIPTION
+
+L<bin::mozilla::sm> contains the maintainance module.
+
+=head1 DEPENDENCIES
+
+L<bin::mozilla::sm>
+
+=over
+
+=item * uses
+L<SL::IR>,
+L<SL::IS>,
+L<SL::SM>
+
+=item * requires
+L<bin::mozilla::js>
+
+=back
+
+=head1 FUNCTIONS
+
+L<bin::mozilla::sm> implements the following functions:
+
+=head2 continue
+
+Calls C<< &{ $form->{nextsub} } >>.
+
+=head2 do_repost_invoices
+
+=head2 fld_config
+
+=head2 fld_edit
+
+=head2 fld_save
+
+=head2 repost_invoices
+
+=cut

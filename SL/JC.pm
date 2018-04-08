@@ -119,15 +119,15 @@ sub jcitems_links {
   if ($form->{project_id} *= 1) {
     $query = qq|SELECT parts_id
                 FROM project
-	        WHERE id = $form->{project_id}|;
+                WHERE id = $form->{project_id}|;
     if ($dbh->selectrow_array($query)) {
       $form->{project} = 'job';
       if (! exists $form->{orphaned}) {
         $query = qq|SELECT id
-		    FROM project
-		    WHERE parts_id > 0
-		    AND production > completed
-		    AND id = $form->{project_id}|;
+                    FROM project
+                    WHERE parts_id > 0
+                    AND production > completed
+                    AND id = $form->{project_id}|;
         ($form->{orphaned}) = $dbh->selectrow_array($query);
       }
     } else {
@@ -144,41 +144,41 @@ sub jcitems_links {
     $where .= qq| AND (enddate IS NULL
                        OR enddate >= '$form->{transdate}')
                   AND (startdate <= '$form->{transdate}'
-		       OR startdate IS NULL)|;
+                       OR startdate IS NULL)|;
   }
 
   if ($form->{project} eq 'job') {
     $query = qq|
-		 SELECT *
-		 FROM project
-		 WHERE parts_id > 0
-		 AND production > completed
-		 $where|;
+                 SELECT *
+                 FROM project
+                 WHERE parts_id > 0
+                 AND production > completed
+                 $where|;
   } elsif ($form->{project} eq 'project') {
     $query = qq|
-		 SELECT *
-		 FROM project
-		 WHERE parts_id IS NULL
-		 $where|;
+                 SELECT *
+                 FROM project
+                 WHERE parts_id IS NULL
+                 $where|;
   } else {
     $query = qq|
-    		 SELECT *
-		 FROM project
-		 WHERE 1=1
-		 $where
-		 EXCEPT
-		 SELECT *
-		 FROM project
-		 WHERE parts_id > 0
-		 AND production = completed|;
+                     SELECT *
+                 FROM project
+                 WHERE 1=1
+                 $where
+                 EXCEPT
+                 SELECT *
+                 FROM project
+                 WHERE parts_id > 0
+                 AND production = completed|;
   }
 
   if ($form->{project_id}) {
     $query .= qq|
-	       UNION
-	       SELECT *
-	       FROM project
-	       WHERE id = $form->{project_id}|;
+               UNION
+               SELECT *
+               FROM project
+               WHERE id = $form->{project_id}|;
   }
 
   $query .= qq| ORDER BY projectnumber|;
@@ -209,7 +209,7 @@ sub retrieve_item {
 
   my $query = qq|SELECT customer_id
                  FROM project
-		 WHERE id = $project_id|;
+                 WHERE id = $project_id|;
   ($form->{customer_id}) = $dbh->selectrow_array($query);
   $form->{customer_id} *= 1;
 
@@ -234,9 +234,9 @@ sub retrieve_item {
                 p.sellprice,
                 p.unit, t.description AS translation
                 FROM parts p
-		LEFT JOIN translation t ON (t.trans_id = p.id AND t.language_code = '$form->{language_code}')
-	        WHERE p.obsolete = '0'
-		$where|;
+                LEFT JOIN translation t ON (t.trans_id = p.id AND t.language_code = '$form->{language_code}')
+                WHERE p.obsolete = '0'
+                $where|;
   }
 
   if ($form->{project} eq 'project') {
@@ -246,11 +246,11 @@ sub retrieve_item {
     $query = qq|SELECT p.id, p.partnumber, p.description,
                 p.sellprice,
                 p.unit, t.description AS translation
-		FROM parts p
-		LEFT JOIN translation t ON (t.trans_id = p.id AND t.language_code = '$form->{language_code}')
-		WHERE p.obsolete = '0'
-		AND p.assembly = '0'
-		$where|;
+                FROM parts p
+                LEFT JOIN translation t ON (t.trans_id = p.id AND t.language_code = '$form->{language_code}')
+                WHERE p.obsolete = '0'
+                AND p.assembly = '0'
+                $where|;
   }
 
   $query .= qq| ORDER BY 2|;
@@ -284,9 +284,9 @@ sub delete {
 
   my %audittrail = ( tablename  => 'jcitems',
                      reference  => $form->{id},
-		     formname   => $form->{type},
-		     action     => 'deleted',
-		     id         => $form->{id} );
+                     formname   => $form->{type},
+                     action     => 'deleted',
+                     id         => $form->{id} );
 
   $form->audittrail($dbh, "", \%audittrail);
 
@@ -297,8 +297,8 @@ sub delete {
   # delete spool files
   $query = qq|SELECT spoolfile FROM status
               WHERE formname = '$form->{type}'
-	      AND trans_id = $form->{id}
-	      AND spoolfile IS NOT NULL|;
+              AND trans_id = $form->{id}
+              AND spoolfile IS NOT NULL|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
@@ -313,7 +313,7 @@ sub delete {
   # delete status entries
   $query = qq|DELETE FROM status
               WHERE formname = '$form->{type}'
-	      AND trans_id = $form->{id}|;
+              AND trans_id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
 
   $form->delete_references($dbh);
@@ -325,7 +325,7 @@ sub delete {
   if ($rc) {
     foreach $spoolfile (@spoolfiles) {
       if (-f "$spool/$myconfig->{dbname}/$spoolfile") {
-	unlink "$spool/$myconfig->{dbname}/$spoolfile";
+        unlink "$spool/$myconfig->{dbname}/$spoolfile";
       }
     }
   }
@@ -353,7 +353,7 @@ sub jcitems {
 
     $query = qq|SELECT parts_id
                 FROM project
-		WHERE id = $var|;
+                WHERE id = $var|;
     my ($job) = $dbh->selectrow_array($query);
     $form->{project} = ($job) ? "job" : "project";
   }
@@ -363,12 +363,12 @@ sub jcitems {
 
     if ($form->{project}) {
       if ($form->{project} eq 'job') {
-	$where .= " AND p.inventory_accno_id > 0";
+        $where .= " AND p.inventory_accno_id > 0";
       }
     } else {
       $query = qq|SELECT inventory_accno_id
-		  FROM parts
-		  WHERE lower(partnumber) LIKE '$var'|;
+                  FROM parts
+                  WHERE lower(partnumber) LIKE '$var'|;
       my ($job) = $dbh->selectrow_array($query);
       $form->{project} = ($job) ? "job" : "project";
     }
@@ -418,22 +418,22 @@ sub jcitems {
   }
 
   $query = qq|SELECT j.id, j.description, j.qty, j.allocated,
-	      to_char(j.checkedin, 'HH24:MI') AS checkedin,
-	      to_char(j.checkedout, 'HH24:MI') AS checkedout,
-	      to_char(j.checkedin, 'yyyymmdd') AS transdate,
-	      to_char(j.checkedin, '$dateformat') AS transdatea,
-	      to_char(j.checkedin, 'D') AS weekday,
-	      p.partnumber,
-	      pr.projectnumber, pr.description AS projectdescription,
-	      e.employeenumber, e.name AS employee,
-	      to_char(j.checkedin, 'IW') AS workweek, pr.parts_id,
-	      j.sellprice, p.inventory_accno_id, p.income_accno_id,
-	      j.notes
-	      FROM jcitems j
-	      JOIN parts p ON (p.id = j.parts_id)
-	      JOIN project pr ON (pr.id = j.project_id)
-	      LEFT JOIN employee e ON (e.id = j.employee_id)
-	      WHERE $where|;
+              to_char(j.checkedin, 'HH24:MI') AS checkedin,
+              to_char(j.checkedout, 'HH24:MI') AS checkedout,
+              to_char(j.checkedin, 'yyyymmdd') AS transdate,
+              to_char(j.checkedin, '$dateformat') AS transdatea,
+              to_char(j.checkedin, 'D') AS weekday,
+              p.partnumber,
+              pr.projectnumber, pr.description AS projectdescription,
+              e.employeenumber, e.name AS employee,
+              to_char(j.checkedin, 'IW') AS workweek, pr.parts_id,
+              j.sellprice, p.inventory_accno_id, p.income_accno_id,
+              j.notes
+              FROM jcitems j
+              JOIN parts p ON (p.id = j.parts_id)
+              JOIN project pr ON (pr.id = j.project_id)
+              LEFT JOIN employee e ON (e.id = j.employee_id)
+              WHERE $where|;
 
   my @sf = qw(transdate projectnumber id);
   my %ordinal = $form->ordinal_order($dbh, $query);
@@ -580,9 +580,9 @@ sub save {
 
   my %audittrail = ( tablename  => 'jcitems',
                      reference  => $form->{id},
-		     formname   => $form->{type},
-		     action     => 'saved',
-		     id         => $form->{id} );
+                     formname   => $form->{type},
+                     action     => 'saved',
+                     id         => $form->{id} );
 
   $form->audittrail($dbh, "", \%audittrail);
 
@@ -622,3 +622,47 @@ sub company_defaults {
 
 
 1;
+
+=encoding utf8
+
+=head1 NAME
+
+JC - Job costing
+
+=head1 DESCRIPTION
+
+L<SL::JC> contains the job costing.
+
+=head1 FUNCTIONS
+
+L<SL::JC> implements the following functions:
+
+=head2 company_defaults
+
+  JC->company_defaults($myconfig, $form);
+
+=head2 delete
+
+  JC->delete($myconfig, $form);
+
+=head2 jcitems
+
+  JC->jcitems($myconfig, $form);
+
+=head2 jcitems_links
+
+  JC->jcitems_links($myconfig, $form, $dbh);
+
+=head2 retrieve_card
+
+  JC->retrieve_card($myconfig, $form);
+
+=head2 retrieve_item
+
+  JC->retrieve_item($myconfig, $form);
+
+=head2 save
+
+  JC->save($myconfig, $form);
+
+=cut
