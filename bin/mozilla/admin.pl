@@ -43,7 +43,7 @@ if ($form->{action}) {
   &check_password unless $form->{action} eq $locale->text('logout');
 
   &{ $locale->findsub($form->{action}) };
-    
+
 } else {
 
   # if there are no drivers bail out
@@ -66,9 +66,9 @@ if ($form->{action}) {
 sub adminlogin {
 
   $form->{title} = qq|SQL-Ledger |.$locale->text('Version').qq| $form->{version} |.$locale->text('Administration');
-  
+
   $form->header;
-  
+
     print qq|
 <script language="javascript" type="text/javascript">
 <!--
@@ -114,7 +114,7 @@ sub create_config {
 
   $form->{sessionkey} = "";
   $form->{sessioncookie} = "";
-  
+
   if ($form->{password}) {
     my $t = time + $form->{timeout};
     srand( time() ^ ($$ + ($$ << 15)) );
@@ -211,7 +211,7 @@ sub form_footer {
 
 
 sub list_datasets {
-  
+
 # type=submit $locale->text('Pg')
 # type=submit $locale->text('PgPP')
 # type=submit $locale->text('Oracle')
@@ -240,7 +240,7 @@ sub list_datasets {
       }
     }
   }
-  
+
   close(FH);
 
   delete $member{"root login"};
@@ -258,10 +258,10 @@ sub list_datasets {
   $column_data{locked} = qq|<th width=1%>|.$locale->text('Locked').qq|</th>|;
 
   @column_index = qw(dbname company templates locked dbdriver dbuser dbhost);
-  
+
   $dbdriver ||= "Pg";
   $dbdriver{$dbdriver} = "checked";
-  
+
   for (User->dbdrivers) {
     $dbdrivers .= qq|
                <input name=dbdriver type=radio class=radio value="$_" $dbdriver{$_}>|.$locale->text($_).qq|&nbsp;|;
@@ -289,7 +289,7 @@ sub list_datasets {
         <tr class=listheading>|;
 
   for (@column_index) { print "$column_data{$_}\n" }
-  
+
   print qq|
         </tr>
 |;
@@ -303,15 +303,15 @@ sub list_datasets {
     for (qw(company dbdriver dbhost dbuser templates)) { $column_data{$_} = qq|<td>$member{$key}{$_}</td>| }
     $column_data{dbname} = qq|<td><a href=$href>$member{$key}{dbname}</a></td>|;
     $column_data{locked} = qq|<td align=center>$member{$key}{locked}</td>|;
-    
+
     $i++; $i %= 2;
     print qq|
-	  <tr class=listrow$i>|;
+          <tr class=listrow$i>|;
 
     for (@column_index) { print "$column_data{$_}\n" }
 
     print qq|
-	  </tr>|;
+          </tr>|;
   }
 
   print qq|
@@ -341,7 +341,7 @@ $dbdrivers
   }
 
   $form->print_button(\%button);
-  
+
   print qq|
 
 </form>
@@ -381,18 +381,18 @@ sub form_header {
   <tr valign=top>
     <td>
       <table>
-	<tr>
-	  <th align=right>|.$locale->text('Company').qq|</th>
-	  <td>$form->{company}</td>
-	</tr>
-	<tr>
-	  <th align=right>|.$locale->text('Dataset').qq|</th>
-	  <td>$form->{dbname}</td>
-	</tr>
-	<tr>
-	  <th align=right>|.$locale->text('Lock Message').qq|</th>
-	  $locked
-	</tr>
+        <tr>
+          <th align=right>|.$locale->text('Company').qq|</th>
+          <td>$form->{company}</td>
+        </tr>
+        <tr>
+          <th align=right>|.$locale->text('Dataset').qq|</th>
+          <td>$form->{dbname}</td>
+        </tr>
+        <tr>
+          <th align=right>|.$locale->text('Lock Message').qq|</th>
+          $locked
+        </tr>
       </table>
     </td>
   </tr>
@@ -410,7 +410,7 @@ sub form_header {
 sub delete {
 
   $form->{title} = $locale->text('Confirm!');
-  
+
   $form->header;
 
   print qq|
@@ -449,7 +449,7 @@ sub do_delete {
 
   open(FH, ">${memberfile}.LCK") or $form->error("${memberfile}.LCK : $!");
   close(FH);
-  
+
   if (! open(FH, "+<$memberfile")) {
     unlink "${memberfile}.LCK";
     $form->error("$memberfile : $!");
@@ -460,10 +460,10 @@ sub do_delete {
     last if /^\[/;
     push @member, $_;
   }
-  
+
   # get variables for dbname
   while ($_ = shift @db) {
-    
+
     if (/^\[(.*)\]/) {
       $user = $+;
       next;
@@ -504,7 +504,7 @@ sub do_delete {
   for (@member) {
     print FH $_;
   }
-  
+
   for $db (sort keys %member) {
     for $user (sort keys %{ $member{$db} }) {
       if ($user) {
@@ -517,7 +517,7 @@ sub do_delete {
     }
   }
   close(FH);
-  
+
   # delete spool and template directory if it is not shared
   # compare dbname and templates
   for (qw(dbname spool)) {
@@ -546,7 +546,7 @@ sub do_delete {
       rmdir "$dir";
     }
   }
-  
+
   unlink "${memberfile}.LCK";
   unlink "$userspath/$form->{dbname}.LCK";
 
@@ -583,12 +583,12 @@ sub change_password {
       <table width=100%>
         <tr>
           <th align=right>|.$locale->text('Password').qq|</th>
-	  <td><input type=password name=new_password></td>
-	</tr>
-	<tr>
-	  <th align=right>|.$locale->text('Confirm').qq|</th>
-	  <td><input type=password name=confirm_password></td>
-	</tr>
+          <td><input type=password name=new_password></td>
+        </tr>
+        <tr>
+          <th align=right>|.$locale->text('Confirm').qq|</th>
+          <td><input type=password name=confirm_password></td>
+        </tr>
       </table>
     </td>
   </tr>
@@ -633,7 +633,7 @@ sub do_change_password {
 
     open(FH, ">${memberfile}.LCK") or $form->error("${memberfile}.LCK : $!");
     close(FH);
-  
+
     if (! open(FH, "+<$memberfile")) {
       unlink "${memberfile}.LCK";
       $form->error("$memberfile : $!");
@@ -654,7 +654,7 @@ sub do_change_password {
         } until /^\s+$/;
       }
     }
-    
+
     # change password
     User->dbpassword(\%$form);
 
@@ -699,7 +699,7 @@ sub do_change_password {
   } else {
 
     $root->{password} = $form->{new_password};
-    
+
     if (! -f $memberfile) {
       open(FH, ">$memberfile") or $form->error("$memberfile : $!");
       print FH qq|# SQL-Ledger members
@@ -708,14 +708,14 @@ sub do_change_password {
 |;
       close FH;
     }
-   
+
     $root->{'root login'} = 1;
     $root->{login} = "root login";
     $root->save_member($memberfile);
 
     $form->{password} = $form->{new_password};
     &create_config;
-    
+
   }
 
   $form->{callback} = "$form->{script}?action=list_datasets&path=$form->{path}&password=$form->{password}";
@@ -747,10 +747,10 @@ sub change_host {
   <tr>
     <td>
       <table width=100%>
-	<tr>
-	  <th align=right>|.$locale->text('Host').qq|</th>
-	  <td><input name=new_host size=40 value=$form->{dbhost}></td>
-	</tr>
+        <tr>
+          <th align=right>|.$locale->text('Host').qq|</th>
+          <td><input name=new_host size=40 value=$form->{dbhost}></td>
+        </tr>
       </table>
     </td>
   </tr>
@@ -868,58 +868,58 @@ sub check_password {
     if ($form->{password}) {
       $form->{callback} .= "&password=$form->{password}" if $form->{callback};
       if ($root->{password} ne crypt $form->{password}, 'ro') {
-	&getpassword;
-	exit;
+        &getpassword;
+        exit;
       }
 
       # create config
       &create_config;
-      
+
     } else {
 
       if ($ENV{HTTP_USER_AGENT}) {
-	$ENV{HTTP_COOKIE} =~ s/;\s*/;/g;
-	@cookies = split /;/, $ENV{HTTP_COOKIE};
-	%cookie = ();
-	foreach (@cookies) {
-	  ($name,$value) = split /=/, $_, 2;
-	  $cookie{$name} = $value;
-	}
+        $ENV{HTTP_COOKIE} =~ s/;\s*/;/g;
+        @cookies = split /;/, $ENV{HTTP_COOKIE};
+        %cookie = ();
+        foreach (@cookies) {
+          ($name,$value) = split /=/, $_, 2;
+          $cookie{$name} = $value;
+        }
 
-	$cookie = ($form->{path} eq 'bin/lynx') ? $cookie{login} : $cookie{"SL-root"};
+        $cookie = ($form->{path} eq 'bin/lynx') ? $cookie{login} : $cookie{"SL-root"};
 
         if ($cookie) {
-	  $form->{sessioncookie} = $cookie;
+          $form->{sessioncookie} = $cookie;
 
-	  $s = "";
-	  %ndx = ();
-	  $l = length $form->{sessioncookie};
+          $s = "";
+          %ndx = ();
+          $l = length $form->{sessioncookie};
 
-	  for $i (0 .. $l - 1) {
-	    $j = substr($rootconfig{sessionkey}, $i * 2, 2);
-	    $ndx{$j} = substr($cookie, $i, 1);
-	  }
+          for $i (0 .. $l - 1) {
+            $j = substr($rootconfig{sessionkey}, $i * 2, 2);
+            $ndx{$j} = substr($cookie, $i, 1);
+          }
 
-	  for (sort keys %ndx) {
-	    $s .= $ndx{$_};
-	  }
+          for (sort keys %ndx) {
+            $s .= $ndx{$_};
+          }
 
-	  $l = 4;
-	  $login = substr($s, 0, $l);
-	  $time = substr($s, -10);
-	  $password = substr($s, $l, (length $s) - ($l + 10));
+          $l = 4;
+          $login = substr($s, 0, $l);
+          $time = substr($s, -10);
+          $password = substr($s, $l, (length $s) - ($l + 10));
 
-	  if ((time > $time) || ($login ne 'root') || ($root->{password} ne crypt $password, 'ro')) {
-	    &getpassword;
-	    exit;
-	  }
-	} else {
-	  &getpassword;
-	  exit;
-	}
+          if ((time > $time) || ($login ne 'root') || ($root->{password} ne crypt $password, 'ro')) {
+            &getpassword;
+            exit;
+          }
+        } else {
+          &getpassword;
+          exit;
+        }
       } else {
-	&getpassword;
-	exit;
+        &getpassword;
+        exit;
       }
     }
   }
@@ -938,22 +938,22 @@ sub dbdriver_defaults {
   # load some defaults for the selected driver
   %driverdefaults = ( 'Pg' => { dbport => '',
                                 dbuser => 'sql-ledger',
-		             dbdefault => 'template1',
-				dbhost => '',
-			 connectstring => $locale->text('Connect to')
-			      },
+                             dbdefault => 'template1',
+                                dbhost => '',
+                         connectstring => $locale->text('Connect to')
+                              },
                   'Oracle' => { dbport => '1521',
-		                dbuser => 'oralin',
-		             dbdefault => $sid,
-				dbhost => `hostname`,
-			 connectstring => 'SID'
-			      },
+                                dbuser => 'oralin',
+                             dbdefault => $sid,
+                                dbhost => `hostname`,
+                         connectstring => 'SID'
+                              },
                    'Sybase' => { dbport => '',
-		                dbuser => 'sql-ledger',
-		             dbdefault => '',
-				dbhost => '',
-			 connectstring => $locale->text('Connect to')
-			      }
+                                dbuser => 'sql-ledger',
+                             dbdefault => '',
+                                dbhost => '',
+                         connectstring => $locale->text('Connect to')
+                              }
                     );
 
   $driverdefaults{PgPP} = $driverdefaults{Pg};
@@ -961,16 +961,16 @@ sub dbdriver_defaults {
   for (keys %{ $driverdefaults{Pg} }) { $form->{$_} = $driverdefaults{$form->{dbdriver}}{$_} }
 
 }
-  
+
 
 sub dbselect_source {
 
   &dbdriver_defaults;
-  
+
   $form->{title} = "SQL-Ledger / ".$locale->text('Add Dataset');
-  
+
   $form->{callback} = "$form->{script}?action=list_datasets&path=$form->{path}";
-  
+
   $focus = "dbhost";
 
   $form->header;
@@ -988,22 +988,22 @@ sub dbselect_source {
   <tr>
     <td>
       <table>
-	<tr>
-	  <th align=right>|.$locale->text('Host').qq|</th>
-	  <td><input name=dbhost size=25 value=$form->{dbhost}></td>
-	  <th align=right>|.$locale->text('Port').qq|</th>
-	  <td><input name=dbport size=5 value=$form->{dbport}></td>
-	</tr>
-	<tr>
-	  <th align=right>|.$locale->text('User').qq|</th>
-	  <td><input name=dbuser size=10 value=$form->{dbuser}></td>
-	  <th align=right>|.$locale->text('Password').qq|</th>
-	  <td><input type=password name=dbpasswd size=10 value=$form->{dbpasswd}></td>
-	</tr>
-	<tr>
-	  <th align=right>$form->{connectstring}</th>
-	  <td colspan=3><input name=dbdefault size=10 value=$form->{dbdefault}></td>
-	</tr>
+        <tr>
+          <th align=right>|.$locale->text('Host').qq|</th>
+          <td><input name=dbhost size=25 value=$form->{dbhost}></td>
+          <th align=right>|.$locale->text('Port').qq|</th>
+          <td><input name=dbport size=5 value=$form->{dbport}></td>
+        </tr>
+        <tr>
+          <th align=right>|.$locale->text('User').qq|</th>
+          <td><input name=dbuser size=10 value=$form->{dbuser}></td>
+          <th align=right>|.$locale->text('Password').qq|</th>
+          <td><input type=password name=dbpasswd size=10 value=$form->{dbpasswd}></td>
+        </tr>
+        <tr>
+          <th align=right>$form->{connectstring}</th>
+          <td colspan=3><input name=dbdefault size=10 value=$form->{dbdefault}></td>
+        </tr>
       </table>
     </td>
   </tr>
@@ -1046,7 +1046,7 @@ sub create_dataset {
   closedir SQLDIR;
 
   $form->{name} ||= $locale->text('Admin');
-  
+
   $templatedir = "doc/templates";
 
   if (-d "$templatedir") {
@@ -1090,7 +1090,7 @@ sub create_dataset {
   }
 
   $form->{title} = "SQL-Ledger / ".$locale->text('Create Dataset');
-  
+
   $form->header;
 
   print qq|
@@ -1111,9 +1111,9 @@ sub create_dataset {
           <td>
 |;
 
-	  for (@dbsources) { print "[&nbsp;$_&nbsp;] " }
-	  
-	  print qq|
+          for (@dbsources) { print "[&nbsp;$_&nbsp;] " }
+
+          print qq|
           </td>
         </tr>
         <tr>
@@ -1153,7 +1153,7 @@ sub create_dataset {
   }
 
   print qq|
- 
+
         <tr>
           <th align=right nowrap>|.$locale->text('Create Chart of Accounts').qq|</th>
           <td><select name=chart>|.$form->select_option($selectchart).qq|</select></td>
@@ -1173,7 +1173,7 @@ sub create_dataset {
 
   $form->{nextsub} = "dbcreate";
   $form->{callback} = "$form->{script}?action=list_datasets&path=$form->{path}";
-  
+
   $form->hide_form(qw(dbdriver dbuser dbhost dbport dbpasswd dbdefault path nextsub callback));
 
   print qq|
@@ -1189,7 +1189,7 @@ sub create_dataset {
 sub dbcreate {
 
   $form->isblank("db", $locale->text('Dataset missing!'));
-  
+
   $form->error("$memberfile : ".$locale->text('locked!')) if (-f ${memberfile}.LCK);
 
   # check if dbname is already in use
@@ -1214,7 +1214,7 @@ sub dbcreate {
 
   open(FH, ">${memberfile}.LCK") or $form->error("${memberfile}.LCK : $!");
   close(FH);
- 
+
   $templatedir = "doc/templates";
 
   umask(002);
@@ -1224,7 +1224,7 @@ sub dbcreate {
   }
 
   $form->{company} ||= $form->{db};
-  
+
   # create user template directory and copy master files
   $form->{templates} = ($form->{usetemplates}) ? "$form->{usetemplates}" : "$form->{db}";
 
@@ -1241,7 +1241,7 @@ sub dbcreate {
     if (! -f "$templates/$form->{templates}/$file") {
       open(TEMP, "$templatedir/$form->{mastertemplates}/$file") or $form->error("$templatedir/$form->{mastertemplates}/$file : $!");
       open(NEW, ">$templates/$form->{templates}/$file") or $form->error("$templates/$form->{templates}/$file : $!");
-      
+
       for (<TEMP>) { print NEW $_ }
       close(NEW);
       close(TEMP);
@@ -1262,7 +1262,7 @@ sub dbcreate {
   if (! -d "$spool/$form->{db}") {
     mkdir "$spool/$form->{db}", oct("771") or $form->error("$spool/$form->{db} : $!");
   }
-  
+
   # add admin to members file
   if (! open(FH, ">>$memberfile")) {
     unlink "${memberfile}.LCK";
@@ -1283,7 +1283,7 @@ sub dbcreate {
   $form->{vclimit} = "1000";
 
   print FH "\[$form->{login}\]\n";
-  
+
   if ($form->{dbpasswd}) {
     $form->{dbpasswd} = pack 'u', $form->{dbpasswd};
     chomp $form->{dbpasswd};
@@ -1293,7 +1293,7 @@ sub dbcreate {
     srand( time() ^ ($$ + ($$ << 15)) );
     $form->{password} = crypt $form->{adminpassword}, 'ad';
   }
-  
+
   for (sort (qw(company name email dbconnect dbdriver dbhost dbname dboptions dbpasswd dbport dbuser stylesheet password dateformat numberformat charset vclimit templates))) {
     print FH "$_=$form->{$_}\n" if $form->{$_};
   }
@@ -1301,7 +1301,7 @@ sub dbcreate {
   close(FH);
 
   unlink "${memberfile}.LCK";
- 
+
   delete $form->{password};
 
   &list_datasets;
@@ -1319,7 +1319,7 @@ sub unlock_system {
     $filename = "$userspath/nologin.LCK";
   }
   unlink "$filename";
-  
+
   $form->{callback} = "$form->{script}?action=list_datasets&path=$form->{path}";
 
   $form->redirect($locale->text('Lockfile removed!'));
@@ -1331,9 +1331,9 @@ sub lock_dataset { &do_lock_system }
 
 
 sub lock_system {
-  
+
   $form->{title} = "SQL-Ledger / ";
-  
+
   if ($form->{dbname}) {
     $form->{title} .= $locale->text('Lock Dataset')." / ".$form->{dbname};
   } else {
@@ -1357,10 +1357,10 @@ sub lock_system {
   <tr>
     <td>
       <table>
-	<tr>
-	  <th align=right>|.$locale->text('Lock Message').qq|</th>
-	  <td><input name=lock size=25></td>
-	</tr>
+        <tr>
+          <th align=right>|.$locale->text('Lock Message').qq|</th>
+          <td><input name=lock size=25></td>
+        </tr>
       </table>
     </td>
   </tr>
@@ -1369,7 +1369,7 @@ sub lock_system {
 
 <br>
 <input type=submit class=submit name=action value="|.$locale->text('Continue').qq|">|;
-  
+
   $form->{callback} = "$form->{script}?action=list_datasets&path=$form->{path}";
   $form->{nextsub} = "do_lock_system";
   $form->hide_form(qw(callback dbname dbdriver path nextsub));
@@ -1396,9 +1396,114 @@ sub do_lock_system {
     print FH $form->{lock};
   }
   close(FH);
-  
+
   $form->redirect($locale->text('Lockfile created!'));
 
 }
 
 
+
+=encoding utf8
+
+=head1 NAME
+
+bin/mozilla/admin.pl - Setup module
+
+=head1 DESCRIPTION
+
+L<bin::mozilla::admin> contains the setup module,
+add/edit/delete users.
+
+=head1 DEPENDENCIES
+
+L<bin::mozilla::admin>
+
+=over
+
+=item * uses
+L<SL::Form>,
+L<SL::User>
+
+=item * requires
+L<DBI>,
+L<bin::mozilla::pw>
+
+=item * optionally requires
+C<$userspath/${rootname}.conf>,
+F<< bin/mozilla/custom/admin.pl >>
+
+=back
+
+=head1 FUNCTIONS
+
+L<bin::mozilla::admin> implements the following functions:
+
+=head2 Oracle
+
+=head2 Pg
+
+=head2 PgPP
+
+=head2 Sybase
+
+=head2 add_dataset
+
+Calls C<< &{ "$form->{dbdriver}" } >>.
+
+=head2 adminlogin
+
+=head2 change_host
+
+=head2 change_password
+
+=head2 check_password
+
+=head2 continue
+
+Calls C<< &{ $form->{nextsub} } >>.
+
+=head2 create_config
+
+=head2 create_dataset
+
+=head2 dbcreate
+
+=head2 dbdriver_defaults
+
+=head2 dbselect_source
+
+=head2 delete
+
+=head2 do_change_host
+
+=head2 do_change_password
+
+=head2 do_delete
+
+=head2 do_lock_system
+
+=head2 edit
+
+=head2 form_footer
+
+=head2 form_header
+
+=head2 list_datasets
+
+=head2 lock_dataset
+
+=head2 lock_system
+
+=head2 login
+
+=head2 logout
+
+=head2 unlock_dataset
+
+=head2 unlock_system
+
+=head2 yes
+
+Calls C<< &{ $form->{nextsub} } >>.
+
+=cut

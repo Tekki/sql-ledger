@@ -13,6 +13,7 @@ The `full` branch, which is checked out by default, provides some additions:
 * WLprinter
 * real Unicode support
 * JSON API
+* minimalistic documentation
 * Swiss charts of accounts in German, French and Italian
 * security patch for template editor
 
@@ -24,7 +25,7 @@ To install the program on Debian, you can use the [Ansible Role for SQL-Ledger](
 WLprinter
 =========
 
-WLprinter, included in the `full` branch, is a Java program that is executed on the client PC and allows to print directly from SQL-Ledger to your local printers. It is available for printing if you add a printer with command `wlprinter` at `System--Workstations`. The client program is started from `Batch--WLprinter`. You will probably have to add a Java security exception for your SQL-Ledger server.
+WLprinter, included in the `full` branch, is a Java program that is executed on the client PC and allows to print directly from SQL-Ledger to your local printers. It is available for printing if you add a printer with command `wlprinter` at `System--Workstations`. The client program is started from `Batch--WLprinter`. You will have to add a Java security exception for your SQL-Ledger server.
 
 Unicode Support
 ===============
@@ -38,4 +39,4 @@ As mentioned above, what you find here is more or less a copy of the code from D
 
 It follows that if you want the DWS code to change, you have to speak with them. If on the other hand you want this repo to change, don't care about the moon calendar and create an issue.
 
-It was mentioned too that the `full` branch contains some additions, like Unicode support. So it's probably more correct to call it a superset of the DWS code.
+It was mentioned too that the `full` branch contains some additions, like Unicode support and documentation. So it's probably more correct to call it a superset of the DWS code.

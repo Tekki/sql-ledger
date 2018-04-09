@@ -22,23 +22,23 @@ sub get_part {
   my $i;
 
   $form->{id} *= 1;
-  
+
   my $query = qq|SELECT p.*,
                  c1.accno AS inventory_accno, c1.description AS inventory_description,
-		 c2.accno AS income_accno, c2.description AS income_description,
-		 c3.accno AS expense_accno, c3.description AS expense_description,
-		 pg.partsgroup, pg.code AS partsgroupcode,
-		 l1.description AS inventory_translation,
-		 l2.description AS income_translation,
-		 l3.description AS expense_translation
-	         FROM parts p
-		 LEFT JOIN chart c1 ON (p.inventory_accno_id = c1.id)
-		 LEFT JOIN translation l1 ON (l1.trans_id = c1.id AND l1.language_code = '$myconfig->{countrycode}')
-		 LEFT JOIN chart c2 ON (p.income_accno_id = c2.id)
-		 LEFT JOIN translation l2 ON (l2.trans_id = c2.id AND l2.language_code = '$myconfig->{countrycode}')
-		 LEFT JOIN chart c3 ON (p.expense_accno_id = c3.id)
-		 LEFT JOIN translation l3 ON (l3.trans_id = c3.id AND l3.language_code = '$myconfig->{countrycode}')
-		 LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
+                 c2.accno AS income_accno, c2.description AS income_description,
+                 c3.accno AS expense_accno, c3.description AS expense_description,
+                 pg.partsgroup, pg.code AS partsgroupcode,
+                 l1.description AS inventory_translation,
+                 l2.description AS income_translation,
+                 l3.description AS expense_translation
+                 FROM parts p
+                 LEFT JOIN chart c1 ON (p.inventory_accno_id = c1.id)
+                 LEFT JOIN translation l1 ON (l1.trans_id = c1.id AND l1.language_code = '$myconfig->{countrycode}')
+                 LEFT JOIN chart c2 ON (p.income_accno_id = c2.id)
+                 LEFT JOIN translation l2 ON (l2.trans_id = c2.id AND l2.language_code = '$myconfig->{countrycode}')
+                 LEFT JOIN chart c3 ON (p.expense_accno_id = c3.id)
+                 LEFT JOIN translation l3 ON (l3.trans_id = c3.id AND l3.language_code = '$myconfig->{countrycode}')
+                 LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
                  WHERE p.id = $form->{id}|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -51,34 +51,34 @@ sub get_part {
 
   for (keys %$ref) { $form->{$_} = $ref->{$_} }
   $sth->finish;
-  
+
   # part, service item or labor
   $form->{item} = ($form->{inventory_accno_id}) ? 'part' : 'service';
   $form->{item} = 'labor' if ! $form->{income_accno_id};
   $form->{item} = 'assembly' if $form->{assembly};
   $form->{item} = 'kit' unless $form->{inventory_accno_id} + $form->{income_accno_id} + $form->{expense_accno_id};
-    
+
   if ($form->{assembly} || $form->{item} eq 'kit') {
 
     # retrieve assembly items
     $query = qq|SELECT p.id, p.partnumber, p.description,
                 p.sellprice, p.weight, a.qty, a.bom, a.adj, p.unit,
-		p.lastcost, p.listprice, p.onhand,
-		pg.partsgroup, p.assembly, p.partsgroup_id
+                p.lastcost, p.listprice, p.onhand,
+                pg.partsgroup, p.assembly, p.partsgroup_id
                 FROM parts p
-		JOIN assembly a ON (a.parts_id = p.id)
-		LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
-		WHERE a.aid = $form->{id}
-		ORDER BY a.id|;
+                JOIN assembly a ON (a.parts_id = p.id)
+                LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
+                WHERE a.aid = $form->{id}
+                ORDER BY a.id|;
 
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
-    
+
     $form->{assembly_rows} = 0;
     while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
       $form->{assembly_rows}++;
       foreach my $key ( keys %{ $ref } ) {
-	$form->{"${key}_$form->{assembly_rows}"} = $ref->{$key};
+        $form->{"${key}_$form->{assembly_rows}"} = $ref->{$key};
       }
     }
     $sth->finish;
@@ -98,9 +98,9 @@ sub get_part {
 
       $sth = $dbh->prepare($query);
       $sth->execute || $form->dberror($query);
-      
+
       while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-	push @{ $form->{makemodels} }, $ref;
+        push @{ $form->{makemodels} }, $ref;
       }
       $sth->finish;
     }
@@ -114,7 +114,7 @@ sub get_part {
                 ORDER BY warehouse|;
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
-    
+
     while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
       push @{ $form->{inventory} }, $ref if $ref->{onhand};
     }
@@ -125,9 +125,9 @@ sub get_part {
   # now get accno for taxes
   $query = qq|SELECT c.accno
               FROM chart c, partstax pt
-	      WHERE pt.chart_id = c.id
-	      AND pt.parts_id = $form->{id}|;
-  
+              WHERE pt.chart_id = c.id
+              AND pt.parts_id = $form->{id}|;
+
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
@@ -139,38 +139,38 @@ sub get_part {
 
   # is it an orphan
   $form->{orphaned} = &orphaned("", $dbh, $form);
- 
+
   $form->{orphaned} = 0 if $form->{project_id};
 
   if ($form->{item} =~ /(part|service)/) {
     # get vendors
     $query = qq|SELECT v.id, v.name, pv.partnumber,
                 pv.lastcost, pv.leadtime, pv.curr AS vendorcurr
-		FROM partsvendor pv
-		JOIN vendor v ON (v.id = pv.vendor_id)
-		WHERE pv.parts_id = $form->{id}
-		ORDER BY 2|;
-    
+                FROM partsvendor pv
+                JOIN vendor v ON (v.id = pv.vendor_id)
+                WHERE pv.parts_id = $form->{id}
+                ORDER BY 2|;
+
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
-    
+
     while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
       push @{ $form->{vendormatrix} }, $ref;
     }
     $sth->finish;
   }
- 
+
   # get matrix
   if ($form->{item} ne 'labor') {
     $query = qq|SELECT pc.pricebreak, pc.sellprice AS customerprice,
-		pc.curr AS customercurr,
-		pc.validfrom, pc.validto,
-		c.name, c.id AS cid, g.pricegroup, g.id AS gid
-		FROM partscustomer pc
-		LEFT JOIN customer c ON (c.id = pc.customer_id)
-		LEFT JOIN pricegroup g ON (g.id = pc.pricegroup_id)
-		WHERE pc.parts_id = $form->{id}
-		ORDER BY c.name, g.pricegroup, pc.pricebreak|;
+                pc.curr AS customercurr,
+                pc.validfrom, pc.validto,
+                c.name, c.id AS cid, g.pricegroup, g.id AS gid
+                FROM partscustomer pc
+                LEFT JOIN customer c ON (c.id = pc.customer_id)
+                LEFT JOIN pricegroup g ON (g.id = pc.pricegroup_id)
+                WHERE pc.parts_id = $form->{id}
+                ORDER BY c.name, g.pricegroup, pc.pricebreak|;
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
 
@@ -181,28 +181,28 @@ sub get_part {
   }
 
   $dbh->disconnect;
-  
+
 }
 
 
 sub orphaned {
   my ($self, $dbh, $form) = @_;
-  
+
   my $query = qq|SELECT parts_id
               FROM invoice
-	      WHERE parts_id = $form->{id}
-	    UNION
-	      SELECT parts_id
-	      FROM orderitems
-	      WHERE parts_id = $form->{id}
-	    UNION
-	      SELECT parts_id
-	      FROM assembly
-	      WHERE parts_id = $form->{id}
-	    UNION
-	      SELECT parts_id
-	      FROM jcitems
-	      WHERE parts_id = $form->{id}|;
+              WHERE parts_id = $form->{id}
+            UNION
+              SELECT parts_id
+              FROM orderitems
+              WHERE parts_id = $form->{id}
+            UNION
+              SELECT parts_id
+              FROM assembly
+              WHERE parts_id = $form->{id}
+            UNION
+              SELECT parts_id
+              FROM jcitems
+              WHERE parts_id = $form->{id}|;
   my ($orphaned) = $dbh->selectrow_array($query);
 
   !$orphaned;
@@ -214,7 +214,7 @@ sub save {
   my ($self, $myconfig, $form, $dbh) = @_;
 
   my $disconnect;
-  
+
   # connect to database, turn off AutoCommit
   if (! $dbh) {
     $disconnect = 1;
@@ -223,29 +223,29 @@ sub save {
 
   # undo amount formatting
   for (qw(rop weight listprice sellprice lastcost onhand)) { $form->{$_} = $form->parse_amount($myconfig, $form->{$_}) }
-  
+
   $form->{assembly} = ($form->{item} eq 'assembly') ? 1 : 0;
   for (qw(id alternate obsolete)) { $form->{$_} *= 1 }
 
   if ($form->{id} && $form->{changeup}) {
-    
+
     if (!$form->{orphaned}) {
-      
+
       if ($form->{assembly}) {
-	
+
         my $stock = new Form;
         $stock->{rowcount} = 1;
         $stock->{qty_1} = $form->{oldonhand} * -1;
         $stock->{id_1} = $form->{id};
 
         IC->stock_assemblies($myconfig, \%$stock, $dbh);
-        
+
         $query = qq|UPDATE parts SET obsolete = '1'
               WHERE id = $form->{id}|;
         $dbh->do($query) || $form->dberror($query);
 
       } else {
-	
+
         $query = qq|UPDATE parts SET obsolete = '1', onhand = 0
                     WHERE id = $form->{id}|;
         $dbh->do($query) || $form->dberror($query);
@@ -253,31 +253,31 @@ sub save {
       $form->{id} = 0;
       $form->{oldonhand} = 0;
     }
-    
+
   }
-  
+
   ($form->{inventory_accno}) = split(/--/, $form->{IC_inventory});
   ($form->{expense_accno}) = split(/--/, $form->{IC_expense});
   ($form->{income_accno}) = split(/--/, $form->{IC_income});
 
   $form->{makemodel} = (($form->{make_1}) || ($form->{model_1})) ? 1 : 0;
-  
+
   my $query;
   my $sth;
   my $i;
   my $vendor_id;
   my $customer_id;
-  
+
   if ($form->{id}) {
 
     # get old price
     $query = qq|SELECT id, listprice, sellprice, lastcost, weight, project_id
                 FROM parts
-		WHERE id = $form->{id}|;
+                WHERE id = $form->{id}|;
     my ($id, $listprice, $sellprice, $lastcost, $weight, $project_id) = $dbh->selectrow_array($query);
 
     if ($id) {
-      
+
       if ($form->{item} eq 'assembly' &! $project_id) {
         # if item is part of an assembly adjust all assemblies
         $query = qq|SELECT aid, qty, adj
@@ -297,7 +297,7 @@ sub save {
                     WHERE parts_id = $form->{id}|;
         $dbh->do($query) || $form->dberror($query);
       }
-       
+
       if ($form->{item} !~ /(service|labor)/) {
         # delete makemodel records
         $query = qq|DELETE FROM makemodel
@@ -337,14 +337,14 @@ sub save {
 
       # delete tax records
       $query = qq|DELETE FROM partstax
-		  WHERE parts_id = $form->{id}|;
+                  WHERE parts_id = $form->{id}|;
       $dbh->do($query) || $form->dberror($query);
-      
+
       # delete matrix
       $query = qq|DELETE FROM partscustomer
-		  WHERE parts_id = $form->{id}|;
+                  WHERE parts_id = $form->{id}|;
       $dbh->do($query) || $form->dberror($query);
-      
+
     } else {
       $query = qq|INSERT INTO parts (id)
                   VALUES ($form->{id})|;
@@ -352,7 +352,7 @@ sub save {
     }
 
   } else {
-  
+
     my $uid = localtime;
     $uid .= $$;
 
@@ -368,7 +368,7 @@ sub save {
     $sth->finish;
 
     $form->{orphaned} = 1;
-    
+
   }
 
   my $partsgroup_id;
@@ -429,30 +429,30 @@ sub save {
   for (split / /, $form->{taxaccounts}) {
     if ($form->{"IC_tax_$_"}) {
       $query = qq|INSERT INTO partstax (parts_id, chart_id)
-                  VALUES ($form->{id}, 
-		              (SELECT id
-			            FROM chart
-			            WHERE accno = '$_'))|;
+                  VALUES ($form->{id},
+                              (SELECT id
+                                    FROM chart
+                                    WHERE accno = '$_'))|;
       $dbh->do($query) || $form->dberror($query);
     }
   }
-  
+
   @lt = localtime;
   $lt[5] += 1900;
   $lt[4]++;
   $lt[4] = substr("0$lt[4]", -2);
   $lt[3] = substr("0$lt[3]", -2);
   my $shippingdate = "$lt[5]$lt[4]$lt[3]";
-  
+
   ($form->{employee}, $form->{employee_id}) = $form->get_employee($dbh);
- 
+
   # add assembly records
   if ($form->{item} eq 'assembly' && !$project_id) {
-    
+
     if ($form->{orphaned}) {
       for $i (1 .. $form->{assembly_rows}) {
         $form->{"qty_$i"} = $form->parse_amount($myconfig, $form->{"qty_$i"});
-	
+
         if ($form->{"qty_$i"}) {
           for (qw(bom adj)) { $form->{"${_}_$i"} *= 1 }
           $query = qq|INSERT INTO assembly (aid, parts_id, qty, bom, adj)
@@ -463,7 +463,7 @@ sub save {
         }
       }
     }
-   
+
     # adjust onhand for the assembly parts
     &adjust_inventory($dbh, $form, $form->{id}, $form->{onhand} - $form->{oldonhand});
 
@@ -471,10 +471,10 @@ sub save {
 
   # add kit records
   if ($form->{item} eq 'kit') {
-    
+
     for $i (1 .. $form->{assembly_rows}) {
       $form->{"qty_$i"} = $form->parse_amount($myconfig, $form->{"qty_$i"});
-      
+
       if ($form->{"qty_$i"}) {
         for (qw(bom adj)) { $form->{"${_}_$i"} *= 1 }
         $query = qq|INSERT INTO assembly (aid, parts_id, qty, bom, adj)
@@ -489,14 +489,14 @@ sub save {
 
   # add vendors
   if ($form->{item} !~ /(assembly|kit)/) {
-    
+
     for $i (1 .. $form->{vendor_rows}) {
       if (($form->{"vendor_$i"} ne "") && $form->{"lastcost_$i"}) {
 
         (undef, $vendor_id) = split /--/, $form->{"vendor_$i"};
-	
+
         for (qw(lastcost leadtime)) { $form->{"${_}_$i"} = $form->parse_amount($myconfig, $form->{"${_}_$i"})}
-        
+
         $query = qq|INSERT INTO partsvendor (vendor_id, parts_id, partnumber,
                     lastcost, leadtime, curr)
                     VALUES ($vendor_id, $form->{id},|
@@ -507,8 +507,8 @@ sub save {
       }
     }
   }
-  
-  
+
+
   # add pricematrix
   for $i (1 .. $form->{customer_rows}) {
 
@@ -518,10 +518,10 @@ sub save {
 
       (undef, $customer_id) = split /--/, $form->{"customer_$i"};
       $customer_id *= 1;
-      
+
       (undef, $pricegroup_id) = split /--/, $form->{"pricegroup_$i"};
       $pricegroup_id *= 1;
-      
+
       $query = qq|INSERT INTO partscustomer (parts_id, customer_id,
                   pricegroup_id, pricebreak, sellprice, curr,
                   validfrom, validto)
@@ -536,30 +536,30 @@ sub save {
 
   if ($form->{item} =~ /(part|labor)/) {
     $form->update_balance($dbh,
-			  "parts",
-			  "onhand",
-			  qq|id = $form->{id}|,
-			  $form->{onhand} - $form->{oldonhand});
+                          "parts",
+                          "onhand",
+                          qq|id = $form->{id}|,
+                          $form->{onhand} - $form->{oldonhand});
   }
-  
-  my %audittrail = ( tablename	=> 'ic',
+
+  my %audittrail = ( tablename        => 'ic',
                      reference => $form->{partnumber},
-		     formname => $form->{item},
+                     formname => $form->{item},
                      action     => 'saved',
-		     id => $form->{id}
-		     );
+                     id => $form->{id}
+                     );
 
   $form->audittrail($dbh, "", \%audittrail);
-  
+
   $form->save_reference($dbh, $form->{item});
-  
+
   # commit
   my $rc = $dbh->commit;
 
   $dbh->disconnect if $disconnect;
 
   $rc;
-  
+
 }
 
 
@@ -568,20 +568,20 @@ sub update_assembly {
 
   my $formlistprice = $form->{listprice};
   my $formsellprice = $form->{sellprice};
-  
+
   if (!$adj) {
     $formlistprice = $listprice;
     $formsellprice = $sellprice;
   }
-  
+
   my $query = qq|SELECT aid, qty, adj
                  FROM assembly
-	         WHERE parts_id = $id|;
+                 WHERE parts_id = $id|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   $form->{$id} = 1;
-  
+
   while (my ($pid, $aqty, $aadj) = $sth->fetchrow_array) {
     &update_assembly($dbh, $form, $pid, $aqty * $qty, $aadj, $listprice, $sellprice, $lastcost, $weight) if !$form->{$pid};
   }
@@ -589,31 +589,31 @@ sub update_assembly {
 
   $query = qq|UPDATE parts
               SET listprice = listprice + $qty * ($formlistprice - $listprice),
-	          sellprice = sellprice + $qty * ($formsellprice - $sellprice),
-		  lastcost = lastcost + $qty * ($form->{lastcost} - $lastcost),
+                  sellprice = sellprice + $qty * ($formsellprice - $sellprice),
+                  lastcost = lastcost + $qty * ($form->{lastcost} - $lastcost),
                   weight = weight + $qty * ($form->{weight} - $weight)
-	      WHERE id = $id|;
+              WHERE id = $id|;
   $dbh->do($query) || $form->dberror($query);
 
   delete $form->{$id};
-  
+
 }
 
 
 sub retrieve_items {
   my ($self, $myconfig, $form) = @_;
-  
+
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
   my $var;
   my $where = '1 = 1';
-  
+
   if ($form->{partnumber} ne "") {
     $var = $form->like(lc $form->{partnumber});
     $where .= " AND lower(p.partnumber) LIKE '$var'";
   }
-  
+
   if ($form->{description} ne "") {
     $var = $form->like(lc $form->{description});
     $where .= " AND lower(p.description) LIKE '$var'";
@@ -629,7 +629,7 @@ sub retrieve_items {
   my $query = qq|SELECT p.id, p.partnumber, p.description,
                  p.bin, p.onhand, p.rop, p.assembly
                  FROM parts p
- 		 WHERE $where|;
+                  WHERE $where|;
 
   my @sf = qw(partnumber description bin);
   my %ordinal = $form->ordinal_order($dbh, $query);
@@ -637,72 +637,72 @@ sub retrieve_items {
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
-  
+
   my $ref;
-  
+
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     push @{ $form->{all_items} }, $ref;
   }
   $sth->finish;
-  
+
   if ($form->{warehouse} ne "") {
     my ($warehouse, $warehouse_id) = split /--/, $form->{warehouse};
     $warehouse_id *= 1;
     $query = qq|SELECT SUM(qty) AS onhand, '$warehouse' AS warehouse,
-		'$warehouse_id' AS warehouse_id
-		FROM inventory
-		WHERE warehouse_id = $warehouse_id
-		AND parts_id = ?|;
+                '$warehouse_id' AS warehouse_id
+                FROM inventory
+                WHERE warehouse_id = $warehouse_id
+                AND parts_id = ?|;
   } else {
     $query = qq|SELECT SUM(i.qty) AS onhand, w.description AS warehouse,
-		w.id AS warehouse_id
-		FROM inventory i
-		JOIN warehouse w ON (w.id = i.warehouse_id)
-		WHERE i.parts_id = ?
-		GROUP BY w.description, w.id|;
+                w.id AS warehouse_id
+                FROM inventory i
+                JOIN warehouse w ON (w.id = i.warehouse_id)
+                WHERE i.parts_id = ?
+                GROUP BY w.description, w.id|;
   }
 
   $sth = $dbh->prepare($query) || $form->dberror($query);
 
   my @tp;
-  
+
   for (@{ $form->{all_items} }) {
 
     @tp = ();
-    
+
     $sth->execute($_->{id}) || $form->dberror($query);
-    
+
     if ($form->{warehouse} ne "") {
-      
+
       $ref = $sth->fetchrow_hashref(NAME_lc);
       if ($ref->{onhand} != 0) {
-	$_->{onhand} = $ref->{onhand};
-	push @tp, $_;
+        $_->{onhand} = $ref->{onhand};
+        push @tp, $_;
       }
 
     } else {
 
       push @tp, $_;
-      
+
       while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-	if ($ref->{onhand} != 0) {
+        if ($ref->{onhand} != 0) {
           $_->{onhand} -= $ref->{onhand};
 
-	  $ref->{id} = $_->{id};
-	  push @tp, $ref;
-	}
+          $ref->{id} = $_->{id};
+          push @tp, $ref;
+        }
       }
     }
-    
+
     push @li, @tp;
-    
+
     $sth->finish;
   }
 
   @{ $form->{all_items} } = @li;
 
   $dbh->disconnect;
-  
+
 }
 
 
@@ -714,29 +714,29 @@ sub adjust_onhand {
 
   my $query = qq|UPDATE parts SET
                  onhand = ?
-		 WHERE id = ?|;
+                 WHERE id = ?|;
   my $sth = $dbh->prepare($query) || $form->dberror($query);
   my $onhand;
   my %pt;
   my %upd;
-  
+
   my $current_date = $form->current_date($myconfig);
-  
+
   my ($name, $employee_id) = $form->get_employee($dbh);
   $employee_id *= 1;
-  
+
   $query = qq|INSERT INTO inventory (warehouse_id, parts_id, qty, employee_id, shippingdate)
               VALUES (?,?,?,'$employee_id','$current_date')|;
   my $ith = $dbh->prepare($query);
- 
+
   for my $i (1 .. $form->{rowcount}) {
 
     $form->{"onhand_$i"} = $form->parse_amount($myconfig, $form->{"onhand_$i"});
     if ($form->{"oldonhand_$i"} != $form->{"onhand_$i"}) {
       $upd{$form->{"id_$i"}} = 1;
       if ($form->{"warehouseid_$i"}) {
-	$ith->execute($form->{"warehouseid_$i"}, $form->{"id_$i"}, $form->{"onhand_$i"} - $form->{"oldonhand_$i"});
-	$ith->finish;
+        $ith->execute($form->{"warehouseid_$i"}, $form->{"id_$i"}, $form->{"onhand_$i"} - $form->{"oldonhand_$i"});
+        $ith->finish;
       }
     }
 
@@ -747,12 +747,12 @@ sub adjust_onhand {
       $pt{$form->{"id_$i"}} += $form->{"onhand_$i"};
     }
   }
-    
+
   for (keys %pt) {
     $sth->execute($pt{$_}, $_);
     $sth->finish;
   }
-  
+
   $dbh->disconnect;
 
 }
@@ -760,14 +760,14 @@ sub adjust_onhand {
 
 sub retrieve_assemblies {
   my ($self, $myconfig, $form) = @_;
-  
+
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
   my $var;
   my $inventoryjoin;
   my $where = '1 = 1';
-  
+
   if ($form->{partnumber} ne "") {
     $var = $form->like(lc $form->{partnumber});
     $where .= " AND lower(p.partnumber) LIKE '$var'";
@@ -784,8 +784,8 @@ sub retrieve_assemblies {
   my $query = qq|SELECT p.id, p.partnumber, p.description,
                  p.bin, p.onhand, p.rop
                  FROM parts p
- 		 WHERE $where
-		 AND p.assembly = '1'|;
+                  WHERE $where
+                 AND p.assembly = '1'|;
 
   my @sf = qw(partnumber description bin);
   my %ordinal = $form->ordinal_order($dbh, $query);
@@ -797,9 +797,9 @@ sub retrieve_assemblies {
   # only services
   $query = qq|SELECT sum(p.inventory_accno_id), p.assembly
               FROM parts p
-	      JOIN assembly a ON (a.parts_id = p.id)
-	      WHERE a.aid = ?
-	      GROUP BY p.assembly|;
+              JOIN assembly a ON (a.parts_id = p.id)
+              WHERE a.aid = ?
+              GROUP BY p.assembly|;
   my $svh = $dbh->prepare($query) || $form->dberror($query);
 
   my $warehouse_id;
@@ -837,7 +837,7 @@ sub retrieve_assemblies {
   my $howmany;
   my $qty;
   my $ok;
-  
+
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     $stock = 0;
     $svh->execute($ref->{id});
@@ -845,42 +845,42 @@ sub retrieve_assemblies {
       last if $ref->{inventory} || $ref->{assembly};
     }
     $svh->finish;
-    
+
     if ($ref->{inventory} || $ref->{assembly}) {
       $ok = 1;
 
       if ($form->{checkinventory}) {
         # warehouse onhand
-	$inh->execute($ref->{id});
-	$ok = 0;
-	%required = ();
-	
-	while ($aref = $inh->fetchrow_hashref(NAME_lc)) {
-	  $available{$aref->{id}} = (exists $available{$aref->{id}}) ? $available{$aref->{id}} : $aref->{onhand};
-	  $required{$aref->{id}} = $aref->{qty};
-	  
-	  if ($available{$aref->{id}} >= $aref->{qty}) {
-	    
-	    $howmany = ($aref->{qty}) ? int $available{$aref->{id}}/$aref->{qty} : 1;
-	    if ($stock) {
-	      $stock = ($stock > $howmany) ? $howmany : $stock;
-	    } else {
-	      $stock = $howmany;
-	    }
-	    $ok = 1;
+        $inh->execute($ref->{id});
+        $ok = 0;
+        %required = ();
 
-	    $available{$aref->{id}} -= $aref->{qty} * $stock;
+        while ($aref = $inh->fetchrow_hashref(NAME_lc)) {
+          $available{$aref->{id}} = (exists $available{$aref->{id}}) ? $available{$aref->{id}} : $aref->{onhand};
+          $required{$aref->{id}} = $aref->{qty};
 
-	  } else {
-	    $ok = 0;
-	    for (keys %required) { $available{$_} += $required{$_} * $stock }
-	    $stock = 0;
-	    last;
-	  }
-	}
-	$inh->finish;
-	$ref->{stock} = $stock;
-	
+          if ($available{$aref->{id}} >= $aref->{qty}) {
+
+            $howmany = ($aref->{qty}) ? int $available{$aref->{id}}/$aref->{qty} : 1;
+            if ($stock) {
+              $stock = ($stock > $howmany) ? $howmany : $stock;
+            } else {
+              $stock = $howmany;
+            }
+            $ok = 1;
+
+            $available{$aref->{id}} -= $aref->{qty} * $stock;
+
+          } else {
+            $ok = 0;
+            for (keys %required) { $available{$_} += $required{$_} * $stock }
+            $stock = 0;
+            last;
+          }
+        }
+        $inh->finish;
+        $ref->{stock} = $stock;
+
       }
       push @{ $form->{assembly_items} }, $ref if $ok;
     }
@@ -888,7 +888,7 @@ sub retrieve_assemblies {
   $sth->finish;
 
   $dbh->disconnect;
-  
+
 }
 
 
@@ -897,7 +897,7 @@ sub stock_assemblies {
 
   my $disconnect;
   my %audittrail;
-  
+
   # connect to database
   if (!$dbh) {
     $dbh = $form->dbconnect_noauto($myconfig);
@@ -911,7 +911,7 @@ sub stock_assemblies {
 
   (undef, $form->{warehouse_id}) = split /--/, $form->{warehouse};
   (undef, $form->{employee_id}) = $form->get_employee($dbh);
-  
+
   for my $i (1 .. $form->{rowcount}) {
 
     $form->{"qty_$i"} = $form->parse_amount($myconfig, $form->{"qty_$i"});
@@ -949,16 +949,16 @@ sub adjust_inventory {
   my ($dbh, $form, $id, $qty) = @_;
 
   return unless $qty;
-  
+
   my $query = qq|SELECT p.id, p.inventory_accno_id, p.assembly, a.qty
-		 FROM parts p
-		 JOIN assembly a ON (a.parts_id = p.id)
-		 WHERE a.aid = $id|;
+                 FROM parts p
+                 JOIN assembly a ON (a.parts_id = p.id)
+                 WHERE a.aid = $id|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   my $current_date = $form->current_date($myconfig) || $form->{shippingdate};
-  
+
   $query = qq|INSERT INTO inventory (warehouse_id, parts_id, qty, employee_id, shippingdate)
               VALUES (?,?,?,'$form->{employee_id}','$current_date')|;
   my $ith = $dbh->prepare($query);
@@ -969,29 +969,29 @@ sub adjust_inventory {
     if (! $ref->{inventory_accno_id}) {
       next if ! $ref->{assembly};              # assembly
     }
-    
+
     # adjust parts onhand
     $form->update_balance($dbh,
-			  "parts",
-			  "onhand",
-			  qq|id = $ref->{id}|,
-			  $qty * $ref->{qty} * -1);
+                          "parts",
+                          "onhand",
+                          qq|id = $ref->{id}|,
+                          $qty * $ref->{qty} * -1);
 
     if ($form->{warehouse_id}) {
       $ith->execute($form->{warehouse_id}, $ref->{id}, $qty * $ref->{qty} * -1);
       $ith->finish;
     }
-    
+
   }
 
   $sth->finish;
 
   # update assembly
   $form->update_balance($dbh,
-			"parts",
-			"onhand",
-			qq|id = $id|,
-			$qty);
+                        "parts",
+                        "onhand",
+                        qq|id = $id|,
+                        $qty);
 
   if ($form->{warehouse_id}) {
     $ith->execute($form->{warehouse_id}, $id, $qty);
@@ -1008,28 +1008,28 @@ sub delete {
   my $dbh = $form->dbconnect_noauto($myconfig);
 
   my $query;
-  
+
   $form->{id} *= 1;
-  
+
   $query = qq|DELETE FROM parts
- 	      WHERE id = $form->{id}|;
+               WHERE id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
 
   $query = qq|DELETE FROM partstax
-	      WHERE parts_id = $form->{id}|;
+              WHERE parts_id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
 
 
   if ($form->{item} ne 'assembly') {
     $query = qq|DELETE FROM partsvendor
-		WHERE parts_id = $form->{id}|;
+                WHERE parts_id = $form->{id}|;
     $dbh->do($query) || $form->dberror($query);
   }
 
   # check if it is a part, assembly or service
   if ($form->{item} ne 'service') {
     $query = qq|DELETE FROM makemodel
-		WHERE parts_id = $form->{id}|;
+                WHERE parts_id = $form->{id}|;
     $dbh->do($query) || $form->dberror($query);
   }
 
@@ -1038,44 +1038,44 @@ sub delete {
     &adjust_inventory($dbh, $form, $form->{id}, $form->{oldonhand} * -1);
 
     $query = qq|DELETE FROM assembly
-		WHERE aid = $form->{id}|;
+                WHERE aid = $form->{id}|;
     $dbh->do($query) || $form->dberror($query);
   }
-  
+
   if ($form->{item} eq 'alternate') {
     $query = qq|DELETE FROM alternate
-		WHERE id = $form->{id}|;
+                WHERE id = $form->{id}|;
     $dbh->do($query) || $form->dberror($query);
   }
 
   $query = qq|DELETE FROM inventory
-	      WHERE parts_id = $form->{id}|;
+              WHERE parts_id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
-  
+
   $query = qq|DELETE FROM partscustomer
-	      WHERE parts_id = $form->{id}|;
+              WHERE parts_id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
-  
+
   $query = qq|DELETE FROM translation
-	      WHERE trans_id = $form->{id}|;
+              WHERE trans_id = $form->{id}|;
   $dbh->do($query) || $form->dberror($query);
-  
+
   $form->delete_references($dbh);
-  
+
   my %audittrail = ( tablename  => 'ic',
                      reference  => $form->{partnumber},
-		     formname   => $form->{item},
-		     action     => 'deleted',
-		     id         => $form->{id} );
+                     formname   => $form->{item},
+                     action     => 'deleted',
+                     id         => $form->{id} );
 
   $form->audittrail($dbh, "", \%audittrail);
- 
+
   # commit
   my $rc = $dbh->commit;
   $dbh->disconnect;
 
   $rc;
-  
+
 }
 
 
@@ -1115,10 +1115,10 @@ sub assembly_item {
   my $query = qq|SELECT p.id, p.partnumber, p.description, p.sellprice,
                  p.weight, p.onhand, p.unit, p.lastcost,
                  p.inventory_accno_id, p.income_accno_id, p.expense_accno_id,
-		 pg.partsgroup, p.partsgroup_id, p.assembly
-		 FROM parts p
-		 LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
-		 WHERE $where|;
+                 pg.partsgroup, p.partsgroup_id, p.assembly
+                 FROM parts p
+                 LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
+                 WHERE $where|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
@@ -1127,10 +1127,10 @@ sub assembly_item {
     next if $ref->{assembly} && $form->{item} eq 'kit';
     push @{ $form->{item_list} }, $ref;
   }
-  
+
   $sth->finish;
   $dbh->disconnect;
-  
+
 }
 
 
@@ -1141,7 +1141,7 @@ sub all_parts {
   my $var;
   my $warehouse;
   my $ref;
-  
+
   for (qw(partnumber drawing microfiche toolnumber barcode)) {
     if ($form->{$_} ne "") {
       $var = $form->like(lc $form->{$_});
@@ -1155,7 +1155,7 @@ sub all_parts {
       $where .= " AND lower(p.description) LIKE '$var'";
     }
   }
-  
+
   # assembly components
   my $assemblyflds;
   if ($form->{searchitems} eq 'component') {
@@ -1173,7 +1173,7 @@ sub all_parts {
   if (($form->{warehouse} ne "") || $form->{l_warehouse}) {
     $form->{l_warehouse} = 1;
   }
-  
+
   if ($form->{searchitems} eq 'part') {
     $where .= " AND p.inventory_accno_id > 0
                 AND p.income_accno_id > 0";
@@ -1202,15 +1202,15 @@ sub all_parts {
   if ($form->{itemstatus} eq 'orphaned') {
     $where .= qq| AND p.onhand = 0
                   AND p.id NOT IN (SELECT p.id FROM parts p
-		                   JOIN invoice i ON (p.id = i.parts_id))
-		  AND p.id NOT IN (SELECT p.id FROM parts p
-		                   JOIN assembly a ON (p.id = a.parts_id))
+                                   JOIN invoice i ON (p.id = i.parts_id))
                   AND p.id NOT IN (SELECT p.id FROM parts p
-		                   JOIN orderitems o ON (p.id = o.parts_id))
-		  AND p.id NOT IN (SELECT p.id FROM parts p
-		                   JOIN jcitems j ON (p.id = j.parts_id))|;
+                                   JOIN assembly a ON (p.id = a.parts_id))
+                  AND p.id NOT IN (SELECT p.id FROM parts p
+                                   JOIN orderitems o ON (p.id = o.parts_id))
+                  AND p.id NOT IN (SELECT p.id FROM parts p
+                                   JOIN jcitems j ON (p.id = j.parts_id))|;
   }
-  
+
   if ($form->{itemstatus} eq 'active') {
     $where .= " AND p.obsolete = '0'";
   }
@@ -1232,14 +1232,14 @@ sub all_parts {
     $costflds = qq|, i.sellprice AS cost|;
     $where .= " AND (i.qty - i.allocated) < 0";
   }
-  
+
   my $makemodelflds = qq|, '', ''|;;
   my $makemodeljoin;
-  
+
   if (($form->{make} ne "") || $form->{l_make} || ($form->{model} ne "") || $form->{l_model}) {
     $makemodelflds = qq|, m.make, m.model|;
     $makemodeljoin = qq|LEFT JOIN makemodel m ON (m.parts_id = p.id)|;
-    
+
     if ($form->{make} ne "") {
       $var = $form->like(lc $form->{make});
       $where .= " AND lower(m.make) LIKE '$var'";
@@ -1256,61 +1256,61 @@ sub all_parts {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
-  
+
   my %defaults = $form->get_defaults($dbh, \@{['precision', 'company', 'companyemail', 'companywebsite', 'address', 'tel', 'fax', 'businessnumber']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   my @sf = qw(partnumber description);
 
   my $query;
-  
+
   my $curr = substr($form->get_currencies($myconfig, $dbh),0,3);
-  
+
   my $flds = qq|p.id, p.partnumber, p.description, p.onhand, p.unit,
                 p.bin, p.sellprice, p.listprice, p.lastcost, p.rop,
-		p.avgcost,
-		p.weight, p.priceupdate, p.image, p.drawing, p.microfiche,
-		p.assembly, pg.partsgroup, pg.code AS partsgroupcode,
-		'$curr' AS curr,
-		c1.accno AS inventory, c2.accno AS income, c3.accno AS expense,
-		p.notes, p.toolnumber, p.countryorigin, p.tariff_hscode,
-		p.barcode
-		$makemodelflds $assemblyflds $costflds
-		|;
+                p.avgcost,
+                p.weight, p.priceupdate, p.image, p.drawing, p.microfiche,
+                p.assembly, pg.partsgroup, pg.code AS partsgroupcode,
+                '$curr' AS curr,
+                c1.accno AS inventory, c2.accno AS income, c3.accno AS expense,
+                p.notes, p.toolnumber, p.countryorigin, p.tariff_hscode,
+                p.barcode
+                $makemodelflds $assemblyflds $costflds
+                |;
 
   if ($form->{l_cost}) {
     $flds =~ s/p.onhand/(i.qty + i.allocated) * -1 AS onhand/;
   }
 
   $query = qq|SELECT $flds
-	      FROM parts p
-	      LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
-	      LEFT JOIN chart c1 ON (c1.id = p.inventory_accno_id)
-	      LEFT JOIN chart c2 ON (c2.id = p.income_accno_id)
-	      LEFT JOIN chart c3 ON (c3.id = p.expense_accno_id)
-	      $makemodeljoin
-	      $invoicejoin
-  	      WHERE $where|;
+              FROM parts p
+              LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
+              LEFT JOIN chart c1 ON (c1.id = p.inventory_accno_id)
+              LEFT JOIN chart c2 ON (c2.id = p.income_accno_id)
+              LEFT JOIN chart c3 ON (c3.id = p.expense_accno_id)
+              $makemodeljoin
+              $invoicejoin
+                WHERE $where|;
 
   # redo query for components report
   if ($form->{searchitems} eq 'component') {
-    
+
     $flds =~ s/p.onhand/a.qty AS onhand/;
-    
+
     if ($form->{itemstatus} eq 'active') {
       $where .= qq| AND p1.obsolete = '0'|;
     }
 
     $query = qq|SELECT $flds
-		FROM assembly a
-		JOIN parts p ON (a.parts_id = p.id)
-		JOIN parts p1 ON (a.aid = p1.id)
-		LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
-		LEFT JOIN chart c1 ON (c1.id = p.inventory_accno_id)
-		LEFT JOIN chart c2 ON (c2.id = p.income_accno_id)
-		LEFT JOIN chart c3 ON (c3.id = p.expense_accno_id)
-		$makemodeljoin
-  	        WHERE $where|;
+                FROM assembly a
+                JOIN parts p ON (a.parts_id = p.id)
+                JOIN parts p1 ON (a.aid = p1.id)
+                LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
+                LEFT JOIN chart c1 ON (c1.id = p.inventory_accno_id)
+                LEFT JOIN chart c2 ON (c2.id = p.income_accno_id)
+                LEFT JOIN chart c3 ON (c3.id = p.expense_accno_id)
+                $makemodeljoin
+                  WHERE $where|;
   }
 
   # rebuild query for bought and sold items
@@ -1326,285 +1326,285 @@ sub all_parts {
 
     my $union = "";
     $query = "";
-  
+
     if ($form->{bought} || $form->{sold}) {
-      
+
       my $invwhere = "$where";
       my $transdate = ($form->{method} eq 'accrual') ? "transdate" : "datepaid";
-      
+
       $invwhere .= " AND i.assemblyitem = '0'";
       $invwhere .= " AND a.$transdate >= '$form->{transdatefrom}'" if $form->{transdatefrom};
       $invwhere .= " AND a.$transdate <= '$form->{transdateto}'" if $form->{transdateto};
 
       if ($form->{description} ne "") {
-	$var = $form->like(lc $form->{description});
-	$invwhere .= " AND lower(i.description) LIKE '$var'";
+        $var = $form->like(lc $form->{description});
+        $invwhere .= " AND lower(i.description) LIKE '$var'";
       }
 
       if ($form->{open} || $form->{closed}) {
-	if ($form->{open} && $form->{closed}) {
-	  if ($form->{method} eq 'cash') {
-	    $invwhere .= " AND a.amount = a.paid";
-	  }
-	} else {
-	  if ($form->{open}) {
-	    if ($form->{method} eq 'cash') {
-	      $invwhere .= " AND a.id = 0";
-	    } else {
-	      $invwhere .= " AND NOT a.amount = a.paid";
-	    }
-	  } else {
-	    $invwhere .= " AND a.amount = a.paid";
-	  }
-	}
+        if ($form->{open} && $form->{closed}) {
+          if ($form->{method} eq 'cash') {
+            $invwhere .= " AND a.amount = a.paid";
+          }
+        } else {
+          if ($form->{open}) {
+            if ($form->{method} eq 'cash') {
+              $invwhere .= " AND a.id = 0";
+            } else {
+              $invwhere .= " AND NOT a.amount = a.paid";
+            }
+          } else {
+            $invwhere .= " AND a.amount = a.paid";
+          }
+        }
       } else {
-	$invwhere .= " AND a.id = 0";
+        $invwhere .= " AND a.id = 0";
       }
 
       my $flds = qq|p.id, p.partnumber, i.description, i.serialnumber,
                     i.qty AS onhand, i.unit, p.bin, i.sellprice,
-		    p.listprice, p.lastcost, p.rop, p.weight,
-		    p.avgcost,
-		    p.priceupdate, p.image, p.drawing, p.microfiche,
-		    p.assembly,
-		    pg.partsgroup, pg.code AS partsgroupcode,
-		    a.invnumber, a.ordnumber, a.quonumber,
+                    p.listprice, p.lastcost, p.rop, p.weight,
+                    p.avgcost,
+                    p.priceupdate, p.image, p.drawing, p.microfiche,
+                    p.assembly,
+                    pg.partsgroup, pg.code AS partsgroupcode,
+                    a.invnumber, a.ordnumber, a.quonumber,
                     a.transdate,
-		    i.trans_id, ct.name, e.name AS employee,
-		    a.curr, a.till, p.notes, p.toolnumber,
-		    p.countryorigin, p.tariff_hscode, p.barcode
-		    $makemodelflds $costflds|;
+                    i.trans_id, ct.name, e.name AS employee,
+                    a.curr, a.till, p.notes, p.toolnumber,
+                    p.countryorigin, p.tariff_hscode, p.barcode
+                    $makemodelflds $costflds|;
 
       my $rflds;
-      
+
       if ($form->{bought}) {
-	
-	$rflds = $flds;
 
-	if ($form->{l_cost}) {
-	  $rflds =~ s/i.sellprice/p.sellprice/;
-	  $rflds =~ s/i.qty AS onhand/(i.qty + i.allocated) * -1 AS onhand/;
-	} else {
-	  $rflds =~ s/i.qty AS onhand/i.qty * -1 AS onhand/;
-	}
+        $rflds = $flds;
 
-	$query = qq|
-	            SELECT $rflds, 'ir' AS module, '' AS type,
-		    (SELECT exchangerate FROM exchangerate ex
-		     WHERE ex.curr = a.curr
-		     AND ex.transdate = a.$transdate) AS exchangerate,
-		     i.discount, ct.id AS vc_id, 'vendor' as vc
-		    FROM invoice i
-		    JOIN parts p ON (p.id = i.parts_id)
-		    JOIN ap a ON (a.id = i.trans_id)
-		    JOIN vendor ct ON (a.vendor_id = ct.id)
-		    LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
-		    LEFT JOIN employee e ON (a.employee_id = e.id)
-		    $makemodeljoin
-		    WHERE $invwhere|;
-	$union = "
-	          UNION ALL";
+        if ($form->{l_cost}) {
+          $rflds =~ s/i.sellprice/p.sellprice/;
+          $rflds =~ s/i.qty AS onhand/(i.qty + i.allocated) * -1 AS onhand/;
+        } else {
+          $rflds =~ s/i.qty AS onhand/i.qty * -1 AS onhand/;
+        }
+
+        $query = qq|
+                    SELECT $rflds, 'ir' AS module, '' AS type,
+                    (SELECT exchangerate FROM exchangerate ex
+                     WHERE ex.curr = a.curr
+                     AND ex.transdate = a.$transdate) AS exchangerate,
+                     i.discount, ct.id AS vc_id, 'vendor' as vc
+                    FROM invoice i
+                    JOIN parts p ON (p.id = i.parts_id)
+                    JOIN ap a ON (a.id = i.trans_id)
+                    JOIN vendor ct ON (a.vendor_id = ct.id)
+                    LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
+                    LEFT JOIN employee e ON (a.employee_id = e.id)
+                    $makemodeljoin
+                    WHERE $invwhere|;
+        $union = "
+                  UNION ALL";
       }
 
       if ($form->{sold}) {
-	
-	$query .= qq|$union
+
+        $query .= qq|$union
                      SELECT $flds, 'is' AS module, '' AS type,
-		    (SELECT exchangerate FROM exchangerate ex
-		     WHERE ex.curr = a.curr
-		     AND ex.transdate = a.$transdate) AS exchangerate,
-		     i.discount, ct.id AS vc_id, 'customer' as vc
-		     FROM invoice i
-		     JOIN parts p ON (p.id = i.parts_id)
-		     JOIN ar a ON (a.id = i.trans_id)
-		     JOIN customer ct ON (a.customer_id = ct.id)
-		     LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
-		     LEFT JOIN employee e ON (a.employee_id = e.id)
-		     $makemodeljoin
-		     WHERE $invwhere|;
-	$union = "
-	          UNION ALL";
+                    (SELECT exchangerate FROM exchangerate ex
+                     WHERE ex.curr = a.curr
+                     AND ex.transdate = a.$transdate) AS exchangerate,
+                     i.discount, ct.id AS vc_id, 'customer' as vc
+                     FROM invoice i
+                     JOIN parts p ON (p.id = i.parts_id)
+                     JOIN ar a ON (a.id = i.trans_id)
+                     JOIN customer ct ON (a.customer_id = ct.id)
+                     LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
+                     LEFT JOIN employee e ON (a.employee_id = e.id)
+                     $makemodeljoin
+                     WHERE $invwhere|;
+        $union = "
+                  UNION ALL";
       }
     }
 
     if (! $form->{l_cost}) {
       if ($form->{onorder} || $form->{ordered}) {
-	my $ordwhere = "$where
-		       AND a.quotation = '0'";
-	$ordwhere .= " AND a.transdate >= '$form->{transdatefrom}'" if $form->{transdatefrom};
-	$ordwhere .= " AND a.transdate <= '$form->{transdateto}'" if $form->{transdateto};
+        my $ordwhere = "$where
+                       AND a.quotation = '0'";
+        $ordwhere .= " AND a.transdate >= '$form->{transdatefrom}'" if $form->{transdatefrom};
+        $ordwhere .= " AND a.transdate <= '$form->{transdateto}'" if $form->{transdateto};
 
-	if ($form->{description} ne "") {
-	  $var = $form->like(lc $form->{description});
-	  $ordwhere .= " AND lower(i.description) LIKE '$var'";
-	}
-	
-	if ($form->{open} || $form->{closed}) {
-	  unless ($form->{open} && $form->{closed}) {
-	    $ordwhere .= " AND a.closed = '0'" if $form->{open};
-	    $ordwhere .= " AND a.closed = '1'" if $form->{closed};
-	  }
-	} else {
-	  $ordwhere .= " AND a.id = 0";
-	}
+        if ($form->{description} ne "") {
+          $var = $form->like(lc $form->{description});
+          $ordwhere .= " AND lower(i.description) LIKE '$var'";
+        }
 
-	$flds = qq|p.id, p.partnumber, i.description, i.serialnumber,
-		   i.qty AS onhand, i.unit, p.bin, i.sellprice,
-		   p.listprice, p.lastcost, p.rop, p.weight,
-		   p.avgcost,
-		   p.priceupdate, p.image, p.drawing, p.microfiche,
-		   p.assembly,
-		   pg.partsgroup, pg.code AS partsgroupcode,
-		   '' AS invnumber, a.ordnumber, a.quonumber,
+        if ($form->{open} || $form->{closed}) {
+          unless ($form->{open} && $form->{closed}) {
+            $ordwhere .= " AND a.closed = '0'" if $form->{open};
+            $ordwhere .= " AND a.closed = '1'" if $form->{closed};
+          }
+        } else {
+          $ordwhere .= " AND a.id = 0";
+        }
+
+        $flds = qq|p.id, p.partnumber, i.description, i.serialnumber,
+                   i.qty AS onhand, i.unit, p.bin, i.sellprice,
+                   p.listprice, p.lastcost, p.rop, p.weight,
+                   p.avgcost,
+                   p.priceupdate, p.image, p.drawing, p.microfiche,
+                   p.assembly,
+                   pg.partsgroup, pg.code AS partsgroupcode,
+                   '' AS invnumber, a.ordnumber, a.quonumber,
                    a.transdate,
-		   i.trans_id, ct.name, e.name AS employee,
-		   a.curr, '0' AS till, p.notes, p.toolnumber,
-		   p.countryorigin, p.tariff_hscode, p.barcode
-		   $makemodelflds|;
+                   i.trans_id, ct.name, e.name AS employee,
+                   a.curr, '0' AS till, p.notes, p.toolnumber,
+                   p.countryorigin, p.tariff_hscode, p.barcode
+                   $makemodelflds|;
 
-	if ($form->{ordered}) {
-	  $query .= qq|$union
-		       SELECT $flds, 'oe' AS module, 'sales_order' AS type,
-		      (SELECT exchangerate FROM exchangerate ex
-		       WHERE ex.curr = a.curr
-		       AND ex.transdate = a.transdate) AS exchangerate,
-		       i.discount, ct.id AS vc_id, 'customer' as vc
-		       FROM orderitems i
-		       JOIN parts p ON (i.parts_id = p.id)
-		       JOIN oe a ON (i.trans_id = a.id)
-		       JOIN customer ct ON (a.customer_id = ct.id)
-		       LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
-		       LEFT JOIN employee e ON (a.employee_id = e.id)
-		       $makemodeljoin
-		       WHERE $ordwhere
-		       AND a.customer_id > 0|;
-	  $union = "
-		    UNION ALL";
-	}
-	
-	if ($form->{onorder}) {
-	  $flds = qq|p.id, p.partnumber, i.description, i.serialnumber,
-		     i.qty AS onhand, i.unit, p.bin, i.sellprice,
-		     p.listprice, p.lastcost, p.rop, p.weight,
-		     p.avgcost,
-		     p.priceupdate, p.image, p.drawing, p.microfiche,
-		     p.assembly,
-		     pg.partsgroup, pg.code AS partsgroupcode,
-		     '' AS invnumber, a.ordnumber, a.quonumber,
+        if ($form->{ordered}) {
+          $query .= qq|$union
+                       SELECT $flds, 'oe' AS module, 'sales_order' AS type,
+                      (SELECT exchangerate FROM exchangerate ex
+                       WHERE ex.curr = a.curr
+                       AND ex.transdate = a.transdate) AS exchangerate,
+                       i.discount, ct.id AS vc_id, 'customer' as vc
+                       FROM orderitems i
+                       JOIN parts p ON (i.parts_id = p.id)
+                       JOIN oe a ON (i.trans_id = a.id)
+                       JOIN customer ct ON (a.customer_id = ct.id)
+                       LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
+                       LEFT JOIN employee e ON (a.employee_id = e.id)
+                       $makemodeljoin
+                       WHERE $ordwhere
+                       AND a.customer_id > 0|;
+          $union = "
+                    UNION ALL";
+        }
+
+        if ($form->{onorder}) {
+          $flds = qq|p.id, p.partnumber, i.description, i.serialnumber,
+                     i.qty AS onhand, i.unit, p.bin, i.sellprice,
+                     p.listprice, p.lastcost, p.rop, p.weight,
+                     p.avgcost,
+                     p.priceupdate, p.image, p.drawing, p.microfiche,
+                     p.assembly,
+                     pg.partsgroup, pg.code AS partsgroupcode,
+                     '' AS invnumber, a.ordnumber, a.quonumber,
                      a.transdate,
-		     i.trans_id, ct.name, e.name AS employee,
-		     a.curr, '0' AS till, p.notes, p.toolnumber,
-		     p.countryorigin, p.tariff_hscode, p.barcode
-		     $makemodelflds|;
-		     
-	  $query .= qq|$union
-		      SELECT $flds, 'oe' AS module, 'purchase_order' AS type,
-		      (SELECT exchangerate FROM exchangerate ex
-		       WHERE ex.curr = a.curr
-		       AND ex.transdate = a.transdate) AS exchangerate,
-		       i.discount, ct.id AS vc_id, 'vendor' as vc
-		      FROM orderitems i
-		      JOIN parts p ON (i.parts_id = p.id)
-		      JOIN oe a ON (i.trans_id = a.id)
-		      JOIN vendor ct ON (a.vendor_id = ct.id)
-		      LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
-		      LEFT JOIN employee e ON (a.employee_id = e.id)
-		      $makemodeljoin
-		      WHERE $ordwhere
-		      AND a.vendor_id > 0|;
-	  $union = "
-		    UNION ALL";
-	}
-      
+                     i.trans_id, ct.name, e.name AS employee,
+                     a.curr, '0' AS till, p.notes, p.toolnumber,
+                     p.countryorigin, p.tariff_hscode, p.barcode
+                     $makemodelflds|;
+
+          $query .= qq|$union
+                      SELECT $flds, 'oe' AS module, 'purchase_order' AS type,
+                      (SELECT exchangerate FROM exchangerate ex
+                       WHERE ex.curr = a.curr
+                       AND ex.transdate = a.transdate) AS exchangerate,
+                       i.discount, ct.id AS vc_id, 'vendor' as vc
+                      FROM orderitems i
+                      JOIN parts p ON (i.parts_id = p.id)
+                      JOIN oe a ON (i.trans_id = a.id)
+                      JOIN vendor ct ON (a.vendor_id = ct.id)
+                      LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
+                      LEFT JOIN employee e ON (a.employee_id = e.id)
+                      $makemodeljoin
+                      WHERE $ordwhere
+                      AND a.vendor_id > 0|;
+          $union = "
+                    UNION ALL";
+        }
+
       }
-	
+
       if ($form->{rfq} || $form->{quoted}) {
-	my $quowhere = "$where
-		       AND a.quotation = '1'";
-	$quowhere .= " AND a.transdate >= '$form->{transdatefrom}'" if $form->{transdatefrom};
-	$quowhere .= " AND a.transdate <= '$form->{transdateto}'" if $form->{transdateto};
+        my $quowhere = "$where
+                       AND a.quotation = '1'";
+        $quowhere .= " AND a.transdate >= '$form->{transdatefrom}'" if $form->{transdatefrom};
+        $quowhere .= " AND a.transdate <= '$form->{transdateto}'" if $form->{transdateto};
 
-	if ($form->{description} ne "") {
-	  $var = $form->like(lc $form->{description});
-	  $quowhere .= " AND lower(i.description) LIKE '$var'";
-	}
-	
-	if ($form->{open} || $form->{closed}) {
-	  unless ($form->{open} && $form->{closed}) {
-	    $ordwhere .= " AND a.closed = '0'" if $form->{open};
-	    $ordwhere .= " AND a.closed = '1'" if $form->{closed};
-	  }
-	} else {
-	  $ordwhere .= " AND a.id = 0";
-	}
+        if ($form->{description} ne "") {
+          $var = $form->like(lc $form->{description});
+          $quowhere .= " AND lower(i.description) LIKE '$var'";
+        }
 
-	$flds = qq|p.id, p.partnumber, i.description, i.serialnumber,
-		   i.qty AS onhand, i.unit, p.bin, i.sellprice,
-		   p.listprice, p.lastcost, p.rop, p.weight,
-		   p.avgcost,
-		   p.priceupdate, p.image, p.drawing, p.microfiche,
-		   p.assembly,
-		   pg.partsgroup, pg.code AS partsgroupcode,
-		   '' AS invnumber, a.ordnumber, a.quonumber,
+        if ($form->{open} || $form->{closed}) {
+          unless ($form->{open} && $form->{closed}) {
+            $ordwhere .= " AND a.closed = '0'" if $form->{open};
+            $ordwhere .= " AND a.closed = '1'" if $form->{closed};
+          }
+        } else {
+          $ordwhere .= " AND a.id = 0";
+        }
+
+        $flds = qq|p.id, p.partnumber, i.description, i.serialnumber,
+                   i.qty AS onhand, i.unit, p.bin, i.sellprice,
+                   p.listprice, p.lastcost, p.rop, p.weight,
+                   p.avgcost,
+                   p.priceupdate, p.image, p.drawing, p.microfiche,
+                   p.assembly,
+                   pg.partsgroup, pg.code AS partsgroupcode,
+                   '' AS invnumber, a.ordnumber, a.quonumber,
                    a.transdate,
-		   i.trans_id, ct.name, e.name AS employee,
-		   a.curr, '0' AS till, p.notes, p.toolnumber,
-		   p.countryorigin, p.tariff_hscode, p.barcode
-		   $makemodelflds|;
+                   i.trans_id, ct.name, e.name AS employee,
+                   a.curr, '0' AS till, p.notes, p.toolnumber,
+                   p.countryorigin, p.tariff_hscode, p.barcode
+                   $makemodelflds|;
 
-	if ($form->{quoted}) {
-	  $query .= qq|$union
-		       SELECT $flds, 'oe' AS module, 'sales_quotation' AS type,
-		      (SELECT exchangerate FROM exchangerate ex
-		       WHERE ex.curr = a.curr
-		       AND ex.transdate = a.transdate) AS exchangerate,
-		       i.discount, ct.id AS vc_id, 'customer' as vc
-		       FROM orderitems i
-		       JOIN parts p ON (i.parts_id = p.id)
-		       JOIN oe a ON (i.trans_id = a.id)
-		       JOIN customer ct ON (a.customer_id = ct.id)
-		       LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
-		       LEFT JOIN employee e ON (a.employee_id = e.id)
-		       $makemodeljoin
-		       WHERE $quowhere
-		       AND a.customer_id > 0|;
-	  $union = "
-		    UNION ALL";
-	}
-	
-	if ($form->{rfq}) {
-	  $flds = qq|p.id, p.partnumber, i.description, i.serialnumber,
-		     i.qty AS onhand, i.unit, p.bin, i.sellprice,
-		     p.listprice, p.lastcost, p.rop, p.weight,
-		     p.avgcost,
-		     p.priceupdate, p.image, p.drawing, p.microfiche,
-		     p.assembly,
-		     pg.partsgroup, pg.code AS partsgroupcode,
-		     '' AS invnumber, a.ordnumber, a.quonumber,
+        if ($form->{quoted}) {
+          $query .= qq|$union
+                       SELECT $flds, 'oe' AS module, 'sales_quotation' AS type,
+                      (SELECT exchangerate FROM exchangerate ex
+                       WHERE ex.curr = a.curr
+                       AND ex.transdate = a.transdate) AS exchangerate,
+                       i.discount, ct.id AS vc_id, 'customer' as vc
+                       FROM orderitems i
+                       JOIN parts p ON (i.parts_id = p.id)
+                       JOIN oe a ON (i.trans_id = a.id)
+                       JOIN customer ct ON (a.customer_id = ct.id)
+                       LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
+                       LEFT JOIN employee e ON (a.employee_id = e.id)
+                       $makemodeljoin
+                       WHERE $quowhere
+                       AND a.customer_id > 0|;
+          $union = "
+                    UNION ALL";
+        }
+
+        if ($form->{rfq}) {
+          $flds = qq|p.id, p.partnumber, i.description, i.serialnumber,
+                     i.qty AS onhand, i.unit, p.bin, i.sellprice,
+                     p.listprice, p.lastcost, p.rop, p.weight,
+                     p.avgcost,
+                     p.priceupdate, p.image, p.drawing, p.microfiche,
+                     p.assembly,
+                     pg.partsgroup, pg.code AS partsgroupcode,
+                     '' AS invnumber, a.ordnumber, a.quonumber,
                      a.transdate,
-		     i.trans_id, ct.name, e.name AS employee,
-		     a.curr, '0' AS till, p.notes, p.toolnumber,
-		     p.countryorigin, p.tariff_hscode, p.barcode
-		     $makemodelflds|;
+                     i.trans_id, ct.name, e.name AS employee,
+                     a.curr, '0' AS till, p.notes, p.toolnumber,
+                     p.countryorigin, p.tariff_hscode, p.barcode
+                     $makemodelflds|;
 
-	  $query .= qq|$union
-		      SELECT $flds, 'oe' AS module, 'request_quotation' AS type,
-		      (SELECT exchangerate FROM exchangerate ex
-		       WHERE ex.curr = a.curr
-		       AND ex.transdate = a.transdate) AS exchangerate,
-		       i.discount, ct.id AS vc_id, 'vendor' as vc
-		      FROM orderitems i
-		      JOIN parts p ON (i.parts_id = p.id)
-		      JOIN oe a ON (i.trans_id = a.id)
-		      JOIN vendor ct ON (a.vendor_id = ct.id)
-		      LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
-		      LEFT JOIN employee e ON (a.employee_id = e.id)
-		      $makemodeljoin
-		      WHERE $quowhere
-		      AND a.vendor_id > 0|;
-	  $union = "
-		    UNION ALL";
-	}
+          $query .= qq|$union
+                      SELECT $flds, 'oe' AS module, 'request_quotation' AS type,
+                      (SELECT exchangerate FROM exchangerate ex
+                       WHERE ex.curr = a.curr
+                       AND ex.transdate = a.transdate) AS exchangerate,
+                       i.discount, ct.id AS vc_id, 'vendor' as vc
+                      FROM orderitems i
+                      JOIN parts p ON (i.parts_id = p.id)
+                      JOIN oe a ON (i.trans_id = a.id)
+                      JOIN vendor ct ON (a.vendor_id = ct.id)
+                      LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
+                      LEFT JOIN employee e ON (a.employee_id = e.id)
+                      $makemodeljoin
+                      WHERE $quowhere
+                      AND a.vendor_id > 0|;
+          $union = "
+                    UNION ALL";
+        }
 
       }
     }
@@ -1618,11 +1618,11 @@ sub all_parts {
 
   $query = qq|SELECT c.accno
               FROM chart c
-	      JOIN partstax pt ON (pt.chart_id = c.id)
-	      WHERE pt.parts_id = ?
-	      ORDER BY c.accno|;
+              JOIN partstax pt ON (pt.chart_id = c.id)
+              WHERE pt.parts_id = ?
+              ORDER BY c.accno|;
   my $pth = $dbh->prepare($query) || $form->dberror($query);
-  
+
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     $pth->execute($ref->{id});
     while (($accno) = $pth->fetchrow_array) {
@@ -1635,25 +1635,25 @@ sub all_parts {
   $sth->finish;
 
   my @li = ();
-  
+
   # include individual items for assembly and kit
   if (($form->{searchitems} =~ /(assembly|kit)/) && $form->{individual}) {
 
     if ($form->{sold} || $form->{ordered} || $form->{quoted}) {
       $flds = qq|p.id, p.partnumber, p.description, p.onhand AS perassembly, p.unit,
                  p.bin, p.sellprice, p.listprice, p.lastcost, p.rop,
-		 p.avgcost,
- 		 p.weight, p.priceupdate, p.image, p.drawing, p.microfiche,
-		 p.assembly, pg.partsgroup, pg.code AS partsgroupcode,
-		 p.notes, p.toolnumber, p.barcode
-		 $makemodelflds $assemblyflds
-		 |;
+                 p.avgcost,
+                  p.weight, p.priceupdate, p.image, p.drawing, p.microfiche,
+                 p.assembly, pg.partsgroup, pg.code AS partsgroupcode,
+                 p.notes, p.toolnumber, p.barcode
+                 $makemodelflds $assemblyflds
+                 |;
     } else {
       # replace p.onhand with a.qty AS onhand
       $flds =~ s/p.onhand/a.qty AS perassembly/;
       $flds .= ",p.onhand" if $form->{searchitems} =~ /kit/;
     }
-	
+
     for (@{ $form->{parts} }) {
       push @li, $_;
 
@@ -1666,26 +1666,26 @@ sub all_parts {
 
     # copy assemblies to $form->{parts}
     @{ $form->{parts} } = @li;
-    
+
   }
-    
+
   @li = ();
-  
+
   if (($form->{warehouse} ne "") || $form->{l_warehouse}) {
-    
+
     if ($form->{warehouse} ne "") {
       ($warehouse, $var) = split /--/, $form->{warehouse};
       $var *= 1;
       $query = qq|SELECT SUM(qty) AS onhand, '$warehouse' AS warehouse
                   FROM inventory
-		  WHERE warehouse_id = $var
+                  WHERE warehouse_id = $var
                   AND parts_id = ?|;
     } else {
       $query = qq|SELECT SUM(i.qty) AS onhand, w.description AS warehouse
                   FROM inventory i
-		  JOIN warehouse w ON (w.id = i.warehouse_id)
+                  JOIN warehouse w ON (w.id = i.warehouse_id)
                   WHERE i.parts_id = ?
-		  GROUP BY w.description
+                  GROUP BY w.description
                   ORDER BY warehouse|;
     }
 
@@ -1701,7 +1701,7 @@ sub all_parts {
       $sth->execute($_->{id}) || $form->dberror($query);
 
       if ($form->{warehouse} ne "") {
-	$ref = $sth->fetchrow_hashref(NAME_lc);
+        $ref = $sth->fetchrow_hashref(NAME_lc);
         if ($_->{assemblyitem}) {
           if ($form->{searchitems} =~ /kit/) {
             $_->{onhand} = $ref->{onhand};
@@ -1717,7 +1717,7 @@ sub all_parts {
 
       } else {
 
-	push @tp, $_;
+        push @tp, $_;
 
         if ($_->{assemblyitem}) {
           while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
@@ -1735,16 +1735,16 @@ sub all_parts {
           }
         }
       }
-      
+
       push @li, @tp;
-      
+
       $sth->finish;
     }
 
     @{ $form->{parts} } = @li;
 
   }
-  
+
   $form->get_peripherals($dbh);
 
   $form->all_languages($myconfig, $dbh);
@@ -1756,12 +1756,12 @@ sub all_parts {
 
 sub include_assembly {
   my ($dbh, $myconfig, $form, $id, $flds, $makemodeljoin, $qty, $all) = @_;
-  
+
   $form->{stagger}++;
   if ($form->{stagger} > $form->{pncol}) {
     $form->{pncol} = $form->{stagger};
   }
- 
+
   $form->{$id} = 1;
   $qty *= 1;
 
@@ -1772,18 +1772,18 @@ sub include_assembly {
     @sf = grep !/$form->{sort}/, @sf;
     $sortorder = "p.$form->{sort} $form->{direction}, ". join ',p.', @sf;
   }
-  
+
   @sf = ();
   my $query = qq|SELECT $flds
-		 FROM parts p
-		 JOIN assembly a ON (a.parts_id = p.id)
-		 LEFT JOIN partsgroup pg ON (pg.id = p.id)
- 		 LEFT JOIN chart c1 ON (c1.id = p.inventory_accno_id)
-		 LEFT JOIN chart c2 ON (c2.id = p.income_accno_id)
-		 LEFT JOIN chart c3 ON (c3.id = p.expense_accno_id)
-		 $makemodeljoin
-		 WHERE a.aid = $id
-		 ORDER BY $sortorder|;
+                 FROM parts p
+                 JOIN assembly a ON (a.parts_id = p.id)
+                 LEFT JOIN partsgroup pg ON (pg.id = p.id)
+                  LEFT JOIN chart c1 ON (c1.id = p.inventory_accno_id)
+                 LEFT JOIN chart c2 ON (c2.id = p.income_accno_id)
+                 LEFT JOIN chart c3 ON (c3.id = p.expense_accno_id)
+                 $makemodeljoin
+                 WHERE a.aid = $id
+                 ORDER BY $sortorder|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
@@ -1798,7 +1798,7 @@ sub include_assembly {
     if ($ref->{assembly} &! $form->{$ref->{id}}) {
       push @sf, &include_assembly($dbh, $myconfig, $form, $ref->{id}, $flds, $makemodeljoin, $ref->{qty}, $all);
       if ($form->{stagger} > $form->{pncol}) {
-	$form->{pncol} = $form->{stagger};
+        $form->{pncol} = $form->{stagger};
       }
     }
   }
@@ -1816,11 +1816,11 @@ sub get_assembly_bom_transfer {
   my ($self, $myconfig, $form) = @_;
 
   my $var;
- 
+
   my $where = qq|p.assembly = '1'
                  AND p.obsolete = '0'
                  AND p.project_id IS NULL|;
- 
+
   for (qw(partnumber description)) {
     if ($form->{$_} ne "") {
       $var = $form->like(lc $form->{$_});
@@ -1835,9 +1835,9 @@ sub get_assembly_bom_transfer {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
-  
+
   my %defaults = $form->get_defaults($dbh, \@{['precision', 'company', 'companyemail', 'companywebsite', 'address', 'tel', 'fax', 'businessnumber']});
-  
+
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   my %ordinal = ( 'partnumber' => 2 );
@@ -1918,9 +1918,9 @@ sub get_assembly_bom_transfer {
     }
 
     $_->{transfer} = $_->{qty};
-    
+
     push @{ $form->{all_inventory} }, $_;
-    
+
     $sth->finish;
   }
 
@@ -1934,7 +1934,7 @@ sub supply_demand {
 
   my $var;
   my $ref;
-  
+
   my $where = qq|p.obsolete = '0'|;
   my $dwhere;
 
@@ -1944,7 +1944,7 @@ sub supply_demand {
       $where .= qq| AND lower(p.$_) LIKE '$var'|;
     }
   }
-  
+
   if ($form->{partsgroup} ne "") {
     (undef, $var) = split /--/, $form->{partsgroup};
     $where .= qq| AND p.partsgroup_id = $var|;
@@ -1956,23 +1956,23 @@ sub supply_demand {
   my ($transdatefrom, $transdateto);
   if ($form->{year}) {
     ($transdatefrom, $transdateto) = $form->from_to($form->{year}, '01', 12);
-    
+
     $dwhere = qq| AND a.transdate >= '$transdatefrom'
- 		  AND a.transdate <= '$transdateto'|;
+                   AND a.transdate <= '$transdateto'|;
   }
-    
+
   $query = qq|SELECT p.id, p.partnumber, p.description,
               sum(i.qty) AS qty, p.onhand, p.rop,
-	      extract(MONTH FROM a.transdate) AS month,
-	      '0' AS so, '0' AS po
-	      FROM invoice i
-	      JOIN parts p ON (p.id = i.parts_id)
-	      JOIN ar a ON (a.id = i.trans_id)
-	      WHERE $where
-	      $dwhere
-	      AND p.inventory_accno_id > 0
-	      GROUP BY p.id, p.partnumber, p.description, p.onhand, p.rop,
-	      extract(MONTH FROM a.transdate)|;
+              extract(MONTH FROM a.transdate) AS month,
+              '0' AS so, '0' AS po
+              FROM invoice i
+              JOIN parts p ON (p.id = i.parts_id)
+              JOIN ar a ON (a.id = i.trans_id)
+              WHERE $where
+              $dwhere
+              AND p.inventory_accno_id > 0
+              GROUP BY p.id, p.partnumber, p.description, p.onhand, p.rop,
+              extract(MONTH FROM a.transdate)|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
@@ -1990,29 +1990,29 @@ sub supply_demand {
 
   my %ofld = ( customer => so,
                vendor => po );
-  
+
   for (qw(customer vendor)) {
     $query = qq|SELECT p.id, p.partnumber, p.description,
-		sum(i.qty) - sum(i.ship) AS $ofld{$_}, p.onhand, p.rop,
-		0 AS month
-		FROM orderitems i
-		JOIN parts p ON (p.id = i.parts_id)
-		JOIN oe a ON (a.id = i.trans_id)
-		WHERE $where
-		AND p.inventory_accno_id > 0
-		AND a.closed = '0'
-		AND a.quotation = '0'
-		AND a.${_}_id > 0
-		GROUP BY p.id, p.partnumber, p.description, p.onhand, p.rop,
-		month|;
+                sum(i.qty) - sum(i.ship) AS $ofld{$_}, p.onhand, p.rop,
+                0 AS month
+                FROM orderitems i
+                JOIN parts p ON (p.id = i.parts_id)
+                JOIN oe a ON (a.id = i.trans_id)
+                WHERE $where
+                AND p.inventory_accno_id > 0
+                AND a.closed = '0'
+                AND a.quotation = '0'
+                AND a.${_}_id > 0
+                GROUP BY p.id, p.partnumber, p.description, p.onhand, p.rop,
+                month|;
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
 
     while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
       if (exists $parts{$ref->{id}}) {
-	$parts{$ref->{id}}->{$ofld{$_}} += $ref->{$ofld{$_}};
+        $parts{$ref->{id}}->{$ofld{$_}} += $ref->{$ofld{$_}};
       } else {
-	$parts{$ref->{id}} = $ref;
+        $parts{$ref->{id}} = $ref;
       }
     }
     $sth->finish;
@@ -2021,12 +2021,12 @@ sub supply_demand {
   # add assemblies from open sales orders
   $query = qq|SELECT p.id, SUM(i.qty) - SUM(i.ship) AS qty, p.onhand, p.rop
               FROM orderitems i
-	      JOIN parts p ON (p.id = i.parts_id)
-	      JOIN oe a ON (a.id = i.trans_id)
-	      WHERE p.obsolete = '0'
-	      AND p.assembly = '1'
-	      AND a.closed = '0'
-	      GROUP BY p.id, p.onhand, p.rop|;
+              JOIN parts p ON (p.id = i.parts_id)
+              JOIN oe a ON (a.id = i.trans_id)
+              WHERE p.obsolete = '0'
+              AND p.assembly = '1'
+              AND a.closed = '0'
+              GROUP BY p.id, p.onhand, p.rop|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
@@ -2041,7 +2041,7 @@ sub supply_demand {
   for (sort { $parts{$a}->{$form->{sort}} cmp $parts{$b}->{$form->{sort}} } keys %parts) {
     push @{ $form->{parts} }, $parts{$_};
   }
-  
+
 }
 
 
@@ -2051,23 +2051,23 @@ sub assembly_demand {
   # assemblies
   my $query = qq|SELECT p.id, p.partnumber, p.description,
                  a.qty * $qty AS so, p.onhand, p.assembly,
-	         p.partsgroup_id
-	         FROM assembly a
-	         JOIN parts p ON (p.id = a.parts_id)
- 	         WHERE $where
-		 AND a.aid = $id
-	         AND p.inventory_accno_id > 0
-		 
-		 UNION
-	  
-	         SELECT p.id, p.partnumber, p.description,
-                 a.qty * $qty AS so, p.onhand, p.assembly,
-	         p.partsgroup_id
-	         FROM assembly a
-	         JOIN parts p ON (p.id = a.parts_id)
- 	         WHERE $where
+                 p.partsgroup_id
+                 FROM assembly a
+                 JOIN parts p ON (p.id = a.parts_id)
+                  WHERE $where
                  AND a.aid = $id
-		 AND p.assembly = '1'|;
+                 AND p.inventory_accno_id > 0
+
+                 UNION
+
+                 SELECT p.id, p.partnumber, p.description,
+                 a.qty * $qty AS so, p.onhand, p.assembly,
+                 p.partsgroup_id
+                 FROM assembly a
+                 JOIN parts p ON (p.id = a.parts_id)
+                  WHERE $where
+                 AND a.aid = $id
+                 AND p.assembly = '1'|;
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -2085,7 +2085,7 @@ sub assembly_demand {
     }
   }
   $sth->finish;
-    
+
 }
 
 
@@ -2096,7 +2096,7 @@ sub requirements {
   my $ref;
   my $id;
   my $qty;
-  
+
   my $where = qq|p.obsolete = '0'|;
 
   for (qw(partnumber description)) {
@@ -2105,7 +2105,7 @@ sub requirements {
       $where .= qq| AND lower(p.$_) LIKE '$var'|;
     }
   }
-  
+
   if ($form->{partsgroup} ne "") {
     (undef, $var) = split /--/, $form->{partsgroup};
     $where .= qq| AND p.partsgroup_id = $var|;
@@ -2115,15 +2115,15 @@ sub requirements {
   my $dbh = $form->dbconnect($myconfig);
 
   $query = qq|SELECT p.*
-	      FROM parts p
-	      WHERE $where
-	      AND p.inventory_accno_id > 0
-	      UNION
-	      SELECT p.*
-	      FROM parts p
-	      WHERE $where
-	      AND p.assembly = '1'
-	      |;
+              FROM parts p
+              WHERE $where
+              AND p.inventory_accno_id > 0
+              UNION
+              SELECT p.*
+              FROM parts p
+              WHERE $where
+              AND p.assembly = '1'
+              |;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
@@ -2135,10 +2135,10 @@ sub requirements {
 
   # add assemblies
   $query = qq|SELECT p.*
-	      FROM parts p
-	      WHERE $where
-	      AND p.assembly = '1'
-	      |;
+              FROM parts p
+              WHERE $where
+              AND p.assembly = '1'
+              |;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
@@ -2151,17 +2151,17 @@ sub requirements {
 
   # if part belongs to an assembly
   $query = qq|SELECT a.aid, a.qty, p.onhand, p.rop, p.id, p.assembly
-	      FROM parts p
-	      JOIN assembly a ON (a.parts_id = p.id)
-	      WHERE $where
-	      |;
+              FROM parts p
+              JOIN assembly a ON (a.parts_id = p.id)
+              WHERE $where
+              |;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   $query = qq|SELECT p.*
-	      FROM parts p
-	      WHERE p.id = ?
-	      |;
+              FROM parts p
+              WHERE p.id = ?
+              |;
   my $pth = $dbh->prepare($query) || $form->dberror($query);
 
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
@@ -2170,54 +2170,54 @@ sub requirements {
     $qty = 0 if $qty < 0;
 
     if ($qty) {
-      
+
       $qty *= $ref->{qty};
 
       if (exists $parts{$ref->{id}}) {
-	if ($ref->{assembly}) {
-	  &assembly_requirements($dbh, $form, \%parts, $ref->{id}, $qty);
-	} else {
-	  $parts{$ref->{id}}{amb} = $qty;
-	}
+        if ($ref->{assembly}) {
+          &assembly_requirements($dbh, $form, \%parts, $ref->{id}, $qty);
+        } else {
+          $parts{$ref->{id}}{amb} = $qty;
+        }
       } else {
-	
-	$pth->execute($ref->{id});
-	$pref = $pth->fetchrow_hashref(NAME_lc);
 
-	$pref->{amb} = $qty;
+        $pth->execute($ref->{id});
+        $pref = $pth->fetchrow_hashref(NAME_lc);
 
-	if ($pref->{assembly}) {
-	  &assembly_requirements($dbh, $form, \%parts, $ref->{id}, $qty);
-	} else {
-	  if (exists $parts{$ref->{id}}) {
-	    $parts{$ref->{id}}{amb} += $qty;
-	  } else {
-	    $parts{$ref->{id}} = $pref;
-	  }
-	}
-	$pth->finish;
+        $pref->{amb} = $qty;
+
+        if ($pref->{assembly}) {
+          &assembly_requirements($dbh, $form, \%parts, $ref->{id}, $qty);
+        } else {
+          if (exists $parts{$ref->{id}}) {
+            $parts{$ref->{id}}{amb} += $qty;
+          } else {
+            $parts{$ref->{id}} = $pref;
+          }
+        }
+        $pth->finish;
       }
     }
   }
   $sth->finish;
 
 
-  # check for parts on open orders 
+  # check for parts on open orders
   my %ofld = ( customer => so,
                vendor => po );
-  
+
   for (qw(customer vendor)) {
     $query = qq|SELECT sum(qty) - sum(ship) AS $ofld{$_}, p.assembly, p.onhand,
                 p.rop
-		FROM orderitems i
-		JOIN parts p ON (p.id = i.parts_id)
-		JOIN oe a ON (a.id = i.trans_id)
-		WHERE i.parts_id = ?
-		AND a.closed = '0'
-		AND a.quotation = '0'
-		AND a.${_}_id > 0
-		GROUP BY p.assembly, p.onhand, p.rop
-		|;
+                FROM orderitems i
+                JOIN parts p ON (p.id = i.parts_id)
+                JOIN oe a ON (a.id = i.trans_id)
+                WHERE i.parts_id = ?
+                AND a.closed = '0'
+                AND a.quotation = '0'
+                AND a.${_}_id > 0
+                GROUP BY p.assembly, p.onhand, p.rop
+                |;
     $sth = $dbh->prepare($query) || $form->dberror($query);
 
     for $id (keys %parts) {
@@ -2226,11 +2226,11 @@ sub requirements {
       $qty = $ref->{$ofld{$_}} - $ref->{onhand};
       $qty = 0 if $qty < 0;
       if ($qty) {
-	if ($ref->{assembly}) {
-	  &assembly_requirements($dbh, $form, \%parts, $id, $qty);
-	} else {
-	  $parts{$id}{$ofld{$_}} += $qty;
-	}
+        if ($ref->{assembly}) {
+          &assembly_requirements($dbh, $form, \%parts, $id, $qty);
+        } else {
+          $parts{$id}{$ofld{$_}} += $qty;
+        }
       }
       $sth->finish;
     }
@@ -2241,7 +2241,7 @@ sub requirements {
   for (sort { $parts{$a}->{$form->{sort}} cmp $parts{$b}->{$form->{sort}} } keys %parts) {
     push @{ $form->{parts} }, $parts{$_};
   }
-  
+
 }
 
 
@@ -2251,23 +2251,23 @@ sub assembly_requirements {
   # assemblies
   my $query = qq|SELECT p.id, p.partnumber, p.description,
                  a.qty * $qty AS amb, p.onhand, p.assembly,
-	         p.partsgroup_id, p.rop
-	         FROM assembly a
-	         JOIN parts p ON (p.id = a.parts_id)
- 	         WHERE p.obsolete = '0'
-		 AND a.aid = $id
-	         AND p.inventory_accno_id > 0
-		 
-		 UNION
-	  
-	         SELECT p.id, p.partnumber, p.description,
-                 a.qty * $qty AS amb, p.onhand, p.assembly,
-	         p.partsgroup_id, p.rop
-	         FROM assembly a
-	         JOIN parts p ON (p.id = a.parts_id)
- 	         WHERE p.obsolete = '0'
+                 p.partsgroup_id, p.rop
+                 FROM assembly a
+                 JOIN parts p ON (p.id = a.parts_id)
+                  WHERE p.obsolete = '0'
                  AND a.aid = $id
-		 AND p.assembly = '1'|;
+                 AND p.inventory_accno_id > 0
+
+                 UNION
+
+                 SELECT p.id, p.partnumber, p.description,
+                 a.qty * $qty AS amb, p.onhand, p.assembly,
+                 p.partsgroup_id, p.rop
+                 FROM assembly a
+                 JOIN parts p ON (p.id = a.parts_id)
+                  WHERE p.obsolete = '0'
+                 AND a.aid = $id
+                 AND p.assembly = '1'|;
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
@@ -2275,9 +2275,9 @@ sub assembly_requirements {
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
     if ($ref->{assembly}) {
       if (exists $parts->{$ref->{id}}) {
-	$parts->{$ref->{id}}{amb} += $ref->{amb};
+        $parts->{$ref->{id}}{amb} += $ref->{amb};
       } else {
-	$parts->{$ref->{id}} = $ref;
+        $parts->{$ref->{id}} = $ref;
       }
 
       &assembly_requirements($dbh, $form, $parts, $ref->{id}, $ref->{amb});
@@ -2291,7 +2291,7 @@ sub assembly_requirements {
     }
   }
   $sth->finish;
-    
+
 }
 
 
@@ -2300,25 +2300,25 @@ sub create_links {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
-  
+
   my $ref;
 
   my $query = qq|SELECT c.accno, c.description, c.link,
                  l.description AS translation
                  FROM chart c
-		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
-		 WHERE c.link LIKE '%$module%'
-		 ORDER BY c.accno|;
+                 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+                 WHERE c.link LIKE '%$module%'
+                 ORDER BY c.accno|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     foreach my $key (split /:/, $ref->{link}) {
       if ($key =~ /$module/) {
-	$ref->{description} = $ref->{translation} if $ref->{translation};
+        $ref->{description} = $ref->{translation} if $ref->{translation};
 
-	push @{ $form->{"${module}_links"}{$key} }, { accno => $ref->{accno},
-				      description => $ref->{description} };
+        push @{ $form->{"${module}_links"}{$key} }, { accno => $ref->{accno},
+                                      description => $ref->{description} };
       }
     }
   }
@@ -2330,13 +2330,13 @@ sub create_links {
 
     if ($count < $myconfig->{vclimit}) {
       $query = qq|SELECT id, name
-		  FROM vendor
-		  ORDER BY name|;
+                  FROM vendor
+                  ORDER BY name|;
       $sth = $dbh->prepare($query);
       $sth->execute || $form->dberror($query);
 
       while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-	push @{ $form->{all_vendor} }, $ref;
+        push @{ $form->{all_vendor} }, $ref;
       }
       $sth->finish;
     }
@@ -2348,8 +2348,8 @@ sub create_links {
 
   if ($count < $myconfig->{vclimit}) {
     $query = qq|SELECT id, name
-		FROM customer
-		ORDER BY name|;
+                FROM customer
+                ORDER BY name|;
     $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);
 
@@ -2361,7 +2361,7 @@ sub create_links {
 
   $query = qq|SELECT id, pricegroup
               FROM pricegroup
-	      ORDER BY pricegroup|;
+              ORDER BY pricegroup|;
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
@@ -2374,12 +2374,12 @@ sub create_links {
   if ($form->{id} *= 1) {
     my %defaults = $form->get_defaults($dbh, \@{[qw(weightunit precision referenceurl)]});
     for (keys %defaults) { $form->{$_} = $defaults{$_} }
-  
+
     $form->all_references($dbh);
 
   } else {
     $form->{priceupdate} = $form->current_date($myconfig);
-    
+
     my %defaults = $form->get_defaults($dbh, \@{['weightunit', '%_accno_id', 'precision', 'referenceurl']});
     for (qw(weightunit precision referenceurl)) { $form->{$_} = $defaults{$_} }
 
@@ -2387,20 +2387,20 @@ sub create_links {
       $query = qq|SELECT c.accno, c.description,
                   l.description AS translation
                   FROM chart c
-		  LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
-		  WHERE c.id = '$defaults{"${_}_accno_id"}'|;
+                  LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
+                  WHERE c.id = '$defaults{"${_}_accno_id"}'|;
       ($form->{"${_}_accno"}, $form->{"${_}_description"}, $form->{"${_}_translation"}) = $dbh->selectrow_array($query);
       $form->{"${_}_description"} = $form->{"${_}_translation"} if $form->{"${_}_translation"};
       $form->{amount}{"IC_$_"} = { accno => $form->{"${_}_accno"}, description => $form->{"${_}_description"} };
-      
+
     }
-    
+
   }
 
   $form->{currencies} = $form->get_currencies($myconfig, $dbh);
-  
+
   $form->get_partsgroup($myconfig, {all => 1}, $dbh);
- 
+
   $dbh->disconnect;
 
 }
@@ -2441,7 +2441,7 @@ sub get_inventory {
   my $var;
 
   my $dbh = $form->dbconnect($myconfig);
-  
+
   my %defaults = $form->get_defaults($dbh, \@{[qw(company address tel fax companyemail companywebsite)]});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
@@ -2449,7 +2449,7 @@ sub get_inventory {
                  AND p.obsolete = '0'
                  AND ((p.inventory_accno_id > 0 AND p.income_accno_id > 0)
                  OR p.assembly = '1')|;
-  
+
   if ($form->{partnumber} ne "") {
     $var = $form->like(lc $form->{partnumber});
     $where .= "
@@ -2540,11 +2540,11 @@ sub get_inventory {
 
 sub transfer {
   my ($self, $myconfig, $form) = @_;
-  
+
   my $dbh = $form->dbconnect_noauto($myconfig);
-  
+
   ($form->{employee}, $form->{employee_id}) = $form->get_employee($dbh);
-  
+
   my @a = localtime;
   $a[5] += 1900;
   $a[4]++;
@@ -2556,7 +2556,7 @@ sub transfer {
 
   my $query = qq|INSERT INTO inventory
                  (warehouse_id, parts_id, qty, shippingdate, employee_id)
-		 VALUES (?, ?, ?, '$shippingdate', $form->{employee_id})|;
+                 VALUES (?, ?, ?, '$shippingdate', $form->{employee_id})|;
   my $sth = $dbh->prepare($query) || $form->dberror($query);
 
   $query = qq|SELECT partnumber, assembly, onhand
@@ -2575,7 +2575,7 @@ sub transfer {
   my $partnumber;
   my $assembly;
   my $onhand;
-  
+
   for $i (1 .. $form->{rowcount}) {
     $qty = $form->parse_amount($myconfig, $form->{"transfer_$i"});
 
@@ -2585,12 +2585,12 @@ sub transfer {
       ($partnumber, $assembly, $onhand) = $ath->fetchrow_array;
       $ath->finish;
 
-      %audittrail = ( tablename	=> 'ic',
+      %audittrail = ( tablename        => 'ic',
                       reference => $partnumber,
-		      formname => $assembly ? 'assembly' : 'part',
+                      formname => $assembly ? 'assembly' : 'part',
                       action     => 'transfer',
-		      id => $form->{"id_$i"}
-		      );
+                      id => $form->{"id_$i"}
+                      );
 
       $form->audittrail($dbh, "", \%audittrail);
 
@@ -2612,15 +2612,15 @@ sub transfer {
 
       # to warehouse
       if ($form->{"towarehouse_$i"}) {
-	(undef, $towarehouse_id) = split /--/, $form->{"towarehouse_$i"}; 
-	$sth->execute($towarehouse_id, $form->{"id_$i"}, $qty) || $form->dberror;
-	$sth->finish;
+        (undef, $towarehouse_id) = split /--/, $form->{"towarehouse_$i"};
+        $sth->execute($towarehouse_id, $form->{"id_$i"}, $qty) || $form->dberror;
+        $sth->finish;
       }
-      
+
       # from warehouse
       if ($form->{"warehouse_id_$i"}) {
-	$sth->execute($form->{"warehouse_id_$i"}, $form->{"id_$i"}, $qty * -1) || $form->dberror;
-	$sth->finish;
+        $sth->execute($form->{"warehouse_id_$i"}, $form->{"id_$i"}, $qty * -1) || $form->dberror;
+        $sth->finish;
       }
     }
   }
@@ -2637,12 +2637,12 @@ sub transfer_report {
   my ($self, $myconfig, $form) = @_;
 
   my $dbh = $form->dbconnect($myconfig);
-  
+
   my $var;
   my %inventory;
   my $where = "1 = 1";
   my $warehouse_id;
-  
+
   if ($form->{partnumber} ne "") {
     $var = $form->like(lc $form->{partnumber});
     $where .= "
@@ -2663,7 +2663,7 @@ sub transfer_report {
     $where .= "
                 AND i.warehouse_id = $warehouse_id";
   }
-  
+
   unless ($form->{transdatefrom} || $form->{transdateto}) {
     ($form->{transdatefrom}, $form->{transdateto}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};
   }
@@ -2673,13 +2673,13 @@ sub transfer_report {
 
   my $query = qq|SELECT p.id, p.partnumber, p.description,
               pg.partsgroup, w.description AS warehouse, i.shippingdate,
-	      e.name AS employee, i.employee_id, i.qty, i.id AS iid, p.unit
-	      FROM inventory i
-	      JOIN parts p ON (p.id = i.parts_id)
-	      LEFT JOIN partsgroup pg ON (pg.id = p.partsgroup_id)
-	      JOIN warehouse w ON (w.id = i.warehouse_id)
-	      LEFT JOIN employee e ON (e.id = i.employee_id)
-	      WHERE $where|;
+              e.name AS employee, i.employee_id, i.qty, i.id AS iid, p.unit
+              FROM inventory i
+              JOIN parts p ON (p.id = i.parts_id)
+              LEFT JOIN partsgroup pg ON (pg.id = p.partsgroup_id)
+              JOIN warehouse w ON (w.id = i.warehouse_id)
+              LEFT JOIN employee e ON (e.id = i.employee_id)
+              WHERE $where|;
 
   my @sf = (shippingdate, partnumber, iid);
   my %ordinal = $form->ordinal_order($dbh, $query);
@@ -2715,7 +2715,7 @@ sub transfer_report {
       $ref->{qty} *= -1;
       $ref->{fromwarehouse} = $ref->{warehouse};
     }
- 
+
     $inventory{$ref->{iid}} = 1;
 
     $wth->execute($ref->{id}, $ref->{shippingdate}, $ref->{employee_id}, $qty * -1);
@@ -2759,7 +2759,7 @@ sub so_requirements {
 
   my $var;
   my $where = "o.closed = '0' AND o.quotation = '0'";
-  
+
   $form->{vc} =~ s/;//g;
 
   if ($form->{searchitems} eq 'part') {
@@ -2797,21 +2797,21 @@ sub so_requirements {
   }
   $where .= " AND o.reqdate >= '$form->{reqdatefrom}'" if $form->{reqdatefrom};
   $where .= " AND o.reqdate <= '$form->{reqdateto}'" if $form->{reqdateto};
-  
+
   my $query = qq|SELECT p.partnumber, p.id as parts_id,
                  c.id AS $form->{vc}_id, c.name, c.$form->{vc}number,
-		 o.id, o.ordnumber, o.reqdate,
-		 oi.qty - oi.ship AS qty, oi.description
+                 o.id, o.ordnumber, o.reqdate,
+                 oi.qty - oi.ship AS qty, oi.description
                  FROM oe o
-		 JOIN orderitems oi ON (oi.trans_id = o.id)
-		 JOIN parts p ON (p.id = oi.parts_id)
-		 JOIN $form->{vc} c ON (o.$form->{vc}_id = c.id)
-		 WHERE $where|;
+                 JOIN orderitems oi ON (oi.trans_id = o.id)
+                 JOIN parts p ON (p.id = oi.parts_id)
+                 JOIN $form->{vc} c ON (o.$form->{vc}_id = c.id)
+                 WHERE $where|;
 
   my @sf = qw(partnumber ordnumber reqdate);
   my %ordinal = $form->ordinal_order($dbh, $query);
   $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
- 
+
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
@@ -2832,142 +2832,142 @@ sub history {
 
   my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
   for (%defaults) { $form->{$_} = $defaults{$_} }
-  
+
   my $id = $form->{id} * 1;
-  
+
   my $query;
 
   if ($form->{history} eq 'sales') {
     $query = qq|SELECT 'ar' AS module, p.partnumber, i.description,
-		i.sellprice, c.name, a.invnumber AS trn,
-		a.id, 'invoice' AS type, a.transdate
-		FROM invoice i
-		JOIN parts p ON (p.id = i.parts_id)
-		JOIN ar a ON (a.id = i.trans_id)
-		JOIN customer c ON (c.id = a.customer_id)
-		WHERE i.parts_id = $id
-	      UNION ALL
-		SELECT 'so' AS module, p.partnumber, i.description,
-		i.sellprice * o.exchangerate AS sellprice,
-		c.name, o.ordnumber AS trn, o.id, 'sales_order' AS type,
-		o.transdate
-		FROM orderitems i
-		JOIN parts p ON (p.id = i.parts_id)
-		JOIN oe o ON (o.id = i.trans_id)
-		JOIN customer c ON (c.id = o.customer_id)
-		WHERE o.quotation = '0'
-		AND i.parts_id = $id
-	      UNION ALL
-		SELECT 'sq' AS module, p.partnumber, i.description,
-		i.sellprice * o.exchangerate AS sellprice,
-		c.name, o.quonumber AS trn, o.id, 'sales_quotation' AS type,
-		o.transdate
-		FROM orderitems i
-		JOIN parts p ON (p.id = i.parts_id)
-		JOIN oe o ON (o.id = i.trans_id)
-		JOIN customer c ON (c.id = o.customer_id)
-		WHERE o.quotation = '1'
-		AND i.parts_id = $id
-		ORDER BY 1, transdate
-		|;
+                i.sellprice, c.name, a.invnumber AS trn,
+                a.id, 'invoice' AS type, a.transdate
+                FROM invoice i
+                JOIN parts p ON (p.id = i.parts_id)
+                JOIN ar a ON (a.id = i.trans_id)
+                JOIN customer c ON (c.id = a.customer_id)
+                WHERE i.parts_id = $id
+              UNION ALL
+                SELECT 'so' AS module, p.partnumber, i.description,
+                i.sellprice * o.exchangerate AS sellprice,
+                c.name, o.ordnumber AS trn, o.id, 'sales_order' AS type,
+                o.transdate
+                FROM orderitems i
+                JOIN parts p ON (p.id = i.parts_id)
+                JOIN oe o ON (o.id = i.trans_id)
+                JOIN customer c ON (c.id = o.customer_id)
+                WHERE o.quotation = '0'
+                AND i.parts_id = $id
+              UNION ALL
+                SELECT 'sq' AS module, p.partnumber, i.description,
+                i.sellprice * o.exchangerate AS sellprice,
+                c.name, o.quonumber AS trn, o.id, 'sales_quotation' AS type,
+                o.transdate
+                FROM orderitems i
+                JOIN parts p ON (p.id = i.parts_id)
+                JOIN oe o ON (o.id = i.trans_id)
+                JOIN customer c ON (c.id = o.customer_id)
+                WHERE o.quotation = '1'
+                AND i.parts_id = $id
+                ORDER BY 1, transdate
+                |;
 
   } elsif ($form->{history} eq 'purchases') {
     $query = qq|SELECT 'ap' AS module, p.partnumber, i.description,
-		i.sellprice, v.name, a.invnumber AS trn,
-		a.id, 'invoice' AS type, a.transdate
-		FROM invoice i
-		JOIN parts p ON (p.id = i.parts_id)
-		JOIN ap a ON (a.id = i.trans_id)
-		JOIN vendor v ON (v.id = a.vendor_id)
-		WHERE i.parts_id = $id
-	      UNION ALL
-		SELECT 'po' AS module, p.partnumber, i.description,
-		i.sellprice * o.exchangerate AS sellprice,
-		v.name, o.ordnumber AS trn, o.id, 'purchase_order' AS type,
-		o.transdate
-		FROM orderitems i
-		JOIN parts p ON (p.id = i.parts_id)
-		JOIN oe o ON (o.id = i.trans_id)
-		JOIN vendor v ON (v.id = o.vendor_id)
-		WHERE o.quotation = '0'
-		AND i.parts_id = $id
-	      UNION ALL
-		SELECT 'rfq' AS module, p.partnumber, i.description,
-		i.sellprice * o.exchangerate AS isellprice,
-		v.name, o.quonumber AS trn, o.id, 'request_quotation' AS type,
-		o.transdate
-		FROM orderitems i
-		JOIN parts p ON (p.id = i.parts_id)
-		JOIN oe o ON (o.id = i.trans_id)
-		JOIN vendor v ON (v.id = o.vendor_id)
-		WHERE o.quotation = '1'
-		AND i.parts_id = $id
-		ORDER BY 1, transdate
-		|;
+                i.sellprice, v.name, a.invnumber AS trn,
+                a.id, 'invoice' AS type, a.transdate
+                FROM invoice i
+                JOIN parts p ON (p.id = i.parts_id)
+                JOIN ap a ON (a.id = i.trans_id)
+                JOIN vendor v ON (v.id = a.vendor_id)
+                WHERE i.parts_id = $id
+              UNION ALL
+                SELECT 'po' AS module, p.partnumber, i.description,
+                i.sellprice * o.exchangerate AS sellprice,
+                v.name, o.ordnumber AS trn, o.id, 'purchase_order' AS type,
+                o.transdate
+                FROM orderitems i
+                JOIN parts p ON (p.id = i.parts_id)
+                JOIN oe o ON (o.id = i.trans_id)
+                JOIN vendor v ON (v.id = o.vendor_id)
+                WHERE o.quotation = '0'
+                AND i.parts_id = $id
+              UNION ALL
+                SELECT 'rfq' AS module, p.partnumber, i.description,
+                i.sellprice * o.exchangerate AS isellprice,
+                v.name, o.quonumber AS trn, o.id, 'request_quotation' AS type,
+                o.transdate
+                FROM orderitems i
+                JOIN parts p ON (p.id = i.parts_id)
+                JOIN oe o ON (o.id = i.trans_id)
+                JOIN vendor v ON (v.id = o.vendor_id)
+                WHERE o.quotation = '1'
+                AND i.parts_id = $id
+                ORDER BY 1, transdate
+                |;
   } else {
     $query = qq|SELECT 'ar' AS module, p.partnumber, i.description,
-		i.sellprice, c.name, a.invnumber AS trn,
-		a.id, 'invoice' AS type, a.transdate
-		FROM invoice i
-		JOIN parts p ON (p.id = i.parts_id)
-		JOIN ar a ON (a.id = i.trans_id)
-		JOIN customer c ON (c.id = a.customer_id)
-		WHERE i.parts_id = $id
-	      UNION ALL
-		SELECT 'ap' AS module, p.partnumber, i.description,
-		i.sellprice, v.name, a.invnumber AS trn,
-		a.id, 'invoice' AS type, a.transdate
-		FROM invoice i
-		JOIN parts p ON (p.id = i.parts_id)
-		JOIN ap a ON (a.id = i.trans_id)
-		JOIN vendor v ON (v.id = a.vendor_id)
-		WHERE i.parts_id = $id
-	      UNION ALL
-		SELECT 'so' AS module, p.partnumber, i.description,
-		i.sellprice * o.exchangerate AS sellprice,
-		c.name, o.ordnumber AS trn, o.id, 'sales_order' AS type,
-		o.transdate
-		FROM orderitems i
-		JOIN parts p ON (p.id = i.parts_id)
-		JOIN oe o ON (o.id = i.trans_id)
-		JOIN customer c ON (c.id = o.customer_id)
-		WHERE o.quotation = '0'
-		AND i.parts_id = $id
-	      UNION ALL
-		SELECT 'po' AS module, p.partnumber, i.description,
-		i.sellprice * o.exchangerate AS sellprice,
-		v.name, o.ordnumber AS trn, o.id, 'purchase_order' AS type,
-		o.transdate
-		FROM orderitems i
-		JOIN parts p ON (p.id = i.parts_id)
-		JOIN oe o ON (o.id = i.trans_id)
-		JOIN vendor v ON (v.id = o.vendor_id)
-		WHERE o.quotation = '0'
-		AND i.parts_id = $id
-	      UNION ALL
-		SELECT 'sq' AS module, p.partnumber, i.description,
-		i.sellprice * o.exchangerate AS sellprice,
-		c.name, o.quonumber AS trn, o.id, 'sales_quotation' AS type,
-		o.transdate
-		FROM orderitems i
-		JOIN parts p ON (p.id = i.parts_id)
-		JOIN oe o ON (o.id = i.trans_id)
-		JOIN customer c ON (c.id = o.customer_id)
-		WHERE o.quotation = '1'
-		AND i.parts_id = $id
-	      UNION ALL
-		SELECT 'rfq' AS module, p.partnumber, i.description,
-		i.sellprice * o.exchangerate AS isellprice,
-		v.name, o.quonumber AS trn, o.id, 'request_quotation' AS type,
-		o.transdate
-		FROM orderitems i
-		JOIN parts p ON (p.id = i.parts_id)
-		JOIN oe o ON (o.id = i.trans_id)
-		JOIN vendor v ON (v.id = o.vendor_id)
-		WHERE o.quotation = '1'
-		AND i.parts_id = $id
-		ORDER BY 1, transdate
-		|;
+                i.sellprice, c.name, a.invnumber AS trn,
+                a.id, 'invoice' AS type, a.transdate
+                FROM invoice i
+                JOIN parts p ON (p.id = i.parts_id)
+                JOIN ar a ON (a.id = i.trans_id)
+                JOIN customer c ON (c.id = a.customer_id)
+                WHERE i.parts_id = $id
+              UNION ALL
+                SELECT 'ap' AS module, p.partnumber, i.description,
+                i.sellprice, v.name, a.invnumber AS trn,
+                a.id, 'invoice' AS type, a.transdate
+                FROM invoice i
+                JOIN parts p ON (p.id = i.parts_id)
+                JOIN ap a ON (a.id = i.trans_id)
+                JOIN vendor v ON (v.id = a.vendor_id)
+                WHERE i.parts_id = $id
+              UNION ALL
+                SELECT 'so' AS module, p.partnumber, i.description,
+                i.sellprice * o.exchangerate AS sellprice,
+                c.name, o.ordnumber AS trn, o.id, 'sales_order' AS type,
+                o.transdate
+                FROM orderitems i
+                JOIN parts p ON (p.id = i.parts_id)
+                JOIN oe o ON (o.id = i.trans_id)
+                JOIN customer c ON (c.id = o.customer_id)
+                WHERE o.quotation = '0'
+                AND i.parts_id = $id
+              UNION ALL
+                SELECT 'po' AS module, p.partnumber, i.description,
+                i.sellprice * o.exchangerate AS sellprice,
+                v.name, o.ordnumber AS trn, o.id, 'purchase_order' AS type,
+                o.transdate
+                FROM orderitems i
+                JOIN parts p ON (p.id = i.parts_id)
+                JOIN oe o ON (o.id = i.trans_id)
+                JOIN vendor v ON (v.id = o.vendor_id)
+                WHERE o.quotation = '0'
+                AND i.parts_id = $id
+              UNION ALL
+                SELECT 'sq' AS module, p.partnumber, i.description,
+                i.sellprice * o.exchangerate AS sellprice,
+                c.name, o.quonumber AS trn, o.id, 'sales_quotation' AS type,
+                o.transdate
+                FROM orderitems i
+                JOIN parts p ON (p.id = i.parts_id)
+                JOIN oe o ON (o.id = i.trans_id)
+                JOIN customer c ON (c.id = o.customer_id)
+                WHERE o.quotation = '1'
+                AND i.parts_id = $id
+              UNION ALL
+                SELECT 'rfq' AS module, p.partnumber, i.description,
+                i.sellprice * o.exchangerate AS isellprice,
+                v.name, o.quonumber AS trn, o.id, 'request_quotation' AS type,
+                o.transdate
+                FROM orderitems i
+                JOIN parts p ON (p.id = i.parts_id)
+                JOIN oe o ON (o.id = i.trans_id)
+                JOIN vendor v ON (v.id = o.vendor_id)
+                WHERE o.quotation = '1'
+                AND i.parts_id = $id
+                ORDER BY 1, transdate
+                |;
   }
 
   my $sth = $dbh->prepare($query);
@@ -2985,3 +2985,119 @@ sub history {
 
 1;
 
+
+=encoding utf8
+
+=head1 NAME
+
+IC - Inventory control backend
+
+=head1 DESCRIPTION
+
+L<SL::IC> contains the inventory control backend.
+
+=head1 FUNCTIONS
+
+L<SL::IC> implements the following functions:
+
+=head2 adjust_inventory
+
+  IC::adjust_inventory($dbh, $form, $id, $qty);
+
+=head2 adjust_onhand
+
+  IC->adjust_onhand($myconfig, $form);
+
+=head2 all_parts
+
+  IC->all_parts($myconfig, $form);
+
+=head2 assembly_demand
+
+  IC::assembly_demand($dbh, $form, $parts, $id, $qty, $where);
+
+=head2 assembly_item
+
+  IC->assembly_item($myconfig, $form);
+
+=head2 assembly_requirements
+
+  IC::assembly_requirements($dbh, $form, $parts, $id, $qty);
+
+=head2 create_links
+
+  IC->create_links($module, $myconfig, $form);
+
+=head2 delete
+
+  IC->delete($myconfig, $form);
+
+=head2 get_assembly_bom_transfer
+
+  IC->get_assembly_bom_transfer($myconfig, $form);
+
+=head2 get_inventory
+
+  IC->get_inventory($myconfig, $form);
+
+=head2 get_part
+
+  IC->get_part($myconfig, $form);
+
+=head2 get_warehouses
+
+  IC->get_warehouses($myconfig, $form);
+
+=head2 history
+
+  IC->history($myconfig, $form);
+
+=head2 include_assembly
+
+  IC::include_assembly($dbh, $myconfig, $form, $id, $flds, $makemodeljoin, $qty, $all);
+
+=head2 orphaned
+
+  IC->orphaned($dbh, $form);
+
+=head2 requirements
+
+  IC->requirements($myconfig, $form);
+
+=head2 retrieve_assemblies
+
+  IC->retrieve_assemblies($myconfig, $form);
+
+=head2 retrieve_items
+
+  IC->retrieve_items($myconfig, $form);
+
+=head2 save
+
+  IC->save($myconfig, $form, $dbh);
+
+=head2 so_requirements
+
+  IC->so_requirements($myconfig, $form);
+
+=head2 stock_assemblies
+
+  IC->stock_assemblies($myconfig, $form, $dbh);
+
+=head2 supply_demand
+
+  IC->supply_demand($myconfig, $form);
+
+=head2 transfer
+
+  IC->transfer($myconfig, $form);
+
+=head2 transfer_report
+
+  IC->transfer_report($myconfig, $form);
+
+=head2 update_assembly
+
+  IC::update_assembly($dbh, $form, $id, $qty, $adj, $listprice, $sellprice, $lastcost, $weight);
+
+=cut

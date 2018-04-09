@@ -31,7 +31,7 @@ sub send {
   $domain =~ s/(.*?\@|>)//g;
   my $msgid = "$boundary\@$domain";
   $boundary = "SL-$self->{version}-$boundary";
-  
+
   $self->{charset} = 'UTF-8';
 
   $self->{contenttype} ||= "text/plain";
@@ -46,11 +46,11 @@ sub send {
     $self->{$_} =~ s/["]?(.*?)["]? (<.*>)/"=?$self->{charset}?B?".&encode_base64($1,"")."?= $2"/e if $self->{$_} =~ m/[\x00-\x1F]|[\x7B-\xFFFF]/;
     $h{$_} = $self->{$_};
   }
- 
+
   $h{cc} = "Cc: $h{cc}\n" if $self->{cc};
   $h{bcc} = "Bcc: $h{bcc}\n" if $self->{bcc};
   $h{subject} = ($self->{subject} =~ /([\x00-\x1F]|[\x7B-\xFFFF])/) ? "Subject: =?$self->{charset}?B?".&encode_base64($self->{subject},"")."?=" : "Subject: $self->{subject}";
-  
+
   if ($self->{notify}) {
     if ($self->{notify} =~ /\@/) {
       $h{notify} = "Disposition-Notification-To: $self->{notify}\n";
@@ -93,18 +93,18 @@ $self->{message}
     foreach my $attachment (@{ $self->{attachments} }) {
 
       my $application = ($attachment =~ /(^\w+$)|\.(html|text|txt|sql)$/) ? "text" : "application";
-      
+
       unless (open IN, $attachment) {
-	close(OUT);
-	return "$attachment : $!";
+        close(OUT);
+        return "$attachment : $!";
       }
 
       binmode(IN);
-      
+
       my $filename = $attachment;
       # strip path
       $filename =~ s/(.*\/|$self->{fileid})//g;
-      
+
       print OUT qq|--${boundary}
 Content-Type: $application/$self->{format}; name=${filename}; charset=$self->{charset}
 Content-Transfer-Encoding: BASE64
@@ -117,7 +117,7 @@ Content-Disposition: attachment; filename=$filename\n\n|;
       print OUT &encode_base64($msg);
 
       close(IN);
-      
+
     }
     print OUT qq|--${boundary}--\n|;
 
@@ -131,7 +131,7 @@ $self->{message}
   close(OUT);
 
   return "";
-  
+
 }
 
 
@@ -156,9 +156,42 @@ sub encode_base64 ($;$) {
     $res =~ s/(.{1,60})/$1$eol/g;
   }
   return $res;
-  
+
 }
 
 
 1;
 
+
+=encoding utf8
+
+=head1 NAME
+
+Mailer - Mailer package
+
+=head1 DESCRIPTION
+
+L<SL::Mailer> contains the mailer package.
+
+
+=head1 CONSTRUCTOR
+
+L<SL::Mailer> uses the following constructor:
+
+=head2 new
+
+  $mailer = Mailer->new;
+
+=head1 METHODS
+
+L<SL::Mailer> implements the following methods:
+
+=head2 encode_base64
+
+  Mailer::encode_base64($unencoded, $eol);
+
+=head2 send
+
+  $mailer->send($out);
+
+=cut

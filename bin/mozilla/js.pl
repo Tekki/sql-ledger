@@ -47,13 +47,13 @@ function ChangeReport() {
     for $item (keys %{$radio}) {
       $found = 0;
       for (keys %{ $radio->{$item} }) {
-	if ($form->{all_reportvars}{$ref->{reportid}}{"report_$item"} eq $_) {
-	  print qq|  ${item}\[$i\] = "$radio->{$item}{$_}";\n|;
-	  $found = 1;
-	}
+        if ($form->{all_reportvars}{$ref->{reportid}}{"report_$item"} eq $_) {
+          print qq|  ${item}\[$i\] = "$radio->{$item}{$_}";\n|;
+          $found = 1;
+        }
       }
       if (!$found) {
-	print qq|  ${item}\[$i\] = "0";\n|;
+        print qq|  ${item}\[$i\] = "0";\n|;
       }
     }
     print "\n";
@@ -63,7 +63,7 @@ function ChangeReport() {
       $s = $_;
       $s =~ s/l_//;
       if (exists $column_index{$s}) {
-	print qq|  ${_}[$i] = "1";\n|;
+        print qq|  ${_}[$i] = "1";\n|;
       }
     }
     $i++;
@@ -200,20 +200,20 @@ print q|
 if ($myconfig{dateformat} =~ /^yy/i) {
 print q|
     var n_day = Number(RegExp.$3),
-	n_month = Number(RegExp.$2),
-	n_year = Number(RegExp.$1);
+        n_month = Number(RegExp.$2),
+        n_year = Number(RegExp.$1);
 |;
 } elsif ($myconfig{dateformat} =~ /^dd/i) {
 print q|
     var n_day = Number(RegExp.$1),
-	n_month = Number(RegExp.$2),
-	n_year = Number(RegExp.$3);
+        n_month = Number(RegExp.$2),
+        n_year = Number(RegExp.$3);
 |;
 } else {
 print q|
     var n_day = Number(RegExp.$2),
-	n_month = Number(RegExp.$1),
-	n_year = Number(RegExp.$3);
+        n_month = Number(RegExp.$1),
+        n_year = Number(RegExp.$3);
 |;
 }
 
@@ -455,3 +455,43 @@ for (var i = 1; i < document.main.rowcount.value; i++) {
 }
 
 1;
+
+=encoding utf8
+
+=head1 NAME
+
+bin/mozilla/js.pl - Routines to create Javascript functions
+
+=head1 DESCRIPTION
+
+L<bin::mozilla::js> contains routines to create javascript functions.
+
+=head1 FUNCTIONS
+
+L<bin::mozilla::js> implements the following functions:
+
+=head2 calendar
+
+=head2 change_report
+
+  &change_report($form, $input, $checked, $radio);
+
+=head2 check_all
+
+  &check_all($checkbox, $match);
+
+=head2 clock
+
+=head2 js_calendar
+
+  &js_calendar($formname, $date);
+
+=head2 pickvalue
+
+=head2 resize
+
+  &resize($width, $height);
+
+=head2 show_progress
+
+=cut

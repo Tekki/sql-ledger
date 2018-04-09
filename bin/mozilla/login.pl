@@ -81,23 +81,23 @@ sub login_screen {
     <form method=post name=main action=$form->{script}>
 
       <table width=100%>
-	<tr>
-	  <td align=center>
-	    <table>
-	      <tr>
-		<th align=right>|.$locale->text('Name').qq|</th>
-		<td><input class=login name=login size=30></td>
-	      </tr>
-	      <tr>
-		<th align=right>|.$locale->text('Password').qq|</th>
-		<td><input class=login type=password name=password size=30></td>
-	      </tr>
-	    </table>
+        <tr>
+          <td align=center>
+            <table>
+              <tr>
+                <th align=right>|.$locale->text('Name').qq|</th>
+                <td><input class=login name=login size=30></td>
+              </tr>
+              <tr>
+                <th align=right>|.$locale->text('Password').qq|</th>
+                <td><input class=login type=password name=password size=30></td>
+              </tr>
+            </table>
 
-	    <br>
-	    <input type=submit name=action value="|.$locale->text('Login').qq|">
-	  </td>
-	</tr>
+            <br>
+            <input type=submit name=action value="|.$locale->text('Login').qq|">
+          </td>
+        </tr>
       </table>
 |;
 
@@ -116,7 +116,7 @@ var agt = navigator.userAgent.toLowerCase();
 var is_major = parseInt(navigator.appVersion);
 var is_nav = ((agt.indexOf('mozilla') != -1) && (agt.indexOf('spoofer') == -1)
            && (agt.indexOf('compatible') == -1) && (agt.indexOf('opera') == -1)
-	   && (agt.indexOf('webtv') == -1));
+           && (agt.indexOf('webtv') == -1));
 var is_nav4lo = (is_nav && (is_major <= 4));
 
 function jsp() {
@@ -180,39 +180,39 @@ sub selectdataset {
 <input type=hidden name=beenthere value=1>
 
       <table width=100%>
-	<tr>
-	  <td align=center>
-	    <table>
-	      <tr>
-		<th align=right>|.$locale->text('Name').qq|</th>
-		<td>$form->{login}</td>
-	      </tr>
-	      <tr>
-		<th align=right>|.$locale->text('Password').qq|</th>
-		<td><input class=login type=password name=password size=30 value=$form->{password}></td>
-	      </tr>
-	      <tr>
-		<th align=right>|.$locale->text('Company').qq|</th>
-		<td>|;
+        <tr>
+          <td align=center>
+            <table>
+              <tr>
+                <th align=right>|.$locale->text('Name').qq|</th>
+                <td>$form->{login}</td>
+              </tr>
+              <tr>
+                <th align=right>|.$locale->text('Password').qq|</th>
+                <td><input class=login type=password name=password size=30 value=$form->{password}></td>
+              </tr>
+              <tr>
+                <th align=right>|.$locale->text('Company').qq|</th>
+                <td>|;
 
-		$form->hide_form(qw(js path));
+                $form->hide_form(qw(js path));
 
-		$checked = "checked";
-		for (sort { lc $login{$a} cmp lc $login{$b} } keys %{ $login }) {
-		  print qq|
-		  <br><input class=login type=radio name=login value=$_ $checked>$login->{$_}
-		  |;
-		  $checked = "";
-		}
+                $checked = "checked";
+                for (sort { lc $login{$a} cmp lc $login{$b} } keys %{ $login }) {
+                  print qq|
+                  <br><input class=login type=radio name=login value=$_ $checked>$login->{$_}
+                  |;
+                  $checked = "";
+                }
 
-		print qq|
-		  </td>
-	      </tr>
-	    </table>
-	    <br>
-	    <input type=submit name=action value="|.$locale->text('Login').qq|">
-	  </td>
-	</tr>
+                print qq|
+                  </td>
+              </tr>
+            </table>
+            <br>
+            <input type=submit name=action value="|.$locale->text('Login').qq|">
+          </td>
+        </tr>
       </table>
 
 </form>
@@ -244,20 +244,20 @@ sub login {
     while (@members) {
       $_ = shift @members;
       if (/^\[(.*\@.*)\]/) {
-	$login = $1;
-	if ($login =~ /^\Q$form->{login}\E(\@|$)/) {
-	  ($name, $dbname) = split /\@/, $login, 2;
-	  $login{$login} = $dbname;
+        $login = $1;
+        if ($login =~ /^\Q$form->{login}\E(\@|$)/) {
+          ($name, $dbname) = split /\@/, $login, 2;
+          $login{$login} = $dbname;
 
-	  do {
-	    if (/^company=/) {
-	      (undef, $company) = split /=/, $_, 2;
-	      chop $company;
-	      $login{$login} = $company if $company;
-	    }
-	    $_ = shift @members;
-	  } until /^\s+$/;
-	}
+          do {
+            if (/^company=/) {
+              (undef, $company) = split /=/, $_, 2;
+              chop $company;
+              $login{$login} = $company if $company;
+            }
+            $_ = shift @members;
+          } until /^\s+$/;
+        }
       }
     }
 
@@ -266,7 +266,7 @@ sub login {
       exit;
     } else {
       if ($form->{login} !~ /\@/) {
-	$form->{login} .= "\@$dbname";
+        $form->{login} .= "\@$dbname";
       }
     }
   }
@@ -299,40 +299,40 @@ sub login {
 
     if ($errno == 5) {
       if (-f "$userspath/$user->{dbname}.LCK") {
-	if (-s "$userspath/$user->{dbname}.LCK") {
-	  open(FH, "$userspath/$user->{dbname}.LCK");
-	  $msg = <FH>;
-	  close(FH);
-	  if ($form->{admin}) {
-	    $form->info($msg);
-	  } else {
-	    $form->error($msg);
-	  }
-	} else {
-	  $msg = $locale->text('Dataset locked!');
-	  if ($form->{admin}) {
-	    $form->info($msg);
-	  } else {
-	    $form->error($msg);
-	  }
-	}
+        if (-s "$userspath/$user->{dbname}.LCK") {
+          open(FH, "$userspath/$user->{dbname}.LCK");
+          $msg = <FH>;
+          close(FH);
+          if ($form->{admin}) {
+            $form->info($msg);
+          } else {
+            $form->error($msg);
+          }
+        } else {
+          $msg = $locale->text('Dataset locked!');
+          if ($form->{admin}) {
+            $form->info($msg);
+          } else {
+            $form->error($msg);
+          }
+        }
 
       } else {
 
-	# upgrade dataset and log in again
-	open FH, ">$userspath/$user->{dbname}.LCK" or $form->error($!);
+        # upgrade dataset and log in again
+        open FH, ">$userspath/$user->{dbname}.LCK" or $form->error($!);
 
-	for (qw(dbname dbhost dbport dbdriver dbuser dbpasswd)) { $form->{$_} = $user->{$_} }
+        for (qw(dbname dbhost dbport dbdriver dbuser dbpasswd)) { $form->{$_} = $user->{$_} }
 
-	$form->info($locale->text('Upgrading to Version')." $form->{version} ... ");
+        $form->info($locale->text('Upgrading to Version')." $form->{version} ... ");
 
-	# required for Oracle
-	$form->{dbdefault} = $sid;
+        # required for Oracle
+        $form->{dbdefault} = $sid;
 
-	$user->dbupdate(\%$form);
+        $user->dbupdate(\%$form);
 
-	# remove lock file
-	unlink "$userspath/$user->{dbname}.LCK";
+        # remove lock file
+        unlink "$userspath/$user->{dbname}.LCK";
 
       }
 
@@ -448,18 +448,18 @@ sub email_tan {
       <form method=post action=$form->{script}>
 
       <table width=100%>
-	<tr>
-	  <td align=center>
-	    <table>
-	      <tr>
-		<th align=right>|.$locale->text('TAN').qq|</th>
-		<td><input class=login type=password name=password size=30></td>
-	      </tr>
-	    </table>
-	    <br>
-	    <input type=submit name=action value="|.$locale->text('Continue').qq|">
-	  </td>
-	</tr>
+        <tr>
+          <td align=center>
+            <table>
+              <tr>
+                <th align=right>|.$locale->text('TAN').qq|</th>
+                <td><input class=login type=password name=password size=30></td>
+              </tr>
+            </table>
+            <br>
+            <input type=submit name=action value="|.$locale->text('Continue').qq|">
+          </td>
+        </tr>
       </table>
 |;
 
@@ -535,3 +535,57 @@ sub tan_login {
 
 
 sub continue { &{ $form->{nextsub} } };
+
+=encoding utf8
+
+=head1 NAME
+
+bin/mozilla/login.pl - Login frontend
+
+=head1 DESCRIPTION
+
+L<bin::mozilla::login> contains functions for login frontend.
+
+=head1 DEPENDENCIES
+
+L<bin::mozilla::login>
+
+=over
+
+=item * uses
+L<DBI>,
+L<SL::Form>,
+L<SL::User>
+
+=item * requires
+F<< $userspath/$form->{login}.conf >>
+
+=item * optionally requires
+F<< bin/mozilla/custom/$form->{login}/login.pl >>,
+F<< bin/mozilla/custom/$form->login.pl >>
+
+=back
+
+=head1 FUNCTIONS
+
+L<bin::mozilla::login> implements the following functions:
+
+=head2 continue
+
+Calls C<< &{ $form->{nextsub} } >>.
+
+=head2 email_tan
+
+=head2 login
+
+=head2 login_screen
+
+=head2 logout
+
+=head2 selectdataset
+
+  &selectdataset($login);
+
+=head2 tan_login
+
+=cut

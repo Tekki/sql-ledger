@@ -74,3 +74,31 @@ sub list_accounts {
 }
 
 1;
+
+=encoding utf8
+
+=head1 NAME
+
+API - JSON API
+
+=head1 DESCRIPTION
+
+L<SL::API> contains the JSON API.
+
+=head1 FUNCTIONS
+
+L<SL::API> implements the following functions:
+
+=head2 add_reference
+
+  API->add_reference($myconfig, $form);
+
+=head2 find_invoice
+
+  API->find_invoice($myconfig, $form);
+
+=head2 list_accounts
+
+  API->list_accounts($myconfig, $form);
+
+=cut

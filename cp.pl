@@ -59,7 +59,7 @@ eval { require("$userspath/$form->{login}.conf"); };
 
 if ($@) {
   $locale = new Locale "$language", "$script";
-  
+
   $form->{callback} = "";
   $msg1 = $locale->text('You are logged out!');
   $msg2 = $locale->text('Login');
@@ -106,7 +106,7 @@ if (-f "$userspath/$myconfig{dbname}.LCK" && $form->{login} ne "admin\@$myconfig
     $form->error($message);
   }
   $form->error($locale->text('Dataset currently down for maintenance!'));
-} 
+}
 
 # pull in the main code
 require "$form->{path}/$form->{script}";
@@ -149,71 +149,71 @@ sub check_password {
 
     if ($form->{password}) {
       if ((crypt $form->{password}, substr($form->{login}, 0, 2)) ne $myconfig{password}) {
-	if ($ENV{HTTP_USER_AGENT}) {
-	  &getpassword;
-	} else {
-	  $form->error($locale->text('Access Denied!'));
-	}
-	exit;
+        if ($ENV{HTTP_USER_AGENT}) {
+          &getpassword;
+        } else {
+          $form->error($locale->text('Access Denied!'));
+        }
+        exit;
       } else {
         # password checked out, create session
-	if ($ENV{HTTP_USER_AGENT}) {
-	  # create new session
-	  use SL::User;
-	  $user = new User $memberfile, $form->{login};
-	  $user->{password} = $form->{password};
-	  $user->create_config("$userspath/$form->{login}.conf");
-	  $form->{sessioncookie} = $user->{sessioncookie};
-	}
+        if ($ENV{HTTP_USER_AGENT}) {
+          # create new session
+          use SL::User;
+          $user = new User $memberfile, $form->{login};
+          $user->{password} = $form->{password};
+          $user->create_config("$userspath/$form->{login}.conf");
+          $form->{sessioncookie} = $user->{sessioncookie};
+        }
       }
     } else {
 
       if ($ENV{HTTP_USER_AGENT}) {
-	$ENV{HTTP_COOKIE} =~ s/;\s*/;/g;
-	@cookies = split /;/, $ENV{HTTP_COOKIE};
-	%cookie = ();
-	foreach (@cookies) {
-	  ($name,$value) = split /=/, $_, 2;
-	  $cookie{$name} = $value;
-	}
+        $ENV{HTTP_COOKIE} =~ s/;\s*/;/g;
+        @cookies = split /;/, $ENV{HTTP_COOKIE};
+        %cookie = ();
+        foreach (@cookies) {
+          ($name,$value) = split /=/, $_, 2;
+          $cookie{$name} = $value;
+        }
 
-	if ($cookie{"SL-$form->{login}"}) {
+        if ($cookie{"SL-$form->{login}"}) {
 
-	  $form->{sessioncookie} = $cookie{"SL-$form->{login}"};
+          $form->{sessioncookie} = $cookie{"SL-$form->{login}"};
 
-	  $s = "";
-	  %ndx = ();
-	  $l = length $form->{sessioncookie};
+          $s = "";
+          %ndx = ();
+          $l = length $form->{sessioncookie};
 
-	  for $i (0 .. $l - 1) {
-	    $j = substr($myconfig{sessionkey}, $i * 2, 2);
-	    $ndx{$j} = substr($cookie{"SL-$form->{login}"}, $i, 1);
-	  }
+          for $i (0 .. $l - 1) {
+            $j = substr($myconfig{sessionkey}, $i * 2, 2);
+            $ndx{$j} = substr($cookie{"SL-$form->{login}"}, $i, 1);
+          }
 
-	  for (sort keys %ndx) {
-	    $s .= $ndx{$_};
-	  }
+          for (sort keys %ndx) {
+            $s .= $ndx{$_};
+          }
 
-	  $l = length $form->{login};
-	  $login = substr($s, 0, $l);
-	  $password = substr($s, $l, (length $s) - ($l + 10));
+          $l = length $form->{login};
+          $login = substr($s, 0, $l);
+          $password = substr($s, $l, (length $s) - ($l + 10));
 
           # validate cookie
-	  if (($login ne $form->{login}) || ($myconfig{password} ne crypt $password, substr($form->{login}, 0, 2))) {
-	    &getpassword(1);
-	    exit;
-	  }
+          if (($login ne $form->{login}) || ($myconfig{password} ne crypt $password, substr($form->{login}, 0, 2))) {
+            &getpassword(1);
+            exit;
+          }
 
-	} else {
+        } else {
 
-	  if ($form->{action} ne 'display') {
-	    &getpassword(1);
-	    exit;
-	  }
+          if ($form->{action} ne 'display') {
+            &getpassword(1);
+            exit;
+          }
 
-	}
+        }
       } else {
-	exit;
+        exit;
       }
     }
   }
