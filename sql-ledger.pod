@@ -131,6 +131,8 @@ superset of the DWS code.
 
 =item * L<binE<sol>mozillaE<sol>menu.pl|bin::mozilla::menu> - Two frame layout with refractured menu
 
+=item * L<binE<sol>mozillaE<sol>mrp.pl|bin::mozilla::mrp> - Material Requirements Planning
+
 =item * L<binE<sol>mozillaE<sol>oe.pl|bin::mozilla::oe> - Order entry module
 
 =item * L<binE<sol>mozillaE<sol>pe.pl|bin::mozilla::pe> - Project/job administration
@@ -199,6 +201,8 @@ superset of the DWS code.
 
 =item * L<SL::Menu> - Routines for menu items
 
+=item * L<SL::MRP> - Material requirements planning module
+
 =item * L<SL::Num2text> - Default code for the Check package
 
 =item * L<SL::OE> - Order entry module
@@ -216,6 +220,8 @@ superset of the DWS code.
 =item * L<SL::RP> - Backend code for reports
 
 =item * L<SL::SM> - Module for reposting/deleting invoices
+
+=item * L<SL::TagHelpers> - HTML tag helpers
 
 =item * L<SL::User> - User related functions
 
