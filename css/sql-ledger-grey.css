@@ -134,8 +134,8 @@ A.listtop:link, A.listtop:active, A.listtop:visited {
 A.listheading:link, A.listheading:active, A.listheading:visited {
   color: white;
   text-decoration: none; }
-.listrow1 { font-size: 11px; background-color: #e8e8e8; color: black; vertical-align: top; }
-.listrow0 { font-size: 11px; background-color: #cbcbcb; color: black; vertical-align: top; }
+.listrow1, tr.zebra:nth-child(odd) { font-size: 11px; background-color: #e8e8e8; color: black; vertical-align: top; }
+.listrow0, tr.zebra:nth-child(even) { font-size: 11px; background-color: #cbcbcb; color: black; vertical-align: top; }
 .listsubtotal { font-size: 11px; background-color: #686868; color: white; }
 A.listsubtotal:link, A.listsubtotal:active, A.listsubtotal:visited {
   color: white;
@@ -163,9 +163,9 @@ input {
   font-weight: bold;
 }
 
-/* .inputright {
-  text-align:right;
-} */
+.decimal, .number, .inputright {
+  text-align: right;
+}
 
 select {
   background-color: white;

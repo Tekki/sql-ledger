@@ -138,9 +138,9 @@ body.menu {
 A.listheading:link, A.listheading:active, A.listheading:visited {
   color: white;
   text-decoration: none; }
-.listrow1 { font-size: 10px; background-color: #ffffee; color: black;
+.listrow1, tr.zebra:nth-child(odd) { font-size: 10px; background-color: #ffffee; color: black;
 vertical-align: top; }
-.listrow0 { font-size: 10px; background-color: #eeeecc; color: black;
+.listrow0, tr.zebra:nth-child(even) { font-size: 10px; background-color: #eeeecc; color: black;
 vertical-align: top; }
 .listsubtotal { font-size: 10px; background-color: #dad561; color: white; }
 .listtotal { font-size: 10px; background-color: black; color: white; }
@@ -159,6 +159,10 @@ input {
         font-size: 11px;
         background-color: #eeeeee;
         font-weight: bold;
+}
+
+.decimal, .number, .inputright {
+  text-align: right;
 }
 
 select {
