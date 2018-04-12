@@ -10,6 +10,7 @@
 package Form;
 
 use utf8;
+use JSON::PP;
 
 sub new {
   my ($type, $userspath) = @_;
@@ -5219,6 +5220,16 @@ sub audittrail {
 
 }
 
+
+sub as_json {
+  my ($self, $pretty) = @_;
+
+  my $json = JSON::PP->new;
+  $json->pretty if $pretty;
+  return $json->encode({%$self});
+}
+
+
 =encoding utf8
 
 =head1 NAME
@@ -5228,6 +5239,16 @@ Form - Request container and utilities
 =head1 DESCRIPTION
 
 L<SL::Form> contains the request container and utilities.
+
+=head1 DEPENDENCIES
+
+L<SL::Form>
+
+=over
+
+=item * uses L<JSON::PP>
+
+=back
 
 =head1 CONSTRUCTOR
 
@@ -5296,6 +5317,10 @@ L<SL::Form> implements the following methods:
 =head2 all_years
 
   $form->all_years($myconfig, $dbh);
+
+=head2 as_json
+
+  $json_string = $form->as_json($pretty);
 
 =head2 audittrail
 

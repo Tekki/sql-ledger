@@ -15,10 +15,16 @@ package IC;
 
 
 sub get_part {
-  my ($self, $myconfig, $form) = @_;
+  my ($self, $myconfig, $form, $dbh) = @_;
 
-  # connect to db
-  my $dbh = $form->dbconnect($myconfig);
+  my $disconnect;
+
+  # connect to database
+  if (! $dbh) {
+    $disconnect = 1;
+    $dbh = $form->dbconnect($myconfig);
+  }
+
   my $i;
 
   $form->{id} *= 1;
@@ -180,7 +186,7 @@ sub get_part {
     $sth->finish;
   }
 
-  $dbh->disconnect;
+  $dbh->disconnect if $disconnect;
 
 }
 
@@ -3042,7 +3048,7 @@ L<SL::IC> implements the following functions:
 
 =head2 get_part
 
-  IC->get_part($myconfig, $form);
+  IC->get_part($myconfig, $form, $dbh);
 
 =head2 get_warehouses
 
