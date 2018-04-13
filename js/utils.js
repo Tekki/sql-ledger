@@ -1,3 +1,4 @@
+Vue.component('v-select', VueSelect.VueSelect);
 Vue.filter('date', function(value, dateformat) {
   if (value) {
     if (!(typeof value === 'Date')) {

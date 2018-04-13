@@ -101,6 +101,10 @@ sub new {
       delete $self->{$data};
     }
 
+  } elsif ($content =~ /application\/json/){
+
+    $self = JSON::PP->new->utf8->decode($_);
+
   } else {
 
     %$self = split /[&=]/;
@@ -5221,12 +5225,33 @@ sub audittrail {
 }
 
 
+sub accepts_json {
+  my ($self) = @_;
+
+  return $ENV{HTTP_ACCEPT} =~ /application\/json/;
+}
+
+
 sub as_json {
   my ($self, $pretty) = @_;
 
   my $json = JSON::PP->new;
   $json->pretty if $pretty;
   return $json->encode({%$self});
+}
+
+
+sub render_json {
+  my ($self, $result) = @_;
+
+  unless ($result) {
+    $result = {%$self};
+    delete $result->{sessioncookie};
+  }
+
+print qq|Content-Type: application/json; charset=$self->{charset}
+
+| . JSON::PP->new->encode($result);
 }
 
 
@@ -5261,6 +5286,10 @@ L<SL::Form> uses the following constructor:
 =head1 METHODS
 
 L<SL::Form> implements the following methods:
+
+=head2 accepts_json
+
+  $form->accepts_json;
 
 =head2 add_date
 
@@ -5541,6 +5570,11 @@ L<SL::Form> implements the following methods:
 =head2 remove_locks
 
   $form->remove_locks($myconfig, $dbh, $module);
+
+=head2 render_json
+
+  $form->render_json($result);
+  $form->render_json;
 
 =head2 report_level
 

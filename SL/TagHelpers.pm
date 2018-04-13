@@ -21,7 +21,7 @@ package TagHelpers;
 # constructor
 
 sub new ($class, $myconfig, $form) {
-  my $self = {data => {}, form => $form, myconfig => $myconfig,};
+  my $self = {data => [], form => $form, methods => [], myconfig => $myconfig,};
 
   return bless $self, $class;
 }
@@ -42,18 +42,17 @@ sub customer_link ($self, $id_field, $content) {
 }
 
 sub end_body ($self) {
-  my $form = $self->{form};
+  my $myconfig = $self->{myconfig};
+  my $form     = $self->{form};
 
-  my $dateformat = uc $self->{myconfig}->{dateformat};
-  $dateformat =~ s/(\WYY)$/$1YY/;
-  my $numberformat  = $self->{myconfig}->{numberformat};
   my $myconfig_json = qq| {
-      dateformat: "$dateformat",
-      numberformat: "$numberformat"
+      dateformat: "$myconfig->{dateformat}",
+      numberformat: "$myconfig->{numberformat}"
     }|;
 
   my $form_json = $self->_indent(6, $self->{form}->as_json(1));
 
+  # callback function
   my $callback_fn = '';
   if (my $callback_fields = $self->{callback}) {
     $callback_fn = qq| else {
@@ -64,9 +63,25 @@ sub end_body ($self) {
       }|;
   }
 
+  # data
+  my $data_string = '';
+  if (@{$self->{data}}) {
+    $data_string =
+      "\n" . $self->_indent(4, join ",\n", @{$self->{data}}) . ",";
+  }
+
+  # methods
+  my $method_string = '';
+  if (@{$self->{methods}}) {
+    $method_string =
+      "\n" . $self->_indent(4, join ",\n", @{$self->{methods}}) . "\n  ";
+  }
+
   my $rv = qq|
 </div>
 <script src="js/vue-2.5.16.min.js"></script>
+<script src="js/vue-select-2.4.0.js"></script>
+<script src="js/axios-0.17.1.min.js"></script>
 <script src="js/utils.js"></script>
 <script>
 var app = new Vue({
@@ -81,10 +96,15 @@ var app = new Vue({
       return rv;
     }
   },
-  data: {
+  data: {$data_string
+    loadingObject: true,
     myconfig: $myconfig_json,
     form:
 $form_json
+  },
+  methods: {$method_string},
+  updated: function() {
+    this.loadingObject = false;
   }
 });
 </script>
@@ -108,6 +128,60 @@ sub requirements_link ($self, $id_field, $content) {
     $self->_build_link(qq|'mrp.pl?action=part_requirements&id=' + $$id_field|);
   my $text = $self->_text($content);
   my $rv   = qq|<a v-bind:href="$href">$text</a>|;
+  return $rv;
+}
+
+sub search_part ($self, %definition) {
+  push @{$self->{data}}, 'allParts: []';
+
+  my $searchitems = $definition{searchitems} || 'all';
+
+  push @{$self->{methods}}, qq~getPart: function(newPart) {
+  if (this.loadingObject || !newPart) {
+    return;
+  }
+  this.loadingObject = true;
+  var self = this;
+  axios.post('$definition{script}', {action: '$definition{action}', id: newPart.id, path: 'bin/mozilla', login: this.form.login})
+    .then(function(response) {
+      self.form = response.data;
+    });
+},
+searchPartNumber: function(search, loading) {
+  this.searchPart(search, loading, 'partnumber');
+},
+searchPartDescription: function(search, loading) {
+  this.searchPart(search, loading, 'description');
+},
+searchPart: function(search, loading, field) {
+  if (search.length > 2) {
+    loading(true);
+    var self = this;
+    var query = {
+      action: 'search_part',
+      searchitems: '$searchitems',
+      path: 'bin/mozilla',
+      login: this.form.login
+    };
+    query[field] = search;
+    axios.post('api.pl', query)
+      .then(function(response) {
+        self.allParts = response.data.parts;
+        loading(false);
+      });
+  }
+}~;
+
+  my $rv = {
+    columns => [
+q|<v-select label="partnumber" :value="form" :options="allParts" @search="searchPartNumber" @input="getPart">
+</v-select>|,
+q|<v-select label="description" :value="form" :options="allParts" @search="searchPartDescription" @input="getPart">
+</v-select>|,
+    ],
+    params => {class => 'noprint'},
+  };
+
   return $rv;
 }
 
@@ -319,6 +393,26 @@ Creates a link to the L<order entry module|bin::mozilla::oe/edit>.
 
 Creates a link to the L<requirements overwiev|bin::mozilla::mrp/part_requirements>
 of a part.
+
+=head2 search_part
+
+  $href = $html->search_part(
+    action => $action,            # action for selected part
+    script => $script,            # script for selected part
+    searchitems => $searchitems,  # default 'all'
+  );
+
+Sets up the required variables and methods and returns a hash reference
+that defines a non-printing table row with two columns and can be inserted
+in L</table>.
+
+  $html->table(
+    rows => [
+      $html->search_part(%definition),
+      ...
+    ],
+  );
+
 
 =head2 start_body
 

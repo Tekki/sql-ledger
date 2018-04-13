@@ -18,10 +18,13 @@ sub part_requirements {
 
   MRP->part_requirements(\%myconfig, $form);
 
+  return $form->render_json if $form->accepts_json;
+
   my $html = TagHelpers->new(\%myconfig, $form)->callback('action', 'id');
 
   $form->header;
   print $html->start_body;
+
   print $html->table(
     params => {width => '100%'},
     rows   => [
@@ -34,6 +37,7 @@ sub part_requirements {
         ],
         params => {class => 'listtop'},
       },
+      $html->search_part(action => 'part_requirements', script => 'mrp.pl'),
       {
         columns => [
           {

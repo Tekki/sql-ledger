@@ -11,10 +11,10 @@
 #
 #======================================================================
 
-use JSON::PP;
 use SL::AA;
 use SL::API;
 use SL::CT;
+use SL::IC;
 use SL::IS;
 use SL::OE;
 
@@ -48,9 +48,7 @@ sub add_payment {
     CP->post_payment(\%myconfig, $payment_form) and $result = 'success';
   }
 
-  print qq|Content-Type: application/json; charset=$form->{charset}
-
-| . JSON::PP->new->encode({result => $result});
+  $form->render_json({result => $result});
 }
 
 sub add_reference {
@@ -58,9 +56,7 @@ sub add_reference {
   API->find_invoice(\%myconfig, $form);
   API->add_reference(\%myconfig, $form);
 
-  print qq|Content-Type: application/json; charset=$form->{charset}
-
-| . JSON::PP->new->encode({result => $form->{result}});
+  $form->render_json({result => $form->{result}});
 }
 
 sub customer_details {
@@ -81,9 +77,7 @@ sub customer_details {
 
   my %new_form = map { $_ => $form->{$_} } keys %$form;
 
-  print qq|Content-Type: application/json; charset=$form->{charset}
-
-| . JSON::PP->new->encode(\%new_form);
+  $form->render_json(\%new_form);
 }
 
 sub invoice_details {
@@ -100,18 +94,14 @@ sub invoice_details {
   }
   my %new_form = map { $_ => $form->{$_} } grep !/^all_/, keys %$form;
 
-  print qq|Content-Type: application/json; charset=$form->{charset}
-
-| . JSON::PP->new->encode(\%new_form);
+  $form->render_json(\%new_form);
 }
 
 sub list_accounts {
 
   API->list_accounts(\%myconfig, $form);
 
-  print qq|Content-Type: application/json; charset=$form->{charset}
-
-| . JSON::PP->new->encode({accounts => $form->{accounts}});
+  $form->render_json({accounts => $form->{accounts}});
 }
 
 sub search_customer {
@@ -119,9 +109,7 @@ sub search_customer {
   $form->{db} = 'customer';
   CT->search(\%myconfig, $form);
 
-  print qq|Content-Type: application/json; charset=$form->{charset}
-
-| . JSON::PP->new->encode({customers => $form->{CT}});
+  $form->render_json({customers => $form->{CT}});
 }
 
 sub search_order {
@@ -131,9 +119,14 @@ sub search_order {
   $form->{vc}   ||= 'customer';
   OE->transactions(\%myconfig, $form);
 
-  print qq|Content-Type: application/json; charset=$form->{charset}
+  $form->render_json({orders => $form->{OE}});
+}
 
-| . JSON::PP->new->encode({orders => $form->{OE}});
+sub search_part {
+
+  IC->all_parts(\%myconfig, $form);
+
+  $form->render_json({parts => $form->{parts} || []})
 }
 
 sub search_transaction {
@@ -143,9 +136,7 @@ sub search_transaction {
   $form->{vc} = 'customer';
   AA->transactions(\%myconfig, $form);
 
-  print qq|Content-Type: application/json; charset=$form->{charset}
-
-| . JSON::PP->new->encode({transactions => $form->{transactions}});
+  $form->render_json({transactions => $form->{transactions}});
 }
 
 1;
@@ -167,10 +158,10 @@ L<bin::mozilla::api>
 =over
 
 =item * uses
-L<JSON::PP>,
 L<SL::AA>,
 L<SL::API>,
 L<SL::CT>,
+L<SL::IC>,
 L<SL::IS>,
 L<SL::OE>
 
@@ -193,6 +184,8 @@ L<bin::mozilla::api> implements the following functions:
 =head2 search_customer
 
 =head2 search_order
+
+=head2 search_part
 
 =head2 search_transaction
 
