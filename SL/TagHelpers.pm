@@ -146,13 +146,28 @@ sub search_part ($self, %definition) {
 
   my $searchitems = $definition{searchitems} || 'all';
 
+  # translated texts
+  my $not_found = $definition{not_found}
+    ? qq|
+  <span slot="no-options">$definition{not_found}</span>|
+    : '';
+  my %placeholders = (
+    partnumber  => '',
+    description => '',
+  );
+  if ($definition{placeholders}) {
+    $placeholders{partnumber} = qq| placeholder="$definition{placeholders}[0]"|;
+    $placeholders{description} =
+      qq| placeholder="$definition{placeholders}[1]"|;
+  }
+
   push @{$self->{methods}}, qq~getPart: function(newPart) {
   if (this.loadingObject || !newPart) {
     return;
   }
   this.loadingObject = true;
   var self = this;
-  axios.post('$definition{script}', {action: '$definition{action}', id: newPart.id, path: 'bin/mozilla', login: this.form.login})
+  axios.post('$definition{selected}{script}', {action: '$definition{selected}{action}', id: newPart.id, path: 'bin/mozilla', login: this.form.login})
     .then(function(response) {
       self.form = response.data;
       self.selectedPart = self.form;
@@ -186,9 +201,9 @@ searchPart: function(search, loading, field) {
 
   my $rv = {
     columns => [
-q|<v-select label="partnumber" :value="selectedPart" :options="allParts" @search="searchPartNumber" @input="getPart">
+qq|<v-select$placeholders{partnumber} label="partnumber" :value="selectedPart" :options="allParts" \@search="searchPartNumber" \@input="getPart">$not_found
 </v-select>|,
-q|<v-select label="description" :value="selectedPart" :options="allParts" @search="searchPartDescription" @input="getPart">
+qq|<v-select$placeholders{description} label="description" :value="selectedPart" :options="allParts" \@search="searchPartDescription" \@input="getPart">$not_found
 </v-select>|,
     ],
     params => {class => 'noprint'},
@@ -409,9 +424,13 @@ of a part.
 =head2 search_part
 
   $href = $html->search_part(
-    action => $action,            # action for selected part
-    script => $script,            # script for selected part
-    searchitems => $searchitems,  # default 'all'
+    not_found    => $not_found,          # optional text for nothing found
+    placeholders => [$partnum, $descr],  # optional texts for placeholders
+    selected     => {
+      action       => $action,           # action for selected part
+      script       => $script,           # script for selected part
+    },
+    searchitems  => $searchitems,        # default 'all'
   );
 
 Sets up the required variables and methods and returns a hash reference

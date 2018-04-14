@@ -124,14 +124,15 @@ sub search_order {
 
 sub search_part {
 
+  $form->{sort} ||= $form->{partnumber} ? 'partnumber' : 'description';
   IC->all_parts(\%myconfig, $form);
 
-  $form->render_json({parts => $form->{parts} || []})
+  $form->render_json({parts => $form->{parts} || []});
 }
 
 sub search_transaction {
 
-  $form->{open}    //= 1 unless $form->{outstanding};
+  $form->{open} //= 1 unless $form->{outstanding};
   $form->{summary} //= 1;
   $form->{vc} = 'customer';
   AA->transactions(\%myconfig, $form);

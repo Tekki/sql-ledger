@@ -37,7 +37,17 @@ sub part_requirements {
         ],
         params => {class => 'listtop'},
       },
-      $html->search_part(action => 'part_requirements', script => 'mrp.pl'),
+      $html->search_part(
+        not_found    => $locale->text('Nothing found!'),
+        placeholders => [
+          $locale->text('Search Part Number'),
+          $locale->text('Search Description')
+        ],
+        selected => {
+          action => 'part_requirements',
+          script => 'mrp.pl',
+        }
+      ),
       {
         columns => [
           {
@@ -109,6 +119,8 @@ sub part_requirements {
 sub warnings {
 
   MRP->warnings(\%myconfig, $form);
+
+  return $form->render_json if $form->accepts_json;
 
   my $html = TagHelpers->new(\%myconfig, $form)->callback('action');
 
@@ -190,8 +202,12 @@ L<bin::mozilla:mrp> implements the following functions:
 
   &part_requirements;
 
+Returns HTML or JSON.
+
 =head2 warnings
 
   &warnings;
+
+Returns HTML or JSON.
 
 =cut
