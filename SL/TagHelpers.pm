@@ -52,15 +52,22 @@ sub end_body ($self) {
 
   my $form_json = $self->_indent(6, $self->{form}->as_json(1));
 
-  # callback function
+  # callback and currentURL
   my $callback_fn = '';
+  my $url_fn;
   if (my $callback_fields = $self->{callback}) {
+    $url_fn =
+        qq|'$form->{script}?path=$form->{path}' + |
+      . join(' + ', map { qq|'&$_=' + this.form.$_| } @$callback_fields)
+      . qq| + '&login=$form->{login}&js=$form->{js}'|;
     $callback_fn = qq| else {
-        rv = '&callback=' + encodeURIComponent('$form->{script}?path=$form->{path}'
-          + |
-      . join(' + ', map { qq|'&$_=' + this.form.$_| } @$callback_fields) . qq|
-          + '&login=$form->{login}&js=$form->{js}');
+        rv = '&callback=' + encodeURIComponent(
+          $url_fn
+        );
       }|;
+  } else {
+    $url_fn =
+qq|'$form->{script}?path=$form->{path}' + '&login=$form->{login}&js=$form->{js}'|;
   }
 
   # data
@@ -94,6 +101,9 @@ var app = new Vue({
       }$callback_fn
 
       return rv;
+    },
+    currentURL: function() {
+      return $url_fn;
     }
   },
   data: {$data_string
@@ -132,7 +142,7 @@ sub requirements_link ($self, $id_field, $content) {
 }
 
 sub search_part ($self, %definition) {
-  push @{$self->{data}}, 'allParts: []';
+  push @{$self->{data}}, 'allParts: []', 'selectedPart: null';
 
   my $searchitems = $definition{searchitems} || 'all';
 
@@ -145,6 +155,8 @@ sub search_part ($self, %definition) {
   axios.post('$definition{script}', {action: '$definition{action}', id: newPart.id, path: 'bin/mozilla', login: this.form.login})
     .then(function(response) {
       self.form = response.data;
+      self.selectedPart = self.form;
+      history.replaceState(null, null, self.currentURL);
     });
 },
 searchPartNumber: function(search, loading) {
@@ -174,9 +186,9 @@ searchPart: function(search, loading, field) {
 
   my $rv = {
     columns => [
-q|<v-select label="partnumber" :value="form" :options="allParts" @search="searchPartNumber" @input="getPart">
+q|<v-select label="partnumber" :value="selectedPart" :options="allParts" @search="searchPartNumber" @input="getPart">
 </v-select>|,
-q|<v-select label="description" :value="form" :options="allParts" @search="searchPartDescription" @input="getPart">
+q|<v-select label="description" :value="selectedPart" :options="allParts" @search="searchPartDescription" @input="getPart">
 </v-select>|,
     ],
     params => {class => 'noprint'},
