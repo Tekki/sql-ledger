@@ -2057,6 +2057,7 @@ $myconfig->{dboptions};
 
       $fields .= join ',', map { $dbh->quote($_) } @arr;
       $fields .= ")";
+      utf8::encode $fields;
 
       print OUT qq|$query $fields;\n|;
     }
