@@ -37,7 +37,7 @@ sub customer_link ($self, $id_field, $content) {
   my $href =
     $self->_build_link(qq|'ct.pl?db=customer&action=edit&id=' + $$id_field|);
   my $text = $self->_text($content);
-  my $rv   = qq|<a v-bind:href="$href">$text</a>|;
+  my $rv   = qq|<a :href="$href">$text</a>|;
   return $rv;
 }
 
@@ -124,12 +124,42 @@ $form_json
   return "$rv\n";
 }
 
+sub form ($self, %definition) {
+
+  my $props = $self->_props($definition{params}, {method => 'post'});
+
+  my $hidden =
+      $definition{hidden}
+    ? $self->_indent(2, $self->hidden(%{$definition{hidden}}))
+    : '';
+
+  my $rv = qq|<form$props>
+| . $self->_indent(2, $definition{content}) . qq|
+$hidden
+</form>|;
+  return $rv;
+}
+
+sub hidden ($self, %definition) {
+  my @rv;
+  for my $field (sort keys %definition) {
+    my $value =
+      ref $definition{$field}
+      ? qq|:value="${$definition{$field}}"|
+      : qq|value="$definition{$field}"|;
+    push @rv, qq|<input name="$field" type="hidden" $value>|;
+  }
+
+  my $rv = join "\n", @rv;
+  return $rv;
+}
+
 sub order_link ($self, $type_field, $id_field, $content) {
   my $href =
     $self->_build_link(
     qq|'oe.pl?type=' + $$type_field + '&action=edit&id=' + $$id_field|);
   my $text = $self->_text($content);
-  my $rv   = qq|<a v-bind:href="$href">$text</a>|;
+  my $rv   = qq|<a :href="$href">$text</a>|;
   return $rv;
 }
 
@@ -137,7 +167,7 @@ sub requirements_link ($self, $id_field, $content) {
   my $href =
     $self->_build_link(qq|'mrp.pl?action=part_requirements&id=' + $$id_field|);
   my $text = $self->_text($content);
-  my $rv   = qq|<a v-bind:href="$href">$text</a>|;
+  my $rv   = qq|<a :href="$href">$text</a>|;
   return $rv;
 }
 
@@ -279,7 +309,7 @@ sub vendor_link ($self, $id_field, $content) {
   my $href =
     $self->_build_link(qq|'ct.pl?db=vendor&action=edit&id=' + $$id_field|);
   my $text = $self->_text($content);
-  my $rv   = qq|<a v-bind:href="$href">$text</a>|;
+  my $rv   = qq|<a :href="$href">$text</a>|;
   return $rv;
 }
 
@@ -305,8 +335,12 @@ sub _indent ($self, $spaces, $text) {
   return $text;
 }
 
-sub _props ($self, $params = {}) {
+sub _props ($self, $params = {}, $defaults = {}) {
   my @rv;
+
+  for (keys %$defaults) {
+    $params->{$_} //= $defaults->{$_};
+  }
 
   # types
   if (my $type = $params->{type}) {
@@ -316,9 +350,9 @@ sub _props ($self, $params = {}) {
   }
 
   for (sort keys %$params) {
-    if (/align|class|colspan|width/) {
+    if (/action|align|class|colspan|width/) {
       push @rv, qq|$_="$params->{$_}"|;
-    } elsif (/for/) {
+    } elsif (/for|if/) {
       push @rv, qq|v-$_="$params->{$_}"|;
     }
   }
@@ -366,9 +400,13 @@ TagHelpers - Helpers for HTML tags
   $html->requirements_link;
   $html->vendor_link;
 
+  $html->search_part;
+
   $html->table;
   $html->tr;
   $html->td;
+
+  $html->form;
 
 =head1 DESCRIPTION
 
@@ -405,6 +443,23 @@ See L</vendor_link>.
   $text = $html->end_body;
 
 Closes the application C<div>, adds JavaScript blocks, closes C<body>.
+
+=head2 form
+
+  $text = $html->form(
+    content => $content,
+    hidden  => \%hidden,
+    params  => \%params,
+  );
+
+Create a form with default method 'post'.
+
+  %hidden = (
+    id     => \'form.id',
+    field1 => 'a text',
+  );
+
+Defines the hidden input tags.
 
 =head2 order_link
 
@@ -444,6 +499,31 @@ in L</table>.
     ],
   );
 
+=head2 search_vendor
+
+  $href = $html->search_vendor(
+    not_found   => $not_found,    # optional text for nothing found
+    placeholder => $placeholder,  # optional texts for placeholders
+    selected    => {
+      action      => $action,     # action for selected vendor
+      script      => $script,     # script for selected vendor
+    },
+  );
+
+Sets up the required variables and methods and returns a hash reference
+that defines a column that can be inserted into the rows of a L</table>.
+
+  $html->table(
+    rows => [
+      {
+        columns => [
+          $html->search_vendor(%definition),
+          ...
+        ]
+      }
+      ...
+    ],
+  );
 
 =head2 start_body
 
@@ -527,6 +607,8 @@ Parameters are defined with C<params> for the element itself and with
 C<common_params> for its immediate children. Parameters in an element have
 precendence over common parameters.
 
+There is no check for tha validity of a parameter in the given context.
+
 =head2 align
 
   %params = ( align => $align );
@@ -545,6 +627,12 @@ Adds CSS classes to the element.
 
 Sets the colspan of a table cell.
 
+=head2 if
+
+  %params = ( if => q|a == 'b'| ):
+
+A JavaScript condition for the visibility of the element.
+
 =head2 for
 
   %params = ( for => 'item in list' );
@@ -556,6 +644,18 @@ Repeats the element.
   %params = ( head => 1 );
 
 Renders a table cell als header.
+
+=head2 method
+
+  %params = ( method => 'post' );
+
+Defines the method of a L</form>.
+
+=head2 name
+
+  %params = (name => 'input1');
+
+Defines the name of the element.
 
 =head2 width
 

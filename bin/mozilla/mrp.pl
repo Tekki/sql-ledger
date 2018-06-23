@@ -20,12 +20,11 @@ sub part_requirements {
 
   return $form->render_json if $form->accepts_json;
 
+  # prepare content
   my $html = TagHelpers->new(\%myconfig, $form)->callback('action', 'id');
 
-  $form->header;
-  print $html->start_body;
-
-  print $html->table(
+  # header
+  my %header = (
     params => {width => '100%'},
     rows   => [
       {
@@ -72,7 +71,8 @@ sub part_requirements {
     ],
   );
 
-  print $html->table(
+  # requirements table
+  my %requirements = (
     params => {width => '100%'},
     rows   => [
       {
@@ -87,15 +87,15 @@ sub part_requirements {
       },
       {
         columns => [
-          {content => \'item.date', params => {type => 'date'}},
-          $html->order_link(\'item.order_type', \'item.id', \'item.ordnumber'),
-          $html->vendor_link(\'item.vendor_id', \'item.vendor_name'),
-          $html->customer_link(\'item.customer_id', \'item.customer_name'),
-          {content => \'item.qty_in',  params => {type => 'number'}},
-          {content => \'item.qty_out', params => {type => 'number'}},
-          {content => \'item.total',   params => {type => 'number'}},
+          {content => \'req.date', params => {type => 'date'}},
+          $html->order_link(\'req.order_type', \'req.id', \'req.ordnumber'),
+          $html->vendor_link(\'req.vendor_id', \'req.vendor_name'),
+          $html->customer_link(\'req.customer_id', \'req.customer_name'),
+          {content => \'req.qty_in',  params => {type => 'number'}},
+          {content => \'req.qty_out', params => {type => 'number'}},
+          {content => \'req.total',   params => {type => 'number'}},
         ],
-        params => {class => 'zebra', for => 'item in form.requirements',},
+        params => {class => 'zebra', for => 'req in form.requirements',},
       },
       {
         columns => [
@@ -113,6 +113,11 @@ sub part_requirements {
     ],
   );
 
+  # render page
+  $form->header;
+  print $html->start_body;
+  print $html->table(%header);
+  print $html->table(%requirements);
   print $html->end_body;
 }
 
@@ -126,6 +131,7 @@ sub warnings {
 
   $form->header;
   print $html->start_body;
+
   print $html->table(
     params => {width => '100%'},
     rows   => [
@@ -155,14 +161,14 @@ sub warnings {
       },
       {
         columns => [
-          $html->requirements_link(\'item.id', \'item.partnumber'),
-          \'item.description',
-          {content => \'item.onhand',   params => {type => 'number'}},
-          {content => \'item.incoming', params => {type => 'number'}},
-          {content => \'item.outgoing', params => {type => 'number'}},
-          {content => \'item.total',    params => {type => 'number'}},
+          $html->requirements_link(\'warning.id', \'warning.partnumber'),
+          \'warning.description',
+          {content => \'warning.onhand',   params => {type => 'number'}},
+          {content => \'warning.incoming', params => {type => 'number'}},
+          {content => \'warning.outgoing', params => {type => 'number'}},
+          {content => \'warning.total',    params => {type => 'number'}},
         ],
-        params => {class => 'zebra', for => 'item in form.warnings'},
+        params => {class => 'zebra', for => 'warning in form.warnings'},
       },
     ],
   );
