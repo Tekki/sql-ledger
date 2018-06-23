@@ -1548,7 +1548,7 @@ sub save_template {
   $self->check_access(@_);
   open(TEMPLATE, '>:utf8', $form->{file}) or $form->error("$form->{file} : $!");
 
-  # strip 
+  # strip
   $form->{body} =~ s/\r//g;
   chomp $form->{body};
   print TEMPLATE $form->{body};
@@ -1828,9 +1828,9 @@ sub backup {
   my $boundary = time;
   my $tmpfile = "$userspath/$boundary.$myconfig->{dbname}-$form->{version}-$t[5]$t[4]$t[3].sql";
   my $out = $form->{OUT};
-  $form->{OUT} = ">$tmpfile";
+  $form->{OUT} = $tmpfile;
 
-  open(OUT, "$form->{OUT}") or $form->error("$form->{OUT} : $!");
+  open(OUT, '>:utf8', $form->{OUT}) or $form->error("$form->{OUT} : $!");
 
   # get sequences, functions and triggers
   my %tables;
