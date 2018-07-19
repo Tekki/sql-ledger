@@ -1,4 +1,4 @@
-use vars qw($userspath $spool $memberfile $templates $sendmail $images $language $charset $sid $latex $gzip $dvipdf $pdftk $xelatex);
+use vars qw($userspath $spool $memberfile $templates $sendmail $images $language $charset $sid $latex $gzip $dvipdf $pdftk $xelatex @accessfolders $helpful_login);
 
 # path to user configuration files
 $userspath = "users";
@@ -41,8 +41,11 @@ $pdftk = 1;
 # use xelatex instead of pdflatex for PDF
 #$xelatex = 1;
 
-# Folders with read and write access
+# folders with read and write access
 @accessfolders = qw|templates css|;
+
+# if you want helpful error messages during login an invite spies set to 1
+$helpful_login = 0;
 
 # if the server can't find gzip or latex add the path
 $ENV{PATH} .= ":/usr/local/bin";
@@ -55,4 +58,3 @@ $ENV{PATH} .= ":/usr/local/bin";
 #$ENV{DB2_HOME} = "/opt/IBM/db2/V8.1/";
 
 1;
-

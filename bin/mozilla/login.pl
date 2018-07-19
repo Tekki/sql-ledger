@@ -262,8 +262,12 @@ sub login {
     }
 
     if (keys %login > 1) {
-      &selectdataset(\%login);
-      exit;
+      if ($helpful_login) {
+        &selectdataset(\%login);
+        exit;
+      } else {
+        $form->error($locale->text('Incorrect Username or Password!'));
+      }
     } else {
       if ($form->{login} !~ /\@/) {
         $form->{login} .= "\@$dbname";
@@ -277,13 +281,17 @@ sub login {
   if (($errno = $user->login(\%$form, $userspath)) <= -1) {
 
     $errno *= -1;
-    $err[1] = $locale->text('Incorrect Username!');
-    $err[2] = $locale->text('Incorrect Password!');
+    if ($helpful_login) {
+      $err[1] = $locale->text('Incorrect Username!');
+      $err[2] = $locale->text('Incorrect Password!');
+    } else {
+      $err[1] = $err[2] = $locale->text('Incorrect Username or Password!');
+    }
     $err[3] = $locale->text('Incorrect Dataset version!');
     $err[4] = $locale->text('Dataset is newer than version!');
 
 
-    if ($errno == 1 && $form->{admin}) {
+    if ($errno == 1 && $form->{admin} && $helpful_login) {
       $err[1] = $locale->text('admin does not exist!');
     }
 
