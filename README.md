@@ -1,12 +1,12 @@
 What is SQL-Ledger?
 ===================
 
-[SQL-Ledger](http://sql-ledger.com) is an open source ERP and accounting system. It gives you all the functionality you need for quotations, order management, invoices, payrolls and much more. The program is written in Perl, runs on an Apache webserver, uses a PostgreSQL database and is highly configurable.
+[SQL-Ledger](https://sql-ledger.com) is an open source ERP and accounting system. It gives you all the functionality you need for quotations, order management, invoices, payrolls and much more. The program is written in Perl, runs on an Apache webserver, uses a PostgreSQL database and is highly configurable.
 
 About this repo
 ===============
 
-SQL-Ledger is developed by [DWS Systems Inc.](http://sql-ledger.com). The `master` branch contains the original version from DWS. It has version tags, so you can download a specific version back to 2.6.0 from October 1, 2005.
+SQL-Ledger is developed by [DWS Systems Inc.](https://sql-ledger.com). The `master` branch contains the original version from DWS. It has version tags, so you can download a specific version back to 2.6.0 from October 1, 2005.
 
 The `full` branch, which is checked out by default, provides some additions:
 
@@ -20,17 +20,26 @@ The `full` branch, which is checked out by default, provides some additions:
 Installation
 ============
 
-To install the program on Debian, you can use the [Ansible Role for SQL-Ledger](https://github.com/Tekki/ansible-sql-ledger). If you are on a different distribution, either follow the [instructions from DWS](http://sql-ledger.com/cgi-bin/nav.pl?page=source/readme.txt&title=README), or open an issue in the other repo (the chances that you get an update depend on your Github name, the weather and the lunar phase).
+To install the program on Debian, you can use the [Ansible Role for SQL-Ledger](https://github.com/Tekki/ansible-sql-ledger). If you are on a different distribution, either follow the [instructions from DWS](https://sql-ledger.com/cgi-bin/nav.pl?page=source/readme.txt&title=README), or open an issue in the other repo (the chances that you get an update depend on your Github name, the weather and the lunar phase).
 
 WLprinter
 =========
 
-WLprinter, included in the `full` branch, is a Java program that is executed on the client PC and allows to print directly from SQL-Ledger to your local printers. It is available for printing if you add a printer with command `wlprinter` at `System--Workstations`. The client program is started from `Batch--WLprinter`. You will have to add a Java security exception for your SQL-Ledger server.
+WLprinter, included in the `full` branch, is a [Java](https://java.com) program that is executed on the client PC and allows to print directly from SQL-Ledger to your local printers. It is available for printing if you add a printer with command `wlprinter` at `System--Workstations`. The client program is started from `Batch--WLprinter`. You will have to add a Java security exception for your SQL-Ledger server.
 
 Unicode Support
 ===============
 
-In difference to the original SQL-Ledger, the version in the `full` branch internally works with [Unicode characters](http://perldoc.perl.org/perlunicode.html). This requires that your database, your templates and translations are all encoded in UTF-8.
+In difference to the original SQL-Ledger, the version in the `full` branch internally works with [Unicode characters](https://perldoc.perl.org/perlunicode.html). This requires that your database, your templates and translations are all encoded in UTF-8.
+
+Documentation
+=============
+
+The documentation is very minimalistic and doesn't contain much more than the function names of the different modules. If you have [Mojolicious](https://mojolicious.org/) installed, you can start a perldoc server from your SQL-Ledger base directory with
+
+    perl -I. -Mojo -e"plugin 'PODRenderer'; app->start;" daemon
+
+and browse to [localhost:3000/perldoc/sql-ledger](http://localhost:3000/perldoc/sql-ledger).
 
 Contributing
 ============
