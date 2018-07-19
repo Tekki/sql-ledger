@@ -40,17 +40,17 @@ The C<full> branch, which is checked out by default, provides some additions:
 To install the program on Debian, you can use the
 L<Ansible Role for SQL-Ledger|https://github.com/Tekki/ansible-sql-ledger>.
 If you are on a different distribution, either follow the
-L<instructions from DWS|http://sql-ledger.com/cgi-bin/nav.pl?pagesource/readme.txt&titleREADME>,
+L<instructions from DWS|https://sql-ledger.com/cgi-bin/nav.pl?page=source/readme.txt&title=README>,
 or open an issue in the other repo (the chances that you get an update depend
 on your Github name, the weather and the lunar phase).
 
 =head1 WLPRINTER
 
-WLprinter, included in the C<full> branch, is a Java program that is executed
-on the client PC and allows to print directly from SQL-Ledger to your local
-printers. It is available for printing if you add a printer with command
-C<wlprinter> at C<System--Workstations>. The client program is started from
-C<Batch--WLprinter>. You will have to add a Java security exception for your
+WLprinter, included in the C<full> branch, is a L<Java|https://java.com> program
+that is executed on the client PC and allows to print directly from SQL-Ledger
+to your local printers. It is available for printing if you add a printer with
+command C<wlprinter> at C<System--Workstations>. The client program is started
+from C<Batch--WLprinter>. You will have to add a Java security exception for your
 SQL-Ledger server.
 
 =head1 UNICODE SUPPORT
@@ -59,6 +59,17 @@ In difference to the original SQL-Ledger, the version in the C<full> branch
 internally works with L<Unicode characters|http://perldoc.perl.org/perlunicode.html>.
 This requires that your database, your templates and translations are all
 encoded in UTF-8.
+
+=head1 DOCUMENTATION
+
+The documentation is very minimalistic and doesn't contain much more than the
+function names of the different modules. If you have L<Mojolicious|https://mojolicious.org/>
+installed, you can start a perldoc server from your SQL-Ledger base directory with
+
+  perl -I. -Mojo -e"plugin 'PODRenderer'; app->start;" daemon
+
+and browse to L<localhost:3000/perldoc/sql-ledger|http://localhost:3000/perldoc/sql-ledger>.
+
 
 =head1 CONTRIBUTING
 

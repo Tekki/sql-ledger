@@ -10,6 +10,7 @@ $self{texts} = {
   'Dataset locked!'             => 'Datenbank gesperrt!',
   'Incorrect Dataset version!'  => 'Ungültige Datenbank-Version',
   'Incorrect Password!'         => 'Ungültiges Passwort!',
+  'Incorrect Username or Password!' => 'Ungültiger Benutzername oder Passwort!',
   'Incorrect Username!'         => 'Ungültiger Benutzername!',
   'Invalid TAN'                 => 'Ungültige TAN',
   'Login'                       => 'Login',

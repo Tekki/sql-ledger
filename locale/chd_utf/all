@@ -733,6 +733,7 @@ $self{texts} = {
   'Income account does not exist!' => 'Es existiert kein Konto für Einnahmen!',
   'Incorrect Dataset version!'  => 'Ungültige Datenbank-Version',
   'Incorrect Password!'         => 'Ungültiges Passwort!',
+  'Incorrect Username or Password!' => 'Ungültiger Benutzername oder Passwort!',
   'Incorrect Username!'         => 'Ungültiger Benutzername!',
   'Individual Items'            => 'Einzelteile',
   'Internal Notes'              => 'Interne Notizen',
