@@ -75,7 +75,7 @@ sub login_screen {
   <tr>
     <td class=login align=center><a href="https://github.com/Tekki/sql-ledger" target=_blank><img src=$images/sql-ledger.png border=0></a>
 <h1 class=login align=center>|.$locale->text('Version').qq| $form->{version}</h1>
-
+<p>$form->{version2}</p>
 <p>
 
     <form method=post name=main action=$form->{script}>
