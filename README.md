@@ -15,7 +15,7 @@ The `full` branch, which is checked out by default, provides some additions:
 * JSON API
 * minimalistic documentation
 * Swiss charts of accounts in German, French and Italian
-* security patch for template editor
+* several security patches
 
 Installation
 ============
@@ -37,7 +37,7 @@ Documentation
 
 The documentation is very minimalistic and doesn't contain much more than the function names of the different modules. If you have [Mojolicious](https://mojolicious.org/) installed, you can start a perldoc server from your SQL-Ledger base directory with
 
-    perl -I. -Mojo -e"plugin 'PODRenderer'; app->start;" daemon
+    perl -I. -Mojo -E"plugin 'PODRenderer'; app->start" daemon
 
 and browse to [localhost:3000/perldoc/sql-ledger](http://localhost:3000/perldoc/sql-ledger).
 
