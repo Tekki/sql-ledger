@@ -341,7 +341,7 @@ sub invoice_details {
               if ($form->{taxaccounts} =~ /$p[$n]/) {
                 if ($p[1]) {
                   if ($p{0}) {
-                    $r = $form->{"sellprice_$i"}/$p{0};
+                    $r = $sellprice/$p{0};
                     $d = $form->round_amount($p[2] * $form->{"discount_$i"}/100, $decimalplaces);
                     $lt = $form->round_amount(($p[2] - $d) * $r * $form->{"qty_$i"}, $form->{precision});
 
