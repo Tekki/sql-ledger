@@ -1618,7 +1618,7 @@ sub save_defaults {
     $dbh->do($query) || $form->dberror($query);
   }
 
-  for (qw(glnumber sinumber sonumber vinumber batchnumber vouchernumber ponumber sqnumber rfqnumber employeenumber customernumber vendornumber)) {
+  for (qw(glnumber sinumber sonumber vinumber batchnumber vouchernumber ponumber sqnumber rfqnumber partnumber employeenumber customernumber projectnumber vendornumber)) {
     $sth->execute($_, $form->{$_}) || $form->dberror;
     $sth->finish;
   }
