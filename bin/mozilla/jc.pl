@@ -739,11 +739,12 @@ sub timecard_footer {
     &menubar;
   }
 
-  $form->hide_form(qw(reference_rows callback path login));
+  $form->hide_form(qw(reference_rows callback path login _updated));
 
-  print qq|
-
-</form>
+  print q|
+</form>|;
+  &unload;
+  print q|
 
 </body>
 </html>
@@ -999,6 +1000,7 @@ sub storescard_footer {
 
 sub update {
 
+  $form->{_updated} = 1;
   (undef, $form->{project_id}) = split /--/, $form->{projectnumber};
 
   for (qw(transdate project_id)) {

@@ -125,7 +125,7 @@ sub new {
   $self->{charset} = 'UTF-8';
 
   $self->{version} = "3.2.6";
-  $self->{version2} = "tekki 3.2.6.4";
+  $self->{version2} = "tekki 3.2.6.5";
   $self->{version2} .= "-extended";
   $self->{dbversion} = "3.2.1";
 

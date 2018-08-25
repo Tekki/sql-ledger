@@ -1087,12 +1087,15 @@ sub form_footer {
     &menubar;
   }
 
-  $form->hide_form(qw(helpref generate rowcount readonly callback path login));
+  $form->hide_form(qw(helpref generate rowcount readonly callback path login _updated));
 
-  print qq|
+  print q|
 </form>|;
   &quick_calculation;
-  print qq|</body>
+  &unload;
+  print q|
+
+</body>
 </html>
 |;
 
@@ -1101,6 +1104,7 @@ sub form_footer {
 
 sub update {
 
+  $form->{_updated} = 1;
   $form->get_onhand(\%myconfig) if $form->{warehouse} ne $form->{oldwarehouse};
 
   for (qw(exchangerate cashdiscount discount_paid)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
