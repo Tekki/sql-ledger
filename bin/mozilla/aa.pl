@@ -1075,7 +1075,7 @@ print qq|
 
 sub form_footer {
 
-  $form->hide_form(qw(helpref callback path login));
+  $form->hide_form(qw(helpref callback path login _updated));
 
   $transdate = $form->datetonum(\%myconfig, $form->{transdate});
 
@@ -1131,9 +1131,10 @@ sub form_footer {
     &menubar;
   }
 
-  print qq|
-</form>
-
+  print q|
+</form>|;
+  &unload;
+  print q|
 </body>
 </html>
 |;
@@ -1143,6 +1144,8 @@ sub form_footer {
 
 sub update {
   my $display = shift;
+
+  $form->{_updated} = 1;
 
   if (!$display) {
     $form->{invtotal} = 0;

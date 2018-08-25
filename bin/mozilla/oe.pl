@@ -1174,10 +1174,12 @@ sub form_footer {
     &menubar;
   }
 
-  $form->hide_form(qw(backorder rowcount readonly callback path login));
+  $form->hide_form(qw(backorder rowcount readonly callback path login _updated));
 
-  print qq|
-</form>
+  print q|
+</form>|;
+  &unload;
+  print q|
 
 </body>
 </html>
@@ -1201,6 +1203,7 @@ sub ship_all {
 
 sub update {
 
+  $form->{_updated} = 1;
   if ($form->{type} eq 'generate_purchase_order') {
 
     for (1 .. $form->{rowcount}) {

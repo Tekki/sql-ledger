@@ -359,6 +359,27 @@ function showProgress() {
 |;
 }
 
+
+sub unload {
+  print q|
+<script>
+  var submitting = false;
+
+  document.main.onsubmit = function () {
+    submitting = true;
+  }
+
+  window.onbeforeunload = function (e) {
+    if (document.main._updated.value && !submitting) {
+      e.returnValue = 'Updated';
+      return 'Updated';
+    }
+  }
+</script>
+|;
+}
+
+
 1;
 
 
@@ -399,5 +420,7 @@ L<bin::mozilla::js> implements the following functions:
   &resize($width, $height);
 
 =head2 show_progress
+
+=head2 unload
 
 =cut
