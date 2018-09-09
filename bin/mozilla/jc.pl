@@ -584,7 +584,7 @@ sub timecard_header {
         </tr>
         <tr>
           <th align=right nowrap>$projectlabel <font color=red>*</font></th>
-          <td><select name=projectnumber onChange="javascript:document.main.submit()">|
+          <td><select name=projectnumber onChange="doSubmit(document.main)">|
           .$form->select_option($form->{selectprojectnumber}, $form->{projectnumber}, 1)
           .qq|</select>
           </td>

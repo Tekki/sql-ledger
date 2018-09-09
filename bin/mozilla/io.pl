@@ -106,7 +106,7 @@ sub display_row {
   $column_data{onhand} = qq|<th class=listheading nowrap>|.$locale->text('OH').qq|</th>|;
 
   $form->{allbox} = ($form->{allbox}) ? "checked" : "";
-  $column_data{lineitemdetail} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll(); JavaScript:document.main.submit()"></th>|;
+  $column_data{lineitemdetail} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll(); doSubmit(document.main)"></th>|;
 
   $form->hide_form(qw(weightunit));
 

@@ -365,14 +365,19 @@ sub unload {
 <script>
   var submitting = false;
 
+  function doSubmit(form) {
+    submitting = true;
+    form.submit();
+  }
+
   document.main.onsubmit = function () {
     submitting = true;
   }
 
   window.onbeforeunload = function (e) {
     if (document.main._updated.value && !submitting) {
-      e.returnValue = 'Updated';
-      return 'Updated';
+      e.preventDefault()
+      return '';
     }
   }
 </script>
