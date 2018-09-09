@@ -446,7 +446,7 @@ sub form_header {
                   <table>
                     <tr>
 
-                <td><select name=currency onChange="javascript:document.main.submit()">|
+                <td><select name=currency onChange="doSubmit(document.main)">|
                 .$form->select_option($form->{selectcurrency}, $form->{currency})
                 .qq|</select></td>|;
 
@@ -475,7 +475,7 @@ sub form_header {
   $department = qq|
               <tr>
                 <th align="right" nowrap>|.$locale->text('Department').qq|</th>
-                <td><select name=department onChange="javascript:document.main.submit()">|
+                <td><select name=department onChange="doSubmit(document.main)">|
                 .$form->select_option($form->{selectdepartment}, $form->{department}, 1)
                 .qq|
                 </select>
@@ -519,7 +519,7 @@ sub form_header {
 
   if ($form->{"select$form->{vc}"}) {
     $vc .= qq|
-                <td><select name="$form->{vc}" onChange="javascript:document.main.submit()">|.$form->select_option($form->{"select$form->{vc}"}, $form->{$form->{vc}}, 1).qq|</select>
+                <td><select name="$form->{vc}" onChange="doSubmit(document.main)">|.$form->select_option($form->{"select$form->{vc}"}, $form->{$form->{vc}}, 1).qq|</select>
                 $vcref
                 </td>
               </tr>
@@ -940,7 +940,7 @@ print qq|
   if ($form->{taxaccounts}) {
     $taxincluded = qq|
               <tr>
-                <td><input name=taxincluded class=checkbox type=checkbox value=1 $form->{taxincluded}><b> |.$locale->text('Tax Included').qq|</b></td>
+                <td><input name=taxincluded class=checkbox type=checkbox value=1 $form->{taxincluded} onChange="doSubmit(document.main)"><b> |.$locale->text('Tax Included').qq|</b></td>
               </tr>
 |;
   }
@@ -2119,7 +2119,7 @@ sub transactions {
 
   $form->{allbox} = ($form->{allbox}) ? "checked" : "";
   $action = ($form->{deselect}) ? "deselect_all" : "select_all";
-  $column_data{delete} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll(); javascript:main.submit()"><input type=hidden name=action value="$action"></th>|;
+  $column_data{delete} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll(); doSubmit(document.main)"><input type=hidden name=action value="$action"></th>|;
   $column_data{runningnumber} = qq|<th class=listheading>&nbsp;</th>|;
   $column_data{id} = "<th><a class=listheading href=$href&sort=id>".$locale->text('ID')."</a></th>";
   $column_data{transdate} = "<th><a class=listheading href=$href&sort=transdate>".$locale->text('Date')."</a></th>";

@@ -317,7 +317,7 @@ sub form_header {
                   <table>
                     <tr>
 
-                <td><select name=currency onChange="javascript:main.submit()">|
+                <td><select name=currency onChange="doSubmit(document.main)">|
                 .$form->select_option($form->{selectcurrency}, $form->{currency})
                 .qq|</select></td>|;
 
@@ -346,7 +346,7 @@ sub form_header {
 
   if ($form->{"select$form->{vc}"}) {
     $vc .= qq|
-               <td nowrap><select name="$form->{vc}" onChange="javascript:main.submit()">|.$form->select_option($form->{"select$form->{vc}"}, $form->{$form->{vc}}, 1).qq|</select>
+               <td nowrap><select name="$form->{vc}" onChange="doSubmit(document.main)">|.$form->select_option($form->{"select$form->{vc}"}, $form->{$form->{vc}}, 1).qq|</select>
                $vcref
                </td>
              </tr>
@@ -371,7 +371,7 @@ sub form_header {
   $department = qq|
               <tr>
               <th align="right" nowrap>|.$locale->text('Department').qq|</th>
-              <td><select name=department onChange="javascript:document.main.submit()">|
+              <td><select name=department onChange="doSubmit(document.main)">|
               .$form->select_option($form->{selectdepartment}, $form->{department}, 1)
               .qq|</select>
               </td>
@@ -381,7 +381,7 @@ sub form_header {
   $warehouse = qq|
               <tr>
                 <th align="right" nowrap>|.$locale->text('Warehouse').qq|</th>
-                <td><select name=warehouse onChange="javascript:document.main.submit()">|
+                <td><select name=warehouse onChange="doSubmit(document.main)">|
                 .$form->select_option($form->{selectwarehouse}, $form->{warehouse}, 1).qq|
                 </select>
                 </td>
@@ -612,7 +612,7 @@ sub form_footer {
               <tr height="5"></tr>
               <tr>
                 <td align=right>
-                <input name=taxincluded class=checkbox type=checkbox value=1 $form->{taxincluded} onChange="javascript:document.main.submit()"></td><th align=left>|.$locale->text('Tax Included').qq|</th>
+                <input name=taxincluded class=checkbox type=checkbox value=1 $form->{taxincluded} onChange="doSubmit(document.main)"></td><th align=left>|.$locale->text('Tax Included').qq|</th>
               </tr>
 |;
   }
