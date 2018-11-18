@@ -1,11 +1,12 @@
 $self{texts} = {
   'Continue'                    => 'Fortsæt',
   'Password'                    => 'Adgangskode',
+  'Session expired!'            => 'Sessionen er udløbet!',
 };
 
 $self{subs} = {
   'getpassword'                 => 'getpassword',
-  'fortsæt'                     => 'continue',
+  'fortsæt'                    => 'continue',
 };
 
 1;

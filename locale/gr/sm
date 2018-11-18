@@ -1,16 +1,34 @@
-$self{charset} = 'ISO-8859-7';
-
 $self{texts} = {
-  'Continue'                    => '��������',
-  'From'                        => '���',
+  'April'                       => 'Απρίλιος',
+  'August'                      => 'Αύγουστος',
+  'Continue'                    => 'Συνέχεια',
+  'Date missing!'               => 'Δεν υπάρχει η ημερομηνία',
+  'December'                    => 'Δεκέμβριος',
+  'February'                    => 'Φεβρουάριος',
+  'January'                     => 'Ιανουάριος',
+  'July'                        => 'Ιούλιος',
+  'June'                        => 'Ιούνιος',
+  'March'                       => 'Μάρτιος',
+  'May'                         => 'Μάϊος',
+  'November'                    => 'Νοέμβριος',
+  'October'                     => 'Οκτώβριος',
 };
 
 $self{subs} = {
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
   'continue'                    => 'continue',
-  'delete_invoices'             => 'delete_invoices',
-  'do_delete_invoices'          => 'do_delete_invoices',
   'do_repost_invoices'          => 'do_repost_invoices',
+  'fld_config'                  => 'fld_config',
+  'fld_edit'                    => 'fld_edit',
+  'fld_save'                    => 'fld_save',
+  'js_calendar'                 => 'js_calendar',
+  'pickvalue'                   => 'pickvalue',
   'repost_invoices'             => 'repost_invoices',
+  'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
 };
 
 1;

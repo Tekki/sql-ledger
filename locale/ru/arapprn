@@ -1,5 +1,3 @@
-$self{charset} = 'UTF-8';
-
 $self{texts} = {
   'Account'                     => 'Счет',
   'Amount'                      => 'Сумма',
@@ -9,11 +7,13 @@ $self{texts} = {
   'Nothing to print!'           => 'Ничего не напечатано!',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
+  'Printed'                     => 'Напечатано',
+  'Scheduled'                   => 'Назначено расписание',
   'Screen'                      => 'Экран',
   'Select a Printer!'           => 'Выбрать принтер',
   'Select payment'              => 'Выберите оплату',
-  'Select postscript or PDF!'   => 'Выберите postscript или PDF!',
   'Source'                      => 'Источник',
+  'Text'                        => 'Текст',
 };
 
 $self{subs} = {
@@ -24,6 +24,7 @@ $self{subs} = {
   'print_credit_note'           => 'print_credit_note',
   'print_debit_note'            => 'print_debit_note',
   'print_options'               => 'print_options',
+  'print_payslip'               => 'print_payslip',
   'print_receipt'               => 'print_receipt',
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',

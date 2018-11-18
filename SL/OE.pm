@@ -461,16 +461,22 @@ sub save {
         for (split / /, $form->{"kit_$i"}) {
           @p = split /:/, $_;
           for $n (3 .. $#p) {
-            if ($p[2]) {
-              if ($p{0}) {
-                $d = $form->round_amount($p[2] * $form->{"discount_$i"}, $decimalplaces);
+            if ($form->{taxaccounts} =~ /$p[$n]/) {
+              if ($p[1]) {
+                if ($p{0}) {
+                  $r = $fxsellprice/$p{0};
+                  $d = $form->round_amount($p[2] * $r * $form->{"discount_$i"}, $form->{precision});
+                  $lt = $form->round_amount(($p[2] * $r) - $d, $form->{precision});
+                  $lt = $form->round_amount($lt * $p[1], $form->{precision});
+                  $lt = $form->round_amount($lt * $form->{"qty_$i"}, $form->{precision});
 
-                $lt = $form->round_amount(($p[2] - $d) * $p[1] * $form->{"sellprice_$i"}/$p{0} * $form->{"qty_$i"}, $form->{precision});
-
-                if ($form->{taxincluded}) {
-                  $taxaccounts{$p[$n]} += $lt * $form->{"$p[$n]_rate"} / (1 + $form->{"$p[$n]_rate"}) if $form->{"$p[$n]_rate"} != -1;
-                } else {
-                  $taxaccounts{$p[$n]} += $lt * $form->{"$p[$n]_rate"};
+                  if ($form->{taxincluded}) {
+                    $taxaccounts{$p[$n]} += $lt * $form->{"$p[$n]_rate"} / (1 + $form->{"$p[$n]_rate"});
+                    $taxbase{$p[$n]} += $lt - $lt * $form->{"$p[$n]_rate"} / (1 + $form->{"$p[$n]_rate"});
+                  } else {
+                    $taxaccounts{$p[$n]} += $lt * $form->{"$p[$n]_rate"};
+                    $taxbase{$p[$n]} += $lt;
+                  }
                 }
               }
             }
@@ -514,9 +520,9 @@ sub save {
 		  ponumber = |.$dbh->quote($form->{"customerponumber_$i"}).qq|,
 		  itemnotes = |.$dbh->quote($form->{"itemnotes_$i"}).qq|,
 		  lineitemdetail = '$lineitemdetail',
-      cost = $form->{"cost_$i"},
-      vendor = |.$dbh->quote($form->{"costvendor_$i"}).qq|,
-      vendor_id = $form->{"costvendorid_$i"}
+                  cost = $form->{"cost_$i"},
+                  vendor = |.$dbh->quote($form->{"costvendor_$i"}).qq|,
+                  vendor_id = $form->{"costvendorid_$i"}
 		  WHERE id = $form->{"orderitems_id_$i"}
 		  AND trans_id = $form->{id}|;
       $dbh->do($query) || $form->dberror($query);
@@ -685,6 +691,7 @@ sub save {
           $form->{type} = "transaction";
           $form->{exchangerate} = $form->format_amount($myconfig, $form->{exchangerate});
           my $n = $form->{paidaccounts} - 1;
+          $n ||= 1;
           $form->{"${arap}_paid_$form->{paidaccounts}"} = $form->{"${arap}_paid_$n"};
           $form->{"payment_$form->{paidaccounts}"} = $form->{"payment_$n"};
           delete $form->{rowcount};
@@ -893,7 +900,7 @@ sub retrieve {
 		pr.projectnumber,
 		pg.partsgroup, p.partsgroup_id, p.partnumber AS sku,
 		p.listprice, p.lastcost, p.sellprice AS sell, p.weight,
-		p.onhand,
+		p.onhand, p.lot, p.expires, p.checkinventory,
 		p.inventory_accno_id, p.income_accno_id, p.expense_accno_id,
 		t.description AS partsgrouptranslation,
 		c.package, c.netweight, c.grossweight, c.volume,
@@ -922,7 +929,12 @@ sub retrieve {
 		JOIN partstax pt ON (pt.chart_id = c.id)
 		WHERE pt.parts_id = ?|;
     my $tth = $dbh->prepare($query) || $form->dberror($query);
-   
+    
+    # makes and models
+    $query = qq|SELECT * FROM makemodel
+                WHERE parts_id = ?|;
+    my $mth = $dbh->prepare($query) || $form->dberror($query);
+
     my $taxrate;
     my $ptref;
     my $sellprice;
@@ -962,6 +974,13 @@ sub retrieve {
       }
       $tth->finish;
       chop $ref->{taxaccounts};
+
+      $mth->execute($ref->{id}) || $form->dberror($query);
+      while ($mref = $mth->fetchrow_hashref(NAME_lc)) {
+        for (qw(make model)) { $ref->{$_} .= "$mref->{$_}\n" }
+      }
+      $mth->finish;
+      for (qw(make model)) { chomp $ref->{$_} }
 
       # preserve prices
       $sellprice = $ref->{sellprice};
@@ -1148,62 +1167,60 @@ sub order_details {
   # sort items by project and partsgroup
   for $i (1 .. $form->{rowcount} - 1) {
 
-    if ($form->{"id_$i"}) {
-      # account numbers
-      $pth->execute($form->{"id_$i"});
-      $ref = $pth->fetchrow_hashref(NAME_lc);
-      for (keys %$ref) { $form->{"${_}_$i"} = $ref->{$_} }
-      $pth->finish;
+    # account numbers
+    $pth->execute($form->{"id_$i"});
+    $ref = $pth->fetchrow_hashref(NAME_lc);
+    for (keys %$ref) { $form->{"${_}_$i"} = $ref->{$_} }
+    $pth->finish;
 
-      $projectnumber_id = 0;
-      $projectnumber = "";
-      $partsgroup = "";
-      $form->{projectnumber} = "";
+    $projectnumber_id = 0;
+    $projectnumber = "";
+    $partsgroup = "";
+    $form->{projectnumber} = "";
 
-      if ($form->{groupprojectnumber} || $form->{grouppartsgroup}) {
+    if ($form->{groupprojectnumber} || $form->{grouppartsgroup}) {
 
-        $inventory_accno_id = ($form->{"inventory_accno_id_$i"} || $form->{"assembly_$i"}) ? "1" : "";
+      $inventory_accno_id = ($form->{"inventory_accno_id_$i"} || $form->{"assembly_$i"}) ? "1" : "";
 
-        if ($form->{groupprojectnumber}) {
-          ($projectnumber, $projectnumber_id) = split /--/, $form->{"projectnumber_$i"};
-        }
-        if ($form->{grouppartsgroup}) {
-          ($partsgroup) = split /--/, $form->{"partsgroup_$i"};
-        }
-
-        if ($projectnumber_id && $form->{groupprojectnumber}) {
-          if ($translation{$projectnumber_id}) {
-            $form->{projectnumber} = $translation{$projectnumber_id};
-          } else {
-            # get project description
-            $prh->execute($projectnumber_id);
-            ($projectdescription, $translation) = $prh->fetchrow_array;
-            $prh->finish;
-
-            $form->{projectnumber} = ($translation) ? "$projectnumber, $translation" : "$projectnumber, $projectdescription";
-
-            $translation{$projectnumber_id} = $form->{projectnumber};
-          }
-        }
-
-        if ($form->{grouppartsgroup} && $form->{partsgroup}) {
-          $form->{projectnumber} .= " / " if $projectnumber_id;
-          $form->{projectnumber} .= $partsgroup;
-        }
-
-        $form->format_string((projectnumber));
-
+      if ($form->{groupprojectnumber}) {
+        ($projectnumber, $projectnumber_id) = split /--/, $form->{"projectnumber_$i"};
+      }
+      if ($form->{grouppartsgroup}) {
+        ($partsgroup) = split /--/, $form->{"partsgroup_$i"};
       }
 
-      $sortby = qq|$projectnumber$form->{partsgroup}|;
-      if ($form->{sortby} ne 'runningnumber') {
-        for (qw(partnumber description bin)) {
-          $sortby .= $form->{"${_}_$i"} if $form->{sortby} eq $_;
+      if ($projectnumber_id && $form->{groupprojectnumber}) {
+        if ($translation{$projectnumber_id}) {
+          $form->{projectnumber} = $translation{$projectnumber_id};
+        } else {
+          # get project description
+          $prh->execute($projectnumber_id);
+          ($projectdescription, $translation) = $prh->fetchrow_array;
+          $prh->finish;
+
+          $form->{projectnumber} = ($translation) ? "$projectnumber, $translation" : "$projectnumber, $projectdescription";
+
+          $translation{$projectnumber_id} = $form->{projectnumber};
         }
       }
 
-      push @sortlist, [ $i, qq|$projectnumber$form->{partsgroup}$inventory_accno_id|, $form->{projectnumber}, $projectnumber_id, $partsgroup, $sortby ];
+      if ($form->{grouppartsgroup} && $form->{partsgroup}) {
+        $form->{projectnumber} .= " / " if $projectnumber_id;
+        $form->{projectnumber} .= $partsgroup;
+      }
+
+      $form->format_string((projectnumber));
+
     }
+
+    $sortby = qq|$projectnumber$form->{partsgroup}|;
+    if ($form->{sortby} ne 'runningnumber') {
+      for (qw(partnumber description bin)) {
+        $sortby .= $form->{"${_}_$i"} if $form->{sortby} eq $_;
+      }
+    }
+
+    push @sortlist, [ $i, qq|$projectnumber$form->{partsgroup}$inventory_accno_id|, $form->{projectnumber}, $projectnumber_id, $partsgroup, $sortby ];
 
     # last package number
     $form->{packages} = $form->{"package_$i"} if $form->{"package_$i"};
@@ -1281,6 +1298,7 @@ sub order_details {
   @{ $form->{taxrates} } = ();
 
   for my $item (@sortlist) {
+
     $i = $item->[0];
     $j++;
 
@@ -1307,7 +1325,7 @@ sub order_details {
           }
 
           push(@{ $form->{description} }, $item->[2]);
-          for (qw(taxrates runningnumber number sku qty ship unit bin serialnumber ordernumber customerponumber requiredate projectnumber sell sellprice listprice netprice discount discountrate linetotal itemnotes lineitemdetail package netweight grossweight volume countryorigin hscode drawing toolnumber barcode)) { push(@{ $form->{$_} }, "") }
+          for (qw(taxrates runningnumber number sku qty ship unit bin serialnumber ordernumber customerponumber requiredate projectnumber sell sellprice listprice netprice discount discountrate linetotal itemnotes lineitemdetail package netweight grossweight volume countryorigin hscode drawing toolnumber barcode lot expires make model)) { push(@{ $form->{$_} }, "") }
           push(@{ $form->{lineitems} }, { amount => 0, tax => 0 });
         }
       }
@@ -1328,11 +1346,15 @@ sub order_details {
       push(@{ $form->{number} }, $form->{"partnumber_$i"});
       push(@{ $form->{requiredate} }, $form->{"reqdate_$i"});
 
-      for (qw(sku description unit bin serialnumber ordernumber customerponumber sell sellprice listprice itemnotes lineitemdetail package netweight grossweight volume countryorigin hscode drawing toolnumber barcode)) { push(@{ $form->{$_} }, $form->{"${_}_$i"}) }
-
       # if not grouped remove id
       ($projectnumber) = split /--/, $form->{"projectnumber_$i"};
       push(@{ $form->{projectnumber} }, $projectnumber);
+
+      for (qw(make model)) { $form->{"a_$_"} = $form->{"${_}_$i"} }
+      $form->format_string(qw(a_make a_model));
+      for (qw(make model)) { $form->{"${_}_$i"} = $form->{"a_$_"} }
+
+      for (qw(sku description unit bin serialnumber ordernumber customerponumber sell sellprice listprice itemnotes lineitemdetail package netweight grossweight volume countryorigin hscode drawing toolnumber barcode lot expires make model)) { push(@{ $form->{$_} }, $form->{"${_}_$i"}) }
 
       push(@{ $form->{qty} }, $form->format_amount($myconfig, $form->{"qty_$i"}));
       push(@{ $form->{ship} }, $form->format_amount($myconfig, $form->{"ship_$i"}));
@@ -1433,25 +1455,23 @@ sub order_details {
           %p = split /[: ]/, $form->{"pricematrix_$i"};
           for (split / /, $form->{"kit_$i"}) {
             @p = split /:/, $_;
-            for $n (1 .. $#p) {
+            for $n (3 .. $#p) {
               if ($form->{taxaccounts} =~ /$p[$n]/) {
-                if ($p[0]) {
+                if ($p[1]) {
                   if ($p{0}) {
-                    $d = $form->round_amount($p{0} * $form->{"discount_$i"}/100, $decimalplaces);
-                    $p = $form->round_amount($p{0} - $d, $decimalplaces);
-                    $p = $form->round_amount($p * $form->{"qty_$i"}, $form->{precision});
-                    $d = $form->round_amount($p[0] * $form->{"discount_$i"}/100, $decimalplaces);
-                    if ($p) {
+                    $r = $sellprice/$p{0};
+                    $d = $form->round_amount($p[2] * $form->{"discount_$i"}/100, $decimalplaces);
+                    $lt = $form->round_amount($p[2] - $d, $form->{precision});
+                    $lt = $form->round_amount($lt * $r, $form->{precision});
+                    $lt = $form->round_amount($lt * $p[1], $form->{precision});
+                    $lt = $form->round_amount($lt * $form->{"qty_$i"}, $form->{precision});
 
-                      $lt = ($p[0] - $d) * $linetotal/$p * $form->{"qty_$i"};
-
-                      if ($form->{taxincluded}) {
-                        $taxaccounts{$p[$n]} += $lt * $form->{"$p[$n]_rate"} / (1 + $form->{"$p[$n]_rate"});
-                        $taxbase{$p[$n]} += $lt - $lt * $form->{"$p[$n]_rate"} / (1 + $form->{"$p[$n]_rate"});
-                      } else {
-                        $taxaccounts{$p[$n]} += $lt * $form->{"$p[$n]_rate"};
-                        $taxbase{$p[$n]} += $lt;
-                      }
+                    if ($form->{taxincluded}) {
+                      $taxaccounts{$p[$n]} += $lt * $form->{"$p[$n]_rate"} / (1 + $form->{"$p[$n]_rate"});
+                      $taxbase{$p[$n]} += $lt - $lt * $form->{"$p[$n]_rate"} / (1 + $form->{"$p[$n]_rate"});
+                    } else {
+                      $taxaccounts{$p[$n]} += $lt * $form->{"$p[$n]_rate"};
+                      $taxbase{$p[$n]} += $lt;
                     }
                   }
                 }
@@ -1460,7 +1480,6 @@ sub order_details {
           }
         }
       }
-
     }
 
     # add subtotal
@@ -1478,7 +1497,7 @@ sub order_details {
               push(@{ $form->{part} }, NULL);
             }
 
-            for (qw(taxrates runningnumber number sku qty ship unit bin serialnumber ordernumber customerponumber requiredate projectnumber sell sellprice listprice netprice discount discountrate itemnotes lineitemdetail package netweight grossweight volume countryorigin hscode drawing toolnumber barcode)) { push(@{ $form->{$_} }, "") }
+            for (qw(taxrates runningnumber number sku qty ship unit bin serialnumber ordernumber customerponumber requiredate projectnumber sell sellprice listprice netprice discount discountrate itemnotes lineitemdetail package netweight grossweight volume countryorigin hscode drawing toolnumber barcode lot expires make model)) { push(@{ $form->{$_} }, "") }
 
             push(@{ $form->{description} }, $form->{groupsubtotaldescription});
 
@@ -1505,7 +1524,7 @@ sub order_details {
               push(@{ $form->{part} }, NULL);
             } 
            
-            for (qw(taxrates runningnumber number sku qty ship unit bin serialnumber ordernumber customerponumber requiredate projectnumber sell sellprice listprice netprice discount discountrate itemnotes lineitemdetail package netweight grossweight volume countryorigin hscode drawing toolnumber barcode)) { push(@{ $form->{$_} }, "") }
+            for (qw(taxrates runningnumber number sku qty ship unit bin serialnumber ordernumber customerponumber requiredate projectnumber sell sellprice listprice netprice discount discountrate itemnotes lineitemdetail package netweight grossweight volume countryorigin hscode drawing toolnumber barcode lot expires make model)) { push(@{ $form->{$_} }, "") }
 
             push(@{ $form->{description} }, $form->{groupsubtotaldescription});
             push(@{ $form->{linetotal} }, $form->format_amount($myconfig, $subtotal, $form->{precision}));
@@ -1655,20 +1674,17 @@ sub assembly_details {
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
-  my @sf;
+  my @sf = qw(partnumber description partsgroup itemnotes drawing toolnumber barcode unit bin);
 
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
-    
-    @sf = qw(partnumber description partsgroup itemnotes drawing toolnumber barcode unit bin);
 
     for (@sf) { $form->{"a_$_"} = $ref->{$_} }
     $form->format_string(map { "a_$_" } @sf);
    
     if ($form->{grouppartsgroup} && $ref->{partsgroup} ne $sm) {
-      for (qw(taxrates number sku unit qty runningnumber ship bin serialnumber ordernumber customerponumber requiredate projectnumber sellprice listprice netprice discount discountrate linetotal itemnotes lineitemdetail package netweight grossweight volume countryorigin hscode drawing toolnumber barcode)) { push(@{ $form->{$_} }, "") }
+      for (qw(taxrates number sku unit qty runningnumber ship bin serialnumber ordernumber customerponumber requiredate projectnumber sellprice listprice netprice discount discountrate linetotal itemnotes lineitemdetail package netweight grossweight volume countryorigin hscode drawing toolnumber barcode lot expires make model)) { push(@{ $form->{$_} }, "") }
       $sm = ($form->{"a_partsgroup"}) ? $form->{"a_partsgroup"} : "";
       push(@{ $form->{description} }, "$spacer$sm");
-      
       push(@{ $form->{lineitems} }, { amount => 0, tax => 0 });
       
     }

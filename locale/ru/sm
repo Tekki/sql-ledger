@@ -1,18 +1,36 @@
-$self{charset} = 'ISO-8859-5';
-
 $self{texts} = {
-  'Continue'                    => '����������',
-  'From'                        => '�',
-  'To'                          => '��',
-  'done'                        => '���������',
+  'April'                       => 'апрель',
+  'August'                      => 'август',
+  'Continue'                    => 'Продолжить',
+  'Date missing!'               => 'Пропущена дата',
+  'December'                    => 'декабрь',
+  'February'                    => 'февраль',
+  'January'                     => 'январь',
+  'July'                        => 'июль',
+  'June'                        => 'июнь',
+  'March'                       => 'март',
+  'May'                         => 'май',
+  'November'                    => 'ноябрь',
+  'October'                     => 'октябрь',
+  'September'                   => 'сентябрь',
+  'done'                        => 'выполнено',
 };
 
 $self{subs} = {
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
   'continue'                    => 'continue',
-  'delete_invoices'             => 'delete_invoices',
-  'do_delete_invoices'          => 'do_delete_invoices',
   'do_repost_invoices'          => 'do_repost_invoices',
+  'fld_config'                  => 'fld_config',
+  'fld_edit'                    => 'fld_edit',
+  'fld_save'                    => 'fld_save',
+  'js_calendar'                 => 'js_calendar',
+  'pickvalue'                   => 'pickvalue',
   'repost_invoices'             => 'repost_invoices',
+  'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
 };
 
 1;

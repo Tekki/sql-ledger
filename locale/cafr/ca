@@ -62,6 +62,7 @@ $self{subs} = {
   'list_transactions'           => 'list_transactions',
   'pickvalue'                   => 'pickvalue',
   'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
   'afficher_écritures'          => 'list_transactions',
 };
 

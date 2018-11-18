@@ -1,28 +1,43 @@
-$self{charset} = 'ISO-8859-13';
-
 $self{texts} = {
   'Accounting Menu'             => 'Apskaitos Menu',
-  'Description'                 => 'Apra�ymas',
-  'Heading'                     => 'Antra�t�',
+  'April'                       => 'Balandis',
+  'August'                      => 'Rugpjūtis',
+  'December'                    => 'Gruodis',
+  'Description'                 => 'Aprašymas',
+  'February'                    => 'Vasaris',
+  'Heading'                     => 'Antraštė',
+  'January'                     => 'Sausis',
+  'July'                        => 'Liepa',
+  'June'                        => 'Birželis',
+  'March'                       => 'Kovas',
+  'May'                         => 'Geg',
+  'November'                    => 'Lapkritis',
+  'October'                     => 'Spalis',
+  'September'                   => 'Rūgsėjis',
 };
 
 $self{subs} = {
   'acc_menu'                    => 'acc_menu',
   'add_column'                  => 'add_column',
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
   'delete_column'               => 'delete_column',
   'delete_report'               => 'delete_report',
   'display'                     => 'display',
-  'display_frame'               => 'display_frame',
   'do_save_report'              => 'do_save_report',
   'edit_column'                 => 'edit_column',
+  'js_calendar'                 => 'js_calendar',
   'jsmenu'                      => 'jsmenu',
   'jsmenu_frame'                => 'jsmenu_frame',
   'menubar'                     => 'menubar',
-  'mlmenu'                      => 'mlmenu',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
   'save_column'                 => 'save_column',
   'save_report'                 => 'save_report',
-  'save_report_as_new'          => 'save_report_as_new',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
 };
 
 1;

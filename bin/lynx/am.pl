@@ -1670,13 +1670,14 @@ sub save_language {
   AM->save_language(\%myconfig, \%$form);
 
   $targetdir = "$templates/$myconfig{templates}/$form->{code}";
+  $basedir = "$myconfig{templates}";
   $basedir = "$myconfig{templates}/$form->{copydir}" if $form->{copydir};
   $basedir = "$templates/$basedir";
 
   umask(002);
 
   if (mkdir "$targetdir", oct("771")) {
-    unless (-d $basedir) {
+    unless (-d "$basedir") {
       $basedir = "$templates/$myconfig{templates}";
     }
 
@@ -1691,7 +1692,7 @@ sub save_language {
       if (-f "$basedir/$_") {
         open(TEMP, "$basedir/$_") or $form->error("$basedir/$_ : $!");
 
-        unless (-f $targetdir/$_) {
+        unless (-f "$targetdir/$_") {
           open(NEW, ">$targetdir/$_") or $form->error("$targetdir/$_ : $!");
 
           while ($line = <TEMP>) {
@@ -1764,7 +1765,6 @@ sub yes_delete_language {
   while (@member) {
     $_ = shift @member;
     if (/^\[admin\@(.*)\]/) {
-      $db = $1;
       do {
         if (/^templates=(.*)/) {
           $templates{$1}++;
@@ -1774,18 +1774,9 @@ sub yes_delete_language {
     }
   }
 
-  $ok = 1;
-
-  for (keys %templates) {
-    if ($templates{$_} > 1) {
-      $ok = 0;
-      last;
-    }
-  }
-
   AM->delete_language(\%myconfig, \%$form);
 
-  if ($ok) {
+  unless ($templates{$myconfig{templates}} > 1) {
     # delete templates
     $dir = "$templates/$myconfig{templates}/$form->{code}";
     if (-d $dir) {
@@ -2461,12 +2452,14 @@ sub defaults {
 
   my %checked;
   $checked{cash} = "checked" if $form->{method} eq 'cash';
-  $checked{cdt} = "checked" if $form->{cdt};
   $checked{namesbynumber} = "checked" if $form->{namesbynumber};
   $checked{company} = "checked" unless $form->{typeofcontact};
   $checked{person} = "checked" if $form->{typeofcontact} eq 'person';
-  
   $roundchange{$form->{roundchange}} = "checked";
+
+  for (qw(cdt checkinventory hideaccounts forcewarehouse)) {
+    $checked{$_} = "checked" if $form->{$_};
+  }
 
   for (qw(glnumber sinumber sonumber ponumber sqnumber rfqnumber employeenumber customernumber vendornumber)) {
     $checked{"lock_$_"} = "checked" if $form->{"lock_$_"};
@@ -2512,15 +2505,15 @@ sub defaults {
 	      </tr>
 	      <tr>
 		<th align=right>|.$locale->text('E-mail').qq|</th>
-		<td><input name=companyemail size=25 value="$form->{companyemail}"></td>
+		<td><input name=companyemail size=35 value="$form->{companyemail}"></td>
 	      </tr>
 	      <tr>
 		<th align=right>|.$locale->text('Website').qq|</th>
-		<td><input name=companywebsite size=25 value="$form->{companywebsite}"></td>
+		<td><input name=companywebsite size=35 value="$form->{companywebsite}"></td>
 	      </tr>
 	      <tr>
 		<th align=right>|.$locale->text('Business Number').qq|</th>
-		<td><input name=businessnumber size=25 value="|.$form->quote($form->{businessnumber}).qq|"></td>
+		<td><input name=businessnumber size=35 value="|.$form->quote($form->{businessnumber}).qq|"></td>
 	      </tr>
 	      <tr>
 		<th align=right>|.$locale->text('Reporting Method').qq|</th>
@@ -2575,6 +2568,19 @@ sub defaults {
 		<td><input name=typeofcontact class=radio type=radio value="" $checked{company}>&nbsp;|.$locale->text('Company').qq|
 		<input name=typeofcontact class=radio type=radio value="person" $checked{person}>&nbsp;|.$locale->text('Person').qq|
 		</td>
+	      </tr>
+	      <tr>
+		<th align=right>|.$locale->text('Check Inventory').qq|</th>
+		<td><input name=checkinventory class=checkbox type=checkbox value=1 $checked{checkinventory}></td>
+	      </tr>
+	      <tr>
+		<th align=right>|.$locale->text('Force Warehouse').qq|</th>
+		<td><input name=forcewarehouse class=checkbox type=checkbox value=1 $checked{forcewarehouse}></td>
+	      </tr>
+
+	      <tr>
+		<th align=right>|.$locale->text('Hide Closed Accounts').qq|</th>
+		<td><input name=hideaccounts class=checkbox type=checkbox value=1 $checked{hideaccounts}></td>
 	      </tr>
 	    </table>
 	  </td>
@@ -2696,7 +2702,7 @@ sub defaults {
 </table>
 |;
 
-  $form->{optional} = "company address tel fax companyemail companywebsite yearend weightunit businessnumber closedto revtrans audittrail method cdt namesbynumber typeofcontact roundchange referenceurl annualinterest latepaymentfee restockingcharge";
+  $form->{optional} = "company address tel fax companyemail companywebsite yearend weightunit businessnumber closedto revtrans audittrail method cdt namesbynumber typeofcontact roundchange referenceurl annualinterest latepaymentfee restockingcharge checkinventory hideaccounts forcewarehouse";
 
   for (qw(gl si so po sq rfq employee customer vendor)) { $form->{optional} .= " lock_${_}number" }
 
@@ -2802,7 +2808,7 @@ sub workstations {
 	  <td><input name="cashdrawer" value="|.$form->quote($form->{"cashdrawer"}).qq|" size=60></td>
 	</tr>
 	<tr>
-	  <th align=right nowrap>|.$locale->text('Pole Display').qq|</th>
+	  <th align=right nowrap>|.$locale->text('Poledisplay').qq|</th>
 	  <td>&nbsp;</td>
 	  <td><input name="poledisplay" value="|.$form->quote($form->{"poledisplay"}).qq|" size=60></td>
 	  <td><input name="poledisplayon" type=checkbox style=checkbox $checked><b>|.$locale->text('On').qq|</b></td>
@@ -3750,7 +3756,7 @@ sub list_audit_log {
     $option .= $locale->text('To')."&nbsp;".$locale->date(\%myconfig, $form->{transdateto}, 1);
   }
 
-  @column_index = $form->sort_columns("transdate", "transtime", "tablename", "reference", "trans_id", "formname", "action", "name", "employeenumber", "login");
+  @column_index = $form->sort_columns(qw(transdate transtime tablename reference trans_id formname action name employeenumber login));
   
   $column_header{transdate} = qq|<th><a class=listheading href=$href&sort=transdate>|.$locale->text('Date').qq|</a></th>|;
   $column_header{transtime} = qq|<th class=listheading>|.$locale->text('Time').qq|</th>|;
@@ -3819,6 +3825,7 @@ sub list_audit_log {
 	      request_quotation => { oe => { module => 'oe', param => [ 'type=request_quotation' ] } },
 	      timecard => { jcitems => { module => 'jc', param => [ 'type=timecard', 'project=project' ] } },
 	      storescard => { jcitems => { module => 'jc', param => [ 'type=storescard', 'project=job' ] } },
+	      yearend => { gl => { module => 'gl' } },
 	    );
 
   foreach $ref (@{ $form->{ALL} }) {

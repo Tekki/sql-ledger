@@ -13,6 +13,7 @@ $self{texts} = {
   'November'                    => 'November',
   'October'                     => 'Oktober',
   'September'                   => 'September',
+  'done'                        => 'gebeurd',
 };
 
 $self{subs} = {
@@ -29,6 +30,7 @@ $self{subs} = {
   'pickvalue'                   => 'pickvalue',
   'repost_invoices'             => 'repost_invoices',
   'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
 };
 
 1;

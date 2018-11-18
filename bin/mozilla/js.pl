@@ -182,7 +182,7 @@ print q|
   // date parsing function
   function f_tcalParseDate (s_date) {|;
   
-if ($myconfig{dateformat} =~ /^mm/i) {
+if ($myconfig{dateformat} =~ /^(dd|mm)/i) {
   print q|
     var re_date = /^\s*(\d{1,2})\W(\d{1,2})\W(\d{2,4})\s*$/;|
 }

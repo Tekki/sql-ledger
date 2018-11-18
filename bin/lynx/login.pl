@@ -36,9 +36,6 @@ if (-f "$form->{path}/custom/$form->{login}/$form->{script}") {
   $form->error($@) if ($@);
 }
 
-# window title bar
-$form->{titlebar} = "SQL-Ledger";
-
 if ($form->{action}) {
   &{ $locale->findsub($form->{action}) };
 } else {
@@ -335,6 +332,11 @@ sub login {
   }
 
   for (qw(dbconnect dbhost dbport dbname dbuser dbpasswd)) { $myconfig{$_} = $user->{$_} }
+
+  # create image directory
+  if (! -d "$images/$myconfig{dbname}") {
+    mkdir "$images/$myconfig{dbname}", oct("771") or $form->error("$images/$myconfig{dbname} : $!");
+  }
 
   if ($user->{tan} && $sendmail) {
     &email_tan;

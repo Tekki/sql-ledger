@@ -1,5 +1,3 @@
-$self{charset} = 'UTF-8';
-
 $self{texts} = {
   'Account'                     => 'Λογαριασμός',
   'Accounting Menu'             => 'Μενπύ Λογιστικής',
@@ -44,21 +42,30 @@ $self{texts} = {
 
 $self{subs} = {
   'acc_menu'                    => 'acc_menu',
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
   'continue'                    => 'continue',
   'deselect_all'                => 'deselect_all',
   'display'                     => 'display',
   'display_form'                => 'display_form',
   'done'                        => 'done',
   'get_payments'                => 'get_payments',
-  'js_menu'                     => 'js_menu',
+  'js_calendar'                 => 'js_calendar',
+  'jsmenu'                      => 'jsmenu',
+  'jsmenu_frame'                => 'jsmenu_frame',
   'menubar'                     => 'menubar',
+  'pickvalue'                   => 'pickvalue',
   'reconciliation'              => 'reconciliation',
+  'resize'                      => 'resize',
   'section_menu'                => 'section_menu',
   'select_all'                  => 'select_all',
+  'show_progress'               => 'show_progress',
   'update'                      => 'update',
-  'Συνέχεια'                    => 'continue',
-  'Εντάξει'                     => 'done',
-  'Επιλογή_όλων'                => 'select_all',
+  'Συνέχεια'            => 'continue',
+  'Εντάξει'              => 'done',
+  'Επιλογή_όλων'     => 'select_all',
 };
 
 1;

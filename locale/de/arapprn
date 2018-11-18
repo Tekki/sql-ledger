@@ -17,6 +17,7 @@ $self{texts} = {
   'Select payment'              => 'Zahlung auswählen',
   'Source'                      => 'Beleg',
   'Text'                        => 'Text',
+  'XML'                         => 'XML',
   'html'                        => 'html',
 };
 

@@ -1,5 +1,3 @@
-$self{charset} = 'UTF-8';
-
 $self{texts} = {
   'Account'                     => 'Cuenta',
   'Amount'                      => 'Importe',
@@ -8,14 +6,18 @@ $self{texts} = {
   'Date'                        => 'Fecha',
   'Memo'                        => 'Nota',
   'Nothing to print!'           => '¡No hay nada que imprimir!',
+  'On Hold'                     => 'En Espera',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
+  'Printed'                     => 'Impreso',
   'RVC missing!'                => '¡Falta RVC!',
+  'Scheduled'                   => 'Programado',
   'Screen'                      => 'Pantalla',
   'Select a Printer!'           => '¡Seleccionar una Impresora!',
   'Select payment'              => '¡Seleccione Pago!',
-  'Select postscript or PDF!'   => 'Seleccione Postcript o PDF',
   'Source'                      => 'Referencia',
+  'Text'                        => 'Texto',
+  'html'                        => 'html',
 };
 
 $self{subs} = {
@@ -26,6 +28,7 @@ $self{subs} = {
   'print_credit_note'           => 'print_credit_note',
   'print_debit_note'            => 'print_debit_note',
   'print_options'               => 'print_options',
+  'print_payslip'               => 'print_payslip',
   'print_receipt'               => 'print_receipt',
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',

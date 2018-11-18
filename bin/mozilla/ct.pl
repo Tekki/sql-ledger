@@ -447,7 +447,7 @@ sub include_in_report {
   push @f, qq|<input name="l_business" type=checkbox class=checkbox value=Y> |.$locale->text('Type of Business');
   push @f, qq|<input name="l_creditlimit" type=checkbox class=checkbox value=Y> |.$locale->text('Credit Limit');
   push @f, qq|<input name="l_outstanding" type=checkbox class=checkbox value=Y> |.$locale->text('Outstanding');
-  push @f, qq|<input name="l_availablecredit" type=checkbox class=checkbox value=Y> |.$locale->text('Avalable Credit');
+  push @f, qq|<input name="l_availablecredit" type=checkbox class=checkbox value=Y> |.$locale->text('Available Credit');
   push @f, qq|<input name="l_terms" type=checkbox class=checkbox value=Y> |.$locale->text('Terms');
   push @f, qq|<input name="l_language" type=checkbox class=checkbox value=Y> |.$locale->text('Language');
   push @f, qq|<input name="l_remittancevoucher" type=checkbox class=checkbox value=Y> |.$locale->text('Remittance Voucher');
@@ -2865,7 +2865,7 @@ sub pricelist_header {
   foreach $i (1 .. $form->{rowcount}) {
     for (@column_index, "id", "partsgroup_id") { delete $form->{"${_}_$i"} }
   }
-  for (qw(title titlebar script none)) { delete $form->{$_} }
+  for (qw(title script none)) { delete $form->{$_} }
 
 }
 

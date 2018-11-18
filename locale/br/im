@@ -1,5 +1,3 @@
-$self{charset} = 'UTF8';
-
 $self{texts} = {
   'A'                           => 'A',
   'AP'                          => 'Contas a Pagar',
@@ -166,6 +164,7 @@ $self{subs} = {
   'save_column'                 => 'save_column',
   'save_report'                 => 'save_report',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
   'xmlcsvhdr'                   => 'xmlcsvhdr',
   'xmldata'                     => 'xmldata',
   'xmlform'                     => 'xmlform',

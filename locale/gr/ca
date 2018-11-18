@@ -1,5 +1,3 @@
-$self{charset} = 'UTF-8';
-
 $self{texts} = {
   'Account'                     => 'Λογαριασμός',
   'Apr'                         => 'Απρ',
@@ -8,6 +6,7 @@ $self{texts} = {
   'August'                      => 'Αύγουστος',
   'Balance'                     => 'Ισοζύγιο',
   'Chart of Accounts'           => 'Γράφημα των Κωδικών',
+  'Closed'                      => 'Κλεισμένο',
   'Credit'                      => 'Πίστωση',
   'Current'                     => 'Τρέχων',
   'Date'                        => 'Ημερομηνία',
@@ -41,10 +40,18 @@ $self{texts} = {
 
 $self{subs} = {
   'ca_subtotal'                 => 'ca_subtotal',
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
   'chart_of_accounts'           => 'chart_of_accounts',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'js_calendar'                 => 'js_calendar',
   'list'                        => 'list',
   'list_transactions'           => 'list_transactions',
-  'Λίστα_Κινήσεων'              => 'list_transactions',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
+  'Λίστα_Κινήσεων' => 'list_transactions',
 };
 
 1;

@@ -31,6 +31,7 @@ sub get_vc {
 	       sales_quotation => { oe => customer },
 	       request_quotation => { oe => vendor },
 	       timecard => { jcitems => employee },
+	       storescard => { jcitems => employee },
 	     );
   
   my $query;
@@ -146,7 +147,7 @@ sub get_vc {
   $form->all_years($myconfig, $dbh);
 
   if ($form->{type} =~ /(timecard|storescard)/) {
-    $form->all_projects($myconfig, $dbh);
+    $form->all_projects($myconfig, $dbh, undef, ($form->{type} eq 'storescard'));
   }
 
   $dbh->disconnect;
@@ -191,11 +192,8 @@ sub get_spoolfiles {
 
   my $where;
 
-  if ($form->{type} eq 'timecard') {
-    my $dateformat = $myconfig->{dateformat};
-
-    $dateformat =~ s/yy/yyyy/;
-    $dateformat =~ s/yyyyyy/yyyy/;
+  if ($form->{type} =~ /(timecard|storescard)/) {
+    my $dateformat = 'YYYY-MM-DD';
     
     $invnumber = 'id';
     $where = "1=1";
@@ -206,7 +204,7 @@ sub get_spoolfiles {
                   j.id AS invnumber,
 		  to_char(j.checkedin, '$dateformat') AS transdate,
 		  '' AS ordnumber, '' AS quonumber, '0' AS invoice,
-		  'jc' AS module, s.spoolfile, j.description,
+		  'jcitems' AS tablename, s.spoolfile, j.description,
 		  j.sellprice * j.qty AS amount, ad.city, e.id AS employee_id
 		  FROM jcitems j
 		  JOIN employee e ON (e.id = j.employee_id)
@@ -244,7 +242,7 @@ sub get_spoolfiles {
                   j.id AS invnumber,
 		  to_char(j.checkedin, '$dateformat') AS transdate,
 		  '' AS ordnumber, '' AS quonumber, '0' AS invoice,
-		  'jc' AS module, '' AS spoolfile, j.description, 
+		  'jcitems' AS tablename, '' AS spoolfile, j.description, 
 		  j.sellprice * j.qty AS amount, ad.city, e.id AS employee_id
 		  FROM jcitems j
 		  JOIN employee e ON (e.id = j.employee_id)
@@ -314,7 +312,7 @@ sub get_spoolfiles {
 		  vc.$arap{$form->{type}}{$item}number AS vcnumber,
 		  a.$invnumber AS invnumber, a.transdate,
 		  a.ordnumber, a.quonumber, $invoice AS invoice,
-		  '$item' AS module, s.spoolfile, a.description, a.amount,
+		  '$item' AS tablename, s.spoolfile, a.description, a.amount,
 		  ad.city, vc.email, '$arap{$form->{type}}{$item}' AS db,
 		  vc.id AS vc_id
 		  FROM $item a
@@ -371,10 +369,9 @@ sub get_spoolfiles {
 		}
 	      }
 	    }
-	    } else {
-	      $where .= qq| AND a.id = 0|;
+          } else {
+            $where .= qq| AND a.id = 0|;
 	  }
-
 	}
 
 	$query .= qq|
@@ -383,7 +380,7 @@ sub get_spoolfiles {
 		  vc.$arap{$form->{type}}{$item}number AS vcnumber,
 		  a.$invnumber AS invnumber, a.transdate,
 		  a.ordnumber, a.quonumber, $invoice AS invoice,
-		  '$item' AS module, '' AS spoolfile, a.description, a.amount,
+		  '$item' AS tablename, '' AS spoolfile, a.description, a.amount,
 		  '$arap{$form->{type}}{$item}' AS vc,
 		  ad.city, vc.email, '$arap{$form->{type}}{$item}' AS db,
                   vc.id AS vc_id
@@ -453,7 +450,7 @@ sub get_spoolfiles {
                 AND s.spoolfile IS NOT NULL
                 AND s.spoolfile <> ''|;
 
-     if ($form->{type} eq 'timecard') {
+     if ($form->{type} =~ /(timecard|storescard)/) {
        $query .= qq|AND s.trans_id NOT IN (SELECT id FROM jcitems)|;
 
      } else {
@@ -512,7 +509,7 @@ sub delete_spool {
       $sth->execute($form->{"spoolfile_$i"}) || $form->dberror;
       $sth->finish;
       
-      %audittrail = ( tablename  => $form->{module},
+      %audittrail = ( tablename  => $form->{"tablename_$i"},
                       reference  => $form->{"reference_$i"},
 		      formname   => $formname,
 		      action     => 'dequeued',
@@ -583,7 +580,7 @@ sub print_spool {
   $sth->execute($form->{spoolfile}) || $form->dberror;
   $sth->finish;
   
-  %audittrail = ( tablename  => $form->{module},
+  %audittrail = ( tablename  => $form->{tablename},
 		  reference  => $form->{reference},
 		  formname   => $formname,
 		  action     => 'printed',

@@ -1,28 +1,43 @@
-$self{charset} = 'ISO-8859-9';
-
 $self{texts} = {
-  'Accounting Menu'             => 'Muhasebe Menüsü',
-  'Description'                 => 'Açýklama',
-  'Heading'                     => 'Baþlýk',
+  'Accounting Menu'             => 'Muhasebe MenÃ¼sÃ¼',
+  'April'                       => 'Nisan',
+  'August'                      => 'AÄŸustos',
+  'December'                    => 'AralÄ±k',
+  'Description'                 => 'AÃ§Ä±klama',
+  'February'                    => 'Åžubat',
+  'Heading'                     => 'BaÅŸlÄ±k',
+  'January'                     => 'Ocak',
+  'July'                        => 'Temmuz',
+  'June'                        => 'Haziran',
+  'March'                       => 'Mart',
+  'May'                         => 'May',
+  'November'                    => 'KasÄ±m',
+  'October'                     => 'Ekim',
+  'September'                   => 'EylÃ¼l',
 };
 
 $self{subs} = {
   'acc_menu'                    => 'acc_menu',
   'add_column'                  => 'add_column',
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
   'delete_column'               => 'delete_column',
   'delete_report'               => 'delete_report',
   'display'                     => 'display',
-  'display_frame'               => 'display_frame',
   'do_save_report'              => 'do_save_report',
   'edit_column'                 => 'edit_column',
+  'js_calendar'                 => 'js_calendar',
   'jsmenu'                      => 'jsmenu',
   'jsmenu_frame'                => 'jsmenu_frame',
   'menubar'                     => 'menubar',
-  'mlmenu'                      => 'mlmenu',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
   'save_column'                 => 'save_column',
   'save_report'                 => 'save_report',
-  'save_report_as_new'          => 'save_report_as_new',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
 };
 
 1;

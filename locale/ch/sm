@@ -1,18 +1,38 @@
 $self{texts} = {
+  'AP account does not exist!'  => 'Verbindlichkeitskonto existiert nicht!',
+  'AR account does not exist!'  => 'Forderungskonto existiert nicht!',
+  'Accepted format is'          => 'Akzeptiertes Format lautet',
+  'Allowed range for selected month is' => 'Erlaubter Rahmen für den gewählten Monat ist',
+  'Allowed range is'            => 'Erlaubter Rahmen is',
   'April'                       => 'April',
   'August'                      => 'August',
+  'Beginning date'              => 'Anfangsdatum',
   'Continue'                    => 'Weiter',
   'Date missing!'               => 'Datum fehlt!',
   'December'                    => 'Dezember',
   'February'                    => 'Februar',
+  'Fr'                          => 'Fr',
+  'Invalid date:'               => 'Ungültiges Datum:',
+  'Invalid day:'                => 'Ungültiger Tag:',
+  'Invalid month:'              => 'Ungültiger Monat:',
   'January'                     => 'Januar',
   'July'                        => 'Juli',
   'June'                        => 'Juni',
   'March'                       => 'März',
   'May'                         => 'Mai',
+  'Mo'                          => 'Mo',
   'November'                    => 'November',
   'October'                     => 'Oktober',
+  'Repost Invoices'             => 'Rechnungen neu buchen',
+  'Reposting Invoices ... '     => 'Rechnungen werden neu verbucht ... ',
+  'Sa'                          => 'Sa',
   'September'                   => 'September',
+  'Su'                          => 'So',
+  'Th'                          => 'Do',
+  'Tu'                          => 'Di',
+  'We'                          => 'Mi',
+  'done'                        => 'fertig',
+  'please wait'                 => 'Bitte warten',
 };
 
 $self{subs} = {
@@ -29,6 +49,7 @@ $self{subs} = {
   'pickvalue'                   => 'pickvalue',
   'repost_invoices'             => 'repost_invoices',
   'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
 };
 
 1;

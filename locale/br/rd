@@ -1,5 +1,3 @@
-$self{charset} = 'UTF8';
-
 $self{texts} = {
   'AP Transaction'              => 'Transação - Contas a Pagar',
   'AR Transaction'              => 'Transação - Contas a Receber',
@@ -17,6 +15,7 @@ $self{texts} = {
   'February'                    => 'Fevereiro',
   'GL Transaction'              => 'Transação do Livro Razão',
   'ID'                          => 'ID',
+  'Image'                       => 'Imagem',
   'January'                     => 'Janeiro',
   'Job'                         => 'Serviço',
   'July'                        => 'Julho',
@@ -33,8 +32,10 @@ $self{texts} = {
   'Sales Invoice'               => 'Fatura de Venda',
   'Sales Order'                 => 'Pedido de Venda',
   'Save'                        => 'Salvar',
+  'Select all'                  => 'Selecionar todos',
   'September'                   => 'Setembro',
   'Service'                     => 'Serviço',
+  'Stores Card'                 => 'Cartão de Loja',
   'Vendor'                      => 'Fornecedor',
   'Vendor Invoice'              => 'Fatura de Compra',
 };
@@ -42,6 +43,7 @@ $self{texts} = {
 $self{subs} = {
   'acc_menu'                    => 'acc_menu',
   'add_document'                => 'add_document',
+  'add_file'                    => 'add_file',
   'attach'                      => 'attach',
   'calendar'                    => 'calendar',
   'change_report'               => 'change_report',
@@ -50,6 +52,8 @@ $self{subs} = {
   'continue'                    => 'continue',
   'delete'                      => 'delete',
   'delete_documents'            => 'delete_documents',
+  'delete_files'                => 'delete_files',
+  'deselect_all'                => 'deselect_all',
   'detach'                      => 'detach',
   'display'                     => 'display',
   'display_documents'           => 'display_documents',
@@ -60,17 +64,23 @@ $self{subs} = {
   'jsmenu'                      => 'jsmenu',
   'jsmenu_frame'                => 'jsmenu_frame',
   'list_documents'              => 'list_documents',
+  'list_images'                 => 'list_images',
   'menubar'                     => 'menubar',
   'pickvalue'                   => 'pickvalue',
   'resize'                      => 'resize',
   'save'                        => 'save',
   'search_documents'            => 'search_documents',
   'section_menu'                => 'section_menu',
+  'select_all'                  => 'select_all',
+  'show_progress'               => 'show_progress',
   'upload'                      => 'upload',
   'upload_file'                 => 'upload_file',
+  'upload_image'                => 'upload_image',
+  'upload_imagefile'            => 'upload_imagefile',
   'continuar'                   => 'continue',
   'apagar'                      => 'delete',
   'salvar'                      => 'save',
+  'selecionar_todos'            => 'select_all',
 };
 
 1;

@@ -1,5 +1,3 @@
-$self{charset} = 'UTF-8';
-
 $self{texts} = {
   'AR/AP'                       => 'Osto/Myynti-tilit',
   'Account'                     => 'Tili',
@@ -9,6 +7,7 @@ $self{texts} = {
   'August'                      => 'Elokuu',
   'Balance'                     => 'Tase',
   'Chart of Accounts'           => 'Tilikartta',
+  'Closed'                      => 'Suljettu',
   'Credit'                      => 'Kredit',
   'Current'                     => 'Erääntyy',
   'Date'                        => 'Päiväys',
@@ -53,9 +52,17 @@ $self{texts} = {
 
 $self{subs} = {
   'ca_subtotal'                 => 'ca_subtotal',
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
   'chart_of_accounts'           => 'chart_of_accounts',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'js_calendar'                 => 'js_calendar',
   'list'                        => 'list',
   'list_transactions'           => 'list_transactions',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
   'listaa_viennit'              => 'list_transactions',
 };
 

@@ -1,5 +1,3 @@
-$self{charset} = 'UTF-8';
-
 $self{texts} = {
   'Company'                     => 'Εταιρία',
   'Continue'                    => 'Συνέχεια',
@@ -8,11 +6,15 @@ $self{texts} = {
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_tan'                   => 'email_tan',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
-  'Εισαγωγή'                    => 'login',
+  'tan_login'                   => 'tan_login',
+  'Συνέχεια'            => 'continue',
+  'Εισαγωγή'            => 'login',
 };
 
 1;

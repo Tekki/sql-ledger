@@ -1,0 +1,28 @@
+$self{texts} = {
+  'April'                       => 'apríl',
+  'August'                      => 'ágúst',
+  'December'                    => 'desember',
+  'February'                    => 'febrúar',
+  'January'                     => 'janúar',
+  'July'                        => 'júlí',
+  'June'                        => 'júní',
+  'March'                       => 'mars',
+  'May'                         => 'maí',
+  'November'                    => 'nóvember',
+  'October'                     => 'óktóber',
+  'September'                   => 'september',
+};
+
+$self{subs} = {
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'js_calendar'                 => 'js_calendar',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
+};
+
+1;
+

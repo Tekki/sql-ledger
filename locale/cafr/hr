@@ -229,6 +229,7 @@ $self{subs} = {
   'select_name'                 => 'select_name',
   'select_payment'              => 'select_payment',
   'select_project'              => 'select_project',
+  'show_progress'               => 'show_progress',
   'update'                      => 'update',
   'update_deduction'            => 'update_deduction',
   'update_employee'             => 'update_employee',

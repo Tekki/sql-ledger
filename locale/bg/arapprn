@@ -1,5 +1,3 @@
-$self{charset} = 'UTF8';
-
 $self{texts} = {
   'Account'                     => 'Сметка',
   'Amount'                      => 'Сума',

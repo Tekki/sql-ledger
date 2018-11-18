@@ -7,9 +7,9 @@ $self{texts} = {
   'Nothing to print!'           => '¡No hay nada que imprimir!',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
+  'Printed'                     => 'Impreso',
   'Screen'                      => 'Pantalla',
   'Select payment'              => '¡Seleccione Pago!',
-  'Select postscript or PDF!'   => '¡Seleccione postscript o PDF',
   'Source'                      => 'Fuente',
 };
 
@@ -21,6 +21,7 @@ $self{subs} = {
   'print_credit_note'           => 'print_credit_note',
   'print_debit_note'            => 'print_debit_note',
   'print_options'               => 'print_options',
+  'print_payslip'               => 'print_payslip',
   'print_receipt'               => 'print_receipt',
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',

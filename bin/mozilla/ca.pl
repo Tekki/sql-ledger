@@ -54,7 +54,8 @@ sub chart_of_accounts {
 
   CA->all_accounts(\%myconfig, \%$form);
 
-  @column_index = qw(accno gifi_accno description debit credit closed);
+  @column_index = qw(accno gifi_accno description debit credit);
+  push @column_index, "closed" unless $form->{hideaccounts};
 
   $column_header{accno} = qq|<th class=listtop>|.$locale->text('Account').qq|</th>\n|;
   $column_header{gifi_accno} = qq|<th class=listtop>|.$locale->text('GIFI').qq|</th>\n|;
@@ -89,6 +90,8 @@ sub chart_of_accounts {
 
   
   foreach $ca (@{ $form->{CA} }) {
+
+    next if $form->{hideaccounts} && $ca->{closed};
 
     $description = $form->escape($ca->{description});
     $gifi_description = $form->escape($ca->{gifi_description});

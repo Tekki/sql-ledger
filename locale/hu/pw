@@ -1,5 +1,3 @@
-$self{charset} = 'UTF-8';
-
 $self{texts} = {
   'Continue'                    => 'Folytatás',
   'Password'                    => 'Jelszó',
@@ -8,7 +6,7 @@ $self{texts} = {
 
 $self{subs} = {
   'getpassword'                 => 'getpassword',
-  'folytatás'                   => 'continue',
+  'folytatás'                  => 'continue',
 };
 
 1;

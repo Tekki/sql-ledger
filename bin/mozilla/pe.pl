@@ -152,7 +152,7 @@ sub job_header {
 
   for (qw(partnumber partdescription description notes unit)) { $form->{$_} = $form->quote($form->{$_}) }
 
-  for (qw(production completed weight)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, $form->{precision}) }
+  for (qw(production completed weight)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}) }
   for (qw(listprice sellprice)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, $form->{precision}) }
   
   $reference_documents = &references;
@@ -176,21 +176,25 @@ sub job_header {
   $notes = qq|<textarea name=notes rows=$rows cols=40 wrap=soft>$form->{notes}</textarea>|;
 
   $label = ucfirst $form->{vc};
+  $vcref = qq|<a href=ct.pl?action=edit&db=$form->{vc}&id=$form->{"$form->{vc}_id"}&login=$form->{login}&path=$form->{path} target=_blank>?</a>|;
+
   if ($form->{"select$form->{vc}"}) {
     $name = qq|
 	<tr>
 	  <th align=right nowrap>|.$locale->text($label).qq|</th>
-	  <td colspan=3><select name="$form->{vc}">|
-	  .$form->select_option($form->{"select$form->{vc}"}, $form->{"$form->{vc}"}, 1)
-	  .qq|</select>
+	  <td colspan=3><select name="$form->{vc}"
+          onChange="javascript:document.main.submit()">|
+          .$form->select_option($form->{"select$form->{vc}"}, $form->{$form->{vc}}, 1).qq|</select>
+          $vcref
 	  </td>
+          <input name=action type=hidden value=update>
 	</tr>
 |;
   } else {
     $name = qq|
 	<tr>
 	  <th align=right nowrap>|.$locale->text($label).qq|</th>
-	  <td colspan=3><input name="$form->{vc}" value="|.$form->quote($form->{"$form->{vc}"}).qq|" size=35></td>
+	  <td colspan=3><input name="$form->{vc}" value="|.$form->quote($form->{"$form->{vc}"}).qq|" size=35> $vcref</td>
 	</tr>
 |;
   }
@@ -293,7 +297,7 @@ sub job_header {
   
   $form->hide_form(map { "select$_" } ("IC_income", "$form->{vc}", "partsgroup"));
   $form->hide_form("old$form->{vc}", "$form->{vc}_id");
-  $form->hide_form(qw(id type orphaned taxaccounts vc project));
+  $form->hide_form(qw(id type orphaned taxaccounts vc project precision));
   
   print qq|
   
@@ -353,7 +357,15 @@ sub job_header {
                   <table>
                     <tr>
                       <th align="right" nowrap="true">|.$locale->text('Updated').qq|</th>
-                      <td><input name=priceupdate size=11 class=date title="$myconfig{dateformat}" value=$form->{priceupdate}></td>
+                      <td><input name=priceupdate size=11 class=date title="$myconfig{dateformat}" value=$form->{priceupdate}>|.&js_calendar("main", "priceupdate").qq|</td>
+                    </tr>
+                    <tr>
+                      <th align="right" nowrap="true">|.$locale->text('Lot').qq|</th>
+                      <td><input name=lot size=10 value="|.$form->quote($form->{lot}).qq|"></td>
+                    </tr>
+                    <tr>
+                      <th align="right" nowrap="true">|.$locale->text('Expires').qq|</th>
+                      <td><input name=expires size=11 class=date title="$myconfig{dateformat}" value=$form->{expires}>|.&js_calendar("main", "expires").qq|</td>
                     </tr>
                     <tr>
                       <th align="right" nowrap="true">|.$locale->text('List Price').qq|</th>
@@ -492,7 +504,7 @@ sub list_stock {
 
   if (@{ $form->{all_warehouse} }) {
     push @column_index, "warehouse";
-    $form->{selectwarehouse} = "";
+    $form->{selectwarehouse} = ($form->{forcewarehouse}) ? "" : "\n";
     for (@{ $form->{all_warehouse} }) { $form->{selectwarehouse} .= qq|$_->{description}--$_->{id}\n| }
   }
 
@@ -1070,23 +1082,28 @@ sub project_header {
   } else {
     $description = qq|<input name=description size=60 value="|.$form->quote($form->{description}).qq|">|;
   }
-  
+
   $label = ucfirst $form->{vc};
+  $vcref = qq|<a href=ct.pl?action=edit&db=$form->{vc}&id=$form->{"$form->{vc}_id"}&login=$form->{login}&path=$form->{path} target=_blank>?</a>|;
+
   if ($form->{"select$form->{vc}"}) {
     $name = qq|
 	<tr>
 	  <th align=right nowrap>|.$locale->text($label).qq|</th>
-	  <td colspan=3><select name="$form->{vc}">|
-	  .$form->select_option($form->{"select$form->{vc}"}, $form->{$form->{vc}}, 1)
-	  .qq|</select>
+	  <td colspan=3>
+          <select name="$form->{vc}"
+          onChange="javascript:document.main.submit()">|
+          .$form->select_option($form->{"select$form->{vc}"}, $form->{$form->{vc}}, 1).qq|</select>
+          $vcref
 	  </td>
+          <input name=action type=hidden value=update>
 	</tr>
 |;
   } else {
     $name = qq|
 	<tr>
 	  <th align=right nowrap>|.$locale->text($label).qq|</th>
-	  <td colspan=3><input name="$form->{vc}" value="|.$form->quote($form->{"$form->{vc}"}).qq|" size=35></td>
+	  <td colspan=3><input name="$form->{vc}" value="|.$form->quote($form->{"$form->{vc}"}).qq|" size=35> $vcref</td>
 	</tr>
 |;
   }
@@ -1378,7 +1395,7 @@ sub partsgroup_report {
     $column_data{code} = qq|<td>$ref->{code}</td>|;
     $pos = ($ref->{pos}) ? "*" : "&nbsp;";
     $column_data{pos} = qq|<td align=center>$pos</td>|;
-    $column_data{image} = ($ref->{image}) ? "<td><a href=$ref->{image}><img src=$ref->{image} height=32 border=0></a></td>" : "<td>&nbsp;</td>";
+    $column_data{image} = ($ref->{image}) ? "<td width=10%><a href=$images/$myconfig{dbname}/$ref->{image}><img src=$images/$myconfig{dbname}/$ref->{image} height=32 border=0></a></td>" : "<td>&nbsp;</td>";
     
     for (@column_index) { print "$column_data{$_}\n" }
     
@@ -1431,7 +1448,7 @@ sub partsgroup_report {
 sub partsgroup_header {
 
   $form->{action} =~ s/_.*//g;
-  $form->{title} = $locale->text(ucfirst $form->{action}." Group");
+  $form->{title} = $locale->text(ucfirst $form->{action}." ".$locale->text('Group'));
 
 # $locale->text('Add Group')
 # $locale->text('Edit Group')
@@ -1440,7 +1457,9 @@ sub partsgroup_header {
   $form->{pos} = ($form->{pos}) ? "checked" : "";
   
   $form->helpref("partsgroup", $myconfig{countrycode});
-  
+
+  $preview = ($form->{image}) ? qq|<a href=$images/$myconfig{dbname}/$form->{image}> ?| : qq| <a href="ic.pl?action=upload_image&login=$form->{login}&path=$form->{path}" target=popup>?</a>|;
+
   $form->header;
 
   print qq|
@@ -1459,7 +1478,7 @@ sub partsgroup_header {
         <tr>
           <th align=right nowrap>|.$locale->text('Group').qq| <font color=red>*</font></th>
 
-          <td><input name=partsgroup size=30 value="$form->{partsgroup}"></td>
+          <td><input name=partsgroup size=40 value="$form->{partsgroup}"></td>
         </tr>
         <tr>
           <th align=right nowrap>|.$locale->text('Code').qq|</th>
@@ -1467,7 +1486,7 @@ sub partsgroup_header {
         </tr>
         <tr>
           <th align=right nowrap>|.$locale->text('Image').qq|</th>
-          <td><input name=image size=40 value="$form->{image}"></td>
+          <td><input name=image size=20 value="$form->{image}">$preview</td>
         </tr>
         <tr>
           <th align=right nowrap>|.$locale->text('POS Button').qq|</th>
@@ -1643,7 +1662,7 @@ sub pricegroup_report {
 
 sub pricegroup_header {
 
-  $form->{title} = $locale->text(ucfirst $form->{action}." Pricegroup");
+  $form->{title} = $locale->text(ucfirst $form->{action}." ".$locale->text('Pricegroup'));
 
 # $locale->text('Add Pricegroup')
 # $locale->text('Edit Pricegroup')
@@ -2109,9 +2128,13 @@ sub update {
 # $locale->text('Customer not on file!')
 # $locale->text('Vendor not on file!')
 
-    for (qw(production completed listprice sellprice weight)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
+    for (qw(listprice sellprice weight)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
 
     if ($form->{"select$form->{vc}"}) {
+      
+      (undef, $form->{"$form->{vc}_id"}) = split /--/, $form->{"$form->{vc}"};
+      $form->{"old$form->{vc}"} = $form->{"$form->{vc}"};
+
       if ($form->{startdate} ne $form->{oldstartdate} || $form->{enddate} ne $form->{oldenddate}) {
 	
         PE->get_customer(\%myconfig, \%$form);
@@ -2122,9 +2145,6 @@ sub update {
           $form->{"select$form->{vc}"} = $form->escape($form->{"select$form->{vc}"},1);
         }
       }
-
-      $form->{"old$form->{vc}"} = $form->{"$form->{vc}"};
-      (undef, $form->{"$form->{vc}_id"}) = split /--/, $form->{"$form->{vc}"};
 
     } else {
 

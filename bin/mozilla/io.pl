@@ -127,7 +127,6 @@ sub display_row {
 
   $deliverydate = $locale->text('Delivery Date');
   $serialnumber = $locale->text('Serial No.');
-  $batchnumber = $locale->text('Batch No.');
   $projectnumber = $locale->text('Project');
   $orderxrefnumber = $locale->text('Order Number');
   $poxrefnumber = $locale->text('PO Number');
@@ -141,6 +140,8 @@ sub display_row {
   $netweight = $locale->text('N.W.');
   $grossweight = $locale->text('G.W.');
   $volume = $locale->text('Volume');
+  $lotlabel = $locale->text('Lot');
+  $expireslabel = $locale->text('Expires');
 
   $delvar = 'deliverydate';
   
@@ -154,6 +155,12 @@ sub display_row {
 
   $spc = substr($myconfig{numberformat},-3,1);
   for $i (1 .. $numrows) {
+
+    if ($form->{type} =~ /invoice/ || $form->{type} =~ /(sales|purchase)_order/) {
+      $lot = ($form->{"lot_$i"}) ? qq|<b>$lotlabel</b>&nbsp;$form->{"lot_$i"}&nbsp;&nbsp;&nbsp;| : "";
+      $expires = ($form->{"expires_$i"}) ? qq|<b>$expireslabel</b>&nbsp;$form->{"expires_$i"}| : "";
+    }
+
     if ($spc eq '.') {
       (undef, $dec) = split /\./, $form->{"sellprice_$i"};
     } else {
@@ -214,7 +221,7 @@ sub display_row {
       if ($i < $numrows) {
 	$partsgroup = qq|
 	        <tr>
-		  <td colspan=$colspan>
+		  <td colspan=3>
 		  <b>$group</b>|.$form->hide_form("partsgroup_$i", "partsgroupcode_$i");
 	($form->{"partsgroup_$i"}) = split /--/, $form->{"partsgroup_$i"};
 	$partsgroup .= qq|$form->{"partsgroup_$i"} <b>$groupcode</b> $form->{"partsgroupcode_$i"}</td>
@@ -282,7 +289,7 @@ sub display_row {
 
     $form->{"oldqty_$i"} = $form->{"qty_$i"};
 
-    $form->hide_form(map { "${_}_$i" } qw(oldqty oldship orderitems_id id weight sell listprice lastcost taxaccounts pricematrix sku onhand bin assembly inventory_accno_id income_accno_id expense_accno_id kit));
+    $form->hide_form(map { "${_}_$i" } qw(oldqty oldship orderitems_id id weight sell listprice lastcost taxaccounts pricematrix sku onhand bin assembly inventory_accno_id income_accno_id expense_accno_id kit lot expires checkinventory make model));
   
     $project = qq|
                 <b>$projectnumber</b>
@@ -300,12 +307,9 @@ sub display_row {
 |;
 
       $serial = qq|
-                <td colspan=6><b>$serialnumber</b>
-                <input name="serialnumber_$i" value="|.$form->quote($form->{"serialnumber_$i"}).qq|"><br>|;
+                <td colspan=7><b>$serialnumber</b>
+                <input name="serialnumber_$i" value="|.$form->quote($form->{"serialnumber_$i"}).qq|"><br>$lot$expires|;
                 
-#                <b>$batchnumber</b>
-#                <input name="batchnumber_$i" value="|.$form->quote($form->{"batchnumber_$i"}).qq|"></td>|;
-
     }
 
     $costprice = "";
@@ -318,8 +322,6 @@ sub display_row {
 
         $name = $form->escape($form->{"costvendor_$i"},1);
         $costprice = qq|
-        <tr>
-          <td colspan=$colspan>
           <input name="costvendorid_$i" type="hidden" value="$form->{"costvendorid_$i"}">
           <b>$costvendorlabel</b>
           <input name="costvendor_$i" value="$form->{"costvendor_$i"}">
@@ -332,11 +334,10 @@ sub display_row {
                 $margin
 | if ($margin && $form->{"cost_$i"});
         $costprice .= qq|
-          </td>
-        </tr>
 |;
 
         $form->{costsubtotal} += ($form->{"cost_$i"} * $form->{"qty_$i"});
+
       }
     }
 
@@ -379,6 +380,8 @@ sub display_row {
       }
 
       $serial = "";
+      $lot = "";
+      $expires = "";
       $costprice = "";
       $project = "";
       $orderxref = "";
@@ -395,7 +398,11 @@ sub display_row {
 	  $itemnotes
 	  $serial
 	</tr>
-        $costprice
+        <tr valign=top>
+          <td colspan=$colspan>
+            $costprice
+          </td>
+        </tr>
         <tr valign=top>
 	  <td colspan=$colspan>
 	  $project
@@ -449,22 +456,23 @@ sub display_row {
 
 sub select_item {
 
-  if ($form->{vc} eq "vendor") {
-    @column_index = qw(ndx partnumber sku barcode description image partsgroup partsgroupcode onhand sellprice);
-  } else {
-    @column_index = qw(ndx partnumber barcode description image partsgroup partsgroupcode onhand sellprice);
-  }
+  @column_index = qw(ndx partnumber sku barcode description lot expires make model unit partsgroup onhand sellprice);
+  @column_index = grep !/sku/, @column_index if $form->{vc} eq 'customer';
+  @column_index = grep !/(lot|expires)/, @column_index if $form->{type} =~ /_quotation/;
 
   $column_data{ndx} = qq|<th class=listheading width=1%><input name="allbox_select" type=checkbox class=checkbox value="1" onChange="CheckAll();"></th>|;
   $column_data{partnumber} = qq|<th class=listheading>|.$locale->text('Number').qq|</th>|;
   $column_data{sku} = qq|<th class=listheading>|.$locale->text('SKU').qq|</th>|;
   $column_data{barcode} = qq|<th class=listheading>|.$locale->text('Barcode').qq|</th>|;
-  $column_data{description} = qq|<th class=listheading>|.$locale->text('Description').qq|</th>|;
+  $column_data{description} = qq|<th class=listheading width=50%>|.$locale->text('Description').qq|</th>|;
+  $column_data{lot} = qq|<th class=listheading>|.$locale->text('Lot').qq|</th>|;
+  $column_data{expires} = qq|<th class=listheading>|.$locale->text('Expires').qq|</th>|;
   $column_data{partsgroup} = qq|<th class=listheading>|.$locale->text('Group').qq|</th>|;
-  $column_data{partsgroupcode} = qq|<th class=listheading>|.$locale->text('Code').qq|</th>|;
   $column_data{sellprice} = qq|<th class=listheading>|.$locale->text('Price').qq|</th>|;
   $column_data{onhand} = qq|<th class=listheading>|.$locale->text('Qty').qq|</th>|;
-  $column_data{image} = qq|<th class=listheading>|.$locale->text('Image').qq|</th>|;
+  $column_data{unit} = qq|<th class=listheading>|.$locale->text('Unit').qq|</th>|;
+  $column_data{make} = qq|<th class=listheading>|.$locale->text('Make').qq|</th>|;
+  $column_data{model} = qq|<th class=listheading>|.$locale->text('Model').qq|</th>|;
   
   $exchangerate = $form->{exchangerate} || 1;
 
@@ -477,6 +485,22 @@ sub select_item {
   &check_all(qw(allbox_select ndx_));
   
   $title = $locale->text('Select items');
+
+  my $i = 0;
+
+  foreach $ref (@{ $form->{item_list} }) {
+
+    if ($ref->{checkinventory} && $form->{vc} eq 'customer') {
+      if ($ref->{inventory_accno_id} || $ref->{assembly}) {
+        if ($form->{type} eq 'invoice' || $form->{type} eq 'pos_invoice' || $form->{type} eq 'sales_order') {
+          next unless $ref->{onhand} > 0;
+        }
+      }
+    }
+    $i++;
+  }
+
+  $form->error($locale->text('Not enough inventory!')) unless $i;
 
   print qq|
 <body>
@@ -502,19 +526,33 @@ sub select_item {
         </tr>
 |;
 
-  my $i = 0;
+  $i = 0;
   foreach $ref (@{ $form->{item_list} }) {
+
+    if ($ref->{checkinventory} && $form->{vc} eq 'customer') {
+      if ($ref->{inventory_accno_id} || $ref->{assembly}) {
+        if ($form->{type} eq 'invoice' || $form->{type} eq 'pos_invoice' || $form->{type} eq 'sales_order') {
+          next unless $ref->{onhand} > 0;
+        }
+      }
+    }
+
     $i++;
 
-    for (qw(sku partnumber barcode description unit itemnotes partsgroup partsgroupcode)) { $ref->{$_} = $form->quote($ref->{$_}) }
+    for (qw(sku partnumber barcode description lot make model unit itemnotes partsgroup)) { $ref->{$_} = $form->quote($ref->{$_}) }
 
     $column_data{ndx} = qq|<td><input name="ndx_$i" class=checkbox type=checkbox value=$i></td>|;
     
-    for (qw(partnumber sku barcode description image partsgroup partsgroupcode)) { $column_data{$_} = qq|<td>$ref->{$_}&nbsp;</td>| }
+    for (qw(sku partnumber barcode description lot expires unit partsgroup)) { $column_data{$_} = qq|<td>$ref->{$_}&nbsp;</td>| }
+
+    for (qw(make model)) {
+      $var{$_} = $ref->{$_};
+      $var{$_} =~ s/(\n|\r)/<br>/g;
+      $column_data{$_} = qq|<td>$var{$_}</td>|;
+    }
 
     $column_data{sellprice} = qq|<td align=right>|.$form->format_amount(\%myconfig, $ref->{sellprice} / $exchangerate, $form->{precision}, "&nbsp;").qq|</td>|;
-    $column_data{onhand} = qq|<td align=right>|.$form->format_amount(\%myconfig, $ref->{onhand}, undef, "&nbsp;").qq|</td>|;
-    $column_data{image} = qq|<td align=center><img src="$ref->{image}" border="0" height="32"></td>| if $ref->{image};
+    $column_data{onhand} = qq|<td align=right>|.$form->format_amount(\%myconfig, $ref->{onhand}, undef, " ").qq|</td>|;
     
     $j++; $j %= 2;
     print qq|
@@ -526,7 +564,7 @@ sub select_item {
         </tr>
 |;
 
-    for (qw(partnumber sku description partsgroup partsgroupcode partsgroup_id bin weight sell sellprice listprice lastcost onhand unit assembly taxaccounts inventory_accno_id income_accno_id expense_accno_id pricematrix id itemnotes kit)) {
+    for (qw(partnumber sku description partsgroup partsgroupcode partsgroup_id bin weight sell sellprice listprice lastcost onhand unit assembly taxaccounts inventory_accno_id income_accno_id expense_accno_id pricematrix id itemnotes kit lot expires checkinventory make model)) {
       print qq|<input type=hidden name="new_${_}_$i" value="|.$form->quote($ref->{$_}).qq|">\n|;
     }
   }
@@ -582,10 +620,11 @@ sub item_selected {
       $form->{"discount_$i"} ||= $form->{discount} * 100;
       $form->{"reqdate_$i"} = $form->{reqdate} if $form->{type} !~ /_quotation/;
 
-      for (qw(id partnumber sku description sell sellprice listprice lastcost bin unit partsgroupcode weight assembly taxaccounts pricematrix onhand itemnotes inventory_accno_id income_accno_id expense_accno_id kit)) {
+      for (qw(id partnumber sku description sell sellprice listprice lastcost bin unit partsgroupcode weight assembly taxaccounts pricematrix onhand itemnotes inventory_accno_id income_accno_id expense_accno_id kit lot expires checkinventory make model)) {
 	$form->{"${_}_$i"} = $form->{"new_${_}_$j"};
       }
 
+      $form->{"onhand_$i"} = $form->format_amount(\%myconfig, $form->{"onhand_$i"}, undef, " ");
       $form->{"netweight_$i"} = $form->{"weight_$i"};
       $form->{"grossweight_$i"} = $form->{"weight_$i"};
       
@@ -653,7 +692,7 @@ sub item_selected {
 
   # delete all the new_ variables
   for $i (1 .. $form->{lastndx}) {
-    for (qw(id partnumber sku description sell sellprice listprice lastcost bin unit weight assembly taxaccounts pricematrix onhand itemnotes inventory_accno_id income_accno_id expense_accno_id)) {
+    for (qw(id partnumber sku description sell sellprice listprice lastcost bin unit weight assembly taxaccounts pricematrix onhand itemnotes inventory_accno_id income_accno_id expense_accno_id lot expires checkinventory make model)) {
       delete $form->{"new_${_}_$i"};
     }
   }
@@ -784,7 +823,7 @@ sub check_form {
   my $count = 0;
   my $i;
   my $j;
-  my @flds = qw(id runningnumber partnumber description partsgroup partsgroupcode qty ship unit sell sellprice discount oldqty oldship orderitems_id bin weight listprice lastcost taxaccounts pricematrix sku onhand assembly inventory_accno_id income_accno_id expense_accno_id itemnotes reqdate deliverydate serialnumber ordernumber customerponumber projectnumber package netweight grossweight lineitemdetail cost kit);
+  my @flds = qw(id runningnumber partnumber description partsgroup partsgroupcode qty ship unit sell sellprice discount oldqty oldship orderitems_id bin weight listprice lastcost taxaccounts pricematrix sku onhand assembly inventory_accno_id income_accno_id expense_accno_id itemnotes reqdate deliverydate serialnumber ordernumber customerponumber projectnumber package netweight grossweight lineitemdetail cost kit lot expires checkinventory make model);
 
   # remove any makes or model rows
   if ($form->{item} eq 'part') {
@@ -832,7 +871,7 @@ sub check_form {
       $form->{weight} = 0;
     }
     
-    for (qw(rop markup onhand)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
+    for (qw(sellprice listprice rop markup onhand)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
    
     @flds = qw(id qty unit bom adj partnumber description sellprice listprice lastcost weight assembly runningnumber);
     $count = 0;
@@ -921,6 +960,16 @@ sub check_form {
       } else {
 	$form->{creditremaining} += ($form->{oldinvtotal} - $form->{oldtotalpaid});
 	$form->{creditremaining} -= &invoicetotal;
+      }
+
+      for $i (1 .. $form->{rowcount}) {
+        if ($form->{"checkinventory_$i"} && $form->{vc} eq 'customer' && $form->{"qty_$i"}) {
+          if ($form->{"inventory_accno_id_$i"} || $form->{"assembly_$i"}) {
+            if ($form->{type} eq 'invoice' || $form->{type} eq 'pos_invoice' || $form->{type} eq 'sales_order') {
+              $form->error($locale->text('Not enough inventory in Row') . " $i") if ($form->parse_amount(\%myconfig, $form->{"qty_$i"}) > $form->parse_amount(\%myconfig, $form->{"onhand_$i"}));
+            }
+          }
+        }
       }
 
       $count++;
@@ -1050,9 +1099,22 @@ sub validate_items {
       $samekit{$form->{"id_$i"}} = 1;
     }
 
+    $qty = $form->parse_amount(\%myconfig, $form->{"qty_$i"});
+    $onhand = $form->parse_amount(\%myconfig, $form->{"onhand_$i"});
+
     if ($form->{"assembly_$i"}) {
-      if (($form->{type} =~ /invoice/ && $form->{"qty_$i"} < 0) || $form->{type} eq 'credit_invoice') {
+      if (($form->{type} =~ /invoice/ && $qty < 0) || $form->{type} eq 'credit_invoice') {
         $form->error($locale->text('Cannot return assembly!'));
+      }
+    }
+
+    if ($form->{"checkinventory_$i"} && $form->{vc} eq 'customer' && $form->{"qty_$i"}) {
+      if ($form->{"inventory_accno_id_$i"} || $form->{"assembly_$i"}) {
+        if ($form->{type} eq 'invoice' || $form->{type} eq 'pos_invoice' || $form->{type} eq 'sales_order') {
+          if ($qty > $onhand) {
+            $form->error($locale->text('Not enough inventory in Row') . " $i");
+          }
+        }
       }
     }
   }
@@ -1472,6 +1534,8 @@ sub print_options {
 
 
 sub print {
+
+  &validate_items;
 
   # if this goes to the printer pass through
   if ($form->{media} !~ /(screen|email)/) {

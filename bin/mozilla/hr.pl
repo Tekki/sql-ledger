@@ -742,7 +742,7 @@ sub employee_header {
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('DOB').qq|</th>
-		<td><input name=dob size=11 class=date title="$myconfig{dateformat}" value=$form->{dob}></td>
+		<td><input name=dob size=11 class=date title="$myconfig{dateformat}" value=$form->{dob}>|.&js_calendar("main", "dob").qq|</td>
 	      </tr>
 	      <tr valign=top>
                 <th align=right nowrap>|.$locale->text('Notes').qq|</th>
@@ -2057,26 +2057,6 @@ sub search_payroll {
 |;
   }
     
-  if (@{ $form->{all_years} }) {
-    $selectaccountingyear = "\n";
-    for (@{ $form->{all_years} }) { $selectaccountingyear .= qq|$_\n| }
-    $selectaccountingmonth = "\n";
-    for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|$_--|.$locale->text($form->{all_month}{$_}).qq|\n| }
-
-    $selectfrom = qq|
-      <tr>
-        <th align=right>|.$locale->text('Period').qq|</th>
-	<td>
-	<select name=month>|.$form->select_option($selectaccountingmonth, undef, 1, 1).qq|</select>
-	<select name=year>|.$form->select_option($selectaccountingyear, undef, 1).qq|</select>
-	<input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
-	<input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
-	<input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
-	<input name=interval class=radio type=radio value=12>&nbsp;|.$locale->text('Year').qq|
-	</td>
-      </tr>
-|;
-  }
 
   if (@{ $form->{all_report} }) {
     $form->{selectreportform} = "\n";
@@ -2111,11 +2091,35 @@ sub search_payroll {
   @checked = qw(l_subtotal);
   @input = qw(employee paymentmethod transdatefrom transdateto month year sort direction reportlogin);
   %radio = ( interval => { 0 => 0, 1 => 1, 3 => 2, 12 => 3 },
-             summary => { 1 => 1, 0 => 1 }
+             summary => { 1 => 0, 0 => 1 }
 	   );
   
   $form->{sort} = "employee";
   $form->{summary} = 1;
+
+  $form->{interval} = "0" unless $form->{interval} =~ /(0|1|3|12)/;
+  $checked{$form->{interval}} = "checked";
+
+  if (@{ $form->{all_years} }) {
+    $selectaccountingyear = "\n";
+    for (@{ $form->{all_years} }) { $selectaccountingyear .= qq|$_\n| }
+    $selectaccountingmonth = "\n";
+    for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|$_--|.$locale->text($form->{all_month}{$_}).qq|\n| }
+
+    $selectfrom = qq|
+      <tr>
+        <th align=right>|.$locale->text('Period').qq|</th>
+	<td>
+	<select name=month>|.$form->select_option($selectaccountingmonth, undef, 1, 1).qq|</select>
+	<select name=year>|.$form->select_option($selectaccountingyear, undef, 1).qq|</select>
+	<input name=interval class=radio type=radio value=0 $checked{0}>&nbsp;|.$locale->text('Current').qq|
+	<input name=interval class=radio type=radio value=1 $checked{1}>&nbsp;|.$locale->text('Month').qq|
+	<input name=interval class=radio type=radio value=3 $checked{2}>&nbsp;|.$locale->text('Quarter').qq|
+	<input name=interval class=radio type=radio value=12 $checked{3}>&nbsp;|.$locale->text('Year').qq|
+	</td>
+      </tr>
+|;
+  }
 
   $form->header;
   
@@ -2306,6 +2310,8 @@ sub payroll_transactions {
   $i = 0;
   
   foreach $ref (@{ $form->{transactions} }) {
+
+    $form->{subtotalpaid} = 0 if $sameitem ne $ref->{$form->{sort}};
 
     for (qw(paid)) {
       $column_data{$_} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{$_}, $form->{precision}, "&nbsp;")."</td>";

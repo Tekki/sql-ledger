@@ -1,4 +1,5 @@
 $self{texts} = {
+  'AR/AP'                       => 'Kreditor/Debitor',
   'Account'                     => 'Konto',
   'Apr'                         => 'apr',
   'April'                       => 'april',
@@ -6,6 +7,7 @@ $self{texts} = {
   'August'                      => 'august',
   'Balance'                     => 'Balance',
   'Chart of Accounts'           => 'Kontoplan',
+  'Closed'                      => 'Afsluttet',
   'Credit'                      => 'Kredit',
   'Current'                     => 'Aktuel',
   'Date'                        => 'Dato',
@@ -50,10 +52,18 @@ $self{texts} = {
 
 $self{subs} = {
   'ca_subtotal'                 => 'ca_subtotal',
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
   'chart_of_accounts'           => 'chart_of_accounts',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'js_calendar'                 => 'js_calendar',
   'list'                        => 'list',
   'list_transactions'           => 'list_transactions',
-  'vís_bogføringer'             => 'list_transactions',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
+  'vís_bogføringer'           => 'list_transactions',
 };
 
 1;

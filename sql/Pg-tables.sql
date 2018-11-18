@@ -70,7 +70,7 @@ CREATE TABLE defaults (
   fldvalue text
 );
 --
-INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '3.2.0');
+INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '3.2.2');
 --
 CREATE TABLE acc_trans (
   trans_id int,
@@ -178,7 +178,10 @@ CREATE TABLE parts (
   tariff_hscode text,
   countryorigin text,
   barcode text,
-  toolnumber text
+  toolnumber text,
+  lot text,
+  expires date,
+  checkinventory bool default 'f'
 );
 --
 CREATE TABLE assembly (
@@ -315,7 +318,8 @@ CREATE TABLE oe (
   warehouse_id int,
   description text,
   aa_id int,
-  exchangerate float
+  exchangerate float,
+  backorder bool DEFAULT 'f'
 );
 --
 CREATE TABLE orderitems (

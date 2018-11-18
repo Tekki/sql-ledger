@@ -1,18 +1,36 @@
-$self{charset} = 'BIG5';
-
 $self{texts} = {
-  'Continue'                    => '�~��',
-  'From'                        => '�q',
-  'To'                          => '��',
-  'done'                        => '����',
+  'April'                       => '四月',
+  'August'                      => '八月',
+  'Continue'                    => '繼續',
+  'Date missing!'               => '未指明日期！',
+  'December'                    => '十二月',
+  'February'                    => '二月',
+  'January'                     => '一月',
+  'July'                        => '七月',
+  'June'                        => '六月',
+  'March'                       => '三月',
+  'May'                         => '五月',
+  'November'                    => '十一月',
+  'October'                     => '十月',
+  'September'                   => '九月',
+  'done'                        => '完成',
 };
 
 $self{subs} = {
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
   'continue'                    => 'continue',
-  'delete_invoices'             => 'delete_invoices',
-  'do_delete_invoices'          => 'do_delete_invoices',
   'do_repost_invoices'          => 'do_repost_invoices',
+  'fld_config'                  => 'fld_config',
+  'fld_edit'                    => 'fld_edit',
+  'fld_save'                    => 'fld_save',
+  'js_calendar'                 => 'js_calendar',
+  'pickvalue'                   => 'pickvalue',
   'repost_invoices'             => 'repost_invoices',
+  'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
 };
 
 1;

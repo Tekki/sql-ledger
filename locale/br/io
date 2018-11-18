@@ -1,5 +1,3 @@
-$self{charset} = 'UTF8';
-
 $self{texts} = {
   'Add Part'                    => 'Adicionar Item',
   'Add Purchase Order'          => 'Adicionar Ordem de Compra',
@@ -37,7 +35,6 @@ $self{texts} = {
   'Feb'                         => 'Fev',
   'February'                    => 'Fevereiro',
   'Group'                       => 'Grupo',
-  'Image'                       => 'Imagem',
   'In-line'                     => 'em linha',
   'Invoice'                     => 'Fatura',
   'Invoice Date missing!'       => 'Data da Fatura não encontrada!',
@@ -50,11 +47,13 @@ $self{texts} = {
   'July'                        => 'Julho',
   'Jun'                         => 'Jun',
   'June'                        => 'Junho',
+  'Make'                        => 'Marca',
   'Mar'                         => 'Mar',
   'March'                       => 'Março',
   'May'                         => 'Mai',
   'May '                        => 'Maio',
   'Message'                     => 'Mensagem',
+  'Model'                       => 'Modelo',
   'Name'                        => 'Nome',
   'Nov'                         => 'Nov',
   'November'                    => 'Novembro',
@@ -110,8 +109,6 @@ $self{texts} = {
 };
 
 $self{subs} = {
-  'api_email_invoice'           => 'api_email_invoice',
-  'api_quit'                    => 'api_quit',
   'calc_markup'                 => 'calc_markup',
   'check_form'                  => 'check_form',
   'create_form'                 => 'create_form',

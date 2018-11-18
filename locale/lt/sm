@@ -1,17 +1,35 @@
-$self{charset} = 'ISO-8859-13';
-
 $self{texts} = {
-  'Continue'                    => 'T�sti',
-  'From'                        => 'Nuo',
-  'To'                          => 'iki',
+  'April'                       => 'Balandis',
+  'August'                      => 'Rugpjūtis',
+  'Continue'                    => 'Tęsti',
+  'Date missing!'               => 'Datos nėra!',
+  'December'                    => 'Gruodis',
+  'February'                    => 'Vasaris',
+  'January'                     => 'Sausis',
+  'July'                        => 'Liepa',
+  'June'                        => 'Birželis',
+  'March'                       => 'Kovas',
+  'May'                         => 'Geg',
+  'November'                    => 'Lapkritis',
+  'October'                     => 'Spalis',
+  'September'                   => 'Rūgsėjis',
 };
 
 $self{subs} = {
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
   'continue'                    => 'continue',
-  'delete_invoices'             => 'delete_invoices',
-  'do_delete_invoices'          => 'do_delete_invoices',
   'do_repost_invoices'          => 'do_repost_invoices',
+  'fld_config'                  => 'fld_config',
+  'fld_edit'                    => 'fld_edit',
+  'fld_save'                    => 'fld_save',
+  'js_calendar'                 => 'js_calendar',
+  'pickvalue'                   => 'pickvalue',
   'repost_invoices'             => 'repost_invoices',
+  'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
 };
 
 1;

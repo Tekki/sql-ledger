@@ -1,5 +1,3 @@
-$self{charset} = 'UTF8';
-
 $self{texts} = {
   'AP'                          => 'Contas a Pagar',
   'AP Aging'                    => 'Contas a Pagar Vencidas',
@@ -114,6 +112,7 @@ $self{texts} = {
   'Statement'                   => 'Declaração',
   'Stock Assembly'              => 'Estoque de Conjuntos',
   'Stock Finished Goods'        => 'Estoque de Produtos Acabados',
+  'Stores Card'                 => 'Cartão de Loja',
   'Stores Cards'                => 'Cartões de Loja',
   'Stylesheet'                  => 'Folha de estilos',
   'System'                      => 'Sistema',
@@ -150,6 +149,7 @@ $self{subs} = {
   'pickvalue'                   => 'pickvalue',
   'resize'                      => 'resize',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
 };
 
 1;

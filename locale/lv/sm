@@ -1,18 +1,36 @@
-$self{charset} = 'ISO-8859-13';
-
 $self{texts} = {
-  'Continue'                    => 'Turpin�t',
-  'From'                        => 'No',
-  'To'                          => 'uz',
-  'done'                        => 'izdar�ts',
+  'April'                       => 'Aprīlī',
+  'August'                      => 'Augustā',
+  'Continue'                    => 'Turpināt',
+  'Date missing!'               => 'Nav norādīts datums!',
+  'December'                    => 'Decembrī',
+  'February'                    => 'Februārī',
+  'January'                     => 'Janvārī',
+  'July'                        => 'Jūlijā',
+  'June'                        => 'Jūnijā',
+  'March'                       => 'Martā',
+  'May'                         => 'Mai',
+  'November'                    => 'Novembrī',
+  'October'                     => 'Oktobrī',
+  'September'                   => 'Septembrī',
+  'done'                        => 'izdarīts',
 };
 
 $self{subs} = {
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
   'continue'                    => 'continue',
-  'delete_invoices'             => 'delete_invoices',
-  'do_delete_invoices'          => 'do_delete_invoices',
   'do_repost_invoices'          => 'do_repost_invoices',
+  'fld_config'                  => 'fld_config',
+  'fld_edit'                    => 'fld_edit',
+  'fld_save'                    => 'fld_save',
+  'js_calendar'                 => 'js_calendar',
+  'pickvalue'                   => 'pickvalue',
   'repost_invoices'             => 'repost_invoices',
+  'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
 };
 
 1;

@@ -304,10 +304,10 @@ sub rebuild_formnames {
 
 
 sub rebuild_vc {
-  my ($vc, $ARAP, $transdate, $job) = @_;
+  my ($vc, $ARAP, $transdate) = @_;
 
   (undef, $form->{employee_id}) = split /--/, $form->{employee};
-  $form->all_vc(\%myconfig, $vc, $ARAP, undef, $transdate, $job);
+  $form->all_vc(\%myconfig, $vc, $ARAP, undef, $transdate);
   $form->{"select$vc"} = ($form->{generate}) ? "\n" : "";
   for (@{ $form->{"all_$vc"} }) { $form->{"select$vc"} .= qq|$_->{name}--$_->{id}\n| }
   $form->{"select$vc"} = $form->escape($form->{"select$vc"},1);
@@ -1041,35 +1041,47 @@ sub continue { &{ $form->{nextsub} } };
 sub gl_transaction { &add };
 sub ar_transaction {
   $form->{script} = "ar.pl";
+  $form->{rowcount} = 1;
   &add_transaction;
 }
 sub ap_transaction {
   $form->{script} = "ap.pl";
+  $form->{rowcount} = 1;
   &add_transaction;
 };
 sub sales_invoice_ {
   $form->{script} = "is.pl";
   $form->{type} = "invoice";
+  delete $form->{rowcount};
   &add_transaction;
 }
 sub credit_invoice_ {
   $form->{script} = "is.pl";
   $form->{type} = "credit_invoice";
+  delete $form->{rowcount};
   &add_transaction;
 }
 sub vendor_invoice_ {
   $form->{script} = "ir.pl";
   $form->{type} = "invoice";
+  delete $form->{rowcount};
   &add_transaction;
 }
 sub debit_invoice_ {
   $form->{script} = "ir.pl";
   $form->{type} = "debit_invoice";
+  delete $form->{rowcount};
   &add_transaction;
 }
 
 
 sub preview {
+
+  if ($form->{type} eq 'customer') {
+    if ($form->{type} =~ /(invoice|order)/) {
+      &validate_items;
+    }
+  }
 
   $form->{format} = "pdf";
   $form->{media} = "screen";

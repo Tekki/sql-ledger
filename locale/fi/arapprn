@@ -1,5 +1,3 @@
-$self{charset} = 'UTF-8';
-
 $self{texts} = {
   'Account'                     => 'Tili',
   'Amount'                      => 'Summa',
@@ -9,11 +7,13 @@ $self{texts} = {
   'Nothing to print!'           => 'Ei tulostettavaa!',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
+  'Printed'                     => 'Tulostettu',
+  'Scheduled'                   => 'Aikataulutettu',
   'Screen'                      => 'Näyttö',
   'Select a Printer!'           => 'Valitse tulostin',
   'Select payment'              => 'Valitse maksutapa',
-  'Select postscript or PDF!'   => 'Valitse postscript tai PDF!',
   'Source'                      => 'Lähde',
+  'Text'                        => 'Teksti',
 };
 
 $self{subs} = {
@@ -24,6 +24,7 @@ $self{subs} = {
   'print_credit_note'           => 'print_credit_note',
   'print_debit_note'            => 'print_debit_note',
   'print_options'               => 'print_options',
+  'print_payslip'               => 'print_payslip',
   'print_receipt'               => 'print_receipt',
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',

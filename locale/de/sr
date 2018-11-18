@@ -65,6 +65,7 @@ $self{subs} = {
   'save_column'                 => 'save_column',
   'save_report'                 => 'save_report',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
   'spalte_löschen'             => 'delete_column',
   'bericht_löschen'            => 'delete_report',
   'spalte_sichern'              => 'save_column',

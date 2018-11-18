@@ -1,11 +1,10 @@
-$self{charset} = 'UTF-8';
-
 $self{texts} = {
   'Account'                     => 'Λογαριασμός',
   'Amount'                      => 'Ποσό',
   'Continue'                    => 'Συνέχεια',
   'Date'                        => 'Ημερομηνία',
   'Nothing to print!'           => 'Δεν υπάρχει τίποτα για εκτύπωση',
+  'Printed'                     => 'Εκτυπώθηκε',
   'Screen'                      => 'Οθόνη',
   'Source'                      => 'Πηγή',
 };
@@ -18,11 +17,12 @@ $self{subs} = {
   'print_credit_note'           => 'print_credit_note',
   'print_debit_note'            => 'print_debit_note',
   'print_options'               => 'print_options',
+  'print_payslip'               => 'print_payslip',
   'print_receipt'               => 'print_receipt',
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',
   'select_payment'              => 'select_payment',
-  'Συνέχεια'                    => 'continue',
+  'Συνέχεια'            => 'continue',
 };
 
 1;

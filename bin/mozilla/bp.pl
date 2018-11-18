@@ -61,6 +61,7 @@ sub search {
 # $locale->text('Quotations')
 # $locale->text('RFQs')
 # $locale->text('Time Cards')
+# $locale->text('Stores Cards')
 
 # $locale->text('Customer')
 # $locale->text('Customer Number')
@@ -80,6 +81,7 @@ sub search {
              sales_quotation => { title => 'Quotations', name => ['Customer'] },
              request_quotation => { title => 'RFQs', name => ['Vendor'] },
              timecard => { title => 'Time Cards', name => ['Employee'] },
+             storescard => { title => 'Stores Cards', name => ['Employee'] },
 	   );
 
   $label{invoice}{invnumber} = qq|
@@ -412,7 +414,7 @@ sub print {
   $r = 1;
   $total = 0;
 
-  for my $i (1 .. $myform->{rowcount}) {
+  for $i (1 .. $myform->{rowcount}) {
     
     if ($myform->{"ndx_$i"}) {
 
@@ -444,7 +446,7 @@ sub print {
         for (keys %$form) { delete $form->{$_} }
         
         for (qw(id vc)) { $form->{$_} = $myform->{"${_}_$i"} }
-        $form->{script} = qq|$myform->{"module_$i"}.pl|;
+        $form->{script} = $myform->{"module_$i"};
         for (qw(login path media sendmode subject message format type header copies)) { $form->{$_} = $myform->{$_} }
 
         do "$form->{path}/$form->{script}";
@@ -457,8 +459,8 @@ sub print {
           $form->{formname} = $myform->{type};
           $inv = 'ord'
         } elsif ($myform->{"module_$i"} eq 'jc') {
-          &{"prepare_$myform->{type}"};
           $form->{formname} = $myform->{type};
+          &{"prepare_$myform->{type}"};
         } else {
           &invoice_links;
           &prepare_invoice;
@@ -667,7 +669,7 @@ sub list_spool {
   if ($form->{type} =~ /_quotation$/) {
     push @columns, "quonumber";
   }
-  if ($form->{type} eq 'timecard') {
+  if ($form->{type} =~ /(timecard|storescard)/) {
     push @columns, "id";
   }
   
@@ -749,13 +751,17 @@ print qq|
     
     $totalamount += $ref->{amount};
 
-    # this is for audittrail
-    $form->{module} = $ref->{module};
-    
-    if ($ref->{invoice}) {
-      $ref->{module} = ($ref->{module} eq 'ar') ? "is" : "ir";
+    # this one is for printing spool entries
+    $form->{tablename} = $ref->{tablename};
+
+    $module = $ref->{tablename};
+    if ($ref->{tablename} eq 'jcitems') {
+      $module = 'jc';
     }
-    $module = "$ref->{module}.pl";
+    if ($ref->{invoice}) {
+      $module = ($ref->{tablename} eq 'ar') ? "is" : "ir";
+    }
+    $module .= ".pl";
     
     $column_data{amount} = qq|<td align=right>|.$form->format_amount(\%myconfig, $ref->{amount}, $form->{precision}).qq|</td>|;
 
@@ -774,7 +780,7 @@ print qq|
 
     $column_data{name} = qq|<td><a href=ct.pl?action=edit&id=$ref->{vc_id}&db=$ref->{db}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{name}</a></td>|;
     
-    if ($ref->{module} eq 'oe') {
+    if ($ref->{tablename} eq 'oe') {
       $column_data{invnumber} = qq|<td>&nbsp</td>|;
       $column_data{ordnumber} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{ordnumber}</a></td>
       <input type=hidden name="reference_$i" value="|.$form->quote($ref->{ordnumber}).qq|">|;
@@ -782,7 +788,7 @@ print qq|
       $column_data{quonumber} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{quonumber}</a></td>
     <input type=hidden name="reference_$i" value="|.$form->quote($ref->{quonumber}).qq|">|;
  
-    } elsif ($ref->{module} eq 'jc') {
+    } elsif ($ref->{tablename} eq 'jc') {
       $column_data{id} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{id}</a></td>
     <input type=hidden name="reference_$i" value="$ref->{id}">|;
 
@@ -792,7 +798,6 @@ print qq|
     <input type=hidden name="reference_$i" value="|.$form->quote($ref->{invnumber}).qq|">|;
     }
     
-   
     $column_data{spoolfile} = qq|<td><a href=$spool/$myconfig{dbname}/$ref->{spoolfile}>$ref->{spoolfile}</a></td>
 |;
 
@@ -811,7 +816,8 @@ print qq|
 <input type=hidden name="id_$i" value="$ref->{id}">
 <input type=hidden name="spoolfile_$i" value="$ref->{spoolfile}">
 <input type=hidden name="vc_$i" value="$ref->{vc}">
-<input type=hidden name="module_$i" value="$ref->{module}">
+<input type=hidden name="tablename_$i" value="$ref->{tablename}">
+<input type=hidden name="module_$i" value="$module">
 |;
   }
 
@@ -865,10 +871,11 @@ print qq|
   if (@{ $form->{all_printer} } && $form->{batch} ne 'email') {
     
     for (@{ $form->{all_printer} }) {
-      $media .= qq|<option value="$_->{printer}">$_->{printer}|;
+      $media .= qq|
+          <option value="$_->{printer}">$_->{printer}|;
     }
 
-    $copies = $locale->text('Copies').qq|<input name=copies size=2 value=$form->{copies}>|;
+    $copies = $locale->text('Copies').qq| <input name=copies size=2 value=$form->{copies}>|;
 
   }
 
@@ -879,7 +886,8 @@ print qq|
   }
 	    
   if ($form->{batch} ne 'email') {
-    $media .= qq|<option value="queue">|.$locale->text('Queue') if $form->{batch} eq 'print';
+    $media .= qq|
+          <option value="queue">|.$locale->text('Queue') if $form->{batch} eq 'print';
   }
  
   $media .= qq|</select>|;

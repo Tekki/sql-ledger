@@ -1,5 +1,3 @@
-$self{charset} = 'UTF8';
-
 $self{texts} = {
   'Accounting Menu'             => 'Menu de Contabilidade',
   'Address'                     => 'Endereço',
@@ -102,6 +100,7 @@ $self{subs} = {
   'receipts'                    => 'receipts',
   'resize'                      => 'resize',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
   'continuar'                   => 'continue',
   'apagar'                      => 'delete',
   'lançar'                     => 'post',

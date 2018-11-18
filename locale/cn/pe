@@ -104,6 +104,7 @@ $self{texts} = {
   'Vendor'                      => '供应商',
   'Vendor Number'               => '供应商号码',
   'Vendor not on file!'         => '档案没有此供应商',
+  'Warehouse'                   => '仓库',
   'Weight'                      => '重量',
   'Year'                        => '年份',
 };
@@ -173,6 +174,7 @@ $self{subs} = {
   'section_menu'                => 'section_menu',
   'select_customer'             => 'select_customer',
   'select_name'                 => 'select_name',
+  'show_progress'               => 'show_progress',
   'stock'                       => 'stock',
   'translation'                 => 'translation',
   'translation_footer'          => 'translation_footer',

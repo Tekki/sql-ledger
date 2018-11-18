@@ -121,8 +121,8 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "3.2.6";
-  $self->{dbversion} = "3.2.1";
+  $self->{version} = "3.2.7";
+  $self->{dbversion} = "3.2.2";
 
   bless $self, $type;
   
@@ -153,7 +153,7 @@ sub escape {
   my ($self, $str, $beenthere) = @_;
 
   # for Apache 2 we escape strings twice
-  if (($ENV{SERVER_SIGNATURE} =~ /Apache\/2\.(\d+)\.(\d+)/) && !$beenthere) {
+  if (($ENV{SERVER_SIGNATURE} =~ /Apache\/2\.(\d+)\.(\d+)/) && ! $beenthere) {
     $str = $self->escape($str, 1) if $1 == 0 && $2 < 44;
   }
 
@@ -364,7 +364,7 @@ sub error {
 
     delete $self->{pre};
 
-    if (!$self->{header}) {
+    if (! $self->{header}) {
       $self->header(0,1);
     }
 
@@ -462,14 +462,14 @@ sub header {
   |;
     }
 
-    $self->{titlebar} = ($self->{title}) ? "$self->{title} - $self->{titlebar}" : $self->{titlebar};
+    my $title = ($self->{title}) ? $self->{title} : "SQL-Ledger";
 
     $self->set_cookie($endsession) unless $nocookie;
 
     print qq|Content-Type: text/html
 
 <head>
-  <title>$self->{titlebar}</title>
+  <title>$title</title>
   <META NAME="robots" CONTENT="noindex,nofollow" />
   $favicon
   $stylesheet
@@ -498,6 +498,8 @@ sub set_cookie {
     my $today = "$d[0], $d[2]-$d[1]-$d[4] $d[3] GMT";
     my $login = ($self->{login}) ? $self->{login} : 'root';
 
+    $login =~ s/(\@| )/_/g;
+
     if ($login) {
       if ($self->{sessioncookie}) {
 	print qq|Set-Cookie: SL-${login}=$self->{sessioncookie}; expires=$today; path=/;\n|;
@@ -517,7 +519,7 @@ sub redirect {
 
     my ($script, $argv) = split(/\?/, $self->{callback});
     my @args = ('perl', $script, $argv);
-    exec (@args);
+    exec (@args) or $self->error("$args[0] $args[1]: $!");;
    
   } else {
     
@@ -789,9 +791,8 @@ sub parse_template {
   if ($self->{format} =~ /(ps|pdf)/) {
     $self->run_latex($userspath, $dvipdf, $xelatex);
     if (-f "$self->{errfile}") {
-      my @err;
       open(FH, "$self->{errfile}");
-      @err = <FH>;
+      my @err = <FH>;
       close(FH);
       for (@err) {
         $self->error("@err") if /LaTeX Error:/;
@@ -1234,10 +1235,9 @@ sub run_latex {
         system("$lt --interaction=nonstopmode $self->{tmpfile} > $self->{errfile}");
         last if ++$r > 4;
       }
-      $self->error($self->cleanup) if ! (-f $self->{tmpfile});
       $self->{tmpfile} =~ s/tex$/pdf/;
+      $self->error($self->cleanup) if ! (-f $self->{tmpfile});
     }
-
   }
 
 }
@@ -1250,7 +1250,7 @@ sub gentex {
   $fileid .= $$;
   $self->{tmpfile} = "$userspath/${fileid}.tex";
 
-  open(HDR, "$templates/$myconfig->{dbname}/$self->{language_code}/invoice.tex") or $self->error("$templates/$myconfig->{dbname}/$self->{language_code}/invoice.tex : $!");
+  open(HDR, "$templates/$myconfig->{templates}/$self->{language_code}/invoice.tex") or $self->error("$templates/$myconfig->{templates}/$self->{language_code}/invoice.tex : $!");
   open(OUT, ">$self->{tmpfile}") or $self->error("$self->{tmpfile} : $!");
   
   my @h = ();
@@ -1259,7 +1259,7 @@ sub gentex {
     if ($_ =~ /<%include /) {
       s/<%include //;
       s/%>//;
-      open(INC, "$templates/$myconfig->{dbname}/$self->{language_code}/$_") or $self->error("$templates/$myconfig->{dbname}/$self->{language_code}/$_ : $!");
+      open(INC, "$templates/$myconfig->{templates}/$self->{language_code}/$_") or $self->error("$templates/$myconfig->{templates}/$self->{language_code}/$_ : $!");
       push @h, <INC>;
       close(INC);
       next;
@@ -1305,12 +1305,16 @@ sub gentex {
  
   my $line;
   
-  $line = q|\begin{longtable}{|;
+  $line = q|\begin{longtable}[l]{|;
   
   for (@{$column}) {
     $line .= qq|$hdr->{$_}{align}|;
     if ($hdr->{$_}{align} eq 'p') {
-      $line .= q|{|.$self->round_amount(0.65/$p,2).q|\textwidth}|;
+      if ($hdr->{$_}{width}) {
+        $line .= q|{|.$hdr->{$_}{width}.q|\linewidth}|;
+      } else {
+        $line .= q|{|.$self->round_amount(1/$p,2).q|\linewidth}|;
+      }
     }
   }
   $line .= q|}
@@ -1591,7 +1595,7 @@ sub format_line {
       $newstr = "";
       foreach $str (@kw) {
 	$j++;
-	if (!($j % $n)) {
+	if (! ($j % $n)) {
 	  $newstr .= " ";
 	}
         $newstr .= $str;
@@ -1859,7 +1863,7 @@ sub pad {
   
   $align ||= 'left';
 
-  if (!$display && ($self->{filetype} ne 'txt')) {
+  if (! $display && ($self->{filetype} ne 'txt')) {
     if ($chr =~ /\s+/) {
       $chr = "";
       $width = length $str;
@@ -2226,7 +2230,7 @@ sub update_exchangerate {
   my ($self, $dbh, $curr, $transdate, $exchangerate) = @_;
 
   # some sanity check for currency
-  return if (!$curr || $self->{currency} eq $self->{defaultcurrency});
+  return if (! $curr || $self->{currency} eq $self->{defaultcurrency});
 
   my $query = qq|SELECT curr FROM exchangerate
                  WHERE curr = '$curr'
@@ -2466,6 +2470,8 @@ sub get_name {
   if ($transdate) {
     $where .= qq| AND (ct.startdate IS NULL OR ct.startdate <= '$transdate')
                   AND (ct.enddate IS NULL OR ct.enddate >= '$transdate')|;
+  } else {
+    $where .= qq| AND ct.enddate IS NULL|;
   }
 
   my %defaults = $self->get_defaults($dbh, \@{['namesbynumber']});
@@ -2820,9 +2826,7 @@ sub all_projects {
   
   my $where = "pr.parts_id = 0 OR pr.parts_id IS NULL";
 
-  $where = qq|pr.id NOT IN (SELECT DISTINCT id
-                         FROM parts
-			 WHERE project_id > 0)| if $job;
+  $where = qq|pr.parts_id > 0| if $job;
 			 
   my $query = qq|SELECT *
                  FROM project pr
@@ -2904,7 +2908,10 @@ sub all_warehouses {
     $dbh = $self->dbconnect($myconfig);
     $disconnect = 1;
   }
-  
+
+  my %defaults = $self->get_defaults($dbh, \@{[qw(checkinventory forcewarehouse)]});
+  for (keys %defaults) { $self->{$_} = $defaults{$_} }
+
   my $query = qq|SELECT id, description
                  FROM warehouse
 	         ORDER BY rn|;
@@ -3065,7 +3072,7 @@ sub all_business {
 
 
 sub create_links {
-  my ($self, $module, $myconfig, $vc, $job) = @_;
+  my ($self, $module, $myconfig, $vc) = @_;
  
   # get last customers or vendors
   my ($query, $sth);
@@ -3075,7 +3082,7 @@ sub create_links {
   my $key;
   my %xkeyref = ();
 
-  my @df = qw(closedto revtrans weightunit cdt precision roundchange cashovershort_accno_id referenceurl);
+  my @df = qw(closedto revtrans weightunit cdt precision roundchange cashovershort_accno_id referenceurl forcewarehouse);
   push @df, "lock_%";
   my %defaults = $self->get_defaults($dbh, \@df);
   for (keys %defaults) { $self->{$_} = $defaults{$_} }
@@ -3246,7 +3253,7 @@ sub create_links {
   } else {
    
     # get date
-    if (!$self->{transdate}) {
+    if (! $self->{transdate}) {
       $self->{transdate} = $self->current_date($myconfig);
     }
     if (! $self->{"$self->{vc}_id"}) {
@@ -3255,7 +3262,7 @@ sub create_links {
 
   }
   
-  $self->all_vc($myconfig, $vc, $module, $dbh, $self->{transdate}, $job);
+  $self->all_vc($myconfig, $vc, $module, $dbh, $self->{transdate});
 
   $self->{currencies} = $self->get_currencies($myconfig, $dbh);
 
@@ -3342,7 +3349,6 @@ sub create_lock {
   my $disconnect;
   my $expires = time;
   
-  
   if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
     $disconnect = 1;
@@ -3360,7 +3366,7 @@ sub create_lock {
 		WHERE id = $id|;
     my ($readonly, $login) = $dbh->selectrow_array($query);
 
-    if ($readonly &! $add) {
+    if ($readonly && ! $add) {
       $login =~ s/\@.*//;
       $query = qq|SELECT name FROM employee
 		  WHERE login = '$login'|;
@@ -3572,7 +3578,7 @@ sub get_partsgroup {
 
   my $disconnect;
 
-  if (!$dbh) {
+  if (! $dbh) {
     $dbh = $self->dbconnect($myconfig);
     $disconnect = 1;
   }
@@ -3595,6 +3601,16 @@ sub get_partsgroup {
 		        AND p.income_accno_id > 0)
 		 OR p.assembly = '1'|;
   }
+  if ($p->{searchitems} eq 'partassemblykit') {
+    $where .= qq|
+                 AND (p.inventory_accno_id > 0
+		        AND p.income_accno_id > 0)
+		 OR p.assembly = '1'
+                 OR (p.inventory_accno_id IS NULL
+                     AND p.income_accno_id IS NULL
+                     AND p.expense_accno_id IS NULL)|;
+  }
+
 
   if ($p->{searchitems} eq 'service') {
     $where .= qq|
@@ -3628,9 +3644,9 @@ sub get_partsgroup {
   }
   if ($p->{searchitems} eq 'kit') {
     $where .= qq|
-                 AND p.inventory_accno_id IS NULL
+                 AND (p.inventory_accno_id IS NULL
                  AND p.income_accno_id IS NULL
-                 AND p.expense_accno_id IS NULL|;
+                 AND p.expense_accno_id IS NULL)|;
   }
 
   if ($p->{all}) {
@@ -4633,7 +4649,7 @@ sub report_level {
       $self->{admin} = 1;
       $self->{savereport} = 1;
     }
-    $self->{savereport} = 1 if !$self->{reportid};
+    $self->{savereport} = 1 if ! $self->{reportid};
     $self->{savereport} = 1 if $self->{reportlogin} eq $login;
 
   }
@@ -4695,7 +4711,7 @@ sub save_report {
         $newform{$_} = $self->{$_} unless $_ =~ /ndx_\d+$/;
       }
     }
-    for (qw(path login stylesheet dbversion report reportid reportcode reportdescription action script nextsub allbox charset timeout sessioncookie callback title titlebar version rowcount flds defaultcurrency selectlanguage savereport admin)) { delete $newform{$_} }
+    for (qw(path login stylesheet dbversion report reportid reportcode reportdescription action script nextsub allbox charset timeout sessioncookie callback title version rowcount flds defaultcurrency selectlanguage savereport admin)) { delete $newform{$_} }
 
     for (keys %newform) {
       $sth->execute("report_$_", $newform{$_}) || $self->dberror($query);
@@ -5128,7 +5144,7 @@ sub audittrail {
       my $employee_id;
       (undef, $employee_id) = $self->get_employee($dbh);
 
-      if ($self->{audittrail} && !$myconfig) {
+      if ($self->{audittrail} && ! $myconfig) {
         chop $self->{audittrail};
         
         my @at = split /\|/, $self->{audittrail};

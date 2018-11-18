@@ -195,7 +195,7 @@ sub form_footer {
 
   $form->{callback} = "$form->{script}?action=list_datasets&path=$form->{path}";
 
-  $form->hide_form(qw(company dbname dbhost dbdriver dbuser path callback));
+  $form->hide_form(qw(templates company dbname dbhost dbdriver dbuser path callback));
 
   $form->print_button(\%button);
 
@@ -294,7 +294,7 @@ sub list_datasets {
 |;
 
   foreach $key (sort keys %member) {
-    $href = "$script?action=edit&dbname=$key&path=$form->{path}&locked=$member{$key}{locked}&dbhost=$member{$key}{dbhost}&dbdriver=$member{$key}{dbdriver}&dbuser=$member{$key}{dbuser}";
+    $href = "$script?action=edit&dbname=$key&path=$form->{path}&locked=$member{$key}{locked}&dbhost=$member{$key}{dbhost}&dbdriver=$member{$key}{dbdriver}&dbuser=$member{$key}{dbuser}&templates=$member{$key}{templates}";
     $href .= "&company=".$form->escape($member{$key}{company},1);
 
     $member{$key}{dbname} = $member{$key}{dbuser} if ($member{$key}{dbdriver} eq 'Oracle');
@@ -497,6 +497,15 @@ sub do_delete {
 
   delete $member{$form->{dbname}};
 
+  $templatedir = $db{$form->{dbname}}{templates} || $form->{dbname};
+  delete $db{$form->{dbname}};
+  for (keys %db) {
+    if ($db{$_}{templates} eq $templatedir) {
+      $skiptemplates = 1;
+      last;
+    }
+  }
+
   seek(FH, 0, 0);
   truncate(FH, 0);
 
@@ -516,19 +525,22 @@ sub do_delete {
     }
   }
   close(FH);
-  
-  # delete spool and template directory if it is not shared
-  # compare dbname and templates
-  for (qw(dbname spool)) {
 
-    if ($_ eq "dbname") {
-      $dir = "$templates/$form->{dbname}";
-      $form->{templates} ||= $form->{dbname};
-      next if ($form->{dbname} ne $form->{templates});
+
+  # delete spool, images and template directory if it is not shared
+  for (qw(templates spool images)) {
+
+    if ($_ eq "templates") {
+      $dir = "$templates/$templatedir";
+      next if $skiptemplates;
     }
 
     if ($_ eq "spool") {
       $dir = "$spool/$form->{dbname}";
+    }
+
+    if ($_ eq "images") {
+      $dir = "$images/$form->{dbname}";
     }
 
     if (-d $dir) {
@@ -1260,6 +1272,10 @@ sub dbcreate {
 
   if (! -d "$spool/$form->{db}") {
     mkdir "$spool/$form->{db}", oct("771") or $form->error("$spool/$form->{db} : $!");
+  }
+  
+  if (! -d "$images/$form->{db}") {
+    mkdir "$images/$form->{db}", oct("771") or $form->error("$images/$form->{db} : $!");
   }
   
   # add admin to members file

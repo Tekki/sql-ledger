@@ -44,7 +44,7 @@ sub formnames {
 	      labor		=> { script => ic, db => parts, var => "item=labor", label => $locale->text('Labor') },
 	      employee		=> { script => hr, db => employee, var => "db=employee", label => $locale->text('Employee') },
 	      timecard		=> { script => jc, db => jcitems, var => "type=timecard", label => $locale->text('Timecard') },
-	      storescard	=> { script => jc, db => jcitems, var => "type=storescard", label => $locale->text('Storescard') }
+	      storescard	=> { script => jc, db => jcitems, var => "type=storescard", label => $locale->text('Stores Card') }
 	    );  
 
   %module;
@@ -68,11 +68,13 @@ sub upload {
   $form->{nextsub} = "upload_file";
 
   &resize;
+
+  $focus = "description";
   
   print qq|
-<body>
+<body onLoad="main.${focus}.focus()" />
 
-<form enctype="multipart/form-data" method=post action=$form->{script}>
+<form enctype="multipart/form-data" name=main method=post action=$form->{script}>
 
 <table width=100%>
   <tr>
@@ -139,6 +141,8 @@ sub upload_file {
     $form->{filename} = ($form->{file}) ? $form->{file} : $form->{filename};
 
     &pickvalue;
+
+for (qw(description filename folder)) { $form->{$_} =~ s/'/\\'/g }
 
     print qq|
 <body onLoad="pickvalue('referencedescription_$form->{row}', '$form->{description}'); pickvalue('referencefilename_$form->{row}', '$form->{filename}'); pickvalue('referencetmpfile_$form->{row}', '$form->{tmpfile}'); pickvalue('referencearchive_id_$form->{row}', '-'); pickvalue('referencefolder_$form->{row}', '$form->{folder}'); window.close()">
@@ -686,6 +690,225 @@ sub save {
   $form->redirect($locale->text('Document saved!')) if RD->save_document(\%myconfig, \%$form);
   $form->error($locale->text('Could not save document!'));
   
+}
+
+
+sub upload_image {
+
+  $form->{title} = $locale->text('Upload Image');
+
+  $form->helpref("upload_image", $myconfig{countrycode});
+
+  $form->header;
+
+  $form->{nextsub} = "upload_imagefile";
+
+  &resize;
+
+  print qq|
+<body>
+
+<form enctype="multipart/form-data" method=post action=$form->{script}>
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>
+      <table>
+        <tr>
+          <th align="right">|.$locale->text('File').qq|</th>
+          <td>
+            <input name=data size=60 type=file>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td><hr size=3 noshade></td>
+  </tr>
+
+</table>
+|;
+
+  $form->hide_form(qw(nextsub login path));
+
+  print qq|
+<input name=action class=submit type=submit value="|.$locale->text('Continue').qq|">
+</form>
+
+</body>
+</html>
+|;
+
+}
+
+
+sub upload_imagefile {
+
+  if (-s "$userspath/$form->{tmpfile}") {
+    unless ($^O =~ /mswin/i) {
+      $image = `file $userspath/$form->{tmpfile}`;
+      $form->error($locale->text('Not an Image file!')) unless $image =~ /image/;
+    }
+
+    open(IN, "$userspath/$form->{tmpfile}") or $form->error("$userspath/$form->{tmpfile} : $!\n");
+    open(OUT, "> $images/$myconfig{dbname}/$form->{filename}") or $form->error("$images/$myconfig{dbname}/$form->{filename} : $!\n");
+
+    binmode(IN);
+    binmode(OUT);
+
+    while (<IN>) {
+      print OUT $_;
+    }
+
+    close(IN);
+    close(OUT);
+
+  }
+
+  unlink "$userspath/$form->{tmpfile}";
+
+  &list_images;
+
+}
+
+
+sub list_images {
+
+  opendir DIR, "$images/$myconfig{dbname}" or $form->error("$images/$myconfig{dbname} : $!");
+
+  @files = grep !/^\.\.?$/, readdir DIR;
+  closedir DIR;
+
+  @column_index = qw(ndx filename image);
+
+  $form->{allbox} = ($form->{allbox}) ? "checked" : "";
+  $action = ($form->{deselect}) ? "deselect_all" : "select_all";
+  $column_data{ndx} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll(); javascript:document.main.submit()"><input type=hidden name=action value="$action"></th>|;
+  $column_data{filename} = "<th class=listheading>".$locale->text('Filename')."</th>";
+  $column_data{image} = "<th class=listheading>".$locale->text('Image')."</th>";
+
+  $form->{callback} = "$form->{script}?action=list_images&path=$form->{path}&login=$form->{login}";
+
+  $form->header;
+
+  &check_all(qw(allbox ndx_));
+
+  print qq|
+<body>
+
+<form method="post" name="main" action="$form->{script}">
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>
+      <table width=100%>
+        <tr class=listheading>
+|;
+
+  for (@column_index) { print "\n$column_data{$_}" }
+
+  print qq|
+        </tr>
+|;
+
+  $checked = ($form->{deselect}) ? "checked" : "";
+  $i = 0;
+  for (@files) {
+    $i++;
+    $column_data{ndx} = qq|<td><input name="ndx_$i" class=checkbox type=checkbox value=$_ $checked></td>|;
+    $column_data{filename} = qq|<td>$_</td>|;
+    $column_data{image} = "<td><a href=$images/$myconfig{dbname}/$_><img src=$images/$myconfig{dbname}/$_ height=32 border=0></a></td>";
+
+    $j++; $j %= 2;
+    print "<tr class=listrow$j>";
+
+    for (@column_index) { print "\n$column_data{$_}" }
+
+    print qq|
+    </tr>
+|;
+  }
+
+  print qq|
+      </table>
+    </td>
+  </tr>
+  <tr><td><hr size=3 noshade></td></tr>
+</table>
+|;
+
+  $form->{rowcount} = $i;
+
+  $form->hide_form(qw(rowcount callback path login));
+
+  %button = ('Select all' => { ndx => 2, key => 'A', value => $locale->text('Select all') },
+             'Deselect all' => { ndx => 3, key => 'A', value => $locale->text('Deselect all') },
+             'Add File' => { ndx => 4, key => 'I', value => $locale->text('Add File') },
+             'Delete Files' => { ndx => 5, key => 'D', value => $locale->text('Delete Files') }
+             );
+
+  if ($form->{deselect}) {
+    delete $button{'Select all'};
+  } else {
+    delete $button{'Deselect all'};
+  }
+
+  $form->print_button(\%button);
+
+  if ($form->{menubar}) {
+    require "$form->{path}/menu.pl";
+    &menubar;
+  }
+
+  print qq|
+</form>
+
+</body>
+</html>
+|;
+
+}
+
+
+sub select_all {
+
+  $form->{allbox} = 1;
+  $form->{deselect} = 1;
+  for (qw(allbox deselect)) { $form->{callback} .= "&$_=$form->{$_}" }
+
+  $form->redirect;
+}
+
+
+sub deselect_all {
+
+  $form->redirect;
+
+}
+
+
+sub add_file { &upload_image }
+
+  
+sub delete_files {
+
+  for $i (1 .. $form->{rowcount}) {
+    if ($form->{"ndx_$i"}) {
+      unlink qq|$images/$myconfig{dbname}/$form->{"ndx_$i"}|;
+    }
+  }
+
+  $form->redirect;
+
 }
 
 

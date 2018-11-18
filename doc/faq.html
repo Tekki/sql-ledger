@@ -1,5 +1,23 @@
 <ul>
 
+<p><li><h4>perl 5.26 @INC error</h4>
+If you get something like this instead of the login screen
+<p>
+Can't locate bin/mozilla/login.pl in @INC (@INC contains: /usr/local/lib64/perl5 /usr/local/share/perl5 /usr/lib64/perl5/vendor_perl /usr/share/perl5/vendor_perl /usr/lib64/perl5 /usr/share/perl5) at /var/www/html/sql-ledger/login.pl line 119.
+<p>
+add the code below at the beginning of am.pl and login.pl if you have
+symlinks to the other files in the root directory, otherwise add
+it to all the scripts in the sql-ledger root directory
+
+<pre>
+BEGIN {
+    push @INC, '.';
+}
+</pre>
+
+For some other workarounds see 
+<a href=https://metacpan.org/pod/release/XSAWYERX/perl-5.26.0/pod/perldelta.pod#Removal-of-the-current-directory-%28%22.%22%29-from-@INC>https://metacpan.org/pod/release/XSAWYERX/perl-5.26.0/pod/perldelta.pod#Removal-of-the-current-directory-%28%22.%22%29-from-@INC</a>
+
 <p><li><h4>spool and template directory missing</h4>
 The latest archives, starting with 3.0.7, do not have a spool and/or templates
 directory. Add the directories with web server write privileges in the
@@ -39,7 +57,7 @@ texconfig-sys pdftex paper letter
 
 
 <p><li><h4>Install Notes for Lighttpd</h4>
-<ol>
+<ul>
 <li>Make sure mod_cgi and mod_alias are in server.modules list
 <li>Add sql-ledger directory as an alias, ie:
 <p>alias_url = ( "/sql-ledger/" => "/usr/local/sql-ledger/" )
@@ -48,7 +66,7 @@ texconfig-sys pdftex paper letter
 <p>Note: server.follow-symlink is on by default in lighttpd.
 <li>Deny access to users directory
 <p>$HTTP["url"] =~ "/sql-ledger/users" { url.access-deny = ("") }
-</ol>
+</ul>
 
 
 <p><li><h4>PostgreSQL 8.x</h4>
@@ -229,7 +247,7 @@ download page.
 
 
 <p><li><h4>cannot create function</h4>
-<ol>
+<ul>
 <li>either run createlang and install the plpgsql language handler or
 install yourself. For more information how to do that, visit
 <a href=http://www.postgresql.org/docs/>PostgreSQL</a> and
@@ -238,7 +256,7 @@ read the interactive documentation for procedural languages.
 <li>load admin.pl
 <li>unlock the system
 <li>login
-</ol>
+</ul>
 
 
 <p><li><h4>The requested URL /sql-ledger/admin.pl was not found</h4>
@@ -600,14 +618,7 @@ not packaged follow this recipe to get it working.
 This could be because of a missing configuration file in the users directory
 
 <p>check the permission for the users directory. The directory must be
-set writeable for the webserver. If your webserver runs as user/group
-nobody.nogroup set the directory to
-<pre>
-drwx--x--x   2 nobody   nogroup    1024 May 26 16:49 users
-
-or
-
-drwxrwx--x   2 johndoe  nogroup    1024 May 26 16:49 users</pre>
+set writeable for the webserver.
 
 
 <p><li><h4>script not executing, shows in browser instead</h4>

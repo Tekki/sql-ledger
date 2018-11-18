@@ -1,0 +1,27 @@
+$self{texts} = {
+  'April'                       => 'Απρίλιος',
+  'August'                      => 'Αύγουστος',
+  'December'                    => 'Δεκέμβριος',
+  'February'                    => 'Φεβρουάριος',
+  'January'                     => 'Ιανουάριος',
+  'July'                        => 'Ιούλιος',
+  'June'                        => 'Ιούνιος',
+  'March'                       => 'Μάρτιος',
+  'May'                         => 'Μάϊος',
+  'November'                    => 'Νοέμβριος',
+  'October'                     => 'Οκτώβριος',
+};
+
+$self{subs} = {
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'js_calendar'                 => 'js_calendar',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
+};
+
+1;
+

@@ -1,5 +1,3 @@
-$self{charset} = 'UTF-8';
-
 $self{texts} = {
   'Company'                     => 'Firma',
   'Continue'                    => 'Kontynuj',
@@ -7,19 +5,23 @@ $self{texts} = {
   'Incorrect Dataset version!'  => 'Nieprawidłowa wersja Zbioru Danych',
   'Login'                       => 'Zarejestrój się',
   'Name'                        => 'Nazwa',
+  'No email address for'        => 'Brak adresu email',
   'Password'                    => 'Hasło',
   'Upgrading to Version'        => 'Uaktualnienie do nowej wersji',
   'Version'                     => 'Wersja',
   'You did not enter a name!'   => 'Nie wstawiono nazwy!',
-  'done'                        => 'wykonane',
 };
 
 $self{subs} = {
+  'continue'                    => 'continue',
+  'email_tan'                   => 'email_tan',
   'login'                       => 'login',
   'login_screen'                => 'login_screen',
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
-  'zarejestrój_się'             => 'login',
+  'tan_login'                   => 'tan_login',
+  'kontynuj'                    => 'continue',
+  'zarejestrój_się'           => 'login',
 };
 
 1;

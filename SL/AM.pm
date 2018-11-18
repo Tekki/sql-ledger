@@ -3352,11 +3352,10 @@ sub audit_log {
   $dateformat =~ s/yy$/yyyy/;
   $dateformat =~ s/yyyyyy/yyyy/;
 
-  my %datestyle = ( Pg => "set DateStyle to SQL, US" );
-  
-  my $query = qq|$datestyle{$myconfig->{dbdriver}};
+  my $query = qq|
                  SELECT a.*, e.name, e.employeenumber, e.login,
-                 to_char(a.transdate, '$dateformat') AS transdate,
+                 a.transdate,
+                 to_char(a.transdate, '$dateformat') AS transdatea,
 		 to_char(a.transdate, 'HH24:MI:SS') AS transtime
                  FROM audittrail a
 		 LEFT JOIN employee e ON (e.id = a.employee_id)
@@ -3364,7 +3363,7 @@ sub audit_log {
 
   $form->{sort} ||= "transdate";
   my @sf;
-  push @sf, ($form->{sort} eq 'transdate') ? qw(transdate transtime) : $form->{sort};
+  push @sf, $form->{sort};
   my %ordinal = $form->ordinal_order($dbh, $query);
   my $sortorder = $form->sort_order(\@sf, \%ordinal);
 
@@ -3379,6 +3378,8 @@ sub audit_log {
 
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
     $ref->{login} = 'admin' if $ref->{employee_id} == 0;
+    $ref->{transdate} = $ref->{transdatea};
+    delete $ref->{transdatea};
     push @{ $form->{ALL} }, $ref;
   }
   $sth->finish;

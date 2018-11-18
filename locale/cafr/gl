@@ -171,6 +171,7 @@ $self{subs} = {
   'section_menu'                => 'section_menu',
   'select_name'                 => 'select_name',
   'select_project'              => 'select_project',
+  'show_progress'               => 'show_progress',
   'transactions'                => 'transactions',
   'update'                      => 'update',
   'vendor_invoice_'             => 'vendor_invoice_',

@@ -6,6 +6,7 @@ $self{texts} = {
   'August'                      => 'august',
   'Balance'                     => 'Balanse',
   'Chart of Accounts'           => 'Kontoplan',
+  'Closed'                      => 'Avsluttet',
   'Credit'                      => 'Kredit',
   'Current'                     => 'Nåværende',
   'Date'                        => 'Dato',
@@ -50,10 +51,18 @@ $self{texts} = {
 
 $self{subs} = {
   'ca_subtotal'                 => 'ca_subtotal',
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
   'chart_of_accounts'           => 'chart_of_accounts',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'js_calendar'                 => 'js_calendar',
   'list'                        => 'list',
   'list_transactions'           => 'list_transactions',
-  'vis_bokføringer'             => 'list_transactions',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
+  'vis_bokføringer'            => 'list_transactions',
 };
 
 1;

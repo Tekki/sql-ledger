@@ -1,28 +1,43 @@
-$self{charset} = 'ISO-8859-5';
-
 $self{texts} = {
-  'Accounting Menu'             => '������������� ����',
-  'Description'                 => '��������',
-  'Heading'                     => '������',
+  'Accounting Menu'             => 'Бухгалтерское меню',
+  'April'                       => 'апрель',
+  'August'                      => 'август',
+  'December'                    => 'декабрь',
+  'Description'                 => 'Описание',
+  'February'                    => 'февраль',
+  'Heading'                     => 'Раздел',
+  'January'                     => 'январь',
+  'July'                        => 'июль',
+  'June'                        => 'июнь',
+  'March'                       => 'март',
+  'May'                         => 'май',
+  'November'                    => 'ноябрь',
+  'October'                     => 'октябрь',
+  'September'                   => 'сентябрь',
 };
 
 $self{subs} = {
   'acc_menu'                    => 'acc_menu',
   'add_column'                  => 'add_column',
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
   'delete_column'               => 'delete_column',
   'delete_report'               => 'delete_report',
   'display'                     => 'display',
-  'display_frame'               => 'display_frame',
   'do_save_report'              => 'do_save_report',
   'edit_column'                 => 'edit_column',
+  'js_calendar'                 => 'js_calendar',
   'jsmenu'                      => 'jsmenu',
   'jsmenu_frame'                => 'jsmenu_frame',
   'menubar'                     => 'menubar',
-  'mlmenu'                      => 'mlmenu',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
   'save_column'                 => 'save_column',
   'save_report'                 => 'save_report',
-  'save_report_as_new'          => 'save_report_as_new',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
 };
 
 1;

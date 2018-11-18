@@ -68,7 +68,7 @@ sub invoice_links {
   $readonly = $form->{readonly};
 
   # create links
-  $form->create_links("AR", \%myconfig, "customer", 1);
+  $form->create_links("AR", \%myconfig, "customer");
 
   $form->{readonly} ||= $readonly;
 
@@ -143,7 +143,7 @@ sub invoice_links {
 
   # warehouses
   if (@{ $form->{all_warehouse} }) {
-    $form->{selectwarehouse} = ""; 
+    $form->{selectwarehouse} = ($form->{forcewarehouse}) ? "" : "\n"; 
     $form->{oldwarehouse} = $form->{warehouse} = "$form->{warehouse}--$form->{warehouse_id}" if $form->{warehouse_id};
 
     for (@{ $form->{all_warehouse} }) { $form->{selectwarehouse} .= qq|$_->{description}--$_->{id}\n| }
@@ -311,6 +311,11 @@ sub prepare_invoice {
     foreach $ref (@{ $form->{invoice_details} } ) {
       for (keys %$ref) { $form->{"${_}_$i"} = $ref->{$_} }
 
+      if ($form->{type} eq 'invoice' || $form->{type} eq 'pos_invoice') {
+        if ($form->{"inventory_accno_id_$i"} || $form->{"assembly_$i"}) {
+          $form->{"onhand_$i"} += $form->{"qty_$i"};
+        }
+      }
       $form->{"onhand_$i"} = $form->format_amount(\%myconfig, $form->{"onhand_$i"}, undef, " ");
 
       $form->{"projectnumber_$i"} = qq|$ref->{projectnumber}--$ref->{project_id}| if $ref->{project_id};
@@ -735,7 +740,7 @@ sub form_footer {
 
       if ($form->{"${_}_base"}) {
 
-	$form->{"${_}_total"} = $form->round_amount($form->round_amount($form->{"${_}_base"} * $form->{"${_}_rate"}, 10), $form->{precision});
+	$form->{"${_}_total"} = $form->round_amount($form->{"${_}_base"} * $form->{"${_}_rate"}, $form->{precision});
 
 	if ($form->{discount_paid} && $form->{cdt}) {
 	  $cdtp = $form->{discount_paid} / $form->{invsubtotal} if $form->{invsubtotal};
@@ -1101,14 +1106,19 @@ sub form_footer {
 
 sub update {
 
-  $form->get_onhand(\%myconfig) if $form->{warehouse} ne $form->{oldwarehouse};
+  if ($form->{warehouse} ne $form->{oldwarehouse}) {
+    $form->get_onhand(\%myconfig);
+    for (1 .. $form->{rowcount}) {
+      $form->{"onhand_$_"} = $form->format_amount(\%myconfig, $form->{"onhand_$_"}, undef, " ");
+    }
+  }
 
   for (qw(exchangerate cashdiscount discount_paid)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
   
   &rebuild_departments if $form->{department} ne $form->{olddepartment};
  
   if ($newname = &check_name(customer)) {
-    &rebuild_vc(customer, AR, $form->{transdate}, 1);
+    &rebuild_vc(customer, AR, $form->{transdate});
   }
   if ($form->{oldterms} != $form->{terms}) {
     $form->{duedate} = $form->add_date(\%myconfig, $form->{transdate}, $form->{terms}, 'days');
@@ -1127,7 +1137,7 @@ sub update {
   if ($form->{transdate} ne $form->{oldtransdate}) {
     $form->{duedate} = $form->add_date(\%myconfig, $form->{transdate}, $form->{terms}, 'days') if ! $newterms;
     $form->{oldtransdate} = $form->{transdate};
-    &rebuild_vc(customer, AR, $form->{transdate}, 1) if ! $newname;
+    &rebuild_vc(customer, AR, $form->{transdate}) if ! $newname;
 
     $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate});
     $form->{oldcurrency} = $form->{currency};
@@ -1240,6 +1250,14 @@ sub update {
 	  $form->{"${_}_$i"} = $form->{item_list}[0]{$_};
 	}
 
+        if ($form->{"checkinventory_$i"} && $form->{"qty_$i"}) {
+          if ($form->{type} eq 'invoice' || $form->{type} eq 'pos_invoice') {
+            if ($form->{"inventory_accno_id_$i"} || $form->{"assembly_$i"}) {
+              $form->error($locale->text('Not enough inventory!')) if $form->{"onhand_$i"} <= 0;
+            }
+          }
+        }
+
 	$form->{"discount_$i"} ||= $form->{discount} * 100;
 
 	if ($sellprice) {
@@ -1283,6 +1301,7 @@ sub update {
 	for (qw(netweight grossweight)) { $form->{"${_}_$i"} = $form->{"weight_$i"} * $form->{"qty_$i"} }
 
 	for (qw(qty discount netweight grossweight)) { $form->{"${_}_$i"} =  $form->format_amount(\%myconfig, $form->{"${_}_$i"}) }
+        $form->{"onhand_$i"} = $form->format_amount(\%myconfig, $form->{"onhand_$i"}, undef, " ");
 
 	for (qw(partnumber description unit)) { $form->{"${_}_$i"} = $form->quote($form->{"${_}_$i"}) }
 
@@ -1960,6 +1979,172 @@ sub do_generate_invoices {
 }
 
 
+sub consolidate {
+
+  $form->{sort} ||= "transdate";
+
+  IS->consolidate(\%myconfig, \%$form);
+
+  $form->{title} = $locale->text('Consolidate');
+  
+  $module = "is.pl";
+  $form->{type} eq 'invoice';
+
+  %button = ('Consolidate Invoices' => { ndx => 1, key => 'C', value => $locale->text('Consolidate Invoices') });
+ 
+  # construct href
+  $href = "$form->{script}?action=consolidate";
+  for (qw(type path direction oldsort login)) { $href .= "&$_=$form->{$_}" }
+  
+  $form->sort_order();
+
+  @column_index = qw(transdate invnumber description amount);
+  @column_index = $form->sort_columns(@column_index);
+  unshift @column_index, "ndx";
+  
+  $column_data{ndx} = "<th class=listheading>&nbsp;</th>";
+  $column_data{transdate} = "<th><a class=listheading href=$href&sort=transdate>".$locale->text('Date')."</th>";
+  $column_data{invnumber} = "<th><a class=listheading href=$href&sort=invnumber>".$locale->text('Invoice')."</th>";
+  $column_data{description} = "<th class=listheading>".$locale->text('Description')."</th>";
+  $column_data{amount} = "<th class=listheading>".$locale->text('Amount')."</th>";
+
+  $colspan = $#column_index + 1;
+  
+  $form->helpref("consolidate", $myconfig{countrycode});
+  
+  $title = "$form->{title} / $form->{company}";
+
+  $form->{callback} = "$form->{script}?action=consolidate";
+  for (qw(direction sort oldsort type path login)) { $form->{callback} .= qq|&$_=$form->{$_}| }
+  
+  # escape callback for href
+  $callback = $form->escape($form->{callback});
+
+  $form->header;
+
+  &check_all(qw(allbox ndx_));
+  
+  print qq|
+<body>
+
+<form method=post action=$module>
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$form->{helpref}$title</a></th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>
+      <table width=100%>
+        <tr class=listheading>
+|;
+
+  $column_data{ndx} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll()"></th>|;
+  
+  for (@column_index) { print "\n$column_data{$_}" }
+
+  print qq|
+        </tr>
+|;
+  
+  for $curr (sort keys %{ $form->{all_transactions} }) {
+
+    $printed = 0;
+    
+    if ($form->{$curr} > 1) {
+
+      for $accno (sort keys %{ $form->{all_transactions}{$curr} }) {
+	for $name (sort keys %{ $form->{all_transactions}{$curr}{$accno} }) {
+	  if ($#{$form->{all_transactions}{$curr}{$accno}{$name}} > 0) {
+
+	    if (! $printed) {
+	      print qq|
+        <tr>
+	  <th colspan=$colspan align=left>$curr</th>
+        </tr>
+|;
+              $printed = 1;
+	    }
+    
+	    print qq|
+	      <tr>
+		<th colspan=$colspan align=left>$name / $form->{all_transactions}{$curr}{$accno}{$name}->[0]->{city}</th>
+	      </tr>
+|;
+	    
+	    for $ref (@{ $form->{all_transactions}{$curr}{$accno}{$name} }) {
+	      $j++; $j %= 2;
+	      print qq|
+	      <tr class=listrow$j>
+    |;
+	      for (@column_index) { $column_data{$_} = qq|<td>$ref->{$_}</td>| }
+	      
+	      $form->{ids} .= "$ref->{id} ";
+	      
+	      $column_data{ndx} = qq|<td><input name="ndx_$ref->{id}" type=checkbox class=checkbox value=1></td>|;
+	      $column_data{amount} = qq|<td align=right>|.$form->format_amount(\%myconfig, $ref->{amount}, $ref->{prec}).qq|</td>|;
+
+	      $column_data{invnumber} = "<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{invnumber}&nbsp;</a></td>";
+	      
+	      if ($name eq $samename) {
+		for (qw(name city)) { $column_data{$_} = qq|<td>&nbsp;</td>| }
+	      } else {
+		$column_data{name} = qq|<td><a href=ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{"$form->{vc}_id"}&db=$form->{vc}&callback=$callback>$ref->{name}</a></td>|;
+	      }
+
+	      for (@column_index) { print "\n$column_data{$_}" }
+
+	      $samename = $name;
+	    
+	      print qq|
+	  </tr>
+|;
+	    }
+	  }
+	}
+      }
+    }
+  }
+
+  chop $form->{ids};
+
+  print qq|
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td><hr size=3 noshade></td>
+  </tr>
+</table>
+
+|;
+
+  $form->hide_form(qw(ids callback path login));
+  
+  if ($form->{ids}) {
+    $form->print_button(\%button);
+  } else {
+    $form->info($locale->text('Nothing to consolidate!'));
+  }
+    
+  if ($form->{menubar}) {
+    require "$form->{path}/menu.pl";
+    &menubar;
+  }
+
+  print qq|
+</form>
+
+</body>
+</html>
+|;
+
+}
+
+
 sub consolidate_invoices {
 
   $found = 0;
@@ -1972,11 +2157,13 @@ sub consolidate_invoices {
 
   $form->error($locale->text('Nothing selected!')) unless $found;
 
+  delete $form->{callback};
+
   if (IS->consolidate_invoices(\%myconfig, \%$form, $spool)) {
     $form->redirect($locale->text('Invoices consolidated!'));
+  } else {
+    $form->error($locale->text('Failed to consolidate invoices!'));
   }
-
-  $form->error($locale->text('Failed to consolidate invoices!'));
 
 }
 

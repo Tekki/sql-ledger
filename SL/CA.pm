@@ -24,7 +24,7 @@ sub all_accounts {
 
   my $ref;
   
-  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
+  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company', 'hideaccounts']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
  
   my $query = qq|SELECT c.accno,

@@ -187,6 +187,7 @@ sub jcitems_links {
   $sth->execute || $form->dberror($query);
 
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+    $form->{projectdescription} ||= $ref->{description};
     push @{ $form->{all_project} }, $ref;
   }
   $sth->finish;
@@ -388,7 +389,7 @@ sub jcitems {
 
   if ($form->{open} || $form->{closed}) {
     unless ($form->{open} && $form->{closed}) {
-      $where .= " AND j.qty != j.allocated" if $form->{open};
+      $where .= " AND (j.qty != j.allocated OR j.qty = 0)" if $form->{open};
       $where .= " AND j.qty = j.allocated" if $form->{closed};
     }
   }
@@ -588,7 +589,7 @@ sub company_defaults {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  my %defaults = $form->get_defaults($dbh, \@{['company','address','tel','fax','businessnumber']});
+  my %defaults = $form->get_defaults($dbh, \@{['company','address','tel','fax','businessnumber','companywebsite','companyemail']});
 
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 

@@ -1,0 +1,28 @@
+$self{texts} = {
+  'April'                       => 'Balandis',
+  'August'                      => 'Rugpjūtis',
+  'December'                    => 'Gruodis',
+  'February'                    => 'Vasaris',
+  'January'                     => 'Sausis',
+  'July'                        => 'Liepa',
+  'June'                        => 'Birželis',
+  'March'                       => 'Kovas',
+  'May'                         => 'Geg',
+  'November'                    => 'Lapkritis',
+  'October'                     => 'Spalis',
+  'September'                   => 'Rūgsėjis',
+};
+
+$self{subs} = {
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'js_calendar'                 => 'js_calendar',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
+};
+
+1;
+

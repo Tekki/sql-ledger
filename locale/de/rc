@@ -89,6 +89,7 @@ $self{subs} = {
   'resize'                      => 'resize',
   'section_menu'                => 'section_menu',
   'select_all'                  => 'select_all',
+  'show_progress'               => 'show_progress',
   'update'                      => 'update',
   'weiter'                      => 'continue',
   'alle_abwählen'              => 'deselect_all',

@@ -4,10 +4,19 @@ $self{texts} = {
 
 $self{subs} = {
   'acc_menu'                    => 'acc_menu',
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
   'display'                     => 'display',
-  'js_menu'                     => 'js_menu',
+  'js_calendar'                 => 'js_calendar',
+  'jsmenu'                      => 'jsmenu',
+  'jsmenu_frame'                => 'jsmenu_frame',
   'menubar'                     => 'menubar',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
 };
 
 1;

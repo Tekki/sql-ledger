@@ -161,7 +161,7 @@ sub payment {
   $form->{payment} = "payment";
   
   $form->{callback} = "$form->{script}?action=payment&path=$form->{path}&login=$form->{login}&all_vc=$form->{all_vc}&type=$form->{type}" unless $form->{callback};
-  
+
   # setup customer/vendor selection for open invoices
   if ($form->{all_vc}) {
     $form->all_vc(\%myconfig, $form->{vc}, $form->{ARAP}, undef, $form->{datepaid});
@@ -179,6 +179,7 @@ sub payment {
       for (qw(address1 address2 city zipcode state country)) {
         $form->{$_} = $form->{"all_$form->{vc}"}->[0]->{$_};
       }
+      $form->{currency} = $form->{"all_$form->{vc}"}->[0]->{curr};
     }
 
   }
@@ -225,7 +226,7 @@ sub payment {
   $form->{selectcurrency} = "";
   for (@curr) { $form->{selectcurrency} .= "$_\n" }
 
-  $form->{currency} = $form->{defaultcurrency};
+  $form->{currency} ||= $form->{defaultcurrency};
   $form->{oldcurrency} = $form->{currency};
 
   $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{datepaid});
@@ -247,8 +248,7 @@ sub payment {
     $form->{memo} ||= $form->{batchdescription};
   }
 
-  &payment_header;
-  &payment_footer;
+  &update_payment;
 
 }
 
@@ -747,10 +747,11 @@ sub payments_footer {
   }
   $media .= qq|</select>|;
   
-  $format = qq|<select name=format>
-  <option value="html" $form->{DF}{html}>|.$locale->text('html').qq|
-  <option value="xml" $form->{DF}{xml}>|.$locale->text('XML').qq|
-  <option value="txt" $form->{DF}{txt}>|.$locale->text('Text');
+  $format = qq|<select name=format>|;
+
+#  <option value="html" $form->{DF}{html}>|.$locale->text('html').qq|
+#  <option value="xml" $form->{DF}{xml}>|.$locale->text('XML').qq|
+#  <option value="txt" $form->{DF}{txt}>|.$locale->text('Text');
   
   if ($latex) {
     $format .= qq|
@@ -758,6 +759,11 @@ sub payments_footer {
 	    <option value="pdf" $form->{DF}{pdf}>|.$locale->text('PDF');
   }
   $format .= qq|</select>|;
+
+  if (! $latex) {
+    $format = "";
+    $media = "";
+  }
 
   print qq|
   <tr>
@@ -899,6 +905,7 @@ sub update_payments {
   }
  
   if ($form->{redo}) {
+    $form->{allbox} = "";
     
     for $i (1 .. $form->{rowcount}) {
       for (qw(id amount due paid totaldue)) { $form->{"${_}_$i"} = "" }
@@ -992,7 +999,7 @@ sub update_payment {
   }
 
   if ($new_name_selected) {
-    for ("$form->{ARAP}", "$form->{ARAP}_paid", "department", "business", "currency", "paymentmethod") {
+    for ("$form->{ARAP}", "$form->{ARAP}_paid", "department", "business", "paymentmethod") {
       $form->{$_} = $form->{"old$_"};
     }
   }
@@ -1017,9 +1024,6 @@ sub update_payment {
 
       for ("$form->{ARAP}", "business", "department") { $form->{"old$_"} = $form->{$_}}
 
-      $form->remove_locks(\%myconfig, undef, $form->{arap});
-      $form->{redo} = 1;
-      $form->{locks_removed} = 1;
       $rv = CP->get_openvc(\%myconfig, \%$form);
       
       if ($myconfig{vclimit} > 0) {
@@ -1028,7 +1032,7 @@ sub update_payment {
 
         if ($rv > 1) {
           # assign old values
-          for ("$form->{ARAP}", "department", "business", "currency") {
+          for ("$form->{ARAP}", "department", "business") {
             $form->{"old$_"} = $form->{$_};
           }
           &select_name($form->{vc});
@@ -1040,6 +1044,7 @@ sub update_payment {
           $form->{"$form->{vc}_id"} = $form->{name_list}[0]->{id};
           $form->{$form->{vc}} = $form->{name_list}[0]->{name};
           $form->{"$form->{vc}number"} = $form->{name_list}[0]->{"$form->{vc}number"};
+          $form->{currency} = $form->{name_list}[0]->{curr};
           $form->{"old$form->{vc}"} = "";
           $form->{"old$form->{vc}number"} = "";
         } else {
@@ -1065,7 +1070,7 @@ sub update_payment {
   $form->{"$form->{ARAP}_paid"} = $arappaid;
   $form->{department} = $department;
   $form->{business} = $business;
-  $form->{currency} = $currency;
+  $form->{currency} ||= $currency;
   $form->{paymentmethod} = $paymentmethod;
 
   if ($form->{datepaid} ne $form->{olddatepaid}) {
@@ -1082,6 +1087,7 @@ sub update_payment {
   }
 
   if ($form->{redo}) {
+    $form->{allbox} = "";
     $form->remove_locks(\%myconfig, undef, $form->{arap}) unless $form->{locks_removed};
   }
 
@@ -1324,6 +1330,8 @@ sub payment_header {
 	      </tr>
 |;
 
+  $vcref = qq|<a href=ct.pl?action=edit&db=$form->{vc}&id=$form->{"$form->{vc}_id"}&login=$form->{login}&path=$form->{path} target=_blank>?</a>|;
+
   if ($form->{payments_detail}) {
     $allvc = "";
 
@@ -1361,12 +1369,12 @@ sub payment_header {
 
   } else {
     if ($form->{"select$form->{vc}"}) {
-      $vc .= qq|<td><select name="$form->{vc}" onChange="javascript:document.main.submit()">|.$form->select_option($form->{"select$form->{vc}"}, $form->{$form->{vc}}, 1).qq|</select></td>
+      $vc .= qq|<td><select name="$form->{vc}" onChange="javascript:document.main.submit()">|.$form->select_option($form->{"select$form->{vc}"}, $form->{$form->{vc}}, 1).qq|</select> $vcref</td>
       <input name=action type=hidden value=update>
 		</tr>
   |;
     } else {
-      $vc .= qq|<td><input name="$form->{vc}" size=35 value="|.$form->quote($form->{$form->{vc}}).qq|"></td>
+      $vc .= qq|<td><input name="$form->{vc}" size=35 value="|.$form->quote($form->{$form->{vc}}).qq|"> $vcref</td>
 		</tr>
 		<tr>
 		<th align=right>|.$locale->text($vc{$form->{vc}}{number}).qq|</th>
@@ -1479,7 +1487,7 @@ javascript:window.history.forward(1);
 
 	      $duedate
 	      
-        $vc
+              $vc
 
 	      <tr valign=top>
           <th align=right nowrap>|.$locale->text('Address').qq|</th>
@@ -1679,10 +1687,11 @@ sub payment_footer {
     }
     $media .= qq|</select>|;
 
-    $format = qq|<select name=format>
-    <option value="html" $form->{DF}{html}>|.$locale->text('html').qq|
-    <option value="xml" $form->{DF}{xml}>|.$locale->text('XML').qq|
-    <option value="txt" $form->{DF}{txt}>|.$locale->text('Text');
+    $format = qq|<select name=format>|;
+
+#    <option value="html" $form->{DF}{html}>|.$locale->text('html').qq|
+#    <option value="xml" $form->{DF}{xml}>|.$locale->text('XML').qq|
+#    <option value="txt" $form->{DF}{txt}>|.$locale->text('Text');
    
     if ($latex) {
       if ($form->{selectlanguage}) {
@@ -1695,6 +1704,11 @@ sub payment_footer {
 	      <option value=pdf $form->{DF}{pdf}>|.$locale->text('PDF');
     }
     $format .= qq|</select>|;
+
+    if (! $latex) {
+      $format = "";
+      $media = "";
+    }
 
     print qq|
   <tr>
@@ -2084,6 +2098,8 @@ sub print_form {
 
 sub print_payment {
  
+  $form->error($locale->text('Select postscript or PDF!')) if ($form->{format} !~ /(ps|pdf)/);
+
   &check_form;
   
   @a = qw(name text_amount text_decimal address1 address2 city state zipcode country memo);
@@ -2729,11 +2745,11 @@ sub void_checks {
   $form->error($locale->text('Nothing selected!')) unless $source;
 
   if ($form->{ARAP} eq 'AR') {
-    $msgaction = $locale->text('Yes, Void Receipts');
-    $msgwarn = $locale->text('Are you sure you want to void receipts');
+    $action = $locale->text('Yes, Void Receipts');
+    $msg = $locale->text('Are you sure you want to void receipts');
   } else {
-    $msgaction = $locale->text('Yes, Void Checks');
-    $msgwarn = $locale->text('Are you sure you want to void checks');
+    $action = $locale->text('Yes, Void Checks');
+    $msg = $locale->text('Are you sure you want to void checks');
   }
 
   $form->header;
@@ -2750,9 +2766,9 @@ sub void_checks {
   print qq|
 <h2 class=confirm>$form->{title}</h2>
 
-<h4>$msgwarn $source</h4>
+<h4>$msg $source</h4>
 
-<input name=action class=submit type=submit value="$msgaction">
+<input name=action class=submit type=submit value="$action">
 </form>
 
 </body>

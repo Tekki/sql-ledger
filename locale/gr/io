@@ -1,5 +1,3 @@
-$self{charset} = 'UTF-8';
-
 $self{texts} = {
   'Add Quotation'               => 'Προσθήκη προσφοράς',
   'Add Sales Order'             => 'Προσθήκη Παραγγελίας',
@@ -11,12 +9,12 @@ $self{texts} = {
   'Aug'                         => 'Αυγ',
   'August'                      => 'Αύγουστος',
   'City'                        => 'Πόλη',
+  'Code'                        => 'Κωδικός',
   'Contact'                     => 'Επαφή',
   'Continue'                    => 'Συνέχεια',
   'Copies'                      => 'Αντίγραφα',
+  'Cost'                        => 'Κόστος',
   'Country'                     => 'Χώρα',
-  'Customer'                    => 'Πελάτης',
-  'Customer Number'             => 'Κωδικός Πελάτη',
   'Date'                        => 'Ημερομηνία',
   'Dec'                         => 'Δεκ',
   'December'                    => 'Δεκέμβριος',
@@ -39,11 +37,14 @@ $self{texts} = {
   'May'                         => 'Μάϊος',
   'May '                        => 'Μάϊος',
   'Message'                     => 'Μύνημα',
+  'Model'                       => 'Μοντέλο',
+  'Name'                        => 'Όνομα',
   'Nov'                         => 'Νοέ',
   'November'                    => 'Νοέμβριος',
   'Number'                      => 'Αριθμός',
   'Oct'                         => 'Οκτ',
   'October'                     => 'Οκτώβριος',
+  'Order Number'                => 'Αρ. Παραγγελίας',
   'Phone'                       => 'Τηλέφωνο',
   'Price'                       => 'Τιμή',
   'Printed'                     => 'Εκτυπώθηκε',
@@ -51,7 +52,6 @@ $self{texts} = {
   'Qty'                         => 'Ποσ.',
   'Screen'                      => 'Οθόνη',
   'Vendor'                      => 'Creditor',
-  'Vendor Number'               => 'Creditor Number',
 };
 
 $self{subs} = {
@@ -74,9 +74,10 @@ $self{subs} = {
   'select_item'                 => 'select_item',
   'send_email'                  => 'send_email',
   'ship_to'                     => 'ship_to',
+  'shipto_selected'             => 'shipto_selected',
   'validate_items'              => 'validate_items',
-  'Προσθήκη_υπηρεσίας'          => 'add_service',
-  'Συνέχεια'                    => 'continue',
+  'Προσθήκη_υπηρεσίας' => 'add_service',
+  'Συνέχεια'            => 'continue',
 };
 
 1;

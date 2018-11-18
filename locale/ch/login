@@ -1,15 +1,23 @@
 $self{texts} = {
-  'Company'                     => 'Firmenname',
+  'Company'                     => 'Firma',
+  'Configuration file missing!' => 'Konfigurationsdatei fehlt!',
   'Continue'                    => 'Weiter',
   'Dataset is newer than version!' => 'Datenset ist neuer als installierte Version',
+  'Dataset locked!'             => 'Datensatz gesperrt!',
   'Incorrect Dataset version!'  => 'Ungültige Datenset-Version',
+  'Incorrect Password!'         => 'Ungültiges Passwort',
+  'Incorrect Username!'         => 'Ungültiger Login Name',
+  'Invalid TAN'                 => 'Ungültiges TAN',
   'Login'                       => 'Benutzername',
+  'Maximum tries exceeded!'     => 'Maximale Versuche überschritten!',
   'Name'                        => 'Name',
-  'No email address for'        => 'Keine E-Mailadresse fr',
+  'No email address for'        => 'Keine E-Mailadresse für',
   'Password'                    => 'Passwort',
+  'TAN'                         => 'TAN',
   'Upgrading to Version'        => 'Datenset wird erneuert auf Version',
   'Version'                     => 'Version',
   'You did not enter a name!'   => 'Sie haben keinen Namen eingegeben!',
+  'admin does not exist!'       => 'login "admin" existiert nicht!',
 };
 
 $self{subs} = {

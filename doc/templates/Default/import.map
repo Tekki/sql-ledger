@@ -1,0 +1,35 @@
+[sales_invoice]
+Kunden-Nummer=customernumber
+Rechnungstitel=description
+Buchen auf=AR
+Währung=curr
+Lieferort=shippingpoint
+Versandort=shipvia
+Verkäufer=employee
+Rechnungsnummer=invnumber
+Bestellnummer=ordnumber
+Rechnungsdatum=transdate
+Fälligkeitsdatum=duedate
+Artikelnummer=partnumber
+Menge=qty
+Preis=sellprice
+Rabatt=discount
+Skonto=cashdiscount
+
+[payment]
+Belegdatum=transdate
+Zahlschein=dcn
+Beleg=source
+Betrag=amount
+
+[part]
+PLU=partnumber
+DESCRPTION=description
+UNIT=unit,5
+WEIGHT=weight
+G/L ACCOUNT (INV)=inventory_accno
+REORDER LEVEL=rop
+PRICE=sellprice
+COST=lastcost
+BARCODE=barcode
+DEPARTMENT=partsgroup

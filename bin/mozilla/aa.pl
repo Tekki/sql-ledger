@@ -868,7 +868,7 @@ print qq|
 
     $column_data{paid} = qq|<td align=center><input name="discount_paid" class="inputright" size=11 value=|.$form->format_amount(\%myconfig, $form->{"discount_paid"}, $form->{precision}).qq|></td>|;
     $column_data{ARAP_paid} = qq|<td align=center><select name="$form->{ARAP}_discount_paid">|.$form->select_option($form->{"select$form->{ARAP}_discount"}, $form->{"$form->{ARAP}_discount_paid"}).qq|</select></td>|;
-    $column_data{datepaid} = qq|<td align=center nowrap><input name="discount_datepaid" size=11 class=date title="$myconfig{dateformat}" value=$form->{"discount_datepaid"}></td>|;
+    $column_data{datepaid} = qq|<td align=center nowrap><input name="discount_datepaid" size=11 class=date title="$myconfig{dateformat}" value="$form->{"discount_datepaid"}">|.&js_calendar("main", "discount_datepaid").qq|</td>|;
     $column_data{exchangerate} = qq|<td align=center>$exchangerate</td>|;
     $column_data{source} = qq|<td align=center><input name="discount_source" size=11 value="|.$form->quote($form->{"discount_source"}).qq|"></td>|;
     $column_data{memo} = qq|<td align=center><input name="discount_memo" size=11 value="|.$form->quote($form->{"discount_memo"}).qq|"></td>|;
@@ -2109,11 +2109,6 @@ sub transactions {
     $vcnumber = $locale->text('SSN');
   }
 
-  for $i (1 .. $form->{rowcount}) {
-############
-;
-  }
-
   $form->{allbox} = ($form->{allbox}) ? "checked" : "";
   $action = ($form->{deselect}) ? "deselect_all" : "select_all";
   $column_data{delete} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll(); javascript:main.submit()"><input type=hidden name=action value="$action"></th>|;
@@ -2487,186 +2482,6 @@ sub select_all {
 
 
 sub deselect_all { $form->redirect }
-
-
-sub consolidate {
-
-  $form->{sort} ||= "transdate";
-
-  AA->consolidate(\%myconfig, \%$form);
-
-  $form->{title} = $locale->text('Consolidate');
-  
-  %button = ('Consolidate Transactions' => { ndx => 1, key => 'C', value => $locale->text('Consolidate Transactions') }
-            );
-  
-  $module = $form->{script};
-  
-  if ($form->{ARAP} eq 'AR') {
-    if ($form->{type} eq 'invoice') {
-      $module = "is.pl";
-      %button = ('Consolidate Invoices' => { ndx => 1, key => 'C', value => $locale->text('Consolidate Invoices') }
-              );
-    }
-  } else {
-    if ($form->{type} eq 'invoice') {
-      $module = "ir.pl";
-      %button = ('Consolidate Invoices' => { ndx => 1, key => 'C', value => $locale->text('Consolidate Invoices') }
-              );
-    }
-  }
-
-  # construct href
-  $href = "$form->{script}?action=consolidate";
-  for (qw(type path direction oldsort login)) { $href .= "&$_=$form->{$_}" }
-  
-  $form->sort_order();
-
-  @column_index = qw(transdate invnumber description amount);
-  @column_index = $form->sort_columns(@column_index);
-  unshift @column_index, "ndx";
-  
-  $column_data{ndx} = "<th class=listheading>&nbsp;</th>";
-  $column_data{transdate} = "<th><a class=listheading href=$href&sort=transdate>".$locale->text('Date')."</th>";
-  $column_data{invnumber} = "<th><a class=listheading href=$href&sort=invnumber>".$locale->text('Invoice')."</th>";
-  $column_data{description} = "<th class=listheading>".$locale->text('Description')."</th>";
-  $column_data{amount} = "<th class=listheading>".$locale->text('Amount')."</th>";
-
-  $colspan = $#column_index + 1;
-  
-  $form->helpref("consolidate", $myconfig{countrycode});
-  
-  $title = "$form->{title} / $form->{company}";
-
-  $form->{callback} = "$form->{script}?action=consolidate";
-  for (qw(direction sort oldsort type path login)) { $form->{callback} .= qq|&$_=$form->{$_}| }
-  
-  # escape callback for href
-  $callback = $form->escape($form->{callback});
-
-  $form->header;
-
-  &check_all(qw(allbox ndx_));
-  
-  print qq|
-<body>
-
-<form method=post action=$module>
-
-<table width=100%>
-  <tr>
-    <th class=listtop>$form->{helpref}$title</a></th>
-  </tr>
-  <tr height="5"></tr>
-  <tr>
-    <td>
-      <table width=100%>
-        <tr class=listheading>
-|;
-
-  $column_data{ndx} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll()"></th>|;
-  
-  for (@column_index) { print "\n$column_data{$_}" }
-
-  print qq|
-        </tr>
-|;
-  
-  for $curr (sort keys %{ $form->{all_transactions} }) {
-
-    $printed = 0;
-    
-    if ($form->{$curr} > 1) {
-
-      for $accno (sort keys %{ $form->{all_transactions}{$curr} }) {
-	for $name (sort keys %{ $form->{all_transactions}{$curr}{$accno} }) {
-	  if ($#{$form->{all_transactions}{$curr}{$accno}{$name}} > 0) {
-
-	    if (! $printed) {
-	      print qq|
-        <tr>
-	  <th colspan=$colspan align=left>$curr</th>
-        </tr>
-|;
-              $printed = 1;
-	    }
-    
-	    print qq|
-	      <tr>
-		<th colspan=$colspan align=left>$name / $form->{all_transactions}{$curr}{$accno}{$name}->[0]->{city}</th>
-	      </tr>
-|;
-	    
-	    for $ref (@{ $form->{all_transactions}{$curr}{$accno}{$name} }) {
-	      $j++; $j %= 2;
-	      print qq|
-	      <tr class=listrow$j>
-    |;
-	      for (@column_index) { $column_data{$_} = qq|<td>$ref->{$_}</td>| }
-	      
-	      $form->{ids} .= "$ref->{id} ";
-	      
-	      $column_data{ndx} = qq|<td><input name="ndx_$ref->{id}" type=checkbox class=checkbox value=1></td>|;
-	      $column_data{amount} = qq|<td align=right>|.$form->format_amount(\%myconfig, $ref->{amount}, $ref->{prec}).qq|</td>|;
-
-	      $column_data{invnumber} = "<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{invnumber}&nbsp;</a></td>";
-	      
-	      if ($name eq $samename) {
-		for (qw(name city)) { $column_data{$_} = qq|<td>&nbsp;</td>| }
-	      } else {
-		$column_data{name} = qq|<td><a href=ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{"$form->{vc}_id"}&db=$form->{vc}&callback=$callback>$ref->{name}</a></td>|;
-	      }
-
-	      for (@column_index) { print "\n$column_data{$_}" }
-
-	      $samename = $name;
-	    
-	      print qq|
-	  </tr>
-|;
-	    }
-	  }
-	}
-      }
-    }
-  }
-
-  chop $form->{ids};
-
-  print qq|
-        </tr>
-
-      </table>
-    </td>
-  </tr>
-  <tr>
-    <td><hr size=3 noshade></td>
-  </tr>
-</table>
-
-|;
-
-  $form->hide_form(qw(ids callback path login));
-  
-  if ($form->{ids}) {
-    $form->print_button(\%button);
-  } else {
-    $form->info($locale->text('Nothing to consolidate!'));
-  }
-    
-  if ($form->{menubar}) {
-    require "$form->{path}/menu.pl";
-    &menubar;
-  }
-
-  print qq|
-</form>
-
-</body>
-</html>
-|;
-
-}
 
 
 sub delete_transactions {

@@ -25,6 +25,9 @@ $memberfile = "users/members";
 $sendmail = "| /usr/sbin/sendmail -t";
 ########## end ###########################################
 
+BEGIN {
+  push @INC, '.';
+}
 
 $| = 1;
 

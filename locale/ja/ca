@@ -1,5 +1,3 @@
-$self{charset} = 'UTF-8';
-
 $self{texts} = {
   'AR/AP'                       => '売掛/買掛',
   'Account'                     => '勘定',
@@ -9,6 +7,7 @@ $self{texts} = {
   'August'                      => '8月',
   'Balance'                     => '差額',
   'Chart of Accounts'           => '勘定表',
+  'Closed'                      => 'クローズ',
   'Credit'                      => '貸方',
   'Current'                     => '現在',
   'Date'                        => '日付',
@@ -53,9 +52,17 @@ $self{texts} = {
 
 $self{subs} = {
   'ca_subtotal'                 => 'ca_subtotal',
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
   'chart_of_accounts'           => 'chart_of_accounts',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'js_calendar'                 => 'js_calendar',
   'list'                        => 'list',
   'list_transactions'           => 'list_transactions',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
   'トランザクション一覧' => 'list_transactions',
 };
 

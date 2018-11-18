@@ -72,8 +72,8 @@ if (-f "VERSION") {
   }
 }
 
-$webowner = "nobody";
-$webgroup = "nogroup";
+$webowner = "www-data";
+$webgroup = "www-data";
 
 if ($httpd = `find /etc /usr/local/etc -type f -name 'httpd*.conf'`) {
   chomp $httpd;
@@ -410,11 +410,11 @@ to $httpd
 
       if (!$permset) {
 	print qq|
-WARNING: permissions for templates, users, css and spool directory
+WARNING: permissions for templates, users, css, images and spool directory
 could not be set. Login as root and set permissions
 
-# chown -hR :$webgroup users templates css spool
-# chmod 771 users templates css spool
+# chown -hR :$webgroup users templates css images spool
+# chmod 771 users templates css images spool
 
 |;
       }
@@ -446,15 +446,15 @@ to your httpd configuration file and restart the web server.
   # if this is not root, check if user is part of $webgroup
   if ($>) {
     if ($permset = ($) =~ getgrnam $webgroup)) {
-      `chown -hR :$webgroup users templates css spool`;
-      chmod 0771, 'users', 'templates', 'css', 'spool';
+      `chown -hR :$webgroup users templates css images spool`;
+      chmod 0771, 'users', 'templates', 'css', 'images', 'spool';
       `chown :$webgroup sql-ledger.conf`;
     }
   } else {
     # root
     `chown -hR 0:0 *`;
-    `chown -hR $webowner:$webgroup users templates css spool`;
-    chmod 0771, 'users', 'templates', 'css', 'spool';
+    `chown -hR $webowner:$webgroup users templates css images spool`;
+    chmod 0771, 'users', 'templates', 'css', 'images', 'spool';
     `chown $webowner:$webgroup sql-ledger.conf`;
   }
   

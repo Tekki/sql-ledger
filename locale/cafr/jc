@@ -110,6 +110,7 @@ $self{subs} = {
   'search'                      => 'search',
   'section_menu'                => 'section_menu',
   'select_item'                 => 'select_item',
+  'show_progress'               => 'show_progress',
   'storescard_footer'           => 'storescard_footer',
   'storescard_header'           => 'storescard_header',
   'timecard_footer'             => 'timecard_footer',

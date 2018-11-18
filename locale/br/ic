@@ -1,5 +1,3 @@
-$self{charset} = 'UTF8';
-
 $self{texts} = {
   'A'                           => 'A',
   'Accounting Menu'             => 'Menu de Contabilidade',
@@ -304,6 +302,7 @@ $self{subs} = {
   'send_email'                  => 'send_email',
   'ship_to'                     => 'ship_to',
   'shipto_selected'             => 'shipto_selected',
+  'show_progress'               => 'show_progress',
   'so_requirements'             => 'so_requirements',
   'so_requirements_report'      => 'so_requirements_report',
   'stock_adjustment'            => 'stock_adjustment',
@@ -314,6 +313,8 @@ $self{subs} = {
   'transfer_list'               => 'transfer_list',
   'transfer_report'             => 'transfer_report',
   'update'                      => 'update',
+  'upload_image'                => 'upload_image',
+  'upload_imagefile'            => 'upload_imagefile',
   'validate_items'              => 'validate_items',
   'vendor_row'                  => 'vendor_row',
   'adicionar_conjunto'          => 'add_assembly',

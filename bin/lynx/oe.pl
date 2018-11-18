@@ -96,7 +96,7 @@ sub order_links {
   chop $form->{selectprinter};
   
   # get customer/vendor
-  $form->all_vc(\%myconfig, $form->{vc}, ($form->{vc} eq 'customer') ? "AR" : "AP", undef, $form->{transdate}, 1);
+  $form->all_vc(\%myconfig, $form->{vc}, ($form->{vc} eq 'customer') ? "AR" : "AP", undef, $form->{transdate});
   
   # currencies
   @curr = split /:/, $form->{currencies};
@@ -167,7 +167,7 @@ sub order_links {
 
   # warehouses
   if (@{ $form->{all_warehouse} }) {
-    $form->{selectwarehouse} = "";
+    $form->{selectwarehouse} = ($form->{forcewarehouse}) ? "" : "\n";
     $form->{warehouse} = "$form->{warehouse}--$form->{warehouse_id}" if $form->{warehouse_id};
 
     for (@{ $form->{all_warehouse} }) { $form->{selectwarehouse} .= qq|$_->{description}--$_->{id}\n| }
@@ -255,6 +255,9 @@ sub prepare_order {
     foreach $ref (@{ $form->{form_details} } ) {
       for (keys %$ref) { $form->{"${_}_$i"} = $ref->{$_} }
 
+      if ($form->{vc} eq 'customer') {
+        $form->{"onhand_$i"} += $form->{"ship_$i"};
+      }
       $form->{"onhand_$i"} = $form->format_amount(\%myconfig, $form->{"onhand_$i"}, undef, " ");
 
       $form->{"projectnumber_$i"} = qq|$ref->{projectnumber}--$ref->{project_id}| if $ref->{project_id};
@@ -470,6 +473,7 @@ sub form_header {
 |;
   }
 
+  $form->{terms} = "" unless $form->{terms};
   $terms = qq|
                     <tr>
 		      <th align=right nowrap>|.$locale->text('Terms').qq| |.$locale->text('Net').qq|</th>
@@ -864,7 +868,7 @@ sub form_footer {
     for (split / /, $form->{taxaccounts}) {
 
       if ($form->{"${_}_base"}) {
-	$form->{invtotal} += $form->{"${_}_total"} = $form->round_amount($form->round_amount($form->round_amount($form->{"${_}_base"}, $form->{precision}) * $form->{"${_}_rate"}, 10), $form->{precision});
+	$form->{invtotal} += $form->{"${_}_total"} = $form->round_amount($form->{"${_}_base"} * $form->{"${_}_rate"}, $form->{precision});
 	$form->{"${_}_total"} = $form->format_amount(\%myconfig, $form->{"${_}_total"}, $form->{precision}, 0);
 	
 	$tax .= qq|
@@ -1214,7 +1218,13 @@ sub update {
     exit;
   }
 
-  $form->get_onhand(\%myconfig) if $form->{warehouse} ne $form->{oldwarehouse};
+
+  if ($form->{warehouse} ne $form->{oldwarehouse}) {
+    $form->get_onhand(\%myconfig);
+    for (1 .. $form->{rowcount}) {
+      $form->{"onhand_$_"} = $form->format_amount(\%myconfig, $form->{"onhand_$_"}, undef, " ");
+    }
+  }
  
   $form->{exchangerate} = $form->parse_amount(\%myconfig, $form->{exchangerate});
 
@@ -1227,12 +1237,12 @@ sub update {
   &rebuild_departments if $form->{department} ne $form->{olddepartment};
 
   if ($newname = &check_name($form->{vc})) {
-    &rebuild_vc($form->{vc}, $form->{ARAP}, $form->{transdate}, 1);
+    &rebuild_vc($form->{vc}, $form->{ARAP}, $form->{transdate});
   }
 
   if ($form->{transdate} ne $form->{oldtransdate}) {
     $form->{oldtransdate} = $form->{transdate};
-    &rebuild_vc($form->{vc}, $form->{ARAP}, $form->{transdate}, 1) if ! $newname;
+    &rebuild_vc($form->{vc}, $form->{ARAP}, $form->{transdate}) if ! $newname;
 
     $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate});
     $form->{oldcurrency} = $form->{currency};
@@ -1292,7 +1302,15 @@ sub update {
 	$sellprice = $form->parse_amount(\%myconfig, $form->{"sellprice_$i"});
 	
 	for (qw(partnumber description unit)) { $form->{item_list}[$i]{$_} = $form->quote($form->{item_list}[$i]{$_}) }
-	for (keys %{ $form->{item_list}[0] }) { $form->{"${_}_$i"} = $form->{item_list}[0]{$_} }
+	for (keys %{ $form->{item_list}[0] }) {
+          $form->{"${_}_$i"} = $form->{item_list}[0]{$_};
+        }
+
+        if ($form->{type} eq 'sales_order' && $form->{"checkinventory_$i"}) {
+          if ($form->{"inventory_accno_id_$i"} || $form->{"assembly_$i"}) {
+            $form->error($locale->text('Not enough inventory!')) if $form->{"onhand_$i"} <= 0;
+          }
+        }
 
         $form->{"discount_$i"} ||= $form->{discount} * 100;
 	
@@ -1337,6 +1355,9 @@ sub update {
 	for (qw(netweight grossweight)) { $form->{"${_}_$i"} = $form->{"weight_$i"} * $form->{"qty_$i"} }
 
 	for (qw(qty discount netweight grossweight)) { $form->{"{_}_$i"} =  $form->format_amount(\%myconfig, $form->{"${_}_$i"}) }
+        $form->{"onhand_$i"} = $form->format_amount(\%myconfig, $form->{"onhand_$i"}, undef, " ");
+
+        for (qw(partnumber description unit)) { $form->{"${_}_$i"} = $form->quote($form->{"${_}_$i"}) }
 
       }
 
@@ -1477,7 +1498,7 @@ sub search {
   # setup vendor / customer selection
   $transdate = $form->current_date(\%myconfig);
   if ($form->{type} eq 'generate_sales_invoices') {
-    $form->all_vc(\%myconfig, $form->{vc}, ($form->{vc} eq 'customer') ? "AR" : "AP", undef, $transdate, undef, undef, 1);
+    $form->all_vc(\%myconfig, $form->{vc}, ($form->{vc} eq 'customer') ? "AR" : "AP", undef, $transdate);
   } else {
     $form->all_vc(\%myconfig, $form->{vc}, ($form->{vc} eq 'customer') ? "AR" : "AP", undef, $transdate);
   }
@@ -2332,6 +2353,10 @@ sub subtotal {
 
 sub save {
 
+  if ($form->{type} eq 'sales_order') {
+    &validate_items;
+  }
+
   if ($form->{type} =~ /_order$/) {
     $msg = ($form->{vc} eq 'customer') ? $locale->text('Shipped') : $locale->text('Received');
     $msg .= " ".$locale->text('Qty')." ".$locale->text('in row');
@@ -2367,7 +2392,6 @@ sub save {
   
   $form->isblank("exchangerate", $locale->text('Exchange rate missing!')) if ($form->{currency} ne $form->{defaultcurrency});
   
-  &validate_items;
 
   # if the name changed get new values
   if (&check_name($form->{vc})) {
@@ -2379,6 +2403,7 @@ sub save {
   # this is for the internal notes section for the [email] Subject
   if ($form->{type} =~ /_order$/) {
     if ($form->{type} eq 'sales_order') {
+
       $form->{label} = $locale->text('Sales Order');
 
       $numberfld = "sonumber";
@@ -2768,7 +2793,7 @@ sub ship_receive {
 
   # warehouse
   if (@{ $form->{all_warehouse} }) {
-    $form->{selectwarehouse} = "";
+    $form->{selectwarehouse} = ($form->{forcewarehouse}) ? "" : "\n";
     for (@{ $form->{all_warehouse} }) { $form->{selectwarehouse} .= qq|$_->{description}--$_->{id}\n| }
     $form->{selectwarehouse} = $form->escape($form->{selectwarehouse},1);
   }

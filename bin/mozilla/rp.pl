@@ -1353,8 +1353,14 @@ sub section_display {
         </tr>|;
 
   for $accno (sort keys %{ $form->{$category} }) {
+    $spacer = $spacer{$form->{accounts}{$accno}{charttype}};
+
     if ($subtotal && (($form->{$category}{$accno}{$this}{0}{charttype} eq 'H') || ($form->{$category}{$accno}{$previous}{0}{charttype} eq 'H'))) {
       &section_subtotal;
+    }
+
+    if (($form->{$category}{$accno}{$this}{0}{charttype} eq 'H') || ($form->{$category}{$accno}{$previous}{0}{charttype} eq 'H')) {
+      next unless $form->{l_heading};
     }
 
     $subtotal = 1;
@@ -1362,7 +1368,7 @@ sub section_display {
     $i++; $i %= 2;
     print qq|
         <tr class=listrow$i>
-          <th align=left nowrap>$spacer{$form->{accounts}{$accno}{charttype}}|;
+          <th align=left nowrap>$spacer|;
           
         if (($form->{$category}{$accno}{$this}{0}{charttype} eq 'H') || ($form->{$category}{$accno}{$previous}{0}{charttype} eq 'H')) {
           if ($form->{l_heading}) {
@@ -1390,7 +1396,7 @@ sub section_display {
           $total{$this}{$period} += $form->{$category}{$accno}{$this}{$period}{amount};
 
           print qq|<td align=right>|;
-          print $form->format_amount(\%myconfig, $form->{$category}{$accno}{$this}{$period}{amount} * $ml, $form->{decimalplaces});
+          print $form->format_amount(\%myconfig, $form->{$category}{$accno}{$this}{$period}{amount} * $ml, $form->{decimalplaces}, '-');
           print qq|</td>|;
           if ($form->{previousyear}) {
             if ($form->{$category}{$accno}{$previous}{$period}{charttype} eq 'H') {
@@ -1403,7 +1409,7 @@ sub section_display {
             $total{$previous}{$period} += $form->{$category}{$accno}{$previous}{$period}{amount};
 
             print qq|<td align=right>|;
-            print $form->format_amount(\%myconfig, $form->{$category}{$accno}{$previous}{$period}{amount} * $ml, $form->{decimalplaces});
+            print $form->format_amount(\%myconfig, $form->{$category}{$accno}{$previous}{$period}{amount} * $ml, $form->{decimalplaces}, '-');
             print qq|</td>|;
           }
         }
@@ -1411,6 +1417,37 @@ sub section_display {
     print qq|
         </tr>
 |;
+  }
+
+  if ($category eq 'Q') {
+    $i++; $i %= 2;
+    print qq|
+        <tr class=listrow$i>
+          <th align=left nowrap>$spacer|.$locale->text('Current Earnings').qq|</th>|;
+
+    for $period (@periods) {
+      $currentearnings = $total{A}{$this}{$period} - $total{L}{$this}{$period} - $total{Q}{$this}{$period};
+
+      print qq|
+            <td align=right>|.$form->format_amount(\%myconfig, $currentearnings, $form->{decimalplaces}, '-').qq|</td>|;
+
+      $subtotal{$this}{$period} += $currentearnings if ($form->{l_subtotal} && $form->{l_heading});
+      $total{Q}{$this}{$period} += $currentearnings;
+
+      if ($form->{previousyear}) {
+        $previousearnings = $total{A}{$previous}{$period} - $total{L}{$previous}{$period} - $total{Q}{$previous}{$period};
+        print qq|
+            <td align=right>|.$form->format_amount(\%myconfig, $previousearnings, $form->{decimalplaces}, '-').qq|</td>|;
+
+        $subtotal{$previous}{$period} += $currentearnings if ($form->{l_subtotal} && $form->{l_heading});
+        $total{Q}{$previous}{$period} += $previousearnings;
+      }
+    }
+
+    print qq|
+        </tr>
+|;
+  
   }
 
   &section_subtotal;
@@ -1734,24 +1771,6 @@ sub generate_balance_sheet {
   }
 
   print qq|
-        <tr height="5"></tr>
-        <tr>
-          <th align=left nowrap>|.$locale->text('Current Earnings').qq|</th>|;
-
-  for $period (@periods) {
-    $currentearnings = $form->format_amount(\%myconfig, $total{A}{$this}{$period} - $total{L}{$this}{$period} - $total{Q}{$this}{$period}, $form->{decimalplaces});
-
-  print qq|
-          <td align=right>$currentearnings</td>|;
-    if ($form->{previousyear}) {
-      $currentearnings = $form->format_amount(\%myconfig, $total{A}{$previous}{$period} - $total{L}{$previous}{$period} - $total{Q}{$previous}{$period}, $form->{decimalplaces});
-      print qq|
-          <td align=right>$currentearnings</td>|;
-    }
-  }
-
-  print qq|
-        </tr>
       </table>
     </td>
   </tr>

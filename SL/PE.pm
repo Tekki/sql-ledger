@@ -365,7 +365,7 @@ sub get_job {
                 p.partnumber, p.description AS partdescription,
 		p.unit, p.listprice,
 		p.sellprice, p.priceupdate, p.weight, p.notes, p.bin,
-		p.partsgroup_id,
+                p.lot, p.expires, p.partsgroup_id,
 		ch.accno AS income_accno, ch.description AS income_description,
 		pr.customer_id, c.name AS customer,
 		pg.partsgroup
@@ -479,12 +479,11 @@ sub get_customer {
   my $query;
   my $sth;
   my $ref;
+  my $where = "1=1";
 
-  if (! $form->{startdate}) {
-    $form->{startdate} = $form->current_date($myconfig);
+  if ($form->{startdate}) {
+    $where .= qq| AND (startdate <= '$form->{startdate}' OR startdate IS NULL)|;
   }
-  
-  my $where = qq|(startdate >= '$form->{startdate}' OR startdate IS NULL OR enddate IS NULL)|;
   
   if ($form->{enddate}) {
     $where .= qq| AND (enddate >= '$form->{enddate}' OR enddate IS NULL)|;
@@ -597,6 +596,8 @@ sub save_job {
 	      partsgroup_id = $partsgroup_id,
 	      assembly = '1',
 	      obsolete = '1',
+	      lot = '$form->{lot}',
+              expires = |.$form->dbquote($form->{expires}, SQL_DATE).qq|,
 	      project_id = $form->{id}
 	      WHERE id = $form->{id}|;
 
@@ -654,7 +655,7 @@ sub stock_assembly {
               FROM parts
 	      WHERE id = ?|;
   my $pth = $dbh->prepare($query) || $form->dberror($query);
- 
+
   $query = qq|SELECT j.*, p.listprice
               FROM jcitems j
               JOIN parts p ON (p.id = j.parts_id)
@@ -733,7 +734,9 @@ sub stock_assembly {
       $rvh->execute($form->{"id_$i"});
       my ($rev) = $rvh->fetchrow_array;
       $rvh->finish;
-      
+
+      for (qw(weight partsgroup_id)) { $pref->{$_} *= 1 }
+
       $query = qq|UPDATE parts SET
                   partnumber = '$pref->{partnumber}-$rev',
 		  description = '$pref->{description}',
@@ -748,6 +751,17 @@ sub stock_assembly {
 		  assembly = '1',
 		  income_accno_id = $pref->{income_accno_id},
 		  bin = '$pref->{bin}',
+                  image = '$pref->{image}',
+                  drawing = '$pref->{drawing}',
+                  microfiche = '$pref->{microfiche}',
+                  partsgroup_id = $pref->{partsgroup_id},
+                  toolnumber = '$pref->{toolnumber}',
+                  countryorigin = '$pref->{countryorigin}',
+                  tariff_hscode = '$pref->{tariff_hscode}',
+                  barcode = '$pref->{barcode}',
+                  lot = '$pref->{lot}',
+                  expires = |.$form->dbquote($pref->{expires}, SQL_DATE).qq|,
+                  checkinventory = '$pref->{checkinventory}',
 		  project_id = $form->{"id_$i"}
 		  WHERE id = $uid|;
       $dbh->do($query) || $form->dberror($query);
@@ -756,9 +770,22 @@ sub stock_assembly {
                   SELECT '$uid', chart_id FROM partstax
 		  WHERE parts_id = $pref->{id}|;
       $dbh->do($query) || $form->dberror($query);
-		  
-      $pth->finish;
-      
+	
+      # make and models
+      $query = qq|INSERT INTO makemodel (parts_id, make, model)
+                  SELECT '$uid', make, model
+                  FROM makemodel WHERE parts_id = $pref->{id}|;
+      $dbh->do($query) || $form->dberror($query);
+
+      # customer matrix
+      $query = qq|INSERT INTO partscustomer (parts_id, customer_id,
+                  pricegroup_id, pricebreak, sellprice, validfrom,
+                  validto, curr)
+                  SELECT '$uid', customer_id, pricegroup_id, pricebreak,
+                  sellprice, validfrom, validto, curr
+                  FROM partscustomer WHERE parts_id = $pref->{id}|;
+      $dbh->do($query) || $form->dberror($query);
+
       for (keys %{$assembly{parts_id}}) {
 	if ($assembly{qty}{$_}) {
 	  $ath->execute($uid, $assembly{parts_id}{$_}, $form->round_amount($assembly{qty}{$_} / $stock, 4));
@@ -786,7 +813,17 @@ sub stock_assembly {
       $dbh->do($query) || $form->dberror($query);
 
       $sth->finish;
+ 
+      %audittrail = ( tablename  => 'ic',
+                     reference  => "$pref->{partnumber}-$rev",
+		     formname   => 'assembly',
+		     action     => 'stock',
+		     id         => $uid );
+
+      $form->audittrail($dbh, "", \%audittrail);
       
+      $pth->finish;
+
     }
   }
 

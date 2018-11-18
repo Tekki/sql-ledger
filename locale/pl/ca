@@ -1,5 +1,3 @@
-$self{charset} = 'UTF-8';
-
 $self{texts} = {
   'Account'                     => 'Konto',
   'Apr'                         => 'Kwiecień',
@@ -8,6 +6,7 @@ $self{texts} = {
   'August'                      => 'Sierpień',
   'Balance'                     => 'Saldo',
   'Chart of Accounts'           => 'Plan Kont',
+  'Closed'                      => 'Zamknięto',
   'Credit'                      => 'Kredyt',
   'Current'                     => 'Bieżący',
   'Date'                        => 'Data',
@@ -52,9 +51,17 @@ $self{texts} = {
 
 $self{subs} = {
   'ca_subtotal'                 => 'ca_subtotal',
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
   'chart_of_accounts'           => 'chart_of_accounts',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'js_calendar'                 => 'js_calendar',
   'list'                        => 'list',
   'list_transactions'           => 'list_transactions',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
   'wykaz_transakcji'            => 'list_transactions',
 };
 

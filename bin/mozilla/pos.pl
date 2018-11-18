@@ -86,7 +86,8 @@ sub edit {
   &prepare_invoice;
 
   $form->{format} = "txt";
-  $form->{media} = ($myconfig{printer}) ? $myconfig{printer} : "screen";
+  $form->{media} = "screen";
+  $form->{media} = $myconfig{printer} if $form->{selectprinter} =~ /$myconfig{printer}/;
 
   if (! $form->{readonly}) {
     $form->{readonly} = ($myconfig{acs} =~ /POS--Sale/) ? 1 : 0;
@@ -669,7 +670,7 @@ sub form_footer {
 	  ($partsgroup, $translation, $image) = split /--/, $item;
 	  $item = ($translation) ? $translation : $partsgroup;
 	  $item = $form->quote($item);
-	  print qq| <button name="action" value="$spc$item" type="submit" class="pos" title="$item"><img src="$image" height="32" alt="$item">\n| if $item;
+	  print qq| <button name="action" value="$spc$item" type="submit" class="pos" title="$item"><img src="$images/$myconfig{dbname}/$image" height="32" alt="$item">\n| if $item;
 	}
       }
     }
@@ -887,7 +888,7 @@ sub display_row {
         </tr>
 |;
 
-    for (qw(id linetotal listprice lastcost taxaccounts pricematrix sku barcode partsgroup unit onhand assembly inventory_accno_id income_accno_id expense_accno_id)) { $form->hide_form("${_}_$i") }
+    for (qw(id linetotal listprice lastcost taxaccounts pricematrix sku barcode partsgroup unit onhand assembly kit inventory_accno_id income_accno_id expense_accno_id lot expires checkinventory)) { $form->hide_form("${_}_$i") }
     
   }
 
@@ -989,6 +990,7 @@ sub preview {
   $form->{invnumber} ||= "-";
   $form->{media} = "screen";
 
+  &validate_items;
   &print;
 
 }
@@ -996,6 +998,8 @@ sub preview {
 
 sub print {
   
+  &validate_items;
+
   if (!$form->{invnumber}) {
     if ($form->{media} eq 'screen') {
       $form->{invnumber} = "-";

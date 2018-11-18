@@ -49,7 +49,7 @@ sub invoice_links {
   $readonly = $form->{readonly};
 
   # create links
-  $form->create_links("AP", \%myconfig, "vendor", 1);
+  $form->create_links("AP", \%myconfig, "vendor");
   
   $form->{readonly} ||= $readonly;
 
@@ -115,7 +115,7 @@ sub invoice_links {
 
   # warehouses
   if (@{ $form->{all_warehouse} }) {
-    $form->{selectwarehouse} = ""; 
+    $form->{selectwarehouse} = ($form->{forcewarehouse}) ? "" : "\n"; 
     $form->{warehouse} = "$form->{warehouse}--$form->{warehouse_id}" if $form->{warehouse_id};
 
     for (@{ $form->{all_warehouse} }) { $form->{selectwarehouse} .= qq|$_->{description}--$_->{id}\n| }
@@ -625,7 +625,7 @@ sub form_footer {
     
       if ($form->{"${_}_base"}) {
 	
-	$form->{"${_}_total"} = $form->round_amount($form->round_amount($form->{"${_}_base"} * $form->{"${_}_rate"}, 10), $form->{precision});
+	$form->{"${_}_total"} = $form->round_amount($form->{"${_}_base"} * $form->{"${_}_rate"}, $form->{precision});
 	
 	if ($form->{discount_paid} && $form->{cdt}) {
 	  $cdtp = $form->{discount_paid} / $form->{invsubtotal} if $form->{invsubtotal};
@@ -685,18 +685,18 @@ sub form_footer {
   $cashdiscount = "";
   if ($form->{cashdiscount}) {
     $cashdiscount = qq|
-              <tr>
-	        <td><b>|.$locale->text('Cash Discount').qq|:</b> |
-		.$form->format_amount(\%myconfig, $form->{cd_available}, $form->{precision}, 0).qq|</td>
-	      </tr>
-
-  <tr class=listheading>
-    <th class=listheading>|.$locale->text('Cash Discount').qq|</th>
+  <tr>
+    <td><b>|.$locale->text('Cash Discount').qq|:</b> |
+    .$form->format_amount(\%myconfig, $form->{cd_available}, $form->{precision}, 0).qq|</td>
   </tr>
 
   <tr>
     <td>
       <table width=100%>
+        <tr class=listheading>
+          <th class=listheading colspan=7>|.$locale->text('Cash Discount').qq|</th>
+        </tr>
+
         <tr>
 |;
 
@@ -736,20 +736,20 @@ sub form_footer {
     
     $payments = qq|
     <tr class=listheading>
-      <th class=listheading>|.$locale->text('Payments').qq|</th>
+      <th class=listheading colspan=7>|.$locale->text('Payments').qq|</th>
     </tr>
 |;
 
   } else {
     $payments = qq|
-    <tr class=listheading>
-      <th class=listheading>|.$locale->text('Payments').qq|</th>
-    </tr>
+  <tr>
+    <td>
+      <table width=100%>
+        <tr class=listheading>
+          <th class=listheading colspan=7>|.$locale->text('Payments').qq|</th>
+        </tr>
 
-    <tr>
-      <td>
-        <table width=100%>
-	  <tr>
+        <tr>
 |;
 
     for (@column_index) { $payments .= qq|$column_data{$_}\n| }
@@ -980,14 +980,19 @@ print qq|
 
 sub update {
 
-  $form->get_onhand(\%myconfig) if $form->{warehouse} ne $form->{oldwarehouse};
+  if ($form->{warehouse} ne $form->{oldwarehouse}) {
+    $form->get_onhand(\%myconfig);
+    for (1 .. $form->{rowcount}) {
+      $form->{"onhand_$_"} = $form->format_amount(\%myconfig, $form->{"onhand_$_"}, undef, " ");
+    }
+  }
 
   for (qw(exchangerate cashdiscount discount_paid)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
   
   &rebuild_departments if $form->{department} ne $form->{olddepartment};
 
   if ($newname = &check_name(vendor)) {
-    &rebuild_vc(vendor, AP, $form->{transdate}, 1);
+    &rebuild_vc(vendor, AP, $form->{transdate});
   }
   if ($form->{oldterms} != $form->{terms}) {
     $form->{duedate} = $form->add_date(\%myconfig, $form->{transdate}, $form->{terms}, 'days');
@@ -1006,7 +1011,7 @@ sub update {
   if ($form->{transdate} ne $form->{oldtransdate}) {
     $form->{duedate} = $form->add_date(\%myconfig, $form->{transdate}, $form->{terms}, 'days') if ! $newterms;
     $form->{oldtransdate} = $form->{transdate};
-    &rebuild_vc(vendor, AP, $form->{transdate}, 1) if ! $newname;
+    &rebuild_vc(vendor, AP, $form->{transdate}) if ! $newname;
 
     $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate});
     $form->{oldcurrency} = $form->{currency};

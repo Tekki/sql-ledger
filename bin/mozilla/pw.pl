@@ -21,7 +21,8 @@ sub getpassword {
     require "$form->{path}/custom/pw.pl";
   }
 
-  my $login = ($form->{"root login"}) ? "root login" : $form->{login};
+  my $login = ($form->{"root login"}) ? "root" : $form->{login};
+  $login =~ s/(\@| )/_/g;
   
   my @d = split / +/, scalar gmtime(time);
   my $today = "$d[0], $d[2]-$d[1]-$d[4] $d[3] GMT";
@@ -44,7 +45,7 @@ sub getpassword {
 Content-Type: text/html
 
 <head>
-  <title>$form->{titlebar}</title>
+  <title>$pwt</title>
   $stylesheet
   $charset
 </head>

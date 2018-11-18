@@ -98,6 +98,7 @@ $self{subs} = {
   'receipts'                    => 'receipts',
   'resize'                      => 'resize',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
   '继续'                      => 'continue',
   '删除'                      => 'delete',
   '加入'                      => 'post',

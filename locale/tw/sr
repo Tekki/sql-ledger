@@ -1,28 +1,43 @@
-$self{charset} = 'BIG5';
-
 $self{texts} = {
-  'Accounting Menu'             => '�|�p���',
-  'Description'                 => '����',
-  'Heading'                     => '���D',
+  'Accounting Menu'             => '會計選單',
+  'April'                       => '四月',
+  'August'                      => '八月',
+  'December'                    => '十二月',
+  'Description'                 => '說明',
+  'February'                    => '二月',
+  'Heading'                     => '標題',
+  'January'                     => '一月',
+  'July'                        => '七月',
+  'June'                        => '六月',
+  'March'                       => '三月',
+  'May'                         => '五月',
+  'November'                    => '十一月',
+  'October'                     => '十月',
+  'September'                   => '九月',
 };
 
 $self{subs} = {
   'acc_menu'                    => 'acc_menu',
   'add_column'                  => 'add_column',
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
   'delete_column'               => 'delete_column',
   'delete_report'               => 'delete_report',
   'display'                     => 'display',
-  'display_frame'               => 'display_frame',
   'do_save_report'              => 'do_save_report',
   'edit_column'                 => 'edit_column',
+  'js_calendar'                 => 'js_calendar',
   'jsmenu'                      => 'jsmenu',
   'jsmenu_frame'                => 'jsmenu_frame',
   'menubar'                     => 'menubar',
-  'mlmenu'                      => 'mlmenu',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
   'save_column'                 => 'save_column',
   'save_report'                 => 'save_report',
-  'save_report_as_new'          => 'save_report_as_new',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
 };
 
 1;
