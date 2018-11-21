@@ -1,18 +1,17 @@
-$self{charset} = 'ISO-8859-7';
-
 $self{texts} = {
-  'April'                       => 'Áðñßëéïò',
-  'August'                      => 'Áýãïõóôïò',
-  'Continue'                    => 'ÓõíÝ÷åéá',
-  'December'                    => 'ÄåêÝìâñéïò',
-  'February'                    => 'ÖåâñïõÜñéïò',
-  'January'                     => 'ÉáíïõÜñéïò',
-  'July'                        => 'Éïýëéïò',
-  'June'                        => 'Éïýíéïò',
-  'March'                       => 'ÌÜñôéïò',
-  'May'                         => 'ÌÜúïò',
-  'November'                    => 'ÍïÝìâñéïò',
-  'October'                     => 'Ïêôþâñéïò',
+  'April'                       => 'Î‘Ï€ÏÎ¯Î»Î¹Î¿Ï‚',
+  'August'                      => 'Î‘ÏÎ³Î¿Ï…ÏƒÏ„Î¿Ï‚',
+  'Continue'                    => 'Î£Ï…Î½Î­Ï‡ÎµÎ¹Î±',
+  'Date missing!'               => 'Î”ÎµÎ½ Ï…Ï€Î¬ÏÏ‡ÎµÎ¹ Î· Î·Î¼ÎµÏÎ¿Î¼Î·Î½Î¯Î±',
+  'December'                    => 'Î”ÎµÎºÎ­Î¼Î²ÏÎ¹Î¿Ï‚',
+  'February'                    => 'Î¦ÎµÎ²ÏÎ¿Ï…Î¬ÏÎ¹Î¿Ï‚',
+  'January'                     => 'Î™Î±Î½Î¿Ï…Î¬ÏÎ¹Î¿Ï‚',
+  'July'                        => 'Î™Î¿ÏÎ»Î¹Î¿Ï‚',
+  'June'                        => 'Î™Î¿ÏÎ½Î¹Î¿Ï‚',
+  'March'                       => 'ÎœÎ¬ÏÏ„Î¹Î¿Ï‚',
+  'May'                         => 'ÎœÎ¬ÏŠÎ¿Ï‚',
+  'November'                    => 'ÎÎ¿Î­Î¼Î²ÏÎ¹Î¿Ï‚',
+  'October'                     => 'ÎŸÎºÏ„ÏŽÎ²ÏÎ¹Î¿Ï‚',
 };
 
 $self{subs} = {
@@ -29,6 +28,7 @@ $self{subs} = {
   'pickvalue'                   => 'pickvalue',
   'repost_invoices'             => 'repost_invoices',
   'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
 };
 
 1;

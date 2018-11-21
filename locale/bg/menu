@@ -1,5 +1,3 @@
-$self{charset} = 'UTF8';
-
 $self{texts} = {
   'AP'                          => 'Покупки',
   'AP Aging'                    => 'Разчети с доставчици',
@@ -151,6 +149,7 @@ $self{subs} = {
   'pickvalue'                   => 'pickvalue',
   'resize'                      => 'resize',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
 };
 
 1;

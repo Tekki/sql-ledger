@@ -7,9 +7,17 @@
   \parbox[b]{.2\textwidth}{
     \includegraphics[scale=0.3]{../<%templates%>/<%language_code%>/logo}
   }\hfill
-  \begin{tabular}[b]{rr@{}}
-  Tel: & <%tel%>\\
-  Fax: & <%fax%>
+  \begin{tabular}[b]{rl@{}}
+  Tel: & <%tel%> \\
+  <%if fax%>
+  Fax: & <%fax%> \\
+  <%end fax%>
+  <%if companyemail%>
+  email: & <%companyemail%> \\
+  <%end companyemail%>
+  <%if companywebsite%>
+  www: & <%companywebsite%>
+  <%end companywebsite%>
   \end{tabular}
 
   \rule[1.5em]{\textwidth}{0.5pt}

@@ -128,6 +128,10 @@ sub get_openvc {
 
   my $dbh = $form->dbconnect($myconfig);
 
+  $form->remove_locks($myconfig, $dbh, $form->{arap});
+  $form->{redo} = 1;
+  $form->{locks_removed} = 1;
+
   my $where = qq|a.amount != a.paid
                  AND a.approved = '1'
                  AND a.onhold = '0'
@@ -235,6 +239,8 @@ sub get_openvc {
   $sth->finish;
 
   my %vc;
+
+  @{ $form->{name_list} } = ();
 
   foreach $ref (@transactions) {
 
@@ -539,6 +545,8 @@ sub get_openinvoices {
   }
 
   $sth->finish;
+
+  $form->{PR} = ();
 
   foreach $ref (@transactions) {
     if ($form->{vc} eq 'vendor') {

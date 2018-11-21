@@ -1,18 +1,16 @@
-$self{charset} = 'ISO-8859-2';
-
 $self{texts} = {
-  'April'                       => 'Kwiecieñ',
-  'August'                      => 'Sierpieñ',
-  'December'                    => 'Grudzieñ',
+  'April'                       => 'KwiecieÅ„',
+  'August'                      => 'SierpieÅ„',
+  'December'                    => 'GrudzieÅ„',
   'February'                    => 'Luty',
-  'January'                     => 'Styczeñ',
+  'January'                     => 'StyczeÅ„',
   'July'                        => 'Lipiec',
   'June'                        => 'Czerwiec',
   'March'                       => 'Marzec',
   'May'                         => 'Maj',
   'November'                    => 'Listopad',
-  'October'                     => 'Pa¿dziernik',
-  'September'                   => 'Wrzesieñ',
+  'October'                     => 'PaÅ¼dziernik',
+  'September'                   => 'WrzesieÅ„',
 };
 
 $self{subs} = {
@@ -23,6 +21,7 @@ $self{subs} = {
   'js_calendar'                 => 'js_calendar',
   'pickvalue'                   => 'pickvalue',
   'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
 };
 
 1;

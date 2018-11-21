@@ -1,15 +1,15 @@
 $self{texts} = {
-  'Company'                     => 'Compa耥a',
+  'Company'                     => 'Compa帽铆a',
   'Continue'                    => 'Continuar',
-  'Dataset is newer than version!' => 'La versi髇 de la Base de Datos es m醩 reciente que la versi髇 del programa',
-  'Incorrect Dataset version!'  => 'Versi髇 de Base de Datos incorrecta',
+  'Dataset is newer than version!' => 'La versi贸n de la Base de Datos es m谩s reciente que la versi贸n del programa',
+  'Incorrect Dataset version!'  => 'Versi贸n de Base de Datos incorrecta',
   'Login'                       => 'Login',
   'Name'                        => 'Nombre',
-  'No email address for'        => 'Falta la direcci髇 de E-mail para',
-  'Password'                    => 'Contrase馻',
-  'Upgrading to Version'        => 'Actualizando Versi髇',
-  'Version'                     => 'Versi髇',
-  'You did not enter a name!'   => 'd. no ha introducido un nombre!',
+  'No email address for'        => 'Falta la direcci贸n de E-mail para',
+  'Password'                    => 'Contrase帽a',
+  'Upgrading to Version'        => 'Actualizando Versi贸n',
+  'Version'                     => 'Versi贸n',
+  'You did not enter a name!'   => '隆Ud. no ha introducido un nombre!',
 };
 
 $self{subs} = {

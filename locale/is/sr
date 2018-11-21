@@ -1,18 +1,18 @@
 $self{texts} = {
-  'Accounting Menu'             => 'Bókhalds valmynd',
-  'April'                       => 'apríl',
-  'August'                      => 'ágúst',
+  'Accounting Menu'             => 'BÃ³khalds valmynd',
+  'April'                       => 'aprÃ­l',
+  'August'                      => 'Ã¡gÃºst',
   'December'                    => 'desember',
-  'Description'                 => 'Skýringar',
-  'February'                    => 'febrúar',
+  'Description'                 => 'SkÃ½ringar',
+  'February'                    => 'febrÃºar',
   'Heading'                     => 'Yfirskriftir',
-  'January'                     => 'janúar',
-  'July'                        => 'júlí',
-  'June'                        => 'júní',
+  'January'                     => 'janÃºar',
+  'July'                        => 'jÃºlÃ­',
+  'June'                        => 'jÃºnÃ­',
   'March'                       => 'mars',
-  'May'                         => 'maí',
-  'November'                    => 'nóvember',
-  'October'                     => 'óktóber',
+  'May'                         => 'maÃ­',
+  'November'                    => 'nÃ³vember',
+  'October'                     => 'Ã³ktÃ³ber',
   'September'                   => 'september',
 };
 
@@ -37,6 +37,7 @@ $self{subs} = {
   'save_column'                 => 'save_column',
   'save_report'                 => 'save_report',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
 };
 
 1;

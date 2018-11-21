@@ -1,0 +1,37 @@
+$self{texts} = {
+  'April'                       => 'ابريل',
+  'August'                      => 'اغسطس',
+  'Continue'                    => 'تابع',
+  'Date missing!'               => 'التاريخ غير موجود',
+  'December'                    => 'ديسمبر',
+  'February'                    => 'فبراير',
+  'January'                     => 'يناير',
+  'July'                        => 'يولية',
+  'June'                        => 'يونية',
+  'March'                       => 'مارس',
+  'May'                         => 'مايو',
+  'November'                    => 'نوفمبر',
+  'October'                     => 'اكتوبر',
+  'September'                   => 'سبتمبر',
+  'done'                        => 'نفذ',
+};
+
+$self{subs} = {
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'continue'                    => 'continue',
+  'do_repost_invoices'          => 'do_repost_invoices',
+  'fld_config'                  => 'fld_config',
+  'fld_edit'                    => 'fld_edit',
+  'fld_save'                    => 'fld_save',
+  'js_calendar'                 => 'js_calendar',
+  'pickvalue'                   => 'pickvalue',
+  'repost_invoices'             => 'repost_invoices',
+  'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
+};
+
+1;
+

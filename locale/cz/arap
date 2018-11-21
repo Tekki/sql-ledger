@@ -1,28 +1,26 @@
-$self{charset} = 'ISO-8859-2';
-
 $self{texts} = {
-  'Accounting Menu'             => 'Menu úèetnictví',
+  'Accounting Menu'             => 'Menu ÃºÄetnictvÃ­',
   'Address'                     => 'Adresa',
   'April'                       => 'Duben',
   'August'                      => 'Srpen',
-  'Continue'                    => 'Pokraèování',
+  'Continue'                    => 'PokraÄovÃ¡nÃ­',
   'Date'                        => 'Datum',
   'December'                    => 'Prosinec',
   'Description'                 => 'Popis',
   'E-mail'                      => 'E-mail',
-  'February'                    => 'Únor',
+  'February'                    => 'Ãšnor',
   'Heading'                     => 'Nadpis',
   'January'                     => 'Leden',
-  'July'                        => 'Èervenec',
-  'June'                        => 'Èerven',
-  'March'                       => 'Bøezen',
-  'May'                         => 'Kvìten',
-  'Message'                     => 'Zpráva',
+  'July'                        => 'ÄŒervenec',
+  'June'                        => 'ÄŒerven',
+  'March'                       => 'BÅ™ezen',
+  'May'                         => 'KvÄ›ten',
+  'Message'                     => 'ZprÃ¡va',
   'November'                    => 'Listopad',
-  'Number'                      => 'Èíslo',
-  'October'                     => 'Øíjen',
-  'September'                   => 'Záøí',
-  'Subject'                     => 'Pøedmìt',
+  'Number'                      => 'ÄŒÃ­slo',
+  'October'                     => 'Å˜Ã­jen',
+  'September'                   => 'ZÃ¡Å™Ã­',
+  'Subject'                     => 'PÅ™edmÄ›t',
   'To'                          => 'do',
 };
 
@@ -76,8 +74,9 @@ $self{subs} = {
   'section_menu'                => 'section_menu',
   'select_name'                 => 'select_name',
   'select_project'              => 'select_project',
+  'show_progress'               => 'show_progress',
   'vendor_invoice_'             => 'vendor_invoice_',
-  'pokraèování'                 => 'continue',
+  'pokraÄovÃ¡nÃ­'              => 'continue',
 };
 
 1;

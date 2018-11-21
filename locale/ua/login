@@ -1,15 +1,15 @@
-$self{charset} = 'ISO-8859-5';
-
 $self{texts} = {
-  'Company'                     => 'ð¦ÄÐÒÉ¤ÍÓÔ×Ï',
-  'Continue'                    => 'ðÒÏÄÏ×ÖÉÔÉ',
-  'Incorrect Dataset version!'  => 'îÅ×¦ÒÎÁ ×ÅÒÓ¦Ñ âÁÚÉ äÁÎÉÈ!',
-  'Login'                       => 'ðÏÞÁÔÏË óÅÁÎÓÕ',
-  'Name'                        => 'îÁÚ×Á',
-  'No email address for'        => 'îÅ ×ËÁÚÁÎÁ ÁÄÒÅÓÁ ÅÌ. ÐÏÛÔÉ ÄÌÑ',
-  'Password'                    => 'ðÁÒÏÌØ',
-  'Version'                     => '÷ÅÒÓ¦Ñ',
-  'You did not enter a name!'   => 'îÅ ××ÅÄÅÎÏ ÎÁÚ×Õ',
+  'Company'                     => 'ÐŸÑ–Ð´Ð¿Ñ€Ð¸Ñ”Ð¼ÑÑ‚Ð²Ð¾',
+  'Continue'                    => 'ÐŸÑ€Ð¾Ð´Ð¾Ð²Ð¶Ð¸Ñ‚Ð¸',
+  'Dataset is newer than version!' => 'Ð‘Ð°Ð·Ð° Ð´Ð°Ð½Ð¸Ñ… Ð½Ð¾Ð²Ñ–ÑˆÐ° Ð½Ñ–Ð¶ Ð²ÐµÑ€ÑÑ–Ñ!',
+  'Incorrect Dataset version!'  => 'ÐÐµÐ²Ñ–Ñ€Ð½Ð° Ð²ÐµÑ€ÑÑ–Ñ Ð‘Ð°Ð·Ð¸ Ð”Ð°Ð½Ð¸Ñ…!',
+  'Login'                       => 'Ð’Ñ…Ñ–Ð´',
+  'Name'                        => 'ÐÐ°Ð·Ð²Ð°',
+  'No email address for'        => 'ÐÐµ Ð²ÐºÐ°Ð·Ð°Ð½Ð° Ð°Ð´Ñ€ÐµÑÐ° ÐµÐ». Ð¿Ð¾ÑˆÑ‚Ð¸ Ð´Ð»Ñ',
+  'Password'                    => 'ÐŸÐ°Ñ€Ð¾Ð»ÑŒ',
+  'Upgrading to Version'        => 'ÐžÐ½Ð¾Ð²Ð»ÐµÐ½Ð½Ñ Ð´Ð¾ Ð²ÐµÑ€ÑÑ–Ñ—',
+  'Version'                     => 'Ð’ÐµÑ€ÑÑ–Ñ',
+  'You did not enter a name!'   => 'ÐÐµ Ð²Ð²ÐµÐ´ÐµÐ½Ð¾ Ð½Ð°Ð·Ð²Ñƒ!',
 };
 
 $self{subs} = {
@@ -20,8 +20,8 @@ $self{subs} = {
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
   'tan_login'                   => 'tan_login',
-  'ðÒÏÄÏ×ÖÉÔÉ'                  => 'continue',
-  'ðÏÞÁÔÏË_óÅÁÎÓÕ'              => 'login',
+  'ÐŸÑ€Ð¾Ð´Ð¾Ð²Ð¶Ð¸Ñ‚Ð¸'        => 'continue',
+  'Ð’Ñ…Ñ–Ð´'                    => 'login',
 };
 
 1;

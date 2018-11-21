@@ -1,6 +1,6 @@
 $self{texts} = {
   'Continue'                    => 'Continuar',
-  'Password'                    => 'Contraseña',
+  'Password'                    => 'ContraseÃ±a',
 };
 
 $self{subs} = {

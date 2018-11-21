@@ -1,21 +1,19 @@
-$self{charset} = 'ISO-8859-2';
-
 $self{texts} = {
-  'Accounting Menu'             => 'Menu úèetnictví',
+  'Accounting Menu'             => 'Menu ÃºÄetnictvÃ­',
   'April'                       => 'Duben',
   'August'                      => 'Srpen',
   'December'                    => 'Prosinec',
   'Description'                 => 'Popis',
-  'February'                    => 'Únor',
+  'February'                    => 'Ãšnor',
   'Heading'                     => 'Nadpis',
   'January'                     => 'Leden',
-  'July'                        => 'Èervenec',
-  'June'                        => 'Èerven',
-  'March'                       => 'Bøezen',
-  'May'                         => 'Kvìten',
+  'July'                        => 'ÄŒervenec',
+  'June'                        => 'ÄŒerven',
+  'March'                       => 'BÅ™ezen',
+  'May'                         => 'KvÄ›ten',
   'November'                    => 'Listopad',
-  'October'                     => 'Øíjen',
-  'September'                   => 'Záøí',
+  'October'                     => 'Å˜Ã­jen',
+  'September'                   => 'ZÃ¡Å™Ã­',
 };
 
 $self{subs} = {
@@ -39,6 +37,7 @@ $self{subs} = {
   'save_column'                 => 'save_column',
   'save_report'                 => 'save_report',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
 };
 
 1;

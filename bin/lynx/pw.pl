@@ -21,13 +21,14 @@ sub getpassword {
     require "$form->{path}/custom/pw.pl";
   }
 
-  my $login = ($form->{"root login"}) ? "root login" : $form->{login};
-  
+  my $login = ($form->{"root login"}) ? "root" : $form->{login};
+  $login =~ s/(\@| )/_/g;
+
   my @d = split / +/, scalar gmtime(time);
   my $today = "$d[0], $d[2]-$d[1]-$d[4] $d[3] GMT";
 
   $pwt = $locale->text('Password');
-  
+
   if ($form->{stylesheet} && (-f "css/$form->{stylesheet}")) {
     $stylesheet = qq|<LINK REL="stylesheet" HREF="css/$form->{stylesheet}" TYPE="text/css" TITLE="SQL-Ledger stylesheet">
 |;
@@ -44,14 +45,14 @@ sub getpassword {
 Content-Type: text/html
 
 <head>
-  <title>$form->{titlebar}</title>
+  <title>$pwt</title>
   $stylesheet
   $charset
 </head>
 |;
-  
+
   $sessionexpired = qq|<b><font color=red><blink>|.$locale->text('Session expired!').qq|</blink></font></b><p>| if $s;
-  
+
   print qq|
 <script language="javascript" type="text/javascript">
 <!--
@@ -89,7 +90,7 @@ function sf(){
   }
 
   $form->hide_form;
-  
+
   print qq|
 </form>
 

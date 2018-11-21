@@ -36,9 +36,6 @@ if (-f "$form->{path}/custom/$form->{login}/$form->{script}") {
   $form->error($@) if ($@);
 }
 
-# window title bar
-$form->{titlebar} = "SQL-Ledger";
-
 if ($form->{action}) {
   &{ $locale->findsub($form->{action}) };
 } else {
@@ -65,7 +62,7 @@ var agt = navigator.userAgent.toLowerCase();
 var is_major = parseInt(navigator.appVersion);
 var is_nav = ((agt.indexOf('mozilla') != -1) && (agt.indexOf('spoofer') == -1)
            && (agt.indexOf('compatible') == -1) && (agt.indexOf('opera') == -1)
-	   && (agt.indexOf('webtv') == -1));
+           && (agt.indexOf('webtv') == -1));
 var is_nav4lo = (is_nav && (is_major <= 4));
 
 function jsp() {
@@ -99,23 +96,23 @@ function jsp() {
     <form method=post name=main action=$form->{script}>
 
       <table width=100%>
-	<tr>
-	  <td align=center>
-	    <table>
-	      <tr>
-		<th align=right>|.$locale->text('Name').qq|</th>
-		<td><input class=login name=login size=30></td>
-	      </tr> 
-	      <tr>
-		<th align=right>|.$locale->text('Password').qq|</th>
-		<td><input class=login type=password name=password size=30></td>
-	      </tr>
-	    </table>
+        <tr>
+          <td align=center>
+            <table>
+              <tr>
+                <th align=right>|.$locale->text('Name').qq|</th>
+                <td><input class=login name=login size=30></td>
+              </tr>
+              <tr>
+                <th align=right>|.$locale->text('Password').qq|</th>
+                <td><input class=login type=password name=password size=30></td>
+              </tr>
+            </table>
 
-	    <br>
-	    <input type=submit name=action value="|.$locale->text('Login').qq|">
-	  </td>
-	</tr>
+            <br>
+            <input type=submit name=action value="|.$locale->text('Login').qq|">
+          </td>
+        </tr>
       </table>
 |;
 
@@ -127,7 +124,7 @@ function jsp() {
     </td>
   </tr>
 </table>
-  
+
 </body>
 </html>
 |;
@@ -137,7 +134,7 @@ function jsp() {
 
 sub selectdataset {
   my ($login) = @_;
-  
+
   if (-f "css/sql-ledger.css") {
     $form->{stylesheet} = "sql-ledger.css";
   }
@@ -168,39 +165,39 @@ sub selectdataset {
 <input type=hidden name=beenthere value=1>
 
       <table width=100%>
-	<tr>
-	  <td align=center>
-	    <table>
-	      <tr>
-		<th align=right>|.$locale->text('Name').qq|</th>
-		<td>$form->{login}</td>
-	      </tr> 
-	      <tr>
-		<th align=right>|.$locale->text('Password').qq|</th>
-		<td><input class=login type=password name=password size=30 value=$form->{password}></td>
-	      </tr>
-	      <tr>
-		<th align=right>|.$locale->text('Company').qq|</th>
-		<td>|;
-		
-		$form->hide_form(qw(js path));
-	      
-		$checked = "checked";
-		for (sort { lc $login{$a} cmp lc $login{$b} } keys %{ $login }) {
-		  print qq|
-		  <br><input class=login type=radio name=login value=$_ $checked>$login->{$_}
-		  |;
-		  $checked = "";
-		}
+        <tr>
+          <td align=center>
+            <table>
+              <tr>
+                <th align=right>|.$locale->text('Name').qq|</th>
+                <td>$form->{login}</td>
+              </tr>
+              <tr>
+                <th align=right>|.$locale->text('Password').qq|</th>
+                <td><input class=login type=password name=password size=30 value=$form->{password}></td>
+              </tr>
+              <tr>
+                <th align=right>|.$locale->text('Company').qq|</th>
+                <td>|;
 
-		print qq|
-		  </td>
-	      </tr>
-	    </table>
-	    <br>
-	    <input type=submit name=action value="|.$locale->text('Login').qq|">
-	  </td>
-	</tr>
+                $form->hide_form(qw(js path));
+
+                $checked = "checked";
+                for (sort { lc $login{$a} cmp lc $login{$b} } keys %{ $login }) {
+                  print qq|
+                  <br><input class=login type=radio name=login value=$_ $checked>$login->{$_}
+                  |;
+                  $checked = "";
+                }
+
+                print qq|
+                  </td>
+              </tr>
+            </table>
+            <br>
+            <input type=submit name=action value="|.$locale->text('Login').qq|">
+          </td>
+        </tr>
       </table>
 
 </form>
@@ -208,7 +205,7 @@ sub selectdataset {
     </td>
   </tr>
 </table>
-  
+
 </body>
 </html>
 |;
@@ -221,7 +218,7 @@ sub login {
 
   $form->{stylesheet} = "sql-ledger.css";
   $form->{favicon} = "favicon.ico";
-  
+
   $form->error($locale->text('You did not enter a name!')) unless ($form->{login});
 
   if (! $form->{beenthere}) {
@@ -232,20 +229,20 @@ sub login {
     while (@members) {
       $_ = shift @members;
       if (/^\[(.*\@.*)\]/) {
-	$login = $1;
-	if ($login =~ /^\Q$form->{login}\E(\@|$)/) {
-	  ($name, $dbname) = split /\@/, $login, 2;
-	  $login{$login} = $dbname;
+        $login = $1;
+        if ($login =~ /^\Q$form->{login}\E(\@|$)/) {
+          ($name, $dbname) = split /\@/, $login, 2;
+          $login{$login} = $dbname;
 
-	  do {
-	    if (/^company=/) {
-	      (undef, $company) = split /=/, $_, 2;
-	      chop $company;
-	      $login{$login} = $company if $company;
-	    }
-	    $_ = shift @members;
-	  } until /^\s+$/;
-	}
+          do {
+            if (/^company=/) {
+              (undef, $company) = split /=/, $_, 2;
+              chop $company;
+              $login{$login} = $company if $company;
+            }
+            $_ = shift @members;
+          } until /^\s+$/;
+        }
       }
     }
 
@@ -254,7 +251,7 @@ sub login {
       exit;
     } else {
       if ($form->{login} !~ /\@/) {
-	$form->{login} .= "\@$dbname";
+        $form->{login} .= "\@$dbname";
       }
     }
   }
@@ -280,61 +277,66 @@ sub login {
       $form->info($err[4]);
 
       $form->info("<p><a href=menu.pl?login=$form->{login}&path=$form->{path}&action=display&main=company_logo&js=$form->{js}&password=$form->{password}>".$locale->text('Continue')."</a>");
-      
+
       exit;
- 
+
     }
 
     if ($errno == 5) {
       if (-f "$userspath/$user->{dbname}.LCK") {
-	if (-s "$userspath/$user->{dbname}.LCK") {
-	  open(FH, "$userspath/$user->{dbname}.LCK");
-	  $msg = <FH>;
-	  close(FH);
-	  if ($form->{admin}) {
-	    $form->info($msg);
-	  } else {
-	    $form->error($msg);
-	  }
-	} else {
-	  $msg = $locale->text('Dataset locked!');
-	  if ($form->{admin}) {
-	    $form->info($msg);
-	  } else {
-	    $form->error($msg);
-	  }
-	}
+        if (-s "$userspath/$user->{dbname}.LCK") {
+          open(FH, "$userspath/$user->{dbname}.LCK");
+          $msg = <FH>;
+          close(FH);
+          if ($form->{admin}) {
+            $form->info($msg);
+          } else {
+            $form->error($msg);
+          }
+        } else {
+          $msg = $locale->text('Dataset locked!');
+          if ($form->{admin}) {
+            $form->info($msg);
+          } else {
+            $form->error($msg);
+          }
+        }
 
       } else {
-      
-	# upgrade dataset and log in again
-	open FH, ">$userspath/$user->{dbname}.LCK" or $form->error($!);
 
-	for (qw(dbname dbhost dbport dbdriver dbuser dbpasswd)) { $form->{$_} = $user->{$_} }
+        # upgrade dataset and log in again
+        open FH, ">$userspath/$user->{dbname}.LCK" or $form->error($!);
 
-	$form->info($locale->text('Upgrading to Version')." $form->{version} ... ");
+        for (qw(dbname dbhost dbport dbdriver dbuser dbpasswd)) { $form->{$_} = $user->{$_} }
 
-	# required for Oracle
-	$form->{dbdefault} = $sid;
+        $form->info($locale->text('Upgrading to Version')." $form->{version} ... ");
 
-	$user->dbupdate(\%$form);
+        # required for Oracle
+        $form->{dbdefault} = $sid;
 
-	# remove lock file
-	unlink "$userspath/$user->{dbname}.LCK";
-	
+        $user->dbupdate(\%$form);
+
+        # remove lock file
+        unlink "$userspath/$user->{dbname}.LCK";
+
       }
 
       $form->info("<p><a href=menu.pl?login=$form->{login}&path=$form->{path}&action=display&main=company_logo&js=$form->{js}&password=$form->{password}>".$locale->text('Continue')."</a>");
-      
+
       exit;
-      
+
     }
-    
+
     $form->error($err[$errno]);
-    
+
   }
 
   for (qw(dbconnect dbhost dbport dbname dbuser dbpasswd)) { $myconfig{$_} = $user->{$_} }
+
+  # create image directory
+  if (! -d "$images/$myconfig{dbname}") {
+    mkdir "$images/$myconfig{dbname}", oct("771") or $form->error("$images/$myconfig{dbname} : $!");
+  }
 
   if ($user->{tan} && $sendmail) {
     &email_tan;
@@ -350,7 +352,7 @@ sub login {
   # made it this far, setup callback for the menu
   $form->{callback} = "menu.pl?action=display";
   for (qw(login path password js sessioncookie)) { $form->{callback} .= "&$_=$form->{$_}" }
-  
+
   # check for recurring transactions
   if ($user->{acs} !~ /Recurring Transactions/) {
     if ($user->check_recurring(\%$form)) {
@@ -363,7 +365,7 @@ sub login {
   }
 
   $form->redirect;
-  
+
 }
 
 
@@ -435,18 +437,18 @@ sub email_tan {
       <form method=post action=$form->{script}>
 
       <table width=100%>
-	<tr>
-	  <td align=center>
-	    <table>
-	      <tr>
-		<th align=right>|.$locale->text('TAN').qq|</th>
-		<td><input class=login type=password name=password size=30></td>
-	      </tr>
-	    </table>
-	    <br>
-	    <input type=submit name=action value="|.$locale->text('Continue').qq|">
-	  </td>
-	</tr>
+        <tr>
+          <td align=center>
+            <table>
+              <tr>
+                <th align=right>|.$locale->text('TAN').qq|</th>
+                <td><input class=login type=password name=password size=30></td>
+              </tr>
+            </table>
+            <br>
+            <input type=submit name=action value="|.$locale->text('Continue').qq|">
+          </td>
+        </tr>
       </table>
 |;
 
@@ -459,7 +461,7 @@ sub email_tan {
     </td>
   </tr>
 </table>
-  
+
 </body>
 </html>
 |;
@@ -515,7 +517,7 @@ sub tan_login {
     $form->{callback} .= "&main=company_logo";
 
     $form->redirect;
-   
+
   }
 
 }

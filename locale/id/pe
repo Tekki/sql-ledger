@@ -70,6 +70,7 @@ $self{texts} = {
   'Vendor'                      => 'Supplier',
   'Vendor Number'               => 'Nomor Supplier',
   'Vendor not on file!'         => 'Data Supplier tidak ditemukan!',
+  'Warehouse'                   => 'Gudang',
   'Weight'                      => 'Berat',
   'Year'                        => 'Tahun',
 };
@@ -139,6 +140,7 @@ $self{subs} = {
   'section_menu'                => 'section_menu',
   'select_customer'             => 'select_customer',
   'select_name'                 => 'select_name',
+  'show_progress'               => 'show_progress',
   'stock'                       => 'stock',
   'translation'                 => 'translation',
   'translation_footer'          => 'translation_footer',

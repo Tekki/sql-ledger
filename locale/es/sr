@@ -1,9 +1,9 @@
 $self{texts} = {
-  'Accounting Menu'             => 'Menú general',
+  'Accounting Menu'             => 'MenÃº general',
   'April'                       => 'Abril',
   'August'                      => 'Agosto',
   'December'                    => 'Diciembre',
-  'Description'                 => 'Descripción',
+  'Description'                 => 'DescripciÃ³n',
   'February'                    => 'Febrero',
   'Heading'                     => 'Encabezado',
   'January'                     => 'Enero',
@@ -37,6 +37,7 @@ $self{subs} = {
   'save_column'                 => 'save_column',
   'save_report'                 => 'save_report',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
 };
 
 1;

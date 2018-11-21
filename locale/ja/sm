@@ -1,0 +1,37 @@
+$self{texts} = {
+  'April'                       => '4月',
+  'August'                      => '8月',
+  'Continue'                    => '続ける',
+  'Date missing!'               => '日付が必要です',
+  'December'                    => '12月',
+  'February'                    => '2月',
+  'January'                     => '1月',
+  'July'                        => '7月',
+  'June'                        => '6月',
+  'March'                       => '3月',
+  'May'                         => '5月',
+  'November'                    => '11月',
+  'October'                     => '10月',
+  'September'                   => '9月',
+  'done'                        => '済',
+};
+
+$self{subs} = {
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'continue'                    => 'continue',
+  'do_repost_invoices'          => 'do_repost_invoices',
+  'fld_config'                  => 'fld_config',
+  'fld_edit'                    => 'fld_edit',
+  'fld_save'                    => 'fld_save',
+  'js_calendar'                 => 'js_calendar',
+  'pickvalue'                   => 'pickvalue',
+  'repost_invoices'             => 'repost_invoices',
+  'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
+};
+
+1;
+

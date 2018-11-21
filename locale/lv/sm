@@ -1,19 +1,19 @@
-$self{charset} = 'ISO-8859-13';
-
 $self{texts} = {
-  'April'                       => 'Aprîlî',
-  'August'                      => 'Augustâ',
-  'Continue'                    => 'Turpinât',
-  'December'                    => 'Decembrî',
-  'February'                    => 'Februârî',
-  'January'                     => 'Janvârî',
-  'July'                        => 'Jûlijâ',
-  'June'                        => 'Jûnijâ',
-  'March'                       => 'Martâ',
+  'April'                       => 'AprÄ«lÄ«',
+  'August'                      => 'AugustÄ',
+  'Continue'                    => 'TurpinÄt',
+  'Date missing!'               => 'Nav norÄdÄ«ts datums!',
+  'December'                    => 'DecembrÄ«',
+  'February'                    => 'FebruÄrÄ«',
+  'January'                     => 'JanvÄrÄ«',
+  'July'                        => 'JÅ«lijÄ',
+  'June'                        => 'JÅ«nijÄ',
+  'March'                       => 'MartÄ',
   'May'                         => 'Mai',
-  'November'                    => 'Novembrî',
-  'October'                     => 'Oktobrî',
-  'September'                   => 'Septembrî',
+  'November'                    => 'NovembrÄ«',
+  'October'                     => 'OktobrÄ«',
+  'September'                   => 'SeptembrÄ«',
+  'done'                        => 'izdarÄ«ts',
 };
 
 $self{subs} = {
@@ -30,6 +30,7 @@ $self{subs} = {
   'pickvalue'                   => 'pickvalue',
   'repost_invoices'             => 'repost_invoices',
   'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
 };
 
 1;

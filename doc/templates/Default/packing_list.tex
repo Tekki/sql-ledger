@@ -1,8 +1,4 @@
-\documentclass{scrartcl}
-\usepackage[latin1]{inputenc}
-\usepackage{tabularx}
-\usepackage[letterpaper,top=2cm,bottom=-3cm,left=1.1cm,right=1.5cm]{geometry}
-\usepackage{graphicx}
+<%include preamble.tex%>
 
 \begin{document}
 
@@ -16,7 +12,7 @@
   \parbox{\textwidth}{
   \tiny
    \rule[1.5em]{\textwidth}{0.5pt}
-Items returned are subject to a 10\% restocking charge.
+Items returned are subject to a <%restockingcharge%> \% restocking charge.
 A return authorization must be obtained from <%company%> before goods are
 returned. Returns must be shipped prepaid and properly insured.
 <%company%> will not be responsible for damages during transit.

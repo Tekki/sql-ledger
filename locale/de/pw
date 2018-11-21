@@ -1,9 +1,7 @@
-$self{charset} = 'ISO-8859-1';
-
 $self{texts} = {
   'Continue'                    => 'Weiter',
   'Password'                    => 'Passwort',
-  'Session expired!'            => 'Sitzung abgelaufen!',
+  'Session expired!'            => 'Sitzungsdauer abgelaufen!',
 };
 
 $self{subs} = {

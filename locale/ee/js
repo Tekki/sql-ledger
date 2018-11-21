@@ -1,5 +1,3 @@
-$self{charset} = 'ISO-8859-15';
-
 $self{texts} = {
   'April'                       => 'Aprill',
   'August'                      => 'August',
@@ -8,7 +6,7 @@ $self{texts} = {
   'January'                     => 'Jaanuar',
   'July'                        => 'Juuli',
   'June'                        => 'Juuni',
-  'March'                       => 'Märts',
+  'March'                       => 'MÃ¤rts',
   'May'                         => 'Mai',
   'November'                    => 'November',
   'October'                     => 'Oktoober',
@@ -23,6 +21,7 @@ $self{subs} = {
   'js_calendar'                 => 'js_calendar',
   'pickvalue'                   => 'pickvalue',
   'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
 };
 
 1;

@@ -1,5 +1,3 @@
-$self{charset} = 'UTF8';
-
 $self{texts} = {
   'AP'                          => 'Покупки',
   'AR'                          => 'Продажби',
@@ -204,6 +202,7 @@ $self{subs} = {
   'select_name'                 => 'select_name',
   'select_payment'              => 'select_payment',
   'select_project'              => 'select_project',
+  'show_progress'               => 'show_progress',
   'update'                      => 'update',
   'update_payment'              => 'update_payment',
   'update_payments'             => 'update_payments',
@@ -212,7 +211,9 @@ $self{subs} = {
   'void_receipts'               => 'void_receipts',
   'yes__reissue_checks'         => 'yes__reissue_checks',
   'yes__reissue_receipts'       => 'yes__reissue_receipts',
+  'yes__void_checks'            => 'yes__void_checks',
   'yes__void_payments'          => 'yes__void_payments',
+  'yes__void_receipts'          => 'yes__void_receipts',
   'Продължение'      => 'continue',
   'Изтрии_задачата' => 'delete_schedule',
   'Запази'                => 'post',

@@ -1,0 +1,17 @@
+$self{texts} = {
+  'Customer'                    => 'Debtor',
+  'Customer Number'             => 'Debtor Number',
+};
+
+$self{subs} = {
+  'continue'                    => 'continue',
+  'display_payment'             => 'display_payment',
+  'display_sales_invoice'       => 'display_sales_invoice',
+  'import'                      => 'import',
+  'import_payments'             => 'import_payments',
+  'import_sales_invoices'       => 'import_sales_invoices',
+  'xrefhdr'                     => 'xrefhdr',
+};
+
+1;
+

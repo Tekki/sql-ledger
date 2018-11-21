@@ -2,36 +2,20 @@
 <body bgcolor=ffffff>
 
 <table width=100%>
+
+  <%include letterhead.html%>
+
   <tr>
     <td width=10>&nbsp;</td>
 
-    <td>
-      <table width=100%>
-        <tr>
-          <td>
-            <h4>
-            <%company%><br>
-            <%address%>
-            </h4>
-          </td>
-
-          <th><img src=sql-ledger.png border=0 width=84 height=58></th>
-
-          <td align=right>
-            <h4>
-            Tel: <%tel%><br>
-            Fax: <%fax%>
-            </h4>
-          </td>
-        </tr>
-
-      </table>
-    </td>
+    <th colspan=3>
+      <h4>C R E D I T &nbsp;&nbsp; I N V O I C E</h4>
+    </th>
   </tr>
 
   <tr>
     <td>&nbsp;</td>
-
+ 
     <td>
       <table width=100% cellspacing=5>
         <tr bgcolor=000000>
@@ -84,15 +68,6 @@
   </tr>
 
   <tr height=5></tr>
-
-  <tr>
-    <td>&nbsp;</td>
-    <th align=left>
-      <h2>C R E D I T &nbsp;&nbsp; I N V O I C E</h2>
-    </th>
-  </tr>
- 
-  <tr height=5></tr>
   
   <tr>
     <td>&nbsp;</td>
@@ -100,13 +75,14 @@
     <td>
       <table width=100% border=1>
         <tr>
-	  <th width=14% align=left nowrap>Invoice #</th>
-	  <th width=14% align=left nowrap>Invoice Date</th>
-	  <th width=14% align=left nowrap>Due Date</th>
-	  <th width=14% align=left nowrap>Order #</th>
-	  <th width=14% align=left nowrap>Salesperson</th>
-	  <th width=14% align=left nowrap>Shipping Point</th>
-	  <th width=14% align=left nowrap>Ship via</th>
+	  <th width=12% align=left nowrap>Invoice #</th>
+	  <th width=12% align=left nowrap>Invoice Date</th>
+	  <th width=13% align=left nowrap>Due Date</th>
+	  <th width=13% align=left nowrap>Order #</th>
+	  <th width=12% align=left nowrap>PO #</th>
+	  <th width=13% align=left nowrap>Salesperson</th>
+	  <th width=12% align=left nowrap>Shipping Point</th>
+	  <th width=13% align=left nowrap>Ship via</th>
 	</tr>
 
 	<tr>
@@ -114,6 +90,7 @@
 	  <td><%invdate%></td>
 	  <td><%duedate%></td>
 	  <td><%ordnumber%>&nbsp;</td>
+	  <td><%ponumber%>&nbsp;</td>
 	  <td><%employee%>&nbsp;</td>
 	  <td><%shippingpoint%>&nbsp;</td>
 	  <td><%shipvia%>&nbsp;</td>

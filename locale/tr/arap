@@ -1,27 +1,25 @@
-$self{charset} = 'ISO-8859-9';
-
 $self{texts} = {
-  'Accounting Menu'             => 'Muhasebe Menüsü',
+  'Accounting Menu'             => 'Muhasebe MenÃ¼sÃ¼',
   'Address'                     => 'Adres',
   'April'                       => 'Nisan',
-  'August'                      => 'Aðustos',
+  'August'                      => 'AÄŸustos',
   'Continue'                    => 'Devam',
   'Date'                        => 'Tarih',
-  'December'                    => 'Aralýk',
-  'Description'                 => 'Açýklama',
+  'December'                    => 'AralÄ±k',
+  'Description'                 => 'AÃ§Ä±klama',
   'E-mail'                      => 'Posta',
-  'February'                    => 'Þubat',
-  'Heading'                     => 'Baþlýk',
+  'February'                    => 'Åžubat',
+  'Heading'                     => 'BaÅŸlÄ±k',
   'January'                     => 'Ocak',
   'July'                        => 'Temmuz',
   'June'                        => 'Haziran',
   'March'                       => 'Mart',
   'May'                         => 'May',
-  'November'                    => 'Kasým',
+  'November'                    => 'KasÄ±m',
   'Number'                      => 'Numara',
   'October'                     => 'Ekim',
-  'September'                   => 'Eylül',
-  'To'                          => 'Bitiþ',
+  'September'                   => 'EylÃ¼l',
+  'To'                          => 'BitiÅŸ',
 };
 
 $self{subs} = {
@@ -74,6 +72,7 @@ $self{subs} = {
   'section_menu'                => 'section_menu',
   'select_name'                 => 'select_name',
   'select_project'              => 'select_project',
+  'show_progress'               => 'show_progress',
   'vendor_invoice_'             => 'vendor_invoice_',
   'devam'                       => 'continue',
 };

@@ -1,32 +1,13 @@
-\documentclass{scrartcl}
-\usepackage[latin1]{inputenc}
-\usepackage{tabularx}
-\usepackage[top=2.7cm,bottom=-1cm,left=1.9cm,right=0.5cm]{geometry}
-\usepackage{graphicx}
-\setlength{\parindent}{0pt}
+<%include preamble.tex%>
 
 \begin{document}
 
-\pagestyle{empty}
+\pagestyle{myheadings}
+\thispagestyle{empty}
 
 \fontfamily{cmss}\fontsize{10pt}{12pt}\selectfont
 
-\parbox{\textwidth}{%
-  \parbox[b]{.42\textwidth}{%
-    <%company%>
-   
-    <%address%>
-  }
-  \parbox[b]{.2\textwidth}{
-    \includegraphics[scale=0.3]{sql-ledger}
-  }\hfill
-  \begin{tabular}[b]{rr@{}}
-  Tel: & <%tel%>\\
-  Fax: & <%fax%>
-  \end{tabular}
-
-  \rule[1.5em]{\textwidth}{0.5pt}
-}
+<%include letterhead.tex%>
 
 \centerline{\textbf{C R E D I T} \hspace{0.3cm} \textbf{N O T E}}
 

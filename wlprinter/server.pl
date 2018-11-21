@@ -40,121 +40,119 @@ eval { require "../sql-ledger.conf"; };
 my $tokenfile = "../$userspath/wlprinter-tokens";
 my $spooldir  = "../$spool";
 
-read( STDIN, $_, $ENV{CONTENT_LENGTH} );
+read(STDIN, $_, $ENV{CONTENT_LENGTH});
 
-if ( $ENV{QUERY_STRING} ) {
-	$_ = $ENV{QUERY_STRING};
+if ($ENV{QUERY_STRING}) {
+  $_ = $ENV{QUERY_STRING};
 }
 
-if ( $ARGV[0] ) {
-	$_ = $ARGV[0];
+if ($ARGV[0]) {
+  $_ = $ARGV[0];
 }
 
 my @request = split(/&/);
-my ( $fields, $username );
+my ($fields, $username);
 
 foreach (@request) {
-	( $name, $value ) = split( /=/, $_ );
-	$fields{$name} = $value;
+  ($name, $value) = split(/=/, $_);
+  $fields{$name} = $value;
 }
 $fields{docid} =~ s/\D//g;
 
 $userid = $fields{id};
-%tokens = %{ retrieve($tokenfile) };
+%tokens = %{retrieve($tokenfile)};
 
-unless ( $userspath && -d "../$userspath" ) {
-	print "Content-Type: text/plain\n\n";
-	print "-105\nConfiguration error.\n";
-} elsif ( exists $tokens{$userid} ) {
-	if ( $spool && -d $spooldir ) {
-		$username = $tokens{$userid};
-		eval { &{ $fields{action} } };
-		if ($@) {
-			print "Content-Type: text/plain\n\n";
-			print "-104\nNo action specified.\n";
-		}
-	} else {
-		print "Content-Type: text/plain\n\n";
-		print "-106\nConfiguration error: spool directory.\n";
-	}
+unless ($userspath && -d "../$userspath") {
+  print "Content-Type: text/plain\n\n";
+  print "-105\nConfiguration error.\n";
+} elsif (exists $tokens{$userid}) {
+  if ($spool && -d $spooldir) {
+    $username = $tokens{$userid};
+    eval { &{$fields{action}} };
+    if ($@) {
+      print "Content-Type: text/plain\n\n";
+      print "-104\nNo action specified.\n";
+    }
+  } else {
+    print "Content-Type: text/plain\n\n";
+    print "-106\nConfiguration error: spool directory.\n";
+  }
 } else {
-	print "Content-Type: text/plain\n\n";
-	print "-101\nNot authenticated.\n";
+  print "Content-Type: text/plain\n\n";
+  print "-101\nNot authenticated.\n";
 }
 
 sub version {
-	print "Content-Type: text/plain\n\n";
-	print "1\n$version\n";
+  print "Content-Type: text/plain\n\n";
+  print "1\n$version\n";
 }
 
 sub list {
-	print "Content-Type: text/plain\n\n";
-	print "1\n";
-	for ( glob "$spooldir/$username/*" ) {
-		print basename($_) . "\n";
-	}
+  print "Content-Type: text/plain\n\n";
+  print "1\n";
+  for (glob "$spooldir/$username/*") {
+    print basename($_) . "\n";
+  }
 }
 
 sub head {
-	my $requestfile = "$spooldir/$username/$fields{docid}";
-	if ( $fields{docid} ne "" && -e $requestfile ) {
-		print "Content-Type: application/octet-stream\n\n";
-		open INPUT, "<", $requestfile;
-		for ( my $i = 0 ;
-			$i < $headlength && ( $_ = getc(INPUT) ) ne "" ; $i++ )
-		{
-			print $_;
-		}
-		close INPUT;
-	} else {
-		print "Content-Type: text/plain\n\n";
-		print "-102\nFile does not exist.\n";
-	}
+  my $requestfile = "$spooldir/$username/$fields{docid}";
+  if ($fields{docid} ne "" && -e $requestfile) {
+    print "Content-Type: application/octet-stream\n\n";
+    open INPUT, "<", $requestfile;
+    for (my $i = 0; $i < $headlength && ($_ = getc(INPUT)) ne ""; $i++) {
+      print $_;
+    }
+    close INPUT;
+  } else {
+    print "Content-Type: text/plain\n\n";
+    print "-102\nFile does not exist.\n";
+  }
 }
 
 sub get {
-	my $requestfile = "$spooldir/$username/$fields{docid}";
-	if ( $fields{docid} ne "" && -e $requestfile ) {
-		print "Content-Type: application/octet-stream\n\n";
-		open INPUT, "<", $requestfile;
-		while (<INPUT>) {
-			print $_;
-		}
-		close INPUT;
-	} else {
-		print "Content-Type: text/plain\n\n";
-		print "-102\nFile does not exist.\n";
-	}
+  my $requestfile = "$spooldir/$username/$fields{docid}";
+  if ($fields{docid} ne "" && -e $requestfile) {
+    print "Content-Type: application/octet-stream\n\n";
+    open INPUT, "<", $requestfile;
+    while (<INPUT>) {
+      print $_;
+    }
+    close INPUT;
+  } else {
+    print "Content-Type: text/plain\n\n";
+    print "-102\nFile does not exist.\n";
+  }
 }
 
 sub delete {
-	my $requestfile = "$spooldir/$username/$fields{docid}";
-	if ( $fields{docid} ne "" && -e $requestfile ) {
-		unlink $requestfile;
-		print "Content-Type: text/plain\n\n";
-		print "1\nFile deleted.\n";
-	} else {
-		print "Content-Type: text/plain\n\n";
-		print "-102\nFile does not exist.\n";
-	}
+  my $requestfile = "$spooldir/$username/$fields{docid}";
+  if ($fields{docid} ne "" && -e $requestfile) {
+    unlink $requestfile;
+    print "Content-Type: text/plain\n\n";
+    print "1\nFile deleted.\n";
+  } else {
+    print "Content-Type: text/plain\n\n";
+    print "-102\nFile does not exist.\n";
+  }
 }
 
 sub deleteall {
-	my $requestfiles = glob "$spooldir/$username/*";
-	if ($requestfiles) {
-		unlink $requestfiles;
-		print "Content-Type: text/plain\n\n";
-		print "1\nAll files deleted.\n";
-	} else {
-		print "Content-Type: text/plain\n\n";
-		print "-103\nNothing deleted.\n";
-	}
+  my $requestfiles = glob "$spooldir/$username/*";
+  if ($requestfiles) {
+    unlink $requestfiles;
+    print "Content-Type: text/plain\n\n";
+    print "1\nAll files deleted.\n";
+  } else {
+    print "Content-Type: text/plain\n\n";
+    print "-103\nNothing deleted.\n";
+  }
 }
 
 sub logout {
-	delete $tokens{$userid};
-	store \%tokens, $tokenfile;
+  delete $tokens{$userid};
+  store \%tokens, $tokenfile;
 
-	print "Content-Type: text/plain\n\n";
-	print "1\nLogged out.\n";
+  print "Content-Type: text/plain\n\n";
+  print "1\nLogged out.\n";
 }

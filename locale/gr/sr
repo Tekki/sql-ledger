@@ -1,19 +1,17 @@
-$self{charset} = 'ISO-8859-7';
-
 $self{texts} = {
-  'Accounting Menu'             => 'Μενπύ Λογιστικής',
-  'April'                       => 'Απρίλιος',
-  'August'                      => 'Αύγουστος',
-  'December'                    => 'Δεκέμβριος',
-  'Description'                 => 'Περιγραφή',
-  'February'                    => 'Φεβρουάριος',
-  'January'                     => 'Ιανουάριος',
-  'July'                        => 'Ιούλιος',
-  'June'                        => 'Ιούνιος',
-  'March'                       => 'Μάρτιος',
-  'May'                         => 'Μάϊος',
-  'November'                    => 'Νοέμβριος',
-  'October'                     => 'Οκτώβριος',
+  'Accounting Menu'             => 'ΞΞµΞ½Ο€Ο Ξ›ΞΏΞ³ΞΉΟƒΟ„ΞΉΞΊΞ®Ο‚',
+  'April'                       => 'Ξ‘Ο€ΟΞ―Ξ»ΞΉΞΏΟ‚',
+  'August'                      => 'Ξ‘ΟΞ³ΞΏΟ…ΟƒΟ„ΞΏΟ‚',
+  'December'                    => 'Ξ”ΞµΞΊΞ­ΞΌΞ²ΟΞΉΞΏΟ‚',
+  'Description'                 => 'Ξ ΞµΟΞΉΞ³ΟΞ±Ο†Ξ®',
+  'February'                    => 'Ξ¦ΞµΞ²ΟΞΏΟ…Ξ¬ΟΞΉΞΏΟ‚',
+  'January'                     => 'Ξ™Ξ±Ξ½ΞΏΟ…Ξ¬ΟΞΉΞΏΟ‚',
+  'July'                        => 'Ξ™ΞΏΟΞ»ΞΉΞΏΟ‚',
+  'June'                        => 'Ξ™ΞΏΟΞ½ΞΉΞΏΟ‚',
+  'March'                       => 'ΞΞ¬ΟΟ„ΞΉΞΏΟ‚',
+  'May'                         => 'ΞΞ¬ΟΞΏΟ‚',
+  'November'                    => 'ΞΞΏΞ­ΞΌΞ²ΟΞΉΞΏΟ‚',
+  'October'                     => 'ΞΞΊΟ„ΟΞ²ΟΞΉΞΏΟ‚',
 };
 
 $self{subs} = {
@@ -37,6 +35,7 @@ $self{subs} = {
   'save_column'                 => 'save_column',
   'save_report'                 => 'save_report',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
 };
 
 1;

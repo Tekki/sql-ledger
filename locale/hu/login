@@ -1,17 +1,15 @@
-$self{charset} = 'ISO-8859-2';
-
 $self{texts} = {
-  'Company'                     => 'Társaság',
-  'Continue'                    => 'Folytatás',
-  'Dataset is newer than version!' => 'A Cégadatbázis verziója újabb, mint a programé!',
-  'Incorrect Dataset version!'  => 'Érvénytelen adatbázisverzió!',
-  'Login'                       => 'Belépés',
-  'Name'                        => 'Név',
-  'No email address for'        => 'Nincs e-mail címe:',
-  'Password'                    => 'Jelszó',
-  'Upgrading to Version'        => 'Verzió karbantartás',
-  'Version'                     => 'Verzió',
-  'You did not enter a name!'   => 'Nem írt be nevet!',
+  'Company'                     => 'TÃ¡rsasÃ¡g',
+  'Continue'                    => 'FolytatÃ¡s',
+  'Dataset is newer than version!' => 'A CÃ©gadatbÃ¡zis verziÃ³ja Ãºjabb, mint a programÃ©!',
+  'Incorrect Dataset version!'  => 'Ã‰rvÃ©nytelen adatbÃ¡zisverziÃ³!',
+  'Login'                       => 'BelÃ©pÃ©s',
+  'Name'                        => 'NÃ©v',
+  'No email address for'        => 'Nincs e-mail cÃ­me:',
+  'Password'                    => 'JelszÃ³',
+  'Upgrading to Version'        => 'VerziÃ³ karbantartÃ¡s',
+  'Version'                     => 'VerziÃ³',
+  'You did not enter a name!'   => 'Nem Ã­rt be nevet!',
 };
 
 $self{subs} = {
@@ -22,8 +20,8 @@ $self{subs} = {
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
   'tan_login'                   => 'tan_login',
-  'folytatás'                   => 'continue',
-  'belépés'                     => 'login',
+  'folytatÃ¡s'                  => 'continue',
+  'belÃ©pÃ©s'                   => 'login',
 };
 
 1;

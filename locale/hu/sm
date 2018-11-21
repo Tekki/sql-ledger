@@ -1,19 +1,19 @@
-$self{charset} = 'ISO-8859-2';
-
 $self{texts} = {
-  'April'                       => 'Április',
+  'April'                       => 'Ãprilis',
   'August'                      => 'Augusztus',
-  'Continue'                    => 'Folytatás',
+  'Continue'                    => 'FolytatÃ¡s',
+  'Date missing!'               => 'DÃ¡tum hiÃ¡nyzik',
   'December'                    => 'December',
-  'February'                    => 'Február',
-  'January'                     => 'Január',
-  'July'                        => 'Július',
-  'June'                        => 'Június',
-  'March'                       => 'Március',
-  'May'                         => 'Máj.',
+  'February'                    => 'FebruÃ¡r',
+  'January'                     => 'JanuÃ¡r',
+  'July'                        => 'JÃºlius',
+  'June'                        => 'JÃºnius',
+  'March'                       => 'MÃ¡rcius',
+  'May'                         => 'MÃ¡j.',
   'November'                    => 'November',
-  'October'                     => 'Október',
+  'October'                     => 'OktÃ³ber',
   'September'                   => 'Szeptember',
+  'done'                        => 'elvÃ©gezve',
 };
 
 $self{subs} = {
@@ -30,6 +30,7 @@ $self{subs} = {
   'pickvalue'                   => 'pickvalue',
   'repost_invoices'             => 'repost_invoices',
   'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
 };
 
 1;

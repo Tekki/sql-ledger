@@ -1,5 +1,3 @@
-insert into mimetype (extension,contenttype) values ('png', 'image/png');
---
 INSERT INTO mimetype (extension, contenttype) VALUES ('acx', 'application/internet-property-stream');
 INSERT INTO mimetype (extension, contenttype) VALUES ('ai', 'application/postscript');
 INSERT INTO mimetype (extension, contenttype) VALUES ('aif', 'audio/x-aiff');
@@ -95,6 +93,8 @@ INSERT INTO mimetype (extension, contenttype) VALUES ('ms', 'application/x-troff
 INSERT INTO mimetype (extension, contenttype) VALUES ('mvb', 'application/x-msmediaview');
 INSERT INTO mimetype (extension, contenttype) VALUES ('nws', 'message/rfc822');
 INSERT INTO mimetype (extension, contenttype) VALUES ('oda', 'application/oda');
+INSERT INTO mimetype (extension, contenttype) VALUES ('ods', 'application/vnd.oasis.opendocument.spreadsheet');
+INSERT INTO mimetype (extension, contenttype) VALUES ('odt', 'application/vnd.oasis.opendocument.document');
 INSERT INTO mimetype (extension, contenttype) VALUES ('p10', 'application/pkcs10');
 INSERT INTO mimetype (extension, contenttype) VALUES ('p12', 'application/x-pkcs12');
 INSERT INTO mimetype (extension, contenttype) VALUES ('p7b', 'application/x-pkcs7-certificates');
@@ -112,6 +112,7 @@ INSERT INTO mimetype (extension, contenttype) VALUES ('pmc', 'application/x-perf
 INSERT INTO mimetype (extension, contenttype) VALUES ('pml', 'application/x-perfmon');
 INSERT INTO mimetype (extension, contenttype) VALUES ('pmr', 'application/x-perfmon');
 INSERT INTO mimetype (extension, contenttype) VALUES ('pmw', 'application/x-perfmon');
+INSERT INTO mimetype (extension, contenttype) VALUES ('png', 'image/png');
 INSERT INTO mimetype (extension, contenttype) VALUES ('pnm', 'image/x-portable-anymap');
 INSERT INTO mimetype (extension, contenttype) VALUES ('pot', 'application/vnd.ms-powerpoint');
 INSERT INTO mimetype (extension, contenttype) VALUES ('ppm', 'image/x-portable-pixmap');

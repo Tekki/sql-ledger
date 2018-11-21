@@ -36,7 +36,7 @@ sub import {
              partsgroup => 'Groups',
              coa => 'Chart of Accounts',
              gl => 'General Ledger'
-	   );
+           );
 
 # $locale->text('Import Sales Invoices')
 # $locale->text('Import Sales Orders')
@@ -52,15 +52,15 @@ sub import {
 
   $msg = "Import $title{$form->{type}}";
   $form->{title} = $locale->text($msg);
-  
+
   $form->helpref("import_$form->{type}", $myconfig{countrycode});
-  
+
   $form->header;
 
   $form->{nextsub} = "im_$form->{type}";
 
   $form->{delimiter} = ",";
-  
+
   if ($form->{type} eq 'payment') {
     IM->paymentaccounts(\%myconfig, \%$form);
     if (@{ $form->{all_paymentaccount} }) {
@@ -69,7 +69,7 @@ sub import {
       chomp $form->{defaultcurrency};
 
       for (@curr) { $form->{selectcurrency} .= "$_\n" }
-      
+
       $selectpaymentaccount = "";
       for (@{ $form->{all_paymentaccount} }) { $selectpaymentaccount .= qq|$_->{accno}--$_->{description}\n| }
       $paymentaccount = qq|
@@ -90,7 +90,7 @@ sub import {
     }
     $v11 = qq|
         <tr>
-	        <td><input name=filetype type=radio class=radio value=v11>&nbsp;|.$locale->text('.v11').qq|</td>
+                <td><input name=filetype type=radio class=radio value=v11>&nbsp;|.$locale->text('.v11').qq|</td>
         </tr>
 |;
   }
@@ -112,7 +112,7 @@ sub import {
 |;
 
   }
-  
+
   print qq|
 <body>
 
@@ -128,7 +128,7 @@ sub import {
       <table>
         $paymentaccount
         <tr>
-	        <th align="right">|.$locale->text('File to Import').qq|</th>
+                <th align="right">|.$locale->text('File to Import').qq|</th>
           <td>
             <input name=data size=60 type=file>
           </td>
@@ -180,7 +180,7 @@ sub import {
 sub export {
 
   %title = ( payment => 'Payments'
-	   );
+           );
 
 # $locale->text('Export Payments')
 
@@ -188,9 +188,9 @@ sub export {
 
   $msg = "Export $title{$form->{type}}";
   $form->{title} = $locale->text($msg);
-  
+
   $form->helpref("export_$form->{type}", $myconfig{countrycode});
-  
+
   $form->header;
 
   $form->{nextsub} = "ex_$form->{type}";
@@ -198,7 +198,7 @@ sub export {
 
   $form->{reportcode} = "export_$form->{type}";
   $form->{initreport} = 1;
-  
+
   for (qw(mm-dd-yy mm/dd/yy dd-mm-yy dd/mm/yy dd.mm.yy yyyy-mm-dd mmddyy ddmmyy yymmdd mmddyyyy ddmmyyyy yyyymmdd)) { $selectdateformat .= "$_\n" }
   $form->{dateformat} = $myconfig{dateformat};
 
@@ -207,7 +207,7 @@ sub export {
   if (@{ $form->{all_report} }) {
     $form->{selectreportform} = "\n";
     for (@{ $form->{all_report} }) { $form->{selectreportform} .= qq|$_->{reportdescription}--$_->{reportid}\n| }
-    
+
     $reportform = qq|
       <tr>
         <th align="right">|.$locale->text('Report').qq|</th>
@@ -225,7 +225,7 @@ sub export {
   for (qw(invnumber dcn name datepaid amount source)) {
     $form->{"l_$_"} = "checked";
   }
-  
+
   for (qw(includeheader stringsquoted)) {
     $form->{$_} = "checked";
   }
@@ -281,7 +281,7 @@ sub export {
       $form->{curr} = $form->{defaultcurrency};
 
       for (@curr) { $form->{selectcurrency} .= "$_\n" }
-      
+
       $form->{selectpaymentaccount} = "";
       for (@{ $form->{all_paymentaccount} }) { $form->{selectpaymentaccount} .= qq|$_->{accno}--$_->{description}\n| }
 
@@ -297,31 +297,31 @@ sub export {
           <th align="right">|.$locale->text('Account').qq|</th>
         <td>
           <select name=paymentaccount>|.$form->select_option($form->{selectpaymentaccount})
-	        .qq|</select>
-	  </td>
-	  <td>$includeinreport{accountnumber}->{html}</td>
+                .qq|</select>
+          </td>
+          <td>$includeinreport{accountnumber}->{html}</td>
 |;
 
       $currency = qq|
-	<tr>
-	  <th align="right" nowrap>|.$locale->text('Currency').qq|</th>
-	  <td><select name=curr>|
-	  .$form->select_option($form->{selectcurrency})
-	  .qq|</select>
-	  </td>
-	  <td>$includeinreport{curr}->{html}</td>
-	</tr>
+        <tr>
+          <th align="right" nowrap>|.$locale->text('Currency').qq|</th>
+          <td><select name=curr>|
+          .$form->select_option($form->{selectcurrency})
+          .qq|</select>
+          </td>
+          <td>$includeinreport{curr}->{html}</td>
+        </tr>
 |;
 
       if ($form->{selectpaymentmethod}) {
-	$paymentmethod = qq|
-	<tr>
-	  <th align="right" nowrap>|.$locale->text('Payment Method').qq|</th>
-	  <td><select name=paymentmethod>|
-	  .$form->select_option($form->{selectpaymentmethod}, undef, 1)
-	  .qq|</select></td>
-	  <td>$includeinreport{paymentmethod}->{html}</td>
-	</tr>
+        $paymentmethod = qq|
+        <tr>
+          <th align="right" nowrap>|.$locale->text('Payment Method').qq|</th>
+          <td><select name=paymentmethod>|
+          .$form->select_option($form->{selectpaymentmethod}, undef, 1)
+          .qq|</select></td>
+          <td>$includeinreport{paymentmethod}->{html}</td>
+        </tr>
 |;
       }
     } else {
@@ -349,7 +349,7 @@ sub export {
   &change_report(\%$form, \@input, \@checked, \%radio);
 
   &calendar;
-  
+
   print qq|
 <body>
 
@@ -388,44 +388,44 @@ sub export {
   <tr>
     <td>
       <table>
-	<tr>
-	  <th align=right>|.$locale->text('Type of File').qq|</th>
-	  <td>
-	    <table>
-	      <tr>
-	        <td><input name=filetype type=radio class=radio value=csv $form->{csv}>&nbsp;|.$locale->text('csv').qq|</td>
-		<td>|.$locale->text('Delimiter').qq|&nbsp;<input name=delimiter size=2 value="$form->{delimiter}"></td>
-		<td><input name=tabdelimited type=checkbox class=checkbox $form->{tabdelimited}>&nbsp;|.$locale->text('Tab delimited').qq|</td>
-		<td><input name=includeheader type=checkbox class=checkbox $form->{includeheader}>&nbsp;|.$locale->text('Include Header').qq|</td>
-		<td><input name=stringsquoted type=checkbox class=checkbox $form->{stringsquoted}>&nbsp;|.$locale->text('Strings quoted').qq|</td>
-	      </tr>
-	      <tr>
-	        <td><input name=filetype type=radio class=radio value=txt $form->{txt}>&nbsp;|.$locale->text('Fixed Length Text').qq|</td>
-	      </tr>
-	    </table>
-	  </td>
-	</tr>
-	<tr>
-	  <th align=right>|.$locale->text('Linefeed').qq|</th>
-	  <td>
-	    <table>
-	      <tr>
+        <tr>
+          <th align=right>|.$locale->text('Type of File').qq|</th>
+          <td>
+            <table>
+              <tr>
+                <td><input name=filetype type=radio class=radio value=csv $form->{csv}>&nbsp;|.$locale->text('csv').qq|</td>
+                <td>|.$locale->text('Delimiter').qq|&nbsp;<input name=delimiter size=2 value="$form->{delimiter}"></td>
+                <td><input name=tabdelimited type=checkbox class=checkbox $form->{tabdelimited}>&nbsp;|.$locale->text('Tab delimited').qq|</td>
+                <td><input name=includeheader type=checkbox class=checkbox $form->{includeheader}>&nbsp;|.$locale->text('Include Header').qq|</td>
+                <td><input name=stringsquoted type=checkbox class=checkbox $form->{stringsquoted}>&nbsp;|.$locale->text('Strings quoted').qq|</td>
+              </tr>
+              <tr>
+                <td><input name=filetype type=radio class=radio value=txt $form->{txt}>&nbsp;|.$locale->text('Fixed Length Text').qq|</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <th align=right>|.$locale->text('Linefeed').qq|</th>
+          <td>
+            <table>
+              <tr>
           <td><input name=linefeed type=radio class=radio value="UNIX" $form->{UNIX}>&nbsp;|.$locale->text('UNIX').qq|</td>
           <td><input name=linefeed type=radio class=radio value="MAC" $form->{CR}>&nbsp;|.$locale->text('MAC').qq|</td>
           <td><input name=linefeed type=radio class=radio value="DOS" $form->{DOS}>&nbsp;|.$locale->text('DOS').qq|</td>
           <td><input name=linefeed type=radio class=radio value="noLF" $form->{noLF}>&nbsp;|.$locale->text('None').qq|</td>
-	      </tr>
-	    </td>
-	  </table>
-	</tr>
-	<tr>
-	  <th align=right>|.$locale->text('Decimal Point').qq|</th>
-	  <td><input name=decimalpoint size=2 value="$form->{decimalpoint}"></td>
-	</tr>
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Include in Report').qq|</th>
-	  <td>
-	    <table>
+              </tr>
+            </td>
+          </table>
+        </tr>
+        <tr>
+          <th align=right>|.$locale->text('Decimal Point').qq|</th>
+          <td><input name=decimalpoint size=2 value="$form->{decimalpoint}"></td>
+        </tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Include in Report').qq|</th>
+          <td>
+            <table>
 |;
   while (@f) {
     print qq|<tr>\n|;
@@ -438,8 +438,8 @@ sub export {
 
   print qq|
             </table>
-	  </td>
-	</tr>
+          </td>
+        </tr>
       </table>
     </td>
   </tr>
@@ -464,7 +464,7 @@ sub export {
     require "$form->{path}/menu.pl";
     &menubar;
   }
-  
+
   print qq|
 </form>
 
@@ -478,9 +478,9 @@ sub export {
 sub im_sales_invoice {
 
   &import_file;
-  
+
   @column_index = qw(runningnumber ndx transdate invnumber name customernumber city invoicedescription total curr totalqty unit duedate employee);
-  
+
   $form->{callback} = "$form->{script}?action=import";
   for (qw(type login path)) { $form->{callback} .= "&$_=$form->{$_}" }
 
@@ -513,13 +513,13 @@ sub im_sales_invoice {
   $column_data{employee} = $locale->text('Salesperson');
 
   $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
-  
+
   $form->helpref("import_$form->{type}", $myconfig{countrycode});
 
   $form->header;
-  
+
   &check_all(qw(allbox ndx_));
- 
+
   print qq|
 <body>
 
@@ -547,18 +547,18 @@ sub im_sales_invoice {
   $k = 0;
 
   for $i (1 .. $form->{rowcount}) {
-    
+
     if ($i == $ndx) {
       $k++;
       $j++; $j %= 2;
       $ndx = shift @ndx;
-   
+
       print qq|
         <tr class=listrow$j>
 |;
 
       $total += $form->{"total_$i"};
-      
+
       for (@column_index) { $column_data{$_} = qq|<td>$form->{"${_}_$i"}</td>| }
       $column_data{total} = qq|<td align=right>|.$form->format_amount(\%myconfig, $form->{"total_$i"}, $form->{precision}).qq|</td>|;
       $column_data{totalqty} = qq|<td align=right>|.$form->format_amount(\%myconfig, $form->{"totalqty_$i"}).qq|</td>|;
@@ -573,9 +573,9 @@ sub im_sales_invoice {
       for (@column_index) { print $column_data{$_} }
 
       print qq|
-	</tr>
+        </tr>
 |;
-    
+
     }
 
   }
@@ -589,7 +589,7 @@ sub im_sales_invoice {
 |;
 
   for (@column_index) { print "\n$column_data{$_}" }
-  
+
   print qq|
         </tr>
       </table>
@@ -603,7 +603,7 @@ sub im_sales_invoice {
       <td>|;
       $form->info($locale->text('The following customers are not on file:')."\n\n");
     for (split /\n/, $form->{missingcustomer}) {
-	    $form->info("$_\n");
+            $form->info("$_\n");
     }
     print qq|
       </td>
@@ -617,7 +617,7 @@ sub im_sales_invoice {
       <td>|;
       $form->info($locale->text('The following parts are not on file:')."\n\n");
       for (split /\n/, $form->{missingpart}) {
-	$form->info("$_\n");
+        $form->info("$_\n");
       }
     print qq|
       </td>
@@ -647,15 +647,15 @@ sub im_sales_invoice {
 
 
 sub im_sales_order {
-  
+
   $form->{vc} = "customer";
   &im_order;
-  
+
 }
 
 
 sub im_purchase_order {
-  
+
   $form->{vc} = "vendor";
   &im_order;
 
@@ -663,16 +663,16 @@ sub im_purchase_order {
 
 
 sub im_order {
-  
+
   &import_file;
 
   @column_index = qw(runningnumber ndx transdate ordnumber name);
   push @column_index, "$form->{vc}number";
   push @column_index, qw(city orderdescription total curr);
-  
+
   $form->{callback} = "$form->{script}?action=import";
   for (qw(type login path)) { $form->{callback} .= "&$_=$form->{$_}" }
-  
+
   if ($form->{filetype} eq 'xml') {
     &xmlorder;
   }
@@ -703,9 +703,9 @@ sub im_order {
   $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
 
   $form->helpref("import_$form->{type}", $myconfig{countrycode});
-  
+
   $form->header;
- 
+
   &check_all(qw(allbox ndx_));
 
   print qq|
@@ -735,23 +735,23 @@ sub im_order {
   $k = 0;
 
   for $i (1 .. $form->{rowcount}) {
-    
+
     if ($i == $ndx) {
       $k++;
       $j++; $j %= 2;
       $ndx = shift @ndx;
-   
+
       print qq|
         <tr class=listrow$j>
 |;
 
       $total += $form->{"total_$i"};
-      
+
       for (@column_index) { $column_data{$_} = qq|<td>$form->{"${_}_$i"}</td>| }
       $column_data{total} = qq|<td align=right>|.$form->format_amount(\%myconfig, $form->{"total_$i"}, $form->{precision}).qq|</td>|;
 
       $column_data{runningnumber} = qq|<td align=right>$k</td>|;
-      
+
       if ($form->{"missingpart_$i"} || $form->{"missing$form->{vc}_$i"}) {
         $column_data{ndx} = qq|<td>&nbsp;</td>|;
       } else {
@@ -761,9 +761,9 @@ sub im_order {
       for (@column_index) { print $column_data{$_} }
 
       print qq|
-	</tr>
+        </tr>
 |;
-    
+
     }
 
   }
@@ -777,7 +777,7 @@ sub im_order {
 |;
 
   for (@column_index) { print "\n$column_data{$_}" }
-  
+
   print qq|
         </tr>
       </table>
@@ -786,7 +786,7 @@ sub im_order {
 |;
 
   $msg = ($form->{vc} eq 'customer') ? $locale->text('The following customers are not on file:') : $locale->text('The following vendors are not on file:');
-  
+
   if ($form->{"missing$form->{vc}"}) {
     print qq|
     <tr>
@@ -807,7 +807,7 @@ sub im_order {
       <td>|;
       $form->info($locale->text('The following parts are not on file:')."\n\n");
       for (split /\n/, $form->{missingpart}) {
-	$form->info("$_\n");
+        $form->info("$_\n");
       }
     print qq|
       </td>
@@ -844,7 +844,7 @@ sub im_coa {
   for (qw(type login path)) { $form->{callback} .= "&$_=$form->{$_}" }
 
   &xrefhdr;
-  
+
   @column_index = qw();
 
   for (sort { $form->{$form->{type}}{$a}{ndx} <=> $form->{$form->{type}}{$b}{ndx} } keys %{ $form->{$form->{type}} }) {
@@ -860,17 +860,17 @@ sub im_coa {
   $column_data{link} = $locale->text('Link');
   $column_data{gifi_accno} = $locale->text('GIFI');
   $column_data{contra} = $locale->text('C');
-  
+
   $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
-  
+
   IM->prepare_import_data(\%myconfig, \%$form);
- 
+
   $form->helpref("import_$form->{type}", $myconfig{countrycode});
-  
+
   $form->header;
- 
+
   &check_all(qw(allbox ndx_));
-  
+
   print qq|
 <body>
 
@@ -895,9 +895,9 @@ sub im_coa {
 
 
   for $i (1 .. $form->{rowcount}) {
-    
+
       $j++; $j %= 2;
-   
+
       print qq|
         <tr class=listrow$j>
 |;
@@ -905,13 +905,13 @@ sub im_coa {
       for (@column_index) { $column_data{$_} = qq|<td>$form->{"${_}_$i"}</td>| }
 
       $column_data{contra} = ($form->{"contra_$i"}) ? qq|<td>*</td>| : qq|<td>&nbsp;</td>|;
-      
+
       for (@column_index) { print $column_data{$_} }
 
       print qq|
-	</tr>
+        </tr>
 |;
-    
+
   }
 
   print qq|
@@ -963,7 +963,7 @@ sub im_gl {
   for (qw(type login path)) { $form->{callback} .= "&$_=$form->{$_}" }
 
   &xrefhdr;
-  
+
   @column_index = (ndx);
 
   for (sort { $form->{$form->{type}}{$a}{ndx} <=> $form->{$form->{type}}{$b}{ndx} } keys %{ $form->{$form->{type}} }) {
@@ -986,19 +986,19 @@ sub im_gl {
   $column_data{exchangerate} = $locale->text('Rate');
   $column_data{source} = $locale->text('Source');
   $column_data{project} = $locale->text('Project');
-  
+
   $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
-  
+
   IM->prepare_import_data(\%myconfig, \%$form);
 
   $sameitem = "";
 
   for $i (1 .. $form->{rowcount}) {
-		unless ($form->{"reference_$i"}) {
+                unless ($form->{"reference_$i"}) {
       $form->error($locale->text('Reference missing!'));
-			exit;
-		}
-		
+                        exit;
+                }
+
     if ($form->{"reference_$i"} ne $sameitem) {
       $ndx{$form->{"reference_$i"}} = 1;
       $debit{$form->{"reference_$i"}} = $form->{"debit_$i"};
@@ -1011,11 +1011,11 @@ sub im_gl {
   }
 
   $form->helpref("import_$form->{type}", $myconfig{countrycode});
-  
+
   $form->header;
- 
+
   &check_all(qw(allbox ndx_));
-  
+
   print qq|
 <body>
 
@@ -1045,7 +1045,7 @@ sub im_gl {
   for $i (1 .. $form->{rowcount}) {
 
     $j++; $j %= 2;
- 
+
     print qq|
         <tr class=listrow$j>
 |;
@@ -1062,11 +1062,11 @@ sub im_gl {
     $sameitem = $form->{"reference_$i"};
 
     $form->hide_form("reference_$i");
-    
+
     for (@column_index) { print $column_data{$_} }
 
     print qq|
-	</tr>
+        </tr>
 |;
 
   }
@@ -1117,7 +1117,7 @@ sub xmlorder {
   @data = split /\n/, $form->{data};
 
   %xml = &xmlin(undef, \@data);
-  
+
   for (keys %xml) {
     if ($xml{$_} =~ 'ARRAY') {
       &xmlcsvhdr($xml{$_}, \%hdr);
@@ -1125,7 +1125,7 @@ sub xmlorder {
   }
 
   $form->{data} = "";
-  
+
   $i = 0;
   for (keys %hdr) {
     $order{$_} = $i;
@@ -1134,15 +1134,15 @@ sub xmlorder {
   }
   chop $form->{data};
   $form->{data} .= "\n";
-  
+
   %data = ();
-  
+
   for (keys %xml) {
     if ($xml{$_} =~ 'ARRAY') {
       &xmldata(\@{$xml{$_}}, \%data);
     }
   }
-  
+
 }
 
 
@@ -1151,15 +1151,15 @@ sub xmlin {
 
   my $key;
   my %xml;
-  
+
   unless ($tag) {
     $_ = shift @{$data};
     s/<\?xml //;
     s/\?>//;
-    
+
     %xml = split /[ =]/, $_;
-    
-    for (keys %xml) { 
+
+    for (keys %xml) {
       $xml{$_} =~ s/(^"|"$)//g;
     }
   }
@@ -1170,21 +1170,21 @@ sub xmlin {
     if (/<(\w+)/) {
       $key = $1;
       if (/<\/$key>/) {  # endkey?
-	s/^\s*//;
-	s/<$key.*?>?//;
-	s/<\/$key>//;
-	$xml{$key} = $_;
+        s/^\s*//;
+        s/<$key.*?>?//;
+        s/<\/$key>//;
+        $xml{$key} = $_;
       } else {
-	push @{ $xml{$key} }, ();
-	$l = @{$xml{$key}};
-	%{ $xml{$key}[$l] } = &xmlin($key, $data);
+        push @{ $xml{$key} }, ();
+        $l = @{$xml{$key}};
+        %{ $xml{$key}[$l] } = &xmlin($key, $data);
       }
     }
     last if ($tag && /<\/$tag>/);
   }
-  
+
   %xml;
-  
+
 }
 
 
@@ -1195,13 +1195,13 @@ sub xmlcsvhdr {
   for $ref (@{$xml}) {
     for (keys %{$ref}) {
       if ($ref->{$_} =~ 'ARRAY') {
-	&xmlcsvhdr($ref->{$_}, $hdr);
+        &xmlcsvhdr($ref->{$_}, $hdr);
       } else {
-	$hdr->{$_} = 1;
+        $hdr->{$_} = 1;
       }
     }
   }
-  
+
 }
 
 
@@ -1215,17 +1215,17 @@ sub xmlform {
 
     for (keys %{$ref}) {
       if ($ref->{$_} =~ 'ARRAY') {
-	&xmlform($_, $ref->{$_}, $form);
+        &xmlform($_, $ref->{$_}, $form);
       } else {
-	if ($i) {
-	  $form->{"${_}_$i"} = $ref->{$_};
-	} else {
-	  $form->{$_} = $ref->{$_};
-	}
+        if ($i) {
+          $form->{"${_}_$i"} = $ref->{$_};
+        } else {
+          $form->{$_} = $ref->{$_};
+        }
       }
     }
   }
-  
+
 }
 
 
@@ -1235,28 +1235,28 @@ sub xmldata {
   if ($xml =~ 'ARRAY') {
     for (@{$xml}) {
       if ($_ =~ 'ARRAY' || $_ =~ 'HASH') {
-	&xmldata($_, $data);
+        &xmldata($_, $data);
       } else {
-	push @{$data->{$_}}, $xml->{$_};
+        push @{$data->{$_}}, $xml->{$_};
       }
     }
   } elsif ($xml =~ 'HASH') {
     for (keys %{$xml}) {
       if ($_ =~ 'ARRAY' || $_ =~ 'HASH') {
-	&xmldata($_, $data);
+        &xmldata($_, $data);
       } else {
-	push @{$data->{$_}}, $xml->{$_};
+        push @{$data->{$_}}, $xml->{$_};
       }
     }
   }
-    
+
 }
 
 
 sub xrefhdr {
-  
+
   $form->{delimiter} ||= ',';
- 
+
   $i = 1;
 
   if ($form->{mapfile}) {
@@ -1284,7 +1284,7 @@ sub xrefhdr {
     }
     delete $form->{$form->{type}}{''};
     close FH;
-    
+
   } else {
     # get first line
     $str = (split /\n/, $form->{data})[0];
@@ -1298,7 +1298,7 @@ sub xrefhdr {
         $str =~ s/"$form->{delimiter}"/$form->{delimiter}/g;
       }
     }
-      
+
     for (split /$form->{delimiter}/, $str) {
       $form->{$form->{type}}{$_} = { field => $_, length => "", ndx => $i++ };
     }
@@ -1313,7 +1313,7 @@ sub import_sales_invoices {
 
   my %ndx = ();
   my @ndx = split / /, $form->{ndx};
-  
+
   my $i;
   my $j = shift @ndx;
   my $k = shift @ndx;
@@ -1328,13 +1328,13 @@ sub import_sales_invoices {
   }
 
   my $total = 0;
-  
+
   $newform = new Form;
 
   my $m = 0;
-  
+
   for $k (sort keys %ndx) {
-    
+
     if ($form->{"ndx_$k"}) {
 
       $m++;
@@ -1348,22 +1348,22 @@ sub import_sales_invoices {
       # post invoice
       $form->info("${m}. ".$locale->text('Posting Invoice ...'));
       if (IM->import_sales_invoice(\%myconfig, \%$newform, \@{ $ndx{$k} })) {
-	$form->{precision} = $newform->{precision};
+        $form->{precision} = $newform->{precision};
 
-	$form->info(qq| $newform->{invnumber}, $newform->{description}, $newform->{customernumber}, $newform->{name}, $newform->{city}, |);
-	$form->info($form->format_amount(\%myconfig, $newform->{invamount}, $newform->{precision}));
-	$form->info(" ... ");
-	
-	if ($newform->{rejected}) {
-	  $form->info($locale->text('rejected')."\n");
-	} elsif ($newform->{updated}) {
-	  $form->info($locale->text('updated')."\n");
-	} else {
-	  $form->info($locale->text('added')."\n");
-	}
-				
+        $form->info(qq| $newform->{invnumber}, $newform->{description}, $newform->{customernumber}, $newform->{name}, $newform->{city}, |);
+        $form->info($form->format_amount(\%myconfig, $newform->{invamount}, $newform->{precision}));
+        $form->info(" ... ");
+
+        if ($newform->{rejected}) {
+          $form->info($locale->text('rejected')."\n");
+        } elsif ($newform->{updated}) {
+          $form->info($locale->text('updated')."\n");
+        } else {
+          $form->info($locale->text('added')."\n");
+        }
+
       } else {
-	$form->error($locale->text('Posting failed!'));
+        $form->error($locale->text('Posting failed!'));
       }
 
       $total += $newform->{invamount};
@@ -1372,7 +1372,7 @@ sub import_sales_invoices {
   }
 
   $form->info("\n".$locale->text('Total:')." ".$form->format_amount(\%myconfig, $total, $form->{precision}));
-  
+
 }
 
 
@@ -1383,7 +1383,7 @@ sub import_orders {
 
   my %ndx = ();
   my @ndx = split / /, $form->{ndx};
-  
+
   my $i;
   my $j = shift @ndx;
   my $k = shift @ndx;
@@ -1398,13 +1398,13 @@ sub import_orders {
   }
 
   my $total = 0;
-  
+
   $newform = new Form;
 
   my $m = 0;
-  
+
   for $k (sort keys %ndx) {
-    
+
     if ($form->{"ndx_$k"}) {
 
       $m++;
@@ -1421,13 +1421,13 @@ sub import_orders {
         $form->info(qq| $newform->{ordnumber}, $newform->{description}, $newform->{"$form->{vc}number"}, $newform->{name}, $newform->{city}, |);
         $form->info($form->format_amount(\%myconfig, $newform->{ordtotal}, $newform->{precision}));
         $form->info(" ... ");
-				
+
         if ($newform->{updated}) {
           $form->info($locale->text('updated')."\n");
         } else {
           $form->info($locale->text('added')."\n");
         }
-        
+
       } else {
         $form->error($locale->text('Save failed!'));
       }
@@ -1438,15 +1438,15 @@ sub import_orders {
   }
 
   $form->info("\n".$locale->text('Total:')." ".$form->format_amount(\%myconfig, $total, $form->{precision}));
-  
+
 }
 
 
 
 sub im_payment {
-  
+
   &import_file;
- 
+
   &{ "im_$form->{filetype}_payment" }
 
 }
@@ -1484,7 +1484,7 @@ sub im_v11_payment {
   $form->{delimiter} = ",";
   $form->{stringsquoted} = 1;
   for (qw(tabdelimited mapfile)) { delete $form->{$_} }
-  
+
   &{ "im_$form->{filetype}_payment" };
 
 }
@@ -1498,14 +1498,14 @@ sub im_csv_payment {
   shift @flds;
   shift @flds;
   push @flds, qw(id source memo paymentmethod arap vc outstanding);
-  
+
   $form->{callback} = "$form->{script}?action=import";
   for (qw(type login path)) { $form->{callback} .= "&$_=$form->{$_}" }
-  
+
   &xrefhdr;
 
   IM->payment_links(\%myconfig, \%$form);
-  
+
   $column_data{runningnumber} = "&nbsp;";
   $column_data{datepaid} = $locale->text('Date Paid');
   $column_data{invnumber} = $locale->text('Invoice');
@@ -1516,13 +1516,13 @@ sub im_csv_payment {
   $column_data{dcn} = $locale->text('DCN');
   $column_data{amount} = $locale->text('Paid');
   $column_data{exchangerate} = $locale->text('Exch');
-  
+
   $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
-  
+
   $form->helpref("import_$form->{type}", $myconfig{countrycode});
 
   $form->header;
-  
+
   &check_all(qw(allbox ndx_));
 
   print qq|
@@ -1548,15 +1548,15 @@ sub im_csv_payment {
 |;
 
   for $i (1 .. $form->{rowcount}) {
-    
+
     $j++; $j %= 2;
- 
+
     print qq|
       <tr class=listrow$j>
 |;
 
     $total += $form->parse_amount(\%myconfig, $form->{"amount_$i"});
-    
+
     for (@column_index) { $column_data{$_} = qq|<td>$form->{"${_}_$i"}</td>| }
     $column_data{amount} = qq|<td align=right>$form->{"amount_$i"}</td>|;
 
@@ -1572,12 +1572,12 @@ sub im_csv_payment {
     for (@column_index) { print $column_data{$_} }
 
     print qq|
-	</tr>
+        </tr>
 |;
-    
+
     $form->{"paymentmethod_$i"} = qq|--$form->{"paymentmethod_id_$i"}|;
     $form->hide_form(map { "${_}_$i" } @flds);
-    
+
   }
 
   # print total
@@ -1589,7 +1589,7 @@ sub im_csv_payment {
 |;
 
   for (@column_index) { print "\n$column_data{$_}" }
-  
+
   print qq|
         </tr>
       </table>
@@ -1601,7 +1601,7 @@ sub im_csv_payment {
 
 </table>
 |;
-  
+
   $form->{paymentaccount} =~ s/--.*//;
 
   $form->hide_form(qw(precision rowcount type paymentaccount currency defaultcurrency login path callback));
@@ -1618,7 +1618,7 @@ sub im_csv_payment {
 
 
 sub import_file {
-  
+
   open(FH, "$userspath/$form->{tmpfile}") or $form->error("$userspath/$form->{tmpfile} : $!");
   while (<FH>) {
     $form->{data} .= $_;
@@ -1637,15 +1637,15 @@ sub import_payments {
   my $m = 0;
 
   $form->error($locale->text('Nothing to import!')) unless $form->{rowcount};
-  
+
   $newform = new Form;
-  
+
   for my $i (1 .. $form->{rowcount}) {
-    
+
     if ($form->{"ndx_$i"}) {
 
       $m++;
-      
+
       for (keys %$newform) { delete $newform->{$_} };
 
       for (qw(precision currency defaultcurrency)) { $newform->{$_} = $form->{$_} }
@@ -1657,27 +1657,27 @@ sub import_payments {
       $newform->{"paid_1"} = $form->{"amount_$i"};
       $newform->{"checked_1"} = 1;
       $newform->{"id_1"} = $form->{"id_$i"};
-      
+
       $form->info("${m}. ".$locale->text('Posting Payment ...'));
 
       if (CP->post_payment(\%myconfig, \%$newform)) {
-	$form->info(qq| $form->{"invnumber_$i"}, $form->{"description_$i"}, $form->{"companynumber_$i"}, $form->{"name_$i"}, $form->{"city_$i"}, $form->{"amount_$i"} ... | . $locale->text('ok'));
+        $form->info(qq| $form->{"invnumber_$i"}, $form->{"description_$i"}, $form->{"companynumber_$i"}, $form->{"name_$i"}, $form->{"city_$i"}, $form->{"amount_$i"} ... | . $locale->text('ok'));
 
-	$ou = $form->round_amount($form->{"outstanding_$i"} - $form->parse_amount(\%myconfig, $form->{"amount_$i"}), $form->{precision});
-	if ($ou) {
-	  if ($ou > 0) {
-	    $ou = $form->format_amount(\%myconfig, $ou, $form->{precision});
-	    $form->info(", $ou " . $locale->text('Outstanding'));
-	  } else {
-	    $ou = $form->format_amount(\%myconfig, $ou * -1, $form->{precision});
-	    $form->info(", $ou " . $locale->text('Overpaid'));
-	  }
-	}
+        $ou = $form->round_amount($form->{"outstanding_$i"} - $form->parse_amount(\%myconfig, $form->{"amount_$i"}), $form->{precision});
+        if ($ou) {
+          if ($ou > 0) {
+            $ou = $form->format_amount(\%myconfig, $ou, $form->{precision});
+            $form->info(", $ou " . $locale->text('Outstanding'));
+          } else {
+            $ou = $form->format_amount(\%myconfig, $ou * -1, $form->{precision});
+            $form->info(", $ou " . $locale->text('Overpaid'));
+          }
+        }
 
-	$form->info("\n");
-	
+        $form->info("\n");
+
       } else {
-	$form->error($locale->text('Posting failed!'));
+        $form->error($locale->text('Posting failed!'));
       }
     }
   }
@@ -1699,7 +1699,7 @@ sub im_vc {
   for (qw(type login path)) { $form->{callback} .= "&$_=$form->{$_}" }
 
   &xrefhdr;
-    
+
   @column_index = qw(runningnumber ndx);
 
   for (sort { $form->{$form->{type}}{$a}{ndx} <=> $form->{$form->{type}}{$b}{ndx} } keys %{ $form->{$form->{type}} }) {
@@ -1734,12 +1734,12 @@ sub im_vc {
   $column_data{enddate} = $locale->text('Enddate');
 
   $column_data{arap_accno} = ($form->{type} eq 'customer') ? $locale->text('AR') : $locale->text('AP');
-  
+
   $column_data{payment_accno} = $locale->text('Payment');
   $column_data{discount_accno} = $locale->text('Discount');
-  
+
   $column_data{taxaccounts} = $locale->text('Tax');
-  
+
   $column_data{cashdiscount} = $locale->text('%');
   $column_data{discountterms} = $locale->text('Terms');
   $column_data{threshold} = $locale->text('Threshold');
@@ -1757,7 +1757,7 @@ sub im_vc {
   $column_data{mobile} = $locale->text('Mobile');
   $column_data{gender} = $locale->text('Gender');
   $column_data{typeofcontact} = $locale->text('Type');
-  
+
   $column_data{taxincluded} = $locale->text('T');
   $column_data{iban} = $locale->text('IBAN');
   $column_data{bic} = $locale->text('BIC');
@@ -1770,13 +1770,13 @@ sub im_vc {
 
   $column_data{clearingnumber} = $locale->text('Clearing Number');
   $column_data{membernumber} = $locale->text('Member Number');
-  
+
   $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
 
   $form->helpref("import_$form->{type}", $myconfig{countrycode});
-  
+
   $form->header;
- 
+
   &check_all(qw(allbox ndx_));
 
   print qq|
@@ -1803,37 +1803,37 @@ sub im_vc {
 
   $form->{reportcode} = "import_$form->{type}";
   IM->prepare_import_data(\%myconfig, \%$form);
-  
+
   for $i (1 .. $form->{rowcount}) {
 
     $j++; $j %= 2;
 
     print qq|
-	<tr class=listrow$j>
+        <tr class=listrow$j>
 |;
 
     for (@column_index) {
       $column_data{$_} = qq|<td>$form->{"${_}_$i"}</td>|;
     }
-      
+
     for (qw(address1 address2 city zipcode state country)) {
       if ($form->{"${_}_$i"}) {
-	$form->{"address_$i"} .= qq|$form->{"${_}_$i"} |;
+        $form->{"address_$i"} .= qq|$form->{"${_}_$i"} |;
       }
     }
     chop $form->{"address_$i"};
     $column_data{address} = qq|<td>$form->{"address_$i"}</td>|;
-    
+
     $column_data{runningnumber} = qq|<td align=right>$i</td>|;
     $column_data{ndx} = qq|<td><input name="ndx_$i" type=checkbox class=checkbox checked></td>|;
- 
+
     for (@column_index) { print $column_data{$_} }
-      
+
     print qq|
-	</tr>
+        </tr>
 |;
   }
- 
+
   print qq|
       </table>
     </td>
@@ -1844,7 +1844,7 @@ sub im_vc {
 
 </table>
 |;
-  
+
   $form->hide_form(qw(rowcount type login path callback));
 
   if ($form->{type} eq 'customer') {
@@ -1854,7 +1854,7 @@ sub im_vc {
   }
 
   $form->print_button(\%button);
-  
+
   print qq|
 </form>
 
@@ -1867,7 +1867,7 @@ sub im_vc {
 
 sub import_customers { &import_vc }
 sub import_vendors { &import_vc }
-  
+
 sub import_vc {
 
   $form->{reportcode} = "import_$form->{type}";
@@ -1892,14 +1892,14 @@ sub im_labor { &im_item }
 
 
 sub im_item {
-  
+
   &import_file;
 
   $form->{callback} = "$form->{script}?action=import";
   for (qw(type login path)) { $form->{callback} .= "&$_=$form->{$_}" }
 
   &xrefhdr;
-   
+
   @column_index = qw(runningnumber ndx);
 
   for (sort { $form->{$form->{type}}{$a}{ndx} <=> $form->{$form->{type}}{$b}{ndx} } keys %{ $form->{$form->{type}} }) {
@@ -1934,20 +1934,20 @@ sub im_item {
   $column_data{barcode} = $locale->text('Barcode');
   $column_data{toolnumber} = $locale->text('Toolnumber');
   $column_data{priceupdate} = $locale->text('Updated');
-  
+
   $column_data{vendornumber} = $locale->text('Vendor Number');
   $column_data{vendorpartnumber} = $locale->text('Part Number');
   $column_data{leadtime} = $locale->text('Leadtime');
   $column_data{vendorcurr} = $locale->text('Curr');
-  
+
   $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
 
   $form->helpref("import_$form->{type}", $myconfig{countrycode});
-  
+
   $form->header;
- 
+
   &check_all(qw(allbox ndx_));
-  
+
   print qq|
 <body>
 
@@ -1972,7 +1972,7 @@ sub im_item {
 
   $form->{reportcode} = "import_$form->{type}";
   IM->prepare_import_data(\%myconfig, \%$form);
-  
+
   for $i (1 .. $form->{rowcount}) {
 
     $j++; $j %= 2;
@@ -1984,17 +1984,17 @@ sub im_item {
     for (@column_index) {
       $column_data{$_} = qq|<td>$form->{"${_}_$i"}</td>|;
     }
-      
+
     $column_data{runningnumber} = qq|<td align=right>$i</td>|;
     $column_data{ndx} = qq|<td><input name="ndx_$i" type=checkbox class=checkbox checked></td>|;
- 
+
     for (@column_index) { print $column_data{$_} }
-      
+
     print qq|
-	</tr>
+        </tr>
 |;
   }
- 
+
   print qq|
         </tr>
       </table>
@@ -2006,18 +2006,18 @@ sub im_item {
 
 </table>
 |;
-  
+
   $form->hide_form(qw(rowcount type login path callback));
 
   %button = ('part' => { ndx => 1, key => 'I', value => $locale->text('Import Parts') },
              'service' => { ndx => 1, key => 'I', value => $locale->text('Import Services') },
-	     'labor' => { ndx => 1, key => 'I', value => $locale->text('Import Labor/Overhead') }
+             'labor' => { ndx => 1, key => 'I', value => $locale->text('Import Labor/Overhead') }
             );
 
   for (qw(part service labor)) { delete $button{$_} unless $_ eq $form->{type} }
 
   $form->print_button(\%button);
-  
+
   print qq|
 </form>
 
@@ -2061,7 +2061,7 @@ sub im_partsgroup {
   for (qw(type login path)) { $form->{callback} .= "&$_=$form->{$_}" }
 
   &xrefhdr;
-    
+
   @column_index = qw(runningnumber ndx);
 
   for (sort { $form->{$form->{type}}{$a}{ndx} <=> $form->{$form->{type}}{$b}{ndx} } keys %{ $form->{$form->{type}} }) {
@@ -2072,13 +2072,13 @@ sub im_partsgroup {
   $column_data{partsgroup} = $locale->text('Group');
   $column_data{code} = $locale->text('Code');
   $column_data{pos} = $locale->text('POS');
-  
+
   $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
 
   $form->helpref("import_$form->{type}", $myconfig{countrycode});
 
   $form->header;
- 
+
   &check_all(qw(allbox ndx_));
 
   print qq|
@@ -2105,7 +2105,7 @@ sub im_partsgroup {
 
   $form->{reportcode} = "import_$form->{type}";
   IM->prepare_import_data(\%myconfig, \%$form);
-  
+
   for $i (1 .. $form->{rowcount}) {
 
     $j++; $j %= 2;
@@ -2117,17 +2117,17 @@ sub im_partsgroup {
     for (@column_index) {
       $column_data{$_} = qq|<td>$form->{"${_}_$i"}</td>|;
     }
-      
+
     $column_data{runningnumber} = qq|<td align=right>$i</td>|;
     $column_data{ndx} = qq|<td><input name="ndx_$i" type=checkbox class=checkbox checked></td>|;
- 
+
     for (@column_index) { print $column_data{$_} }
-      
+
     print qq|
-	</tr>
+        </tr>
 |;
   }
- 
+
   print qq|
         </tr>
       </table>
@@ -2139,7 +2139,7 @@ sub im_partsgroup {
 
 </table>
 |;
-  
+
   $form->hide_form(qw(rowcount type login path callback));
 
   print qq|
@@ -2179,7 +2179,7 @@ sub ex_payment {
   if ($form->{initreport} && $form->{reportid}) {
     $form->retrieve_report(\%myconfig);
   }
-  
+
   @columns = ();
   for (split /,/, $form->{flds}) {
     ($column, $label) = split /=/, $_;
@@ -2190,11 +2190,11 @@ sub ex_payment {
   $columns{amount} = 1;
 
   @flds = ();
-  
+
   @column_index = qw(ndx);
 
   $i = 0;
-  
+
   if ($form->{column_index}) {
     for (split /,/, $form->{column_index}) {
       s/=.*//;
@@ -2205,12 +2205,12 @@ sub ex_payment {
   } else {
     for (@columns) {
       if ($form->{"l_$_"} eq "Y") {
-	push @column_index, $_;
-	$column_index{$_} = ++$i;
-	$form->{column_index} .= "$_=$columns{$_},";
+        push @column_index, $_;
+        $column_index{$_} = ++$i;
+        $form->{column_index} .= "$_=$columns{$_},";
       }
     }
-  
+
     chop $form->{column_index};
   }
 
@@ -2218,7 +2218,7 @@ sub ex_payment {
 
   $form->{callback} = "$form->{script}?action=export";
   for (qw(type login path)) { $form->{callback} .= "&$_=$form->{$_}" }
-  
+
   &xrefhdr;
 
   $form->{nextsub} = "ex_payment";
@@ -2232,13 +2232,13 @@ sub ex_payment {
   IM->unreconciled_payments(\%myconfig, \%$form);
 
   if ($form->{initreport}) {
-    
+
     @column_index = ();
     $form->{column_index} = "";
-    
+
     $i = 0;
     $j = 0;
-    
+
     for (split /,/, $form->{report_column_index}) {
       $_ =~ s/=.*//;
 
@@ -2246,33 +2246,33 @@ sub ex_payment {
 
       # if it is not a column turn on l_
       if (! $column_data{$_}) {
-	$form->{"l_$_"} = 1;
-	$label = $_;
-	$label =~ s/_/ /g;
+        $form->{"l_$_"} = 1;
+        $label = $_;
+        $label =~ s/_/ /g;
 
-	$form->{flds} .= qq|,$_=$label|;
-	$columns{$_};
-	$column_data{$_} = $label;
+        $form->{flds} .= qq|,$_=$label|;
+        $columns{$_};
+        $column_data{$_} = $label;
       }
-      
+
       if ($form->{"l_$_"}) {
-	push @column_index, $_;
-	delete $column_index{$_};
-	$i++;
-	
-	for $item (qw(a w f)) {
-	  $form->{"${item}_$i"} = $form->{"report_${item}_$j"};
-	  $form->{"t_${item}_$i"} = $form->{"report_t_${item}_$j"};
-	  $form->{"h_${item}_$i"} = $form->{"report_h_${item}_$j"};
-	}
+        push @column_index, $_;
+        delete $column_index{$_};
+        $i++;
+
+        for $item (qw(a w f)) {
+          $form->{"${item}_$i"} = $form->{"report_${item}_$j"};
+          $form->{"t_${item}_$i"} = $form->{"report_t_${item}_$j"};
+          $form->{"h_${item}_$i"} = $form->{"report_h_${item}_$j"};
+        }
       }
-      
+
     }
 
     for (sort { $column_index{$a} <=> $column_index{$b} } keys %column_index) {
       push @column_index, $_;
     }
-    
+
     $form->{column_index} = "";
     for (@column_index) { $form->{column_index} .= "$_=$columns{$_}," }
     chop $form->{column_index};
@@ -2287,7 +2287,7 @@ sub ex_payment {
   }
 
   delete $form->{initreport};
-  
+
   $i = 0;
   %column_index = ();
   for (@column_index) {
@@ -2295,7 +2295,7 @@ sub ex_payment {
   }
 
   $form->save_form(\%myconfig);
-  
+
   $href = "$form->{script}?action=ex_payment";
   for (qw(path login id)) { $href .= qq|&$_=$form->{$_}| }
 
@@ -2308,17 +2308,17 @@ sub ex_payment {
   } else {
     $lf = $br = " ";
   }
-    
+
   $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
-  
+
   $form->helpref("export_$form->{type}", $myconfig{countrycode});
-  
+
   $form->header;
 
   &check_all(qw(allbox ndx_));
 
   print qq|
-  
+
 <body>
 
 <form method=post action=$form->{script}>
@@ -2334,18 +2334,18 @@ sub ex_payment {
 |;
 
   $l = $#column_index;
-  
+
   print qq|<tr>
-	     <td></td>|;
+             <td></td>|;
 
   if ($l > 1) {
     for (1 .. $l) {
       print "\n<td align=center><a href=$href&movecolumn=$column_index[$_],left><img src=$images/left.png border=0><a href=$href&movecolumn=$column_index[$_],right><img src=$images/right.png border=0></td>";
     }
   }
-  
+
   print qq|
-	</tr>
+        </tr>
 |;
 
   for $i (1 .. $l) {
@@ -2355,7 +2355,7 @@ sub ex_payment {
   $dateprepared = $form->format_date($form->{dateformat}, $form->datetonum(\%myconfig, $form->{dateprepared}));
   $hdateprepared = $form->pad($dateprepared, $form->{"h_f_$column_index{dateprepared}"}, $form->{"h_a_$column_index{dateprepared}"}, $form->{"h_w_$column_index{dateprepared}"}, 1);
   $tdateprepared = $form->pad($dateprepared, $form->{"t_f_$column_index{dateprepared}"}, $form->{"t_a_$column_index{dateprepared}"}, $form->{"t_w_$column_index{dateprepared}"}, 1);
-  
+
   $txtheader = 0;
   for (1 .. $#column_index) {
     if ($form->{"h_w_$_"}) {
@@ -2367,21 +2367,21 @@ sub ex_payment {
   # print header
   if (($form->{filetype} eq 'txt') &! $txtheader) {
     $column_h{ndx} = qq|<td>&nbsp;</td>|;
-    
+
     for (1 .. $#column_index) {
       $f = "&nbsp;" x $form->{"w_$_"};
       $column_h{$column_index[$_]} = qq|<th><a href="$href&editcolumn=$column_index[$_],$_,h">$f</a></th>|;
     }
-    
+
     print qq|
         <tr>
 |;
 
     for (@column_index) { print "\n$column_h{$_}" }
-  
+
     print qq|
         </tr>
-|; 
+|;
 
   }
 
@@ -2411,7 +2411,7 @@ sub ex_payment {
   }
 
   $idateprepared = $form->pad($dateprepared, $form->{"f_$column_index{dateprepared}"}, $form->{"a_$column_index{dateprepared}"}, $form->{"w_$column_index{dateprepared}"}, 1);
-  
+
   $i = 0;
   $k = 1;
   $s = 0;
@@ -2429,49 +2429,49 @@ sub ex_payment {
 
     if (($ref->{datepaid} ne $sameday) && $txtheader) {
       $column_data{ndx} = qq|<td>&nbsp;</td>|;
-      
+
       print qq|
       <tr class=listtop>
 |;
 
       for (1 .. $#column_index) {
 
-	if ($form->{"h_w_$_"}) {
-	  $f = $ref->{"$column_index[$_]"};
+        if ($form->{"h_w_$_"}) {
+          $f = $ref->{"$column_index[$_]"};
 
-	  if (! exists $ref->{"$column_index[$_]"}) {
-	    $f = $form->{"h_f_$_"};
-	  
-	    if ($f =~ /-(-|\+)??\d+/) {
-	      $f =~ s/-((-|\+)??\d+)//;
-	      $c = $1;
-	      if ($f =~ /s/i) {
-		$f = $s + $c;
-	      } else {
-		$f = $k + $c;
-	      }
-	    }
-	  }
-	} else {
-	  $f = "&nbsp;" x $form->{"w_$_"};
-	}
-	
-	$column_data{$column_index[$_]} = qq|<th align="$form->{"h_a_$_"}"><a class=listtop href="$href&editcolumn=$column_index[$_],$_,h">|.$form->pad($f, $form->{"h_f_$_"}, $form->{"h_a_$_"}, $form->{"h_w_$_"}, 1).qq|</a></th>|;
+          if (! exists $ref->{"$column_index[$_]"}) {
+            $f = $form->{"h_f_$_"};
+
+            if ($f =~ /-(-|\+)??\d+/) {
+              $f =~ s/-((-|\+)??\d+)//;
+              $c = $1;
+              if ($f =~ /s/i) {
+                $f = $s + $c;
+              } else {
+                $f = $k + $c;
+              }
+            }
+          }
+        } else {
+          $f = "&nbsp;" x $form->{"w_$_"};
+        }
+
+        $column_data{$column_index[$_]} = qq|<th align="$form->{"h_a_$_"}"><a class=listtop href="$href&editcolumn=$column_index[$_],$_,h">|.$form->pad($f, $form->{"h_f_$_"}, $form->{"h_a_$_"}, $form->{"h_w_$_"}, 1).qq|</a></th>|;
 
       }
 
       $column_data{dateprepared} = qq|<th nowrap align="$form->{"h_a_$column_index{dateprepared}"}"><a class=listtop href="$href&editcolumn=dateprepared,$column_index{dateprepared},h">$hdateprepared</th>| if $form->{"h_w_$column_index{dateprepared}"};
 
       for (@column_index) { print $column_data{$_} }
-      
+
       print qq|
         </tr>
-|; 
+|;
 
     }
 
     $j++; $j %= 2;
- 
+
     print qq|
       <tr class=listrow$j>
 |;
@@ -2482,16 +2482,16 @@ sub ex_payment {
     for (@column_index) {
       $f = $ref->{$_};
       if (! exists $ref->{$_}) {
-	$f = $form->{"f_$column_index{$_}"};
-	if ($f =~ /-(-|\+)??\d+/) {
-	  $f =~ s/-((-|\+)??\d+)//;
-	  $c = $1;
-	  if ($f =~ /s/i) {
-	    $f = $s + $c
-	  } else {
-	    $f = $k + $c;
-	  }
-	}
+        $f = $form->{"f_$column_index{$_}"};
+        if ($f =~ /-(-|\+)??\d+/) {
+          $f =~ s/-((-|\+)??\d+)//;
+          $c = $1;
+          if ($f =~ /s/i) {
+            $f = $s + $c
+          } else {
+            $f = $k + $c;
+          }
+        }
       }
 
       $column_data{$_} = qq|<td nowrap align="$form->{"a_$column_index{$_}"}">|.$form->pad($f, $form->{"f_$column_index{$_}"}, $form->{"a_$column_index{$_}"}, $form->{"w_$column_index{$_}"}, 1).qq|</td>|;
@@ -2511,7 +2511,7 @@ sub ex_payment {
     for (@column_index) { print $column_data{$_} }
 
     print qq|
-	</tr>
+        </tr>
 |;
 
     $sameday = $ref->{datepaid};
@@ -2523,49 +2523,49 @@ sub ex_payment {
     # subtotal
     if (($nextday ne $sameday) && $txtheader) {
       $column_data{ndx} = qq|<td>&nbsp;</td>|;
-      
+
       for (1 .. $#column_index) {
 
-	if ($form->{"t_w_$_"}) {
-	  $f = $ref->{"$column_index[$_]"};
-	  if (! exists $ref->{"$column_index[$_]"}) {
-	    $f = $form->{"t_f_$_"};
-	    
-	    if ($f =~ /-(-|\+)??\d+/) {
-	      $f =~ s/-((-|\+)??\d+)//;
-	      $c = $1;
-	      if ($f =~ /s/i) {
-		$f = $s + $c
-	      } else {
-		$f = $k + $c;
-	      }
-	    }
-	  }
-	} else {
-	  $f = "&nbsp;" x $form->{"w_$_"};
-	}
-	
-	$column_data{$column_index[$_]} = qq|<th align="$form->{"t_a_$_"}"><a class=listsubtotal href="$href&editcolumn=$column_index[$_],$_,t">|.$form->pad($f, $form->{"t_f_$_"}, $form->{"t_a_$_"}, $form->{"t_w_$_"}, 1).qq|</a></th>|;
+        if ($form->{"t_w_$_"}) {
+          $f = $ref->{"$column_index[$_]"};
+          if (! exists $ref->{"$column_index[$_]"}) {
+            $f = $form->{"t_f_$_"};
+
+            if ($f =~ /-(-|\+)??\d+/) {
+              $f =~ s/-((-|\+)??\d+)//;
+              $c = $1;
+              if ($f =~ /s/i) {
+                $f = $s + $c
+              } else {
+                $f = $k + $c;
+              }
+            }
+          }
+        } else {
+          $f = "&nbsp;" x $form->{"w_$_"};
+        }
+
+        $column_data{$column_index[$_]} = qq|<th align="$form->{"t_a_$_"}"><a class=listsubtotal href="$href&editcolumn=$column_index[$_],$_,t">|.$form->pad($f, $form->{"t_f_$_"}, $form->{"t_a_$_"}, $form->{"t_w_$_"}, 1).qq|</a></th>|;
       }
-     
+
       $column_data{dateprepared} = qq|<th nowrap align="$form->{"t_a_$column_index{dateprepared}"}"><a class=listsubtotal href="$href&editcolumn=dateprepared,$column_index{dateprepared},t">$tdateprepared</th>| if $form->{"t_w_$column_index{dateprepared}"};
-      
+
       $column_data{amount} = qq|<th align="$form->{"t_a_$column_index{amount}"}"><a class=listsubtotal href="$href&editcolumn=amount,$column_index{amount},t">|.$form->pad($form->format_amount(\%myconfig, $subtotal, $form->{precision}), $form->{"t_f_$column_index{amount}"}, $form->{"t_a_$column_index{amount}"}, $form->{"t_w_$column_index{amount}"}, 1).qq|</a></th>|;
 
       $subtotal = 0;
       $s = 0;
-      
+
       $k++;
 
       print qq|
-	<tr class=listsubtotal>
+        <tr class=listsubtotal>
 |;
 
       for (@column_index) { print $column_data{$_} }
-      
+
       print qq|
         </tr>
-|; 
+|;
 
     }
 
@@ -2581,26 +2581,26 @@ sub ex_payment {
   if ($form->{filetype} eq 'txt') {
     if (! $txtheader) {
       $column_data{ndx} = qq|<td>&nbsp;</td>|;
-      
+
       for (1 .. $#column_index) {
 
-	if ($form->{"t_w_$_"}) {
-	  $f = $form->{$column_index[$_]};
-	  
-	  if ($form->{"t_f_$_"} =~ /-(-|\+)??\d+/) {
-	    $f = $form->{"t_f_$_"};
-	    $f =~ s/-((-|\+)??\d+)//;
-	    $f = $1 + $form->{rowcount};
-	  }
-	} else {
-	  $f = "&nbsp;" x $form->{"w_$_"};
-	}
-	
-	$column_data{$column_index[$_]} = qq|<th align="$form->{"t_a_$_"}"><a class=listtotal href="$href&editcolumn=$column_index[$_],$_,t">|.$form->pad($f, $form->{"t_f_$_"}, $form->{"t_a_$_"}, $form->{"t_w_$_"}, 1).qq|</a></th>|;
+        if ($form->{"t_w_$_"}) {
+          $f = $form->{$column_index[$_]};
+
+          if ($form->{"t_f_$_"} =~ /-(-|\+)??\d+/) {
+            $f = $form->{"t_f_$_"};
+            $f =~ s/-((-|\+)??\d+)//;
+            $f = $1 + $form->{rowcount};
+          }
+        } else {
+          $f = "&nbsp;" x $form->{"w_$_"};
+        }
+
+        $column_data{$column_index[$_]} = qq|<th align="$form->{"t_a_$_"}"><a class=listtotal href="$href&editcolumn=$column_index[$_],$_,t">|.$form->pad($f, $form->{"t_f_$_"}, $form->{"t_a_$_"}, $form->{"t_w_$_"}, 1).qq|</a></th>|;
       }
-      
+
       $column_data{dateprepared} = qq|<th nowrap align="$form->{"t_a_$column_index{dateprepared}"}"><a class=listsubtotal href="$href&editcolumn=dateprepared,$column_index{dateprepared},t">$tdateprepared</th>| if $form->{"t_w_$column_index{dateprepared}"};
-      
+
       $column_data{amount} = qq|<th align="$form->{"t_a_$column_index{amount}"}"><a class=listtotal href="$href&editcolumn=amount,$column_index{amount},t">|.$form->pad($form->format_amount(\%myconfig, $total, $form->{precision}), $form->{"t_f_$column_index{amount}"}, $form->{"t_a_$column_index{amount}"}, $form->{"t_w_$column_index{amount}"}, 1).qq|</a></th>|;
 
       print qq|
@@ -2608,7 +2608,7 @@ sub ex_payment {
 |;
 
       for (@column_index) { print "\n$column_data{$_}" }
-    
+
       print qq|
         </tr>
 |;
@@ -2618,13 +2618,13 @@ sub ex_payment {
   } else {
     for (@column_index) { $column_data{$_} = qq|<td>&nbsp;</td>| }
     $column_data{amount} = qq|<th class=listtotal align="right">|.$form->format_amount(\%myconfig, $total, $form->{precision}).qq|</th>|;
-    
+
     print qq|
         <tr class=listtotal>
 |;
 
     for (@column_index) { print "\n$column_data{$_}" }
-  
+
     print qq|
         </tr>
 |;
@@ -2641,14 +2641,14 @@ sub ex_payment {
 
 </table>
 |;
-  
+
   $form->hide_form(qw(login path report reportcode paymentaccount curr paymentmethod dateprepared dateformat filetype delimiter decimalpoint tabdelimited includeheader stringsquoted defaultcurrency type flds column_index rowcount linefeed callback nextsub title));
-  
+
   %button = ('Export Payments' => { ndx => 1, key => 'E', value => $locale->text('Export Payments') },
              'Reconcile Payments' => { ndx => 2, key => 'R', value => $locale->text('Reconcile Payments') },
              'Add Column' => { ndx => 3, key => 'A', value => $locale->text('Add Column') },
              'Save Report' => { ndx => 4, key => 'S', value => $locale->text('Save Report') }
-	    );
+            );
 
   delete $button{'Export Payments'} if ! $form->{rowcount};
 
@@ -2658,7 +2658,7 @@ sub ex_payment {
     require "$form->{path}/menu.pl";
     &menubar;
   }
-  
+
   print qq|
 </form>
 
@@ -2699,13 +2699,13 @@ sub export_payments {
   $form->{dateprepared} = $form->format_date($form->{dateformat}, $form->datetonum(\%myconfig, $form->{dateprepared}));
 
   $myconfig{numberformat} = "1000$form->{decimalpoint}" . "0" x $form->{precision};
-  
+
   $txtheader = 0;
   if ($form->{filetype} eq 'txt') {
     for (keys %column_index) {
       if ($form->{"h_w_$column_index{$_}"}) {
-	$txtheader = 1;
-	last;
+        $txtheader = 1;
+        last;
       }
     }
   }
@@ -2724,67 +2724,67 @@ sub export_payments {
 
       if (($ref->{datepaid} ne $sameday) && $txtheader) {
 
-	$i++;
-	
-	for (keys %column_index) {
+        $i++;
 
-	  if ($form->{"h_w_$column_index{$_}"}) {
+        for (keys %column_index) {
 
-	    if (exists $ref->{$_}) {
-	      $f = $ref->{$_};
-	    } else {
-	      $f = $form->{"h_f_$column_index{$_}"};
-	     
-	      if ($f =~ /-(-|\+)??\d+/) {
-		$f =~ s/-((-|\+)??\d+)//;
-		$c = $1;
-		if ($f =~ /s/i) {
-		  $f = $s + $c
-		} else {
-		  $f = $k + $c;
-		}
-	      } else {
-		$f = $form->{$_};
-	      }
-	    }
-	  
-	    $form->{"${_}_$i"} = $form->pad($f, $form->{"h_f_$column_index{$_}"}, $form->{"h_a_$column_index{$_}"}, $form->{"h_w_$column_index{$_}"});
+          if ($form->{"h_w_$column_index{$_}"}) {
 
-	  }
-	}
+            if (exists $ref->{$_}) {
+              $f = $ref->{$_};
+            } else {
+              $f = $form->{"h_f_$column_index{$_}"};
+
+              if ($f =~ /-(-|\+)??\d+/) {
+                $f =~ s/-((-|\+)??\d+)//;
+                $c = $1;
+                if ($f =~ /s/i) {
+                  $f = $s + $c
+                } else {
+                  $f = $k + $c;
+                }
+              } else {
+                $f = $form->{$_};
+              }
+            }
+
+            $form->{"${_}_$i"} = $form->pad($f, $form->{"h_f_$column_index{$_}"}, $form->{"h_a_$column_index{$_}"}, $form->{"h_w_$column_index{$_}"});
+
+          }
+        }
       }
 
       $total += $ref->{amount};
       $subtotal += $ref->{amount};
       $i++;
-      
+
       $ref->{amount} = $form->format_amount(\%myconfig, $ref->{amount}, $form->{precision});
 
       for (keys %column_index) {
 
         if ($form->{filetype} eq 'txt') {
-	  next unless $form->{"w_$column_index{$_}"};
-	}
+          next unless $form->{"w_$column_index{$_}"};
+        }
 
-	if (exists $ref->{$_}) {
-	  $f = $ref->{$_};
-	} else {
-	  $f = $form->{"f_$column_index{$_}"};
+        if (exists $ref->{$_}) {
+          $f = $ref->{$_};
+        } else {
+          $f = $form->{"f_$column_index{$_}"};
 
-	  if ($f =~ /-(-|\+)??\d+/) {
-	    $f =~ s/-((-|\+)??\d+)//;
-	    $c = $1;
-	    if ($f =~ /s/i) {
-	      $f = $s + $c
-	    } else {
-	      $f = $k + $c;
-	    }
-	  } else {
-	    $f = $form->{$_};
-	  }
-	}
+          if ($f =~ /-(-|\+)??\d+/) {
+            $f =~ s/-((-|\+)??\d+)//;
+            $c = $1;
+            if ($f =~ /s/i) {
+              $f = $s + $c
+            } else {
+              $f = $k + $c;
+            }
+          } else {
+            $f = $form->{$_};
+          }
+        }
 
-	$form->{"${_}_$i"} = $form->pad($f, $form->{"f_$column_index{$_}"}, $form->{"a_$column_index{$_}"}, $form->{"w_$column_index{$_}"});
+        $form->{"${_}_$i"} = $form->pad($f, $form->{"f_$column_index{$_}"}, $form->{"a_$column_index{$_}"}, $form->{"w_$column_index{$_}"});
 
       }
 
@@ -2792,88 +2792,88 @@ sub export_payments {
       $sameday = $ref->{datepaid};
       $nextday = "";
       if ($j < $l) {
-	$nextday = $form->{TR}->[$j]->{datepaid};
+        $nextday = $form->{TR}->[$j]->{datepaid};
       }
 
       # subtotal
       if (($nextday ne $sameday) && $txtheader) {
 
-	$i++;
+        $i++;
 
-	for (keys %column_index) {
+        for (keys %column_index) {
 
-	  if ($form->{"t_w_$column_index{$_}"}) {
-	    
-	    if (exists $ref->{$_}) {
-	      $f = $ref->{$_};
-	    } else {
-	      $f = $form->{"t_f_$column_index{$_}"};
-	    
-	      if ($f =~ /-(-|\+)??\d+/) {
-		$f =~ s/-((-|\+)??\d+)//;
-		$c = $1;
-		if ($f =~ /s/i) {
-		  $f = $s + $c
-		} else {
-		  $f = $k + $c;
-		}
-	      } else {
-		$f = $form->{$_};
-	      }
-	    }
+          if ($form->{"t_w_$column_index{$_}"}) {
 
-	    $form->{"${_}_$i"} = $form->pad($f, $form->{"t_f_$column_index{$_}"}, $form->{"t_a_$column_index{$_}"}, $form->{"t_w_$column_index{$_}"});
-	  }
-	}
-	
-	$form->{"amount_$i"} = $form->pad($form->format_amount(\%myconfig, $subtotal, $form->{precision}), $form->{"t_f_$column_index{amount}"}, $form->{"t_a_$column_index{amount}"}, $form->{"t_w_$column_index{amount}"}) if $form->{"t_w_$column_index{amount}"};
-	
-	$subtotal = 0;
-	$s = 0;
-	$k++;
-	
+            if (exists $ref->{$_}) {
+              $f = $ref->{$_};
+            } else {
+              $f = $form->{"t_f_$column_index{$_}"};
+
+              if ($f =~ /-(-|\+)??\d+/) {
+                $f =~ s/-((-|\+)??\d+)//;
+                $c = $1;
+                if ($f =~ /s/i) {
+                  $f = $s + $c
+                } else {
+                  $f = $k + $c;
+                }
+              } else {
+                $f = $form->{$_};
+              }
+            }
+
+            $form->{"${_}_$i"} = $form->pad($f, $form->{"t_f_$column_index{$_}"}, $form->{"t_a_$column_index{$_}"}, $form->{"t_w_$column_index{$_}"});
+          }
+        }
+
+        $form->{"amount_$i"} = $form->pad($form->format_amount(\%myconfig, $subtotal, $form->{precision}), $form->{"t_f_$column_index{amount}"}, $form->{"t_a_$column_index{amount}"}, $form->{"t_w_$column_index{amount}"}) if $form->{"t_w_$column_index{amount}"};
+
+        $subtotal = 0;
+        $s = 0;
+        $k++;
+
       }
 
       $k++ unless $txtheader;
 
     }
   }
-  
+
   $form->{rowcount} = $i;
 
   if ($form->{filetype} eq 'txt') {
 
     if (! $txtheader) {
-      
+
       for (keys %column_index) {
-	if ($form->{"t_w_$column_index{$_}"}) {
-	  $summaryrecord = 1;
-	  last;
-	}
+        if ($form->{"t_w_$column_index{$_}"}) {
+          $summaryrecord = 1;
+          last;
+        }
       }
-      
+
       if ($summaryrecord) {
-	
-	$form->{rowcount} = ++$i;
 
-	for (keys %column_index) {
+        $form->{rowcount} = ++$i;
 
-	  if ($form->{"t_w_$column_index{$_}"}) {
-	    $f = $form->{"t_f_$column_index{$_}"};
-	    
-	    if ($form->{"t_f_$column_index{$_}"} =~ /-(-|\+)??\d+/) {
-	      $f =~ s/-((-|\+)??\d+)//;
-	      $f = $1 + $form->{rowcount};
-	    } else {
-	      $f ||= $form->{$_};
-	    }
-       
-	    $form->{"${_}_$i"} = $form->pad($f, $form->{"t_f_$column_index{$_}"}, $form->{"t_a_$column_index{$_}"}, $form->{"t_w_$column_index{$_}"});
-	  }
-	}
+        for (keys %column_index) {
 
-	$form->{"amount_$i"} = $form->pad($form->format_amount(\%myconfig, $total, $form->{precision}), $form->{"t_f_$column_index{amount}"}, $form->{"t_a_$column_index{amount}"}, $form->{"t_w_$column_index{amount}"}) if $form->{"t_w_$column_index{amount}"};
-	
+          if ($form->{"t_w_$column_index{$_}"}) {
+            $f = $form->{"t_f_$column_index{$_}"};
+
+            if ($form->{"t_f_$column_index{$_}"} =~ /-(-|\+)??\d+/) {
+              $f =~ s/-((-|\+)??\d+)//;
+              $f = $1 + $form->{rowcount};
+            } else {
+              $f ||= $form->{$_};
+            }
+
+            $form->{"${_}_$i"} = $form->pad($f, $form->{"t_f_$column_index{$_}"}, $form->{"t_a_$column_index{$_}"}, $form->{"t_w_$column_index{$_}"});
+          }
+        }
+
+        $form->{"amount_$i"} = $form->pad($form->format_amount(\%myconfig, $total, $form->{precision}), $form->{"t_f_$column_index{amount}"}, $form->{"t_a_$column_index{amount}"}, $form->{"t_w_$column_index{amount}"}) if $form->{"t_w_$column_index{amount}"};
+
       }
     }
   }
@@ -2881,7 +2881,7 @@ sub export_payments {
   $form->{filename} ||= time;
 
   open(OUT, ">-") or $form->error("STDOUT : $!");
-  
+
   binmode(OUT);
 
   print qq|Content-Type: application/file;
@@ -2895,7 +2895,7 @@ Content-Disposition: attachment; filename=$form->{filename}.$form->{filetype}\n\
   if ($form->{filetype} eq 'txt') {
     &export_payments_txt;
   }
-  
+
   close(OUT);
 
   $form->{dateprepared} = $dateprepared;
@@ -2904,7 +2904,7 @@ Content-Disposition: attachment; filename=$form->{filename}.$form->{filetype}\n\
 
 
 sub export_payments_csv {
-  
+
   @column_index = ();
   for (split /,/, $form->{column_index}) {
     ($f, $n) = split /=/, $_;
@@ -2916,7 +2916,7 @@ sub export_payments_csv {
     $form->{delimiter} = "\t";
     for (@column_index) { $column_index{$_} = 1 }
   }
-  
+
   %lf = ( UNIX => "\n", MAC => "\r", DOS => "\r\n" );
   $lf = $lf{$form->{linefeed}};
   $lf ||= "\n";
@@ -2926,27 +2926,27 @@ sub export_payments_csv {
   if ($form->{includeheader}) {
     for (@column_index) {
       if ($form->{tabdelimited}) {
-	$line .= qq|$_$form->{delimiter}|;
+        $line .= qq|$_$form->{delimiter}|;
       } else {
-	if ($form->{stringsquoted}) {
-	  $line .= qq|"$_"$form->{delimiter}|;
-	} else {
-	  $column_index{$_} = 1;
-	  $line .= qq|$_$form->{delimiter}|;
-	}
+        if ($form->{stringsquoted}) {
+          $line .= qq|"$_"$form->{delimiter}|;
+        } else {
+          $column_index{$_} = 1;
+          $line .= qq|$_$form->{delimiter}|;
+        }
       }
     }
     chop $line;
     print OUT "$line$lf";
   }
-  
+
   for $i (1 .. $form->{rowcount}) {
     $line = "";
     for (@column_index) {
       if ($column_index{$_}) {
-	$line .= qq|$form->{"${_}_$i"}$form->{delimiter}|;
+        $line .= qq|$form->{"${_}_$i"}$form->{delimiter}|;
       } else {
-	$line .= qq|"$form->{"${_}_$i"}"$form->{delimiter}|;
+        $line .= qq|"$form->{"${_}_$i"}"$form->{delimiter}|;
       }
     }
     chop $line;
@@ -2957,7 +2957,7 @@ sub export_payments_csv {
 
 
 sub export_payments_txt {
-  
+
   @column_index = ();
   $i = 1;
   for (split /,/, $form->{column_index}) {
@@ -2968,7 +2968,7 @@ sub export_payments_txt {
 
   %lf = ( UNIX => "\n", MAC => "\r", DOS => "\r\n" );
   $lf = $lf{$form->{linefeed}};
-  
+
   for $i (1 .. $form->{rowcount}) {
     $line = "";
     for (@column_index) { $line .= $form->{"${_}_$i"} }

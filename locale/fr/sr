@@ -1,11 +1,11 @@
 $self{texts} = {
-  'Accounting Menu'             => 'Menu de comptabilité',
+  'Accounting Menu'             => 'Gestion Comptable',
   'April'                       => 'Avril',
-  'August'                      => 'Août',
-  'December'                    => 'Décembre',
-  'Description'                 => 'Description',
-  'February'                    => 'Février',
-  'Heading'                     => 'En-tête',
+  'August'                      => 'Aout',
+  'December'                    => 'DÃ©cembre',
+  'Description'                 => 'LibellÃ©',
+  'February'                    => 'FÃ©vrier',
+  'Heading'                     => 'Classe',
   'January'                     => 'Janvier',
   'July'                        => 'Juillet',
   'June'                        => 'Juin',
@@ -37,6 +37,7 @@ $self{subs} = {
   'save_column'                 => 'save_column',
   'save_report'                 => 'save_report',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
 };
 
 1;

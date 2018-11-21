@@ -6,14 +6,15 @@ $self{texts} = {
   'August'                      => 'Agosto',
   'Balance'                     => 'Saldo',
   'Chart of Accounts'           => 'Plan de Cuentas',
-  'Credit'                      => 'Crédito',
+  'Closed'                      => 'Cerrado',
+  'Credit'                      => 'CrÃ©dito',
   'Current'                     => 'Actual',
   'Date'                        => 'Fecha',
-  'Debit'                       => 'Débito',
+  'Debit'                       => 'DÃ©bito',
   'Dec'                         => 'Dic',
   'December'                    => 'Diciembre',
   'Department'                  => 'Departamento',
-  'Description'                 => 'Descripción',
+  'Description'                 => 'DescripciÃ³n',
   'Feb'                         => 'Feb',
   'February'                    => 'Febrero',
   'From'                        => 'Desde',
@@ -36,7 +37,7 @@ $self{texts} = {
   'Oct'                         => 'Oct',
   'October'                     => 'Octubre',
   'Period'                      => 'Periodo',
-  'Project Number'              => 'Número del Proyecto',
+  'Project Number'              => 'NÃºmero del Proyecto',
   'Quarter'                     => 'Trimestre',
   'R'                           => 'R',
   'Reference'                   => 'Referencia',
@@ -45,7 +46,7 @@ $self{texts} = {
   'Source'                      => 'Origen',
   'Subtotal'                    => 'Subtotal',
   'To'                          => 'Hasta',
-  'Year'                        => 'Año',
+  'Year'                        => 'AÃ±o',
 };
 
 $self{subs} = {
@@ -60,6 +61,7 @@ $self{subs} = {
   'list_transactions'           => 'list_transactions',
   'pickvalue'                   => 'pickvalue',
   'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
   'mostrar_transacciones'       => 'list_transactions',
 };
 

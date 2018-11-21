@@ -25,11 +25,11 @@ sub display {
   $menu = new Menu "$menufile";
   $menu->add_file("$form->{path}/custom/$menufile") if -f "$form->{path}/custom/$menufile";
   $menu->add_file("$form->{path}/custom/$form->{login}/$menufile") if -f "$form->{path}/custom/$form->{login}/$menufile";
-  
+
   @menuorder = $menu->access_control(\%myconfig);
 
   $form->{title} = "SQL-Ledger $form->{version}";
-  
+
   $form->header;
 
   $offset = int (21 - $#menuorder)/2;
@@ -55,10 +55,10 @@ sub display {
 sub section_menu {
 
   $menu = new Menu "$menufile", $form->{level};
-  
+
   $menu->add_file("$form->{path}/custom/$menufile") if -f "$form->{path}/custom/$menufile";
   $menu->add_file("$form->{path}/custom/$form->{login}/$menufile") if -f "$form->{path}/custom/$form->{login}/$menufile";
-  
+
   # build tiered menus
   @menuorder = $menu->access_control(\%myconfig, $form->{level});
 
@@ -68,19 +68,19 @@ sub section_menu {
     push @neworder, $a unless ($item =~ /--/);
   }
   @menuorder = @neworder;
- 
+
   $level = $form->{level};
   $level =~ s/--/ /g;
 
   $form->{title} = $locale->text($level);
-  
+
   $form->header;
 
   $offset = int (21 - $#menuorder)/2;
   print "<pre>";
   print "\n" x $offset;
   print "</pre>";
-  
+
   print qq|<center><table>|;
 
   foreach $item (@menuorder) {
@@ -92,7 +92,7 @@ sub section_menu {
 
     print "<tr><td>".$menu->menuitem(\%myconfig, \%$form, $item, $form->{level}).$locale->text($label)."</a></td></tr>";
   }
-  
+
   print qq'</table>
 
 </body>
@@ -103,15 +103,15 @@ sub section_menu {
 
 
 sub acc_menu {
-  
+
   &section_menu;
-  
+
 }
 
 
 sub menubar {
   $menu = new Menu "$menufile", "";
-  
+
   # build menubar
   @menuorder = $menu->access_control(\%myconfig, "");
 
@@ -131,7 +131,7 @@ sub menubar {
 
     print $menu->menuitem(\%myconfig, \%$form, $item, "").$locale->text($label)."</a> | ";
   }
-  
+
 }
 
 

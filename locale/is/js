@@ -1,15 +1,15 @@
 $self{texts} = {
-  'April'                       => 'apríl',
-  'August'                      => 'ágúst',
+  'April'                       => 'aprÃ­l',
+  'August'                      => 'Ã¡gÃºst',
   'December'                    => 'desember',
-  'February'                    => 'febrúar',
-  'January'                     => 'janúar',
-  'July'                        => 'júlí',
-  'June'                        => 'júní',
+  'February'                    => 'febrÃºar',
+  'January'                     => 'janÃºar',
+  'July'                        => 'jÃºlÃ­',
+  'June'                        => 'jÃºnÃ­',
   'March'                       => 'mars',
-  'May'                         => 'maí',
-  'November'                    => 'nóvember',
-  'October'                     => 'óktóber',
+  'May'                         => 'maÃ­',
+  'November'                    => 'nÃ³vember',
+  'October'                     => 'Ã³ktÃ³ber',
   'September'                   => 'september',
 };
 
@@ -21,6 +21,7 @@ $self{subs} = {
   'js_calendar'                 => 'js_calendar',
   'pickvalue'                   => 'pickvalue',
   'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
 };
 
 1;

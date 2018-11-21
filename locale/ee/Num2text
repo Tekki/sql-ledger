@@ -31,7 +31,7 @@ sub init {
 
   %{ $self->{numbername} } =
                    (0 => 'null',
-                    1 => 'üks',
+                    1 => 'Ã¼ks',
                     2 => 'kaks',
 	            3 => 'kolm',
 		    4 => 'neli',
@@ -39,8 +39,8 @@ sub init {
 		    6 => 'kuus',
 		    7 => 'seitse',
 		    8 => 'kaheksa',
-		    9 => 'üheksa',
-		   10 => 'kümme',
+		    9 => 'Ã¼heksa',
+		   10 => 'kÃ¼mme',
                 10**2 => 'sada',
                 10**3 => 'tuhat',
 		10**6 => 'miljon',
@@ -97,7 +97,7 @@ sub num2text {
     
     if ($numblock[$i] > 19) {
       # 20 - 99
-      push @textnumber, "$self->{numbername}{$num[0]}kümmend";
+      push @textnumber, "$self->{numbername}{$num[0]}kÃ¼mmend";
       @num = split //, $numblock[$i];
       push @textnumber, $self->{numbername}{$num[1]} if $num[1] > 0;
       

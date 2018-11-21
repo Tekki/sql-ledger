@@ -7,7 +7,7 @@ $self{texts} = {
   'January'                     => 'Gener',
   'July'                        => 'Juliol',
   'June'                        => 'Juny',
-  'March'                       => 'Març',
+  'March'                       => 'MarÃ§',
   'May'                         => 'Mai',
   'November'                    => 'Novembre',
   'October'                     => 'Octubre',
@@ -28,6 +28,7 @@ $self{subs} = {
   'pickvalue'                   => 'pickvalue',
   'repost_invoices'             => 'repost_invoices',
   'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
 };
 
 1;

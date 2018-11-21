@@ -1,18 +1,19 @@
-$self{charset} = 'ISO-8859-5';
-
 $self{texts} = {
-  'Account'                     => 'óÞÅÔ',
-  'Amount'                      => 'óÕÍÍÁ',
-  'Continue'                    => 'ðÒÏÄÏÌÖÉÔØ',
-  'Date'                        => 'äÁÔÁ',
-  'Memo'                        => 'ëÏÍÍÅÎÔÁÒÉÊ',
-  'Nothing to print!'           => 'îÉÞÅÇÏ ÎÅ ÎÁÐÅÞÁÔÁÎÏ!',
+  'Account'                     => 'Ð¡Ñ‡ÐµÑ‚',
+  'Amount'                      => 'Ð¡ÑƒÐ¼Ð¼Ð°',
+  'Continue'                    => 'ÐŸÑ€Ð¾Ð´Ð¾Ð»Ð¶Ð¸Ñ‚ÑŒ',
+  'Date'                        => 'Ð”Ð°Ñ‚Ð°',
+  'Memo'                        => 'ÐšÐ¾Ð¼Ð¼ÐµÐ½Ñ‚Ð°Ñ€Ð¸Ð¹',
+  'Nothing to print!'           => 'ÐÐ¸Ñ‡ÐµÐ³Ð¾ Ð½Ðµ Ð½Ð°Ð¿ÐµÑ‡Ð°Ñ‚Ð°Ð½Ð¾!',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
-  'Printed'                     => 'îÁÐÅÞÁÔÁÎÏ',
-  'Screen'                      => 'üËÒÁÎ',
-  'Select payment'              => '÷ÙÂÅÒÉÔÅ ÏÐÌÁÔÕ',
-  'Source'                      => 'éÓÔÏÞÎÉË',
+  'Printed'                     => 'ÐÐ°Ð¿ÐµÑ‡Ð°Ñ‚Ð°Ð½Ð¾',
+  'Scheduled'                   => 'ÐÐ°Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¾ Ñ€Ð°ÑÐ¿Ð¸ÑÐ°Ð½Ð¸Ðµ',
+  'Screen'                      => 'Ð­ÐºÑ€Ð°Ð½',
+  'Select a Printer!'           => 'Ð’Ñ‹Ð±Ñ€Ð°Ñ‚ÑŒ Ð¿Ñ€Ð¸Ð½Ñ‚ÐµÑ€',
+  'Select payment'              => 'Ð’Ñ‹Ð±ÐµÑ€Ð¸Ñ‚Ðµ Ð¾Ð¿Ð»Ð°Ñ‚Ñƒ',
+  'Source'                      => 'Ð˜ÑÑ‚Ð¾Ñ‡Ð½Ð¸Ðº',
+  'Text'                        => 'Ð¢ÐµÐºÑÑ‚',
 };
 
 $self{subs} = {
@@ -28,7 +29,7 @@ $self{subs} = {
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',
   'select_payment'              => 'select_payment',
-  'ðÒÏÄÏÌÖÉÔØ'                  => 'continue',
+  'ÐŸÑ€Ð¾Ð´Ð¾Ð»Ð¶Ð¸Ñ‚ÑŒ'        => 'continue',
 };
 
 1;

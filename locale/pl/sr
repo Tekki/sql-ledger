@@ -1,21 +1,19 @@
-$self{charset} = 'ISO-8859-2';
-
 $self{texts} = {
-  'Accounting Menu'             => 'Menu Ksiêgowo¶ci',
-  'April'                       => 'Kwiecieñ',
-  'August'                      => 'Sierpieñ',
-  'December'                    => 'Grudzieñ',
+  'Accounting Menu'             => 'Menu KsiÄ™gowoÅ›ci',
+  'April'                       => 'KwiecieÅ„',
+  'August'                      => 'SierpieÅ„',
+  'December'                    => 'GrudzieÅ„',
   'Description'                 => 'Opis',
   'February'                    => 'Luty',
-  'Heading'                     => 'Nag³ówek',
-  'January'                     => 'Styczeñ',
+  'Heading'                     => 'NagÅ‚Ã³wek',
+  'January'                     => 'StyczeÅ„',
   'July'                        => 'Lipiec',
   'June'                        => 'Czerwiec',
   'March'                       => 'Marzec',
   'May'                         => 'Maj',
   'November'                    => 'Listopad',
-  'October'                     => 'Pa¿dziernik',
-  'September'                   => 'Wrzesieñ',
+  'October'                     => 'PaÅ¼dziernik',
+  'September'                   => 'WrzesieÅ„',
 };
 
 $self{subs} = {
@@ -39,6 +37,7 @@ $self{subs} = {
   'save_column'                 => 'save_column',
   'save_report'                 => 'save_report',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
 };
 
 1;

@@ -66,6 +66,7 @@ $self{subs} = {
   'section_menu'                => 'section_menu',
   'select_customer'             => 'select_customer',
   'select_name'                 => 'select_name',
+  'show_progress'               => 'show_progress',
   'stock'                       => 'stock',
   'translation'                 => 'translation',
   'translation_footer'          => 'translation_footer',

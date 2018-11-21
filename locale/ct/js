@@ -6,7 +6,7 @@ $self{texts} = {
   'January'                     => 'Gener',
   'July'                        => 'Juliol',
   'June'                        => 'Juny',
-  'March'                       => 'Març',
+  'March'                       => 'MarÃ§',
   'May'                         => 'Mai',
   'November'                    => 'Novembre',
   'October'                     => 'Octubre',
@@ -21,6 +21,7 @@ $self{subs} = {
   'js_calendar'                 => 'js_calendar',
   'pickvalue'                   => 'pickvalue',
   'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
 };
 
 1;

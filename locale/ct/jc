@@ -1,5 +1,5 @@
 $self{texts} = {
-  'Accounting Menu'             => 'Menú Comptable',
+  'Accounting Menu'             => 'MenÃº Comptable',
   'Amount'                      => 'Total',
   'April'                       => 'Abril',
   'August'                      => 'Agost',
@@ -9,20 +9,20 @@ $self{texts} = {
   'Date'                        => 'Data',
   'December'                    => 'Desembre',
   'Delete'                      => 'Esborrar',
-  'Description'                 => 'Descripció',
+  'Description'                 => 'DescripciÃ³',
   'February'                    => 'Febrer',
   'From'                        => 'De',
-  'Heading'                     => 'Capçalera',
+  'Heading'                     => 'CapÃ§alera',
   'ID'                          => 'ID',
   'Include in Report'           => 'Incloure en l\'Informe',
   'January'                     => 'Gener',
   'July'                        => 'Juliol',
   'June'                        => 'Juny',
-  'March'                       => 'Març',
+  'March'                       => 'MarÃ§',
   'May'                         => 'Mai',
   'Notes'                       => 'Notes',
   'November'                    => 'Novembre',
-  'Number'                      => 'Número',
+  'Number'                      => 'NÃºmero',
   'October'                     => 'Octubre',
   'Open'                        => 'Obert',
   'Qty'                         => 'Quantitat',
@@ -33,7 +33,7 @@ $self{texts} = {
   'Subtotal'                    => 'Subtotal',
   'To'                          => 'Fins',
   'Total'                       => 'Total',
-  'Yes'                         => 'Sí',
+  'Yes'                         => 'SÃ­',
 };
 
 $self{subs} = {
@@ -90,6 +90,7 @@ $self{subs} = {
   'search'                      => 'search',
   'section_menu'                => 'section_menu',
   'select_item'                 => 'select_item',
+  'show_progress'               => 'show_progress',
   'storescard_footer'           => 'storescard_footer',
   'storescard_header'           => 'storescard_header',
   'timecard_footer'             => 'timecard_footer',
@@ -101,7 +102,7 @@ $self{subs} = {
   'continuar'                   => 'continue',
   'esborrar'                    => 'delete',
   'guardar'                     => 'save',
-  'sí'                          => 'yes',
+  'sÃ­'                         => 'yes',
 };
 
 1;
