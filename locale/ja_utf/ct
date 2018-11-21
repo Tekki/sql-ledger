@@ -238,6 +238,7 @@ $self{subs} = {
   'shipto_selected'             => 'shipto_selected',
   'show_progress'               => 'show_progress',
   'transactions'                => 'transactions',
+  'unload'                      => 'unload',
   'update'                      => 'update',
   'vendor_invoice'              => 'vendor_invoice',
   'vendor_pricelist'            => 'vendor_pricelist',

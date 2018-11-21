@@ -1,9 +1,7 @@
-$self{charset} = 'ISO-8859-13';
-
 $self{texts} = {
-  'Account'                     => 'Sàskaita',
+  'Account'                     => 'SÄ…skaita',
   'Amount'                      => 'Suma',
-  'Continue'                    => 'Tæsti',
+  'Continue'                    => 'TÄ™sti',
   'Date'                        => 'Data',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript(TM)',
@@ -24,7 +22,7 @@ $self{subs} = {
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',
   'select_payment'              => 'select_payment',
-  'tæsti'                       => 'continue',
+  'tÄ™sti'                      => 'continue',
 };
 
 1;

@@ -1,5 +1,3 @@
-$self{charset} = 'BIG5';
-
 $self{texts} = {
 };
 

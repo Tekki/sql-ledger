@@ -15,11 +15,6 @@
 #
 #######################################################################
 
-
-BEGIN {
-  push @INC, '.';
-}
-
 use open ':std' => ':utf8';
 
 # setup defaults, DO NOT CHANGE
@@ -31,6 +26,9 @@ $memberfile = "users/members";
 $sendmail = "| /usr/sbin/sendmail -t";
 ########## end ###########################################
 
+BEGIN {
+  push @INC, '.';
+}
 
 $| = 1;
 

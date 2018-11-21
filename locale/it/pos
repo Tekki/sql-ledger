@@ -79,6 +79,7 @@ $self{subs} = {
   'receipts'                    => 'receipts',
   'resize'                      => 'resize',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
   'continua'                    => 'continue',
   'cancella'                    => 'delete',
   'salva'                       => 'post',

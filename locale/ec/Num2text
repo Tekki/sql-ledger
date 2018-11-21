@@ -46,18 +46,18 @@ sub init {
 		   13 => 'trece',
 		   14 => 'catorce',
 		   15 => 'quince',
-		   16 => 'dieciséis',
+		   16 => 'diecisÃ©is',
 		   17 => 'diecisiete',
 		   18 => 'dieciocho',
 		   19 => 'diecinueve',
 		   20 => 'veinte',
-		   21 => 'veintiún',
+		   21 => 'veintiÃºn',
 	        '21o' => 'veintiuno',
-		   22 => 'veintidós',
-		   23 => 'veintitrés',
+		   22 => 'veintidÃ³s',
+		   23 => 'veintitrÃ©s',
 		   24 => 'veinticuatro',
 		   25 => 'veinticinco',
-		   26 => 'veintiséis',
+		   26 => 'veintisÃ©is',
 		   27 => 'veintisiete',
 		   28 => 'veintiocho',
 		   29 => 'veintinueve',
@@ -73,8 +73,8 @@ sub init {
 		  900 => 'novecientos',
                 10**2 => 'cien',
                 10**3 => 'mil',
-		10**6 => 'millón',
-	       10**12 => 'billón',
+		10**6 => 'millÃ³n',
+	       10**12 => 'billÃ³n',
 		);
 
 }
@@ -153,12 +153,12 @@ sub num2text {
       if ($numblock[$i] > 1) {
 	if ($i == 2 || $i == 4) {
 	  $a = $self->{numbername}{$num}."es";
-	  $a =~ s/ó/o/;
+	  $a =~ s/Ã³/o/;
 	  push @textnumber, $a;
 	} elsif ($i == 3) {
 	  $num = 10**($i * 2);
 	  $a = "$self->{numbername}{10**3} $self->{numbername}{$num}es";
-	  $a =~ s/ó/o/;
+	  $a =~ s/Ã³/o/;
 	  push @textnumber, $a;
 	} else {
 	  if ($i == 1) {
@@ -173,7 +173,7 @@ sub num2text {
 	  push @textnumber, $self->{numbername}{10**3};
 	} else {
 	  $a = "$self->{numbername}{$num}es";
-	  $a =~ s/ó/o/;
+	  $a =~ s/Ã³/o/;
 	  push @textnumber, $a;
 	}
       }

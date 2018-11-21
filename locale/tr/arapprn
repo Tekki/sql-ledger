@@ -1,5 +1,3 @@
-$self{charset} = 'ISO-8859-9';
-
 $self{texts} = {
   'Account'                     => 'Hesap',
   'Amount'                      => 'Miktar',

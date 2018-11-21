@@ -621,9 +621,9 @@ sub dbpassword {
   my $query;
 
   if ($form->{new_password}) {
-    $query = qq|ALTER ROLE $form->{dbuser} WITH PASSWORD '$form->{new_password}'|;
+    $query = qq|ALTER ROLE '$form->{dbuser}' WITH PASSWORD '$form->{new_password}'|;
   } else {
-    $query = qq|ALTER ROLE $form->{dbuser} WITH PASSWORD NULL|;
+    $query = qq|ALTER ROLE '$form->{dbuser}' WITH PASSWORD NULL|;
   }
 
   $dbh->do($query) or $form->dberror($query);
@@ -712,6 +712,7 @@ sub create_config {
 
   my $password = $self->{password};
   my $key = "";
+  my $login;
 
   $self->{sessionkey} = "";
   $self->{sessioncookie} = "";
@@ -719,7 +720,9 @@ sub create_config {
   if ($self->{password}) {
     my $t = time + $self->{timeout};
     srand( time() ^ ($$ + ($$ << 15)) );
-    $key = "$self->{login}$self->{password}$t";
+    $login = $self->{login};
+    $login =~ s/(\@| )/_/g;
+    $key = "$login$self->{password}$t";
 
     my $i = 0;
     my $l = length $key;

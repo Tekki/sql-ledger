@@ -1,13 +1,11 @@
-$self{charset} = 'ISO-8859-2';
-
 $self{texts} = {
-  'Continue'                    => 'Pokraèování',
+  'Continue'                    => 'PokraÄovÃ¡nÃ­',
   'Password'                    => 'Heslo',
 };
 
 $self{subs} = {
   'getpassword'                 => 'getpassword',
-  'pokraèování'                 => 'continue',
+  'pokraÄovÃ¡nÃ­'              => 'continue',
 };
 
 1;

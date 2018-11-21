@@ -1,17 +1,15 @@
-$self{charset} = 'ISO-8859-15';
-
 $self{texts} = {
-  'Accounting Menu'             => 'Raamatupidamise Menüü',
+  'Accounting Menu'             => 'Raamatupidamise MenÃ¼Ã¼',
   'April'                       => 'Aprill',
   'August'                      => 'August',
   'December'                    => 'Detsember',
-  'Description'                 => 'Selgitus',
+  'Description'                 => 'Kirjeldus',
   'February'                    => 'Veebruar',
-  'Heading'                     => 'Päis',
+  'Heading'                     => 'PÃ¤is',
   'January'                     => 'Jaanuar',
   'July'                        => 'Juuli',
   'June'                        => 'Juuni',
-  'March'                       => 'Märts',
+  'March'                       => 'MÃ¤rts',
   'May'                         => 'Mai',
   'November'                    => 'November',
   'October'                     => 'Oktoober',
@@ -39,6 +37,7 @@ $self{subs} = {
   'save_column'                 => 'save_column',
   'save_report'                 => 'save_report',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
 };
 
 1;

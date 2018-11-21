@@ -163,6 +163,7 @@ $self{subs} = {
   'statement_details'           => 'statement_details',
   'subtotal'                    => 'subtotal',
   'transactions'                => 'transactions',
+  'unload'                      => 'unload',
   'update'                      => 'update',
   'validate_items'              => 'validate_items',
   'vendor_invoice_'             => 'vendor_invoice_',

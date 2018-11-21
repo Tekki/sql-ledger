@@ -334,7 +334,7 @@ Version 3.0.8 to 3.2.2
 
    Mimetype.sql is in the sql directory
 
-Version 3.2.2 to 3.2.3
+Version 3.2.2 to current
 ---------------------
 1. copy income_statement.html and balance_sheet.html
    from the doc/templates/Default directory to your

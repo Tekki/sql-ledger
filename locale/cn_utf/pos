@@ -103,6 +103,7 @@ $self{subs} = {
   'resize'                      => 'resize',
   'section_menu'                => 'section_menu',
   'show_progress'               => 'show_progress',
+  'unload'                      => 'unload',
   'ç»§ç»­'                      => 'continue',
   'å é¤'                      => 'delete',
   'å å¥'                      => 'post',

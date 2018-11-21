@@ -183,6 +183,7 @@ $self{subs} = {
   'translation'                 => 'translation',
   'translation_footer'          => 'translation_footer',
   'translation_header'          => 'translation_header',
+  'unload'                      => 'unload',
   'update'                      => 'update',
   'æ°å¢ç»'                   => 'add_group',
   'æ°å¢ä»·æ ¼ç»'             => 'add_pricegroup',

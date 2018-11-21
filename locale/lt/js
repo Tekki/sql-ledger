@@ -1,18 +1,16 @@
-$self{charset} = 'ISO-8859-13';
-
 $self{texts} = {
   'April'                       => 'Balandis',
-  'August'                      => 'Rugpjûtis',
+  'August'                      => 'RugpjÅ«tis',
   'December'                    => 'Gruodis',
   'February'                    => 'Vasaris',
   'January'                     => 'Sausis',
   'July'                        => 'Liepa',
-  'June'                        => 'Birþelis',
+  'June'                        => 'BirÅ¾elis',
   'March'                       => 'Kovas',
   'May'                         => 'Geg',
   'November'                    => 'Lapkritis',
   'October'                     => 'Spalis',
-  'September'                   => 'Rûgsëjis',
+  'September'                   => 'RÅ«gsÄ—jis',
 };
 
 $self{subs} = {
@@ -23,6 +21,7 @@ $self{subs} = {
   'js_calendar'                 => 'js_calendar',
   'pickvalue'                   => 'pickvalue',
   'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
 };
 
 1;

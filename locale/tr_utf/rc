@@ -61,6 +61,7 @@ $self{subs} = {
   'section_menu'                => 'section_menu',
   'select_all'                  => 'select_all',
   'show_progress'               => 'show_progress',
+  'unload'                      => 'unload',
   'update'                      => 'update',
   'devam'                       => 'continue',
 };

@@ -6,6 +6,7 @@ $self{texts} = {
   'August'                      => 'Agosto',
   'Balance'                     => 'Saldo',
   'Chart of Accounts'           => 'Piano dei Conti',
+  'Closed'                      => 'Chiuso',
   'Credit'                      => 'Avere',
   'Current'                     => 'Corrente',
   'Date'                        => 'Data',
@@ -53,6 +54,7 @@ $self{subs} = {
   'list_transactions'           => 'list_transactions',
   'pickvalue'                   => 'pickvalue',
   'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
   'lista_transazioni'           => 'list_transactions',
 };
 

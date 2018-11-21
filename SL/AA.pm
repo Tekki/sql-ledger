@@ -1579,68 +1579,6 @@ sub vc_links {
 }
 
 
-sub consolidate {
-  my ($self, $myconfig, $form) = @_;
-
-  # connect to database
-  my $dbh = $form->dbconnect($myconfig);
-
-  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
-  for (keys %defaults) { $form->{$_} = $defaults{$_} }
-
-  my $invoice = ($form->{type} eq 'invoice') ? 1 : 0;
-  my $arap = lc $form->{ARAP};
-  my $vc = ($form->{ARAP} eq 'AR') ? 'customer' : 'vendor';
-
-  my $query = qq|SELECT a.*, c.prec
-                 FROM $arap a
-                 LEFT JOIN curr c ON (c.curr = a.curr)
-                 WHERE amount != paid
-                 AND invoice = '$invoice'
-                 AND approved = '1'
-                 AND onhold = '0'|;
-
-  my @sf = (transdate);
-  my %ordinal = $form->ordinal_order($dbh, $query);
-  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
-
-  my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
-
-  $query = qq|SELECT c.name, a.city
-              FROM $vc c
-              JOIN address a ON (a.trans_id = c.id)
-              WHERE c.id = ?|;
-  my $cth = $dbh->prepare($query);
-
-  $query = qq|SELECT c.accno
-              FROM acc_trans ac
-              JOIN chart c ON (c.id = ac.chart_id)
-              WHERE ac.trans_id = ?
-              AND c.link = '$form->{ARAP}'|;
-  my $ath = $dbh->prepare($query);
-
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
-    $cth->execute($ref->{"${vc}_id"});
-    ($ref->{name}, $ref->{city}) = $cth->fetchrow_array;
-    $cth->finish;
-
-    $ath->execute($ref->{id});
-    ($arap) = $ath->fetchrow_array;
-    $ath->finish;
-
-    $form->{$ref->{curr}}++;
-
-    push @{ $form->{all_transactions}{$ref->{curr}}{$arap}{$ref->{name}} }, $ref;
-  }
-  $sth->finish;
-
-  $dbh->disconnect;
-
-}
-
-
-
 1;
 
 =encoding utf8
@@ -1665,10 +1603,6 @@ L<SL::AA> implements the following functions:
 =head2 company_details
 
   AA->company_details($myconfig, $form, $dbh);
-
-=head2 consolidate
-
-  AA->consolidate($myconfig, $form);
 
 =head2 delete_transaction
 

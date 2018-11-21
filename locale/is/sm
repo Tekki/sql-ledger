@@ -1,16 +1,17 @@
 $self{texts} = {
-  'April'                       => 'apríl',
-  'August'                      => 'ágúst',
-  'Continue'                    => 'Áfram',
+  'April'                       => 'aprÃ­l',
+  'August'                      => 'Ã¡gÃºst',
+  'Continue'                    => 'Ãfram',
+  'Date missing!'               => 'Dagsetningu vantar!',
   'December'                    => 'desember',
-  'February'                    => 'febrúar',
-  'January'                     => 'janúar',
-  'July'                        => 'júlí',
-  'June'                        => 'júní',
+  'February'                    => 'febrÃºar',
+  'January'                     => 'janÃºar',
+  'July'                        => 'jÃºlÃ­',
+  'June'                        => 'jÃºnÃ­',
   'March'                       => 'mars',
-  'May'                         => 'maí',
-  'November'                    => 'nóvember',
-  'October'                     => 'óktóber',
+  'May'                         => 'maÃ­',
+  'November'                    => 'nÃ³vember',
+  'October'                     => 'Ã³ktÃ³ber',
   'September'                   => 'september',
 };
 
@@ -28,6 +29,7 @@ $self{subs} = {
   'pickvalue'                   => 'pickvalue',
   'repost_invoices'             => 'repost_invoices',
   'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
 };
 
 1;

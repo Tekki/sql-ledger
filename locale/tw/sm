@@ -1,19 +1,19 @@
-$self{charset} = 'BIG5';
-
 $self{texts} = {
-  'April'                       => '¥|¤ë',
-  'August'                      => '¤K¤ë',
-  'Continue'                    => 'Ä~Äò',
-  'December'                    => '¤Q¤G¤ë',
-  'February'                    => '¤G¤ë',
-  'January'                     => '¤@¤ë',
-  'July'                        => '¤C¤ë',
-  'June'                        => '¤»¤ë',
-  'March'                       => '¤T¤ë',
-  'May'                         => '¤­¤ë',
-  'November'                    => '¤Q¤@¤ë',
-  'October'                     => '¤Q¤ë',
-  'September'                   => '¤E¤ë',
+  'April'                       => 'å››æœˆ',
+  'August'                      => 'å…«æœˆ',
+  'Continue'                    => 'ç¹¼çºŒ',
+  'Date missing!'               => 'æœªæŒ‡æ˜Žæ—¥æœŸï¼',
+  'December'                    => 'åäºŒæœˆ',
+  'February'                    => 'äºŒæœˆ',
+  'January'                     => 'ä¸€æœˆ',
+  'July'                        => 'ä¸ƒæœˆ',
+  'June'                        => 'å…­æœˆ',
+  'March'                       => 'ä¸‰æœˆ',
+  'May'                         => 'äº”æœˆ',
+  'November'                    => 'åä¸€æœˆ',
+  'October'                     => 'åæœˆ',
+  'September'                   => 'ä¹æœˆ',
+  'done'                        => 'å®Œæˆ',
 };
 
 $self{subs} = {
@@ -30,6 +30,7 @@ $self{subs} = {
   'pickvalue'                   => 'pickvalue',
   'repost_invoices'             => 'repost_invoices',
   'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
 };
 
 1;

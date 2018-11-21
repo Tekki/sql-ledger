@@ -1,11 +1,11 @@
 $self{texts} = {
-  'Accounting Menu'             => 'Bokförings-meny',
-  'April'                       => 'April',
-  'August'                      => 'Augusti',
-  'December'                    => 'December',
+  'Accounting Menu'             => 'BokfÃ¶rings-meny',
+  'April'                       => 'april',
+  'August'                      => 'augusti',
+  'December'                    => 'december',
   'Description'                 => 'Beskrivning',
   'February'                    => 'Februari',
-  'Heading'                     => 'Överskrift',
+  'Heading'                     => 'Ã–verskrift',
   'January'                     => 'Januari',
   'July'                        => 'Juli',
   'June'                        => 'Juni',
@@ -37,6 +37,7 @@ $self{subs} = {
   'save_column'                 => 'save_column',
   'save_report'                 => 'save_report',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
 };
 
 1;

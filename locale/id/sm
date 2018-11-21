@@ -1,6 +1,7 @@
 $self{texts} = {
   'August'                      => 'Agustus',
   'Continue'                    => 'Lanjut',
+  'Date missing!'               => 'Tanggal harap diisi!',
   'December'                    => 'Desember',
   'February'                    => 'Februari',
   'January'                     => 'Januari',
@@ -8,6 +9,7 @@ $self{texts} = {
   'June'                        => 'Juni',
   'March'                       => 'Maret',
   'October'                     => 'Oktober',
+  'done'                        => 'selesai',
 };
 
 $self{subs} = {
@@ -24,6 +26,7 @@ $self{subs} = {
   'pickvalue'                   => 'pickvalue',
   'repost_invoices'             => 'repost_invoices',
   'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
 };
 
 1;

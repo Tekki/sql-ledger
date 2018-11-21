@@ -1,21 +1,19 @@
-$self{charset} = 'ISO-8859-13';
-
 $self{texts} = {
-  'Accounting Menu'             => 'Kontçðanas izvçlne',
-  'April'                       => 'Aprîlî',
-  'August'                      => 'Augustâ',
-  'December'                    => 'Decembrî',
+  'Accounting Menu'             => 'KontÄ“Å¡anas izvÄ“lne',
+  'April'                       => 'AprÄ«lÄ«',
+  'August'                      => 'AugustÄ',
+  'December'                    => 'DecembrÄ«',
   'Description'                 => 'Apraksts',
-  'February'                    => 'Februârî',
+  'February'                    => 'FebruÄrÄ«',
   'Heading'                     => 'Virsraksts',
-  'January'                     => 'Janvârî',
-  'July'                        => 'Jûlijâ',
-  'June'                        => 'Jûnijâ',
-  'March'                       => 'Martâ',
+  'January'                     => 'JanvÄrÄ«',
+  'July'                        => 'JÅ«lijÄ',
+  'June'                        => 'JÅ«nijÄ',
+  'March'                       => 'MartÄ',
   'May'                         => 'Mai',
-  'November'                    => 'Novembrî',
-  'October'                     => 'Oktobrî',
-  'September'                   => 'Septembrî',
+  'November'                    => 'NovembrÄ«',
+  'October'                     => 'OktobrÄ«',
+  'September'                   => 'SeptembrÄ«',
 };
 
 $self{subs} = {
@@ -39,6 +37,7 @@ $self{subs} = {
   'save_column'                 => 'save_column',
   'save_report'                 => 'save_report',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
 };
 
 1;

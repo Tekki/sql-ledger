@@ -1,21 +1,19 @@
-$self{charset} = 'ISO-8859-13';
-
 $self{texts} = {
   'Accounting Menu'             => 'Apskaitos Menu',
   'April'                       => 'Balandis',
-  'August'                      => 'Rugpjûtis',
+  'August'                      => 'RugpjÅ«tis',
   'December'                    => 'Gruodis',
-  'Description'                 => 'Apraðymas',
+  'Description'                 => 'ApraÅ¡ymas',
   'February'                    => 'Vasaris',
-  'Heading'                     => 'Antraðtë',
+  'Heading'                     => 'AntraÅ¡tÄ—',
   'January'                     => 'Sausis',
   'July'                        => 'Liepa',
-  'June'                        => 'Birþelis',
+  'June'                        => 'BirÅ¾elis',
   'March'                       => 'Kovas',
   'May'                         => 'Geg',
   'November'                    => 'Lapkritis',
   'October'                     => 'Spalis',
-  'September'                   => 'Rûgsëjis',
+  'September'                   => 'RÅ«gsÄ—jis',
 };
 
 $self{subs} = {
@@ -39,6 +37,7 @@ $self{subs} = {
   'save_column'                 => 'save_column',
   'save_report'                 => 'save_report',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
 };
 
 1;

@@ -18,6 +18,7 @@ $self{texts} = {
   'February'                    => 'äºæ',
   'GL Transaction'              => 'GLäº¤æ',
   'ID'                          => 'ç¼å·',
+  'Image'                       => 'å½¢å',
   'January'                     => 'ä¸æ',
   'July'                        => 'ä¸æ',
   'June'                        => 'å­æ',
@@ -33,6 +34,7 @@ $self{texts} = {
   'Sales Invoice'               => 'éå®åç¥¨',
   'Sales Order'                 => 'éè´§å',
   'Save'                        => 'å¨å­',
+  'Select all'                  => 'å¨é',
   'September'                   => 'ä¹æ',
   'Service'                     => 'æå¡',
   'Vendor'                      => 'ä¾åºå',
@@ -42,6 +44,7 @@ $self{texts} = {
 $self{subs} = {
   'acc_menu'                    => 'acc_menu',
   'add_document'                => 'add_document',
+  'add_file'                    => 'add_file',
   'attach'                      => 'attach',
   'calendar'                    => 'calendar',
   'change_report'               => 'change_report',
@@ -50,6 +53,8 @@ $self{subs} = {
   'continue'                    => 'continue',
   'delete'                      => 'delete',
   'delete_documents'            => 'delete_documents',
+  'delete_files'                => 'delete_files',
+  'deselect_all'                => 'deselect_all',
   'detach'                      => 'detach',
   'display'                     => 'display',
   'display_documents'           => 'display_documents',
@@ -60,18 +65,24 @@ $self{subs} = {
   'jsmenu'                      => 'jsmenu',
   'jsmenu_frame'                => 'jsmenu_frame',
   'list_documents'              => 'list_documents',
+  'list_images'                 => 'list_images',
   'menubar'                     => 'menubar',
   'pickvalue'                   => 'pickvalue',
   'resize'                      => 'resize',
   'save'                        => 'save',
   'search_documents'            => 'search_documents',
   'section_menu'                => 'section_menu',
+  'select_all'                  => 'select_all',
   'show_progress'               => 'show_progress',
+  'unload'                      => 'unload',
   'upload'                      => 'upload',
   'upload_file'                 => 'upload_file',
+  'upload_image'                => 'upload_image',
+  'upload_imagefile'            => 'upload_imagefile',
   'ç»§ç»­'                      => 'continue',
   'å é¤'                      => 'delete',
   'å¨å­'                      => 'save',
+  'å¨é'                      => 'select_all',
 };
 
 1;

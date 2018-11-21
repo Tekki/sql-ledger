@@ -4,13 +4,16 @@ $self{texts} = {
   'Continue'                    => 'Continuar',
   'Date'                        => 'Fecha',
   'Memo'                        => 'Memo',
-  'Nothing to print!'           => '¡No hay nada que imprimir!',
+  'Nothing to print!'           => 'Â¡No hay nada que imprimir!',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
   'Printed'                     => 'Impreso',
+  'Scheduled'                   => 'Programado',
   'Screen'                      => 'Pantalla',
-  'Select payment'              => '¡Seleccione Pago!',
+  'Select a Printer!'           => 'Selecciona Impresora!',
+  'Select payment'              => 'Â¡Seleccione Pago!',
   'Source'                      => 'Fuente',
+  'Text'                        => 'Texto',
 };
 
 $self{subs} = {

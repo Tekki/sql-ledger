@@ -2,14 +2,18 @@ $self{texts} = {
   'Account'                     => 'Tili',
   'Amount'                      => 'Summa',
   'Continue'                    => 'Jatka',
-  'Date'                        => 'Päiväys',
+  'Date'                        => 'PÃ¤ivÃ¤ys',
+  'Memo'                        => 'Muistio',
   'Nothing to print!'           => 'Ei tulostettavaa!',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
   'Printed'                     => 'Tulostettu',
-  'Screen'                      => 'Näyttö',
+  'Scheduled'                   => 'Aikataulutettu',
+  'Screen'                      => 'NÃ¤yttÃ¶',
+  'Select a Printer!'           => 'Valitse tulostin',
   'Select payment'              => 'Valitse maksutapa',
-  'Source'                      => 'Lähde',
+  'Source'                      => 'LÃ¤hde',
+  'Text'                        => 'Teksti',
 };
 
 $self{subs} = {

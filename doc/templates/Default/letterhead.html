@@ -1,23 +1,25 @@
   <tr>
     <td width=10>&nbsp;</td>
 
-    <td>
+    <td colspan=3>
       <table width=100%>
-        <tr>
-          <td>
+        <tr valign=bottom>
+          <td width=33%>
             <h4>
             <%company%><br>
             <%address%>
             </h4>
           </td>
 
-          <th><img src=<%templates%>/<%language_code%>/logo.png border=0 height=58></th>
+          <th width=34%><img src=<%templates%>/<%language_code%>/logo.png border=0 height=58></th>
 
-          <td align=right>
-            <h4>
-            Tel: <%tel%><br>
-            Fax: <%fax%>
-            </h4>
+          <td align=right width=33%>
+            <table>
+              <tr><th align=right>Tel:</th><td><%tel%></td></tr>
+              <tr><th align=right>Fax:</th><td><%fax%></td></tr>
+              <tr><th align=right>E-mail:</th><td><%companyemail%></td></tr>
+              <tr><th align=right>www:</th><td><%companywebsite%></td></tr>
+            </table>
           </td>
         </tr>
 

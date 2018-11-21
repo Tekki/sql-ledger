@@ -1,20 +1,22 @@
 $self{texts} = {
-  'April'                       => 'april',
-  'August'                      => 'augustus',
+  'April'                       => 'April',
+  'August'                      => 'Augustus',
   'Beginning date'              => 'Begin datum',
   'Continue'                    => 'Verder',
-  'Date missing'                => 'Datum ontbreekt',
-  'December'                    => 'december',
-  'February'                    => 'februari',
-  'January'                     => 'januari',
-  'July'                        => 'juli',
-  'June'                        => 'juni',
-  'March'                       => 'maart',
-  'May'                         => 'mei',
-  'November'                    => 'november',
-  'October'                     => 'oktober',
+  'Date missing!'               => 'Datum ontbreekt!',
+  'December'                    => 'December',
+  'February'                    => 'Februari',
+  'January'                     => 'Januari',
+  'July'                        => 'Juli',
+  'June'                        => 'Juni',
+  'March'                       => 'Maart',
+  'May'                         => 'Mei',
+  'November'                    => 'November',
+  'October'                     => 'Oktober',
   'Repost Invoices'             => 'Facturen opnieuw boeken',
-  'September'                   => 'september',
+  'September'                   => 'September',
+  'done'                        => 'gebeurd',
+  'please wait'                 => 'even geduld',
 };
 
 $self{subs} = {
@@ -31,6 +33,7 @@ $self{subs} = {
   'pickvalue'                   => 'pickvalue',
   'repost_invoices'             => 'repost_invoices',
   'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
 };
 
 1;

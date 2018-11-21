@@ -1,15 +1,15 @@
 $self{texts} = {
   'Company'                     => 'Empresa',
   'Continue'                    => 'Continuar',
-  'Dataset is newer than version!' => '¡El conjunto de datos es mas reciente que la versión del programa!',
-  'Incorrect Dataset version!'  => '¡La Versión del conjunto de datos es incorrecta!',
+  'Dataset is newer than version!' => 'Â¡El conjunto de datos es mas reciente que la versiÃ³n del programa!',
+  'Incorrect Dataset version!'  => 'Â¡La VersiÃ³n del conjunto de datos es incorrecta!',
   'Login'                       => 'Entrada al sistema',
   'Name'                        => 'Nombre',
-  'No email address for'        => 'Falta dirección de correo-e para',
-  'Password'                    => 'Contraseña',
-  'Upgrading to Version'        => 'Actualizando a versión',
-  'Version'                     => 'Versión',
-  'You did not enter a name!'   => '¡No ingresó un nombre!',
+  'No email address for'        => 'Falta direcciÃ³n de correo-e para',
+  'Password'                    => 'ContraseÃ±a',
+  'Upgrading to Version'        => 'Actualizando a versiÃ³n',
+  'Version'                     => 'VersiÃ³n',
+  'You did not enter a name!'   => 'Â¡No ingresÃ³ un nombre!',
 };
 
 $self{subs} = {

@@ -1,18 +1,16 @@
-$self{charset} = 'ISO-8859-5';
-
 $self{texts} = {
-  'April'                       => 'ë×¦ÔÅÎØ',
-  'August'                      => 'óÅÒÐÅÎØ',
-  'December'                    => 'çÒÕÄÅÎØ',
-  'February'                    => 'ìÀÔÉÊ',
-  'January'                     => 'Ó¦ÞÅÎØ',
-  'July'                        => 'ìÉÐÅÎØ',
-  'June'                        => 'þÅÒ×ÅÎØ',
-  'March'                       => 'âÅÒÅÚÅÎØ',
-  'May'                         => 'ÔÒÁ×ÎÑ',
-  'November'                    => 'ìÉÓÔÏÐÁÄ',
-  'October'                     => 'öÏ×ÔÅÎØ',
-  'September'                   => '÷ÅÒÅÓÅÎØ',
+  'April'                       => 'ÐšÐ²Ñ–Ñ‚ÐµÐ½ÑŒ',
+  'August'                      => 'Ð¡ÐµÑ€Ð¿ÐµÐ½ÑŒ',
+  'December'                    => 'Ð“Ñ€ÑƒÐ´ÐµÐ½ÑŒ',
+  'February'                    => 'Ð›ÑŽÑ‚Ð¸Ð¹',
+  'January'                     => 'ÑÑ–Ñ‡ÐµÐ½ÑŒ',
+  'July'                        => 'Ð›Ð¸Ð¿ÐµÐ½ÑŒ',
+  'June'                        => 'Ð§ÐµÑ€Ð²ÐµÐ½ÑŒ',
+  'March'                       => 'Ð‘ÐµÑ€ÐµÐ·ÐµÐ½ÑŒ',
+  'May'                         => 'Ñ‚Ñ€Ð°Ð²Ð½Ñ',
+  'November'                    => 'Ð›Ð¸ÑÑ‚Ð¾Ð¿Ð°Ð´',
+  'October'                     => 'Ð–Ð¾Ð²Ñ‚ÐµÐ½ÑŒ',
+  'September'                   => 'Ð’ÐµÑ€ÐµÑÐµÐ½ÑŒ',
 };
 
 $self{subs} = {
@@ -23,6 +21,7 @@ $self{subs} = {
   'js_calendar'                 => 'js_calendar',
   'pickvalue'                   => 'pickvalue',
   'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
 };
 
 1;

@@ -1,0 +1,10 @@
+#!/bin/sh
+set -e
+
+test -f sql-ledger.conf || cp sql-ledger.conf.default sql-ledger.conf
+test -f wlprinter.conf || cp wlprinter.conf.default wlprinter.conf
+
+# Apache gets grumpy about PID files pre-existing
+rm -f /usr/local/apache2/logs/httpd.pid
+
+exec httpd -DFOREGROUND

@@ -1,8 +1,8 @@
 $self{texts} = {
   'April'                       => 'Avril',
-  'August'                      => 'Août',
-  'December'                    => 'Décembre',
-  'February'                    => 'Février',
+  'August'                      => 'Aout',
+  'December'                    => 'DÃ©cembre',
+  'February'                    => 'FÃ©vrier',
   'January'                     => 'Janvier',
   'July'                        => 'Juillet',
   'June'                        => 'Juin',
@@ -21,6 +21,7 @@ $self{subs} = {
   'js_calendar'                 => 'js_calendar',
   'pickvalue'                   => 'pickvalue',
   'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
 };
 
 1;

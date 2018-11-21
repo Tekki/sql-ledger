@@ -175,6 +175,7 @@ $self{subs} = {
   'storescard_header'           => 'storescard_header',
   'timecard_footer'             => 'timecard_footer',
   'timecard_header'             => 'timecard_header',
+  'unload'                      => 'unload',
   'update'                      => 'update',
   'yes'                         => 'yes',
   'yes_delete_storescard'       => 'yes_delete_storescard',

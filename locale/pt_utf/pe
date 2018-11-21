@@ -143,6 +143,7 @@ $self{subs} = {
   'translation'                 => 'translation',
   'translation_footer'          => 'translation_footer',
   'translation_header'          => 'translation_header',
+  'unload'                      => 'unload',
   'update'                      => 'update',
   'novo_projecto'               => 'add_project',
   'continuar'                   => 'continue',

@@ -31,6 +31,7 @@ $self{texts} = {
   'January'                     => 'Januari',
   'July'                        => 'Juli',
   'June'                        => 'Juni',
+  'Make'                        => 'Pembuatan',
   'March'                       => 'Maret',
   'May '                        => 'Mei',
   'Message'                     => 'Pesan',

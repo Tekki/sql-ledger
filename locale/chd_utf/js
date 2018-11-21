@@ -39,6 +39,7 @@ $self{subs} = {
   'quick_calculation'           => 'quick_calculation',
   'resize'                      => 'resize',
   'show_progress'               => 'show_progress',
+  'unload'                      => 'unload',
 };
 
 1;

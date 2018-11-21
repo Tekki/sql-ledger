@@ -245,6 +245,7 @@ $self{subs} = {
   'show_progress'               => 'show_progress',
   'statement_details'           => 'statement_details',
   'subtotal'                    => 'subtotal',
+  'unload'                      => 'unload',
   'vendor_invoice_'             => 'vendor_invoice_',
   '繼續'                          => 'continue',
   '刪除時間表'                       => 'delete_schedule',

@@ -4,7 +4,7 @@
 #
 #  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.com
-# 
+#
 #======================================================================
 #
 # printing routines for ar, ap
@@ -28,7 +28,7 @@ sub print {
     $oldform = new Form;
     for (keys %$form) { $oldform->{$_} = $form->{$_} }
   }
- 
+
   if (! $form->{invnumber}) {
     $invfld = 'sinumber';
     $invfld = 'vinumber' if $form->{ARAP} eq 'AP';
@@ -42,10 +42,10 @@ sub print {
     if ($form->{media} ne 'screen') {
       for (qw(action header)) { delete $form->{$_} }
       $form->{invtotal} = $form->{oldinvtotal};
-      
+
       foreach $key (keys %$form) {
-	$form->{$key} =~ s/&/%26/g;
-	$form->{previousform} .= qq|$key=$form->{$key}&|;
+        $form->{$key} =~ s/&/%26/g;
+        $form->{previousform} .= qq|$key=$form->{$key}&|;
       }
       chop $form->{previousform};
       $form->{previousform} = $form->escape($form->{previousform}, 1);
@@ -53,16 +53,16 @@ sub print {
 
     if ($form->{paidaccounts} > 1) {
       if ($form->{"paid_$form->{paidaccounts}"}) {
-	&update;
-	exit;
+        &update;
+        exit;
       } elsif ($form->{paidaccounts} > 2) {
-	&select_payment;
-	exit;
+        &select_payment;
+        exit;
       }
     } else {
       $form->error($locale->text('Nothing to print!'));
     }
-    
+
   }
 
   &{ "print_$form->{formname}" }($oldform, 1);
@@ -72,12 +72,12 @@ sub print {
 
 sub print_check {
   my ($oldform, $i) = @_;
-  
+
   $display_form = ($form->{display_form}) ? $form->{display_form} : "display_form";
 
   if ($form->{"paid_$i"}) {
     @a = ();
-    
+
     $datepaid = $form->datetonum(\%myconfig, $form->{"datepaid_$i"});
     ($form->{yyyy}, $form->{mm}, $form->{dd}) = $datepaid =~ /(....)(..)(..)/;
 
@@ -95,13 +95,13 @@ sub print_check {
     ($form->{formname} eq 'receipt' && $form->{vc} eq 'vendor')) {
     $form->{amount} =~ s/-//g;
   }
-    
+
   for (qw(datepaid source memo)) { $form->{$_} = $form->{"${_}_$i"} }
 
   AA->company_details(\%myconfig, \%$form);
   @a = qw(name address1 address2 city state zipcode country);
   push @a, qw(firstname lastname salutation contacttitle occupation mobile);
- 
+
   foreach $item (qw(invnumber ordnumber)) {
     $temp{$item} = $form->{$item};
     delete $form->{$item};
@@ -112,7 +112,7 @@ sub print_check {
   push(@{ $form->{paid} }, $form->{"paid_$i"});
 
   use SL::CP;
-  $c = CP->new(($form->{language_code}) ? $form->{language_code} : $myconfig{countrycode}); 
+  $c = CP->new(($form->{language_code}) ? $form->{language_code} : $myconfig{countrycode});
   $c->init;
   ($whole, $form->{decimal}) = split /\./, $form->parse_amount(\%myconfig, $form->{amount});
 
@@ -128,7 +128,7 @@ sub print_check {
     $form->{text_cd_invtotal} = $c->num2text($whole);
     $form->{integer_cd_invtotal} = $whole;
   }
-  
+
   push @a, (qw(text_amount text_decimal text_cd_invtotal text_cd_decimal));
 
   # dcn
@@ -139,9 +139,9 @@ sub print_check {
   }
 
   for (qw(employee)) { ($form->{$_}, $form->{"${_}_id"}) = split /--/, $form->{$_} };
-  
+
   push @a, qw(employee notes intnotes company address tel fax businessnumber companyemail companywebsite);
-  
+
   $form->format_string(@a);
 
   $form->{templates} = "$templates/$myconfig{templates}";
@@ -153,7 +153,7 @@ sub print_check {
 
   if ($form->{media} !~ /(screen)/) {
     $form->{OUT} = qq~| $form->{"$form->{media}_printer"}~;
-    
+
     if ($form->{printed} !~ /$form->{formname}/) {
 
       $form->{printed} .= " $form->{formname}";
@@ -164,13 +164,13 @@ sub print_check {
 
     %audittrail = ( tablename   => lc $form->{ARAP},
                     reference   => $form->{invnumber},
-		    formname    => $form->{formname},
-		    action      => 'printed',
-		    id          => $form->{id} );
-    
+                    formname    => $form->{formname},
+                    action      => 'printed',
+                    id          => $form->{id} );
+
     %status = ();
     for (qw(printed audittrail)) { $status{$_} = $form->{$_} }
-    
+
     $status{audittrail} .= $form->audittrail("", \%myconfig, \%audittrail);
 
   }
@@ -181,7 +181,7 @@ sub print_check {
   $form->parse_template(\%myconfig, $userspath, $dvipdf, $xelatex);
 
   if ($form->{previousform}) {
-  
+
     $previousform = $form->unescape($form->{previousform});
 
     for (keys %$form) { delete $form->{$_} }
@@ -204,7 +204,7 @@ sub print_check {
     for (qw(printed audittrail)) { $form->{$_} = $status{$_} }
 
     &{ "$display_form" };
-    
+
   }
 
 }
@@ -212,7 +212,7 @@ sub print_check {
 
 sub print_receipt {
   my ($oldform, $i) = @_;
-  
+
   &print_check($oldform, $i);
 
 }
@@ -227,9 +227,9 @@ sub print_remittance_voucher {
 
 sub print_transaction {
   my ($oldform) = @_;
- 
+
   $display_form = ($form->{display_form}) ? $form->{display_form} : "display_form";
- 
+
   AA->company_details(\%myconfig, \%$form);
 
   @a = qw(name address1 address2 city state zipcode country);
@@ -242,9 +242,9 @@ sub print_transaction {
     ($form->{tempaccno}, $form->{tempaccount}) = split /--/, $form->{"$form->{ARAP}_amount_$i"};
     ($form->{tempprojectnumber}) = split /--/, $form->{"projectnumber_$i"};
     $form->{tempdescription} = $form->{"description_$i"};
-    
+
     $form->format_string(qw(tempaccno tempaccount tempprojectnumber tempdescription));
-    
+
     push(@{ $form->{accno} }, $form->{tempaccno});
     push(@{ $form->{account} }, $form->{tempaccount});
     push(@{ $form->{description} }, $form->{tempdescription});
@@ -253,7 +253,7 @@ sub print_transaction {
     push(@{ $form->{amount} }, $form->{"amount_$i"});
 
     $form->{subtotal} += $form->parse_amount(\%myconfig, $form->{"amount_$i"});
-    
+
   }
 
   $form->{cd_subtotal} = $form->{subtotal};
@@ -271,9 +271,9 @@ sub print_transaction {
 
   $cd_tax = 0;
   for (split / /, $form->{taxaccounts}) {
-    
+
     if ($form->{"tax_$_"}) {
-      
+
       $form->format_string("${_}_description");
 
       $tax += $amount = $form->parse_amount(\%myconfig, $form->{"tax_$_"});
@@ -282,19 +282,19 @@ sub print_transaction {
       push(@{ $form->{tax} }, $form->{"tax_$_"});
 
       if ($form->{cdt}) {
-	$cdt = ($form->{discount_paid}) ? $form->{"tax_$_"} : $amount * (1 - $cashdiscount);
-	$cd_tax += $form->round_amount($cdt, $form->{precision});
-	push(@{ $form->{cd_tax} }, $form->format_amount(\%myconfig, $cdt, $form->{precision}));
+        $cdt = ($form->{discount_paid}) ? $form->{"tax_$_"} : $amount * (1 - $cashdiscount);
+        $cd_tax += $form->round_amount($cdt, $form->{precision});
+        push(@{ $form->{cd_tax} }, $form->format_amount(\%myconfig, $cdt, $form->{precision}));
       } else {
-	push(@{ $form->{cd_tax} }, $form->{"tax_$_"});
+        push(@{ $form->{cd_tax} }, $form->{"tax_$_"});
       }
-      
+
       push(@{ $form->{taxdescription} }, $form->{"${_}_description"});
 
       $form->{"${_}_taxrate"} = $form->format_amount($myconfig, $form->{"${_}_rate"} * 100, undef, 0);
 
       push(@{ $form->{taxrate} }, $form->{"${_}_taxrate"});
-      
+
       push(@{ $form->{taxnumber} }, $form->{"${_}_taxnumber"});
     }
   }
@@ -319,16 +319,16 @@ sub print_transaction {
     if ($form->{"paid_$i"}) {
       @a = ();
       $form->{paid} += $form->parse_amount(\%myconfig, $form->{"paid_$i"});
-      
+
       if (exists $form->{longformat}) {
-	$form->{"datepaid_$i"} = $locale->date(\%myconfig, $form->{"datepaid_$i"}, $form->{longformat});
+        $form->{"datepaid_$i"} = $locale->date(\%myconfig, $form->{"datepaid_$i"}, $form->{longformat});
       }
 
       push @a, "$form->{ARAP}_paid_$i", "source_$i", "memo_$i";
       $form->format_string(@a);
-      
+
       ($accno, $account) = split /--/, $form->{"$form->{ARAP}_paid_$i"};
-      
+
       push(@{ $form->{payment} }, $form->{"paid_$i"});
       push(@{ $form->{paymentdate} }, $form->{"datepaid_$i"});
       push(@{ $form->{paymentaccount} }, $account);
@@ -339,9 +339,9 @@ sub print_transaction {
       push(@{ $form->{paymentmethod} }, $description);
 
       if ($form->{selectpaymentmethod}) {
-	$form->{roundto} = $roundchange{$form->{"paymentmethod_$i"}};
+        $form->{roundto} = $roundchange{$form->{"paymentmethod_$i"}};
       }
-      
+
     }
   }
 
@@ -359,7 +359,7 @@ sub print_transaction {
   $form->{cd_invtotal} = $form->{cd_subtotal} + $cd_tax;
 
   use SL::CP;
-  $c = CP->new(($form->{language_code}) ? $form->{language_code} : $myconfig{countrycode}); 
+  $c = CP->new(($form->{language_code}) ? $form->{language_code} : $myconfig{countrycode});
   $c->init;
 
   ($whole, $decimal) = split /\./, $form->{invtotal};
@@ -377,10 +377,10 @@ sub print_transaction {
 
   ($whole, $decimal) = split /\./, $form->{total};
   $form->{out_decimal} = substr("${decimal}00", 0, 2);
-  $form->{text_out_decimal} = $c->num2text($form->{out_decimal} * 1); 
+  $form->{text_out_decimal} = $c->num2text($form->{out_decimal} * 1);
   $form->{text_out_amount} = $c->num2text($whole);
   $form->{integer_out_amount} = $whole;
-  
+
   for (qw(cd_subtotal cd_amount cd_invtotal invtotal subtotal paid total)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, $form->{precision}) }
 
   # dcn
@@ -388,9 +388,9 @@ sub print_transaction {
     $form->{rvc} = $form->format_dcn($form->{rvc});
     $form->{dcn} = $form->format_dcn($form->{dcn});
   }
-  
+
   for (qw(employee)) { ($form->{$_}, $form->{"${_}_id"}) = split /--/, $form->{$_} };
-  
+
   $form->fdld(\%myconfig, \%$locale);
 
   if (exists $form->{longformat}) {
@@ -399,11 +399,11 @@ sub print_transaction {
 
   # before we format replace <%var%>
   for (qw(description notes intnotes)) { $form->{$_} =~ s/<%(.*?)%>/$fld = lc $1; $form->{$fld}/ge }
-  
+
   @a = qw(employee invnumber transdate duedate notes intnotes dcn rvc);
 
   push @a, qw(company address tel fax businessnumber companyemail companywebsite text_amount text_decimal text_out_decimal text_out_amount);
-  
+
   $form->format_string(@a);
 
   $form->{invdate} = $form->{transdate};
@@ -420,7 +420,7 @@ sub print_transaction {
 
   if ($form->{media} !~ /(screen)/) {
     $form->{OUT} = qq~| $form->{"$form->{media}_printer"}~;
-    
+
     if ($form->{printed} !~ /$form->{formname}/) {
 
       $form->{printed} .= " $form->{formname}";
@@ -438,10 +438,10 @@ sub print_transaction {
 
     %audittrail = ( tablename   => lc $form->{ARAP},
                     reference   => $form->{invnumber},
-		    formname    => $form->{formname},
-		    action      => 'printed',
-		    id          => $form->{id} );
-    
+                    formname    => $form->{formname},
+                    action      => 'printed',
+                    id          => $form->{id} );
+
     $oldform->{audittrail} .= $form->audittrail("", \%myconfig, \%audittrail) if %$oldform;
 
   }
@@ -465,10 +465,10 @@ sub print_transaction {
       for (split / /, $form->{taxaccounts}) { $form->{"tax_$_"} = $form->parse_amount(\%myconfig, $form->{"tax_$_"}) }
 
       for $i (1 .. $form->{paidaccounts}) {
-	for (qw(paid exchangerate)) { $form->{"${_}_$i"} = $form->parse_amount(\%myconfig, $form->{"${_}_$i"}) }
+        for (qw(paid exchangerate)) { $form->{"${_}_$i"} = $form->parse_amount(\%myconfig, $form->{"${_}_$i"}) }
       }
     }
-    
+
     &{ "$display_form" };
 
   }
@@ -486,41 +486,41 @@ sub print_payslip {
   HR->payslip_details(\%myconfig, \%$form);
 
   $display_form = ($form->{display_form}) ? $form->{display_form} : "display_form";
- 
+
   @a = ();
   $form->{paid} = $form->parse_amount(\%myconfig, $form->{paid});
-  
+
   if (exists $form->{longformat}) {
     $form->{dateto} = $locale->date(\%myconfig, $form->{dateto}, $form->{longformat});
     $form->{transdate} = $locale->date(\%myconfig, $form->{transdate}, $form->{longformat});
     $form->{datepaid} = $form->{transdate};
   }
-  
+
   for (qw(employee paymentmethod department project)) { ($form->{$_}, $form->{"${_}_id"}) = split /--/, $form->{$_} };
- 
+
   push @a, qw(ap payment employee paymentmethod department project gldescription source memo);
   $form->format_string(@a);
-  
+
 
   use SL::CP;
-  $c = CP->new(($form->{language_code}) ? $form->{language_code} : $myconfig{countrycode}); 
+  $c = CP->new(($form->{language_code}) ? $form->{language_code} : $myconfig{countrycode});
   $c->init;
   ($whole, $form->{decimal}) = split /\./, $form->{paid};
 
   $form->{decimal} .= "00";
   $form->{decimal} = substr($form->{decimal}, 0, 2);
-  $form->{text_decimal} = $c->num2text($form->{decimal} * 1); 
+  $form->{text_decimal} = $c->num2text($form->{decimal} * 1);
   $form->{text_amount} = $c->num2text($whole);
   $form->{integer_amount} = $whole;
-  
- 
+
+
   # before we format replace <%var%>
   $form->{description} =~ s/<%(.*?)%>/$fld = lc $1; $form->{$fld}/ge;
-  
+
   @a = qw(description);
 
   push @a, qw(company address tel fax businessnumber companyemail companywebsite text_amount text_decimal);
-   
+
   for $i (1 .. $form->{wage_rows}) {
     if ($form->{"qty_$i"}) {
       push @a, "wage_$i";
@@ -533,7 +533,7 @@ sub print_payslip {
   }
 
   delete $form->{deduct};
-  
+
   for $i (1 .. $form->{deduction_rows}) {
     if ($form->{"deduct_$i"}) {
       push @a, "deduction_$i";
@@ -579,7 +579,7 @@ sub select_payment {
 
   $helpref = $form->{helpref};
   $form->helpref("select_payment", $myconfig{countrycode});
-  
+
   # list payments with radio button on a form
   $form->header;
 
@@ -605,12 +605,12 @@ sub select_payment {
   <tr>
     <td>
       <table width=100%>
-	<tr class=listheading>|;
+        <tr class=listheading>|;
 
   for (@column_index) { print "\n$column_data{$_}" }
-  
+
   print qq|
-	</tr>
+        </tr>
 |;
 
   $checked = "checked";
@@ -626,19 +626,19 @@ sub select_payment {
     $column_data{datepaid} = qq|<td nowrap>$form->{"datepaid_$i"}</td>|;
 
     $checked = "";
-    
+
     $j++; $j %= 2;
     print qq|
-	<tr class=listrow$j>|;
+        <tr class=listrow$j>|;
 
     for (@column_index) { print "\n$column_data{$_}" }
 
     print qq|
-	</tr>
+        </tr>
 |;
 
   }
-  
+
   print qq|
       </table>
     </td>
@@ -651,9 +651,9 @@ sub select_payment {
 
   for (qw(action nextsub)) { delete $form->{$_} }
   $form->{helpref} = $helpref;
-  
+
   $form->hide_form;
-  
+
   print qq|
 
 <br>
@@ -671,7 +671,7 @@ sub select_payment {
 </body>
 </html>
 |;
-  
+
 }
 
 sub payment_selected {
@@ -686,7 +686,7 @@ sub print_options {
   if ($form->{selectlanguage}) {
     $lang = qq|<select name=language_code>|.$form->select_option($form->{selectlanguage}, $form->{language_code}, undef, 1).qq|</select>|;
   }
-  
+
   $type = qq|<select name=formname>|.$form->select_option($form->{selectformname}, $form->{formname}, undef, 1).qq|</select>|;
 
   $media = qq|<select name=media>
@@ -695,9 +695,9 @@ sub print_options {
   $selectformat = qq|<option value="html">|.$locale->text('html').qq|
 <option value="xml">|.$locale->text('XML').qq|
 <option value="txt">|.$locale->text('Text');
-			
+
   if ($form->{selectprinter} && $latex) {
-    for (split /\n/, $form->unescape($form->{selectprinter})) { $media .= qq| 
+    for (split /\n/, $form->unescape($form->{selectprinter})) { $media .= qq|
           <option value="$_">$_| }
   }
 
@@ -719,20 +719,20 @@ sub print_options {
   if (!$form->{nohold}) {
     $status = qq|
              <tr>
-	       <td align=right><input name="onhold" type="checkbox" class="checkbox" value="1" $checked{onhold}></td>
-	       <th align=left nowrap>|.$locale->text('On Hold').qq|</font></th>
-	       <td align=right><input name="$form->{formname}_printed" type="checkbox" class="checkbox" value="1" $checked{printed}></td>
-	       <th align=left nowrap>|.$locale->text('Printed').qq|</th>
-	     </tr>
+               <td align=right><input name="onhold" type="checkbox" class="checkbox" value="1" $checked{onhold}></td>
+               <th align=left nowrap>|.$locale->text('On Hold').qq|</font></th>
+               <td align=right><input name="$form->{formname}_printed" type="checkbox" class="checkbox" value="1" $checked{printed}></td>
+               <th align=left nowrap>|.$locale->text('Printed').qq|</th>
+             </tr>
 |;
   }
 
   if ($form->{recurring}) {
     $recurring = qq|
              <tr>
-	       <td></td>
-	       <th align=left nowrap>|.$locale->text('Scheduled').qq|</th>
-	     </tr>
+               <td></td>
+               <th align=left nowrap>|.$locale->text('Scheduled').qq|</th>
+             </tr>
 |;
   }
 
@@ -747,7 +747,7 @@ sub print_options {
         <table>
       $status
       $recurring
-	</table>
+        </table>
       </td>
     </tr>
   </table>

@@ -101,6 +101,7 @@ $self{subs} = {
   'select_all'                  => 'select_all',
   'show_progress'               => 'show_progress',
   'subtotal'                    => 'subtotal',
+  'unload'                      => 'unload',
   'yes'                         => 'yes',
   'yes_delete_batch'            => 'yes_delete_batch',
   '繼續'                          => 'continue',

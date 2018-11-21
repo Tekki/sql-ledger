@@ -80,6 +80,7 @@ $self{subs} = {
   'pickvalue'                   => 'pickvalue',
   'resize'                      => 'resize',
   'show_progress'               => 'show_progress',
+  'unload'                      => 'unload',
   'buchungsliste'               => 'list_transactions',
 };
 

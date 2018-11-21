@@ -1,5 +1,3 @@
-$self{charset} = 'UTF8';
-
 $self{texts} = {
   'April'                       => 'Април',
   'August'                      => 'Август',
@@ -15,6 +13,7 @@ $self{texts} = {
   'November'                    => 'Ноември',
   'October'                     => 'Октомври',
   'September'                   => 'Септември',
+  'done'                        => 'Готов',
 };
 
 $self{subs} = {
@@ -31,6 +30,7 @@ $self{subs} = {
   'pickvalue'                   => 'pickvalue',
   'repost_invoices'             => 'repost_invoices',
   'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
 };
 
 1;

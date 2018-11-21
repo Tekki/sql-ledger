@@ -4,12 +4,12 @@ $self{texts} = {
   'Continue'                    => 'Continuar',
   'Date'                        => 'Fecha',
   'Memo'                        => 'Memo',
-  'Nothing to print!'           => '¡No hay nada que imprimir!',
+  'Nothing to print!'           => 'Â¡No hay nada que imprimir!',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
   'Printed'                     => 'Impreso',
   'Screen'                      => 'Pantalla',
-  'Select payment'              => '¡Seleccione Pago!',
+  'Select payment'              => 'Â¡Seleccione Pago!',
   'Source'                      => 'Fuente',
 };
 

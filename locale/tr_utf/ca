@@ -54,6 +54,7 @@ $self{subs} = {
   'pickvalue'                   => 'pickvalue',
   'resize'                      => 'resize',
   'show_progress'               => 'show_progress',
+  'unload'                      => 'unload',
   'i̇şlemleri_listele'          => 'list_transactions',
 };
 

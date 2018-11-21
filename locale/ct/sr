@@ -1,15 +1,15 @@
 $self{texts} = {
-  'Accounting Menu'             => 'Menú Comptable',
+  'Accounting Menu'             => 'MenÃº Comptable',
   'April'                       => 'Abril',
   'August'                      => 'Agost',
   'December'                    => 'Desembre',
-  'Description'                 => 'Descripció',
+  'Description'                 => 'DescripciÃ³',
   'February'                    => 'Febrer',
-  'Heading'                     => 'Capçalera',
+  'Heading'                     => 'CapÃ§alera',
   'January'                     => 'Gener',
   'July'                        => 'Juliol',
   'June'                        => 'Juny',
-  'March'                       => 'Març',
+  'March'                       => 'MarÃ§',
   'May'                         => 'Mai',
   'November'                    => 'Novembre',
   'October'                     => 'Octubre',
@@ -37,6 +37,7 @@ $self{subs} = {
   'save_column'                 => 'save_column',
   'save_report'                 => 'save_report',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
 };
 
 1;

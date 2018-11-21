@@ -104,6 +104,7 @@ $self{subs} = {
   'resize'                      => 'resize',
   'section_menu'                => 'section_menu',
   'show_progress'               => 'show_progress',
+  'unload'                      => 'unload',
   'fortsæt'                     => 'continue',
   'fjern'                       => 'delete',
   'bogfør'                      => 'post',

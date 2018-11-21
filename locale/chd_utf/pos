@@ -126,6 +126,7 @@ $self{subs} = {
   'resize'                      => 'resize',
   'section_menu'                => 'section_menu',
   'show_progress'               => 'show_progress',
+  'unload'                      => 'unload',
   'nummer_zuweisen'             => 'assign_number',
   'weiter'                      => 'continue',
   'löschen'                     => 'delete',

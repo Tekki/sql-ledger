@@ -113,6 +113,7 @@ $self{subs} = {
   'resize'                      => 'resize',
   'section_menu'                => 'section_menu',
   'show_progress'               => 'show_progress',
+  'unload'                      => 'unload',
   'rechnungs_nr._zuweisen'      => 'assign_number',
   'weiter'                      => 'continue',
   'löschen'                     => 'delete',

@@ -2,16 +2,18 @@ $self{texts} = {
   'April'                       => 'Huhtikuu',
   'August'                      => 'Elokuu',
   'Continue'                    => 'Jatka',
+  'Date missing!'               => 'Pvm puuttuu',
   'December'                    => 'Joulukuu',
   'February'                    => 'Helmikuu',
   'January'                     => 'Tammikuu',
-  'July'                        => 'Heinäkuu',
-  'June'                        => 'Kesäkuu',
+  'July'                        => 'HeinÃ¤kuu',
+  'June'                        => 'KesÃ¤kuu',
   'March'                       => 'Maaliskuu',
   'May'                         => 'Tou',
   'November'                    => 'Marraskuu',
   'October'                     => 'Lokakuu',
   'September'                   => 'Syyskuu',
+  'done'                        => 'valmis',
 };
 
 $self{subs} = {
@@ -28,6 +30,7 @@ $self{subs} = {
   'pickvalue'                   => 'pickvalue',
   'repost_invoices'             => 'repost_invoices',
   'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
 };
 
 1;

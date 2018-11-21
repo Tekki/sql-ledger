@@ -417,24 +417,27 @@ sub prepare_timecard {
   $form->{checkedin} = $form->{inhour} * 3600 + $form->{inmin} * 60 + $form->{insec};
   $form->{checkedout} = $form->{outhour} * 3600 + $form->{outmin} * 60 + $form->{outsec};
 
-  if ($form->{checkedout} && ($form->{checkedin} > $form->{checkedout})) {
-    $form->{checkedout} = 86400 - ($form->{checkedin} - $form->{checkedout});
-    $form->{checkedin} = 0;
+  if ($form->{checkedout}) {
+    if ($form->{checkedin} > $form->{checkedout}) {
+      $form->{checkedout} = 86400 - ($form->{checkedin} - $form->{checkedout});
+      $form->{checkedin} = 0;
+    }
+
+    $form->{clocked} = $form->round_amount(($form->{checkedout} - $form->{checkedin}) / 3600, $form->{precision});
   }
 
-  $form->{clocked} = ($form->{checkedout} - $form->{checkedin}) / 3600;
   if ($form->{clocked}) {
     $form->{oldnoncharge} = $form->{clocked} - $form->{qty};
   }
   $form->{oldqty} = $form->{qty};
 
-  $form->{noncharge} = $form->format_amount(\%myconfig, $form->{clocked} - $form->{qty}, 4) if $form->{checkedin} != $form->{checkedout};
-  $form->{clocked} = $form->format_amount(\%myconfig, $form->{clocked}, 4);
+  $form->{noncharge} = $form->format_amount(\%myconfig, $form->{clocked} - $form->{qty}, $form->{precision}) if $form->{checkedin} != $form->{checkedout};
+  $form->{clocked} = $form->format_amount(\%myconfig, $form->{clocked}, $form->{precision});
 
   $form->{amount} = $form->{sellprice} * $form->{qty};
   for (qw(sellprice amount)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, $form->{precision}) }
-  $form->{qty} = $form->format_amount(\%myconfig, $form->{qty}, 4);
-  $form->{allocated} = $form->format_amount(\%myconfig, $form->{allocated}, 4);
+  $form->{qty} = $form->format_amount(\%myconfig, $form->{qty}, $form->{precision});
+  $form->{allocated} = $form->format_amount(\%myconfig, $form->{allocated}, $form->{precision});
 
   $form->{employee} .= "--$form->{employee_id}";
   $form->{projectnumber} .= "--$form->{project_id}" unless $form->{projectnumber} =~ /--/;
@@ -546,6 +549,13 @@ sub timecard_header {
   $lookup = qq|
           <a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"parts_id"}" target=_blank>?</a>| if $form->{"parts_id"};
 
+  $cardno = qq|
+        <tr>
+          <th align=right nowrap>|.$locale->text('Card Number').qq|</th>
+          <td>$form->{id}</td>
+        </tr>
+| if $form->{id};
+
   $form->helpref($form->{type}, $myconfig{countrycode});
 
   $form->{action} = "update";
@@ -575,6 +585,7 @@ sub timecard_header {
   <tr>
     <td>
       <table>
+        $cardno
         <tr>
           <th align=right nowrap>|.$locale->text('Employee').qq| <font color=red>*</font></th>
           <td colspan=3><select name=employee>|
@@ -772,7 +783,7 @@ sub prepare_storescard {
 
   $form->{formname} = "storescard";
   $form->{format} ||= $myconfig{outputformat};
-  $form->{media} = $myconfig{printer};
+  $form->{media} ||= $myconfig{printer};
 
   if ($myconfig{printer}) {
     $form->{format} ||= "ps";
@@ -842,6 +853,13 @@ sub storescard_header {
   $lookup = qq|
           <a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"parts_id"}" target=_blank>?</a>| if $form->{"parts_id"};
 
+  $cardno = qq|
+        <tr>
+          <th align=right nowrap>|.$locale->text('Card Number').qq|</th>
+          <td>$form->{id}</td>
+        </tr>
+| if $form->{id};
+
   $form->helpref("storescard", $myconfig{countrycode});
 
   $form->{action} = "update";
@@ -871,6 +889,7 @@ sub storescard_header {
   <tr>
     <td>
       <table>
+        $cardno
         <tr>
           <th align=right nowrap>|.$locale->text('Job Number').qq| <font color=red>*</font></th>
           <td colspan=2><select name=projectnumber onChange="javascript:document.main.submit()">|
@@ -897,13 +916,13 @@ sub storescard_header {
         </tr>
         <tr>
           <th align=right nowrap>|.$locale->text('Qty').qq|</th>
-          <td><input name=qty class="inputright" size=6 value=$form->{qty}></td>
-        </tr>
-        <tr>
-          <th align=right nowrap>|.$locale->text('Allocated').qq|</th>
-          <td><input name=allocated class="inputright" size=6 value=$form->{allocated}></td>
+          <td><input name=qty class="inputright" size=10 value=$form->{qty}></td>
         </tr>
         $charge
+        <tr>
+          <th align=right nowrap>|.$locale->text('Allocated').qq|</th>
+          <td><input name=allocated class="inputright" size=10 value=$form->{allocated}></td>
+        </tr>
         <tr>
         $reference_documents
         </tr>
@@ -1064,12 +1083,13 @@ sub update {
     $form->{checkedin} = $hour{in} * 3600 + $form->{inmin} * 60 + $form->{insec};
     $form->{checkedout} = $hour{out} * 3600 + $form->{outmin} * 60 + $form->{outsec};
 
-    if ($form->{checkedin} > $form->{checkedout}) {
-      $form->{checkedout} = 86400 - ($form->{checkedin} - $form->{checkedout});
-      $form->{checkedin} = 0;
+    if ($form->{checkedout}) {
+      if ($form->{checkedin} > $form->{checkedout}) {
+        $form->{checkedout} = 86400 - ($form->{checkedin} - $form->{checkedout});
+        $form->{checkedin} = 0;
+      }
+      $form->{clocked} = $form->round_amount(($form->{checkedout} - $form->{checkedin}) / 3600, $form->{precision});
     }
-
-    $form->{clocked} = ($form->{checkedout} - $form->{checkedin}) / 3600;
 
     for (qw(sellprice qty noncharge allocated)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
 
@@ -1105,11 +1125,11 @@ sub update {
 
     $form->{amount} = $form->{sellprice} * $form->{qty};
 
-    $form->{clocked} = $form->format_amount(\%myconfig, $form->{clocked}, 4);
+    $form->{clocked} = $form->format_amount(\%myconfig, $form->{clocked}, $form->{precision});
     for (qw(sellprice amount)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, $form->{precision}) }
     for (qw(qty noncharge)) {
       $form->{"old$_"} = $form->{$_};
-      $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, 4);
+      $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, $form->{precision});
     }
 
   } else {
@@ -1131,11 +1151,10 @@ sub update {
     $form->{amount} = $form->{sellprice} * $form->{qty};
     for (qw(sellprice amount)) { $form->{$_} = $form->format_amount(\%myconfig, $form->{$_}, $form->{precision}) }
     $form->{oldqty} = $form->{qty};
-    $form->{qty} = $form->format_amount(\%myconfig, $form->{qty});
-
+    $form->{qty} = $form->format_amount(\%myconfig, $form->{qty}, $form->{precision});
   }
 
-  $form->{allocated} = $form->format_amount(\%myconfig, $form->{allocated});
+  $form->{allocated} = $form->format_amount(\%myconfig, $form->{allocated}, $form->{precision});
 
   &display_form;
 
@@ -1180,9 +1199,7 @@ sub save {
     $form->error($locale->text('Cannot add time card for a completed job!')) if ($rc == -2);
 
     if ($rc) {
-      if ($form->{callback} =~ /^$form->{script}\?action=add/) {
-        $form->{callback} .= "&lastemployee=$form->{employee}&lastprojectnumber=$form->{projectnumber}&lasttransdate=$form->{transdate}";
-      }
+      $form->{callback} .= "&projectnumber=".$form->quote($form->{projectnumber},1);
       $form->redirect($locale->text('Time Card saved!'));
     } else {
       $form->error($locale->text('Cannot save time card!'));
@@ -1193,6 +1210,7 @@ sub save {
     $form->error($locale->text('Cannot add stores card for a completed job!')) if ($rc == -2);
 
     if ($rc) {
+      $form->{callback} .= "&projectnumber=".$form->quote($form->{projectnumber},1);
       $form->redirect($locale->text('Stores Card saved!'));
     } else {
       $form->error($locale->text('Cannot save stores card!'));
@@ -1280,7 +1298,7 @@ sub print_and_save {
   $form->{display_form} = "save";
   for (keys %$form) { $oldform->{$_} = $form->{$_} }
 
-  &{ "print_$form->{formname}" }($oldform);
+  &print;
 
 }
 

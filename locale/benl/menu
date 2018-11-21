@@ -134,6 +134,7 @@ $self{subs} = {
   'pickvalue'                   => 'pickvalue',
   'resize'                      => 'resize',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
 };
 
 1;

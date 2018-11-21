@@ -57,6 +57,7 @@ $self{texts} = {
   'Logout'                      => 'Déconnexion',
   'March'                       => 'Mars',
   'May'                         => 'Mai',
+  'New Window'                  => 'Nouvelle fenêtre',
   'Non-taxable'                 => 'Non imposable',
   'November'                    => 'Novembre',
   'October'                     => 'Octobre',
@@ -134,6 +135,7 @@ $self{subs} = {
   'pickvalue'                   => 'pickvalue',
   'resize'                      => 'resize',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
 };
 
 1;

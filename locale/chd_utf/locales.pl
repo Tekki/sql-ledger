@@ -4,6 +4,10 @@
 # -a build all file
 # -m do not generate missing files
 
+BEGIN {
+  push @INC, '.';
+}
+
 use FileHandle;
 
 
@@ -333,9 +337,9 @@ sub scanfile {
     if (/require\s+\W.*\.pl/) {
       my $newfile = $&;
       $newfile =~ s/require\s+\W//;
-      $newfile =~ s/\$form->{path}\///;
+      $newfile =~ s/\$form->\{path}\///;
 
-      if ($newfile !~ /(custom|\$form->{login})/) {
+      if ($newfile !~ /(custom|\$form->\{login})/) {
         &scanfile("$bindir/$newfile", 1);
       }
     }

@@ -113,6 +113,7 @@ $self{subs} = {
   'resize'                      => 'resize',
   'section_menu'                => 'section_menu',
   'show_progress'               => 'show_progress',
+  'unload'                      => 'unload',
   'nummer_toekennen'            => 'assign_number',
   'verder'                      => 'continue',
   'verwijder'                   => 'delete',

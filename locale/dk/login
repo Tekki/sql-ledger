@@ -1,9 +1,9 @@
 $self{texts} = {
   'Company'                     => 'Firma',
-  'Continue'                    => 'Fortsæt',
-  'Dataset is newer than version!' => 'Datasæt er nyere end version!',
-  'Incorrect Dataset version!'  => 'Forkert version af datasæt!',
-  'Login'                       => 'Log på',
+  'Continue'                    => 'FortsÃ¦t',
+  'Dataset is newer than version!' => 'DatasÃ¦t er nyere end version!',
+  'Incorrect Dataset version!'  => 'Forkert version af datasÃ¦t!',
+  'Login'                       => 'Log pÃ¥',
   'Name'                        => 'Navn',
   'No email address for'        => 'Ingen epostadresse for',
   'Password'                    => 'Adgangskode',
@@ -20,8 +20,8 @@ $self{subs} = {
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
   'tan_login'                   => 'tan_login',
-  'fortsæt'                     => 'continue',
-  'log_på'                      => 'login',
+  'fortsÃ¦t'                    => 'continue',
+  'log_pÃ¥'                     => 'login',
 };
 
 1;

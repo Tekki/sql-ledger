@@ -39,7 +39,7 @@ function ChangeReport() {
   my $item;
   my $found;
   my %column_index;
-  
+
   for my $ref (@{ $form->{all_report} }) {
     for (@{$input}, @{$checked}) {
       print qq|  ${_}[$i] = "$form->{all_reportvars}{$ref->{reportid}}{"report_$_"}";\n|;
@@ -47,23 +47,23 @@ function ChangeReport() {
     for $item (keys %{$radio}) {
       $found = 0;
       for (keys %{ $radio->{$item} }) {
-	if ($form->{all_reportvars}{$ref->{reportid}}{"report_$item"} eq $_) {
-	  print qq|  ${item}\[$i\] = "$radio->{$item}{$_}";\n|;
-	  $found = 1;
-	}
+        if ($form->{all_reportvars}{$ref->{reportid}}{"report_$item"} eq $_) {
+          print qq|  ${item}\[$i\] = "$radio->{$item}{$_}";\n|;
+          $found = 1;
+        }
       }
       if (!$found) {
-	print qq|  ${item}\[$i\] = "0";\n|;
+        print qq|  ${item}\[$i\] = "0";\n|;
       }
     }
     print "\n";
-    
+
     %column_index = split /[,=]/, $form->{all_reportvars}{$ref->{reportid}}{report_column_index};
     for (@{$checked}) {
       $s = $_;
       $s =~ s/l_//;
       if (exists $column_index{$s}) {
-	print qq|  ${_}[$i] = "1";\n|;
+        print qq|  ${_}[$i] = "1";\n|;
       }
     }
     $i++;
@@ -129,7 +129,7 @@ sub resize {
 
   $width ||= 600;
   $height ||= 600;
-  
+
   print qq|
 <script language="javascript" type="text/javascript">
 <!--
@@ -142,7 +142,7 @@ self.resizeTo($width,$height);
 
 
 sub calendar {
-  
+
 print qq|
   <script language="javascript" src="js/calendar.js"></script>
   <link rel="stylesheet" href="css/calendar.css">
@@ -181,8 +181,8 @@ print qq|
 print q|
   // date parsing function
   function f_tcalParseDate (s_date) {|;
-  
-if ($myconfig{dateformat} =~ /^mm/i) {
+
+if ($myconfig{dateformat} =~ /^(dd|mm)/i) {
   print q|
     var re_date = /^\s*(\d{1,2})\W(\d{1,2})\W(\d{2,4})\s*$/;|
 }
@@ -200,20 +200,20 @@ print q|
 if ($myconfig{dateformat} =~ /^yy/i) {
 print q|
     var n_day = Number(RegExp.$3),
-	n_month = Number(RegExp.$2),
-	n_year = Number(RegExp.$1);
+        n_month = Number(RegExp.$2),
+        n_year = Number(RegExp.$1);
 |;
 } elsif ($myconfig{dateformat} =~ /^dd/i) {
 print q|
     var n_day = Number(RegExp.$1),
-	n_month = Number(RegExp.$2),
-	n_year = Number(RegExp.$3);
+        n_month = Number(RegExp.$2),
+        n_year = Number(RegExp.$3);
 |;
 } else {
 print q|
     var n_day = Number(RegExp.$2),
-	n_month = Number(RegExp.$1),
-	n_year = Number(RegExp.$3);
+        n_month = Number(RegExp.$1),
+        n_year = Number(RegExp.$3);
 |;
 }
 
@@ -312,9 +312,9 @@ sub clock {
 
   my @gmt = gmtime;
   my @lct = localtime;
-  
+
   my $tz = ((24 - $lct[2]) + $gmt[2]) * -1;
-  
+
 print qq|
 <script type="text/javascript">
 function jsClock() {

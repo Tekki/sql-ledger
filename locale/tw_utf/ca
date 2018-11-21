@@ -66,6 +66,7 @@ $self{subs} = {
   'pickvalue'                   => 'pickvalue',
   'resize'                      => 'resize',
   'show_progress'               => 'show_progress',
+  'unload'                      => 'unload',
   '列出所有交易'                      => 'list_transactions',
 };
 

@@ -140,6 +140,7 @@ $self{subs} = {
   'search_exchangerates'        => 'search_exchangerates',
   'section_menu'                => 'section_menu',
   'select_all'                  => 'select_all',
+  'show_progress'               => 'show_progress',
   'sic_header'                  => 'sic_header',
   'taxes'                       => 'taxes',
   'unlock_dataset'              => 'unlock_dataset',

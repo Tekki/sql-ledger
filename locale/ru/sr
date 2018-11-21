@@ -1,21 +1,19 @@
-$self{charset} = 'ISO-8859-5';
-
 $self{texts} = {
-  'Accounting Menu'             => 'âÕÈÇÁÌÔÅÒÓËÏÅ ÍÅÎÀ',
-  'April'                       => 'ÁÐÒÅÌØ',
-  'August'                      => 'Á×ÇÕÓÔ',
-  'December'                    => 'ÄÅËÁÂÒØ',
-  'Description'                 => 'ïÐÉÓÁÎÉÅ',
-  'February'                    => 'ÆÅ×ÒÁÌØ',
-  'Heading'                     => 'òÁÚÄÅÌ',
-  'January'                     => 'ÑÎ×ÁÒØ',
-  'July'                        => 'ÉÀÌØ',
-  'June'                        => 'ÉÀÎØ',
-  'March'                       => 'ÍÁÒÔ',
-  'May'                         => 'ÍÁÊ',
-  'November'                    => 'ÎÏÑÂÒØ',
-  'October'                     => 'ÏËÔÑÂÒØ',
-  'September'                   => 'ÓÅÎÔÑÂÒØ',
+  'Accounting Menu'             => 'Ð‘ÑƒÑ…Ð³Ð°Ð»Ñ‚ÐµÑ€ÑÐºÐ¾Ðµ Ð¼ÐµÐ½ÑŽ',
+  'April'                       => 'Ð°Ð¿Ñ€ÐµÐ»ÑŒ',
+  'August'                      => 'Ð°Ð²Ð³ÑƒÑÑ‚',
+  'December'                    => 'Ð´ÐµÐºÐ°Ð±Ñ€ÑŒ',
+  'Description'                 => 'ÐžÐ¿Ð¸ÑÐ°Ð½Ð¸Ðµ',
+  'February'                    => 'Ñ„ÐµÐ²Ñ€Ð°Ð»ÑŒ',
+  'Heading'                     => 'Ð Ð°Ð·Ð´ÐµÐ»',
+  'January'                     => 'ÑÐ½Ð²Ð°Ñ€ÑŒ',
+  'July'                        => 'Ð¸ÑŽÐ»ÑŒ',
+  'June'                        => 'Ð¸ÑŽÐ½ÑŒ',
+  'March'                       => 'Ð¼Ð°Ñ€Ñ‚',
+  'May'                         => 'Ð¼Ð°Ð¹',
+  'November'                    => 'Ð½Ð¾ÑÐ±Ñ€ÑŒ',
+  'October'                     => 'Ð¾ÐºÑ‚ÑÐ±Ñ€ÑŒ',
+  'September'                   => 'ÑÐµÐ½Ñ‚ÑÐ±Ñ€ÑŒ',
 };
 
 $self{subs} = {
@@ -39,6 +37,7 @@ $self{subs} = {
   'save_column'                 => 'save_column',
   'save_report'                 => 'save_report',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
 };
 
 1;

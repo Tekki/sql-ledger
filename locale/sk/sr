@@ -1,20 +1,18 @@
-$self{charset} = 'ISO-8859-2';
-
 $self{texts} = {
-  'Accounting Menu'             => 'Menu úètovníctva',
-  'April'                       => 'Apríl',
+  'Accounting Menu'             => 'Menu ÃºÄtovnÃ­ctva',
+  'April'                       => 'AprÃ­l',
   'August'                      => 'August',
   'December'                    => 'December',
   'Description'                 => 'Popis',
-  'February'                    => 'Február',
+  'February'                    => 'FebruÃ¡r',
   'Heading'                     => 'Nadpis',
-  'January'                     => 'Január',
-  'July'                        => 'Júl',
-  'June'                        => 'Jún',
+  'January'                     => 'JanuÃ¡r',
+  'July'                        => 'JÃºl',
+  'June'                        => 'JÃºn',
   'March'                       => 'Marec',
-  'May'                         => 'Máj',
+  'May'                         => 'MÃ¡j',
   'November'                    => 'November',
-  'October'                     => 'Október',
+  'October'                     => 'OktÃ³ber',
   'September'                   => 'September',
 };
 
@@ -39,6 +37,7 @@ $self{subs} = {
   'save_column'                 => 'save_column',
   'save_report'                 => 'save_report',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
 };
 
 1;

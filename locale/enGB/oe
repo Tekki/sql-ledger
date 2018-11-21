@@ -109,6 +109,7 @@ $self{subs} = {
   'ship_receive'                => 'ship_receive',
   'ship_to'                     => 'ship_to',
   'shipto_selected'             => 'shipto_selected',
+  'show_progress'               => 'show_progress',
   'subtotal'                    => 'subtotal',
   'transactions'                => 'transactions',
   'update'                      => 'update',

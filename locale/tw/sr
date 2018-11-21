@@ -1,21 +1,19 @@
-$self{charset} = 'BIG5';
-
 $self{texts} = {
-  'Accounting Menu'             => '·|­p¿ï³æ',
-  'April'                       => '¥|¤ë',
-  'August'                      => '¤K¤ë',
-  'December'                    => '¤Q¤G¤ë',
-  'Description'                 => '»¡©ú',
-  'February'                    => '¤G¤ë',
-  'Heading'                     => '¼ÐÃD',
-  'January'                     => '¤@¤ë',
-  'July'                        => '¤C¤ë',
-  'June'                        => '¤»¤ë',
-  'March'                       => '¤T¤ë',
-  'May'                         => '¤­¤ë',
-  'November'                    => '¤Q¤@¤ë',
-  'October'                     => '¤Q¤ë',
-  'September'                   => '¤E¤ë',
+  'Accounting Menu'             => 'æœƒè¨ˆé¸å–®',
+  'April'                       => 'å››æœˆ',
+  'August'                      => 'å…«æœˆ',
+  'December'                    => 'åäºŒæœˆ',
+  'Description'                 => 'èªªæ˜Ž',
+  'February'                    => 'äºŒæœˆ',
+  'Heading'                     => 'æ¨™é¡Œ',
+  'January'                     => 'ä¸€æœˆ',
+  'July'                        => 'ä¸ƒæœˆ',
+  'June'                        => 'å…­æœˆ',
+  'March'                       => 'ä¸‰æœˆ',
+  'May'                         => 'äº”æœˆ',
+  'November'                    => 'åä¸€æœˆ',
+  'October'                     => 'åæœˆ',
+  'September'                   => 'ä¹æœˆ',
 };
 
 $self{subs} = {
@@ -39,6 +37,7 @@ $self{subs} = {
   'save_column'                 => 'save_column',
   'save_report'                 => 'save_report',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
 };
 
 1;

@@ -7,6 +7,7 @@ $self{texts} = {
   'August'                      => 'august',
   'Balance'                     => 'Balance',
   'Chart of Accounts'           => 'Kontoplan',
+  'Closed'                      => 'Afsluttet',
   'Credit'                      => 'Kredit',
   'Current'                     => 'Aktuel',
   'Date'                        => 'Dato',
@@ -19,19 +20,19 @@ $self{texts} = {
   'February'                    => 'februar',
   'From'                        => 'Fra',
   'GIFI'                        => 'GIFI',
-  'Include in Report'           => 'Inkludér i rapport',
+  'Include in Report'           => 'InkludÃ©r i rapport',
   'Jan'                         => 'jan',
   'January'                     => 'januar',
   'Jul'                         => 'jul',
   'July'                        => 'juli',
   'Jun'                         => 'jun',
   'June'                        => 'juni',
-  'List Transactions'           => 'Vís bogføringer',
+  'List Transactions'           => 'VÃ­s bogfÃ¸ringer',
   'Mar'                         => 'mar',
   'March'                       => 'marts',
   'May'                         => 'maj',
   'May '                        => 'maj ',
-  'Month'                       => 'Måned',
+  'Month'                       => 'MÃ¥ned',
   'Nov'                         => 'nov',
   'November'                    => 'november',
   'Oct'                         => 'okt',
@@ -46,7 +47,7 @@ $self{texts} = {
   'Source'                      => 'Bilag',
   'Subtotal'                    => 'Subtotal',
   'To'                          => 'til',
-  'Year'                        => 'År',
+  'Year'                        => 'Ã…r',
 };
 
 $self{subs} = {
@@ -61,7 +62,8 @@ $self{subs} = {
   'list_transactions'           => 'list_transactions',
   'pickvalue'                   => 'pickvalue',
   'resize'                      => 'resize',
-  'vís_bogføringer'             => 'list_transactions',
+  'show_progress'               => 'show_progress',
+  'vÃ­s_bogfÃ¸ringer'           => 'list_transactions',
 };
 
 1;

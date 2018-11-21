@@ -52,7 +52,7 @@ require "$form->{path}/arap.pl";
 
 
 sub add {
-  
+
   if ($form->{batch}) {
     $form->{title} = $locale->text('Add General Ledger Voucher');
     $form->helpref("gl_voucher", $myconfig{countrycode});
@@ -68,11 +68,11 @@ sub add {
       $form->helpref("gl_transaction", $myconfig{countrycode});
     }
   }
-  
+
   $form->{callback} = "$form->{script}?action=add&fxadj=$form->{fxadj}&path=$form->{path}&login=$form->{login}" unless $form->{callback};
 
   $transdate = $form->{transdate};
-  
+
   &create_links;
 
   $form->{transdate} = $transdate if $transdate;
@@ -84,14 +84,14 @@ sub add {
   $form->{currency} = $form->{defaultcurrency};
 
   &display_form(1);
-  
+
 }
 
 
 sub edit {
 
   &create_links;
- 
+
   $form->{locked} = ($form->{revtrans}) ? '1' : ($form->datetonum(\%myconfig, $form->{transdate}) <= $form->{closedto});
 
   if ($form->{batch}) {
@@ -109,7 +109,7 @@ sub edit {
       $form->helpref("gl_transaction", $myconfig{countrycode});
     }
   }
- 
+
 
   $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate});
 
@@ -119,7 +119,7 @@ sub edit {
 
     $form->{"projectnumber_$i"} = "$ref->{projectnumber}--$ref->{project_id}" if $ref->{project_id};
     for (qw(fx_transaction source memo cleared)) { $form->{"${_}_$i"} = $ref->{$_} }
-    
+
     if ($ref->{amount} < 0) {
       $form->{totaldebit} -= $ref->{amount};
       $form->{"debit_$i"} = $ref->{amount} * -1;
@@ -137,23 +137,23 @@ sub edit {
 
   # readonly
   if (! $form->{readonly}) {
-    if ($form->{batch}) { 
+    if ($form->{batch}) {
       $form->{readonly} = 1 if $myconfig{acs} =~ /VR--General Ledger/ || $form->{approved};
     } else {
-      $form->{readonly} = 1 if $myconfig{acs} =~ /General Ledger--Add Transaction/; 
+      $form->{readonly} = 1 if $myconfig{acs} =~ /General Ledger--Add Transaction/;
     }
   }
- 
+
   &form_header;
   &display_rows;
   &form_footer;
-  
+
 }
 
 
 
 sub create_links {
-  
+
   GL->transaction(\%myconfig, \%$form);
 
   for (@{ $form->{all_accno} }) { $form->{selectaccno} .= "$_->{accno}--$_->{description}\n" }
@@ -166,7 +166,7 @@ sub create_links {
   chomp $form->{defaultcurrency};
 
   for (@curr) { $form->{selectcurrency} .= "$_\n" }
- 
+
   # projects
   if (@{ $form->{all_project} }) {
     $form->{selectprojectnumber} = "\n";
@@ -182,7 +182,7 @@ sub create_links {
   &all_references;
 
   for (qw(department projectnumber accno currency)) { $form->{"select$_"} = $form->escape($form->{"select$_"},1) }
-  
+
 }
 
 
@@ -192,7 +192,7 @@ sub search {
 
   $form->{reportcode} = 'gl';
   $form->{dateformat} = $myconfig{dateformat};
-  
+
   $form->all_departments(\%myconfig);
 
   # departments
@@ -203,13 +203,13 @@ sub search {
     $l_department = 1;
 
     $department = qq|
-  	<tr>
-	  <th align=right>|.$locale->text('Department').qq|</th>
-	  <td><select name=department>|
-	  .$form->select_option($form->{selectdepartment}, $form->{department}, 1)
-	  .qq|
-	  </select></td>
-	</tr>
+          <tr>
+          <th align=right>|.$locale->text('Department').qq|</th>
+          <td><select name=department>|
+          .$form->select_option($form->{selectdepartment}, $form->{department}, 1)
+          .qq|
+          </select></td>
+        </tr>
 |;
   }
 
@@ -222,15 +222,15 @@ sub search {
 
     $selectfrom = qq|
         <tr>
-	<th align=right>|.$locale->text('Period').qq|</th>
-	<td>
-	<select name=month>|.$form->select_option($selectaccountingmonth, $form->{month}, 1, 1).qq|</select>
-	<select name=year>|.$form->select_option($selectaccountingyear, $form->{year}).qq|</select>
-	<input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
-	<input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
-	<input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
-	<input name=interval class=radio type=radio value=12>&nbsp;|.$locale->text('Year').qq|
-	</td>
+        <th align=right>|.$locale->text('Period').qq|</th>
+        <td>
+        <select name=month>|.$form->select_option($selectaccountingmonth, $form->{month}, 1, 1).qq|</select>
+        <select name=year>|.$form->select_option($selectaccountingyear, $form->{year}).qq|</select>
+        <input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
+        <input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
+        <input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
+        <input name=interval class=radio type=radio value=12>&nbsp;|.$locale->text('Year').qq|
+        </td>
       </tr>
 |;
   }
@@ -242,10 +242,10 @@ sub search {
     $reportform = qq|
       <tr>
         <th align=right>|.$locale->text('Report').qq|</th>
-	<td>
-	  <select name=report onChange="ChangeReport();">|.$form->select_option($form->{selectreportform}, undef, 1)
-	  .qq|</select>
-	</td>
+        <td>
+          <select name=report onChange="ChangeReport();">|.$form->select_option($form->{selectreportform}, undef, 1)
+          .qq|</select>
+        </td>
       </tr>
 |;
   }
@@ -282,7 +282,7 @@ sub search {
 
   @f = ();
   $form->{flds} = "";
-  
+
   for (sort { $includeinreport{$a}->{ndx} <=> $includeinreport{$b}->{ndx} } keys %includeinreport) {
     $form->{flds} .= "$_=$includeinreport{$_}->{label}=$includeinreport{$_}->{sort},";
     push @checked, "l_$_";
@@ -293,13 +293,13 @@ sub search {
   chop $form->{flds};
 
   $form->helpref("search_gl_transactions", $myconfig{countrycode});
-  
+
   $form->header;
 
   &calendar;
-  
+
   &change_report(\%$form, \@input, \@checked, \%radio);
-  
+
   print qq|
 <body>
 
@@ -314,80 +314,80 @@ sub search {
     <td>
       <table width=100%>
         $reportform
-	<tr>
-	  <th align=right>|.$locale->text('Reference').qq| / |.$locale->text('Invoice Number').qq|</th>
-	  <td><input name=reference size=20></td>
-	</tr>
-	<tr>
-	  <th align=right>|.$locale->text('Description').qq|</th>
-	  <td><input name=description size=40></td>
-	</tr>
-	<tr>
-	  <th align=right>|.$locale->text('Company Name').qq|</th>
-	  <td><input name=name size=35></td>
-	</tr>
-	<tr>
-	  <th align=right>|.$locale->text('Company Number').qq|</th>
-	  <td><input name=vcnumber size=35></td>
-	</tr>
+        <tr>
+          <th align=right>|.$locale->text('Reference').qq| / |.$locale->text('Invoice Number').qq|</th>
+          <td><input name=reference size=20></td>
+        </tr>
+        <tr>
+          <th align=right>|.$locale->text('Description').qq|</th>
+          <td><input name=description size=40></td>
+        </tr>
+        <tr>
+          <th align=right>|.$locale->text('Company Name').qq|</th>
+          <td><input name=name size=35></td>
+        </tr>
+        <tr>
+          <th align=right>|.$locale->text('Company Number').qq|</th>
+          <td><input name=vcnumber size=35></td>
+        </tr>
 
-      	$department
-	
-	<tr>
-	  <th align=right>|.$locale->text('Line Item').qq|</th>
-	  <td><input name=lineitem size=30></td>
-	</tr>
+              $department
 
-	<tr>
-	  <th align=right>|.$locale->text('Notes').qq|</th>
-	  <td><input name=notes size=40></td>
-	</tr>
+        <tr>
+          <th align=right>|.$locale->text('Line Item').qq|</th>
+          <td><input name=lineitem size=30></td>
+        </tr>
 
-	<tr>
-	  <th align=right>|.$locale->text('Source').qq|</th>
-	  <td><input name=source size=20></td>
-	</tr>
-	
-	<tr>
-	  <th align=right>|.$locale->text('Memo').qq|</th>
-	  <td><input name=memo size=30></td>
-	</tr>
+        <tr>
+          <th align=right>|.$locale->text('Notes').qq|</th>
+          <td><input name=notes size=40></td>
+        </tr>
 
-	<tr>
-	  <th align=right>|.$locale->text('From').qq|</th>
-	  <td><input name=datefrom size=11 class=date title="$myconfig{dateformat}"> <b>|.&js_calendar("main", "datefrom").$locale->text('To').qq|</b> <input name=dateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "dateto").qq|</td>
-	</tr>
-	
-	$selectfrom
-	
-	<tr>
-	  <th align=right>|.$locale->text('Account').qq| >=</th>
-	  <td><input name=accnofrom> <b>|.$locale->text('Account').qq| <=</b> <input name=accnoto></td>
-	</tr>
-	
-	<tr>
-	  <th align=right>|.$locale->text('Amount').qq| >=</th>
-	  <td><input name=amountfrom size=11> <b>|.$locale->text('Amount').qq| <=</b> <input name=amountto size=11></td>
-	</tr>
-	
-	<tr>
-	  <th align=right>|.$locale->text('Include in Report').qq|</th>
-	  <td>
-	    <table>
-	      <tr>
-		<td>
-		  <input name="category" class=radio type=radio value=X checked>&nbsp;|.$locale->text('All').qq|
-		  <input name="category" class=radio type=radio value=A>&nbsp;|.$locale->text('Asset').qq|
-		  <input name="category" class=radio type=radio value=L>&nbsp;|.$locale->text('Liability').qq|
-		  <input name="category" class=radio type=radio value=Q>&nbsp;|.$locale->text('Equity').qq|
-		  <input name="category" class=radio type=radio value=I>&nbsp;|.$locale->text('Income').qq|
-		  <input name="category" class=radio type=radio value=E>&nbsp;|.$locale->text('Expense').qq|
-		</td>
-	      </tr>
-	      
-	      <tr>
-	        <td>
-		  <table>
+        <tr>
+          <th align=right>|.$locale->text('Source').qq|</th>
+          <td><input name=source size=20></td>
+        </tr>
+
+        <tr>
+          <th align=right>|.$locale->text('Memo').qq|</th>
+          <td><input name=memo size=30></td>
+        </tr>
+
+        <tr>
+          <th align=right>|.$locale->text('From').qq|</th>
+          <td><input name=datefrom size=11 class=date title="$myconfig{dateformat}"> <b>|.&js_calendar("main", "datefrom").$locale->text('To').qq|</b> <input name=dateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "dateto").qq|</td>
+        </tr>
+
+        $selectfrom
+
+        <tr>
+          <th align=right>|.$locale->text('Account').qq| >=</th>
+          <td><input name=accnofrom> <b>|.$locale->text('Account').qq| <=</b> <input name=accnoto></td>
+        </tr>
+
+        <tr>
+          <th align=right>|.$locale->text('Amount').qq| >=</th>
+          <td><input name=amountfrom size=11> <b>|.$locale->text('Amount').qq| <=</b> <input name=amountto size=11></td>
+        </tr>
+
+        <tr>
+          <th align=right>|.$locale->text('Include in Report').qq|</th>
+          <td>
+            <table>
+              <tr>
+                <td>
+                  <input name="category" class=radio type=radio value=X checked>&nbsp;|.$locale->text('All').qq|
+                  <input name="category" class=radio type=radio value=A>&nbsp;|.$locale->text('Asset').qq|
+                  <input name="category" class=radio type=radio value=L>&nbsp;|.$locale->text('Liability').qq|
+                  <input name="category" class=radio type=radio value=Q>&nbsp;|.$locale->text('Equity').qq|
+                  <input name="category" class=radio type=radio value=I>&nbsp;|.$locale->text('Income').qq|
+                  <input name="category" class=radio type=radio value=E>&nbsp;|.$locale->text('Expense').qq|
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <table>
 |;
 
   while (@f) {
@@ -400,15 +400,15 @@ sub search {
   }
 
   print qq|
-		    <tr>
-		      <td nowrap><input name="l_subtotal" class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Subtotal').qq|</td>
-		    </tr>
-		  </table>
-		</td>
-	      </tr>
-	    </table>
-	  </td>
-	</tr>
+                    <tr>
+                      <td nowrap><input name="l_subtotal" class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Subtotal').qq|</td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
       </table>
     </td>
   </tr>
@@ -421,17 +421,17 @@ sub search {
 
 
   %button = ('Continue' => { ndx => 1, key => 'C', value => $locale->text('Continue') } );
-  
+
   $form->print_button(\%button);
-  
+
   $form->{sort} ||= "transdate";
   $form->{direction} ||= "ASC";
-  
+
   $form->{nextsub} = "transactions";
   $form->{initreport} = 1;
- 
+
   $form->hide_form(qw(sort direction reportlogin nextsub initreport path login flds));
- 
+
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
     &menubar;
@@ -463,16 +463,16 @@ sub transactions {
   $callback = "$form->{script}?action=transactions";
   for (qw(direction oldsort path login month year interval reportlogin)) { $callback .= "&$_=$form->{$_}" }
   for (qw(report flds)) { $callback .= "&$_=".$form->escape($form->{$_}) }
-  
+
   %acctype = ( 'A' => $locale->text('Asset'),
                'L' => $locale->text('Liability'),
-	       'Q' => $locale->text('Equity'),
-	       'I' => $locale->text('Income'),
-	       'E' => $locale->text('Expense'),
-	     );
-  
+               'Q' => $locale->text('Equity'),
+               'I' => $locale->text('Income'),
+               'E' => $locale->text('Expense'),
+             );
+
   $form->{title} = $locale->text('General Ledger') . " / $form->{company}";
-  
+
   $ml = ($form->{category} =~ /(A|E)/) ? -1 : 1;
 
   unless ($form->{category} eq 'X') {
@@ -609,11 +609,11 @@ sub transactions {
   $column_data{gifi_contra} = $column_data{contra};
   $form->{l_gifi_contra} = "Y" if ($form->{l_gifi_accno} && $form->{l_contra});
   delete $form->{l_contra} unless $form->{l_accno};
-  
+
   $columns{debit} = 1;
   $columns{credit} = 1;
-  
-  
+
+
   if ($form->{link} =~ /_paid/) {
     push @columns, "cleared";
     $column_data{cleared} = $locale->text('R');
@@ -632,14 +632,14 @@ sub transactions {
   } else {
     for (@columns) {
       if ($form->{"l_$_"} eq "Y") {
-	push @column_index, $_;
-	$column_index{$_} = ++$i;
-	$form->{column_index} .= "$_=$columns{$_},";
+        push @column_index, $_;
+        $column_index{$_} = ++$i;
+        $form->{column_index} .= "$_=$columns{$_},";
       }
     }
     chop $form->{column_index};
   }
-  
+
   if ($form->{accno} || $form->{gifi_accno}) {
     @column_index = grep !/(accno|gifi_accno|contra|gifi_contra)/, @column_index;
     push @column_index, "balance";
@@ -661,19 +661,19 @@ sub transactions {
       $i = 0;
       $j = 0;
       for (split /,/, $form->{report_column_index}) {
-	s/=.*//;
-	$j++;
+        s/=.*//;
+        $j++;
 
-	if ($form->{"l_$_"}) {
-	  push @column_index, $_;
-	  $form->{column_index} .= "$_=$columns{$_},";
-	  delete $column_index{$_};
-	  $i++;
-	}
+        if ($form->{"l_$_"}) {
+          push @column_index, $_;
+          $form->{column_index} .= "$_=$columns{$_},";
+          delete $column_index{$_};
+          $i++;
+        }
       }
 
       for (sort { $column_index{$a} <=> $column_index{$b} } keys %column_index) {
-	push @column_index, $_;
+        push @column_index, $_;
       }
 
       $form->{column_index} = "";
@@ -686,7 +686,7 @@ sub transactions {
       @column_index = $form->sort_column_index;
     }
   }
-  
+
   for (@columns) {
     if ($form->{"l_$_"} eq "Y") {
       # add column to href and callback
@@ -694,7 +694,7 @@ sub transactions {
       $href .= "&l_$_=Y";
     }
   }
-  
+
 
   if ($form->{l_subtotal} eq 'Y') {
     $callback .= "&l_subtotal=Y";
@@ -707,7 +707,7 @@ sub transactions {
   $callback .= "&category=$form->{category}";
 
   $form->helpref("list_gl_transactions", $myconfig{countrycode});
-  
+
   $form->header;
 
   print qq|
@@ -736,10 +736,10 @@ sub transactions {
       $revhref = $href;
       $direction = ($form->{direction} eq 'DESC') ? "ASC" : "DESC";
       $revhref =~ s/direction=$direction/direction=$form->{direction}/;
-     
+
       print "\n<td align=center><a href=$revhref&movecolumn=$column_index[0],right><img src=$images/right.png border=0></td>";
       for (1 .. $l - 1) {
-	print "\n<td align=center><a href=$revhref&movecolumn=$column_index[$_],left><img src=$images/left.png border=0><a href=$href&movecolumn=$column_index[$_],right><img src=$images/right.png border=0></td>";
+        print "\n<td align=center><a href=$revhref&movecolumn=$column_index[$_],left><img src=$images/left.png border=0><a href=$href&movecolumn=$column_index[$_],right><img src=$images/right.png border=0></td>";
       }
       print "\n<td align=center><a href=$revhref&movecolumn=$column_index[$l],left><img src=$images/left.png border=0></td>";
     }
@@ -747,25 +747,25 @@ sub transactions {
 
   print qq|
         </tr>
-	<tr class=listheading>
+        <tr class=listheading>
 |;
 
   for (0 .. $l) {
     if ($column_sort{$column_index[$_]}) {
       $sort = "";
       if ($form->{sort} eq $column_sort{$column_index[$_]}) {
-	if ($form->{direction} eq 'ASC') {
-	  $sort = qq|<img src=$images/up.png>&nbsp;&nbsp;&nbsp;|;
-	} else {
-	  $sort = qq|<img src=$images/down.png>&nbsp;&nbsp;&nbsp;|;
-	}
+        if ($form->{direction} eq 'ASC') {
+          $sort = qq|<img src=$images/up.png>&nbsp;&nbsp;&nbsp;|;
+        } else {
+          $sort = qq|<img src=$images/down.png>&nbsp;&nbsp;&nbsp;|;
+        }
       }
       print qq|\n<th nowrap>$sort<a class=listheading href=$href&sort=$column_sort{$column_index[$_]}>$column_data{$column_index[$_]}</a></th>|;
     } else {
       print qq|\n<th nowrap class=listheading>$column_data{$column_index[$_]}</th>|;
     }
   }
-  
+
   print qq|
         </tr>
 |;
@@ -781,21 +781,21 @@ sub transactions {
     $sameitem = $form->{GL}->[0]->{$form->{sort}};
     $cml = -1 if $form->{contra};
   }
-  
+
   if (($form->{accno} || $form->{gifi_accno}) && $form->{balance}) {
 
     for (@column_index) { $column_data{$_} = "<td>&nbsp;</td>" }
     $column_data{balance} = "<td align=right>".$form->format_amount(\%myconfig, $form->{balance} * $ml * $cml, $form->{precision}, 0)."</td>";
-    
+
     if ($ref->{id} != $sameid) {
       $i++; $i %= 2;
     }
-   
+
     print qq|
         <tr class=listrow$i>
 |;
     for (@column_index) { print "$column_data{$_}\n" }
-    
+
     print qq|
         </tr>
 |;
@@ -812,21 +812,21 @@ sub transactions {
     # if item ne sort print subtotal
     if ($form->{l_subtotal} eq 'Y') {
       if ($sameitem ne $ref->{$form->{sort}}) {
-	&gl_subtotal;
+        &gl_subtotal;
       }
     }
-    
+
     $form->{balance} += $ref->{amount};
-    
+
     $subtotaldebit += $ref->{debit};
     $subtotalcredit += $ref->{credit};
-    
+
     $totaldebit += $ref->{debit};
     $totalcredit += $ref->{credit};
 
     $ref->{debit} = $form->format_amount(\%myconfig, $ref->{debit}, $form->{precision}, "&nbsp;");
     $ref->{credit} = $form->format_amount(\%myconfig, $ref->{credit}, $form->{precision}, "&nbsp;");
-    
+
     $column_data{id} = "<td>$ref->{id}</td>";
     $column_data{transdate} = "<td nowrap>$ref->{transdate}</td>";
 
@@ -834,19 +834,19 @@ sub transactions {
     $column_data{reference} = "<td><a href=$ref->{module}.pl?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{reference}</td>";
 
     for (qw(department name vcnumber address)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
-    
+
     for (qw(lineitem description source memo notes)) {
       $ref->{$_} =~ s/\r?\n/<br>/g;
       $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>";
     }
-    
+
     if ($ref->{vc_id}) {
       $column_data{name} = "<td><a href=ct.pl?action=edit&id=$ref->{vc_id}&db=$ref->{db}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{name}</td>";
     }
-    
+
     $column_data{debit} = "<td align=right>$ref->{debit}</td>";
     $column_data{credit} = "<td align=right>$ref->{credit}</td>";
-    
+
     $column_data{accno} = "<td><a href=$href&accno=$ref->{accno}&callback=$callback>$ref->{accno}</a></td>";
     $column_data{contra} = "<td>";
     for (split / /, $ref->{contra}) {
@@ -870,7 +870,7 @@ sub transactions {
         <tr class=listrow$i>";
     for (@column_index) { print "$column_data{$_}\n" }
     print "</tr>";
-    
+
     $sameid = $ref->{id};
   }
 
@@ -879,18 +879,18 @@ sub transactions {
 
 
   for (@column_index) { $column_data{$_} = "<td>&nbsp;</td>" }
-  
+
   $column_data{debit} = "<th align=right class=listtotal>".$form->format_amount(\%myconfig, $totaldebit, $form->{precision}, "&nbsp;")."</th>";
   $column_data{credit} = "<th align=right class=listtotal>".$form->format_amount(\%myconfig, $totalcredit, $form->{precision}, "&nbsp;")."</th>";
   $column_data{balance} = "<th align=right class=listtotal>".$form->format_amount(\%myconfig, $form->{balance} * $ml * $cml, $form->{precision}, 0)."</th>";
-  
+
   print qq|
-	<tr class=listtotal>
+        <tr class=listtotal>
 |;
 
   for (@column_index) { print "$column_data{$_}\n" }
 
-  
+
   %button = ('General Ledger--Add Transaction' => { ndx => 1, key => 'G', value => $locale->text('GL Transaction') },
   'AR--Add Transaction' => { ndx => 2, key => 'R', value => $locale->text('AR Transaction') },
   'AR--Sales Invoice' => { ndx => 3, key => 'I', value => $locale->text('Sales Invoice ') },
@@ -904,7 +904,7 @@ sub transactions {
   if (!$form->{admin}) {
     delete $button{'Save Report'} unless $form->{savereport};
   }
-    
+
   if ($myconfig{acs} =~ /General Ledger--General Ledger/) {
     delete $button{'General Ledger--Add Transaction'};
   }
@@ -946,11 +946,11 @@ sub transactions {
     for (qw(datefrom dateto)) { delete $form->{$_} }
   }
   $form->hide_form(qw(department reference description name vcnumber lineitem notes source memo datefrom dateto month year accnofrom accnoto amountfrom amountto interval category l_subtotal));
-  
+
   $form->hide_form(qw(callback path login report reportcode reportlogin column_index flds sort direction));
-  
+
   $form->print_button(\%button);
-  
+
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
     &menubar;
@@ -968,16 +968,16 @@ sub transactions {
 
 
 sub gl_subtotal {
-      
+
   $subtotaldebit = $form->format_amount(\%myconfig, $subtotaldebit, $form->{precision}, "&nbsp;");
   $subtotalcredit = $form->format_amount(\%myconfig, $subtotalcredit, $form->{precision}, "&nbsp;");
-  
+
   for (@column_index) { $column_data{$_} = "<td>&nbsp;</td>" }
 
   $column_data{debit} = "<th align=right class=listsubtotal>$subtotaldebit</td>";
   $column_data{credit} = "<th align=right class=listsubtotal>$subtotalcredit</td>";
 
-  
+
   print "<tr class=listsubtotal>";
   for (@column_index) { print "$column_data{$_}\n" }
   print "</tr>";
@@ -995,24 +995,24 @@ sub update {
   if ($form->{currency} ne $form->{defaultcurrency}) {
     $form->{exchangerate} = $form->parse_amount(\%myconfig, $form->{exchangerate});
   }
-  
+
   if ($form->{transdate} ne $form->{oldtransdate}) {
     if ($form->{selectprojectnumber}) {
       $form->all_projects(\%myconfig, undef, $form->{transdate});
       if (@{ $form->{all_project} }) {
-	$form->{selectprojectnumber} = "\n";
-	for (@{ $form->{all_project} }) { $form->{selectprojectnumber} .= qq|$_->{projectnumber}--$_->{id}\n| }
-	$form->{selectprojectnumber} = $form->escape($form->{selectprojectnumber},1);
+        $form->{selectprojectnumber} = "\n";
+        for (@{ $form->{all_project} }) { $form->{selectprojectnumber} .= qq|$_->{projectnumber}--$_->{id}\n| }
+        $form->{selectprojectnumber} = $form->escape($form->{selectprojectnumber},1);
       }
     }
     $form->{oldtransdate} = $form->{transdate};
-    
+
     $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate});
     $form->{oldcurrency} = $form->{currency};
   }
-  
+
   $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{transdate}) if $form->{currency} ne $form->{oldcurrency};
-  
+
   $form->{oldcurrency} = $form->{currency};
 
   &rebuild_departments if $form->{department} ne $form->{olddepartment};
@@ -1024,10 +1024,10 @@ sub update {
   for $i (1 .. $form->{rowcount}) {
     if ($form->{"debit_$i"} || $form->{"credit_$i"}) {
       for (qw(debit credit)) { $form->{"${_}_$i"} = $form->parse_amount(\%myconfig, $form->{"${_}_$i"}) }
-      
+
       push @f, {};
       $j = $#f;
-      
+
       for (@flds) { $f[$j]->{$_} = $form->{"${_}_$i"} }
       $count++;
     }
@@ -1046,7 +1046,7 @@ sub update {
   $form->{rowcount} = $count + 1;
 
   &display_form;
-  
+
 }
 
 
@@ -1076,63 +1076,63 @@ sub display_rows {
     if ($init) {
       $accno = qq|
       <td><select name="accno_$i">|.$form->select_option($form->{selectaccno}).qq|</select></td>|;
-      
+
       if ($form->{selectprojectnumber}) {
-	$project = qq|
+        $project = qq|
     <td><select name="projectnumber_$i">|.$form->select_option($form->{selectprojectnumber}, undef, 1).qq|</select></td>|;
       }
 
       if ($form->{fxadj}) {
-	$fx_transaction = qq|
-	<td><input name="fx_transaction_$i" class=checkbox type=checkbox value=1></td>
+        $fx_transaction = qq|
+        <td><input name="fx_transaction_$i" class=checkbox type=checkbox value=1></td>
 |;
       }
-    
+
     } else {
-   
+
       $form->{totaldebit} += $form->{"debit_$i"};
       $form->{totalcredit} += $form->{"credit_$i"};
 
       for (qw(debit credit)) { $form->{"${_}_$i"} = ($form->{"${_}_$i"}) ? $form->format_amount(\%myconfig, $form->{"${_}_$i"}, $form->{precision}) : "" }
 
       if ($i < $form->{rowcount}) {
-	
-	$accno = qq|<td>$form->{"accno_$i"}</td>|;
 
-	if ($form->{selectprojectnumber}) {
-	  $project = $form->{"projectnumber_$i"};
-	  $project =~ s/--.*//;
-	  $project = qq|<td>$project</td>|;
-	}
+        $accno = qq|<td>$form->{"accno_$i"}</td>|;
 
-	if ($form->{fxadj}) {
-	  $checked = ($form->{"fx_transaction_$i"}) ? "1" : "";
-	  $x = ($checked) ? "x" : "";
-	  $fx_transaction = qq|
+        if ($form->{selectprojectnumber}) {
+          $project = $form->{"projectnumber_$i"};
+          $project =~ s/--.*//;
+          $project = qq|<td>$project</td>|;
+        }
+
+        if ($form->{fxadj}) {
+          $checked = ($form->{"fx_transaction_$i"}) ? "1" : "";
+          $x = ($checked) ? "x" : "";
+          $fx_transaction = qq|
       <td><input type=hidden name="fx_transaction_$i" value="$checked">$x</td>
 |;
-	}
-      
-	$form->hide_form(map { "${_}_$i"} qw(accno projectnumber));
-	
+        }
+
+        $form->hide_form(map { "${_}_$i"} qw(accno projectnumber));
+
       } else {
-	
-	$accno = qq|
+
+        $accno = qq|
       <td><select name="accno_$i">|.$form->select_option($form->{selectaccno}).qq|</select></td>|;
 
-	if ($form->{selectprojectnumber}) {
-	  $project = qq|
+        if ($form->{selectprojectnumber}) {
+          $project = qq|
       <td><select name="projectnumber_$i">|.$form->select_option($form->{selectprojectnumber}, undef, 1).qq|</select></td>|;
-	}
+        }
 
-	if ($form->{fxadj}) {
-	  $fx_transaction = qq|
+        if ($form->{fxadj}) {
+          $fx_transaction = qq|
       <td><input name="fx_transaction_$i" class=checkbox type=checkbox value=1></td>
 |;
-	}
+        }
       }
     }
-    
+
     print qq|<tr valign=top>
     $accno
     $fx_transaction
@@ -1145,19 +1145,19 @@ sub display_rows {
 |;
 
     $form->hide_form("cleared_$i");
-    
+
   }
 
   $form->hide_form(qw(rowcount));
   $form->hide_form(map { "select$_" } qw(accno projectnumber));
-  
+
 }
 
 
 sub form_header {
 
   for (qw(reference description notes)) { $form->{$_} = $form->quote($form->{$_}) }
-  
+
   $reference_documents = &references;
 
   if (($rows = $form->numtextrows($form->{description}, 50)) > 1) {
@@ -1165,7 +1165,7 @@ sub form_header {
   } else {
     $description = qq|<input name=description size=50 value="|.$form->quote($form->{description}).qq|">|;
   }
-  
+
   if (($rows = $form->numtextrows($form->{notes}, 50)) > 1) {
     $notes = qq|<textarea name=notes rows=$rows cols=50 wrap=soft>$form->{notes}</textarea>|;
   } else {
@@ -1176,33 +1176,33 @@ sub form_header {
   if (!$form->{fxadj}) {
     $exchangerate = qq|
                 <th align=right nowrap>|.$locale->text('Currency').qq|</th>
-		<td>
-		  <table>
-		    <tr>
+                <td>
+                  <table>
+                    <tr>
                       <td><select name=currency onChange="javascript:document.main.submit()">|
-		      .$form->select_option($form->{selectcurrency}, $form->{currency})
-		      .qq|</select></td>|;
+                      .$form->select_option($form->{selectcurrency}, $form->{currency})
+                      .qq|</select></td>|;
 
     if ($form->{currency} ne $form->{defaultcurrency}) {
 
       $form->{exchangerate} = $form->format_amount(\%myconfig, $form->{exchangerate});
-      
+
       $exchangerate .= qq|
       <th align=right nowrap>|.$locale->text('Exchange Rate').qq| <font color=red>*</font></th>
       <td><input name=exchangerate class="inputright" size=10 value=$form->{exchangerate}></td>|;
     }
     $exchangerate .= qq|</tr></table></td></tr>|;
   }
-  
+
   $department = qq|
-	  <th align=right nowrap>|.$locale->text('Department').qq|</th>
-	  <td><select name=department onChange="javascript:document.main.submit()">|
+          <th align=right nowrap>|.$locale->text('Department').qq|</th>
+          <td><select name=department onChange="javascript:document.main.submit()">|
           .$form->select_option($form->{selectdepartment}, $form->{department}, 1)
           .qq|</select></td>
 | if $form->{selectdepartment};
 
-  $project = qq| 
-	  <th class=listheading>|.$locale->text('Project').qq|</th>
+  $project = qq|
+          <th class=listheading>|.$locale->text('Project').qq|</th>
 | if $form->{selectprojectnumber};
 
   if ($form->{fxadj}) {
@@ -1212,32 +1212,32 @@ sub form_header {
   }
 
   $focus = ($form->{focus}) ? $form->{focus} : "debit_$form->{rowcount}";
-  
+
   if ($form->{batch} && ! $form->{approved}) {
     $transdate = qq|
-	  <td>$form->{transdate}</td>
-	  <input type=hidden name=transdate value=$form->{transdate}>
+          <td>$form->{transdate}</td>
+          <input type=hidden name=transdate value=$form->{transdate}>
 |;
   } else {
     $transdate = qq|
-	  <td><input name=transdate size=11 class=date title="$myconfig{dateformat}" value=$form->{transdate}>|.&js_calendar("main", "transdate").qq|</td>
+          <td><input name=transdate size=11 class=date title="$myconfig{dateformat}" value=$form->{transdate}>|.&js_calendar("main", "transdate").qq|</td>
 |;
   }
 
   if ($form->{id} && $form->{lock_glnumber}) {
     $reference = qq|
-	  <th align=right>|.$locale->text('Reference').qq|</th>
-	  <td>|.$form->quote($form->{reference}).qq|</td>
-	  <th align=right>|.$locale->text('Date').qq| <font color=red>*</font></th>|.$form->hide_form(qw(reference lock_glnumber));
+          <th align=right>|.$locale->text('Reference').qq|</th>
+          <td>|.$form->quote($form->{reference}).qq|</td>
+          <th align=right>|.$locale->text('Date').qq| <font color=red>*</font></th>|.$form->hide_form(qw(reference lock_glnumber));
   } else {
     $reference = qq|
-	  <th align=right>|.$locale->text('Reference').qq|</th>
-	  <td><input name=reference size=20 value="|.$form->quote($form->{reference}).qq|"></td>
-	  <th align=right>|.$locale->text('Date').qq| <font color=red>*</font></th>|;
+          <th align=right>|.$locale->text('Reference').qq|</th>
+          <td><input name=reference size=20 value="|.$form->quote($form->{reference}).qq|"></td>
+          <th align=right>|.$locale->text('Date').qq| <font color=red>*</font></th>|;
   }
 
   $form->header;
-  
+
   &calendar;
 
   print qq|
@@ -1248,7 +1248,7 @@ sub form_header {
 
   $form->hide_form(qw(id fxadj closedto locked oldtransdate oldcurrency recurring batch batchid batchnumber batchdescription defaultcurrency precision helpref reference_rows referenceurl olddepartment));
   $form->hide_form(map { "select$_" } qw(accno department currency));
-  
+
   print qq|
 <input type=hidden name=title value="|.$form->quote($form->{title}).qq|">
 
@@ -1260,38 +1260,38 @@ sub form_header {
   <tr>
     <td>
       <table>
-	<tr>
+        <tr>
           $reference
-	  $transdate
-	</tr>
-	<tr>
-	  $department
-	  $exchangerate
-	</tr>
-	<tr>
-	  <th align=right>|.$locale->text('Description').qq|</th>
-	  <td colspan=3>$description</td>
-	</tr>
-	<tr>
-	  <th align=right>|.$locale->text('Notes').qq|</th>
-	  <td colspan=3>$notes</td>
-	</tr>
-	$reference_documents
+          $transdate
+        </tr>
+        <tr>
+          $department
+          $exchangerate
+        </tr>
+        <tr>
+          <th align=right>|.$locale->text('Description').qq|</th>
+          <td colspan=3>$description</td>
+        </tr>
+        <tr>
+          <th align=right>|.$locale->text('Notes').qq|</th>
+          <td colspan=3>$notes</td>
+        </tr>
+        $reference_documents
       </table>
     </td>
   </tr>
   <tr>
     <td>
       <table width=100%>
-	<tr class=listheading>
-	  <th class=listheading>|.$locale->text('Account').qq|</th>
-	  $fx_transaction
-	  <th class=listheading>|.$locale->text('Debit').qq|</th>
-	  <th class=listheading>|.$locale->text('Credit').qq|</th>
-	  <th class=listheading>|.$locale->text('Source').qq|</th>
-	  <th class=listheading>|.$locale->text('Memo').qq|</th>
-	  $project
-	</tr>
+        <tr class=listheading>
+          <th class=listheading>|.$locale->text('Account').qq|</th>
+          $fx_transaction
+          <th class=listheading>|.$locale->text('Debit').qq|</th>
+          <th class=listheading>|.$locale->text('Credit').qq|</th>
+          <th class=listheading>|.$locale->text('Source').qq|</th>
+          <th class=listheading>|.$locale->text('Memo').qq|</th>
+          $project
+        </tr>
 |;
 
 }
@@ -1310,7 +1310,7 @@ sub form_footer {
 
 
   $project = qq|
-	  <th>&nbsp;</th>
+          <th>&nbsp;</th>
 | if $form->{selectprojectnumber};
 
   if ($form->{fxadj}) {
@@ -1337,13 +1337,13 @@ sub form_footer {
 
   print qq|
         <tr class=listtotal>
-	  <th>&nbsp;</th>
-	  $fx_transaction
-	  <th class=listtotal align=right>$form->{totaldebit}</th>
-	  <th class=listtotal align=right>$form->{totalcredit}</th>
-	  <th>&nbsp;</th>
-	  <th>&nbsp;</th>
-	  $project
+          <th>&nbsp;</th>
+          $fx_transaction
+          <th class=listtotal align=right>$form->{totaldebit}</th>
+          <th class=listtotal align=right>$form->{totalcredit}</th>
+          <th>&nbsp;</th>
+          <th>&nbsp;</th>
+          $project
         </tr>
         $difference
       </table>
@@ -1358,7 +1358,7 @@ sub form_footer {
   $form->{action} = "Update";
 
   $form->hide_form(qw(action path login callback));
-  
+
   $transdate = $form->datetonum(\%myconfig, $form->{transdate});
 
   if ($form->{readonly}) {
@@ -1369,37 +1369,37 @@ sub form_footer {
 
     %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
                'Post' => { ndx => 3, key => 'O', value => $locale->text('Post') },
-	       'Post as new' => { ndx => 6, key => 'N', value => $locale->text('Post as new') },
-	       'Schedule' => { ndx => 7, key => 'H', value => $locale->text('Schedule') },
-	       'New Number' => { ndx => 10, key => 'M', value => $locale->text('New Number') },
-	       'Delete' => { ndx => 11, key => 'D', value => $locale->text('Delete') },
-	      );
-    
+               'Post as new' => { ndx => 6, key => 'N', value => $locale->text('Post as new') },
+               'Schedule' => { ndx => 7, key => 'H', value => $locale->text('Schedule') },
+               'New Number' => { ndx => 10, key => 'M', value => $locale->text('New Number') },
+               'Delete' => { ndx => 11, key => 'D', value => $locale->text('Delete') },
+              );
+
     %f = ();
-    
+
     if ($form->{id}) {
       for ('Update', 'Post as new', 'Schedule', 'New Number') { $f{$_} = 1 }
-      
+
       if (! $form->{locked}) {
-	if ($transdate > $form->{closedto}) {
-	  for ('Post', 'Delete') { $f{$_} = 1 }
-	}
+        if ($transdate > $form->{closedto}) {
+          for ('Post', 'Delete') { $f{$_} = 1 }
+        }
       }
-      
+
     } else {
       if ($transdate > $form->{closedto}) {
-	for ("Update", "Post", "Schedule", "New Number") { $f{$_} = 1 }
+        for ("Update", "Post", "Schedule", "New Number") { $f{$_} = 1 }
       }
     }
 
     $f{'Schedule'} = 0 if $form->{batch};
-    
+
     for (keys %button) { delete $button{$_} if ! $f{$_} }
 
     $form->print_button(\%button);
-    
+
   }
-  
+
   if ($form->{recurring}) {
     print qq|<div align=right>|.$locale->text('Scheduled').qq|</div>|;
   }
@@ -1408,14 +1408,14 @@ sub form_footer {
     require "$form->{path}/menu.pl";
     &menubar;
   }
-  
+
   print qq|
   </form>
 
 </body>
 </html>
 |;
-  
+
 }
 
 
@@ -1432,7 +1432,7 @@ sub delete {
   delete $form->{action};
 
   $form->hide_form;
-  
+
   print qq|
 <h2 class=confirm>|.$locale->text('Confirm!').qq|</h2>
 
@@ -1452,7 +1452,7 @@ sub yes {
   } else {
     $form->error($locale->text('Cannot delete transaction!'));
   }
-  
+
 }
 
 
@@ -1463,19 +1463,19 @@ sub post {
   $transdate = $form->datetonum(\%myconfig, $form->{transdate});
 
   $form->error($locale->text('Cannot post transaction for a closed period!')) if ($transdate <= $form->{closedto});
-  
+
   # add up debits and credits
   for $i (1 .. $form->{rowcount}) {
     $dr = $form->parse_amount(\%myconfig, $form->{"debit_$i"});
     $cr = $form->parse_amount(\%myconfig, $form->{"credit_$i"});
-    
+
     if ($dr && $cr) {
       $form->error($locale->text('Cannot post transaction with a debit and credit entry for the same account!'));
     }
     $debit += $dr;
     $credit += $cr;
   }
-  
+
   if ($form->round_amount($debit, $form->{precision}) != $form->round_amount($credit, $form->{precision})) {
     $form->error($locale->text('Out of balance transaction!'));
   }
@@ -1488,13 +1488,13 @@ sub post {
   }
 
   $form->{userspath} = $userspath;
-  
+
   if ($form->{batch}) {
     $rc = VR->post_transaction(\%myconfig, \%$form);
   } else {
     $rc = GL->post_transaction(\%myconfig, \%$form);
   }
-  
+
   if ($form->{callback}) {
     $form->{callback} =~ s/(batch|batchid|batchdescription)=.*?&//g;
     $form->{callback} .= "&batch=$form->{batch}&batchid=$form->{batchid}&transdate=$form->{transdate}&batchdescription=".$form->escape($form->{batchdescription},1);
@@ -1505,7 +1505,7 @@ sub post {
   } else {
     $form->error($locale->text('Cannot post transaction!'));
   }
- 
+
 }
 
 

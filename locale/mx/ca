@@ -1,11 +1,13 @@
 $self{texts} = {
+  'AR/AP'                       => 'CxC/CxP',
   'Account'                     => 'Cuenta',
   'Apr'                         => 'Abr',
   'April'                       => 'Abril',
   'Aug'                         => 'Ago',
   'August'                      => 'Agosto',
   'Balance'                     => 'Saldo',
-  'Chart of Accounts'           => 'Catálogo de cuentas',
+  'Chart of Accounts'           => 'CatÃ¡logo de cuentas',
+  'Closed'                      => 'Cerrada',
   'Credit'                      => 'Abono',
   'Current'                     => 'Actual',
   'Date'                        => 'Fecha',
@@ -13,11 +15,11 @@ $self{texts} = {
   'Dec'                         => 'Dic',
   'December'                    => 'Diciembre',
   'Department'                  => 'Departamento',
-  'Description'                 => 'Descripción',
+  'Description'                 => 'DescripciÃ³n',
   'Feb'                         => 'Feb',
   'February'                    => 'Febrero',
   'From'                        => 'De',
-  'GIFI'                        => 'Código GIFI',
+  'GIFI'                        => 'CÃ³digo GIFI',
   'Include in Report'           => 'Incluir en reporte',
   'Jan'                         => 'Ene',
   'January'                     => 'Enero',
@@ -35,8 +37,8 @@ $self{texts} = {
   'November'                    => 'Noviembre',
   'Oct'                         => 'Oct',
   'October'                     => 'Octubre',
-  'Period'                      => 'Período',
-  'Project Number'              => 'Número de proyecto',
+  'Period'                      => 'PerÃ­odo',
+  'Project Number'              => 'NÃºmero de proyecto',
   'Quarter'                     => 'Trimestre',
   'R'                           => 'C',
   'Reference'                   => 'Referencia',
@@ -45,7 +47,7 @@ $self{texts} = {
   'Source'                      => 'Referencia',
   'Subtotal'                    => 'Subtotal',
   'To'                          => 'A',
-  'Year'                        => 'Año',
+  'Year'                        => 'AÃ±o',
 };
 
 $self{subs} = {
@@ -60,6 +62,7 @@ $self{subs} = {
   'list_transactions'           => 'list_transactions',
   'pickvalue'                   => 'pickvalue',
   'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
   'enlistar_movimientos'        => 'list_transactions',
 };
 

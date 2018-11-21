@@ -1,14 +1,12 @@
-$self{charset} = 'ISO-8859-7';
-
 $self{texts} = {
-  'Account'                     => 'Ëïãáñéáóìüò',
-  'Amount'                      => 'Ðïóü',
-  'Continue'                    => 'ÓõíÝ÷åéá',
-  'Date'                        => 'Çìåñïìçíßá',
-  'Nothing to print!'           => 'Äåí õðÜñ÷åé ôßðïôá ãéá åêôýðùóç',
-  'Printed'                     => 'Åêôõðþèçêå',
-  'Screen'                      => 'Ïèüíç',
-  'Source'                      => 'ÐçãÞ',
+  'Account'                     => 'Î›Î¿Î³Î±ÏÎ¹Î±ÏƒÎ¼ÏŒÏ‚',
+  'Amount'                      => 'Î Î¿ÏƒÏŒ',
+  'Continue'                    => 'Î£Ï…Î½Î­Ï‡ÎµÎ¹Î±',
+  'Date'                        => 'Î—Î¼ÎµÏÎ¿Î¼Î·Î½Î¯Î±',
+  'Nothing to print!'           => 'Î”ÎµÎ½ Ï…Ï€Î¬ÏÏ‡ÎµÎ¹ Ï„Î¯Ï€Î¿Ï„Î± Î³Î¹Î± ÎµÎºÏ„ÏÏ€Ï‰ÏƒÎ·',
+  'Printed'                     => 'Î•ÎºÏ„Ï…Ï€ÏŽÎ¸Î·ÎºÎµ',
+  'Screen'                      => 'ÎŸÎ¸ÏŒÎ½Î·',
+  'Source'                      => 'Î Î·Î³Î®',
 };
 
 $self{subs} = {
@@ -24,7 +22,7 @@ $self{subs} = {
   'print_remittance_voucher'    => 'print_remittance_voucher',
   'print_transaction'           => 'print_transaction',
   'select_payment'              => 'select_payment',
-  'ÓõíÝ÷åéá'                    => 'continue',
+  'Î£Ï…Î½Î­Ï‡ÎµÎ¹Î±'            => 'continue',
 };
 
 1;

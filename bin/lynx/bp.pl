@@ -61,6 +61,7 @@ sub search {
 # $locale->text('Quotations')
 # $locale->text('RFQs')
 # $locale->text('Time Cards')
+# $locale->text('Stores Cards')
 
 # $locale->text('Customer')
 # $locale->text('Customer Number')
@@ -80,25 +81,26 @@ sub search {
              sales_quotation => { title => 'Quotations', name => ['Customer'] },
              request_quotation => { title => 'RFQs', name => ['Vendor'] },
              timecard => { title => 'Time Cards', name => ['Employee'] },
-	   );
+             storescard => { title => 'Stores Cards', name => ['Employee'] },
+           );
 
   $label{invoice}{invnumber} = qq|
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Invoice Number').qq|</th>
-	  <td colspan=3><input name=invnumber size=20></td>
-	</tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Invoice Number').qq|</th>
+          <td colspan=3><input name=invnumber size=20></td>
+        </tr>
 |;
   $label{invoice}{ordnumber} = qq|
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Order Number').qq|</th>
-	  <td colspan=3><input name=ordnumber size=20></td>
-	</tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Order Number').qq|</th>
+          <td colspan=3><input name=ordnumber size=20></td>
+        </tr>
 |;
   $label{sales_quotation}{quonumber} = qq|
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Quotation Number').qq|</th>
-	  <td colspan=3><input name=quonumber size=20></td>
-	</tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Quotation Number').qq|</th>
+          <td colspan=3><input name=quonumber size=20></td>
+        </tr>
 |;
 
   $label{remittance_voucher}{invnumber} = $label{invoice}{invnumber};
@@ -112,7 +114,7 @@ sub search {
   $label{bin_list}{invnumber} = $label{invoice}{invnumber};
   $label{bin_list}{ordnumber} = $label{invoice}{ordnumber};
   $label{request_quotation}{quonumber} = $label{sales_quotation}{quonumber};
-  
+
   $label{print}{title} = "Print";
   $label{queue}{title} = "Queued";
   $label{email}{title} = "E-mail";
@@ -127,7 +129,7 @@ sub search {
 
   if ($form->{batch} ne 'queue') {
     $onhold = qq|
-		<input name=onhold class=checkbox type=checkbox value=Y> |.$locale->text('On Hold');
+                <input name=onhold class=checkbox type=checkbox value=Y> |.$locale->text('On Hold');
 
     @f = qw(invoice packing_list pick_list bin_list);
 
@@ -135,17 +137,17 @@ sub search {
       $onhold = "";
     }
 
-    $openclosed = qq| 
+    $openclosed = qq|
               <tr>
-	        <td></td>
-	        <td colspan=3 nowrap><input name=open class=checkbox type=checkbox value=Y checked> |.$locale->text('Open').qq|
-		<input name=closed class=checkbox type=checkbox value=Y> |.$locale->text('Closed').qq|
-		$onhold
-		<input name="printed" class=checkbox type=checkbox value=Y> |.$locale->text('Printed').qq|
-		<input name="notprinted" class=checkbox type=checkbox value=Y $checked{print}> |.$locale->text('Not Printed').qq|
-		<input name="emailed" class=checkbox type=checkbox value=Y> |.$locale->text('E-mailed').qq|
-		<input name="notemailed" class=checkbox type=checkbox value=Y $checked{email}> |.$locale->text('Not E-mailed').qq|
-		</td>
+                <td></td>
+                <td colspan=3 nowrap><input name=open class=checkbox type=checkbox value=Y checked> |.$locale->text('Open').qq|
+                <input name=closed class=checkbox type=checkbox value=Y> |.$locale->text('Closed').qq|
+                $onhold
+                <input name="printed" class=checkbox type=checkbox value=Y> |.$locale->text('Printed').qq|
+                <input name="notprinted" class=checkbox type=checkbox value=Y $checked{print}> |.$locale->text('Not Printed').qq|
+                <input name="emailed" class=checkbox type=checkbox value=Y> |.$locale->text('E-mailed').qq|
+                <input name="notemailed" class=checkbox type=checkbox value=Y $checked{email}> |.$locale->text('Not E-mailed').qq|
+                </td>
               </tr>
 |;
   }
@@ -157,7 +159,7 @@ sub search {
       $form->error($locale->text('Nothing in the Queue!'));
     }
   }
-  
+
   if ($form->{vc}) {
     @{ $label{$form->{type}}{name} } = (ucfirst $form->{vc});
   }
@@ -168,43 +170,43 @@ sub search {
     if ($form->{$vcn}) {
       $k++;
       if (@{ $form->{"all_$vcn"} }) {
-	
-	$form->{"select$vcn"} = qq|
-	<tr>
-	  <th align=right>|.$locale->text($vc).qq|</th>
-	  <td colspan=3><select name=$vcn><option>\n|;
-	  
-	for (@{ $form->{"all_$vcn"} }) { $form->{"select$vcn"} .= qq|<option value="$_->{name}--$_->{id}">$_->{name}\n| }
-	
-	$form->{"select$vcn"} .= qq|<option value="1--0">|.$locale->text('None') if $k > 1;
-	
-	$form->{"select$vcn"} .= qq|</select></tr>
+
+        $form->{"select$vcn"} = qq|
+        <tr>
+          <th align=right>|.$locale->text($vc).qq|</th>
+          <td colspan=3><select name=$vcn><option>\n|;
+
+        for (@{ $form->{"all_$vcn"} }) { $form->{"select$vcn"} .= qq|<option value="$_->{name}--$_->{id}">$_->{name}\n| }
+
+        $form->{"select$vcn"} .= qq|<option value="1--0">|.$locale->text('None') if $k > 1;
+
+        $form->{"select$vcn"} .= qq|</select></tr>
         <input type=hidden name="print$vcn" value=Y>|;
 
       } else {
-	$form->{"select$vcn"} = qq|
-	  <tr>
-	    <th align=right>|.$locale->text($vc).qq|</th>
-	    <td colspan=3><input name=$vcn size=35>|;
+        $form->{"select$vcn"} = qq|
+          <tr>
+            <th align=right>|.$locale->text($vc).qq|</th>
+            <td colspan=3><input name=$vcn size=35>|;
 
-	if ($#{$label{$form->{type}}{name}} > 0) {
-	  $form->{"select$vcn"} .= qq|
-	    <input name=print$vcn type=checkbox class=checkbox value=Y checked>|;
-	} else {
-	  $form->{"select$vcn"} .= qq| 
-	    <input name=print$vcn type=hidden value="Y">|;
+        if ($#{$label{$form->{type}}{name}} > 0) {
+          $form->{"select$vcn"} .= qq|
+            <input name=print$vcn type=checkbox class=checkbox value=Y checked>|;
+        } else {
+          $form->{"select$vcn"} .= qq|
+            <input name=print$vcn type=hidden value="Y">|;
 
-	}
+        }
 
         $vcnumber = "$vc Number";
         $form->{"select$vcn"} .= qq|
             </td>
-	  </tr>
-	  <tr>
-	    <th align=right>|.$locale->text($vcnumber).qq|</th>
-	    <td colspan=3><input name="${vcn}number" size=35></td>
-	  </tr>|;
-	    
+          </tr>
+          <tr>
+            <th align=right>|.$locale->text($vcnumber).qq|</th>
+            <td colspan=3><input name="${vcn}number" size=35></td>
+          </tr>|;
+
       }
     }
   }
@@ -213,20 +215,20 @@ sub search {
     if ($form->{type} eq 'timecard') {
       $projectlabel = $locale->text('Project Number');
     }
-      
+
     if ($form->{type} eq 'storescard') {
       $projectlabel = $locale->text('Job Number');
     }
-    
+
     $selectprojectnumber = "\n";
     for (@{ $form->{all_project} }) { $selectprojectnumber .= qq|$_->{projectnumber}--$_->{id}\n| }
-    
+
     $projectnumber = qq|
           <tr>
-	    <th align=right>$projectlabel</th>
-	    <td colspan=3><select name=projectnumber>|.$form->select_option($selectprojectnumber, $form->{projectnumber}, 1)
-	    .qq|</select></td>
-	    </tr>
+            <th align=right>$projectlabel</th>
+            <td colspan=3><select name=projectnumber>|.$form->select_option($selectprojectnumber, $form->{projectnumber}, 1)
+            .qq|</select></td>
+            </tr>
 |;
   }
 
@@ -234,14 +236,14 @@ sub search {
     if (@{ $form->{all_paymentmethod} }) {
       $paymentmethod = qq|
           <tr>
-	    <th align=right>|.$locale->text('Payment Method').qq|</th>
-	    <td colspan=3><select name=paymentmethod><option>\n|;
+            <th align=right>|.$locale->text('Payment Method').qq|</th>
+            <td colspan=3><select name=paymentmethod><option>\n|;
 
-	    for (@{ $form->{all_paymentmethod} }) { $paymentmethod .= qq|<option value="$_->{description}--$_->{id}">$_->{description}\n| }
-	    $paymentmethod .= qq|</select></tr>|;
+            for (@{ $form->{all_paymentmethod} }) { $paymentmethod .= qq|<option value="$_->{description}--$_->{id}">$_->{description}\n| }
+            $paymentmethod .= qq|</select></tr>|;
     }
   }
- 
+
   # accounting years
   if (@{ $form->{all_years} }) {
     # accounting years
@@ -252,28 +254,28 @@ sub search {
 
     $selectfrom = qq|
         <tr>
-	<th align=right>|.$locale->text('Period').qq|</th>
-	<td colspan=3 nowrap>
-	<select name=month>|.$form->select_option($selectaccountingmonth, undef, 1, 1).qq|</select>
-	<select name=year>|.$form->select_option($selectaccountingyear).qq|</select>
-	<input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
-	<input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
-	<input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
-	<input name=interval class=radio type=radio value=12>&nbsp;|.$locale->text('Year').qq|
-	</td>
+        <th align=right>|.$locale->text('Period').qq|</th>
+        <td colspan=3 nowrap>
+        <select name=month>|.$form->select_option($selectaccountingmonth, undef, 1, 1).qq|</select>
+        <select name=year>|.$form->select_option($selectaccountingyear).qq|</select>
+        <input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
+        <input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
+        <input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
+        <input name=interval class=radio type=radio value=12>&nbsp;|.$locale->text('Year').qq|
+        </td>
       </tr>
 |;
   }
 
   $form->{sort} = "transdate";
   $form->{nextsub} = "list_spool";
-  
+
   $form->helpref("bp_$form->{type}", $myconfig{countrycode});
 
   $form->header;
 
   &calendar;
-  
+
   print qq|
 <body>
 
@@ -290,26 +292,26 @@ sub search {
     <td>
       <table>
         $form->{selectcustomer}
-	$form->{selectvendor}
-	$form->{selectemployee}
-	$account
-	$label{$form->{type}}{invnumber}
-	$label{$form->{type}}{ordnumber}
-	$label{$form->{type}}{quonumber}
-	$projectnumber
-	<tr>
-	  <th align=right nowrap>|.$locale->text('Description').qq|</th>
-	  <td><input name=description size=40></td>
-	</tr>
-	$paymentmethod
-	<tr>
-	  <th align=right nowrap>|.$locale->text('From').qq|</th>
-	  <td><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdatefrom").qq|
-	  <b>|.$locale->text('To').qq|</b>
-	  <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
-	</tr>
-	$selectfrom
-	$openclosed
+        $form->{selectvendor}
+        $form->{selectemployee}
+        $account
+        $label{$form->{type}}{invnumber}
+        $label{$form->{type}}{ordnumber}
+        $label{$form->{type}}{quonumber}
+        $projectnumber
+        <tr>
+          <th align=right nowrap>|.$locale->text('Description').qq|</th>
+          <td><input name=description size=40></td>
+        </tr>
+        $paymentmethod
+        <tr>
+          <th align=right nowrap>|.$locale->text('From').qq|</th>
+          <td><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdatefrom").qq|
+          <b>|.$locale->text('To').qq|</b>
+          <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
+        </tr>
+        $selectfrom
+        $openclosed
       </table>
     </td>
   </tr>
@@ -321,9 +323,9 @@ sub search {
 <br>
 <input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">
 |;
-  
+
   $form->hide_form(qw(path login));
-  
+
   print qq|
 
 </form>
@@ -337,9 +339,9 @@ sub search {
 
 
 sub remove {
-  
+
   $selected = 0;
-  
+
   for $i (1 .. $form->{rowcount}) {
     if ($form->{"ndx_$i"}) {
       $selected = 1;
@@ -348,9 +350,9 @@ sub remove {
   }
 
   $form->error('Nothing selected!') unless $selected;
- 
+
   $form->{title} = $locale->text('Confirm!');
-  
+
   $form->header;
 
   print qq|
@@ -360,9 +362,9 @@ sub remove {
 |;
 
   for (qw(action header)) { delete $form->{$_} }
-  
+
   $form->hide_form;
-  
+
   print qq|
 <h2 class=confirm>$form->{title}</h2>
 
@@ -397,7 +399,7 @@ sub yes {
 sub print {
 
   $myform = new Form;
-  
+
   for (keys %$form) {
     $myform->{$_} = $form->{$_};
     delete $form->{$_};
@@ -405,15 +407,15 @@ sub print {
 
   %msg = ( print => $locale->text('Printing'),
            email => $locale->text('E-mailing'),
-	   );
+           );
 
   $ok = 0;
   $myconfig{vclimit} = 0;
   $r = 1;
   $total = 0;
 
-  for my $i (1 .. $myform->{rowcount}) {
-    
+  for $i (1 .. $myform->{rowcount}) {
+
     if ($myform->{"ndx_$i"}) {
 
       $ok = 1;
@@ -440,15 +442,15 @@ sub print {
           $myform->info($!);
         }
       } else {
-      
+
         for (keys %$form) { delete $form->{$_} }
-        
+
         for (qw(id vc)) { $form->{$_} = $myform->{"${_}_$i"} }
-        $form->{script} = qq|$myform->{"module_$i"}.pl|;
+        $form->{script} = $myform->{"module_$i"};
         for (qw(login path media sendmode subject message format type header copies)) { $form->{$_} = $myform->{$_} }
 
         do "$form->{path}/$form->{script}";
-        
+
         $form->{linkshipto} = 1;
 
         if ($myform->{"module_$i"} eq 'oe') {
@@ -457,8 +459,8 @@ sub print {
           $form->{formname} = $myform->{type};
           $inv = 'ord'
         } elsif ($myform->{"module_$i"} eq 'jc') {
-          &{"prepare_$myform->{type}"};
           $form->{formname} = $myform->{type};
+          &{"prepare_$myform->{type}"};
         } else {
           &invoice_links;
           &prepare_invoice;
@@ -466,10 +468,10 @@ sub print {
             $form->{formname} = $myform->{type};
           }
           delete $form->{paid};
-          
+
           $arap = ($form->{vc} eq 'customer') ? "AR" : "AP";
           $form->{payment_accno} = $form->unescape($form->{payment_accno});
-          
+
           # default
           @f = split /\n/, $form->unescape($form->{"select${arap}_paid"});
           $form->{payment_accno} ||= $f[0];
@@ -513,9 +515,9 @@ sub print {
       }
     }
   }
-  
+
   $myform->info($locale->text('Total').": ".$form->format_amount(\%myconfig, $total, $myform->{precision})) if $total;
-  
+
   for (keys %$form) { delete $form->{$_} }
   for (keys %$myform) { $form->{$_} = $myform->{$_} }
 
@@ -525,7 +527,7 @@ sub print {
   } else {
     $form->error($locale->text('Nothing selected!'));
   }
-  
+
 }
 
 
@@ -541,9 +543,9 @@ sub list_spool {
   for (@f) { $href .= "&$_=$form->{$_}" }
   $href .= "&title=".$form->escape($form->{title});
 
- 
+
   $form->sort_order();
-  
+
   $callback = "$form->{script}?action=list_spool";
   for (@f) { $callback .= "&$_=$form->{$_}" }
   $callback .= "&title=".$form->escape($form->{title},1);
@@ -551,8 +553,8 @@ sub list_spool {
   %vc = ( customer => { name => 'Customer', number => 'Customer Number' },
             vendor => { name => 'Vendor', number => 'Vendor Number' },
           employee => { name => 'Employee', number => 'Employee Number' }
-	     );
-  
+             );
+
   for (qw(customer vendor employee)) {
     if ($form->{$_}) {
       $var = qq|$form->{$_}--$form->{"${_}_id"}|;
@@ -630,7 +632,7 @@ sub list_spool {
     $href .= "&onhold=$form->{onhold}";
     $option .= "\n<br>" if ($option);
     $option .= $locale->text('On Hold');
-  } 
+  }
   if ($form->{printed}) {
     $callback .= "&printed=$form->{printed}";
     $href .= "&printed=$form->{printed}";
@@ -667,15 +669,15 @@ sub list_spool {
   if ($form->{type} =~ /_quotation$/) {
     push @columns, "quonumber";
   }
-  if ($form->{type} eq 'timecard') {
+  if ($form->{type} =~ /(timecard|storescard)/) {
     push @columns, "id";
   }
-  
+
   push @columns, qw(description name vcnumber);
   push @columns, "email" if $form->{batch} eq 'email';
   push @columns, qw(city amount);
   push @columns, "spoolfile" if $form->{batch} eq 'queue';
-  
+
   @column_index = $form->sort_columns(@columns);
   unshift @column_index, qw(runningnumber ndx);
 
@@ -699,9 +701,9 @@ sub list_spool {
   $column_header{amount} = "<th class=listheading>".$locale->text('Amount')."</th>";
 
   $form->helpref("list_spool", $myconfig{countrycode});
-  
+
   $form->header;
-  
+
   &check_all(qw(allbox ndx_));
 
 print qq|
@@ -720,13 +722,13 @@ print qq|
   <tr>
     <td>
       <table width=100%>
-	<tr class=listheading>
+        <tr class=listheading>
 |;
 
   for (@column_index) { print "\n$column_header{$_}" }
 
   print qq|
-	</tr>
+        </tr>
 |;
 
 
@@ -738,51 +740,55 @@ print qq|
 
   $i = 0;
   $totalamount = 0;
-  
+
   foreach $ref (@{ $form->{SPOOL} }) {
 
     $i++;
-    
+
     if ($form->{"ndx_$i"}) {
       $form->{"ndx_$i"} = "checked";
     }
-    
+
     $totalamount += $ref->{amount};
 
-    # this is for audittrail
-    $form->{module} = $ref->{module};
-    
-    if ($ref->{invoice}) {
-      $ref->{module} = ($ref->{module} eq 'ar') ? "is" : "ir";
+    # this one is for printing spool entries
+    $form->{tablename} = $ref->{tablename};
+
+    $module = $ref->{tablename};
+    if ($ref->{tablename} eq 'jcitems') {
+      $module = 'jc';
     }
-    $module = "$ref->{module}.pl";
-    
+    if ($ref->{invoice}) {
+      $module = ($ref->{tablename} eq 'ar') ? "is" : "ir";
+    }
+    $module .= ".pl";
+
     $column_data{amount} = qq|<td align=right>|.$form->format_amount(\%myconfig, $ref->{amount}, $form->{precision}).qq|</td>|;
 
     $column_data{ndx} = qq|<td><input name="ndx_$i" type=checkbox class=checkbox $form->{"ndx_$i"} $form->{"ndx_$i"}></td>|;
 
     if ($form->{batch} eq 'queue') {
       if ($spoolfile eq $ref->{spoolfile}) {
-	$column_data{ndx} = qq|<td></td>|;
+        $column_data{ndx} = qq|<td></td>|;
       }
     }
-    
+
     $column_data{runningnumber} = qq|<td>$i</td>|;
 
     for (qw(description email city id invnumber ordnumber quonumber vcnumber)) { $column_data{$_} = qq|<td>$ref->{$_}</td>| }
     $column_data{transdate} = qq|<td nowrap>$ref->{transdate}</td>|;
 
     $column_data{name} = qq|<td><a href=ct.pl?action=edit&id=$ref->{vc_id}&db=$ref->{db}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{name}</a></td>|;
-    
-    if ($ref->{module} eq 'oe') {
+
+    if ($ref->{tablename} eq 'oe') {
       $column_data{invnumber} = qq|<td>&nbsp</td>|;
       $column_data{ordnumber} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{ordnumber}</a></td>
       <input type=hidden name="reference_$i" value="|.$form->quote($ref->{ordnumber}).qq|">|;
-      
+
       $column_data{quonumber} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{quonumber}</a></td>
     <input type=hidden name="reference_$i" value="|.$form->quote($ref->{quonumber}).qq|">|;
- 
-    } elsif ($ref->{module} eq 'jc') {
+
+    } elsif ($ref->{tablename} eq 'jc') {
       $column_data{id} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{id}</a></td>
     <input type=hidden name="reference_$i" value="$ref->{id}">|;
 
@@ -791,13 +797,12 @@ print qq|
       $column_data{invnumber} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{invnumber}</a></td>
     <input type=hidden name="reference_$i" value="|.$form->quote($ref->{invnumber}).qq|">|;
     }
-    
-   
+
     $column_data{spoolfile} = qq|<td><a href=$spool/$myconfig{dbname}/$ref->{spoolfile}>$ref->{spoolfile}</a></td>
 |;
 
     $spoolfile = $ref->{spoolfile};
-    
+
     $j++; $j %= 2;
     print "
         <tr class=listrow$j>
@@ -811,16 +816,17 @@ print qq|
 <input type=hidden name="id_$i" value="$ref->{id}">
 <input type=hidden name="spoolfile_$i" value="$ref->{spoolfile}">
 <input type=hidden name="vc_$i" value="$ref->{vc}">
-<input type=hidden name="module_$i" value="$ref->{module}">
+<input type=hidden name="tablename_$i" value="$ref->{tablename}">
+<input type=hidden name="module_$i" value="$module">
 |;
   }
 
   for (@column_index) { $column_data{$_} = "<td>&nbsp;</td>" }
 
   $column_data{amount} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $totalamount, $form->{precision}, "&nbsp;")."</th>";
-  
+
   print qq|<tr class=listtotal>|;
-  
+
   for (@column_index) { print "\n$column_data{$_}" }
 
   print qq|
@@ -843,7 +849,7 @@ print qq|
 
   $selectformat = "";
   $media = qq|<select name=media>|;
-  
+
   if ($form->{batch} eq 'email') {
     $form->{format} ||= "pdf";
     $selectformat .= qq|<option value="html">|.$locale->text('html').qq|
@@ -855,50 +861,52 @@ print qq|
     $form->{format} ||= "ps";
     exit if (! $latex && $form->{batch} eq 'print');
   }
-  
+
   if ($latex) {
     $selectformat .= qq|
-	  <option value="ps">|.$locale->text('Postscript').qq|
+          <option value="ps">|.$locale->text('Postscript').qq|
           <option value="pdf">|.$locale->text('PDF');
   }
-   
+
   if (@{ $form->{all_printer} } && $form->{batch} ne 'email') {
-    
+
     for (@{ $form->{all_printer} }) {
-      $media .= qq|<option value="$_->{printer}">$_->{printer}|;
+      $media .= qq|
+          <option value="$_->{printer}">$_->{printer}|;
     }
 
-    $copies = $locale->text('Copies').qq|<input name=copies size=2 value=$form->{copies}>|;
+    $copies = $locale->text('Copies').qq| <input name=copies size=2 value=$form->{copies}>|;
 
   }
 
   if ($form->{batch} eq 'email') {
     $sendmode = qq|<select name="sendmode">
             <option value="attachment">|.$locale->text('Attachment').qq|
-	    <option value="inline">|.$locale->text('In-line').qq|</select>|;
+            <option value="inline">|.$locale->text('In-line').qq|</select>|;
   }
-	    
+
   if ($form->{batch} ne 'email') {
-    $media .= qq|<option value="queue">|.$locale->text('Queue') if $form->{batch} eq 'print';
+    $media .= qq|
+          <option value="queue">|.$locale->text('Queue') if $form->{batch} eq 'print';
   }
- 
+
   $media .= qq|</select>|;
 
   $media =~ s/(<option value="\Q$form->{media}\E")/$1 selected/;
-  
+
   $format = qq|<select name=format>$selectformat</select>|;
   $format =~ s/(<option value="\Q$form->{format}\E")/$1 selected/;
- 
+
   if ($form->{batch} eq 'email') {
     $sendmode =~ s/(<option value="\Q$form->{sendmode}\E")/$1 selected/;
 
     $message = qq|<tr>
                     <td nowrap><b>|.$locale->text('Subject').qq|</b>&nbsp;<input name=subject size=60></td>
-		  </tr>
-		  <tr>
+                  </tr>
+                  <tr>
                     <td><b>|.$locale->text('Message').qq|</b><br><textarea name=message rows=15 cols=60 wrap=soft>$form->{message}</textarea></td>
       </tr>|;
-      
+
     $media = qq|<input type="hidden" name="media" value="email">
 |;
   }
@@ -923,14 +931,14 @@ print qq|
     $form->{"$_->{printer}_printer"} = $_->{command};
     $form->hide_form("$_->{printer}_printer");
   }
- 
+
   %button = ('Select all' => { ndx => 2, key => 'A', value => $locale->text('Select all') },
                'Deselect all' => { ndx => 3, key => 'A', value => $locale->text('Deselect all') },
                'Print' => { ndx => 5, key => 'P', value => $locale->text('Print') },
                'E-mail' => { ndx => 6, key => 'E', value => $locale->text('E-mail') },
                'Combine' => { ndx => 7, key => 'C', value => $locale->text('Combine') },
-	       'Remove' => { ndx => 8, key => 'R', value => $locale->text('Remove') },
-	      );
+               'Remove' => { ndx => 8, key => 'R', value => $locale->text('Remove') },
+              );
 
 
   if ($form->{deselect}) {
@@ -938,7 +946,7 @@ print qq|
   } else {
     delete $button{'Deselect all'};
   }
-  
+
   if ($form->{batch} eq 'print') {
     delete $button{'E-mail'};
   }
@@ -958,7 +966,7 @@ print qq|
   }
 
   $form->print_button(\%button);
-    
+
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -981,16 +989,16 @@ sub select_all {
   $form->{allbox} = 1;
   $form->{deselect} = 1;
   &list_spool;
-  
+
 }
 
 
 sub deselect_all {
-  
+
   for (1 .. $form->{rowcount}) { $form->{"ndx_$_"} = "" }
   $form->{allbox} = "";
   &list_spool;
-  
+
 }
 
 

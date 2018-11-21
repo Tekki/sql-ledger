@@ -52,6 +52,7 @@ $self{subs} = {
   'save_column'                 => 'save_column',
   'save_report'                 => 'save_report',
   'section_menu'                => 'section_menu',
+  'show_progress'               => 'show_progress',
   'verwijder_kolom'             => 'delete_column',
   'verwijder_rapport'           => 'delete_report',
   'bewaar_kolom'                => 'save_column',

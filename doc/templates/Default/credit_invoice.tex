@@ -1,9 +1,4 @@
-\documentclass{scrartcl}
-\usepackage[latin1]{inputenc}
-\usepackage{tabularx}
-\usepackage[top=2.2cm,bottom=-1cm,left=1.9cm,right=0.5cm]{geometry}
-\usepackage{graphicx}
-\setlength{\parindent}{0pt}
+<%include preamble.tex%>
 
 \begin{document}
 
@@ -12,22 +7,7 @@
 
 \fontfamily{cmss}\fontsize{10pt}{12pt}\selectfont
 
-\parbox{\textwidth}{%
-  \parbox[b]{.42\textwidth}{%
-    <%company%>
-   
-    <%address%>
-  }
-  \parbox[b]{.2\textwidth}{
-    \includegraphics[scale=0.3]{sql-ledger}
-  }\hfill
-  \begin{tabular}[b]{rr@{}}
-  Tel: & <%tel%>\\
-  Fax: & <%fax%>
-  \end{tabular}
-
-  \rule[1.5em]{\textwidth}{0.5pt}
-}
+<%include letterhead.tex%>
 
 <%pagebreak 90 27 37%>
 \end{tabularx}
@@ -44,7 +24,7 @@
 \markboth{<%company%>\hfill <%invnumber%>}{<%company%>\hfill <%invnumber%>}
 
 \begin{tabularx}{\textwidth}{@{}rlXlrlrrr@{}}
-  \textbf{Item} & \textbf{Number} & \textbf{Description} & & \textbf{Qt'y} &
+  \textbf{Item} & \textbf{Number} & \textbf{Description} & \textbf{Qt'y} &
     \textbf{Unit} & \textbf{Price} & \textbf{Disc \%} & \textbf{Amount} \\ [0.5em]
   & carried forward from page <%lastpage%> & & & & & & & <%sumcarriedforward%> \\ [0.5em]
 <%end pagebreak%>
@@ -97,40 +77,24 @@ Fax: <%customerfax%>
 \vspace{1cm}
 
 \begin{tabularx}{\textwidth}{*{8}{|X}|} \hline
-  \textbf{Invoice \#} & \textbf{Invoice Date} & \textbf{Order \#} & \textbf{Salesperson}
-  <%if shippingpoint%>
-  & \textbf{Shipping Point}
-  <%end shippingpoint>
-  <%if ponumber%>
-  & \textbf{PO Number}
-  <%end ponumber%>
-  <%if shipvia%>
-  & \textbf{Ship via}
-  <%end shipvia%>
+  \textbf{Invoice \#} & \textbf{Invoice Date} & \textbf{Due Date} & \textbf{Order \#} &
+  \textbf{PO \#} & \textbf{Salesperson} & \textbf{Shipping Point} & \textbf{Ship via}
   \\ [0.5em]
   \hline
-  <%invnumber%> & <%invdate%> & <%ordnumber%> & <%employee%>
-  <%if shippingpoint%>
-  & <%shippingpoint%>
-  <%end shippingpoint>
-  <%if ponumber%>
-  & <%ponumber%>
-  <%end ponumber%>
-  <%if shipvia%>
-  & <%shipvia%>
-  <%end shipvia%>
+  <%invnumber%> & <%invdate%> & <%duedate%> & <%ordnumber%> &
+  <%ponumber%> & <%employee%> & <%shippingpoint%> & <%shipvia%>
   \\
   \hline
 \end{tabularx}
 
 \vspace{1cm}
 
-\begin{tabularx}{\textwidth}{@{}rlXlrlrrr@{}}
+\begin{tabularx}{\textwidth}{@{}rlXrlrrr@{}}
   \textbf{Item} & \textbf{Number} & \textbf{Description} & \textbf{Qt'y} &
-    \textbf{Unit} & \textbf{Price} & \textbf{Amount} \\ [0.5em]
+  \textbf{Unit} & \textbf{Price} & \textbf{Disc \%} & \textbf{Amount} \\ [0.5em]
 <%foreach number%>
   <%runningnumber%> & <%number%> & <%description%> &
-  <%qty%> & <%unit%> & <%sellprice%> & <%linetotal%> \\
+  <%qty%> & <%unit%> & <%sellprice%> & <%discountrate%> & <%linetotal%> \\
   <%if itemnotes%>& & <%itemnotes%> \\[1em]<%end itemnotes%>
 <%end number%>
 \end{tabularx}
@@ -192,4 +156,3 @@ Taxes included in price.
 \rule{\textwidth}{0.5pt}
 
 \end{document}
-

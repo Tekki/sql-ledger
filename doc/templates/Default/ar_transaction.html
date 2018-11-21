@@ -185,6 +185,7 @@
 		<th>Date</th>
 		<th>&nbsp;</th>
 		<th>Source</th>
+                <th>Memo</th>
 		<th>Amount</th>
 	      </tr>
   <%end paid_1%>
@@ -194,6 +195,7 @@
 		<td><%paymentdate%></td>
 		<td><%paymentaccount%></td>
 		<td><%paymentsource%></td>
+                <td><%paymentmemo%></td>
 		<td align=right><%payment%></td>
 	      </tr>
         <%end payment%>
@@ -226,8 +228,19 @@
     <th colspan=3 align=left><font size=-2>Taxes shown are included in price.</th>
   </tr>
   <%end taxincluded%>
+  
+  <%if cd_amount%>
+  <tr>
+    <td></td>
+    <td colspan=9>
+    If payment is received within <%discountterms%> days a discount of <%cashdiscount%> % applies for a total of <%cd_amount%>.
+    </td>
+  </tr>
+  <%end cd_amount%>
 
 </table>
+
+<%dcn%>
 
 </body>
 </html>

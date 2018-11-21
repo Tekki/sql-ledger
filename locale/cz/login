@@ -1,15 +1,13 @@
-$self{charset} = 'ISO-8859-2';
-
 $self{texts} = {
   'Company'                     => 'Firma',
-  'Continue'                    => 'Pokraèování',
-  'Incorrect Dataset version!'  => '©patná verze dat!',
-  'Login'                       => 'U¾ivatelské jméno',
-  'Name'                        => 'Jméno',
-  'No email address for'        => 'Chybí emailová adresy pro',
+  'Continue'                    => 'PokraÄovÃ¡nÃ­',
+  'Incorrect Dataset version!'  => 'Å patnÃ¡ verze dat!',
+  'Login'                       => 'UÅ¾ivatelskÃ© jmÃ©no',
+  'Name'                        => 'JmÃ©no',
+  'No email address for'        => 'ChybÃ­ emailovÃ¡ adresy pro',
   'Password'                    => 'Heslo',
   'Version'                     => 'Verze',
-  'You did not enter a name!'   => 'Nezadal jste jméno!',
+  'You did not enter a name!'   => 'Nezadal jste jmÃ©no!',
 };
 
 $self{subs} = {
@@ -20,8 +18,8 @@ $self{subs} = {
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
   'tan_login'                   => 'tan_login',
-  'pokraèování'                 => 'continue',
-  'u¾ivatelské_jméno'           => 'login',
+  'pokraÄovÃ¡nÃ­'              => 'continue',
+  'uÅ¾ivatelskÃ©_jmÃ©no'        => 'login',
 };
 
 1;
