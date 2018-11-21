@@ -83,6 +83,7 @@ $self{subs} = {
   'section_menu'                => 'section_menu',
   'select_all'                  => 'select_all',
   'show_progress'               => 'show_progress',
+  'unload'                      => 'unload',
   'yes'                         => 'yes',
   'pokračování'                 => 'continue',
   'e_mail'                      => 'e_mail',

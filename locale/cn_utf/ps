@@ -112,7 +112,6 @@ $self{texts} = {
   'Group'                       => 'ç»',
   'Heading'                     => 'æ é¢, ',
   'ID'                          => 'ç¼å·',
-  'Image'                       => 'å½¢å',
   'In-line'                     => 'è¡å',
   'Include in Report'           => 'ä¸å¹¶æ¾ç¤º',
   'Income'                      => 'æ¶å¥',
@@ -132,6 +131,7 @@ $self{texts} = {
   'Jun'                         => 'å­æ',
   'June'                        => 'å­æ',
   'Language'                    => 'è¯­è¨',
+  'Make'                        => 'å¶é ',
   'Mar'                         => 'ä¸æ',
   'March'                       => 'ä¸æ',
   'May'                         => 'äºæ',
@@ -139,6 +139,7 @@ $self{texts} = {
   'Memo'                        => 'å¤å¿å½',
   'Message'                     => 'è®¯æ¯',
   'Method'                      => 'æ¹æ³',
+  'Model'                       => 'åå·',
   'Month'                       => 'æä»½',
   'Month(s)'                    => 'æ',
   'Months'                      => 'æ',
@@ -412,6 +413,7 @@ $self{subs} = {
   'statement_details'           => 'statement_details',
   'subtotal'                    => 'subtotal',
   'transactions'                => 'transactions',
+  'unload'                      => 'unload',
   'update'                      => 'update',
   'validate_items'              => 'validate_items',
   'vendor_invoice_'             => 'vendor_invoice_',

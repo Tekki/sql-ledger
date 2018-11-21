@@ -52,6 +52,7 @@ $self{texts} = {
   'Cannot set account for more than one of AR, AP or IC' => 'ä¸è½è®¾ç½®å¤äºä¸ä¸ªåºæ¶å¸æ¬¾, åºä»å¸æ¬¾æIC',
   'Cash'                        => 'ç°é',
   'Chart of Accounts'           => 'ä¼è®¡ç§ç®è¡¨',
+  'Check Inventory'             => 'æ£æ¥å­è´§æ¸å',
   'City'                        => 'åå¸',
   'Close Books up to'           => 'å³é­å°æ­¤ä¸ºæ­¢çå¸ç°¿',
   'Closed'                      => 'å·²å³é­',
@@ -369,6 +370,7 @@ $self{subs} = {
   'show_progress'               => 'show_progress',
   'sic_header'                  => 'sic_header',
   'taxes'                       => 'taxes',
+  'unload'                      => 'unload',
   'unlock_dataset'              => 'unlock_dataset',
   'update'                      => 'update',
   'update_taxes'                => 'update_taxes',

@@ -74,7 +74,6 @@ $self{texts} = {
   'From'                        => 'ä»',
   'Group'                       => 'ç»',
   'Heading'                     => 'æ é¢, ',
-  'Image'                       => 'å½¢å',
   'In-line'                     => 'è¡å',
   'Include in Report'           => 'ä¸å¹¶æ¾ç¤º',
   'Internal Notes'              => 'åé¨å¤å¿å½',
@@ -91,6 +90,7 @@ $self{texts} = {
   'July'                        => 'ä¸æ',
   'Jun'                         => 'å­æ',
   'June'                        => 'å­æ',
+  'Make'                        => 'å¶é ',
   'Mar'                         => 'ä¸æ',
   'March'                       => 'ä¸æ',
   'May'                         => 'äºæ',
@@ -98,6 +98,7 @@ $self{texts} = {
   'Memo'                        => 'å¤å¿å½',
   'Message'                     => 'è®¯æ¯',
   'Method'                      => 'æ¹æ³',
+  'Model'                       => 'åå·',
   'Month(s)'                    => 'æ',
   'Name'                        => 'åç§°',
   'Notes'                       => 'å¤æ³¨',
@@ -206,6 +207,7 @@ $self{subs} = {
   'check_name'                  => 'check_name',
   'check_project'               => 'check_project',
   'clock'                       => 'clock',
+  'consolidate'                 => 'consolidate',
   'consolidate_invoices'        => 'consolidate_invoices',
   'continue'                    => 'continue',
   'create_form'                 => 'create_form',
@@ -275,6 +277,7 @@ $self{subs} = {
   'ship_to'                     => 'ship_to',
   'shipto_selected'             => 'shipto_selected',
   'show_progress'               => 'show_progress',
+  'unload'                      => 'unload',
   'update'                      => 'update',
   'validate_items'              => 'validate_items',
   'vendor_invoice_'             => 'vendor_invoice_',

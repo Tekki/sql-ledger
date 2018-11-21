@@ -107,6 +107,7 @@ $self{subs} = {
   'show_progress'               => 'show_progress',
   'subtotal'                    => 'subtotal',
   'transactions'                => 'transactions',
+  'unload'                      => 'unload',
   'update'                      => 'update',
   'validate_items'              => 'validate_items',
   'vendor_invoice'              => 'vendor_invoice',

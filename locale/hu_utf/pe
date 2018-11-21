@@ -204,6 +204,7 @@ $self{subs} = {
   'translation'                 => 'translation',
   'translation_footer'          => 'translation_footer',
   'translation_header'          => 'translation_header',
+  'unload'                      => 'unload',
   'update'                      => 'update',
   'új_csoport'                  => 'add_group',
   'új_munkaművelet'             => 'add_job',

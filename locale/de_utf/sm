@@ -51,6 +51,7 @@ $self{subs} = {
   'repost_invoices'             => 'repost_invoices',
   'resize'                      => 'resize',
   'show_progress'               => 'show_progress',
+  'unload'                      => 'unload',
 };
 
 1;

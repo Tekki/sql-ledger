@@ -149,6 +149,7 @@ $self{subs} = {
   'translation'                 => 'translation',
   'translation_footer'          => 'translation_footer',
   'translation_header'          => 'translation_header',
+  'unload'                      => 'unload',
   'update'                      => 'update',
   'tambah_kelompok_rakitan'     => 'add_group',
   'tambah_kelompok_harga'       => 'add_pricegroup',

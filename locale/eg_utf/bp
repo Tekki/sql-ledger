@@ -98,6 +98,7 @@ $self{subs} = {
   'section_menu'                => 'section_menu',
   'select_all'                  => 'select_all',
   'show_progress'               => 'show_progress',
+  'unload'                      => 'unload',
   'yes'                         => 'yes',
   'تابع'                        => 'continue',
   'بريد_الكتروني'               => 'e_mail',
