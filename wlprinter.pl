@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 #
 ######################################################################
-# SQL-Ledger ERP
-# Copyright (C) 2006
+# SQL-Ledger
+# Copyright (c) DWS Systems Inc.
 #
 #  Author: DWS Systems Inc.
 #     Web: http://www.sql-ledger.com
@@ -14,10 +14,6 @@
 # turn execute the same script in bin/$terminal/
 #
 #######################################################################
-
-BEGIN {
-  push @INC, '.';
-}
 
 use open ':std' => ':utf8';
 
@@ -35,6 +31,9 @@ $interval = 10;
 $externalclient = 0;
 ########## end ###########################################
 
+BEGIN {
+  push @INC, '.';
+}
 
 $| = 1;
 
@@ -76,13 +75,14 @@ if ($@) {
 
 # locale messages
 $locale = new Locale "$myconfig{countrycode}", "$script";
-# $form->{charset} = $locale->{charset};
+
+# $form->{charset} = $myconfig{charset};
 
 # send warnings to browser
-$SIG{__WARN__} = sub { eval { print qq|\n$_[0]|; } };
+$SIG{__WARN__} = sub { eval { $form->info($_[0]); } };
 
 # send errors to browser
-$SIG{__DIE__} = sub { eval { print qq|\n$_[0]|; exit; } };
+$SIG{__DIE__} = sub { eval { $form->error($_[0]); } };
 
 $myconfig{dbpasswd} = unpack 'u', $myconfig{dbpasswd};
 map { $form->{$_} = $myconfig{$_} } qw(stylesheet timeout) unless ($form->{type} eq 'preferences');
@@ -93,9 +93,9 @@ if ($form->{path} !~ /^bin\//) {
 }
 
 # global lock out
-if (-f "$userspath/nologin") {
-  if (-s "$userspath/nologin") {
-    open(FH, "$userspath/nologin");
+if (-f "$userspath/nologin.LCK") {
+  if (-s "$userspath/nologin.LCK") {
+    open(FH, "$userspath/nologin.LCK");
     $message = <FH>;
     close(FH);
     $form->error($message);
@@ -104,33 +104,33 @@ if (-f "$userspath/nologin") {
 }
 
 # dataset lock out
-if (-f "$userspath/$myconfig{dbname}.nologin") {
-  if (-s "$userspath/$myconfig{dbname}.nologin") {
-    open(FH, "$userspath/$myconfig{dbname}.nologin");
+if (-f "$userspath/$myconfig{dbname}.LCK" && $form->{login} ne "admin\@$myconfig{dbname}") {
+  if (-s "$userspath/$myconfig{dbname}.LCK") {
+    open(FH, "$userspath/$myconfig{dbname}.LCK");
     $message = <FH>;
     close(FH);
     $form->error($message);
   }
-  $form->error($locale->text('System currently down for maintenance!'));
+  $form->error($locale->text('Dataset currently down for maintenance!'));
 }
 
 # pull in the main code
 require "$form->{path}/$form->{script}";
 
 # customized scripts
-if (-f "$form->{path}/custom_$form->{script}") {
-  eval { require "$form->{path}/custom_$form->{script}"; };
+if (-f "$form->{path}/custom/$form->{script}") {
+  eval { require "$form->{path}/custom/$form->{script}"; };
 }
 
 # customized scripts for login
-if (-f "$form->{path}/$form->{login}_$form->{script}") {
-  eval { require "$form->{path}/$form->{login}_$form->{script}"; };
+if (-f "$form->{path}/custom/$form->{login}/$form->{script}") {
+  eval { require "$form->{path}/custom/$form->{login}/$form->{script}"; };
 }
 
 
 if ($form->{action}) {
   # window title bar, user info
-  $form->{titlebar} = "SQL-Ledger ".$locale->text('Version'). " $form->{version} - $myconfig{name} - $myconfig{dbname}";
+  $form->{titlebar} = "SQL-Ledger - $myconfig{name} - $myconfig{dbname}";
 
   &check_password;
 
@@ -183,9 +183,12 @@ sub check_password {
           $cookie{$name} = $value;
         }
 
-        if ($cookie{"SL-$form->{login}"}) {
+        $login = $form->{login};
+        $login =~ s/(\@| )/_/g;
 
-          $form->{sessioncookie} = $cookie{"SL-$form->{login}"};
+        if ($cookie{"SL-$login"}) {
+
+          $form->{sessioncookie} = $cookie{"SL-$login"};
 
           $s = "";
           %ndx = ();
@@ -193,7 +196,7 @@ sub check_password {
 
           for $i (0 .. $l - 1) {
             $j = substr($myconfig{sessionkey}, $i * 2, 2);
-            $ndx{$j} = substr($cookie{"SL-$form->{login}"}, $i, 1);
+            $ndx{$j} = substr($cookie{"SL-$login"}, $i, 1);
           }
 
           for (sort keys %ndx) {
@@ -204,8 +207,11 @@ sub check_password {
           $login = substr($s, 0, $l);
           $password = substr($s, $l, (length $s) - ($l + 10));
 
+          $flogin = $form->{login};
+          $flogin =~ s/(\@| )/_/g;
+
           # validate cookie
-          if (($login ne $form->{login}) || ($myconfig{password} ne crypt $password, substr($form->{login}, 0, 2))) {
+          if (($login ne $flogin) || ($myconfig{password} ne crypt $password, substr($form->{login}, 0, 2))) {
             &getpassword(1);
             exit;
           }
@@ -226,18 +232,3 @@ sub check_password {
 }
 
 
-sub error {
-  my ($msg) = @_;
-
-  if ($ENV{HTTP_USER_AGENT}) {
-    print qq|Content-Type: text/html
-
-<body><h2 class=error>Error!</h2>
-    <p><b>$msg</b>|;
-
-    exit;
-  }
-
-  die "Error: $msg\n";
-
-}
