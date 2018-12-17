@@ -15,10 +15,6 @@
 #
 #######################################################################
 
-BEGIN {
-  push @INC, '.';
-}
-
 use open ':std' => ':utf8';
 
 # setup defaults, DO NOT CHANGE
@@ -30,6 +26,10 @@ $memberfile = "users/members";
 $sendmail = "| /usr/sbin/sendmail -t";
 $latex = 0;
 ########## end ###########################################
+
+BEGIN {
+  push @INC, '.';
+}
 
 $| = 1;
 
@@ -72,7 +72,8 @@ if ($@) {
 
 # locale messages
 $locale = new Locale "$myconfig{countrycode}", "$script";
-# $form->{charset} = $locale->{charset};
+
+# $form->{charset} = $myconfig{charset};
 
 # send warnings to browser
 $SIG{__WARN__} = sub { eval { $form->info($_[0]); } };
@@ -179,9 +180,12 @@ sub check_password {
           $cookie{$name} = $value;
         }
 
-        if ($cookie{"SL-$form->{login}"}) {
+        $login = $form->{login};
+        $login =~ s/(\@| )/_/g;
 
-          $form->{sessioncookie} = $cookie{"SL-$form->{login}"};
+        if ($cookie{"SL-$login"}) {
+
+          $form->{sessioncookie} = $cookie{"SL-$login"};
 
           $s = "";
           %ndx = ();
@@ -189,7 +193,7 @@ sub check_password {
 
           for $i (0 .. $l - 1) {
             $j = substr($myconfig{sessionkey}, $i * 2, 2);
-            $ndx{$j} = substr($cookie{"SL-$form->{login}"}, $i, 1);
+            $ndx{$j} = substr($cookie{"SL-$login"}, $i, 1);
           }
 
           for (sort keys %ndx) {
@@ -200,8 +204,11 @@ sub check_password {
           $login = substr($s, 0, $l);
           $password = substr($s, $l, (length $s) - ($l + 10));
 
+          $flogin = $form->{login};
+          $flogin =~ s/(\@| )/_/g;
+
           # validate cookie
-          if (($login ne $form->{login}) || ($myconfig{password} ne crypt $password, substr($form->{login}, 0, 2))) {
+          if (($login ne $flogin) || ($myconfig{password} ne crypt $password, substr($form->{login}, 0, 2))) {
             &getpassword(1);
             exit;
           }
