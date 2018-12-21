@@ -1330,7 +1330,7 @@ sub payment_header {
               </tr>
 |;
 
-  $vcref = qq|<a href=ct.pl?action=edit&db=$form->{vc}&id=$form->{"$form->{vc}_id"}&login=$form->{login}&path=$form->{path} target=_blank>?</a>|;
+  $vcref = qq|<a href=ct.pl?action=edit&db=$form->{vc}&id=$form->{"$form->{vc}_id"}&login=$form->{login}&path=$form->{path} target=_blank>&#8663;</a>|;
 
   if ($form->{payments_detail}) {
     $allvc = "";

@@ -238,8 +238,8 @@ sub display_row {
 
     if ($i < $numrows) {
       $zero = "0";
-      $itemhref = qq| <a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"id_$i"}" target=_blank>?</a>|;
-      $itemhistory = qq| <a href="ic.pl?action=history&history=sales&login=$form->{login}&path=$form->{path}&pickvar=sellprice_$i&id=$form->{"id_$i"}" target=popup>?</a>|;
+      $itemhref = qq| <a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"id_$i"}" target=_blank>&#8663;</a>|;
+      $itemhistory = qq| <a href="ic.pl?action=history&history=sales&login=$form->{login}&path=$form->{path}&pickvar=sellprice_$i&id=$form->{"id_$i"}" target=popup>&#8663;</a>|;
 
       %p = split /[: ]/, $form->{"pricematrix_$i"};
       for (split / /, $form->{"kit_$i"}) {
@@ -301,9 +301,9 @@ sub display_row {
     if ($form->{type} !~ /_quotation/) {
       $orderxref = qq|
                 <b>$orderxrefnumber</b>
-                <input name="ordernumber_$i" value="$form->{"ordernumber_$i"}">&nbsp;<a href=oe.pl?action=lookup_order&ordnumber=|.$form->escape($form->{"ordernumber_$i"},1).qq|&vc=customer&type=sales_order&pickvar=ordernumber_$i&path=$form->{path}&login=$form->{login} target=popup>?</a>
+                <input name="ordernumber_$i" value="$form->{"ordernumber_$i"}">&nbsp;<a href=oe.pl?action=lookup_order&ordnumber=|.$form->escape($form->{"ordernumber_$i"},1).qq|&vc=customer&type=sales_order&pickvar=ordernumber_$i&path=$form->{path}&login=$form->{login} target=popup>&#8663;</a>
                 <b>$poxrefnumber</b>
-                <input name="customerponumber_$i" value="$form->{"customerponumber_$i"}">&nbsp;<a href=oe.pl?action=lookup_order&ordnumber=|.$form->escape($form->{"customerponumber_$i"},1).qq|&vc=vendor&type=purchase_order&pickvar=customerponumber_$i&path=$form->{path}&login=$form->{login} target=popup>?</a>
+                <input name="customerponumber_$i" value="$form->{"customerponumber_$i"}">&nbsp;<a href=oe.pl?action=lookup_order&ordnumber=|.$form->escape($form->{"customerponumber_$i"},1).qq|&vc=vendor&type=purchase_order&pickvar=customerponumber_$i&path=$form->{path}&login=$form->{login} target=popup>&#8663;</a>
 |;
 
       $serial = qq|

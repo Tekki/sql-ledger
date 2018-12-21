@@ -66,13 +66,13 @@ sub references {
     if ($form->{referenceurl}) {
       $_ .= qq|
                 <td><input name="referencecode_$i" size=10 value="$form->{"referencecode_$i"}">
-                <a href=$form->{referenceurl}$form->{"referencecode_$i"} target=popup>?</a>
+                <a href=$form->{referenceurl}$form->{"referencecode_$i"} target=popup>&#8663;</a>
 |;
     } else {
       $_ .= qq|
                 <td>
                 <input type="hidden" name="referencecode_$i" value="$form->{"referencecode_$i"}">
-                <a href="rd.pl?action=upload&login=$form->{login}&path=$form->{path}&row=$i&id=$form->{"referencearchive_id_$i"}&description=|.$form->escape($form->{"referencedescription_$i"},1) . qq|" target=popup>?</a>
+                <a href="rd.pl?action=upload&login=$form->{login}&path=$form->{path}&row=$i&id=$form->{"referencearchive_id_$i"}&description=|.$form->escape($form->{"referencedescription_$i"},1) . qq|" target=popup>&#8663;</a>
 |;
     }
 

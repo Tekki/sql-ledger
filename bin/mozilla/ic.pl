@@ -349,7 +349,7 @@ sub form_header {
   $sellprice = qq|
               <tr>
                 <th align="right" nowrap="true">|.$locale->text('Sell Price').qq|</th>
-                <td><input name=sellprice class="inputright" size=11 value=$form->{sellprice}> <a href=ic.pl?action=history&login=$form->{login}&path=$form->{path}&pickvar=sellprice&id=$form->{id} target=popup>?</a></td>
+                <td><input name=sellprice class="inputright" size=11 value=$form->{sellprice}> <a href=ic.pl?action=history&login=$form->{login}&path=$form->{path}&pickvar=sellprice&id=$form->{id} target=popup>&#8663;</a></td>
               </tr>
 |;
 
@@ -455,7 +455,7 @@ sub form_header {
     }
   }
 
-  $preview = ($form->{image}) ? " <a href=$images/$myconfig{dbname}/$form->{image}> ?" : qq| <a href="ic.pl?action=upload_image&login=$form->{login}&path=$form->{path}" target=popup>?</a>|;
+  $preview = ($form->{image}) ? " <a href=$images/$myconfig{dbname}/$form->{image}> ?" : qq| <a href="ic.pl?action=upload_image&login=$form->{login}&path=$form->{path}" target=popup>&#8663;</a>|;
 
   $imagelinks = qq|
   <tr>
