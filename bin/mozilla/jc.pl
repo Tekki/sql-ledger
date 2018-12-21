@@ -1199,7 +1199,7 @@ sub save {
     $form->error($locale->text('Cannot add time card for a completed job!')) if ($rc == -2);
 
     if ($rc) {
-      $form->{callback} .= "&projectnumber=".$form->quote($form->{projectnumber},1);
+      # $form->{callback} .= "&projectnumber=".$form->quote($form->{projectnumber},1);
       $form->redirect($locale->text('Time Card saved!'));
     } else {
       $form->error($locale->text('Cannot save time card!'));
@@ -1210,7 +1210,7 @@ sub save {
     $form->error($locale->text('Cannot add stores card for a completed job!')) if ($rc == -2);
 
     if ($rc) {
-      $form->{callback} .= "&projectnumber=".$form->quote($form->{projectnumber},1);
+      # $form->{callback} .= "&projectnumber=".$form->quote($form->{projectnumber},1);
       $form->redirect($locale->text('Stores Card saved!'));
     } else {
       $form->error($locale->text('Cannot save stores card!'));
