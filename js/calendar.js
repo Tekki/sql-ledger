@@ -37,7 +37,7 @@ function tcal (a_cfg, a_tpl) {
 	this.s_iconId = 'tcalico_' + this.s_id;
 	this.e_icon = f_getElement(this.s_iconId);
 	if (!this.e_icon) {
-		document.write('<img src="' + a_tpl.imgpath + 'cal.gif" id="' + this.s_iconId + '" onclick="A_TCALS[\'' + this.s_id + '\'].f_toggle()" class="tcalIcon" alt="Open Calendar" />');
+		document.write('<span id="' + this.s_iconId + '" onclick="A_TCALS[\'' + this.s_id + '\'].f_toggle()" class="tcalIcon" alt="Open Calendar">&#128197;</span>');
 		this.e_icon = f_getElement(this.s_iconId);
 	}
 	// save received parameters
@@ -99,7 +99,7 @@ function f_tcalShow (d_date) {
 		this.e_iframe.style.visibility = 'visible';
 
 	// change icon and status
-	this.e_icon.src = this.a_tpl.imgpath + 'no_cal.gif';
+	this.e_icon.innerHTML = '&#8999;';
 	this.e_icon.title = 'Close Calendar';
 	this.b_visible = true;
 }
@@ -121,7 +121,7 @@ function f_tcalHide (n_date) {
 	
 	// change icon and status
 	this.e_icon = f_getElement(this.s_iconId);
-	this.e_icon.src = this.a_tpl.imgpath + 'cal.gif';
+	this.e_icon.innerHTML = '&#128197';
 	this.e_icon.title = 'Open Calendar';
 	this.b_visible = false;
 }

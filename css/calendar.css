@@ -1,8 +1,6 @@
 /* calendar icon */
-img.tcalIcon {
+.tcalIcon {
 	cursor: pointer;
-	margin-left: 1px;
-	vertical-align: middle;
 }
 /* calendar container element */
 div#tcal {

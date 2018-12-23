@@ -547,7 +547,7 @@ sub timecard_header {
 |;
 
   $lookup = qq|
-          <a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"parts_id"}" target=_blank>?</a>| if $form->{"parts_id"};
+          <a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"parts_id"}" target=_blank>&#8663;</a>| if $form->{"parts_id"};
 
   $cardno = qq|
         <tr>
@@ -851,7 +851,7 @@ sub storescard_header {
                </tr>|;
 
   $lookup = qq|
-          <a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"parts_id"}" target=_blank>?</a>| if $form->{"parts_id"};
+          <a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"parts_id"}" target=_blank>&#8663;</a>| if $form->{"parts_id"};
 
   $cardno = qq|
         <tr>
@@ -1199,7 +1199,7 @@ sub save {
     $form->error($locale->text('Cannot add time card for a completed job!')) if ($rc == -2);
 
     if ($rc) {
-      $form->{callback} .= "&projectnumber=".$form->quote($form->{projectnumber},1);
+      # $form->{callback} .= "&projectnumber=".$form->quote($form->{projectnumber},1);
       $form->redirect($locale->text('Time Card saved!'));
     } else {
       $form->error($locale->text('Cannot save time card!'));
@@ -1210,7 +1210,7 @@ sub save {
     $form->error($locale->text('Cannot add stores card for a completed job!')) if ($rc == -2);
 
     if ($rc) {
-      $form->{callback} .= "&projectnumber=".$form->quote($form->{projectnumber},1);
+      # $form->{callback} .= "&projectnumber=".$form->quote($form->{projectnumber},1);
       $form->redirect($locale->text('Stores Card saved!'));
     } else {
       $form->error($locale->text('Cannot save stores card!'));
