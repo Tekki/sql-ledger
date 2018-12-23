@@ -126,7 +126,7 @@ sub new {
 
   $self->{version} = "3.2.7";
   $self->{dbversion} = "3.2.2";
-  $self->{version2} = "tekki 3.2.7.3";
+  $self->{version2} = "tekki 3.2.7.4";
 
   $self->{favicon} = 'favicon.ico';
 
