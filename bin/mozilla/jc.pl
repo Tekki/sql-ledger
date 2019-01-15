@@ -1200,6 +1200,9 @@ sub save {
 
     if ($rc) {
       # $form->{callback} .= "&projectnumber=".$form->quote($form->{projectnumber},1);
+      if ($form->{callback} =~ /^$form->{script}\?action=add/) {
+        $form->{callback} .= "&lastemployee=$form->{employee}&lastprojectnumber=$form->{projectnumber}&lasttransdate=$form->{transdate}";
+      }
       $form->redirect($locale->text('Time Card saved!'));
     } else {
       $form->error($locale->text('Cannot save time card!'));
@@ -1211,6 +1214,9 @@ sub save {
 
     if ($rc) {
       # $form->{callback} .= "&projectnumber=".$form->quote($form->{projectnumber},1);
+      if ($form->{callback} =~ /^$form->{script}\?action=add/) {
+        $form->{callback} .= "&lastemployee=$form->{employee}&lastprojectnumber=$form->{projectnumber}&lasttransdate=$form->{transdate}";
+      }
       $form->redirect($locale->text('Stores Card saved!'));
     } else {
       $form->error($locale->text('Cannot save stores card!'));
