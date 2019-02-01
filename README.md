@@ -38,9 +38,9 @@ you can start a simple test environment (without LaTeX support). SQL-Ledger runs
 
 # Documentation
 
-The documentation is very minimalistic and doesn't contain much more than the function names of the different modules. If you have [Mojolicious](https://mojolicious.org/) installed, you can start a perldoc server from your SQL-Ledger base directory with
+The documentation is very minimalistic and doesn't contain much more than the function names of the different modules. If you have [Mojolicious](https://metacpan.org/pod/Mojolicious) and [Mojolicious::Plugin::PODViewer](https://metacpan.org/pod/Mojolicious::Plugin::PODViewer) installed, you can start a perldoc server from your SQL-Ledger base directory with
 
-    perl -I. -Mojo -E"plugin 'PODRenderer'; app->start" daemon
+    perl -I. -Mojo -E'plugin "PODViewer"; a->start' daemon
 
 and browse to [localhost:3000/perldoc/sql-ledger](http://localhost:3000/perldoc/sql-ledger).
 
