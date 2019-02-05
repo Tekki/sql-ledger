@@ -34,7 +34,7 @@ sub add {
   $form->{callback} = "$form->{script}?action=add&type=$form->{type}&login=$form->{login}&path=$form->{path}&project=$form->{project}" unless $form->{callback};
 
   &{ "prepare_$form->{type}" };
-  for (qw|employee projectnumber transdate|) {
+  for (qw|employee projectnumber projectdescription transdate|) {
     $form->{$_} = $form->{"last$_"} if $form->{"last$_"};
   }
 
@@ -1201,7 +1201,7 @@ sub save {
     if ($rc) {
       # $form->{callback} .= "&projectnumber=".$form->quote($form->{projectnumber},1);
       if ($form->{callback} =~ /^$form->{script}\?action=add/) {
-        $form->{callback} .= "&lastemployee=$form->{employee}&lastprojectnumber=$form->{projectnumber}&lasttransdate=$form->{transdate}";
+        $form->{callback} .= "&lastemployee=$form->{employee}&lastprojectnumber=$form->{projectnumber}&lastprojectdescription=$form->{projectdescription}&lasttransdate=$form->{transdate}";
       }
       $form->redirect($locale->text('Time Card saved!'));
     } else {
@@ -1215,7 +1215,7 @@ sub save {
     if ($rc) {
       # $form->{callback} .= "&projectnumber=".$form->quote($form->{projectnumber},1);
       if ($form->{callback} =~ /^$form->{script}\?action=add/) {
-        $form->{callback} .= "&lastemployee=$form->{employee}&lastprojectnumber=$form->{projectnumber}&lasttransdate=$form->{transdate}";
+        $form->{callback} .= "&lastemployee=$form->{employee}&lastprojectnumber=$form->{projectnumber}&lastprojectdescription=$form->{projectdescription}&lasttransdate=$form->{transdate}";
       }
       $form->redirect($locale->text('Stores Card saved!'));
     } else {
