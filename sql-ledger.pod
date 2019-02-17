@@ -27,6 +27,8 @@ The C<full> branch, which is checked out by default, provides some additions:
 
 =item * JSON API
 
+=item * recently used objects
+
 =item * minimalistic documentation
 
 =item * Swiss charts of accounts in German, French and Italian
@@ -159,6 +161,8 @@ superset of the DWS code.
 
 =item * L<binE<sol>mozillaE<sol>rp.pl|bin::mozilla::rp> - Module for preparing Income Statement and Balance Sheet
 
+=item * L<binE<sol>mozillaE<sol>ru.pl|bin::mozilla::ru> - Routines and frontend for recently used objects
+
 =item * L<binE<sol>mozillaE<sol>sm.pl|bin::mozilla::sm> - Maintainance module
 
 =item * L<binE<sol>mozillaE<sol>sr.pl|bin::mozilla::sr> - Save reports
@@ -226,6 +230,8 @@ superset of the DWS code.
 =item * L<SL::RD> - CMS backend routines
 
 =item * L<SL::RP> - Backend code for reports
+
+=item * L<SL::RU> - Backend for recently used objects
 
 =item * L<SL::SM> - Module for reposting/deleting invoices
 

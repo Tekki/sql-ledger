@@ -1,0 +1,28 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'AP Transactions'             => '買掛トランザクション',
+  'AR Transactions'             => '売掛トランザクション',
+  'Customers'                   => '得意先',
+  'Description'                 => 'テキスト',
+  'Items'                       => '項目',
+  'Number'                      => '番号/数字',
+  'Purchase Orders'             => '購買発注',
+  'Quotations'                  => '見積書',
+  'Request for Quotations'      => '見積りの依頼',
+  'Sales Invoices'              => '販売請求書',
+  'Sales Orders'                => '受注伝票',
+  'Vendor Invoices'             => '仕入先請求',
+  'Vendors'                     => '仕入先',
+};
+
+$self{subs} = {
+  'delete_recent'               => 'delete_recent',
+  'list_recent'                 => 'list_recent',
+  'register_recent'             => 'register_recent',
+};
+
+1;
+

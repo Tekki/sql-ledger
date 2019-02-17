@@ -1,6 +1,6 @@
 #=====================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2015-2017
+# Copyright (C) 2015-2019
 #
 #  Author: Tekki
 #     Web: https://tekki.ch

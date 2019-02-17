@@ -1,0 +1,28 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'AP Transactions'             => 'Kreditorpostering',
+  'AR Transactions'             => 'Debitorposteringer',
+  'Customers'                   => 'Kunder',
+  'Description'                 => 'Beskrivelse',
+  'Items'                       => 'Elementer',
+  'Number'                      => 'Nummer',
+  'Purchase Orders'             => 'Innkjøpsordrer',
+  'Quotations'                  => 'Tilbud',
+  'Request for Quotations'      => 'Tilbudsforespørsler',
+  'Sales Invoices'              => 'Salgsfakturaer',
+  'Sales Orders'                => 'Salgsordrer',
+  'Vendor Invoices'             => 'Leverandørfakturaer',
+  'Vendors'                     => 'Leverandører',
+};
+
+$self{subs} = {
+  'delete_recent'               => 'delete_recent',
+  'list_recent'                 => 'list_recent',
+  'register_recent'             => 'register_recent',
+};
+
+1;
+

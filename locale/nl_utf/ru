@@ -1,0 +1,29 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'AP Transactions'             => 'Crediteurenboekingen',
+  'AR Transactions'             => 'Debiteurenboekingen',
+  'Category'                    => 'Categorie',
+  'Customers'                   => 'Klanten',
+  'Description'                 => 'Omschrijving',
+  'Items'                       => 'Onderdelen',
+  'Number'                      => 'Code',
+  'Purchase Orders'             => 'Inkooporders',
+  'Quotations'                  => 'Offertes',
+  'Request for Quotations'      => 'Prijsaanvragen',
+  'Sales Invoices'              => 'Verkoopfacturen',
+  'Sales Orders'                => 'Verkooporders',
+  'Vendor Invoices'             => 'Inkoopfacturen',
+  'Vendors'                     => 'Leveranciers',
+};
+
+$self{subs} = {
+  'delete_recent'               => 'delete_recent',
+  'list_recent'                 => 'list_recent',
+  'register_recent'             => 'register_recent',
+};
+
+1;
+

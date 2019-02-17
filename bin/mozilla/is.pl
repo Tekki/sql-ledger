@@ -39,6 +39,7 @@ sub edit {
 
   $form->{linkshipto} = 1;
   &invoice_links;
+  &register_recent;
   &prepare_invoice;
   &display_form;
 
@@ -1454,6 +1455,7 @@ sub post {
   $form->{userspath} = $userspath;
 
   if (IS->post_invoice(\%myconfig, \%$form)) {
+    &register_recent;
     $form->redirect($locale->text('Invoice')." $form->{invnumber} ".$locale->text('posted!'));
   } else {
     $form->error($locale->text('Cannot post invoice!'));
@@ -1516,6 +1518,7 @@ sub delete {
 sub yes {
 
   if (IS->delete_invoice(\%myconfig, \%$form, $spool)) {
+    &delete_recent;
     $form->redirect($locale->text('Invoice deleted!'));
   } else {
     $form->error($locale->text('Cannot delete invoice!'));

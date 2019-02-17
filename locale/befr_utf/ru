@@ -1,0 +1,28 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'AP Transactions'             => 'Mouvements - Dépenses',
+  'AR Transactions'             => 'Mouvements - Recettes',
+  'Customers'                   => 'Clients',
+  'Description'                 => 'Description',
+  'Items'                       => 'Objets',
+  'Number'                      => 'Numéro',
+  'Purchase Orders'             => 'Commandes d\'achat',
+  'Quotations'                  => 'Devis',
+  'Request for Quotations'      => 'Demandes de devis',
+  'Sales Invoices'              => 'Factures de vente',
+  'Sales Orders'                => 'Commandes de vente',
+  'Vendor Invoices'             => 'Factures d\'achat',
+  'Vendors'                     => 'Fournisseurs',
+};
+
+$self{subs} = {
+  'delete_recent'               => 'delete_recent',
+  'list_recent'                 => 'list_recent',
+  'register_recent'             => 'register_recent',
+};
+
+1;
+

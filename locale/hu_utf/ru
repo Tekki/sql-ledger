@@ -1,0 +1,28 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'AP Transactions'             => 'Szállító tranzakciók',
+  'AR Transactions'             => 'Vevő tranzakciók',
+  'Customers'                   => 'Vevőadatok',
+  'Description'                 => 'Szöveges leírás',
+  'Items'                       => 'Tételek',
+  'Number'                      => 'Szám',
+  'Purchase Orders'             => 'Szállítói rendelések',
+  'Quotations'                  => 'Ajánlatok',
+  'Request for Quotations'      => 'Ajánlat kérés',
+  'Sales Invoices'              => 'VevőSzámla',
+  'Sales Orders'                => 'Vevőrendelések',
+  'Vendor Invoices'             => 'Szállító számlák',
+  'Vendors'                     => 'Szállítók',
+};
+
+$self{subs} = {
+  'delete_recent'               => 'delete_recent',
+  'list_recent'                 => 'list_recent',
+  'register_recent'             => 'register_recent',
+};
+
+1;
+

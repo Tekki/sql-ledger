@@ -1,0 +1,28 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'AP Transactions'             => 'Kohustuste kanded',
+  'AR Transactions'             => 'Nõuete kanded',
+  'Customers'                   => 'Kliendid',
+  'Description'                 => 'Selgitus',
+  'Items'                       => 'Tooted',
+  'Number'                      => 'Kood',
+  'Purchase Orders'             => 'Ostutellimused',
+  'Quotations'                  => 'Hinnapakkumised',
+  'Request for Quotations'      => 'Hinnapakkumise Taotlused',
+  'Sales Invoices'              => 'Müügiarved',
+  'Sales Orders'                => 'Müügitellimused',
+  'Vendor Invoices'             => 'Ostuarved',
+  'Vendors'                     => 'Hankijad',
+};
+
+$self{subs} = {
+  'delete_recent'               => 'delete_recent',
+  'list_recent'                 => 'list_recent',
+  'register_recent'             => 'register_recent',
+};
+
+1;
+

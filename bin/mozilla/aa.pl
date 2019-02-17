@@ -101,6 +101,7 @@ sub add {
 sub edit {
 
   &create_links;
+  &register_recent;
 
   %title = ( transaction => "$form->{ARAP} Transaction",
              credit_note => 'Credit Note',
@@ -1474,6 +1475,7 @@ sub post {
     $rc = VR->post_transaction(\%myconfig, \%$form);
   } else {
     $rc = AA->post_transaction(\%myconfig, \%$form);
+    &register_recent;
   }
 
   if ($form->{callback}) {
@@ -1524,6 +1526,7 @@ sub delete {
 sub yes {
 
   if (AA->delete_transaction(\%myconfig, \%$form)) {
+    &delete_recent;
     $form->redirect($locale->text('Transaction deleted!'));
   } else {
     $form->error($locale->text('Cannot delete transaction!'));

@@ -99,4 +99,9 @@ create index jcitems_id_key on jcitems (id);
 create index cargo_id_key on cargo (id, trans_id);
 --
 create index inventory_parts_id_key on inventory (parts_id);
-
+--
+CREATE UNIQUE index recent_id_key ON recent(id);
+CREATE INDEX recent_employee_id_key ON recent(employee_id);
+CREATE INDEX recent_object_id_key ON recent(object_id);
+CREATE INDEX recent_code_key ON recent(code);
+CREATE UNIQUE INDEX recentdescr_object_id_key ON recentdescr(object_id);

@@ -11,6 +11,7 @@ The `full` branch, which is checked out by default, provides some additions:
 * WLprinter
 * real Unicode support
 * JSON API
+* recently used objects
 * Docker files for test environment
 * minimalistic documentation
 * Swiss charts of accounts in German, French and Italian

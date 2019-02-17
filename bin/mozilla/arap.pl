@@ -16,6 +16,7 @@ use SL::AA;
 require "$form->{path}/sr.pl";
 require "$form->{path}/cm.pl";
 require "$form->{path}/js.pl";
+require "$form->{path}/ru.pl";
 
 # any custom scripts for this one
 if (-f "$form->{path}/custom/arap.pl") {
@@ -1139,6 +1140,7 @@ L<SL::AA>
 =item * requires
 L<bin::mozilla::cm>,
 L<bin::mozilla::js>,
+L<bin::mozilla::ru>,
 L<bin::mozilla::sr>
 
 =item * optionally requires

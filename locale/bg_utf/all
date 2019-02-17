@@ -1150,6 +1150,7 @@ $self{texts} = {
   'Receive'                     => 'Получи',
   'Receive Merchandise'         => 'Получаване на стока',
   'Received'                    => '',
+  'Recently Used'               => '',
   'Reconcile Payments'          => '',
   'Reconciliation'              => 'Съгласуване',
   'Reconciliation Date'         => '',

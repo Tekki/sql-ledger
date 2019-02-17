@@ -29,6 +29,9 @@ SELECT nextval('referenceid');
 CREATE SEQUENCE archiveid;
 SELECT nextval('archiveid');
 --
+CREATE SEQUENCE recentid;
+SELECT nextval('recentid');
+--
 CREATE TABLE makemodel (
   parts_id int,
   make text,
@@ -70,7 +73,7 @@ CREATE TABLE defaults (
   fldvalue text
 );
 --
-INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '3.2.2');
+INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '3.2.3');
 --
 CREATE TABLE acc_trans (
   trans_id int,
@@ -800,5 +803,18 @@ CREATE TABLE archivedata (
 CREATE TABLE mimetype (
   extension varchar(32) primary key,
   contenttype varchar(64)
+);
+--
+CREATE TABLE recent (
+  id int DEFAULT nextval('recentid'),
+  employee_id int,
+  object_id int NOT NULL,
+  code char(2) NOT NULL
+);
+--
+CREATE TABLE recentdescr (
+  object_id int NOT NULL,
+  number varchar(32) NOT NULL DEFAULT '',
+  description text NOT NULL DEFAULT ''
 );
 --

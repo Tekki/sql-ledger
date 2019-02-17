@@ -15,6 +15,7 @@ use SL::CT;
 
 require "$form->{path}/cm.pl";
 require "$form->{path}/js.pl";
+require "$form->{path}/ru.pl";
 
 1;
 # end of main
@@ -41,6 +42,7 @@ sub edit {
 
   $form->helpref("$form->{db}", $myconfig{countrycode});
   &create_links;
+  &register_recent;
 
   &display_form;
 
@@ -3323,6 +3325,7 @@ sub save {
   $form->{userspath} = $userspath;
 
   CT->save(\%myconfig, \%$form);
+  &register_recent;
 
   $form->redirect($locale->text($msg));
 
@@ -3337,6 +3340,7 @@ sub delete {
 # $locale->text('Cannot delete vendor!')
 
   CT->delete(\%myconfig, \%$form);
+  &delete_recent;
 
   $msg = ucfirst $form->{db};
   $msg .= " deleted!";
@@ -3506,7 +3510,8 @@ L<SL::CT>
 =item * requires
 L<bin::mozilla::cm>,
 L<bin::mozilla::js>,
-L<bin::mozilla::menu>
+L<bin::mozilla::menu>,
+L<bin::mozilla::ru>
 
 =back
 
