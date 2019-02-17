@@ -24,6 +24,7 @@ sub display {
 
   $menuwidth = $myconfig{menuwidth} || 155;
   $menuwidth = '25%' if $form->{small_device};
+  $script = $form->{main} =~ /recent/ ? 'ru.pl' : 'am.pl';
 
   $form->{frameset} = 1;
   $form->header;
@@ -33,7 +34,7 @@ sub display {
 <frameset id="menu_frames" cols="$menuwidth,*" border="1">
 
   <frame name="acc_menu" src="$form->{script}?login=$form->{login}&action=acc_menu&path=$form->{path}&js=$form->{js}">
-  <frame name="main_window" src="am.pl?login=$form->{login}&action=$form->{main}&path=$form->{path}">
+  <frame name="main_window" src="$script?login=$form->{login}&action=$form->{main}&path=$form->{path}">
 
 </frameset>
 

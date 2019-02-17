@@ -1168,6 +1168,7 @@ $self{texts} = {
   'Receive'                     => 'شحن وارد',
   'Receive Merchandise'         => 'استلام بضاعة',
   'Received'                    => '',
+  'Recently Used'               => '',
   'Reconcile Payments'          => '',
   'Reconciliation'              => 'تسويات',
   'Reconciliation Date'         => '',

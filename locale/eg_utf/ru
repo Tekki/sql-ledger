@@ -1,0 +1,27 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'AP Transactions'             => 'حركات حساب الموردين',
+  'AR Transactions'             => 'حركات حساب العملاء',
+  'Customers'                   => 'العملاء',
+  'Description'                 => 'وصف',
+  'Number'                      => 'الرقم',
+  'Purchase Orders'             => 'اوامر شراء',
+  'Quotations'                  => 'عروض اسعار',
+  'Request for Quotations'      => 'عروض اسعار مطلوبة',
+  'Sales Invoices'              => 'فواتير المبيعات',
+  'Sales Orders'                => 'اوامر بيع',
+  'Vendor Invoices'             => 'فواتير الموردين',
+  'Vendors'                     => 'الموردين',
+};
+
+$self{subs} = {
+  'delete_recent'               => 'delete_recent',
+  'list_recent'                 => 'list_recent',
+  'register_recent'             => 'register_recent',
+};
+
+1;
+

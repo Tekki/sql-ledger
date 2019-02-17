@@ -1,0 +1,23 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'AP Transactions'             => '№вЯзЯФЫЩ їЩдвСд',
+  'AR Transactions'             => '№вЯзЯФЫЩ фЯШЯФІз',
+  'Customers'                   => 'ыЬІЄЮдЩ',
+  'Description'                 => 'яаЩг',
+  'Number'                      => 'юЯЭХв',
+  'Purchase Orders'             => 'ыеаІзХЬиЮІ њСЭЯзЬХЮЮб',
+  'Sales Orders'                => '№вЯФСжЮІ юСЫЬСФЮІ',
+  'Vendors'                     => '№ЯгдСоСЬиЮЩЫЩ',
+};
+
+$self{subs} = {
+  'delete_recent'               => 'delete_recent',
+  'list_recent'                 => 'list_recent',
+  'register_recent'             => 'register_recent',
+};
+
+1;
+

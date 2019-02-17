@@ -1,0 +1,22 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'AP Transactions'             => 'Κινήσεις Αγορών',
+  'AR Transactions'             => 'Κινήσεις Πωλήσεων',
+  'Customers'                   => 'Πελάτες',
+  'Description'                 => 'Περιγραφή',
+  'Items'                       => 'Τεμάχια',
+  'Number'                      => 'Αριθμός',
+  'Vendors'                     => 'Creditors',
+};
+
+$self{subs} = {
+  'delete_recent'               => 'delete_recent',
+  'list_recent'                 => 'list_recent',
+  'register_recent'             => 'register_recent',
+};
+
+1;
+

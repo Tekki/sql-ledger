@@ -1168,6 +1168,7 @@ $self{texts} = {
   'Receive'                     => '受領',
   'Receive Merchandise'         => '商品の受領',
   'Received'                    => '',
+  'Recently Used'               => '',
   'Reconcile Payments'          => '',
   'Reconciliation'              => '調整',
   'Reconciliation Date'         => '調整日付',

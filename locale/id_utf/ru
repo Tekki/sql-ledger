@@ -1,0 +1,27 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'AP Transactions'             => 'Transkasi Hutang',
+  'AR Transactions'             => 'Transaksi Piutang',
+  'Customers'                   => 'Pelanggan',
+  'Description'                 => 'Keterangan',
+  'Items'                       => 'Item',
+  'Number'                      => 'Nomor',
+  'Purchase Orders'             => 'Pesanan Pembelian (PO)',
+  'Quotations'                  => 'Quotation',
+  'Sales Invoices'              => 'Invoice Penjualan',
+  'Sales Orders'                => 'Pesanan Penjualan (SO)',
+  'Vendor Invoices'             => 'Invoice Supplier',
+  'Vendors'                     => 'Supplier',
+};
+
+$self{subs} = {
+  'delete_recent'               => 'delete_recent',
+  'list_recent'                 => 'list_recent',
+  'register_recent'             => 'register_recent',
+};
+
+1;
+

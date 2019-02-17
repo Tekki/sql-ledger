@@ -17,6 +17,7 @@ use SL::IC;
 require "$form->{path}/io.pl";
 require "$form->{path}/cm.pl";
 require "$form->{path}/js.pl";
+require "$form->{path}/ru.pl";
 
 1;
 # end of main
@@ -82,6 +83,7 @@ sub edit {
   $form->{previousform} = $form->escape($form->{previousform}, 1) if $form->{previousform};
 
   &link_part;
+  &register_recent;
 
   &display_form;
 
@@ -3911,6 +3913,7 @@ sub save {
 
   # save part
   $rc = IC->save(\%myconfig, \%$form);
+  &register_recent;
 
   $parts_id = $form->{id};
 
@@ -4048,6 +4051,7 @@ sub delete {
 
   # redirect
   if (IC->delete(\%myconfig, \%$form)) {
+    &delete_recent;
     $form->redirect($locale->text('Item deleted!'));
   } else {
     $form->error($locale->text('Cannot delete item!'));
@@ -5531,7 +5535,8 @@ L<SL::IC>
 L<bin::mozilla::cm>,
 L<bin::mozilla::io>,
 L<bin::mozilla::js>,
-L<bin::mozilla::menu>
+L<bin::mozilla::menu>,
+L<bin::mozilla::ru>
 
 =back
 

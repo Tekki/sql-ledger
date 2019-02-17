@@ -1,0 +1,28 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'AP Transactions'             => 'Ostotapahtumat',
+  'AR Transactions'             => 'Myyntitapahtumat',
+  'Customers'                   => 'Asiakkaat',
+  'Description'                 => 'Kuvaus',
+  'Items'                       => 'Tuotteet',
+  'Number'                      => 'Numero',
+  'Purchase Orders'             => 'Ostotilaukset',
+  'Quotations'                  => 'Tarjoukset',
+  'Request for Quotations'      => 'Tarjouspyynnöt',
+  'Sales Invoices'              => 'Myyntilaskut',
+  'Sales Orders'                => 'Tilausvahvistukset',
+  'Vendor Invoices'             => 'Ostolaskut',
+  'Vendors'                     => 'Toimittajat',
+};
+
+$self{subs} = {
+  'delete_recent'               => 'delete_recent',
+  'list_recent'                 => 'list_recent',
+  'register_recent'             => 'register_recent',
+};
+
+1;
+

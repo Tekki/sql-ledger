@@ -179,6 +179,7 @@ $self{texts} = {
   'Receipt'                     => 'Zahlungseingang',
   'Receipts'                    => 'Zahlungseingänge',
   'Receive'                     => 'Einlagern',
+  'Recently Used'               => 'Zuletzt verwendet',
   'Reconciliation'              => 'Kontenabgleich',
   'Recurring Transactions'      => 'Wiederkehrende Buchungen',
   'Reference Documents'         => 'Dokumente',

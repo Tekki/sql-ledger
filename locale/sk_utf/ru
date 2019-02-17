@@ -1,0 +1,28 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'AP Transactions'             => 'Odberateľské transakcie',
+  'AR Transactions'             => 'Dodavateľské transakcie',
+  'Customers'                   => 'Odberatelia',
+  'Description'                 => 'Popis',
+  'Items'                       => 'Položky',
+  'Number'                      => 'Číslo',
+  'Purchase Orders'             => 'Vystavené objednávky',
+  'Quotations'                  => 'Ponukové listy',
+  'Request for Quotations'      => 'Žiadošť o ponuku',
+  'Sales Invoices'              => 'Faktúry',
+  'Sales Orders'                => 'Prijaté objednávky',
+  'Vendor Invoices'             => 'Dodavateľské faktúry',
+  'Vendors'                     => 'Dodavatelia',
+};
+
+$self{subs} = {
+  'delete_recent'               => 'delete_recent',
+  'list_recent'                 => 'list_recent',
+  'register_recent'             => 'register_recent',
+};
+
+1;
+

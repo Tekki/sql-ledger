@@ -1,0 +1,21 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'AP Transactions'             => 'Transaccions de Despeses',
+  'AR Transactions'             => 'Transaccions d\'Ingressos',
+  'Description'                 => 'Descripció',
+  'Number'                      => 'Número',
+  'Purchase Orders'             => 'Ordres de Compra',
+  'Sales Orders'                => 'Pressupostos',
+};
+
+$self{subs} = {
+  'delete_recent'               => 'delete_recent',
+  'list_recent'                 => 'list_recent',
+  'register_recent'             => 'register_recent',
+};
+
+1;
+

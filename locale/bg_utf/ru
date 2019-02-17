@@ -1,0 +1,28 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'AP Transactions'             => 'Преводи покупки',
+  'AR Transactions'             => 'Преводи продажби',
+  'Customers'                   => 'Клиенти',
+  'Description'                 => 'Обяснение',
+  'Items'                       => 'Стоки',
+  'Number'                      => 'Номер',
+  'Purchase Orders'             => 'Поръчки за доставки',
+  'Quotations'                  => 'Запазени форми',
+  'Request for Quotations'      => 'Необходимост от заявки',
+  'Sales Invoices'              => 'Фактури прдажби',
+  'Sales Orders'                => 'Поръчки продажби',
+  'Vendor Invoices'             => 'Фактури за доставки',
+  'Vendors'                     => 'Доставчици',
+};
+
+$self{subs} = {
+  'delete_recent'               => 'delete_recent',
+  'list_recent'                 => 'list_recent',
+  'register_recent'             => 'register_recent',
+};
+
+1;
+

@@ -1165,6 +1165,7 @@ $self{texts} = {
   'Receive'                     => 'Einlagern',
   'Receive Merchandise'         => 'Artikeln einlagern',
   'Received'                    => '',
+  'Recently Used'               => '',
   'Reconcile Payments'          => 'Rechnungen als exportiert markieren',
   'Reconciliation'              => 'Kontenabgleich',
   'Reconciliation Date'         => 'Abstimmungsdatum',

@@ -1,0 +1,16 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Failed to consolidate invoices!' => 'Rechnungen können nicht konsolidiert werden!',
+  'Invoices consolidated!'      => 'Rechnungen konsolidiert!',
+  'Nothing selected!'           => 'Es wurde nichts ausgewählt!',
+  'Nothing to consolidate!'     => 'Es wurde nichts konsolidiert!',
+};
+
+$self{subs} = {
+};
+
+1;
+

@@ -1,0 +1,23 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'AP Transactions'             => 'Innkaupafærslur',
+  'AR Transactions'             => 'Sölufærslur',
+  'Customers'                   => 'Viðskiptavinir',
+  'Description'                 => 'Skýringar',
+  'Number'                      => 'Númer',
+  'Purchase Orders'             => 'Innkaupspantanir',
+  'Sales Orders'                => 'Sölupantanir',
+  'Vendors'                     => 'Byrgjar',
+};
+
+$self{subs} = {
+  'delete_recent'               => 'delete_recent',
+  'list_recent'                 => 'list_recent',
+  'register_recent'             => 'register_recent',
+};
+
+1;
+

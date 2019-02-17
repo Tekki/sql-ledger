@@ -1176,6 +1176,7 @@ $self{texts} = {
   'Receive'                     => 'Beszállítás',
   'Receive Merchandise'         => 'Áru érkeztetés',
   'Received'                    => '',
+  'Recently Used'               => '',
   'Reconcile Payments'          => '',
   'Reconciliation'              => 'Egyeztetés',
   'Reconciliation Date'         => '',

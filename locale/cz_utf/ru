@@ -1,0 +1,21 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'AP Transactions'             => 'Faktury přijaté',
+  'AR Transactions'             => 'Faktury vydané',
+  'Description'                 => 'Popis',
+  'Number'                      => 'Číslo',
+  'Purchase Orders'             => 'Vystavené objednávky',
+  'Sales Orders'                => 'Přijaté objednávky',
+};
+
+$self{subs} = {
+  'delete_recent'               => 'delete_recent',
+  'list_recent'                 => 'list_recent',
+  'register_recent'             => 'register_recent',
+};
+
+1;
+

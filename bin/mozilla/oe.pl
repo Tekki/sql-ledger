@@ -79,6 +79,7 @@ sub edit {
 
   $form->{linkshipto} = 1;
   &order_links;
+  &register_recent;
   &prepare_order;
   &display_form;
 
@@ -2456,6 +2457,7 @@ sub save {
   $form->{userspath} = $userspath;
 
   if (OE->save(\%myconfig, \%$form)) {
+    &register_recent;
     $form->redirect($locale->text('Order saved!'));
   } else {
     $form->error($err);
@@ -2527,6 +2529,7 @@ sub yes {
   }
 
   if (OE->delete(\%myconfig, \%$form, $spool)) {
+    &delete_recent;
     $form->redirect($msg);
   } else {
     $form->error($err);

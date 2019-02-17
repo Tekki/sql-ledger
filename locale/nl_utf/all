@@ -1201,6 +1201,7 @@ $self{texts} = {
   'Receive'                     => 'Ontvangen',
   'Receive Merchandise'         => 'Goederen Ontvangen',
   'Received'                    => '',
+  'Recently Used'               => '',
   'Reconcile Payments'          => 'Betalingen verwerken',
   'Reconciliation'              => 'Boekingen Verwerken',
   'Reconciliation Date'         => 'Reconciliatie Datum',

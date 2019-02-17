@@ -1,0 +1,23 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'AP Transactions'             => 'Pirkimo Operacijos',
+  'AR Transactions'             => 'Pardavimo Operacijos',
+  'Customers'                   => 'Klientai',
+  'Description'                 => 'Aprašymas',
+  'Number'                      => 'Numeris',
+  'Purchase Orders'             => 'Pirkimo užsakymai',
+  'Sales Orders'                => 'Pardavimų užsakymai',
+  'Vendors'                     => 'Tiekėjai',
+};
+
+$self{subs} = {
+  'delete_recent'               => 'delete_recent',
+  'list_recent'                 => 'list_recent',
+  'register_recent'             => 'register_recent',
+};
+
+1;
+

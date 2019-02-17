@@ -1202,6 +1202,7 @@ $self{texts} = {
   'Receive'                     => 'Ta emot',
   'Receive Merchandise'         => 'Varumottagning',
   'Received'                    => '',
+  'Recently Used'               => '',
   'Reconcile Payments'          => '',
   'Reconciliation'              => 'In/ut betalningar',
   'Reconciliation Date'         => 'Datum för kontroll',

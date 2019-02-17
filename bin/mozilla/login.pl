@@ -378,10 +378,10 @@ sub login {
     if ($user->check_recurring(\%$form)) {
       $form->{callback} .= "&main=recurring_transactions";
     } else {
-      $form->{callback} .= "&main=company_logo";
+      $form->{callback} .= "&main=list_recent";
     }
   } else {
-    $form->{callback} .= "&main=company_logo";
+    $form->{callback} .= "&main=list_recent";
   }
 
   $form->redirect;

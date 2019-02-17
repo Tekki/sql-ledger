@@ -1,0 +1,28 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'AP Transactions'             => 'KP transakcijas',
+  'AR Transactions'             => 'DP transakcijas',
+  'Customers'                   => 'Klienti',
+  'Description'                 => 'Apraksts',
+  'Items'                       => 'Vienības',
+  'Number'                      => 'Numurs',
+  'Purchase Orders'             => 'Pirkšanas orderi',
+  'Quotations'                  => 'Tāmes',
+  'Request for Quotations'      => 'Tāmju pieprasījums',
+  'Sales Invoices'              => 'Pārdošanas rēķini',
+  'Sales Orders'                => 'Pārdošanas orderi',
+  'Vendor Invoices'             => 'Pārdevēja rēķini',
+  'Vendors'                     => 'Pārdevēji',
+};
+
+$self{subs} = {
+  'delete_recent'               => 'delete_recent',
+  'list_recent'                 => 'list_recent',
+  'register_recent'             => 'register_recent',
+};
+
+1;
+

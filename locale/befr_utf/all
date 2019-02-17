@@ -1167,6 +1167,7 @@ $self{texts} = {
   'Receive'                     => 'Réception',
   'Receive Merchandise'         => 'Réception marchandise',
   'Received'                    => '',
+  'Recently Used'               => '',
   'Reconcile Payments'          => '',
   'Reconciliation'              => 'Rapprochement',
   'Reconciliation Date'         => '',
