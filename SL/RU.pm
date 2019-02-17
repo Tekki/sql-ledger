@@ -61,10 +61,16 @@ sub delete {
 
 sub list {
   my ($self, $myconfig, $form) = @_;
+  $form->{all_recent} = [];
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
   my ($query, $ref, $sth);
+
+  # employee id
+  my $employee_id = &_employee_id($form, $dbh) or return;
+
+  # list recent objects
 
   my $sortorder;
   if ($form->{sort}) {
@@ -80,9 +86,10 @@ sub list {
   $query = qq|SELECT r.*, rd.number, rd.description
             FROM recent r
             LEFT JOIN recentdescr rd ON (r.object_id = rd.object_id)
+            WHERE r.employee_id = ?
             ORDER BY $sortorder|;
   $sth = $dbh->prepare($query) or $form->dberror($query);
-  $sth->execute or $form->dberror($query);
+  $sth->execute($employee_id) or $form->dberror($query);
 
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     push @{$form->{all_recent}}, $ref;
@@ -101,13 +108,8 @@ sub register {
   my ($query, @values, $rv);
 
   # object and employee id
-  my $object_id = $form->{id} or return;
-
-  $query = qq|SELECT id FROM employee WHERE login = '$login'|;
-  my ($employee_id) = $dbh->selectrow_array($query);
-  return unless $employee_id;
-
-  $employee_id *= 1;
+  my $object_id   = $form->{id} or return;
+  my $employee_id = &_employee_id($form, $dbh) or return;
 
   # register object
 
@@ -235,6 +237,21 @@ sub _descr_oe {
   my ($form) = @_;
   my $number = $form->{type} =~ /quotation/ ? 'quonumber' : 'ordnumber';
   return $form->{$number}, qq|$form->{$form->{vc}}, $form->{transdate}|;
+}
+
+sub _employee_id {
+  my ($form, $dbh) = @_;
+
+  return -1 if $form->{admin};
+
+  my $login = $form->{login};
+  $login =~ s/\@.*//;
+
+  $query = qq|SELECT id FROM employee WHERE login = '$login'|;
+  my ($rv) = $dbh->selectrow_array($query);
+  $rv *= 1;
+
+  return $rv;
 }
 
 1;
