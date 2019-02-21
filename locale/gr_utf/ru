@@ -9,6 +9,7 @@ $self{texts} = {
   'Description'                 => 'Περιγραφή',
   'Items'                       => 'Τεμάχια',
   'Number'                      => 'Αριθμός',
+  'Projects'                    => 'Έργα',
   'Vendors'                     => 'Creditors',
 };
 

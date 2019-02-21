@@ -85,6 +85,7 @@ $self{texts} = {
   'Print'                       => 'Udskriv',
   'Printed'                     => 'Udskrevet',
   'Project not on file!'        => 'Projekt ikke i databasen!',
+  'Projects'                    => 'Projekter',
   'Purchase Orders'             => 'Indkøbsordrer',
   'Quarter'                     => 'Kvartal',
   'Quotations'                  => 'Tilbud',

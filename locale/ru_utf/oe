@@ -145,6 +145,7 @@ $self{texts} = {
   'Printed'                     => 'юСаХоСдСЮЯ',
   'Project'                     => '№вЯХЫд',
   'Project not on file!'        => '№вЯХЫд ЯдгедгдзеХд з гавСзЯоЮЩЫХ!',
+  'Projects'                    => '№вЯХЫдй',
   'Purchase Order'              => 'њСЫСк аЯгдСзнЩЫе',
   'Purchase Orders'             => 'њСЫСкй аЯгдСзнЩЫе',
   'Qty'                         => 'ыЯЬЩоХгдзЯ',

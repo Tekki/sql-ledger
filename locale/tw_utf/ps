@@ -196,6 +196,7 @@ $self{texts} = {
   'Project Number'              => '項目號碼',
   'Project Transactions'        => '項目交易',
   'Project not on file!'        => '沒有此項目的記錄！',
+  'Projects'                    => '項目',
   'Purchase Order'              => '採購單',
   'Purchase Orders'             => '採購單',
   'Qty'                         => '數量',

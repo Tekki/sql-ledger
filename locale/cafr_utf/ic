@@ -155,6 +155,7 @@ $self{texts} = {
   'Pricegroup'                  => 'Groupe de prix',
   'Printed'                     => 'Imprimé',
   'Project'                     => 'Projet',
+  'Projects'                    => 'Projets',
   'Purchase Order'              => 'Commande d\'achat',
   'Purchase Orders'             => 'Commandes d\'achat',
   'Qty'                         => 'Qté',

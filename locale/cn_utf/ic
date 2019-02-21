@@ -158,6 +158,7 @@ $self{texts} = {
   'Pricegroup'                  => 'ä»·æ ¼ç»',
   'Printed'                     => 'å·³åå°',
   'Project'                     => 'æ¹æ¡',
+  'Projects'                    => 'æ¹æ¡',
   'Purchase Order'              => 'éè´­å',
   'Purchase Orders'             => 'éè´­å',
   'Qty'                         => 'æ°é',

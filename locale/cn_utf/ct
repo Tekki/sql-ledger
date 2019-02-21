@@ -91,6 +91,7 @@ $self{texts} = {
   'Phone'                       => 'çµè¯å·ç ',
   'Pricegroup'                  => 'ä»·æ ¼ç»',
   'Project Number'              => 'æ¹æ¡å·ç ',
+  'Projects'                    => 'æ¹æ¡',
   'Purchase Order'              => 'éè´­å',
   'Purchase Orders'             => 'éè´­å',
   'Qty'                         => 'æ°é',

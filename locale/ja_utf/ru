@@ -9,11 +9,13 @@ $self{texts} = {
   'Description'                 => 'テキスト',
   'Items'                       => '項目',
   'Number'                      => '番号/数字',
+  'Projects'                    => 'プロジェクト',
   'Purchase Orders'             => '購買発注',
   'Quotations'                  => '見積書',
   'Request for Quotations'      => '見積りの依頼',
   'Sales Invoices'              => '販売請求書',
   'Sales Orders'                => '受注伝票',
+  'Time Cards'                  => 'タイムカード',
   'Vendor Invoices'             => '仕入先請求',
   'Vendors'                     => '仕入先',
 };

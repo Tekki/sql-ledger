@@ -32,6 +32,7 @@ $self{texts} = {
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
   'Print'                       => 'Imprimir',
+  'Projects'                    => 'Proyectos',
   'Purchase Orders'             => 'Ordenes de Compra',
   'Reference'                   => 'Referencia',
   'Sales Invoices'              => 'Facturas de Venta',

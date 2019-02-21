@@ -33,6 +33,7 @@ $self{texts} = {
   'Postscript'                  => 'PostScript',
   'Print'                       => 'Imprimir',
   'Project not on file!'        => 'Projecto não existe',
+  'Projects'                    => 'Projectos',
   'Purchase Orders'             => 'Ordens de Compra',
   'Reference'                   => 'Referência',
   'Sales Orders'                => 'Encomendas de Venda',

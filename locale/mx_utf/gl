@@ -90,6 +90,7 @@ $self{texts} = {
   'Print'                       => 'Vista Preliminar',
   'Project'                     => 'Proyecto',
   'Project not on file!'        => '¡Proyecto no registrado!',
+  'Projects'                    => 'Proyectos',
   'Purchase Orders'             => 'Ordenes de compra',
   'Quarter'                     => 'Trimestre',
   'Quotations'                  => 'Cotizaciones',

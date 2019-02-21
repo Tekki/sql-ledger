@@ -44,6 +44,7 @@ $self{texts} = {
   'Postscript'                  => 'Postscript',
   'Print'                       => 'Imprimir',
   'Project not on file!'        => '¡Proyecto no existe en la Base de Datos!',
+  'Projects'                    => 'Proyectos',
   'Purchase Orders'             => 'Órdenes de Compra',
   'Quotations'                  => 'Cotizaciones',
   'Recurring Transaction'       => 'Transacción Recurrente',

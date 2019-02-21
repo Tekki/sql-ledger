@@ -95,6 +95,7 @@ $self{texts} = {
   'Project Number'              => 'Projekta numurs',
   'Project Transactions'        => 'Projekta transakcijas',
   'Project not on file!'        => 'Nav tāda projekta!',
+  'Projects'                    => 'Projekti',
   'Purchase Orders'             => 'Pirkšanas orderi',
   'Quotations'                  => 'Tāmes',
   'Receipts'                    => 'Kvītis',

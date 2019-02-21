@@ -144,6 +144,7 @@ $self{texts} = {
   'Pricegroup'                  => 'Cenu grupa',
   'Printed'                     => 'Izdrukāts',
   'Project'                     => 'Projekts',
+  'Projects'                    => 'Projekti',
   'Purchase Order'              => 'Pirkšanas orderis',
   'Purchase Orders'             => 'Pirkšanas orderi',
   'Qty'                         => 'Skaits',

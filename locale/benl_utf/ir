@@ -121,6 +121,7 @@ $self{texts} = {
   'Printed'                     => 'Afgedrukt',
   'Project'                     => 'Project',
   'Project not on file!'        => 'Onbekend project!',
+  'Projects'                    => 'Projecten',
   'Purchase Order'              => 'Inkooporder',
   'Purchase Orders'             => 'Inkooporders',
   'Qty'                         => 'Aantal',

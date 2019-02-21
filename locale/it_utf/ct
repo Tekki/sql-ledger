@@ -70,6 +70,7 @@ $self{texts} = {
   'Orphaned'                    => 'Orfano',
   'Payment'                     => 'Pagamento',
   'Phone'                       => 'Tel.',
+  'Projects'                    => 'Progetti',
   'Purchase Order'              => 'Ordine di acquisto',
   'Purchase Orders'             => 'Ordini di acquisto',
   'Qty'                         => 'Q.tÃ ',

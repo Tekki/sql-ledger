@@ -36,6 +36,7 @@ $self{texts} = {
   'Postscript'                  => 'Postscript',
   'Print'                       => 'Skriv ut',
   'Project not on file!'        => 'Prosjektet mangler i databasen!',
+  'Projects'                    => 'Prosjekter',
   'Purchase Orders'             => 'Innkjøpsordrer',
   'Quotations'                  => 'Tilbud',
   'Reference'                   => 'Referanse',

@@ -72,6 +72,7 @@ $self{texts} = {
   'Orphaned'                    => 'Našlaitinis',
   'Payment'                     => 'Mokėjimas',
   'Phone'                       => 'Tel.',
+  'Projects'                    => 'Projektai',
   'Purchase Order'              => 'Pirkimo užsakymas',
   'Purchase Orders'             => 'Pirkimo užsakymai',
   'Qty'                         => 'Kks',

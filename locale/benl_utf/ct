@@ -91,6 +91,7 @@ $self{texts} = {
   'Phone'                       => 'Tel.',
   'Pricegroup'                  => 'Prijsgroep',
   'Project Number'              => 'Projectnummer',
+  'Projects'                    => 'Projecten',
   'Purchase Order'              => 'Inkooporder',
   'Purchase Orders'             => 'Inkooporders',
   'Qty'                         => 'Aantal',

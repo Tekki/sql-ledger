@@ -9,6 +9,7 @@ $self{texts} = {
   'Description'                 => '說明',
   'Items'                       => '項目',
   'Number'                      => '編號',
+  'Projects'                    => '項目',
   'Purchase Orders'             => '採購單',
   'Quotations'                  => '報價單',
   'Request for Quotations'      => '要求報價單',

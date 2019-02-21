@@ -29,6 +29,7 @@ $self{texts} = {
   'Number'                      => 'Αριθμός',
   'October'                     => 'Οκτώβριος',
   'Print'                       => 'Εκτύπωση',
+  'Projects'                    => 'Έργα',
   'Vendor Number'               => 'Creditor Number',
   'Vendor not on file!'         => 'Creditor not on file!',
   'Vendors'                     => 'Creditors',

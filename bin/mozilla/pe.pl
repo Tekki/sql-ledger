@@ -21,6 +21,7 @@ use SL::OE;
 require "$form->{path}/cm.pl";
 require "$form->{path}/sr.pl";
 require "$form->{path}/js.pl";
+require "$form->{path}/ru.pl";
 
 1;
 # end of main
@@ -605,6 +606,7 @@ sub prepare_project {
   $form->{vc} = 'customer';
 
   PE->get_project(\%myconfig, \%$form);
+  &register_recent if $form->{id};
 
   $form->helpref("projects", $myconfig{countrycode});
 
@@ -1232,6 +1234,7 @@ sub save {
     }
 
     PE->save_project(\%myconfig, \%$form);
+    &register_recent;
     $form->redirect($locale->text('Project saved!'));
   }
 
@@ -1294,6 +1297,7 @@ sub delete {
 
     if ($form->{type} eq 'project') {
       PE->delete_project(\%myconfig, \%$form);
+      &delete_recent;
       $form->redirect($locale->text('Project deleted!'));
     }
     if ($form->{type} eq 'job') {
@@ -2817,6 +2821,7 @@ L<SL::PE>
 L<bin::mozilla::cm>,
 L<bin::mozilla::js>,
 L<bin::mozilla::menu>,
+L<bin::mozilla::ru>,
 L<bin::mozilla::sr>
 
 =back
