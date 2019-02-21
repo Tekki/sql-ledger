@@ -134,6 +134,7 @@ $self{texts} = {
   'Pricegroup'                  => 'Hintaryhmä',
   'Printed'                     => 'Tulostettu',
   'Project'                     => 'Projekti',
+  'Projects'                    => 'Projektit',
   'Purchase Order'              => 'Ostotilaus',
   'Purchase Orders'             => 'Ostotilaukset',
   'Qty'                         => 'Määrä',

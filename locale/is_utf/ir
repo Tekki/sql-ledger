@@ -102,6 +102,7 @@ $self{texts} = {
   'Print'                       => 'Prenta',
   'Project'                     => 'Verkefni',
   'Project not on file!'        => 'Verkefni ekki á skrá!',
+  'Projects'                    => 'Verkefni',
   'Purchase Order'              => 'Innkaupspöntun',
   'Purchase Orders'             => 'Innkaupspantanir',
   'Qty'                         => 'Magn',

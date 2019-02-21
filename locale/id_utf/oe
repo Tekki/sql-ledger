@@ -102,6 +102,7 @@ $self{texts} = {
   'Printed'                     => 'Sudah dicetak',
   'Project'                     => 'Proyek',
   'Project not on file!'        => 'Data Proyek tidak ditemukan!',
+  'Projects'                    => 'Proyek',
   'Purchase Order'              => 'Pesanan Pembelian (PO)',
   'Purchase Orders'             => 'Pesanan Pembelian (PO)',
   'Qty'                         => 'Banyak',

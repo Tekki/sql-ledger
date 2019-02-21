@@ -56,6 +56,7 @@ $self{texts} = {
   'Prepayment'                  => 'Προπληρωμή',
   'Print'                       => 'Εκτύπωση',
   'Printed'                     => 'Εκτυπώθηκε',
+  'Projects'                    => 'Έργα',
   'Receipt'                     => 'Απόδειξη',
   'Screen'                      => 'Οθόνη',
   'Select all'                  => 'Επιλογή όλων',

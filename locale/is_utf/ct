@@ -72,6 +72,7 @@ $self{texts} = {
   'Orphaned'                    => 'Sjáfstætt',
   'Payment'                     => 'Greislur',
   'Phone'                       => 'Sími.',
+  'Projects'                    => 'Verkefni',
   'Purchase Order'              => 'Innkaupspöntun',
   'Purchase Orders'             => 'Innkaupspantanir',
   'Qty'                         => 'Magn',

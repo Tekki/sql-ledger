@@ -87,6 +87,7 @@ $self{texts} = {
   'Print'                       => 'Afdrukken',
   'Project'                     => 'Project',
   'Project not on file!'        => 'Onbekend project!',
+  'Projects'                    => 'Projecten',
   'Purchase Orders'             => 'Inkooporders',
   'Quotations'                  => 'Offertes',
   'R'                           => 'R',

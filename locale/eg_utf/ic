@@ -123,6 +123,7 @@ $self{texts} = {
   'Price'                       => 'سعر',
   'Pricegroup'                  => 'مجموعة سعرية',
   'Project'                     => 'مشروع',
+  'Projects'                    => 'مشروعات',
   'Purchase Order'              => 'امر شراء',
   'Purchase Orders'             => 'اوامر شراء',
   'Qty'                         => 'الكمية',

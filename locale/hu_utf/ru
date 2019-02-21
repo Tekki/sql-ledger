@@ -9,11 +9,13 @@ $self{texts} = {
   'Description'                 => 'Szöveges leírás',
   'Items'                       => 'Tételek',
   'Number'                      => 'Szám',
+  'Projects'                    => 'Projektek',
   'Purchase Orders'             => 'Szállítói rendelések',
   'Quotations'                  => 'Ajánlatok',
   'Request for Quotations'      => 'Ajánlat kérés',
   'Sales Invoices'              => 'VevőSzámla',
   'Sales Orders'                => 'Vevőrendelések',
+  'Time Cards'                  => 'IdőKártyaLista',
   'Vendor Invoices'             => 'Szállító számlák',
   'Vendors'                     => 'Szállítók',
 };

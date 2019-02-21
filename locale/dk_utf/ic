@@ -160,6 +160,7 @@ $self{texts} = {
   'Pricegroup'                  => 'Prisgruppe',
   'Printed'                     => 'Udskrevet',
   'Project'                     => 'Projekt',
+  'Projects'                    => 'Projekter',
   'Purchase Order'              => 'Indkøbsordre',
   'Purchase Orders'             => 'Indkøbsordrer',
   'Qty'                         => 'Mængde',

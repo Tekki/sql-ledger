@@ -44,6 +44,7 @@ $self{texts} = {
   'Postscript'                  => 'Postscript',
   'Print'                       => '列印',
   'Project not on file!'        => '沒有此項目的記錄！',
+  'Projects'                    => '項目',
   'Purchase Orders'             => '採購單',
   'Quotations'                  => '報價單',
   'Recurring Transaction'       => '重覆出現的交易',

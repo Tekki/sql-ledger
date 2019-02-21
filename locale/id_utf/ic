@@ -99,6 +99,7 @@ $self{texts} = {
   'Pricegroup'                  => 'Kelompok Harga',
   'Printed'                     => 'Sudah dicetak',
   'Project'                     => 'Proyek',
+  'Projects'                    => 'Proyek',
   'Purchase Order'              => 'Pesanan Pembelian (PO)',
   'Purchase Orders'             => 'Pesanan Pembelian (PO)',
   'Qty'                         => 'Banyak',

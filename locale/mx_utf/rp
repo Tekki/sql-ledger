@@ -98,6 +98,7 @@ $self{texts} = {
   'Project Number'              => 'Número de proyecto',
   'Project Transactions'        => 'Movimientos de proyecto',
   'Project not on file!'        => '¡Proyecto no registrado!',
+  'Projects'                    => 'Proyectos',
   'Purchase Orders'             => 'Ordenes de compra',
   'Quarter'                     => 'Trimestre',
   'Quotations'                  => 'Cotizaciones',

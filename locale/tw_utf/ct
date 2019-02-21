@@ -98,6 +98,7 @@ $self{texts} = {
   'Pricegroup'                  => '價格組別',
   'Pricelist'                   => '價格清單',
   'Project Number'              => '項目號碼',
+  'Projects'                    => '項目',
   'Purchase Order'              => '採購單',
   'Purchase Orders'             => '採購單',
   'Qty'                         => '數量',

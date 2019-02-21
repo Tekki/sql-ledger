@@ -9,11 +9,13 @@ $self{texts} = {
   'Description'                 => 'Selgitus',
   'Items'                       => 'Tooted',
   'Number'                      => 'Kood',
+  'Projects'                    => 'Projektid',
   'Purchase Orders'             => 'Ostutellimused',
   'Quotations'                  => 'Hinnapakkumised',
   'Request for Quotations'      => 'Hinnapakkumise Taotlused',
   'Sales Invoices'              => 'Müügiarved',
   'Sales Orders'                => 'Müügitellimused',
+  'Time Cards'                  => 'Aja Kaardid',
   'Vendor Invoices'             => 'Ostuarved',
   'Vendors'                     => 'Hankijad',
 };

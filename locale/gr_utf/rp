@@ -76,6 +76,7 @@ $self{texts} = {
   'Print'                       => 'Εκτύπωση',
   'Project'                     => 'Έργο',
   'Project Number'              => 'Αριθμός έργου',
+  'Projects'                    => 'Έργα',
   'Screen'                      => 'Οθόνη',
   'Select all'                  => 'Επιλογή όλων',
   'Source'                      => 'Πηγή',

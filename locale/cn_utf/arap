@@ -40,6 +40,7 @@ $self{texts} = {
   'Postscript'                  => 'éè¨',
   'Print'                       => 'åå°',
   'Project not on file!'        => 'æ¹æ¡åæ æ­¤æ¡£æ¡',
+  'Projects'                    => 'æ¹æ¡',
   'Purchase Orders'             => 'éè´­å',
   'Quotations'                  => 'æ¥ä»·å',
   'Recurring Transaction'       => 'å¤æ¬¡è®°å½',

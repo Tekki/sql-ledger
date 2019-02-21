@@ -122,6 +122,7 @@ $self{texts} = {
   'Printed'                     => 'Εκτυπώθηκε',
   'Project'                     => 'Έργο',
   'Project Number'              => 'Αριθμός έργου',
+  'Projects'                    => 'Έργα',
   'Qty'                         => 'Ποσ.',
   'Receipt'                     => 'Απόδειξη',
   'Screen'                      => 'Οθόνη',

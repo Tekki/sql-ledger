@@ -8,6 +8,7 @@ $self{texts} = {
   'Customers'                   => 'Viðskiptavinir',
   'Description'                 => 'Skýringar',
   'Number'                      => 'Númer',
+  'Projects'                    => 'Verkefni',
   'Purchase Orders'             => 'Innkaupspantanir',
   'Sales Orders'                => 'Sölupantanir',
   'Vendors'                     => 'Byrgjar',

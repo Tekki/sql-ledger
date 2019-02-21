@@ -9,11 +9,13 @@ $self{texts} = {
   'Description'                 => 'Обяснение',
   'Items'                       => 'Стоки',
   'Number'                      => 'Номер',
+  'Projects'                    => 'Проекти',
   'Purchase Orders'             => 'Поръчки за доставки',
   'Quotations'                  => 'Запазени форми',
   'Request for Quotations'      => 'Необходимост от заявки',
   'Sales Invoices'              => 'Фактури прдажби',
   'Sales Orders'                => 'Поръчки продажби',
+  'Time Cards'                  => 'Работни карти',
   'Vendor Invoices'             => 'Фактури за доставки',
   'Vendors'                     => 'Доставчици',
 };

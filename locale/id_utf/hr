@@ -79,6 +79,7 @@ $self{texts} = {
   'Printed'                     => 'Sudah dicetak',
   'Project'                     => 'Proyek',
   'Project not on file!'        => 'Data Proyek tidak ditemukan!',
+  'Projects'                    => 'Proyek',
   'Purchase Orders'             => 'Pesanan Pembelian (PO)',
   'Quotations'                  => 'Quotation',
   'Reference'                   => 'Referensi',

@@ -162,6 +162,7 @@ $self{texts} = {
   'Pricegroup'                  => 'Grupo de Precios',
   'Printed'                     => 'Impreso',
   'Project'                     => 'Proyecto',
+  'Projects'                    => 'Proyectos',
   'Purchase Order'              => 'Orden de Compra',
   'Purchase Orders'             => 'Órdenes de Compra',
   'Qty'                         => 'Cantidad',

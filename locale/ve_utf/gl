@@ -99,6 +99,7 @@ $self{texts} = {
   'Print'                       => 'Imprimir',
   'Project'                     => 'Proyecto',
   'Project not on file!'        => '¡Proyecto no existe en la Base de Datos!',
+  'Projects'                    => 'Proyectos',
   'Purchase Orders'             => 'Órdenes de Compra',
   'Quarter'                     => 'Trimestre',
   'Quotations'                  => 'Cotizaciones',

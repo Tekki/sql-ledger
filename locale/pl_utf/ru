@@ -9,6 +9,7 @@ $self{texts} = {
   'Description'                 => 'Opis',
   'Items'                       => 'Pozycje',
   'Number'                      => 'Numer Katalogu',
+  'Projects'                    => 'Projekty',
   'Purchase Orders'             => 'Zlecenia Zakupu',
   'Quotations'                  => 'Oferty',
   'Request for Quotations'      => 'Prośba o Oferty',

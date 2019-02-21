@@ -113,6 +113,7 @@ $self{texts} = {
   'Printed'                     => 'Skrevet ut',
   'Project'                     => 'Prosjekt',
   'Project not on file!'        => 'Prosjektet mangler i databasen!',
+  'Projects'                    => 'Prosjekter',
   'Purchase Orders'             => 'Innkjøpsordrer',
   'Quarter'                     => 'Kvartal',
   'Quotations'                  => 'Tilbud',

@@ -83,6 +83,7 @@ $self{texts} = {
   'Print and Post'              => 'Έκτύπωση και αποστολή',
   'Printed'                     => 'Εκτυπώθηκε',
   'Project'                     => 'Έργο',
+  'Projects'                    => 'Έργα',
   'Receipt'                     => 'Απόδειξη',
   'Screen'                      => 'Οθόνη',
   'Select all'                  => 'Επιλογή όλων',

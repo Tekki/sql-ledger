@@ -8,6 +8,7 @@ $self{texts} = {
   'Customers'                   => 'العملاء',
   'Description'                 => 'وصف',
   'Number'                      => 'الرقم',
+  'Projects'                    => 'مشروعات',
   'Purchase Orders'             => 'اوامر شراء',
   'Quotations'                  => 'عروض اسعار',
   'Request for Quotations'      => 'عروض اسعار مطلوبة',

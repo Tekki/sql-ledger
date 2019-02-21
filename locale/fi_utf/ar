@@ -109,6 +109,7 @@ $self{texts} = {
   'Printed'                     => 'Tulostettu',
   'Project'                     => 'Projekti',
   'Project not on file!'        => 'Projekti ei ole järjestelmässä!',
+  'Projects'                    => 'Projektit',
   'Purchase Orders'             => 'Ostotilaukset',
   'Quarter'                     => 'Neljännes',
   'Quotations'                  => 'Tarjoukset',

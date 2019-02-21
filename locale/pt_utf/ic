@@ -108,6 +108,7 @@ $self{texts} = {
   'Postscript'                  => 'PostScript',
   'Price'                       => 'Preço',
   'Project'                     => 'Projecto',
+  'Projects'                    => 'Projectos',
   'Purchase Order'              => 'Ordem de Compra',
   'Purchase Orders'             => 'Ordens de Compra',
   'Qty'                         => 'Qtd',

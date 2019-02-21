@@ -115,6 +115,7 @@ $self{texts} = {
   'Postscript'                  => 'Postscript',
   'Price'                       => 'Prezzo',
   'Project'                     => 'Progetto',
+  'Projects'                    => 'Progetti',
   'Purchase Order'              => 'Ordine di acquisto',
   'Purchase Orders'             => 'Ordini di acquisto',
   'Qty'                         => 'Q.tÃ ',

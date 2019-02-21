@@ -60,6 +60,7 @@ $self{texts} = {
   'Post'                        => 'Registrar',
   'Postscript'                  => 'Postscript',
   'Print'                       => 'Imprimir',
+  'Projects'                    => 'Proyectos',
   'Purchase Orders'             => 'Ordenes de Compra',
   'Receipt'                     => 'Recibo',
   'Receipts'                    => 'Ingresos',

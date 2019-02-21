@@ -99,6 +99,7 @@ $self{texts} = {
   'Print and Save'              => 'Εκτύπωση και αποθήκευση',
   'Printed'                     => 'Εκτυπώθηκε',
   'Project'                     => 'Έργο',
+  'Projects'                    => 'Έργα',
   'Qty'                         => 'Ποσ.',
   'Save'                        => 'Αποθήκευση',
   'Screen'                      => 'Οθόνη',

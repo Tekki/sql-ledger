@@ -131,6 +131,7 @@ $self{texts} = {
   'Printed'                     => 'Imprimé',
   'Project'                     => 'Projet',
   'Project not on file!'        => 'Projet absent du fichier!',
+  'Projects'                    => 'Projets',
   'Purchase Order'              => 'Commande d\'achat',
   'Purchase Orders'             => 'Commandes d\'achat',
   'Qty'                         => 'Qté',

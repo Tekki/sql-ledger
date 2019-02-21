@@ -25,11 +25,13 @@ sub list_recent {
     RU::AR_TRANSACTION    => $locale->text('AR Transactions'),
     RU::CUSTOMER          => $locale->text('Customers'),
     RU::ITEM              => $locale->text('Items'),
+    RU::PROJECT           => $locale->text('Projects'),
     RU::PURCHASE_ORDER    => $locale->text('Purchase Orders'),
     RU::REQUEST_QUOTATION => $locale->text('Request for Quotations'),
     RU::SALES_INVOICE     => $locale->text('Sales Invoices'),
     RU::SALES_ORDER       => $locale->text('Sales Orders'),
     RU::SALES_QUOTATION   => $locale->text('Quotations'),
+    RU::TIMECARD          => $locale->text('Time Cards'),
     RU::VENDOR            => $locale->text('Vendors'),
     RU::VENDOR_INVOICE    => $locale->text('Vendor Invoices'),
   );
@@ -98,21 +100,23 @@ sub list_recent {
         </tr>
 |;
 
-  my ($j, $sameitem);
+  my ($j, $samecode);
   for my $ref (@{$form->{all_recent}}) {
-    $url = RU::CODES->{$ref->{code}}
+    my $object_url = RU::CODES->{$ref->{code}}->{object}
       . "&id=$ref->{object_id}&path=$form->{path}&login=$form->{login}&callback=$callback";
 
-    $column_data{number}      = qq|<td><a href="$url">$ref->{number}</a></td>|;
+    $column_data{number}
+      = qq|<td><a href="$object_url">$ref->{number}</a></td>|;
     $column_data{description} = "<td>$ref->{description}</td>";
-    $column_data{code}        = "<td>$labels{$ref->{code}}</td>";
+    if ($ref->{code} eq $samecode) {
+      $column_data{code} = q|<td>&nbsp;</td>|;
+    } else {
+      my $report_url = RU::CODES->{$ref->{code}}->{report}
+        . "&path=$form->{path}&login=$form->{login}&callback=$callback";
 
-    if ($form->{sort}) {
-      my $new_sameitem = $column_data{$form->{sort}};
-      if ($new_sameitem eq $sameitem) {
-        $column_data{$form->{sort}} = q|<td>&nbsp;</td>|;
-      }
-      $sameitem = $new_sameitem;
+      $column_data{code}
+        = qq|<td><a href="$report_url">$labels{$ref->{code}}</a></td>|;
+      $samecode = $ref->{code};
     }
 
     $j++;
@@ -129,6 +133,10 @@ sub list_recent {
   }
 
   print qq|
+      </table>
+    </td>
+  </tr>
+</table>
 
 </body>
 </html>

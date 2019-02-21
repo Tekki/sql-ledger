@@ -85,6 +85,7 @@ $self{texts} = {
   'Phone'                       => 'تليفون',
   'Pricegroup'                  => 'مجموعة سعرية',
   'Project Number'              => 'رقم المشروع',
+  'Projects'                    => 'مشروعات',
   'Purchase Order'              => 'امر شراء',
   'Purchase Orders'             => 'اوامر شراء',
   'Qty'                         => 'الكمية',

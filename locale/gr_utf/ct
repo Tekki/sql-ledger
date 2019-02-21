@@ -74,6 +74,7 @@ $self{texts} = {
   'Outstanding'                 => 'Αξιοσημείωτο',
   'Phone'                       => 'Τηλέφωνο',
   'Project Number'              => 'Αριθμός έργου',
+  'Projects'                    => 'Έργα',
   'Qty'                         => 'Ποσ.',
   'Save'                        => 'Αποθήκευση',
   'Search'                      => 'Αναζήτηση',

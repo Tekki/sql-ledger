@@ -218,6 +218,7 @@ $self{texts} = {
   'Print '                      => 'Drucken',
   'Printed'                     => 'Gedruckt',
   'Project'                     => 'Projekt',
+  'Projects'                    => 'Projekte',
   'Purchase Order'              => 'Einkaufsbestellung',
   'Purchase Orders'             => 'Einkaufsbestellungen',
   'Qty'                         => 'Menge',
@@ -282,6 +283,7 @@ $self{texts} = {
   'Tax'                         => 'MWST',
   'Text'                        => 'Text',
   'Th'                          => 'Do',
+  'Time Cards'                  => 'Stempelkarten',
   'To'                          => 'Bis',
   'To Warehouse'                => 'Zu Lager',
   'Tool Number'                 => 'Werkzeugnummer',
@@ -424,7 +426,7 @@ $self{subs} = {
   'drucken'                     => 'print_',
   'speichern'                   => 'save',
   'als_neu_speichern'           => 'save_as_new',
-  'Übertrag'                    => 'transfer',
+  'übertrag'                    => 'transfer',
   'aktualisieren'               => 'update',
 };
 

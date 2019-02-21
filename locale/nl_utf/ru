@@ -10,11 +10,13 @@ $self{texts} = {
   'Description'                 => 'Omschrijving',
   'Items'                       => 'Onderdelen',
   'Number'                      => 'Code',
+  'Projects'                    => 'Projecten',
   'Purchase Orders'             => 'Inkooporders',
   'Quotations'                  => 'Offertes',
   'Request for Quotations'      => 'Prijsaanvragen',
   'Sales Invoices'              => 'Verkoopfacturen',
   'Sales Orders'                => 'Verkooporders',
+  'Time Cards'                  => 'Tijdkaarten',
   'Vendor Invoices'             => 'Inkoopfacturen',
   'Vendors'                     => 'Leveranciers',
 };

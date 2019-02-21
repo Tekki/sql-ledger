@@ -18,27 +18,70 @@ package RU;
 use constant {
   MAX_RECENT => 12,
   CODES      => {
-    a1 => 'ar.pl?action=edit',
-    a2 => 'is.pl?action=edit',
-    c1 => 'ct.pl?db=customer&action=edit',
-    d1 => 'ap.pl?action=edit',
-    d2 => 'ir.pl?action=edit',
-    e2 => 'ct.pl?db=vendor&action=edit',
-    i1 => 'oe.pl?type=sales_order&action=edit',
-    i2 => 'oe.pl?type=purchase_order&action=edit',
-    k1 => 'oe.pl?type=sales_quotation&action=edit',
-    k2 => 'oe.pl?type=request_quotation&action=edit',
-    m1 => 'ic.pl?action=edit',
+    a1 => {
+      object => 'ar.pl?action=edit',
+      report => 'ar.pl?action=search&nextsub=transactions'
+    },
+    a2 => {
+      object => 'is.pl?action=edit',
+      report => 'ar.pl?action=search&nextsub=transactions'
+    },
+    c1 => {
+      object => 'ct.pl?db=customer&action=edit',
+      report => 'ct.pl?db=customer&action=search'
+    },
+    d1 => {
+      object => 'ap.pl?action=edit',
+      report => 'ap.pl?action=search&nextsub=transactions'
+    },
+    d2 => {
+      object => 'ir.pl?action=edit',
+      report => 'ap.pl?action=search&nextsub=transactions'
+    },
+    e2 => {
+      object => 'ct.pl?db=vendor&action=edit',
+      report => 'ct.pl?db=vendor&action=search'
+    },
+    i1 => {
+      object => 'oe.pl?type=sales_order&action=edit',
+      report => 'oe.pl?type=sales_order&action=search'
+    },
+    i2 => {
+      object => 'oe.pl?type=purchase_order&action=edit',
+      report => 'oe.pl?type=purchase_order&action=search'
+    },
+    k1 => {
+      object => 'oe.pl?type=sales_quotation&action=edit',
+      report => 'oe.pl?type=sales_quotation&action=search'
+    },
+    k2 => {
+      object => 'oe.pl?type=request_quotation&action=edit',
+      report => 'oe.pl?type=request_quotation&action=search'
+    },
+    m1 => {
+      object => 'ic.pl?action=edit',
+      report => 'ic.pl?action=search&searchitems=all'
+    },
+    n1 => {
+      object => 'pe.pl?type=project&action=edit',
+      report => 'pe.pl?type=project&action=search',
+    },
+    n2 => {
+      object => 'jc.pl?type=timecard&project=project&action=edit',
+      report => 'jc.pl?type=timecard&project=project&action=search',
+    },
   },
   AP_TRANSACTION    => 'd1',
   AR_TRANSACTION    => 'a1',
   CUSTOMER          => 'c1',
   ITEM              => 'm1',
+  PROJECT           => 'n1',
   PURCHASE_ORDER    => 'i2',
   REQUEST_QUOTATION => 'k2',
   SALES_INVOICE     => 'a2',
   SALES_ORDER       => 'i1',
   SALES_QUOTATION   => 'k1',
+  TIMECARD          => 'n2',
   VENDOR            => 'e2',
   VENDOR_INVOICE    => 'd2',
 };
@@ -50,11 +93,13 @@ sub delete {
   my $dbh = $form->dbconnect($myconfig);
   my $query;
 
+  my $object_id = &_object_id($form);
+
   $query = 'DELETE FROM recentdescr WHERE object_id = ?';
-  $dbh->do($query, undef, $form->{id}) or $form->dberror($query);
+  $dbh->do($query, undef, $object_id) or $form->dberror($query);
 
   $query = 'DELETE FROM recent WHERE object_id = ?';
-  $dbh->do($query, undef, $form->{id}) or $form->dberror($query);
+  $dbh->do($query, undef, $object_id) or $form->dberror($query);
 
   $dbh->disconnect;
 }
@@ -92,6 +137,7 @@ sub list {
   $sth->execute($employee_id) or $form->dberror($query);
 
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    $ref->{object_id} = abs $ref->{object_id};
     push @{$form->{all_recent}}, $ref;
   }
 
@@ -108,7 +154,7 @@ sub register {
   my ($query, @values, $rv);
 
   # object and employee id
-  my $object_id   = $form->{id} or return;
+  my $object_id   = &_object_id($form) or return;
   my $employee_id = &_employee_id($form, $dbh) or return;
 
   # register object
@@ -190,8 +236,16 @@ sub _code_is {
   return SALES_INVOICE;
 }
 
+sub _code_jc {
+  return TIMECARD;
+}
+
 sub _code_oe {
   return &{uc shift->{type}};
+}
+
+sub _code_pe {
+  return PROJECT;
 }
 
 sub _descr {
@@ -233,10 +287,22 @@ sub _descr_is {
   return &_descr_ar;
 }
 
+sub _descr_jc {
+  my ($form) = @_;
+  return $form->{id},
+    qq|$form->{projectdescription}, $form->{transdate} $form->{qty}|;
+}
+
 sub _descr_oe {
   my ($form) = @_;
   my $number = $form->{type} =~ /quotation/ ? 'quonumber' : 'ordnumber';
   return $form->{$number}, qq|$form->{$form->{vc}}, $form->{transdate}|;
+}
+
+sub _descr_pe {
+  my ($form) = @_;
+  return $form->{projectnumber},
+    qq|$form->{$form->{vc}}, $form->{startdate}-$form->{enddate}|;
 }
 
 sub _employee_id {
@@ -252,6 +318,11 @@ sub _employee_id {
   $rv *= 1;
 
   return $rv;
+}
+
+sub _object_id {
+  my ($form) = @_;
+  return $form->{script} eq 'jc.pl' ? -$form->{id} : $form->{id};
 }
 
 1;

@@ -96,6 +96,7 @@ $self{texts} = {
   'Pricegroup'                  => 'Preciogrupo',
   'Pricelist'                   => 'Lista de Precios',
   'Project Number'              => 'número del projecto',
+  'Projects'                    => 'Proyectos',
   'Purchase Order'              => 'Pedido',
   'Purchase Orders'             => 'Pedidos',
   'Qty'                         => 'Cantidad',

@@ -175,6 +175,7 @@ $self{texts} = {
   'Project Number'              => 'Projektinumero',
   'Project Transactions'        => 'Projektin tapahtumat',
   'Project not on file!'        => 'Projekti ei ole järjestelmässä!',
+  'Projects'                    => 'Projektit',
   'Purchase Order'              => 'Ostotilaus',
   'Purchase Orders'             => 'Ostotilaukset',
   'Qty'                         => 'Määrä',

@@ -9,11 +9,13 @@ $self{texts} = {
   'Description'                 => 'Popis',
   'Items'                       => 'Položky',
   'Number'                      => 'Číslo',
+  'Projects'                    => 'Projekty',
   'Purchase Orders'             => 'Vystavené objednávky',
   'Quotations'                  => 'Ponukové listy',
   'Request for Quotations'      => 'Žiadošť o ponuku',
   'Sales Invoices'              => 'Faktúry',
   'Sales Orders'                => 'Prijaté objednávky',
+  'Time Cards'                  => 'Časové karty',
   'Vendor Invoices'             => 'Dodavateľské faktúry',
   'Vendors'                     => 'Dodavatelia',
 };

@@ -9,6 +9,7 @@ $self{texts} = {
   'Description'                 => 'Apraksts',
   'Items'                       => 'Vienības',
   'Number'                      => 'Numurs',
+  'Projects'                    => 'Projekti',
   'Purchase Orders'             => 'Pirkšanas orderi',
   'Quotations'                  => 'Tāmes',
   'Request for Quotations'      => 'Tāmju pieprasījums',

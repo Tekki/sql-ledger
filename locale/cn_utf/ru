@@ -9,6 +9,7 @@ $self{texts} = {
   'Description'                 => 'è¯´æ',
   'Items'                       => 'é¡¹ç®',
   'Number'                      => 'ç¼å·',
+  'Projects'                    => 'æ¹æ¡',
   'Purchase Orders'             => 'éè´­å',
   'Quotations'                  => 'æ¥ä»·å',
   'Request for Quotations'      => 'è¦æ±æ¥ä»·å',

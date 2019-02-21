@@ -148,6 +148,7 @@ $self{texts} = {
   'Print'                       => 'Imprimir',
   'Project'                     => 'Proyecto',
   'Project Number'              => 'Número de Proyecto',
+  'Projects'                    => 'Proyectos',
   'Purchase Order'              => 'Orden de Compra',
   'Purchase Orders'             => 'Ordenes de Compra',
   'Qty'                         => 'Cant.',

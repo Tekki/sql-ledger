@@ -97,6 +97,7 @@ $self{texts} = {
   'Pricegroup'                  => 'єЩа УХЮ',
   'Pricelist'                   => '№вСЪгЬЩгд',
   'Project Number'              => 'ыЯФ авЯХЫдС',
+  'Projects'                    => '№вЯХЫдй',
   'Purchase Order'              => 'њСЫСк аЯгдСзнЩЫе',
   'Purchase Orders'             => 'њСЫСкй аЯгдСзнЩЫе',
   'Qty'                         => 'ыЯЬЩоХгдзЯ',
