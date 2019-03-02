@@ -189,11 +189,34 @@ sub register {
 
   # cleanup
   $query = q|DELETE FROM recent r
-             WHERE r.employee_id = ? and r.code = ?
+             WHERE r.employee_id = ? AND r.code = ?
              AND ( SELECT count(*) FROM recent r2
                    WHERE r2.id > r.id AND r2.employee_id = r.employee_id AND r2.code = r.code
                  ) >= ?|;
   $dbh->do($query, undef, $employee_id, $code, MAX_RECENT)
+    or $form->dberror($query);
+
+  $query
+    = q|DELETE FROM recentdescr WHERE object_id NOT IN (SELECT distinct(object_id) FROM recent)|;
+  $dbh->do($query) or $form->dberror($query);
+
+  $dbh->disconnect;
+}
+
+sub unregister {
+  my ($self, $myconfig, $form) = @_;
+
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+  my ($query, $ref, $sth);
+
+  # employee id
+  my $employee_id = &_employee_id($form, $dbh) or return;
+
+  my $query;
+  $query = q|DELETE FROM recent
+            WHERE employee_id = ? AND code = ?|;
+  $dbh->do($query, undef, $employee_id, $form->{code})
     or $form->dberror($query);
 
   $query

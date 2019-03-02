@@ -101,9 +101,12 @@ sub list_recent {
 |;
 
   my ($j, $samecode);
+  my $url_suffix = "&path=$form->{path}&login=$form->{login}&callback=$callback";
+  my $unregister_url
+    = "$form->{script}?action=unregister_recent$url_suffix";
   for my $ref (@{$form->{all_recent}}) {
     my $object_url = RU::CODES->{$ref->{code}}->{object}
-      . "&id=$ref->{object_id}&path=$form->{path}&login=$form->{login}&callback=$callback";
+      . "&id=$ref->{object_id}$url_suffix";
 
     $column_data{number}
       = qq|<td><a href="$object_url">$ref->{number}</a></td>|;
@@ -112,10 +115,13 @@ sub list_recent {
       $column_data{code} = q|<td>&nbsp;</td>|;
     } else {
       my $report_url = RU::CODES->{$ref->{code}}->{report}
-        . "&path=$form->{path}&login=$form->{login}&callback=$callback";
+        . "&path=$form->{path}&login=$form->{login}";
 
       $column_data{code}
-        = qq|<td><a href="$report_url">$labels{$ref->{code}}</a></td>|;
+        = qq|<td>
+  <a href="$report_url">$labels{$ref->{code}}</a>
+  <a href="$unregister_url&code=$ref->{code}">&#10005</a>
+</td>|;
       $samecode = $ref->{code};
     }
 
@@ -145,6 +151,11 @@ sub list_recent {
 
 sub register_recent {
   RU->register(\%myconfig, $form);
+}
+
+sub unregister_recent {
+  RU->unregister(\%myconfig, $form);
+  $form->redirect;
 }
 
 1;
