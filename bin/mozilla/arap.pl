@@ -16,7 +16,6 @@ use SL::AA;
 require "$form->{path}/sr.pl";
 require "$form->{path}/cm.pl";
 require "$form->{path}/js.pl";
-require "$form->{path}/ru.pl";
 
 # any custom scripts for this one
 if (-f "$form->{path}/custom/arap.pl") {

@@ -14,6 +14,7 @@
 
 use SL::IR;
 use SL::PE;
+use SL::RU;
 
 require "$form->{path}/io.pl";
 require "$form->{path}/arap.pl";
@@ -37,7 +38,7 @@ sub edit {
 
   $form->{linkshipto} = 1;
   &invoice_links;
-  &register_recent;
+  RU->register(\%myconfig, $form);
   &prepare_invoice;
   &display_form;
 
@@ -1289,7 +1290,7 @@ sub post {
   $form->{userspath} = $userspath;
 
   if (IR->post_invoice(\%myconfig, \%$form)) {
-    &register_recent;
+    RU->register(\%myconfig, $form);
     $form->redirect($locale->text('Invoice')." $form->{invnumber} ".$locale->text('posted!'));
   } else {
     $form->error($locale->text('Cannot post invoice!'));
@@ -1350,7 +1351,7 @@ sub delete {
 sub yes {
 
   if (IR->delete_invoice(\%myconfig, \%$form, $spool)) {
-    &delete_recent;
+    RU->delete(\%myconfig, $form);
     $form->redirect($locale->text('Invoice deleted!'));
   } else {
     $form->error($locale->text('Cannot delete invoice!'));

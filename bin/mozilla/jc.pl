@@ -12,11 +12,11 @@
 #======================================================================
 
 use SL::JC;
+use SL::RU;
 
 require "$form->{path}/cm.pl";
 require "$form->{path}/sr.pl";
 require "$form->{path}/js.pl";
-require "$form->{path}/ru.pl";
 
 1;
 # end of main
@@ -397,7 +397,7 @@ sub prepare_timecard {
   $form->{media} ||= $myconfig{printer};
 
   JC->retrieve_card(\%myconfig, \%$form);
-  &register_recent if $form->{id} && $form->{project} eq 'project';
+  RU->register(\%myconfig, $form) if $form->{id} && $form->{project} eq 'project';
 
   $form->{selectprinter} = "";
   for (@{ $form->{all_printer} }) { $form->{selectprinter} .= "$_->{printer}\n" }
@@ -1205,7 +1205,7 @@ sub save {
       if ($form->{callback} =~ /^$form->{script}\?action=add/) {
         $form->{callback} .= "&lastemployee=$form->{employee}&lastprojectnumber=$form->{projectnumber}&lastprojectdescription=$form->{projectdescription}&lasttransdate=$form->{transdate}";
       }
-      &register_recent if $form->{project} eq 'project';
+      RU->register(\%myconfig, $form) if $form->{project} eq 'project';
       $form->redirect($locale->text('Time Card saved!'));
     } else {
       $form->error($locale->text('Cannot save time card!'));
@@ -1394,7 +1394,7 @@ sub yes { &{ "yes_delete_$form->{type}" } };
 sub yes_delete_timecard {
 
   if (JC->delete(\%myconfig, \%$form)) {
-    &delete_recent if $form->{project} eq 'project';
+    RU->delete(\%myconfig, $form) if $form->{project} eq 'project';
     $form->redirect($locale->text('Time Card deleted!'));
   } else {
     $form->error($locale->text('Cannot delete time card!'));

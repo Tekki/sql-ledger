@@ -15,10 +15,6 @@
 
 use SL::RU;
 
-sub delete_recent {
-  RU->delete(\%myconfig, $form);
-}
-
 sub list_recent {
   my %labels = (
     RU::AP_TRANSACTION    => $locale->text('AP Transactions'),
@@ -149,10 +145,6 @@ sub list_recent {
 |;
 }
 
-sub register_recent {
-  RU->register(\%myconfig, $form);
-}
-
 sub unregister_recent {
   RU->unregister(\%myconfig, $form);
   $form->redirect;
@@ -164,11 +156,11 @@ sub unregister_recent {
 
 =head1 NAME
 
-bin/mozilla/ru.pl - routines and frontend for recently used objects
+bin/mozilla/ru.pl - frontend for recently used objects
 
 =head1 DESCRIPTION
 
-L<bin::mozilla::ru> contains routines and frontend for recently used object.
+L<bin::mozilla::ru> contains frontend for recently used object.
 
 =head1 DEPENDENCIES
 
@@ -183,10 +175,6 @@ L<SL::RU>
 
 =head1 FUNCTIONS
 
-=head2 delete_recent
-
 =head2 list_recent
-
-=head2 register_recent
 
 =cut

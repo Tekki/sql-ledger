@@ -17,6 +17,7 @@ use SL::OE;
 use SL::IR;
 use SL::IS;
 use SL::PE;
+use SL::RU;
 
 require "$form->{path}/arap.pl";
 require "$form->{path}/io.pl";
@@ -79,7 +80,7 @@ sub edit {
 
   $form->{linkshipto} = 1;
   &order_links;
-  &register_recent;
+  RU->register(\%myconfig, $form);
   &prepare_order;
   &display_form;
 
@@ -2457,7 +2458,7 @@ sub save {
   $form->{userspath} = $userspath;
 
   if (OE->save(\%myconfig, \%$form)) {
-    &register_recent;
+    RU->register(\%myconfig, $form);
     $form->redirect($locale->text('Order saved!'));
   } else {
     $form->error($err);
@@ -2529,7 +2530,7 @@ sub yes {
   }
 
   if (OE->delete(\%myconfig, \%$form, $spool)) {
-    &delete_recent;
+    RU->delete(\%myconfig, $form);
     $form->redirect($msg);
   } else {
     $form->error($err);
@@ -3432,6 +3433,8 @@ sub consolidate_orders {
   }
 
   if (OE->consolidate_orders(\%myconfig, \%$form)) {
+    &order_links;
+    RU->register(\%myconfig, $form);
     $form->info($locale->text('Consolidated Orders')."\n");
     $form->info($orders);
   } else {
@@ -3514,6 +3517,7 @@ sub consolidate_orders_to_invoice {
     for (qw(id printed emailed queued audittrail)) { delete $form->{$_} }
 
     if (IS->post_invoice(\%myconfig, \%$form)) {
+      RU->register(\%myconfig, $form);
       $form->info($locale->text('Invoice')." $form->{invnumber} ".$locale->text('created from Sales Orders')."\n");
       $form->info($orders);
     } else {

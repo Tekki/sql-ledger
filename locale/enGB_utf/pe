@@ -3,17 +3,13 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'AP Transactions'             => 'Purchase Transactions',
-  'AR Transactions'             => 'Sales Transactions',
   'Customer'                    => 'Debtor',
   'Customer Number'             => 'Debtor Number',
   'Customer missing!'           => 'Debtor missing!',
   'Customer not on file!'       => 'Debtor not on file!',
-  'Customers'                   => 'Debtors',
   'Vendor'                      => 'Creditor',
   'Vendor Number'               => 'Creditor Number',
   'Vendor not on file!'         => 'Creditor not on file!',
-  'Vendors'                     => 'Creditors',
 };
 
 $self{subs} = {
@@ -33,7 +29,6 @@ $self{subs} = {
   'customer_selected'           => 'customer_selected',
   'delete'                      => 'delete',
   'delete_column'               => 'delete_column',
-  'delete_recent'               => 'delete_recent',
   'delete_report'               => 'delete_report',
   'display'                     => 'display',
   'display_form'                => 'display_form',
@@ -50,7 +45,6 @@ $self{subs} = {
   'jsmenu'                      => 'jsmenu',
   'jsmenu_frame'                => 'jsmenu_frame',
   'list_projects'               => 'list_projects',
-  'list_recent'                 => 'list_recent',
   'list_stock'                  => 'list_stock',
   'list_translations'           => 'list_translations',
   'menubar'                     => 'menubar',
@@ -72,7 +66,6 @@ $self{subs} = {
   'project_report'              => 'project_report',
   'project_sales_order'         => 'project_sales_order',
   'references'                  => 'references',
-  'register_recent'             => 'register_recent',
   'resize'                      => 'resize',
   'sales_order_footer'          => 'sales_order_footer',
   'sales_order_header'          => 'sales_order_header',

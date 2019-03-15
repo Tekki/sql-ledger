@@ -3,17 +3,13 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'AP Transactions'             => 'Purchase Transactions',
-  'AR Transactions'             => 'Sales Transactions',
   'Customer'                    => 'Debtor',
   'Customer Number'             => 'Debtor Number',
   'Customer not on file!'       => 'Debtor not on file!',
-  'Customers'                   => 'Debtors',
   'Vendor'                      => 'Creditor',
   'Vendor Invoice'              => 'Creditor Invoice',
   'Vendor Number'               => 'Creditor Number',
   'Vendor not on file!'         => 'Creditor not on file!',
-  'Vendors'                     => 'Creditors',
 };
 
 $self{subs} = {
@@ -40,7 +36,6 @@ $self{subs} = {
   'create_form'                 => 'create_form',
   'customer_row'                => 'customer_row',
   'delete'                      => 'delete',
-  'delete_recent'               => 'delete_recent',
   'display'                     => 'display',
   'display_form'                => 'display_form',
   'display_row'                 => 'display_row',
@@ -60,7 +55,6 @@ $self{subs} = {
   'list_assemblies'             => 'list_assemblies',
   'list_assembly_bom_transfer'  => 'list_assembly_bom_transfer',
   'list_inventory'              => 'list_inventory',
-  'list_recent'                 => 'list_recent',
   'makemodel_row'               => 'makemodel_row',
   'menubar'                     => 'menubar',
   'name_selected'               => 'name_selected',
@@ -76,7 +70,6 @@ $self{subs} = {
   'purchase_order'              => 'purchase_order',
   'quotation'                   => 'quotation',
   'references'                  => 'references',
-  'register_recent'             => 'register_recent',
   'requirements'                => 'requirements',
   'requirements_report'         => 'requirements_report',
   'resize'                      => 'resize',
