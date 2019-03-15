@@ -12,10 +12,10 @@
 #======================================================================
 
 use SL::CT;
+use SL::RU;
 
 require "$form->{path}/cm.pl";
 require "$form->{path}/js.pl";
-require "$form->{path}/ru.pl";
 
 1;
 # end of main
@@ -42,7 +42,7 @@ sub edit {
 
   $form->helpref("$form->{db}", $myconfig{countrycode});
   &create_links;
-  &register_recent;
+  RU->register(\%myconfig, $form);
 
   &display_form;
 
@@ -3325,7 +3325,7 @@ sub save {
   $form->{userspath} = $userspath;
 
   CT->save(\%myconfig, \%$form);
-  &register_recent;
+  RU->register(\%myconfig, $form);
 
   $form->redirect($locale->text($msg));
 
@@ -3340,7 +3340,7 @@ sub delete {
 # $locale->text('Cannot delete vendor!')
 
   CT->delete(\%myconfig, \%$form);
-  &delete_recent;
+  RU->delete(\%myconfig, $form);
 
   $msg = ucfirst $form->{db};
   $msg .= " deleted!";

@@ -21,9 +21,8 @@ $self{texts} = {
 };
 
 $self{subs} = {
-  'delete_recent'               => 'delete_recent',
   'list_recent'                 => 'list_recent',
-  'register_recent'             => 'register_recent',
+  'unregister_recent'           => 'unregister_recent',
 };
 
 1;

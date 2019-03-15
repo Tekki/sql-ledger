@@ -13,11 +13,11 @@
 
 
 use SL::IC;
+use SL::RU;
 
 require "$form->{path}/io.pl";
 require "$form->{path}/cm.pl";
 require "$form->{path}/js.pl";
-require "$form->{path}/ru.pl";
 
 1;
 # end of main
@@ -83,7 +83,7 @@ sub edit {
   $form->{previousform} = $form->escape($form->{previousform}, 1) if $form->{previousform};
 
   &link_part;
-  &register_recent;
+  RU->register(\%myconfig, $form);
 
   &display_form;
 
@@ -3913,7 +3913,7 @@ sub save {
 
   # save part
   $rc = IC->save(\%myconfig, \%$form);
-  &register_recent;
+  RU->register(\%myconfig, $form);
 
   $parts_id = $form->{id};
 
@@ -4051,7 +4051,7 @@ sub delete {
 
   # redirect
   if (IC->delete(\%myconfig, \%$form)) {
-    &delete_recent;
+    RU->delete(\%myconfig, $form);
     $form->redirect($locale->text('Item deleted!'));
   } else {
     $form->error($locale->text('Cannot delete item!'));

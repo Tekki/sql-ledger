@@ -17,11 +17,11 @@
 use SL::PE;
 use SL::AA;
 use SL::OE;
+use SL::RU;
 
 require "$form->{path}/cm.pl";
 require "$form->{path}/sr.pl";
 require "$form->{path}/js.pl";
-require "$form->{path}/ru.pl";
 
 1;
 # end of main
@@ -606,7 +606,7 @@ sub prepare_project {
   $form->{vc} = 'customer';
 
   PE->get_project(\%myconfig, \%$form);
-  &register_recent if $form->{id};
+  RU->register(\%myconfig, $form) if $form->{id};
 
   $form->helpref("projects", $myconfig{countrycode});
 
@@ -1234,7 +1234,7 @@ sub save {
     }
 
     PE->save_project(\%myconfig, \%$form);
-    &register_recent;
+    RU->register(\%myconfig, $form);
     $form->redirect($locale->text('Project saved!'));
   }
 
@@ -1297,7 +1297,7 @@ sub delete {
 
     if ($form->{type} eq 'project') {
       PE->delete_project(\%myconfig, \%$form);
-      &delete_recent;
+      RU->delete(\%myconfig, $form);
       $form->redirect($locale->text('Project deleted!'));
     }
     if ($form->{type} eq 'job') {
@@ -2777,6 +2777,7 @@ sub generate_sales_orders {
     for (qw(employee employee_id)) { delete $order->{$_} }
 
     if (OE->save(\%myconfig, \%$order)) {
+      RU->register(\%myconfig, $order);
       if (! PE->allocate_projectitems(\%myconfig, \%$order)) {
         OE->delete(\%myconfig, \%$order, $spool);
       }

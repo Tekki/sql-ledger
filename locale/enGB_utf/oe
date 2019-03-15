@@ -3,19 +3,15 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'AP Transactions'             => 'Purchase Transactions',
-  'AR Transactions'             => 'Sales Transactions',
   'Customer'                    => 'Debtor',
   'Customer Number'             => 'Debtor Number',
   'Customer missing!'           => 'Debtor missing!',
   'Customer not on file!'       => 'Debtor not on file!',
-  'Customers'                   => 'Debtors',
   'Vendor'                      => 'Creditor',
   'Vendor Invoice'              => 'Creditor Invoice',
   'Vendor Number'               => 'Creditor Number',
   'Vendor missing!'             => 'Creditor missing!',
   'Vendor not on file!'         => 'Creditor not on file!',
-  'Vendors'                     => 'Creditors',
 };
 
 $self{subs} = {
@@ -43,7 +39,6 @@ $self{subs} = {
   'debit_invoice_'              => 'debit_invoice_',
   'delete'                      => 'delete',
   'delete_column'               => 'delete_column',
-  'delete_recent'               => 'delete_recent',
   'delete_report'               => 'delete_report',
   'delete_schedule'             => 'delete_schedule',
   'display'                     => 'display',
@@ -68,7 +63,6 @@ $self{subs} = {
   'js_calendar'                 => 'js_calendar',
   'jsmenu'                      => 'jsmenu',
   'jsmenu_frame'                => 'jsmenu_frame',
-  'list_recent'                 => 'list_recent',
   'lookup_order'                => 'lookup_order',
   'menubar'                     => 'menubar',
   'name_selected'               => 'name_selected',
@@ -94,7 +88,6 @@ $self{subs} = {
   'rebuild_formnames'           => 'rebuild_formnames',
   'rebuild_vc'                  => 'rebuild_vc',
   'references'                  => 'references',
-  'register_recent'             => 'register_recent',
   'repost'                      => 'repost',
   'reprint'                     => 'reprint',
   'resize'                      => 'resize',

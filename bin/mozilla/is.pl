@@ -14,6 +14,7 @@
 
 use SL::IS;
 use SL::PE;
+use SL::RU;
 
 require "$form->{path}/arap.pl";
 require "$form->{path}/io.pl";
@@ -39,7 +40,7 @@ sub edit {
 
   $form->{linkshipto} = 1;
   &invoice_links;
-  &register_recent;
+  RU->register(\%myconfig, $form);
   &prepare_invoice;
   &display_form;
 
@@ -1455,7 +1456,7 @@ sub post {
   $form->{userspath} = $userspath;
 
   if (IS->post_invoice(\%myconfig, \%$form)) {
-    &register_recent;
+    RU->register(\%myconfig, $form);
     $form->redirect($locale->text('Invoice')." $form->{invnumber} ".$locale->text('posted!'));
   } else {
     $form->error($locale->text('Cannot post invoice!'));
@@ -1518,7 +1519,7 @@ sub delete {
 sub yes {
 
   if (IS->delete_invoice(\%myconfig, \%$form, $spool)) {
-    &delete_recent;
+    RU->delete(\%myconfig, $form);
     $form->redirect($locale->text('Invoice deleted!'));
   } else {
     $form->error($locale->text('Cannot delete invoice!'));
@@ -2161,6 +2162,8 @@ sub consolidate_invoices {
   delete $form->{callback};
 
   if (IS->consolidate_invoices(\%myconfig, \%$form, $spool)) {
+    &invoice_links;
+    RU->register(\%myconfig, $form);
     $form->redirect($locale->text('Invoices consolidated!'));
   } else {
     $form->error($locale->text('Failed to consolidate invoices!'));

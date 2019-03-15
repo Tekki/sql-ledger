@@ -21,6 +21,7 @@ if (-f "$form->{path}/custom/$form->{login}/aa.pl") {
 }
 
 use SL::VR;
+use SL::RU;
 
 1;
 # end of main
@@ -101,7 +102,7 @@ sub add {
 sub edit {
 
   &create_links;
-  &register_recent;
+  RU->register(\%myconfig, $form);
 
   %title = ( transaction => "$form->{ARAP} Transaction",
              credit_note => 'Credit Note',
@@ -1475,7 +1476,7 @@ sub post {
     $rc = VR->post_transaction(\%myconfig, \%$form);
   } else {
     $rc = AA->post_transaction(\%myconfig, \%$form);
-    &register_recent;
+    RU->register(\%myconfig, $form);
   }
 
   if ($form->{callback}) {
@@ -1526,7 +1527,7 @@ sub delete {
 sub yes {
 
   if (AA->delete_transaction(\%myconfig, \%$form)) {
-    &delete_recent;
+    RU->delete(\%myconfig, $form);
     $form->redirect($locale->text('Transaction deleted!'));
   } else {
     $form->error($locale->text('Cannot delete transaction!'));

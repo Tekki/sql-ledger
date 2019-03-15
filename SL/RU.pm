@@ -174,7 +174,7 @@ sub register {
 
   # description
 
-  @values = $self->_descr($form);
+  @values = $self->_descr($form, $code);
 
   $query
     = q|UPDATE recentdescr SET number = ?, description = ? WHERE object_id = ?|;
@@ -213,7 +213,6 @@ sub unregister {
   # employee id
   my $employee_id = &_employee_id($form, $dbh) or return;
 
-  my $query;
   $query = q|DELETE FROM recent
             WHERE employee_id = ? AND code = ?|;
   $dbh->do($query, undef, $employee_id, $form->{code})
@@ -231,8 +230,14 @@ sub unregister {
 sub _code {
   my ($self, $form) = @_;
   $form->{script} =~ /(.+)\.pl/;
-  my $fn = $self->can("_code_$1") or $form->error("$1: no recent code found");
-  return $fn->($form);
+  return $self->can("_code_$1")->($form);
+}
+
+sub _code_ {
+  my ($form) = @_;
+  return SALES_ORDER   if $form->{type} eq 'sales_order';
+  return SALES_INVOICE if $form->{type} eq 'invoice';
+  $form->error('type not identified');
 }
 
 sub _code_ap {
@@ -264,17 +269,36 @@ sub _code_jc {
 }
 
 sub _code_oe {
-  return &{uc shift->{type}};
+  my ($form) = @_;
+  my $type = $form->{type};
+  $type =~ s/consolidate_//;
+  return &{uc $type};
 }
 
 sub _code_pe {
-  return PROJECT;
+  PROJECT;
 }
 
 sub _descr {
-  my ($self, $form) = @_;
-  $form->{script} =~ /(.+)\.pl/;
-  my $fn = $self->can("_descr_$1") or return $form->{id}, '';
+  my ($self, $form, $code) = @_;
+
+  my %descr = (
+    &AR_TRANSACTION    => \&_descr_ar,
+    &AP_TRANSACTION    => \&_descr_ap,
+    &CUSTOMER          => \&_descr_ct,
+    &VENDOR            => \&_descr_ct,
+    &ITEM              => \&_descr_ic,
+    &SALES_INVOICE     => \&_descr_ar,
+    &VENDOR_INVOICE    => \&_descr_ap,
+    &TIMECARD          => \&_descr_jc,
+    &SALES_QUOTATION   => \&_descr_oe1,
+    &REQUEST_QUOTATION => \&_descr_oe1,
+    &SALES_ORDER       => \&_descr_oe2,
+    &PURCHASE_ORDER    => \&_descr_oe2,
+    &PROJECT           => \&_descr_pe,
+  );
+  my $fn = $descr{$code} or return $form->{id}, '';
+
   my ($number, $description) = $fn->($form);
   $description .= ", $form->{description}"
     if $form->{description} && $form->{script} ne 'ic.pl';
@@ -302,24 +326,21 @@ sub _descr_ic {
   return $form->{partnumber}, (split "\n", $form->{description})[0];
 }
 
-sub _descr_ir {
-  return &_descr_ap;
-}
-
-sub _descr_is {
-  return &_descr_ar;
-}
-
 sub _descr_jc {
   my ($form) = @_;
   return $form->{id},
-    qq|$form->{projectdescription}, $form->{transdate} $form->{qty}|;
+    ($form->{projectdescription} || $form->{projectnumber})
+    . qq|, $form->{transdate} $form->{inhour}:$form->{inmin}-$form->{outhour}:$form->{outmin}, $form->{qty}|;
 }
 
-sub _descr_oe {
+sub _descr_oe1 {
   my ($form) = @_;
-  my $number = $form->{type} =~ /quotation/ ? 'quonumber' : 'ordnumber';
-  return $form->{$number}, qq|$form->{$form->{vc}}, $form->{transdate}|;
+  return $form->{quonumber}, qq|$form->{$form->{vc}}, $form->{transdate}|;
+}
+
+sub _descr_oe2 {
+  my ($form) = @_;
+  return $form->{ordnumber}, qq|$form->{$form->{vc}}, $form->{transdate}|;
 }
 
 sub _descr_pe {
