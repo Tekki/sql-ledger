@@ -228,7 +228,7 @@ sub list {
         <tr>
           <th align=right>|.$locale->text('Include in Report').qq|</th>
           <td colspan=3>
-          <input name=l_accno class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('AR/AP').qq|
+          <input name=l_accno class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Contra').qq|
           <input name=l_subtotal class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Subtotal').qq|
           </td>
         </tr>
@@ -282,13 +282,14 @@ sub list_transactions {
   $column_header{debit} = qq|<th class=listheading>|.$locale->text('Debit').qq|</th>|;
   $column_header{credit} = qq|<th class=listheading>|.$locale->text('Credit').qq|</th>|;
   $column_header{balance} = qq|<th class=listheading>|.$locale->text('Balance').qq|</th>|;
-  $column_header{accno} = qq|<th class=listheading>|.$locale->text('AR/AP').qq|</th>|;
+  $column_header{accno} = qq|<th class=listheading>|.$locale->text('Contra').qq|</th>|;
 
-  @columns = qw(transdate reference description debit credit);
+  @columns = qw(transdate reference description);
   if ($form->{link} =~ /_paid/) {
-    @columns = qw(transdate reference description source cleared debit credit);
+    @columns = qw(transdate reference description source cleared);
   }
   push @columns, "accno" if $form->{l_accno};
+  push @columns, qw|debit credit|;
   @column_index = $form->sort_columns(@columns);
 
 
@@ -425,6 +426,7 @@ sub list_transactions {
 
     if ($ca->{vc_id}) {
       $href = "<a href=ct.pl?path=$form->{path}&action=edit&id=$ca->{vc_id}&db=$ca->{db}&login=$form->{login}&callback=$form->{callback}>$ca->{description}</a>";
+      $href .= ", $ca->{invdescription}" if $ca->{invdescription};
       $column_data{description} = qq|<td>$href</td>|;
     } else {
       $column_data{description} = qq|<td>$ca->{description}&nbsp;</td>|;

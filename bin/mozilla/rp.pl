@@ -1843,6 +1843,7 @@ sub generate_trial_balance {
 
   $form->{title} = $locale->text('Trial Balance') . " / $form->{company}";
   $form->helpref("trial_balance", $myconfig{countrycode});
+  $form->{l_accno} = 1;
 
   $form->{callback} = "$form->{script}?action=generate_trial_balance";
   for (qw(login path nextsub fromdate todate month year interval l_heading l_subtotal all_accounts accounttype reportcode reportlogin)) { $form->{callback} .= "&$_=$form->{$_}" }
@@ -1933,7 +1934,7 @@ sub list_accounts {
     $description = $form->escape($ref->{description});
 
     $href = qq|ca.pl?action=list_transactions|;
-    for (qw(path accounttype login fromdate todate l_heading l_subtotal project_id nextsub)) { $href .= "&$_=$form->{$_}" }
+    for (qw(path accounttype login fromdate todate l_heading l_subtotal l_accno project_id nextsub)) { $href .= "&$_=$form->{$_}" }
     $href .= "&sort=transdate&prevreport=$callback&department=$department&projectnumber=$projectnumber&title=$title";
 
     if ($form->{accounttype} eq 'gifi') {
