@@ -158,11 +158,16 @@ sub report {
   $form->{summary} = "1" unless $form->{summary} =~ /(0|1)/;
   $checked{$form->{summary}} = "checked";
 
+  if ($form->{reportcode} =~ /^tax_/) {
+    $taxsummary = q|
+          <input name=summary type=radio class=radio value=2> |.$locale->text('Only Sums');
+  }
+
   $summary = qq|
         <tr>
           <th></th>
           <td><input name=summary type=radio class=radio value=1 $checked{1}> |.$locale->text('Summary').qq|
-          <input name=summary type=radio class=radio value=0 $checked{0}> |.$locale->text('Detail').qq|
+          <input name=summary type=radio class=radio value=0 $checked{0}> |.$locale->text('Detail').qq|$taxsummary
           </td>
         </tr>
 |;
@@ -3655,7 +3660,7 @@ sub generate_tax_report {
   $callback = $form->escape($callback);
 
   if (@{ $form->{TR} }) {
-    $sameitem = $form->{TR}->[0]->{$form->{sort}};
+    $amount{subtotal}{label} = $sameitem = $form->{TR}->[0]->{$form->{sort}};
   }
 
   foreach $ref (@{ $form->{TR} }) {
@@ -3666,7 +3671,7 @@ sub generate_tax_report {
     if ($form->{l_subtotal} eq 'Y') {
       if ($sameitem ne $ref->{$form->{sort}}) {
         &subtotal('subtotal');
-        $sameitem = $ref->{$form->{sort}};
+        $amount{subtotal}{label} = $sameitem = $ref->{$form->{sort}};
       }
     }
 
@@ -3684,7 +3689,7 @@ sub generate_tax_report {
 |;
       $acctotal= 1;
     }
-    $sameaccno = $ref->{accno};
+    $amount{acctotal}{label} = $sameaccno = $ref->{accno};
 
     for (qw(total subtotal acctotal)) {
       $amount{$_}{netamount} += $ref->{netamount};
@@ -3706,15 +3711,17 @@ sub generate_tax_report {
     for (qw(netamount tax total)) { $column_data{$_} = qq|<td align=right>$ref->{$_}</td>| }
 
     $i++; $i %= 2;
-    print qq|
+    if ($form->{summary} != 2) {
+      print qq|
         <tr class=listrow$i>
 |;
 
-    for (@column_index) { print "$column_data{$_}\n" }
+      for (@column_index) { print "$column_data{$_}\n" }
 
-    print qq|
+      print qq|
         </tr>
 |;
+    }
 
   }
 
@@ -3791,6 +3798,9 @@ sub subtotal {
   $_ = shift;
 
   for (@column_index) { $column_data{$_} = "<td>&nbsp;</td>" }
+  if ($amount{$_}{label}) {
+    $column_data{$column_index[0]} = qq|<td>$amount{$_}{label}</td>|;
+  }
 
   $amount{$_}{netamount} = $form->format_amount(\%myconfig, $amount{$_}{netamount}, $form->{precision}, "&nbsp;");
   $amount{$_}{tax} = $form->format_amount(\%myconfig, $amount{$_}{tax}, $form->{precision}, "&nbsp;");
