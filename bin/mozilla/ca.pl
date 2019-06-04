@@ -274,9 +274,15 @@ sub list_transactions {
   $drilldown .= "&prevreport=".$form->escape($form->{prevreport});
 
   # figure out which column comes first
-  $column_header{transdate} = qq|<th><a class=listheading href=$href&sort=transdate>|.$locale->text('Date').qq|</a></th>|;
-  $column_header{reference} = qq|<th><a class=listheading href=$href&sort=reference>|.$locale->text('Reference').qq|</a></th>|;
-  $column_header{description} = qq|<th><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</a></th>|;
+  if ($form->{subreport}) {
+    $column_header{transdate} = qq|<th>|.$locale->text('Date').qq|</th>|;
+    $column_header{reference} = qq|<th>|.$locale->text('Reference').qq|</th>|;
+    $column_header{description} = qq|<th>|.$locale->text('Description').qq|</th>|;
+  } else {
+    $column_header{transdate} = qq|<th><a class=listheading href=$href&sort=transdate>|.$locale->text('Date').qq|</a></th>|;
+    $column_header{reference} = qq|<th><a class=listheading href=$href&sort=reference>|.$locale->text('Reference').qq|</a></th>|;
+    $column_header{description} = qq|<th><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</a></th>|;
+  }
   $column_header{cleared} = qq|<th class=listheading>|.$locale->text('R').qq|</th>|;
   $column_header{source} = qq|<th class=listheading>|.$locale->text('Source').qq|</th>|;
   $column_header{debit} = qq|<th class=listheading>|.$locale->text('Debit').qq|</th>|;
@@ -339,12 +345,15 @@ sub list_transactions {
   $title = $form->escape($form->{title},1);
   $form->{prevreport} = $form->escape($form->{prevreport},1);
 
-  $form->{callback} = "$form->{script}?action=list_transactions&department=$department&projectnumber=$projectnumber&title=$title";
+  my $action = $form->{subreport} ? 'display_all' : 'list_transactions';
+  $form->{callback} = "$form->{script}?action=$action&department=$department&projectnumber=$projectnumber&title=$title";
   for (qw(path direction oldsort accno login fromdate todate accounttype gifi_accno l_heading l_subtotal l_accno prevreport)) { $form->{callback} .= "&$_=$form->{$_}" }
 
   $form->helpref("account_transactions", $myconfig{countrycode});
 
-  unless ($form->{subreport}) {
+  if ($form->{subreport}) {
+    $form->{helpref} = qq|<a name="$form->{accno}">|;
+  } else {
     $form->header;
     print q|
 <body>
@@ -440,7 +449,10 @@ sub list_transactions {
     $column_data{source} = qq|<td>$ca->{source}&nbsp;</td>|;
 
     $column_data{accno} = qq|<td>|;
-    for (@{ $ca->{accno} }) { $column_data{accno} .= "<a href=$drilldown&accno=$_>$_</a> " }
+    for (@{ $ca->{accno} }) {
+      my $link = $form->{subreport} ? qq|"#$_"| : qq|$drilldown&accno=$_|;
+      $column_data{accno} .= "<a href=$link>$_</a> ";
+    }
     $column_data{accno} .= qq|&nbsp;</td>|;
 
     if ($ca->{id} != $sameid) {
