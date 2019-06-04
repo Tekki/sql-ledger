@@ -248,7 +248,7 @@ sub all_transactions {
                  SELECT a.id, a.reference, a.description, ac.transdate,
                  $false AS invoice, ac.amount, 'gl' as module, ac.cleared,
                  ac.source,
-                 '' AS till, ac.chart_id, '0' AS vc_id
+                 '' AS till, '' AS invdescription, ac.chart_id, '0' AS vc_id
                  FROM gl a
                  JOIN acc_trans ac ON (ac.trans_id = a.id)
                  $dpt_join
@@ -264,7 +264,7 @@ sub all_transactions {
                  SELECT a.id, a.invnumber, c.name, ac.transdate,
                  a.invoice, ac.amount, 'ar' as module, ac.cleared,
                  ac.source,
-                 a.till, ac.chart_id, c.id AS vc_id
+                 a.till, a.description AS invdescription, ac.chart_id, c.id AS vc_id
                  FROM ar a
                  JOIN acc_trans ac ON (ac.trans_id = a.id)
                  JOIN customer c ON (a.customer_id = c.id)
@@ -281,7 +281,7 @@ sub all_transactions {
                  SELECT a.id, a.invnumber, v.name, ac.transdate,
                  a.invoice, ac.amount, 'ap' as module, ac.cleared,
                  ac.source,
-                 a.till, ac.chart_id, v.id AS vc_id
+                 a.till, a.description AS invdescription, ac.chart_id, v.id AS vc_id
                  FROM ap a
                  JOIN acc_trans ac ON (ac.trans_id = a.id)
                  JOIN vendor v ON (a.vendor_id = v.id)
@@ -309,17 +309,17 @@ sub all_transactions {
   $query = qq|SELECT c.id, c.accno FROM chart c
               JOIN acc_trans ac ON (ac.chart_id = c.id)
               WHERE ac.amount >= 0
-              AND (c.link = 'AR' OR c.link = 'AP')
               AND ac.approved = '1'
-              AND ac.trans_id = ?|;
+              AND ac.trans_id = ?
+              AND ac.transdate = ?|;
   my $dr = $dbh->prepare($query) || $form->dberror($query);
 
   $query = qq|SELECT c.id, c.accno FROM chart c
               JOIN acc_trans ac ON (ac.chart_id = c.id)
               WHERE ac.amount < 0
-              AND (c.link = 'AR' OR c.link = 'AP')
               AND ac.approved = '1'
-              AND ac.trans_id = ?|;
+              AND ac.trans_id = ?
+              AND ac.transdate = ?|;
   my $cr = $dbh->prepare($query) || $form->dberror($query);
 
   my $accno;
@@ -355,7 +355,7 @@ sub all_transactions {
       if ($ref->{amount} < 0) {
         $ref->{debit} = $ref->{amount} * -1;
         $ref->{credit} = 0;
-        $dr->execute($ref->{id});
+        $dr->execute($ref->{id}, $ref->{transdate});
         $ref->{accno} = ();
         while (($chart_id, $accno) = $dr->fetchrow_array) {
           $accno{$accno} = 1 if $chart_id ne $ref->{chart_id};
@@ -368,14 +368,14 @@ sub all_transactions {
         $ref->{credit} = $ref->{amount};
         $ref->{debit} = 0;
 
-        $cr->execute($ref->{id});
+        $cr->execute($ref->{id}, $ref->{transdate});
         $ref->{accno} = ();
         while (($chart_id, $accno) = $cr->fetchrow_array) {
           $accno{$accno} = 1 if $chart_id ne $ref->{chart_id};
         }
         $cr->finish;
 
-        for (keys %accno) { push @{ $ref->{accno} }, "$_ " }
+        for (sort keys %accno) { push @{ $ref->{accno} }, "$_ " }
 
       }
 
