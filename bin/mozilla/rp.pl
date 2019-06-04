@@ -2193,9 +2193,10 @@ sub display_all {
     next unless $ref->{charttype} eq 'A';
 
     $form = bless {%$oldform}, Form;
-    $form->{subreport} = 1;
-    $form->{sort}      = 'transdate';
     $form->{accno}     = $ref->{accno};
+    $form->{l_accno}   = 1;
+    $form->{sort}      = 'transdate';
+    $form->{subreport} = 1;
 
     $subtotaldebit = $subtotalcredit = 0;
     $totaldebit    = $totalcredit    = 0;
