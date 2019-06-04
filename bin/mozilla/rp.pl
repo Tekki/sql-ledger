@@ -4350,6 +4350,8 @@ Calls C<< &{ "deselect_all_$form->{type}" } >>.
 
 =head2 deselect_all_statement
 
+=head2 display_all
+
 =head2 do_print_reminder
 
 =head2 do_print_statement
