@@ -414,7 +414,7 @@ $self{subs} = {
   'drucken'                     => 'print_',
   'speichern'                   => 'save',
   'als_neu_speichern'           => 'save_as_new',
-  'übertrag'                    => 'transfer',
+  'Übertrag'                    => 'transfer',
   'aktualisieren'               => 'update',
 };
 
