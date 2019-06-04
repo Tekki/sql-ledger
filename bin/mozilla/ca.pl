@@ -343,11 +343,15 @@ sub list_transactions {
 
   $form->helpref("account_transactions", $myconfig{countrycode});
 
-  $form->header;
-
-  print qq|
+  unless ($form->{subreport}) {
+    $form->header;
+    print q|
 <body>
+|;
+  }
 
+  $options = '' if $form->{subreport};
+  print qq|
 <table width=100%>
   <tr>
     <th class=listtop>$form->{helpref}$form->{title}</a></th>
@@ -481,10 +485,14 @@ sub list_transactions {
     <td><hr size=3 noshade></td>
   </tr>
 </table>
+|;
 
+  unless ($form->{subreport}) {
+    print q|
 </body>
 </html>
 |;
+  }
 
 }
 

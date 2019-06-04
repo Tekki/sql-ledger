@@ -2104,8 +2104,12 @@ sub list_accounts {
 <form method=post action=$form->{script}>
 |;
 
-  %button = ('Save Report' => { ndx => 8, key => 'S', value => $locale->text('Save Report') }
-            );
+  %button = (
+    'Save Report' =>
+      {ndx => 8, key => 'S', value => $locale->text('Save Report')},
+    'Display All' =>
+      {ndx => 9, key => 'A', value => $locale->text('Display All')},
+  );
 
   if (!$form->{admin}) {
     delete $button{'Save Report'} unless $form->{savereport};
@@ -2134,6 +2138,75 @@ sub list_accounts {
 </html>
 |;
 
+}
+
+
+sub display_all {
+
+  $form->{title} = $locale->text('Accounts');
+
+  require "$form->{path}/ca.pl";
+
+  RP->trial_balance(\%myconfig, $form);
+
+  if ($form->{department}) {
+    ($department) = split /--/, $form->{department};
+    $options = $locale->text('Department')." : $department<br>";
+  }
+  if ($form->{projectnumber}) {
+    ($projectnumber) = split /--/, $form->{projectnumber};
+    $options .= $locale->text('Project Number')." : $projectnumber<br>";
+  }
+
+  if ($form->{fromdate} || $form->{todate}) {
+    if ($form->{fromdate}) {
+      $fromdate = $locale->date(\%myconfig, $form->{fromdate}, 1);
+    }
+    if ($form->{todate}) {
+      $todate = $locale->date(\%myconfig, $form->{todate}, 1);
+    }
+    $form->{period} = "$fromdate - $todate";
+  } else {
+    $form->{period} = $locale->date(\%myconfig, $form->current_date(\%myconfig), 1);
+  }
+  $options .= $form->{period};
+
+  $form->header;
+
+  print qq|
+<body>
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>$options</td>
+  </tr>
+</table>
+|;
+
+  my $oldform = $form;
+  for my $ref (sort { $a->{accno} cmp $b->{accno} } @{$oldform->{TB}}) {
+    next unless $ref->{charttype} eq 'A';
+
+    $form = bless {%$oldform}, Form;
+    $form->{subreport} = 1;
+    $form->{sort}      = 'transdate';
+    $form->{accno}     = $ref->{accno};
+
+    $subtotaldebit = $subtotalcredit = 0;
+    $totaldebit    = $totalcredit    = 0;
+
+    &list_transactions;
+  }
+
+  print qq|
+
+</body>
+</html>
+|;
 }
 
 
