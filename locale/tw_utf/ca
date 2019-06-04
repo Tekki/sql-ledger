@@ -3,7 +3,6 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'AR/AP'                       => '應收/應付 ',
   'Account'                     => '帳戶',
   'Apr'                         => '四月',
   'April'                       => '四月',
@@ -12,6 +11,7 @@ $self{texts} = {
   'Balance'                     => '餘額',
   'Chart of Accounts'           => '會計科目表',
   'Closed'                      => '已關閉',
+  'Contra'                      => '相反',
   'Credit'                      => '貸方',
   'Current'                     => '現有',
   'Date'                        => '日期',

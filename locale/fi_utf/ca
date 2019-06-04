@@ -11,6 +11,7 @@ $self{texts} = {
   'Balance'                     => 'Tase',
   'Chart of Accounts'           => 'Tilikartta',
   'Closed'                      => 'Suljettu',
+  'Contra'                      => 'Kontra',
   'Credit'                      => 'Kredit',
   'Current'                     => 'Erääntyy',
   'Date'                        => 'Päiväys',

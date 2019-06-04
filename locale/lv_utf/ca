@@ -11,6 +11,7 @@ $self{texts} = {
   'Balance'                     => 'Bilance',
   'Chart of Accounts'           => 'Kontu plāns',
   'Closed'                      => 'Aizvērts',
+  'Contra'                      => 'Kontrārais konts',
   'Credit'                      => 'Kredīts',
   'Current'                     => 'Pašreizējs',
   'Date'                        => 'Datums',

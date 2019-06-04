@@ -11,6 +11,7 @@ $self{texts} = {
   'Balance'                     => 'ä½é¢',
   'Chart of Accounts'           => 'ä¼è®¡ç§ç®è¡¨',
   'Closed'                      => 'å·²å³é­',
+  'Contra'                      => 'ç¸å',
   'Credit'                      => 'è´·æ¹',
   'Current'                     => 'ç°æ',
   'Date'                        => 'æ¥æ',

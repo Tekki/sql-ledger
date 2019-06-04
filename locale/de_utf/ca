@@ -3,7 +3,6 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'AR/AP'                       => 'OF/OV',
   'Accepted format is'          => 'Akzeptiertes Datumsformat',
   'Account'                     => 'Konto',
   'Allowed range for selected month is' => 'Erlaubte Tage für ausgewählten Monat sind',
@@ -15,6 +14,7 @@ $self{texts} = {
   'Balance'                     => 'Bilanz',
   'Chart of Accounts'           => 'Kontenübersicht',
   'Closed'                      => 'Geschlossen',
+  'Contra'                      => 'Gegenkonto',
   'Credit'                      => 'Haben',
   'Current'                     => 'Aktuell',
   'Date'                        => 'Datum',
