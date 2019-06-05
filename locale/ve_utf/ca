@@ -3,7 +3,6 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'AR/AP'                       => 'CxC/CxP',
   'Account'                     => 'Cuenta',
   'Apr'                         => 'Abr',
   'April'                       => 'Abril',
@@ -12,6 +11,7 @@ $self{texts} = {
   'Balance'                     => 'Balance',
   'Chart of Accounts'           => 'Plan de Cuentas',
   'Closed'                      => 'Cerrado',
+  'Contra'                      => 'Cuentas de Orden',
   'Credit'                      => 'Crédito',
   'Current'                     => 'Actual',
   'Date'                        => 'Fecha',

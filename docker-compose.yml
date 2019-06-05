@@ -3,12 +3,11 @@
 # with sql-ledger at http://localhost/sql-ledger
 # and db admin at http://localhost:8080?pgsql=db
 
-version: '3'
+version: '2.4'
 
 services:
   db:
     image: postgres
-    container_name: sl-db
     environment:
       POSTGRES_PASSWORD: sql-ledger
       POSTGRES_USER: sql-ledger
@@ -17,7 +16,6 @@ services:
 
   dbdamin:
     image: adminer
-    container_name: sl-dbadmin
     environment:
       ADMINER_DESIGN: nette
     ports:
@@ -26,7 +24,6 @@ services:
   app:
     build: .
     image: sql-ledger-test:0.5
-    container_name: sl-app
     ports:
       - 80:80
     volumes:

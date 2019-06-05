@@ -1,7 +1,7 @@
 # Dockerfile for test environment
 FROM httpd
 
-RUN set -x \
+RUN set -ex \
   && apt-get update \
   && apt-get install -y --no-install-recommends \
     libdbd-pg-perl \

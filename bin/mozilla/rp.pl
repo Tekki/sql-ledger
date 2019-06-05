@@ -158,11 +158,16 @@ sub report {
   $form->{summary} = "1" unless $form->{summary} =~ /(0|1)/;
   $checked{$form->{summary}} = "checked";
 
+  if ($form->{reportcode} =~ /^tax_/) {
+    $taxsummary = q|
+          <input name=summary type=radio class=radio value=2> |.$locale->text('Only Sums');
+  }
+
   $summary = qq|
         <tr>
           <th></th>
           <td><input name=summary type=radio class=radio value=1 $checked{1}> |.$locale->text('Summary').qq|
-          <input name=summary type=radio class=radio value=0 $checked{0}> |.$locale->text('Detail').qq|
+          <input name=summary type=radio class=radio value=0 $checked{0}> |.$locale->text('Detail').qq|$taxsummary
           </td>
         </tr>
 |;
@@ -1843,6 +1848,7 @@ sub generate_trial_balance {
 
   $form->{title} = $locale->text('Trial Balance') . " / $form->{company}";
   $form->helpref("trial_balance", $myconfig{countrycode});
+  $form->{l_accno} = 1;
 
   $form->{callback} = "$form->{script}?action=generate_trial_balance";
   for (qw(login path nextsub fromdate todate month year interval l_heading l_subtotal all_accounts accounttype reportcode reportlogin)) { $form->{callback} .= "&$_=$form->{$_}" }
@@ -1933,7 +1939,7 @@ sub list_accounts {
     $description = $form->escape($ref->{description});
 
     $href = qq|ca.pl?action=list_transactions|;
-    for (qw(path accounttype login fromdate todate l_heading l_subtotal project_id nextsub)) { $href .= "&$_=$form->{$_}" }
+    for (qw(path accounttype login fromdate todate l_heading l_subtotal l_accno project_id nextsub)) { $href .= "&$_=$form->{$_}" }
     $href .= "&sort=transdate&prevreport=$callback&department=$department&projectnumber=$projectnumber&title=$title";
 
     if ($form->{accounttype} eq 'gifi') {
@@ -2099,8 +2105,12 @@ sub list_accounts {
 <form method=post action=$form->{script}>
 |;
 
-  %button = ('Save Report' => { ndx => 8, key => 'S', value => $locale->text('Save Report') }
-            );
+  %button = (
+    'Save Report' =>
+      {ndx => 8, key => 'S', value => $locale->text('Save Report')},
+    'Display All' =>
+      {ndx => 9, key => 'A', value => $locale->text('Display All')},
+  );
 
   if (!$form->{admin}) {
     delete $button{'Save Report'} unless $form->{savereport};
@@ -2129,6 +2139,76 @@ sub list_accounts {
 </html>
 |;
 
+}
+
+
+sub display_all {
+
+  $form->{title} = $locale->text('Accounts');
+
+  require "$form->{path}/ca.pl";
+
+  RP->trial_balance(\%myconfig, $form);
+
+  if ($form->{department}) {
+    ($department) = split /--/, $form->{department};
+    $options = $locale->text('Department')." : $department<br>";
+  }
+  if ($form->{projectnumber}) {
+    ($projectnumber) = split /--/, $form->{projectnumber};
+    $options .= $locale->text('Project Number')." : $projectnumber<br>";
+  }
+
+  if ($form->{fromdate} || $form->{todate}) {
+    if ($form->{fromdate}) {
+      $fromdate = $locale->date(\%myconfig, $form->{fromdate}, 1);
+    }
+    if ($form->{todate}) {
+      $todate = $locale->date(\%myconfig, $form->{todate}, 1);
+    }
+    $form->{period} = "$fromdate - $todate";
+  } else {
+    $form->{period} = $locale->date(\%myconfig, $form->current_date(\%myconfig), 1);
+  }
+  $options .= $form->{period};
+
+  $form->header;
+
+  print qq|
+<body>
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>$options</td>
+  </tr>
+</table>
+|;
+
+  my $oldform = $form;
+  for my $ref (sort { $a->{accno} cmp $b->{accno} } @{$oldform->{TB}}) {
+    next unless $ref->{charttype} eq 'A';
+
+    $form = bless {%$oldform}, Form;
+    $form->{accno}     = $ref->{accno};
+    $form->{l_accno}   = 1;
+    $form->{sort}      = 'transdate';
+    $form->{subreport} = 1;
+
+    $subtotaldebit = $subtotalcredit = 0;
+    $totaldebit    = $totalcredit    = 0;
+
+    &list_transactions;
+  }
+
+  print qq|
+
+</body>
+</html>
+|;
 }
 
 
@@ -3655,7 +3735,7 @@ sub generate_tax_report {
   $callback = $form->escape($callback);
 
   if (@{ $form->{TR} }) {
-    $sameitem = $form->{TR}->[0]->{$form->{sort}};
+    $amount{subtotal}{label} = $sameitem = $form->{TR}->[0]->{$form->{sort}};
   }
 
   foreach $ref (@{ $form->{TR} }) {
@@ -3666,7 +3746,7 @@ sub generate_tax_report {
     if ($form->{l_subtotal} eq 'Y') {
       if ($sameitem ne $ref->{$form->{sort}}) {
         &subtotal('subtotal');
-        $sameitem = $ref->{$form->{sort}};
+        $amount{subtotal}{label} = $sameitem = $ref->{$form->{sort}};
       }
     }
 
@@ -3684,7 +3764,7 @@ sub generate_tax_report {
 |;
       $acctotal= 1;
     }
-    $sameaccno = $ref->{accno};
+    $amount{acctotal}{label} = $sameaccno = $ref->{accno};
 
     for (qw(total subtotal acctotal)) {
       $amount{$_}{netamount} += $ref->{netamount};
@@ -3706,15 +3786,17 @@ sub generate_tax_report {
     for (qw(netamount tax total)) { $column_data{$_} = qq|<td align=right>$ref->{$_}</td>| }
 
     $i++; $i %= 2;
-    print qq|
+    if ($form->{summary} != 2) {
+      print qq|
         <tr class=listrow$i>
 |;
 
-    for (@column_index) { print "$column_data{$_}\n" }
+      for (@column_index) { print "$column_data{$_}\n" }
 
-    print qq|
+      print qq|
         </tr>
 |;
+    }
 
   }
 
@@ -3791,6 +3873,9 @@ sub subtotal {
   $_ = shift;
 
   for (@column_index) { $column_data{$_} = "<td>&nbsp;</td>" }
+  if ($amount{$_}{label}) {
+    $column_data{$column_index[0]} = qq|<td>$amount{$_}{label}</td>|;
+  }
 
   $amount{$_}{netamount} = $form->format_amount(\%myconfig, $amount{$_}{netamount}, $form->{precision}, "&nbsp;");
   $amount{$_}{tax} = $form->format_amount(\%myconfig, $amount{$_}{tax}, $form->{precision}, "&nbsp;");
@@ -4264,6 +4349,8 @@ Calls C<< &{ "deselect_all_$form->{type}" } >>.
 =head2 deselect_all_reminder
 
 =head2 deselect_all_statement
+
+=head2 display_all
 
 =head2 do_print_reminder
 

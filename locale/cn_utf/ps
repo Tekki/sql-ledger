@@ -36,6 +36,7 @@ $self{texts} = {
   'Attachment'                  => 'éæ¡£',
   'Aug'                         => 'å«æ',
   'August'                      => 'å«æ',
+  'Balance'                     => 'ä½é¢',
   'Balance Sheet'               => 'èµäº§è´åºè¡¨',
   'Bcc'                         => 'ä¸æ¾ç¤ºæé',
   'Beginning Balance'           => 'èµ·å§ä½é¢',
@@ -52,6 +53,7 @@ $self{texts} = {
   'Cash'                        => 'ç°é',
   'Cc'                          => 'æé',
   'Change'                      => 'æ´æ¹',
+  'Chart of Accounts'           => 'ä¼è®¡ç§ç®è¡¨',
   'Check'                       => 'æ£æ¥',
   'City'                        => 'åå¸',
   'Closed'                      => 'å·²å³é­',
@@ -59,6 +61,7 @@ $self{texts} = {
   'Confirm!'                    => 'å¥å¸æå!',
   'Contact'                     => 'è¿ç»äºº',
   'Continue'                    => 'ç»§ç»­',
+  'Contra'                      => 'ç¸å',
   'Copies'                      => 'å¯æ¬',
   'Cost'                        => 'ææ¬',
   'Country'                     => 'å½å®¶',
@@ -131,6 +134,7 @@ $self{texts} = {
   'Jun'                         => 'å­æ',
   'June'                        => 'å­æ',
   'Language'                    => 'è¯­è¨',
+  'List Transactions'           => 'ååºäº¤æ',
   'Make'                        => 'å¶é ',
   'Mar'                         => 'ä¸æ',
   'March'                       => 'ä¸æ',
@@ -193,6 +197,7 @@ $self{texts} = {
   'Quotation'                   => 'æ¥ä»·å',
   'Quotation Date missing!'     => 'æªæææ¥ä»·åæ¥æ',
   'Quotation Number missing!'   => 'æªæææ¥ä»·åå·ç ',
+  'R'                           => 'å¯¹',
   'Recd'                        => 'å·³æ¶å°',
   'Receipt'                     => 'æ¶æ®',
   'Receipts'                    => 'æ¶æ®',
@@ -281,9 +286,11 @@ $self{subs} = {
   'ar_transaction'              => 'ar_transaction',
   'assign_number'               => 'assign_number',
   'build_report'                => 'build_report',
+  'ca_subtotal'                 => 'ca_subtotal',
   'calc_markup'                 => 'calc_markup',
   'calendar'                    => 'calendar',
   'change_report'               => 'change_report',
+  'chart_of_accounts'           => 'chart_of_accounts',
   'check_all'                   => 'check_all',
   'check_form'                  => 'check_form',
   'check_name'                  => 'check_name',
@@ -305,6 +312,7 @@ $self{subs} = {
   'deselect_all_reminder'       => 'deselect_all_reminder',
   'deselect_all_statement'      => 'deselect_all_statement',
   'display'                     => 'display',
+  'display_all'                 => 'display_all',
   'display_form'                => 'display_form',
   'display_row'                 => 'display_row',
   'do_generate_invoices'        => 'do_generate_invoices',
@@ -336,9 +344,11 @@ $self{subs} = {
   'js_calendar'                 => 'js_calendar',
   'jsmenu'                      => 'jsmenu',
   'jsmenu_frame'                => 'jsmenu_frame',
+  'list'                        => 'list',
   'list_accounts'               => 'list_accounts',
   'list_names'                  => 'list_names',
   'list_payments'               => 'list_payments',
+  'list_transactions'           => 'list_transactions',
   'lookup_partsgroup'           => 'lookup_partsgroup',
   'main_groups'                 => 'main_groups',
   'menubar'                     => 'menubar',
@@ -427,6 +437,7 @@ $self{subs} = {
   'å é¤'                      => 'delete',
   'å é¤é¢å®'                => 'delete_schedule',
   'çµå­é®ä»¶'                => 'e_mail',
+  'ååºäº¤æ'                => 'list_transactions',
   'å å¥'                      => 'post',
   'å½æ°çå å¥'             => 'post_as_new',
   'åå°'                      => 'print',

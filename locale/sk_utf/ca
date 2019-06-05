@@ -3,7 +3,6 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'AR/AP'                       => 'Pohľadávky/Záväzky',
   'Account'                     => 'Účet',
   'Apr'                         => 'Apr',
   'April'                       => 'Apríl',
@@ -12,6 +11,7 @@ $self{texts} = {
   'Balance'                     => 'Súvaha',
   'Chart of Accounts'           => 'Účtový rozvrh',
   'Closed'                      => 'Zaplatené',
+  'Contra'                      => 'Proti',
   'Credit'                      => 'Dal',
   'Current'                     => 'Sučasné',
   'Date'                        => 'Dátum',

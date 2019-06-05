@@ -126,7 +126,7 @@ sub new {
 
   $self->{version} = "3.2.7";
   $self->{dbversion} = "3.2.3";
-  $self->{version2} = "tekki 3.2.7.10";
+  $self->{version2} = "tekki 3.2.7.11";
 
   $self->{version2} .= "-extended";
 
@@ -1871,8 +1871,11 @@ sub format_string {
   }
 
   if ($self->{format} =~ /(ps|pdf)/) {
+    # Markdown
     for (@fields) {
-      $self->{$_} =~ s~(https?://)([^\f\t\n\r ?]+)(\S*)~\\href{$1$2$3}{$2}~g;
+      $self->{$_} =~ s~\*\*(\S.*?\S)\*\*~\\textbf{$1}~g;
+      $self->{$_} =~ s~\*(\S.*?\S)\*~\\textit{$1}~g;
+      $self->{$_} =~ s~\[(.+?)\]\((https?://.+?)\)~\\href{$2}{$1}~g;
     }
   }
 

@@ -5,6 +5,7 @@ locale/*.zip
 locales*.pl
 *.missing
 *~
+*.swp
 .project
 .includepath
 .settings

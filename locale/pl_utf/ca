@@ -11,6 +11,7 @@ $self{texts} = {
   'Balance'                     => 'Saldo',
   'Chart of Accounts'           => 'Plan Kont',
   'Closed'                      => 'Zamknięto',
+  'Contra'                      => 'Konto Przeciwstawne',
   'Credit'                      => 'Kredyt',
   'Current'                     => 'Bieżący',
   'Date'                        => 'Data',
