@@ -3,10 +3,10 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'AP'                          => 'Kreditoren',
-  'AP account missing!'         => 'Kreditorenkonto fehlt!',
-  'AR'                          => 'Debitoren',
-  'AR account missing!'         => 'Debitorenkonto fehlt!',
+  'AP'                          => 'Verbindlichkeiten',
+  'AP account missing!'         => 'Verbindlichkeitskonto fehlt!',
+  'AR'                          => 'Forderungen',
+  'AR account missing!'         => 'Forderungskonto fehlt!',
   'Accepted format is'          => 'Erlaubtes Format ist',
   'Account'                     => 'Konto',
   'Accounting Menu'             => 'Kontoverwaltung',

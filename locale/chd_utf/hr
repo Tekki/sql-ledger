@@ -4,7 +4,7 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   '%'                           => '%',
-  'AP'                          => 'Kreditoren',
+  'AP'                          => 'Verbindlichkeiten',
   'Above'                       => 'Über',
   'Accepted format is'          => 'Erlaubtes Format ist',
   'Access Control'              => 'Zugriffskontrolle',

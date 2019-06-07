@@ -3,10 +3,10 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'AP'                          => 'Kreditoren',
+  'AP'                          => 'Verbindlichkeiten',
   'AP Amount'                   => 'Verbindlichkeit',
   'AP Payment'                  => 'Zahlung an Lieferant',
-  'AR'                          => 'Debitoren',
+  'AR'                          => 'Forderungen',
   'AR Amount'                   => 'Forderung',
   'AR Payment'                  => 'Zahlung von Kunde',
   'About'                       => 'Über',
