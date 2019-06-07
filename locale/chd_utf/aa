@@ -4,10 +4,10 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   '+/-'                         => '+/-',
-  'AP Outstanding'              => 'Offene Kreditoren',
+  'AP Outstanding'              => 'Offene Verbindlichkeiten',
   'AP Transaction'              => 'Eingangsbuchung',
   'AP Transactions'             => 'Eingangsbuchungen',
-  'AR Outstanding'              => 'Offene Debitoren',
+  'AR Outstanding'              => 'Offene Forderungen',
   'AR Transaction'              => 'Ausgangsbuchung',
   'AR Transactions'             => 'Ausgangsbuchungen',
   'Accepted format is'          => 'Erlaubtes Format ist',

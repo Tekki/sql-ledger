@@ -126,7 +126,7 @@ sub new {
 
   $self->{version} = "3.2.7";
   $self->{dbversion} = "3.2.3";
-  $self->{version2} = "tekki 3.2.7.11";
+  $self->{version2} = "tekki 3.2.7.12";
 
   $self->{version2} .= "-extended";
 
@@ -154,6 +154,17 @@ sub debug {
     print "</pre>" if $ENV{HTTP_USER_AGENT};
   }
 
+}
+
+
+sub dump {
+  my ($self, @values) = @_;
+  require Data::Dumper;
+  local $Data::Dumper::Sortkeys = 1;
+
+  for (@values) {
+    print {*STDERR} ref($_) ? Data::Dumper::Dumper($_) : "$_\n";
+  }
 }
 
 
@@ -5377,6 +5388,10 @@ L<SL::Form> implements the following methods:
 =head2 delete_references
 
   $form->delete_references($dbh);
+
+=head2 dump
+
+  $form->dump(@values);
 
 =head2 error
 

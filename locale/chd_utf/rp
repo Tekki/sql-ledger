@@ -3,8 +3,8 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'AP Aging'                    => 'Kreditorenspiegel',
-  'AR Aging'                    => 'Debitorenspiegel',
+  'AP Aging'                    => 'Verbindlichkeitsspiegel',
+  'AR Aging'                    => 'Forderungsspiegel',
   'Accepted format is'          => 'Erlaubtes Format ist',
   'Account'                     => 'Konto',
   'Account Number'              => 'Kontonummer',
@@ -97,7 +97,7 @@ $self{texts} = {
   'Include in Report'           => 'In Bericht aufnehmen',
   'Income'                      => 'Ertrag',
   'Income / (Loss)'             => 'Gewinn / (Verlust)',
-  'Income Statement'            => 'Gewinn- und Verlustrechnung',
+  'Income Statement'            => 'Erfolgsrechnung',
   'Invalid date:'               => 'Ungültiges Datum:',
   'Invalid day:'                => 'Ungültiger Tag:',
   'Invalid month:'              => 'Ungültiger Monat:',

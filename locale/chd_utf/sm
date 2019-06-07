@@ -3,8 +3,8 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'AP account does not exist!'  => 'Kreditorenkonto existiert nicht!',
-  'AR account does not exist!'  => 'Debitorenkonto existiert nicht!',
+  'AP account does not exist!'  => 'Verbindlichkeitskonto existiert nicht!',
+  'AR account does not exist!'  => 'Forderungskonto existiert nicht!',
   'Accepted format is'          => 'Erlaubtes Format ist',
   'Allowed range for selected month is' => 'Erlaubter Bereich für Monat ist',
   'Allowed range is'            => 'Erlaubter Bereich ist',
