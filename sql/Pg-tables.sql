@@ -628,7 +628,7 @@ CREATE TABLE semaphore (
   id int,
   login text,
   module text,
-  expires varchar(10)
+  expires varchar(12)
 );
 --
 CREATE TABLE address (
@@ -797,7 +797,8 @@ CREATE TABLE archive (
 --
 CREATE TABLE archivedata (
   archive_id int references archive (id) on delete cascade,
-  bt text
+  bt text,
+  rn int
 );
 --
 CREATE TABLE mimetype (
