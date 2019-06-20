@@ -352,7 +352,9 @@ sub install {
     $alias = $absolutealias = $ENV{'PWD'};
     $alias =~ s/.*\///g;
     
-    $httpddir = `dirname $httpd`;
+    if ($httpd) {
+      $httpddir = `dirname $httpd`;
+    }
     if ($confd) {
       $httpddir = $confd;
     }

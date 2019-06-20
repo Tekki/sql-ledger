@@ -1007,7 +1007,7 @@ sub dbselect_source {
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('User').qq|</th>
-	  <td><input name=dbuser size=10 value=$form->{dbuser}></td>
+	  <td><input name=dbuser size=25 value=$form->{dbuser}></td>
 	  <th align=right>|.$locale->text('Password').qq|</th>
 	  <td><input type=password name=dbpasswd size=10 value=$form->{dbpasswd}></td>
 	</tr>
@@ -1202,6 +1202,7 @@ sub dbcreate {
   $form->isblank("db", $locale->text('Dataset missing!'));
   
   $form->error("$memberfile : ".$locale->text('locked!')) if (-f ${memberfile}.LCK);
+  $form->error($locale->text('Cannot use') . " $form->{db}") if $form->{dbdriver} =~ /Pg/ && $form->{db} =~ /^template(0|1)$/;
 
   # check if dbname is already in use
   open(FH, "$memberfile") or $form->error("$memberfile : $!");

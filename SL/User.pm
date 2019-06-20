@@ -388,9 +388,9 @@ sub dbcreate {
 
   for (qw(db encoding)) { $form->{$_} =~ s/;//g }
 
-  my %dbcreate = ( 'Pg' => qq|CREATE DATABASE "$form->{db}"|,
+  my %dbcreate = ( 'Pg' => qq|CREATE DATABASE \"$form->{db}\"|,
                 'Sybase' => qq|CREATE DATABASE $form->{db}|,
-               'Oracle' => qq|CREATE USER "$form->{db}" DEFAULT TABLESPACE USERS TEMPORARY TABLESPACE TEMP IDENTIFIED BY "$form->{db}"|);
+               'Oracle' => qq|CREATE USER \"$form->{db}\" DEFAULT TABLESPACE USERS TEMPORARY TABLESPACE TEMP IDENTIFIED BY \"$form->{db}\"|);
 
   $dbcreate{Pg} .= " WITH ENCODING = '$form->{encoding}'" if $form->{encoding};
   $dbcreate{Sybase} .= " CHARACTER SET $form->{encoding}" if $form->{encoding};
@@ -446,8 +446,8 @@ sub dbcreate {
   $self->process_query($form, $dbh, $filename);
 
   # create custom tables and functions
-  for (qw(tables functions)) {
-    $filename = "sql/${dbdriver}-custom_${_}.sql";
+  for my $f (qw(tables functions)) {
+    $filename = "sql/${dbdriver}-custom_${f}.sql";
     $self->process_query($form, $dbh, $filename);
   }
 

@@ -3038,6 +3038,8 @@ sub so_requirements {
 	  <b>|.$locale->text('Parts').qq|</b>
 	  <input name=searchitems class=radio type=radio value=assembly>
 	  <b>|.$locale->text('Assemblies').qq|</b>
+	  <input name=searchitems class=radio type=radio value=kit>
+	  <b>|.$locale->text('Kits').qq|</b>
 	  <input name=searchitems class=radio type=radio value=service>
 	  <b>|.$locale->text('Services').qq|</b>
 	  </td>

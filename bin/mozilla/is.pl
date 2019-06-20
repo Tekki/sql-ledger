@@ -1875,10 +1875,15 @@ sub list_names {
 
   $i = 0;
   for $ref (@{ $form->{all_vc} }) {
+
+    $ref->{vcnumber} = $ref->{"$form->{vc}number"};
     
     $i++;
     $j++; $j %= 2;
-    
+
+    $form->{"customernumber_$i"} = $ref->{vcnumber};
+    $form->hide_form("customernumber_$i");
+   
     print qq|
       <tr class=listrow$j>
 |;
@@ -1950,6 +1955,7 @@ sub do_generate_invoices {
     if ($form->{"ndx_$_"}) {
       $i++;
       $myform->{"$form->{vc}_id"} = $form->{"ndx_$_"};
+      $myform->{"$form->{vc}number"} = $form->{"$form->{vc}number_$_"};
       
       $ok = IS->generate_invoice(\%myconfig, \%$myform);
       

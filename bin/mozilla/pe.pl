@@ -1758,13 +1758,13 @@ sub translation {
   }
   
   if ($form->{translation} eq 'project') {
-    $form->{title} = $locale->text('Project Description Translations');
-    $form->helpref("project_translation", $myconfig{countrycode});
+    $form->{title} = $locale->text('Project/Job Description Translations');
+    $form->helpref("project_job_translation", $myconfig{countrycode});
     $form->{number} = "projectnumber";
     $sort = qq|<input type=hidden name=sort value=projectnumber>|;
     $number = qq|
         <tr>
-          <th align=right nowrap>|.$locale->text('Project Number').qq|</th>
+          <th align=right nowrap>|.$locale->text('Project/Job Number').qq|</th>
           <td><input name=projectnumber size=20></td>
         </tr>
 |;

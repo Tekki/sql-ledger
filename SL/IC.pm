@@ -1651,10 +1651,13 @@ sub all_parts {
         $skip = 1;
       }
     }
+
     if ($skip) {
-      $form->{parts}[$l]->{make} .= "\n$ref->{make}";
-      $form->{parts}[$l]->{model} .= "\n$ref->{model}";
-      next;
+      if ($makemodeljoin) {
+        $form->{parts}[$l]->{make} .= "\n$ref->{make}";
+        $form->{parts}[$l]->{model} .= "\n$ref->{model}";
+        next;
+      }
     }
 
     $pth->execute($ref->{id});
@@ -2726,13 +2729,12 @@ sub so_requirements {
   if ($form->{searchitems} eq 'assembly') {
     $where .= " AND p.assembly = '1'";
   }
+  if ($form->{searchitems} eq 'kit') {
+    $where .= " AND p.inventory_accno_id IS NULL AND p.income_accno_id IS NULL AND p.expense_accno_id IS NULL";
+  }
   if ($form->{searchitems} eq 'service') {
-    $where .= " AND p.assembly = '0' AND p.inventory_accno_id IS NULL";
+    $where .= " AND p.assembly = '0' AND p.inventory_accno_id IS NULL AND p.income_accno_id > 0";
   }
-  if ($form->{searchitems} eq 'labor') {
-    $where .= " AND p.inventory_accno_id > 0 AND p.income_accno_id IS NULL";
-  }
-
   if ($form->{partnumber}) {
     $var = $form->like(lc $form->{partnumber});
     $where .= " AND lower(p.partnumber) LIKE '$var'";

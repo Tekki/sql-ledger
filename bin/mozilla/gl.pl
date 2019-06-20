@@ -449,6 +449,7 @@ sub search {
 sub transactions {
 
   ($form->{reportdescription}, $form->{reportid}) = split /--/, $form->{report};
+  $form->{sort} ||= $form->{oldsort};
   $form->{sort} ||= "transdate";
   $form->{reportcode} = 'gl';
 
@@ -739,7 +740,7 @@ sub transactions {
      
       print "\n<td align=center><a href=$revhref&movecolumn=$column_index[0],right><img src=$images/right.png border=0></td>";
       for (1 .. $l - 1) {
-	print "\n<td align=center><a href=$revhref&movecolumn=$column_index[$_],left><img src=$images/left.png border=0><a href=$href&movecolumn=$column_index[$_],right><img src=$images/right.png border=0></td>";
+	print "\n<td align=center><a href=$revhref&movecolumn=$column_index[$_],left><img src=$images/left.png border=0><a href=$revhref&movecolumn=$column_index[$_],right><img src=$images/right.png border=0></td>";
       }
       print "\n<td align=center><a href=$revhref&movecolumn=$column_index[$l],left><img src=$images/left.png border=0></td>";
     }

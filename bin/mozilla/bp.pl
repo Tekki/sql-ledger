@@ -1017,6 +1017,7 @@ sub combine {
   }
 
   $form->{format} = "pdf";
+  $form->{callback} =~ s/\&allbox=1//;
 
   if ($files) {
     chdir("$spool/$myconfig{dbname}");

@@ -1861,7 +1861,7 @@ sub update_payroll {
 	  if (($ref->{trans_id} == $ed->{id}) && $ok) {
             $fromwithholding = 0;
             $fromincome = 0;
-            $form->{"deduct_$i"} = $ref->{amount};
+            $form->{"deduct_$i"} += $ref->{amount};
 
             $j = 0;
             for (@{ $form->{deduct}{$ref->{trans_id}} }) {
@@ -1889,7 +1889,7 @@ sub update_payroll {
 		$form->{"deduct_$i"} += $form->round_amount((($amount * $form->{payperiod}) - $ref->{above}) * $ref->{rate} / $form->{payperiod}, $form->{precision});
 		$ok = 0;
 	      } else {
-		if ($ref->{below}) {
+		if ($m > $ref->{below}) {
 		  $form->{"deduct_$i"} += $form->round_amount(($ref->{below} - $ref->{above}) * $ref->{rate} / $form->{payperiod}, $form->{precision});
 		} else {
 		  $form->{"deduct_$i"} += $form->round_amount((($amount * $form->{payperiod}) - $ref->{above}) * $ref->{rate} / $form->{payperiod}, $form->{precision});

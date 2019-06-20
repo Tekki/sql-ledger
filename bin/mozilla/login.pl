@@ -307,7 +307,7 @@ sub login {
 	# upgrade dataset and log in again
 	open FH, ">$userspath/$user->{dbname}.LCK" or $form->error($!);
 
-	for (qw(dbname dbhost dbport dbdriver dbuser dbpasswd)) { $form->{$_} = $user->{$_} }
+	for (qw(dbname dbhost dbport dbdriver dbconnect dbuser dbpasswd)) { $form->{$_} = $user->{$_} }
 
 	$form->info($locale->text('Upgrading to Version')." $form->{version} ... ");
 
