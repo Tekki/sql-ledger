@@ -124,9 +124,10 @@ sub new {
 
   $self->{charset} = 'UTF-8';
 
-  $self->{version} = "3.2.7";
+  $self->{version} = "3.2.8";
   $self->{dbversion} = "3.2.3";
-  $self->{version2} = "tekki 3.2.7.12";
+  $self->{version2} = "tekki 3.2.8.12";
+  $self->{dbversion2} = 11;
 
   $self->{version2} .= "-extended";
 
@@ -3497,7 +3498,7 @@ sub lastname_used {
                 ORDER BY ct.name|;
   }
   $sth = $dbh->prepare($query);
-  $sth->execute || $self->dberror($query);
+  $sth->execute;
 
   my $ref = $sth->fetchrow_hashref(NAME_lc);
   for (keys %$ref) { $self->{$_} = $ref->{$_} }
@@ -3986,7 +3987,8 @@ sub get_reference {
 
   $self->{id} *= 1;
   my $query = qq|SELECT bt FROM archivedata
-                 WHERE archive_id = $self->{id}|;
+                 WHERE archive_id = $self->{id}
+                 ORDER BY rn|;
   my $sth = $dbh->prepare($query) || $self->error($query);
 
   $sth->execute;
@@ -4080,9 +4082,9 @@ sub save_reference {
   $query = qq|UPDATE archive SET filename = ?
               WHERE filename = ?|;
   my $uath = $dbh->prepare($query) || $self->dberror($query);
-
-  $query = qq|INSERT INTO archivedata (archive_id, bt)
-              VALUES (?, ?)|;
+	      
+  $query = qq|INSERT INTO archivedata (rn, archive_id, bt)
+              VALUES (?, ?, ?)|;
   my $acth = $dbh->prepare($query) || $self->dberror($query);
 
   for $i (1 .. $self->{reference_rows}) {
@@ -4123,8 +4125,9 @@ sub save_reference {
             $uath->execute($self->{"referencefilename_$i"}, $uid);
             $uath->finish;
 
+            my $j = 1;
             while (read FH, $data, 512) {
-              $acth->execute($self->{"referencearchive_id_$i"}, pack 'u', $data);
+              $acth->execute($j++, $self->{"referencearchive_id_$i"}, pack 'u', $data);
               $acth->finish;
             }
             close(FH);

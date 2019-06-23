@@ -111,6 +111,7 @@ sub login {
 
     my %defaults;
     my $dbversion;
+    my $dbversion2;
     my $audittrail;
 
     my $query = qq|SELECT * FROM defaults|;
@@ -118,8 +119,9 @@ sub login {
     $sth->execute;
 
     if ($sth->{NAME}->[0] eq 'fldname') {
-      %defaults = $form->get_defaults($dbh, \@{[qw(version audittrail)]});
+      %defaults = $form->get_defaults($dbh, \@{[qw(version version2 audittrail)]});
       $dbversion = $defaults{version};
+      $dbversion2 = $defaults{version2} * 1;
       $audittrail = $defaults{audittrail};
     } else {
       $query = qq|SELECT version, audittrail FROM defaults|;
@@ -144,13 +146,27 @@ sub login {
       $dbh->do($query);
     }
 
+    # check if we are on Tekki 3.2.3
+    if (!$dbversion2 && $dbversion eq '3.2.3') {
+      $query = 'SELECT id FROM recent LIMIT 1';
+      if ($dbh->selectrow_array($query)) {
+        $dbversion = '3.2.2';
+        $dbversion2 = 11;
+        $query = q|UPDATE defaults SET fldvalue = ? WHERE fldname = 'version'|;
+        $dbh->do($query, undef, $dbversion);
+        $query = q|INSERT INTO defaults (fldname, fldvalue) VALUES ('version2', ?)|;
+        $dbh->do($query, undef, $dbversion2);
+      }
+    }
+
     $dbh->disconnect;
 
     $rc = 0;
 
-    if (($form->{dbversion} ne $dbversion) && $dbversion) {
+    if (($form->{dbversion} ne $dbversion || $form->{dbversion2} != $dbversion2) && $dbversion) {
       $rc = -4;
       $dbupdate = (calc_version($dbversion) < calc_version($form->{dbversion}));
+      $dbupdate ||= $dbversion2 < $form->{dbversion2};
     }
 
     if ($dbupdate) {
@@ -388,9 +404,9 @@ sub dbcreate {
 
   for (qw(db encoding)) { $form->{$_} =~ s/;//g }
 
-  my %dbcreate = ( 'Pg' => qq|CREATE DATABASE "$form->{db}"|,
+  my %dbcreate = ( 'Pg' => qq|CREATE DATABASE \"$form->{db}\"|,
                 'Sybase' => qq|CREATE DATABASE $form->{db}|,
-               'Oracle' => qq|CREATE USER "$form->{db}" DEFAULT TABLESPACE USERS TEMPORARY TABLESPACE TEMP IDENTIFIED BY "$form->{db}"|);
+               'Oracle' => qq|CREATE USER \"$form->{db}\" DEFAULT TABLESPACE USERS TEMPORARY TABLESPACE TEMP IDENTIFIED BY \"$form->{db}\"|);
 
   $dbcreate{Pg} .= " WITH ENCODING = '$form->{encoding}'" if $form->{encoding};
   $dbcreate{Sybase} .= " CHARACTER SET $form->{encoding}" if $form->{encoding};
@@ -446,8 +462,8 @@ sub dbcreate {
   $self->process_query($form, $dbh, $filename);
 
   # create custom tables and functions
-  for my $item (qw(tables functions)) {
-    $filename = "sql/${dbdriver}-custom_${item}.sql";
+  for my $f (qw(tables functions)) {
+    $filename = "sql/${dbdriver}-custom_${f}.sql";
     $self->process_query($form, $dbh, $filename);
   }
 
@@ -555,11 +571,14 @@ sub dbupdate {
   $form->{sid} = $form->{dbdefault};
 
   my @upgradescripts = ();
+  my @upgradescripts2 = ();
   my $query;
 
   # read update scripts into memory
   opendir SQLDIR, "sql/." or $form->error($!);
   @upgradescripts = sort script_version grep /$form->{dbdriver}-upgrade-.*?\.sql$/, readdir SQLDIR;
+  rewinddir SQLDIR;
+  @upgradescripts2 = grep /Tekki-upgrade-.*\.sql$/, readdir SQLDIR;
   closedir SQLDIR;
 
   &dbconnect_vars($form, $form->{dbname});
@@ -573,10 +592,12 @@ sub dbupdate {
 
   my %defaults;
   my $version;
+  my $version2;
 
   if ($sth->{NAME}->[0] eq 'fldname') {
-    %defaults = $form->get_defaults($dbh, \@{['version']});
+    %defaults = $form->get_defaults($dbh, \@{['version', 'version2']});
     $version = $defaults{version};
+    $version2 = $defaults{version2} * 1;
   } else {
     $query = qq|SELECT version FROM defaults|;
     ($version) = $dbh->selectrow_array($query);
@@ -604,6 +625,23 @@ sub dbupdate {
 
     $version = $maxdb;
 
+  }
+
+  # Tekki upgrade
+  for my $upgradescript (@upgradescripts2) {
+    $upgradescript =~ /Tekki-upgrade-(\d+)-(\d+)/;
+    my $mindb = $1 * 1;
+    my $maxdb = $2 * 1;
+
+    next if ($version2 >= $maxdb);
+
+    # exit if there is no upgrade script or version == mindb
+    last if ($version2 < $mindb || $version2 >= $form->{dbversion2});
+
+    # apply upgrade
+    $self->process_query($form, $dbh, "sql/$upgradescript");
+
+    $version2 = $maxdb;
   }
 
   $dbh->disconnect;

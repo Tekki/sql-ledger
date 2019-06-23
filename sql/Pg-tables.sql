@@ -74,6 +74,7 @@ CREATE TABLE defaults (
 );
 --
 INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '3.2.3');
+INSERT INTO defaults (fldname, fldvalue) VALUES ('version2', '11');
 --
 CREATE TABLE acc_trans (
   trans_id int,
@@ -628,7 +629,7 @@ CREATE TABLE semaphore (
   id int,
   login text,
   module text,
-  expires varchar(10)
+  expires varchar(12)
 );
 --
 CREATE TABLE address (
@@ -797,7 +798,8 @@ CREATE TABLE archive (
 --
 CREATE TABLE archivedata (
   archive_id int references archive (id) on delete cascade,
-  bt text
+  bt text,
+  rn int
 );
 --
 CREATE TABLE mimetype (
