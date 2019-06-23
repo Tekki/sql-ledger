@@ -74,6 +74,7 @@ CREATE TABLE defaults (
 );
 --
 INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '3.2.3');
+INSERT INTO defaults (fldname, fldvalue) VALUES ('version2', '11');
 --
 CREATE TABLE acc_trans (
   trans_id int,

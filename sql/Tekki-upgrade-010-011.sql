@@ -21,4 +21,5 @@ CREATE INDEX recent_object_id_key ON recent(object_id);
 CREATE INDEX recent_code_key ON recent(code);
 CREATE UNIQUE INDEX recentdescr_object_id_key ON recentdescr(object_id);
 --
-UPDATE defaults SET fldvalue = '3.2.3' WHERE fldname = 'version';
+DELETE FROM defaults WHERE fldname = 'version2';
+INSERT INTO defaults (fldname, fldvalue) VALUES ('version2', '11');
