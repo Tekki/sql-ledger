@@ -637,8 +637,8 @@ sub search {
     $fromto = qq|
  	<tr>
 	  <th align=right>|.$locale->text('Startdate').qq|</th>
-	  <td>|.$locale->text('From').qq| <input name=startdatefrom size=11 class=date title="$myconfig{'dateformat'}">|.&js_calendar("main", "startdatefrom")
-	  .$locale->text('To').qq| <input name=startdateto size=11 class=date title="$myconfig{'dateformat'}">|.&js_calendar("main", "startdateto").qq|</td>
+	  <td>|.$locale->text('From').qq| <input name=startdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "startdatefrom")
+	  .$locale->text('To').qq| <input name=startdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "startdateto").qq|</td>
 	</tr>
 |;
 

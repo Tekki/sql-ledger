@@ -882,7 +882,7 @@ sub delete_login {
 
 sub config_vars {
 
-  my @conf = qw(acs company countrycode charset dateformat
+  my @conf = qw(acs countrycode charset dateformat
              dbconnect dbdriver dbhost dbname dboptions dbpasswd
 	     dbport dbuser menuwidth name email numberformat password
 	     outputformat printer sessionkey sid

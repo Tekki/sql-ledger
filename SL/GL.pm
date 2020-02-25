@@ -498,61 +498,84 @@ sub transactions {
     }
  
     if ($form->{datefrom}) {
-      $where = $glwhere;
-      $where =~ s/(AND)??ac.transdate.*?(AND|$)//g;
+
+      $query = qq|SELECT SUM(ac.amount)
+                  FROM acc_trans ac
+                  JOIN chart c ON (ac.chart_id = c.id)
+                  JOIN gl g ON (g.id = ac.trans_id)
+                  WHERE c.accno = '$form->{accno}'
+                  AND ac.transdate < date '$form->{datefrom}'
+                  |;
+      my ($balance) = $dbh->selectrow_array($query);
+      $form->{balance} = $balance;
+
+      $query = qq|SELECT SUM(ac.amount)
+                  FROM acc_trans ac
+                  JOIN chart c ON (ac.chart_id = c.id)
+                  JOIN ar a ON (a.id = ac.trans_id)
+                  JOIN customer ct ON (ct.id = a.customer_id)
+                  WHERE c.accno = '$form->{accno}'
+                  AND ac.transdate < date '$form->{datefrom}'
+                  |;
+      ($balance) = $dbh->selectrow_array($query);
+      $form->{balance} += $balance;
+
+      $query = qq|SELECT SUM(ac.amount)
+                  FROM acc_trans ac
+                  JOIN chart c ON (ac.chart_id = c.id)
+                  JOIN ap a ON (a.id = ac.trans_id)
+                  JOIN vendor ct ON (ct.id = a.vendor_id)
+                  WHERE c.accno = '$form->{accno}'
+                  AND ac.transdate < date '$form->{datefrom}'
+                  |;
       
+      ($balance) = $dbh->selectrow_array($query);
+      $form->{balance} += $balance;
+    }
+  }
+
+  if ($form->{l_splitledger}) {
+    if ($form->{datefrom}) {
+
       $query = qq|SELECT SUM(ac.amount)
 		  FROM acc_trans ac
 		  JOIN chart c ON (ac.chart_id = c.id)
 		  JOIN gl g ON (g.id = ac.trans_id)
-		  WHERE $where
-		  AND ac.transdate < date '$form->{datefrom}'
+		  WHERE ac.transdate < date '$form->{datefrom}'
+                  AND c.accno = ?
 		  |;
-      my ($balance) = $dbh->selectrow_array($query);
-      $form->{balance} += $balance;
+      $bgl = $dbh->prepare($query);
 
-
-      $where = $arwhere;
-      $where =~ s/(AND)??ac.transdate.*?(AND|$)//g;
-      
       $query = qq|SELECT SUM(ac.amount)
 		  FROM acc_trans ac
 		  JOIN chart c ON (ac.chart_id = c.id)
 		  JOIN ar a ON (a.id = ac.trans_id)
 		  JOIN customer ct ON (ct.id = a.customer_id)
-		  $invoicejoin
-		  WHERE $where
-		  AND ac.transdate < date '$form->{datefrom}'
+		  WHERE ac.transdate < date '$form->{datefrom}'
+                  AND c.accno = ?
 		  |;
-      ($balance) = $dbh->selectrow_array($query);
-      $form->{balance} += $balance;
-
+      $bar = $dbh->prepare($query);
  
-      $where = $apwhere;
-      $where =~ s/(AND)??ac.transdate.*?(AND|$)//g;
-      
       $query = qq|SELECT SUM(ac.amount)
 		  FROM acc_trans ac
 		  JOIN chart c ON (ac.chart_id = c.id)
 		  JOIN ap a ON (a.id = ac.trans_id)
 		  JOIN vendor ct ON (ct.id = a.vendor_id)
-		  $invoicejoin
-		  WHERE $where
-		  AND ac.transdate < date '$form->{datefrom}'
+		  WHERE ac.transdate < date '$form->{datefrom}'
+                  AND c.accno = ?
 		  |;
-      
-      ($balance) = $dbh->selectrow_array($query);
-      $form->{balance} += $balance;
-
+      $bap = $dbh->prepare($query);
     }
   }
-  
 
   my $false = ($myconfig->{dbdriver} =~ /Pg/) ? FALSE : q|'0'|;
  
   my $query = qq|SELECT g.id, 'gl' AS type, $false AS invoice, g.reference,
                  g.description, ac.transdate, ac.source,
-		 ac.amount, c.accno, c.gifi_accno, g.notes, c.link,
+		 ac.amount, c.accno, c.description as account_description,
+                 l.description AS account_translation, c.category,
+                 c.contra AS ca,
+                 c.gifi_accno, g.notes, c.link,
 		 '' AS till, ac.cleared, d.description AS department,
 		 ac.memo, '0' AS name_id, '' AS db,
 		 $gdescription AS lineitem, '' AS name, '' AS vcnumber,
@@ -562,11 +585,15 @@ sub transactions {
 		 JOIN acc_trans ac ON (g.id = ac.trans_id)
 		 JOIN chart c ON (ac.chart_id = c.id)
 		 LEFT JOIN department d ON (d.id = g.department_id)
+		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
                  WHERE $glwhere
 	UNION ALL
 	         SELECT a.id, 'ar' AS type, a.invoice, a.invnumber,
 		 a.description, ac.transdate, ac.source,
-		 ac.amount, c.accno, c.gifi_accno, a.notes, c.link,
+		 ac.amount, c.accno, c.description as account_description,
+                 l.description AS account_translation, c.category,
+                 c.contra AS ca,
+                 c.gifi_accno, a.notes, c.link,
 		 a.till, ac.cleared, d.description AS department,
 		 ac.memo, ct.id AS name_id, 'customer' AS db,
 		 $lineitem AS lineitem, ct.name, ct.customernumber,
@@ -579,11 +606,15 @@ sub transactions {
 		 JOIN customer ct ON (a.customer_id = ct.id)
 		 JOIN address ad ON (ad.trans_id = ct.id)
 		 LEFT JOIN department d ON (d.id = a.department_id)
+		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 		 WHERE $arwhere
 	UNION ALL
 	         SELECT a.id, 'ap' AS type, a.invoice, a.invnumber,
 		 a.description, ac.transdate, ac.source,
-		 ac.amount, c.accno, c.gifi_accno, a.notes, c.link,
+		 ac.amount, c.accno, c.description as account_description,
+                 l.description AS account_translation, c.category,
+                 c.contra AS ca,
+                 c.gifi_accno, a.notes, c.link,
 		 a.till, ac.cleared, d.description AS department,
 		 ac.memo, ct.id AS name_id, 'vendor' AS db,
 		 $lineitem AS lineitem, ct.name, ct.vendornumber,
@@ -596,20 +627,55 @@ sub transactions {
 		 JOIN vendor ct ON (a.vendor_id = ct.id)
 		 JOIN address ad ON (ad.trans_id = ct.id)
 		 LEFT JOIN department d ON (d.id = a.department_id)
+		 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
 		 WHERE $apwhere|;
  
-  my @sf = qw(id transdate reference accno);
+  my @sf = qw(id transdate reference);
+  push @sf, "accno" unless $form->{l_splitledger};
   my %ordinal = $form->ordinal_order($dbh, $query);
-  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
+  my $sort_order = $form->sort_order(\@sf, \%ordinal);
+
+  if ($form->{l_splitledger}) {
+    $sort_order = $ordinal{accno} .", $sort_order";
+  }
+  $query .= qq| ORDER BY $sort_order|;
 
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
   my %trans;
   my $i = 0;
-  
+
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
 
+    $ref->{account_description} = $ref->{account_translation} if $ref->{account_translation};
+
+    if ($form->{l_splitledger}) {
+      $ref->{balance} = 0;
+      if ($form->{datefrom}) {
+        if ($balance{$ref->{accno}}) {
+          $ref->{balance} = $balance{$ref->{accno}};
+        } else {
+          $bgl->execute($ref->{accno}) || $form->dberror;
+          ($balance) = $bgl->fetchrow_array;
+          $ref->{balance} = $balance;
+          $bgl->finish;
+
+          $bar->execute($ref->{accno}) || $form->dberror;
+          ($balance) = $bar->fetchrow_array;
+          $ref->{balance} += $balance;
+          $bar->finish;
+
+          $bap->execute($ref->{accno}) || $form->dberror;
+          ($balance) = $bap->fetchrow_array;
+          $ref->{balance} += $balance;
+          $bap->finish;
+
+          $balance{$ref->{accno}} = $ref->{balance};
+        }
+      }
+    }
+     
     # gl
     if ($ref->{type} eq "gl") {
       $ref->{module} = "gl";
@@ -645,6 +711,7 @@ sub transactions {
 
     for (qw(address1 address2 city zipcode country)) { $ref->{address} .= "$ref->{$_} " }
 
+
     $trans{$ref->{id}}{$i} = {
                  transdate => $ref->{transdate},
                       link => $ref->{link},
@@ -653,7 +720,8 @@ sub transactions {
                 gifi_accno => $ref->{gifi_accno},
                      debit => $ref->{debit},
                     credit => $ref->{credit},
-                    amount => $ref->{debit} + $ref->{credit}
+                    amount => $ref->{debit} + $ref->{credit},
+                   balance => $ref->{balance}
 		             };
     push @{ $form->{GL} }, $ref;
 

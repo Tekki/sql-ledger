@@ -633,7 +633,7 @@ sub schedule {
     $nextdate = qq|
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Next Date').qq|</th>
-		<td><input name=recurringnextdate size=11 class=date title="$myconfig{'dateformat'}" value=$form->{recurringnextdate}>|.&js_calendar("main", "recurringnextdate").qq|</td>
+		<td><input name=recurringnextdate size=11 class=date title="$myconfig{dateformat}" value=$form->{recurringnextdate}>|.&js_calendar("main", "recurringnextdate").qq|</td>
 	      </tr>
 |;
   }
@@ -846,7 +846,7 @@ pdf--|.$locale->text('PDF');
 
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Startdate').qq|</th>
-		<td><input name=recurringstartdate size=11 class=date title="$myconfig{'dateformat'}" value=$form->{recurringstartdate}>|.&js_calendar("main", "recurringstartdate").qq|</td>
+		<td><input name=recurringstartdate size=11 class=date title="$myconfig{dateformat}" value=$form->{recurringstartdate}>|.&js_calendar("main", "recurringstartdate").qq|</td>
 	      </tr>
 	      $nextdate
 	    </table>

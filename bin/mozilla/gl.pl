@@ -220,16 +220,20 @@ sub search {
     $selectaccountingmonth = "\n";
     for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|$_--|.$locale->text($form->{all_month}{$_}).qq|\n| }
 
+    %checked = ();
+    $form->{interval} = "0" unless $form->{interval} =~ /(0|1|3|12)/;
+    $checked{$form->{interval}} = "checked";
+
     $selectfrom = qq|
         <tr>
 	<th align=right>|.$locale->text('Period').qq|</th>
 	<td>
 	<select name=month>|.$form->select_option($selectaccountingmonth, $form->{month}, 1, 1).qq|</select>
 	<select name=year>|.$form->select_option($selectaccountingyear, $form->{year}).qq|</select>
-	<input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
-	<input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
-	<input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
-	<input name=interval class=radio type=radio value=12>&nbsp;|.$locale->text('Year').qq|
+	<input name=interval class=radio type=radio value=0 $checked{0}>&nbsp;|.$locale->text('Current').qq|
+	<input name=interval class=radio type=radio value=1 $checked{1}>&nbsp;|.$locale->text('Month').qq|
+	<input name=interval class=radio type=radio value=3 $checked{3}>&nbsp;|.$locale->text('Quarter').qq|
+	<input name=interval class=radio type=radio value=12 $checked{12}>&nbsp;|.$locale->text('Year').qq|
 	</td>
       </tr>
 |;
@@ -250,9 +254,9 @@ sub search {
 |;
   }
 
-  for (qw(transdate reference description debit credit accno)) { $form->{"l_$_"} = "checked" }
+  for (qw(transdate reference description debit credit splitledger)) { $form->{"l_$_"} = "checked" }
 
-  @checked = qw(l_subtotal);
+  @checked = qw(l_subtotal l_splitledger);
   @input = qw(reference description name vcnumber lineitem notes source memo datefrom dateto month year accnofrom accnoto amountfrom amountto sort direction reportlogin);
   for (qw(department)) {
     push @input, $_ if exists $form->{$_};
@@ -260,6 +264,8 @@ sub search {
   %radio = ( interval => { 0 => 0, 1 => 1, 3 => 2, 12 => 3 },
              category => { X => 0, A => 1, L => 2, Q => 3, I => 4, E => 5 }
            );
+  %checked = ();
+  $checked{X} = "checked";
 
   $i = 1;
   $includeinreport{id} = { ndx => $i++, sort => id, checkbox => 1, html => qq|<input name="l_id" class=checkbox type=checkbox value=Y $form->{l_id}>|, label => $locale->text('ID') };
@@ -376,18 +382,21 @@ sub search {
 	    <table>
 	      <tr>
 		<td>
-		  <input name="category" class=radio type=radio value=X checked>&nbsp;|.$locale->text('All').qq|
-		  <input name="category" class=radio type=radio value=A>&nbsp;|.$locale->text('Asset').qq|
-		  <input name="category" class=radio type=radio value=L>&nbsp;|.$locale->text('Liability').qq|
-		  <input name="category" class=radio type=radio value=Q>&nbsp;|.$locale->text('Equity').qq|
-		  <input name="category" class=radio type=radio value=I>&nbsp;|.$locale->text('Income').qq|
-		  <input name="category" class=radio type=radio value=E>&nbsp;|.$locale->text('Expense').qq|
+		  <input name="category" class=radio type=radio value=X $checked{X}>&nbsp;|.$locale->text('All').qq|
+		  <input name="category" class=radio type=radio value=A $checked{A}>&nbsp;|.$locale->text('Asset').qq|
+		  <input name="category" class=radio type=radio value=L $checked{L}>&nbsp;|.$locale->text('Liability').qq|
+		  <input name="category" class=radio type=radio value=Q $checked{Q}>&nbsp;|.$locale->text('Equity').qq|
+		  <input name="category" class=radio type=radio value=I $checked{I}>&nbsp;|.$locale->text('Income').qq|
+		  <input name="category" class=radio type=radio value=E $checked{E}>&nbsp;|.$locale->text('Expense').qq|
 		</td>
 	      </tr>
 	      
 	      <tr>
 	        <td>
 		  <table>
+		    <tr>
+		      <td nowrap><input name="l_splitledger" class=checkbox type=checkbox value=Y $form->{l_splitledger}>&nbsp;|.$locale->text('Split Ledger').qq|</td>
+		    </tr>
 |;
 
   while (@f) {
@@ -456,13 +465,13 @@ sub transactions {
   GL->transactions(\%myconfig, \%$form);
 
   $href = "$form->{script}?action=transactions";
-  for (qw(direction oldsort path login month year interval reportlogin)) { $href .= "&$_=$form->{$_}" }
+  for (qw(direction oldsort path login month year interval reportlogin l_splitledger)) { $href .= "&$_=$form->{$_}" }
   for (qw(report flds)) { $href .= "&$_=".$form->escape($form->{$_}) }
 
   $form->sort_order();
 
   $callback = "$form->{script}?action=transactions";
-  for (qw(direction oldsort path login month year interval reportlogin)) { $callback .= "&$_=$form->{$_}" }
+  for (qw(direction oldsort path login month year interval reportlogin l_splitledger)) { $callback .= "&$_=$form->{$_}" }
   for (qw(report flds)) { $callback .= "&$_=".$form->escape($form->{$_}) }
   
   %acctype = ( 'A' => $locale->text('Asset'),
@@ -614,13 +623,20 @@ sub transactions {
   $columns{debit} = 1;
   $columns{credit} = 1;
   
-  
   if ($form->{link} =~ /_paid/) {
     push @columns, "cleared";
     $column_data{cleared} = $locale->text('R');
     $form->{l_cleared} = "Y";
   }
   @columns = grep !/department/, @columns if $form->{department};
+
+  if ($form->{l_splitledger}) {
+    unless ($form->{column_index}) {
+      push @columns, "balance";
+      $form->{l_balance} = "Y";
+      $column_data{balance} = $locale->text('Balance');
+    }
+  }
 
   $i = 0;
   if ($form->{column_index}) {
@@ -640,10 +656,10 @@ sub transactions {
     }
     chop $form->{column_index};
   }
-  
+ 
   if ($form->{accno} || $form->{gifi_accno}) {
     @column_index = grep !/(accno|gifi_accno|contra|gifi_contra)/, @column_index;
-    push @column_index, "balance";
+    push @column_index, "balance" unless $form->{l_splitledger};
     $column_data{balance} = $locale->text('Balance');
     for (qw(l_contra l_gifi_contra)) { delete $form->{$_} }
   }
@@ -687,7 +703,7 @@ sub transactions {
       @column_index = $form->sort_column_index;
     }
   }
-  
+
   for (@columns) {
     if ($form->{"l_$_"} eq "Y") {
       # add column to href and callback
@@ -782,8 +798,8 @@ sub transactions {
     $sameitem = $form->{GL}->[0]->{$form->{sort}};
     $cml = -1 if $form->{contra};
   }
-  
-  if (($form->{accno} || $form->{gifi_accno}) && $form->{balance}) {
+
+  if ($form->{accno} || $form->{gifi_accno}) {
 
     for (@column_index) { $column_data{$_} = "<td>&nbsp;</td>" }
     $column_data{balance} = "<td align=right>".$form->format_amount(\%myconfig, $form->{balance} * $ml * $cml, $form->{precision}, 0)."</td>";
@@ -808,7 +824,33 @@ sub transactions {
   $href =~ s/direction=$form->{direction}/direction=$direction/;
 
   $i = 0;
+  $colspan = $#column_index;
+
+  %category = ( A => -1, L => 1, I => 1, E => -1, Q => 1 );
+  %ca = ( 0 => 1, 1 => -1 );
+
   foreach $ref (@{ $form->{GL} }) {
+
+    if ($form->{l_splitledger}) {
+      if ($sameaccno ne $ref->{accno}) {
+        unless ($form->{accno}) {
+
+          &account_subtotal if $sameaccno;
+
+          $ml = $category{$ref->{category}};
+          $cml = $ca{$ref->{ca}};
+
+          print qq|
+            <tr height="15"></tr>
+            <tr>
+              <td colspan=$colspan>$ref->{accno}--$ref->{account_description}</td>
+              <td align=right>|.$form->format_amount(\%myconfig, $ref->{balance} * $ml * $cml, $form->{precision}, 0).qq|</td>
+            </tr>
+            <tr height="5"></tr>|;
+            $form->{balance} = $ref->{balance};
+        }
+      }
+    }
 
     # if item ne sort print subtotal
     if ($form->{l_subtotal} eq 'Y') {
@@ -822,6 +864,9 @@ sub transactions {
     $subtotaldebit += $ref->{debit};
     $subtotalcredit += $ref->{credit};
     
+    $accountsubtotaldebit += $ref->{debit};
+    $accountsubtotalcredit += $ref->{credit};
+
     $totaldebit += $ref->{debit};
     $totalcredit += $ref->{credit};
 
@@ -864,34 +909,39 @@ sub transactions {
     $column_data{balance} = "<td align=right>".$form->format_amount(\%myconfig, $form->{balance} * $ml * $cml, $form->{precision}, 0)."</td>";
     $column_data{cleared} = ($ref->{cleared}) ? "<td>*</td>" : "<td>&nbsp;</td>";
 
-    if ($ref->{id} != $sameid) {
-      $i++; $i %= 2;
-    }
+    $i++; $i %= 2;
+
     print "
         <tr class=listrow$i>";
     for (@column_index) { print "$column_data{$_}\n" }
     print "</tr>";
     
     $sameid = $ref->{id};
+    $sameaccno = $ref->{accno};
+
   }
 
-
   &gl_subtotal if ($form->{l_subtotal} eq 'Y');
-
+  &account_subtotal if $form->{l_splitledger};
 
   for (@column_index) { $column_data{$_} = "<td>&nbsp;</td>" }
   
   $column_data{debit} = "<th align=right class=listtotal>".$form->format_amount(\%myconfig, $totaldebit, $form->{precision}, "&nbsp;")."</th>";
   $column_data{credit} = "<th align=right class=listtotal>".$form->format_amount(\%myconfig, $totalcredit, $form->{precision}, "&nbsp;")."</th>";
-  $column_data{balance} = "<th align=right class=listtotal>".$form->format_amount(\%myconfig, $form->{balance} * $ml * $cml, $form->{precision}, 0)."</th>";
+  $column_data{balance} = "<th align=right class=listtotal>".$form->format_amount(\%myconfig, $form->{balance} *$ml * $cml, $form->{precision}, "&nbsp;")."</th>";
   
+  unless ($form->{accno}) {
   print qq|
 	<tr class=listtotal>
 |;
 
   for (@column_index) { print "$column_data{$_}\n" }
 
-  
+  print qq|
+        </tr>
+|;
+};
+
   %button = ('General Ledger--Add Transaction' => { ndx => 1, key => 'G', value => $locale->text('GL Transaction') },
   'AR--Add Transaction' => { ndx => 2, key => 'R', value => $locale->text('AR Transaction') },
   'AR--Sales Invoice' => { ndx => 3, key => 'I', value => $locale->text('Sales Invoice ') },
@@ -929,7 +979,6 @@ sub transactions {
   }
 
   print qq|
-        </tr>
       </table>
     </td>
   </tr>
@@ -946,7 +995,7 @@ sub transactions {
   if ($form->{year} && $form->{month}) {
     for (qw(datefrom dateto)) { delete $form->{$_} }
   }
-  $form->hide_form(qw(department reference description name vcnumber lineitem notes source memo datefrom dateto month year accnofrom accnoto amountfrom amountto interval category l_subtotal));
+  $form->hide_form(qw(department reference description name vcnumber lineitem notes source memo datefrom dateto month year accnofrom accnoto amountfrom amountto interval category l_subtotal l_splitledger));
   
   $form->hide_form(qw(callback path login report reportcode reportlogin column_index flds sort direction));
   
@@ -977,7 +1026,6 @@ sub gl_subtotal {
 
   $column_data{debit} = "<th align=right class=listsubtotal>$subtotaldebit</td>";
   $column_data{credit} = "<th align=right class=listsubtotal>$subtotalcredit</td>";
-
   
   print "<tr class=listsubtotal>";
   for (@column_index) { print "$column_data{$_}\n" }
@@ -987,6 +1035,29 @@ sub gl_subtotal {
   $subtotalcredit = 0;
 
   $sameitem = $ref->{$form->{sort}};
+
+}
+
+
+sub account_subtotal {
+      
+  $accountsubtotaldebit = $form->format_amount(\%myconfig, $accountsubtotaldebit, $form->{precision}, "&nbsp;");
+  $accountsubtotalcredit = $form->format_amount(\%myconfig, $accountsubtotalcredit, $form->{precision}, "&nbsp;");
+  $balance = $form->format_amount(\%myconfig, $form->{balance} * $ml * $cml, $form->{precision}, 0);
+
+  for (@column_index) { $column_data{$_} = "<td>&nbsp;</td>" }
+
+  $column_data{debit} = "<th align=right class=listsubtotal>$accountsubtotaldebit</td>";
+  $column_data{credit} = "<th align=right class=listsubtotal>$accountsubtotalcredit</td>";
+  $column_data{balance} = "<th align=right class=listsubtotal>$balance</td>";
+  
+  print "<tr class=listsubtotal>";
+  for (@column_index) { print "$column_data{$_}\n" }
+  print "</tr>";
+
+  $accountsubtotaldebit = 0;
+  $accountsubtotalcredit = 0;
+  $form->{balance} = 0;
 
 }
 

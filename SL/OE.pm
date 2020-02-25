@@ -1607,10 +1607,15 @@ sub order_details {
       $form->{paid} += $form->parse_amount($myconfig, $form->{"paid_$i"});
     }
   }
-  $form->{payment_method} = $form->{"paymentmethod_$form->{paidaccounts}"};
-  $form->{payment_method} =~ s/--.*//;
-  $form->{payment_accno} = $form->{"AR_paid_$form->{paidaccounts}"};
-  $form->{payment_accno} =~ s/--.*//;
+  if ($form->{paidaccounts} > 1) {
+    unless ($form->{"paid_$form->{paidaccounts}"}) {
+      $i = $form->{paidaccounts} - 1;
+    }
+    $form->{payment_method} = $form->{"paymentmethod_$i"};
+    $form->{payment_method} =~ s/--.*//;
+    $form->{payment_accno} = $form->{"AR_paid_$i"};
+    $form->{payment_accno} =~ s/--.*//;
+  }
 
   $form->{total} = $form->format_amount($myconfig, $form->{ordtotal} - $form->{paid}, $form->{precision}, 0);
   $form->{paid} = $form->format_amount($myconfig, $form->{paid}, $form->{precision});
@@ -2246,18 +2251,20 @@ sub generate_orders {
     $sth->execute || $form->dberror($query);
     $ref = $sth->fetchrow_hashref(NAME_lc);
 
-    $query = qq|INSERT INTO shipto (trans_id, shiptoname, shiptoaddress1,
-                shiptoaddress2, shiptocity, shiptostate, shiptozipcode,
-		shiptocountry, shiptocontact, shiptophone, shiptofax,
-		shiptoemail) VALUES ($id, '$ref->{shiptoname}',
-		'$ref->{shiptoaddress1}', '$ref->{shiptoaddress2}',
-		'$ref->{shiptocity}', '$ref->{shiptostate}',
-		'$ref->{shiptozipcode}', '$ref->{shiptocountry}',
-		'$ref->{shiptocontact}', '$ref->{shiptophone}',
-		'$ref->{shiptofax}', '$ref->{shiptoemail}')|;
-    $dbh->do($query) || $form->dberror($query);
-    $sth->finish;
-
+    if ($ref->{trans_id}) {
+      $query = qq|INSERT INTO shipto (trans_id, shiptoname, shiptoaddress1,
+                  shiptoaddress2, shiptocity, shiptostate, shiptozipcode,
+                  shiptocountry, shiptocontact, shiptophone, shiptofax,
+                  shiptoemail, shiptorecurring) VALUES ($id, '$ref->{shiptoname}',
+                  '$ref->{shiptoaddress1}', '$ref->{shiptoaddress2}',
+                  '$ref->{shiptocity}', '$ref->{shiptostate}',
+                  '$ref->{shiptozipcode}', '$ref->{shiptocountry}',
+                  '$ref->{shiptocontact}', '$ref->{shiptophone}',
+                  '$ref->{shiptofax}', '$ref->{shiptoemail}',
+                  '$ref->{shiptorecurring}')|;
+      $dbh->do($query) || $form->dberror($query);
+      $sth->finish;
+    }
 
     $amount = 0;
     $netamount = 0;

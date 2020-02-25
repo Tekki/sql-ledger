@@ -285,6 +285,9 @@ sub gifi_accounts {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
+  my %defaults = $form->get_defaults($dbh, \@{['company']});
+  $form->{company} = $defaults{company};
+
   my $query = qq|SELECT accno, description
                  FROM gifi
 		 ORDER BY accno|;
@@ -308,7 +311,7 @@ sub get_gifi {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
-  
+
   my $query = qq|SELECT accno, description
                  FROM gifi
 	         WHERE accno = |.$dbh->quote($form->{accno});
@@ -400,6 +403,9 @@ sub warehouses {
   
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
+
+  my %defaults = $form->get_defaults($dbh, \@{['company']});
+  $form->{company} = $defaults{company};
 
   my $query = qq|SELECT w.id, w.description,
                  a.address1, a.address2, a.city, a.state, a.zipcode, a.country
@@ -563,6 +569,9 @@ sub departments {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
+  my %defaults = $form->get_defaults($dbh, \@{['company']});
+  $form->{company} = $defaults{company};
+
   my $query = qq|SELECT id, description, role
                  FROM department
 		 ORDER BY rn|;
@@ -677,6 +686,9 @@ sub business {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
+  my %defaults = $form->get_defaults($dbh, \@{['company']});
+  $form->{company} = $defaults{company};
+
   my $query = qq|SELECT id, description, discount
                  FROM business
 		 ORDER BY rn|;
@@ -786,7 +798,7 @@ sub paymentmethod {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  my %defaults = $form->get_defaults($dbh, \@{['company', 'precision']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
   
   $form->{sort} ||= "rn";
@@ -822,9 +834,6 @@ sub get_paymentmethod {
   
   $form->{id} *= 1;
 
-  my %defaults = $form->get_defaults($dbh, \@{['precision']});
-  $form->{precision} = $defaults{precision};
-  
   my $query = qq|SELECT description, fee, roundchange
                  FROM paymentmethod
 	         WHERE id = $form->{id}|;
@@ -925,6 +934,9 @@ sub sic {
   
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
+
+  my %defaults = $form->get_defaults($dbh, \@{['company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   $form->{sort} = "code" unless $form->{sort};
   my @sf = qw(code description);
@@ -1039,6 +1051,9 @@ sub language {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
+  my %defaults = $form->get_defaults($dbh, \@{['company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+
   $form->{sort} = "code" unless $form->{sort};
   my @sf = qw(code description);
   my %ordinal = ( code		=> 1,
@@ -1151,6 +1166,9 @@ sub mimetypes {
   
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
+
+  my %defaults = $form->get_defaults($dbh, \@{['company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   $form->{sort} = "extension" unless $form->{sort};
   my @sf = qw(extension contenttype);
@@ -1601,13 +1619,8 @@ sub save_defaults {
     $dbh->do($query) || $form->dberror($query);
   }
  
-  for (qw(glnumber sinumber sonumber vinumber batchnumber vouchernumber ponumber sqnumber rfqnumber employeenumber customernumber vendornumber)) {
-    $sth->execute($_, $form->{$_}) || $form->dberror;
-    $sth->finish;
-  }
   $sth->execute("precision", $form->{precision}) || $form->dberror;
   $sth->finish;
-
 
   # optional
   for (split / /, $form->{optional}) {
@@ -1727,6 +1740,9 @@ sub taxes {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
   
+  my %defaults = $form->get_defaults($dbh, \@{['company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+
   my $query = qq|SELECT c.id, c.accno, c.description, c.closed,
               t.rate * 100 AS rate, t.taxnumber, t.validto,
 	      l.description AS translation
@@ -2198,8 +2214,9 @@ sub earningsaccounts {
   }
   $sth->finish;
 
-  my %defaults = $form->get_defaults($dbh, \@{['method', 'precision']});
+  my %defaults = $form->get_defaults($dbh, \@{['company', 'method', 'precision']});
   $form->{precision} = $defaults{precision};
+  $form->{company} = $defaults{company};
   $form->{method} ||= "accrual";
   
   $dbh->disconnect;
@@ -2320,6 +2337,9 @@ sub bank_accounts {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
+  my %defaults = $form->get_defaults($dbh, \@{['company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+
   my $query = qq|SELECT c.id, c.accno, c.description, c.closed,
                  bk.name, bk.iban, bk.bic, bk.membernumber, bk.clearingnumber,
 		 bk.dcn, bk.rvc,
@@ -2384,7 +2404,7 @@ sub get_bank {
   for (keys %$ref) { $form->{$_} = $ref->{$_} }
   $sth->finish;
 
-  my %defaults = $form->get_defaults($dbh, \@{["check\_$form->{accno}", "receipt\_$form->{accno}"]});
+  my %defaults = $form->get_defaults($dbh, \@{['company', "check\_$form->{accno}", "receipt\_$form->{accno}"]});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   $dbh->disconnect;
@@ -2544,6 +2564,9 @@ sub get_exchangerates {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
+  my %defaults = $form->get_defaults($dbh, \@{['company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+
   my $where = "1 = 1";
 
   $form->{currencies} = $form->get_currencies($myconfig, $dbh);
@@ -2679,6 +2702,9 @@ sub currencies {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
   
+  my %defaults = $form->get_defaults($dbh, \@{['company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+
   $form->{sort} = "rn" unless $form->{sort};
   my @sf = qw(rn curr);
   my %ordinal = ( rn	=> 1,
@@ -2811,7 +2837,7 @@ sub workstations {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  my %defaults = $form->get_defaults($dbh, \@{['workstation\_%','printer\_%','cashdrawer%','poledisplay%']});
+  my %defaults = $form->get_defaults($dbh, \@{['company', 'workstation\_%','printer\_%','cashdrawer%','poledisplay%']});
 
   my $fld;
   my $ws;
@@ -3025,6 +3051,9 @@ sub roles {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
+
+  my %defaults = $form->get_defaults($dbh, \@{['company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   $form->{sort} = "rn" unless $form->{sort};
   my @sf = qw(rn description);
@@ -3302,6 +3331,9 @@ sub audit_log_links {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
+  my %defaults = $form->get_defaults($dbh, \@{['company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+
   my $query = qq|SELECT DISTINCT action
                  FROM audittrail
 		 ORDER BY action|;
@@ -3325,6 +3357,9 @@ sub audit_log {
   
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
+
+  my %defaults = $form->get_defaults($dbh, \@{['company']});
+  for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   my $id;
   my $where = "WHERE 1 = 1";

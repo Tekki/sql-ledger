@@ -19,7 +19,7 @@ sub create_links {
 
   my $dbh = $form->dbconnect($myconfig);
 
-  my %defaults = $form->get_defaults($dbh, \@{['precision','lock_%']});
+  my %defaults = $form->get_defaults($dbh, \@{['company', 'precision','lock_%']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
  
   my $query;
@@ -1349,31 +1349,22 @@ sub ship_to {
   for (qw(id db)) { $form->{$_} =~ s/;//g }
 
   if ($form->{id} *= 1) {
-    $query = qq|SELECT
-                s.shiptoname, s.shiptoaddress1, s.shiptoaddress2,
-                s.shiptocity, s.shiptostate, s.shiptozipcode,
-		s.shiptocountry, s.shiptocontact, s.shiptophone,
-		s.shiptofax, s.shiptoemail
+    $query = qq|SELECT s.*
 	        FROM shipto s
 		JOIN oe o ON (o.id = s.trans_id)
 		WHERE o.$form->{db}_id = $form->{id}
+                AND s.shiptorecurring
 		UNION
-		SELECT
-                s.shiptoname, s.shiptoaddress1, s.shiptoaddress2,
-                s.shiptocity, s.shiptostate, s.shiptozipcode,
-		s.shiptocountry, s.shiptocontact, s.shiptophone,
-		s.shiptofax, s.shiptoemail
+		SELECT s.*
 		FROM shipto s
 		JOIN $table a ON (a.id = s.trans_id)
 	        WHERE a.$form->{db}_id = $form->{id}
+                AND s.shiptorecurring
 		EXCEPT
-		SELECT
-	        s.shiptoname, s.shiptoaddress1, s.shiptoaddress2,
-                s.shiptocity, s.shiptostate, s.shiptozipcode,
-		s.shiptocountry, s.shiptocontact, s.shiptophone,
-		s.shiptofax, s.shiptoemail
+		SELECT s.*
 		FROM shipto s
-		WHERE s.trans_id = '$form->{id}'|;
+		WHERE s.trans_id = '$form->{id}'
+                AND s.shiptorecurring|;
 	 
     my $sth = $dbh->prepare($query);
     $sth->execute || $form->dberror($query);

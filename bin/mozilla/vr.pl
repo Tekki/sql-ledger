@@ -76,7 +76,7 @@ sub add_batch {
     $focus = "batchdescription";
     
     $transdate .= qq|
-	  <td><input name=transdate size=11 class=date title="$myconfig{'dateformat'}" value=$form->{transdate}>|.&js_calendar("main", "transdate").qq|</td>
+	  <td><input name=transdate size=11 class=date title="$myconfig{dateformat}" value=$form->{transdate}>|.&js_calendar("main", "transdate").qq|</td>
 	</tr>
 |;
   }

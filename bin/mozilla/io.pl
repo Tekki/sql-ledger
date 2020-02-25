@@ -2014,6 +2014,8 @@ sub ship_to {
   
   $form->header;
 
+  $checked = "checked" if $form->{shiptorecurring};
+  
   print qq|
 <body>
 
@@ -2031,7 +2033,8 @@ sub ship_to {
 	  <th class=listheading colspan=3>$form->{name}</a></th>
 	</tr>
 	<tr>
-	  <td></td>
+	  <td>|.$locale->text('Recurring').qq|<br>
+          <input name="shiptorecurring" type=checkbox value=1 class=checkbox $checked>
 	  <th align=right nowrap>$vcname</th>
 	  <td><input name=shiptoname size=35 maxlength=64 value="|.$form->quote($form->{shiptoname}).qq|"></td>
 	</tr>
@@ -2088,6 +2091,8 @@ sub ship_to {
 	
 |;
 
+  $select = $locale->text('Select');
+
   $i = 1;
   for $ref (@{ $form->{all_shipto} }) {
 
@@ -2099,7 +2104,7 @@ sub ship_to {
 	</tr>
 
 	<tr>
-	  <td><input name="ndx_$i" type=checkbox class=checkbox>
+	  <td>$select<br><input name="ndx_$i" type=checkbox class=checkbox>
 	  <th align=right nowrap>$vcname</th>
 	  <td>$ref->{shiptoname}</td>
 	</tr>
@@ -2131,7 +2136,7 @@ sub ship_to {
 
   # delete shipto
   for (qw(action all_shipto)) { delete $form->{$_} }
-  for (qw(name address1 address2 city state zipcode country contact phone fax email)) {
+  for (qw(name address1 address2 city state zipcode country contact phone fax email recurring)) {
     delete $form->{"shipto$_"};
     $form->{flds} .= "$_ ";
   }

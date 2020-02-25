@@ -387,7 +387,8 @@ CREATE TABLE shipto (
   shiptocontact varchar(64),
   shiptophone varchar(20),
   shiptofax varchar(20),
-  shiptoemail text
+  shiptoemail text,
+  shiptorecurring bool DEFAULT 'f'
 );
 --
 CREATE TABLE vendor (

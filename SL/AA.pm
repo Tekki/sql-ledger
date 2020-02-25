@@ -1395,44 +1395,32 @@ sub ship_to {
   
   my $table = ($form->{vc} eq 'customer') ? 'ar' : 'ap';
   
-  my $query = qq|SELECT
-                 s.shiptoname, s.shiptoaddress1, s.shiptoaddress2,
-                 s.shiptocity, s.shiptostate, s.shiptozipcode,
-		 s.shiptocountry, s.shiptocontact, s.shiptophone,
-		 s.shiptofax, s.shiptoemail
+  my $query = qq|SELECT s.*
                  FROM shipto s
 		 WHERE trans_id = $form->{"$form->{vc}_id"}
+                 AND s.shiptorecurring
 		 UNION
-                 SELECT
-                 s.shiptoname, s.shiptoaddress1, s.shiptoaddress2,
-                 s.shiptocity, s.shiptostate, s.shiptozipcode,
-		 s.shiptocountry, s.shiptocontact, s.shiptophone,
-		 s.shiptofax, s.shiptoemail
+                 SELECT s.*
 	         FROM shipto s
 		 JOIN oe o ON (o.id = s.trans_id)
 		 WHERE o.$form->{vc}_id = $form->{"$form->{vc}_id"}
+                 AND s.shiptorecurring
 		 UNION
-		 SELECT
-                 s.shiptoname, s.shiptoaddress1, s.shiptoaddress2,
-                 s.shiptocity, s.shiptostate, s.shiptozipcode,
-		 s.shiptocountry, s.shiptocontact, s.shiptophone,
-		 s.shiptofax, s.shiptoemail
+		 SELECT s.*
 		 FROM shipto s
 		 JOIN $table a ON (a.id = s.trans_id)
-	         WHERE a.$form->{vc}_id = $form->{"$form->{vc}_id"}|;
+	         WHERE a.$form->{vc}_id = $form->{"$form->{vc}_id"}
+                 AND s.shiptorecurring|;
 
   if ($form->{id} *= 1) {
     $query .= qq|
 		 EXCEPT
-		 SELECT
-	         s.shiptoname, s.shiptoaddress1, s.shiptoaddress2,
-                 s.shiptocity, s.shiptostate, s.shiptozipcode,
-		 s.shiptocountry, s.shiptocontact, s.shiptophone,
-		 s.shiptofax, s.shiptoemail
+		 SELECT s.*
 		 FROM shipto s
-		 WHERE s.trans_id = '$form->{id}'|;
+		 WHERE s.trans_id = '$form->{id}'
+                 AND s.shiptorecurring|;
   }
-	 
+
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 

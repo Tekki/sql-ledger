@@ -631,6 +631,7 @@ sub employee_header {
 |;
     }
     if ($form->{sales}) {
+      $sales ||= "x";
       $login .= qq|
 	      <tr>
 		<th align=right>|.$locale->text('Sales').qq|</th>

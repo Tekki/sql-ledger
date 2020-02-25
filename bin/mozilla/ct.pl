@@ -485,8 +485,9 @@ sub search {
 # $locale->text('Customers')
 # $locale->text('Vendors')
 
+
   $form->{title} = $locale->text('Search') unless $form->{title};
-  
+
   for (qw(name contact phone email)) { $form->{"l_$_"} = 'checked' }
 
   $form->{nextsub} = "list_names";
@@ -502,6 +503,7 @@ sub search {
 	  <input name=status class=radio type=radio value=orphaned $checked{orphaned}>&nbsp;|.$locale->text('Orphaned').qq|</td>
 	</tr>
 |;
+
 
   &transactions;
   &include_in_report;
@@ -1054,8 +1056,8 @@ sub list_names {
     $form->{title} = ($form->{db} eq 'customer') ? $locale->text('Customer Transactions') : $locale->text('Vendor Transactions');
   }
 
-  $title = "$form->{title} / $form->{company}";
-  
+  $form->{title} .= " / $form->{company}";
+
   $form->header;
 
   &check_all(qw(allbox_delete id_));
@@ -1067,7 +1069,7 @@ sub list_names {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$title</a></th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1999,6 +2001,8 @@ sub form_header {
 
   $reference_documents = &references;
 
+  $form->{title} .= " / $form->{company}";
+
   $form->header;
 
   &calendar;
@@ -2348,7 +2352,7 @@ sub form_footer {
   }
 
   $form->{update_contact} = 1;
-  $form->hide_form(qw(id ARAP update_contact addressid contactid taxaccounts path login callback db status reference_rows referenceurl precision));
+  $form->hide_form(qw(id ARAP update_contact addressid contactid taxaccounts path login callback db status reference_rows referenceurl precision company));
   
   for (keys %button) { delete $button{$_} if ! $f{$_} }
 
@@ -2468,12 +2472,14 @@ sub shipping_address {
 	</tr>
 |;
 
+  $select = $locale->text('Default');
+
   $i = 1;
   for $ref (@{ $form->{all_shipto} }) {
 
     print qq|
         <tr>
-	  <td></td>
+	  <td>$select</td>
 	  <td><hr noshade></td>
 	  <td><hr noshade></td>
         </tr>

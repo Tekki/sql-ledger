@@ -115,7 +115,7 @@ sub account_header {
   for (qw(accno description)) { $form->{$_} = $form->quote($form->{$_}) }
 
   $form->{type} = "account";
-  
+
   $form->helpref("account", $myconfig{countrycode});
   
   $form->header;
@@ -316,7 +316,7 @@ sub list_account {
 
   CA->all_accounts(\%myconfig, \%$form);
 
-  $form->{title} = $locale->text('Chart of Accounts');
+  $form->{title} = $locale->text('Chart of Accounts') . " / $form->{company}";
   
   # construct callback
   my $callback = "$form->{script}?action=list_account&path=$form->{path}&login=$form->{login}";
@@ -459,7 +459,7 @@ sub list_gifi {
   
   AM->gifi_accounts(\%myconfig, \%$form);
 
-  $form->{title} = $locale->text('GIFI');
+  $form->{title} = $locale->text('GIFI') . " / $form->{company}";
   
   # construct callback
   my $callback = "$form->{script}?action=list_gifi&path=$form->{path}&login=$form->{login}";
@@ -711,7 +711,7 @@ sub list_department {
 
   my $callback = $form->escape($form->{callback});
   
-  $form->{title} = $locale->text('Departments');
+  $form->{title} = $locale->text('Departments') . " / $form->{company}";
 
   my @column_index = qw(description cost profit up down);
 
@@ -917,7 +917,7 @@ sub list_business {
 
   my $callback = $form->escape($form->{callback});
   
-  $form->{title} = $locale->text('Type of Business');
+  $form->{title} = $locale->text('Type of Business') . " / $form->{company}";
 
   my @column_index = qw(description discount up down);
 
@@ -1129,6 +1129,8 @@ sub list_paymentmethod {
   
   $form->helpref("list_paymentmethod", $myconfig{countrycode});
   
+  $form->{title} .= " / $form->{company}";
+
   $form->header;
 
   print qq|
@@ -1343,6 +1345,8 @@ sub list_sic {
 
   $form->helpref("list_sic", $myconfig{countrycode});
   
+  $form->{title} .= " / $form->{company}";
+
   $form->header;
 
   print qq|
@@ -1438,7 +1442,7 @@ sub sic_header {
   $checked{H} = ($form->{sictype} eq 'H') ? "checked" : "";
 
   $form->helpref("sic", $myconfig{countrycode});
-  
+
   $form->header;
 
   print qq|
@@ -1535,7 +1539,7 @@ sub list_language {
   
   my $callback = $form->escape($form->{callback});
   
-  $form->{title} = $locale->text('Languages');
+  $form->{title} = $locale->text('Languages') . " / $form->{company}";
 
   my @column_index = $form->sort_columns(qw(code description));
 
@@ -1704,6 +1708,8 @@ sub save_language {
         close(TEMP);
       }
     }
+  } else {
+    $form->error($locale->text('Unable to create directory: ')."$targetdir");
   }
 
   unless ($form->{copydir}) {
@@ -1801,7 +1807,7 @@ sub list_mimetypes {
   
   my $callback = $form->escape($form->{callback});
   
-  $form->{title} = $locale->text('Mimetypes');
+  $form->{title} = $locale->text('Mimetypes') . " / $form->{company}";
 
   my @column_index = $form->sort_columns(qw(extension contenttype));
 
@@ -2015,7 +2021,7 @@ sub list_templates {
   $form->sort_order();
 
   $form->{file} =~ s/$myconfig{templates}\///;
-  $form->{title} = $form->{file};
+  $form->{title} = "$form->{file} / $form->{company}";
 
   my @column_index = $form->sort_columns(qw(code description));
 
@@ -2290,7 +2296,7 @@ sub taxes {
 
 sub display_taxes {
   
-  $form->{title} = $locale->text('Taxes');
+  $form->{title} = $locale->text('Taxes') . " / $form->{company}";
   
   $form->{type} = "taxes";
 
@@ -2366,7 +2372,7 @@ sub display_taxes {
 </table>
 |;
 
-  $form->hide_form(qw(type taxaccounts path login));
+  $form->hide_form(qw(company type taxaccounts path login));
 
   print qq|
 <input type=submit class=submit name=action value="|.$locale->text('Update').qq|">
@@ -2704,6 +2710,8 @@ sub defaults {
 
   $form->{optional} = "company address tel fax companyemail companywebsite yearend weightunit businessnumber closedto revtrans audittrail method cdt namesbynumber typeofcontact roundchange referenceurl annualinterest latepaymentfee restockingcharge checkinventory hideaccounts forcewarehouse";
 
+  for (qw(gl si so vi batch voucher po sq rfq part project employee customer vendor)) { $form->{optional} .= " ${_}number" }
+
   for (qw(gl si so po sq rfq employee customer vendor)) { $form->{optional} .= " lock_${_}number" }
 
   @f = qw(closedto revtrans audittrail);
@@ -2750,7 +2758,7 @@ sub workstations {
     AM->workstations(\%myconfig, \%$form);
   }
 
-  $form->{title} = $locale->text('Workstations');
+  $form->{title} = $locale->text('Workstations') . " / $form->{company}";
 
   $form->{numworkstations} ||= 1;
   $form->{numprinters} ||= 1;
@@ -2890,7 +2898,7 @@ sub workstations {
 </table>
 |;
 
-  $form->hide_form(qw(numprinters numworkstations path login));
+  $form->hide_form(qw(company numprinters numworkstations path login));
   $form->hide_form(map { "numprinters_$_" } (1 .. $form->{numworkstations}));
   
   print qq|
@@ -3651,7 +3659,7 @@ sub audit_log {
   }
 
 	  
-  $form->{title} = $locale->text('Audit Log');
+  $form->{title} = $locale->text('Audit Log') . " / $form->{company}";
 
   $form->helpref("audit_log", $myconfig{countrycode});
 
@@ -3769,8 +3777,7 @@ sub list_audit_log {
   $column_header{action} = qq|<th><a class=listheading href=$href&sort=action>|.$locale->text('Action').qq|</a></th>|;
   $column_header{login} = qq|<th><a class=listheading href=$href&sort=login>|.$locale->text('Login').qq|</a></th>|;
   
-  $form->{title} = $locale->text('Audit Log');
-
+  $form->{title} = $locale->text('Audit Log') . " / $form->{company}";
 
   $form->header;
 
@@ -3910,7 +3917,7 @@ sub add_warehouse {
 
 sub edit_warehouse {
 
-  $form->{title} = $locale->text('Edit');
+  $form->{title} = $locale->text('Edit Warehouse');
 
   AM->get_warehouse(\%myconfig, \%$form);
 
@@ -3932,7 +3939,7 @@ sub list_warehouse {
   
   my $callback = $form->escape($form->{callback});
   
-  $form->{title} = $locale->text('Warehouses');
+  $form->{title} = $locale->text('Warehouses') . " / $form->{company}";
 
   my @column_index = $form->sort_columns(qw(description address up down));
 
@@ -4124,7 +4131,7 @@ sub yearend {
   $checked{accrual} = "checked" if $form->{method} eq 'accrual';
   $checked{cash} = "checked" if $form->{method} eq 'cash';
   
-  $form->{title} = $locale->text('Yearend');
+  $form->{title} = $locale->text('Yearend') . " / $form->{company}";
   
   $form->helpref("yearend", $myconfig{countrycode});
   
@@ -5170,7 +5177,7 @@ sub bank_accounts {
 
   AM->bank_accounts(\%myconfig, \%$form);
 
-  $form->{title} = $locale->text('Bank Accounts');
+  $form->{title} = $locale->text('Bank Accounts') . " / $form->{company}";
   
   $callback = "$form->{script}?action=bank_accounts";
   for (qw(path login)) { $callback .= "&$_=$form->{$_}" }
@@ -5264,7 +5271,7 @@ sub edit_bank {
 
 sub bank_header {
   
-  $form->{title} = $locale->text('Bank Account Details');
+  $form->{title} = $locale->text('Bank Account Details') . " / $form->{company}";
   
   $form->helpref("bank", $myconfig{countrycode});
 
@@ -5404,10 +5411,10 @@ sub save_bank {
 
 sub search_exchangerates {
 
-  $form->{title} = $locale->text('Exchange Rates');
-  
   AM->exchangerates(\%myconfig, $form);
 
+  $form->{title} = $locale->text('Exchange Rates') . " / $form->{company}";
+  
   $form->{nextsub} = "list_exchangerates";
 
   # currencies
@@ -5551,7 +5558,7 @@ sub list_exchangerates {
     }
   }
  
-  $form->{title} = $locale->text('Exchange Rates');
+  $form->{title} = $locale->text('Exchange Rates') . " / $form->{company}";
 
   $column_header{transdate} = "<th><a class=listheading href=$href&sort=$form->{sort}>".$locale->text('Date')."</a></th>";
 
@@ -5798,7 +5805,7 @@ sub list_currencies {
   $form->{callback} = $callback .= "&sort=$form->{sort}";
   $callback = $form->escape($callback);
   
-  $form->{title} = $locale->text('Currencies');
+  $form->{title} = $locale->text('Currencies') . " / $form->{company}";
 
   my @column_index = $form->sort_columns(qw(rn curr prec up down));
 
@@ -5906,7 +5913,7 @@ sub add_currency {
 
 sub edit_currency {
 
-  $form->{title} = $locale->text('Edit');
+  $form->{title} = $locale->text('Edit Currency');
 
   AM->get_currency(\%myconfig, \%$form);
 
@@ -6006,7 +6013,7 @@ sub list_roles {
   $form->{callback} = $callback;
   $callback = $form->escape($form->{callback});
   
-  $form->{title} = $locale->text('Roles');
+  $form->{title} = $locale->text('Roles') . " / $form->{company}";
 
   my @column_index = $form->sort_columns(qw(description acs up down));
 

@@ -43,14 +43,12 @@ sub new {
     %$self = ();
     
     my $var;
-    my @file = split /\r\n/, $_;
-
+    my @file = ($windows) ? split /\n/, $_ : split /\r\n/, $_;
+    
     for my $line (@file) {
 
       last if $line =~ /${boundary}--/;
-      if ($line =~ /${boundary}/) {
-        next;
-      }
+      next if $line =~ /${boundary}/;
 
       if ($line =~ /Content-Disposition: form-data;/) {
 
@@ -73,7 +71,7 @@ sub new {
       }
 
       if ($self->{$var}) {
-        $self->{$var} .= "\r\n$line";
+        $self->{$var} .= ($windows) ? "\n$line" : "\r\n$line";
       } else {
         chomp $line;
         $self->{$var} = "$line";
@@ -121,8 +119,8 @@ sub new {
 
   $self->{menubar} = 1 if $self->{path} =~ /lynx/i;
 
-  $self->{version} = "3.2.8";
-  $self->{dbversion} = "3.2.3";
+  $self->{version} = "3.2.9";
+  $self->{dbversion} = "3.2.4";
 
   bless $self, $type;
   
@@ -2369,15 +2367,20 @@ sub add_shipto {
   my $shipto;
   foreach my $item (qw(name address1 address2 city state zipcode country contact phone fax email)) {
     if ($self->{"shipto$item"} ne "") {
-      $shipto = 1 if ($self->{$item} ne $self->{"shipto$item"});
+      if ($self->{$item} ne $self->{"shipto$item"}) {
+        $shipto = 1;
+        last;
+      }
     }
   }
 
   if ($shipto) {
+    $self->{shiptorecurring} *= 1;
     my $query = qq|INSERT INTO shipto (trans_id, shiptoname, shiptoaddress1,
                    shiptoaddress2, shiptocity, shiptostate,
 		   shiptozipcode, shiptocountry, shiptocontact,
-		   shiptophone, shiptofax, shiptoemail) VALUES ($id, |
+		   shiptophone, shiptofax, shiptoemail, shiptorecurring)
+                   VALUES ($id, |
 		   .$dbh->quote($self->{shiptoname}).qq|, |
 		   .$dbh->quote($self->{shiptoaddress1}).qq|, |
 		   .$dbh->quote($self->{shiptoaddress2}).qq|, |
@@ -2387,7 +2390,7 @@ sub add_shipto {
 		   .$dbh->quote($self->{shiptocountry}).qq|, |
 		   .$dbh->quote($self->{shiptocontact}).qq|,
 		   '$self->{shiptophone}', '$self->{shiptofax}',
-		   '$self->{shiptoemail}')|;
+		   '$self->{shiptoemail}', '$self->{shiptorecurring}')|;
     $dbh->do($query) || $self->dberror($query);
   }
 
@@ -3003,7 +3006,7 @@ sub all_years {
 			  '11' => 'November',
 			  '12' => 'December' );
   
-  my %defaults = $self->get_defaults($dbh, \@{[qw(method precision namesbynumber)]});
+  my %defaults = $self->get_defaults($dbh, \@{[qw(company method precision namesbynumber)]});
   for (keys %defaults) { $self->{$_} = $defaults{$_} }
   $self->{method} ||= "accrual";
   
