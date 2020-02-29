@@ -440,8 +440,12 @@ sub form_header {
 
   for (qw(terms discountterms)) { $form->{$_} = "" if ! $form->{$_} }
 
+  $tt = $form->{title};
+  $form->{title} .= " / $form->{company}";
 
   $form->header;
+
+  $form->{title} = $tt;
 
   &calendar;
 
@@ -451,7 +455,7 @@ sub form_header {
 <form method="post" name="main" action="$form->{script}">
 |;
 
-  $form->hide_form(qw(id type printed emailed queued title vc creditlimit creditremaining business closedto locked shipped oldtransdate oldduedate recurring defaultcurrency oldterms cdt precision order_id reference_rows referenceurl oldwarehouse olddepartment));
+  $form->hide_form(qw(id type printed emailed queued title vc creditlimit creditremaining business closedto locked shipped oldtransdate oldduedate recurring defaultcurrency oldterms cdt precision order_id reference_rows referenceurl oldwarehouse olddepartment company));
 
   $form->hide_form(map { "select$_" } ("$form->{vc}", "AP", "AP_paid", "AP_discount"));
   $form->hide_form(map { "select$_" } qw(formname currency partsgroup projectnumber department warehouse employee language paymentmethod printer));
@@ -485,7 +489,7 @@ sub form_header {
   print qq|
 <table width=100%>
   <tr class=listtop>
-    <th class=listtop>$form->{helpref}$form->{title}$title</a></th>
+    <th class=listtop>$form->{helpref}$form->{title} / $form->{company}$title</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -584,7 +588,7 @@ sub form_header {
   </tr>
 |;
 
-  $form->hide_form(map { "shipto$_" } qw(name address1 address2 city state zipcode country contact phone fax email));
+  $form->hide_form(map { "shipto$_" } qw(name address1 address2 city state zipcode country contact phone fax email recurring));
   $form->hide_form(qw(address1 address2 city state zipcode country message email subject cc bcc taxaccounts helpref));
   foreach $accno (split / /, $form->{taxaccounts}) { $form->hide_form(map { "${accno}_$_" } qw(rate description taxnumber)) }
 

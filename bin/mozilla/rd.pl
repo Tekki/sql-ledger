@@ -752,7 +752,10 @@ sub upload_imagefile {
   if (-s "$userspath/$form->{tmpfile}") {
     unless ($^O =~ /mswin/i) {
       $image = `file $userspath/$form->{tmpfile}`;
-      $form->error($locale->text('Not an Image file!')) unless $image =~ /image/;
+      unless ($image =~ /image/) {
+        unlink "$userspath/$form->{tmpfile}";
+        $form->error($locale->text('Not an Image file!'));
+      }
     }
 
     open(IN, "$userspath/$form->{tmpfile}") or $form->error("$userspath/$form->{tmpfile} : $!\n");

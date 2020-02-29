@@ -1202,7 +1202,11 @@ sub aging {
 
   $form->get_peripherals($dbh);
   for (@{ $form->{all_printer} }) {
-    $form->{"$_->{printer}_printer"} = $_->{command};
+    # Tekki: wlprinter
+    $form->{"$_->{printer}_printer"} = $_->{command} eq 'wlprinter'
+      ? "wlprinter/fileprinter.pl $form->{login}"
+      : $_->{command};
+    # Tekki_end
   }
 
   $form->{currencies} = $form->get_currencies($myconfig, $dbh);
@@ -1317,6 +1321,7 @@ sub aging {
   }
 
   my %ordinal = ( 'vc_id' => 1,
+                  "$form->{vc}number" => 2,
                   'invnumber' => 16,
                   'transdate' => 17
                 );
@@ -1513,6 +1518,7 @@ sub reminder {
   }
 
   my %ordinal = ( 'vc_id' => 1,
+                  "$form->{vc}number" => 2,
                   'invnumber' => 19,
                   'transdate' => 20
                 );

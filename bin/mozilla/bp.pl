@@ -839,7 +839,7 @@ print qq|
 <input type=hidden name="spoolfile_$i" value="$ref->{spoolfile}">
 <input type=hidden name="vc_$i" value="$ref->{vc}">
 <input type=hidden name="tablename_$i" value="$ref->{tablename}">
-<input type=hidden name="module_$i" value="$ref->{module}">
+<input type=hidden name="module_$i" value="$module">
 |;
   }
 

@@ -73,7 +73,7 @@ CREATE TABLE defaults (
   fldvalue text
 );
 --
-INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '3.2.3');
+INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '3.2.4');
 INSERT INTO defaults (fldname, fldvalue) VALUES ('version2', '11');
 --
 CREATE TABLE acc_trans (
@@ -391,7 +391,8 @@ CREATE TABLE shipto (
   shiptocontact varchar(64),
   shiptophone varchar(20),
   shiptofax varchar(20),
-  shiptoemail text
+  shiptoemail text,
+  shiptorecurring bool DEFAULT 'f'
 );
 --
 CREATE TABLE vendor (

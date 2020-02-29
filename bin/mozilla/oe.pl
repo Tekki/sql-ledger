@@ -734,8 +734,12 @@ sub form_header {
            );
   $title = " / $title{$form->{formname}}" if $form->{formname} !~ /(sales_order|purchase_order|quotation)/;
 
+  $tt = $form->{title};
+  $form->{title} .= " / $form->{company}";
 
   $form->header;
+
+  $form->{title} = $tt;
 
   &calendar;
 
@@ -745,7 +749,7 @@ sub form_header {
 <form method="post" name="main" action="$form->{script}">
 |;
 
-  $form->hide_form(qw(id type defaultcurrency formname printed emailed queued vc title discount creditlimit creditremaining tradediscount business oldtransdate recurring address1 address2 city state zipcode country pricegroup closedto precision reference_rows referenceurl oldwarehouse olddepartment));
+  $form->hide_form(qw(id type defaultcurrency formname printed emailed queued vc title discount creditlimit creditremaining tradediscount business oldtransdate recurring address1 address2 city state zipcode country pricegroup closedto precision reference_rows referenceurl oldwarehouse olddepartment company));
 
   $form->hide_form(map { "select$_" } ("$form->{vc}", "$form->{ARAP}_paid") );
   $form->hide_form(map { "select$_" } qw(formname currency partsgroup projectnumber department warehouse employee language printer paymentmethod));
@@ -765,7 +769,7 @@ sub form_header {
   print qq|
 <table width=100%>
   <tr class=listtop>
-    <th class=listtop>$form->{helpref}$form->{title}$title</a></th>
+    <th class=listtop>$form->{helpref}$form->{title} / $form->{company}$title</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -825,7 +829,8 @@ sub form_header {
   </tr>
 |;
 
-  $form->hide_form(qw(shiptoname shiptoaddress1 shiptoaddress2 shiptocity shiptostate shiptozipcode shiptocountry shiptocontact shiptophone shiptofax shiptoemail message email subject cc bcc taxaccounts helpref aa_id));
+  $form->hide_form(map { "shipto$_" } qw(name address1 address2 city state zipcode country contact phone fax email recurring));
+  $form->hide_form(qw(message email subject cc bcc taxaccounts helpref aa_id));
 
   foreach $accno (split / /, $form->{taxaccounts}) { $form->hide_form(map { "${accno}_$_" } qw(rate description taxnumber)) }
 
@@ -1134,7 +1139,7 @@ sub form_footer {
 
       if ($myconfig{acs} !~ /Quotations--Quotations/) {
         if ($form->{type} eq 'sales_order') {
-          if ($myconfig{acs} !~ /Quotations--RFQ/) {
+          if ($myconfig{acs} !~ /Quotations--Quotation/) {
             $f{'Quotation'} = 1;
           }
         }
@@ -2997,7 +3002,7 @@ sub display_ship_receive {
 |;
 
   $form->hide_form(qw(ordnumber transdate ponumber));
-  $form->hide_form(map { "shipto$_" } qw(name address1 address2 city state zipcode country contact phone fax email));
+  $form->hide_form(map { "shipto$_" } qw(name address1 address2 city state zipcode country contact phone fax email recurring));
   $form->hide_form(qw(message email subject cc bcc));
 
   @column_index = qw(partnumber);
