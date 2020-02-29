@@ -1317,6 +1317,7 @@ sub aging {
   }
 
   my %ordinal = ( 'vc_id' => 1,
+                  "$form->{vc}number" => 2,
                   'invnumber' => 16,
                   'transdate' => 17
                 );
@@ -1513,6 +1514,7 @@ sub reminder {
   }
 
   my %ordinal = ( 'vc_id' => 1,
+                  "$form->{vc}number" => 2,
                   'invnumber' => 19,
                   'transdate' => 20
                 );

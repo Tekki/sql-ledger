@@ -629,6 +629,9 @@ sub form_header {
 
   $checked{onhold} = ($form->{onhold}) ? "checked" : "";
 
+  $title = $form->quote($form->{title});
+
+  $form->{title} .= " / $form->{company}";
 
   $form->header;
 
@@ -640,10 +643,10 @@ print qq|
 
 <form method="post" name="main" action="$form->{script}">
 
-<input type=hidden name=title value="|.$form->quote($form->{title}).qq|">
+<input type=hidden name=title value="$title">
 |;
 
-  $form->hide_form(qw(id type printed emailed sort closedto locked oldtransdate oldduedate oldcurrency audittrail recurring checktax creditlimit creditremaining defaultcurrency rowcount oldterms batch batchid batchnumber batchdescription cdt precision remittancevoucher reference_rows referenceurl olddepartment));
+  $form->hide_form(qw(id type printed emailed sort closedto locked oldtransdate oldduedate oldcurrency audittrail recurring checktax creditlimit creditremaining defaultcurrency rowcount oldterms batch batchid batchnumber batchdescription cdt precision remittancevoucher reference_rows referenceurl olddepartment company));
   $form->hide_form("select$form->{vc}");
   $form->hide_form(map { "select$_" } qw(formname currency department employee projectnumber language paymentmethod printer));
   $form->hide_form("old$form->{vc}", "$form->{vc}_id", "old$form->{vc}number");
@@ -1851,6 +1854,8 @@ sub search {
 |;
 
   $form->{sort} = "transdate";
+  $form->{title} = $title;
+
   $form->hide_form(qw(title outstanding sort helpref));
 
 
