@@ -1139,7 +1139,7 @@ sub form_footer {
 
       if ($myconfig{acs} !~ /Quotations--Quotations/) {
         if ($form->{type} eq 'sales_order') {
-          if ($myconfig{acs} !~ /Quotations--RFQ/) {
+          if ($myconfig{acs} !~ /Quotations--Quotation/) {
             $f{'Quotation'} = 1;
           }
         }

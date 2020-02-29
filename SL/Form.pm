@@ -160,7 +160,7 @@ sub dump {
   local $Data::Dumper::Sortkeys = 1;
 
   for (@values) {
-    print {*STDERR} ref($_) ? Data::Dumper::Dumper($_) : "$_\n";
+    print {*STDERR} ref($_) ? Data::Dumper::Dumper($_) : "|$_|\n";
   }
 }
 
