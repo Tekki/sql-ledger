@@ -1,0 +1,317 @@
+Revision history for SQL-Ledger, starting with version 3.0.0
+
+3.2.9.14 2020-05-30
+  - support for Indian number format
+
+3.2.9.13 2020-02-29
+  - WLprinter for reminders
+
+3.2.9 DWS 2020-01-08
+  - added general ledger report option to list transactions by account
+  - added company name to reports and some entry screens
+  - added feature to set previous shipto address to recurring effectively
+    hiding previously used addresses; default is set to hide
+
+3.2.8.12 2019-06-23
+  - split DWS and Tekki db updates
+
+3.2.8 DWS 2019-06-17
+  - added check to disallow use of template[0|1]
+  - fixed DCN bug when generating invoices
+  - fixed components report to display all items
+  - fixed payroll deduction calculation
+  - changed archivedata table to retrieve tuples in an orderly fashion
+  - increase expires in semaphore table to accomodate 12 digits
+  - removed error check for last accounts used
+  - fixed issue with password when upgrading
+
+3.2.7.12 2019-06-07
+  - Form->dump function for development
+
+3.2.7.11 2019-06-05
+  - extended account statements and trial balance
+  - more options for VAT reports
+  - simple markdown for printed fields
+
+3.2.7.10 2019-03-15
+  - generated and consolidated order added to recently used
+
+3.2.7.9 2019-03-02
+  - possibility to delete categories from recent list
+
+3.2.7.8 2019-02-21
+  - register recently used projects and timecards
+
+3.2.7.7 2019-02-17
+  - display recently used objects on start screen
+
+3.2.7.6 2019-02-05
+  - improved callback for time cards
+
+3.2.7.5 2019-01-15
+  - bugfix
+
+3.2.7.4 2018-12-21
+  - images and questions marks replaced with unicode icons
+
+3.2.7.3 2018-12-17
+  - updated frontend script for API
+
+3.2.7.2 2018-12-13
+  - corrected frontend script for WLprinter
+
+3.2.7.1 2018-11-21
+  - Docker and docker compose files
+
+3.2.7 DWS 2018-11-17
+  - fixed inventory bug when converting an order to an invoice
+  - added option to limit sales to inventory on hand
+  - added option to hide closed accounts
+  - added lot and expiry date for parts and assemblies
+  - added option to force using a warehouse
+  - fixed missing function call for printing timecards
+  - added storescards for batch printing and queueing
+  - fixed display for first selected customer/vendor on payment screen
+  - added upload image function
+  - added make and model to selection screen and forms
+  - changed cookie to allow space in login names
+  - fixed subtotals on payroll report
+  - added missing module link for batch printing
+  - fixed totals on invoices with kits
+
+3.2.6.6 2018-09-09
+  - improved unload warnings
+
+3.2.6.5 2018-08-25
+  - display warnings before navigating away from changed documents on Chrome and Edge
+
+3.2.6.4 2018-08-22
+  - more information on login screen
+
+3.2.6.3 2018-07-19
+  - error messages on login screen are unhelpful by default
+  - correct encoded backup files
+
+2018-03-30
+  - full UTF-8 support
+  - improved appearance on small devices
+  - more variables for reminders
+  - more comfortable time card screen
+
+3.2.6 DWS 2017-12-27
+  - added missing select all Javascript to reminders
+  - fixed missing project link when editing payroll transaction
+  - added option to lock invoice/order/quotation/customer/employee numbers
+  - added missing javascript on batch report screen to un/select all
+  - added code to use a common template directory
+
+2017-05-18
+  - new option to download db dump
+
+3.2.5 DWS 2017-04-10
+  - exclude backorders on salesorder report
+  - merged foreign exchange gain / loss account
+  - fixed incorrect onhand quantity display on invoices / orders when warehouse selected
+  - update tax setting for parts and services when changing tax account
+  - added missing input criteria for audit log report
+
+3.2.4 DWS 2017-03-21
+  - included missing spool and templates directory in archive
+
+3.2.3 DWS 2017-02-07
+  - added pdftk to combine PDF files
+  - added missing period selection on voucher search screen
+  - added option to generate income statement and balance sheet from a template
+
+3.2.2 DWS 2016-12-26
+  - added per user printer configuration option
+  - fixed broken pipe for parts report printing
+  - fixed unescaped left brace regex warning
+  - added missing functions for voiding checks and receipts
+  - added dropdowns for country, salespeople/employee and type of business on
+    customer/vendor search screen
+  - added period selection to customer/vendor search screen
+  - disallow creating admin login
+
+2016-11-04
+  - config flag to get copies of all e-mails
+
+3.2.1 DWS 2016-06-11
+  - added option to change database password and host
+  - fixed partsreport subtotal grouping
+  - updated character set list for postgresql
+  - moved templates into directories for easier maintenance
+  - added General Ledger import
+  - fixed adding a new language
+  - added Service Company COA for Germany
+  - added missing to email for reminders
+  - fixed foreign exchange for orders with prepayments
+  - added maximum number of tries for one time TAN login
+  - added units for timecard in generate sales order function
+  - changed character encoding to select option
+  - added payment info to print on order
+  - added totals for income sheet and balance sheet when headings are not included
+  - changed error reporting when creating a new dataset
+  - added xelatex option to generate PDF files
+  - added client_encoding to preferences
+
+2016-04-30
+  - improved API to find invoices
+  - API endpoint to add payments
+
+2016-02-12
+  - buttons are not printed
+
+2016-01-24
+  - WLprinter moved to new menu entry
+
+3.2.0 DWS 2016-01-14
+  - kits, similar to assemblies but non-stocking and processed as a bundle when
+    sold or purchased. Items can either be shown on an invoice/packing list or
+    hidden. This features is also useful for bundling such things as promotional
+    giveaways, bottle deposits, core charges, etc.
+  - enter pre-payments made to vendor at time of order. Same for customer
+    orders, enter deposits received on order
+  - CMS. Attach reference documents to customers, employees, transactions,
+    projects, etc. Documents can be kept "Confidential" so not everyone has
+    access to the documents
+  - Upload documents and attach to transactions. Once documents are attached
+    they can be viewed by the program associated with the type of document. i.e
+    launch a spreadsheet in openoffice or Excell, or display a word document in
+    your word processor
+  - consolidate multiple orders and generate an invoice. Add your own
+    description to indicate for which period the invoice is for. i.e For
+    services rendered / beginning date - ending date
+  - tighter security with added audit control functions. New function for audit
+    log to review who has done what
+  - consolidated tax reports
+  - warehouse transfer form and transaction log
+  - display price history for items and pick price
+  - Javascript code such as a calendar to pick a date, or to pick a price from
+    a price history, etc.
+  - consolidate multiple invoices into one invoice
+  - display margins for individual items and totals on invoices and orders
+  - fixed taxes for batch print function
+  - fixed taxes for multiple taxes with a valid to date
+  - changed printer string in check print module
+  - added missing variable for taxreports
+  - fixed division by zero error for credit invoices
+  - fixed check printing for multiple vendors
+  - added missing FROM clause in price matrix query
+  - added missing printer variable to ship/receive merchandise screen
+  - ship/receive merchandise screen included closed orders when an order number
+    was entered for a search criteria
+  - re-open order if linked invoice is deleted
+  - added reset_shipped function
+  - added two-step login with TAN sent to email account so one cannot log in
+    without it
+  - batch warehouse transfer for assemblies
+  - changed import function to disregard extra fields in import file
+  - fixed rounding error for discounts
+  - payment register interface
+  - void checks/payments
+  - reissue checks/payments
+  - set accounts inactive
+  - added UTF-8 translations for all translations
+
+2015-12-23
+  - simple REST API
+
+3.0.8 DWS 2015-04-09
+  - fixed taxes for batch print function
+  - fixed taxes for multiple taxes with a valid to date
+  - changed printer string in check print module
+  - added missing balance sheet templates
+  - added missing variable for taxreports
+  - fixed division by zero error for credit invoices
+  - fixed check printing for multiple vendors
+  - added missing FROM clause in price matrix query
+
+3.0.7 DWS 2015-02-10
+  - added transaction locking for payroll
+  - added COGS difference for credit invoices
+  - fixed reconciliation to reconcile transactions with no source
+  - added fixed dection for payroll
+  - added transaction locking for payroll
+  - fixed formatting for PDF parts report
+
+2014-03-24
+  - favicons for all pages
+  - set sendmail envelope
+
+3.0.6 DWS 2014-02-12
+  - changed import function to disregard extra fields in import file
+  - added encoding for names to email function
+  - added source check to reconciliation
+  - changed credit invoices to return items to inventory at last cost
+
+3.0.5 DWS 2013-05-24
+  - two step login procedure with one-time password
+  - payment method variable for invoice
+  - limit levels for reminders
+  - fixed role assignment
+
+3.0.4 DWS 2013-01-23
+  - changed description on invoices/orders from textarea to input field, field
+    switches over to textarea again if more than one line of text is entered
+  - fixed sort order index for parts report
+  - fixed discount formatting error
+  - added missing closing tag for totals line for the payroll transaction report
+  - added formatting to print barcodes with special characters
+  - added missing format for sum carried forward variable
+
+3.0.3 DWS 2012-06-05
+  - fixed version number entry for backup/restore
+  - fixed buttons for POS screen
+  - changed function call to remove locks
+  - removed hash reference checks
+
+2012-04-30
+  - improved support for WLprinter
+
+3.0.2-1 DWS 2012-04-17
+  - restrict access role selection for users to lower access roles only
+  - added admin check
+  - changed "over" field so the newer versions of postgres (7.4+) won't
+    complain about a reserved word
+  - changed backslash in queries to avoid warning from postgres
+  - fixed partsgroup selection on parts entry screen to reselect group
+
+3.0.2 DWS 2012-04-15
+  - restrict access role selection for users to lower access roles only
+  - added admin check
+  - changed "over" field so the newer versions of postgres (7.4+) won't
+    complain about a reserved word
+  - changed backslash in queries to avoid warning from postgres
+  - fixed partsgroup selection on parts entry screen to reselect group
+
+3.0.1 DWS 2012-04-11
+  - fixed formatting error for payments when format is set to 1.000,00
+  - updated Dutch translation
+
+2012-04-06
+  - UTF-8 version of all translations
+  - all Tekki changes from version 2 added to version 3:
+    - new chd translation for de_CH
+    - WLprinter
+    - security leak in template editor closed
+    - correct mail message ID
+    - Swiss SMB charts of accounts
+
+3.0.0 DWS 2012-04-01
+  - payments export file for use with BDD, DTA
+  - multiple rounding options based on type of payment
+  - save and restore public and private report layouts
+  - GL report with contra accounts
+  - import sales invoices, purchase and sales orders, pricelists, parts,
+    services, labor, partsgroups, customers and vendors
+  - generate same invoice for multiple customers
+  - barcode and label printing for received merchandise and stock on hand
+  - data driven payroll system
+  - revised template editor
+  - hierarchical group selection
+  - role based user managment
+  - multi-company environment with admin access
+  - administration module to access dataset
+  - restore any version dataset
+  - consolidate sales / purchase orders
