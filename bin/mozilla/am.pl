@@ -3015,7 +3015,7 @@ sub config {
 
   for (qw(mm-dd-yy mm/dd/yy dd-mm-yy dd/mm/yy dd.mm.yy yyyy-mm-dd)) { $form->{selectdateformat} .= "$_\n" }
 
-  for (qw(1,000.00 1000.00 1.000,00 1000,00 1'000.00)) { $form->{selectnumberformat} .= "$_\n" }
+  for (qw(1,000.00 1000.00 1.000,00 1000,00 1'000.00 1,00,000.00)) { $form->{selectnumberformat} .= "$_\n" }
 
   $form->{signature} = $form->quote($myconfig{signature});
   $form->{signature} =~ s/\\n/\n/g;

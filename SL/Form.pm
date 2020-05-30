@@ -124,7 +124,7 @@ sub new {
 
   $self->{version} = "3.2.9";
   $self->{dbversion} = "3.2.4";
-  $self->{version2} = "tekki 3.2.9.13";
+  $self->{version2} = "tekki 3.2.9.14";
   $self->{dbversion2} = 11;
 
   $self->{version2} .= "-extended";
@@ -648,31 +648,39 @@ sub format_amount {
         $amount .= "\.$dec" if ($dec ne "");
       }
 
-      if ($myconfig->{numberformat} eq "1'000.00") {
+      elsif ($myconfig->{numberformat} eq "1'000.00") {
         $amount =~ s/\d{3,}?/$&'/g;
         $amount =~ s/'$//;
         $amount = join '', reverse split //, $amount;
         $amount .= "\.$dec" if ($dec ne "");
       }
 
-      if ($myconfig->{numberformat} eq '1.000,00') {
+      elsif ($myconfig->{numberformat} eq '1.000,00') {
         $amount =~ s/\d{3,}?/$&./g;
         $amount =~ s/\.$//;
         $amount = join '', reverse split //, $amount;
         $amount .= ",$dec" if ($dec ne "");
       }
 
-      if ($myconfig->{numberformat} eq '1000,00') {
+      elsif ($myconfig->{numberformat} eq '1,00,000.00') {
+        $amount =~ s/(\d{3})(\d{2})(\d{1,2})/$1,$2,$3,/g;
+        $amount =~ s/(\d{3})(\d{1,2})$/$1,$2/;
+        $amount =~ s/,$//;
+        $amount = join '', reverse split //, $amount;
+        $amount .= ".$dec" if ($dec ne "");
+      }
+
+      elsif ($myconfig->{numberformat} eq '1000,00') {
         $amount = "$whole";
         $amount .= ",$dec" if ($dec ne "");
       }
 
-      if ($myconfig->{numberformat} eq '1000.00') {
+      elsif ($myconfig->{numberformat} eq '1000.00') {
         $amount = "$whole";
         $amount .= ".$dec" if ($dec ne "");
       }
 
-      if ($myconfig->{numberformat} eq '100000') {
+      elsif ($myconfig->{numberformat} eq '100000') {
         $amount = "$whole$dec";
       }
 
