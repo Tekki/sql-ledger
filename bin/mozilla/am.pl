@@ -5194,7 +5194,7 @@ sub bank_accounts {
   $callback = "$form->{script}?action=bank_accounts";
   for (qw(path login)) { $callback .= "&$_=$form->{$_}" }
 
-  @column_index = qw(accno description name iban bic membernumber clearingnumber rvc dcn closed);
+  @column_index = qw(accno description name iban qriban bic membernumber clearingnumber rvc dcn closed);
 
   $callback = $form->escape($callback);
 
@@ -5202,6 +5202,7 @@ sub bank_accounts {
   $column_header{description} = qq|<th class=listheading>|.$locale->text('Description').qq|</th>|;
   $column_header{name} = qq|<th class=listheading>|.$locale->text('Bank').qq|</th>|;
   $column_header{iban} = qq|<th class=listheading>|.$locale->text('IBAN').qq|</th>|;
+  $column_header{qriban} = qq|<th class=listheading>|.$locale->text('QR IBAN').qq|</th>|;
   $column_header{bic} = qq|<th class=listheading>|.$locale->text('BIC').qq|</th>|;
   $column_header{membernumber} = qq|<th class=listheading>|.$locale->text('Member No.').qq|</th>|;
   $column_header{clearingnumber} = qq|<th class=listheading>|.$locale->text('Clearing No.').qq|</th>|;
@@ -5237,7 +5238,7 @@ sub bank_accounts {
 
     for (qw(name description)) { $column_data{$_} = "<td nowrap>$ref->{$_}&nbsp;</td>" }
     for (qw(membernumber clearingnumber rvc dcn)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
-    for (qw(iban bic)) { $column_data{$_} = "<td nowrap>$ref->{$_}&nbsp;</td>" }
+    for (qw(iban qriban bic)) { $column_data{$_} = "<td nowrap>$ref->{$_}&nbsp;</td>" }
     $column_data{accno} = "<td><a href=$form->{script}?action=edit_bank&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{accno}</td>";
     $closed = ($ref->{closed}) ? "*" : "&nbsp;";
     $column_data{closed} = "<td>$closed</td>";
@@ -5320,6 +5321,10 @@ sub bank_header {
         <tr>
           <th align=right>|.$locale->text('IBAN').qq|</th>
           <td><input name=iban size=24 maxlength=34 value="$form->{iban}"></td>
+        </tr>
+        <tr>
+          <th align=right>|.$locale->text('QR IBAN').qq|</th>
+          <td><input name=qriban size=24 maxlength=34 value="$form->{qriban}"></td>
         </tr>
         <tr>
           <th align=right nowrap>|.$locale->text('Address').qq|</th>

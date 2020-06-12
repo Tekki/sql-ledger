@@ -210,6 +210,7 @@ $self{texts} = {
   'Recd'                        => 'Erh',
   'Received'                    => 'Eingelagert',
   'Record in'                   => 'Buchen auf',
+  'Recurring'                   => 'Wiederkehrend',
   'Recurring Transaction'       => 'Wiederkehrende Buchung',
   'Reference'                   => 'Referenz',
   'Reference Documents'         => 'Dokumente',

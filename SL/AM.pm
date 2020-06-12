@@ -2359,7 +2359,7 @@ sub bank_accounts {
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   my $query = qq|SELECT c.id, c.accno, c.description, c.closed,
-                 bk.name, bk.iban, bk.bic, bk.membernumber, bk.clearingnumber,
+                 bk.name, bk.iban, bk.qriban, bk.bic, bk.membernumber, bk.clearingnumber,
                  bk.dcn, bk.rvc,
                  ad.address1, ad.address2, ad.city,
                  ad.state, ad.zipcode, ad.country,
@@ -2403,7 +2403,7 @@ sub get_bank {
   $form->{id} *= 1;
 
   $query = qq|SELECT c.accno, c.description, c.closed,
-              bk.name, bk.iban, bk.bic, bk.membernumber, bk.clearingnumber,
+              bk.name, bk.iban, bk.qriban, bk.bic, bk.membernumber, bk.clearingnumber,
               bk.dcn, bk.rvc,
               ad.address1, ad.address2, ad.city,
               ad.state, ad.zipcode, ad.country,
@@ -2449,7 +2449,7 @@ sub save_bank {
   $dbh->do($query) || $form->dberror($query);
 
   my $ok;
-  for (qw(name iban bic address1 address2 city state zipcode country membernumber clearingnumber rvc dcn)) {
+  for (qw(name iban qriban bic address1 address2 city state zipcode country membernumber clearingnumber rvc dcn)) {
     if ($form->{$_}) {
       $ok = 1;
       last;
@@ -2464,6 +2464,7 @@ sub save_bank {
       $query = qq|UPDATE bank SET
                   name = |.$dbh->quote(uc $form->{name}).qq|,
                   iban = |.$dbh->quote($form->{iban}).qq|,
+                  qriban = |.$dbh->quote($form->{qriban}).qq|,
                   bic = |.$dbh->quote(uc $form->{bic}).qq|,
                   membernumber = |.$dbh->quote($form->{membernumber}).qq|,
                   clearingnumber = |.$dbh->quote($form->{clearingnumber}).qq|,
@@ -2472,11 +2473,12 @@ sub save_bank {
                   WHERE id = $form->{id}|;
       $dbh->do($query) || $form->dberror($query);
     } else {
-      $query = qq|INSERT INTO bank (id, name, iban, bic, membernumber,
+      $query = qq|INSERT INTO bank (id, name, iban, qriban, bic, membernumber,
                   clearingnumber, rvc, dcn)
                   VALUES ($form->{id}, |
                   .$dbh->quote(uc $form->{name}).qq|, |
                   .$dbh->quote(uc $form->{iban}).qq|, |
+                  .$dbh->quote(uc $form->{qriban}).qq|, |
                   .$dbh->quote($form->{bic}).qq|, |
                   .$dbh->quote($form->{membernumber}).qq|, |
                   .$dbh->quote($form->{clearingnumber}).qq|, |

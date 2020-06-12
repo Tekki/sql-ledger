@@ -235,6 +235,7 @@ $self{texts} = {
   'RVC missing!'                => 'Codierzeile fehlt!',
   'Recd'                        => 'Erh',
   'Received'                    => 'Eingelagert',
+  'Recurring'                   => 'Wiederkehrend',
   'Reference Documents'         => 'Dokumente',
   'Report processed!'           => 'Bericht verarbeitet!',
   'Required'                    => 'Erforderlich',
@@ -420,7 +421,7 @@ $self{subs} = {
   'drucken'                     => 'print_',
   'speichern'                   => 'save',
   'als_neu_speichern'           => 'save_as_new',
-  'übertrag'                    => 'transfer',
+  'Übertrag'                    => 'transfer',
   'aktualisieren'               => 'update',
 };
 

@@ -263,6 +263,7 @@ sub export {
   $includeinreport{zipcode} = { ndx => $i++, checkbox => 1, html => qq|<input name="l_zipcode" class=checkbox type=checkbox value=Y $form->{l_zipcode}>|, label => $locale->text('Zip/Postal Code') };
   $includeinreport{country} = { ndx => $i++, checkbox => 1, html => qq|<input name="l_country" class=checkbox type=checkbox value=Y $form->{l_country}>|, label => $locale->text('Country') };
   $includeinreport{iban} = { ndx => $i++, checkbox => 1, html => qq|<input name="l_iban" class=checkbox type=checkbox value=Y $form->{l_iban}>|, label => $locale->text('IBAN') };
+  $includeinreport{qriban} = { ndx => $i++, checkbox => 1, html => qq|<input name="l_qriban" class=checkbox type=checkbox value=Y $form->{l_qriban}>|, label => $locale->text('QR IBAN') };
   $includeinreport{clearingnumber} = { ndx => $i++, checkbox => 1, html => qq|<input name="l_clearingnumber" class=checkbox type=checkbox value=Y $form->{l_clearingnumber}>|, label => $locale->text('BC Number') };
   $includeinreport{membernumber} = { ndx => $i++, checkbox => 1, html => qq|<input name="l_membernumber" class=checkbox type=checkbox value=Y $form->{l_membernumber}>|, label => $locale->text('Member Number') };
   $includeinreport{datepaid} = { ndx => $i++, checkbox => 1, html => qq|<input name="l_datepaid" class=checkbox type=checkbox value=Y $form->{l_datepaid}>|, label => $locale->text('Date Paid') };
@@ -1760,6 +1761,7 @@ sub im_vc {
 
   $column_data{taxincluded} = $locale->text('T');
   $column_data{iban} = $locale->text('IBAN');
+  $column_data{qriban} = $locale->text('QR IBAN');
   $column_data{bic} = $locale->text('BIC');
   $column_data{bankname} = $locale->text('Bank');
   $column_data{bankaddress1} = $locale->text('Street');

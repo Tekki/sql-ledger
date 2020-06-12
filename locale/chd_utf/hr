@@ -161,6 +161,7 @@ $self{texts} = {
   'Project'                     => 'Projekt',
   'Project not on file!'        => 'Dieses Projekt ist nicht in der Datenbank!',
   'Public'                      => 'Öffentlich',
+  'QR IBAN'                     => 'QR-IBAN',
   'Quarter'                     => 'Quartal',
   'RVC missing!'                => 'Codierzeile fehlt!',
   'Rate %'                      => 'Prozentsatz',

@@ -40,8 +40,8 @@ sub create_links {
                 e.name AS employee, e.id AS employee_id,
                 g.pricegroup, g.id AS pricegroup_id,
                 m.description AS paymentmethod, m.id AS paymentmethod_id,
-                bk.name AS bankname, bk.iban, bk.bic, bk.membernumber,
-                bk.clearingnumber,
+                bk.name AS bankname, bk.iban, bk.qriban, bk.bic,
+                bk.membernumber, bk.clearingnumber,
                 ad1.address1 AS bankaddress1,
                 ad1.address2 AS bankaddress2,
                 ad1.city AS bankcity,
@@ -338,7 +338,7 @@ sub save {
 
   my $ok;
 
-  for (qw(iban bic membernumber clearingnumber)) {
+  for (qw(iban qriban bic membernumber clearingnumber)) {
     if ($form->{$_}) {
       $ok = 1;
       last;
@@ -357,22 +357,24 @@ sub save {
   # bank
   if ($ok) {
     if ($bank_address_id) {
-      $query = qq|INSERT INTO bank (id, name, iban, bic, membernumber,
+      $query = qq|INSERT INTO bank (id, name, iban, qriban, bic, membernumber,
                   clearingnumber, address_id)
                   VALUES ($form->{id}, |
                   .$dbh->quote(uc $form->{bankname}).qq|,|
                   .$dbh->quote($form->{iban}).qq|,|
+                  .$dbh->quote($form->{qriban}).qq|,|
                   .$dbh->quote($form->{bic}).qq|,|
                   .$dbh->quote($form->{membernumber}).qq|,|
                   .$dbh->quote($form->{clearingnumber}).qq|,
                   $bank_address_id
                   )|;
     } else {
-      $query = qq|INSERT INTO bank (id, name, iban, bic, membernumber,
+      $query = qq|INSERT INTO bank (id, name, iban, qriban, bic, membernumber,
                   clearingnumber)
                   VALUES ($form->{id}, |
                   .$dbh->quote(uc $form->{bankname}).qq|,|
                   .$dbh->quote($form->{iban}).qq|,|
+                  .$dbh->quote($form->{qriban}).qq|,|
                   .$dbh->quote($form->{bic}).qq|,|
                   .$dbh->quote($form->{membernumber}).qq|,|
                   .$dbh->quote($form->{clearingnumber}).qq|
@@ -949,7 +951,7 @@ sub search {
 
     $bth->execute($ref->{id});
     $bref = $bth->fetchrow_hashref(NAME_lc);
-    for (qw(iban bic membernumber clearingnumber)) {
+    for (qw(iban qriban bic membernumber clearingnumber)) {
       $ref->{$_} = $bref->{$_};
     }
     for (qw(name address1 address2 city state zipcode country)) {

@@ -1297,7 +1297,8 @@ sub company_details {
                  ct.contact, ct.phone as $form->{vc}phone,
                  ct.fax as $form->{vc}fax,
                  ct.taxnumber AS $form->{vc}taxnumber, ct.sic_code AS sic,
-                 bk.iban AS $form->{vc}iban, bk.bic AS $form->{vc}bic,
+                 bk.iban AS $form->{vc}iban, bk.qriban AS $form->{vc}qriban,
+                 bk.bic AS $form->{vc}bic,
                  bk.membernumber AS $form->{vc}bankmembernumber,
                  bk.clearingnumber AS $form->{vc}bankclearingnumber,
                  ct.startdate, ct.enddate,
@@ -1377,7 +1378,8 @@ sub company_details {
     for (keys %$ref) { $form->{"bank$_"} = $ref->{$_} }
     $sth->finish;
 
-    for (qw(iban bic membernumber clearingnumber rvc dcn)) { $form->{$_} = $form->{"bank$_"} };
+    for (qw(iban qriban bic membernumber clearingnumber rvc dcn)) { $form->{$_} = $form->{"bank$_"} };
+    $form->{qriban} =~ s/\s+//g;
   }
 
   $dbh->disconnect if $disconnect;
