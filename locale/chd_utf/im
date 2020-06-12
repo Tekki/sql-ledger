@@ -166,6 +166,7 @@ $self{texts} = {
   'Pricegroup'                  => 'Preisgruppe',
   'Project'                     => 'Projekt',
   'Public'                      => 'Öffentlich',
+  'QR IBAN'                     => 'QR-IBAN',
   'Qty'                         => 'Menge',
   'ROP'                         => 'Mindestbestand',
   'RV'                          => 'EZS',

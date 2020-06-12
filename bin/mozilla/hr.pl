@@ -95,6 +95,7 @@ sub search_employee {
   push @f, qq|<input name="l_ssn" type=checkbox class=checkbox value=Y> |.$locale->text('SSN');
   push @f, qq|<input name="l_dob" type=checkbox class=checkbox value=Y> |.$locale->text('DOB');
   push @f, qq|<input name="l_iban" type=checkbox class=checkbox value=Y> |.$locale->text('IBAN');
+  push @f, qq|<input name="l_qriban" type=checkbox class=checkbox value=Y> |.$locale->text('QR IBAN');
   push @f, qq|<input name="l_bic" type=checkbox class=checkbox value=Y> |.$locale->text('BIC');
   push @f, qq|<input name="l_notes" type=checkbox class=checkbox value=Y> |.$locale->text('Notes');
 
@@ -209,7 +210,7 @@ sub list_employees {
   $callback = "$form->{script}?action=list_employees";
   for (qw(direction oldsort db path login status)) { $callback .= "&$_=$form->{$_}" }
 
-  @columns = $form->sort_columns(qw(id employeenumber name address city state zipcode country workphone workfax workmobile homephone homemobile email startdate enddate ssn dob iban bic sales payroll acsrole login notes));
+  @columns = $form->sort_columns(qw(id employeenumber name address city state zipcode country workphone workfax workmobile homephone homemobile email startdate enddate ssn dob iban qriban bic sales payroll acsrole login notes));
   unshift @columns, "ndx";
 
   $form->{l_acsrole} = "" if $form->{acsrole};
@@ -333,6 +334,7 @@ sub list_employees {
   $column_header{ssn} = qq|<th><a class=listheading href=$href&sort=ssn>|.$locale->text('SSN').qq|</a></th>|;
   $column_header{dob} = qq|<th><a class=listheading href=$href&sort=dob>|.$locale->text('DOB').qq|</a></th>|;
   $column_header{iban} = qq|<th><a class=listheading href=$href&sort=iban>|.$locale->text('IBAN').qq|</a></th>|;
+  $column_header{qriban} = qq|<th><a class=listheading href=$href&sort=qriban>|.$locale->text('QR IBAN').qq|</a></th>|;
   $column_header{bic} = qq|<th><a class=listheading href=$href&sort=bic>|.$locale->text('BIC').qq|</a></th>|;
 
   $form->{title} = $locale->text('Employees') . " / $form->{company}";
@@ -790,6 +792,10 @@ sub employee_header {
               <tr>
                 <th align=right nowrap>|.$locale->text('IBAN').qq|</th>
                 <td><input name=iban size=34 maxlength=34 value="|.$form->quote($form->{iban}).qq|"></td>
+              </tr>
+              <tr>
+                <th align=right nowrap>|.$locale->text('QR IBAN').qq|</th>
+                <td><input name=qriban size=34 maxlength=34 value="|.$form->quote($form->{qriban}).qq|"></td>
               </tr>
               <tr>
                 <th align=right nowrap>|.$locale->text('BIC').qq|</th>

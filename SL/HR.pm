@@ -46,7 +46,7 @@ sub get_employee {
     $query = qq|SELECT e.*,
                 ad.id AS addressid, ad.address1, ad.address2, ad.city,
                 ad.state, ad.zipcode, ad.country,
-                bk.name AS bankname, bk.iban, bk.bic,
+                bk.name AS bankname, bk.iban, bk.qriban, bk.bic,
                 bk.membernumber, bk.clearingnumber,
                 ad1.address1 AS bankaddress1,
                 ad1.address2 AS bankaddress2,
@@ -513,7 +513,7 @@ sub save_employee {
 
   my $ok;
 
-  for (qw(iban bic membernumber clearingnumber)) {
+  for (qw(iban qriban bic membernumber clearingnumber)) {
     if ($form->{$_}) {
       $ok = 1;
       last;
@@ -531,22 +531,24 @@ sub save_employee {
 
   if ($ok) {
     if ($bank_address_id) {
-      $query = qq|INSERT INTO bank (id, name, iban, bic, membernumber,
+      $query = qq|INSERT INTO bank (id, name, iban, qriban, bic, membernumber,
                   clearingnumber, address_id)
                   VALUES ($form->{id}, |
                   .$dbh->quote(uc $form->{bankname}).qq|,|
                   .$dbh->quote($form->{iban}).qq|,|
+                  .$dbh->quote($form->{qriban}).qq|,|
                   .$dbh->quote($form->{bic}).qq|,|
                   .$dbh->quote($form->{membernumber}).qq|,|
                   .$dbh->quote($form->{clearingnumber}).qq|,
                   $bank_address_id
                   )|;
     } else {
-      $query = qq|INSERT INTO bank (id, name, iban, bic, membernumber,
+      $query = qq|INSERT INTO bank (id, name, iban, qriban, bic, membernumber,
                   clearingnumber)
                   VALUES ($form->{id}, |
                   .$dbh->quote(uc $form->{bankname}).qq|,|
                   .$dbh->quote($form->{iban}).qq|,|
+                  .$dbh->quote($form->{qriban}).qq|,|
                   .$dbh->quote($form->{bic}).qq|,|
                   .$dbh->quote($form->{membernumber}).qq|,|
                   .$dbh->quote($form->{clearingnumber}).qq|
@@ -795,7 +797,7 @@ sub employees {
   $query = qq|SELECT DISTINCT e.*,
               ad.address1, ad.address2, ad.city, ad.state,
               ad.zipcode, ad.country,
-              bk.iban, bk.bic,
+              bk.iban, bk,qriban, bk.bic,
               r.description AS acsrole,
               ew.employee_id AS payroll
               FROM employee e
@@ -1305,7 +1307,7 @@ sub payslip_details {
                 ad.address1, ad.address2, ad.city,
                 ad.state, ad.zipcode, ad.country,
                 bk.name AS employeebankname, bk.iban AS employeebankiban,
-                bk.bic AS employeebankbic,
+                bk.qriban AS employeebankqriban, bk.bic AS employeebankbic,
                 bk.membernumber AS employeebankmembernumber,
                 bk.clearingnumber AS employeebankclearingnumber,
                 ad1.address1 AS employeebankaddress1,
@@ -1354,7 +1356,7 @@ sub payslip_details {
     $query = qq|SELECT
                 c2.accno AS payment, c2.description AS payment_description,
                 tr2.description AS payment_translation,
-                bk.name AS bankname, bk.iban, bk.bic, bk.dcn, bk.rvc,
+                bk.name AS bankname, bk.iban, bk.qriban, bk.bic, bk.dcn, bk.rvc,
                 bk.membernumber, bk.clearingnumber,
                 ad1.address1 AS bankaddress1,
                 ad1.address2 AS bankaddress2,

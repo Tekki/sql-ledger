@@ -443,6 +443,7 @@ sub include_in_report {
   push @f, qq|<input name="l_bankcountry" type=checkbox class=checkbox value=Y> |.$locale->text('Country');
 
   push @f, qq|<input name="l_iban" type=checkbox class=checkbox value=Y> |.$locale->text('IBAN');
+  push @f, qq|<input name="l_qriban" type=checkbox class=checkbox value=Y> |.$locale->text('QR IBAN');
   push @f, qq|<input name="l_bic" type=checkbox class=checkbox value=Y> |.$locale->text('BIC');
   push @f, qq|<input name="l_membernumber" type=checkbox class=checkbox value=Y> |.$locale->text('Member Number');
   push @f, qq|<input name="l_clearingnumber" type=checkbox class=checkbox value=Y> |.$locale->text('BC Number');
@@ -780,7 +781,7 @@ sub list_names {
     $href .= "&l_bankaddress=Y";
   }
 
-  push @columns, qw(bankcity bankstate bankzipcode bankcountry iban bic remittancevoucher membernumber clearingnumber startdate enddate invnumber invamount invtax invtotal ordnumber ordamount ordtax ordtotal quonumber quoamount quotax quototal);
+  push @columns, qw(bankcity bankstate bankzipcode bankcountry iban qriban bic remittancevoucher membernumber clearingnumber startdate enddate invnumber invamount invtax invtotal ordnumber ordamount ordtax ordtotal quonumber quoamount quotax quototal);
   @columns = $form->sort_columns(@columns);
 
   if ($form->{sort} eq 'contact') {
@@ -1011,6 +1012,7 @@ sub list_names {
   $column_header{bankzipcode} = qq|<th class=listheading>|.$locale->text('Zip/Postal Code').qq|</th>|;
   $column_header{bankcountry} = qq|<th class=listheading>|.$locale->text('Country').qq|</th>|;
   $column_header{iban} = qq|<th class=listheading>|.$locale->text('IBAN').qq|</th>|;
+  $column_header{qriban} = qq|<th class=listheading>|.$locale->text('QR IBAN').qq|</th>|;
   $column_header{bic} = qq|<th class=listheading>|.$locale->text('BIC').qq|</th>|;
   $column_header{membernumber} = qq|<th class=listheading>|.$locale->text('Member Number').qq|</th>|;
   $column_header{clearingnumber} = qq|<th class=listheading>|.$locale->text('BC Number').qq|</th>|;
@@ -2187,6 +2189,10 @@ sub form_header {
               <tr>
                 <th align=right>|.$locale->text('IBAN').qq|</th>
                 <td><input name=iban size=34 maxlength=34 value="$form->{iban}"></td>
+              </tr>
+              <tr>
+                <th align=right>|.$locale->text('QR IBAN').qq|</th>
+                <td><input name=qriban size=34 maxlength=34 value="$form->{qriban}"></td>
               </tr>
               <tr>
                 <th align=right>|.$locale->text('BIC').qq|</th>

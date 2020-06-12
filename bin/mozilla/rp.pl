@@ -3416,7 +3416,7 @@ sub do_print_reminder {
   @a = qw(name address1 address2 city state zipcode country contact typeofcontact salutation firstname lastname);
   push @a, map { "$form->{vc}$_" } qw(number phone fax taxnumber);
   push @a, map { "shipto$_" } qw(name address1 address2 city state zipcode country contact phone fax email);
-  push @a, qw(dcn rvc iban bic membernumber clearingnumber);
+  push @a, qw(dcn rvc iban qriban bic membernumber clearingnumber);
   push @a, map { "bank$_" } qw(name address1 address2 city state zipcode country);
 
   $c = CP->new(($form->{language_code}) ? $form->{language_code} : $myconfig{countrycode});

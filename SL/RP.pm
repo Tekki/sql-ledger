@@ -1574,9 +1574,9 @@ sub reminder {
 
         $bth->execute($ref->{bank_id});
         $bank = $bth->fetchrow_hashref(NAME_lc);
-        for (qw(rvc iban bic membernumber clearingnumber)) {
-          $ref->{$_} = $bank->{$_};
-          delete $bank->{$_};
+        for (qw(rvc iban qriban bic membernumber clearingnumber)) {
+          $ref->{$_} = delete $bank->{$_};
+          $ref->{qriban} =~ s/\s+//g;
         }
         for (keys %$bank) {
           $ref->{"bank$_"} = $bank->{$_};

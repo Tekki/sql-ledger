@@ -74,7 +74,7 @@ CREATE TABLE defaults (
 );
 --
 INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '3.2.4');
-INSERT INTO defaults (fldname, fldvalue) VALUES ('version2', '11');
+INSERT INTO defaults (fldname, fldvalue) VALUES ('version2', '15');
 --
 CREATE TABLE acc_trans (
   trans_id int,
@@ -673,6 +673,7 @@ CREATE TABLE bank (
   id int,
   name varchar(64),
   iban varchar(34),
+  qriban varchar(34),
   bic varchar(11),
   address_id int default nextval('addressid'),
   dcn text,
