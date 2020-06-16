@@ -323,7 +323,7 @@ sub _descr_ct {
 
 sub _descr_ic {
   my ($form) = @_;
-  return $form->{partnumber}, (split "\n", $form->{description})[0];
+  return $form->{partnumber}, (split "\n", $form->{description})[0] // '';
 }
 
 sub _descr_jc {
