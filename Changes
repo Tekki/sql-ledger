@@ -1,5 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+3.2.9.16 2020-06-16
+  - recent list accepts empty item descriptions
+
 3.2.9.15 2020-06-12
   - new qriban field for Swiss QR invoice
 
