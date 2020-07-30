@@ -1,5 +1,9 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+3.2.9.17 2020-07-30
+  - misspelled bank colum name corrected
+    #45, reported by gakmalone
+
 3.2.9.16 2020-06-16
   - recent list accepts empty item descriptions
 
