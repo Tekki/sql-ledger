@@ -797,7 +797,7 @@ sub employees {
   $query = qq|SELECT DISTINCT e.*,
               ad.address1, ad.address2, ad.city, ad.state,
               ad.zipcode, ad.country,
-              bk.iban, bk,qriban, bk.bic,
+              bk.iban, bk.qriban, bk.bic,
               r.description AS acsrole,
               ew.employee_id AS payroll
               FROM employee e
