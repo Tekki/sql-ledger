@@ -768,13 +768,17 @@ sub parse_template {
     $self->{OUT} = $self->{tmpfile};
   }
 
-  if ($self->{OUT}) {
-    open(OUT, '>:utf8', $self->{OUT}) or $self->error("$self->{OUT} : $!");
+  if (my $out = $self->{OUT}) {
+    my $mode = '>';
+    if ($out =~ /^\|/) {
+      $out =~ s/^\|\s*//;
+      $mode = '|-';
+    }
+    open(OUT, "$mode:utf8", $out) or $self->error("$out : $!");
   } else {
     open(OUT, ">-") or $self->error("STDOUT : $!");
 
     $self->header;
-
   }
 
   $self->{copies} ||= 1;
