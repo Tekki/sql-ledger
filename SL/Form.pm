@@ -159,9 +159,33 @@ sub dump {
   require Data::Dumper;
   local $Data::Dumper::Sortkeys = 1;
 
+  my ($package, $filename, $line) = caller;
+  print {*STDERR} "$line $filename\n";
+
   for (@values) {
-    print {*STDERR} ref($_) ? Data::Dumper::Dumper($_) : "|$_|\n";
+    print {*STDERR} ref($_) ? Data::Dumper::Dumper($_) : "  |$_|\n";
   }
+}
+
+
+sub dump_form {
+  my ($self, @fields) = @_;
+
+  my @dump_fields;
+  if (@fields) {
+    if (ref $fields[0] eq 'Regexp') {
+      @dump_fields = grep /$fields[0]/, sort keys %$self;
+    } else {
+      @dump_fields = @fields;
+    }
+  } else {
+    @dump_fields = sort keys %$self;
+  }
+
+  my ($package, $filename, $line) = caller;
+  print {*STDERR} "$line $filename\n";
+
+  print {*STDERR} "  $_: |$self->{$_}|\n" for @dump_fields;
 }
 
 
@@ -5408,6 +5432,10 @@ L<SL::Form> implements the following methods:
 =head2 dump
 
   $form->dump(@values);
+
+=head2 dump_form
+
+  $form->dump_form(@values);
 
 =head2 error
 
