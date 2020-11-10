@@ -627,6 +627,26 @@ sub spoolfile {
 }
 
 
+sub set_printed {
+  my ($self, $myconfig, $form, $spoolfiles) = @_;
+
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+
+  $query = qq|
+    UPDATE status SET
+    printed = TRUE
+    WHERE spoolfile = ?|;
+  my $sth = $dbh->prepare($query) || $form->dberror($query);
+
+  for my $file (@$spoolfiles) {
+    $sth->execute($file) || $form->dberror($query, $file);
+  }
+
+  $dbh->disconnect;
+}
+
+
 1;
 
 
@@ -663,5 +683,9 @@ L<SL::BP> implements the following functions:
 =head2 spoolfile
 
   BP->spoolfile($myconfig, $form);
+
+=head2 set_printed
+
+  BP->set_printed($myconfig, $form, \@spoolfiles);
 
 =cut

@@ -456,7 +456,7 @@ sub print {
         for (keys %$form) { delete $form->{$_} }
 
         for (qw(id vc)) { $form->{$_} = $myform->{"${_}_$i"} }
-        $form->{script} = $myform->{"module_$i"};
+        $form->{script} = qq|$myform->{"module_$i"}.pl|;
         for (qw(login path media sendmode subject message format type header copies)) { $form->{$_} = $myform->{$_} }
 
         do "$form->{path}/$form->{script}";
@@ -783,7 +783,7 @@ print qq|
     if ($ref->{invoice}) {
       $module = ($ref->{tablename} eq 'ar') ? "is" : "ir";
     }
-    $module .= ".pl";
+    $script = "$module.pl";
 
     $column_data{amount} = qq|<td align=right>|.$form->format_amount(\%myconfig, $ref->{amount}, $form->{precision}).qq|</td>|;
 
@@ -804,19 +804,19 @@ print qq|
 
     if ($ref->{tablename} eq 'oe') {
       $column_data{invnumber} = qq|<td>&nbsp</td>|;
-      $column_data{ordnumber} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{ordnumber}</a></td>
+      $column_data{ordnumber} = qq|<td><a href=$script?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{ordnumber}</a></td>
       <input type=hidden name="reference_$i" value="|.$form->quote($ref->{ordnumber}).qq|">|;
 
-      $column_data{quonumber} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{quonumber}</a></td>
+      $column_data{quonumber} = qq|<td><a href=$script?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{quonumber}</a></td>
     <input type=hidden name="reference_$i" value="|.$form->quote($ref->{quonumber}).qq|">|;
 
     } elsif ($ref->{tablename} eq 'jc') {
-      $column_data{id} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{id}</a></td>
+      $column_data{id} = qq|<td><a href=$script?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{id}</a></td>
     <input type=hidden name="reference_$i" value="$ref->{id}">|;
 
       $column_data{name} = qq|<td><a href=hr.pl?action=edit&id=$ref->{employee_id}&db=employee&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{name}</a></td>|;
     } else {
-      $column_data{invnumber} = qq|<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{invnumber}</a></td>
+      $column_data{invnumber} = qq|<td><a href=$script?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{invnumber}</a></td>
     <input type=hidden name="reference_$i" value="|.$form->quote($ref->{invnumber}).qq|">|;
     }
 
@@ -1028,12 +1028,12 @@ sub combine {
 
   use Cwd;
   $dir = cwd();
-  $files = "";
+  my @files;
 
   for (1 .. $form->{rowcount}) {
     if ($form->{"ndx_$_"}) {
       if ($form->{"spoolfile_$_"} =~ /\.pdf$/) {
-        $files .= qq|$form->{"spoolfile_$_"} |;
+        push @files, $form->{"spoolfile_$_"};
       }
     }
   }
@@ -1041,11 +1041,13 @@ sub combine {
   $form->{format} = "pdf";
   $form->{callback} =~ s/\&allbox=1//;
 
-  if ($files) {
+  if (@files) {
     chdir("$spool/$myconfig{dbname}");
     if ($filename = BP->spoolfile(\%myconfig, \%$form)) {
-      @args = ("pdftk $files cat output $filename");
+      my $spoolfiles = join ' ', @files;
+      @args = ("pdftk $spoolfiles cat output $filename");
       system(@args) % 256 == 0 or $form->error("@args : $?");
+      BP->set_printed(\%myconfig, \%$form, \@files);
     }
   } else {
     $form->error($locale->text('Nothing selected!'));
