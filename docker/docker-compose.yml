@@ -23,11 +23,11 @@ services:
 
   app:
     build: .
-    image: sql-ledger-test:0.5
+    image: sql-ledger-test:0.6
     ports:
       - 80:80
     volumes:
-      - .:/usr/local/apache2/htdocs/sql-ledger
+      - ../.:/usr/local/apache2/htdocs/sql-ledger
 
 volumes:
   db:

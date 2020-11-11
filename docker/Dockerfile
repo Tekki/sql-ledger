@@ -16,4 +16,4 @@ RUN echo " <Directory /usr/local/apache2/htdocs/sql-ledger>\n"\
 
 WORKDIR /usr/local/apache2/htdocs/sql-ledger
 
-COPY doc/docker-httpd-foreground /usr/local/bin/httpd-foreground
+COPY docker-httpd-foreground /usr/local/bin/httpd-foreground
