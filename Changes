@@ -1,5 +1,11 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+3.2.9.18 2020-11-11
+  - printing to txt format corrected
+    #46 reported by pjaouen
+  - improved batch printing
+  - extended helper functions for development
+
 3.2.9.17 2020-07-30
   - misspelled bank colum name corrected
     #45, reported by gakmalone
