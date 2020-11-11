@@ -1,3 +1,5 @@
+*The `extended` branch is deprecated and will no longer be updated!*
+
 # What is SQL-Ledger?
 
 [SQL-Ledger](https://sql-ledger.com) is an open source ERP and accounting system. It gives you all the functionality you need for quotations, order management, invoices, payrolls and much more. The program is written in [Perl](https://www.perl.org), runs on an [Apache](https://httpd.apache.org) webserver, uses a [PostgreSQL](https://www.postgresql.org) database and is highly configurable.
