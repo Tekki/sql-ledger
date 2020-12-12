@@ -1627,6 +1627,8 @@ sub save_defaults {
   # must be present
   $sth->execute('version', $form->{dbversion}) || $form->dberror;
   $sth->finish;
+  $sth->execute('version2', $form->{dbversion2}) || $form->dberror;
+  $sth->finish;
 
   for (qw(inventory income expense fxgainloss cashovershort)) {
     $query = qq|INSERT INTO defaults (fldname, fldvalue)
