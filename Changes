@@ -1,5 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+3.2.9.19 2020-12-12
+  - saving of defaults corrected
+
 3.2.9.18 2020-11-11
   - printing to txt format corrected
     #46 reported by pjaouen
