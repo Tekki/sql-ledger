@@ -414,7 +414,7 @@ sub create_links {
   $form->{cashdiscount} *= 100;
 
   if ($form->{id} || !$form->{rowcount}) {
-    $i = $form->{rowcount}++;
+    $i = $form->{rowcount}++ || 1;
     $form->{"$form->{ARAP}_amount_$form->{rowcount}"} = $form->{"$form->{ARAP}_amount_$i"};
   }
 
