@@ -1,0 +1,46 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Accepted format is'          => 'Format accepté est',
+  'Allowed range for selected month is' => 'Intervalle autorisé pour le mois sélectionné est',
+  'Allowed range is'            => 'Intervalle autorisé est',
+  'April'                       => 'Avril',
+  'August'                      => 'Aout',
+  'December'                    => 'Décembre',
+  'February'                    => 'Février',
+  'Fr'                          => 'Ve',
+  'Invalid date:'               => 'Date invalide',
+  'Invalid day:'                => 'Jour invalide',
+  'Invalid month:'              => 'Mois invalide',
+  'January'                     => 'Janvier',
+  'July'                        => 'Juillet',
+  'June'                        => 'Juin',
+  'March'                       => 'Mars',
+  'May'                         => 'Mai',
+  'Mo'                          => 'MO',
+  'November'                    => 'Novembre',
+  'October'                     => 'Octobre',
+  'Sa'                          => 'Sa.',
+  'September'                   => 'Septembre',
+  'Su'                          => 'Di',
+  'Th'                          => 'Je',
+  'Tu'                          => 'Ma',
+  'We'                          => 'Me',
+};
+
+$self{subs} = {
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'js_calendar'                 => 'js_calendar',
+  'pickvalue'                   => 'pickvalue',
+  'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
+  'unload'                      => 'unload',
+};
+
+1;
+

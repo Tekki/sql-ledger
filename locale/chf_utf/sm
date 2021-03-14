@@ -1,0 +1,61 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'AP account does not exist!'  => 'Compte de dépense n\'existe pas !',
+  'AR account does not exist!'  => 'Compte de recette n\'existe pas !',
+  'Accepted format is'          => 'Format accepté est',
+  'Allowed range for selected month is' => 'Intervalle autorisé pour le mois sélectionné est',
+  'Allowed range is'            => 'Intervalle autorisé est',
+  'April'                       => 'Avril',
+  'August'                      => 'Aout',
+  'Beginning date'              => 'Date de début',
+  'Continue'                    => 'Continuer',
+  'Date missing!'               => 'Date manquante !',
+  'December'                    => 'Décembre',
+  'February'                    => 'Février',
+  'Fr'                          => 'Ve',
+  'Invalid date:'               => 'Date invalide',
+  'Invalid day:'                => 'Jour invalide',
+  'Invalid month:'              => 'Mois invalide',
+  'January'                     => 'Janvier',
+  'July'                        => 'Juillet',
+  'June'                        => 'Juin',
+  'March'                       => 'Mars',
+  'May'                         => 'Mai',
+  'Mo'                          => 'MO',
+  'November'                    => 'Novembre',
+  'October'                     => 'Octobre',
+  'Repost Invoices'             => 'Reenregister facture',
+  'Reposting Invoices ... '     => 'Reenregister factures',
+  'Sa'                          => 'Sa.',
+  'September'                   => 'Septembre',
+  'Su'                          => 'Di',
+  'Th'                          => 'Je',
+  'Tu'                          => 'Ma',
+  'We'                          => 'Me',
+  'done'                        => 'écuté',
+  'please wait'                 => 'attendez SVP',
+};
+
+$self{subs} = {
+  'calendar'                    => 'calendar',
+  'change_report'               => 'change_report',
+  'check_all'                   => 'check_all',
+  'clock'                       => 'clock',
+  'continue'                    => 'continue',
+  'do_repost_invoices'          => 'do_repost_invoices',
+  'fld_config'                  => 'fld_config',
+  'fld_edit'                    => 'fld_edit',
+  'fld_save'                    => 'fld_save',
+  'js_calendar'                 => 'js_calendar',
+  'pickvalue'                   => 'pickvalue',
+  'repost_invoices'             => 'repost_invoices',
+  'resize'                      => 'resize',
+  'show_progress'               => 'show_progress',
+  'unload'                      => 'unload',
+};
+
+1;
+

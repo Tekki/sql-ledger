@@ -1,0 +1,15 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Reference Documents'         => 'Référencer documents',
+};
+
+$self{subs} = {
+  'all_references'              => 'all_references',
+  'references'                  => 'references',
+};
+
+1;
+
