@@ -1,5 +1,10 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+3.2.9.20 2021-03-14
+  - new translation French (Switzerland)
+    contributed by Bent Kjelsberg
+  - intoduction to the API
+
 3.2.9.19 2020-12-12
   - saving of defaults corrected
 
