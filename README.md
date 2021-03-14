@@ -17,7 +17,7 @@ The `full` branch, which is checked out by default, provides some additions:
 
 * WLprinter
 * real Unicode support
-* JSON API
+* JSON API ([introduction](doc/api.md))
 * recently used objects
 * Docker files for containerized test environment
 * minimalistic documentation
