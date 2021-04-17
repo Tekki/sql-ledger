@@ -17,14 +17,16 @@ cpanm Mojolicious Print::Colored
 
 ## Authentication
 
+### Authenticated client (recommended)
+
 To create an authenticated client, the first call has to be made to `login.pl`
 with `username` and `password` as parameters.
 
-parameter | value
--|-
-action | 'login' 
-username | your username
-password | your password
+| parameter | value         |
+|-----------|---------------|
+| action    | 'login'       |
+| login     | your username |
+| password  | your password |
 
 As SQL-Ledger always returns 200 as status code you probably want to check
 the response for login errors.
@@ -58,13 +60,26 @@ my $res = $ua->post(
 For the following examples `$ua` created with this code is used as client. The
 next calls are always made to `api.pl`.
 
+### Login with every request (alternative)
+
+As an alternative it is possible to login with every request. This maybe useful
+if just a single request has to be made to the API, but not recommended for
+multiple requests.
+
+```perl
+my %sl_params = (login => $sl_username, password => $sl_password, path => 'bin/mozilla',);
+```
+
+For this, add the password to `%sl_params` and directly call one of the
+following endpoints.
+
 ## List Accounts
 
 List all accounts from the chart of accounts.
 
-parameter | value
--|-
-action | 'list\_accounts' 
+| parameter | value            |
+|-----------|------------------|
+| action    | 'list\_accounts' |
 
 ```json
 { "accounts": [ ... ] }
@@ -94,9 +109,9 @@ if (my $accounts = $res->json->{accounts}) {
 
 Search customers using any of the parameters from `Customers--Reports--Search`.
 
-parameter | value
--|-
-action | 'search\_customer'
+| parameter | value              |
+|-----------|--------------------|
+| action    | 'search\_customer' |
 
 ```json
 { "customers": [ ... ] }
@@ -129,10 +144,10 @@ if (my $customers = $res->json->{customers}) {
 
 Load all details of a customer.
 
-parameter | value
--|-
-action | 'customer\_details'
-id | a valid customer ID
+| parameter | value               |
+|-----------|---------------------|
+| action    | 'customer\_details' |
+| id        | a valid customer ID |
 
 ```json
 { "id": ..., "name": ..., ... }
@@ -157,12 +172,12 @@ say_info dumper $res->json;
 Search for a sales or purchase order using any of the parameters from `Order
 Entry--Reports--Sales Orders`.
 
-parameter | value
--|-
-action | 'search\_order'
-open | default '1'
-type | default 'sales\_order', alternative 'purchase\_order'
-vc | default 'customer', alternative 'vendor'
+| parameter | value                                                 |
+|-----------|-------------------------------------------------------|
+| action    | 'search\_order'                                       |
+| open      | default '1'                                           |
+| type      | default 'sales\_order', alternative 'purchase\_order' |
+| vc        | default 'customer', alternative 'vendor'              |
 
 ```json
 { "orders": [ ... ] }
@@ -201,11 +216,11 @@ if (my $orders = $res->json->{orders}) {
 Search for transactions using any of the parameters from
 `AR--Reports--Transactions` or `AR--Reports--Outstanding`.
 
-parameter | value
--|-
-action | 'search\_transaction'
-open | default '1' if `outstanding` is not set
-summary | default '1'
+| parameter | value                                   |
+|-----------|-----------------------------------------|
+| action    | 'search\_transaction'                   |
+| open      | default '1' if `outstanding` is not set |
+| summary   | default '1'                             |
 
 ```json
 { "transactions": [ ... ] }
@@ -243,15 +258,16 @@ if (my $transactions = $res->json->{transactions}) {
 
 Load all the details of a sales invoice.
 
-parameter | value
--|-
-action | 'invoice\_details'
-id | valid ID of a sales invoice
-dcn | DCN
-invnumber | invoice number
-waybill | content of field `waybill`
+| parameter | value                       |
+|-----------|-----------------------------|
+| action    | 'invoice\_details'          |
+| id        | valid ID of a sales invoice |
+| dcn       | DCN                         |
+| invnumber | invoice number              |
+| waybill   | content of field `waybill`  |
 
-Only the first of `id`, `dcn`, `invnumber`, or `waybill` is taken into account and the most recent invoice that meets the criteria is returned.
+Only the first of `id`, `dcn`, `invnumber`, or `waybill` is taken into account
+and the most recent invoice that meets the criteria is returned.
 
 ```json
 { "id": ..., "invnumber": ..., ... }
@@ -279,17 +295,17 @@ if ($res->json->{id}) {
 
 Add a payment to a sales invoice.
 
-parameter | value
--|-
-action | 'add\_payment'
-amount | amout paid
-datepaid | payment date
-currency | (optional)
-exchangerate | required if `currency` is provided
-memo | (optional)
-paymentaccount | account number for the payment
-paymentmethod | (optional)
-source | (optional)
+| parameter      | value                              |
+|----------------|------------------------------------|
+| action         | 'add\_payment'                     |
+| amount         | amout paid                         |
+| datepaid       | payment date                       |
+| currency       | (optional)                         |
+| exchangerate   | required if `currency` is provided |
+| memo           | (optional)                         |
+| paymentaccount | account number for the payment     |
+| paymentmethod  | (optional)                         |
+| source         | (optional)                         |
 
 The invoice has to be identified using one of `id`, `dcn`, `invnumber`, or
 `waybill`.
@@ -323,11 +339,11 @@ if ($res->json->{result} eq 'success') {
 
 Add a reference to an external document to a sales invoice.
 
-parameter | value
--|-
-action | 'add\_reference'
-referencecode | code of the reference to create the link
-referencedescription | description of the reference
+| parameter            | value                                    |
+|----------------------|------------------------------------------|
+| action               | 'add\_reference'                         |
+| referencecode        | code of the reference to create the link |
+| referencedescription | description of the reference             |
 
 The invoice has to be identified using one of `id`, `dcn`, `invnumber`, or
 `waybill`.
