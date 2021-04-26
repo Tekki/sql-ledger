@@ -15,6 +15,12 @@
 package AA;
 
 
+use constant {
+  NO_PROJECTS => -5482,
+  EMPTY_PROJECTS => -9214,
+};
+
+
 sub post_transaction {
   my ($self, $myconfig, $form, $dbh) = @_;
 
@@ -779,6 +785,7 @@ sub transactions {
   my $table = 'ar';
   my $acc_trans_join;
   my $acc_trans_flds;
+  my $projectnumber;
 
   my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
@@ -836,6 +843,15 @@ sub transactions {
     $acc_trans_join .= qq|)|;
   }
 
+  if ($form->{l_projectnumber}) {
+    $projectnumber = qq|, (
+              SELECT ARRAY_TO_STRING(ARRAY_AGG(distinct(projectnumber)), ',')
+              FROM acc_trans
+              JOIN project ON project.id = project_id
+              WHERE trans_id = a.id
+            ) AS projectnumber|;
+  }
+
   my $query = qq|SELECT a.id, a.invnumber, a.ordnumber, a.transdate,
                  a.duedate, ($taxfld) * $ml AS tax,
                  a.amount, ($paid) AS paid,
@@ -850,6 +866,7 @@ sub transactions {
                  ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
                  c.description AS paymentaccount, vc.taxnumber
                  $acc_trans_flds
+                 $projectnumber
                  FROM $table a
                  JOIN $form->{vc} vc ON (a.$form->{vc}_id = vc.id)
                  JOIN address ad ON (ad.trans_id = vc.id)
@@ -896,6 +913,20 @@ sub transactions {
       $where .= " AND (";
       for (@ids) { $where .= "a.department_id = $_ OR " }
       $where = substr($where, 0, -4) . ")";
+    }
+  }
+  if ($form->{projectnumber}) {
+    (undef, $id) = split /--/, $form->{projectnumber};
+    $id *= 1;
+    if ($id == &NO_PROJECTS) {
+      $where
+        .= qq| AND NOT EXISTS (SELECT 1 FROM acc_trans WHERE trans_id = a.id AND project_id > 0)|;
+    } elsif ($id == &EMPTY_PROJECTS) {
+      $where
+        .= qq| AND EXISTS (SELECT 1 FROM acc_trans JOIN chart ON chart.id = chart_id WHERE trans_id = a.id AND project_id IS NULL AND link LIKE '%_amount%')|;
+    } else {
+      $where
+        .= qq| AND EXISTS (SELECT 1 FROM acc_trans WHERE trans_id = a.id AND project_id = $id)|;
     }
   }
 

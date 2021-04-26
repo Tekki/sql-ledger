@@ -8,6 +8,8 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   '%'                           => '%',
+  '(empty)'                     => '(leer)',
+  '(none)'                      => '(kein)',
   '+/-'                         => '+/-',
   '.v11'                        => '.v11',
   '1.Reminder'                  => '1.Mahnung',
@@ -1322,7 +1324,7 @@ $self{texts} = {
   'Sort by'                     => 'Sortieren nach',
   'Source'                      => 'Beleg',
   'Source missing!'             => 'Quelle fehlt!',
-  'Split Ledger'                => '',
+  'Split Ledger'                => 'Konten gruppieren',
   'Spoolfile'                   => 'Spoolfile',
   'Standard'                    => 'Standard',
   'Standard Industrial Codes'   => 'Standard Industrie Norm',

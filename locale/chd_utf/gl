@@ -145,6 +145,7 @@ $self{texts} = {
   'Sep'                         => 'Sep',
   'September'                   => 'September',
   'Source'                      => 'Beleg',
+  'Split Ledger'                => 'Konten gruppieren',
   'Startdate'                   => 'Startdatum',
   'Su'                          => 'So',
   'Subject'                     => 'Betreff',

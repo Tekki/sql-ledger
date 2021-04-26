@@ -8,6 +8,8 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   '%'                           => '%',
+  '(empty)'                     => '(vide)',
+  '(none)'                      => '(aucun)',
   '+/-'                         => '+/-',
   '.v11'                        => '.v11',
   '1.Reminder'                  => 'Rappel 1',

@@ -3,6 +3,8 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
+  '(empty)'                     => '(vide)',
+  '(none)'                      => '(aucun)',
   '+/-'                         => '+/-',
   'AP Aging'                    => 'Extrait dépenses',
   'AP Outstanding'              => 'Dépenses ouvertes',

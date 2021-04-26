@@ -1650,6 +1650,32 @@ sub search {
 
   }
 
+  if (@{ $form->{all_project} }) {
+    $form->{selectprojectnumber}
+      = "\n"
+      . $locale->text('(none)') . '--'
+      . AA->NO_PROJECTS . "\n"
+      . $locale->text('(empty)') . '--'
+      . AA->EMPTY_PROJECTS . "\n";
+
+    for (@{ $form->{all_project} }) { $form->{selectprojectnumber} .= qq|$_->{projectnumber}--$_->{id}\n| }
+
+    $project = qq|
+            <tr>
+              <th align=right>|.$locale->text('Project').qq|</th>
+              <td><select name=projectnumber>|
+              .$form->select_option($form->{selectprojectnumber}, undef, 1)
+              .qq|</select>
+              </td>
+              <input type=hidden name=selectprojectnumber value="|
+              .$form->escape($form->{selectprojectnumber},1).qq|">
+            </tr>
+|;
+
+    $l_projectnumber = qq|<input name="l_projectnumber" class=checkbox type=checkbox value=Y> |.$locale->text('Project');
+
+  }
+
   if ($form->{ARAP} eq 'AR') {
     $form->{title} = $locale->text('AR Transactions');
     $form->helpref("ar_transactions", $myconfig{countrycode});
@@ -1764,6 +1790,7 @@ sub search {
   push @f, qq|<input name="l_country" class=checkbox type=checkbox value=Y> |.$locale->text('Country');
   push @f, $l_employee if $l_employee;
   push @f, $l_department if $l_department;
+  push @f, $l_projectnumber if $l_projectnumber;
   push @f, qq|<input name="l_netamount" class=checkbox type=checkbox value=Y> |.$locale->text('Amount');
   push @f, qq|<input name="l_tax" class=checkbox type=checkbox value=Y> |.$locale->text('Tax');
   push @f, qq|<input name="l_amount" class=checkbox type=checkbox value=Y checked> |.$locale->text('Total');
@@ -1823,6 +1850,7 @@ sub search {
             <table>
               $employee
               $department
+              $project
               $warehouse
               <tr>
                 <th align=right>|.$locale->text('Shipping Point').qq|</th>
@@ -1956,6 +1984,13 @@ sub transactions {
     $option .= "\n<br>" if ($option);
     $option .= $locale->text('Department')." : $department";
   }
+  if ($form->{projectnumber}) {
+    $callback .= "&projectnumber=".$form->escape($form->{projectnumber},1);
+    $href .= "&projectnumber=".$form->escape($form->{projectnumber});
+    ($projectnumber) = split /--/, $form->{projectnumber};
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Project')." : $projectnumber";
+  }
   if ($form->{employee}) {
     $callback .= "&employee=".$form->escape($form->{employee},1);
     $href .= "&employee=".$form->escape($form->{employee});
@@ -2075,7 +2110,7 @@ sub transactions {
   }
 
 
-  @columns = $form->sort_columns(qw(transdate id invnumber ordnumber ponumber description name customernumber vendornumber taxnumber address city zipcode country netamount tax amount paid paymentaccount paymentmethod due curr datepaid duedate memo notes till employee warehouse shippingpoint shipvia waybill dcn paymentdiff department));
+  @columns = $form->sort_columns(qw(transdate id invnumber ordnumber ponumber description name customernumber vendornumber taxnumber address city zipcode country netamount tax amount paid paymentaccount paymentmethod due curr datepaid duedate memo notes till employee warehouse shippingpoint shipvia waybill dcn paymentdiff department projectnumber));
   unshift @columns, "runningnumber";
 
   @column_index = qw(delete);
@@ -2161,6 +2196,8 @@ sub transactions {
   $column_data{curr} = "<th><a class=listheading href=$href&sort=curr>" . $locale->text('Curr') . "</a></th>";
 
   $column_data{department} = "<th><a class=listheading href=$href&sort=department>" . $locale->text('Department') . "</a></th>";
+
+  $column_data{projectnumber} = "<th><a class=listheading href=$href&sort=projectnumber>" . $locale->text('Project') . "</a></th>";
 
   $column_data{accno} = "<th><a class=listheading href=$href&sort=accno>" . $locale->text('Account') . "</a></th>";
   $column_data{source} = "<th><a class=listheading href=$href&sort=source>" . $locale->text('Source') . "</a></th>";
