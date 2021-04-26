@@ -1,5 +1,10 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+3.2.9.21 2021-04-26
+  - filter and display projects in AR and AP reports
+  - improved API intro
+  - improved translation French (Switzerland)
+
 3.2.9.20 2021-03-14
   - new translation French (Switzerland)
     contributed by Bent Kjelsberg
