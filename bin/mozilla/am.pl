@@ -6433,7 +6433,7 @@ sub run_sql_command {
 
   $form->header;
 
-  if ($form->{sql} =~ /^select/i) {
+  if ($form->{sql} =~ /^select|with/i) {
     $sth = $dbh->prepare($form->{sql});
 
     if ($sth->execute) {
