@@ -4,7 +4,12 @@ FROM httpd
 RUN set -ex \
   && apt-get update \
   && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    libarchive-extract-perl \
+    libarchive-zip-perl \
     libdbd-pg-perl \
+    libio-socket-ssl-perl \
+    libmojolicious-perl \
   && rm -rf /var/lib/apt/lists/*
 
 RUN echo " <Directory /usr/local/apache2/htdocs/sql-ledger>\n"\
