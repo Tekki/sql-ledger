@@ -61,7 +61,7 @@ for my $dataset (values %members) {
     unpack('u', $dataset->{dbpasswd}), {AutoCommit => 1}
   ) or die $DBI::errstr;
 
-  my $query = q|SELECT curr FROM curr|;
+  my $query = q|SELECT curr FROM curr ORDER BY rn|;
   my $sth   = $dbh->prepare($query);
   $sth->execute || die $dbh->errstr;
 
