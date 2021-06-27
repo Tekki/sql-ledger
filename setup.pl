@@ -26,9 +26,9 @@ $latex = `latex -version`;
 %checkversion = ( www => 1, abacus => 2 );
 
 %source = (
-            1 => { url => "http://www.sql-ledger.com/source", site => "www.sql-ledger.com", locale => us },
+	    1 => { url => "http://www.sql-ledger.com/source", site => "www.sql-ledger.com", locale => us },
             2 => { url => "http://abacus.sql-ledger.com/source", site => "abacus.sql-ledger.com", locale => ca },
-          );
+	  );
 
 $userspath = "users";         # default for new installation
 
@@ -51,12 +51,12 @@ perl $0 <filename>\n";
 if ($filename) {
   # extract version
   die "Not a SQL-Ledger archive\n" if ($filename !~ /^sql-ledger/);
-
+  
   $version = $filename;
   $version =~ s/sql-ledger-(\d+\.\d+\.\d+).*$/$1/;
 
 }
-
+  
 if (-f "VERSION") {
   # get installed version from VERSION file
   open(FH, "VERSION");
@@ -82,7 +82,7 @@ if ($httpd = `find /etc /usr/local/etc -type f -name 'httpd*.conf'`) {
 
   chomp $webowner;
   chomp $webgroup;
-
+  
   ($null, $webowner) = split / /, $webowner;
   ($null, $webgroup) = split / /, $webgroup;
 
@@ -105,7 +105,7 @@ chomp $latest_version;
 if (!$newinstall) {
 
   $install .= "\n(r)einstall $version\n";
-
+  
 }
 
 
@@ -149,7 +149,7 @@ if ($a !~ /d/) {
   $web = <STDIN>;
   chomp $web;
   $webgroup = $web if $web;
-
+  
 }
 
 
@@ -193,7 +193,7 @@ sub download {
 
 
 sub get_latest_version {
-
+  
   print "Checking for latest version number ....\n";
 
   if ($filename) {
@@ -208,38 +208,38 @@ sub get_latest_version {
       print "$source{$checkversion{$source}}{site} ... ";
 
       $latest_version = LWP::Simple::get("$url/latest_version");
-
+      
       if ($latest_version) {
-        $found = 1;
-        last;
+	$found = 1;
+	last;
       } else {
-        print "not found\n";
+	print "not found\n";
       }
     }
-
+    
     if (! $found) {
       $lwp = 0;
       &get_latest_version;
     }
-
+    
   } elsif ($wget) {
     $found = 0;
     foreach $source (qw(www abacus)) {
       $url = $source{$checkversion{$source}}{url};
       print "$source{$checkversion{$source}}{site} ... ";
       if ($latest_version = `wget -q -O - $url/latest_version`) {
-        $found = 1;
-        last;
+	$found = 1;
+	last;
       } else {
-        print "not found\n";
+	print "not found\n";
       }
     }
-
+    
     if (! $found) {
       $wget = 0;
       &get_latest_version;
     }
-
+    
   } else {
     if (!$lynx) {
       print "\nYou must have either wget, lynx or LWP installed";
@@ -251,10 +251,10 @@ sub get_latest_version {
       print "$source{$checkversion{$source}}{site} ... ";
       $ok = `lynx -dump -head $url/latest_version`;
       if ($ok = ($ok =~ s/HTTP.*?200 //)) {
-        $latest_version = `lynx -dump $url/latest_version`;
-        last;
+	$latest_version = `lynx -dump $url/latest_version`;
+	last;
       } else {
-        print "not found\n";
+	print "not found\n";
       }
     }
     die unless $ok;
@@ -272,7 +272,7 @@ sub get_source_code {
   $err = 0;
 
   @order = ();
-
+  
   for (sort { $a <=> $b } keys %source) {
     push @order, $_;
   }
@@ -289,34 +289,34 @@ sub get_source_code {
       print "\n$source{$key}{site} .... ";
 
       if ($lwp) {
-        $err = LWP::Simple::getstore("$source{$key}{url}/$latest_version", "$latest_version");
-        $err -= 200;
+	$err = LWP::Simple::getstore("$source{$key}{url}/$latest_version", "$latest_version");
+	$err -= 200;
       } elsif ($wget) {
-        $ok = `wget -Sqc $source{$key}{url}/$latest_version`;
-        if ($ok =~ /HTTP.*?(20|416)/) {
-          $err = 0;
-        }
+	$ok = `wget -Sqc $source{$key}{url}/$latest_version`;
+	if ($ok =~ /HTTP.*?(20|416)/) {
+	  $err = 0;
+	}
       } else {
-        $ok = `lynx -dump -head $source{$key}{url}/$latest_version`;
-        $err = !($ok =~ s/HTTP.*?200 //);
+	$ok = `lynx -dump -head $source{$key}{url}/$latest_version`;
+	$err = !($ok =~ s/HTTP.*?200 //);
 
-        if (!$err) {
-          $err = system("lynx -dump $source{$key}{url}/$latest_version > $latest_version");
-        }
+	if (!$err) {
+	  $err = system("lynx -dump $source{$key}{url}/$latest_version > $latest_version");
+	}
       }
 
       if ($err) {
-        print "failed!";
+	print "failed!";
       } else {
-        last;
+	last;
       }
 
     }
-
+    
   } else {
     $err = -1;
   }
-
+  
   if ($err) {
     die "Cannot get $latest_version";
   } else {
@@ -369,24 +369,24 @@ sub install {
 
     $directives = qq|
 Alias /$alias $absolutealias/
+AddHandler cgi-script .pl
+
 <Directory $absolutealias>
-  AllowOverride All
-  AddHandler cgi-script .pl
   Options ExecCGI Includes FollowSymlinks
-  Order Allow,Deny
-  Allow from All
+  AllowOverride all
+  Require all granted
 </Directory>
 
 <Directory $absolutealias/users>
-  Order Deny,Allow
-  Deny from All
+  AllowOverride none
+  Require all denied
 </Directory>
-
+  
 |;
 
     print FH $directives;
     close(FH);
-
+    
     print qq|
 This is a new installation.
 
@@ -395,12 +395,12 @@ This is a new installation.
     if ($norw) {
       print qq|
 Webserver directives were written to $filename
-
+      
 Copy $filename to $httpddir
 |;
 
       if (!$confd) {
-        print qq| and add
+	print qq| and add
 # SQL-Ledger
 Include $httpddir/$filename
 
@@ -411,7 +411,7 @@ to $httpd
       print qq| and restart your webserver!\n|;
 
       if (!$permset) {
-        print qq|
+	print qq|
 WARNING: permissions for templates, users, css, images and spool directory
 could not be set. Login as root and set permissions
 
@@ -422,29 +422,29 @@ could not be set. Login as root and set permissions
       }
 
     } else {
-
+      
        print qq|
 Webserver directives were written to
 
   $httpddir/$filename
 |;
-
+     
       if (!$confd) {
-        if (!(`grep "^# SQL-Ledger" $httpd`)) {
+	if (!(`grep "^# SQL-Ledger" $httpd`)) {
 
-          print qq|Please add
+	  print qq|Please add
 
 # SQL-Ledger
 Include $httpddir/$filename
 
 to your httpd configuration file and restart the web server.
 |;
-
-        }
+	  
+	}
       }
     }
   }
-
+  
   # if this is not root, check if user is part of $webgroup
   if ($>) {
     if ($permset = ($) =~ getgrnam $webgroup)) {
@@ -459,7 +459,7 @@ to your httpd configuration file and restart the web server.
     chmod 0771, 'users', 'templates', 'css', 'images', 'spool';
     `chown $webowner:$webgroup sql-ledger.conf`;
   }
-
+  
   chmod 0644, 'sql-ledger.conf';
   unlink "sql-ledger.conf.default";
 
@@ -470,26 +470,26 @@ to your httpd configuration file and restart the web server.
     $a = <STDIN>;
     chomp $a;
     $a = ($a) ? uc $a : 'Y';
-
+    
     if ($a eq 'Y') {
       @args = ("more", "doc/README");
       system(@args);
     }
   }
-
+  
 }
 
 
 sub decompress {
-
+  
   die "Error: gzip not installed\n" unless ($gzip);
   die "Error: tar not installed\n" unless ($tar);
-
+  
   &create_lockfile;
 
   # ungzip and extract source code
   print "Decompressing $latest_version ... ";
-
+    
   if (system("gzip -df $latest_version")) {
     print "Error: Could not decompress $latest_version\n";
     &remove_lockfile;
@@ -500,7 +500,7 @@ sub decompress {
 
   # strip gz from latest_version
   $latest_version =~ s/\.gz//;
-
+  
   # now untar it
   print "Unpacking $latest_version ... ";
   if (system("tar -xf $latest_version")) {
@@ -516,8 +516,8 @@ sub decompress {
     } else {
       if (system("tar -xf $latest_version")) {
         print "Error: Could not unpack $latest_version\n";
-        &remove_lockfile;
-        exit;
+	&remove_lockfile;
+	exit;
       } else {
         print "done\n";
         print "cleaning up ... ";
@@ -535,7 +535,7 @@ sub create_lockfile {
     open(FH, ">$userspath/nologin.LCK");
     close(FH);
   }
-
+  
 }
 
 
@@ -545,7 +545,7 @@ sub cleanup {
   unlink "$userspath/members.default" if (-f "$userspath/members.default");
 
   &remove_lockfile;
-
+  
 }
 
 

@@ -150,8 +150,8 @@ $self{subs} = {
     $english_sub = lc $key;
 
     $translated_sub = lc $text;
-    $english_sub =~ s/( |-|,|\/|\.$)/_/g;
-    $translated_sub =~ s/( |-|,|\/|\.$)/_/g;
+    $english_sub =~ s/( |-|,|\/|\.$|\\')/_/g;
+    $translated_sub =~ s/( |-|,|\/|\.$|\\')/_/g;
     print FH qq|  '$translated_sub'|
       . (' ' x (27 - length($translated_sub)))
       . qq| => '$english_sub',\n|;

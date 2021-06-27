@@ -3,9 +3,9 @@
 # -n do not include custom scripts
 # -a build all file
 # -m do not generate missing files
+# -c character set
 
 use FileHandle;
-
 
 $basedir = "../..";
 $bindir = "$basedir/bin/mozilla";
@@ -21,7 +21,8 @@ $language = <FH>;
 close(FH);
 chomp $language;
 $language =~ s/\((.*)\)/$1/;
-$charset = $1;
+$c = $1 || 'UTF8';
+$charset = ($arg{c}) ? $c : "";
 
 opendir DIR, "$bindir" or die "$!";
 @progfiles = grep { /\.pl/ } readdir DIR;
@@ -45,20 +46,20 @@ if (-f "all") {
     &scanfile("$bindir/$file");
   }
 }
-
+ 
 # remove the old missing file
 if (-f 'missing') {
   unlink "missing";
 }
 
 foreach $file (@progfiles) {
-
+  
   %locale = ();
   %submit = ();
   %subrt = ();
   @missing = ();
   %missing = ();
-
+  
   &scanfile("$bindir/$file");
 
   # scan custom/{module}.pl and custom/{login}/{module}.pl files
@@ -67,7 +68,7 @@ foreach $file (@progfiles) {
   foreach $customlogin (@customlogins) {
     &scanfile("$bindir/custom/$customlogin/$file");
   }
-
+  
   # if this is the menu.pl file
   if ($file eq 'menu.pl') {
     &scanmenu("$basedir/$menufile");
@@ -77,11 +78,13 @@ foreach $file (@progfiles) {
       &scanmenu("$bindir/custom/$customlogin/$menufile");
     }
   }
-
+  
   $file =~ s/\.pl//;
-
+  
   if (-f "$file.missing") {
     eval { require "$file.missing"; };
+    
+    die if $@;
     unlink "$file.missing";
 
     for (keys %$missing) {
@@ -101,20 +104,20 @@ foreach $file (@progfiles) {
   foreach $key (sort keys %locale) {
     $text = ($self{texts}{$key}) ? $self{texts}{$key} : $all{$key};
     $count++;
-
+    
     $text =~ s/'/\\'/g;
     $text =~ s/\\$/\\\\/;
 
     $keytext = $key;
     $keytext =~ s/'/\\'/g;
     $keytext =~ s/\\$/\\\\/;
-
+    
     if (!$text) {
       $notext++;
       push @missing, $keytext;
       next;
     }
-
+    
     print FH qq|  '$keytext'|.(' ' x (27-length($keytext))).qq| => '$text',\n|;
   }
 
@@ -122,7 +125,7 @@ foreach $file (@progfiles) {
 
 $self{subs} = {
 |;
-
+  
   foreach $key (sort keys %subrt) {
     $text = $key;
     $text =~ s/'/\\'/g;
@@ -141,13 +144,13 @@ $self{subs} = {
     $english_sub =~ s/'/\\'/g;
     $english_sub =~ s/\\$/\\\\/;
     $english_sub = lc $key;
-
+    
     $translated_sub = lc $text;
-    $english_sub =~ s/( |-|,|\/|\.$)/_/g;
-    $translated_sub =~ s/( |-|,|\/|\.$)/_/g;
+    $english_sub =~ s/( |-|,|\/|\.$|\\')/_/g;
+    $translated_sub =~ s/( |-|,|\/|\.$|\\')/_/g;
     print FH qq|  '$translated_sub'|.(' ' x (27-length($translated_sub))).qq| => '$english_sub',\n|;
   }
-
+  
   print FH q|};
 
 1;
@@ -156,7 +159,7 @@ $self{subs} = {
 
   close FH;
 
-  if (!$arg{m}) {
+  if (!$arg{m}) {  
     if (@missing) {
       open FH, ">$file.missing" or die "$! : missing";
 
@@ -167,9 +170,9 @@ $self{subs} = {
 |;
 
       foreach $text (@missing) {
-        $text =~ s/'/\\'/g;
-        $text =~ s/\\$/\\\\/;
-        print FH qq|  '$text'|.(' ' x (27-length($text))).qq| => '',\n|;
+				$text =~ s/'/\\'/g;
+				$text =~ s/\\$/\\\\/;
+				print FH qq|  '$text'|.(' ' x (27-length($text))).qq| => '',\n|;
       }
 
       print FH q|};
@@ -178,12 +181,12 @@ $self{subs} = {
 |;
 
       close FH;
-
+      
     }
   }
 }
 
-
+  
   # redo the all file
   if ($arg{a}) {
     open FH, ">all" or die "$! : all";
@@ -205,7 +208,7 @@ $self{texts} = {
       $keytext = $key;
       $keytext =~ s/'/\\'/g;
       $keytext =~ s/\\$/\\\\/;
-
+   
       $text = $all{$key};
       $text =~ s/'/\\'/g;
       $text =~ s/\\$/\\\\/;
@@ -218,7 +221,7 @@ $self{texts} = {
 |;
 
     close FH;
-
+    
   }
 
 
@@ -249,7 +252,7 @@ print FH q|$self{texts} = {
     $keytext = $key;
     $keytext =~ s/'/\\'/g;
     $keytext =~ s/\\$/\\\\/;
-
+ 
     $text = $self{texts}{$key};
     $text =~ s/'/\\'/g;
     $text =~ s/\\$/\\\\/;
@@ -266,9 +269,9 @@ $self{subs} = {
   for (sort keys %{ $self{subs} }) {
     print FH qq|  '$_'|.(' ' x (27-length($_))).qq| => '$self{subs}{$_}',\n|;
   }
-
+  
   print FH q|};
-
+  
 1;
 |;
 
@@ -291,21 +294,21 @@ sub scanfile {
 
   $file =~ s/\.pl//;
   $file =~ s/$bindir\///;
-
+  
   %temp = ();
   for (keys %{$self{texts}}) {
     $temp{$_} = $self{texts}{$_};
   }
-
+      
   # read translation file if it exists
   if (-f $file) {
     eval { do "$file"; };
     for (keys %{$self{texts}}) {
       $all{$_} ||= $self{texts}{$_};
       if ($level) {
-        $temp{$_} ||= $self{texts}{$_};
+				$temp{$_} ||= $self{texts}{$_};
       } else {
-        $temp{$_} = $self{texts}{$_};
+				$temp{$_} = $self{texts}{$_};
       }
     }
   }
@@ -314,59 +317,59 @@ sub scanfile {
   for (sort keys %temp) {
     $self{texts}{$_} = $temp{$_};
   }
-
-
+  
+  
   while (<$fh>) {
     # is this another file
     if (/require\s+\W.*\.pl/) {
       my $newfile = $&;
       $newfile =~ s/require\s+\W//;
-      $newfile =~ s/\$form->{path}\///;
+      $newfile =~ s/\$form->\{path\}\///;
 
-      if ($newfile !~ /(custom|\$form->{login})/) {
-        &scanfile("$bindir/$newfile", 1);
+      if ($newfile !~ /(custom|\$form->\{login\})/) {
+				&scanfile("$bindir/$newfile", 1);
       }
     }
-
+   
     # is this a sub ?
     if (/^sub /) {
       ($null, $subrt) = split / +/;
       $subrt{$subrt} = 1;
       next;
     }
-
+    
     my $rc = 1;
-
+    
     while ($rc) {
       if (/Locale/) {
-        if (!/^use /) {
-          my ($null, $country) = split /,/;
-          $country =~ s/^ +["']//;
-          $country =~ s/["'].*//;
-        }
+				if (!/^use /) {
+					my ($null, $country) = split /,/;
+					$country =~ s/^ +["']//;
+					$country =~ s/["'].*//;
+				}
       }
 
       if (/\$locale->text.*?\W\)/) {
-        my $string = $&;
-        $string =~ s/\$locale->text\(\s*['"(q|qq)]['\/\\\|~]*//;
-        $string =~ s/\W\)+.*$//;
+				my $string = $&;
+				$string =~ s/\$locale->text\(\s*['"(q|qq)]['\/\\\|~]*//;
+				$string =~ s/\W\)+.*$//;
 
         # if there is no $ in the string record it
-        unless ($string =~ /\$\D.*/) {
-          # this guarantees one instance of string
-          $locale{$string} = 1;
+				unless ($string =~ /\$\D.*/) {
+					# this guarantees one instance of string
+					$locale{$string} = 1;
 
           # is it a submit button before $locale->
           if (/type=submit/i) {
-            $submit{$string} = 1;
+				    $submit{$string} = 1;
           }
 
           # is it a value before $locale->
           if (/value => \$locale/) {
-            $submit{$string} = 1;
+	    			$submit{$string} = 1;
           }
 
-        }
+				}
       }
 
       # exit loop if there are no more locales on this line
@@ -392,7 +395,7 @@ sub scanmenu {
 
   # strip []
   grep { s/(\[|\])//g } @a;
-
+  
   foreach my $item (@a) {
     $item =~ s/ *$//;
     @b = split /--/, $item;
@@ -403,7 +406,7 @@ sub scanmenu {
       }
     }
   }
-
+  
 }
 
 

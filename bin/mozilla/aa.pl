@@ -284,7 +284,11 @@ sub create_links {
     $form->{"select$key"} = "";
     foreach $ref (@{ $form->{"$form->{ARAP}_links"}{$key} }) {
       if ($key eq "$form->{ARAP}_tax") {
-        $form->{"select$form->{ARAP}_tax_$ref->{accno}"} = $form->escape("$ref->{accno}--$ref->{description}",1);
+
+        $desc_taxrate = $form->{"${item}_rate"} * 100;
+
+        $form->{"select$form->{ARAP}_tax_$ref->{accno}"}
+          = $form->escape("$ref->{accno}--$ref->{description} $desc_taxrate%", 1);
         next;
       }
       $form->{"select$key"} .= "$ref->{accno}--$ref->{description}\n";
@@ -378,8 +382,6 @@ sub create_links {
 
   if ($form->{type} =~ /_note/) {
     $form->{"select$form->{ARAP}_discount"} = "";
-  } else {
-    $form->{cd_available} = ($form->{taxincluded}) ? ($netamount + $tax) * $form->{cashdiscount} : $netamount * $form->{cashdiscount};
   }
 
   $form->{invtotal} = $netamount + $tax;
@@ -411,6 +413,7 @@ sub create_links {
   for (qw(payment discount)) { $form->{"${_}_accno"} = $form->escape($form->{"${_}_accno"},1) }
   $form->{payment_method} = $form->escape($form->{payment_method}, 1);
 
+  $form->{"cd_available"} = $form->{invtotal} * $form->{cashdiscount};
   $form->{cashdiscount} *= 100;
 
   if ($form->{id} || !$form->{rowcount}) {
@@ -1257,7 +1260,8 @@ sub update {
       $taxrate *= $ml;
 
       foreach $item (@taxaccounts) {
-        $form->{"select$form->{ARAP}_tax_$item"} = qq|$item--$form->{"${item}_description"}|;
+        $desc_taxrate = $form->{"${item}_rate"} * 100;
+        $form->{"select$form->{ARAP}_tax_$item"} = qq|$item--$form->{"${item}_description"} $desc_taxrate%|;
         $form->{"calctax_$item"} = 1 if $form->{calctax};
 
         if (($form->{"${item}_rate"} * $ml) > 0) {
@@ -1287,13 +1291,12 @@ sub update {
         $x = ($form->{cdt}) ? $form->{invtotal} - $form->{discount_paid} : $form->{invtotal};
         $form->{"tax_$item"} = $form->round_amount($x * $form->{"${item}_rate"}, $form->{precision});
       }
-      $form->{"select$form->{ARAP}_tax_$item"} = qq|$item--$form->{"${item}_description"}|;
+      $desc_taxrate = $form->{"${item}_rate"} * 100;
+
+      $form->{"select$form->{ARAP}_tax_$item"} = qq|$item--$form->{"${item}_description"} $desc_taxrate%|;
       $totaltax += $form->{"tax_$item"};
     }
   }
-
-  # redo payment discount
-  $form->{cd_available} = $form->{invtotal} * $form->{cashdiscount} / 100;
 
   if ($form->{taxincluded}) {
     $netamount = $form->{invtotal} - $totaltax;
@@ -1301,6 +1304,9 @@ sub update {
     $netamount = $form->{invtotal};
     $form->{invtotal} += $totaltax;
   }
+
+  # redo payment discount
+  $form->{cd_available} = $form->{invtotal} * $form->{cashdiscount} / 100;
 
   if ($form->{discount_paid}) {
     if ($form->{discount_datepaid} ne $form->{olddiscount_datepaid} || $form->{currency} ne $form->{oldcurrency}) {
@@ -2211,7 +2217,7 @@ sub transactions {
     for (qw(amount tax netamount paid due)) { $column_data{"${item}_$_"} = "<th>$item</th>" }
   }
 
-  $form->{title} = ($form->{title}) ? $form->{title} : $locale->text('AR Transactions');
+  $form->{title} = ($form->{outstanding}) ? $locale->text("$form->{ARAP} Outstanding") : $locale->text("$form->{ARAP} Transactions");
 
   $form->{title} .= " / $form->{company}";
 

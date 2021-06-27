@@ -8,7 +8,7 @@ $self{texts} = {
   'Incorrect Password!'         => 'Ungültiges Passwort',
   'Incorrect Username!'         => 'Ungültiger Login Name',
   'Invalid TAN'                 => 'Ungültiges TAN',
-  'Login'                       => 'Benutzername',
+  'Login'                       => 'Anmelden',
   'Maximum tries exceeded!'     => 'Maximale Versuche überschritten!',
   'Name'                        => 'Name',
   'No email address for'        => 'Keine E-Mailadresse für',
@@ -17,7 +17,7 @@ $self{texts} = {
   'Upgrading to Version'        => 'Datenset wird erneuert auf Version',
   'Version'                     => 'Version',
   'You did not enter a name!'   => 'Sie haben keinen Namen eingegeben!',
-  'admin does not exist!'       => 'login "admin" existiert nicht!',
+  'admin does not exist!'       => 'Benutzer "admin" existiert nicht!',
 };
 
 $self{subs} = {
