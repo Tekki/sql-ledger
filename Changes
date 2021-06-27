@@ -1,5 +1,14 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+3.2.10 DWS 2020-06-22
+  - added tax rate to tax descriptions
+  - show taxes for tax included on entry forms
+  - fixed missing DCN when batch printing or emailing
+  - added message to internal notes when batch emailing
+  - fixed POS readonly access
+  - fixed payments formatting issue when printing to queue
+  - trap errors when translating files
+
 3.2.9.22 2021-06-18
   - improved database monitor
   - script for Federal Customs Administration API

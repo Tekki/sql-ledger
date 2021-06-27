@@ -127,6 +127,7 @@ $self{texts} = {
   'Project Number'              => 'Projektnummer',
   'Project deleted!'            => 'Projekt gelöscht!',
   'Project saved!'              => 'Projekt gespeichert!',
+  'Project/Job Description Translations' => 'Übersetzung Projekt-/Auftragsbeschreibung',
   'Project/Job Number'          => 'Projekt-/Auftragsnummer',
   'Projects'                    => 'Projekte',
   'Public'                      => 'Öffentlich',

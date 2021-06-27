@@ -58,8 +58,12 @@ $update->find('devise')->each(
 for my $dataset (values %members) {
   my $dbh = DBI->connect(
     $dataset->{dbconnect}, $dataset->{dbuser},
-    unpack('u', $dataset->{dbpasswd}), {AutoCommit => 1}
-  ) or die $DBI::errstr;
+    unpack('u', $dataset->{dbpasswd} // ''), {AutoCommit => 1}
+  );
+  unless ($dbh) {
+    warn $DBI::errstr;
+    next;
+  }
 
   my $query = q|SELECT curr FROM curr ORDER BY rn|;
   my $sth   = $dbh->prepare($query);
