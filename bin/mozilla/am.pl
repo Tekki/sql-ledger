@@ -2871,7 +2871,7 @@ sub workstations {
 	  <td><input name="cashdrawer_$i" value="|.$form->quote($form->{"cashdrawer_$i"}).qq|" size=60></td>
 	</tr>
 	<tr>
-	  <th align=right nowrap>|.$locale->text('Pole Display').qq|</th>
+	  <th align=right nowrap>|.$locale->text('Poledisplay').qq|</th>
 	  <td>&nbsp;</td>
 	  <td><input name="poledisplay_$i" value="|.$form->quote($form->{"poledisplay_$i"}).qq|" size=60></td>
 	  <td><input name="poledisplayon_$i" type=checkbox style=checkbox $checked><b>|.$locale->text('On').qq|</b></td>

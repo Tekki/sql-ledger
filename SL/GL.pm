@@ -684,6 +684,7 @@ sub transactions {
     # ap
     if ($ref->{type} eq "ap") {
       $ref->{memo} ||= $ref->{lineitem};
+      $ref->{description} ||= $ref->{name};
       if ($ref->{invoice}) {
         $ref->{module} = "ir";
       } else {
@@ -694,6 +695,7 @@ sub transactions {
     # ar
     if ($ref->{type} eq "ar") {
       $ref->{memo} ||= $ref->{lineitem};
+      $ref->{description} ||= $ref->{name};
       if ($ref->{invoice}) {
         $ref->{module} = ($ref->{till}) ? "ps" : "is";
       } else {

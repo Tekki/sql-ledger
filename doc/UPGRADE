@@ -21,8 +21,9 @@ The steps to do it yourself are:
    $ tar zxvf sql-ledger-x.x.x.tar.gz
 
 2. fix permissions
+   # cd sql-ledger
    # chown -hR nobody:nogroup *
-   # chmod 711 templates users css spool
+   # chmod 711 templates css images spool
 
    Note: replace nobody:nogroup with your web server user and group
 

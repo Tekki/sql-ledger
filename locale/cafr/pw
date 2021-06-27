@@ -1,7 +1,7 @@
 $self{texts} = {
   'Continue'                    => 'Continuer',
   'Password'                    => 'Mot de passe',
-  'Session expired!'            => 'Session termin�e!',
+  'Session expired!'            => 'Session-Dépassement de durée',
 };
 
 $self{subs} = {

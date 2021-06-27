@@ -1336,7 +1336,11 @@ sub post_invoice {
     }
   }
   
-  ($paymentaccno) = split /--/, $form->{"AP_paid_$form->{paidaccounts}"};
+  for (1 .. $form->{"AP_paid_$form->{paidaccounts}"}) {
+    if ($form->{"AP_paid_$_"}) {
+      ($paymentaccno) = (split /--/, $form->{"AP_paid_$_"});
+    }
+  }
   
   (undef, $paymentmethod_id) = split /--/, $form->{"paymentmethod_$form->{paidaccounts}"};
   $paymentmethod_id *= 1;

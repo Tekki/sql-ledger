@@ -142,6 +142,7 @@ $self{texts} = {
   'Sep'                         => 'Sep',
   'September'                   => 'September',
   'Source'                      => 'Beleg',
+  'Split Ledger'                => 'Konten aufteilen',
   'Startdate'                   => 'Eintrittsdatum',
   'Su'                          => 'So',
   'Subject'                     => 'Betreff',
@@ -179,6 +180,7 @@ $self{texts} = {
 
 $self{subs} = {
   'acc_menu'                    => 'acc_menu',
+  'account_subtotal'            => 'account_subtotal',
   'add'                         => 'add',
   'add_column'                  => 'add_column',
   'add_transaction'             => 'add_transaction',

@@ -137,6 +137,8 @@ $self{texts} = {
 };
 
 $self{subs} = {
+  'api_email_invoice'           => 'api_email_invoice',
+  'api_quit'                    => 'api_quit',
   'calc_markup'                 => 'calc_markup',
   'check_form'                  => 'check_form',
   'create_form'                 => 'create_form',

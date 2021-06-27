@@ -346,6 +346,7 @@ $self{subs} = {
   'add_transaction'             => 'add_transaction',
   'all_references'              => 'all_references',
   'ap_transaction'              => 'ap_transaction',
+  'api_invoice'                 => 'api_invoice',
   'ar_transaction'              => 'ar_transaction',
   'calc_markup'                 => 'calc_markup',
   'calendar'                    => 'calendar',

@@ -453,12 +453,12 @@ sub print {
         
         $form->{linkshipto} = 1;
 
-        if ($myform->{"module_$i"} eq 'oe') {
+        if ($myform->{"module_$i"} eq 'oe.pl') {
           &order_links;
           &prepare_order;
           $form->{formname} = $myform->{type};
-          $inv = 'ord'
-        } elsif ($myform->{"module_$i"} eq 'jc') {
+          $inv = ($form->{formname} =~ /_quotation/) ? 'quo' : 'ord';
+        } elsif ($myform->{"module_$i"} eq 'jc.pl') {
           $form->{formname} = $myform->{type};
           &{"prepare_$myform->{type}"};
         } else {
@@ -471,14 +471,14 @@ sub print {
           
           $arap = ($form->{vc} eq 'customer') ? "AR" : "AP";
           $form->{payment_accno} = $form->unescape($form->{payment_accno});
-          
+
           # default
           @f = split /\n/, $form->unescape($form->{"select${arap}_paid"});
           $form->{payment_accno} ||= $f[0];
 
           for (1 .. $form->{paidaccounts}) {
             $form->{"paid_$_"} = $form->format_amount(\%myconfig, $form->{"paid_$_"}, $form->{precision});
-            $form->{payment_accno} = $form->{"${arap}_paid_$_"};
+            $form->{payment_accno} = $form->{"${arap}_paid_$_"} if $form->{"paid_$_"};
           }
 
           $form->{"${arap}_paid_$form->{paidaccounts}"} = $form->{payment_accno};
@@ -496,14 +496,49 @@ sub print {
 
         $form->fdld(\%myconfig, \%$locale);
 
+        if ($form->{media} eq 'email') {
+          if ($inv) {
+            %label = ( invoice => $locale->text('Invoice'),
+                       credit_invoice => $locale->text('Credit Invoice'),
+                       debit_invoice => $locale->text('Debit Invoice'),
+                       remittance_voucher => $locale->text('Remittance Voucher'),
+                       sales_order => $locale->text('Sales Order'),
+                       work_order => $locale->text('Work Order'),
+                       sales_quotation => $locale->text('Quotation'),
+                       packing_list => $locale->text('Packing List'),
+                       pick_list => $locale->text('Pick List'),
+                       purchase_order => $locale->text('Purchase Order'),
+                       bin_list => $locale->text('Bin List'),
+                       request_quotation => $locale->text('RFQ')
+                     );
+
+            $form->{subject} = qq|$label{$form->{formname}} $form->{"${inv}number"}| unless $form->{subject};
+
+            $now = scalar localtime;
+            $cc = $locale->text('Cc').qq|: $form->{cc}\n| if $form->{cc};
+            $bcc = $locale->text('Bcc').qq|: $form->{bcc}\n| if $form->{bcc};
+
+            $form->{intnotes} = qq|$form->{intnotes}\n\n| if $form->{intnotes};
+
+            $form->{intnotes} .= qq|[email]\n|
+            .$locale->text('Date').qq|: $now\n|
+            .$locale->text('To').qq|: $form->{email}\n${cc}${bcc}|
+            .$locale->text('Subject').qq|: $form->{subject}\n|;
+            $form->{intnotes} .= qq|\n|.$locale->text('Message').qq|: |;
+            $form->{intnotes} .= ($form->{message}) ? $form->{message} : $locale->text('sent');
+            $form->save_intnotes(\%myconfig, ($inv =~ /ord|quo/) ? 'oe' : $arap);
+          }
+        }
+
         &print_form;
 
         $myform->info(qq|${r}. $msg{$myform->{batch}} ... $myform->{"reference_$i"}|);
         $myform->info(qq|, $myform->{description}|) if $myform->{description};
 
-        if ($myform->{"module_$i"} ne 'jc') {
+        if ($myform->{"module_$i"} ne 'jc.pl') {
           if ($form->{formname} =~ /_invoice/) {
             $total -= $form->parse_amount(\%myconfig, $form->{"${inv}total"});
+            $form->{"${inv}total"} = qq|($form->{"${inv}total"})| if ($form->{formname} eq "credit_invoice");
           } else {
             $total += $form->parse_amount(\%myconfig, $form->{"${inv}total"});
           }

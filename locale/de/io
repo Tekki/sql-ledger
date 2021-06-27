@@ -102,12 +102,14 @@ $self{texts} = {
   'RVC missing!'                => 'Codierzeile fehlt!',
   'Recd'                        => 'Erh',
   'Received'                    => 'Erhalten',
+  'Recurring'                   => 'Wiederkehrend',
   'Required by'                 => 'Erforderlich bis am',
   'SKU'                         => 'Lagerhaltungseinheit',
   'Sales Order'                 => 'Auftragsbestätigung',
   'Same kit in Row'             => 'Selbe Warengruppe in Reihe',
   'Scheduled'                   => 'geplant',
   'Screen'                      => 'Bildschirm',
+  'Select'                      => 'Auswählen',
   'Select items'                => 'Bitte wählen Sie aus',
   'Sep'                         => 'Sep',
   'September'                   => 'September',
@@ -137,6 +139,8 @@ $self{texts} = {
 };
 
 $self{subs} = {
+  'api_email_invoice'           => 'api_email_invoice',
+  'api_quit'                    => 'api_quit',
   'calc_markup'                 => 'calc_markup',
   'check_form'                  => 'check_form',
   'create_form'                 => 'create_form',

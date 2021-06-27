@@ -229,8 +229,6 @@ sub invoice_links {
   for (qw(payment discount)) { $form->{"${_}_accno"} = $form->escape($form->{"${_}_accno"},1) }
   $form->{payment_method} = $form->escape($form->{payment_method}, 1);
 
-  $form->{exchangerate} ||= 1;
-  $form->{cd_available} = $form->round_amount($form->{netamount} * $form->{cashdiscount} / $form->{exchangerate}, $form->{precision});
   $form->{cashdiscount} *= 100;
 
   $form->{paidaccounts} ||= 1;
@@ -736,12 +734,22 @@ sub form_footer {
              </tr>
 |;
   }
-  
-  $form->hide_form("cd_available");
 
   for (split / /, $form->{taxaccounts}) {
     
-    if (!$form->{taxincluded}) {
+    if ($form->{taxincluded}) {
+
+      if ($form->{"${_}_base"}) {
+	$form->{"${_}_total"} = $form->round_amount($form->{"${_}_base"} * $form->{"${_}_rate"} / (1 + $form->{"${_}_rate"}), $form->{precision});
+        $form->{invsubtotal} -= $form->{"${_}_total"};
+
+	if ($form->{discount_paid} && $form->{cdt}) {
+	  $cdtp = $form->{discount_paid} / $form->{invsubtotal} if $form->{invsubtotal};
+	  $form->{"${_}_total"} -= $form->round_amount($form->{"${_}_total"} * $cdtp, $form->{precision});
+	}
+      }
+
+    } else {
 
       if ($form->{"${_}_base"}) {
 
@@ -753,15 +761,18 @@ sub form_footer {
 	}
 
 	$form->{invtotal} += $form->{"${_}_total"};
-      
-	$tax .= qq|
+
+      }
+    }
+
+    $desc_taxrate = $form->{"${_}_rate"} * 100;
+
+    $tax .= qq|
 	      <tr>
-		<th align=right>$form->{"${_}_description"}</th>
+		<th align=right>$form->{"${_}_description"} $desc_taxrate%</th>
 		<td align=right>|.$form->format_amount(\%myconfig, $form->{"${_}_total"}, $form->{precision}, 0).qq|</td>
 	      </tr>
 |;
-      }
-    }
 
   }
 
@@ -772,6 +783,7 @@ sub form_footer {
 	      </tr>
 |;
 
+
   if ($form->{discount_paid}) {
     $discount_paid = qq|
 	      <tr>
@@ -780,6 +792,10 @@ sub form_footer {
 	      </tr>
 |;
   }
+
+  $form->{"cd_available"} = $form->{invtotal} * $form->{cashdiscount} / 100;
+
+  $form->hide_form("cd_available");
 
   $form->{invtotal} -= $form->{discount_paid};
 
@@ -1121,7 +1137,7 @@ sub update {
   for (qw(exchangerate cashdiscount discount_paid)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
   
   &rebuild_departments if $form->{department} ne $form->{olddepartment};
- 
+
   if ($newname = &check_name(customer)) {
     &rebuild_vc(customer, AR, $form->{transdate});
   }

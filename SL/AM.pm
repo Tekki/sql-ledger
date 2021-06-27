@@ -1619,13 +1619,13 @@ sub save_defaults {
     $dbh->do($query) || $form->dberror($query);
   }
  
-  $sth->execute("precision", $form->{precision}) || $form->dberror;
+  $sth->execute('precision', $form->{precision}) || $form->dberror;
   $sth->finish;
 
   # optional
   for (split / /, $form->{optional}) {
     if ($form->{$_}) {
-      $sth->execute($_, $form->{$_}) || $form->dberror;
+      $sth->execute("$_", $form->{$_}) || $form->dberror;
       $sth->finish;
     }
   }

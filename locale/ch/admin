@@ -308,6 +308,7 @@ $self{subs} = {
   'passwort_Ändern'            => 'change_password',
   'pg'                          => 'pg',
   'pgpp'                        => 'pgpp',
+  'supportforum_pw'             => 'supportforum_pw',
   'sybase'                      => 'sybase',
   'system_entsperren'           => 'unlock_system',
   'system_sperren'              => 'lock_system',

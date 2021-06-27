@@ -1064,15 +1064,6 @@ sub invoicetotal {
     $form->{oldinvtotal} += $form->round_amount($amount, $form->{precision});
   }
 
-  if ($form->{taxincluded}) {
-    $netamount = $form->{oldinvtotal};
-    for (split / /, $form->{taxaccounts}) { $netamount -= ($form->{"${_}_base"} * $form->{"${_}_rate"}) }
-    $form->{cd_available} = $form->round_amount($netamount * $form->{cashdiscount} / 100, $form->{precision});
-  } else {
-    $form->{cd_available} = $form->round_amount($form->{oldinvtotal} * $form->{cashdiscount} / 100, $form->{precision});
-    for (split / /, $form->{taxaccounts}) { $form->{oldinvtotal} += $form->round_amount($form->{"${_}_base"} * $form->{"${_}_rate"}, $form->{precision}) }
-  }
-  
   $totalpaid = 0;
   for $i (1 .. $form->{paidaccounts}) {
     $totalpaid += $form->{"paid_$i"};
@@ -1942,9 +1933,10 @@ sub print_form {
 
   $form->parse_template(\%myconfig, $userspath, $dvipdf, $xelatex) if $form->{copies};
 
-
   # if we got back here restore the previous form
   if ($oldform) {
+
+    for (1 .. $oldform->{paidaccounts}) { $oldform->{"paid_$_"} = $oldform->parse_amount(\%myconfig, $oldform->{"paid_$_"}) }
 
     $oldform->{"${inv}number"} = $form->{"${inv}number"};
     $oldform->{dcn} = $form->{dcn};
@@ -1967,8 +1959,11 @@ sub ship_to {
   $title = $form->{title};
   $form->{title} = $locale->text('Shipping Address');
 
-  for (qw(exchangerate creditlimit creditremaining)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
+# formatting bug in module oe
+unless ($form->{type} =~ /_order/) {
   for (1 .. $form->{paidaccounts}) { $form->{"paid_$_"} = $form->parse_amount(\%myconfig, $form->{"paid_$_"}) }
+}
+
   for (qw(dcn rvc)) { $temp{$_} = $form->{$_} }
 
   # get details for name

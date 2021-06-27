@@ -892,7 +892,12 @@ sub update_payments {
     }
   }
 
-  $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{datepaid});
+  if ($form->{currency} ne $form->{defaultcurrency}) {
+    $exchangerate = $form->parse_amount(\%myconfig, $form->{exchangerate});
+    $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{datepaid});
+    $form->{exchangerate} ||= $exchangerate;
+  }
+
   for ("datepaid", "duedatefrom", "duedateto", "department", "business", "currency", "$form->{ARAP}", "$form->{ARAP}_paid", "paymentmethod") {
     if ($form->{$_} ne $form->{"old$_"}) {
       if (!$form->{redo}) {
@@ -1169,7 +1174,11 @@ sub update_payment {
     $form->{redo} = 1;
   }
 
-  $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{datepaid});
+  if ($form->{currency} ne $form->{defaultcurrency}) {
+    $exchangerate = $form->parse_amount(\%myconfig, $form->{exchangerate});
+    $form->{exchangerate} = $form->check_exchangerate(\%myconfig, $form->{currency}, $form->{datepaid});
+    $form->{exchangerate} ||= $exchangerate;
+  }
 
   if ($form->{redo}) {
     $form->{rowcount} = 0;

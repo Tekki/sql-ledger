@@ -190,8 +190,8 @@ VALUES (13314, , '03-22-2005',1.00 * 1)
 ERROR: syntax error at or near "," at character 114 </pre>
 This error is caused by a transaction which does not have links to
 an AR/AP account.
-<br>set up your chart of accounts properly and create at least one
-AR and AP account. Then edit all your transactions and repost.
+<br>There must be at least on AR and AP account.
+Then edit all your transactions and repost.
 
 
 <p><li><h4>SELinux</h4>
@@ -215,7 +215,9 @@ recv_msg };
 
 <p><li><h4>session timeouts</h4>
 If you get frequent timeouts or can't even log in synchronize
-the clock with your server.
+the clock with your server. It could also be an issue with the
+timeout value set in your preferences. The timeout is calculated in seconds
+so if you want to limit this to 10 minutes set the value to 600.
 
 
 <p><li><h4>lineitems not printing</h4>
@@ -427,8 +429,8 @@ Alias /sql-ledger "c:/apache/sql-ledger/"
 
 <li>start Apache
 <li>start Postgres|Oracle|DB2
-<li>connect to http://localhost/sql-ledger/admin.pl and set up users
-and datasets
+<li>connect to http://localhost/sql-ledger/admin.pl and set up
+datasets
 <li>connect to http://localhost/sql-ledger/login.pl and login
 
 </ul>
@@ -476,29 +478,6 @@ in /var/www/sql-ledger
 If you use English, nothing, if you want to use a foreign language for
 the login screen and admin stuff enter the language code, this is the
 directory in the locale directory.
-
-
-<p><li><h4>printing to a printer</h4>
-Printers are defined in sql-ledger.conf
-
-<pre>
-%printer = ( 'Default' => 'lpr', 'Color' => 'lpr -PEpson' );</pre>
-
-Check in your /etc/printcap file for the names of available printers.
-
-<p>If you have LaTeX installed set
-<pre>
-  $latex = 1;</pre> in sql-ledger.conf
-
-<p>To send the document to the printer check the "Postscript" or "PDF" format,
-enter the number of copies and click on the "Print" button.
-
-<p>The printer you enter in your preferences is the default printer.
-You can choose any other available printer. This makes it possible
-to print from anywhere on the network to any printer.
-
-<p>Note: html format is for screen preview. Use the "Print" option from your
-browser to print to a printer.
 
 
 <p><li><h4>Using samba to send printjobs to a printer attached to a Windows XP workstation</h4>
@@ -646,13 +625,19 @@ Valid terminal variables are lynx and mozilla
 <p><li><h4>permission denied</h4>
 
 Check if your webserver has write permission to write to the following
-files and directories:
+directories and files therein:
 <pre>
   users/
   templates/
-  users/members
+  images/
+  spool/
+  css/
 
-  # chown nobody:nogroup users templates users/members
+  # chown -hR nobody:nogroup users templates images spool css
+
+  replace nobody:nogroup with the web server user and group.
+  Some systems use apache:apache, www, www-data, ...
+
 </pre>
 
 
@@ -710,14 +695,12 @@ can be changed by setting the language in your Preferences.
 <h1>SQL-Ledger security</h1>
 
 <ul>
-<li>The security features built into SQL-Ledger provide password
-and access control.
+<li>The security features built into SQL-Ledger provide passwords,
+two step authentication and access control.
 If you expose your server on the Internet we strongly advise to use your
 web server's authentication mechanism as well.
 
-<p>SQL-Ledger was not designed to be run wide open on the Internet.
-
-<p>Some precautions which are out of our control must also be taken.
+<p>Some other precautions which are out of our control must also be taken.
 It matters where you install SL and how you configure your web server and
 SQL database server.
 
@@ -761,7 +744,7 @@ pg_hba.conf
 <br>Authentication crypt does not work because not all SQL servers
 accept encrypted passwords.
 
-<p><li>in addition you can secure the tables from unauthorized access by
+<p><li>In addition you can secure the tables from unauthorized access by
 setting up a different database user and GRANT rights. For instance,
 users without DELETE rights will still be able to use the program, change
 customers and vendors, add transactions but will not be able to delete or

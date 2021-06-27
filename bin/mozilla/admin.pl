@@ -195,7 +195,7 @@ sub form_footer {
 
   $form->{callback} = "$form->{script}?action=list_datasets&path=$form->{path}";
 
-  $form->hide_form(qw(templates company dbname dbhost dbdriver dbuser path callback));
+  $form->hide_form(qw(templates company dbname dbhost dbport dbdriver dbuser path callback));
 
   $form->print_button(\%button);
 
@@ -233,7 +233,7 @@ sub list_datasets {
       }
     }
     if ($new) {
-      if (/^(company|dbname|dbdriver|dbhost|dbuser|templates)=/) {
+      if (/^(company|dbname|dbdriver|dbhost|dbport|dbuser|templates)=/) {
         $var = $1;
         (undef, $member{$member}{$var}) = split /=/, $_, 2;
         $member{$member}{$var} =~ s/(\r\n|\n)//;
@@ -252,12 +252,13 @@ sub list_datasets {
   $column_data{company} = qq|<th>|.$locale->text('Company').qq|</th>|;
   $column_data{dbdriver} = qq|<th>|.$locale->text('Driver').qq|</th>|;
   $column_data{dbhost} = qq|<th>|.$locale->text('Host').qq|</th>|;
+  $column_data{dbport} = qq|<th>|.$locale->text('Port').qq|</th>|;
   $column_data{dbuser} = qq|<th>|.$locale->text('User').qq|</th>|;
   $column_data{dbname} = qq|<th>|.$locale->text('Dataset').qq|</th>|;
   $column_data{templates} = qq|<th>|.$locale->text('Templates').qq|</th>|;
   $column_data{locked} = qq|<th width=1%>|.$locale->text('Locked').qq|</th>|;
 
-  @column_index = qw(dbname company templates locked dbdriver dbuser dbhost);
+  @column_index = qw(dbname company templates locked dbdriver dbuser dbhost dbport);
   
   $dbdriver ||= "Pg";
   $dbdriver{$dbdriver} = "checked";
@@ -294,12 +295,12 @@ sub list_datasets {
 |;
 
   foreach $key (sort keys %member) {
-    $href = "$script?action=edit&dbname=$key&path=$form->{path}&locked=$member{$key}{locked}&dbhost=$member{$key}{dbhost}&dbdriver=$member{$key}{dbdriver}&dbuser=$member{$key}{dbuser}&templates=$member{$key}{templates}";
+    $href = "$script?action=edit&dbname=$key&path=$form->{path}&locked=$member{$key}{locked}&dbhost=$member{$key}{dbhost}&dbport=$member{$key}{dbport}&dbdriver=$member{$key}{dbdriver}&dbuser=$member{$key}{dbuser}&templates=$member{$key}{templates}";
     $href .= "&company=".$form->escape($member{$key}{company},1);
 
     $member{$key}{dbname} = $member{$key}{dbuser} if ($member{$key}{dbdriver} eq 'Oracle');
 
-    for (qw(company dbdriver dbhost dbuser templates)) { $column_data{$_} = qq|<td>$member{$key}{$_}</td>| }
+    for (qw(company dbdriver dbhost dbport dbuser templates)) { $column_data{$_} = qq|<td>$member{$key}{$_}</td>| }
     $column_data{dbname} = qq|<td><a href=$href>$member{$key}{dbname}</a></td>|;
     $column_data{locked} = qq|<td align=center>$member{$key}{locked}</td>|;
     
@@ -639,7 +640,7 @@ sub do_change_password {
     # get connection details from members file
     $admin = new User $memberfile, "admin\@$form->{dbname}";
 
-    for (qw(dbconnect dbuser dbpasswd dbhost dbdriver)) { $form->{$_} = $admin->{$_} }
+    for (qw(dbconnect dbuser dbpasswd dbhost dbport dbdriver)) { $form->{$_} = $admin->{$_} }
     $form->{dbpasswd} = unpack 'u', $form->{dbpasswd};
 
     open(FH, ">${memberfile}.LCK") or $form->error("${memberfile}.LCK : $!");
@@ -762,6 +763,10 @@ sub change_host {
 	  <th align=right>|.$locale->text('Host').qq|</th>
 	  <td><input name=new_host size=40 value=$form->{dbhost}></td>
 	</tr>
+	<tr>
+	  <th align=right>|.$locale->text('Port').qq|</th>
+	  <td><input name=new_port size=5 value=$form->{dbport}></td>
+	</tr>
       </table>
     </td>
   </tr>
@@ -776,7 +781,7 @@ sub change_host {
 
   $form->{nextsub} = "do_change_host";
 
-  $form->hide_form(qw(path nextsub dbname dbhost dbdriver));
+  $form->hide_form(qw(path nextsub dbname dbhost dbport dbdriver));
 
   print qq|
 </form>
@@ -830,19 +835,21 @@ sub do_change_host {
   for (keys %member) {
     if ($member{$_}{dbdriver} eq $form->{dbdriver}) {
       if ($member{$_}{dbname} eq $form->{dbname}) {
-        if ($form->{new_host} ne $member{$_}{dbhost}) {
+        if ($form->{new_host} ne $member{$_}{dbhost} || $form->{new_port} ne $member{$_}{dbport}) {
           $member{$_}{dbhost} = $form->{new_host};
+          $member{$_}{dbport} = $form->{new_port};
           if ($form->{dbdriver} =~ /(Pg|Sybase)/) {
             $member{$_}{dbconnect} = "dbi:$form->{dbdriver}:dbname=$form->{dbname}";
-          }
-          if ($form->{dbdriver} eq 'Oracle') {
-            $form->{dbconnect} = "dbi:Oracle:sid=$member{$_}{sid}";
+            if ($form->{new_host}) {
+              $member{$_}{dbconnect} .= ";host=$form->{new_host}";
+            }
+            if ($form->{new_port}) {
+              $member{$_}{dbconnect} .= ";port=$form->{new_port}";
+            }
           }
 
-          if ($form->{new_host}) {
-            $member{$_}{dbconnect} .= ";host=$form->{new_host}";
-          } else {
-            delete $member{$_}{dbhost};
+          if ($form->{dbdriver} eq 'Oracle') {
+            $form->{dbconnect} = "dbi:Oracle:sid=$member{$_}{sid}";
           }
         }
       }
@@ -852,7 +859,7 @@ sub do_change_host {
   for $member (sort keys %member) {
     print FH qq|[$member]\n|;
     for (sort keys %{$member{$member}}) {
-      print FH qq|$_=$member{$member}{$_}\n|;
+      print FH qq|$_=$member{$member}{$_}\n| if $member{$member}{$_};
     }
     print FH "\n";
   }
@@ -1001,7 +1008,7 @@ sub dbselect_source {
       <table>
 	<tr>
 	  <th align=right>|.$locale->text('Host').qq|</th>
-	  <td><input name=dbhost size=25 value=$form->{dbhost}></td>
+	  <td><input name=dbhost size=50 value=$form->{dbhost}></td>
 	  <th align=right>|.$locale->text('Port').qq|</th>
 	  <td><input name=dbport size=5 value=$form->{dbport}></td>
 	</tr>

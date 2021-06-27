@@ -522,7 +522,12 @@ sub invoice_details {
     $form->{"${_}_taxrate"} = $form->format_amount($myconfig, $form->{"${_}_rate"} * 100, undef, 0);
   }
 
-  my ($paymentaccno) = split /--/, $form->{"AR_paid_$form->{paidaccounts}"};
+  my $paymentaccno;
+  for (1 .. $form->{"AR_paid_$form->{paidaccounts}"}) {
+    if ($form->{"AR_paid_$_"}) {
+      ($paymentaccno) = (split /--/, $form->{"AR_paid_$_"});
+    }
+  }
   
   $form->{roundto} = 0;
   my %roundchange;

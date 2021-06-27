@@ -1,16 +1,23 @@
 $self{texts} = {
   'Company'                     => 'Entité',
+  'Configuration file missing!' => 'Fichier de configuration manquant!',
   'Continue'                    => 'Continuer',
   'Dataset is newer than version!' => 'Fichier de données plus récent que le logiciel!',
+  'Dataset locked!'             => 'Jeu de données verrouillé!',
   'Incorrect Dataset version!'  => 'Fichier de données incorrect!',
   'Incorrect Password!'         => 'Mot de passe incorrect!',
+  'Incorrect Username!'         => 'Nom d\'utilisateur incorrect!',
+  'Invalid TAN'                 => 'TAN non valide',
   'Login'                       => 'Login',
+  'Maximum tries exceeded!'     => 'Essais maximums dépassés!',
   'Name'                        => 'Nom',
   'No email address for'        => 'Pas d\'adresse email pour',
   'Password'                    => 'Mot de passe',
+  'TAN'                         => 'TAN',
   'Upgrading to Version'        => 'Mise à  jour vers la version',
   'Version'                     => 'Version',
   'You did not enter a name!'   => 'Vous n\'avez pas saisi de nom!',
+  'admin does not exist!'       => 'admin n\'existe pas',
 };
 
 $self{subs} = {

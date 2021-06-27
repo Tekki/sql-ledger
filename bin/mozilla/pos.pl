@@ -89,6 +89,8 @@ sub edit {
   $form->{media} = "screen";
   $form->{media} = $myconfig{printer} if $form->{selectprinter} =~ /$myconfig{printer}/;
 
+  $form->{readonly} = 1 if $form->{revtrans};
+
   if (! $form->{readonly}) {
     $form->{readonly} = ($myconfig{acs} =~ /POS--Sale/) ? 1 : 0;
   }
@@ -401,10 +403,12 @@ sub form_footer {
 	  
 	    $form->{"${_}_total"} = $form->format_amount(\%myconfig, $totaltax * $form->{"${_}_rate"} / $taxrate, $form->{precision});
 	  }
+
+          $desc_taxrate = $form->{"${_}_rate"} * 100;
 	  
 	  $tax .= qq|
 		  <tr>
-		    <th align=right>$form->{"${_}_description"}</th>
+		    <th align=right>$form->{"${_}_description"} $desc_taxrate%</th>
 		    <td align=right>$form->{"${_}_total"}</td>
 		  </tr>
 |;
@@ -420,10 +424,12 @@ sub form_footer {
 	$form->{"${_}_total"} = $form->round_amount($form->{"${_}_base"} * $form->{"${_}_rate"}, $form->{precision});
 	$form->{invtotal} += $form->{"${_}_total"};
 	$form->{"${_}_total"} = $form->format_amount(\%myconfig, $form->{"${_}_total"}, $form->{precision}, 0);
+
+        $desc_taxrate = $form->{"${_}_rate"} * 100;
 	
 	$tax .= qq|
 	      <tr>
-		<th align=right>$form->{"${_}_description"}</th>
+		<th align=right>$form->{"${_}_description"} $desc_taxrate %</th>
 		<td align=right>$form->{"${_}_total"}</td>
 	      </tr>
 |;
@@ -848,7 +854,7 @@ sub display_row {
     } else {
       $column_data{discount} = qq|<td></td>|;
       $column_data{itemhref} = qq|<td></td>|;
-      $itemhistory = "";
+      $itemhistory = q|&nbsp;&nbsp;|;
     }
     
     $discount = $form->round_amount($form->{"sellprice_$i"} * $form->{"discount_$i"}/100, $decimalplaces);

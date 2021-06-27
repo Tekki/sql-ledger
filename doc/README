@@ -50,7 +50,6 @@ REQUIREMENTS:
 4 - DBD (DBD-Pg)
 5 - DBI
 6 - LaTeX (optional)
-7 - pdftk (optional)
 
 
 FOREIGN LANGUAGE SUPPORT:
@@ -92,7 +91,7 @@ INSTALLATION WITHOUT setup.pl:
 --------------------------------
 unpack the tar.gz file in /usr/local
 
-  tar xzvf sql-ledger-3.2.0.tar.gz
+  tar xzvf sql-ledger-3.2.x.tar.gz
 
 you should now have everything in /usr/local/sql-ledger
 
@@ -135,7 +134,7 @@ restart your web server.
 Note: /usr/local/sql-ledger is only a suggested
 path, you can install in any directory.
 
-Some versions of Apache 2 use a confd directory for
+Newer versions of Apache use a confd directory for
 configuration files. If this is the case copy
 sql-ledger-httpd.conf into this directory and leave
 httpd.conf as is. Restart Apache.
@@ -145,7 +144,7 @@ SET PERMISSION:
 ---------------
 change directory to /usr/local/sql-ledger
 
-# chown -hR nobody:nogroup users templates css spool doc
+# chown -hR nobody:nogroup users templates css spool images
 
 replace nobody:nogroup with the web server user and group.
 Some systems use apache:apache, www, www-data, ...
@@ -256,7 +255,7 @@ If you have more than one dataset you can either
 choose from a list of datasets or log in directly
 to the dataset by appending @dataset to admin
 
-Go to HR -> Add Employee
+Go HR -> Add Employee
 
 In the field 'login' assign a login for the employee.
 
@@ -305,8 +304,6 @@ IF SOMETHING DOESN'T WORK:
 There is a FAQ at http://www.sql-ledger.com/misc/faq.html
 or see the one included in the doc directory.
 
-For other support options please go to http://www.sql-ledger.com
+For other support options please see http://www.sql-ledger.com
 =====================================================================
-
-Enjoy!
 
