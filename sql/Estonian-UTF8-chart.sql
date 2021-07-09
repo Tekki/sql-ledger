@@ -5,7 +5,7 @@ insert into chart (accno,description,charttype,gifi_accno,category,link) values 
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1102','Pangakonto','A','','A','AR_paid:AP_paid');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('13','Nõuded ja ettemaksed','H','','A','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1310','Nõuded ostjate vastu','A','','A','AR');
-insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1320','Sisendkäibemaks (18%)','A','','L','AP_tax:IC_taxpart:IC_taxservice');
+insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1320','Sisendkäibemaks (20%)','A','','L','AP_tax:IC_taxpart:IC_taxservice');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1330','Arveldused aruandvate isikutega','A','','A','AP_paid');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('14','Varud','H','','A','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('1410','Tooraine ja materjal','A','','A','AP_amount');
@@ -22,7 +22,7 @@ insert into chart (accno,description,charttype,gifi_accno,category,link) values 
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('2210','Võlad tarnijatele','A','','L','AP');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('2220','Võlad töövõtjatele','A','','L','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('223','Maksuvõlad','H','','L','');
-insert into chart (accno,description,charttype,gifi_accno,category,link) values ('2230','Arvestatud käibemaks (18%)','A','','L','AR_tax:IC_taxpart:IC_taxservice');
+insert into chart (accno,description,charttype,gifi_accno,category,link) values ('2230','Arvestatud käibemaks (20%)','A','','L','AR_tax:IC_taxpart:IC_taxservice');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('2231','Ettevõtte tulumaks','A','','L','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('2232','Kinnipeetud tulumaks','A','','L','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('2233','sotsiaalmaks','A','','L','');
@@ -63,8 +63,8 @@ insert into chart (accno,description,charttype,gifi_accno,category,link) values 
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('48','Finantskulud','H','','E','');
 insert into chart (accno,description,charttype,gifi_accno,category,link) values ('4801','Intressikulud','A','','E','');
 --
-insert into tax (chart_id,rate) values ((select id from chart where accno = '1320'),0.18);
-insert into tax (chart_id,rate) values ((select id from chart where accno = '2230'),0.18);
+insert into tax (chart_id,rate) values ((select id from chart where accno = '1320'),0.20);
+insert into tax (chart_id,rate) values ((select id from chart where accno = '2230'),0.20);
 --
 insert into defaults (fldname, fldvalue) values ('inventory_accno_id', (select id from chart where accno = '1440'));
 insert into defaults (fldname, fldvalue) values ('income_accno_id', (select id from chart where accno = '3101'));
