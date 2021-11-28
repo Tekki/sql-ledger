@@ -167,7 +167,7 @@ sub import {
   $form->hide_form(qw(defaultcurrency title type nextsub login path));
 
   print qq|
-<input name=action class=submit type=submit value="|.$locale->text('Continue').qq|">
+<input name=action class=submit type=submit value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 </form>
 
 </body>
@@ -451,7 +451,7 @@ sub export {
 </table>
 
 <br>
-<input name=action class=submit type=submit value="|.$locale->text('Continue').qq|">
+<input name=action class=submit type=submit value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 |;
 
   $form->hide_form(qw(initreport reportcode defaultcurrency title type action nextsub login path));

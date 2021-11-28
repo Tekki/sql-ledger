@@ -181,7 +181,7 @@ sub search_employee {
 
   print qq|
 <br>
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|">
+<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 </form>
 |;
 
@@ -2182,7 +2182,7 @@ sub search_payroll {
 
   print qq|
 <br>
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|">
+<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 </form>
 |;
 

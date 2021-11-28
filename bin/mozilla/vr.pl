@@ -112,7 +112,7 @@ sub add_batch {
 
 <input type=hidden name=action value=continue>
 
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">|;
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -542,7 +542,7 @@ sub search {
 </table>
 
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 |;
 
   $form->{sort} = "batchnumber";

@@ -486,9 +486,9 @@ sub form_header {
   $reference_documents = &references;
 
   if (($rows = $form->numtextrows($form->{description}, 60, 5)) > 1) {
-    $description = qq|<textarea name="description" rows=$rows cols=60 wrap=soft>$form->{description}</textarea>|;
+    $description = qq|<textarea name="description" rows=$rows cols=60 wrap=soft accesskey="-" title="$myconfig{dateformat} [-]">$form->{description}</textarea>|;
   } else {
-    $description = qq|<input name=description size=60 value="|.$form->quote($form->{description}).qq|">|;
+    $description = qq|<input name=description size=60 value="|.$form->quote($form->{description}).qq|" accesskey="-" title="$myconfig{dateformat} [-]">|;
   }
   $description = qq|
               <tr valign=top>
@@ -534,7 +534,7 @@ sub form_header {
     $ordnumber .= qq|
               <tr>
                 <th align=right nowrap>|.$locale->text('Order Date').qq| <font color=red>*</font></th>
-                <td><input name=transdate size=11 class=date title="$myconfig{dateformat}" value=$form->{transdate}>|.&js_calendar("main", "transdate").qq|</td>
+                <td><input name=transdate size=11 class=date value=$form->{transdate} accesskey="*" title="$myconfig{dateformat} [*]">|.&js_calendar("main", "transdate").qq|</td>
               </tr>
               <tr>
                 <th align=right nowrap=true>|.$locale->text('Required by').qq|</th>
@@ -615,7 +615,7 @@ sub form_header {
     $ordnumber .= qq|
               <tr>
                 <th align=right nowrap>|.$locale->text('Quotation Date').qq|</th>
-                <td><input name=transdate size=11 class=date title="$myconfig{dateformat}" value=$form->{transdate}>|.&js_calendar("main", "transdate").qq|</td>
+                <td><input name=transdate size=11 class=date value=$form->{transdate} accesskey="*" title="$myconfig{dateformat} [*]">|.&js_calendar("main", "transdate").qq|</td>
               </tr>
               <tr>
                 <th align=right nowrap=true>$reqlabel</th>
@@ -653,7 +653,9 @@ sub form_header {
 
   if ($form->{"select$form->{vc}"}) {
     $vc .= qq|
-                <td nowrap><select name=$form->{vc} onChange="doSubmit(document.main)">|.$form->select_option($form->{"select$form->{vc}"}, $form->{$form->{vc}}, 1).qq|</select>
+                <td nowrap><select name=$form->{vc} onChange="doSubmit(document.main)" accesskey="/" title="[/]">|
+      . $form->select_option($form->{"select$form->{vc}"}, $form->{$form->{vc}}, 1)
+      . qq|</select>
                 $vcref
                 </td>
               </tr>
@@ -664,7 +666,9 @@ sub form_header {
 | . $form->hide_form("$form->{vc}number");
   } else {
     $vc .= qq|
-                <td nowrap><input name=$form->{vc} value="|.$form->quote($form->{$form->{vc}}).qq|" size=35>
+                <td nowrap><input name=$form->{vc} value="|
+      . $form->quote($form->{$form->{vc}})
+      . qq|" size=35 accesskey="/" title="[/]">
                 $vcref
                 </td>
               </tr>
@@ -852,7 +856,7 @@ sub form_footer {
     $introws = 2;
   }
   $rows = ($rows > $introws) ? $rows : $introws;
-  $notes = qq|<textarea name=notes rows=$rows cols=35 wrap=soft>$form->{notes}</textarea>|;
+  $notes = qq|<textarea name=notes rows=$rows cols=35 wrap=soft accesskey="+" title="[+]">$form->{notes}</textarea>|;
   $intnotes = qq|<textarea name=intnotes rows=$rows cols=35 wrap=soft>$form->{intnotes}</textarea>|;
 
 
@@ -1035,7 +1039,17 @@ sub form_footer {
       $column_data{paid} = qq|<td align=center><input name="paid_$i" class="inputright" size=11 value=|.$form->format_amount(\%myconfig, $form->{"paid_$i"}, $form->{precision}).qq|></td>|;
       $column_data{ARAP_paid} = qq|<td align=center><select name="$form->{ARAP}_paid_$i">|.$form->select_option($form->{"select$form->{ARAP}_paid"}, $form->{"$form->{ARAP}_paid_$i"}).qq|</select></td>|;
       $column_data{exchangerate} = qq|<td align=center>$exchangerate</td>|;
-      $column_data{datepaid} = qq|<td align=center nowrap><input name="datepaid_$i" size=11 class=date title="$myconfig{dateformat}" value="$form->{"datepaid_$i"}" />|.&js_calendar("main", "datepaid_$i").qq|</td>|;
+      if ($i == $form->{paidaccounts}) {
+        $column_data{datepaid}
+          = qq|<td align=center nowrap><input name="datepaid_$i" size=11 class=date value="$form->{"datepaid_$i"}" accesskey="." title="$myconfig{dateformat} [.]">|
+          . &js_calendar("main", "datepaid_$i")
+          . qq|</td>|;
+      } else {
+        $column_data{datepaid}
+          = qq|<td align=center nowrap><input name="datepaid_$i" size=11 class=date title="$myconfig{dateformat}" value="$form->{"datepaid_$i"}">|
+          . &js_calendar("main", "datepaid_$i")
+          . qq|</td>|;
+      }
       $column_data{source} = qq|<td align=center><input name="source_$i" size=11 value="|.$form->quote($form->{"source_$i"}).qq|"></td>|;
       $column_data{memo} = qq|<td align=center><input name="memo_$i" size=11 value="|.$form->quote($form->{"memo_$i"}).qq|"></td>|;
 
@@ -1531,7 +1545,7 @@ sub search {
     $vc = qq|
          <tr>
            <th align=right nowrap>$vcname</th>
-           <td colspan=3><select name=$form->{vc}><option>\n|;
+           <td colspan=3><select name=$form->{vc} accesskey="/" title="[/]"><option>\n|;
 
     for (@{ $form->{"all_$form->{vc}"} }) { $vc .= qq|<option value="|.$form->quote($_->{name}).qq|--$_->{id}">$_->{name}\n| }
 
@@ -1543,7 +1557,7 @@ sub search {
     $vc = qq|
               <tr>
                 <th align=right nowrap>$vcname</th>
-                <td colspan=3><input name=$form->{vc} size=35>
+                <td colspan=3><input name=$form->{vc} size=35 accesskey="/" title="[/]">
                 </td>
               </tr>
               <tr>
@@ -1690,8 +1704,9 @@ sub search {
 
   &calendar;
 
+  my $focus = $form->{type} =~ /quotation/ ? 'quonumber' : 'ordnumber';
   print qq|
-<body>
+<body onload="document.main.$focus.focus()">
 
 <form method="post" name="main" action="$form->{script}">
 
@@ -1713,7 +1728,7 @@ sub search {
         $ponumber
         <tr>
           <th align=right>|.$locale->text('Description').qq|</th>
-          <td colspan=3><input name="description" size=40></td>
+          <td colspan=3><input name="description" size=40 accesskey="-" title="[-]"></td>
         </tr>
         <tr>
           <th align=right>|.$locale->text('Notes').qq|</th>
@@ -1735,7 +1750,7 @@ sub search {
 
         <tr>
           <th align=right>|.$locale->text('From').qq|</th>
-          <td colspan=3 nowrap><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdatefrom").qq|<b>|.$locale->text('To').qq| <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
+          <td colspan=3 nowrap><input name=transdatefrom size=11 class=date accesskey="*" title="$myconfig{dateformat} [*]">|.&js_calendar("main", "transdatefrom").qq|<b>|.$locale->text('To').qq| <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
         </tr>
         <input type=hidden name=sort value=transdate>
         $selectfrom
@@ -1776,7 +1791,7 @@ sub search {
   $form->hide_form(qw(path login vc type));
 
   print qq|
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 </form>
 |;
 
@@ -3561,7 +3576,7 @@ sub select_vendor {
   $form->hide_form;
 
   print qq|
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">
+<input class=submit type=submit name=action value="|.$locale->teyt('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 
 </form>
 |;

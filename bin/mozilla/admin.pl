@@ -612,7 +612,7 @@ sub change_password {
   </tr>
 </table>
 
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|">|;
+<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
 
   $form->{nextsub} = "do_change_password";
 
@@ -778,7 +778,7 @@ sub change_host {
   </tr>
 </table>
 
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|">|;
+<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
 
   $form->{nextsub} = "do_change_host";
 
@@ -1030,7 +1030,7 @@ sub dbselect_source {
 <hr size=3 noshade>
 
 <br>
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|">
+<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 |;
 
   $form->{nextsub} = "create_dataset";
@@ -1187,7 +1187,7 @@ sub create_dataset {
 
 <hr size=3 noshade>
 <br>
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|">
+<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 |;
 
   $form->{nextsub} = "dbcreate";
@@ -1392,7 +1392,7 @@ sub lock_system {
 <hr size=3 noshade>
 
 <br>
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|">|;
+<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
 
   $form->{callback} = "$form->{script}?action=list_datasets&path=$form->{path}";
   $form->{nextsub} = "do_lock_system";

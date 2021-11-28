@@ -143,7 +143,8 @@ self.resizeTo($width,$height);
 
 sub calendar {
 
-print qq|
+  my $weekstart = $myconfig{dateformat} =~ /^mm/ ? 0 : 1;
+  print qq|
   <script language="javascript" src="js/calendar.js"></script>
   <link rel="stylesheet" href="css/calendar.css">
 
@@ -151,93 +152,116 @@ print qq|
   <!--
   var A_TCALDEF = {
     'months' : ['|
-    .$locale->text('January').qq|', '|
-    .$locale->text('February').qq|', '|
-    .$locale->text('March').qq|', '|
-    .$locale->text('April').qq|', '|
-    .$locale->text('May').qq|', '|
-    .$locale->text('June').qq|', '|
-    .$locale->text('July').qq|', '|
-    .$locale->text('August').qq|', '|
-    .$locale->text('September').qq|', '|
-    .$locale->text('October').qq|', '|
-    .$locale->text('November').qq|', '|
-    .$locale->text('December').qq|'],
+    . $locale->text('January')
+    . qq|', '|
+    . $locale->text('February')
+    . qq|', '|
+    . $locale->text('March')
+    . qq|', '|
+    . $locale->text('April')
+    . qq|', '|
+    . $locale->text('May')
+    . qq|', '|
+    . $locale->text('June')
+    . qq|', '|
+    . $locale->text('July')
+    . qq|', '|
+    . $locale->text('August')
+    . qq|', '|
+    . $locale->text('September')
+    . qq|', '|
+    . $locale->text('October')
+    . qq|', '|
+    . $locale->text('November')
+    . qq|', '|
+    . $locale->text('December') . qq|'],
     'weekdays' : ['|
-    .$locale->text('Su').qq|', '|
-    .$locale->text('Mo').qq|', '|
-    .$locale->text('Tu').qq|', '|
-    .$locale->text('We').qq|', '|
-    .$locale->text('Th').qq|', '|
-    .$locale->text('Fr').qq|', '|
-    .$locale->text('Sa').qq|'],
+    . $locale->text('Su')
+    . qq|', '|
+    . $locale->text('Mo')
+    . qq|', '|
+    . $locale->text('Tu')
+    . qq|', '|
+    . $locale->text('We')
+    . qq|', '|
+    . $locale->text('Th')
+    . qq|', '|
+    . $locale->text('Fr')
+    . qq|', '|
+    . $locale->text('Sa') . qq|'],
     'yearscroll': true, // show year scroller
-    'weekstart': 0, // first day of week: 0-Su or 1-Mo
+    'weekstart': $weekstart, // first day of week: 0-Su or 1-Mo
     'centyear'  : 70, // 2 digit years less than 'centyear' are in 20xx, othewise in 19xx.
     'imgpath' : 'images/' // directory with calendar images
   }
 |;
 
-print q|
+  print q|
   // date parsing function
   function f_tcalParseDate (s_date) {|;
 
-if ($myconfig{dateformat} =~ /^(dd|mm)/i) {
-  print q|
+  if ($myconfig{dateformat} =~ /^(dd|mm)/i) {
+    print q|
     var re_date = /^\s*(\d{1,2})\W(\d{1,2})\W(\d{2,4})\s*$/;|
-}
-if ($myconfig{dateformat} =~ /^yy/i) {
-  print q|
+  }
+  if ($myconfig{dateformat} =~ /^yy/i) {
+    print q|
     var re_date = /^\s*(\d{2,4})\W(\d{1,2})\W(\d{1,2})\s*$/;|
-}
+  }
 
-print q|
+  print q|
     if (!re_date.exec(s_date))
     return alert ("|
-    .$locale->text('Invalid date:').q| '" + s_date + "'.\n|
-    .$locale->text('Accepted format is').qq| $myconfig{dateformat}")|;
+    . $locale->text('Invalid date:')
+    . q| '" + s_date + "'.\n|
+    . $locale->text('Accepted format is')
+    . qq| $myconfig{dateformat}")|;
 
-if ($myconfig{dateformat} =~ /^yy/i) {
-print q|
+  if ($myconfig{dateformat} =~ /^yy/i) {
+    print q|
     var n_day = Number(RegExp.$3),
         n_month = Number(RegExp.$2),
         n_year = Number(RegExp.$1);
 |;
-} elsif ($myconfig{dateformat} =~ /^dd/i) {
-print q|
+  } elsif ($myconfig{dateformat} =~ /^dd/i) {
+    print q|
     var n_day = Number(RegExp.$1),
         n_month = Number(RegExp.$2),
         n_year = Number(RegExp.$3);
 |;
-} else {
-print q|
+  } else {
+    print q|
     var n_day = Number(RegExp.$2),
         n_month = Number(RegExp.$1),
         n_year = Number(RegExp.$3);
 |;
-}
+  }
 
-print q|
+  print q|
   if (n_year < 100)
     n_year += (n_year < this.a_tpl.centyear ? 2000 : 1900);
     if (n_month < 1 \|\| n_month > 12)
       return alert ("|
-      .$locale->text('Invalid month:').q| '" + n_month + "'.\n|
-      .$locale->text('Allowed range is').q| 01-12'");
+    . $locale->text('Invalid month:')
+    . q| '" + n_month + "'.\n|
+    . $locale->text('Allowed range is')
+    . q| 01-12'");
     var d_numdays = new Date(n_year, n_month, 0);
     if (n_day > d_numdays.getDate())
     return alert("|
-    .$locale->text('Invalid day:').q| '" + n_day + "'.\n|
-    .$locale->text('Allowed range for selected month is').q| 01 - " + d_numdays.getDate() + ".");
+    . $locale->text('Invalid day:')
+    . q| '" + n_day + "'.\n|
+    . $locale->text('Allowed range for selected month is')
+    . q| 01 - " + d_numdays.getDate() + ".");
     return new Date (n_year, n_month - 1, n_day);
 }
 |;
 
-$spc = $myconfig{dateformat};
-$spc =~ s/\w//g;
-$spc = substr($spc, 0, 1);
-if ($myconfig{dateformat} =~ /^yy/i) {
-print qq|
+  $spc = $myconfig{dateformat};
+  $spc =~ s/\w//g;
+  $spc = substr($spc, 0, 1);
+  if ($myconfig{dateformat} =~ /^yy/i) {
+    print qq|
 function f_tcalGenerDate (d_date) {
   return (
     d_date.getFullYear() + "$spc"
@@ -246,8 +270,8 @@ function f_tcalGenerDate (d_date) {
     );
 }
 |;
-} elsif ($myconfig{dateformat} =~ /^dd/i) {
-print qq|
+  } elsif ($myconfig{dateformat} =~ /^dd/i) {
+    print qq|
 function f_tcalGenerDate (d_date) {
   return (
     (d_date.getDate() < 10 ? '0' : '') + d_date.getDate() + "$spc"
@@ -256,8 +280,8 @@ function f_tcalGenerDate (d_date) {
     );
 }
 |;
-} else {
-print qq|
+  } else {
+    print qq|
 function f_tcalGenerDate (d_date) {
   return (
     (d_date.getMonth() < 9 ? '0' : '') + (d_date.getMonth() + 1) + "$spc"
@@ -266,9 +290,73 @@ function f_tcalGenerDate (d_date) {
     );
 }
 |;
+  }
+
+  print q|
+function processDate(e) {
+    var dateField = e.target;
+    var dateValue = dateField.value;
+    var newDate = new Date();
+
+    if (dateValue.match(/^(\d+)\D+(\d+)\D+(\d+)/)) {|;
+
+  if ($myconfig{dateformat} =~ /dd.mm.yy/) {
+
+    print q|
+        var year = Number(RegExp.$3);
+        if (year < 100) {
+            year += year < A_TCALDEF.centyear ? 2000 : 1900;
+        }
+        newDate.setFullYear(year, Number(RegExp.$2) - 1, Number(RegExp.$1));
+    } else if (dateValue.match(/^(\d+)\D+(\d+)/)) {
+        newDate.setMonth(Number(RegExp.$2) - 1);
+        newDate.setDate(Number(RegExp.$1));|;
+
+  } elsif ($myconfig{dateformat} =~ /mm.dd.yy/) {
+
+    print q|
+        var year = Number(RegExp.$3);
+        if (year < 100) {
+            year += year < A_TCALDEF.centyear ? 2000 : 1900;
+        }
+        newDate.setFullYear(year, Number(RegExp.$1) - 1, Number(RegExp.$2));
+    } else if (dateValue.match(/^(\d+)\D+(\d+)/)) {
+        newDate.setMonth(Number(RegExp.$1) - 1);
+        newDate.setDate(Number(RegExp.$2));|;
+
+  } else {
+
+    print q|
+        var year = Number(RegExp.$1);
+        if (year < 100) {
+            year += year < A_TCALDEF.centyear ? 2000 : 1900;
+        }
+        newDate.setFullYear(year, Number(RegExp.$2) - 1, Number(RegExp.$3));
+    } else if (dateValue.match(/^(\d+)\D+(\d+)/)) {
+        newDate.setMonth(Number(RegExp.$1) - 1);
+        newDate.setDate(Number(RegExp.$2));|;
+
+  }
+
+  print q|
+    } else if (dateValue.match(/^(\d+)/)) {
+        newDate.setDate(Number(RegExp.$1));
+    } else if (dateValue.match(/^([+-]\d+)/)) {
+        var interval = Number(RegExp.$1);
+        newDate.setDate(newDate.getDate() + interval);
+    }
+
+    dateField.value = f_tcalGenerDate(newDate);
 }
 
-print q|
+window.addEventListener('load', function() {
+    document.querySelectorAll('.date').forEach(elem => {
+        elem.addEventListener('change', e => {
+            processDate(e)
+        });
+    });
+});
+
 // End -->
 </script>
 |;

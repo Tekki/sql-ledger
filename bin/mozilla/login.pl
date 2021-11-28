@@ -467,7 +467,7 @@ sub email_tan {
               </tr>
             </table>
             <br>
-            <input type=submit name=action value="|.$locale->text('Continue').qq|">
+            <input type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
           </td>
         </tr>
       </table>

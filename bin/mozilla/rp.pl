@@ -1147,7 +1147,7 @@ print qq|
 </table>
 
 <br>
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|">
+<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 |;
 
   $form->hide_form(qw(helpref reportcode reportlogin title nextsub path login));
@@ -3199,7 +3199,7 @@ sub prepare_e_mail {
 <input type=hidden name=nextsub value="$nextsub">
 
 <br>
-<input name=action class=submit type=submit value="|.$locale->text('Continue').qq|">
+<input name=action class=submit type=submit value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 </form>
 
 </body>

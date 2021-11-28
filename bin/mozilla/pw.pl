@@ -75,7 +75,7 @@ function sf(){
   <tr>
     <th align=right>$pwt</th>
     <td><input type=password name=password size=30></td>
-    <td><input type=submit class=submit value="|.$locale->text('Continue').qq|"></td>
+    <td><input type=submit class=submit value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]"></td>
   </tr>
 </table>
 

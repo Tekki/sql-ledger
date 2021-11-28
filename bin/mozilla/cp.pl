@@ -2463,7 +2463,7 @@ sub payment_register {
 
 <br>
 <input type=hidden name=action value=continue>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">|;
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
 
   $form->{sort} = "datepaid";
   $form->{nextsub} = "list_checks";

@@ -580,7 +580,7 @@ sub list_stock {
   print qq|
 <input type=hidden name=nextsub value="stock">
 <br>
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|">
+<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 </form>
 
 </body>
@@ -833,7 +833,7 @@ sub search {
   $form->hide_form(qw(path login title sort direction type nextsub reportcode reportlogin));
 
   print qq|
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 </form>
 |;
 
@@ -1826,7 +1826,7 @@ $sort
   print qq|
 
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 </form>
 
 </body>
@@ -2264,7 +2264,7 @@ sub select_name {
   print qq|
 <input type=hidden name=nextsub value=name_selected>
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 </form>
 
 </body>
@@ -2420,7 +2420,7 @@ sub project_sales_order {
   $form->hide_form(qw(path login nextsub type vc));
 
   print qq|
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|">
+<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 
 </form>
 |;
@@ -2671,7 +2671,7 @@ sub select_customer {
   $form->hide_form;
 
   print qq|
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 
 </form>
 |;

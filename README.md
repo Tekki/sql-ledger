@@ -16,9 +16,10 @@ you can download a specific version back to 2.6.0 from October 1, 2005.
 The `full` branch, which is checked out by default, provides some additions:
 
 * WLprinter
-* real Unicode support
+* extended keyboard shortcuts ([docs](doc/shortcuts.md))
 * JSON API ([introduction](doc/api.md))
 * recently used objects
+* real Unicode support
 * Docker files for containerized test environment
 * minimalistic documentation
 * Swiss charts of accounts in German, French and Italian

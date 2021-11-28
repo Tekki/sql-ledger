@@ -144,7 +144,7 @@ sub form_header {
     $customer = qq|
               <tr>
                 <th align=right nowrap>|.$locale->text('Customer').qq| <font color=red>*</font></th>
-                <td><select name=customer onChange="javascript:main.submit()">|.$form->select_option($form->{selectcustomer}, $form->{customer}, 1).qq|</select>
+                <td><select name=customer onChange="javascript:main.submit()" accesskey="/" title="[/]">|.$form->select_option($form->{selectcustomer}, $form->{customer}, 1).qq|</select>
                 $vcref
                 </td>
               </tr>
@@ -159,7 +159,7 @@ sub form_header {
     $customer = qq|
               <tr>
                 <th align=right nowrap>|.$locale->text('Customer').qq| <font color=red>*</font></th>
-                <td><input name=customer value="|.$form->quote($form->{customer}).qq|" size=35>
+                <td><input name=customer value="|.$form->quote($form->{customer}).qq|" size=35 accesskey="/" title="[/]">
                 $vcref
                 </td>
               </tr>
@@ -206,9 +206,9 @@ sub form_header {
 
 
   if (($rows = $form->numtextrows($form->{description}, 60, 5)) > 1) {
-    $description = qq|<textarea name="description" rows=$rows cols=60 wrap=soft>$form->{description}</textarea>|;
+    $description = qq|<textarea name="description" rows=$rows cols=60 wrap=soft accesskey="-" title="[-]">$form->{description}</textarea>|;
   } else {
-    $description = qq|<input name=description size=60 value="|.$form->quote($form->{description}).qq|">|;
+    $description = qq|<input name=description size=60 value="|.$form->quote($form->{description}).qq|" accesskey="-" title="[-]">|;
   }
   $description = qq|
               <tr valign=top>
@@ -490,7 +490,13 @@ sub form_footer {
     $form->{"paid_$i"} = $form->format_amount(\%myconfig, $form->{"paid_$i"}, $form->{precision});
     $form->{"exchangerate_$i"} = $form->{exchangerate};
 
-    $column_data{paid} = qq|<td align=center><input name="paid_$i" class="inputright" size="11" value="$form->{"paid_$i"}"></td>|;
+    if ($i == $form->{paidaccounts}) {
+      $column_data{paid}
+        = qq|<td align=center><input name="paid_$i" class="inputright" size="11" value="$form->{"paid_$i"}" accesskey="." title="[.]"></td>|;
+    } else {
+      $column_data{paid}
+        = qq|<td align=center><input name="paid_$i" class="inputright" size="11" value="$form->{"paid_$i"}"></td>|;
+    }
     $column_data{source} = qq|<td align=center><input name="source_$i" size=10 value="|.$form->quote($form->{"source_$i"}).qq|"></td>|;
     $column_data{memo} = qq|<td align=center><input name="memo_$i" size=20 value="|.$form->quote($form->{"memo_$i"}).qq|"></td>|;
 
@@ -871,7 +877,8 @@ sub display_row {
 
     for (qw(partnumber sku barcode description partsgroup unit)) { $form->{"${_}_$i"} = $form->quote($form->{"${_}_$i"}); }
 
-    $column_data{partnumber} = qq|<td><input name="partnumber_$i" size=20 value="|.$form->quote($form->{"partnumber_$i"}).qq|" accesskey="$i" title="[$i]"></td>|;
+    my $accesskey = $i == $form->{rowcount} ? 0 : $i;
+    $column_data{partnumber} = qq|<td><input name="partnumber_$i" size=20 value="|.$form->quote($form->{"partnumber_$i"}).qq|" accesskey="$accesskey" title="[$accesskey]"></td>|;
 
     if (($rows = $form->numtextrows($form->{"description_$i"}, 40, 6)) > 1) {
       $column_data{description} = qq|<td><textarea name="description_$i" rows=$rows cols=46 wrap=soft>$form->{"description_$i"}</textarea></td>|;
@@ -1286,7 +1293,7 @@ sub receipts {
 </table>
 
 <br>
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|">
+<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 |;
 
   $form->hide_form(qw(vc db path login));

@@ -1291,7 +1291,7 @@ sub search {
 <input type=hidden name=nextsub value=generate_report>
 
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 |;
 
   $form->hide_form(qw(path login));
@@ -2451,7 +2451,7 @@ sub supply_demand {
   </tr>
 </table>
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">|;
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
 
   $form->hide_form(qw(sort nextsub path login));
 
@@ -2747,7 +2747,7 @@ sub requirements {
 <input type=hidden name=sort value=partnumber>
 
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">|;
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
 
   $form->hide_form(qw(path login));
 
@@ -3053,7 +3053,7 @@ sub so_requirements {
   </tr>
 </table>
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">|;
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
 
   $form->hide_form(qw(sort nextsub vc path login));
 
@@ -3874,7 +3874,7 @@ sub select_name {
 <input type=hidden name=nextsub value=name_selected>
 <input type=hidden name=vc value=$table>
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 </form>
 
 </body>
@@ -4116,7 +4116,7 @@ sub stock_adjustment {
   <tr><td><hr size=3 noshade></td></tr>
 </table>
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 |;
 
   $form->hide_form(qw(sort nextsub path login));
@@ -4251,7 +4251,7 @@ sub list_inventory {
 <input type=hidden name=nextsub value=adjust_onhand>
 
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 
 </form>
 
@@ -4340,7 +4340,7 @@ sub stock_assembly {
 <input type=hidden name=nextsub value=list_assemblies>
 
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 </form>
 |;
 
@@ -4482,7 +4482,7 @@ sub list_assemblies {
 <input type=hidden name=nextsub value=restock_assemblies>
 
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 
 </form>
 
@@ -4709,7 +4709,7 @@ sub search_transfer {
 
 <br>
 
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">|;
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
 
   $form->hide_form(qw(nextsub path login));
 
@@ -5163,7 +5163,7 @@ sub assembly_bom_transfer {
 <input type=hidden name=nextsub value=list_assembly_bom_transfer>
 
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|">
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 </form>
 |;
 
@@ -5470,7 +5470,7 @@ sub upload_image {
   $form->hide_form(qw(nextsub login path));
 
   print qq|
-<input name=action class=submit type=submit value="|.$locale->text('Continue').qq|">
+<input name=action class=submit type=submit value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 </form>
 
 </body>

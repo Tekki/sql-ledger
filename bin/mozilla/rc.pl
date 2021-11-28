@@ -144,7 +144,7 @@ sub reconciliation {
   $form->hide_form(qw(report path login));
 
   print qq|
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|">
+<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
 
 </form>
 |;
