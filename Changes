@@ -2,6 +2,7 @@ Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
   - extended keyboard shortcuts
+  - tax report with foreign currencies
 
 3.2.10 DWS 2021-06-22
   - added tax rate to tax descriptions

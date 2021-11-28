@@ -1838,7 +1838,8 @@ sub tax_report {
                 ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
                 a.netamount, a.description,
                 sum(ac.amount) * $ml AS tax,
-                a.till, n.id AS vc_id, ch.accno
+                a.till, n.id AS vc_id, ch.accno,
+                a.curr, a.exchangerate
                 FROM acc_trans ac
                 JOIN $form->{db} a ON (a.id = ac.trans_id)
                 JOIN chart ch ON (ch.id = ac.chart_id)
@@ -1851,7 +1852,8 @@ sub tax_report {
                 a.netamount, a.till, n.id, a.description, n.${vc}number,
                 n.taxnumber,
                 ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
-                ch.accno
+                ch.accno,
+                a.curr, a.exchangerate
                 |;
 
     if ($form->{fromdate}) {
@@ -1865,7 +1867,8 @@ sub tax_report {
               ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
               a.netamount, a.description,
               sum(ac.amount) * $ml AS tax,
-              a.till, n.id AS vc_id, ch.accno
+              a.till, n.id AS vc_id, ch.accno,
+              a.curr, a.exchangerate
               FROM acc_trans ac
               JOIN $form->{db} a ON (a.id = ac.trans_id)
               JOIN chart ch ON (ch.id = ac.chart_id)
@@ -1878,7 +1881,8 @@ sub tax_report {
               a.netamount, a.till, n.id, a.description, n.${vc}number,
               n.taxnumber,
               ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
-              ch.accno
+              ch.accno,
+              a.curr, a.exchangerate
               |;
       }
     }
@@ -1890,7 +1894,8 @@ sub tax_report {
                 ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
                 a.netamount, ac.memo AS description,
                 ac.amount * $ml AS tax,
-                a.till, n.id AS vc_id, ch.accno
+                a.till, n.id AS vc_id, ch.accno,
+                a.curr, a.exchangerate
                 FROM acc_trans ac
                 JOIN $form->{db} a ON (a.id = ac.trans_id)
                 JOIN chart ch ON (ch.id = ac.chart_id)
@@ -1911,7 +1916,8 @@ sub tax_report {
                 i.description,
                 i.sellprice * i.qty * $ml *
                 (SELECT tx.rate FROM tax tx WHERE tx.chart_id = ch.id AND (tx.validto > $transdate OR tx.validto IS NULL) ORDER BY tx.validto LIMIT 1) AS tax,
-                a.till, n.id AS vc_id, ch.accno
+                a.till, n.id AS vc_id, ch.accno,
+                a.curr, a.exchangerate
                 FROM acc_trans ac
                 JOIN $form->{db} a ON (a.id = ac.trans_id)
                 JOIN chart ch ON (ch.id = ac.chart_id)
@@ -1937,7 +1943,8 @@ sub tax_report {
               ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
               a.netamount, ac.memo AS description,
               ac.amount * $ml AS tax,
-              a.till, n.id AS vc_id, ch.accno
+              a.till, n.id AS vc_id, ch.accno,
+              a.curr, a.exchangerate
               FROM acc_trans ac
               JOIN $form->{db} a ON (a.id = ac.trans_id)
               JOIN chart ch ON (ch.id = ac.chart_id)
@@ -1958,7 +1965,8 @@ sub tax_report {
               i.description,
               i.sellprice * i.qty * $ml *
               (SELECT tx.rate FROM tax tx WHERE tx.chart_id = ch.id AND (tx.validto > $transdate OR tx.validto IS NULL) ORDER BY tx.validto LIMIT 1) AS tax,
-              a.till, n.id AS vc_id, ch.accno
+              a.till, n.id AS vc_id, ch.accno,
+              a.curr, a.exchangerate
               FROM acc_trans ac
               JOIN $form->{db} a ON (a.id = ac.trans_id)
               JOIN chart ch ON (ch.id = ac.chart_id)
@@ -1986,7 +1994,8 @@ sub tax_report {
                   a.invnumber, n.name, n.${vc}number,
                   ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
                   a.netamount, a.description,
-                  a.till, n.id AS vc_id
+                  a.till, n.id AS vc_id,
+                  a.curr, a.exchangerate
                   FROM acc_trans ac
                   JOIN $form->{db} a ON (a.id = ac.trans_id)
                   JOIN $vc n ON (n.id = a.${vc}_id)
@@ -2004,7 +2013,8 @@ sub tax_report {
                   a.invnumber, n.name, n.${vc}number,
                   ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
                   a.netamount, a.description,
-                  a.till, n.id AS vc_id
+                  a.till, n.id AS vc_id,
+                  a.curr, a.exchangerate
                   FROM acc_trans ac
                   JOIN $form->{db} a ON (a.id = ac.trans_id)
                   JOIN $vc n ON (n.id = a.${vc}_id)
@@ -2024,7 +2034,8 @@ sub tax_report {
                   ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
                   ac.amount * $ml AS netamount,
                   ac.memo AS description,
-                  a.till, n.id AS vc_id
+                  a.till, n.id AS vc_id,
+                  a.curr, a.exchangerate
                   FROM acc_trans ac
                   JOIN $form->{db} a ON (a.id = ac.trans_id)
                   JOIN $vc n ON (n.id = a.${vc}_id)
@@ -2043,7 +2054,8 @@ sub tax_report {
                   ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
                   ac.sellprice * ac.qty * $ml AS netamount,
                   ac.description,
-                  a.till, n.id AS vc_id
+                  a.till, n.id AS vc_id,
+                  a.curr, a.exchangerate
                   FROM invoice ac
                   JOIN $form->{db} a ON (a.id = ac.trans_id)
                   JOIN $vc n ON (n.id = a.${vc}_id)
@@ -2064,7 +2076,8 @@ sub tax_report {
                   ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
                   ac.amount * $ml AS netamount,
                   ac.memo AS description,
-                  a.till, n.id AS vc_id
+                  a.till, n.id AS vc_id,
+                  a.curr, a.exchangerate
                   FROM acc_trans ac
                   JOIN $form->{db} a ON (a.id = ac.trans_id)
                   JOIN $vc n ON (n.id = a.${vc}_id)
@@ -2083,7 +2096,8 @@ sub tax_report {
                   ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
                   ac.sellprice * ac.qty * $ml AS netamount,
                   ac.description,
-                  a.till, n.id AS vc_id
+                  a.till, n.id AS vc_id,
+                  a.curr, a.exchangerate
                   FROM invoice ac
                   JOIN $form->{db} a ON (a.id = ac.trans_id)
                   JOIN $vc n ON (n.id = a.${vc}_id)
@@ -2108,11 +2122,24 @@ sub tax_report {
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
+  my %used_currencies;
+
   while ( my $ref = $sth->fetchrow_hashref(NAME_lc)) {
     $ref->{netamount} = $form->round_amount($ref->{netamount}, $form->{precision});
     $ref->{tax} = $form->round_amount($ref->{tax}, $form->{precision});
     $ref->{total} = $ref->{netamount} + $ref->{tax};
 
+    if ($form->{l_currency}) {
+      $used_currencies{$ref->{curr}} = 1;
+
+      $ref->{"$ref->{curr}_curr"} = $ref->{curr};
+      $ref->{"$ref->{curr}_netamount"}
+        = $form->round_amount($ref->{netamount} / $ref->{exchangerate}, $form->{precision});
+      $ref->{"$ref->{curr}_tax"}
+        = $form->round_amount($ref->{tax} / $ref->{exchangerate}, $form->{precision});
+      $ref->{"$ref->{curr}_total"} = $ref->{"$ref->{curr}_netamount"} + $ref->{"$ref->{curr}_tax"};
+    }
+    
     map { $ref->{address} .= "$ref->{$_} " if $ref->{$_} } qw(address1 address2 city zipcode);
     chomp $ref->{address};
 
@@ -2123,6 +2150,13 @@ sub tax_report {
     }
   }
 
+  $form->{_used_currencies} = [];
+  if ($form->{l_currency}) {
+    for my $curr (split /:/, $form->get_currencies($myconfig, $dbh)) {
+      push @{$form->{_used_currencies}}, $curr if $used_currencies{$curr};
+    }
+  }
+  
   $sth->finish;
 
   $form->report_level($myconfig, $dbh);
