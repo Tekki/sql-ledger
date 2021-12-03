@@ -296,6 +296,7 @@ function f_tcalGenerDate (d_date) {
 function processDate(e) {
     var dateField = e.target;
     var dateValue = dateField.value;
+    if (!dateValue) return;
     var newDate = new Date();
 
     if (dateValue.match(/^(\d+)\D+(\d+)\D+(\d+)/)) {|;
