@@ -318,6 +318,7 @@ $self{subs} = {
   'send_email_reminder'         => 'send_email_reminder',
   'send_email_statement'        => 'send_email_statement',
   'show_progress'               => 'show_progress',
+  'spreadsheet'                 => 'spreadsheet',
   'statement_details'           => 'statement_details',
   'subtotal'                    => 'subtotal',
   'unload'                      => 'unload',

@@ -86,7 +86,8 @@ sub new {
       if ($#e >= 1) {
         $self->{tmpfile} .= ".$e[$#e]";
       }
-      if (! open(FH, ">$userspath/$self->{tmpfile}")) {
+      my $operator = $self->{contenttype} =~ /^text/ ? '>:encoding(UTF-8)' : '>';
+      if (! open(FH, $operator, "$userspath/$self->{tmpfile}")) {
         if ($ENV{HTTP_USER_AGENT}) {
           print "Content-Type: text/html\n\n";
         }
@@ -186,6 +187,32 @@ sub dump_form {
   print {*STDERR} "$line $filename\n";
 
   print {*STDERR} "  $_: |$self->{$_}|\n" for @dump_fields;
+}
+
+
+sub load_module {
+  my ($self, $modules, $msg) = @_;
+
+  local $SIG{__DIE__} = undef;
+
+  my @missing;
+  for (@$modules) {
+    push @missing, $_ unless $_->can('new') || eval "require $_; 1";
+  }
+
+  $self->error($msg . ' ' . join ', ', @missing) if @missing;
+}
+
+
+sub read_callback {
+  my ($self) = @_;
+
+  (undef, my $args) = split /\?/, $self->{callback}, 2;
+
+  for my $arg (split /&/, $args) {
+    my ($key, $value) = split /=/, $arg, 2;
+    $self->{$key} = $self->unescape($value);
+  }
 }
 
 
@@ -1474,6 +1501,43 @@ Content-Disposition: attachment; filename=$self->{tmpfile}\n\n|;
   close(IN);
   close(OUT);
 
+}
+
+
+sub download_tmpfile {
+  my ($self, $mimetype, $filename) = @_;
+
+  $filename ||= $self->{tmpfile};
+  $filename = $self->escape($filename, 1);
+
+  my $err;
+
+  unless (open(IN, $self->{tmpfile})) {
+    $err = $!;
+    $self->cleanup;
+    $self->error("$self->{tmpfile} : $err");
+  }
+
+  binmode(IN);
+
+  print qq|Content-Type: $mimetype
+Content-Disposition: attachment; filename*=UTF-8''$filename\n\n|;
+
+  unless (open(OUT, ">-")) {
+    $err = $!;
+    $self->cleanup;
+    $self->error("STDOUT : $err");
+  }
+
+  binmode(OUT);
+
+  while (<IN>) {
+    print OUT $_;
+  }
+
+  close(IN);
+  close(OUT);
+  $self->cleanup;
 }
 
 
@@ -5429,6 +5493,10 @@ L<SL::Form> implements the following methods:
 
   $form->delete_references($dbh);
 
+=head2 download_tmpfile
+
+  $form->download_tmpfile($mimetype, $filename);
+
 =head2 dump
 
   $form->dump(@values);
@@ -5584,6 +5652,10 @@ L<SL::Form> implements the following methods:
 =head2 quote
 
   $form->quote($str);
+
+=head2 read_callback
+
+  $form->read_callback;
 
 =head2 redirect
 

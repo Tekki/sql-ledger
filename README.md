@@ -17,8 +17,9 @@ The `full` branch, which is checked out by default, provides some additions:
 
 * WLprinter
 * extended keyboard shortcuts ([docs](doc/shortcuts.md))
-* JSON API ([introduction](doc/api.md))
+* spreadsheet downloads
 * recently used objects
+* JSON API ([introduction](doc/api.md))
 * real Unicode support
 * Docker files for containerized test environment
 * minimalistic documentation

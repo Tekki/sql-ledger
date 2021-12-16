@@ -1,6 +1,7 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
+  - spreadsheets for invoice, order and quotation reports
   - corrected date script
   - preserve start and end date in yearend reports
 

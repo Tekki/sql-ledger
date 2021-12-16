@@ -8,6 +8,7 @@ RUN set -ex \
     libarchive-extract-perl \
     libarchive-zip-perl \
     libdbd-pg-perl \
+    libexcel-writer-xlsx-perl \
     libio-socket-ssl-perl \
     libmojolicious-perl \
   && rm -rf /var/lib/apt/lists/*

@@ -2125,6 +2125,9 @@ sub transactions {
     $vcnumber = $locale->text('Customer Number');
   }
 
+  $button{spreadsheet}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Spreadsheet').qq|" accesskey="X" title="[X]">|;
+  $button{spreadsheet}{order} = $i++;
+
   for (split /;/, $myconfig{acs}) { delete $button{$_} }
 
   $column_header{ndx} = qq|
@@ -2157,7 +2160,13 @@ sub transactions {
 
   for (qw(amount tax netamount)) { $column_header{"fx_$_"} = "<th>&nbsp;</th>" }
 
-  $title = "$form->{title} / $form->{company}";
+  $form->{title} .= " / $form->{company}";
+
+  if ($form->{action} eq 'spreadsheet') {
+    require "$form->{path}/ss.pl";
+    &download_spreadsheet(&_transactions_spreadsheet, $option, \@column_index, \%column_header,
+      $form->{OE});
+  }
 
   $form->header;
 
@@ -2170,7 +2179,7 @@ sub transactions {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$title</a></th>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -2341,6 +2350,57 @@ sub transactions {
 
 }
 
+
+sub _transactions_spreadsheet {
+  return {
+    columns => {
+      closed         => 'bool',
+      curr           => 'text',
+      customernumber => 'text',
+      description    => 'text',
+      employee       => 'text',
+      id             => 'number',
+      memo           => 'text',
+      name           => 'link',
+      notes          => 'text',
+      open           => 'bool',
+      ordnumber      => 'link',
+      ponumber       => 'text',
+      quonumber      => 'link',
+      reqdate        => 'date',
+      shippingpoint  => 'text',
+      shipvia        => 'text',
+      transdate      => 'date',
+      vendornumber   => 'text',
+      warehouse      => 'text',
+      waybill        => 'text',
+    },
+    init_row => sub {
+      my ($ref) = @_;
+
+      # links
+      $ref->{name_link} = qq|ct.pl?action=edit&id=$ref->{"$form->{vc}_id"}&db=$form->{vc}|;
+
+      my $action = $form->{type} =~ /(ship|receive)_order/ ? 'ship_receive' : 'edit';
+      $ref->{"${ordnumber}_link"}
+        = qq|$form->{script}?action=$action&type=$form->{type}&id=$ref->{id}&warehouse=$warehouse&vc=$form->{vc}|;
+
+      # amounts
+      if ($form->{l_curr}) {
+        for (qw|netamount amount|) {
+          $ref->{"fx_$_"} = $ref->{$_};
+          $ref->{$_} = $form->round_amount($ref->{$_} * $ref->{exchangerate}, $form->{precision});
+        }
+        $ref->{fx_tax} = $ref->{fx_amount} - $ref->{fx_netamount};
+      }
+
+      $ref->{tax} = $ref->{amount} - $ref->{netamount};
+
+      # open / closed
+      $ref->{open} = !$ref->{closed};
+    },
+  };
+}
 
 
 sub subtotal {

@@ -1117,6 +1117,17 @@ sub new_number {
 
 }
 
+
+sub spreadsheet {
+  $form->read_callback;
+  delete $myconfig{dboptions};
+
+  my $action = $form->{action};
+  $form->{action} = 'spreadsheet';
+  &$action;
+}
+
+
 =encoding utf8
 
 =head1 NAME
@@ -1213,6 +1224,8 @@ Calls C<< &{ $form->{nextsub} } >>.
   &select_name($table);
 
 =head2 select_project
+
+=head2 spreadsheet
 
 =head2 vendor_invoice_
 
