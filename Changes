@@ -2,6 +2,7 @@ Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
   - corrected date script
+  - preserve start and end date in yearend reports
 
 3.2.10.23 2021-11-30
   - extended keyboard shortcuts

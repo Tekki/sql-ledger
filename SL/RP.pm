@@ -88,6 +88,8 @@ sub income_statement {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
+  $form->{"old_$_"} = $form->{$_} for qw|fromdate todate|;
+
   unless ($form->{fromdate} || $form->{todate}) {
     ($form->{fromdate}, $form->{todate}) = $form->from_to($form->{fromyear}, $form->{frommonth}, $form->{interval}) if $form->{fromyear} && $form->{frommonth};
   }
@@ -297,6 +299,7 @@ sub income_statement {
   $dbh->disconnect;
 
   $myconfig->{dateformat} = $dateformat;
+  $form->{$_} = delete $form->{"old_$_"} for qw|fromdate todate|;
 
 }
 
@@ -306,6 +309,8 @@ sub balance_sheet {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
+
+  $form->{old_todate} = $form->{todate};
 
   $form->{todate} = $form->datetonum($myconfig, $form->{todate});
 
@@ -381,6 +386,7 @@ sub balance_sheet {
   $dbh->disconnect;
 
   $myconfig->{dateformat} = $dateformat;
+  $form->{todate} = delete $form->{old_todate};
 
 }
 
@@ -875,6 +881,8 @@ sub trial_balance {
 
   my $dbh = $form->dbconnect($myconfig);
 
+  $form->{"old_$_"} = $form->{$_} for qw|fromdate todate|;
+
   my ($query, $sth, $ref);
   my %balance = ();
   my %trb = ();
@@ -1180,6 +1188,8 @@ sub trial_balance {
       }
     }
   }
+
+  $form->{$_} = delete $form->{"old_$_"} for qw|fromdate todate|;
 
 }
 
@@ -1723,6 +1733,8 @@ sub tax_report {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
+  $form->{"old_$_"} = $form->{$_} for qw|fromdate todate|;
+
   my $department_id;
   (undef, $department_id) = split /--/, $form->{department};
 
@@ -2163,6 +2175,8 @@ sub tax_report {
 
   $dbh->disconnect;
 
+  $form->{$_} = delete $form->{"old_$_"} for qw|fromdate todate|;
+
 }
 
 
@@ -2202,6 +2216,8 @@ sub payments {
 
   # connect to database, turn AutoCommit off
   my $dbh = $form->dbconnect_noauto($myconfig);
+
+  $form->{"old_$_"} = $form->{$_} for qw|fromdate todate|;
 
   for (qw(db vc)) { $form->{$_} =~ s/;//g }
 
@@ -2344,6 +2360,8 @@ sub payments {
   }
 
   $dbh->disconnect;
+
+  $form->{$_} = delete $form->{"old_$_"} for qw|fromdate todate|;
 
 }
 
