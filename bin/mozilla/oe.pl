@@ -2376,7 +2376,7 @@ sub _transactions_spreadsheet {
       warehouse      => 'text',
       waybill        => 'text',
     },
-    init_row => sub {
+    init_data => sub {
       my ($ref) = @_;
 
       # links
@@ -2400,6 +2400,7 @@ sub _transactions_spreadsheet {
       # open / closed
       $ref->{open} = !$ref->{closed};
     },
+    totalize => ['netamount', 'tax', 'amount'],
   };
 }
 

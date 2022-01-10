@@ -204,14 +204,21 @@ sub load_module {
 }
 
 
-sub read_callback {
-  my ($self) = @_;
+sub parse_callback {
+  my ($self, $myconfig, %params) = @_;
 
   (undef, my $args) = split /\?/, $self->{callback}, 2;
 
   for my $arg (split /&/, $args) {
     my ($key, $value) = split /=/, $arg, 2;
     $self->{$key} = $self->unescape($value);
+  }
+
+  if ($myconfig && $params{iso_date}) {
+    for (grep /^(?!l_).*date/, keys %$self) {
+      $self->{$_} = $self->datetonum($myconfig, $self->{$_});
+    }
+    delete $myconfig->{dboptions};
   }
 }
 
@@ -5633,6 +5640,10 @@ L<SL::Form> implements the following methods:
 
   $form->parse_amount($myconfig, $amount);
 
+=head2 parse_callback
+
+  $form->parse_callback([$myconfig, %params]);
+
 =head2 parse_template
 
   $form->parse_template($myconfig, $userspath, $dvipdf, $xelatex);
@@ -5652,10 +5663,6 @@ L<SL::Form> implements the following methods:
 =head2 quote
 
   $form->quote($str);
-
-=head2 read_callback
-
-  $form->read_callback;
 
 =head2 redirect
 
@@ -5824,6 +5831,7 @@ sub findsub {
 
 sub date {
   my ($self, $myconfig, $date, $longformat) = @_;
+  return $date unless $myconfig->{dateformat};
 
   my $longdate = "";
   my $longmonth = ($longformat) ? 'LONG_MONTH' : 'SHORT_MONTH';

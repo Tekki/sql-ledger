@@ -2142,7 +2142,7 @@ sub transactions {
     if ($form->{"l_$item"} eq "Y") {
       push @column_index, $item;
 
-      if ($form->{l_curr} && $item =~ /(amount|tax|paid|due)/) {
+      if ($form->{l_curr} && $item =~ /^(amount|tax|paid|due)$/) {
         for (@curr) {
           push @column_index, "${_}_$item";
         }
@@ -2530,6 +2530,7 @@ sub _transactions_spreadsheet {
       notes          => 'text',
       ordnumber      => 'text',
       paymentaccount => 'text',
+      paymentdiff    => 'number',
       paymentmethod  => 'text',
       ponumber       => 'text',
       projectnumber  => 'text',
@@ -2543,7 +2544,7 @@ sub _transactions_spreadsheet {
       waybill        => 'text',
       zipcode        => 'text',
     },
-    init_row => sub {
+    init_data => sub {
       my ($ref) = @_;
       
       # links
@@ -2577,6 +2578,7 @@ sub _transactions_spreadsheet {
       }
       delete $ref->{paid} if $ref->{paid} == 0;
     },
+    totalize => ['+decimal'],
   };
 }
 

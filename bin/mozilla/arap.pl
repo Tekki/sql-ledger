@@ -1119,8 +1119,7 @@ sub new_number {
 
 
 sub spreadsheet {
-  $form->read_callback;
-  delete $myconfig{dboptions};
+  $form->parse_callback(\%myconfig, iso_date => 1);
 
   my $action = $form->{action};
   $form->{action} = 'spreadsheet';
