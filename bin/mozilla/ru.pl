@@ -50,15 +50,15 @@ sub list_recent {
 
   my @column_index = @columns;
   $column_header{number}
-    = qq|<th width=1%><a class=listheading href="$href&sort=number">|
+    = qq|<th width=1%><a class=listheading href="$href&sort=number" accesskey="N" title="[N]">|
     . $locale->text('Number')
     . '</a></th>';
   $column_header{description}
-    = qq|<th><a class=listheading href="$href&sort=description">|
+    = qq|<th><a class=listheading href="$href&sort=description" accesskey="D" title="[D]">|
     . $locale->text('Description')
     . '</a></th>';
   $column_header{code}
-    = qq|<th><a class=listheading href="$href&sort=code">|
+    = qq|<th><a class=listheading href="$href&sort=code" accesskey="C" title="[C]">|
     . $locale->text('Category')
     . "</a></th>";
 
@@ -72,7 +72,7 @@ sub list_recent {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 <table width=100%>
   <tr>
     <th>
@@ -96,16 +96,18 @@ sub list_recent {
         </tr>
 |;
 
-  my ($j, $samecode);
+  my ($i, $j, $samecode);
   my $url_suffix = "&path=$form->{path}&login=$form->{login}&callback=$callback";
   my $unregister_url
     = "$form->{script}?action=unregister_recent$url_suffix";
   for my $ref (@{$form->{all_recent}}) {
+    $i++;
     my $object_url = RU::CODES->{$ref->{code}}->{object}
       . "&id=$ref->{object_id}$url_suffix";
 
+    my $accesskey = $i < 10 ? qq| accesskey="$i" title="[$i]"| : '';
     $column_data{number}
-      = qq|<td><a href="$object_url">$ref->{number}</a></td>|;
+      = qq|<td><a href="$object_url"$accesskey>$ref->{number}</a></td>|;
     $column_data{description} = "<td>$ref->{description}</td>";
     if ($ref->{code} eq $samecode) {
       $column_data{code} = q|<td>&nbsp;</td>|;

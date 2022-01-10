@@ -44,9 +44,13 @@ The following keys move the cursor directly to an input field:
 | -     | description               |
 | +     | notes                     |
 | .     | payment date              |
+| $     | curreny                   |
+| ,     | invoice number            |
 
-The shortcuts for customer or vendor, date, description, and notes are
-available in the frontend of the reports, too.
+`/ * - + .` are the special characters on the numeric keypad. The shortcuts for
+customer or vendor, date, description, and notes are available in the frontend
+of the reports, too. The keys `1 … 9` open the document at the specified
+position of a report.
 
 ## Quick Date Entry
 
@@ -54,16 +58,16 @@ It is not necessary to enter full dates, they can be abbreviated and will be
 expanded as soon as the cursor jumps out of the date field, for example by
 pressing `Tab`.
 
-Let's assume the current date is November 26, 2021 and the date format is set
+Let's assume the current date is November 26, 2022 and the date format is set
 to `dd.mm.yy`.
 
 | input  | is expanded to |
 |--------|----------------|
-| +5     | 01.12.2021     |
-| -10    | 16.11.2021     |
-| 3      | 03.11.2021     |
-| 5-2    | 05.02.2021     |
-| 4.3.22 | 04.03.2022     |
+| +5     | 01.12.2022     |
+| -10    | 16.11.2022     |
+| 3      | 03.11.2022     |
+| 5-2    | 05.02.2022     |
+| 4.3.23 | 04.03.2023     |
 
 ### `+/- n`: plus or minus days
 

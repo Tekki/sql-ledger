@@ -366,7 +366,7 @@ sub form_header {
                   <table>
                     <tr>
 
-                      <td><select name=currency onChange="doSubmit(document.main)">|
+                      <td><select name=currency onChange="doSubmit(document.main)" accesskey="\$" title="[\$]">|
                 .$form->select_option($form->{selectcurrency}, $form->{currency})
                 .qq|</select></td>|;
 
@@ -396,7 +396,7 @@ sub form_header {
     $invnumber = qq|
               <tr>
                 <th align=right nowrap>|.$locale->text('Invoice Number').qq|</th>
-                <td><input name="invnumber" size="20" value="|.$form->quote($form->{invnumber}).qq|"></td>
+                <td><input name="invnumber" size="20" value="|.$form->quote($form->{invnumber}).qq|" accesskey="," title="[,]"></td>
               </tr>|;
   }
 

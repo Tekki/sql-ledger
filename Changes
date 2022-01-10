@@ -1,5 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+Not Released
+  - more keyboard shortcuts
+
 3.2.10.24 2021-12-18
   - spreadsheets for invoice, order and quotation reports
   - corrected date script

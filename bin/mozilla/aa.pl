@@ -2351,7 +2351,8 @@ sub transactions {
     $module = ($ref->{invoice}) ? ($form->{ARAP} eq 'AR') ? "is.pl" : "ir.pl" : $form->{script};
     $module = ($ref->{till}) ? "ps.pl" : $module;
 
-    $column_data{invnumber} = "<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{invnumber}&nbsp;</a></td>";
+    my $accesskey = $i < 10 ? qq| accesskey="$i" title="[$i]"| : '';
+    $column_data{invnumber} = "<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback$accesskey>$ref->{invnumber}&nbsp;</a></td>";
 
     for (qw(notes description memo)) { $ref->{$_} =~ s/\r?\n/<br>/g }
     for (qw(transdate datepaid duedate)) { $column_data{$_} = "<td nowrap>$ref->{$_}&nbsp;</td>" }
