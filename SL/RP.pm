@@ -91,7 +91,13 @@ sub income_statement {
   $form->{"old_$_"} = $form->{$_} for qw|fromdate todate|;
 
   unless ($form->{fromdate} || $form->{todate}) {
-    ($form->{fromdate}, $form->{todate}) = $form->from_to($form->{fromyear}, $form->{frommonth}, $form->{interval}) if $form->{fromyear} && $form->{frommonth};
+    if ($form->{fromyear} && $form->{frommonth}) {
+      ($form->{fromdate}, $form->{todate})
+        = $form->from_to($form->{fromyear}, $form->{frommonth}, $form->{interval});
+      for (qw|fromdate todate|) {
+        $form->{$_} = $form->format_date($myconfig->{dateformat}, $form->{$_});
+      }
+    }
   }
 
   if (!$form->{fromdate}) {
@@ -99,10 +105,10 @@ sub income_statement {
   }
   $form->{todate} ||= $form->current_date($myconfig);
 
-  for (qw(fromdate todate)) { $form->{$_} = $form->datetonum($myconfig, $form->{$_}) }
-
-  my $dateformat = $myconfig->{dateformat};
-  $myconfig->{dateformat} = "yyyymmdd";
+  # for (qw(fromdate todate)) { $form->{$_} = $form->datetonum($myconfig, $form->{$_}) }
+  #
+  # my $dateformat = $myconfig->{dateformat};
+  # $myconfig->{dateformat} = "yyyymmdd";
 
   $form->{transdate} = $form->{fromdate};
   $form->fdld($myconfig, $locale);
@@ -298,8 +304,7 @@ sub income_statement {
   # disconnect
   $dbh->disconnect;
 
-  $myconfig->{dateformat} = $dateformat;
-  $form->{$_} = delete $form->{"old_$_"} for qw|fromdate todate|;
+  # $myconfig->{dateformat} = $dateformat;
 
 }
 
@@ -312,10 +317,10 @@ sub balance_sheet {
 
   $form->{old_todate} = $form->{todate};
 
-  $form->{todate} = $form->datetonum($myconfig, $form->{todate});
+  # $form->{todate} = $form->datetonum($myconfig, $form->{todate});
 
-  my $dateformat = $myconfig->{dateformat};
-  $myconfig->{dateformat} = "yyyymmdd";
+  # my $dateformat = $myconfig->{dateformat};
+  # $myconfig->{dateformat} = "yyyymmdd";
 
   $form->{decimalplaces} *= 1;
   $form->{longformat} *= 1;
@@ -385,8 +390,7 @@ sub balance_sheet {
   # disconnect
   $dbh->disconnect;
 
-  $myconfig->{dateformat} = $dateformat;
-  $form->{todate} = delete $form->{old_todate};
+  # $myconfig->{dateformat} = $dateformat;
 
 }
 
@@ -1188,8 +1192,6 @@ sub trial_balance {
       }
     }
   }
-
-  $form->{$_} = delete $form->{"old_$_"} for qw|fromdate todate|;
 
 }
 

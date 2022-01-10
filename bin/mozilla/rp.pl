@@ -420,7 +420,7 @@ sub report {
 
   if ($form->{reportcode} eq 'balance_sheet') {
 
-    @checked = qw(l_heading l_subtotal l_accno previousyear reversedisplay usetemplate);
+    @checked = qw(l_heading l_account l_subtotal l_accno previousyear reversedisplay usetemplate);
 
     @input = qw(todate tomonth toyear decimalplaces reportlogin);
     for (qw(department currency language_code)) {
@@ -437,7 +437,7 @@ sub report {
 
   if ($form->{reportcode} eq 'income_statement') {
 
-    @checked = qw(l_heading l_subtotal l_accno previousyear reversedisplay usetemplate);
+    @checked = qw(l_heading l_account l_subtotal l_accno previousyear reversedisplay usetemplate);
 
     @input = qw(fromdate todate frommonth fromyear decimalplaces reportlogin);
     for (qw(projectnumber department currency language_code)) {
@@ -528,8 +528,8 @@ sub report {
 |;
     }
 
-    %checked = ( l_heading => "checked", l_accno => "checked" );
-    for (qw(l_heading l_subtotal l_accno)) {
+    %checked = ( l_heading => 'checked', l_account => 'checked', l_accno => 'checked' );
+    for (qw(l_heading l_subtotal)) {
       $checked{$_} = ($form->{$_}) ? "checked" : "";
     }
 
@@ -556,6 +556,7 @@ sub report {
         <tr>
           <th align=right nowrap>|.$locale->text('Include in Report').qq|</th>
           <td colspan=3><input name=l_heading class=checkbox type=checkbox value=Y $checked{l_heading}>&nbsp;|.$locale->text('Heading').qq|
+          <input name=l_account class=checkbox type=checkbox value=Y $checked{l_account}>&nbsp;|.$locale->text('Account').qq|
           <input name=l_subtotal class=checkbox type=checkbox value=Y $checked{l_subtotal}>&nbsp;|.$locale->text('Subtotal').qq|
           <input name=l_accno class=checkbox type=checkbox value=Y $checked{l_accno}>&nbsp;|.$locale->text('Account Number').qq|</td>
         </tr>
@@ -583,8 +584,8 @@ sub report {
 |;
    }
 
-   %checked = ( l_heading => "checked", l_accno => "checked" );
-   for (qw(l_heading l_subtotal l_accno reversedisplay usetemplate)) {
+   %checked = ( l_heading => 'checked', l_account => 'checked', l_accno => 'checked' );
+   for (qw(l_heading l_subtotal reversedisplay usetemplate)) {
      $checked{$_} = ($form->{$_}) ? "checked" : "";
    }
 
@@ -612,6 +613,7 @@ sub report {
         <tr>
           <th align=right nowrap>|.$locale->text('Include in Report').qq|</th>
           <td><input name=l_heading class=checkbox type=checkbox value=Y $checked{l_heading}>&nbsp;|.$locale->text('Heading').qq|
+          <input name=l_account class=checkbox type=checkbox value=Y $checked{l_account}>&nbsp;|.$locale->text('Account').qq|
           <input name=l_subtotal class=checkbox type=checkbox value=Y $checked{l_subtotal}>&nbsp;|.$locale->text('Subtotal').qq|
           <input name=l_accno class=checkbox type=checkbox value=Y $checked{l_accno}>&nbsp;|.$locale->text('Account Number').qq|</td>
         </tr>
@@ -1184,8 +1186,19 @@ sub continue { &{$form->{nextsub}} };
 sub generate_income_statement {
 
   $form->{callback} = "$form->{script}?action=generate_income_statement";
-  for (qw(path login accounttype currency decimalplaces fromdate frommonth fromyear interval method todate reportcode reportlogin l_heading l_subtotal l_accno includeperiod previousyear reversedisplay usetemplate)) { $form->{callback} .= "&$_=$form->{$_}" if $form->{$_} }
-  for (qw(department language_code projectnumber report)) { $form->{callback} .= "&$_=".$form->escape($form->{$_},1) if $form->{$_} }
+  for (
+    'path',       'login',      'accounttype',   'currency',     'decimalplaces',
+    'fromdate',   'frommonth',  'fromyear',      'interval',     'method',
+    'todate',     'reportcode', 'reportlogin',   'l_heading',    'l_account',
+    'l_subtotal', 'l_accno',    'includeperiod', 'previousyear', 'reversedisplay',
+    'usetemplate',
+    )
+  {
+    $form->{callback} .= "&$_=$form->{$_}" if $form->{$_};
+  }
+  for (qw(department language_code projectnumber report)) {
+    $form->{callback} .= "&$_=" . $form->escape($form->{$_}, 1) if $form->{$_};
+  }
 
   ($form->{reportdescription}, $form->{reportid}) = split /--/, $form->{report};
 
@@ -1329,10 +1342,7 @@ print qq|
 |;
 
   # created in RP.pm
-  if ($form->{fromyear} && $form->{frommonth}) {
-    delete $form->{fromdate};
-    delete $form->{todate};
-  }
+  $form->{$_} = $form->{"old_$_"} for qw|fromdate todate|;
 
   $form->hide_form(qw(department projectnumber fromdate todate frommonth fromyear previousyear interval includeperiod currency decimalplaces language_code l_heading l_subtotal l_accno accounttype method reversedisplay usetemplate));
 
@@ -1364,94 +1374,125 @@ sub section_display {
           <th align=left colspan=$colspan>$accounts{$category}</th>
         </tr>|;
 
-  for $accno (sort keys %{ $form->{$category} }) {
+  for $accno (sort keys %{$form->{$category}}) {
     $spacer = $spacer{$form->{accounts}{$accno}{charttype}};
 
-    if ($subtotal && (($form->{$category}{$accno}{$this}{0}{charttype} eq 'H') || ($form->{$category}{$accno}{$previous}{0}{charttype} eq 'H'))) {
-      &section_subtotal;
-    }
+    my $do_print
+      = (  $form->{$category}{$accno}{$this}{0}{charttype} eq 'H'
+        || $form->{$category}{$accno}{$previous}{0}{charttype} eq 'H')
+      && $form->{l_heading}
+      || ($form->{$category}{$accno}{$this}{0}{charttype} eq 'A'
+      || $form->{$category}{$accno}{$previous}{0}{charttype} eq 'A')
+      && $form->{l_account};
 
-    if (($form->{$category}{$accno}{$this}{0}{charttype} eq 'H') || ($form->{$category}{$accno}{$previous}{0}{charttype} eq 'H')) {
-      next unless $form->{l_heading};
+    if (
+      $subtotal
+      && ( ($form->{$category}{$accno}{$this}{0}{charttype} eq 'H')
+        || ($form->{$category}{$accno}{$previous}{0}{charttype} eq 'H'))
+      )
+    {
+      &section_subtotal;
     }
 
     $subtotal = 1;
 
-    $i++; $i %= 2;
-    print qq|
+    $i++;
+    $i %= 2;
+    if ($do_print) {
+      print qq|
         <tr class=listrow$i>
           <th align=left nowrap>$spacer|;
 
-        if (($form->{$category}{$accno}{$this}{0}{charttype} eq 'H') || ($form->{$category}{$accno}{$previous}{0}{charttype} eq 'H')) {
-          if ($form->{l_heading}) {
-            if ($form->{l_accno}) {
-              print qq|$accno - $form->{accounts}{$accno}{description}</th>|;
-            } else {
-              print qq|$form->{accounts}{$accno}{description}</th>|;
-            }
-          }
-        } else {
-          if ($form->{l_accno}) {
-            print qq|$accno - |;
-          }
-          print qq|$form->{accounts}{$accno}{description}</th>|;
+      if ($form->{l_accno}) {
+        print qq|$accno - |;
+      }
+      print qq|$form->{accounts}{$accno}{description}</th>|;
+    }
+
+    for $period (@periods) {
+      if ($form->{$category}{$accno}{$this}{$period}{charttype} eq 'H') {
+        $subtotal{accno}
+          = $form->{l_heading} ? $locale->text('Total') . ' '
+          : $form->{l_accno}   ? qq|$accno - |
+          :                      '';
+        $subtotal{accno} .= $form->{accounts}{$accno}{description};
+        $subtotal{$this}{$period} = $form->{$category}{$accno}{$this}{$period}{amount} * $ml;
+        $form->{$category}{$accno}{$this}{$period}{amount} = 0;
+      }
+
+      $total{$category}{$this}{$period} += $form->{$category}{$accno}{$this}{$period}{amount} * $ml;
+      $total{$this}{$period} += $form->{$category}{$accno}{$this}{$period}{amount};
+
+      if ($do_print) {
+        print qq|<td align=right>|;
+        print $form->format_amount(
+          \%myconfig,
+          $form->{$category}{$accno}{$this}{$period}{amount} * $ml,
+          $form->{decimalplaces}, '-'
+        );
+        print qq|</td>|;
+      }
+      if ($form->{previousyear}) {
+        if ($form->{$category}{$accno}{$previous}{$period}{charttype} eq 'H') {
+          $subtotal{$previous}{$period}
+            = $form->{$category}{$accno}{$previous}{$period}{amount} * $ml;
+          $form->{$category}{$accno}{$previous}{$period}{amount} = 0;
         }
 
-        for $period (@periods) {
-          if ($form->{$category}{$accno}{$this}{$period}{charttype} eq 'H') {
-            $subtotal{accno} = $form->{accounts}{$accno}{description};
-            $subtotal{$this}{$period} = $form->{$category}{$accno}{$this}{$period}{amount} * $ml;
-            $form->{$category}{$accno}{$this}{$period}{amount} = 0;
-          }
+        $total{$category}{$previous}{$period}
+          += $form->{$category}{$accno}{$previous}{$period}{amount} * $ml;
+        $total{$previous}{$period} += $form->{$category}{$accno}{$previous}{$period}{amount};
 
-          $total{$category}{$this}{$period} += $form->{$category}{$accno}{$this}{$period}{amount} * $ml;
-          $total{$this}{$period} += $form->{$category}{$accno}{$this}{$period}{amount};
-
+        if ($do_print) {
           print qq|<td align=right>|;
-          print $form->format_amount(\%myconfig, $form->{$category}{$accno}{$this}{$period}{amount} * $ml, $form->{decimalplaces}, '-');
+          print $form->format_amount(
+            \%myconfig,
+            $form->{$category}{$accno}{$previous}{$period}{amount} * $ml,
+            $form->{decimalplaces}, '-'
+          );
           print qq|</td>|;
-          if ($form->{previousyear}) {
-            if ($form->{$category}{$accno}{$previous}{$period}{charttype} eq 'H') {
-              $subtotal{accno} = $form->{accounts}{$accno}{description};
-              $subtotal{$previous}{$period} = $form->{$category}{$accno}{$previous}{$period}{amount} * $ml;
-              $form->{$category}{$accno}{$previous}{$period}{amount} = 0;
-            }
-
-            $total{$category}{$previous}{$period} += $form->{$category}{$accno}{$previous}{$period}{amount} * $ml;
-            $total{$previous}{$period} += $form->{$category}{$accno}{$previous}{$period}{amount};
-
-            print qq|<td align=right>|;
-            print $form->format_amount(\%myconfig, $form->{$category}{$accno}{$previous}{$period}{amount} * $ml, $form->{decimalplaces}, '-');
-            print qq|</td>|;
-          }
         }
+      }
+    }
 
-    print qq|
+    if ($do_print) {
+      print qq|
         </tr>
 |;
+    }
   }
 
   if ($category eq 'Q') {
-    $i++; $i %= 2;
+    $i++;
+    $i %= 2;
     print qq|
         <tr class=listrow$i>
-          <th align=left nowrap>$spacer|.$locale->text('Current Earnings').qq|</th>|;
+          <th align=left nowrap>$spacer| . $locale->text('Current Earnings') . qq|</th>|;
 
     for $period (@periods) {
-      $currentearnings = $total{A}{$this}{$period} - $total{L}{$this}{$period} - $total{Q}{$this}{$period};
+      $currentearnings
+        = $total{A}{$this}{$period} - $total{L}{$this}{$period} - $total{Q}{$this}{$period};
 
       print qq|
-            <td align=right>|.$form->format_amount(\%myconfig, $currentearnings, $form->{decimalplaces}, '-').qq|</td>|;
+            <td align=right>|
+        . $form->format_amount(\%myconfig, $currentearnings, $form->{decimalplaces}, '-')
+        . qq|</td>|;
 
       $subtotal{$this}{$period} += $currentearnings if ($form->{l_subtotal} && $form->{l_heading});
       $total{Q}{$this}{$period} += $currentearnings;
 
       if ($form->{previousyear}) {
-        $previousearnings = $total{A}{$previous}{$period} - $total{L}{$previous}{$period} - $total{Q}{$previous}{$period};
+        $previousearnings
+          = $total{A}{$previous}{$period}
+          - $total{L}{$previous}{$period}
+          - $total{Q}{$previous}{$period};
         print qq|
-            <td align=right>|.$form->format_amount(\%myconfig, $previousearnings, $form->{decimalplaces}, '-').qq|</td>|;
+            <td align=right>|
+          . $form->format_amount(\%myconfig, $previousearnings, $form->{decimalplaces}, '-')
+          . qq|</td>|;
 
-        $subtotal{$previous}{$period} += $currentearnings if ($form->{l_subtotal} && $form->{l_heading});
+        $subtotal{$previous}{$period} += $currentearnings
+          if ($form->{l_subtotal} && $form->{l_heading});
         $total{Q}{$previous}{$period} += $previousearnings;
       }
     }
@@ -1466,14 +1507,21 @@ sub section_display {
 
   print qq|
         <tr class=listtotal>
-          <th align=left>|.$locale->text('Total').qq| $accounts{$category}</th>
+          <th align=left>| . $locale->text('Total') . qq| $accounts{$category}</th>
 |;
   for $period (@periods) {
     print qq|
-        <th align=right>|.$form->format_amount(\%myconfig, $total{$category}{$this}{$period}, $form->{decimalplaces}).qq|</th>|;
+        <th align=right>|
+      . $form->format_amount(\%myconfig, $total{$category}{$this}{$period}, $form->{decimalplaces})
+      . qq|</th>|;
     if ($form->{previousyear}) {
       print qq|
-        <th align=right>|.$form->format_amount(\%myconfig, $total{$category}{$previous}{$period}, $form->{decimalplaces}).qq|</th>|;
+        <th align=right>|
+        . $form->format_amount(
+        \%myconfig,
+        $total{$category}{$previous}{$period},
+        $form->{decimalplaces}
+        ) . qq|</th>|;
     }
   }
 
@@ -1489,7 +1537,7 @@ sub section_display {
 
 sub section_subtotal {
 
-  return unless $form->{l_subtotal};
+  return unless $form->{l_subtotal} && $subtotal{accno};
 
   $i++; $i %= 2;
   print qq|
@@ -1516,6 +1564,7 @@ sub section_subtotal {
         </tr>
 |;
 
+  delete $subtotal{accno};
 }
 
 
@@ -1662,8 +1711,18 @@ sub build_report {
 sub generate_balance_sheet {
 
   $form->{callback} = "$form->{script}?action=generate_balance_sheet";
-  for (qw(path login todate tomonth toyear currency decimalplaces accounttype method reportcode reportlogin l_heading l_subtotal l_accno includeperiod previousyear reversedisplay usetemplate)) { $form->{callback} .= "&$_=$form->{$_}" }
-  for (qw(department language_code report)) { $form->{callback} .= "&$_=".$form->escape($form->{$_},1) }
+  for (
+    'path',          'login',         'todate',         'tomonth',    'toyear',
+    'currency',      'decimalplaces', 'accounttype',    'method',     'reportcode',
+    'reportlogin',   'l_heading',     'l_account',      'l_subtotal', 'l_accno',
+    'includeperiod', 'previousyear',  'reversedisplay', 'usetemplate',
+    )
+  {
+    $form->{callback} .= "&$_=$form->{$_}" if $form->{$_};
+  }
+  for (qw(department language_code report)) {
+    $form->{callback} .= "&$_=" . $form->escape($form->{$_}, 1) if $form->{$_};
+  }
 
   if ($form->{todate}) {
     if ($form->{toyear} && $form->{tomonth}) {
@@ -1807,6 +1866,9 @@ sub generate_balance_sheet {
     delete $form->{todate};
   }
 
+  # created in RP.pm
+  $form->{todate} = $form->{old_todate};
+
   $form->hide_form(qw(department todate tomonth toyear includeperiod currency decimalplaces language_code l_heading l_subtotal l_accno previousyear reversedisplay accounttype method usetemplate));
 
   $form->hide_form(qw(callback path login report reportcode reportlogin column_index flds sort direction));
@@ -1850,16 +1912,25 @@ sub generate_trial_balance {
 
   ($form->{reportdescription}, $form->{reportid}) = split /--/, $form->{report};
 
+  $form->{callback} = "$form->{script}?action=generate_trial_balance";
+  for (
+    'login',        'path',        'nextsub',    'fromdate',  'todate',
+    'month',        'year',        'interval',   'l_heading', 'l_subtotal',
+    'all_accounts', 'accounttype', 'reportcode', 'reportlogin',
+    )
+  {
+    $form->{callback} .= "&$_=$form->{$_}" if $form->{$_};
+  }
+  for (qw(department title report)) {
+    $form->{callback} .= "&$_=" . $form->escape($form->{$_}, 1) if $form->{$_};
+  }
+
   # get for each account initial balance, debits and credits
   RP->trial_balance(\%myconfig, \%$form);
 
   $form->{title} = $locale->text('Trial Balance') . " / $form->{company}";
   $form->helpref("trial_balance", $myconfig{countrycode});
   $form->{l_accno} = 1;
-
-  $form->{callback} = "$form->{script}?action=generate_trial_balance";
-  for (qw(login path nextsub fromdate todate month year interval l_heading l_subtotal all_accounts accounttype reportcode reportlogin)) { $form->{callback} .= "&$_=$form->{$_}" }
-  for (qw(department title report)) { $form->{callback} .= "&$_=".$form->escape($form->{$_},1) }
 
   &list_accounts;
 
@@ -2126,6 +2197,9 @@ sub list_accounts {
   if ($form->{year} && $form->{month}) {
     for (qw(fromdate todate)) { delete $form->{$_} }
   }
+
+  # created in RP.pm
+  $form->{$_} = $form->{"old_$_"} for qw|fromdate todate|;
 
   $form->hide_form(qw(department projectnumber fromdate todate month year interval language_code l_heading l_subtotal all_accounts accounttype));
 
