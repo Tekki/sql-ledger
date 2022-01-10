@@ -166,6 +166,7 @@ $self{texts} = {
   'Save'                        => 'Guardar',
   'Save as new'                 => 'Guardar como nuevo',
   'Screen'                      => 'Pantalla',
+  'Select'                      => 'Seleccione',
   'Select from one of the names below' => 'Seleccione uno de los nombres de la lista',
   'Sell'                        => 'Venta',
   'Sell Price'                  => 'Precio de venta',

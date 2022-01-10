@@ -98,6 +98,7 @@ $self{texts} = {
   'Edit GIFI'                   => '編輯GIFI',
   'Edit Language'               => '編輯語言',
   'Edit SIC'                    => '編輯標準工業分類代碼',
+  'Edit Warehouse'              => '編輯倉庫',
   'Employee'                    => '職員',
   'Employee Number'             => '職員編號',
   'Ends'                        => '完結',

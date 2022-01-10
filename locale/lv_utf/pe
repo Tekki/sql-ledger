@@ -79,7 +79,6 @@ $self{texts} = {
   'Pricegroup saved!'           => 'Cenu grupa saglabāta',
   'Pricegroups'                 => 'Cenu grupas',
   'Project'                     => 'Projekts',
-  'Project Description Translations' => 'Projekta apraksta tulkojumi',
   'Project Number'              => 'Projekta numurs',
   'Project deleted!'            => 'Projekts izdzēsts!',
   'Project saved!'              => 'Projekts saglabāts',

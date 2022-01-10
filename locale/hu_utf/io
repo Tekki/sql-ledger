@@ -96,6 +96,7 @@ $self{texts} = {
   'Sales Order'                 => 'Vevőrendelés',
   'Scheduled'                   => 'Ütemezve',
   'Screen'                      => 'Képernyőre',
+  'Select'                      => 'Választás',
   'Select items'                => 'Cikk választás',
   'Sep'                         => 'Szept.',
   'September'                   => 'Szeptember',

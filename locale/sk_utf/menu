@@ -98,7 +98,6 @@ $self{texts} = {
   'Preferences'                 => 'Nastavenia',
   'Pricegroups'                 => 'Cenové skupiny',
   'Print'                       => 'Tlač',
-  'Production'                  => 'Produkcia',
   'Projects'                    => 'Projekty',
   'Purchase Order'              => 'Vystavená objednávka',
   'Purchase Orders'             => 'Vystavené objednávky',

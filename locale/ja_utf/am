@@ -127,6 +127,7 @@ $self{texts} = {
   'Edit Language'               => '言語の編集',
   'Edit Payment Method'         => '支払いメソッドの編集',
   'Edit SIC'                    => 'SIC編集',
+  'Edit Warehouse'              => '倉庫の編集',
   'Employee'                    => '従業員',
   'Employee Number'             => '授業員番号',
   'Ends'                        => '終了',

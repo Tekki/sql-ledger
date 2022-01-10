@@ -57,6 +57,7 @@ $self{texts} = {
   'Debit Invoice'               => 'Mahnung',
   'Debit Note'                  => 'Mahnung',
   'December'                    => 'Dezember',
+  'Default'                     => 'Standard',
   'Delete'                      => 'Löschen',
   'Delivery Date'               => 'Lieferdatum',
   'Description'                 => 'Beschreibung',

@@ -83,7 +83,6 @@ $self{texts} = {
   'Preferences'                 => '個人設定',
   'Pricegroups'                 => '所有價格組別',
   'Print'                       => '列印',
-  'Production'                  => '生產',
   'Projects'                    => '項目',
   'Purchase Order'              => '採購單',
   'Purchase Orders'             => '採購單',

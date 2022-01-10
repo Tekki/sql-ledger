@@ -95,6 +95,7 @@ $self{texts} = {
   'Edit GIFI'                   => 'Endre GIFI',
   'Edit Language'               => 'Endre språk',
   'Edit SIC'                    => 'Endre SIC',
+  'Edit Warehouse'              => 'Endre lager',
   'Employee'                    => 'Ansatt',
   'Employee Number'             => 'Ansatt-nummer',
   'Enforce transaction reversal for all dates' => 'Tving eksplisitte transaksjonsrettelser for alle datoer',

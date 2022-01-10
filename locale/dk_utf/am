@@ -113,6 +113,7 @@ $self{texts} = {
   'Edit Language'               => 'Redigér sprog',
   'Edit Payment Method'         => 'Redigér betalingsmåde',
   'Edit SIC'                    => 'Redigér SIC',
+  'Edit Warehouse'              => 'Redigér varehus',
   'Employee'                    => 'Medarbejder',
   'Employee Number'             => 'Medarbejdernummer',
   'Ends'                        => 'Slutter',

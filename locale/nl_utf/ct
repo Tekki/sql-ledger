@@ -54,6 +54,7 @@ $self{texts} = {
   'Debit Invoice'               => 'Debitfactuur',
   'Debit Note'                  => 'Debetnota',
   'December'                    => 'december',
+  'Default'                     => 'Standaard',
   'Delete'                      => 'Verwijder',
   'Delivery Date'               => 'Leverdatum',
   'Description'                 => 'Omschrijving',

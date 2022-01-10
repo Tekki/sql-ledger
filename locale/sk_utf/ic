@@ -202,6 +202,7 @@ $self{texts} = {
   'Save as new'                 => 'Uložiť ako nový',
   'Scheduled'                   => 'Naplánované',
   'Screen'                      => 'Obrazovka',
+  'Select'                      => 'Výber',
   'Select from one of the names below' => 'Vyberte stranu zo zoznamu',
   'Select items'                => 'Vybrať položku',
   'Sell'                        => 'Predaj',

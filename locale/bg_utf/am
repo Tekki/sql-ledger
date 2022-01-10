@@ -103,6 +103,7 @@ $self{texts} = {
   'Edit GIFI'                   => 'Редакция на GIFI',
   'Edit Language'               => 'Редакция на език',
   'Edit SIC'                    => 'Редакция с SIC',
+  'Edit Warehouse'              => 'Редакция на склад',
   'Employee'                    => 'Сътрудник',
   'Employee Number'             => 'Сътрудник номер',
   'Ends'                        => 'Приключване',

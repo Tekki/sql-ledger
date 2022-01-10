@@ -89,6 +89,7 @@ sub income_statement {
   my $dbh = $form->dbconnect($myconfig);
 
   $form->{"old_$_"} = $form->{$_} for qw|fromdate todate|;
+  delete $myconfig->{dateformat} if $form->{action} eq 'spreadsheet';
 
   unless ($form->{fromdate} || $form->{todate}) {
     if ($form->{fromyear} && $form->{frommonth}) {
@@ -316,6 +317,7 @@ sub balance_sheet {
   my $dbh = $form->dbconnect($myconfig);
 
   $form->{old_todate} = $form->{todate};
+  delete $myconfig->{dateformat} if $form->{action} eq 'spreadsheet';
 
   # $form->{todate} = $form->datetonum($myconfig, $form->{todate});
 

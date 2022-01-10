@@ -95,6 +95,7 @@ $self{texts} = {
 
 $self{subs} = {
   'acc_menu'                    => 'acc_menu',
+  'account_subtotal'            => 'account_subtotal',
   'add'                         => 'add',
   'add_column'                  => 'add_column',
   'add_transaction'             => 'add_transaction',
@@ -155,6 +156,7 @@ $self{subs} = {
   'select_name'                 => 'select_name',
   'select_project'              => 'select_project',
   'show_progress'               => 'show_progress',
+  'spreadsheet'                 => 'spreadsheet',
   'transactions'                => 'transactions',
   'unload'                      => 'unload',
   'update'                      => 'update',

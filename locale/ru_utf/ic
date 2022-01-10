@@ -167,6 +167,7 @@ $self{texts} = {
   'Save'                        => 'ѓЯШвСЮЩди',
   'Save as new'                 => 'ѓЯШвСЮЩди ЫСЫ ЮЯзйЪ',
   'Screen'                      => 'ќЫвСЮ',
+  'Select'                      => 'їйТвСди',
   'Select from one of the names below' => 'їйТХвЩдХ ЯФЮЯ Щк ЮСЩЭХЮЯзСЮЩЪ Щк гаЩгЫС',
   'Sell'                        => '№вЯФСжС',
   'Sell Price'                  => '№вЯФСжЮСб УХЮС',

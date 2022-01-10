@@ -93,6 +93,7 @@ $self{texts} = {
   'Sales Order'                 => 'Pedido de Venda',
   'Scheduled'                   => 'Programado',
   'Screen'                      => 'Tela',
+  'Select'                      => 'Selecionar',
   'Select items'                => 'Selecionar itens',
   'Sep'                         => 'Set',
   'September'                   => 'Setembro',

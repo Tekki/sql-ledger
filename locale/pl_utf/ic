@@ -166,6 +166,7 @@ $self{texts} = {
   'Save'                        => 'Zapisz',
   'Save as new'                 => 'Zapisz jako nowe',
   'Screen'                      => 'Ekran',
+  'Select'                      => 'Wybierz',
   'Select from one of the names below' => 'Wybierz nazwę z poniższych',
   'Sell'                        => 'Sprzedaż',
   'Sell Price'                  => 'Cena Sprzedaży',

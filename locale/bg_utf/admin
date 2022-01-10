@@ -115,7 +115,6 @@ $self{texts} = {
   'Preferences'                 => 'Свойства',
   'Pricegroups'                 => 'Ценова група',
   'Print'                       => 'Печат',
-  'Production'                  => 'Продукция',
   'Projects'                    => 'Проекти',
   'Purchase Order'              => 'Поръчка за доставка',
   'Purchase Orders'             => 'Поръчки за доставки',

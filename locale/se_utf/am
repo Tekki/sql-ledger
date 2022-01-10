@@ -127,6 +127,7 @@ $self{texts} = {
   'Edit Language'               => 'Redigera språk',
   'Edit Payment Method'         => 'Ändra betalningsmetod',
   'Edit SIC'                    => 'Redigera sni-koder',
+  'Edit Warehouse'              => 'Redigera lager',
   'Employee'                    => 'Anställd',
   'Employee Number'             => 'Anställd nr',
   'Ends'                        => 'Slutdatum',

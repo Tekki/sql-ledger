@@ -55,6 +55,7 @@ $self{texts} = {
   'Project'                     => 'Έργο',
   'Qty'                         => 'Ποσ.',
   'Screen'                      => 'Οθόνη',
+  'Select'                      => 'Επιλογή',
   'Vendor'                      => 'Creditor',
 };
 

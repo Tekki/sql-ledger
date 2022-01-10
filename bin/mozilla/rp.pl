@@ -1207,18 +1207,6 @@ sub generate_income_statement {
   ($form->{department}) = split /--/, $form->{department};
   ($form->{projectnumber}) = split /--/, $form->{projectnumber};
 
-  $form->format_string(qw(company address businessnumber companyemail companywebsite));
-  $form->{address} =~ s/\n/<br>/g;
-
-  $timeperiod = $locale->date(\%myconfig, $form->{fromdate}, $form->{longformat}) .qq| | .$locale->text('To') .qq| | .$locale->date(\%myconfig, $form->{todate}, $form->{longformat});
-
-  %button = ('Save Report' => { ndx => 8, key => 'S', value => $locale->text('Save Report') }
-            );
-
-  if (!$form->{admin}) {
-    delete $button{'Save Report'} unless $form->{savereport};
-  }
-
   $this = "this";
   $previous = "previous";
   @periods = reverse sort { $a <=> $b } keys %{ $form->{period} };
@@ -1231,6 +1219,29 @@ sub generate_income_statement {
       $previous = "this";
     }
   }
+  
+  %accounts = ( I => $locale->text('Income'),
+                E => $locale->text('Expenses')
+              );
+
+  if ($form->{action} eq 'spreadsheet') {
+    require "$form->{path}/rpss.pl";
+    &download_spreadsheet('income_statement', \@periods);
+  }
+
+  $form->format_string(qw(company address businessnumber companyemail companywebsite));
+  $form->{address} =~ s/\n/<br>/g;
+
+  %button = (
+    'Save Report' => {ndx => 8, key => 'S', value => $locale->text('Save Report')},
+    'Spreadsheet' => {ndx => 9, key => 'X', value => $locale->text('Spreadsheet')},
+  );
+
+  if (!$form->{admin}) {
+    delete $button{'Save Report'} unless $form->{savereport};
+  }
+
+  $timeperiod = $locale->date(\%myconfig, $form->{fromdate}, $form->{longformat}) .qq| | .$locale->text('To') .qq| | .$locale->date(\%myconfig, $form->{todate}, $form->{longformat});
 
   # this section applies to the old template
   if ($form->{usetemplate}) {
@@ -1239,7 +1250,6 @@ sub generate_income_statement {
 
     &build_report(qw(I E));
   }
-
 
   if ($form->{usetemplate}) {
     $form->parse_template(\%myconfig, $userspath);
@@ -1297,10 +1307,6 @@ sub generate_income_statement {
   print qq|
         </tr>
 |;
-
-  %accounts = ( I => $locale->text('Income'),
-                E => $locale->text('Expenses')
-              );
 
   %spacer = ( H => '',
               A => '&nbsp;&nbsp;&nbsp;'
@@ -1743,17 +1749,6 @@ sub generate_balance_sheet {
 
   ($form->{department}) = split /--/, $form->{department};
 
-  # setup company variables for the form
-  $form->format_string(qw(company address businessnumber companyemail companywebsite));
-  $form->{address} =~ s/\n/<br>/g;
-
-  %button = ('Save Report' => { ndx => 8, key => 'S', value => $locale->text('Save Report') }
-            );
-
-  if (!$form->{admin}) {
-    delete $button{'Save Report'} unless $form->{savereport};
-  }
-
   $this = "this";
   $previous = "previous";
   @periods = sort { $a <=> $b } keys %{ $form->{period} };
@@ -1770,9 +1765,27 @@ sub generate_balance_sheet {
                 Q => $locale->text('Equity')
               );
 
+  if ($form->{action} eq 'spreadsheet') {
+    require "$form->{path}/rpss.pl";
+    &download_spreadsheet('balance_sheet', \@periods);
+  }
+
   %spacer = ( H => '',
               A => '&nbsp;&nbsp;&nbsp;'
             );
+
+  # setup company variables for the form
+  $form->format_string(qw(company address businessnumber companyemail companywebsite));
+  $form->{address} =~ s/\n/<br>/g;
+
+  %button = (
+    'Save Report' => {ndx => 8, key => 'S', value => $locale->text('Save Report')},
+    'Spreadsheet' => {ndx => 9, key => 'X', value => $locale->text('Spreadsheet')},
+  );
+
+  if (!$form->{admin}) {
+    delete $button{'Save Report'} unless $form->{savereport};
+  }
 
   if ($form->{usetemplate}) {
 

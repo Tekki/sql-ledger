@@ -227,6 +227,7 @@ $self{subs} = {
   'ship_to'                     => 'ship_to',
   'shipto_selected'             => 'shipto_selected',
   'show_progress'               => 'show_progress',
+  'spreadsheet'                 => 'spreadsheet',
   'unload'                      => 'unload',
   'update'                      => 'update',
   'validate_items'              => 'validate_items',

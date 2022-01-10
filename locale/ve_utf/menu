@@ -83,7 +83,6 @@ $self{texts} = {
   'Preferences'                 => 'Preferencias',
   'Pricegroups'                 => 'Grupos de Precios',
   'Print'                       => 'Imprimir',
-  'Production'                  => 'Producción',
   'Projects'                    => 'Proyectos',
   'Purchase Order'              => 'Orden de Compra',
   'Purchase Orders'             => 'Órdenes de Compra',

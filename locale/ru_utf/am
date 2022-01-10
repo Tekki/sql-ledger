@@ -97,6 +97,7 @@ $self{texts} = {
   'Edit GIFI'                   => 'ђХФСЫдЩвЯзСди GIFI',
   'Edit Language'               => 'ђХФСЫдЩвЯзСди ёкйЫ',
   'Edit SIC'                    => 'ђХФСЫдЩвЯзСди SIC',
+  'Edit Warehouse'              => 'ђХФСЫдЩвЯзСди гЫЬСФ',
   'Employee'                    => 'ѓЯдвеФЮЩЫ',
   'Employee Number'             => 'ыЯФ гЯдвеФЮЩЫС',
   'Enforce transaction reversal for all dates' => '№ХвХгоЩдСФи авЯзЯФЫЩ аЯЬЮЯгдиР',

@@ -1,0 +1,24 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Balance Sheet'               => 'Bilanz',
+  'Current Earnings'            => 'Aktuelles Einkommen',
+  'Equity'                      => 'Passiva/Eigenkapital',
+  'Income'                      => 'Einnahmen',
+  'Income Statement'            => 'G & V',
+  'Total'                       => 'Betrag',
+  'as at'                       => 'zum Stand',
+  'for Period'                  => 'für den Zeitraum',
+};
+
+$self{subs} = {
+  '_ss_section'                 => '_ss_section',
+  '_ss_subtotal'                => '_ss_subtotal',
+  'create_spreadsheet'          => 'create_spreadsheet',
+  'download_spreadsheet'        => 'download_spreadsheet',
+};
+
+1;
+

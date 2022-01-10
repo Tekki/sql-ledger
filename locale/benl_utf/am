@@ -96,6 +96,7 @@ $self{texts} = {
   'Edit GIFI'                   => 'Wijzig GIFI',
   'Edit Language'               => 'Taal Wijzigen',
   'Edit SIC'                    => 'SIC wijzigen',
+  'Edit Warehouse'              => 'Magazijn wijzigen',
   'Employee'                    => 'Werknemer',
   'Enforce transaction reversal for all dates' => 'Boeking terugdraaien voor alle data',
   'Equity'                      => 'Passiva/Eigen Vermogen',

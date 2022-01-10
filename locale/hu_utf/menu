@@ -87,7 +87,6 @@ $self{texts} = {
   'Preferences'                 => 'Beállítások',
   'Pricegroups'                 => 'ÁrCsoportok',
   'Print'                       => 'Nyomtatás',
-  'Production'                  => 'Gyártás',
   'Projects'                    => 'PROJEKTEK',
   'Purchase Order'              => 'ÚjSzállRendelés',
   'Purchase Orders'             => 'SzállRendLista',

@@ -87,6 +87,7 @@ $self{texts} = {
   'SKU'                         => 'SKU',
   'Sales Order'                 => 'њСЫСк ЫЬЩХЮдС',
   'Screen'                      => 'ќЫвСЮ',
+  'Select'                      => 'їйТвСди',
   'Sep'                         => 'гХЮ',
   'September'                   => 'гХЮдбТви',
   'Serial No.'                  => 'ѓХвЩЪЮйЪ ЮЯЭ.',

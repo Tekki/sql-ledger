@@ -113,6 +113,7 @@ $self{texts} = {
   'Edit GIFI'                   => 'Oprava skup.účtov',
   'Edit Language'               => 'Oprava jazyku',
   'Edit SIC'                    => 'Oprava SIC',
+  'Edit Warehouse'              => 'Oprava skladov',
   'Employee'                    => 'Zamestnanec',
   'Employee Number'             => 'Číslo zamestnanca',
   'Ends'                        => 'Koniec',

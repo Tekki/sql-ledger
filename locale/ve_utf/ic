@@ -182,6 +182,7 @@ $self{texts} = {
   'Save as new'                 => 'Guardar como nuevo',
   'Scheduled'                   => 'Programada',
   'Screen'                      => 'Pantalla',
+  'Select'                      => 'Seleccionar',
   'Select from one of the names below' => 'Seleccione de uno de los nombres siguientes',
   'Select items'                => 'Seleccione los items',
   'Sell'                        => 'Vender',

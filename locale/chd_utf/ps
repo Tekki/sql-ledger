@@ -448,6 +448,8 @@ $self{texts} = {
 };
 
 $self{subs} = {
+  '_ss_section'                 => '_ss_section',
+  '_ss_subtotal'                => '_ss_subtotal',
   '_transactions_spreadsheet'   => '_transactions_spreadsheet',
   'acc_menu'                    => 'acc_menu',
   'add'                         => 'add',

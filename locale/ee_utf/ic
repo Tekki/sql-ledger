@@ -191,6 +191,7 @@ $self{texts} = {
   'Save as new'                 => 'Salvesta uuena',
   'Scheduled'                   => 'Planeeritud',
   'Screen'                      => 'Ekraan',
+  'Select'                      => 'Vali',
   'Select from one of the names below' => 'Vali üks alltoodud nimedest',
   'Select items'                => 'Vali kaubaartikkel',
   'Sell'                        => 'Müüma',

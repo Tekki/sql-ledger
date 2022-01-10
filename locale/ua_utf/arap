@@ -90,6 +90,7 @@ $self{subs} = {
   'select_name'                 => 'select_name',
   'select_project'              => 'select_project',
   'show_progress'               => 'show_progress',
+  'spreadsheet'                 => 'spreadsheet',
   'unload'                      => 'unload',
   'vendor_invoice_'             => 'vendor_invoice_',
   '№вяфязжщдщ'                  => 'continue',

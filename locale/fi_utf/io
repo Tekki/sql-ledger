@@ -84,6 +84,7 @@ $self{texts} = {
   'Required by'                 => 'Toimituspäivä',
   'Sales Order'                 => 'Tilausvahvistus',
   'Screen'                      => 'Näyttö',
+  'Select'                      => 'Valitse',
   'Sep'                         => 'Syy',
   'September'                   => 'Syyskuu',
   'Serial No.'                  => 'Sarjanumero',

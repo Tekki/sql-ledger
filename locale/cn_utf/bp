@@ -11,8 +11,11 @@ $self{texts} = {
   'Attachment'                  => 'éæ¡£',
   'Aug'                         => 'å«æ',
   'August'                      => 'å«æ',
+  'Bcc'                         => 'ä¸æ¾ç¤ºæé',
+  'Bin List'                    => 'ç®±çæç»è¡¨',
   'Bin Lists'                   => 'ç®±æ¸å',
   'Cannot remove files!'        => 'ä¸è½ç§»é¤æ¡£æ¡',
+  'Cc'                          => 'æé',
   'City'                        => 'åå¸',
   'Closed'                      => 'å·²å³é­',
   'Confirm!'                    => 'å¥å¸æå!',
@@ -60,24 +63,29 @@ $self{texts} = {
   'Order'                       => 'è®¢å',
   'Order Number'                => 'è®¢åç¼å·',
   'PDF'                         => 'PDF',
+  'Packing List'                => 'åºè´§å',
   'Packing Lists'               => 'åºè´§å',
   'Paid'                        => 'å·²ä»',
   'Period'                      => 'æ¶æ',
+  'Pick List'                   => 'éæ©å',
   'Pick Lists'                  => 'æ£è´§æ¸å',
   'Postscript'                  => 'éè¨',
   'Print'                       => 'åå°',
   'Printed'                     => 'å·³åå°',
   'Printing'                    => 'å¨åå°',
   'Project Number'              => 'æ¹æ¡å·ç ',
+  'Purchase Order'              => 'éè´­å',
   'Purchase Orders'             => 'éè´­å',
   'Quarter'                     => 'å­£åº¦',
   'Quotation'                   => 'æ¥ä»·å',
   'Quotation Number'            => 'æ¥ä»·åå·ç ',
   'Quotations'                  => 'æ¥ä»·å',
+  'RFQ'                         => 'æ¥ä»·è¯·æ±(RFQ) ',
   'RFQs'                        => 'æ¥ä»·è¯·æ±',
   'Remove'                      => 'ç§»é¤',
   'Removed spoolfiles!'         => 'ç§»é¤çº¿è½´æ¡£æ¡',
   'Removing marked entries from queue ...' => 'æ­£ä»é¿éä¸­ç§»é¤æè®°å·çä¼è®¡é¡¹ç®',
+  'Sales Order'                 => 'éè´§å',
   'Sales Orders'                => 'éè´§å',
   'Select all'                  => 'å¨é',
   'Sep'                         => 'ä¹æ',
@@ -88,9 +96,11 @@ $self{texts} = {
   'Total'                       => 'æ»è®¡',
   'Vendor'                      => 'ä¾åºå',
   'Vendor Number'               => 'ä¾åºåå·ç ',
+  'Work Order'                  => 'å·¥ä½å',
   'Work Orders'                 => 'å·¥ä½å',
   'Year'                        => 'å¹´ä»½',
   'Yes'                         => 'æ¯',
+  'sent'                        => 'å·³éåº',
 };
 
 $self{subs} = {

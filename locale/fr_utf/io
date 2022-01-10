@@ -104,6 +104,7 @@ $self{texts} = {
   'Sales Order'                 => 'Commande de vente',
   'Scheduled'                   => 'Planifié',
   'Screen'                      => 'Écran',
+  'Select'                      => 'Sélectionner',
   'Select items'                => 'Sélectionner éléments',
   'Sep'                         => 'Sept.',
   'September'                   => 'Septembre',

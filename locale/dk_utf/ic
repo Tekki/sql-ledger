@@ -181,6 +181,7 @@ $self{texts} = {
   'Save'                        => 'Gem',
   'Save as new'                 => 'Gem som ny',
   'Screen'                      => 'Skærm',
+  'Select'                      => 'Vælg',
   'Select from one of the names below' => 'Vælg en af navnene nedenfor',
   'Sell'                        => 'Sælg',
   'Sell Price'                  => 'Salgspris',

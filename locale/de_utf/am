@@ -257,7 +257,6 @@ $self{texts} = {
   'Person'                      => 'Person',
   'Phone'                       => 'Tel.',
   'Pick List'                   => 'Lagerliste',
-  'Pole Display'                => 'Anzeigetafel',
   'Poledisplay'                 => 'Anzeigetafel',
   'Posting'                     => 'Buchung',
   'Postscript'                  => 'Postscript',

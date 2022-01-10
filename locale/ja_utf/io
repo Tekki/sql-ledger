@@ -104,6 +104,7 @@ $self{texts} = {
   'Sales Order'                 => '受注伝票',
   'Scheduled'                   => '計画済',
   'Screen'                      => '画面',
+  'Select'                      => '選択',
   'Select items'                => 'アイテムの選択',
   'Sep'                         => '9月',
   'September'                   => '9月',

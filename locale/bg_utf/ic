@@ -191,6 +191,7 @@ $self{texts} = {
   'Save as new'                 => 'Запази като нов',
   'Scheduled'                   => 'Зададено разписание',
   'Screen'                      => 'Екран',
+  'Select'                      => 'Избери',
   'Select from one of the names below' => 'Избери едно от имената посочени по-долу',
   'Select items'                => 'Избери стока',
   'Sell'                        => 'Продажба',

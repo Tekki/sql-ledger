@@ -162,6 +162,7 @@ $self{texts} = {
   'Save'                        => 'Opslaan',
   'Save as new'                 => 'Opslaan als nieuw',
   'Screen'                      => 'Scherm',
+  'Select'                      => 'Selecteer',
   'Select from one of the names below' => 'Kies een van de onderstaande namen',
   'Sell Price'                  => 'Verkoopprijs',
   'Sep'                         => 'Sep',

@@ -103,6 +103,7 @@ $self{texts} = {
   'Edit GIFI'                   => 'Muuda GIFI',
   'Edit Language'               => 'Muuda Keel',
   'Edit SIC'                    => 'Muuda Standardiseeritud Tööstuskood',
+  'Edit Warehouse'              => 'Muuda Kaubaladu',
   'Employee'                    => 'Töötaja',
   'Employee Number'             => 'Teenistuja Number',
   'Ends'                        => 'Lõpeb',

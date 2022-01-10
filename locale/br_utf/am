@@ -101,6 +101,7 @@ $self{texts} = {
   'Edit GIFI'                   => 'Editar CFOP',
   'Edit Language'               => 'Editar Idioma',
   'Edit SIC'                    => 'Editar SIC',
+  'Edit Warehouse'              => 'Editar o Almoxarifado',
   'Employee'                    => 'Empregado',
   'Employee Number'             => 'Número do Empregado',
   'Ends'                        => 'Términos',

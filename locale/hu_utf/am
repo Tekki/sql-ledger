@@ -104,6 +104,7 @@ $self{texts} = {
   'Edit GIFI'                   => 'Gyűjtőkód módosítása',
   'Edit Language'               => 'Nyelv módosítás',
   'Edit SIC'                    => 'SIC módosítás',
+  'Edit Warehouse'              => 'Raktár módosítás',
   'Employee'                    => 'Alkalmazott',
   'Employee Number'             => 'Alkalmazott Száma',
   'Ends'                        => 'Vége',

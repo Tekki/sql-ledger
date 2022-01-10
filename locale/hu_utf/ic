@@ -192,6 +192,7 @@ $self{texts} = {
   'Save as new'                 => 'Mentés újként',
   'Scheduled'                   => 'Ütemezve',
   'Screen'                      => 'Képernyőre',
+  'Select'                      => 'Választás',
   'Select from one of the names below' => 'Válasszon ki egyet az alábbi nevek közül',
   'Select items'                => 'Cikk választás',
   'Sell'                        => 'Eladás',

@@ -104,7 +104,6 @@ $self{texts} = {
   'Preferences'                 => '設定',
   'Pricegroups'                 => '価格グループ',
   'Print'                       => '印刷',
-  'Production'                  => '製造',
   'Projects'                    => 'プロジェクト',
   'Purchase Order'              => '購買発注',
   'Purchase Orders'             => '購買発注',

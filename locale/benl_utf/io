@@ -87,6 +87,7 @@ $self{texts} = {
   'SKU'                         => 'SKU',
   'Sales Order'                 => 'Verkooporder',
   'Screen'                      => 'Scherm',
+  'Select'                      => 'Selecteer',
   'Sep'                         => 'Sep',
   'September'                   => 'September',
   'Serial No.'                  => 'Serienr',

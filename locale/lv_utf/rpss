@@ -1,0 +1,24 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Balance Sheet'               => 'Bilances pārskats',
+  'Current Earnings'            => 'Pašreizējie ienākumi',
+  'Equity'                      => 'Pašu kapitāls',
+  'Income'                      => 'Ienākums',
+  'Income Statement'            => 'Peļņas vai zaudējuma aprēķins',
+  'Total'                       => 'Pavisam Kopā',
+  'as at'                       => 'uz',
+  'for Period'                  => 'periodam',
+};
+
+$self{subs} = {
+  '_ss_section'                 => '_ss_section',
+  '_ss_subtotal'                => '_ss_subtotal',
+  'create_spreadsheet'          => 'create_spreadsheet',
+  'download_spreadsheet'        => 'download_spreadsheet',
+};
+
+1;
+

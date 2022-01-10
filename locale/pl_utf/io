@@ -87,6 +87,7 @@ $self{texts} = {
   'SKU'                         => 'SWW',
   'Sales Order'                 => 'Zlecenie Sprzedaży',
   'Screen'                      => 'Ekran',
+  'Select'                      => 'Wybierz',
   'Sep'                         => 'Wrzesień',
   'September'                   => 'Wrzesień',
   'Serial No.'                  => 'Nr. Sr.',

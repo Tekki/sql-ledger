@@ -1,0 +1,24 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Balance Sheet'               => '貸借対照表',
+  'Current Earnings'            => '現在売上',
+  'Equity'                      => '証券',
+  'Income'                      => '所得',
+  'Income Statement'            => '所得伝票',
+  'Total'                       => '合計',
+  'as at'                       => '時点で',
+  'for Period'                  => '会計期間',
+};
+
+$self{subs} = {
+  '_ss_section'                 => '_ss_section',
+  '_ss_subtotal'                => '_ss_subtotal',
+  'create_spreadsheet'          => 'create_spreadsheet',
+  'download_spreadsheet'        => 'download_spreadsheet',
+};
+
+1;
+

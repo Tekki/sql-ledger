@@ -95,6 +95,7 @@ $self{texts} = {
   'Edit GIFI'                   => 'Labot GIFI',
   'Edit Language'               => 'Labot valodu',
   'Edit SIC'                    => 'Labot SIC',
+  'Edit Warehouse'              => 'Labot noliktavu',
   'Employee'                    => 'Darbinieks',
   'Enforce transaction reversal for all dates' => 'Izpildīt transakciju atcelšanu visos datumos',
   'Equity'                      => 'Pašu kapitāls',

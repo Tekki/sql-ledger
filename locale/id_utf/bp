@@ -43,10 +43,12 @@ $self{texts} = {
   'Print'                       => 'Cetak',
   'Printed'                     => 'Sudah dicetak',
   'Project Number'              => 'Nomor Proyek',
+  'Purchase Order'              => 'Pesanan Pembelian (PO)',
   'Purchase Orders'             => 'Pesanan Pembelian (PO)',
   'Quotation'                   => 'Quotation',
   'Quotation Number'            => 'Nomor Quotation',
   'Quotations'                  => 'Quotation',
+  'Sales Order'                 => 'Pesanan Penjualan (SO)',
   'Sales Orders'                => 'Pesanan Penjualan (SO)',
   'Select all'                  => 'Pilih semua',
   'To'                          => 'Sampai',
@@ -55,6 +57,7 @@ $self{texts} = {
   'Vendor Number'               => 'Nomor Supplier',
   'Year'                        => 'Tahun',
   'Yes'                         => 'Ya',
+  'sent'                        => 'sudah dikirim',
 };
 
 $self{subs} = {

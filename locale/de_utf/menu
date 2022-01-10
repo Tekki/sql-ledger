@@ -121,7 +121,6 @@ $self{texts} = {
   'Preferences'                 => 'Benutzereinstellungen',
   'Pricegroups'                 => 'Preisgruppen',
   'Print'                       => 'Drucken',
-  'Production'                  => 'Produktion',
   'Projects'                    => 'Projekte',
   'Purchase Order'              => 'Einkaufsbestellung',
   'Purchase Orders'             => 'Einkaufsbestellungen',

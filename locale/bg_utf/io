@@ -95,6 +95,7 @@ $self{texts} = {
   'Sales Order'                 => 'Поръчка продажба',
   'Scheduled'                   => 'Зададено разписание',
   'Screen'                      => 'Екран',
+  'Select'                      => 'Избери',
   'Select items'                => 'Избери стока',
   'Sep'                         => 'Сеп',
   'September'                   => 'Септември',

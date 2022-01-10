@@ -90,6 +90,7 @@ $self{texts} = {
   'Sales Order'                 => '銷貨單',
   'Scheduled'                   => '編排了時間',
   'Screen'                      => '螢幕',
+  'Select'                      => '選擇',
   'Select items'                => '選擇項目',
   'Sep'                         => '九月',
   'September'                   => '九月',

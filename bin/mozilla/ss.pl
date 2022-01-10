@@ -54,7 +54,6 @@ sub download_spreadsheet {
 
 1;
 
-
 =encoding utf8
 
 =head1 NAME
@@ -63,7 +62,7 @@ bin/mozilla/ss.pl - Spreadsheet Functions
 
 =head1 DESCRIPTION
 
-L<bin::mozilla::ss> contains functions to create and download spreadsheets
+L<bin::mozilla::ss> contains functions to create and download spreadsheets.
 
 =head1 DEPENDENCIES
 

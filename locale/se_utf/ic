@@ -212,6 +212,7 @@ $self{texts} = {
   'Save as new'                 => 'Spara som ny',
   'Scheduled'                   => 'Schemalagd',
   'Screen'                      => 'Skärm',
+  'Select'                      => 'Välj',
   'Select from one of the names below' => 'Välj ett av namnen nedan',
   'Select items'                => 'Välj vara',
   'Sell'                        => 'Sälj',

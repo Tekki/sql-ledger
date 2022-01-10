@@ -1,0 +1,29 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Assets'                      => 'Actifs',
+  'Balance Sheet'               => 'Bilan',
+  'Current Earnings'            => 'Résulltat de l\'exercice',
+  'Equity'                      => 'Fonds',
+  'Expenses'                    => 'Charges',
+  'Income'                      => 'Produits',
+  'Income / (Loss)'             => 'Résultat bénéfice/(perte)',
+  'Income Statement'            => 'Compte de résultat',
+  'Liabilities'                 => 'Dettes',
+  'Module not installed:'       => 'Module pas installé:',
+  'Total'                       => 'Total',
+  'as at'                       => 'au',
+  'for Period'                  => 'pour la période',
+};
+
+$self{subs} = {
+  '_ss_section'                 => '_ss_section',
+  '_ss_subtotal'                => '_ss_subtotal',
+  'create_spreadsheet'          => 'create_spreadsheet',
+  'download_spreadsheet'        => 'download_spreadsheet',
+};
+
+1;
+

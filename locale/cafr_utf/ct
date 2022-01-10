@@ -225,7 +225,7 @@ $self{subs} = {
   'supprimer'                   => 'delete',
   'point_de_vente'              => 'pos',
   'liste_de_prix'               => 'pricelist',
-  'commande_d\'achat'           => 'purchase_order',
+  'commande_d_achat'            => 'purchase_order',
   'devis'                       => 'quotation',
   'demande_de_devis'            => 'rfq',
   'facture_de_vente'            => 'sales_invoice',
@@ -233,9 +233,9 @@ $self{subs} = {
   'enregistrer'                 => 'save',
   'enregistrer_la_liste_de_prix' => 'save_pricelist',
   'enregistrer_comme_nouveau'   => 'save_as_new',
-  'adresse_d\'envoi'            => 'shipping_address',
+  'adresse_d_envoi'             => 'shipping_address',
   'mettre_à_jour'               => 'update',
-  'facture_d\'achat'            => 'vendor_invoice',
+  'facture_d_achat'             => 'vendor_invoice',
 };
 
 1;

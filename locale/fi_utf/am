@@ -87,6 +87,7 @@ $self{texts} = {
   'Edit Department'             => 'Muokkaa toimipistettä',
   'Edit GIFI'                   => 'Muokkaa GIFI',
   'Edit Language'               => 'Muokkaa kieltä',
+  'Edit Warehouse'              => 'Muokkaa varastoa',
   'Employee'                    => 'Työntekijä',
   'Employee Number'             => 'Työntekijän numero',
   'Enforce transaction reversal for all dates' => 'Pakota muunnos kaikille viennille',

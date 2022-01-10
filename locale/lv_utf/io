@@ -87,6 +87,7 @@ $self{texts} = {
   'SKU'                         => 'SKU',
   'Sales Order'                 => 'Pārdošanas orderis',
   'Screen'                      => 'Ekrāns',
+  'Select'                      => 'Atlasīt',
   'Sep'                         => 'Sep',
   'September'                   => 'Septembrī',
   'Serial No.'                  => 'Seriālais Nr.',

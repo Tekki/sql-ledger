@@ -116,6 +116,7 @@ $self{texts} = {
 
 $self{subs} = {
   'acc_menu'                    => 'acc_menu',
+  'account_subtotal'            => 'account_subtotal',
   'add'                         => 'add',
   'add_column'                  => 'add_column',
   'add_transaction'             => 'add_transaction',
@@ -176,6 +177,7 @@ $self{subs} = {
   'select_name'                 => 'select_name',
   'select_project'              => 'select_project',
   'show_progress'               => 'show_progress',
+  'spreadsheet'                 => 'spreadsheet',
   'transactions'                => 'transactions',
   'unload'                      => 'unload',
   'update'                      => 'update',
@@ -190,7 +192,7 @@ $self{subs} = {
   'enregistrer_comme_nouveau'   => 'post_as_new',
   'facture_de_vente_'           => 'sales_invoice_',
   'mettre_à_jour'               => 'update',
-  'facture_d\'achat_'           => 'vendor_invoice_',
+  'facture_d_achat_'            => 'vendor_invoice_',
   'oui'                         => 'yes',
 };
 

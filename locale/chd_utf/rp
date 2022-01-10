@@ -121,6 +121,7 @@ $self{texts} = {
   'Memo'                        => 'Notiz',
   'Message'                     => 'Nachricht',
   'Method'                      => 'Methode',
+  'Module not installed:'       => 'Modul nicht installiert:',
   'Month'                       => 'Monat',
   'Month(s)'                    => 'Monat(e)',
   'Months'                      => 'Monate',
@@ -179,6 +180,7 @@ $self{texts} = {
   'Sep'                         => 'Sep',
   'September'                   => 'September',
   'Source'                      => 'Beleg',
+  'Spreadsheet'                 => 'Excel-Tabelle',
   'Standard'                    => 'Standard',
   'Startdate'                   => 'Startdatum',
   'Statement'                   => 'Zahlungserinnerung',
@@ -225,6 +227,8 @@ $self{texts} = {
 };
 
 $self{subs} = {
+  '_ss_section'                 => '_ss_section',
+  '_ss_subtotal'                => '_ss_subtotal',
   'acc_menu'                    => 'acc_menu',
   'add_column'                  => 'add_column',
   'add_transaction'             => 'add_transaction',
@@ -242,6 +246,7 @@ $self{subs} = {
   'check_project'               => 'check_project',
   'clock'                       => 'clock',
   'continue'                    => 'continue',
+  'create_spreadsheet'          => 'create_spreadsheet',
   'credit_invoice_'             => 'credit_invoice_',
   'debit_invoice_'              => 'debit_invoice_',
   'delete_column'               => 'delete_column',
@@ -255,6 +260,7 @@ $self{subs} = {
   'do_print_reminder'           => 'do_print_reminder',
   'do_print_statement'          => 'do_print_statement',
   'do_save_report'              => 'do_save_report',
+  'download_spreadsheet'        => 'download_spreadsheet',
   'e_mail'                      => 'e_mail',
   'e_mail_reminder'             => 'e_mail_reminder',
   'e_mail_statement'            => 'e_mail_statement',
@@ -339,6 +345,7 @@ $self{subs} = {
   'abfrage_speichern'           => 'save_report',
   'zeitplan_speichern'          => 'save_schedule',
   'alle_auswählen'              => 'select_all',
+  'excel_tabelle'               => 'spreadsheet',
 };
 
 1;

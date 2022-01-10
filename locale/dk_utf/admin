@@ -122,7 +122,6 @@ $self{texts} = {
   'Preferences'                 => 'Præferencer',
   'Pricegroups'                 => 'Prisgrupper',
   'Print'                       => 'Udskriv',
-  'Production'                  => 'Produktion',
   'Projects'                    => 'Projekter',
   'Purchase Order'              => 'Indkøbsordre',
   'Purchase Orders'             => 'Indkøbsordrer',

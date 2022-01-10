@@ -162,6 +162,7 @@ $self{texts} = {
   'Save'                        => 'Saglabāt',
   'Save as new'                 => 'Saglabāt kā jaunu',
   'Screen'                      => 'Ekrāns',
+  'Select'                      => 'Atlasīt',
   'Select from one of the names below' => 'Atlasīt vienu no sekojošiem nosaukumiem',
   'Sell Price'                  => 'Pārdošanas cena',
   'Sep'                         => 'Sep',

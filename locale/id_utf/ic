@@ -113,6 +113,7 @@ $self{texts} = {
   'Save'                        => 'Simpan',
   'Save as new'                 => 'Simpan sbg yg baru',
   'Screen'                      => 'Layar',
+  'Select'                      => 'Pilih',
   'Select from one of the names below' => 'Pilih dari salah satu nama di bawah',
   'Sell'                        => 'Jual',
   'Sell Price'                  => 'Harga Jual',

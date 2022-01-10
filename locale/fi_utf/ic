@@ -150,6 +150,7 @@ $self{texts} = {
   'Save'                        => 'Tallenna',
   'Save as new'                 => 'Tallenna uutena',
   'Screen'                      => 'Näyttö',
+  'Select'                      => 'Valitse',
   'Select from one of the names below' => 'Valitse yksi nimi alapuolelta',
   'Sell'                        => 'Myynti',
   'Sell Price'                  => 'Myyntihinta',

@@ -1,0 +1,24 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Balance Sheet'               => 'Balans',
+  'Current Earnings'            => 'Huidige winst',
+  'Equity'                      => 'Passiva/Eigen Vermogen',
+  'Income'                      => 'Inkomsten',
+  'Income Statement'            => 'Inkomstenoverzicht',
+  'Total'                       => 'Totaal',
+  'as at'                       => 'per',
+  'for Period'                  => 'voor periode',
+};
+
+$self{subs} = {
+  '_ss_section'                 => '_ss_section',
+  '_ss_subtotal'                => '_ss_subtotal',
+  'create_spreadsheet'          => 'create_spreadsheet',
+  'download_spreadsheet'        => 'download_spreadsheet',
+};
+
+1;
+

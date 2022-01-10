@@ -136,6 +136,7 @@ $self{texts} = {
 };
 
 $self{subs} = {
+  '_transactions_spreadsheet'   => '_transactions_spreadsheet',
   'acc_menu'                    => 'acc_menu',
   'add'                         => 'add',
   'calendar'                    => 'calendar',
@@ -143,11 +144,13 @@ $self{subs} = {
   'check_all'                   => 'check_all',
   'clock'                       => 'clock',
   'create_links'                => 'create_links',
+  'create_spreadsheet'          => 'create_spreadsheet',
   'delete'                      => 'delete',
   'delete_transactions'         => 'delete_transactions',
   'deselect_all'                => 'deselect_all',
   'display'                     => 'display',
   'display_form'                => 'display_form',
+  'download_spreadsheet'        => 'download_spreadsheet',
   'edit'                        => 'edit',
   'form_footer'                 => 'form_footer',
   'form_header'                 => 'form_header',
@@ -181,7 +184,7 @@ $self{subs} = {
   'planification'               => 'schedule',
   'tout_sélectionner'           => 'select_all',
   'mettre_à_jour'               => 'update',
-  'facture_d\'achat_'           => 'vendor_invoice_',
+  'facture_d_achat_'            => 'vendor_invoice_',
   'oui'                         => 'yes',
 };
 

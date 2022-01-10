@@ -99,7 +99,6 @@ $self{texts} = {
   'Pricegroups'                 => 'Ценова група',
   'Production'                  => 'Продукция',
   'Project'                     => 'Проект',
-  'Project Description Translations' => 'Описание на преводите към проекта',
   'Project Number'              => 'Номер на проекта',
   'Project deleted!'            => 'Проекта е изтрит!',
   'Project saved!'              => 'Проекта е запазен!',

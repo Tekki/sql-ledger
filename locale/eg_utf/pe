@@ -69,7 +69,6 @@ $self{texts} = {
   'Pricegroup'                  => 'مجموعة سعرية',
   'Pricegroups'                 => 'مجموعات سعرية',
   'Project'                     => 'مشروع',
-  'Project Description Translations' => 'ترجمة وصف المشروع',
   'Project Number'              => 'رقم المشروع',
   'Project deleted!'            => 'الغي المشروع',
   'Project saved!'              => 'خزن المشروع',

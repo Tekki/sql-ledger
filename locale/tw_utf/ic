@@ -181,6 +181,7 @@ $self{texts} = {
   'Save as new'                 => '當新的儲存',
   'Scheduled'                   => '編排了時間',
   'Screen'                      => '螢幕',
+  'Select'                      => '選擇',
   'Select from one of the names below' => '於下列姓名中選擇一個',
   'Select items'                => '選擇項目',
   'Sell'                        => '售賣',

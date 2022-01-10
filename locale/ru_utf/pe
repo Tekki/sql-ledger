@@ -82,7 +82,6 @@ $self{texts} = {
   'Pricegroup saved!'           => 'њСаЩгСЮ дЩа УХЮ',
   'Pricegroups'                 => 'єЩай УХЮ',
   'Project'                     => '№вЯХЫд',
-  'Project Description Translations' => '№ХвХзЯФй ЯаЩгСЮЩб авЯХЫдЯз',
   'Project Number'              => 'ыЯФ авЯХЫдС',
   'Project deleted!'            => '№вЯХЫд еФСЬХЮ',
   'Project saved!'              => '№вЯХЫд гЯШвСЮХЮ!',

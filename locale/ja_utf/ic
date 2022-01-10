@@ -212,6 +212,7 @@ $self{texts} = {
   'Save as new'                 => '新規登録する',
   'Scheduled'                   => '計画済',
   'Screen'                      => '画面',
+  'Select'                      => '選択',
   'Select from one of the names below' => '下記の名前の中に一つを選択して下さい',
   'Select items'                => 'アイテムの選択',
   'Sell'                        => '売る',

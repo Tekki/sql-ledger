@@ -102,6 +102,7 @@ $self{texts} = {
   'Sales Order'                 => 'Prijatá objednávka',
   'Scheduled'                   => 'Naplánované',
   'Screen'                      => 'Obrazovka',
+  'Select'                      => 'Výber',
   'Select items'                => 'Vybrať položku',
   'Sep'                         => 'Sep',
   'September'                   => 'September',

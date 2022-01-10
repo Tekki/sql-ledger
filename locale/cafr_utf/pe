@@ -81,7 +81,6 @@ $self{texts} = {
   'Pricegroup saved!'           => 'Groupe de prix enregistré!',
   'Pricegroups'                 => 'Groupes de prix',
   'Project'                     => 'Projet',
-  'Project Description Translations' => 'Traductions description de projet',
   'Project Number'              => 'Numéro de projet',
   'Project deleted!'            => 'Projet supprimé!',
   'Project saved!'              => 'Projet enregistré!',
