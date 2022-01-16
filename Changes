@@ -1,5 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+3.2.10.26 2022-01-16
+  - small improvements and corrections for yearend reports, shortcuts and admin module
+
 3.2.10.25 2022-01-10
   - improved spreadsheets
   - more options for appearance of balance sheet and income statement
