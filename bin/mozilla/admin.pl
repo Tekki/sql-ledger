@@ -714,7 +714,7 @@ sub do_change_password {
     $root->{password} = $form->{new_password};
 
     if (! -f $memberfile) {
-      open(FH, ">$memberfile") or $form->error("$memberfile : $!");
+      open(FH, '>:utf8', $memberfile) or $form->error("$memberfile : $!");
       print FH qq|# SQL-Ledger members
 
 [root login]
@@ -1213,7 +1213,7 @@ sub dbcreate {
   $form->error($locale->text('Cannot use') . " $form->{db}") if $form->{dbdriver} =~ /Pg/ && $form->{db} =~ /^template(0|1)$/;
 
   # check if dbname is already in use
-  open(FH, "$memberfile") or $form->error("$memberfile : $!");
+  open(FH, '<:utf8', $memberfile) or $form->error("$memberfile : $!");
   @member = <FH>;
   close(FH);
 
@@ -1288,7 +1288,7 @@ sub dbcreate {
   }
 
   # add admin to members file
-  if (! open(FH, ">>$memberfile")) {
+  if (! open(FH, '>>:utf8', $memberfile)) {
     unlink "${memberfile}.LCK";
     $form->error("$memberfile : $!");
   }
