@@ -1350,7 +1350,13 @@ print qq|
   # created in RP.pm
   $form->{$_} = $form->{"old_$_"} for qw|fromdate todate|;
 
-  $form->hide_form(qw(department projectnumber fromdate todate frommonth fromyear previousyear interval includeperiod currency decimalplaces language_code l_heading l_subtotal l_accno accounttype method reversedisplay usetemplate));
+  $form->hide_form(
+    'accounttype',   'currency',       'decimalplaces', 'department',
+    'fromdate',      'frommonth',      'fromyear',      'includeperiod',
+    'interval',      'l_accno',        'l_account',     'language_code',
+    'l_heading',     'l_subtotal',     'method',        'previousyear',
+    'projectnumber', 'reversedisplay', 'todate',        'usetemplate',
+  );
 
   $form->hide_form(qw(callback path login report reportid reportcode reportdescription reportlogin column_index flds sort direction));
 
@@ -1882,7 +1888,13 @@ sub generate_balance_sheet {
   # created in RP.pm
   $form->{todate} = $form->{old_todate};
 
-  $form->hide_form(qw(department todate tomonth toyear includeperiod currency decimalplaces language_code l_heading l_subtotal l_accno previousyear reversedisplay accounttype method usetemplate));
+$form->hide_form(
+  'accounttype',    'currency',   'decimalplaces', 'department',
+  'includeperiod',  'l_accno',    'l_account',     'language_code',
+  'l_heading',      'l_subtotal', 'method',        'previousyear',
+  'reversedisplay', 'todate',     'tomonth',       'toyear',
+  'usetemplate',
+);
 
   $form->hide_form(qw(callback path login report reportcode reportlogin column_index flds sort direction));
 

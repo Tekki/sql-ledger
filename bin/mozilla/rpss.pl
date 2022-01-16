@@ -108,7 +108,7 @@ sub _ss_section {
       = $charttype eq 'H' && $form->{l_heading} || $charttype eq 'A' && $form->{l_account};
 
     if ($print_subtotal && $charttype eq 'H') {
-      &_ss_subtotal($ss, \%subtotal, \%total);
+      &_ss_subtotal($ss, \%subtotal);
     }
 
     $print_subtotal = 1;
@@ -142,7 +142,7 @@ sub _ss_section {
       my ($year, $period) = $column =~ /(.*)_(.*)/;
 
       my $currentearnings
-        = $total->{A}{$column} - $total{L}{$column} - $total{Q}{$column};
+        = $total->{A}{$column} - $total->{L}{$column} - $total->{Q}{$column};
       $column_data{$column} = $currentearnings;
 
       $subtotal{$column} += $currentearnings if $form->{l_subtotal} && $form->{l_heading};
