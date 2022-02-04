@@ -11,9 +11,10 @@
 #
 #======================================================================
 
-$form->load_module(['Excel::Writer::XLSX', 'SL::Spreadsheet'], $locale->text('Module not installed:'));
+$form->load_module(['Excel::Writer::XLSX', 'SL::Spreadsheet'],
+  $locale->text('Module not installed:'));
 
-sub create_spreadsheet {
+sub yearend_spreadsheet {
   my ($report_code, $periods) = @_;
   
   my $ss = SL::Spreadsheet->new($form, $userspath);
@@ -83,6 +84,8 @@ sub create_spreadsheet {
   $ss->data_row(\%total, format => 'total') if $report_code eq 'income_statement';
 
   $ss->finish;
+
+  $form->download_tmpfile('application/vnd.ms-excel', "$form->{title}-$form->{company}.xlsx");
 }
 
 sub _ss_section {
@@ -168,13 +171,6 @@ sub _ss_subtotal {
   }
 }
 
-sub download_spreadsheet {
-  &create_spreadsheet(@_);
-  $form->download_tmpfile('application/vnd.ms-excel', "$form->{title}-$form->{company}.xlsx");
-
-  exit;
-}
-
 1;
 
 =encoding utf8
@@ -194,7 +190,8 @@ L<bin::mozilla::ss>
 =over
 
 =item * uses
-L<Excel::Writer::XLSX>
+L<Excel::Writer::XLSX>,
+L<SL::Spreadsheet>
 
 =back
 
@@ -202,12 +199,8 @@ L<Excel::Writer::XLSX>
 
 L<bin::mozilla::ss> implements the following functions:
 
-=head2 create_spreadsheet
+=head2 yearend_spreadsheet
 
-  &create_spreadsheet($spreadsheet_info, $report_options, $column_index, $header, $data);
-
-=head2 download_spreadsheet
-
-  &download_spreadsheet($spreadsheet_info, $report_options, $column_index, $header, $data);
+  &yearend_spreadsheet($spreadsheet_info, $report_options, $column_index, $header, $data);
 
 =cut

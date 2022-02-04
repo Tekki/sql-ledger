@@ -2238,9 +2238,9 @@ sub transactions {
   $form->{title} .= " / $form->{company}";
 
   if ($form->{action} eq 'spreadsheet') {
-    require "$form->{path}/ss.pl";
-    &download_spreadsheet(&_transactions_spreadsheet, $option, \@column_index, \%column_data,
-      $form->{transactions});
+    require "$form->{path}/arapss.pl";
+    &transactions_spreadsheet($option, \@column_index, \%column_data);
+    exit;
   }
 
   $form->header;
@@ -2505,81 +2505,6 @@ sub transactions {
 </html>
 |;
 
-}
-
-
-sub _transactions_spreadsheet {
-  return {
-    columns => {
-      accno          => 'text',
-      address        => 'text',
-      city           => 'text',
-      country        => 'text',
-      curr           => 'text',
-      customernumber => 'text',
-      datepaid       => 'date',
-      dcn            => 'text',
-      department     => 'text',
-      description    => 'text',
-      duedate        => 'date',
-      employee       => 'text',
-      id             => 'number',
-      invnumber      => 'link',
-      memo           => 'text',
-      name           => 'link',
-      notes          => 'text',
-      ordnumber      => 'text',
-      paymentaccount => 'text',
-      paymentdiff    => 'number',
-      paymentmethod  => 'text',
-      ponumber       => 'text',
-      projectnumber  => 'text',
-      shippingpoint  => 'text',
-      shipvia        => 'text',
-      source         => 'text',
-      taxnumber      => 'text',
-      till           => 'text',
-      transdate      => 'date',
-      warehouse      => 'text',
-      waybill        => 'text',
-      zipcode        => 'text',
-    },
-    init_data => sub {
-      my ($ref) = @_;
-      
-      # links
-      $ref->{name_link} = qq|ct.pl?action=edit&id=$ref->{"$form->{vc}_id"}&db=$form->{vc}|;
-
-      my $module = $ref->{invoice} ? $form->{ARAP} eq 'AR' ? 'is.pl' : 'ir.pl' : $form->{script};
-      $module = 'ps.pl' if $ref->{till};
-      $ref->{invnumber_link} = qq|$module?action=edit&id=$ref->{id}|;
-
-      # amounts
-      if ($form->{l_curr}) {
-        if ($ref->{curr} ne $form->{defaultcurrency}) {
-          for (qw|netamount amount paid|) {
-            $ref->{"$ref->{curr}_$_"}
-              = $form->round_amount($ref->{$_} / $ref->{exchangerate}, $form->{precision})
-              if $ref->{$_};
-          }
-          $ref->{"$ref->{curr}_tax"}
-            = $ref->{"$ref->{curr}_amount"} - $ref->{"$ref->{curr}_netamount"};
-          if ($ref->{paid} != $ref->{amount}) {
-            $ref->{"$ref->{curr}_due"}
-              = $ref->{"$ref->{curr}_amount"} - $ref->{"$ref->{curr}_paid"};
-          }
-        }
-      }
-
-      $ref->{tax} = $ref->{amount} - $ref->{netamount};
-
-      if ($ref->{paid} != $ref->{amount}) {
-        $ref->{due} = $ref->{amount} - $ref->{paid};
-      }
-      delete $ref->{paid} if $ref->{paid} == 0;
-    },
-    totalize => ['+decimal'],
-  };
 }
 
 

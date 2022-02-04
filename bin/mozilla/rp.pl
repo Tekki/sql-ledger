@@ -1226,7 +1226,8 @@ sub generate_income_statement {
 
   if ($form->{action} eq 'spreadsheet') {
     require "$form->{path}/rpss.pl";
-    &download_spreadsheet('income_statement', \@periods);
+    &yearend_spreadsheet('income_statement', \@periods);
+    exit;
   }
 
   $form->format_string(qw(company address businessnumber companyemail companywebsite));
@@ -1773,7 +1774,8 @@ sub generate_balance_sheet {
 
   if ($form->{action} eq 'spreadsheet') {
     require "$form->{path}/rpss.pl";
-    &download_spreadsheet('balance_sheet', \@periods);
+    &yearend_spreadsheet('balance_sheet', \@periods);
+    exit;
   }
 
   %spacer = ( H => '',

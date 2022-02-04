@@ -2163,9 +2163,9 @@ sub transactions {
   $form->{title} .= " / $form->{company}";
 
   if ($form->{action} eq 'spreadsheet') {
-    require "$form->{path}/ss.pl";
-    &download_spreadsheet(&_transactions_spreadsheet, $option, \@column_index, \%column_header,
-      $form->{OE});
+    require "$form->{path}/oess.pl";
+    &transactions_spreadsheet($option, \@column_index, \%column_header);
+    exit;
   }
 
   $form->header;

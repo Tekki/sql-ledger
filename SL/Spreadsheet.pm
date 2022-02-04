@@ -156,10 +156,25 @@ sub data_row {
     &$fn($row);
   }
 
+  if ( $params{subtotal}
+    && $self->{structure}{group_by}
+    && $self->{lastid}
+    && $self->{lastid} ne $row->{$self->{structure}{group_by}})
+  {
+    $self->subtotal_row;
+  }
+
   if ($self->{total} && $rowtype eq 'data') {
+
     for (keys %{$self->{total}}) {
-      $self->{total}{$_} += $row->{$_} if looks_like_number($row->{$_});
+      if (looks_like_number($row->{$_})) {
+        $self->{total}{$_}    += $row->{$_};
+        $self->{subtotal}{$_} += $row->{$_};
+      }
     }
+
+    $self->{lastid} = $row->{$self->{structure}{group_by}} if $self->{structure}{group_by};
+    $self->{subtotalcount}++;
   }
 
   $self->{col} = 0;
@@ -314,6 +329,20 @@ sub number {
   return $self;
 }
 
+sub report_options {
+  my ($self, $options) = @_;
+
+  if ($options) {
+    $options =~ s/<br>//g;
+    $options =~ s/&nbsp;/ /g;
+
+    $self->crlf->text($_) for split /\n/, $options;
+    $self->crlf;
+  }
+
+  return $self;
+}
+
 sub reset_width {
   my ($self) = @_;
 
@@ -333,6 +362,23 @@ sub set_width {
 
 sub structure {
   $_[0]->_get_set('structure', $_[1]);
+}
+
+sub subtotal_row {
+  my ($self, %params) = @_;
+
+  my $group = $self->{structure}{group_by};
+  if ( $self->{_form}{l_subtotal}
+    && $self->{subtotalcount})
+  {
+    $params{format}  ||= 'subtotal';
+    $params{rowtype} ||= 'total';
+
+    $self->data_row($self->{subtotal}, %params);
+    delete $self->{subtotal};
+  }
+
+  return $self;
 }
 
 sub tab {
@@ -382,9 +428,9 @@ sub totalize {
   if (defined $newvalues) {
     $self->{totalize} = $newvalues;
 
-    delete $self->{total};
+    delete $self->{$_} for qw|total subtotal subtotalcount|;
     for my $val (@$newvalues) {
-      if ($val eq '+decimal') {
+      if ($val eq ':decimal') {
 
         for my $column (@{$self->{column_index}}) {
           if (!$self->{structure}{columns}{$column}
@@ -432,11 +478,16 @@ SL::Spreadsheet - Spreadsheet Module
 
     my $ss = SL::Spreadsheet->new($form, $userspath);
 
+    my %spreadsheet_info = (
+      columns  => {},
+      group_by => $field,
+    );
     $ss->structure(\%spreadsheet_info);
     $ss->column_index(\@index);
-    $ss->totalize(\columns);
+    $ss->totalize(\@columns);
 
     $ss->title($title, $format);
+    $ss->report_options($options);
 
     $ss->tab;
     $ss->lf;
@@ -454,6 +505,7 @@ SL::Spreadsheet - Spreadsheet Module
     $ss->header_row(\%header);
     $ss->freeze_panes;
     $ss->data_row(\%data);
+    $ss->subtotal_row;
     $ss->total_row;
 
     $ss->finish;
@@ -549,6 +601,10 @@ L<Scalar::Util>
 
   $ss = $ss->number($number);
   $ss = $ss->number($number, $format);
+
+=head2 report_options
+
+  $ss = $ss->report_options($options);
 
 =head2 reset_width
 
