@@ -92,6 +92,9 @@ sub import {
         <tr>
                 <td><input name=filetype type=radio class=radio value=v11>&nbsp;|.$locale->text('.v11').qq|</td>
         </tr>
+        <tr>
+                <td><input name=filetype type=radio class=radio value=camt054>&nbsp;|.$locale->text('camt.054').qq|</td>
+        </tr>
 |;
   }
 
@@ -1446,7 +1449,7 @@ sub import_orders {
 
 sub im_payment {
 
-  &import_file;
+  &import_file unless $form->{filename} =~ /\.zip$/;
 
   &{ "im_$form->{filetype}_payment" }
 
@@ -1491,10 +1494,79 @@ sub im_v11_payment {
 }
 
 
+sub im_camt054_payment {
+  $form->load_module(['Archive::Zip', 'Mojo::DOM'], $locale->text('Module not installed:'));
+
+  IM->paymentaccounts(\%myconfig, $form);
+  $form->{iban} = $form->{all_paymentaccount}[0]{iban};
+  $form->{iban} =~ s/ //g;
+
+  if ($form->{filename} =~ /\.zip/) {
+    my $zip = Archive::Zip->new;
+    $zip->read("$userspath/$form->{tmpfile}");
+
+    $form->{data} = '';
+    for my $member ($zip->members) {
+      $form->{data} .= $member->contents;
+    }
+
+    unlink "$userspath/$form->{tmpfile}";
+  }
+
+  my $dom = Mojo::DOM->new($form->{data});
+
+  $form->{data} = qq|"datepaid","debit","credit","dcn","iban"|;
+
+  $dom->find('BkToCstmrDbtCdtNtfctn Ntfctn')->each(
+    sub {
+      my ($notification) = @_;
+      my $n_iban = $notification->at('Acct Id IBAN')->text;
+
+      $notification->find('Ntry')->each(
+        sub {
+          my ($entry) = @_;
+          my $date = $entry->at('BookgDt Dt')->text;
+
+          $entry->find('NtryDtls TxDtls')->each(
+            sub {
+              my ($transaction) = @_;
+
+              my $amount = $transaction->at('Amt')->text;
+
+              my ($debit, $credit);
+              if ($transaction->at('CdtDbtInd')->text eq 'CRDT') {
+                $credit = $amount;
+              } else {
+                $debit = $amount;
+              }
+
+              my $dcn  = $transaction->at('RmtInf Strd CdtrRefInf Ref')->text;
+              my $iban = $n_iban eq $form->{iban} ? '' : $n_iban =~ s/(....)/$1 /gr;
+
+              $form->{data} .= qq|\n"$date",$debit,$credit,"$dcn","$iban"|;
+            }
+          );
+        }
+      );
+    }
+  );
+
+  $form->{iban} =~ s/(....)/$1 /g;
+  $form->{old_filetype}  = $form->{filetype};
+  $form->{filetype}      = 'csv';
+  $form->{delimiter}     = ',';
+  $form->{stringsquoted} = 1;
+  delete $form->{$_} for qw|tabdelimited mapfile|;
+
+  &{"im_$form->{filetype}_payment"};
+}
+
+
 sub im_csv_payment {
 
   @column_index = qw(runningnumber ndx invnumber description dcn name companynumber city datepaid amount);
   push @column_index, "exchangerate" if $form->{currency} ne $form->{defaultcurrency};
+  push @column_index, 'iban' if $form->{old_filetype} eq 'camt054';
   @flds = @column_index;
   shift @flds;
   shift @flds;
@@ -1507,6 +1579,15 @@ sub im_csv_payment {
 
   IM->payment_links(\%myconfig, \%$form);
 
+  (undef, my $account) = split /--/, $form->{paymentaccount};
+  $option = $locale->text('Account') . " : $account";
+
+  if ($form->{iban}) {
+    $option .= "<br>\n" . $locale->text('IBAN') . " : $form->{iban}";
+  }
+
+  $option .= "<br>\n" . $locale->text('Currency') . " : $form->{currency}";
+
   $column_data{runningnumber} = "&nbsp;";
   $column_data{datepaid} = $locale->text('Date Paid');
   $column_data{invnumber} = $locale->text('Invoice');
@@ -1517,6 +1598,7 @@ sub im_csv_payment {
   $column_data{dcn} = $locale->text('DCN');
   $column_data{amount} = $locale->text('Paid');
   $column_data{exchangerate} = $locale->text('Exch');
+  $column_data{iban} = $locale->text('IBAN');
 
   $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
 
@@ -1536,6 +1618,9 @@ sub im_csv_payment {
     <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
   <tr height="5"></tr>
+  <tr>
+    <td>$option</td>
+  </tr>
   <tr>
     <td>
       <table width=100%>
@@ -1564,7 +1649,7 @@ sub im_csv_payment {
     $column_data{runningnumber} = qq|<td align=right>$i</td>|;
     $column_data{exchangerate} = qq|<td><input name="exchangerate_$i" size=10 value=|.$form->format_amount(\%myconfig, $form->{"exchangerate_$i"}).qq|></td>|;
 
-    if ($form->{"id_$i"}) {
+    if ($form->{"id_$i"} && !$form->{"iban_$i"}) {
       $column_data{ndx} = qq|<td><input name="ndx_$i" type=checkbox class=checkbox checked></td>|;
     } else {
       $column_data{ndx} = qq|<td></td>|;

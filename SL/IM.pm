@@ -1542,12 +1542,20 @@ sub paymentaccounts {
   my %defaults = $form->get_defaults($dbh, \@{['address']});
   $form->{address} = $defaults{address};
 
+  my $where = qq|c.link LIKE '%_paid' AND NOT c.closed|;
+
+  if ($form->{paymentaccount}) {
+    my ($accno) = split /--/m, $form->{paymentaccount};
+    $where .= ' AND c.accno = ' . $dbh->quote($accno);
+  }
+
   my $query = qq|SELECT c.accno, c.description, c.link,
+                 b.iban,
                  l.description AS translation
                  FROM chart c
                  LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
-                 WHERE c.link LIKE '%_paid'
-                 AND c.closed = '0'
+                 LEFT JOIN bank b ON b.id = c.id
+                 WHERE $where
                  ORDER BY c.accno|;
   my $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
