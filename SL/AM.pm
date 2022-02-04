@@ -3446,8 +3446,135 @@ sub audit_log {
 }
 
 
-1;
+sub snapshots {
+  my ($self, $myconfig, $form, $dbh) = @_;
 
+  my $disconnect;
+  unless ($dbh) {
+    $disconnect = 1;
+    $dbh        = $form->dbconnect($myconfig);
+  }
+
+  my $where = qq|datname LIKE '$myconfig->{dbname}-%'|;
+
+  unless ($form->{admin}) {
+    $form->{login} =~ /(.*)@/;
+    $where .= qq| AND datname LIKE '%-$1'|;
+  }
+  
+  if ($form->{action} ne 'list_snapshots') {
+    my @oids;
+    for my $i (1 .. $form->{rowcount}) {
+      if (my $oid = $form->{"ndx_$i"}) {
+        push @oids, $oid;
+      }
+    }
+
+    if (@oids) {
+      $where .= ' AND oid IN (' . join(',', @oids) . ')';
+    } else {
+      $where .= ' AND FALSE';
+    }
+  }
+
+  my $query = qq|
+    SELECT *
+    FROM pg_database
+    WHERE $where
+    ORDER BY datname|;
+
+  my $sth = $dbh->prepare($query);
+  $sth->execute || $form->dberror($query);
+
+  $form->{ALL} = [];
+  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+    if ($ref->{datname} =~ /-(?<d>\d{8})(?<h>\d{2})(?<m>\d{2})(?<s>\d{2})-(?<l>\w+)$/) {
+      $ref->{timestamp} = $form->current_date($myconfig, $+{d}) . " $+{h}:$+{m}:$+{s}";
+      $ref->{login}    = $+{l};
+      push @{$form->{ALL}}, $ref;
+    }
+  }
+  $sth->finish;
+
+  $dbh->disconnect if $disconnect;
+}
+
+
+sub save_snapshot {
+  my ($self, $myconfig, $form) = @_;
+
+  my $dbh = $form->dbconnect($myconfig);
+
+  my $snapshot = $self->_snapshot_name($myconfig, $form);
+  my $query    = qq|CREATE DATABASE "$snapshot" TEMPLATE "$myconfig->{dbname}"|;
+  $dbh->do($query) || $form->dberror($query);
+
+  $dbh->disconnect;
+}
+
+
+sub _snapshot_name {
+  my ($self, $myconfig, $form) = @_;
+
+  my @time = localtime;
+  $time[4]++;
+  $time[5] += 1900;
+  my $timestamp = sprintf("%4u%02u%02u%02u%02u%02u", reverse @time[0 .. 5]);
+
+  $form->{login} =~ /(.*)@/;
+  return "$myconfig->{dbname}-$timestamp-$1";
+}
+
+
+sub delete_snapshots {
+  my ($self, $myconfig, $form) = @_;
+
+  my $dbh = $form->dbconnect($myconfig);
+
+  $self->snapshots($myconfig, $form, $dbh);
+  my $query;
+  for my $ref (@{$form->{ALL}}) {
+    $query = qq|DROP DATABASE "$ref->{datname}"|;
+    $dbh->do($query) || $form->dberror($query);
+  }
+
+  $dbh->disconnect;
+}
+
+
+sub restore_snapshot {
+  my ($self, $myconfig, $form) = @_;
+
+  my %config = %$myconfig{'dbconnect', 'dbuser', 'dbpasswd'};
+  $config{dbconnect} =~ s/(?<=dbname=)$myconfig->{dbname}/template1/;
+
+  my $dbh = $form->dbconnect(\%config);
+
+  $self->snapshots($myconfig, $form, $dbh);
+  my $old_snapshot = $form->{ALL}[0]{datname};
+  my $new_snapshot = $self->_snapshot_name($myconfig, $form);
+  my $query;
+
+  $query = qq|ALTER DATABASE "$myconfig->{dbname}" RENAME TO "$new_snapshot"|;
+  $dbh->do($query) || $form->dberror($query);
+
+  if ($form->{keep_snapshot}) {
+    $query = qq|CREATE DATABASE "$myconfig->{dbname}" TEMPLATE "$old_snapshot"|;
+  } else {
+    $query = qq|ALTER DATABASE "$old_snapshot" RENAME TO "$myconfig->{dbname}"|;
+  }
+  $dbh->do($query) || $form->dberror($query);
+
+  unless ($form->{create_snapshot}) {
+    $query = qq|DROP DATABASE "$new_snapshot"|;
+    $dbh->do($query) || $form->dberror($query);
+  }
+
+  $dbh->disconnect;
+}
+
+
+1;
 
 =encoding utf8
 
@@ -3549,6 +3676,10 @@ L<SL::AM> implements the following functions:
 =head2 delete_sic
 
   AM->delete_sic($myconfig, $form);
+
+=head2 delete_snapshots
+
+  AM->delete_snapshots($myconfig, $form);
 
 =head2 delete_warehouse
 
@@ -3666,6 +3797,10 @@ L<SL::AM> implements the following functions:
 
   AM->restore($myconfig, $form, $backupfile);
 
+=head2 restore_snapshot
+
+  AM->restore_snapshot($myconfig, $form);
+
 =head2 roles
 
   AM->roles($myconfig, $form);
@@ -3726,6 +3861,10 @@ L<SL::AM> implements the following functions:
 
   AM->save_sic($myconfig, $form);
 
+=head2 save_snapshot
+
+  AM->save_snapshot($myconfig, $form);
+
 =head2 save_taxes
 
   AM->save_taxes($myconfig, $form);
@@ -3745,6 +3884,10 @@ L<SL::AM> implements the following functions:
 =head2 sic
 
   AM->sic($myconfig, $form);
+
+=head2 snapshots
+
+  AM->snapshots($myconfig, $form, $dbh);
 
 =head2 taxes
 

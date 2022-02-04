@@ -221,6 +221,7 @@ $self{texts} = {
   'Session expired!'            => 'Session expirée !',
   'Setup'                       => 'Configuration',
   'Ship'                        => 'Versenden',
+  'Snapshots'                   => 'Instantanés',
   'Statement'                   => 'Relevé',
   'Stock Adjustment'            => 'Adjustement stock',
   'Stock Assembly'              => 'Stocker produit',

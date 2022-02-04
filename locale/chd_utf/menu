@@ -170,6 +170,7 @@ $self{texts} = {
   'Services'                    => 'Dienstleistungen',
   'Setup'                       => 'Einrichten',
   'Ship'                        => 'Versenden',
+  'Snapshots'                   => 'Snapshots',
   'Statement'                   => 'Zahlungserinnerung',
   'Stock Adjustment'            => 'Lagerkorrektur',
   'Stock Assembly'              => 'Erzeugnis einlagern',

@@ -6565,6 +6565,236 @@ sub save_sql {
 
 }
 
+
+sub list_snapshots {
+  AM->snapshots(\%myconfig, $form);
+
+  $form->{title} = $locale->text('Database Snapshots');
+  $form->{title} .= " / $myconfig{name}" unless $form->{admin};
+
+  my $callback = "$form->{script}?action=list_snapshots";
+  $callback .= "&$_=$form->{$_}" for qw|path login|;
+  $form->{callback} = $callback;
+
+  my @column_index = qw|ndx timestamp|;
+  push @column_index, 'login' if $form->{admin};
+  
+  my (%column_header, %column_data);
+  $column_header{ndx}
+    = qq|<th class="listheading"><input name="allbox" type="checkbox" class="checkbox" value="1" onChange="CheckAll()"></th>|;
+  $column_header{timestamp} = qq|<th class="listheading">| . $locale->text('Date') . qq|</th>|;
+  $column_header{login}    = qq|<th class="listheading">| . $locale->text('Login') . qq|</th>|;
+
+  $form->header;
+
+  &check_all('allbox', 'ndx_');
+
+  print qq|
+<body>
+
+<form method="post" name="main" action="$form->{script}">
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>
+      <table>
+        <tr class=listheading>
+|;
+
+  for (@column_index) { print "$column_header{$_}\n" }
+
+  print qq|
+        </tr>
+|;
+
+  my ($i, $j);
+  for my $ref (@{$form->{ALL}}) {
+    $i++;
+    $j = $i %2;
+
+    $column_data{ndx} = qq|<td><input name="ndx_$i" type="checkbox" value="$ref->{oid}"></td>|;
+    $column_data{timestamp} = qq|<td>$ref->{timestamp}</td>|;
+    $column_data{login} = qq|<td>$ref->{login}</td>|;
+
+    print qq|
+        <tr class="listrow$j">|;
+    print $column_data{$_} for @column_index;
+    print qq|
+        </tr>|;
+  }
+
+  $form->{rowcount} = $i;
+
+  unless ($i) {
+    print qq|
+        <tr>
+          <td></td>
+          <td>| . $locale->text('No snapshots') . qq|</td>
+        </tr>|;
+  }
+
+  print qq|
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td><hr size=3 noshade></td>
+  </tr>
+</table>
+|;
+
+  my %button = (
+    'Add Snapshot'     => {ndx => 1, key => 'A', value => $locale->text('Add Snapshot')},
+    'Restore Snapshot' => {ndx => 2, key => 'R', value => $locale->text('Restore Snapshot')},
+    'Delete Snapshots'  => {ndx => 3, key => 'D', value => $locale->text('Delete Snapshots')}
+  );
+  $form->print_button(\%button);
+
+  $form->hide_form(qw|callback rowcount path login|);
+
+  print qq|
+</form>
+
+</body>
+</html>
+|;
+
+}
+
+
+sub add_snapshot {
+
+  $form->header;
+  print qq|
+<body>
+
+<form method=post action=$form->{script}>
+|;
+
+  $form->{nextsub} = 'do_add_snapshot';
+  $form->{action} = 'continue';
+  $form->hide_form;
+
+  print qq|
+<h2 class=confirm>|.$locale->text('Confirm!').qq|</h2>
+
+<h4>|.$locale->text('Create new snapshot for current point of time').qq|</h4>
+<p>
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+</form>
+
+</body>
+</html>
+|;
+
+}
+
+
+sub do_add_snapshot {
+  AM->save_snapshot(\%myconfig, $form);
+  $form->redirect($locale->text('Snapshot created'));
+}
+
+
+sub delete_snapshots {
+  AM->snapshots(\%myconfig, $form);
+  my @snapshots = @{$form->{ALL}};
+  $form->error($locale->text('Nothing selected!')) unless @snapshots;
+
+  $form->header;
+  print qq|
+<body>
+
+<form method=post action=$form->{script}>
+|;
+
+  $form->{nextsub} = 'do_delete_snapshots';
+  $form->{action}  = 'yes';
+  $form->hide_form;
+
+  print qq|
+<h2 class=confirm>|.$locale->text('Confirm!').qq|</h2>
+
+<h4>|.$locale->text('Are you sure you want to delete the following Snapshots?').qq|</h4>
+<p>
+<ul>|;
+
+  for my $ref (@snapshots) {
+    print qq|
+  <li>$ref->{timestamp}, $ref->{login}</li>|;
+  }
+
+  print qq|
+</ul>
+<input class=submit type=submit name=action value="|.$locale->text('Yes').qq|">
+</form>
+
+</body>
+</html>
+|;
+
+}
+
+
+sub do_delete_snapshots {
+  AM->delete_snapshots(\%myconfig, $form);
+  $form->redirect($locale->text('Snapshots deleted'));
+}
+
+
+sub restore_snapshot {
+  $form->error($locale->text('Must be logged in as admin!')) unless $form->{admin};
+
+  AM->snapshots(\%myconfig, $form);
+  my @snapshots = @{$form->{ALL}};
+  $form->error($locale->text('Nothing selected!')) unless @snapshots;
+  $form->error($locale->text('Only one selection allowed!')) if @snapshots > 1;
+
+  $form->header;
+  print qq|
+<body>
+
+<form method=post action=$form->{script}>
+|;
+
+  $form->{nextsub} = 'do_restore_snapshot';
+  $form->{action}  = 'continue';
+  $form->hide_form;
+
+  print qq|
+<h2 class=confirm>|.$locale->text('Confirm!').qq|</h2>
+
+<h4>|.$locale->text('The following snapshot will be restored:').qq|</h4>
+<p>
+<ul>
+  <li>$form->{ALL}[0]{timestamp}, $form->{ALL}[0]{login}</li>
+</ul>
+<input type="checkbox" name="keep_snapshot" value="1">&nbsp;|.$locale->text('Keep restored snapshot').qq|
+<p>
+<input type="checkbox" name="create_snapshot" value="1" checked>&nbsp;|.$locale->text('Create new snapshot for current point of time').qq|
+<p>
+<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+
+</form>
+
+</body>
+</html>
+|;
+
+}
+
+
+sub do_restore_snapshot {
+  $form->error($locale->text('Must be logged in as admin!')) unless $form->{admin};
+  AM->restore_snapshot(\%myconfig, $form);
+  $form->redirect($locale->text('Snapshot restored'));
+}
+
+
 =encoding utf8
 
 =head1 NAME
@@ -6630,6 +6860,8 @@ Calls C<< &{ "add_$form->{type}" } >>.
 
 =head2 add_sic
 
+=head2 add_snapshot
+
 =head2 add_warehouse
 
 =head2 audit_control
@@ -6685,6 +6917,8 @@ Calls C<< &{ "delete_$form->{type}" } >>.
 =head2 delete_role
 
 =head2 delete_sic
+
+=head2 delete_snapshots
 
 =head2 delete_sql_command
 
@@ -6786,6 +7020,8 @@ Calls C<< &{ "edit_$form->{type}" } >>.
 
 =head2 list_sic
 
+=head2 list_snapshots
+
 =head2 list_templates
 
 =head2 list_warehouse
@@ -6811,6 +7047,8 @@ Calls C<< &{ "edit_$form->{type}" } >>.
 =head2 remove_locks
 
 =head2 restore
+
+=head2 restore_snapshot
 
 =head2 role_header
 
