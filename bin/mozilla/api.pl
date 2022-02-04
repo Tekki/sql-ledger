@@ -22,8 +22,9 @@ sub add_payment {
 
   my $result       = 'error';
   my $invoice_form = Form->new;
-  $invoice_form->{$_} = $form->{$_} for qw|id dcn invnumber|;
+  $invoice_form->{$_} = $form->{$_} for qw|id dcn invnumber waybill|;
   API->find_invoice(\%myconfig, $invoice_form);
+  $invoice_form->dump_form('id');
 
   if ($invoice_form->{id}) {
 
@@ -41,7 +42,7 @@ sub add_payment {
       for qw|amount datepaid exchangerate memo paymentmethod source|;
     $payment_form->{rowcount}                     = 1;
     $payment_form->{"$payment_form->{ARAP}_paid"} = $form->{paymentaccount};
-    $payment_form->{id_1}                         = $form->{id};
+    $payment_form->{id_1}                         = $invoice_form->{id};
     $payment_form->{paid_1}                       = $form->{amount};
     $payment_form->{checked_1}                    = 1;
 
