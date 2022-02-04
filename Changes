@@ -1,8 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
-Not Released
+3.2.10.27 2022-02-04
   - database snapshots
-  - import for camt.054 payment files
+  - import for ISO 20022 camt.054 payment files
   - list recently used GL transactions
   - display subtotals in spreadsheets
   - error in payment API with invoice numbers and waybill corrected

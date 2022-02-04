@@ -15,15 +15,17 @@ you can download a specific version back to 2.6.0 from October 1, 2005.
 
 The `full` branch, which is checked out by default, provides some additions:
 
-* WLprinter
 * extended keyboard shortcuts ([docs](doc/shortcuts.md))
 * spreadsheet downloads
 * recently used objects
+* database snapshots
 * JSON API ([introduction](doc/api.md))
 * real Unicode support
 * Docker files for containerized test environment
+* WLprinter
 * minimalistic documentation
 * Swiss charts of accounts in German, French and Italian
+* support for ISO 20022 camt.054 files
 * several security patches
 
 # Installation
