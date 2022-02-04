@@ -50,6 +50,10 @@ use constant {
       object => 'oe.pl?type=purchase_order&action=edit',
       report => 'oe.pl?type=purchase_order&action=search'
     },
+    j1 => {
+      object => 'gl.pl?action=edit',
+      report => 'gl.pl?action=search',
+    },
     k1 => {
       object => 'oe.pl?type=sales_quotation&action=edit',
       report => 'oe.pl?type=sales_quotation&action=search'
@@ -74,6 +78,7 @@ use constant {
   AP_TRANSACTION    => 'd1',
   AR_TRANSACTION    => 'a1',
   CUSTOMER          => 'c1',
+  GL_TRANSACTION    => 'j1',
   ITEM              => 'm1',
   PROJECT           => 'n1',
   PURCHASE_ORDER    => 'i2',
@@ -252,6 +257,10 @@ sub _code_ct {
   return &{uc shift->{db}};
 }
 
+sub _code_gl {
+  return GL_TRANSACTION;
+}
+
 sub _code_ic {
   return ITEM;
 }
@@ -283,19 +292,20 @@ sub _descr {
   my ($self, $form, $code) = @_;
 
   my %descr = (
-    &AR_TRANSACTION    => \&_descr_ar,
     &AP_TRANSACTION    => \&_descr_ap,
+    &AR_TRANSACTION    => \&_descr_ar,
     &CUSTOMER          => \&_descr_ct,
-    &VENDOR            => \&_descr_ct,
+    &GL_TRANSACTION    => \&_descr_gl,
     &ITEM              => \&_descr_ic,
-    &SALES_INVOICE     => \&_descr_ar,
-    &VENDOR_INVOICE    => \&_descr_ap,
-    &TIMECARD          => \&_descr_jc,
-    &SALES_QUOTATION   => \&_descr_oe1,
-    &REQUEST_QUOTATION => \&_descr_oe1,
-    &SALES_ORDER       => \&_descr_oe2,
-    &PURCHASE_ORDER    => \&_descr_oe2,
     &PROJECT           => \&_descr_pe,
+    &PURCHASE_ORDER    => \&_descr_oe2,
+    &REQUEST_QUOTATION => \&_descr_oe1,
+    &SALES_INVOICE     => \&_descr_ar,
+    &SALES_ORDER       => \&_descr_oe2,
+    &SALES_QUOTATION   => \&_descr_oe1,
+    &TIMECARD          => \&_descr_jc,
+    &VENDOR            => \&_descr_ct,
+    &VENDOR_INVOICE    => \&_descr_ap,
   );
   my $fn = $descr{$code} or return $form->{id}, '';
 
@@ -319,6 +329,11 @@ sub _descr_ct {
   my ($form) = @_;
   return $form->{"$form->{db}number"},
     "$form->{name}, $form->{zipcode} $form->{city}";
+}
+
+sub _descr_gl {
+  my ($form) = @_;
+  return $form->{reference}, $form->{transdate};
 }
 
 sub _descr_ic {

@@ -684,6 +684,7 @@ $self{texts} = {
   'GL'                          => 'Hauptbuch',
   'GL Reference Number'         => 'Hauptbuchreferenz',
   'GL Transaction'              => 'Hauptbuchbuchung',
+  'GL Transactions'             => 'Hauptbuchbuchungen',
   'Gender'                      => 'Geschlecht',
   'General Ledger'              => 'Hauptbuch',
   'General Ledger Batches'      => 'Hauptbuch-Voucher',

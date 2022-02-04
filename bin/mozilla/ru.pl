@@ -20,6 +20,7 @@ sub list_recent {
     RU::AP_TRANSACTION    => $locale->text('AP Transactions'),
     RU::AR_TRANSACTION    => $locale->text('AR Transactions'),
     RU::CUSTOMER          => $locale->text('Customers'),
+    RU::GL_TRANSACTION    => $locale->text('GL Transactions'),
     RU::ITEM              => $locale->text('Items'),
     RU::PROJECT           => $locale->text('Projects'),
     RU::PURCHASE_ORDER    => $locale->text('Purchase Orders'),

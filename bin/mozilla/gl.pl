@@ -14,6 +14,7 @@
 
 use SL::GL;
 use SL::PE;
+use SL::RU;
 use SL::VR;
 
 require "$form->{path}/arap.pl";
@@ -91,6 +92,7 @@ sub add {
 sub edit {
 
   &create_links;
+  RU->register(\%myconfig, $form);
 
   $form->{locked} = ($form->{revtrans}) ? '1' : ($form->datetonum(\%myconfig, $form->{transdate}) <= $form->{closedto});
 
@@ -1523,6 +1525,7 @@ sub delete {
 sub yes {
 
   if (GL->delete_transaction(\%myconfig, \%$form)) {
+    RU->delete(\%myconfig, $form);
     $form->redirect($locale->text('Transaction deleted!'));
   } else {
     $form->error($locale->text('Cannot delete transaction!'));
@@ -1576,6 +1579,7 @@ sub post {
   }
 
   if ($rc) {
+    RU->register(\%myconfig, $form);
     $form->redirect($locale->text('Transaction posted!'));
   } else {
     $form->error($locale->text('Cannot post transaction!'));

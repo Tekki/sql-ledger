@@ -2,6 +2,7 @@ Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
   - database snapshots
+  - list recently used GL transactions
   - error in payment API with invoice numbers and waybill corrected
 
 3.2.10.26 2022-01-16

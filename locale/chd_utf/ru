@@ -8,6 +8,7 @@ $self{texts} = {
   'Category'                    => 'Kategorie',
   'Customers'                   => 'Kunden',
   'Description'                 => 'Beschreibung',
+  'GL Transactions'             => 'Hauptbuchbuchungen',
   'Items'                       => 'Artikel',
   'Number'                      => 'Nummer',
   'Projects'                    => 'Projekte',
