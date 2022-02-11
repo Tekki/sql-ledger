@@ -7,7 +7,7 @@ version: '2.4'
 
 services:
   db:
-    image: postgres
+    image: postgres:13
     environment:
       POSTGRES_PASSWORD: sql-ledger
       POSTGRES_USER: sql-ledger
@@ -23,7 +23,7 @@ services:
 
   app:
     build: .
-    image: sql-ledger-test:0.12
+    image: sql-ledger-test:0.13
     ports:
       - 80:80
     volumes:

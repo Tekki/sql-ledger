@@ -1,5 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+Not Released
+  - download of db dumps from external hosts
+
 3.2.10.27 2022-02-04
   - database snapshots
   - import for ISO 20022 camt.054 payment files
