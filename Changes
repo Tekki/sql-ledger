@@ -2,6 +2,7 @@ Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
   - select/unselect checkboxes in lists with ctrl/ctrl-shift mouseover
+  - extended API docs with example for HTML API
   - download of db dumps from external hosts
   - simplified layout of yearend spreadsheets
 

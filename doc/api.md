@@ -1,18 +1,29 @@
 # Introduction to the API
 
+## JSON and HTML API
+
+There are two ways to communicate programmatically with SQL-Ledger. The first
+is to make requests to the API endpoint that returns a JSON response. The
+second is to simulate a browser and imitate step by step the actions of a user.
+
 ## Prerequisites
 
-The API is an additional script that runs in the SQL-Ledger infrastructure.
-This means it uses the same frontend as the other parts of SQL-Ledger and calls
-to the endpoints are made with the `action` parameter. The client that makes
-these calls must be able to store SQL-Ledger's authentication cookie.
+In both approaches scripts that run in the SQL-Ledger infrastructure are
+called. The client that makes these calls must be able to store SQL-Ledger's
+authentication cookie.
 
-The following examples are written in Perl, but the same approach can be used
-in other languages. It is even possible to access the API from the browser.
+The following code is written in Perl, but the same method can be used in
+other languages, for example in Python with the module BeautifulSoap. It is
+even possible to make simple API calls in the browser or in the with `curl` or
+`wget`.
 
-To run the examples, two additional Perl modules have to be installed with
+To run the examples, two, respectively three additional Perl modules have to be
+installed with
+
 ```
-cpanm Mojolicious Print::Colored
+cpanm Mojolicious \
+  Print::Colored  \
+  HTML::Form      # only for the HTML API
 ```
 
 ## Authentication
@@ -27,9 +38,6 @@ with `username` and `password` as parameters.
 | action    | 'login'       |
 | login     | your username |
 | password  | your password |
-
-As SQL-Ledger always returns 200 as status code you probably want to check
-the response for login errors.
 
 ```perl
 #! /usr/bin/env perl
@@ -57,13 +65,15 @@ my $res = $ua->post(
   )->result;
 ```
 
-For the following examples `$ua` created with this code is used as client. The
-next calls are always made to `api.pl`.
+As SQL-Ledger always returns 200 as status code you probably want to check
+the response for login errors in the body of the response.
+
+For the following examples `$ua` created with this code is used as client.
 
 ### Login with every request (alternative)
 
-As an alternative it is possible to login with every request. This maybe useful
-if just a single request has to be made to the API, but not recommended for
+As an alternative it is possible to login with every request. This may be
+useful if just a single request has to be made, but not recommended for
 multiple requests.
 
 ```perl
@@ -73,7 +83,12 @@ my %sl_params = (login => $sl_username, password => $sl_password, path => 'bin/m
 For this, add the password to `%sl_params` and directly call one of the
 following endpoints.
 
-## List Accounts
+## JSON API
+
+Calls to the JSON API are made to `api.pl` with the endpoint in the `action`
+parameter.
+
+### List Accounts
 
 List all accounts from the chart of accounts.
 
@@ -105,7 +120,7 @@ if (my $accounts = $res->json->{accounts}) {
 }
 ```
 
-## Search Customers
+### Search Customers
 
 Search customers using any of the parameters from `Customers--Reports--Search`.
 
@@ -140,7 +155,7 @@ if (my $customers = $res->json->{customers}) {
 }
 ```
 
-## Customer Details
+### Customer Details
 
 Load all details of a customer.
 
@@ -167,7 +182,7 @@ say_info dumper $res->json;
 
 ```
 
-## Search Order
+### Search Order
 
 Search for a sales or purchase order using any of the parameters from `Order
 Entry--Reports--Sales Orders`.
@@ -211,7 +226,7 @@ if (my $orders = $res->json->{orders}) {
 }
 ```
 
-## Search Transaction
+### Search Transaction
 
 Search for transactions using any of the parameters from
 `AR--Reports--Transactions` or `AR--Reports--Outstanding`.
@@ -254,7 +269,7 @@ if (my $transactions = $res->json->{transactions}) {
 }
 ```
 
-## Invoice Details
+### Invoice Details
 
 Load all the details of a sales invoice.
 
@@ -291,14 +306,14 @@ if ($res->json->{id}) {
 }
 ```
 
-## Add Payment
+### Add Payment
 
 Add a payment to a sales invoice.
 
 | parameter      | value                              |
 |----------------|------------------------------------|
 | action         | 'add\_payment'                     |
-| amount         | amout paid                         |
+| amount         | amount paid                        |
 | datepaid       | payment date                       |
 | currency       | (optional)                         |
 | exchangerate   | required if `currency` is provided |
@@ -335,7 +350,7 @@ if ($res->json->{result} eq 'success') {
 }
 ```
 
-## Add Reference
+### Add Reference
 
 Add a reference to an external document to a sales invoice.
 
@@ -371,3 +386,95 @@ if ($res->json->{result} eq 'success') {
   say_error 'Error, reference not added!';
 }
 ```
+## HTML API
+
+This is not a real API, we just reproduce what a user is doing when he works
+with SQL-Ledger in a browser.
+
+### Preparation
+
+To get a consistent behavior of the screens, the Drop-down Limit in the
+Preferences of the user should be set to zero. As already mentioned, we need
+more Perl modules and the header of the script looks like this:
+
+```perl
+#! /usr/bin/env perl
+use Mojo::Base -strict;
+use open ':std', ':encoding(utf8)';
+
+use HTML::Form;
+use Mojo::Util 'decode';
+use Mojo::UserAgent;
+use Print::Colored ':all';
+```
+
+### Add an invoice with 3 rows
+
+As an example we create an invoice for customer with number 1109. We start with
+creating variables for the content of the invoice.
+
+```perl
+# content of the invoice
+
+my $customernumber = 1109;
+my $description    = 'Generated Invoice';
+my @rows
+  = ({partnumber => 300016, qty => 5}, {partnumber => 300011, qty => 2}, {partnumber => 300005},);
+```
+
+The first step for a user would be to click on `AR--Sales Invoice` in the menu.
+In the script we simulate this with a call to `is.pl`.
+
+```perl
+# open page AR--Sales Invoice
+
+$res = $ua->post("$sl_url/is.pl", form => {action => 'add', type => 'invoice', %sl_params})->result;
+```
+
+Next he would choose the customer and add the description.
+
+```perl
+# add customer number and description
+
+%form                 = HTML::Form->parse(decode($charset, $res->body), %parse_params)->form;
+$form{customernumber} = $customernumber;
+$form{description}    = $description;
+
+$form{action} = 'update';
+$res = $ua->post("$sl_url/is.pl", form => \%form)->result;
+```
+
+Then he would add the part numbers and quantities to the rows and press the
+`Update` button after each row.
+
+```perl
+# add rows
+
+my $i;
+for my $row (@rows) {
+  $i++;
+
+  %form = HTML::Form->parse(decode($charset, $res->body), %parse_params)->form;
+  for (keys %$row) {
+    $form{"${_}_$i"} = $row->{$_};
+  }
+
+  $form{action} = 'update';
+  $res = $ua->post("$sl_url/is.pl", form => \%form)->result;
+}
+```
+
+At the end, the user would press the `Post` button.
+
+```perl
+# post invoice
+
+%form         = HTML::Form->parse(decode($charset, $res->body), %parse_params)->form;
+$form{action} = 'post';
+$res          = $ua->post("$sl_url/is.pl", form => \%form)->result;
+
+say_ok 'Invoice posted.';
+```
+
+Now the new invoice is created and it appears at the top of the list of this
+user's recently used objects.
