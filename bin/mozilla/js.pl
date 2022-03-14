@@ -117,6 +117,21 @@ function CheckAll() {
   }
 }
 
+function changeCheckbox(e) {
+    if (e.ctrlKey) {
+        e.target.checked = e.shiftKey ? false : true;
+    }
+}
+
+window.addEventListener('load', function() {
+    document.querySelectorAll("input[type='checkbox']").forEach(elem => {
+        if (elem.name != 'allbox') {
+            elem.addEventListener('mouseover', e => {
+                changeCheckbox(e);
+            });
+        }
+    });
+});
 // -->
 </script>
 |;
