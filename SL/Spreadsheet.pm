@@ -92,7 +92,7 @@ sub new {
     };
 
   for my $format (keys %formats) {
-    my %settings = %{$formats{$format}};
+    my %settings = $formats{$format}->%*;
     $self{format}{"${format}_text"}   = $self{workbook}->add_format(%settings);
     $self{format}{"${format}_bool"}
       = $self{workbook}->add_format(%settings, align => 'center');
@@ -118,6 +118,18 @@ sub bool {
     $bool ? "\x{00D7}" : '',
     $self->{format}{"${format}_bool"},
   );
+
+  return $self;
+}
+
+sub change_format {
+  my ($self, $name, %properties) = @_;
+  
+  my $filter = $name eq ':all' ? '.*' : "^${name}_";
+
+  for my $format (grep /$filter/, keys $self->{format}->%*) {
+    $self->{format}{$format}->set_format_properties(%properties);
+  }
 
   return $self;
 }
@@ -166,7 +178,7 @@ sub data_row {
 
   if ($self->{total} && $rowtype eq 'data') {
 
-    for (keys %{$self->{total}}) {
+    for (keys $self->{total}->%*) {
       if (looks_like_number($row->{$_})) {
         $self->{total}{$_}    += $row->{$_};
         $self->{subtotal}{$_} += $row->{$_};
@@ -178,7 +190,7 @@ sub data_row {
   }
 
   $self->{col} = 0;
-  for my $column (@{$self->{column_index}}) {
+  for my $column ($self->{column_index}->@*) {
     my $type = $self->{structure}{$structure}{$column} || $default_type;
 
     my $value = $row->{$column};
@@ -271,7 +283,7 @@ sub header_row {
 
   my %data;
   if ($params{parse}) {
-    for my $column (@{$self->{column_index}}) {
+    for my $column ($self->{column_index}->@*) {
       ($data{$column}) = $header->{$column} =~ /.*>([^<]+)</;
       $data{$column} =~ s/&nbsp;/ /g;
     }
@@ -432,7 +444,7 @@ sub totalize {
     for my $val (@$newvalues) {
       if ($val eq ':decimal') {
 
-        for my $column (@{$self->{column_index}}) {
+        for my $column ($self->{column_index}->@*) {
           if (!$self->{structure}{columns}{$column}
             || $self->{structure}{columns}{$column} eq 'decimal')
           {
@@ -485,6 +497,7 @@ SL::Spreadsheet - Spreadsheet Module
     $ss->structure(\%spreadsheet_info);
     $ss->column_index(\@index);
     $ss->totalize(\@columns);
+    $ss->change_format($name, %new_properties);
 
     $ss->title($title, $format);
     $ss->report_options($options);
@@ -541,6 +554,11 @@ L<Scalar::Util>
 
   $ss = $ss->bool($bool);
   $ss = $ss->bool($bool, $format);
+
+=head2 change_format
+
+  $ss = $ss->change_format($name, %new_properties);
+  $ss = $ss->change_format(':all', %new_properties);
 
 =head2 column_index
 

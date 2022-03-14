@@ -63,7 +63,7 @@ sub transactions_spreadsheet {
 
   $ss->crlf->header_row($header, parse => 1)->freeze_panes;
 
-  for my $ref (@{$form->{transactions}}) {
+  for my $ref ($form->{transactions}->@*) {
 
     # links
     $ref->{name_link} = qq|ct.pl?action=edit&id=$ref->{"$form->{vc}_id"}&db=$form->{vc}|;

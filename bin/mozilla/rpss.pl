@@ -16,9 +16,12 @@ $form->load_module(['Excel::Writer::XLSX', 'SL::Spreadsheet'],
 
 sub yearend_spreadsheet {
   my ($report_code, $periods) = @_;
-  
+
   my $ss = SL::Spreadsheet->new($form, $userspath);
-  
+
+  $ss->change_format(':all', color => undef, border_color => undef);
+  $ss->change_format('total', bottom => 1);
+
   # structure
   my %spreadsheet_info = (
     columns => {
@@ -105,7 +108,7 @@ sub _ss_section {
 
   my $ml             = $category =~ /I|L|Q/ ? 1 : -1;
   my $print_subtotal = 0;
-  for my $accno (sort keys %{$form->{$category}}) {
+  for my $accno (sort keys $form->{$category}->%*) {
     my $charttype = $form->{$category}{$accno}{this}{0}{charttype};
     my $do_print
       = $charttype eq 'H' && $form->{l_heading} || $charttype eq 'A' && $form->{l_account};
@@ -152,13 +155,13 @@ sub _ss_section {
       $total->{Q}{$column} += $currentearnings;
     }
 
-    $ss->data_row(\%column_data);
+    $ss->crlf->data_row(\%column_data, format => 'subtotal')->crlf;
   }
 
   &_ss_subtotal($ss, \%subtotal); 
 
   %column_data
-    = (description => $locale->text('Total') . qq| $accounts{$category}|, %{$total->{$category}});
+    = (description => $locale->text('Total') . qq| $accounts{$category}|, $total->{$category}->%*);
   $ss->data_row(\%column_data, format => 'subtotal')->crlf;
 }
 

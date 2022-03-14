@@ -2,6 +2,7 @@ Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
   - download of db dumps from external hosts
+  - simplified layout of yearend spreadsheets
 
 3.2.10.27 2022-02-04
   - database snapshots
