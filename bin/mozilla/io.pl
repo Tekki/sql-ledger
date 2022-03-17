@@ -1355,7 +1355,6 @@ sub send_email {
   
   for (keys %$form) { $oldform->{$_} = $form->{$_} }
   for (qw(media format)) { $oldform->{$_} = $form->{"old$_"} }
-  for (1 .. $oldform->{paidaccounts}) { $oldform->{"paid_$_"} = $form->parse_amount(\%myconfig, $form->{"paid_$_"}) }
 
   &print_form($oldform);
   
@@ -1959,10 +1958,7 @@ sub ship_to {
   $title = $form->{title};
   $form->{title} = $locale->text('Shipping Address');
 
-# formatting bug in module oe
-unless ($form->{type} =~ /_order/) {
   for (1 .. $form->{paidaccounts}) { $form->{"paid_$_"} = $form->parse_amount(\%myconfig, $form->{"paid_$_"}) }
-}
 
   for (qw(dcn rvc)) { $temp{$_} = $form->{$_} }
 

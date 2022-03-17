@@ -5299,7 +5299,7 @@ sub bank_header {
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Bank').qq|</th>
-	  <td><input name=name size=32 maxlength=64 value="|.$form->quote($form->{name}).qq|"></td>
+	  <td><input name=name size=35 maxlength=64 value="|.$form->quote($form->{name}).qq|"></td>
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('BIC').qq|</th>
@@ -5307,23 +5307,23 @@ sub bank_header {
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('IBAN').qq|</th>
-	  <td><input name=iban size=24 maxlength=34 value="$form->{iban}"></td>
+	  <td><input name=iban size=35 maxlength=34 value="$form->{iban}"></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Address').qq|</th>
-	  <td><input name=address1 size=32 maxlength=32 value="|.$form->quote($form->{address1}).qq|"></td>
+	  <td><input name=address1 size=35 maxlength=32 value="|.$form->quote($form->{address1}).qq|"></td>
 	</tr>
 	<tr>
 	  <th></th>
-	  <td><input name=address2 size=32 maxlength=32 value="|.$form->quote($form->{address2}).qq|"></td>
+	  <td><input name=address2 size=35 maxlength=32 value="|.$form->quote($form->{address2}).qq|"></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('City').qq|</th>
-	  <td><input name=city size=32 maxlength=32 value="|.$form->quote($form->{city}).qq|"></td>
+	  <td><input name=city size=35 maxlength=32 value="|.$form->quote($form->{city}).qq|"></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('State/Province').qq|</th>
-	  <td><input name=state size=32 maxlength=32 value="|.$form->quote($form->{state}).qq|"></td>
+	  <td><input name=state size=35 maxlength=32 value="|.$form->quote($form->{state}).qq|"></td>
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Zip/Postal Code').qq|</th>
@@ -5331,7 +5331,7 @@ sub bank_header {
 	</tr>
 	<tr>
 	  <th align=right nowrap>|.$locale->text('Country').qq|</th>
-	  <td><input name=country size=32 maxlength=32 value="|.$form->quote($form->{country}).qq|"></td>
+	  <td><input name=country size=35 maxlength=32 value="|.$form->quote($form->{country}).qq|"></td>
 	</tr>
 	<tr>
 	  <th align=right>|.$locale->text('Member No.').qq|</th>

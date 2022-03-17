@@ -515,8 +515,8 @@ sub print {
             $form->{subject} = qq|$label{$form->{formname}} $form->{"${inv}number"}| unless $form->{subject};
 
             $now = scalar localtime;
-            $cc = $locale->text('Cc').qq|: $form->{cc}\n| if $form->{cc};
-            $bcc = $locale->text('Bcc').qq|: $form->{bcc}\n| if $form->{bcc};
+            $cc = ($form->{cc}) ? $locale->text('Cc').qq|: $form->{cc}\n| : "";
+            $bcc = ($form->{bcc}) ? $locale->text('Bcc').qq|: $form->{bcc}\n| : "";
 
             $form->{intnotes} = qq|$form->{intnotes}\n\n| if $form->{intnotes};
 

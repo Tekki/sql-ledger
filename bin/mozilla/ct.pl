@@ -1917,23 +1917,23 @@ sub form_header {
     $name = qq|
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Salutation').qq|</th>
-		<td><input name=salutation size=32 maxlength=32 value="|.$form->quote($form->{salutation}).qq|"></td>
+		<td><input name=salutation size=35 maxlength=32 value="|.$form->quote($form->{salutation}).qq|"></td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('First Name').qq|</th>
-		<td><input name=firstname size=32 maxlength=31 value="|.$form->quote($form->{firstname}).qq|"></td>
+		<td><input name=firstname size=35 maxlength=31 value="|.$form->quote($form->{firstname}).qq|"></td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Last Name').qq|</th>
-		<td><input name=lastname size=32 maxlength=32 value="|.$form->quote($form->{lastname}).qq|"></td>
+		<td><input name=lastname size=35 maxlength=32 value="|.$form->quote($form->{lastname}).qq|"></td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Title').qq|</th>
-		<td><input name=contacttitle size=32 maxlength=32 value="|.$form->quote($form->{contacttitle}).qq|"></td>
+		<td><input name=contacttitle size=35 maxlength=32 value="|.$form->quote($form->{contacttitle}).qq|"></td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Occupation').qq|</th>
-		<td><input name=occupation size=32 maxlength=32 value="|.$form->quote($form->{occupation}).qq|"></td>
+		<td><input name=occupation size=35 maxlength=32 value="|.$form->quote($form->{occupation}).qq|"></td>
 	      </tr>
 	      <tr>
 		<th align=right></th>
@@ -1948,29 +1948,29 @@ sub form_header {
     $name = qq|
  	      <tr>
 		<th align=right nowrap>$vcname <font color=red>*</font></th>
-		<td><input name=name size=32 maxlength=64 value="|.$form->quote($form->{name}).qq|"></td>
+		<td><input name=name size=35 maxlength=64 value="|.$form->quote($form->{name}).qq|"></td>
 	      </tr>
 |;
     $contact = qq|
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Salutation').qq|</th>
-		<td><input name=salutation size=32 maxlength=32 value="|.$form->quote($form->{salutation}).qq|"></td>
+		<td><input name=salutation size=35 maxlength=32 value="|.$form->quote($form->{salutation}).qq|"></td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('First Name').qq|</th>
-		<td><input name=firstname size=32 maxlength=31 value="|.$form->quote($form->{firstname}).qq|"></td>
+		<td><input name=firstname size=35 maxlength=31 value="|.$form->quote($form->{firstname}).qq|"></td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Last Name').qq|</th>
-		<td><input name=lastname size=32 maxlength=32 value="|.$form->quote($form->{lastname}).qq|"></td>
+		<td><input name=lastname size=35 maxlength=32 value="|.$form->quote($form->{lastname}).qq|"></td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Title').qq|</th>
-		<td><input name=contacttitle size=32 maxlength=32 value="|.$form->quote($form->{contacttitle}).qq|"></td>
+		<td><input name=contacttitle size=35 maxlength=32 value="|.$form->quote($form->{contacttitle}).qq|"></td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Occupation').qq|</th>
-		<td><input name=occupation size=32 maxlength=32 value="|.$form->quote($form->{occupation}).qq|"></td>
+		<td><input name=occupation size=35 maxlength=32 value="|.$form->quote($form->{occupation}).qq|"></td>
 	      </tr>
 	      <tr>
 		<th align=right></th>
@@ -1993,7 +1993,7 @@ sub form_header {
     $number = qq|
 	      <tr>
 		<th align=right nowrap>$vcnumber</th>
-		<td><input name="$form->{db}number" size=32 maxlength=32 value="|.$form->quote($form->{"$form->{db}number"}).qq|"></td>
+		<td><input name="$form->{db}number" size=35 maxlength=32 value="|.$form->quote($form->{"$form->{db}number"}).qq|"></td>
 	      </tr>|;
   }
 
@@ -2033,19 +2033,19 @@ sub form_header {
 	      
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Address').qq|</th>
-		<td><input name=address1 size=32 maxlength=32 value="|.$form->quote($form->{address1}).qq|"></td>
+		<td><input name=address1 size=35 maxlength=32 value="|.$form->quote($form->{address1}).qq|"></td>
 	      </tr>
 	      <tr>
 		<th></th>
-		<td><input name=address2 size=32 maxlength=32 value="|.$form->quote($form->{address2}).qq|"></td>
+		<td><input name=address2 size=35 maxlength=32 value="|.$form->quote($form->{address2}).qq|"></td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('City').qq|</th>
-		<td><input name=city size=32 maxlength=32 value="|.$form->quote($form->{city}).qq|"></td>
+		<td><input name=city size=35 maxlength=32 value="|.$form->quote($form->{city}).qq|"></td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('State/Province').qq|</th>
-		<td><input name=state size=32 maxlength=32 value="|.$form->quote($form->{state}).qq|"></td>
+		<td><input name=state size=35 maxlength=32 value="|.$form->quote($form->{state}).qq|"></td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Zip/Postal Code').qq|</th>
@@ -2053,7 +2053,7 @@ sub form_header {
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Country').qq|</th>
-		<td><input name=country size=32 maxlength=32 value="|.$form->quote($form->{country}).qq|"></td>
+		<td><input name=country size=35 maxlength=32 value="|.$form->quote($form->{country}).qq|"></td>
 	      </tr>
 	    </table>
 	  </td>
@@ -2075,11 +2075,11 @@ sub form_header {
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('E-mail').qq|</th>
-		<td><input name=email size=32 value="$form->{email}"></td>
+		<td><input name=email size=35 value="$form->{email}"></td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Cc').qq|</th>
-		<td><input name=cc size=32 value="$form->{cc}"></td>
+		<td><input name=cc size=35 value="$form->{cc}"></td>
 	      </tr>
     	      <tr>
 		<th align=right nowrap>|.$locale->text('Bcc').qq|</th>
@@ -2154,23 +2154,23 @@ sub form_header {
 	    <table>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Bank').qq|</th>
-		<td><input name=bankname size=32 maxlength=64 value="|.$form->quote($form->{bankname}).qq|"></td>
+		<td><input name=bankname size=35 maxlength=64 value="|.$form->quote($form->{bankname}).qq|"></td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Address').qq|</th>
-		<td><input name=bankaddress1 size=32 maxlength=32 value="|.$form->quote($form->{bankaddress1}).qq|"></td>
+		<td><input name=bankaddress1 size=35 maxlength=32 value="|.$form->quote($form->{bankaddress1}).qq|"></td>
 	      </tr>
 	      <tr>
 		<th></th>
-		<td><input name=bankaddress2 size=32 maxlength=32 value="|.$form->quote($form->{bankaddress2}).qq|"></td>
+		<td><input name=bankaddress2 size=35 maxlength=32 value="|.$form->quote($form->{bankaddress2}).qq|"></td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('City').qq|</th>
-		<td><input name=bankcity size=32 maxlength=32 value="|.$form->quote($form->{bankcity}).qq|"></td>
+		<td><input name=bankcity size=35 maxlength=32 value="|.$form->quote($form->{bankcity}).qq|"></td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('State/Province').qq|</th>
-		<td><input name=bankstate size=32 maxlength=32 value="|.$form->quote($form->{bankstate}).qq|"></td>
+		<td><input name=bankstate size=35 maxlength=32 value="|.$form->quote($form->{bankstate}).qq|"></td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Zip/Postal Code').qq|</th>
@@ -2178,7 +2178,7 @@ sub form_header {
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Country').qq|</th>
-		<td><input name=bankcountry size=32 maxlength=32 value="|.$form->quote($form->{bankcountry}).qq|"></td>
+		<td><input name=bankcountry size=35 maxlength=32 value="|.$form->quote($form->{bankcountry}).qq|"></td>
 	      </tr>
 	    </table>
 	  </td>
@@ -2186,7 +2186,7 @@ sub form_header {
 	    <table>
 	      <tr>
 		<th align=right>|.$locale->text('IBAN').qq|</th>
-		<td><input name=iban size=34 maxlength=34 value="$form->{iban}"></td>
+		<td><input name=iban size=35 maxlength=34 value="$form->{iban}"></td>
 	      </tr>
 	      <tr>
 		<th align=right>|.$locale->text('BIC').qq|</th>
@@ -2418,27 +2418,27 @@ sub shipping_address {
 	<tr>
 	  <td></td>
 	  <th align=right nowrap>$vcname</th>
-	  <td><input name=shiptoname size=32 maxlength=64 value="|.$form->quote($form->{shiptoname}).qq|"></td>
+	  <td><input name=shiptoname size=35 maxlength=64 value="|.$form->quote($form->{shiptoname}).qq|"></td>
 	</tr>
 	<tr>
 	  <td></td>
 	  <th align=right nowrap>$shipto{address1}{label}</th>
-	  <td><input name=shiptoaddress1 size=32 maxlength=32 value="|.$form->quote($form->{shiptoaddress1}).qq|"></td>
+	  <td><input name=shiptoaddress1 size=35 maxlength=32 value="|.$form->quote($form->{shiptoaddress1}).qq|"></td>
 	</tr>
 	<tr>
 	  <td></td>
 	  <td></td>
-	  <td><input name=shiptoaddress2 size=32 maxlength=32 value="|.$form->quote($form->{shiptoaddress2}).qq|"></td>
+	  <td><input name=shiptoaddress2 size=35 maxlength=32 value="|.$form->quote($form->{shiptoaddress2}).qq|"></td>
 	</tr>
 	<tr>
 	  <td></td>
 	  <th align=right nowrap>$shipto{city}{label}</th>
-	  <td><input name=shiptocity size=32 maxlength=32 value="|.$form->quote($form->{shiptocity}).qq|"></td>
+	  <td><input name=shiptocity size=35 maxlength=32 value="|.$form->quote($form->{shiptocity}).qq|"></td>
 	</tr>
 	<tr>
 	  <td></td>
 	  <th align=right nowrap>$shipto{state}{label}</th>
-	  <td><input name=shiptostate size=32 maxlength=32 value="|.$form->quote($form->{shiptostate}).qq|"></td>
+	  <td><input name=shiptostate size=35 maxlength=32 value="|.$form->quote($form->{shiptostate}).qq|"></td>
 	</tr>
 	<tr>
 	  <td></td>
@@ -2448,7 +2448,7 @@ sub shipping_address {
 	<tr>
 	  <td></td>
 	  <th align=right nowrap>$shipto{country}{label}</th>
-	  <td><input name=shiptocountry size=32 maxlength=32 value="|.$form->quote($form->{shiptocountry}).qq|"></td>
+	  <td><input name=shiptocountry size=35 maxlength=32 value="|.$form->quote($form->{shiptocountry}).qq|"></td>
 	</tr>
 	<tr>
 	  <td></td>
@@ -2468,7 +2468,7 @@ sub shipping_address {
 	<tr>
 	  <td></td>
 	  <th align=right nowrap>$shipto{email}{label}</th>
-	  <td><input name=shiptoemail size=32 value="$form->{shiptoemail}"></td>
+	  <td><input name=shiptoemail size=35 value="$form->{shiptoemail}"></td>
 	</tr>
 |;
 

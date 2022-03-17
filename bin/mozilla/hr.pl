@@ -653,7 +653,7 @@ sub employee_header {
     $employeenumber = qq|
 	      <tr>
 		<th align=right nowrap>|.$locale->text('Employee Number').qq|</th>
-		<td><input name=employeenumber size=32 maxlength=32 value="|.$form->quote($form->{employeenumber}).qq|"></td>
+		<td><input name=employeenumber size=35 maxlength=32 value="|.$form->quote($form->{employeenumber}).qq|"></td>
 	      </tr>|;
   }
 
@@ -757,23 +757,23 @@ sub employee_header {
 	    <table>
 	      <tr>
 	        <th align=right nowrap>|.$locale->text('Bank').qq|</th>
-		<td><input name=bankname size=32 maxlength=64 value="|.$form->quote($form->{bankname}).qq|"></td>
+		<td><input name=bankname size=35 maxlength=64 value="|.$form->quote($form->{bankname}).qq|"></td>
 	      </tr>
 	      <tr>
 	        <th align=right nowrap>|.$locale->text('Address').qq|</th>
-		<td><input name=bankaddress1 size=32 maxlength=32 value="|.$form->quote($form->{bankaddress1}).qq|"></td>
+		<td><input name=bankaddress1 size=35 maxlength=32 value="|.$form->quote($form->{bankaddress1}).qq|"></td>
 	      </tr>
 	      <tr>
 	        <th></th>
-	        <td><input name=bankaddress2 size=32 maxlength=32 value="|.$form->quote($form->{bankaddress2}).qq|"></td>
+	        <td><input name=bankaddress2 size=35 maxlength=32 value="|.$form->quote($form->{bankaddress2}).qq|"></td>
 	      </tr>
 	      <tr>
 	        <th align=right nowrap>|.$locale->text('City').qq|</th>
-		<td><input name=bankcity size=32 maxlength=32 value="|.$form->quote($form->{bankcity}).qq|"></td>
+		<td><input name=bankcity size=35 maxlength=32 value="|.$form->quote($form->{bankcity}).qq|"></td>
 	      </tr>
 	      <tr>
 	        <th align=right nowrap>|.$locale->text('State/Province').qq|</th>
-		<td><input name=bankstate size=32 maxlength=32 value="|.$form->quote($form->{bankstate}).qq|"></td>
+		<td><input name=bankstate size=35 maxlength=32 value="|.$form->quote($form->{bankstate}).qq|"></td>
 	      </tr>
 	      <tr>
 	        <th align=right nowrap>|.$locale->text('Zip/Postal Code').qq|</th>
@@ -781,7 +781,7 @@ sub employee_header {
 	      </tr>
 	      <tr>
 	        <th align=right nowrap>|.$locale->text('Country').qq|</th>
-		<td><input name=bankcountry size=32 maxlength=32 value="|.$form->quote($form->{bankcountry}).qq|"></td>
+		<td><input name=bankcountry size=35 maxlength=32 value="|.$form->quote($form->{bankcountry}).qq|"></td>
 	      </tr>
 	    </table>
 	  </td>
@@ -789,7 +789,7 @@ sub employee_header {
 	    <table>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('IBAN').qq|</th>
-		<td><input name=iban size=34 maxlength=34 value="|.$form->quote($form->{iban}).qq|"></td>
+		<td><input name=iban size=35 maxlength=34 value="|.$form->quote($form->{iban}).qq|"></td>
 	      </tr>
 	      <tr>
 		<th align=right nowrap>|.$locale->text('BIC').qq|</th>

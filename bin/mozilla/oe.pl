@@ -356,6 +356,10 @@ sub prepare_order {
 
   $form->{paidaccounts} ||= 1;
 
+  for $i (1 .. $form->{paidaccounts}) {
+    for (qw(paid exchangerate)) { $form->{"${_}_$i"} = $form->parse_amount(\%myconfig, $form->{"${_}_$i"}) }
+  }
+
   $form->helpref($form->{type}, $myconfig{countrycode});
 
 }
@@ -984,7 +988,6 @@ sub form_footer {
 
       if ($form->{"paid_$i"}) {
         for (qw(olddatepaid datepaid source memo cleared vr_id paymentmethod)) { $form->{"${_}_$j"} = $form->{"${_}_$i"} }
-        for (qw(paid exchangerate)) { $form->{"${_}_$j"} = $form->parse_amount(\%myconfig, $form->{"${_}_$i"}) }
         $form->{"$form->{ARAP}_paid_$j"} = $form->{"$form->{ARAP}_paid_$i"};
 
         $totalpaid += $form->{"paid_$j"};
@@ -1231,6 +1234,8 @@ sub update {
   }
  
   $form->{exchangerate} = $form->parse_amount(\%myconfig, $form->{exchangerate});
+  for (1 .. $form->{paidaccounts}) { $form->{"paid_$_"} = $form->parse_amount(\%myconfig, $form->{"paid_$_"}) }
+
 
   if ($form->{vc} eq 'customer') {
     $form->{ARAP} = "AR";

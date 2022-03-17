@@ -248,7 +248,7 @@ sub prepare_invoice {
   $form->helpref($form->{type}, $myconfig{countrycode});
 
   if ($form->{type} eq 'invoice') {
-    $form->{selectformname} = qq|vendor_invoice--|.$locale->text('Invoice')
+    $form->{selectformname} = qq|invoice--|.$locale->text('Invoice')
 .qq|\nbin_list--|.$locale->text('Bin List');
     $form->{selectformname} .= qq|\nbarcode--|.$locale->text('Barcode') if $dvipdf;
   }

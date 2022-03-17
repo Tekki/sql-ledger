@@ -4754,13 +4754,14 @@ sub transfer_list {
   for (qw(direction oldsort path login)) { $callback .= "&$_=$form->{$_}" }
   for (qw(partnumber description unit partsgroup warehouse)) { $callback .= "&$_=".$form->escape($form->{$_},1) }
 
-  @column_index = $form->sort_columns(qw(partnumber description partsgroup qty unit warehouse transfer towarehouse));
+  @column_index = $form->sort_columns(qw(partnumber description lot partsgroup qty unit warehouse transfer towarehouse));
 
   $column_header{partnumber} = qq|<th><a class=listheading href=$href&sort=partnumber>|.$locale->text('Part Number').qq|</a></th>|;
   $column_header{description} = qq|<th><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</a></th>|;
   $column_header{partsgroup} = qq|<th><a class=listheading href=$href&sort=partsgroup>|.$locale->text('Group').qq|</a></th>|;
   $column_header{warehouse} = qq|<th><a class=listheading href=$href&sort=warehouse>|.$locale->text('Warehouse').qq|</a></th>|;
   $column_header{towarehouse} = qq|<th class=listheading>|.$locale->text('To').qq|</th>|;
+  $column_header{lot} = qq|<th class=listheading>|.$locale->text('Lot').qq|</a></th>|;
   $column_header{qty} = qq|<th class=listheading>|.$locale->text('Qty').qq|</a></th>|;
   $column_header{unit} = qq|<th class=listheading>|.$locale->text('Unit').qq|</a></th>|;
   $column_header{transfer} = qq|<th class=listheading>|.$locale->text('Transfer').qq|</a></th>|;
@@ -4838,6 +4839,7 @@ sub transfer_list {
     if ($sameid != $ref->{id}) {
       $column_data{partnumber} = qq|<td><input type=hidden name="id_$i" value=$ref->{id}><a href=ic.pl?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{partnumber}</td>|;
       $column_data{description} = "<td>$ref->{description}&nbsp;</td>";
+      $column_data{lot} = "<td>$ref->{lot}&nbsp;</td>";
       $column_data{unit} = "<td>$ref->{unit}&nbsp;</td>";
       $column_data{partsgroup} = "<td>$ref->{partsgroup}&nbsp;</td>";
     } else {

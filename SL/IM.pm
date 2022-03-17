@@ -1625,6 +1625,7 @@ sub payment_links {
   # retrieve invoice by dcn
   $query = qq|SELECT c.name, c.customernumber AS companynumber, ad.city,
               a.id, a.invnumber, a.description, a.dcn,
+	      (a.amount - a.paid) / a.exchangerate AS amount,
 	      a.paymentmethod_id, 'customer' AS vc, 'ar' AS arap
 	      FROM ar a
 	      JOIN customer c ON (a.customer_id = c.id)
@@ -1633,6 +1634,7 @@ sub payment_links {
 	      UNION
 	      SELECT c.name, c.vendornumber AS companynumber, ad.city,
               a.id, a.invnumber, a.description, a.dcn,
+	      (a.amount - a.paid) / a.exchangerate AS amount,
 	      a.paymentmethod_id, 'vendor' AS vc, 'ap' AS arap
 	      FROM ap a
 	      JOIN vendor c ON (a.vendor_id = c.id)
@@ -1678,23 +1680,23 @@ sub payment_links {
       
       # dcn
       if ($form->{$form->{type}}->{dcn}{ndx} >= 0) {
-				$am = 0;
-				$sth->execute("$dl[$form->{$form->{type}}->{dcn}{ndx}]", "$dl[$form->{$form->{type}}->{dcn}{ndx}]");
-				$ref = $sth->fetchrow_hashref(NAME_lc);
-
-				if ($ref->{invnumber}) {
-					$vc = $ref->{vc};
-					$ref->{outstanding} = $ref->{amount};
-					for (qw(id invnumber description name companynumber vc arap city paymentmethod_id outstanding)) { $form->{"${_}_$i"} = $ref->{$_} }
-				}
-				$sth->finish;
-      } else {
-				$am = 1;
+        if ($dl[$form->{$form->{type}}->{dcn}{ndx}]) {
+          $am = 0;
+          $sth->execute("$dl[$form->{$form->{type}}->{dcn}{ndx}]", "$dl[$form->{$form->{type}}->{dcn}{ndx}]");
+          $ref = $sth->fetchrow_hashref(NAME_lc);
+          if ($ref->{invnumber}) {
+            $vc = $ref->{vc};
+            $ref->{outstanding} = $ref->{amount};
+            for (qw(id invnumber description name companynumber vc arap city paymentmethod_id outstanding)) { $form->{"${_}_$i"} = $ref->{$_} }
+          }
+          $amount = $form->format_amount($myconfig, $ref->{amount}, $form->{precision});
+          shift @{ $amount{$amount} };
+          $sth->finish;
+        }
       }
       
       if ($am) {
 				$vc = $amount{$amount}->[0]->{vc};
-				
 				for (qw(id invnumber description name companynumber vc arap city paymentmethod_id)) { $form->{"${_}_$i"} = $amount{$amount}->[0]->{$_} }
 				$form->{"outstanding_$i"} = $dl[$form->{$form->{type}}->{credit}{ndx}] - $dl[$form->{$form->{type}}->{debit}{ndx}];
 
