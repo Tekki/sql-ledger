@@ -443,11 +443,13 @@ sub transactions {
     $apwhere .= " AND ac.transdate <= '$form->{dateto}'";
   }
   if ($form->{amountfrom}) {
+    $form->{amountfrom} = $form->parse_amount($myconfig, $form->{amountfrom});
     $glwhere .= " AND abs(ac.amount) >= $form->{amountfrom}";
     $arwhere .= " AND abs(ac.amount) >= $form->{amountfrom}";
     $apwhere .= " AND abs(ac.amount) >= $form->{amountfrom}";
   }
   if ($form->{amountto}) {
+    $form->{amountto} = $form->parse_amount($myconfig, $form->{amountto});
     $glwhere .= " AND abs(ac.amount) <= $form->{amountto}";
     $arwhere .= " AND abs(ac.amount) <= $form->{amountto}";
     $apwhere .= " AND abs(ac.amount) <= $form->{amountto}";

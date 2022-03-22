@@ -39,7 +39,7 @@ sub get_vc {
   my $count;
   my $item;
   my $vc;
-  my $wildcard;
+  my $wildcard = ($form->{type} eq 'invoice') ? '%' : '';
 
   if ($form->{batch} eq 'queue') {
     for (keys %{ $arap{$form->{type}} }) {

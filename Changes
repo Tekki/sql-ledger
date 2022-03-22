@@ -1,5 +1,13 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+3.2.11 DWS 2022-03-14
+  - updated Postrgesql options
+  - fixed batchprint query
+  - fixed logfile entries
+  - reset cc and bcc variables in batch email function
+  - fixed formatting error for pre-payments on orders when sending email
+  - added lot to transfer inventory module
+
 3.2.10.28 2022-03-14
   - select/unselect checkboxes in lists with ctrl/ctrl-shift mouseover
   - extended API docs with example for HTML API

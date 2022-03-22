@@ -2432,7 +2432,7 @@ sub get_inventory {
     $wwhere .= " AND i.warehouse_id = $var";
 
     $query = qq|
-            SELECT p.id, p.partnumber, p.description,
+            SELECT p.id, p.partnumber, p.description, p.lot,
             pg.partsgroup, '' AS warehouse, 0 AS warehouse_id,
             p.unit, p.onhand,
             (SELECT SUM(qty) FROM inventory i WHERE i.parts_id = p.id AND i.warehouse_id > 0) AS qty
@@ -2441,7 +2441,7 @@ sub get_inventory {
             WHERE p.onhand > 0
             $where
         UNION
-            SELECT p.id, p.partnumber, p.description,
+            SELECT p.id, p.partnumber, p.description, p.lot,
             pg.partsgroup, w.description AS warehouse, i.warehouse_id,
             p.unit, sum(i.qty) * 2 AS onhand,
             sum(i.qty) AS qty
@@ -2450,10 +2450,10 @@ sub get_inventory {
             LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
             JOIN warehouse w ON (w.id = i.warehouse_id)
             $wwhere
-            GROUP BY p.id, p.partnumber, p.description, p.unit, pg.partsgroup, w.description, i.warehouse_id|;
+            GROUP BY p.id, p.partnumber, p.description, p.lot, p.unit, pg.partsgroup, w.description, i.warehouse_id|;
   } else {
     $query = qq|
-            SELECT p.id, p.partnumber, p.description,
+            SELECT p.id, p.partnumber, p.description, p.lot,
             pg.partsgroup, '' AS warehouse, 0 AS warehouse_id,
             p.unit, p.onhand,
             (SELECT SUM(qty) FROM inventory i WHERE i.parts_id = p.id AND i.warehouse_id > 0) AS qty
@@ -2463,7 +2463,7 @@ sub get_inventory {
             $where
 
         UNION
-            SELECT p.id, p.partnumber, p.description,
+            SELECT p.id, p.partnumber, p.description, p.lot,
             pg.partsgroup, w.description AS warehouse, i.warehouse_id,
             p.unit, sum(i.qty) * 2 AS onhand,
             sum(i.qty) AS qty
@@ -2473,11 +2473,11 @@ sub get_inventory {
             LEFT JOIN warehouse w ON (w.id = i.warehouse_id)
             WHERE 1 = 1
             $where
-            GROUP BY p.id, p.partnumber, p.description, p.unit, pg.partsgroup, w.description, i.warehouse_id|;
+            GROUP BY p.id, p.partnumber, p.description, p.lot, p.unit, pg.partsgroup, w.description, i.warehouse_id|;
 
   }
 
-  my @sf = qw(partnumber warehouse);
+  my @sf = qw(partnumber lot warehouse);
   my %ordinal = $form->ordinal_order($dbh, $query);
   $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
 

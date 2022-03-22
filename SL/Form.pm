@@ -123,9 +123,9 @@ sub new {
 
   $self->{charset} = 'UTF-8';
 
-  $self->{version} = "3.2.10";
+  $self->{version} = "3.2.11";
   $self->{dbversion} = "3.2.4";
-  $self->{version2} = "tekki 3.2.10.28";
+  $self->{version2} = "tekki 3.2.11.28";
   $self->{dbversion2} = 15;
 
   $self->{favicon} = 'favicon.ico';
@@ -601,7 +601,7 @@ sub redirect {
   if ($self->{callback}) {
 
     my ($script, $argv) = split(/\?/, $self->{callback});
-    my @args = ('perl', $script, $argv);
+    my @args = ($^X, $script, $argv);
     exec (@args) or $self->error("$args[0] $args[1]: $!");;
 
   } else {
@@ -3281,6 +3281,11 @@ sub create_links {
   my $arap = ($vc eq 'customer') ? 'ar' : 'ap';
 
   $self->remove_locks($myconfig, $dbh);
+
+  if ($self->{id} *= 1) {
+    $query = qq|SELECT id FROM $arap WHERE id = $self->{id}|;
+    ($self->{id}) = $dbh->selectrow_array($query);
+  }
 
   if ($self->{id} *= 1) {
 

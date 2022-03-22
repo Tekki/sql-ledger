@@ -2012,7 +2012,6 @@ sub retrieve_invoice {
     ($form->{$_}) = $dbh->selectrow_array($query);
   }
 
-
   if ($form->{id} *= 1) {
 
     # retrieve invoice
