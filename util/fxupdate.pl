@@ -73,7 +73,16 @@ for my $dataset (values %members) {
   while (my $ref = $sth->fetchrow_hashref('NAME_lc')) {
     push @currencies, $ref->{curr};
   }
-  next unless $currencies[0] eq 'CHF';
+
+  if ($currencies[0] ne 'CHF') {
+    my $factor2 = delete $rates{$currencies[0]} or next;
+    $rates{CHF} = 1;
+
+    for (values %rates) {
+      $_ = sprintf '%.5f', $_ / $factor2;
+    }
+
+  }
 
   $query = q|DELETE FROM exchangerate WHERE transdate = CURRENT_DATE|;
   $dbh->do($query) || die $dbh->errstr;
