@@ -180,7 +180,8 @@ sub payment_transactions {
   for (1 .. 2) {
     $query .= qq|$union
                 SELECT ac.transdate, ac.source, ac.fx_transaction,
-                ac.amount, ac.cleared, g.id, g.description
+                ac.amount, ac.cleared, g.id, g.description,
+                'gl' AS script, g.reference as number
                 FROM acc_trans ac
                 JOIN chart ch ON (ac.chart_id = ch.id)
                 JOIN gl g ON (g.id = ac.trans_id)
@@ -191,7 +192,9 @@ sub payment_transactions {
                 $cleared
                 UNION
                 SELECT ac.transdate, ac.source, ac.fx_transaction,
-                ac.amount, ac.cleared, a.id, n.name
+                ac.amount, ac.cleared, a.id, n.name,
+                CASE WHEN a.invoice THEN 'is' ELSE 'ar' END AS script,
+                a.invnumber AS number
                 FROM acc_trans ac
                 JOIN chart ch ON (ac.chart_id = ch.id)
                 JOIN ar a ON (a.id = ac.trans_id)
@@ -203,7 +206,9 @@ sub payment_transactions {
                 $cleared
                 UNION
                 SELECT ac.transdate, ac.source, ac.fx_transaction,
-                ac.amount, ac.cleared, a.id, n.name
+                ac.amount, ac.cleared, a.id, n.name,
+                CASE WHEN a.invoice THEN 'ir' ELSE 'ap' END AS script,
+                a.invnumber AS number
                 FROM acc_trans ac
                 JOIN chart ch ON (ac.chart_id = ch.id)
                 JOIN ap a ON (a.id = ac.trans_id)

@@ -187,15 +187,22 @@ sub get_payments {
 
 sub display_form {
 
-  if ($form->{report}) {
-    @column_index = qw(transdate source name debit credit);
+  if ($form->{summary}) {
+    @column_index = qw|transdate source name|;
   } else {
-    @column_index = qw(transdate source name cleared debit credit balance);
+    @column_index = qw|transdate number source name|;
+  }
+
+  if ($form->{report}) {
+    push @column_index, qw|debit credit|;
+  } else {
+    push @column_index, qw|cleared debit credit balance|;
   }
 
   $form->{allbox} = ($form->{allbox}) ? "checked" : "";
   $action = ($form->{deselect}) ? "deselect_all" : "select_all";
   $column_header{cleared} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll(); javascript:document.main.submit()"><input type=hidden name=action value="$action"></th>|;
+  $column_header{number} = "<th class=listheading>".$locale->text('Transaction')."</a></th>";
   $column_header{source} = "<th class=listheading>".$locale->text('Source')."</a></th>";
   $column_header{name} = "<th class=listheading>".$locale->text('Description')."</a></th>";
   $column_header{transdate} = "<th class=listheading>".$locale->text('Date')."</a></th>";
@@ -258,7 +265,7 @@ sub display_form {
   $i = 0;
   $j = 0;
 
-  for (qw(cleared transdate source debit credit)) { $column_data{$_} = "<td>&nbsp;</td>" }
+  for (qw|cleared transdate number source debit credit|) { $column_data{$_} = "<td>&nbsp;</td>" }
 
   if (! $form->{report}) {
     $column_data{name} = qq|<td>|.$locale->text('Beginning Balance').qq|</td>|;
@@ -296,6 +303,9 @@ sub display_form {
     if (!$ref->{fx_transaction}) {
       for (qw(name source transdate)) { $temp{$_} = $ref->{$_} }
     }
+
+    $column_data{number}
+      = qq|<td><a href="$ref->{script}.pl?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&js=$form->{js}" target="_blank">$ref->{number}</a></td>|;
 
     $column_data{name} = "<td>";
     for (@{ $temp{name} }) { $column_data{name} .= "$_<br>" }

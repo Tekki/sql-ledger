@@ -65,6 +65,7 @@ $self{texts} = {
   'Summary'                     => 'Zusammenfassung',
   'Th'                          => 'Do',
   'To'                          => 'Bis',
+  'Transaction'                 => 'Buchung',
   'Tu'                          => 'Di',
   'Update'                      => 'Aktualisieren',
   'We'                          => 'Mi',
