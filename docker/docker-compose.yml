@@ -21,6 +21,17 @@ services:
     ports:
       - 8080:8080
 
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      # change these settings or add a new user after the first login:
+      PGADMIN_DEFAULT_EMAIL: user@domain.com
+      PGADMIN_DEFAULT_PASSWORD: SuperSecret
+    ports:
+      - 8085:80
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+
   app:
     build: .
     image: sql-ledger-test:0.13
@@ -31,3 +42,4 @@ services:
 
 volumes:
   db:
+  pgadmin:

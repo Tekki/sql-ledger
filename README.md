@@ -58,13 +58,15 @@ database, your templates and translations are all encoded in UTF-8.
 With
 
     cd docker
-    docker-compose up -d
+    docker-compose -p sql-ledger up -d
 
 you can start a simple test environment (without LaTeX support). SQL-Ledger
-runs at [localhost/sql-ledger](http://localhost/sql-ledger) and at
-[localhost:8080](http://localhost:8080) you find the db management tool
-[Adminer](https://www.adminer.org). The PostgreSQL database runs on service `db`
-with username and password `sql-ledger` and uses a persistent data volume.
+runs at [localhost/sql-ledger](http://localhost/sql-ledger). At
+[localhost:8080](http://localhost:8080) and
+[localhost:8085](http://localhost:8085) you find the database management tools
+[Adminer](https://www.adminer.org) and [pgAdmin](https://pgadmin.org). You'll
+have to connect them to the PostgreSQL database that runs on service `db` with
+username and password `sql-ledger`.
 
 # Documentation
 

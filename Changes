@@ -1,7 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
-  - speadsheets use correct MIME
+  - MIME type for xlsx spreadsheets corrected
+  - docker-compose file additionally starts pgAdmin
 
 3.2.11.29 2022-05-18
   - link from reconciliation screen to transactions
