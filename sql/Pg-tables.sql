@@ -74,7 +74,7 @@ CREATE TABLE defaults (
 );
 --
 INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '3.2.4');
-INSERT INTO defaults (fldname, fldvalue) VALUES ('version2', '15');
+INSERT INTO defaults (fldname, fldvalue) VALUES ('version2', '30');
 --
 CREATE TABLE acc_trans (
   trans_id int,
@@ -806,7 +806,7 @@ CREATE TABLE archivedata (
 --
 CREATE TABLE mimetype (
   extension varchar(32) primary key,
-  contenttype varchar(64)
+  contenttype text
 );
 --
 CREATE TABLE recent (

@@ -523,7 +523,7 @@ SL::Spreadsheet - Spreadsheet Module
 
     $ss->finish;
 
-    $form->download_tmpfile('application/vnd.ms-excel', "$filename.xlsx");
+    $form->download_tmpfile(\%myconfig, "$filename.xlsx");
 
 =head1 DESCRIPTION
 

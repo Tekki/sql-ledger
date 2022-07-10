@@ -103,7 +103,7 @@ sub transactions_spreadsheet {
   $ss->subtotal_row->total_row;
   $ss->finish;
 
-  $form->download_tmpfile('application/vnd.ms-excel', "$form->{title}.xlsx");
+  $form->download_tmpfile(\%myconfig, "$form->{title}.xlsx");
 }
 
 1;

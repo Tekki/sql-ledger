@@ -33,6 +33,7 @@ INSERT INTO mimetype (extension, contenttype) VALUES ('dir', 'application/x-dire
 INSERT INTO mimetype (extension, contenttype) VALUES ('dll', 'application/x-msdownload');
 INSERT INTO mimetype (extension, contenttype) VALUES ('dms', 'application/octet-stream');
 INSERT INTO mimetype (extension, contenttype) VALUES ('doc', 'application/msword');
+INSERT INTO mimetype (extension, contenttype) VALUES ('docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
 INSERT INTO mimetype (extension, contenttype) VALUES ('dot', 'application/msword');
 INSERT INTO mimetype (extension, contenttype) VALUES ('dvi', 'application/x-dvi');
 INSERT INTO mimetype (extension, contenttype) VALUES ('dxr', 'application/x-director');
@@ -118,6 +119,7 @@ INSERT INTO mimetype (extension, contenttype) VALUES ('pot', 'application/vnd.ms
 INSERT INTO mimetype (extension, contenttype) VALUES ('ppm', 'image/x-portable-pixmap');
 INSERT INTO mimetype (extension, contenttype) VALUES ('pps', 'application/vnd.ms-powerpoint');
 INSERT INTO mimetype (extension, contenttype) VALUES ('ppt', 'application/vnd.ms-powerpoint');
+INSERT INTO mimetype (extension, contenttype) VALUES ('pptx', 'application/vnd.openxmlformats-officedocument.presentationml.presentation');
 INSERT INTO mimetype (extension, contenttype) VALUES ('prf', 'application/pics-rules');
 INSERT INTO mimetype (extension, contenttype) VALUES ('ps', 'application/postscript');
 INSERT INTO mimetype (extension, contenttype) VALUES ('pub', 'application/x-mspublisher');
@@ -180,6 +182,7 @@ INSERT INTO mimetype (extension, contenttype) VALUES ('xla', 'application/vnd.ms
 INSERT INTO mimetype (extension, contenttype) VALUES ('xlc', 'application/vnd.ms-excel');
 INSERT INTO mimetype (extension, contenttype) VALUES ('xlm', 'application/vnd.ms-excel');
 INSERT INTO mimetype (extension, contenttype) VALUES ('xls', 'application/vnd.ms-excel');
+INSERT INTO mimetype (extension, contenttype) VALUES ('xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 INSERT INTO mimetype (extension, contenttype) VALUES ('xlt', 'application/vnd.ms-excel');
 INSERT INTO mimetype (extension, contenttype) VALUES ('xlw', 'application/vnd.ms-excel');
 INSERT INTO mimetype (extension, contenttype) VALUES ('xof', 'x-world/x-vrml');

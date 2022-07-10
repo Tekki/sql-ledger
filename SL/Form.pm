@@ -126,7 +126,7 @@ sub new {
   $self->{version} = "3.2.11";
   $self->{dbversion} = "3.2.4";
   $self->{version2} = "tekki 3.2.11.29";
-  $self->{dbversion2} = 15;
+  $self->{dbversion2} = 30;
 
   $self->{favicon} = 'favicon.ico';
 
@@ -1511,8 +1511,28 @@ Content-Disposition: attachment; filename=$self->{tmpfile}\n\n|;
 }
 
 
+sub mimetype {
+  my ($self, $myconfig, $filename) = @_;
+  my $rv;
+
+  if ($filename =~ /.+\.([^.]+)$/) {
+    my $ext = lc $1;
+
+    my $dbh   = $self->dbconnect($myconfig);
+
+    my $query = qq|SELECT contenttype FROM mimetype WHERE extension = ?|;
+    ($rv) = $dbh->selectrow_array($query, undef, $ext);
+
+    $dbh->disconnect;
+  }
+
+  $rv ||= '';
+  return $rv;
+}
+
+
 sub download_tmpfile {
-  my ($self, $mimetype, $filename) = @_;
+  my ($self, $myconfig, $filename) = @_;
 
   $filename ||= $self->{tmpfile};
   $filename = $self->escape($filename, 1);
@@ -1524,6 +1544,8 @@ sub download_tmpfile {
     $self->cleanup;
     $self->error("$self->{tmpfile} : $err");
   }
+
+  my $mimetype = $self->mimetype($myconfig, $filename);
 
   binmode(IN);
 
@@ -5628,6 +5650,10 @@ L<SL::Form> implements the following methods:
 =head2 like
 
   $form->like($str);
+
+=head2 mimetype
+
+  $form->mimetype($myconfig, $filename);
 
 =head2 numtextrows
 

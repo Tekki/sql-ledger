@@ -88,7 +88,7 @@ sub yearend_spreadsheet {
 
   $ss->finish;
 
-  $form->download_tmpfile('application/vnd.ms-excel', "$form->{title}-$form->{company}.xlsx");
+  $form->download_tmpfile(\%myconfig, "$form->{title}-$form->{company}.xlsx");
 }
 
 sub _ss_section {
