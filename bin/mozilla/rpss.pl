@@ -109,7 +109,8 @@ sub _ss_section {
   my $ml             = $category =~ /I|L|Q/ ? 1 : -1;
   my $print_subtotal = 0;
   for my $accno (sort keys $form->{$category}->%*) {
-    my $charttype = $form->{$category}{$accno}{this}{0}{charttype};
+    my $charttype = $form->{$category}{$accno}{this}{0}{charttype}
+      || $form->{$category}{$accno}{previous}{0}{charttype};
     my $do_print
       = $charttype eq 'H' && $form->{l_heading} || $charttype eq 'A' && $form->{l_account};
 
