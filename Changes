@@ -1,6 +1,6 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
-Not Released
+3.2.11.31 2022-08-31
   - e-mail subject and message accept template variables
   - special variables for Swiss QR Bill added
 
