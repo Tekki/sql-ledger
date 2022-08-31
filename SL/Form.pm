@@ -1931,6 +1931,48 @@ sub format_dcn {
 }
 
 
+sub qr_variables {
+  my ($self, $myconfig) = @_;
+
+  $self->{qr_businessnumber} = $self->{businessnumber} =~ s/\D//gr;
+
+  my @address = split "\n", $self->{address};
+  $self->{qr_creditor_address} = $address[0];
+  $address[-1] =~ /((?<country>..)-)?(?<city>.*)/;
+  $self->{qr_creditor_country} = $+{country} || 'CH';
+  $self->{qr_creditor_city}    = $+{city};
+  $self->format_string(qw|qr_creditor_address qr_creditor_city|);
+
+  $self->{qr_debtor_country} = $form->{country} || $self->{qr_creditor_country};
+
+  $self->{qr_invdate} = $self->datetonum($myconfig, $self->{transdate}) =~ s/^..//r;
+
+  my @date;
+  for my $i (1 .. $self->{rowcount}) {
+    push @date, $self->datetonum($myconfig, $self->{"deliverydate_$i"}) =~ s/^..//r
+      if $self->{"deliverydate_$i"};
+  }
+  if (@date) {
+    require List::Util;
+    my $min = List::Util::min(@date);
+    my $max = List::Util::max(@date);
+    $self->{qr_vatdate} = $min == $max ? $min : "$min$max";
+  } else {
+    $self->{qr_vatdate} = $self->{qr_invdate};
+  }
+
+  $self->{qr_amount} = qq|$self->{integer_out_amount}.$self->{out_decimal}|;
+
+  my @vat;
+  for my $i (0 .. $#{$self->{tax}}) {
+    if (my $taxbase = $self->parse_amount($myconfig, $self->{taxbase}[$i])) {
+      push @vat, qq|$self->{taxrate}[$i]:$taxbase|;
+    }
+  }
+  $self->{qr_vatdetails} = join ';', @vat;
+}
+
+
 sub cleanup {
   my $self = shift;
 
@@ -5540,7 +5582,7 @@ L<SL::Form> implements the following methods:
 
 =head2 dump_form
 
-  $form->dump_form(@values);
+  $form->dump_form(@fields);
 
 =head2 error
 
@@ -5693,6 +5735,10 @@ L<SL::Form> implements the following methods:
 =head2 process_tex
 
   $form->process_tex($out);
+
+=head2 qr_variables
+
+  $form->qr_variables($myconfig);
 
 =head2 quote
 

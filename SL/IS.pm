@@ -640,6 +640,9 @@ sub invoice_details {
     $dbh->do($query) || $form->dberror($query);
   }
 
+  # variables for swiss qr bill
+  $form->qr_variables($myconfig);
+
   $dbh->disconnect;
 
 }

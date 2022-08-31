@@ -2,6 +2,7 @@ Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
   - e-mail subject and message accept template variables
+  - special variables for Swiss QR Bill added
 
 3.2.11.30 2022-07-10
   - docker-compose file additionally starts pgAdmin

@@ -405,6 +405,9 @@ sub print_transaction {
 
   push @a, qw(company address tel fax businessnumber companyemail companywebsite text_amount text_decimal text_out_decimal text_out_amount);
 
+  # variables for swiss qr bill
+  $form->qr_variables(\%myconfig);
+
   $form->format_string(@a);
 
   $form->{invdate} = $form->{transdate};
