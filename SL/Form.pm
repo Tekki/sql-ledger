@@ -910,6 +910,9 @@ sub parse_template {
       $mail->{from} = qq|"$myconfig->{name}" <$myconfig->{email}>|;
       $mail->{fileid} = "${fileid}.";
 
+      $mail->{subject} =~ s/<%(.*?)%>/$self->{$1}/g;
+      $mail->{message} =~ s/<%(.*?)%>/$self->{$1}/g;
+
       if ($myconfig->{emailcopy} && $mail->{bcc} !~ /$myconfig->{email}/) {
         $mail->{bcc} .= ', ' if $mail->{bcc};
         $mail->{bcc} .= $myconfig->{email};
