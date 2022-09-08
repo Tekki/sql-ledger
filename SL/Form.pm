@@ -1933,19 +1933,34 @@ sub format_dcn {
 
 sub qr_variables {
   my ($self, $myconfig) = @_;
+  require Encode;
 
-  $self->{qr_businessnumber} = $self->{businessnumber} =~ s/\D//gr;
-
+  $self->{qr_company_name} = $self->{company};
   my @address = split "\n", $self->{address};
-  $self->{qr_creditor_address} = $address[0];
+  $self->{qr_company_address} = $address[0];
   $address[-1] =~ /((?<country>..)-)?(?<city>.*)/;
-  $self->{qr_creditor_country} = $+{country} || 'CH';
-  $self->{qr_creditor_city}    = $+{city};
-  $self->format_string(qw|qr_creditor_address qr_creditor_city|);
+  my $country = $+{country} || 'CH';
+  $self->{qr_company_city} = "$country-$+{city}";
 
-  $self->{qr_debtor_country} = $form->{country} || $self->{qr_creditor_country};
+  $self->{qr_customer_name}
+    = $self->{typeofcontact} eq 'company' ? $self->{name} : "$self->{firstname} $self->{lastname}";
+  $self->{qr_customer_address} = $self->{address1};
+  $self->{qr_customer_city}    = ($form->{country} || $country) . "-$self->{zipcode} $self->{city}";
 
-  $self->{qr_invdate} = $self->datetonum($myconfig, $self->{transdate}) =~ s/^..//r;
+  my (@fields, @sf);
+  for (qw|name address city|) {
+    push @fields, "company_$_", "customer_$_";
+  }
+  for my $field (@fields) {
+    $self->{"qr2e_$field"} = Encode::encode('UTF-8', $self->{"qr_$field"});
+
+    push @sf, "qr_$field", "qr2e_$field";
+  }
+  $self->format_string(@sf);
+
+  my %alt;
+  $alt{invdate}        = $self->datetonum($myconfig, $self->{transdate}) =~ s/^..//r;
+  $alt{businessnumber} = $self->{businessnumber}                         =~ s/\D//gr;
 
   my @date;
   for my $i (1 .. $self->{rowcount}) {
@@ -1956,12 +1971,10 @@ sub qr_variables {
     require List::Util;
     my $min = List::Util::min(@date);
     my $max = List::Util::max(@date);
-    $self->{qr_vatdate} = $min == $max ? $min : "$min$max";
+    $alt{vatdate} = $min == $max ? $min : "$min$max";
   } else {
-    $self->{qr_vatdate} = $self->{qr_invdate};
+    $alt{vatdate} = $alt{invdate};
   }
-
-  $self->{qr_amount} = qq|$self->{integer_out_amount}.$self->{out_decimal}|;
 
   my @vat;
   for my $i (0 .. $#{$self->{tax}}) {
@@ -1969,7 +1982,13 @@ sub qr_variables {
       push @vat, qq|$self->{taxrate}[$i]:$taxbase|;
     }
   }
-  $self->{qr_vatdetails} = join ';', @vat;
+  $alt{vatdetails} = join ';', @vat;
+
+  $self->{qr_alt_proc} = qq|//S1/10/$self->{invnumber}/11/$alt{invdate}/30/$alt{businessnumber}|;
+  if ($alt{vatdetails}) {
+    $self->{qr_alt_proc} .= qq|/31/$alt{vatdate}/32/$alt{vatdetails}|;
+  }
+  $self->{qr_alt_proc} .= qq|/40/0:$self->{terms}|;
 }
 
 
