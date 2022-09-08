@@ -1939,16 +1939,17 @@ sub qr_variables {
   my @address = split "\n", $self->{address};
   $self->{qr_company_address} = $address[0];
   $address[-1] =~ /((?<country>..)-)?(?<city>.*)/;
-  my $country = $+{country} || 'CH';
-  $self->{qr_company_city} = "$country-$+{city}";
+  $self->{qr_company_country} = $+{country} || 'CH';
+  $self->{qr_company_city} = $+{city};
 
   $self->{qr_customer_name}
     = $self->{typeofcontact} eq 'company' ? $self->{name} : "$self->{firstname} $self->{lastname}";
   $self->{qr_customer_address} = $self->{address1};
-  $self->{qr_customer_city}    = ($form->{country} || $country) . "-$self->{zipcode} $self->{city}";
+  $self->{qr_customer_country} = $self->{country} || $self->{qr_company_country};
+  $self->{qr_customer_city}    = "$self->{zipcode} $self->{city}";
 
   my (@fields, @sf);
-  for (qw|name address city|) {
+  for (qw|name address city country|) {
     push @fields, "company_$_", "customer_$_";
   }
   for my $field (@fields) {
