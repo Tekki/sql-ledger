@@ -1,6 +1,6 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
-Not Released
+3.2.11.33 2022-09-16
   - access token for API calls
   - disappearing printer options corrected  
 
