@@ -2697,7 +2697,7 @@ sub get_defaults {
   my %pr;
 
   for (sort keys %defaults) {
-    ($label, $command) = split /=/, $defaults{$_};
+    ($label, $command) = split /=/, $defaults{$_}, 2;
     if (! $pr{$label}) {
       push @{ $form->{all_printer} }, { printer => $label };
       $pr{$label} = 1;
@@ -2875,7 +2875,7 @@ sub workstations {
       ($fld, $ws, $tp) = split /_/, $_;
 
       if ($tp) {
-        ($fld, $command) = split /=/, $defaults{$_};
+        ($fld, $command) = split /=/, $defaults{$_}, 2;
 
         $ws{$ws}{workstation}{$tp} = $ws;
 
@@ -2884,7 +2884,7 @@ sub workstations {
 
       } else {
         # main
-        ($fld, $command) = split /=/, $defaults{$_};
+        ($fld, $command) = split /=/, $defaults{$_}, 2;
 
         $form->{$_} = $fld;
         ($fld, $tp) = split /_/, $_;

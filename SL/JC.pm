@@ -612,7 +612,7 @@ sub company_defaults {
   my $command;
   for (keys %defaults) {
     if ($_ =~ /printer_/) {
-      ($label, $command) = split /=/, $defaults{$_};
+      ($label, $command) = split /=/, $defaults{$_}, 2;
       $form->{"${label}_printer"} = $command;
     }
   }

@@ -37,7 +37,7 @@ sub get_employee {
   my $command;
   for (keys %defaults) {
     if ($_ =~ /printer_/) {
-      ($label, $command) = split /=/, $defaults{$_};
+      ($label, $command) = split /=/, $defaults{$_}, 2;
       $form->{"${label}_printer"} = $command;
     }
   }
@@ -1293,7 +1293,7 @@ sub payslip_details {
   # Tekki: wlprinter
   for (keys %defaults) {
     if ($_ =~ /printer_/) {
-      ($label, $command) = split /=/, $defaults{$_};
+      ($label, $command) = split /=/, $defaults{$_}, 2;
       $command = "wlprinter/fileprinter.pl $form->{login}" if lc $command eq 'wlprinter';
       $form->{"${label}_printer"} = $command;
     }

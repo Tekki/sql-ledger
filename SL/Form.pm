@@ -3552,7 +3552,7 @@ sub get_peripherals {
   if (%defaults) {
     for (sort keys %defaults) {
       if ($_ =~ /printer_/) {
-        ($label, $command) = split /=/, $defaults{$_};
+        ($label, $command) = split /=/, $defaults{$_}, 2;
         unless ($printer{$label}) {
           push @{ $self->{all_printer} }, { printer => $label, command => $command };
         }
@@ -3569,7 +3569,7 @@ sub get_peripherals {
 
     for (sort keys %defaults) {
       if ($_ =~ /printer_\d+$/) {
-        ($label, $command) = split /=/, $defaults{$_};
+        ($label, $command) = split /=/, $defaults{$_}, 2;
         unless ($printer{$label}) {
           push @{ $self->{all_printer} }, { printer => $label, command => $command };
         }
