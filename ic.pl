@@ -166,6 +166,12 @@ sub check_password {
           $form->{sessioncookie} = $user->{sessioncookie};
         }
       }
+    } elsif ($ENV{HTTP_SL_TOKEN} && $myconfig{sessionkey}) {
+      require Digest::SHA;
+
+      if ($ENV{HTTP_SL_TOKEN} ne Digest::SHA::sha256_base64($myconfig{sessionkey})) {
+        $form->error($locale->text('Access Denied!'));
+      }
     } else {
 
       if ($ENV{HTTP_USER_AGENT}) {

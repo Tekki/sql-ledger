@@ -457,6 +457,19 @@ sub error {
 }
 
 
+sub json_error {
+  my ($self, $msg, $code) = @_;
+  require JSON::PP;
+
+  print qq|Content-Type: application/json; charset=$form->{charset}
+
+| . JSON::PP->new->encode({error => $code || 1, message => $msg});
+
+  exit;
+
+}
+
+
 sub info {
   my ($self, $msg) = @_;
 

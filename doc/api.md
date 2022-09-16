@@ -9,13 +9,11 @@ second is to simulate a browser and imitate step by step the actions of a user.
 ## Prerequisites
 
 In both approaches scripts that run in the SQL-Ledger infrastructure are
-called. The client that makes these calls must be able to store SQL-Ledger's
-authentication cookie.
+called.
 
-The following code is written in Perl, but the same method can be used in
-other languages, for example in Python with the module BeautifulSoap. It is
-even possible to make simple API calls in the browser or in the with `curl` or
-`wget`.
+The following code is written in Perl, but the same method can be used in other
+languages, for example in Python or in PowerShell. It is even possible to make
+simple API calls in the browser, with `curl` or `wget`.
 
 To run the examples, two, respectively three additional Perl modules have to be
 installed with
@@ -28,16 +26,24 @@ cpanm Mojolicious \
 
 ## Authentication
 
-### Authenticated client (recommended)
+### Access token (recommended)
 
-To create an authenticated client, the first call has to be made to `login.pl`
-with `username` and `password` as parameters.
+To get an access token, the first call has to be made to `api.pl` with
+`username` and `password` as parameters.
 
 | parameter | value         |
 |-----------|---------------|
-| action    | 'login'       |
+| action    | 'get\_token'  |
 | login     | your username |
 | password  | your password |
+
+```json
+{ "token": ... }
+```
+
+Returns a hash that contains the access token. The token has to be used as
+`SL-Token` in the header of the requests. It is valid until the session
+expires, this means until the same user logs in again.
 
 ```perl
 #! /usr/bin/env perl
@@ -60,15 +66,27 @@ my %sl_params = (login => $sl_username, path => 'bin/mozilla',);
 my %search_params;
 
 my $res = $ua->post(
-    "$sl_url/login.pl",
-    form => {action => 'login', password => $sl_password, %sl_params}
+    "$sl_url/api.pl",
+    form => {action => 'get_token', password => $sl_password, %sl_params}
   )->result;
+
+my $json      = $res->json;
+my $token     = $json->{token};
+my %sl_header = ('SL-Token' => $token);
+say_info "Access token: $token";
 ```
 
-As SQL-Ledger always returns 200 as status code you probably want to check
+SQL-Ledger always returns 200 as status code, so you probably want to check
 the response for login errors in the body of the response.
 
-For the following examples `$ua` created with this code is used as client.
+```perl
+if ($json->{error}) {
+  die color_error $json->{message};
+}
+```
+
+In the following examples `%sl_header` with the token is included as
+header in every request.
 
 ### Login with every request (alternative)
 
@@ -105,6 +123,7 @@ Returns a hash with an array of all accounts.
 ```perl
 $res = $ua->post(
     "$sl_url/api.pl",
+    \%sl_header,
     form => {action => 'list_accounts', %sl_params}
   )->result;
 
@@ -140,6 +159,7 @@ my %search_params = (name => 'hans');  # search for name like 'hans'
 
 $res = $ua->post(
     "$sl_url/api.pl",
+    \%sl_header,
     form => {action => 'search_customer', %search_params, %sl_params}
   )->result;
 
@@ -174,9 +194,11 @@ provided or if it does not exists the hash just contains some default values.
 ```perl
 %search_params = (id => $customer_id);  # with a valid ID
 
-$res
-  = $ua->post("$sl_url/api.pl", form => {action => 'customer_details', %search_params, %sl_params})
-  ->result;
+$res = $ua->post(
+    "$sl_url/api.pl",
+    \%sl_header,
+    form => {action => 'customer_details', %search_params, %sl_params}
+  )->result;
 
 say_info dumper $res->json;
 
@@ -211,6 +233,7 @@ orders are found the array is `null`.
 
 $res = $ua->post(
     "$sl_url/api.pl",
+    \%sl_header,
     form => {action => 'search_order', %search_params, %sl_params}
   )->result;
 
@@ -253,7 +276,8 @@ If none are found the array is `null`.
 
 $res = $ua->post(
     "$sl_url/api.pl",
-      form => {action => 'search_transaction', %search_params, %sl_params}
+    \%sl_header,
+    form => {action => 'search_transaction', %search_params, %sl_params}
   )->result;
 
 if (my $transactions = $res->json->{transactions}) {
@@ -296,6 +320,7 @@ hash contains no ID and just some default values.
 
 $res = $ua->post(
     "$sl_url/api.pl",
+    \%sl_header,
     form => {action => 'invoice_details', %search_params, %sl_params}
   )->result;
 
@@ -340,6 +365,7 @@ my %payment_params = (
 
 $res = $ua->post(
     "$sl_url/api.pl",
+    \%sl_header,
     form => {action => 'add_payment', %payment_params, %sl_params}
   )->result;
 
@@ -377,6 +403,7 @@ my %reference_params = (
 
 $res = $ua->post(
     "$sl_url/api.pl",
+    \%sl_header,
     form => {action => 'add_reference', %reference_params, %sl_params}
   )->result;
 
@@ -428,7 +455,12 @@ In the script we simulate this with a call to `is.pl`.
 ```perl
 # open page AR--Sales Invoice
 
-$res = $ua->post("$sl_url/is.pl", form => {action => 'add', type => 'invoice', %sl_params})->result;
+$res = $ua->post(
+    "$sl_url/is.pl",
+    \%sl_header,
+    form => {action => 'add',
+    type => 'invoice', %sl_params}
+  )->result;
 ```
 
 Next he would choose the customer and add the description.
@@ -441,7 +473,7 @@ $form{customernumber} = $customernumber;
 $form{description}    = $description;
 
 $form{action} = 'update';
-$res = $ua->post("$sl_url/is.pl", form => \%form)->result;
+$res = $ua->post("$sl_url/is.pl", \%sl_header, form => \%form)->result;
 ```
 
 Then he would add the part numbers and quantities to the rows and press the
@@ -460,7 +492,7 @@ for my $row (@rows) {
   }
 
   $form{action} = 'update';
-  $res = $ua->post("$sl_url/is.pl", form => \%form)->result;
+  $res = $ua->post("$sl_url/is.pl", \%sl_header, form => \%form)->result;
 }
 ```
 
@@ -471,7 +503,7 @@ At the end, the user would press the `Post` button.
 
 %form         = HTML::Form->parse(decode($charset, $res->body), %parse_params)->form;
 $form{action} = 'post';
-$res          = $ua->post("$sl_url/is.pl", form => \%form)->result;
+$res          = $ua->post("$sl_url/is.pl", \%sl_header, form => \%form)->result;
 
 say_ok 'Invoice posted.';
 ```

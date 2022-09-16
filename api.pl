@@ -56,19 +56,14 @@ $form->{login} =~ s/(\.\.|\/|\\|\x00)//g;
 
 # check for user config file, could be missing or ???
 eval { require("$userspath/$form->{login}.conf"); };
+if ($@) {
+  $form->json_error('Access Denied!');
+}
+
 $myconfig{dateformat}   = 'yyyy-mm-dd';
 $myconfig{dboptions}    = '';
 $myconfig{numberformat} = '1000.00';
-
-if ($@) {
-  $locale = new Locale "$language", "$script";
-
-  $form->{callback} = "";
-  $msg1 = $locale->text('You are logged out!');
-  $msg2 = $locale->text('Login');
-  $form->redirect("$msg1 <p><a href=login.pl target=_top>$msg2</a>");
-  exit;
-}
+$myconfig{countrycode}  = '';
 
 # locale messages
 $locale = new Locale "$myconfig{countrycode}", "$script";
@@ -79,14 +74,14 @@ $locale = new Locale "$myconfig{countrycode}", "$script";
 $SIG{__WARN__} = sub { eval { $form->info($_[0]); } };
 
 # send errors to browser
-$SIG{__DIE__} = sub { eval { $form->error($_[0]); } };
+$SIG{__DIE__} = sub { eval { $form->json_error($_[0]); } };
 
 $myconfig{dbpasswd} = unpack 'u', $myconfig{dbpasswd};
 map { $form->{$_} = $myconfig{$_} } qw(stylesheet timeout) unless ($form->{type} eq 'preferences');
 
 $form->{path} =~ s/\.\.//g;
 if ($form->{path} !~ /^bin\//) {
-  $form->error($locale->text('Invalid path!')."\n");
+  $form->json_error($locale->text('Invalid path!')."\n");
 }
 
 # global lock out
@@ -95,9 +90,9 @@ if (-f "$userspath/nologin.LCK") {
     open(FH, "$userspath/nologin.LCK");
     $message = <FH>;
     close(FH);
-    $form->error($message);
+    $form->json_error($message);
   }
-  $form->error($locale->text('System currently down for maintenance!'));
+  $form->json_error($locale->text('System currently down for maintenance!'));
 }
 
 # dataset lock out
@@ -106,9 +101,9 @@ if (-f "$userspath/$myconfig{dbname}.LCK" && $form->{login} ne "admin\@$myconfig
     open(FH, "$userspath/$myconfig{dbname}.LCK");
     $message = <FH>;
     close(FH);
-    $form->error($message);
+    $form->json_error($message);
   }
-  $form->error($locale->text('Dataset currently down for maintenance!'));
+  $form->json_error($locale->text('Dataset currently down for maintenance!'));
 }
 
 # pull in the main code
@@ -137,7 +132,7 @@ if ($form->{action}) {
     &{ $locale->findsub($form->{action}) };
   }
 } else {
-  $form->error($locale->text('action= not defined!'));
+  $form->json_error($locale->text('action= not defined!'));
 }
 
 1;
@@ -148,16 +143,9 @@ sub check_password {
 
   if ($myconfig{password}) {
 
-    require "$form->{path}/pw.pl";
-
     if ($form->{password}) {
       if ((crypt $form->{password}, substr($form->{login}, 0, 2)) ne $myconfig{password}) {
-        if ($ENV{HTTP_USER_AGENT}) {
-          &getpassword;
-        } else {
-          $form->error($locale->text('Access Denied!'));
-        }
-        exit;
+        $form->json_error($locale->text('Access Denied!'));
       } else {
         # password checked out, create session
         if ($ENV{HTTP_USER_AGENT}) {
@@ -167,7 +155,14 @@ sub check_password {
           $user->{password} = $form->{password};
           $user->create_config("$userspath/$form->{login}.conf");
           $form->{sessioncookie} = $user->{sessioncookie};
+          $myconfig{sessionkey} = $user->{sessionkey};
         }
+      }
+    } elsif ($ENV{HTTP_SL_TOKEN} && $myconfig{sessionkey}) {
+      require Digest::SHA;
+
+      if ($ENV{HTTP_SL_TOKEN} ne Digest::SHA::sha256_base64($myconfig{sessionkey})) {
+        $form->json_error($locale->text('Access Denied!'));
       }
     } else {
 
@@ -209,15 +204,13 @@ sub check_password {
 
           # validate cookie
           if (($login ne $flogin) || ($myconfig{password} ne crypt $password, substr($form->{login}, 0, 2))) {
-            &getpassword(1);
-            exit;
+            $form->json_error($locale->text('Access Denied!'));
           }
 
         } else {
 
           if ($form->{action} ne 'display') {
-            &getpassword(1);
-            exit;
+            $form->json_error($locale->text('Access Denied!'));
           }
 
         }

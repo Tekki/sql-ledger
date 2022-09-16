@@ -24,7 +24,6 @@ sub add_payment {
   my $invoice_form = Form->new;
   $invoice_form->{$_} = $form->{$_} for qw|id dcn invnumber waybill|;
   API->find_invoice(\%myconfig, $invoice_form);
-  $invoice_form->dump_form('id');
 
   if ($invoice_form->{id}) {
 
@@ -85,6 +84,16 @@ sub customer_details {
   print qq|Content-Type: application/json; charset=$form->{charset}
 
 | . JSON::PP->new->encode(\%new_form);
+}
+
+sub get_token {
+  require Digest::SHA;
+
+  my $token = Digest::SHA::sha256_base64($myconfig{sessionkey});
+
+  print qq|Content-Type: application/json; charset=$form->{charset}
+
+| . JSON::PP->new->encode({token => $token});
 }
 
 sub invoice_details {
