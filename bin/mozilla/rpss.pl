@@ -14,6 +14,61 @@
 $form->load_module(['Excel::Writer::XLSX', 'SL::Spreadsheet'],
   $locale->text('Module not installed:'));
 
+sub tax_spreadsheet {
+  my ($report_options, $column_index, $header) = @_;
+
+  # structure
+  my %spreadsheet_info = (
+    columns => {
+      accno       => 'text',
+      address     => 'text',
+      country     => 'text',
+      description => 'text',
+      id          => 'number',
+      invnumber   => 'text',
+      name        => 'text',
+      transdate   => 'date',
+    },
+  );
+
+  for my $curr ($form->{_used_currencies}->@*) {
+    $spreadsheet_info{columns}{"${curr}_curr"} = 'text';
+  }
+
+  my $ss = SL::Spreadsheet->new($form, $userspath);
+  $ss->structure(\%spreadsheet_info)->column_index($column_index)->totalize([':decimal']);
+  if ($form->{l_subtotal}) {
+    $ss->group_by(['accno', $form->{sort}]);
+  } else {
+    $ss->group_by(['accno']);
+  }
+  $ss->group_label(['accno']);
+
+  $ss->change_format(':all', color => undef, border_color => undef);
+  $ss->change_format('total', bottom => 1);
+
+  $ss->title($form->{title})->crlf;
+
+  $ss->crlf->text($form->{company})->lf;
+  $ss->text($form->{method} eq 'cash' ? $locale->text('Cash') : $locale->text('Accrual'))->lf;
+  $ss->date($form->{fromdate})->lf->date($form->{todate})->lf;
+
+  $ss->crlf->header_row($header, parse => 1)->freeze_panes;
+
+  for my $ref ($form->{TR}->@*) {
+    if ($ref->{accno} ne $ss->{last}{accno}) {
+      $ss->text(qq|$ref->{accno}--$form->{"$ref->{accno}_description"}|, 'total')->crlf;
+    }
+
+    $ss->table_row($ref);
+  }
+  $ss->total_row;
+
+  $ss->finish;
+
+  $form->download_tmpfile(\%myconfig, "$form->{title}-$form->{company}.xlsx");
+}
+
 sub yearend_spreadsheet {
   my ($report_code, $periods) = @_;
 
@@ -25,7 +80,7 @@ sub yearend_spreadsheet {
   # structure
   my %spreadsheet_info = (
     columns => {
-      accno => 'text',
+      accno       => 'text',
       description => 'text',
     }
   );
@@ -47,7 +102,7 @@ sub yearend_spreadsheet {
   $spreadsheet_info{header}{$_} = 'date' for @amount_columns;
 
   $ss->structure(\%spreadsheet_info)->column_index(\@column_index)->maxwidth(50);
-  
+
   $ss->text($form->{company})->crlf;
   $ss->text($_)->crlf for split /\n/, $form->{address};
   $ss->crlf;
@@ -58,8 +113,8 @@ sub yearend_spreadsheet {
     @categories = qw|A L Q|;
 
     $ss->title($form->{title})->crlf(2);
-    $ss->tab($tab)->text($locale->text('as at'), 'heading4')
-      ->lf->date($form->{todate}, 'heading4')->crlf(2);
+    $ss->tab($tab)->text($locale->text('as at'), 'heading4')->lf->date($form->{todate}, 'heading4')
+      ->crlf(2);
   } else {
     $form->{title} = $locale->text('Income Statement');
     @categories = qw|I E|;
@@ -152,14 +207,14 @@ sub _ss_section {
         = $total->{A}{$column} - $total->{L}{$column} - $total->{Q}{$column};
       $column_data{$column} = $currentearnings;
 
-      $subtotal{$column} += $currentearnings if $form->{l_subtotal} && $form->{l_heading};
+      $subtotal{$column}   += $currentearnings if $form->{l_subtotal} && $form->{l_heading};
       $total->{Q}{$column} += $currentearnings;
     }
 
     $ss->crlf->data_row(\%column_data, format => 'subtotal')->crlf;
   }
 
-  &_ss_subtotal($ss, \%subtotal); 
+  &_ss_subtotal($ss, \%subtotal);
 
   %column_data
     = (description => $locale->text('Total') . qq| $accounts{$category}|, $total->{$category}->%*);
@@ -169,7 +224,7 @@ sub _ss_section {
 sub _ss_subtotal {
   my ($ss, $subtotal) = @_;
 
-  if ($form->{l_subtotal} && $subtotal->{accno}){
+  if ($form->{l_subtotal} && $subtotal->{accno}) {
     $ss->data_row($subtotal, format => 'subsubtotal')->crlf;
     $subtotal = {};
   }
@@ -205,6 +260,6 @@ L<bin::mozilla::ss> implements the following functions:
 
 =head2 yearend_spreadsheet
 
-  &yearend_spreadsheet($spreadsheet_info, $report_options, $column_index, $header, $data);
+  &yearend_spreadsheet($report_code, $periods);
 
 =cut

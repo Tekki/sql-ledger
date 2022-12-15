@@ -52,12 +52,14 @@ sub transactions_spreadsheet {
       waybill        => 'text',
       zipcode        => 'text',
     },
-    group_by => $form->{sort},
   );
 
   my $ss = SL::Spreadsheet->new($form, $userspath);
   $ss->structure(\%spreadsheet_info)->column_index([grep !/delete|runningnumber/, @$column_index])
     ->totalize([':decimal']);
+  if ($form->{l_subtotal}) {
+    $ss->group_by([$form->{sort}])->group_label([$form->{sort}]);
+  }
 
   $ss->title($form->{title})->crlf->report_options($report_options);
 
@@ -97,10 +99,10 @@ sub transactions_spreadsheet {
     delete $ref->{paid} if $ref->{paid} == 0;
 
     # write to spreadsheet
-    $ss->data_row($ref, subtotal => 1);
+    $ss->table_row($ref);
   }
 
-  $ss->subtotal_row->total_row;
+  $ss->total_row;
   $ss->finish;
 
   $form->download_tmpfile(\%myconfig, "$form->{title}.xlsx");

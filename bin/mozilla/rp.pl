@@ -3827,6 +3827,12 @@ sub generate_tax_report {
     $column_data{"${curr}_$_"}   = $column_data{$_} for qw|netamount tax total|;
   }
   
+  if ($form->{action} eq 'spreadsheet') {
+    require "$form->{path}/rpss.pl";
+    &tax_spreadsheet($option, \@column_index, \%column_data);
+    exit;
+  }
+
   $form->header;
 
   print qq|
@@ -4023,7 +4029,10 @@ sub generate_tax_report {
   $form->hide_form(map { "gifi_$_" } split / /, $form->{gifi_taxaccounts});
   $form->hide_form(qw(report reportcode reportlogin));
 
-  $button{'Save Report'} = { ndx => 8, key => 'S', value => $locale->text('Save Report') };
+  %button = (
+    'Save Report' => {ndx => 8, key => 'S', value => $locale->text('Save Report')},
+    'Spreadsheet' => {ndx => 9, key => 'X', value => $locale->text('Spreadsheet')},
+  );
 
   if (!$form->{admin}) {
     delete $button{'Save Report'} unless $form->{savereport};

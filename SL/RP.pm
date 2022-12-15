@@ -1738,6 +1738,7 @@ sub tax_report {
   my $dbh = $form->dbconnect($myconfig);
 
   $form->{"old_$_"} = $form->{$_} for qw|fromdate todate|;
+  delete $myconfig->{dateformat} if $form->{action} eq 'spreadsheet';
 
   my $department_id;
   (undef, $department_id) = split /--/, $form->{department};
@@ -2179,7 +2180,7 @@ sub tax_report {
 
   $dbh->disconnect;
 
-  $form->{$_} = delete $form->{"old_$_"} for qw|fromdate todate|;
+  # $form->{$_} = delete $form->{"old_$_"} for qw|fromdate todate|;
 
 }
 

@@ -27,9 +27,14 @@ sub new {
     col          => 0,
     column_index => [],
     date_length  => 14,
+    group_count  => {},
+    group_by     => [],
+    group_label  => {},
+    group_sum    => {},
     height       => {
-      title        => 23.25,
+      title => 23.25,
     },
+    last       => {},
     maxwidth   => 40,
     row        => 0,
     structure  => {},
@@ -164,31 +169,6 @@ sub data_row {
   my $scale        = $params{scale}        || 1;
   my $structure    = $params{structure}    || 'columns';
 
-  if (my $fn = $self->{structure}{"init_$rowtype"}) {
-    &$fn($row);
-  }
-
-  if ( $params{subtotal}
-    && $self->{structure}{group_by}
-    && $self->{lastid}
-    && $self->{lastid} ne $row->{$self->{structure}{group_by}})
-  {
-    $self->subtotal_row;
-  }
-
-  if ($self->{total} && $rowtype eq 'data') {
-
-    for (keys $self->{total}->%*) {
-      if (looks_like_number($row->{$_})) {
-        $self->{total}{$_}    += $row->{$_};
-        $self->{subtotal}{$_} += $row->{$_};
-      }
-    }
-
-    $self->{lastid} = $row->{$self->{structure}{group_by}} if $self->{structure}{group_by};
-    $self->{subtotalcount}++;
-  }
-
   $self->{col} = 0;
   for my $column ($self->{column_index}->@*) {
     my $type = $self->{structure}{$structure}{$column} || $default_type;
@@ -205,12 +185,20 @@ sub data_row {
 
     } elsif ($type eq 'date') {
 
-      $self->date($value, $format)->set_width($self->{date_length} * $scale);
+      if ($value =~ /\d{4}-?\d{2}-?\d{2}/) {
+        $self->date($value, $format)->set_width($self->{date_length} * $scale);
+      } else {
+        $self->text($value, $format)->set_width(length($value) * $scale + 2);
+      }
 
     } elsif ($type eq 'link') {
 
-      $self->link(qq|$self->{url}/$row->{"${column}_link"}$self->{url_params}|, $value, $format)
-        ->set_width(length($value) * $scale + 2);
+      if ($row->{"${column}_link"}) {
+        $self->link(qq|$self->{url}/$row->{"${column}_link"}$self->{url_params}|, $value, $format)
+          ->set_width(length($value) * $scale + 2);
+      } else {
+        $self->text($value, $format)->set_width(length($value) * $scale + 2);
+      }
 
     } elsif ($type eq 'bool') {
 
@@ -276,6 +264,31 @@ sub freeze_panes {
   $self->{worksheet}->freeze_panes($row // $self->{row}, $col // $self->{col});
 
   return $self;
+}
+
+sub group_by {
+  my ($self, $newvalues) = @_;
+
+  if (defined $newvalues) {
+    $self->{group_by} = $newvalues;
+
+    return $self;
+  } else {
+    return $self->{group_by};
+  }
+}
+
+sub group_label {
+  my ($self, $newvalues) = @_;
+
+  if (defined $newvalues) {
+    $self->{group_label} = {};
+    $self->{group_label}{$_} = 1 for $newvalues->@*;
+
+    return $self;
+  } else {
+    return [sort keys $self->{group_label}->%*];
+  }
 }
 
 sub header_row {
@@ -377,17 +390,16 @@ sub structure {
 }
 
 sub subtotal_row {
-  my ($self, %params) = @_;
+  my ($self, $group) = @_;
 
-  my $group = $self->{structure}{group_by};
-  if ( $self->{_form}{l_subtotal}
-    && $self->{subtotalcount})
-  {
-    $params{format}  ||= 'subtotal';
-    $params{rowtype} ||= 'total';
+  if ($self->{group_count}{$group}) {
+    my $sum = delete $self->{group_sum}{$group};
+    if ($self->{group_label}{$group}) {
+      $sum->{$self->{column_index}->[0]} = $self->{last}{$group};
+    }
 
-    $self->data_row($self->{subtotal}, %params);
-    delete $self->{subtotal};
+    $self->data_row($sum, format => 'subtotal');
+    $self->{group_count}{$group} = 0;
   }
 
   return $self;
@@ -399,6 +411,36 @@ sub tab {
   $self->{col} += $times // 1;
 
   return $self;
+}
+
+sub table_row {
+  my ($self, $row, %params) = @_;
+
+  for my $group (reverse $self->{group_by}->@*) {
+    my $lastid = $self->{last}{$group};
+    if ($lastid && $lastid ne $row->{$group}) {
+      $self->subtotal_row($group);
+    }
+  }
+
+  if ($self->{group_sum}{total}) {
+
+    for my $field (keys $self->{group_sum}{total}->%*) {
+      if (looks_like_number($row->{$field})) {
+        for my $group ('total', $self->{group_by}->@*) {
+          $self->{group_sum}{$group}{$field} += $row->{$field};
+        }
+      }
+    }
+
+    for my $group ($self->{group_by}->@*) {
+      $self->{last}{$group} = $row->{$group};
+      $self->{group_count}{$group}++;
+    }
+
+  }
+
+  return $self->data_row($row, %params);
 }
 
 sub text {
@@ -426,11 +468,15 @@ sub title {
 sub total_row {
   my ($self, %params) = @_;
 
+  for my $group (reverse $self->{group_by}->@*) {
+    $self->subtotal_row($group);
+  }
+
   $params{format}  ||= 'total';
   $params{rowtype} ||= 'total';
   $params{scale}   ||= 1.2;
 
-  $self->data_row($self->{total}, %params);
+  $self->data_row($self->{group_sum}{total}, %params);
 
   return $self;
 }
@@ -448,12 +494,12 @@ sub totalize {
           if (!$self->{structure}{columns}{$column}
             || $self->{structure}{columns}{$column} eq 'decimal')
           {
-            $self->{total}{$column} = 0;
+            $self->{group_sum}{total}{$column} = 0;
           }
         }
 
       } else {
-        $self->{total}{$val} = 0;
+        $self->{group_sum}{total}{$val} = 0;
       }
     }
 
@@ -497,6 +543,8 @@ SL::Spreadsheet - Spreadsheet Module
     $ss->structure(\%spreadsheet_info);
     $ss->column_index(\@index);
     $ss->totalize(\@columns);
+    $ss->group_by(\@groups);
+    $ss->group_label(\@groups);
     $ss->change_format($name, %new_properties);
 
     $ss->title($title, $format);
@@ -515,10 +563,13 @@ SL::Spreadsheet - Spreadsheet Module
     $ss->number($number, $format);
     $ss->text($text, $format);
 
+    $ss->data_row(\%data);
+
     $ss->header_row(\%header);
     $ss->freeze_panes;
-    $ss->data_row(\%data);
-    $ss->subtotal_row;
+    for my $row (@rows) {
+      $ss->table_row($row);
+    }
     $ss->total_row;
 
     $ss->finish;
@@ -527,7 +578,7 @@ SL::Spreadsheet - Spreadsheet Module
 
 =head1 DESCRIPTION
 
-L<SL::Spreadsheet> is the backend to create spreadsheets.
+L<SL::Spreadsheet> provides the backend to create spreadsheets.
 
 =head1 DEPENDENCIES
 
@@ -593,6 +644,16 @@ L<Scalar::Util>
 
   $ss = $ss->freeze_panes;
   $ss = $ss->freeze_panes($row, $col);
+
+=head2 group_by
+
+  $ss     = $ss->group_by(\@groups);
+  $groups = $ss->group_by;
+
+=head2 group_label
+
+  $ss     = $ss->group_label(\@groups);
+  $groups = $ss->group_label;
 
 =head2 header_row
 
