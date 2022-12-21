@@ -211,4 +211,21 @@ h2.error {
   .noprint {   /* items with this class won't print */
     display: none;
   }
+
+  .listtop { font-size: 11px; background-color: white; color: black; }
+  A.listtop:link, A.listtop:active, A.listtop:visited {
+    color: black;
+    text-decoration: none; }
+  .listheading { font-size: 11px; background-color: white; color: black; }
+  A.listheading:link, A.listheading:active, A.listheading:visited {
+    color: black;
+    text-decoration: none; }
+  .listsubtotal { font-size: 11px; background-color: white; color: black; }
+  A.listsubtotal:link, A.listsubtotal:active, A.listsubtotal:visited {
+    color: black;
+    text-decoration: none; }
+  .listtotal { font-size: 11px; background-color: white; color: black; }
+  A.listtotal:link, A.listtotal:active, A.listtotal:visited {
+    color: black;
+    text-decoration: none; }
 }
