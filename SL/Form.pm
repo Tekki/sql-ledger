@@ -1190,7 +1190,7 @@ sub process_template {
       }
 
       if ($ok) {
-        s/^$var//;
+        s/^\Q$var\E//;
         if (/<%else\s*?%>/) {
           s/<%else\s*?%>.*?(<%end\s+?$var%>)/$1/;
         }

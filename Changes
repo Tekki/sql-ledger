@@ -3,6 +3,7 @@ Revision history for SQL-Ledger, starting with version 3.0.0
 Not Released
   - spreadsheet for tax reports
   - improved accesskeys to select items in lists
+  - regular expressions in template if statements
   - don't use white character when printing out a page
 
 3.2.11.33 2022-09-16
