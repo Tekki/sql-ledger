@@ -31,6 +31,7 @@ sub new {
     group_by     => [],
     group_label  => {},
     group_sum    => {},
+    group_title  => {},
     height       => {
       title => 23.25,
     },
@@ -53,6 +54,12 @@ sub new {
   my $localized_decimal = 4;
   my %formats = (
     default  => {font => 'Calibri', size => 11,},
+    group_title => {
+      bold         => 1,
+      border_color => '#4472C4',
+      font         => 'Calibri',
+      size         => 11,
+    },
     heading3 => {
       align        => 'center',
       bold         => 1,
@@ -291,6 +298,18 @@ sub group_label {
   }
 }
 
+sub group_title {
+  my ($self, $newvalues) = @_;
+
+  if (defined $newvalues) {
+    $self->{group_title} = $newvalues;
+
+    return $self;
+  } else {
+    return $self->{group_title};
+  }
+}
+
 sub header_row {
   my ($self, $header, %params) = @_;
 
@@ -417,9 +436,12 @@ sub table_row {
   my ($self, $row, %params) = @_;
 
   for my $group (reverse $self->{group_by}->@*) {
-    my $lastid = $self->{last}{$group};
-    if ($lastid && $lastid ne $row->{$group}) {
-      $self->subtotal_row($group);
+    my $lastid = $self->{last}{$group} || '';
+    if ($lastid ne $row->{$group}) {
+      if ($lastid) {
+        $self->subtotal_row($group);
+      }
+      $self->title_row($group, $row);
     }
   }
 
@@ -450,6 +472,20 @@ sub text {
 
   $self->{worksheet}
     ->write_string($self->{row}, $self->{col}, $text, $self->{format}{"${format}_text"});
+
+  return $self;
+}
+
+sub title_row {
+  my ($self, $group, $row) = @_;
+
+  if (my $title = $self->{group_title}{$group}) {
+    my $title_string = ref $title eq 'CODE' ? $title->($self->{_form}, $row) : $title;
+
+    my %data = ($self->{column_index}[0] => $title_string);
+
+    $self->data_row(\%data, format => 'group_title');
+  }
 
   return $self;
 }
@@ -545,6 +581,7 @@ SL::Spreadsheet - Spreadsheet Module
     $ss->totalize(\@columns);
     $ss->group_by(\@groups);
     $ss->group_label(\@groups);
+    $ss->group_title(\%titles);
     $ss->change_format($name, %new_properties);
 
     $ss->title($title, $format);
@@ -654,6 +691,11 @@ L<Scalar::Util>
 
   $ss     = $ss->group_label(\@groups);
   $groups = $ss->group_label;
+
+=head2 group_title
+
+  $ss     = $ss->group_title(\%titles);
+  $titles = $ss->grou_title;
 
 =head2 header_row
 

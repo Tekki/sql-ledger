@@ -43,6 +43,14 @@ sub tax_spreadsheet {
     $ss->group_by(['accno']);
   }
   $ss->group_label(['accno']);
+  $ss->group_title(
+    {
+      accno => sub {
+        my ($form, $row) = @_;
+        return qq|$row->{accno}--$form->{"$row->{accno}_description"}|;
+      }
+    }
+  );
 
   $ss->change_format(':all', color => undef, border_color => undef);
   $ss->change_format('total', bottom => 1);
@@ -56,10 +64,6 @@ sub tax_spreadsheet {
   $ss->crlf->header_row($header, parse => 1)->freeze_panes;
 
   for my $ref ($form->{TR}->@*) {
-    if ($ref->{accno} ne $ss->{last}{accno}) {
-      $ss->text(qq|$ref->{accno}--$form->{"$ref->{accno}_description"}|, 'total')->crlf;
-    }
-
     $ss->table_row($ref);
   }
   $ss->total_row;
