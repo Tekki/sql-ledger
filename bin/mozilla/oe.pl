@@ -2258,7 +2258,10 @@ sub transactions {
     $column_data{runningnumber} = qq|<td align=right>$i</td>|;
     $id = ($ref->{orderitemsid}) ? "$ref->{id}--$ref->{orderitemsid}" : $ref->{id};
     $column_data{ndx} = qq|<td><input name="ndx_$i" class=checkbox type=checkbox value="$id" checked></td>|;
-    my $accesskey = $i < 10 ? qq| accesskey="$i" title="[$i]"| : '';
+    my $accesskey
+      = $i == @{$form->{OE}} ? qq| accesskey="0" title="0"|
+      : $i < 10              ? qq| accesskey="$i" title="[$i]"|
+      :                        '';
     $column_data{$ordnumber} = qq|<td><a href=$form->{script}?path=$form->{path}&action=$action&type=$form->{type}&id=$ref->{id}&warehouse=$warehouse&vc=$form->{vc}&login=$form->{login}&callback=$callback$accesskey>$ref->{$ordnumber}</a><input type=hidden name="ordnumber_$i" value="$ref->{$ordnumber}"></td>|;
 
     $name = $form->escape($ref->{name});

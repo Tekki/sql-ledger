@@ -186,11 +186,15 @@ sub select_name {
 
     $ref->{name} = $form->quote($ref->{name});
 
-   $column_data{ndx} = qq|<td><input name=ndx class=radio type=radio value=$i $checked></td>|;
-   $column_data{number} = qq|<td><input name="new_${table}number_$i" type=hidden value="|.$form->quote($ref->{"${table}number"}).qq|">$ref->{"${table}number"}</td>|;
-   $column_data{name} = qq|<td><input name="new_name_$i" type=hidden value="|.$form->quote($ref->{name}).qq|">$ref->{name}</td>|;
-   $column_data{address} = qq|<td>$ref->{address1} $ref->{address2}</td>|;
-   for (qw(city state zipcode country)) { $column_data{$_} = qq|<td>$ref->{$_}&nbsp;</td>| }
+    my $accesskey
+      = $i == @{$form->{name_list}} ? qq| accesskey="0" title="[0]"|
+      : $i < 10                     ? qq| accesskey="$i" title="[$i]"|
+      :                               '';
+    $column_data{ndx} = qq|<td><input name=ndx class=radio type=radio value=$i $checked$accesskey></td>|;
+    $column_data{number} = qq|<td><input name="new_${table}number_$i" type=hidden value="|.$form->quote($ref->{"${table}number"}).qq|">$ref->{"${table}number"}</td>|;
+    $column_data{name} = qq|<td><input name="new_name_$i" type=hidden value="|.$form->quote($ref->{name}).qq|">$ref->{name}</td>|;
+    $column_data{address} = qq|<td>$ref->{address1} $ref->{address2}</td>|;
+    for (qw(city state zipcode country)) { $column_data{$_} = qq|<td>$ref->{$_}&nbsp;</td>| }
 
     $j++; $j %= 2;
     print qq|

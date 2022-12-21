@@ -461,7 +461,7 @@ sub select_item {
   @column_index = grep !/sku/, @column_index if $form->{vc} eq 'customer';
   @column_index = grep !/(lot|expires)/, @column_index if $form->{type} =~ /_quotation/;
 
-  $column_data{ndx} = qq|<th class=listheading width=1%><input name="allbox_select" type=checkbox class=checkbox value="1" onChange="CheckAll();"></th>|;
+  $column_data{ndx} = qq|<th class=listheading width=1%><input name="allbox_select" type=checkbox class=checkbox value="1" accesskey="A" title="[A]" onChange="CheckAll();"></th>|;
   $column_data{partnumber} = qq|<th class=listheading>|.$locale->text('Number').qq|</th>|;
   $column_data{sku} = qq|<th class=listheading>|.$locale->text('SKU').qq|</th>|;
   $column_data{barcode} = qq|<th class=listheading>|.$locale->text('Barcode').qq|</th>|;
@@ -542,7 +542,11 @@ sub select_item {
 
     for (qw(sku partnumber barcode description lot make model unit itemnotes partsgroup)) { $ref->{$_} = $form->quote($ref->{$_}) }
 
-    $column_data{ndx} = qq|<td><input name="ndx_$i" class=checkbox type=checkbox value=$i></td>|;
+    my $accesskey
+      = $i == @{$form->{item_list}} ? qq| accesskey="0" title="[0]"|
+      : $i < 10                     ? qq| accesskey="$i" title="[$i]"|
+      :                               '';
+    $column_data{ndx} = qq|<td><input name="ndx_$i" class=checkbox type=checkbox value=$i$accesskey></td>|;
 
     for (qw(sku partnumber barcode description lot expires unit partsgroup)) { $column_data{$_} = qq|<td>$ref->{$_}&nbsp;</td>| }
 
