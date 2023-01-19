@@ -1064,6 +1064,7 @@ sub payment_register {
   my $ref;
   my $arap;
   my $ml = 1;
+  my $var;
 
   if ($form->{ARAP} eq 'AP') {
     $arap = 'ap';
@@ -1099,6 +1100,15 @@ sub payment_register {
   }
   if ($form->{"$form->{vc}_id"}) {
     $where .= qq| AND vc.id = $form->{"$form->{vc}_id"}|;
+  } else {
+    if ($form->{vc}) {
+      $var = $form->like(lc $form->{$form->{vc}});
+      $where .= qq| AND lower(vc.name) LIKE '$var'|;
+    }
+    if ($form->{"$form->{vc}number"}) {
+      $var = $form->like(lc $form->{"$form->{vc}number"});
+      $where .= qq| AND lower(vc.$form->{vc}number) LIKE '$var'|;
+    }
   }
   $query .= qq| $where ORDER BY acc.source|;
 
@@ -1139,6 +1149,7 @@ sub payment_register {
     $sth->execute($_->{id});
 
     while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+      undef $samesource;
       if ($form->{checknumberfrom}) {
         next if $ref->{source} < $form->{checknumberfrom};
       }
@@ -1198,7 +1209,7 @@ sub payment_register {
 
       $form->{"$_->{accno}"} = "$_->{accno}--$_->{description}";
 
-      if ($ref->{source} && $ref->{source} eq $samesource) {
+      if ($ref->{source} && ($ref->{source} eq $samesource)) {
         $i = @{ $source{$_->{accno}} };
         $source{$_->{accno}}[$i-1]->{amount} += $ref->{amount};
         $source{$_->{accno}}[$i-1]->{trans_id} .= "\n$ref->{trans_id}";
@@ -1303,19 +1314,14 @@ sub void_payments {
 sub create_selects {
   my ($self, $myconfig, $form) = @_;
 
-  my ($query, $sth);
-
   my $dbh = $form->dbconnect($myconfig);
 
   $form->get_peripherals($dbh);
 
   $form->all_languages($myconfig, $dbh);
 
-  $query = qq|SELECT id FROM chart WHERE accno = '$form->{"accno_1"}'|;
-  ($chart_id) = $dbh->selectrow_array($query);
-
-  my %defaults = $form->get_defaults($dbh, \@{["chknumber_${chart_id}"]});
-  $form->{source} = $defaults{"chknumber_${chart_id}"} + 1;
+  my %defaults = $form->get_defaults($dbh, \@{["check_$form->{accno_1}"]});
+  $form->{source} = $defaults{"check_$form->{accno_1}"};
 
   $dbh->disconnect;
 
@@ -1340,6 +1346,8 @@ sub reissue_payment {
 
   my $rc = 0;
   my $arap = lc $form->{ARAP};
+
+  $form->{"$form->{vc}_id"} = $form->{"$form->{vc}_id_$i"};
 
   # retrieve name, address
   $query = qq|SELECT vc.*, ad.*, current_date AS datepaid
@@ -1420,7 +1428,7 @@ sub reissue_payment {
 
   $form->{"source_$i"} = $form->{source};
 
-  my $chkno = ($form->{ARAP} eq 'AP') ? qq|chknumber_$form->{"accno_$i"}| : qq|receipt_$form->{"accno_$i"}|;
+  my $chkno = ($form->{ARAP} eq 'AP') ? qq|check_$form->{"accno_$i"}| : qq|receipt_$form->{"accno_$i"}|;
   # record last check number
   $form->update_defaults($myconfig, $chkno, $dbh, $form->{source});
 

@@ -2289,7 +2289,7 @@ sub payment_register {
 
   CP->paymentaccounts(\%myconfig, \%$form);
 
-  $form->{"selectaccno"} = "\n" unless $form->{reissue};
+  $form->{"selectaccno"} = ($form->{reissue}) ? "" : "\n";
   for (@{ $form->{PR}{"$form->{ARAP}_paid"} }) { $form->{"selectaccno"} .= "$_->{accno}--$_->{description}\n" }
 
   $vclabel = $locale->text('Customer');
@@ -2626,6 +2626,7 @@ sub list_checks {
 
   for $accno (sort keys %{ $form->{CHK} }) {
     $r = 0;
+    $i = 0;
 
     print "<th colspan=$colspan align=left>$form->{$accno}</th>\n";
 
@@ -2649,6 +2650,7 @@ sub list_checks {
 
       $form->{"accno_$i"} = $accno;
       $form->{"source_$i"} = $ref->{source};
+      $form->{"$form->{vc}_id_$i"} = $ref->{"$form->{vc}_id"};
       $vd = ($ref->{void}) ? $void : "";
       $column_data{source} = "<td>$ref->{source}&nbsp;$vd</td>";
 
@@ -2656,8 +2658,6 @@ sub list_checks {
       $account = $form->escape($form->{$accno},1);
       $name = $form->escape($ref->{name},1);
       $column_data{source} = "<td><a href=rp.pl?action=list_payments&account=$account&source=$source&db=$arap&vc=$form->{vc}&$form->{vc}=$name$reportflds&path=$form->{path}&login=$form->{login}&title=$title target=_new>$ref->{source}&nbsp;$vd</a></td>";
-
-      $column_data{source} .= $form->hide_form("source_$i", "accno_$i");
 
       $column_data{name} = qq|<td><a href=ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{"$form->{vc}_id"}&db=$form->{vc}&callback=$callback>$ref->{name}</a></td>|;
 
@@ -2672,6 +2672,8 @@ sub list_checks {
       print qq|
           </tr>
 |;
+
+      $form->hide_form("source_$i", "accno_$i", "$form->{vc}_id_$i");
     }
   }
 
@@ -2815,6 +2817,7 @@ sub reissue_payments {
   CP->create_selects(\%myconfig, \%$form);
 
   if ($form->{ARAP} eq 'AR') {
+    $form->{vc} = "customer";
     $form->{type} = "receipt";
     $form->{formname} = "receipt";
     $form->{selectformname} = "receipt--".$locale->text('Receipt');
@@ -2822,6 +2825,7 @@ sub reissue_payments {
     $msgchk = $locale->text('Reissue Receipts');
     $chknumber = $locale->text('Receipt Number');
   } else {
+    $form->{vc} = "vendor";
     $form->{type} = "check";
     $form->{formname} = "check";
     $form->{selectformname} = "check--".$locale->text('Check');
@@ -2898,7 +2902,7 @@ sub reissue_payments {
     $form->{action} = "yes__reissue_checks";
   }
 
-  for (qw(action admin format formname media selectformname selectlanguage selectprinter)) { delete $form->{$_} }
+  for (qw(action admin format formname media selectformname selectlanguage selectprinter source)) { delete $form->{$_} }
   $form->hide_form;
 
   print qq|
@@ -2931,7 +2935,7 @@ sub yes__reissue_checks {
         }
         &print_form;
         $form->{source}++;
-$form->{file}++;
+        $form->{file}++;
       } else {
         $form->error($locale->text('Error processing payment!'));
       }

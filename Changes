@@ -1,5 +1,10 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+3.2.12 DWS 2023-01-02
+  - fixed reissue check function
+  - fixed locales.pl to generate the 'all' file
+  - removed delete option from AR/AP transaction report if enforce transaction reversal is set
+
 3.2.11.34 2022-12-21
   - spreadsheet for tax reports
   - improved accesskeys to select items in lists

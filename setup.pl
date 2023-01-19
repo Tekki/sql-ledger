@@ -27,7 +27,6 @@ $latex = `latex -version`;
 
 %source = (
 	    1 => { url => "http://www.sql-ledger.com/source", site => "www.sql-ledger.com", locale => us },
-            2 => { url => "http://abacus.sql-ledger.com/source", site => "abacus.sql-ledger.com", locale => ca },
 	  );
 
 $userspath = "users";         # default for new installation
@@ -72,23 +71,24 @@ if (-f "VERSION") {
   }
 }
 
-$webowner = "www-data";
-$webgroup = "www-data";
+$webowner = "somewww-data";
+$webgroup = "somewww-data";
 
-if ($httpd = `find /etc /usr/local/etc -type f -name 'httpd*.conf'`) {
+if ($httpd = `find /etc/apache2 -type f -name 'envvars'`) {
   chomp $httpd;
-  $webowner = `grep "^User " $httpd`;
-  $webgroup = `grep "^Group " $httpd`;
+  $webowner = `grep "APACHE_RUN_USER" $httpd`;
+  $webgroup = `grep "APACHE_RUN_GROUP" $httpd`;
 
   chomp $webowner;
   chomp $webgroup;
   
-  ($null, $webowner) = split / /, $webowner;
-  ($null, $webgroup) = split / /, $webgroup;
+  (undef, $webowner) = split /=/, $webowner;
+  (undef, $webgroup) = split /=/, $webgroup;
 
 }
 
-if ($confd = `find /etc /usr/local/etc -type d -name 'apache*/conf.d'`) {
+# updated for Apache 2.4
+if ($confd = `find /etc/apache* -type d -name sites-available`) {
   chomp $confd;
 }
 
@@ -203,17 +203,17 @@ sub get_latest_version {
 
   if ($lwp) {
     $found = 0;
-    foreach $source (qw(www abacus)) {
+    foreach $source (qw(www)) {
       $url = $source{$checkversion{$source}}{url};
       print "$source{$checkversion{$source}}{site} ... ";
 
       $latest_version = LWP::Simple::get("$url/latest_version");
       
       if ($latest_version) {
-	$found = 1;
-	last;
+       	$found = 1;
+	      last;
       } else {
-	print "not found\n";
+	      print "not found\n";
       }
     }
     
@@ -224,14 +224,14 @@ sub get_latest_version {
     
   } elsif ($wget) {
     $found = 0;
-    foreach $source (qw(www abacus)) {
+    foreach $source (qw(www)) {
       $url = $source{$checkversion{$source}}{url};
       print "$source{$checkversion{$source}}{site} ... ";
       if ($latest_version = `wget -q -O - $url/latest_version`) {
-	$found = 1;
-	last;
+	      $found = 1;
+	      last;
       } else {
-	print "not found\n";
+	      print "not found\n";
       }
     }
     
@@ -246,15 +246,15 @@ sub get_latest_version {
       exit 1;
     }
 
-    foreach $source (qw(www abacus)) {
+    foreach $source (qw(www)) {
       $url = $source{$checkversion{$source}}{url};
       print "$source{$checkversion{$source}}{site} ... ";
       $ok = `lynx -dump -head $url/latest_version`;
       if ($ok = ($ok =~ s/HTTP.*?200 //)) {
-	$latest_version = `lynx -dump $url/latest_version`;
-	last;
+	      $latest_version = `lynx -dump $url/latest_version`;
+	      last;
       } else {
-	print "not found\n";
+	      print "not found\n";
       }
     }
     die unless $ok;
@@ -289,26 +289,26 @@ sub get_source_code {
       print "\n$source{$key}{site} .... ";
 
       if ($lwp) {
-	$err = LWP::Simple::getstore("$source{$key}{url}/$latest_version", "$latest_version");
-	$err -= 200;
+        $err = LWP::Simple::getstore("$source{$key}{url}/$latest_version", "$latest_version");
+        $err -= 200;
       } elsif ($wget) {
-	$ok = `wget -Sqc $source{$key}{url}/$latest_version`;
-	if ($ok =~ /HTTP.*?(20|416)/) {
-	  $err = 0;
-	}
+        $ok = `wget -Sqc $source{$key}{url}/$latest_version`;
+        if ($ok =~ /HTTP.*?(20|416)/) {
+          $err = 0;
+        }
       } else {
-	$ok = `lynx -dump -head $source{$key}{url}/$latest_version`;
-	$err = !($ok =~ s/HTTP.*?200 //);
+        $ok = `lynx -dump -head $source{$key}{url}/$latest_version`;
+        $err = !($ok =~ s/HTTP.*?200 //);
 
-	if (!$err) {
-	  $err = system("lynx -dump $source{$key}{url}/$latest_version > $latest_version");
-	}
+        if (!$err) {
+          $err = system("lynx -dump $source{$key}{url}/$latest_version > $latest_version");
+        }
       }
 
       if ($err) {
-	print "failed!";
+        print "failed!";
       } else {
-	last;
+        last;
       }
 
     }
@@ -373,13 +373,15 @@ AddHandler cgi-script .pl
 
 <Directory $absolutealias>
   Options ExecCGI Includes FollowSymlinks
-  AllowOverride all
   Require all granted
+  Order Deny,Allow
+  Allow from All
 </Directory>
 
 <Directory $absolutealias/users>
-  AllowOverride none
-  Require all denied
+  Require all granted
+  Order Deny,Allow
+  Deny from All
 </Directory>
   
 |;
@@ -396,7 +398,7 @@ This is a new installation.
       print qq|
 Webserver directives were written to $filename
       
-Copy $filename to $httpddir
+Copy $filename to $httpddir and create a symlink in /etc/sites-available
 |;
 
       if (!$confd) {
@@ -516,8 +518,8 @@ sub decompress {
     } else {
       if (system("tar -xf $latest_version")) {
         print "Error: Could not unpack $latest_version\n";
-	&remove_lockfile;
-	exit;
+        &remove_lockfile;
+        exit;
       } else {
         print "done\n";
         print "cleaning up ... ";

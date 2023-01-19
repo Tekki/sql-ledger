@@ -1966,7 +1966,7 @@ sub transactions {
   AA->transactions(\%myconfig, \%$form);
 
   $href = "$form->{script}?action=transactions";
-  for (qw(direction oldsort till outstanding path login summary)) { $href .= qq|&$_=$form->{$_}| }
+  for (qw(direction oldsort till outstanding path login summary revtrans)) { $href .= qq|&$_=$form->{$_}| }
   $href .= "&title=".$form->escape($form->{title});
   $href .= "&helpref=".$form->escape($form->{helpref});
 
@@ -2135,7 +2135,8 @@ sub transactions {
   @columns = $form->sort_columns(qw(transdate id invnumber ordnumber ponumber description name customernumber vendornumber taxnumber address city zipcode country netamount tax amount paid paymentaccount paymentmethod due curr datepaid duedate memo notes till employee warehouse shippingpoint shipvia waybill dcn paymentdiff department projectnumber));
   unshift @columns, "runningnumber";
 
-  @column_index = qw(delete);
+  @column_index = ($form->{revtrans}) ? () : qw(delete);
+
   @curr = split /:/, $form->{currencies};
 
   foreach $item (@columns) {
@@ -2424,11 +2425,13 @@ sub transactions {
   if ($myconfig{acs} !~ /$form->{ARAP}--$form->{ARAP}/) {
     $i = 1;
 
-    $button{'Select all'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Select all').qq|"> |;
-    $button{'Select all'}{order} = $i++;
+    unless ($form->{revtrans}) {
+      $button{'Select all'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Select all').qq|"> |;
+      $button{'Select all'}{order} = $i++;
 
-    $button{'Deselect all'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Deselect all').qq|"> |;
-    $button{'Deselect all'}{order} = $i++;
+      $button{'Deselect all'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Deselect all').qq|"> |;
+      $button{'Deselect all'}{order} = $i++;
+    }
 
     if ($form->{ARAP} eq 'AR') {
       unless ($form->{till}) {
@@ -2438,8 +2441,10 @@ sub transactions {
         $button{'AR--Sales Invoice'}{order} = $i++;
       }
 
-      $button{'AR--Delete Transactions'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Delete Transactions').qq|"> |;
-      $button{'AR--Delete Transactions'}{order} = $i++;
+      unless ($form->{revtrans}) {
+        $button{'AR--Delete Transactions'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Delete Transactions').qq|"> |;
+        $button{'AR--Delete Transactions'}{order} = $i++;
+      }
 
       if ($myconfig{acs} =~ /AR--Add Transaction/) {
         $myconfig{acs} .= ";AR--Delete Transactions";
@@ -2451,8 +2456,10 @@ sub transactions {
       $button{'AP--Vendor Invoice'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Vendor Invoice.').qq|"> |;
       $button{'AP--Vendor Invoice'}{order} = $i++;
 
-      $button{'AP--Delete Transactions'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Delete Transactions').qq|"> |;
-      $button{'AP--Delete Transactions'}{order} = $i++;
+      unless ($form->{revtrans}) {
+        $button{'AP--Delete Transactions'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Delete Transactions').qq|"> |;
+        $button{'AP--Delete Transactions'}{order} = $i++;
+      }
 
       if ($myconfig{acs} =~ /AP--Add Transaction/) {
         $myconfig{acs} .= ";AP--Delete Transactions";
@@ -2463,11 +2470,12 @@ sub transactions {
     $button{spreadsheet}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Spreadsheet').qq|" accesskey="X" title="[X]">|;
     $button{spreadsheet}{order} = $i++;
 
-    if ($form->{deselect}) {
-      delete $button{'Select all'};
-    } else {
-      delete $button{'Deselect all'};
-    }
+    unless ($form->{revtrans}) {
+      if ($form->{deselect}) {
+        delete $button{'Select all'};
+      } else {
+        delete $button{'Deselect all'};
+      }
 
     foreach $item (split /;/, $myconfig{acs}) {
       delete $button{$item};

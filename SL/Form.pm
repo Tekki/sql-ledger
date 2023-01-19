@@ -123,9 +123,9 @@ sub new {
 
   $self->{charset} = 'UTF-8';
 
-  $self->{version} = "3.2.11";
+  $self->{version} = "3.2.12";
   $self->{dbversion} = "3.2.4";
-  $self->{version2} = "tekki 3.2.11.34";
+  $self->{version2} = "tekki 3.2.12.34";
   $self->{dbversion2} = 30;
 
   $self->{favicon} = 'favicon.ico';
