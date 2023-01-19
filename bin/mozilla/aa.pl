@@ -2476,6 +2476,7 @@ sub transactions {
       } else {
         delete $button{'Deselect all'};
       }
+    }
 
     foreach $item (split /;/, $myconfig{acs}) {
       delete $button{$item};
