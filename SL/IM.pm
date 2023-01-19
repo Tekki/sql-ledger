@@ -152,7 +152,7 @@ sub sales_invoice_links {
           $form->{"city_$i"} = $ref->{city};
           $form->{"employeename_$i"} ||= $ref->{employee};
           $form->{"employee_id_$i"} ||= $ref->{employee_id};
-          $customertax{$ref->{taxaccount}} = 1;
+          $customertax{$ref->{taxaccount}} = 1 unless $form->{"taxincluded_$i"};
         }
         $cth->finish;
 

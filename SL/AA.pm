@@ -780,7 +780,7 @@ sub transactions {
   my $acc_trans_join;
   my $acc_trans_flds;
   
-  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
+  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company', 'revtrans']});
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   $form->{defaultcurrency} = substr($form->get_currencies($myconfig, $dbh),0,3);
