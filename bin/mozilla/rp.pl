@@ -746,25 +746,27 @@ sub report {
           <td>
             <table>
               <tr>
+                <td><input name="l_accno" class=checkbox type=checkbox value=Y></td>
+                <td>| . $locale->text('Account') . qq|</td>
+                <td><input name="l_transdate" class=checkbox type=checkbox value=Y checked></td>
+                <td>| . $locale->text('Date') . qq|</td>
                 <td><input name="l_id" class=checkbox type=checkbox value=Y></td>
                 <td>| . $locale->text('ID') . qq|</td>
                 <td><input name="l_invnumber" class=checkbox type=checkbox value=Y checked></td>
                 <td>| . $locale->text('Invoice') . qq|</td>
-                <td><input name="l_transdate" class=checkbox type=checkbox value=Y checked></td>
-                <td>| . $locale->text('Date') . qq|</td>
-                <td><input name="l_description" class=checkbox type=checkbox value=Y checked></td>
-                <td>| . $locale->text('Description') . qq|</td>
               </tr>
 
               <tr>
+                <td><input name="l_description" class=checkbox type=checkbox value=Y checked></td>
+                <td>| . $locale->text('Description') . qq|</td>
                 $vc
                 <td><input name="l_address" class=checkbox type=checkbox value=Y></td>
                 <td>| . $locale->text('Address') . qq|</td>
-                <td><input name="l_country" class=checkbox type=checkbox value=Y></td>
-                <td>| . $locale->text('Country') . qq|</td>
               </tr>
 
               <tr>
+                <td><input name="l_country" class=checkbox type=checkbox value=Y></td>
+                <td>| . $locale->text('Country') . qq|</td>
                 <td><input name="l_taxnumber" class=checkbox type=checkbox value=Y></td>
                 <td>| . $locale->text('Taxnumber') . qq|</td>
                 <td><input name="l_netamount" class=checkbox type=checkbox value=Y checked></td>
@@ -772,11 +774,11 @@ sub report {
 
                 <td><input name="l_tax" class=checkbox type=checkbox value=Y checked></td>
                 <td>| . $locale->text('Tax') . qq|</td>
-                <td><input name="l_total" class=checkbox type=checkbox value=Y checked></td>
-                <td>| . $locale->text('Total') . qq|</td>
 
               </tr>
               <tr>
+                <td><input name="l_total" class=checkbox type=checkbox value=Y checked></td>
+                <td>| . $locale->text('Total') . qq|</td>
                 <td><input name="l_currency" class=checkbox type=checkbox value=Y></td>
                 <td>| . $locale->text('Currency') . qq|</td>
                 <td><input name="l_subtotal" class=checkbox type=checkbox value=Y></td>
@@ -3752,7 +3754,7 @@ sub generate_tax_report {
   @columns = qw(id transdate invnumber description name);
   push @columns, "$form->{vc}number";
   push @columns, qw(address country taxnumber netamount tax total);
-  @columns = $form->sort_columns(@columns);
+  @columns = ('accno', $form->sort_columns(@columns));
 
   foreach $item (@columns) {
     if ($form->{"l_$item"} eq "Y") {
@@ -3807,6 +3809,7 @@ sub generate_tax_report {
 
   $option .= "<br>$form->{period}";
 
+  $column_data{accno} = qq|<th>|.$locale->text('Account').qq|</th>|;
   $column_data{id} = qq|<th><a class=listheading href=$href&sort=id>|.$locale->text('ID').qq|</th>|;
   $column_data{invnumber} = qq|<th><a class=listheading href=$href&sort=invnumber>|.$locale->text('Invoice').qq|</th>|;
   $column_data{transdate} = qq|<th nowrap><a class=listheading href=$href&sort=transdate>|.$locale->text('Date').qq|</th>|;
@@ -3928,6 +3931,7 @@ sub generate_tax_report {
       }
     }
 
+    $column_data{accno} = qq|<td>$ref->{accno}</td>|;
     $column_data{id} = qq|<td>$ref->{id}</td>|;
     $column_data{invnumber} = qq|<td><a href=$module?path=$form->{path}&action=edit&id=$ref->{id}&login=$form->{login}&callback=$callback>$ref->{invnumber}</a></td>|;
 
