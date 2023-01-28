@@ -1,0 +1,339 @@
+@charset 'utf-8';
+/* Dark Theme for SQL-Ledger
+ *
+ * Based on colors from Everforest color scheme for Vim by Sainnhe Park
+ * (https://github.com/sainnhe/everforest).
+ *
+ * © Tekki 2023 */
+
+:root {
+  --main-font: Verdana, Arial, Helvetica, sans-serif;
+  --bg-1: #1E2326;
+  --bg-2: #272E33;
+  --bg-3: #2E383C;
+  --bg-4: #374145;
+  --bg-5: #414B50;
+  --bg-6: #495156;
+  --bg-contrast: #4F5B58;
+  --bg-red: #493B40;
+  --bg-green: #3C4841;
+  --bg-blue: #384B55;
+  --default: #D3C6AA;
+  --red: #E67E80;
+  --orange: #E69875;
+  --yellow: #DBBC7F;
+  --green: #A7C080;
+  --cyan: #83C092;
+  --blue: #7FBBB3;
+  --purple: #D699B6;
+  --gray-1: #7A8478;
+  --gray-2: #859289;
+  --gray-3: #9DA9A0;
+}
+
+@media screen {
+  .noscreen {
+    display: none;
+  }
+
+  img {
+    opacity: 0.7;
+  }
+}
+
+@media print {
+  :root {
+    --bg-1: white;
+    --bg-2: white;
+    --bg-3: white;
+    --bg-4: white;
+    --bg-5: white;
+    --bg-6: white;
+    --bg-contrast: white;
+    --bg-red: white;
+    --bg-green: white;
+    --bg-blue: white;
+    --default: black;
+    --red: black;
+    --orange: black;
+    --yellow: black;
+    --green: black;
+    --cyan: black;
+    --blue: black;
+    --purple: black;
+    --gray-1: black;
+    --gray-2: black;
+    --gray-3: black;
+  }
+
+  .noprint {
+    display: none;
+  }
+}
+
+body {
+  background-color: var(--bg-1);
+  color: var(--default);
+  font-family: var(--main-font);
+  font-size: 11px;
+}
+
+a:link, a:active, a:visited {
+  color: var(--orange);
+  text-decoration: none;
+}
+a:hover {
+  background-color: var(--bg-contrast);
+  color: var(--orange);
+  text-decoration: none;
+}
+
+td {
+  font-family: var(--main-font);
+  font-size: 11px;
+}
+
+th {
+  font-family: var(--main-font);
+  font-size: 11px;
+}
+
+body.menu {
+  background-color: var(--bg-3);
+  color: var(--default);
+  font-family: var(--main-font);
+  font-size: 11px;
+}
+
+.menuOut {
+  background-color: var(--bg-3);
+  border: 1px solid var(--bg-3);
+  color: var(--default);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px;
+  text-align: left;
+}
+
+.menuOver {
+  background-color: var(--bg-contrast);
+  border: 1px solid var(--bg-contrast);
+  color: var(--default);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px;
+  text-align: left;
+}
+
+.submenu {
+  font-family: var(--main-font);
+  font-size: 11px;
+  padding-left: 5px;
+}
+
+.menuOut a {
+  background-color: var(--bg-3);
+  border: 0px solid var(--bg-3);
+  color: var(--default);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: bold;
+  margin: 0px;
+  padding: 0px;
+  text-align: left;
+}
+
+.menuOver a {
+  background-color: var(--bg-contrast);
+  border: 0px solid var(--bg-3);
+  color: var(--default);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: bold;
+  margin: 0px;
+  padding: 0px;
+  text-align: left;
+}
+
+.submenu a {
+  color: var(--orange);
+  text-decoration: none;
+}
+
+.submenu a:hover {
+  color: var(--orange);
+  text-decoration: none;
+}
+
+.listtop {
+  background-color: var(--bg-5);
+  color: var(--gray-3);
+  font-size: 11px;
+}
+a.listtop:link, a.listtop:active, a.listtop:visited {
+  color: var(--gray-3);
+  text-decoration: none;
+}
+
+.listheading {
+  background-color: var(--bg-green);
+  color: var(--cyan);
+  font-size: 11px;
+}
+.undefined {
+  background-color: var(--bg-1);
+  color: var(--gray-3);
+  font-size: 11px;
+}
+a.listheading:link, a.listheading:active, a.listheading:visited {
+  color: var(--cyan);
+  text-decoration: none;
+}
+
+.listrow1 {
+  font-size: 11px;
+  background-color: var(--bg-3);
+  color: var(--default);
+  vertical-align: top;
+}
+.listrow0 {
+  font-size: 11px;
+  background-color: var(--bg-4);
+  color: var(--default);
+  vertical-align: top;
+}
+
+.listsubtotal {
+  background-color: var(--bg-2);
+  color: var(--blue);
+  font-size: 11px;
+}
+a.listsubtotal:link, a.listsubtotal:active, a.listsubtotal:visited {
+  color: var(--blue);
+  text-decoration: none;
+}
+
+.listtotal {
+  background-color: var(--bg-blue);
+  color: var(--blue);
+  font-size: 11px;
+  text-decoration: none;
+}
+a.listtotal:link, a.listtotal:active, a.listtotal:visited {
+  color: var(--blue);
+  text-decoration: none;
+}
+
+.help {
+  background-color: var(--bg-blue);
+  color: var(--blue);
+  font-size: 11px;
+  vertical-align: top;
+}
+
+textarea {
+  background-color: var(--bg-2);
+  border: 1px solid var(--bg-6);
+  border-radius: 0px;
+  color: var(--default);
+  font-family: var(--main-font);
+  font-size: 11px;
+  font-weight: bold;
+  width: 100%;
+}
+
+input {
+  background-color: var(--bg-2);
+  border: 1px solid var(--gray-1);
+  border-radius: 0px;
+  color: var(--default);
+  font-family: var(--main-font);
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.inputright {
+  text-align: right;
+}
+
+input[type='checkbox']::after {
+  background-color: var(--bg-2);
+  border: 1px solid var(--gray-1);
+  content: '';
+  font-size: 15px;
+  height: 12px;
+  position: absolute;
+  width: 12px;
+}
+
+input[type='radio']::after {
+  background-color: var(--bg-2);
+  border: 1px solid var(--gray-1);
+  border-radius: 44%;
+  content: '';
+  font-size: 15px;
+  height: 12px;
+  position: absolute;
+  width: 12px;
+}
+
+input:checked::after {
+  content: '✓';
+}
+
+select {
+  background-color: var(--bg-2);
+  border: 1px solid var(--gray-1);
+  border-radius: 0px;
+  color: var(--default);
+  cursor: pointer;
+  font-family: var(--main-font);
+  font-size: 11px;
+}
+
+option {
+  cursor: pointer;
+}
+
+.submit {
+  color: var(--orange);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: normal;
+}
+
+.pos {
+  color: var(--default);
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.checkbox, .radio {
+  cursor: pointer;
+  font-family: var(--main-font);
+  font-size: 11px;
+}
+
+.plus0 {
+  color: var(--purple);
+}
+
+.plus1 {
+  color: var(--cyan);
+}
+
+h2.confirm {
+  color: var(--blue);
+  font-size: 14px;
+}
+
+h2.error {
+  color: var(--red);
+  font-size: 14px;
+}
+
+font[color='red'] {
+  color: var(--red);
+}

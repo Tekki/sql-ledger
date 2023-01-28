@@ -1,5 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+Not Released
+  - dark mode
+
 3.2.12 DWS 2023-01-02
   - fixed reissue check function
   - fixed locales.pl to generate the 'all' file

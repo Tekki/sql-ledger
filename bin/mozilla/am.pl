@@ -3032,7 +3032,7 @@ sub config {
   $form->{selectcountrycode} = qq|--English\n$form->{selectcountrycode}|;
 
   opendir CSS, "css/.";
-  my @all = grep /.*\.css$/, readdir CSS;
+  my @all = sort grep /(?<!calendar)\.css$/, readdir CSS;
   closedir CSS;
 
   for (@all) { $form->{selectstylesheet} .= "$_\n" }
