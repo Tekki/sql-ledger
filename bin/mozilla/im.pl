@@ -60,6 +60,7 @@ sub import {
   $form->{nextsub} = "im_$form->{type}";
 
   $form->{delimiter} = ",";
+  my $checked = ' checked';
 
   if ($form->{type} eq 'payment') {
     IM->paymentaccounts(\%myconfig, \%$form);
@@ -93,9 +94,10 @@ sub import {
                 <td><input name=filetype type=radio class=radio value=v11>&nbsp;|.$locale->text('.v11').qq|</td>
         </tr>
         <tr>
-                <td><input name=filetype type=radio class=radio value=camt054>&nbsp;|.$locale->text('camt.054').qq|</td>
+                <td><input name=filetype type=radio class=radio value=camt054 checked>&nbsp;|.$locale->text('camt.054').qq|</td>
         </tr>
 |;
+    $checked = '';
   }
 
   $form->all_languages(\%myconfig);
@@ -141,7 +143,7 @@ sub import {
           <td>
             <table>
               <tr>
-                <td><input name=filetype type=radio class=radio value=csv checked>&nbsp;|.$locale->text('csv').qq|</td>
+                <td><input name=filetype type=radio class=radio value=csv$checked>&nbsp;|.$locale->text('csv').qq|</td>
                 <td>|.$locale->text('Delimiter').qq|</td>
                 <td><input name=delimiter size=2 value="$form->{delimiter}"></td>
                 <td><input name=tabdelimited type=checkbox class=checkbox>&nbsp;|.$locale->text('Tab delimited').qq|</td>

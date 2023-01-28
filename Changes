@@ -4,6 +4,7 @@ Not Released
   - dark mode
   - tax reports show account number
   - e-mail links in spreadsheets
+  - camt.054 is default type for payment import
 
 3.2.12 DWS 2023-01-02
   - fixed reissue check function
