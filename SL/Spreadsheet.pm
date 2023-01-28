@@ -207,6 +207,10 @@ sub data_row {
         $self->text($value, $format)->set_width(length($value) * $scale + 2);
       }
 
+    } elsif ($type eq 'email') {
+
+      $self->link("mailto:$value", $value, $format)->set_width(length($value) * $scale + 2);
+
     } elsif ($type eq 'bool') {
 
       $self->bool($value, $format);
