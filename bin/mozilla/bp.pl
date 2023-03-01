@@ -811,6 +811,11 @@ print qq|
       $form->{"ndx_$i"} = "checked";
     }
 
+    my $accesskey
+      = $i == @{$form->{SPOOL}} ? qq| accesskey="0" title="[0]"|
+      : $i < 10                 ? qq| accesskey="$i" title="[$i]"|
+      :                           '';
+
     $totalamount += $ref->{amount};
 
     # this one is for printing spool entries
@@ -833,6 +838,11 @@ print qq|
       if ($spoolfile eq $ref->{spoolfile}) {
         $column_data{ndx} = qq|<td></td>|;
       }
+
+      $column_data{spoolfile} = qq|<td><a href=$spool/$myconfig{dbname}/$ref->{spoolfile}$accesskey>$ref->{spoolfile}</a></td>
+|;
+
+      $accesskey = '';
     }
 
     $column_data{runningnumber} = qq|<td>$i</td>|;
@@ -844,24 +854,21 @@ print qq|
 
     if ($ref->{tablename} eq 'oe') {
       $column_data{invnumber} = qq|<td>&nbsp</td>|;
-      $column_data{ordnumber} = qq|<td><a href=$script?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{ordnumber}</a></td>
+      $column_data{ordnumber} = qq|<td><a href=$script?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback$accesskey>$ref->{ordnumber}</a></td>
       <input type=hidden name="reference_$i" value="|.$form->quote($ref->{ordnumber}).qq|">|;
 
-      $column_data{quonumber} = qq|<td><a href=$script?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{quonumber}</a></td>
+      $column_data{quonumber} = qq|<td><a href=$script?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback$accesskey>$ref->{quonumber}</a></td>
     <input type=hidden name="reference_$i" value="|.$form->quote($ref->{quonumber}).qq|">|;
 
     } elsif ($ref->{tablename} eq 'jc') {
-      $column_data{id} = qq|<td><a href=$script?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{id}</a></td>
+      $column_data{id} = qq|<td><a href=$script?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback$accesskey>$ref->{id}</a></td>
     <input type=hidden name="reference_$i" value="$ref->{id}">|;
 
       $column_data{name} = qq|<td><a href=hr.pl?action=edit&id=$ref->{employee_id}&db=employee&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{name}</a></td>|;
     } else {
-      $column_data{invnumber} = qq|<td><a href=$script?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback>$ref->{invnumber}</a></td>
+      $column_data{invnumber} = qq|<td><a href=$script?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=$form->{type}&callback=$callback$accesskey>$ref->{invnumber}</a></td>
     <input type=hidden name="reference_$i" value="|.$form->quote($ref->{invnumber}).qq|">|;
     }
-
-    $column_data{spoolfile} = qq|<td><a href=$spool/$myconfig{dbname}/$ref->{spoolfile}>$ref->{spoolfile}</a></td>
-|;
 
     $spoolfile = $ref->{spoolfile};
 
@@ -998,7 +1005,7 @@ print qq|
                'Deselect all' => { ndx => 3, key => 'A', value => $locale->text('Deselect all') },
                'Print' => { ndx => 5, key => 'P', value => $locale->text('Print') },
                'E-mail' => { ndx => 6, key => 'E', value => $locale->text('E-mail') },
-               'Combine' => { ndx => 7, key => 'C', value => $locale->text('Combine') },
+               'Combine' => { ndx => 7, key => 'K', value => $locale->text('Combine') },
                'Remove' => { ndx => 8, key => 'R', value => $locale->text('Remove') },
               );
 
