@@ -119,6 +119,12 @@ sub yearend_spreadsheet {
     $ss->title($form->{title})->crlf(2);
     $ss->tab($tab)->text($locale->text('as at'), 'heading4')->lf->date($form->{todate}, 'heading4')
       ->crlf(2);
+
+    if ($form->{department}) {
+      (my $val) = split /--/, $form->{department};
+      $ss->tab($tab)->text($val, 'heading4')->crlf(2);
+    }
+
   } else {
     $form->{title} = $locale->text('Income Statement');
     @categories = qw|I E|;
@@ -126,6 +132,17 @@ sub yearend_spreadsheet {
     $ss->title($form->{title})->crlf(2);
     $ss->tab($tab)->text($locale->text('for Period'), 'heading4')
       ->lf->date($form->{fromdate}, 'heading4')->lf->date($form->{todate}, 'heading4')->crlf(2);
+
+    if ($form->{department} || $form->{projectnumber}) {
+      for (qw|department projectnumber|) {
+        if ($form->{$_}) {
+          (my $val) = split /--/, $form->{$_};
+          $ss->tab($tab)->text($val, 'heading4')->crlf;
+        }
+      }
+
+      $ss->crlf;
+    }
 
     for my $column (@amount_columns) {
       $column =~ /(.*)_(.*)/;

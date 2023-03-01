@@ -18,6 +18,7 @@ The `full` branch, which is checked out by default, provides some additions:
 * extended keyboard shortcuts ([docs](doc/shortcuts.md))
 * spreadsheet downloads
 * recently used objects
+* dark mode
 * database snapshots
 * JSON API ([introduction](doc/api.md))
 * real Unicode support

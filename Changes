@@ -1,5 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+Not Released
+  - department and project are displayed in yearend spreadsheet
+
 3.2.12.35 2023-01-28
   - dark mode
   - tax reports show account number
