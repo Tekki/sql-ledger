@@ -74,11 +74,12 @@ for my $dataset (values %members) {
     push @currencies, $ref->{curr};
   }
 
+  my %ds_rates = %rates;
   if ($currencies[0] ne 'CHF') {
-    my $factor2 = delete $rates{$currencies[0]} or next;
-    $rates{CHF} = 1;
+    my $factor2 = delete $ds_rates{$currencies[0]} or next;
+    $ds_rates{CHF} = 1;
 
-    for (values %rates) {
+    for (values %ds_rates) {
       $_ = sprintf '%.5f', $_ / $factor2;
     }
 
@@ -91,8 +92,8 @@ for my $dataset (values %members) {
   $sth   = $dbh->prepare($query);
 
   for my $curr (@currencies) {
-    if ($rates{$curr}) {
-      $sth->execute($curr, $rates{$curr});
+    if ($ds_rates{$curr}) {
+      $sth->execute($curr, $ds_rates{$curr});
     }
   }
 
