@@ -1,5 +1,5 @@
 # Dockerfile for test environment
-FROM httpd:bullseye
+FROM httpd:bookworm
 
 RUN set -ex \
   && apt-get update \
@@ -11,7 +11,7 @@ RUN set -ex \
     libexcel-writer-xlsx-perl \
     libio-socket-ssl-perl \
     libmojolicious-perl \
-    posgresql-client \
+    postgresql-client \
   && rm -rf /var/lib/apt/lists/*
 
 RUN echo " <Directory /usr/local/apache2/htdocs/sql-ledger>\n"\
