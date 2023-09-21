@@ -9,4 +9,4 @@ locales*.pl
 .project
 .includepath
 .settings
-
+.vscode
