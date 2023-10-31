@@ -2771,7 +2771,7 @@ sub generate_sales_orders {
 
     $order->{ordnumber} = $order->update_defaults(\%myconfig, 'sonumber');
     $order->{transdate} = $order->current_date(\%myconfig);
-    $order->{reqdate} = $order->{transdate};
+    # $order->{reqdate} = $order->{transdate};
     $order->{exchangerate} = $order->get_exchangerate(\%myconfig, undef, $order->{currency}, $order->{transdate}) unless $order->{currency} eq $order->{defaultcurrency};
 
     for (qw(employee employee_id)) { delete $order->{$_} }

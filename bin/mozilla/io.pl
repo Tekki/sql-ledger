@@ -1226,7 +1226,7 @@ sub create_form {
 
   &order_links;
 
-  $form->{reqdate} = $form->add_date(\%myconfig, $form->{transdate}, $form->{terms}, 'days');
+  # $form->{reqdate} = $form->add_date(\%myconfig, $form->{transdate}, $form->{terms}, 'days');
 
   for (keys %temp) { $form->{$_} = $temp{$_} if $temp{$_} }
 
