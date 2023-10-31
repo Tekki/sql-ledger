@@ -43,7 +43,8 @@ sub transactions_spreadsheet {
   );
 
   my $ss = SL::Spreadsheet->new($form, $userspath);
-  $ss->structure(\%spreadsheet_info)->column_index([grep !/delete|runningnumber/, @$column_index])
+  $ss->worksheet(form_title => 1)->structure(\%spreadsheet_info)
+    ->column_index([grep !/delete|runningnumber/, @$column_index])
     ->totalize(['netamount', 'tax', 'amount']);
   if ($form->{l_subtotal}) {
     $ss->group_by([$form->{sort}])->group_label([$form->{sort}]);
@@ -80,7 +81,7 @@ sub transactions_spreadsheet {
     $ss->table_row($ref);
   }
 
-  $ss->total_row;
+  $ss->total_row->adjust_columns;
   $ss->finish;
 
   $form->download_tmpfile(\%myconfig, "$form->{title}.xlsx");

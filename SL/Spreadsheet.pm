@@ -24,20 +24,16 @@ sub new {
   my ($class, $form, $userspath) = @_;
   my %self = (
     _form        => $form,
-    col          => 0,
     column_index => [],
     date_length  => 14,
     group_count  => {},
     group_by     => [],
     group_label  => {},
-    group_sum    => {},
     group_title  => {},
     height       => {
       title => 23.25,
     },
-    last       => {},
     maxwidth   => 40,
-    row        => 0,
     structure  => {},
     url_params => qq|&path=$form->{path}&login=$form->{login}|,
     width      => [],
@@ -48,7 +44,6 @@ sub new {
   $form->{tmpfile} = "$userspath/" . time . "$$.xlsx";
   $self{workbook} = Excel::Writer::XLSX->new($form->{tmpfile})
     or $form->error("$form->{tmpfile}: $!");
-  $self{worksheet} = $self{workbook}->add_worksheet;
 
   my $localized_date    = 14;
   my $localized_decimal = 4;
@@ -121,6 +116,17 @@ sub new {
 
 # methods
 
+sub adjust_columns {
+  my ($self) = @_;
+
+  for (0 .. $#{$self->{width}}) {
+    my $width = $self->{width}[$_] || next;
+    $self->{worksheet}->set_column($_, $_, min($width, $self->{maxwidth}));
+  }
+
+  return $self;
+}
+
 sub bool {
   my ($self, $bool, $format) = @_;
   $format ||= 'default';
@@ -136,7 +142,7 @@ sub bool {
 
 sub change_format {
   my ($self, $name, %properties) = @_;
-  
+
   my $filter = $name eq ':all' ? '.*' : "^${name}_";
 
   for my $format (grep /$filter/, keys $self->{format}->%*) {
@@ -200,9 +206,12 @@ sub data_row {
 
     } elsif ($type eq 'link') {
 
-      if ($row->{"${column}_link"}) {
-        $self->link(qq|$self->{url}/$row->{"${column}_link"}$self->{url_params}|, $value, $format)
-          ->set_width(length($value) * $scale + 2);
+      if (my $link = $row->{"${column}_link"}) {
+        if ($link =~ /^[a-z]+\.pl/) {
+          $link = qq|$self->{url}/$link$self->{url_params}|;
+        }
+
+        $self->link($link, $value, $format)->set_width(length($value) * $scale + 2);
       } else {
         $self->text($value, $format)->set_width(length($value) * $scale + 2);
       }
@@ -217,7 +226,8 @@ sub data_row {
 
     } else {
 
-      $self->$type($value, $format)->set_width(length($value) * $scale + 2);
+      my $length = $type =~ /decimal/ ? length(sprintf "%.2f", $value) : length($value);
+      $self->$type($value, $format)->set_width($length * $scale + 2);
 
     }
   } continue {
@@ -231,7 +241,7 @@ sub data_row {
 
 sub date {
   my ($self, $date, $format) = @_;
-  
+
   $format ||= 'default';
 
   $date =~ s/(\d{4})(\d{2})/$1-$2-/;
@@ -258,11 +268,6 @@ sub decimal {
 
 sub finish {
   my ($self) = @_;
-  
-  for (0 .. $#{$self->{width}}) {
-    my $width = $self->{width}[$_] || next;
-    $self->{worksheet}->set_column($_, $_, min($width, $self->{maxwidth}));
-  }
 
   $self->{workbook}->close;
 
@@ -362,6 +367,18 @@ sub maxwidth {
   $_[0]->_get_set('maxwidth', $_[1]);
 }
 
+sub nonzero_decimal {
+  my ($self, $decimal, $format) = @_;
+
+  if ($decimal * 1) {
+    $self->decimal($decimal, $format);
+  } else {
+    $self->text('', $format);
+  }
+
+  return $self;
+}
+
 sub number {
   my ($self, $number, $format) = @_;
   $format ||= 'default';
@@ -451,7 +468,7 @@ sub table_row {
 
   if ($self->{group_sum}{total}) {
 
-    for my $field (keys $self->{group_sum}{total}->%*) {
+    for my $field ($self->totalize->@*) {
       if (looks_like_number($row->{$field})) {
         for my $group ('total', $self->{group_by}->@*) {
           $self->{group_sum}{$group}{$field} += $row->{$field};
@@ -512,6 +529,10 @@ sub total_row {
     $self->subtotal_row($group);
   }
 
+  if (my $update = $params{update}) {
+    $self->{group_sum}{total}{$_} = $update->{$_} for keys %$update;
+  }
+
   $params{format}  ||= 'total';
   $params{rowtype} ||= 'total';
   $params{scale}   ||= 1.2;
@@ -524,7 +545,7 @@ sub total_row {
 sub totalize {
   my ($self, $newvalues) = @_;
   if (defined $newvalues) {
-    $self->{totalize} = $newvalues;
+    $self->{totalize} = [];
 
     delete $self->{$_} for qw|total subtotal subtotalcount|;
     for my $val (@$newvalues) {
@@ -532,13 +553,15 @@ sub totalize {
 
         for my $column ($self->{column_index}->@*) {
           if (!$self->{structure}{columns}{$column}
-            || $self->{structure}{columns}{$column} eq 'decimal')
+            || $self->{structure}{columns}{$column} =~ /decimal$/)
           {
+            push $self->{totalize}->@*, $column;
             $self->{group_sum}{total}{$column} = 0;
           }
         }
 
       } else {
+        push $self->{totalize}->@*, $val;
         $self->{group_sum}{total}{$val} = 0;
       }
     }
@@ -547,6 +570,25 @@ sub totalize {
   } else {
     return $self->{totalize};
   }
+}
+
+sub worksheet {
+  my ($self, %params) = @_;
+
+  my $title;
+  if ($params{form_title}) {
+    $title = $self->{_form}{title} =~ s/ \/.*$//r;
+  } elsif ($params{title}) {
+    $title = $params{title};
+  }
+
+  $self->{worksheet} = $self->{workbook}->add_worksheet($title);
+
+  $self->{$_} = 0  for qw|row col|;
+  $self->{$_} = {} for qw|last group_sum|;
+  $self->{$_} = [] for qw|width|;
+
+  return $self;
 }
 
 # internal methods
@@ -580,6 +622,7 @@ SL::Spreadsheet - Spreadsheet Module
       columns  => {},
       group_by => $field,
     );
+    $ss->worksheet;
     $ss->structure(\%spreadsheet_info);
     $ss->column_index(\@index);
     $ss->totalize(\@columns);
@@ -600,6 +643,7 @@ SL::Spreadsheet - Spreadsheet Module
     $ss->bool($bool, $format);
     $ss->date($date, $format);
     $ss->decimal($decimal, $format);
+    $ss->nonzero_decimal($decimal, $format);
     $ss->link($url, $text, $format);
     $ss->number($number, $format);
     $ss->text($text, $format);
@@ -641,6 +685,10 @@ L<Scalar::Util>
   $ss = SL::Spreadsheet->new($form, $userspath);
 
 =head1 METHODS
+
+=head2 adjust_columns
+
+  $ss = $ss->adjust_columns;
 
 =head2 bool
 
@@ -699,7 +747,7 @@ L<Scalar::Util>
 =head2 group_title
 
   $ss     = $ss->group_title(\%titles);
-  $titles = $ss->grou_title;
+  $titles = $ss->group_title;
 
 =head2 header_row
 
@@ -722,6 +770,11 @@ L<Scalar::Util>
   $ss       = $ss->maxwidth($maxwidth);
   $maxwidth = $ss->maxwidth;
 
+=head2 nonzero_decimal
+
+  $ss = $ss->nonzero_decimal($decimal);
+  $ss = $ss->nonzero_decimal($decimal, $format);
+
 =head2 number
 
   $ss = $ss->number($number);
@@ -742,6 +795,10 @@ L<Scalar::Util>
 =head2 structure
 
   $ss = $ss->structure(\%spreadsheet_info);
+
+=head2 subtotal_row
+
+  $ss = $ss->subtotal_row($group);
 
 =head2 tab
 
@@ -767,5 +824,11 @@ L<Scalar::Util>
 
   $ss = $ss->title($text);
   $ss = $ss->title($text, $format);
+
+=head2 worksheet
+
+  $ss = $ss->worksheet;
+  $ss = $ss->worksheet(form_title => 1);
+  $ss = $ss->worksheet(title => $title);
 
 =cut

@@ -36,7 +36,8 @@ sub tax_spreadsheet {
   }
 
   my $ss = SL::Spreadsheet->new($form, $userspath);
-  $ss->structure(\%spreadsheet_info)->column_index($column_index)->totalize([':decimal']);
+  $ss->worksheet(form_title => 1)->structure(\%spreadsheet_info)->column_index($column_index)
+    ->totalize([':decimal']);
   if ($form->{l_subtotal}) {
     $ss->group_by(['accno', $form->{sort}]);
   } else {
@@ -66,7 +67,7 @@ sub tax_spreadsheet {
   for my $ref ($form->{TR}->@*) {
     $ss->table_row($ref);
   }
-  $ss->total_row;
+  $ss->total_row->adjust_columns;
 
   $ss->finish;
 
@@ -105,7 +106,12 @@ sub yearend_spreadsheet {
 
   $spreadsheet_info{header}{$_} = 'date' for @amount_columns;
 
-  $ss->structure(\%spreadsheet_info)->column_index(\@column_index)->maxwidth(50);
+  $form->{title}
+    = $reportcode eq 'balance_sheet'
+    ? $locale->text('Balance Sheet')
+    : $locale->text('Income Statement');
+  $ss->worksheet(form_title => 1)->structure(\%spreadsheet_info)->column_index(\@column_index)
+    ->maxwidth(50);
 
   $ss->text($form->{company})->crlf;
   $ss->text($_)->crlf for split /\n/, $form->{address};
@@ -113,7 +119,6 @@ sub yearend_spreadsheet {
 
   my (@categories, %header_data);
   if ($report_code eq 'balance_sheet') {
-    $form->{title} = $locale->text('Balance Sheet');
     @categories = qw|A L Q|;
 
     $ss->title($form->{title})->crlf(2);
@@ -126,7 +131,6 @@ sub yearend_spreadsheet {
     }
 
   } else {
-    $form->{title} = $locale->text('Income Statement');
     @categories = qw|I E|;
 
     $ss->title($form->{title})->crlf(2);
