@@ -14,6 +14,173 @@
 $form->load_module(['Excel::Writer::XLSX', 'SL::Spreadsheet'],
   $locale->text('Module not installed:'));
 
+sub account_spreadsheet {
+  my ($report_options) = @_;
+
+  $form->{title} = $locale->text('Accounts');
+
+  my $ss = SL::Spreadsheet->new($form, $userspath);
+
+  $ss->change_format(':all', color => undef, border_color => undef, underline => 0);
+  $ss->change_format('total', bottom => 1);
+
+  # trial balance
+  &_trialbalance_worksheet($ss);
+
+  # accounts
+
+  my %spreadsheet_info = (
+    columns => {
+      accnos      => 'text',
+      cleared     => 'bool',
+      credit      => 'nonzero_decimal',
+      debit       => 'nonzero_decimal',
+      description => 'text',
+      reference   => 'link',
+      source      => 'text',
+      transdate   => 'date',
+    },
+  );
+
+  my %header_data = (
+    accnos      => $locale->text('Contra'),
+    balance     => $locale->text('Balance'),
+    cleared     => $locale->text('R'),
+    credit      => $locale->text('Credit'),
+    debit       => $locale->text('Debit'),
+    description => $locale->text('Description'),
+    reference   => $locale->text('Reference'),
+    source      => $locale->text('Source'),
+    transdate   => $locale->text('Date'),
+  );
+
+  $ss->structure(\%spreadsheet_info);
+
+  my $oldform = $form;
+  for my $ref (sort { $a->{accno} cmp $b->{accno} } @{$oldform->{TB}}) {
+    next unless $ref->{charttype} eq 'A';
+
+    $form = bless {%$oldform}, Form;
+    $form->{accno}     = $ref->{accno};
+    $form->{l_accno}   = 1;
+    $form->{sort}      = 'transdate';
+    $form->{subreport} = 1;
+
+    &_account_worksheet($ss, \%header_data);
+  }
+
+  $ss->finish;
+
+  $form->download_tmpfile(\%myconfig, "$oldform->{title}-$oldform->{company}.xlsx");
+}
+
+sub _trialbalance_worksheet {
+  my ($ss) = @_;
+
+  # trial balance
+
+  my $title = $locale->text('Trial Balance');
+
+  my %spreadsheet_info = (
+    columns => {
+      accno       => 'link',
+      address     => 'text',
+      credit      => 'nonzero_decimal',
+      debit       => 'nonzero_decimal',
+      description => 'text',
+    },
+  );
+
+  my @column_index = qw|accno description begbalance debit credit endbalance|;
+
+  my %header_data = (
+    accno => $form->{accounttype} eq 'gifi' ? $locale->text('GIFI') : $locale->text('Account'),
+    begbalance  => $locale->text('Beginning Balance'),
+    credit      => $locale->text('Credit'),
+    debit       => $locale->text('Debit'),
+    description => $locale->text('Description'),
+    endbalance  => $locale->text('Ending Balance'),
+  );
+
+  $ss->worksheet(title => $title)->structure(\%spreadsheet_info)->column_index(\@column_index)
+    ->totalize(['debit', 'credit']);
+
+  $ss->text($form->{company})->crlf;
+  $ss->text($_)->crlf for split /\n/, $form->{address};
+  $ss->crlf;
+
+  $ss->title($form->{title})->crlf(2);
+  $ss->tab($tab)->text($locale->text('for Period'), 'heading4')
+    ->lf->date($form->{fromdate}, 'heading4')->lf->date($form->{todate}, 'heading4')->crlf(2);
+
+  if ($form->{department} || $form->{projectnumber}) {
+    for (qw|department projectnumber|) {
+      if ($form->{$_}) {
+        (my $val) = split /--/, $form->{$_};
+        $ss->tab($tab)->text($val, 'heading4')->crlf;
+      }
+    }
+
+    $ss->crlf;
+  }
+
+  $ss->crlf->header_row(\%header_data)->freeze_panes;
+
+  for my $ref ($form->{TB}->@*) {
+    next if $ref->{charttype} ne 'A';
+
+    my $ml = ($ref->{category} =~ /(A|E)/) ? -1 : 1;
+    $ml *= -1 if $ref->{contra};
+
+    $ref->{begbalance} = $ref->{balance} * $ml;
+    $ref->{endbalance} = ($ref->{balance} + $ref->{amount}) * $ml;
+    $ref->{accno_link} = qq|internal:$ref->{accno}!A1|;
+
+    $ss->table_row($ref);
+  }
+  $ss->total_row->adjust_columns;
+}
+
+sub _account_worksheet {
+  my ($ss, $header_data) = @_;
+
+  CA->all_transactions(\%myconfig, \%$form);
+
+  my @column_index = qw|transdate reference description|;
+  push @column_index, qw|source cleared| if $form->{link} =~ /_paid/;
+  push @column_index, 'accnos'           if $form->{l_accno};
+  push @column_index, qw|debit credit balance|;
+
+  $ss->worksheet(title => $form->{accno})->column_index(\@column_index)
+    ->totalize(['debit', 'credit']);
+
+  $form->{title}
+    = ($form->{accounttype} eq 'gifi') ? $locale->text('GIFI') : $locale->text('Account');
+  $form->{title} .= " $form->{accno} - $form->{description}";
+  $ss->title($form->{title})->crlf(2);
+
+  $ss->crlf->header_row($header_data)->freeze_panes;
+
+  my $ml = ($form->{category} =~ /(A|E)/) ? -1 : 1;
+  $ml *= -1 if $form->{contra};
+
+  $ss->table_row({balance => $form->{balance} * $ml, transdate => $form->{fromdate}});
+
+  for my $ref ($form->{CA}->@*) {
+    $form->{balance} += $ref->{amount};
+    $ref->{balance} = $form->{balance} * $ml;
+
+    $ref->{accnos} = join ', ', $ref->{accno}->@*;
+
+    $ref->{reference_link} = qq|$ref->{module}.pl?action=edit&id=$ref->{id}|;
+
+    $ss->table_row($ref);
+  }
+
+  $ss->total_row(update => {balance => $form->{balance} * $ml, transdate => $form->{todate}})
+    ->adjust_columns;
+}
+
 sub tax_spreadsheet {
   my ($report_options, $column_index, $header) = @_;
 

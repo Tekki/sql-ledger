@@ -2259,6 +2259,7 @@ sub display_all {
   require "$form->{path}/ca.pl";
 
   RP->trial_balance(\%myconfig, $form);
+  my $callback = $form->{callback};
 
   if ($form->{department}) {
     ($department) = split /--/, $form->{department};
@@ -2281,6 +2282,12 @@ sub display_all {
     $form->{period} = $locale->date(\%myconfig, $form->current_date(\%myconfig), 1);
   }
   $options .= $form->{period};
+
+  if ($form->{action} eq 'spreadsheet') {
+    require "$form->{path}/rpss.pl";
+    &account_spreadsheet($options);
+    exit;
+  }
 
   $form->header;
 
@@ -2315,6 +2322,34 @@ sub display_all {
   }
 
   print qq|
+
+<form method=post action=$form->{script}>
+|;
+
+  %button = (
+    'Spreadsheet' => {ndx => 9, key => 'X', value => $locale->text('Spreadsheet')},
+  );
+
+  if (!$form->{admin}) {
+    delete $button{'Save Report'} unless $form->{savereport};
+  }
+
+  if ($form->{year} && $form->{month}) {
+    for (qw(fromdate todate)) { delete $form->{$_} }
+  }
+
+  # created in RP.pm
+  $form->{$_} = $form->{"old_$_"} for qw|fromdate todate|;
+  $form->{callback} = $callback =~ s/generate_trial_balance/display_all/r;
+
+  $form->hide_form(qw(department projectnumber fromdate todate month year interval language_code l_heading l_subtotal all_accounts accounttype));
+
+  $form->hide_form(qw(callback path login report reportcode reportlogin sort direction));
+
+  $form->print_button(\%button);
+
+  print qq|
+</form>
 
 </body>
 </html>

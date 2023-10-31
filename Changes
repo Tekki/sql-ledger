@@ -1,5 +1,9 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+Not Released
+  - new methods and data types for creating spreadsheets
+  - spreadsheet for account statements
+
 3.2.12.37 2023-07-31
   - fx rate script improved
   - Docker files updated to Debian Bookworm
