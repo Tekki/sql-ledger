@@ -20,6 +20,7 @@ The `full` branch, which is checked out by default, provides some additions:
 * recently used objects
 * dark mode
 * database snapshots
+* encrypted backups
 * JSON API ([introduction](doc/api.md))
 * real Unicode support
 * Docker files for containerized test environment
@@ -38,21 +39,12 @@ DWS](https://sql-ledger.com/cgi-bin/nav.pl?page=source/readme.txt&title=README),
 or open an issue in the other repo (the chances that you get an update depend
 on your Github name, the weather and the lunar phase).
 
-# WLprinter
+# Encrypted Backups
 
-WLprinter, included in the `full` branch, is a [Java](https://java.com) program
-that is executed on the client PC and allows to print directly from SQL-Ledger
-to your local printers. It is available for printing if you add a printer with
-command `wlprinter` at `System--Workstations`. The client program is started
-from `Batch--WLprinter`. You will have to add a Java security exception for
-your SQL-Ledger server.
-
-# Unicode Support
-
-In difference to the original SQL-Ledger, the version in the `full` branch
-internally works with [Unicode
-characters](https://perldoc.perl.org/perlunicode.html). This requires that your
-database, your templates and translations are all encoded in UTF-8.
+If [GnuPG](https://gnupg.org/) is installed on your server, you can
+use it to encrypt backups. Uncomment the `$gpg` variable in
+`sql-ledger.conf`, create a directory `/var/www/gnupg` and change its
+owner to `www-data:www-data`.
 
 # Docker
 
@@ -62,12 +54,28 @@ With
     docker-compose -p sql-ledger up -d
 
 you can start a simple test environment (without LaTeX support). SQL-Ledger
-runs at [localhost/sql-ledger](http://localhost/sql-ledger). At
+will run at [localhost/sql-ledger](http://localhost/sql-ledger). At
 [localhost:8080](http://localhost:8080) and
 [localhost:8085](http://localhost:8085) you find the database management tools
 [Adminer](https://www.adminer.org) and [pgAdmin](https://pgadmin.org). You'll
 have to connect them to the PostgreSQL database that runs on service `db` with
 username and password `sql-ledger`.
+
+# Unicode Support
+
+In difference to the original SQL-Ledger, the version in the `full` branch
+internally works with [Unicode
+characters](https://perldoc.perl.org/perlunicode.html). This requires that your
+database, your templates and translations are all encoded in UTF-8.
+
+# WLprinter
+
+WLprinter, included in the `full` branch, is a [Java](https://java.com) program
+that is executed on the client PC and allows to print directly from SQL-Ledger
+to your local printers. It is available for printing if you add a printer with
+command `wlprinter` at `System--Workstations`. The client program is started
+from `Batch--WLprinter`. You will have to add a Java security exception for
+your SQL-Ledger server.
 
 # Documentation
 

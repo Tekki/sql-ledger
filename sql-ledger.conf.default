@@ -1,4 +1,4 @@
-use vars qw($userspath $spool $memberfile $templates $sendmail $images $language $charset $sid $latex $gzip $dvipdf $pdftk $xelatex @accessfolders $helpful_login);
+use vars qw($userspath $spool $memberfile $templates $sendmail $images $language $charset $sid $latex $gzip $gpg $dvipdf $pdftk $xelatex @accessfolders $helpful_login);
 
 # path to user configuration files
 $userspath = "users";
@@ -31,6 +31,9 @@ $latex = 1;
 
 # program to use for file compression
 $gzip = "gzip -S .gz";
+
+# use gpg for file encryption
+#$gpg = "gpg --homedir /var/www/gnupg --batch --yes";
 
 # use dvipdf instead of pdflatex for PDF
 $dvipdf = 1;

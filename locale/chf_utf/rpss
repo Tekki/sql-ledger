@@ -3,26 +3,46 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
+  'Account'                     => 'Compte',
+  'Accounts'                    => 'Comptes',
+  'Accrual'                     => 'Convenu (créance/dette)',
   'Assets'                      => 'Actifs',
+  'Balance'                     => 'Solde',
   'Balance Sheet'               => 'Bilan',
+  'Beginning Balance'           => 'Solde initial',
+  'Cash'                        => 'Paiements',
+  'Contra'                      => 'Contre-compte',
+  'Credit'                      => 'Crédit',
   'Current Earnings'            => 'Résulltat de l\'exercice',
+  'Date'                        => 'Date',
+  'Debit'                       => 'Débit',
+  'Description'                 => 'Libellé',
+  'Ending Balance'              => 'Solde de clôture',
   'Equity'                      => 'Fonds',
   'Expenses'                    => 'Charges',
+  'GIFI'                        => 'Groupe de compte',
   'Income'                      => 'Produits',
   'Income / (Loss)'             => 'Résultat',
   'Income Statement'            => 'Compte de résultat',
   'Liabilities'                 => 'Dettes',
   'Module not installed:'       => 'Module pas installé:',
+  'R'                           => 'R',
+  'Reference'                   => 'Référence',
+  'Source'                      => 'Source',
   'Total'                       => 'Total',
+  'Trial Balance'               => 'Balance de vérification',
   'as at'                       => 'au',
   'for Period'                  => 'pour la période',
 };
 
 $self{subs} = {
+  '_account_worksheet'          => '_account_worksheet',
   '_ss_section'                 => '_ss_section',
   '_ss_subtotal'                => '_ss_subtotal',
-  'create_spreadsheet'          => 'create_spreadsheet',
-  'download_spreadsheet'        => 'download_spreadsheet',
+  '_trialbalance_worksheet'     => '_trialbalance_worksheet',
+  'account_spreadsheet'         => 'account_spreadsheet',
+  'tax_spreadsheet'             => 'tax_spreadsheet',
+  'yearend_spreadsheet'         => 'yearend_spreadsheet',
 };
 
 1;

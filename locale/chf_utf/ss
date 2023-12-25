@@ -1,15 +1,7 @@
-use utf8;
-
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Module not installed:'       => 'Module pas installÃ©:',
-};
+  'Module not installed:'       => 'Module pas installé:',
 
-$self{subs} = {
-  'create_spreadsheet'          => 'create_spreadsheet',
-  'download_spreadsheet'        => 'download_spreadsheet',
 };
-
 1;
-

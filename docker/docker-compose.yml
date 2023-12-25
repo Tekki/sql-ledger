@@ -36,12 +36,14 @@ services:
 
   app:
     build: .
-    image: sql-ledger-test:0.14
+    image: sql-ledger-test:0.15
     ports:
       - 80:80
     volumes:
       - ../.:/usr/local/apache2/htdocs/sql-ledger
+      - gnupg:/usr/local/apache2/gnupg
 
 volumes:
   db:
+  gnupg:
   pgadmin:

@@ -2701,20 +2701,44 @@ sub defaults {
         </tr>
       </table>
     </td>
+  </tr>|;
+
+  if ($gpg) {
+    print qq|
+  <tr>
+    <th class=listheading>|.$locale->text('Encryption').qq|</th>
   </tr>
   <tr>
+    <td>
+      <table>
+        <tr>
+          <th></th>
+          <td></td>
+          <th>|.$locale->text('Delete').qq|</th>
+        </tr>
+        <tr valign=top>
+          <th align=right nowrap>|.$locale->text('Public Key').qq|</th>
+                <td><textarea name=publickey rows=3 cols=60>$form->{publickey}</textarea></td>
+          <td><input name=delete_publickey class=checkbox type=checkbox value=1></td>
+        </tr>
+      </table>
+    </td>
+  <tr>
     <td><hr size=3 noshade></td>
-  </tr>
+  </tr>|;
+  }
+
+  print qq|
 </table>
 |;
 
-  $form->{optional} = "company address tel fax companyemail companywebsite yearend weightunit businessnumber closedto revtrans audittrail method cdt namesbynumber typeofcontact roundchange referenceurl annualinterest latepaymentfee restockingcharge checkinventory hideaccounts forcewarehouse";
+  $form->{optional} = "company address tel fax companyemail companywebsite yearend weightunit businessnumber closedto revtrans audittrail method cdt namesbynumber typeofcontact roundchange referenceurl annualinterest latepaymentfee restockingcharge checkinventory hideaccounts forcewarehouse publickey";
 
   for (qw(gl si so vi batch voucher po sq rfq part project employee customer vendor)) { $form->{optional} .= " ${_}number" }
 
   for (qw(gl si so po sq rfq employee customer vendor)) { $form->{optional} .= " lock_${_}number" }
 
-  @f = qw(closedto revtrans audittrail);
+  @f = qw(closedto revtrans audittrail old_publickey);
 
   for (qw(printer opendrawer poledisplay poledisplayon)) {
     if ($form->{$_}) {
@@ -2729,6 +2753,7 @@ sub defaults {
     }
   }
 
+  $form->{old_publickey} = $form->{publickey};
   $form->hide_form(@f) if @f;
 
   $form->hide_form(qw(optional path login));
@@ -3221,6 +3246,14 @@ pdf--PDF|;
 
 sub save_defaults {
 
+  if ($form->{publickey} && $form->{publickey} ne $form->{old_publickey}) {
+    AM->import_publickey(\%myconfig, $form, $gpg, $userspath);
+  }
+
+  if ($form->{old_publickey} && $form->{delete_publickey}) {
+    AM->delete_publickey(\%myconfig, $form, $gpg);
+  }
+
   if (AM->save_defaults(\%myconfig, \%$form)) {
     $form->redirect($locale->text('Defaults saved!'));
   } else {
@@ -3315,6 +3348,12 @@ sub pg_dump {
     $tmpfile .= $suffix;
   }
 
+  if ($gpg && AM->encrypt_file(\%myconfig, $form, $gpg, $tmpfile)) {
+    unlink $tmpfile;
+    $suffix .= '.gpg';
+    $tmpfile .= '.gpg';
+  }
+
   open(IN,  "$tmpfile") or $form->error("$tmpfile : $!");
   open(OUT, ">-")       or $form->error("STDOUT : $!");
 
@@ -3345,7 +3384,7 @@ sub backup {
   }
 
   $SIG{INT} = 'IGNORE';
-  AM->backup(\%myconfig, \%$form, $userspath, $gzip);
+  AM->backup(\%myconfig, \%$form, $userspath, $gzip, $gpg);
 
   if ($form->{media} eq 'email') {
     $form->redirect($locale->text('Backup sent to').qq| $myconfig{email}|);

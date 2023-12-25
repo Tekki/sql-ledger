@@ -1833,7 +1833,7 @@ sub save_taxes {
 
 
 sub backup {
-  my ($self, $myconfig, $form, $userspath, $gzip) = @_;
+  my ($self, $myconfig, $form, $userspath, $gzip, $gpg) = @_;
 
   my $mail;
   my $err;
@@ -2114,6 +2114,12 @@ $myconfig->{dboptions};
     my %s = @s;
     $suffix = ${-S} || ".gz";
     $tmpfile .= $suffix;
+  }
+
+  if ($gpg && $self->encrypt_file($myconfig, $form, $gpg, $tmpfile)) {
+    unlink $tmpfile;
+    $suffix .= '.gpg';
+    $tmpfile .= '.gpg';
   }
 
   if ($form->{media} eq 'email') {
@@ -3574,6 +3580,59 @@ sub restore_snapshot {
 }
 
 
+sub import_publickey {
+  my ($self, $myconfig, $form, $gpg, $userspath) = @_;
+
+  if ($form->{publickey} =~ /^[[:xdigit:]]{8}$/) {
+
+    my $result = `$gpg --list-keys $form->{publickey} 2>&1`;
+    $form->error("$form->{publickey} : Not available!") unless $result =~ /$form->{publickey}/;
+
+  } elsif ($form->{publickey} =~ /^-----BEGIN PGP PUBLIC KEY BLOCK-----/) {
+
+    my $tmpfile = "$userspath/" . time . "$$_pubkey.asc";
+    open my $out, '>', $tmpfile or $form->error("$tmpfile : $!");
+    print $out $form->{publickey};
+    close $out;
+
+    my $result = `$gpg --import $tmpfile 2>&1`;
+    $form->error("gpg import : $!") if $!;
+    unlink $tmpfile;
+
+    ($form->{publickey}) = $result =~ /gpg: .*([[:xdigit:]]{8}):/;
+
+  } else {
+    $form->error('Not a public key!');
+  }
+}
+
+
+sub delete_publickey {
+  my ($self, $myconfig, $form, $gpg) = @_;
+  return unless $form->{old_publickey};
+
+  system qq|$gpg --delete-keys $form->{old_publickey}|;
+
+  $form->{publickey}     = '' if $form->{publickey} eq $form->{old_publickey};
+  $form->{old_publickey} = '';
+}
+
+
+sub encrypt_file {
+  my ($self, $myconfig, $form, $gpg, $file) = @_;
+
+  my $dbh      = $form->dbconnect($myconfig);
+  my %defaults = $form->get_defaults($dbh, ['publickey']);
+  $dbh->disconnect;
+
+  return unless $defaults{publickey};
+
+  my @args = split / /, $gpg;
+  push @args, ('--always-trust', '--recipient', $defaults{publickey}, '--encrypt', $file);
+  return system(@args) == 0;
+}
+
+
 1;
 
 =encoding utf8
@@ -3603,7 +3662,7 @@ L<SL::AM> implements the following functions:
 
 =head2 backup
 
-  AM->backup($myconfig, $form, $userspath, $gzip);
+  AM->backup($myconfig, $form, $userspath, $gzip, $gpg);
 
 =head2 bank_accounts
 
@@ -3669,6 +3728,10 @@ L<SL::AM> implements the following functions:
 
   AM->delete_paymentmethod($myconfig, $form);
 
+=head2 delete_publickey
+
+  AM->delete_publickey($myconfig, $form, $gpg);
+
 =head2 delete_role
 
   AM->delete_role($myconfig, $form);
@@ -3692,6 +3755,10 @@ L<SL::AM> implements the following functions:
 =head2 earningsaccounts
 
   AM->earningsaccounts($myconfig, $form);
+
+=head2 encrypt_file
+
+  AM->encrypt_file($myconfig, $form, $gpg, $file);
 
 =head2 exchangerates
 
@@ -3752,6 +3819,10 @@ L<SL::AM> implements the following functions:
 =head2 gifi_accounts
 
   AM->gifi_accounts($myconfig, $form);
+
+=head2 import_publickey
+
+  AM->import_publickey($myconfig, $form, $gpg, $userspath);
 
 =head2 language
 

@@ -1,5 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+Not Released
+  - encrypted backups
+
 3.2.12.38 2023-10-31
   - new methods and data types for creating spreadsheets
   - spreadsheet for account statements

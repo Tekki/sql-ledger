@@ -3,26 +3,46 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
+  'Account'                     => 'Konto',
+  'Accounts'                    => 'Konten',
+  'Accrual'                     => 'vereinbart',
   'Assets'                      => 'Aktiven',
+  'Balance'                     => 'Bilanz',
   'Balance Sheet'               => 'Bilanz',
+  'Beginning Balance'           => 'Eröffnungsbilanz',
+  'Cash'                        => 'Zahlungen',
+  'Contra'                      => 'Gegenkonto',
+  'Credit'                      => 'Haben',
   'Current Earnings'            => 'Aktuelles Ergebnis',
+  'Date'                        => 'Datum',
+  'Debit'                       => 'Soll',
+  'Description'                 => 'Beschreibung',
+  'Ending Balance'              => 'Schlussbilanz',
   'Equity'                      => 'Eigenkapital',
   'Expenses'                    => 'Aufwand',
+  'GIFI'                        => 'Kontengruppe',
   'Income'                      => 'Ertrag',
   'Income / (Loss)'             => 'Ergebnis',
   'Income Statement'            => 'Erfolgsrechnung',
   'Liabilities'                 => 'Passiven',
   'Module not installed:'       => 'Modul nicht installiert:',
+  'R'                           => 'R',
+  'Reference'                   => 'Referenz',
+  'Source'                      => 'Beleg',
   'Total'                       => 'Total',
+  'Trial Balance'               => 'Saldenbilanz',
   'as at'                       => 'zum Stand',
   'for Period'                  => 'für den Zeitraum',
 };
 
 $self{subs} = {
+  '_account_worksheet'          => '_account_worksheet',
   '_ss_section'                 => '_ss_section',
   '_ss_subtotal'                => '_ss_subtotal',
-  'create_spreadsheet'          => 'create_spreadsheet',
-  'download_spreadsheet'        => 'download_spreadsheet',
+  '_trialbalance_worksheet'     => '_trialbalance_worksheet',
+  'account_spreadsheet'         => 'account_spreadsheet',
+  'tax_spreadsheet'             => 'tax_spreadsheet',
+  'yearend_spreadsheet'         => 'yearend_spreadsheet',
 };
 
 1;
