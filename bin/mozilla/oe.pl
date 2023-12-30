@@ -880,19 +880,24 @@ sub form_footer {
 
   if (!$form->{taxincluded}) {
 
+    next unless $form->{"${_}_base"};
+
     for (split / /, $form->{taxaccounts}) {
 
-      if ($form->{"${_}_base"}) {
-        $form->{invtotal} += $form->{"${_}_total"} = $form->round_amount($form->{"${_}_base"} * $form->{"${_}_rate"}, $form->{precision});
-        $form->{"${_}_total"} = $form->format_amount(\%myconfig, $form->{"${_}_total"}, $form->{precision}, 0);
+      $form->{invtotal} += $form->{"${_}_total"}
+        = $form->round_amount($form->{"${_}_base"} * $form->{"${_}_rate"}, $form->{precision});
+      $form->{"${_}_total"}
+        = $form->format_amount(\%myconfig, $form->{"${_}_total"}, $form->{precision}, 0);
 
-        $tax .= qq|
+      $desc_taxrate = $form->{"${_}_rate"} * 100;
+
+      $tax .= qq|
               <tr>
-                <th align=right>$form->{"${_}_description"}</th>
+                <th align=right>$form->{"${_}_description"} $desc_taxrate%</th>
                 <td align=right>$form->{"${_}_total"}</td>
               </tr>
 |;
-      }
+
     }
 
     $form->{invsubtotal} = $form->format_amount(\%myconfig, $form->{invsubtotal}, $form->{precision}, 0);

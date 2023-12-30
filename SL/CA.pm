@@ -349,7 +349,7 @@ sub all_transactions {
       $ref->{db} = "customer";
     }
 
-    if ($ref->{amount}) {
+    if ($ref->{amount} || $form->{link} =~ /_tax/) {
       %accno = ();
 
       if ($ref->{amount} < 0) {

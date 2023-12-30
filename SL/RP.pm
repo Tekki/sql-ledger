@@ -1921,7 +1921,7 @@ sub tax_report {
                 WHERE $where
                 $accno
                 AND a.invoice = '0'
-                AND NOT (ch.link LIKE '%_paid' OR ch.link = '$ARAP')
+                AND NOT (ch.link ~ '_paid\|_tax' OR ch.link = '$ARAP')
                 $cashwhere
 
               UNION ALL
@@ -1970,7 +1970,7 @@ sub tax_report {
               WHERE a.datepaid >= '$form->{fromdate}'
               $accno
               AND a.invoice = '0'
-              AND NOT (ch.link LIKE '%_paid' OR ch.link = '$ARAP')
+              AND NOT (ch.link ~ '_paid\|_tax' OR ch.link = '$ARAP')
               $cashwhere
 
             UNION
@@ -2061,7 +2061,7 @@ sub tax_report {
                   WHERE $where
                   AND a.invoice = '0'
                   AND a.netamount = a.amount
-                  AND NOT (ch.link LIKE '%_paid' OR ch.link = '$ARAP')
+                  AND NOT (ch.link ~ '_paid\|_tax' OR ch.link = '$ARAP')
                   $cashwhere
 
                 UNION ALL
@@ -2103,7 +2103,7 @@ sub tax_report {
                   WHERE a.datepaid >= '$form->{fromdate}'
                   AND a.invoice = '0'
                   AND a.netamount = a.amount
-                  AND NOT (ch.link LIKE '%_paid' OR ch.link = '$ARAP')
+                  AND NOT (ch.link ~ '_paid\|_tax' OR ch.link = '$ARAP')
                   $cashwhere
 
                 UNION
@@ -2163,7 +2163,7 @@ sub tax_report {
     if ($form->{reportcode} =~ /nontaxable/) {
       push @{ $form->{TR} }, $ref if $ref->{netamount};
     } else {
-      push @{ $form->{TR} }, $ref if $ref->{tax};
+      push @{ $form->{TR} }, $ref if $ref->{tax} || $ref->{netamount};
     }
   }
 

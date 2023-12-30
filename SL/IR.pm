@@ -316,9 +316,9 @@ sub invoice_details {
         $ml *= -1;
       }
 
-      # process 0 taxes
+      # process zero percent taxes
       for (@taxaccounts) {
-        if ($form->{"${_}_rate"} eq "0") {
+        if ($form->{"${_}_rate"} * 1 == 0 && $form->{"${_}_description"}) {
           push @taxrates, 0;
           $taxaccounts{$_} = 0;
           $taxbase{$_} += $linetotal;
@@ -1206,16 +1206,15 @@ sub post_invoice {
 
 
   foreach my $trans_id (keys %{$form->{acc_trans}}) {
-    foreach $accno (keys %{ $form->{acc_trans}{$trans_id} }) {
-      $amount = $form->round_amount($form->{acc_trans}{$trans_id}{$accno}{amount}, $form->{precision});
-      if ($amount) {
-        $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount,
+    foreach $accno (keys %{$form->{acc_trans}{$trans_id}}) {
+      $amount
+        = $form->round_amount($form->{acc_trans}{$trans_id}{$accno}{amount}, $form->{precision});
+      $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount,
                     transdate)
                     VALUES ($trans_id, (SELECT id FROM chart
                                         WHERE accno = '$accno'),
                     $amount, '$form->{transdate}')|;
-        $dbh->do($query) || $form->dberror($query);
-      }
+      $dbh->do($query) || $form->dberror($query);
     }
   }
 

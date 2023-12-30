@@ -746,38 +746,34 @@ $notes = qq|<textarea name=notes rows=$rows cols=35 wrap=soft accesskey="+" titl
 
   for (split / /, $form->{taxaccounts}) {
 
+    next unless $form->{"${_}_base"};
+
     if ($form->{taxincluded}) {
 
-      if ($form->{"${_}_base"}) {
-        $form->{"${_}_total"}
-          = $form->round_amount(
-          $form->{"${_}_base"} * $form->{"${_}_rate"} / (1 + $form->{"${_}_rate"}),
-          $form->{precision});
-        $form->{invsubtotal} -= $form->{"${_}_total"};
+      $form->{"${_}_total"}
+        = $form->round_amount(
+        $form->{"${_}_base"} * $form->{"${_}_rate"} / (1 + $form->{"${_}_rate"}),
+        $form->{precision});
+      $form->{invsubtotal} -= $form->{"${_}_total"};
 
-        if ($form->{discount_paid} && $form->{cdt}) {
-          $cdtp = $form->{discount_paid} / $form->{invsubtotal} if $form->{invsubtotal};
-          $form->{"${_}_total"}
-            -= $form->round_amount($form->{"${_}_total"} * $cdtp, $form->{precision});
-        }
+      if ($form->{discount_paid} && $form->{cdt}) {
+        $cdtp = $form->{discount_paid} / $form->{invsubtotal} if $form->{invsubtotal};
+        $form->{"${_}_total"}
+          -= $form->round_amount($form->{"${_}_total"} * $cdtp, $form->{precision});
       }
 
     } else {
 
-      if ($form->{"${_}_base"}) {
+      $form->{"${_}_total"}
+        = $form->round_amount($form->{"${_}_base"} * $form->{"${_}_rate"}, $form->{precision});
 
+      if ($form->{discount_paid} && $form->{cdt}) {
+        $cdtp = $form->{discount_paid} / $form->{invsubtotal} if $form->{invsubtotal};
         $form->{"${_}_total"}
-          = $form->round_amount($form->{"${_}_base"} * $form->{"${_}_rate"}, $form->{precision});
-
-        if ($form->{discount_paid} && $form->{cdt}) {
-          $cdtp = $form->{discount_paid} / $form->{invsubtotal} if $form->{invsubtotal};
-          $form->{"${_}_total"}
-            -= $form->round_amount($form->{"${_}_total"} * $cdtp, $form->{precision});
-        }
-
-        $form->{invtotal} += $form->{"${_}_total"};
-
+          -= $form->round_amount($form->{"${_}_total"} * $cdtp, $form->{precision});
       }
+
+      $form->{invtotal} += $form->{"${_}_total"};
     }
 
     $desc_taxrate = $form->{"${_}_rate"} * 100;

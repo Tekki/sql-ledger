@@ -1435,9 +1435,9 @@ sub order_details {
         $ml *= -1;
       }
 
-      # process 0 taxes
+      # process zero percent taxes
       for (@taxaccounts) {
-        if ($form->{"${_}_rate"} eq "0") {
+        if ($form->{"${_}_rate"} * 1 == 0 && $form->{"${_}_description"}) {
           push @taxrates, 0;
           $taxaccounts{$_} = 0;
           $taxbase{$_} += $linetotal;
