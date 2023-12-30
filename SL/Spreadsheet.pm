@@ -226,8 +226,12 @@ sub data_row {
 
     } else {
 
-      my $length = $type =~ /decimal/ ? length(sprintf "%.2f", $value) : length($value);
-      $self->$type($value, $format)->set_width($length * $scale + 2);
+      $self->$type($value, $format);
+
+      if ($value) {
+        my $length = $type =~ /decimal/ ? length(sprintf "%.2f", $value) : length($value);
+        $self->set_width($length * $scale + 2);
+      }
 
     }
   } continue {
@@ -581,6 +585,9 @@ sub worksheet {
   } elsif ($params{title}) {
     $title = $params{title};
   }
+  $title =~ tr'\/?*[]'--.+()';
+  $title =~ s/^\.+//;
+  $title = substr $title, 0, 31;
 
   $self->{worksheet} = $self->{workbook}->add_worksheet($title);
 

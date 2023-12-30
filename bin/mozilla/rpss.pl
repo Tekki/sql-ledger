@@ -333,7 +333,7 @@ sub yearend_spreadsheet {
 
   $ss->data_row(\%total, format => 'total') if $report_code eq 'income_statement';
 
-  $ss->finish;
+  $ss->adjust_columns->finish;
 
   $form->download_tmpfile(\%myconfig, "$form->{title}-$form->{company}.xlsx");
 }
