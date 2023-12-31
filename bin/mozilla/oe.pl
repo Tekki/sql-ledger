@@ -880,9 +880,9 @@ sub form_footer {
 
   if (!$form->{taxincluded}) {
 
-    next unless $form->{"${_}_base"};
-
     for (split / /, $form->{taxaccounts}) {
+
+      next unless $form->{"${_}_base"};
 
       $form->{invtotal} += $form->{"${_}_total"}
         = $form->round_amount($form->{"${_}_base"} * $form->{"${_}_rate"}, $form->{precision});

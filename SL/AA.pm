@@ -75,11 +75,14 @@ sub post_transaction {
     $fxtax += $tax{fxamount}{$accno} = $form->parse_amount($myconfig, $form->{"tax_$accno"});
     $tax += $tax{fxamount}{$accno};
 
-    push @{ $form->{acc_trans}{taxes} }, {
-      accno => $accno,
-      amount => $tax{fxamount}{$accno},
-      transdate => $form->{transdate},
-      fx_transaction => 0 };
+    push @{$form->{acc_trans}{taxes}},
+      {
+      accno          => $accno,
+      amount         => $tax{fxamount}{$accno},
+      transdate      => $form->{transdate},
+      fx_transaction => 0,
+      calctax        => $form->{"calctax_$accno"},
+      };
 
     $amount = $tax{fxamount}{$accno} * $form->{exchangerate};
     $tax{amount}{$accno} = $form->round_amount($amount - $diff, $form->{precision});
@@ -350,7 +353,7 @@ sub post_transaction {
   # save taxes
   foreach $ref (@{ $form->{acc_trans}{taxes} }) {
     $ref->{amount} = $form->round_amount($ref->{amount}, $form->{precision});
-    if ($ref->{amount}) {
+    if ($ref->{amount} || $ref->{calctax}) {
       $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount,
                   transdate, fx_transaction, approved)
                   VALUES ($form->{id},
