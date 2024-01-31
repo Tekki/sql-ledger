@@ -72,6 +72,9 @@ sub invoice_details {
 
   my $sortby;
 
+  $form->{all_partsgroup} = "";
+  $form->{all_projectnumber} = "";
+
   # sort items by project and partsgroup
   for $i (1 .. $form->{rowcount} - 1) {
 
@@ -81,10 +84,15 @@ sub invoice_details {
     for (keys %$ref) { $form->{"${_}_$i"} = $ref->{$_} }
     $pth->finish;
 
+    if ($form->{"projectnumber_$i"}) {
+      $prh->execute($form->{"projectnumber_$i"} =~ s/.*--//r);
+      ($projectnumber, $projectdescription, $translation) = $prh->fetchrow_array;
+      $form->{"projectdescription_$i"} = $translation || $projectdescription;
+      $prh->finish;
+    }
+
     $projectnumber_id = 0;
     $projectnumber = "";
-    $form->{partsgroup} = "";
-    $form->{projectnumber} = "";
 
     if ($form->{groupprojectnumber} || $form->{grouppartsgroup}) {
 
@@ -94,41 +102,41 @@ sub invoice_details {
         ($projectnumber, $projectnumber_id) = split /--/, $form->{"projectnumber_$i"};
       }
       if ($form->{grouppartsgroup}) {
-        ($form->{partsgroup}) = split /--/, $form->{"partsgroup_$i"};
+        ($form->{all_partsgroup}) = split /--/, $form->{"partsgroup_$i"};
       }
 
       if ($projectnumber_id && $form->{groupprojectnumber}) {
         if ($translation{$projectnumber_id}) {
-          $form->{projectnumber} = $translation{$projectnumber_id};
+          $form->{all_projectnumber} = $translation{$projectnumber_id};
         } else {
           # get project description
           $prh->execute($projectnumber_id);
           ($projectdescription, $translation) = $prh->fetchrow_array;
           $prh->finish;
 
-          $form->{projectnumber} = ($translation) ? "$projectnumber, $translation" : "$projectnumber, $projectdescription";
+          $form->{all_projectnumber} = ($translation) ? "$projectnumber, $translation" : "$projectnumber, $projectdescription";
 
-          $translation{$projectnumber_id} = $form->{projectnumber};
+          $translation{$projectnumber_id} = $form->{all_projectnumber};
         }
       }
 
-      if ($form->{grouppartsgroup} && $form->{partsgroup}) {
-        $form->{projectnumber} .= " / " if $projectnumber_id;
-        $form->{projectnumber} .= $form->{partsgroup};
+      if ($form->{grouppartsgroup} && $form->{all_partsgroup}) {
+        $form->{all_projectnumber} .= " / " if $projectnumber_id;
+        $form->{all_projectnumber} .= $form->{all_partsgroup};
       }
 
       $form->format_string((projectnumber));
 
     }
 
-    $sortby = qq|$projectnumber$form->{partsgroup}|;
+    $sortby = qq|$projectnumber$form->{all_partsgroup}|;
     if ($form->{sortby} ne 'runningnumber') {
       for (qw(partnumber description bin)) {
         $sortby .= $form->{"${_}_$i"} if $form->{sortby} eq $_;
       }
     }
 
-    push @sortlist, [ $i, qq|$projectnumber$form->{partsgroup}$inventory_accno_id|, $form->{projectnumber}, $projectnumber_id, $form->{partsgroup}, $sortby ];
+    push @sortlist, [ $i, qq|$projectnumber$form->{all_partsgroup}$inventory_accno_id|, $form->{all_projectnumber}, $projectnumber_id, $form->{all_partsgroup}, $sortby ];
 
     # last package number
     $form->{packages} = $form->{"package_$i"} if $form->{"package_$i"};
@@ -177,8 +185,10 @@ sub invoice_details {
   my $j = 0;
   my $ok;
 
-  @{ $form->{lineitems} } = ();
-  @{ $form->{taxrates} } = ();
+  $form->{lineitems}     = [];
+  $form->{taxrates}      = [];
+  $form->{projectnumber} = [];
+  $form->{description}   = [];
 
   for my $item (@sortlist) {
 
@@ -210,7 +220,7 @@ sub invoice_details {
           }
 
           push(@{ $form->{description} }, $item->[2]);
-          for (qw(taxrates runningnumber number sku serialnumber ordernumber customerponumber bin qty ship unit deliverydate projectnumber sell sellprice listprice netprice discount discountrate linetotal itemnotes lineitemdetail package netweight grossweight volume countryorigin hscode barcode lot expires make model)) { push(@{ $form->{$_} }, "") }
+          for (qw(taxrates runningnumber number sku serialnumber ordernumber customerponumber bin qty ship unit deliverydate projectnumber projectdescription sell sellprice listprice netprice discount discountrate linetotal itemnotes lineitemdetail package netweight grossweight volume countryorigin hscode barcode lot expires make model)) { push(@{ $form->{$_} }, "") }
           push(@{ $form->{lineitems} }, { amount => 0, tax => 0 });
         }
       }
@@ -231,7 +241,10 @@ sub invoice_details {
 
       # if not grouped remove id
       ($projectnumber) = split /--/, $form->{"projectnumber_$i"};
-      push(@{ $form->{projectnumber} }, $projectnumber);
+      push(@{$form->{projectnumber}}, $projectnumber);
+      push @{$form->{projectdescription}}, $form->{"projectdescription_$i"};
+      $form->{first_projectnumber}      ||= $projectnumber;
+      $form->{first_projectdescription} ||= $form->{"projectdescription_$i"};
 
       for (qw(make model)) { $form->{"a_$_"} = $form->{"${_}_$i"} }
       $form->format_string(qw(a_make a_model));
@@ -377,7 +390,7 @@ sub invoice_details {
               push(@{ $form->{part} }, NULL);
             }
 
-            for (qw(taxrates runningnumber number sku serialnumber ordernumber customerponumber bin qty ship unit deliverydate projectnumber sell sellprice listprice netprice discount discountrate itemnotes lineitemdetail package netweight grossweight volume countryorigin hscode barcode lot expires make model)) { push(@{ $form->{$_} }, "") }
+            for (qw(taxrates runningnumber number sku serialnumber ordernumber customerponumber bin qty ship unit deliverydate projectnumber projectdescription sell sellprice listprice netprice discount discountrate itemnotes lineitemdetail package netweight grossweight volume countryorigin hscode barcode lot expires make model)) { push(@{ $form->{$_} }, "") }
 
             push(@{ $form->{description} }, $form->{groupsubtotaldescription});
 
@@ -404,7 +417,7 @@ sub invoice_details {
               push(@{ $form->{part} }, NULL);
             }
 
-            for (qw(taxrates runningnumber number sku serialnumber ordernumber customerponumber bin qty ship unit deliverydate projectnumber sell sellprice listprice netprice discount discountrate itemnotes lineitemdetail package netweight grossweight volume countryorigin hscode barcode lot expires make model)) { push(@{ $form->{$_} }, "") }
+            for (qw(taxrates runningnumber number sku serialnumber ordernumber customerponumber bin qty ship unit deliverydate projectnumber projectdescription sell sellprice listprice netprice discount discountrate itemnotes lineitemdetail package netweight grossweight volume countryorigin hscode barcode lot expires make model)) { push(@{ $form->{$_} }, "") }
 
             push(@{ $form->{description} }, $form->{groupsubtotaldescription});
             push(@{ $form->{linetotal} }, $form->format_amount($myconfig, $subtotal, $form->{precision}));

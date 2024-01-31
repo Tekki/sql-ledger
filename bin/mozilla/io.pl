@@ -1687,7 +1687,7 @@ sub print_form {
 
   @f = ();
   foreach $i (1 .. $form->{rowcount}) {
-    push @f, map { "${_}_$i" } qw(partnumber description projectnumber partsgroup partsgroupcode serialnumber ordernumber customerponumber bin unit itemnotes package);
+    push @f, map { "${_}_$i" } qw(partnumber description projectnumber projectdescription partsgroup partsgroupcode serialnumber ordernumber customerponumber bin unit itemnotes package);
   }
   for (split / /, $form->{taxaccounts}) { push @f, "${_}_description" }
 
@@ -1794,6 +1794,7 @@ sub print_form {
 
   # some of the stuff could have umlauts so we translate them
   push @f, qw(contact shippingpoint shipvia notes intnotes employee warehouse paymentmethod);
+  push @f, qw(all_partsgroup all_projectnumber first_projectnumber first_projectdescription);
   push @f, map { "shipto$_" } qw(name address1 address2 city state zipcode country contact email phone fax);
   push @f, qw(firstname lastname salutation contacttitle occupation mobile);
 

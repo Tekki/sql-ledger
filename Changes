@@ -3,6 +3,7 @@ Revision history for SQL-Ledger, starting with version 3.0.0
 Not Released
   - VAT rate zero percent is now allowed
   - improved Spreadsheet generation with check for correct sheet names
+  - additional template variables for project number and description
 
 3.2.12.39 2023-12-25
   - encrypted backups
