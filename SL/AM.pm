@@ -161,35 +161,35 @@ sub save_account {
   }
 
   # update taxpart and taxservice
-  if ($form->{oldIC_taxpart} ne $form->{IC_taxpart}) {
-    $query = qq|DELETE FROM partstax
-                WHERE parts_id IN (SELECT id FROM parts
-                                   WHERE inventory_accno_id > 0)
-                AND chart_id = $chart_id|;
-    $dbh->do($query) || $form->dberror($query);
+  # if ($form->{oldIC_taxpart} ne $form->{IC_taxpart}) {
+  #   $query = qq|DELETE FROM partstax
+  #               WHERE parts_id IN (SELECT id FROM parts
+  #                                  WHERE inventory_accno_id > 0)
+  #               AND chart_id = $chart_id|;
+  #   $dbh->do($query) || $form->dberror($query);
 
-    if ($form->{IC_taxpart}) {
-      $query = qq|INSERT INTO partstax
-                  SELECT id, $chart_id FROM parts
-                  WHERE inventory_accno_id > 0|;
-      $dbh->do($query) || $form->dberror($query);
-    }
-  }
+  #   if ($form->{IC_taxpart}) {
+  #     $query = qq|INSERT INTO partstax
+  #                 SELECT id, $chart_id FROM parts
+  #                 WHERE inventory_accno_id > 0|;
+  #     $dbh->do($query) || $form->dberror($query);
+  #   }
+  # }
 
-  if ($form->{oldIC_taxservice} ne $form->{IC_taxservice}) {
-    $query = qq|DELETE FROM partstax
-                WHERE parts_id IN (SELECT id FROM parts
-                                   WHERE inventory_accno_id IS NULL)
-                AND chart_id = $chart_id|;
-    $dbh->do($query) || $form->dberror($query);
+  # if ($form->{oldIC_taxservice} ne $form->{IC_taxservice}) {
+  #   $query = qq|DELETE FROM partstax
+  #               WHERE parts_id IN (SELECT id FROM parts
+  #                                  WHERE inventory_accno_id IS NULL)
+  #               AND chart_id = $chart_id|;
+  #   $dbh->do($query) || $form->dberror($query);
 
-    if ($form->{IC_taxservice}) {
-      $query = qq|INSERT INTO partstax
-                  SELECT id, $chart_id FROM parts
-                  WHERE inventory_accno_id IS NULL|;
-      $dbh->do($query) || $form->dberror($query);
-    }
-  }
+  #   if ($form->{IC_taxservice}) {
+  #     $query = qq|INSERT INTO partstax
+  #                 SELECT id, $chart_id FROM parts
+  #                 WHERE inventory_accno_id IS NULL|;
+  #     $dbh->do($query) || $form->dberror($query);
+  #   }
+  # }
 
   my %audittrail = ( tablename  => 'chart',
                      reference  => $form->{accno},

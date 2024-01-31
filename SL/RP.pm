@@ -1850,11 +1850,11 @@ sub tax_report {
 
   if ($form->{summary}) {
 
-    $query = qq|SELECT a.id, a.invoice, $transdate AS transdate,
+    $query = qq|SELECT a.id, '0' AS invoice, $transdate AS transdate,
                 a.invnumber, n.name, n.${vc}number, n.taxnumber,
                 ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
                 a.netamount, a.description,
-                sum(ac.amount) * $ml AS tax,
+                ac.amount * $ml AS tax,
                 a.till, n.id AS vc_id, ch.accno,
                 a.curr, a.exchangerate
                 FROM acc_trans ac
@@ -1864,26 +1864,46 @@ sub tax_report {
                 JOIN address ad ON (ad.trans_id = n.id)
                 WHERE $where
                 $accno
+                AND a.invoice = '0'
+                AND NOT (ch.link LIKE '%_paid' OR ch.link = '$ARAP')
                 $cashwhere
-                GROUP BY a.id, a.invoice, $transdate, a.invnumber, n.name,
-                a.netamount, a.till, n.id, a.description, n.${vc}number,
-                n.taxnumber,
+
+              UNION ALL
+
+                SELECT a.id, '1' AS invoice, $transdate AS transdate,
+                a.invnumber, n.name, n.${vc}number, n.taxnumber,
                 ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
-                ch.accno,
+                i.sellprice * i.qty * $ml AS netamount,
+                a.description,
+                i.sellprice * i.qty * $ml *
+                (SELECT tx.rate FROM tax tx WHERE tx.chart_id = ch.id AND (tx.validto > $transdate OR tx.validto IS NULL) ORDER BY tx.validto LIMIT 1) AS tax,
+                a.till, n.id AS vc_id, ch.accno,
                 a.curr, a.exchangerate
-                |;
+                FROM acc_trans ac
+                JOIN $form->{db} a ON (a.id = ac.trans_id)
+                JOIN chart ch ON (ch.id = ac.chart_id)
+                JOIN $vc n ON (n.id = a.${vc}_id)
+                JOIN address ad ON (ad.trans_id = n.id)
+                JOIN ${vc}tax t ON (t.${vc}_id = n.id AND t.chart_id = ch.id)
+                JOIN invoice i ON (i.trans_id = a.id)
+                JOIN partstax pt ON (pt.parts_id = i.parts_id AND pt.chart_id = ch.id)
+                WHERE $where
+                $accno
+                AND a.invoice = '1'
+                AND i.parts_id IN (SELECT parts_id FROM partstax)
+                $cashwhere
+          |;
 
     if ($form->{fromdate}) {
-      # include open transactions from previous period
       if ($cashwhere) {
-        $query .= qq|
+       $query .= qq|
             UNION
 
-              SELECT a.id, a.invoice, $transdate AS transdate,
+              SELECT a.id, '0' AS invoice, $transdate AS transdate,
               a.invnumber, n.name, n.${vc}number, n.taxnumber,
               ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
               a.netamount, a.description,
-              sum(ac.amount) * $ml AS tax,
+              ac.amount * $ml AS tax,
               a.till, n.id AS vc_id, ch.accno,
               a.curr, a.exchangerate
               FROM acc_trans ac
@@ -1893,16 +1913,52 @@ sub tax_report {
               JOIN address ad ON (ad.trans_id = n.id)
               WHERE a.datepaid >= '$form->{fromdate}'
               $accno
+              AND a.invoice = '0'
+              AND NOT (ch.link LIKE '%_paid' OR ch.link = '$ARAP')
               $cashwhere
-              GROUP BY a.id, a.invoice, $transdate, a.invnumber, n.name,
-              a.netamount, a.till, n.id, a.description, n.${vc}number,
-              n.taxnumber,
+
+            UNION
+
+              SELECT a.id, '1' AS invoice, $transdate AS transdate,
+              a.invnumber, n.name, n.${vc}number, n.taxnumber,
               ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
-              ch.accno,
+              i.sellprice * i.qty * $ml AS netamount,
+              a.description,
+              i.sellprice * i.qty * $ml *
+              (SELECT tx.rate FROM tax tx WHERE tx.chart_id = ch.id AND (tx.validto > $transdate OR tx.validto IS NULL) ORDER BY tx.validto LIMIT 1) AS tax,
+              a.till, n.id AS vc_id, ch.accno,
               a.curr, a.exchangerate
+              FROM acc_trans ac
+              JOIN $form->{db} a ON (a.id = ac.trans_id)
+              JOIN chart ch ON (ch.id = ac.chart_id)
+              JOIN $vc n ON (n.id = a.${vc}_id)
+              JOIN address ad ON (ad.trans_id = n.id)
+              JOIN ${vc}tax t ON (t.${vc}_id = n.id AND t.chart_id = ch.id)
+              JOIN invoice i ON (i.trans_id = a.id)
+              JOIN partstax pt ON (pt.parts_id = i.parts_id AND pt.chart_id = ch.id)
+              WHERE a.datepaid >= '$form->{fromdate}'
+              $accno
+              AND a.invoice = '1'
+              AND i.parts_id IN (SELECT parts_id FROM partstax)
+              $cashwhere
               |;
       }
     }
+
+    $query = qq|
+      WITH details AS (
+              $query
+      )
+      SELECT
+        id, invoice, transdate, invnumber, name, ${vc}number, taxnumber,
+        address1, address2, city, zipcode, country, sum(netamount) AS netamount, description,
+        sum(tax) AS tax, till, vc_id, accno, curr, exchangerate
+      FROM details
+      GROUP BY
+        id, invoice, transdate, invnumber, name, ${vc}number, taxnumber,
+        address1, address2, city, zipcode, country, description,
+        till, vc_id, accno, curr, exchangerate
+     |;
 
   } else {
 
@@ -1921,7 +1977,7 @@ sub tax_report {
                 WHERE $where
                 $accno
                 AND a.invoice = '0'
-                AND NOT (ch.link ~ '_paid\|_tax' OR ch.link = '$ARAP')
+                AND NOT (ch.link LIKE '%_paid' OR ch.link = '$ARAP')
                 $cashwhere
 
               UNION ALL
@@ -1970,7 +2026,7 @@ sub tax_report {
               WHERE a.datepaid >= '$form->{fromdate}'
               $accno
               AND a.invoice = '0'
-              AND NOT (ch.link ~ '_paid\|_tax' OR ch.link = '$ARAP')
+              AND NOT (ch.link LIKE '%_paid' OR ch.link = '$ARAP')
               $cashwhere
 
             UNION
@@ -2061,7 +2117,7 @@ sub tax_report {
                   WHERE $where
                   AND a.invoice = '0'
                   AND a.netamount = a.amount
-                  AND NOT (ch.link ~ '_paid\|_tax' OR ch.link = '$ARAP')
+                  AND NOT (ch.link LIKE '%_paid' OR ch.link = '$ARAP')
                   $cashwhere
 
                 UNION ALL
@@ -2103,7 +2159,7 @@ sub tax_report {
                   WHERE a.datepaid >= '$form->{fromdate}'
                   AND a.invoice = '0'
                   AND a.netamount = a.amount
-                  AND NOT (ch.link ~ '_paid\|_tax' OR ch.link = '$ARAP')
+                  AND NOT (ch.link LIKE '%_paid' OR ch.link = '$ARAP')
                   $cashwhere
 
                 UNION
