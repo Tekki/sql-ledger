@@ -1686,14 +1686,19 @@ sub get_customer {
 
 
 sub get_taxaccounts {
-  my ($self, $myconfig, $form) = @_;
+  my ($self, $myconfig, $form, $dbh) = @_;
 
   # connect to database
-  my $dbh = $form->dbconnect($myconfig);
+  my $disconnect;
+  unless ($dbh) {
+    $disconnect = 1;
+    $dbh        = $form->dbconnect($myconfig);
+  }
+
   my $ARAP = uc $form->{db};
 
   # get tax accounts
-  my $query = qq|SELECT DISTINCT c.accno, c.description,
+  my $query = qq|SELECT DISTINCT c.id, c.accno, c.description,
                  l.description AS translation
                  FROM chart c
                  JOIN tax t ON (c.id = t.chart_id)
@@ -1725,7 +1730,7 @@ sub get_taxaccounts {
   }
   $sth->finish;
 
-  $dbh->disconnect;
+  $dbh->disconnect if $disconnect;
 
 }
 
@@ -1759,6 +1764,7 @@ sub tax_report {
   my $query;
   my $sth;
   my $accno;
+  my $acc_id;
   my $l_gifi;
   my @gifi = split / /, $form->{gifi_taxaccounts};
   my @c;
@@ -1875,8 +1881,7 @@ sub tax_report {
                 ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
                 i.sellprice * i.qty * $ml AS netamount,
                 a.description,
-                i.sellprice * i.qty * $ml *
-                (SELECT tx.rate FROM tax tx WHERE tx.chart_id = ch.id AND (tx.validto > $transdate OR tx.validto IS NULL) ORDER BY tx.validto LIMIT 1) AS tax,
+                ac.amount * $ml AS tax,
                 a.till, n.id AS vc_id, ch.accno,
                 a.curr, a.exchangerate
                 FROM acc_trans ac
@@ -1924,8 +1929,7 @@ sub tax_report {
               ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
               i.sellprice * i.qty * $ml AS netamount,
               a.description,
-              i.sellprice * i.qty * $ml *
-              (SELECT tx.rate FROM tax tx WHERE tx.chart_id = ch.id AND (tx.validto > $transdate OR tx.validto IS NULL) ORDER BY tx.validto LIMIT 1) AS tax,
+              ac.amount * $ml AS tax,
               a.till, n.id AS vc_id, ch.accno,
               a.curr, a.exchangerate
               FROM acc_trans ac
@@ -1952,12 +1956,12 @@ sub tax_report {
       SELECT
         id, invoice, transdate, invnumber, name, ${vc}number, taxnumber,
         address1, address2, city, zipcode, country, sum(netamount) AS netamount, description,
-        sum(tax) AS tax, till, vc_id, accno, curr, exchangerate
+        tax, till, vc_id, accno, curr, exchangerate
       FROM details
       GROUP BY
         id, invoice, transdate, invnumber, name, ${vc}number, taxnumber,
         address1, address2, city, zipcode, country, description,
-        till, vc_id, accno, curr, exchangerate
+        tax, till, vc_id, accno, curr, exchangerate
      |;
 
   } else {
@@ -1965,7 +1969,8 @@ sub tax_report {
     $query = qq|SELECT a.id, '0' AS invoice, $transdate AS transdate,
                 a.invnumber, n.name, n.${vc}number, n.taxnumber,
                 ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
-                a.netamount, ac.memo AS description,
+                a.netamount,
+                COALESCE(NULLIF(ac.memo, ''), a.description) AS description,
                 ac.amount * $ml AS tax,
                 a.till, n.id AS vc_id, ch.accno,
                 a.curr, a.exchangerate
@@ -2014,7 +2019,8 @@ sub tax_report {
               SELECT a.id, '0' AS invoice, $transdate AS transdate,
               a.invnumber, n.name, n.${vc}number, n.taxnumber,
               ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
-              a.netamount, ac.memo AS description,
+              a.netamount,
+              COALESCE(NULLIF(ac.memo, ''), a.description) AS description,
               ac.amount * $ml AS tax,
               a.till, n.id AS vc_id, ch.accno,
               a.curr, a.exchangerate
@@ -2058,55 +2064,17 @@ sub tax_report {
     }
   }
 
-
   if ($form->{reportcode} =~ /nontaxable/) {
+
+    RP->get_taxaccounts($myconfig, $form, $dbh);
+    $acc_id = 'AND chart_id IN (' . join(',', map { $_->{id} } @{$form->{taxaccounts}}) . ')';
 
     if ($form->{summary}) {
       # only gather up non-taxable transactions
-      $query = qq|SELECT DISTINCT a.id, a.invoice, $transdate AS transdate,
-                  a.invnumber, n.name, n.${vc}number,
-                  ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
-                  a.netamount, a.description,
-                  a.till, n.id AS vc_id,
-                  a.curr, a.exchangerate
-                  FROM acc_trans ac
-                  JOIN $form->{db} a ON (a.id = ac.trans_id)
-                  JOIN $vc n ON (n.id = a.${vc}_id)
-                  JOIN address ad ON (ad.trans_id = n.id)
-                  WHERE $where
-                  AND a.netamount = a.amount
-                  $cashwhere
-                  |;
-
-      if ($form->{fromdate}) {
-        if ($cashwhere) {
-          $query .= qq|
-                UNION
-                  SELECT DISTINCT a.id, a.invoice, $transdate AS transdate,
-                  a.invnumber, n.name, n.${vc}number,
-                  ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
-                  a.netamount, a.description,
-                  a.till, n.id AS vc_id,
-                  a.curr, a.exchangerate
-                  FROM acc_trans ac
-                  JOIN $form->{db} a ON (a.id = ac.trans_id)
-                  JOIN $vc n ON (n.id = a.${vc}_id)
-                  JOIN address ad ON (ad.trans_id = n.id)
-                  WHERE a.datepaid >= '$form->{fromdate}'
-                  AND a.netamount = a.amount
-                  $cashwhere
-                  |;
-        }
-      }
-
-    } else {
-
-      # gather up details for non-taxable transactions
       $query = qq|SELECT a.id, '0' AS invoice, $transdate AS transdate,
                   a.invnumber, n.name, n.${vc}number,
                   ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
-                  ac.amount * $ml AS netamount,
-                  ac.memo AS description,
+                  a.netamount, a.description,
                   a.till, n.id AS vc_id,
                   a.curr, a.exchangerate
                   FROM acc_trans ac
@@ -2116,7 +2084,102 @@ sub tax_report {
                   JOIN chart ch ON (ch.id = ac.chart_id)
                   WHERE $where
                   AND a.invoice = '0'
-                  AND a.netamount = a.amount
+                  AND NOT EXISTS(SELECT 1 FROM acc_trans where trans_id = a.id $acc_id)
+                  AND NOT (ch.link LIKE '%_paid' OR ch.link = '$ARAP')
+                  $cashwhere
+
+                UNION ALL
+
+                  SELECT a.id, '1' AS invoice, $transdate AS transdate,
+                  a.invnumber, n.name, n.${vc}number,
+                  ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
+                  ac.sellprice * ac.qty * $ml AS netamount, a.description,
+                  a.till, n.id AS vc_id,
+                  a.curr, a.exchangerate
+                  FROM invoice ac
+                  JOIN $form->{db} a ON (a.id = ac.trans_id)
+                  JOIN $vc n ON (n.id = a.${vc}_id)
+                  JOIN address ad ON (ad.trans_id = n.id)
+                  WHERE $where
+                  AND a.invoice = '1'
+                  AND NOT EXISTS(SELECT 1 FROM partstax where parts_id = ac.parts_id $acc_id)
+                  $cashwhere
+                  |;
+
+      if ($form->{fromdate}) {
+        if ($cashwhere) {
+          $query .= qq|
+                UNION
+
+                  a.invnumber, n.name, n.${vc}number,
+                  ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
+                  a.netamount, a.description,
+                  a.till, n.id AS vc_id,
+                  a.curr, a.exchangerate
+                  FROM acc_trans ac
+                  JOIN $form->{db} a ON (a.id = ac.trans_id)
+                  JOIN $vc n ON (n.id = a.${vc}_id)
+                  JOIN address ad ON (ad.trans_id = n.id)
+                  JOIN chart ch ON (ch.id = ac.chart_id)
+                  WHERE a.datepaid >= '$form->{fromdate}'
+                  AND a.invoice = '0'
+                  AND NOT EXISTS(SELECT 1 FROM acc_trans where trans_id = a.id $acc_id)
+                  AND NOT (ch.link LIKE '%_paid' OR ch.link = '$ARAP')
+                  $cashwhere
+
+                UNION
+
+                  SELECT a.id, '1' AS invoice, $transdate AS transdate,
+                  a.invnumber, n.name, n.${vc}number,
+                  ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
+                  ac.sellprice * ac.qty * $ml AS netamount, a.description,
+                  a.till, n.id AS vc_id,
+                  a.curr, a.exchangerate
+                  FROM invoice ac
+                  JOIN $form->{db} a ON (a.id = ac.trans_id)
+                  JOIN $vc n ON (n.id = a.${vc}_id)
+                  JOIN address ad ON (ad.trans_id = n.id)
+                  WHERE a.datepaid >= '$form->{fromdate}'
+                  AND a.invoice = '1'
+                  AND NOT EXISTS(SELECT 1 FROM partstax where parts_id = ac.parts_id $acc_id)
+                  $cashwhere
+                  |;
+        }
+      }
+
+      $query = qq|
+        WITH details AS (
+                $query
+        )
+        SELECT
+          id, invoice, transdate, invnumber, name, ${vc}number,
+          address1, address2, city, zipcode, country, sum(netamount) AS netamount, description,
+          till, vc_id, curr, exchangerate
+        FROM details
+        GROUP BY
+          id, invoice, transdate, invnumber, name, ${vc}number,
+          address1, address2, city, zipcode, country, description,
+          till, vc_id, curr, exchangerate
+      |;
+
+    } else {
+
+      # gather up details for non-taxable transactions
+      $query = qq|SELECT a.id, '0' AS invoice, $transdate AS transdate,
+                  a.invnumber, n.name, n.${vc}number,
+                  ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
+                  ac.amount * $ml AS netamount,
+                  COALESCE(NULLIF(ac.memo, ''), a.description) AS description,
+                  a.till, n.id AS vc_id,
+                  a.curr, a.exchangerate
+                  FROM acc_trans ac
+                  JOIN $form->{db} a ON (a.id = ac.trans_id)
+                  JOIN $vc n ON (n.id = a.${vc}_id)
+                  JOIN address ad ON (ad.trans_id = n.id)
+                  JOIN chart ch ON (ch.id = ac.chart_id)
+                  WHERE $where
+                  AND a.invoice = '0'
+                  AND NOT EXISTS(SELECT 1 FROM acc_trans where trans_id = a.id $acc_id)
                   AND NOT (ch.link LIKE '%_paid' OR ch.link = '$ARAP')
                   $cashwhere
 
@@ -2135,20 +2198,20 @@ sub tax_report {
                   JOIN address ad ON (ad.trans_id = n.id)
                   WHERE $where
                   AND a.invoice = '1'
-                  AND a.amount = a.netamount
+                  AND NOT EXISTS(SELECT 1 FROM partstax where parts_id = ac.parts_id $acc_id)
                   $cashwhere
                   |;
 
       if ($form->{fromdate}) {
         if ($cashwhere) {
           $query .= qq|
-                  UNION
+                UNION
 
                   SELECT a.id, '0' AS invoice, $transdate AS transdate,
                   a.invnumber, n.name, n.${vc}number,
                   ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
                   ac.amount * $ml AS netamount,
-                  ac.memo AS description,
+                  COALESCE(NULLIF(ac.memo, ''), a.description) AS description,
                   a.till, n.id AS vc_id,
                   a.curr, a.exchangerate
                   FROM acc_trans ac
@@ -2158,7 +2221,7 @@ sub tax_report {
                   JOIN chart ch ON (ch.id = ac.chart_id)
                   WHERE a.datepaid >= '$form->{fromdate}'
                   AND a.invoice = '0'
-                  AND a.netamount = a.amount
+                  AND NOT EXISTS(SELECT 1 FROM acc_trans where trans_id = a.id $acc_id)
                   AND NOT (ch.link LIKE '%_paid' OR ch.link = '$ARAP')
                   $cashwhere
 
@@ -2177,7 +2240,7 @@ sub tax_report {
                   JOIN address ad ON (ad.trans_id = n.id)
                   WHERE a.datepaid >= '$form->{fromdate}'
                   AND a.invoice = '1'
-                  AND a.amount = a.netamount
+                  AND NOT EXISTS(SELECT 1 FROM partstax where parts_id = ac.parts_id $acc_id)
                   $cashwhere
                   |;
         }
