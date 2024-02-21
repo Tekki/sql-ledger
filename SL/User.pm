@@ -634,8 +634,7 @@ sub dbupdate {
 
     next if ($version2 >= $maxdb);
 
-    # exit if there is no upgrade script or version == mindb
-    last if ($version2 < $mindb || $version2 >= $form->{dbversion2});
+    last if ($version2 >= $form->{dbversion2});
 
     # apply upgrade
     $self->process_query($form, $dbh, "sql/$upgradescript");

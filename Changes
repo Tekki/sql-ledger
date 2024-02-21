@@ -4,6 +4,7 @@ Not Released
   - VAT rate zero percent is now allowed
   - improved Spreadsheet generation with check for correct sheet names
   - additional template variables for project number and description
+  - correct error in migration from DWS to Tekki version
 
 3.2.12.39 2023-12-25
   - encrypted backups
