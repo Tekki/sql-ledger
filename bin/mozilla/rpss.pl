@@ -194,6 +194,7 @@ sub tax_spreadsheet {
       id          => 'number',
       invnumber   => 'text',
       name        => 'text',
+      taxnumber   => 'text',
       transdate   => 'date',
     },
   );
