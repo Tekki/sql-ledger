@@ -275,7 +275,7 @@ sub yearend_spreadsheet {
   $spreadsheet_info{header}{$_} = 'date' for @amount_columns;
 
   $form->{title}
-    = $reportcode eq 'balance_sheet'
+    = $report_code eq 'balance_sheet'
     ? $locale->text('Balance Sheet')
     : $locale->text('Income Statement');
   $ss->worksheet(form_title => 1)->structure(\%spreadsheet_info)->column_index(\@column_index)
