@@ -9,6 +9,7 @@ $self{subs} = {
   'add_payment'                 => 'add_payment',
   'add_reference'               => 'add_reference',
   'customer_details'            => 'customer_details',
+  'get_token'                   => 'get_token',
   'invoice_details'             => 'invoice_details',
   'list_accounts'               => 'list_accounts',
   'search_customer'             => 'search_customer',
