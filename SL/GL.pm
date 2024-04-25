@@ -358,6 +358,11 @@ sub transactions {
     $arwhere .= " AND a.department_id = $var";
     $apwhere .= " AND a.department_id = $var";
   }
+  if ($form->{project}) {
+    (undef, $var) = split /--/, $form->{project};
+    $arwhere .= " AND ac.project_id = $var";
+    $apwhere .= " AND ac.project_id = $var";
+  }
 
   my $gdescription = "''";
   my $invoicejoin;
@@ -579,6 +584,7 @@ sub transactions {
                  c.contra AS ca,
                  c.gifi_accno, g.notes, c.link,
                  '' AS till, ac.cleared, d.description AS department,
+                 p.description AS project,
                  ac.memo, '0' AS name_id, '' AS db,
                  $gdescription AS lineitem, '' AS name, '' AS vcnumber,
                  '' AS address1, '' AS address2, '' AS city,
@@ -587,6 +593,7 @@ sub transactions {
                  JOIN acc_trans ac ON (g.id = ac.trans_id)
                  JOIN chart c ON (ac.chart_id = c.id)
                  LEFT JOIN department d ON (d.id = g.department_id)
+                 LEFT JOIN project p ON p.id = ac.project_id
                  LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
                  WHERE $glwhere
         UNION ALL
@@ -597,6 +604,7 @@ sub transactions {
                  c.contra AS ca,
                  c.gifi_accno, a.notes, c.link,
                  a.till, ac.cleared, d.description AS department,
+                 p.description AS project,
                  ac.memo, ct.id AS name_id, 'customer' AS db,
                  $lineitem AS lineitem, ct.name, ct.customernumber,
                  ad.address1, ad.address2, ad.city,
@@ -608,6 +616,7 @@ sub transactions {
                  JOIN customer ct ON (a.customer_id = ct.id)
                  JOIN address ad ON (ad.trans_id = ct.id)
                  LEFT JOIN department d ON (d.id = a.department_id)
+                 LEFT JOIN project p ON p.id = ac.project_id
                  LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
                  WHERE $arwhere
         UNION ALL
@@ -618,6 +627,7 @@ sub transactions {
                  c.contra AS ca,
                  c.gifi_accno, a.notes, c.link,
                  a.till, ac.cleared, d.description AS department,
+                 p.description AS project,
                  ac.memo, ct.id AS name_id, 'vendor' AS db,
                  $lineitem AS lineitem, ct.name, ct.vendornumber,
                  ad.address1, ad.address2, ad.city,
@@ -629,6 +639,7 @@ sub transactions {
                  JOIN vendor ct ON (a.vendor_id = ct.id)
                  JOIN address ad ON (ad.trans_id = ct.id)
                  LEFT JOIN department d ON (d.id = a.department_id)
+                 LEFT JOIN project p ON p.id = ac.project_id
                  LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
                  WHERE $apwhere|;
 

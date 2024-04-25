@@ -1,5 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+Not Released
+  - option to show project number in GL reports added
+
 3.2.12.40 2024-04-21
   - VAT rate zero percent is now allowed
   - improved Spreadsheet generation with check for correct sheet names

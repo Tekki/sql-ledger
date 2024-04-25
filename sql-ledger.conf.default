@@ -47,7 +47,7 @@ $pdftk = 1;
 # folders with read and write access
 @accessfolders = qw|templates css|;
 
-# if you want helpful error messages during login an invite spies set to 1
+# if you want helpful error messages during login and invite spies set to 1
 $helpful_login = 0;
 
 # if the server can't find gzip or latex add the path
