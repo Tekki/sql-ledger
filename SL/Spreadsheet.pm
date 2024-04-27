@@ -23,14 +23,18 @@ use Scalar::Util 'looks_like_number';
 sub new {
   my ($class, $form, $userspath) = @_;
   my %self = (
-    _form        => $form,
-    column_index => [],
-    date_length  => 14,
-    group_count  => {},
-    group_by     => [],
-    group_label  => {},
-    group_title  => {},
-    height       => {
+    _form          => $form,
+    balance_column => '',
+    balance_group  => '',
+    balance_fn     => sub {0},
+    balance_start  => sub {0},
+    column_index   => [],
+    date_length    => 14,
+    group_count    => {},
+    group_by       => [],
+    group_label    => {},
+    group_title    => {},
+    height         => {
       title => 23.25,
     },
     maxwidth   => 40,
@@ -125,6 +129,67 @@ sub adjust_columns {
   }
 
   return $self;
+}
+
+sub balance {
+  my ($self, $newvalue) = @_;
+  if (defined $newvalue) {
+    $self->{balance} = $newvalue;
+
+    if ($self->{balance_group} && $self->{balance_column}) {
+      $self->{group_sum}{$self->{balance_group}}{$self->{balance_column}} = $newvalue;
+    }
+
+    return $self;
+  } else {
+    return $self->{balance};
+  }
+}
+
+sub balance_column {
+  my ($self, $newvalue) = @_;
+  if (defined $newvalue) {
+    $self->{balance_column} = $newvalue;
+    $self->balance(0);
+
+    return $self;
+  } else {
+    return $self->{balance_column};
+  }
+}
+
+sub balance_fn {
+  my ($self, $newvalue) = @_;
+  if (defined $newvalue) {
+    $self->{balance_fn} = $newvalue;
+
+    return $self;
+  } else {
+    return $self->{balance_fn};
+  }
+}
+
+sub balance_group {
+  my ($self, $newvalue) = @_;
+  if (defined $newvalue) {
+    $self->{balance_group} = $newvalue;
+    $self->balance(0);
+
+    return $self;
+  } else {
+    return $self->{balance_group};
+  }
+}
+
+sub balance_start {
+  my ($self, $newvalue) = @_;
+  if (defined $newvalue) {
+    $self->{balance_start} = $newvalue;
+
+    return $self;
+  } else {
+    return $self->{balance_start};
+  }
 }
 
 sub bool {
@@ -249,8 +314,13 @@ sub date {
   $format ||= 'default';
 
   $date =~ s/(\d{4})(\d{2})/$1-$2-/;
-  $self->{worksheet}
-    ->write_date_time($self->{row}, $self->{col}, "${date}T", $self->{format}{"${format}_date"});
+  if ($date =~ /\d{4}-\d{2}-\d{2}/) {
+    $self->{worksheet}
+      ->write_date_time($self->{row}, $self->{col}, "${date}T", $self->{format}{"${format}_date"});
+  } else {
+    $self->{worksheet}
+      ->write_string($self->{row}, $self->{col}, '', $self->{format}{"${format}_date"});
+  }
 
   return $self;
 }
@@ -444,6 +514,7 @@ sub subtotal_row {
 
     $self->data_row($sum, format => 'subtotal');
     $self->{group_count}{$group} = 0;
+
   }
 
   return $self;
@@ -467,6 +538,11 @@ sub table_row {
         $self->subtotal_row($group);
       }
       $self->title_row($group, $row);
+
+      if ($group eq $self->{balance_group}) {
+        $self->balance($self->{balance_start}->($self, $row));
+        $self->data_row({$self->{balance_column} => $self->{balance}}, %params);
+      }
     }
   }
 
@@ -485,6 +561,12 @@ sub table_row {
       $self->{group_count}{$group}++;
     }
 
+  }
+
+
+  if ($self->{balance_column}) {
+    $row->{$self->{balance_column}} = $self->{balance_fn}($self, $row);
+    $self->balance($row->{$self->{balance_column}});
   }
 
   return $self->data_row($row, %params);
@@ -632,10 +714,18 @@ SL::Spreadsheet - Spreadsheet Module
     $ss->worksheet;
     $ss->structure(\%spreadsheet_info);
     $ss->column_index(\@index);
+
     $ss->totalize(\@columns);
+
     $ss->group_by(\@groups);
     $ss->group_label(\@groups);
     $ss->group_title(\%titles);
+
+    $ss->balance_column($column_name);
+    $ss->balance_group($column_name);
+    $ss->balance_start($coderef);
+    $ss->balance_fn($coderef);
+
     $ss->change_format($name, %new_properties);
 
     $ss->title($title, $format);
@@ -696,6 +786,31 @@ L<Scalar::Util>
 =head2 adjust_columns
 
   $ss = $ss->adjust_columns;
+
+=head2 balance
+
+  $ss      = $ss->balance($new_balance);
+  $balance = $ss->balance;
+
+=head2 balance_column
+
+  $ss          = $ss->balance_column($column_name);
+  $column_name = $ss->balance_column;
+
+=head2 balance_fn
+
+  $ss      = $ss->balance_fn($coderef);
+  $coderef = $ss->balance_fn;
+
+=head2 balance_group
+
+  $ss          = $ss->balance_group($column_name);
+  $column_name = $ss->balance_group;
+
+=head2 balance_start
+
+  $ss      = $ss->balance_start($coderef);
+  $coderef = $ss->balance_start;
 
 =head2 bool
 

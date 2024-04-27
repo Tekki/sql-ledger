@@ -433,11 +433,11 @@ bin/mozilla/rpss.pl - Spreadsheet Functions for Yearend Reports
 
 =head1 DESCRIPTION
 
-L<bin::mozilla::ss> contains functions to create and download spreadsheets for yearend reports.
+L<bin::mozilla::rpss> contains functions to create and download spreadsheets for yearend reports.
 
 =head1 DEPENDENCIES
 
-L<bin::mozilla::ss>
+L<bin::mozilla::rpss>
 
 =over
 
@@ -449,7 +449,15 @@ L<SL::Spreadsheet>
 
 =head1 FUNCTIONS
 
-L<bin::mozilla::ss> implements the following functions:
+L<bin::mozilla::rpss> implements the following functions:
+
+=head2 account_spreadsheet
+
+  &account_spreadsheet($report_options);
+
+=head2 tax_spreadsheet
+
+  &tax_spreadsheet($report_options, $column_index, $header);
 
 =head2 yearend_spreadsheet
 

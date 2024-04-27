@@ -605,13 +605,17 @@ sub transactions {
   GL->transactions(\%myconfig, \%$form);
 
   $href = "$form->{script}?action=transactions";
-  for (qw(direction oldsort path login month year interval reportlogin l_splitledger)) { $href .= "&$_=$form->{$_}" }
-  for (qw(report flds)) { $href .= "&$_=".$form->escape($form->{$_}) }
+  for (qw(direction oldsort path login month year interval reportlogin l_splitledger)) {
+    $href .= "&$_=$form->{$_}" if $form->{$_};
+  }
+  for (qw(report flds)) { $href .= "&$_=" . $form->escape($form->{$_}) }
 
   $form->sort_order();
 
   $callback = "$form->{script}?action=transactions";
-  for (qw(direction oldsort path login month year interval reportlogin l_splitledger)) { $callback .= "&$_=$form->{$_}" }
+  for (qw(direction oldsort path login month year interval reportlogin l_splitledger)) {
+    $callback .= "&$_=$form->{$_}" if $form->{$_};
+  }
   for (qw(report flds)) { $callback .= "&$_=".$form->escape($form->{$_}) }
 
   %acctype = ( 'A' => $locale->text('Asset'),
@@ -780,8 +784,12 @@ sub transactions {
     unless ($form->{column_index}) {
       push @columns, "balance";
       $form->{l_balance} = "Y";
-      $column_data{balance} = $locale->text('Balance');
     }
+    $column_data{balance} = $locale->text('Balance');
+  }
+
+  for (qw|department project|) {
+    delete $form->{"l_$_"} if $form->{$_};
   }
 
   for (qw|department project|) {
@@ -873,6 +881,22 @@ sub transactions {
   $href .= "&category=$form->{category}";
   $callback .= "&category=$form->{category}";
 
+  # add sort to callback
+  $form->{callback} = "$callback&sort=$form->{sort}";
+  $callback = $form->escape($form->{callback});
+
+  if ($form->{action} eq 'spreadsheet') {
+    require "$form->{path}/glss.pl";
+
+    # reverse href
+    $direction = ($form->{direction} eq 'ASC') ? "ASC" : "DESC";
+    $form->sort_order();
+    $href =~ s/direction=$form->{direction}/direction=$direction/;
+
+    &transactions_spreadsheet($option, \@column_index, \%column_data, $href);
+    exit;
+  }
+
   $form->helpref("list_gl_transactions", $myconfig{countrycode});
 
   $form->header;
@@ -937,10 +961,6 @@ sub transactions {
         </tr>
 |;
 
-
-  # add sort to callback
-  $form->{callback} = "$callback&sort=$form->{sort}";
-  $callback = $form->escape($form->{callback});
 
   $cml = 1;
   # initial item for subtotals
@@ -1093,15 +1113,18 @@ sub transactions {
 |;
   };
 
-  %button = ('General Ledger--Add Transaction' => { ndx => 1, key => 'G', value => $locale->text('GL Transaction') },
-  'AR--Add Transaction' => { ndx => 2, key => 'R', value => $locale->text('AR Transaction') },
-  'AR--Sales Invoice' => { ndx => 3, key => 'I', value => $locale->text('Sales Invoice ') },
-  'AR--Credit Invoice' => { ndx => 4, key => 'C', value => $locale->text('Credit Invoice ') },
-  'AP--Add Transaction' => { ndx => 5, key => 'P', value => $locale->text('AP Transaction') },
-  'AP--Vendor Invoice' => { ndx => 6, key => 'V', value => $locale->text('Vendor Invoice ') },
-  'AP--Vendor Invoice' => { ndx => 7, key => 'D', value => $locale->text('Debit Invoice ') },
-  'Save Report' => { ndx => 8, key => 'S', value => $locale->text('Save Report') }
-            );
+  %button = (
+    'General Ledger--Add Transaction' =>
+      {ndx => 1, key => 'G', value => $locale->text('GL Transaction')},
+    'AR--Add Transaction' => {ndx => 2, key => 'R', value => $locale->text('AR Transaction')},
+    'AR--Sales Invoice'   => {ndx => 3, key => 'I', value => $locale->text('Sales Invoice ')},
+    'AR--Credit Invoice'  => {ndx => 4, key => 'C', value => $locale->text('Credit Invoice ')},
+    'AP--Add Transaction' => {ndx => 5, key => 'P', value => $locale->text('AP Transaction')},
+    'AP--Vendor Invoice'  => {ndx => 6, key => 'V', value => $locale->text('Vendor Invoice ')},
+    'AP--Vendor Invoice'  => {ndx => 7, key => 'D', value => $locale->text('Debit Invoice ')},
+    'Save Report'         => {ndx => 8, key => 'S', value => $locale->text('Save Report')},
+    'Spreadsheet'         => {ndx => 9, key => 'X', value => $locale->text('Spreadsheet')},
+  );
 
   if (!$form->{admin}) {
     delete $button{'Save Report'} unless $form->{savereport};
