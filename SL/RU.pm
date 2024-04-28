@@ -310,6 +310,7 @@ sub _descr {
   my $fn = $descr{$code} or return $form->{id}, '';
 
   my ($number, $description) = $fn->($form);
+  $description =~ s/--\d+//;
   $description .= ", $form->{description}"
     if $form->{description} && $form->{script} ne 'ic.pl';
   return $number, $description;
