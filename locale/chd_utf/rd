@@ -70,6 +70,7 @@ $self{texts} = {
   'November'                    => 'November',
   'October'                     => 'Oktober',
   'Part'                        => 'Ware',
+  'Pay Slip'                    => 'Lohnabrechnung',
   'Project'                     => 'Projekt',
   'Purchase Order'              => 'Einkaufsbestellung',
   'Quotation'                   => 'Offerte',

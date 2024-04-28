@@ -1,0 +1,14 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+  'Module not installed:'       => 'Modul nicht installiert:',
+};
+
+$self{subs} = {
+  'transactions_spreadsheet'    => 'transactions_spreadsheet',
+};
+
+1;
+
