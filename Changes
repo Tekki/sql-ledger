@@ -3,6 +3,7 @@ Revision history for SQL-Ledger, starting with version 3.0.0
 Not Released
   - option to show project number in GL reports
   - spreadsheets for general ledger reports
+  - attachments for payroll transactions corrected
 
 3.2.12.40 2024-04-21
   - VAT rate zero percent is now allowed

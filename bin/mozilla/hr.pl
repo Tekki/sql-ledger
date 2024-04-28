@@ -1986,6 +1986,8 @@ sub post {
     }
   }
 
+  $form->{userspath} = $userspath;
+
   if (HR->post_transaction(\%myconfig, \%$form)) {
     $form->redirect($locale->text('Transaction posted!'));
   }

@@ -21,33 +21,92 @@ require "$form->{path}/js.pl";
 
 sub formnames {
 
-  my %module = ( ar_transaction        => { script => ar, db => ar, var => "type=transaction", label => $locale->text('AR Transaction') },
-              credit_note        => { script => ar, db => ar, var => "type=credit_note", label => $locale->text('Credit Note') },
-              ap_transaction        => { script => ap, db => ap, var => "type=transaction", label => $locale->text('AP Transaction') },
-              debit_note        => { script => ap, db => ap, var => "type=debit_note", label => $locale->text('Debit Note') },
-              ar_invoice        => { script => is, db => ar, var => "type=invoice", label => $locale->text('Sales Invoice') },
-              credit_invoice        => { script => is, db => ar, var => "type=credit_invoice", label => $locale->text('Credit Invoice') },
-              ap_invoice        => { script => ir, db => ap, var => "type=invoice", label => $locale->text('Vendor Invoice') },
-              debit_invoice        => { script => ir, db => ap, var => "type=debit_invoice", label => $locale->text('Debit Invoice') },
-              sales_order        => { script => oe, db => oe, var => "type=sales_order", label => $locale->text('Sales Order') },
-              sales_quotation        => { script => oe, db => oe, var => "type=sales_quotation", label => $locale->text('Quotation') },
-              purchase_order        => { script => oe, db => oe, var => "type=purchase_order", label => $locale->text('Purchase Order') },
-              request_quotation        => { script => oe, db => oe, var => "type=request_quotation", label => $locale->text('RFQ') },
-              gl                => { script => gl, db => gl, label => $locale->text('GL Transaction') },
-              project                => { script => pe, db => oe, var => "type=project", label => $locale->text('Project') },
-              job                => { script => pe, db => project, var => "type=job", label => $locale->text('Job') },
-              customer                => { script => ct, db => customer, var => "db=customer", label => $locale->text('Customer') },
-              vendor                => { script => ct, db => vendor, var => "db=vendor", label => $locale->text('Vendor') },
-              part                => { script => ic, db => parts, var => "item=part", label => $locale->text('Part') },
-              service                => { script => ic, db => parts, var => "item=service", label => $locale->text('Service') },
-              assembly                => { script => ic, db => parts, var => "item=assembly", label => $locale->text('Assembly') },
-              labor                => { script => ic, db => parts, var => "item=labor", label => $locale->text('Labor') },
-              employee                => { script => hr, db => employee, var => "db=employee", label => $locale->text('Employee') },
-              timecard                => { script => jc, db => jcitems, var => "type=timecard", label => $locale->text('Timecard') },
-              storescard        => { script => jc, db => jcitems, var => "type=storescard", label => $locale->text('Stores Card') }
-            );
+  my %module = (
+    ar_transaction => {
+      script => 'ar',
+      db     => 'ar',
+      var    => 'type=transaction',
+      label  => $locale->text('AR Transaction')
+    },
+    ap_invoice =>
+      {script => 'ir', db => 'ap', var => 'type=invoice', label => $locale->text('Vendor Invoice')},
+    ap_transaction => {
+      script => 'ap',
+      db     => 'ap',
+      var    => 'type=transaction',
+      label  => $locale->text('AP Transaction')
+    },
+    ar_invoice =>
+      {script => 'is', db => 'ar', var => 'type=invoice', label => $locale->text('Sales Invoice')},
+    assembly =>
+      {script => 'ic', db => 'parts', var => 'item=assembly', label => $locale->text('Assembly')},
+    credit_invoice => {
+      script => 'is',
+      db     => 'ar',
+      var    => 'type=credit_invoice',
+      label  => $locale->text('Credit Invoice')
+    },
+    credit_note => {
+      script => 'ar',
+      db     => 'ar',
+      var    => 'type=credit_note',
+      label  => $locale->text('Credit Note')
+    },
+    customer =>
+      {script => 'ct', db => 'customer', var => 'db=customer', label => $locale->text('Customer')},
+    debit_invoice => {
+      script => 'ir',
+      db     => 'ap',
+      var    => 'type=debit_invoice',
+      label  => $locale->text('Debit Invoice')
+    },
+    debit_note =>
+      {script => 'ap', db => 'ap', var => 'type=debit_note', label => $locale->text('Debit Note')},
+    employee =>
+      {script => 'hr', db => 'employee', var => 'db=employee', label => $locale->text('Employee')},
+    gl    => {script => 'gl', db => 'gl',      label => $locale->text('GL Transaction')},
+    job   => {script => 'pe', db => 'project', var   => 'type=job', label => $locale->text('Job')},
+    labor => {script => 'ic', db => 'parts', var => 'item=labor', label => $locale->text('Labor')},
+    part  => {script => 'ic', db => 'parts', var => 'item=part',  label => $locale->text('Part')},
+    payslip =>
+      {script => 'hr', db => 'ap', var => 'db=payroll', label => $locale->text('Pay Slip')},
+    project =>
+      {script => 'pe', db => 'oe', var => 'type=project', label => $locale->text('Project')},
+    purchase_order => {
+      script => 'oe',
+      db     => 'oe',
+      var    => 'type=purchase_order',
+      label  => $locale->text('Purchase Order')
+    },
+    request_quotation =>
+      {script => 'oe', db => 'oe', var => 'type=request_quotation', label => $locale->text('RFQ')},
+    sales_order => {
+      script => 'oe',
+      db     => 'oe',
+      var    => 'type=sales_order',
+      label  => $locale->text('Sales Order')
+    },
+    sales_quotation => {
+      script => 'oe',
+      db     => 'oe',
+      var    => 'type=sales_quotation',
+      label  => $locale->text('Quotation')
+    },
+    service =>
+      {script => 'ic', db => 'parts', var => 'item=service', label => $locale->text('Service')},
+    storescard => {
+      script => 'jc',
+      db     => 'jcitems',
+      var    => 'type=storescard',
+      label  => $locale->text('Stores Card')
+    },
+    timecard =>
+      {script => 'jc', db => 'jcitems', var => 'type=timecard', label => $locale->text('Timecard')},
+    vendor =>
+      {script => 'ct', db => 'vendor', var => 'db=vendor', label => $locale->text('Vendor')},
+  );
 
-  %module;
+  return %module;
 
 }
 

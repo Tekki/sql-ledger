@@ -553,7 +553,7 @@ sub post_transaction {
   $form->save_status($dbh);
 
   # save reference documents
-  $form->save_reference($dbh, "${table}_$form->{type}");
+  $form->save_reference($dbh, $form->{_from_hr} ? 'payslip' : "${table}_$form->{type}");
 
   my %audittrail = ( tablename  => $table,
                      reference  => $form->{invnumber},

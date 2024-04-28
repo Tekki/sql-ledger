@@ -1505,13 +1505,16 @@ sub post_transaction {
   }
 
   delete $form->{invnumber} if $form->{postasnew};
-  for (qw(login id invnumber department transdate description language_code)) { $ap->{$_} = $form->{$_} }
+  for (qw(login id invnumber department transdate description language_code userspath)) {
+    $ap->{$_} = $form->{$_};
+  }
 
-  $ap->{vendor_id} = $employee_id;
+  $ap->{vendor_id}       = $employee_id;
   $ap->{defaultcurrency} = $ap->{currency};
-  $ap->{vc} = 'vendor';
-  $ap->{duedate} = $form->{transdate};
-  $ap->{AP} = $form->{ap};
+  $ap->{vc}              = 'vendor';
+  $ap->{duedate}         = $form->{transdate};
+  $ap->{AP}              = $form->{ap};
+  $ap->{_from_hr}        = 1;
 
   my $i = 0;
   my $j;
@@ -1605,14 +1608,9 @@ sub post_transaction {
   $ap->{"memo_1"} = $form->{memo};
   $ap->{"paymentmethod_1"} = $form->{paymentmethod};
 
-  for $i (1 .. $form->{reference_rows}) {
-    for $item (qw(description id archive_id filename confidential)) {
-      $ap->{"reference${item}_$i"} = $form->{"reference${item}_$i"};
-      $gl->{"reference${item}_$i"} = $form->{"reference${item}_$i"};
-    }
+  for (grep /^reference.+/, keys %$form) {
+    $ap->{$_} = $gl->{$_} = $form->{$_};
   }
-  $ap->{reference_rows} = $form->{reference_rows};
-  $gl->{reference_rows} = $form->{reference_rows};
 
   AA->post_transaction($myconfig, $ap, $dbh);
 
