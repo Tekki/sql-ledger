@@ -6,9 +6,9 @@ test -f wlprinter.conf || cp wlprinter.conf.default wlprinter.conf
 
 sed -i -e 's|#$gpg.*|$gpg = "gpg --homedir /usr/local/apache2/gnupg --batch --yes";|' sql-ledger.conf
 
-chown -R www-data:www-data images spool templates users
+chown -R apache:apache images spool templates users
 
 # Apache gets grumpy about PID files pre-existing
-rm -f /usr/local/apache2/logs/httpd.pid
+rm -f /var/run/httpd/httpd.pid
 
 exec httpd -DFOREGROUND

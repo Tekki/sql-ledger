@@ -1,5 +1,5 @@
 ---
-# starts a test and development environment on Debian Bookworm with
+# starts a test and development environment on AlmaLinux 9 with
 # - SQL-Ledger at http://localhost/sql-ledger
 # - Adminer at http://localhost:8080?pgsql=db
 # - pgAdmin at http://localhost:8085
@@ -37,12 +37,14 @@ services:
       - pgadmin:/var/lib/pgadmin
 
   app:
-    build: .
-    image: sql-ledger-test:0.16
+    build:
+      context: .
+      dockerfile: DockerfileAlma
+    image: sql-ledger-almatest:0.07
     ports:
       - 80:80
     volumes:
-      - ../.:/usr/local/apache2/htdocs/sql-ledger
+      - ../.:/var/www/html/sql-ledger
       - gnupg:/usr/local/apache2/gnupg
 
 volumes:

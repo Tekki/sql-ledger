@@ -1,0 +1,37 @@
+# Dockerfile for test environment on AlmaLinux 9
+FROM almalinux:9
+
+RUN set -ex \
+  && dnf install -y epel-release \
+  && dnf install -y \
+    httpd \
+    perl \
+    perl-Archive-Zip \
+    perl-DBD-Pg \
+    perl-Excel-Writer-XLSX \
+    perl-IO-Socket-SSL \
+    perl-Mojolicious \
+    postgresql \
+    procps-ng \
+  && dnf clean all
+
+RUN echo -e " <Directory /var/www/html/sql-ledger>\n"\
+  "  AddHandler cgi-script .pl\n"\
+  "  Options +ExecCGI\n"\
+  "</Directory>"\
+  >> /etc/httpd/conf/httpd.conf
+
+RUN set -ex \
+    && mkdir -p /usr/local/apache2/gnupg \
+    && chown -R apache:apache /usr/local/apache2/gnupg \
+    && chmod 0700 /usr/local/apache2/gnupg
+
+RUN set -ex \
+    && sed -i -e 's/use warnings;/# use warnings;/' /usr/share/perl5/vendor_perl/Excel/Writer/XLSX/Package/Styles.pm 
+
+WORKDIR /var/www/html/sql-ledger
+
+COPY docker-httpd-foreground-alma /usr/local/bin/httpd-foreground
+
+EXPOSE 80
+CMD ["httpd-foreground"]
