@@ -1,7 +1,7 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
 3.2.12.41 2024-04-28
-  - option to show project number in GL reports
+  - option to show project number in general ledger reports
   - spreadsheets for general ledger reports
   - attachments for payroll transactions corrected
   - Docker files for AlmaLinux 9

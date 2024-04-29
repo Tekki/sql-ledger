@@ -15,19 +15,20 @@ you can download a specific version back to 2.6.0 from October 1, 2005.
 
 The `full` branch, which is checked out by default, provides some additions:
 
+* real Unicode support
 * extended keyboard shortcuts ([docs](doc/shortcuts.md))
 * spreadsheet downloads
 * recently used objects
 * dark mode
+* markdown for bold, italic and links in templates
 * database snapshots
 * encrypted backups
 * JSON API ([introduction](doc/api.md))
-* real Unicode support
+* support for ISO 20022 camt.054 files
 * Docker files for containerized test environment
 * WLprinter
 * minimalistic documentation
 * Swiss charts of accounts in German, French and Italian
-* support for ISO 20022 camt.054 files
 * several security patches
 
 # Installation
@@ -36,15 +37,22 @@ To install the program on Debian, you can use the [Ansible Role for
 SQL-Ledger](https://github.com/Tekki/ansible-sql-ledger). If you are on a
 different distribution, either follow the [instructions from
 DWS](https://sql-ledger.com/cgi-bin/nav.pl?page=source/readme.txt&title=README),
-or open an issue in the other repo (the chances that you get an update depend
-on your Github name, the weather and the lunar phase).
+or open an issue on Github.
 
 # Encrypted Backups
 
 If [GnuPG](https://gnupg.org/) is installed on your server, you can
 use it to encrypt backups. Uncomment the `$gpg` variable in
 `sql-ledger.conf`, create a directory `/var/www/gnupg` and change its
-owner to `www-data:www-data`.
+owner to `www-data:www-data` on Debian or `apache:apache` on Fedora
+based distributions.
+
+# Unicode Support
+
+In difference to the original SQL-Ledger, the version in the `full` branch
+internally works with [Unicode characters](https://perldoc.perl.org/perlunicode.html).
+This requires that your database, your templates and translations are
+all encoded in UTF-8.
 
 # Docker
 
@@ -53,20 +61,21 @@ With
     cd docker
     docker-compose -p sql-ledger up -d
 
-you can start a simple test environment (without LaTeX support). SQL-Ledger
-will run at [localhost/sql-ledger](http://localhost/sql-ledger). At
+you can start a simple test environment (without LaTeX support) on
+Debian Bookworm. SQL-Ledger will run at
+[localhost/sql-ledger](http://localhost/sql-ledger). At
 [localhost:8080](http://localhost:8080) and
-[localhost:8085](http://localhost:8085) you find the database management tools
-[Adminer](https://www.adminer.org) and [pgAdmin](https://pgadmin.org). You'll
-have to connect them to the PostgreSQL database that runs on service `db` with
-username and password `sql-ledger`.
+[localhost:8085](http://localhost:8085) you find the database
+management tools [Adminer](https://www.adminer.org) and
+[pgAdmin](https://pgadmin.org). You'll have to connect them to the
+PostgreSQL database that runs on service `db` with username and
+password `sql-ledger`.
 
-# Unicode Support
+If you want to try the program on AlmaLinux 9, use the second compose
+file
 
-In difference to the original SQL-Ledger, the version in the `full` branch
-internally works with [Unicode
-characters](https://perldoc.perl.org/perlunicode.html). This requires that your
-database, your templates and translations are all encoded in UTF-8.
+    cd docker
+    docker-compose -f docker-compose-alma.yml -p sql-ledger up -d
 
 # WLprinter
 
