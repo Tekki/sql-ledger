@@ -1,5 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+Not Released
+  - size of database is displayed in admin and version screen
+
 3.2.12.41 2024-04-28
   - option to show project number in general ledger reports
   - spreadsheets for general ledger reports

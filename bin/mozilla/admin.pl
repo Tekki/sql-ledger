@@ -233,7 +233,7 @@ sub list_datasets {
       }
     }
     if ($new) {
-      if (/^(company|dbname|dbdriver|dbhost|dbport|dbuser|templates)=/) {
+      if (/^(company|dbconnect|dbname|dbdriver|dbhost|dbpasswd|dbport|dbuser|templates)=/) {
         $var = $1;
         (undef, $member{$member}{$var}) = split /=/, $_, 2;
         $member{$member}{$var} =~ s/(\r\n|\n)//;
@@ -249,16 +249,19 @@ sub list_datasets {
     $member{$_}{locked} = "x" if -f "$userspath/$member{$_}{dbname}.LCK";
   }
 
-  $column_data{company} = qq|<th>|.$locale->text('Company').qq|</th>|;
-  $column_data{dbdriver} = qq|<th>|.$locale->text('Driver').qq|</th>|;
-  $column_data{dbhost} = qq|<th>|.$locale->text('Host').qq|</th>|;
-  $column_data{dbport} = qq|<th>|.$locale->text('Port').qq|</th>|;
-  $column_data{dbuser} = qq|<th>|.$locale->text('User').qq|</th>|;
-  $column_data{dbname} = qq|<th>|.$locale->text('Dataset').qq|</th>|;
-  $column_data{templates} = qq|<th>|.$locale->text('Templates').qq|</th>|;
-  $column_data{locked} = qq|<th width=1%>|.$locale->text('Locked').qq|</th>|;
+  User::add_db_size($form, \%member);
 
-  @column_index = qw(dbname company templates locked dbdriver dbuser dbhost dbport);
+  $column_data{company}   = qq|<th>| . $locale->text('Company') . qq|</th>|;
+  $column_data{dbdriver}  = qq|<th>| . $locale->text('Driver') . qq|</th>|;
+  $column_data{dbhost}    = qq|<th>| . $locale->text('Host') . qq|</th>|;
+  $column_data{dbname}    = qq|<th>| . $locale->text('Dataset') . qq|</th>|;
+  $column_data{dbport}    = qq|<th>| . $locale->text('Port') . qq|</th>|;
+  $column_data{dbuser}    = qq|<th>| . $locale->text('User') . qq|</th>|;
+  $column_data{locked}    = qq|<th width=1%>| . $locale->text('Locked') . qq|</th>|;
+  $column_data{size}      = qq|<th>| . $locale->text('Dataset Size') . qq|</th>|;
+  $column_data{templates} = qq|<th>| . $locale->text('Templates') . qq|</th>|;
+
+  @column_index = qw(dbname company size templates locked dbdriver dbuser dbhost dbport);
 
   $dbdriver ||= "Pg";
   $dbdriver{$dbdriver} = "checked";
@@ -301,9 +304,12 @@ sub list_datasets {
 
     $member{$key}{dbname} = $member{$key}{dbuser} if ($member{$key}{dbdriver} eq 'Oracle');
 
-    for (qw(company dbdriver dbhost dbport dbuser templates)) { $column_data{$_} = qq|<td>$member{$key}{$_}</td>| }
+    for (qw(company dbdriver dbhost dbport dbuser templates)) {
+      $column_data{$_} = qq|<td>$member{$key}{$_}</td>|;
+    }
     $column_data{dbname} = qq|<td><a href=$href>$member{$key}{dbname}</a></td>|;
     $column_data{locked} = qq|<td align=center>$member{$key}{locked}</td>|;
+    $column_data{size}   = qq|<td align=right>$member{$key}{size}</td>|;
 
     $i++; $i %= 2;
     print qq|

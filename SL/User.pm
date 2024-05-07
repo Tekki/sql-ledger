@@ -996,6 +996,33 @@ sub error {
 }
 
 
+sub add_db_size {
+  my ($form, $members) = @_;
+
+  my %dbhosts;
+  for my $member (values %$members) {
+    my $hostcode = "$member->{dbhost}$member->{dbport}$member->{dbuser}";
+
+    $dbhosts{$hostcode} ||= {$member->%*};
+    push $dbhosts{$hostcode}{dbnames}->@*, $member->{dbname};
+  }
+
+  my $query = qq|
+    SELECT pg_size_pretty(pg_database_size(?))
+    WHERE EXISTS (SELECT 1 FROM pg_catalog.pg_database WHERE datname = ?)|;
+
+  for my $dbhost (values %dbhosts) {
+    $dbhost->{dbpasswd} = unpack 'u', $dbhost->{dbpasswd};
+    my $dbh = $form->dbconnect($dbhost);
+
+    for my $dbname ($dbhost->{dbnames}->@*) {
+      ($members->{$dbname}{size}) = $dbh->selectrow_array($query, undef, $dbname, $dbname);
+    }
+
+    $dbh->disconnect;
+  }
+}
+
 1;
 
 =encoding utf8
@@ -1008,7 +1035,6 @@ User - User related functions
 
 L<SL::User> contains the user related functions.
 
-
 =head1 CONSTRUCTOR
 
 L<SL::User> uses the following constructor:
@@ -1017,17 +1043,17 @@ L<SL::User> uses the following constructor:
 
   $user = User->new($memfile, $login);
 
-=head1 METHODS
+=head1 FUNCTIONS
 
-L<SL::User> implements the following methods:
+L<SL::User> implements the following functions:
+
+=head2 add_db_size
+
+  User::add_db_size($form, $members);
 
 =head2 calc_version
 
   User::calc_version($version);
-
-=head2 check_recurring
-
-  $user->check_recurring($form);
 
 =head2 config_vars
 
@@ -1037,13 +1063,29 @@ L<SL::User> implements the following methods:
 
   User::country_codes;
 
-=head2 create_config
-
-  $user->create_config($filename);
-
 =head2 dbconnect_vars
 
   User::dbconnect_vars($form, $db);
+
+=head2 dbdrivers
+
+  User::dbdrivers;
+
+=head2 script_version
+
+  User::script_version($my_a, $my_b);
+
+=head1 METHODS
+
+L<SL::User> implements the following methods:
+
+=head2 check_recurring
+
+  $user->check_recurring($form);
+
+=head2 create_config
+
+  $user->create_config($filename);
 
 =head2 dbcreate
 
@@ -1052,10 +1094,6 @@ L<SL::User> implements the following methods:
 =head2 dbdelete
 
   $user->dbdelete($form);
-
-=head2 dbdrivers
-
-  User::dbdrivers;
 
 =head2 dbpassword
 
@@ -1096,9 +1134,5 @@ L<SL::User> implements the following methods:
 =head2 save_member
 
   $user->save_member($memberfile, $userspath);
-
-=head2 script_version
-
-  User::script_version($my_a, $my_b);
 
 =cut

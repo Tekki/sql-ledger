@@ -2352,6 +2352,10 @@ sub company_defaults {
 
   $form->{username} ||= 'admin' if $login eq 'admin';
 
+  $query = qq|SELECT pg_size_pretty(pg_database_size('$myconfig->{dbname}'))|;
+
+  ($form->{dbsize}) = $dbh->selectrow_array($query);
+
   $dbh->disconnect;
 
 }

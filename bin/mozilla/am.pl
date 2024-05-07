@@ -4414,6 +4414,10 @@ $form->{company}
     <th align=right>|.$locale->text('Dataset').qq|</th>
     <td>$myconfig{dbname}</td>
   </tr>
+  <tr>
+    <th align=right>|.$locale->text('Dataset Size').qq|</th>
+    <td>$form->{dbsize}</td>
+  </tr>
   $dbhost
 </table>
 
