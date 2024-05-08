@@ -97,8 +97,8 @@ bin/mozilla/oess.pl - Spreadsheet Functions for orders and quotations
 
 =head1 DESCRIPTION
 
-L<bin::mozilla::ss> contains functions to create and download spreadsheets for
-orders and quotations.
+L<bin::mozilla::oess> contains functions to create and download
+spreadsheets for orders and quotations.
 
 =head1 DEPENDENCIES
 

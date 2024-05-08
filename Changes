@@ -1,6 +1,7 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
+  - spreadsheets for individual accounts
   - size of database is displayed in admin and version screen
 
 3.2.12.41 2024-04-28
@@ -47,7 +48,7 @@ Not Released
   - spreadsheet for tax reports
   - improved accesskeys to select items in lists
   - regular expressions in template if statements
-  - don't use white character when printing out a page
+  - don't use white characters when printing out a page
 
 3.2.11.33 2022-09-16
   - access token for API calls

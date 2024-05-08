@@ -354,9 +354,19 @@ sub list_transactions {
   if ($form->{subreport}) {
     $form->{helpref} = qq|<a name="$form->{accno}">|;
   } else {
+
+    if ($form->{action} eq 'spreadsheet') {
+      require "$form->{path}/cass.pl";
+      $options =~ s~<a href.*?>(.*)</a>~$1~;
+      &transactions_spreadsheet($options, \@column_index, \%column_header);
+      exit;
+    }
+
     $form->header;
-    print q|
+    print qq|
 <body>
+
+<form method="post" name="main" action="$form->{script}">
 |;
   }
 
@@ -383,7 +393,9 @@ sub list_transactions {
 |;
 
   # add sort to callback
-  $form->{callback} = $form->escape($form->{callback} . "&sort=$form->{sort}");
+  $form->{callback} .= "&sort=$form->{sort}";
+
+  my $callback = $form->escape($form->{callback});
 
   if (@{ $form->{CA} }) {
     $sameitem = $form->{CA}->[0]->{$form->{sort}};
@@ -419,7 +431,7 @@ sub list_transactions {
     }
 
     # construct link to source
-    $href = "<a href=$ca->{module}.pl?path=$form->{path}&action=edit&id=$ca->{id}&login=$form->{login}&callback=$form->{callback}>$ca->{reference}</a>";
+    $href = "<a href=$ca->{module}.pl?path=$form->{path}&action=edit&id=$ca->{id}&login=$form->{login}&callback=$callback>$ca->{reference}</a>";
 
 
     $column_data{debit} = "<td align=right>".$form->format_amount(\%myconfig, $ca->{debit}, $form->{precision}, "&nbsp;")."</td>";
@@ -438,7 +450,7 @@ sub list_transactions {
     $column_data{reference} = qq|<td>$href</td>|;
 
     if ($ca->{vc_id}) {
-      $href = "<a href=ct.pl?path=$form->{path}&action=edit&id=$ca->{vc_id}&db=$ca->{db}&login=$form->{login}&callback=$form->{callback}>$ca->{description}</a>";
+      $href = "<a href=ct.pl?path=$form->{path}&action=edit&id=$ca->{vc_id}&db=$ca->{db}&login=$form->{login}&callback=$callback>$ca->{description}</a>";
       $href .= ", $ca->{invdescription}" if $ca->{invdescription};
       $column_data{description} = qq|<td>$href</td>|;
     } else {
@@ -502,7 +514,14 @@ sub list_transactions {
 |;
 
   unless ($form->{subreport}) {
+    %button = ('Spreadsheet' => {ndx => 1, key => 'X', value => $locale->text('Spreadsheet')},);
+
+    $form->hide_form(qw(callback path login));
+
+    $form->print_button(\%button);
+
     print q|
+</form>
 </body>
 </html>
 |;
@@ -533,6 +552,15 @@ sub ca_subtotal {
       </tr>
 |;
 
+}
+
+
+sub spreadsheet {
+  $form->parse_callback(\%myconfig, iso_date => 1);
+
+  my $action = $form->{action};
+  $form->{action} = 'spreadsheet';
+  &$action;
 }
 
 
@@ -572,5 +600,7 @@ L<bin::mozilla::ca> implements the following functions:
 =head2 list
 
 =head2 list_transactions
+
+=head2 spreadsheet
 
 =cut
