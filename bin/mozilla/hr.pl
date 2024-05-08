@@ -568,7 +568,7 @@ sub employee_header {
 <form method="post" name="main" action="$form->{script}" />
 |;
 
-  $form->hide_form(qw(acs payrate_rows wage_rows deduction_rows reference_rows referenceurl status title helpref oldemployeelogin company));
+  $form->hide_form(qw(acs payrate_rows wage_rows deduction_rows reference_rows referenceurl max_upload_size status title helpref oldemployeelogin company));
   $form->hide_form(map { "select$_" } qw(paymentmethod payment ap wage deduction acsrole));
 
   $login = "";
@@ -1536,7 +1536,7 @@ sub payroll_header {
 
   $form->{ARAP} = "AP";
 
-  $form->hide_form(qw(id invnumber helpref title precision ARAP reference_rows referenceurl));
+  $form->hide_form(qw(id invnumber helpref title precision ARAP reference_rows referenceurl max_upload_size));
   $form->hide_form(map { "select$_" } qw(formname language employee ap payment paymentmethod printer department project));
 
   print qq|

@@ -316,6 +316,10 @@ option {
   font-size: 11px;
 }
 
+.clickable {
+  cursor: pointer;
+}
+
 .plus0 {
   color: var(--purple);
 }
@@ -336,4 +340,15 @@ h2.error {
 
 font[color='red'] {
   color: var(--red);
+}
+
+.dnd-idle {
+  text-align: left;
+  vertical-align: top;
+}
+
+.dnd-active {
+  text-align: center;
+  vertical-align: middle;
+  border: 1px dashed;
 }

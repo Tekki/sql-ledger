@@ -1498,7 +1498,7 @@ sub form_header {
 <form method="post" name="main" action="$form->{script}">
 |;
 
-  $form->hide_form(qw(id fxadj closedto locked oldtransdate oldcurrency recurring batch batchid batchnumber batchdescription defaultcurrency precision helpref reference_rows referenceurl olddepartment));
+  $form->hide_form(qw(id fxadj closedto locked oldtransdate oldcurrency recurring batch batchid batchnumber batchdescription defaultcurrency precision helpref reference_rows referenceurl max_upload_size olddepartment));
   $form->hide_form(map { "select$_" } qw(accno department currency));
 
   print qq|

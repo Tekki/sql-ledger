@@ -1612,6 +1612,10 @@ sub save_defaults {
   $form->{fxgainloss_accno} = $form->{fxgainloss};
   $form->{cashovershort_accno} = $form->{cashovershort};
 
+  for (qw|max_upload_size precision annualinterest latepaymentfee restockingcharge roundchange|) {
+    $form->{$_} *= 1;
+  }
+
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
 

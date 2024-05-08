@@ -19,6 +19,7 @@ The `full` branch, which is checked out by default, provides some additions:
 * extended keyboard shortcuts ([docs](doc/shortcuts.md))
 * spreadsheet downloads
 * recently used objects
+* improved document management with drag and drop
 * dark mode
 * markdown for bold, italic and links in templates
 * database snapshots
@@ -37,7 +38,7 @@ To install the program on Debian, you can use the [Ansible Role for
 SQL-Ledger](https://github.com/Tekki/ansible-sql-ledger). If you are on a
 different distribution, either follow the [instructions from
 DWS](https://sql-ledger.com/cgi-bin/nav.pl?page=source/readme.txt&title=README),
-or open an issue on Github.
+or open an issue on GitHub.
 
 # Encrypted Backups
 

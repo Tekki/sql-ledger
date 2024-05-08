@@ -12,13 +12,11 @@
 #======================================================================
 
 use JSON::PP;
-use SL::AA;
 use SL::API;
-use SL::CT;
-use SL::IS;
-use SL::OE;
 
 sub add_payment {
+  require SL::AA;
+  require SL::IS;
 
   my $result       = 'error';
   my $invoice_form = Form->new;
@@ -64,6 +62,7 @@ sub add_reference {
 }
 
 sub customer_details {
+  require SL::CT;
 
   $form->{db}   = 'customer';
   $form->{ARAP} = 'AR';
@@ -97,6 +96,8 @@ sub get_token {
 }
 
 sub invoice_details {
+  require SL::AA;
+  require SL::IS;
 
   API->find_invoice(\%myconfig, $form);
 
@@ -125,6 +126,7 @@ sub list_accounts {
 }
 
 sub search_customer {
+  require SL::CT;
 
   $form->{db} = 'customer';
   CT->search(\%myconfig, $form);
@@ -135,6 +137,7 @@ sub search_customer {
 }
 
 sub search_order {
+  require SL::OE;
 
   $form->{open} //= 1;
   $form->{type} ||= 'sales_order';
@@ -147,6 +150,7 @@ sub search_order {
 }
 
 sub search_transaction {
+  require SL::AA;
 
   $form->{open}    //= 1 unless $form->{outstanding};
   $form->{summary} //= 1;
@@ -156,6 +160,20 @@ sub search_transaction {
   print qq|Content-Type: application/json; charset=$form->{charset}
 
 | . JSON::PP->new->encode({transactions => $form->{transactions}});
+}
+
+sub upload_file {
+
+  $form->{description} ||= $form->{filename} =~ s/(.+)\.[^.]+$/$1/r;
+
+  my %result = (
+    data   => {$form->%{'description', 'filename', 'tmpfile'}},
+    result => 'success',
+  );
+
+  print qq|Content-Type: application/json; charset=$form->{charset}
+
+| . JSON::PP->new->encode(\%result);
 }
 
 1;
@@ -205,5 +223,7 @@ L<bin::mozilla::api> implements the following functions:
 =head2 search_order
 
 =head2 search_transaction
+
+=head2 upload_file
 
 =cut

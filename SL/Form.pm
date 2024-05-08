@@ -127,6 +127,7 @@ sub new {
   $self->{dbversion} = "3.2.4";
   $self->{version2} = "tekki 3.2.12.42rc";
   $self->{dbversion2} = 30;
+  $self->{cssversion} = 42;
 
   $self->{favicon} = 'favicon.ico';
 
@@ -536,7 +537,7 @@ sub header {
   if ($ENV{HTTP_USER_AGENT}) {
 
     if ($self->{stylesheet} && (-f "css/$self->{stylesheet}")) {
-      $stylesheet = qq|<link rel="stylesheet" href="css/$self->{stylesheet}" type="text/css" title="SQL-Ledger stylesheet">
+      $stylesheet = qq|<link rel="stylesheet" href="css/$self->{stylesheet}?v=$self->{cssversion}" type="text/css" title="SQL-Ledger stylesheet">
   |;
     }
 
@@ -2873,6 +2874,24 @@ sub get_defaults {
 }
 
 
+sub load_defaults {
+  my ($self, $myconfig, $dbh, $flds) = @_;
+
+  my $disconnect;
+  unless ($dbh) {
+    $dbh = $self->dbconnect($myconfig);
+    $disconnect = 1;
+  }
+
+  my %defaults = $self->get_defaults($dbh, $flds);
+  for (keys %defaults) {
+    $self->{$_} = $defaults{$_};
+  }
+
+  $dbh->disconnect if $disconnect;
+}
+
+
 sub all_vc {
   my ($self, $myconfig, $vc, $module, $dbh, $transdate, $job, $openinv, $openord) = @_;
 
@@ -3335,7 +3354,7 @@ sub create_links {
   my $key;
   my %xkeyref = ();
 
-  my @df = qw(closedto revtrans weightunit cdt precision roundchange cashovershort_accno_id referenceurl forcewarehouse);
+  my @df = qw(closedto revtrans weightunit cdt precision roundchange cashovershort_accno_id referenceurl max_upload_size forcewarehouse);
   push @df, "lock_%";
   my %defaults = $self->get_defaults($dbh, \@df);
   for (keys %defaults) { $self->{$_} = $defaults{$_} }
@@ -4222,10 +4241,8 @@ sub get_reference {
               WHERE r.archive_id = $self->{id}|;
   ($self->{description}, $self->{filename}) = $dbh->selectrow_array($query);
 
-  if ($self->{filename} =~ /\./) {
-    my @ext = split /\./, $self->{filename};
-    $self->{extension} = pop @ext;
-    $self->{extension} = lc $self->{extension};
+  if ($self->{filename} =~ /.+\.([^.]+)/) {
+    $self->{extension} = lc $1;
   }
 
   $query = qq|SELECT contenttype
@@ -4297,7 +4314,11 @@ sub save_reference {
   $query = qq|UPDATE archive SET filename = ?
               WHERE filename = ?|;
   my $uath = $dbh->prepare($query) || $self->dberror($query);
-	      
+
+  $query = qq|UPDATE archive SET filename = ?
+              WHERE id = ?|;
+  my $uath2 = $dbh->prepare($query) || $self->dberror($query);
+
   $query = qq|INSERT INTO archivedata (rn, archive_id, bt)
               VALUES (?, ?, ?)|;
   my $acth = $dbh->prepare($query) || $self->dberror($query);
@@ -4318,7 +4339,7 @@ sub save_reference {
 
   for $i (1 .. $self->{reference_rows}) {
 
-    if (! $self->{referenceurl}) {
+    unless ($self->{referenceurl}) {
 
       if ($self->{"referencetmpfile_$i"}) {
 
@@ -4357,13 +4378,24 @@ sub save_reference {
     }
 
     if ($self->{"referencedescription_$i"}) {
-      delete $self->{"referencearchive_id_$i"} unless $self->{"referencearchive_id_$i"};
+      if ($self->{"referencearchive_id_$i"}) {
+        $uath2->execute($self->{"referencefilename_$i"}, $self->{"referencearchive_id_$i"});
+        $uath2->finish;
+      } else {
+        delete $self->{"referencearchive_id_$i"};
+      }
       $self->{id} ||= $self->{trans_id};
       delete $self->{id} unless $self->{id};
 
       $confidential = ($self->{"referenceconfidential_$i"}) ? $login : "";
 
-      $sth->execute($self->{"referencecode_$i"}, $self->{id}, $self->{"referencedescription_$i"}, $self->{"referencearchive_id_$i"}, $confidential, $formname, $self->{"referencefolder_$i"});
+      $sth->execute(
+        $self->{"referencecode_$i"},
+        $self->{id},
+        $self->{"referencedescription_$i"},
+        $self->{"referencearchive_id_$i"},
+        $confidential, $formname, $self->{"referencefolder_$i"}
+      );
       $sth->finish;
     }
   }
@@ -5669,7 +5701,11 @@ L<SL::Form> implements the following methods:
 
 =head2 get_defaults
 
-  $form->get_defaults($dbh, $flds);
+  $form->get_defaults($dbh, \@flds);
+
+=head2 load_defaults
+
+  $form->load_defaults($myconfig, \@flds);
 
 =head2 get_employee
 
@@ -5730,6 +5766,11 @@ L<SL::Form> implements the following methods:
 =head2 like
 
   $form->like($str);
+
+=head2 load_defaults
+
+  $form->load_defaults($myconfig, undef, $flds);
+  $form->load_defaults(undef, $db, $flds);
 
 =head2 mimetype
 

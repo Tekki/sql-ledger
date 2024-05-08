@@ -720,7 +720,7 @@ sub form_header {
 <form method="post" name="main" action="$form->{script}">
 |;
 
-  $form->hide_form(qw(id item title makemodel alternate oldonhand orphaned taxaccounts rowcount project_id precision changeup oldpartsgroup oldpartsgroupcode helpref reference_rows referenceurl));
+  $form->hide_form(qw(id item title makemodel alternate oldonhand orphaned taxaccounts rowcount project_id precision changeup oldpartsgroup oldpartsgroupcode helpref reference_rows referenceurl max_upload_size));
 
   print qq|
 <input type=hidden name=action value="update">

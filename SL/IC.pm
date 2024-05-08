@@ -2332,7 +2332,7 @@ sub create_links {
 
 
   if ($form->{id} *= 1) {
-    my %defaults = $form->get_defaults($dbh, \@{[qw(weightunit precision referenceurl)]});
+    my %defaults = $form->get_defaults($dbh, [qw(weightunit precision referenceurl max_upload_size)]);
     for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
     $form->all_references($dbh);
@@ -2340,8 +2340,14 @@ sub create_links {
   } else {
     $form->{priceupdate} = $form->current_date($myconfig);
 
-    my %defaults = $form->get_defaults($dbh, \@{['weightunit', '%_accno_id', 'precision', 'referenceurl', 'checkinventory']});
-    for (qw(weightunit precision referenceurl checkinventory)) { $form->{$_} = $defaults{$_} }
+    my %defaults = $form->get_defaults(
+      $dbh,
+      [
+        'weightunit', '%_accno_id', 'precision', 'referenceurl', 'max_upload_size',
+        'checkinventory'
+      ]
+    );
+    for (qw(weightunit precision referenceurl max_upload_size checkinventory)) { $form->{$_} = $defaults{$_} }
 
     for (qw(inventory income expense)) {
       $query = qq|SELECT c.accno, c.description,

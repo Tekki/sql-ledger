@@ -227,7 +227,7 @@ sub create_links {
   # get currencies
   $form->{currencies} = $form->get_currencies($myconfig, $dbh);
 
-  my %defaults = $form->get_defaults($dbh, \@{[qw(typeofcontact referenceurl)]});
+  my %defaults = $form->get_defaults($dbh, [qw(typeofcontact referenceurl max_upload_size)]);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   $dbh->disconnect;

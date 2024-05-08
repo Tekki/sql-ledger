@@ -757,7 +757,7 @@ sub form_header {
 <form method="post" name="main" action="$form->{script}">
 |;
 
-  $form->hide_form(qw(id type defaultcurrency formname printed emailed queued vc title discount creditlimit creditremaining tradediscount business oldtransdate recurring address1 address2 city state zipcode country pricegroup closedto precision reference_rows referenceurl oldwarehouse olddepartment company));
+  $form->hide_form(qw(id type defaultcurrency formname printed emailed queued vc title discount creditlimit creditremaining tradediscount business oldtransdate recurring address1 address2 city state zipcode country pricegroup closedto precision reference_rows referenceurl max_upload_size oldwarehouse olddepartment company));
 
   $form->hide_form(map { "select$_" } ("$form->{vc}", "$form->{ARAP}_paid") );
   $form->hide_form(map { "select$_" } qw(formname currency partsgroup projectnumber department warehouse employee language printer paymentmethod));

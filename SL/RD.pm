@@ -14,49 +14,122 @@
 package RD;
 
 
-sub all_documents {
+sub prepare_search {
   my ($self, $myconfig, $form) = @_;
 
   my $dbh = $form->dbconnect($myconfig);
 
+  my $query = qq|SELECT DISTINCT formname FROM reference|;
+
+  my $sth = $dbh->prepare($query);
+  $sth->execute or $form->dberror($query);
+
+  while (my $ref = $sth->fetchrow_hashref('NAME_lc')) {
+    $form->{has_formname}{$ref->{formname}} = 1;
+  }
+  $sth->finish;
+
+  $query = qq|
+    SELECT DISTINCT folder
+    FROM reference
+    ORDER BY folder|;
+
+  my $sth = $dbh->prepare($query);
+  $sth->execute or $form->dberror($query);
+
+  while (my $ref = $sth->fetchrow_hashref('NAME_lc')) {
+    push $form->{all_folder}->@*, $ref;
+  }
+  $sth->finish;
+
+  $dbh->disconnect;
+
+}
+
+
+sub all_documents {
+  my ($self, $myconfig, $form, $formnames) = @_;
+
+  my $dbh = $form->dbconnect($myconfig);
+
+  $form->load_defaults(undef, $dbh, ['company']);
+
   my $login = $form->{login};
   $login =~ s/\@.*//;
 
-  my $var;
+  my %numbers;
+  for my $f (values %$formnames) {
+    my $db = $f->{db};
+    $numbers{$f->{db}} ||= {
+      field  => "$db.$f->{number}::text",
+      join   => "LEFT JOIN $db ON $db.id = r.trans_id",
+    };
+  }
+
+  my ($joins, @all_numbers, $var);
+
+  for (sort keys %numbers) {
+    push @all_numbers, $numbers{$_}{field};
+    $joins .= qq|
+      $numbers{$_}{join}|;
+  }
 
   # get reference documents
-  my $query = qq|SELECT r.*, a.filename
-                 FROM reference r
-                 LEFT JOIN archive a ON (a.id = r.archive_id)
-                 WHERE 1 = 1|;
+  my $where = '1=1';
+
   if ($form->{description}) {
     $var = $form->like(lc $form->{description});
 
-    $query .= qq|
-              AND lower(r.description) LIKE '$var'|;
+    $where .= qq|
+        AND lower(r.description) LIKE '$var'|;
   }
   if ($form->{filename}) {
     $var = $form->like(lc $form->{filename});
 
-    $query .= qq|
-              AND lower(a.filename) LIKE '$var'|;
+    $where .= qq|
+        AND lower(a.filename) LIKE '$var'|;
   }
   if ($form->{folder}) {
     $var = $form->like(lc $form->{folder});
 
-    $query .= qq|
-              AND lower(r.folder) LIKE '$var'|;
+    $where .= qq|
+        AND lower(r.folder) LIKE '$var'|;
   }
   if ($form->{formname}) {
     (undef, $var) = split /--/, $form->{formname};
 
-    $query .= qq|
-              AND r.formname = '$var'|;
+    $where .= qq|
+        AND r.formname = '$var'|;
+  }
+  if ($form->{confidential}) {
+    $where .= qq|
+        AND r.login = '$login'|;
   }
 
-  my @sf = (description);
+  my @sf = qw(description);
   my %ordinal = $form->ordinal_order($dbh, $query);
-  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
+  my $order = $form->sort_order(\@sf, \%ordinal);
+
+  my $query = qq|
+      SELECT
+        r.*,
+        a.filename,
+        COALESCE(|. join(',', @all_numbers) .qq|) AS document_number
+      FROM reference r
+      LEFT JOIN archive a ON (a.id = r.archive_id)$joins
+      WHERE $where
+      ORDER BY $order|;
+
+  if ($form->{document_number}) {
+    $var = $form->like(lc $form->{document_number});
+
+    $query = qq|
+    WITH all_numbers AS ($query
+    )
+    SELECT *
+    FROM all_numbers
+    WHERE lower(document_number) LIKE '$var'|;
+  }
 
   $sth = $dbh->prepare($query) || $form->dberror($query);
   $sth->execute || $form->dberror($query);
@@ -259,8 +332,8 @@ sub attach_document {
 
   $query = qq|SELECT id
               FROM $form->{db}
-              WHERE id = $form->{trans_id}|;
-  my ($id) = $dbh->selectrow_array($query);
+              WHERE $form->{number_field} = ?|;
+  my ($id) = $dbh->selectrow_array($query, undef, $form->{document_number});
 
   if ($id) {
     $query = qq|SELECT *
@@ -273,12 +346,12 @@ sub attach_document {
     if ($ref->{trans_id}) {
       $query = qq|INSERT INTO reference (code, trans_id, description,
                   archive_id, login, formname, folder) VALUES (
-                  '$ref->{code}', '$form->{trans_id}', '$ref->{description}',
+                  '$ref->{code}', '$id', '$ref->{description}',
                   '$ref->{archive_id}', '$ref->{login}', '$form->{formname}',
                   '$ref->{folder}')|;
     } else {
       $query = qq|UPDATE reference SET
-                  trans_id = $form->{trans_id},
+                  trans_id = $id,
                   formname = '$form->{formname}'
                   WHERE id = $form->{id}|;
     }

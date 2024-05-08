@@ -27,7 +27,7 @@ sub get_employee {
   my $notid = "";
   my $rne;
 
-  my @df = qw(closedto revtrans company address tel fax businessnumber precision referenceurl lock_%);
+  my @df = qw(closedto revtrans company address tel fax businessnumber precision referenceurl max_upload_size lock_%);
   my %defaults = $form->get_defaults($dbh, \@df);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
@@ -883,7 +883,7 @@ sub payroll_links {
 
   my @var;
 
-  my @df = qw(closedto revtrans company precision namesbynumber referenceurl);
+  my @df = qw(closedto revtrans company precision namesbynumber referenceurl max_upload_size);
   my %defaults = $form->get_defaults($dbh, \@df);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
@@ -1286,7 +1286,14 @@ sub payslip_details {
   my $ref;
   my $id;
 
-  my %defaults = $form->get_defaults($dbh, \@{['company', 'address', 'tel', 'fax', 'companyemail', 'companywebsite', 'businessnumber', 'precision', 'referenceurl']});
+  my %defaults = $form->get_defaults(
+    $dbh,
+    [
+      'company',      'address',        'tel',            'fax',
+      'companyemail', 'companywebsite', 'businessnumber', 'precision',
+      'referenceurl', 'max_upload_size'
+    ]
+  );
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   %defaults = $form->get_defaults($dbh, \@{['printer_%']});

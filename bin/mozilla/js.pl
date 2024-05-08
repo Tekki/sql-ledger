@@ -412,6 +412,26 @@ sub pickvalue {
 }
 
 
+sub check_upload_size {
+
+  print qq|
+<script>
+  const dataField = document.getElementsByName('data')[0];
+  dataField.addEventListener('change', () => {
+    if ( dataField.files.length
+         && dataField.files[0].size / 1024 / 1024 > $form->{max_upload_size}
+         && !confirm('|
+    . $locale->text('File is too big! Allowed are:')
+    . qq| $form->{max_upload_size} MiB\\n|
+    . $locale->text('Continue?') . qq|'))
+    {
+      dataField.value = '';
+    }});
+</script>|;
+
+}
+
+
 sub clock {
 
   my @gmt = gmtime;
@@ -515,6 +535,10 @@ L<bin::mozilla::js> implements the following functions:
 =head2 check_all
 
   &check_all($checkbox, $match);
+
+=head2 check_upload_size
+
+  &check_upload_size;
 
 =head2 clock
 

@@ -799,7 +799,7 @@ sub retrieve {
   my $var;
   my $ref;
 
-  my %defaults = $form->get_defaults($dbh, \@{[qw(weightunit closedto precision referenceurl lock_%)]});
+  my %defaults = $form->get_defaults($dbh, [qw(weightunit closedto precision referenceurl max_upload_size lock_%)]);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   $form->get_peripherals($dbh);

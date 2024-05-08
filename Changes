@@ -1,6 +1,13 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
+  - add reference documents using drag and drop
+  - directly edit details of reference documents
+  - set maximum upload size in system settings
+  - documents report shows numbers of referenced transactions
+  - search reference documents using transaction number or confidential flag
+  - attach documents to transaction using its number
+  - spreadsheets for reference documents
   - spreadsheets for individual accounts
   - size of database is displayed in admin and version screen
 

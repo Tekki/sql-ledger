@@ -580,7 +580,7 @@ sub form_header {
 <form method=post name="main" action="$form->{script}">
 |;
 
-  $form->hide_form(qw(id type printed emailed queued title vc discount creditlimit creditremaining tradediscount business closedto locked shipped oldtransdate oldduedate recurring defaultcurrency oldterms cdt precision order_id remittancevoucher reference_rows referenceurl oldwarehouse olddepartment company));
+  $form->hide_form(qw(id type printed emailed queued title vc discount creditlimit creditremaining tradediscount business closedto locked shipped oldtransdate oldduedate recurring defaultcurrency oldterms cdt precision order_id remittancevoucher reference_rows referenceurl max_upload_size oldwarehouse olddepartment company));
 
   $form->hide_form(map { "select$_" } ("$form->{vc}", "AR", "AR_paid", "AR_discount"));
   $form->hide_form(map { "select$_" } qw(formname currency partsgroup projectnumber department warehouse employee language paymentmethod printer));

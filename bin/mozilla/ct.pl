@@ -2357,8 +2357,9 @@ sub form_footer {
     }
   }
 
+  $form->{action}         = 'update';
   $form->{update_contact} = 1;
-  $form->hide_form(qw(id ARAP update_contact addressid contactid taxaccounts path login callback db status reference_rows referenceurl precision company));
+  $form->hide_form(qw(id action ARAP update_contact addressid contactid taxaccounts path login callback db status reference_rows referenceurl max_upload_size precision company _updated));
 
   for (keys %button) { delete $button{$_} if ! $f{$_} }
 
@@ -2369,9 +2370,10 @@ sub form_footer {
     &menubar;
   }
 
-  print qq|
-
-  </form>
+  print q|
+</form>|;
+  &unload;
+  print q|
 
 </body>
 </html>
@@ -2902,6 +2904,7 @@ sub pricelist_footer {
 
 sub update {
 
+  $form->{_updated} = 1;
   for (qw(creditlimit threshold discount cashdiscount)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
 
   if ($form->{update_contact}) {

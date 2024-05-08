@@ -193,6 +193,10 @@ select {
   font-size: 11px;
 }
 
+.clickable {
+  cursor: pointer;
+}
+
 .plus0 {    /* font color for negative numbers */
   color: red;
 }
@@ -209,6 +213,17 @@ h2.confirm {
 h2.error {
   color: red;
   font-size: 14px;
+}
+
+.dnd-idle {
+  text-align: left;
+  vertical-align: top;
+}
+
+.dnd-active {
+  text-align: center;
+  vertical-align: middle;
+  border: 1px dashed;
 }
 
 
