@@ -4,12 +4,13 @@ Not Released
   - add reference documents using drag and drop
   - directly edit details of reference documents
   - set maximum upload size in system settings
-  - documents report shows numbers of referenced transactions
+  - document report shows numbers of referenced transactions
   - search reference documents using transaction number or confidential flag
   - attach documents to transaction using its number
   - spreadsheets for reference documents
   - spreadsheets for individual accounts
   - size of database is displayed in admin and version screen
+  - version screen shows missing Perl modules
 
 3.2.12.41 2024-04-28
   - option to show project number in general ledger reports

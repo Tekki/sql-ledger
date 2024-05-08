@@ -4371,6 +4371,8 @@ sub company_logo {
 
   $form->{title} = $locale->text('About');
 
+  my ($user, $dbhost, $perl_status);
+
   if ($form->{username}) {
     $user = qq|
   <tr>
@@ -4389,6 +4391,12 @@ sub company_logo {
 |;
   }
 
+  my @perl_modules = qw|Archive::Zip Excel::Writer::XLSX Mojolicious|;
+  if (my @missing = $form->load_module(\@perl_modules)) {
+    $perl_status = $locale->text('Module not installed:') . '<br>' . join '<br>', @missing;
+  } else {
+    $perl_status = $locale->text('ok');
+  }
 
   # create the logo screen
   $form->header;
@@ -4427,6 +4435,10 @@ $form->{company}
     <td>$form->{dbsize}</td>
   </tr>
   $dbhost
+  <tr>
+    <th align="right" valign="top">|.$locale->text('Perl Modules').qq|</th>
+    <td>$perl_status</td>
+  </tr>
 </table>
 
 </center>

@@ -15,6 +15,7 @@ package SL::Spreadsheet;
 use strict;
 use warnings;
 
+use Excel::Writer::XLSX;
 use List::Util qw|max min|;
 use Scalar::Util 'looks_like_number';
 

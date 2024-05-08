@@ -11,8 +11,7 @@
 #
 #======================================================================
 
-$form->load_module(['Excel::Writer::XLSX', 'SL::Spreadsheet'],
-  $locale->text('Module not installed:'));
+use SL::Spreadsheet;
 
 sub account_spreadsheet {
   my ($report_options) = @_;

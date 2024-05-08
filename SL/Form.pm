@@ -201,7 +201,11 @@ sub load_module {
     push @missing, $_ unless $_->can('new') || eval "require $_; 1";
   }
 
-  $self->error($msg . ' ' . join ', ', @missing) if @missing;
+  if (@missing && $msg) {
+    $self->error($msg . ' ' . join ', ', @missing);
+  } else {
+    return @missing;
+  }
 }
 
 

@@ -11,8 +11,7 @@
 #
 #======================================================================
 
-$form->load_module(['Excel::Writer::XLSX', 'SL::Spreadsheet'],
-  $locale->text('Module not installed:'));
+use SL::Spreadsheet;
 
 sub transactions_spreadsheet {
   my ($report_options, $column_index, $header, $href) = @_;
