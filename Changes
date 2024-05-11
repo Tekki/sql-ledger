@@ -1,6 +1,6 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
-Not Released
+3.2.12.42 2024-05-11
   - add reference documents using drag and drop
   - directly edit details of reference documents
   - set maximum upload size in system settings
