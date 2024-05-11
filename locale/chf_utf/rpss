@@ -25,7 +25,6 @@ $self{texts} = {
   'Income / (Loss)'             => 'Résultat',
   'Income Statement'            => 'Compte de résultat',
   'Liabilities'                 => 'Dettes',
-  'Module not installed:'       => 'Module pas installé:',
   'R'                           => 'R',
   'Reference'                   => 'Référence',
   'Source'                      => 'Source',

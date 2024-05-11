@@ -5,6 +5,7 @@ $self{charset} = 'UTF-8';
 $self{texts} = {
   'Continue'                    => 'Devam',
   'Password'                    => 'Şifre',
+  'Session expired!'            => 'Oturum zamanaşımına uğradı!',
 };
 
 $self{subs} = {

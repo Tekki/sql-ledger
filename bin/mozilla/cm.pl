@@ -162,7 +162,7 @@ sub references {
   $rv .= qq|
 
                 if (uploadFile) {
-                  dropZone.textContent = '|.$locale->text('Uploading...').qq|';
+                  dropZone.textContent = '|.$locale->text('Uploading ...').qq|';
 
                   const form = new FormData();
                   form.set('action', 'upload_file');

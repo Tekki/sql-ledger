@@ -3,7 +3,18 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Reference Documents'         => 'Référencer documents',
+  'C'                           => 'C',
+  'Confidential'                => 'Confidentiel',
+  'Continue?'                   => 'Continuer?',
+  'Description'                 => 'Libellé',
+  'Drag and Drop'               => 'Glisser-déposer',
+  'Error!'                      => 'Erreur!',
+  'File is too big! Allowed are:' => 'Fichier trop grand! Permis sont:',
+  'Filename'                    => 'Nom du fichier',
+  'Finished'                    => 'Terminé',
+  'Folder'                      => 'Dossier',
+  'Reference Documents'         => 'Documents de référence',
+  'Uploading ...'               => 'Téléchargement ...',
 };
 
 $self{subs} = {

@@ -4,10 +4,25 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Account'                     => 'Hesap',
-  'Amount'                      => 'Miktar',
+  'Amount'                      => 'Tutar',
   'Continue'                    => 'Devam',
+  'DCN missing!'                => 'DCN yok!',
   'Date'                        => 'Tarih',
+  'Memo'                        => 'Memo',
+  'Nothing to print!'           => 'Yazdırılacak birşey yok!',
+  'On Hold'                     => 'Beklemede',
+  'PDF'                         => 'PDF',
+  'Postscript'                  => 'Postscript',
+  'Printed'                     => 'Yazdırıldı',
+  'RVC missing!'                => 'RVC yok!',
+  'Scheduled'                   => 'Planlı',
+  'Screen'                      => 'Ekran',
+  'Select a Printer!'           => 'Yazıcı Seç!',
+  'Select payment'              => 'Ödeme seç',
   'Source'                      => 'Kaynak',
+  'Text'                        => 'Yazı',
+  'XML'                         => 'XML',
+  'html'                        => 'html',
 };
 
 $self{subs} = {

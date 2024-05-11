@@ -15,6 +15,7 @@ $self{subs} = {
   'search_customer'             => 'search_customer',
   'search_order'                => 'search_order',
   'search_transaction'          => 'search_transaction',
+  'upload_file'                 => 'upload_file',
 };
 
 1;

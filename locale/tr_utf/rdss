@@ -6,7 +6,7 @@ $self{texts} = {
 };
 
 $self{subs} = {
-  'transactions_spreadsheet'    => 'transactions_spreadsheet',
+  'documents_spreadsheet'       => 'documents_spreadsheet',
 };
 
 1;

@@ -25,7 +25,6 @@ $self{texts} = {
   'Income / (Loss)'             => 'Ergebnis',
   'Income Statement'            => 'Erfolgsrechnung',
   'Liabilities'                 => 'Passiven',
-  'Module not installed:'       => 'Modul nicht installiert:',
   'R'                           => 'R',
   'Reference'                   => 'Referenz',
   'Source'                      => 'Beleg',

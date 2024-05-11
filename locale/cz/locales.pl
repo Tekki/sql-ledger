@@ -388,7 +388,7 @@ sub scanmenu {
   my $file = shift;
 
   my $fh = new FileHandle;
-  retunr unless open $fh, "$file";
+  return unless open $fh, "$file";
 
   my @a = grep /^\[/, <$fh>;
   close($fh);

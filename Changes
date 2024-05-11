@@ -11,6 +11,8 @@ Not Released
   - spreadsheets for individual accounts
   - size of database is displayed in admin and version screen
   - version screen shows missing Perl modules
+  - updated Turkish (UTF-8) translation
+    contributed my Mufit Eribol
 
 3.2.12.41 2024-04-28
   - option to show project number in general ledger reports
@@ -23,7 +25,6 @@ Not Released
   - improved Spreadsheet generation with check for correct sheet names
   - additional template variables for project number and description
   - error in migration from DWS to Tekki version corrected
-  - Turkish (UTF-8) translation updated
 
 3.2.12.39 2023-12-25
   - encrypted backups

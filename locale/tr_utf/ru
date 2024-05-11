@@ -5,10 +5,22 @@ $self{charset} = 'UTF-8';
 $self{texts} = {
   'AP Transactions'             => 'Borç İşlemleri',
   'AR Transactions'             => 'Alacak İşlemleri',
-  'Description'                 => 'Açıklama',
+  'Category'                    => 'Kategory',
+  'Customers'                   => 'Müşteriler',
+  'Description'                 => 'Tanım',
+  'GL Transactions'             => 'DK İşlemleri',
+  'Items'                       => 'Kalemler',
   'Number'                      => 'Numara',
+  'Projects'                    => 'Projeler',
   'Purchase Orders'             => 'Satınalma Siparişleri',
+  'Quotations'                  => 'Teklifler',
+  'Recently Used'               => 'Son Kullanılan',
+  'Request for Quotations'      => 'Teklif Talepleri',
+  'Sales Invoices'              => 'Satış Faturaları',
   'Sales Orders'                => 'Satış Siparişleri',
+  'Time Cards'                  => 'Zaman Kartları',
+  'Vendor Invoices'             => 'Tedarikçi Faturaları',
+  'Vendors'                     => 'Tedarikçiler',
 };
 
 $self{subs} = {

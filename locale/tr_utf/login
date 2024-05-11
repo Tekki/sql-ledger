@@ -4,13 +4,25 @@ $self{charset} = 'UTF-8';
 
 $self{texts} = {
   'Company'                     => 'Şirket',
+  'Configuration file missing!' => 'Konfigürasyon dosyası yok!',
   'Continue'                    => 'Devam',
+  'Dataset is newer than version!' => 'Veriseti versiyondan daha güncel!',
+  'Dataset locked!'             => 'Veriseti kilitli!',
+  'Incorrect Dataset version!'  => 'Geçersiz Veriseti versiyonu!',
+  'Incorrect Password!'         => 'Geçersiz şifre',
+  'Incorrect Username or Password!' => 'Geçersiz kullanıcı adı veya şifre',
+  'Incorrect Username!'         => 'Geçersiz kullanıcı adı!',
+  'Invalid TAN'                 => 'Geçersiz TAN',
   'Login'                       => 'Giriş',
-  'Name'                        => 'İsim',
+  'Maximum tries exceeded!'     => 'Maksimum deneme aşıldı!',
+  'Name'                        => 'Ad',
   'No email address for'        => 'E-posta adresi yok: ',
   'Password'                    => 'Şifre',
+  'TAN'                         => 'TAN',
+  'Upgrading to Version'        => 'Versiyon güncelleniyor',
   'Version'                     => 'Versiyon',
-  'You did not enter a name!'   => 'İsim girmediniz!',
+  'You did not enter a name!'   => 'Ad girmediniz!',
+  'admin does not exist!'       => 'admin mevcur değil!',
 };
 
 $self{subs} = {

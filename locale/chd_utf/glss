@@ -3,7 +3,6 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Module not installed:'       => 'Modul nicht installiert:',
 };
 
 $self{subs} = {
