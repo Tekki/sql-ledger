@@ -191,6 +191,11 @@ sub dump_form {
 }
 
 
+sub perl_modules {
+  return [qw|Archive::Zip Excel::Writer::XLSX Mojolicious|];
+}
+
+
 sub load_module {
   my ($self, $modules, $msg) = @_;
 
@@ -5787,6 +5792,10 @@ L<SL::Form> implements the following methods:
 =head2 ordinal_order
 
   $form->ordinal_order($dbh, $query);
+
+=head2 perl_modules
+
+  $form->perl_modules;
 
 =head2 pad
 

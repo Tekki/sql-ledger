@@ -263,6 +263,13 @@ sub list_datasets {
 
   @column_index = qw(dbname company size templates locked dbdriver dbuser dbhost dbport);
 
+  my $perl_modules;
+  if (my @missing = $form->load_module($form->perl_modules)) {
+    $perl_modules = $locale->text('Module not installed:') . ' ' . join ', ', @missing;
+  } else {
+    $perl_modules = $locale->text('ok');
+  }
+
   $dbdriver ||= "Pg";
   $dbdriver{$dbdriver} = "checked";
 
@@ -332,7 +339,12 @@ sub list_datasets {
 
 <input type=hidden name=path value=$form->{path}>
 
+<p>
+<b>|.$locale->text('Perl Modules').qq|</b> $perl_modules
+</p>
+<p>
 $dbdrivers
+</p>
 <p>
 |;
 

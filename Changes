@@ -1,5 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+Not Released
+  - status of Perl modules only visible for admins and on admin screen
+
 3.2.12.42 2024-05-11
   - add reference documents using drag and drop
   - directly edit details of reference documents
