@@ -149,10 +149,10 @@ sub references {
   if ($form->{max_upload_size}) {
     $rv .= qq|
 
-                if (uploadFile.size / 1024 / 1024 > $form->{max_upload_size}
+                if (uploadFile.size / 1e+6 > $form->{max_upload_size}
                     && !confirm('|
                   . $locale->text('File is too big! Allowed are:')
-                  . qq| $form->{max_upload_size} MiB\\n|
+                  . qq| $form->{max_upload_size} MB\\n|
                   . $locale->text('Continue?') . qq|'))
                 {
                    uploadFile = null;

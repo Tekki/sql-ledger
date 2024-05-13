@@ -2535,7 +2535,7 @@ sub defaults {
               </tr>
               <tr>
                 <th align=right>|.$locale->text('Maximum Upload Size').qq|</th>
-                <td><input name="max_upload_size" class="inputright" size="5" value="$form->{max_upload_size}"> MiB</td>
+                <td><input name="max_upload_size" class="inputright" size="5" value="$form->{max_upload_size}"> MB</td>
               </tr>
               <tr>
                 <th align=right>|.$locale->text('Precision').qq|</th>

@@ -419,10 +419,10 @@ sub check_upload_size {
   const dataField = document.getElementsByName('data')[0];
   dataField.addEventListener('change', () => {
     if ( dataField.files.length
-         && dataField.files[0].size / 1024 / 1024 > $form->{max_upload_size}
+         && dataField.files[0].size / 1e+6 > $form->{max_upload_size}
          && !confirm('|
     . $locale->text('File is too big! Allowed are:')
-    . qq| $form->{max_upload_size} MiB\\n|
+    . qq| $form->{max_upload_size} MB\\n|
     . $locale->text('Continue?') . qq|'))
     {
       dataField.value = '';
