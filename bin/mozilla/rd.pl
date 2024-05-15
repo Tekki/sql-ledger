@@ -372,6 +372,27 @@ Content-Disposition: inline; filename=$form->{filename};\n\n|;
 }
 
 
+sub download_document {
+  if ($form->{id} and my $data = $form->get_reference(\%myconfig)) {
+
+    $form->{contenttype} ||= 'text/plain';
+
+    print qq|Content-Type: $form->{contenttype}
+Content-Disposition: attachment; filename*=UTF-8''$form->{filename};\n\n|;
+
+    open(OUT, ">-") or $form->error("STDOUT : $!");
+
+    binmode(OUT);
+
+    print OUT $data;
+    close(OUT);
+
+  } else {
+    $form->error($locale->text('No data!'));
+  }
+}
+
+
 sub search_documents {
 
   RD->prepare_search(\%myconfig, $form);
@@ -592,7 +613,7 @@ sub list_documents {
       }
     }
     if ($ref->{filename}) {
-      $column_data{filename} = qq|<td><a href=$form->{script}?action=display_documents&login=$form->{login}&path=$form->{path}&id=$ref->{archive_id} target=popup>$ref->{filename}</a></td>|;
+      $column_data{filename} = qq|<td><a href="$form->{script}?action=download_document&login=$form->{login}&path=$form->{path}&id=$ref->{archive_id}">$ref->{filename}</a></td>|;
     }
     $column_data{description} = qq|<td><a href=$form->{script}?action=edit&login=$form->{login}&path=$form->{path}&id=$ref->{id}&callback=$callback>$ref->{description}</a></td>|;
 
@@ -1166,6 +1187,8 @@ Calls C<< &{ $form->{nextsub} } >>.
 =head2 detach
 
 =head2 display_documents
+
+=head2 download_document
 
 =head2 do_attach
 

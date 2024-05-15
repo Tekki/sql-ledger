@@ -132,13 +132,13 @@ sub form_header {
       $exchangerate .= qq|
       <th align=right nowrap>|.$locale->text('Exchange Rate').qq|</th>
       <td nowrap><input name="exchangerate" class="inputright" size="10" value="$form->{exchangerate}">
-          <a href=am.pl?action=list_exchangerates&transdatefrom=$fdm&transdateto=$ldm&currency=$form->{currency}&login=$form->{login}&path=$form->{path} target=_blank>&#8663;</a></td>|;
+          <a href=am.pl?action=list_exchangerates&transdatefrom=$fdm&transdateto=$ldm&currency=$form->{currency}&login=$form->{login}&path=$form->{path} target=_blank>&#9701;</a></td>|;
     }
     $exchangerate .= qq|</tr></table></td></tr>
 |;
   }
 
-  $vcref = qq|<a href=ct.pl?action=edit&db=$form->{vc}&id=$form->{"$form->{vc}_id"}&login=$form->{login}&path=$form->{path} target=_blank>&#8663;</a>|;
+  $vcref = qq|<a href=ct.pl?action=edit&db=$form->{vc}&id=$form->{"$form->{vc}_id"}&login=$form->{login}&path=$form->{path} target=_blank>&#9701;</a>|;
 
   if ($form->{selectcustomer}) {
     $customer = qq|
@@ -854,9 +854,9 @@ sub display_row {
     if ($i < $numrows) {
       $column_data{discount} = qq|<td align=right><input name="discount_$i" class="inputright" size="3" value="|.$form->format_amount(\%myconfig, $form->{"discount_$i"}).qq|"></td>|;
 
-      $column_data{itemhref} = qq|<td><a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"id_$i"}" target=_blank>&#8663;</a></td>|;
+      $column_data{itemhref} = qq|<td><a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"id_$i"}" target=_blank>&#9701;</a></td>|;
 
-      $itemhistory = qq| <a href="ic.pl?action=history&login=$form->{login}&path=$form->{path}&pickvar=sellprice_$i&id=$form->{"id_$i"}" target=popup>&#8663;</a>|;
+      $itemhistory = qq| <a href="ic.pl?action=history&login=$form->{login}&path=$form->{path}&pickvar=sellprice_$i&id=$form->{"id_$i"}" target=popup>&#9701;</a>|;
     } else {
       $column_data{discount} = qq|<td></td>|;
       $column_data{itemhref} = qq|<td></td>|;

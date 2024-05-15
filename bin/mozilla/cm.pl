@@ -90,17 +90,28 @@ sub references {
 
     if ($form->{referenceurl}) {
       $rv .= qq|
-                <td><input name="referencecode_$i" size=10 value="$form->{"referencecode_$i"}">
-                <a href=$form->{referenceurl}$form->{"referencecode_$i"} target=popup>&#8663;</a>
-|;
+                <td><input name="referencecode_$i" size=10 value="$form->{"referencecode_$i"}">|;
+      if ($form->{"referencecode_$i"}) {
+        $rv .= qq|
+                    <a href="$form->{referenceurl}$form->{"referencecode_$i"}" target="_blank">&#9701;</a>|;
+      }
     } else {
       $rv .= qq|
                 <td><input name="referencefolder_$i" class="docdetails noscreen noprint" size="20" value="|.$form->quote($form->{"referencefolder_$i"}).qq|"></td>
                 <td><input name="referencefilename_$i" class="docdetails noscreen noprint" size="40" value="|.$form->quote($form->{"referencefilename_$i"}).qq|"></td>
                 <td>
-                <input type="hidden" name="referencecode_$i" value="$form->{"referencecode_$i"}">
-                <a href="rd.pl?action=upload&login=$form->{login}&path=$form->{path}&row=$i&id=$form->{"referencearchive_id_$i"}&description=|.$form->escape($form->{"referencedescription_$i"},1) . qq|" target=popup>&#8663;</a>
-|;
+                  <input type="hidden" name="referencecode_$i" value="$form->{"referencecode_$i"}">|;
+
+      if ($form->{"referencearchive_id_$i"} eq '-') {
+        $rv .= qq|
+                  <span title="|. $locale->text('Document not archived!').qq|">&#9203;</span>|;
+      } elsif ($form->{"referencearchive_id_$i"} * 1) {
+        $rv .= qq|
+                  <a href="rd.pl?action=download_document&login=$form->{login}&path=$form->{path}&id=$form->{"referencearchive_id_$i"}" target="_blank">&#9660;</a>|;
+      } else {
+        $rv .= qq|
+                  <a href="rd.pl?action=upload&login=$form->{login}&path=$form->{path}&row=$i&description=|.$form->escape($form->{"referencedescription_$i"},1) . qq|" target="popup">&#9651;</a>|;
+      }
 
       $rv .= $form->hide_form(map { "reference${_}_$i" } qw(tmpfile archive_id));
     }

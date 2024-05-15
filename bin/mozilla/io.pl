@@ -238,8 +238,8 @@ sub display_row {
 
     if ($i < $numrows) {
       $zero = "0";
-      $itemhref = qq| <a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"id_$i"}" target=_blank>&#8663;</a>|;
-      $itemhistory = qq| <a href="ic.pl?action=history&history=sales&login=$form->{login}&path=$form->{path}&pickvar=sellprice_$i&id=$form->{"id_$i"}" target=popup>&#8663;</a>|;
+      $itemhref = qq| <a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"id_$i"}" target=_blank>&#9701;</a>|;
+      $itemhistory = qq| <a href="ic.pl?action=history&history=sales&login=$form->{login}&path=$form->{path}&pickvar=sellprice_$i&id=$form->{"id_$i"}" target=popup>&#9701;</a>|;
 
       %p = split /[: ]/, $form->{"pricematrix_$i"};
       for (split / /, $form->{"kit_$i"}) {
@@ -302,9 +302,9 @@ sub display_row {
     if ($form->{type} !~ /_quotation/) {
       $orderxref = qq|
                 <b>$orderxrefnumber</b>
-                <input name="ordernumber_$i" value="$form->{"ordernumber_$i"}">&nbsp;<a href=oe.pl?action=lookup_order&ordnumber=|.$form->escape($form->{"ordernumber_$i"},1).qq|&vc=customer&type=sales_order&pickvar=ordernumber_$i&path=$form->{path}&login=$form->{login} target=popup>&#8663;</a>
+                <input name="ordernumber_$i" value="$form->{"ordernumber_$i"}">&nbsp;<a href=oe.pl?action=lookup_order&ordnumber=|.$form->escape($form->{"ordernumber_$i"},1).qq|&vc=customer&type=sales_order&pickvar=ordernumber_$i&path=$form->{path}&login=$form->{login} target=popup>&#9701;</a>
                 <b>$poxrefnumber</b>
-                <input name="customerponumber_$i" value="$form->{"customerponumber_$i"}">&nbsp;<a href=oe.pl?action=lookup_order&ordnumber=|.$form->escape($form->{"customerponumber_$i"},1).qq|&vc=vendor&type=purchase_order&pickvar=customerponumber_$i&path=$form->{path}&login=$form->{login} target=popup>&#8663;</a>
+                <input name="customerponumber_$i" value="$form->{"customerponumber_$i"}">&nbsp;<a href=oe.pl?action=lookup_order&ordnumber=|.$form->escape($form->{"customerponumber_$i"},1).qq|&vc=vendor&type=purchase_order&pickvar=customerponumber_$i&path=$form->{path}&login=$form->{login} target=popup>&#9701;</a>
 |;
 
       $serial = qq|
@@ -326,9 +326,9 @@ sub display_row {
           <input name="costvendorid_$i" type="hidden" value="$form->{"costvendorid_$i"}">
           <b>$costvendorlabel</b>
           <input name="costvendor_$i" value="$form->{"costvendor_$i"}">
-          <a href="ct.pl?action=lookup_name&db=vendor&login=$form->{login}&path=$form->{path}&pickvar=costvendor_$i&pickid=costvendorid_$i&name=$name" target=popup> ?</a>
+          <a href="ct.pl?action=lookup_name&db=vendor&login=$form->{login}&path=$form->{path}&pickvar=costvendor_$i&pickid=costvendorid_$i&name=$name" target=popup> &#9701;</a>
           <b>$costlabel</b>
-          <input name="cost_$i" class=inputright size=10 value="|.$form->format_amount(\%myconfig, $form->{"cost_$i"}, $form->{precision}).qq|">&nbsp;<a href="ic.pl?action=history&history=purchases&login=$form->{login}&path=$form->{path}&pickvar=cost_$i&id=$form->{"id_$i"}" target=popup> ?</a>
+          <input name="cost_$i" class=inputright size=10 value="|.$form->format_amount(\%myconfig, $form->{"cost_$i"}, $form->{precision}).qq|">&nbsp;<a href="ic.pl?action=history&history=purchases&login=$form->{login}&path=$form->{path}&pickvar=cost_$i&id=$form->{"id_$i"}" target=popup> &#9701;</a>
 |;
         $costprice .= qq|
                 <b>$marginlabel</b>

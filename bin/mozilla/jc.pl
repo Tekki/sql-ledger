@@ -549,7 +549,7 @@ sub timecard_header {
 |;
 
   $lookup = qq|
-          <a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"parts_id"}" target=_blank>&#8663;</a>| if $form->{"parts_id"};
+          <a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"parts_id"}" target=_blank>&#9701;</a>| if $form->{"parts_id"};
 
   $cardno = qq|
         <tr>
@@ -853,7 +853,7 @@ sub storescard_header {
                </tr>|;
 
   $lookup = qq|
-          <a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"parts_id"}" target=_blank>&#8663;</a>| if $form->{"parts_id"};
+          <a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"parts_id"}" target=_blank>&#9701;</a>| if $form->{"parts_id"};
 
   $cardno = qq|
         <tr>

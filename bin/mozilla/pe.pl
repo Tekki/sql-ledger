@@ -177,7 +177,7 @@ sub job_header {
   $notes = qq|<textarea name=notes rows=$rows cols=40 wrap=soft>$form->{notes}</textarea>|;
 
   $label = ucfirst $form->{vc};
-  $vcref = qq|<a href=ct.pl?action=edit&db=$form->{vc}&id=$form->{"$form->{vc}_id"}&login=$form->{login}&path=$form->{path} target=_blank>&#8663;</a>|;
+  $vcref = qq|<a href=ct.pl?action=edit&db=$form->{vc}&id=$form->{"$form->{vc}_id"}&login=$form->{login}&path=$form->{path} target=_blank>&#9701;</a>|;
 
   if ($form->{"select$form->{vc}"}) {
     $name = qq|
@@ -1086,7 +1086,7 @@ sub project_header {
   }
 
   $label = ucfirst $form->{vc};
-  $vcref = qq|<a href=ct.pl?action=edit&db=$form->{vc}&id=$form->{"$form->{vc}_id"}&login=$form->{login}&path=$form->{path} target=_blank>&#8663;</a>|;
+  $vcref = qq|<a href=ct.pl?action=edit&db=$form->{vc}&id=$form->{"$form->{vc}_id"}&login=$form->{login}&path=$form->{path} target=_blank>&#9701;</a>|;
 
   if ($form->{"select$form->{vc}"}) {
     $name = qq|
@@ -1462,7 +1462,7 @@ sub partsgroup_header {
 
   $form->helpref("partsgroup", $myconfig{countrycode});
 
-  $preview = ($form->{image}) ? qq|<a href=$images/$myconfig{dbname}/$form->{image}> ?| : qq| <a href="ic.pl?action=upload_image&login=$form->{login}&path=$form->{path}" target=popup>&#8663;</a>|;
+  $preview = ($form->{image}) ? qq|<a href=$images/$myconfig{dbname}/$form->{image}> ?| : qq| <a href="ic.pl?action=upload_image&login=$form->{login}&path=$form->{path}" target=popup>&#9701;</a>|;
 
   $form->header;
 
