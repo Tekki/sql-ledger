@@ -376,9 +376,10 @@ sub download_document {
   if ($form->{id} and my $data = $form->get_reference(\%myconfig)) {
 
     $form->{contenttype} ||= 'text/plain';
+    my $disposition = $form->{contenttype} =~ /^image/ ? 'inline' : 'attachment';
 
     print qq|Content-Type: $form->{contenttype}
-Content-Disposition: attachment; filename*=UTF-8''$form->{filename};\n\n|;
+Content-Disposition: $disposition; filename*=UTF-8''$form->{filename};\n\n|;
 
     open(OUT, ">-") or $form->error("STDOUT : $!");
 
