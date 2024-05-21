@@ -105,3 +105,5 @@ CREATE INDEX recent_employee_id_key ON recent(employee_id);
 CREATE INDEX recent_object_id_key ON recent(object_id);
 CREATE INDEX recent_code_key ON recent(code);
 CREATE UNIQUE INDEX recentdescr_object_id_key ON recentdescr(object_id);
+--
+CREATE INDEX archive_hash_key ON archive(hash);

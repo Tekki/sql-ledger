@@ -11,6 +11,8 @@ package Form;
 
 use utf8;
 
+use Digest::SHA 'sha256_hex';
+
 sub new {
   my ($type, $userspath) = @_;
 
@@ -126,7 +128,7 @@ sub new {
   $self->{version} = "3.2.12";
   $self->{dbversion} = "3.2.4";
   $self->{version2} = "tekki 3.2.12.43rc";
-  $self->{dbversion2} = 30;
+  $self->{dbversion2} = 43;
   $self->{cssversion} = 42;
 
   $self->{favicon} = 'favicon.ico';
@@ -4244,11 +4246,17 @@ sub get_reference {
   }
   $sth->finish;
 
-  $query = qq|SELECT r.description, a.filename
+  $query = qq|SELECT r.description, a.filename, a.hash
               FROM reference r
               JOIN archive a ON (r.archive_id = a.id)
               WHERE r.archive_id = $self->{id}|;
-  ($self->{description}, $self->{filename}) = $dbh->selectrow_array($query);
+  ($self->{description}, $self->{filename}, $self->{hash}) = $dbh->selectrow_array($query);
+
+  if ($data && !$self->{hash}) {
+    $self->{hash} = sha256_hex $data;
+    $query = qq|UPDATE archive SET hash = ? WHERE id = ?|;
+    $dbh->do($query, undef, $self->{hash}, $self->{id}) or self->dberror($query);
+  }
 
   if ($self->{filename} =~ /.+\.([^.]+)/) {
     $self->{extension} = lc $1;
@@ -4272,7 +4280,7 @@ sub save_reference {
   my $login = $self->{login};
   $login =~ s/@.*//;
   my $archive_id;
-  my %reference;
+  my %unused;
   my $i;
   my $data;
   my $str;
@@ -4293,7 +4301,7 @@ sub save_reference {
 
     while (($archive_id) = $sth->fetchrow_array) {
       if ($archive_id) {
-        $reference{$archive_id} = 1;
+        $unused{$archive_id} = 1;
       }
     }
     $sth->finish;
@@ -4304,47 +4312,36 @@ sub save_reference {
     $dbh->do($query) || $self->dberror($query);
   }
 
-  $query = qq|INSERT INTO reference (code, trans_id, description, archive_id, login, formname, folder)
-              VALUES (?, ?, ?, ?, ?, ?, ?)|;
+  $query = q|INSERT INTO reference (code, trans_id, description, archive_id, login, formname, folder)
+             VALUES (?, ?, ?, ?, ?, ?, ?)|;
   $sth = $dbh->prepare($query) || $self->dberror($query);
 
-  $query = qq|DELETE FROM archive
-              WHERE id = ?|;
+  $query = q|DELETE FROM archive
+             WHERE id = $1
+             AND NOT EXISTS (SELECT 1 FROM reference WHERE archive_id = $1)|;
   my $dth = $dbh->prepare($query) || $self->dberror($query);
 
-  $query = qq|INSERT INTO archive (filename)
-              VALUES (?)|;
+  $query = q|SELECT id, filename FROM archive
+             WHERE hash = ?|;
+  my $hath = $dbh->prepare($query) || $self->dberror($query);
+
+  $query = q|INSERT INTO archive (filename, hash)
+             VALUES (?, ?)
+             RETURNING id|;
   my $aath = $dbh->prepare($query) || $self->dberror($query);
 
-  $query = qq|SELECT id FROM archive
-              WHERE filename = ?|;
-  my $sath = $dbh->prepare($query) || $self->dberror($query);
-
-  $query = qq|UPDATE archive SET filename = ?
-              WHERE filename = ?|;
-  my $uath = $dbh->prepare($query) || $self->dberror($query);
-
-  $query = qq|UPDATE archive SET filename = ?
-              WHERE id = ?|;
+  $query = q|UPDATE archive SET filename = ?
+             WHERE id = ?|;
   my $uath2 = $dbh->prepare($query) || $self->dberror($query);
 
-  $query = qq|INSERT INTO archivedata (rn, archive_id, bt)
-              VALUES (?, ?, ?)|;
+  $query = q|INSERT INTO archivedata (rn, archive_id, bt)
+             VALUES (?, ?, ?)|;
   my $acth = $dbh->prepare($query) || $self->dberror($query);
 
   for $i (1 .. $self->{reference_rows}) {
     $self->{"referencearchive_id_$i"} *= 1;
-    delete $reference{$self->{"referencearchive_id_$i"}} if $self->{"referencedescription_$i"};
+    delete $unused{$self->{"referencearchive_id_$i"}} if $self->{"referencedescription_$i"};
   }
-
-  for (keys %reference) {
-    $dth->execute($_);
-    $dth->finish;
-  }
-
-  my $uid = time;
-  $uid .= $$;
-
 
   for $i (1 .. $self->{reference_rows}) {
 
@@ -4356,26 +4353,35 @@ sub save_reference {
 
         if (-s "$self->{userspath}/$tmpfile") {
 
-          if (open(FH, "$self->{userspath}/$tmpfile")) {
+          if (open my $fh, '<', "$self->{userspath}/$tmpfile") {
+            binmode $fh;
 
-            binmode(FH);
+            my $sha = Digest::SHA->new(256);
+            $sha->addfile($fh);
+            my $hash = $sha->hexdigest;
 
-            $aath->execute($uid);
-            $aath->finish;
+            $hath->execute($hash);
+            if (my @existing = $hath->fetchrow_array) {
+              $hath->finish;
 
-            $sath->execute($uid);
-            ($self->{"referencearchive_id_$i"}) = $sath->fetchrow_array;
-            $sath->finish;
+              ($self->{"referencearchive_id_$i"}, $self->{"referencefilename_$i"}) = @existing;
 
-            $uath->execute($self->{"referencefilename_$i"}, $uid);
-            $uath->finish;
+            } else {
+              $hath->finish;
 
-            my $j = 1;
-            while (read FH, $data, 512) {
-              $acth->execute($j++, $self->{"referencearchive_id_$i"}, pack 'u', $data);
-              $acth->finish;
+              $aath->execute($self->{"referencefilename_$i"}, $hash);
+              ($self->{"referencearchive_id_$i"}) = $aath->fetchrow_array;
+              $aath->finish;
+
+              my $j = 1;
+              seek $fh, 0, 0;
+              while (read $fh, $data, 512) {
+                $acth->execute($j++, $self->{"referencearchive_id_$i"}, pack 'u', $data);
+                $acth->finish;
+              }
             }
-            close(FH);
+
+            close $fh;
           }
 
         }
@@ -4407,6 +4413,11 @@ sub save_reference {
       );
       $sth->finish;
     }
+  }
+
+  for (keys %unused) {
+    $dth->execute($_);
+    $dth->finish;
   }
 
 }

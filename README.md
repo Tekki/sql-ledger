@@ -19,7 +19,7 @@ The `full` branch, which is checked out by default, provides some additions:
 * extended keyboard shortcuts ([docs](doc/shortcuts.md))
 * spreadsheet downloads
 * recently used objects
-* improved document management with drag and drop
+* improved document management with drag and drop and deduplication
 * dark mode
 * markdown for bold, italic and links in templates
 * database snapshots

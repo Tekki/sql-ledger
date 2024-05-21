@@ -795,7 +795,8 @@ CREATE TABLE acsrole (
 --
 CREATE TABLE archive (
   id int default nextval('archiveid') primary key,
-  filename text
+  filename text,
+  hash char(64)
 );
 --
 CREATE TABLE archivedata (
