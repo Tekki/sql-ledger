@@ -52,7 +52,7 @@ sub all_documents {
 
   my $dbh = $form->dbconnect($myconfig);
 
-  $form->load_defaults(undef, $dbh, ['company']);
+  $form->load_defaults(undef, $dbh, ['company', 'referenceurl']);
 
   my $login = $form->{login};
   $login =~ s/\@.*//;
@@ -106,9 +106,8 @@ sub all_documents {
         AND r.login = '$login'|;
   }
 
-  my @sf = qw(description);
-  my %ordinal = $form->ordinal_order($dbh, $query);
-  my $order = $form->sort_order(\@sf, \%ordinal);
+  my @sf = $form->{referenceurl} ? qw|description| : qw|filename description document_number|;
+  my $order = $form->sort_order(\@sf);
 
   my $query = qq|
       SELECT

@@ -4,6 +4,7 @@ Not Released
   - improved icons for links, uploads and downloads
   - document upload checks for identical files in the archive
   - document download distinguishes between images and other files
+  - documents report groups identical files
   - status of Perl modules only visible for admins and on admin screen
 
 3.2.12.42 2024-05-11

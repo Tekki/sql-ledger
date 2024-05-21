@@ -502,7 +502,10 @@ sub list_documents {
   $callback = "$form->{script}?action=list_documents";
   for (qw(direction oldsort path login)) { $callback .= qq|&$_=$form->{$_}| }
 
-  @columns = qw(description folder filename confidential formname document_number);
+  @columns
+    = $form->{referenceurl}
+    ? qw|description confidential formname document_number|
+    : qw|filename description folder confidential formname document_number|;
 
   if ($form->{description}) {
     $option .= "\n<br>" if ($option);
@@ -599,7 +602,16 @@ sub list_documents {
 |;
 
   $i = 0;
+  my ($sameid, $skipid);
   foreach $ref (@{ $form->{all_documents} }) {
+
+    if (($ref->{archive_id} || '0') eq $sameid) {
+      $ref->{filename} = '&#8627';
+      $skipid = 1;
+    } else {
+      $sameid = $ref->{archive_id};
+      $skipid = 0;
+    }
 
     $i++;
 
@@ -624,7 +636,10 @@ sub list_documents {
       $column_data{confidential} = qq|<td align="center">x</td>|;
     }
 
-    $j++; $j %= 2;
+    unless ($skipid) {
+      $j++;
+      $j %= 2;
+    }
 
     print "
         <tr class=listrow$j>
