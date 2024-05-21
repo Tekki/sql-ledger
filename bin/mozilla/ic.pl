@@ -850,8 +850,10 @@ sub form_footer {
 
   $form->hide_form(qw(login path callback previousform));
 
-  print qq|
-</form>
+  print q|
+</form>|;
+  &unload;
+  print q|
 
 </body>
 </html>
