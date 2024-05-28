@@ -1567,21 +1567,24 @@ sub search {
   $form->{"select$form->{ARAP}"} = "\n";
   for (@{ $form->{"$form->{ARAP}_links"}{$form->{ARAP}} }) { $form->{"select$form->{ARAP}"} .= "$_->{accno}--$_->{description}\n" }
 
-  $vclabel = $locale->text('Customer');
-  $vcnumber = $locale->text('Customer Number');
-  $vctaxnumber = $locale->text('Taxnumber');
-  $l_name = qq|<input name="l_name" class=checkbox type=checkbox value=Y checked> $vclabel|;
-  $l_customernumber = qq|<input name="l_customernumber" class=checkbox type=checkbox value=Y> $vcnumber|;
-  $l_till = qq|<input name="l_till" class=checkbox type=checkbox value=Y> |.$locale->text('Till');
-
-  if ($form->{vc} eq 'vendor') {
-    $vclabel = $locale->text('Vendor');
-    $vcnumber = $locale->text('Vendor Number');
-    $vctaxnumber = $locale->text('SSN');
-    $l_till = "";
-    $l_customernumber = "";
+  if ($form->{vc} eq 'customer') {
+    $vclabel     = $locale->text('Customer');
+    $vcnumber    = $locale->text('Customer Number');
+    $vctaxnumber = $locale->text('Taxnumber');
+    $l_name      = qq|<input name="l_name" class=checkbox type=checkbox value=Y checked> $vclabel|;
+    $l_customernumber
+      = qq|<input name="l_customernumber" class=checkbox type=checkbox value=Y> $vcnumber|;
+    $l_till
+      = qq|<input name="l_till" class=checkbox type=checkbox value=Y> | . $locale->text('Till');
+  } else {
+    $vclabel          = $locale->text('Vendor');
+    $vcnumber         = $locale->text('Vendor Number');
+    $vctaxnumber      = $locale->text('Taxnumber');
+    $l_till           = '';
+    $l_customernumber = '';
     $l_name = qq|<input name="l_name" class=checkbox type=checkbox value=Y checked> $vclabel|;
-    $l_vendornumber = qq|<input name="l_vendornumber" class=checkbox type=checkbox value=Y> $vcnumber|;
+    $l_vendornumber
+      = qq|<input name="l_vendornumber" class=checkbox type=checkbox value=Y> $vcnumber|;
   }
 
   if (@{ $form->{"all_$form->{vc}"} }) {
@@ -1804,11 +1807,9 @@ sub search {
   push @f, $l_name;
   push @f, $l_customernumber if $l_customernumber;
   push @f, $l_vendornumber if $l_vendornumber;
-  push @f, qq|<input name="l_taxnumber" class=checkbox type=checkbox value=Y>$vctaxnumber|;
+  push @f, qq|<input name="l_taxnumber" class=checkbox type=checkbox value=Y> $vctaxnumber|;
   push @f, qq|<input name="l_address" class=checkbox type=checkbox value=Y> |.$locale->text('Address');
-  push @f, qq|<input name="l_city" class=checkbox type=checkbox value=Y> |.$locale->text('City');
-  push @f, qq|<input name="l_zipcode" class=checkbox type=checkbox value=Y> |.$locale->text('Zipcode');
-  push @f, qq|<input name="l_country" class=checkbox type=checkbox value=Y> |.$locale->text('Country');
+  push @f, qq|<input name="l_contact" class=checkbox type=checkbox value=Y> |.$locale->text('Contact');
   push @f, $l_employee if $l_employee;
   push @f, $l_department if $l_department;
   push @f, $l_projectnumber if $l_projectnumber;
@@ -2132,12 +2133,46 @@ sub transactions {
   }
 
 
-  @columns = $form->sort_columns(qw(transdate id invnumber ordnumber ponumber description name customernumber vendornumber taxnumber address city zipcode country netamount tax amount paid paymentaccount paymentmethod due curr datepaid duedate memo notes till employee warehouse shippingpoint shipvia waybill dcn paymentdiff department projectnumber));
+  @columns = (
+    'transdate',      'id',            'invnumber', 'ordnumber',
+    'ponumber',       'description',   'name',      'customernumber',
+    'vendornumber',   'taxnumber',     'address1',  'address2',
+    'state',          'city',          'zipcode',   'country',
+    'salutation',     'firstname',     'lastname',  'contacttitle',
+    'occupation',     'phone',         'mobile',    'email',
+    'netamount',      'tax',           'amount',    'paid',
+    'paymentaccount', 'paymentmethod', 'due',       'curr',
+    'datepaid',       'duedate',       'memo',      'notes',
+    'till',           'employee',      'warehouse', 'shippingpoint',
+    'shipvia',        'waybill',       'dcn',       'paymentdiff',
+    'department',     'projectnumber',
+  );
+  @columns = $form->sort_columns(@columns);
   unshift @columns, "runningnumber";
 
   @column_index = ($form->{revtrans}) ? () : qw(delete);
 
   @curr = split /:/, $form->{currencies};
+
+  if ($form->{l_name}) {
+    $form->{l_city} = 'Y';
+  }
+
+  if ($form->{l_address}) {
+    for ('address1', 'address2', 'state', 'city', 'zipcode', 'country',) {
+      $form->{"l_$_"} = 'Y' if $form->{_flds}{$_};
+    }
+  }
+
+  if ($form->{l_contact}) {
+    for (
+      'salutation', 'firstname', 'lastname', 'contacttitle',
+      'occupation', 'phone',     'mobile', 'email',
+      )
+    {
+      $form->{"l_$_"} = 'Y' if $form->{_flds}{$_};
+    }
+  }
 
   foreach $item (@columns) {
     if ($form->{"l_$item"} eq "Y") {
@@ -2170,69 +2205,87 @@ sub transactions {
     $name = $locale->text('Customer');
     $namenumber = $locale->text('Customer Number');
     $namefld = "customernumber";
-    $vcnumber = $locale->text('Taxnumber');
+    $vctaxnumber = $locale->text('Taxnumber');
   } else {
     $employee = $locale->text('Employee');
     $name = $locale->text('Vendor');
     $namenumber = $locale->text('Vendor Number');
     $namefld = "vendornumber";
-    $vcnumber = $locale->text('SSN');
+    $vctaxnumber = $locale->text('Taxnumber');
   }
 
   $form->{allbox} = ($form->{allbox}) ? "checked" : "";
   $action = ($form->{deselect}) ? "deselect_all" : "select_all";
-  $column_data{delete} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll(); doSubmit(document.main)"><input type=hidden name=action value="$action"></th>|;
-  $column_data{runningnumber} = qq|<th class=listheading>&nbsp;</th>|;
-  $column_data{id} = "<th><a class=listheading href=$href&sort=id>".$locale->text('ID')."</a></th>";
-  $column_data{transdate} = "<th><a class=listheading href=$href&sort=transdate>".$locale->text('Date')."</a></th>";
-  $column_data{duedate} = "<th><a class=listheading href=$href&sort=duedate>".$locale->text('Due Date')."</a></th>";
-  $column_data{invnumber} = "<th><a class=listheading href=$href&sort=invnumber>".$locale->text('Invoice')."</a></th>";
-  $column_data{ordnumber} = "<th><a class=listheading href=$href&sort=ordnumber>".$locale->text('Order')."</a></th>";
-  $column_data{ponumber} = "<th><a class=listheading href=$href&sort=ponumber>".$locale->text('PO Number')."</a></th>";
-  $column_data{name} = "<th><a class=listheading href=$href&sort=name>$name</a></th>";
-  $column_data{$namefld} = "<th><a class=listheading href=$href&sort=$namefld>$namenumber</a></th>";
-  $column_data{taxnumber} = "<th><a class=listheading href=$href&sort=taxnumber>$vcnumber</th>";
-  $column_data{address} = "<th class=listheading>" . $locale->text('Address') . "</th>";
-  $column_data{city} = "<th><a class=listheading href=$href&sort=city>" . $locale->text('City') . "</th>";
-  $column_data{zipcode} = "<th><a class=listheading href=$href&sort=zipcode>" . $locale->text('Zipcode') . "</th>";
-  $column_data{country} = "<th><a class=listheading href=$href&sort=country>" . $locale->text('Country') . "</th>";
-  $column_data{netamount} = "<th class=listheading>" . $locale->text('Amount') . "</th>";
-  $column_data{tax} = "<th class=listheading>" . $locale->text('Tax') . "</th>";
-  $column_data{amount} = "<th class=listheading>" . $locale->text('Total') . "</th>";
-  $column_data{paid} = "<th class=listheading>" . $locale->text('Paid') . "</th>";
-  $column_data{paymentaccount} = "<th><a class=listheading href=$href&sort=paymentaccount>" . $locale->text('Payment Account') . "</a></th>";
-  $column_data{paymentmethod} = "<th><a class=listheading href=$href&sort=paymentmethod>" . $locale->text('Payment Method') . "</a></th>";
-  $column_data{datepaid} = "<th><a class=listheading href=$href&sort=datepaid>" . $locale->text('Date Paid') . "</a></th>";
-  $column_data{due} = "<th class=listheading>" . $locale->text('Due') . "</th>";
-  $column_data{notes} = "<th class=listheading>".$locale->text('Notes')."</th>";
-  $column_data{employee} = "<th><a class=listheading href=$href&sort=employee>$employee</a></th>";
-  $column_data{till} = "<th><a class=listheading href=$href&sort=till>".$locale->text('Till')."</a></th>";
 
-  $column_data{warehouse} = qq|<th><a class=listheading href=$href&sort=warehouse>|.$locale->text('Warehouse').qq|</a></th>|;
+  my %sortable = (
+    $namefld       => $namenumber,
+    accno          => $locale->text('Account'),
+    city           => $locale->text('City'),
+    contacttitle   => $locale->text('Title'),
+    country        => $locale->text('Country'),
+    curr           => $locale->text('Curr'),
+    datepaid       => $locale->text('Date Paid'),
+    dcn            => $locale->text('DCN'),
+    department     => $locale->text('Department'),
+    description    => $locale->text('Description'),
+    duedate        => $locale->text('Due Date'),
+    employee       => $employee,
+    email          => $locale->text('E-Mail'),
+    firstname      => $locale->text('Firstname'),
+    id             => $locale->text('ID'),
+    invnumber      => $locale->text('Invoice'),
+    lastname       => $locale->text('Lastname'),
+    mobile         => $locale->text('Mobile'),
+    name           => $name,
+    occupation     => $locale->text('Occupation'),
+    ordnumber      => $locale->text('Order'),
+    paymentaccount => $locale->text('Payment Account'),
+    paymentdiff    => $locale->text('+/-'),
+    paymentmethod  => $locale->text('Payment Method'),
+    phone          => $locale->text('Phone'),
+    ponumber       => $locale->text('PO Number'),
+    projectnumber  => $locale->text('Project'),
+    projectnumber  => $locale->text('Project'),
+    salutation     => $locale->text('Salutation'),
+    shippingpoint  => $locale->text('Shipping Point'),
+    shipvia        => $locale->text('Ship via'),
+    source         => $locale->text('Source'),
+    taxnumber      => $vctaxnumber,
+    till           => $locale->text('Till'),
+    transdate      => $locale->text('Date'),
+    warehouse      => $locale->text('Warehouse'),
+    waybill        => $locale->text('Waybill'),
+    zipcode        => $locale->text('Zipcode'),
+  );
 
-  $column_data{shippingpoint} = "<th><a class=listheading href=$href&sort=shippingpoint>" . $locale->text('Shipping Point') . "</a></th>";
-  $column_data{shipvia} = "<th><a class=listheading href=$href&sort=shipvia>" . $locale->text('Ship via') . "</a></th>";
-  $column_data{waybill} = "<th><a class=listheading href=$href&sort=waybill>" . $locale->text('Waybill') . "</a></th>";
-  $column_data{dcn} = "<th><a class=listheading href=$href&sort=dcn>" . $locale->text('DCN') . "</a></th>";
-  $column_data{paymentdiff} = "<th><a class=listheading href=$href&sort=paymentdiff>" . $locale->text('+/-') . "</a></th>";
+  my %not_sortable = (
+    runningnumber => 'nbsp;',
+    address1      => $locale->text('Address'),
+    address2      => $locale->text('Address Line 2'),
+    netamount     => $locale->text('Amount'),
+    tax           => $locale->text('Tax'),
+    amount        => $locale->text('Total'),
+    paid          => $locale->text('Paid'),
+    due           => $locale->text('Due'),
+    notes         => $locale->text('Notes'),
+    debit         => $locale->text('Debit'),
+    credit        => $locale->text('Credit'),
+    memo          => $locale->text('Line Item'),
+  );
 
-  $column_data{curr} = "<th><a class=listheading href=$href&sort=curr>" . $locale->text('Curr') . "</a></th>";
+  for (keys %sortable) {
+    $column_data{$_} = qq|<th><a class="listheading" href="$href&sort=$_">$sortable{$_}</a></th>|;
+  }
 
-  $column_data{department} = "<th><a class=listheading href=$href&sort=department>" . $locale->text('Department') . "</a></th>";
-
-  $column_data{projectnumber} = "<th><a class=listheading href=$href&sort=projectnumber>" . $locale->text('Project') . "</a></th>";
-
-  $column_data{accno} = "<th><a class=listheading href=$href&sort=accno>" . $locale->text('Account') . "</a></th>";
-  $column_data{source} = "<th><a class=listheading href=$href&sort=source>" . $locale->text('Source') . "</a></th>";
-  $column_data{debit} = "<th class=listheading>" . $locale->text('Debit') . "</th>";
-  $column_data{credit} = "<th class=listheading>" . $locale->text('Credit') . "</th>";
-  $column_data{projectnumber} = "<th><a class=listheading href=$href&sort=projectnumber>" . $locale->text('Project') . "</a></th>";
-  $column_data{description} = "<th><a class=listheading href=$href&sort=description>" . $locale->text('Description') . "</a></th>";
-  $column_data{memo} = "<th class=listheading>" . $locale->text('Line Item') . "</th>";
+  for (keys %not_sortable) {
+    $column_data{$_} = qq|<th class="listheading">$not_sortable{$_}</th>|;
+  }
 
   for $item (@curr) {
     for (qw(amount tax netamount paid due)) { $column_data{"${item}_$_"} = "<th>$item</th>" }
   }
+
+  $column_data{delete} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll(); doSubmit(document.main)"><input type=hidden name=action value="$action"></th>|;
 
   $form->{title} = ($form->{outstanding}) ? $locale->text("$form->{ARAP} Outstanding") : $locale->text("$form->{ARAP} Transactions");
 
@@ -2360,8 +2413,20 @@ sub transactions {
 
     for (qw(notes description memo)) { $ref->{$_} =~ s/\r?\n/<br>/g }
     for (qw(transdate datepaid duedate)) { $column_data{$_} = "<td nowrap>$ref->{$_}&nbsp;</td>" }
-    for (qw(department ordnumber ponumber notes warehouse shippingpoint shipvia waybill employee till source memo description projectnumber taxnumber address city zipcode country dcn paymentaccount paymentmethod)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
-    $column_data{$namefld} = "<td>$ref->{$namefld}&nbsp;</td>";
+    for (
+      'address1',      'address2',       'city',          'contacttitle', 'country',
+      'dcn',           'department',     'description',   'employee',     'firstname',
+      'lastname',      'memo',           'mobile',        'notes',        'occupation',
+      'ordnumber',     'paymentaccount', 'paymentmethod', 'phone',        'ponumber',
+      'projectnumber', 'salutation',     'shippingpoint', 'shipvia',      'source',
+      'state',         'taxnumber',      'till',          'warehouse',    'waybill',
+      'zipcode',       $namefld,
+      )
+    {
+      $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>";
+    }
+
+    $column_data{email} = qq|<td><a href="mailto:$ref->{email}">$ref->{email}</a></td>|;
 
     if ($ref->{paymentdiff} <= 0) {
       $column_data{paymentdiff} = qq|<td class="plus1" align=right>$ref->{paymentdiff}&nbsp;</td>|;

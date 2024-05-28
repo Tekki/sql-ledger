@@ -860,24 +860,28 @@ sub transactions {
                  a.amount, ($paid) AS paid,
                  a.invoice, a.datepaid, a.terms, a.notes,
                  a.shipvia, a.waybill, a.shippingpoint,
-                 e.name AS employee, vc.name, vc.$form->{vc}number,
+                 e.name AS employee,
+                 vc.name, vc.$form->{vc}number, vc.phone,
                  a.$form->{vc}_id, a.till, a.curr,
                  a.exchangerate, d.description AS department,
                  a.ponumber, a.warehouse_id, w.description AS warehouse,
                  a.description, a.dcn, pm.description AS paymentmethod,
                  a.datepaid - a.duedate AS paymentdiff,
-                 ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
+                 ad.address1, ad.address2, ad.city, ad.state, ad.zipcode, ad.country,
+                 ct.salutation, ct.firstname, ct.lastname, ct.contacttitle,
+                 ct.occupation, ct.mobile, ct.email, ct.gender, ct.typeofcontact,
                  c.description AS paymentaccount, vc.taxnumber
                  $acc_trans_flds
                  $projectnumber
                  FROM $table a
-                 JOIN $form->{vc} vc ON (a.$form->{vc}_id = vc.id)
-                 JOIN address ad ON (ad.trans_id = vc.id)
-                 LEFT JOIN employee e ON (a.employee_id = e.id)
-                 LEFT JOIN department d ON (a.department_id = d.id)
-                 LEFT JOIN warehouse w ON (a.warehouse_id = w.id)
-                 LEFT JOIN paymentmethod pm ON (pm.id = a.paymentmethod_id)
-                 LEFT JOIN chart c ON (c.id = a.bank_id)
+                 JOIN $form->{vc} vc ON a.$form->{vc}_id = vc.id
+                 JOIN contact ct ON ct.trans_id = vc.id
+                 JOIN address ad ON ad.trans_id = vc.id
+                 LEFT JOIN employee e ON a.employee_id = e.id
+                 LEFT JOIN department d ON a.department_id = d.id
+                 LEFT JOIN warehouse w ON a.warehouse_id = w.id
+                 LEFT JOIN paymentmethod pm ON pm.id = a.paymentmethod_id
+                 LEFT JOIN chart c ON c.id = a.bank_id
                  $acc_trans_join
 |;
 
@@ -1031,6 +1035,10 @@ sub transactions {
   my %curr;
 
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+    for (keys %$ref) {
+      $form->{_flds}{$_} ||= 1 if $ref->{$_};
+    }
+
     $curr{$ref->{curr}} = 1;
 
     $ref->{exchangerate} ||= 1;
