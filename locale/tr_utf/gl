@@ -57,6 +57,7 @@ $self{texts} = {
   'Delete Schedule'             => 'Takvimi Sil',
   'Department'                  => 'Departman',
   'Description'                 => 'Tanım',
+  'Document not archived!'      => 'Döküman arşivlenmedi!',
   'Drag and Drop'               => 'Sürükle ve Bırak',
   'E-mail'                      => 'E-posta',
   'E-mail message'              => 'E-posta mesajı',

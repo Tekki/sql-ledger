@@ -49,6 +49,7 @@ $self{texts} = {
   'Delete Column'               => 'Kolonu Sil',
   'Delete Report'               => 'Raporu Sil',
   'Description'                 => 'Tanım',
+  'Document not archived!'      => 'Döküman arşivlenmedi!',
   'Drag and Drop'               => 'Sürükle ve Bırak',
   'Edit Column'                 => 'Kolonu Düzenle',
   'Edit Column Header'          => 'Kolon Başlığını Düzenle',

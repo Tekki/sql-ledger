@@ -55,6 +55,7 @@ $self{texts} = {
   'Deselect all'                => 'Alle abwählen',
   'Discount'                    => 'Rabatt',
   'Display'                     => 'Anzeigen',
+  'Document not archived!'      => 'Dokument nicht archiviert!',
   'Drag and Drop'               => 'Drag-and-Drop',
   'Due'                         => 'Fällig',
   'Due Date'                    => 'Fälligkeitsdatum',

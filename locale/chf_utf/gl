@@ -57,6 +57,7 @@ $self{texts} = {
   'Delete Schedule'             => 'Supprimer transaction périodique',
   'Department'                  => 'Département',
   'Description'                 => 'Libellé',
+  'Document not archived!'      => 'Document pas archivé !',
   'Drag and Drop'               => 'Glisser-déposer',
   'E-mail'                      => 'émail',
   'E-mail message'              => 'Message émail',

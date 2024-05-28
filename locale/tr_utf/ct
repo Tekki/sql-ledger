@@ -72,6 +72,7 @@ $self{texts} = {
   'Detail'                      => 'Detay',
   'Disc'                        => 'İnd',
   'Discount'                    => 'İndirim',
+  'Document not archived!'      => 'Döküman arşivlenmedi!',
   'Drag and Drop'               => 'Sürükle ve Bırak',
   'E-mail'                      => 'E-posta',
   'Edit Customer'               => 'Müşteriyi Düzenle',

@@ -77,6 +77,7 @@ $self{texts} = {
   'Department'                  => 'Departman',
   'Description'                 => 'Tanım',
   'Discount'                    => 'İndirim',
+  'Document not archived!'      => 'Döküman arşivlenmedi!',
   'Drag and Drop'               => 'Sürükle ve Bırak',
   'Due Date'                    => 'Vade Tarihi',
   'E-mail'                      => 'E-posta',

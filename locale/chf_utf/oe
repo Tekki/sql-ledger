@@ -85,6 +85,7 @@ $self{texts} = {
   'Department'                  => 'Département',
   'Description'                 => 'Libellé',
   'Detail'                      => 'Détail',
+  'Document not archived!'      => 'Document pas archivé !',
   'Done'                        => 'Exécuté',
   'Drag and Drop'               => 'Glisser-déposer',
   'E-mail'                      => 'émail',

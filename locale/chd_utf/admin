@@ -145,6 +145,7 @@ $self{texts} = {
   'May'                         => 'Mai',
   'Merchandise'                 => 'Handelsware',
   'Mimetypes'                   => 'MIME-Typen',
+  'Module not installed:'       => 'Modul nicht installiert:',
   'Multibyte Encoding'          => 'Zeichensatz',
   'New Window'                  => 'Neues Fenster',
   'Non-taxable'                 => 'MWST-frei',
@@ -168,6 +169,7 @@ $self{texts} = {
   'Payments'                    => 'Zahlungen',
   'Payroll'                     => 'Lohnabrechnung',
   'Payslip'                     => 'Lohnabrechnung',
+  'Perl Modules'                => 'Perl-Module',
   'Pick List'                   => 'Rüstliste',
   'Pick Lists'                  => 'Rüstlisten',
   'Port'                        => 'TCP-Port-Nr.',
@@ -263,6 +265,7 @@ $self{texts} = {
   'html Templates'              => 'HTML-Vorlagen',
   'locked!'                     => 'gesperrt!',
   'logout'                      => 'abmelden',
+  'ok'                          => 'ok',
   'website'                     => 'Webseite',
 };
 

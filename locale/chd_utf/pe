@@ -50,6 +50,7 @@ $self{texts} = {
   'Description'                 => 'Beschreibung',
   'Description Translations'    => 'Übersetzung von Beschreibungen',
   'Detail'                      => 'Einzelheiten',
+  'Document not archived!'      => 'Dokument nicht archiviert!',
   'Drag and Drop'               => 'Drag-and-Drop',
   'Edit Column'                 => 'Spalte bearbeiten',
   'Edit Column Header'          => 'Spaltentitel bearbeiten',

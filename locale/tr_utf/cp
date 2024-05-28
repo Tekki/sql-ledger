@@ -57,6 +57,7 @@ $self{texts} = {
   'Deselect all'                => 'Seçimleri kaldır',
   'Discount'                    => 'İndirim',
   'Display'                     => 'Göster',
+  'Document not archived!'      => 'Döküman arşivlenmedi!',
   'Drag and Drop'               => 'Sürükle ve Bırak',
   'Due'                         => 'Kalan',
   'Due Date'                    => 'Vade Tarihi',

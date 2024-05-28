@@ -57,6 +57,7 @@ $self{texts} = {
   'Delete Schedule'             => 'Zeitplan löschen',
   'Department'                  => 'Abteilung',
   'Description'                 => 'Beschreibung',
+  'Document not archived!'      => 'Dokument nicht archiviert!',
   'Drag and Drop'               => 'Drag-and-Drop',
   'E-mail'                      => 'E-Mail',
   'E-mail message'              => 'E-Mail-Nachricht ',

@@ -67,6 +67,7 @@ $self{texts} = {
   'Deselect all'                => 'Tout dé-sélectionner',
   'Detail'                      => 'Détail',
   'Display All'                 => 'Afficher tous',
+  'Document not archived!'      => 'Document pas archivé !',
   'Drag and Drop'               => 'Glisser-déposer',
   'Due'                         => 'Dû',
   'Due Date'                    => 'Date d\'échéance',

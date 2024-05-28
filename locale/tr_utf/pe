@@ -50,6 +50,7 @@ $self{texts} = {
   'Description'                 => 'Tanım',
   'Description Translations'    => 'Tanım Çevirileri',
   'Detail'                      => 'Detay',
+  'Document not archived!'      => 'Döküman arşivlenmedi!',
   'Drag and Drop'               => 'Sürükle ve Bırak',
   'Edit Column'                 => 'Kolonu Düzenle',
   'Edit Column Header'          => 'Kolon Başlığını Düzenle',

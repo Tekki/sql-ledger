@@ -149,6 +149,7 @@ $self{texts} = {
   'Merchandise'                 => 'Commerce',
   'Mimetypes'                   => 'Mimetypes',
   'Mo'                          => 'MO',
+  'Module not installed:'       => 'Module pas installé:',
   'Monitor'                     => 'Console commande SQL',
   'Multibyte Encoding'          => 'Table de caractères multibytes',
   'New Window'                  => 'Nouvel écran',
@@ -174,6 +175,7 @@ $self{texts} = {
   'Payments'                    => 'Paiements sortants',
   'Payroll'                     => 'Paie',
   'Payslip'                     => 'Fiche de paie',
+  'Perl Modules'                => 'Modules Perl',
   'Pg'                          => 'PostgreSQL',
   'PgPP'                        => 'PgPP',
   'Pick List'                   => 'Liste préparatoire commande',
@@ -276,6 +278,7 @@ $self{texts} = {
   'html Templates'              => 'modèle html',
   'locked!'                     => 'verrouillé !',
   'logout'                      => 'déconnexion',
+  'ok'                          => 'OK',
   'website'                     => 'site web',
 };
 

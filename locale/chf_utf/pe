@@ -50,6 +50,7 @@ $self{texts} = {
   'Description'                 => 'Libellé',
   'Description Translations'    => 'Libellé traduction',
   'Detail'                      => 'Détail',
+  'Document not archived!'      => 'Document pas archivé !',
   'Drag and Drop'               => 'Glisser-déposer',
   'Edit Column'                 => 'Modifier colonne',
   'Edit Column Header'          => 'Modifier entête colonne',

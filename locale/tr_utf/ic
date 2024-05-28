@@ -92,6 +92,7 @@ $self{texts} = {
   'Delivery Date'               => 'Sevk Tarihi',
   'Description'                 => 'Tanım',
   'Detail'                      => 'Detay',
+  'Document not archived!'      => 'Döküman arşivlenmedi!',
   'Drag and Drop'               => 'Sürükle ve Bırak',
   'Drawing'                     => 'Çizim',
   'E-mail'                      => 'E-posta',

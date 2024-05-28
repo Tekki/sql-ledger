@@ -69,6 +69,7 @@ $self{texts} = {
   'Description'                 => 'Tanım',
   'Description missing!'        => 'Tanım yok!',
   'Detail'                      => 'Detay',
+  'Document not archived!'      => 'Döküman arşivlenmedi!',
   'Drag and Drop'               => 'Sürükle ve Bırak',
   'E-mail'                      => 'E-posta',
   'E-mail TAN'                  => 'E-posta TAN',

@@ -149,6 +149,7 @@ $self{texts} = {
   'Merchandise'                 => 'Ürün',
   'Mimetypes'                   => 'Mimetipleri',
   'Mo'                          => 'Ay',
+  'Module not installed:'       => 'Kurulu olmayan modul:',
   'Monitor'                     => 'Monitor',
   'Multibyte Encoding'          => 'Çoklubayt kodlama',
   'New Window'                  => 'Yeni Pencere',
@@ -174,6 +175,7 @@ $self{texts} = {
   'Payments'                    => 'Ödemeler',
   'Payroll'                     => 'Bordro',
   'Payslip'                     => 'Ücret Bordrosu',
+  'Perl Modules'                => 'Perl Modülleri',
   'Pg'                          => 'Pg',
   'PgPP'                        => 'PgPP',
   'Pick List'                   => 'Toplama Listesi',
@@ -276,6 +278,7 @@ $self{texts} = {
   'html Templates'              => 'html Şablonları',
   'locked!'                     => 'kilitli!',
   'logout'                      => 'çıkış',
+  'ok'                          => 'tamam',
   'website'                     => 'Websitesi',
 };
 

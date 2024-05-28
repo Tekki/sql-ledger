@@ -49,6 +49,7 @@ $self{texts} = {
   'Delete Column'               => 'Supprimer colonne',
   'Delete Report'               => 'Supprimer rapport',
   'Description'                 => 'Libellé',
+  'Document not archived!'      => 'Document pas archivé !',
   'Drag and Drop'               => 'Glisser-déposer',
   'Edit Column'                 => 'Modifier colonne',
   'Edit Column Header'          => 'Modifier entête colonne',

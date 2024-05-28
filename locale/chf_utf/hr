@@ -69,6 +69,7 @@ $self{texts} = {
   'Description'                 => 'Libellé',
   'Description missing!'        => 'Libellé manquant !',
   'Detail'                      => 'Détail',
+  'Document not archived!'      => 'Document pas archivé !',
   'Drag and Drop'               => 'Glisser-déposer',
   'E-mail'                      => 'émail',
   'E-mail TAN'                  => 'Code (TAN) par émail à',

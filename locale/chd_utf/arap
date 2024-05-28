@@ -27,6 +27,7 @@ $self{texts} = {
   'Delete Report'               => 'Bericht löschen',
   'Delete Schedule'             => 'Zeitplan löschen',
   'Description'                 => 'Beschreibung',
+  'Document not archived!'      => 'Dokument nicht archiviert!',
   'Drag and Drop'               => 'Drag-and-Drop',
   'E-mail'                      => 'E-Mail',
   'E-mail message'              => 'E-Mail-Nachricht ',

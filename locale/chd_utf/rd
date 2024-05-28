@@ -119,6 +119,7 @@ $self{subs} = {
   'display_documents'           => 'display_documents',
   'do_attach'                   => 'do_attach',
   'documents_spreadsheet'       => 'documents_spreadsheet',
+  'download_document'           => 'download_document',
   'edit'                        => 'edit',
   'formnames'                   => 'formnames',
   'js_calendar'                 => 'js_calendar',

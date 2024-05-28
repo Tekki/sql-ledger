@@ -72,6 +72,7 @@ $self{texts} = {
   'Detail'                      => 'Détail',
   'Disc'                        => 'Disque',
   'Discount'                    => 'Remise',
+  'Document not archived!'      => 'Document pas archivé !',
   'Drag and Drop'               => 'Glisser-déposer',
   'E-mail'                      => 'émail',
   'Edit Customer'               => 'Modifier client',

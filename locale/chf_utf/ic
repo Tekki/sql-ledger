@@ -93,6 +93,7 @@ $self{texts} = {
   'Delivery Date'               => 'Date de livraison',
   'Description'                 => 'Libellé',
   'Detail'                      => 'Détail',
+  'Document not archived!'      => 'Document pas archivé !',
   'Drag and Drop'               => 'Glisser-déposer',
   'Drawing'                     => 'Tirage',
   'E-mail'                      => 'émail',
