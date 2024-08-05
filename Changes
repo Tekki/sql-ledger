@@ -1,5 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+Not Released
+  - JavaScript in report dropdown corrected
+
 3.2.12.44 2024-05-28
   - option to display contact information in transactions report
 

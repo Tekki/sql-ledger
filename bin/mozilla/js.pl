@@ -36,13 +36,14 @@ function ChangeReport() {
   }
 
   my $i = 1;
-  my $item;
-  my $found;
+  my ($item, $found, $value, $delimiter);
   my %column_index;
 
   for my $ref (@{ $form->{all_report} }) {
     for (@{$input}, @{$checked}) {
-      print qq|  ${_}[$i] = "$form->{all_reportvars}{$ref->{reportid}}{"report_$_"}";\n|;
+      $value     = $form->{all_reportvars}{$ref->{reportid}}{"report_$_"};
+      $delimiter = $value =~ /\n/ ? '`' : '"';
+      print qq|  ${_}[$i] = $delimiter$value$delimiter;\n|;
     }
     for $item (keys %{$radio}) {
       $found = 0;
