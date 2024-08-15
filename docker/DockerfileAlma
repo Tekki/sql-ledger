@@ -11,6 +11,7 @@ RUN set -ex \
     perl-Excel-Writer-XLSX \
     perl-IO-Socket-SSL \
     perl-Mojolicious \
+    perl-Spreadsheet-ParseXLSX \
     postgresql \
     procps-ng \
   && dnf clean all

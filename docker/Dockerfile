@@ -13,6 +13,7 @@ RUN set -ex \
     libexcel-writer-xlsx-perl \
     libio-socket-ssl-perl \
     libmojolicious-perl \
+    libspreadsheet-parsexlsx-perl \
     postgresql-client \
   && rm -rf /var/lib/apt/lists/*
 

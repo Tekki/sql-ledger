@@ -13,8 +13,6 @@
 
 package IM;
 
-
-
 sub sales_invoice_links {
   my ($self, $myconfig, $form) = @_;
 
@@ -791,6 +789,10 @@ sub import_vc {
   ($form->{defaultcurrency}) = $dbh->selectrow_array($query);
 
   $query = qq|SELECT id FROM $form->{type}
+              WHERE id = ?|;
+  my $ith = $dbh->prepare($query) || $form->dberror($query);
+
+  $query = qq|SELECT id FROM $form->{type}
               WHERE $form->{type}number = ?|;
   my $cth = $dbh->prepare($query) || $form->dberror($query);
 
@@ -817,7 +819,13 @@ sub import_vc {
 
       $newform->{curr} ||= $form->{defaultcurrency};
 
-      if ($newform->{"$newform->{db}number"}) {
+      if ($newform->{id}) {
+        $ith->execute($newform->{id});
+        ($newform->{id}) = $ith->fetchrow_array;
+        $ith->finish;
+      }
+
+      if ($newform->{"$newform->{db}number"} && !$newform->{id}) {
         $cth->execute($newform->{"$newform->{db}number"});
         ($newform->{id}) = $cth->fetchrow_array;
         $cth->finish;
@@ -1486,7 +1494,7 @@ sub prepare_import_data {
   my $sth;
   my $ref;
 
-        my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  my %defaults = $form->get_defaults($dbh, ['precision']);
   $form->{precision} = $defaults{precision};
 
   # clean out report
@@ -1503,7 +1511,7 @@ sub prepare_import_data {
   my $i = 0;
   my $j = 0;
 
-  my @d = split /\n/, $form->{data};
+  my @d = $form->{filetype} eq 'xlsx' ? $form->{data}->@* : split /\n/, $form->{data};
   shift @d;
 
   my @dl;
@@ -1739,7 +1747,9 @@ sub dataline {
 
   chomp;
 
-  if ($form->{tabdelimited}) {
+  if ($form->{filetype} eq 'xlsx') {
+    @dl = @$_;
+  } elsif ($form->{tabdelimited}) {
     @dl = split /\t/, $_;
   } else {
     if ($form->{stringsquoted}) {

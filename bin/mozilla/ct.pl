@@ -756,7 +756,7 @@ sub list_names {
     $href .= "&l_contact=Y";
   }
 
-  push@ columns, (contacttitle, gender, occupation,
+  push @columns, (contacttitle, gender, occupation,
              phone, fax, email, cc, bcc, employee,
              notes, discount, terms, creditlimit, outstanding, availablecredit);
 

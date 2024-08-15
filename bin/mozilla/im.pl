@@ -143,18 +143,18 @@ sub import {
           <td>
             <table>
               <tr>
-                <td><input name=filetype type=radio class=radio value=csv$checked>&nbsp;|.$locale->text('csv').qq|</td>
+                <td><input name=filetype type=radio class=radio value=csv>&nbsp;|.$locale->text('csv').qq|</td>
                 <td>|.$locale->text('Delimiter').qq|</td>
                 <td><input name=delimiter size=2 value="$form->{delimiter}"></td>
                 <td><input name=tabdelimited type=checkbox class=checkbox>&nbsp;|.$locale->text('Tab delimited').qq|</td>
                 <td><input name=stringsquoted type=checkbox class=checkbox checked>&nbsp;|.$locale->text('Strings quoted').qq|</td>
               </tr>
               $v11
-<!--
               <tr>
-                <td><input name=filetype type=radio class=radio value=xml>&nbsp;|.$locale->text('xml').qq|</td>
+                <td><input name=filetype type=radio class=radio value=xlsx$checked>&nbsp;XLSX</td>
+                <td>|.$locale->text('Worksheet').qq|</td>
+                <td><select name="worksheet">|.$form->select_option(join "\n", 1..9).qq|</select></td>
               </tr>
--->
             </table>
           </td>
         </tr>
@@ -184,8 +184,11 @@ sub import {
 
 sub export {
 
-  %title = ( payment => 'Payments'
-           );
+  %title = (
+    customer => 'Customers',
+    payment  => 'Payments',
+    vendor   => 'Vendors'
+  );
 
 # $locale->text('Export Payments')
 
@@ -196,10 +199,223 @@ sub export {
 
   $form->helpref("export_$form->{type}", $myconfig{countrycode});
 
-  $form->header;
-
   $form->{nextsub} = "ex_$form->{type}";
   $form->{action} = "continue";
+
+  &{"export_screen_$form->{type}"};
+}
+
+
+sub export_screen_customer { &export_screen_vc }
+sub export_screen_vendor { &export_screen_vc }
+
+
+sub export_screen_vc {
+
+  require SL::Spreadsheet;
+
+  $form->{db} = $form->{type};
+
+  $form->all_employees(\%myconfig, undef, undef, 1);
+
+  if (@{ $form->{all_employee} }) {
+    $form->{selectemployee} = "\n";
+    for (@{ $form->{all_employee} }) { $form->{selectemployee} .= qq|$_->{name}--$_->{id}\n| }
+  }
+
+  if ($form->{db} eq 'customer') {
+    $vcname = $locale->text('Customer');
+    $vcnumber = $locale->text('Customer Number');
+    $label = $locale->text('Salesperson');
+
+    $form->{ARAP} = "AR";
+
+  }
+  if ($form->{db} eq 'vendor') {
+    $vcname = $locale->text('Vendor');
+    $vcnumber = $locale->text('Vendor Number');
+    $label = $locale->text('Employee');
+
+    $form->{ARAP} = "AP";
+  }
+
+  if ($form->{selectemployee}) {
+    $employee = qq|
+        <tr>
+           <th align=right nowrap>$label</th>
+          <td><select name=employee>|
+          .$form->select_option($form->{selectemployee}, undef, 1)
+          .qq|
+          </select>
+          </td>
+        </tr>
+|;
+  }
+
+  $form->all_business(\%myconfig);
+
+  if (@{ $form->{all_business} }) {
+    $form->{selectbusiness} = "\n";
+    for (@{ $form->{all_business} }) { $form->{selectbusiness} .= qq|$_->{description}--$_->{id}\n| }
+
+    $typeofbusiness = qq|
+          <tr>
+            <th align=right nowrap>|.$locale->text('Type of Business').qq|</th>
+            <td><select name=business>|
+            .$form->select_option($form->{selectbusiness}, undef, 1)
+            .qq|
+            </select>
+            </td>
+          </tr>
+|;
+  }
+
+  $form->all_countries(\%myconfig, $form->{db});
+
+  if ($form->{all_countries}) {
+    $form->{selectcountry} = "\n";
+    for (@{ $form->{all_countries} }) { $form->{selectcountry} .= qq|$_->{country}\n| }
+
+    $selectcountry = qq|
+              <tr>
+                <th align=right nowrap>|.$locale->text('Country').qq|</th>
+                <td><select name=country>|
+                .$form->select_option($form->{selectcountry})
+                .qq|</select></td>
+              </tr>
+|;
+  }
+
+  my %checked = (all => 'checked');
+
+  $status = qq|
+        <tr>
+          <td></td>
+          <td><input name=status class=radio type=radio value=all $checked{all}>&nbsp;|.$locale->text('All').qq|
+          <input name=status class=radio type=radio value=active $checked{active}>&nbsp;|.$locale->text('Active').qq|
+          <input name=status class=radio type=radio value=inactive $checked{inactive}>&nbsp;|.$locale->text('Inactive').qq|
+          <input name=status class=radio type=radio value=orphaned $checked{orphaned}>&nbsp;|.$locale->text('Orphaned').qq|</td>
+        </tr>
+|;
+
+  $focus = 'name';
+
+  $form->header;
+
+  &calendar;
+
+  print qq|
+<body onLoad="main.${focus}.focus()">
+
+<form method="post" name="main" action=$form->{script}>
+
+<table width=100%>
+  <tr>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+  </tr>
+  <tr height="5"></tr>
+  <tr valign=top>
+    <td>
+      <table>
+        <tr valign=top>
+          <td>
+            <table>
+              <tr>
+                <th align=right nowrap>$vcname</th>
+                <td><input name=name size=32></td>
+              </tr>
+              <tr>
+                <th align=right nowrap>|.$locale->text('Contact').qq|</th>
+                <td><input name=contact size=32></td>
+              </tr>
+              <tr>
+                <th align=right nowrap>|.$locale->text('E-mail').qq|</th>
+                <td><input name=email size=32></td>
+              </tr>
+              <tr>
+                <th align=right nowrap>|.$locale->text('Phone').qq|</th>
+                <td><input name=phone size=20></td>
+              </tr>
+              <tr>
+              </tr>
+              <tr>
+                <th align=right nowrap>|.$locale->text('Notes').qq|</th>
+                <td colspan=3><textarea name=notes rows=3 cols=32></textarea></td>
+              </tr>
+                $employee
+                $typeofbusiness
+            </table>
+          </td>
+
+          <td>
+            <table>
+              <tr>
+                <th align=right nowrap>$vcnumber</th>
+                <td><input name=$form->{db}number size=32></td>
+              </tr>
+              <tr>
+                <th align=right nowrap>|.$locale->text('Address').qq|</th>
+                <td><input name=address size=32></td>
+              </tr>
+              <tr>
+                <th align=right nowrap>|.$locale->text('City').qq|</th>
+                <td><input name=city size=32></td>
+              </tr>
+              <tr>
+                <th align=right nowrap>|.$locale->text('State/Province').qq|</th>
+                <td><input name=state size=32></td>
+              </tr>
+              <tr>
+                <th align=right nowrap>|.$locale->text('Zip/Postal Code').qq|</th>
+                <td><input name=zipcode size=10></td>
+              </tr>
+              $selectcountry
+              <tr>
+                <th align=right nowrap>|.$locale->text('Startdate').qq|</th>
+                <td nowrap>|.$locale->text('From').qq| <input name=startdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "startdatefrom").$locale->text('To').qq| <input name=startdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "startdateto").qq|</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <table>
+        $status
+      </table>
+    </td>
+  </tr>
+
+  <tr>
+    <td><hr size=3 noshade></td>
+  </tr>
+</table>
+
+<br>
+|;
+
+  %button = ('Continue' => { ndx => 1, key => 'C', value => $locale->text('Continue') }
+  );
+
+  $form->print_button(\%button);
+
+  $form->hide_form(qw|ARAP db nextsub title path login|);
+
+  print qq|
+</form>
+
+</body>
+</html>
+|;
+}
+
+
+sub export_screen_payment {
+
+  $form->header;
 
   $form->{reportcode} = "export_$form->{type}";
   $form->{initreport} = 1;
@@ -1265,7 +1481,11 @@ sub xrefhdr {
 
   $i = 1;
 
-  if ($form->{mapfile}) {
+  if ($form->{filetype} eq 'xlsx') {
+    for ($form->{data}[0]->@*) {
+      $form->{$form->{type}}{$_} = {field => $_, length => '', ndx => $i++};
+    }
+  } elsif ($form->{mapfile}) {
     open(FH, "$templates/$myconfig{templates}/$form->{mapfile}/import.map") or $form->error($!);
 
     while (<FH>) {
@@ -1707,11 +1927,51 @@ sub im_csv_payment {
 
 sub import_file {
 
-  open(FH, "$userspath/$form->{tmpfile}") or $form->error("$userspath/$form->{tmpfile} : $!");
-  while (<FH>) {
-    $form->{data} .= $_;
+  if ($form->{filetype} eq 'xlsx') {
+
+    $form->load_module(['Spreadsheet::ParseXLSX'], $locale->text('Module not installed:'));
+
+    my $parser   = Spreadsheet::ParseXLSX->new;
+    my $workbook = $parser->parse("$userspath/$form->{tmpfile}");
+
+    if (my $worksheet = $workbook->worksheet($form->{worksheet} - 1)) {
+
+      my @data;
+      my ($row_min, $row_max) = $worksheet->row_range;
+      my ($col_min, $col_max) = $worksheet->col_range;
+      my $last_on_empty = $row_max > 1_000_000;    # LibreOffice files may return a wrong row_max
+
+      for my $row ($row_min .. $row_max) {
+        my (@datarow, $has_data, $cell, $value);
+        for my $col ($col_min .. $col_max) {
+
+          if ($cell = $worksheet->get_cell($row, $col) and $value = $cell->value) {
+            push @datarow, $value;
+            $has_data = 1;
+          } else {
+            push @datarow, '';
+          }
+        }
+
+        if ($has_data) {
+          push @data, \@datarow;
+        } elsif ($last_on_empty) {
+          last;
+        }
+      }
+
+      $form->{data} = \@data;
+    }
+
+  } else {
+
+    open(FH, "$userspath/$form->{tmpfile}") or $form->error("$userspath/$form->{tmpfile} : $!");
+    while (<FH>) {
+      $form->{data} .= $_;
+    }
+    close(FH);
   }
-  close(FH);
+
   unlink "$userspath/$form->{tmpfile}";
 
   $form->error($locale->text('Import File missing!')) unless $form->{filename};
@@ -1796,11 +2056,12 @@ sub im_vc {
 
   $column_data{runningnumber} = "&nbsp;";
   $column_data{ndx} = "&nbsp;";
+  $column_data{id} = $locale->text('ID');
   $column_data{name} = $locale->text('Name');
   $column_data{customernumber} = $locale->text('Customer Number');
   $column_data{vendornumber} = $locale->text('Vendor Number');
   $column_data{address1} = $locale->text('Street');
-  $column_data{address2} = "&nbsp;";
+  $column_data{address2} = '&nbsp;';
   $column_data{city} = $locale->text('City');
   $column_data{zipcode} = $locale->text('Zipcode');
   $column_data{state} = $locale->text('State');
@@ -1825,6 +2086,7 @@ sub im_vc {
 
   $column_data{payment_accno} = $locale->text('Payment');
   $column_data{discount_accno} = $locale->text('Discount');
+  $column_data{prepayment_accno} = $locale->text('Prepayment');
 
   $column_data{taxaccounts} = $locale->text('Tax');
 
@@ -1852,6 +2114,7 @@ sub im_vc {
   $column_data{bic} = $locale->text('BIC');
   $column_data{bankname} = $locale->text('Bank');
   $column_data{bankaddress1} = $locale->text('Street');
+  $column_data{bankaddress2} = '&nbsp;';
   $column_data{bankcity} = $locale->text('City');
   $column_data{bankstate} = $locale->text('State');
   $column_data{bankzipcode} = $locale->text('Zipcode');
@@ -2255,6 +2518,135 @@ sub import_groups {
   }
 
   $form->info;
+
+}
+
+
+sub ex_customer { &ex_vc }
+sub ex_vendor { &ex_vc }
+
+
+sub ex_vc {
+
+  require SL::CT;
+
+  CT->search(\%myconfig, $form);
+
+  @column_index = (
+    'runningnumber',     'ndx',      'name',    'typeofcontact',
+    "$form->{db}number", 'address1', 'zipcode', 'city',
+    'country',
+  );
+
+  if ($form->{db} eq 'customer') {
+    $vcname   = $locale->text('Customer');
+    $vcnumber = $locale->text('Customer Number');
+    $button   = $locale->text('Export Customers');
+
+  }
+  if ($form->{db} eq 'vendor') {
+    $vcname   = $locale->text('Vendor');
+    $vcnumber = $locale->text('Vendor Number');
+    $button   = $locale->text('Export Vendors');
+  }
+
+  $form->{allbox} = 'checked';
+
+  my %not_sortable = (
+    "$form->{db}number" => $vcnumber,
+    address1            => $locale->text('Address'),
+    city                => $locale->text('City'),
+    country             => $locale->text('Country'),
+    name                => $vcname,
+    runningnumber       => '&nbsp;',
+    typeofcontact       => $locale->text('Type'),
+    zipcode             => $locale->text('Zipcode'),
+  );
+
+  for (keys %not_sortable) {
+    $column_data{$_} = qq|<th class="listheading">$not_sortable{$_}</th>|;
+  }
+
+  $column_data{ndx} = qq|<th class="listheading" width="1%"><input name="allbox" type="checkbox" class="checkbox" value="1" $form->{allbox} onChange="CheckAll()"></th>|;
+
+  $form->{title} .= " / $form->{company}";
+
+  $form->header;
+
+  &check_all(qw(allbox ndx_));
+
+  print qq|
+<body>
+
+<form method="post" name="main" action="$form->{script}" />
+
+<table>
+  <tr>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>$option</td>
+  </tr>
+  <tr>
+    <td>
+      <table width=100%>
+        <tr class=listheading>|;
+
+  for (@column_index) { print "\n$column_data{$_}" }
+
+  print qq|
+        </tr>|;
+
+  my $i = 0;
+  for my $ref ($form->{CT}->@*) {
+
+      $i++;
+
+      # $locale->text('Company');
+      # $locale->text('Person');
+      $ref->{typeofcontact} = $locale->text(ucfirst $ref->{typeofcontact});
+
+      for (@column_index) { $column_data{$_} = qq|<td>$ref->{$_}&nbsp;</td>| }
+      $column_data{runningnumber} = "<td align=right>&nbsp;$i&nbsp;</td>";
+      $column_data{ndx} = qq|<td><input name="ndx_$i" type="checkbox" class="checkbox" value="$ref->{id}" $form->{allbox}></td>|;
+
+    $j++; $j %= 2;
+    print qq|
+        <tr class=listrow$j>|;
+
+    for (@column_index) { print "\n$column_data{$_}" }
+
+    print qq|
+        </tr>|;
+  }
+
+  $form->{rowcount} = $i;
+
+  print qq|
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td><hr size=3 noshade></td>
+  </tr>
+</table>
+
+<br>
+|;
+
+  $form->hide_form(qw|rowcount db title login path|);
+
+  %button = (export_vc => {ndx => 1, key => 'X', value => $button});
+
+  $form->print_button(\%button);
+
+  print qq|
+</form>
+
+</body>
+</html>
+|;
 
 }
 
@@ -2733,11 +3125,12 @@ sub ex_payment {
 
   $form->hide_form(qw(login path report reportcode paymentaccount curr paymentmethod dateprepared dateformat filetype delimiter decimalpoint tabdelimited includeheader stringsquoted defaultcurrency type flds column_index rowcount linefeed callback nextsub title));
 
-  %button = ('Export Payments' => { ndx => 1, key => 'E', value => $locale->text('Export Payments') },
-             'Reconcile Payments' => { ndx => 2, key => 'R', value => $locale->text('Reconcile Payments') },
-             'Add Column' => { ndx => 3, key => 'A', value => $locale->text('Add Column') },
-             'Save Report' => { ndx => 4, key => 'S', value => $locale->text('Save Report') }
-            );
+  %button = (
+    'Export Payments'    => {ndx => 1, key => 'X', value => $locale->text('Export Payments')},
+    'Reconcile Payments' => {ndx => 2, key => 'R', value => $locale->text('Reconcile Payments')},
+    'Add Column'         => {ndx => 3, key => 'A', value => $locale->text('Add Column')},
+    'Save Report'        => {ndx => 4, key => 'S', value => $locale->text('Save Report')}
+  );
 
   delete $button{'Export Payments'} if ! $form->{rowcount};
 
@@ -2754,6 +3147,79 @@ sub ex_payment {
 </body>
 </html>
 |;
+
+}
+
+
+sub export_customers { &export_vc }
+sub export_vendors { &export_vc }
+
+
+sub export_vc {
+
+  my @ids;
+
+  for (1 .. $form->{rowcount}) {
+    push @ids, $form->{"ndx_$_"} if $form->{"ndx_$_"};
+  }
+
+  $form->error($locale->text('Nothing selected!')) unless @ids;
+
+  require SL::CT;
+  require SL::Spreadsheet;
+
+  $form->{ids} = join ',', @ids;
+  CT->search(\%myconfig, $form);
+
+  my @column_index = (
+    'id',           "$form->{db}number", 'typeofcontact',    'name',
+    'salutation',   'firstname',         'lastname',         'contacttitle',
+    'occupation',   'gender',            'address1',         'address2',
+    'zipcode',      'city',              'state',            'country',
+    'phone',        'fax',               'mobile',           'email',
+    'cc',           'bcc',               'taxaccounts',      'taxincluded',
+    'arap_accno',   'payment_accno',     'prepayment_accno', 'terms',
+    'creditlimit',  'threshold',         'paymentmethod',    'remittancevoucher',
+    'curr',         'startdate',         'enddate',          'pricegroup',
+    'discount',     'language_code',     'business',         'taxnumber',
+    'sic_code',     'employee',          'notes',            'bankname',
+    'bankaddress1', 'bankaddress2',      'bankzipcode',      'bankcity',
+    'bankstate',    'bankcountry',       'iban',             'qriban',
+    'bic',          'membernumber',      'clearingnumber',
+  );
+
+  my $ss = SL::Spreadsheet->new($form, $userspath);
+
+  my @date_columns    = qw|enddate startdate|;
+  my @decimal_columns = qw|creditlimit discount threshold|;
+  my @number_columns  = qw|id remittancevoucher taxincluded terms|;
+
+  my %spreadsheet_info;
+  for (@date_columns) {
+    $spreadsheet_info{columns}{$_} = 'date';
+  }
+  for (@decimal_columns) {
+    $spreadsheet_info{columns}{$_} = 'nonzero_decimal';
+  }
+  for (@number_columns) {
+    $spreadsheet_info{columns}{$_} = 'number';
+  }
+  for (@column_index) {
+    $spreadsheet_info{columns}{$_} ||= 'text';
+  }
+
+  $ss->worksheet(form_title => 1)->structure(\%spreadsheet_info)->column_index(\@column_index);
+
+  $ss->header_row({map {$_ => $_} @column_index})->freeze_panes;
+
+  for my $ref ($form->{CT}->@*) {
+    $ss->table_row($ref);
+  }
+
+  $ss->adjust_columns->finish;
+
+  my $filename = "$form->{title}.xlsx";
+  $form->download_tmpfile(\%myconfig, $filename);
 
 }
 

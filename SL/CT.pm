@@ -649,6 +649,10 @@ sub search {
   @sf = ("$form->{db}number");
   push @sf, qw(name contact notes phone email);
 
+  if ($form->{ids}) {
+    $where .= qq| AND c.id IN ($form->{ids})|;
+  }
+
   if ($form->{employee}) {
     (undef, $var) = split /--/, $form->{employee};
     $where .= " AND e.id = $var";

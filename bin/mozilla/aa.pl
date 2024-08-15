@@ -2259,7 +2259,7 @@ sub transactions {
   );
 
   my %not_sortable = (
-    runningnumber => 'nbsp;',
+    runningnumber => '&nbsp;',
     address1      => $locale->text('Address'),
     address2      => $locale->text('Address Line 2'),
     netamount     => $locale->text('Amount'),

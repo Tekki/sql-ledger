@@ -194,7 +194,7 @@ sub dump_form {
 
 
 sub perl_modules {
-  return [qw|Archive::Zip Excel::Writer::XLSX Mojolicious|];
+  return [qw|Archive::Zip Excel::Writer::XLSX Mojolicious Spreadsheet::ParseXLSX|];
 }
 
 
@@ -209,7 +209,7 @@ sub load_module {
   }
 
   if (@missing && $msg) {
-    $self->error($msg . ' ' . join ', ', @missing);
+    $self->error("$msg " . join ', ', @missing);
   } else {
     return @missing;
   }

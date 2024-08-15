@@ -1,7 +1,9 @@
+use utf8;
+
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Module not installed:'       => 'Module pas installÈ:',
+  'Module not installed:'       => 'Module pas install√©:',
 
 };
 1;
