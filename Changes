@@ -1,6 +1,6 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
-Not Released
+3.2.12.45 2024-08-15
   - XLSX is accepted as import file format
   - export customers and vendors in a spreadsheet suited for reimport
   - JavaScript in report dropdown corrected for values with linebreaks
