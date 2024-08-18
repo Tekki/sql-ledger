@@ -3610,15 +3610,27 @@ L<bin::mozilla::im> implements the following functions:
 
 Calls C<< &{ $form->{nextsub} } >>.
 
+=head2 ex_customer
+
 =head2 ex_payment
 
+=head2 ex_vc
+
+=head2 ex_vendor
+
 =head2 export
+
+=head2 export_customers
 
 =head2 export_payments
 
 =head2 export_payments_csv
 
 =head2 export_payments_txt
+
+=head2 export_vc
+
+=head2 export_vendors
 
 =head2 im_coa
 

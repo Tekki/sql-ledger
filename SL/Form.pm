@@ -856,6 +856,8 @@ sub parse_template {
     if ($out =~ /^\|/) {
       $out =~ s/^\|\s*//;
       $mode = '|-';
+    } else {
+      $out =~ s/^>\s*//;
     }
     open(OUT, "$mode:utf8", $out) or $self->error("$out : $!");
   } else {

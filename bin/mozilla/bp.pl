@@ -13,6 +13,7 @@
 
 
 use SL::BP;
+use Cwd;
 require "$form->{path}/js.pl";
 
 1;
@@ -426,7 +427,7 @@ sub print {
 
   for $i (1 .. $myform->{rowcount}) {
 
-    if ($myform->{"ndx_$i"}) {
+    if ($myform->{"ndx_$i"} && $myform->{"spoolfile_$i"} !~ /\.zip$/) {
 
       $ok = 1;
 
@@ -1001,14 +1002,16 @@ print qq|
     $form->hide_form("$_->{printer}_printer");
   }
 
-  %button = ('Select all' => { ndx => 2, key => 'A', value => $locale->text('Select all') },
-               'Deselect all' => { ndx => 3, key => 'A', value => $locale->text('Deselect all') },
-               'Print' => { ndx => 5, key => 'P', value => $locale->text('Print') },
-               'E-mail' => { ndx => 6, key => 'E', value => $locale->text('E-mail') },
-               'Combine' => { ndx => 7, key => 'K', value => $locale->text('Combine') },
-               'Remove' => { ndx => 8, key => 'R', value => $locale->text('Remove') },
-              );
-
+  my $ndx;
+  %button = (
+    'Select all'   => {ndx => ++$ndx, key => 'A', value => $locale->text('Select all')},
+    'Deselect all' => {ndx => ++$ndx, key => 'A', value => $locale->text('Deselect all')},
+    'Print'        => {ndx => ++$ndx, key => 'P', value => $locale->text('Print')},
+    'E-mail'       => {ndx => ++$ndx, key => 'E', value => $locale->text('E-mail')},
+    'Combine'      => {ndx => ++$ndx, key => 'K', value => $locale->text('Combine')},
+    'Archive File' => {ndx => ++$ndx, key => 'Z', value => $locale->text('Archive File')},
+    'Remove'       => {ndx => ++$ndx, key => 'R', value => $locale->text('Remove')},
+  );
 
   if ($form->{deselect}) {
     delete $button{'Select all'};
@@ -1022,6 +1025,7 @@ print qq|
   if ($form->{batch} ne 'queue') {
     delete $button{'Remove'};
     delete $button{'Combine'};
+    delete $button{'Archive File'};
   }
   if ($form->{batch} eq 'email') {
     delete $button{'Print'};
@@ -1073,7 +1077,6 @@ sub deselect_all {
 
 sub combine {
 
-  use Cwd;
   $dir = cwd();
   my @files;
 
@@ -1102,6 +1105,41 @@ sub combine {
 
   chdir("$dir");
 
+  $form->redirect;
+
+}
+
+
+sub archive_file {
+
+  my @files;
+  for (1 .. $form->{rowcount}) {
+    push @files, $form->{"spoolfile_$_"} if $form->{"ndx_$_"};
+  }
+
+  $form->error($locale->text('Nothing selected!')) unless @files;
+
+  $form->load_module(['Archive::Zip'], $locale->text('Module not installed:'));
+
+  my $old_dir = cwd();
+  chdir "$spool/$myconfig{dbname}";
+
+  $form->{format} = 'zip';
+  if (my $filename = BP->spoolfile(\%myconfig, $form)) {
+
+    my $zip = Archive::Zip->new;
+    $zip->addFile($_) for @files;
+
+    unless ($zip->writeToFileNamed($filename) == AZ_OK) {
+      $form->error("$filename: $!");
+    }
+
+    BP->set_printed(\%myconfig, $form, \@files);
+  }
+
+  chdir $old_dir;
+
+  $form->{callback} =~ s/\&allbox=1//;
   $form->redirect;
 
 }
@@ -1138,6 +1176,8 @@ L<bin::mozilla::menu>
 =head1 FUNCTIONS
 
 L<bin::mozilla::bp> implements the following functions:
+
+=head2 archive_file
 
 =head2 combine
 

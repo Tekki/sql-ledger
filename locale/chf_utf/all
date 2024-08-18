@@ -150,6 +150,7 @@ $self{texts} = {
   'Approved'                    => 'Approuvé',
   'Apr'                         => 'Avr',
   'April'                       => 'Avril',
+  'Archive File'                => 'Fichier d\'archive',
   'Are you sure you want to delete' => 'Etes-vous sûr que vous voulez supprimer ?',
   'Are you sure you want to delete Batch' => 'Etes-vous sûr de vouloir supprimer cette tâche ?',
   'Are you sure you want to delete Invoice Number' => 'Etes-vous sûr de vouloir supprimer cette facture ?',

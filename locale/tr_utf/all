@@ -148,6 +148,7 @@ $self{texts} = {
   'Approved'                    => 'Onaylı',
   'Apr'                         => 'Nis',
   'April'                       => 'Nisan',
+  'Archive File'                => 'Arşiv Dosyası',
   'Are you sure you want to delete' => 'Silmek istediğinizden emin misiniz',
   'Are you sure you want to delete Batch' => 'Yığını silmek istediğinizden emin misiniz',
   'Are you sure you want to delete Invoice Number' => 'Faturayı silmek istediğinizden emin misiniz? No: ',
