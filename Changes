@@ -1,6 +1,6 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
-Not Released
+3.2.12.46 2024-08-18
   - store queued documents in a ZIP archive file
 
 3.2.12.45 2024-08-15
