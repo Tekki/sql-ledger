@@ -2847,12 +2847,14 @@ sub save_as_new {
       delete $form->{ordnumber} if $form->{lock_sonumber};
     } else {
       delete $form->{quonumber} if $form->{lock_sqnumber};
+      delete $form->{ordnumber};
     }
   } else {
     if ($form->{type} eq 'purchase_order') {
       delete $form->{ordnumber} if $form->{lock_ponumber};
     } else {
       delete $form->{quonumber} if $form->{lock_rfqnumber};
+      delete $form->{ordnumber};
     }
   }
 
@@ -2872,12 +2874,14 @@ sub print_and_save_as_new {
       delete $form->{ordnumber} if $form->{lock_sonumber};
     } else {
       delete $form->{quonumber} if $form->{lock_sqnumber};
+      delete $form->{ordnumber};
     }
   } else {
     if ($form->{type} eq 'purchase_order') {
       delete $form->{ordnumber} if $form->{lock_ponumber};
     } else {
       delete $form->{quonumber} if $form->{lock_rfqnumber};
+      delete $form->{ordnumber};
     }
   }
 
