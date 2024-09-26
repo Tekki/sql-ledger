@@ -2362,6 +2362,16 @@ sub retrieve_invoice {
     $sth->finish;
 
     # retrieve individual items
+    my $api_fields = my $api_joins = '';
+    if ($form->{script} eq 'api.pl') {
+      $api_fields = qq|,
+                i_acc.accno AS income_accno, e_acc.accno AS expense_accno, v_acc.accno AS inventory_accno|;
+      $api_joins = qq|
+                LEFT JOIN chart i_acc ON i_acc.id = p.income_accno_id
+                LEFT JOIN chart e_acc ON e_acc.id = p.expense_accno_id
+                LEFT JOIN chart v_acc ON v_acc.id = p.inventory_accno_id|;
+    }
+
     $query = qq|SELECT i.description, i.qty, i.fxsellprice, i.sellprice,
                 i.discount, i.parts_id AS id, i.unit, i.deliverydate,
                 i.project_id, pr.projectnumber, i.serialnumber, i.ordernumber,
@@ -2374,14 +2384,14 @@ sub retrieve_invoice {
                 p.inventory_accno_id, p.income_accno_id, p.expense_accno_id,
                 t.description AS partsgrouptranslation,
                 c.package, c.netweight, c.grossweight, c.volume,
-                v.name
+                v.name$api_fields
                 FROM invoice i
                 JOIN parts p ON (i.parts_id = p.id)
                 LEFT JOIN project pr ON (i.project_id = pr.id)
                 LEFT JOIN partsgroup pg ON (p.partsgroup_id = pg.id)
                 LEFT JOIN translation t ON (t.trans_id = p.partsgroup_id AND t.language_code = '$form->{language_code}')
                 LEFT JOIN cargo c ON (c.id = i.id AND c.trans_id = i.trans_id)
-                LEFT JOIN vendor v ON (v.id = i.vendor_id)
+                LEFT JOIN vendor v ON (v.id = i.vendor_id)$api_joins
                 WHERE i.trans_id = $form->{id}
                 AND NOT i.assemblyitem = '1'
                 ORDER BY i.id|;
