@@ -1,5 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+Not Released
+  - button to jump from customers and vendors directly to transaction report
+
 3.2.12.47 2024-11-09
   - hidden order number is deleted when a quotation or rfq is saved a new
   - ct.pl accepts custom scripts

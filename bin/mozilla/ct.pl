@@ -80,9 +80,10 @@ sub create_links {
   for (qw(email phone fax mobile salutation firstname lastname gender contacttitle occupation)) { $form->{$_} = $form->{all_contact}->[0]->{$_} }
   $form->{gender} ||= 'M';
 
+  # currencies
   if ($form->{currencies}) {
-    # currencies
     for (split /:/, $form->{currencies}) { $form->{selectcurrency} .= "$_\n" }
+    $form->{selectcurrency} = $form->escape($form->{selectcurrency},1);
   }
 
   # accounts
@@ -2247,28 +2248,36 @@ sub form_header {
 
 sub form_footer {
 
-  %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
-             'Save' => { ndx => 2, key => 'S', value => $locale->text('Save') },
-             'Shipping Address' => { ndx => 3, key => 'H', value => $locale->text('Shipping Address') },
-             'Save as new' => { ndx => 4, key => 'N', value => $locale->text('Save as new') },
-             'AR Transaction' => { ndx => 7, key => 'A', value => $locale->text('AR Transaction') },
-             'Credit Note' => { ndx => 8, key => 'E', value => $locale->text('Credit Note') },
-             'AP Transaction' => { ndx => 9, key => 'A', value => $locale->text('AP Transaction') },
-             'Debit Note' => { ndx => 10, key => 'E', value => $locale->text('Debit Note') },
-             'Sales Invoice' => { ndx => 11, key => 'I', value => $locale->text('Sales Invoice') },
-             'Credit Invoice' => { ndx => 12, key => 'R', value => $locale->text('Credit Invoice') },
-             'POS' => { ndx => 13, key => 'C', value => $locale->text('POS') },
-             'Sales Order' => { ndx => 14, key => 'O', value => $locale->text('Sales Order') },
-             'Quotation' => { ndx => 15, key => 'Q', value => $locale->text('Quotation') },
-             'Vendor Invoice' => { ndx => 16, key => 'I', value => $locale->text('Vendor Invoice') },
-             'Debit Invoice' => { ndx => 17, key => 'R', value => $locale->text('Debit Invoice') },
-             'Purchase Order' => { ndx => 18, key => 'O', value => $locale->text('Purchase Order') },
-             'RFQ' => { ndx => 19, key => 'Q', value => $locale->text('RFQ') },
-             'Pricelist' => { ndx => 20, key => 'P', value => $locale->text('Pricelist') },
-             'New Number' => { ndx => 21, key => 'M', value => $locale->text('New Number') },
-             'Delete' => { ndx => 22, key => 'D', value => $locale->text('Delete') },
-            );
-
+  my @buttons = (
+    {
+      'Update'           => {ndx => 1,  key => 'U', value => $locale->text('Update')},
+      'Save'             => {ndx => 2,  key => 'S', value => $locale->text('Save')},
+      'Shipping Address' => {ndx => 3,  key => 'H', value => $locale->text('Shipping Address')},
+      'Save as new'      => {ndx => 4,  key => 'N', value => $locale->text('Save as new')},
+      'New Number'       => {ndx => 21, key => 'M', value => $locale->text('New Number')},
+      'Delete'           => {ndx => 22, key => 'D', value => $locale->text('Delete')},
+    },
+    {
+      'AR Transaction' => {ndx => 7,  key => 'A', value => $locale->text('AR Transaction')},
+      'Credit Note'    => {ndx => 8,  key => 'E', value => $locale->text('Credit Note')},
+      'AP Transaction' => {ndx => 9,  key => 'A', value => $locale->text('AP Transaction')},
+      'Debit Note'     => {ndx => 10, key => 'E', value => $locale->text('Debit Note')},
+      'Sales Invoice'  => {ndx => 11, key => 'I', value => $locale->text('Sales Invoice')},
+      'Credit Invoice' => {ndx => 12, key => 'R', value => $locale->text('Credit Invoice')},
+      'POS'            => {ndx => 13, key => 'C', value => $locale->text('POS')},
+      'Sales Order'    => {ndx => 14, key => 'O', value => $locale->text('Sales Order')},
+      'Quotation'      => {ndx => 15, key => 'Q', value => $locale->text('Quotation')},
+      'Vendor Invoice' => {ndx => 16, key => 'I', value => $locale->text('Vendor Invoice')},
+      'Debit Invoice'  => {ndx => 17, key => 'R', value => $locale->text('Debit Invoice')},
+      'Purchase Order' => {ndx => 18, key => 'O', value => $locale->text('Purchase Order')},
+      'RFQ'            => {ndx => 19, key => 'Q', value => $locale->text('RFQ')},
+      'Pricelist'      => {ndx => 20, key => 'P', value => $locale->text('Pricelist')},
+    },
+    {
+      'AR Transactions' => {ndx => 23, key => 'T', value => $locale->text('AR Transactions')},
+      'AP Transactions' => {ndx => 24, key => 'T', value => $locale->text('AP Transactions')},
+    },
+  );
 
   %f = ();
 
@@ -2299,6 +2308,9 @@ sub form_footer {
       }
       if ($myconfig{acs} !~ /AR--Credit Invoice/) {
         $f{'Credit Invoice'} = 1;
+      }
+      if ($myconfig{acs} !~ /AR--Reports--Transactions/ && $form->{id}) {
+        $f{'AR Transactions'} = 1;
       }
     }
     if ($myconfig{acs} !~ /POS--POS/) {
@@ -2346,6 +2358,9 @@ sub form_footer {
       if ($myconfig{acs} !~ /AP--Debit Invoice/) {
         $f{'Debit Invoice'} = 1;
       }
+      if ($myconfig{acs} !~ /AP--Reports--Transactions/ && $form->{id}) {
+        $f{'AP Transactions'} = 1;
+      }
     }
     if ($myconfig{acs} !~ /Order Entry--Order Entry/) {
       if ($myconfig{acs} !~ /Order Entry--Purchase Order/) {
@@ -2370,9 +2385,38 @@ sub form_footer {
   $form->{update_contact} = 1;
   $form->hide_form(qw(id action ARAP update_contact addressid contactid taxaccounts path login callback db status reference_rows referenceurl max_upload_size precision company _updated));
 
-  for (keys %button) { delete $button{$_} if ! $f{$_} }
+  for my $button (@buttons) {
+    for (keys %$button) {
+      delete $button->{$_} unless $f{$_};
+    }
+  }
 
-  $form->print_button(\%button);
+  print qq|
+<table width="100%">
+  <tr>
+    <td colspan="2">|;
+  $form->print_button($buttons[0]);
+  print qq|
+    </td>
+</tr>|;
+
+  my @labels = ($locale->text('Add'), $locale->text('Reports'));
+  for my $button (@buttons[1 .. 2]) {
+    my $label = shift @labels;
+    if (keys %$button) {
+      print qq|
+  <tr>
+    <td width="1%">$label</td>
+    <td>|;
+      $form->print_button($button);
+      print qq|
+    </td>
+  </tr>|;
+    }
+  }
+
+  print qq|
+</table>|;
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -3508,6 +3552,60 @@ sub yes__delete {
 
 }
 
+
+sub ar_transactions {
+  $form->{script} = "ar.pl";
+  &_transaction_report;
+}
+
+
+sub ap_transactions {
+  $form->{script} = "ap.pl";
+  &_transaction_report;
+}
+
+
+sub _transaction_report {
+
+  if ("$form->{name}$form->{lastname}$form->{firstname}" eq "") {
+    $form->error($locale->text("Name missing!"));
+  }
+
+  $form->{enddate} = "" if $form->{enddate};
+
+  CT->save(\%myconfig, \%$form);
+
+  $name = $form->escape($form->{name},1);
+
+  my %params = (
+    action        => 'transactions',
+    closed        => 'Y',
+    direction     => 'ASC',
+    l_amount      => 'Y',
+    l_curr        => $form->{selectcurrency} =~ /%0a.+/ ? 'Y' : '',
+    l_datepaid    => 'Y',
+    l_description => 'Y',
+    l_invnumber   => 'Y',
+    l_netamount   => 'Y',
+    l_paid        => 'Y',
+    l_tax         => 'Y',
+    l_transdate   => 'Y',
+    oldsort       => 'transdate',
+    open          => 'Y',
+    sort          => 'transdate',
+    summary       => 1,
+    vc            => $form->{db},
+    $form->{db}   => "$name--$form->{id}",
+  );
+
+  $form->{callback} = "$form->{script}?login=$form->{login}&path=$form->{path}";
+  for (keys %params) {
+    $form->{callback} .= "&$_=$params{$_}";
+  }
+
+  $form->redirect;
+
+}
 
 
 =encoding utf8
