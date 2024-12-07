@@ -297,6 +297,7 @@ $self{texts} = {
   'Spreadsheet'                 => 'Hesap Tablosu',
   'Startdate'                   => 'Başlangıç',
   'State/Province'              => 'Şehir',
+  'Street'                      => 'Sokak',
   'Su'                          => 'Pz',
   'Subject'                     => 'Konu',
   'Subtotal'                    => 'Aratoplam',

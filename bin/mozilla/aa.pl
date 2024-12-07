@@ -681,7 +681,7 @@ print qq|
               $vc
               <tr>
                 <th align=right nowrap>|.$locale->text('Address').qq|</th>
-                <td>$form->{address1} $form->{address2} $form->{city} $form->{state} $form->{zipcode} $form->{country}</td>
+                <td>$form->{address1} $form->{streetname} $form->{buildingnumber} $form->{address2} $form->{city} $form->{state} $form->{zipcode} $form->{country}</td>
               </tr>
               <tr>
                 <th align=right nowrap>|.$locale->text('Credit Limit').qq|</th>
@@ -1081,7 +1081,7 @@ print qq|
     }
   }
 
-  $form->hide_form(qw(address1 address2 city state zipcode country paidaccounts payment_accno discount_accno payment_method roundchange cashovershort));
+  $form->hide_form(qw(address1 streetname buildingnumber address2 city state zipcode country paidaccounts payment_accno discount_accno payment_method roundchange cashovershort));
 
   print qq|
       </table>
@@ -2134,18 +2134,18 @@ sub transactions {
 
 
   @columns = (
-    'transdate',      'id',            'invnumber', 'ordnumber',
-    'ponumber',       'description',   'name',      'customernumber',
-    'vendornumber',   'taxnumber',     'address1',  'address2',
-    'state',          'city',          'zipcode',   'country',
-    'salutation',     'firstname',     'lastname',  'contacttitle',
-    'occupation',     'phone',         'mobile',    'email',
-    'netamount',      'tax',           'amount',    'paid',
-    'paymentaccount', 'paymentmethod', 'due',       'curr',
-    'datepaid',       'duedate',       'memo',      'notes',
-    'till',           'employee',      'warehouse', 'shippingpoint',
-    'shipvia',        'waybill',       'dcn',       'paymentdiff',
-    'department',     'projectnumber',
+    'transdate',      'id',            'invnumber',      'ordnumber',
+    'ponumber',       'description',   'name',           'customernumber',
+    'vendornumber',   'taxnumber',     'address1',       'streetname',
+    'buildingnumber', 'address2',      'state',          'city',
+    'zipcode',        'country',       'salutation',     'firstname',
+    'lastname',       'contacttitle',  'occupation',     'phone',
+    'mobile',         'email',         'netamount',      'tax',
+    'amount',         'paid',          'paymentaccount', 'paymentmethod',
+    'due',            'curr',          'datepaid',       'duedate',
+    'memo',           'notes',         'till',           'employee',
+    'warehouse',      'shippingpoint', 'shipvia',        'waybill',
+    'dcn',            'paymentdiff',   'department',     'projectnumber',
   );
   @columns = $form->sort_columns(@columns);
   unshift @columns, "runningnumber";
@@ -2159,7 +2159,11 @@ sub transactions {
   }
 
   if ($form->{l_address}) {
-    for ('address1', 'address2', 'state', 'city', 'zipcode', 'country',) {
+    for (
+      'address1', 'streetname', 'buildingnumber', 'address2',
+      'state',    'city',       'zipcode',        'country',
+      )
+    {
       $form->{"l_$_"} = 'Y' if $form->{_flds}{$_};
     }
   }
@@ -2259,18 +2263,20 @@ sub transactions {
   );
 
   my %not_sortable = (
-    runningnumber => '&nbsp;',
-    address1      => $locale->text('Address'),
-    address2      => $locale->text('Address Line 2'),
-    netamount     => $locale->text('Amount'),
-    tax           => $locale->text('Tax'),
-    amount        => $locale->text('Total'),
-    paid          => $locale->text('Paid'),
-    due           => $locale->text('Due'),
-    notes         => $locale->text('Notes'),
-    debit         => $locale->text('Debit'),
-    credit        => $locale->text('Credit'),
-    memo          => $locale->text('Line Item'),
+    runningnumber  => '&nbsp;',
+    address1       => $locale->text('Address'),
+    streetname     => $locale->text('Street'),
+    buildingnumber => $locale->text('Number'),
+    address2       => $locale->text('Address Line 2'),
+    netamount      => $locale->text('Amount'),
+    tax            => $locale->text('Tax'),
+    amount         => $locale->text('Total'),
+    paid           => $locale->text('Paid'),
+    due            => $locale->text('Due'),
+    notes          => $locale->text('Notes'),
+    debit          => $locale->text('Debit'),
+    credit         => $locale->text('Credit'),
+    memo           => $locale->text('Line Item'),
   );
 
   for (keys %sortable) {
@@ -2414,13 +2420,13 @@ sub transactions {
     for (qw(notes description memo)) { $ref->{$_} =~ s/\r?\n/<br>/g }
     for (qw(transdate datepaid duedate)) { $column_data{$_} = "<td nowrap>$ref->{$_}&nbsp;</td>" }
     for (
-      'address1',      'address2',       'city',          'contacttitle', 'country',
-      'dcn',           'department',     'description',   'employee',     'firstname',
-      'lastname',      'memo',           'mobile',        'notes',        'occupation',
-      'ordnumber',     'paymentaccount', 'paymentmethod', 'phone',        'ponumber',
-      'projectnumber', 'salutation',     'shippingpoint', 'shipvia',      'source',
-      'state',         'taxnumber',      'till',          'warehouse',    'waybill',
-      'zipcode',       $namefld,
+      'address1',     'streetname', 'buildingnumber', 'address2',       'city',
+      'contacttitle', 'country',    'dcn',            'department',     'description',
+      'employee',     'firstname',  'lastname',       'memo',           'mobile',
+      'notes',        'occupation', 'ordnumber',      'paymentaccount', 'paymentmethod',
+      'phone',        'ponumber',   'projectnumber',  'salutation',     'shippingpoint',
+      'shipvia',      'source',     'state',          'taxnumber',      'till',
+      'warehouse',    'waybill',    'zipcode',        $namefld,
       )
     {
       $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>";

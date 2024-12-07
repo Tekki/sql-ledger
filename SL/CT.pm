@@ -19,8 +19,8 @@ sub create_links {
 
   my $dbh = $form->dbconnect($myconfig);
 
-  my %defaults = $form->get_defaults($dbh, \@{['company', 'precision','lock_%']});
-  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+  my %defaults
+    = $form->load_defaults(undef, $dbh, ['company', 'precision', 'lock_%', 'checkaddress',]);
 
   my $query;
   my $sth;
@@ -34,8 +34,8 @@ sub create_links {
 
   if ($form->{id} *= 1) {
     $query = qq|SELECT ct.*,
-                ad.id AS addressid, ad.address1, ad.address2, ad.city,
-                ad.state, ad.zipcode, ad.country,
+                ad.id AS addressid, ad.address1, ad.streetname, ad.buildingnumber,
+                ad.address2, ad.city, ad.state, ad.zipcode, ad.country,
                 b.description AS business, b.id AS business_id, s.*,
                 e.name AS employee, e.id AS employee_id,
                 g.pricegroup, g.id AS pricegroup_id,
@@ -43,6 +43,8 @@ sub create_links {
                 bk.name AS bankname, bk.iban, bk.qriban, bk.bic,
                 bk.membernumber, bk.clearingnumber,
                 ad1.address1 AS bankaddress1,
+                ad1.streetname AS bankstreetname,
+                ad1.buildingnumber AS bankbuildingnumber,
                 ad1.address2 AS bankaddress2,
                 ad1.city AS bankcity,
                 ad1.state AS bankstate,
@@ -227,8 +229,8 @@ sub create_links {
   # get currencies
   $form->{currencies} = $form->get_currencies($myconfig, $dbh);
 
-  my %defaults = $form->get_defaults($dbh, [qw(typeofcontact referenceurl max_upload_size)]);
-  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+  my %defaults
+    = $form->load_defaults(undef, $dbh, [qw(typeofcontact referenceurl max_upload_size)]);
 
   $dbh->disconnect;
 
@@ -346,7 +348,7 @@ sub save {
   }
 
   if (!$ok) {
-    for (qw(name address1 address2 city state zipcode country)) {
+    for (qw(name address1 streetname buildingnumber address2 city state zipcode country)) {
       if ($form->{"bank$_"}) {
         $ok = 1;
         last;
@@ -390,7 +392,7 @@ sub save {
   }
 
   $ok = 0;
-  for (qw(address1 address2 city state zipcode country)) {
+  for (qw(address1 streetname buildingnumber address2 city state zipcode country)) {
     if ($form->{"bank$_"}) {
       $ok = 1;
       last;
@@ -404,6 +406,8 @@ sub save {
                   city, state, zipcode, country) VALUES (
                   $bank_address_id, $bank_address_id,
                   |.$dbh->quote(uc $form->{bankaddress1}).qq|,
+                  |.$dbh->quote(uc $form->{bankstreetname}).qq|,
+                  |.$dbh->quote(uc $form->{bankbuildingnumber}).qq|,
                   |.$dbh->quote(uc $form->{bankaddress2}).qq|,
                   |.$dbh->quote(uc $form->{bankcity}).qq|,
                   |.$dbh->quote(uc $form->{bankstate}).qq|,
@@ -422,10 +426,12 @@ sub save {
                   WHERE id = $form->{id}|;
       ($bank_address_id) = $dbh->selectrow_array($query);
 
-      $query = qq|INSERT INTO address (id, trans_id, address1, address2,
-                  city, state, zipcode, country) VALUES (
+      $query = qq|INSERT INTO address (id, trans_id, address1, streetname, buildingnumber,
+                  address2, city, state, zipcode, country) VALUES (
                   $bank_address_id, $bank_address_id,
                   |.$dbh->quote(uc $form->{bankaddress1}).qq|,
+                  |.$dbh->quote(uc $form->{bankstreetname}).qq|,
+                  |.$dbh->quote(uc $form->{bankbuildingnumber}).qq|,
                   |.$dbh->quote(uc $form->{bankaddress2}).qq|,
                   |.$dbh->quote(uc $form->{bankcity}).qq|,
                   |.$dbh->quote(uc $form->{bankstate}).qq|,
@@ -509,10 +515,12 @@ sub save {
     $var = "$form->{addressid}, ";
   }
 
-  $query = qq|INSERT INTO address ($id trans_id, address1, address2,
-              city, state, zipcode, country) VALUES ($var
+  $query = qq|INSERT INTO address ($id trans_id, address1, streetname, buildingnumber,
+              address2, city, state, zipcode, country) VALUES ($var
               $form->{id},
               |.$dbh->quote($form->{address1}).qq|,
+              |.$dbh->quote($form->{streetname}).qq|,
+              |.$dbh->quote($form->{buildingnumber}).qq|,
               |.$dbh->quote($form->{address2}).qq|,
               |.$dbh->quote($form->{city}).qq|,
               |.$dbh->quote($form->{state}).qq|,
@@ -680,7 +688,7 @@ sub search {
 
   if ($form->{address} ne "") {
     $var = $form->like(lc $form->{address});
-    $where .= " AND (lower(ad.address1) LIKE '$var' OR lower(ad.address2) LIKE '$var')";
+    $where .= " AND (lower(ad.address1) LIKE '$var' OR lower(ad.streetname) LIKE '$var' OR lower(ad.address2) LIKE '$var')";
   }
 
   if ($form->{country} ne "") {
@@ -722,8 +730,8 @@ sub search {
 
   my $query = qq|SELECT c.*, b.description AS business,
                  e.name AS employee, g.pricegroup, l.description AS language,
-                 ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
-                 ad.country,
+                 ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+                 ad.city, ad.state, ad.zipcode, ad.country,
                  pm.description AS paymentmethod,
                  ct.salutation, ct.firstname, ct.lastname, ct.contacttitle,
                  ct.occupation, ct.mobile, ct.gender, ct.typeofcontact
@@ -770,8 +778,8 @@ sub search {
                   '$ar' AS module, 'invoice' AS formtype,
                   (a.amount = a.paid) AS closed, a.amount, a.netamount,
                   e.name AS employee,
-                  ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
-                  ad.country,
+                  ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+                  ad.city, ad.state, ad.zipcode, ad.country,
                   pm.description AS paymentmethod,
                   ct.salutation, ct.firstname, ct.lastname, ct.contacttitle,
                   ct.occupation, ct.mobile, ct.gender, ct.typeofcontact
@@ -810,8 +818,8 @@ sub search {
                   '$module' AS module, 'invoice' AS formtype,
                   (a.amount = a.paid) AS closed, a.amount, a.netamount,
                   e.name AS employee,
-                  ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
-                  ad.country,
+                  ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+                  ad.city, ad.state, ad.zipcode, ad.country,
                   pm.description AS paymentmethod,
                   ct.salutation, ct.firstname, ct.lastname, ct.contacttitle,
                   ct.occupation, ct.mobile, ct.gender, ct.typeofcontact
@@ -847,8 +855,8 @@ sub search {
                   'oe' AS module, 'order' AS formtype,
                   o.closed, o.amount, o.netamount,
                   e.name AS employee,
-                  ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
-                  ad.country,
+                  ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+                  ad.city, ad.state, ad.zipcode, ad.country,
                   pm.description AS paymentmethod,
                   ct.salutation, ct.firstname, ct.lastname, ct.contacttitle,
                   ct.occupation, ct.mobile, ct.gender, ct.typeofcontact
@@ -884,8 +892,8 @@ sub search {
                   'oe' AS module, 'quotation' AS formtype,
                   o.closed, o.amount, o.netamount,
                   e.name AS employee,
-                  ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
-                  ad.country,
+                  ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+                  ad.city, ad.state, ad.zipcode, ad.country,
                   pm.description AS paymentmethod,
                   ct.salutation, ct.firstname, ct.lastname, ct.contacttitle,
                   ct.occupation, ct.mobile, ct.gender, ct.typeofcontact
@@ -958,7 +966,7 @@ sub search {
     for (qw(iban qriban bic membernumber clearingnumber)) {
       $ref->{$_} = $bref->{$_};
     }
-    for (qw(name address1 address2 city state zipcode country)) {
+    for (qw(name address1 streetname buildingnumber address2 city state zipcode country)) {
       $ref->{"bank$_"} = $bref->{$_};
     }
     $bth->finish;
@@ -979,7 +987,9 @@ sub search {
     for (qw(arap payment discount)) { $ref->{"${_}_accno"} = $accno{$ref->{"${_}_accno_id"}} }
 
     $ref->{address} = "";
-    for (qw(address1 address2 city state zipcode country)) { $ref->{address} .= "$ref->{$_} " }
+    for (qw(address1 streetname buildingnumber address2 city state zipcode country)) {
+      $ref->{address} .= "$ref->{$_} " if $ref->{$_};
+    }
     push @{ $form->{CT} }, $ref;
   }
 
@@ -1015,7 +1025,7 @@ sub get_history {
   }
   if ($form->{address} ne "") {
     $var = $form->like(lc $form->{address});
-    $where .= " AND lower(ad.address1) LIKE '$var'";
+    $where .= " AND (lower(ad.address1) LIKE '$var' OR lower(ad.streetname) LIKE '$var')";
   }
   for (qw(name contact email phone notes)) {
     if ($form->{$_} ne "") {
@@ -1116,8 +1126,9 @@ sub get_history {
     $where .= qq| AND a.quotation = '1'|;
   }
 
-  $query = qq|SELECT ct.id AS ctid, ct.name, ad.address1,
-              ad.address2, ad.city, ad.state,
+  $query = qq|SELECT ct.id AS ctid, ct.name,
+              ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+              ad.city, ad.state,
               p.id AS pid, p.partnumber, a.id AS invid,
               a.$invnumber, a.curr, $description,
               i.qty, i.$sellprice AS sellprice, i.discount,
@@ -1147,7 +1158,9 @@ sub get_history {
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
     $ref->{address} = "";
     $ref->{exchangerate} ||= 1;
-    for (qw(address1 address2 city state zipcode country)) { $ref->{address} .= "$ref->{$_} " }
+    for (qw(address1 streetname buildingnumber address2 city state zipcode country)) {
+      $ref->{address} .= "$ref->{$_} " if $ref->{$_};
+    }
     $ref->{id} = $ref->{ctid};
     push @{ $form->{CT} }, $ref;
   }

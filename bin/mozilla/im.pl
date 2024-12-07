@@ -478,6 +478,8 @@ sub export_screen_payment {
   $includeinreport{name} = { ndx => $i++, checkbox => 1, html => qq|<input name="l_name" class=checkbox type=checkbox value=Y $form->{l_name}>|, label => $locale->text('Customer/Vendor') };
   $includeinreport{companynumber} = { ndx => $i++, checkbox => 1, html => qq|<input name="l_companynumber" class=checkbox type=checkbox value=Y $form->{l_companynumber}>|, label => $locale->text('Customer/Vendor Number') };
   $includeinreport{address1} = { ndx => $i++, checkbox => 1, html => qq|<input name="l_address1" class=checkbox type=checkbox value=Y $form->{l_address1}>|, label => $locale->text('Address Line 1') };
+  $includeinreport{streetname} = { ndx => $i++, checkbox => 1, html => qq|<input name="l_streetname" class=checkbox type=checkbox value=Y $form->{l_streetname}>|, label => $locale->text('Street Name') };
+  $includeinreport{buildingnumber} = { ndx => $i++, checkbox => 1, html => qq|<input name="l_buildingnumber" class=checkbox type=checkbox value=Y $form->{l_buildingnumber}>|, label => $locale->text('Building Number') };
   $includeinreport{address2} = { ndx => $i++, checkbox => 1, html => qq|<input name="l_address2" class=checkbox type=checkbox value=Y $form->{l_address2}>|, label => $locale->text('Address Line 2') };
   $includeinreport{city} = { ndx => $i++, checkbox => 1, html => qq|<input name="l_city" class=checkbox type=checkbox value=Y $form->{l_city}>|, label => $locale->text('City') };
   $includeinreport{state} = { ndx => $i++, checkbox => 1, html => qq|<input name="l_state" class=checkbox type=checkbox value=Y $form->{l_state}>|, label => $locale->text('State/Province') };
@@ -2060,8 +2062,10 @@ sub im_vc {
   $column_data{name} = $locale->text('Name');
   $column_data{customernumber} = $locale->text('Customer Number');
   $column_data{vendornumber} = $locale->text('Vendor Number');
-  $column_data{address1} = $locale->text('Street');
-  $column_data{address2} = '&nbsp;';
+  $column_data{address1} = $locale->text('Address');
+  $column_data{streetname} = $locale->text('Street');
+  $column_data{buildingnumber} = $locale->text('Number');
+  $column_data{address2} = $locale->text('Addition');
   $column_data{city} = $locale->text('City');
   $column_data{zipcode} = $locale->text('Zipcode');
   $column_data{state} = $locale->text('State');
@@ -2113,8 +2117,10 @@ sub im_vc {
   $column_data{qriban} = $locale->text('QR IBAN');
   $column_data{bic} = $locale->text('BIC');
   $column_data{bankname} = $locale->text('Bank');
+  $column_data{bankaddress1} = $locale->text('Address');
   $column_data{bankaddress1} = $locale->text('Street');
-  $column_data{bankaddress2} = '&nbsp;';
+  $column_data{bankaddress1} = $locale->text('Number');
+  $column_data{bankaddress2} = $locale->text('Addition');
   $column_data{bankcity} = $locale->text('City');
   $column_data{bankstate} = $locale->text('State');
   $column_data{bankzipcode} = $locale->text('Zipcode');
@@ -2168,7 +2174,7 @@ sub im_vc {
       $column_data{$_} = qq|<td>$form->{"${_}_$i"}</td>|;
     }
 
-    for (qw(address1 address2 city zipcode state country)) {
+    for (qw(address1 streetname buildingnumber address2 city zipcode state country)) {
       if ($form->{"${_}_$i"}) {
         $form->{"address_$i"} .= qq|$form->{"${_}_$i"} |;
       }
@@ -2533,9 +2539,9 @@ sub ex_vc {
   CT->search(\%myconfig, $form);
 
   @column_index = (
-    'runningnumber',     'ndx',      'name',    'typeofcontact',
-    "$form->{db}number", 'address1', 'zipcode', 'city',
-    'country',
+    'runningnumber',     'ndx',      'name',       'typeofcontact',
+    "$form->{db}number", 'address1', 'streetname', 'zipcode',
+    'city',              'country',
   );
 
   if ($form->{db} eq 'customer') {
@@ -2555,6 +2561,7 @@ sub ex_vc {
   my %not_sortable = (
     "$form->{db}number" => $vcnumber,
     address1            => $locale->text('Address'),
+    streetname          => $locale->text('Street'),
     city                => $locale->text('City'),
     country             => $locale->text('Country'),
     name                => $vcname,
@@ -3172,20 +3179,21 @@ sub export_vc {
   CT->search(\%myconfig, $form);
 
   my @column_index = (
-    'id',           "$form->{db}number", 'typeofcontact',    'name',
-    'salutation',   'firstname',         'lastname',         'contacttitle',
-    'occupation',   'gender',            'address1',         'address2',
-    'zipcode',      'city',              'state',            'country',
-    'phone',        'fax',               'mobile',           'email',
-    'cc',           'bcc',               'taxaccounts',      'taxincluded',
-    'arap_accno',   'payment_accno',     'prepayment_accno', 'terms',
-    'creditlimit',  'threshold',         'paymentmethod',    'remittancevoucher',
-    'curr',         'startdate',         'enddate',          'pricegroup',
-    'discount',     'language_code',     'business',         'taxnumber',
-    'sic_code',     'employee',          'notes',            'bankname',
-    'bankaddress1', 'bankaddress2',      'bankzipcode',      'bankcity',
-    'bankstate',    'bankcountry',       'iban',             'qriban',
-    'bic',          'membernumber',      'clearingnumber',
+    'id',                 "$form->{db}number", 'typeofcontact', 'name',
+    'salutation',         'firstname',         'lastname',      'contacttitle',
+    'occupation',         'gender',            'address1',      'streetname',
+    'buildingnumber',     'address2',          'zipcode',       'city',
+    'state',              'country',           'phone',         'fax',
+    'mobile',             'email',             'cc',            'bcc',
+    'taxaccounts',        'taxincluded',       'arap_accno',    'payment_accno',
+    'prepayment_accno',   'terms',             'creditlimit',   'threshold',
+    'paymentmethod',      'remittancevoucher', 'curr',          'startdate',
+    'enddate',            'pricegroup',        'discount',      'language_code',
+    'business',           'taxnumber',         'sic_code',      'employee',
+    'notes',              'bankname',          'bankaddress1',  'bankstreetname',
+    'bankbuildingnumber', 'bankaddress2',      'bankzipcode',   'bankcity',
+    'bankstate',          'bankcountry',       'iban',          'qriban',
+    'bic',                'membernumber',      'clearingnumber',
   );
 
   my $ss = SL::Spreadsheet->new($form, $userspath);

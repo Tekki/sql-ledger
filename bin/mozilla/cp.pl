@@ -176,7 +176,7 @@ sub payment {
 
       $form->{"$form->{vc}_id"} = $form->{"all_$form->{vc}"}->[0]->{id};
 
-      for (qw(address1 address2 city zipcode state country)) {
+      for (qw(address1 streetname buildingnumber address2 city zipcode state country)) {
         $form->{$_} = $form->{"all_$form->{vc}"}->[0]->{$_};
       }
       $form->{currency} = $form->{"all_$form->{vc}"}->[0]->{curr};
@@ -1277,7 +1277,7 @@ sub payment_header {
 # $locale->text('Vendor Number')
 
   if ($form->{$form->{vc}} eq "") {
-    for (qw(address1 address2 city zipcode state country)) { $form->{$_} = "" }
+    for (qw(address1 streetname buildingnumber address2 city zipcode state country)) { $form->{$_} = "" }
   }
 
   if ($form->{defaultcurrency}) {
@@ -1508,6 +1508,9 @@ javascript:window.history.forward(1);
                       <td>$form->{address1}</td>
                     </tr>
                     <tr>
+                      <td>$form->{streetname} $form->{buildingnumber}</td>
+                    </tr>
+                    <tr>
                       <td>$form->{address2}</td>
                     </tr>
                       <td>$form->{city}</td>
@@ -1570,7 +1573,7 @@ javascript:window.history.forward(1);
   </tr>
 |;
 
-  $form->hide_form(qw(address1 address2 city state zipcode country));
+  $form->hide_form(qw(address1 streetname buildingnumber address2 city state zipcode country));
 
 }
 
@@ -2113,7 +2116,7 @@ sub print_payment {
 
   &check_form;
 
-  @a = qw(name text_amount text_decimal address1 address2 city state zipcode country memo);
+  @a = qw(name text_amount text_decimal address1 streetname buildingnumber address2 city state zipcode country memo);
 
   %temp = ();
   for (@a) { $temp{$_} = $form->{$_} }
@@ -2207,7 +2210,7 @@ sub check_openvc {
 
       if ($form->{"old$form->{vc}"} ne $form->{$form->{vc}}) {
 
-        for (qw(address1 address2 city state zipcode country)) { $form->{$_} = "" }
+        for (qw(address1 streetname buildingnumber address2 city state zipcode country)) { $form->{$_} = "" }
 
         $form->remove_locks(\%myconfig, undef, $form->{arap});
         $form->{locks_removed} = 1;

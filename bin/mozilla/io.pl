@@ -11,6 +11,8 @@
 #
 #======================================================================
 
+use SL::ADR;
+
 # any custom scripts for this one
 if (-f "$form->{path}/custom/io.pl") {
   eval { require "$form->{path}/custom/io.pl"; };
@@ -1752,7 +1754,7 @@ sub print_form {
     for ("${inv}date", "${due}date", "shippingdate", "transdate") { $form->{$_} = $locale->date(\%myconfig, $form->{$_}, $form->{longformat}) }
   }
 
-  @f = qw(email name address1 address2 city state zipcode country contact phone fax);
+  @f = qw(email name address1 streetname buildingnumber address2 city state zipcode country countryname contact phone fax);
 
   $fillshipto = 1;
   # check for shipto
@@ -1775,7 +1777,7 @@ sub print_form {
     if ($fillshipto) {
       if ($form->{warehouse}) {
         $form->{shiptoname} = $form->{company};
-        for (qw(address1 address2 city state zipcode country)) {
+        for (qw(address1 streetname buildingnumber address2 city state zipcode country)) {
           $form->{"shipto$_"} = $form->{"warehouse$_"};
         }
       } else {
@@ -1789,13 +1791,17 @@ sub print_form {
     }
   }
 
+  # country names
+  $form->{countryname}       = SL::ADR::country_name($form->{country});
+  $form->{shiptocountryname} = SL::ADR::country_name($form->{shiptocountry});
+
   # remove email
   shift @f;
 
   # some of the stuff could have umlauts so we translate them
   push @f, qw(contact shippingpoint shipvia notes intnotes employee warehouse paymentmethod);
   push @f, qw(all_partsgroup all_projectnumber first_projectnumber first_projectdescription);
-  push @f, map { "shipto$_" } qw(name address1 address2 city state zipcode country contact email phone fax);
+  push @f, map { "shipto$_" } qw(name address1 streetname buildingnumber address2 city state zipcode country countryname contact email phone fax);
   push @f, qw(firstname lastname salutation contacttitle occupation mobile);
 
   push @f, ("${inv}number", "${inv}date", "${due}date", "${inv}description");
@@ -2008,21 +2014,24 @@ sub ship_to {
   $form->{rowcount}--;
 
   %shipto = (
-          address1 => { i => 2, label => $locale->text('Address') },
-          address2 => { i => 3, label => '' },
-              city => { i => 4, label => $locale->text('City') },
-             state => { i => 5, label => $locale->text('State/Province') },
-           zipcode => { i => 6, label => $locale->text('Zip/Postal Code') },
-           country => { i => 7, label => $locale->text('Country') },
-           contact => { i => 8, label => $locale->text('Contact') },
-             phone => { i => 9, label => $locale->text('Phone') },
-               fax => { i => 10, label => $locale->text('Fax') },
-             email => { i => 11, label => $locale->text('E-mail') } );
+    address1       => {i => 2,  label => $locale->text('Address')},
+    streetname     => {i => 3,  label => $locale->text('Street')},
+    buildingnumber => {i => 4,  label => $locale->text('Number')},
+    address2       => {i => 5,  label => $locale->text('Addition')},
+    city           => {i => 6,  label => $locale->text('City')},
+    state          => {i => 7,  label => $locale->text('State/Province')},
+    zipcode        => {i => 8,  label => $locale->text('Zip/Postal Code')},
+    country        => {i => 9,  label => $locale->text('Country')},
+    contact        => {i => 10, label => $locale->text('Contact')},
+    phone          => {i => 11, label => $locale->text('Phone')},
+    fax            => {i => 12, label => $locale->text('Fax')},
+    email          => {i => 13, label => $locale->text('E-mail')}
+  );
 
   $form->header;
 
   $checked = "checked" if $form->{shiptorecurring};
-  
+
   print qq|
 <body>
 
@@ -2053,7 +2062,15 @@ sub ship_to {
         </tr>
         <tr>
           <td></td>
+          <th align=right nowrap>$shipto{streetname}{label}</th>
+          <td>
+            <input name=shiptostreetname size=28 maxlength=32 value="|.$form->quote($form->{shiptostreetname}).qq|">
+            <input name=shiptobuildingnumber size=3 maxlength=32 value="|.$form->quote($form->{shiptobuildingnumber}).qq|">
+          </td>
+        </tr>
+        <tr>
           <td></td>
+          <th align=right nowrap>$shipto{address2}{label}</th>
           <td><input name=shiptoaddress2 size=35 maxlength=32 value="|.$form->quote($form->{shiptoaddress2}).qq|"></td>
         </tr>
         <tr>
@@ -2074,7 +2091,7 @@ sub ship_to {
         <tr>
           <td></td>
           <th align=right nowrap>$shipto{country}{label}</th>
-          <td><input name=shiptocountry size=35 maxlength=32 value="|.$form->quote($form->{shiptocountry}).qq|"></td>
+          <td><input name=shiptocountry size=10 maxlength=32 value="|.$form->quote($form->{shiptocountry}).qq|"></td>
         </tr>
         <tr>
           <td></td>
@@ -2144,7 +2161,7 @@ sub ship_to {
 
   # delete shipto
   for (qw(action all_shipto)) { delete $form->{$_} }
-  for (qw(name address1 address2 city state zipcode country contact phone fax email recurring)) {
+  for (qw(name address1 streetname buildingnumber address2 city state zipcode country contact phone fax email recurring)) {
     delete $form->{"shipto$_"};
     $form->{flds} .= "$_ ";
   }

@@ -127,8 +127,8 @@ sub new {
 
   $self->{version} = "3.2.12";
   $self->{dbversion} = "3.2.4";
-  $self->{version2} = "tekki 3.2.12.48";
-  $self->{dbversion2} = 43;
+  $self->{version2} = "tekki 3.2.12.49rc";
+  $self->{dbversion2} = 49;
   $self->{cssversion} = 42;
 
   $self->{favicon} = 'favicon.ico';
@@ -2629,7 +2629,7 @@ sub add_shipto {
   my ($self, $dbh, $id) = @_;
 
   my $shipto;
-  foreach my $item (qw(name address1 address2 city state zipcode country contact phone fax email)) {
+  for my $item (qw(name address1 streetname buildingnumber address2 city state zipcode country contact phone fax email)) {
     if ($self->{"shipto$item"} ne "") {
       if ($self->{$item} ne $self->{"shipto$item"}) {
         $shipto = 1;
@@ -2640,13 +2640,16 @@ sub add_shipto {
 
   if ($shipto) {
     $self->{shiptorecurring} *= 1;
-    my $query = qq|INSERT INTO shipto (trans_id, shiptoname, shiptoaddress1,
+    my $query = qq|INSERT INTO shipto (trans_id, shiptoname,
+                   shiptoaddress1, shiptostreetname, shiptobuildingnumber,
                    shiptoaddress2, shiptocity, shiptostate,
                    shiptozipcode, shiptocountry, shiptocontact,
                    shiptophone, shiptofax, shiptoemail, shiptorecurring)
                      VALUES ($id, |
                    .$dbh->quote($self->{shiptoname}).qq|, |
                    .$dbh->quote($self->{shiptoaddress1}).qq|, |
+                   .$dbh->quote($self->{shiptostreetname}).qq|, |
+                   .$dbh->quote($self->{shiptobuildingnumber}).qq|, |
                    .$dbh->quote($self->{shiptoaddress2}).qq|, |
                    .$dbh->quote($self->{shiptocity}).qq|, |
                    .$dbh->quote($self->{shiptostate}).qq|, |
@@ -2761,8 +2764,8 @@ sub get_name {
   }
 
   my $query = qq|SELECT ct.*,
-                 ad.address1, ad.address2, ad.city, ad.state,
-                 ad.zipcode, ad.country
+                 ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+                 ad.city, ad.state, ad.zipcode, ad.country
                  FROM $table ct
                  JOIN address ad ON (ad.trans_id = ct.id)
                  WHERE $where

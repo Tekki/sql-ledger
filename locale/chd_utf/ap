@@ -224,6 +224,7 @@ $self{texts} = {
   'Source'                      => 'Beleg',
   'Spreadsheet'                 => 'Excel-Tabelle',
   'Startdate'                   => 'Startdatum',
+  'Street'                      => 'Strasse',
   'Su'                          => 'So',
   'Subject'                     => 'Betreff',
   'Subtotal'                    => 'Zwischensumme',

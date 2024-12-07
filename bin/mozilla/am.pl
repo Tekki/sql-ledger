@@ -18,6 +18,7 @@ use SL::Form;
 use SL::User;
 use SL::RP;
 use SL::GL;
+use SL::ADR;
 
 require "$form->{path}/js.pl";
 
@@ -251,7 +252,7 @@ print qq|
 
 sub form_footer {
 
-  $form->hide_form(qw(callback path login));
+  $form->hide_form(qw(callback path login checkaddress));
 
   my %button;
 
@@ -2463,7 +2464,7 @@ sub defaults {
   $checked{person} = "checked" if $form->{typeofcontact} eq 'person';
   $roundchange{$form->{roundchange}} = "checked";
 
-  for (qw(cdt checkinventory hideaccounts forcewarehouse)) {
+  for (qw(cdt checkinventory hideaccounts forcewarehouse checkaddress)) {
     $checked{$_} = "checked" if $form->{$_};
   }
 
@@ -2578,6 +2579,10 @@ sub defaults {
                 <td><input name=typeofcontact class=radio type=radio value="" $checked{company}>&nbsp;|.$locale->text('Company').qq|
                 <input name=typeofcontact class=radio type=radio value="person" $checked{person}>&nbsp;|.$locale->text('Person').qq|
                 </td>
+              </tr>
+              <tr>
+                <th align=right>|.$locale->text('Check Addresses').qq|</th>
+                <td><input name=checkaddress class=checkbox type=checkbox value=1 $checked{checkaddress}></td>
               </tr>
               <tr>
                 <th align=right>|.$locale->text('Check Inventory').qq|</th>
@@ -2740,7 +2745,7 @@ sub defaults {
     = 'company address tel fax companyemail companywebsite yearend weightunit businessnumber'
       . ' closedto revtrans audittrail method cdt namesbynumber typeofcontact roundchange'
       . ' referenceurl max_upload_size annualinterest latepaymentfee restockingcharge checkinventory'
-      . ' hideaccounts forcewarehouse publickey';
+      . ' hideaccounts forcewarehouse publickey checkaddress';
 
   for (qw(gl si so vi batch voucher po sq rfq part project employee customer vendor)) { $form->{optional} .= " ${_}number" }
 
@@ -2766,8 +2771,9 @@ sub defaults {
 
   $form->hide_form(qw(optional path login));
 
+  my $save = $locale->text('Save');
   print qq|
-<input type=submit class=submit name=action value="|.$locale->text('Save').qq|">|;
+<input type=submit class=submit name=action value="$save" accesskey="S" title="$save [S]">|;
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -3253,6 +3259,10 @@ pdf--PDF|;
 
 
 sub save_defaults {
+
+  if ($form->{checkaddress} && !SL::ADR::default_country($form)->{valid}) {
+    $form->error($locale->text('Invalid country code!'));
+  }
 
   if ($form->{publickey} && $form->{publickey} ne $form->{old_publickey}) {
     AM->import_publickey(\%myconfig, $form, $gpg, $userspath);
@@ -4020,6 +4030,7 @@ sub list_audit_log {
 
 sub add_warehouse {
 
+  $form->load_defaults(\%myconfig, undef, ['checkaddress']);
   $form->{title} = $locale->text('Add Warehouse');
 
   $form->{callback} = "$form->{script}?action=add_warehouse&path=$form->{path}&login=$form->{login}" unless $form->{callback};
@@ -4100,7 +4111,7 @@ sub list_warehouse {
 |;
 
    $column_data{description} = qq|<td><a href=$form->{script}?action=edit_warehouse&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{description}</td>|;
-   $column_data{address} = qq|<td>$ref->{address1} $ref->{address2} $ref->{city} $ref->{state} $ref->{zipcode} $ref->{country}</td>|;
+   $column_data{address} = qq|<td>$ref->{address1} $ref->{streetname} $ref->{buildingnumber} $ref->{address2} $ref->{city} $ref->{state} $ref->{zipcode} $ref->{country}</td>|;
    $column_data{up} = qq|<td><a href=$form->{script}?action=move&db=warehouse&fld=id&id=$ref->{id}&move=up&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$images/up.png alt="+" border=0></td>|;
    $column_data{down} = qq|<td><a href=$form->{script}?action=move&db=warehouse&fld=id&id=$ref->{id}&move=down&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$images/down.png alt="-" border=0></td>|;
 
@@ -4186,7 +4197,14 @@ sub warehouse_header {
     <td><input name=address1 size=35 maxlength=32 value="|.$form->quote($form->{address1}).qq|"></td>
   </tr>
   <tr>
-    <th></th>
+    <th align=right nowrap>|.$locale->text('Street').qq|</th>
+    <td>
+      <input name=streetname size=28 maxlength=32 value="|.$form->quote($form->{streetname}).qq|">
+      <input name=buildingnumber size=3 maxlength=32 value="|.$form->quote($form->{buildingnumber}).qq|">
+    </td>
+  </tr>
+  <tr>
+    <th align=right nowrap>|.$locale->text('Addition').qq|</th>
     <td><input name=address2 size=35 maxlength=32 value="|.$form->quote($form->{address2}).qq|"></td>
   </tr>
   <tr>
@@ -4203,7 +4221,7 @@ sub warehouse_header {
   </tr>
   <tr>
     <th align=right nowrap>|.$locale->text('Country').qq|</th>
-    <td><input name=country size=35 maxlength=32 value="|.$form->quote($form->{country}).qq|"></td>
+    <td><input name=country size=10 maxlength=32 value="|.$form->quote($form->{country}).qq|"></td>
   </tr>
   <tr>
     <td colspan=2><hr size=3 noshade></td>
@@ -4217,6 +4235,10 @@ sub warehouse_header {
 sub save_warehouse {
 
   $form->isblank("description", $locale->text('Description missing!'));
+  if ($form->{checkaddress}) {
+    SL::ADR::check_country($form, $locale->text('Invalid country code!'));
+  }
+
   if (AM->save_warehouse(\%myconfig, \%$form)) {
     $form->redirect($locale->text('Warehouse saved!'));
   }
@@ -5455,7 +5477,14 @@ sub bank_header {
           <td><input name=address1 size=35 maxlength=32 value="|.$form->quote($form->{address1}).qq|"></td>
         </tr>
         <tr>
-          <th></th>
+          <th align=right nowrap>|.$locale->text('Street').qq|</th>
+          <td>
+            <input name=streetname size=28 maxlength=32 value="|.$form->quote($form->{streetname}).qq|">
+            <input name=buildingnumber size=3 maxlength=32 value="|.$form->quote($form->{buildingnumber}).qq|"></td>
+          </td>
+        </tr>
+        <tr>
+          <th align=right nowrap>|.$locale->text('Addition').qq|</th>
           <td><input name=address2 size=35 maxlength=32 value="|.$form->quote($form->{address2}).qq|"></td>
         </tr>
         <tr>
@@ -5468,11 +5497,11 @@ sub bank_header {
         </tr>
         <tr>
           <th align=right nowrap>|.$locale->text('Zip/Postal Code').qq|</th>
-          <td><input name=zipcode size=35 maxlength=10 value="|.$form->quote($form->{zipcode}).qq|"></td>
+          <td><input name=zipcode size=10 maxlength=10 value="|.$form->quote($form->{zipcode}).qq|"></td>
         </tr>
         <tr>
           <th align=right nowrap>|.$locale->text('Country').qq|</th>
-          <td><input name=country size=35 maxlength=32 value="|.$form->quote($form->{country}).qq|"></td>
+          <td><input name=country size=10 maxlength=32 value="|.$form->quote($form->{country}).qq|"></td>
         </tr>
         <tr>
           <th align=right>|.$locale->text('Member No.').qq|</th>
@@ -5488,7 +5517,7 @@ sub bank_header {
         </tr>
         <tr>
           <th align=right>|.$locale->text('DCN').qq|</th>
-          <td><input name=dcn size=60 value="$form->{dcn}"></td>
+          <td><input name=dcn size=80 value="$form->{dcn}"></td>
         </tr>
         <tr>
           <th align=right>|.$locale->text('Check No.').qq|</th>
@@ -5519,7 +5548,7 @@ sub bank_footer {
 
   $form->{type} = "bank";
 
-  $form->hide_form(qw(id type login path account callback));
+  $form->hide_form(qw(id type login path account callback checkaddress));
 
   $form->print_button(\%button);
 
@@ -5540,6 +5569,10 @@ sub bank_footer {
 
 
 sub save_bank {
+
+  if ($form->{checkaddress}) {
+    SL::ADR::check_country($form, $locale->text('Invalid country code!'));
+  }
 
   if (!AM->save_bank(\%myconfig, \%$form)) {
     $form->error($locale->text('Failed to save Bank!'));

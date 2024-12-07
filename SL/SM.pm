@@ -252,7 +252,8 @@ sub repost_invoices {
                   a.waybill,
                   a.warehouse_id, a.description, a.onhold, a.exchangerate,
                   a.dcn, a.bank_id, a.paymentmethod_id,
-                  ct.name AS $arap{$item}{vc}, ad.address1, ad.address2,
+                  ct.name AS $arap{$item}{vc},
+                  ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
                   ad.city, ad.state, ad.zipcode, ad.country,
                   ct.contact, ct.phone, ct.fax, ct.email,
                   e.login
@@ -285,8 +286,8 @@ sub repost_invoices {
       $sth->finish;
 
       # get shipto
-      $query = qq|SELECT shiptoname, shiptoaddress1, shiptoaddress2,
-                  shiptocity, shiptostate, shiptozipcode, shiptocountry,
+      $query = qq|SELECT shiptoname, shiptoaddress1, shiptostreetname, shiptobuildingnumber,
+                  shiptoaddress2, shiptocity, shiptostate, shiptozipcode, shiptocountry,
                   shiptocontact, shiptophone, shiptofax, shiptoemail
                   FROM shipto$tid
                   WHERE trans_id = $id|;

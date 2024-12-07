@@ -2225,7 +2225,7 @@ sub select_name {
     $column_data{name} = qq|<td><input name="new_name_$i" type=hidden value="|.$form->quote($ref->{name}).qq|">$ref->{name}</td>|;
 
     $column_data{"$form->{vc}number"} = qq|<td><input name="new_$form->{vc}number{_}_$i" type=hidden value="|.$form->quote($ref->{"$form->{vc}number"}).qq|">$ref->{"$form->{vc}number"}</td>|;
-    $column_data{address} = qq|<td>$ref->{address1} $ref->{address2}</td>|;
+    $column_data{address} = qq|<td>$ref->{address1} $ref->{streetname} $ref->{buildingnumber} $ref->{address2}</td>|;
     for (qw(city state zipcode country)) { $column_data{$_} = qq|<td>$ref->{$_}&nbsp;</td>| }
 
     $j++; $j %= 2;

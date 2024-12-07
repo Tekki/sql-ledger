@@ -587,8 +587,8 @@ sub transactions {
                  p.description AS project,
                  ac.memo, '0' AS name_id, '' AS db,
                  $gdescription AS lineitem, '' AS name, '' AS vcnumber,
-                 '' AS address1, '' AS address2, '' AS city,
-                 '' AS zipcode, '' AS country
+                 '' AS address1, '' AS streetname, '' AS buildingnumber, '' AS address2,
+                 '' AS city, '' AS zipcode, '' AS country
                  FROM gl g
                  JOIN acc_trans ac ON (g.id = ac.trans_id)
                  JOIN chart c ON (ac.chart_id = c.id)
@@ -607,8 +607,8 @@ sub transactions {
                  p.description AS project,
                  ac.memo, ct.id AS name_id, 'customer' AS db,
                  $lineitem AS lineitem, ct.name, ct.customernumber,
-                 ad.address1, ad.address2, ad.city,
-                 ad.zipcode, ad.country
+                 ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+                 ad.city, ad.zipcode, ad.country
                  FROM ar a
                  JOIN acc_trans ac ON (a.id = ac.trans_id)
                  $invoicejoin
@@ -630,8 +630,8 @@ sub transactions {
                  p.description AS project,
                  ac.memo, ct.id AS name_id, 'vendor' AS db,
                  $lineitem AS lineitem, ct.name, ct.vendornumber,
-                 ad.address1, ad.address2, ad.city,
-                 ad.zipcode, ad.country
+                 ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+                 ad.city, ad.zipcode, ad.country
                  FROM ap a
                  JOIN acc_trans ac ON (a.id = ac.trans_id)
                  $invoicejoin
@@ -724,7 +724,9 @@ sub transactions {
       $ref->{debit} = 0;
     }
 
-    for (qw(address1 address2 city zipcode country)) { $ref->{address} .= "$ref->{$_} " }
+    for (qw(address1 streetname buildingnumber address2 city zipcode country)) {
+      $ref->{address} .= "$ref->{$_} " if $ref->{$_};
+    }
 
     $trans{$ref->{id}}{$i} = {
                  transdate => $ref->{transdate},

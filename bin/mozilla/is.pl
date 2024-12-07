@@ -538,7 +538,7 @@ sub form_header {
     $address = qq|
               <tr>
                 <th align=right nowrap>|.$locale->text('Address').qq|</th>
-                <td>$form->{address1} $form->{address2} $form->{zipcode} $form->{city} $form->{state} $form->{country}</td>
+                <td>$form->{address1} $form->{streetname} $form->{buildingnumber} $form->{address2} $form->{zipcode} $form->{city} $form->{state} $form->{country}</td>
               </tr>
 |;
 
@@ -704,8 +704,8 @@ sub form_header {
 </tr>
 |;
 
-  $form->hide_form(map { "shipto$_" } qw(name address1 address2 city state zipcode country contact phone fax email recurring));
-  $form->hide_form(qw(address1 address2 city state zipcode country message email subject cc bcc taxaccounts dcn pricegroup));
+  $form->hide_form(map { "shipto$_" } qw(name address1 streetname buildingnumber address2 city state zipcode country contact phone fax email recurring));
+  $form->hide_form(qw(address1 streetname buildingnumber address2 city state zipcode country message email subject cc bcc taxaccounts dcn pricegroup));
 
 foreach $accno (split / /, $form->{taxaccounts}) { $form->hide_form(map { "${accno}_$_" } qw(rate description taxnumber)) }
 

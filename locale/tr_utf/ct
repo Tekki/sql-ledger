@@ -179,6 +179,7 @@ $self{texts} = {
   'Startdate'                   => 'Başlangıç',
   'State'                       => 'Şehir',
   'State/Province'              => 'Şehir',
+  'Street'                      => 'Sokak',
   'Su'                          => 'Pz',
   'Sub-contract GIFI'           => 'Taşaron GIFI',
   'Subtotal'                    => 'Aratoplam',

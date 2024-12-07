@@ -44,11 +44,13 @@ sub get_employee {
 
   if ($form->{id} *= 1) {
     $query = qq|SELECT e.*,
-                ad.id AS addressid, ad.address1, ad.address2, ad.city,
-                ad.state, ad.zipcode, ad.country,
+                ad.id AS addressid, ad.address1, ad.streetname, ad.buildingnumber,
+                ad.address2, ad.city, ad.state, ad.zipcode, ad.country,
                 bk.name AS bankname, bk.iban, bk.qriban, bk.bic,
                 bk.membernumber, bk.clearingnumber,
                 ad1.address1 AS bankaddress1,
+                ad1.streetname AS bankstreetname,
+                ad1.buildingnumber AS bankbuildingnumber,
                 ad1.address2 AS bankaddress2,
                 ad1.city AS bankcity,
                 ad1.state AS bankstate,
@@ -500,10 +502,12 @@ sub save_employee {
     $var = "$form->{addressid}, ";
   }
 
-  $query = qq|INSERT INTO address ($id trans_id, address1, address2,
-              city, state, zipcode, country) VALUES ($var
+  $query = qq|INSERT INTO address ($id trans_id, address1, streetname, buildingnumber,
+              address2, city, state, zipcode, country) VALUES ($var
               $form->{id},
               |.$dbh->quote($form->{address1}).qq|,
+              |.$dbh->quote($form->{streetname}).qq|,
+              |.$dbh->quote($form->{buildingnumber}).qq|,
               |.$dbh->quote($form->{address2}).qq|,
               |.$dbh->quote($form->{city}).qq|,
               |.$dbh->quote($form->{state}).qq|,
@@ -521,7 +525,7 @@ sub save_employee {
   }
 
   if (!$ok) {
-    for (qw(name address1 address2 city state zipcode country)) {
+    for (qw(name address1 streetname buildingnumber address2 city state zipcode country)) {
       if ($form->{"bank$_"}) {
         $ok = 1;
         last;
@@ -564,7 +568,7 @@ sub save_employee {
   }
 
   $ok = 0;
-  for (qw(address1 address2 city state zipcode country)) {
+  for (qw(address1 streetname buildingnumber address2 city state zipcode country)) {
     if ($form->{"bank$_"}) {
       $ok = 1;
       last;
@@ -573,10 +577,12 @@ sub save_employee {
 
   if ($ok) {
     if ($bank_address_id) {
-      $query = qq|INSERT INTO address (id, trans_id, address1, address2,
-                  city, state, zipcode, country) VALUES (
+      $query = qq|INSERT INTO address (id, trans_id, address1, streetname, buildingnumber,
+                  address2, city, state, zipcode, country) VALUES (
                   $bank_address_id, $bank_address_id,
                   |.$dbh->quote(uc $form->{bankaddress1}).qq|,
+                  |.$dbh->quote(uc $form->{bankstreetname}).qq|,
+                  |.$dbh->quote(uc $form->{bankbuildingnumber}).qq|,
                   |.$dbh->quote(uc $form->{bankaddress2}).qq|,
                   |.$dbh->quote(uc $form->{bankcity}).qq|,
                   |.$dbh->quote(uc $form->{bankstate}).qq|,
@@ -595,10 +601,12 @@ sub save_employee {
                   WHERE id = $form->{id}|;
       ($bank_address_id) = $dbh->selectrow_array($query);
 
-      $query = qq|INSERT INTO address (id, trans_id, address1, address2,
-                  city, state, zipcode, country) VALUES (
+      $query = qq|INSERT INTO address (id, trans_id, address1, streetname, buildingnumber,
+                  address2, city, state, zipcode, country) VALUES (
                   $bank_address_id, $bank_address_id,
                   |.$dbh->quote(uc $form->{bankaddress1}).qq|,
+                  |.$dbh->quote(uc $form->{bankstreetname}).qq|,
+                  |.$dbh->quote(uc $form->{bankbuildingnumber}).qq|,
                   |.$dbh->quote(uc $form->{bankaddress2}).qq|,
                   |.$dbh->quote(uc $form->{bankcity}).qq|,
                   |.$dbh->quote(uc $form->{bankstate}).qq|,
@@ -795,8 +803,8 @@ sub employees {
   }
 
   $query = qq|SELECT DISTINCT e.*,
-              ad.address1, ad.address2, ad.city, ad.state,
-              ad.zipcode, ad.country,
+              ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+              ad.city, ad.state, ad.zipcode, ad.country,
               bk.iban, bk.qriban, bk.bic,
               r.description AS acsrole,
               ew.employee_id AS payroll
@@ -816,7 +824,9 @@ sub employees {
 
   while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
     $ref->{address} = "";
-    for (qw(address1 address2 city state zipcode country)) { $ref->{address} .= "$ref->{$_} " }
+    for (qw(address1 streetname buildingnumber address2 city state zipcode country)) {
+      $ref->{address} .= "$ref->{$_} " if $ref->{$_};
+    }
     push @{ $form->{all_employee} }, $ref;
   }
   $sth->finish;
@@ -1311,13 +1321,15 @@ sub payslip_details {
 
   if ($id *= 1) {
     $query = qq|SELECT e.*,
-                ad.address1, ad.address2, ad.city,
-                ad.state, ad.zipcode, ad.country,
+                ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+                ad.city, ad.state, ad.zipcode, ad.country,
                 bk.name AS employeebankname, bk.iban AS employeebankiban,
                 bk.qriban AS employeebankqriban, bk.bic AS employeebankbic,
                 bk.membernumber AS employeebankmembernumber,
                 bk.clearingnumber AS employeebankclearingnumber,
                 ad1.address1 AS employeebankaddress1,
+                ad1.streetname AS employeebankstreetname,
+                ad1.buildingnumber AS employeebankbuildingnumber,
                 ad1.address2 AS employeebankaddress2,
                 ad1.city AS employeebankcity,
                 ad1.state AS employeebankstate,
@@ -1366,6 +1378,8 @@ sub payslip_details {
                 bk.name AS bankname, bk.iban, bk.qriban, bk.bic, bk.dcn, bk.rvc,
                 bk.membernumber, bk.clearingnumber,
                 ad1.address1 AS bankaddress1,
+                ad1.streetname AS bankstreetname,
+                ad1.buildingnumber AS bankbuildingnumber,
                 ad1.address2 AS bankaddress2,
                 ad1.city AS bankcity,
                 ad1.state AS bankstate,

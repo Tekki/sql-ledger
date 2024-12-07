@@ -867,7 +867,8 @@ sub transactions {
                  a.ponumber, a.warehouse_id, w.description AS warehouse,
                  a.description, a.dcn, pm.description AS paymentmethod,
                  a.datepaid - a.duedate AS paymentdiff,
-                 ad.address1, ad.address2, ad.city, ad.state, ad.zipcode, ad.country,
+                 ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+                 ad.city, ad.state, ad.zipcode, ad.country,
                  ct.salutation, ct.firstname, ct.lastname, ct.contacttitle,
                  ct.occupation, ct.mobile, ct.email, ct.gender, ct.typeofcontact,
                  c.description AS paymentaccount, vc.taxnumber
@@ -1060,7 +1061,9 @@ sub transactions {
       next if $form->round_amount($ref->{amount}, $form->{precision}) == $form->round_amount($ref->{paid}, $form->{precision});
     }
 
-    for (qw(address1 address2)) { $ref->{address} .= "$ref->{$_} " }
+    for (qw(address1 streetname buildingnumber address2)) {
+      $ref->{address} .= "$ref->{$_} " if $ref->{$_};
+    }
 
     if ($form->{summary}) {
       if ($sameid != $ref->{id}) {
@@ -1140,8 +1143,9 @@ sub get_name {
   my $query = qq|SELECT c.name AS $form->{vc}, c.$form->{vc}number,
                  c.discount, c.creditlimit, c.terms,
                  c.email, c.cc, c.bcc, c.taxincluded,
-                 ad.address1, ad.address2, ad.city, ad.state,
-                 ad.zipcode, ad.country, c.curr AS currency, c.language_code,
+                 ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+                 ad.city, ad.state, ad.zipcode, ad.country,
+                 c.curr AS currency, c.language_code,
                  $duedate AS duedate, c.notes AS intnotes,
                  b.discount AS tradediscount, b.description AS business,
                  e.name AS employee, e.id AS employee_id,
@@ -1334,7 +1338,8 @@ sub company_details {
   $form->{vc} =~ s/;//g;
 
   # get rest for the customer/vendor
-  my $query = qq|SELECT ct.$form->{vc}number, ct.name, ad.address1, ad.address2,
+  my $query = qq|SELECT ct.$form->{vc}number, ct.name,
+                 ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
                  ad.city, ad.state, ad.zipcode, ad.country,
                  ct.contact, ct.phone as $form->{vc}phone,
                  ct.fax as $form->{vc}fax,
@@ -1394,7 +1399,7 @@ sub company_details {
   }
 
   if ($form->{warehouse_id} *= 1) {
-    $query = qq|SELECT address1, address2, city, state, zipcode, country
+    $query = qq|SELECT address1, streetname, buildingnumber, address2, city, state, zipcode, country
                 FROM address
                 WHERE trans_id = $form->{warehouse_id}|;
     $sth = $dbh->prepare($query) || $form->dberror($query);

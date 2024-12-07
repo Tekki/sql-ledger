@@ -282,7 +282,7 @@ sub form_header {
 |;
 
   $form->hide_form(map { "select$_" } qw(currency customer department warehouse employee language AR AR_paid paymentmethod printer));
-  $form->hide_form(qw(id till type format printed title discount creditlimit creditremaining tradediscount business address1 address2 city state zipcode country pricegroup closedto locked customer_id payment_accno precision roundchange cashovershort action vc cashdrawer poledisplay parentgroups helpref));
+  $form->hide_form(qw(id till type format printed title discount creditlimit creditremaining tradediscount business address1 streetname buildingnumber address2 city state zipcode country pricegroup closedto locked customer_id payment_accno precision roundchange cashovershort action vc cashdrawer poledisplay parentgroups helpref));
   $form->hide_form(map { "old$_" } qw(transdate customer language customernumber));
 
   print qq|
@@ -301,7 +301,7 @@ sub form_header {
               $customer
               <tr>
                 <th align=right nowrap>|.$locale->text('Address').qq|</th>
-                <td>$form->{address1} $form->{address2} $form->{zipcode} $form->{city} $form->{state} $form->{country}</td>
+                <td>$form->{address1} $form->{streetname} $form->{buildingnumber} $form->{address2} $form->{zipcode} $form->{city} $form->{state} $form->{country}</td>
               </tr>
               $pricegroup
 

@@ -74,7 +74,7 @@ CREATE TABLE defaults (
 );
 --
 INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '3.2.4');
-INSERT INTO defaults (fldname, fldvalue) VALUES ('version2', '30');
+INSERT INTO defaults (fldname, fldvalue) VALUES ('version2', '49');
 --
 CREATE TABLE acc_trans (
   trans_id int,
@@ -392,7 +392,9 @@ CREATE TABLE shipto (
   shiptophone varchar(20),
   shiptofax varchar(20),
   shiptoemail text,
-  shiptorecurring bool DEFAULT 'f'
+  shiptorecurring bool DEFAULT 'f',
+  shiptostreetname varchar(32),
+  shiptobuildingnumber varchar(32)
 );
 --
 CREATE TABLE vendor (
@@ -641,7 +643,9 @@ CREATE TABLE address (
   city varchar(32),
   state varchar(32),
   zipcode varchar(10),
-  country varchar(32)
+  country varchar(32),
+  streetname varchar(32),
+  buildingnumber varchar(32)
 );
 --
 CREATE TABLE contact (

@@ -369,6 +369,7 @@ $self{texts} = {
   'Sort Names by'               => 'Adları sıralama',
   'Standard Industrial Codes'   => 'Standart Endüstri Kodları',
   'State/Province'              => 'Şehir',
+  'Street'                      => 'Sokak',
   'Stylesheet'                  => 'Stil Sayfası',
   'Su'                          => 'Pz',
   'System Defaults'             => 'Sistem Öntanımları',

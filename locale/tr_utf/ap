@@ -225,6 +225,7 @@ $self{texts} = {
   'Source'                      => 'Kaynak',
   'Spreadsheet'                 => 'Hesap Tablosu',
   'Startdate'                   => 'Başlangıç',
+  'Street'                      => 'Sokak',
   'Su'                          => 'Pz',
   'Subject'                     => 'Konu',
   'Subtotal'                    => 'Aratoplam',

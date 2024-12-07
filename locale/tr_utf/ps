@@ -391,6 +391,7 @@ $self{texts} = {
   'Statement'                   => 'Çıktı',
   'Statement sent to'           => 'Çıktı gönderildi:',
   'Statements sent to printer!' => 'Çıktılar yazıcıya gönderildi!',
+  'Street'                      => 'Sokak',
   'Su'                          => 'Pz',
   'Subject'                     => 'Konu',
   'Subtotal'                    => 'Aratoplam',

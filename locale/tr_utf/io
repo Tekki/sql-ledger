@@ -123,6 +123,7 @@ $self{texts} = {
   'Shipping Address'            => 'Sevk Adresi',
   'Sort by'                     => 'Sıralama',
   'State/Province'              => 'Şehir',
+  'Street'                      => 'Sokak',
   'Subject'                     => 'Konu',
   'Subtotal'                    => 'Aratoplam',
   'Text'                        => 'Yazı',

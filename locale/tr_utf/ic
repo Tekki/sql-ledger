@@ -283,6 +283,7 @@ $self{texts} = {
   'Stock Adjustment'            => 'Stok Ayarlaması',
   'Stock Assembly'              => 'Montajı Stokla',
   'Stock level'                 => 'Stok seviyesi',
+  'Street'                      => 'Sokak',
   'Su'                          => 'Pz',
   'Subject'                     => 'Konu',
   'Subtotal'                    => 'Aratoplam',

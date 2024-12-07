@@ -408,7 +408,7 @@ sub warehouses {
   $form->{company} = $defaults{company};
 
   my $query = qq|SELECT w.id, w.description,
-                 a.address1, a.address2, a.city, a.state, a.zipcode, a.country
+                 a.address1, a.streetname, a.buildingnumber, a.address2, a.city, a.state, a.zipcode, a.country
                  FROM warehouse w
                  JOIN address a ON (a.trans_id = w.id)
                  ORDER BY w.rn|;
@@ -435,7 +435,7 @@ sub get_warehouse {
 
   $form->{id} *= 1;
 
-  my $query = qq|SELECT w.description, a.address1, a.address2, a.city,
+  my $query = qq|SELECT w.description, a.address1, a.streetname, a.buildingnumber, a.address2, a.city,
                  a.state, a.zipcode, a.country
                  FROM warehouse w
                  JOIN address a ON (a.trans_id = w.id)
@@ -452,6 +452,8 @@ sub get_warehouse {
               WHERE warehouse_id = $form->{id}|;
   ($form->{orphaned}) = $dbh->selectrow_array($query);
   $form->{orphaned} = !$form->{orphaned};
+
+  $form->load_defaults(undef, $dbh, ['checkaddress']);
 
   $dbh->disconnect;
 
@@ -504,6 +506,8 @@ sub save_warehouse {
 
   $query = qq|UPDATE address SET
               address1 = |.$dbh->quote($form->{address1}).qq|,
+              streetname = |.$dbh->quote($form->{streetname}).qq|,
+              buildingnumber = |.$dbh->quote($form->{buildingnumber}).qq|,
               address2 = |.$dbh->quote($form->{address2}).qq|,
               city = |.$dbh->quote($form->{city}).qq|,
               state = |.$dbh->quote($form->{state}).qq|,
@@ -2377,7 +2381,7 @@ sub bank_accounts {
   my $query = qq|SELECT c.id, c.accno, c.description, c.closed,
                  bk.name, bk.iban, bk.qriban, bk.bic, bk.membernumber, bk.clearingnumber,
                  bk.dcn, bk.rvc,
-                 ad.address1, ad.address2, ad.city,
+                 ad.address1, ad.streetname, ad.buildingnumber, ad.address2, ad.city,
                  ad.state, ad.zipcode, ad.country,
                  l.description AS translation
                  FROM chart c
@@ -2394,7 +2398,7 @@ sub bank_accounts {
 
   while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
     $ref->{address} = "";
-    for (qw(address1 address2 city state zipcode country)) {
+    for (qw(address1 streetname buildingnumber address2 city state zipcode country)) {
       $ref->{address} .= "$ref->{$_}\n" if $ref->{$_};
     }
     chop $ref->{address};
@@ -2421,7 +2425,7 @@ sub get_bank {
   $query = qq|SELECT c.accno, c.description, c.closed,
               bk.name, bk.iban, bk.qriban, bk.bic, bk.membernumber, bk.clearingnumber,
               bk.dcn, bk.rvc,
-              ad.address1, ad.address2, ad.city,
+              ad.address1, ad.streetname, ad.buildingnumber, ad.address2, ad.city,
               ad.state, ad.zipcode, ad.country,
               l.description AS translation
               FROM chart c
@@ -2438,8 +2442,8 @@ sub get_bank {
   for (keys %$ref) { $form->{$_} = $ref->{$_} }
   $sth->finish;
 
-  my %defaults = $form->get_defaults($dbh, \@{['company', "check\_$form->{accno}", "receipt\_$form->{accno}"]});
-  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+  $form->load_defaults(undef, $dbh,
+    ['company', "check\_$form->{accno}", "receipt\_$form->{accno}", 'checkaddress']);
 
   $dbh->disconnect;
 
@@ -2465,7 +2469,7 @@ sub save_bank {
   $dbh->do($query) || $form->dberror($query);
 
   my $ok;
-  for (qw(name iban qriban bic address1 address2 city state zipcode country membernumber clearingnumber rvc dcn)) {
+  for (qw(name iban qriban bic address1 streetname buildingnumber address2 city state zipcode country membernumber clearingnumber rvc dcn)) {
     if ($form->{$_}) {
       $ok = 1;
       last;
@@ -2478,10 +2482,10 @@ sub save_bank {
   if ($ok) {
     if ($id) {
       $query = qq|UPDATE bank SET
-                  name = |.$dbh->quote(uc $form->{name}).qq|,
+                  name = |.$dbh->quote($form->{name}).qq|,
                   iban = |.$dbh->quote($form->{iban}).qq|,
                   qriban = |.$dbh->quote($form->{qriban}).qq|,
-                  bic = |.$dbh->quote(uc $form->{bic}).qq|,
+                  bic = |.$dbh->quote($form->{bic}).qq|,
                   membernumber = |.$dbh->quote($form->{membernumber}).qq|,
                   clearingnumber = |.$dbh->quote($form->{clearingnumber}).qq|,
                   rvc = |.$dbh->quote($form->{rvc}).qq|,
@@ -2492,9 +2496,9 @@ sub save_bank {
       $query = qq|INSERT INTO bank (id, name, iban, qriban, bic, membernumber,
                   clearingnumber, rvc, dcn)
                   VALUES ($form->{id}, |
-                  .$dbh->quote(uc $form->{name}).qq|, |
-                  .$dbh->quote(uc $form->{iban}).qq|, |
-                  .$dbh->quote(uc $form->{qriban}).qq|, |
+                  .$dbh->quote($form->{name}).qq|, |
+                  .$dbh->quote($form->{iban}).qq|, |
+                  .$dbh->quote($form->{qriban}).qq|, |
                   .$dbh->quote($form->{bic}).qq|, |
                   .$dbh->quote($form->{membernumber}).qq|, |
                   .$dbh->quote($form->{clearingnumber}).qq|, |
@@ -2514,17 +2518,19 @@ sub save_bank {
     }
 
     $query = qq|UPDATE address SET
-                address1 = |.$dbh->quote(uc $form->{address1}).qq|,
-                address2 = |.$dbh->quote(uc $form->{address2}).qq|,
-                city = |.$dbh->quote(uc $form->{city}).qq|,
-                state = |.$dbh->quote(uc $form->{state}).qq|,
-                zipcode = |.$dbh->quote(uc $form->{zipcode}).qq|,
-                country = |.$dbh->quote(uc $form->{country}).qq|
+                address1 = |.$dbh->quote($form->{address1}).qq|,
+                streetname = |.$dbh->quote($form->{streetname}).qq|,
+                buildingnumber = |.$dbh->quote($form->{buildingnumber}).qq|,
+                address2 = |.$dbh->quote($form->{address2}).qq|,
+                city = |.$dbh->quote($form->{city}).qq|,
+                state = |.$dbh->quote($form->{state}).qq|,
+                zipcode = |.$dbh->quote($form->{zipcode}).qq|,
+                country = |.$dbh->quote($form->{country}).qq|
                 WHERE trans_id = $form->{id}|;
     $dbh->do($query) || $form->dberror($query);
 
     %audittrail = ( tablename  => 'bank',
-                    reference  => uc $form->{name},
+                    reference  => $form->{name},
                     formname   => '',
                     action     => 'saved',
                     id         => $form->{id} );
@@ -2539,7 +2545,7 @@ sub save_bank {
     $dbh->do($query) || $form->dberror($query);
 
     %audittrail = ( tablename  => 'bank',
-                     reference  => uc $form->{name},
+                     reference  => $form->{name},
                      formname   => '',
                      action     => 'deleted',
                      id         => $form->{id} );

@@ -13,6 +13,7 @@
 
 use SL::CT;
 use SL::RU;
+use SL::ADR;
 
 require "$form->{path}/cm.pl";
 require "$form->{path}/js.pl";
@@ -747,7 +748,7 @@ sub list_names {
   @columns = (id, name, typeofcontact, "$form->{db}number");
 
   if ($form->{l_address}) {
-    for (address1, address2) {
+    for (qw|address1 streetname buildingnumber address2|) {
       $form->{"l_$_"} = "Y";
       push @columns, $_;
     }
@@ -783,9 +784,9 @@ sub list_names {
              business, pricegroup, language, bankname);
 
   if ($form->{l_bankaddress}) {
-    for (bankaddress1, bankaddress2) {
-      $form->{"l_$_"} = "Y";
-      push @columns, $_;
+    for (qw|address1 streetname buildingnumber address2|) {
+      $form->{"l_bank$_"} = "Y";
+      push @columns, "bank$_";
     }
     $callback .= "&l_bankaddress=Y";
     $href .= "&l_bankaddress=Y";
@@ -976,7 +977,9 @@ sub list_names {
   $column_header{"$form->{db}number"} = qq|<th><a class=listheading href=$href&sort=$form->{db}number>$vcnumber</a></th>|;
   $column_header{name} = qq|<th><a class=listheading href=$href&sort=name>$vcname</a></th>|;
   $column_header{address1} = qq|<th class=listheading>|.$locale->text('Address').qq|</th>|;
-  $column_header{address2} = qq|<th class=listheading>&nbsp;</th>|;
+  $column_header{streetname} = qq|<th class=listheading>|.$locale->text('Street').qq|</th>|;
+  $column_header{buildingnumber} = qq|<th class=listheading>|.$locale->text('Number').qq|</th>|;
+  $column_header{address2} = qq|<th class=listheading>|.$locale->text('Addition').qq|</th>|;
   $column_header{city} = qq|<th><a class=listheading href=$href&sort=city>|.$locale->text('City').qq|</a></th>|;
   $column_header{state} = qq|<th><a class=listheading href=$href&sort=state>|.$locale->text('State/Province').qq|</a></th>|;
   $column_header{zipcode} = qq|<th><a class=listheading href=$href&sort=zipcode>|.$locale->text('Zip/Postal Code').qq|</a></th>|;
@@ -1016,6 +1019,8 @@ sub list_names {
 
   $column_header{bankname} = qq|<th class=listheading>|.$locale->text('Bank').qq|</th>|;
   $column_header{bankaddress1} = qq|<th class=listheading>|.$locale->text('Address').qq|</th>|;
+  $column_header{bankstreetname} = qq|<th class=listheading>|.$locale->text('Street').qq|</th>|;
+  $column_header{bankbuildingnumber} = qq|<th class=listheading>|.$locale->text('Number').qq|</th>|;
   $column_header{bankaddress2} = qq|<th class=listheading>&nbsp;</th>|;
   $column_header{bankcity} = qq|<th class=listheading>|.$locale->text('City').qq|</th>|;
   $column_header{bankstate} = qq|<th class=listheading>|.$locale->text('State/Province').qq|</th>|;
@@ -2048,7 +2053,14 @@ sub form_header {
                 <td><input name=address1 size=35 maxlength=32 value="|.$form->quote($form->{address1}).qq|"></td>
               </tr>
               <tr>
-                <th></th>
+                <th align=right nowrap>|.$locale->text('Street').qq|</th>
+                <td>
+                  <input name=streetname size=28 maxlength=32 value="|.$form->quote($form->{streetname}).qq|">
+                  <input name=buildingnumber size=3 maxlength=32 value="|.$form->quote($form->{buildingnumber}).qq|">
+                </td>
+              </tr>
+              <tr>
+                <th align=right nowrap>|.$locale->text('Addition').qq|</th>
                 <td><input name=address2 size=35 maxlength=32 value="|.$form->quote($form->{address2}).qq|"></td>
               </tr>
               <tr>
@@ -2061,15 +2073,14 @@ sub form_header {
               </tr>
               <tr>
                 <th align=right nowrap>|.$locale->text('Zip/Postal Code').qq|</th>
-                <td><input name=zipcode size=11 maxlength=10 value="|.$form->quote($form->{zipcode}).qq|"></td>
+                <td><input name=zipcode size=10 maxlength=10 value="|.$form->quote($form->{zipcode}).qq|"></td>
               </tr>
               <tr>
                 <th align=right nowrap>|.$locale->text('Country').qq|</th>
-                <td><input name=country size=35 maxlength=32 value="|.$form->quote($form->{country}).qq|"></td>
+                <td><input name=country size=10 maxlength=32 value="|.$form->quote($form->{country}).qq|"></td>
               </tr>
             </table>
           </td>
-
           <td width=50%>
             <table>
               $contact
@@ -2173,7 +2184,14 @@ sub form_header {
                 <td><input name=bankaddress1 size=35 maxlength=32 value="|.$form->quote($form->{bankaddress1}).qq|"></td>
               </tr>
               <tr>
-                <th></th>
+                <th align=right nowrap>|.$locale->text('Street').qq|</th>
+                <td>
+                  <input name=bankstreetname size=28 maxlength=32 value="|.$form->quote($form->{bankstreetname}).qq|">
+                  <input name=bankbuildingnumber size=3 maxlength=32 value="|.$form->quote($form->{bankbuildingnumber}).qq|">
+                </td>
+              </tr>
+              <tr>
+                <th align=right nowrap>|.$locale->text('Addition').qq|</th>
                 <td><input name=bankaddress2 size=35 maxlength=32 value="|.$form->quote($form->{bankaddress2}).qq|"></td>
               </tr>
               <tr>
@@ -2186,13 +2204,13 @@ sub form_header {
               </tr>
               <tr>
                 <th align=right nowrap>|.$locale->text('Zip/Postal Code').qq|</th>
-                <td><input name=bankzipcode size=11 maxlength=10 value="|.$form->quote($form->{bankzipcode}).qq|"></td>
+                <td><input name=bankzipcode size=10 maxlength=10 value="|.$form->quote($form->{bankzipcode}).qq|"></td>
               </tr>
               <tr>
                 <th align=right nowrap>|.$locale->text('Country').qq|</th>
-                <td><input name=bankcountry size=35 maxlength=32 value="|.$form->quote($form->{bankcountry}).qq|"></td>
+                <td><input name=bankcountry size=10 maxlength=32 value="|.$form->quote($form->{bankcountry}).qq|"></td>
               </tr>
-            </table>
+           </table>
           </td>
           <td colspan=4>
             <table>
@@ -2240,7 +2258,7 @@ sub form_header {
 
   $form->hide_form(map { "tax_${_}_description" } (split / /, $form->{taxaccounts})) if $form->{taxaccounts};
   $form->hide_form(map { "select$_" } qw(currency arap discount payment business pricegroup language employee paymentmethod));
-  $form->hide_form(map { "shipto$_" } qw(name address1 address2 city state zipcode country contact phone fax email));
+  $form->hide_form(map { "shipto$_" } qw(name address1 streetname buildingnumber address2 city state zipcode country contact phone fax email));
 
 }
 
@@ -2383,7 +2401,13 @@ sub form_footer {
 
   $form->{action}         = 'update';
   $form->{update_contact} = 1;
-  $form->hide_form(qw(id action ARAP update_contact addressid contactid taxaccounts path login callback db status reference_rows referenceurl max_upload_size precision company _updated));
+  $form->hide_form(
+    'ARAP',     '_updated',     'action',         'addressid',
+    'callback', 'checkaddress', 'company',        'contactid',
+    'db',       'id',           'login',          'max_upload_size',
+    'path',     'precision',    'reference_rows', 'referenceurl',
+    'status',   'taxaccounts',  'update_contact',
+  );
 
   for my $button (@buttons) {
     for (keys %$button) {
@@ -2446,15 +2470,17 @@ sub shipping_address {
 
   %shipto = (
           address1 => { i => 2, label => $locale->text('Address') },
-          address2 => { i => 3, label => '' },
-          city => { i => 4, label => $locale->text('City') },
-          state => { i => 5, label => $locale->text('State/Province') },
-          zipcode => { i => 6, label => $locale->text('Zip/Postal Code') },
-          country => { i => 7, label => $locale->text('Country') },
-          contact => { i => 8, label => $locale->text('Contact') },
-          phone => { i => 9, label => $locale->text('Phone') },
-          fax => { i => 10, label => $locale->text('Fax') },
-          email => { i => 11, label => $locale->text('E-mail') } );
+          streetname => { i => 3, label => $locale->text('Street') },
+          buildingnumber => { i => 4, label => $locale->text('Building Number') },
+          address2 => { i => 5, label => $locale->text('Addition') },
+          city => { i => 6, label => $locale->text('City') },
+          state => { i => 7, label => $locale->text('State/Province') },
+          zipcode => { i => 8, label => $locale->text('Zip/Postal Code') },
+          country => { i => 9, label => $locale->text('Country') },
+          contact => { i => 10, label => $locale->text('Contact') },
+          phone => { i => 11, label => $locale->text('Phone') },
+          fax => { i => 12, label => $locale->text('Fax') },
+          email => { i => 13, label => $locale->text('E-mail') } );
 
   $form->header;
 
@@ -2488,7 +2514,15 @@ sub shipping_address {
         </tr>
         <tr>
           <td></td>
+          <th align=right nowrap>$shipto{streetname}{label}</th>
+          <td>
+            <input name=shiptostreetname size=28 maxlength=32 value="|.$form->quote($form->{shiptostreetname}).qq|">
+            <input name=shiptobuildingnumber size=3 maxlength=32 value="|.$form->quote($form->{shiptobuildingnumber}).qq|">
+          </td>
+        </tr>
+        <tr>
           <td></td>
+          <th align=right nowrap>$shipto{address2}{label}</th>
           <td><input name=shiptoaddress2 size=35 maxlength=32 value="|.$form->quote($form->{shiptoaddress2}).qq|"></td>
         </tr>
         <tr>
@@ -2509,7 +2543,7 @@ sub shipping_address {
         <tr>
           <td></td>
           <th align=right nowrap>$shipto{country}{label}</th>
-          <td><input name=shiptocountry size=35 maxlength=32 value="|.$form->quote($form->{shiptocountry}).qq|"></td>
+          <td><input name=shiptocountry size=10 maxlength=32 value="|.$form->quote($form->{shiptocountry}).qq|"></td>
         </tr>
         <tr>
           <td></td>
@@ -2576,7 +2610,7 @@ sub shipping_address {
 </table>
 |;
 
-  for (qw(name address1 address2 city state zipcode country contact phone fax email)) {
+  for (qw(name address1 streetname buildingnumber address2 city state zipcode country contact phone fax email)) {
     delete $form->{"shipto$_"};
     $form->{flds} .= "$_ ";
   }
@@ -2956,6 +2990,13 @@ sub pricelist_footer {
 
 
 sub update {
+
+  if ($form->{checkaddress}) {
+    my $msg = $locale->text('Invalid country code!');
+    for ('', 'bank', 'shipto') {
+      SL::ADR::check_country($form, $msg, $_);
+    }
+  }
 
   $form->{_updated} = 1;
   for (qw(creditlimit threshold discount cashdiscount)) { $form->{$_} = $form->parse_amount(\%myconfig, $form->{$_}) }
@@ -3384,6 +3425,13 @@ sub save {
 
   if ("$form->{name}$form->{lastname}$form->{firstname}" eq "") {
     $form->error($locale->text("Name missing!"));
+  }
+
+  if ($form->{checkaddress}) {
+    my $msg = $locale->text('Invalid country code!');
+    for ('', 'bank', 'shipto') {
+      SL::ADR::check_country($form, $msg, $_);
+    }
   }
 
   &references;

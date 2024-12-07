@@ -3558,11 +3558,11 @@ sub do_print_reminder {
   # setup variables for the form
   $form->format_string(qw(company address businessnumber companyemail companywebsite username useremail tel fax));
 
-  @a = qw(name address1 address2 city state zipcode country contact typeofcontact salutation firstname lastname);
+  @a = qw(name address1 streetname buildingnumber address2 city state zipcode country contact typeofcontact salutation firstname lastname);
   push @a, map { "$form->{vc}$_" } qw(number phone fax taxnumber);
-  push @a, map { "shipto$_" } qw(name address1 address2 city state zipcode country contact phone fax email);
+  push @a, map { "shipto$_" } qw(name address1 streetname buildingnumber address2 city state zipcode country contact phone fax email);
   push @a, qw(dcn rvc iban qriban bic membernumber clearingnumber);
-  push @a, map { "bank$_" } qw(name address1 address2 city state zipcode country);
+  push @a, map { "bank$_" } qw(name address1 streetname buildingnumber address2 city state zipcode country);
 
   $c = CP->new(($form->{language_code}) ? $form->{language_code} : $myconfig{countrycode});
 
@@ -3644,9 +3644,9 @@ sub do_print_statement {
   # setup variables for the form
   $form->format_string(qw(company address businessnumber companyemail companywebsite username useremail tel fax companyemail companywebsite));
 
-  @a = qw(name address1 address2 city state zipcode country contact typeofcontact salutation firstname lastname);
+  @a = qw(name address1 streetname buildingnumber address2 city state zipcode country contact typeofcontact salutation firstname lastname);
   push @a, "$form->{vc}number", "$form->{vc}phone", "$form->{vc}fax", "$form->{vc}taxnumber";
-  push @a, map { "shipto$_" } qw(name address1 address2 city state zipcode country contact phone fax email);
+  push @a, map { "shipto$_" } qw(name address1 streetname buildingnumber address2 city state zipcode country contact phone fax email);
 
   $i = 0;
   while (@{ $form->{AG} }) {

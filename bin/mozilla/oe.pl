@@ -252,7 +252,12 @@ sub prepare_order {
 
   if ($form->{id}) {
 
-    for (qw(ordnumber quonumber shippingpoint shipvia waybill notes intnotes shiptoname shiptoaddress1 shiptoaddress2 shiptocity shiptostate shiptozipcode shiptocountry shiptocontact)) { $form->{$_} = $form->quote($form->{$_}) }
+    for (
+      qw(ordnumber quonumber shippingpoint shipvia waybill notes intnotes shiptoname shiptoaddress1 shiptostreetname shiptobuildingnumber shiptoaddress2 shiptocity shiptostate shiptozipcode shiptocountry shiptocontact)
+      )
+    {
+      $form->{$_} = $form->quote($form->{$_});
+    }
 
     foreach $ref (@{ $form->{form_details} } ) {
       for (keys %$ref) { $form->{"${_}_$i"} = $ref->{$_} }
@@ -757,7 +762,7 @@ sub form_header {
 <form method="post" name="main" action="$form->{script}">
 |;
 
-  $form->hide_form(qw(id type defaultcurrency formname printed emailed queued vc title discount creditlimit creditremaining tradediscount business oldtransdate recurring address1 address2 city state zipcode country pricegroup closedto precision reference_rows referenceurl max_upload_size oldwarehouse olddepartment company));
+  $form->hide_form(qw(id type defaultcurrency formname printed emailed queued vc title discount creditlimit creditremaining tradediscount business oldtransdate recurring address1 streetname buildingnumber address2 city state zipcode country pricegroup closedto precision reference_rows referenceurl max_upload_size oldwarehouse olddepartment company));
 
   $form->hide_form(map { "select$_" } ("$form->{vc}", "$form->{ARAP}_paid") );
   $form->hide_form(map { "select$_" } qw(formname currency partsgroup projectnumber department warehouse employee language printer paymentmethod));
@@ -789,7 +794,7 @@ sub form_header {
               $vc
               <tr>
                 <th align=right nowrap>|.$locale->text('Address').qq|</th>
-                <td>$form->{address1} $form->{address2} $form->{city} $form->{state} $form->{zipcode} $form->{country}</td>
+                <td>$form->{address1} $form->{streetname} $form->{buildingnumber} $form->{address2} $form->{city} $form->{state} $form->{zipcode} $form->{country}</td>
               </tr>
               $pricegroup
               $creditremaining
@@ -837,7 +842,7 @@ sub form_header {
   </tr>
 |;
 
-  $form->hide_form(map { "shipto$_" } qw(name address1 address2 city state zipcode country contact phone fax email recurring));
+  $form->hide_form(map { "shipto$_" } qw(name address1 streetname buildingnumber address2 city state zipcode country contact phone fax email recurring));
   $form->hide_form(qw(message email subject cc bcc taxaccounts helpref aa_id));
 
   foreach $accno (split / /, $form->{taxaccounts}) { $form->hide_form(map { "${accno}_$_" } qw(rate description taxnumber)) }
@@ -3094,7 +3099,7 @@ sub display_ship_receive {
 |;
 
   $form->hide_form(qw(ordnumber transdate ponumber));
-  $form->hide_form(map { "shipto$_" } qw(name address1 address2 city state zipcode country contact phone fax email recurring));
+  $form->hide_form(map { "shipto$_" } qw(name address1 streetname buildingnumber address2 city state zipcode country contact phone fax email recurring));
   $form->hide_form(qw(message email subject cc bcc));
 
   @column_index = qw(partnumber);

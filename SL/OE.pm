@@ -2263,10 +2263,12 @@ sub generate_orders {
 
     if ($ref->{trans_id}) {
       $query = qq|INSERT INTO shipto (trans_id, shiptoname, shiptoaddress1,
+                  shiptostreetname, shiptobuildingnumber,
                   shiptoaddress2, shiptocity, shiptostate, shiptozipcode,
                   shiptocountry, shiptocontact, shiptophone, shiptofax,
                   shiptoemail, shiptorecurring) VALUES ($id, '$ref->{shiptoname}',
-                  '$ref->{shiptoaddress1}', '$ref->{shiptoaddress2}',
+                  '$ref->{shiptoaddress1}', '$ref->{shiptostreetname}',
+                  '$ref->{shiptobuildingnumber}', '$ref->{shiptoaddress2}',
                   '$ref->{shiptocity}', '$ref->{shiptostate}',
                   '$ref->{shiptozipcode}', '$ref->{shiptocountry}',
                   '$ref->{shiptocontact}', '$ref->{shiptophone}',

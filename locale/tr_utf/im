@@ -157,6 +157,7 @@ $self{texts} = {
   'Nothing selected!'           => 'Seçilen birşey yok!',
   'Nothing to import!'          => 'İçe alınacak bir şey yok!',
   'November'                    => 'Kasım',
+  'Number'                      => 'Numara',
   'Occupation'                  => 'Meslek',
   'October'                     => 'Ekim',
   'Order Date'                  => 'Sipariş Tarihi',

@@ -228,7 +228,7 @@ sub list_employees {
   @columns = ();
   for (@column_index) {
     if ($_ eq 'address') {
-      push @columns, ('address1', 'address2');
+      push @columns, ('address1', 'streetname', 'buildingnumber', 'address2');
     } else {
       push @columns, $_;
     }
@@ -311,7 +311,9 @@ sub list_employees {
   $column_header{employeenumber} = qq|<th><a class=listheading href=$href&sort=employeenumber>|.$locale->text('Number').qq|</a></th>|;
   $column_header{name} = qq|<th><a class=listheading href=$href&sort=name>|.$locale->text('Name').qq|</a></th>|;
   $column_header{address1} = qq|<th class=listheading>|.$locale->text('Address').qq|</a></th>|;
-  $column_header{address2} = qq|<th class=listheading>&nbsp;</th>|;
+  $column_header{streetname} = qq|<th class=listheading>|.$locale->text('Street').qq|</a></th>|;
+  $column_header{buildingnumber} = qq|<th class=listheading>|.$locale->text('Number').qq|</a></th>|;
+  $column_header{address2} = qq|<th class=listheading>|.$locale->text('Addition').qq|</a></th>|;
   $column_header{city} = qq|<th><a class=listheading href=$href&sort=city>|.$locale->text('City').qq|</a></th>|;
   $column_header{state} = qq|<th><a class=listheading href=$href&sort=state>|.$locale->text('State/Province').qq|</a></th>|;
   $column_header{zipcode} = qq|<th><a class=listheading href=$href&sort=zipcode>|.$locale->text('Zip/Postal Code').qq|</a></th>|;
@@ -682,7 +684,14 @@ sub employee_header {
                 <td><input name=address1 size=35 maxlength=32 value="|.$form->quote($form->{address1}).qq|"></td>
               </tr>
               <tr>
-                <th></th>
+                <th align=right nowrap>|.$locale->text('Street').qq|</th>
+                <td>
+                  <input name=streetname size=28 maxlength=32 value="|.$form->quote($form->{streetname}).qq|">
+                  <input name=buildingnumber size=3 maxlength=32 value="|.$form->quote($form->{buildingnumber}).qq|">
+                </td>
+              </tr>
+              <tr>
+                <th align=right nowrap>|.$locale->text('Addition').qq|</th>
                 <td><input name=address2 size=35 maxlength=32 value="|.$form->quote($form->{address2}).qq|"></td>
               </tr>
               <tr>
@@ -699,7 +708,7 @@ sub employee_header {
               </tr>
               <tr>
                 <th align=right nowrap>|.$locale->text('Country').qq|</th>
-                <td><input name=country size=35 maxlength=32 value="|.$form->quote($form->{country}).qq|"></td>
+                <td><input name=country size=10 maxlength=32 value="|.$form->quote($form->{country}).qq|"></td>
               </tr>
               <tr>
                 <th align=right nowrap>|.$locale->text('E-mail').qq|</th>
@@ -766,7 +775,14 @@ sub employee_header {
                 <td><input name=bankaddress1 size=35 maxlength=32 value="|.$form->quote($form->{bankaddress1}).qq|"></td>
               </tr>
               <tr>
-                <th></th>
+                <th align=right nowrap>|.$locale->text('Street').qq|</th>
+                <td>
+                  <input name=bankstreetname size=28 maxlength=32 value="|.$form->quote($form->{bankstreetname}).qq|">
+                  <input name=bankbuildingnumber size=3 maxlength=32 value="|.$form->quote($form->{bankbuildingnumber}).qq|">
+                </td>
+              </tr>
+              <tr>
+                <th align=right nowrap>|.$locale->text('Addition').qq|</th>
                 <td><input name=bankaddress2 size=35 maxlength=32 value="|.$form->quote($form->{bankaddress2}).qq|"></td>
               </tr>
               <tr>
@@ -779,11 +795,11 @@ sub employee_header {
               </tr>
               <tr>
                 <th align=right nowrap>|.$locale->text('Zip/Postal Code').qq|</th>
-                <td><input name=bankzipcode size=11 maxlength=10 value="|.$form->quote($form->{bankzipcode}).qq|"></td>
+                <td><input name=bankzipcode size=10 maxlength=10 value="|.$form->quote($form->{bankzipcode}).qq|"></td>
               </tr>
               <tr>
                 <th align=right nowrap>|.$locale->text('Country').qq|</th>
-                <td><input name=bankcountry size=35 maxlength=32 value="|.$form->quote($form->{bankcountry}).qq|"></td>
+                <td><input name=bankcountry size=10 maxlength=32 value="|.$form->quote($form->{bankcountry}).qq|"></td>
               </tr>
             </table>
           </td>

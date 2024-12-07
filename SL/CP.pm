@@ -199,7 +199,7 @@ sub get_openvc {
 
   # build selection list
   $query = qq|SELECT vc.*,
-              ad.address1, ad.address2, ad.city, ad.state, ad.zipcode,
+              ad.address1, ad.streetname, ad.buildingnumber, ad.address2, ad.city, ad.state, ad.zipcode,
               ad.country, a.amount, a.paid,
               a.exchangerate,
               l.description AS translation,
@@ -1357,7 +1357,9 @@ sub reissue_payment {
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
   $ref = $sth->fetchrow_hashref(NAME_lc);
-  for (qw(name address1 address2 city state zipcode country datepaid)) { $form->{$_} = $ref->{$_} }
+  for (qw(name address1 streetname buildingnumber address2 city state zipcode country datepaid)) {
+    $form->{$_} = $ref->{$_};
+  }
   $sth->finish;
 
   # invoices

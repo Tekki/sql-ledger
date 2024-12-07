@@ -205,6 +205,7 @@ $self{texts} = {
   'Source'                      => 'Kaynak',
   'Startdate'                   => 'Başlangıç',
   'State/Province'              => 'Şehir',
+  'Street'                      => 'Sokak',
   'Su'                          => 'Pz',
   'Subject'                     => 'Konu',
   'Subtotal'                    => 'Aratoplam',

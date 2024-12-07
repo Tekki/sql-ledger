@@ -1368,7 +1368,8 @@ sub aging {
 
       $query .= qq|$union
       SELECT c.id AS vc_id, c.$form->{vc}number, c.name,
-      ad.address1, ad.address2, ad.city, ad.state, ad.zipcode, ad.country,
+      ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+      ad.city, ad.state, ad.zipcode, ad.country,
       c.contact,
       c.phone as $form->{vc}phone, c.fax as $form->{vc}fax,
       c.$form->{vc}number, c.taxnumber as $form->{vc}taxnumber,
@@ -1541,7 +1542,8 @@ sub reminder {
   my $sortorder = $form->sort_order(\@sf, \%ordinal);
 
   $query = qq|SELECT c.id AS vc_id, c.$form->{vc}number, c.name, c.terms,
-              ad.address1, ad.address2, ad.city, ad.state, ad.zipcode, ad.country,
+              ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+              ad.city, ad.state, ad.zipcode, ad.country,
               c.contact,
               c.phone as $form->{vc}phone, c.fax as $form->{vc}fax,
               c.$form->{vc}number, c.taxnumber as $form->{vc}taxnumber,
@@ -1858,7 +1860,8 @@ sub tax_report {
 
     $query = qq|SELECT a.id, '0' AS invoice, $transdate AS transdate,
                 a.invnumber, n.name, n.${vc}number, n.taxnumber,
-                ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
+                ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+                ad.city, ad.zipcode, ad.country,
                 a.netamount, a.description,
                 ac.amount * $ml AS tax,
                 a.till, n.id AS vc_id, ch.accno,
@@ -1878,7 +1881,8 @@ sub tax_report {
 
                 SELECT a.id, '1' AS invoice, $transdate AS transdate,
                 a.invnumber, n.name, n.${vc}number, n.taxnumber,
-                ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
+                ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+                ad.city, ad.zipcode, ad.country,
                 i.sellprice * i.qty * $ml AS netamount,
                 a.description,
                 ac.amount * $ml AS tax,
@@ -1906,7 +1910,8 @@ sub tax_report {
 
               SELECT a.id, '0' AS invoice, $transdate AS transdate,
               a.invnumber, n.name, n.${vc}number, n.taxnumber,
-              ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
+              ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+              ad.city, ad.zipcode, ad.country,
               a.netamount, a.description,
               ac.amount * $ml AS tax,
               a.till, n.id AS vc_id, ch.accno,
@@ -1926,7 +1931,8 @@ sub tax_report {
 
               SELECT a.id, '1' AS invoice, $transdate AS transdate,
               a.invnumber, n.name, n.${vc}number, n.taxnumber,
-              ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
+              ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+              ad.city, ad.zipcode, ad.country,
               i.sellprice * i.qty * $ml AS netamount,
               a.description,
               ac.amount * $ml AS tax,
@@ -1955,20 +1961,22 @@ sub tax_report {
       )
       SELECT
         id, invoice, transdate, invnumber, name, ${vc}number, taxnumber,
-        address1, address2, city, zipcode, country, sum(netamount) AS netamount, description,
+        address1, streetname, buildingnumber, address2, city, zipcode, country,
+        sum(netamount) AS netamount, description,
         tax, till, vc_id, accno, curr, exchangerate
       FROM details
       GROUP BY
         id, invoice, transdate, invnumber, name, ${vc}number, taxnumber,
-        address1, address2, city, zipcode, country, description,
-        tax, till, vc_id, accno, curr, exchangerate
+        address1, streetname, buildingnumber, address2, city, zipcode, country,
+        description, tax, till, vc_id, accno, curr, exchangerate
      |;
 
   } else {
 
     $query = qq|SELECT a.id, '0' AS invoice, $transdate AS transdate,
                 a.invnumber, n.name, n.${vc}number, n.taxnumber,
-                ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
+                ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+                ad.city, ad.zipcode, ad.country,
                 a.netamount,
                 COALESCE(NULLIF(ac.memo, ''), a.description) AS description,
                 ac.amount * $ml AS tax,
@@ -1989,7 +1997,8 @@ sub tax_report {
 
                 SELECT a.id, '1' AS invoice, $transdate AS transdate,
                 a.invnumber, n.name, n.${vc}number, n.taxnumber,
-                ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
+                ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+                ad.city, ad.zipcode, ad.country,
                 i.sellprice * i.qty * $ml AS netamount,
                 i.description,
                 i.sellprice * i.qty * $ml *
@@ -2018,7 +2027,8 @@ sub tax_report {
 
               SELECT a.id, '0' AS invoice, $transdate AS transdate,
               a.invnumber, n.name, n.${vc}number, n.taxnumber,
-              ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
+              ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+              ad.city, ad.zipcode, ad.country,
               a.netamount,
               COALESCE(NULLIF(ac.memo, ''), a.description) AS description,
               ac.amount * $ml AS tax,
@@ -2039,7 +2049,8 @@ sub tax_report {
 
               SELECT a.id, '1' AS invoice, $transdate AS transdate,
               a.invnumber, n.name, n.${vc}number, n.taxnumber,
-              ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
+              ad.address1, ad.streetname, ad.buildingnumber ad.address2,
+              ad.city, ad.zipcode, ad.country,
               i.sellprice * i.qty * $ml AS netamount,
               i.description,
               i.sellprice * i.qty * $ml *
@@ -2073,7 +2084,8 @@ sub tax_report {
       # only gather up non-taxable transactions
       $query = qq|SELECT a.id, '0' AS invoice, $transdate AS transdate,
                   a.invnumber, n.name, n.${vc}number,
-                  ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
+                  ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+                  ad.city, ad.zipcode, ad.country,
                   a.netamount, a.description,
                   a.till, n.id AS vc_id,
                   a.curr, a.exchangerate
@@ -2092,7 +2104,8 @@ sub tax_report {
 
                   SELECT a.id, '1' AS invoice, $transdate AS transdate,
                   a.invnumber, n.name, n.${vc}number,
-                  ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
+                  ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+                  ad.city, ad.zipcode, ad.country,
                   ac.sellprice * ac.qty * $ml AS netamount, a.description,
                   a.till, n.id AS vc_id,
                   a.curr, a.exchangerate
@@ -2112,7 +2125,8 @@ sub tax_report {
                 UNION
 
                   a.invnumber, n.name, n.${vc}number,
-                  ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
+                  ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+                  ad.city, ad.zipcode, ad.country,
                   a.netamount, a.description,
                   a.till, n.id AS vc_id,
                   a.curr, a.exchangerate
@@ -2131,7 +2145,8 @@ sub tax_report {
 
                   SELECT a.id, '1' AS invoice, $transdate AS transdate,
                   a.invnumber, n.name, n.${vc}number,
-                  ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
+                  ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+                  ad.city, ad.zipcode, ad.country,
                   ac.sellprice * ac.qty * $ml AS netamount, a.description,
                   a.till, n.id AS vc_id,
                   a.curr, a.exchangerate
@@ -2153,12 +2168,12 @@ sub tax_report {
         )
         SELECT
           id, invoice, transdate, invnumber, name, ${vc}number,
-          address1, address2, city, zipcode, country, sum(netamount) AS netamount, description,
-          till, vc_id, curr, exchangerate
+          address1, streetname, buildingnumber, address2, city, zipcode, country,
+          sum(netamount) AS netamount, description, till, vc_id, curr, exchangerate
         FROM details
         GROUP BY
           id, invoice, transdate, invnumber, name, ${vc}number,
-          address1, address2, city, zipcode, country, description,
+          address1, streetname, buildingnumber, address2, city, zipcode, country, description,
           till, vc_id, curr, exchangerate
       |;
 
@@ -2167,7 +2182,8 @@ sub tax_report {
       # gather up details for non-taxable transactions
       $query = qq|SELECT a.id, '0' AS invoice, $transdate AS transdate,
                   a.invnumber, n.name, n.${vc}number,
-                  ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
+                  ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+                  ad.city, ad.zipcode, ad.country,
                   ac.amount * $ml AS netamount,
                   COALESCE(NULLIF(ac.memo, ''), a.description) AS description,
                   a.till, n.id AS vc_id,
@@ -2187,7 +2203,8 @@ sub tax_report {
 
                   SELECT a.id, '1' AS invoice, $transdate AS transdate,
                   a.invnumber, n.name, n.${vc}number,
-                  ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
+                  ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+                  ad.city, ad.zipcode, ad.country,
                   ac.sellprice * ac.qty * $ml AS netamount,
                   ac.description,
                   a.till, n.id AS vc_id,
@@ -2209,7 +2226,8 @@ sub tax_report {
 
                   SELECT a.id, '0' AS invoice, $transdate AS transdate,
                   a.invnumber, n.name, n.${vc}number,
-                  ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
+                  ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+                  ad.city, ad.zipcode, ad.country,
                   ac.amount * $ml AS netamount,
                   COALESCE(NULLIF(ac.memo, ''), a.description) AS description,
                   a.till, n.id AS vc_id,
@@ -2229,7 +2247,8 @@ sub tax_report {
 
                   SELECT a.id, '1' AS invoice, $transdate AS transdate,
                   a.invnumber, n.name, n.${vc}number,
-                  ad.address1, ad.address2, ad.city, ad.zipcode, ad.country,
+                  ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+                  ad.city, ad.zipcode, ad.country,
                   ac.sellprice * ac.qty * $ml AS netamount,
                   ac.description,
                   a.till, n.id AS vc_id,
@@ -2275,8 +2294,10 @@ sub tax_report {
         = $form->round_amount($ref->{tax} / $ref->{exchangerate}, $form->{precision});
       $ref->{"$ref->{curr}_total"} = $ref->{"$ref->{curr}_netamount"} + $ref->{"$ref->{curr}_tax"};
     }
-    
-    map { $ref->{address} .= "$ref->{$_} " if $ref->{$_} } qw(address1 address2 city zipcode);
+
+    for (qw(address1 streetname buildingnumber address2 city zipcode)) {
+      $ref->{address} .= "$ref->{$_} " if $ref->{$_};
+    }
     chomp $ref->{address};
 
     unless ($ref->{invoice}) {

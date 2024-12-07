@@ -553,7 +553,12 @@ sub import_sales_invoice {
   }
   $form->{rowcount} = $i;
 
-  for (qw(invnumber ordnumber quonumber ponumber transdate name customer_id datepaid duedate shippingpoint shipvia waybill terms notes intnotes curr exchangerate language_code cashdiscount discountterms AR taxincluded AR_paid_1 paymentmethod_1 paid_1 datepaid_1 shiptoname shiptoaddress1 shiptoaddress2 shiptocity shiptostate shiptozipcode shiptocountry shiptocontact shiptophone shiptofax shiptoemail)) { $form->{$_} = $form->{"${_}_1"} }
+  for (
+    qw(invnumber ordnumber quonumber ponumber transdate name customer_id datepaid duedate shippingpoint shipvia waybill terms notes intnotes curr exchangerate language_code cashdiscount discountterms AR taxincluded AR_paid_1 paymentmethod_1 paid_1 datepaid_1 shiptoname shiptoaddress1 shiptostreetname shiptobuildingnumber shiptoaddress2 shiptocity shiptostate shiptozipcode shiptocountry shiptocontact shiptophone shiptofax shiptoemail)
+    )
+  {
+    $form->{$_} = $form->{"${_}_1"};
+  }
   $form->{description} = $form->{"invoicedescription_1"};
   $form->{customer} = $form->{"name_1"};
 
@@ -689,7 +694,12 @@ sub import_order {
   }
   $form->{rowcount} = $i;
 
-  for (qw(ordnumber quonumber ponumber transdate name reqdate shippingpoint shipvia waybill terms notes intnotes curr exchangerate language_code taxincluded shiptoname shiptoaddress1 shiptoaddress2 shiptocity shiptostate shiptozipcode shiptocountry shiptocontact shiptophone shiptofax shiptoemail)) { $form->{$_} = $form->{"${_}_1"} }
+  for (
+    qw(ordnumber quonumber ponumber transdate name reqdate shippingpoint shipvia waybill terms notes intnotes curr exchangerate language_code taxincluded shiptoname shiptoaddress1 shiptostreetname shiptobuildingnumber shiptoaddress2 shiptocity shiptostate shiptozipcode shiptocountry shiptocontact shiptophone shiptofax shiptoemail)
+    )
+  {
+    $form->{$_} = $form->{"${_}_1"};
+  }
   $form->{"$form->{vc}_id"} = $form->{"$form->{vc}_id_1"};
   $form->{description} = $form->{"orderdescription_1"};
   $form->{"$form->{vc}"} = $form->{"name_1"};
@@ -1825,8 +1835,8 @@ sub unreconciled_payments {
               ac.source, ac.memo, ac.amount * -1 AS amount,
               to_char(ac.transdate, '$form->{dateformat}') AS datepaid,
               'ar' AS module,
-              ad.address1, ad.address2, ad.city, ad.zipcode, ad.state,
-              ad.country,
+              ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+              ad.city, ad.zipcode, ad.state, ad.country,
               bk.iban, bk.clearingnumber, bk.membernumber
               FROM ar a
               JOIN acc_trans ac ON (ac.trans_id = a.id)
@@ -1846,8 +1856,8 @@ sub unreconciled_payments {
               ac.source, ac.memo, ac.amount,
               to_char(ac.transdate, '$form->{dateformat}') AS datepaid,
               'ap' AS module,
-              ad.address1, ad.address2, ad.city, ad.zipcode, ad.state,
-              ad.country,
+              ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
+              ad.city, ad.zipcode, ad.state, ad.country,
               bk.iban, bk.clearingnumber, bk.membernumber
               FROM ap a
               JOIN acc_trans ac ON (ac.trans_id = a.id)
