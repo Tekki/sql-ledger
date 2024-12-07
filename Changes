@@ -1,5 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+Not Released
+  - duplicate entries for foreign currencies in tax reports removed
+
 3.2.12.48 2024-11-29
   - button to jump from customers and vendors directly to transaction report
 

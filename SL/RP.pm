@@ -2258,7 +2258,7 @@ sub tax_report {
   $sth = $dbh->prepare($query);
   $sth->execute || $form->dberror($query);
 
-  my %used_currencies;
+  my ($last_id, %used_currencies);
 
   while ( my $ref = $sth->fetchrow_hashref(NAME_lc)) {
     $ref->{netamount} = $form->round_amount($ref->{netamount}, $form->{precision});
@@ -2278,6 +2278,22 @@ sub tax_report {
     
     map { $ref->{address} .= "$ref->{$_} " if $ref->{$_} } qw(address1 address2 city zipcode);
     chomp $ref->{address};
+
+    unless ($ref->{invoice}) {
+      if ($ref->{id} == $last_id) {
+        $form->{TR}[-1]{tax}   += $ref->{tax};
+        $form->{TR}[-1]{total} += $ref->{tax};
+        $ref->{tax}       = 0;
+        $ref->{netamount} = 0;
+
+        if ($form->{l_currency}) {
+          $form->{TR}[-1]{"$ref->{curr}_tax"}   += $ref->{"$ref->{curr}_tax"};
+          $form->{TR}[-1]{"$ref->{curr}_total"} += $ref->{"$ref->{curr}_tax"};
+        }
+      } else {
+        $last_id = $ref->{id};
+      }
+    }
 
     if ($form->{reportcode} =~ /nontaxable/) {
       push @{ $form->{TR} }, $ref if $ref->{netamount};
