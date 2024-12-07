@@ -1,6 +1,6 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
-Not Released
+3.2.12.49 2024-12-07
   - address field for country now expects a two-letter country code
   - new fields for street name and building number
   - new template variables for streetname, buildingnumber, countryname
