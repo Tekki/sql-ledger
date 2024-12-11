@@ -2503,12 +2503,16 @@ sub defaults {
                 <td><textarea name=address rows=3 cols=35>$form->{address}</textarea></td>
               </tr>
               <tr>
+                <th align=right>|.$locale->text('Country').qq|</th>
+                <td><input name=companycountry size=2 maxlength=2 value="$form->{companycountry}"></td>
+              </tr>
+              <tr>
                 <th align=right>|.$locale->text('Phone').qq|</th>
-                <td><input name=tel size=14 value="$form->{tel}"></td>
+                <td><input name=tel size=35 value="$form->{tel}"></td>
               </tr>
               <tr>
                 <th align=right>|.$locale->text('Fax').qq|</th>
-                <td><input name=fax size=14 value="$form->{fax}"></td>
+                <td><input name=fax size=35 value="$form->{fax}"></td>
               </tr>
               <tr>
                 <th align=right>|.$locale->text('E-mail').qq|</th>
@@ -2741,13 +2745,20 @@ sub defaults {
 </table>
 |;
 
-  $form->{optional}
-    = 'company address tel fax companyemail companywebsite yearend weightunit businessnumber'
-      . ' closedto revtrans audittrail method cdt namesbynumber typeofcontact roundchange'
-      . ' referenceurl max_upload_size annualinterest latepaymentfee restockingcharge checkinventory'
-      . ' hideaccounts forcewarehouse publickey checkaddress';
+  $form->{optional} = join ' ',
+    (
+    'address',         'annualinterest',   'audittrail',     'businessnumber',
+    'cdt',             'checkaddress',     'checkinventory', 'closedto',
+    'company',         'companycountry',   'companyemail',   'companywebsite',
+    'fax',             'forcewarehouse',   'hideaccounts',   'latepaymentfee',
+    'max_upload_size', 'method',           'namesbynumber',  'publickey',
+    'referenceurl',    'restockingcharge', 'revtrans',       'roundchange',
+    'tel',             'typeofcontact',    'weightunit',     'yearend',
+    );
 
-  for (qw(gl si so vi batch voucher po sq rfq part project employee customer vendor)) { $form->{optional} .= " ${_}number" }
+  for (qw(gl si so vi batch voucher po sq rfq part project employee customer vendor)) {
+    $form->{optional} .= " ${_}number";
+  }
 
   for (qw(gl si so po sq rfq employee customer vendor)) { $form->{optional} .= " lock_${_}number" }
 
@@ -3260,8 +3271,9 @@ pdf--PDF|;
 
 sub save_defaults {
 
-  if ($form->{checkaddress} && !SL::ADR::default_country($form)->{valid}) {
-    $form->error($locale->text('Invalid country code!'));
+  if ($form->{checkaddress}) {
+    $form->isblank('companycountry', $locale->text('Country code missing!'));
+    SL::ADR::check_country($form, $locale->text('Invalid country code!'), 'company');
   }
 
   if ($form->{publickey} && $form->{publickey} ne $form->{old_publickey}) {

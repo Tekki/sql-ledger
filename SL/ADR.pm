@@ -291,16 +291,12 @@ sub default_country {
   my ($form) = @_;
   my %rv = (valid => 0);
 
-  if ($form->{address}) {
-    my @address_lines = split "\n", $form->{address};
-    $address_lines[-1] =~ /(?<ctry>[A-Z]{2})-/;
-    $rv{countrycode} = $+{ctry};
-    $rv{countryname} = country_name($rv{countrycode});
-    if ($rv{countrycode} && $rv{countryname}) {
-      $rv{valid} = 1;
-    } else {
-      %rv = (valid => 0);
-    }
+  if (my $name = country_name($form->{companycountry})) {
+    %rv = (
+      countrycode => $form->{companycountry},
+      countryname => $name,
+      valid       => 1,
+    );
   }
 
   return \%rv;
