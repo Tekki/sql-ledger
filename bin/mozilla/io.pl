@@ -1754,7 +1754,7 @@ sub print_form {
     for ("${inv}date", "${due}date", "shippingdate", "transdate") { $form->{$_} = $locale->date(\%myconfig, $form->{$_}, $form->{longformat}) }
   }
 
-  @f = qw(email name address1 streetname buildingnumber address2 city state zipcode country countryname contact phone fax);
+  @f = qw(email name address1 streetname buildingnumber address2 city state zipcode country contact phone fax);
 
   $fillshipto = 1;
   # check for shipto
@@ -1791,9 +1791,17 @@ sub print_form {
     }
   }
 
-  # country names
-  $form->{countryname}       = SL::ADR::country_name($form->{country});
-  $form->{shiptocountryname} = SL::ADR::country_name($form->{shiptocountry});
+  if ($form->{checkaddress}) {
+    for ('', 'shipto') {
+      if (($form->{"${_}country"} || '') ne $form->{companycountry}) {
+        $form->{"${_}countryname"} = SL::ADR::country_name($form->{"${_}country"});
+        push @f, "${_}countryname";
+      }
+      $form->{"${_}localaddress"} = SL::ADR::local_address($form, undef, $_);
+      $form->{"${_}localaddress"} =~ s/\n/\n\n/g if $form->{format} eq 'pdf';
+      push @f, "${_}localaddress";
+    }
+  }
 
   # remove email
   shift @f;
@@ -1801,7 +1809,7 @@ sub print_form {
   # some of the stuff could have umlauts so we translate them
   push @f, qw(contact shippingpoint shipvia notes intnotes employee warehouse paymentmethod);
   push @f, qw(all_partsgroup all_projectnumber first_projectnumber first_projectdescription);
-  push @f, map { "shipto$_" } qw(name address1 streetname buildingnumber address2 city state zipcode country countryname contact email phone fax);
+  push @f, map { "shipto$_" } qw(name address1 streetname buildingnumber address2 city state zipcode country contact email phone fax);
   push @f, qw(firstname lastname salutation contacttitle occupation mobile);
 
   push @f, ("${inv}number", "${inv}date", "${due}date", "${inv}description");

@@ -19,8 +19,8 @@ sub create_links {
 
   my $dbh = $form->dbconnect($myconfig);
 
-  my %defaults
-    = $form->load_defaults(undef, $dbh, ['company', 'precision', 'lock_%', 'checkaddress',]);
+  my %defaults = $form->load_defaults(undef, $dbh,
+    ['checkaddress', 'company', 'companycountry', 'precision', 'lock_%',]);
 
   my $query;
   my $sth;

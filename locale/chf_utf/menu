@@ -231,6 +231,7 @@ $self{subs} = {
   'check_all'                   => 'check_all',
   'check_upload_size'           => 'check_upload_size',
   'clock'                       => 'clock',
+  'copy_element'                => 'copy_element',
   'display'                     => 'display',
   'js_calendar'                 => 'js_calendar',
   'jsmenu'                      => 'jsmenu',

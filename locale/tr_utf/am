@@ -473,6 +473,7 @@ $self{subs} = {
   'company_logo'                => 'company_logo',
   'config'                      => 'config',
   'continue'                    => 'continue',
+  'copy_element'                => 'copy_element',
   'copy_to_coa'                 => 'copy_to_coa',
   'currency_header'             => 'currency_header',
   'defaults'                    => 'defaults',

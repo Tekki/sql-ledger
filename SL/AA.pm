@@ -1379,9 +1379,13 @@ sub company_details {
               WHERE id = $id|;
   ($form->{workphone}, $form->{workfax}, $form->{workmobile}) = $dbh->selectrow_array($query);
 
-  my @df = qw(weightunit cdt company companyemail companywebsite address tel fax businessnumber annualinterest latepaymentfee restockingcharge);
-  my %defaults = $form->get_defaults($dbh, \@df);
-  for (@df) { $form->{$_} = $defaults{$_} }
+  my @df = (
+    'address',        'annualinterest', 'businessnumber', 'cdt',
+    'checkaddress',   'company',        'companyemail',   'companycountry',
+    'companywebsite', 'fax',            'latepaymentfee', 'restockingcharge',
+    'tel',            'weightunit',
+  );
+  $form->load_defaults(undef, $dbh, \@df);
 
   @df = qw(printer_%);
   %defaults = $form->get_defaults($dbh, \@df);

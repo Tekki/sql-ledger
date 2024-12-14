@@ -208,6 +208,7 @@ $self{subs} = {
   'check_all'                   => 'check_all',
   'check_upload_size'           => 'check_upload_size',
   'clock'                       => 'clock',
+  'copy_element'                => 'copy_element',
   'create_links'                => 'create_links',
   'delete'                      => 'delete',
   'delete_transactions'         => 'delete_transactions',

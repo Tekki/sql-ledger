@@ -376,6 +376,7 @@ $self{subs} = {
   'consolidate_orders'          => 'consolidate_orders',
   'consolidate_orders_to_invoice' => 'consolidate_orders_to_invoice',
   'continue'                    => 'continue',
+  'copy_element'                => 'copy_element',
   'create_backorder'            => 'create_backorder',
   'create_form'                 => 'create_form',
   'credit_invoice_'             => 'credit_invoice_',

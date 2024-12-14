@@ -12,6 +12,7 @@
 #======================================================================
 
 use JSON::PP;
+use SL::ADR;
 use SL::API;
 
 sub add_payment {
@@ -77,6 +78,11 @@ sub customer_details {
     for
     qw|email phone fax mobile salutation firstname lastname gender contacttitle occupation|;
   $form->{gender} ||= 'M';
+
+  if ($form->{checkaddress}) {
+    $form->{localaddress}       = SL::ADR::local_address($form);
+    $form->{shiptolocaladdress} = SL::ADR::local_address($form, undef, 'shipto');
+  }
 
   my %new_form = map { $_ => $form->{$_} } keys %$form;
 

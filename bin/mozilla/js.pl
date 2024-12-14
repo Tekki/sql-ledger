@@ -510,6 +510,20 @@ sub unload {
 }
 
 
+sub copy_element {
+  print qq|
+<script>
+
+  function copyElement(e, id) {
+    e.preventDefault();
+    navigator.clipboard.writeText(document.getElementById(id).textContent);
+  }
+
+</script>
+|;
+}
+
+
 1;
 
 
@@ -546,6 +560,10 @@ L<bin::mozilla::js> implements the following functions:
 =head2 js_calendar
 
   &js_calendar($formname, $date);
+
+=head2 copy_element
+
+  &copy_element;
 
 =head2 pickvalue
 

@@ -48,6 +48,7 @@ $self{subs} = {
   'check_upload_size'           => 'check_upload_size',
   'clock'                       => 'clock',
   'continue'                    => 'continue',
+  'copy_element'                => 'copy_element',
   'do_repost_invoices'          => 'do_repost_invoices',
   'fld_config'                  => 'fld_config',
   'fld_edit'                    => 'fld_edit',

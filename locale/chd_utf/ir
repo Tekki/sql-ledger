@@ -301,6 +301,7 @@ $self{subs} = {
   'check_upload_size'           => 'check_upload_size',
   'clock'                       => 'clock',
   'continue'                    => 'continue',
+  'copy_element'                => 'copy_element',
   'create_form'                 => 'create_form',
   'credit_invoice_'             => 'credit_invoice_',
   'debit_invoice_'              => 'debit_invoice_',

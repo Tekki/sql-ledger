@@ -23,6 +23,7 @@ The `full` branch, which is checked out by default, provides some additions:
 * data export for editing and reimport
 * dark mode
 * markdown for bold, italic and links in templates
+* localized postal addresses ([docs](doc/localaddress.md))
 * database snapshots
 * encrypted backups
 * JSON API ([introduction](doc/api.md))

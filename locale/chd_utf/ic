@@ -347,6 +347,7 @@ $self{subs} = {
   'check_vendor'                => 'check_vendor',
   'clock'                       => 'clock',
   'continue'                    => 'continue',
+  'copy_element'                => 'copy_element',
   'create_form'                 => 'create_form',
   'customer_row'                => 'customer_row',
   'delete'                      => 'delete',

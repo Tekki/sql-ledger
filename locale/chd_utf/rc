@@ -82,6 +82,7 @@ $self{subs} = {
   'check_upload_size'           => 'check_upload_size',
   'clock'                       => 'clock',
   'continue'                    => 'continue',
+  'copy_element'                => 'copy_element',
   'deselect_all'                => 'deselect_all',
   'display'                     => 'display',
   'display_form'                => 'display_form',

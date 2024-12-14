@@ -81,6 +81,11 @@ sub create_links {
   for (qw(email phone fax mobile salutation firstname lastname gender contacttitle occupation)) { $form->{$_} = $form->{all_contact}->[0]->{$_} }
   $form->{gender} ||= 'M';
 
+  if ($form->{checkaddress}) {
+    $form->{localaddress}       = SL::ADR::local_address($form);
+    $form->{shiptolocaladdress} = SL::ADR::local_address($form, undef, 'shipto');
+  }
+
   # currencies
   if ($form->{currencies}) {
     for (split /:/, $form->{currencies}) { $form->{selectcurrency} .= "$_\n" }
@@ -1999,6 +2004,15 @@ sub form_header {
 
   }
 
+  my $localaddress;
+  if ($form->{checkaddress}) {
+    $localaddress = qq|
+                <td rowspan="7">
+                   <pre><span id="localaddress">$form->{localaddress}</span></pre>
+                   <a href="" title="|.$locale->text('Copy').qq|" onclick="copyElement(event, 'localaddress')">&#128203</a>
+                </td>|;
+  }
+
   if ($form->{id} && $form->{"lock_$form->{db}number"}) {
     $number = qq|
               <tr>
@@ -2050,7 +2064,7 @@ sub form_header {
 
               <tr>
                 <th align=right nowrap>|.$locale->text('Address').qq|</th>
-                <td><input name=address1 size=35 maxlength=32 value="|.$form->quote($form->{address1}).qq|"></td>
+                <td><input name=address1 size=35 maxlength=32 value="|.$form->quote($form->{address1}).qq|"></td>$localaddress
               </tr>
               <tr>
                 <th align=right nowrap>|.$locale->text('Street').qq|</th>
@@ -2402,11 +2416,12 @@ sub form_footer {
   $form->{action}         = 'update';
   $form->{update_contact} = 1;
   $form->hide_form(
-    'ARAP',     '_updated',     'action',         'addressid',
-    'callback', 'checkaddress', 'company',        'contactid',
-    'db',       'id',           'login',          'max_upload_size',
-    'path',     'precision',    'reference_rows', 'referenceurl',
-    'status',   'taxaccounts',  'update_contact',
+    'ARAP',           '_updated',        'action',             'addressid',
+    'callback',       'checkaddress',    'company',            'companycountry',
+    'contactid',      'db',              'id',                 'localaddress',
+    'login',          'max_upload_size', 'path',               'precision',
+    'reference_rows', 'referenceurl',    'shiptolocaladdress', 'status',
+    'taxaccounts',    'update_contact',
   );
 
   for my $button (@buttons) {
@@ -2449,6 +2464,7 @@ sub form_footer {
 
   print q|
 </form>|;
+  &copy_element if $form->{checkaddress};
   &unload;
   print q|
 
@@ -2486,6 +2502,16 @@ sub shipping_address {
 
   $vcname = $locale->text('Name');
 
+  my $copy = $locale->text('Copy');
+  my $shiptolocaladdress;
+  if ($form->{checkaddress}) {
+    $shiptolocaladdress = qq|
+                <td rowspan="9">
+                   <pre><span id="shiptolocaladdress">$form->{shiptolocaladdress}</span></pre>
+                   <a href="" title="$copy" onclick="copyElement(event, 'shiptolocaladdress')">&#128203</a>
+                </td>|;
+  }
+
   print qq|
 <body>
 
@@ -2500,7 +2526,7 @@ sub shipping_address {
     <td>
       <table width=100%>
         <tr>
-          <th class=listheading colspan=3>$form->{name}</th>
+          <th class=listheading colspan=4>$form->{name}</th>
         </tr>
         <tr>
           <td></td>
@@ -2510,7 +2536,7 @@ sub shipping_address {
         <tr>
           <td></td>
           <th align=right nowrap>$shipto{address1}{label}</th>
-          <td><input name=shiptoaddress1 size=35 maxlength=32 value="|.$form->quote($form->{shiptoaddress1}).qq|"></td>
+          <td><input name=shiptoaddress1 size=35 maxlength=32 value="|.$form->quote($form->{shiptoaddress1}).qq|"></td>$shiptolocaladdress
         </tr>
         <tr>
           <td></td>
@@ -2572,17 +2598,25 @@ sub shipping_address {
   $i = 1;
   for $ref (@{ $form->{all_shipto} }) {
 
+    my $shiptolocaladdress;
+    if ($form->{checkaddress}) {
+      $shiptolocaladdress = qq|
+                  <td rowspan="10">
+                    <pre><span id="shiptolocaladdress_$i">|.SL::ADR::local_address($form, $ref, 'shipto').qq|</span></pre>
+                    <a href="" title="$copy" onclick="copyElement(event, 'shiptolocaladdress_$i')">&#128203</a>
+                  </td>|;
+    }
+
     print qq|
         <tr>
           <td>$select</td>
-          <td><hr noshade></td>
-          <td><hr noshade></td>
+          <td colspan=3><hr noshade></td>
         </tr>
 
         <tr>
           <td><input name="ndx_$i" type=checkbox class=checkbox>
           <th align=right nowrap>$vcname</th>
-          <td>$ref->{shiptoname}</td>
+          <td>$ref->{shiptoname}</td>$shiptolocaladdress
         </tr>
 |;
 
@@ -2626,8 +2660,9 @@ sub shipping_address {
 
 <br>
 <input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
-</form>
-
+</form>|;
+  &copy_element if $form->{checkaddress};
+  print qq|
 </body>
 </html>
 |;
@@ -2995,6 +3030,9 @@ sub update {
     my $msg = $locale->text('Invalid country code!');
     for ('', 'bank', 'shipto') {
       SL::ADR::check_country($form, $msg, $_);
+    }
+    for ('', 'shipto') {
+      $form->{"${_}localaddress"} = SL::ADR::local_address($form, undef, $_);
     }
   }
 

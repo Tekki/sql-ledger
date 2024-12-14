@@ -152,6 +152,7 @@ $self{subs} = {
   'clock'                       => 'clock',
   'combine'                     => 'combine',
   'continue'                    => 'continue',
+  'copy_element'                => 'copy_element',
   'deselect_all'                => 'deselect_all',
   'display'                     => 'display',
   'e_mail'                      => 'e_mail',

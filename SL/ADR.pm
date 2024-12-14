@@ -106,7 +106,7 @@ use constant {
     GN => 'Guinée',
     GP => 'Guadeloupe',
     GQ => 'Guinea Ecuatorial',
-    GR => 'Elláda',
+    GR => 'Ellás',
     GT => 'Guatemala',
     GU => 'Guam',
     GW => 'Guiné-Bissau',
@@ -241,7 +241,7 @@ use constant {
     TM => 'Türkmenistan',
     TN => 'Tunis',
     TO => 'Tonga',
-    TR => 'Türkiye',
+    TR => 'Türki̇ye',
     TT => 'Trinidad and Tobago',
     TV => 'Tuvalu',
     TW => 'Taiwan',
@@ -249,7 +249,7 @@ use constant {
     UA => 'Ukraina',
     UG => 'Uganda',
     UM => 'United States Minor Outlying Islands',
-    US => 'United States',
+    US => 'United States of America',
     UY => 'Uruguay',
     UZ => 'O‘zbekiston',
     VA => 'Città del Vaticano',
@@ -266,6 +266,23 @@ use constant {
     ZA => 'South Africa',
     ZM => 'Zambia',
     ZW => 'Zimbabwe',
+  },
+  LOCAL_ADDRESS => {
+    BG => ["%1\$s\n%2\$s %3\$s\n%4\$s\n%5\$s %6\$s\n%7\$s\n%10\$s\n%8\$s %9\$s\n%11\$s", [8,10]],
+    CA => ["%2\$s %3\$s\n%1\$s\n%4\$s\n%6\$s %5\$s\n%7\$s\n%9\$s %10\$s %8\$s\n%11\$s", [0..10]],
+    ES => ["%1\$s\n%2\$s %3\$s\n%4\$s\n%5\$s %6\$s\n%7\$s\n%8\$s %9\$s\n%10\$s\n%11\$s", [8..10]],
+    FR => ["%1\$s\n%2\$s %3\$s\n%4\$s\n%6\$s %5\$s\n%7\$s\n%8\$s %9\$s %10\$s\n%11\$s", [4..10]],
+    GB => ["%1\$s\n%2\$s %3\$s\n%4\$s\n%6\$s %5\$s\n%7\$s\n%9\$s\n%8\$s\n%11\$s", [8..10]],
+    GR => ["%1\$s\n%2\$s %3\$s\n%4\$s\n%6\$s, %5\$s\n%7\$s\n%8\$s %9\$s %10\$s\n%11\$s", [0..10]],
+    HU => ["%1\$s\n%3\$s %2\$s\n%4\$s\n%9\$s\n%5\$s %6\$s.\n%7\$s\n%8\$s\n%11\$s"],
+    IE => ["%1\$s\n%2\$s %3\$s\n%4\$s\n%6\$s %5\$s\n%7\$s\n%9\$s\n%8\$s\n%11\$s", [3..10]],
+    IT => ["%1\$s\n%2\$s %3\$s\n%4\$s\n%5\$s %6\$s\n%7\$s\n%8\$s %9\$s %10\$s\n%11\$s", [0..10]],
+    NL => ["%2\$s %3\$s\n%1\$s\n%4\$s\n%7\$s\n%5\$s %6\$s\n%8\$s %9\$s\n%11\$s", [8..10]],
+    PT => ["%1\$s\n%2\$s %3\$s\n%4\$s\n%5\$s %6\$s\n%7\$s\n%8\$s %9\$s %10\$s\n%11\$s", [0..10]],
+    RO => ["%1\$s\n%2\$s %3\$s\n%4\$s\n%5\$s %6\$s\n%7\$s\n%8\$s %9\$s %10\$s\n%11\$s", [8..10]],
+    TR => ["%2\$s %3\$s\n%1\$s\n%4\$s\n%5\$s. %6\$s\n%7\$s\n%8\$s %9\$s/%10\$s\n%11\$s", [8..10]],
+    US => ["%2\$s %3\$s\n%1\$s\n%4\$s\n%6\$s %5\$s\n%7\$s\n%9\$s %10\$s %8\$s\n%11\$s", [0..10]],
+    _  => ["%1\$s\n%2\$s %3\$s\n%4\$s\n%5\$s %6\$s\n%7\$s\n%8\$s %9\$s %10\$s\n%11\$s"],
   },
 };
 
@@ -300,6 +317,49 @@ sub default_country {
   }
 
   return \%rv;
+}
+
+sub local_address {
+  my ($form, $ref, $pre) = @_;
+  my $in = $ref || $form;
+  $pre ||= '';
+  my ($rv, @values);
+
+  if ($pre) {
+    push @values, $in->{"${pre}name"} // '';
+    push @values, '', $in->{"${pre}contact"} // '';
+  } else {
+    if ( ($in->{typeofcontact} || '') eq 'company') {
+      push @values, $in->{name} // '';
+    } else {
+      push @values, '';
+    }
+    push @values, ($in->{firstname} // '') , ($in->{lastname} // '');
+  }
+
+  for (qw|address1 streetname buildingnumber address2 zipcode city state|) {
+    push @values, $in->{"${pre}$_"} // '';
+  }
+
+  my $countrycode = $in->{"${pre}country"} || $form->{companycountry};
+  push @values, $countrycode eq $form->{companycountry} ? '' : country_name($countrycode);
+
+  my $tpl = LOCAL_ADDRESS->{$countrycode} || LOCAL_ADDRESS->{_};
+
+  if ($tpl->[1]) {
+    for ($tpl->[1]->@*) {
+      $values[$_] = uc $values[$_];
+    }
+  }
+
+  $rv = sprintf $tpl->[0], @values;
+  $rv =~ s/^[ .,]+//mg;
+  $rv =~ s/[ ]+$//mg;
+  $rv =~ s/\n{2,}/\n/g;
+  $rv =~ s/^\n//;
+  $rv =~ s/\n$//;
+
+  return $rv;
 }
 
 1;

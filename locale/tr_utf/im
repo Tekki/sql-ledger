@@ -263,6 +263,7 @@ $self{subs} = {
   'check_upload_size'           => 'check_upload_size',
   'clock'                       => 'clock',
   'continue'                    => 'continue',
+  'copy_element'                => 'copy_element',
   'delete_column'               => 'delete_column',
   'delete_report'               => 'delete_report',
   'display'                     => 'display',

@@ -330,6 +330,7 @@ $self{subs} = {
   'consolidate'                 => 'consolidate',
   'consolidate_invoices'        => 'consolidate_invoices',
   'continue'                    => 'continue',
+  'copy_element'                => 'copy_element',
   'create_form'                 => 'create_form',
   'credit_invoice_'             => 'credit_invoice_',
   'debit_invoice_'              => 'debit_invoice_',
