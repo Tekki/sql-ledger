@@ -1965,13 +1965,14 @@ sub qr_variables {
   $self->{qr_company_name} = $self->{company};
   my @address = split "\n", $self->{address};
   $self->{qr_company_address} = $address[0];
-  $address[-1] =~ /((?<country>..)-)?(?<city>.*)/;
-  $self->{qr_company_country} = uc(substr($+{country}, 0, 2)) || 'CH';
+  $address[-1] =~ /(..-)?(?<city>.*)/;
+  $self->{qr_company_country} = $self->{companycountry} || 'CH';
   $self->{qr_company_city}    = $+{city};
 
   $self->{qr_customer_name}
     = $self->{typeofcontact} eq 'company' ? $self->{name} : "$self->{firstname} $self->{lastname}";
-  $self->{qr_customer_address} = $self->{address1};
+  $self->{qr_customer_address} = $self->{streetname}
+    && $self->{buildingnumber} ? "$self->{streetname} $self->{buildingnumber}" : $self->{address1};
   $self->{qr_customer_country} = uc(substr($self->{country}, 0, 2)) || $self->{qr_company_country};
   $self->{qr_customer_city}    = "$self->{zipcode} $self->{city}";
 
@@ -1980,9 +1981,10 @@ sub qr_variables {
     push @fields, "company_$_", "customer_$_";
   }
   for my $field (@fields) {
+    $self->{"qr_$field"} =~ tr/–—/--/;
     $self->{"qr2e_$field"}  = Encode::encode('UTF-8', $self->{"qr_$field"});
     $self->{"qrasc_$field"} = $self->{"qr_$field"}
-      =~ tr/ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ/AAAAAAACEEEEIIIIDNOOOOOxOUUUUYDsaaaaaaaceeeeiiiidnoooooouuuuydy/r;
+      =~ tr/ÀÁÂÃÄÅÆĂÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØȘȚÙÚÛÜÝÞßàáâãäåæăçèéêëìíîïðñòóôõöøșțùúûüýþÿ/AAAAAAAACEEEEIIIIDNOOOOOxOSTUUUUYDsaaaaaaaaceeeeiiiidnoooooostuuuuydy/r;
 
     push @sf, "qr_$field", "qr2e_$field", "qrasc_$field";
   }

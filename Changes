@@ -4,6 +4,7 @@ Not Released
   - new field for own country in system defaults
   - address validation
   - new fields for localized postal addresses
+  - variables for QR Bill updated
 
 3.2.12.49 2024-12-07
   - address field for country now expects a two-letter country code
