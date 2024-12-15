@@ -1,6 +1,6 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
-Not Released
+3.2.12.50 2024-12-15
   - new field for own country in system defaults
   - address validation
   - new fields for localized postal addresses
