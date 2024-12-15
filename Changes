@@ -5,6 +5,7 @@ Not Released
   - address validation
   - new fields for localized postal addresses
   - variables for QR Bill updated
+  - accesskeys for entries in customer and vendor reports
 
 3.2.12.49 2024-12-07
   - address field for country now expects a two-letter country code

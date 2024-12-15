@@ -1140,7 +1140,12 @@ sub list_names {
         $column_data{$form->{sort}} = "<td>&nbsp;</td>";
       }
 
-      $column_data{name} = "<td><a href=$form->{script}?action=edit&id=$ref->{id}&db=$form->{db}&path=$form->{path}&login=$form->{login}&status=$form->{status}&callback=$callback>$ref->{name}&nbsp;</td>";
+      my $accesskey
+        = $i == @{$form->{CT}} ? qq| accesskey="0" title="[0]"|
+        : $i < 10              ? qq| accesskey="$i" title="[$i]"|
+        :                        '';
+
+      $column_data{name} = "<td><a href=$form->{script}?action=edit&id=$ref->{id}&db=$form->{db}&path=$form->{path}&login=$form->{login}&status=$form->{status}&callback=$callback$accesskey>$ref->{name}&nbsp;</td>";
 
       $email = "";
       if ($form->{sort} =~ /(email|cc)/) {
