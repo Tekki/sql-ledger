@@ -2013,8 +2013,8 @@ sub form_header {
   if ($form->{checkaddress}) {
     $localaddress = qq|
                 <td rowspan="7">
-                   <pre><span id="localaddress">$form->{localaddress}</span></pre>
-                   <a href="" title="|.$locale->text('Copy').qq|" onclick="copyElement(event, 'localaddress')">&#128203</a>
+                  <pre><span id="localaddress">$form->{localaddress}</span></pre>
+                  <span class="clickable" accesskey="Y" title="|.$locale->text('Copy').qq| [Y]" onclick="copyElement(event, 'localaddress')">&#128203</span>
                 </td>|;
   }
 
@@ -2512,8 +2512,8 @@ sub shipping_address {
   if ($form->{checkaddress}) {
     $shiptolocaladdress = qq|
                 <td rowspan="9">
-                   <pre><span id="shiptolocaladdress">$form->{shiptolocaladdress}</span></pre>
-                   <a href="" title="$copy" onclick="copyElement(event, 'shiptolocaladdress')">&#128203</a>
+                  <pre><span id="shiptolocaladdress">$form->{shiptolocaladdress}</span></pre>
+                  <span class="clickable" accesskey="Y" title="$copy [Y]" onclick="copyElement(event, 'shiptolocaladdress')">&#128203</span>
                 </td>|;
   }
 
@@ -2608,7 +2608,7 @@ sub shipping_address {
       $shiptolocaladdress = qq|
                   <td rowspan="10">
                     <pre><span id="shiptolocaladdress_$i">|.SL::ADR::local_address($form, $ref, 'shipto').qq|</span></pre>
-                    <a href="" title="$copy" onclick="copyElement(event, 'shiptolocaladdress_$i')">&#128203</a>
+                    <span class="clickable" title="$copy" onclick="copyElement(event, 'shiptolocaladdress_$i')">&#128203</span>
                   </td>|;
     }
 

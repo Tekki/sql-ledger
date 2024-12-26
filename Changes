@@ -1,6 +1,7 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
+  - keyboard shortcut to copy localized addresses
   - error in banks corrected, names are no longer changed to uppercase
 
 3.2.12.50 2024-12-15
