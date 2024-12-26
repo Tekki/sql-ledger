@@ -1,6 +1,6 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
-Not Released
+3.2.12.51 2024-12-26
   - XML payment export (pain.001), first part: domestic payments in CHF and EUR
   - keyboard shortcut to copy localized addresses
   - error in banks corrected, names are no longer changed to uppercase
