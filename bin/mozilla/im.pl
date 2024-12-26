@@ -455,7 +455,7 @@ sub export_screen_payment {
   $form->{$form->{filetype}} = 1;
   $form->{UNIX} = 1;
 
-  %radio = (filetype => { csv => 0, txt => 1 },
+  %radio = (filetype => { csv => 0, txt => 1, xml => 2 },
             linefeed => { UNIX => 0, MAC => 1, DOS => 2, noLF => 3 });
   for $item (keys %radio) {
     for (keys %{ $radio{$item} }) {
@@ -485,6 +485,7 @@ sub export_screen_payment {
   $includeinreport{state} = { ndx => $i++, checkbox => 1, html => qq|<input name="l_state" class=checkbox type=checkbox value=Y $form->{l_state}>|, label => $locale->text('State/Province') };
   $includeinreport{zipcode} = { ndx => $i++, checkbox => 1, html => qq|<input name="l_zipcode" class=checkbox type=checkbox value=Y $form->{l_zipcode}>|, label => $locale->text('Zip/Postal Code') };
   $includeinreport{country} = { ndx => $i++, checkbox => 1, html => qq|<input name="l_country" class=checkbox type=checkbox value=Y $form->{l_country}>|, label => $locale->text('Country') };
+  $includeinreport{bic} = { ndx => $i++, checkbox => 1, html => qq|<input name="l_bic" class=checkbox type=checkbox value=Y $form->{l_bic}>|, label => $locale->text('BIC') };
   $includeinreport{iban} = { ndx => $i++, checkbox => 1, html => qq|<input name="l_iban" class=checkbox type=checkbox value=Y $form->{l_iban}>|, label => $locale->text('IBAN') };
   $includeinreport{qriban} = { ndx => $i++, checkbox => 1, html => qq|<input name="l_qriban" class=checkbox type=checkbox value=Y $form->{l_qriban}>|, label => $locale->text('QR IBAN') };
   $includeinreport{clearingnumber} = { ndx => $i++, checkbox => 1, html => qq|<input name="l_clearingnumber" class=checkbox type=checkbox value=Y $form->{l_clearingnumber}>|, label => $locale->text('BC Number') };
@@ -625,6 +626,9 @@ sub export_screen_payment {
               </tr>
               <tr>
                 <td><input name=filetype type=radio class=radio value=txt $form->{txt}>&nbsp;|.$locale->text('Fixed Length Text').qq|</td>
+              </tr>
+              <tr>
+                <td><input name=filetype type=radio class=radio value=xml $form->{xml}>&nbsp;|.$locale->text('XML').qq|</td>
               </tr>
             </table>
           </td>
@@ -2659,6 +2663,7 @@ sub ex_vc {
 
 
 sub ex_payment {
+  require SL::SPS if $form->{filetype} eq 'xml';
 
   $form->retrieve_form(\%myconfig);
 
@@ -2787,6 +2792,15 @@ sub ex_payment {
   $href = "$form->{script}?action=ex_payment";
   for (qw(path login id)) { $href .= qq|&$_=$form->{$_}| }
 
+  if ($form->{filetype} eq 'xml') {
+    $callback = $href;
+    for (qw|paymentaccount dateprepared filetype column_index|) {
+      $callback .= "&$_=" . $form->escape($form->{$_}, 1);
+    }
+
+    $callback = $form->escape($callback, 1);
+  }
+
   $form->{decimalpoint} = "" unless $form->{precision};
   $myconfig{numberformat} = "1000$form->{decimalpoint}" . "0" x $form->{precision};
 
@@ -2823,21 +2837,24 @@ sub ex_payment {
 
   $l = $#column_index;
 
-  print qq|<tr>
+  unless ($form->{filetype} eq 'xml') {
+    print qq|<tr>
              <td></td>|;
 
-  if ($l > 1) {
-    for (1 .. $l) {
-      print "\n<td align=center><a href=$href&movecolumn=$column_index[$_],left><img src=$images/left.png border=0><a href=$href&movecolumn=$column_index[$_],right><img src=$images/right.png border=0></td>";
+    if ($l > 1) {
+      for (1 .. $l) {
+        print
+          "\n<td align=center><a href=$href&movecolumn=$column_index[$_],left><img src=$images/left.png border=0><a href=$href&movecolumn=$column_index[$_],right><img src=$images/right.png border=0></td>";
+      }
     }
-  }
 
-  print qq|
+    print qq|
         </tr>
 |;
 
-  for $i (1 .. $l) {
-    $form->hide_form(map { "${_}_$i" } qw(f a w t_f t_a t_w h_f h_a h_w));
+    for $i (1 .. $l) {
+      $form->hide_form(map {"${_}_$i"} qw(f a w t_f t_a t_w h_f h_a h_w));
+    }
   }
 
   $dateprepared = $form->format_date($form->{dateformat}, $form->datetonum(\%myconfig, $form->{dateprepared}));
@@ -2884,7 +2901,9 @@ sub ex_payment {
       $class = "undefined" unless ($form->{"w_$_"});
     }
 
-    print qq|\n<th nowrap><a class="$class" href="$href&editcolumn=$column_index[$_],$_">$column_data{$column_index[$_]}</a></th>|;
+    print $form->{filetype} eq 'xml'
+      ? qq|\n<th class="$class" nowrap>$column_data{$column_index[$_]}</th>|
+      : qq|\n<th nowrap><a class="$class" href="$href&editcolumn=$column_index[$_],$_">$column_data{$column_index[$_]}</a></th>|;
   }
 
   print qq|
@@ -2906,6 +2925,10 @@ sub ex_payment {
   $l = $#{ $form->{TR} } + 1;
 
   foreach $ref (@{ $form->{TR} }) {
+
+    if ($form->{filetype} eq 'xml') {
+      next if $ref->{amount} <= 0;
+    }
 
     $i++;
     $s++;
@@ -2993,8 +3016,18 @@ sub ex_payment {
       $column_data{amount} = qq|<td nowrap align="right">|.$form->pad($form->format_amount(\%myconfig, $ref->{amount}, $form->{precision}), $form->{"f_$column_index{amount}"}, $form->{"a_$column_index{amount}"}, $form->{"w_$column_index{amount}"}, 1).qq|</td>|;
     }
 
-    $column_data{ndx} = qq|<td><input name="ndx_$i" type=checkbox class=checkbox value=$ref->{id} checked></td>
-    <input type=hidden name="datepaid_$i" value="$ref->{datepaid}">|;
+    $column_data{ndx} = qq|<td>
+  <input name="ndx_$i" type=checkbox class=checkbox value=$ref->{id} checked>
+  <input type=hidden name="datepaid_$i" value="$ref->{datepaid}">
+</td>|;
+
+    if ($form->{filetype} eq 'xml') {
+      $column_data{invnumber} = qq|<td><a href="$ref->{module}.pl?id=$ref->{id}&action=edit&login=$form->{login}&path=$form->{path}&callback=$callback">$ref->{invnumber}</a></td>|;
+
+      unless (SL::SPS::payment_valid($ref)) {
+        $column_data{ndx} = qq|<td></td>|;
+      }
+    }
 
     for (@column_index) { print $column_data{$_} }
 
@@ -3139,7 +3172,8 @@ sub ex_payment {
     'Save Report'        => {ndx => 4, key => 'S', value => $locale->text('Save Report')}
   );
 
-  delete $button{'Export Payments'} if ! $form->{rowcount};
+  delete $button{'Export Payments'} if !$form->{rowcount};
+  delete $button{'Add Column'}      if $form->{filetype} eq 'xml';
 
   $form->print_button(\%button);
 
@@ -3239,8 +3273,18 @@ sub export_payments {
     delete $form->{"datepaid_$_"};
   }
 
+  if ($form->{filetype} eq 'xml') {
+    &export_payments_xml;
+  } else {
+    &_do_export_payments;
+  }
+}
+
+
+sub _do_export_payments {
+
   # get transactions
-  IM->unreconciled_payments(\%myconfig, \%$form);
+  IM->unreconciled_payments(\%myconfig, $form);
 
   $j = 0;
   for (split /\n/, $form->{address}) {
@@ -3538,6 +3582,39 @@ sub export_payments_txt {
     print OUT "$line$lf";
   }
 
+}
+
+
+sub export_payments_xml {
+  require SL::SPS;
+
+  # get transactions
+  delete $myconfig{dboptions};
+  $myconfig{dateformat} = 'yyyy-mm-dd';
+  IM->unreconciled_payments(\%myconfig, $form);
+
+  my $sps      = SL::SPS->new($form);
+  my $ok;
+
+  for my $ref (@{$form->{TR}}) {
+    if ($id{$ref->{id}}) {
+      $sps->add_payment($ref);
+      $ok = 1;
+    }
+  }
+
+  if ($ok) {
+    my $filename = "payments-$form->{accountiban}-$sps->{message_id}.xml";
+    my $xml      = $sps->to_xml;
+
+    print qq|Content-Type: text/xml
+Content-Disposition: attachment; filename*=UTF-8''$filename
+
+$xml|;
+
+  } else {
+    $form->error($locale->text('Nothing selected!'));
+  }
 }
 
 

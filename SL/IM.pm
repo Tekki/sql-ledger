@@ -1812,8 +1812,7 @@ sub unreconciled_payments {
 
   my ($accno) = split /--/, $form->{paymentaccount};
 
-  my %defaults = $form->get_defaults($dbh, \@{[qw(precision company address)]});
-  for (keys %defaults) { $form->{$_} = $defaults{$_} }
+  $form->load_defaults(undef, $dbh, [qw|precision company companycountry address|]);
 
   my $where;
 
@@ -1824,6 +1823,17 @@ sub unreconciled_payments {
     ($form->{precision}) = $dbh->selectrow_array($query);
   }
 
+  my ($ml, $transdate, $ar_dcn);
+  if ($form->{filetype} eq 'xml') {
+    $ml        = 1;
+    $transdate = qq|ac.transdate AS datepaid|;
+    $ar_dcn = q|'' AS dcn|;
+  } else {
+    $ml        = -1;
+    $transdate = qq|to_char(ac.transdate, '$form->{dateformat}') AS datepaid|;
+    $ar_dcn = q|a.dcn|;
+  }
+
   my $paymentmethod_id;
   if ($form->{paymentmethod}) {
     (undef, $paymentmethod_id) = split /--/, $form->{paymentmethod};
@@ -1831,13 +1841,13 @@ sub unreconciled_payments {
   }
 
   $query = qq|SELECT vc.name, vc.customernumber AS companynumber,
-              a.id, a.invnumber, a.description, a.curr, a.dcn,
-              ac.source, ac.memo, ac.amount * -1 AS amount,
-              to_char(ac.transdate, '$form->{dateformat}') AS datepaid,
+              a.id, a.invnumber, a.description, a.curr, $ar_dcn,
+              ac.source, ac.memo, ac.amount * $ml AS amount,
+              $transdate,
               'ar' AS module,
               ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
               ad.city, ad.zipcode, ad.state, ad.country,
-              bk.iban, bk.clearingnumber, bk.membernumber
+              bk.bic, bk.iban, bk.qriban, bk.clearingnumber, bk.membernumber
               FROM ar a
               JOIN acc_trans ac ON (ac.trans_id = a.id)
               JOIN chart c ON (c.id = ac.chart_id)
@@ -1854,11 +1864,11 @@ sub unreconciled_payments {
               SELECT vc.name, vc.vendornumber AS companynumber,
               a.id, a.invnumber, a.description, a.curr, a.dcn,
               ac.source, ac.memo, ac.amount,
-              to_char(ac.transdate, '$form->{dateformat}') AS datepaid,
+              $transdate,
               'ap' AS module,
               ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
               ad.city, ad.zipcode, ad.state, ad.country,
-              bk.iban, bk.clearingnumber, bk.membernumber
+              bk.bic, bk.iban, bk.qriban, bk.clearingnumber, bk.membernumber
               FROM ap a
               JOIN acc_trans ac ON (ac.trans_id = a.id)
               JOIN chart c ON (c.id = ac.chart_id)
@@ -1883,11 +1893,12 @@ sub unreconciled_payments {
   }
   $sth->finish;
 
-  $query = qq|SELECT iban, clearingnumber
+  $query = qq|SELECT iban, clearingnumber, bic
               FROM bank
               WHERE id = (SELECT id FROM chart
                           WHERE accno = '$accno')|;
-  ($form->{accountnumber}, $form->{accountclearingnumber}) = $dbh->selectrow_array($query);
+  ($form->{accountnumber}, $form->{accountclearingnumber}, $form->{accountbic}) = $dbh->selectrow_array($query);
+  $form->{accountiban} = $form->{accountnumber} =~ s/ //gr;
 
   $dbh->disconnect;
 
