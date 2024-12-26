@@ -362,7 +362,7 @@ sub save {
       $query = qq|INSERT INTO bank (id, name, iban, qriban, bic, membernumber,
                   clearingnumber, address_id)
                   VALUES ($form->{id}, |
-                  .$dbh->quote(uc $form->{bankname}).qq|,|
+                  .$dbh->quote($form->{bankname}).qq|,|
                   .$dbh->quote($form->{iban}).qq|,|
                   .$dbh->quote($form->{qriban}).qq|,|
                   .$dbh->quote($form->{bic}).qq|,|
@@ -374,7 +374,7 @@ sub save {
       $query = qq|INSERT INTO bank (id, name, iban, qriban, bic, membernumber,
                   clearingnumber)
                   VALUES ($form->{id}, |
-                  .$dbh->quote(uc $form->{bankname}).qq|,|
+                  .$dbh->quote($form->{bankname}).qq|,|
                   .$dbh->quote($form->{iban}).qq|,|
                   .$dbh->quote($form->{qriban}).qq|,|
                   .$dbh->quote($form->{bic}).qq|,|
@@ -402,23 +402,23 @@ sub save {
   # bank's address
   if ($ok) {
     if ($bank_address_id) {
-      $query = qq|INSERT INTO address (id, trans_id, address1, address2,
-                  city, state, zipcode, country) VALUES (
+      $query = qq|INSERT INTO address (id, trans_id, address1, streetname, buildingnumber,
+                  address2, city, state, zipcode, country) VALUES (
                   $bank_address_id, $bank_address_id,
-                  |.$dbh->quote(uc $form->{bankaddress1}).qq|,
-                  |.$dbh->quote(uc $form->{bankstreetname}).qq|,
-                  |.$dbh->quote(uc $form->{bankbuildingnumber}).qq|,
-                  |.$dbh->quote(uc $form->{bankaddress2}).qq|,
-                  |.$dbh->quote(uc $form->{bankcity}).qq|,
-                  |.$dbh->quote(uc $form->{bankstate}).qq|,
-                  |.$dbh->quote(uc $form->{bankzipcode}).qq|,
-                  |.$dbh->quote(uc $form->{bankcountry}).qq|)|;
+                  |.$dbh->quote($form->{bankaddress1}).qq|,
+                  |.$dbh->quote($form->{bankstreetname}).qq|,
+                  |.$dbh->quote($form->{bankbuildingnumber}).qq|,
+                  |.$dbh->quote($form->{bankaddress2}).qq|,
+                  |.$dbh->quote($form->{bankcity}).qq|,
+                  |.$dbh->quote($form->{bankstate}).qq|,
+                  |.$dbh->quote($form->{bankzipcode}).qq|,
+                  |.$dbh->quote($form->{bankcountry}).qq|)|;
       $dbh->do($query) || $form->dberror($query);
 
     } else {
       $query = qq|INSERT INTO bank (id, name)
                   VALUES ($form->{id},
-                  |.$dbh->quote(uc $form->{bankname}).qq|)|;
+                  |.$dbh->quote($form->{bankname}).qq|)|;
       $dbh->do($query) || $form->dberror($query);
 
       $query = qq|SELECT address_id
@@ -429,14 +429,14 @@ sub save {
       $query = qq|INSERT INTO address (id, trans_id, address1, streetname, buildingnumber,
                   address2, city, state, zipcode, country) VALUES (
                   $bank_address_id, $bank_address_id,
-                  |.$dbh->quote(uc $form->{bankaddress1}).qq|,
-                  |.$dbh->quote(uc $form->{bankstreetname}).qq|,
-                  |.$dbh->quote(uc $form->{bankbuildingnumber}).qq|,
-                  |.$dbh->quote(uc $form->{bankaddress2}).qq|,
-                  |.$dbh->quote(uc $form->{bankcity}).qq|,
-                  |.$dbh->quote(uc $form->{bankstate}).qq|,
-                  |.$dbh->quote(uc $form->{bankzipcode}).qq|,
-                  |.$dbh->quote(uc $form->{bankcountry}).qq|)|;
+                  |.$dbh->quote($form->{bankaddress1}).qq|,
+                  |.$dbh->quote($form->{bankstreetname}).qq|,
+                  |.$dbh->quote($form->{bankbuildingnumber}).qq|,
+                  |.$dbh->quote($form->{bankaddress2}).qq|,
+                  |.$dbh->quote($form->{bankcity}).qq|,
+                  |.$dbh->quote($form->{bankstate}).qq|,
+                  |.$dbh->quote($form->{bankzipcode}).qq|,
+                  |.$dbh->quote($form->{bankcountry}).qq|)|;
       $dbh->do($query) || $form->dberror($query);
     }
   }
