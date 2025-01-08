@@ -30,16 +30,23 @@ sub payment_add_metadata {
     && $pmt->{city}
     && $pmt->{curr}
     && $pmt->{datepaid}
-    && $pmt->{amount} > 0;
+    && $pmt->{amount} > 0
+    && ($pmt->{iban} || $pmt->{qriban});
 
-  if ($pmt->{curr} =~ /CHF|EUR/) {
-    if ($pmt->{qriban} || $pmt->{iban} =~ /^(CH|LI)/) {
+  if (($pmt->{qriban} || $pmt->{iban}) =~ /^(CH|LI)/) {
+    if ($pmt->{curr} =~ /CHF|EUR/) {
       if ($pmt->{qriban} && $pmt->{dcn}) {
         $pmt->{type} = 'D1q';
       } elsif ($pmt->{iban}) {
         $pmt->{type} = 'D1i';
       }
+    } elsif ($pmt->{iban}) {
+      $pmt->{type} = 'X1';
     }
+  } elsif ($pmt->{iban} && $pmt->{curr} eq 'EUR') {
+    $pmt->{type} = 'S';
+  } elsif ($pmt->{iban} && $pmt->{bic}) {
+    $pmt->{type} = 'X2';
   }
 
   $pmt->{valid} = !!$pmt->{type};
@@ -61,8 +68,6 @@ sub sepa_escape {
 
 # xml_escape: parts copied from Mojo::Util
 
-my %XML_REPL
-  = ('$' => 'USD', '£' => 'GBP', '¥' => 'JPY', '€' => 'EUR', '#' => '', '©' => '(C)', '®' => '(R)');
 my %XML_ESC = (
   '&'  => '&amp;',
   '<'  => '&lt;',
@@ -72,11 +77,15 @@ my %XML_ESC = (
   '»'  => '&quot;',
   '\'' => '&#39;',
 );
+my %XML_SUBST
+  = ('$' => 'USD', '£' => 'GBP', '¥' => 'JPY', '€' => 'EUR', '#' => '', '©' => '(C)', '®' => '(R)');
 
 sub xml_escape {
   my ($str, $len) = (shift // '', shift);
 
-  $str =~ s/([\$£¥€#©®])/$XML_REPL{$1}/ge;
+  $str =~ s/^\s+//;
+  $str =~ s/\s+$//;
+  $str =~ s/([\$£¥€#©®])/$XML_SUBST{$1}/ge;
   $str = substr $str, 0, $len if $len;
   $str =~ s/([&<>"«»'])/$XML_ESC{$1}/ge;
 
@@ -111,7 +120,7 @@ sub add_payment {
   my ($self, $pmt) = @_;
 
   if (payment_valid($pmt)) {
-    push $self->{payment_groups}{"$pmt->{datepaid}--$pmt->{curr}"}->@*, $pmt;
+    push $self->{payment_groups}{"$pmt->{datepaid}--$pmt->{type}--$pmt->{curr}"}->@*, $pmt;
     $self->{payment_count}++;
     $self->{payment_sum} += $pmt->{amount};
   }
@@ -126,20 +135,24 @@ sub to_xml {
 
   for my $key (sort keys $self->{payment_groups}->%*) {
     my $group = $self->{payment_groups}{$key};
-    my ($payment_date, @payments);
+    my ($payment_date, $payment_info, @payments);
     my $payment_sum = 0;
 
     for my $payment (@$group) {
 
+      $payment_info //= $self->xml_payment_info($payment);
       $payment_date ||= $payment->{datepaid};
       $payment_sum += $payment->{amount};
       my $address   = $self->xml_address($payment);
+      my $bank      = $self->xml_payment_bank($payment);
+      my $info      = $self->xml_payment_info($payment);
       my $reference = $self->xml_payment_reference($payment);
 
-      push @payments, $self->xml_payment($payment, $address, $reference);
+      push @payments, $self->xml_payment($payment, $address, $bank, $reference);
     }
 
-    push @payment_groups, $self->xml_payment_group($payment_date, $payment_sum, \@payments);
+    push @payment_groups,
+      $self->xml_payment_group($payment_date, $payment_sum, $payment_info, \@payments);
   }
 
   return sprintf q|<?xml version="1.0" encoding="UTF-8"?>
@@ -201,7 +214,7 @@ sub xml_header {
 }
 
 sub xml_payment {
-  my ($self, $pmt, $addr, $ref) = @_;
+  my ($self, $pmt, $addr, $bank, $ref) = @_;
 
   my $iban = ($pmt->{type} eq 'D1q' ? $pmt->{qriban} : $pmt->{iban}) =~ s/ //gr;
 
@@ -213,22 +226,38 @@ sub xml_payment {
         </PmtId>
         <Amt>
           <InstdAmt Ccy="%3$s">%4$0.2f</InstdAmt>
-        </Amt>
+        </Amt>%6$s
         <Cdtr>%5$s
         </Cdtr>
         <CdtrAcct>
           <Id>
-            <IBAN>%6$s</IBAN>
+            <IBAN>%7$s</IBAN>
           </Id>
         </CdtrAcct>
-        <RmtInf>%7$s
+        <RmtInf>%8$s
         </RmtInf>
       </CdtTrfTxInf>|, $self->{message_id}, ++$self->{pmt_num}, $pmt->{curr}, $pmt->{amount},
-    $addr, $iban, $ref;
+    $addr, $bank, $iban, $ref;
+}
+
+sub xml_payment_bank {
+  my ($self, $pmt) = @_;
+  my $rv = '';
+
+  if ($pmt->{type} eq 'X2') {
+    $rv = sprintf q|
+        <CdtrAgt>
+          <FinInstnId>
+            <BICFI>%s</BICFI>
+          </FinInstnId>
+        </CdtrAgt>|, $pmt->{bic};
+  }
+
+  return $rv;
 }
 
 sub xml_payment_group {
-  my ($self, $pmtdt, $psum, $pmts) = @_;
+  my ($self, $pmtdt, $psum, $info, $pmts) = @_;
 
   return sprintf q|
     <PmtInf>
@@ -236,7 +265,7 @@ sub xml_payment_group {
       <PmtMtd>TRF</PmtMtd>
       <BtchBookg>false</BtchBookg>
       <NbOfTxs>%d</NbOfTxs>
-      <CtrlSum>%.2f</CtrlSum>
+      <CtrlSum>%.2f</CtrlSum>%s
       <ReqdExctnDt>
         <Dt>%s</Dt>
       </ReqdExctnDt>
@@ -253,8 +282,25 @@ sub xml_payment_group {
           <BICFI>%s</BICFI>
         </FinInstnId>
       </DbtrAgt>%s
-    </PmtInf>|, ++$self->{pmt_grp_num}, scalar @$pmts, $psum, $pmtdt, xml_escape($self->{company}),
-    $self->{accountiban} =~ s/ //gr, $self->{accountbic}, join('', @$pmts);
+    </PmtInf>|, ++$self->{pmt_grp_num}, scalar @$pmts, $psum, $info, $pmtdt,
+    xml_escape($self->{company}), $self->{accountiban} =~ s/ //gr, $self->{accountbic},
+    join('', @$pmts);
+}
+
+sub xml_payment_info {
+  my ($self, $pmt) = @_;
+  my $rv = '';
+
+  if ($pmt->{type} eq 'S') {
+    $rv = q|
+      <PmtTpInf>
+        <SvcLvl>
+          <Cd>SEPA</Cd>
+        </SvcLvl>
+      </PmtTpInf>|;
+  }
+
+  return $rv;
 }
 
 sub xml_payment_reference {
@@ -274,9 +320,9 @@ sub xml_payment_reference {
             </CdtrRefInf>
             <AddtlRmtInf>%s</AddtlRmtInf>
           </Strd>|, $pmt->{dcn} =~ s/ //gr, xml_escape($pmt->{invnumber});
-  } elsif ($pmt->{type} eq 'D1i') {
+  } else {
     $rv = sprintf q|
-          <Ustrd>%s</Ustrd>|, xml_escape($pmt->{invnumber});
+          <Ustrd>%s</Ustrd>|, xml_escape("$pmt->{invnumber} $pmt->{memo}");
   }
 
   return $rv;

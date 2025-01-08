@@ -415,6 +415,8 @@ sub export_screen_vc {
 
 sub export_screen_payment {
 
+  IM->paymentaccounts(\%myconfig, $form) if $form->{type} eq 'payment';
+
   $form->header;
 
   $form->{reportcode} = "export_$form->{type}";
@@ -441,9 +443,9 @@ sub export_screen_payment {
 
 
   @checked = qw(tabdelimited includeheader stringsquoted);
-  @input = qw(paymentaccount curr paymentmethod dateprepared dateformat delimiter decimalpoint);
+  @input = qw(paymentaccount defaultcurrency paymentmethod dateprepared dateformat delimiter decimalpoint);
 
-  for (qw(invnumber dcn name datepaid amount source)) {
+  for (qw(invnumber dcn name datepaid amount source memo)) {
     $form->{"l_$_"} = "checked";
   }
 
@@ -451,7 +453,7 @@ sub export_screen_payment {
     $form->{$_} = "checked";
   }
 
-  $form->{filetype} ||= "csv";
+  $form->{filetype} ||= $form->{companycountry} =~ /CH|LI/ ? 'xml' : 'csv';
   $form->{$form->{filetype}} = 1;
   $form->{UNIX} = 1;
 
@@ -498,13 +500,13 @@ sub export_screen_payment {
 
 
   if ($form->{type} eq 'payment') {
-    IM->paymentaccounts(\%myconfig, \%$form);
     if (@{ $form->{all_paymentaccount} }) {
       @curr = split /:/, $form->{currencies};
       $form->{defaultcurrency} = $curr[0];
       chomp $form->{defaultcurrency};
       $form->{curr} = $form->{defaultcurrency};
 
+      $form->{selectcurrency} = "\n";
       for (@curr) { $form->{selectcurrency} .= "$_\n" }
 
       $form->{selectpaymentaccount} = "";
@@ -628,7 +630,7 @@ sub export_screen_payment {
                 <td><input name=filetype type=radio class=radio value=txt $form->{txt}>&nbsp;|.$locale->text('Fixed Length Text').qq|</td>
               </tr>
               <tr>
-                <td><input name=filetype type=radio class=radio value=xml $form->{xml}>&nbsp;|.$locale->text('XML').qq|</td>
+                <td><input name=filetype type=radio class=radio value=xml $form->{xml}>&nbsp;|.$locale->text('XML pain.001').qq|</td>
               </tr>
             </table>
           </td>
@@ -2811,7 +2813,7 @@ sub ex_payment {
     $lf = $br = " ";
   }
 
-  $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
+  $column_data{ndx} = qq|<input name="allbox" type="checkbox" class="checkbox" value="1" accesskey="A" checked onChange="CheckAll();">|;
 
   $form->helpref("export_$form->{type}", $myconfig{countrycode});
 
@@ -2933,7 +2935,7 @@ sub ex_payment {
     $i++;
     $s++;
 
-    for (qw(accountnumber curr paymentmethod accountclearingnumber company)) { $ref->{$_} = $form->{$_} }
+    for (qw(accountnumber paymentmethod accountclearingnumber company)) { $ref->{$_} = $form->{$_} }
     for (1 .. $companyaddress) {
       $ref->{"companyaddress$_"} = $form->{"companyaddress$_"};
     }
@@ -3016,13 +3018,14 @@ sub ex_payment {
       $column_data{amount} = qq|<td nowrap align="right">|.$form->pad($form->format_amount(\%myconfig, $ref->{amount}, $form->{precision}), $form->{"f_$column_index{amount}"}, $form->{"a_$column_index{amount}"}, $form->{"w_$column_index{amount}"}, 1).qq|</td>|;
     }
 
-    $column_data{ndx} = qq|<td>
-  <input name="ndx_$i" type=checkbox class=checkbox value=$ref->{id} checked>
+    $column_data{ndx} = qq|<td align="center">
+  <input name="ndx_$i" type=checkbox class=checkbox value=$ref->{payment_id} checked>
   <input type=hidden name="datepaid_$i" value="$ref->{datepaid}">
 </td>|;
 
     if ($form->{filetype} eq 'xml') {
-      $column_data{invnumber} = qq|<td><a href="$ref->{module}.pl?id=$ref->{id}&action=edit&login=$form->{login}&path=$form->{path}&callback=$callback">$ref->{invnumber}</a></td>|;
+      $column_data{invnumber} = qq|<td><a href="$ref->{script}.pl?id=$ref->{payment_id}&action=edit&login=$form->{login}&path=$form->{path}&callback=$callback">$ref->{invnumber}</a></td>|;
+      $column_data{name} = qq|<td><a href="ct.pl?db=$ref->{vc}&id=$ref->{vc_id}&action=edit&login=$form->{login}&path=$form->{path}&callback=$callback">$ref->{name}</a></td>|;
 
       unless (SL::SPS::payment_valid($ref)) {
         $column_data{ndx} = qq|<td></td>|;
@@ -3325,7 +3328,7 @@ sub _do_export_payments {
   $s = 0;
 
   foreach $ref (@{ $form->{TR} }) {
-    if ($id{$ref->{id}}) {
+    if ($id{$ref->{payment_id}}) {
       $j++;
       $s++;
 
@@ -3597,7 +3600,7 @@ sub export_payments_xml {
   my $ok;
 
   for my $ref (@{$form->{TR}}) {
-    if ($id{$ref->{id}}) {
+    if ($id{$ref->{payment_id}}) {
       $sps->add_payment($ref);
       $ok = 1;
     }

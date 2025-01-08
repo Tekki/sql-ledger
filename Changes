@@ -1,6 +1,7 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
+  - XML payment export (pain.001), second part: foreign payments
   - new development function with timer
 
 3.2.12.51 2024-12-26

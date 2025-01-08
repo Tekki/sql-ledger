@@ -1557,8 +1557,7 @@ sub paymentaccounts {
 
   $dbh = $form->dbconnect($myconfig);
 
-  my %defaults = $form->get_defaults($dbh, \@{['address']});
-  $form->{address} = $defaults{address};
+  $form->load_defaults(undef, $dbh, ['address', 'companycountry']);
 
   my $where = qq|c.link LIKE '%_paid' AND NOT c.closed|;
 
@@ -1814,6 +1813,9 @@ sub unreconciled_payments {
 
   $form->load_defaults(undef, $dbh, [qw|precision company companycountry address|]);
 
+  $query = qq|SELECT curr FROM curr ORDER BY rn LIMIT 1|;
+  ($form->{defaultcurrency}) = $dbh->selectrow_array($query);
+
   my $where;
 
   if ($form->{curr}) {
@@ -1840,11 +1842,14 @@ sub unreconciled_payments {
     $where .= " AND pm.paymentmethod_id = $paymentmethod_id";
   }
 
-  $query = qq|SELECT vc.name, vc.customernumber AS companynumber,
+  $query = qq|SELECT vc.id AS vc_id, vc.name, vc.customernumber AS companynumber,
+              'customer' AS vc,
               a.id, a.invnumber, a.description, a.curr, $ar_dcn,
+              concat(a.id, '-', ac.id) AS payment_id,
               ac.source, ac.memo, ac.amount * $ml AS amount,
               $transdate,
               'ar' AS module,
+              CASE WHEN invoice THEN 'is' ELSE 'ar' END AS script,
               ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
               ad.city, ad.zipcode, ad.state, ad.country,
               bk.bic, bk.iban, bk.qriban, bk.clearingnumber, bk.membernumber
@@ -1853,7 +1858,7 @@ sub unreconciled_payments {
               JOIN chart c ON (c.id = ac.chart_id)
               JOIN customer vc ON (a.customer_id = vc.id)
               JOIN address ad ON (ad.trans_id = vc.id)
-              JOIN payment pm ON (pm.trans_id = a.id)
+              JOIN payment pm ON (pm.trans_id = a.id AND pm.id = ac.id)
               LEFT JOIN bank bk ON (bk.id = vc.id)
               WHERE ac.cleared IS NULL
               AND c.accno = '$accno'
@@ -1861,11 +1866,14 @@ sub unreconciled_payments {
               AND ac.approved = '1'
               $where
               UNION
-              SELECT vc.name, vc.vendornumber AS companynumber,
+              SELECT vc.id AS vc_id, vc.name, vc.vendornumber AS companynumber,
+              'vendor' AS vc,
               a.id, a.invnumber, a.description, a.curr, a.dcn,
+              concat(a.id, '-', ac.id) AS payment_id,
               ac.source, ac.memo, ac.amount,
               $transdate,
               'ap' AS module,
+              CASE WHEN invoice THEN 'ir' ELSE 'ap' END AS script,
               ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
               ad.city, ad.zipcode, ad.state, ad.country,
               bk.bic, bk.iban, bk.qriban, bk.clearingnumber, bk.membernumber
@@ -1874,7 +1882,7 @@ sub unreconciled_payments {
               JOIN chart c ON (c.id = ac.chart_id)
               JOIN vendor vc ON (a.vendor_id = vc.id)
               JOIN address ad ON (ad.trans_id = vc.id)
-              JOIN payment pm ON (pm.trans_id = a.id)
+              JOIN payment pm ON (pm.trans_id = a.id AND pm.id = ac.id)
               LEFT JOIN bank bk ON (bk.id = vc.id)
               WHERE ac.cleared IS NULL
               AND c.accno = '$accno'
@@ -1921,16 +1929,16 @@ sub reconcile_payments {
   my ($paymentaccount_id) = $dbh->selectrow_array($query);
 
   $query = qq|UPDATE acc_trans SET
-              cleared = '$form->{dateprepared}'
+              cleared = ?
               WHERE trans_id = ?
-              AND transdate = ?
-              AND chart_id = $paymentaccount_id|;
+              AND id = ?
+              AND chart_id = ?|;
   $sth = $dbh->prepare($query) || $form->dberror($query);
 
   my $i;
   for $i (1 .. $form->{rowcount}) {
     if ($form->{"ndx_$i"}) {
-      $sth->execute($form->{"ndx_$i"} * 1, $form->{"datepaid_$i"});
+      $sth->execute($form->{dateprepared}, split('-', $form->{"ndx_$i"}), $paymentaccount_id);
       $sth->finish;
     }
   }

@@ -27,7 +27,9 @@ The `full` branch, which is checked out by default, provides some additions:
 * database snapshots
 * encrypted backups
 * JSON API ([introduction](doc/api.md))
-* support for ISO 20022 camt.054 files
+* variables for Swiss QR Bill
+* XML payment export, pain.001 Swiss Payment Standard 2024
+* XML payment import, ISO 20022 camt.054
 * Docker files for containerized test environment
 * WLprinter
 * minimalistic documentation
