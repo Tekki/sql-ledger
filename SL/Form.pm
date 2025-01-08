@@ -193,6 +193,16 @@ sub dump_form {
 }
 
 
+sub dump_timer {
+  my ($self) = @_;
+  require Time::HiRes;
+  $self->{_timer} //= [Time::HiRes::gettimeofday()];
+  my ($package, $filename, $line) = caller;
+
+  printf {*STDERR} "%8.3f: $line $filename\n", Time::HiRes::tv_interval($self->{_timer});
+}
+
+
 sub perl_modules {
   return [qw|Archive::Zip Excel::Writer::XLSX Mojolicious Spreadsheet::ParseXLSX|];
 }
@@ -5677,6 +5687,10 @@ L<SL::Form> implements the following methods:
 =head2 dump_form
 
   $form->dump_form(@fields);
+
+=head2 dump_timer
+
+  $form->dump_timer(@fields);
 
 =head2 error
 
