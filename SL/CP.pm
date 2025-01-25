@@ -146,6 +146,15 @@ sub get_openvc {
   my $i = 0;
   my $var;
 
+  if ($form->{transdatefrom}) {
+    $where .= qq|
+              AND a.transdate >= '$form->{transdatefrom}'|;
+  }
+  if ($form->{transdateto}) {
+    $where .= qq|
+              AND a.transdate <= '$form->{transdateto}'|;
+  }
+
   if ($form->{duedatefrom}) {
     $where .= qq|
               AND a.duedate >= '$form->{duedatefrom}'|;
@@ -463,6 +472,10 @@ sub get_openinvoices {
 
   $where .= qq|
               AND a.curr = '$form->{currency}'| if $form->{currency};
+  $where .= qq|
+              AND a.transdate >= '$form->{transdatefrom}'| if $form->{transdatefrom};
+  $where .= qq|
+              AND a.transdate <= '$form->{transdateto}'| if $form->{transdateto};
   $where .= qq|
               AND a.duedate >= '$form->{duedatefrom}'| if $form->{duedatefrom};
   $where .= qq|

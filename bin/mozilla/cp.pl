@@ -278,7 +278,7 @@ sub prepare_payments_header {
       $form->{"old$form->{vc}"} = qq|$form->{"name_$i"}--$form->{"$form->{vc}_id_$i"}|;
       $form->{"select$form->{vc}"} = $form->escape($form->{$form->{vc}},1);
 
-      for (qw(datepaid duedatefrom duedateto)) { $form->{"old$_"} = $form->{$_} }
+      for (qw(datepaid transdatefrom transdateto duedatefrom duedateto)) { $form->{"old$_"} = $form->{$_} }
       last;
     }
   }
@@ -543,7 +543,7 @@ javascript:window.history.forward(1);
 |;
 
   $form->hide_form(qw(defaultcurrency closedto vc type formname arap ARAP title payment batch batchid batchnumber batchdescription transdate edit voucherid employee cdt precision));
-  $form->hide_form(map { "old$_" } qw(currency datepaid duedatefrom duedateto department business paymentmethod));
+  $form->hide_form(map { "old$_" } qw(currency datepaid transdatefrom transdateto duedatefrom duedateto department business paymentmethod));
   $form->hide_form(map { "old$_" } ("$form->{ARAP}", "$form->{ARAP}_paid", "$form->{vc}", "$form->{vc}number"));
   $form->hide_form(map { "select$_" } qw(currency department business language account paymentmethod printer));
   $form->hide_form(map { "select$_" } ("$form->{ARAP}", "$form->{ARAP}_paid", "$form->{ARAP}_discount"));
@@ -566,17 +566,30 @@ javascript:window.history.forward(1);
           <td>
             <table>
               <tr>
-          <th align=right>|.$locale->text('Due Date').qq|</th>
-          <td>
-            <table>
-              <tr>
-                <th align=right>|.$locale->text('From').qq|</th>
-                <td><input name=duedatefrom value="$form->{duedatefrom}" title="$myconfig{dateformat}" size=11 class=date>|.&js_calendar("main", "duedatefrom").qq|</td>
-                <th align=right>|.$locale->text('To').qq|</th>
-                <td><input name=duedateto value="$form->{duedateto}" title="$myconfig{dateformat}" size=11 class=date>|.&js_calendar("main", "duedateto").qq|</td>
+                <th align=right>|.$locale->text('Invoice Date').qq|</th>
+                <td>
+                  <table>
+                    <tr>
+                      <th align=right>|.$locale->text('From').qq|</th>
+                      <td><input name=transdatefrom value="$form->{transdatefrom}" title="$myconfig{dateformat}" size=11 class=date>|.&js_calendar("main", "transdatefrom").qq|</td>
+                      <th align=right>|.$locale->text('To').qq|</th>
+                      <td><input name=transdateto value="$form->{transdateto}" title="$myconfig{dateformat}" size=11 class=date>|.&js_calendar("main", "transdateto").qq|</td>
+                    </tr>
+                  </table>
+                </td>
               </tr>
-            </table>
-          </td>
+              <tr>
+                <th align=right>|.$locale->text('Due Date').qq|</th>
+                <td>
+                  <table>
+                    <tr>
+                      <th align=right>|.$locale->text('From').qq|</th>
+                      <td><input name=duedatefrom value="$form->{duedatefrom}" title="$myconfig{dateformat}" size=11 class=date>|.&js_calendar("main", "duedatefrom").qq|</td>
+                      <th align=right>|.$locale->text('To').qq|</th>
+                      <td><input name=duedateto value="$form->{duedateto}" title="$myconfig{dateformat}" size=11 class=date>|.&js_calendar("main", "duedateto").qq|</td>
+                    </tr>
+                  </table>
+                </td>
               </tr>
               $department
               $business
@@ -900,7 +913,12 @@ sub update_payments {
     $form->{exchangerate} ||= $exchangerate;
   }
 
-  for ("datepaid", "duedatefrom", "duedateto", "department", "business", "currency", "$form->{ARAP}", "$form->{ARAP}_paid", "paymentmethod") {
+  for (
+    'datepaid',      'transdatefrom',      'transdateto', 'duedatefrom',
+    'duedateto',     'department',         'business',    'currency',
+    "$form->{ARAP}", "$form->{ARAP}_paid", 'paymentmethod'
+    )
+  {
     if ($form->{$_} ne $form->{"old$_"}) {
       if (!$form->{redo}) {
         $form->remove_locks(\%myconfig, undef, $form->{arap});
@@ -1086,7 +1104,11 @@ sub update_payment {
     $form->{oldall_vc} = !$form->{oldall_vc} if $form->{all_vc};
   }
 
-  for ("duedatefrom", "duedateto", "department", "business", "$form->{ARAP}", "currency", "paymentmethod") {
+  for (
+    'transdatefrom', 'transdateto',   'duedatefrom', 'duedateto', 'department',
+    'business',      "$form->{ARAP}", 'currency',    'paymentmethod'
+    )
+  {
     if ($form->{$_} ne $form->{"old$_"}) {
       $form->{redo} = 1;
     }
@@ -1325,6 +1347,22 @@ sub payment_header {
                 <th align=right>|.$locale->text($vc{$form->{vc}}{name}).qq|</th>
 |;
 
+  $transdate = qq|
+              <tr>
+                <th align=right>|.$locale->text('Invoice Date').qq|</th>
+                <td>
+                  <table>
+                    <tr>
+                      <th align=right>|.$locale->text('From').qq|</th>
+                      <td><input name=transdatefrom value="$form->{transdatefrom}" title="$myconfig{dateformat}" size=11 class=date>|.&js_calendar("main", "transdatefrom").qq|</td>
+                      <th align=right>|.$locale->text('To').qq|</th>
+                      <td><input name=transdateto value="$form->{transdateto}" title="$myconfig{dateformat}" size=11 class=date>|.&js_calendar("main", "transdateto").qq|</td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+|;
+
   $duedate = qq|
               <tr>
                 <th align=right>|.$locale->text('Due Date').qq|</th>
@@ -1356,6 +1394,28 @@ sub payment_header {
               </tr>
 |.$form->hide_form("payments_detail","$form->{vc}","$form->{vc}number");
 
+    if ($form->{transdatefrom} || $form->{transdateto}) {
+      $transdate = qq|
+              <tr>
+                <th align=right>|.$locale->text('Invoice Date').qq|</th>
+                <td>
+                  <table>
+                    <tr>
+                      <th align=right>|.$locale->text('From').qq|</th>
+                      <td>$form->{transdatefrom}</td>
+                      <th align=right>|.$locale->text('To').qq|</th>
+                      <td>$form->{transdateto}</td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+|;
+    } else {
+      $transdate = "";
+    }
+
+    $transdate .= $form->hide_form(qw(transdatefrom transdateto));
+
     if ($form->{duedatefrom} || $form->{duedateto}) {
       $duedate = qq|
               <tr>
@@ -1364,9 +1424,9 @@ sub payment_header {
                   <table>
                     <tr>
                       <th align=right>|.$locale->text('From').qq|</th>
-                      <td>$form->{duedatefrom}|.&js_calendar("main", "duedatefrom").qq|</td>
+                      <td>$form->{duedatefrom}</td>
                       <th align=right>|.$locale->text('To').qq|</th>
-                      <td>$form->{duedateto}|.&js_calendar("main", "duedateto").qq|</td>
+                      <td>$form->{duedateto}</td>
                     </tr>
                   </table>
                 </td>
@@ -1478,7 +1538,7 @@ javascript:window.history.forward(1);
 
   $form->hide_form(qw(defaultcurrency closedto vc type ARAP arap title formname payment batch batchid batchnumber batchdescription transdate edit voucherid vouchernumber employee precision));
   $form->hide_form("$form->{vc}_id");
-  $form->hide_form(map { "old$_" } qw(currency datepaid duedatefrom duedateto department business paymentmethod));
+  $form->hide_form(map { "old$_" } qw(currency datepaid transdatefrom transdateto duedatefrom duedateto department business paymentmethod));
   $form->hide_form(map { "old$_" } ("$form->{ARAP}", "$form->{ARAP}_paid", "$form->{vc}", "$form->{vc}number"));
   $form->hide_form(map { "select$_" } qw(currency department business paymentmethod printer));
   $form->hide_form(map { "select$_" } ("$form->{ARAP}", "$form->{ARAP}_paid", "$form->{ARAP}_discount", "$form->{vc}"));
@@ -1498,7 +1558,7 @@ javascript:window.history.forward(1);
             <table>
               $allvc
 
-              $duedate
+              $transdate
 
               $vc
 

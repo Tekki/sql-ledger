@@ -2,6 +2,7 @@ Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
   - warning if payment date is not a working day
+  - new filter for transaction date in all payment reports
 
 3.2.12.52 2025-01-08
   - XML payment export (pain.001), second part: foreign payments
