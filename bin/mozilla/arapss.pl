@@ -60,6 +60,7 @@ sub transactions_spreadsheet {
       taxnumber      => 'text',
       till           => 'text',
       transdate      => 'date',
+      vcnotes        => 'text',
       warehouse      => 'text',
       waybill        => 'text',
       zipcode        => 'text',

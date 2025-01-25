@@ -1808,15 +1808,18 @@ sub search {
   push @f, qq|<input name="l_description" class=checkbox type=checkbox value=Y checked> |.$locale->text('Description');
   push @f, qq|<input name="l_ponumber" class=checkbox type=checkbox value=Y> |.$locale->text('PO Number');
   push @f, qq|<input name="l_transdate" class=checkbox type=checkbox value=Y checked> |.$locale->text('Invoice Date');
+  push @f, '';
   push @f, $l_name;
   push @f, $l_customernumber if $l_customernumber;
   push @f, $l_vendornumber if $l_vendornumber;
   push @f, qq|<input name="l_taxnumber" class=checkbox type=checkbox value=Y> $vctaxnumber|;
   push @f, qq|<input name="l_address" class=checkbox type=checkbox value=Y> |.$locale->text('Address');
   push @f, qq|<input name="l_contact" class=checkbox type=checkbox value=Y> |.$locale->text('Contact');
+  push @f, qq|<input name="l_vcnotes" class=checkbox type=checkbox value=Y> |.$locale->text('Notes');
   push @f, $l_employee if $l_employee;
   push @f, $l_department if $l_department;
   push @f, $l_projectnumber if $l_projectnumber;
+  push @f, '';
   push @f, qq|<input name="l_netamount" class=checkbox type=checkbox value=Y> |.$locale->text('Amount');
   push @f, qq|<input name="l_tax" class=checkbox type=checkbox value=Y> |.$locale->text('Tax');
   push @f, qq|<input name="l_amount" class=checkbox type=checkbox value=Y checked> |.$locale->text('Total');
@@ -1828,6 +1831,8 @@ sub search {
   push @f, qq|<input name="l_paymentmethod" class=checkbox type=checkbox value=Y> |.$locale->text('Payment Method');
   push @f, qq|<input name="l_duedate" class=checkbox type=checkbox value=Y> |.$locale->text('Due Date');
   push @f, qq|<input name="l_due" class=checkbox type=checkbox value=Y> |.$locale->text('Due');
+  push @f, qq|<input name="l_dcn" class=checkbox type=checkbox value=Y> |.$locale->text('DCN');
+  push @f, '';
   push @f, qq|<input name="l_memo" class=checkbox type=checkbox value=Y> |.$locale->text('Line Item');
   push @f, qq|<input name="l_notes" class=checkbox type=checkbox value=Y> |.$locale->text('Notes');
   push @f, $l_till if $l_till;
@@ -1835,7 +1840,6 @@ sub search {
   push @f, qq|<input name="l_shippingpoint" class=checkbox type=checkbox value=Y> |.$locale->text('Shipping Point');
   push @f, qq|<input name="l_shipvia" class=checkbox type=checkbox value=Y> |.$locale->text('Ship via');
   push @f, qq|<input name="l_waybill" class=checkbox type=checkbox value=Y> |.$locale->text('Waybill');
-  push @f, qq|<input name="l_dcn" class=checkbox type=checkbox value=Y> |.$locale->text('DCN');
 
 
   $form->header;
@@ -1913,12 +1917,11 @@ sub search {
 
   $form->hide_form(qw(title outstanding sort helpref));
 
-
   while (@f) {
     print qq|<tr>\n|;
     for (1 .. 5) {
-      print qq|<td nowrap>|. shift @f;
-      print qq|</td>\n|;
+      my $fld = shift @f or last;
+      print qq|<td nowrap>$fld</td>\n|
     }
     print qq|</tr>\n|;
   }
@@ -2138,18 +2141,19 @@ sub transactions {
 
 
   @columns = (
-    'transdate',      'id',            'invnumber',      'ordnumber',
-    'ponumber',       'description',   'name',           'customernumber',
-    'vendornumber',   'taxnumber',     'address1',       'streetname',
-    'buildingnumber', 'address2',      'state',          'city',
-    'zipcode',        'country',       'salutation',     'firstname',
-    'lastname',       'contacttitle',  'occupation',     'phone',
-    'mobile',         'email',         'netamount',      'tax',
-    'amount',         'paid',          'paymentaccount', 'paymentmethod',
-    'due',            'curr',          'datepaid',       'duedate',
-    'memo',           'notes',         'till',           'employee',
-    'warehouse',      'shippingpoint', 'shipvia',        'waybill',
-    'dcn',            'paymentdiff',   'department',     'projectnumber',
+    'transdate',      'id',           'invnumber',   'ordnumber',
+    'ponumber',       'description',  'name',        'customernumber',
+    'vendornumber',   'taxnumber',    'address1',    'streetname',
+    'buildingnumber', 'address2',     'state',       'city',
+    'zipcode',        'country',      'salutation',  'firstname',
+    'lastname',       'contacttitle', 'occupation',  'phone',
+    'mobile',         'email',        'vcnotes',     'netamount',
+    'tax',            'amount',       'paid',        'paymentaccount',
+    'paymentmethod',  'due',          'curr',        'datepaid',
+    'duedate',        'dcn',          'memo',        'notes',
+    'till',           'employee',     'warehouse',   'shippingpoint',
+    'shipvia',        'waybill',      'paymentdiff', 'department',
+    'projectnumber',
   );
   @columns = $form->sort_columns(@columns);
   unshift @columns, "runningnumber";
@@ -2272,6 +2276,7 @@ sub transactions {
     streetname     => $locale->text('Street'),
     buildingnumber => $locale->text('Number'),
     address2       => $locale->text('Address Line 2'),
+    vcnotes        => $locale->text('Notes'),
     netamount      => $locale->text('Amount'),
     tax            => $locale->text('Tax'),
     amount         => $locale->text('Total'),
@@ -2421,7 +2426,7 @@ sub transactions {
       :                                  '';
     $column_data{invnumber} = "<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback$accesskey>$ref->{invnumber}&nbsp;</a></td>";
 
-    for (qw(notes description memo)) { $ref->{$_} =~ s/\r?\n/<br>/g }
+    for (qw(notes description memo vcnotes)) { $ref->{$_} =~ s/\r?\n/<br>/g }
     for (qw(transdate datepaid duedate)) { $column_data{$_} = "<td nowrap>$ref->{$_}&nbsp;</td>" }
     for (
       'address1',     'streetname', 'buildingnumber', 'address2',       'city',
@@ -2430,7 +2435,7 @@ sub transactions {
       'notes',        'occupation', 'ordnumber',      'paymentaccount', 'paymentmethod',
       'phone',        'ponumber',   'projectnumber',  'salutation',     'shippingpoint',
       'shipvia',      'source',     'state',          'taxnumber',      'till',
-      'warehouse',    'waybill',    'zipcode',        $namefld,
+      'vcnotes',      'warehouse',  'waybill',        'zipcode',        $namefld,
       )
     {
       $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>";

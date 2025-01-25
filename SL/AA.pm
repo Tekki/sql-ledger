@@ -862,6 +862,7 @@ sub transactions {
                  a.shipvia, a.waybill, a.shippingpoint,
                  e.name AS employee,
                  vc.name, vc.$form->{vc}number, vc.phone,
+                 vc.notes AS vcnotes,
                  a.$form->{vc}_id, a.till, a.curr,
                  a.exchangerate, d.description AS department,
                  a.ponumber, a.warehouse_id, w.description AS warehouse,

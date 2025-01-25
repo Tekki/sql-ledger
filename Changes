@@ -1,6 +1,7 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
+  - new option in transaction reports to display the notes for customers or vendors
   - warning if payment date is not a working day
   - new filter for transaction date in all payment reports
 
