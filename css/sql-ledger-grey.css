@@ -215,6 +215,10 @@ h2.error {
   font-size: 14px;
 }
 
+input.error {
+  background-color: red;
+}
+
 .dnd-idle {
   text-align: left;
   vertical-align: top;

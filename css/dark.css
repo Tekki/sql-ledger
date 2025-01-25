@@ -338,6 +338,11 @@ h2.error {
   font-size: 14px;
 }
 
+input.error {
+  color: black;
+  background-color: var(--red);
+}
+
 font[color='red'] {
   color: var(--red);
 }

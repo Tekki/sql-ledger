@@ -516,8 +516,10 @@ sub payments_header {
                 <input type=hidden name=datepaid value="$form->{datepaid}"></td>
 |;
   } else {
+    my $errorclass
+      = $form->{ARAP} eq 'AR' || $form->workingday(\%myconfig, $form->{datepaid}) ? '' : ' error';
     $datepaid = qq|
-                <td><input name=datepaid value="$form->{datepaid}" title="$myconfig{dateformat}" size=11 class=date>|.&js_calendar("main", "datepaid").qq|</td>
+                <td><input name=datepaid value="$form->{datepaid}" title="$myconfig{dateformat}" size=11 class="date$errorclass">|.&js_calendar("main", "datepaid").qq|</td>
 |;
   }
 
@@ -1443,8 +1445,10 @@ sub payment_header {
                 <input type=hidden name=datepaid value="$form->{datepaid}"></td>
 |;
   } else {
+    my $errorclass
+      = $form->{ARAP} eq 'AR' || $form->workingday(\%myconfig, $form->{datepaid}) ? '' : ' error';
     $datepaid = qq|
-                <td><input name=datepaid value="$form->{datepaid}" title="$myconfig{dateformat}" size=11 class=date>|.&js_calendar("main", "datepaid").qq|</td>
+                <td><input name=datepaid value="$form->{datepaid}" title="$myconfig{dateformat}" size=11 class="date$errorclass">|.&js_calendar("main", "datepaid").qq|</td>
 |;
   }
 
@@ -1493,8 +1497,6 @@ javascript:window.history.forward(1);
           <td>
             <table>
               $allvc
-
-              $duedate
 
               $duedate
 

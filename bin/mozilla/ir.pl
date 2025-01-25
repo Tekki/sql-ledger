@@ -872,8 +872,10 @@ sub form_footer {
         . &js_calendar("main", "datepaid_$i")
         . qq|</td>|;
     } else {
+      my $errorclass = $form->{"cleared_$i"}
+        || $form->workingday(\%myconfig, $form->{"datepaid_$i"}) ? '' : ' error';
       $column_data{datepaid}
-        = qq|<td align=center nowrap><input name="datepaid_$i" size=11 class=date title="$myconfig{dateformat}" value="$form->{"datepaid_$i"}">|
+        = qq|<td align=center nowrap><input name="datepaid_$i" size=11 class="date$errorclass" title="$myconfig{dateformat}" value="$form->{"datepaid_$i"}">|
         . &js_calendar("main", "datepaid_$i")
         . qq|</td>|;
     }

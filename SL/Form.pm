@@ -129,7 +129,7 @@ sub new {
   $self->{dbversion} = "3.2.4";
   $self->{version2} = "tekki 3.2.12.52";
   $self->{dbversion2} = 49;
-  $self->{cssversion} = 42;
+  $self->{cssversion} = 53;
 
   $self->{favicon} = 'favicon.ico';
 
@@ -2417,6 +2417,25 @@ sub valid_date {
 
   1;
 
+}
+
+
+sub weekday {
+  my ($self, $myconfig, $date) = @_;
+
+  my $numdate = $self->datetonum($myconfig, $date);
+  $numdate =~ /(\d{4})(\d{2})(\d{2})/;
+
+  my @t = localtime(timelocal(0, 0, 12, $3, $2 - 1, $1));
+
+  return $t[6];
+}
+
+
+sub workingday {
+  my ($self, $myconfig, $date) = @_;
+
+  return !!($self->weekday($myconfig, $date) % 6);
 }
 
 
