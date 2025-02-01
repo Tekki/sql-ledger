@@ -818,8 +818,8 @@ sub transactions {
                     OR c.link = '')|;
     $paid .= qq|
                AND ac.transdate <= '$form->{transdateto}'| if $form->{transdateto};
-    $form->{summary} = 1;
-    $form->{l_memo} = "";
+    $form->{detail} = '';
+    $form->{l_memo} = '';
   }
 
   my $taxfld = qq|SELECT sum(ac.amount)
@@ -831,7 +831,18 @@ sub transactions {
   $taxfld .= qq|
                   AND ac.transdate <= '$form->{transdateto}'| if $form->{transdateto};
 
-  if (!$form->{summary} || $form->{l_memo}) {
+  if ($form->{detail} eq 'payment') {
+    $acc_trans_flds = qq|,
+                 ac.amount * -1 * $ml AS paid, ac.transdate as datepaid, ac.memo,
+                 ac.transdate - a.duedate AS paymentdiff,
+                 ch.description AS paymentaccount|;
+
+    $acc_trans_join = qq|
+                 JOIN acc_trans ac ON a.id = ac.trans_id
+                 JOIN chart ch ON ch.id = ac.chart_id|;
+
+    $form->{"l_$_"} = 'Y' for qw|datepaid memo paid paymentaccount|;
+  } elsif ($form->{detail} eq 'detail' || $form->{l_memo}) {
     $acc_trans_flds = qq|, ch.accno, ac.source,
                          pr.projectnumber, ac.memo,
                          ac.amount AS linetotal,
@@ -842,7 +853,7 @@ sub transactions {
             JOIN chart ch ON (ch.id = ac.chart_id)
             LEFT JOIN project pr ON (pr.id = ac.project_id)
             LEFT JOIN invoice i ON (i.id = ac.id|;
-    $acc_trans_join .= qq| AND i.trans_id = a.id| if $form->{summary};
+    $acc_trans_join .= qq| AND i.trans_id = a.id| unless $form->{detail};
     $acc_trans_join .= qq|)|;
   }
 
@@ -1022,6 +1033,10 @@ sub transactions {
                              WHERE lower(description) LIKE '$var'))|;
   }
 
+  if ($form->{detail} eq 'payment') {
+    $where .= qq| AND ch.link LIKE '%${ARAP}_paid%'|;
+  }
+
   $query .= " WHERE $where";
 
   my @sf = (transdate, invnumber, name);
@@ -1066,7 +1081,7 @@ sub transactions {
       $ref->{address} .= "$ref->{$_} " if $ref->{$_};
     }
 
-    if ($form->{summary}) {
+    unless ($form->{detail}) {
       if ($sameid != $ref->{id}) {
         $i++;
         push @{ $form->{transactions} }, $ref;
@@ -1078,6 +1093,8 @@ sub transactions {
           $form->{transactions}[$i]->{memo} .= $ref->{memo};
         }
       }
+    } elsif ($form->{detail} eq 'payment' && $sameid == $ref->{id}) {
+      push @{ $form->{transactions} }, {%$ref{qw|id datepaid paid paymentaccount paymentdiff memo|}};
     } else {
       push @{ $form->{transactions} }, $ref;
     }

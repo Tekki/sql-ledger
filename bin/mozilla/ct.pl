@@ -3662,8 +3662,6 @@ sub _transaction_report {
     $form->error($locale->text("Name missing!"));
   }
 
-  $form->{enddate} = "" if $form->{enddate};
-
   CT->save(\%myconfig, \%$form);
 
   $name = $form->escape($form->{name},1);
@@ -3685,7 +3683,6 @@ sub _transaction_report {
     oldsort         => 'transdate',
     open            => 'Y',
     sort            => 'transdate',
-    summary         => 1,
     vc              => $form->{db},
     $form->{db}     => "$name--$form->{id}",
   );

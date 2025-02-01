@@ -1755,9 +1755,9 @@ sub search {
 
   $summary = qq|
               <tr>
-                <td><input name=summary type=radio class=radio value=1 checked> |.$locale->text('Summary').qq|</td>
-                <td><input name=summary type=radio class=radio value=0> |.$locale->text('Detail').qq|
-                </td>
+                <td><input name="detail" type="radio" class="radio" value="" checked> |.$locale->text('Summary').qq|</td>
+                <td><input name="detail" type="radio" class="radio" value="detail"> |.$locale->text('Detail').qq|</td>
+                <td><input name="detail" type="radio" class="radio" value="payment"> |.$locale->text('Payments').qq|</td>
               </tr>
 |;
 
@@ -1974,14 +1974,14 @@ sub transactions {
   AA->transactions(\%myconfig, \%$form);
 
   $href = "$form->{script}?action=transactions";
-  for (qw(direction oldsort till outstanding path login summary revtrans)) { $href .= qq|&$_=$form->{$_}| }
+  for (qw(direction oldsort till outstanding path login revtrans)) { $href .= qq|&$_=$form->{$_}| }
   $href .= "&title=".$form->escape($form->{title});
   $href .= "&helpref=".$form->escape($form->{helpref});
 
   $form->sort_order();
 
   $callback = "$form->{script}?action=transactions";
-  for (qw(direction oldsort till outstanding path login summary)) { $callback .= qq|&$_=$form->{$_}| }
+  for (qw(direction oldsort till outstanding path login)) { $callback .= qq|&$_=$form->{$_}| }
   $callback .= "&title=".$form->escape($form->{title},1);
   $callback .= "&helpref=".$form->escape($form->{helpref},1);
 
@@ -2138,6 +2138,12 @@ sub transactions {
     $option .= "\n<br>" if ($option);
     $option .= $locale->text('Paid Early');
   }
+  if ($form->{detail}) {
+    $callback .= "&detail=$form->{detail}";
+    $href .= "&detail=$form->{detail}";
+    $option .= "\n<br>" if ($option);
+    $option .= $form->{detail} eq 'payment' ? $locale->text('Payments') : $locale->text('Detail');
+  }
 
 
   @columns = (
@@ -2202,7 +2208,7 @@ sub transactions {
     }
   }
 
-  if (!$form->{summary}) {
+  if ($form->{detail} eq 'detail') {
     @f = grep !/memo/, @column_index;
     @column_index = (@f, (qw(source debit credit accno memo projectnumber)));
   }
