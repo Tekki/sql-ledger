@@ -2,6 +2,7 @@ Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
   - new option "Payments" for AR and AP transaction reports
+  - button for order and quotation reports for customers and vendors
 
 3.2.12.53 2025-01-25
   - new option in transaction reports to display the notes for customers or vendors

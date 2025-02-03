@@ -2311,8 +2311,12 @@ sub form_footer {
       'Pricelist'      => {ndx => 20, key => 'P', value => $locale->text('Pricelist')},
     },
     {
-      'AR Transactions' => {ndx => 23, key => 'T', value => $locale->text('AR Transactions')},
-      'AP Transactions' => {ndx => 24, key => 'T', value => $locale->text('AP Transactions')},
+      'AR Transactions' => {ndx => 23, key => '1', value => $locale->text('AR Transactions')},
+      'AP Transactions' => {ndx => 24, key => '1', value => $locale->text('AP Transactions')},
+      'Sales Orders'    => {ndx => 25, key => '2', value => $locale->text('Sales Orders')},
+      'Purchase Orders' => {ndx => 26, key => '2', value => $locale->text('Purchase Orders')},
+      'Quotations'      => {ndx => 27, key => '3', value => $locale->text('Quotations')},
+      'RFQs'            => {ndx => 28, key => '3', value => $locale->text('RFQs')},
     },
   );
 
@@ -2359,10 +2363,16 @@ sub form_footer {
       if ($myconfig{acs} !~ /Order Entry--Sales Order/) {
         $f{'Sales Order'} = 1;
       }
+      if ($myconfig{acs} !~ /Order Entry--Reports--Sales Orders/ && $form->{id}) {
+        $f{'Sales Orders'} = 1;
+      }
     }
     if ($myconfig{acs} !~ /Quotations--Quotations/) {
       if ($myconfig{acs} !~ /Quotations--Quotation/) {
         $f{'Quotation'} = 1;
+      }
+      if ($myconfig{acs} !~ /Quotations--Reports--Quotations/ && $form->{id}) {
+        $f{'Quotations'} = 1;
       }
     }
   }
@@ -2403,10 +2413,16 @@ sub form_footer {
       if ($myconfig{acs} !~ /Order Entry--Purchase Order/) {
         $f{'Purchase Order'} = 1;
       }
+      if ($myconfig{acs} !~ /Order Entry--Reports--Purchase Orders/ && $form->{id}) {
+        $f{'Purchase Orders'} = 1;
+      }
     }
     if ($myconfig{acs} !~ /Quotations--Quotations/) {
       if ($myconfig{acs} !~ /Quotations--RFQ/) {
         $f{'RFQ'} = 1;
+      }
+      if ($myconfig{acs} !~ /Quotations--Reports--RFQs/ && $form->{id}) {
+        $f{'RFQs'} = 1;
       }
     }
   }
@@ -3645,14 +3661,88 @@ sub yes__delete {
 
 
 sub ar_transactions {
-  $form->{script} = "ar.pl";
+
+  $form->{script} = 'ar.pl';
+  %params = (
+    l_datepaid      => 'Y',
+    l_invnumber     => 'Y',
+    l_paid          => 'Y',
+    $form->{db}     => "$name--$form->{id}",
+  );
+
   &_transaction_report;
+
 }
 
 
 sub ap_transactions {
-  $form->{script} = "ap.pl";
+
+  $form->{script} = 'ap.pl';
+  %params = (
+    l_datepaid      => 'Y',
+    l_invnumber     => 'Y',
+    l_paid          => 'Y',
+    $form->{db}     => "$name--$form->{id}",
+  );
+
   &_transaction_report;
+
+}
+
+
+sub sales_orders {
+
+  $form->{script} = 'oe.pl';
+  %params = (
+    l_ordnumber => 'Y',
+    l_reqdate   => 'Y',
+    type        => 'sales_order',
+  );
+
+  &_transaction_report;
+
+}
+
+
+sub purchase_orders {
+
+  $form->{script} = 'oe.pl';
+  %params = (
+    l_ordnumber => 'Y',
+    l_reqdate   => 'Y',
+    type        => 'purchase_order',
+  );
+
+  &_transaction_report;
+
+}
+
+
+sub quotations {
+
+  $form->{script} = 'oe.pl';
+  %params = (
+    l_quonumber => 'Y',
+    l_reqdate   => 'Y',
+    type        => 'sales_quotation',
+  );
+
+  &_transaction_report;
+
+}
+
+
+sub rfqs {
+
+  $form->{script} = 'oe.pl';
+  %params = (
+    l_quonumber => 'Y',
+    l_reqdate   => 'Y',
+    type        => 'request_quotation',
+  );
+
+  &_transaction_report;
+
 }
 
 
@@ -3666,15 +3756,13 @@ sub _transaction_report {
 
   $name = $form->escape($form->{name},1);
 
-  my %params = (
+  my %global_params = (
     action          => 'transactions',
     closed          => 'Y',
     direction       => 'ASC',
     l_amount        => 'Y',
     l_curr          => $form->{selectcurrency} =~ /%0a.+/ ? 'Y' : '',
-    l_datepaid      => 'Y',
     l_description   => 'Y',
-    l_invnumber     => 'Y',
     l_netamount     => 'Y',
     l_paid          => 'Y',
     l_runningnumber => 'Y',
@@ -3690,6 +3778,9 @@ sub _transaction_report {
   $form->{callback} = "$form->{script}?login=$form->{login}&path=$form->{path}";
   for (keys %params) {
     $form->{callback} .= "&$_=$params{$_}";
+  }
+  for (keys %global_params) {
+    $form->{callback} .= "&$_=$global_params{$_}";
   }
 
   $form->redirect;
