@@ -175,7 +175,7 @@ $self{texts} = {
   'Partsgroup'                  => 'Artikelgruppe',
   'Partsgroup Code'             => 'Artikelgruppen-Code',
   'Payment'                     => 'Zahlung',
-  'Payment Method'              => 'Zahlungsweise',
+  'Payment Method'              => 'Zahlungsart',
   'Payment account missing!'    => 'Zielkonto fehlt!',
   'Person'                      => 'Person',
   'Phone'                       => 'Tel.',
@@ -254,6 +254,7 @@ $self{texts} = {
 };
 
 $self{subs} = {
+  '_do_export_payments'         => '_do_export_payments',
   'acc_menu'                    => 'acc_menu',
   'add_column'                  => 'add_column',
   'calendar'                    => 'calendar',
@@ -277,6 +278,7 @@ $self{subs} = {
   'export_payments'             => 'export_payments',
   'export_payments_csv'         => 'export_payments_csv',
   'export_payments_txt'         => 'export_payments_txt',
+  'export_payments_xml'         => 'export_payments_xml',
   'export_screen_customer'      => 'export_screen_customer',
   'export_screen_payment'       => 'export_screen_payment',
   'export_screen_vc'            => 'export_screen_vc',

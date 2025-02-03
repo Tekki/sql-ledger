@@ -1577,6 +1577,7 @@ $self{texts} = {
   'Workstations saved!'         => 'İş İstasyonu kaydedildi!',
   'XML'                         => 'XML',
   'XML Templates'               => 'XML Şablonları',
+  'XML pain.001'                => '',
   'Year'                        => 'Yıl',
   'Year(s)'                     => 'Yıl',
   'Yearend'                     => 'Yılsonu',

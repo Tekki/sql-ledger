@@ -1618,6 +1618,7 @@ $self{texts} = {
   'Workstations saved!'         => 'Postes de travail enregistrés !',
   'XML'                         => 'XML',
   'XML Templates'               => 'Modèles XML',
+  'XML pain.001'                => '',
   'Year'                        => 'Année',
   'Year(s)'                     => 'Année(s)',
   'Yearend'                     => 'Fin d\'exercice',
