@@ -2140,9 +2140,14 @@ sub transactions {
   }
   if ($form->{detail}) {
     $callback .= "&detail=$form->{detail}";
-    $href .= "&detail=$form->{detail}";
-    $option .= "\n<br>" if ($option);
-    $option .= $form->{detail} eq 'payment' ? $locale->text('Payments') : $locale->text('Detail');
+    $href     .= "&detail=$form->{detail}";
+    $option   .= "\n<br>" if ($option);
+    if ($form->{detail} eq 'payment') {
+      $option .= $locale->text('Payments');
+      delete $form->{l_curr};
+    } else {
+      $option .= $locale->text('Detail');
+    }
   }
 
 
