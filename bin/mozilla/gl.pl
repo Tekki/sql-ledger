@@ -1244,6 +1244,8 @@ sub account_subtotal {
 
 sub update {
 
+  $form->{_updated} = 1;
+
   if ($form->{currency} ne $form->{defaultcurrency}) {
     $form->{exchangerate} = $form->parse_amount(\%myconfig, $form->{exchangerate});
   }
@@ -1609,7 +1611,7 @@ sub form_footer {
 
   $form->{action} = "Update";
 
-  $form->hide_form(qw(action path login callback));
+  $form->hide_form(qw(action path login callback _updated));
 
   $transdate = $form->datetonum(\%myconfig, $form->{transdate});
 
@@ -1661,9 +1663,10 @@ sub form_footer {
     &menubar;
   }
 
-  print qq|
-  </form>
-
+  print q|
+  </form>|;
+  &unload;
+  print q|
 </body>
 </html>
 |;

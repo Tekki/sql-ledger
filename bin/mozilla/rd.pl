@@ -100,7 +100,7 @@ sub formnames {
       label  => $locale->text('Employee')
     },
     gl =>
-      {script => 'gl', db => 'gl', number => 'id', label => $locale->text('GL Transaction')},
+      {script => 'gl', db => 'gl', number => 'reference', label => $locale->text('GL Transaction')},
     job => {
       script => 'pe',
       db     => 'project',
