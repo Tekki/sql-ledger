@@ -2,6 +2,7 @@ Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
   - JavaScript in GL transaction screen corrected
+  - AR and AP transactions show correct tax rate
 
 3.2.12.54 2025-02-03
   - new option "Payments" for AR and AP transaction reports

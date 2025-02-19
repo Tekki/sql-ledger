@@ -285,7 +285,7 @@ sub create_links {
     foreach $ref (@{ $form->{"$form->{ARAP}_links"}{$key} }) {
       if ($key eq "$form->{ARAP}_tax") {
 
-        $desc_taxrate = $form->{"${item}_rate"} * 100;
+        $desc_taxrate = $form->{"$ref->{accno}_rate"} * 100;
 
         $form->{"select$form->{ARAP}_tax_$ref->{accno}"}
           = $form->escape("$ref->{accno}--$ref->{description} $desc_taxrate%", 1);
