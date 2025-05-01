@@ -1,5 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+Not Released
+  - payment screen shows links to invoices
+
 3.2.12.55 2025-02-19
   - payment report no longer contains currencies and fx amounts
   - JavaScript in GL transaction screen corrected

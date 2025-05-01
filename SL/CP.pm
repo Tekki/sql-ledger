@@ -500,6 +500,9 @@ sub get_openinvoices {
 
   }
 
+  my $script = sprintf qq|CASE WHEN invoice then '%s' ELSE '$form->{arap}' END AS script|,
+    $form->{arap} eq 'ar' ? 'is' : 'ir';
+
   my $datepaid = ($form->{datepaid}) ? "date '$form->{datepaid}'" : 'current_date';
   my $query = qq|SELECT DISTINCT a.id, a.invnumber, a.transdate, a.duedate,
                  a.description AS invdescription,
@@ -510,7 +513,8 @@ sub get_openinvoices {
                  a.discountterms, a.cashdiscount, a.netamount,
                  $datepaid <= a.transdate + a.discountterms AS calcdiscount,
                  a.exchangerate, ex.exchangerate AS vcexch,
-                 a.taxincluded
+                 a.taxincluded,
+                 $script
                  FROM acc_trans ac
                  JOIN $form->{arap} a ON (a.id = ac.trans_id)
                  JOIN $form->{vc} vc ON (vc.id = a.$form->{vc}_id)
