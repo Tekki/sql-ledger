@@ -16,6 +16,7 @@ you can download a specific version back to 2.6.0 from October 1, 2005.
 The `full` branch, which is checked out by default, provides some additions:
 
 * real Unicode support
+* MFA with time-based one-time passwords (codes from Authenticator App)
 * extended keyboard shortcuts ([docs](doc/shortcuts.md))
 * spreadsheet downloads
 * recently used objects
@@ -43,6 +44,19 @@ SQL-Ledger](https://github.com/Tekki/ansible-sql-ledger). If you are on a
 different distribution, either follow the [instructions from
 DWS](https://sql-ledger.com/cgi-bin/nav.pl?page=source/readme.txt&title=README),
 or open an issue on GitHub.
+
+The Perl modules required to run this application are:
+
+| Module                 | Debian package                |
+|------------------------|-------------------------------|
+| Archive::Extract       | libarchive-extract-perl       |
+| Archive::Zip           | libarchive-zip-perl           |
+| DBD::Pg                | libdbd-pg-perl                |
+| Excel::Writer::XLSX    | libexcel-writer-xlsx-perl     |
+| IO::Socket::SSL        | libio-socket-ssl-perl         |
+| Mojolicious            | libmojolicious-perl           |
+| Spreadsheet::ParseXLSX | libspreadsheet-parsexlsx-perl |
+| Text::QRCode           | libtext-qrcode-perl           |
 
 # Encrypted Backups
 
