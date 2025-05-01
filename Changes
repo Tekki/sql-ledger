@@ -1,6 +1,7 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
+  - MFA with time-based one-time passwords (codes from Authenticator App)
   - payment screen shows links to invoices
 
 3.2.12.55 2025-02-19

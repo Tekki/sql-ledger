@@ -496,6 +496,9 @@ sub prepare_employee {
           if (/^tan/) {
             (undef, $form->{tan}) = split /=/, $_, 2;
           }
+          if (/^totp_activated/) {
+            (undef, $form->{totp_activated}) = split /=/, $_, 2;
+          }
           if (/^password/) {
             (undef, $form->{employeepassword}) = split /=/, $_, 2;
           }
@@ -504,6 +507,8 @@ sub prepare_employee {
       }
     }
   }
+
+  $form->{totp_available} = !$form->load_module(['Text::QRCode']);
 
   $i = 0;
   foreach $ref (@{ $form->{all_employeewage} }) {
@@ -570,14 +575,14 @@ sub employee_header {
 <form method="post" name="main" action="$form->{script}" />
 |;
 
-  $form->hide_form(qw(acs payrate_rows wage_rows deduction_rows reference_rows referenceurl max_upload_size status title helpref oldemployeelogin company));
+  $form->hide_form(qw(acs payrate_rows wage_rows deduction_rows reference_rows referenceurl max_upload_size status title helpref oldemployeelogin company totp_available));
   $form->hide_form(map { "select$_" } qw(paymentmethod payment ap wage deduction acsrole));
 
   $login = "";
 
   if ($form->{admin}) {
-    $sales = ($form->{sales}) ? "checked" : "";
-    $tan = ($form->{tan}) ? "checked" : "";
+    my %checked
+      = map { $_ => $form->{$_} ? 'checked' : '' } qw|sales tan totp_activated reset_totp|;
 
     if ($form->{selectacsrole}) {
       $login = qq|
@@ -590,6 +595,32 @@ sub employee_header {
 |;
     }
 
+    my $mfa = '';
+    if ($form->{totp_available}) {
+      $mfa = qq|
+              <tr>
+                <th align=right>|.$locale->text('MFA').qq|</th>
+                <td>
+                  <input name=totp_activated class=checkbox type=checkbox value=1 $checked{totp_activated}>|.$locale->text('Authenticator'). qq|
+                  <input name=reset_totp class=checkbox type=checkbox value=1 $checked{reset_totp}>|.$locale->text('reset'). qq|
+                </td>
+              </tr>
+              <tr>
+                <th></th>
+                <td>
+                  <input name=tan class=checkbox type=checkbox value=1 $checked{tan}>|.$locale->text('E-mail TAN').qq|
+                </td>
+              </tr>|;
+    } else {
+      $mfa = qq|
+              <tr>
+                <th align=right>|.$locale->text('MFA').qq|</th>
+                <td>
+                  <input name=tan class=checkbox type=checkbox value=1 $checked{tan}>|.$locale->text('E-mail TAN').qq|
+                </td>
+              </tr>|;
+    }
+
     $login .= qq|
               <tr>
                 <th align=right nowrap>|.$locale->text('Login').qq|</th>
@@ -598,11 +629,7 @@ sub employee_header {
               <tr>
                 <th align=right nowrap>|.$locale->text('Password').qq|</th>
                 <td><input name=employeepassword size=20 value="$form->{employeepassword}"></td>
-              </tr>
-              <tr>
-                <th align=right>|.$locale->text('E-mail TAN').qq|</th>
-                <td><input name=tan class=checkbox type=checkbox value=1 $tan></td>
-              </tr>
+              </tr>$mfa
               <tr>
                 <th align=right>|.$locale->text('Sales').qq|</th>
                 <td><input name=sales class=checkbox type=checkbox value=1 $sales></td>
@@ -626,11 +653,14 @@ sub employee_header {
               </tr>
 |;
     }
-    if ($form->{tan}) {
+    if ($form->{tan} || $form->{totp_activated}) {
+      my @mfa;
+      push @mfa, $locale->text('Authenticator') if $form->{totp_activated};
+      push @mfa, $locale->text('E-Mail TAN')    if $form->{tan};
       $login .= qq|
               <tr>
-                <th align=right nowrap>|.$locale->text('E-mail TAN').qq|</th>
-                <td>x</td>
+                <th align=right nowrap>| . $locale->text('MFA') . qq|</th>
+                <td>| . join(', ', @mfa) . qq|</td>
               </tr>
 |;
     }
@@ -644,7 +674,7 @@ sub employee_header {
 |;
     }
 
-    $form->hide_form(qw(acsrole employeelogin sales tan employeepassword));
+    $form->hide_form(qw(acsrole employeelogin sales tan employeepassword totp_activated));
   }
 
   if ($form->{id} && $form->{lock_employeenumber}) {
@@ -1259,7 +1289,7 @@ sub save_memberfile {
     srand( time() ^ ($$ + ($$ << 15)) );
 
     if (@{ $member{$oldlogin} }) {
-      @memberlogin = grep !/^(name|email|password|tan|templates)=/, @{ $member{$oldlogin} };
+      @memberlogin = grep !/^(name|email|password|tan|totp_activated|templates)=/, @{ $member{$oldlogin} };
       ($oldemployeepassword) = grep /^password=/, @{ $member{$oldlogin} };
       pop @memberlogin;
 
@@ -1279,7 +1309,11 @@ sub save_memberfile {
         }
       }
 
-      for (qw(name email tan templates)) { push @memberlogin, "$_=$form->{$_}\n" if $form->{$_} }
+      for (qw(name email tan templates totp_activated)) { push @memberlogin, "$_=$form->{$_}\n" if $form->{$_} }
+
+      if (!$form->{totp_activated} || $form->{reset_totp}) {
+        @memberlogin = grep !/^totp_secret/, @memberlogin;
+      }
 
       @{ $member{$employeelogin} } = ();
 
@@ -1288,8 +1322,10 @@ sub save_memberfile {
       }
 
     } else {
-      for (qw(company dateformat dbconnect dbdriver dbname dbhost dboptions dbpasswd dbuser numberformat)) { $m{$_} = $myconfig{$_} }
-      for (qw(name email tan templates)) { $m{$_} = $form->{$_} }
+      for (qw(company dateformat dbconnect dbdriver dbname dbhost dboptions dbpasswd dbuser numberformat totp_secret)) { $m{$_} = $myconfig{$_} }
+      for (qw(name email tan totp_activated templates)) { $m{$_} = $form->{$_} }
+
+      delete $m{totp_secret} unless $form->{totp_activated};
 
       $m{dbpasswd} = pack 'u', $myconfig{dbpasswd};
       chop $m{dbpasswd};

@@ -108,6 +108,7 @@ $self{texts} = {
   'Copy to COA'                 => 'Copier dans le plan comptable',
   'Cost Center'                 => 'Centre de coûts',
   'Country'                     => 'Pays',
+  'Country code missing!'       => 'Code pays manquant',
   'Create new snapshot for current point of time' => 'Ajouter un nouvel instantané pour le moment actuel',
   'Credit Invoice'              => 'Facture avoir',
   'Credit Note'                 => 'Note avoir',

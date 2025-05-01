@@ -923,7 +923,8 @@ sub config_vars {
              dbconnect dbdriver dbhost dbname dboptions dbpasswd
              dbport dbuser menuwidth name email emailcopy numberformat password
              outputformat printer sessionkey sid
-             signature stylesheet tan templates timeout vclimit);
+             signature stylesheet tan totp_activated totp_secret
+             templates timeout vclimit);
 
   @conf;
 

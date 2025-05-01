@@ -108,6 +108,7 @@ $self{texts} = {
   'Copy to COA'                 => 'In Kontenplan kopieren',
   'Cost Center'                 => 'Kostenstelle',
   'Country'                     => 'Land',
+  'Country code missing!'       => 'Ländercode fehlt!',
   'Create new snapshot for current point of time' => 'Neuen Snapshot für aktuellen Zeitpunkt hinzufügen',
   'Credit Invoice'              => 'Gutschriftrechnung',
   'Credit Note'                 => 'Gutschrift',

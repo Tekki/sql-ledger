@@ -3,6 +3,7 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
+  'Code from Authenticator'     => 'Code de l\'app d\'authentification',
   'Company'                     => 'Entreprise',
   'Configuration file missing!' => 'Fichier de configuration manquant !',
   'Continue'                    => 'Continuer',
@@ -12,12 +13,15 @@ $self{texts} = {
   'Incorrect Password!'         => 'Mot de passe incorrect !',
   'Incorrect Username or Password!' => 'Utilisateur ou mot de lpasse incorrect ! ',
   'Incorrect Username!'         => 'Utilisateur incorrect !',
+  'Invalid Code'                => 'Code invalide',
   'Invalid TAN'                 => 'TAN invalide',
   'Login'                       => 'Login',
   'Maximum tries exceeded!'     => 'Nombre maximal d\'essais dépassé !',
+  'Module not installed:'       => 'Module pas installé:',
   'Name'                        => 'Nom',
   'No email address for'        => 'Pas d\'adresse émail pour',
   'Password'                    => 'Mot de passe',
+  'Scan the following code with your Authenticator App:' => 'Scannez le code suivant avec votre app d\'authentification',
   'TAN'                         => 'TAN',
   'Upgrading to Version'        => 'Actualiser à la version',
   'Version'                     => 'Version',
@@ -33,6 +37,8 @@ $self{subs} = {
   'logout'                      => 'logout',
   'selectdataset'               => 'selectdataset',
   'tan_login'                   => 'tan_login',
+  'totp_login'                  => 'totp_login',
+  'totp_screen'                 => 'totp_screen',
   'continuer'                   => 'continue',
   'login'                       => 'login',
 };

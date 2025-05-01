@@ -14,6 +14,7 @@ RUN set -ex \
     libio-socket-ssl-perl \
     libmojolicious-perl \
     libspreadsheet-parsexlsx-perl \
+    libtext-qrcode-perl \
     postgresql-client \
   && rm -rf /var/lib/apt/lists/*
 

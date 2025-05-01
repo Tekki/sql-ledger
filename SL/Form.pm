@@ -204,7 +204,7 @@ sub dump_timer {
 
 
 sub perl_modules {
-  return [qw|Archive::Zip Excel::Writer::XLSX Mojolicious Spreadsheet::ParseXLSX|];
+  return [qw|Archive::Zip Excel::Writer::XLSX Mojolicious Spreadsheet::ParseXLSX Text::QRCode|];
 }
 
 

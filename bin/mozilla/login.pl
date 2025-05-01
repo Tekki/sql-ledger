@@ -358,7 +358,10 @@ sub login {
     mkdir "$images/$myconfig{dbname}", oct("771") or $form->error("$images/$myconfig{dbname} : $!");
   }
 
-  if ($user->{tan} && $sendmail) {
+  if ($user->{totp_activated}) {
+    &totp_screen;
+    exit;
+  } elsif ($user->{tan} && $sendmail) {
     &email_tan;
     exit;
   }
@@ -544,6 +547,134 @@ sub tan_login {
 }
 
 
+sub totp_screen {
+
+  my $qrcode = '';
+  unless ($user->{totp_secret}) {
+    $form->load_module(['Text::QRCode'], $locale->text('Module not installed:'));
+    require SL::QRCode;
+    require SL::TOTP;
+
+    SL::TOTP::add_secret($user, $memberfile, $userspath);
+
+    $qrcode = qq|
+              <tr>
+                <th colspan="2">|.$locale->text('Scan the following code with your Authenticator App:').qq|</th>
+              </tr>
+              <tr><td>&nbsp;</td></tr>
+              <tr>
+                <th colspan="2">
+|. SL::QRCode::plot_svg(SL::TOTP::url($user), scale => 4) . qq|
+                </th>
+              </tr>
+              <tr><td>&nbsp;</td></tr>|;
+  }
+
+  $form->{stylesheet} = $user->{stylesheet};
+  $form->{favicon}    = 'favicon.ico';
+  $form->{nextsub}    = 'totp_login';
+
+  $form->header;
+
+  print qq|
+
+<body class=login onload="document.forms[0].totp.focus()">
+
+<pre>
+
+</pre>
+
+<center>
+<table class=login border=3 cellpadding=20>
+  <tr>
+    <td class=login align=center><a href="https://github.com/Tekki/sql-ledger" target=_blank><img src=$images/sql-ledger.png border=0></a>
+<h1 class=login align=center>|.$locale->text('Version').qq| $form->{version}</h1>
+<h1 class=login align=center>$user->{company}</h1>
+
+<p>
+
+      <form method=post action=$form->{script}>
+
+      <table width=100%>
+        <tr>
+          <td align=center>
+            <table>
+              <tr>
+                <th colspan=2>$form->{login}</th>
+              </tr>$qrcode
+              <tr>
+                <th align=right>|.$locale->text('Code from Authenticator').qq|</th>
+                <td><input class=login type=text name=totp size=6></td>
+              </tr>
+            </table>
+            <br>
+            <input type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+          </td>
+        </tr>
+      </table>
+|;
+
+    $form->hide_form(qw|nextsub js login path|);
+
+  print qq|
+      </form>
+
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>
+|;
+
+}
+
+
+sub totp_login {
+
+  require SL::TOTP;
+
+  $user = User->new($memberfile, $form->{login});
+
+  unless (SL::TOTP::check_code($user, $form->{totp})) {
+    sleep 5;
+    $form->{stylesheet} = $user->{stylesheet};
+    $form->error($locale->text('Invalid Code'));
+  }
+
+  $user->create_config("$userspath/$form->{login}.conf");
+  $user->{dbpasswd} = unpack 'u', $user->{dbpasswd};
+
+  %myconfig = $user->%{qw|dbconnect dbhost dbname dbuser dbpasswd|};
+
+  # remove stale locks
+  $form->remove_locks(\%myconfig);
+
+  $form->{timeout}       = $user->{timeout};
+  $form->{sessioncookie} = $user->{sessioncookie};
+
+  # made it this far, setup callback for the menu
+  $form->{callback} = "menu.pl?action=display";
+  for (qw(login path password js sessioncookie small_device)) {
+    $form->{callback} .= "&$_=$form->{$_}";
+  }
+
+  # check for recurring transactions
+  if ($user->{acs} !~ /Recurring Transactions/) {
+    if ($user->check_recurring($form)) {
+      $form->{callback} .= "&main=recurring_transactions";
+    } else {
+      $form->{callback} .= "&main=list_recent";
+    }
+  } else {
+    $form->{callback} .= "&main=list_recent";
+  }
+
+  $form->redirect;
+
+}
+
+
 sub continue { &{ $form->{nextsub} } };
 
 =encoding utf8
@@ -597,5 +728,9 @@ Calls C<< &{ $form->{nextsub} } >>.
   &selectdataset($login);
 
 =head2 tan_login
+
+=head2 totp_login
+
+=head2 totp_screen
 
 =cut
