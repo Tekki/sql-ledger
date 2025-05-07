@@ -1798,7 +1798,6 @@ sub print_form {
         push @f, "${_}countryname";
       }
       $form->{"${_}localaddress"} = SL::ADR::local_address($form, undef, $_);
-      $form->{"${_}localaddress"} =~ s/\n/\n\n/g if $form->{format} eq 'pdf';
       push @f, "${_}localaddress";
     }
   }
