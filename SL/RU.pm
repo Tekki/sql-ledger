@@ -313,7 +313,7 @@ sub _descr {
   $description =~ s/--\d+//;
   $description .= ", $form->{description}"
     if $form->{description} && $form->{script} ne 'ic.pl';
-  return $number, $description;
+  return substr($number, 0, 32), $description;
 }
 
 sub _descr_ap {
