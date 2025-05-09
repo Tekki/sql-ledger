@@ -1,6 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
+  - re-authentication with MFA is now possible
+  - login to API accepts time-based one-time password
   - notes in customers, vendors and employees adapt their size to the content
   - error with too long identifiers for recently used objects corrected
   - LaTeX variables for localized addresses corrected

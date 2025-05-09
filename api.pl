@@ -144,7 +144,20 @@ sub check_password {
   if ($myconfig{password}) {
 
     if ($form->{password}) {
-      if ((crypt $form->{password}, substr($form->{login}, 0, 2)) ne $myconfig{password}) {
+
+      my $err;
+      if ($myconfig{totp_activated}) {
+        require SL::TOTP;
+        $form->{password} = crypt $form->{password}, substr($form->{login}, 0, 2);
+        $err = !(
+          SL::TOTP::check_code(\%myconfig, $form->{totp})
+          && crypt($form->{password}, substr($form->{login}, 0, 2)) eq $myconfig{password}
+        );
+      } else {
+        $err = crypt($form->{password}, substr($form->{login}, 0, 2)) ne $myconfig{password};
+      }
+
+      if ($err) {
         $form->json_error($locale->text('Access Denied!'));
       } else {
         # password checked out, create session

@@ -6,15 +6,22 @@ RUN set -ex \
   && dnf install -y \
     httpd \
     perl \
+    perl-App-cpanminus \
     perl-Archive-Zip \
     perl-DBD-Pg \
     perl-Excel-Writer-XLSX \
     perl-IO-Socket-SSL \
     perl-Mojolicious \
-#    perl-Spreadsheet-ParseXLSX \
+    perl-XML-Parser \
     postgresql \
     procps-ng \
+    qrencode-devel \
   && dnf clean all
+
+RUN set -ex \
+  && cpanm \
+    Spreadsheet::ParseXLSX \
+    Text::QRCode
 
 RUN echo -e " <Directory /var/www/html/sql-ledger>\n"\
   "  AddHandler cgi-script .pl\n"\
@@ -28,7 +35,7 @@ RUN set -ex \
     && chmod 0700 /usr/local/apache2/gnupg
 
 RUN set -ex \
-    && sed -i -e 's/use warnings;/# use warnings;/' /usr/share/perl5/vendor_perl/Excel/Writer/XLSX/Package/Styles.pm 
+    && sed -i -e 's/use warnings;/# use warnings;/' /usr/share/perl5/vendor_perl/Excel/Writer/XLSX/Package/Styles.pm
 
 WORKDIR /var/www/html/sql-ledger
 

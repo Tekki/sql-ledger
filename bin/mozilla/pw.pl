@@ -29,6 +29,16 @@ sub getpassword {
 
   $pwt = $locale->text('Password');
 
+  my $totp = '';
+  if ($myconfig{totp_activated}) {
+    $totp = qq|
+  <tr>
+    <th align=right>| . $locale->text('Code from Authenticator') . qq|</th>
+    <td><input type=text name=totp size=30></td>
+  </tr>|;
+  }
+
+
   if ($form->{stylesheet} && (-f "css/$form->{stylesheet}")) {
     $stylesheet = qq|<link rel="stylesheet" href="css/$form->{stylesheet}" type="text/css" title="SQL-Ledger stylesheet">
 |;
@@ -75,13 +85,16 @@ function sf(){
   <tr>
     <th align=right>$pwt</th>
     <td><input type=password name=password size=30></td>
+  </tr>$totp
+  <tr>
+    <th></th>
     <td><input type=submit class=submit value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]"></td>
   </tr>
 </table>
 
 |;
 
-  for (qw(script password header sessioncookie)) { delete $form->{$_} }
+  for (qw(script password totp header sessioncookie)) { delete $form->{$_} }
 
   foreach $item (split /;/, $form->{acs}) {
     $item = $form->escape($item,1);

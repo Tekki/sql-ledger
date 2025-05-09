@@ -67,6 +67,7 @@ $self{texts} = {
   'Chart of Accounts'           => 'Plan comptable',
   'Check'                       => 'Chèque',
   'Clear Semaphores'            => 'Effacer semaphores',
+  'Code from Authenticator'     => 'Code de l\'app d\'authentification',
   'Company'                     => 'Entreprise',
   'Components'                  => 'Composants',
   'Confirm'                     => 'Confirmer',

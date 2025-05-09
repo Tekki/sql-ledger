@@ -3,6 +3,7 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
+  'Code from Authenticator'     => 'Code von Authenticator',
   'Continue'                    => 'Weiter',
   'Password'                    => 'Passwort',
   'Session expired!'            => 'Sitzungsdauer abgelaufen!',

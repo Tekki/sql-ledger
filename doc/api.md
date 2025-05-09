@@ -31,11 +31,12 @@ cpanm Mojolicious \
 To get an access token, the first call has to be made to `api.pl` with
 `username` and `password` as parameters.
 
-| parameter | value         |
-|-----------|---------------|
-| action    | 'get\_token'  |
-| login     | your username |
-| password  | your password |
+| parameter | value                                 |
+|-----------|---------------------------------------|
+| action    | 'get\_token'                          |
+| login     | your username                         |
+| password  | your password                         |
+| totp      | optional time-based one-time password |
 
 ```json
 { "token": ... }
@@ -167,7 +168,7 @@ if (my $customers = $res->json->{customers}) {
   say_ok @$customers . ' customers found';
 
   for my $customer (@$customers) {
-    printf "%-30s %-10s %s\n", $customer->{name}, $customer->{typeofcontact}, $customer->{email};
+    printf "%-30.30s %-10s %s\n", $customer->{name}, $customer->{typeofcontact}, $customer->{email};
   }
 
 } else {
