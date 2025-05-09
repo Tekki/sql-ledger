@@ -565,6 +565,9 @@ sub employee_header {
   $form->{payrate_rows}++;
   $form->{wage_rows}++;
 
+  my $notes_rows = $form->numtextrows($form->{notes}, 32, 10);
+  $notes_rows = 3 if $notes_rows < 3;
+
   $form->header;
 
   &calendar;
@@ -788,7 +791,7 @@ sub employee_header {
               </tr>
               <tr valign=top>
                 <th align=right nowrap>|.$locale->text('Notes').qq|</th>
-                <td><textarea name=notes rows=3 cols=32>$form->{notes}</textarea></td>
+                <td><textarea name=notes rows=$notes_rows cols=32>$form->{notes}</textarea></td>
               </tr>
             </table>
           </td>

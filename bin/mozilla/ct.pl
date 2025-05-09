@@ -2039,6 +2039,9 @@ sub form_header {
 
   $form->{title} .= " / $form->{company}";
 
+  my $notes_rows = $form->numtextrows($form->{notes}, 40, 10);
+  $notes_rows = 3 if $notes_rows < 3;
+
   $form->header;
 
   &calendar;
@@ -2186,7 +2189,7 @@ sub form_header {
             <table width=100%>
               <tr valign=top>
                 <th width=1% align=left nowrap>|.$locale->text('Notes').qq|</th>
-                <td><textarea name=notes rows=3 cols=40 wrap=soft>$form->{notes}</textarea></td>
+                <td><textarea name=notes rows=$notes_rows cols=40 wrap=soft>$form->{notes}</textarea></td>
               </tr>
             </table>
           </td>
