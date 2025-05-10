@@ -1,6 +1,6 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
-Not Released
+3.2.12.57 2025-05-10
   - re-authentication with MFA is now possible
   - login to API accepts time-based one-time password
   - notes in customers, vendors and employees adapt their size to the content
