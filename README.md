@@ -16,19 +16,20 @@ you can download a specific version back to 2.6.0 from October 1, 2005.
 The `full` branch, which is checked out by default, provides some additions:
 
 * real Unicode support
-* MFA with time-based one-time passwords (codes from Authenticator App)
+* MFA with time-based one-time passwords (TOTP, codes from Authenticator App)
 * extended keyboard shortcuts ([docs](doc/shortcuts.md))
 * spreadsheet downloads
 * recently used objects
 * improved document management with drag and drop and deduplication
 * data export for editing and reimport
 * dark mode
-* markdown for bold, italic and links in templates
-* localized postal addresses ([docs](doc/localaddress.md))
+* markdown for bold, italic and links in templates ([docs](doc/latex_templates.md#md))
+* directive for QR Codes in templates ([docs](doc/latex_templates.md#qrcode))
+* localized postal addresses (docs for [addresses](doc/localaddress.md), [templates](doc/latex_templates.md#localaddr))
 * database snapshots
 * encrypted backups
 * JSON API ([introduction](doc/api.md))
-* variables for Swiss QR Bill
+* variables for Swiss QR Bill ([docs](doc/latex_templates.md#qrbill))
 * XML payment export, pain.001 Swiss Payment Standard 2024
 * XML payment import, ISO 20022 camt.054
 * Docker files for containerized test environment

@@ -1638,7 +1638,7 @@ sub format_line {
     $newstr = "";
 
     %kw = ();
-    if ($var =~ /(align|width|offset|group)\s*?=/) {
+    if ($var =~ /(align|width|offset|group|qrcode)\s*?=/) {
       @kw = split / /, $var;
       $var = $kw[0];
       foreach $item (@kw) {
@@ -1827,6 +1827,17 @@ sub format_line {
           $newstr .= ord;
         }
       }
+    }
+
+    if ($kw{qrcode}) {
+      require SL::QRCode;
+
+      my %params = (height => $kw{qrcode});
+      for my $p (qw|foreground background unit margin level version|) {
+        $params{$p} = $kw{$p} if $kw{$p};
+      }
+
+      $newstr = SL::QRCode::plot_latex($newstr, %params);
     }
 
     s/<%(.+?)%>/$newstr/;

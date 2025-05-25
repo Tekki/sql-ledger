@@ -12,8 +12,75 @@
 #======================================================================
 package SL::QRCode;
 
+use strict;
+use warnings;
+
 use POSIX 'fmax';
 use Text::QRCode;
+
+sub plot_latex {
+  my ($text, %param) = @_;
+
+  $param{foreground} ||= 'black';
+  $param{level}      ||= 'M';
+  $param{margin}     ||= 0;
+  $param{unit}       ||= 'mm';
+  $param{version}    ||= 0;
+
+  my @code = Text::QRCode->new(level => $param{level}, version => $param{version})->plot($text)->@*;
+
+  $param{height} ||= @code + 2 * $param{margin};
+  my $dotsize = ($param{height} - 2 * $param{margin}) / @code;
+
+  my $n_max   = @code - 1;
+  my (@elements, @dot);
+
+  if ($param{background}) {
+    push @elements, qq|  \\filldraw[draw=$param{background}, fill=$param{background}] (0,0) rectangle ($param{height},$param{height});|;
+  }
+
+  my $rect = sub {
+    my ($x, $y, $width, $height) = @_;
+
+    my $x1 = $x * $dotsize + $param{margin};
+    my $y1 = ($n_max - $y) * $dotsize + $param{margin};
+    my $x2 = $x1 + $width * $dotsize;
+    my $y2 = $y1 + $height * $dotsize;
+
+    push @elements, sprintf '  \filldraw (%0.3f,%0.3f) rectangle (%0.3f,%0.3f);', $x1, $y1, $x2, $y2;
+  };
+
+  my $add_dot = sub {
+    if (@dot) {
+      $rect->(@dot);
+      @dot = ();
+    }
+  };
+
+  for my $y (0 .. $n_max) {
+    for my $x (0 .. $n_max) {
+      if ($code[$y][$x] eq '*') {
+        if (@dot) {
+          $dot[2]++;
+        } else {
+          @dot = ($x, $y, 1, 1);
+        }
+      } else {
+        $add_dot->();
+      }
+    }
+    $add_dot->();
+  }
+
+  push @elements, $param{additional_elements}->@* if $param{additional_elements};
+  
+  my $latex
+    = qq|\\begin{tikzpicture}[x=1$param{unit}, y=1$param{unit}, draw=$param{foreground}, fill=$param{foreground}]\n|
+    . join("\n", @elements)
+    . qq|\n\\end{tikzpicture}|;
+
+  return $latex;
+}
 
 sub plot_svg {
   my ($text, %param) = @_;
@@ -102,7 +169,20 @@ SL::QRCode - Generator for QR Codes
 
     use SL::QRCode;
 
-    my %default_params = (
+    my %default_latex_params = (
+      level               => 'M',
+      version             => 0,
+      background          => undef,
+      foreground          => 'black',
+      unit                => 'mm',
+      height              => undef,     # calculated if not provided
+      margin              => 0,
+      additional_elements => undef,
+    );
+
+    my $latex = SL::QRCode::plot_latex($text, %default_latex_params, height => $height);
+
+    my %default_svg_params = (
       level      => 'M',
       version    => 0,
       background => 'white',
@@ -114,7 +194,7 @@ SL::QRCode - Generator for QR Codes
       scale      => 1,
     );
 
-    my $svg = SL::QRCode::plot_svg($text, %default_params);
+    my $svg = SL::QRCode::plot_svg($text, %default_svg_params);
 
 =head1 DESCRIPTION
 
@@ -132,6 +212,12 @@ L<Text::QRCode>
 =back
 
 =head1 FUNCTIONS
+
+=head2 plot_latex
+
+    my $latex = SL::QRCode::plot_latex($text, height => $height);
+    my $latex = SL::QRCode::plot_latex($text, %params);
+    my $latex = SL::QRCode::plot_latex($text, %params, additional_elements => \@el);
 
 =head2 plot_svg
 

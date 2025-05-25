@@ -1,6 +1,7 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
+  - directive for QR Codes in LaTeX templates
   - cursor starting point improved on several screens
 
 3.2.12.57 2025-05-10
