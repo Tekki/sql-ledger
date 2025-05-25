@@ -30,7 +30,7 @@ sub getpassword {
   $pwt = $locale->text('Password');
 
   my $totp = '';
-  if ($myconfig{totp_activated}) {
+  if ($myconfig{totp_activated} || $form->{admin} && $admin_totp_activated) {
     $totp = qq|
   <tr>
     <th align=right>| . $locale->text('Code from Authenticator') . qq|</th>

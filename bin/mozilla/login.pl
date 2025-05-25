@@ -358,7 +358,7 @@ sub login {
     mkdir "$images/$myconfig{dbname}", oct("771") or $form->error("$images/$myconfig{dbname} : $!");
   }
 
-  if ($user->{totp_activated}) {
+  if ($user->{totp_activated} || $form->{admin} && $admin_totp_activated) {
     &totp_screen;
     exit;
   } elsif ($user->{tan} && $sendmail) {
@@ -566,6 +566,9 @@ sub totp_screen {
                 <th colspan="2">
 |. SL::QRCode::plot_svg(SL::TOTP::url($user), scale => 4) . qq|
                 </th>
+              </tr>
+              <tr>
+                <th colspan="2">$user->{totp_secret}</th>
               </tr>
               <tr><td>&nbsp;</td></tr>|;
   }

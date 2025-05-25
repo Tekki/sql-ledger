@@ -150,7 +150,7 @@ sub check_password {
     if ($form->{password}) {
 
       my $err;
-      if ($myconfig{totp_activated}) {
+      if ($myconfig{totp_activated} || $form->{admin} && $admin_totp_activated) {
         require SL::TOTP;
         $form->{password} = crypt $form->{password}, substr($form->{login}, 0, 2);
         $err = !(

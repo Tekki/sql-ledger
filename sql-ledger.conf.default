@@ -1,4 +1,4 @@
-use vars qw($userspath $spool $memberfile $templates $sendmail $images $language $charset $sid $latex $gzip $gpg $dvipdf $pdftk $xelatex @accessfolders $helpful_login);
+use vars qw($userspath $spool $memberfile $templates $sendmail $images $language $charset $sid $latex $gzip $gpg $dvipdf $pdftk $xelatex @accessfolders $helpful_login $admin_totp_activated);
 
 # path to user configuration files
 $userspath = "users";
@@ -49,10 +49,14 @@ $pdftk = 1;
 @accessfolders = qw|templates css|;
 
 # login security
+
 # 0: users have to enter their full username and correct password
 # 1: displays helpful error messages and lists of similar users;
 #    facilitates attacks on the system, not recommended
 $helpful_login = 0;
+
+# TOTP for admins
+$admin_totp_activated = 0;
 
 # if the server can't find gzip or latex add the path
 $ENV{PATH} .= ":/usr/local/bin";

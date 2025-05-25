@@ -1,6 +1,7 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
+  - MFA can be globally enforced for admins
   - directive for QR Codes in LaTeX templates
   - cursor starting point improved on several screens
 
