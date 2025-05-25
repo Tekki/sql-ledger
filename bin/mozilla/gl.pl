@@ -438,6 +438,8 @@ sub search {
 
   $form->helpref("search_gl_transactions", $myconfig{countrycode});
 
+  $focus = $form->{focus} || 'reference';
+
   $form->header;
 
   &calendar;
@@ -445,7 +447,7 @@ sub search {
   &change_report(\%$form, \@input, \@checked, \%radio);
 
   print qq|
-<body>
+<body onload="document.main.${focus}.focus()">
 
 <form method="post" name="main" action="$form->{script}">
 

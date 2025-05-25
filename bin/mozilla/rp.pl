@@ -65,20 +65,21 @@ use SL::CP;
 
 sub report {
 
-  %report = ( balance_sheet        => { title => 'Balance Sheet' },
-             income_statement        => { title => 'Income Statement' },
-             trial_balance        => { title => 'Trial Balance' },
-             ar_aging                => { title => 'AR Aging', vc => 'customer' },
-             ap_aging                => { title => 'AP Aging', vc => 'vendor' },
-             tax_collected        => { title => 'Tax collected', vc => 'customer' },
-             tax_paid                => { title => 'Tax paid' },
-             nontaxable_sales        => { title => 'Non-taxable Sales', vc => 'customer' },
-             nontaxable_purchases => { title => 'Non-taxable Purchases' },
-             receipts                => { title => 'Receipts', vc => 'customer' },
-             payments                => { title => 'Payments' },
-             projects                => { title => 'Project Transactions' },
-             reminder                => { title => 'Reminder', vc => 'customer' },
-           );
+  %report = (
+    ap_aging             => {title => 'AP Aging',         vc    => 'vendor'},
+    ar_aging             => {title => 'AR Aging',         vc    => 'customer'},
+    balance_sheet        => {title => 'Balance Sheet',    focus => 'todate'},
+    income_statement     => {title => 'Income Statement', focus => 'fromdate'},
+    nontaxable_purchases => {title => 'Non-taxable Purchases'},
+    nontaxable_sales     => {title => 'Non-taxable Sales', vc => 'customer'},
+    payments             => {title => 'Payments'},
+    projects             => {title => 'Project Transactions', focus => 'projectnumber'},
+    receipts             => {title => 'Receipts',             vc    => 'customer'},
+    reminder             => {title => 'Reminder',             vc    => 'customer'},
+    tax_collected        => {title => 'Tax collected',        vc    => 'customer'},
+    tax_paid             => {title => 'Tax paid'},
+    trial_balance        => {title => 'Trial Balance', focus => 'fromdate'},
+  );
 
   $form->{title} = $locale->text($report{$form->{reportcode}}->{title});
 
@@ -452,6 +453,8 @@ sub report {
 
   }
 
+  $focus = $form->{focus} || $report{$form->{reportcode}}{focus};
+
   $form->header;
 
   &change_report(\%$form, \@input, \@checked, \%radio);
@@ -459,7 +462,7 @@ sub report {
   &calendar;
 
   print qq|
-<body>
+<body onload="document.main.${focus}.focus()">
 
 <form method="post" name="main" action="$form->{script}">
 

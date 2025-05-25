@@ -269,6 +269,8 @@ sub search {
   $type = $form->{type} || "stcard";
   $form->helpref("search_$type", $myconfig{countrycode});
 
+  $focus = $form->{focus} || 'employee';
+
   $form->header;
 
   &calendar;
@@ -276,7 +278,7 @@ sub search {
   &change_report(\%$form, \@input, \@checked, \%radio);
 
   print qq|
-<body>
+<body onload="document.main.${focus}.focus()">
 
 <form method=post name=main action=$form->{script}>
 

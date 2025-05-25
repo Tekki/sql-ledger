@@ -94,12 +94,14 @@ sub reconciliation {
 
   $form->helpref("reconciliation", $myconfig{countrycode});
 
+  $focus = $form->{focus} || 'accno';
+
   $form->header;
 
   &calendar;
 
   print qq|
-<body>
+<body onload="document.main.${focus}.focus()">
 
 <form method="post" name="main" action="$form->{script}">
 

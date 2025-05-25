@@ -790,6 +790,8 @@ sub search {
 
   $form->helpref("search_$form->{type}", $myconfig{countrycode});
 
+  $focus = $form->{focus} || 'projectnumber';
+
   $form->header;
 
   &calendar;
@@ -797,7 +799,7 @@ sub search {
   &change_report(\%$form, \@input, \@checked, \%radio);
 
   print qq|
-<body>
+<body onload="document.main.${focus}.focus()">
 
 <form method=post name=main action=$form->{script}>
 
@@ -2375,12 +2377,14 @@ sub project_sales_order {
   $form->{vc} = "customer";
   $form->{type} = "sales_order";
 
+  $focus = $form->{focus} || 'projectnumber';
+
   $form->header;
 
   &calendar;
 
   print qq|
-<body>
+<body onload="document.main.${focus}.focus()">
 
 <form method="post" name="main" action="$form->{script}" />
 

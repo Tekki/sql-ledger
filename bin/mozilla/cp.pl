@@ -523,6 +523,7 @@ sub payments_header {
 |;
   }
 
+  $focus = $form->{focus} || 'transdatefrom';
 
   $form->header;
 
@@ -537,7 +538,7 @@ javascript:window.history.forward(1);
 // -->
 </script>
 
-<body>
+<body onload="document.main.${focus}.focus()">
 
 <form method="post" name="main" action="$form->{script}">
 |;
@@ -1512,6 +1513,7 @@ sub payment_header {
 |;
   }
 
+  $focus = $form->{focus} || $form->{vc};
 
   $form->header;
 
@@ -1526,7 +1528,7 @@ javascript:window.history.forward(1);
 // -->
 </script>
 
-<body>
+<body onload="document.main.${focus}.focus()">
 
 <form method="post" name="main" action="$form->{script}">
 |;

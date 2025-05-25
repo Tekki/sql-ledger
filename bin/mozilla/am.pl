@@ -119,12 +119,14 @@ sub account_header {
 
   $form->helpref("account", $myconfig{countrycode});
 
+  $focus = $form->{focus} || 'accno';
+
   $form->header;
 
   print qq|
-<body>
+<body onload="document.main.${focus}.focus()">
 
-<form method=post action=$form->{script}>
+<form name="main" method="post" action="$form->{script}">
 
 <input type=hidden name=type value=account>
 |;
@@ -5643,12 +5645,14 @@ sub search_exchangerates {
 
   $form->helpref("search_exchangerates", $myconfig{countrycode});
 
+  $focus = $form->{focus} || 'currency';
+
   $form->header;
 
   &calendar;
 
   print qq|
-<body>
+<body onload="document.main.${focus}.focus()">
 
 <form method="post" name="main" action="$form->{script}">
 

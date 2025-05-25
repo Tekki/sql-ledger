@@ -55,6 +55,8 @@ sub import {
 
   $form->helpref("import_$form->{type}", $myconfig{countrycode});
 
+  $focus = $form->{focus} || $form->{type} eq 'payment' ? 'paymentaccount' : 'data';
+
   $form->header;
 
   $form->{nextsub} = "im_$form->{type}";
@@ -119,9 +121,9 @@ sub import {
   }
 
   print qq|
-<body>
+<body onload="document.main.${focus}.focus()">
 
-<form enctype="multipart/form-data" method=post action=$form->{script}>
+<form name="main" enctype="multipart/form-data" method=post action=$form->{script}>
 
 <table width=100%>
   <tr>
@@ -417,6 +419,8 @@ sub export_screen_payment {
 
   IM->paymentaccounts(\%myconfig, $form) if $form->{type} eq 'payment';
 
+  $focus = $form->{focus} || 'paymentaccount';
+
   $form->header;
 
   $form->{reportcode} = "export_$form->{type}";
@@ -578,7 +582,7 @@ sub export_screen_payment {
   &calendar;
 
   print qq|
-<body>
+<body onload="document.main.${focus}.focus()">
 
 <form method="post" name="main" action="$form->{script}">
 
