@@ -2730,6 +2730,31 @@ sub ex_payment {
 
   IM->unreconciled_payments(\%myconfig, \%$form);
 
+  if ($form->{filetype} eq 'xml') {
+    my @errors;
+    my %label = (
+      accountbic     => $locale->text('BIC missing!'),
+      accountiban    => $locale->text('IBAN missing!'),
+      company        => $locale->text('Company missing!'),
+      companycountry => $locale->text('Country code missing!'),
+      defaults       => $locale->text('Defaults'),
+    );
+
+    for (qw|company companycountry|) {
+      unless ($form->{$_}) {
+        push @errors, "$label{defaults}: $label{$_}";
+      }
+    }
+
+    for (qw|accountbic accountiban|) {
+      unless ($form->{$_}) {
+        push @errors, "$form->{paymentaccount}: $label{$_}";
+      }
+    }
+
+    $form->{export_message} = join "\n", @errors;
+  }
+
   if ($form->{initreport}) {
 
     @column_index = ();
@@ -2827,7 +2852,11 @@ sub ex_payment {
 
   print qq|
 
-<body>
+<body>|;
+
+  $form->info($form->{export_message}) if $form->{export_message};
+
+  print qq|
 
 <form method=post action=$form->{script}>
 
@@ -3103,7 +3132,7 @@ sub ex_payment {
 
   }
 
-  $form->{rowcount} = $i + 1;
+  $form->{rowcount} = $i;
 
   # print total
   if ($form->{filetype} eq 'txt') {
@@ -3179,7 +3208,7 @@ sub ex_payment {
     'Save Report'        => {ndx => 4, key => 'S', value => $locale->text('Save Report')}
   );
 
-  delete $button{'Export Payments'} if !$form->{rowcount};
+  delete $button{'Export Payments'} if !$form->{rowcount} || $form->{export_message};
   delete $button{'Add Column'}      if $form->{filetype} eq 'xml';
 
   $form->print_button(\%button);

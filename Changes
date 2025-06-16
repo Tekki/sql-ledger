@@ -1,5 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+Not Released
+  - XML payment export warns if required values are missing
+
 3.2.12.58 2025-05-25
   - MFA can be globally enforced for admins
   - directive for QR Codes in LaTeX templates
