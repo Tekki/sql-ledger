@@ -2538,6 +2538,237 @@ sub import_groups {
 }
 
 
+sub import_qrbill {
+  $form->load_module(['Image::Magick', 'Imager::zxing'], $locale->text('Module not installed:'));
+
+  my %title = (
+    qr_transaction => $locale->text('Import QR-Bill: AP Transaction'),
+    qr_invoice     => $locale->text('Import QR-Bill: Vendor Invoice'),
+  );
+
+  $form->{selectqr_page} = '0--' . $locale->text('last');
+  for (1..9) {
+    $form->{selectqr_page} .= "\n$_--$_";
+  }
+  $form->{selectqr_page} = $form->escape($form->{selectqr_page}, 1);
+
+  $form->{title}   = $title{$form->{type}};
+  $form->{nextsub} = "im_$form->{type}";
+
+  $form->{qr_attach} //= 1;
+
+  my %checked;
+  for (qw|qr_add_vendor qr_attach|) {
+    $checked{$_} = $form->{$_} ? ' checked' : '';
+  }
+
+  $form->helpref("import_$form->{type}", $myconfig{countrycode});
+
+  $focus = $form->{focus} || 'data';
+
+  $form->header;
+
+  $form->{nextsub} = 'im_qrbill';
+
+  print qq|
+<body onload="document.main.${focus}.focus()">
+
+<form name="main" enctype="multipart/form-data" method="post" action="$form->{script}">
+
+<table width="100%">
+  <tr>
+    <th class="listtop">$form->{helpref}$form->{title}</a></th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>
+      <table>
+        <tr>
+          <th align="right">|.$locale->text('File to Import').qq|</th>
+          <td>
+            <input name="data" size="60" type="file">
+          </td>
+        </tr>
+        <tr>
+          <th align="right">|.$locale->text('Code on page').qq|</th>
+          <td>
+            <select name="qr_page">|.$form->select_option($form->{selectqr_page}, undef , 1,1 ) .qq|</select>
+          </td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <input name="qr_attach" class="checkbox" type="checkbox" value="1"$checked{qr_attach}> |.$locale->text('Attach Document').qq|
+          </td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <input name="qr_add_vendor" class="checkbox" type="checkbox" value="1"$checked{qr_add_vendor}> |.$locale->text('Create missing vendor').qq|
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td><hr size="3" noshade></td>
+  </tr>
+</table> |;
+
+  $form->hide_form(qw|nextsub type login path|);
+
+  print qq|
+<input name=action class=submit type=submit value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+</form>
+
+</body>
+</html>
+|;
+}
+
+
+sub im_qrbill {
+  require SL::QRCode;
+
+  my $res = SL::QRCode::decode_qrbill("$userspath/$form->{tmpfile}", $form->{page});
+  my $data;
+
+  unless ($form->{qr_attach}) {
+    unlink "$userspath/$form->{tmpfile}";
+    delete $form->{tmpfile};
+  }
+
+  if ($res->{result} eq 'ok') {
+    $data = $res->{structured_data};
+    $form->{arap_message}
+      = "$data->{currency} " . $form->format_amount(\%myconfig, $data->{amount}, 2);
+
+    $form->{qriban} = $res->{structured_data}{qriban};
+    IM->qrbill_links(\%myconfig, $form);
+
+    my @ct = @{$form->{CT}};
+    if (@ct == 1) {
+
+      $form->{vendor_id} = $form->{CT}[0]{id};
+      $form->{vendor}    = $form->{CT}[0]{name};
+
+    } elsif (@ct > 1) {
+
+      $form->{arap_message}
+        .= "\n" . $locale->text('More than one vendor found:') . ' ' . join ', ',
+        map { $_->{name} } @ct;
+
+    } elsif ($form->{qr_add_vendor}) {
+
+      require JSON::PP;
+      require "$form->{path}/ct.pl";
+      $locale = Locale->new($myconfig{countrycode}, 'ct');
+
+      $form->{callback} = "im.pl?action=process_qrbill&qrbill_data="
+        . $form->escape(JSON::PP->new->utf8(0)->encode($data), 1);
+      for (qw|type qr_add_vendor qr_attach tmpfile filename arap_message path login|) {
+        $form->{callback} .= "&$_=$form->{$_}" if $form->{$_};
+      }
+
+      $form->{script}        = 'ct.pl';
+      $form->{db}            = 'vendor';
+      $form->{typeofcontact} = 'company';
+      $form->{qriban}        = $data->{qriban} =~ s/(\S{4})(?=\S)/$1 /gr;
+      $form->{curr}          = $data->{currency};
+
+      for (qw|name address1 streetname buildingnumber zipcode city taxnumber|) {
+        $form->{$_} = $data->{vendor}{$_};
+      }
+      $form->{country} = $data->{vendor}{country}
+        if $data->{vendor}{country} ne $form->{companycountry};
+
+      &add;
+      exit;
+
+    } else {
+
+      $form->{arap_message}
+        .= "\n" . $locale->text('Vendor not found:') . " $data->{vendor}{name}";
+
+    }
+
+  } else {
+    $form->{arap_message} = $locale->text('Error!') . " $res->{errstr}";
+  }
+
+  &process_qrbill($data);
+}
+
+
+sub process_qrbill {
+  my ($data) = @_;
+
+  if ($form->{qrbill_data} && !$data) {
+    require JSON::PP;
+
+    $data = JSON::PP->new->utf8(0)->decode($form->{qrbill_data});
+  }
+
+  $form->{callback} = "im.pl?action=import_qrbill";
+  for (qw|type qr_add_vendor qr_attach path login|) {
+    $form->{callback} .= "&$_=$form->{$_}" if $form->{$_};
+  }
+
+  if ($form->{type} eq 'qr_invoice') {
+    $form->{script}      = 'ir.pl';
+    $form->{type}        = 'invoice';
+    $locale              = Locale->new($myconfig{countrycode}, 'ir');
+    $form->{sellprice_1} = $form->format_amount(\%myconfig, $data->{amount}, 2);
+    $form->{rowcount}    = 0;
+  } else {
+    $form->{script}   = 'ap.pl';
+    $form->{type}     = 'transaction';
+    $form->{focus}    = 'amount_1';
+    $locale           = Locale->new($myconfig{countrycode}, 'ap');
+    $form->{amount_1} = $form->format_amount(\%myconfig, $data->{amount}, 2);
+    $form->{rowcount} = 2;
+  }
+
+  for (qw|dcn currency|) {
+    $form->{$_} = $data->{$_};
+  }
+
+  if ($data->{terms}) {
+    $form->{terms}   = $data->{terms};
+    $form->{duedate} = '';
+  } else {
+    $form->{focus} = 'terms';
+  }
+  if ($data->{transdate}) {
+    $form->{transdate} = $form->format_date($myconfig{dateformat} =~ s/yy/yyyy/r, $data->{transdate});
+  } else {
+    $form->{focus} = 'transdate';
+  }
+  if ($data->{invnumber}) {
+    $form->{invnumber} = $data->{invnumber};
+  } else {
+    $form->{focus} = 'invnumber';
+  }
+  unless ($form->{vendor}) {
+    $form->{focus} = 'vendor';
+  }
+
+  if ($form->{qr_attach} && $form->{tmpfile}) {
+    $form->{all_reference} = [
+      {
+        archive_id  => '-',
+        description => $form->{filename} =~ s/\.\w+$//r,
+        filename    => $form->{filename},
+      }
+    ];
+    $form->{referencetmpfile_1} = $form->{tmpfile};
+  }
+
+  require "$form->{path}/$form->{script}";
+  &add;
+}
+
+
 sub ex_customer { &ex_vc }
 sub ex_vendor { &ex_vc }
 

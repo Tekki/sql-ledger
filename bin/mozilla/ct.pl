@@ -2448,6 +2448,10 @@ sub form_footer {
     'taxaccounts',    'update_contact',
   );
 
+  if ($form->{callback} =~ /^im\.pl\?action=process_qrbill/) {
+    delete $buttons[1], $buttons[2];
+  }
+
   for my $button (@buttons) {
     for (keys %$button) {
       delete $button->{$_} unless $f{$_};
@@ -3502,6 +3506,11 @@ sub save {
 
   CT->save(\%myconfig, \%$form);
   RU->register(\%myconfig, $form);
+
+  if ($form->{callback} =~ /^im\.pl\?action=process_qrbill/) {
+    $form->{callback}
+      .= "&$form->{db}_id=$form->{id}&$form->{db}=" . $form->escape($form->{name}, 1);
+  }
 
   $form->redirect($locale->text($msg));
 

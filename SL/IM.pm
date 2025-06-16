@@ -1950,6 +1950,33 @@ sub reconcile_payments {
 }
 
 
+sub qrbill_links {
+  my ($self, $myconfig, $form) = @_;
+
+  # connect to database
+  my $dbh = $form->dbconnect($myconfig);
+
+  $form->load_defaults(undef, $dbh, ['companycountry']);
+
+  my $query = qq|
+    SELECT ct.id, ct.name
+    FROM vendor ct
+    LEFT JOIN bank bk ON bk.id = ct.id
+    WHERE replace(qriban, ' ', '') = ?
+    ORDER BY ct.name|;
+  my $sth = $dbh->prepare($query);
+
+  $form->{CT} = [];
+  $sth->execute($form->{qriban}) or $form->dberror($query);
+  while (my $ref = $sth->fetchrow_hashref('NAME_lc')) {
+    push @{$form->{CT}}, $ref;
+  }
+
+  $dbh->disconnect;
+
+}
+
+
 1;
 
 

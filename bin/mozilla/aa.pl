@@ -93,7 +93,7 @@ sub add {
 
   $form->{callback} = "$form->{script}?action=add&type=$form->{type}&path=$form->{path}&login=$form->{login}" unless $form->{callback};
 
-  $form->{focus} = "amount_1";
+  $form->{focus} ||= "amount_1";
   &display_form;
 
 }
@@ -652,6 +652,8 @@ print qq|
 
 <input type=hidden name=title value="$title">
 |;
+
+  $form->info($form->{arap_message}) if $form->{arap_message};
 
   $form->hide_form(qw(id type printed emailed sort closedto locked oldtransdate oldduedate oldcurrency audittrail recurring checktax creditlimit creditremaining defaultcurrency rowcount oldterms batch batchid batchnumber batchdescription cdt precision remittancevoucher reference_rows referenceurl max_upload_size olddepartment company));
   $form->hide_form("select$form->{vc}");

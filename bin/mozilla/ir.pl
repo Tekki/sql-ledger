@@ -297,7 +297,7 @@ sub prepare_invoice {
     }
   }
 
-  $focus = "partnumber_$i";
+  $focus = $form->{focus} || "partnumber_$i";
 
   $form->{selectformname} = $form->escape($form->{selectformname},1);
 
@@ -456,6 +456,8 @@ sub form_header {
 
 <form method="post" name="main" action="$form->{script}">
 |;
+
+  $form->info($form->{arap_message}) if $form->{arap_message};
 
   $form->hide_form(qw(id type printed emailed queued title vc creditlimit creditremaining business closedto locked shipped oldtransdate oldduedate recurring defaultcurrency oldterms cdt precision order_id reference_rows referenceurl max_upload_size oldwarehouse olddepartment company));
 
