@@ -40,7 +40,7 @@ following the rules published by the Universal Postal Union.
 ## <a id="qrbill"></a>Variables for Swiss QR Bill
 
 For documents sent to customers, several variables are prepared that can be used
-for the LaTeX `qrcode` package so generate QR Codes for Swiss QR Bills.
+to generate QR Codes for Swiss QR Bills.
 
 | variable            | content                                     |
 |---------------------|---------------------------------------------|
@@ -54,10 +54,11 @@ for the LaTeX `qrcode` package so generate QR Codes for Swiss QR Bills.
 | qr_customer_country | the ISO code of the country of the customer |
 
 The the `qrcode` LaTeX package is not only terribly slow, its behavior is rather
-tricky when it has to process UTF-8 characters. The above variables work
-together with `xelatex`. For other cases, there are two more sets, one with
-prefix `qr2e_` instead of `qr_` that contains characters that are encoded twice
-and one with prefix `qrasc_` with plain ASCII texts.
+tricky when it has to process UTF-8 characters. It will not accept the above
+variables. With `xelatex`, you have to use a second set with prefix `qr2e_`
+instead of `qr_` that contains characters that are encoded twice. With
+`pdflatex` you can only use plain ASCII texts that are available with prefix
+`qrasc_`.
 
 ## <a id="qrcode"></a>Directive for QR Codes
 

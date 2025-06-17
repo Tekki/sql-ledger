@@ -1,7 +1,9 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
+  - import for QR Bills into AP transactions and vendor invoices
   - XML payment export warns if required values are missing
+  - links in perldoc completed and corrected
 
 3.2.12.58 2025-05-25
   - MFA can be globally enforced for admins

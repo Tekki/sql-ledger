@@ -17,79 +17,8 @@ SQL-Ledger is developed by L<DWS Systems Inc.|http://sql-ledger.com>. The
 C<master> branch contains the original version from DWS. It has version tags,
 so you can download a specific version back to 2.6.0 from October 1, 2005.
 
-The C<full> branch, which is checked out by default, provides some additions:
-
-=over
-
-=item * WLprinter
-
-=item * real Unicode support
-
-=item * JSON API
-
-=item * recently used objects
-
-=item * minimalistic documentation
-
-=item * Swiss charts of accounts in German, French and Italian
-
-=item * security patch for template editor
-
-=back
-
-=head1 INSTALLATION
-
-To install the program on Debian, you can use the
-L<Ansible Role for SQL-Ledger|https://github.com/Tekki/ansible-sql-ledger>.
-If you are on a different distribution, either follow the
-L<instructions from DWS|https://sql-ledger.com/cgi-bin/nav.pl?page=source/readme.txt&title=README>,
-or open an issue in the other repo (the chances that you get an update depend
-on your Github name, the weather and the lunar phase).
-
-=head1 WLPRINTER
-
-WLprinter, included in the C<full> branch, is a L<Java|https://java.com> program
-that is executed on the client PC and allows to print directly from SQL-Ledger
-to your local printers. It is available for printing if you add a printer with
-command C<wlprinter> at C<System--Workstations>. The client program is started
-from C<Batch--WLprinter>. You will have to add a Java security exception for your
-SQL-Ledger server.
-
-=head1 UNICODE SUPPORT
-
-In difference to the original SQL-Ledger, the version in the C<full> branch
-internally works with L<Unicode characters|http://perldoc.perl.org/perlunicode.html>.
-This requires that your database, your templates and translations are all
-encoded in UTF-8.
-
-=head1 DOCUMENTATION
-
-The documentation is very minimalistic and doesn't contain much more than the
-function names of the different modules. If you have L<Mojolicious|https://metacpan.org/pod/Mojolicious>
-and L<Mojolicious::Plugin::PODViewer|https://metacpan.org/pod/Mojolicious::Plugin::PODViewer>
-installed, you can start a perldoc server from your SQL-Ledger base directory with
-
-  perl -I. -Mojo -E'plugin "PODViewer"; a->start' daemon
-
-and browse to L<localhost:3000/perldoc/sql-ledger|http://localhost:3000/perldoc/sql-ledger>.
-
-
-=head1 CONTRIBUTING
-
-As mentioned above, what you find here is more or less a copy of the code from
-DWS. 'copy' means that the code flows from DWS to here and rarely in the other
-direction. 'more or less' means that the differences between the C<full> and the
-C<master> branch should always be as small that it is possible to include
-updates without problems. 2 merge conflics are not a problem, but 100 conflics
-are.
-
-It follows that if you want the DWS code to change, you have to speak with them.
-If on the other hand you want this repo to change, don't care about the moon
-calendar and create an issue.
-
-It was mentioned too that the C<full> branch contains some additions, like
-Unicode support and documentation. So it's probably more correct to call it a
-superset of the DWS code.
+The C<full> branch, which is checked out by default, provides some additions.
+Refer to the file README.md for a full description.
 
 =head1 REFERENCE
 
@@ -97,79 +26,79 @@ superset of the DWS code.
 
 =over
 
-=item * L<binE<sol>mozillaE<sol>aa.pl|bin::mozilla::aa> - AR / AP
+=item * L<binE<sol>mozillaE<sol>aa.pl|bin::mozilla::aa.pl> - AR / AP
 
-=item * L<binE<sol>mozillaE<sol>admin.pl|bin::mozilla::admin> - Setup module
+=item * L<binE<sol>mozillaE<sol>admin.pl|bin::mozilla::admin.pl> - Setup module
 
-=item * L<binE<sol>mozillaE<sol>am.pl|bin::mozilla::am> - Administration
+=item * L<binE<sol>mozillaE<sol>am.pl|bin::mozilla::am.pl> - Administration
 
-=item * L<binE<sol>mozillaE<sol>ap.pl|bin::mozilla::ap> - Accounts Payable
+=item * L<binE<sol>mozillaE<sol>ap.pl|bin::mozilla::ap.pl> - Accounts Payable
 
-=item * L<binE<sol>mozillaE<sol>api.pl|bin::mozilla::api> - JSON API
+=item * L<binE<sol>mozillaE<sol>api.pl|bin::mozilla::api.pl> - JSON API
 
-=item * L<binE<sol>mozillaE<sol>ar.pl|bin::mozilla::ar> - Accounts Receivable
+=item * L<binE<sol>mozillaE<sol>ar.pl|bin::mozilla::ar.pl> - Accounts Receivable
 
-=item * L<binE<sol>mozillaE<sol>arap.pl|bin::mozilla::arap> - Common routines for gl, ar, ap, is, ir, oe
+=item * L<binE<sol>mozillaE<sol>arap.pl|bin::mozilla::arap.pl> - Common routines for gl, ar, ap, is, ir, oe
 
-=item * L<binE<sol>mozillaE<sol>arapprn.pl|bin::mozilla::arapprn> - Printing routines for ar, ap
+=item * L<binE<sol>mozillaE<sol>arapprn.pl|bin::mozilla::arapprn.pl> - Printing routines for ar, ap
 
-=item * L<binE<sol>mozillaE<sol>bp.pl|bin::mozilla::bp> - Batch printing
+=item * L<binE<sol>mozillaE<sol>bp.pl|bin::mozilla::bp.pl> - Batch printing
 
-=item * L<binE<sol>mozillaE<sol>ca.pl|bin::mozilla::ca> - Module for Chart of Accounts, Income Statement and Balance Sheet
+=item * L<binE<sol>mozillaE<sol>ca.pl|bin::mozilla::ca.pl> - Module for Chart of Accounts, Income Statement and Balance Sheet
 
-=item * L<binE<sol>mozillaE<sol>cm.pl|bin::mozilla::cm> - Attach Reference Documents to transactions
+=item * L<binE<sol>mozillaE<sol>cm.pl|bin::mozilla::cm.pl> - Attach Reference Documents to transactions
 
-=item * L<binE<sol>mozillaE<sol>cp.pl|bin::mozilla::cp> - Payment module
+=item * L<binE<sol>mozillaE<sol>cp.pl|bin::mozilla::cp.pl> - Payment module
 
-=item * L<binE<sol>mozillaE<sol>ct.pl|bin::mozilla::ct> - Customer/vendor module
+=item * L<binE<sol>mozillaE<sol>ct.pl|bin::mozilla::ct.pl> - Customer/vendor module
 
-=item * L<binE<sol>mozillaE<sol>gl.pl|bin::mozilla::gl> - General Ledger
+=item * L<binE<sol>mozillaE<sol>gl.pl|bin::mozilla::gl.pl> - General Ledger
 
-=item * L<binE<sol>mozillaE<sol>hr.pl|bin::mozilla::hr> - Payroll module
+=item * L<binE<sol>mozillaE<sol>hr.pl|bin::mozilla::hr.pl> - Payroll module
 
-=item * L<binE<sol>mozillaE<sol>ic.pl|bin::mozilla::ic> - Inventory Control module
+=item * L<binE<sol>mozillaE<sol>ic.pl|bin::mozilla::ic.pl> - Inventory Control module
 
-=item * L<binE<sol>mozillaE<sol>im.pl|bin::mozilla::im> - Import/export
+=item * L<binE<sol>mozillaE<sol>im.pl|bin::mozilla::im.pl> - Import/export
 
-=item * L<binE<sol>mozillaE<sol>io.pl|bin::mozilla::io> - Common routines used in is, ir, oe, ic
+=item * L<binE<sol>mozillaE<sol>io.pl|bin::mozilla::io.pl> - Common routines used in is, ir, oe, ic
 
-=item * L<binE<sol>mozillaE<sol>ir.pl|bin::mozilla::ir> - Inventory received module
+=item * L<binE<sol>mozillaE<sol>ir.pl|bin::mozilla::ir.pl> - Inventory received module
 
-=item * L<binE<sol>mozillaE<sol>is.pl|bin::mozilla::is> - Inventory invoicing module
+=item * L<binE<sol>mozillaE<sol>is.pl|bin::mozilla::is.pl> - Inventory invoicing module
 
-=item * L<binE<sol>mozillaE<sol>jc.pl|bin::mozilla::jc> - Job Costing module
+=item * L<binE<sol>mozillaE<sol>jc.pl|bin::mozilla::jc.pl> - Job Costing module
 
-=item * L<binE<sol>mozillaE<sol>js.pl|bin::mozilla::js> - Routines to create Javascript functions
+=item * L<binE<sol>mozillaE<sol>js.pl|bin::mozilla::js.pl> - Routines to create Javascript functions
 
-=item * L<binE<sol>mozillaE<sol>login.pl|bin::mozilla::login> - Login frontend
+=item * L<binE<sol>mozillaE<sol>login.pl|bin::mozilla::login.pl> - Login frontend
 
-=item * L<binE<sol>mozillaE<sol>menu.pl|bin::mozilla::menu> - Two frame layout with refractured menu
+=item * L<binE<sol>mozillaE<sol>menu.pl|bin::mozilla::menu.pl> - Two frame layout with refractured menu
 
-=item * L<binE<sol>mozillaE<sol>oe.pl|bin::mozilla::oe> - Order entry module
+=item * L<binE<sol>mozillaE<sol>oe.pl|bin::mozilla::oe.pl> - Order entry module
 
-=item * L<binE<sol>mozillaE<sol>pe.pl|bin::mozilla::pe> - Project/job administration
+=item * L<binE<sol>mozillaE<sol>pe.pl|bin::mozilla::pe.pl> - Project/job administration
 
-=item * L<binE<sol>mozillaE<sol>pos.pl|bin::mozilla::pos> - POS
+=item * L<binE<sol>mozillaE<sol>pos.pl|bin::mozilla::pos.pl> - POS
 
-=item * L<binE<sol>mozillaE<sol>ps.pl|bin::mozilla::ps> - Point of sale script
+=item * L<binE<sol>mozillaE<sol>ps.pl|bin::mozilla::ps.pl> - Point of sale script
 
-=item * L<binE<sol>mozillaE<sol>pw.pl|bin::mozilla::pw> - Password dialog
+=item * L<binE<sol>mozillaE<sol>pw.pl|bin::mozilla::pw.pl> - Password dialog
 
-=item * L<binE<sol>mozillaE<sol>rc.pl|bin::mozilla::rc> - Account reconciliation module
+=item * L<binE<sol>mozillaE<sol>rc.pl|bin::mozilla::rc.pl> - Account reconciliation module
 
-=item * L<binE<sol>mozillaE<sol>rd.pl|bin::mozilla::rd> - Reference Documents
+=item * L<binE<sol>mozillaE<sol>rd.pl|bin::mozilla::rd.pl> - Reference Documents
 
-=item * L<binE<sol>mozillaE<sol>rp.pl|bin::mozilla::rp> - Module for preparing Income Statement and Balance Sheet
+=item * L<binE<sol>mozillaE<sol>rp.pl|bin::mozilla::rp.pl> - Module for preparing Income Statement and Balance Sheet
 
-=item * L<binE<sol>mozillaE<sol>ru.pl|bin::mozilla::ru> - Frontend for recently used objects
+=item * L<binE<sol>mozillaE<sol>ru.pl|bin::mozilla::ru.pl> - Frontend for recently used objects
 
-=item * L<binE<sol>mozillaE<sol>sm.pl|bin::mozilla::sm> - Maintainance module
+=item * L<binE<sol>mozillaE<sol>sm.pl|bin::mozilla::sm.pl> - Maintainance module
 
-=item * L<binE<sol>mozillaE<sol>sr.pl|bin::mozilla::sr> - Save reports
+=item * L<binE<sol>mozillaE<sol>sr.pl|bin::mozilla::sr.pl> - Save reports
 
-=item * L<binE<sol>mozillaE<sol>vr.pl|bin::mozilla::vr> - Voucher/batch register
+=item * L<binE<sol>mozillaE<sol>vr.pl|bin::mozilla::vr.pl> - Voucher/batch register
 
-=item * L<binE<sol>mozillaE<sol>wlprinter.pl|bin::mozilla::wlprinter> - Download and start WLprinter JAVA client
+=item * L<binE<sol>mozillaE<sol>wlprinter.pl|bin::mozilla::wlprinter.pl> - Download and start WLprinter JAVA client
 
 =back
 
@@ -225,6 +154,8 @@ superset of the DWS code.
 
 =item * L<SL::PM> - Price Matrix for IS, IR, OE
 
+=item * L<SL::QRCode> - Generator and decoder for QR Codes
+
 =item * L<SL::RC> - Account reconciliation routines
 
 =item * L<SL::RD> - CMS backend routines
@@ -234,6 +165,10 @@ superset of the DWS code.
 =item * L<SL::RU> - Backend for recently used objects
 
 =item * L<SL::SM> - Module for reposting/deleting invoices
+
+=item * L<SL::Spreadsheet> - Spreadsheet module
+
+=item * L<SL::SPS> - Swiss Payment Standard
 
 =item * L<SL::User> - User related functions
 

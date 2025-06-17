@@ -34,7 +34,7 @@ The `full` branch, which is checked out by default, provides some additions:
 * XML payment import, ISO 20022 camt.054
 * Docker files for containerized test environment
 * WLprinter
-* minimalistic documentation
+* minimalist documentation
 * Swiss charts of accounts in German, French and Italian
 * several security patches
 
@@ -46,7 +46,7 @@ different distribution, either follow the [instructions from
 DWS](https://sql-ledger.com/cgi-bin/nav.pl?page=source/readme.txt&title=README),
 or open an issue on GitHub.
 
-The Perl modules required to run this application are:
+The Perl modules required to run this application with all additions are:
 
 | Module                 | Debian package                |
 |------------------------|-------------------------------|
@@ -54,10 +54,15 @@ The Perl modules required to run this application are:
 | Archive::Zip           | libarchive-zip-perl           |
 | DBD::Pg                | libdbd-pg-perl                |
 | Excel::Writer::XLSX    | libexcel-writer-xlsx-perl     |
+| Image::Magick          | libimage-magick-perl          |
+| Imager::zxing          | -                             |
 | IO::Socket::SSL        | libio-socket-ssl-perl         |
 | Mojolicious            | libmojolicious-perl           |
 | Spreadsheet::ParseXLSX | libspreadsheet-parsexlsx-perl |
 | Text::QRCode           | libtext-qrcode-perl           |
+
+For a simple system, you should at least install `Archive::Zip`, `DBD::Pg`, and
+`Excel::Writer::XLSX`.
 
 # Encrypted Backups
 
@@ -79,7 +84,7 @@ all encoded in UTF-8.
 With
 
     cd docker
-    docker-compose -p sql-ledger up -d
+    docker compose -p sql-ledger up -d
 
 you can start a simple test environment (without LaTeX support) on
 Debian Bookworm. SQL-Ledger will run at
@@ -95,7 +100,7 @@ If you want to try the program on AlmaLinux 9, use the second compose
 file
 
     cd docker
-    docker-compose -f docker-compose-alma.yml -p sql-ledger up -d
+    docker compose -f docker-compose-alma.yml -p sql-ledger up -d
 
 # WLprinter
 
@@ -108,17 +113,9 @@ your SQL-Ledger server.
 
 # Documentation
 
-The documentation is very minimalistic and doesn't contain much more than the
-function names of the different modules. If you have
-[Mojolicious](https://metacpan.org/pod/Mojolicious) and
-[Mojolicious::Plugin::PODViewer](https://metacpan.org/pod/Mojolicious::Plugin::PODViewer)
-installed, you can start a perldoc server from your SQL-Ledger base directory
-with
-
-    perl -I. -Mojo -E'plugin "PODViewer"; a->start' daemon
-
-and browse to
-[localhost:3000/perldoc/sql-ledger](http://localhost:3000/perldoc/sql-ledger).
+The documentation is very minimalist and doesn't contain much more than the
+function names of the different modules. You can browse through it if you open
+file `sql-ledger.pod` in any Perldoc viewer.
 
 # Contributing
 
