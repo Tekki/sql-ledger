@@ -127,7 +127,7 @@ sub new {
 
   $self->{version} = "3.2.12";
   $self->{dbversion} = "3.2.4";
-  $self->{version2} = "tekki 3.2.12.59";
+  $self->{version2} = "tekki 3.2.12.60rc";
   $self->{dbversion2} = 49;
   $self->{cssversion} = 53;
 

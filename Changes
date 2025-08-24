@@ -1,5 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+Not Released
+  - registration of recently used timecards corrected
+
 3.2.12.59 2025-06-17
   - import for QR Bills into AP transactions and vendor invoices
   - XML payment export warns if required values are missing

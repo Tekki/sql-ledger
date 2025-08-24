@@ -399,7 +399,6 @@ sub prepare_timecard {
   $form->{media} ||= $myconfig{printer};
 
   JC->retrieve_card(\%myconfig, \%$form);
-  RU->register(\%myconfig, $form) if $form->{id} && $form->{project} eq 'project';
 
   $form->{selectprinter} = "";
   for (@{ $form->{all_printer} }) { $form->{selectprinter} .= "$_->{printer}\n" }
@@ -468,6 +467,8 @@ sub prepare_timecard {
 
   # references
   &all_references;
+
+  RU->register(\%myconfig, $form) if $form->{id} && $form->{project} eq 'project';
 
 }
 
