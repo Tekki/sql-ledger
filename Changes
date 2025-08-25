@@ -1,6 +1,7 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
+  - Docker files upgraded to Debian Trixie
   - registration of recently used timecards corrected
 
 3.2.12.59 2025-06-17

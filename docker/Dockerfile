@@ -1,5 +1,5 @@
 # Dockerfile for test environment
-FROM httpd:bookworm
+FROM httpd:trixie
 
 RUN set -ex \
   && apt-get update \

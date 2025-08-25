@@ -11,12 +11,14 @@
 
 services:
   db:
-    image: postgres:15
+    image: postgres:17
     environment:
       POSTGRES_PASSWORD: sql-ledger
       POSTGRES_USER: sql-ledger
+    ports:
+      - 54320:5432
     volumes:
-      - db:/var/lib/postgresql/data
+      - db17:/var/lib/postgresql/data
 
   dbdamin:
     image: adminer
@@ -38,7 +40,7 @@ services:
 
   app:
     build: .
-    image: sql-ledger-test:0.18
+    image: sql-ledger-test:0.20
     ports:
       - 80:80
     volumes:
@@ -46,6 +48,6 @@ services:
       - gnupg:/usr/local/apache2/gnupg
 
 volumes:
-  db:
+  db17:
   gnupg:
   pgadmin:
