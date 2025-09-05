@@ -1,6 +1,6 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
-Not Released
+3.2.12.60 2025-09-05
   - files printed to queue have invoice, order, quotation number in file name
   - description of invoices added to reconciliation screen
   - Docker files upgraded to Debian Trixie
