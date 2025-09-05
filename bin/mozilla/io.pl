@@ -1923,7 +1923,8 @@ sub print_form {
       unlink "$spool/$myconfig{dbname}/$filename";
       $filename =~ s/\..*$//g;
     } else {
-      $filename = time;
+      $filename = $form->{"${inv}number"} =~ s/\W//gr;
+      $filename .= '_' . time;
       $filename .= int rand 10000;
     }
 
