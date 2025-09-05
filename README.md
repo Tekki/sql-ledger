@@ -9,18 +9,20 @@ highly configurable.
 
 # About this repo
 
-SQL-Ledger is developed by [DWS Systems Inc.](https://sql-ledger.com). The
-`master` branch contains the original version from DWS. It has version tags, so
-you can download a specific version back to 2.6.0 from October 1, 2005.
+SQL-Ledger was developed until 2023 by [DWS Systems Inc.](https://sql-ledger.com).
+The `master` branch contains the original version from DWS. It has version tags,
+so you can download a specific version back to 2.6.0 from October 1, 2005.
 
-The `full` branch, which is checked out by default, provides some additions:
+The `full` branch, checked out by default, is based on the latest DWS version
+and contains more than 100 corrections and improvements. The most important
+additions are:
 
 * real Unicode support
 * MFA with time-based one-time passwords (TOTP, codes from Authenticator App)
 * extended keyboard shortcuts ([docs](doc/shortcuts.md))
 * spreadsheet downloads
 * recently used objects
-* improved document management with drag and drop and deduplication
+* document management with drag and drop and deduplication
 * data export for editing and reimport
 * dark mode
 * markdown for bold, italic and links in templates ([docs](doc/latex_templates.md#md))
@@ -30,6 +32,7 @@ The `full` branch, which is checked out by default, provides some additions:
 * encrypted backups
 * JSON API ([introduction](doc/api.md))
 * variables for Swiss QR Bill ([docs](doc/latex_templates.md#qrbill))
+* import of Swiss QR Bills into invoices and transactions
 * XML payment export, pain.001 Swiss Payment Standard 2024
 * XML payment import, ISO 20022 camt.054
 * Docker files for containerized test environment
@@ -62,7 +65,8 @@ The Perl modules required to run this application with all additions are:
 | Text::QRCode           | libtext-qrcode-perl           |
 
 For a simple system, you should at least install `Archive::Zip`, `DBD::Pg`, and
-`Excel::Writer::XLSX`.
+`Excel::Writer::XLSX`. `Image::Magick` and `Imager::zxing` are only required for
+import of QR Bills.
 
 # Encrypted Backups
 
@@ -75,7 +79,7 @@ based distributions.
 # Unicode Support
 
 In difference to the original SQL-Ledger, the version in the `full` branch
-internally works with [Unicode characters](https://perldoc.perl.org/perlunicode.html).
+internally works with [Unicode characters](https://perldoc.perl.org/perluniintro.html).
 This requires that your database, your templates and translations are
 all encoded in UTF-8.
 
@@ -83,8 +87,10 @@ all encoded in UTF-8.
 
 With
 
-    cd docker
-    docker compose -p sql-ledger up -d
+```bash
+cd docker
+docker compose -p sql-ledger up -d
+```
 
 you can start a simple test environment (without LaTeX support) on
 Debian Bookworm. SQL-Ledger will run at
@@ -99,8 +105,10 @@ password `sql-ledger`.
 If you want to try the program on AlmaLinux 9, use the second compose
 file
 
-    cd docker
-    docker compose -f docker-compose-alma.yml -p sql-ledger up -d
+```bash
+cd docker
+docker compose -f docker-compose-alma.yml -p sql-ledger up -d
+```
 
 # WLprinter
 
@@ -119,17 +127,12 @@ file `sql-ledger.pod` in any Perldoc viewer.
 
 # Contributing
 
-As mentioned above, what you find here is more or less a copy of the code from
-DWS. 'copy' means that the code flows from DWS to here and rarely in the other
-direction. 'more or less' means that the differences between the `full` and the
-`master` branch should always be as small that it is possible to include
-updates without problems. 2 merge conflics are not a problem, but 100 conflics
-are.
+If you encounter an error or have an idea for new functionality, open an issue.
 
-It follows that if you want the DWS code to change, you have to speak with
-them. If on the other hand you want this repo to change, don't care about the
-moon calendar and create an issue.
+## Copyright and License
 
-It was mentioned too that the `full` branch contains some additions, like
-Unicode support and documentation. So it's probably more correct to call it a
-superset of the DWS code.
+© 1999-2023 DWS Systems Inc.
+
+© 2007-2025 Tekki (Rolf Stöckli)
+
+[GPL3](LICENSE)
