@@ -310,7 +310,8 @@ sub display_form {
       = qq|<td><a href="$ref->{script}.pl?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&js=$form->{js}" target="_blank">$ref->{number}</a></td>|;
 
     $column_data{name} = "<td>";
-    for (@{ $temp{name} }) { $column_data{name} .= "$_<br>" }
+    $column_data{name} .= join '<br>', @{$temp{name}};
+    $column_data{name} .= ", $ref->{invdescription}" if $ref->{invdescription};
     $column_data{name} .= "</td>";
     $column_data{source} = qq|<td>$temp{source}&nbsp;</td>
     <input type=hidden name="id_$i" value="$ref->{id}">|;

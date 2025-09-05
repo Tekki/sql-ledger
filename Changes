@@ -1,6 +1,7 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
+  - description of invoices added to reconciliation screen
   - Docker files upgraded to Debian Trixie
   - registration of recently used timecards corrected
 
