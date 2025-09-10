@@ -657,9 +657,9 @@ sub dbpassword {
   my $query;
 
   if ($form->{new_password}) {
-    $query = qq|ALTER ROLE '$form->{dbuser}' WITH PASSWORD '$form->{new_password}'|;
+    $query = qq|ALTER ROLE "$form->{dbuser}" WITH PASSWORD '$form->{new_password}'|;
   } else {
-    $query = qq|ALTER ROLE '$form->{dbuser}' WITH PASSWORD NULL|;
+    $query = qq|ALTER ROLE "$form->{dbuser}" WITH PASSWORD NULL|;
   }
 
   $dbh->do($query) or $form->dberror($query);
