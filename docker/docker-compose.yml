@@ -1,9 +1,9 @@
 ---
-# starts a test and development environment on Debian Bookworm with
+# starts a test and development environment on Debian Trixie with
 # - SQL-Ledger at http://localhost/sql-ledger
 # - Adminer at http://localhost:8080?pgsql=db
 # - pgAdmin at http://localhost:8085
-# - PostgreSQL 15 in a separate container
+# - PostgreSQL 17 in a separate container
 #
 # WARNING:
 # This and its related files start a minimal test environment.
