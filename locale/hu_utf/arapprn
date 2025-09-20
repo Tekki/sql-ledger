@@ -3,21 +3,26 @@ use utf8;
 $self{charset} = 'UTF-8';
 
 $self{texts} = {
-  'Account'                     => 'Számla',
-  'Amount'                      => 'Összeg',
+  'Account'                     => 'Főkönyvi számla',
+  'Amount'                      => 'Öszeg',
   'Continue'                    => 'Folytatás',
+  'DCN missing!'                => 'Hiányzik a DCN!',
   'Date'                        => 'Dátum',
-  'Memo'                        => 'Memo',
+  'Memo'                        => 'Feljegyzés',
   'Nothing to print!'           => 'Nincs mit nyomtatni!',
+  'On Hold'                     => 'Készleten',
   'PDF'                         => 'PDF',
   'Postscript'                  => 'Postscript',
   'Printed'                     => 'Kinyomtatva',
-  'Scheduled'                   => 'Ütemezve',
-  'Screen'                      => 'Képernyőre',
-  'Select a Printer!'           => 'Válasszon Nyomtatót',
-  'Select payment'              => 'Válasszon fizetési módot',
-  'Source'                      => 'Bizonylatszám',
+  'RVC missing!'                => 'Hiányzik az RVC',
+  'Scheduled'                   => 'Ütemezett',
+  'Screen'                      => 'Kijelző',
+  'Select a Printer!'           => 'Válasszon egy noymtatót!',
+  'Select payment'              => 'Válasszon kifizetést',
+  'Source'                      => 'Forrás',
   'Text'                        => 'Szöveg',
+  'XML'                         => 'XML',
+  'html'                        => 'html',
 };
 
 $self{subs} = {

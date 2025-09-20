@@ -1,0 +1,13 @@
+use utf8;
+
+$self{charset} = 'UTF-8';
+
+$self{texts} = {
+};
+
+$self{subs} = {
+  'documents_spreadsheet'       => 'documents_spreadsheet',
+};
+
+1;
+

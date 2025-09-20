@@ -1,6 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
+  - new Hungarian translation
+    contributed by György Tóth-Szabó
   - customers and vendors in Switzerland can be updated with data from UID Register
   - payments in foreign currencies use exchange rate of transaction as default
   - script that generates and distributes templates for multiple datasets
