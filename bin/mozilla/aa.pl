@@ -1007,7 +1007,10 @@ print qq|
         <tr>
 |;
 
-    $form->{"exchangerate_$i"} = $form->format_amount(\%myconfig, $form->{"exchangerate_$i"});
+    $form->{"exchangerate_$i"}
+      = $form->{"exchangerate_$i"}
+      ? $form->format_amount(\%myconfig, $form->{"exchangerate_$i"})
+      : $form->{exchangerate};
 
     $exchangerate = qq|&nbsp;|;
     if ($form->{currency} ne $form->{defaultcurrency}) {

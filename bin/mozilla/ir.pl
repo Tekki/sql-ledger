@@ -856,7 +856,10 @@ sub form_footer {
     $totalpaid += $form->{"paid_$i"};
 
     $form->{"paid_$i"} = $form->format_amount(\%myconfig, $form->{"paid_$i"}, $form->{precision});
-    $form->{"exchangerate_$i"} = $form->format_amount(\%myconfig, $form->{"exchangerate_$i"});
+    $form->{"exchangerate_$i"}
+      = $form->{"exchangerate_$i"}
+      ? $form->format_amount(\%myconfig, $form->{"exchangerate_$i"})
+      : $form->{exchangerate};
 
     $exchangerate = qq|&nbsp;|;
     if ($form->{currency} ne $form->{defaultcurrency}) {
