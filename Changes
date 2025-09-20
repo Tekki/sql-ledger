@@ -1,6 +1,6 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
-Not Released
+3.2.12.62 2025-09-20
   - new Hungarian translation
     contributed by György Tóth-Szabó
   - customers and vendors in Switzerland can be updated with data from UID Register
