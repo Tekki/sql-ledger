@@ -4,6 +4,7 @@ wlprinter.conf
 locale/*.zip
 locales*.pl
 *.missing
+doc/templates/template-config.yml
 *~
 *.swp
 .project

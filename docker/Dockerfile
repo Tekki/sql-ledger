@@ -5,6 +5,7 @@ RUN set -ex \
   && apt-get update \
   && apt-get install -y --no-install-recommends \
     ca-certificates \
+    cpanminus \
     gpg \
     gpg-agent \
     libarchive-extract-perl \
@@ -15,8 +16,15 @@ RUN set -ex \
     libmojolicious-perl \
     libspreadsheet-parsexlsx-perl \
     libtext-qrcode-perl \
+    libtemplate-perl \
+    libyaml-pp-perl \
     postgresql-client \
   && rm -rf /var/lib/apt/lists/*
+
+RUN set -ex \
+  && cpanm \
+    Print::Colored \
+  && rm -rf ~/.cpanm/*
 
 RUN echo " <Directory /usr/local/apache2/htdocs/sql-ledger>\n"\
   "  AddHandler cgi-script .pl\n"\
