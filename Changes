@@ -4,6 +4,7 @@ Not Released
   - customers and vendors in Switzerland can be updated with data from UID Register
   - payments in foreign currencies use exchange rate of transaction as default
   - script that generates and distributes templates for multiple datasets
+  - encoding of parsed SQL files corrected
 
 3.2.12.61 2025-09-10
   - query to change database password corrected

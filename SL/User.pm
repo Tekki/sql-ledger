@@ -489,7 +489,7 @@ sub process_query {
 
   return unless (-f $filename);
 
-  open(FH, "$filename") or $form->error("$filename : $!\n");
+  open(FH, '<:encoding(UTF-8)', "$filename") or $form->error("$filename : $!\n");
   my $query = "";
   my $loop = 0;
   my $i;
