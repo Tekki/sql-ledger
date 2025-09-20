@@ -362,6 +362,66 @@ sub local_address {
   return $rv;
 }
 
+sub uid_register {
+  my ($form) = @_;
+  my %rv;
+
+  my $uid = $form->{taxnumber} =~ s/\D//gr;
+  if (length $uid == 9) {
+
+    $form->load_module(['Mojo::UserAgent', 'Mojo::DOM']);
+
+    my $url    = 'https://www.uid-wse.admin.ch/V5.0/PublicServices.svc';
+    my %headers = (
+      'Content-Type' => 'text/xml;charset=UTF-8',
+      'SOAPAction'   => 'http://www.uid.admin.ch/xmlns/uid-wse/IPublicServices/GetByUID',
+      'User-Agent'   => "SQL-Ledger $form->{version}",
+    );
+    my $request_body = <<~"EOT";
+      <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:uid="http://www.uid.admin.ch/xmlns/uid-wse" xmlns:ns="http://www.ech.ch/xmlns/eCH-0097/5">
+        <soapenv:Header/>
+        <soapenv:Body>
+            <uid:GetByUID>
+              <uid:uid>
+                  <ns:uidOrganisationIdCategorie>CHE</ns:uidOrganisationIdCategorie>
+                  <ns:uidOrganisationId>$uid</ns:uidOrganisationId>
+              </uid:uid>
+            </uid:GetByUID>
+        </soapenv:Body>
+      </soapenv:Envelope>
+      EOT
+
+    my $res = Mojo::UserAgent->new->post($url, \%headers, $request_body)->result;
+
+    if ($res->is_success) {
+      my $dom = $res->dom;
+
+      $rv{taxnumber}
+        = $dom->at('uidorganisationidcategorie')->text . '-' . $dom->at('uidorganisationid')->text
+        =~ s/\d{3}(?=\d)/$&./gr;
+      if ($dom->at('vatregisterinformation')) {
+        $rv{taxnumber} .= ' MWST';
+      }
+
+      my $address = $dom->at('address');
+      if ($address->at('addressline1')) {
+        $rv{name} = $address->at('addressline1')->text;
+      } else {
+        $rv{name} = $dom->at('organisationname')->text;
+      }
+      $rv{streetname}     = $address->at('street')->text;
+      $rv{buildingnumber} = $address->at('housenumber')->text;
+      $rv{zipcode}        = $address->at('swisszipcode')->text;
+      $rv{city}           = $address->at('town')->text;
+      $rv{country}        = $address->at('countryidiso2')->text;
+    } else {
+      $form->error($res->message);
+    }
+  }
+
+  return \%rv;
+}
+
 1;
 
 =encoding utf8

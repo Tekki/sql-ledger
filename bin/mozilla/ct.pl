@@ -2179,7 +2179,7 @@ sub form_header {
         </tr>
         <tr>
           <th align=right>|.$locale->text('Tax Number / SSN').qq|</th>
-          <td><input name=taxnumber size=20 value="|.$form->quote($form->{taxnumber}).qq|"></td>
+          <td><input name=taxnumber size=22 value="|.$form->quote($form->{taxnumber}).qq|"></td>
           <th align=right>|.$locale->text('SIC').qq|</th>
           <td><input name=sic_code size=6 maxlength=6 value="|.$form->quote($form->{sic_code}).qq|"></td>
         </tr>
@@ -2292,8 +2292,9 @@ sub form_footer {
     {
       'Update'           => {ndx => 1,  key => 'U', value => $locale->text('Update')},
       'Save'             => {ndx => 2,  key => 'S', value => $locale->text('Save')},
-      'Shipping Address' => {ndx => 3,  key => 'H', value => $locale->text('Shipping Address')},
-      'Save as new'      => {ndx => 4,  key => 'N', value => $locale->text('Save as new')},
+      'UID Register'     => {ndx => 3,  key => 'G', value => $locale->text('UID Register')},
+      'Shipping Address' => {ndx => 4,  key => 'H', value => $locale->text('Shipping Address')},
+      'Save as new'      => {ndx => 5,  key => 'N', value => $locale->text('Save as new')},
       'New Number'       => {ndx => 21, key => 'M', value => $locale->text('New Number')},
       'Delete'           => {ndx => 22, key => 'D', value => $locale->text('Delete')},
     },
@@ -2437,6 +2438,10 @@ sub form_footer {
     }
   }
 
+  if ($form->{uidaddress}) {
+    $f{'UID Register'} = 1;
+  }
+
   $form->{action}         = 'update';
   $form->{update_contact} = 1;
   $form->hide_form(
@@ -2445,7 +2450,7 @@ sub form_footer {
     'contactid',      'db',              'id',                 'localaddress',
     'login',          'max_upload_size', 'path',               'precision',
     'reference_rows', 'referenceurl',    'shiptolocaladdress', 'status',
-    'taxaccounts',    'update_contact',
+    'taxaccounts',    'update_contact',  'uidaddress',
   );
 
   if ($form->{callback} =~ /^im\.pl\?action=process_qrbill/) {
@@ -2706,6 +2711,20 @@ sub shipto_selected {
       last;
     }
   }
+
+  &update;
+
+}
+
+
+sub uid_register {
+my $address_data = SL::ADR::uid_register($form);
+    if (%$address_data) {
+      $form->{$_} = $address_data->{$_} for keys %$address_data;
+      delete $form->{country} if $form->{country} eq $form->{companycountry};
+    } else {
+      $form->error("$form->{taxnumber}: " . $locale->text('Invalid UID'));
+    }
 
   &update;
 

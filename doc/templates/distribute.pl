@@ -2,8 +2,6 @@
 
 use v5.40;
 use open ':std', OUT => ':encoding(utf8)';
-use feature 'class';
-no warnings 'experimental::class';
 
 use FindBin;
 use Mojo::File 'path';

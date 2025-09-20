@@ -2466,7 +2466,7 @@ sub defaults {
   $checked{person} = "checked" if $form->{typeofcontact} eq 'person';
   $roundchange{$form->{roundchange}} = "checked";
 
-  for (qw(cdt checkinventory hideaccounts forcewarehouse checkaddress)) {
+  for (qw(cdt checkinventory hideaccounts forcewarehouse checkaddress uidaddress)) {
     $checked{$_} = "checked" if $form->{$_};
   }
 
@@ -2587,8 +2587,12 @@ sub defaults {
                 </td>
               </tr>
               <tr>
-                <th align=right>|.$locale->text('Check Addresses').qq|</th>
+                <th align=right>|.$locale->text('Localized Addresses').qq|</th>
                 <td><input name=checkaddress class=checkbox type=checkbox value=1 $checked{checkaddress}></td>
+              </tr>
+              <tr>
+                <th align=right>|.$locale->text('Addresses from UID Register').qq|</th>
+                <td><input name=uidaddress class=checkbox type=checkbox value=1 $checked{uidaddress}></td>
               </tr>
               <tr>
                 <th align=right>|.$locale->text('Check Inventory').qq|</th>
@@ -2755,7 +2759,8 @@ sub defaults {
     'fax',             'forcewarehouse',   'hideaccounts',   'latepaymentfee',
     'max_upload_size', 'method',           'namesbynumber',  'publickey',
     'referenceurl',    'restockingcharge', 'revtrans',       'roundchange',
-    'tel',             'typeofcontact',    'weightunit',     'yearend',
+    'tel',             'typeofcontact',    'uidaddress',     'weightunit',
+    'yearend',
     );
 
   for (qw(gl si so vi batch voucher po sq rfq part project employee customer vendor)) {
