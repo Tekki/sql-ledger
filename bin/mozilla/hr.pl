@@ -1325,7 +1325,7 @@ sub save_memberfile {
       }
 
     } else {
-      for (qw(company dateformat dbconnect dbdriver dbname dbhost dboptions dbpasswd dbuser numberformat totp_secret)) { $m{$_} = $myconfig{$_} }
+      for (qw(company dateformat dbconnect dbdriver dbname dbhost dbport dboptions dbpasswd dbuser numberformat totp_secret)) { $m{$_} = $myconfig{$_} }
       for (qw(name email tan totp_activated templates)) { $m{$_} = $form->{$_} }
 
       delete $m{totp_secret} unless $form->{totp_activated};
