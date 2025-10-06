@@ -5032,6 +5032,8 @@ sub process_transactions {
         $form->{description} = $pt->{description};
         $form->{transdate} = $pt->{nextdate};
 
+        $form->{reference} = $form->update_defaults(\%myconfig, 'glnumber') unless $form->{reference};
+
         $form->{defaultcurrency} = substr($form->{currencies},0,3);
 
         # exchangerate

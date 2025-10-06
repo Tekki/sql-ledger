@@ -1,5 +1,9 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+Not Released
+  - info for recurring GL transactions shows number of created transaction
+  - database port for new users corrected
+
 3.2.12.62 2025-09-20
   - new Hungarian translation
     contributed by György Tóth-Szabó
