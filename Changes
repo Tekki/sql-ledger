@@ -2,6 +2,7 @@ Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
   - info for recurring GL transactions shows number of created transaction
+  - templates created with distribute.pl are locked in the user interface
   - type of entries found in UID Register is set to company
   - database port for new users corrected
 

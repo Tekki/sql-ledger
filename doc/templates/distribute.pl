@@ -43,34 +43,40 @@ while (1) {
 
   # loop over selected names
 
-  for my $name (@selected) {
-    say "\n$name:";
+  for my $dataset (@selected) {
+    say "\n$dataset:";
+
+    my $dataset_templates = path("$templates/$dataset")->make_path;
+    $dataset_templates->child('managed.LCK')->touch;
 
     # loop over languages
 
-    for my $lang (sort keys $config{datasets}{$name}->%*) {
+    for my $lang (sort keys $config{datasets}{$dataset}->%*) {
       say "  $lang:";
 
       # paths
 
       my $path        = $lang eq 'default' ? '' : "/$lang";
       my $source_path = path("$source$path");
-      my $target_path = path("$templates/$name$path")->make_path;
-      chown $config{www_user_id}, $config{www_group_id}, $target_path;
+      my $target_path = path("$dataset_templates$path")->make_path;
+
+      if ($config{www_user_id} && $config{www_group_id}) {
+        chown $config{www_user_id}, $config{www_group_id}, $target_path;
+      }
 
       # configuration variables
 
-      my $lang_config = $config{datasets}{$name}{$lang};
+      my $lang_config = $config{datasets}{$dataset}{$lang};
 
       unless (ref $lang_config) {
-        if ($config{datasets}{$name}{$lang_config}) {
+        if ($config{datasets}{$dataset}{$lang_config}) {
           my $ref_path = $lang_config eq 'default' ? '' : "/$lang_config";
           $source_path = path("$source$ref_path");
 
-          $lang_config = $config{datasets}{$name}{$lang_config};
+          $lang_config = $config{datasets}{$dataset}{$lang_config};
         } else {
           say color_error 'error';
-          die "$name.$lang_config: config not found";
+          die "$dataset.$lang_config: config not found";
         }
       }
 

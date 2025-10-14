@@ -381,6 +381,7 @@ $self{texts} = {
   'Taxes'                       => 'MWST',
   'Taxes saved!'                => 'MWST gespeichert',
   'Template saved!'             => 'Druckvorlage gespeichert!',
+  'Templates managed externally' => 'Vorlagen werden extern verwaltet',
   'Text'                        => 'Text',
   'Th'                          => 'Do',
   'The following snapshot will be restored:' => 'Der folgende Snapshot wird wiederhergestellt:',

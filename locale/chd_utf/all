@@ -1439,6 +1439,7 @@ $self{texts} = {
   'Template'                    => 'Vorlage',
   'Template saved!'             => 'Druckvorlage gespeichert!',
   'Templates'                   => 'Druckvorlagen',
+  'Templates managed externally' => 'Vorlagen werden extern verwaltet',
   'Terms'                       => 'Zahlungsbedingungen',
   'Text'                        => 'Text',
   'Text Templates'              => 'Text Vorlagen',

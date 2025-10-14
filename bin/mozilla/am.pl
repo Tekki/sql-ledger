@@ -2044,7 +2044,17 @@ sub list_templates {
   <tr>
     <th class=listtop>$form->{helpref}$form->{title}</a></th>
   </tr>
-  <tr height="5"></tr>
+  <tr height="5"></tr>|;
+
+  if (-f "$templates/$myconfig{templates}/managed.LCK") {
+    print qq|
+  <tr>
+   <td>|.$locale->text('Templates managed externally').qq|</td>
+  </tr>
+|;
+  }
+
+  print qq|
   <tr>
     <td>
       <table width=100%>
@@ -2190,8 +2200,16 @@ $form->{body}
   $form->hide_form(qw(file type path login callback));
 
   print qq|
-<p>
+<hr size="3" noshade>
+<br>|;
+
+  if (-f "$templates/$myconfig{templates}/managed.LCK") {
+    print $locale->text('Templates managed externally');
+  } else {
+    print qq|
 <input name=action type=submit class=submit value="|.$locale->text('Edit').qq|">| if $form->{edit};
+  }
+
 
   print qq|
 </form>
@@ -2247,6 +2265,7 @@ $form->{body}</textarea>
   </tr>
 </table>
 
+<hr size="3" noshade>
 <br>
 <input type=submit class=submit name=action value="|.$locale->text('Save').qq|">
 |;
