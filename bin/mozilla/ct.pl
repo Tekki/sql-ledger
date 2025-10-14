@@ -2718,13 +2718,16 @@ sub shipto_selected {
 
 
 sub uid_register {
-my $address_data = SL::ADR::uid_register($form);
-    if (%$address_data) {
-      $form->{$_} = $address_data->{$_} for keys %$address_data;
-      delete $form->{country} if $form->{country} eq $form->{companycountry};
-    } else {
-      $form->error("$form->{taxnumber}: " . $locale->text('Invalid UID'));
-    }
+
+  my $address_data = SL::ADR::uid_register($form);
+
+  if (%$address_data) {
+    $form->{typeofcontact} = 'company';
+    $form->{$_} = $address_data->{$_} for keys %$address_data;
+    delete $form->{country} if $form->{country} eq $form->{companycountry};
+  } else {
+    $form->error("$form->{taxnumber}: " . $locale->text('Invalid UID'));
+  }
 
   &update;
 
