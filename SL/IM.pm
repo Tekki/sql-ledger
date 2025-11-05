@@ -1508,14 +1508,14 @@ sub prepare_import_data {
   $form->{precision} = $defaults{precision};
 
   # clean out report
-  my $reportid = &delete_import($dbh, $form);
+  $form->{reportid} = &delete_import($dbh, $form);
 
   $query = qq|DELETE FROM reportvars
-              WHERE reportid = $reportid|;
+              WHERE reportid = $form->{reportid}|;
   $dbh->do($query) || $form->dberror($query);
 
   $query = qq|INSERT INTO reportvars (reportid, reportvariable, reportvalue)
-              VALUES ($reportid, ?, ?)|;
+              VALUES ($form->{reportid}, ?, ?)|;
   my $rth = $dbh->prepare($query) || $form->dberror($query);
 
   my $i = 0;

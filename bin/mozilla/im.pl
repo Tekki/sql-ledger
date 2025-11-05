@@ -18,6 +18,14 @@ use SL::CP;
 require "$form->{path}/sr.pl";
 require "$form->{path}/js.pl";
 
+# any custom scripts for this one
+if (-f "$form->{path}/custom/im.pl") {
+    eval { require "$form->{path}/custom/im.pl"; };
+}
+if (-f "$form->{path}/custom/$form->{login}/im.pl") {
+    eval { require "$form->{path}/custom/$form->{login}/im.pl"; };
+}
+
 1;
 # end of main
 
