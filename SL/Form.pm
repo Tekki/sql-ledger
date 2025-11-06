@@ -1984,21 +1984,25 @@ sub qr_variables {
   require Encode;
 
   $self->{qr_company_name} = $self->{company};
-  my @address = split "\n", $self->{address};
-  $self->{qr_company_address} = $address[0];
-  $address[-1] =~ /(..-)?(?<city>.*)/;
+  my @address = split /\n/, $self->{address};
+
+  $address[-2] =~ /(\D+) (\d.*)/;
+  $self->{qr_company_streetname}     = $1 // 'a';
+  $self->{qr_company_buildingnumber} = $2 // 'b';
+
+  $address[-1] =~ /(\d+) (.+)/;
+  $self->{qr_company_zipcode} = $1;
+  $self->{qr_company_city}    = $2;
+
   $self->{qr_company_country} = $self->{companycountry} || 'CH';
-  $self->{qr_company_city}    = $+{city};
 
   $self->{qr_customer_name}
     = $self->{typeofcontact} eq 'company' ? $self->{name} : "$self->{firstname} $self->{lastname}";
-  $self->{qr_customer_address} = $self->{streetname}
-    && $self->{buildingnumber} ? "$self->{streetname} $self->{buildingnumber}" : $self->{address1};
-  $self->{qr_customer_country} = uc(substr($self->{country}, 0, 2)) || $self->{qr_company_country};
-  $self->{qr_customer_city}    = "$self->{zipcode} $self->{city}";
+  $self->{"qr_customer_$_"} = $self->{$_} for qw|streetname buildingnumber zipcode city country|;
+  $self->{qr_customer_country} ||= $self->{qr_company_country};
 
   my (@fields, @sf);
-  for (qw|name address city country|) {
+  for (qw|name streetname buildingnumber zipcode city country|) {
     push @fields, "company_$_", "customer_$_";
   }
   for my $field (@fields) {

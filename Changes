@@ -2,6 +2,7 @@ Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
   - import is able to load custom scripts
+  - variables for QR Bills adapted to structured addresses (needs updated templates)
   - BREAKING CHANGE: branch with DWS code renamed from master to dws
 
 3.2.12.63 2025-10-14
