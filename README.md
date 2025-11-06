@@ -10,7 +10,7 @@ highly configurable.
 # About this repo
 
 SQL-Ledger was developed until 2023 by [DWS Systems Inc.](https://sql-ledger.com).
-The `master` branch contains the original version from DWS. It has version tags,
+The `dws` branch contains the original version from DWS. It has version tags,
 so you can download a specific version back to 2.6.0 from October 1, 2005.
 
 The `full` branch, checked out by default, is based on the latest DWS version

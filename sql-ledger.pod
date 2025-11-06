@@ -14,7 +14,7 @@ Apache webserver, uses a PostgreSQL database and is highly configurable.
 =head1 ABOUT THIS REPO
 
 SQL-Ledger is developed by L<DWS Systems Inc.|http://sql-ledger.com>. The
-C<master> branch contains the original version from DWS. It has version tags,
+C<dws> branch contains the original version from DWS. It has version tags,
 so you can download a specific version back to 2.6.0 from October 1, 2005.
 
 The C<full> branch, which is checked out by default, provides some additions.
