@@ -2796,13 +2796,9 @@ sub ex_vc {
   if ($form->{db} eq 'customer') {
     $vcname   = $locale->text('Customer');
     $vcnumber = $locale->text('Customer Number');
-    $button   = $locale->text('Export Customers');
-
-  }
-  if ($form->{db} eq 'vendor') {
+  } else {
     $vcname   = $locale->text('Vendor');
     $vcnumber = $locale->text('Vendor Number');
-    $button   = $locale->text('Export Vendors');
   }
 
   $form->{allbox} = 'checked';
@@ -2893,7 +2889,11 @@ sub ex_vc {
 
   $form->hide_form(qw|rowcount db title login path|);
 
-  %button = (export_vc => {ndx => 1, key => 'X', value => $button});
+  if ($form->{db} eq 'customer') {
+    %button = (export_vc => {ndx => 1, key => 'X', value => $locale->text('Export Customers')});
+  } else {
+    %button = (export_vc => {ndx => 1, key => 'X', value => $locale->text('Export Vendors')});
+  }
 
   $form->print_button(\%button);
 

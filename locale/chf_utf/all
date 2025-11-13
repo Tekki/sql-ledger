@@ -1483,6 +1483,7 @@ $self{texts} = {
   'Template'                    => 'Modèle',
   'Template saved!'             => 'Modèle enregistré !',
   'Templates'                   => 'Modèles',
+  'Templates managed externally' => '',
   'Terms'                       => 'Conditions',
   'Text'                        => 'Texte',
   'Text Templates'              => 'Modèles mode texte',

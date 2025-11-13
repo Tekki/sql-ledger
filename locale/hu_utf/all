@@ -1344,6 +1344,7 @@ $self{texts} = {
   'Template'                    => 'Sablon',
   'Template saved!'             => 'Sablon elmentve!',
   'Templates'                   => 'Sablonok',
+  'Templates managed externally' => '',
   'Terms'                       => 'Feltételek',
   'Text'                        => 'Szöveg',
   'Text Templates'              => 'Szöveg sablonok',
