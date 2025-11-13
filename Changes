@@ -1,7 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
-  - buttons in customers and vendor export changed to produce correct translations
+  - buttons in customer and vendor export changed to produce correct translations
+  - link for exchange rates from Swiss Federal Office for Customs and Border updated
 
 3.2.12.64 2025-11-07
   - import is able to load custom scripts

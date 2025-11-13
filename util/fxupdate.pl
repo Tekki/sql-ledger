@@ -11,7 +11,7 @@ chdir "$FindBin::Bin/..";
 
 my $memberfile = 'users/members';
 
-my $ezv = 'https://www.backend-rates.ezv.admin.ch/api/xmldaily';
+my $ezv = 'https://www.backend-rates.bazg.admin.ch/api/xmldaily';
 
 open(my $fh, '<:encoding(utf-8)', $memberfile) or die "$memberfile: $!";
 
