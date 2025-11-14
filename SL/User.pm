@@ -119,10 +119,16 @@ sub login {
     $sth->execute;
 
     if ($sth->{NAME}->[0] eq 'fldname') {
-      %defaults = $form->get_defaults($dbh, \@{[qw(version version2 audittrail)]});
-      $dbversion = $defaults{version};
+      %defaults   = $form->get_defaults($dbh, \@{[qw(version version2 audittrail)]});
+      $dbversion  = $defaults{version};
       $dbversion2 = $defaults{version2} * 1;
       $audittrail = $defaults{audittrail};
+
+      # accept database version 4.0
+      if ($dbversion =~ /^4\.0/) {
+        $dbversion  = '3.2.4';
+        $dbversion2 = 49;
+      }
     } else {
       $query = qq|SELECT version, audittrail FROM defaults|;
       ($dbversion, $audittrail) = $dbh->selectrow_array($query);
