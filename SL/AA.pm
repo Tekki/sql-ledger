@@ -1330,7 +1330,7 @@ sub get_name {
       $ref->{description} = $ref->{translation} if $ref->{translation};
       if ($ref->{link} =~ /_amount/) {
         $i++;
-        next if $form->{"amount_$i"};
+        next if $form->{"amount_$i"} && !$form->{_im_qrbill};
         $form->{"$form->{ARAP}_amount_$i"} = "$ref->{accno}--$ref->{description}" if $ref->{accno};
         $form->{"projectnumber_$i"} = "$ref->{projectnumber}--$ref->{project_id}" if $ref->{project_id};
       }

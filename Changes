@@ -1,5 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+Not Released
+  - import of QR Bills improved
+
 3.2.12.65 2025-11-14
   - buttons in customer and vendor export changed to produce correct translations
   - link for exchange rates from Swiss Federal Office for Customs and Border updated

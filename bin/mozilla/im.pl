@@ -2638,7 +2638,7 @@ sub import_qrbill {
 sub im_qrbill {
   require SL::QRCode;
 
-  my $res = SL::QRCode::decode_qrbill("$userspath/$form->{tmpfile}", $form->{page});
+  my $res = SL::QRCode::decode_qrbill("$userspath/$form->{tmpfile}", $form->{qr_page});
   my $data;
 
   unless ($form->{qr_attach}) {
@@ -2733,7 +2733,7 @@ sub process_qrbill {
     $form->{type}     = 'transaction';
     $form->{focus}    = 'amount_1';
     $locale           = Locale->new($myconfig{countrycode}, 'ap');
-    $form->{amount_1} = $form->format_amount(\%myconfig, $data->{amount}, 2);
+    $form->{amount_1} = $data->{amount};
     $form->{rowcount} = 2;
   }
 
@@ -2772,6 +2772,7 @@ sub process_qrbill {
     $form->{referencetmpfile_1} = $form->{tmpfile};
   }
 
+  $form->{_im_qrbill} = 1;
   require "$form->{path}/$form->{script}";
   &add;
 }
