@@ -1,9 +1,7 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2018-2019
 #
-#  Author: Tekki
-#     Web: https://tekki.ch
+# © 2018-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #  Version: 0.1
 #
@@ -17,27 +15,27 @@ use SL::RU;
 
 sub list_recent {
   my %labels = (
-    RU::AP_TRANSACTION    => $locale->text('AP Transactions'),
-    RU::AR_TRANSACTION    => $locale->text('AR Transactions'),
-    RU::CUSTOMER          => $locale->text('Customers'),
-    RU::GL_TRANSACTION    => $locale->text('GL Transactions'),
-    RU::ITEM              => $locale->text('Items'),
-    RU::PROJECT           => $locale->text('Projects'),
-    RU::PURCHASE_ORDER    => $locale->text('Purchase Orders'),
-    RU::REQUEST_QUOTATION => $locale->text('Request for Quotations'),
-    RU::SALES_INVOICE     => $locale->text('Sales Invoices'),
-    RU::SALES_ORDER       => $locale->text('Sales Orders'),
-    RU::SALES_QUOTATION   => $locale->text('Quotations'),
-    RU::TIMECARD          => $locale->text('Time Cards'),
-    RU::VENDOR            => $locale->text('Vendors'),
-    RU::VENDOR_INVOICE    => $locale->text('Vendor Invoices'),
+    SL::RU::AP_TRANSACTION    => $locale->text('AP Transactions'),
+    SL::RU::AR_TRANSACTION    => $locale->text('AR Transactions'),
+    SL::RU::CUSTOMER          => $locale->text('Customers'),
+    SL::RU::GL_TRANSACTION    => $locale->text('GL Transactions'),
+    SL::RU::ITEM              => $locale->text('Items'),
+    SL::RU::PROJECT           => $locale->text('Projects'),
+    SL::RU::PURCHASE_ORDER    => $locale->text('Purchase Orders'),
+    SL::RU::REQUEST_QUOTATION => $locale->text('Request for Quotations'),
+    SL::RU::SALES_INVOICE     => $locale->text('Sales Invoices'),
+    SL::RU::SALES_ORDER       => $locale->text('Sales Orders'),
+    SL::RU::SALES_QUOTATION   => $locale->text('Quotations'),
+    SL::RU::TIMECARD          => $locale->text('Time Cards'),
+    SL::RU::VENDOR            => $locale->text('Vendors'),
+    SL::RU::VENDOR_INVOICE    => $locale->text('Vendor Invoices'),
   );
 
   $callback = "$form->{script}?action=list_recent";
   for (qw|sort direction path login|) { $callback .= "&$_=$form->{$_}" }
   $callback = $form->escape($callback);
 
-  RU->list(\%myconfig, $form);
+  SL::RU->list(\%myconfig, $form);
 
   $href = "$form->{script}?action=list_recent";
   for (qw|direction oldsort path login|) { $href .= "&$_=$form->{$_}" }
@@ -77,7 +75,7 @@ sub list_recent {
 <table width=100%>
   <tr>
     <th>
-      <a href="$version_url"><img src=$images/sql-ledger.png border=0></a>
+      <a href="$version_url"><img src=$slconfig{images}/sql-ledger.png border=0></a>
     </th>
   </tr>
   <tr height="5"></tr>
@@ -103,17 +101,17 @@ sub list_recent {
     = "$form->{script}?action=unregister_recent$url_suffix";
   for my $ref (@{$form->{all_recent}}) {
     $i++;
-    my $object_url = RU::CODES->{$ref->{code}}->{object}
+    my $object_url = SL::RU::CODES->{$ref->{code}}->{object}
       . "&id=$ref->{object_id}$url_suffix";
 
     my $accesskey = $i < 10 ? qq| accesskey="$i" title="[$i]"| : '';
     $column_data{number}
-      = qq|<td><a href="$object_url"$accesskey>$ref->{number}</a></td>|;
+      = qq|<td><a class="number-l" href="$object_url"$accesskey>$ref->{number}</a></td>|;
     $column_data{description} = "<td>$ref->{description}</td>";
     if ($ref->{code} eq $samecode) {
       $column_data{code} = q|<td>&nbsp;</td>|;
     } else {
-      my $report_url = RU::CODES->{$ref->{code}}->{report}
+      my $report_url = SL::RU::CODES->{$ref->{code}}->{report}
         . "&path=$form->{path}&login=$form->{login}";
 
       $column_data{code}
@@ -149,7 +147,7 @@ sub list_recent {
 }
 
 sub unregister_recent {
-  RU->unregister(\%myconfig, $form);
+  SL::RU->unregister(\%myconfig, $form);
   $form->redirect;
 }
 

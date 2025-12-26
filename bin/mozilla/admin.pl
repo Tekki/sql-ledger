@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -13,14 +12,17 @@
 #======================================================================
 
 use SL::Form;
+use SL::Locale;
 use SL::User;
 
+use Storable ();
+use YAML::PP;
 
-$form = new Form;
+$form = SL::Form->new;
 
-$locale = new Locale $language, "admin";
+$locale = SL::Locale->new($slconfig{language}, "admin");
 
-# $form->{charset} = $charset;
+# $form->{charset} = $slconfig{charset};
 
 eval { require DBI; };
 $form->error($locale->text('DBI not installed!')) if ($@);
@@ -28,7 +30,7 @@ $form->error($locale->text('DBI not installed!')) if ($@);
 $form->{stylesheet} = "sql-ledger.css";
 $form->{favicon} = "favicon.ico";
 $form->{timeout} = 86400;
-$form->{"root login"} = 1;
+$form->{'root login'} = 1;
 
 require "$form->{path}/pw.pl";
 
@@ -47,10 +49,10 @@ if ($form->{action}) {
 } else {
 
   # if there are no drivers bail out
-  $form->error($locale->text('Database Driver missing!')) unless (User->dbdrivers);
+  $form->error($locale->text('Database Driver missing!')) unless (SL::User->dbdrivers);
 
   # create memberfile
-  if (! -f $memberfile) {
+  unless (-f "$slconfig{memberfile}.bin") {
     &change_password;
     exit;
   }
@@ -82,7 +84,7 @@ function sf(){
 
 <div align=center>
 
-<a href="https://github.com/Tekki/sql-ledger"><img src=$images/sql-ledger.gif border=0 target=_blank></a>
+<a href="https://github.com/Tekki/sql-ledger"><img src=$slconfig{images}/sql-ledger.gif border=0 target=_blank></a>
 <h1 class=login>|.$locale->text('Version').qq| $form->{version}<p>|.$locale->text('Administration').qq|</h1>
 
 <form method=post name=main action="$form->{script}">
@@ -99,7 +101,7 @@ function sf(){
 
 </form>
 
-<a href=http://www.sql-ledger.com target=_blank>SQL-Ledger |.$locale->text('website').qq|</a>
+<a href="https://github.com/Tekki/sql-ledger" target=_blank>SQL-Ledger |.$locale->text('website').qq|</a>
 
 </div>
 
@@ -136,14 +138,7 @@ sub create_config {
     }
   }
 
-  open(CONF, ">$userspath/root login.conf") or $form->error("root login.conf : $!");
-  print CONF qq|# configuration file for root
-
-\%rootconfig = (
-  sessionkey => '$form->{sessionkey}'
-);\n\n|;
-
-  close CONF;
+  Storable::store {sessionkey => $form->{sessionkey}}, "$slconfig{userspath}/root login.bin";
 
 }
 
@@ -168,10 +163,10 @@ sub edit {
 
   $form->{title} = "SQL-Ledger ".$locale->text('Administration');
 
-  if (-f "$userspath/$form->{dbname}.LCK") {
-    open(FH, "$userspath/$form->{dbname}.LCK") or $form->error("$userspath/$form->{dbname}.LCK : $!");
-    $form->{lock} = <FH>;
-    close(FH);
+  if (-f "$slconfig{userspath}/$form->{dbname}.LCK") {
+    open my $fh, "$slconfig{userspath}/$form->{dbname}.LCK" or $form->error("$slconfig{userspath}/$form->{dbname}.LCK : $!");
+    $form->{lock} = <$fh>;
+    close $fh;
   }
 
   &form_header;
@@ -187,7 +182,7 @@ sub form_footer {
              'Change Host' => { ndx => 5, key => 'H', value => $locale->text('Change Host') },
             );
 
-  if (-f "$userspath/$form->{dbname}.LCK") {
+  if (-f "$slconfig{userspath}/$form->{dbname}.LCK") {
     $button{'Unlock Dataset'} = { ndx => 1, key => 'U', value => $locale->text('Unlock Dataset') };
   } else {
     $button{'Lock Dataset'} = { ndx => 1, key => 'L', value => $locale->text('Lock Dataset') };
@@ -213,43 +208,20 @@ sub form_footer {
 sub list_datasets {
 
 # type=submit $locale->text('Pg')
-# type=submit $locale->text('PgPP')
-# type=submit $locale->text('Oracle')
-# type=submit $locale->text('Sybase')
+# type=submit $locale->text('Mock')
 
-  open(FH, '<:utf8', $memberfile) or $form->error("$memberfile : $!");
+  my (%member, %datasets);
+  eval { %member = Storable::retrieve("$slconfig{memberfile}.bin")->%*; };
+  $form->error("$slconfig{memberfile}.bin: $@") if $@;
 
-  my %member;
-  my $member;
+  delete $member{'root login'};
 
-  while (<FH>) {
-    if (/^\[(.*)\]/) {
-      $member = $+;
-      if ($member =~ /^admin\@/) {
-        $member = substr($member,6);
-        $new = 1;
-      } else {
-        $new = 0;
-      }
-    }
-    if ($new) {
-      if (/^(company|dbconnect|dbname|dbdriver|dbhost|dbpasswd|dbport|dbuser|templates)=/) {
-        $var = $1;
-        (undef, $member{$member}{$var}) = split /=/, $_, 2;
-        $member{$member}{$var} =~ s/(\r\n|\n)//;
-      }
-    }
+  for (grep /^admin@/, keys %member) {
+    $datasets{$member{$_}{dbname}} = $member{$_};
+    $datasets{$_}{locked} = "x" if -f "$slconfig{userspath}/$member{$_}{dbname}.LCK";
   }
 
-  close(FH);
-
-  delete $member{"root login"};
-
-  for (keys %member) {
-    $member{$_}{locked} = "x" if -f "$userspath/$member{$_}{dbname}.LCK";
-  }
-
-  User::add_db_size($form, \%member);
+  SL::User::add_db_size($form, \%datasets);
 
   $column_data{company}   = qq|<th>| . $locale->text('Company') . qq|</th>|;
   $column_data{dbdriver}  = qq|<th>| . $locale->text('Driver') . qq|</th>|;
@@ -273,7 +245,7 @@ sub list_datasets {
   $dbdriver ||= "Pg";
   $dbdriver{$dbdriver} = "checked";
 
-  for (User->dbdrivers) {
+  for (SL::User->dbdrivers) {
     $dbdrivers .= qq|
                <input name=dbdriver type=radio class=radio value="$_" $dbdriver{$_}>|.$locale->text($_).qq|&nbsp;|;
   }
@@ -305,18 +277,17 @@ sub list_datasets {
         </tr>
 |;
 
-  foreach $key (sort keys %member) {
-    $href = "$script?action=edit&dbname=$key&path=$form->{path}&locked=$member{$key}{locked}&dbhost=$member{$key}{dbhost}&dbport=$member{$key}{dbport}&dbdriver=$member{$key}{dbdriver}&dbuser=$member{$key}{dbuser}&templates=$member{$key}{templates}";
-    $href .= "&company=".$form->escape($member{$key}{company},1);
-
-    $member{$key}{dbname} = $member{$key}{dbuser} if ($member{$key}{dbdriver} eq 'Oracle');
+  for $key (sort keys %datasets) {
+    my $dataset = $datasets{$key};
+    $href = "$script?action=edit&dbname=$key&path=$form->{path}&locked=$dataset->{locked}&dbhost=$dataset->{dbhost}&dbport=$dataset->{dbport}&dbdriver=$dataset->{dbdriver}&dbuser=$dataset->{dbuser}&templates=$dataset->{templates}";
+    $href .= "&company=".$form->escape($dataset->{company},1);
 
     for (qw(company dbdriver dbhost dbport dbuser templates)) {
-      $column_data{$_} = qq|<td>$member{$key}{$_}</td>|;
+      $column_data{$_} = qq|<td>$dataset->{$_}</td>|;
     }
-    $column_data{dbname} = qq|<td><a href=$href>$member{$key}{dbname}</a></td>|;
-    $column_data{locked} = qq|<td align=center>$member{$key}{locked}</td>|;
-    $column_data{size}   = qq|<td align=right>$member{$key}{size}</td>|;
+    $column_data{dbname} = qq|<td><a href=$href>$dataset->{dbname}</a></td>|;
+    $column_data{locked} = qq|<td align=center>$dataset->{locked}</td>|;
+    $column_data{size}   = qq|<td align=right>$dataset->{size}</td>|;
 
     $i++; $i %= 2;
     print qq|
@@ -353,7 +324,7 @@ $dbdrivers
              'Logout' => { ndx => 4, key => 'X', value => $locale->text('Logout') }
             );
 
-  if (-f "$userspath/nologin.LCK") {
+  if (-f "$slconfig{userspath}/nologin.LCK") {
     $button{'Unlock System'} = { ndx => 3, key => 'U', value => $locale->text('Unlock System') };
   } else {
     $button{'Lock System'} = { ndx => 3, key => 'L', value => $locale->text('Lock System') };
@@ -464,55 +435,43 @@ sub do_delete {
 
   $form->{db} = $form->{dbname};
 
-  $form->error("$memberfile : ".$locale->text('locked!')) if (-f ${memberfile}.LCK);
+  $form->error("$slconfig{memberfile}.bin : ".$locale->text('locked!')) if -f "$slconfig{memberfile}.LCK";
 
-  open(FH, ">${memberfile}.LCK") or $form->error("${memberfile}.LCK : $!");
-  close(FH);
+  open my $fh, '>', "$slconfig{memberfile}.LCK" or $form->error("$slconfig{memberfile}.LCK : $!");
+  close $fh;
 
-  if (! open(FH, "+<$memberfile")) {
-    unlink "${memberfile}.LCK";
-    $form->error("$memberfile : $!");
-  }
-  @db = <FH>;
+  my %member;
+  eval { %member = Storable::retrieve("$slconfig{memberfile}.bin")->%*; };
 
-  for (@db) {
-    last if /^\[/;
-    push @member, $_;
+  if ($@) {
+    unlink "$slconfig{memberfile}.LCK";
+    $form->error("$slconfig{memberfile}.bin: $@");
   }
 
-  # get variables for dbname
-  while ($_ = shift @db) {
+  my %db;
+  for $user (keys %member) {
+    my $dbname = $member{$user}{dbname};
 
-    if (/^\[(.*)\]/) {
-      $user = $+;
-      next;
-    }
+    $db{$dbname} ||= $member{$user};
 
-    chop;
-    ($var, $value) = split /=/, $_, 2;
-    $temp{$user}{$var} = $value;
-
-  }
-
-  for $user (keys %temp) {
-    $dbname = $temp{$user}{dbname};
-    for (keys %{$temp{$user}}) {
-      $db{$dbname}{$_} = $temp{$user}{$_};
-      $member{$dbname}{$user}{$_} = $temp{$user}{$_};
-    }
+    # for (keys %{$temp{$user}}) {
+    #   $db{$dbname}{$_} = $temp{$user}{$_};
+    #   $member{$dbname}{$user}{$_} = $temp{$user}{$_};
+    # }
   }
 
   $form->{dbdriver} = $db{$form->{dbname}}{dbdriver};
   &dbdriver_defaults;
   for (qw(dbconnect dbuser dbhost dbport templates)) { $form->{$_} = $db{$form->{dbname}}{$_} }
-  $form->{dbpasswd} = unpack 'u', $db{$form->{dbname}}{dbpasswd};
+  $form->{dbpasswd} = unpack 'u', $db{$form->{dbname}}{dbpasswd} if $db{$form->{dbname}}{dbpasswd};
 
   # delete dataset
-  User->dbdelete(\%$form);
+  SL::User->dbdelete($form);
 
   # delete conf for users
-  for (keys %{ $member{$form->{dbname}} }) {
-    unlink "$userspath/${_}.conf";
+  for (grep /.*\@$form->{dbname}/, keys %member) {
+    unlink "$slconfig{userspath}/${_}.bin";
+    delete $member{$_};
   }
 
   delete $member{$form->{dbname}};
@@ -526,41 +485,23 @@ sub do_delete {
     }
   }
 
-  seek(FH, 0, 0);
-  truncate(FH, 0);
-
-  for (@member) {
-    print FH $_;
-  }
-
-  for $db (sort keys %member) {
-    for $user (sort keys %{ $member{$db} }) {
-      if ($user) {
-        print FH "\[$user\]\n";
-        for $var (sort keys %{ $member{$db}{$user} }) {
-          print FH "${var}=$member{$db}{$user}{$var}\n" if $member{$db}{$user}{$var};
-        }
-        print FH "\n";
-      }
-    }
-  }
-  close(FH);
-
+  YAML::PP->new->dump_file("$slconfig{memberfile}.yml", \%member);
+  Storable::store \%member, "$slconfig{memberfile}.bin";
 
   # delete spool, images and template directory if it is not shared
   for (qw(templates spool images)) {
 
     if ($_ eq "templates") {
-      $dir = "$templates/$templatedir";
+      $dir = "$slconfig{templates}/$templatedir";
       next if $skiptemplates;
     }
 
     if ($_ eq "spool") {
-      $dir = "$spool/$form->{dbname}";
+      $dir = "$slconfig{spool}/$form->{dbname}";
     }
 
     if ($_ eq "images") {
-      $dir = "$images/$form->{dbname}";
+      $dir = "$slconfig{images}/$form->{dbname}";
     }
 
     if (-d $dir) {
@@ -578,8 +519,8 @@ sub do_delete {
     }
   }
 
-  unlink "${memberfile}.LCK";
-  unlink "$userspath/$form->{dbname}.LCK";
+  unlink "$slconfig{memberfile}.LCK";
+  unlink "$slconfig{userspath}/$form->{dbname}.LCK";
 
   $form->redirect($locale->text('Dataset deleted!'));
 
@@ -657,92 +598,55 @@ sub do_change_password {
 
   if ($form->{dbname}) {
     # get connection details from members file
-    $admin = new User $memberfile, "admin\@$form->{dbname}";
+    $admin = SL::User->new($slconfig{memberfile}, "admin\@$form->{dbname}");
 
     for (qw(dbconnect dbuser dbpasswd dbhost dbport dbdriver)) { $form->{$_} = $admin->{$_} }
-    $form->{dbpasswd} = unpack 'u', $form->{dbpasswd};
+    $form->{dbpasswd} = unpack 'u', $form->{dbpasswd} if $form->{dbpasswd};
 
-    open(FH, ">${memberfile}.LCK") or $form->error("${memberfile}.LCK : $!");
-    close(FH);
+    open my $fh, '>', "$slconfig{memberfile}.LCK" or $form->error("$slconfig{memberfile}.LCK : $!");
+    close $fh;
 
-    if (! open(FH, "+<$memberfile")) {
-      unlink "${memberfile}.LCK";
-      $form->error("$memberfile : $!");
-    }
-    @member = <FH>;
+    my %member;
+    eval { %member = Storable::retrieve("$slconfig{memberfile}.bin")->%*; };
 
-    while ($_ = shift @member) {
-      if (/^\[.*\]/) {
-        chop;
-        $member = $_;
-        $member =~ s/(^\[|\]$)//g;
-        $_ = shift @member;
-        do {
-          chop;
-          ($var, $val) = split /=/, $_, 2;
-          $member{$member}{$var} = $val;
-          $_ = shift @member;
-        } until /^\s+$/;
-      }
+    if ($@) {
+      unlink "$slconfig{memberfile}.LCK";
+      $form->error("$slconfig{memberfile}.bin: $@");
     }
 
     # change password
-    User->dbpassword(\%$form);
+    SL::User->dbpassword($form);
 
     # change passwords in members file
     $form->{dbpasswd} = pack 'u', $form->{new_password};
     chomp $form->{dbpasswd};
 
-    seek(FH, 0, 0);
-    truncate(FH, 0);
-
-    print FH qq|# SQL-Ledger members
-
-[root login]\n|;
-
-    for (sort keys %{$member{"root login"}}) {
-      print FH qq|$_=$member{"root login"}{$_}\n|;
-    }
-    print FH "\n";
-    delete $member{"root login"};
-
-    for (keys %member) {
-      if ($member{$_}{dbdriver} eq $form->{dbdriver}) {
-        if ($member{$_}{dbuser} eq $form->{dbuser}) {
-          if ($member{$_}{dbhost} eq $form->{dbhost}) {
-            $member{$_}{dbpasswd} = $form->{dbpasswd};
-          }
-        }
+    for my $param (values %member) {
+      if ( $param->{dbdriver} eq $form->{dbdriver}
+        && $param->{dbuser} eq $form->{dbuser}
+        && $param->{dbhost} eq $form->{dbhost}
+        && $param->{dbport} eq $form->{dbport})
+      {
+        $param->{dbpasswd} = $form->{dbpasswd};
       }
     }
 
-    for $member (sort keys %member) {
-      print FH qq|[$member]\n|;
-      for (sort keys %{$member{$member}}) {
-        print FH qq|$_=$member{$member}{$_}\n|;
-      }
-      print FH "\n";
-    }
-    close(FH);
-
-    unlink "${memberfile}.LCK";
+    YAML::PP->new->dump_file("$slconfig{memberfile}.yml", \%member);
+    Storable::store \%member, "$slconfig{memberfile}.bin";
+    unlink "$slconfig{memberfile}.LCK";
 
   } else {
 
     $root->{password} = $form->{new_password};
 
-    if (! -f $memberfile) {
-      open(FH, '>:utf8', $memberfile) or $form->error("$memberfile : $!");
-      print FH qq|# SQL-Ledger members
-
-[root login]
-|;
-      close FH;
+    unless (-f "$slconfig{memberfile}.bin") {
+      my %member = ('root login' => {});
+      Storable::store \%member, "$slconfig{memberfile}.bin";
     }
 
     $root->{'root login'} = 1;
-    $root->{login} = "root login";
-    $root->save_member($memberfile);
+    $root->{login} = 'root login';
+    $root->save_member($slconfig{memberfile}, $slconfig{userspath});
 
     $form->{password} = $form->{new_password};
     &create_config;
@@ -814,77 +718,44 @@ sub change_host {
 
 sub do_change_host {
 
-  open(FH, ">${memberfile}.LCK") or $form->error("${memberfile}.LCK : $!");
-  close(FH);
+  open my $fh, '>', "$slconfig{memberfile}.LCK" or $form->error("$slconfig{memberfile}.LCK : $!");
+  close $fh;
 
-  if (! open(FH, "+<$memberfile")) {
-    unlink "${memberfile}.LCK";
-    $form->error("$memberfile : $!");
-  }
-  @member = <FH>;
+  my %member;
+  eval { %member = Storable::retrieve("$slconfig{memberfile}.bin")->%*; };
 
-  while ($_ = shift @member) {
-    if (/^\[.*\]/) {
-      chop;
-      $member = $_;
-      $member =~ s/(^\[|\]$)//g;
-      $_ = shift @member;
-      do {
-        chop;
-        ($var, $val) = split /=/, $_, 2;
-        $member{$member}{$var} = $val;
-        $_ = shift @member;
-      } until /^\s+$/;
-    }
+  if ($@) {
+    unlink "$slconfig{memberfile}.LCK";
+    $form->error("$slconfig{memberfile}.bin: $@");
   }
 
-  seek(FH, 0, 0);
-  truncate(FH, 0);
+  for my $user (keys %member) {
+    my $param = $member{$user};
+    if ( $param->{dbdriver} eq $form->{dbdriver}
+      && $param->{dbname} eq $form->{dbname}
+      && ($form->{new_host} ne $param->{dbhost} || $form->{new_port} ne $param->{dbport}))
+    {
+      $param->{dbhost}    = $form->{new_host};
+      $param->{dbport}    = $form->{new_port};
+      $param->{dbconnect} = "dbi:$form->{dbdriver}:dbname=$form->{dbname}";
+      if ($form->{new_host}) {
+        $param->{dbconnect} .= ";host=$form->{new_host}";
+      }
+      if ($form->{new_port}) {
+        $param->{dbconnect} .= ";port=$form->{new_port}";
+      }
 
-  print FH qq|# SQL-Ledger members
-
-[root login]\n|;
-
-  for (sort keys %{$member{"root login"}}) {
-    print FH qq|$_=$member{"root login"}{$_}\n|;
-  }
-  print FH "\n";
-  delete $member{"root login"};
-
-  for (keys %member) {
-    if ($member{$_}{dbdriver} eq $form->{dbdriver}) {
-      if ($member{$_}{dbname} eq $form->{dbname}) {
-        if ($form->{new_host} ne $member{$_}{dbhost} || $form->{new_port} ne $member{$_}{dbport}) {
-          $member{$_}{dbhost} = $form->{new_host};
-          $member{$_}{dbport} = $form->{new_port};
-          if ($form->{dbdriver} =~ /(Pg|Sybase)/) {
-            $member{$_}{dbconnect} = "dbi:$form->{dbdriver}:dbname=$form->{dbname}";
-            if ($form->{new_host}) {
-              $member{$_}{dbconnect} .= ";host=$form->{new_host}";
-            }
-            if ($form->{new_port}) {
-              $member{$_}{dbconnect} .= ";port=$form->{new_port}";
-            }
-          }
-
-          if ($form->{dbdriver} eq 'Oracle') {
-            $form->{dbconnect} = "dbi:Oracle:sid=$member{$_}{sid}";
-          }
-        }
+      if (-f "$slconfig{userspath}/$user.bin") {
+        my $config = Storable::retrieve "$slconfig{userspath}/$user.bin";
+        $config->{$_} = $param->{$_} for qw|dbdriver dbname dbhost dbport dbconnect|;
+        Storable::store $config, "$slconfig{userspath}/$user.bin";
       }
     }
   }
 
-  for $member (sort keys %member) {
-    print FH qq|[$member]\n|;
-    for (sort keys %{$member{$member}}) {
-      print FH qq|$_=$member{$member}{$_}\n| if $member{$member}{$_};
-    }
-    print FH "\n";
-  }
-  close(FH);
-
-  unlink "${memberfile}.LCK";
+  YAML::PP->new->dump_file("$slconfig{memberfile}.yml", \%member);
+  Storable::store \%member, "$slconfig{memberfile}.bin";
+  unlink "$slconfig{memberfile}.LCK";
 
   $form->{callback} = "$form->{script}?action=list_datasets&path=$form->{path}";
 
@@ -895,10 +766,9 @@ sub do_change_host {
 
 sub check_password {
 
-  $root = new User "$memberfile", "root login";
+  $root = SL::User->new($slconfig{memberfile}, 'root login');
 
-  $rootname = "root login";
-  eval { require "$userspath/${rootname}.conf"; };
+  eval { %rootconfig = Storable::retrieve("$slconfig{userspath}/root login.bin")->%*; };
 
   if ($root->{password}) {
 
@@ -965,35 +835,23 @@ sub check_password {
 
 
 sub Pg { &dbselect_source }
-sub PgPP { &dbselect_source }
-sub Oracle { &dbselect_source }
-sub Sybase { &dbselect_source }
+sub Mock { &dbselect_source }
 
 
 sub dbdriver_defaults {
 
   # load some defaults for the selected driver
-  %driverdefaults = ( 'Pg' => { dbport => '',
-                                dbuser => 'sql-ledger',
-                             dbdefault => 'template1',
-                                dbhost => '',
-                         connectstring => $locale->text('Connect to')
-                              },
-                  'Oracle' => { dbport => '1521',
-                                dbuser => 'oralin',
-                             dbdefault => $sid,
-                                dbhost => `hostname`,
-                         connectstring => 'SID'
-                              },
-                   'Sybase' => { dbport => '',
-                                dbuser => 'sql-ledger',
-                             dbdefault => '',
-                                dbhost => '',
-                         connectstring => $locale->text('Connect to')
-                              }
-                    );
+  %driverdefaults = (
+    Pg => {
+      dbport        => '',
+      dbuser        => 'sql-ledger',
+      dbdefault     => 'template1',
+      dbhost        => '',
+      connectstring => $locale->text('Connect to')
+    },
+  );
 
-  $driverdefaults{PgPP} = $driverdefaults{Pg};
+  $driverdefaults{Mock} = $driverdefaults{Pg};
 
   for (keys %{ $driverdefaults{Pg} }) { $form->{$_} = $driverdefaults{$form->{dbdriver}}{$_} }
 
@@ -1070,7 +928,7 @@ sub yes { &{ $form->{nextsub} } }
 
 sub create_dataset {
 
-  @dbsources = sort User->dbsources(\%$form);
+  @dbsources = sort SL::User->dbsources($form);
 
   opendir SQLDIR, "sql" or $form->error($!);
   foreach $item (sort grep /-chart\.sql/, readdir SQLDIR) {
@@ -1082,7 +940,7 @@ sub create_dataset {
   $selectchart = "Default\n$selectchart" if (-f 'sql/Default-chart.sql');
   closedir SQLDIR;
 
-  $form->{name} ||= $locale->text('Admin');
+  $form->{name} ||= lc $locale->text('Admin');
 
   $templatedir = "doc/templates";
 
@@ -1101,15 +959,15 @@ sub create_dataset {
 
   }
 
-  $selectencoding = User->encoding($form->{dbdriver});
-  $form->{charset} = $charset;
+  $selectencoding = SL::User->encoding($form->{dbdriver});
+  $form->{charset} = $slconfig{charset};
 
   # get subdirectories from templates directory
-  if (-d $templates) {
-    opendir TEMPLATEDIR, "$templates" or $form->error("$templates : $!");
+  if (-d $slconfig{templates}) {
+    opendir TEMPLATEDIR, "$slconfig{templates}" or $form->error("$slconfig{templates} : $!");
     @d = grep !/^\./, readdir TEMPLATEDIR;
     closedir TEMPLATEDIR;
-    for (@d) { push @dir, $_ if -d "$templates/$_" }
+    for (@d) { push @dir, $_ if -d "$slconfig{templates}/$_" }
 
     if (@dir) {
       $selectusetemplates = "\n";
@@ -1227,38 +1085,31 @@ sub dbcreate {
 
   $form->isblank("db", $locale->text('Dataset missing!'));
 
-  $form->error("$memberfile : ".$locale->text('locked!')) if (-f ${memberfile}.LCK);
+  $form->error("$slconfig{memberfile} : ".$locale->text('locked!')) if -f "$slconfig{memberfile}.LCK";
   $form->error($locale->text('Cannot use') . " $form->{db}") if $form->{dbdriver} =~ /Pg/ && $form->{db} =~ /^template(0|1)$/;
 
   # check if dbname is already in use
-  open(FH, '<:utf8', $memberfile) or $form->error("$memberfile : $!");
-  @member = <FH>;
-  close(FH);
+  my %member;
+  eval { %member = Storable::retrieve("$slconfig{memberfile}.bin")->%*; };
+  $form->error("$slconfig{memberfile}.bin: $@") if $@;
 
-  while ($_ = shift @member) {
-    if (/^\[(.*)\]/) {
-      $user = $+;
-      $user =~ s/.*\@//;
-    }
-
-    if (/^dbname=/) {
-      chop;
-      (undef, $dbname) = split /=/, $_, 2;
-       $member{$user} = $dbname;
-    }
+  my %db;
+  for my $user (keys %member) {
+    $user =~ /.*@/;
+    $db{$'} = $member{$user}{dbname};
   }
 
-  $form->error($locale->text('Duplicate Dataset!')) if $form->{db} eq $member{$form->{db}};
+  $form->error($locale->text('Duplicate Dataset!')) if $form->{db} eq $db{$form->{db}};
 
-  open(FH, ">${memberfile}.LCK") or $form->error("${memberfile}.LCK : $!");
-  close(FH);
+  open my $fh, '>', "$slconfig{memberfile}.LCK" or $form->error("$slconfig{memberfile}.LCK : $!");
+  close $fh;
 
   $templatedir = "doc/templates";
 
   umask(002);
 
-  if (! -d "$templates") {
-    mkdir "$templates", oct("771") or $form->error("$templates : $!");
+  if (! -d "$slconfig{templates}") {
+    mkdir "$slconfig{templates}", oct("771") or $form->error("$slconfig{templates} : $!");
   }
 
   $form->{company} ||= $form->{db};
@@ -1267,52 +1118,53 @@ sub dbcreate {
   $form->{templates} = ($form->{usetemplates}) ? "$form->{usetemplates}" : "$form->{db}";
 
   # get templates from master
-  opendir TEMPLATEDIR, "$templatedir/$form->{mastertemplates}" or $form->error("$templates : $!");
+  opendir TEMPLATEDIR, "$templatedir/$form->{mastertemplates}" or $form->error("$slconfig{templates} : $!");
   @templates = grep !/^\./, readdir TEMPLATEDIR;
   closedir TEMPLATEDIR;
 
-  if (! -d "$templates/$form->{templates}") {
-    mkdir "$templates/$form->{templates}", oct("771") or $form->error("$templates/$form->{templates} : $!");
+  if (! -d "$slconfig{templates}/$form->{templates}") {
+    mkdir "$slconfig{templates}/$form->{templates}", oct("771") or $form->error("$slconfig{templates}/$form->{templates} : $!");
   }
 
   foreach $file (@templates) {
-    if (! -f "$templates/$form->{templates}/$file") {
-      open(TEMP, "$templatedir/$form->{mastertemplates}/$file") or $form->error("$templatedir/$form->{mastertemplates}/$file : $!");
-      open(NEW, ">$templates/$form->{templates}/$file") or $form->error("$templates/$form->{templates}/$file : $!");
+    if (! -f "$slconfig{templates}/$form->{templates}/$file") {
+      open $temp, "$templatedir/$form->{mastertemplates}/$file" or $form->error("$templatedir/$form->{mastertemplates}/$file : $!");
+      open $new, ">$slconfig{templates}/$form->{templates}/$file" or $form->error("$slconfig{templates}/$form->{templates}/$file : $!");
 
-      for (<TEMP>) { print NEW $_ }
-      close(NEW);
-      close(TEMP);
+      for (<$temp>) { print $new $_ }
+      close $new;
+      close $temp;
     }
   }
 
   # copy logo files
   for $ext (qw(eps png)) {
-    if (! -f "$templates/$form->{templates}/logo.$ext") {
-      open(TEMP, "$userspath/sql-ledger.$ext");
-      open(NEW, ">$templates/$form->{templates}/logo.$ext");
-      for (<TEMP>) { print NEW $_ }
-      close(NEW);
-      close(TEMP);
+    if (! -f "$slconfig{templates}/$form->{templates}/logo.$ext") {
+      open $temp, "$slconfig{userspath}/sql-ledger.$ext";
+      open $new, ">$slconfig{templates}/$form->{templates}/logo.$ext";
+      for (<$temp>) { print $new $_ }
+      close $new;
+      close $temp;
     }
   }
 
-  if (! -d "$spool/$form->{db}") {
-    mkdir "$spool/$form->{db}", oct("771") or $form->error("$spool/$form->{db} : $!");
+  if (! -d "$slconfig{spool}/$form->{db}") {
+    mkdir "$slconfig{spool}/$form->{db}", oct("771") or $form->error("$slconfig{spool}/$form->{db} : $!");
   }
 
-  if (! -d "$images/$form->{db}") {
-    mkdir "$images/$form->{db}", oct("771") or $form->error("$images/$form->{db} : $!");
+  if (! -d "$slconfig{images}/$form->{db}") {
+    mkdir "$slconfig{images}/$form->{db}", oct("771") or $form->error("$slconfig{images}/$form->{db} : $!");
   }
 
   # add admin to members file
-  if (! open(FH, '>>:utf8', $memberfile)) {
-    unlink "${memberfile}.LCK";
-    $form->error("$memberfile : $!");
+
+  if ($@) {
+    unlink "$slconfig{memberfile}.LCK";
+    $form->error("$slconfig{memberfile}.bin: $@");
   }
 
   # create dataset
-  User->dbcreate(\%$form);
+  SL::User->dbcreate($form);
 
   $form->{charset} = $form->{encoding};
   $form->{dbname} = $form->{db};
@@ -1324,8 +1176,6 @@ sub dbcreate {
   $form->{dboptions} .= ';set client_encoding to \''.$form->{encoding}."'" if $form->{encoding};
   $form->{vclimit} = "1000";
 
-  print FH "\[$form->{login}\]\n";
-
   if ($form->{dbpasswd}) {
     $form->{dbpasswd} = pack 'u', $form->{dbpasswd};
     chomp $form->{dbpasswd};
@@ -1336,13 +1186,18 @@ sub dbcreate {
     $form->{password} = crypt $form->{adminpassword}, 'ad';
   }
 
-  for (sort (qw(company name email dbconnect dbdriver dbhost dbname dboptions dbpasswd dbport dbuser stylesheet password dateformat numberformat charset vclimit templates))) {
-    print FH "$_=$form->{$_}\n" if $form->{$_};
+  for (
+    'charset', 'company',      'dateformat', 'dbconnect',  'dbdriver',  'dbhost',
+    'dbname',  'dboptions',    'dbpasswd',   'dbport',     'dbuser',    'email',
+    'name',    'numberformat', 'password',   'stylesheet', 'templates', 'vclimit',
+    )
+  {
+    $member{$form->{login}}{$_} = $form->{$_} if $form->{$_};
   }
-  print FH "\n";
-  close(FH);
+  YAML::PP->new->dump_file("$slconfig{memberfile}.yml", \%member);
+  Storable::store \%member, "$slconfig{memberfile}.bin";
 
-  unlink "${memberfile}.LCK";
+  unlink "$slconfig{memberfile}.LCK";
 
   delete $form->{password};
 
@@ -1356,9 +1211,9 @@ sub unlock_dataset { &unlock_system }
 sub unlock_system {
 
   if ($form->{dbname}) {
-    $filename = "$userspath/$form->{dbname}.LCK";
+    $filename = "$slconfig{userspath}/$form->{dbname}.LCK";
   } else {
-    $filename = "$userspath/nologin.LCK";
+    $filename = "$slconfig{userspath}/nologin.LCK";
   }
   unlink "$filename";
 
@@ -1429,15 +1284,15 @@ sub lock_system {
 sub do_lock_system {
 
   if ($form->{dbname}) {
-    open(FH, ">$userspath/$form->{dbname}.LCK") or $form->error($locale->text('Cannot create Lock!'));
+    open $fh, ">$slconfig{userspath}/$form->{dbname}.LCK" or $form->error($locale->text('Cannot create Lock!'));
   } else {
-    open(FH, ">$userspath/nologin.LCK") or $form->error($locale->text('Cannot create Lock!'));
+    open $fh, ">$slconfig{userspath}/nologin.LCK" or $form->error($locale->text('Cannot create Lock!'));
   }
 
   if ($form->{lock}) {
-    print FH $form->{lock};
+    print $fh $form->{lock};
   }
-  close(FH);
+  close $fh;
 
   $form->redirect($locale->text('Lockfile created!'));
 
@@ -1471,7 +1326,7 @@ L<DBI>,
 L<bin::mozilla::pw>
 
 =item * optionally requires
-C<$userspath/${rootname}.conf>,
+C<$slconfig{userspath}/${rootname}.conf>,
 F<< bin/mozilla/custom/admin.pl >>
 
 =back
@@ -1480,13 +1335,9 @@ F<< bin/mozilla/custom/admin.pl >>
 
 L<bin::mozilla::admin> implements the following functions:
 
-=head2 Oracle
+=head2 Mock
 
 =head2 Pg
-
-=head2 PgPP
-
-=head2 Sybase
 
 =head2 add_dataset
 

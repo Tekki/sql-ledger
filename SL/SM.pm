@@ -1,21 +1,20 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2009
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2009-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2009-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
 # module for reposting/deleting invoices
 #
 #======================================================================
+use v5.40;
 
-package SM;
+package SL::SM;
 
 
-sub repost_invoices {
-  my ($self, $myconfig, $form, $userspath) = @_;
+sub repost_invoices ($, $myconfig, $form, $userspath) {
 
   $myconfig->{numberformat} = '1000.00';
 
@@ -25,7 +24,7 @@ sub repost_invoices {
   my $query;
   my $sth;
 
-  my $newform = new Form;
+  my $newform = SL::Form->new;
   my %default;
 
   # set up default AR account
@@ -148,8 +147,8 @@ sub repost_invoices {
   $dbh->{AutoCommit} = 0;
 
   my $id;
-  my %arap = ( ar => { link => AR, isir => IS, vc => customer },
-               ap => { link => AP, isir => IR, vc => vendor }
+  my %arap = ( ar => { link => 'AR', isir => 'IS', vc => 'customer' },
+               ap => { link => 'AP', isir => 'IR', vc => 'vendor' }
              );
   my $i;
   my $item;
@@ -173,7 +172,7 @@ sub repost_invoices {
       $dbh->do($query) || &dberror($form, $query, $userspath);
 
       $pth->execute($form->{id});
-      while ($ref = $pth->fetchrow_hashref(NAME_lc)) {
+      while ($ref = $pth->fetchrow_hashref) {
         $obsolete{$ref->{id}} = 1 if $ref->{obsolete};
       }
       $pth->finish;
@@ -230,7 +229,7 @@ sub repost_invoices {
       $sth->execute || &dberror($form, $query, $userspath);
 
       $i = 0;
-      while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+      while ($ref = $sth->fetchrow_hashref) {
         $i++;
         $newform->{"$arap{$item}{link}_paid_$i"} = $ref->{accno};
         $newform->{"paid_$i"} = $ref->{amount} * -1;
@@ -265,7 +264,7 @@ sub repost_invoices {
       $sth = $dbh->prepare($query);
       $sth->execute || &dberror($form, $query, $userspath);
 
-      $ref = $sth->fetchrow_hashref(NAME_lc);
+      $ref = $sth->fetchrow_hashref;
       for (keys %$ref) { $newform->{$_} = $ref->{$_} }
       $sth->finish;
 
@@ -278,7 +277,7 @@ sub repost_invoices {
       $sth = $dbh->prepare($query);
       $sth->execute || &dberror($form, $query, $userspath);
 
-      while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+      while ($ref = $sth->fetchrow_hashref) {
         $newform->{taxaccounts} .= "$ref->{accno} ";
         $newform->{"$ref->{accno}_rate"} = $ref->{rate};
       }
@@ -294,7 +293,7 @@ sub repost_invoices {
       $sth = $dbh->prepare($query);
       $sth->execute || &dberror($form, $query, $userspath);
 
-      $ref = $sth->fetchrow_hashref(NAME_lc);
+      $ref = $sth->fetchrow_hashref;
       for (keys %$ref) { $newform->{$_} = $ref->{$_} }
       $sth->finish;
 
@@ -311,7 +310,7 @@ sub repost_invoices {
       $sth->execute || &dberror($form, $query, $userspath);
 
       $i = 0;
-      while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+      while ($ref = $sth->fetchrow_hashref) {
 
         # get tax accounts for part
         $query = qq|SELECT c.accno
@@ -320,7 +319,7 @@ sub repost_invoices {
                     WHERE pt.parts_id = $ref->{id}|;
         $pth = $dbh->prepare($query);
         $pth->execute || &dberror($form, $query, $userspath);
-        while (($accno) = $pth->fetchrow_array) {
+        while (my ($accno) = $pth->fetchrow_array) {
           $ref->{taxaccounts} .= "$accno ";
         }
         chop $ref->{taxaccounts};
@@ -405,8 +404,7 @@ sub repost_invoices {
 }
 
 
-sub dberror {
-  my ($form, $query, $userspath) = @_;
+sub dberror ($form, $query, $userspath) {
 
   unlink "$userspath/nologin.LCK";
   $form->dberror($query);
@@ -420,7 +418,7 @@ sub dberror {
 
 =head1 NAME
 
-SM - Module for reposting/deleting invoices
+SL::SM - Module for reposting/deleting invoices
 
 =head1 DESCRIPTION
 
@@ -436,6 +434,6 @@ L<SL::SM> implements the following functions:
 
 =head2 repost_invoices
 
-  SM->repost_invoices($myconfig, $form, $userspath);
+  SL::SM->repost_invoices($myconfig, $form, $userspath);
 
 =cut

@@ -1,22 +1,20 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2006
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
 # chart of accounts
 #
 #======================================================================
+use v5.40;
+
+package SL::CA;
 
 
-package CA;
-
-
-sub all_accounts {
-  my ($self, $myconfig, $form) = @_;
+sub all_accounts ($, $myconfig, $form) {
 
   my $amount = ();
   # connect to database
@@ -24,7 +22,7 @@ sub all_accounts {
 
   my $ref;
 
-  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company', 'hideaccounts']});
+  my %defaults = $form->get_defaults($dbh, ['precision', 'company', 'hideaccounts']);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   my $query = qq|SELECT c.accno,
@@ -34,9 +32,11 @@ sub all_accounts {
                  WHERE ac.approved = '1'
                  GROUP BY c.accno|;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  my (%amount, %gifi);
+
+  while ($ref = $sth->fetchrow_hashref) {
     $amount{$ref->{accno}} = $ref->{amount}
   }
   $sth->finish;
@@ -44,9 +44,8 @@ sub all_accounts {
   $query = qq|SELECT accno, description
               FROM gifi|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  my $gifi = ();
   while (my ($accno, $description) = $sth->fetchrow_array) {
     $gifi{$accno} = $description;
   }
@@ -59,11 +58,11 @@ sub all_accounts {
               LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
               ORDER BY c.accno|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
-    $ref->{amount} = $amount{$ref->{accno}};
-    $ref->{gifi_description} = $gifi{$ref->{gifi_accno}};
+  while ($ref = $sth->fetchrow_hashref) {
+    $ref->{amount}           = $amount{$ref->{accno}}    // 0;
+    $ref->{gifi_description} = $gifi{$ref->{gifi_accno}} // '';
     if ($ref->{amount} < 0) {
       $ref->{debit} = $ref->{amount} * -1;
     } else {
@@ -79,29 +78,28 @@ sub all_accounts {
 }
 
 
-sub all_transactions {
-  my ($self, $myconfig, $form) = @_;
+sub all_transactions ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
 
-  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
+  my %defaults = $form->get_defaults($dbh, ['precision', 'company']);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   # get chart_id
   my $query = qq|SELECT id FROM chart
                  WHERE accno = '$form->{accno}'|;
-  if ($form->{accounttype} eq 'gifi') {
+  if (($form->{accounttype} // '') eq 'gifi' && $form->{gifi_accno}) {
     $query = qq|SELECT id FROM chart
                 WHERE gifi_accno = '$form->{gifi_accno}'|;
   }
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  my @id = ();
+  my @ids = ();
   while (my ($id) = $sth->fetchrow_array) {
-    push @id, $id;
+    push @ids, $id;
   }
   $sth->finish;
 
@@ -124,14 +122,14 @@ sub all_transactions {
   }
 
 
-  my $false = ($myconfig->{dbdriver} =~ /Pg/) ? FALSE : q|'0'|;
+  my $false = ($myconfig->{dbdriver} =~ /Pg/) ? 'FALSE' : q|'0'|;
 
   my $department_id;
-  my $dpt_where;
-  my $dpt_join;
-  my $union;
+  my $dpt_where = '';
+  my $dpt_join  = '';
+  my $union     = '';
 
-  (undef, $department_id) = split /--/, $form->{department};
+  (undef, $department_id) = split /--/, $form->{department} // '';
 
   if ($department_id) {
     $dpt_join = qq|
@@ -142,10 +140,10 @@ sub all_transactions {
                   |;
   }
 
-  my $project;
+  my $project = '';
   my $project_id;
   if ($form->{projectnumber}) {
-    (undef, $project_id) = split /--/, $form->{projectnumber};
+    (undef, $project_id) = split /--/, $form->{projectnumber} // '';
     $project = qq|
                  AND ac.project_id = $project_id
                  |;
@@ -158,7 +156,7 @@ sub all_transactions {
                 FROM chart c
                 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
                 WHERE c.accno = '$form->{accno}'|;
-    if ($form->{accounttype} eq 'gifi') {
+    if (($form->{accounttype} // '') eq 'gifi' && $form->{gifi_accno}) {
       $query = qq|SELECT description, category, link, contra
                 FROM chart
                 WHERE gifi_accno = '$form->{gifi_accno}'
@@ -178,7 +176,7 @@ sub all_transactions {
 
         for (qw(ar ap gl)) {
 
-          if ($form->{accounttype} eq 'gifi') {
+          if (($form->{accounttype} // '') eq 'gifi') {
             $query = qq|
                         $union
                         SELECT SUM(ac.amount)
@@ -212,7 +210,7 @@ sub all_transactions {
 
       } else {
 
-        if ($form->{accounttype} eq 'gifi') {
+        if (($form->{accounttype} // '') eq 'gifi' && $form->{gifi_accno}) {
           $query = qq|SELECT SUM(ac.amount)
                     FROM acc_trans ac
                     JOIN chart c ON (ac.chart_id = c.id)
@@ -239,9 +237,9 @@ sub all_transactions {
   }
 
   $query = "";
-  my $union = "";
+  $union = "";
 
-  foreach my $id (@id) {
+  foreach my $id (@ids) {
 
     # get all transactions
     $query .= qq|$union
@@ -300,11 +298,10 @@ sub all_transactions {
   }
 
   my @sf = qw(transdate reference description);
-  my %ordinal = $form->ordinal_order($dbh, $query);
-  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
+  $query .= qq| ORDER BY | . $form->sort_order(\@sf);
 
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
   $query = qq|SELECT c.id, c.accno FROM chart c
               JOIN acc_trans ac ON (ac.chart_id = c.id)
@@ -312,7 +309,7 @@ sub all_transactions {
               AND ac.approved = '1'
               AND ac.trans_id = ?
               AND ac.transdate = ?|;
-  my $dr = $dbh->prepare($query) || $form->dberror($query);
+  my $dr = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|SELECT c.id, c.accno FROM chart c
               JOIN acc_trans ac ON (ac.chart_id = c.id)
@@ -320,13 +317,13 @@ sub all_transactions {
               AND ac.approved = '1'
               AND ac.trans_id = ?
               AND ac.transdate = ?|;
-  my $cr = $dbh->prepare($query) || $form->dberror($query);
+  my $cr = $dbh->prepare($query) or $form->dberror($query);
 
   my $accno;
   my $chart_id;
   my %accno;
 
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
 
     # gl
     if ($ref->{module} eq "gl") {
@@ -396,7 +393,7 @@ sub all_transactions {
 
 =head1 NAME
 
-CA - Chart of accounts
+SL::CA - Chart of accounts
 
 =head1 DESCRIPTION
 
@@ -408,10 +405,10 @@ L<SL::CA> implements the following functions:
 
 =head2 all_accounts
 
-  CA->all_accounts($myconfig, $form);
+  SL::CA->all_accounts($myconfig, $form);
 
 =head2 all_transactions
 
-  CA->all_transactions($myconfig, $form);
+  SL::CA->all_transactions($myconfig, $form);
 
 =cut

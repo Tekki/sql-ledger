@@ -1,9 +1,7 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2015-2017
 #
-#  Author: Tekki
-#     Web: https://tekki.ch
+# © 2015-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -20,18 +18,18 @@ sub add_payment {
   require SL::IS;
 
   my $result       = 'error';
-  my $invoice_form = Form->new;
+  my $invoice_form = SL::Form->new;
   $invoice_form->{$_} = $form->{$_} for qw|id dcn invnumber waybill|;
-  API->find_invoice(\%myconfig, $invoice_form);
+  SL::API->find_invoice(\%myconfig, $invoice_form);
 
   if ($invoice_form->{id}) {
 
     $invoice_form->{vc} = 'customer';
-    AA->get_name(\%myconfig, $invoice_form);
+    SL::AA->get_name(\%myconfig, $invoice_form);
     delete $invoice_form->{notes};
-    IS->retrieve_invoice(\%myconfig, $invoice_form);
+    SL::IS->retrieve_invoice(\%myconfig, $invoice_form);
 
-    my $payment_form = Form->new;
+    my $payment_form = SL::Form->new;
     $payment_form->{$_} = $invoice_form->{$_}
       for qw|ARAP defaultcurrency precision vc|;
     $payment_form->{currency} = $form->{currency}
@@ -44,7 +42,7 @@ sub add_payment {
     $payment_form->{paid_1}                       = $form->{amount};
     $payment_form->{checked_1}                    = 1;
 
-    CP->post_payment(\%myconfig, $payment_form) and $result = 'success';
+    SL::CP->post_payment(\%myconfig, $payment_form) and $result = 'success';
   }
 
   print qq|Content-Type: application/json; charset=$form->{charset}
@@ -54,8 +52,8 @@ sub add_payment {
 
 sub add_reference {
 
-  API->find_invoice(\%myconfig, $form);
-  API->add_reference(\%myconfig, $form);
+  SL::API->find_invoice(\%myconfig, $form);
+  SL::API->add_reference(\%myconfig, $form);
 
   print qq|Content-Type: application/json; charset=$form->{charset}
 
@@ -67,7 +65,7 @@ sub customer_details {
 
   $form->{db}   = 'customer';
   $form->{ARAP} = 'AR';
-  CT->create_links(\%myconfig, $form);
+  SL::CT->create_links(\%myconfig, $form);
   for (qw(discount cashdiscount)) { $form->{$_} *= 100 }
   $form->{contactid} = $form->{all_contact}->[0]->{id};
   if ($form->{all_contact}->[0]->{typeofcontact}) {
@@ -105,14 +103,14 @@ sub invoice_details {
   require SL::AA;
   require SL::IS;
 
-  API->find_invoice(\%myconfig, $form);
+  SL::API->find_invoice(\%myconfig, $form);
 
   if ($form->{id}) {
     $form->{vc} = 'customer';
-    $form->create_links('AR', \%myconfig, 'customer', 1);
-    AA->get_name(\%myconfig, $form);
+    $form->create_links('AR', \%myconfig, 'customer');
+    SL::AA->get_name(\%myconfig, $form);
     delete $form->{notes};
-    IS->retrieve_invoice(\%myconfig, $form);
+    SL::IS->retrieve_invoice(\%myconfig, $form);
     $form->all_references($form->dbconnect(\%myconfig));
   }
   my %new_form = map { $_ => $form->{$_} } grep !/^all_/, keys %$form;
@@ -124,7 +122,7 @@ sub invoice_details {
 
 sub list_accounts {
 
-  API->list_accounts(\%myconfig, $form);
+  SL::API->list_accounts(\%myconfig, $form);
 
   print qq|Content-Type: application/json; charset=$form->{charset}
 
@@ -135,7 +133,7 @@ sub search_customer {
   require SL::CT;
 
   $form->{db} = 'customer';
-  CT->search(\%myconfig, $form);
+  SL::CT->search(\%myconfig, $form);
 
   print qq|Content-Type: application/json; charset=$form->{charset}
 
@@ -148,7 +146,7 @@ sub search_order {
   $form->{open} //= 1;
   $form->{type} ||= 'sales_order';
   $form->{vc}   ||= 'customer';
-  OE->transactions(\%myconfig, $form);
+  SL::OE->transactions(\%myconfig, $form);
 
   print qq|Content-Type: application/json; charset=$form->{charset}
 
@@ -161,7 +159,7 @@ sub search_transaction {
   $form->{open}    //= 1 unless $form->{outstanding};
   $form->{summary} //= 1;
   $form->{vc} = 'customer';
-  AA->transactions(\%myconfig, $form);
+  SL::AA->transactions(\%myconfig, $form);
 
   print qq|Content-Type: application/json; charset=$form->{charset}
 

@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -41,7 +40,7 @@ sub edit {
     $form->{formname} = "check";
   }
 
-  CP->retrieve(\%myconfig, \%$form);
+  SL::CP->retrieve(\%myconfig, $form);
 
   # departments
   if (@{ $form->{all_department} }) {
@@ -166,7 +165,7 @@ sub payment {
   if ($form->{all_vc}) {
     $form->all_vc(\%myconfig, $form->{vc}, $form->{ARAP}, undef, $form->{datepaid});
   } else {
-    CP->get_openvc(\%myconfig, \%$form);
+    SL::CP->get_openvc(\%myconfig, $form);
     if ($myconfig{vclimit} > 0) {
       $form->{"all_$form->{vc}"} = $form->{name_list};
     }
@@ -194,7 +193,7 @@ sub payment {
     for (@{ $form->{all_language} }) { $form->{selectlanguage} .= qq|$_->{code}--$_->{description}\n| }
   }
 
-  CP->paymentaccounts(\%myconfig, \%$form);
+  SL::CP->paymentaccounts(\%myconfig, $form);
 
   foreach $item (qw(department business paymentmethod)) {
     if (@{ $form->{"all_$item"} }) {
@@ -286,7 +285,7 @@ sub prepare_payments_header {
   $form->{payment} = "payment";
   $form->{allbox} = 1;
 
-  CP->get_openinvoices(\%myconfig, \%$form);
+  SL::CP->get_openinvoices(\%myconfig, $form);
 
   for ("currency","$form->{ARAP}","$form->{ARAP}_paid","$form->{ARAP}_discount","department","business","paymentmethod") {
     $form->{"old$_"} = $form->{$_};
@@ -294,7 +293,7 @@ sub prepare_payments_header {
 
   $exchangerate = $form->{exchangerate};
 
-  AA->get_name(\%myconfig, \%$form);
+  SL::AA->get_name(\%myconfig, $form);
 
   for ("currency","$form->{ARAP}","$form->{ARAP}_paid","$form->{ARAP}_discount","department","business","paymentmethod") {
     $form->{$_} = $form->{"old$_"};
@@ -370,7 +369,7 @@ sub payments {
 
   $form->{callback} = "$form->{script}?action=payments&path=$form->{path}&login=$form->{login}&type=$form->{type}" unless $form->{callback};
 
-  CP->paymentaccounts(\%myconfig, \%$form);
+  SL::CP->paymentaccounts(\%myconfig, $form);
 
   if (@{ $form->{all_language} }) {
     $form->{selectlanguage} = "\n";
@@ -769,14 +768,14 @@ sub payments_footer {
 #  <option value="xml" $form->{DF}{xml}>|.$locale->text('XML').qq|
 #  <option value="txt" $form->{DF}{txt}>|.$locale->text('Text');
 
-  if ($latex) {
+  if ($slconfig{latex}) {
     $format .= qq|
             <option value="ps" $form->{DF}{ps}>|.$locale->text('Postscript').qq|
             <option value="pdf" $form->{DF}{pdf}>|.$locale->text('PDF');
   }
   $format .= qq|</select>|;
 
-  if (! $latex) {
+  if (! $slconfig{latex}) {
     $format = "";
     $media = "";
   }
@@ -802,7 +801,7 @@ sub payments_footer {
     delete $button{'Deselect all'};
   }
 
-  if (! $latex) {
+  if (! $slconfig{latex}) {
     for ('Print', 'Preview') { delete $button{$_} }
   }
 
@@ -923,7 +922,7 @@ sub update_payments {
     if ($form->{$_} ne $form->{"old$_"}) {
       if (!$form->{redo}) {
         $form->remove_locks(\%myconfig, undef, $form->{arap});
-        CP->get_openinvoices(\%myconfig, \%$form);
+        SL::CP->get_openinvoices(\%myconfig, $form);
         $form->{redo} = 1;
       }
     }
@@ -1050,7 +1049,7 @@ sub update_payment {
 
       for ("$form->{ARAP}", "business", "department") { $form->{"old$_"} = $form->{$_}}
 
-      $rv = CP->get_openvc(\%myconfig, \%$form);
+      $rv = SL::CP->get_openvc(\%myconfig, $form);
 
       if ($myconfig{vclimit} > 0) {
         $form->{"all_$form->{vc}"} = $form->{name_list};
@@ -1153,7 +1152,7 @@ sub update_payment {
 
       $form->remove_locks(\%myconfig, undef, $form->{arap}) unless $form->{locks_removed};
 
-      CP->get_openvc(\%myconfig, \%$form);
+      SL::CP->get_openvc(\%myconfig, $form);
 
       if ($myconfig{vclimit} > 0) {
         $form->{"all_$form->{vc}"} = $form->{name_list};
@@ -1192,7 +1191,7 @@ sub update_payment {
   }
 
   if ($new_name_selected || $form->{redo}) {
-    CP->get_openinvoices(\%myconfig, \%$form);
+    SL::CP->get_openinvoices(\%myconfig, $form);
 
     ($newvc) = split /--/, $form->{$form->{vc}};
     $form->{"old$form->{vc}"} = qq|$newvc--$form->{"$form->{vc}_id"}|;
@@ -1771,7 +1770,7 @@ sub payment_footer {
 #    <option value="xml" $form->{DF}{xml}>|.$locale->text('XML').qq|
 #    <option value="txt" $form->{DF}{txt}>|.$locale->text('Text');
 
-    if ($latex) {
+    if ($slconfig{latex}) {
       if ($form->{selectlanguage}) {
         $lang = qq|<select name=language_code>|.$form->select_option($form->{"selectlanguage"}, $form->{language_code}, undef, 1).qq|</select>|;
         $form->hide_form(qw(selectlanguage));
@@ -1783,7 +1782,7 @@ sub payment_footer {
     }
     $format .= qq|</select>|;
 
-    if (! $latex) {
+    if (! $slconfig{latex}) {
       $format = "";
       $media = "";
     }
@@ -1826,7 +1825,7 @@ sub payment_footer {
       delete $button{'Deselect all'};
     }
 
-    if (! $latex) {
+    if (! $slconfig{latex}) {
       for ('Print', 'Preview') { delete $button{$_} }
     }
 
@@ -1886,7 +1885,7 @@ sub post_payments {
   %oldform = ();
   for (keys %$form) { $oldform{$_} = $form->{$_} };
 
-  CP->invoice_ids(\%myconfig, \%$form);
+  SL::CP->invoice_ids(\%myconfig, $form);
 
   $i = 0;
   $j = 0;
@@ -1957,9 +1956,9 @@ sub post_payments {
     if ($form->{"checked_$i"}) {
       if ($form->{batch}) {
         $batchid = $form->{batchid};
-        VR->post_transaction(\%myconfig, \%$form);
+        SL::VR->post_transaction(\%myconfig, $form);
       } else {
-        CP->post_payment(\%myconfig, \%$form);
+        SL::CP->post_payment(\%myconfig, $form);
       }
       $oldform{header} = 1;
 
@@ -2007,7 +2006,7 @@ sub post_payment {
 
   if ($form->{batch}) {
     $batchid = $form->{batchid};
-    if ($rc = VR->post_transaction(\%myconfig, \%$form)) {
+    if ($rc = SL::VR->post_transaction(\%myconfig, $form)) {
       if ($form->{callback}) {
         $form->{callback} .= "&batch=$form->{batch}&batchdescription=".$form->escape($form->{batchdescription},1);
         if (!$batchid) {
@@ -2017,7 +2016,7 @@ sub post_payment {
       $form->redirect($locale->text($msg1));
     }
   } else {
-    if ($rc = CP->post_payment(\%myconfig, \%$form)) {
+    if ($rc = SL::CP->post_payment(\%myconfig, $form)) {
       $form->redirect($locale->text($msg1));
     }
   }
@@ -2043,7 +2042,7 @@ sub print_payments {
   %oldform = ();
   for (keys %$form) { $oldform{$_} = $form->{$_} };
 
-  CP->invoice_ids(\%myconfig, \%$form);
+  SL::CP->invoice_ids(\%myconfig, $form);
 
   $i = 0;
   $j = 0;
@@ -2144,7 +2143,7 @@ sub print_payments {
 
 sub print_form {
 
-  $c = CP->new(($form->{language_code}) ? $form->{language_code} : $myconfig{countrycode});
+  $c = SL::CP->new(($form->{language_code}) ? $form->{language_code} : $myconfig{countrycode});
   $c->init;
 
   ($whole, $form->{decimal}) = split /\./, $form->{amount};
@@ -2158,18 +2157,18 @@ sub print_form {
   $datepaid = $form->datetonum(\%myconfig, $form->{datepaid});
   ($form->{yyyy}, $form->{mm}, $form->{dd}) = $datepaid =~ /(....)(..)(..)/;
 
-  AA->company_details(\%myconfig, \%$form);
+  SL::AA->company_details(\%myconfig, $form);
 
   $form->format_string(qw(company address companyemail companywebsite));
 
-  $form->{templates} = "$templates/$myconfig{templates}";
+  $form->{templates} = "$slconfig{templates}/$myconfig{templates}";
   $form->{IN} = "$form->{formname}.tex";
 
   if ($form->{media} ne 'screen') {
     $form->{OUT} = qq~| $form->{"$form->{media}_printer"}~;
   }
 
-  $form->parse_template(\%myconfig, $userspath, $dvipdf, $xelatex);
+  $form->parse_template(\%myconfig, $slconfig{userspath}, $slconfig{dvipdf}, $slconfig{xelatex});
 
 }
 
@@ -2260,7 +2259,7 @@ sub check_openvc {
 
       if ($form->{"select$form->{vc}"}) {
         $form->{"$form->{vc}_id"} = $new_id;
-        AA->get_name(\%myconfig, \%$form);
+        SL::AA->get_name(\%myconfig, $form);
         $form->{$form->{vc}} = $form->{"old$form->{vc}"} = "$new_name--$new_id";
       } else {
         &check_name($form->{vc});
@@ -2280,7 +2279,7 @@ sub check_openvc {
         $form->{locks_removed} = 1;
 
         $form->{"$form->{vc}_id"} = $new_id;
-        AA->get_name(\%myconfig, \%$form);
+        SL::AA->get_name(\%myconfig, $form);
 
         if ($form->{"$form->{vc}_id"}) {
           $form->{$form->{vc}} = $form->{"old$form->{vc}"} = "$new_name--$new_id";
@@ -2311,7 +2310,7 @@ sub check_openvc {
         $form->{locks_removed} = 1;
 
         # return one name or a list of names in $form->{name_list}
-        if (($rv = CP->get_openvc(\%myconfig, \%$form)) > 1) {
+        if (($rv = SL::CP->get_openvc(\%myconfig, $form)) > 1) {
           $form->{redo} = 1;
           &select_name($form->{vc});
           exit;
@@ -2324,7 +2323,7 @@ sub check_openvc {
           $form->{"old$form->{vc}"} = qq|$form->{$form->{vc}}--$form->{"$form->{vc}_id"}|;
           $form->{"old$form->{vc}number"} = $form->{name_list}[0]->{"$form->{vc}number"};
 
-          AA->get_name(\%myconfig, \%$form);
+          SL::AA->get_name(\%myconfig, $form);
 
         } else {
           # nothing open
@@ -2354,7 +2353,7 @@ sub payment_register {
 
   $form->create_links($form->{ARAP}, \%myconfig, $form->{vc});
 
-  CP->paymentaccounts(\%myconfig, \%$form);
+  SL::CP->paymentaccounts(\%myconfig, $form);
 
   $form->{"selectaccno"} = ($form->{reissue}) ? "" : "\n";
   for (@{ $form->{PR}{"$form->{ARAP}_paid"} }) { $form->{"selectaccno"} .= "$_->{accno}--$_->{description}\n" }
@@ -2556,7 +2555,7 @@ sub list_checks {
 
   $form->sort_order();
 
-  CP->payment_register(\%myconfig, \%$form);
+  SL::CP->payment_register(\%myconfig, $form);
 
   $href = "$form->{script}?action=list_checks";
   for (qw(ARAP void reissue direction oldsort path login)) { $href .= qq|&$_=$form->{$_}| }
@@ -2863,7 +2862,7 @@ sub yes__void_receipts { &yes__void_payments }
 
 sub yes__void_payments {
 
-  if (CP->void_payments(\%myconfig, \%$form)) {
+  if (SL::CP->void_payments(\%myconfig, $form)) {
     $form->redirect;
   }
 
@@ -2881,7 +2880,7 @@ sub reissue_payments {
 
   $form->error($locale->text('Nothing selected!')) unless $ok;
 
-  CP->create_selects(\%myconfig, \%$form);
+  SL::CP->create_selects(\%myconfig, $form);
 
   if ($form->{ARAP} eq 'AR') {
     $form->{vc} = "customer";
@@ -2996,7 +2995,7 @@ sub yes__reissue_checks {
 
   for (1 .. $form->{rowcount}) {
     if ($form->{"id_$_"}) {
-      if (CP->reissue_payment(\%myconfig, \%$form, $_)) {
+      if (SL::CP->reissue_payment(\%myconfig, $form, $_)) {
         if (exists $form->{longformat}) {
           $form->{datepaid} = $locale->date(\%myconfig, $form->{datepaid}, $form->{longformat});
         }

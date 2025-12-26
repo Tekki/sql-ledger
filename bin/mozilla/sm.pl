@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -89,12 +88,12 @@ sub do_repost_invoices {
 
   $SIG{INT} = 'IGNORE';
 
-  open(FH, ">$userspath/$myconfig{dbname}.LCK") or $form->error($!);
-  close(FH);
+  open my $fh, ">$slconfig{userspath}/$myconfig{dbname}.LCK" or $form->error($!);
+  close $fh;
 
-  $err = SM->repost_invoices(\%myconfig, \%$form, $userspath);
+  $err = SL::SM->repost_invoices(\%myconfig, $form, $slconfig{userspath});
 
-  unlink "$userspath/$myconfig{dbname}.LCK";
+  unlink "$slconfig{userspath}/$myconfig{dbname}.LCK";
 
   if ($err == -1) {
     $form->error($locale->text('AR account does not exist!'));

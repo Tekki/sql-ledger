@@ -1,0 +1,51 @@
+---
+locale: ja_utf
+texts:
+  Credit Limit:
+    aa: 信用限度
+    ap: 信用限度
+    ar: 信用限度
+    ct: 信用限度
+    im: 信用限度
+    ir: 信用限度
+    is: 信用限度
+    oe: 信用限度
+    pos: 信用限度
+    ps: 信用限度
+  No open Jobs!:
+    jc: オープンジョブではありません
+  No open Projects!:
+    jc: オープンプロジェクトではありません
+    pe: オープンプロジェクトではありません
+  Print and Post:
+    aa: 登録と印刷
+    ap: 登録と印刷
+    ar: 登録と印刷
+    hr: 登録と印刷
+    ir: 登録と印刷
+    is: 登録と印刷
+    pos: 登録と印刷
+    ps: 登録と印刷
+  Print and Post as new:
+    aa: 新規登録と印刷
+    ap: 新規登録と印刷
+    ar: 新規登録と印刷
+    hr: 新規登録と印刷
+    ir: 新規登録と印刷
+    is: 新規登録と印刷
+    ps: 新規登録と印刷
+  Print and Save:
+    jc: 保存と印刷
+    oe: 保存と印刷
+  Print and Save as new:
+    jc: 新規保存と印刷
+    oe: 新規保存と印刷
+  Sort by:
+    ic: 順番
+    io: 順番
+    ir: 順番
+    is: 順番
+    oe: 順番
+    ps: 順番
+  Source missing!:
+    vr: ソースは未入力です

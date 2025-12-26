@@ -1,0 +1,57 @@
+---
+locale: befr_utf
+texts:
+  COGS account does not exist!:
+    ic: Compte des produits vendus inexistant!
+  Cannot create Assembly:
+    ic: Impossible de créer le produit fini
+  Cannot create Service:
+    ic: Impossible de créer le service
+  Cannot delete transaction!:
+    aa: Impossible de supprimer l'écriture!
+    ap: Impossible de supprimer l'écriture!
+    ar: Impossible de supprimer l'écriture!
+    gl: Impossible de supprimer l'écriture!
+    hr: Impossible de supprimer l'écriture!
+    ps: Impossible de supprimer l'écriture!
+  Cannot post transaction with a debit and credit entry for the same account!:
+    gl: Impossible d'enregistrer l'écriture avec un débit et un crédit sur le même compte!
+  Expense account does not exist!:
+    ic: Compte de dépenses inexistant
+  Income account does not exist!:
+    ic: Compte de recettes inexistant
+  Inventory account does not exist!:
+    ic: Compte de stock inexistant
+  Non-chargeable:
+    jc: Sans facture
+  Pos:
+    hr: PDV
+  To:
+    aa: À
+    ap: À
+    ar: À
+    arap: À
+    bp: À
+    ca: À
+    cp: À
+    ct: À
+    gl: À
+    hr: À
+    ic: À
+    im: À
+    io: À
+    ir: À
+    is: À
+    jc: À
+    oe: À
+    pe: À
+    pos: À
+    ps: À
+    rc: À
+    rp: À
+    vr: À
+  ea:
+    ir: pièce(s)
+    is: pièce(s)
+    oe: pièce(s)
+    ps: pièce(s)

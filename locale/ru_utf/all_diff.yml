@@ -1,0 +1,47 @@
+---
+locale: ru_utf
+texts:
+  AP Transactions:
+    ru: №вЯзЯФЫЩ кСЫеаЫЩ
+  AR Transactions:
+    ru: №вЯзЯФЫЩ авЯФСж
+  Balance Sheet:
+    rpss: тСЬСЮг
+  Current Earnings:
+    rpss: єХЫенСб авЩТйЬи
+  Customers:
+    ru: ыЬЩХЮдй
+  Description:
+    ru: яаЩгСЮЩХ
+  Equity:
+    rpss: ыСаЩдСЬ
+  Income:
+    rpss: №ЯгдеаЬХЮЩХ
+  Income Statement:
+    rpss: ядоХд Я авЩТйЬЩ/еТйдЫСШ
+  Items:
+    ru: юЯЭХЮЫЬСдевС
+  Number:
+    ru: ЫЯФ
+  Projects:
+    ru: №вЯХЫдй
+  Purchase Orders:
+    ru: њСЫСкй аЯгдСзнЩЫе
+  Quotations:
+    ru: ђХкХвзй
+  Request for Quotations:
+    ru: њСавЯгй ЮС вХкХвзЩвЯзСЮЩХ
+  Sales Invoices:
+    ru: цСЫдевй ЫЬЩХЮдС
+  Sales Orders:
+    ru: њСЫСкй ЫЬЩХЮдС
+  Total:
+    rpss: їгХЧЯ
+  Vendor Invoices:
+    ru: цСЫдевй аЯгдСзнЩЫС
+  Vendors:
+    ru: №ЯгдСзнЩЫЩ
+  as at:
+    rpss: ЫСЫ з
+  for Period:
+    rpss: кС аХвЩЯФ

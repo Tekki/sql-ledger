@@ -1,0 +1,70 @@
+---
+# Sample for config/sql-ledger.yml
+
+## Language
+
+# set language and charset for login and admin
+language: ''
+charset: UTF8
+
+## Paths
+
+### path to user configuration files
+userspath: users
+
+### member file
+memberfile: users/members
+
+### spool directory for batch printing
+spool: spool
+
+### templates base directory
+templates: templates
+
+### location for images
+images: images
+
+## External Programs
+
+## set to '' if not available
+
+### command to send e-mails
+sendmail: '| /usr/sbin/sendmail -f <%from%> -t'
+
+### program to use for file compression
+gzip: gzip -S .gz
+
+### command to encrypt files
+gpg: gpg --homedir /var/www/gnupg --batch --yes
+
+## Print Templates
+
+# if you have latex installed set to true
+latex: true
+
+# use xelatex instead of pdflatex for PDF
+xelatex: true
+
+# use dvipdf instead of pdflatex or xelatex for PDF
+dvipdf: false
+
+# if you have pdftk installed and want to combine PDFs set to true
+pdftk: true
+
+## Security
+
+### file access security
+### folders with read and write access
+accessfolders:
+  - templates
+  - css
+
+### login security
+
+### false: users have to enter their full username and correct password
+### true: displays helpful error messages and lists of similar users
+###       facilitates attacks on the system, not recommended
+helpful_login: false
+
+### TOTP for admins
+admin_totp_activated: false

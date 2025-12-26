@@ -1,0 +1,258 @@
+---
+locale: br_utf
+texts:
+  Add Labor/Overhead:
+    admin: Adicionar Trabalho/Sobretaxa
+    ic: Adicionar Trabalho/Sobretaxa
+    menu: Adicionar Trabalho/Sobretaxa
+  Add Project:
+    admin: Adicionar projeto
+    menu: Adicionar projeto
+    pe: Adicionar projeto
+  Audit trail removed up to:
+    am: Registro de Auditoria memovido até
+  Cannot create Lock!:
+    admin: Não pode criar uma trava!
+  Cannot delete account!:
+    am: Não pode apagar conta!
+  Cannot delete customer!:
+    ct: Não pode apagar cliente!
+    im: Não pode apagar cliente!
+  Cannot delete default account!:
+    am: Não pode apagar conta padrão!
+  Cannot delete invoice!:
+    ir: Não pode apagar fatura!
+    is: Não pode apagar fatura!
+    ps: Não pode apagar fatura!
+  Cannot delete item!:
+    ic: Não pode apagar item!
+  Cannot delete order!:
+    oe: Não pode apagar pedido!
+  Cannot delete quotation!:
+    oe: Não pode apagar cotação
+  Cannot delete transaction!:
+    aa: Não pode apagar transação!
+    ap: Não pode apagar transação!
+    ar: Não pode apagar transação!
+    gl: Não pode apagar transação!
+    hr: Não pode apagar transação!
+    ps: Não pode apagar transação!
+  Cannot delete vendor!:
+    ct: Não pode apagar fornecedor!
+    im: Não pode apagar fornecedor!
+  Cannot post invoice for a closed period!:
+    ir: Não pode lançar fatura em período fechado!
+    is: Não pode lançar fatura em período fechado!
+    ps: Não pode lançar fatura em período fechado!
+  Cannot post invoice!:
+    ir: Não pode lançar fatura!
+    is: Não pode lançar fatura!
+    ps: Não pode lançar fatura!
+  Cannot post payment for a closed period!:
+    aa: Não pode lançar pagamento em período fechado!
+    ap: Não pode lançar pagamento em período fechado!
+    ar: Não pode lançar pagamento em período fechado!
+    cp: Não pode lançar pagamento em período fechado!
+    ir: Não pode lançar pagamento em período fechado!
+    is: Não pode lançar pagamento em período fechado!
+    ps: Não pode lançar pagamento em período fechado!
+  Cannot post transaction for a closed period!:
+    aa: Não pode lançar transação para um período já encerrado!
+    ap: Não pode lançar transação para um período já encerrado!
+    ar: Não pode lançar transação para um período já encerrado!
+    gl: Não pode lançar transação para um período já encerrado!
+    hr: Não pode lançar transação para um período já encerrado!
+    ps: Não pode lançar transação para um período já encerrado!
+  Cannot post transaction!:
+    aa: Não pode lançar transação!
+    ap: Não pode lançar transação!
+    ar: Não pode lançar transação!
+    gl: Não pode lançar transação!
+    pos: Não pode lançar transação!
+    ps: Não pode lançar transação!
+  Cannot remove files!:
+    bp: Não pode remover arquivos!
+  Cannot save account!:
+    am: Não pode salvar conta!
+  Cannot save defaults!:
+    am: Não pode salvar configurações padrão!
+  Cannot save order!:
+    oe: Não pode salvar pedido!
+  Cannot save preferences!:
+    am: Não pode salvar preferências!
+  Cannot save quotation!:
+    oe: Não pode salvar cotação!
+  Cannot set account for more than one of AR, AP or IC:
+    am: Não pode haver conta para mais de um dos CR, CP ou IC
+  Cannot set multiple options for:
+    am: Não pode haver múltipla escolha para
+  Cannot stock assemblies!:
+    ic: Não pode estocar conjuntos!
+  Could not save pricelist!:
+    ct: Não pode salvar lista de preços
+    im: Não pode salvar lista de preços
+  Could not save!:
+    oe: Não pode salvar!
+  E-mail:
+    admin: E-Mail
+    am: E-Mail
+    ap: E-Mail
+    ar: E-Mail
+    arap: E-Mail
+    bp: E-Mail
+    cp: E-Mail
+    ct: E-Mail
+    gl: E-Mail
+    hr: E-Mail
+    ic: E-Mail
+    im: E-Mail
+    io: E-Mail
+    ir: E-Mail
+    is: E-Mail
+    oe: E-Mail
+    ps: E-Mail
+    rp: E-Mail
+  E-mail Statement to:
+    ps: Declaração enviada por email para
+    rp: Declaração enviada por email para
+  E-mail address missing!:
+    am: Endereço de E-mail faltando!
+    ic: Endereço de E-mail faltando!
+    io: Endereço de E-mail faltando!
+    ir: Endereço de E-mail faltando!
+    is: Endereço de E-mail faltando!
+    oe: Endereço de E-mail faltando!
+    ps: Endereço de E-mail faltando!
+    rp: Endereço de E-mail faltando!
+  Edit AP Transaction:
+    aa: Editar Transação de CP
+    ap: Editar Transação de CP
+    ar: Editar Transação de CP
+    ps: Editar Transação de CP
+  Edit AR Transaction:
+    aa: Editar Transação de CR
+    ap: Editar Transação de CR
+    ar: Editar Transação de CR
+    ps: Editar Transação de CR
+  Edit Account:
+    am: Editar Conta
+  Edit Assembly:
+    ic: Editar Conjunto
+  Edit Business:
+    am: Editar Negócio
+  Edit Customer:
+    ct: Editar Cliente
+    im: Editar Cliente
+  Edit Deduction:
+    hr: Editar Dedução
+  Edit Department:
+    am: Editar Departamento
+  Edit Description Translations:
+    pe: Editar Traduções de Descrições
+  Edit Employee:
+    hr: Editar Empregado
+  Edit GIFI:
+    am: Editar CFOP
+  Edit General Ledger Transaction:
+    gl: Editar Transação Livro Razão
+  Edit Group:
+    pe: Editar Grupo
+  Edit Labor/Overhead:
+    ic: Editar Trabalho/sobretaxa
+  Edit Language:
+    am: Editar Idioma
+  Edit POS Invoice:
+    ps: Editar Fatura de PDV
+  Edit Part:
+    ic: Editar Item
+  Edit Pricegroup:
+    pe: Editar Grupo de Preços
+  Edit Project:
+    pe: Editar Projeto
+  Edit Purchase Order:
+    oe: Editar Ordem de Compra
+  Edit Quotation:
+    oe: Editar Cotação
+  Edit Request for Quotation:
+    oe: Editar Requisição de Cotação
+  Edit SIC:
+    am: Editar SIC
+  Edit Sales Invoice:
+    is: Editar Fatura de Venda
+    ps: Editar Fatura de Venda
+  Edit Sales Order:
+    oe: Editar Pedido de Venda
+  Edit Service:
+    ic: Editar Serviço
+  Edit Vendor:
+    ct: Editar Fornecedor
+    im: Editar Fornecedor
+  Edit Vendor Invoice:
+    ir: Editar Fatura de Compra
+  Labor/Overhead:
+    admin: Tabalho/Sobretaxa
+    ic: Tabalho/Sobretaxa
+    menu: Tabalho/Sobretaxa
+  List:
+    ic: Listar
+  Lock System:
+    admin: Travar o systema
+  No email address for:
+    am: Sem endereço de email para
+  Project Number:
+    bp: Número de Projeto
+    ca: Número de Projeto
+    ct: Número de Projeto
+    im: Número de Projeto
+    jc: Número de Projeto
+    pe: Número de Projeto
+    ps: Número de Projeto
+    rp: Número de Projeto
+  Project Transactions:
+    ps: Transações de Projeto
+    rp: Transações de Projeto
+  ROP:
+    ic: Pto Ressupr.
+    im: Pto Ressupr.
+  Receipt:
+    aa: Recibo
+    admin: Recibo
+    ap: Recibo
+    ar: Recibo
+    cp: Recibo
+    menu: Recibo
+    ps: Recibo
+  Receipts:
+    admin: Recibos
+    cp: Recibos
+    menu: Recibos
+    pos: Recibos
+    ps: Recibos
+    rp: Recibos
+  Receive Merchandise:
+    oe: Receber mercadoria
+  Select payment:
+    ap: Selecionar Pagamento
+    ar: Selecionar Pagamento
+    arapprn: Selecionar Pagamento
+    cp: Selecionar Pagamento
+    hr: Selecionar Pagamento
+    ps: Selecionar Pagamento
+  Startdate:
+    ap: Data inicial
+    ar: Data inicial
+    arap: Data inicial
+    cp: Data inicial
+    ct: Data inicial
+    gl: Data inicial
+    hr: Data inicial
+    im: Data inicial
+    ir: Data inicial
+    is: Data inicial
+    jc: Data inicial
+    oe: Data inicial
+    pe: Data inicial
+    ps: Data inicial
+    rp: Data inicial
+  Unlock System:
+    admin: Unlock System

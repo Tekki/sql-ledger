@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -222,7 +221,7 @@ sub payment_reversal_batch {
 
 sub edit_payment_reversal {
 
-  VR->payment_reversal(\%myconfig, \%$form);
+  SL::VR->payment_reversal(\%myconfig, $form);
 
   $form->{memo} ||= $locale->text('Payment Reversal');
 
@@ -322,7 +321,7 @@ sub post {
 
   $form->isblank("source", $locale->text('Source missing!'));
 
-  if (VR->post_payment_reversal(\%myconfig, \%$form)) {
+  if (SL::VR->post_payment_reversal(\%myconfig, $form)) {
     # add batch to callback
     $form->{callback} =~ s/(batch|batchid|batchdescription)=.*?&//g;
     $form->{callback} .= "&batch=$form->{batch}&batchid=$form->{batchid}&batchdescription=".$form->escape($form->{batchdescription},1);
@@ -340,7 +339,7 @@ sub yes { &{ "$form->{nextsub}" } }
 
 sub delete {
 
-  if (VR->delete_payment_reversal(\%myconfig, \%$form)) {
+  if (SL::VR->delete_payment_reversal(\%myconfig, $form)) {
     $form->redirect($locale->text('Voucher deleted!'));
   } else {
     $form->error($locale->text('Cannot delete voucher!'));
@@ -389,7 +388,7 @@ sub yes_delete_batch {
     $form->{callback} .= "&$_=$form->{$_}";
   }
 
-  if (VR->delete_batch(\%myconfig, \%$form, $spool)) {
+  if (SL::VR->delete_batch(\%myconfig, $form, $slconfig{spool})) {
     $form->redirect($locale->text('Batch deleted!'));
   } else {
     $form->error($locale->text('Cannot delete batch!'));
@@ -400,7 +399,7 @@ sub yes_delete_batch {
 
 sub search {
 
-  VR->create_links(\%myconfig, \%$form);
+  SL::VR->create_links(\%myconfig, $form);
 
   $form->{nextsub} = "list_batches";
 
@@ -570,7 +569,7 @@ sub search {
 
 sub list_batches {
 
-  VR->list_batches(\%myconfig, \%$form);
+  SL::VR->list_batches(\%myconfig, $form);
 
   $href = "$form->{script}?action=list_batches";
   for (qw(direction oldsort path login batch)) { $href .= qq|&$_=$form->{$_}| }
@@ -845,7 +844,7 @@ print "
 
 sub list_vouchers {
 
-  VR->list_vouchers(\%myconfig, \%$form);
+  SL::VR->list_vouchers(\%myconfig, $form);
 
   $href = "$form->{script}?action=list_vouchers";
   for (qw(batchid direction oldsort path login)) { $href .= qq|&$_=$form->{$_}| }
@@ -1093,7 +1092,7 @@ sub edit_batch {
 
   $form->{nextsub} = "save_batch";
 
-  VR->edit_batch(\%myconfig, \%$form);
+  SL::VR->edit_batch(\%myconfig, $form);
 
   &add_batch;
 
@@ -1102,7 +1101,7 @@ sub edit_batch {
 
 sub save_batch {
 
-  if (VR->save_batch(\%myconfig, \%$form)) {
+  if (SL::VR->save_batch(\%myconfig, $form)) {
     $form->redirect;
   } else {
     $form->error($locale->text('Cannot save Batch'));
@@ -1154,7 +1153,7 @@ sub post_batches {
       $form->{batch} = $form->{"batch_$i"};
 
       $form->info($locale->text('Posting Batch').qq| $form->{"batchnumber_$i"}|);
-      if (VR->post_batch(\%myconfig, \%$form)) {
+      if (SL::VR->post_batch(\%myconfig, $form)) {
         $form->info(" ... ".$locale->text('ok')."\n");
       } else {
         $form->error($locale->text('Batch Posting failed!'));
@@ -1175,7 +1174,7 @@ sub post_batch {
     $form->{callback} .= "&$_=$form->{$_}";
   }
 
-  if (VR->post_batch(\%myconfig, \%$form)) {
+  if (SL::VR->post_batch(\%myconfig, $form)) {
     $form->redirect($locale->text('Batch posted!'));
   } else {
     $form->error($locale->text('Batch Posting failed!'));

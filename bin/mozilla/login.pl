@@ -1,28 +1,28 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
-#=====================================================================
+#======================================================================
 #
 # login frontend
 #
-#=====================================================================
+#======================================================================
 
 
 use DBI;
 use SL::User;
 use SL::Form;
+use SL::Locale;
 
 
-$form = new Form;
+$form = SL::Form->new;
 
 
-$locale = new Locale $language, "login";
+$locale = SL::Locale->new($slconfig{language}, "login");
 
-# $form->{charset} = $charset;
+# $form->{charset} = $slconfig{charset};
 
 # customization
 if (-f "$form->{path}/custom/$form->{script}") {
@@ -70,9 +70,8 @@ sub login_screen {
 <center>
 <table class=login border=3 cellpadding=20>
   <tr>
-    <td class=login align=center><a href="https://github.com/Tekki/sql-ledger" target=_blank><img src=$images/sql-ledger.png border=0></a>
+    <td class=login align=center><a href="https://github.com/Tekki/sql-ledger" target=_blank><img src=$slconfig{images}/sql-ledger.png border=0></a>
 <h1 class=login align=center>|.$locale->text('Version').qq| $form->{version}</h1>
-<p>$form->{version2}</p>
 <p>
 
     <form method=post name=main action=$form->{script}>
@@ -167,7 +166,7 @@ sub selectdataset {
 <center>
 <table class=login border=3 cellpadding=20>
   <tr>
-    <td class=login align=center><a href="https://github.com/Tekki/sql-ledger" target=_blank><img src=$images/sql-ledger.png border=0></a>
+    <td class=login align=center><a href="https://github.com/Tekki/sql-ledger" target=_blank><img src=$slconfig{images}/sql-ledger.png border=0></a>
 <h1 class=login align=center>|.$locale->text('Version').qq| $form->{version}</h1>
 
 <p>
@@ -234,32 +233,16 @@ sub login {
   $form->error($locale->text('You did not enter a name!')) unless ($form->{login});
 
   if (! $form->{beenthere}) {
-    open(FH, "$memberfile") or $form->error("$memberfile : $!");
-    @members = <FH>;
-    close(FH);
 
-    while (@members) {
-      $_ = shift @members;
-      if (/^\[(.*\@.*)\]/) {
-        $login = $1;
-        if ($login =~ /^\Q$form->{login}\E(\@|$)/) {
-          ($name, $dbname) = split /\@/, $login, 2;
-          $login{$login} = $dbname;
+    my $members = Storable::retrieve "$slconfig{memberfile}.bin";
 
-          do {
-            if (/^company=/) {
-              (undef, $company) = split /=/, $_, 2;
-              chop $company;
-              $login{$login} = $company if $company;
-            }
-            $_ = shift @members;
-          } until /^\s+$/;
-        }
-      }
+    my %login;
+    for (grep /^\Q$form->{login}\E(\@|$)/, keys %$members) {
+      $login{$_} = $members->{$_};
     }
 
     if (keys %login > 1) {
-      if ($helpful_login) {
+      if ($slconfig{helpful_login}) {
         &selectdataset(\%login);
         exit;
       } else {
@@ -272,13 +255,13 @@ sub login {
     }
   }
 
-  $user = new User $memberfile, $form->{login};
+  $user = SL::User->new($slconfig{memberfile}, $form->{login});
 
   # if we get an error back, bale out
-  if (($errno = $user->login(\%$form, $userspath)) <= -1) {
+  if (($errno = $user->login($form, $slconfig{userspath})) <= -1) {
 
     $errno *= -1;
-    if ($helpful_login) {
+    if ($slconfig{helpful_login}) {
       $err[1] = $locale->text('Incorrect Username!');
       $err[2] = $locale->text('Incorrect Password!');
     } else {
@@ -288,7 +271,7 @@ sub login {
     $err[4] = $locale->text('Dataset is newer than version!');
 
 
-    if ($errno == 1 && $form->{admin} && $helpful_login) {
+    if ($errno == 1 && $form->{admin} && $slconfig{helpful_login}) {
       $err[1] = $locale->text('admin does not exist!');
     }
 
@@ -303,11 +286,11 @@ sub login {
     }
 
     if ($errno == 5) {
-      if (-f "$userspath/$user->{dbname}.LCK") {
-        if (-s "$userspath/$user->{dbname}.LCK") {
-          open(FH, "$userspath/$user->{dbname}.LCK");
-          $msg = <FH>;
-          close(FH);
+      if (-f "$slconfig{userspath}/$user->{dbname}.LCK") {
+        if (-s "$slconfig{userspath}/$user->{dbname}.LCK") {
+          open my $fh, "$slconfig{userspath}/$user->{dbname}.LCK" ;
+          $msg = <$fh>;
+          close $fh;
           if ($form->{admin}) {
             $form->info($msg);
           } else {
@@ -325,19 +308,16 @@ sub login {
       } else {
 
         # upgrade dataset and log in again
-        open FH, ">$userspath/$user->{dbname}.LCK" or $form->error($!);
+        open FH, ">$slconfig{userspath}/$user->{dbname}.LCK" or $form->error($!);
 
         for (qw(dbname dbhost dbport dbdriver dbconnect dbuser dbpasswd)) { $form->{$_} = $user->{$_} }
 
         $form->info($locale->text('Upgrading to Version')." $form->{version} ... ");
 
-        # required for Oracle
-        $form->{dbdefault} = $sid;
-
-        $user->dbupdate(\%$form);
+        $user->dbupdate($form);
 
         # remove lock file
-        unlink "$userspath/$user->{dbname}.LCK";
+        unlink "$slconfig{userspath}/$user->{dbname}.LCK";
 
       }
 
@@ -354,14 +334,14 @@ sub login {
   for (qw(dbconnect dbhost dbport dbname dbuser dbpasswd)) { $myconfig{$_} = $user->{$_} }
 
   # create image directory
-  if (! -d "$images/$myconfig{dbname}") {
-    mkdir "$images/$myconfig{dbname}", oct("771") or $form->error("$images/$myconfig{dbname} : $!");
+  if (! -d "$slconfig{images}/$myconfig{dbname}") {
+    mkdir "$slconfig{images}/$myconfig{dbname}", oct("771") or $form->error("$slconfig{images}/$myconfig{dbname} : $!");
   }
 
-  if ($user->{totp_activated} || $form->{admin} && $admin_totp_activated) {
+  if ($user->{totp_activated} || $form->{admin} && $slconfig{admin_totp_activated}) {
     &totp_screen;
     exit;
-  } elsif ($user->{tan} && $sendmail) {
+  } elsif ($user->{tan} && $slconfig{sendmail}) {
     &email_tan;
     exit;
   }
@@ -378,7 +358,7 @@ sub login {
 
   # check for recurring transactions
   if ($user->{acs} !~ /Recurring Transactions/) {
-    if ($user->check_recurring(\%$form)) {
+    if ($user->check_recurring($form)) {
       $form->{callback} .= "&main=recurring_transactions";
     } else {
       $form->{callback} .= "&main=list_recent";
@@ -394,14 +374,14 @@ sub login {
 
 sub logout {
 
-  $form->{callback} = "$form->{script}?path=$form->{path}&endsession=1";
+  $form->{callback} = "$form->{script}?path=$form->{path}&end session=1";
 
-  if (-f "$userspath/$form->{login}.conf") {
+  if (-f "$slconfig{userspath}/$form->{login}.bin") {
     $form->{callback} .= "&login=$form->{login}";
-    require "$userspath/$form->{login}.conf";
-    $myconfig{dbpasswd} = unpack 'u', $myconfig{dbpasswd};
+    %myconfig = Storable::retrieve("$slconfig{userspath}/$form->{login}.bin")->%*;
+    $myconfig{dbpasswd} = unpack 'u', $myconfig{dbpasswd} if $myconfig{dbpasswd};
 
-    User->logout(\%myconfig, \%$form);
+    SL::User->logout(\%myconfig, $form);
   }
 
   $form->redirect;
@@ -414,7 +394,7 @@ sub email_tan {
   $form->error($locale->text('No email address for')." $user->{name}") unless ($user->{email});
 
   use SL::Mailer;
-  $mail = new Mailer;
+  $mail = SL::Mailer->new;
 
   srand( time() ^ ($$ + ($$ << 15)) );
   $digits = "0123456789";
@@ -428,7 +408,7 @@ sub email_tan {
   $mail->{subject} = "SQL-Ledger $form->{version} $user->{company} $mail->{message}";
 
 
-  $form->error($err) if ($err = $mail->send($sendmail));
+  $form->error($err) if ($err = $mail->send($slconfig{sendmail}));
 
   $form->{stylesheet} = $user->{stylesheet};
   $form->{favicon} = "favicon.ico";
@@ -436,7 +416,7 @@ sub email_tan {
 
   $user->{password} = $tan;
 
-  $user->create_config("$userspath/$form->{login}.conf");
+  $user->create_config("$slconfig{userspath}/$form->{login}.bin");
 
 
   $form->header;
@@ -452,7 +432,7 @@ sub email_tan {
 <center>
 <table class=login border=3 cellpadding=20>
   <tr>
-    <td class=login align=center><a href="https://github.com/Tekki/sql-ledger" target=_blank><img src=$images/sql-ledger.png border=0></a>
+    <td class=login align=center><a href="https://github.com/Tekki/sql-ledger" target=_blank><img src=$slconfig{images}/sql-ledger.png border=0></a>
 <h1 class=login align=center>|.$locale->text('Version').qq| $form->{version}</h1>
 <h1 class=login align=center>$user->{company}</h1>
 
@@ -498,7 +478,7 @@ sub tan_login {
   $form->{login} =~ s/(\.\.|\/|\\|\x00)//g;
 
   # check for user config file, could be missing or ???
-  eval { require("$userspath/$form->{login}.conf"); };
+  eval { %myconfig = Storable::retrieve("$slconfig{userspath}/$form->{login}.bin")->%*; };
 
   if ($@) {
     $form->error($locale->text('Configuration file missing!'));
@@ -506,26 +486,26 @@ sub tan_login {
   }
 
   if ((crypt $form->{password}, substr($form->{login}, 0, 2)) ne $myconfig{password}) {
-    if (-f "$userspath/$form->{login}.tan") {
-      open(FH, "+<$userspath/$form->{login}.tan") or $form->error("$userspath/$form->{login}.tan : $!");
+    if (-f "$slconfig{userspath}/$form->{login}.tan") {
+      open my $fh, "+<$slconfig{userspath}/$form->{login}.tan" or $form->error("$slconfig{userspath}/$form->{login}.tan : $!");
 
-      $tries = <FH>;
+      $tries = <$fh>;
       $tries++;
 
-      seek(FH, 0, 0);
-      truncate(FH, 0);
-      print FH $tries;
-      close(FH);
+      seek($fh, 0, 0);
+      truncate($fh, 0);
+      print $fh $tries;
+      close $fh;
 
       if ($tries > 3) {
-        unlink "$userspath/$form->{login}.conf";
-        unlink "$userspath/$form->{login}.tan";
+        unlink "$slconfig{userspath}/$form->{login}.bin";
+        unlink "$slconfig{userspath}/$form->{login}.tan";
         $form->error($locale->text('Maximum tries exceeded!'));
       }
     } else {
-      open(FH, ">$userspath/$form->{login}.tan") or $form->error("$userspath/$form->{login}.tan : $!");
-      print FH "1";
-      close(FH);
+      open my $fh, ">$slconfig{userspath}/$form->{login}.tan" or $form->error("$slconfig{userspath}/$form->{login}.tan : $!");
+      print $fh "1";
+      close $fh;
     }
 
     $form->error($locale->text('Invalid TAN'));
@@ -534,7 +514,7 @@ sub tan_login {
     # remove stale locks
     $form->remove_locks(\%myconfig);
 
-    unlink "$userspath/$form->{login}.tan";
+    unlink "$slconfig{userspath}/$form->{login}.tan";
 
     $form->{callback} = "menu.pl?action=display";
     for (qw(login path js password)) { $form->{callback} .= "&$_=$form->{$_}" }
@@ -555,7 +535,7 @@ sub totp_screen {
     require SL::QRCode;
     require SL::TOTP;
 
-    SL::TOTP::add_secret($user, $memberfile, $userspath);
+    SL::TOTP::add_secret($user, $slconfig{memberfile}, $slconfig{userspath});
 
     $qrcode = qq|
               <tr>
@@ -590,9 +570,8 @@ sub totp_screen {
 <center>
 <table class=login border=3 cellpadding=20>
   <tr>
-    <td class=login align=center><a href="https://github.com/Tekki/sql-ledger" target=_blank><img src=$images/sql-ledger.png border=0></a>
+    <td class=login align=center><a href="https://github.com/Tekki/sql-ledger" target=_blank><img src=$slconfig{images}/sql-ledger.png border=0></a>
 <h1 class=login align=center>|.$locale->text('Version').qq| $form->{version}</h1>
-<p>$form->{version2}</p>
 <p>
 
       <form method=post action=$form->{script}>
@@ -636,7 +615,7 @@ sub totp_login {
 
   require SL::TOTP;
 
-  $user = User->new($memberfile, $form->{login});
+  $user = SL::User->new($slconfig{memberfile}, $form->{login});
 
   unless (SL::TOTP::check_code($user, $form->{totp})) {
     sleep 5;
@@ -644,8 +623,8 @@ sub totp_login {
     $form->error($locale->text('Invalid Code'));
   }
 
-  $user->create_config("$userspath/$form->{login}.conf");
-  $user->{dbpasswd} = unpack 'u', $user->{dbpasswd};
+  $user->create_config("$slconfig{userspath}/$form->{login}.bin");
+  $user->{dbpasswd} = unpack 'u', $user->{dbpasswd} if $user->{dbpasswd};
 
   %myconfig = $user->%{qw|dbconnect dbhost dbname dbuser dbpasswd|};
 
@@ -701,7 +680,7 @@ L<SL::Form>,
 L<SL::User>
 
 =item * requires
-F<< $userspath/$form->{login}.conf >>
+F<< $slconfig{userspath}/$form->{login}.bin >>
 
 =item * optionally requires
 F<< bin/mozilla/custom/$form->{login}/login.pl >>,

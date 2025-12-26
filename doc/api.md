@@ -1,4 +1,6 @@
-# Introduction to the API
+[SQL-Ledger Documentation](index.md) ▶ API
+
+# API
 
 ## JSON and HTML API
 
@@ -436,7 +438,7 @@ use Mojo::UserAgent;
 use Print::Colored ':all';
 ```
 
-### Add an invoice with 3 rows
+### Add an invoice
 
 As an example we create an invoice for customer with number 1109. We start with
 creating variables for the content of the invoice.

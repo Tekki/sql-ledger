@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -73,7 +72,7 @@ sub edit {
 # $locale->text('Assembly Changeup')
 # $locale->text('Labor/Overhead Changeup')
 
-  IC->get_part(\%myconfig, \%$form);
+  SL::IC->get_part(\%myconfig, $form);
 
   $label = "Edit $label{$form->{item}}";
   $label = "$label{$form->{item}} Changeup" if $form->{changeup};
@@ -83,7 +82,7 @@ sub edit {
   $form->{previousform} = $form->escape($form->{previousform}, 1) if $form->{previousform};
 
   &link_part;
-  RU->register(\%myconfig, $form);
+  SL::RU->register(\%myconfig, $form);
 
   &display_form;
 
@@ -95,7 +94,7 @@ sub link_part {
 
   $partsgroupcode = $form->{partsgroupcode};
 
-  IC->create_links("IC", \%myconfig, \%$form);
+  SL::IC->create_links("IC", \%myconfig, $form);
 
   $form->{partsgroupcode} = $partsgroupcode;
   $form->{oldpartsgroupcode} = $partsgroupcode;
@@ -457,7 +456,7 @@ sub form_header {
     }
   }
 
-  $preview = ($form->{image}) ? " <a href=$images/$myconfig{dbname}/$form->{image}> &#9701;" : qq| <a href="ic.pl?action=upload_image&login=$form->{login}&path=$form->{path}" target=popup>&#9651;</a>|;
+  $preview = ($form->{image}) ? " <a href=$slconfig{images}/$myconfig{dbname}/$form->{image}> &#9701;" : qq| <a href="ic.pl?action=upload_image&login=$form->{login}&path=$form->{path}" target=popup>&#9651;</a>|;
 
   $imagelinks = qq|
   <tr>
@@ -864,7 +863,7 @@ sub form_footer {
 
 sub search {
 
-  IC->get_warehouses(\%myconfig, \%$form);
+  SL::IC->get_warehouses(\%myconfig, $form);
 
   if (@{ $form->{all_partsgroup} }) {
     $partsgroup = qq|<option>\n|;
@@ -1609,7 +1608,7 @@ sub generate_report {
     $callback .= "&l_subtotal=Y";
   }
 
-  IC->all_parts(\%myconfig, \%$form);
+  SL::IC->all_parts(\%myconfig, $form);
 
   $callback .= "&direction=$form->{direction}&oldsort=$form->{oldsort}";
 
@@ -1957,7 +1956,7 @@ sub generate_report {
     for (1 .. $form->{pncol}) { $column_data{"partnumber_$_"} = "<td>&nbsp;</td>" }
 
     $column_data{runningnumber} = "<td align=right>$i</td>";
-    $column_data{partnumber} = "<td><a href=$form->{script}?action=edit&id=$ref->{id}&changeup=$form->{changeup}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{partnumber}&nbsp;</a></td>";
+    $column_data{partnumber} = qq|<td><a class="partnumber-l" href=$form->{script}?action=edit&id=$ref->{id}&changeup=$form->{changeup}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{partnumber}&nbsp;</a></td>|;
     $column_data{id} = "<td>$ref->{id}</td>";
 
     for (qw(description assemblydescription notes partsgroup partsgroupcode employee curr)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
@@ -2033,7 +2032,7 @@ sub generate_report {
       $column_data{name} = qq|<td><a href=ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{vc_id}&db=$ref->{vc}&callback=$callback>$ref->{name}</a></td>|;
     }
 
-    $column_data{image} = ($ref->{image}) ? "<td><a href=$images/$myconfig{dbname}/$ref->{image}><img src=$images/$myconfig{dbname}/$ref->{image} height=32 border=0></a></td>" : "<td>&nbsp;</td>";
+    $column_data{image} = ($ref->{image}) ? "<td><a href=$slconfig{images}/$myconfig{dbname}/$ref->{image}><img src=$slconfig{images}/$myconfig{dbname}/$ref->{image} height=32 border=0></a></td>" : "<td>&nbsp;</td>";
     $column_data{drawing} = ($ref->{drawing}) ? "<td><a href=$ref->{drawing}>$ref->{drawing}</a></td>" : "<td>&nbsp;</td>";
     $column_data{microfiche} = ($ref->{microfiche}) ? "<td><a href=$ref->{microfiche}>$ref->{microfiche}</a></td>" : "<td>&nbsp;</td>";
     $column_data{checkinventory} = ($ref->{checkinventory}) ? "<td>&nbsp;x</td>" : "<td>&nbsp;</td>";
@@ -2126,7 +2125,7 @@ sub preview {
 
 sub ic_print_options {
 
-  if (! $latex) {
+  if (! $slconfig{latex}) {
     for (map { "Goods & Services--$_" } qw(Print Preview)) {
       delete $button{$_};
     }
@@ -2149,7 +2148,7 @@ sub ic_print_options {
   $media = qq|<select name=media>
           <option value=screen>|.$locale->text('Screen');
 
-  if ($form->{selectprinter} && $latex) {
+  if ($form->{selectprinter} && $slconfig{latex}) {
     $media .= $form->select_option($form->{selectprinter}, $form->{media});
   }
 
@@ -2160,10 +2159,10 @@ sub ic_print_options {
   $type = qq|<select name=formname>
             <option value="partsreport" $form->{PD}{partsreport}>|.$locale->text('Parts Report');
   $type .= qq|
-            <option value="barcode" $form->{PD}{barcode}>|.$locale->text('Barcode') if $dvipdf;
+            <option value="barcode" $form->{PD}{barcode}>|.$locale->text('Barcode') if $slconfig{dvipdf};
   $type .= qq|</select>|;
 
-  if ($latex) {
+  if ($slconfig{latex}) {
     $format .= qq|
             <option value="ps">|.$locale->text('Postscript').qq|
             <option value="pdf">|.$locale->text('PDF');
@@ -2202,7 +2201,7 @@ sub print_ {
     $form->{$key} = $form->unescape($value);
   }
 
-  IC->all_parts(\%myconfig, \%$form);
+  SL::IC->all_parts(\%myconfig, $form);
 
   $form->error($locale->text('Nothing to print')) unless $form->{parts};
 
@@ -2284,7 +2283,7 @@ sub print_ {
   }
 
   if ($form->{formname} eq 'barcode') {
-    $form->{templates} = "$templates/$myconfig{templates}";
+    $form->{templates} = "$slconfig{templates}/$myconfig{templates}";
     $form->{IN} = "$form->{formname}.$form->{format}";
 
     if ($form->{format} =~ /(ps|pdf)/) {
@@ -2299,11 +2298,11 @@ sub print_ {
       }
     }
 
-    $form->parse_template(\%myconfig, $userspath, $dvipdf, $xelatex);
+    $form->parse_template(\%myconfig, $slconfig{userspath}, $slconfig{dvipdf}, $slconfig{xelatex});
 
   } else {
 
-    $form->gentex(\%myconfig, $templates, $userspath, $dvipdf, $xelatex, \@colndx, \%hdr);
+    $form->gentex(\%myconfig, $slconfig{templates}, $slconfig{userspath}, $slconfig{dvipdf}, $slconfig{xelatex}, \@colndx, \%hdr);
 
   }
 
@@ -2508,7 +2507,7 @@ sub supply_demand_report {
   push @column_index, "year" unless %month;
   push @column_index, qw(onhand rop so po required);
 
-  IC->supply_demand(\%myconfig, \%$form);
+  SL::IC->supply_demand(\%myconfig, $form);
 
   $form->sort_order();
 
@@ -2797,7 +2796,7 @@ sub requirements_report {
 
   push @column_index, qw(onhand rop so po required);
 
-  IC->requirements(\%myconfig, \%$form);
+  SL::IC->requirements(\%myconfig, $form);
 
   $form->sort_order();
 
@@ -2864,7 +2863,7 @@ sub requirements_report {
       $i++;
       $column_data{runningnumber} = "<td align=right>$i</td>";
 
-      $column_data{partnumber} = "<td><a href=$form->{script}?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{partnumber}&nbsp;</a></td>";
+      $column_data{partnumber} = qq|<td><a class="partnumber-l" href=$form->{script}?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{partnumber}&nbsp;</a></td>|;
 
       $ref->{description} =~ s/\r?\n/<br>/g;
       $column_data{description} = "<td>$ref->{description}&nbsp;</td>";
@@ -3082,7 +3081,7 @@ sub so_requirements_report {
 
   $form->{title} = $locale->text('Sales Order Requirements');
 
-  IC->so_requirements(\%myconfig, \%$form);
+  SL::IC->so_requirements(\%myconfig, $form);
 
   $href = "$form->{script}?action=so_requirements_report";
   for (qw(searchitems vc direction oldsort path login)) { $href .= qq|&$_=$form->{$_}| }
@@ -3617,7 +3616,7 @@ sub update {
 
     } else {
 
-      IC->assembly_item(\%myconfig, \%$form);
+      SL::IC->assembly_item(\%myconfig, $form);
 
       $rows = scalar @{ $form->{item_list} };
 
@@ -3913,11 +3912,11 @@ sub save {
 
   $olditem = $form->{id};
 
-  $form->{userspath} = $userspath;
+  $form->{userspath} = $slconfig{userspath};
 
   # save part
-  $rc = IC->save(\%myconfig, \%$form);
-  RU->register(\%myconfig, $form);
+  $rc = SL::IC->save(\%myconfig, $form);
+  SL::RU->register(\%myconfig, $form);
 
   $parts_id = $form->{id};
 
@@ -4054,8 +4053,8 @@ sub save_as_new {
 sub delete {
 
   # redirect
-  if (IC->delete(\%myconfig, \%$form)) {
-    RU->delete(\%myconfig, $form);
+  if (SL::IC->delete(\%myconfig, $form)) {
+    SL::RU->delete(\%myconfig, $form);
     $form->redirect($locale->text('Item deleted!'));
   } else {
     $form->error($locale->text('Cannot delete item!'));
@@ -4140,7 +4139,7 @@ sub stock_adjustment {
 
 sub list_inventory {
 
-  IC->retrieve_items(\%myconfig, \%$form);
+  SL::IC->retrieve_items(\%myconfig, $form);
 
   $form->sort_order();
 
@@ -4266,7 +4265,7 @@ sub list_inventory {
 
 sub adjust_onhand {
 
-  IC->adjust_onhand(\%myconfig, \%$form);
+  SL::IC->adjust_onhand(\%myconfig, $form);
   $form->redirect($locale->text('Items stocked!'));
 
 }
@@ -4362,7 +4361,7 @@ sub stock_assembly {
 
 sub list_assemblies {
 
-  IC->retrieve_assemblies(\%myconfig, \%$form);
+  SL::IC->retrieve_assemblies(\%myconfig, $form);
 
   $form->sort_order();
 
@@ -4501,7 +4500,7 @@ sub restock_assemblies {
     for (1 .. $form->{rowcount}) { $form->error($locale->text('Quantity exceeds available units to stock!')) if $form->parse_amount($myconfig, $form->{"qty_$_"}) > $form->{"stock_$_"} }
   }
 
-  if (IC->stock_assemblies(\%myconfig, \%$form)) {
+  if (SL::IC->stock_assemblies(\%myconfig, $form)) {
     $form->redirect($locale->text('Assemblies stocked!'));
   } else {
     $form->error($locale->text('Cannot stock assemblies!'));
@@ -4512,7 +4511,7 @@ sub restock_assemblies {
 
 sub history {
 
-  IC->history(\%myconfig, \%$form);
+  SL::IC->history(\%myconfig, $form);
 
   @column_index = qw(partnumber description name trn transdate sellprice);
   $colspan = $#column_index + 1;
@@ -4601,7 +4600,7 @@ sub search_transfer {
 
   $form->{searchitems} = 'partandassembly';
 
-  IC->get_warehouses(\%myconfig, \%$form);
+  SL::IC->get_warehouses(\%myconfig, $form);
 
   if (@{ $form->{all_warehouse} }) {
     $selectwarehouse = ($form->{forcewarehouse}) ? "" : "\n";
@@ -4737,7 +4736,7 @@ sub transfer_list {
 
   $form->{sort} ||= "partnumber";
 
-  IC->get_inventory(\%myconfig, \%$form);
+  SL::IC->get_inventory(\%myconfig, $form);
 
   # warehouses
   if (@{ $form->{all_warehouse} }) {
@@ -4930,7 +4929,7 @@ sub transfer {
 
   $form->error($locale->text('Nothing to transfer!')) unless $ok;
 
-  if (IC->transfer(\%myconfig, \%$form)) {
+  if (SL::IC->transfer(\%myconfig, $form)) {
     $form->redirect($locale->text('Inventory transferred!'));
   } else {
     $form->error($locale->text('Could not transfer Inventory!'));
@@ -4943,7 +4942,7 @@ sub transfer_report {
 
   $form->{sort} ||= "shippingdate";
 
-  IC->transfer_report(\%myconfig, \%$form);
+  SL::IC->transfer_report(\%myconfig, $form);
 
   $href = "$form->{script}?action=transfer_report";
   for (qw(direction oldsort path login)) { $href .= qq|&$_=$form->{$_}| }
@@ -5079,7 +5078,7 @@ sub assembly_bom_transfer {
 
   $form->{searchitems} = 'assembly';
 
-  IC->get_warehouses(\%myconfig, \%$form);
+  SL::IC->get_warehouses(\%myconfig, $form);
 
   if (@{ $form->{all_warehouse} }) {
     $selecttowarehouse = ($form->{forcewarehouse}) ? "" : "\n";
@@ -5193,7 +5192,7 @@ sub list_assembly_bom_transfer {
 
   $form->{qty} ||= 1;
 
-  IC->get_assembly_bom_transfer(\%myconfig, \%$form);
+  SL::IC->get_assembly_bom_transfer(\%myconfig, $form);
 
   $callback = "$form->{script}?action=list_assembly_bom_transfer";
   for (qw(path login towarehouse)) { $callback .= qq|&$_=$form->{$_}| }
@@ -5486,23 +5485,23 @@ sub upload_image {
 
 sub upload_imagefile {
 
-  if (-s "$userspath/$form->{tmpfile}") {
-    open(IN, "$userspath/$form->{tmpfile}") or $form->error("$userspath/$form->{tmpfile} : $!\n");
-    open(OUT, "> $images/$myconfig{dbname}/$form->{filename}") or $form->error("$images/$myconfig{dbname}/$form->{filename} : $!\n");
+  if (-s "$slconfig{userspath}/$form->{tmpfile}") {
+    open my $in, "$slconfig{userspath}/$form->{tmpfile}" or $form->error("$slconfig{userspath}/$form->{tmpfile} : $!\n");
+    open my $out, "> $slconfig{images}/$myconfig{dbname}/$form->{filename}" or $form->error("$slconfig{images}/$myconfig{dbname}/$form->{filename} : $!\n");
 
-    binmode(IN);
-    binmode(OUT);
+    binmode $in;
+    binmode $out;
 
-    while (<IN>) {
-      print OUT $_;
+    while (<$in>) {
+      print $out $_;
     }
 
-    close(IN);
-    close(OUT);
+    close $in;
+    close $out;
 
   }
 
-  unlink "$userspath/$form->{tmpfile}";
+  unlink "$slconfig{userspath}/$form->{tmpfile}";
 
   $form->header;
 

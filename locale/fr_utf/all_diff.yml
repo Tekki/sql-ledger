@@ -1,0 +1,2048 @@
+---
+locale: fr_utf
+texts:
+  AP:
+    admin: Dépenses
+    am: Dépenses
+    cp: Dépenses
+    ct: Dépenses
+    hr: Dépenses
+    im: Dépenses
+    menu: Dépenses
+  AP Aging:
+    admin: Dépenses exigibles
+    menu: Dépenses exigibles
+    ps: Dépenses exigibles
+    rp: Dépenses exigibles
+  AP Outstanding:
+    aa: Dépenses en retard
+    ap: Dépenses en retard
+    ar: Dépenses en retard
+    ps: Dépenses en retard
+  AP Transaction:
+    aa: Écriture dépenses
+    admin: Écriture dépenses
+    ap: Écriture dépenses
+    ar: Écriture dépenses
+    ct: Écriture dépenses
+    gl: Écriture dépenses
+    im: Écriture dépenses
+    menu: Écriture dépenses
+    ps: Écriture dépenses
+    rd: Écriture dépenses
+  AP Transactions:
+    aa: Mouvements - Dépenses
+    ap: Mouvements - Dépenses
+    ar: Mouvements - Dépenses
+    ct: Mouvements - Dépenses
+    im: Mouvements - Dépenses
+    ps: Mouvements - Dépenses
+    ru: Mouvements - Dépenses
+  AR:
+    admin: Recettes
+    am: Recettes
+    cp: Recettes
+    ct: Recettes
+    im: Recettes
+    menu: Recettes
+  AR Aging:
+    admin: Recettes exigibles
+    menu: Recettes exigibles
+    ps: Recettes exigibles
+    rp: Recettes exigibles
+  AR Outstanding:
+    aa: Recettes en retard
+    ap: Recettes en retard
+    ar: Recettes en retard
+    ps: Recettes en retard
+  AR Transaction:
+    aa: Écriture recettes
+    admin: Écriture recettes
+    ap: Écriture recettes
+    ar: Écriture recettes
+    ct: Écriture recettes
+    gl: Écriture recettes
+    im: Écriture recettes
+    menu: Écriture recettes
+    ps: Écriture recettes
+    rd: Écriture recettes
+  AR Transactions:
+    aa: Mouvements - Recettes
+    ap: Mouvements - Recettes
+    ar: Mouvements - Recettes
+    ct: Mouvements - Recettes
+    im: Mouvements - Recettes
+    ps: Mouvements - Recettes
+    ru: Mouvements - Recettes
+  About:
+    am: À propos
+  Access Control:
+    am: Contrôle d'accès
+    hr: Contrôle d'accès
+  Access Denied!:
+    am: Acces Refuse!
+  Account Number:
+    am: Numéro de compte
+    im: Numéro de compte
+    ps: Numéro de compte
+    rp: Numéro de compte
+  Account Number missing!:
+    am: Numéro de compte manquant!
+  Accounting Menu:
+    aa: Menu de comptabilité
+    admin: Menu de comptabilité
+    am: Menu de comptabilité
+    ap: Menu de comptabilité
+    ar: Menu de comptabilité
+    arap: Menu de comptabilité
+    bp: Menu de comptabilité
+    cp: Menu de comptabilité
+    ct: Menu de comptabilité
+    gl: Menu de comptabilité
+    hr: Menu de comptabilité
+    ic: Menu de comptabilité
+    im: Menu de comptabilité
+    ir: Menu de comptabilité
+    is: Menu de comptabilité
+    jc: Menu de comptabilité
+    menu: Menu de comptabilité
+    oe: Menu de comptabilité
+    pe: Menu de comptabilité
+    pos: Menu de comptabilité
+    ps: Menu de comptabilité
+    rc: Menu de comptabilité
+    rd: Menu de comptabilité
+    rp: Menu de comptabilité
+    sr: Menu de comptabilité
+    vr: Menu de comptabilité
+  Accrual:
+    am: Accumulation
+    ic: Accumulation
+    ps: Accumulation
+    rp: Accumulation
+    rpss: Accumulation
+  Activate Audit trail:
+    am: Activer la journalisation des accès aux écritures clôturées
+  Active:
+    ct: Actif
+    hr: Actif
+    ic: Actif
+    im: Actif
+    pe: Actif
+  Add:
+    ct: Ajouter
+    ic: Ajouter
+    pe: Ajouter
+  Add AP Transaction:
+    aa: Ajouter une dépense
+    ap: Ajouter une dépense
+    ar: Ajouter une dépense
+    ps: Ajouter une dépense
+  Add AR Transaction:
+    aa: Ajouter une recette
+    ap: Ajouter une recette
+    ar: Ajouter une recette
+    ps: Ajouter une recette
+  Add Account:
+    admin: Ajouter compte
+    am: Ajouter compte
+    menu: Ajouter compte
+  Add Assembly:
+    admin: Ajouter produit
+    ic: Ajouter produit
+    menu: Ajouter produit
+  Add Business:
+    am: Ajouter type d'affaire
+  Add Customer:
+    admin: Ajouter client
+    ct: Ajouter client
+    im: Ajouter client
+    menu: Ajouter client
+  Add Deduction:
+    hr: Ajouter prélèvement
+  Add Department:
+    am: Ajouter service
+  Add Employee:
+    admin: Ajouter employé
+    hr: Ajouter employé
+    menu: Ajouter employé
+  Add GIFI:
+    admin: Ajouter code d'identification comptable ou fiscale
+    am: Ajouter code d'identification comptable ou fiscale
+    menu: Ajouter code d'identification comptable ou fiscale
+  Add General Ledger Transaction:
+    gl: Ajouter une écriture au grand-livre
+  Add Group:
+    admin: Ajouter groupe
+    menu: Ajouter groupe
+    pe: Ajouter groupe
+  Add Labor/Overhead:
+    admin: Ajouter coût de production
+    ic: Ajouter coût de production
+    menu: Ajouter coût de production
+  Add Language:
+    am: Ajouter langue
+  Add POS Invoice:
+    is: Saisie ticket de caisse
+    ps: Saisie ticket de caisse
+  Add Part:
+    admin: Ajouter marchandise
+    ic: Ajouter marchandise
+    io: Ajouter marchandise
+    ir: Ajouter marchandise
+    is: Ajouter marchandise
+    menu: Ajouter marchandise
+    oe: Ajouter marchandise
+    ps: Ajouter marchandise
+  Add Pricegroup:
+    admin: Ajouter groupe de prix
+    menu: Ajouter groupe de prix
+    pe: Ajouter groupe de prix
+  Add Project:
+    admin: Ajouter projet
+    menu: Ajouter projet
+    pe: Ajouter projet
+  Add Purchase Order:
+    ic: Établir commande d'achat
+    io: Établir commande d'achat
+    ir: Établir commande d'achat
+    is: Établir commande d'achat
+    oe: Établir commande d'achat
+    ps: Établir commande d'achat
+  Add Quotation:
+    ic: Établir devis
+    io: Établir devis
+    ir: Établir devis
+    is: Établir devis
+    oe: Établir devis
+    ps: Établir devis
+  Add Request for Quotation:
+    ic: Établir demande de devis
+    io: Établir demande de devis
+    ir: Établir demande de devis
+    is: Établir demande de devis
+    oe: Établir demande de devis
+    ps: Établir demande de devis
+  Add SIC:
+    am: Ajouter code secteur économique
+  Add Sales Invoice:
+    is: Établir facture de vente
+    ps: Établir facture de vente
+  Add Sales Order:
+    ic: Établir commande de vente
+    io: Établir commande de vente
+    ir: Établir commande de vente
+    is: Établir commande de vente
+    oe: Établir commande de vente
+    ps: Établir commande de vente
+  Add Service:
+    admin: Ajouter prestation
+    ic: Ajouter prestation
+    io: Ajouter prestation
+    ir: Ajouter prestation
+    is: Ajouter prestation
+    menu: Ajouter prestation
+    oe: Ajouter prestation
+    ps: Ajouter prestation
+  Add Transaction:
+    admin: Saisie d'écriture
+    hr: Saisie d'écriture
+    menu: Saisie d'écriture
+  Add Vendor:
+    admin: Ajouter fournisseur
+    ct: Ajouter fournisseur
+    im: Ajouter fournisseur
+    menu: Ajouter fournisseur
+  Add Vendor Invoice:
+    ir: Établir facture d'achat
+  Add Warehouse:
+    am: Ajouter entrepôt
+  Aged:
+    ps: Agee
+    rp: Agee
+  Aged Overdue:
+    ps: Agee En Retard
+    rp: Agee En Retard
+  All Items:
+    admin: Tout objet
+    menu: Tout objet
+  Allocated:
+    jc: Montant Alloue
+  Are you sure you want to delete Invoice Number:
+    ir: Êtes-vous sûr de vouloir supprimer la facture n°
+    is: Êtes-vous sûr de vouloir supprimer la facture n°
+    ps: Êtes-vous sûr de vouloir supprimer la facture n°
+  Are you sure you want to delete Order Number:
+    oe: Êtes vous sûr de vouloir supprimer la commande n°
+  Are you sure you want to delete Quotation Number:
+    oe: Êtes vous sûr de vouloir supprimer le devis n°
+  Are you sure you want to delete Transaction:
+    aa: Êtes vous sûr de vouloir effacer la saisie?
+    ap: Êtes vous sûr de vouloir effacer la saisie?
+    ar: Êtes vous sûr de vouloir effacer la saisie?
+    gl: Êtes vous sûr de vouloir effacer la saisie?
+    hr: Êtes vous sûr de vouloir effacer la saisie?
+    ps: Êtes vous sûr de vouloir effacer la saisie?
+  Are you sure you want to delete time card for:
+    jc: Êtes vous sûr de vouloir effacer Fiche Temps pour
+  Are you sure you want to remove the marked entries from the queue?:
+    bp: Êtes vous sûr de vouloir enlever les objets sélectionnés de la queue?
+  Assemblies:
+    admin: Produits finis
+    ic: Produits finis
+    menu: Produits finis
+  Assembly:
+    ic: Produit fini
+    pe: Produit fini
+    rd: Produit fini
+  Assembly stocked!:
+    pe: Enreegistrement Produit Compose!
+  Audit trail disabled:
+    am: Journalisation clôture desactivée
+  Audit trail enabled:
+    am: Journalisation clôture activée
+  Audit trail removed up to:
+    am: Annulation de la journalisation des accès aux écritures clôturées jusqu'au
+  August:
+    aa: Août
+    admin: Août
+    am: Août
+    ap: Août
+    ar: Août
+    arap: Août
+    bp: Août
+    ca: Août
+    cp: Août
+    ct: Août
+    gl: Août
+    hr: Août
+    ic: Août
+    im: Août
+    io: Août
+    ir: Août
+    is: Août
+    jc: Août
+    js: Août
+    menu: Août
+    oe: Août
+    pe: Août
+    pos: Août
+    ps: Août
+    rc: Août
+    rd: Août
+    rp: Août
+    sm: Août
+    sr: Août
+    vr: Août
+  Average Cost:
+    ic: Cout Moyen
+  Avg Cost:
+    ic: Cout Moyen
+  BIC:
+    ct: BIC
+    hr: BIC
+  BOM:
+    ic: Nomenclature composantes
+  Backup:
+    admin: Sauvegarder
+    menu: Sauvegarder
+  Backup sent to:
+    am: Sauvegarde envoyée à
+  Based on:
+    hr: Basé sur
+  Bcc:
+    ap: Copie cachée
+    ar: Copie cachée
+    arap: Copie cachée
+    bp: Copie cachée
+    cp: Copie cachée
+    ct: Copie cachée
+    gl: Copie cachée
+    hr: Copie cachée
+    ic: Copie cachée
+    im: Copie cachée
+    io: Copie cachée
+    ir: Copie cachée
+    is: Copie cachée
+    oe: Copie cachée
+    ps: Copie cachée
+    rp: Copie cachée
+  Beginning Balance:
+    ps: Solde du départ
+    rc: Solde du départ
+    rpss: Solde du départ
+  Bin List:
+    admin: Liste des emplacements
+    am: Liste des emplacements
+    bp: Liste des emplacements
+    ic: Liste des emplacements
+    io: Liste des emplacements
+    ir: Liste des emplacements
+    is: Liste des emplacements
+    menu: Liste des emplacements
+    oe: Liste des emplacements
+    ps: Liste des emplacements
+  Bin Lists:
+    admin: Liste des emplacements
+    bp: Liste des emplacements
+    menu: Liste des emplacements
+  Books are open:
+    am: Début exercice
+  Business Number:
+    am: Numéro d'enregistrement société
+  COGS account does not exist!:
+    ic: Compte de Cout inexistant
+  Cannot create Assembly:
+    ic: Echec Creation P.Assemble
+  Cannot create Labor:
+    ic: Echec Creation Tache
+  Cannot create Lock!:
+    admin: Impossible de verrouiller le fichier!
+  Cannot create Part:
+    ic: Echec Creation Produit
+  Cannot create Service:
+    ic: Echec Creation Service
+  Cannot delete account!:
+    am: Impossible de supprimer le compte!
+  Cannot delete customer!:
+    ct: Impossible de supprimer le client!
+    im: Impossible de supprimer le client!
+  Cannot delete default account!:
+    am: Impossible de supprimer le compte par défaut!
+  Cannot delete invoice!:
+    ir: Impossible de supprimer la facture!
+    is: Impossible de supprimer la facture!
+    ps: Impossible de supprimer la facture!
+  Cannot delete item!:
+    ic: Impossible de supprimer l'objet!
+  Cannot delete order!:
+    oe: Impossible de supprimer la commande!
+  Cannot delete quotation!:
+    oe: Impossible de supprimer le devis!
+  Cannot delete transaction!:
+    aa: Impossible de supprimer la saisie!
+    ap: Impossible de supprimer la saisie!
+    ar: Impossible de supprimer la saisie!
+    gl: Impossible de supprimer la saisie!
+    hr: Impossible de supprimer la saisie!
+    ps: Impossible de supprimer la saisie!
+  Cannot delete vendor!:
+    ct: Impossible de supprimer le fournisseur!
+    im: Impossible de supprimer le fournisseur!
+  Cannot post invoice for a closed period!:
+    ir: Impossible d'enregistrer la facture sur un exercice clos!
+    is: Impossible d'enregistrer la facture sur un exercice clos!
+    ps: Impossible d'enregistrer la facture sur un exercice clos!
+  Cannot post invoice!:
+    ir: Impossible d'enregistrer la facture!
+    is: Impossible d'enregistrer la facture!
+    ps: Impossible d'enregistrer la facture!
+  Cannot post payment for a closed period!:
+    aa: Impossible d'enregistrer le paiement sur un exercice clos!
+    ap: Impossible d'enregistrer le paiement sur un exercice clos!
+    ar: Impossible d'enregistrer le paiement sur un exercice clos!
+    cp: Impossible d'enregistrer le paiement sur un exercice clos!
+    ir: Impossible d'enregistrer le paiement sur un exercice clos!
+    is: Impossible d'enregistrer le paiement sur un exercice clos!
+    ps: Impossible d'enregistrer le paiement sur un exercice clos!
+  Cannot post transaction for a closed period!:
+    aa: Impossible d'enregistrer l'écriture sur un exercice clos!
+    ap: Impossible d'enregistrer l'écriture sur un exercice clos!
+    ar: Impossible d'enregistrer l'écriture sur un exercice clos!
+    gl: Impossible d'enregistrer l'écriture sur un exercice clos!
+    hr: Impossible d'enregistrer l'écriture sur un exercice clos!
+    ps: Impossible d'enregistrer l'écriture sur un exercice clos!
+  Cannot post transaction!:
+    aa: Impossible d'enregistrer l'écriture!
+    ap: Impossible d'enregistrer l'écriture!
+    ar: Impossible d'enregistrer l'écriture!
+    gl: Impossible d'enregistrer l'écriture!
+    pos: Impossible d'enregistrer l'écriture!
+    ps: Impossible d'enregistrer l'écriture!
+  Cannot remove files!:
+    bp: Impossible d'effacer les fichiers!
+  Cannot save account!:
+    am: Impossible d'enregistrer le compte!
+  Cannot save defaults!:
+    am: Impossible d'enregistrer les valeurs par défaut!
+  Cannot save order!:
+    oe: Impossible d'enregistrer la commande!
+  Cannot save preferences!:
+    am: Impossible d'enregistrer les préférences
+  Cannot save quotation!:
+    oe: Impossible d'enregistrer le devis!
+  Cannot save stores card for a closed period!:
+    jc: Echec Sauve Fiche-Periode Cloturee!
+  Cannot save time card for a closed period!:
+    jc: Echec sauve Fiche Temps - Periode cloturee!
+  Cannot set account for more than one of AR, AP or IC:
+    am: Impossible d'enregistrer le compte simultanément en tant que compte de recettes, dépenses ou service
+  Cannot set multiple options for:
+    am: Impossible de choisir plusieurs options pour
+  Cannot stock Assembly!:
+    pe: Echec Stockage Produit Compose!
+  Cannot stock assemblies!:
+    ic: Impossible de stocker l'assemblage!
+  Cash:
+    admin: Financier
+    am: Financier
+    ic: Financier
+    menu: Financier
+    ps: Financier
+    rp: Financier
+    rpss: Financier
+  Check:
+    aa: Chèque
+    admin: Chèque
+    ap: Chèque
+    ar: Chèque
+    cp: Chèque
+    menu: Chèque
+    ps: Chèque
+  Check Inventory:
+    ic: Listing chèques
+  Clocked:
+    jc: Decompte Horaire
+  Close Books up to:
+    am: Clôturer l'exercice jusqu'au
+  Closed:
+    aa: Clôturé
+    am: Clôturé
+    ap: Clôturé
+    ar: Clôturé
+    bp: Clôturé
+    ca: Clôturé
+    ct: Clôturé
+    ic: Clôturé
+    im: Clôturé
+    jc: Clôturé
+    oe: Clôturé
+    ps: Clôturé
+    rp: Clôturé
+  Company:
+    admin: Société
+    am: Société
+    ct: Société
+    im: Société
+    login: Société
+  Company Name:
+    gl: Nom de société
+  Confirm:
+    admin: Confirmer
+    am: Confirmer
+  Connect to:
+    admin: Connecter à
+  Cost Center:
+    am: Axé coûts
+  Could not save pricelist!:
+    ct: Enregistrement de la liste de prix impossible!
+    im: Enregistrement de la liste de prix impossible!
+  Could not save!:
+    oe: Enregistrement impossible!
+  Credit Limit:
+    aa: Encours autorisé
+    ap: Encours autorisé
+    ar: Encours autorisé
+    ct: Encours autorisé
+    im: Encours autorisé
+    ir: Encours autorisé
+    is: Encours autorisé
+    oe: Encours autorisé
+    pos: Encours autorisé
+    ps: Encours autorisé
+  Current Earnings:
+    ps: Bénéfice de l'exercice
+    rp: Bénéfice de l'exercice
+    rpss: Bénéfice de l'exercice
+  Customer:
+    aa: Client
+    ap: Client
+    ar: Client
+    bp: Client
+    cp: Client
+    ic: Client
+    im: Client
+    is: Client
+    oe: Client
+    pe: Client
+    pos: Client
+    ps: Client
+    rd: Client
+    rp: Client
+  Customer History:
+    ct: Historique client
+    im: Historique client
+  Customer Number:
+    aa: Numéro de client
+    am: Numéro de client
+    ap: Numéro de client
+    ar: Numéro de client
+    arap: Numéro de client
+    bp: Numéro de client
+    cp: Numéro de client
+    ct: Numéro de client
+    gl: Numéro de client
+    hr: Numéro de client
+    ic: Numéro de client
+    im: Numéro de client
+    ir: Numéro de client
+    is: Numéro de client
+    oe: Numéro de client
+    pe: Numéro de client
+    pos: Numéro de client
+    ps: Numéro de client
+    rp: Numéro de client
+  Customer deleted!:
+    ct: Client supprimé!
+    im: Client supprimé!
+  Customer missing!:
+    aa: Client manquant!
+    ap: Client manquant!
+    ar: Client manquant!
+    is: Client manquant!
+    oe: Client manquant!
+    pe: Client manquant!
+    pos: Client manquant!
+    ps: Client manquant!
+  Customer not on file!:
+    ap: Client absent du fichier!
+    ar: Client absent du fichier!
+    arap: Client absent du fichier!
+    cp: Client absent du fichier!
+    gl: Client absent du fichier!
+    hr: Client absent du fichier!
+    ic: Client absent du fichier!
+    ir: Client absent du fichier!
+    is: Client absent du fichier!
+    oe: Client absent du fichier!
+    pe: Client absent du fichier!
+    ps: Client absent du fichier!
+    rp: Client absent du fichier!
+  Customer saved!:
+    ct: Client enregistré!
+    im: Client enregistré!
+  Customers:
+    admin: Clients
+    ct: Clients
+    im: Clients
+    menu: Clients
+    ru: Clients
+  DBI not installed!:
+    admin: DBI non installée!
+  DOB:
+    hr: Date de naissance
+  Database Host:
+    am: Hôte de base de données
+  Date Format:
+    am: Format de date
+    im: Format de date
+  Debit Invoice:
+    admin: Facture Debit
+    am: Facture Debit
+    bp: Facture Debit
+    ct: Facture Debit
+    ic: Facture Debit
+    im: Facture Debit
+    io: Facture Debit
+    ir: Facture Debit
+    is: Facture Debit
+    menu: Facture Debit
+    oe: Facture Debit
+    ps: Facture Debit
+    rd: Facture Debit
+  Deduction deleted!:
+    hr: Prélèvement supprimé!
+  Deduction saved!:
+    hr: Prélèvement enrégistré!
+  Default Template:
+    am: Squelette par defaut
+  Defaults saved!:
+    am: Valeurs par défaut enrégistrées!
+  Delete Account:
+    am: Supprimer compte
+  Delete Schedule:
+    ap: Effacer transaction planifiée
+    ar: Effacer transaction planifiée
+    arap: Effacer transaction planifiée
+    cp: Effacer transaction planifiée
+    gl: Effacer transaction planifiée
+    hr: Effacer transaction planifiée
+    ir: Effacer transaction planifiée
+    is: Effacer transaction planifiée
+    oe: Effacer transaction planifiée
+    ps: Effacer transaction planifiée
+    rp: Effacer transaction planifiée
+  Department:
+    aa: Service
+    ap: Service
+    ar: Service
+    ca: Service
+    cp: Service
+    gl: Service
+    hr: Service
+    im: Service
+    ir: Service
+    is: Service
+    oe: Service
+    pos: Service
+    ps: Service
+    rp: Service
+  Department deleted!:
+    am: Service effacé!
+  Department saved!:
+    am: Service enregistré!
+  Departments:
+    admin: Services
+    am: Services
+    menu: Services
+  Description:
+    aa: Description
+    admin: Description
+    am: Description
+    ap: Description
+    ar: Description
+    arap: Description
+    bp: Description
+    ca: Description
+    cm: Description
+    cp: Description
+    ct: Description
+    gl: Description
+    hr: Description
+    ic: Description
+    im: Description
+    io: Description
+    ir: Description
+    is: Description
+    jc: Description
+    menu: Description
+    oe: Description
+    pe: Description
+    pos: Description
+    ps: Description
+    rc: Description
+    rd: Description
+    rp: Description
+    rpss: Description
+    ru: Description
+    sr: Description
+    vr: Description
+  Description Translations:
+    pe: Description traductions
+  Description missing!:
+    am: Description manquante!
+    hr: Description manquante!
+  Difference:
+    rc: Différence
+  Dropdown Limit:
+    am: Limite de déroulement
+  Due Date:
+    aa: Échéance
+    ap: Échéance
+    ar: Échéance
+    cp: Échéance
+    im: Échéance
+    ir: Échéance
+    is: Échéance
+    ps: Échéance
+    rp: Échéance
+  E-mail Statement to:
+    ps: Message éléctronique à
+    rp: Message éléctronique à
+  Edit:
+    am: Modifier
+  Edit AP Transaction:
+    aa: Modifier une dépense
+    ap: Modifier une dépense
+    ar: Modifier une dépense
+    ps: Modifier une dépense
+  Edit AR Transaction:
+    aa: Modifier une recette
+    ap: Modifier une recette
+    ar: Modifier une recette
+    ps: Modifier une recette
+  Edit Account:
+    am: Modifier le compte
+  Edit Assembly:
+    ic: Modifier produit fini / transformé
+  Edit Business:
+    am: Modifier type d'affaire
+  Edit Customer:
+    ct: Modifier client
+    im: Modifier client
+  Edit Deduction:
+    hr: Modifier prélèvement
+  Edit Department:
+    am: Modifier service de l'entreprise
+  Edit Description Translations:
+    pe: Modifier traductions description
+  Edit Employee:
+    hr: Modifier employé
+  Edit GIFI:
+    am: Modifier code d'identification comptable ou fiscale
+  Edit General Ledger Transaction:
+    gl: Modifier écriture grand-livre
+  Edit Group:
+    pe: Modifier groupe
+  Edit Labor/Overhead:
+    ic: Modifier coût de production
+  Edit Language:
+    am: Modifier langue
+  Edit POS Invoice:
+    is: Modifier ticket de caisse
+    ps: Modifier ticket de caisse
+  Edit Part:
+    ic: Modifier marchandise
+  Edit Pricegroup:
+    pe: Modifier groupe de prix
+  Edit Project:
+    pe: Modifier projet
+  Edit Purchase Order:
+    oe: Modifier commande d'achat
+  Edit Quotation:
+    oe: Modifier devis
+  Edit Request for Quotation:
+    oe: Modifier demande de devis
+  Edit SIC:
+    am: Modifier code de secteur économique
+  Edit Sales Invoice:
+    is: Modifier facture de vente
+    ps: Modifier facture de vente
+  Edit Sales Order:
+    oe: Modifier commande de vente
+  Edit Service:
+    ic: Modifier service
+  Edit Vendor:
+    ct: Modifier fournisseur
+    im: Modifier fournisseur
+  Edit Vendor Invoice:
+    ir: Modifier facture de fournisseur
+  Employee:
+    aa: Employé
+    am: Employé
+    ap: Employé
+    ar: Employé
+    bp: Employé
+    ct: Employé
+    hr: Employé
+    ic: Employé
+    im: Employé
+    ir: Employé
+    jc: Employé
+    oe: Employé
+    pe: Employé
+    ps: Employé
+    rd: Employé
+    rp: Employé
+    vr: Employé
+  Employee Name:
+    hr: Nom employé
+  Employee Number:
+    am: Numéro d'employé
+    ap: Numéro d'employé
+    ar: Numéro d'employé
+    arap: Numéro d'employé
+    bp: Numéro d'employé
+    cp: Numéro d'employé
+    gl: Numéro d'employé
+    hr: Numéro d'employé
+    ir: Numéro d'employé
+    is: Numéro d'employé
+    oe: Numéro d'employé
+    ps: Numéro d'employé
+    rp: Numéro d'employé
+  Employee deleted!:
+    hr: Employé effacé!
+  Employee pays:
+    hr: Employé pays
+  Employee saved!:
+    hr: Employé enregistré
+  Employees:
+    admin: Employés
+    hr: Employés
+    menu: Employés
+  Enddate:
+    ct: Date de fin
+    hr: Date de fin
+    im: Date de fin
+    is: Date de fin
+    pe: Date de fin
+    ps: Date de fin
+  Enforce transaction reversal for all dates:
+    am: Activer la clôture des écritures pour toutes les dates
+  Every:
+    am: Chaque
+    ap: Chaque
+    ar: Chaque
+    arap: Chaque
+    cp: Chaque
+    gl: Chaque
+    hr: Chaque
+    ir: Chaque
+    is: Chaque
+    oe: Chaque
+    ps: Chaque
+    rp: Chaque
+  Existing Datasets:
+    admin: Fichiers de données existants
+  Expense:
+    am: Dépenses
+    gl: Dépenses
+    ic: Dépenses
+    im: Dépenses
+  Extended:
+    ic: Prix total
+    io: Prix total
+    ir: Prix total
+    is: Prix total
+    oe: Prix total
+    pos: Prix total
+    ps: Prix total
+  Failed to delete Currency!:
+    am: Echec Suppression Devises
+  Failed to delete Warehouse!:
+    am: Echec Suppression Entrepot
+  Failed to save Bank!:
+    am: 'Echec Enregistrement  RÃf-Bancaires '
+  Failed to save Currency!:
+    am: Echec Enregistrement Devises
+  Failed to save Warehouse!:
+    am: Echec Enregistrement Entrepot
+  Failed to save order!:
+    pe: Echec Enregistrement Commande Clts
+  From:
+    aa: De
+    ap: De
+    ar: De
+    bp: De
+    ca: De
+    cp: De
+    ct: De
+    gl: De
+    hr: De
+    ic: De
+    im: De
+    is: De
+    jc: De
+    oe: De
+    pe: De
+    pos: De
+    ps: De
+    rc: De
+    rp: De
+    vr: De
+  GIFI:
+    am: Code d'identification comptable ou fiscale
+    ca: Code d'identification comptable ou fiscale
+    ct: Code d'identification comptable ou fiscale
+    gl: Code d'identification comptable ou fiscale
+    im: Code d'identification comptable ou fiscale
+    ps: Code d'identification comptable ou fiscale
+    rp: Code d'identification comptable ou fiscale
+    rpss: Code d'identification comptable ou fiscale
+  GIFI deleted!:
+    am: Code d'identification comptable ou fiscale supprimé!
+  GIFI missing!:
+    am: Code d'identification comptable ou fiscale manquant!
+  GIFI saved!:
+    am: Code d'identification comptable ou fiscale enregistré!
+  GL:
+    am: Grand-livre
+    hr: Grand-livre
+  General Ledger:
+    admin: Grand-livre
+    gl: Grand-livre
+    menu: Grand-livre
+  Generate:
+    admin: 'Generation '
+    menu: 'Generation '
+  Generate Orders:
+    oe: Generer Commandes
+  Generate Purchase Orders:
+    oe: Generation Commandes Frs
+  Generate Purchase Orders from Sales Order:
+    oe: Genere Commandes Frs d'apres Commandes Clts
+  Generate Sales Orders:
+    pe: Genere Commandes Clts
+  Goods & Services:
+    admin: Articles & Prestations
+    menu: Articles & Prestations
+  Group:
+    ct: Groupe
+    ic: Groupe
+    im: Groupe
+    io: Groupe
+    ir: Groupe
+    is: Groupe
+    oe: Groupe
+    pe: Groupe
+    ps: Groupe
+  Group Translations:
+    pe: Grouper traductions
+  Group deleted!:
+    pe: Groupe effacé!
+  Group missing!:
+    pe: Groupe absent!
+  Group saved!:
+    pe: Groupe enregistré!
+  Groups:
+    admin: Groupes
+    menu: Groupes
+    pe: Groupes
+  HR:
+    admin: Ressources humaines
+    menu: Ressources humaines
+  Heading:
+    am: En-tête
+    ap: En-tête
+    ar: En-tête
+    arap: En-tête
+    cp: En-tête
+    gl: En-tête
+    hr: En-tête
+    im: En-tête
+    ir: En-tête
+    is: En-tête
+    jc: En-tête
+    oe: En-tête
+    pe: En-tête
+    ps: En-tête
+    rp: En-tête
+    sr: En-tête
+  IBAN:
+    ct: IBAN
+    hr: IBAN
+  Include Exchange Rate Difference:
+    rc: Inclure différence conversion devises
+  Include Payment:
+    ap: Inclure paiement
+    ar: Inclure paiement
+    arap: Inclure paiement
+    cp: Inclure paiement
+    gl: Inclure paiement
+    hr: Inclure paiement
+    ir: Inclure paiement
+    is: Inclure paiement
+    oe: Inclure paiement
+    ps: Inclure paiement
+    rp: Inclure paiement
+  Include in Report:
+    aa: Inclure dans l'état
+    ap: Inclure dans l'état
+    ar: Inclure dans l'état
+    ca: Inclure dans l'état
+    ct: Inclure dans l'état
+    gl: Inclure dans l'état
+    hr: Inclure dans l'état
+    ic: Inclure dans l'état
+    im: Inclure dans l'état
+    is: Inclure dans l'état
+    jc: Inclure dans l'état
+    oe: Inclure dans l'état
+    ps: Inclure dans l'état
+    rp: Inclure dans l'état
+    vr: Inclure dans l'état
+  Include in drop-down menus:
+    am: Inclure dans les menus déroulants
+  Income:
+    am: Recettes
+    gl: Recettes
+    ic: Recettes
+    im: Recettes
+    pe: Recettes
+    ps: Recettes
+    rpss: Recettes
+  Individual Items:
+    ic: Composition en marchandises individuelles
+  Inventory:
+    am: Inventaire
+    ic: Inventaire
+    im: Inventaire
+  Is this a summary account to record:
+    am: Est-ce que c'est un compte sommaire à enregistrer?
+  Item already on pricelist!:
+    ct: Objet déjà présent dans la liste des prix
+    im: Objet déjà présent dans la liste des prix
+  Item deleted!:
+    ic: Objet supprimé!
+  Item not on file!:
+    ct: Objet non-listé!
+    ic: Objet non-listé!
+    im: Objet non-listé!
+    io: Objet non-listé!
+    ir: Objet non-listé!
+    is: Objet non-listé!
+    oe: Objet non-listé!
+    ps: Objet non-listé!
+  Items:
+    ic: Objets
+    ru: Objets
+  Job Number:
+    bp: Numero du Job
+    jc: Numero du Job
+    pe: Numero du Job
+  Job Number missing!:
+    jc: Numero du Job Manquant!
+  Job deleted!:
+    pe: Job Supprime!
+  Job saved!:
+    pe: Job Enregistre!
+  Job/Project Number:
+    am: Numero du Projet/Bon
+  Language:
+    admin: Langue
+    am: Langue
+    cp: Langue
+    ct: Langue
+    im: Langue
+    menu: Langue
+    pe: Langue
+    pos: Langue
+    ps: Langue
+    rp: Langue
+  Language deleted!:
+    am: Langue effacée!
+  Language saved!:
+    am: Langue enregistrée!
+  Languages:
+    am: Langues
+  Languages not defined!:
+    pe: Langues non définis!
+  Last Cost:
+    ic: Dernier Cout
+  Licensed to:
+    am: Licence à
+  Link:
+    im: Liens
+  List GIFI:
+    admin: Afficher la liste des codes d'identification comptable ou fiscale
+    menu: Afficher la liste des codes d'identification comptable ou fiscale
+  List Price:
+    ic: Prix de revient
+    pe: Prix de revient
+  List Transactions:
+    ca: Afficher écritures
+    ps: Afficher écritures
+    rp: Afficher écritures
+  Lock System:
+    admin: Verrouiller le système
+  Lockfile created!:
+    admin: Verrouillage en place!
+  Lockfile removed!:
+    admin: Verrouillage enlevé!
+  Locks removed!:
+    am: Verrouillage dÃbloquÃ©
+  Markup:
+    ic: Majoration
+  Model:
+    ic: Modèle
+    im: Modèle
+    io: Modèle
+    ir: Modèle
+    is: Modèle
+    oe: Modèle
+    ps: Modèle
+  Multibyte Encoding:
+    admin: Encodage multibyte
+    am: Encodage multibyte
+  No Employees on file!:
+    jc: Aucun Employe Enregistre!
+  No.:
+    aa: N°
+    am: N°
+    ap: N°
+    ar: N°
+    ct: N°
+    ic: N°
+    im: N°
+    oe: N°
+    ps: N°
+    vr: N°
+  Non-chargeable:
+    jc: Prix Fixe
+  Non-taxable:
+    admin: Non imposable
+    menu: Non imposable
+  Non-taxable Purchases:
+    ps: Achats hors taxe
+    rp: Achats hors taxe
+  Non-taxable Sales:
+    ps: Ventes hors taxe
+    rp: Ventes hors taxe
+  Nothing selected!:
+    aa: Pas de sélection!
+    am: Pas de sélection!
+    ap: Pas de sélection!
+    ar: Pas de sélection!
+    bp: Pas de sélection!
+    cp: Pas de sélection!
+    ct: Pas de sélection!
+    im: Pas de sélection!
+    is: Pas de sélection!
+    oe: Pas de sélection!
+    ps: Pas de sélection!
+    rp: Pas de sélection!
+  Nothing to print!:
+    ap: Rien à imprimer
+    ar: Rien à imprimer
+    arapprn: Rien à imprimer
+    cp: Rien à imprimer
+    hr: Rien à imprimer
+    ps: Rien à imprimer
+  Number Format:
+    am: Format des numéros
+  On Hand:
+    ic: En Stock / disponible
+  Open:
+    aa: Ouvert
+    admin: Ouvert
+    ap: Ouvert
+    ar: Ouvert
+    bp: Ouvert
+    ct: Ouvert
+    ic: Ouvert
+    im: Ouvert
+    jc: Ouvert
+    menu: Ouvert
+    oe: Ouvert
+    pos: Ouvert
+    ps: Ouvert
+  Order Entry:
+    admin: Commandes
+    menu: Commandes
+  Orders generated!:
+    pe: Commande Generee!
+  Out of balance transaction!:
+    gl: Écriture non-soldée!
+  Outstanding:
+    aa: En retard
+    admin: En retard
+    ap: En retard
+    ar: En retard
+    ct: En retard
+    im: En retard
+    ir: En retard
+    is: En retard
+    menu: En retard
+    pos: En retard
+    ps: En retard
+  PO:
+    ic: PO ?
+  PO Number:
+    aa: Numéro de référence
+    ap: Numéro de référence
+    ar: Numéro de référence
+    ic: Numéro de référence
+    io: Numéro de référence
+    ir: Numéro de référence
+    is: Numéro de référence
+    oe: Numéro de référence
+    ps: Numéro de référence
+  POS:
+    admin: Point de vente
+    ct: Point de vente
+    im: Point de vente
+    menu: Point de vente
+    pe: Point de vente
+  Packing List:
+    admin: Liste d'envoi
+    am: Liste d'envoi
+    bp: Liste d'envoi
+    ic: Liste d'envoi
+    io: Liste d'envoi
+    ir: Liste d'envoi
+    is: Liste d'envoi
+    menu: Liste d'envoi
+    oe: Liste d'envoi
+    ps: Liste d'envoi
+  Packing List Date missing!:
+    ic: La liste d'envoi n'a pas de date!
+    io: La liste d'envoi n'a pas de date!
+    ir: La liste d'envoi n'a pas de date!
+    is: La liste d'envoi n'a pas de date!
+    oe: La liste d'envoi n'a pas de date!
+    ps: La liste d'envoi n'a pas de date!
+  Packing List Number missing!:
+    ic: Le numéro de la liste d'envoi est manquant!
+    io: Le numéro de la liste d'envoi est manquant!
+    ir: Le numéro de la liste d'envoi est manquant!
+    is: Le numéro de la liste d'envoi est manquant!
+    oe: Le numéro de la liste d'envoi est manquant!
+    ps: Le numéro de la liste d'envoi est manquant!
+  Packing Lists:
+    admin: Listes d'envoi
+    bp: Listes d'envoi
+    menu: Listes d'envoi
+  Parts:
+    admin: Marchandises
+    ic: Marchandises
+    menu: Marchandises
+  Password does not match!:
+    am: Mot de passe incorrect!
+  Payment:
+    admin: Paiement
+    am: Paiement
+    cp: Paiement
+    ct: Paiement
+    hr: Paiement
+    im: Paiement
+    menu: Paiement
+  Payments:
+    aa: Paiements
+    admin: Paiements
+    ap: Paiements
+    ar: Paiements
+    cp: Paiements
+    ir: Paiements
+    is: Paiements
+    menu: Paiements
+    oe: Paiements
+    ps: Paiements
+    rp: Paiements
+  Pick List:
+    admin: Liste de sélection
+    am: Liste de sélection
+    bp: Liste de sélection
+    ic: Liste de sélection
+    io: Liste de sélection
+    ir: Liste de sélection
+    is: Liste de sélection
+    menu: Liste de sélection
+    oe: Liste de sélection
+    ps: Liste de sélection
+  Pick Lists:
+    admin: Liste de sélection
+    bp: Liste de sélection
+    menu: Liste de sélection
+  Prepayment:
+    cp: Paiement à l'avance
+  Price:
+    ic: Prix
+    io: Prix
+    ir: Prix
+    is: Prix
+    oe: Prix
+    pos: Prix
+    ps: Prix
+  Pricegroup:
+    ct: Groupe de prix
+    ic: Groupe de prix
+    im: Groupe de prix
+    is: Groupe de prix
+    oe: Groupe de prix
+    pe: Groupe de prix
+    pos: Groupe de prix
+    ps: Groupe de prix
+  Pricegroup deleted!:
+    pe: Groupe de prix supprimé!
+  Pricegroup missing!:
+    pe: Groupe de prix manquant!
+  Pricegroup saved!:
+    pe: Groupe de prix enregistré!
+  Pricegroups:
+    admin: Groupes de prix
+    menu: Groupes de prix
+    pe: Groupes de prix
+  Pricelist:
+    ct: Liste de prix
+    im: Liste de prix
+  Print and Post:
+    aa: Imprimer et imputer
+    ap: Imprimer et imputer
+    ar: Imprimer et imputer
+    hr: Imprimer et imputer
+    ir: Imprimer et imputer
+    is: Imprimer et imputer
+    pos: Imprimer et imputer
+    ps: Imprimer et imputer
+  Printed:
+    ap: Imprimé
+    ar: Imprimé
+    arapprn: Imprimé
+    bp: Imprimé
+    cp: Imprimé
+    hr: Imprimé
+    ic: Imprimé
+    io: Imprimé
+    ir: Imprimé
+    is: Imprimé
+    jc: Imprimé
+    oe: Imprimé
+    pos: Imprimé
+    ps: Imprimé
+  Process Transactions:
+    am: Traiter transactions
+  Profit Center:
+    am: Axé profit
+  Project Number:
+    bp: Numéro de projet
+    ca: Numéro de projet
+    ct: Numéro de projet
+    im: Numéro de projet
+    jc: Numéro de projet
+    pe: Numéro de projet
+    ps: Numéro de projet
+    rp: Numéro de projet
+  Project Number missing!:
+    jc: Numéro du projet manquant!
+  Project/Job Number:
+    jc: Numero Projet/Job
+  Projects:
+    admin: Projets
+    menu: Projets
+    pe: Projets
+    ru: Projets
+  Purchase Order:
+    admin: Commande d'achat
+    am: Commande d'achat
+    bp: Commande d'achat
+    ct: Commande d'achat
+    ic: Commande d'achat
+    im: Commande d'achat
+    io: Commande d'achat
+    ir: Commande d'achat
+    is: Commande d'achat
+    menu: Commande d'achat
+    oe: Commande d'achat
+    ps: Commande d'achat
+    rd: Commande d'achat
+  Purchase Orders:
+    admin: Commandes d'achat
+    am: Commandes d'achat
+    bp: Commandes d'achat
+    ct: Commandes d'achat
+    ic: Commandes d'achat
+    im: Commandes d'achat
+    menu: Commandes d'achat
+    oe: Commandes d'achat
+    ru: Commandes d'achat
+  Quantity exceeds available units to stock!:
+    ic: La quantité dépasse le nombre d'unités en stock
+  Quotations:
+    admin: Devis
+    bp: Devis
+    ct: Devis
+    ic: Devis
+    im: Devis
+    menu: Devis
+    oe: Devis
+    ru: Devis
+  'RFQ ':
+    oe: 'Demande de devis '
+  ROP:
+    ic: Seuil réapprovisionnement
+    im: Seuil réapprovisionnement
+  Recd:
+    ic: Reçu
+    io: Reçu
+    ir: Reçu
+    is: Reçu
+    oe: Reçu
+    ps: Reçu
+  Receipt:
+    aa: Reçu
+    admin: Reçu
+    ap: Reçu
+    ar: Reçu
+    cp: Reçu
+    menu: Reçu
+    ps: Reçu
+  Receipts:
+    admin: Reçus
+    cp: Reçus
+    menu: Reçus
+    pos: Reçus
+    ps: Reçus
+    rp: Reçus
+  Reconciliation Report:
+    rc: Rapport de rapprochement
+  Recurring Transactions:
+    admin: Transactions périodiques
+    am: Transactions périodiques
+    menu: Transactions périodiques
+  Remove Audit trail up to:
+    am: Annuler la journalisation des accès aux écritures clôturées jusqu'au
+  Removing marked entries from queue ...:
+    bp: Suppression des éléments sélectionnés de la file d'attente ...
+  Reports:
+    admin: Rapports
+    ct: Rapports
+    gl: Rapports
+    im: Rapports
+    menu: Rapports
+  Retained Earnings:
+    am: Éxcédents non distribués
+  Role:
+    hr: Rôle
+  SIC:
+    admin: Code secteur économique
+    ct: Code secteur économique
+    im: Code secteur économique
+    menu: Code secteur économique
+  SIC deleted!:
+    am: Code secteur économique effacé!
+  SIC saved!:
+    am: Code secteur économique enregistré!
+  SSN:
+    hr: Numéro sécurité sociale
+  Sale:
+    admin: Vente
+    menu: Vente
+  Sales Invoice:
+    admin: Facture de vente
+    am: Facture de vente
+    ct: Facture de vente
+    ic: Facture de vente
+    im: Facture de vente
+    menu: Facture de vente
+    oe: Facture de vente
+    rd: Facture de vente
+  'Sales Invoice ':
+    gl: 'Facture de vente '
+  Sales Invoice.:
+    aa: Facture de vente.
+    ap: Facture de vente.
+    ar: Facture de vente.
+    ps: Facture de vente.
+  Sales Invoices:
+    admin: Factures de vente
+    ct: Factures de vente
+    ic: Factures de vente
+    im: Factures de vente
+    menu: Factures de vente
+    ru: Factures de vente
+  Sales Order:
+    admin: Commande de vente
+    am: Commande de vente
+    bp: Commande de vente
+    ct: Commande de vente
+    ic: Commande de vente
+    im: Commande de vente
+    io: Commande de vente
+    ir: Commande de vente
+    is: Commande de vente
+    menu: Commande de vente
+    oe: Commande de vente
+    ps: Commande de vente
+    rd: Commande de vente
+  Sales Order Number:
+    am: Numéro de commande de vente
+  Sales Orders:
+    admin: Commandes de vente
+    am: Commandes de vente
+    bp: Commandes de vente
+    ct: Commandes de vente
+    ic: Commandes de vente
+    im: Commandes de vente
+    menu: Commandes de vente
+    oe: Commandes de vente
+    ru: Commandes de vente
+  Sales Quotation Number:
+    am: Numéro de devis de vente
+  Salesperson:
+    aa: Vendeur
+    ap: Vendeur
+    ar: Vendeur
+    ct: Vendeur
+    im: Vendeur
+    is: Vendeur
+    oe: Vendeur
+    pos: Vendeur
+    ps: Vendeur
+    rp: Vendeur
+  Save Pricelist:
+    ct: Enregistrer la liste de prix
+    im: Enregistrer la liste de prix
+  Save Schedule:
+    ap: Enregistrer transaction planifiée
+    ar: Enregistrer transaction planifiée
+    arap: Enregistrer transaction planifiée
+    cp: Enregistrer transaction planifiée
+    gl: Enregistrer transaction planifiée
+    hr: Enregistrer transaction planifiée
+    ir: Enregistrer transaction planifiée
+    is: Enregistrer transaction planifiée
+    oe: Enregistrer transaction planifiée
+    ps: Enregistrer transaction planifiée
+    rp: Enregistrer transaction planifiée
+  Schedule:
+    aa: Planification
+    ap: Planification
+    ar: Planification
+    gl: Planification
+    ir: Planification
+    is: Planification
+    oe: Planification
+    ps: Planification
+  Scheduled:
+    ap: Planifié
+    ar: Planifié
+    arapprn: Planifié
+    cp: Planifié
+    gl: Planifié
+    hr: Planifié
+    ic: Planifié
+    io: Planifié
+    ir: Planifié
+    is: Planifié
+    oe: Planifié
+    ps: Planifié
+  Screen:
+    ap: Écran
+    ar: Écran
+    arapprn: Écran
+    cp: Écran
+    hr: Écran
+    ic: Écran
+    io: Écran
+    ir: Écran
+    is: Écran
+    jc: Écran
+    oe: Écran
+    pos: Écran
+    ps: Écran
+    rp: Écran
+  Select Customer:
+    pe: Choix Client
+  Select from one of the projects below:
+    ap: Sélectionner un des projets ci-dessous
+    ar: Sélectionner un des projets ci-dessous
+    arap: Sélectionner un des projets ci-dessous
+    cp: Sélectionner un des projets ci-dessous
+    gl: Sélectionner un des projets ci-dessous
+    hr: Sélectionner un des projets ci-dessous
+    ir: Sélectionner un des projets ci-dessous
+    is: Sélectionner un des projets ci-dessous
+    oe: Sélectionner un des projets ci-dessous
+    ps: Sélectionner un des projets ci-dessous
+    rp: Sélectionner un des projets ci-dessous
+  Select items:
+    ct: Sélectionner éléments
+    ic: Sélectionner éléments
+    im: Sélectionner éléments
+    io: Sélectionner éléments
+    ir: Sélectionner éléments
+    is: Sélectionner éléments
+    jc: Sélectionner éléments
+    oe: Sélectionner éléments
+    ps: Sélectionner éléments
+  Select payment:
+    ap: Sélectionner le payement
+    ar: Sélectionner le payement
+    arapprn: Sélectionner le payement
+    cp: Sélectionner le payement
+    hr: Sélectionner le payement
+    ps: Sélectionner le payement
+  Serial No.:
+    ic: N° série
+    io: N° série
+    ir: N° série
+    is: N° série
+    oe: N° série
+    ps: N° série
+  Service:
+    rd: Produit Non stocké
+  Service Code:
+    jc: Code Service/Produit
+    pe: Code Service/Produit
+  Service Code missing!:
+    jc: Code Service/Produit Manquant!
+  Services:
+    admin: Prestations de services
+    ic: Prestations de services
+    menu: Prestations de services
+  Session Timeout:
+    am: Fin de session
+  Session expired!:
+    admin: Session terminée!
+    pw: Session terminée!
+  Ship to:
+    ir: Expédier à
+    is: Expédier à
+    oe: Expédier à
+    ps: Expédier à
+  Sort by:
+    ic: Trie par
+    io: Trie par
+    ir: Trie par
+    is: Trie par
+    oe: Trie par
+    ps: Trie par
+  Standard Industrial Codes:
+    am: Code secteur économique
+  Startdate:
+    ap: Date de début
+    ar: Date de début
+    arap: Date de début
+    cp: Date de début
+    ct: Date de début
+    gl: Date de début
+    hr: Date de début
+    im: Date de début
+    ir: Date de début
+    is: Date de début
+    jc: Date de début
+    oe: Date de début
+    pe: Date de début
+    ps: Date de début
+    rp: Date de début
+  State/Province:
+    am: Région/État
+    ct: Région/État
+    hr: Région/État
+    ic: Région/État
+    im: Région/État
+    io: Région/État
+    ir: Région/État
+    is: Région/État
+    oe: Région/État
+    ps: Région/État
+  Statement sent to:
+    ps: Relevé envoyé à
+    rp: Relevé envoyé à
+  Statements sent to printer!:
+    ps: Relevés envoyés à l'imprimante!
+    rp: Relevés envoyés à l'imprimante!
+  Stock Assembly:
+    admin: Stock de produits
+    ic: Stock de produits
+    menu: Stock de produits
+  Stores Card saved!:
+    jc: Fiche Production Enregistree
+  Sub-contract GIFI:
+    ct: Code d'identification comptable ou fiscale - Sous-traitance
+    im: Code d'identification comptable ou fiscale - Sous-traitance
+  Subtotal:
+    aa: Sous total
+    ap: Sous total
+    ar: Sous total
+    ca: Sous total
+    ct: Sous total
+    gl: Sous total
+    hr: Sous total
+    ic: Sous total
+    im: Sous total
+    io: Sous total
+    ir: Sous total
+    is: Sous total
+    jc: Sous total
+    oe: Sous total
+    pos: Sous total
+    ps: Sous total
+    rp: Sous total
+    vr: Sous total
+  System:
+    admin: Système
+    menu: Système
+  System Defaults:
+    am: Préférences système
+  Taxable:
+    am: Soumis à
+  Taxes saved!:
+    am: SuccÃs Enregistrement Comptes TVA-Taxes
+  Template saved!:
+    am: Squelette enregistré!
+  Templates:
+    admin: Squelettes
+  Terms:
+    aa: Crédit limité à
+    ap: Crédit limité à
+    ar: Crédit limité à
+    ct: Crédit limité à
+    im: Crédit limité à
+    ir: Crédit limité à
+    is: Crédit limité à
+    oe: Crédit limité à
+    ps: Crédit limité à
+  Text Templates:
+    admin: Squelettes texte
+    menu: Squelettes texte
+  Time Card deleted!:
+    jc: Fiche de Temps Supprimee!
+  Time Card saved!:
+    jc: Fiche de Temps Enregistree!
+  To:
+    aa: À
+    ap: À
+    ar: À
+    arap: À
+    bp: À
+    ca: À
+    cp: À
+    ct: À
+    gl: À
+    hr: À
+    ic: À
+    im: À
+    io: À
+    ir: À
+    is: À
+    jc: À
+    oe: À
+    pe: À
+    pos: À
+    ps: À
+    rc: À
+    rp: À
+    vr: À
+  Trade Discount:
+    is: Escompte commercial
+    oe: Escompte commercial
+    pos: Escompte commercial
+    ps: Escompte commercial
+  Transaction:
+    aa: Écriture
+    am: Écriture
+    ap: Écriture
+    ar: Écriture
+    ps: Écriture
+  Transaction deleted!:
+    aa: Écriture supprimée!
+    ap: Écriture supprimée!
+    ar: Écriture supprimée!
+    gl: Écriture supprimée!
+    hr: Écriture supprimée!
+    ps: Écriture supprimée!
+  Transaction posted!:
+    aa: Écriture enregistrée!
+    ap: Écriture enregistrée!
+    ar: Écriture enregistrée!
+    gl: Écriture enregistrée!
+    hr: Écriture enregistrée!
+    ps: Écriture enregistrée!
+  Transaction reversal enforced for all dates:
+    am: Inversion des écritures exécutée pour toutes les dates
+  Transactions:
+    admin: Mouvements
+    menu: Mouvements
+  Trial Balance:
+    admin: Balance Globale
+    menu: Balance Globale
+    ps: Balance Globale
+    rp: Balance Globale
+    rpss: Balance Globale
+  Update:
+    aa: Mettre à jour
+    ap: Mettre à jour
+    ar: Mettre à jour
+    cp: Mettre à jour
+    ct: Mettre à jour
+    gl: Mettre à jour
+    hr: Mettre à jour
+    ic: Mettre à jour
+    im: Mettre à jour
+    ir: Mettre à jour
+    is: Mettre à jour
+    jc: Mettre à jour
+    oe: Mettre à jour
+    pe: Mettre à jour
+    pos: Mettre à jour
+    ps: Mettre à jour
+    rc: Mettre à jour
+  Updated:
+    ic: Mis à jour
+    im: Mis à jour
+    pe: Mis à jour
+  Upgrading to Version:
+    am: Mise à jour à la version
+    login: Mise à jour à la version
+  Vendor:
+    aa: Fournisseur
+    ap: Fournisseur
+    ar: Fournisseur
+    bp: Fournisseur
+    cp: Fournisseur
+    ic: Fournisseur
+    im: Fournisseur
+    ir: Fournisseur
+    is: Fournisseur
+    oe: Fournisseur
+    pe: Fournisseur
+    ps: Fournisseur
+    rd: Fournisseur
+    rp: Fournisseur
+    vr: Fournisseur
+  Vendor History:
+    ct: Historique fournisseurs
+    im: Historique fournisseurs
+  Vendor Invoice:
+    admin: Facture d'achat
+    am: Facture d'achat
+    ct: Facture d'achat
+    ic: Facture d'achat
+    im: Facture d'achat
+    menu: Facture d'achat
+    oe: Facture d'achat
+    rd: Facture d'achat
+  'Vendor Invoice ':
+    gl: "Facture d'achat "
+  Vendor Invoice.:
+    aa: Facture d'achat.
+    ap: Facture d'achat.
+    ar: Facture d'achat.
+    ps: Facture d'achat.
+  Vendor Invoices:
+    admin: Factures d'achat
+    ct: Factures d'achat
+    ic: Factures d'achat
+    im: Factures d'achat
+    menu: Factures d'achat
+    ru: Factures d'achat
+  Vendor Number:
+    aa: Numéro de fournisseur
+    am: Numéro de fournisseur
+    ap: Numéro de fournisseur
+    ar: Numéro de fournisseur
+    arap: Numéro de fournisseur
+    bp: Numéro de fournisseur
+    cp: Numéro de fournisseur
+    ct: Numéro de fournisseur
+    gl: Numéro de fournisseur
+    hr: Numéro de fournisseur
+    ic: Numéro de fournisseur
+    im: Numéro de fournisseur
+    ir: Numéro de fournisseur
+    is: Numéro de fournisseur
+    oe: Numéro de fournisseur
+    pe: Numéro de fournisseur
+    ps: Numéro de fournisseur
+    rp: Numéro de fournisseur
+    vr: Numéro de fournisseur
+  Vendor deleted!:
+    ct: Fournisseur supprimé!
+    im: Fournisseur supprimé!
+  Vendor missing!:
+    aa: Fournisseur manquant!
+    ap: Fournisseur manquant!
+    ar: Fournisseur manquant!
+    ir: Fournisseur manquant!
+    oe: Fournisseur manquant!
+    ps: Fournisseur manquant!
+  Vendor not on file!:
+    ap: Fournisseur absent du fichier!
+    ar: Fournisseur absent du fichier!
+    arap: Fournisseur absent du fichier!
+    cp: Fournisseur absent du fichier!
+    gl: Fournisseur absent du fichier!
+    hr: Fournisseur absent du fichier!
+    ic: Fournisseur absent du fichier!
+    ir: Fournisseur absent du fichier!
+    is: Fournisseur absent du fichier!
+    oe: Fournisseur absent du fichier!
+    pe: Fournisseur absent du fichier!
+    ps: Fournisseur absent du fichier!
+    rp: Fournisseur absent du fichier!
+  Vendor saved!:
+    ct: Fournisseur enregistré!
+    im: Fournisseur enregistré!
+  Vendors:
+    admin: Fournisseurs
+    ct: Fournisseurs
+    im: Fournisseurs
+    menu: Fournisseurs
+    ru: Fournisseurs
+  Work Order:
+    admin: Fiche de traitement
+    am: Fiche de traitement
+    bp: Fiche de traitement
+    ic: Fiche de traitement
+    io: Fiche de traitement
+    ir: Fiche de traitement
+    is: Fiche de traitement
+    menu: Fiche de traitement
+    oe: Fiche de traitement
+    ps: Fiche de traitement
+  Work Orders:
+    admin: Fiche de traitement
+    bp: Fiche de traitement
+    menu: Fiche de traitement
+  Yearend:
+    admin: Écriture de fin d'exercice
+    am: Écriture de fin d'exercice
+    menu: Écriture de fin d'exercice
+  Yearend date missing!:
+    am: Écriture de fin d'exercice - date manquante
+  Yearend posted!:
+    am: Écriture de fin d'exercice enregistrée
+  Yearend posting failed!:
+    am: Échec enregistrement écriture fin d'exercice!
+  You are logged out:
+    admin: Vous êtes déconnecté!
+  You are posting an existing transaction!:
+    ap: Vous enregistrez une transaction existante!
+    ar: Vous enregistrez une transaction existante!
+    arap: Vous enregistrez une transaction existante!
+    cp: Vous enregistrez une transaction existante!
+    gl: Vous enregistrez une transaction existante!
+    hr: Vous enregistrez une transaction existante!
+    ir: Vous enregistrez une transaction existante!
+    is: Vous enregistrez une transaction existante!
+    oe: Vous enregistrez une transaction existante!
+    ps: Vous enregistrez une transaction existante!
+    rp: Vous enregistrez une transaction existante!
+  You are printing and posting an existing transaction!:
+    ap: Vous imprimez et enregistrez une transaction existante!
+    ar: Vous imprimez et enregistrez une transaction existante!
+    arap: Vous imprimez et enregistrez une transaction existante!
+    cp: Vous imprimez et enregistrez une transaction existante!
+    gl: Vous imprimez et enregistrez une transaction existante!
+    hr: Vous imprimez et enregistrez une transaction existante!
+    ir: Vous imprimez et enregistrez une transaction existante!
+    is: Vous imprimez et enregistrez une transaction existante!
+    oe: Vous imprimez et enregistrez une transaction existante!
+    ps: Vous imprimez et enregistrez une transaction existante!
+    rp: Vous imprimez et enregistrez une transaction existante!
+  You are saving an existing order:
+    ap: Vous enregistrez une commande existante
+    ar: Vous enregistrez une commande existante
+    arap: Vous enregistrez une commande existante
+    cp: Vous enregistrez une commande existante
+    gl: Vous enregistrez une commande existante
+    hr: Vous enregistrez une commande existante
+    ir: Vous enregistrez une commande existante
+    is: Vous enregistrez une commande existante
+    oe: Vous enregistrez une commande existante
+    ps: Vous enregistrez une commande existante
+    rp: Vous enregistrez une commande existante
+  You are saving an existing quotation:
+    ap: Vous enregistrez un devis existant
+    ar: Vous enregistrez un devis existant
+    arap: Vous enregistrez un devis existant
+    cp: Vous enregistrez un devis existant
+    gl: Vous enregistrez un devis existant
+    hr: Vous enregistrez un devis existant
+    ir: Vous enregistrez un devis existant
+    is: Vous enregistrez un devis existant
+    oe: Vous enregistrez un devis existant
+    ps: Vous enregistrez un devis existant
+    rp: Vous enregistrez un devis existant
+  Zip/Postal Code:
+    ct: Code postal
+    hr: Code postal
+    ic: Code postal
+    im: Code postal
+    io: Code postal
+    ir: Code postal
+    is: Code postal
+    oe: Code postal
+    ps: Code postal
+  account cannot be set to any other type of account:
+    am: compte ne peut pas être changé vers un autre type de compte
+  failed:
+    am: échec
+  posted!:
+    ir: enregistré!
+    is: enregistré!
+    ps: enregistré!
+  time(s):
+    ap: temps
+    ar: temps
+    arap: temps
+    cp: temps
+    gl: temps
+    hr: temps
+    ir: temps
+    is: temps
+    oe: temps
+    ps: temps
+    rp: temps

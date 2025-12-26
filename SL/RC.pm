@@ -1,21 +1,20 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2006
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
 # Account reconciliation routines
 #
 #======================================================================
+use v5.40;
 
-package RC;
+package SL::RC;
 
 
-sub paymentaccounts {
-  my ($self, $myconfig, $form) = @_;
+sub paymentaccounts ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -28,9 +27,9 @@ sub paymentaccounts {
                  AND c.closed = '0'
                  ORDER BY c.accno|;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     $ref->{description} = $ref->{translation} if $ref->{translation};
     push @{ $form->{PR} }, $ref;
   }
@@ -43,8 +42,7 @@ sub paymentaccounts {
 }
 
 
-sub payment_transactions {
-  my ($self, $myconfig, $form) = @_;
+sub payment_transactions ($, $myconfig, $form) {
 
   # connect to database, turn AutoCommit off
   my $dbh = $form->dbconnect_noauto($myconfig);
@@ -128,7 +126,7 @@ sub payment_transactions {
               |;
   ($form->{fx_endingbalance}) = $dbh->selectrow_array($query);
 
-  my %defaults = $form->get_defaults($dbh, \@{['fx%_accno_id','precision', 'company']});
+  my %defaults = $form->get_defaults($dbh, ['fx%_accno_id','precision', 'company']);
   for (qw(precision company)) { $form->{$_} = $defaults{$_} }
 
   my $fx_transaction;
@@ -173,9 +171,9 @@ sub payment_transactions {
     }
   }
 
-  my $union;
+  my $union = '';
 
-  $query = "";
+  $query = '';
 
   for (1 .. 2) {
     $query .= qq|$union
@@ -237,20 +235,20 @@ sub payment_transactions {
   $query .= " ORDER BY 1,2,3";
 
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  my $sameitem;
-  my $samename;
+  my $sameitem = '';
+  my $samename = '';
   my $i = -1;
   my $sw;
 
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
-
+  while (my $ref = $sth->fetchrow_hashref) {
     if ($i == -1) {
       $sw = $ref->{amount};
     }
 
     $ref->{oldcleared} = $ref->{cleared};
+    $ref->{source} //= '';
 
     if ($form->{summary}) {
 
@@ -293,8 +291,7 @@ sub payment_transactions {
 }
 
 
-sub reconcile {
-  my ($self, $myconfig, $form) = @_;
+sub reconcile ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -302,7 +299,7 @@ sub reconcile {
   my $query = qq|SELECT id FROM chart
                  WHERE accno = '$form->{accno}'|;
   my ($chart_id) = $dbh->selectrow_array($query);
-  $chart_id *= 1;
+  ($chart_id //= 0) *= 1;
 
   my $i;
   my $trans_id;
@@ -311,20 +308,20 @@ sub reconcile {
 
   # clear flags
   for $i (1 .. $form->{rowcount}) {
-    if ($form->{"datecleared_$i"} ne $form->{"oldcleared_$i"}) {
+    if (($form->{"datecleared_$i"} // '') ne $form->{"oldcleared_$i"}) {
 
       $cleared = ($form->{"cleared_$i"}) ? $form->{recdate} : '';
-      $cleared = $form->dbquote($cleared, SQL_DATE);
+      $cleared = $form->dbquote($cleared, 'SQL_DATE');
       $source = ($form->{"source_$i"}) ? qq|AND source = |.$dbh->quote($form->{"source_$i"}) : qq|AND (source = '' OR source IS NULL)|;
 
-      foreach $trans_id (split / /, $form->{"id_$i"}) {
+      foreach $trans_id (split / /, $form->{"id_$i"} // '') {
         $query = qq|UPDATE acc_trans SET
                     cleared = $cleared
                     WHERE trans_id = $trans_id
-                    AND transdate = |.$form->dbquote($form->{"transdate_$i"}, SQL_DATE).qq|
+                    AND transdate = |.$form->dbquote($form->{"transdate_$i"}, 'SQL_DATE').qq|
                     AND chart_id = $chart_id
                     $source|;
-        $dbh->do($query) || $form->dberror($query);
+        $dbh->do($query) or $form->dberror($query);
       }
 
     }
@@ -341,7 +338,7 @@ sub reconcile {
 
 =head1 NAME
 
-RC - Account reconciliation routines
+SL::RC - Account reconciliation routines
 
 =head1 DESCRIPTION
 
@@ -353,14 +350,14 @@ L<SL::RC> implements the following functions:
 
 =head2 payment_transactions
 
-  RC->payment_transactions($myconfig, $form);
+  SL::RC->payment_transactions($myconfig, $form);
 
 =head2 paymentaccounts
 
-  RC->paymentaccounts($myconfig, $form);
+  SL::RC->paymentaccounts($myconfig, $form);
 
 =head2 reconcile
 
-  RC->reconcile($myconfig, $form);
+  SL::RC->reconcile($myconfig, $form);
 
 =cut

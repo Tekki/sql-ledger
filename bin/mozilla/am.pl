@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -15,6 +14,7 @@
 use SL::AM;
 use SL::CA;
 use SL::Form;
+use SL::Locale;
 use SL::User;
 use SL::RP;
 use SL::GL;
@@ -92,7 +92,7 @@ sub edit_account {
   $form->{accno} =~ s/\\'/'/g;
   $form->{accno} =~ s/\\\\/\\/g;
 
-  AM->get_account(\%myconfig, \%$form);
+  SL::AM->get_account(\%myconfig, $form);
 
   for (split(/:/, $form->{link})) { $form->{$_} = "checked" }
 
@@ -306,7 +306,7 @@ sub save_account {
     $form->error($locale->text('Cannot set multiple options for')." $item") if $i > 1;
   }
 
-  if (AM->save_account(\%myconfig, \%$form)) {
+  if (SL::AM->save_account(\%myconfig, $form)) {
     $form->redirect($locale->text('Account saved!'));
   } else {
     $form->error($locale->text('Cannot save account!'));
@@ -317,7 +317,7 @@ sub save_account {
 
 sub list_account {
 
-  CA->all_accounts(\%myconfig, \%$form);
+  SL::CA->all_accounts(\%myconfig, $form);
 
   $form->{title} = $locale->text('Chart of Accounts') . " / $form->{company}";
 
@@ -446,7 +446,7 @@ sub delete_account {
     }
   }
 
-  if (AM->delete_account(\%myconfig, \%$form)) {
+  if (SL::AM->delete_account(\%myconfig, $form)) {
     $form->redirect($locale->text('Account deleted!'));
   } else {
     $form->error($locale->text('Cannot delete account!'));
@@ -460,7 +460,7 @@ sub list_gifi {
   @{ $form->{fields} } = qw(accno description);
   $form->{table} = "gifi";
 
-  AM->gifi_accounts(\%myconfig, \%$form);
+  SL::AM->gifi_accounts(\%myconfig, $form);
 
   $form->{title} = $locale->text('GIFI') . " / $form->{company}";
 
@@ -552,7 +552,7 @@ sub edit_gifi {
 
   $accno = $form->{accno};
 
-  AM->get_gifi(\%myconfig, \%$form);
+  SL::AM->get_gifi(\%myconfig, $form);
 
   if ($form->{accno}) {
     &gifi_header;
@@ -647,7 +647,7 @@ sub gifi_footer {
 sub save_gifi {
 
   $form->isblank("accno", $locale->text('GIFI missing!'));
-  AM->save_gifi(\%myconfig, \%$form);
+  SL::AM->save_gifi(\%myconfig, $form);
   $form->redirect($locale->text('GIFI saved!'));
 
 }
@@ -657,7 +657,7 @@ sub copy_to_coa {
 
   $form->isblank("accno", $locale->text('GIFI missing!'));
 
-  AM->save_gifi(\%myconfig, \%$form);
+  SL::AM->save_gifi(\%myconfig, $form);
 
   delete $form->{id};
   $form->{gifi_accno} = $form->{accno};
@@ -673,7 +673,7 @@ sub copy_to_coa {
 
 sub delete_gifi {
 
-  AM->delete_gifi(\%myconfig, \%$form);
+  SL::AM->delete_gifi(\%myconfig, $form);
   $form->redirect($locale->text('GIFI deleted!'));
 
 }
@@ -696,7 +696,7 @@ sub edit_department {
 
   $form->{title} = $locale->text('Edit Department');
 
-  AM->get_department(\%myconfig, \%$form);
+  SL::AM->get_department(\%myconfig, $form);
 
   &department_header;
   &form_footer;
@@ -706,7 +706,7 @@ sub edit_department {
 
 sub list_department {
 
-  AM->departments(\%myconfig, \%$form);
+  SL::AM->departments(\%myconfig, $form);
 
   $form->{callback} = "$form->{script}?action=list_department";
 
@@ -768,8 +768,8 @@ sub list_department {
    $column_data{description} = qq|<td><a href=$form->{script}?action=edit_department&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{description}</td>|;
    $column_data{cost} = qq|<td align=center>$costcenter</td>|;
    $column_data{profit} = qq|<td align=center>$profitcenter</td>|;
-   $column_data{up} = qq|<td><a href=$form->{script}?action=move&db=department&fld=id&id=$ref->{id}&move=up&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$images/up.png alt="+" border=0></td>|;
-   $column_data{down} = qq|<td><a href=$form->{script}?action=move&db=department&fld=id&id=$ref->{id}&move=down&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$images/down.png alt="-" border=0></td>|;
+   $column_data{up} = qq|<td><a href=$form->{script}?action=move&db=department&fld=id&id=$ref->{id}&move=up&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$slconfig{images}/up.png alt="+" border=0></td>|;
+   $column_data{down} = qq|<td><a href=$form->{script}?action=move&db=department&fld=id&id=$ref->{id}&move=down&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$slconfig{images}/down.png alt="-" border=0></td>|;
 
    for (@column_index) { print "$column_data{$_}\n" }
 
@@ -870,7 +870,7 @@ sub department_header {
 sub save_department {
 
   $form->isblank("description", $locale->text('Description missing!'));
-  AM->save_department(\%myconfig, \%$form);
+  SL::AM->save_department(\%myconfig, $form);
   $form->redirect($locale->text('Department saved!'));
 
 }
@@ -878,7 +878,7 @@ sub save_department {
 
 sub delete_department {
 
-  AM->delete_department(\%myconfig, \%$form);
+  SL::AM->delete_department(\%myconfig, $form);
   $form->redirect($locale->text('Department deleted!'));
 
 }
@@ -900,7 +900,7 @@ sub edit_business {
 
   $form->{title} = $locale->text('Edit Business');
 
-  AM->get_business(\%myconfig, \%$form);
+  SL::AM->get_business(\%myconfig, $form);
 
   &business_header;
 
@@ -912,7 +912,7 @@ sub edit_business {
 
 sub list_business {
 
-  AM->business(\%myconfig, \%$form);
+  SL::AM->business(\%myconfig, $form);
 
   $form->{callback} = "$form->{script}?action=list_business";
 
@@ -970,8 +970,8 @@ sub list_business {
 
    $column_data{description} = qq|<td><a href=$form->{script}?action=edit_business&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{description}</td>|;
    $column_data{discount} = qq|<td align=right>$discount</td>|;
-   $column_data{up} = qq|<td><a href=$form->{script}?action=move&db=business&fld=id&id=$ref->{id}&move=up&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$images/up.png alt="+" border=0></td>|;
-   $column_data{down} = qq|<td><a href=$form->{script}?action=move&db=business&fld=id&id=$ref->{id}&move=down&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$images/down.png alt="-" border=0></td>|;
+   $column_data{up} = qq|<td><a href=$form->{script}?action=move&db=business&fld=id&id=$ref->{id}&move=up&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$slconfig{images}/up.png alt="+" border=0></td>|;
+   $column_data{down} = qq|<td><a href=$form->{script}?action=move&db=business&fld=id&id=$ref->{id}&move=down&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$slconfig{images}/down.png alt="-" border=0></td>|;
 
    for (@column_index) { print "$column_data{$_}\n" }
 
@@ -1063,7 +1063,7 @@ sub business_header {
 sub save_business {
 
   $form->isblank("description", $locale->text('Description missing!'));
-  AM->save_business(\%myconfig, \%$form);
+  SL::AM->save_business(\%myconfig, $form);
   $form->redirect($locale->text('Business saved!'));
 
 }
@@ -1071,7 +1071,7 @@ sub save_business {
 
 sub delete_business {
 
-  AM->delete_business(\%myconfig, \%$form);
+  SL::AM->delete_business(\%myconfig, $form);
   $form->redirect($locale->text('Business deleted!'));
 
 }
@@ -1095,7 +1095,7 @@ sub edit_paymentmethod {
 
   $form->{title} = $locale->text('Edit Payment Method');
 
-  AM->get_paymentmethod(\%myconfig, \%$form);
+  SL::AM->get_paymentmethod(\%myconfig, $form);
 
   &paymentmethod_header;
 
@@ -1107,7 +1107,7 @@ sub edit_paymentmethod {
 
 sub list_paymentmethod {
 
-  AM->paymentmethod(\%myconfig, \%$form);
+  SL::AM->paymentmethod(\%myconfig, $form);
 
   my $href = "$form->{script}?action=list_paymentmethod&direction=$form->{direction}&oldsort=$form->{oldsort}&path=$form->{path}&login=$form->{login}";
 
@@ -1174,8 +1174,8 @@ sub list_paymentmethod {
    $column_data{description} = qq|<td><a href=$form->{script}?action=edit_paymentmethod&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{description}</td>|;
    $column_data{fee} = qq|<td align=right>$fee</td>|;
    $column_data{roundchange} = qq|<td align=right>$roundchange</td>|;
-   $column_data{up} = qq|<td><a href=$form->{script}?action=move&db=paymentmethod&fld=id&id=$ref->{id}&move=up&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$images/up.png alt="+" border=0></td>|;
-   $column_data{down} = qq|<td><a href=$form->{script}?action=move&db=paymentmethod&fld=id&id=$ref->{id}&move=down&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$images/down.png alt="-" border=0></td>|;
+   $column_data{up} = qq|<td><a href=$form->{script}?action=move&db=paymentmethod&fld=id&id=$ref->{id}&move=up&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$slconfig{images}/up.png alt="+" border=0></td>|;
+   $column_data{down} = qq|<td><a href=$form->{script}?action=move&db=paymentmethod&fld=id&id=$ref->{id}&move=down&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$slconfig{images}/down.png alt="-" border=0></td>|;
 
    for (@column_index) { print "$column_data{$_}\n" }
 
@@ -1281,7 +1281,7 @@ sub paymentmethod_header {
 sub save_paymentmethod {
 
   $form->isblank("description", $locale->text('Description missing!'));
-  AM->save_paymentmethod(\%myconfig, \%$form);
+  SL::AM->save_paymentmethod(\%myconfig, $form);
   $form->redirect($locale->text('Payment Method saved!'));
 
 }
@@ -1289,7 +1289,7 @@ sub save_paymentmethod {
 
 sub delete_paymentmethod {
 
-  AM->delete_paymentmethod(\%myconfig, \%$form);
+  SL::AM->delete_paymentmethod(\%myconfig, $form);
   $form->redirect($locale->text('Payment Method deleted!'));
 
 }
@@ -1314,7 +1314,7 @@ sub edit_sic {
   $form->{code} =~ s/\\'/'/g;
   $form->{code} =~ s/\\\\/\\/g;
 
-  AM->get_sic(\%myconfig, \%$form);
+  SL::AM->get_sic(\%myconfig, $form);
   $form->{id} = $form->{code};
 
   &sic_header;
@@ -1327,7 +1327,7 @@ sub edit_sic {
 
 sub list_sic {
 
-  AM->sic(\%myconfig, \%$form);
+  SL::AM->sic(\%myconfig, $form);
 
   my $href = "$form->{script}?action=list_sic&direction=$form->{direction}&oldsort=$form->{oldsort}&path=$form->{path}&login=$form->{login}";
 
@@ -1486,7 +1486,7 @@ sub save_sic {
 
   $form->isblank("code", $locale->text('Code missing!'));
   $form->isblank("description", $locale->text('Description missing!'));
-  AM->save_sic(\%myconfig, \%$form);
+  SL::AM->save_sic(\%myconfig, $form);
   $form->redirect($locale->text('SIC saved!'));
 
 }
@@ -1494,7 +1494,7 @@ sub save_sic {
 
 sub delete_sic {
 
-  AM->delete_sic(\%myconfig, \%$form);
+  SL::AM->delete_sic(\%myconfig, $form);
   $form->redirect($locale->text('SIC deleted!'));
 
 }
@@ -1519,7 +1519,7 @@ sub edit_language {
   $form->{code} =~ s/\\'/'/g;
   $form->{code} =~ s/\\\\/\\/g;
 
-  AM->get_language(\%myconfig, \%$form);
+  SL::AM->get_language(\%myconfig, $form);
   $form->{id} = $form->{code};
 
   &language_header;
@@ -1532,7 +1532,7 @@ sub edit_language {
 
 sub list_language {
 
-  AM->language(\%myconfig, \%$form);
+  SL::AM->language(\%myconfig, $form);
 
   my $href = "$form->{script}?action=list_language&direction=$form->{direction}&oldsort=$form->{oldsort}&path=$form->{path}&login=$form->{login}";
 
@@ -1674,18 +1674,18 @@ sub save_language {
 
   $form->{code} =~ s/(\.\.|\*)//g;
 
-  AM->save_language(\%myconfig, \%$form);
+  SL::AM->save_language(\%myconfig, $form);
 
-  $targetdir = "$templates/$myconfig{templates}/$form->{code}";
+  $targetdir = "$slconfig{templates}/$myconfig{templates}/$form->{code}";
   $basedir = "$myconfig{templates}";
   $basedir = "$myconfig{templates}/$form->{copydir}" if $form->{copydir};
-  $basedir = "$templates/$basedir";
+  $basedir = "$slconfig{templates}/$basedir";
 
   umask(002);
 
   if (mkdir "$targetdir", oct("771")) {
     unless (-d "$basedir") {
-      $basedir = "$templates/$myconfig{templates}";
+      $basedir = "$slconfig{templates}/$myconfig{templates}";
     }
 
     opendir TEMPLATEDIR, "$basedir" or $form->error("$basedir : $!");
@@ -1697,18 +1697,18 @@ sub save_language {
 
     for (@templates) {
       if (-f "$basedir/$_") {
-        open(TEMP, "$basedir/$_") or $form->error("$basedir/$_ : $!");
+        open my $temp, "$basedir/$_" or $form->error("$basedir/$_ : $!");
 
         unless (-f "$targetdir/$_") {
-          open(NEW, ">$targetdir/$_") or $form->error("$targetdir/$_ : $!");
+          open my $new, ">$targetdir/$_" or $form->error("$targetdir/$_ : $!");
 
-          while ($line = <TEMP>) {
-            print NEW $line;
+          while ($line = <$temp>) {
+            print $new $line;
           }
-          close(NEW);
+          close $new;
         }
 
-        close(TEMP);
+        close $temp;
       }
     }
   } else {
@@ -1718,7 +1718,7 @@ sub save_language {
   unless ($form->{copydir}) {
     if ($form->{id} && ($form->{id} ne $form->{code})) {
       # remove old directory
-      $dir = "$templates/$myconfig{templates}/$form->{id}";
+      $dir = "$slconfig{templates}/$myconfig{templates}/$form->{id}";
       unlink <$dir/*>;
       rmdir "$dir";
     }
@@ -1765,29 +1765,21 @@ sub delete_language {
 sub yes_delete_language {
 
   # check if template dir is used by another dataset
-  open(FH, "$memberfile") or $form->error("$memberfile : $!\n");
-  @member = <FH>;
-  close(FH);
+  my %member;
+  eval { %member = Storable::retrieve("$slconfig{memberfile}.bin")->%*; };
+  $form->error("$slconfig{memberfile}.bin: $@") if $@;
 
-  %templates = ();
+  %templates;
 
-  while (@member) {
-    $_ = shift @member;
-    if (/^\[admin\@(.*)\]/) {
-      do {
-        if (/^templates=(.*)/) {
-          $templates{$1}++;
-        }
-        $_ = shift @member;
-      } until /^\s/;
-    }
+  for my $params (values %member) {
+    $slconfig{templates}{$params->{templates}}++ if $params->{templates};
   }
+  
+  SL::AM->delete_language(\%myconfig, $form);
 
-  AM->delete_language(\%myconfig, \%$form);
-
-  unless ($templates{$myconfig{templates}} > 1) {
+  unless ($slconfig{templates}{$myconfig{templates}} > 1) {
     # delete templates
-    $dir = "$templates/$myconfig{templates}/$form->{code}";
+    $dir = "$slconfig{templates}/$myconfig{templates}/$form->{code}";
     if (-d $dir) {
       unlink <$dir/*>;
       rmdir "$dir";
@@ -1800,7 +1792,7 @@ sub yes_delete_language {
 
 sub list_mimetypes {
 
-  AM->mimetypes(\%myconfig, \%$form);
+  SL::AM->mimetypes(\%myconfig, $form);
 
   my $href = "$form->{script}?action=list_mimetypes&direction=$form->{direction}&oldsort=$form->{oldsort}&path=$form->{path}&login=$form->{login}";
 
@@ -1983,7 +1975,7 @@ sub save_mimetype {
   $form->isblank("extension", $locale->text('Extension missing!'));
   $form->isblank("contenttype", $locale->text('Content-Type missing!'));
 
-  AM->save_mimetype(\%myconfig, \%$form);
+  SL::AM->save_mimetype(\%myconfig, $form);
 
   $form->redirect($locale->text('Mimetype saved!'));
 
@@ -1992,7 +1984,7 @@ sub save_mimetype {
 
 sub delete_mimetype {
 
-  AM->delete_mimetype(\%myconfig, \%$form);
+  SL::AM->delete_mimetype(\%myconfig, $form);
 
   $form->redirect($locale->text('Mimetype deleted!'));
 
@@ -2009,10 +2001,10 @@ sub display_stylesheet {
 
 sub list_templates {
 
-  AM->language(\%myconfig, \%$form);
+  SL::AM->language(\%myconfig, $form);
 
   if (! @{ $form->{ALL} }) {
-    $form->{file} = "$templates/$form->{file}";
+    $form->{file} = "$slconfig{templates}/$form->{file}";
     &display_form;
     exit;
   }
@@ -2077,7 +2069,7 @@ sub list_templates {
         <tr valign=top class=listrow$i>
 |;
 
-    $column_data{code} = qq|<td><a href=$form->{script}?action=display_form&file=$templates/$myconfig{templates}/$ref->{code}/$form->{file}&path=$form->{path}&login=$form->{login}>$ref->{code}</td>|;
+    $column_data{code} = qq|<td><a href=$form->{script}?action=display_form&file=$slconfig{templates}/$myconfig{templates}/$ref->{code}/$form->{file}&path=$form->{path}&login=$form->{login}>$ref->{code}</td>|;
     $column_data{description} = qq|<td>$ref->{description}</td>|;
 
    for (@column_index) { print "$column_data{$_}\n" }
@@ -2120,21 +2112,21 @@ sub display_form {
 
   $form->{file} =~ s/^(.:)*?\/|\.\.\/|\.\///g;
   $form->{file} =~ s/^\/*//g;
-  $form->{file} =~ s/$userspath//;
-  $form->{file} =~ s/$memberfile//;
+  $form->{file} =~ s/$slconfig{userspath}//;
+  $form->{file} =~ s/$slconfig{memberfile}//;
 
   @f = split /\//, $form->{file};
   $file = pop @f;
   $basedir = join '/', @f;
 
-  AM->load_template(\%$form, \@accessfolders, $locale->text('Access Denied!'));
+  SL::AM->load_template($form, $slconfig{accessfolders}, $locale->text('Access Denied!'));
 
   $form->{title} = $form->{file};
 
   $form->{body} =~ s/<%include\s+?(\S+)?\s+?(\S+)?%>/$1 <%include $2%>/g;
   $form->{body} =~ s/<%include\s+?(\S+)?%>/<a href=$form->{script}\?action=display_form&file=$basedir\/$1&path=$form->{path}&login=$form->{login}&callback=$callback>$1<\/a>/g;
 
-  $form->{body} =~ s/<%templates%>/$templates\/$myconfig{templates}/g;
+  $form->{body} =~ s/<%templates%>/$slconfig{templates}\/$myconfig{templates}/g;
   $form->{body} =~ s/<%language_code%>/$form->{language_code}/g;
   $form->{body} =~ s/<%if .*?%>|<%foreach .*?%>|<%end .*?%>//g;
 
@@ -2231,7 +2223,7 @@ $form->{body}
 
 sub edit_template {
 
-  AM->load_template(\%$form, \@accessfolders, $locale->text('Access Denied!'));
+  SL::AM->load_template($form, $slconfig{accessfolders}, $locale->text('Access Denied!'));
 
   $form->{title} = $form->{file};
   # convert &nbsp to &amp;nbsp;
@@ -2289,7 +2281,7 @@ $form->{body}</textarea>
 
 sub save_template {
 
-  AM->save_template(\%$form, \@accessfolders, $locale->text('Access Denied!'));
+  SL::AM->save_template($form, $slconfig{accessfolders}, $locale->text('Access Denied!'));
   $form->redirect($locale->text('Template saved!'));
 
 }
@@ -2298,7 +2290,7 @@ sub save_template {
 sub taxes {
 
   # get tax account numbers
-  AM->taxes(\%myconfig, \%$form);
+  SL::AM->taxes(\%myconfig, $form);
 
   my $i = 0;
   foreach my $ref (@{ $form->{taxrates} }) {
@@ -2464,7 +2456,7 @@ sub update_taxes {
 sub defaults {
 
   # get defaults for account numbers and last numbers
-  AM->defaultaccounts(\%myconfig, \%$form);
+  SL::AM->defaultaccounts(\%myconfig, $form);
 
   foreach my $key (keys %{ $form->{accno} }) {
     foreach my $accno (sort keys %{ $form->{accno}{$key} }) {
@@ -2741,7 +2733,7 @@ sub defaults {
     </td>
   </tr>|;
 
-  if ($gpg) {
+  if ($slconfig{gpg}) {
     print qq|
   <tr>
     <th class=listheading>|.$locale->text('Encryption').qq|</th>
@@ -2831,7 +2823,7 @@ sub workstations {
 
   # get printers etc.
   if (! $form->{have}) {
-    AM->workstations(\%myconfig, \%$form);
+    SL::AM->workstations(\%myconfig, $form);
   }
 
   $form->{title} = $locale->text('Workstations') . " / $form->{company}";
@@ -3076,7 +3068,7 @@ sub update_workstations {
 
 sub save_workstations {
 
-  if (AM->save_workstations(\%myconfig, \%$form)) {
+  if (SL::AM->save_workstations(\%myconfig, $form)) {
     $form->redirect($locale->text('Workstations saved!'));
   } else {
     $form->error($locale->text('Failed to save workstations!'));
@@ -3087,7 +3079,7 @@ sub save_workstations {
 
 sub config {
 
-  AM->get_defaults(\%myconfig, \%$form);
+  SL::AM->get_defaults(\%myconfig, $form);
 
   for (qw(mm-dd-yy mm/dd/yy dd-mm-yy dd/mm/yy dd.mm.yy yyyy-mm-dd)) { $form->{selectdateformat} .= "$_\n" }
 
@@ -3100,7 +3092,7 @@ sub config {
   my %checked;
   $checked{emailcopy} = "checked" if $myconfig{emailcopy};
 
-  my %countrycodes = User->country_codes;
+  my %countrycodes = SL::User->country_codes;
 
   for (sort { $countrycodes{$a} cmp $countrycodes{$b} } keys %countrycodes) {
     $form->{selectcountrycode} .= qq|${_}--$countrycodes{$_}|;
@@ -3135,7 +3127,7 @@ sub config {
 xml--|.$locale->text('XML').qq|
 txt--|.$locale->text('Text');
 
-  if ($latex) {
+  if ($slconfig{latex}) {
     $selectoutputformat .= qq|
 ps--Postscript
 pdf--PDF|;
@@ -3172,7 +3164,7 @@ pdf--PDF|;
 
   $form->{type} = "preferences";
 
-  $selectencoding = User->encoding($myconfig{dbdriver});
+  $selectencoding = SL::User->encoding($myconfig{dbdriver});
   $myconfig{charset} = 'UTF8';
 
   $form->header;
@@ -3303,14 +3295,14 @@ sub save_defaults {
   }
 
   if ($form->{publickey} && $form->{publickey} ne $form->{old_publickey}) {
-    AM->import_publickey(\%myconfig, $form, $gpg, $userspath);
+    SL::AM->import_publickey(\%myconfig, $form, $slconfig{gpg}, $slconfig{userspath});
   }
 
   if ($form->{old_publickey} && $form->{delete_publickey}) {
-    AM->delete_publickey(\%myconfig, $form, $gpg);
+    SL::AM->delete_publickey(\%myconfig, $form, $slconfig{gpg});
   }
 
-  if (AM->save_defaults(\%myconfig, \%$form)) {
+  if (SL::AM->save_defaults(\%myconfig, $form)) {
     $form->redirect($locale->text('Defaults saved!'));
   } else {
     $form->error($locale->text('Cannot save defaults!'));
@@ -3332,7 +3324,7 @@ sub save_taxes {
     $sameaccno = $accno;
   }
 
-  if (AM->save_taxes(\%myconfig, \%$form)) {
+  if (SL::AM->save_taxes(\%myconfig, $form)) {
     $form->redirect($locale->text('Taxes saved!'));
   } else {
     $form->error($locale->text('Cannot save taxes!'));
@@ -3359,7 +3351,7 @@ sub save_preferences {
   $form->{tan} = $myconfig{tan};
   $form->{charset} = $form->{encoding};
 
-  if (AM->save_preferences(\%$form, $memberfile, $userspath)) {
+  if (SL::AM->save_preferences($form, $slconfig{memberfile}, $slconfig{userspath})) {
     $form->redirect($locale->text('Preferences saved!'));
   } else {
     $form->error($locale->text('Cannot save preferences!'));
@@ -3378,7 +3370,7 @@ sub pg_dump {
 
   my $boundary = time;
   my $tmpfile
-    = "$userspath/$boundary.$myconfig{dbname}-$form->{version}-$t[5]$t[4]$t[3].dump";
+    = "$slconfig{userspath}/$boundary.$myconfig{dbname}-$form->{version}-$t[5]$t[4]$t[3].dump";
 
   my @args = ('pg_dump');
   if ($myconfig{dbpasswd}) {
@@ -3391,8 +3383,8 @@ sub pg_dump {
   push @args, '-f', $tmpfile;
   system(@args) == 0 or $form->error("$args[0] : $?");
 
-  if ($gzip) {
-    my @args = split / /, $gzip;
+  if ($slconfig{gzip}) {
+    my @args = split / /, $slconfig{gzip};
     my @s = @args;
 
     push @args, "$tmpfile";
@@ -3404,27 +3396,27 @@ sub pg_dump {
     $tmpfile .= $suffix;
   }
 
-  if ($gpg && AM->encrypt_file(\%myconfig, $form, $gpg, $tmpfile)) {
+  if ($slconfig{gpg} && SL::AM->encrypt_file(\%myconfig, $form, $slconfig{gpg}, $tmpfile)) {
     unlink $tmpfile;
     $suffix .= '.gpg';
     $tmpfile .= '.gpg';
   }
 
-  open(IN,  "$tmpfile") or $form->error("$tmpfile : $!");
-  open(OUT, ">-")       or $form->error("STDOUT : $!");
+  open my $in,  "$tmpfile" or $form->error("$tmpfile : $!");
+  open my $out, ">-"       or $form->error("STDOUT : $!");
 
-  print OUT qq|Content-Type: application/file;
+  print $out qq|Content-Type: application/file;
 Content-Disposition: attachment; filename=$myconfig{dbname}-$form->{version}-$t[5]$t[4]$t[3].dump$suffix\n\n|;
 
-  binmode(IN);
-  binmode(OUT);
+  binmode $in;
+  binmode $out;
 
-  while (<IN>) {
-    print OUT $_;
+  while (<$in>) {
+    print $out $_;
   }
 
-  close(IN);
-  close(OUT);
+  close $in;
+  close $out;
 
   unlink "$tmpfile";
 }
@@ -3435,12 +3427,12 @@ sub backup {
   if ($form->{media} eq 'email') {
     $form->error($locale->text('No email address for')." $myconfig{name}") unless ($myconfig{email});
 
-    $form->{OUT} = "$sendmail";
+    $form->{OUT} = "$slconfig{sendmail}";
 
   }
 
   $SIG{INT} = 'IGNORE';
-  AM->backup(\%myconfig, \%$form, $userspath, $gzip, $gpg);
+  SL::AM->backup(\%myconfig, $form, $slconfig{userspath}, $slconfig{gzip}, $slconfig{gpg});
 
   if ($form->{media} eq 'email') {
     $form->redirect($locale->text('Backup sent to').qq| $myconfig{email}|);
@@ -3507,14 +3499,14 @@ print qq|
 sub get_dataset {
 
   if ($form->{tmpfile} =~ /\.gz$/) {
-    if ($gzip) {
-      ($gzip) = split / /, $gzip;
+    if ($slconfig{gzip}) {
+      ($slconfig{gzip}) = split / /, $slconfig{gzip};
     } else {
-      unlink "$userspath/$form->{tmpfile}";
+      unlink "$slconfig{userspath}/$form->{tmpfile}";
       $form->error($locale->text('Cannot process gzipped file!'));
     }
 
-    @args = ("$gzip", '-d', "$userspath/$form->{tmpfile}");
+    @args = ("$slconfig{gzip}", '-d', "$slconfig{userspath}/$form->{tmpfile}");
     system(@args) == 0 or $form->error($locale->text('gzip failed!'));
 
     $form->{tmpfile} =~ s/\..*//;
@@ -3525,11 +3517,11 @@ sub get_dataset {
     }
   }
 
-  open(FH, "$userspath/$form->{tmpfile}") or $form->error("$userspath/$form->{tmpfile} : $!");
-  open(SP, ">$spool/$myconfig{dbname}/$form->{filename}") or $form->error("$spool/$myconfig{dbname}/$form->{filename} : $!");
+  open my $fh, "$slconfig{userspath}/$form->{tmpfile}" or $form->error("$slconfig{userspath}/$form->{tmpfile} : $!");
+  open my $sp, ">$slconfig{spool}/$myconfig{dbname}/$form->{filename}" or $form->error("$slconfig{spool}/$myconfig{dbname}/$form->{filename} : $!");
 
-  for (<FH>) {
-    print SP $_;
+  for (<$fh>) {
+    print $sp $_;
     if (/-- Version:/) {
       @d = split / /, $_;
       $form->{restoredbversion} = $d[2];
@@ -3541,13 +3533,13 @@ sub get_dataset {
       chop $form->{restoredbname};
     }
   }
-  close(FH);
-  close(SP);
+  close $fh;
+  close $sp;
 
-  unlink "$userspath/$form->{tmpfile}";
+  unlink "$slconfig{userspath}/$form->{tmpfile}";
 
   unless ($form->{restoredbversion} && $form->{restoredbname}) {
-    unlink "$spool/$myconfig{dbname}/$form->{filename}";
+    unlink "$slconfig{spool}/$myconfig{dbname}/$form->{filename}";
     $form->error($locale->text('Not a SQL-Ledger backup!'));
   }
 
@@ -3569,7 +3561,7 @@ $locale->text('will be restored with data from').qq| <b>$form->{restoredbname}</
 
   if ($form->{dbversion} ne $form->{restoredbversion}) {
     if ($form->{restoredbversion} gt $form->{dbversion}) {
-      unlink "$spool/$myconfig{dbname}/$form->{filename}";
+      unlink "$slconfig{spool}/$myconfig{dbname}/$form->{filename}";
       $form->error($locale->text('Dataset version newer, SQL-Ledger must first be upgraded!'));
     }
 
@@ -3633,18 +3625,18 @@ sub do_restore {
 
   $form->error($locale->text('Must be logged in as admin!')) unless $form->{admin};
 
-  open FH, ">$userspath/$myconfig{dbname}.LCK" or $form->error($!);
+  open FH, ">$slconfig{userspath}/$myconfig{dbname}.LCK" or $form->error($!);
   close(FH);
 
   $form->info($locale->text('Restoring dataset version')." $form->{restoredbversion}\n");
 
-  if ($ok = AM->restore(\%myconfig, \%$form, "$spool/$myconfig{dbname}/$form->{filename}")) {
+  if ($ok = SL::AM->restore(\%myconfig, $form, "$slconfig{spool}/$myconfig{dbname}/$form->{filename}")) {
     $form->info($locale->text('done')."\n");
   } else {
     $form->info($locale->text('failed!')."\n");
   }
 
-  unlink "$spool/$myconfig{dbname}/$form->{filename}";
+  unlink "$slconfig{spool}/$myconfig{dbname}/$form->{filename}";
 
   if ($ok) {
     if ($form->{dbversion} ne $form->{restoredbversion}) {
@@ -3652,28 +3644,25 @@ sub do_restore {
     }
   }
 
-  unlink "$userspath/$myconfig{dbname}.LCK";
+  unlink "$slconfig{userspath}/$myconfig{dbname}.LCK";
 
 }
 
 
 sub upgrade_dataset {
 
-  $user = new User $memberfile, $form->{login};
+  $user = SL::User->new($slconfig{memberfile}, $form->{login});
 
-  open FH, ">$userspath/$myconfig{dbname}.LCK" or $form->error($!);
+  open FH, ">$slconfig{userspath}/$myconfig{dbname}.LCK" or $form->error($!);
 
   for (qw(dbname dbhost dbport dbdriver dbuser)) { $form->{$_} = $myconfig{$_} }
-  $form->{dbpasswd} = unpack 'u', $myconfig{dbpasswd};
+  $form->{dbpasswd} = unpack 'u', $myconfig{dbpasswd} if $myconfig{dbpasswd};
 
   $form->info($locale->text('Upgrading to Version')." $form->{dbversion} ... \n");
 
-  # required for Oracle
-  $form->{dbdefault} = $sid;
+  $user->dbupdate($form);
 
-  $user->dbupdate(\%$form);
-
-  unlink "$userspath/$myconfig{dbname}.LCK";
+  unlink "$slconfig{userspath}/$myconfig{dbname}.LCK";
 
   $form->info($locale->text('done'));
 
@@ -3686,7 +3675,7 @@ sub audit_control {
 
   $form->error($locale->text('Must be logged in as admin!')) unless $form->{admin};
 
-  AM->closedto(\%myconfig, \%$form);
+  SL::AM->closedto(\%myconfig, $form);
 
   my %checked;
   for (qw(revtrans audittrail)) { $checked{$_} = "checked" if $form->{$_} }
@@ -3754,7 +3743,7 @@ sub doclose {
 
   $form->error($locale->text('Must be logged in as admin!')) unless $form->{admin};
 
-  AM->closebooks(\%myconfig, \%$form);
+  SL::AM->closebooks(\%myconfig, $form);
 
   my $msg;
   if ($form->{revtrans}) {
@@ -3789,7 +3778,7 @@ sub doclose {
 
 sub audit_log {
 
-  AM->audit_log_links(\%myconfig, \%$form);
+  SL::AM->audit_log_links(\%myconfig, $form);
 
   if (@{ $form->{all_employee} }) {
     $form->{selectemployee} = "\n";
@@ -3880,7 +3869,7 @@ sub audit_log {
 
 sub list_audit_log {
 
-  AM->audit_log(\%myconfig, \%$form);
+  SL::AM->audit_log(\%myconfig, $form);
 
   $form->helpref("audit_trail", $myconfig{countrycode});
 
@@ -4083,7 +4072,7 @@ sub edit_warehouse {
 
   $form->{title} = $locale->text('Edit Warehouse');
 
-  AM->get_warehouse(\%myconfig, \%$form);
+  SL::AM->get_warehouse(\%myconfig, $form);
 
   &warehouse_header;
   &form_footer;
@@ -4093,7 +4082,7 @@ sub edit_warehouse {
 
 sub list_warehouse {
 
-  AM->warehouses(\%myconfig, \%$form);
+  SL::AM->warehouses(\%myconfig, $form);
 
   my $href = "$form->{script}?action=list_warehouse";
 
@@ -4150,8 +4139,8 @@ sub list_warehouse {
 
    $column_data{description} = qq|<td><a href=$form->{script}?action=edit_warehouse&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{description}</td>|;
    $column_data{address} = qq|<td>$ref->{address1} $ref->{streetname} $ref->{buildingnumber} $ref->{address2} $ref->{city} $ref->{state} $ref->{zipcode} $ref->{country}</td>|;
-   $column_data{up} = qq|<td><a href=$form->{script}?action=move&db=warehouse&fld=id&id=$ref->{id}&move=up&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$images/up.png alt="+" border=0></td>|;
-   $column_data{down} = qq|<td><a href=$form->{script}?action=move&db=warehouse&fld=id&id=$ref->{id}&move=down&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$images/down.png alt="-" border=0></td>|;
+   $column_data{up} = qq|<td><a href=$form->{script}?action=move&db=warehouse&fld=id&id=$ref->{id}&move=up&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$slconfig{images}/up.png alt="+" border=0></td>|;
+   $column_data{down} = qq|<td><a href=$form->{script}?action=move&db=warehouse&fld=id&id=$ref->{id}&move=down&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$slconfig{images}/down.png alt="-" border=0></td>|;
 
    for (@column_index) { print "$column_data{$_}\n" }
 
@@ -4277,7 +4266,7 @@ sub save_warehouse {
     SL::ADR::check_country($form, $locale->text('Invalid country code!'));
   }
 
-  if (AM->save_warehouse(\%myconfig, \%$form)) {
+  if (SL::AM->save_warehouse(\%myconfig, $form)) {
     $form->redirect($locale->text('Warehouse saved!'));
   }
 
@@ -4288,7 +4277,7 @@ sub save_warehouse {
 
 sub delete_warehouse {
 
-  if (AM->delete_warehouse(\%myconfig, \%$form)) {
+  if (SL::AM->delete_warehouse(\%myconfig, $form)) {
     $form->redirect($locale->text('Warehouse deleted!'));
   }
 
@@ -4299,7 +4288,7 @@ sub delete_warehouse {
 
 sub yearend {
 
-  AM->earningsaccounts(\%myconfig, \%$form);
+  SL::AM->earningsaccounts(\%myconfig, $form);
 
   for (@{ $form->{chart} }) { $form->{selectchart} .= "$_->{accno}--$_->{description}\n" }
 
@@ -4373,7 +4362,7 @@ sub generate_yearend {
 
   $form->isblank("todate", $locale->text('Yearend date missing!'));
 
-  RP->yearend_statement(\%myconfig, \%$form);
+  SL::RP->yearend_statement(\%myconfig, $form);
 
   $form->{transdate} = $form->{todate};
 
@@ -4409,7 +4398,7 @@ sub generate_yearend {
   }
 
   if ($ok && $earnings) {
-    if (AM->post_yearend(\%myconfig, \%$form)) {
+    if (SL::AM->post_yearend(\%myconfig, $form)) {
       $form->redirect($locale->text('Yearend posted!'));
     } else {
       $form->error($locale->text('Yearend posting failed!'));
@@ -4424,7 +4413,7 @@ sub generate_yearend {
 
 sub company_logo {
 
-  AM->company_defaults(\%myconfig, \%$form);
+  SL::AM->company_defaults(\%myconfig, $form);
   $form->{address} =~ s/\n/<br>/g;
 
   $form->{stylesheet} = $myconfig{stylesheet};
@@ -4480,9 +4469,8 @@ sub company_logo {
 
 </pre>
 <center>
-<a href="https://github.com/Tekki/sql-ledger" target=_blank><img src=$images/sql-ledger.png border=0></a>
+<a href="https://github.com/Tekki/sql-ledger" target=_blank><img src=$slconfig{images}/sql-ledger.png border=0></a>
 <h1 class=login>|.$locale->text('Version').qq| $form->{version}</h1>
-<p>$form->{version2}</p>
 <p>
 |.$locale->text('Licensed to').qq|
 <p>
@@ -4530,7 +4518,7 @@ sub recurring_transactions {
 
   $column_data{id} = "";
 
-  AM->recurring_transactions(\%myconfig, \%$form);
+  SL::AM->recurring_transactions(\%myconfig, $form);
 
   $form->{title} = $locale->text('Recurring Transactions') . " / $form->{company}";
 
@@ -4826,7 +4814,7 @@ sub edit_recurring {
 xml--|.$locale->text('XML').qq|
 txt--|.$locale->text('Text');
 
-  if ($latex) {
+  if ($slconfig{latex}) {
     $form->{selectformat} .= qq|
 ps--|.$locale->text('Postscript').qq|
 pdf--|.$locale->text('PDF');
@@ -4840,7 +4828,7 @@ pdf--|.$locale->text('PDF');
 sub process_transactions {
 
   # save variables
-  my $pt = new Form;
+  my $pt = SL::Form->new;
   for (keys %$form) { $pt->{$_} = $form->{$_} }
 
   my $defaultprinter;
@@ -4859,7 +4847,7 @@ sub process_transactions {
       my $id = $pt->{"ndx_$i"};
 
       # process transaction
-      AM->recurring_details(\%myconfig, \%$pt, $id);
+      SL::AM->recurring_details(\%myconfig, \%$pt, $id);
 
       $pt->{nextdate} = $pt->{"nextdate_$i"} if $pt->{"nextdate_$i"};
 
@@ -4957,14 +4945,14 @@ sub process_transactions {
           if ($pt->{invoice}) {
             if ($pt->{arid}) {
               $form->info("\n".$locale->text('Posting')." ".$locale->text('Sales Invoice')." $form->{invnumber} ... ");
-              $ok = IS->post_invoice(\%myconfig, \%$form);
+              $ok = SL::IS->post_invoice(\%myconfig, $form);
             } else {
               $form->info("\n".$locale->text('Posting')." ".$locale->text('Vendor Invoice')." $form->{invnumber} ... ");
-              $ok = IR->post_invoice(\%myconfig, \%$form);
+              $ok = SL::IR->post_invoice(\%myconfig, $form);
             }
           } else {
             $form->info("\n".$locale->text('Posting')." ".$locale->text('Transaction')." $form->{invnumber} ... ");
-            $ok = AA->post_transaction(\%myconfig, \%$form);
+            $ok = SL::AA->post_transaction(\%myconfig, $form);
           }
           if ($ok) {
             $form->info($locale->text('ok'));
@@ -4973,7 +4961,7 @@ sub process_transactions {
           }
 
           # print form
-          if ($latex && $ok) {
+          if ($slconfig{latex} && $ok) {
             $ok = &print_recurring(\%$pt, $defaultprinter);
           }
 
@@ -5028,14 +5016,14 @@ sub process_transactions {
           $form->{closed} = 0;
 
           $form->info("\n".$locale->text('Saving')." ".$flabel." $form->{$ordnumber} ... ");
-          if ($ok = OE->save(\%myconfig, \%$form)) {
+          if ($ok = SL::OE->save(\%myconfig, $form)) {
             $form->info($locale->text('ok'));
           } else {
             $form->info($locale->text('failed'));
           }
 
           # print form
-          if ($latex && $ok) {
+          if ($slconfig{latex} && $ok) {
             &print_recurring(\%$pt, $defaultprinter);
           }
 
@@ -5045,7 +5033,7 @@ sub process_transactions {
 
       } else {
         # GL transaction
-        GL->transaction(\%myconfig, \%$form);
+        SL::GL->transaction(\%myconfig, $form);
 
         $form->{reference} = $pt->{reference};
         $form->{description} = $pt->{description};
@@ -5081,14 +5069,14 @@ sub process_transactions {
 
         for (qw(id recurring)) { delete $form->{$_} }
         $form->info("\n".$locale->text('Posting')." ".$locale->text('GL Transaction')." $form->{reference} ... ");
-        if ($ok = GL->post_transaction(\%myconfig, \%$form)) {
+        if ($ok = SL::GL->post_transaction(\%myconfig, $form)) {
           $form->info($locale->text('ok'));
         } else {
           $form->info($locale->text('failed'));
         }
       }
 
-      AM->update_recurring(\%myconfig, \%$pt, $id) if $ok;
+      SL::AM->update_recurring(\%myconfig, \%$pt, $id) if $ok;
 
     }
   }
@@ -5247,7 +5235,7 @@ sub clear_semaphores {
 
 sub remove_locks {
 
-  AM->remove_locks(\%myconfig, \%$form, $userspath);
+  SL::AM->remove_locks(\%myconfig, $form, $slconfig{userspath});
 
   $form->info($locale->text('Locks removed!'));
 
@@ -5261,8 +5249,8 @@ sub lock_dataset {
 
   $form->error($locale->text('Must be logged in as admin!')) unless $form->{admin};
 
-  if (-f "$userspath/$myconfig{dbname}.LCK") {
-    open FH, "$userspath/$myconfig{dbname}.LCK";
+  if (-f "$slconfig{userspath}/$myconfig{dbname}.LCK") {
+    open FH, "$slconfig{userspath}/$myconfig{dbname}.LCK";
     $form->{msg} = <FH>;
     close(FH);
   }
@@ -5316,12 +5304,12 @@ print qq|
 
 sub do_lock_dataset {
 
-  open(FH, ">$userspath/$myconfig{dbname}.LCK") or $form->error("$userspath/$myconfig{dbname}.LCK : $!");
+  open my $fh, ">$slconfig{userspath}/$myconfig{dbname}.LCK" or $form->error("$slconfig{userspath}/$myconfig{dbname}.LCK : $!");
 
   if ($form->{msg}) {
-    print FH $form->{msg};
+    print $fh $form->{msg};
   }
-  close(FH);
+  close $fh;
 
   $form->redirect($locale->text('Dataset locked!'));
 
@@ -5362,8 +5350,8 @@ sub unlock_dataset {
 
 sub do_unlock_dataset {
 
-  if (-f "$userspath/$myconfig{dbname}.LCK") {
-    unlink "$userspath/$myconfig{dbname}.LCK";
+  if (-f "$slconfig{userspath}/$myconfig{dbname}.LCK") {
+    unlink "$slconfig{userspath}/$myconfig{dbname}.LCK";
   }
 
   $form->info($locale->text('Dataset lock removed!')."\n");
@@ -5373,7 +5361,7 @@ sub do_unlock_dataset {
 
 sub bank_accounts {
 
-  AM->bank_accounts(\%myconfig, \%$form);
+  SL::AM->bank_accounts(\%myconfig, $form);
 
   $form->{title} = $locale->text('Bank Accounts') . " / $form->{company}";
 
@@ -5460,7 +5448,7 @@ sub bank_accounts {
 
 sub edit_bank {
 
-  AM->get_bank(\%myconfig, \%$form);
+  SL::AM->get_bank(\%myconfig, $form);
 
   &bank_header;
   &bank_footer;
@@ -5614,7 +5602,7 @@ sub save_bank {
     SL::ADR::check_country($form, $locale->text('Invalid country code!'));
   }
 
-  if (!AM->save_bank(\%myconfig, \%$form)) {
+  if (!AM->save_bank(\%myconfig, $form)) {
     $form->error($locale->text('Failed to save Bank!'));
   }
 
@@ -5625,7 +5613,7 @@ sub save_bank {
 
 sub search_exchangerates {
 
-  AM->exchangerates(\%myconfig, $form);
+  SL::AM->exchangerates(\%myconfig, $form);
 
   $form->{title} = $locale->text('Exchange Rates') . " / $form->{company}";
 
@@ -5728,7 +5716,7 @@ sub search_exchangerates {
 
 sub list_exchangerates {
 
-  AM->get_exchangerates(\%myconfig, \%$form);
+  SL::AM->get_exchangerates(\%myconfig, $form);
 
   $href = "$form->{script}?action=list_exchangerates";
   for (qw(direction oldsort path login)) { $href .= qq|&$_=$form->{$_}| }
@@ -5912,7 +5900,7 @@ sub edit_exchangerate {
 
   $currencies = $form->{currencies};
   for (split /:/, $form->{currencies}) { $curr{$_} = 1 };
-  AM->get_exchangerates(\%myconfig, \%$form);
+  SL::AM->get_exchangerates(\%myconfig, $form);
 
   for $ref (@{ $form->{transactions} }) {
     $form->{"$ref->{curr}exchangerate"} = $ref->{exchangerate};
@@ -6000,7 +5988,7 @@ sub exchangerate_header {
 sub save_exchangerate {
 
   $form->isblank("transdate", $locale->text('Date missing!'));
-  AM->save_exchangerate(\%myconfig, \%$form);
+  SL::AM->save_exchangerate(\%myconfig, $form);
   $form->redirect($locale->text('Exchange Rate saved!'));
 
 }
@@ -6008,7 +5996,7 @@ sub save_exchangerate {
 
 sub list_currencies {
 
-  AM->currencies(\%myconfig, \%$form);
+  SL::AM->currencies(\%myconfig, $form);
 
   my $href = "$form->{script}?action=list_currencies";
   for (qw(direction oldsort path login)) { $href .= qq|&$_=$form->{$_}| }
@@ -6071,8 +6059,8 @@ sub list_currencies {
    $column_data{rn} = qq|<td align=right>$ref->{rn}</td>|;
    $column_data{curr} = qq|<td><a href=$form->{script}?action=edit_currency&curr=$ref->{curr}&rn=$ref->{rn}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{curr}</td>|;
    $column_data{prec} = qq|<td align=right>$ref->{prec}</td>|;
-   $column_data{up} = qq|<td align=center><a href=$form->{script}?action=move&db=curr&fld=curr&id=$ref->{curr}&move=up&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$images/up.png alt="+" border=0></td>|;
-   $column_data{down} = qq|<td align=center><a href=$form->{script}?action=move&db=curr&fld=curr&id=$ref->{curr}&move=down&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$images/down.png alt="-" border=0></td>|;
+   $column_data{up} = qq|<td align=center><a href=$form->{script}?action=move&db=curr&fld=curr&id=$ref->{curr}&move=up&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$slconfig{images}/up.png alt="+" border=0></td>|;
+   $column_data{down} = qq|<td align=center><a href=$form->{script}?action=move&db=curr&fld=curr&id=$ref->{curr}&move=down&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$slconfig{images}/down.png alt="-" border=0></td>|;
 
 
    for (@column_index) { print "$column_data{$_}\n" }
@@ -6131,7 +6119,7 @@ sub edit_currency {
 
   $form->{title} = $locale->text('Edit Currency');
 
-  AM->get_currency(\%myconfig, \%$form);
+  SL::AM->get_currency(\%myconfig, $form);
 
   $form->{id} = 1;
   &currency_header;
@@ -6142,7 +6130,7 @@ sub edit_currency {
 
 sub delete_currency {
 
-  if (AM->delete_currency(\%myconfig, \%$form)) {
+  if (SL::AM->delete_currency(\%myconfig, $form)) {
     $form->redirect($locale->text('Currency deleted!'));
   }
 
@@ -6153,7 +6141,7 @@ sub delete_currency {
 
 sub move {
 
-  AM->move(\%myconfig, \%$form);
+  SL::AM->move(\%myconfig, $form);
   $form->redirect;
 
 }
@@ -6203,7 +6191,7 @@ sub currency_header {
 sub save_currency {
 
   $form->isblank("curr", $locale->text('Currency missing!'));
-  if (AM->save_currency(\%myconfig, \%$form)) {
+  if (SL::AM->save_currency(\%myconfig, $form)) {
     $form->redirect($locale->text('Currency saved!'));
   }
 
@@ -6214,9 +6202,9 @@ sub save_currency {
 
 sub list_roles {
 
-  AM->roles(\%myconfig, \%$form);
+  SL::AM->roles(\%myconfig, $form);
 
-  $locale = new Locale "$myconfig{countrycode}", "menu";
+  $locale = SL::Locale->new("$myconfig{countrycode}", "menu");
 
   my $href = "$form->{script}?action=list_roles";
   for (qw(direction oldsort path login)) { $href .= "&$_=$form->{$_}" }
@@ -6311,7 +6299,7 @@ sub list_roles {
    $edit = 1 if $form->{admin};
 
    if ($edit) {
-     $column_data{up} = qq|<td align=center><a href=$form->{script}?action=move&db=acsrole&fld=id&id=$ref->{id}&move=up&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$images/up.png alt="+" border=0></td>|;
+     $column_data{up} = qq|<td align=center><a href=$form->{script}?action=move&db=acsrole&fld=id&id=$ref->{id}&move=up&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$slconfig{images}/up.png alt="+" border=0></td>|;
    }
 
    $edit = 0;
@@ -6319,7 +6307,7 @@ sub list_roles {
    $edit = 1 if $form->{admin};
 
    if ($edit) {
-     $column_data{down} = qq|<td align=center><a href=$form->{script}?action=move&db=acsrole&fld=id&id=$ref->{id}&move=down&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$images/down.png alt="-" border=0></td>|;
+     $column_data{down} = qq|<td align=center><a href=$form->{script}?action=move&db=acsrole&fld=id&id=$ref->{id}&move=down&path=$form->{path}&login=$form->{login}&callback=$callback><img src=$slconfig{images}/down.png alt="-" border=0></td>|;
    }
 
    for (@column_index) { print "$column_data{$_}\n" }
@@ -6384,7 +6372,7 @@ sub edit_role {
 
   $form->{title} = $locale->text('Edit Role');
 
-  AM->get_role(\%myconfig, \%$form);
+  SL::AM->get_role(\%myconfig, $form);
 
   &role_header;
   &form_footer;
@@ -6400,7 +6388,7 @@ sub role_header {
 
   $form->helpref("roles", $myconfig{countrycode});
 
-  $locale = new Locale "$myconfig{countrycode}", "menu";
+  $locale = SL::Locale->new("$myconfig{countrycode}", "menu");
 
   $form->header;
 
@@ -6435,15 +6423,15 @@ sub role_header {
 |;
 
   # access control
-  open(FH, $menufile) or $form->error("$menufile : $!");
+  open $fh, $menufile or $form->error("$menufile : $!");
   # scan for first menu level
-  @a = <FH>;
-  close(FH);
+  @a = <$fh>;
+  close $fh;
 
-  if (open(FH, "$form->{path}/custom/$menufile")) {
-    push @a, <FH>;
+  if (open $fh, "$form->{path}/custom/$menufile") {
+    push @a, <$fh>;
   }
-  close(FH);
+  close $fh;
 
   foreach $item (@a) {
     next unless $item =~ /\[\w+/;
@@ -6536,7 +6524,7 @@ sub save_role {
     }
   }
 
-  if (AM->save_role(\%myconfig, \%$form)) {
+  if (SL::AM->save_role(\%myconfig, $form)) {
     $form->redirect($locale->text('Role saved!'));
   }
 
@@ -6547,7 +6535,7 @@ sub save_role {
 
 sub delete_role {
 
-  if (AM->delete_role(\%myconfig, \%$form)) {
+  if (SL::AM->delete_role(\%myconfig, $form)) {
     $form->redirect($locale->text('Role deleted!'));
   }
 
@@ -6579,7 +6567,7 @@ sub monitor {
 
   $form->header;
 
-  &change_report(\%$form, \@input);
+  &change_report($form, \@input);
 
   print qq|
 <body>
@@ -6766,7 +6754,7 @@ sub save_sql {
 
 
 sub list_snapshots {
-  AM->snapshots(\%myconfig, $form);
+  SL::AM->snapshots(\%myconfig, $form);
 
   $form->{title} = $locale->text('Database Snapshots');
   $form->{title} .= " / $myconfig{name}" unless $form->{admin};
@@ -6894,13 +6882,13 @@ sub add_snapshot {
 
 
 sub do_add_snapshot {
-  AM->save_snapshot(\%myconfig, $form);
+  SL::AM->save_snapshot(\%myconfig, $form);
   $form->redirect($locale->text('Snapshot created'));
 }
 
 
 sub delete_snapshots {
-  AM->snapshots(\%myconfig, $form);
+  SL::AM->snapshots(\%myconfig, $form);
   my @snapshots = @{$form->{ALL}};
   $form->error($locale->text('Nothing selected!')) unless @snapshots;
 
@@ -6940,7 +6928,7 @@ sub delete_snapshots {
 
 
 sub do_delete_snapshots {
-  AM->delete_snapshots(\%myconfig, $form);
+  SL::AM->delete_snapshots(\%myconfig, $form);
   $form->redirect($locale->text('Snapshots deleted'));
 }
 
@@ -6948,7 +6936,7 @@ sub do_delete_snapshots {
 sub restore_snapshot {
   $form->error($locale->text('Must be logged in as admin!')) unless $form->{admin};
 
-  AM->snapshots(\%myconfig, $form);
+  SL::AM->snapshots(\%myconfig, $form);
   my @snapshots = @{$form->{ALL}};
   $form->error($locale->text('Nothing selected!')) unless @snapshots;
   $form->error($locale->text('Only one selection allowed!')) if @snapshots > 1;
@@ -6989,7 +6977,7 @@ sub restore_snapshot {
 
 sub do_restore_snapshot {
   $form->error($locale->text('Must be logged in as admin!')) unless $form->{admin};
-  AM->restore_snapshot(\%myconfig, $form);
+  SL::AM->restore_snapshot(\%myconfig, $form);
   $form->redirect($locale->text('Snapshot restored'));
 }
 

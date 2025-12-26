@@ -1,31 +1,34 @@
 #=================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2006
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
+use v5.40;
 
-package Form;
+package SL::Form;
 
 use utf8;
 
 use Digest::SHA 'sha256_hex';
+use Time::Local;
 
-sub new {
-  my ($type, $userspath) = @_;
+sub new ($type, $userspath = '') {
 
-  my $self = {};
+  my $self         = {};
+  my $query_string = '';
 
-  read(STDIN, $_, $ENV{CONTENT_LENGTH});
+  if ($ENV{CONTENT_LENGTH}) {
+    read(STDIN, $query_string, $ENV{CONTENT_LENGTH});
+  }
 
   if ($ENV{QUERY_STRING}) {
-    $_ = $ENV{QUERY_STRING};
+    $query_string = $ENV{QUERY_STRING};
   }
 
   if ($ARGV[0]) {
-    $_ = $ARGV[0];
+    $query_string = $ARGV[0];
   }
 
   my $data;
@@ -37,7 +40,7 @@ sub new {
 # UNIX \r\n
 
   # if multipart form take apart on boundary
-  my ($content, $boundary) = split /; /, $ENV{CONTENT_TYPE};
+  my ($content, $boundary) = split /; /, $ENV{CONTENT_TYPE} || '';
 
   if ($boundary) {
     (undef, $boundary) = split /=/, $boundary;
@@ -89,23 +92,28 @@ sub new {
         $self->{tmpfile} .= ".$e[$#e]";
       }
       my $operator = $self->{contenttype} =~ /^text/ ? '>:encoding(UTF-8)' : '>';
-      if (! open(FH, $operator, "$userspath/$self->{tmpfile}")) {
+      my $fh;
+      unless (open $fh, $operator, "$userspath/$self->{tmpfile}") {
         if ($ENV{HTTP_USER_AGENT}) {
           print "Content-Type: text/html\n\n";
         }
         print "$userspath/$self->{tmpfile} : $!";
         die;
       }
-      print FH $self->{$data};
-      close(FH);
+      print $fh $self->{$data};
+      close $fh;
       delete $self->{$data};
     }
 
   } else {
 
-    %$self = split /[&=]/;
+    my @query = split /[&=]/, $query_string;
+    push @query, '' if @query % 2;
+    $self = {@query};
 
   }
+
+  $self->{$_} //= '' for qw|action login path|;
 
   if ($esc) {
     for (keys %$self) { $self->{$_} = unescape("", $self->{$_}) }
@@ -125,10 +133,8 @@ sub new {
 
   $self->{charset} = 'UTF-8';
 
-  $self->{version} = "3.2.12";
-  $self->{dbversion} = "3.2.4";
-  $self->{version2} = "tekki 3.2.12.66";
-  $self->{dbversion2} = 49;
+  $self->{version}    = '4.0.0';
+  $self->{dbversion}  = '4.0.0';
   $self->{cssversion} = 53;
 
   $self->{favicon} = 'favicon.ico';
@@ -138,13 +144,12 @@ sub new {
 }
 
 
-sub debug {
-  my ($self, $file) = @_;
+sub debug ($self, $file) {
 
   if ($file) {
-    open(FH, "> $file") or die $!;
-    for (sort keys %$self) { print FH "$_ = $self->{$_}\n" }
-    close(FH);
+    open my $fh, "> $file" or die $!;
+    for (sort keys %$self) { print $fh "$_ = $self->{$_}\n" }
+    close $fh;
   } else {
     if ($ENV{HTTP_USER_AGENT}) {
       $self->header unless $self->{header};
@@ -158,8 +163,7 @@ sub debug {
 }
 
 
-sub dump {
-  my ($self, @values) = @_;
+sub dump ($self, @values) {
   require Data::Dumper;
   local $Data::Dumper::Sortkeys = 1;
 
@@ -172,8 +176,7 @@ sub dump {
 }
 
 
-sub dump_form {
-  my ($self, @fields) = @_;
+sub dump_form ($self, @fields) {
 
   my @dump_fields;
   if (@fields) {
@@ -193,8 +196,7 @@ sub dump_form {
 }
 
 
-sub dump_timer {
-  my ($self) = @_;
+sub dump_timer ($self) {
   require Time::HiRes;
   $self->{_timer} //= [Time::HiRes::gettimeofday()];
   my ($package, $filename, $line) = caller;
@@ -204,12 +206,11 @@ sub dump_timer {
 
 
 sub perl_modules {
-  return [qw|Archive::Zip Excel::Writer::XLSX Image::Magick Imager::zxing Mojolicious Spreadsheet::ParseXLSX Text::QRCode|];
+  return [qw|Archive::Zip Excel::Writer::XLSX Mojolicious Spreadsheet::ParseXLSX Text::QRCode|];
 }
 
 
-sub load_module {
-  my ($self, $modules, $msg) = @_;
+sub load_module ($self, $modules, $msg = '') {
 
   local $SIG{__DIE__} = undef;
 
@@ -226,14 +227,13 @@ sub load_module {
 }
 
 
-sub parse_callback {
-  my ($self, $myconfig, %params) = @_;
+sub parse_callback ($self, $myconfig, %params) {
 
   (undef, my $args) = split /\?/, $self->{callback}, 2;
 
   for my $arg (split /&/, $args) {
     my ($key, $value) = split /=/, $arg, 2;
-    $self->{$key} = $self->unescape($value);
+    $self->{$key} = $self->unescape($value) // '';
   }
 
   if ($myconfig && $params{iso_date}) {
@@ -245,8 +245,7 @@ sub parse_callback {
 }
 
 
-sub escape {
-  my ($self, $str, $beenthere) = @_;
+sub escape ($self, $str //= '', $beenthere = 0) {
 
   # for Apache 2 we escape strings twice
   if (($ENV{SERVER_SIGNATURE} =~ /Apache\/2\.(\d+)\.(\d+)/) && ! $beenthere) {
@@ -255,53 +254,50 @@ sub escape {
 
   utf8::encode $str;
   $str =~ s/([^a-zA-Z0-9_.-])/sprintf("%%%02x", ord($1))/ge;
-  $str;
+
+  return $str;
 
 }
 
 
-sub unescape {
-  my ($self, $str) = @_;
+sub unescape ($self, $str //= '') {
 
   $str =~ tr/+/ /;
   $str =~ s/\\$//;
 
-  $str =~ s/%([0-9a-fA-Z]{2})/pack("c",hex($1))/eg;
+  $str =~ s/%([0-9a-fA-Z]{2})/chr hex $1/eg;
   $str =~ s/\r?\n/\n/g;
   utf8::decode $str;
 
-  $str;
+  return $str;
 
 }
 
 
-sub quote {
-  my ($self, $str) = @_;
+sub quote ($self, $str //= '') {
 
   if ($str && ! ref($str)) {
     $str =~ s/"/&quot;/g;
     $str =~ s/\+/\&#43;/g;
   }
 
-  $str;
+  return $str;
 
 }
 
 
-sub unquote {
-  my ($self, $str) = @_;
+sub unquote ($self, $str //= '') {
 
   if ($str && ! ref($str)) {
     $str =~ s/&quot;/"/g;
   }
 
-  $str;
+  return $str;
 
 }
 
 
-sub helpref {
-  my ($self, $file, $countrycode) = @_;
+sub helpref ($self, $file, $countrycode = '') {
 
 return; # disable for now
 
@@ -314,10 +310,9 @@ return; # disable for now
 }
 
 
-sub retrieve_form {
-  my ($self, $myconfig, $dbh) = @_;
+sub retrieve_form ($self, $myconfig, $dbh = undef) {
 
-  $self->{id} *= 1;
+  ($self->{id} //= 0) *= 1;
 
   return unless $self->{id};
 
@@ -333,7 +328,7 @@ sub retrieve_form {
   my $sth = $dbh->prepare($query);
   $sth->execute || $self->dberror($query);
 
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     $self->{$ref->{reportvariable}} = $ref->{reportvalue};
   }
   $sth->finish;
@@ -343,8 +338,7 @@ sub retrieve_form {
 }
 
 
-sub save_form {
-  my ($self, $myconfig, $dbh) = @_;
+sub save_form ($self, $myconfig, $dbh = undef) {
 
   my $disconnect;
 
@@ -405,8 +399,7 @@ sub save_form {
 }
 
 
-sub select_option {
-  my ($self, $list, $selected, $removeid, $rev) = @_;
+sub select_option ($self, $list, $selected = '', $removeid = '', $rev = '') {
 
   my $str;
   my @opt = split /\r?\n/, $self->unescape($list);
@@ -432,13 +425,12 @@ sub select_option {
 }
 
 
-sub hide_form {
-  my $self = shift;
+sub hide_form ($self, @fields) {
 
   my $str;
 
-  if (@_) {
-    for (@_) { $str .= qq|<input type="hidden" name="$_" value="|.$self->quote($self->{$_}).qq|">\n| }
+  if (@fields) {
+    for (@fields) { $str .= qq|<input type="hidden" name="$_" value="|.$self->quote($self->{$_}).qq|">\n| }
     print qq|$str| if $self->{header};
   } else {
     delete $self->{header};
@@ -452,13 +444,12 @@ sub hide_form {
 }
 
 
-sub error {
-  my ($self, $msg) = @_;
+sub error ($self, $msg = '') {
 
   if ($ENV{HTTP_USER_AGENT}) {
     $self->{msg} = $msg;
     $self->{format} = "html";
-    $self->format_string((msg));
+    $self->format_string('msg');
 
     delete $self->{pre};
 
@@ -466,9 +457,9 @@ sub error {
       $self->header(0,1);
     }
 
-    print qq|<body><h2 class=error>Error!</h2>
+    print qq|<body><h2 class="error">Error!</h2>
 
-    <p><b>$self->{msg}</b>|;
+    <p><b class="error">$self->{msg}</b>|;
 
     exit;
 
@@ -479,21 +470,19 @@ sub error {
 }
 
 
-sub json_error {
-  my ($self, $msg, $code) = @_;
+sub json_error ($self, $msg, $code = 1) {
   require JSON::PP;
 
-  print qq|Content-Type: application/json; charset=$form->{charset}
+  print qq|Content-Type: application/json; charset=$self->{charset}
 
-| . JSON::PP->new->encode({error => $code || 1, message => $msg});
+| . JSON::PP->new->encode({error => $code, message => $msg});
 
   exit;
 
 }
 
 
-sub info {
-  my ($self, $msg) = @_;
+sub info ($self, $msg = '', $type = '') {
 
   if ($ENV{HTTP_USER_AGENT}) {
     $msg =~ s/\n/<br>/g;
@@ -506,7 +495,7 @@ sub info {
       <body>|;
     }
 
-    print "<b>$msg</b>";
+    print $type ? qq|<b class="$type">$msg</b>| : "<b>$msg</b>";
 
   } else {
 
@@ -517,8 +506,7 @@ sub info {
 }
 
 
-sub numtextrows {
-  my ($self, $str, $cols, $maxrows) = @_;
+sub numtextrows ($self, $str //= '', $cols =  1, $maxrows = undef) {
 
   my $rows = 0;
 
@@ -532,28 +520,27 @@ sub numtextrows {
 }
 
 
-sub dberror {
-  my ($self, $msg) = @_;
+sub dberror ($self, $msg) {
 
-  $self->error("$msg\n".$DBI::errstr);
+  my ($package, $filename, $line) = caller;
+  $self->error("$msg\n" . $DBI::errstr . " at $filename line $line");
 
 }
 
 
-sub isblank {
-  my ($self, $name, $msg) = @_;
+sub isblank ($self, $name, $msg) {
 
   $self->error($msg) if $self->{$name} =~ /^\s*$/;
 
 }
 
 
-sub header {
-  my ($self, $endsession, $nocookie) = @_;
+sub header ($self, $endsession = undef, $nocookie = undef) {
 
   return if $self->{header};
 
-  my ($stylesheet, $favicon, $charset);
+  my ($stylesheet, $favicon, $charset) = ('','','');
+  $self->{$_} ||= '' for qw|customheader pre|;
 
   if ($ENV{HTTP_USER_AGENT}) {
 
@@ -604,8 +591,7 @@ $self->{pre}
 }
 
 
-sub set_cookie {
-  my ($self, $endsession) = @_;
+sub set_cookie ($self, $endsession = undef) {
 
   $self->{timeout} ||= 31557600;
   my $t = ($endsession) ? time : time + $self->{timeout};
@@ -630,8 +616,7 @@ sub set_cookie {
 }
 
 
-sub redirect {
-  my ($self, $msg) = @_;
+sub redirect ($self, $msg = '') {
 
   if ($self->{callback}) {
 
@@ -648,8 +633,7 @@ sub redirect {
 }
 
 
-sub sort_columns {
-  my ($self, @columns) = @_;
+sub sort_columns ($self, @columns) {
 
   if ($self->{sort}) {
     $self->{sort} = "" if $self->{sort} =~ s/;//g;
@@ -664,12 +648,11 @@ sub sort_columns {
 }
 
 
-sub sort_order {
-  my ($self, $columns, $ordinal) = @_;
+sub sort_order ($self, $columns = []) {
 
   # setup direction
   if ($self->{direction}) {
-    if ($self->{sort} eq $self->{oldsort}) {
+    if (($self->{sort} // '') eq ($self->{oldsort} // '')) {
       if ($self->{direction} eq 'ASC') {
         $self->{direction} = "DESC";
       } else {
@@ -682,38 +665,16 @@ sub sort_order {
   $self->{oldsort} = $self->{sort};
 
   my @sf = $self->sort_columns(@{$columns});
-  if (%$ordinal) {
-    $sf[0] = ($ordinal->{$sf[$_]}) ? "$ordinal->{$sf[0]} $self->{direction}" : "$sf[0] $self->{direction}";
-    for (1 .. $#sf) { $sf[$_] = $ordinal->{$sf[$_]} if $ordinal->{$sf[$_]} }
-  } else {
-    $sf[0] .= " $self->{direction}";
-  }
+  $sf[0] .= " $self->{direction}";
 
-  $sortorder = join ',', @sf;
+  my $sortorder = join ',', @sf;
 
   $sortorder;
 
 }
 
 
-sub ordinal_order {
-  my ($self, $dbh, $query) = @_;
-
-  return unless ($dbh && $query);
-  my %ordinal = ();
-
-  my $sth = $dbh->prepare($query);
-  $sth->execute || $self->dberror($query);
-  for (0 .. $sth->{NUM_OF_FIELDS} - 1) { $ordinal{$sth->{NAME_lc}->[$_]} = $_ + 1 }
-  $sth->finish;
-
-  %ordinal;
-
-}
-
-
-sub format_amount {
-  my ($self, $myconfig, $amount, $places, $dash) = @_;
+sub format_amount ($self, $myconfig, $amount ||= 0, $places //= '', $dash //= '') {
 
   if ($places =~ /\d+/) {
     $amount = $self->round_amount($amount, $places);
@@ -725,6 +686,7 @@ sub format_amount {
   if ($amount) {
     if ($myconfig->{numberformat}) {
       my ($whole, $dec) = split /\./, "$amount";
+      $dec //= '';
       $whole =~ s/-//;
       $amount = join '', reverse split //, $whole;
       if ($places) {
@@ -800,8 +762,8 @@ sub format_amount {
 }
 
 
-sub parse_amount {
-  my ($self, $myconfig, $amount) = @_;
+sub parse_amount ($self, $myconfig, $amount //= 0) {
+  return 0 unless $amount;
 
   if (($myconfig->{numberformat} eq '1.000,00') ||
       ($myconfig->{numberformat} eq '1000,00')) {
@@ -813,15 +775,14 @@ sub parse_amount {
     $amount =~ s/'//g;
   }
 
-  $amount =~ s/,//g;
+  $amount =~ s/[, ]+//g;
 
-  return ($amount * 1);
+  return ($amount || 0) * 1;
 
 }
 
 
-sub round_amount {
-  my ($self, $amount, $places) = @_;
+sub round_amount ($self, $amount ||= 0, $places //= 0) {
 
   $amount *= 1;
   $places *= 1;
@@ -833,20 +794,18 @@ sub round_amount {
 }
 
 
-sub parse_template {
-  my ($self, $myconfig, $userspath, $dvipdf, $xelatex) = @_;
+sub parse_template ($self, $myconfig, $userspath, $dvipdf = '', $xelatex = '') {
 
-  my $err;
-  my $ok;
+  my ($err, $ok, $in, $out, $target);
 
   if (-f "$self->{templates}/$self->{language_code}/$self->{IN}") {
-    open(IN, '<:utf8', "$self->{templates}/$self->{language_code}/$self->{IN}") or $self->error("$self->{templates}/$self->{language_code}/$self->{IN} : $!");
+    open $in, '<:encoding(UTF-8)', "$self->{templates}/$self->{language_code}/$self->{IN}" or $self->error("$self->{templates}/$self->{language_code}/$self->{IN} : $!");
   } else {
-    open(IN, '<:utf8', "$self->{templates}/$self->{IN}") or $self->error("$self->{templates}/$self->{IN} : $!");
+    open $in, '<:encoding(UTF-8)', "$self->{templates}/$self->{IN}" or $self->error("$self->{templates}/$self->{IN} : $!");
   }
 
-  my @template = <IN>;
-  close(IN);
+  my @template = <$in>;
+  close $in;
 
   # OUT is used for the media, screen, printer, email
   # for postscript we store a copy in a temporary file
@@ -857,21 +816,21 @@ sub parse_template {
   $self->{tmpfile} = "$userspath/${fileid}_${tmpfile}";
 
   if ($self->{format} =~ /(ps|pdf)/ || $self->{media} eq 'email') {
-    $out = $self->{OUT};
+    $target = $self->{OUT};
     $self->{OUT} = $self->{tmpfile};
   }
 
-  if (my $out = $self->{OUT}) {
+  if (my $self_out = $self->{OUT}) {
     my $mode = '>';
-    if ($out =~ /^\|/) {
-      $out =~ s/^\|\s*//;
+    if ($self_out =~ /^\|/) {
+      $self_out =~ s/^\|\s*//;
       $mode = '|-';
     } else {
-      $out =~ s/^>\s*//;
+      $self_out =~ s/^>\s*//;
     }
-    open(OUT, "$mode:utf8", $out) or $self->error("$out : $!");
+    open $out, "$mode:encoding(UTF-8)", $self_out  or $self->error("$self_out : $!");
   } else {
-    open(OUT, ">-") or $self->error("STDOUT : $!");
+    open $out, ">-"  or $self->error("STDOUT : $!");
 
     $self->header;
   }
@@ -885,20 +844,20 @@ sub parse_template {
 
   for my $i (1 .. $self->{copies}) {
 
-    $sum = 0;
+    $self->{_sum} = 0;
     $self->{copy} = 1 if $i == 2;
 
     if ($self->{format} =~ /(ps|pdf)/ && $self->{copies} > 1) {
       if ($i == 1) {
-        @_ = ();
-        while ($_ = shift @template) {
+        my @tpl2 = ();
+        while (shift @template) {
           if (/\\end\{document\}/) {
-            push @_, qq|\\newpage\n|;
+            push @tpl2, qq|\\newpage\n|;
             last;
           }
-          push @_, $_;
+          push @tpl2, $_;
         }
-        @template = @_;
+        @template = @tpl2;
       }
 
       if ($i == 2) {
@@ -912,20 +871,20 @@ sub parse_template {
       }
     }
 
-    print OUT $self->process_template($myconfig, @template);
+    print $out $self->process_template($myconfig, @template);
 
   }
 
-  close(OUT);
+  close($out);
 
 
   # Convert the tex file to postscript
   if ($self->{format} =~ /(ps|pdf)/) {
     $self->run_latex($userspath, $dvipdf, $xelatex);
     if (-f "$self->{errfile}") {
-      open(FH, "$self->{errfile}");
-      my @err = <FH>;
-      close(FH);
+      open my $fh, "$self->{errfile}";
+      my @err = <$fh>;
+      close $fh;
       for (@err) {
         $self->error("@err") if /LaTeX Error:/;
       }
@@ -938,7 +897,7 @@ sub parse_template {
 
       use SL::Mailer;
 
-      my $mail = new Mailer;
+      my $mail = SL::Mailer->new;
 
       for (qw(email cc bcc)) { $self->{$_} =~ s/(\\|\&gt;|\&lt;|<|>)//g; }
       for (qw(cc bcc subject message version format notify)) { $mail->{$_} = $self->{$_} }
@@ -966,17 +925,17 @@ sub parse_template {
         $myconfig->{signature} =~ s/\\n/$br\n/g;
         $mail->{message} .= "$br\n-- $br\n$myconfig->{signature}\n$br" if $myconfig->{signature};
 
-        unless (open(IN, $self->{tmpfile})) {
+        unless (open $in, $self->{tmpfile}) {
           $err = $!;
           $self->cleanup;
           $self->error("$self->{tmpfile} : $err");
         }
 
-        while (<IN>) {
+        while (<$in>) {
           $mail->{message} .= $_;
         }
 
-        close(IN);
+        close $in;
 
       } else {
 
@@ -987,14 +946,14 @@ sub parse_template {
 
       }
 
-      if ($err = $mail->send($out)) {
+      if ($err = $mail->send($target)) {
         $self->cleanup;
         $self->error($err);
       }
 
     } else {
 
-      $self->process_tex($out);
+      $self->process_tex($target);
 
     }
 
@@ -1005,9 +964,7 @@ sub parse_template {
 }
 
 
-sub process_template {
-  my $self = shift;
-  my $myconfig = shift;
+sub process_template ($self, $myconfig, @template) {
 
   my $var;
   my $par;
@@ -1015,37 +972,36 @@ sub process_template {
 
   my ($chars_per_line, $lines_on_first_page, $lines_on_second_page) = (0, 0, 0);
   my ($current_page, $current_line) = (1, 1);
-  my $sum;
   my $pagebreak = "";
   my %include;
 
-  while ($_ = shift) {
+  while (my $ln = shift @template) {
 
     $par = "";
 
     # detect pagebreak block and its parameters
-    if (/<%pagebreak ([0-9]+) ([0-9]+) ([0-9]+)%>/) {
+    if ($ln =~ /<%pagebreak ([0-9]+) ([0-9]+) ([0-9]+)%>/) {
       $chars_per_line = $1;
       $lines_on_first_page = $2;
       $lines_on_second_page = $3;
 
-      while ($_ = shift) {
-        last if (/<%end pagebreak%>/);
-        $pagebreak .= $_;
+      while ($ln = shift @template) {
+        last if ($ln =~ /<%end pagebreak%>/);
+        $pagebreak .= $ln;
       }
     }
 
-    if (/<%foreach /) {
+    if ($ln =~ /<%foreach /) {
 
       # this one we need for the count
-      chomp;
-      s/.*?<%foreach\s+?(.+?)%>/$1/;
+      chomp $ln;
+      $ln =~ s/.*?<%foreach\s+?(.+?)%>/$1/;
       $var = $1;
-      while ($_ = shift) {
-        last if /<%end\s+?\Q$var\E%>/;
+      while ($ln = shift @template) {
+        last if $ln =~ /<%end\s+?\Q$var\E%>/;
 
         # store line in $par
-        $par .= $_;
+        $par .= $ln;
       }
 
       my $v = time;
@@ -1100,7 +1056,7 @@ sub process_template {
                 # replace the special variables <%sumcarriedforward%>
                 # and <%lastpage%>
 
-                my $psum = $self->format_amount($myconfig, $sum, $self->{precision});
+                my $psum = $self->format_amount($myconfig, $self->{_sum}, $self->{precision});
                 $pb =~ s/<%sumcarriedforward%>/$psum/g;
                 $pb =~ s/<%lastpage%>/$current_page/g;
 
@@ -1118,7 +1074,7 @@ sub process_template {
               }
               $current_line += $lines;
             }
-            $sum += $self->parse_amount($myconfig, $self->{linetotal}[$i]);
+            $self->{_sum} += $self->parse_amount($myconfig, $self->{linetotal}[$i]);
           }
 
           # don't parse par, we need it for each line
@@ -1129,78 +1085,78 @@ sub process_template {
       next;
     }
 
-    if (/<%else /) {
+    if ($ln =~ /<%else /) {
       # check if it is not set and display
-      chomp;
-      s/.*?<%else\s+?(.+?)%>/$1/;
+      chomp $ln;
+      $ln =~ s/.*?<%else\s+?(.+?)%>/$1/;
       $var = $1;
 
       if (! $self->{$var}) {
-        s/^$var//;
-        if (/<%end /) {
-          s/<%end\s+?$var%>//;
+        $ln =~ s/^$var//;
+        if ($ln =~ /<%end /) {
+          $ln =~ s/<%end\s+?$var%>//;
         } else {
-          $par = $_;
-          while ($_ = shift) {
-            last if /<%end /;
+          $par = $ln;
+          while ($ln = shift @template) {
+            last if $ln =~ /<%end /;
             # store line in $par
-            $par .= $_;
+            $par .= $ln;
           }
-          $_ = $par;
+          $ln = $par;
         }
       } else {
-        if (! /<%end /) {
-          while ($_ = shift) {
-            last if /<%end /;
+        unless ($ln =~ /<%end /) {
+          while ($ln = shift @template) {
+            last if $ln =~ /<%end /;
           }
         }
         next;
       }
     }
 
-    if (/<%if\s+?not /) {
+    if ($ln =~ /<%if\s+?not /) {
       # check if it is not set and display
-      chomp;
-      s/.*?<%if\s+?not\s+?(.+?)%>/$1/;
+      chomp $ln;
+      $ln =~ s/.*?<%if\s+?not\s+?(.+?)%>/$1/;
       $var = $1;
 
       if (! $self->{$var}) {
-        s/^$var//;
-        if (/<%else\s*?%>/) {
-          s/<%else\s*?%>.*?(<%end\s+?$var%>)/$1/;
+        $ln =~ s/^$var//;
+        if ($ln =~ /<%else\s*?%>/) {
+          $ln =~ s/<%else\s*?%>.*?(<%end\s+?$var%>)/$1/;
         }
-        if (/<%end /) {
-          s/<%end\s+?$var%>//;
+        if ($ln =~ /<%end /) {
+          $ln =~ s/<%end\s+?$var%>//;
         } else {
-          $par = $_;
-          while ($_ = shift) {
-            last if /<%end /;
+          $par = $ln;
+          while ($ln = shift @template) {
+            last if $ln =~ /<%end /;
             # store line in $par
-            $par .= $_;
+            $par .= $ln;
           }
-          $_ = $par;
+          $ln = $par;
         }
       } else {
-        if (! /<%(end|else) /) {
-          while ($_ = shift) {
-            last if /<%(end|else) /;
+        unless ($ln =~ /<%(end|else) /) {
+          while ($ln = shift @template) {
+            last if $ln =~ /<%(end|else) /;
           }
         }
         next;
       }
     }
 
-    if (/<%if /) {
+    if ($ln =~ /<%if /) {
       # check if it is set and display
-      chomp;
-      s/.*?<%if\s+?(.+?)%>/$1/;
+      chomp $ln;
+      $ln =~ s/.*?<%if\s+?(.+?)%>/$1/;
       $var = $1;
-      $ok = 0;
+      my $ok = 0;
       if ($var =~ /\s/) {
         my @k = split / /, $var, 3;
         if ($#k == 2) {
           for my $j (0 .. 2) {
-            $temp = $k[$j];
+            my $temp = $k[$j];
             if ($temp !~ /'/) {
               if (exists $self->{$temp}) {
                 $k[$j] = qq|'$self->{$temp}'|;
@@ -1214,25 +1170,25 @@ sub process_template {
       }
 
       if ($ok) {
-        s/^\Q$var\E//;
-        if (/<%else\s*?%>/) {
-          s/<%else\s*?%>.*?(<%end\s+?$var%>)/$1/;
+        $ln =~ s/^\Q$var\E//;
+        if ($ln =~ /<%else\s*?%>/) {
+          $ln =~ s/<%else\s*?%>.*?(<%end\s+?$var%>)/$1/;
         }
-        if (/<%end /) {
-          s/<%end\s+?$var%>//;
+        if ($ln =~ /<%end /) {
+          $ln =~ s/<%end\s+?$var%>//;
         } else {
-          $par = $_;
-          while ($_ = shift) {
-            last if /<%end /;
+          $par = $ln;
+          while ($ln = shift @template) {
+            last if $ln =~ /<%end /;
             # store line in $par
-            $par .= $_;
+            $par .= $ln;
           }
-          $_ = $par;
+          $ln = $par;
         }
       } else {
-        if (! /<%(end|else) /) {
-          while ($_ = shift) {
-            last if /<%(end|else) /;
+        unless ($ln =~ /<%(end|else) /) {
+          while ($ln = shift @template) {
+            last if $ln =~ /<%(end|else) /;
           }
         }
         next;
@@ -1240,9 +1196,9 @@ sub process_template {
     }
 
     # check for <%include something filename%>
-    if (/<%include /) {
+    if ($ln =~ /<%include /) {
 
-      $var = $_;
+      $var = $ln;
       $var =~ s/(\s*?<%|%>)//g;
       my @k = split / /, $var;
 
@@ -1250,27 +1206,28 @@ sub process_template {
         # get the filename
         $var = $k[2];
 
-        unless (open(INC, '<:utf8', "$self->{templates}/$self->{language_code}/$var")) {
-          $err = $!;
+        my $inc;
+        unless (open $inc, '<:encoding(UTF-8)', "$self->{templates}/$self->{language_code}/$var") {
+          my $err = $!;
           $self->cleanup;
           $self->error("$self->{templates}/$self->{language_code}/$var : $err");
         }
-        my @include = <INC>;
-        close(INC);
+        my @include = <$inc>;
+        close $inc;
 
         $include{"include$var"}++;
 
-        $tmpfile = $self->{tmpfile};
+        my $tmpfile = $self->{tmpfile};
         $tmpfile =~ s/\.\w+$//g;
         $tmpfile .= qq|.$include{"include$var"}|;
 
-        unless (open(INC, '>:utf8', $tmpfile)) {
-          $err = $!;
+        unless (open $inc, '>:encoding(UTF-8)', $tmpfile) {
+          my $err = $!;
           $self->cleanup;
           $self->error("$tmpfile : $err");
         }
-        print INC $self->process_template($myconfig, @include);
-        close(INC);
+        print $inc $self->process_template($myconfig, @include);
+        close $inc;
 
         $tmpfile =~ s/.*?\///;
         $str .= qq|$k[1]\{$tmpfile\}|;
@@ -1280,33 +1237,34 @@ sub process_template {
     }
 
     # check for <%include filename%>
-    if (/<%include /) {
+    if ($ln =~ /<%include /) {
 
       # get the filename
-      chomp;
-      s/.*?<%include\s+?(.+?)%>/$1/;
+      chomp $ln;
+      $ln =~ s/.*?<%include\s+?(.+?)%>/$1/;
       $var = $1;
 
       # remove / ..
       $var =~ s/(\/|\.\.)//g;
 
       # assume loop after 10 includes of the same file
-      next if $include{$var} > 10;
+      next if $include{$var} && $include{$var} > 10;
 
-      unless (open(INC, '<:utf8', "$self->{templates}/$self->{language_code}/$var")) {
-        $err = $!;
+      my $inc;
+      unless (open $inc, '<:encoding(UTF-8)', "$self->{templates}/$self->{language_code}/$var") {
+        my $err = $!;
         $self->cleanup;
         $self->error("$self->{templates}/$self->{language_code}/$var : $err");
       }
-      unshift(@_, <INC>);
-      close(INC);
+      unshift(@template, <$inc>);
+      close $inc;
 
       $include{$var}++;
 
       next;
     }
 
-    $str .= $self->format_line($_);
+    $str .= $self->format_line($ln);
 
   }
 
@@ -1315,8 +1273,7 @@ sub process_template {
 }
 
 
-sub run_latex {
-  my ($self, $userspath, $dvipdf, $xelatex) = @_;
+sub run_latex ($self, $userspath, $dvipdf, $xelatex) {
 
   use Cwd;
   $self->{cwd} = cwd();
@@ -1369,7 +1326,7 @@ sub run_latex {
       $self->{tmpfile} =~ s/dvi$/pdf/;
 
     } else {
-      $lt = ($xelatex) ? "xelatex" : "pdflatex";
+      my $lt = ($xelatex) ? "xelatex" : "pdflatex";
       system("$lt --interaction=nonstopmode $self->{tmpfile} > $self->{errfile}");
       while ($self->rerun_latex) {
         system("$lt --interaction=nonstopmode $self->{tmpfile} > $self->{errfile}");
@@ -1383,25 +1340,24 @@ sub run_latex {
 }
 
 
-sub gentex {
-  my ($self, $myconfig, $templates, $userspath, $dvipdf, $xelatex, $column, $hdr) = @_;
+sub gentex ($self, $myconfig, $templates, $userspath, $dvipdf, $xelatex, $column, $hdr) {
 
   my $fileid = time;
   $fileid .= $$;
   $self->{tmpfile} = "$userspath/${fileid}.tex";
 
-  open(HDR, "$templates/$myconfig->{templates}/$self->{language_code}/invoice.tex") or $self->error("$templates/$myconfig->{templates}/$self->{language_code}/invoice.tex : $!");
-  open(OUT, ">$self->{tmpfile}") or $self->error("$self->{tmpfile} : $!");
+  open $hdr, "$templates/$myconfig->{templates}/$self->{language_code}/invoice.tex" or $self->error("$templates/$myconfig->{templates}/$self->{language_code}/invoice.tex : $!");
+  open my $out, ">$self->{tmpfile}" or $self->error("$self->{tmpfile} : $!");
 
   my @h = ();
 
-  while (<HDR>) {
+  while (<$hdr>) {
     if ($_ =~ /<%include /) {
       s/<%include //;
       s/%>//;
-      open(INC, "$templates/$myconfig->{templates}/$self->{language_code}/$_") or $self->error("$templates/$myconfig->{templates}/$self->{language_code}/$_ : $!");
-      push @h, <INC>;
-      close(INC);
+      open my $inc, "$templates/$myconfig->{templates}/$self->{language_code}/$_" or $self->error("$templates/$myconfig->{templates}/$self->{language_code}/$_ : $!");
+      push @h, <$inc>;
+      close $inc;
       next;
     }
     last if $_ =~ /begin\{document\}/;
@@ -1415,23 +1371,23 @@ sub gentex {
 
 |;
 
-  while (<HDR>) {
+  while (<$hdr>) {
     if ($_ =~ /fontfamily/) {
       push @h, $_;
       last;
     }
   }
-  close(HDR);
+  close $hdr;
 
-  print OUT @h;
+  print $out @h;
 
   $self->format_string(qw(title company));
 
-  print OUT qq|\\centerline\{\\textbf\{$self->{title} / $self->{company}\}\}\n|;
+  print $out qq|\\centerline\{\\textbf\{$self->{title} / $self->{company}\}\}\n|;
 
   $self->{option} =~ s/<br>/
 /g;
-  print OUT $self->format_string((option)).qq|\n\n|;
+  print $out $self->format_string('option').qq|\n\n|;
 
 
   my $l = $#{$self->{$column->[0]}};
@@ -1460,39 +1416,39 @@ sub gentex {
   $line .= q|}
 |;
 
-  print OUT $line;
+  print $out $line;
 
   $line = "";
   for (@{$column}) {
     $self->{temp} = $hdr->{$_}{label};
-    $self->format_string((temp));
+    $self->format_string('temp');
     $line .= qq|\\textbf{$self->{temp}} \& |;
   }
   $line = substr($line, 0, -3) .q| \\\\ \hline|;
 
-  print OUT qq|$line\n\\endfirsthead\n|;
-  print OUT qq|$line\n\\endhead\n|;
+  print $out qq|$line\n\\endfirsthead\n|;
+  print $out qq|$line\n\\endhead\n|;
 
-  print OUT qq|\\hline\n\\endfoot\n|;
-  print OUT qq|\\hline\n\\endlastfoot\n|;
+  print $out qq|\\hline\n\\endfoot\n|;
+  print $out qq|\\hline\n\\endlastfoot\n|;
 
   for my $i (0 .. $l) {
     $line = "";
     for (@{$column}) {
       $self->{temp} = $self->{$_}[$i];
       if ($self->{temp} && $hdr->{$_}{type} ne 'n') {
-        $self->format_string(temp) unless $hdr->{$_}{image};
+        $self->format_string('temp') unless $hdr->{$_}{image};
       }
       $line .= qq|$self->{temp} \& |;
     }
-    print OUT substr($line, 0, -3) .qq| \\\\ \n|;
+    print $out substr($line, 0, -3) .qq| \\\\ \n|;
   }
 
-  print OUT q|\end{longtable}
+  print $out q|\end{longtable}
 \end{document}
 |;
 
-  close(OUT);
+  close $out;
 
   $self->run_latex($userspath, $dvipdf, $xelatex);
 
@@ -1503,27 +1459,26 @@ sub gentex {
 }
 
 
-sub process_tex {
-  my ($self, $out) = @_;
+sub process_tex ($self, $target) {
 
-  my $err;
+  my ($err, $in, $out);
 
-  $self->{OUT} = $out;
-  unless (open(IN, $self->{tmpfile})) {
+  $self->{OUT} = $target;
+  unless (open $in, $self->{tmpfile}) {
     $err = $!;
     $self->cleanup;
     $self->error("$self->{tmpfile} : $err");
   }
 
-  binmode(IN);
+  binmode $in;
 
   chdir("$self->{cwd}");
 
   if ($self->{OUT}) {
-    unless (open(OUT, $self->{OUT})) {
+    unless (open $out, $self->{$out}) {
       $err = $!;
       $self->cleanup;
-      $self->error("$self->{OUT} : $err");
+      $self->error("$self->{$out} : $err");
     }
   } else {
 
@@ -1531,7 +1486,7 @@ sub process_tex {
     print qq|Content-Type: application/$self->{format}
 Content-Disposition: attachment; filename=$self->{tmpfile}\n\n|;
 
-    unless (open(OUT, ">-")) {
+    unless (open $out, ">-") {
       $err = $!;
       $self->cleanup;
       $self->error("STDOUT : $err");
@@ -1539,20 +1494,19 @@ Content-Disposition: attachment; filename=$self->{tmpfile}\n\n|;
 
   }
 
-  binmode(OUT);
+  binmode $out;
 
-  while (<IN>) {
-    print OUT $_;
+  while (<$in>) {
+    print $out $_;
   }
 
-  close(IN);
-  close(OUT);
+  close $in;
+  close $out;
 
 }
 
 
-sub mimetype {
-  my ($self, $myconfig, $filename) = @_;
+sub mimetype ($self, $myconfig, $filename) {
   my $rv;
 
   if ($filename =~ /.+\.([^.]+)$/) {
@@ -1571,15 +1525,16 @@ sub mimetype {
 }
 
 
-sub download_tmpfile {
-  my ($self, $myconfig, $filename) = @_;
+sub download_tmpfile ($self, $myconfig, $filename) {
 
   $filename ||= $self->{tmpfile};
+  $filename =~ s/\//_/g;
+  $filename =~ s/ _ /_/g;
   $filename = $self->escape($filename, 1);
 
-  my $err;
+  my ($err, $in, $out);
 
-  unless (open(IN, $self->{tmpfile})) {
+  unless (open $in, $self->{tmpfile}) {
     $err = $!;
     $self->cleanup;
     $self->error("$self->{tmpfile} : $err");
@@ -1587,34 +1542,32 @@ sub download_tmpfile {
 
   my $mimetype = $self->mimetype($myconfig, $filename);
 
-  binmode(IN);
+  binmode $in;
 
   print qq|Content-Type: $mimetype
 Content-Disposition: attachment; filename*=UTF-8''$filename\n\n|;
 
-  unless (open(OUT, ">-")) {
+  unless (open $out, ">-") {
     $err = $!;
     $self->cleanup;
-    $self->error("STDOUT : $err");
+    $self->error("STD$out : $err");
   }
 
-  binmode(OUT);
+  binmode $out;
 
-  while (<IN>) {
-    print OUT $_;
+  while (<$in>) {
+    print $out $_;
   }
 
-  close(IN);
-  close(OUT);
+  close $in;
+  close $out;
   $self->cleanup;
 }
 
 
-sub format_line {
-  my $self = shift;
+sub format_line ($self, $ln, $i = undef) {
 
-  $_ = shift;
-  my $i = shift;
+  # $_ = $ln;
 
   my $j;
   my $str;
@@ -1632,7 +1585,7 @@ sub format_line {
   my $key;
   my $value;
 
-  while (/<%(.+?)%>/) {
+  while ($ln =~ /<%(.+?)%>/) {
 
     $var = $1;
     $newstr = "";
@@ -1643,7 +1596,7 @@ sub format_line {
       $var = $kw[0];
       foreach $item (@kw) {
         ($key, $value) = split /=/, $item;
-        if ($value ne "") {
+        if ($value) {
           $kw{$key} = $value;
         }
       }
@@ -1692,19 +1645,19 @@ sub format_line {
     if ($var =~ /^if\s+?not /) {
       if ($str) {
         $var =~ s/if\s+?not\s+?//;
-        s/<%if\s+?not\s+?$var%>.*?(<%end\s+?$var%>|$)//s;
+        $ln =~ s/<%if\s+?not\s+?$var%>.*?(<%end\s+?$var%>|$)//s;
       } else {
-        s/<%$var%>//;
+        $ln =~ s/<%$var%>//;
       }
       next;
     }
 
     if ($var =~ /^if /) {
       if ($str) {
-        s/<%$var%>//;
+        $ln =~ s/<%$var%>//;
       } else {
         $var =~ s/if\s+?//;
-        s/<%if\s+?$var%>.*?(<%(end|else)\s+?$var%>|$)//s;
+        $ln =~ s/<%if\s+?$var%>.*?(<%(end|else)\s+?$var%>|$)//s;
       }
       next;
     }
@@ -1712,15 +1665,15 @@ sub format_line {
     if ($var =~ /^else /) {
       if ($str) {
         $var =~ s/else\s+?//;
-        s/<%else\s+?$var%>.*?(<%end\s+?$var%>|$)//s;
+        $ln =~ s/<%else\s+?$var%>.*?(<%end\s+?$var%>|$)//s;
       } else {
-        s/<%$var%>//;
+        $ln =~ s/<%$var%>//;
       }
       next;
     }
 
     if ($var =~ /^end /) {
-      s/<%$var%>//;
+      $ln =~ s/<%$var%>//;
       next;
     }
 
@@ -1770,11 +1723,11 @@ sub format_line {
 
           $newstr .= "$lf$line";
 
-          $str = substr($str, $pos + 1);
+          $str = length $str > $pos ? substr($str, $pos + 1) : '';
           $line = $str;
           $lf = "\n";
 
-          $offset = $kw{offset};
+          $offset = $kw{offset} || 0;
 
         } while ($str);
       }
@@ -1783,7 +1736,7 @@ sub format_line {
     if ($kw{group}) {
 
       $kw{group} =~ s/\d+//;
-      $n = $&;
+      my $n = $&;
       @kw = split //, $str;
 
       if ($kw{group} =~ /right/i) {
@@ -1809,7 +1762,7 @@ sub format_line {
     if ($kw{ASCII}) {
       my $carret;
       my $nn;
-      $n = 0;
+      my $n = 0;
       if ($kw{ASCII} =~ /^\^/) {
         $carret = '^';
       }
@@ -1840,19 +1793,19 @@ sub format_line {
       $newstr = SL::QRCode::plot_latex($newstr, %params);
     }
 
-    s/<%(.+?)%>/$newstr/;
+    $newstr //= '';
+    $ln =~ s/<%(.+?)%>/$newstr/;
 
   }
 
-  $_;
+  return $ln;
 
 }
 
 
-sub format_dcn {
-  my $self = shift;
+sub format_dcn ($self, $dcn) {
 
-  $_ = shift;
+  $dcn //= '';
 
   my $str;
   my $modulo;
@@ -1871,6 +1824,7 @@ sub format_dcn {
   my @n;
   my $n;
   my $w;
+  my $lr;
   my $cd;
 
   for (0 .. $#m) {
@@ -1879,15 +1833,15 @@ sub format_dcn {
     push @m, $m;
   }
 
-  if (/<%/) {
+  if ($dcn =~ /<%/) {
 
-    while (/<%(.+?)%>/) {
+    while ($dcn =~ /<%(.+?)%>/) {
 
       $param = $1;
       $str = $param;
 
       ($var, $padl) = split / /, $param;
-      $padl *= 1;
+      ($padl //= 0) *= 1;
 
       if ($var eq 'membernumber') {
 
@@ -1901,19 +1855,19 @@ sub format_dcn {
 
       } else {
         $i = 0;
-        $str = $self->{$var};
+        $str = $self->{$var} // '';
         $str =~ s/\D/++$i/ge;
         $str = substr('0' x $padl . $str, -$padl) if $padl;
       }
 
-      s/<%$param%>/$str/;
+      $dcn =~ s/<%$param%>/$str/;
 
     }
 
-    /(.+?)\x01modulo/;
+    $dcn =~ /(.+?)\x01modulo/;
     $modulo = $1;
 
-    while (/\x01(modulo.+?)\x01/) {
+    while ($dcn =~ /\x01(modulo.+?)\x01/) {
 
       $param = $1;
 
@@ -1923,7 +1877,7 @@ sub format_dcn {
         $e = 0;
 
         for $n (@e) {
-          $e = $m{$e}[$n];
+          $e = $m{$e}[$n] if $n =~ /\d/;
         }
         $str = substr(10 - $e, -1);
       }
@@ -1965,22 +1919,21 @@ sub format_dcn {
         }
       }
 
-      s/\x01$param\x01/$str/;
+      $dcn =~ s/\x01$param\x01/$str/;
 
-      /(.+?)\x01modulo/;
+      $dcn =~ /(.+?)\x01modulo/;
       $modulo = $1;
 
     }
 
   }
 
-  $_;
+  return $dcn;
 
 }
 
 
-sub qr_variables {
-  my ($self, $myconfig) = @_;
+sub qr_variables ($self, $myconfig) {
   require Encode;
 
   $self->{qr_company_name} = $self->{company};
@@ -2006,10 +1959,11 @@ sub qr_variables {
     push @fields, "company_$_", "customer_$_";
   }
   for my $field (@fields) {
+    $self->{"qr_$field"} //= '';
     $self->{"qr_$field"} =~ tr/–—/--/;
     $self->{"qr2e_$field"}  = Encode::encode('UTF-8', $self->{"qr_$field"});
     $self->{"qrasc_$field"} = $self->{"qr_$field"}
-      =~ tr/ÀÁÂÃÄÅÆĂÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØȘȚÙÚÛÜÝÞßàáâãäåæăçèéêëìíîïðñòóôõöøșțùúûüýþÿ/AAAAAAAACEEEEIIIIDNOOOOOxOSTUUUUYDsaaaaaaaaceeeeiiiidnoooooostuuuuydy/r;
+      =~ tr/ÀÁÂÃÄÅÆĂÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖŐ×ØȘȚÙÚÛÜŰÝÞßàáâãäåæăçèéêëìíîïðñòóôõöőøșțùúûüűýþÿ/AAAAAAAACEEEEIIIIDNOOOOOOxOSTUUUUUYDsaaaaaaaaceeeeiiiidnooooooostuuuuuydy/r;
 
     push @sf, "qr_$field", "qr2e_$field", "qrasc_$field";
   }
@@ -2049,16 +2003,15 @@ sub qr_variables {
 }
 
 
-sub cleanup {
-  my $self = shift;
+sub cleanup ($self) {
 
-  chdir("$self->{tmpdir}");
+  chdir($self->{tmpdir}) if $self->{tmpdir};
 
   my @err = ();
-  if (-f "$self->{errfile}") {
-    open(FH, "$self->{errfile}");
-    @err = <FH>;
-    close(FH);
+  if ($self->{errfile} && -f $self->{errfile}) {
+    open my $fh, "$self->{errfile}";
+    @err = <$fh>;
+    close $fh;
   }
 
   if ($self->{tmpfile}) {
@@ -2068,21 +2021,20 @@ sub cleanup {
     unlink(<$tmpfile.*>);
   }
 
-  chdir("$self->{cwd}");
+  chdir($self->{cwd}) if $self->{cwd};
 
   "@err";
 
 }
 
 
-sub rerun_latex {
-  my $self = shift;
+sub rerun_latex ($self) {
 
   my $w = 0;
   if (-f "$self->{errfile}") {
-    open(FH, "$self->{errfile}");
-    $w = grep /(longtable Warning:|Warning:.*?LastPage)/, <FH>;
-    close(FH);
+    open my $fh, "$self->{errfile}";
+    $w = grep /(longtable Warning:|Warning:.*?LastPage)/, <$fh>;
+    close $fh;
   }
 
   $w;
@@ -2090,10 +2042,9 @@ sub rerun_latex {
 }
 
 
-sub format_string {
-  my ($self, @fields) = @_;
+sub format_string ($self, @fields) {
 
-  my $format = $self->{format};
+  my $format = $self->{format} or return;
   if ($self->{format} =~ /(ps|pdf)/) {
     $format = ($self->{charset} =~ /utf/i) ? 'utf' : 'tex';
   }
@@ -2123,25 +2074,24 @@ sub format_string {
 
   $replace{utf} = $replace{tex};
 
-  my $key;
-  foreach $key (@{ $replace{order}{$format} }) {
-    for (@fields) { $self->{$_} =~ s/$key/$replace{$format}{$key}/g }
+  for my $key (@{$replace{order}{$format}}) {
+    for (@fields) { $self->{$_} =~ s/$key/$replace{$format}{$key}/g if $self->{$_} }
   }
 
   if ($self->{format} =~ /(ps|pdf)/) {
+
     # Markdown
     for (@fields) {
-      $self->{$_} =~ s~\*\*(\S.*?\S)\*\*~\\textbf{$1}~g;
-      $self->{$_} =~ s~\*(\S.*?\S)\*~\\textit{$1}~g;
-      $self->{$_} =~ s~\[(.+?)\]\((https?://.+?)\)~\\href{$2}{$1}~g;
+      $self->{$_} =~ s~\*\*(\S.*?\S)\*\*~\\textbf{$1}~g             if $self->{$_};
+      $self->{$_} =~ s~\*(\S.*?\S)\*~\\textit{$1}~g                 if $self->{$_};
+      $self->{$_} =~ s~\[(.+?)\]\((https?://.+?)\)~\\href{$2}{$1}~g if $self->{$_};
     }
   }
 
 }
 
 
-sub pad {
-  my ($self, $str, $chr, $align, $width, $display) = @_;
+sub pad ($self, $str, $chr, $align, $width, $display) {
 
   $chr =~ s/-(-|\+)??\d+(s|S)?//;
   $chr = " " if $chr eq "";
@@ -2181,8 +2131,7 @@ sub pad {
 }
 
 
-sub datediff {
-  my ($self, $myconfig, $date1, $date2) = @_;
+sub datediff ($self, $myconfig, $date1, $date2) {
 
   use Time::Local;
 
@@ -2238,8 +2187,7 @@ sub datediff {
 }
 
 
-sub datetonum {
-  my ($self, $myconfig, $date) = @_;
+sub datetonum ($self, $myconfig, $date) {
 
   my ($mm, $dd, $yy);
 
@@ -2270,15 +2218,13 @@ sub datetonum {
 }
 
 
-sub add_date {
-  my ($self, $myconfig, $date, $repeat, $unit) = @_;
+sub add_date ($self, $myconfig, $date, $repeat, $unit) {
 
-  use Time::Local;
-
+  $myconfig->{dateformat} //= 'yyyymmdd';
   my $diff = 0;
-  my $spc = $myconfig->{dateformat};
-  $spc =~ s/\w//g;
-  $spc = substr($spc, 0, 1);
+  my ($spc) = $myconfig->{dateformat} =~ /(\W)/;
+  $spc //= '';
+  my ($yy, $mm, $dd);
 
   if ($date) {
     if ($date =~ /\D/) {
@@ -2344,7 +2290,7 @@ sub add_date {
 
     $mm--;
 
-    @t = localtime(timelocal(0,0,12,$dd,$mm,$yy) + $diff);
+    my @t = localtime(timelocal(0,0,12,$dd,$mm,$yy) + $diff);
 
     $t[4]++;
     $mm = substr("0$t[4]",-2);
@@ -2373,31 +2319,29 @@ sub add_date {
 }
 
 
-sub format_date {
-  my ($self, $dateformat, $date) = @_;
+sub format_date ($self, $dateformat, $date) {
 
-  my $spc = $dateformat;
-  $spc =~ s/\w//g;
-  $spc = substr($spc, 0, 1);
+  $dateformat //= '';
+  my ($spc) = $dateformat =~ /(\W)/;
+  $spc //= '';
 
   # ISO
-  $date =~ /(....)(..)(..)/;
-  $yy = $1;
-  $mm = $2;
-  $dd = $3;
+  my ($yy, $mm, $dd) = $date =~ /(....)(..)(..)/;
 
-  if ($dateformat !~ /yyyy/) {
-    $yy = substr($yy, -2);
-  }
+  if ($yy && $mm && $dd) {
+    if ($dateformat !~ /yyyy/) {
+      $yy = substr($yy, -2);
+    }
 
-  if ($dateformat =~ /^yy/) {
-    $date = "$yy$spc$mm$spc$dd";
-  }
-  if ($dateformat =~ /^mm/) {
-    $date = "$mm$spc$dd$spc$yy";
-  }
-  if ($dateformat =~ /^dd/) {
-    $date = "$dd$spc$mm$spc$yy";
+    if ($dateformat =~ /^yy/) {
+      $date = "$yy$spc$mm$spc$dd";
+    }
+    if ($dateformat =~ /^mm/) {
+      $date = "$mm$spc$dd$spc$yy";
+    }
+    if ($dateformat =~ /^dd/) {
+      $date = "$dd$spc$mm$spc$yy";
+    }
   }
 
   $date;
@@ -2405,8 +2349,7 @@ sub format_date {
 }
 
 
-sub valid_date {
-  my ($self, $myconfig, $date) = @_;
+sub valid_date ($self, $myconfig, $date) {
 
   my %dd = ( '01' => 31, '02' => 28, '03' => 31, '04' => 30,
              '05' => 31, '06' => 30, '07' => 31, '08' => 31,
@@ -2435,8 +2378,7 @@ sub valid_date {
 }
 
 
-sub weekday {
-  my ($self, $myconfig, $date) = @_;
+sub weekday ($self, $myconfig, $date) {
 
   my $numdate = $self->datetonum($myconfig, $date);
   $numdate =~ /(\d{4})(\d{2})(\d{2})/;
@@ -2447,15 +2389,13 @@ sub weekday {
 }
 
 
-sub workingday {
-  my ($self, $myconfig, $date) = @_;
+sub workingday ($self, $myconfig, $date) {
 
   return !!($self->weekday($myconfig, $date) % 6);
 }
 
 
-sub print_button {
-  my ($self, $button) = @_;
+sub print_button ($self, $button) {
 
   for (sort { $button->{$a}->{ndx} <=> $button->{$b}->{ndx} } keys %{$button}) {
     print qq|<input class="submit noprint" type=submit name=action value="$button->{$_}{value}" accesskey="$button->{$_}{key}" title="$button->{$_}{value} [$button->{$_}{key}]">\n|;
@@ -2466,11 +2406,12 @@ sub print_button {
 
 # Database routines used throughout
 
-sub dbconnect {
-  my ($self, $myconfig) = @_;
+sub dbconnect ($self, $myconfig) {
 
   # connect to database
-  my $dbh = DBI->connect($myconfig->{dbconnect}, $myconfig->{dbuser}, $myconfig->{dbpasswd}, {AutoCommit => 1}) or $self->dberror;
+  my $dbh = DBI->connect($myconfig->{dbconnect},
+    $myconfig->{dbuser}, $myconfig->{dbpasswd}, {AutoCommit => 1, FetchHashKeyName => 'NAME_lc'})
+    or $self->dberror;
 
   # set db options
   if ($myconfig->{dboptions}) {
@@ -2482,11 +2423,12 @@ sub dbconnect {
 }
 
 
-sub dbconnect_noauto {
-  my ($self, $myconfig) = @_;
+sub dbconnect_noauto ($self, $myconfig) {
 
   # connect to database
-  my $dbh = DBI->connect($myconfig->{dbconnect}, $myconfig->{dbuser}, $myconfig->{dbpasswd}, {AutoCommit => 0}) or $self->dberror;
+  my $dbh = DBI->connect($myconfig->{dbconnect},
+    $myconfig->{dbuser}, $myconfig->{dbpasswd}, {AutoCommit => 0, FetchHashKeyName => 'NAME_lc'})
+    or $self->dberror;
 
   # set db options
   if ($myconfig->{dboptions}) {
@@ -2498,10 +2440,9 @@ sub dbconnect_noauto {
 }
 
 
-sub dbquote {
-  my ($self, $var, $type) = @_;
+sub dbquote ($self, $var, $type) {
 
-  $var =~ s/;/\\;/g;
+  ($var //= '') =~ s/;/\\;/g;
 
   # DBI does not return NULL for SQL_DATE if the date is empty
   if ($type eq 'SQL_DATE') {
@@ -2516,8 +2457,7 @@ sub dbquote {
 }
 
 
-sub update_balance {
-  my ($self, $dbh, $table, $field, $where, $value) = @_;
+sub update_balance ($self, $dbh, $table, $field, $where, $value) {
 
   # if we have a value, go do it
   if ($value) {
@@ -2534,8 +2474,7 @@ sub update_balance {
 }
 
 
-sub update_exchangerate {
-  my ($self, $dbh, $curr, $transdate, $exchangerate) = @_;
+sub update_exchangerate ($self, $dbh, $curr, $transdate, $exchangerate) {
 
   # some sanity check for currency
   return if (! $curr || $self->{currency} eq $self->{defaultcurrency});
@@ -2565,8 +2504,7 @@ sub update_exchangerate {
 }
 
 
-sub save_exchangerate {
-  my ($self, $myconfig, $currency, $transdate, $exchangerate) = @_;
+sub save_exchangerate ($self, $myconfig, $currency, $transdate, $exchangerate) {
 
   my $dbh = $self->dbconnect($myconfig);
 
@@ -2577,8 +2515,7 @@ sub save_exchangerate {
 }
 
 
-sub get_exchangerate {
-  my ($self, $myconfig, $dbh, $curr, $transdate) = @_;
+sub get_exchangerate ($self, $myconfig, $dbh = undef, $curr = '', $transdate = '') {
 
   my $disconnect;
 
@@ -2589,7 +2526,7 @@ sub get_exchangerate {
 
   my $exchangerate;
 
-  if ($transdate) {
+  if ($curr && $transdate) {
     my $query = qq|SELECT exchangerate FROM exchangerate
                    WHERE curr = '$curr'
                    AND transdate = '$transdate'|;
@@ -2603,8 +2540,7 @@ sub get_exchangerate {
 }
 
 
-sub check_exchangerate {
-  my ($self, $myconfig, $currency, $transdate) = @_;
+sub check_exchangerate ($self, $myconfig, $currency, $transdate) {
 
   return "" if ! $transdate || $self->{defaultcurrency} eq $currency;
 
@@ -2615,7 +2551,7 @@ sub check_exchangerate {
 
   $query = qq|SELECT exchangerate FROM exchangerate
               WHERE curr = '$currency'
-              AND transdate = |.$self->dbquote($transdate, SQL_DATE);
+              AND transdate = |.$self->dbquote($transdate, 'SQL_DATE');
   ($exchangerate) = $dbh->selectrow_array($query);
 
   $query = qq|SELECT prec FROM curr
@@ -2629,8 +2565,7 @@ sub check_exchangerate {
 }
 
 
-sub exchangerate_defaults {
-  my ($self, $dbh, $myconfig, $form) = @_;
+sub exchangerate_defaults ($self, $dbh, $myconfig, $form) {
 
   my $var;
   my $query;
@@ -2658,7 +2593,7 @@ sub exchangerate_defaults {
       $eth2->execute($var);
 
       ($self->{$var}) = $eth2->fetchrow_array;
-      (undef, $self->{$var}) = split / /, $self->{$var};
+      (undef, $self->{$var}) = split / /, ($self->{$var} // '');
       $self->{$var} = 1 unless $self->{$var};
       $eth2->finish;
     }
@@ -2671,8 +2606,7 @@ sub exchangerate_defaults {
 }
 
 
-sub add_shipto {
-  my ($self, $dbh, $id) = @_;
+sub add_shipto ($self, $dbh, $id) {
 
   my $shipto;
   for my $item (qw(name address1 streetname buildingnumber address2 city state zipcode country contact phone fax email)) {
@@ -2685,7 +2619,7 @@ sub add_shipto {
   }
 
   if ($shipto) {
-    $self->{shiptorecurring} *= 1;
+    ($self->{shiptorecurring} //= 0) *= 1;
     my $query = qq|INSERT INTO shipto (trans_id, shiptoname,
                    shiptoaddress1, shiptostreetname, shiptobuildingnumber,
                    shiptoaddress2, shiptocity, shiptostate,
@@ -2710,8 +2644,7 @@ sub add_shipto {
 }
 
 
-sub reset_shipped {
-  my ($self, $dbh, $id, $ml) = @_;
+sub reset_shipped ($self, $dbh, $id, $ml) {
 
   my $query = qq|SELECT o.parts_id, o.ship, p.inventory_accno_id,
                  p.income_accno_id, p.expense_accno_id, p.assembly
@@ -2731,7 +2664,7 @@ sub reset_shipped {
 
   $sth->execute;
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while ($ref = $sth->fetchrow_hashref) {
     if ($ref->{inventory_accno_id} || $ref->{assembly}) {
       $self->update_balance($dbh,
                             "parts",
@@ -2740,10 +2673,10 @@ sub reset_shipped {
                             $ref->{ship} * $ml);
     }
 
-    unless ($ref->{inventory_accno_id} + $ref->{income_accno_id} + $ref->{expense_accno_id}) {
+    unless ($ref->{inventory_accno_id} || $ref->{income_accno_id} || $ref->{expense_accno_id}) {
       $kth->execute($ref->{parts_id});
 
-      while ($kref = $kth->fetchrow_hashref(NAME_lc)) {
+      while ($kref = $kth->fetchrow_hashref) {
         if ($kref->{inventory_accno_id}) {
           $self->update_balance($dbh,
                                 "parts",
@@ -2760,15 +2693,18 @@ sub reset_shipped {
 }
 
 
-sub get_employee {
-  my ($self, $dbh) = @_;
+sub get_employee ($self, $dbh) {
 
   my $login = $self->{login};
   $login =~ s/@.*//;
   my $query = qq|SELECT name, id FROM employee
                  WHERE login = '$login'|;
   my (@name) = $dbh->selectrow_array($query);
-  $name[1] *= 1;
+  if (@name) {
+    $name[1] *= 1;
+  } else {
+    @name = ('', 0);
+  }
 
   @name;
 
@@ -2776,8 +2712,7 @@ sub get_employee {
 
 
 # this sub gets the id and name from $table
-sub get_name {
-  my ($self, $myconfig, $table, $transdate) = @_;
+sub get_name ($self, $myconfig, $table, $transdate) {
 
   # connect to database
   my $dbh = $self->dbconnect($myconfig);
@@ -2790,7 +2725,7 @@ sub get_name {
     $where .= qq| AND ct.enddate IS NULL|;
   }
 
-  my %defaults = $self->get_defaults($dbh, \@{['namesbynumber']});
+  my %defaults = $self->get_defaults($dbh, ['namesbynumber']);
 
   my $sortorder = "name";
   $sortorder = $self->{searchby} if $self->{searchby};
@@ -2823,7 +2758,7 @@ sub get_name {
 
   my $i = 0;
   @{ $self->{name_list} } = ();
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push(@{ $self->{name_list} }, $ref);
     $i++;
   }
@@ -2835,8 +2770,7 @@ sub get_name {
 }
 
 
-sub get_currencies {
-  my ($self, $myconfig, $dbh) = @_;
+sub get_currencies ($self, $myconfig, $dbh = undef) {
 
   my $disconnect;
 
@@ -2856,7 +2790,7 @@ sub get_currencies {
   $sth->execute || $self->dberror($query);
 
   while (($curr, $precision) = $sth->fetchrow_array) {
-    if ($self->{currency} eq $curr) {
+    if ($self->{currency} // '' eq $curr) {
       $self->{precision} = $precision;
     }
     $currencies .= "$curr:";
@@ -2871,8 +2805,7 @@ sub get_currencies {
 }
 
 
-sub get_onhand {
-  my ($self, $myconfig, $dbh) = @_;
+sub get_onhand ($self, $myconfig, $dbh = undef) {
 
   my $disconnect;
 
@@ -2910,8 +2843,7 @@ sub get_onhand {
 }
 
 
-sub get_defaults {
-  my ($self, $dbh, $flds) = @_;
+sub get_defaults ($self, $dbh, $flds = ['%']) {
 
   my $query = qq|SELECT * FROM defaults
                  WHERE fldname LIKE ?|;
@@ -2919,13 +2851,9 @@ sub get_defaults {
 
   my %defaults;
 
-  if (! @{$flds}) {
-    @{$flds} = '%';
-  }
-
-  for (@{$flds}) {
+  for (@$flds) {
     $sth->execute($_);
-    while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+    while (my $ref = $sth->fetchrow_hashref) {
       $defaults{$ref->{fldname}} = $ref->{fldvalue};
     }
     $sth->finish;
@@ -2936,8 +2864,7 @@ sub get_defaults {
 }
 
 
-sub load_defaults {
-  my ($self, $myconfig, $dbh, $flds) = @_;
+sub load_defaults ($self, $myconfig, $dbh = undef, $flds = []) {
 
   my $disconnect;
   unless ($dbh) {
@@ -2954,8 +2881,7 @@ sub load_defaults {
 }
 
 
-sub all_vc {
-  my ($self, $myconfig, $vc, $module, $dbh, $transdate, $job, $openinv, $openord) = @_;
+sub all_vc ($self, $myconfig, $vc, $module, $dbh = undef, $transdate = '', $job = '', $openinv = '', $openord = '') {
 
   my $ref;
   my $disconnect;
@@ -2967,10 +2893,10 @@ sub all_vc {
   my $sth;
 
   my $query;
-  my $arap = lc $module;
-  my $joinarap;
-  my $joinoe;
-  my $where = "1 = 1";
+  my $arap     = lc $module;
+  my $joinarap = '';
+  my $joinoe   = '';
+  my $where    = "1 = 1";
 
   if ($openinv) {
     $joinarap = "JOIN $arap a ON (a.${vc}_id = vc.id)";
@@ -2986,15 +2912,15 @@ sub all_vc {
                   AND (vc.enddate IS NULL OR vc.enddate >= '$transdate')|;
   }
 
-  $query .= qq|SELECT count(*) FROM $vc vc
-               $joinarap
-               $joinoe
-               WHERE $where|;
+  $query = qq|SELECT count(*) FROM $vc vc
+              $joinarap
+              $joinoe
+              WHERE $where|;
   my ($count) = $dbh->selectrow_array($query);
 
   # build selection list
-  if ($count < $myconfig->{vclimit}) {
-    $self->{"${vc}_id"} *= 1;
+  if (($count // 0) < ($myconfig->{vclimit} // 0)) {
+    ($self->{"${vc}_id"} //= 0) *= 1;
     $query = qq|SELECT vc.id, vc.name
                 FROM $vc vc
                 $joinarap
@@ -3007,7 +2933,7 @@ sub all_vc {
     $sth = $dbh->prepare($query);
     $sth->execute || $self->dberror($query);
     @{ $self->{"all_$vc"} } = ();
-    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    while ($ref = $sth->fetchrow_hashref) {
       push @{ $self->{"all_$vc"} }, $ref;
     }
     $sth->finish;
@@ -3017,7 +2943,7 @@ sub all_vc {
 
   # get self
   if (! $self->{employee_id}) {
-    ($self->{employee}, $self->{employee_id}) = split /--/, $self->{employee};
+    ($self->{employee}, $self->{employee_id}) = split /--/, $self->{employee} // '';
     ($self->{employee}, $self->{employee_id}) = $self->get_employee($dbh) unless $self->{employee_id};
   }
 
@@ -3038,8 +2964,7 @@ sub all_vc {
 }
 
 
-sub all_languages {
-  my ($self, $myconfig, $dbh) = @_;
+sub all_languages ($self, $myconfig, $dbh = undef) {
 
   my $disconnect;
 
@@ -3057,7 +2982,7 @@ sub all_languages {
   $sth->execute || $self->dberror($query);
 
   $self->{all_language} = ();
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $self->{all_language} }, $ref;
   }
   $sth->finish;
@@ -3067,8 +2992,7 @@ sub all_languages {
 }
 
 
-sub all_taxaccounts {
-  my ($self, $myconfig, $dbh, $transdate) = @_;
+sub all_taxaccounts ($self, $myconfig, $dbh = undef, $transdate = '') {
 
   my $disconnect;
 
@@ -3106,8 +3030,7 @@ sub all_taxaccounts {
 }
 
 
-sub all_employees {
-  my ($self, $myconfig, $dbh, $transdate, $sales) = @_;
+sub all_employees ($self, $myconfig, $dbh = undef, $transdate = '', $sales = '') {
 
   my $disconnect;
 
@@ -3137,7 +3060,7 @@ sub all_employees {
   my $sth = $dbh->prepare($query);
   $sth->execute || $self->dberror($query);
 
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $self->{all_employee} }, $ref;
   }
   $sth->finish;
@@ -3148,8 +3071,7 @@ sub all_employees {
 
 
 
-sub all_projects {
-  my ($self, $myconfig, $dbh, $transdate, $job) = @_;
+sub all_projects ($self, $myconfig, $dbh = undef, $transdate = '', $job = '') {
 
   my $disconnect;
 
@@ -3181,11 +3103,11 @@ sub all_projects {
 
   $query .= qq| ORDER BY pr.projectnumber|;
 
-  $sth = $dbh->prepare($query);
+  my $sth = $dbh->prepare($query);
   $sth->execute || $self->dberror($query);
 
   @{ $self->{all_project} } = ();
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $self->{all_project} }, $ref;
   }
   $sth->finish;
@@ -3195,8 +3117,7 @@ sub all_projects {
 }
 
 
-sub all_departments {
-  my ($self, $myconfig, $dbh, $vc) = @_;
+sub all_departments ($self, $myconfig, $dbh = undef, $vc = '') {
 
   my $disconnect;
   if (! $dbh) {
@@ -3220,7 +3141,7 @@ sub all_departments {
   $sth->execute || $self->dberror($query);
 
   @{ $self->{all_department} } = ();
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $self->{all_department} }, $ref;
   }
   $sth->finish;
@@ -3234,8 +3155,7 @@ sub all_departments {
 }
 
 
-sub all_warehouses {
-  my ($self, $myconfig, $dbh) = @_;
+sub all_warehouses ($self, $myconfig, $dbh = undef) {
 
   my $disconnect;
   if (! $dbh) {
@@ -3243,7 +3163,7 @@ sub all_warehouses {
     $disconnect = 1;
   }
 
-  my %defaults = $self->get_defaults($dbh, \@{[qw(checkinventory forcewarehouse)]});
+  my %defaults = $self->get_defaults($dbh, [qw(checkinventory forcewarehouse)]);
   for (keys %defaults) { $self->{$_} = $defaults{$_} }
 
   my $query = qq|SELECT id, description
@@ -3253,7 +3173,7 @@ sub all_warehouses {
   $sth->execute || $self->dberror($query);
 
   @{ $self->{all_warehouse} } = ();
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $self->{all_warehouse} }, $ref;
   }
   $sth->finish;
@@ -3263,8 +3183,7 @@ sub all_warehouses {
 }
 
 
-sub all_roles {
-  my ($self, $myconfig, $dbh) = @_;
+sub all_roles ($self, $myconfig, $dbh = undef) {
 
   my $disconnect;
   if (! $dbh) {
@@ -3279,7 +3198,7 @@ sub all_roles {
   $sth->execute || $self->dberror($query);
 
   @{ $self->{all_acsrole} } = ();
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $self->{all_acsrole} }, $ref;
   }
   $sth->finish;
@@ -3289,8 +3208,7 @@ sub all_roles {
 }
 
 
-sub all_years {
-  my ($self, $myconfig, $dbh) = @_;
+sub all_years ($self, $myconfig, $dbh = undef) {
 
   my $disconnect;
   if (! $dbh) {
@@ -3299,45 +3217,29 @@ sub all_years {
   }
 
   # get years
-  my $query = qq|SELECT MIN(transdate) FROM acc_trans|;
-  my ($startdate) = $dbh->selectrow_array($query);
-  my $query = qq|SELECT MAX(transdate) FROM acc_trans|;
-  my ($enddate) = $dbh->selectrow_array($query);
+  my $query = qq|SELECT EXTRACT(YEAR FROM transdate) FROM acc_trans ORDER BY transdate LIMIT 1|;
+  my ($startyear) = $dbh->selectrow_array($query);
+  $query = qq|SELECT EXTRACT(YEAR FROM transdate) FROM acc_trans ORDER BY transdate DESC LIMIT 1|;
+  my ($endyear) = $dbh->selectrow_array($query);
 
-  if ($myconfig->{dateformat} =~ /^yy/) {
-    ($startdate) = split /\W/, $startdate;
-    ($enddate) = split /\W/, $enddate;
-  } else {
-    (@_) = split /\W/, $startdate;
-    $startdate = $_[2];
-    (@_) = split /\W/, $enddate;
-    $enddate = $_[2];
-  }
+  @{$self->{all_years}} = $startyear && $endyear ? reverse $startyear .. $endyear : ();
 
-  $self->{all_years} = ();
-  $startdate = substr($startdate,0,4);
-  $enddate = substr($enddate,0,4);
+  $self->{all_month} = {
+    '01' => 'January',
+    '02' => 'February',
+    '03' => 'March',
+    '04' => 'April',
+    '05' => 'May ',
+    '06' => 'June',
+    '07' => 'July',
+    '08' => 'August',
+    '09' => 'September',
+    '10' => 'October',
+    '11' => 'November',
+    '12' => 'December'
+  };
 
-  if ($startdate) {
-    while ($enddate >= $startdate) {
-      push @{ $self->{all_years} }, $enddate--;
-    }
-  }
-
-  %{ $self->{all_month} } = ( '01' => 'January',
-                          '02' => 'February',
-                          '03' => 'March',
-                          '04' => 'April',
-                          '05' => 'May ',
-                          '06' => 'June',
-                          '07' => 'July',
-                          '08' => 'August',
-                          '09' => 'September',
-                          '10' => 'October',
-                          '11' => 'November',
-                          '12' => 'December' );
-
-  my %defaults = $self->get_defaults($dbh, \@{[qw(company method precision namesbynumber)]});
+  my %defaults = $self->get_defaults($dbh, [qw(company method precision namesbynumber)]);
   for (keys %defaults) { $self->{$_} = $defaults{$_} }
   $self->{method} ||= "accrual";
 
@@ -3346,8 +3248,7 @@ sub all_years {
 }
 
 
-sub all_countries {
-  my ($self, $myconfig, $db, $dbh) = @_;
+sub all_countries ($self, $myconfig, $db, $dbh = undef) {
 
   my $disconnect;
 
@@ -3367,7 +3268,7 @@ sub all_countries {
   $sth->execute || $self->dberror($query);
 
   $self->{all_countries} = ();
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $self->{all_countries} }, $ref;
   }
   $sth->finish;
@@ -3377,8 +3278,7 @@ sub all_countries {
 }
 
 
-sub all_business {
-  my ($self, $myconfig, $dbh) = @_;
+sub all_business ($self, $myconfig, $dbh = undef) {
 
   my $disconnect;
 
@@ -3395,7 +3295,7 @@ sub all_business {
   $sth = $dbh->prepare($query);
   $sth->execute || $self->dberror($query);
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $self->{all_business} }, $ref;
   }
   $sth->finish;
@@ -3405,8 +3305,7 @@ sub all_business {
 }
 
 
-sub create_links {
-  my ($self, $module, $myconfig, $vc) = @_;
+sub create_links ($self, $module, $myconfig, $vc) {
 
   # get last customers or vendors
   my ($query, $sth);
@@ -3424,7 +3323,7 @@ sub create_links {
   $self->get_peripherals($dbh);
 
 
-  $self->{cashovershort_accno_id} *= 1;
+  ($self->{cashovershort_accno_id} //= 0) *= 1;
   $query = qq|SELECT accno
               FROM chart
               WHERE id = $self->{cashovershort_accno_id}
@@ -3443,7 +3342,7 @@ sub create_links {
   $sth->execute || $self->dberror($query);
 
   $self->{accounts} = "";
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
 
     foreach $key (split /:/, $ref->{link}) {
       if ($key =~ /$module/) {
@@ -3465,12 +3364,12 @@ sub create_links {
 
   $self->remove_locks($myconfig, $dbh);
 
-  if ($self->{id} *= 1) {
+  if (($self->{id} //= 0) *= 1) {
     $query = qq|SELECT id FROM $arap WHERE id = $self->{id}|;
     ($self->{id}) = $dbh->selectrow_array($query);
   }
 
-  if ($self->{id} *= 1) {
+  if (($self->{id} //= 0) *= 1) {
 
     $query = qq|SELECT a.invnumber, a.transdate,
                 a.${vc}_id, a.datepaid, a.duedate, a.ordnumber,
@@ -3499,7 +3398,7 @@ sub create_links {
     $sth = $dbh->prepare($query);
     $sth->execute || $self->dberror($query);
 
-    $ref = $sth->fetchrow_hashref(NAME_lc);
+    my $ref = $sth->fetchrow_hashref;
 
     $ref->{exchangerate} ||= 1;
 
@@ -3522,13 +3421,13 @@ sub create_links {
     $sth = $dbh->prepare($query);
     $sth->execute || $self->dberror($query);
 
-    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    while ($ref = $sth->fetchrow_hashref) {
       $self->{printed} .= "$ref->{formname} " if $ref->{printed};
       $self->{emailed} .= "$ref->{formname} " if $ref->{emailed};
       $self->{queued} .= "$ref->{formname} $ref->{spoolfile} " if $ref->{spoolfile};
     }
     $sth->finish;
-    for (qw(printed emailed queued)) { $self->{$_} =~ s/ +$//g }
+    for (qw(printed emailed queued)) { $self->{$_} =~ s/ +$//g if $self->{$_} }
 
     # get recurring
     $self->get_recurring($dbh);
@@ -3555,7 +3454,7 @@ sub create_links {
     my $resort;
 
     # store amounts in {acc_trans}{$key} for multiple accounts
-    while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+    while (my $ref = $sth->fetchrow_hashref) {
       $ref->{description} = $ref->{translation} if $ref->{translation};
       $ref->{exchangerate} ||= 1;
       if ($ref->{closed}) {
@@ -3575,7 +3474,7 @@ sub create_links {
           }
         }
       }
-      push @{ $self->{acc_trans}{$xkeyref{$ref->{accno}}} }, $ref;
+      push @{ $self->{acc_trans}{$xkeyref{$ref->{accno}}} }, $ref if $xkeyref{$ref->{accno}};
     }
     $sth->finish;
 
@@ -3596,7 +3495,7 @@ sub create_links {
       $self->{transdate} = $self->current_date($myconfig);
     }
     if (! $self->{"$self->{vc}_id"}) {
-      $self->lastname_used($myconfig, $dbh, $vc, $module);
+      $self->lastname_used($myconfig, $dbh, $vc);
     }
 
   }
@@ -3605,7 +3504,7 @@ sub create_links {
 
   $self->{currencies} = $self->get_currencies($myconfig, $dbh);
 
-  if ($self->{currency} ne substr($self->{currencies}, 0, 3)) {
+  if (($self->{currency} // '') ne substr($self->{currencies}, 0, 3)) {
     $self->{exchangerate} ||= $self->get_exchangerate($myconfig, $dbh, $self->{currency}, $self->{transdate});
   }
 
@@ -3617,7 +3516,7 @@ sub create_links {
   $sth->execute || $self->dberror($query);
 
   @{ $self->{"all_paymentmethod"} } = ();
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $self->{"all_paymentmethod"} }, $ref;
   }
   $sth->finish;
@@ -3627,8 +3526,7 @@ sub create_links {
 }
 
 
-sub get_peripherals {
-  my ($self, $dbh) = @_;
+sub get_peripherals ($self, $dbh) {
 
   $self->{workstation} ||= $ENV{REMOTE_ADDR};
 
@@ -3680,8 +3578,7 @@ sub get_peripherals {
 
 
 
-sub create_lock {
-  my ($self, $myconfig, $dbh, $id, $module, $add) = @_;
+sub create_lock ($self, $myconfig, $dbh = undef, $id = '', $module = '', $add = '') {
 
   my $query;
 
@@ -3724,8 +3621,7 @@ sub create_lock {
 }
 
 
-sub remove_locks {
-  my ($self, $myconfig, $dbh, $module) = @_;
+sub remove_locks ($self, $myconfig, $dbh = undef, $module = '') {
 
   my $disconnect;
   if (! $dbh) {
@@ -3744,13 +3640,13 @@ sub remove_locks {
 }
 
 
-sub lastname_used {
-  my ($self, $myconfig, $dbh, $vc, $module) = @_;
+sub lastname_used ($self, $myconfig, $dbh, $vc) {
 
   my $arap = ($vc eq 'customer') ? "ar" : "ap";
   my $where = "1 = 1";
   my $sth;
 
+  $self->{type} //= '';
   if ($self->{type} =~ /_order/) {
     $arap = 'oe';
     $where = "quotation = '0'";
@@ -3766,16 +3662,9 @@ sub lastname_used {
                               AND ${vc}_id > 0)|;
   my ($trans_id) = $dbh->selectrow_array($query);
 
-  $trans_id *= 1;
+  $trans_id //= 0;
 
-  my $duedate;
-  if ($myconfig->{dbdriver} eq 'DB2') {
-    $duedate = ($self->{transdate}) ? qq|date '$self->{transdate}' + ct.terms DAYS| : qq|current_date + ct.terms DAYS|;
-  } elsif ($myconfig->{dbdriver} eq 'Sybase') {
-    $duedate = ($self->{transdate}) ? qq|dateadd($myconfig->{dateformat}, ct.terms DAYS, $self->{transdate})| : qq|dateadd($myconfig->{dateformat}, ct.terms DAYS, current_date)|;
-  } else {
-    $duedate = ($self->{transdate}) ? qq|date '$self->{transdate}' + ct.terms| : qq|current_date + ct.terms|;
-  }
+  my $duedate = ($self->{transdate}) ? qq|date '$self->{transdate}' + ct.terms| : qq|current_date + ct.terms|;
 
   if ($trans_id) {
     $query = qq|SELECT ct.name AS $vc, ct.${vc}number, a.curr AS currency,
@@ -3796,7 +3685,7 @@ sub lastname_used {
   $sth = $dbh->prepare($query);
   $sth->execute;
 
-  my $ref = $sth->fetchrow_hashref(NAME_lc);
+  my $ref = $sth->fetchrow_hashref;
   for (keys %$ref) { $self->{$_} = $ref->{$_} }
   $sth->finish;
 
@@ -3804,14 +3693,13 @@ sub lastname_used {
 
 
 
-sub current_date {
-  my ($self, $myconfig, $date) = @_;
+sub current_date ($self, $myconfig, $date = undef) {
 
   use Time::Local;
 
-  my $spc = $myconfig->{dateformat};
-  $spc =~ s/\w//g;
-  $spc = substr($spc, 0, 1);
+  $myconfig->{dateformat} //= 'yyyymmdd';
+  my ($spc) = $myconfig->{dateformat} =~ /(\W)/;
+  $spc //= '';
   my @t = localtime;
   my $dd;
   my $mm;
@@ -3870,8 +3758,7 @@ sub current_date {
 }
 
 
-sub like {
-  my ($self, $str) = @_;
+sub like ($self, $str) {
 
   $str =~ s/;/\\;/g;
 
@@ -3889,16 +3776,16 @@ sub like {
 }
 
 
-sub redo_rows {
-  my ($self, $flds, $new, $count, $numrows) = @_;
+sub redo_rows ($self, $flds, $new, $count, $numrows = 0) {
 
   my @ndx = ();
 
-  for (1 .. $count) { push @ndx, { num => $new->[$_-1]->{runningnumber}, ndx => $_ } }
+  for (1 .. $count) { push @ndx, { num => $new->[$_-1]{runningnumber} // 0, ndx => $_ } }
 
   my $i = 0;
+  my $j;
   # fill rows
-  foreach my $item (sort { $a->{num} <=> $b->{num} } @ndx) {
+  for my $item (sort { $a->{num} <=> $b->{num} } @ndx) {
     $i++;
     $j = $item->{ndx} - 1;
     for (@{$flds}) { $self->{"${_}_$i"} = $new->[$j]->{$_} }
@@ -3912,8 +3799,7 @@ sub redo_rows {
 }
 
 
-sub get_partsgroup {
-  my ($self, $myconfig, $p, $dbh) = @_;
+sub get_partsgroup ($self, $myconfig, $p, $dbh = undef) {
 
   my $disconnect;
 
@@ -3929,6 +3815,7 @@ sub get_partsgroup {
   my $where = qq|WHERE p.obsolete = '0'|;
   my $sortorder = "partsgroup";
 
+  $p->{searchitems} //= '';
   if ($p->{searchitems} eq 'part') {
     $where .= qq|
                  AND (p.inventory_accno_id > 0
@@ -4030,7 +3917,7 @@ sub get_partsgroup {
   my $pref;
   my $i;
   my $pt;
-  my @pt;
+  my @pt = ();
   my $id;
   my $str;
 
@@ -4045,7 +3932,7 @@ sub get_partsgroup {
     $self->{oldpartsgroupcode} = $self->{partsgroupcode};
   }
 
-  if ($self->{partsgroupcode} ne $self->{oldpartsgroupcode}) {
+  if (($self->{partsgroupcode} // '') ne ($self->{oldpartsgroupcode} // '')) {
     if ($self->{partsgroupcode}) {
       $query = qq|SELECT partsgroup, id
                   FROM partsgroup
@@ -4062,14 +3949,14 @@ sub get_partsgroup {
 
   my $level = $#pt + 1;
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while ($ref = $sth->fetchrow_hashref) {
 
     if ($p->{pos}) {
       if ($p->{parentgroup}) {
         if ($ref->{partsgroup} =~ /:/) {
           (@pt) = split /:/, $ref->{partsgroup};
           $pth->execute($pt[0]);
-          $pref = $pth->fetchrow_hashref(NAME_lc);
+          $pref = $pth->fetchrow_hashref;
           $pth->finish;
           if ($pref && ! $partsgroup{$pref->{partsgroup}}) {
             push @{ $self->{all_partsgroup} }, $pref;
@@ -4088,7 +3975,7 @@ sub get_partsgroup {
           for (0 .. $level) {
             $str .= $pt[$_];
             $pth->execute($str);
-            $pref = $pth->fetchrow_hashref(NAME_lc);
+            $pref = $pth->fetchrow_hashref;
             $pth->finish;
             if ($pref && ! $partsgroup{$pref->{partsgroup}}) {
               push @{ $self->{all_partsgroup} }, $pref;
@@ -4148,7 +4035,7 @@ sub get_partsgroup {
   }
   $sth->finish;
 
-  my %defaults = $self->get_defaults($dbh, \@{['method']});
+  my %defaults = $self->get_defaults($dbh, ['method']);
   $self->{method} = ($defaults{method}) ? $defaults{method} : "accrual";
 
   $dbh->disconnect if $disconnect;
@@ -4156,11 +4043,10 @@ sub get_partsgroup {
 }
 
 
-sub update_status {
-  my ($self, $myconfig) = @_;
+sub update_status ($self, $myconfig) {
 
   # no id return
-  $self->{id} *= 1;
+  ($self->{id} //= 0) *= 1;
   return unless $self->{id};
 
   my $dbh = $self->dbconnect_noauto($myconfig);
@@ -4187,13 +4073,12 @@ sub update_status {
 }
 
 
-sub save_status {
-  my ($self, $dbh) = @_;
+sub save_status ($self, $dbh) {
 
   my $formnames = $self->{printed};
   my $emailforms = $self->{emailed};
 
-  $self->{id} *= 1;
+  ($self->{id} //= 0) *= 1;
   my $query = qq|DELETE FROM status
                  WHERE trans_id = $self->{id}|;
   $dbh->do($query) || $self->dberror($query);
@@ -4206,8 +4091,8 @@ sub save_status {
 
     foreach $formname (keys %queued) {
 
-      $printed = ($self->{printed} =~ /$formname/) ? "1" : "0";
-      $emailed = ($self->{emailed} =~ /$formname/) ? "1" : "0";
+      my $printed = ($self->{printed} =~ /$formname/) ? "1" : "0";
+      my $emailed = ($self->{emailed} =~ /$formname/) ? "1" : "0";
 
       if ($queued{$formname}) {
         $query = qq|INSERT INTO status (trans_id, printed, emailed,
@@ -4231,9 +4116,9 @@ sub save_status {
   for (split / +/, $formnames) { $status{$_}{printed} = 1 }
   for (split / +/, $emailforms) { $status{$_}{emailed} = 1 }
 
-  foreach $formname (keys %status) {
-    $printed = $status{$formname}{printed} * 1;
-    $emailed = $status{$formname}{emailed} * 1;
+  for $formname (keys %status) {
+    my $printed = $status{$formname}{printed} * 1;
+    my $emailed = $status{$formname}{emailed} * 1;
 
     $query = qq|INSERT INTO status (trans_id, printed, emailed, formname)
                 VALUES ($self->{id}, '$printed', '$emailed', '$formname')|;
@@ -4243,13 +4128,12 @@ sub save_status {
 }
 
 
-sub all_references {
-  my ($self, $dbh, $formname) = @_;
+sub all_references ($self, $dbh, $formname = undef) {
 
   my $login = $self->{login};
   $login =~ s/\@.*//;
   # get reference documents
-  if ($self->{id} *= 1) {
+  if (($self->{id} //= 0) *= 1) {
     my $query = qq|SELECT r.*, a.filename
                    FROM reference r
                    LEFT JOIN archive a ON (a.id = r.archive_id)
@@ -4263,7 +4147,7 @@ sub all_references {
     my $sth = $dbh->prepare($query);
     $sth->execute || $self->dberror($query);
 
-    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    while (my $ref = $sth->fetchrow_hashref) {
       if ($ref->{login}) {
         next if $ref->{login} ne $login;
       }
@@ -4276,12 +4160,11 @@ sub all_references {
 }
 
 
-sub get_reference {
-  my ($self, $myconfig) = @_;
+sub get_reference ($self, $myconfig) {
 
   my $dbh = $self->dbconnect($myconfig);
 
-  $self->{id} *= 1;
+  ($self->{id} //= 0) *= 1;
   my $query = qq|SELECT bt FROM archivedata
                  WHERE archive_id = $self->{id}
                  ORDER BY rn|;
@@ -4325,8 +4208,7 @@ sub get_reference {
 }
 
 
-sub save_reference {
-  my ($self, $dbh, $formname) = @_;
+sub save_reference ($self, $dbh, $formname = '') {
 
   my $login = $self->{login};
   $login =~ s/@.*//;
@@ -4340,7 +4222,7 @@ sub save_reference {
   my $where = qq| AND (login = '$login' OR login = '' OR login IS NULL)|;
   $where .= qq| AND formname = '$formname'| if $formname;
 
-  if ($self->{id} *= 1) {
+  if (($self->{id} //= 0) *= 1) {
     $query = qq|SELECT archive_id
                 FROM reference
                 WHERE trans_id = $self->{id}
@@ -4390,7 +4272,7 @@ sub save_reference {
   my $acth = $dbh->prepare($query) || $self->dberror($query);
 
   for $i (1 .. $self->{reference_rows}) {
-    $self->{"referencearchive_id_$i"} *= 1;
+    ($self->{"referencearchive_id_$i"} ||= 0) *= 1;
     delete $unused{$self->{"referencearchive_id_$i"}} if $self->{"referencedescription_$i"};
   }
 
@@ -4400,7 +4282,7 @@ sub save_reference {
 
       if ($self->{"referencetmpfile_$i"}) {
 
-        $tmpfile = $self->{"referencetmpfile_$i"};
+        my $tmpfile = $self->{"referencetmpfile_$i"};
 
         if (-s "$self->{userspath}/$tmpfile") {
 
@@ -4453,7 +4335,7 @@ sub save_reference {
       $self->{id} ||= $self->{trans_id};
       delete $self->{id} unless $self->{id};
 
-      $confidential = ($self->{"referenceconfidential_$i"}) ? $login : "";
+      my $confidential = ($self->{"referenceconfidential_$i"}) ? $login : "";
 
       $sth->execute(
         $self->{"referencecode_$i"},
@@ -4474,8 +4356,7 @@ sub save_reference {
 }
 
 
-sub delete_references {
-  my ($self, $dbh) = @_;
+sub delete_references ($self, $dbh) {
 
   my $login = $self->{login};
   $login =~ s/@.*//;
@@ -4508,10 +4389,9 @@ sub delete_references {
 }
 
 
-sub get_recurring {
-  my ($self, $dbh) = @_;
+sub get_recurring ($self, $dbh) {
 
-  $self->{id} *= 1;
+  ($self->{id} //= 0) *= 1;
 
   my $query = qq|SELECT s.*, se.formname AS formnamee, se.format AS formate,
               se.message,
@@ -4525,7 +4405,7 @@ sub get_recurring {
 
   for (qw(email print)) { $self->{"recurring$_"} = "" }
 
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     for (keys %$ref) { $self->{"recurring$_"} = $ref->{$_} }
     $self->{recurringemail} .= "$ref->{formnamee}:$ref->{formate}:";
     $self->{recurringprint} .= "$ref->{formnamep}:$ref->{formatp}:$ref->{printerp}:";
@@ -4544,8 +4424,7 @@ sub get_recurring {
 }
 
 
-sub save_recurring {
-  my ($self, $dbh, $myconfig) = @_;
+sub save_recurring ($self, $dbh = undef, $myconfig = '') {
 
   my $disconnect;
   if (! $dbh) {
@@ -4569,28 +4448,21 @@ sub save_recurring {
 
     # calculate enddate
     my $advance = $s{repeat} * ($s{howmany} - 1);
-    my %interval = ( 'Pg' => "(date '$s{startdate}' + interval '$advance $s{unit}')",
-                  'Sybase' => "dateadd($myconfig->{dateformat}, $advance $s{unit}, $s{startdate})",
-                    'DB2' => qq|(date ('$s{startdate}') + "$advance $s{unit}")|,
-                   );
-    $interval{Oracle} = $interval{PgPP} = $interval{Pg};
+    my %interval = (
+      Pg   => "(date '$s{startdate}' + interval '$advance $s{unit}')",
+      Mock => "(date '$s{startdate}' + interval '$advance $s{unit}')",
+    );
+
     $query = qq|SELECT $interval{$myconfig->{dbdriver}}
                 FROM defaults
                 WHERE fldname = 'version'|;
     my ($enddate) = $dbh->selectrow_array($query);
 
     # calculate nextdate
-    if ($myconfig->{dbdriver} eq 'Sybase') {
-      $query = qq|SELECT datediff($myconfig->{dateformat}, $s{startdate}, current_date) AS a,
-                  datediff($myconfig->{dateformat}, current_date, $enddate) AS b
-                  FROM defaults
-                  WHERE fldname = 'version'|;
-    } else {
-      $query = qq|SELECT current_date - date '$s{startdate}' AS a,
-                  date '$enddate' - current_date AS b
-                  FROM defaults
-                  WHERE fldname = 'version'|;
-    }
+    $query = qq|SELECT current_date - date '$s{startdate}' AS a,
+                date '$enddate' - current_date AS b
+                FROM defaults
+                WHERE fldname = 'version'|;
     my ($x, $y) = $dbh->selectrow_array($query);
 
     if ($x + $y) {
@@ -4602,11 +4474,11 @@ sub save_recurring {
     my $nextdate = $enddate;
     if ($advance > 0) {
       if ($advance < ($s{repeat} * $s{howmany})) {
-        %interval = ( 'Pg' => "(date '$s{startdate}' + interval '$advance $s{unit}')",
-                    'Sybase' => "dateadd($myconfig->{dateformat}, $advance $s{unit}, $s{startdate})",
-                      'DB2' => qq|(date ('$s{startdate}') + "$advance $s{unit}")|,
-                    );
-        $interval{Oracle} = $interval{PgPP} = $interval{Pg};
+        %interval = (
+          Pg   => "(date '$s{startdate}' + interval '$advance $s{unit}')",
+          Mock => "(date '$s{startdate}' + interval '$advance $s{unit}')",
+        );
+
         $query = qq|SELECT $interval{$myconfig->{dbdriver}}
                     FROM defaults
                     WHERE fldname = 'version'|;
@@ -4622,25 +4494,20 @@ sub save_recurring {
       $query = qq|SELECT '$enddate' - date '$nextdate'
                   FROM defaults
                   WHERE fldname = 'version'|;
-      if ($myconfig->{dbdriver} eq 'Sybase') {
-        $query = qq|SELECT datediff($myconfig->{dateformat}, $enddate, $nextdate)
-                    FROM defaults
-                    WHERE fldname = 'version'|;
-      }
 
       if ($dbh->selectrow_array($query) < 0) {
         undef $nextdate;
       }
     }
 
-    $self->{recurringpayment} *= 1;
+    ($self->{recurringpayment} //= 0) *= 1;
     $query = qq|INSERT INTO recurring (id, reference, description,
                 startdate, enddate, nextdate,
                 repeat, unit, howmany, payment)
                 VALUES ($self->{id}, |.$dbh->quote($s{reference}).qq|,
                 |.$dbh->quote($s{description}).qq|,
                 '$s{startdate}', '$enddate', |.
-                $self->dbquote($nextdate, SQL_DATE).
+                $self->dbquote($nextdate, 'SQL_DATE').
                 qq|, $s{repeat}, '$s{unit}', $s{howmany}, '$s{payment}')|;
     $dbh->do($query) || $self->dberror($query);
 
@@ -4688,11 +4555,10 @@ sub save_recurring {
 }
 
 
-sub save_intnotes {
-  my ($self, $myconfig, $vc) = @_;
+sub save_intnotes ($self, $myconfig, $vc) {
 
   # no id return
-  $self->{id} *= 1;
+  ($self->{id} //= 0) *= 1;
   return unless $self->{id};
 
   my $dbh = $self->dbconnect($myconfig);
@@ -4707,8 +4573,7 @@ sub save_intnotes {
 }
 
 
-sub update_defaults {
-  my ($self, $myconfig, $fld, $dbh, $ini) = @_;
+sub update_defaults ($self, $myconfig, $fld, $dbh = undef, $ini = '') {
 
   my $disconnect;
 
@@ -4822,7 +4687,7 @@ sub update_defaults {
         my $mdy = $1;
         $p =~ s/(<|>|%)//g;
 
-        if (! $ml) {
+        if (! $ini) {
           my $spc = $p;
           $spc =~ s/\w//g;
           $spc = substr($spc, 0, 1);
@@ -4870,8 +4735,7 @@ sub update_defaults {
 }
 
 
-sub reports {
-  my ($self, $myconfig, $dbh, $login) = @_;
+sub reports ($self, $myconfig, $dbh = undef, $login = '') {
 
   my $disconnect;
   my $ref;
@@ -4906,7 +4770,7 @@ sub reports {
   $sth->execute || $self->dberror($query);
 
   @{ $self->{all_report} } = ();
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while ($ref = $sth->fetchrow_hashref) {
     push @{ $self->{all_report} }, $ref;
   }
   $sth->finish;
@@ -4925,12 +4789,12 @@ sub reports {
   $sth = $dbh->prepare($query);
   $sth->execute || $self->dberror($query);
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while ($ref = $sth->fetchrow_hashref) {
     $self->{all_reportvars}{$ref->{reportid}}{$ref->{reportvariable}} = $ref->{reportvalue};
   }
   $sth->finish;
 
-  $query = qq|SELECT to_char(current_date, '$self->{dateformat}')
+  $query = qq|SELECT to_char(current_date, '$myconfig->{dateformat}')
               FROM defaults WHERE fldname = 'version'|;
   ($self->{dateprepared}) = $dbh->selectrow_array($query);
 
@@ -4939,10 +4803,9 @@ sub reports {
 }
 
 
-sub retrieve_report {
-  my ($self, $myconfig, $dbh) = @_;
+sub retrieve_report ($self, $myconfig, $dbh = undef) {
 
-  $self->{reportid} *= 1;
+  ($self->{reportid} //= 0) *= 1;
   return unless $self->{reportid};
 
   my $disconnect;
@@ -4957,7 +4820,7 @@ sub retrieve_report {
   my $sth = $dbh->prepare($query);
   $sth->execute || $self->dberror($query);
 
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     $self->{$ref->{reportvariable}} = $ref->{reportvalue};
   }
   $sth->finish;
@@ -4967,8 +4830,7 @@ sub retrieve_report {
 }
 
 
-sub report_level {
-  my ($self, $myconfig, $dbh) = @_;
+sub report_level ($self, $myconfig, $dbh = undef) {
 
   my $disconnect;
 
@@ -4977,7 +4839,7 @@ sub report_level {
     $disconnect = 1;
   }
 
-  $self->{reportid} *= 1;
+  ($self->{reportid} //= 0) *= 1;
 
   my $query = qq|SELECT login
               FROM report
@@ -5008,6 +4870,9 @@ sub report_level {
     my ($l1) = $sth->fetchrow_array;
     $sth->finish;
 
+    $l1 //= 0;
+    $l2 //= 0;
+
     if ($l1 > $l2 || $l2 == 0 || $l2 == 1) {
       $self->{admin} = 1;
       $self->{savereport} = 1;
@@ -5022,15 +4887,14 @@ sub report_level {
 }
 
 
-sub save_report {
-  my ($self, $myconfig) = @_;
+sub save_report ($self, $myconfig) {
 
   my $dbh = $self->dbconnect_noauto($myconfig);
 
   my $query;
   my $sth;
 
-  if ($self->{reportid} *= 1) {
+  if (($self->{reportid} //= 0) *= 1) {
     $query = qq|DELETE FROM reportvars
                 WHERE reportid = '$self->{reportid}'|;
     $dbh->do($query) || $self->dberror($query);
@@ -5090,8 +4954,7 @@ sub save_report {
 
 
 
-sub sort_column_index {
-  my ($self) = @_;
+sub sort_column_index ($self) {
 
   my @c = split /,/, $self->{column_index};
   my $i = 1;
@@ -5203,9 +5066,9 @@ sub sort_column_index {
 }
 
 
-sub split_date {
-  my ($self, $dateformat, $date) = @_;
+sub split_date ($self, $dateformat, $date) {
 
+  $dateformat //= 'yyyymmdd';
   my @t = localtime;
   my $mm;
   my $dd;
@@ -5292,9 +5155,9 @@ sub split_date {
 }
 
 
-sub dayofmonth {
-  my ($self, $dateformat, $date, $fdm) = @_;
+sub dayofmonth ($self, $dateformat, $date, $fdm = '') {
 
+  $dateformat //= 'yyyymmdd';
   my $rv = $date;
   my @date = $self->split_date($dateformat, $date);
   my $bd = 0;
@@ -5303,7 +5166,7 @@ sub dayofmonth {
   $spc =~ s/\w//g;
   $spc = substr($spc, 0, 1);
 
-  use Time::Local;
+  require Time::Local;
 
   $date[2]-- if $date[2];
 
@@ -5340,10 +5203,9 @@ sub dayofmonth {
 }
 
 
-sub from_to {
-  my ($self, $yy, $mm, $interval) = @_;
+sub from_to ($self, $yy, $mm, $interval) {
 
-  use Time::Local;
+  require Time::Local;
 
   my @t;
   my $dd = 1;
@@ -5386,8 +5248,7 @@ sub from_to {
 }
 
 
-sub fdld {
-  my ($self, $myconfig, $locale) = @_;
+sub fdld ($self, $myconfig, $locale) {
 
   $self->{fdm} = $self->dayofmonth($myconfig->{dateformat}, $self->{transdate}, 'fdm');
   $self->{ldm} = $self->dayofmonth($myconfig->{dateformat}, $self->{transdate});
@@ -5481,8 +5342,7 @@ sub fdld {
 }
 
 
-sub audittrail {
-  my ($self, $dbh, $myconfig, $audittrail) = @_;
+sub audittrail ($self, $dbh, $myconfig, $audittrail) {
 
 # table, $reference, $formname, $action, $id, $transdate) = @_;
 
@@ -5501,7 +5361,7 @@ sub audittrail {
 
     $audittrail->{id} = 'NULL' if $audittrail->{id} == 1;
 
-    my %defaults = $self->get_defaults($dbh, \@{['audittrail']});
+    my %defaults = $self->get_defaults($dbh, ['audittrail']);
 
     if ($defaults{audittrail}) {
       my $employee_id;
@@ -5572,6 +5432,9 @@ sub audittrail {
 
 }
 
+
+1;
+
 =encoding utf8
 
 =head1 NAME
@@ -5588,7 +5451,7 @@ L<SL::Form> uses the following constructor:
 
 =head2 new
 
-  $form = Form->new($userspath);
+  $form = SL::Form->new($userspath);
 
 =head1 METHODS
 
@@ -5836,7 +5699,7 @@ L<SL::Form> implements the following methods:
 
 =head2 lastname_used
 
-  $form->lastname_used($myconfig, $dbh, $vc, $module);
+  $form->lastname_used($myconfig, $dbh, $vc);
 
 =head2 like
 
@@ -5854,10 +5717,6 @@ L<SL::Form> implements the following methods:
 =head2 numtextrows
 
   $form->numtextrows($str, $cols, $maxrows);
-
-=head2 ordinal_order
-
-  $form->ordinal_order($dbh, $query);
 
 =head2 perl_modules
 
@@ -5989,7 +5848,7 @@ L<SL::Form> implements the following methods:
 
 =head2 sort_order
 
-  $form->sort_order($columns, $ordinal);
+  $form->sort_order($columns);
 
 =head2 split_date
 
@@ -6022,157 +5881,5 @@ L<SL::Form> implements the following methods:
 =head2 valid_date
 
   $form->valid_date($myconfig, $date);
-
-=cut
-
-package Locale;
-
-
-sub new {
-  my ($type, $country, $NLS_file) = @_;
-  my $self = {};
-
-  %self = ();
-  if ($country && -d "locale/$country") {
-    $self->{countrycode} = $country;
-    eval { require "locale/$country/$NLS_file"; };
-  }
-
-  $self->{NLS_file} = $NLS_file;
-
-  push @{ $self->{LONG_MONTH} }, ("January", "February", "March", "April", "May ", "June", "July", "August", "September", "October", "November", "December");
-  push @{ $self->{SHORT_MONTH} }, (qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec));
-
-  bless $self, $type;
-
-}
-
-
-sub text {
-  my ($self, $text) = @_;
-
-  return (exists $self{texts}{$text}) ? $self{texts}{$text} : $text;
-
-}
-
-
-sub findsub {
-  my ($self, $text) = @_;
-
-  return (exists $self{subs}{$text}) ? $self{subs}{$text} : $text;
-
-}
-
-
-sub date {
-  my ($self, $myconfig, $date, $longformat) = @_;
-  return $date unless $myconfig->{dateformat};
-
-  my $longdate = "";
-  my $longmonth = ($longformat) ? 'LONG_MONTH' : 'SHORT_MONTH';
-
-
-  if ($date) {
-    # get separator
-    $spc = $myconfig->{dateformat};
-    $spc =~ s/\w//g;
-    $spc = substr($spc, 0, 1);
-
-    if ($date =~ /\D/) {
-      if ($myconfig->{dateformat} =~ /^yy/) {
-        ($yy, $mm, $dd) = split /\D/, $date;
-      }
-      if ($myconfig->{dateformat} =~ /^mm/) {
-        ($mm, $dd, $yy) = split /\D/, $date;
-      }
-      if ($myconfig->{dateformat} =~ /^dd/) {
-        ($dd, $mm, $yy) = split /\D/, $date;
-      }
-    } else {
-      if (length $date > 6) {
-        ($yy, $mm, $dd) = ($date =~ /(....)(..)(..)/);
-      } else {
-        ($yy, $mm, $dd) = ($date =~ /(..)(..)(..)/);
-      }
-    }
-
-    $dd *= 1;
-    $mm--;
-    $yy += 2000 if length $yy == 2;
-
-    if ($myconfig->{dateformat} =~ /^dd/) {
-      $mm++;
-      $dd = substr("0$dd", -2);
-      $mm = substr("0$mm", -2);
-      $longdate = "$dd$spc$mm$spc$yy";
-
-      if ($longformat ne "") {
-        $longdate = "$dd";
-        $longdate .= ($spc eq '.') ? ". " : " ";
-        $longdate .= &text($self, $self->{$longmonth}[--$mm])." $yy";
-      }
-    } elsif ($myconfig->{dateformat} =~ /^yy/) {
-      $mm++;
-      $dd = substr("0$dd", -2);
-      $mm = substr("0$mm", -2);
-      $longdate = "$yy$spc$mm$spc$dd";
-
-      if ($longformat ne "") {
-        $longdate = &text($self, $self->{$longmonth}[--$mm])." $dd $yy";
-      }
-    } else {
-      $mm++;
-      $dd = substr("0$dd", -2);
-      $mm = substr("0$mm", -2);
-      $longdate = "$mm$spc$dd$spc$yy";
-
-      if ($longformat ne "") {
-        $longdate = &text($self, $self->{$longmonth}[--$mm])." $dd $yy";
-      }
-    }
-
-  }
-
-  $longdate;
-
-}
-
-
-1;
-
-=encoding utf8
-
-=head1 NAME
-
-Locale - Translation module
-
-=head1 DESCRIPTION
-
-L<SL::Locale> contains the translation module.
-
-
-=head1 CONSTRUCTOR
-
-L<SL::Locale> uses the following constructor:
-
-=head2 new
-
-  $locale = Locale->new($country, $NLS_file);
-
-=head1 METHODS
-
-L<SL::Locale> implements the following methods:
-
-=head2 date
-
-  $locale->date($myconfig, $date, $longformat);
-
-=head2 findsub
-
-  $locale->findsub($text);
-
-=head2 text
-
-  $locale->text($text);
 
 =cut

@@ -1,24 +1,20 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2025
 #
-#  Author: Tekki
-#     Web: https://tekki.ch
+# © 2025-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
 # Generator and decoder for QR Codes
 #
 #======================================================================
-package SL::QRCode;
+use v5.40;
 
-use strict;
-use warnings;
+package SL::QRCode;
 
 use POSIX 'fmax';
 
-sub decode_file {
-  my ($path, %param) = @_;
+sub decode_file ($path, %param) {
 
   require Imager::zxing;
 
@@ -92,14 +88,13 @@ sub decode_file {
   return \%rv;
 }
 
-sub decode_qrbill {
-  my ($path, $page) = @_;
+sub decode_qrbill ($path, $page = 0) {
 
   my %param;
 
   if ($path =~ /\.pdf$/) {
     %param = (
-      page   => $page // 0,
+      page   => $page,
       left   => 6200 / 210,
       top    => 20400 / 297,
       width  => 5700 / 210,
@@ -181,8 +176,7 @@ sub decode_qrbill {
   return $rv;
 }
 
-sub plot_latex {
-  my ($text, %param) = @_;
+sub plot_latex ($text, %param) {
 
   require Text::QRCode;
 
@@ -247,8 +241,7 @@ sub plot_latex {
   return $latex;
 }
 
-sub plot_svg {
-  my ($text, %param) = @_;
+sub plot_svg ($text, %param) {
 
   require Text::QRCode;
 

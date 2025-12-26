@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -140,7 +139,7 @@ sub search {
   $form->{reportcode} = $form->{type};
   $form->{reportcode} ||= 'jc';
 
-  JC->jcitems_links(\%myconfig, \%$form);
+  SL::JC->jcitems_links(\%myconfig, $form);
 
   if (@{ $form->{all_project} }) {
     $form->{selectprojectnumber} = "\n";
@@ -275,7 +274,7 @@ sub search {
 
   &calendar;
 
-  &change_report(\%$form, \@input, \@checked, \%radio);
+  &change_report($form, \@input, \@checked, \%radio);
 
   print qq|
 <body onload="document.main.${focus}.focus()">
@@ -398,7 +397,7 @@ sub prepare_timecard {
   }
   $form->{media} ||= $myconfig{printer};
 
-  JC->retrieve_card(\%myconfig, \%$form);
+  SL::JC->retrieve_card(\%myconfig, $form);
 
   $form->{selectprinter} = "";
   for (@{ $form->{all_printer} }) { $form->{selectprinter} .= "$_->{printer}\n" }
@@ -468,7 +467,7 @@ sub prepare_timecard {
   # references
   &all_references;
 
-  RU->register(\%myconfig, $form) if $form->{id} && $form->{project} eq 'project';
+  SL::RU->register(\%myconfig, $form) if $form->{id} && $form->{project} eq 'project';
 
 }
 
@@ -722,7 +721,7 @@ sub timecard_footer {
       if (!$form->{locked}) {
         for ('Update', 'Print', 'Save', 'Save as new') { $a{$_} = 1 }
 
-        if ($latex) {
+        if ($slconfig{latex}) {
           for ('Preview', 'Print and Save', 'Print and Save as new') { $a{$_} = 1 }
         }
 
@@ -738,7 +737,7 @@ sub timecard_footer {
 
         for ('Update', 'Print', 'Save') { $a{$_} = 1 }
 
-        if ($latex) {
+        if ($slconfig{latex}) {
           for ('Print and Save', 'Preview') { $a{$_}  = 1 }
         }
 
@@ -794,7 +793,7 @@ sub prepare_storescard {
     $form->{format} ||= "ps";
   }
 
-  JC->retrieve_card(\%myconfig, \%$form);
+  SL::JC->retrieve_card(\%myconfig, $form);
 
   $form->{selectprinter} = "";
   for (@{ $form->{all_printer} }) { $form->{selectprinter} .= "$_->{printer}\n" }
@@ -978,7 +977,7 @@ sub storescard_footer {
 
       if (!$form->{locked}) {
         for ('Update', 'Print', 'Save', 'Save as new') { $a{$_} = 1 }
-        if ($latex) {
+        if ($slconfig{latex}) {
           for ('Preview', 'Print and Save', 'Print and Save as new') { $a{$_} = 1 }
         }
         if ($form->{orphaned}) {
@@ -991,7 +990,7 @@ sub storescard_footer {
       if ($transdate > $form->{closedto}) {
         for ('Update', 'Print', 'Save') { $a{$_} = 1 }
 
-        if ($latex) {
+        if ($slconfig{latex}) {
           for ('Preview', 'Print and Save') { $a{$_} = 1 }
         }
       }
@@ -1029,7 +1028,7 @@ sub update {
 
   for (qw(transdate project_id)) {
     if ($form->{"old$_"} ne $form->{$_}) {
-      JC->jcitems_links(\%myconfig, \%$form);
+      SL::JC->jcitems_links(\%myconfig, $form);
       &jcitems_links;
       last;
     }
@@ -1044,7 +1043,7 @@ sub update {
       $form->error($locale->text('Job Number missing!')) if ! $form->{projectnumber};
     }
 
-    JC->retrieve_item(\%myconfig, \%$form);
+    SL::JC->retrieve_item(\%myconfig, $form);
 
     $rows = scalar @{ $form->{item_list} };
 
@@ -1195,9 +1194,9 @@ sub save {
     }
   }
 
-  $form->{userspath} = $userspath;
+  $form->{userspath} = $slconfig{userspath};
 
-  $rc = JC->save(\%myconfig, \%$form);
+  $rc = SL::JC->save(\%myconfig, $form);
 
   if ($form->{type} eq 'timecard') {
     $form->error($locale->text('Cannot change time card for a completed job!')) if ($rc == -1);
@@ -1208,7 +1207,7 @@ sub save {
       if ($form->{callback} =~ /^$form->{script}\?action=add/) {
         $form->{callback} .= "&lastemployee=$form->{employee}&lastprojectnumber=$form->{projectnumber}&lastprojectdescription=$form->{projectdescription}&lasttransdate=$form->{transdate}";
       }
-      RU->register(\%myconfig, $form) if $form->{project} eq 'project';
+      SL::RU->register(\%myconfig, $form) if $form->{project} eq 'project';
       $form->redirect($locale->text('Time Card saved!'));
     } else {
       $form->error($locale->text('Cannot save time card!'));
@@ -1306,7 +1305,7 @@ sub print_and_save {
     }
   }
 
-  $oldform = new Form;
+  $oldform = SL::Form->new;
   $form->{display_form} = "save";
   for (keys %$form) { $oldform->{$_} = $form->{$_} }
 
@@ -1396,8 +1395,8 @@ sub yes { &{ "yes_delete_$form->{type}" } };
 
 sub yes_delete_timecard {
 
-  if (JC->delete(\%myconfig, \%$form)) {
-    RU->delete(\%myconfig, $form) if $form->{project} eq 'project';
+  if (SL::JC->delete(\%myconfig, $form, $slconfig{spool})) {
+    SL::RU->delete(\%myconfig, $form) if $form->{project} eq 'project';
     $form->redirect($locale->text('Time Card deleted!'));
   } else {
     $form->error($locale->text('Cannot delete time card!'));
@@ -1408,7 +1407,7 @@ sub yes_delete_timecard {
 
 sub yes_delete_storescard {
 
-  if (JC->delete(\%myconfig, \%$form)) {
+  if (SL::JC->delete(\%myconfig, $form, $slconfig{spool})) {
     $form->redirect($locale->text('Stores Card deleted!'));
   } else {
     $form->error($locale->text('Cannot delete stores card!'));
@@ -1419,7 +1418,7 @@ sub yes_delete_storescard {
 
 sub list_cards {
 
-  JC->jcitems(\%myconfig, \%$form);
+  SL::JC->jcitems(\%myconfig, $form);
 
   if (! exists $form->{title}) {
     $form->{title} = $locale->text('Time and Stores Cards');
@@ -1755,7 +1754,7 @@ sub list_cards {
     }
     $column_data{$ref->{weekday}} .= "</td>";
 
-    $column_data{id} = "<td><a href=$form->{script}?action=edit&id=$ref->{id}&type=$ref->{type}&path=$form->{path}&login=$form->{login}&project=$ref->{project}&callback=$callback>$ref->{id}</a></td>";
+    $column_data{id} = qq|<td><a class="id-l" href=$form->{script}?action=edit&id=$ref->{id}&type=$ref->{type}&path=$form->{path}&login=$form->{login}&project=$ref->{project}&callback=$callback>$ref->{id}</a></td>|;
 
     $subtotal{$ref->{weekday}} += $ref->{qty};
     $total{$ref->{weekday}} += $ref->{qty};
@@ -1943,12 +1942,12 @@ sub print_options {
 
   $form->{selectformat} = qq|<option value="html">html\n|;
 
-  if ($form->{selectprinter} && $latex) {
+  if ($form->{selectprinter} && $slconfig{latex}) {
     for (split /\n/, $form->unescape($form->{selectprinter})) { $media .= qq|
           <option value="$_">$_| }
   }
 
-  if ($latex) {
+  if ($slconfig{latex}) {
     $media .= qq|
           <option value="queue">|.$locale->text('Queue');
 
@@ -1995,7 +1994,7 @@ sub print {
 
   if ($form->{media} !~ /screen/) {
     $form->error($locale->text('Select postscript or PDF!')) if $form->{format} !~ /(ps|pdf)/;
-    $oldform = new Form;
+    $oldform = SL::Form->new;
     for (keys %$form) { $oldform->{$_} = $form->{$_} }
   }
 
@@ -2020,7 +2019,7 @@ sub print_form {
     }
   }
 
-  JC->company_defaults(\%myconfig, \%$form);
+  SL::JC->company_defaults(\%myconfig, $form);
 
   @a = ();
   push @a, qw(partnumber description projectnumber projectdescription);
@@ -2033,7 +2032,7 @@ sub print_form {
 
   ($form->{employee}, $form->{employee_id}) = split /--/, $form->{employee};
 
-  $form->{templates} = "$templates/$myconfig{templates}";
+  $form->{templates} = "$slconfig{templates}/$myconfig{templates}";
   $form->{IN} = "$form->{formname}.$form->{format}";
 
   if ($form->{format} =~ /(ps|pdf)/) {
@@ -2070,7 +2069,7 @@ sub print_form {
 
     if ($filename = $queued{$form->{formname}}) {
       $form->{queued} =~ s/$form->{formname} $filename//;
-      unlink "$spool/$myconfig{dbname}/$filename";
+      unlink "$slconfig{spool}/$myconfig{dbname}/$filename";
       $filename =~ s/\..*$//g;
     } else {
       $filename = time;
@@ -2078,7 +2077,7 @@ sub print_form {
     }
 
     $filename .= ".$form->{format}";
-    $form->{OUT} = ">$spool/$myconfig{dbname}/$filename";
+    $form->{OUT} = ">$slconfig{spool}/$myconfig{dbname}/$filename";
 
     $form->{queued} = "$form->{formname} $filename";
     $form->update_status(\%myconfig);
@@ -2095,7 +2094,7 @@ sub print_form {
     $status{audittrail} .= $form->audittrail("", \%myconfig, \%audittrail);
   }
 
-  $form->parse_template(\%myconfig, $userspath, $dvipdf, $xelatex);
+  $form->parse_template(\%myconfig, $slconfig{userspath}, $slconfig{dvipdf}, $slconfig{xelatex});
 
   if ($oldform) {
 

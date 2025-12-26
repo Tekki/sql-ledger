@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -46,7 +45,7 @@ sub display {
 
 sub acc_menu {
 
-  my $menu = new Menu "$menufile";
+  my $menu = SL::Menu->new("$menufile");
   $menu->add_file("$form->{path}/custom/$menufile") if -f "$form->{path}/custom/$menufile";
   $menu->add_file("$form->{path}/custom/$form->{login}/$menufile") if -f "$form->{path}/custom/$form->{login}/$menufile";
 
@@ -78,7 +77,7 @@ document.onselectstart = new Function("return false");
 
 <body class=menu>
 
-<img src=$images/sql-ledger.gif width=80 border=0>
+<img src=$slconfig{images}/sql-ledger.gif width=80 border=0>
 
 <br>$myconfig{name}
 |;
@@ -123,7 +122,7 @@ sub section_menu {
       if ($form->{level} && $item =~ $form->{level}) {
 
         # expand menu
-        print qq|<br>\n$spacer|.$menu->menuitem(\%myconfig, \%$form, $item, $level).qq|$label</a>|;
+        print qq|<br>\n$spacer|.$menu->menuitem(\%myconfig, $form, $item, $level).qq|$label</a>|;
 
         # remove same level items
         map { shift @menuorder } grep /^$item/, @menuorder;
@@ -134,7 +133,7 @@ sub section_menu {
 
       } else {
 
-        print qq|<br>\n$spacer|.$menu->menuitem(\%myconfig, \%$form, $item, $level).qq|$label&nbsp;...</a>|;
+        print qq|<br>\n$spacer|.$menu->menuitem(\%myconfig, $form, $item, $level).qq|$label&nbsp;...</a>|;
 
         # remove same level items
         map { shift @menuorder } grep /^$item/, @menuorder;
@@ -145,7 +144,7 @@ sub section_menu {
 
       if ($menu->{$item}{module}) {
 
-        print qq|<br>\n$spacer|.$menu->menuitem(\%myconfig, \%$form, $item, $level).qq|$label</a>|;
+        print qq|<br>\n$spacer|.$menu->menuitem(\%myconfig, $form, $item, $level).qq|$label</a>|;
 
       } else {
 
@@ -201,7 +200,7 @@ sub jsmenu_frame {
       if ($menu->{$item}{module}) {
         if ($level eq "") {
           print qq|<div id="menu$i" class="menuOut" onmouseover="ChangeClass('menu$i','menuOver')" onmouseout="ChangeClass('menu$i','menuOut')"> |.
-          $menu->menuitem(\%myconfig, \%$form, $item, $level).qq|$label</a></div>|;
+          $menu->menuitem(\%myconfig, $form, $item, $level).qq|$label</a></div>|;
 
           # remove same level items
           map { shift @menuorder } grep /^$item/, @menuorder;
@@ -211,7 +210,7 @@ sub jsmenu_frame {
         } else {
 
           print qq|<div class="submenu"> |.
-          $menu->menuitem(\%myconfig, \%$form, $item, $level).qq|$label</a></div>|;
+          $menu->menuitem(\%myconfig, $form, $item, $level).qq|$label</a></div>|;
         }
 
       } else {
@@ -274,7 +273,7 @@ sub jsmenu {
         if ($level eq "") {
 
           $menu->{$item}{jsmenu} = 1;
-          $str = $menu->menuitem(\%myconfig, \%$form, $item, $level);
+          $str = $menu->menuitem(\%myconfig, $form, $item, $level);
           $str =~ s/^<a href=//;
           $str =~ s/>$//;
 
@@ -291,7 +290,7 @@ sub jsmenu {
         } else {
 
           $menu->{$item}{jsmenu} = 1;
-          $str = $menu->menuitem(\%myconfig, \%$form, $item, $level);
+          $str = $menu->menuitem(\%myconfig, $form, $item, $level);
           $str =~ s/^<a href=//;
           $str =~ s/>$//;
           $form->{jsmenu} .= $form->{stagger};

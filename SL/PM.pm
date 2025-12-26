@@ -1,21 +1,20 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2010
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2010-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2010-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
 # Price Matrix for IS, IR, OE
 #
 #======================================================================
+use v5.40;
 
-package PM;
+package SL::PM;
 
 
-sub price_matrix_query {
-  my ($self, $dbh, $form) = @_;
+sub price_matrix_query ($, $dbh, $form) {
 
   my $query;
   my $sth;
@@ -53,7 +52,7 @@ sub price_matrix_query {
              AND p.parts_id = ?
 
              ORDER BY 2 DESC, 3 DESC, 4|;
-    $sth = $dbh->prepare($query) || $form->dberror($query);
+    $sth = $dbh->prepare($query) or $form->dberror($query);
   }
 
   if ($form->{vendor_id}) {
@@ -62,7 +61,7 @@ sub price_matrix_query {
                 FROM partsvendor
                 WHERE parts_id = ?
                 AND vendor_id = $form->{vendor_id}|;
-    $sth = $dbh->prepare($query) || $form->dberror($query);
+    $sth = $dbh->prepare($query) or $form->dberror($query);
   }
 
   $sth;
@@ -70,8 +69,7 @@ sub price_matrix_query {
 }
 
 
-sub price_matrix {
-  my ($self, $pmh, $ref, $transdate, $decimalplaces, $form, $myconfig) = @_;
+sub price_matrix ($, $pmh, $ref, $transdate, $decimalplaces, $form, $myconfig) {
 
   $ref->{pricematrix} = "";
   my $customerprice;
@@ -86,7 +84,7 @@ sub price_matrix {
   if ($form->{customer_id}) {
     $pmh->execute($ref->{id}, $ref->{id}, $ref->{id}, $ref->{id});
 
-    while ($mref = $pmh->fetchrow_hashref(NAME_lc)) {
+    while ($mref = $pmh->fetchrow_hashref) {
 
       # check date
       if ($mref->{validfrom}) {
@@ -132,6 +130,8 @@ sub price_matrix {
       $p{0} = $baseprice;
     }
 
+    $form->{tradediscount} ||= 0;
+
     if ($i > 1) {
       $ref->{sellprice} = $form->round_amount($p{0} * (1 - $form->{tradediscount}), $decimalplaces);
       for (sort { $a <=> $b } keys %p) {
@@ -149,9 +149,9 @@ sub price_matrix {
   if ($form->{vendor_id}) {
     $pmh->execute($ref->{id});
 
-    $mref = $pmh->fetchrow_hashref(NAME_lc);
+    $mref = $pmh->fetchrow_hashref;
 
-    if ($mref->{partnumber} ne "") {
+    if ($mref->{partnumber}) {
       $ref->{partnumber} = $mref->{partnumber};
     }
 
@@ -178,7 +178,7 @@ sub price_matrix {
 
 =head1 NAME
 
-PM - Price matrix for is, ir, oe
+SL::PM - Price matrix for is, ir, oe
 
 =head1 DESCRIPTION
 
@@ -190,10 +190,10 @@ L<SL::PM> implements the following functions:
 
 =head2 price_matrix
 
-  PM->price_matrix($pmh, $ref, $transdate, $decimalplaces, $form, $myconfig);
+  SL::PM->price_matrix($pmh, $ref, $transdate, $decimalplaces, $form, $myconfig);
 
 =head2 price_matrix_query
 
-  PM->price_matrix_query($dbh, $form);
+  SL::PM->price_matrix_query($dbh, $form);
 
 =cut

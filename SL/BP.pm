@@ -1,37 +1,36 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2006
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
 # Batch printing module backend routines
 #
 #======================================================================
+use v5.40;
 
-package BP;
+package SL::BP;
 
 
-sub get_vc {
-  my ($self, $myconfig, $form) = @_;
+sub get_vc ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  my %arap = ( invoice => { ar => customer, ap => vendor },
-               remittance_voucher => { ar => customer },
-               packing_list => { oe => customer, ar => customer, ap => vendor },
-               sales_order => { oe => customer },
-               work_order => { oe => customer },
-               pick_list => { oe => customer, ar => customer, ap => vendor },
-               purchase_order => { oe => vendor },
-               bin_list => { oe => customer, ar => customer, ap => vendor },
-               sales_quotation => { oe => customer },
-               request_quotation => { oe => vendor },
-               timecard => { jcitems => employee },
-               storescard => { jcitems => employee },
+  my %arap = ( invoice => { ar => 'customer', ap => 'vendor' },
+               remittance_voucher => { ar => 'customer' },
+               packing_list => { oe => 'customer', ar => 'customer', ap => 'vendor' },
+               sales_order => { oe => 'customer' },
+               work_order => { oe => 'customer' },
+               pick_list => { oe => 'customer', ar => 'customer', ap => 'vendor' },
+               purchase_order => { oe => 'vendor' },
+               bin_list => { oe => 'customer', ar => 'customer', ap => 'vendor' },
+               sales_quotation => { oe => 'customer' },
+               request_quotation => { oe => 'vendor' },
+               timecard => { jcitems => 'employee' },
+               storescard => { jcitems => 'employee' },
              );
 
   my $query;
@@ -39,9 +38,9 @@ sub get_vc {
   my $count;
   my $item;
   my $vc;
-  my $wildcard = ($form->{type} eq 'invoice') ? '%' : '';
+  my $wildcard = (($form->{type} // '') eq 'invoice') ? '%' : '';
 
-  if ($form->{batch} eq 'queue') {
+  if (($form->{batch} // '') eq 'queue') {
     for (keys %{ $arap{$form->{type}} }) {
       $query = qq|
                 SELECT count(*)
@@ -53,7 +52,7 @@ sub get_vc {
                       AND s.spoolfile IS NOT NULL) AS total|;
       ($vc) = $dbh->selectrow_array($query);
       $form->{$arap{$form->{type}}{$_}} ||= $vc;
-      if ($form->{type} eq 'invoice') {
+      if (($form->{type} // '') eq 'invoice') {
         if ($form->{$arap{$form->{type}}{$_}}) {
           if ($arap{$form->{type}}{$_} eq $form->{vc}) {
             $count += $vc;
@@ -68,8 +67,8 @@ sub get_vc {
   # build selection list
   my $union = "";
   $query = "";
-  if ($form->{batch} eq 'queue') {
-    if (($count < $myconfig->{vclimit}) && $count) {
+  if (($form->{batch} // '') eq 'queue') {
+    if ($count && ($count < $myconfig->{vclimit} // 0)) {
       foreach $item (keys %{ $arap{$form->{type}} }) {
         $query .= qq|
                     $union
@@ -84,22 +83,22 @@ sub get_vc {
       $query .= qq| ORDER BY 2, 1|;
 
       $sth = $dbh->prepare($query);
-      $sth->execute || $form->dberror($query);
+      $sth->execute or $form->dberror($query);
 
-      while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+      while (my $ref = $sth->fetchrow_hashref) {
         push @{ $form->{"all_$ref->{vclabel}"} }, $ref;
       }
       $sth->finish;
     }
   } else {
     # get all vc or employee
-    my $c;
-    my $count;
+    my $c     = 0;
+    my $count = 0;
     foreach $item (keys %{ $arap{$form->{type}} }) {
       $query = qq|SELECT count(*) FROM $arap{$form->{type}}{$item}|;
       ($c) = $dbh->selectrow_array($query);
       if ($form->{vc}) {
-        if ($form->{vc} eq $arap{$form->{type}}{$item}) {
+        if (($form->{vc} // '') eq $arap{$form->{type}}{$item}) {
           $count = $c;
         }
       } else {
@@ -108,7 +107,7 @@ sub get_vc {
     }
 
     $query = "";
-    if ($count < $myconfig->{vclimit}) {
+    if (($count // 0) < ($myconfig->{vclimit} // 0)) {
 
       foreach $item (keys %{ $arap{$form->{type}} }) {
         $query .= qq|
@@ -120,8 +119,8 @@ sub get_vc {
       }
       $query .= qq| ORDER BY 2, 1|;
       $sth = $dbh->prepare($query);
-      $sth->execute || $form->dberror($query);
-      while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+      $sth->execute or $form->dberror($query);
+      while (my $ref = $sth->fetchrow_hashref) {
         push @{ $form->{"all_$ref->{vclabel}"} }, $ref;
         $form->{$ref->{vclabel}} = 1;
       }
@@ -136,8 +135,8 @@ sub get_vc {
                 FROM paymentmethod
                 ORDER BY rn|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
-    while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+    $sth->execute or $form->dberror($query);
+    while (my $ref = $sth->fetchrow_hashref) {
       push @{ $form->{"all_paymentmethod"} }, $ref;
     }
     $sth->finish;
@@ -147,7 +146,7 @@ sub get_vc {
   $form->all_years($myconfig, $dbh);
 
   if ($form->{type} =~ /(timecard|storescard)/) {
-    $form->all_projects($myconfig, $dbh, undef, ($form->{type} eq 'storescard'));
+    $form->all_projects($myconfig, $dbh, undef, (($form->{type} // '') eq 'storescard'));
   }
 
   $dbh->disconnect;
@@ -157,13 +156,12 @@ sub get_vc {
 }
 
 
-sub get_spoolfiles {
-  my ($self, $myconfig, $form) = @_;
+sub get_spoolfiles ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  my %defaults = $form->get_defaults($dbh, ['precision']);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   $form->get_peripherals($dbh);
@@ -172,18 +170,18 @@ sub get_spoolfiles {
   my $invnumber = "invnumber";
   my $item;
   my $var;
-  my $wildcard = ($form->{type} eq 'invoice') ? '%' : '';
+  my $wildcard = (($form->{type} // '') eq 'invoice') ? '%' : '';
 
-  my %arap = ( invoice => { ar => customer, ap => vendor },
-               remittance_voucher => { ar => customer },
-               packing_list => { oe => customer, ar => customer, ap => vendor },
-               sales_order => { oe => customer },
-               work_order => { oe => customer },
-               pick_list => { oe => customer, ar => customer, ap => vendor },
-               purchase_order => { oe => vendor },
-               bin_list => { oe => customer, ar => customer, ap => vendor },
-               sales_quotation => { oe => customer },
-               request_quotation => { oe => vendor }
+  my %arap = ( invoice => { ar => 'customer', ap => 'vendor' },
+               remittance_voucher => { ar => 'customer' },
+               packing_list => { oe => 'customer', ar => 'customer', ap => 'vendor' },
+               sales_order => { oe => 'customer' },
+               work_order => { oe => 'customer' },
+               pick_list => { oe => 'customer', ar => 'customer', ap => 'vendor' },
+               purchase_order => { oe => 'vendor' },
+               bin_list => { oe => 'customer', ar => 'customer', ap => 'vendor' },
+               sales_quotation => { oe => 'customer' },
+               request_quotation => { oe => 'vendor' }
              );
 
   unless ($form->{transdatefrom} || $form->{transdateto}) {
@@ -198,7 +196,7 @@ sub get_spoolfiles {
     $invnumber = 'id';
     $where = "1=1";
 
-    if ($form->{batch} eq 'queue') {
+    if (($form->{batch} // '') eq 'queue') {
 
       $query = qq|SELECT j.id, e.name, e.employeenumber AS vcnumber,
                   j.id AS invnumber,
@@ -223,11 +221,12 @@ sub get_spoolfiles {
         }
       }
 
-      if ($form->{batch} eq 'print') {
+      if (($form->{batch} // '') eq 'print') {
         if (! ($form->{printed} && $form->{notprinted})) {
 
+          my $not = '';
           if (! $form->{printed}) {
-            $not = "NOT";
+            $not = 'NOT';
           }
 
           $where .= " AND $not j.id IN (SELECT s.trans_id
@@ -250,7 +249,7 @@ sub get_spoolfiles {
                   WHERE $where|;
     }
 
-    my ($employee, $employee_id) = split /--/, $form->{employee};
+    my ($employee, $employee_id) = split /--/, $form->{employee} // '';
     if ($employee_id) {
       $query .= qq| AND j.employee_id = $employee_id|;
     } else {
@@ -259,12 +258,12 @@ sub get_spoolfiles {
         $query .= " AND lower(e.name) LIKE '$item'";
       }
     }
-    if ($form->{description} ne "") {
+    if (($form->{description} // '') ne "") {
       $item = $form->like(lc $form->{description});
       $query .= " AND lower(j.description) LIKE '$item'";
     }
-    if ($form->{projectnumber} ne "") {
-      ($item, $var) = split /--/, $form->{projectnumber};
+    if (($form->{projectnumber} // '') ne "") {
+      ($item, $var) = split /--/, $form->{projectnumber} // '';
       $query .= " AND j.project_id = $var";
     }
 
@@ -278,14 +277,15 @@ sub get_spoolfiles {
       $form->{printed} = $form->{notprinted} = 1;
     }
     foreach $item (keys %{ $arap{$form->{type}} }) {
-      ($form->{$arap{$form->{type}}{$item}}, $form->{"$arap{$form->{type}}{$item}_id"}) = split /--/, $form->{$arap{$form->{type}}{$item}};
+      ($form->{$arap{$form->{type}}{$item}}, $form->{"$arap{$form->{type}}{$item}_id"}) = split /--/, $form->{$arap{$form->{type}}{$item}} // '';
     }
 
+    my $union = '';
     foreach $item (keys %{ $arap{$form->{type}} }) {
 
       $where = "1 = 1";
 
-      $invoice = "a.invoice";
+      my $invoice = "a.invoice";
       $invnumber = "invnumber";
 
       if ($item eq 'oe') {
@@ -294,22 +294,22 @@ sub get_spoolfiles {
         $where .= ($form->{type} =~ /_quotation/) ? " AND a.quotation = '1'" : " AND a.quotation = '0'";
       }
 
-      if ($form->{"print$arap{$form->{type}}{$item}"} ne 'Y') {
+      if (($form->{"print$arap{$form->{type}}{$item}"} // '') ne 'Y') {
         $form->{$arap{$form->{type}}{$item}} = "\r";
         $form->{"$arap{$form->{type}}{$item}_id"} = 0;
       }
 
-      if ($form->{type} eq 'remittance_voucher') {
+      if (($form->{type} // '') eq 'remittance_voucher') {
         $where .= qq| AND vc.remittancevoucher = '1'|;
       }
-      if ($form->{type} eq 'remittance_voucher' || $form->{type} eq 'invoice') {
+      if (($form->{type} // '') eq 'remittance_voucher' || ($form->{type} // '') eq 'invoice') {
         if ($form->{paymentmethod}) {
-          ($var, $paymentmethod_id) = split /--/, $form->{paymentmethod};
+          my ($var, $paymentmethod_id) = split /--/, $form->{paymentmethod} // '';
           $where .= qq| AND a.paymentmethod_id = $paymentmethod_id|;
         }
       }
 
-      if ($form->{batch} eq 'queue') {
+      if (($form->{batch} // '') eq 'queue') {
         $query .= qq|
                   $union
                   SELECT a.id, vc.name,
@@ -349,7 +349,7 @@ sub get_spoolfiles {
           }
         }
 
-        if ($form->{batch} ne 'queue') {
+        if (($form->{batch} // '') ne 'queue') {
 
           if ($form->{printed} || $form->{notprinted} || $form->{emailed} || $form->{notemailed}) {
             for (qw(printed emailed)) {
@@ -394,33 +394,33 @@ sub get_spoolfiles {
       }
 
       if ($form->{$arap{$form->{type}}{$item}}) {
-        if ($form->{"$arap{$form->{type}}{$item}_id"} ne "") {
+        if (($form->{"$arap{$form->{type}}{$item}_id"} // '') ne "") {
           $query .= qq| AND a.$arap{$form->{type}}{$item}_id = $form->{"$arap{$form->{type}}{$item}_id"}|;
         } else {
           $var = $form->like(lc $form->{$arap{$form->{type}}{$item}});
           $query .= " AND lower(vc.name) LIKE '$var'";
         }
+        $form->{$arap{$form->{type}}{$item}} =~ s/^\r//;
       }
-      $form->{$arap{$form->{type}}{$item}} =~ s/^\r//;
 
       if ($form->{"$arap{$form->{type}}{$item}number"}) {
         $var = $form->like(lc $form->{"$arap{$form->{type}}{$item}number"});
         $query .= " AND lower(vc.$arap{$form->{type}}{$item}number) LIKE '$var'";
       }
 
-      if ($form->{description} ne "") {
+      if (($form->{description} // '') ne "") {
         $var = $form->like(lc $form->{description});
         $query .= " AND lower(a.description) LIKE '$var'";
       }
-      if ($form->{invnumber} ne "") {
+      if (($form->{invnumber} // '') ne "") {
         $var = $form->like(lc $form->{invnumber});
         $query .= " AND lower(a.invnumber) LIKE '$var'";
       }
-      if ($form->{ordnumber} ne "") {
+      if (($form->{ordnumber} // '') ne "") {
         $var = $form->like(lc $form->{ordnumber});
         $query .= " AND lower(a.ordnumber) LIKE '$var'";
       }
-      if ($form->{quonumber} ne "") {
+      if (($form->{quonumber} // '') ne "") {
         $var = $form->like(lc $form->{quonumber});
         $query .= " AND lower(a.quonumber) LIKE '$var'";
       }
@@ -436,19 +436,18 @@ sub get_spoolfiles {
   }
 
   my @sf = ("transdate", "$invnumber", "name");
-  my %ordinal = $form->ordinal_order($dbh, $query);
-  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf);
 
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $form->{SPOOL} }, $ref;
   }
   $sth->finish;
 
   # include spoolfiles only
-  if ($form->{batch} eq 'queue') {
+  if (($form->{batch} // '') eq 'queue') {
     $query = qq|SELECT s.*, s.trans_id AS id
                 FROM status s
                 WHERE s.formname = '$form->{type}'
@@ -472,8 +471,8 @@ sub get_spoolfiles {
      }
      $sth = $dbh->prepare($query);
 
-     $sth->execute || $form->dberror($query);
-     while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+     $sth->execute or $form->dberror($query);
+     while (my $ref = $sth->fetchrow_hashref) {
        push @{ $form->{SPOOL} }, $ref;
      }
      $sth->finish;
@@ -484,8 +483,7 @@ sub get_spoolfiles {
 }
 
 
-sub delete_spool {
-  my ($self, $myconfig, $form, $spool) = @_;
+sub delete_spool ($, $myconfig, $form, $spool) {
 
   # connect to database, turn AutoCommit off
   my $dbh = $form->dbconnect_noauto($myconfig);
@@ -496,22 +494,22 @@ sub delete_spool {
   $query = qq|SELECT formname
               FROM status
               WHERE spoolfile = ?|;
-  my $fth = $dbh->prepare($query) || $form->dberror($query);
+  my $fth = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|UPDATE status SET
               spoolfile = NULL
               WHERE spoolfile = ?|;
-  my $sth = $dbh->prepare($query) || $form->dberror($query);
+  my $sth = $dbh->prepare($query) or $form->dberror($query);
 
   my $formname;
 
   foreach my $i (1 .. $form->{rowcount}) {
     if ($form->{"ndx_$i"}) {
-      $fth->execute($form->{"spoolfile_$i"}) || $form->dberror;
+      $fth->execute($form->{"spoolfile_$i"}) or $form->dberror;
       ($formname) = $fth->fetchrow_array;
       $fth->finish;
 
-      $sth->execute($form->{"spoolfile_$i"}) || $form->dberror;
+      $sth->execute($form->{"spoolfile_$i"}) or $form->dberror;
       $sth->finish;
 
       %audittrail = ( tablename  => $form->{"tablename_$i"},
@@ -542,8 +540,7 @@ sub delete_spool {
 }
 
 
-sub print_spool {
-  my ($self, $myconfig, $form, $spool) = @_;
+sub print_spool ($, $myconfig, $form, $spool) {
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
@@ -554,35 +551,35 @@ sub print_spool {
   $query = qq|SELECT formname
               FROM status
               WHERE spoolfile = ?|;
-  my $fth = $dbh->prepare($query) || $form->dberror($query);
+  my $fth = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|UPDATE status SET
               printed = '1'
               WHERE spoolfile = ?|;
-  my $sth = $dbh->prepare($query) || $form->dberror($query);
+  my $sth = $dbh->prepare($query) or $form->dberror($query);
 
   my $formname;
 
-  open(OUT, $form->{OUT}) or $form->error("$form->{OUT} : $!");
-  binmode(OUT);
+  open my $out, $form->{OUT} or $form->error("$form->{OUT} : $!");
+  binmode $out;
 
-  $spoolfile = qq|$spool/$myconfig->{dbname}/$form->{spoolfile}|;
+  my $spoolfile = qq|$spool/$myconfig->{dbname}/$form->{spoolfile}|;
 
   # send file to printer
-  open(IN, $spoolfile) or $form->error("$spoolfile : $!");
-  binmode(IN);
+  open my $in, $spoolfile or $form->error("$spoolfile : $!");
+  binmode $in;
 
-  while (<IN>) {
-    print OUT $_;
+  while (<$in>) {
+    print $out $_;
   }
-  close(IN);
-  close(OUT);
+  close $in;
+  close $out;
 
-  $fth->execute($form->{spoolfile}) || $form->dberror;
+  $fth->execute($form->{spoolfile}) or $form->dberror;
   ($formname) = $fth->fetchrow_array;
   $fth->finish;
 
-  $sth->execute($form->{spoolfile}) || $form->dberror;
+  $sth->execute($form->{spoolfile}) or $form->dberror;
   $sth->finish;
 
   %audittrail = ( tablename  => $form->{tablename},
@@ -602,8 +599,7 @@ sub print_spool {
 }
 
 
-sub spoolfile {
-  my ($self, $myconfig, $form) = @_;
+sub spoolfile ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -618,7 +614,7 @@ sub spoolfile {
   $query = qq|INSERT INTO status (trans_id, printed, emailed,
               spoolfile, formname) VALUES ($id, '0', '0',
               '$filename', '$form->{type}')|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $dbh->disconnect;
 
@@ -627,20 +623,19 @@ sub spoolfile {
 }
 
 
-sub set_printed {
-  my ($self, $myconfig, $form, $spoolfiles) = @_;
+sub set_printed ($, $myconfig, $form, $spoolfiles) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  $query = qq|
+  my $query = qq|
     UPDATE status SET
     printed = TRUE
     WHERE spoolfile = ?|;
-  my $sth = $dbh->prepare($query) || $form->dberror($query);
+  my $sth = $dbh->prepare($query) or $form->dberror($query);
 
   for my $file (@$spoolfiles) {
-    $sth->execute($file) || $form->dberror($query, $file);
+    $sth->execute($file) or $form->dberror($query, $file);
   }
 
   $dbh->disconnect;
@@ -654,7 +649,7 @@ sub set_printed {
 
 =head1 NAME
 
-BP - Batch printing module backend routines
+SL::BP - Batch printing module backend routines
 
 =head1 DESCRIPTION
 
@@ -666,26 +661,26 @@ L<SL::BP> implements the following functions:
 
 =head2 delete_spool
 
-  BP->delete_spool($myconfig, $form, $spool);
+  SL::BP->delete_spool($myconfig, $form, $spool);
 
 =head2 get_spoolfiles
 
-  BP->get_spoolfiles($myconfig, $form);
+  SL::BP->get_spoolfiles($myconfig, $form);
 
 =head2 get_vc
 
-  BP->get_vc($myconfig, $form);
+  SL::BP->get_vc($myconfig, $form);
 
 =head2 print_spool
 
-  BP->print_spool($myconfig, $form, $spool);
+  SL::BP->print_spool($myconfig, $form, $spool);
 
 =head2 spoolfile
 
-  BP->spoolfile($myconfig, $form);
+  SL::BP->spoolfile($myconfig, $form);
 
 =head2 set_printed
 
-  BP->set_printed($myconfig, $form, \@spoolfiles);
+  SL::BP->set_printed($myconfig, $form, \@spoolfiles);
 
 =cut

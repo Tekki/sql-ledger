@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -1124,7 +1123,7 @@ sub purchase_order {
 
   if ($form->{type} eq 'request_quotation') {
     $form->{closed} = 1;
-    OE->save(\%myconfig, \%$form);
+    SL::OE->save(\%myconfig, $form);
   }
 
   $form->{title} = $locale->text('Add Purchase Order');
@@ -1147,7 +1146,7 @@ sub sales_order {
 
   if ($form->{type} eq 'sales_quotation') {
     $form->{closed} = 1;
-    OE->save(\%myconfig, \%$form);
+    SL::OE->save(\%myconfig, $form);
     # format amounts
     for $i (1 .. $form->{rowcount}) {
       for (qw(qty discount sellprice cost netweight grossweight volume)) {
@@ -1175,7 +1174,7 @@ sub rfq {
 
   if ($form->{type} eq 'purchase_order') {
     $form->{closed} = 1;
-    OE->save(\%myconfig, \%$form);
+    SL::OE->save(\%myconfig, $form);
   }
 
   $form->{title} = $locale->text('Add Request for Quotation');
@@ -1192,7 +1191,7 @@ sub quotation {
 
   if ($form->{type} eq 'sales_order') {
     $form->{closed} = 1;
-    OE->save(\%myconfig, \%$form);
+    SL::OE->save(\%myconfig, $form);
   }
 
   $form->{title} = $locale->text('Add Quotation');
@@ -1275,7 +1274,7 @@ sub e_mail {
 
   ($form->{warehouse}, $form->{warehouse_id}) = split /--/, $form->{warehouse};
 
-  AA->company_details(\%myconfig, \%$form);
+  SL::AA->company_details(\%myconfig, $form);
 
   $form->{warehouse} = "$form->{warehouse}--$form->{warehouse_id}" if $form->{warehouse_id};
 
@@ -1358,7 +1357,7 @@ sub e_mail {
 
 sub send_email {
 
-  $oldform = new Form;
+  $oldform = SL::Form->new;
 
   for (keys %$form) { $oldform->{$_} = $form->{$_} }
   for (qw(media format)) { $oldform->{$_} = $form->{"old$_"} }
@@ -1392,7 +1391,7 @@ sub print_options {
     $media = qq|<select name=media>
             <option value="screen">|.$locale->text('Screen');
 
-    if ($form->{selectprinter} && $latex) {
+    if ($form->{selectprinter} && $slconfig{latex}) {
       for (split /\n/, $form->unescape($form->{selectprinter})) { $media .= qq|
             <option value="$_">$_| }
     }
@@ -1409,7 +1408,7 @@ sub print_options {
 <option value="xml">|.$locale->text('XML').qq|
 <option value="txt">|.$locale->text('Text');
 
-  if ($latex) {
+  if ($slconfig{latex}) {
     $selectformat .= qq|
 <option value="ps">|.$locale->text('Postscript').qq|
 <option value="pdf">|.$locale->text('PDF');
@@ -1427,7 +1426,7 @@ sub print_options {
     <td>$media</td>
 |;
 
-  if ($latex && $form->{media} ne 'email') {
+  if ($slconfig{latex} && $form->{media} ne 'email') {
     print qq|
     <td nowrap>|.$locale->text('Copies').qq|
     <input name="copies" class="inputright" size="2" value="$form->{copies}"></td>
@@ -1537,7 +1536,7 @@ sub print {
   # if this goes to the printer pass through
   if ($form->{media} !~ /(screen|email)/) {
 
-    $oldform = new Form;
+    $oldform = SL::Form->new;
     for (keys %$form) { $oldform->{$_} = $form->{$_} }
 
   }
@@ -1685,7 +1684,7 @@ sub print_form {
 # $locale->text('Quotation Number missing!')
 # $locale->text('Quotation Date missing!')
 
-  AA->company_details(\%myconfig, \%$form);
+  SL::AA->company_details(\%myconfig, $form);
 
   @f = ();
   foreach $i (1 .. $form->{rowcount}) {
@@ -1734,12 +1733,12 @@ sub print_form {
       }
     }
 
-    OE->order_details(\%myconfig, \%$form);
+    SL::OE->order_details(\%myconfig, $form);
   } else {
     if ($form->{vc} eq 'customer') {
-      IS->invoice_details(\%myconfig, \%$form);
+      SL::IS->invoice_details(\%myconfig, $form);
     } else {
-      IR->invoice_details(\%myconfig, \%$form);
+      SL::IR->invoice_details(\%myconfig, $form);
     }
   }
 
@@ -1827,7 +1826,7 @@ sub print_form {
     $form->{'total'.$i--} = $_;
   }
 
-  $form->{templates} = "$templates/$myconfig{templates}";
+  $form->{templates} = "$slconfig{templates}/$myconfig{templates}";
 
   $form->{IN} = "$form->{formname}.$form->{format}";
 
@@ -1871,7 +1870,7 @@ sub print_form {
     $form->{subject} = qq|$form->{label} $form->{"${inv}number"}| unless $form->{subject};
 
     $form->{plainpaper} = 1;
-    $form->{OUT} = "$sendmail";
+    $form->{OUT} = "$slconfig{sendmail}";
 
     if ($form->{emailed} !~ /$form->{formname}/) {
       $form->{emailed} .= " $form->{formname}";
@@ -1920,7 +1919,7 @@ sub print_form {
 
     if ($filename = $queued{$form->{formname}}) {
       $form->{queued} =~ s/$form->{formname} $filename//;
-      unlink "$spool/$myconfig{dbname}/$filename";
+      unlink "$slconfig{spool}/$myconfig{dbname}/$filename";
       $filename =~ s/\..*$//g;
     } else {
       $filename = $form->{"${inv}number"} =~ s/\W//gr;
@@ -1929,7 +1928,7 @@ sub print_form {
     }
 
     $filename .= ".$form->{format}";
-    $form->{OUT} = ">$spool/$myconfig{dbname}/$filename";
+    $form->{OUT} = ">$slconfig{spool}/$myconfig{dbname}/$filename";
 
     $form->{queued} .= " $form->{formname} $filename";
     $form->{queued} =~ s/^ //;
@@ -1955,7 +1954,7 @@ sub print_form {
 
   $form->format_string(qw(email cc bcc));
 
-  $form->parse_template(\%myconfig, $userspath, $dvipdf, $xelatex) if $form->{copies};
+  $form->parse_template(\%myconfig, $slconfig{userspath}, $slconfig{dvipdf}, $slconfig{xelatex}) if $form->{copies};
 
 
   # if we got back here restore the previous form
@@ -1993,7 +1992,7 @@ sub ship_to {
   for (qw(dcn rvc)) { $temp{$_} = $form->{$_} }
 
   # get details for name
-  AA->ship_to(\%myconfig, \%$form);
+  SL::AA->ship_to(\%myconfig, $form);
 
   for (keys %temp) { $form->{$_} = $temp{$_} }
 

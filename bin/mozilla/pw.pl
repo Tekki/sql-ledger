@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 
@@ -15,7 +14,7 @@
 sub getpassword {
   my ($s) = @_;
 
-  $locale = new Locale "$myconfig{countrycode}", "pw";
+  $locale = SL::Locale->new("$myconfig{countrycode}", "pw");
 
   if (-f "$form->{path}/custom/pw.pl") {
     require "$form->{path}/custom/pw.pl";
@@ -30,7 +29,7 @@ sub getpassword {
   $pwt = $locale->text('Password');
 
   my $totp = '';
-  if ($myconfig{totp_activated} || $form->{admin} && $admin_totp_activated) {
+  if ($myconfig{totp_activated} || $form->{admin} && $slconfig{admin_totp_activated}) {
     $totp = qq|
   <tr>
     <th align=right>| . $locale->text('Code from Authenticator') . qq|</th>
@@ -60,7 +59,7 @@ Content-Type: text/html
   <title>$pwt</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   $stylesheet
-  $charset
+  $slconfig{charset}
 </head>
 |;
 

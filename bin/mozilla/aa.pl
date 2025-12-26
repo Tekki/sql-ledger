@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -102,7 +101,7 @@ sub add {
 sub edit {
 
   &create_links;
-  RU->register(\%myconfig, $form);
+  SL::RU->register(\%myconfig, $form);
 
   %title = ( transaction => "$form->{ARAP} Transaction",
              credit_note => 'Credit Note',
@@ -176,7 +175,7 @@ sub create_links {
 
   $form->{selectformname} = qq|$form->{type}--|.$locale->text($selectform{$form->{type}});
 
-  if ($latex) {
+  if ($slconfig{latex}) {
     if (!$form->{batch}) {
       if ($form->{ARAP} eq 'AR') {
         if ($form->{type} eq 'credit_note') {
@@ -209,7 +208,7 @@ sub create_links {
 
   for (@curr) { $form->{selectcurrency} .= "$_\n" }
 
-  AA->get_name(\%myconfig, \%$form);
+  SL::AA->get_name(\%myconfig, $form);
 
   $form->{currency} =~ s/ //g;
   $form->{duedate} = $temp{duedate} if $temp{duedate};
@@ -1150,7 +1149,7 @@ sub form_footer {
       }
     }
 
-    if (!$latex) {
+    if (!$slconfig{latex}) {
       for ("Preview", "Print and Post", "Print and Post as new") { delete $button{$_} }
     }
 
@@ -1503,13 +1502,13 @@ sub post {
   }
   $form->{printed} =~ s/^ //;
 
-  $form->{userspath} = $userspath;
+  $form->{userspath} = $slconfig{userspath};
 
   if ($form->{batch}) {
-    $rc = VR->post_transaction(\%myconfig, \%$form);
+    $rc = SL::VR->post_transaction(\%myconfig, $form);
   } else {
-    $rc = AA->post_transaction(\%myconfig, \%$form);
-    RU->register(\%myconfig, $form);
+    $rc = SL::AA->post_transaction(\%myconfig, $form);
+    SL::RU->register(\%myconfig, $form);
   }
 
   if ($form->{callback}) {
@@ -1559,8 +1558,8 @@ sub delete {
 
 sub yes {
 
-  if (AA->delete_transaction(\%myconfig, \%$form)) {
-    RU->delete(\%myconfig, $form);
+  if (SL::AA->delete_transaction(\%myconfig, $form)) {
+    SL::RU->delete(\%myconfig, $form);
     $form->redirect($locale->text('Transaction deleted!'));
   } else {
     $form->error($locale->text('Cannot delete transaction!'));
@@ -1687,9 +1686,9 @@ sub search {
     $form->{selectprojectnumber}
       = "\n"
       . $locale->text('(none)') . '--'
-      . AA->NO_PROJECTS . "\n"
+      . SL::AA->NO_PROJECTS . "\n"
       . $locale->text('(empty)') . '--'
-      . AA->EMPTY_PROJECTS . "\n";
+      . SL::AA->EMPTY_PROJECTS . "\n";
 
     for (@{ $form->{all_project} }) { $form->{selectprojectnumber} .= qq|$_->{projectnumber}--$_->{id}\n| }
 
@@ -1976,7 +1975,7 @@ sub transactions {
     ($form->{$form->{vc}}, $form->{"$form->{vc}_id"}) = split(/--/, $form->{$form->{vc}});
   }
 
-  AA->transactions(\%myconfig, \%$form);
+  SL::AA->transactions(\%myconfig, $form);
 
   $href = "$form->{script}?action=transactions";
   for (qw(direction oldsort till outstanding path login revtrans)) { $href .= qq|&$_=$form->{$_}| }
@@ -2440,7 +2439,8 @@ sub transactions {
       = $i == @{$form->{transactions}} ? qq| accesskey="0" title="[0]"|
       : $i < 10                        ? qq| accesskey="$i" title="[$i]"|
       :                                  '';
-    $column_data{invnumber} = "<td><a href=$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback$accesskey>$ref->{invnumber}&nbsp;</a></td>";
+    my $class = qq|invnumber-l $module-l| =~ s/\.pl//r;
+    $column_data{invnumber} = qq|<td><a class="$class" href="$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback"$accesskey>$ref->{invnumber}&nbsp;</a></td>|;
 
     for (qw(notes description memo vcnotes)) { $ref->{$_} =~ s/\r?\n/<br>/g }
     for (qw(transdate datepaid duedate)) { $column_data{$_} = "<td nowrap>$ref->{$_}&nbsp;</td>" }
@@ -2457,7 +2457,7 @@ sub transactions {
       $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>";
     }
 
-    $column_data{email} = qq|<td><a href="mailto:$ref->{email}">$ref->{email}</a></td>|;
+    $column_data{email} = qq|<td><a class="email-l" href="mailto:$ref->{email}">$ref->{email}</a></td>|;
 
     if ($ref->{paymentdiff} <= 0) {
       $column_data{paymentdiff} = qq|<td class="plus1" align=right>$ref->{paymentdiff}&nbsp;</td>|;
@@ -2467,7 +2467,7 @@ sub transactions {
 
     for (qw(id curr accno)) { $column_data{$_} = "<td>$ref->{$_}</td>" }
 
-    $column_data{name} = qq|<td><a href=ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{"$form->{vc}_id"}&db=$form->{vc}&callback=$callback>$ref->{name}</a></td>|;
+    $column_data{name} = qq|<td><a class="name-l" href=ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{"$form->{vc}_id"}&db=$form->{vc}&callback=$callback>$ref->{name}</a></td>|;
 
     if ($ref->{id} != $sameid) {
       $j++; $j %= 2;
@@ -2724,7 +2724,7 @@ sub yes__delete_transactions {
 
   $SIG{INT} = 'IGNORE';
 
-  $form->redirect if AA->delete_transactions(\%myconfig, \%$form, $spool);
+  $form->redirect if SL::AA->delete_transactions(\%myconfig, $form, $slconfig{spool});
 
   $form->error($locale->text('Unable to delete:')." $form->{notdeleted}");
 

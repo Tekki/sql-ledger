@@ -1,0 +1,26 @@
+---
+locale: de_utf
+texts:
+  Add AP Voucher:
+    ap: Gutschrift hinzufügen
+    ar: Gutschrift hinzufügen
+    ps: Gutschrift hinzufügen
+  Add Credit Note:
+    ap: Rechnungsbezogene Gutschrift hinzufügen
+    ar: Rechnungsbezogene Gutschrift hinzufügen
+    ps: Rechnungsbezogene Gutschrift hinzufügen
+  Add Debit Note:
+    ap: Mahnung hinzufügen
+    ar: Mahnung hinzufügen
+    ps: Mahnung hinzufügen
+  Deselect all:
+    am: Alle abwählen
+    ar: Alle abwählen
+    rc: Alle abwählen
+    rd: Alle abwählen
+    rp: Alle abwählen
+    vr: Alle abwählen
+  Job Number:
+    pe: Fließbandarbeitsnummer
+  PO Number:
+    aa: Unsere Referenz

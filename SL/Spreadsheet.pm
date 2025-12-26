@@ -1,19 +1,16 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2022
 #
-#  Author: Tekki
-#     Web: https://tekki.ch
+# © 2022-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
 # Spreadsheet Module
 #
 #======================================================================
-package SL::Spreadsheet;
+use v5.40;
 
-use strict;
-use warnings;
+package SL::Spreadsheet;
 
 use Excel::Writer::XLSX;
 use List::Util qw|max min|;
@@ -21,8 +18,7 @@ use Scalar::Util 'looks_like_number';
 
 # constructor
 
-sub new {
-  my ($class, $form, $userspath) = @_;
+sub new ($class, $form, $userspath) {
   my %self = (
     _form          => $form,
     balance_column => '',
@@ -40,11 +36,12 @@ sub new {
     },
     maxwidth   => 40,
     structure  => {},
+    url        => '',
     url_params => qq|&path=$form->{path}&login=$form->{login}|,
     width      => [],
   );
 
-  ($self{url}) = $ENV{HTTP_REFERER} =~ /(.+?)\/[a-z]+\.pl/;
+  ($self{url}) = $ENV{HTTP_REFERER} =~ /(.+?)\/[a-z]+\.pl/ if $ENV{HTTP_REFERER};
 
   $form->{tmpfile} = "$userspath/" . time . "$$.xlsx";
   $self{workbook} = Excel::Writer::XLSX->new($form->{tmpfile})
@@ -121,8 +118,7 @@ sub new {
 
 # methods
 
-sub adjust_columns {
-  my ($self) = @_;
+sub adjust_columns ($self) {
 
   for (0 .. $#{$self->{width}}) {
     my $width = $self->{width}[$_] || next;
@@ -132,8 +128,7 @@ sub adjust_columns {
   return $self;
 }
 
-sub balance {
-  my ($self, $newvalue) = @_;
+sub balance ($self, $newvalue = undef) {
   if (defined $newvalue) {
     $self->{balance} = $newvalue;
 
@@ -147,8 +142,7 @@ sub balance {
   }
 }
 
-sub balance_column {
-  my ($self, $newvalue) = @_;
+sub balance_column ($self, $newvalue = undef) {
   if (defined $newvalue) {
     $self->{balance_column} = $newvalue;
     $self->balance(0);
@@ -159,8 +153,7 @@ sub balance_column {
   }
 }
 
-sub balance_fn {
-  my ($self, $newvalue) = @_;
+sub balance_fn ($self, $newvalue = undef) {
   if (defined $newvalue) {
     $self->{balance_fn} = $newvalue;
 
@@ -170,8 +163,7 @@ sub balance_fn {
   }
 }
 
-sub balance_group {
-  my ($self, $newvalue) = @_;
+sub balance_group ($self, $newvalue = undef) {
   if (defined $newvalue) {
     $self->{balance_group} = $newvalue;
     $self->balance(0);
@@ -182,8 +174,7 @@ sub balance_group {
   }
 }
 
-sub balance_start {
-  my ($self, $newvalue) = @_;
+sub balance_start ($self, $newvalue = undef) {
   if (defined $newvalue) {
     $self->{balance_start} = $newvalue;
 
@@ -193,9 +184,7 @@ sub balance_start {
   }
 }
 
-sub bool {
-  my ($self, $bool, $format) = @_;
-  $format ||= 'default';
+sub bool ($self, $bool, $format = 'default') {
 
   $self->{worksheet}->write_string(
     $self->{row}, $self->{col},
@@ -206,8 +195,7 @@ sub bool {
   return $self;
 }
 
-sub change_format {
-  my ($self, $name, %properties) = @_;
+sub change_format ($self, $name, %properties) {
 
   my $filter = $name eq ':all' ? '.*' : "^${name}_";
 
@@ -218,8 +206,7 @@ sub change_format {
   return $self;
 }
 
-sub column_index {
-  my ($self, $newvalue) = @_;
+sub column_index ($self, $newvalue = undef) {
   if (defined $newvalue) {
     $self->{column_index} = $newvalue;
     $self->{maxcol} = scalar @$newvalue;
@@ -230,17 +217,15 @@ sub column_index {
   }
 }
 
-sub crlf {
-  my ($self, $times) = @_;
+sub crlf ($self, $times = 1) {
 
-  $self->{row} += $times // 1;
+  $self->{row} += $times;
   $self->{col} = 0;
 
   return $self;
 }
 
-sub data_row {
-  my ($self, $row, %params) = @_;
+sub data_row ($self, $row, %params) {
 
   my $default_type = $params{default_type} || 'decimal';
   my $format       = $params{format}       || 'default';
@@ -309,10 +294,7 @@ sub data_row {
   return $self;
 }
 
-sub date {
-  my ($self, $date, $format) = @_;
-
-  $format ||= 'default';
+sub date ($self, $date, $format = 'default') {
 
   $date =~ s/(\d{4})(\d{2})/$1-$2-/;
   if ($date =~ /\d{4}-\d{2}-\d{2}/) {
@@ -326,9 +308,7 @@ sub date {
   return $self;
 }
 
-sub decimal {
-  my ($self, $decimal, $format) = @_;
-  $format ||= 'default';
+sub decimal ($self, $decimal, $format = 'default') {
 
   if (looks_like_number($decimal)) {
     $self->{worksheet}
@@ -341,24 +321,21 @@ sub decimal {
   return $self;
 }
 
-sub finish {
-  my ($self) = @_;
+sub finish ($self) {
 
   $self->{workbook}->close;
 
   return $self;
 }
 
-sub freeze_panes {
-  my ($self, $row, $col) = @_;
+sub freeze_panes ($self, $row = undef, $col = undef) {
 
   $self->{worksheet}->freeze_panes($row // $self->{row}, $col // $self->{col});
 
   return $self;
 }
 
-sub group_by {
-  my ($self, $newvalues) = @_;
+sub group_by ($self, $newvalues = undef) {
 
   if (defined $newvalues) {
     $self->{group_by} = $newvalues;
@@ -369,8 +346,7 @@ sub group_by {
   }
 }
 
-sub group_label {
-  my ($self, $newvalues) = @_;
+sub group_label ($self, $newvalues = undef) {
 
   if (defined $newvalues) {
     $self->{group_label} = {};
@@ -382,8 +358,7 @@ sub group_label {
   }
 }
 
-sub group_title {
-  my ($self, $newvalues) = @_;
+sub group_title ($self, $newvalues = undef) {
 
   if (defined $newvalues) {
     $self->{group_title} = $newvalues;
@@ -394,8 +369,7 @@ sub group_title {
   }
 }
 
-sub header_row {
-  my ($self, $header, %params) = @_;
+sub header_row ($self, $header, %params) {
 
   my %data;
   if ($params{parse}) {
@@ -419,18 +393,14 @@ sub header_row {
   return $self;
 }
 
-sub lf {
-  my ($self, $times) = @_;
+sub lf ($self, $times = 1) {
 
-  $self->{row} += $times // 1;
+  $self->{row} += $times;
 
   return $self;
 }
 
-sub link {
-  my ($self, $url, $text, $format) = @_;
-  $text   ||= $url;
-  $format ||= 'default';
+sub link ($self, $url, $text = '', $format = 'default') {
 
   $self->{worksheet}
     ->write_url($self->{row}, $self->{col}, $url, $self->{format}{"${format}_link"}, $text);
@@ -442,8 +412,7 @@ sub maxwidth {
   $_[0]->_get_set('maxwidth', $_[1]);
 }
 
-sub nonzero_decimal {
-  my ($self, $decimal, $format) = @_;
+sub nonzero_decimal ($self, $decimal = 0, $format = '') {
 
   if ($decimal * 1) {
     $self->decimal($decimal, $format);
@@ -454,9 +423,7 @@ sub nonzero_decimal {
   return $self;
 }
 
-sub number {
-  my ($self, $number, $format) = @_;
-  $format ||= 'default';
+sub number ($self, $number, $format = 'default') {
 
   if (looks_like_number($number)) {
     $self->{worksheet}
@@ -469,8 +436,7 @@ sub number {
   return $self;
 }
 
-sub report_options {
-  my ($self, $options) = @_;
+sub report_options ($self, $options = '') {
 
   if ($options) {
     $options =~ s/<br>//g;
@@ -483,16 +449,14 @@ sub report_options {
   return $self;
 }
 
-sub reset_width {
-  my ($self) = @_;
+sub reset_width ($self) {
 
   $self->{width} = [];
 
   return $self;
 }
 
-sub set_width {
-  my ($self, $width) = @_;
+sub set_width ($self, $width) {
 
   $self->{width}[$self->{col}] //= 0;
   $self->{width}[$self->{col}] = max $self->{width}[$self->{col}], $width;
@@ -504,8 +468,7 @@ sub structure {
   $_[0]->_get_set('structure', $_[1]);
 }
 
-sub subtotal_row {
-  my ($self, $group) = @_;
+sub subtotal_row ($self, $group) {
 
   if ($self->{group_count}{$group}) {
     my $sum = delete $self->{group_sum}{$group};
@@ -521,16 +484,14 @@ sub subtotal_row {
   return $self;
 }
 
-sub tab {
-  my ($self, $times) = @_;
+sub tab ($self, $times //= 1) {
 
-  $self->{col} += $times // 1;
+  $self->{col} += $times;
 
   return $self;
 }
 
-sub table_row {
-  my ($self, $row, %params) = @_;
+sub table_row ($self, $row, %params) {
 
   for my $group (reverse $self->{group_by}->@*) {
     my $lastid = $self->{last}{$group} || '';
@@ -573,10 +534,7 @@ sub table_row {
   return $self->data_row($row, %params);
 }
 
-sub text {
-  my ($self, $text, $format) = @_;
-
-  $format ||= 'default';
+sub text ($self, $text, $format = 'default') {
 
   $self->{worksheet}
     ->write_string($self->{row}, $self->{col}, $text, $self->{format}{"${format}_text"});
@@ -584,8 +542,7 @@ sub text {
   return $self;
 }
 
-sub title_row {
-  my ($self, $group, $row) = @_;
+sub title_row ($self, $group, $row) {
 
   if (my $title = $self->{group_title}{$group}) {
     my $title_string = ref $title eq 'CODE' ? $title->($self->{_form}, $row) : $title;
@@ -598,8 +555,7 @@ sub title_row {
   return $self;
 }
 
-sub title {
-  my ($self, $text) = @_;
+sub title ($self, $text) {
 
   $self->{worksheet}
     ->write_string($self->{row}, $self->{col}, $text, $self->{format}{title});
@@ -609,8 +565,7 @@ sub title {
   return $self;
 }
 
-sub total_row {
-  my ($self, %params) = @_;
+sub total_row ($self, %params) {
 
   for my $group (reverse $self->{group_by}->@*) {
     $self->subtotal_row($group);
@@ -629,8 +584,7 @@ sub total_row {
   return $self;
 }
 
-sub totalize {
-  my ($self, $newvalues) = @_;
+sub totalize ($self, $newvalues = undef) {
   if (defined $newvalues) {
     $self->{totalize} = [];
 
@@ -659,8 +613,7 @@ sub totalize {
   }
 }
 
-sub worksheet {
-  my ($self, %params) = @_;
+sub worksheet ($self, %params) {
 
   my $title;
   if ($params{form_title}) {
@@ -683,8 +636,7 @@ sub worksheet {
 
 # internal methods
 
-sub _get_set {
-  my ($self, $fld, $newvalue) = @_;
+sub _get_set ($self, $fld, $newvalue = undef) {
 
   if (defined $newvalue) {
     $self->{$fld} = $newvalue;

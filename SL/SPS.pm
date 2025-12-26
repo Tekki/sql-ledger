@@ -1,27 +1,24 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2024
 #
-#  Author: Tekki
-#     Web: https://tekki.ch
+# © 2024-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
 # Swiss Payment Standard
 #
 #======================================================================
+use v5.40;
+
 package SL::SPS;
 
-use strict;
-use warnings;
 use utf8;
 
 use Time::Piece;
 
 # functions
 
-sub payment_add_metadata {
-  my ($pmt) = @_;
+sub payment_add_metadata ($pmt) {
   return $pmt
     unless $pmt->{name}
     && $pmt->{streetname}
@@ -94,8 +91,7 @@ sub xml_escape {
 
 # constructor
 
-sub new {
-  my ($class, $form) = @_;
+sub new ($class, $form) {
 
   my %self = (
     payment_count    => 0,
@@ -103,7 +99,7 @@ sub new {
     payment_sum      => 0,
     pmt_grp_num      => 0,
     pmt_num          => 0,
-    software_version => $form->{version2},
+    software_version => $form->{version},
   );
 
   $self{$_} = $form->{$_} for qw|accountbic accountiban company companycountry|;
@@ -116,8 +112,7 @@ sub new {
 
 # methods
 
-sub add_payment {
-  my ($self, $pmt) = @_;
+sub add_payment ($self, $pmt) {
 
   if (payment_valid($pmt)) {
     push $self->{payment_groups}{"$pmt->{datepaid}--$pmt->{type}--$pmt->{curr}"}->@*, $pmt;
@@ -128,8 +123,7 @@ sub add_payment {
   return $self;
 }
 
-sub to_xml {
-  my ($self) = @_;
+sub to_xml ($self) {
 
   my @payment_groups;
 
@@ -162,8 +156,7 @@ sub to_xml {
 </Document>|, $self->xml_header, join('', @payment_groups);
 }
 
-sub xml_address {
-  my ($self, $pmt) = @_;
+sub xml_address ($self, $pmt) {
 
   return sprintf q|
           <Nm>%s</Nm>
@@ -179,8 +172,7 @@ sub xml_address {
     xml_escape($pmt->{city}),           $pmt->{country} || $self->{companycountry};
 }
 
-sub xml_header {
-  my ($self) = @_;
+sub xml_header ($self) {
 
   return sprintf q|
     <GrpHdr>
@@ -213,8 +205,7 @@ sub xml_header {
     $self->{payment_sum}, xml_escape($self->{company}), $self->{software_version};
 }
 
-sub xml_payment {
-  my ($self, $pmt, $addr, $bank, $ref) = @_;
+sub xml_payment ($self, $pmt, $addr, $bank, $ref) {
 
   my $iban = ($pmt->{type} eq 'D1q' ? $pmt->{qriban} : $pmt->{iban}) =~ s/ //gr;
 
@@ -240,8 +231,7 @@ sub xml_payment {
     $addr, $bank, $iban, $ref;
 }
 
-sub xml_payment_bank {
-  my ($self, $pmt) = @_;
+sub xml_payment_bank ($self, $pmt) {
   my $rv = '';
 
   if ($pmt->{type} eq 'X2') {
@@ -256,8 +246,7 @@ sub xml_payment_bank {
   return $rv;
 }
 
-sub xml_payment_group {
-  my ($self, $pmtdt, $psum, $info, $pmts) = @_;
+sub xml_payment_group ($self, $pmtdt, $psum, $info, $pmts) {
 
   return sprintf q|
     <PmtInf>
@@ -287,8 +276,7 @@ sub xml_payment_group {
     join('', @$pmts);
 }
 
-sub xml_payment_info {
-  my ($self, $pmt) = @_;
+sub xml_payment_info ($self, $pmt) {
   my $rv = '';
 
   if ($pmt->{type} eq 'S') {
@@ -303,8 +291,7 @@ sub xml_payment_info {
   return $rv;
 }
 
-sub xml_payment_reference {
-  my ($self, $pmt) = @_;
+sub xml_payment_reference ($self, $pmt) {
   my $rv;
 
   if ($pmt->{type} eq 'D1q') {

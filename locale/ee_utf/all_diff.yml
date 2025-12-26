@@ -1,0 +1,1547 @@
+---
+locale: ee_utf
+texts:
+  AP:
+    admin: Kohustused
+    am: Kohustused
+    cp: Kohustused
+    ct: Kohustused
+    hr: Kohustused
+    im: Kohustused
+    menu: Kohustused
+  AP Aging:
+    admin: Võlad
+    menu: Võlad
+    ps: Võlad
+    rp: Võlad
+  AP Outstanding:
+    aa: Tasumata kohustused
+    ap: Tasumata kohustused
+    ar: Tasumata kohustused
+    ps: Tasumata kohustused
+  AP Transaction:
+    aa: Kohustuste kanne
+    admin: Kohustuste kanne
+    ap: Kohustuste kanne
+    ar: Kohustuste kanne
+    ct: Kohustuste kanne
+    gl: Kohustuste kanne
+    im: Kohustuste kanne
+    menu: Kohustuste kanne
+    ps: Kohustuste kanne
+    rd: Kohustuste kanne
+  AP Transactions:
+    aa: Kohustuste kanded
+    ap: Kohustuste kanded
+    ar: Kohustuste kanded
+    ct: Kohustuste kanded
+    im: Kohustuste kanded
+    ps: Kohustuste kanded
+    ru: Kohustuste kanded
+  AR:
+    admin: Nõuded
+    am: Nõuded
+    cp: Nõuded
+    ct: Nõuded
+    im: Nõuded
+    menu: Nõuded
+  AR Aging:
+    admin: Võlglased
+    menu: Võlglased
+    ps: Võlglased
+    rp: Võlglased
+  AR Outstanding:
+    aa: Tasumata nõued
+    ap: Tasumata nõued
+    ar: Tasumata nõued
+    ps: Tasumata nõued
+  AR Transaction:
+    aa: Nõuete kanne
+    admin: Nõuete kanne
+    ap: Nõuete kanne
+    ar: Nõuete kanne
+    ct: Nõuete kanne
+    gl: Nõuete kanne
+    im: Nõuete kanne
+    menu: Nõuete kanne
+    ps: Nõuete kanne
+    rd: Nõuete kanne
+  AR Transactions:
+    aa: Nõuete kanded
+    ap: Nõuete kanded
+    ar: Nõuete kanded
+    ct: Nõuete kanded
+    im: Nõuete kanded
+    ps: Nõuete kanded
+    ru: Nõuete kanded
+  Above:
+    hr: Ülal
+  Account Number:
+    am: Konto number
+    im: Konto number
+    ps: Konto number
+    rp: Konto number
+  Account Number missing!:
+    am: Konto number puudub
+  Account Type:
+    am: Konto tüüp
+  Account Type missing!:
+    am: Konto tüüp puudub!
+  Accounting Menu:
+    aa: Raamatupidamise Menüü
+    admin: Raamatupidamise Menüü
+    am: Raamatupidamise Menüü
+    ap: Raamatupidamise Menüü
+    ar: Raamatupidamise Menüü
+    arap: Raamatupidamise Menüü
+    bp: Raamatupidamise Menüü
+    cp: Raamatupidamise Menüü
+    ct: Raamatupidamise Menüü
+    gl: Raamatupidamise Menüü
+    hr: Raamatupidamise Menüü
+    ic: Raamatupidamise Menüü
+    im: Raamatupidamise Menüü
+    ir: Raamatupidamise Menüü
+    is: Raamatupidamise Menüü
+    jc: Raamatupidamise Menüü
+    menu: Raamatupidamise Menüü
+    oe: Raamatupidamise Menüü
+    pe: Raamatupidamise Menüü
+    pos: Raamatupidamise Menüü
+    ps: Raamatupidamise Menüü
+    rc: Raamatupidamise Menüü
+    rd: Raamatupidamise Menüü
+    rp: Raamatupidamise Menüü
+    sr: Raamatupidamise Menüü
+    vr: Raamatupidamise Menüü
+  Active:
+    ct: Aktiva
+    hr: Aktiva
+    ic: Aktiva
+    im: Aktiva
+    pe: Aktiva
+  Add Account:
+    admin: Lisa konto
+    am: Lisa konto
+    menu: Lisa konto
+  Add Assembly:
+    admin: Lisa komplekt
+    ic: Lisa komplekt
+    menu: Lisa komplekt
+  Add Business:
+    am: Lisa Ettevõtte
+  Add Customer:
+    admin: Lisa klient
+    ct: Lisa klient
+    im: Lisa klient
+    menu: Lisa klient
+  Add Deduction:
+    hr: Lisa mahaarvamine
+  Add Employee:
+    admin: Lisa töötaja
+    hr: Lisa töötaja
+    menu: Lisa töötaja
+  Add General Ledger Transaction:
+    gl: Lisa pearaamatu kanne
+  Add Labor/Overhead:
+    admin: Lisa Tööjõukulu
+    ic: Lisa Tööjõukulu
+    menu: Lisa Tööjõukulu
+  Add POS Invoice:
+    ps: Lisa Sularahamüügi Kviitung
+  Add Part:
+    admin: Lisa Toode
+    ic: Lisa Toode
+    io: Lisa Toode
+    ir: Lisa Toode
+    is: Lisa Toode
+    menu: Lisa Toode
+    oe: Lisa Toode
+    ps: Lisa Toode
+  Add Purchase Order:
+    ic: Lisa Ostutellimus
+    io: Lisa Ostutellimus
+    ir: Lisa Ostutellimus
+    is: Lisa Ostutellimus
+    oe: Lisa Ostutellimus
+    ps: Lisa Ostutellimus
+  Add Quotation:
+    ic: Lisa Pakkumine
+    io: Lisa Pakkumine
+    ir: Lisa Pakkumine
+    is: Lisa Pakkumine
+    oe: Lisa Pakkumine
+    ps: Lisa Pakkumine
+  Add Request for Quotation:
+    ic: Lisa Hinnapakkumise taotlus
+    io: Lisa Hinnapakkumise taotlus
+    ir: Lisa Hinnapakkumise taotlus
+    is: Lisa Hinnapakkumise taotlus
+    oe: Lisa Hinnapakkumise taotlus
+    ps: Lisa Hinnapakkumise taotlus
+  Add Service:
+    ic: Lisa teenus
+    io: Lisa teenus
+    ir: Lisa teenus
+    is: Lisa teenus
+    oe: Lisa teenus
+  Add Transaction:
+    admin: Lisa kanne
+    hr: Lisa kanne
+    menu: Lisa kanne
+  Add Vendor:
+    admin: Lisa tarnija
+    ct: Lisa tarnija
+    im: Lisa tarnija
+    menu: Lisa tarnija
+  Add Warehouse:
+    am: Lisa Ladu
+  Administration:
+    admin: Administreerimine
+  Administrator:
+    admin: Administraator
+  All Accounts:
+    ps: Koik kontod
+    rp: Koik kontod
+  Are you sure you want to delete Invoice Number:
+    ir: Kas oled kindel, et soovid kustutada arve
+    is: Kas oled kindel, et soovid kustutada arve
+    ps: Kas oled kindel, et soovid kustutada arve
+  Are you sure you want to delete Order Number:
+    oe: Kas oled kindel, et soovid kustutada tellimuse
+  Are you sure you want to delete Quotation Number:
+    oe: Kas oled kindel, et soovid kustutada pakkumise
+  Assemblies:
+    admin: Komplektid
+    ic: Komplektid
+    menu: Komplektid
+  Attachment:
+    bp: Kaasatud fail
+    ic: Kaasatud fail
+    io: Kaasatud fail
+    ir: Kaasatud fail
+    is: Kaasatud fail
+    oe: Kaasatud fail
+    ps: Kaasatud fail
+    rp: Kaasatud fail
+  Audit Control:
+    admin: Audit
+    am: Audit
+    menu: Audit
+  BIC:
+    ct: BIC (Rahvusvaheline pangakood - S.W.I.F.T)
+    hr: BIC (Rahvusvaheline pangakood - S.W.I.F.T)
+    im: BIC (Rahvusvaheline pangakood - S.W.I.F.T)
+  Backup sent to:
+    am: Varukoopia saadetakse
+  Balance Sheet:
+    admin: Bilansitabel
+    menu: Bilansitabel
+    ps: Bilansitabel
+    rp: Bilansitabel
+    rpss: Bilansitabel
+  Billing Address:
+    ct: Arve aadress
+    im: Arve aadress
+  Bin:
+    ic: Kast
+    im: Kast
+    io: Kast
+    ir: Kast
+    is: Kast
+    oe: Kast
+    pe: Kast
+    ps: Kast
+  Books are open:
+    am: Kanded on avatud
+  Business:
+    im: Ettevõtte
+    is: Ettevõtte
+    oe: Ettevõtte
+    ps: Ettevõtte
+  Business Number:
+    am: Ettevõtte kood
+  Business deleted!:
+    am: Ettevõtte kustutatud
+  Business saved!:
+    am: Ettevõtte salvestatud
+  COGS:
+    am: COGS
+    ic: COGS
+  Cannot create Lock!:
+    admin: Cannot create Lock!
+  Cannot delete default account!:
+    am: Vaikimisi kontot ei saa kustutada!
+  Cannot delete item!:
+    ic: Toodet ei saa kustutada!
+  Cannot delete quotation!:
+    oe: Hinnapakkumist ei saa kustutada!
+  Cannot post transaction!:
+    aa: Kannet ei saa salvestada!
+    ap: Kannet ei saa salvestada!
+    ar: Kannet ei saa salvestada!
+    gl: Kannet ei saa salvestada!
+    pos: Kannet ei saa salvestada!
+    ps: Kannet ei saa salvestada!
+  Cannot remove files!:
+    bp: Faili ei saa kustutada!
+  Cannot save defaults!:
+    am: Ei saa salvestada vaikimisi mÃ€Ã€ranguid!
+  Cannot save order!:
+    oe: Arvet ei saa salvestada!
+  Cannot save preferences!:
+    am: MÃ€Ã€ranguid ei saa salvestada!
+  Cannot save quotation!:
+    oe: Hinnapakkumist ei saa salvestada!
+  Cash:
+    admin: Kassa
+    am: Kassa
+    ic: Kassa
+    menu: Kassa
+    ps: Kassa
+    rp: Kassa
+    rpss: Kassa
+  Change:
+    pos: Muuda
+    ps: Muuda
+  Change Password:
+    admin: Muuda parool
+  Check:
+    aa: Tshekk
+    admin: Tshekk
+    ap: Tshekk
+    ar: Tshekk
+    cp: Tshekk
+    menu: Tshekk
+    ps: Tshekk
+  Check Inventory:
+    ic: Kontrolli ladu
+  Close Books up to:
+    am: Sulge kanded kuni
+  Code missing!:
+    am: Kood pole leitav
+  Company:
+    admin: Ettevõte
+    am: Ettevõte
+    ct: Ettevõte
+    im: Ettevõte
+    login: Ettevõte
+  Company Name:
+    gl: Ettevõtte nimi
+  Continue:
+    aa: Edasi
+    admin: Edasi
+    am: Edasi
+    ap: Edasi
+    ar: Edasi
+    arap: Edasi
+    arapprn: Edasi
+    bp: Edasi
+    cp: Edasi
+    ct: Edasi
+    gl: Edasi
+    hr: Edasi
+    ic: Edasi
+    im: Edasi
+    io: Edasi
+    ir: Edasi
+    is: Edasi
+    jc: Edasi
+    login: Edasi
+    oe: Edasi
+    pe: Edasi
+    pos: Edasi
+    ps: Edasi
+    pw: Edasi
+    rc: Edasi
+    rd: Edasi
+    rp: Edasi
+    vr: Edasi
+  Copies:
+    bp: koopiat
+    ic: koopiat
+    io: koopiat
+    ir: koopiat
+    is: koopiat
+    oe: koopiat
+    ps: koopiat
+    rp: koopiat
+  Cost:
+    ct: Kulu
+    ic: Kulu
+    im: Kulu
+    io: Kulu
+    ir: Kulu
+    is: Kulu
+    jc: Kulu
+    oe: Kulu
+    ps: Kulu
+  Create Dataset:
+    admin: Uus andmebaas
+  Current:
+    aa: Käesolev
+    ap: Käesolev
+    ar: Käesolev
+    bp: Käesolev
+    ca: Käesolev
+    cp: Käesolev
+    ct: Käesolev
+    gl: Käesolev
+    hr: Käesolev
+    ic: Käesolev
+    im: Käesolev
+    jc: Käesolev
+    oe: Käesolev
+    pe: Käesolev
+    pos: Käesolev
+    ps: Käesolev
+    rc: Käesolev
+    rp: Käesolev
+    vr: Käesolev
+  Current Earnings:
+    ps: Käesoleva aasta kasum (kahjum)
+    rp: Käesoleva aasta kasum (kahjum)
+    rpss: Käesoleva aasta kasum (kahjum)
+  Customer History:
+    ct: Kliendi ajalugu
+    im: Kliendi ajalugu
+  Customer Number:
+    aa: Kliendi number
+    am: Kliendi number
+    ap: Kliendi number
+    ar: Kliendi number
+    arap: Kliendi number
+    bp: Kliendi number
+    cp: Kliendi number
+    ct: Kliendi number
+    gl: Kliendi number
+    hr: Kliendi number
+    ic: Kliendi number
+    im: Kliendi number
+    ir: Kliendi number
+    is: Kliendi number
+    oe: Kliendi number
+    pe: Kliendi number
+    pos: Kliendi number
+    ps: Kliendi number
+    rp: Kliendi number
+  Customer missing!:
+    aa: Klienti pole määratud!
+    ap: Klienti pole määratud!
+    ar: Klienti pole määratud!
+    is: Klienti pole määratud!
+    oe: Klienti pole määratud!
+    pe: Klienti pole määratud!
+    pos: Klienti pole määratud!
+    ps: Klienti pole määratud!
+  Customer not on file!:
+    ap: Klienti pole failis!
+    ar: Klienti pole failis!
+    arap: Klienti pole failis!
+    cp: Klienti pole failis!
+    gl: Klienti pole failis!
+    hr: Klienti pole failis!
+    ic: Klienti pole failis!
+    ir: Klienti pole failis!
+    is: Klienti pole failis!
+    oe: Klienti pole failis!
+    pe: Klienti pole failis!
+    ps: Klienti pole failis!
+    rp: Klienti pole failis!
+  Date Format:
+    am: Kuupäeva formaat
+    im: Kuupäeva formaat
+  Debit Invoice:
+    admin: Deebetarve
+    am: Deebetarve
+    bp: Deebetarve
+    ct: Deebetarve
+    ic: Deebetarve
+    im: Deebetarve
+    io: Deebetarve
+    ir: Deebetarve
+    is: Deebetarve
+    menu: Deebetarve
+    oe: Deebetarve
+    ps: Deebetarve
+    rd: Deebetarve
+  Deduction deleted!:
+    hr: Hinnaalandus kustutatud!
+  Deduction saved!:
+    hr: Hinnaalandus salvestatud!
+  Defaults:
+    admin: Vaikimisi määrangud
+    im: Vaikimisi määrangud
+    menu: Vaikimisi määrangud
+  Defaults saved!:
+    am: Vaikimisi määrangud salvestatud
+  Delete Account:
+    am: Kustuta konto
+  Delete Schedule:
+    ap: Kustutata Ajakava
+    ar: Kustutata Ajakava
+    arap: Kustutata Ajakava
+    cp: Kustutata Ajakava
+    gl: Kustutata Ajakava
+    hr: Kustutata Ajakava
+    ir: Kustutata Ajakava
+    is: Kustutata Ajakava
+    oe: Kustutata Ajakava
+    ps: Kustutata Ajakava
+    rp: Kustutata Ajakava
+  Delivery Date:
+    ct: Kättetoimetamise kuupäev
+    ic: Kättetoimetamise kuupäev
+    im: Kättetoimetamise kuupäev
+    io: Kättetoimetamise kuupäev
+    ir: Kättetoimetamise kuupäev
+    is: Kättetoimetamise kuupäev
+    oe: Kättetoimetamise kuupäev
+    ps: Kättetoimetamise kuupäev
+  Description Translations:
+    pe: Selgituse tõlged
+  Difference:
+    rc: Vahe
+  Discount:
+    am: Allahindlus
+    cp: Allahindlus
+    ct: Allahindlus
+    im: Allahindlus
+    ir: Allahindlus
+    is: Allahindlus
+    ps: Allahindlus
+  Done:
+    oe: Teostatud
+    rc: Teostatud
+  Drawing:
+    ic: Pildid
+    im: Pildid
+  Driver:
+    admin: Draiver
+  Dropdown Limit:
+    am: Hüppikmenüü Piirang
+  E-mail:
+    admin: E-mail
+    am: E-mail
+    ap: E-mail
+    ar: E-mail
+    arap: E-mail
+    bp: E-mail
+    cp: E-mail
+    ct: E-mail
+    gl: E-mail
+    hr: E-mail
+    ic: E-mail
+    im: E-mail
+    io: E-mail
+    ir: E-mail
+    is: E-mail
+    oe: E-mail
+    ps: E-mail
+    rp: E-mail
+  E-mail Statement to:
+    ps: E-mailiga teatamine
+    rp: E-mailiga teatamine
+  E-mail address missing!:
+    am: E-maili aadress puudub
+    ic: E-maili aadress puudub
+    io: E-maili aadress puudub
+    ir: E-maili aadress puudub
+    is: E-maili aadress puudub
+    oe: E-maili aadress puudub
+    ps: E-maili aadress puudub
+    rp: E-maili aadress puudub
+  E-mailed:
+    bp: E-mailiga saadetud
+    ic: E-mailiga saadetud
+    io: E-mailiga saadetud
+    ir: E-mailiga saadetud
+    is: E-mailiga saadetud
+    oe: E-mailiga saadetud
+    ps: E-mailiga saadetud
+  Edit Account:
+    am: Konto muudatused
+  Edit Business:
+    am: Muuda Ettevõte
+  Edit Customer:
+    ct: Muuda Kliendi Andmeid
+    im: Muuda Kliendi Andmeid
+  Edit Deduction:
+    hr: Muuda Hinnaalandus
+  Edit Department:
+    am: Muuda osakonna andmed
+  Edit Description Translations:
+    pe: Muuda Selgituse Tõlged
+  Edit Employee:
+    hr: Muuda Töötaja andmed
+  Edit General Ledger Transaction:
+    gl: Muuda Pearaamatu kanne
+  Edit Labor/Overhead:
+    ic: Muuda tööjõukulu
+  Edit POS Invoice:
+    ps: Muuda Sularahamüügi Kviitung
+  Edit Part:
+    ic: Muuda Toode
+  Edit Pricegroup:
+    pe: Muuda Hinnagrupi andmed
+  Edit Project:
+    pe: Muuda Projekti andmed
+  Edit Purchase Order:
+    oe: Muuda Ostutellimuse
+  Edit Quotation:
+    oe: Muuda Hinnapakkumise
+  Edit Request for Quotation:
+    oe: Muuda Hinnapakkumise Taotluse
+  Edit SIC:
+    am: Muuda Standardiseeritud Tööstuskood
+  Edit Sales Invoice:
+    is: Müügiarve muutmine
+    ps: Müügiarve muutmine
+  Edit Sales Order:
+    oe: Müügitellimuse muutmine
+  Edit Service:
+    ic: Teenuse muutmine
+  Edit Vendor:
+    ct: Muuda Tarnija andmeid
+    im: Muuda Tarnija andmeid
+  Edit Vendor Invoice:
+    ir: Ostuarve muutmine
+  Employee Name:
+    hr: Töötaja nimi
+  Employee deleted!:
+    hr: Töötaja kustutatud
+  Employee pays:
+    hr: Töötaja tasub
+  Employee saved!:
+    hr: Töötaja salvestatud
+  Employees:
+    admin: Töötajad
+    hr: Töötajad
+    menu: Töötajad
+  Employer pays:
+    hr: Tööandja tasub
+  Enddate:
+    ct: Lõppkuupäev
+    hr: Lõppkuupäev
+    im: Lõppkuupäev
+    is: Lõppkuupäev
+    pe: Lõppkuupäev
+    ps: Lõppkuupäev
+  Enforce transaction reversal for all dates:
+    am: Muuda kannete pööramine kõikide kuupäevade ulatuses kohustuslikuks
+  Equity:
+    am: Omakapital
+    gl: Omakapital
+    ps: Omakapital
+    rpss: Omakapital
+  Exchange rate for payment missing!:
+    aa: Maksel ei ole valuutakurssi!
+    ap: Maksel ei ole valuutakurssi!
+    ar: Maksel ei ole valuutakurssi!
+    ir: Maksel ei ole valuutakurssi!
+    is: Maksel ei ole valuutakurssi!
+    ps: Maksel ei ole valuutakurssi!
+  Exchange rate missing!:
+    aa: Valuutakurssi ei ole
+    ap: Valuutakurssi ei ole
+    ar: Valuutakurssi ei ole
+    cp: Valuutakurssi ei ole
+    ir: Valuutakurssi ei ole
+    is: Valuutakurssi ei ole
+    oe: Valuutakurssi ei ole
+    pos: Valuutakurssi ei ole
+    ps: Valuutakurssi ei ole
+  Existing Datasets:
+    admin: Olemasolevad andmebaasid
+  GL Transaction:
+    am: Pearaamatu kanne
+    gl: Pearaamatu kanne
+    rd: Pearaamatu kanne
+  Goods & Services:
+    admin: Tooted ja teenused
+    menu: Tooted ja teenused
+  Group:
+    ct: Grupp
+    ic: Grupp
+    im: Grupp
+    io: Grupp
+    ir: Grupp
+    is: Grupp
+    oe: Grupp
+    pe: Grupp
+    ps: Grupp
+  Home Phone:
+    hr: Kodune telefoninumber
+  IBAN:
+    ct: IBAN - Rahvusvaheline Pangakonto Number
+    hr: IBAN - Rahvusvaheline Pangakonto Number
+    im: IBAN - Rahvusvaheline Pangakonto Number
+  Include Exchange Rate Difference:
+    rc: Kaasa valuutavahetuskursside vahe
+  Include in Report:
+    aa: Kaasa aruandesse
+    ap: Kaasa aruandesse
+    ar: Kaasa aruandesse
+    ca: Kaasa aruandesse
+    ct: Kaasa aruandesse
+    gl: Kaasa aruandesse
+    hr: Kaasa aruandesse
+    ic: Kaasa aruandesse
+    im: Kaasa aruandesse
+    is: Kaasa aruandesse
+    jc: Kaasa aruandesse
+    oe: Kaasa aruandesse
+    ps: Kaasa aruandesse
+    rp: Kaasa aruandesse
+    vr: Kaasa aruandesse
+  Include in drop-down menus:
+    am: Kaasa valikmenüüdes
+  Income:
+    am: Kasum
+    gl: Kasum
+    ic: Kasum
+    im: Kasum
+    pe: Kasum
+    ps: Kasum
+    rpss: Kasum
+  Incorrect Dataset version!:
+    login: Vale andmebaasi versioon
+  Individual Items:
+    ic: Komponendid
+  Inventory:
+    am: Laoarvestus
+    ic: Laoarvestus
+    im: Laoarvestus
+  Inventory saved!:
+    oe: Laoarvestus salvestatud!
+  Invoice:
+    aa: Arve
+    am: Arve
+    ap: Arve
+    ar: Arve
+    bp: Arve
+    cp: Arve
+    ct: Arve
+    ic: Arve
+    im: Arve
+    io: Arve
+    ir: Arve
+    is: Arve
+    oe: Arve
+    ps: Arve
+    rp: Arve
+  Invoice Date:
+    aa: Arve kuupäev
+    ap: Arve kuupäev
+    ar: Arve kuupäev
+    cp: Arve kuupäev
+    im: Arve kuupäev
+    ir: Arve kuupäev
+    is: Arve kuupäev
+    ps: Arve kuupäev
+  Invoice Date missing!:
+    aa: Arve kuupäev puudub!
+    ap: Arve kuupäev puudub!
+    ar: Arve kuupäev puudub!
+    ic: Arve kuupäev puudub!
+    io: Arve kuupäev puudub!
+    ir: Arve kuupäev puudub!
+    is: Arve kuupäev puudub!
+    oe: Arve kuupäev puudub!
+    ps: Arve kuupäev puudub!
+  Invoice Number:
+    aa: Arve number
+    ap: Arve number
+    ar: Arve number
+    bp: Arve number
+    ic: Arve number
+    im: Arve number
+    ir: Arve number
+    is: Arve number
+    ps: Arve number
+    vr: Arve number
+  Invoice Number missing!:
+    ic: Arve number puudub!
+    io: Arve number puudub!
+    ir: Arve number puudub!
+    is: Arve number puudub!
+    oe: Arve number puudub!
+    ps: Arve number puudub!
+  Invoice deleted!:
+    ir: Arve kustutatud!
+    is: Arve kustutatud!
+    ps: Arve kustutatud!
+  Invoices:
+    bp: Arved
+    cp: Arved
+  Item deleted!:
+    ic: Toode kustutatud!
+  Item not on file!:
+    ct: Toode puudub andmebaasist!
+    ic: Toode puudub andmebaasist!
+    im: Toode puudub andmebaasist!
+    io: Toode puudub andmebaasist!
+    ir: Toode puudub andmebaasist!
+    is: Toode puudub andmebaasist!
+    oe: Toode puudub andmebaasist!
+    ps: Toode puudub andmebaasist!
+  Items:
+    ic: Tooted
+    ru: Tooted
+  LaTeX Templates:
+    admin: LaTeX dokumendipõhjad
+    menu: LaTeX dokumendipõhjad
+  Labor/Overhead:
+    admin: Tööjõukulu
+    ic: Tööjõukulu
+    menu: Tööjõukulu
+  Liability:
+    am: Kohustus
+    gl: Kohustus
+  Licensed to:
+    am: 'Kasutaja andmed:'
+  Link Accounts:
+    ic: Seosta kontod
+    pe: Seosta kontod
+  List Accounts:
+    admin: Kontode nimekiri
+    menu: Kontode nimekiri
+  List Price:
+    ic: Hinnakirja hind
+    pe: Hinnakirja hind
+  List Transactions:
+    ca: Kannete sirvimine
+    ps: Kannete sirvimine
+    rp: Kannete sirvimine
+  Lock System:
+    admin: Süstemi lukustamine
+  Login:
+    admin: Login
+    am: Login
+    hr: Login
+    login: Login
+  Message:
+    ap: Teade
+    ar: Teade
+    arap: Teade
+    bp: Teade
+    cp: Teade
+    gl: Teade
+    hr: Teade
+    ic: Teade
+    io: Teade
+    ir: Teade
+    is: Teade
+    oe: Teade
+    ps: Teade
+    rp: Teade
+  Microfiche:
+    ic: Microkaart
+    im: Microkaart
+  Name missing!:
+    ct: Nimi puudub!
+    hr: Nimi puudub!
+    im: Nimi puudub!
+  No email address for:
+    am: E-maili aadress puudub
+  Non-taxable Purchases:
+    ps: Maksuvaba ostud
+    rp: Maksuvaba ostud
+  Non-taxable Sales:
+    ps: Maksuvaba müük
+    rp: Maksuvaba müük
+  Number:
+    aa: Kood
+    am: Kood
+    ap: Kood
+    ar: Kood
+    arap: Kood
+    bp: Kood
+    cp: Kood
+    ct: Kood
+    gl: Kood
+    hr: Kood
+    ic: Kood
+    im: Kood
+    io: Kood
+    ir: Kood
+    is: Kood
+    jc: Kood
+    oe: Kood
+    pe: Kood
+    pos: Kood
+    ps: Kood
+    rd: Kood
+    rp: Kood
+    ru: Kood
+  Number Format:
+    am: Numbri formaat
+  Number missing in Row:
+    ic: Antud real puudub kood
+    io: Antud real puudub kood
+    ir: Antud real puudub kood
+    is: Antud real puudub kood
+    oe: Antud real puudub kood
+    ps: Antud real puudub kood
+  On Hand:
+    ic: Laos
+  Order Date:
+    im: Tellimuse kuupäev
+    oe: Tellimuse kuupäev
+  Order Date missing!:
+    ic: Tellimuse kuupäev puudub!
+    io: Tellimuse kuupäev puudub!
+    ir: Tellimuse kuupäev puudub!
+    is: Tellimuse kuupäev puudub!
+    oe: Tellimuse kuupäev puudub!
+    ps: Tellimuse kuupäev puudub!
+  Order Entry:
+    admin: Tellimuse sisestamine
+    menu: Tellimuse sisestamine
+  Order Number:
+    aa: Tellimuse number
+    ap: Tellimuse number
+    ar: Tellimuse number
+    bp: Tellimuse number
+    ic: Tellimuse number
+    im: Tellimuse number
+    ir: Tellimuse number
+    is: Tellimuse number
+    oe: Tellimuse number
+    ps: Tellimuse number
+  Order Number missing!:
+    ic: Tellimuse number puudub
+    io: Tellimuse number puudub
+    ir: Tellimuse number puudub
+    is: Tellimuse number puudub
+    oe: Tellimuse number puudub
+    ps: Tellimuse number puudub
+  Out of balance transaction!:
+    gl: Kanne ei ole balanseeritud!
+  Outstanding:
+    aa: Tasumata nõued
+    admin: Tasumata nõuded
+    ap: Tasumata nõued
+    ar: Tasumata nõued
+    ct: Tasumata nõuded
+    im: Tasumata nõued
+    ir: Tasumata nõuded
+    is: Tasumata nõuded
+    menu: Tasumata nõuded
+    pos: Tasumata nõuded
+    ps: Tasumata nõuded
+  POS Invoice:
+    admin: POS arve
+    menu: POS arve
+  Packing List Date missing!:
+    ic: Saatelehe kuupäev puudub!
+    io: Saatelehe kuupäev puudub!
+    ir: Saatelehe kuupäev puudub!
+    is: Saatelehe kuupäev puudub!
+    oe: Saatelehe kuupäev puudub!
+    ps: Saatelehe kuupäev puudub!
+  Packing List Number missing!:
+    ic: Saatelehe number puudub!
+    io: Saatelehe number puudub!
+    ir: Saatelehe number puudub!
+    is: Saatelehe number puudub!
+    oe: Saatelehe number puudub!
+    ps: Saatelehe number puudub!
+  Part Number:
+    am: Deaili Number
+    im: Deaili Number
+    jc: Deaili Number
+    oe: Deaili Number
+    pe: Deaili Number
+  Parts:
+    admin: Osad
+    ic: Osad
+    menu: Osad
+  Payment:
+    admin: Maksmine
+    am: Maksmine
+    cp: Maksmine
+    ct: Maksmine
+    hr: Maksmine
+    im: Maksmine
+    menu: Maksmine
+  Payment date missing!:
+    aa: Maksekuupäev puudub!
+    ap: Maksekuupäev puudub!
+    ar: Maksekuupäev puudub!
+    ir: Maksekuupäev puudub!
+    is: Maksekuupäev puudub!
+    ps: Maksekuupäev puudub!
+  Payroll Deduction:
+    hr: Palgamahaarvamine
+  Post:
+    aa: Salvesta
+    ap: Salvesta
+    ar: Salvesta
+    cp: Salvesta
+    gl: Salvesta
+    hr: Salvesta
+    ir: Salvesta
+    is: Salvesta
+    pos: Salvesta
+    ps: Salvesta
+    vr: Salvesta
+  Post as new:
+    aa: Salvesta uuena
+    ap: Salvesta uuena
+    ar: Salvesta uuena
+    gl: Salvesta uuena
+    hr: Salvesta uuena
+    ir: Salvesta uuena
+    is: Salvesta uuena
+    ps: Salvesta uuena
+  Posted!:
+    pos: Salvestatud!
+    ps: Salvestatud!
+  Preferences:
+    admin: Määrangud
+    menu: Määrangud
+  Preferences saved!:
+    am: Määrangud salvestatud!
+  Prepayment:
+    cp: Ettemaksud
+  Pricegroup missing!:
+    pe: Hinnagrupp puudub!
+  Print and Post:
+    aa: Trüki ja salvesta
+    ap: Trüki ja salvesta
+    ar: Trüki ja salvesta
+    hr: Trüki ja salvesta
+    is: Trüki ja salvesta
+    pos: Trüki ja salvesta
+    ps: Trüki ja salvesta
+  Print and Save:
+    jc: Trüki ja salvesta
+    oe: Trüki ja salvesta
+  Project Number:
+    bp: Projekti number
+    ca: Projekti number
+    ct: Projekti number
+    im: Projekti number
+    jc: Projekti number
+    pe: Projekti number
+    ps: Projekti number
+    rp: Projekti number
+  Project Number missing!:
+    jc: Projekti number puudub!
+  Purchase Order:
+    admin: Ostutellimus
+    am: Ostutellimus
+    bp: Ostutellimus
+    ct: Ostutellimus
+    ic: Ostutellimus
+    im: Ostutellimus
+    io: Ostutellimus
+    ir: Ostutellimus
+    is: Ostutellimus
+    menu: Ostutellimus
+    oe: Ostutellimus
+    ps: Ostutellimus
+    rd: Ostutellimus
+  Purchase Orders:
+    admin: Ostutellimused
+    am: Ostutellimused
+    bp: Ostutellimused
+    ct: Ostutellimused
+    ic: Ostutellimused
+    im: Ostutellimused
+    menu: Ostutellimused
+    oe: Ostutellimused
+    ru: Ostutellimused
+  Quantity exceeds available units to stock!:
+    ic: Kogus on suurem, kui laos olev hulk!
+  Quarter:
+    aa: Trimester
+    ap: Trimester
+    ar: Trimester
+    bp: Trimester
+    ca: Trimester
+    cp: Trimester
+    ct: Trimester
+    gl: Trimester
+    hr: Trimester
+    ic: Trimester
+    im: Trimester
+    jc: Trimester
+    oe: Trimester
+    pe: Trimester
+    pos: Trimester
+    ps: Trimester
+    rc: Trimester
+    rp: Trimester
+    vr: Trimester
+  Quotation:
+    admin: Hinnapakkumine
+    bp: Hinnapakkumine
+    ct: Hinnapakkumine
+    ic: Hinnapakkumine
+    im: Hinnapakkumine
+    io: Hinnapakkumine
+    ir: Hinnapakkumine
+    is: Hinnapakkumine
+    menu: Hinnapakkumine
+    oe: Hinnapakkumine
+    ps: Hinnapakkumine
+    rd: Hinnapakkumine
+  Quotation Date:
+    oe: Hinnap&auml;ringu kuupäev
+  Quotation Date missing!:
+    ic: Hinnapakkumise kuupäev puudub!
+    io: Hinnapakkumise kuupäev puudub!
+    ir: Hinnapakkumise kuupäev puudub!
+    is: Hinnapakkumise kuupäev puudub!
+    oe: Hinnapakkumise kuupäev puudub!
+    ps: Hinnapakkumise kuupäev puudub!
+  Quotation Number:
+    bp: Hinnapakkumise number
+    oe: Hinnapakkumise number
+  Quotation Number missing!:
+    ic: Hinnapakkumise number puudub!
+    io: Hinnapakkumise number puudub!
+    ir: Hinnapakkumise number puudub!
+    is: Hinnapakkumise number puudub!
+    oe: Hinnapakkumise number puudub!
+    ps: Hinnapakkumise number puudub!
+  Quotation deleted!:
+    oe: Hinnapakkumine kustutatud!
+  Quotations:
+    admin: Hinnapakkumised
+    bp: Hinnapakkumised
+    ct: Hinnapakkumised
+    ic: Hinnapakkumised
+    im: Hinnapakkumised
+    menu: Hinnapakkumised
+    oe: Hinnapakkumised
+    ru: Hinnapakkumised
+  RFQ:
+    admin: Hinnap&auml;ring
+    bp: Hinnapakkumise Taotlus
+    ct: Hinnapakkumise Taotlus
+    ic: Hinnapakkumise Taotlus
+    im: Hinnap&auml;ring
+    menu: Hinnap&auml;ring
+    oe: Hinnapakkumise Taotlus
+    rd: Hinnapakkumise Taotlus
+  RFQ Number:
+    am: Hinnapakkumise Taotluse nr.
+    oe: Hinnapakkumise Taotlus nr.
+  RFQs:
+    admin: Hinnap&auml;ringud
+    bp: Hinnapakkumise Taotlused
+    ct: Hinnapakkumise Taotlused
+    ic: Hinnap&auml;ringud
+    im: Hinnap&auml;ringud
+    menu: Hinnap&auml;ringud
+  ROP:
+    ic: TM
+    im: TM
+  Rate:
+    am: Määr
+    im: Määr
+  Rate missing!:
+    hr: Määr puudub!
+  Recd:
+    ic: Kattesaadud
+    io: Kattesaadud
+    ir: Kattesaadud
+    is: Kattesaadud
+    oe: Kattesaadud
+    ps: Kattesaadud
+  Receipt:
+    aa: Maksekviitung
+    admin: Maksekviitung
+    ap: Maksekviitung
+    ar: Maksekviitung
+    cp: Maksekviitung
+    menu: Maksekviitung
+    ps: Maksekviitung
+  Receipts:
+    admin: Sissetulek
+    cp: Sissetulek
+    menu: Sissetulek
+    pos: Sissetulek
+    ps: Sissetulek
+    rp: Sissetulek
+  Receive:
+    admin: Võtta vastu
+    menu: Võtta vastu
+  Reference:
+    am: Referenss
+    ap: Referenss
+    ar: Referenss
+    arap: Referenss
+    ca: Referenss
+    cp: Referenss
+    gl: Referenss
+    hr: Referenss
+    im: Referenss
+    ir: Referenss
+    is: Referenss
+    oe: Referenss
+    ps: Referenss
+    rp: Referenss
+    rpss: Referenss
+    vr: Referenss
+  Remaining:
+    aa: Kasutamata
+    ap: Kasutamata
+    ar: Kasutamata
+    ir: Kasutamata
+    is: Kasutamata
+    oe: Kasutamata
+    pos: Kasutamata
+    ps: Kasutamata
+  Removing marked entries from queue ...:
+    bp: Eemaldan märgitud kanded trükijärjekorrast...
+  Request for Quotation:
+    oe: Hinnapakkumise Taotlus
+  Request for Quotations:
+    ct: Hinnapakkumise Taotlused
+    im: Hinnapakkumise Taotlused
+    oe: Hinnapakkumise Taotlused
+    ru: Hinnapakkumise Taotlused
+  Required by:
+    ic: Tarneaeg
+    io: Tarneaeg
+    ir: Tarneaeg
+    is: Tarneaeg
+    oe: P&auml;ringu t&auml;htaeg
+    ps: Tarneaeg
+  Retained Earnings:
+    am: Jaotamata kasum
+  SSN:
+    hr: IK
+  Salesperson:
+    aa: Müügiesindaja
+    ap: Müügiesindaja
+    ar: Müügiesindaja
+    ct: Müügiesindaja
+    im: Müügiesindaja
+    is: Müügiesindaja
+    oe: Müügiesindaja
+    pos: Müügiesindaja
+    ps: Müügiesindaja
+    rp: Müügiesindaja
+  Save to File:
+    admin: Salvesta faili
+    menu: Salvesta faili
+  Send by E-Mail:
+    admin: Saada e-postiga
+    menu: Saada e-postiga
+  Ship:
+    admin: Tarnimine
+    ic: Tarnimine
+    io: Tarnimine
+    ir: Tarnimine
+    is: Tarnimine
+    menu: Tarnimine
+    oe: Tarnimine
+    ps: Tarnimine
+  Ship Merchandise:
+    oe: Tarni kaubad
+  Ship to:
+    ir: Tarneaadress
+    is: Tarneaadress
+    oe: Tarneaadress
+    ps: Tarneaadress
+  Shipping Date:
+    oe: Tarne kuupäev
+  Shipping Date missing!:
+    oe: Tarne kuupäev puudub
+  Short:
+    ic: Lühike
+  Startdate:
+    ap: Algus Kuupäev
+    ar: Algus Kuupäev
+    arap: Algus Kuupäev
+    cp: Algus Kuupäev
+    ct: Algus Kuupäev
+    gl: Algus Kuupäev
+    hr: Algus Kuupäev
+    im: Algus Kuupäev
+    ir: Algus Kuupäev
+    is: Algus Kuupäev
+    jc: Algus Kuupäev
+    oe: Algus Kuupäev
+    pe: Algus Kuupäev
+    ps: Algus Kuupäev
+    rp: Algus Kuupäev
+  State:
+    ct: Seisund
+    im: Seisund
+  State/Province:
+    ct: Maakond
+    hr: Maakond
+    ic: Maakond
+    im: Maakond
+    io: Maakond
+    ir: Maakond
+    is: Maakond
+    oe: Maakond
+    ps: Maakond
+  Statement sent to:
+    ps: Saata aruanne aadressil
+    rp: Saata aruanne aadressil
+  Statements sent to printer!:
+    ps: Saata aruanne printerile
+    rp: Saata aruanne printerile
+  Stock Assembly:
+    admin: Komplekti lattu võtmine
+    ic: Komplekti lattu võtmine
+    menu: Komplekti lattu võtmine
+  Sub-contract GIFI:
+    ct: Allhange GIFI
+    im: Allhange GIFI
+  Subtotal:
+    aa: Vahesumma
+    ap: Vahesumma
+    ar: Vahesumma
+    ca: Vahesumma
+    ct: Vahesumma
+    gl: Vahesumma
+    hr: Vahesumma
+    ic: Vahesumma
+    im: Vahesumma
+    io: Vahesumma
+    ir: Vahesumma
+    is: Vahesumma
+    jc: Vahesumma
+    oe: Vahesumma
+    pos: Vahesumma
+    ps: Vahesumma
+    rp: Vahesumma
+    vr: Vahesumma
+  Summary:
+    ap: Kokkuvõtte
+    ar: Kokkuvõtte
+    ct: Kokkuvõtte
+    hr: Kokkuvõtte
+    ic: Kokkuvõtte
+    im: Kokkuvõtte
+    oe: Kokkuvõtte
+    pe: Kokkuvõtte
+    ps: Kokkuvõtte
+    rc: Kokkuvõtte
+    rp: Kokkuvõtte
+  System Defaults:
+    am: Süsteemi vaikimisi seadistused
+  Tax Included:
+    aa: Koos maksuga
+    ap: Koos maksuga
+    ar: Koos maksuga
+    ct: Koos maksuga
+    im: Koos maksuga
+    ir: Koos maksuga
+    is: Koos maksuga
+    oe: Koos maksuga
+    pos: Koos maksuga
+    ps: Koos maksuga
+  Tax Number:
+    ct: Kaibemaksukohuslase number
+    im: Kaibemaksukohuslase number
+  Tax Number / SSN:
+    ct: Registrinumber / Isikukood
+    im: Registrinumber / Isikukood
+  Terms:
+    aa: Maksetingimus
+    ap: Maksetingimus
+    ar: Maksetingimus
+    ct: Maksetingimus
+    im: Maksetingimus
+    ir: Maksetingimus
+    is: Maksetingimus
+    oe: Maksetingimus
+    ps: Maksetingimus
+  Till:
+    aa: Müügipunkt
+    ap: Müügipunkt
+    ar: Müügipunkt
+    ps: Müügipunkt
+    rp: Müügipunkt
+  Trade Discount:
+    pos: Kaubanduslik Allahindlus
+  Transaction Date missing!:
+    gl: Kande kuupäev puudub!
+  Transaction deleted!:
+    aa: Kanne kustutatud!
+    ap: Kanne kustutatud!
+    ar: Kanne kustutatud!
+    gl: Kanne kustutatud!
+    hr: Kanne kustutatud!
+    ps: Kanne kustutatud!
+  Transaction posted!:
+    aa: Kanne saadetud!
+    ap: Kanne saadetud!
+    ar: Kanne saadetud!
+    gl: Kanne saadetud!
+    hr: Kanne saadetud!
+    ps: Kanne saadetud!
+  Transaction reversal enforced for all dates:
+    am: Kannete pööramine on kohustuslik kõikide kuupäevade ulatuses
+  Transactions:
+    admin: Kanded
+    menu: Kanded
+  Translation not on file!:
+    ic: Tõlget pole andmebaasis olemas
+    io: Tõlget pole andmebaasis olemas
+    ir: Tõlget pole andmebaasis olemas
+    is: Tõlget pole andmebaasis olemas
+    oe: Tõlget pole andmebaasis olemas
+    ps: Tõlget pole andmebaasis olemas
+  Unlock System:
+    admin: Unlock System
+  Update:
+    aa: Uuendus
+    ap: Uuendus
+    ar: Uuendus
+    cp: Uuendus
+    ct: Uuendus
+    gl: Uuendus
+    hr: Uuendus
+    ic: Uuendus
+    im: Uuendus
+    ir: Uuendus
+    is: Uuendus
+    jc: Uuendus
+    oe: Uuendus
+    pe: Uuendus
+    pos: Uuendus
+    ps: Uuendus
+    rc: Uuendus
+  Updated:
+    ic: Uuendatud
+    im: Uuendatud
+    pe: Uuendatud
+  Upgrading to Version:
+    am: Viin vastavusse Versiooniga
+    login: Viin vastavusse Versiooniga
+  Vendor:
+    aa: Hankija
+    ap: Hankija
+    ar: Hankija
+    bp: Hankija
+    cp: Hankija
+    ic: Hankija
+    im: Hankija
+    io: Hankija
+    ir: Hankija
+    is: Hankija
+    oe: Hankija
+    pe: Hankija
+    ps: Hankija
+    rd: Hankija
+    rp: Hankija
+    vr: Hankija
+  Vendor History:
+    ct: Hankija ajalugu
+    im: Hankija ajalugu
+  Vendor Invoice:
+    admin: Ostuarve
+    am: Ostuarve
+    ct: Ostuarve
+    ic: Ostuarve
+    im: Ostuarve
+    menu: Ostuarve
+    oe: Ostuarve
+    rd: Ostuarve
+  Vendor Invoices:
+    admin: Ostuarved
+    ct: Ostuarved
+    ic: Ostuarved
+    im: Ostuarved
+    menu: Ostuarved
+    ru: Ostuarved
+  Vendor Number:
+    aa: Hankija number
+    am: Hankija number
+    ap: Hankija number
+    ar: Hankija number
+    arap: Hankija number
+    bp: Hankija number
+    cp: Hankija number
+    ct: Hankija number
+    gl: Hankija number
+    hr: Hankija number
+    ic: Hankija number
+    im: Hankija number
+    ir: Hankija number
+    is: Hankija number
+    oe: Hankija number
+    pe: Hankija number
+    ps: Hankija number
+    rp: Hankija number
+    vr: Hankija number
+  Vendor deleted!:
+    ct: Hankija kustutatud!
+    im: Hankija kustutatud!
+  Vendor missing!:
+    aa: Hankija puudub!
+    ap: Hankija puudub!
+    ar: Hankija puudub!
+    ir: Hankija puudub!
+    oe: Hankija puudub!
+    ps: Hankija puudub!
+  Vendor not on file!:
+    ap: Hankijat pole failis!
+    ar: Hankijat pole failis!
+    arap: Hankijat pole failis!
+    cp: Hankijat pole failis!
+    gl: Hankijat pole failis!
+    hr: Hankijat pole failis!
+    ic: Hankijat pole failis!
+    ir: Hankijat pole failis!
+    is: Hankijat pole failis!
+    oe: Hankijat pole failis!
+    pe: Hankijat pole failis!
+    ps: Hankijat pole failis!
+    rp: Hankijat pole failis!
+  Vendor saved!:
+    ct: Hankija salvestatud!
+    im: Hankija salvestatud!
+  Vendors:
+    admin: Hankijad
+    ct: Hankijad
+    im: Hankijad
+    menu: Hankijad
+    ru: Hankijad
+  Warehouse:
+    aa: Ladu
+    ap: Ladu
+    ar: Ladu
+    ic: Ladu
+    ir: Ladu
+    is: Ladu
+    oe: Ladu
+    pe: Ladu
+    pos: Ladu
+    ps: Ladu
+  Warehouse deleted!:
+    am: Ladu kustutatud!
+  Warehouse saved!:
+    am: Ladu salvestatud!
+  Warehouses:
+    admin: Laod
+    am: Laod
+    menu: Laod
+  Yearend:
+    admin: Kasumi eraldamine
+    am: Kasumi eraldamine
+    menu: Kasumi eraldamine
+  Yearend date missing!:
+    am: Kasumi eraldamise kuupäev puudub!
+  Yearend posted!:
+    am: Kasumi eraldamine salvestatud!
+  Yearend posting failed!:
+    am: Kasumi eraldamise teostamine ebaõnnestus
+  You did not enter a name!:
+    login: Nimi sisestamata!
+  Zip/Postal Code:
+    ct: Postiindeks
+    ps: Postiindeks
+  account cannot be set to any other type of account:
+    am: konto tüüpi ei saa muuta

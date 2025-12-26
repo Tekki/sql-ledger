@@ -1,9 +1,7 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2022
 #
-#  Author: Tekki
-#     Web: https://tekki.ch
+# © 2022-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -41,7 +39,7 @@ sub transactions_spreadsheet {
     },
   );
 
-  my $ss = SL::Spreadsheet->new($form, $userspath);
+  my $ss = SL::Spreadsheet->new($form, $slconfig{userspath});
   $ss->worksheet(form_title => 1)->structure(\%spreadsheet_info)
     ->column_index([grep !/delete|runningnumber/, @$column_index])
     ->totalize(['netamount', 'tax', 'amount']);

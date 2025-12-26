@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -80,7 +79,7 @@ sub edit {
 
   $form->{linkshipto} = 1;
   &order_links;
-  RU->register(\%myconfig, $form);
+  SL::RU->register(\%myconfig, $form);
   &prepare_order;
   &display_form;
 
@@ -91,7 +90,7 @@ sub edit {
 sub order_links {
 
   # retrieve order/quotation
-  OE->retrieve(\%myconfig, \%$form);
+  SL::OE->retrieve(\%myconfig, $form);
 
   $form->{selectprinter} = "";
   for (@{ $form->{all_printer} }) { $form->{selectprinter} .= "$_->{printer}\n" }
@@ -141,7 +140,7 @@ sub order_links {
   for (qw(terms taxincluded intnotes)) { $temp{$_} = $form->{$_} }
 
   # get customer / vendor
-  AA->get_name(\%myconfig, \%$form);
+  SL::AA->get_name(\%myconfig, $form);
 
   if ($form->{id}) {
     for (keys %temp) { $form->{$_} = $temp{$_} }
@@ -332,7 +331,7 @@ sub prepare_order {
 .qq|\nwork_order--|.$locale->text('Work Order')
 .qq|\npick_list--|.$locale->text('Pick List')
 .qq|\npacking_list--|.$locale->text('Packing List');
-    $form->{selectformname} .= qq|\nbarcode--|.$locale->text('Barcode') if $dvipdf;
+    $form->{selectformname} .= qq|\nbarcode--|.$locale->text('Barcode') if $slconfig{dvipdf};
   }
 
   if ($form->{type} eq 'purchase_order') {
@@ -342,18 +341,18 @@ sub prepare_order {
 
     $form->{selectformname} = qq|purchase_order--|.$locale->text('Purchase Order')
 .qq|\nbin_list--|.$locale->text('Bin List');
-    $form->{selectformname} .= qq|\nbarcode--|.$locale->text('Barcode') if $dvipdf;
+    $form->{selectformname} .= qq|\nbarcode--|.$locale->text('Barcode') if $slconfig{dvipdf};
   }
 
   if ($form->{type} eq 'ship_order') {
     $form->{selectformname} = qq|pick_list--|.$locale->text('Pick List')
 .qq|\npacking_list--|.$locale->text('Packing List');
-    $form->{selectformname} .= qq|\nbarcode--|.$locale->text('Barcode') if $dvipdf;
+    $form->{selectformname} .= qq|\nbarcode--|.$locale->text('Barcode') if $slconfig{dvipdf};
   }
 
   if ($form->{type} eq 'receive_order') {
     $form->{selectformname} = qq|bin_list--|.$locale->text('Bin List');
-    $form->{selectformname} .= qq|\nbarcode--|.$locale->text('Barcode') if $dvipdf;
+    $form->{selectformname} .= qq|\nbarcode--|.$locale->text('Barcode') if $slconfig{dvipdf};
   }
 
   $focus = "partnumber_$i";
@@ -377,7 +376,7 @@ sub lookup_order {
   $form->{open} = 1;
   $form->{closed} = 1;
 
-  OE->transactions(\%myconfig, \%$form);
+  SL::OE->transactions(\%myconfig, $form);
 
   @column_index = qw(transdate name description amount);
 
@@ -1137,7 +1136,7 @@ sub form_footer {
 
     %f = ();
     for ("Update", "Ship to", "Print", "E-mail", "Save", "New Number") { $f{$_} = 1 }
-    if ($latex) {
+    if ($slconfig{latex}) {
       $f{'Print and Save'} = 1;
       $f{'Preview'} = 1;
     }
@@ -1148,7 +1147,7 @@ sub form_footer {
 
       $f{'Delete'} = 1;
       $f{'Save as new'} = 1;
-      $f{'Print and Save as new'} = 1 if $latex;
+      $f{'Print and Save as new'} = 1 if $slconfig{latex};
       if ($form->{closed} && $transdate <= $form->{closedto}) {
         $f{'Save'} = 0;
         $f{'Delete'} = 0;
@@ -1306,13 +1305,13 @@ sub update {
 
     $retrieve_item = "";
     if ($form->{type} eq 'purchase_order' || $form->{type} eq 'request_quotation') {
-      $retrieve_item = "IR::retrieve_item";
+      $retrieve_item = "SL::IR::retrieve_item";
     }
     if ($form->{type} eq 'sales_order' || $form->{type} eq 'sales_quotation') {
-      $retrieve_item = "IS::retrieve_item";
+      $retrieve_item = "SL::IS::retrieve_item";
     }
 
-    &{ "$retrieve_item" }("", \%myconfig, \%$form);
+    &{ "$retrieve_item" }("", \%myconfig, $form);
 
     $rows = scalar @{ $form->{item_list} };
 
@@ -1320,7 +1319,7 @@ sub update {
       $language_code = $form->{language_code};
       $form->{language_code} = "";
       if ($retrieve_item) {
-        &{ "$retrieve_item" }("", \%myconfig, \%$form);
+        &{ "$retrieve_item" }("", \%myconfig, $form);
       }
       $form->{language_code} = $language_code;
       $rows = scalar @{ $form->{item_list} };
@@ -1828,7 +1827,7 @@ sub transactions {
   # split vendor / customer
   ($form->{$form->{vc}}, $form->{"$form->{vc}_id"}) = split(/--/, $form->{$form->{vc}});
 
-  OE->transactions(\%myconfig, \%$form);
+  SL::OE->transactions(\%myconfig, $form);
 
   if ($form->{type} =~ /^consolidate_/) {
     $form->error($locale->text('Nothing to consolidate!')) unless @{ $form->{OE} };
@@ -2272,10 +2271,10 @@ sub transactions {
       = $i == @{$form->{OE}} ? qq| accesskey="0" title="0"|
       : $i < 10              ? qq| accesskey="$i" title="[$i]"|
       :                        '';
-    $column_data{$ordnumber} = qq|<td><a href=$form->{script}?path=$form->{path}&action=$action&type=$form->{type}&id=$ref->{id}&warehouse=$warehouse&vc=$form->{vc}&login=$form->{login}&callback=$callback$accesskey>$ref->{$ordnumber}</a><input type=hidden name="ordnumber_$i" value="$ref->{$ordnumber}"></td>|;
+    $column_data{$ordnumber} = qq|<td><a class="$ordnumber-l" href=$form->{script}?path=$form->{path}&action=$action&type=$form->{type}&id=$ref->{id}&warehouse=$warehouse&vc=$form->{vc}&login=$form->{login}&callback=$callback$accesskey>$ref->{$ordnumber}</a><input type=hidden name="ordnumber_$i" value="$ref->{$ordnumber}"></td>|;
 
     $name = $form->escape($ref->{name});
-    $column_data{name} = qq|<td><a href=ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{"$form->{vc}_id"}&db=$form->{vc}&callback=$callback>$ref->{name}</a></td>|;
+    $column_data{name} = qq|<td><a class="name-l" href=ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{"$form->{vc}_id"}&db=$form->{vc}&callback=$callback>$ref->{name}</a></td>|;
     $column_data{"$form->{vc}number"} = qq|<td>$ref->{"$form->{vc}number"}</td>|;
 
     for (qw(employee warehouse shipvia shippingpoint waybill curr ponumber notes)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
@@ -2553,10 +2552,10 @@ sub save {
     $form->{$_} =~ s/^ //;
   }
 
-  $form->{userspath} = $userspath;
+  $form->{userspath} = $slconfig{userspath};
 
-  if (OE->save(\%myconfig, \%$form)) {
-    RU->register(\%myconfig, $form);
+  if (SL::OE->save(\%myconfig, $form)) {
+    SL::RU->register(\%myconfig, $form);
     $form->redirect($locale->text('Order saved!'));
   } else {
     $form->error($err);
@@ -2569,7 +2568,7 @@ sub print_and_save {
 
   $form->error($locale->text('Select a Printer!')) if $form->{media} eq 'screen';
 
-  $oldform = new Form;
+  $oldform = SL::Form->new;
   $form->{display_form} = "save";
   for (keys %$form) { $oldform->{$_} = $form->{$_} }
   $oldform->{rowcount}++;
@@ -2627,8 +2626,8 @@ sub yes {
     $err = $locale->text('Cannot delete quotation!');
   }
 
-  if (OE->delete(\%myconfig, \%$form, $spool)) {
-    RU->delete(\%myconfig, $form);
+  if (SL::OE->delete(\%myconfig, $form, $slconfig{spool})) {
+    SL::RU->delete(\%myconfig, $form);
     $form->redirect($msg);
   } else {
     $form->error($err);
@@ -2672,7 +2671,7 @@ sub invoice {
   $paidaccounts = $form->{paidaccounts};
   delete $form->{paidaccounts};
 
-  OE->save(\%myconfig, \%$form);
+  SL::OE->save(\%myconfig, $form);
 
   $form->{order_id} = $form->{id} if $form->{type} =~ /_order$/;
 
@@ -2713,7 +2712,7 @@ sub invoice {
   $form->{formname} = "invoice";
 
   # locale messages
-  $locale = new Locale "$myconfig{countrycode}", "$script";
+  $locale = SL::Locale->new("$myconfig{countrycode}", "$script");
 
   require "$form->{path}/$form->{script}";
 
@@ -2814,7 +2813,7 @@ sub create_backorder {
 
   $form->{backorder} = 1;
 
-  OE->save(\%myconfig, \%$form);
+  SL::OE->save(\%myconfig, $form);
 
   # rebuild rows for invoice
   @f = ();
@@ -3276,7 +3275,7 @@ sub done {
 
   $form->error($locale->text('Nothing entered!')) unless $total;
 
-  if (OE->save_inventory(\%myconfig, \%$form)) {
+  if (SL::OE->save_inventory(\%myconfig, $form)) {
     $form->redirect($locale->text('Inventory saved!'));
   } else {
     $form->error($locale->text('Could not save!'));
@@ -3309,7 +3308,7 @@ sub generate_purchase_orders {
 
   $form->{vc} = "vendor";
 
-  OE->get_soparts(\%myconfig, \%$form);
+  SL::OE->get_soparts(\%myconfig, $form);
 
   # flatten array
   $i = 0;
@@ -3487,7 +3486,7 @@ BLANKROW:
 
 sub generate_orders {
 
-  if (OE->generate_orders(\%myconfig, \%$form)) {
+  if (SL::OE->generate_orders(\%myconfig, $form)) {
     $form->redirect($locale->text('Purchase Orders generated!'));
   } else {
     $form->error($locale->text('Generate Purchase Orders failed!'));
@@ -3534,9 +3533,9 @@ sub consolidate_orders {
     $form->{$key} = $value;
   }
 
-  if (OE->consolidate_orders(\%myconfig, \%$form)) {
+  if (SL::OE->consolidate_orders(\%myconfig, $form)) {
     &order_links;
-    RU->register(\%myconfig, $form);
+    SL::RU->register(\%myconfig, $form);
     $form->info($locale->text('Consolidated Orders')."\n");
     $form->info($orders);
   } else {
@@ -3573,7 +3572,7 @@ sub consolidate_orders_to_invoice {
 
   $form->error($locale->text('Nothing selected!')) unless $ok;
 
-  if (OE->consolidate_orders(\%myconfig, \%$form)) {
+  if (SL::OE->consolidate_orders(\%myconfig, $form)) {
     # convert order to invoice
     $myconfig{vclimit} = 0;
 
@@ -3601,7 +3600,7 @@ sub consolidate_orders_to_invoice {
 
     # close order
     $form->{closed} = 1;
-    OE->save(\%myconfig, \%$form);
+    SL::OE->save(\%myconfig, $form);
 
     $description = $form->{description};
     $form->{description} = $locale->text('Backorder from Orders: ')
@@ -3618,8 +3617,8 @@ sub consolidate_orders_to_invoice {
 
     for (qw(id printed emailed queued audittrail)) { delete $form->{$_} }
 
-    if (IS->post_invoice(\%myconfig, \%$form)) {
-      RU->register(\%myconfig, $form);
+    if (SL::IS->post_invoice(\%myconfig, $form)) {
+      SL::RU->register(\%myconfig, $form);
       $form->info($locale->text('Invoice')." $form->{invnumber} ".$locale->text('created from Sales Orders')."\n");
       $form->info($orders);
     } else {
@@ -3742,7 +3741,7 @@ sub generate_sales_invoices {
 
     # close order
     $form->{closed} = 1;
-    OE->save(\%myconfig, \%$form);
+    SL::OE->save(\%myconfig, $form);
 
     &create_backorder;
 
@@ -3753,7 +3752,7 @@ sub generate_sales_invoices {
 
     for (qw(id printed emailed queued audittrail)) { delete $form->{$_} }
 
-    if (IS->post_invoice(\%myconfig, \%$form)) {
+    if (SL::IS->post_invoice(\%myconfig, $form)) {
       $form->info($locale->text('Sales Order')." $form->{ordnumber} ". $locale->text('converted to')." ".$locale->text('Invoice')." $form->{invnumber} \n");
     } else {
       $form->error($locale->text('Invoice generation failed!'));

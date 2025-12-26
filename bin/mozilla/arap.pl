@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -50,7 +49,7 @@ sub check_name {
       $form->{calctax} = 1;
 
       $form->{"${name}_id"} = $new_id;
-      AA->get_name(\%myconfig, \%$form);
+      SL::AA->get_name(\%myconfig, $form);
 
       $form->{"paymentmethod_$form->{paidaccounts}"} = $form->{payment_method};
       $form->{"$form->{ARAP}_paid_$form->{paidaccounts}"} = $form->{payment_accno};
@@ -103,7 +102,7 @@ sub check_name {
         $form->{"old$name"} = qq|$form->{$name}--$form->{"${name}_id"}|;
         $form->{"old${name}number"} = $form->{"${name}number"};
 
-        AA->get_name(\%myconfig, \%$form);
+        SL::AA->get_name(\%myconfig, $form);
 
         $form->{"paymentmethod_$form->{paidaccounts}"} = $form->{payment_method};
         $form->{"$form->{ARAP}_paid_$form->{paidaccounts}"} = $form->{payment_accno};
@@ -267,7 +266,7 @@ sub name_selected {
 
   for (qw(ndx lastndx nextsub)) { delete $form->{$_} }
 
-  AA->get_name(\%myconfig, \%$form);
+  SL::AA->get_name(\%myconfig, $form);
 
   $form->{"old$form->{ARAP}"} = $form->{$form->{ARAP}};
 
@@ -382,7 +381,7 @@ sub check_project {
       if ($form->{"projectnumber_$i"}) {
         # get new project
         $form->{projectnumber} = $form->{"projectnumber_$i"};
-        if (($rows = PE->projects(\%myconfig, $form)) > 1) {
+        if (($rows = SL::PE->projects(\%myconfig, $form)) > 1) {
           # check form->{project_list} how many there are
           $form->{rownumber} = $i;
           &select_project;
@@ -712,7 +711,7 @@ pdf--|.$locale->text('PDF');
 
   }
 
-  if ($form->{selectprinter} && $latex && %formname) {
+  if ($form->{selectprinter} && $slconfig{latex} && %formname) {
     $selectprinter = "";
     for (split /\n/, $form->unescape($form->{selectprinter})) { $selectprinter .= qq|
           <option value="$_">$_| }
@@ -1112,7 +1111,7 @@ sub new_number {
     $numberfld = "glnumber";
   } elsif ($form->{script} eq 'hr.pl') {
     $numberfld = $invnumber = "employeenumber";
-    HR->isadmin(\%myconfig, \%$form);
+    SL::HR->isadmin(\%myconfig, $form);
   }
 
   $form->{"$invnumber"} = $form->update_defaults(\%myconfig, $numberfld);

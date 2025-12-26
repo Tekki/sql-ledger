@@ -1,11 +1,12 @@
 #!/usr/bin/perl
-use Mojo::Base -strict, -signatures;
-use open ':std', ':encoding(utf8)';
+use v5.40;
+use open ':std', ':encoding(UTF-8)';
 
 use DBI;
 use FindBin;
 use Mojo::File qw|path|;
 use Mojo::UserAgent;
+use Storable ();
 
 chdir "$FindBin::Bin/..";
 
@@ -13,29 +14,7 @@ my $memberfile = 'users/members';
 
 my $ezv = 'https://www.backend-rates.bazg.admin.ch/api/xmldaily';
 
-open(my $fh, '<:encoding(utf-8)', $memberfile) or die "$memberfile: $!";
-
-my (%members, $member, $new, $var);
-while (<$fh>) {
-  if (/^\[(.*)\]/) {
-    $member = $+;
-    if ($member =~ /^admin\@/) {
-      $member = substr($member, 6);
-      $new    = 1;
-    } else {
-      $new = 0;
-    }
-  }
-  if ($new) {
-    if (/^(company|dbconnect|dbuser|dbpasswd|templates)=/) {
-      $var = $1;
-      (undef, $members{$member}{$var}) = split /=/, $_, 2;
-      $members{$member}{$var} =~ s/(\r\n|\n)//;
-    }
-  }
-}
-
-close $fh;
+my %members = Storable::retrieve("$memberfile.bin")->%*;
 
 my $ua  = Mojo::UserAgent->new;
 my $res = $ua->get($ezv)->result;
@@ -56,6 +35,8 @@ $update->find('devise')->each(
 );
 
 for my $dataset (values %members) {
+  next unless $dataset->{dbconnect};
+
   my $dbh = DBI->connect(
     $dataset->{dbconnect}, $dataset->{dbuser},
     unpack('u', $dataset->{dbpasswd} // ''), {AutoCommit => 1}

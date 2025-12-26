@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -49,7 +48,7 @@ require "$form->{path}/js.pl";
 
 sub reconciliation {
 
-  RC->paymentaccounts(\%myconfig, \%$form);
+  SL::RC->paymentaccounts(\%myconfig, $form);
 
   $selectaccno = "";
   for (@{ $form->{PR} }) { $selectaccno .= "$_->{accno}--$_->{description}\n" }
@@ -172,7 +171,7 @@ sub get_payments {
 
   ($form->{accno}, $form->{account}) = split /--/, $form->{accno};
 
-  RC->payment_transactions(\%myconfig, \%$form);
+  SL::RC->payment_transactions(\%myconfig, $form);
 
   $ml = ($form->{category} eq 'A') ? -1 : 1;
   $form->{statementbalance} = $form->{endingbalance} * $ml;
@@ -494,7 +493,7 @@ sub display_form {
 
 sub update {
 
-  RC->payment_transactions(\%myconfig, \%$form);
+  SL::RC->payment_transactions(\%myconfig, $form);
 
   $i = 0;
   foreach $ref (@{ $form->{PR} }) {
@@ -512,7 +511,7 @@ sub update {
 
 sub select_all {
 
-  RC->payment_transactions(\%myconfig, \%$form);
+  SL::RC->payment_transactions(\%myconfig, $form);
 
   foreach $ref (@{ $form->{PR} }) {
     $ref->{cleared} = ($form->{"datecleared_$i"}) ? $form->{"datecleared_$i"} : $form->{recdate};
@@ -528,7 +527,7 @@ sub select_all {
 
 sub deselect_all {
 
-  RC->payment_transactions(\%myconfig, \%$form);
+  SL::RC->payment_transactions(\%myconfig, $form);
 
   for (@{ $form->{PR} }) { $_->{cleared} = "" }
 
@@ -553,7 +552,7 @@ sub done {
 
   $form->error($locale->text('Out of balance!')) if ($form->{difference} *= 1);
 
-  RC->reconcile(\%myconfig, \%$form);
+  SL::RC->reconcile(\%myconfig, $form);
   $form->redirect;
 
 }

@@ -1,9 +1,8 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2006
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -11,7 +10,7 @@
 #
 #======================================================================
 
-package RP;
+package SL::RP;
 
 
 sub yearend_statement {
@@ -24,7 +23,7 @@ sub yearend_statement {
   my $query = qq|SELECT trans_id FROM yearend
                  WHERE transdate >= '$form->{todate}'|;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
   my @trans_id = ();
   my $id;
@@ -35,15 +34,15 @@ sub yearend_statement {
 
   $query = qq|DELETE FROM gl
               WHERE id = ?|;
-  $sth = $dbh->prepare($query) || $form->dberror($query);
+  $sth = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|DELETE FROM acc_trans
               WHERE trans_id = ?|;
-  my $ath = $dbh->prepare($query) || $form->dberror($query);
+  my $ath = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|DELETE FROM yearend
               WHERE trans_id = ?|;
-  my $yth = $dbh->prepare($query) || $form->dberror($query);
+  my $yth = $dbh->prepare($query) or $form->dberror($query);
 
   foreach $id (@trans_id) {
     $sth->execute($id);
@@ -114,12 +113,12 @@ sub income_statement {
   $form->{transdate} = $form->{fromdate};
   $form->fdld($myconfig, $locale);
 
-  if ($form->{currency} ne $form->{defaultcurrency}) {
+  if (($form->{currency} // '') ne $form->{defaultcurrency}) {
     $form->{exchangerate} = $form->get_exchangerate($myconfig, $dbh, $form->{currency}, $form->{todate});
   }
 
   $form->{exchangerate} ||= 1;
-  $form->{longformat} *= 1;
+  ($form->{longformat} ||= 0) *= 1;
 
   my @categories = qw(I E);
   my $fromdate;
@@ -140,7 +139,7 @@ sub income_statement {
     %c = &get_accounts($form, $dbh, $fromdate, $todate, $_, 1);
     &add_accounts($form, \%c, 'this', '0', $_);
 
-    if ($form->{includeperiod} eq 'month') {
+    if (($form->{includeperiod} // '') eq 'month') {
       $todate = $form->add_date($myconfig, $form->{ldm}, $form->{dd} - 1, "days");
       next if ($todate ge $form->{todate});
 
@@ -172,7 +171,7 @@ sub income_statement {
       }
     }
 
-    if ($form->{includeperiod} eq 'quarter') {
+    if (($form->{includeperiod} // '') eq 'quarter') {
       $todate = $form->add_date($myconfig, $form->{"ldm+2"}, $form->{dd} - 1, "days");
       next if ($todate ge $form->{todate});
 
@@ -219,7 +218,7 @@ sub income_statement {
       %c = &get_accounts($form, $dbh, $fromdate, $todate, $_, 1);
       &add_accounts($form, \%c, 'previous', '0', $_);
 
-      if ($form->{includeperiod} eq 'month') {
+      if (($form->{includeperiod} // '') eq 'month') {
         $todate = $form->add_date($myconfig, $form->{ldm}, -1, "year");
         $todate = $form->add_date($myconfig, $todate, $form->{dd} - 1, "days");
 
@@ -256,7 +255,7 @@ sub income_statement {
         }
       }
 
-      if ($form->{includeperiod} eq 'quarter') {
+      if (($form->{includeperiod} // '') eq 'quarter') {
         $todate = $form->add_date($myconfig, $form->{"ldm+2"}, -1, "year");
         $todate = $form->add_date($myconfig, $todate, $form->{dd} - 1, "days");
 
@@ -297,7 +296,7 @@ sub income_statement {
     }
   }
 
-  my %defaults = $form->get_defaults($dbh, \@{['company','address','businessnumber','companywebsite','companyemail','tel','fax']});
+  my %defaults = $form->get_defaults($dbh, ['company','address','businessnumber','companywebsite','companyemail','tel','fax']);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   $form->report_level($myconfig, $dbh);
@@ -324,12 +323,12 @@ sub balance_sheet {
   # my $dateformat = $myconfig->{dateformat};
   # $myconfig->{dateformat} = "yyyymmdd";
 
-  $form->{decimalplaces} *= 1;
-  $form->{longformat} *= 1;
+  ($form->{decimalplaces} ||= 0) *= 1;
+  ($form->{longformat} ||= 0) *= 1;
 
   $form->{todate} ||= $form->current_date($myconfig);
 
-  if ($form->{currency} ne $form->{defaultcurrency}) {
+  if (($form->{currency} // '') ne $form->{defaultcurrency}) {
     $form->{exchangerate} = $form->get_exchangerate($myconfig, $dbh, $form->{currency}, $form->{todate});
   }
 
@@ -351,10 +350,10 @@ sub balance_sheet {
     %c = &get_accounts($form, $dbh, undef, $form->{todate}, $_);
     &add_accounts($form, \%c, 'this', '0', $_);
 
-    if ($form->{includeperiod} eq 'month') {
+    if (($form->{includeperiod} // '') eq 'month') {
       $k = 11;
     }
-    if ($form->{includeperiod} eq 'quarter') {
+    if (($form->{includeperiod} // '') eq 'quarter') {
       $k = 3;
       $p = 3;
     }
@@ -383,7 +382,7 @@ sub balance_sheet {
     }
   }
 
-  my %defaults = $form->get_defaults($dbh, \@{['company','address','businessnumber','companywebsite','companyemail','tel','fax']});
+  my %defaults = $form->get_defaults($dbh, ['company','address','businessnumber','companywebsite','companyemail','tel','fax']);
 
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
@@ -421,8 +420,8 @@ sub get_accounts {
   my $department_id;
   my $project_id;
 
-  (undef, $department_id) = split /--/, $form->{department};
-  (undef, $project_id) = split /--/, $form->{projectnumber};
+  (undef, $department_id) = split /--/, $form->{department} // '';
+  (undef, $project_id) = split /--/, $form->{projectnumber} // '';
 
   my $query;
   my $dpt_where;
@@ -443,7 +442,7 @@ sub get_accounts {
               AND c.category = '$category'
               ORDER by c.accno|;
 
-  if ($form->{accounttype} eq 'gifi')
+  if (($form->{accounttype} // '') eq 'gifi')
   {
     $query = qq|SELECT g.accno, g.description, c.category,
                 '' AS translation
@@ -462,10 +461,10 @@ sub get_accounts {
   }
 
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
   my @headingaccounts = ();
-  while ($ref = $sth->fetchrow_hashref(NAME_lc))
+  while ($ref = $sth->fetchrow_hashref)
   {
     $ref->{description} = $ref->{translation} if $ref->{translation};
 
@@ -478,12 +477,12 @@ sub get_accounts {
 
   $sth->finish;
 
-  if ($form->{method} eq 'cash' && !$todate) {
+  if (($form->{method} // '') eq 'cash' && !$todate) {
     $todate = $form->current_date($myconfig);
   }
 
   if ($fromdate) {
-    if ($form->{method} eq 'cash') {
+    if (($form->{method} // '') eq 'cash') {
       $subwhere .= " AND ac.transdate >= '$fromdate'";
       $glwhere = " AND ac.transdate >= '$fromdate'";
     } else {
@@ -536,9 +535,9 @@ sub get_accounts {
   }
 
 
-  if ($form->{accounttype} eq 'gifi') {
+  if (($form->{accounttype} // '') eq 'gifi') {
 
-    if ($form->{method} eq 'cash') {
+    if (($form->{method} // '') eq 'cash') {
 
         $query = qq|
 
@@ -733,7 +732,7 @@ sub get_accounts {
 
   } else {    # standard account
 
-    if ($form->{method} eq 'cash') {
+    if (($form->{method} // '') eq 'cash') {
 
       $query = qq|
 
@@ -850,11 +849,11 @@ sub get_accounts {
   my $ref;
 
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
   $form->{exchangerate} ||= 1;
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while ($ref = $sth->fetchrow_hashref) {
 
     # get last heading account
     @accno = grep { $_ le "$ref->{accno}" } @headingaccounts;
@@ -899,14 +898,14 @@ sub trial_balance {
   my $dpt_join;
   my $project;
 
-  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
+  my %defaults = $form->get_defaults($dbh, ['precision', 'company']);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   my $where = "ac.approved = '1'";
   my $invwhere = $where;
 
-  (undef, $department_id) = split /--/, $form->{department};
-  (undef, $project_id) = split /--/, $form->{projectnumber};
+  (undef, $department_id) = split /--/, $form->{department} // '';
+  (undef, $project_id) = split /--/, $form->{projectnumber} // '';
 
   if ($department_id) {
     $dpt_join = qq|
@@ -931,7 +930,7 @@ sub trial_balance {
   # get beginning balances
   if ($form->{fromdate}) {
 
-    if ($form->{accounttype} eq 'gifi') {
+    if (($form->{accounttype} // '') eq 'gifi') {
 
       $query = qq|SELECT g.accno, c.category, SUM(ac.amount) AS amount,
                   g.description, c.contra
@@ -965,9 +964,9 @@ sub trial_balance {
     }
 
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+    while (my $ref = $sth->fetchrow_hashref) {
       $ref->{amount} = $form->round_amount($ref->{amount}, $form->{precision});
       $balance{$ref->{accno}} = $ref->{amount};
 
@@ -994,7 +993,7 @@ sub trial_balance {
               WHERE c.charttype = 'H'
               ORDER by c.accno|;
 
-  if ($form->{accounttype} eq 'gifi')
+  if (($form->{accounttype} // '') eq 'gifi')
   {
     $query = qq|SELECT g.accno, g.description, c.category, c.contra
                 FROM gifi g
@@ -1004,9 +1003,9 @@ sub trial_balance {
   }
 
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc))
+  while ($ref = $sth->fetchrow_hashref)
   {
     $ref->{description} = $ref->{translation} if $ref->{translation};
 
@@ -1033,7 +1032,7 @@ sub trial_balance {
   }
 
 
-  if ($form->{accounttype} eq 'gifi') {
+  if (($form->{accounttype} // '') eq 'gifi') {
 
     $query = qq|SELECT g.accno, g.description, c.category,
                 SUM(ac.amount) AS amount, c.contra
@@ -1065,7 +1064,7 @@ sub trial_balance {
   }
 
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
   # prepare query for each account
   $query = qq|SELECT (SELECT SUM(ac.amount) * -1
@@ -1089,7 +1088,7 @@ sub trial_balance {
               AND c.accno = ?) AS credit
               |;
 
-  if ($form->{accounttype} eq 'gifi') {
+  if (($form->{accounttype} // '') eq 'gifi') {
 
     $query = qq|SELECT (SELECT SUM(ac.amount) * -1
                 FROM acc_trans ac
@@ -1116,7 +1115,7 @@ sub trial_balance {
   $drcr = $dbh->prepare($query);
 
   # calculate debit and credit for the period
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while ($ref = $sth->fetchrow_hashref) {
     $ref->{description} = $ref->{translation} if $ref->{translation};
 
     $trb{$ref->{accno}}{description} = $ref->{description};
@@ -1203,7 +1202,7 @@ sub aging {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
-  my $invoice = ($form->{arap} eq 'ar') ? 'is' : 'ir';
+  my $invoice = (($form->{arap} // '') eq 'ar') ? 'is' : 'ir';
 
   my $query;
 
@@ -1216,11 +1215,7 @@ sub aging {
 
   $form->get_peripherals($dbh);
   for (@{ $form->{all_printer} }) {
-    # Tekki: wlprinter
-    $form->{"$_->{printer}_printer"} = $_->{command} eq 'wlprinter'
-      ? "wlprinter/fileprinter.pl $form->{login}"
-      : $_->{command};
-    # Tekki_end
+    $form->{"$_->{printer}_printer"} = $_->{command};
   }
 
   $form->{currencies} = $form->get_currencies($myconfig, $dbh);
@@ -1243,18 +1238,18 @@ sub aging {
   if ($form->{"$form->{vc}_id"}) {
     $where .= qq| AND vc.id = $form->{"$form->{vc}_id"}|;
   } else {
-    if ($form->{$form->{vc}} ne "") {
+    if (($form->{$form->{vc}} // '') ne "") {
       $name = $form->like(lc $form->{$form->{vc}});
       $where .= qq| AND lower(vc.name) LIKE '$name'|;
     }
-    if ($form->{"$form->{vc}number"} ne "") {
+    if (($form->{"$form->{vc}number"} // '') ne "") {
       $name = $form->like(lc $form->{"$form->{vc}number"});
       $where .= qq| AND lower(vc.$form->{vc}number) LIKE '$name'|;
     }
   }
 
   if ($form->{department}) {
-    (undef, $department_id) = split /--/, $form->{department};
+    (undef, $department_id) = split /--/, $form->{department} // '';
     $where .= qq| AND a.department_id = $department_id|;
   }
 
@@ -1271,33 +1266,27 @@ sub aging {
               AND (a.$transdate <= '$form->{todate}')
               ORDER BY vc.$sortorder|;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror;
+  $sth->execute or $form->dberror;
 
   my @ot = ();
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while ($ref = $sth->fetchrow_hashref) {
     push @ot, $ref;
   }
   $sth->finish;
 
-  my %interval = ( 'Pg' => {
-                        'c0' => "(date '$form->{todate}' - interval '0 days')",
-                        'c15' => "(date '$form->{todate}' - interval '15 days')",
-                        'c30' => "(date '$form->{todate}' - interval '30 days')",
-                        'c45' => "(date '$form->{todate}' - interval '45 days')",
-                        'c60' => "(date '$form->{todate}' - interval '60 days')",
-                        'c75' => "(date '$form->{todate}' - interval '75 days')",
-                        'c90' => "(date '$form->{todate}' - interval '90 days')" },
-                  'DB2' => {
-                        'c0' => "(date ('$form->{todate}') - 0 days)",
-                        'c15' => "(date ('$form->{todate}') - 15 days)",
-                        'c30' => "(date ('$form->{todate}') - 30 days)",
-                        'c45' => "(date ('$form->{todate}') - 45 days)",
-                        'c60' => "(date ('$form->{todate}') - 60 days)",
-                        'c75' => "(date ('$form->{todate}') - 75 days)",
-                        'c90' => "(date ('$form->{todate}') - 90 days)" }
-                );
+  my %interval = (
+    Pg => {
+      'c0'  => "(date '$form->{todate}' - interval '0 days')",
+      'c15' => "(date '$form->{todate}' - interval '15 days')",
+      'c30' => "(date '$form->{todate}' - interval '30 days')",
+      'c45' => "(date '$form->{todate}' - interval '45 days')",
+      'c60' => "(date '$form->{todate}' - interval '60 days')",
+      'c75' => "(date '$form->{todate}' - interval '75 days')",
+      'c90' => "(date '$form->{todate}' - interval '90 days')"
+    },
+  );
 
-  $interval{Oracle} = $interval{PgPP} = $interval{Pg};
+  $interval{Mock}= $interval{Pg};
 
   # for each company that has some stuff outstanding
   $form->{currencies} ||= ":";
@@ -1334,14 +1323,8 @@ sub aging {
     }
   }
 
-  my %ordinal = ( 'vc_id' => 1,
-                  "$form->{vc}number" => 2,
-                  'invnumber' => 16,
-                  'transdate' => 17
-                );
-
   my @sf = qw(vc_id transdate invnumber);
-  my $sortorder = $form->sort_order(\@sf, \%ordinal);
+  my $sortorder = $form->sort_order(\@sf);
 
   if (@c) {
 
@@ -1398,12 +1381,12 @@ sub aging {
 
     $query .= qq| ORDER BY $sortorder|;
 
-    $sth = $dbh->prepare($query) || $form->dberror($query);
+    $sth = $dbh->prepare($query) or $form->dberror($query);
 
     my @var;
     my $i;
 
-    foreach $curr (split /:/, $form->{currencies}) {
+    foreach $curr (split /:/, $form->{currencies} // '') {
 
       foreach $item (@ot) {
 
@@ -1412,7 +1395,7 @@ sub aging {
 
         $sth->execute(@var);
 
-        while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+        while ($ref = $sth->fetchrow_hashref) {
           $ref->{module} = ($ref->{invoice}) ? $invoice : $form->{arap};
           $ref->{module} = 'ps' if $ref->{till};
           $ref->{exchangerate} ||= 1;
@@ -1453,11 +1436,7 @@ sub reminder {
 
   $form->get_peripherals($dbh);
   for (@{ $form->{all_printer} }) {
-    # Tekki: wlprinter
-    $form->{"$_->{printer}_printer"} = $_->{command} eq 'wlprinter'
-      ? "wlprinter/fileprinter.pl $form->{login}"
-      : $_->{command};
-    # Tekki_end
+    $form->{"$_->{printer}_printer"} = $_->{command};
   }
 
   $form->{currencies} = $form->get_currencies($myconfig, $dbh);
@@ -1469,23 +1448,23 @@ sub reminder {
 
   $form->{vc} =~ s/;//g;
 
-  (undef, $vc_id) = split /--/, $form->{$form->{vc}};
+  (undef, $vc_id) = split /--/, $form->{$form->{vc}} // '';
 
   if ($vc_id) {
     $where .= qq| AND vc.id = $vc_id|;
   } else {
-    if ($form->{$form->{vc}} ne "") {
+    if (($form->{$form->{vc}} // '') ne "") {
       $name = $form->like(lc $form->{$form->{vc}});
       $where .= qq| AND lower(vc.name) LIKE '$name'|;
     }
-    if ($form->{"$form->{vc}number"} ne "") {
+    if (($form->{"$form->{vc}number"} // '') ne "") {
       $name = $form->like(lc $form->{"$form->{vc}number"});
       $where .= qq| AND lower(vc.$form->{vc}number) LIKE '$name'|;
     }
   }
 
   if ($form->{department}) {
-    (undef, $department_id) = split /--/, $form->{department};
+    (undef, $department_id) = split /--/, $form->{department} // '';
     $where .= qq| AND a.department_id = $department_id|;
   }
 
@@ -1501,10 +1480,10 @@ sub reminder {
               AND a.paid != a.amount
               ORDER BY vc.$sortorder|;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror;
+  $sth->execute or $form->dberror;
 
   my @ot = ();
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while ($ref = $sth->fetchrow_hashref) {
     push @ot, $ref;
   }
   $sth->finish;
@@ -1532,14 +1511,8 @@ sub reminder {
     $where .= qq| AND a.department_id = $department_id|;
   }
 
-  my %ordinal = ( 'vc_id' => 1,
-                  "$form->{vc}number" => 2,
-                  'invnumber' => 19,
-                  'transdate' => 20
-                );
-
   my @sf = qw(vc_id transdate invnumber);
-  my $sortorder = $form->sort_order(\@sf, \%ordinal);
+  my $sortorder = $form->sort_order(\@sf);
 
   $query = qq|SELECT c.id AS vc_id, c.$form->{vc}number, c.name, c.terms,
               ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
@@ -1565,31 +1538,31 @@ sub reminder {
               AND $where
               ORDER BY $sortorder|;
 
-  $sth = $dbh->prepare($query) || $form->dberror($query);
+  $sth = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|SELECT b.*, a.*
               FROM bank b
               LEFT JOIN address a ON (a.id = b.address_id)
               WHERE b.id = ?|;
-  my $bth = $dbh->prepare($query) || $form->dberror($query);
+  my $bth = $dbh->prepare($query) or $form->dberror($query);
   my $bank;
 
   $form->{AG} = ();
 
-  for $curr (split /:/, $form->{currencies}) {
+  for $curr (split /:/, $form->{currencies} // '') {
 
     for $item (@ot) {
 
       $sth->execute($item->{id}, $curr);
 
-      while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+      while ($ref = $sth->fetchrow_hashref) {
         $ref->{module} = ($ref->{invoice}) ? 'is' : 'ar';
         $ref->{module} = 'ps' if $ref->{till};
         $ref->{exchangerate} ||= 1;
         $ref->{language_code} = $item->{language_code};
 
         $bth->execute($ref->{bank_id});
-        $bank = $bth->fetchrow_hashref(NAME_lc);
+        $bank = $bth->fetchrow_hashref;
         for (qw(rvc iban qriban bic membernumber clearingnumber)) {
           $ref->{$_} = delete $bank->{$_};
           $ref->{qriban} =~ s/\s+//g;
@@ -1641,20 +1614,20 @@ sub save_level {
   $query = qq|DELETE FROM status
               WHERE trans_id = ?
               AND formname LIKE 'reminder_'|;
-  my $dth = $dbh->prepare($query) || $form->dberror($query);
+  my $dth = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|INSERT INTO status (trans_id, formname)
               VALUES (?,?)|;
-  my $ath = $dbh->prepare($query) || $form->dberror($query);
+  my $ath = $dbh->prepare($query) or $form->dberror($query);
 
-  for (split / /, $form->{ids}) {
+  for (split / /, $form->{ids} // '') {
     if ($form->{"ndx_$_"}) {
 
-      $dth->execute($_) || $form->dberror;
+      $dth->execute($_) or $form->dberror;
       $dth->finish;
 
-      if ($form->{"level_$_"} *= 1) {
-        $ath->execute($_, qq|reminder$form->{"level_$_"}|) || $form->dberror;
+      if (($form->{"level_$_"} ||= 0) *= 1) {
+        $ath->execute($_, qq|reminder$form->{"level_$_"}|) or $form->dberror;
         $ath->finish;
       }
     }
@@ -1709,10 +1682,10 @@ sub get_taxaccounts {
                  AND c.closed = '0'
                  ORDER BY c.accno|;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror;
+  $sth->execute or $form->dberror;
 
   my $ref = ();
-  while ($ref = $sth->fetchrow_hashref(NAME_lc) ) {
+  while ($ref = $sth->fetchrow_hashref ) {
     push @{ $form->{taxaccounts} }, $ref;
   }
   $sth->finish;
@@ -1725,9 +1698,9 @@ sub get_taxaccounts {
                  WHERE c.link LIKE '%${ARAP}_tax%'
                  ORDER BY g.accno|;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror;
+  $sth->execute or $form->dberror;
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc) ) {
+  while ($ref = $sth->fetchrow_hashref ) {
     push @{ $form->{gifi_taxaccounts} }, $ref;
   }
   $sth->finish;
@@ -1748,13 +1721,13 @@ sub tax_report {
   delete $myconfig->{dateformat} if $form->{action} eq 'spreadsheet';
 
   my $department_id;
-  (undef, $department_id) = split /--/, $form->{department};
+  (undef, $department_id) = split /--/, $form->{department} // '';
 
   # build WHERE
   my $where = "a.approved = '1'";
   my $cashwhere = "";
 
-  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
+  my %defaults = $form->get_defaults($dbh, ['precision', 'company']);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   if ($department_id) {
@@ -1768,7 +1741,7 @@ sub tax_report {
   my $accno;
   my $acc_id;
   my $l_gifi;
-  my @gifi = split / /, $form->{gifi_taxaccounts};
+  my @gifi = split / /, $form->{gifi_taxaccounts} // '';
   my @c;
 
   for (@gifi) {
@@ -1789,7 +1762,7 @@ sub tax_report {
     $accno .= qq|)|;
   } else {
     $accno = qq| AND (|;
-    for (split / /, $form->{taxaccounts}) {
+    for (split / /, $form->{taxaccounts} // '') {
       if ($form->{"accno_$_"}) {
         push @c, qq| ch.accno = '$_' |;
       }
@@ -1804,11 +1777,11 @@ sub tax_report {
 
   $form->{db} =~ s/;//g;
 
-  if ($form->{db} eq 'ar') {
+  if (($form->{db} // '') eq 'ar') {
     $vc = "customer";
     $ARAP = "AR";
   }
-  if ($form->{db} eq 'ap') {
+  if (($form->{db} // '') eq 'ap') {
     $vc = "vendor";
     $ARAP = "AP";
   }
@@ -1830,7 +1803,7 @@ sub tax_report {
   }
 
 
-  if ($form->{method} eq 'cash') {
+  if (($form->{method} // '') eq 'cash') {
     $transdate = "a.datepaid";
 
     my $todate = $form->{todate};
@@ -1854,7 +1827,7 @@ sub tax_report {
   }
 
 
-  my $ml = ($form->{db} eq 'ar') ? 1 : -1;
+  my $ml = (($form->{db} // '') eq 'ar') ? 1 : -1;
 
   if ($form->{summary}) {
 
@@ -2077,7 +2050,7 @@ sub tax_report {
 
   if ($form->{reportcode} =~ /nontaxable/) {
 
-    RP->get_taxaccounts($myconfig, $form, $dbh);
+    SL::RP->get_taxaccounts($myconfig, $form, $dbh);
     $acc_id = 'AND chart_id IN (' . join(',', map { $_->{id} } @{$form->{taxaccounts}}) . ')';
 
     if ($form->{summary}) {
@@ -2268,18 +2241,17 @@ sub tax_report {
   }
 
   my @sf = qw(transdate invnumber name);
-  my %ordinal = $form->ordinal_order($dbh, $query);
-  my $sortorder = $form->sort_order(\@sf, \%ordinal);
-  $sortorder = "$ordinal{accno} ASC, $sortorder" if $form->{reportcode} !~ /nontaxable/;
+  my $sortorder = $form->sort_order(\@sf);
+  $sortorder = "accno ASC, $sortorder" if $form->{reportcode} !~ /nontaxable/;
 
   $query .= qq| ORDER by $sortorder|;
 
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
   my ($last_id, %used_currencies);
 
-  while ( my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while ( my $ref = $sth->fetchrow_hashref) {
     $ref->{netamount} = $form->round_amount($ref->{netamount}, $form->{precision});
     $ref->{tax} = $form->round_amount($ref->{tax}, $form->{precision});
     $ref->{total} = $ref->{netamount} + $ref->{tax};
@@ -2357,9 +2329,9 @@ sub paymentaccounts {
                  WHERE c.link LIKE '%${ARAP}_paid%'
                  ORDER BY c.accno|;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     $ref->{description} = $ref->{translation} if $ref->{translation};
     push @{ $form->{PR} }, $ref;
   }
@@ -2382,16 +2354,16 @@ sub payments {
 
   for (qw(db vc)) { $form->{$_} =~ s/;//g }
 
-  my $ml = ($form->{db} eq 'ar') ? -1 : 1;
+  my $ml = (($form->{db} // '') eq 'ar') ? -1 : 1;
   my $query;
   my $sth;
   my $dpt_join;
   my $where = "1 = 1";
   my $var;
   my $arapwhere;
-  my $gl = ($form->{till} eq "");
+  my $gl = (($form->{till} // '') eq "");
 
-  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
+  my %defaults = $form->get_defaults($dbh, ['precision', 'company']);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   if ($form->{department_id}) {
@@ -2418,31 +2390,31 @@ sub payments {
     $where .= " AND ac.fx_transaction = '0'";
   }
 
-  if ($form->{description} ne "") {
+  if (($form->{description} // '') ne "") {
     $var = $form->like(lc $form->{description});
     $where .= " AND lower(a.description) LIKE '$var'";
   }
-  if ($form->{source} ne "") {
+  if (($form->{source} // '') ne "") {
     $var = $form->like(lc $form->{source});
     $where .= " AND lower(ac.source) LIKE '$var'";
   }
-  if ($form->{memo} ne "") {
+  if (($form->{memo} // '') ne "") {
     $var = $form->like(lc $form->{memo});
     $where .= " AND lower(ac.memo) LIKE '$var'";
   }
-  if ($form->{"$form->{vc}number"} ne "") {
+  if (($form->{"$form->{vc}number"} // '') ne "") {
     $var = $form->like(lc $form->{"$form->{vc}number"});
     $where .= " AND lower(c.$form->{vc}number) LIKE '$var'";
     $gl = 0;
   }
-  if ($form->{$form->{vc}} ne "") {
+  if (($form->{$form->{vc}} // '') ne "") {
     $var = $form->like(lc $form->{$form->{vc}});
     $where .= " AND lower(c.name) LIKE '$var'";
     $gl = 0;
   }
 
   # cycle through each id
-  foreach my $accno (split(/ /, $form->{paymentaccounts})) {
+  foreach my $accno (split(/ /, $form->{paymentaccounts} // '')) {
 
     $query = qq|SELECT c.id, c.accno, c.description,
                 l.description AS translation
@@ -2450,9 +2422,9 @@ sub payments {
                 LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
                 WHERE c.accno = '$accno'|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    my $ref = $sth->fetchrow_hashref(NAME_lc);
+    my $ref = $sth->fetchrow_hashref;
     $ref->{description} = $ref->{translation} if $ref->{translation};
     push @{ $form->{PR} }, $ref;
     $sth->finish;
@@ -2471,7 +2443,7 @@ sub payments {
                 AND ac.chart_id = $ref->{id}
                 AND ac.approved = '1'|;
 
-    if ($form->{till} ne "") {
+    if (($form->{till} // '') ne "") {
       $query .= " AND a.invoice = '1'
                   AND NOT a.till IS NULL";
     }
@@ -2507,13 +2479,12 @@ sub payments {
     }
 
     my @sf = qw(name transdate employee);
-    my %ordinal = $form->ordinal_order($dbh, $query);
-    $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
+    $query .= qq| ORDER BY | .$form->sort_order(\@sf);
 
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    while (my $pr = $sth->fetchrow_hashref(NAME_lc)) {
+    while (my $pr = $sth->fetchrow_hashref) {
       push @{ $form->{$ref->{id}} }, $pr;
     }
     $sth->finish;
@@ -2535,7 +2506,7 @@ sub payments {
 
 =head1 NAME
 
-RP - Backend code for reports
+SL::RP - Backend code for reports
 
 =head1 DESCRIPTION
 
@@ -2551,15 +2522,15 @@ L<SL::RP> implements the following functions:
 
 =head2 aging
 
-  RP->aging($myconfig, $form);
+  SL::RP->aging($myconfig, $form);
 
 =head2 balance_sheet
 
-  RP->balance_sheet($myconfig, $form, $locale);
+  SL::RP->balance_sheet($myconfig, $form, $locale);
 
 =head2 create_links
 
-  RP->create_links($myconfig, $form, $vc);
+  SL::RP->create_links($myconfig, $form, $vc);
 
 =head2 get_accounts
 
@@ -2567,42 +2538,42 @@ L<SL::RP> implements the following functions:
 
 =head2 get_customer
 
-  RP->get_customer($myconfig, $form);
+  SL::RP->get_customer($myconfig, $form);
 
 =head2 get_taxaccounts
 
-  RP->get_taxaccounts($myconfig, $form);
+  SL::RP->get_taxaccounts($myconfig, $form);
 
 =head2 income_statement
 
-  RP->income_statement($myconfig, $form, $locale);
+  SL::RP->income_statement($myconfig, $form, $locale);
 
 =head2 paymentaccounts
 
-  RP->paymentaccounts($myconfig, $form);
+  SL::RP->paymentaccounts($myconfig, $form);
 
 =head2 payments
 
-  RP->payments($myconfig, $form);
+  SL::RP->payments($myconfig, $form);
 
 =head2 reminder
 
-  RP->reminder($myconfig, $form);
+  SL::RP->reminder($myconfig, $form);
 
 =head2 save_level
 
-  RP->save_level($myconfig, $form);
+  SL::RP->save_level($myconfig, $form);
 
 =head2 tax_report
 
-  RP->tax_report($myconfig, $form);
+  SL::RP->tax_report($myconfig, $form);
 
 =head2 trial_balance
 
-  RP->trial_balance($myconfig, $form);
+  SL::RP->trial_balance($myconfig, $form);
 
 =head2 yearend_statement
 
-  RP->yearend_statement($myconfig, $form);
+  SL::RP->yearend_statement($myconfig, $form);
 
 =cut

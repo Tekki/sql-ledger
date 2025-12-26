@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -92,7 +91,7 @@ sub add {
 sub edit {
 
   &create_links;
-  RU->register(\%myconfig, $form);
+  SL::RU->register(\%myconfig, $form);
 
   $form->{locked} = ($form->{revtrans}) ? '1' : ($form->datetonum(\%myconfig, $form->{transdate}) <= $form->{closedto});
 
@@ -156,7 +155,7 @@ sub edit {
 
 sub create_links {
 
-  GL->transaction(\%myconfig, \%$form);
+  SL::GL->transaction(\%myconfig, $form);
 
   for (@{ $form->{all_accno} }) { $form->{selectaccno} .= "$_->{accno}--$_->{description}\n" }
 
@@ -444,7 +443,7 @@ sub search {
 
   &calendar;
 
-  &change_report(\%$form, \@input, \@checked, \%radio);
+  &change_report($form, \@input, \@checked, \%radio);
 
   print qq|
 <body onload="document.main.${focus}.focus()">
@@ -604,7 +603,7 @@ sub transactions {
   $form->{sort} ||= "transdate";
   $form->{reportcode} = 'gl';
 
-  GL->transactions(\%myconfig, \%$form);
+  SL::GL->transactions(\%myconfig, $form);
 
   $href = "$form->{script}?action=transactions";
   for (qw(direction oldsort path login month year interval reportlogin l_splitledger)) {
@@ -930,11 +929,11 @@ sub transactions {
       $direction = ($form->{direction} eq 'DESC') ? "ASC" : "DESC";
       $revhref =~ s/direction=$direction/direction=$form->{direction}/;
 
-      print "\n<td align=center><a href=$revhref&movecolumn=$column_index[0],right><img src=$images/right.png border=0></td>";
+      print "\n<td align=center><a href=$revhref&movecolumn=$column_index[0],right><img src=$slconfig{images}/right.png border=0></td>";
       for (1 .. $l - 1) {
-	    print "\n<td align=center><a href=$revhref&movecolumn=$column_index[$_],left><img src=$images/left.png border=0><a href=$revhref&movecolumn=$column_index[$_],right><img src=$images/right.png border=0></td>";
+	    print "\n<td align=center><a href=$revhref&movecolumn=$column_index[$_],left><img src=$slconfig{images}/left.png border=0><a href=$revhref&movecolumn=$column_index[$_],right><img src=$slconfig{images}/right.png border=0></td>";
       }
-      print "\n<td align=center><a href=$revhref&movecolumn=$column_index[$l],left><img src=$images/left.png border=0></td>";
+      print "\n<td align=center><a href=$revhref&movecolumn=$column_index[$l],left><img src=$slconfig{images}/left.png border=0></td>";
     }
   }
 
@@ -948,9 +947,9 @@ sub transactions {
       $sort = "";
       if ($form->{sort} eq $column_sort{$column_index[$_]}) {
         if ($form->{direction} eq 'ASC') {
-          $sort = qq|<img src=$images/up.png>&nbsp;&nbsp;&nbsp;|;
+          $sort = qq|<img src=$slconfig{images}/up.png>&nbsp;&nbsp;&nbsp;|;
         } else {
-          $sort = qq|<img src=$images/down.png>&nbsp;&nbsp;&nbsp;|;
+          $sort = qq|<img src=$slconfig{images}/down.png>&nbsp;&nbsp;&nbsp;|;
         }
       }
       print qq|\n<th nowrap>$sort<a class=listheading href=$href&sort=$column_sort{$column_index[$_]}>$column_data{$column_index[$_]}</a></th>|;
@@ -1049,7 +1048,7 @@ sub transactions {
     $column_data{transdate} = "<td nowrap>$ref->{transdate}</td>";
 
     $ref->{reference} ||= "&nbsp;";
-    $column_data{reference} = "<td><a href=$ref->{module}.pl?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{reference}</td>";
+    $column_data{reference} = qq|<td><a class="reference-l $ref->{module}-l" href=$ref->{module}.pl?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{reference}</td>|;
 
     for (qw(department project name vcnumber address)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
 
@@ -1059,22 +1058,22 @@ sub transactions {
     }
 
     if ($ref->{vc_id}) {
-      $column_data{name} = "<td><a href=ct.pl?action=edit&id=$ref->{vc_id}&db=$ref->{db}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{name}</td>";
+      $column_data{name} = qq|<td><a class="name-l" href=ct.pl?action=edit&id=$ref->{vc_id}&db=$ref->{db}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{name}</td>|;
     }
 
     $column_data{debit} = "<td align=right>$ref->{debit}</td>";
     $column_data{credit} = "<td align=right>$ref->{credit}</td>";
 
-    $column_data{accno} = "<td><a href=$href&accno=$ref->{accno}&callback=$callback>$ref->{accno}</a></td>";
+    $column_data{accno} = qq|<td><a class="accno-l" href=$href&accno=$ref->{accno}&callback=$callback>$ref->{accno}</a></td>|;
     $column_data{contra} = "<td>";
     for (split / /, $ref->{contra}) {
-      $column_data{contra} .= qq|<a href=$href&accno=$_&callback=$callback>$_</a>&nbsp;|
+      $column_data{contra} .= qq|<a class="contra-l" href=$href&accno=$_&callback=$callback>$_</a>&nbsp;|
     }
     $column_data{contra} .= "</td>";
-    $column_data{gifi_accno} = "<td><a href=$href&gifi_accno=$ref->{gifi_accno}&callback=$callback>$ref->{gifi_accno}</a>&nbsp;</td>";
+    $column_data{gifi_accno} = qq|<td><a class="gifi_accno-l" href=$href&gifi_accno=$ref->{gifi_accno}&callback=$callback>$ref->{gifi_accno}</a>&nbsp;</td>|;
     $column_data{gifi_contra} = "<td>";
     for (split / /, $ref->{gifi_contra}) {
-      $column_data{gifi_contra} .= qq|<a href=$href&gifi_accno=$_&callback=$callback>$_</a>&nbsp;|
+      $column_data{gifi_contra} .= qq|<a class="gifi_contra-l" href=$href&gifi_accno=$_&callback=$callback>$_</a>&nbsp;|
     }
     $column_data{gifi_contra} .= "</td>";
 
@@ -1704,8 +1703,8 @@ sub delete {
 
 sub yes {
 
-  if (GL->delete_transaction(\%myconfig, \%$form)) {
-    RU->delete(\%myconfig, $form);
+  if (SL::GL->delete_transaction(\%myconfig, $form)) {
+    SL::RU->delete(\%myconfig, $form);
     $form->redirect($locale->text('Transaction deleted!'));
   } else {
     $form->error($locale->text('Cannot delete transaction!'));
@@ -1745,12 +1744,12 @@ sub post {
     }
   }
 
-  $form->{userspath} = $userspath;
+  $form->{userspath} = $slconfig{userspath};
 
   if ($form->{batch}) {
-    $rc = VR->post_transaction(\%myconfig, \%$form);
+    $rc = SL::VR->post_transaction(\%myconfig, $form);
   } else {
-    $rc = GL->post_transaction(\%myconfig, \%$form);
+    $rc = SL::GL->post_transaction(\%myconfig, $form);
   }
 
   if ($form->{callback}) {
@@ -1759,7 +1758,7 @@ sub post {
   }
 
   if ($rc) {
-    RU->register(\%myconfig, $form);
+    SL::RU->register(\%myconfig, $form);
     $form->redirect($locale->text('Transaction posted!'));
   } else {
     $form->error($locale->text('Cannot post transaction!'));

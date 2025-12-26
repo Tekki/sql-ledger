@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -155,7 +154,7 @@ sub search {
 
 
   # setup customer/vendor/employee selection
-  if (! BP->get_vc(\%myconfig, \%$form)) {
+  if (! SL::BP->get_vc(\%myconfig, $form)) {
     if ($form->{batch} eq 'queue') {
       $form->error($locale->text('Nothing in the Queue!'));
     }
@@ -397,7 +396,7 @@ sub yes {
   $form->info($locale->text('Removing marked entries from queue ...'));
   $form->{callback} .= "&header=1" if $form->{callback};
 
-  if (BP->delete_spool(\%myconfig, \%$form, $spool)) {
+  if (SL::BP->delete_spool(\%myconfig, $form, $slconfig{spool})) {
     $form->redirect($locale->text('Removed spoolfiles!'));
   } else {
     $form->error($locale->text('Cannot remove files!'));
@@ -409,7 +408,7 @@ sub yes {
 
 sub print {
 
-  $myform = new Form;
+  $myform = SL::Form->new;
 
   for (keys %$form) {
     $myform->{$_} = $form->{$_};
@@ -432,20 +431,20 @@ sub print {
       $ok = 1;
 
       if ($myform->{batch} eq 'queue') {
-        if (open(FH, qq|$spool/$myconfig{dbname}/$myform->{"spoolfile_$i"}|)) {
-          binmode FH;
+        if (open my $fh, qq|$slconfig{spool}/$myconfig{dbname}/$myform->{"spoolfile_$i"}|) {
+          binmode $fh;
 
-          if (open(OUT, qq~| $myform->{"$myform->{media}_printer"}~)) {
-            binmode OUT;
+          if (open my $out, qq~| $myform->{"$myform->{media}_printer"}~) {
+            binmode $out;
 
             $myform->info(qq|$msg{print} ... $myform->{"spoolfile_$i"}\n|);
 
-            while (<FH>) {
-              print OUT $_;
+            while (<$fh>) {
+              print $out $_;
             }
 
-            close(OUT);
-            close(FH);
+            close $out;
+            close $fh;
           } else {
             $myform->info($!);
           }
@@ -587,7 +586,7 @@ sub e_mail { &print }
 
 sub list_spool {
 
-  BP->get_spoolfiles(\%myconfig, \%$form);
+  SL::BP->get_spoolfiles(\%myconfig, $form);
 
   @f = qw(direction oldsort path login type printcustomer printvendor batch allbox);
   $href = "$form->{script}?action=list_spool";
@@ -840,7 +839,7 @@ print qq|
         $column_data{ndx} = qq|<td></td>|;
       }
 
-      $column_data{spoolfile} = qq|<td><a href=$spool/$myconfig{dbname}/$ref->{spoolfile}$accesskey>$ref->{spoolfile}</a></td>
+      $column_data{spoolfile} = qq|<td><a href=$slconfig{spool}/$myconfig{dbname}/$ref->{spoolfile}$accesskey>$ref->{spoolfile}</a></td>
 |;
 
       $accesskey = '';
@@ -929,10 +928,10 @@ print qq|
     $form->{format} ||= $myconfig{outputformat};
     $form->{media} ||= $myconfig{printer};
     $form->{format} ||= "ps";
-    exit if (! $latex && $form->{batch} eq 'print');
+    exit if (! $slconfig{latex} && $form->{batch} eq 'print');
   }
 
-  if ($latex) {
+  if ($slconfig{latex}) {
     $selectformat .= qq|
           <option value="ps">|.$locale->text('Postscript').qq|
           <option value="pdf">|.$locale->text('PDF');
@@ -1034,7 +1033,7 @@ print qq|
     delete $button{'E-mail'};
     delete $button{'Print'} if ! @{ $form->{all_printer} };
   }
-  if (!$pdftk) {
+  if (!$slconfig{pdftk}) {
     delete $button{'Combine'};
   }
 
@@ -1092,12 +1091,12 @@ sub combine {
   $form->{callback} =~ s/\&allbox=1//;
 
   if (@files) {
-    chdir("$spool/$myconfig{dbname}");
-    if ($filename = BP->spoolfile(\%myconfig, \%$form)) {
+    chdir("$slconfig{spool}/$myconfig{dbname}");
+    if ($filename = SL::BP->spoolfile(\%myconfig, $form)) {
       my $spoolfiles = join ' ', @files;
-      @args = ("pdftk $spoolfiles cat output $filename");
+      @args = ("pdftk $slconfig{spool}files cat output $filename");
       system(@args) % 256 == 0 or $form->error("@args : $?");
-      BP->set_printed(\%myconfig, \%$form, \@files);
+      SL::BP->set_printed(\%myconfig, $form, \@files);
     }
   } else {
     $form->error($locale->text('Nothing selected!'));
@@ -1122,10 +1121,10 @@ sub archive_file {
   $form->load_module(['Archive::Zip'], $locale->text('Module not installed:'));
 
   my $old_dir = cwd();
-  chdir "$spool/$myconfig{dbname}";
+  chdir "$slconfig{spool}/$myconfig{dbname}";
 
   $form->{format} = 'zip';
-  if (my $filename = BP->spoolfile(\%myconfig, $form)) {
+  if (my $filename = SL::BP->spoolfile(\%myconfig, $form)) {
 
     my $zip = Archive::Zip->new;
     $zip->addFile($_) for @files;
@@ -1134,7 +1133,7 @@ sub archive_file {
       $form->error("$filename: $!");
     }
 
-    BP->set_printed(\%myconfig, $form, \@files);
+    SL::BP->set_printed(\%myconfig, $form, \@files);
   }
 
   chdir $old_dir;

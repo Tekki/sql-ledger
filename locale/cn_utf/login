@@ -1,32 +1,0 @@
-use utf8;
-
-$self{charset} = 'UTF-8';
-
-$self{texts} = {
-  'Company'                     => 'å¬å¸',
-  'Continue'                    => 'ç»§ç»­',
-  'Dataset is newer than version!' => 'è¾æ°èµæé',
-  'Incorrect Dataset version!'  => 'èµæéçæ¬éè¯¯!',
-  'Login'                       => 'ç»å¥',
-  'Name'                        => 'åç§°',
-  'No email address for'        => 'æªææçµå­é®ä»¶ä½ç½®',
-  'Password'                    => 'å¯ç ',
-  'Upgrading to Version'        => 'æ­£åçº§è³æ°ç',
-  'Version'                     => 'çæ¬',
-  'You did not enter a name!'   => 'ä½ å¹¶æªé®å¥åç§°!',
-};
-
-$self{subs} = {
-  'continue'                    => 'continue',
-  'email_tan'                   => 'email_tan',
-  'login'                       => 'login',
-  'login_screen'                => 'login_screen',
-  'logout'                      => 'logout',
-  'selectdataset'               => 'selectdataset',
-  'tan_login'                   => 'tan_login',
-  'ç»§ç»­'                      => 'continue',
-  'ç»å¥'                      => 'login',
-};
-
-1;
-

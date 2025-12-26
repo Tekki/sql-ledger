@@ -1,17 +1,17 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2007
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2007-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
-#=====================================================================
+#======================================================================
 #
 # routines to create Javascript functions
 #
-#=====================================================================
+#======================================================================
+use v5.40;
 
-package JS;
+package SL::JS;
 
 
 sub change_report {
@@ -28,7 +28,7 @@ function ChangeReport() {
 |;
 
   for (@{$input}, @{$checked}, keys %{$radio}) {
-    print qq|  var $_ = new Array();\n|;
+    print qq|  var $_ = Array->new;\n|;
   }
 
   print "\n";
@@ -49,7 +49,7 @@ function ChangeReport() {
     for $item (keys %{$radio}) {
       $found = 0;
       for (keys %{ $radio->{$item} }) {
-        if ($form->{all_reportvars}{$ref->{reportid}}{"report_$item"} eq $_) {
+        if (($form->{all_reportvars}{$ref->{reportid}}{"report_$item"} // '') eq $_) {
           print qq|  ${item}\[$i\] = "$radio->{$item}{$_}";\n|;
           $found = 1;
         }
@@ -60,9 +60,9 @@ function ChangeReport() {
     }
     print "\n";
 
-    %column_index = split /[,=]/, $form->{all_reportvars}{$ref->{reportid}}{report_column_index};
+    %column_index = split /[,=]/, $form->{all_reportvars}{$ref->{reportid}}{report_column_index} // '';
     for (@{$checked}) {
-      $s = $_;
+      my $s = $_;
       $s =~ s/l_//;
       if (exists $column_index{$s}) {
         print qq|  ${_}[$i] = "1";\n|;
@@ -133,7 +133,7 @@ function CheckAll() {
 
 =head1 NAME
 
-JS - Routines to create javascript functions
+SL::JS - Routines to create javascript functions
 
 =head1 DESCRIPTION
 
@@ -145,10 +145,10 @@ L<SL::JS> implements the following functions:
 
 =head2 change_report
 
-  JS->change_report($form, $input, $checked, $radio);
+  SL::JS->change_report($form, $input, $checked, $radio);
 
 =head2 check_all
 
-  JS->check_all($checkbox, $match);
+  SL::JS->check_all($checkbox, $match);
 
 =cut

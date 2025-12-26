@@ -1,9 +1,7 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2015-2019
 #
-#  Author: Tekki
-#     Web: https://tekki.ch
+# © 2015-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #  Version: 0.4
 #
@@ -12,20 +10,20 @@
 # JSON API
 #
 #======================================================================
+use v5.40;
 
-package API;
+package SL::API;
 
-sub add_reference {
-  my ($self, $myconfig, $form) = @_;
+sub add_reference ($, $myconfig, $form) {
 
   if ($form->{id} and $form->{referencecode} and $form->{referencedescription}) {
     my $dbh = $form->dbconnect($myconfig);
     my $query
       = q|INSERT INTO reference (code, trans_id, description, formname) VALUES (?,?,?,?)|;
-    my $sth = $dbh->prepare($query) || $form->dberror($query);
+    my $sth = $dbh->prepare($query) or $form->dberror($query);
     $sth->execute($form->{referencecode}, $form->{id},
       $form->{referencedescription}, 'ar_invoice')
-      || $form->dberror($query);
+      or $form->dberror($query);
 
     $form->{result} = 'success';
   } else {
@@ -33,8 +31,7 @@ sub add_reference {
   }
 }
 
-sub find_invoice {
-  my ($self, $myconfig, $form) = @_;
+sub find_invoice ($, $myconfig, $form) {
 
   my $dbh   = $form->dbconnect($myconfig);
   my $where = '1 = 0';
@@ -58,17 +55,16 @@ sub find_invoice {
 
 }
 
-sub list_accounts {
-  my ($self, $myconfig, $form) = @_;
+sub list_accounts ($, $myconfig, $form) {
 
   my $dbh = $form->dbconnect($myconfig);
 
   my $query = q|SELECT * FROM chart WHERE charttype='A' ORDER BY accno|;
-  my $sth = $dbh->prepare($query) || $form->dberror($query);
+  my $sth = $dbh->prepare($query) or $form->dberror($query);
   $sth->execute;
 
   my $ref;
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while ($ref = $sth->fetchrow_hashref) {
     push @{$form->{accounts}}, $ref;
   }
 }
@@ -79,7 +75,7 @@ sub list_accounts {
 
 =head1 NAME
 
-API - JSON API
+SL::API - JSON API
 
 =head1 DESCRIPTION
 
@@ -91,14 +87,14 @@ L<SL::API> implements the following functions:
 
 =head2 add_reference
 
-  API->add_reference($myconfig, $form);
+  SL::API->add_reference($myconfig, $form);
 
 =head2 find_invoice
 
-  API->find_invoice($myconfig, $form);
+  SL::API->find_invoice($myconfig, $form);
 
 =head2 list_accounts
 
-  API->list_accounts($myconfig, $form);
+  SL::API->list_accounts($myconfig, $form);
 
 =cut

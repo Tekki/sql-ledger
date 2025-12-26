@@ -1,9 +1,8 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2006
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -11,18 +10,18 @@
 # used in AR, AP, IS, IR, OE, CP
 #
 #======================================================================
+use v5.40;
 
-package OP;
+package SL::OP;
 
-sub overpayment {
-  my ($self, $myconfig, $form, $dbh, $amount, $ml) = @_;
+sub overpayment ($, $myconfig, $form, $dbh, $amount, $ml) {
 
   my $fxamount = $form->round_amount($amount * $form->{exchangerate}, $form->{precision});
-  my ($paymentaccno) = split /--/, $form->{"$form->{ARAP}_paid"};
+  my ($paymentaccno) = split /--/, $form->{"$form->{ARAP}_paid"} // '';
 
   my $department_id;
-  (undef, $department_id) = split /--/, $form->{department};
-  $department_id *= 1;
+  (undef, $department_id) = split /--/, $form->{department} // '';
+  ($department_id //= 0) *= 1;
 
   my $action = 'posted';
 
@@ -39,10 +38,10 @@ sub overpayment {
   $form->{vc} =~ s/;//g;
 
   # add AR/AP header transaction with a payment
-  $query = qq|INSERT INTO $form->{arap} (invnumber, employee_id, approved)
+  my $query = qq|INSERT INTO $form->{arap} (invnumber, employee_id, approved)
               VALUES ('$uid', (SELECT id FROM employee
                              WHERE login = '$form->{login}'), '$approved')|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $query = qq|SELECT id FROM $form->{arap}
             WHERE invnumber = '$uid'|;
@@ -60,7 +59,7 @@ sub overpayment {
   }
 
   my $invnumber = $form->{invnumber};
-  $invnumber = $form->update_defaults($myconfig, ($form->{arap} eq 'ar') ? "sinumber" : "vinumber", $dbh) unless $invnumber;
+  $invnumber = $form->update_defaults($myconfig, (($form->{arap} // '') eq 'ar') ? "sinumber" : "vinumber", $dbh) unless $invnumber;
 
   $query = qq|UPDATE $form->{arap} set
               invnumber = |.$dbh->quote($invnumber).qq|,
@@ -75,17 +74,17 @@ sub overpayment {
               department_id = $department_id,
               bank_id = (SELECT id FROM chart WHERE accno = '$paymentaccno')
               WHERE id = $uid|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   # add AR/AP
-  my ($accno) = split /--/, $form->{$form->{ARAP}};
+  my ($accno) = split /--/, $form->{$form->{ARAP}} // '';
 
   $query = qq|INSERT INTO acc_trans (trans_id, chart_id, transdate, amount,
               approved, vr_id)
               VALUES ($uid, (SELECT id FROM chart
                              WHERE accno = '$accno'),
               '$form->{datepaid}', $fxamount * $ml, '$approved', $voucherid)|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   # add payment
   $query = qq|INSERT INTO acc_trans (trans_id, chart_id, transdate,
@@ -95,7 +94,7 @@ sub overpayment {
                 '$form->{datepaid}', $amount * $ml * -1, |
                 .$dbh->quote($form->{source}).qq|, |
                 .$dbh->quote($form->{memo}).qq|, '$approved', $voucherid)|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   # add exchangerate difference
   if ($fxamount != $amount) {
@@ -106,7 +105,7 @@ sub overpayment {
                 '$form->{datepaid}', ($fxamount - $amount) * $ml * -1,
                 '$form->{datepaid}', '1', |
                 .$dbh->quote($form->{source}).qq|, '$approved', $voucherid)|;
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
   }
 
   # add voucher
@@ -114,7 +113,7 @@ sub overpayment {
     $query = qq|INSERT INTO vr (br_id, trans_id, id, vouchernumber)
                 VALUES ($batchid, $uid, $voucherid, |
                 .$dbh->quote($form->{vouchernumber}).qq|)|;
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
 
     # update batch
     $form->update_balance($dbh,
@@ -127,7 +126,7 @@ sub overpayment {
 
   my %audittrail = ( tablename  => $form->{arap},
                      reference  => $invnumber,
-                     formname   => ($form->{arap} eq 'ar') ? 'deposit' : 'pre-payment',
+                     formname   => (($form->{arap} // '') eq 'ar') ? 'deposit' : 'pre-payment',
                      action     => $action,
                      id         => $uid );
 
@@ -143,7 +142,7 @@ sub overpayment {
 
 =head1 NAME
 
-OP - Overpayment function
+SL::OP - Overpayment function
 
 =head1 DESCRIPTION
 
@@ -156,6 +155,6 @@ L<SL::OP> implements the following functions:
 
 =head2 overpayment
 
-  OP->overpayment($myconfig, $form, $dbh, $amount, $ml);
+  SL::OP->overpayment($myconfig, $form, $dbh, $amount, $ml);
 
 =cut

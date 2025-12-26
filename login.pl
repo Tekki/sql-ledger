@@ -1,39 +1,44 @@
 #!/usr/bin/perl
 #
-######################################################################
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#######################################################################
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #######################################################################
 #
 # this script sets up the terminal and runs the scripts
 # in bin/$terminal directory
-# admin.pl is linked to this script
 #
 #######################################################################
-
-use open ':std' => ':utf8';
-
-# setup defaults, DO NOT CHANGE
-$userspath = "users";
-$spool = "spool";
-$templates = "templates";
-$images = "images";
-$memberfile = "users/members";
-$sendmail = "| /usr/sbin/sendmail -t";
-########## end ###########################################
 
 BEGIN {
   push @INC, '.';
 }
 
+use open ':std', OUT => ':encoding(UTF-8)';
+use Storable ();
+
 $| = 1;
 
-eval { require "sql-ledger.conf"; };
+our %slconfig;
 
+eval {
+  %slconfig = Storable::retrieve('config/sql-ledger.bin')->%*;
+};
+
+if ($@) {
+  %slconfig = (
+    userspath     => 'users',
+    spool         => 'spool',
+    templates     => 'templates',
+    images        => 'images',
+    memberfile    => 'users/members',
+    sendmail      => '| /usr/sbin/sendmail -f <%from%> -t',
+    accessfolders => ['templates', 'css'],
+  );
+}
 
 if ($ENV{CONTENT_LENGTH}) {
   read(STDIN, $_, $ENV{CONTENT_LENGTH});
@@ -66,12 +71,12 @@ if (grep !/^\Q$form{script}\E/, @scripts) {
   exit;
 }
 
-if (-f "$userspath/nologin.LCK" && $script ne 'admin.pl') {
+if (-f "$slconfig{userspath}/nologin.LCK" && $script ne 'admin.pl') {
   print "Content-Type: text/html\n\n" if $ENV{HTTP_USER_AGENT};
-  if (-s "$userspath/nologin.LCK") {
-    open(FH, "$userspath/nologin.LCK");
-    $message = <FH>;
-    close(FH);
+  if (-s "$slconfig{userspath}/nologin.LCK") {
+    open my $fh, "$slconfig{userspath}/nologin.LCK";
+    $message = <$fh>;
+    close $fh;
     print "\n$message\n";
   } else {
     print "\nLogin disabled!\n";
@@ -131,5 +136,3 @@ if ($form{path}) {
 }
 
 1;
-# end of main
-

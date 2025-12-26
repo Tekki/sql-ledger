@@ -1,9 +1,8 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2006
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -11,12 +10,12 @@
 # also used for partsgroups
 #
 #======================================================================
+use v5.40;
 
-package PE;
+package SL::PE;
 
 
-sub projects {
-  my ($self, $myconfig, $form) = @_;
+sub projects ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -30,18 +29,18 @@ sub projects {
               FROM project pr
               LEFT JOIN customer c ON (c.id = pr.customer_id)|;
 
-  if ($form->{type} eq 'job') {
+  if (($form->{type} // '') eq 'job') {
     $where = qq|WHERE pr.id NOT IN (SELECT DISTINCT id
                                     FROM parts
                                     WHERE project_id > 0)|;
   }
 
   my $var;
-  if ($form->{projectnumber} ne "") {
+  if (($form->{projectnumber} // '') ne "") {
     $var = $form->like(lc $form->{projectnumber});
     $where .= " AND lower(pr.projectnumber) LIKE '$var'";
   }
-  if ($form->{description} ne "") {
+  if (($form->{description} // '') ne "") {
     $var = $form->like(lc $form->{description});
     $where .= " AND lower(pr.description) LIKE '$var'";
   }
@@ -57,7 +56,7 @@ sub projects {
     $where .= " AND (pr.startdate IS NULL OR pr.startdate <= '$form->{startdateto}')";
   }
 
-  if ($form->{status} eq 'orphaned') {
+  if (($form->{status} // '') eq 'orphaned') {
     $where .= qq| AND pr.id NOT IN (SELECT DISTINCT project_id
                                     FROM acc_trans
                                     WHERE project_id > 0
@@ -76,23 +75,22 @@ sub projects {
                 |;
 
   }
-  if ($form->{status} eq 'active') {
+  if (($form->{status} // '') eq 'active') {
     $where .= qq| AND (pr.enddate IS NULL OR pr.enddate >= current_date)|;
   }
-  if ($form->{status} eq 'inactive') {
+  if (($form->{status} // '') eq 'inactive') {
     $where .= qq| AND pr.enddate <= current_date|;
   }
 
   $query .= qq| $where|;
   my @sf = ($form->{sort});
-  my %ordinal = $form->ordinal_order($dbh, $query);
-  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf);
 
-  $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  my $sth = $dbh->prepare($query);
+  $sth->execute or $form->dberror($query);
 
   my $i = 0;
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $form->{all_project} }, $ref;
     $i++;
   }
@@ -105,8 +103,7 @@ sub projects {
 }
 
 
-sub get_project {
-  my ($self, $myconfig, $form) = @_;
+sub get_project ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -116,7 +113,7 @@ sub get_project {
   my $ref;
   my $where;
 
-  if ($form->{id} *= 1) {
+  if (($form->{id} ||= 0) *= 1) {
 
     $where = "WHERE pr.id = $form->{id}" if $form->{id};
 
@@ -126,9 +123,9 @@ sub get_project {
                 LEFT JOIN customer c ON (c.id = pr.customer_id)
                 $where|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    $ref = $sth->fetchrow_hashref(NAME_lc);
+    $ref = $sth->fetchrow_hashref;
 
     for (keys %$ref) { $form->{$_} = $ref->{$_} }
 
@@ -152,7 +149,7 @@ sub get_project {
                 WHERE project_id = $form->{id}
                |;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
     my $count;
     while (($count) = $sth->fetchrow_array) {
@@ -171,15 +168,15 @@ sub get_project {
 }
 
 
-sub save_project {
-  my ($self, $myconfig, $form) = @_;
+sub save_project ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
 
   $form->{customer_id} ||= 'NULL';
 
-  if ($form->{id} *= 1) {
+  my $query;
+  if (($form->{id} ||= 0) *= 1) {
     $query = qq|SELECT id FROM project
                 WHERE id = $form->{id}|;
     ($form->{id}) = $dbh->selectrow_array($query);
@@ -191,7 +188,7 @@ sub save_project {
 
     $query = qq|INSERT INTO project (projectnumber)
                 VALUES ('$uid')|;
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
 
     $query = qq|SELECT id FROM project
                 WHERE projectnumber = '$uid'|;
@@ -203,11 +200,11 @@ sub save_project {
   $query = qq|UPDATE project SET
               projectnumber = |.$dbh->quote($form->{projectnumber}).qq|,
               description = |.$dbh->quote($form->{description}).qq|,
-              startdate = |.$form->dbquote($form->{startdate}, SQL_DATE).qq|,
-              enddate = |.$form->dbquote($form->{enddate}, SQL_DATE).qq|,
+              startdate = |.$form->dbquote($form->{startdate}, 'SQL_DATE').qq|,
+              enddate = |.$form->dbquote($form->{enddate}, 'SQL_DATE').qq|,
               customer_id = $form->{customer_id}
               WHERE id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $form->save_reference($dbh, 'project');
 
@@ -217,8 +214,7 @@ sub save_project {
 }
 
 
-sub list_stock {
-  my ($self, $myconfig, $form) = @_;
+sub list_stock ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -226,12 +222,12 @@ sub list_stock {
   my $var;
   my $where = "1 = 1";
 
-  if ($form->{status} eq 'active') {
+  if (($form->{status} // '') eq 'active') {
     $where = qq|(pr.enddate IS NULL
                  OR pr.enddate >= current_date)
                  AND pr.completed < pr.production|;
   }
-  if ($form->{status} eq 'inactive') {
+  if (($form->{status} // '') eq 'inactive') {
     $where = qq|pr.completed = pr.production|;
   }
 
@@ -253,13 +249,12 @@ sub list_stock {
                  WHERE $where|;
 
   my @sf = ($form->{sort});
-  my %ordinal = $form->ordinal_order($dbh, $query);
-  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf);
 
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $form->{all_project} }, $ref;
   }
   $sth->finish;
@@ -273,8 +268,7 @@ sub list_stock {
 }
 
 
-sub jobs {
-  my ($self, $myconfig, $form) = @_;
+sub jobs ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -287,12 +281,12 @@ sub jobs {
                  LEFT JOIN customer c ON (c.id = pr.customer_id)
                  WHERE 1=1|;
 
-  if ($form->{projectnumber} ne "") {
-    $var = $form->like(lc $form->{projectnumber});
+  if (($form->{projectnumber} // '') ne "") {
+    my $var = $form->like(lc $form->{projectnumber});
     $query .= " AND lower(pr.projectnumber) LIKE '$var'";
   }
-  if ($form->{description} ne "") {
-    $var = $form->like(lc $form->{description});
+  if (($form->{description} // '') ne "") {
+    my $var = $form->like(lc $form->{description});
     $query .= " AND lower(pr.description) LIKE '$var'";
   }
 
@@ -307,13 +301,13 @@ sub jobs {
     $query .= " AND pr.startdate <= '$form->{startdateto}'";
   }
 
-  if ($form->{status} eq 'active') {
+  if (($form->{status} // '') eq 'active') {
     $query .= qq| AND NOT pr.production = pr.completed|;
   }
-  if ($form->{status} eq 'inactive') {
+  if (($form->{status} // '') eq 'inactive') {
     $query .= qq| AND pr.production = pr.completed|;
   }
-  if ($form->{status} eq 'orphaned') {
+  if (($form->{status} // '') eq 'orphaned') {
     $query .= qq| AND pr.completed = 0
                   AND pr.id NOT IN (SELECT DISTINCT project_id
                                     FROM invoice
@@ -330,13 +324,12 @@ sub jobs {
   }
 
   my @sf = ($form->{sort});
-  my %ordinal = $form->ordinal_order($dbh, $query);
-  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf);
 
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $form->{all_project} }, $ref;
   }
   $sth->finish;
@@ -346,8 +339,7 @@ sub jobs {
 }
 
 
-sub get_job {
-  my ($self, $myconfig, $form) = @_;
+sub get_job ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -356,10 +348,10 @@ sub get_job {
   my $sth;
   my $ref;
 
-  my %defaults = $form->get_defaults($dbh, \@{['weightunit', 'precision']});
+  my %defaults = $form->get_defaults($dbh, ['weightunit', 'precision']);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
-  if ($form->{id} *= 1) {
+  if (($form->{id} ||= 0) *= 1) {
 
     $query = qq|SELECT pr.*,
                 p.partnumber, p.description AS partdescription,
@@ -377,9 +369,9 @@ sub get_job {
                 WHERE pr.id = $form->{id}|;
 
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    $ref = $sth->fetchrow_hashref(NAME_lc);
+    $ref = $sth->fetchrow_hashref;
 
     for (keys %$ref) { $form->{$_} = $ref->{$_} }
 
@@ -408,7 +400,7 @@ sub get_job {
                |;
 
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
     my $count;
     while (($count) = $sth->fetchrow_array) {
@@ -427,9 +419,9 @@ sub get_job {
               WHERE c.link LIKE '%IC%'
               ORDER BY c.accno|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     for (split /:/, $ref->{link}) {
       if (/IC/) {
         $ref->{description} = $ref->{translation} if $ref->{translation};
@@ -449,9 +441,9 @@ sub get_job {
                 WHERE p.id = $form->{id}|;
 
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    while (my $ref = $sth->fetchrow_hashref) {
       $form->{amount}{$ref->{accno}} = $ref->{accno};
     }
     $sth->finish;
@@ -466,8 +458,7 @@ sub get_job {
 }
 
 
-sub get_customer {
-  my ($self, $myconfig, $form, $dbh) = @_;
+sub get_customer ($, $myconfig, $form, $dbh = undef) {
 
   my $disconnect = 0;
 
@@ -496,12 +487,12 @@ sub get_customer {
               WHERE $where|;
   my ($count) = $dbh->selectrow_array($query);
 
-  if ($count < $myconfig->{vclimit}) {
+  if (($count // 0) < ($myconfig->{vclimit} // 0)) {
     $query = qq|SELECT id, name
                 FROM customer
                 WHERE $where|;
 
-    if ($form->{customer_id} *= 1) {
+    if (($form->{customer_id} ||= 0) *= 1) {
       $query .= qq|
                 UNION SELECT id,name
                 FROM customer
@@ -510,10 +501,10 @@ sub get_customer {
 
     $query .= qq| ORDER BY name|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
     @{ $form->{all_customer} } = ();
-    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    while (my $ref = $sth->fetchrow_hashref) {
       push @{ $form->{all_customer} }, $ref;
     }
     $sth->finish;
@@ -524,18 +515,18 @@ sub get_customer {
 }
 
 
-sub save_job {
-  my ($self, $myconfig, $form) = @_;
+sub save_job ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
 
-  my ($income_accno) = split /--/, $form->{IC_income};
+  my ($income_accno) = split /--/, $form->{IC_income} // '';
 
-  my ($partsgroup, $partsgroup_id) = split /--/, $form->{partsgroup};
+  my ($partsgroup, $partsgroup_id) = split /--/, $form->{partsgroup} // '';
   $partsgroup_id ||= 'NULL';
 
-  if ($form->{id} *= 1) {
+  my $query;
+  if (($form->{id} ||= 0) *= 1) {
     $query = qq|SELECT id FROM project
                 WHERE id = $form->{id}|;
     ($form->{id}) = $dbh->selectrow_array($query);
@@ -547,7 +538,7 @@ sub save_job {
 
     $query = qq|INSERT INTO project (projectnumber)
                 VALUES ('$uid')|;
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
 
     $query = qq|SELECT id FROM project
                 WHERE projectnumber = '$uid'|;
@@ -559,13 +550,13 @@ sub save_job {
   $query = qq|UPDATE project SET
               projectnumber = |.$dbh->quote($form->{projectnumber}).qq|,
               description = |.$dbh->quote($form->{description}).qq|,
-              startdate = |.$form->dbquote($form->{startdate}, SQL_DATE).qq|,
-              enddate = |.$form->dbquote($form->{enddate}, SQL_DATE).qq|,
+              startdate = |.$form->dbquote($form->{startdate}, 'SQL_DATE').qq|,
+              enddate = |.$form->dbquote($form->{enddate}, 'SQL_DATE').qq|,
               parts_id = $form->{id},
               production = |.$form->parse_amount($myconfig, $form->{production}).qq|,
               customer_id = $form->{customer_id}
               WHERE id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
 
   #### add/edit assembly
@@ -576,7 +567,7 @@ sub save_job {
   if (!$id) {
     $query = qq|INSERT INTO parts (id)
                 VALUES ($form->{id})|;
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
   }
 
   my $partnumber = ($form->{partnumber}) ? $form->{partnumber} : $form->{projectnumber};
@@ -584,7 +575,7 @@ sub save_job {
   $query = qq|UPDATE parts SET
               partnumber = |.$dbh->quote($partnumber).qq|,
               description = |.$dbh->quote($form->{partdescription}).qq|,
-              priceupdate = |.$form->dbquote($form->{priceupdate}, SQL_DATE).qq|,
+              priceupdate = |.$form->dbquote($form->{priceupdate}, 'SQL_DATE').qq|,
               listprice = |.$form->parse_amount($myconfig, $form->{listprice}).qq|,
               sellprice = |.$form->parse_amount($myconfig, $form->{sellprice}).qq|,
               weight = |.$form->parse_amount($myconfig, $form->{weight}).qq|,
@@ -597,24 +588,24 @@ sub save_job {
               assembly = '1',
               obsolete = '1',
               lot = '$form->{lot}',
-              expires = |.$form->dbquote($form->{expires}, SQL_DATE).qq|,
+              expires = |.$form->dbquote($form->{expires}, 'SQL_DATE').qq|,
               project_id = $form->{id}
               WHERE id = $form->{id}|;
 
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $query = qq|DELETE FROM partstax
               WHERE parts_id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
-  for (split / /, $form->{taxaccounts}) {
+  for (split / /, $form->{taxaccounts} // '') {
     if ($form->{"IC_tax_$_"}) {
       $query = qq|INSERT INTO partstax (parts_id, chart_id)
                   VALUES ($form->{id},
                           (SELECT id
                            FROM chart
                            WHERE accno = '$_'))|;
-      $dbh->do($query) || $form->dberror($query);
+      $dbh->do($query) or $form->dberror($query);
     }
   }
 
@@ -626,13 +617,12 @@ sub save_job {
 }
 
 
-sub stock_assembly {
-  my ($self, $myconfig, $form) = @_;
+sub stock_assembly ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
 
-  my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  my %defaults = $form->get_defaults($dbh, ['precision']);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   my $ref;
@@ -640,12 +630,12 @@ sub stock_assembly {
   my $query = qq|SELECT *
                  FROM project
                   WHERE id = ?|;
-  my $sth = $dbh->prepare($query) || $form->dberror($query);
+  my $sth = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|SELECT COUNT(*)
               FROM parts
               WHERE project_id = ?|;
-  my $rvh = $dbh->prepare($query) || $form->dberror($query);
+  my $rvh = $dbh->prepare($query) or $form->dberror($query);
 
   if (! $form->{stockingdate}) {
     $form->{stockingdate} = $form->current_date($myconfig);
@@ -654,7 +644,7 @@ sub stock_assembly {
   $query = qq|SELECT *
               FROM parts
               WHERE id = ?|;
-  my $pth = $dbh->prepare($query) || $form->dberror($query);
+  my $pth = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|SELECT j.*, p.listprice
               FROM jcitems j
@@ -662,16 +652,16 @@ sub stock_assembly {
               WHERE j.project_id = ?
               AND j.checkedin <= '$form->{stockingdate}'
               ORDER BY j.parts_id|;
-  my $jth = $dbh->prepare($query) || $form->dberror($query);
+  my $jth = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|INSERT INTO assembly (id, parts_id, qty, bom, adj)
               VALUES (?, ?, ?, '0', '0')|;
-  my $ath = $dbh->prepare($query) || $form->dberror($query);
+  my $ath = $dbh->prepare($query) or $form->dberror($query);
 
   (undef, $form->{employee_id}) = $form->get_employee($dbh);
   $query = qq|INSERT INTO inventory (warehouse_id, parts_id, qty, shippingdate, employee_id)
               VALUES (?, ?, ?, '$form->{stockingdate}', $form->{employee_id})|;
-  my $ith = $dbh->prepare($query) || $form->dberror($query);
+  my $ith = $dbh->prepare($query) or $form->dberror($query);
 
   my $i = 0;
   my $sold;
@@ -681,11 +671,11 @@ sub stock_assembly {
     $i++;
     last unless $form->{"id_$i"};
 
-    $stock = $form->parse_amount($myconfig, $form->{"stock_$i"});
+    my $stock = $form->parse_amount($myconfig, $form->{"stock_$i"});
 
     if ($stock) {
       $sth->execute($form->{"id_$i"});
-      $ref = $sth->fetchrow_hashref(NAME_lc);
+      $ref = $sth->fetchrow_hashref;
 
       if ($stock > ($ref->{production} - $ref->{completed})) {
         $stock = $ref->{production} - $ref->{completed};
@@ -695,7 +685,7 @@ sub stock_assembly {
       }
 
       $pth->execute($form->{"id_$i"});
-      $pref = $pth->fetchrow_hashref(NAME_lc);
+      my $pref = $pth->fetchrow_hashref;
 
       my %assembly = ();
       my $sellprice = 0;
@@ -703,7 +693,7 @@ sub stock_assembly {
       my $lastcost = 0;
 
       $jth->execute($form->{"id_$i"});
-      while ($jref = $jth->fetchrow_hashref(NAME_lc)) {
+      while (my $jref = $jth->fetchrow_hashref) {
         $assembly{qty}{$jref->{parts_id}} += ($jref->{qty} - $jref->{allocated});
         $assembly{parts_id}{$jref->{parts_id}} = $jref->{parts_id};
         $assembly{jcitems}{$jref->{id}} = $jref->{id};
@@ -715,12 +705,12 @@ sub stock_assembly {
       }
       $jth->finish;
 
-      $uid = localtime;
+      my $uid = localtime;
       $uid .= $$;
 
       $query = qq|INSERT INTO parts (partnumber)
                   VALUES ('$uid')|;
-      $dbh->do($query) || $form->dberror($query);
+      $dbh->do($query) or $form->dberror($query);
 
       $query = qq|SELECT id
                   FROM parts
@@ -760,22 +750,22 @@ sub stock_assembly {
                   tariff_hscode = '$pref->{tariff_hscode}',
                   barcode = '$pref->{barcode}',
                   lot = '$pref->{lot}',
-                  expires = |.$form->dbquote($pref->{expires}, SQL_DATE).qq|,
+                  expires = |.$form->dbquote($pref->{expires}, 'SQL_DATE').qq|,
                   checkinventory = '$pref->{checkinventory}',
                   project_id = $form->{"id_$i"}
                   WHERE id = $uid|;
-      $dbh->do($query) || $form->dberror($query);
+      $dbh->do($query) or $form->dberror($query);
 
       $query = qq|INSERT INTO partstax (parts_id, chart_id)
                   SELECT '$uid', chart_id FROM partstax
                   WHERE parts_id = $pref->{id}|;
-      $dbh->do($query) || $form->dberror($query);
+      $dbh->do($query) or $form->dberror($query);
 
       # make and models
       $query = qq|INSERT INTO makemodel (parts_id, make, model)
                   SELECT '$uid', make, model
                   FROM makemodel WHERE parts_id = $pref->{id}|;
-      $dbh->do($query) || $form->dberror($query);
+      $dbh->do($query) or $form->dberror($query);
 
       # customer matrix
       $query = qq|INSERT INTO partscustomer (parts_id, customer_id,
@@ -784,7 +774,7 @@ sub stock_assembly {
                   SELECT '$uid', customer_id, pricegroup_id, pricebreak,
                   sellprice, validfrom, validto, curr
                   FROM partscustomer WHERE parts_id = $pref->{id}|;
-      $dbh->do($query) || $form->dberror($query);
+      $dbh->do($query) or $form->dberror($query);
 
       for (keys %{$assembly{parts_id}}) {
         if ($assembly{qty}{$_}) {
@@ -794,7 +784,7 @@ sub stock_assembly {
       }
 
       if ($form->{"warehouse_$i"}) {
-        (undef, $form->{warehouse_id}) = split /--/, $form->{"warehouse_$i"};
+        (undef, $form->{warehouse_id}) = split /--/, $form->{"warehouse_$i"} // '';
         $ith->execute($form->{warehouse_id}, $uid, $stock);
         $ith->finish;
       }
@@ -810,11 +800,11 @@ sub stock_assembly {
                   WHERE allocated != qty
                   AND checkedin <= '$form->{stockingdate}'
                   AND project_id = $form->{"id_$i"}|;
-      $dbh->do($query) || $form->dberror($query);
+      $dbh->do($query) or $form->dberror($query);
 
       $sth->finish;
 
-      %audittrail = ( tablename  => 'ic',
+      my %audittrail = ( tablename  => 'ic',
                      reference  => "$pref->{partnumber}-$rev",
                      formname   => 'assembly',
                      action     => 'stock',
@@ -835,21 +825,20 @@ sub stock_assembly {
 }
 
 
-sub delete_project {
-  my ($self, $myconfig, $form) = @_;
+sub delete_project ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
 
-  $form->{id} *= 1;
+  ($form->{id} ||= 0) *= 1;
 
-  $query = qq|DELETE FROM project
+  my $query = qq|DELETE FROM project
               WHERE id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $query = qq|DELETE FROM translation
               WHERE trans_id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $form->delete_references($dbh);
 
@@ -861,21 +850,20 @@ sub delete_project {
 }
 
 
-sub delete_partsgroup {
-  my ($self, $myconfig, $form) = @_;
+sub delete_partsgroup ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
 
-  $form->{id} *= 1;
+  ($form->{id} ||= 0) *= 1;
 
-  $query = qq|DELETE FROM partsgroup
+  my $query = qq|DELETE FROM partsgroup
               WHERE id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $query = qq|DELETE FROM translation
               WHERE trans_id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   my $rc = $dbh->commit;
   $dbh->disconnect;
@@ -885,17 +873,16 @@ sub delete_partsgroup {
 }
 
 
-sub delete_pricegroup {
-  my ($self, $myconfig, $form) = @_;
+sub delete_pricegroup ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
 
-  $form->{id} *= 1;
+  ($form->{id} ||= 0) *= 1;
 
-  $query = qq|DELETE FROM pricegroup
+  my $query = qq|DELETE FROM pricegroup
               WHERE id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   my $rc = $dbh->commit;
   $dbh->disconnect;
@@ -905,13 +892,12 @@ sub delete_pricegroup {
 }
 
 
-sub delete_job {
-  my ($self, $myconfig, $form) = @_;
+sub delete_job ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
 
-  $form->{id} *= 1;
+  ($form->{id} ||= 0) *= 1;
 
   my %audittrail = ( tablename  => 'project',
                      reference  => $form->{id},
@@ -923,22 +909,22 @@ sub delete_job {
 
   my $query = qq|DELETE FROM project
                  WHERE id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $query = qq|DELETE FROM translation
               WHERE trans_id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   # delete all the assemblies
   $query = qq|DELETE FROM assembly
               WHERE aid IN
               (SELECT id FROM parts
                WHERE project_id = $form->{id})|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $query = qq|DELETE FROM parts
               WHERE project_id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $form->delete_references($dbh);
 
@@ -950,15 +936,14 @@ sub delete_job {
 }
 
 
-sub partsgroups {
-  my ($self, $myconfig, $form) = @_;
+sub partsgroups ($, $myconfig, $form) {
 
   my $var;
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  my %defaults = $form->get_defaults($dbh, \@{['company']});
+  my %defaults = $form->get_defaults($dbh, ['company']);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   $form->{sort} ||= "partsgroup";
@@ -968,18 +953,18 @@ sub partsgroups {
 
   my $where = "1 = 1";
 
-  if ($form->{partsgroup} ne "") {
+  if (($form->{partsgroup} // '') ne "") {
     $var = $form->like(lc $form->{partsgroup});
     $where .= " AND lower(g.partsgroup) LIKE '$var'";
   }
-  if ($form->{partsgroupcode} ne "") {
+  if (($form->{partsgroupcode} // '') ne "") {
     $var = $form->like(lc $form->{partsgroupcode});
     $where .= " AND lower(g.code) LIKE '$var'";
   }
 
   $query .= qq| WHERE $where|;
 
-  if ($form->{status} eq 'orphaned') {
+  if (($form->{status} // '') eq 'orphaned') {
     $query = qq|SELECT g.*
                 FROM partsgroup g
                 LEFT JOIN parts p ON (p.partsgroup_id = g.id)
@@ -992,14 +977,13 @@ sub partsgroups {
   }
 
   my @sf = qw(partsgroup);
-  my %ordinal = $form->ordinal_order($dbh, $query);
-  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf);
 
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
   my $i = 0;
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $form->{item_list} }, $ref;
     $i++;
   }
@@ -1012,16 +996,15 @@ sub partsgroups {
 }
 
 
-sub save_partsgroup {
-  my ($self, $myconfig, $form) = @_;
+sub save_partsgroup ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
   my $query;
 
-  $form->{pos} *= 1;
+  ($form->{pos} ||= 0) *= 1;
 
-  if ($form->{id} *= 1) {
+  if (($form->{id} ||= 0) *= 1) {
     $query = qq|UPDATE partsgroup SET
                 partsgroup = |.$dbh->quote($form->{partsgroup}).qq|,
                 code = |.$dbh->quote($form->{code}).qq|,
@@ -1036,28 +1019,27 @@ sub save_partsgroup {
                 .$dbh->quote($form->{image}).qq|,
                 '$form->{pos}')|;
   }
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $dbh->disconnect;
 
 }
 
 
-sub get_partsgroup {
-  my ($self, $myconfig, $form) = @_;
+sub get_partsgroup ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  $form->{id} *= 1;
+  ($form->{id} ||= 0) *= 1;
 
   my $query = qq|SELECT *
                  FROM partsgroup
                  WHERE id = $form->{id}|;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  my $ref = $sth->fetchrow_hashref(NAME_lc);
+  my $ref = $sth->fetchrow_hashref;
 
   for (keys %$ref) { $form->{$_} = $ref->{$_} }
 
@@ -1068,7 +1050,7 @@ sub get_partsgroup {
               FROM parts
               WHERE partsgroup_id = $form->{id}|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
   ($form->{orphaned}) = $sth->fetchrow_array;
   $form->{orphaned} = !$form->{orphaned};
@@ -1080,15 +1062,14 @@ sub get_partsgroup {
 }
 
 
-sub pricegroups {
-  my ($self, $myconfig, $form) = @_;
+sub pricegroups ($, $myconfig, $form) {
 
   my $var;
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  my %defaults = $form->get_defaults($dbh, \@{['company']});
+  my %defaults = $form->get_defaults($dbh, ['company']);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   $form->{sort} ||= "pricegroup";
@@ -1098,13 +1079,13 @@ sub pricegroups {
 
   my $where = "1 = 1";
 
-  if ($form->{pricegroup} ne "") {
+  if (($form->{pricegroup} // '') ne "") {
     $var = $form->like(lc $form->{pricegroup});
     $where .= " AND lower(g.pricegroup) LIKE '$var'";
   }
   $query .= qq| WHERE $where|;
 
-  if ($form->{status} eq 'orphaned') {
+  if (($form->{status} // '') eq 'orphaned') {
     $query = qq|SELECT g.*
                 FROM pricegroup g
                 WHERE $where
@@ -1113,15 +1094,14 @@ sub pricegroups {
                                  WHERE pricegroup_id > 0)|;
   }
 
-  my @sf = (pricegroup);
-  my %ordinal = $form->ordinal_order($dbh, $query);
-  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
+  my @sf = qw|pricegroup|;
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf);
 
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
   my $i = 0;
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $form->{item_list} }, $ref;
     $i++;
   }
@@ -1134,13 +1114,13 @@ sub pricegroups {
 }
 
 
-sub save_pricegroup {
-  my ($self, $myconfig, $form) = @_;
+sub save_pricegroup ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  if ($form->{id} *= 1) {
+  my $query;
+  if (($form->{id} ||= 0) *= 1) {
     $query = qq|UPDATE pricegroup SET
                 pricegroup = |.$dbh->quote($form->{pricegroup}).qq|
                 WHERE id = $form->{id}|;
@@ -1149,28 +1129,27 @@ sub save_pricegroup {
                 (pricegroup)
                 VALUES (|.$dbh->quote($form->{pricegroup}).qq|)|;
   }
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $dbh->disconnect;
 
 }
 
 
-sub get_pricegroup {
-  my ($self, $myconfig, $form) = @_;
+sub get_pricegroup ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  $form->{id} *= 1;
+  ($form->{id} ||= 0) *= 1;
 
   my $query = qq|SELECT *
                  FROM pricegroup
                  WHERE id = $form->{id}|;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  my $ref = $sth->fetchrow_hashref(NAME_lc);
+  my $ref = $sth->fetchrow_hashref;
 
   for (keys %$ref) { $form->{$_} = $ref->{$_} }
 
@@ -1181,7 +1160,7 @@ sub get_pricegroup {
               FROM partscustomer
               WHERE pricegroup_id = $form->{id}|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
   ($form->{orphaned}) = $sth->fetchrow_array;
   $form->{orphaned} = !$form->{orphaned};
@@ -1193,14 +1172,13 @@ sub get_pricegroup {
 }
 
 
-sub description_translations {
-  my ($self, $myconfig, $form) = @_;
+sub description_translations ($, $myconfig, $form) {
 
   my $where = "1 = 1";
   my $var;
   my $ref;
 
-  $form->{id} *= 1;
+  ($form->{id} ||= 0) *= 1;
 
   for (qw(partnumber description)) {
     if ($form->{$_}) {
@@ -1215,12 +1193,8 @@ sub description_translations {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  my %ordinal = ( 'partnumber' => 2,
-                  'description' => 3
-                );
-
   my @sf = qw(partnumber description);
-  my $sortorder = $form->sort_order(\@sf, \%ordinal);
+  my $sortorder = $form->sort_order(\@sf);
 
   my $query = qq|SELECT l.description AS language, t.description AS translation,
                  l.code
@@ -1236,17 +1210,17 @@ sub description_translations {
               ORDER BY $sortorder|;
 
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
   my $tra;
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $form->{translations} }, $ref;
 
     # get translations for description
-    $tth->execute($ref->{id}) || $form->dberror;
+    $tth->execute($ref->{id}) or $form->dberror;
 
-    while ($tra = $tth->fetchrow_hashref(NAME_lc)) {
+    while (my $tra = $tth->fetchrow_hashref) {
       $form->{trans_id} = $ref->{id};
       $tra->{id} = $ref->{id};
       push @{ $form->{translations} }, $tra;
@@ -1263,14 +1237,13 @@ sub description_translations {
 }
 
 
-sub partsgroup_translations {
-  my ($self, $myconfig, $form) = @_;
+sub partsgroup_translations ($, $myconfig, $form) {
 
   my $where = "1 = 1";
   my $ref;
   my $var;
 
-  $form->{id} *= 1;
+  ($form->{id} ||= 0) *= 1;
 
   if ($form->{description}) {
     $var = $form->like(lc $form->{description});
@@ -1297,17 +1270,17 @@ sub partsgroup_translations {
               ORDER BY 2 $form->{direction}|;
 
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
   my $tra;
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $form->{translations} }, $ref;
 
     # get translations for partsgroup
-    $tth->execute($ref->{id}) || $form->dberror;
+    $tth->execute($ref->{id}) or $form->dberror;
 
-    while ($tra = $tth->fetchrow_hashref(NAME_lc)) {
+    while (my $tra = $tth->fetchrow_hashref) {
       $form->{trans_id} = $ref->{id};
       push @{ $form->{translations} }, $tra;
     }
@@ -1323,14 +1296,13 @@ sub partsgroup_translations {
 }
 
 
-sub project_translations {
-  my ($self, $myconfig, $form) = @_;
+sub project_translations ($, $myconfig, $form) {
 
   my $where = "1 = 1";
   my $var;
   my $ref;
 
-  $form->{id} *= 1;
+  ($form->{id} ||= 0) *= 1;
 
   for (qw(projectnumber description)) {
     if ($form->{$_}) {
@@ -1344,12 +1316,8 @@ sub project_translations {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  my %ordinal = ( 'projectnumber' => 2,
-                  'description' => 3
-                );
-
   my @sf = qw(projectnumber description);
-  my $sortorder = $form->sort_order(\@sf, \%ordinal);
+  my $sortorder = $form->sort_order(\@sf);
 
   my $query = qq|SELECT l.description AS language, t.description AS translation,
                  l.code
@@ -1365,17 +1333,17 @@ sub project_translations {
               ORDER BY $sortorder|;
 
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
   my $tra;
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $form->{translations} }, $ref;
 
     # get translations for description
-    $tth->execute($ref->{id}) || $form->dberror;
+    $tth->execute($ref->{id}) or $form->dberror;
 
-    while ($tra = $tth->fetchrow_hashref(NAME_lc)) {
+    while (my $tra = $tth->fetchrow_hashref) {
       $form->{trans_id} = $ref->{id};
       $tra->{id} = $ref->{id};
       push @{ $form->{translations} }, $tra;
@@ -1392,14 +1360,13 @@ sub project_translations {
 }
 
 
-sub chart_translations {
-  my ($self, $myconfig, $form) = @_;
+sub chart_translations ($, $myconfig, $form) {
 
   my $where = "1 = 1";
   my $var;
   my $ref;
 
-  $form->{id} *= 1;
+  ($form->{id} ||= 0) *= 1;
 
   for (qw(accno description)) {
     if ($form->{$_}) {
@@ -1413,12 +1380,8 @@ sub chart_translations {
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  my %ordinal = ( 'accno' => 2,
-                  'description' => 3
-                );
-
   my @sf = qw(accno description);
-  my $sortorder = $form->sort_order(\@sf, \%ordinal);
+  my $sortorder = $form->sort_order(\@sf);
 
   my $query = qq|SELECT l.description AS language, t.description AS translation,
                  l.code
@@ -1434,17 +1397,17 @@ sub chart_translations {
               ORDER BY $sortorder|;
 
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
   my $tra;
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $form->{translations} }, $ref;
 
     # get translations for description
-    $tth->execute($ref->{id}) || $form->dberror;
+    $tth->execute($ref->{id}) or $form->dberror;
 
-    while ($tra = $tth->fetchrow_hashref(NAME_lc)) {
+    while (my $tra = $tth->fetchrow_hashref) {
       $form->{trans_id} = $ref->{id};
       $tra->{id} = $ref->{id};
       push @{ $form->{translations} }, $tra;
@@ -1462,24 +1425,23 @@ sub chart_translations {
 
 
 
-sub save_translation {
-  my ($self, $myconfig, $form) = @_;
+sub save_translation ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
 
-  $form->{id} *= 1;
+  ($form->{id} ||= 0) *= 1;
 
   my $query = qq|DELETE FROM translation
                  WHERE trans_id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $query = qq|INSERT INTO translation (trans_id, language_code, description)
               VALUES ($form->{id}, ?, ?)|;
-  my $sth = $dbh->prepare($query) || $form->dberror($query);
+  my $sth = $dbh->prepare($query) or $form->dberror($query);
 
   foreach my $i (1 .. $form->{translation_rows}) {
-    if ($form->{"language_code_$i"} ne "") {
+    if (($form->{"language_code_$i"} // '') ne "") {
       $sth->execute($form->{"language_code_$i"}, $form->{"translation_$i"});
       $sth->finish;
     }
@@ -1490,25 +1452,23 @@ sub save_translation {
 }
 
 
-sub delete_translation {
-  my ($self, $myconfig, $form) = @_;
+sub delete_translation ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  $form->{id} *= 1;
+  ($form->{id} ||= 0) *= 1;
 
   my $query = qq|DELETE FROM translation
                    WHERE trans_id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $dbh->disconnect;
 
 }
 
 
-sub project_sales_order {
-   my ($self, $myconfig, $form) = @_;
+sub project_sales_order ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -1528,25 +1488,24 @@ sub project_sales_order {
 }
 
 
-sub get_jcitems {
-  my ($self, $myconfig, $form) = @_;
+sub get_jcitems ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  my %defaults = $form->get_defaults($dbh, ['precision']);
   $form->{precision} = $defaults{precision};
 
   my $var;
   my $where;
 
   if ($form->{projectnumber}) {
-    (undef, $var) = split /--/, $form->{projectnumber};
+    (undef, $var) = split /--/, $form->{projectnumber} // '';
     $where .= " AND j.project_id = $var";
   }
 
   if ($form->{employee}) {
-    (undef, $var) = split /--/, $form->{employee};
+    (undef, $var) = split /--/, $form->{employee} // '';
     $where .= " AND j.employee_id = $var";
   }
 
@@ -1563,7 +1522,7 @@ sub get_jcitems {
 
   my $query;
   my $ref;
-  $form->{vc} = ($form->{vc} eq 'customer') ? 'customer' : 'vendor';
+  $form->{vc} = (($form->{vc} // '') eq 'customer') ? 'customer' : 'vendor';
 
   $query = qq|SELECT j.id, j.description, j.qty - j.allocated AS qty,
                j.sellprice, j.parts_id, pr.$form->{vc}_id, j.project_id,
@@ -1585,22 +1544,22 @@ sub get_jcitems {
     $query =~ s/c\.name,/c\.name, j\.parts_id, /;
   }
 
-  $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  my $sth = $dbh->prepare($query);
+  $sth->execute or $form->dberror($query);
 
   # tax accounts
   $query = qq|SELECT c.accno
               FROM chart c
               JOIN partstax pt ON (pt.chart_id = c.id)
               WHERE pt.parts_id = ?|;
-  my $tth = $dbh->prepare($query) || $form->dberror($query);
+  my $tth = $dbh->prepare($query) or $form->dberror($query);
   my $ptref;
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
 
     $tth->execute($ref->{parts_id});
     $ref->{taxaccounts} = "";
-    while ($ptref = $tth->fetchrow_hashref(NAME_lc)) {
+    while (my $ptref = $tth->fetchrow_hashref) {
       $ref->{taxaccounts} .= "$ptref->{accno} ";
     }
     $tth->finish;
@@ -1627,8 +1586,9 @@ sub get_jcitems {
               $where
               ORDER BY c.accno, t.validto|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  $sth->execute or $form->dberror($query);
+  my %tax;
+  while (my $ref = $sth->fetchrow_hashref) {
     if (! exists $tax{$ref->{accno}}) {
       $form->{taxaccounts} .= "$ref->{accno} ";
     }
@@ -1643,14 +1603,13 @@ sub get_jcitems {
 }
 
 
-sub allocate_projectitems {
-  my ($self, $myconfig, $form) = @_;
+sub allocate_projectitems ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
 
   for my $i (1 .. $form->{rowcount}) {
-    for (split / /, $form->{"jcitems_$i"}) {
+    for (split / /, $form->{"jcitems_$i"} // '') {
       my ($id, $qty) = split /:/, $_;
       $form->update_balance($dbh,
                             'jcitems',
@@ -1660,7 +1619,7 @@ sub allocate_projectitems {
     }
   }
 
-  $rc = $dbh->commit;
+  my $rc = $dbh->commit;
   $dbh->disconnect;
 
   $rc;
@@ -1674,7 +1633,7 @@ sub allocate_projectitems {
 
 =head1 NAME
 
-PE - Project module
+SL::PE - Project module
 
 =head1 DESCRIPTION
 
@@ -1687,114 +1646,114 @@ L<SL::PE> implements the following functions:
 
 =head2 allocate_projectitems
 
-  PE->allocate_projectitems($myconfig, $form);
+  SL::PE->allocate_projectitems($myconfig, $form);
 
 =head2 chart_translations
 
-  PE->chart_translations($myconfig, $form);
+  SL::PE->chart_translations($myconfig, $form);
 
 =head2 delete_job
 
-  PE->delete_job($myconfig, $form);
+  SL::PE->delete_job($myconfig, $form);
 
 =head2 delete_partsgroup
 
-  PE->delete_partsgroup($myconfig, $form);
+  SL::PE->delete_partsgroup($myconfig, $form);
 
 =head2 delete_pricegroup
 
-  PE->delete_pricegroup($myconfig, $form);
+  SL::PE->delete_pricegroup($myconfig, $form);
 
 =head2 delete_project
 
-  PE->delete_project($myconfig, $form);
+  SL::PE->delete_project($myconfig, $form);
 
 =head2 delete_translation
 
-  PE->delete_translation($myconfig, $form);
+  SL::PE->delete_translation($myconfig, $form);
 
 =head2 description_translations
 
-  PE->description_translations($myconfig, $form);
+  SL::PE->description_translations($myconfig, $form);
 
 =head2 get_customer
 
-  PE->get_customer($myconfig, $form, $dbh);
+  SL::PE->get_customer($myconfig, $form, $dbh);
 
 =head2 get_jcitems
 
-  PE->get_jcitems($myconfig, $form);
+  SL::PE->get_jcitems($myconfig, $form);
 
 =head2 get_job
 
-  PE->get_job($myconfig, $form);
+  SL::PE->get_job($myconfig, $form);
 
 =head2 get_partsgroup
 
-  PE->get_partsgroup($myconfig, $form);
+  SL::PE->get_partsgroup($myconfig, $form);
 
 =head2 get_pricegroup
 
-  PE->get_pricegroup($myconfig, $form);
+  SL::PE->get_pricegroup($myconfig, $form);
 
 =head2 get_project
 
-  PE->get_project($myconfig, $form);
+  SL::PE->get_project($myconfig, $form);
 
 =head2 jobs
 
-  PE->jobs($myconfig, $form);
+  SL::PE->jobs($myconfig, $form);
 
 =head2 list_stock
 
-  PE->list_stock($myconfig, $form);
+  SL::PE->list_stock($myconfig, $form);
 
 =head2 partsgroup_translations
 
-  PE->partsgroup_translations($myconfig, $form);
+  SL::PE->partsgroup_translations($myconfig, $form);
 
 =head2 partsgroups
 
-  PE->partsgroups($myconfig, $form);
+  SL::PE->partsgroups($myconfig, $form);
 
 =head2 pricegroups
 
-  PE->pricegroups($myconfig, $form);
+  SL::PE->pricegroups($myconfig, $form);
 
 =head2 project_sales_order
 
-  PE->project_sales_order($myconfig, $form);
+  SL::PE->project_sales_order($myconfig, $form);
 
 =head2 project_translations
 
-  PE->project_translations($myconfig, $form);
+  SL::PE->project_translations($myconfig, $form);
 
 =head2 projects
 
-  PE->projects($myconfig, $form);
+  SL::PE->projects($myconfig, $form);
 
 =head2 save_job
 
-  PE->save_job($myconfig, $form);
+  SL::PE->save_job($myconfig, $form);
 
 =head2 save_partsgroup
 
-  PE->save_partsgroup($myconfig, $form);
+  SL::PE->save_partsgroup($myconfig, $form);
 
 =head2 save_pricegroup
 
-  PE->save_pricegroup($myconfig, $form);
+  SL::PE->save_pricegroup($myconfig, $form);
 
 =head2 save_project
 
-  PE->save_project($myconfig, $form);
+  SL::PE->save_project($myconfig, $form);
 
 =head2 save_translation
 
-  PE->save_translation($myconfig, $form);
+  SL::PE->save_translation($myconfig, $form);
 
 =head2 stock_assembly
 
-  PE->stock_assembly($myconfig, $form);
+  SL::PE->stock_assembly($myconfig, $form);
 
 =cut

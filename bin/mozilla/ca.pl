@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -52,7 +51,7 @@ sub chart_of_accounts {
 
   $form->{excludeclosed} = 1;
 
-  CA->all_accounts(\%myconfig, \%$form);
+  SL::CA->all_accounts(\%myconfig, $form);
 
   @column_index = qw(accno gifi_accno description debit credit);
   push @column_index, "closed" unless $form->{hideaccounts};
@@ -250,7 +249,7 @@ sub list {
 
 sub list_transactions {
 
-  CA->all_transactions(\%myconfig, \%$form);
+  SL::CA->all_transactions(\%myconfig, $form);
 
   $department = $form->escape($form->{department});
   $projectnumber = $form->escape($form->{projectnumber});

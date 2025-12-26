@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -76,8 +75,8 @@ sub edit {
 }
 
 
-sub prepare_partsgroup { PE->get_partsgroup(\%myconfig, \%$form) if $form->{id} }
-sub prepare_pricegroup { PE->get_pricegroup(\%myconfig, \%$form) if $form->{id} }
+sub prepare_partsgroup { SL::PE->get_partsgroup(\%myconfig, $form) if $form->{id} }
+sub prepare_pricegroup { SL::PE->get_pricegroup(\%myconfig, $form) if $form->{id} }
 
 sub prepare_job {
 
@@ -86,7 +85,7 @@ sub prepare_job {
 
   $form->{vc} = 'customer';
 
-  PE->get_job(\%myconfig, \%$form);
+  SL::PE->get_job(\%myconfig, $form);
 
   $form->helpref("jobs", $myconfig{countrycode});
 
@@ -458,7 +457,7 @@ sub job_footer {
 
 sub list_stock {
 
-  PE->list_stock(\%myconfig, \%$form);
+  SL::PE->list_stock(\%myconfig, $form);
 
   $form->{title} = $locale->text('Stock Finished Goods');
   $form->{action} = "list_stock";
@@ -592,7 +591,7 @@ sub list_stock {
 
 sub stock {
 
-  if (PE->stock_assembly(\%myconfig, \%$form)) {
+  if (SL::PE->stock_assembly(\%myconfig, $form)) {
     $form->redirect($locale->text('Assembly stocked!'));
   } else {
     $form->error($locale->text('Cannot stock Assembly!'));
@@ -605,8 +604,8 @@ sub prepare_project {
 
   $form->{vc} = 'customer';
 
-  PE->get_project(\%myconfig, \%$form);
-  RU->register(\%myconfig, $form) if $form->{id};
+  SL::PE->get_project(\%myconfig, $form);
+  SL::RU->register(\%myconfig, $form) if $form->{id};
 
   $form->helpref("projects", $myconfig{countrycode});
 
@@ -686,7 +685,7 @@ sub search {
   if ($form->{type} eq 'stock') {
     $form->{nextsub} = "list_stock";
     $form->{title} = $locale->text('Stock Finished Goods');
-    PE->list_stock(\%myconfig, \%$form);
+    SL::PE->list_stock(\%myconfig, $form);
 
     $selectperiod = "";
     $orphaned = "";
@@ -796,7 +795,7 @@ sub search {
 
   &calendar;
 
-  &change_report(\%$form, \@input, \@checked, \%radio);
+  &change_report($form, \@input, \@checked, \%radio);
 
   print qq|
 <body onload="document.main.${focus}.focus()">
@@ -856,7 +855,7 @@ sub search {
 sub job_report {
 
   for (qw(projectnumber description)) { $form->{$_} = $form->unescape($form->{$_}) }
-  PE->jobs(\%myconfig, \%$form);
+  SL::PE->jobs(\%myconfig, $form);
 
   $form->{action} = "job_report";
   &list_projects;
@@ -867,7 +866,7 @@ sub job_report {
 sub project_report {
 
   for (qw(projectnumber description)) { $form->{$_} = $form->unescape($form->{$_}) }
-  PE->projects(\%myconfig, \%$form);
+  SL::PE->projects(\%myconfig, $form);
 
   $form->{action} = "project_report";
   &list_projects;
@@ -990,13 +989,13 @@ sub list_projects {
     for (qw(description name)) { $column_data{$_} = qq|<td>$ref->{$_}&nbsp;</td>| }
 
     if ($ref->{name}) {
-      $column_data{name} = qq|<td><a href=ct.pl?action=edit&db=customer&id=$ref->{customer_id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{name}</td>|;
+      $column_data{name} = qq|<td><a class="name-l" href=ct.pl?action=edit&db=customer&id=$ref->{customer_id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{name}</td>|;
     }
 
     for (qw(production completed)) { $column_data{$_} = qq|<td align=right>|.$form->format_amount(\%myconfig, $ref->{$_}) }
 
-    $column_data{projectnumber} = qq|<td><a href=$form->{script}?action=edit&type=$form->{type}&status=$form->{status}&id=$ref->{id}&path=$form->{path}&login=$form->{login}&project=$form->{project}&callback=$callback>$ref->{projectnumber}</td>|;
-    $column_data{partnumber} = qq|<td><a href=ic.pl?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{partnumber}</td>|;
+    $column_data{projectnumber} = qq|<td><a class="number-l" href=$form->{script}?action=edit&type=$form->{type}&status=$form->{status}&id=$ref->{id}&path=$form->{path}&login=$form->{login}&project=$form->{project}&callback=$callback>$ref->{projectnumber}</td>|;
+    $column_data{partnumber} = qq|<td><a class="partnumber-l" href=ic.pl?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{partnumber}</td>|;
 
     $j++; $j %= 2;
 
@@ -1207,10 +1206,10 @@ sub project_footer {
 
 sub save {
 
-  $form->{userspath} = $userspath;
+  $form->{userspath} = $slconfig{userspath};
 
   if ($form->{translation}) {
-    PE->save_translation(\%myconfig, \%$form);
+    SL::PE->save_translation(\%myconfig, $form);
     $form->redirect($locale->text('Translations saved!'));
     exit;
   }
@@ -1235,20 +1234,20 @@ sub save {
       }
     }
 
-    PE->save_project(\%myconfig, \%$form);
-    RU->register(\%myconfig, $form);
+    SL::PE->save_project(\%myconfig, $form);
+    SL::RU->register(\%myconfig, $form);
     $form->redirect($locale->text('Project saved!'));
   }
 
   if ($form->{type} eq 'partsgroup') {
     $form->isblank("partsgroup", $locale->text('Group missing!'));
-    PE->save_partsgroup(\%myconfig, \%$form);
+    SL::PE->save_partsgroup(\%myconfig, $form);
     $form->redirect($locale->text('Group saved!'));
   }
 
   if ($form->{type} eq 'pricegroup') {
     $form->isblank("pricegroup", $locale->text('Pricegroup missing!'));
-    PE->save_pricegroup(\%myconfig, \%$form);
+    SL::PE->save_pricegroup(\%myconfig, $form);
     $form->redirect($locale->text('Pricegroup saved!'));
   }
 
@@ -1274,7 +1273,7 @@ sub save {
       }
     }
 
-    PE->save_job(\%myconfig, \%$form);
+    SL::PE->save_job(\%myconfig, $form);
     $form->redirect($locale->text('Job saved!'));
   }
 
@@ -1292,26 +1291,26 @@ sub save_as_new {
 sub delete {
 
   if ($form->{translation}) {
-    PE->delete_translation(\%myconfig, \%$form);
+    SL::PE->delete_translation(\%myconfig, $form);
     $form->redirect($locale->text('Translation deleted!'));
 
   } else {
 
     if ($form->{type} eq 'project') {
-      PE->delete_project(\%myconfig, \%$form);
-      RU->delete(\%myconfig, $form);
+      SL::PE->delete_project(\%myconfig, $form);
+      SL::RU->delete(\%myconfig, $form);
       $form->redirect($locale->text('Project deleted!'));
     }
     if ($form->{type} eq 'job') {
-      PE->delete_job(\%myconfig, \%$form);
+      SL::PE->delete_job(\%myconfig, $form);
       $form->redirect($locale->text('Job deleted!'));
     }
     if ($form->{type} eq 'partsgroup') {
-      PE->delete_partsgroup(\%myconfig, \%$form);
+      SL::PE->delete_partsgroup(\%myconfig, $form);
       $form->redirect($locale->text('Group deleted!'));
     }
     if ($form->{type} eq 'pricegroup') {
-      PE->delete_pricegroup(\%myconfig, \%$form);
+      SL::PE->delete_pricegroup(\%myconfig, $form);
       $form->redirect($locale->text('Pricegroup deleted!'));
     }
   }
@@ -1322,7 +1321,7 @@ sub delete {
 sub partsgroup_report {
 
   for (qw(partsgroup partsgroupcode)) { $form->{$_} = $form->unescape($form->{$_}) }
-  PE->partsgroups(\%myconfig, \%$form);
+  SL::PE->partsgroups(\%myconfig, $form);
 
   $href = "$form->{script}?action=partsgroup_report&sort=$form->{sort}&direction=$form->{direction}&oldsort=$form->{oldsort}&type=$form->{type}&path=$form->{path}&login=$form->{login}&status=$form->{status}";
 
@@ -1397,11 +1396,11 @@ sub partsgroup_report {
         <tr valign=top class=listrow$i>
 |;
 
-    $column_data{partsgroup} = qq|<td><a href=$form->{script}?action=edit&type=$form->{type}&status=$form->{status}&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{partsgroup}</td>|;
+    $column_data{partsgroup} = qq|<td><a class="partsgroup-l" href=$form->{script}?action=edit&type=$form->{type}&status=$form->{status}&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{partsgroup}</td>|;
     $column_data{code} = qq|<td>$ref->{code}</td>|;
     $pos = ($ref->{pos}) ? "*" : "&nbsp;";
     $column_data{pos} = qq|<td align=center>$pos</td>|;
-    $column_data{image} = ($ref->{image}) ? "<td width=10%><a href=$images/$myconfig{dbname}/$ref->{image}><img src=$images/$myconfig{dbname}/$ref->{image} height=32 border=0></a></td>" : "<td>&nbsp;</td>";
+    $column_data{image} = ($ref->{image}) ? "<td width=10%><a href=$slconfig{images}/$myconfig{dbname}/$ref->{image}><img src=$slconfig{images}/$myconfig{dbname}/$ref->{image} height=32 border=0></a></td>" : "<td>&nbsp;</td>";
 
     for (@column_index) { print "$column_data{$_}\n" }
 
@@ -1464,7 +1463,7 @@ sub partsgroup_header {
 
   $form->helpref("partsgroup", $myconfig{countrycode});
 
-  $preview = ($form->{image}) ? qq|<a href=$images/$myconfig{dbname}/$form->{image}> ?| : qq| <a href="ic.pl?action=upload_image&login=$form->{login}&path=$form->{path}" target=popup>&#9701;</a>|;
+  $preview = ($form->{image}) ? qq|<a href=$slconfig{images}/$myconfig{dbname}/$form->{image}> ?| : qq| <a href="ic.pl?action=upload_image&login=$form->{login}&path=$form->{path}" target=popup>&#9701;</a>|;
 
   $form->header;
 
@@ -1551,7 +1550,7 @@ sub partsgroup_footer {
 sub pricegroup_report {
 
   $form->{pricegroup} = $form->unescape($form->{pricegroup});
-  PE->pricegroups(\%myconfig, \%$form);
+  SL::PE->pricegroups(\%myconfig, $form);
 
   $href = "$form->{script}?action=pricegroup_report&sort=$form->{sort}&direction=$form->{direction}&oldsort=$form->{oldsort}&type=$form->{type}&path=$form->{path}&login=$form->{login}&status=$form->{status}";
 
@@ -1618,7 +1617,7 @@ sub pricegroup_report {
         <tr valign=top class=listrow$i>
 |;
 
-    $column_data{pricegroup} = qq|<td><a href=$form->{script}?action=edit&type=$form->{type}&status=$form->{status}&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{pricegroup}</td>|;
+    $column_data{pricegroup} = qq|<td><a class="pricegroup-l" href=$form->{script}?action=edit&type=$form->{type}&status=$form->{status}&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{pricegroup}</td>|;
     for (@column_index) { print "$column_data{$_}\n" }
 
     print "
@@ -1862,7 +1861,7 @@ sub list_translations {
     @column_index = $form->sort_columns("$form->{number}", "description", "language", "translation");
   }
 
-  &{ "PE::$form->{translation}_translations" }("", \%myconfig, \%$form);
+  &{ "SL::PE::$form->{translation}_translations" }("", \%myconfig, $form);
 
   $callback .= "&direction=$form->{direction}&oldsort=$form->{oldsort}";
 
@@ -1970,7 +1969,7 @@ sub list_translations {
 
 sub edit_translation {
 
-  &{ "PE::$form->{translation}_translations" }("", \%myconfig, \%$form);
+  &{ "SL::PE::$form->{translation}_translations" }("", \%myconfig, $form);
 
   $form->error($locale->text('Languages not defined!')) unless @{ $form->{all_language} };
 
@@ -2143,7 +2142,7 @@ sub update {
 
       if ($form->{startdate} ne $form->{oldstartdate} || $form->{enddate} ne $form->{oldenddate}) {
 
-        PE->get_customer(\%myconfig, \%$form);
+        SL::PE->get_customer(\%myconfig, $form);
 
         if (@{ $form->{"all_$form->{vc}"} }) {
           $form->{"select$form->{vc}"} = qq|\n|;
@@ -2318,7 +2317,7 @@ sub add_pricegroup { &add }
 
 sub project_sales_order {
 
-  PE->project_sales_order(\%myconfig, \%$form);
+  SL::PE->project_sales_order(\%myconfig, $form);
 
   if (@{ $form->{all_years} }) {
     $selectaccountingyear = "\n";
@@ -2452,7 +2451,7 @@ sub project_jcitems_list {
   for (qw(month year interval summary transdatefrom transdateto login path nextsub type vc)) { $form->{callback} .= "&$_=$form->{$_}" }
   for (qw(employee projectnumber)) { $form->{callback} .= "&$_=".$form->escape($form->{$_},1) }
 
-  PE->get_jcitems(\%myconfig, \%$form);
+  SL::PE->get_jcitems(\%myconfig, $form);
 
   # flatten array
   $i = 1;
@@ -2750,7 +2749,7 @@ sub generate_sales_orders {
     }
   }
 
-  $order = new Form;
+  $order = SL::Form->new;
   for (keys %{ $form->{order} }) {
 
     for (qw(type vc defaultcurrency login)) { $order->{$_} = $form->{$_} }
@@ -2759,7 +2758,7 @@ sub generate_sales_orders {
     $i = 0;
     $order->{"$order->{vc}_id"} = $_;
 
-    AA->get_name(\%myconfig, \%$order);
+    SL::AA->get_name(\%myconfig, \%$order);
 
     foreach $ref (@ {$form->{order}{$_} }) {
       $i++;
@@ -2780,10 +2779,10 @@ sub generate_sales_orders {
 
     for (qw(employee employee_id)) { delete $order->{$_} }
 
-    if (OE->save(\%myconfig, \%$order)) {
-      RU->register(\%myconfig, $order);
-      if (! PE->allocate_projectitems(\%myconfig, \%$order)) {
-        OE->delete(\%myconfig, \%$order, $spool);
+    if (SL::OE->save(\%myconfig, \%$order)) {
+      SL::RU->register(\%myconfig, $order);
+      if (! SL::PE->allocate_projectitems(\%myconfig, \%$order)) {
+        SL::OE->delete(\%myconfig, \%$order, $slconfig{spool});
       }
     } else {
       $order->error($locale->text('Failed to save order!'));

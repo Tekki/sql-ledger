@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -102,7 +101,7 @@ sub report {
 |;
 
 
-  RP->create_links(\%myconfig, \%$form, $report{$form->{reportcode}}->{vc});
+  SL::RP->create_links(\%myconfig, $form, $report{$form->{reportcode}}->{vc});
 
   # departments
   if (@{ $form->{all_department} }) {
@@ -334,7 +333,7 @@ sub report {
 
     $form->{db} = ($form->{reportcode} =~ /_collected/) ? "ar" : "ap";
 
-    RP->get_taxaccounts(\%myconfig, \%$form);
+    SL::RP->get_taxaccounts(\%myconfig, $form);
 
     $form->{sort} ||= "transdate";
 
@@ -457,7 +456,7 @@ sub report {
 
   $form->header;
 
-  &change_report(\%$form, \@input, \@checked, \%radio);
+  &change_report($form, \@input, \@checked, \%radio);
 
   &calendar;
 
@@ -1031,7 +1030,7 @@ sub report {
 
     $gifi = "";
 
-    RP->paymentaccounts(\%myconfig, \%$form);
+    SL::RP->paymentaccounts(\%myconfig, $form);
 
     $selectpaymentaccount = "\n";
     foreach $ref (@{ $form->{PR} }) {
@@ -1207,7 +1206,7 @@ sub generate_income_statement {
 
   ($form->{reportdescription}, $form->{reportid}) = split /--/, $form->{report};
 
-  RP->income_statement(\%myconfig, \%$form, \%$locale);
+  SL::RP->income_statement(\%myconfig, $form, \%$locale);
 
   ($form->{department}) = split /--/, $form->{department};
   ($form->{projectnumber}) = split /--/, $form->{projectnumber};
@@ -1251,14 +1250,14 @@ sub generate_income_statement {
 
   # this section applies to the old template
   if ($form->{usetemplate}) {
-    $form->{templates} = "$templates/$myconfig{templates}";
+    $form->{templates} = "$slconfig{templates}/$myconfig{templates}";
     $form->{IN} = "income_statement.html";
 
     &build_report(qw(I E));
   }
 
   if ($form->{usetemplate}) {
-    $form->parse_template(\%myconfig, $userspath);
+    $form->parse_template(\%myconfig, $slconfig{userspath});
   } else {
 
   $form->header;
@@ -1757,7 +1756,7 @@ sub generate_balance_sheet {
 
   ($form->{reportdescription}, $form->{reportid}) = split /--/, $form->{report};
 
-  RP->balance_sheet(\%myconfig, \%$form, \%$locale);
+  SL::RP->balance_sheet(\%myconfig, $form, \%$locale);
 
   ($form->{department}) = split /--/, $form->{department};
 
@@ -1802,7 +1801,7 @@ sub generate_balance_sheet {
 
   if ($form->{usetemplate}) {
 
-    $form->{templates} = "$templates/$myconfig{templates}";
+    $form->{templates} = "$slconfig{templates}/$myconfig{templates}";
     $form->{IN} = "balance_sheet.html";
 
     &build_report(qw(A L Q));
@@ -1810,7 +1809,7 @@ sub generate_balance_sheet {
 
 
   if ($form->{usetemplate}) {
-    $form->parse_template(\%myconfig, $userspath);
+    $form->parse_template(\%myconfig, $slconfig{userspath});
   } else {
 
   $form->header;
@@ -1933,7 +1932,7 @@ sub generate_projects {
 
   ($form->{reportdescription}, $form->{reportid}) = split /--/, $form->{report};
 
-  RP->trial_balance(\%myconfig, \%$form);
+  SL::RP->trial_balance(\%myconfig, $form);
 
   &list_accounts;
 
@@ -1958,7 +1957,7 @@ sub generate_trial_balance {
   }
 
   # get for each account initial balance, debits and credits
-  RP->trial_balance(\%myconfig, \%$form);
+  SL::RP->trial_balance(\%myconfig, $form);
 
   $form->{title} = $locale->text('Trial Balance') . " / $form->{company}";
   $form->helpref("trial_balance", $myconfig{countrycode});
@@ -2261,7 +2260,7 @@ sub display_all {
 
   require "$form->{path}/ca.pl";
 
-  RP->trial_balance(\%myconfig, $form);
+  SL::RP->trial_balance(\%myconfig, $form);
   my $callback = $form->{callback};
 
   if ($form->{department}) {
@@ -2312,7 +2311,7 @@ sub display_all {
   for my $ref (sort { $a->{accno} cmp $b->{accno} } @{$oldform->{TB}}) {
     next unless $ref->{charttype} eq 'A';
 
-    $form = bless {%$oldform}, Form;
+    $form = bless {%$oldform}, SL::Form;
     $form->{accno}     = $ref->{accno};
     $form->{l_accno}   = 1;
     $form->{sort}      = 'transdate';
@@ -2372,7 +2371,7 @@ sub generate_ar_aging {
 
   $form->{initcallback} = qq|$form->{script}?action=generate_ar_aging&todate=$form->{todate}|;
 
-  RP->aging(\%myconfig, \%$form);
+  SL::RP->aging(\%myconfig, $form);
 
   &aging;
 
@@ -2394,7 +2393,7 @@ sub generate_ap_aging {
 
   $form->{initcallback} = qq|$form->{script}?action=generate_ap_aging&todate=$form->{todate}|;
 
-  RP->aging(\%myconfig, \%$form);
+  SL::RP->aging(\%myconfig, $form);
 
   &aging;
 
@@ -2576,7 +2575,7 @@ sub aging {
 
     if ($vc_id != $ref->{vc_id}) {
 
-      $column_data{vc} = qq|<td><a href=ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{vc_id}&db=$form->{vc}&callback=$callback>$ref->{name}</a></td>|;
+      $column_data{vc} = qq|<td><a class="vc-l" href=ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{vc_id}&db=$form->{vc}&callback=$callback>$ref->{name}</a></td>|;
       $column_data{"$form->{vc}number"} = qq|<td>$ref->{"$form->{vc}number"}</td>|;
 
       if ($form->{selectlanguage}) {
@@ -2783,7 +2782,7 @@ sub select_all { &{ "select_all_$form->{type}" } }
 
 sub select_all_statement {
 
-  RP->aging(\%myconfig, \%$form);
+  SL::RP->aging(\%myconfig, $form);
 
   for (@{ $form->{AG} }) { $form->{"ndx_$_->{curr}_$_->{vc_id}"} = "checked" }
   $form->{allbox} = "checked";
@@ -2796,7 +2795,7 @@ sub select_all_statement {
 
 sub select_all_reminder {
 
-  RP->reminder(\%myconfig, \%$form);
+  SL::RP->reminder(\%myconfig, $form);
 
   for (@{ $form->{AG} }) { $form->{"ndx_$_->{id}"} = "checked" }
   $form->{allbox} = "checked";
@@ -2811,7 +2810,7 @@ sub deselect_all { &{ "deselect_all_$form->{type}" } }
 
 sub deselect_all_statement {
 
-  RP->aging(\%myconfig, \%$form);
+  SL::RP->aging(\%myconfig, $form);
 
   for (@{ $form->{AG} }) { $form->{"ndx_$_->{curr}_$_->{vc_id}"} = "" }
   $form->{allbox} = "";
@@ -2823,7 +2822,7 @@ sub deselect_all_statement {
 
 sub deselect_all_reminder {
 
-  RP->reminder(\%myconfig, \%$form);
+  SL::RP->reminder(\%myconfig, $form);
 
   for (@{ $form->{AG} }) { $form->{"ndx_$_->{id}"} = "" }
   $form->{allbox} = "";
@@ -2842,7 +2841,7 @@ sub generate_reminder {
 
   $form->{initcallback} = qq|$form->{script}?action=generate_reminder|;
 
-  RP->reminder(\%myconfig, \%$form);
+  SL::RP->reminder(\%myconfig, $form);
 
   &reminder;
 
@@ -2972,7 +2971,7 @@ sub reminder {
 
     $curr = $ref->{curr};
 
-    $column_data{vc} = qq|<td><a href=ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{vc_id}&db=$form->{vc}&callback=$callback>$ref->{name}</a></td>
+    $column_data{vc} = qq|<td><a class="vc-l" href=ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{vc_id}&db=$form->{vc}&callback=$callback>$ref->{name}</a></td>
     <input type=hidden name="vc_$ref->{id}" value="$ref->{vc_id}">|;
 
     $column_data{"$form->{vc}number"} = qq|<td>$ref->{"$form->{vc}number"}</td>|;
@@ -2997,7 +2996,7 @@ sub reminder {
 
     $href = qq|$ref->{module}.pl?path=$form->{path}&action=edit&id=$ref->{id}&login=$form->{login}&callback=|.$form->escape($form->{callback});
 
-    $column_data{invnumber} = qq|<td><a href=$href>$ref->{invnumber}</a></td>|;
+    $column_data{invnumber} = qq|<td><a class="invnumber-l" href=$href>$ref->{invnumber}</a></td>|;
     $column_data{ordnumber} = qq|<td>$ref->{ordnumber}</td>|;
     for (qw(transdate duedate)) { $column_data{$_} = qq|<td nowrap>$ref->{$_}</td>| }
 
@@ -3093,7 +3092,7 @@ sub reminder {
 
 sub save_level {
 
-  if (RP->save_level(\%myconfig, \%$form)) {
+  if (SL::RP->save_level(\%myconfig, $form)) {
     $form->redirect;
   }
 
@@ -3127,7 +3126,7 @@ sub print_options {
     $media = qq|<select name=media>
             <option value=screen>|.$locale->text('Screen');
 
-    if ($form->{selectprinter} && $latex) {
+    if ($form->{selectprinter} && $slconfig{latex}) {
       for (split /\n/, $form->{selectprinter}) { $media .= qq|
             <option value="$_">$_| }
     }
@@ -3148,7 +3147,7 @@ sub print_options {
   $media .= qq|</select>|;
   $media =~ s/(<option value="\Q$form->{media}\E")/$1 selected/;
 
-  if ($latex) {
+  if ($slconfig{latex}) {
     $format .= qq|
             <option value="ps">|.$locale->text('Postscript').qq|
             <option value="pdf">|.$locale->text('PDF');
@@ -3167,7 +3166,7 @@ sub print_options {
     <td>$media</td>
 |;
 
-  if ($form->{selectprinter} && $latex && $form->{media} ne 'email') {
+  if ($form->{selectprinter} && $slconfig{latex} && $form->{media} ne 'email') {
     print qq|
       <td nowrap>|.$locale->text('Copies').qq|
       <input name=copies size=2 value=$form->{copies}></td>
@@ -3209,7 +3208,7 @@ sub e_mail_statement {
       if ($form->{"ndx_${curr}_$_"}) {
         $form->{"$form->{vc}_id"} = $_;
         $form->{language_code} = $form->{"language_code_${curr}_$_"};
-        RP->get_customer(\%myconfig, \%$form);
+        SL::RP->get_customer(\%myconfig, $form);
         $selected = 1;
         last;
       }
@@ -3251,7 +3250,7 @@ sub e_mail_reminder {
     if ($form->{"ndx_$_"}) {
       $form->{"$form->{vc}_id"} = $form->{"vc_$_"};
       $form->{language_code} = $form->{"language_code_$_"};
-      RP->get_customer(\%myconfig, \%$form);
+      SL::RP->get_customer(\%myconfig, $form);
       $selected = 1;
       last;
     }
@@ -3359,11 +3358,11 @@ sub prepare_e_mail {
 
 sub send_email_statement {
 
-  $form->{OUT} = "$sendmail";
+  $form->{OUT} = "$slconfig{sendmail}";
 
   $form->isblank("email", $locale->text('E-mail address missing!'));
 
-  RP->aging(\%myconfig, \%$form);
+  SL::RP->aging(\%myconfig, $form);
 
   $form->{subject} = $locale->text('Statement').qq| - $form->{todate}| unless $form->{subject};
 
@@ -3394,11 +3393,11 @@ sub send_email_statement {
 
 sub send_email_reminder {
 
-  $form->{OUT} = "$sendmail";
+  $form->{OUT} = "$slconfig{sendmail}";
 
   $form->isblank("email", $locale->text('E-mail address missing!'));
 
-  RP->reminder(\%myconfig, \%$form);
+  SL::RP->reminder(\%myconfig, $form);
 
   $form->{subject} = $locale->text('Reminder') unless $form->{subject};
 
@@ -3458,7 +3457,7 @@ sub print_statement {
     $SIG{INT} = 'IGNORE';
   }
 
-  RP->aging(\%myconfig, \%$form);
+  SL::RP->aging(\%myconfig, $form);
 
   if ($form->{media} !~ /(screen|email)/) {
     $form->{OUT} = qq~| $form->{"$form->{media}_printer"}~;
@@ -3526,7 +3525,7 @@ sub print_reminder {
     $SIG{INT} = 'IGNORE';
   }
 
-  RP->reminder(\%myconfig, \%$form);
+  SL::RP->reminder(\%myconfig, $form);
 
   if ($form->{media} !~ /(screen|email)/) {
     $form->{OUT} = qq~| $form->{"$form->{media}_printer"}~;
@@ -3554,7 +3553,7 @@ sub do_print_reminder {
   $form->{todate} ||= $form->current_date(\%myconfig);
   $form->{statementdate} = $locale->date(\%myconfig, $form->{todate}, 1);
 
-  $form->{templates} = "$templates/$myconfig{templates}";
+  $form->{templates} = "$slconfig{templates}/$myconfig{templates}";
 
   for (qw(name email)) { $form->{"user$_"} = $myconfig{$_} }
 
@@ -3567,7 +3566,7 @@ sub do_print_reminder {
   push @a, qw(dcn rvc iban qriban bic membernumber clearingnumber);
   push @a, map { "bank$_" } qw(name address1 streetname buildingnumber address2 city state zipcode country);
 
-  $c = CP->new(($form->{language_code}) ? $form->{language_code} : $myconfig{countrycode});
+  $c = SL::CP->new(($form->{language_code}) ? $form->{language_code} : $myconfig{countrycode});
 
   while (@{ $form->{AG} }) {
 
@@ -3626,7 +3625,7 @@ sub do_print_reminder {
 
       $form->{due} = $form->format_amount(\%myconfig, $ref->{due} / $ref->{exchangerate}, $form->{precision});
 
-      $form->parse_template(\%myconfig, $userspath, $dvipdf, $xelatex);
+      $form->parse_template(\%myconfig, $slconfig{userspath}, $slconfig{dvipdf}, $slconfig{xelatex});
 
     }
   }
@@ -3640,7 +3639,7 @@ sub do_print_statement {
   $form->{todate} ||= $form->current_date(\%myconfig);
   $form->{statementdate} = $locale->date(\%myconfig, $form->{todate}, 1);
 
-  $form->{templates} = "$templates/$myconfig{templates}";
+  $form->{templates} = "$slconfig{templates}/$myconfig{templates}";
 
   for (qw(name email)) { $form->{"user$_"} = $myconfig{$_} }
 
@@ -3709,7 +3708,7 @@ sub do_print_statement {
 
         for ("c0", "c15", "c30", "c45", "c60", "c75", "c90", "") { $form->{"${_}total"} = $form->format_amount(\%myconfig, $form->{"${_}total"}, $form->{precision}) }
 
-        $form->parse_template(\%myconfig, $userspath, $dvipdf, $xelatex);
+        $form->parse_template(\%myconfig, $slconfig{userspath}, $slconfig{dvipdf}, $slconfig{xelatex});
 
       }
     }
@@ -3744,7 +3743,7 @@ sub generate_tax_report {
 
   for (qw(fromdate todate)) { $temp{$_} = $form->{$_} };
 
-  RP->tax_report(\%myconfig, \%$form);
+  SL::RP->tax_report(\%myconfig, $form);
 
   # construct href
   $href = "$form->{script}?action=generate_tax_report";
@@ -3971,13 +3970,13 @@ sub generate_tax_report {
 
     $column_data{accno} = qq|<td>$ref->{accno}</td>|;
     $column_data{id} = qq|<td>$ref->{id}</td>|;
-    $column_data{invnumber} = qq|<td><a href=$module?path=$form->{path}&action=edit&id=$ref->{id}&login=$form->{login}&callback=$callback>$ref->{invnumber}</a></td>|;
+    $column_data{invnumber} = qq|<td><a class="invnumber-l" href=$module?path=$form->{path}&action=edit&id=$ref->{id}&login=$form->{login}&callback=$callback>$ref->{invnumber}</a></td>|;
 
     $column_data{transdate} = qq|<td nowrap>$ref->{transdate}</td>|;
     for (qw(id partnumber description taxnumber address country)) { $column_data{$_} = qq|<td>$ref->{$_}</td>| }
 
     $column_data{"$form->{vc}number"} = qq|<td>$ref->{"$form->{vc}number"}</td>|;
-    $column_data{name} = qq|<td><a href=ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{vc_id}&db=$form->{vc}&callback=$callback>$ref->{name}</a></td>|;
+    $column_data{name} = qq|<td><a class="name-l" href=ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{vc_id}&db=$form->{vc}&callback=$callback>$ref->{name}</a></td>|;
 
     for (qw(netamount tax total)) { $column_data{$_} = qq|<td align=right>$ref->{$_}</td>| }
 
@@ -4170,7 +4169,7 @@ sub list_payments {
     $option = $locale->text('Department')." : $department";
   }
 
-  RP->payments(\%myconfig, \%$form);
+  SL::RP->payments(\%myconfig, $form);
 
   @columns = (qw(transdate reference description name));
   @columns = $form->sort_columns(@columns);
@@ -4515,7 +4514,7 @@ sub print_report_options {
   $media =~ s/(<option value="\Q$form->{media}\E")/$1 selected/;
   $media .= qq|</select>|;
 
-  if ($latex) {
+  if ($slconfig{latex}) {
     $format .= qq|
             <option value=pdf $form->{DF}{pdf}>|.$locale->text('PDF').qq|
             <option value=ps $form->{DF}{ps}>|.$locale->text('Postscript');

@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -52,7 +51,7 @@ sub edit {
 
   $form->helpref("$form->{db}", $myconfig{countrycode});
   &create_links;
-  RU->register(\%myconfig, $form);
+  SL::RU->register(\%myconfig, $form);
 
   &display_form;
 
@@ -67,7 +66,7 @@ sub create_links {
     $form->{ARAP} = 'AP';
   }
 
-  CT->create_links(\%myconfig, \%$form);
+  SL::CT->create_links(\%myconfig, $form);
 
   for (keys %$form) { $form->{$_} = $form->quote($form->{$_}) }
 
@@ -732,7 +731,7 @@ sub search_name {
 
 sub list_names {
 
-  CT->search(\%myconfig, \%$form);
+  SL::CT->search(\%myconfig, $form);
 
   $href = "$form->{script}?action=list_names";
   for (qw(direction oldsort db ARAP path login status l_subtotal)) { $href .= "&$_=$form->{$_}" }
@@ -1145,7 +1144,7 @@ sub list_names {
         : $i < 10              ? qq| accesskey="$i" title="[$i]"|
         :                        '';
 
-      $column_data{name} = "<td><a href=$form->{script}?action=edit&id=$ref->{id}&db=$form->{db}&path=$form->{path}&login=$form->{login}&status=$form->{status}&callback=$callback$accesskey>$ref->{name}&nbsp;</td>";
+      $column_data{name} = qq|<td><a class="name-l" href=$form->{script}?action=edit&id=$ref->{id}&db=$form->{db}&path=$form->{path}&login=$form->{login}&status=$form->{status}&callback=$callback$accesskey>$ref->{name}&nbsp;</td>|;
 
       $email = "";
       if ($form->{sort} =~ /(email|cc)/) {
@@ -1163,7 +1162,7 @@ sub list_names {
             $email =~ s/</\&lt;/;
             $email =~ s/>/\&gt;/;
 
-            $column_data{$item} = qq|<td><a href="mailto:$ref->{$item}">$email</a></td>|;
+            $column_data{$item} = qq|<td><a class="$item-l" href="mailto:$ref->{$item}">$email</a></td>|;
           }
         }
       }
@@ -1372,7 +1371,7 @@ sub list_subtotal {
 
 sub list_history {
 
-  CT->get_history(\%myconfig, \%$form);
+  SL::CT->get_history(\%myconfig, $form);
 
   $href = "$form->{script}?action=list_history";
   for (qw(oldsort db path login type transdatefrom transdateto history)) { $href .= "&$_=$form->{$_}" }
@@ -1578,7 +1577,7 @@ sub list_history {
       # print the header
       print qq|
         <tr class=listheading>
-          <th colspan=$colspan><a class=listheading href=$form->{script}?action=edit&id=$ref->{ctid}&db=$form->{db}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{name} $ref->{address}</a></th>
+          <th colspan=$colspan><a class="listheading name-l" href=$form->{script}?action=edit&id=$ref->{ctid}&db=$form->{db}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{name} $ref->{address}</a></th>
         </tr>
 |;
     }
@@ -2515,7 +2514,7 @@ sub shipping_address {
 
   $form->{name} ||= "$form->{firstname} $form->{lastname}";
 
-  CT->ship_to(\%myconfig, \%$form);
+  SL::CT->ship_to(\%myconfig, $form);
 
   %shipto = (
           address1 => { i => 2, label => $locale->text('Address') },
@@ -2743,7 +2742,7 @@ sub pricelist {
   delete $form->{update_contact};
   $form->{display_form} ||= "display_pricelist";
 
-  CT->pricelist(\%myconfig, \%$form);
+  SL::CT->pricelist(\%myconfig, $form);
 
   $i = 0;
   foreach $ref (@{ $form->{"all_partspricelist"} }) {
@@ -3115,7 +3114,7 @@ sub update {
 
   if ($additem) {
 
-    CT->retrieve_item(\%myconfig, \%$form);
+    SL::CT->retrieve_item(\%myconfig, $form);
 
     $rows = scalar @{ $form->{item_list} };
 
@@ -3332,14 +3331,14 @@ sub item_selected {
 
 sub save_pricelist {
 
-  CT->save(\%myconfig, \%$form);
+  SL::CT->save(\%myconfig, $form);
 
   $callback = $form->{callback};
   $form->{callback} = "$form->{script}?action=edit";
   for (qw(db id login path)) { $form->{callback} .= "&$_=$form->{$_}" }
   $form->{callback} .= "&callback=".$form->escape($callback,1);
 
-  if (CT->save_pricelist(\%myconfig, \%$form)) {
+  if (SL::CT->save_pricelist(\%myconfig, $form)) {
     $form->redirect;
   } else {
     $form->error($locale->text('Could not save pricelist!'));
@@ -3357,7 +3356,7 @@ sub add_transaction {
 
   $form->{enddate} = "" if $form->{enddate};
 
-  CT->save(\%myconfig, \%$form);
+  SL::CT->save(\%myconfig, $form);
 
   $form->{callback} = $form->escape($form->{callback},1);
   $name = $form->escape($form->{name},1);
@@ -3524,10 +3523,10 @@ sub save {
 
   &references;
 
-  $form->{userspath} = $userspath;
+  $form->{userspath} = $slconfig{userspath};
 
-  CT->save(\%myconfig, \%$form);
-  RU->register(\%myconfig, $form);
+  SL::CT->save(\%myconfig, $form);
+  SL::RU->register(\%myconfig, $form);
 
   if ($form->{callback} =~ /^im\.pl\?action=process_qrbill/) {
     $form->{callback}
@@ -3546,8 +3545,8 @@ sub delete {
 # $locale->text('Vendor deleted!')
 # $locale->text('Cannot delete vendor!')
 
-  CT->delete(\%myconfig, \%$form);
-  RU->delete(\%myconfig, $form);
+  SL::CT->delete(\%myconfig, $form);
+  SL::RU->delete(\%myconfig, $form);
 
   $msg = ucfirst $form->{db};
   $msg .= " deleted!";
@@ -3581,7 +3580,7 @@ sub add_vendor { &add };
 
 sub lookup_name {
 
-  CT->search(\%myconfig, \%$form);
+  SL::CT->search(\%myconfig, $form);
 
   @column_index = qw(name city);
 
@@ -3648,7 +3647,7 @@ sub delete_vendors { &retrieve_names };
 
 sub retrieve_names {
 
-  CT->retrieve_names(\%myconfig, \%$form);
+  SL::CT->retrieve_names(\%myconfig, $form);
 
   $form->error($locale->text('Nothing selected!')) unless @{$form->{names}};
 
@@ -3687,7 +3686,7 @@ sub retrieve_names {
 
 sub yes__delete {
 
-  CT->batch_delete(\%myconfig, \%$form);
+  SL::CT->batch_delete(\%myconfig, $form);
 
   $form->redirect;
 
@@ -3786,7 +3785,7 @@ sub _transaction_report {
     $form->error($locale->text("Name missing!"));
   }
 
-  CT->save(\%myconfig, \%$form);
+  SL::CT->save(\%myconfig, $form);
 
   $name = $form->escape($form->{name},1);
 

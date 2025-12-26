@@ -40,7 +40,7 @@ services:
 
   app:
     build: .
-    image: sql-ledger-test:0.21
+    image: sql-ledger-test:0.23
     ports:
       - 80:80
     volumes:

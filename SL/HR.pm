@@ -1,21 +1,20 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2006
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
 # backend code for human resources and payroll
 #
 #======================================================================
+use v5.40;
 
-package HR;
+package SL::HR;
 
 
-sub get_employee {
-  my ($self, $myconfig, $form, $nolock) = @_;
+sub get_employee ($, $myconfig, $form, $nolock = 0) {
 
   my $dbh = $form->dbconnect($myconfig);
 
@@ -31,7 +30,7 @@ sub get_employee {
   my %defaults = $form->get_defaults($dbh, \@df);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
-  %defaults = $form->get_defaults($dbh, \@{['printer_%']});
+  %defaults = $form->get_defaults($dbh, ['printer_%']);
 
   my $label;
   my $command;
@@ -42,7 +41,7 @@ sub get_employee {
     }
   }
 
-  if ($form->{id} *= 1) {
+  if (($form->{id} ||= 0) *= 1) {
     $query = qq|SELECT e.*,
                 ad.id AS addressid, ad.address1, ad.streetname, ad.buildingnumber,
                 ad.address2, ad.city, ad.state, ad.zipcode, ad.country,
@@ -74,9 +73,9 @@ sub get_employee {
                 LEFT JOIN paymentmethod pm ON (pm.id = e.paymentmethod_id)
                 WHERE e.id = $form->{id}|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    $ref = $sth->fetchrow_hashref(NAME_lc);
+    $ref = $sth->fetchrow_hashref;
     $ref->{employeelogin} = $ref->{login};
     for (qw(ap payment)) { $ref->{"${_}_description"} = $ref->{"${_}_translation"} if $ref->{"${_}_translation"} }
     for (qw(login ap_translation payment_translation)) { delete $ref->{$_} }
@@ -105,9 +104,9 @@ sub get_employee {
                 WHERE trans_id = $form->{id}
                 ORDER BY id|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    while (my $ref = $sth->fetchrow_hashref) {
       push @{ $form->{all_payrate} }, $ref;
     }
     $sth->finish;
@@ -119,9 +118,9 @@ sub get_employee {
                 WHERE ew.employee_id = $form->{id}
                 ORDER BY ew.id|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    while (my $ref = $sth->fetchrow_hashref) {
       push @{ $form->{all_employeewage} }, $ref;
     }
     $sth->finish;
@@ -134,9 +133,9 @@ sub get_employee {
                 WHERE ed.employee_id = $form->{id}
                 ORDER BY ed.id|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    while (my $ref = $sth->fetchrow_hashref) {
       push @{ $form->{all_employeededuction} }, $ref;
     }
     $sth->finish;
@@ -145,10 +144,10 @@ sub get_employee {
                 FROM deduct da
                 JOIN deduction d ON (da.deduction_id = d.id)|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    my %deduct;
-    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    my %deduct = (a => [], b => []);
+    while (my $ref = $sth->fetchrow_hashref) {
       $ref->{percent} ||= 1;
       push @{ $form->{deduct}{$ref->{trans_id}} }, $ref;
       $deduct{$ref->{id}} = 1;
@@ -185,7 +184,7 @@ sub get_employee {
                   WHERE trans_id = $form->{trans_id}|;
       my $tth = $dbh->prepare($query);
       $tth->execute;
-      while ($ref = $tth->fetchrow_hashref(NAME_lc)) {
+      while (my $ref = $tth->fetchrow_hashref) {
         $deduct{$ref->{id}} = $ref->{amount};
       }
       $tth->finish;
@@ -218,16 +217,16 @@ sub get_employee {
 
   }
 
-  HR->isadmin($myconfig, $form, $dbh);
+  SL::HR->isadmin($myconfig, $form, $dbh);
 
   # get wages
   $query = qq|SELECT *
               FROM wage
               ORDER BY 2|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $form->{all_wage} }, $ref;
   }
   $sth->finish;
@@ -238,9 +237,9 @@ sub get_employee {
               FROM deduction
               ORDER BY 2|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $form->{all_deduction} }, $ref;
     # for payroll
     $form->{payrolldeduction}{$ref->{id}} = $ref;
@@ -252,9 +251,9 @@ sub get_employee {
               FROM deductionrate
               ORDER BY trans_id, rn|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $form->{all_deductionrate} }, $ref;
   }
   $sth->finish;
@@ -272,9 +271,9 @@ sub get_employee {
                 AND c.closed = '0'
                 ORDER BY c.accno|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    while (my $ref = $sth->fetchrow_hashref) {
       $ref->{description} = $ref->{translation} if $ref->{translation};
       push @{ $form->{"${_}_accounts"} }, $ref;
     }
@@ -286,10 +285,10 @@ sub get_employee {
               FROM paymentmethod
               ORDER BY rn|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
   @{ $form->{"all_paymentmethod"} } = ();
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $form->{"all_paymentmethod"} }, $ref;
   }
   $sth->finish;
@@ -299,15 +298,14 @@ sub get_employee {
 }
 
 
-sub isadmin {
-  my ($self, $myconfig, $form, $dbh) = @_;
+sub isadmin ($, $myconfig, $form, $dbh = undef) {
 
   my $disconnect = ($dbh) ? 0 : 1;;
 
   # connect to database
   $dbh = $form->dbconnect($myconfig) unless $dbh;
 
-  $form->{id} *= 1;
+  ($form->{id} ||= 0) *= 1;
   my $rne;
 
   my $query = qq|SELECT a.rn
@@ -324,7 +322,7 @@ sub isadmin {
               WHERE e.login = '$login'|;
   my ($rnl) = $dbh->selectrow_array($query);
 
-  $rnl *= 1;
+  ($rnl //= 0) *= 1;
   if ($rnl) {
     $form->{admin} = ($rne) ? $rnl < $rne : 1;
   }
@@ -335,10 +333,10 @@ sub isadmin {
               FROM acsrole
               WHERE rn > $rnl
               ORDER BY rn|;
-  $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  my $sth = $dbh->prepare($query);
+  $sth->execute or $form->dberror($query);
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $form->{all_acsrole} }, $ref;
   }
   $sth->finish;
@@ -348,14 +346,13 @@ sub isadmin {
 }
 
 
-sub acsrole {
-  my ($self, $myconfig, $form) = @_;
+sub acsrole ($, $myconfig, $form) {
 
   my $dbh = $form->dbconnect($myconfig);
 
   my $id;
-  (undef, $id) = split /--/, $form->{acsrole};
-  $id *= 1;
+  (undef, $id) = split /--/, $form->{acsrole} // '';
+  ($id //= 0) *= 1;
 
   my $query = qq|SELECT acs
                  FROM acsrole
@@ -369,8 +366,7 @@ sub acsrole {
 }
 
 
-sub save_employee {
-  my ($self, $myconfig, $form) = @_;
+sub save_employee ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
@@ -385,9 +381,9 @@ sub save_employee {
   my $acsrole_id;
   my $rn;
 
-  for (qw(paymentmethod acsrole)) { (undef, $form->{"${_}_id"}) = split /--/, $form->{$_} }
+  for (qw(paymentmethod acsrole)) { (undef, $form->{"${_}_id"}) = split /--/, $form->{$_} // '' }
 
-  if ($form->{id} *= 1) {
+  if (($form->{id} ||= 0) *= 1) {
     $query = qq|SELECT e.login, e.sales, e.acsrole_id, a.rn
                 FROM employee e
                 LEFT JOIN acsrole a ON (e.acsrole_id = a.id)
@@ -405,19 +401,19 @@ sub save_employee {
     my ($loginrn) = $dbh->selectrow_array($query);
 
     unless ($form->{admin}) {
-      if ($rn <= $loginrn) {
-        $form->{acsrole_id} *= 1;
-        $form->{sales} = $sales;
+      if ($rn && $loginrn && $rn <= $loginrn) {
+        ($form->{acsrole_id} ||= 0) *= 1;
         $form->{acsrole} = qq|--$acsrole_id|;
-        $form->{nochange} = 1;
       }
+      $form->{sales}    = $sales;
+      $form->{nochange} = 1;
     }
 
     if ($employeelogin) {
       $query = qq|UPDATE report SET
                   login = '$form->{employeelogin}'
                   WHERE login = '$employeelogin'|;
-      $dbh->do($query) || $form->dberror($query);
+      $dbh->do($query) or $form->dberror($query);
     }
 
     $query = qq|SELECT address_id
@@ -427,21 +423,21 @@ sub save_employee {
 
     $query = qq|DELETE FROM bank
                 WHERE id = $form->{id}|;
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
 
-    $bank_address_id *= 1;
+    ($bank_address_id //= 0) *= 1;
     $query = qq|DELETE FROM address
                 WHERE trans_id = $bank_address_id|;
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
 
-    $form->{addressid} *= 1;
+    ($form->{addressid} ||= 0) *= 1;
     $query = qq|DELETE FROM address
                 WHERE id = $form->{addressid}|;
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
 
     $query = qq|DELETE FROM payrate
                 WHERE trans_id = $form->{id}|;
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
 
   } else {
     my $uid = localtime;
@@ -449,12 +445,12 @@ sub save_employee {
 
     $query = qq|INSERT INTO employee (name)
                 VALUES ('$uid')|;
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
 
     $query = qq|SELECT id FROM employee
                 WHERE name = '$uid'|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
     ($form->{id}) = $sth->fetchrow_array;
     $sth->finish;
@@ -462,9 +458,9 @@ sub save_employee {
 
   $form->{employeenumber} = $form->update_defaults($myconfig, "employeenumber", $dbh) if ! $form->{employeenumber};
 
-  for (qw(ap payment)) { ($form->{$_}) = split /--/, $form->{$_} }
+  for (qw(ap payment)) { ($form->{$_}) = split /--/, $form->{$_} // '' }
   $form->{acsrole_id} ||= 'NULL';
-  $form->{sales} *= 1;
+  ($form->{sales} ||= 0) *= 1;
 
   $employeelogin = ($form->{employeelogin}) ? $dbh->quote($form->{employeelogin}) : 'NULL';
 
@@ -476,26 +472,26 @@ sub save_employee {
               workmobile = '$form->{workmobile}',
               homephone = '$form->{homephone}',
               homemobile = '$form->{homemobile}',
-              startdate = |.$form->dbquote($form->{startdate}, SQL_DATE).qq|,
-              enddate = |.$form->dbquote($form->{enddate}, SQL_DATE).qq|,
+              startdate = |.$form->dbquote($form->{startdate}, 'SQL_DATE').qq|,
+              enddate = |.$form->dbquote($form->{enddate}, 'SQL_DATE').qq|,
               notes = |.$dbh->quote($form->{notes}).qq|,
               sales = '$form->{sales}',
               login = $employeelogin,
               email = |.$dbh->quote($form->{email}).qq|,
               ssn = '$form->{ssn}',
-              dob = |.$form->dbquote($form->{dob}, SQL_DATE).qq|,
-              payperiod = |.$form->dbquote($form->{payperiod}, SQL_INT).qq|,
-              apid = (SELECT id FROM chart WHERE accno = '$form->{ap}'),
-              paymentid = (SELECT id FROM chart WHERE accno = '$form->{payment}'),
+              dob = |.$form->dbquote($form->{dob}, 'SQL_DATE').qq|,
+              payperiod = |.$form->dbquote($form->{payperiod}, 'SQL_INT').qq|,
+              apid = (SELECT id FROM chart WHERE accno = |.$dbh->quote($form->{ap}).qq|),
+              paymentid = (SELECT id FROM chart WHERE accno = |.$dbh->quote($form->{payment}).qq|),
               paymentmethod_id = |.$dbh->quote($form->{paymentmethod_id}).qq|,
               acsrole_id = $form->{acsrole_id},
               acs = '$form->{acs}'
               WHERE id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   # add address
-  my $id;
-  my $var;
+  my $id  = '';
+  my $var = '';
 
   if ($form->{addressid}) {
     $id = "id, ";
@@ -513,7 +509,7 @@ sub save_employee {
               |.$dbh->quote($form->{state}).qq|,
               |.$dbh->quote($form->{zipcode}).qq|,
               |.$dbh->quote($form->{country}).qq|)|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   my $ok;
 
@@ -558,7 +554,7 @@ sub save_employee {
                   .$dbh->quote($form->{clearingnumber}).qq|
                   )|;
     }
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
 
     $query = qq|SELECT address_id
                 FROM bank
@@ -588,13 +584,13 @@ sub save_employee {
                   |.$dbh->quote($form->{bankstate}).qq|,
                   |.$dbh->quote($form->{bankzipcode}).qq|,
                   |.$dbh->quote($form->{bankcountry}).qq|)|;
-      $dbh->do($query) || $form->dberror($query);
+      $dbh->do($query) or $form->dberror($query);
 
     } else {
       $query = qq|INSERT INTO bank (id, name)
                   VALUES ($form->{id},
                   |.$dbh->quote($form->{bankname}).qq|)|;
-      $dbh->do($query) || $form->dberror($query);
+      $dbh->do($query) or $form->dberror($query);
 
       $query = qq|SELECT address_id
                   FROM bank
@@ -612,7 +608,7 @@ sub save_employee {
                   |.$dbh->quote($form->{bankstate}).qq|,
                   |.$dbh->quote($form->{bankzipcode}).qq|,
                   |.$dbh->quote($form->{bankcountry}).qq|)|;
-      $dbh->do($query) || $form->dberror($query);
+      $dbh->do($query) or $form->dberror($query);
     }
   }
 
@@ -620,46 +616,46 @@ sub save_employee {
   # insert wage, deduction and exempt for payroll
   $query = qq|DELETE FROM employeewage
               WHERE employee_id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $query = qq|INSERT INTO employeewage (employee_id, id, wage_id) VALUES
               ($form->{id},?,?)|;
-  my $sth = $dbh->prepare($query) || $form->dberror($query);
+  $sth = $dbh->prepare($query) or $form->dberror($query);
 
-  for ($i = 1; $i <= $form->{wage_rows}; $i++) {
-    (undef, $wage_id) = split /--/, $form->{"wage_$i"};
+  for my $i (1 .. $form->{wage_rows}) {
+    (undef, my $wage_id) = split /--/, $form->{"wage_$i"} // '';
     if ($wage_id) {
-      $sth->execute($i,$wage_id) || $form->dberror($query);
+      $sth->execute($i, $wage_id) or $form->dberror($query);
     }
   }
   $sth->finish;
 
   $query = qq|DELETE FROM employeededuction
               WHERE employee_id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $query = qq|INSERT INTO employeededuction (employee_id, id, deduction_id,
               exempt, maximum) VALUES ($form->{id},?,?,?,?)|;
-  my $sth = $dbh->prepare($query) || $form->dberror($query);
+  $sth = $dbh->prepare($query) or $form->dberror($query);
 
-  for ($i = 1; $i <= $form->{deduction_rows}; $i++) {
+  for my $i (1 .. $form->{deduction_rows}) {
     for (qw(exempt maximum)) { $form->{"${_}_$i"} = $form->parse_amount($myconfig, $form->{"${_}_$i"}) }
-    (undef, $deduction_id) = split /--/, $form->{"deduction_$i"};
+    (undef, my $deduction_id) = split /--/, $form->{"deduction_$i"} // '';
     if ($deduction_id) {
-      $sth->execute($i, $deduction_id, $form->{"exempt_$i"}, $form->{"maximum_$i"}) || $form->dberror($query);
+      $sth->execute($i, $deduction_id, $form->{"exempt_$i"}, $form->{"maximum_$i"}) or $form->dberror($query);
     }
   }
   $sth->finish;
 
   $query = qq|INSERT INTO payrate (trans_id, id, rate, above)
               VALUES ($form->{id},?,?,?)|;
-  $sth = $dbh->prepare($query) || $form->dberror($query);
+  $sth = $dbh->prepare($query) or $form->dberror($query);
 
-  for ($i = 1; $i <= $form->{payrate_rows}; $i++) {
+  for my $i (1 .. $form->{payrate_rows}) {
     for (qw(rate above)) { $form->{"${_}_$i"} = $form->parse_amount($myconfig, $form->{"${_}_$i"}) }
     $form->{"above_$i"} = $form->parse_amount($myconfig, $form->{"above_$i"});
     if ($form->{"rate_$i"}) {
-      $sth->execute($i, $form->{"rate_$i"}, $form->{"above_$i"}) || $form->dberror($query);
+      $sth->execute($i, $form->{"rate_$i"}, $form->{"above_$i"}) or $form->dberror($query);
     }
   }
   $sth->finish;
@@ -683,8 +679,7 @@ sub save_employee {
 }
 
 
-sub delete_employee {
-  my ($self, $myconfig, $form) = @_;
+sub delete_employee ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
@@ -698,10 +693,10 @@ sub delete_employee {
               WHERE id = $form->{id}|;
   my ($bank_address_id) = $dbh->selectrow_array($query);
 
-  $bank_address_id *= 1;
+  ($bank_address_id //= 0) *= 1;
   $query = qq|DELETE FROM address
               WHERE trans_id = $bank_address_id|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $query = qq|SELECT login
               FROM employee
@@ -712,17 +707,17 @@ sub delete_employee {
     $query = qq|UPDATE report
                 SET login = ''
                 WHERE login = '$login'|;
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
   }
 
   # delete employee
   $query = qq|DELETE FROM $form->{db}
               WHERE id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $query = qq|DELETE FROM address
               WHERE trans_id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $form->delete_references($dbh);
 
@@ -745,13 +740,12 @@ sub delete_employee {
 }
 
 
-sub employees {
-  my ($self, $myconfig, $form) = @_;
+sub employees ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  my %defaults = $form->get_defaults($dbh, \@{['company', 'precision']});
+  my %defaults = $form->get_defaults($dbh, ['company', 'precision']);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   my $where = "1 = 1";
@@ -761,12 +755,12 @@ sub employees {
   my $var;
 
   for (qw(name employeenumber notes)) {
-    if ($form->{$_} ne "") {
+    if (($form->{$_} // '') ne "") {
       $var = $form->like(lc $form->{$_});
       $where .= " AND lower(e.$_) LIKE '$var'";
     }
   }
-  if ($form->{employeelogin} ne "") {
+  if (($form->{employeelogin} // '') ne "") {
     $var = $form->like(lc $form->{employeelogin});
     $where .= " AND lower(e.login) LIKE '$var'";
   }
@@ -776,33 +770,33 @@ sub employees {
   if ($form->{startdateto}) {
     $where .= " AND e.startdate <= '$form->{startdateto}'";
   }
-  if ($form->{status} eq 'sales') {
+  if (($form->{status} // '') eq 'sales') {
     $where .= " AND e.sales = '1'";
   }
-  if ($form->{status} eq 'orphaned') {
+  if (($form->{status} // '') eq 'orphaned') {
     $where .= qq| AND e.login IS NULL
                   AND NOT e.id IN
                           (SELECT DISTINCT employee_id
                            FROM jcitems)|;
   }
-  if ($form->{status} eq 'active') {
+  if (($form->{status} // '') eq 'active') {
     $where .= qq| AND e.enddate IS NULL|;
   }
-  if ($form->{status} eq 'inactive') {
+  if (($form->{status} // '') eq 'inactive') {
     $where .= qq| AND e.enddate <= current_date|;
   }
   if ($form->{acsrole}) {
-    (undef, $var) = split /--/, $form->{acsrole};
+    (undef, $var) = split /--/, $form->{acsrole} // '';
     $where .= qq| AND r.id = $var|;
   }
 
   my $payrolljoin = qq|LEFT JOIN employeewage ew ON (e.id = ew.employee_id)|;
 
-  if ($form->{status} eq 'payroll') {
+  if (($form->{status} // '') eq 'payroll') {
     $payrolljoin = qq|JOIN employeewage ew ON (e.id = ew.employee_id)|;
   }
 
-  $query = qq|SELECT DISTINCT e.*,
+  my $query = qq|SELECT DISTINCT e.*,
               ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
               ad.city, ad.state, ad.zipcode, ad.country,
               bk.iban, bk.qriban, bk.bic,
@@ -816,13 +810,12 @@ sub employees {
               WHERE $where|;
 
   my @sf = qw(name);
-  my %ordinal = $form->ordinal_order($dbh, $query);
-  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf);
 
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     $ref->{address} = "";
     for (qw(address1 streetname buildingnumber address2 city state zipcode country)) {
       $ref->{address} .= "$ref->{$_} " if $ref->{$_};
@@ -837,9 +830,9 @@ sub employees {
               WHERE c.link = 'AP'
               ORDER BY c.accno|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     $ref->{description} = $ref->{translation} if $ref->{translation};
     push @{ $form->{all_ap} }, $ref;
   }
@@ -851,9 +844,9 @@ sub employees {
               WHERE c.link LIKE '%AP_paid%'
               ORDER BY c.accno|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     $ref->{description} = $ref->{translation} if $ref->{translation};
     push @{ $form->{all_payment} }, $ref;
   }
@@ -863,9 +856,9 @@ sub employees {
               FROM paymentmethod
               ORDER BY rn|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $form->{all_paymentmethod} }, $ref;
   }
   $sth->finish;
@@ -883,8 +876,7 @@ sub employees {
 }
 
 
-sub payroll_links {
-  my ($self, $myconfig, $form) = @_;
+sub payroll_links ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -906,16 +898,16 @@ sub payroll_links {
                  AND enddate IS NULL
                  ORDER BY $sortorder|;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $form->{all_employee} }, $ref;
   }
   $sth->finish;
 
   $form->{datepaid} = $form->{transdate} = $form->current_date($myconfig);
 
-  if ($form->{id} *= 1) {
+  if (($form->{id} ||= 0) *= 1) {
     $query = qq|SELECT a.*, e.name AS employee, e.payperiod,
                 d.description AS department,
                 c1.accno AS ap_accno, c1.description AS ap_accno_description,
@@ -933,8 +925,8 @@ sub payroll_links {
                 LEFT JOIN paymentmethod pm ON (pm.id = e.paymentmethod_id)
                 WHERE a.id = $form->{id}|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
-    $ref = $sth->fetchrow_hashref(NAME_lc);
+    $sth->execute or $form->dberror($query);
+    my $ref = $sth->fetchrow_hashref;
     delete $ref->{id};
 
     # projectnumber
@@ -1000,10 +992,10 @@ sub payroll_links {
                 WHERE ew.employee_id = $form->{vendor_id}
                 ORDER BY ew.id|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    $i = 0;
-    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    my $i = 0;
+    while (my $ref = $sth->fetchrow_hashref) {
       $i++;
       $form->{"wage_$i"} = $ref->{description};
       $form->{"wage_id_$i"} = $ref->{id};
@@ -1020,12 +1012,11 @@ sub payroll_links {
                 LEFT JOIN deduction d ON (d.id = pt.id)
                 WHERE pt.trans_id = $form->{id}|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    my $i = 0;
     my $j = 0;
 
-    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    while (my $ref = $sth->fetchrow_hashref) {
       if ($ref->{wage}) {
         for (qw(qty amount)) { $form->{"${_}_$wage{$ref->{id}}"} = $ref->{$_} }
       }
@@ -1044,10 +1035,10 @@ sub payroll_links {
                 WHERE trans_id = $form->{vendor_id}
                 ORDER BY id|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
     $i = 0;
-    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    while (my $ref = $sth->fetchrow_hashref) {
       $i++;
       for (qw(rate above)) { $form->{"${_}_$i"} = $ref->{$_} }
     }
@@ -1067,9 +1058,9 @@ sub payroll_links {
               AND c.closed = '0'
               ORDER BY c.accno|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     $ref->{description} = $ref->{translation} if $ref->{translation};
     push @{ $form->{all_ap} }, $ref;
   }
@@ -1082,9 +1073,9 @@ sub payroll_links {
               AND c.closed = '0'
               ORDER BY c.accno|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     $ref->{description} = $ref->{translation} if $ref->{translation};
     push @{ $form->{all_payment} }, $ref;
   }
@@ -1094,9 +1085,9 @@ sub payroll_links {
               FROM paymentmethod
               ORDER BY rn|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $form->{all_paymentmethod} }, $ref;
   }
   $sth->finish;
@@ -1114,13 +1105,12 @@ sub payroll_links {
 }
 
 
-sub search_payroll {
-  my ($self, $myconfig, $form) = @_;
+sub search_payroll ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  my %defaults = $form->get_defaults($dbh, \@{['namesbynumber']});
+  my %defaults = $form->get_defaults($dbh, ['namesbynumber']);
 
   my $sortorder = "name";
   if ($defaults{namesbynumber}) {
@@ -1132,9 +1122,9 @@ sub search_payroll {
                  WHERE id IN (SELECT employee_id FROM employeewage)
                  ORDER BY $sortorder|;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $form->{all_employee} }, $ref;
   }
   $sth->finish;
@@ -1143,9 +1133,9 @@ sub search_payroll {
               FROM paymentmethod
               ORDER BY rn|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $form->{all_paymentmethod} }, $ref;
   }
   $sth->finish;
@@ -1160,12 +1150,11 @@ sub search_payroll {
 
 
 
-sub payroll_transactions {
-  my ($self, $myconfig, $form) = @_;
+sub payroll_transactions ($, $myconfig, $form) {
 
   my $dbh = $form->dbconnect($myconfig);
 
-  my %defaults = $form->get_defaults($dbh, \@{['company', 'precision']});
+  my %defaults = $form->get_defaults($dbh, ['company', 'precision']);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   my $where = "1 = 1";
@@ -1178,18 +1167,18 @@ sub payroll_transactions {
   $form->report_level($myconfig, $dbh);
 
   if ($form->{employee}) {
-    (undef, $id) = split /--/, $form->{employee};
+    (undef, $id) = split /--/, $form->{employee} // '';
     $where .= qq|
                 AND v.id = $id|;
   }
 
   if ($form->{department}) {
-    (undef, $id) = split /--/, $form->{department};
+    (undef, $id) = split /--/, $form->{department} // '';
     $where .= qq|
                 AND a.department_id = $id|;
   }
   if ($form->{paymentmethod}) {
-    (undef, $id) = split /--/, $form->{paymentmethod};
+    (undef, $id) = split /--/, $form->{paymentmethod} // '';
     $where .= qq|
                 AND a.paymentmethod_id = $id|;
   }
@@ -1209,19 +1198,21 @@ sub payroll_transactions {
                  WHERE $where|;
 
   my @sf = qw(employee);
-  my %ordinal = $form->ordinal_order($dbh, $query);
-  $query .= qq| ORDER BY | .$form->sort_order(\@sf, \%ordinal);
+  $query .= qq| ORDER BY | .$form->sort_order(\@sf);
 
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
   # project ?
-  (undef, $id) = split /--/, $form->{projectnumber};
-  $query = qq|SELECT trans_id
+  my $pth;
+  if ($form->{projectnumber}) {
+    (undef, $id) = split /--/, $form->{projectnumber};
+    $query = qq|SELECT trans_id
               FROM acc_trans
               WHERE project_id = $id
               AND trans_id = ?|;
-  my $pth = $dbh->prepare($query);
+    $pth = $dbh->prepare($query);
+  }
 
   # gl
   $query = qq|SELECT reference
@@ -1238,11 +1229,11 @@ sub payroll_transactions {
   my $ok;
   my $ref;
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     $ok = 0;
     $wth->execute($ref->{id});
 
-    while ($dref = $wth->fetchrow_hashref(NAME_lc)) {
+    while (my $dref = $wth->fetchrow_hashref) {
       $ref->{glid} = $dref->{glid};
       if ($ref->{$dref->{id}} = $form->round_amount($dref->{amount} * $dref->{qty}, $form->{precision})) {
         $form->{$dref->{id}} = 1;
@@ -1273,9 +1264,9 @@ sub payroll_transactions {
                 FROM $_
                 ORDER BY 2|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    while (my $ref = $sth->fetchrow_hashref) {
       push @{ $form->{"all_$_"} }, $ref if $form->{$ref->{id}};
     }
     $sth->finish;
@@ -1286,8 +1277,7 @@ sub payroll_transactions {
 }
 
 
-sub payslip_details {
-  my ($self, $myconfig, $form) = @_;
+sub payslip_details ($, $myconfig, $form) {
 
   my $dbh = $form->dbconnect($myconfig);
 
@@ -1306,20 +1296,17 @@ sub payslip_details {
   );
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
-  %defaults = $form->get_defaults($dbh, \@{['printer_%']});
-  # Tekki: wlprinter
+  %defaults = $form->get_defaults($dbh, ['printer_%']);
   for (keys %defaults) {
     if ($_ =~ /printer_/) {
-      ($label, $command) = split /=/, $defaults{$_}, 2;
-      $command = "wlprinter/fileprinter.pl $form->{login}" if lc $command eq 'wlprinter';
+      my ($label, $command) = split /=/, $defaults{$_}, 2;
       $form->{"${label}_printer"} = $command;
     }
   }
-  # Tekki_end
 
-  (undef, $id) = split /--/, $form->{employee};
+  (undef, $id) = split /--/, $form->{employee} // '';
 
-  if ($id *= 1) {
+  if (($id //= 0) *= 1) {
     $query = qq|SELECT e.*,
                 ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
                 ad.city, ad.state, ad.zipcode, ad.country,
@@ -1344,9 +1331,9 @@ sub payslip_details {
                 WHERE e.id = $id|;
 
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    $ref = $sth->fetchrow_hashref(NAME_lc);
+    $ref = $sth->fetchrow_hashref;
     $ref->{employeelogin} = $ref->{login};
     delete $ref->{login};
     for (keys %$ref) { $form->{$_} = $ref->{$_} }
@@ -1354,24 +1341,24 @@ sub payslip_details {
     $sth->finish;
   }
 
-  (undef, $id) = split /--/, $form->{paymentmethod};
-  if ($id *= 1) {
+  (undef, $id) = split /--/, $form->{paymentmethod} // '';
+  if (($id //= 0) *= 1) {
     $query = qq|SELECT fee, roundchange
                 FROM paymentmethod
                 WHERE id = $id|;
 
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    $ref = $sth->fetchrow_hashref(NAME_lc);
+    $ref = $sth->fetchrow_hashref;
     for (keys %$ref) { $form->{$_} = $ref->{$_} }
 
     $sth->finish;
   }
 
-  ($id) = split /--/, $form->{payment};
+  ($id) = split /--/, $form->{payment} // '';
 
-  if ($id *= 1) {
+  if (($id //= 0) *= 1) {
     $query = qq|SELECT
                 c2.accno AS payment, c2.description AS payment_description,
                 tr2.description AS payment_translation,
@@ -1392,18 +1379,18 @@ sub payslip_details {
                 WHERE c2.accno = '$id'|;
 
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    $ref = $sth->fetchrow_hashref(NAME_lc);
+    $ref = $sth->fetchrow_hashref;
     for (keys %$ref) { $form->{$_} = $ref->{$_} }
 
     $sth->finish;
   }
 
 
-  ($id) = split /--/, $form->{ap};
+  ($id) = split /--/, $form->{ap} // '';
 
-  if ($id *= 1) {
+  if (($id //= 0) *= 1) {
     $query = qq|SELECT
                 c1.accno AS ap, c1.description AS ap_description,
                 tr1.description AS ap_translation
@@ -1412,9 +1399,9 @@ sub payslip_details {
                 WHERE c1.accno = '$id'|;
 
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    $ref = $sth->fetchrow_hashref(NAME_lc);
+    $ref = $sth->fetchrow_hashref;
     for (keys %$ref) { $form->{$_} = $ref->{$_} }
 
     $sth->finish;
@@ -1425,14 +1412,13 @@ sub payslip_details {
 }
 
 
-sub post_transaction {
-  my ($self, $myconfig, $form) = @_;
+sub post_transaction ($, $myconfig, $form) {
 
   my $dbh = $form->dbconnect_noauto($myconfig);
-  my $ap = new Form;
-  my $gl = new Form;
+  my $ap = SL::Form->new;
+  my $gl = SL::Form->new;
 
-  my %defaults = $form->get_defaults($dbh, \@{['expense_accno_id']});
+  my %defaults = $form->get_defaults($dbh, ['expense_accno_id']);
 
   my $query;
   my $sth;
@@ -1442,16 +1428,16 @@ sub post_transaction {
   $query = qq|SELECT *
               FROM wage
               WHERE id = ?|;
-  my $wth = $dbh->prepare($query) || $form->dberror($query);
+  my $wth = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|SELECT *
               FROM deduction
               WHERE id = ?|;
-  my $dth = $dbh->prepare($query) || $form->dberror($query);
+  my $dth = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|INSERT INTO pay_trans (trans_id, id, qty, amount)
               VALUES (?,?,?,?)|;
-  my $pth = $dbh->prepare($query) || $form->dberror($query);
+  my $pth = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|SELECT curr
               FROM curr
@@ -1461,9 +1447,9 @@ sub post_transaction {
   $query = qq|SELECT accno
               FROM chart
               WHERE id = ?|;
-  my $cth = $dbh->prepare($query) || $form->dberror($query);
+  my $cth = $dbh->prepare($query) or $form->dberror($query);
 
-  my ($employee, $employee_id) = split /--/, $form->{employee};
+  my ($employee, $employee_id) = split /--/, $form->{employee} // '';
 
   $cth->execute($defaults{expense_accno_id});
   my ($expense_accno) = $cth->fetchrow_array;
@@ -1478,9 +1464,9 @@ sub post_transaction {
                 FROM employee
                 WHERE id = $employee_id|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    $ref = $sth->fetchrow_hashref(NAME_lc);
+    $ref = $sth->fetchrow_hashref;
 
     (undef, $user_id) = $form->get_employee($dbh);
     my $vendornumber = $form->update_defaults($myconfig, 'vendornumber');
@@ -1495,24 +1481,24 @@ sub post_transaction {
                 .$dbh->quote($employee).qq|, '$ref->{workphone}',
                 '$ref->{workfax}', '$ref->{email}', '$ref->{notes}', |
                 .$dbh->quote($vendornumber).qq|, $user_id, '$ap->{currency}',|
-                .$form->dbquote($ref->{startdate}, SQL_DATE).qq|, |
-                .$form->dbquote($ref->{enddate}, SQL_DATE).qq|, |
+                .$form->dbquote($ref->{startdate}, 'SQL_DATE').qq|, |
+                .$form->dbquote($ref->{enddate}, 'SQL_DATE').qq|, |
                 .$dbh->quote($ref->{apid}).qq|, |
                 .$dbh->quote($ref->{paymentid}).qq|, |
                 .$dbh->quote($ref->{paymentmethod_id}).qq|)|;
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
 
     $query = qq|INSERT INTO contact (trans_id, typeofcontact,
                 phone, fax, mobile, email)
                 VALUES ($employee_id, 'person',
                 '$ref->{workphone}', '$ref->{workfax}', '$ref->{workmobile}',
                 '$ref->{email}')|;
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
 
     $sth->finish;
   }
 
-  if ($form->{id} *= 1) {
+  if (($form->{id} ||= 0) *= 1) {
     $query = qq|SELECT pt.glid, g.reference
                 FROM pay_trans pt
                 JOIN ap a ON (a.id = pt.trans_id)
@@ -1522,7 +1508,7 @@ sub post_transaction {
 
     $query = qq|DELETE FROM pay_trans
                 WHERE trans_id = $form->{id}|;
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
   }
 
   delete $form->{invnumber} if $form->{postasnew};
@@ -1539,7 +1525,7 @@ sub post_transaction {
 
   my $i = 0;
   my $j;
-  my $employerpays;
+  my @employerpays;
   my $amount;
 
   for $j (1 .. $form->{wage_rows}) {
@@ -1547,17 +1533,17 @@ sub post_transaction {
     if ($form->{"wage_id_$j"}) {
 
       $wth->execute($form->{"wage_id_$j"});
-      $ref = $wth->fetchrow_hashref(NAME_lc);
+      $ref = $wth->fetchrow_hashref;
 
       # accno
       $cth->execute($ref->{chart_id});
-      ($accno) = $cth->fetchrow_array;
+      my ($accno) = $cth->fetchrow_array;
       $cth->finish;
 
       if ($ref->{defer}) {
         # deferred wages
         $cth->execute($ref->{defer});
-        ($defer) = $cth->fetchrow_array;
+        my ($defer) = $cth->fetchrow_array;
         $cth->finish;
 
         if ($form->{"pay_$j"}) {
@@ -1581,9 +1567,11 @@ sub post_transaction {
 
   for $j (1 .. $form->{deduction_rows}) {
     $dth->execute($form->{"deduction_id_$j"});
-    $ref = $dth->fetchrow_hashref(NAME_lc);
+    $ref = $dth->fetchrow_hashref;
 
     # employee
+    my $accno;
+
     if ($ref->{employeepays}) {
       # accno
       $cth->execute($ref->{employee_accno_id});
@@ -1603,7 +1591,7 @@ sub post_transaction {
     # employer
     if ($ref->{employerpays}) {
       $cth->execute($ref->{employer_accno_id});
-      ($employeraccno) = $cth->fetchrow_array;
+      my ($employeraccno) = $cth->fetchrow_array;
       $cth->finish;
 
       $employeraccno ||= $form->{ap};
@@ -1633,7 +1621,7 @@ sub post_transaction {
     $ap->{$_} = $gl->{$_} = $form->{$_};
   }
 
-  AA->post_transaction($myconfig, $ap, $dbh);
+  SL::AA->post_transaction($myconfig, $ap, $dbh);
 
   # pay_trans entries
   for $j (1 .. $form->{wage_rows}) {
@@ -1695,12 +1683,12 @@ sub post_transaction {
     }
     $gl->{rowcount} = $i;
 
-    GL->post_transaction($myconfig, $gl, $dbh);
+    SL::GL->post_transaction($myconfig, $gl, $dbh);
 
     $query = qq|UPDATE pay_trans SET
                 glid = $gl->{id}
                 WHERE trans_id = $ap->{id}|;
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
 
   }
 
@@ -1713,8 +1701,7 @@ sub post_transaction {
 }
 
 
-sub get_deduction {
-  my ($self, $myconfig, $form) = @_;
+sub get_deduction ($, $myconfig, $form) {
 
   my $dbh = $form->dbconnect($myconfig);
   my $query;
@@ -1725,10 +1712,10 @@ sub get_deduction {
 
   $form->remove_locks($myconfig, $dbh, 'hr');
 
-  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
+  my %defaults = $form->get_defaults($dbh, ['precision', 'company']);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
-  if ($form->{id} *= 1) {
+  if (($form->{id} ||= 0) *= 1) {
     $query = qq|SELECT d.*,
                  c1.accno AS employee_accno,
                  c1.description AS employee_accno_description,
@@ -1745,9 +1732,9 @@ sub get_deduction {
                  LEFT JOIN deduction b ON (d.basedon = b.id)
                  WHERE d.id = $form->{id}|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    $ref = $sth->fetchrow_hashref(NAME_lc);
+    $ref = $sth->fetchrow_hashref;
     for (qw(employee employer)) { $ref->{"${_}_accno_description"} = $ref->{"${_}_translation"} if $ref->{"${_}_translation"} }
     for (keys %$ref) { $form->{$_} = $ref->{$_} }
 
@@ -1767,9 +1754,9 @@ sub get_deduction {
                 WHERE trans_id = $form->{id}
                 ORDER BY rn|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    while (my $ref = $sth->fetchrow_hashref) {
       push @{ $form->{deductionrate} }, $ref;
     }
     $sth->finish;
@@ -1779,9 +1766,9 @@ sub get_deduction {
                 JOIN deduct da ON (da.deduction_id = d.id)
                 WHERE da.trans_id = $form->{id}|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    while (my $ref = $sth->fetchrow_hashref) {
       push @{ $form->{deduct} }, $ref;
     }
     $sth->finish;
@@ -1802,9 +1789,9 @@ sub get_deduction {
   }
 
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $form->{all_deduction} }, $ref;
   }
   $sth->finish;
@@ -1817,9 +1804,9 @@ sub get_deduction {
               AND c.link LIKE '%AP_amount%'
               ORDER BY c.accno|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     $ref->{description} = $ref->{translation} if $ref->{translation};
     push @{ $form->{accounts} }, $ref;
   }
@@ -1830,12 +1817,11 @@ sub get_deduction {
 }
 
 
-sub deductions {
-  my ($self, $myconfig, $form) = @_;
+sub deductions ($, $myconfig, $form) {
 
   my $dbh = $form->dbconnect($myconfig);
 
-  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
+  my %defaults = $form->get_defaults($dbh, ['precision', 'company']);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   my $query = qq|SELECT d.id, d.description, d.employeepays, d.employerpays,
@@ -1850,9 +1836,9 @@ sub deductions {
                  LEFT JOIN chart c2 ON (d.employer_accno_id = c2.id)
                  ORDER BY 2, dr.rn|;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $form->{all_deduction} }, $ref;
   }
 
@@ -1862,19 +1848,18 @@ sub deductions {
 }
 
 
-sub save_deduction {
-  my ($self, $myconfig, $form) = @_;
+sub save_deduction ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
 
-  $form->{id} *= 1;
+  ($form->{id} ||= 0) *= 1;
 
   my $deduction_id;
   my $query;
   my $sth;
 
-  (undef, $form->{basedon}) = split /--/, $form->{basedon};
+  (undef, $form->{basedon}) = split /--/, $form->{basedon} // '';
 
   if (! $form->{id}) {
     my $uid = localtime;
@@ -1882,12 +1867,12 @@ sub save_deduction {
 
     $query = qq|INSERT INTO deduction (description)
                 VALUES ('$uid')|;
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
 
     $query = qq|SELECT id FROM deduction
                 WHERE description = '$uid'|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
     ($form->{id}) = $sth->fetchrow_array;
     $sth->finish;
@@ -1895,7 +1880,7 @@ sub save_deduction {
 
 
   for (qw(employee employer)) {
-    ($form->{"${_}_accno"}) = split /--/, $form->{"${_}_accno"};
+    ($form->{"${_}_accno"}) = split /--/, $form->{"${_}_accno"} // '';
     $form->{"${_}pays"} = $form->parse_amount($myconfig, $form->{"${_}pays"});
   }
 
@@ -1909,47 +1894,47 @@ sub save_deduction {
                     WHERE accno = '$form->{employer_accno}'),
               employerpays = '$form->{employerpays}',
               employeepays = '$form->{employeepays}',
-              fromage = |.$form->dbquote($form->{fromage}, SQL_INT).qq|,
-              toage = |.$form->dbquote($form->{toage}, SQL_INT).qq|,
+              fromage = |.$form->dbquote($form->{fromage}, 'SQL_INT').qq|,
+              toage = |.$form->dbquote($form->{toage}, 'SQL_INT').qq|,
               basedon = |.$dbh->quote($form->{basedon}).qq|,
               agedob = |.$dbh->quote($form->{agedob}).qq|
               WHERE id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
 
   $query = qq|DELETE FROM deductionrate
               WHERE trans_id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $query = qq|INSERT INTO deductionrate
               (rn, trans_id, rate, amount, above, below) VALUES (?,?,?,?,?,?)|;
-  $sth = $dbh->prepare($query) || $form->dberror($query);
+  $sth = $dbh->prepare($query) or $form->dberror($query);
 
-  for ($i = 1; $i <= $form->{rate_rows}; $i++) {
+  for my $i (1 .. $form->{rate_rows}) {
     for (qw(rate amount above below)) { $form->{"${_}_$i"} = $form->parse_amount($myconfig, $form->{"${_}_$i"}) }
     $form->{"rate_$i"} /= 100;
 
     if ($form->{"rate_$i"} + $form->{"amount_$i"} + $form->{"above_$i"} + $form->{"below_$i"}) {
-      $sth->execute($i, $form->{id}, $form->{"rate_$i"}, $form->{"amount_$i"}, $form->{"above_$i"}, $form->{"below_$i"}) || $form->dberror($query);
+      $sth->execute($i, $form->{id}, $form->{"rate_$i"}, $form->{"amount_$i"}, $form->{"above_$i"}, $form->{"below_$i"}) or $form->dberror($query);
     }
   }
   $sth->finish;
 
   $query = qq|DELETE FROM deduct
               WHERE trans_id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $query = qq|INSERT INTO deduct
               (trans_id, deduction_id, withholding, percent) VALUES (?,?,?,?)|;
-  $sth = $dbh->prepare($query) || $form->dberror($query);
+  $sth = $dbh->prepare($query) or $form->dberror($query);
 
-  for ($i = 1; $i <= $form->{deduct_rows}; $i++) {
-    (undef, $deduction_id) = split /--/, $form->{"deduct_$i"};
+  for my $i (1 .. $form->{deduct_rows}) {
+    (undef, $deduction_id) = split /--/, $form->{"deduct_$i"} // '';
     if ($deduction_id) {
       $form->{"percent_$i"} = $form->parse_amount($myconfig, $form->{"percent_$i"});
       $form->{"percent_$i"} /= 100;
 
-      $sth->execute($form->{id}, $deduction_id, $form->{"withholding_$i"}, $form->{"percent_$i"}) || $form->dberror($query);
+      $sth->execute($form->{id}, $deduction_id, $form->{"withholding_$i"}, $form->{"percent_$i"}) or $form->dberror($query);
     }
   }
   $sth->finish;
@@ -1962,26 +1947,25 @@ sub save_deduction {
 }
 
 
-sub delete_deduction {
-  my ($self, $myconfig, $form) = @_;
+sub delete_deduction ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
 
-  $form->{id} *= 1;
+  ($form->{id} ||= 0) *= 1;
 
   # delete deduction
   my $query = qq|DELETE FROM deduction
                  WHERE id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $query = qq|DELETE FROM deductionrate
                  WHERE trans_id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $query = qq|DELETE FROM deduct
                  WHERE trans_id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $form->remove_locks($myconfig, $dbh, 'hr');
 
@@ -1991,8 +1975,7 @@ sub delete_deduction {
 }
 
 
-sub get_wage {
-  my ($self, $myconfig, $form) = @_;
+sub get_wage ($, $myconfig, $form) {
 
   my $dbh = $form->dbconnect($myconfig);
   my $query;
@@ -2001,10 +1984,10 @@ sub get_wage {
 
   $form->remove_locks($myconfig, $dbh, 'hr');
 
-  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
+  my %defaults = $form->get_defaults($dbh, ['precision', 'company']);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
-  if ($form->{id} *= 1) {
+  if (($form->{id} ||= 0) *= 1) {
     $query = qq|SELECT w.*,
                  c.accno, c.description AS accno_description,
                  l.description AS accno_translation,
@@ -2017,9 +2000,9 @@ sub get_wage {
                  LEFT JOIN translation l1 ON (l1.trans_id = c1.id AND l1.language_code = '$myconfig->{countrycode}')
                  WHERE w.id = $form->{id}|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    $ref = $sth->fetchrow_hashref(NAME_lc);
+    $ref = $sth->fetchrow_hashref;
     $ref->{"accno_description"} = $ref->{"accno_translation"} if $ref->{"accno_translation"};
     $ref->{"defer_description"} = $ref->{"defer_translation"} if $ref->{"defer_translation"};
     for (keys %$ref) { $form->{$_} = $ref->{$_} }
@@ -2046,9 +2029,9 @@ sub get_wage {
               AND c.link LIKE '%AP_amount%'
               ORDER BY c.accno|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     $ref->{description} = $ref->{translation} if $ref->{translation};
     push @{ $form->{accounts} }, $ref;
   }
@@ -2059,12 +2042,11 @@ sub get_wage {
 }
 
 
-sub wages {
-  my ($self, $myconfig, $form) = @_;
+sub wages ($, $myconfig, $form) {
 
   my $dbh = $form->dbconnect($myconfig);
 
-  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
+  my %defaults = $form->get_defaults($dbh, ['precision', 'company']);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   my $query = qq|SELECT w.*,
@@ -2074,9 +2056,9 @@ sub wages {
                  LEFT JOIN chart c1 ON (c1.id = w.defer)
                  ORDER BY 2|;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $form->{all_wage} }, $ref;
   }
 
@@ -2086,8 +2068,7 @@ sub wages {
 }
 
 
-sub save_wage {
-  my ($self, $myconfig, $form) = @_;
+sub save_wage ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
@@ -2101,21 +2082,21 @@ sub save_wage {
 
     $query = qq|INSERT INTO wage (description)
                 VALUES ('$uid')|;
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
 
     $query = qq|SELECT id FROM wage
                 WHERE description = '$uid'|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
     ($form->{id}) = $sth->fetchrow_array;
     $sth->finish;
   }
 
-  $form->{exempt} *= 1;
+  ($form->{exempt} ||= 0) *= 1;
   $form->{amount} = $form->parse_amount($myconfig, $form->{amount});
-  ($form->{accno}) = split /--/, $form->{accno};
-  ($form->{defer}) = split /--/, $form->{defer};
+  ($form->{accno}) = split /--/, $form->{accno} // '';
+  ($form->{defer}) = split /--/, $form->{defer} // '';
 
   $query = qq|UPDATE wage SET
               description = |.$dbh->quote($form->{description}).qq|,
@@ -2128,7 +2109,7 @@ sub save_wage {
                     WHERE accno = '$form->{accno}'),
               amount = $form->{amount}
               WHERE id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $form->remove_locks($myconfig, $dbh, 'hr');
 
@@ -2138,18 +2119,17 @@ sub save_wage {
 }
 
 
-sub delete_wage {
-  my ($self, $myconfig, $form) = @_;
+sub delete_wage ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
 
-  $form->{id} *= 1;
+  ($form->{id} ||= 0) *= 1;
 
   # delete deduction
   my $query = qq|DELETE FROM wage
                  WHERE id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $form->remove_locks($myconfig, $dbh, 'hr');
 
@@ -2166,7 +2146,7 @@ sub delete_wage {
 
 =head1 NAME
 
-HR - Backend code for human resources and payroll
+SL::HR - Backend code for human resources and payroll
 
 =head1 DESCRIPTION
 
@@ -2178,78 +2158,78 @@ L<SL::HR> implements the following functions:
 
 =head2 acsrole
 
-  HR->acsrole($myconfig, $form);
+  SL::HR->acsrole($myconfig, $form);
 
 =head2 deductions
 
-  HR->deductions($myconfig, $form);
+  SL::HR->deductions($myconfig, $form);
 
 =head2 delete_deduction
 
-  HR->delete_deduction($myconfig, $form);
+  SL::HR->delete_deduction($myconfig, $form);
 
 =head2 delete_employee
 
-  HR->delete_employee($myconfig, $form);
+  SL::HR->delete_employee($myconfig, $form);
 
 =head2 delete_wage
 
-  HR->delete_wage($myconfig, $form);
+  SL::HR->delete_wage($myconfig, $form);
 
 =head2 employees
 
-  HR->employees($myconfig, $form);
+  SL::HR->employees($myconfig, $form);
 
 =head2 get_deduction
 
-  HR->get_deduction($myconfig, $form);
+  SL::HR->get_deduction($myconfig, $form);
 
 =head2 get_employee
 
-  HR->get_employee($myconfig, $form, $nolock);
+  SL::HR->get_employee($myconfig, $form, $nolock);
 
 =head2 get_wage
 
-  HR->get_wage($myconfig, $form);
+  SL::HR->get_wage($myconfig, $form);
 
 =head2 isadmin
 
-  HR->isadmin($myconfig, $form, $dbh);
+  SL::HR->isadmin($myconfig, $form, $dbh);
 
 =head2 payroll_links
 
-  HR->payroll_links($myconfig, $form);
+  SL::HR->payroll_links($myconfig, $form);
 
 =head2 payroll_transactions
 
-  HR->payroll_transactions($myconfig, $form);
+  SL::HR->payroll_transactions($myconfig, $form);
 
 =head2 payslip_details
 
-  HR->payslip_details($myconfig, $form);
+  SL::HR->payslip_details($myconfig, $form);
 
 =head2 post_transaction
 
-  HR->post_transaction($myconfig, $form);
+  SL::HR->post_transaction($myconfig, $form);
 
 =head2 save_deduction
 
-  HR->save_deduction($myconfig, $form);
+  SL::HR->save_deduction($myconfig, $form);
 
 =head2 save_employee
 
-  HR->save_employee($myconfig, $form);
+  SL::HR->save_employee($myconfig, $form);
 
 =head2 save_wage
 
-  HR->save_wage($myconfig, $form);
+  SL::HR->save_wage($myconfig, $form);
 
 =head2 search_payroll
 
-  HR->search_payroll($myconfig, $form);
+  SL::HR->search_payroll($myconfig, $form);
 
 =head2 wages
 
-  HR->wages($myconfig, $form);
+  SL::HR->wages($myconfig, $form);
 
 =cut

@@ -1,10 +1,14 @@
 #!/usr/bin/perl
 #
-######################################################################
+#######################################################################
 # SQL-Ledger ERP Installer
-# Copyright (c) 2007, DWS Systems Inc.
 #
-#     Web: http://www.sql-ledger.com
+# © 2007-2023 DWS Systems Inc.                   https://sql-ledger.com
+#
+#######################################################################
+#
+# This script installs the legacy DWS version. Refer to README.md to
+# install the code from this repo.
 #
 #######################################################################
 
@@ -58,9 +62,9 @@ if ($filename) {
   
 if (-f "VERSION") {
   # get installed version from VERSION file
-  open(FH, "VERSION");
-  @a = <FH>;
-  close(FH);
+  open my $fh, "VERSION";
+  @a = <$fh>;
+  close $fh;
   $version = $a[0];
   chomp $version;
 
@@ -123,8 +127,15 @@ $install .= "\n(d)ownload $latest_version (no installation)" unless $filename;
   print qq|
 
 
-               SQL-Ledger ERP Installation
+SQL-Ledger ERP Installation (legacy DWS version)
 
+
+#
+# WARNING!
+#
+# This script is here for historical reasons and not supported anymore. It will
+# try to install the legacy DWS code and not the software from this repo.
+#
 
 
 $install

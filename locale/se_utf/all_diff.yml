@@ -1,0 +1,280 @@
+---
+locale: se_utf
+texts:
+  AP:
+    admin: Leverantörsfakturor
+    am: Leverantörsfakturor
+    cp: Leverantörsfakturor
+    ct: Leverantörsfakturor
+    hr: Leverantörsfakturor
+    im: Leverantörsfakturor
+    menu: Leverantörsfakturor
+  AP Aging:
+    admin: Förfallna fakturor
+    menu: Förfallna fakturor
+    ps: Förfallna fakturor
+    rp: Förfallna fakturor
+  AP Transaction:
+    aa: Betald skuld
+    admin: Betald skuld
+    ap: Betald skuld
+    ar: Betald skuld
+    ct: Betald skuld
+    gl: Betald skuld
+    im: Betald skuld
+    menu: Betald skuld
+    ps: Betald skuld
+    rd: Betald skuld
+  AR:
+    admin: Kundfakturor
+    am: Kundfakturor
+    cp: Kundfakturor
+    ct: Kundfakturor
+    im: Kundfakturor
+    menu: Kundfakturor
+  AR Aging:
+    admin: Förfallna fordringar
+    menu: Förfallna fordringar
+    ps: Förfallna fordringar
+    rp: Förfallna fordringar
+  AR Transaction:
+    aa: Betald Fodran
+    admin: Betald Fodran
+    ap: Betald Fodran
+    ar: Betald Fodran
+    ct: Betald Fodran
+    gl: Betald Fodran
+    im: Betald Fodran
+    menu: Betald Fodran
+    ps: Betald Fodran
+    rd: Betald Fodran
+  Add Assembly:
+    admin: Ny sammansättning
+    ic: Ny sammansättning
+    menu: Ny sammansättning
+  Add Department:
+    am: Ny avdelning
+  Add Labor/Overhead:
+    admin: Lägg till arbete/omkostnader
+    ic: Lägg till arbete/omkostnader
+    menu: Lägg till arbete/omkostnader
+  Add Transaction:
+    admin: Nytt verifikat
+    hr: Nytt verifikat
+    menu: Nytt verifikat
+  Apr:
+    ca: apr
+    io: apr
+  April:
+    ca: april
+    cp: april
+    io: april
+  Are you sure you want to delete Transaction:
+    aa: Är du säker på att du vill radera posten
+  Assemblies:
+    admin: Sammansättningar
+    ic: Sammansättningar
+    menu: Sammansättningar
+  Aug:
+    ca: aug
+    io: aug
+  August:
+    ca: augusti
+    cp: augusti
+    io: augusti
+  BIC:
+    am: Bank identitets kod (BIC)
+  Bcc:
+    arap: Dold kopia
+    bp: Dold kopia
+    im: Dold kopia
+    io: Bankgiro
+  Cannot delete transaction!:
+    aa: Kan inte radera posten
+  Check:
+    aa: Check-betalning
+  Company Number:
+    gl: Företagsnummer
+  Credit Note:
+    aa: Kredit nota
+    ar: Kredit nota
+    ps: Kredit nota
+    rd: Kredit nota
+  Debit Note:
+    aa: Debetnota
+    ar: Debetnota
+    ps: Debetnota
+    rd: Debetnota
+  Dec:
+    ca: dec
+    io: dec
+  December:
+    ca: december
+    cp: december
+    io: december
+  Defaults:
+    admin: Inställningar
+    im: Inställningar
+    menu: Inställningar
+  Department:
+    ca: Avdelning
+  Departments:
+    admin: Avdelningar
+    am: Kostn.ställen/res.enheter
+    menu: Avdelningar
+  Dropdown Limit:
+    am: Brytpunkts gräns
+  Exchange Rate:
+    aa: Växelkurs
+  Exchange rate for payment missing!:
+    aa: Växlelkurs saknas för betalningen!
+  Extended:
+    io: Utökad
+  General Ledger:
+    admin: Bokföring
+    gl: Bokföring
+    menu: Bokföring
+  In-line:
+    bp: In-line
+    io: In-line
+  Include Payment:
+    arap: Inkludera betalning
+  Labor/Overhead:
+    admin: Arbete/omkostnader
+    ic: Arbete/omkostnader
+    menu: Arbete/omkostnader
+  Outstanding:
+    aa: Förfallen
+    admin: Förfallen
+    ap: Förfallen
+    ar: Förfallen
+    ct: Förfallen
+    im: Förfallen
+    ir: Förfallen
+    is: Förfallen
+    menu: Förfallen
+    pos: Förfallen
+    ps: Förfallen
+  PDF:
+    am: PDF
+    ap: PDF
+    ar: PDF
+    arap: PDF
+    arapprn: PDF
+    bp: PDF
+    cp: PDF
+    hr: PDF
+    ic: PDF
+    io: PDF
+    ir: PDF
+    is: PDF
+    jc: PDF
+    oe: PDF
+    ps: PDF
+  PO Number:
+    aa: Fakturamärkning
+    ap: Faktura märkning
+    ar: Faktura märkning
+  POS:
+    admin: Kontant försäljning
+    menu: Kontant försäljning
+  POS Invoice:
+    admin: Kassa kvitto
+    menu: Kassa kvitto
+  Payment:
+    admin: Betalning
+    am: Betalning
+    cp: Betalning
+    ct: Betalning
+    hr: Betalning
+    im: Betalning
+    menu: Betalning
+  Payments:
+    aa: Betalningar
+    admin: Betalningar
+    ap: Betalningar
+    ar: Betalningar
+    cp: Betalningar
+    ir: Betalningar
+    is: Betalningar
+    menu: Betalningar
+    oe: Betalningar
+    ps: Betalningar
+    rp: Betalningar
+  Postscript:
+    am: Postscriptr
+    ap: Postscript
+    ar: Postscript
+    arap: Postscript
+    arapprn: Postscript
+    bp: Postscript
+    cp: Postscript
+    hr: Postscript
+    ic: Postscript
+    io: Postscript
+    ir: Postscript
+    is: Postscript
+    jc: Postscript
+    oe: Postscript
+    ps: Postscript
+  Quotation Number:
+    bp: Offert nummer
+  R:
+    ca: R
+  Receipt:
+    aa: Kvitto
+    admin: Kvitto
+    ap: Kvitto
+    ar: Kvitto
+    cp: Kvitto
+    menu: Kvitto
+    ps: Kvitto
+  Receipts:
+    admin: Kvitton
+    cp: Kvitton
+    menu: Kvitton
+    pos: Kvitton
+    ps: Kvitton
+    rp: Kvitton
+  Reconciliation:
+    admin: Justering mot kontoutdrag
+    menu: Justering mot kontoutdrag
+    rc: Bankuppgörelse
+  Remittance Vouchers:
+    bp: Återköps voucher
+  Standard Industrial Codes:
+    am: Standard industrikoder (sni)
+  Subtotal:
+    ca: Subtotal
+    im: Subtotal
+    io: Subtotal
+  Tax collected:
+    admin: Moms total
+    am: Moms total
+    menu: Moms total
+    ps: Moms total
+    rp: Moms total
+  Tax paid:
+    admin: Moms betalad
+    am: Moms betalad
+    menu: Moms betalad
+    ps: Moms betalad
+    rp: Moms betalad
+  Transactions:
+    admin: Transaktioner
+    menu: Transaktioner
+  Trial Balance:
+    admin: Provbalans
+    menu: Provbalans
+    ps: Provbalans
+    rp: Provbalans
+    rpss: Provbalans
+  Vendor Invoice:
+    admin: Leverantörsfaktura
+    am: Leverantörsfaktura
+    ct: Leverantörsfaktura
+    ic: Leverantörsfaktura
+    im: Leverantörsfaktura
+    menu: Leverantörsfaktura
+    oe: Leverantörsfaktura
+    rd: Leverantörsfaktura

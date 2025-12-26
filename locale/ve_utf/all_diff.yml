@@ -1,0 +1,28 @@
+---
+locale: ve_utf
+texts:
+  Add Labor/Overhead:
+    admin: Agregar Mano de Obra/Overhead
+    ic: Agregar Mano de Obra/Overhead
+    menu: Agregar Mano de Obra/Overhead
+  Bcc:
+    ap: Bcc
+    ar: Bcc
+    arap: Bcc
+    bp: Bcc
+    cp: Bcc
+    ct: Bcc
+    gl: Bcc
+    hr: Bcc
+    ic: Bcc
+    im: Bcc
+    io: Bcc
+    ir: Bcc
+    is: Bcc
+    oe: Bcc
+    ps: Bcc
+    rp: Bcc
+  Sales Order Number:
+    am: N°de Pedido
+  Sales Quotation Number:
+    am: N°de Cotización de Venta

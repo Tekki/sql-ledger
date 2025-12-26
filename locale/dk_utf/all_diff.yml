@@ -1,0 +1,11 @@
+---
+locale: dk_utf
+texts:
+  Login:
+    admin: Log på
+    am: Log på
+    hr: Log på
+    login: Log på
+  Logout:
+    admin: Log af
+    menu: Log af

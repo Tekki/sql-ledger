@@ -1,0 +1,47 @@
+---
+locale: chd_utf
+texts:
+  Are you sure you want to delete Invoice Number:
+    ps: 'Soll der Kassenbon mit folgender Nummer wirklich gelöscht werden:'
+  Cash:
+    am: vereinnahmt
+    ic: vereinnahmt
+    rp: vereinnahmt
+  Employee:
+    aa: Verkäufer
+    ap: Verkäufer
+    ar: Verkäufer
+    bp: Verkäufer
+    ct: Einkäufer
+    ic: Verkäufer
+    ir: Einkäufer
+    oe: Verkäufer
+    ps: Verkäufer
+    rp: Verkäufer
+    vr: Verkäufer
+  Login:
+    hr: Benutzername
+  Name:
+    login: Benutzername
+  Number:
+    am: MWST-Nummer
+    ap: Artikelnummer
+    ar: Artikelnummer
+    arap: Artikelnummer
+    cp: Artikelnummer
+    gl: Artikelnummer
+    hr: Mitarbeiternummer
+    ic: Artikelnummer
+    io: Artikelnummer
+    ir: Artikelnummer
+    is: Artikelnummer
+    jc: Mitarbeiternummer
+    oe: Artikelnummer
+    pos: Artikelnummer
+    ps: Artikelnummer
+    rp: Artikelnummer
+  Payment:
+    hr: Zahlungsausgang
+  Ship:
+    admin: Versenden
+    menu: Versenden

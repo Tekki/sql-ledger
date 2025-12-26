@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -200,7 +199,7 @@ sub search_employee {
 
 sub list_employees {
 
-  HR->employees(\%myconfig, \%$form);
+  SL::HR->employees(\%myconfig, $form);
 
   $href = "$form->{script}?action=list_employees";
   for (qw(direction oldsort db path login status)) { $href .= "&$_=$form->{$_}" }
@@ -381,7 +380,7 @@ sub list_employees {
     }
     $column_data{acsrole} = qq|<td>$ref->{acsrole}&nbsp;</td>|;
 
-    $column_data{name} = "<td><a href=$form->{script}?action=edit&db=employee&id=$ref->{id}&path=$form->{path}&login=$form->{login}&status=$form->{status}&callback=$callback>$ref->{name}&nbsp;</td>";
+    $column_data{name} = qq|<td><a class="name-l" href=$form->{script}?action=edit&db=employee&id=$ref->{id}&path=$form->{path}&login=$form->{login}&status=$form->{status}&callback=$callback>$ref->{name}&nbsp;</td>|;
 
     if ($ref->{email}) {
       $email = $ref->{email};
@@ -463,7 +462,7 @@ sub edit {
 
 sub prepare_employee {
 
-  HR->get_employee(\%myconfig, \%$form);
+  SL::HR->get_employee(\%myconfig, $form);
 
   for (keys %$form) { $form->{$_} = $form->quote($form->{$_}) }
 
@@ -484,26 +483,13 @@ sub prepare_employee {
 
   if ($form->{id}) {
     if ($form->{employeelogin}) {
-      open FH, $memberfile;
-      @member = <FH>;
-      close FH;
+      my %member;
+      eval { %member = Storable::retrieve("$slconfig{memberfile}.bin")->%*; };
+      $form->error("$slconfig{memberfile}.bin: $@") if $@;
 
-      while (@member) {
-        $_ = shift @member;
-        next if ! /\[$form->{employeelogin}\@$myconfig{dbname}\]/;
-        do {
-          chomp;
-          if (/^tan/) {
-            (undef, $form->{tan}) = split /=/, $_, 2;
-          }
-          if (/^totp_activated/) {
-            (undef, $form->{totp_activated}) = split /=/, $_, 2;
-          }
-          if (/^password/) {
-            (undef, $form->{employeepassword}) = split /=/, $_, 2;
-          }
-          $_ = shift @member;
-        } until /^\s/;
+      my $params = $member{"$form->{employeelogin}\@$myconfig{dbname}"};
+      for (qw|tan totp_activated password|) {
+        $form->{$_} = $params->{$_} if $params->{$_};
       }
     }
   }
@@ -635,7 +621,7 @@ sub employee_header {
               </tr>$mfa
               <tr>
                 <th align=right>|.$locale->text('Sales').qq|</th>
-                <td><input name=sales class=checkbox type=checkbox value=1 $sales></td>
+                <td><input name=sales class=checkbox type=checkbox value=1 $checked{sales}></td>
               </tr>
 |;
   } else {
@@ -1073,15 +1059,15 @@ sub access_control {
 |;
 
   # access control
-  open(FH, $menufile) or $form->error("$menufile : $!");
+  open my $fh, $menufile or $form->error("$menufile : $!");
   # scan for first menu level
-  @f = <FH>;
-  close(FH);
+  @f = <$fh>;
+  close $fh;
 
-  if (open(FH, "$form->{path}/custom/$menufile")) {
-    push @f, <FH>;
+  if (open my $fh, "$form->{path}/custom/$menufile") {
+    push @f, <$fh>;
+    close $fh;
   }
-  close(FH);
 
   foreach $item (@f) {
     next unless $item =~ /\[\w+/;
@@ -1102,7 +1088,7 @@ sub access_control {
 
   }
 
-  foreach $item (split /;/, HR->acsrole(\%myconfig, \%$form)) {
+  foreach $item (split /;/, SL::HR->acsrole(\%myconfig, $form)) {
     ($key, $value) = split /--/, $item, 2;
     $disabled{$key}{$value} = 1;
   }
@@ -1233,12 +1219,12 @@ sub save { &{ "save_$form->{db}" } };
 sub save_employee {
 
   $form->isblank("name", $locale->text("Name missing!"));
-  $form->error("$memberfile : ".$locale->text('locked!')) if (-f ${memberfile}.LCK);
+  $form->error("$slconfig{memberfile} : ".$locale->text('locked!')) if -f "$slconfig{memberfile}.LCK";
   $form->error($locale->text('Cannot use admin as login!')) if $form->{employeelogin} eq 'admin';
 
-  $form->{userspath} = $userspath;
+  $form->{userspath} = $slconfig{userspath};
 
-  if (HR->save_employee(\%myconfig, \%$form)) {
+  if (SL::HR->save_employee(\%myconfig, $form)) {
     &save_memberfile;
   }
 
@@ -1250,88 +1236,72 @@ sub save_employee {
 sub save_memberfile {
 
   # change memberfile
-  open(FH, ">${memberfile}.LCK") or $form->error("${memberfile}.LCK : $!");
-  close(FH);
+  open my $fh, ">$slconfig{memberfile}.LCK" or $form->error("$slconfig{memberfile}.LCK : $!");
+  close $fh;
 
-  if (! open(FH, '+<:utf8', $memberfile)) {
-    unlink "${memberfile}.LCK";
-    $form->error("$memberfile : $!");
+  my %member;
+  eval { %member = Storable::retrieve("$slconfig{memberfile}.bin")->%*; };
+
+  if ($@) {
+    unlink "$slconfig{memberfile}.LCK";
+    $form->error("$slconfig{memberfile}.bin: $@");
   }
 
-  $login = "";
-  while (<FH>) {
-    if (/^\[/) {
-      s/(\[|\])//g;
-      chomp;
-      $login = $_;
-      next;
-    }
-
-    if ($login) {
-      push @{ $member{$login} }, $_;
-    } else {
-      push @member, $_;
-    }
-  }
-
-  ($form->{templates}) = grep /^templates=/, @{ $member{"admin\@$myconfig{dbname}"} };
-  $form->{templates} =~ s/templates=//;
-  chomp $form->{templates};
-  $form->{templates} ||= $myconfig{dbname};
+  $form->{templates} = $member{"admin\@$myconfig{dbname}"}{templates} || $myconfig{dbname};
 
   if ($form->{employeelogin}) {
-    $employeelogin = $form->{employeelogin};
-    $employeelogin .= "\@$myconfig{dbname}";  # new format
+    $employeelogin = "$form->{employeelogin}\@$myconfig{dbname}";
 
-    unlink "$userspath/${employeelogin}.tan";
+    unlink "$slconfig{userspath}/${employeelogin}.tan";
 
     # assign values from old entries
-    $oldlogin = $form->{oldemployeelogin};
-    $oldlogin .= "\@$myconfig{dbname}";
+    $oldlogin = "$form->{oldemployeelogin}\@$myconfig{dbname}";
 
     srand( time() ^ ($$ + ($$ << 15)) );
 
-    if (@{ $member{$oldlogin} }) {
-      @memberlogin = grep !/^(name|email|password|tan|totp_activated|templates)=/, @{ $member{$oldlogin} };
-      ($oldemployeepassword) = grep /^password=/, @{ $member{$oldlogin} };
-      pop @memberlogin;
+    if ($member{$oldlogin}) {
+      my $params = delete $member{$oldlogin};
+      $oldemployeepassword = $params->{password};
 
-      $oldemployeepassword =~ s/password=//;
-      chomp $oldemployeepassword;
+      delete $params->{$_} for qw|name email password tan totp_activated templates|;
 
-      $form->{employeepassword} = $oldemployeepassword if $form->{nochange};
-
-      if ($form->{employeepassword} ne $oldemployeepassword) {
-        if ($form->{employeepassword}) {
-          $password = crypt $form->{employeepassword}, substr($form->{employeelogin}, 0, 2);
-          push @memberlogin, "password=$password\n";
-        }
+      if ($form->{admin} && $form->{employeepassword}) {
+        $password           = crypt $form->{employeepassword}, substr($form->{employeelogin}, 0, 2);
+        $params->{password} = $password;
       } else {
-        if ($oldemployeepassword) {
-          push @memberlogin, "password=$oldemployeepassword\n";
-        }
+        $params->{password} = $oldemployeepassword;
       }
 
-      for (qw(name email tan templates totp_activated)) { push @memberlogin, "$_=$form->{$_}\n" if $form->{$_} }
+      for (qw|name email tan templates totp_activated|) {
+        $params->{$_} = $form->{$_} if $form->{$_};
+      }
 
       if (!$form->{totp_activated} || $form->{reset_totp}) {
-        @memberlogin = grep !/^totp_secret/, @memberlogin;
+        delete $params->{totp_secret};
       }
 
-      @{ $member{$employeelogin} } = ();
-
-      for (sort @memberlogin) {
-        push @{ $member{$employeelogin} }, $_;
-      }
+      $member{$employeelogin} = $params;
 
     } else {
-      for (qw(company dateformat dbconnect dbdriver dbname dbhost dbport dboptions dbpasswd dbuser numberformat totp_secret)) { $m{$_} = $myconfig{$_} }
-      for (qw(name email tan totp_activated templates)) { $m{$_} = $form->{$_} }
+      my %m;
+      for (
+        'company', 'dateformat',   'dbconnect', 'dbdriver',
+        'dbhost',  'dbname',       'dboptions', 'dbpasswd',
+        'dbuser',  'numberformat', 'totp_secret',
+        )
+      {
+        $m{$_} = $myconfig{$_};
+      }
+      for (qw|name email tan totp_activated templates|) {
+        $m{$_} = $form->{$_};
+      }
 
       delete $m{totp_secret} unless $form->{totp_activated};
 
-      $m{dbpasswd} = pack 'u', $myconfig{dbpasswd};
-      chop $m{dbpasswd};
+      if ($myconfig{dbpasswd}) {
+        $m{dbpasswd} = pack 'u', $myconfig{dbpasswd};
+        chop $m{dbpasswd};
+      }
       $m{stylesheet} = 'sql-ledger.css';
       $m{timeout} = 86400;
 
@@ -1339,48 +1309,27 @@ sub save_memberfile {
         $m{password} = crypt $form->{employeepassword}, substr($form->{employeelogin}, 0, 2);
       }
 
-      @{ $member{$employeelogin} } = ();
-
-      for (sort keys %m) {
-        push @{ $member{$employeelogin} }, "$_=$m{$_}\n" if $m{$_};
-      }
+      $member{$employeelogin} = \%m;
     }
-    push @{ $member{$employeelogin} }, "\n";
   }
 
   if ($form->{employeelogin} ne $form->{oldemployeelogin}) {
-    delete $member{$form->{oldemployeelogin}};   # old format
     delete $member{"$form->{oldemployeelogin}\@$myconfig{dbname}"};
   }
 
-  seek(FH, 0, 0);
-  truncate(FH, 0);
-
-  # create header
-  for (@member) {
-    print FH $_;
-  }
-
-  for (sort keys %member) {
-    print FH "\[$_\]\n";
-    for $line (@{ $member{$_} }) {
-      print FH $line;
-    }
-  }
-  close(FH);
+  YAML::PP->new->dump_file("$slconfig{memberfile}.yml", \%member);
+  Storable::store \%member, "$slconfig{memberfile}.bin";
 
   if ($form->{employeelogin} ne $form->{oldemployeelogin}) {
     if ($form->{oldemployeelogin}) {
-      for ("$form->{oldemployeelogin}.conf", "$form->{oldemployeelogin}\@$myconfig{dbname}.conf") {
-        $filename = "$userspath/$_";
-        if (-f $filename) {
-          unlink "$filename";
-        }
+      $filename = "$slconfig{userspath}/$form->{oldemployeelogin}\@$myconfig{dbname}.bin";
+      if (-f $filename) {
+        unlink "$filename";
       }
     }
   }
 
-  unlink "${memberfile}.LCK";
+  unlink "$slconfig{memberfile}.LCK";
 
 }
 
@@ -1420,7 +1369,7 @@ sub delete_payroll {
 
 sub yes {
 
-  if (AA->delete_transaction(\%myconfig, \%$form)) {
+  if (SL::AA->delete_transaction(\%myconfig, $form)) {
     $form->redirect($locale->text('Transaction deleted!'));
   }
 
@@ -1431,9 +1380,9 @@ sub yes {
 
 sub delete_employee {
 
-  $form->error("$memberfile : ".$locale->text('locked!')) if (-f ${memberfile}.LCK);
+  $form->error("$slconfig{memberfile} : ".$locale->text('locked!')) if -f "$slconfig{memberfile}.LCK";
 
-  if (HR->delete_employee(\%myconfig, \%$form)) {
+  if (SL::HR->delete_employee(\%myconfig, $form)) {
     delete $form->{employeelogin};
 
     &save_memberfile;
@@ -1456,7 +1405,7 @@ sub add_transaction { &add };
 
 sub prepare_payroll {
 
-  HR->payroll_links(\%myconfig, \%$form);
+  SL::HR->payroll_links(\%myconfig, $form);
 
   if (@{ $form->{all_language} }) {
     $form->{selectlanguage} = "\n";
@@ -1811,7 +1760,7 @@ sub payroll_footer {
       for ("Preview", "Print", "Post", "Print and Post", "Delete") { delete $button{$_} }
     }
 
-    if (!$latex) {
+    if (!$slconfig{latex}) {
       for ("Preview", "Print and Post", "Print and Post as new") { delete $button{$_} }
     }
 
@@ -1844,7 +1793,7 @@ sub update_payroll {
   $form->{trans_id} = $id = $form->{id};
 
   ($employee, $form->{id}) = split /--/, $form->{employee};
-  HR->get_employee(\%myconfig, \%$form, 1);
+  SL::HR->get_employee(\%myconfig, $form, 1);
 
   $form->{oldemployee} = $form->{employee};
   $form->{id} = $id;
@@ -2041,9 +1990,9 @@ sub post {
     }
   }
 
-  $form->{userspath} = $userspath;
+  $form->{userspath} = $slconfig{userspath};
 
-  if (HR->post_transaction(\%myconfig, \%$form)) {
+  if (SL::HR->post_transaction(\%myconfig, $form)) {
     $form->redirect($locale->text('Transaction posted!'));
   }
 
@@ -2056,7 +2005,7 @@ sub search_payroll {
 
   $form->{reportcode} = 'payroll';
 
-  HR->search_payroll(\%myconfig, \%$form);
+  SL::HR->search_payroll(\%myconfig, $form);
 
   $form->{title} = $locale->text('Payroll Transactions');
 
@@ -2187,7 +2136,7 @@ sub search_payroll {
 
   $form->header;
 
-  &change_report(\%$form, \@input, \@checked, \%radio);
+  &change_report($form, \@input, \@checked, \%radio);
 
   &calendar;
 
@@ -2262,7 +2211,7 @@ sub payroll_transactions {
   $form->{sort} ||= "employee";
   $form->{reportcode} = 'payroll';
 
-  HR->payroll_transactions(\%myconfig, \%$form);
+  SL::HR->payroll_transactions(\%myconfig, $form);
 
   $form->{title} = $locale->text('Payroll Transactions');
 
@@ -2620,7 +2569,7 @@ sub payroll_subtotal {
 
 sub search_deduction {
 
-  HR->deductions(\%myconfig, \%$form);
+  SL::HR->deductions(\%myconfig, $form);
 
   $callback = "$form->{script}?action=search_deduction";
   for (qw(db path login)) { $callback .= "&$_=$form->{$_}" }
@@ -2748,7 +2697,7 @@ sub search_deduction {
 
 sub prepare_deduction {
 
-  HR->get_deduction(\%myconfig, \%$form);
+  SL::HR->get_deduction(\%myconfig, $form);
 
   $i = 1;
   foreach $ref (@{ $form->{deductionrate} }) {
@@ -2984,7 +2933,7 @@ sub deduction_footer {
 
 sub search_wage {
 
-  HR->wages(\%myconfig, \%$form);
+  SL::HR->wages(\%myconfig, $form);
 
   $callback = "$form->{script}?action=search_wage";
   for (qw(db path login)) { $callback .= "&$_=$form->{$_}" }
@@ -3096,7 +3045,7 @@ sub search_wage {
 
 sub prepare_wage {
 
-  HR->get_wage(\%myconfig, \%$form);
+  SL::HR->get_wage(\%myconfig, $form);
 
   $form->{selectaccounts} = "";
   for (@{ $form->{accounts} }) { $form->{selectaccounts} .= "$_->{accno}--$_->{description}\n" }
@@ -3323,7 +3272,7 @@ sub update_employee {
   $form->redo_rows(\@flds, \@f, $count, $form->{wage_rows});
   $form->{wage_rows} = $count;
 
-  HR->isadmin(\%myconfig, \%$form);
+  SL::HR->isadmin(\%myconfig, $form);
 
 }
 
@@ -3349,7 +3298,7 @@ sub save_deduction {
     $form->isblank("amount_1", $locale->text("Amount missing!"));
   }
 
-  HR->save_deduction(\%myconfig, \%$form);
+  SL::HR->save_deduction(\%myconfig, $form);
   $form->redirect($locale->text('Deduction saved!'));
 
 }
@@ -3357,7 +3306,7 @@ sub save_deduction {
 
 sub delete_deduction {
 
-  HR->delete_deduction(\%myconfig, \%$form);
+  SL::HR->delete_deduction(\%myconfig, $form);
   $form->redirect($locale->text('Deduction deleted!'));
 
 }
@@ -3367,7 +3316,7 @@ sub save_wage {
 
   $form->isblank("description", $locale->text("Description missing!"));
 
-  HR->save_wage(\%myconfig, \%$form);
+  SL::HR->save_wage(\%myconfig, $form);
   $form->redirect($locale->text('Wage saved!'));
 
 }
@@ -3375,7 +3324,7 @@ sub save_wage {
 
 sub delete_wage {
 
-  HR->delete_wage(\%myconfig, \%$form);
+  SL::HR->delete_wage(\%myconfig, $form);
   $form->redirect($locale->text('Wage deleted!'));
 
 }

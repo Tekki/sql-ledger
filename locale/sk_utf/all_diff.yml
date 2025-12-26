@@ -1,0 +1,24 @@
+---
+locale: sk_utf
+texts:
+  Add Debit Note:
+    aa: Storno dodavateľské transakcia
+  Batch:
+    admin: Výstup v dávke
+    menu: Výstup v dávke
+  Credit Note:
+    aa: Storno transakcia
+    admin: Storno transakcia
+    am: Storno transakcia
+    ct: Storno transakcia
+    im: Storno transakcia
+    menu: Storno transakcia
+  Debit Note:
+    aa: Storno transakcia
+    admin: Storno transakcia
+    am: Storno transakcia
+    ct: Storno transakcia
+    im: Storno transakcia
+    menu: Storno transakcia
+  Deselect all:
+    cp: Nevýbrať všetko

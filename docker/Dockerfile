@@ -10,15 +10,19 @@ RUN set -ex \
     gpg-agent \
     libarchive-extract-perl \
     libarchive-zip-perl \
+    libdbd-mock-perl \
     libdbd-pg-perl \
     libexcel-writer-xlsx-perl \
+    libhtml-form-perl \
     libio-socket-ssl-perl \
     libmojolicious-perl \
     libspreadsheet-parsexlsx-perl \
     libtext-qrcode-perl \
     libtemplate-perl \
+    libtie-ixhash-perl \
     libyaml-pp-perl \
     postgresql-client \
+    vim \
   && rm -rf /var/lib/apt/lists/*
 
 RUN set -ex \

@@ -1,26 +1,26 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2006
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
 # General ledger backend code
 #
 #======================================================================
+use v5.40;
 
-package GL;
+package SL::GL;
 
 
-sub delete_transaction {
-  my ($self, $myconfig, $form) = @_;
+sub delete_transaction ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
+  my $query;
 
-  $form->{id} *= 1;
+  ($form->{id} ||= 0) *= 1;
 
   my %audittrail = ( tablename  => 'gl',
                      reference  => $form->{reference},
@@ -30,12 +30,12 @@ sub delete_transaction {
 
   $form->audittrail($dbh, "", \%audittrail);
 
-  if ($form->{batchid} *= 1) {
+  if (($form->{batchid} ||= 0) *= 1) {
     $query = qq|SELECT sum(amount)
                 FROM acc_trans
                 WHERE trans_id = $form->{id}
                 AND amount < 0|;
-    my ($mount) = $dbh->selectrow_array($query);
+    my ($amount) = $dbh->selectrow_array($query);
 
     $amount = $form->round_amount($amount, $form->{precision});
     $form->update_balance($dbh,
@@ -45,11 +45,11 @@ sub delete_transaction {
                           $amount);
 
     $query = qq|DELETE FROM vr WHERE trans_id = $form->{id}|;
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
   }
 
   $query = qq|DELETE FROM gl WHERE id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $query = qq|SELECT trans_id FROM pay_trans
               WHERE glid = $form->{id}|;
@@ -58,16 +58,16 @@ sub delete_transaction {
   my $id;
   for $id (qw(id apid)) {
     for (qw(acc_trans dpt_trans yearend pay_trans status)) {
-      if ($form->{$id} *= 1) {
+      if (($form->{$id} ||= 0) *= 1) {
         $query = qq|DELETE FROM $_ WHERE trans_id = $form->{$id}|;
-        $dbh->do($query) || $form->dberror($query);
+        $dbh->do($query) or $form->dberror($query);
       }
     }
   }
 
   for (qw(recurring recurringemail recurringprint)) {
     $query = qq|DELETE FROM $_ WHERE id = $form->{id}|;
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
   }
 
   $form->delete_references($dbh);
@@ -83,8 +83,7 @@ sub delete_transaction {
 }
 
 
-sub post_transaction {
-  my ($self, $myconfig, $form, $dbh) = @_;
+sub post_transaction ($, $myconfig, $form, $dbh = undef) {
 
   my $project_id;
   my $department_id;
@@ -104,18 +103,18 @@ sub post_transaction {
   my $approved = ($form->{pending}) ? '0' : '1';
   my $action = ($approved) ? 'posted' : 'saved';
 
-  my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  my %defaults = $form->get_defaults($dbh, ['precision']);
   $form->{precision} = $defaults{precision};
 
-  if ($form->{id} *= 1) {
+  if (($form->{id} ||= 0) *= 1) {
     $keepcleared = 1;
 
-    if ($form->{batchid} *= 1) {
+    if (($form->{batchid} ||= 0) *= 1) {
       $query = qq|SELECT * FROM vr
                   WHERE trans_id = $form->{id}|;
-      $sth = $dbh->prepare($query) || $form->dberror($query);
-      $sth->execute || $form->dberror($query);
-      $ref = $sth->fetchrow_hashref(NAME_lc);
+      $sth = $dbh->prepare($query) or $form->dberror($query);
+      $sth->execute or $form->dberror($query);
+      my $ref = $sth->fetchrow_hashref;
       $form->{voucher}{transaction} = $ref;
       $sth->finish;
 
@@ -123,7 +122,7 @@ sub post_transaction {
                   FROM acc_trans
                   WHERE amount < 0
                   AND trans_id = $form->{id}|;
-      ($amount) = $dbh->selectrow_array($query);
+      my ($amount) = $dbh->selectrow_array($query);
 
       $form->update_balance($dbh,
                             'br',
@@ -134,7 +133,7 @@ sub post_transaction {
       # delete voucher
       $query = qq|DELETE FROM vr
                   WHERE trans_id = $form->{id}|;
-      $dbh->do($query) || $form->dberror($query);
+      $dbh->do($query) or $form->dberror($query);
 
     }
 
@@ -146,7 +145,7 @@ sub post_transaction {
       # delete individual transactions
       for (qw(acc_trans dpt_trans)) {
         $query = qq|DELETE FROM $_ WHERE trans_id = $form->{id}|;
-        $dbh->do($query) || $form->dberror($query);
+        $dbh->do($query) or $form->dberror($query);
       }
     }
   }
@@ -160,15 +159,15 @@ sub post_transaction {
                 VALUES ('$uid', (SELECT id FROM employee
                                  WHERE login = '$form->{login}'),
                 '$approved')|;
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
 
     $query = qq|SELECT id FROM gl
                 WHERE reference = '$uid'|;
     ($form->{id}) = $dbh->selectrow_array($query);
   }
 
-  (undef, $department_id) = split /--/, $form->{department};
-  $department_id *= 1;
+  (undef, $department_id) = split /--/, $form->{department} // '';
+  ($department_id //= 0) *= 1;
 
   $form->{reference} = $form->update_defaults($myconfig, 'glnumber', $dbh) unless $form->{reference};
 
@@ -185,12 +184,12 @@ sub post_transaction {
               curr = '$form->{currency}',
               exchangerate = $form->{exchangerate}
               WHERE id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   if ($department_id) {
     $query = qq|INSERT INTO dpt_trans (trans_id, department_id)
                 VALUES ($form->{id}, $department_id)|;
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
   }
 
   # update exchangerate
@@ -211,7 +210,7 @@ sub post_transaction {
     $credit = $form->parse_amount($myconfig, $form->{"credit_$i"});
 
     # extract accno
-    ($accno) = split(/--/, $form->{"accno_$i"});
+    my ($accno) = split(/--/, $form->{"accno_$i"} // '');
 
     if ($credit) {
       $amount = $credit;
@@ -222,15 +221,15 @@ sub post_transaction {
     }
 
     # add the record
-    (undef, $project_id) = split /--/, $form->{"projectnumber_$i"};
+    (undef, $project_id) = split /--/, $form->{"projectnumber_$i"} // '';
     $project_id ||= 'NULL';
 
     if ($keepcleared) {
-      $cleared = $form->dbquote($form->{"cleared_$i"}, SQL_DATE);
+      $cleared = $form->dbquote($form->{"cleared_$i"}, 'SQL_DATE');
     }
 
-    if ($form->{"fx_transaction_$i"} *= 1) {
-      $cleared = $form->dbquote($form->{transdate}, SQL_DATE);
+    if (($form->{"fx_transaction_$i"} ||= 0) *= 1) {
+      $cleared = $form->dbquote($form->{transdate}, 'SQL_DATE');
     }
 
     if ($amount || $form->{"source_$i"} || $form->{"memo_$i"} || ($project_id ne 'NULL')) {
@@ -245,9 +244,9 @@ sub post_transaction {
                   '$form->{"fx_transaction_$i"}',
                   $project_id, |.$dbh->quote($form->{"memo_$i"}).qq|,
                   $cleared, '$approved')|;
-      $dbh->do($query) || $form->dberror($query);
+      $dbh->do($query) or $form->dberror($query);
 
-      if ($form->{currency} ne $form->{defaultcurrency}) {
+      if (($form->{currency} // '') ne $form->{defaultcurrency}) {
 
                                 $amount = $form->round_amount($amount * ($form->{exchangerate} - 1), $form->{precision});
 
@@ -262,20 +261,20 @@ sub post_transaction {
                                                                  $dbh->quote($form->{"source_$i"}) .qq|,
                                                                 $project_id, '1', |.$dbh->quote($form->{"memo_$i"}).qq|,
                                                                 $cleared, '$approved')|;
-                                        $dbh->do($query) || $form->dberror($query);
+                                        $dbh->do($query) or $form->dberror($query);
                                 }
       }
     }
   }
 
-  if ($form->{batchid} *= 1) {
+  if (($form->{batchid} ||= 0) *= 1) {
     # add voucher
     $form->{voucher}{transaction}{vouchernumber} = $form->update_defaults($myconfig, 'vouchernumber', $dbh) unless $form->{voucher}{transaction}{vouchernumber};
 
     $query = qq|INSERT INTO vr (br_id, trans_id, id, vouchernumber)
                 VALUES ($form->{batchid}, $form->{id}, $form->{id}, |
                 .$dbh->quote($form->{voucher}{transaction}{vouchernumber}).qq|)|;
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
 
     # update batch
     $form->update_balance($dbh,
@@ -314,8 +313,7 @@ sub post_transaction {
 }
 
 
-sub transactions {
-  my ($self, $myconfig, $form) = @_;
+sub transactions ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -323,7 +321,7 @@ sub transactions {
   my $sth;
   my $var;
 
-  my %defaults = $form->get_defaults($dbh, \@{['precision', 'company']});
+  my %defaults = $form->get_defaults($dbh, ['precision', 'company']);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   my ($glwhere, $arwhere, $apwhere) = ("g.approved = '1'", "a.approved = '1'", "a.approved = '1'");
@@ -353,20 +351,20 @@ sub transactions {
     $apwhere .= " AND lower(ct.vendornumber) LIKE '$var'";
   }
   if ($form->{department}) {
-    (undef, $var) = split /--/, $form->{department};
+    (undef, $var) = split /--/, $form->{department} // '';
     $glwhere .= " AND g.department_id = $var";
     $arwhere .= " AND a.department_id = $var";
     $apwhere .= " AND a.department_id = $var";
   }
   if ($form->{project}) {
-    (undef, $var) = split /--/, $form->{project};
+    (undef, $var) = split /--/, $form->{project} // '';
     $arwhere .= " AND ac.project_id = $var";
     $apwhere .= " AND ac.project_id = $var";
   }
 
   my $gdescription = "''";
-  my $invoicejoin;
-  my $lineitem = "''";
+  my $invoicejoin  = '';
+  my $lineitem     = "''";
 
   if ($form->{lineitem}) {
     $var = $form->like(lc $form->{lineitem});
@@ -475,7 +473,7 @@ sub transactions {
     $arwhere .= " AND c.gifi_accno = '$form->{gifi_accno}'";
     $apwhere .= " AND c.gifi_accno = '$form->{gifi_accno}'";
   }
-  if ($form->{category} ne 'X') {
+  if (($form->{category} // '') ne 'X') {
     $glwhere .= " AND c.category = '$form->{category}'";
     $arwhere .= " AND c.category = '$form->{category}'";
     $apwhere .= " AND c.category = '$form->{category}'";
@@ -541,6 +539,8 @@ sub transactions {
     }
   }
 
+  my ($bgl, $bar, $bap);
+
   if ($form->{l_splitledger}) {
     if ($form->{datefrom}) {
 
@@ -575,9 +575,9 @@ sub transactions {
     }
   }
 
-  my $false = ($myconfig->{dbdriver} =~ /Pg/) ? FALSE : q|'0'|;
+  my $false = ($myconfig->{dbdriver} =~ /Pg/) ? 'FALSE' : q|'0'|;
 
-  my $query = qq|SELECT g.id, 'gl' AS type, $false AS invoice, g.reference,
+  $query = qq|SELECT g.id, 'gl' AS type, $false AS invoice, g.reference,
                  g.description, ac.transdate, ac.source,
                  ac.amount, c.accno, c.description as account_description,
                  l.description AS account_translation, c.category,
@@ -645,21 +645,20 @@ sub transactions {
 
   my @sf = qw(id transdate reference);
   push @sf, "accno" unless $form->{l_splitledger};
-  my %ordinal = $form->ordinal_order($dbh, $query);
-  my $sort_order = $form->sort_order(\@sf, \%ordinal);
+  my $sort_order = $form->sort_order(\@sf);
 
   if ($form->{l_splitledger}) {
-    $sort_order = $ordinal{accno} .", $sort_order";
+    $sort_order = "accno, $sort_order";
   }
   $query .= qq| ORDER BY $sort_order|;
 
-  my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth = $dbh->prepare($query);
+  $sth->execute or $form->dberror($query);
 
-  my %trans;
+  my (%trans, %balance);
   my $i = 0;
 
-  while (my $ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
 
     $ref->{account_description} = $ref->{account_translation} if $ref->{account_translation};
 
@@ -669,19 +668,19 @@ sub transactions {
         if ($balance{$ref->{accno}}) {
           $ref->{balance} = $balance{$ref->{accno}};
         } else {
-          $bgl->execute($ref->{accno}) || $form->dberror;
-          ($balance) = $bgl->fetchrow_array;
-          $ref->{balance} = $balance;
+          $bgl->execute($ref->{accno}) or $form->dberror;
+          my ($balance) = $bgl->fetchrow_array;
+          $ref->{balance} = $balance || 0;
           $bgl->finish;
 
-          $bar->execute($ref->{accno}) || $form->dberror;
+          $bar->execute($ref->{accno}) or $form->dberror;
           ($balance) = $bar->fetchrow_array;
-          $ref->{balance} += $balance;
+          $ref->{balance} += $balance if $balance;
           $bar->finish;
 
-          $bap->execute($ref->{accno}) || $form->dberror;
+          $bap->execute($ref->{accno}) or $form->dberror;
           ($balance) = $bap->fetchrow_array;
-          $ref->{balance} += $balance;
+          $ref->{balance} += $balance if $balance;
           $bap->finish;
 
           $balance{$ref->{accno}} = $ref->{balance};
@@ -768,6 +767,7 @@ sub transactions {
       my @paid = ();
       my @accno = ();
       my %accno = ();
+      my %seen = ();
       my $aa = 0;
       my $j;
 
@@ -805,7 +805,7 @@ sub transactions {
         }
         for (@arap) {
           $i = 0;
-          for $ref (@accno) {
+          for my $ref (@accno) {
             $form->{GL}[$_]{contra} .= "$ref->{accno} " unless $seen{"$ref->{accno}$ref->{transdate}"};
             $seen{"$ref->{accno}$ref->{transdate}"} = 1;
 
@@ -814,7 +814,7 @@ sub transactions {
           }
           $i++;
         }
-        for $ref (@accno) {
+        for my $ref (@accno) {
           $form->{GL}[$ref->{i}]{contra} = $arap;
           $form->{GL}[$ref->{i}]{gifi_contra} = $gifi_arap;
         }
@@ -823,8 +823,9 @@ sub transactions {
         %accno = %{$trans{$id}};
 
         for $i (reverse sort { $trans{$id}{$a}{amount} <=> $trans{$id}{$b}{amount} } keys %{$trans{$id}}) {
-          $found = 0;
-          $amount = $trans{$id}{$i}{amount};
+          my $found  = 0;
+          my $amount = $trans{$id}{$i}{amount};
+          my ($amt, $rev);
           $j = $i;
 
           if ($trans{$id}{$i}{debit}) {
@@ -860,8 +861,8 @@ sub transactions {
 
                 }
               }
-              $form->{GL}[$j]{contra} = join ' ', sort split / /, $form->{GL}[$j]{contra};
-              $form->{GL}[$j]{gifi_contra} = join ' ', sort split / /, $form->{GL}[$j]{gifi_contra};
+              $form->{GL}[$j]{contra} = join ' ', sort split / /, $form->{GL}[$j]{contra} // '';
+              $form->{GL}[$j]{gifi_contra} = join ' ', sort split / /, $form->{GL}[$j]{gifi_contra} // '';
             }
           }
         }
@@ -872,8 +873,7 @@ sub transactions {
 }
 
 
-sub transaction {
-  my ($self, $myconfig, $form) = @_;
+sub transaction ($, $myconfig, $form) {
 
   my $query;
   my $sth;
@@ -890,7 +890,7 @@ sub transaction {
 
   $form->{currencies} = $form->get_currencies($myconfig, $dbh);
 
-  if ($form->{id} *= 1) {
+  if (($form->{id} ||= 0) *= 1) {
     $query = qq|SELECT g.*,
                 d.description AS department,
                 br.id AS batchid, br.description AS batchdescription
@@ -900,9 +900,9 @@ sub transaction {
                 LEFT JOIN br ON (br.id = vr.br_id)
                 WHERE g.id = $form->{id}|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    $ref = $sth->fetchrow_hashref(NAME_lc);
+    $ref = $sth->fetchrow_hashref;
     for (keys %$ref) { $form->{$_} = $ref->{$_} }
     $form->{currency} = $form->{curr};
     $sth->finish;
@@ -917,9 +917,12 @@ sub transaction {
                 WHERE ac.trans_id = $form->{id}
                 ORDER BY c.accno|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    my $fxdr = 0;
+    my $fxcr = 0;
+
+    while ($ref = $sth->fetchrow_hashref) {
       $ref->{description} = $ref->{translation} if $ref->{translation};
       push @gl, $ref;
       if ($ref->{fx_transaction}) {
@@ -963,9 +966,9 @@ sub transaction {
               AND c.closed = '0'
               ORDER by 1|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while ($ref = $sth->fetchrow_hashref) {
     $ref->{description} = $ref->{translation} if $ref->{translation};
     push @{ $form->{all_accno} }, $ref;
   }
@@ -989,7 +992,7 @@ sub transaction {
 
 =head1 NAME
 
-GL - General ledger backend code
+SL::GL - General ledger backend code
 
 =head1 DESCRIPTION
 
@@ -1001,18 +1004,18 @@ L<SL::GL> implements the following functions:
 
 =head2 delete_transaction
 
-  GL->delete_transaction($myconfig, $form);
+  SL::GL->delete_transaction($myconfig, $form);
 
 =head2 post_transaction
 
-  GL->post_transaction($myconfig, $form, $dbh);
+  SL::GL->post_transaction($myconfig, $form, $dbh);
 
 =head2 transaction
 
-  GL->transaction($myconfig, $form);
+  SL::GL->transaction($myconfig, $form);
 
 =head2 transactions
 
-  GL->transactions($myconfig, $form);
+  SL::GL->transactions($myconfig, $form);
 
 =cut

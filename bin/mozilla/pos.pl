@@ -1,15 +1,14 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
-#=====================================================================
+#======================================================================
 #
 # POS
 #
-#=====================================================================
+#======================================================================
 
 1;
 # end
@@ -662,7 +661,7 @@ sub form_footer {
         delete $button{'Delete'};
       }
 
-      delete $button{'Print and Post'} unless $latex;
+      delete $button{'Print and Post'} unless $slconfig{latex};
 
       for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) {
         print qq|<input class=pos type=submit name=action value="$button{$_}{value}" accesskey="$button{$_}{key}" title="$button{$_}{value} [$button{$_}{key}]">\n|;
@@ -682,7 +681,7 @@ sub form_footer {
           ($partsgroup, $translation, $image) = split /--/, $item;
           $item = ($translation) ? $translation : $partsgroup;
           $item = $form->quote($item);
-          print qq| <button name="action" value="$spc$item" type="submit" class="pos" title="$item"><img src="$images/$myconfig{dbname}/$image" height="32" alt="$item">\n| if $item;
+          print qq| <button name="action" value="$spc$item" type="submit" class="pos" title="$item"><img src="$slconfig{images}/$myconfig{dbname}/$image" height="32" alt="$item">\n| if $item;
         }
       }
     }
@@ -783,7 +782,7 @@ sub post {
   $form->{"AR_paid_$i"} = $AR_paid;
   $form->{"paymentmethod_$i"} = $paymentmethod;
 
-  if (IS->post_invoice(\%myconfig, \%$form)) {
+  if (SL::IS->post_invoice(\%myconfig, $form)) {
     $form->redirect($locale->text('Posted!'));
   } else {
     $form->error($locale->text('Cannot post transaction!'));
@@ -972,7 +971,7 @@ sub poledisplay {
 
     my $arg = $form->format_line($form->unescape($form->{poledisplay}));
     $errfile = time;
-    $errfile = "$userspath/$errfile";
+    $errfile = "$slconfig{userspath}/$errfile";
 
     $rc = system("$arg 2>$errfile");
 
@@ -1021,7 +1020,7 @@ sub print {
     }
   }
 
-  $oldform = new Form;
+  $oldform = SL::Form->new;
   for (keys %$form) { $oldform->{$_} = $form->{$_}; }
 
   for (qw(employee department)) { $form->{$_} =~ s/--.*//g }
@@ -1051,7 +1050,7 @@ sub print_form {
     exit;
   }
 
-  AA->company_details(\%myconfig, \%$form);
+  SL::AA->company_details(\%myconfig, $form);
 
   @a = ();
   for (1 .. $form->{rowcount}) { push @a, ("partnumber_$_", "description_$_"); }
@@ -1061,7 +1060,7 @@ sub print_form {
   # format payment dates
   for (1 .. $form->{paidaccounts}) { $form->{"datepaid_$_"} = $locale->date(\%myconfig, $form->{"datepaid_$_"}); }
 
-  IS->invoice_details(\%myconfig, \%$form);
+  SL::IS->invoice_details(\%myconfig, $form);
 
   if (($form->{total} = $form->parse_amount(\%myconfig, $form->{total})) <= 0) {
     $form->{total} = 0;
@@ -1080,7 +1079,7 @@ sub print_form {
   push @a, qw(company address tel fax businessnumber companyemail companywebsite username);
   $form->format_string(@a);
 
-  $form->{templates} = "$templates/$myconfig{templates}";
+  $form->{templates} = "$slconfig{templates}/$myconfig{templates}";
   $form->{IN} = "$form->{type}.$form->{format}";
 
   if ($form->{format} =~ /(ps|pdf)/) {
@@ -1097,7 +1096,7 @@ sub print_form {
   $form->{pre} = "<body bgcolor=#ffffff>\n<pre>";
   delete $form->{stylesheet};
 
-  $form->parse_template(\%myconfig, $userspath, $dvipdf, $xelatex);
+  $form->parse_template(\%myconfig, $slconfig{userspath}, $slconfig{dvipdf}, $slconfig{xelatex});
 
   if ($form->{printed} !~ /$form->{formname}/) {
     $form->{printed} .= " $form->{formname}";
@@ -1212,7 +1211,7 @@ sub receipts {
 
   $form->{vc} = 'customer';
   $form->{db} = 'ar';
-  RP->paymentaccounts(\%myconfig, \%$form);
+  SL::RP->paymentaccounts(\%myconfig, $form);
 
   $form->{paymentaccounts} = "";
   for (@{ $form->{PR} } ) { $form->{paymentaccounts} .= "$_->{accno} "; }

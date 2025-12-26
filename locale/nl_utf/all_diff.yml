@@ -1,0 +1,931 @@
+---
+locale: nl_utf
+texts:
+  Add Time Card:
+    admin: Tijdkaart Toevoegen
+    jc: Tijdkaart Toevoegen
+    menu: Tijdkaart Toevoegen
+  Apr:
+    aa: apr
+    am: apr
+    ap: apr
+    ar: apr
+    bp: apr
+    ca: apr
+    gl: apr
+    ic: apr
+    io: apr
+    ir: apr
+    is: apr
+    oe: apr
+    pe: apr
+    ps: apr
+    rc: apr
+    rp: apr
+    vr: apr
+  April:
+    aa: april
+    admin: april
+    am: april
+    ap: april
+    ar: april
+    arap: april
+    bp: april
+    ca: april
+    cp: april
+    ct: april
+    gl: april
+    hr: april
+    ic: april
+    im: april
+    io: april
+    ir: april
+    is: april
+    jc: april
+    js: april
+    menu: april
+    oe: april
+    pe: april
+    pos: april
+    ps: april
+    rc: april
+    rd: april
+    rp: april
+    sm: april
+    sr: april
+    vr: april
+  Are you sure you want to delete time card for:
+    jc: Weet u zeker dat u de tijdkaart wil verwijderen voor
+  Are you sure you want to remove the marked entries from the queue?:
+    bp: Weet us zeker dat u de gemarkeerde stukken wil verwijderen uit de wachtrij?
+  Assembly stocked!:
+    pe: Assemblage ingeslagen!
+  Aug:
+    aa: aug
+    am: aug
+    ap: aug
+    ar: aug
+    bp: aug
+    ca: aug
+    gl: aug
+    ic: aug
+    io: aug
+    ir: aug
+    is: aug
+    oe: aug
+    pe: aug
+    ps: aug
+    rc: aug
+    rp: aug
+    vr: aug
+  August:
+    aa: augustus
+    admin: augustus
+    am: augustus
+    ap: augustus
+    ar: augustus
+    arap: augustus
+    bp: augustus
+    ca: augustus
+    cp: augustus
+    ct: augustus
+    gl: augustus
+    hr: augustus
+    ic: augustus
+    im: augustus
+    io: augustus
+    ir: augustus
+    is: augustus
+    jc: augustus
+    js: augustus
+    menu: augustus
+    oe: augustus
+    pe: augustus
+    pos: augustus
+    ps: augustus
+    rc: augustus
+    rd: augustus
+    rp: augustus
+    sm: augustus
+    sr: augustus
+    vr: augustus
+  Billing Address:
+    ct: Facturatieadres
+    im: Facturatieadres
+  Break:
+    ct: Korting
+    im: Korting
+  COGS:
+    am: Kostprijs omzet
+    ic: Kostprijs omzet
+  COGS account does not exist!:
+    ic: Kostprijs Omzet rekening bestaat niet!
+  Cannot add stores card for a completed job!:
+    jc: Kan geen materiaalkaart toevoegen aan een afgewerkte job!
+  Cannot add time card for a completed job!:
+    jc: Kan geen tijdkaart toevoegen aan een afgewerkte job!
+  Cannot change stores card for a completed job!:
+    jc: Kan materiaalkaart niet veranderen voor een afgewerkte job!
+  Cannot change time card for a completed job!:
+    jc: Kan tijdkaart niet veranderen voor een afgewerkte job!
+  Cannot delete account!:
+    am: Kan bedrag niet verwijderen!
+  Cannot post payment for a closed period!:
+    aa: Kan geen betaling boeken voor afgesloten periode!
+    ap: Kan geen betaling boeken voor afgesloten periode!
+    ar: Kan geen betaling boeken voor afgesloten periode!
+    cp: Kan geen betaling boeken voor afgesloten periode!
+    ir: Kan geen betaling boeken voor afgesloten periode!
+    is: Kan geen betaling boeken voor afgesloten periode!
+    ps: Kan geen betaling boeken voor afgesloten periode!
+  Cannot save defaults!:
+    am: Kan de standaard niet opslaan!
+  Cannot save time card for a closed period!:
+    jc: Kan tijdkaart niet opslaan in een afgesloten periode!
+  Cannot save time card!:
+    jc: Kan tijdkaart niet opslaan!
+  Cannot set account for more than one of AR, AP or IC:
+    am: Kan rekening niet toekennen behalve aan ofwel Debiteuren, Crediteuren of Inventaris
+  Cannot set multiple options for:
+    am: Kan slechts één menuoptie instellen voor
+  Cannot stock Assembly!:
+    pe: Kan assemblage niet inslaan
+  Chargeable:
+    jc: Doorbelastbaar
+  Check Inventory:
+    ic: Inventaris Controleren
+  Copies:
+    bp: Kopieën
+    ic: Kopieën
+    io: Kopieën
+    ir: Kopieën
+    is: Kopieën
+    oe: Kopieën
+    ps: Kopieën
+    rp: Kopieën
+  Copy to COA:
+    am: Kopieër naar rekeningstelsel
+  Cost Center:
+    am: Kostenpost
+  DOB:
+    hr: Geboortedatum
+  Database Host:
+    am: Databasecomputer
+  Debit Invoice:
+    admin: Debitfactuur
+    am: Debitfactuur
+    bp: Debitfactuur
+    ct: Debitfactuur
+    ic: Debitfactuur
+    im: Debitfactuur
+    io: Debitfactuur
+    ir: Debitfactuur
+    is: Debitfactuur
+    menu: Debitfactuur
+    oe: Debitfactuur
+    ps: Debitfactuur
+    rd: Debitfactuur
+  Dec:
+    aa: dec
+    am: dec
+    ap: dec
+    ar: dec
+    bp: dec
+    ca: dec
+    gl: dec
+    ic: dec
+    io: dec
+    ir: dec
+    is: dec
+    oe: dec
+    pe: dec
+    ps: dec
+    rc: dec
+    rp: dec
+    vr: dec
+  December:
+    aa: december
+    admin: december
+    am: december
+    ap: december
+    ar: december
+    arap: december
+    bp: december
+    ca: december
+    cp: december
+    ct: december
+    gl: december
+    hr: december
+    ic: december
+    im: december
+    io: december
+    ir: december
+    is: december
+    jc: december
+    js: december
+    menu: december
+    oe: december
+    pe: december
+    pos: december
+    ps: december
+    rc: december
+    rd: december
+    rp: december
+    sm: december
+    sr: december
+    vr: december
+  Edit POS Invoice:
+    is: Kassaorder Wijzigen
+    ps: Kassaorder Wijzigen
+  Equity:
+    am: Actief vermogen
+    gl: Actief vermogen
+    ps: Actief vermogen
+    rpss: Actief vermogen
+  Expense:
+    am: Onkosten
+    gl: Onkosten
+    ic: Onkosten
+  Expense account does not exist!:
+    ic: Uitgavenrekening bestaat niet!
+  Extended:
+    ic: Uitgebreid
+    io: Uitgebreid
+    ir: Uitgebreid
+    is: Uitgebreid
+    oe: Uitgebreid
+    pos: Uitgebreid
+    ps: Uitgebreid
+  Feb:
+    aa: feb
+    am: feb
+    ap: feb
+    ar: feb
+    bp: feb
+    ca: feb
+    gl: feb
+    ic: feb
+    io: feb
+    ir: feb
+    is: feb
+    oe: feb
+    pe: feb
+    ps: feb
+    rc: feb
+    rp: feb
+    vr: feb
+  February:
+    aa: februari
+    admin: februari
+    am: februari
+    ap: februari
+    ar: februari
+    arap: februari
+    bp: februari
+    ca: februari
+    cp: februari
+    ct: februari
+    gl: februari
+    hr: februari
+    ic: februari
+    im: februari
+    io: februari
+    ir: februari
+    is: februari
+    jc: februari
+    js: februari
+    menu: februari
+    oe: februari
+    pe: februari
+    pos: februari
+    ps: februari
+    rc: februari
+    rd: februari
+    rp: februari
+    sm: februari
+    sr: februari
+    vr: februari
+  GL:
+    am: Memoriaal
+  GL Reference Number:
+    am: Memoriaal Referentiecode
+  Home Phone:
+    hr: Thuistelefoon
+  Income account does not exist!:
+    ic: Inkomstenrekening bestaat niet!
+  Inventory account does not exist!:
+    ic: Inventarisrekening bestaat niet!
+  Is this a summary account to record:
+    am: Totaalrekening voor
+  Item:
+    ic: Regel
+    io: Regel
+    ir: Regel
+    is: Regel
+    oe: Regel
+    ps: Regel
+  Jan:
+    aa: jan
+    am: jan
+    ap: jan
+    ar: jan
+    bp: jan
+    ca: jan
+    gl: jan
+    ic: jan
+    io: jan
+    ir: jan
+    is: jan
+    oe: jan
+    pe: jan
+    ps: jan
+    rc: jan
+    rp: jan
+    vr: jan
+  January:
+    aa: januari
+    admin: januari
+    am: januari
+    ap: januari
+    ar: januari
+    arap: januari
+    bp: januari
+    ca: januari
+    cp: januari
+    ct: januari
+    gl: januari
+    hr: januari
+    ic: januari
+    im: januari
+    io: januari
+    ir: januari
+    is: januari
+    jc: januari
+    js: januari
+    menu: januari
+    oe: januari
+    pe: januari
+    pos: januari
+    ps: januari
+    rc: januari
+    rd: januari
+    rp: januari
+    sm: januari
+    sr: januari
+    vr: januari
+  Jul:
+    aa: jul
+    am: jul
+    ap: jul
+    ar: jul
+    bp: jul
+    ca: jul
+    gl: jul
+    ic: jul
+    io: jul
+    ir: jul
+    is: jul
+    oe: jul
+    pe: jul
+    ps: jul
+    rc: jul
+    rp: jul
+    vr: jul
+  July:
+    aa: juli
+    admin: juli
+    am: juli
+    ap: juli
+    ar: juli
+    arap: juli
+    bp: juli
+    ca: juli
+    cp: juli
+    ct: juli
+    gl: juli
+    hr: juli
+    ic: juli
+    im: juli
+    io: juli
+    ir: juli
+    is: juli
+    jc: juli
+    js: juli
+    menu: juli
+    oe: juli
+    pe: juli
+    pos: juli
+    ps: juli
+    rc: juli
+    rd: juli
+    rp: juli
+    sm: juli
+    sr: juli
+    vr: juli
+  Jun:
+    aa: jun
+    am: jun
+    ap: jun
+    ar: jun
+    bp: jun
+    ca: jun
+    gl: jun
+    ic: jun
+    io: jun
+    ir: jun
+    is: jun
+    oe: jun
+    pe: jun
+    ps: jun
+    rc: jun
+    rp: jun
+    vr: jun
+  June:
+    aa: juni
+    admin: juni
+    am: juni
+    ap: juni
+    ar: juni
+    arap: juni
+    bp: juni
+    ca: juni
+    cp: juni
+    ct: juni
+    gl: juni
+    hr: juni
+    ic: juni
+    im: juni
+    io: juni
+    ir: juni
+    is: juni
+    jc: juni
+    js: juni
+    menu: juni
+    oe: juni
+    pe: juni
+    pos: juni
+    ps: juni
+    rc: juni
+    rd: juni
+    rp: juni
+    sm: juni
+    sr: juni
+    vr: juni
+  Labor Code:
+    jc: Werkcode
+  Labor Code missing!:
+    jc: Werkcode ontbreekt!
+  Liability:
+    am: Passiva
+    gl: Passiva
+  Mar:
+    aa: mrt
+    am: mrt
+    ap: mrt
+    ar: mrt
+    bp: mrt
+    ca: mrt
+    gl: mrt
+    ic: mrt
+    io: mrt
+    ir: mrt
+    is: mrt
+    oe: mrt
+    pe: mrt
+    ps: mrt
+    rc: mrt
+    rp: mrt
+    vr: mrt
+  March:
+    aa: maart
+    admin: maart
+    am: maart
+    ap: maart
+    ar: maart
+    arap: maart
+    bp: maart
+    ca: maart
+    cp: maart
+    ct: maart
+    gl: maart
+    hr: maart
+    ic: maart
+    im: maart
+    io: maart
+    ir: maart
+    is: maart
+    jc: maart
+    js: maart
+    menu: maart
+    oe: maart
+    pe: maart
+    pos: maart
+    ps: maart
+    rc: maart
+    rd: maart
+    rp: maart
+    sm: maart
+    sr: maart
+    vr: maart
+  May:
+    aa: mei
+    admin: mei
+    am: mei
+    ap: mei
+    ar: mei
+    arap: mei
+    bp: mei
+    ca: mei
+    cp: mei
+    ct: mei
+    gl: mei
+    hr: mei
+    ic: mei
+    im: mei
+    io: mei
+    ir: mei
+    is: mei
+    jc: mei
+    js: mei
+    menu: mei
+    oe: mei
+    pe: mei
+    pos: mei
+    ps: mei
+    rc: mei
+    rd: mei
+    rp: mei
+    sm: mei
+    sr: mei
+    vr: mei
+  'May ':
+    aa: 'mei '
+    am: 'mei '
+    ap: 'mei '
+    ar: 'mei '
+    bp: 'mei '
+    ca: 'mei '
+    gl: 'mei '
+    ic: 'mei '
+    io: 'mei '
+    ir: 'mei '
+    is: 'mei '
+    oe: 'mei '
+    pe: 'mei '
+    ps: 'mei '
+    rc: 'mei '
+    rp: 'mei '
+    vr: 'mei '
+  Method:
+    aa: Gebruikt Stelsel
+    am: Gebruikt Stelsel
+    ap: Gebruikt Stelsel
+    ar: Gebruikt Stelsel
+    ct: Gebruikt Stelsel
+    hr: Gebruikt Stelsel
+    ir: Gebruikt Stelsel
+    is: Gebruikt Stelsel
+    oe: Gebruikt Stelsel
+    ps: Gebruikt Stelsel
+    rp: Gebruikt Stelsel
+  N/A:
+    ps: N/A
+    rp: N/A
+  Non-chargeable:
+    jc: Niet Doorbelastbaar
+  Non-tracking Items:
+    am: Inventarisgoederen
+  Nov:
+    aa: nov
+    am: nov
+    ap: nov
+    ar: nov
+    bp: nov
+    ca: nov
+    gl: nov
+    ic: nov
+    io: nov
+    ir: nov
+    is: nov
+    oe: nov
+    pe: nov
+    ps: nov
+    rc: nov
+    rp: nov
+    vr: nov
+  November:
+    aa: november
+    admin: november
+    am: november
+    ap: november
+    ar: november
+    arap: november
+    bp: november
+    ca: november
+    cp: november
+    ct: november
+    gl: november
+    hr: november
+    ic: november
+    im: november
+    io: november
+    ir: november
+    is: november
+    jc: november
+    js: november
+    menu: november
+    oe: november
+    pe: november
+    pos: november
+    ps: november
+    rc: november
+    rd: november
+    rp: november
+    sm: november
+    sr: november
+    vr: november
+  Number:
+    aa: Code
+    am: Code
+    ap: Code
+    ar: Code
+    arap: Code
+    bp: Code
+    cp: Code
+    ct: Code
+    gl: Code
+    hr: Code
+    ic: Code
+    im: Code
+    io: Code
+    ir: Code
+    is: Code
+    jc: Code
+    oe: Code
+    op: Code
+    pe: Code
+    pos: Code
+    ps: Code
+    rd: Code
+    rp: Code
+    ru: Code
+  Number Format:
+    am: Nummeraanduiding
+  Number missing in Row:
+    ic: Code ontbreekt in Regel
+    io: Code ontbreekt in Regel
+    ir: Code ontbreekt in Regel
+    is: Code ontbreekt in Regel
+    oe: Code ontbreekt in Regel
+    ps: Code ontbreekt in Regel
+  Oct:
+    aa: okt
+    am: okt
+    ap: okt
+    ar: okt
+    bp: okt
+    ca: okt
+    gl: okt
+    ic: okt
+    io: okt
+    ir: okt
+    is: okt
+    oe: okt
+    pe: okt
+    ps: okt
+    rc: okt
+    rp: okt
+    vr: okt
+  October:
+    aa: oktober
+    admin: oktober
+    am: oktober
+    ap: oktober
+    ar: oktober
+    arap: oktober
+    bp: oktober
+    ca: oktober
+    cp: oktober
+    ct: oktober
+    gl: oktober
+    hr: oktober
+    ic: oktober
+    im: oktober
+    io: oktober
+    ir: oktober
+    is: oktober
+    jc: oktober
+    js: oktober
+    menu: oktober
+    oe: oktober
+    pe: oktober
+    pos: oktober
+    ps: oktober
+    rc: oktober
+    rd: oktober
+    rp: oktober
+    sm: oktober
+    sr: oktober
+    vr: oktober
+  Part Number:
+    am: Artikelcode
+    ct: Artikelcode
+    ic: Artikelcode
+    im: Artikelcode
+    jc: Artikelcode
+    oe: Artikelcode
+    pe: Artikelcode
+  Partnumber:
+    op: Artikelcode
+  Payroll Deduction:
+    hr: Loonkorting
+  Pos:
+    hr: Pos
+  Posting:
+    am: Aan Het Inboeken
+  Preferences:
+    admin: Instellingen
+    menu: Instellingen
+  Preferences saved!:
+    am: Instellingen bewaard!
+  Print and Post as new:
+    aa: Afdrukken en Boek als nieuw
+    ap: Afdrukken en Boek als nieuw
+    ar: Afdrukken en Boek als nieuw
+    hr: Afdrukken en Boek als nieuw
+    ir: Afdrukken en Boek als nieuw
+    is: Afdrukken en Boek als nieuw
+    ps: Afdrukken en Boek als nieuw
+  Print and Save as new:
+    jc: Afdrukken en Sla op als nieuw
+    oe: Afdrukken en Sla op als nieuw
+  Profit Center:
+    am: Inkomstenpost
+  Project Number:
+    bp: Projectcode
+    ca: Projectcode
+    ct: Projectcode
+    im: Projectcode
+    jc: Projectcode
+    pe: Projectcode
+    ps: Projectcode
+    rp: Projectcode
+  Project Number missing!:
+    jc: Projectcode ontbreekt!
+  Project Transactions:
+    ps: Projectboekingen
+    rp: Projectboekingen
+  Quotation Number:
+    bp: Offertecode
+    oe: Offertecode
+  Quotation Number missing!:
+    ic: Offertecode ontbreekt!
+    io: Offertecode ontbreekt!
+    ir: Offertecode ontbreekt!
+    is: Offertecode ontbreekt!
+    oe: Offertecode ontbreekt!
+    op: Offertecode ontbreekt!
+    ps: Offertecode ontbreekt!
+  RFQ Number:
+    am: Prijsaanvraagcode
+    oe: Prijsaanvraagcode
+  Reconciliation Report:
+    rc: Reconcilidatierapport
+  Sales Order Number:
+    am: Verkoopordercode
+  Sales Quotation Number:
+    am: Verkoopoffertecode
+  Select Printer or Queue!:
+    op: Selecteer de Printer of Wachtrij
+  Sep:
+    aa: sep
+    am: sep
+    ap: sep
+    ar: sep
+    bp: sep
+    ca: sep
+    gl: sep
+    ic: sep
+    io: sep
+    ir: sep
+    is: sep
+    oe: sep
+    pe: sep
+    ps: sep
+    rc: sep
+    rp: sep
+    vr: sep
+  September:
+    aa: september
+    admin: september
+    am: september
+    ap: september
+    ar: september
+    arap: september
+    bp: september
+    ca: september
+    cp: september
+    ct: september
+    gl: september
+    hr: september
+    ic: september
+    im: september
+    io: september
+    ir: september
+    is: september
+    jc: september
+    js: september
+    menu: september
+    oe: september
+    pe: september
+    pos: september
+    ps: september
+    rc: september
+    rd: september
+    rp: september
+    sm: september
+    sr: september
+    vr: september
+  Standard Industrial Codes:
+    am: Standaard Industiële Codes
+  Stock Assembly:
+    admin: Assemblagevoorraad
+    ic: Assemblagevoorraad
+    menu: Assemblagevoorraad
+  Stock Finished Goods:
+    admin: Inslaan Afgewerkte Goederen
+    menu: Inslaan Afgewerkte Goederen
+    pe: Inslaan Afgewerkte Goederen
+  Tax Included:
+    aa: Belasting Inbegrepen
+    ap: Belasting Inbegrepen
+    ar: Belasting Inbegrepen
+    ct: Belasting Inbegrepen
+    im: Belasting Inbegrepen
+    ir: Belasting Inbegrepen
+    is: Belasting Inbegrepen
+    oe: Belasting Inbegrepen
+    pos: Belasting Inbegrepen
+    ps: Belasting Inbegrepen
+  Tax collected:
+    admin: Geïnde belasting
+    am: Geïnde belasting
+    menu: Geïnde belasting
+    ps: Geïnde belasting
+    rp: Geïnde belasting
+  Taxable:
+    am: Belastbaar percentage
+  Terms:
+    aa: Betalingstermijn
+    ap: Betalingstermijn
+    ar: Betalingstermijn
+    ct: Betalingstermijn
+    ir: Betalingstermijn
+    is: Betalingstermijn
+    oe: Betalingstermijn
+    ps: Betalingstermijn
+  Till:
+    aa: Kassa
+    ap: Kassa
+    ar: Kassa
+    ps: Kassa
+    rp: Kassa
+  Time Card:
+    admin: Tijdkaart
+    jc: Tijdkaart
+    menu: Tijdkaart
+  Time Card deleted!:
+    jc: Tijdkaart verwijderd!
+  Time Card saved!:
+    jc: Tijdkaart opgeslagen!
+  Time Cards:
+    admin: Tijdkaarten
+    bp: Tijdkaarten
+    jc: Tijdkaarten
+    menu: Tijdkaarten
+    ru: Tijdkaarten
+  Times:
+    am: Keren
+  Tracking Items:
+    am: Niet-inventarisgoederen
+  Transfer Inventory:
+    op: Inventaris overboeken
+  Unlock System:
+    admin: System Ontgrendelen
+  Vendor History:
+    ct: Leverancierhistorie
+    im: Leverancierhistorie
+  Vendor not on file!:
+    ap: Leverancier bestaat niet!
+    ar: Leverancier bestaat niet!
+    arap: Leverancier bestaat niet!
+    cp: Leverancier bestaat niet!
+    gl: Leverancier bestaat niet!
+    hr: Leverancier bestaat niet!
+    ic: Leverancier bestaat niet!
+    ir: Leverancier bestaat niet!
+    is: Leverancier bestaat niet!
+    oe: Leverancier bestaat niet!
+    pe: Leverancier bestaat niet!
+    ps: Leverancier bestaat niet!
+    rp: Leverancier bestaat niet!

@@ -1,0 +1,1675 @@
+---
+locale: cn_utf
+texts:
+  '%': ''
+  (empty): ''
+  (none): ''
+  +/-: ''
+  .v11: ''
+  1.Reminder: ''
+  2.Reminder: ''
+  3.Reminder: ''
+  <hr>: ''
+  A: ''
+  AP: "åº\x94ä»\x98å¸\x90æ¬¾"
+  AP Aging: "åº\x94ä»\x98å¸\x90é¾\x84å\x88\x86æ\x9e\x90"
+  AP Amount: ''
+  AP Outstanding: "åº\x94ä»\x98æ\x9cªä»\x98"
+  AP Payment: ''
+  AP Transaction: "åº\x94ä»\x98äº¤æ\x98\x93"
+  AP Transactions: "åº\x94ä»\x98äº¤æ\x98\x93"
+  AP account does not exist!: ''
+  AP account missing!: ''
+  AR: "åº\x94æ\x94¶å¸\x90æ¬¾"
+  AR Aging: "åº\x94æ\x94¶å¸\x90é¾\x84å\x88\x86æ\x9e\x90"
+  AR Amount: ''
+  AR Outstanding: "åº\x94æ\x94¶æ\x9cªæ\x94¶"
+  AR Payment: ''
+  AR Transaction: "åº\x94æ\x94¶äº¤æ\x98\x93"
+  AR Transactions: "åº\x94æ\x94¶äº¤æ\x98\x93"
+  AR account does not exist!: ''
+  AR account missing!: ''
+  AR/AP: ''
+  About: "å\N³äº\x8e"
+  Above: "ä¸\x8aæ\x96\x87"
+  Accepted format is: ''
+  Access Control: "æ\x9d\x83é\x99\x90æ\x8e§å\x88¶"
+  Access Denied!: "é\x9d\x9eå­\x98å\x8f\x96!"
+  Account: "å¸\x90æ\x88·"
+  Account Number: "å¸\x90æ\x88·ç¼\x96å\x8f·"
+  Account Number missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eå¸\x90æ\x88·ç¼\x96å\x8f·!"
+  Account Type: "å¸\x90æ\x88·ç±»å\x88«"
+  Account Type missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eå¸\x90æ\x88·ç±»å\x88«!"
+  Account deleted!: "å·³å\x88\_é\x99¤å¸\x90æ\x88·"
+  Account does not exist!: "ä¸\x8då­\x98å\x9c¨å¸\x90æ\x88·"
+  Account saved!: "å·³å\x82¨å­\x98å¸\x90æ\x88·"
+  Accounting: "ä¼\x9aè®¡"
+  Accounting Menu: "ä¼\x9aè®¡é\x80\x89å\x8d\x95"
+  Accounts: "å¸\x90æ\x88·"
+  Accrual: ç´¯ç§¯
+  Action: ''
+  Activate Audit trail: "æ´»è·\x83ç\x9a\x84å®¡è®¡çº¿ç´¢"
+  Activate Audit trails: "æ´»è·\x83ç\x9a\x84å®¡è®¡çº¿ç´¢"
+  Active: "æ´»è·\x83"
+  Add: "æ\x96°å¢\x9e"
+  Add AP Transaction: "æ\x96°å¢\x9eåº\x94ä»\x98è®°å½\x95"
+  Add AP Voucher: ''
+  Add AR Transaction: "æ\x96°å¢\x9eåº\x94æ\x94¶è®°å½\x95"
+  Add Account: "æ\x96°å¢\x9eå¸\x90æ\x88·"
+  Add Assembly: "æ\x96°å¢\x9eå\x95\x86å\x93\x81"
+  Add Business: "æ\x96°å¢\x9eä¸\x9aå\x8a¡"
+  Add Cash Transfer Transaction: "æ\x96°å¢\x9eç\x8e°é\x87\x91è½¬ç§»å¸\x90ç\x9b®"
+  Add Column: ''
+  Add Credit Invoice: ''
+  Add Credit Note: ''
+  Add Currency: ''
+  Add Customer: "æ\x96°å¢\x9eå®¢æ\x88·"
+  Add Dataset: ''
+  Add Debit Invoice: ''
+  Add Debit Note: ''
+  Add Deduction: "æ\x96°å¢\x9eæ\x89£é\x99¤"
+  Add Department: "æ\x96°å¢\x9eé\x83¨é\x97¨"
+  Add Document: ''
+  Add Employee: "æ\x96°å¢\x9eè\x81\x8cå\x91\x98"
+  Add Exchange Rate: "æ\x96°å¢\x9eå¤\x96æ±\x87ç\x8e\x87"
+  Add FX Adjustment: ''
+  Add File: ''
+  Add GIFI: "æ\x96°å¢\x9e GIFI"
+  Add General Ledger Batch: ''
+  Add General Ledger Transaction: "æ\x96°å¢\x9eæ\x80»å¸\x90"
+  Add General Ledger Voucher: ''
+  Add Group: "æ\x96°å¢\x9eç»\x84"
+  Add Job: ''
+  Add Kit: ''
+  Add Labor/Overhead: "æ\x96°å¢\x9eå\x8a³å·¥/ç»\x8få¸¸è´¹ç\x94¨"
+  Add Language: "æ\x96°å¢\x9eè¯­è¨\x80"
+  Add Mimetype: ''
+  Add POS Invoice: "æ\x96°å¢\x9ePOSå\x8f\x91ç¥¨"
+  Add Part: "æ\x96°å¢\x9eå\x8e\x9fæ\x96\x99"
+  Add Payable Batch: ''
+  Add Payment Batch: ''
+  Add Payment Method: ''
+  Add Payment Reversal Batch: ''
+  Add Payments Batch: ''
+  Add Payroll: ''
+  Add Pricegroup: "æ\x96°å¢\x9eä»·æ\_¼ç»\x84"
+  Add Project: "æ\x96°å¢\x9eæ\x96¹æ¡\x88"
+  Add Purchase Order: "æ\x96°å¢\x9eé\x87\x87è´­å\x8d\x95"
+  Add Quotation: "æ\x96°å¢\x9eæ\x8a¥ä»·å\x8d\x95"
+  Add Request for Quotation: "æ\x96°å¢\x9eæ\x8a¥ä»·å\x8d\x95è¦\x81æ±\x82"
+  Add Role: ''
+  Add SIC: "æ\x96°å¢\x9eå\x8e\x9fæ\x96\x87"
+  Add Sales Invoice: "æ\x96°å¢\x9eé\x94\x80å\x94®å\x8f\x91ç¥¨"
+  Add Sales Order: "æ\x96°å¢\x9eé\x94\x80è´§å\x8d\x95"
+  Add Service: "æ\x96°å¢\x9eæ\x9c\x8då\x8a¡"
+  Add Snapshot: ''
+  Add Stores Card: ''
+  Add Time Card: ''
+  Add Timecard: ''
+  Add Transaction: "æ\x96°å¢\x9eäº¤æ\x98\x93"
+  Add User: "æ\x96°å¢\x9eä½¿ç\x94¨è\x80\N"
+  Add Vendor: "æ\x96°å¢\x9eä¾\x9båº\x94å\x95\x86"
+  Add Vendor Invoice: "æ\x96°å¢\x9eä¾\x9båº\x94å\x95\x86å\x8f\x91ç¥¨"
+  Add Voucher: ''
+  Add Wage: ''
+  Add Warehouse: "æ\x96°å¢\x9eä»\x93åº\x93"
+  Add document failed!: ''
+  Added: ''
+  Addition: ''
+  Address: "å\x9c°å\x9d\x80"
+  Address Line 1: ''
+  Address Line 2: ''
+  Addresses from UID Register: ''
+  Admin: ''
+  Administration: "ç³»ç»\x9fç®¡ç\x90\x86"
+  Administrator: "ç®¡ç\x90\x86äºº"
+  After Deduction: "æ\x89£é\x99¤ä»¥å\x90\x8e"
+  Aged: ''
+  Aged Overdue: ''
+  Align: ''
+  All: "å\N¨é\x83¨"
+  All Accounts: "å\N¨é\x83¨å¸\x90æ\x88·"
+  All Batches: ''
+  All Datasets up to date!: "æ\x89\x80æ\x9c\x89èµ\x84æ\x96\x99ç\x9a\x86å·²æ\x9b´æ\x96°!"
+  All Items: "å\N¨é\x83¨é¡¹ç\x9b®"
+  All amounts in: ''
+  All selected!: ''
+  Allocated: ''
+  Allowances: æ´¥è´´
+  Allowed range for selected month is: ''
+  Allowed range is: ''
+  Amount: "æ\x80»è®¡"
+  Amount Due: "åº\x94å¾\x97ç\x9a\x84æ\x80»è®¡"
+  Amount missing!: "æ¼\x8få¡«ç\x9a\x84æ\x80»è®¡"
+  Annual Interest: ''
+  Approved: ''
+  Apr: "å\x9b\x9bæ\x9c\x88"
+  April: "å\x9b\x9bæ\x9c\x88"
+  Archive File: ''
+  Are you sure you want to delete: ''
+  Are you sure you want to delete Batch: ''
+  Are you sure you want to delete Invoice Number: "æ\x82¨ç¡®å®\x9aè¦\x81å\x88\_é\x99¤å\x8f\x91ç¥¨ç¼\x96å\x8f·"
+  Are you sure you want to delete Order Number: "æ\x82¨æ\x98¯å\x90¦ç¡®å®\x9aè¦\x81å\x88\_é\x99¤è®¢å\x8d\x95ç¼\x96å\x8f·"
+  Are you sure you want to delete Quotation Number: "æ\x82¨æ\x98¯å\x90¦ç¡®å®\x9aè¦\x81å\x88\_é\x99¤æ\x8a¥ä»·å\x8d\x95ç¼\x96å\x8f·"
+  Are you sure you want to delete Timecard for: ''
+  Are you sure you want to delete Transaction: "æ\x82¨æ\x98¯å\x90¦ç¡®å®\x9aè¦\x81å\x88\_é\x99¤äº¤æ\x98\x93"
+  Are you sure you want to delete dataset: ''
+  'Are you sure you want to delete language: ': ''
+  Are you sure you want to delete stores card: ''
+  Are you sure you want to delete the following Snapshots?: ''
+  Are you sure you want to delete the following Transactions?: ''
+  Are you sure you want to delete time card for: ''
+  Are you sure you want to reconcile all marked payments: ''
+  Are you sure you want to remove the marked entries from the queue?: "æ\x82¨æ\x98¯å\x90¦ç¡®å®\x9aè¦\x81æ¶\x88é\x99¤æ\x9c\x89è®°å\x8f·ç\x9a\x84æ\x9d¡ç\x9b®"
+  Are you sure you want to void checks: ''
+  Are you sure you want to void receipts: ''
+  As of: ''
+  Assemblies: "å\x95\x86å\x93\x81"
+  Assemblies restocked!: "å·³é\x87\x8dæ\x96°è¿\x9bè´§ç\x9a\x84å\x95\x86å\x93\x81"
+  Assemblies stocked!: ''
+  Assembly: "å\x95\x86å\x93\x81"
+  Assembly BOM Transfer: ''
+  Assembly Changeup: ''
+  Assembly Number: ''
+  Assembly stocked!: ''
+  Asset: "èµ\x84äº§"
+  Assets: ''
+  Assign Number: ''
+  Attach: ''
+  Attach Document: ''
+  Attach to: ''
+  Attached to: ''
+  Attachment: "é\x99\x84æ¡£"
+  Audit Control: "ç¨½æ\_¸æ\x8e§å\x88¶"
+  Audit Log: ''
+  Audit trail disabled: "æ\x9c\x89æ\x95\x88ç\x9a\x84å®¡è®¡çº¿ç´¢"
+  Audit trail enabled: "æ\x97\_æ\x95\x88ç\x9a\x84å®¡è®¡çº¿ç´¢"
+  Audit trail removed up to: "ç§»é\x99¤å\x88°æ­¤ä¸ºæ­¢ç\x9a\x84å®¡è®¡çº¿ç´¢"
+  Audit trails disabled: "æ\x9c\x89æ\x95\x88ç\x9a\x84å®¡è®¡çº¿ç´¢"
+  Audit trails enabled: "æ\x97\_æ\x95\x88ç\x9a\x84å®¡è®¡çº¿ç´¢"
+  Aug: "å\N«æ\x9c\x88"
+  August: "å\N«æ\x9c\x88"
+  Authenticator: ''
+  Available Credit: ''
+  Avalable Credit: ''
+  Average Cost: "å¹³å\x9d\x87æ\x88\x90æ\x9c¬"
+  Avg Cost: "å¹³å\x9d\x87æ\x88\x90æ\x9c¬"
+  BC Number: ''
+  BIC: ''
+  BIC missing!: ''
+  BOM: "æ\x9d\x90æ\x96\x99æ¸\Nå\x8d\x95"
+  Back: ''
+  Backorder: ''
+  'Backorder from Orders: ': ''
+  Backup: "å¤\x87ä»½"
+  Backup File: ''
+  Backup sent to: "å¤\x87ä»½å¯\x84é\x80\x81å\x88°"
+  Balance: "ä½\x99é¢\x9d"
+  Balance Sheet: "èµ\x84äº§è´\x9få\x80ºè¡¨"
+  Bank: ''
+  Bank Account: ''
+  Bank Account Details: ''
+  Bank Accounts: ''
+  Bank saved!: ''
+  Barcode: ''
+  Barcodes: ''
+  Based on: "å\x9fºäº\x8e"
+  Batch: ''
+  Batch No.: ''
+  Batch Number: ''
+  Batch Posting failed!: ''
+  Batch deleted!: ''
+  Batch posted!: ''
+  Bcc: "ä¸\x8dæ\x98¾ç¤ºæ\x8a\x84é\x80\x81"
+  Before Deduction: "æ\x89£é\x99¤ä¹\x8bå\x89\x8d"
+  Beginning Balance: "èµ·å§\x8bä½\x99é¢\x9d"
+  Beginning date: ''
+  Below: "ä»¥ä¸\x8b"
+  Billing Address: "å¸\x90å\x8d\x95å\x9c°å\x9d\x80"
+  Bin: ç®±
+  Bin List: "ç®±ç\x9a\x84æ\x98\x8eç»\x86è¡¨"
+  Bin Lists: "ç®±æ¸\Nå\x8d\x95"
+  Books are open: "å¸\x90ç°¿å·²å¼\x80å\x90¯"
+  Books closed up to: ''
+  Break: "ä¼\x91æ\x81¯"
+  Building Number: ''
+  Business: "ä¸\x9aå\x8a¡"
+  Business Number: "ä¸\x9aå\x8a¡ç¼\x96å\x8f·"
+  Business deleted!: "å·³å\x88\_é\x99¤ä¸\x9aå\x8a¡"
+  Business saved!: "å·³å\x82¨å­\x98ä¸\x9aå\x8a¡"
+  C: ''
+  CO: ''
+  COGS: "è´§é\x94\x80æ\x88\x90æ\x9c¬"
+  COGS account does not exist!: ''
+  Can only send one reminder at a time!: ''
+  Can only send one statement at a time!: ''
+  Cannot add stores card for a completed job!: ''
+  Cannot add time card for a completed job!: ''
+  Cannot add timecard for a completed job!: ''
+  Cannot change stores card for a completed job!: ''
+  Cannot change time card for a completed job!: ''
+  Cannot change timecard for a completed job!: ''
+  Cannot create Assembly: "æ\x97\_æ³\x95é\x80\_æ\x88\x90ç»\x84ä»¶"
+  Cannot create Kit: ''
+  Cannot create Labor: "æ\x97\_æ³\x95é\x80\_æ\x88\x90å\x8a³å·¥"
+  Cannot create Lock!: "ä¸\x8dè\x83½å»ºç«\x8bé\x94\x81"
+  Cannot create Part: "æ\x97\_æ³\x95é\x80\_æ\x88\x90é\x9b¶ä»¶"
+  Cannot create Service: "æ\x97\_æ³\x95é\x80\_æ\x88\x90æ\x9c\x8då\x8a¡"
+  Cannot delete Timecard!: ''
+  Cannot delete account!: "ä¸\x8dè\x83½å\x88\_é\x99¤å¸\x90æ\x88·"
+  Cannot delete batch!: ''
+  Cannot delete customer!: "ä¸\x8dè\x83½å\x88\_é\x99¤å®¢æ\x88·"
+  Cannot delete default account!: "ä¸\x8dè\x83½å\x88\_é\x99¤é¢\x84è®¾å¸\x90æ\x88·"
+  Cannot delete employee!: ''
+  Cannot delete invoice!: "ä¸\x8dè\x83½å\x88\_é\x99¤å\x8f\x91ç¥¨"
+  Cannot delete item!: "ä¸\x8dè\x83½å\x88\_é\x99¤é¡¹ç\x9b®"
+  Cannot delete order!: "ä¸\x8dè\x83½å\x88\_é\x99¤å®\x9aå\x8d\x95"
+  Cannot delete quotation!: "ä¸\x8dè\x83½å\x88\_é\x99¤æ\x8a¥ä»·å\x8d\x95"
+  Cannot delete stores card!: ''
+  Cannot delete time card!: ''
+  Cannot delete transaction!: "ä¸\x8dè\x83½å\x88\_é\x99¤äº¤æ\x98\x93"
+  Cannot delete vendor!: "ä¸\x8dè\x83½å\x88\_é\x99¤ä¾\x9båº\x94å\x95\x86"
+  Cannot delete voucher!: ''
+  Cannot post Payment!: "ä¸\x8dè\x83½å\x8a\_å\N¥æ¬¾é¡¹"
+  Cannot post Receipt!: "ä¸\x8dè\x83½å\x8a\_å\N¥æ\x94¶æ\x8d®"
+  Cannot post cash discount for a closed period!: ''
+  Cannot post invoice for a closed period!: "ä¸\x8dè\x83½å\x9c¨å·²å\N³é\x97­ç\x9a\x84æ\x97¶æ®µå\x86\Nå\x8a\_å\N¥å\x8f\x91ç¥¨"
+  Cannot post invoice!: "ä¸\x8dè\x83½å\x8a\_å\N¥å\x8f\x91ç¥¨"
+  Cannot post payment for a closed period!: "ä¸\x8dè\x83½å\x9c¨å·²å\N³é\x97­ç\x9a\x84æ\x97¶æ®µå\x86\Nå\x8a\_å\N¥æ¬¾é¡¹"
+  Cannot post transaction for a closed period!: "ä¸\x8dè\x83½å\x9c¨å·²å\N³é\x97­ç\x9a\x84æ\x97¶æ®µå\x86\Nå\x8a\_å\N¥äº¤æ\x98\x93!"
+  Cannot post transaction with a debit and credit entry for the same account!: ''
+  Cannot post transaction!: "ä¸\x8dè\x83½å\x8a\_å\N¥äº¤æ\x98\x93"
+  Cannot post voucher!: ''
+  Cannot process gzipped file!: ''
+  Cannot remove files!: "ä¸\x8dè\x83½ç§»é\x99¤æ¡£æ¡\x88"
+  Cannot return assembly!: ''
+  Cannot save Batch: ''
+  Cannot save account!: "ä¸\x8dè\x83½å\x82¨å­\x98å¸\x90æ\x88·"
+  Cannot save defaults!: "ä¸\x8dè\x83½å\x82¨å­\x98é¢\x84è®¾"
+  Cannot save order!: "ä¸\x8dè\x83½å\x82¨å­\x98å®\x9aå\x8d\x95"
+  Cannot save preferences!: "ä¸\x8dè\x83½å\x82¨å­\x98ä¼\x98å\N\x88é\x80\x89æ\x8b© "
+  Cannot save quotation!: "ä¸\x8dè\x83½å\x82¨å­\x98æ\x8a¥ä»·å\x8d\x95"
+  Cannot save stores card for a closed period!: ''
+  Cannot save stores card!: ''
+  Cannot save taxes!: ''
+  Cannot save time card for a closed period!: ''
+  Cannot save time card!: ''
+  Cannot save timecard for a closed period!: ''
+  Cannot save timecard!: ''
+  Cannot set account for more than one of AR, AP or IC: "ä¸\x8dè\x83½è®¾ç½®å¤\x9aäº\x8eä¸\x80ä¸ªåº\x94æ\x94¶å¸\x90æ¬¾, åº\x94ä»\x98å¸\x90æ¬¾æ\x88\x96IC"
+  Cannot set multiple options for: ''
+  Cannot set multiple options for Item: ''
+  Cannot stock Assembly!: ''
+  Cannot stock assemblies!: "ä¸\x8dè\x83½å¸¸å¤\x87ç\x9a\x84å\x95\x86å\x93\x81"
+  Cannot transfer to the same warehouse!: ''
+  Cannot use: ''
+  Cannot use admin as login!: ''
+  Card Number: ''
+  Cash: "ç\x8e°é\x87\x91"
+  Cash Discount: ''
+  Cash Discount date missing!: ''
+  Cash Drawer: ''
+  Cash Over/Short: ''
+  Cash discount date missing!: ''
+  Cash discount date past due!: ''
+  Cash discount exceeds available discount!: ''
+  Category: ''
+  Cc: "æ\x8a\x84é\x80\x81"
+  Change: "æ\x9b´æ\x94¹"
+  Change Admin Password: "æ\x9b´æ\x94¹ç®¡ç\x90\x86å\x91\x98å¯\x86ç\_\x81"
+  Change Host: ''
+  Change Host for Dataset: ''
+  Change Password: "æ\x9b´æ\x94¹å¯\x86ç\_\x81"
+  Change Password for Dataset: ''
+  Changeup: ''
+  Changeup Assemblies: ''
+  Changeup Labor/Overhead: ''
+  Changeup Parts: ''
+  Changeup Services: ''
+  Charge: ''
+  Chargeable: ''
+  Chargeout Rate: ''
+  Chart of Accounts: "ä¼\x9aè®¡ç§\x91ç\x9b®è¡¨"
+  Chart of Accounts Translations: ''
+  Check: "æ£\x80æ\x9f¥"
+  Check In: ''
+  Check Inventory: "æ£\x80æ\x9f¥å­\x98è´§æ¸\Nå\x8d\x95"
+  Check No.: ''
+  Check Number: ''
+  Check Out: ''
+  Check Register: ''
+  Checks: "æ£\x80æ\x9f¥"
+  City: "å\x9f\x8eå¸\x82"
+  Clear Semaphores: ''
+  Cleared: "å·²æ¸\Né\x99¤"
+  Clearing No.: ''
+  Clearing Number: ''
+  Click on login name to edit!: "è¯·æ\x8c\x89ç\x99»å\N¥å\x90\x8dç§°ä»¥è¿\x9bè¡\x8cä¿®æ\x94¹!"
+  Clocked: ''
+  Close Books up to: "å\N³é\x97­å\x88°æ­¤ä¸ºæ­¢ç\x9a\x84å¸\x90ç°¿"
+  Close Window: ''
+  Closed: "å·²å\N³é\x97­"
+  Code: "ç¼\x96ç\_\x81"
+  Code from Authenticator: ''
+  Code missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eç¼\x96ç\_\x81"
+  Code on page: ''
+  Combine: ''
+  Command: ''
+  Company: "å\N¬å\x8f¸"
+  Company Name: "å\N¬å\x8f¸å\x90\x8dç§°"
+  Company Number: ''
+  Company missing!: ''
+  Compare to: "å¯¹ç\N§"
+  Completed: ''
+  Components: "é\x9b¶ä»¶"
+  Confidential: ''
+  Configuration file missing!: ''
+  Confirm: "ç¡®è®¤å¯\x86ç\_\x81"
+  Confirm!: "å\N¥å¸\x90æ\x88\x90å\x8a\x9f!"
+  Connect to: "è¿\x9eç»\x93å\x88°"
+  Consolidate: ''
+  Consolidate Invoices: ''
+  Consolidate Orders: ''
+  Consolidate Orders to Invoice: ''
+  Consolidate Purchase Orders: ''
+  Consolidate Sales Orders: ''
+  Consolidate Sales Orders to Invoice: ''
+  Consolidate Transactions: ''
+  Consolidated Orders: ''
+  Consolidated to Invoice: ''
+  Contact: "è¿\x9eç»\x9cäºº"
+  Content-Type: ''
+  Content-Type missing!: ''
+  Continue: ç»§ç»­
+  Continue?: ''
+  Contra: "ç\x9b¸å\x8f\x8d"
+  Copies: "å\x89¯æ\x9c¬"
+  Copy: ''
+  Copy to COA: "å¤\x8då\x88¶å\x88° COA"
+  Cost: "æ\x88\x90æ\x9c¬"
+  Cost Center: "æ\x88\x90æ\x9c¬ä¸­å¿\x83"
+  Could not delete document!: ''
+  Could not detach document!: ''
+  Could not save document!: ''
+  Could not save pricelist!: ''
+  Could not save reminder level!: ''
+  Could not save!: "ä¸\x8dè\x83½å\x82¨å­\x98"
+  Could not transfer Inventory!: "å­\x98è´§æ¸\Nå\x8d\x95ä¸\x8dè\x83½è½¬ç§»"
+  Could not void payments!: ''
+  Country: "å\x9b½å®¶"
+  Country code missing!: ''
+  Country of Origin: ''
+  Create Chart of Accounts: "å»ºç«\x8bå¸\x90æ\x88·å\x9b¾è¡¨"
+  Create Dataset: "å»ºç«\x8bèµ\x84æ\x96\x99é\x9b\x86"
+  Create missing vendor: ''
+  Create new snapshot for current point of time: ''
+  Credit: "è´·æ\x96¹"
+  Credit Invoice: ''
+  'Credit Invoice ': ''
+  Credit Limit: "ä¿¡ç\x94¨é¢\x9dåº¦"
+  Credit Note: ''
+  Curr: "ç\x9b®å\x89\x8d"
+  Currencies: ''
+  Currency: "å¸\x81å\x88«"
+  Currency deleted!: ''
+  Currency missing!: ''
+  Currency saved!: ''
+  Current: "ç\x8e°æ\x9c\x89"
+  Current Earnings: "ç\x8e°æ\x9c\x89æ\x94¶ç\x9b\x8a"
+  Customer: "å®¢æ\x88·"
+  Customer History: "å®¢æ\x88·å\x8e\x86å\x8f²"
+  Customer Number: "å®¢æ\x88·ç¼\x96å\x8f·"
+  Customer Transactions: ''
+  Customer deleted!: "å·³å\x88\_é\x99¤å®¢æ\x88·"
+  Customer missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eå®¢æ\x88·"
+  Customer not on file!: "å®¢æ\x88·æ\x9cªå­\x98æ¡£"
+  Customer saved!: "å·³å\x82¨å­\x98å®¢æ\x88·"
+  Customer/Vendor: ''
+  Customer/Vendor Number: ''
+  Customers: "å®¢æ\x88·"
+  DBI not installed!: "æ\x9cªå®\x89è£\N DBI æ¨¡ç»\x84!"
+  DCN: ''
+  DCN missing!: ''
+  DOB: "ç\x94\x9fæ\x97¥"
+  DOS: ''
+  Database: "èµ\x84æ\x96\x99åº\x93"
+  Database Administration: "èµ\x84æ\x96\x99åº\x93ç®¡ç\x90\x86"
+  Database Driver missing!: ''
+  Database Driver not checked!: "æ\x9cªé\x80\x89å®\x9aèµ\x84æ\x96\x99åº\x93é©±å\x8a¨ç¨\x8bå¼\x8f!"
+  Database Host: "èµ\x84æ\x96\x99åº\x93ä¸»æ\x9cº"
+  Database Monitor: ''
+  Database Snapshots: ''
+  Database User missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eèµ\x84æ\x96\x99åº\x93ä½¿ç\x94¨è\x80\N!"
+  Dataset: "èµ\x84æ\x96\x99é\x9b\x86"
+  Dataset Size: ''
+  Dataset Version different!: ''
+  'Dataset Version:': ''
+  Dataset deleted!: ''
+  Dataset different!: ''
+  Dataset is newer than version!: "è¾\x83æ\x96°èµ\x84æ\x96\x99é\x9b\x86"
+  Dataset lock removed!: ''
+  Dataset locked!: ''
+  Dataset missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eèµ\x84æ\x96\x99é\x9b\x86!"
+  Dataset updated!: "å·³æ\x9b´æ\x96°èµ\x84æ\x96\x99é\x9b\x86"
+  Dataset version newer, SQL-Ledger must first be upgraded!: ''
+  Dataset will be upgraded to: ''
+  Date: "æ\x97¥æ\x9c\x9f"
+  Date Format: "æ\x97¥æ\x9c\x9fæ\_¼å¼\x8f"
+  Date Issued: ''
+  Date Paid: "ä»\x98æ¬¾æ\x97¥æ\x9c\x9f"
+  Date Prepared: ''
+  Date Received: "æ\x94¶æ¬¾æ\x97¥æ\x9c\x9f"
+  Date for cash discount missing!: ''
+  Date for cash discount past due!: ''
+  Date missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eæ\x97¥æ\x9c\x9f"
+  Date received missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eæ\x94¶æ¬¾æ\x97¥æ\x9c\x9f"
+  Date worked: ''
+  Day: "æ\x97¥"
+  Day(s): "æ\x97¥"
+  Days: "æ\x97¥"
+  Debit: "å\x80\x9fæ\x96¹"
+  Debit Invoice: ''
+  'Debit Invoice ': ''
+  Debit Note: ''
+  Dec: "å\x8d\x81äº\x8cæ\x9c\x88"
+  December: "å\x8d\x81äº\x8cæ\x9c\x88"
+  Decimal Point: ''
+  Decimalplaces: "å°\x8fæ\x95°ç\x9a\x84ä½\x8dç½®"
+  Decrease: "å\x87\x8få°\x91"
+  Deduct: ''
+  Deduct after: "å\x87\x8få°\x91ä»¥å\x90\x8e"
+  Deduction deleted!: "å·³å\x88\_é\x99¤å\x87\x8få°\x91"
+  Deduction saved!: "å·³å\x82¨å­\x98å\x87\x8få°\x91"
+  Deductions: "å\x87\x8fé\x99¤é¢\x9d"
+  Default: ''
+  Default Accounts: ''
+  Default Template: ''
+  Defaults: "é¢\x84è®¾"
+  Defaults saved!: "å·³å\x82¨å­\x98é¢\x84è®¾"
+  Defer: ''
+  Defer Payout: ''
+  Deferred: ''
+  Delete: "å\x88\_é\x99¤"
+  Delete Account: "å\x88\_é\x99¤å¸\x90æ\x88·"
+  Delete Batch: ''
+  Delete Column: ''
+  Delete Customers: ''
+  Delete Dataset: "å\x88\_é\x99¤èµ\x84æ\x96\x99é\x9b\x86"
+  Delete Documents: ''
+  Delete Files: ''
+  Delete Report: ''
+  Delete SQL command: ''
+  Delete Schedule: "å\x88\_é\x99¤é¢\x84å®\x9a"
+  Delete Snapshots: ''
+  Delete Transactions: ''
+  Delete Vendors: ''
+  Deleting a language will also delete the templates for the language: ''
+  Delimiter: ''
+  Delivery Date: "å\x88°æ\x9c\x9fæ\x97¥"
+  Department: "é\x83¨é\x97¨"
+  Department deleted!: "å·³å\x88\_é\x99¤é\x83¨é\x97¨"
+  Department saved!: "å·³å\x82¨å­\x98é\x83¨é\x97¨"
+  Departments: "é\x83¨é\x97¨"
+  Deposit: "å­\x98æ¬¾"
+  Deposit Register: ''
+  Description: "è¯´æ\x98\x8e"
+  Description Translations: "ç¿»è¯\x91æ\x8f\x8fè¿°"
+  Description missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eæ\x8f\x8fè¿°"
+  Deselect all: ''
+  Detach: ''
+  Detail: "è¯¦æ\x83\N"
+  Difference: "å·®å¼\x82"
+  Directory: "ç\x9b®å½\x95"
+  Disable: ''
+  Disc: ''
+  Discount: "æ\x8a\x98æ\x89£"
+  Display: ''
+  Display All: ''
+  Document attached!: ''
+  Document deleted!: ''
+  Document detached!: ''
+  Document not archived!: ''
+  Document saved!: ''
+  Documents deleted!: ''
+  Done: "å·³å®\x8cæ\x88\x90"
+  Download Dump: ''
+  Drag and Drop: ''
+  Drawing: "å\x9b¾ç\x94»"
+  Driver: "é©±å\x8a¨ç¨\x8bå¼\x8f"
+  Drop-down: ''
+  Dropdown Limit: "é\x99\x90å\x88¶"
+  Due: ''
+  Due Date: "å\x88°æ\x9c\x9fæ\x97¥"
+  Due Date missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eå\x88°æ\x9c\x9fæ\x97¥!"
+  Duplicate Dataset!: ''
+  E-Mail: ''
+  E-Mail TAN: ''
+  E-mail: "ç\x94µå­\x90é\x82®ä»¶"
+  E-mail Reminder to: ''
+  E-mail Statement to: "ç\x94µé\x82®ä¼\x9aè®¡è´¦å\x88°"
+  E-mail TAN: ''
+  E-mail address missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eç\x94µå­\x90é\x82®ä»¶ä½\x8då\x9d\x80!"
+  E-mail message: "å\x8f\x91é\x80\x81ç\x94µé\x82®"
+  E-mailed: "å·³ç\x94µé\x82®"
+  E-mailing: ''
+  Early Payment Discount given: ''
+  Early Payment Discount received: ''
+  Edit: "ç¼\x96è¾\x91"
+  Edit AP Transaction: "ç¼\x96è¾\x91åº\x94ä»\x98è®°å½\x95"
+  Edit AP Voucher: ''
+  Edit AR Transaction: "ç¼\x96è¾\x91åº\x94æ\x94¶è®°å½\x95"
+  Edit Account: "ç¼\x96è¾\x91å¸\x90æ\x88·"
+  Edit Assembly: "ç¼\x96è¾\x91å\x95\x86å\x93\x81"
+  Edit Batch: ''
+  Edit Business: "ç¼\x96è¾\x91ä¸\x9aå\x8a¡"
+  Edit Cash Transfer Transaction: "ç¼\x96è¾\x91ç\x8e°é\x87\x91è½¬ç§»"
+  Edit Column: ''
+  Edit Column Header: ''
+  Edit Column Total: ''
+  Edit Credit Invoice: ''
+  Edit Credit Note: ''
+  Edit Currency: ''
+  Edit Customer: "ç¼\x96è¾\x91å®¢æ\x88·"
+  Edit Debit Invoice: ''
+  Edit Debit Note: ''
+  Edit Deduction: "ç¼\x96è¾\x91å\x87\x8fé\x99¤é¢\x9d"
+  Edit Department: "ç¼\x96è¾\x91é\x83¨é\x97¨"
+  Edit Description Translations: "ç¼\x96è¾\x91ç¿»è¯\x91æ\x8f\x8fè¿°"
+  Edit Employee: "ç¼\x96è¾\x91è\x81\x8cå\x91\x98"
+  Edit Exchange Rate: ''
+  Edit FX Adjustment: ''
+  Edit GIFI: "ç¼\x96è¾\x91 GIFI"
+  Edit General Ledger Transaction: "ç¼\x96è¾\x91æ\x80»å¸\x90"
+  Edit General Ledger Voucher: ''
+  Edit Group: "ç¼\x96è¾\x91ç»\x84"
+  Edit Group Translations: ''
+  Edit Job: ''
+  Edit Labor/Overhead: "ç¼\x96è¾\x91å\x8a³å·¥/ç»\x8få¸¸è´¹ç\x94¨"
+  Edit Language: "ç¼\x96è¾\x91è¯­è¨\x80"
+  Edit Mimetype: ''
+  Edit POS Invoice: "ç¼\x96è¾\x91POS"
+  Edit Part: "ç¼\x96è¾\x91å\x8e\x9fæ\x96\x99"
+  Edit Payment Method: ''
+  Edit Payroll: ''
+  Edit Preferences: ''
+  Edit Preferences for: "è®¾å®\x9aä½¿ç\x94¨è\x80\N"
+  Edit Pricegroup: "ç¼\x96è¾\x91ä»·æ\_¼ç»\x84"
+  Edit Project: "ç¼\x96è¾\x91æ\x96¹æ¡\x88"
+  Edit Project Description Translations: ''
+  Edit Purchase Order: "ç¼\x96è¾\x91é\x87\x87è´­å\x8d\x95"
+  Edit Quotation: "ç¼\x96è¾\x91æ\x8a¥ä»·å\x8d\x95"
+  Edit Reference Document: ''
+  Edit Request for Quotation: "ç¼\x96è¾\x91æ\x8a¥ä»·å\x8d\x95è¦\x81æ±\x82"
+  Edit Role: ''
+  Edit SIC: "ç¼\x96è¾\x91å\x8e\x9fæ\x96\x87"
+  Edit Sales Invoice: "ç¼\x96è¾\x91é\x94\x80å\x94®å\x8f\x91ç¥¨"
+  Edit Sales Order: "ç¼\x96è¾\x91é\x94\x80è´§å\x8d\x95"
+  Edit Service: "ç¼\x96è¾\x91æ\x9c\x8då\x8a¡"
+  Edit Stores Card: ''
+  Edit Template: "ç¼\x96è¾\x91æ¨¡ç\x89\x88"
+  Edit Time Card: ''
+  Edit Timecard: ''
+  Edit User: "ç¼\x96è¾\x91ä½¿ç\x94¨è\x80\N"
+  Edit Vendor: "ç¼\x96è¾\x91ä¾\x9båº\x94å\x95\x86"
+  Edit Vendor Invoice: "ç¼\x96è¾\x91ä¾\x9båº\x94å\x95\x86å\x8f\x91ç¥¨"
+  Edit Warehouse: "ç¼\x96è¾\x91ä»\x93åº\x93"
+  Email: ''
+  Employee: "è\x81\x8cå\x91\x98"
+  Employee Login: ''
+  Employee Name: "è\x81\x8cå\x91\x98å§\x93å\x90\x8d"
+  Employee Number: "å·¥å\x8f·"
+  Employee deleted!: "å·³å\x88\_é\x99¤è\x81\x8cå\x91\x98"
+  Employee missing!: ''
+  Employee pays: "ä»\x98æ¬¾ç»\x99è\x81\x8cå\x91\x98"
+  Employee saved!: "å·³å\x82¨å­\x98è\x81\x8cå\x91\x98"
+  Employees: "è\x81\x8cå\x91\x98"
+  Employer: "é\x9b\x87ä¸»"
+  Employer pays: "ä»\x98æ¬¾ç»\x99é\x9b\x87ä¸»"
+  Encryption: ''
+  Enddate: "ç»\x93æ\x9d\x9fæ\x97¥"
+  Ending Balance: ''
+  Ends: ''
+  Enforce transaction reversal for all dates: "å¼ºå\x88¶æ\x89\x80æ\x9c\x89æ\x97¥æ\x9c\x9fç\x9a\x84äº¤æ\x98\x93å\x9b\x9eå¤\x8d"
+  Enter a SQL command to send to the server: ''
+  Enter up to 3 letters separated by a colon (i.e CAD:USD:EUR) for your native and foreign currencies: "è¯·é\x94®å\N¥ä»¥å\x86\x92å\x8f·å\x88\x86é\x9a\x94ç\x9a\x84è\x8b±æ\x96\x87å­\x97æ¯\x8d, æ¯\x8fé¡¹ä¸\x8dè¶\Nè¿\x87ä¸\x89ä¸ªå­\x97 (å¦\x82 CAD:USD:EUR), ä½\x9cä¸ºæ\x82¨ç\x9a\x84æ\x9c¬å\x9b½å\x8f\x8aå¤\x96å\x9b½è´§å¸\x81"
+  Equity: "è\x82¡æ\x9d\x83"
+  Error processing payment!: ''
+  Error!: ''
+  Every: ''
+  Excempt age <: ''
+  Exch: "æ±\x87ç\x8e\x87"
+  Exchange Rate: "æ±\x87ç\x8e\x87"
+  Exchange Rate Difference: ''
+  Exchange Rate saved!: ''
+  Exchange Rates: ''
+  Exchange rate for cash discount missing!: ''
+  Exchange rate for payment missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eä»\x98æ¬¾ç\x9a\x84æ±\x87ç\x8e\x87"
+  Exchange rate missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eæ±\x87ç\x8e\x87"
+  Exchangerate: ''
+  Exclude Void Checks: ''
+  Exclude Void Receipts: ''
+  Exempt: ''
+  Exempt age <: ''
+  Existing Datasets: "æ\x97¢æ\x9c\x89ç\x9a\x84èµ\x84æ\x96\x99é\x9b\x86"
+  Expense: "è´¹ç\x94¨"
+  Expense account does not exist!: "è´¹ç\x94¨ç§\x91ç\x9b®å\x8b¿å­\x98å\x9c¨"
+  Expense/Asset: "è´¹ç\x94¨/èµ\x84äº§"
+  Expenses: ''
+  Expires: ''
+  Export: ''
+  Export Customers: ''
+  Export Payments: ''
+  Export Vendors: ''
+  Extended: "å·³æ\x89©å¤§"
+  Extension: ''
+  Extension missing!: ''
+  FX: ''
+  FX Adjustment: ''
+  Failed: ''
+  Failed to consolidate invoices!: ''
+  Failed to delete Currency!: ''
+  Failed to delete Role!: ''
+  Failed to delete Warehouse!: ''
+  Failed to save Bank!: ''
+  Failed to save Currency!: ''
+  Failed to save Role!: ''
+  Failed to save Warehouse!: ''
+  Failed to save order!: ''
+  Failed to save workstations!: ''
+  Fax: "ä¼\_ç\x9c\x9f"
+  Feb: "äº\x8cæ\x9c\x88"
+  February: "äº\x8cæ\x9c\x88"
+  Fee: ''
+  Female: ''
+  File: ''
+  'File is too big! Allowed are:': ''
+  File to Import: ''
+  Filename: ''
+  Fill: ''
+  Finished: ''
+  First Name: ''
+  Firstname: ''
+  Fixed Length Text: ''
+  Fixed value: ''
+  Folder: ''
+  For: ''
+  Force Warehouse: ''
+  Foreign Exchange Gain: "å¤\x96æ±\x87æ\x94¶ç\x9b\x8a"
+  Foreign Exchange Gain/Loss: ''
+  Foreign Exchange Loss: "å¤\x96æ±\x87æ\x8d\x9få¤±"
+  Form: ''
+  Fr: ''
+  Friday: ''
+  From: "ä»\x8e"
+  From Warehouse: "ä»\x8eä»\x93åº\x93"
+  G: ''
+  G.W.: ''
+  GIFI: ''
+  GIFI deleted!: "å·³å\x88\_é\x99¤"
+  GIFI missing!: "æ\x9cªæ\x8c\x87æ\x98\x8e GIFI!"
+  GIFI saved!: "å·³å\x82¨å­\x98"
+  GL: ''
+  GL Reference Number: ''
+  GL Transaction: "GLäº¤æ\x98\x93"
+  GL Transactions: ''
+  Gender: ''
+  General Ledger: "æ\x80»å¸\x90"
+  General Ledger Batches: ''
+  General Ledger Vouchers: ''
+  Generate: "äº§ç\x94\x9f"
+  Generate Invoices: ''
+  Generate Orders: "äº§ç\x94\x9fè®¢å\x8d\x95"
+  Generate Purchase Orders: "äº§ç\x94\x9fé\x87\x87è´­å\x8d\x95"
+  Generate Purchase Orders failed!: ''
+  Generate Purchase Orders from Sales Order: "ç\x94¨é\x94\x80è´§å\x8d\x95äº§ç\x94\x9fé\x87\x87è´­å\x8d\x95"
+  Generate Sales Invoices: ''
+  Generate Sales Invoices from Sales Order: ''
+  Generate Sales Order: "äº§ç\x94\x9fé\x94\x80è´§å\x8d\x95"
+  Generate Sales Order from Purchase Orders: "ç\x94¨é\x94\x80è´§å\x8d\x95äº§ç\x94\x9fé\x87\x87è´­å\x8d\x95"
+  Generate Sales Orders: ''
+  Generating Invoices: ''
+  Goods & Services: "è´§ç\x89©å\x8f\x8aæ\x9c\x8då\x8a¡"
+  Group: "ç»\x84"
+  Group Code: ''
+  Group Items: "ç»\x84ç\x9a\x84é¡¹ç\x9b®"
+  Group Translations: "ç»\x84ç\x9a\x84ç¿»è¯\x91"
+  Group by: ''
+  Group deleted!: "å·³å\x88\_é\x99¤ç\x9a\x84ç»\x84"
+  Group missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eç\x9a\x84ç»\x84"
+  Group saved!: "å·³å\x82¨å­\x98ç\x9a\x84ç»\x84"
+  Groups: "ç»\x84"
+  HR: "äººäº\x8bç®¡ç\x90\x86"
+  HS Code: ''
+  HTML Templates: "HTML è¡¨å\x8d\x95"
+  Heading: "æ\_\x87é¢\x98, "
+  Hide Closed Accounts: ''
+  History: "å\x8e\x86å\x8f²"
+  Home Mobile: ''
+  Home Phone: "ä½\x8få®\Nç\x94µè¯\x9d"
+  Host: "ä¸»æ\x9cº"
+  Hostname missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eä¸»æ\x9cºå\x90\x8dç§°!"
+  I: ''
+  IBAN: ''
+  IBAN missing!: ''
+  ID: "ç¼\x96å\x8f·"
+  Image: "å½¢å\x83\x8f"
+  Image Files: ''
+  Import: ''
+  Import Chart of Accounts: ''
+  Import Customers: ''
+  Import File missing!: ''
+  Import General Ledger: ''
+  Import Groups: ''
+  Import Labor/Overhead: ''
+  Import Orders: ''
+  Import Parts: ''
+  Import Payments: ''
+  Import Purchase Orders: ''
+  'Import QR-Bill: AP Transaction': ''
+  'Import QR-Bill: Vendor Invoice': ''
+  Import Sales Invoices: ''
+  Import Sales Orders: ''
+  Import Services: ''
+  Import Vendors: ''
+  In-line: "è¡\x8cå\x86\N"
+  Inactive: "æ¶\x88æ\x9e\x81"
+  Include Exchange Rate Difference: "å\x8c\Nå\x90«å¤\x96æ±\x87å·®è·\x9d"
+  Include Header: ''
+  Include Payment: ''
+  Include in Report: "ä¸\x80å¹¶æ\x98¾ç¤º"
+  Include in drop-down menus: "å\x8c\Nå\x90«å\x9c¨ä¸\x8bæ\x8b\x89å¼\x8fé\x80\x89å\x8d\x95ä¸­"
+  Income: "æ\x94¶å\N¥"
+  Income / (Loss): ''
+  Income Statement: "æ\x8d\x9fç\x9b\x8aè¡¨"
+  Income account does not exist!: "æ\x94¶å\N¥ç§\x91ç\x9b®å\x8b¿å­\x98å\x9c¨"
+  Incorrect Dataset version!: "èµ\x84æ\x96\x99é\x9b\x86ç\x89\x88æ\x9c¬é\x94\x99è¯¯!"
+  Incorrect Password!: ''
+  Incorrect Username or Password!: ''
+  Incorrect Username!: ''
+  Increase: "å¢\x9eå\x8a\_"
+  Individual Items: "ä¸ªå\x88«ç\x9a\x84é¡¹ç\x9b®"
+  Internal Notes: "å\x86\Né\x83¨å¤\x87å¿\x98å½\x95"
+  Invalid Code: ''
+  Invalid TAN: ''
+  Invalid UID: ''
+  Invalid country code!: ''
+  'Invalid date:': ''
+  'Invalid day:': ''
+  'Invalid month:': ''
+  Inventory: "åº\x93å­\x98"
+  Inventory Count: ''
+  Inventory Value: ''
+  Inventory account does not exist!: "å­\x98è´§ç§\x91ç\x9b®å\x8b¿å­\x98å\x9c¨"
+  Inventory quantity must be zero before you can set this assembly obsolete!: "å\x9c¨å\x81\x9cç\x94¨æ­¤é¡¹ç»\x84å\x90\x88å\x93\x81ä¹\x8bå\x89\x8d, å­\x98è´§æ\x95°é\x87\x8få¿\Né\x9c\x80ä¸ºé\x9b¶!"
+  Inventory quantity must be zero before you can set this part obsolete!: "å\x81\x9cç\x94¨æ­¤é¡¹é\x9b¶ä»¶ä¹\x8bå\x89\x8d, å­\x98è´§æ\x95°é\x87\x8få¿\Né\x9c\x80ä¸ºé\x9b¶!"
+  Inventory saved!: "å·³å\x82¨å­\x98å­\x98è´§"
+  Inventory transferred!: "è½¬ç§»ç\x9a\x84å­\x98è´§"
+  Invoice: "å\x8f\x91ç¥¨"
+  Invoice Date: "å\x8f\x91ç¥¨æ\x97¥æ\x9c\x9f"
+  Invoice Date missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eå\x8f\x91ç¥¨æ\x97¥æ\x9c\x9f!"
+  Invoice Number: "å\x8f\x91ç¥¨ç¼\x96å\x8f·"
+  Invoice Number missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eå\x8f\x91ç¥¨ç¼\x96å\x8f·!"
+  Invoice deleted!: "å·³å\x88\_é\x99¤å\x8f\x91ç¥¨"
+  Invoice generation failed!: ''
+  Invoices: "å\x8f\x91ç¥¨"
+  Invoices consolidated!: ''
+  Is this a summary account to record: "æ­¤ä¸ºæ\x80»ç»\x93ç§\x91ç\x9b®å\x90\x97?"
+  Item: ''
+  Item already on pricelist!: ''
+  Item deleted!: "å·³å\x88\_é\x99¤é¡¹ç\x9b®"
+  Item not on file!: "æ\x9f¥æ\x97\_æ­¤é¡¹ç\x9b®"
+  Item saved!: ''
+  Items: "é¡¹ç\x9b®"
+  Items stocked!: ''
+  Jan: "ä¸\x80æ\x9c\x88"
+  January: "ä¸\x80æ\x9c\x88"
+  Job: ''
+  Job Name: ''
+  Job Number: ''
+  Job Number missing!: ''
+  Job deleted!: ''
+  Job saved!: ''
+  Job/Project Number: ''
+  Jobs: ''
+  Jul: "ä¸\x83æ\x9c\x88"
+  July: "ä¸\x83æ\x9c\x88"
+  Jun: "å\N­æ\x9c\x88"
+  June: "å\N­æ\x9c\x88"
+  Keep restored snapshot: ''
+  Kits: ''
+  LaTeX Templates: "LaTex æ¨¡ç\x89\x88"
+  Labor: ''
+  Labor Code: ''
+  Labor Code missing!: ''
+  Labor/Overhead: "å\x8a³å·¥/ç»\x8få¸¸è´¹ç\x94¨"
+  Labor/Overhead Changeup: ''
+  Language: "è¯­è¨\x80"
+  Language deleted!: "å·³å\x88\_é\x99¤è¯­è¨\x80"
+  Language saved!: "å·³å\x82¨å­\x98è¯­è¨\x80"
+  Languages: "è¯­è¨\x80"
+  Languages not defined!: "ä¸\x8dè\x83½è¾¨è®¤è¯­è¨\x80"
+  Last Cost: "æ\x9c\x80å\x90\x8eæ\x88\x90æ\x9c¬"
+  Last Name: ''
+  Last Numbers: ''
+  Last Numbers & Default Accounts: "ä¸\x8aä¸\x80ç¬\x94ç¼\x96å\x8f·å\x8f\x8aé¢\x84è®¾å¸\x90æ\x88·"
+  Lastcost: ''
+  Lastname: ''
+  Late Payment Fee: ''
+  Lead: "äº¤è´§æ\x9c\x9f"
+  Leadtime: "æ\x80»é\x9c\x80æ\x97¶"
+  Leave host and port field empty unless you want to make a remote connection.: "é\x99¤é\x9d\x9eæ\x82¨æ\x83³è¦\x81è¿\x9bè¡\x8cè¿\x9cç«¯è¿\x9eçº¿, å\x90¦å\x88\x99è¯·å°\x86ä¸»æ\x9cºå\x8f\x8aå\x9f\_å\x8f·ç\x95\x99ç\x99½."
+  Left: ''
+  Level: ''
+  Liabilities: ''
+  Liability: "è´\x9få\x80º"
+  Licensed to: "æ\x8e\x88æ\x9d\x83äº\x88"
+  Line Item: ''
+  Line Total: "æ\x80»å\x88\x97æ\x95°"
+  Linefeed: ''
+  Lineitem: ''
+  Link: "è¿\x9eç»\x93"
+  Link Accounts: "è¿\x9eç»\x93å¸\x90æ\x88·"
+  List: "ç\x89\x8cä»·"
+  List Accounts: "å\x88\x97å\x87ºå¸\x90å\x8f·"
+  List Businesses: "å\x88\x97å\x87ºä¸\x9aå\x8a¡"
+  List Departments: "å\x88\x97å\x87ºé\x83¨é\x97¨"
+  List Documents: ''
+  List Files: ''
+  List GIFI: "å\x88\x97å\x87º GIFI"
+  List Languages: "å\x88\x97å\x87ºè¯­è¨\x80"
+  List Price: "å\x88\x97å\x87ºä»·"
+  List Projects: "å\x88\x97å\x87ºæ\x96¹æ¡\x88"
+  List SIC: "å\x88\x97å\x87ºSIC"
+  List Transactions: "å\x88\x97å\x87ºäº¤æ\x98\x93"
+  List Warehouses: "å\x88\x97å\x87ºä»\x93åº\x93"
+  Listprice: ''
+  Local branches: ''
+  Localized Addresses: ''
+  Lock: ''
+  Lock Dataset: ''
+  Lock Message: ''
+  Lock System: "ç³»ç»\x9fé\x94\x81ä¸\x8a"
+  Locked: ''
+  Locked by: ''
+  Lockfile created!: "å·³å»ºç«\x8bä¸\x8aé\x94\x81æ¡£æ¡\x88!"
+  Lockfile removed!: "å·³ç§»é\x99¤ä¸\x8aé\x94\x81æ¡£æ¡\x88!"
+  Locks removed!: ''
+  Login: "ç\x99»å\N¥"
+  Login name missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eç\x99»å\N¥å\x90\x8då­\x97"
+  Logistics: ''
+  Logout: "ç\x99»å\x87º"
+  Lot: ''
+  MAC: ''
+  MFA: ''
+  Main Groups: ''
+  Main Menu: ''
+  Maintenance: ''
+  Make: "å\x88¶é\x80\_"
+  Male: ''
+  Manager: "ç»\x8fç\x90\x86"
+  Mapfile: ''
+  Mar: "ä¸\x89æ\x9c\x88"
+  March: "ä¸\x89æ\x9c\x88"
+  Margin: ''
+  Marked entries printed!: "å·³å\x88\x97å\x8d°æ\x9c\x89è®°å\x8f·ç\x9a\x84ä¼\x9aè®¡é¡¹ç\x9b®"
+  Markup: æ¶¨ä»·
+  Maximum: "æ\x9c\x80å¤§"
+  Maximum Upload Size: ''
+  Maximum tries exceeded!: ''
+  May: "äº\x94æ\x9c\x88"
+  'May ': "äº\x94æ\x9c\x88"
+  Member No.: ''
+  Member Number: ''
+  Memo: "å¤\x87å¿\x98å½\x95"
+  Menu Width: "é\x80\x89æ\x8b©å\x8d\x95å®½åº¦"
+  Merchandise: ''
+  Message: "è®¯æ\x81¯"
+  Method: "æ\x96¹æ³\x95"
+  Method of Payment: ''
+  Microfiche: "å\x8d\x95ç\x89\x87ç¼©å½±è\x83¶ç\x89\x87"
+  Mimetype deleted!: ''
+  Mimetype saved!: ''
+  Mimetypes: ''
+  Missing Vendors: ''
+  Mo: ''
+  Mobile: ''
+  Mock: ''
+  Model: "å\x9e\x8bå\x8f·"
+  'Module not installed:': ''
+  Monday: ''
+  Monitor: ''
+  Month: "æ\x9c\x88ä»½"
+  Month(s): "æ\x9c\x88"
+  Months: "æ\x9c\x88"
+  'More than one vendor found:': ''
+  Multibyte Encoding: Multibyte Encoding
+  Must be logged in as admin!: ''
+  N.W.: ''
+  N/A: "ä¸\x8dé\x80\x82ç\x94¨"
+  Name: "å\x90\x8dç§°"
+  Name missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eå\x90\x8då­\x97"
+  Net: ''
+  New Number: ''
+  New Templates: "æ\x96°å¢\x9eæ¨¡ç\x89\x88"
+  New Window: "æ\x96°è§\x86çª\x97"
+  Next: ''
+  Next Date: ''
+  Next Number: ''
+  No: "å\x90¦"
+  No Database Drivers available!: "æ²¡æ\x9c\x89å\x8f¯ç\x94¨ç\x9a\x84é©±å\x8a¨ç¨\x8bå¼\x8f!"
+  No Dataset selected!: "æ\x9cªé\x80\x89å®\x9aèµ\x84æ\x96\x99é\x9b\x86!"
+  No Employees on file!: ''
+  No History!: ''
+  No Labor codes on file!: ''
+  No data!: ''
+  No email address for: "æ\x9cªæ\x8c\x87æ\x98\x8eç\x94µå­\x90é\x82®ä»¶ä½\x8dç½®"
+  No file selected!: ''
+  No foreign currencies!: ''
+  No open Jobs!: ''
+  No open Projects!: ''
+  No snapshots: ''
+  No warehouses!: ''
+  No.: "å\x90¦"
+  Non-chargeable: ''
+  Non-taxable: "ä¸\x8dåº\x94è¯¾ç¨\x8e"
+  Non-taxable Purchases: "ä¸\x8dåº\x94è¯¾ç¨\x8eç\x9a\x84é\x87\x87è´­"
+  Non-taxable Sales: "ä¸\x8dåº\x94è¯¾ç¨\x8eç\x9a\x84é\x94\x80å\x94®"
+  Non-tracking Item Expense: ''
+  Non-tracking Item Income: ''
+  Non-tracking Item Tax: ''
+  Non-tracking Items: ''
+  None: ''
+  Not E-mailed: ''
+  Not Printed: ''
+  Not a SQL-Ledger backup!: ''
+  Not an Image file!: ''
+  Not enough inventory in Row: ''
+  Not enough inventory!: ''
+  Notes: "å¤\x87æ³¨"
+  Nothing entered!: "æ²¡æ\x9c\x89å·³è¾\x93å\N¥"
+  Nothing in the Queue!: ''
+  Nothing selected!: "æ²¡æ\x9c\x89å·³é\x80\x89æ\x8b©"
+  Nothing to consolidate!: ''
+  Nothing to delete!: "æ²¡æ\x9c\x89å\x8f¯å\x88\_é\x99¤ç\x9a\x84é¡¹ç\x9b®"
+  Nothing to generate!: ''
+  Nothing to import!: ''
+  Nothing to print: ''
+  Nothing to print!: ''
+  Nothing to transfer!: "æ²¡æ\x9c\x89å\x8f¯è½¬ç§»ç\x9a\x84é¡¹ç\x9b®"
+  Nov: "å\x8d\x81ä¸\x80æ\x9c\x88"
+  November: "å\x8d\x81ä¸\x80æ\x9c\x88"
+  Number: "ç¼\x96å\x8f·"
+  Number Format: "æ\x95°å­\x97æ\_¼å¼\x8f"
+  Number missing in Row: "æ­¤å\x88\x97ä¸­ç¼ºå°\x91æ\x95°å\x80¼"
+  O: ''
+  OH: ''
+  Obsolete: "å\x81\x9cç\x94¨"
+  Occupation: ''
+  Oct: "å\x8d\x81æ\x9c\x88"
+  October: "å\x8d\x81æ\x9c\x88"
+  On: ''
+  On Hand: "å·³æ\x9c\x89å­\x98é\x87\x8f"
+  On Hold: ''
+  Only Sums: ''
+  Only one selection allowed!: ''
+  Open: "å¼\x80å\x90¯"
+  Open Drawer: ''
+  Open drawer command failed!: ''
+  Open drawer command not defined!: ''
+  Oracle: ''
+  Oracle Database Administration: "Oracle èµ\x84æ\x96\x99åº\x93ç®¡ç\x90\x86"
+  Ord: ''
+  Order: "è®¢å\x8d\x95"
+  Order Date: "ä¸\x8bå\x8d\x95æ\x97¥æ\x9c\x9f"
+  Order Date missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eä¸\x8bå\x8d\x95æ\x97¥æ\x9c\x9f!"
+  Order Entry: "ä¸\x8bå\x8d\x95é¡¹ç\x9b®"
+  Order Number: "è®¢å\x8d\x95ç¼\x96å\x8f·"
+  Order Number missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eè®¢å\x8d\x95ç¼\x96å\x8f·!"
+  Order consolidation failed!: ''
+  Order deleted!: "å·³å\x88\_é\x99¤è®¢å\x8d\x95"
+  Order generation failed!: "è®¢å\x8d\x95äº§ç\x94\x9få¤±è´¥!"
+  Order saved!: "å·³å\x82¨å­\x98è®¢å\x8d\x95"
+  Orders generated!: ''
+  Origin: ''
+  Orphaned: "æ\x97\_ä¸»"
+  Our Address Line: ''
+  Our BC Number: ''
+  Our Company Name: ''
+  Out of balance transaction!: "ä¸\x8då\x8d\x8fè°\x83äº¤æ\x98\x93"
+  Out of balance!: "ä¸\x8då\x8d\x8fè°\x83"
+  Output Format: ''
+  Outstanding: "æ\x9cªä»\x98"
+  Over: ''
+  Overdue: ''
+  Overpaid: ''
+  P: ''
+  PDF: PDF
+  PO: ''
+  PO Number: "é\x87\x87è´­å\x8d\x95ç¼\x96å\x8f·"
+  POS: "æ\x94¶æ¬¾å\x8f°"
+  POS Button: ''
+  POS Invoice: "POSå\x8f\x91ç¥¨"
+  Packaging: ''
+  Packing List: "å\x87ºè´§å\x8d\x95"
+  Packing List Date missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eå\x8c\Nè£\Næ¸\Nå\x8d\x95æ\x97¥æ\x9c\x9f!"
+  Packing List Number missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eå\x8c\Nè£\Næ¸\Nå\x8d\x95ç¼\x96å\x8f·!"
+  Packing Lists: "å\x87ºè´§å\x8d\x95"
+  Paid: "å·²ä»\x98"
+  Paid Early: ''
+  Paid Late: ''
+  Part: "å\x8e\x9fæ\x96\x99"
+  Part Changeup: ''
+  Part Number: ''
+  Partnumber: "æ\x96\x99å\x8f·"
+  Parts: "å\x8e\x9fæ\x96\x99"
+  Parts Report: ''
+  Partsgroup: ''
+  Partsgroup Code: ''
+  Password: "å¯\x86ç\_\x81"
+  Password changed!: "å¯\x86ç\_\x81å·³æ\x94¹"
+  Password does not match!: "å¯\x86ç\_\x81å\x8b¿æ¯\x94é\N\x8d"
+  Passwords do not match!: "å¯\x86ç\_\x81å\x8b¿æ¯\x94é\N\x8d!"
+  Pay Period Ending: ''
+  Pay Periods: ''
+  Pay Rates: ''
+  Pay Slip: ''
+  Payable: ''
+  Payable Batches: ''
+  Payable Vouchers: ''
+  Payables: "åº\x94ä»\x98ç§\x91ç\x9b®"
+  Payment: "ä»\x98æ¬¾"
+  Payment Account: ''
+  Payment Batches: ''
+  Payment Difference: ''
+  Payment Method: ''
+  Payment Method deleted!: ''
+  Payment Method saved!: ''
+  Payment Methods: ''
+  Payment Register: ''
+  Payment Reversal: ''
+  Payment Reversal Batches: ''
+  Payment Reversal Voucher: ''
+  Payment account missing!: ''
+  Payment date missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eä»\x98æ¬¾æ\x97¥æ\x9c\x9f!"
+  Payment posted!: "å·³å\x8a\_å\N¥ä»\x98æ¬¾"
+  Payments: "ä»\x98æ¬¾"
+  Payments posted!: ''
+  Payroll: ''
+  Payroll Deduction: "è\x96ªé\x87\x91å\x87\x8fé\x99¤é¢\x9d"
+  Payroll Transactions: ''
+  Payslip: ''
+  Period: "æ\x97¶æ\x9c\x9f"
+  Perl Modules: ''
+  Person: ''
+  Pg: ''
+  Pg Database Administration: "Pg èµ\x84æ\x96\x99åº\x93ç®¡ç\x90\x86"
+  PgPP: ''
+  PgPP Database Administration: "PgPPèµ\x84æ\x96\x99åº\x93ç®¡ç\x90\x86"
+  Phone: "ç\x94µè¯\x9då\x8f·ç\_\x81"
+  Pick List: "é\x80\x89æ\x8b©å\x8d\x95"
+  Pick Lists: "æ\x8b£è´§æ¸\Nå\x8d\x95"
+  Pole Display: ''
+  Poledisplay: ''
+  Port: "å\x9f\_å\x8f·"
+  Port missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eå\x9f\_å\x8f·!"
+  Pos: ''
+  Post: "å\x8a\_å\N¥"
+  Post Batch: ''
+  Post Batches: ''
+  Post as new: "å½\x93æ\x96°ç\x9a\x84å\x8a\_å\N¥"
+  Posted!: "å·³å\x8a\_å\N¥"
+  Posting: "å\x9c¨è¿\x87å¸\x90"
+  Posting Batch: ''
+  Posting Date: ''
+  Posting Invoice ...: ''
+  Posting Payment: ''
+  Posting Payment ...: ''
+  Posting failed!: ''
+  Postscript: "é\x99\x84è¨\x80"
+  Pre-Payment: ''
+  Precision: ''
+  Preferences: "ä¸ªäººè®¾å®\x9a"
+  Preferences saved!: "ä¸ªäººè®¾å®\x9aå·²å\x82¨å­\x98!"
+  Prepayment: "é¢\x84ç¼´"
+  Preview: ''
+  Previous Year: ''
+  Price: "ä»·æ\_¼"
+  Pricegroup: "ä»·æ\_¼ç»\x84"
+  Pricegroup deleted!: "å·³å\x88\_é\x99¤ä»·æ\_¼ç»\x84"
+  Pricegroup missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eä»·æ\_¼ç»\x84"
+  Pricegroup saved!: "å·³å\x82¨å­\x98ä»·æ\_¼ç»\x84"
+  Pricegroups: "ä»·æ\_¼ç»\x84"
+  Pricelist: ''
+  Print: "å\x88\x97å\x8d°"
+  'Print ': ''
+  Print Report: ''
+  Print and Post: "å\x88\x97å\x8d°å\x8f\x8aè¿\x87å¸\x90"
+  Print and Post as new: "å\x88\x97å\x8d°å\x8f\x8aå½\x93æ\x96°ç\x9a\x84è¿\x87å¸\x90"
+  Print and Save: "æ\x89\x93å\x8d°å\x8f\x8aå\x82¨å­\x98"
+  Print and Save as new: "å\x88\x97å\x8d°å\x8f\x8aå\x8f¦å­\x98æ\x96°æ¡£"
+  Print and post as new: ''
+  Print and save as new: ''
+  Printed: "å·³å\x88\x97å\x8d°"
+  Printed Checks: ''
+  Printed Receipts: ''
+  Printer: "å\x8d°è¡¨æ\x9cº"
+  Printing: "å\x9c¨å\x88\x97å\x8d°"
+  'Printing ... ': "æ­£å\x88\x97å\x8d°"
+  Printing check for: ''
+  Printing receipt for: ''
+  Process Transactions: ''
+  Production: ''
+  Profit Center: "å\x88©æ¶¦ä¸­å¿\x83"
+  Project: "æ\x96¹æ¡\x88"
+  Project Description: ''
+  Project Description Translations: "æ\x96¹æ¡\x88æ\x8f\x8fè¿°ç\x9a\x84ç¿»è¯\x91"
+  Project Name: ''
+  Project Number: "æ\x96¹æ¡\x88å\x8f·ç\_\x81"
+  Project Number missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eæ\x96¹æ¡\x88å\x8f·ç\_\x81"
+  Project Transactions: "æ\x96¹æ¡\x88äº¤æ\x98\x93"
+  Project deleted!: "å·³å\x88\_é\x99¤æ\x96¹æ¡\x88"
+  Project not on file!: "æ\x96¹æ¡\x88å\x86\Næ\x97\_æ­¤æ¡£æ¡\x88"
+  Project saved!: "å·³å\x82¨å­\x98æ\x96¹æ¡\x88"
+  Project/Job Description Translations: ''
+  Project/Job Name: ''
+  Project/Job Number: ''
+  Project/Job Number missing!: ''
+  Projects: "æ\x96¹æ¡\x88"
+  Projects & Jobs: ''
+  Public: ''
+  Public Key: ''
+  Purchase Order: "é\x87\x87è´­å\x8d\x95"
+  Purchase Order Number: "é\x87\x87è´­å\x8d\x95ç¼\x96å\x8f·"
+  Purchase Orders: "é\x87\x87è´­å\x8d\x95"
+  Purchase Orders generated!: ''
+  QR AP Transaction: ''
+  QR IBAN: ''
+  QR Vendor Invoice: ''
+  Qty: "æ\x95°é\x87\x8f"
+  Quantity: ''
+  Quantity exceeds available units to stock!: "è¶\Nè¿\x87å\x8f¯åº\x93å­\x98ç\x9a\x84æ\x95°é\x87\x8f"
+  Quarter: å­£åº¦
+  Quarters: ''
+  Queue: ''
+  Queued: ''
+  Quotation: "æ\x8a¥ä»·å\x8d\x95"
+  'Quotation ': "æ\x8a¥ä»·å\x8d\x95"
+  Quotation Date: "æ\x8a¥ä»·å\x8d\x95æ\x97¥æ\x9c\x9f"
+  Quotation Date missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eæ\x8a¥ä»·å\x8d\x95æ\x97¥æ\x9c\x9f"
+  Quotation Number: "æ\x8a¥ä»·å\x8d\x95å\x8f·ç\_\x81"
+  Quotation Number missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eæ\x8a¥ä»·å\x8d\x95å\x8f·ç\_\x81"
+  Quotation deleted!: "å·³å\x88\_é\x99¤æ\x8a¥ä»·å\x8d\x95"
+  Quotations: "æ\x8a¥ä»·å\x8d\x95"
+  R: å¯¹
+  RFQ: "æ\x8a¥ä»·è¯·æ±\x82(RFQ) "
+  'RFQ ': "ä¾\x9båº\x94å\x95\x86è¯¢ä»·å\x8d\x95"
+  RFQ Number: "RFDå\x8f·ç\_\x81"
+  RFQs: "æ\x8a¥ä»·è¯·æ±\x82"
+  ROP: "å\x86\x8dè®¢ç\x82¹"
+  RV: ''
+  RVC: ''
+  RVC missing!: ''
+  Rate: "ç¨\x8eç\x8e\x87"
+  Rate %: ''
+  Rate missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eç¨\x8eç\x8e\x87"
+  Recd: "å·³æ\x94¶å\x88°"
+  Receipt: "æ\x94¶æ\x8d®"
+  Receipt No.: ''
+  Receipt Number: ''
+  Receipt posted!: "å·³å\x8a\_å\N¥æ\x94¶æ\x8d®"
+  Receipts: "æ\x94¶æ\x8d®"
+  Receivables: "åº\x94æ\x94¶å¸\x90æ\x88·"
+  Receive: "æ\x94¶å\x88°"
+  Receive Merchandise: "æ\x94¶å\x88°è´§ç\x89©"
+  Received: ''
+  Recently Used: ''
+  Reconcile Payments: ''
+  Reconciliation: "è°\x83å\x92\x8c"
+  Reconciliation Date: ''
+  Reconciliation Report: "è°\x83å\x92\x8cæ\x8a¥å\x91\x8a"
+  Record in: "è®°å½\x95ã\x80\x90â\x97\x8eFix:â\x97\x8eäº\x8e;â\x97\x8eæ\x96¼ã\x80\x91"
+  Recurring: ''
+  Recurring Transaction: "å¤\x9aæ¬¡è®°å½\x95"
+  Recurring Transactions: "å¤\x9aæ¬¡è®°å½\x95"
+  Reference: "å\x8f\x82è\x80\x83èµ\x84æ\x96\x99"
+  Reference Document does not exist!: ''
+  Reference Documents: ''
+  Reference Documents URL: ''
+  Reference missing!: ''
+  Reissue Check: ''
+  Reissue Checks: ''
+  Reissue Payments: ''
+  Reissue Receipt: ''
+  Reissue Receipts: ''
+  Rem: ''
+  Remaining: "å°\x9aã\x80\x90â\x97\x8eFix:â\x97\x8eä½\x99;â\x97\x8eé¦\x80ã\x80\x91"
+  Reminder: ''
+  Reminder sent to: ''
+  Reminders sent to printer!: ''
+  Remittance Voucher: ''
+  Remittance Vouchers: ''
+  Remove: "ç§»é\x99¤"
+  Remove Audit trail up to: "ç§»é\x99¤å®¡æ\_¸çº¿ç´¢ç\x9b´è\x87³"
+  Remove Audit trails up to: "ç§»é\x99¤å®¡æ\_¸çº¿ç´¢ç\x9b´è\x87³"
+  Remove semaphores?: ''
+  Removed spoolfiles!: "ç§»é\x99¤çº¿è½´æ¡£æ¡\x88"
+  Removing marked entries from queue ...: "æ­£ä»\x8eé\x95¿é\x98\x9fä¸­ç§»é\x99¤æ\x9c\x89è®°å\x8f·ç\x9a\x84ä¼\x9aè®¡é¡¹ç\x9b®"
+  Repeat: ''
+  Report: ''
+  Report for: "æ\x8a¥è¡¨æ\x9d¥æº\x90"
+  Report processed!: ''
+  Reporting Method: ''
+  Reports: "æ\x8a¥è¡¨"
+  Repost Invoices: ''
+  'Reposting Invoices ... ': ''
+  Req: ''
+  Reqd: ''
+  Request for Quotation: "è¦\x81æ±\x82æ\x8a¥ä»·å\x8d\x95"
+  Request for Quotations: "è¦\x81æ±\x82æ\x8a¥ä»·å\x8d\x95"
+  Required: ''
+  Required by: "é\x9c\x80è¦\x81è\x80\N"
+  Requirements: ''
+  Restocking Charge: ''
+  Restore: ''
+  Restore Snapshot: ''
+  'Restoring Dataset:': ''
+  Restoring dataset version: ''
+  Retained Earnings: "ä¿\x9dç\x95\x99ç\x9b\x88ä½\x99"
+  Reverse Display: ''
+  Right: ''
+  Role: "ä»»å\x8a¡"
+  Role deleted!: ''
+  Role saved!: ''
+  Roles: ''
+  Round: ''
+  Run SQL command: ''
+  S: ''
+  SIC: "å\x8e\x9fæ\x96\x87"
+  SIC deleted!: "å·³å\x88\_é\x99¤å\x8e\x9fæ\x96\x87"
+  SIC saved!: "å·³å\x82¨å­\x98å\x8e\x9fæ\x96\x87"
+  SKU: "è¢«æ\x8c\x87å®\x9aç\x9a\x84æ\x95°é\x87\x8f"
+  SO: ''
+  SQL Run: ''
+  SQL command: ''
+  SQL statement missing: ''
+  SSN: "èº«å\x88\x86è¯\x81ç¼\x96å\x8f·"
+  Sa: ''
+  Sale: "é\x94\x80å\x94®"
+  Sales: "é\x94\x80å\x94®"
+  Sales Invoice: "é\x94\x80å\x94®å\x8f\x91ç¥¨"
+  'Sales Invoice ': "é\x94\x80è´§å\x8f\x91ç¥¨"
+  Sales Invoice.: "é\x94\x80è´§å\x8f\x91ç¥¨"
+  Sales Invoice/AR Transaction Number: ''
+  Sales Invoices: "é\x94\x80å\x94®å\x8f\x91ç¥¨"
+  Sales Order: "é\x94\x80è´§å\x8d\x95"
+  Sales Order Number: "é\x94\x80è´§å\x8d\x95ç¼\x96å\x8f·"
+  Sales Order Requirements: ''
+  Sales Order consolidation failed!: ''
+  Sales Orders: "é\x94\x80è´§å\x8d\x95"
+  Sales Orders to Invoice: ''
+  Sales Quotation Number: "æ\x8a¥ä»·å\x8d\x95ç¼\x96å\x8f·"
+  Salesperson: "é\x94\x80å\x94®äººå\x91\x98"
+  Salutation: ''
+  Same kit in Row: ''
+  Saturday: ''
+  Save: "å\x82¨å­\x98"
+  Save Column: ''
+  Save Level: ''
+  Save Pricelist: ''
+  Save Report: ''
+  Save SQL command: ''
+  Save Schedule: "å\x82¨å­\x98é¢\x84å®\x9a"
+  Save as new: "å½\x93æ\x96°ç\x9a\x84å\x82¨å­\x98"
+  Save failed!: ''
+  Save to File: "å\x82¨å­\x98è\x87³æ¡£æ¡\x88"
+  Saving: ''
+  Saving Order ...: ''
+  'Scan the following code with your Authenticator App:': ''
+  Schedule: "é¢\x84å®\x9a"
+  Scheduled: ''
+  Screen: "è\x90¤å¹\x95"
+  Search: "æ\x90\x9cå¯»"
+  Select: "é\x80\x89æ\x8b©"
+  Select Customer: ''
+  Select Vendor: "é\x80\x89å\x8e\x82å\x95\x86"
+  Select a Printer!: ''
+  Select a printer!: ''
+  Select all: "å\N¨é\x80\x89"
+  Select from one of the items below: "äº\x8eä¸\x8bå\x88\x97é¡¹ç\x9b®ä¸­é\x80\x89æ\x8b©ä¸\x80é¡¹"
+  Select from one of the names below: "äº\x8eä¸\x8bå\x88\x97å§\x93å\x90\x8dä¸­é\x80\x89æ\x8b©ä¸\x80ä¸ª"
+  Select from one of the projects below: "äº\x8eä¸\x8bå\x88\x97æ\x96¹æ¡\x88ä¸­é\x80\x89æ\x8b©ä¸\x80ä¸ª"
+  Select items: ''
+  Select payment: ''
+  Select postscript or PDF!: "ã\x80\x90â\x97\x8eFix:â\x97\x8eäº\x8e;â\x97\x8eæ\x96¼ã\x80\x91é\x99\x84è¨\x80æ\x88\x96PDFä¸­é\x80\x89ä¸\x80"
+  Select txt, postscript or PDF!: ''
+  Sell: "å\x8d\x96ä»·"
+  Sell Price: "å\x94®ä»·"
+  Sellprice: ''
+  Send by E-Mail: "ä»¥ç\x94µå­\x90é\x82®ä»¶å¯\x84é\x80\x81"
+  Sending: ''
+  Sep: "ä¹\x9dæ\x9c\x88"
+  September: "ä¹\x9dæ\x9c\x88"
+  Serial No.: "åº\x8få\x8f·"
+  Serial Number: "åº\x8få\x8f·"
+  Service: "æ\x9c\x8då\x8a¡"
+  Service Changeup: ''
+  Service Code: ''
+  Service Code missing!: ''
+  Service/Labor Code: ''
+  Services: "æ\x9c\x8då\x8a¡"
+  Session Timeout: "ä¼\x9aè¯\x9dè¶\Næ\x97¶"
+  Session expired!: "ä¼\x9aè¯\x9dè¿\x87æ\x9c\x9f"
+  Setup: ''
+  Setup Templates: "è®¾å®\x9aæ¨¡ç\x89\x88"
+  Ship: "è\x88¹"
+  Ship Merchandise: "æµ·è¿\x90è´§ç\x89©"
+  Ship all: ''
+  Ship to: "æµ·è¿\x90è\x87³"
+  Ship via: "ç\x94±æµ·è¿\x90"
+  Shipped: ''
+  Shipped Items: ''
+  Shipping: "æµ·è¿\x90"
+  Shipping Address: "æµ·è¿\x90å\x9c°å\x9d\x80"
+  Shipping Date: "æµ·è¿\x90æ\x97¥æ\x9c\x9f"
+  Shipping Date missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eæµ·è¿\x90æ\x97¥æ\x9c\x9f"
+  Shipping Point: "æµ·è¿\x90å\x9c°ç\x82¹"
+  Short: "ç\x9f­"
+  Signature: "ç­¾å\x90\x8d"
+  Snapshot created: ''
+  Snapshot restored: ''
+  Snapshots: ''
+  Snapshots deleted: ''
+  Software Administration: ''
+  Sort Names by: ''
+  Sort by: ''
+  Source: "æ\x9d¥æº\x90"
+  Source missing!: ''
+  Split Ledger: ''
+  Spoolfile: "çº¿è½´æ¡£æ¡\x88"
+  Spreadsheet: ''
+  Standard: "æ\_\x87å\x87\x86"
+  Standard Industrial Codes: "æ\_\x87å\x87\x86å·¥ä¸\x9aç¼\x96ç\_\x81"
+  Startdate: "å¼\x80å§\x8bæ\x97¥æ\x9c\x9f"
+  State: ''
+  State/Province: "ç\x9c\x81"
+  Statement: "ä¼\x9aè®¡å¸\x90"
+  Statement Balance: "ä¼\x9aè®¡å¸\x90ä½\x99é¢\x9d"
+  Statement sent to: "é\x80\x81ä¼\x9aè®¡å¸\x90è\x87³"
+  Statements sent to printer!: "é\x80\x81ä¼\x9aè®¡å¸\x90è\x87³å\x88\x97å\x8d°æ\x9cº"
+  Stock: "åº\x93å­\x98"
+  Stock Adjustment: ''
+  Stock Assembly: "ç\x9b\x98ç\x82¹"
+  Stock Finished Goods: ''
+  Stock level: ''
+  Stocking Date: ''
+  Stores Card: ''
+  Stores Card deleted!: ''
+  Stores Card saved!: ''
+  Stores Cards: ''
+  Storescard: ''
+  Street: ''
+  Street Name: ''
+  Strings quoted: ''
+  Stylesheet: "æ\_·å¼\x8fè¡¨"
+  Su: ''
+  Sub-contract GIFI: "ç»\x86å\x90\x88çº¦GIFI"
+  Subject: "æ\_\x87é¢\x98"
+  Subtotal: "å°\x8fè®¡"
+  Summary: "æ\x91\x98è¦\x81"
+  Sunday: ''
+  Supervisor: "ç®¡ç\x90\x86äºº"
+  Supply & Demand: ''
+  Supply / Demand: ''
+  Switch branch: ''
+  Sybase: ''
+  System: "ç³»ç»\x9f"
+  System Defaults: "é¢\x84è®¾ç³»ç»\x9f"
+  T: ''
+  TAN: ''
+  Tab delimited: ''
+  Table: ''
+  Tariff: ''
+  Tax: "ç¨\x8eé\x87\x91"
+  Tax Accounts: "ç¨\x8eé\x87\x91ç§\x91ç\x9b®"
+  Tax Included: "å·³å\x90«ç¨\x8eé\x87\x91"
+  Tax Number: "ç¨\x8eå\x8f·"
+  Tax Number / SSN: "ç¨\x8eå\x8f·"
+  Tax collected: "å·³æ\x94¶ç¨\x8eé\x87\x91"
+  Tax paid: "å·³ä»\x98ç¨\x8eé\x87\x91"
+  Taxable: "åº\x94ç¨\x8e"
+  Taxes: ''
+  Taxes saved!: ''
+  Taxnumber: ''
+  Template: ''
+  Template saved!: "å·³å\x82¨å­\x98æ¨¡ç\x89\x88"
+  Templates: "æ¨¡ç\x89\x88"
+  Templates managed externally: ''
+  Terms: "ç¥¨æ\x9c\x9fæ·¨è®¡"
+  Text: ''
+  Text Templates: "æ\x96\x87å­\x97æ¨¡ç\x89\x88"
+  Th: ''
+  The following Datasets are not in use and can be deleted: "ä¸\x8bå\x88\x97èµ\x84æ\x96\x99é\x9b\x86å¹¶æ\x9cªä½¿ç\x94¨, å\x8f¯ä»¥å\x88\_é\x99¤"
+  The following Datasets need to be updated: "ä¸\x8bå\x88\x97èµ\x84æ\x96\x99é\x9b\x86é\x9c\x80è¦\x81æ\x9b´æ\x96°"
+  'The following customers are not on file:': ''
+  'The following parts are not on file:': ''
+  'The following snapshot will be restored:': ''
+  'The following vendors are not on file:': ''
+  This is a preliminary check for existing sources. Nothing will be created or deleted at this stage!: "è¿\x99æ\x98¯å¯¹æ\x97¢å­\x98èµ\x84æ\x96\x99æ\x9d¥æº\x90ç\x9a\x84å\x88\x9dæ­¥æ£\x80æ\x9f¥. å\x9c¨æ­¤é\x98¶æ®µ, ä¸\x8dä¼\x9aå\x88\_é\x99¤æ\x88\x96æ\x96°å¢\x9eä»»ä½\x95èµ\x84æ\x96\x99!"
+  Threshold: ''
+  Thursday: ''
+  Till: "ç\x9b´å\x88°"
+  Time: ''
+  Time & Stores Cards: ''
+  Time Card: ''
+  Time Card deleted!: ''
+  Time Card saved!: ''
+  Time Cards: ''
+  Time In: ''
+  Time Out: ''
+  Time and Stores Cards: ''
+  Timecard: ''
+  Timecard deleted!: ''
+  Timecard saved!: ''
+  Timecards: ''
+  Times: ''
+  Title: ''
+  To: "è\x87³"
+  To Warehouse: "å\x88°ä»\x93åº\x93"
+  To add a user to a group edit a name, change the login name and save.  A new user with the same variables will then be saved under the new login name.: "è\x8b¥è¦\x81æ\x96°å¢\x9eç¾¤ç»\x84å\x86\Nç\x9a\x84ä½¿ç\x94¨è\x80\N, è¯·ç¼\x96è¾\x91å\x90\x8dç§°, æ\x9b´æ\x94¹ç\x99»å\N¥å\x90\x8d, ç\x84¶å\x90\x8eå\x82¨å­\x98.  è¿\x99æ\_·ä¸\x80æ\x9d¥, æ\x96°ä½¿ç\x94¨è\x80\Nä¼\x9aä¿\x9dç\x95\x99ç\x9b¸å\x90\x8cç\x9a\x84å\x8f\x98æ\x95°, å¹¶ä»¥æ\x96°ç\x9a\x84ç\x99»å\N¥å\x90\x8då­\x98å\N¥."
+  Tool Number: ''
+  Toolnumber: ''
+  Top Level: "é«\x98æ°´å\x87\x86"
+  Total: "æ\x80»è®¡"
+  Total Cost: ''
+  'Total:': ''
+  Tracking Item Income: ''
+  Tracking Item Tax: ''
+  Tracking Items: ''
+  Trade Discount: "è´¸æ\x98\x93æ\x8a\x98æ\x89£"
+  Transaction: "è®°å½\x95"
+  Transaction Date missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eäº¤æ\x98\x93æ\x97¥æ\x9c\x9f!"
+  Transaction Dates: ''
+  Transaction deleted!: "å·³å\x88\_é\x99¤äº¤æ\x98\x93"
+  Transaction posted!: "å·³å\x8a\_å\N¥äº¤æ\x98\x93"
+  Transaction reversal enforced for all dates: "å¼ºå\x88¶å\x9b\x9eå¤\x8dæ\x89\x80æ\x9c\x89æ\x97¥æ\x9c\x9fç\x9a\x84äº¤æ\x98\x93"
+  Transaction reversal enforced up to: "å¼ºå\x88¶å\x9b\x9eå¤\x8däº¤æ\x98\x93ç\x9b´å\x88°"
+  Transactions: "äº¤æ\x98\x93"
+  Transfer: è½¬ç§»
+  Transfer Inventory: "è½¬ç§»å­\x98è´§"
+  Transfer from: "è°\x83å\x8a¨ä»\x8e"
+  Transfer to: "å­\x98è´§è\x87³"
+  Translation: "ç¿»è¯\x91"
+  Translation deleted!: "å·³å\x88\_é\x99¤ç¿»è¯\x91"
+  Translation not on file!: ''
+  Translations: "ç¿»è¯\x91"
+  Translations saved!: "å·³å\x82¨å­\x98ç¿»è¯\x91"
+  Trial Balance: "è¯\x95ç®\x97è¡¨"
+  Tu: ''
+  Tuesday: ''
+  Type: ''
+  Type of Business: "ä¸\x9aå\x8a¡ç§\x8dç±»"
+  Type of Contact: ''
+  Type of File: ''
+  UID Register: ''
+  UNIX: ''
+  'Unable to create directory: ': ''
+  'Unable to delete:': ''
+  Unit: "å\x8d\x95ä½\x8d"
+  Unit of measure: "åº¦é\x87\x8få\x8d\x95ä½\x8d"
+  Unknown Error!: ''
+  Unlock Dataset: ''
+  Unlock System: "å¼\x80å\x90¯ç³»ç»\x9f"
+  Unlock dataset?: ''
+  Unprinted Checks: ''
+  Unprinted Receipts: ''
+  Update: "æ\x9b´æ\x96°"
+  Update Dataset: "æ\x9b´æ\x96°èµ\x84æ\x96\x99é\x9b\x86"
+  Update Software: ''
+  Updated: "å·³æ\x9b´æ\x96°"
+  Upgrading to Version: "æ­£å\x8d\x87çº§è\x87³æ\x96°ç\x89\x88"
+  Upload Document: ''
+  Upload Image: ''
+  Uploading ...: ''
+  Use Templates: "ä½¿ç\x94¨æ¨¡ç\x89\x88"
+  User: "ä½¿ç\x94¨è\x80\N"
+  User deleted!: "å·³å\x88\_é\x99¤ä½¿ç\x94¨è\x80\N"
+  User saved!: "å·³å\x82¨å­\x98ä½¿ç\x94¨è\x80\N"
+  Valid To: ''
+  Valid To date missing for: ''
+  Valid until: "æ\x9c\x89æ\x95\x88è\x87³"
+  Vendor: "ä¾\x9båº\x94å\x95\x86"
+  Vendor History: "ä¾\x9båº\x94å\x95\x86å\x8e\x86å\x8f²"
+  Vendor Invoice: "ä¾\x9båº\x94å\x95\x86å\x8f\x91ç¥¨"
+  'Vendor Invoice ': "ä¾\x9båº\x94å\x95\x86å\x8f\x91ç¥¨"
+  Vendor Invoice.: "ä¾\x9båº\x94å\x95\x86å\x8f\x91ç¥¨"
+  Vendor Invoice/AP Transaction Number: ''
+  Vendor Invoices: "ä¾\x9båº\x94å\x95\x86å\x8f\x91ç¥¨"
+  Vendor Number: "ä¾\x9båº\x94å\x95\x86å\x8f·ç\_\x81"
+  Vendor Transactions: ''
+  Vendor deleted!: "å·³å\x88\_é\x99¤ä¾\x9båº\x94å\x95\x86"
+  Vendor missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eä¾\x9båº\x94å\x95\x86"
+  'Vendor not found:': ''
+  Vendor not on file!: "æ¡£æ¡\x88æ²¡æ\x9c\x89æ­¤ä¾\x9båº\x94å\x95\x86"
+  Vendor saved!: "å·³å\x82¨å­\x98ä¾\x9båº\x94å\x95\x86"
+  Vendors: "ä¾\x9båº\x94å\x95\x86"
+  Version: "ç\x89\x88æ\x9c¬"
+  Void Check: ''
+  Void Checks: ''
+  Void Receipt: ''
+  Void Receipts: ''
+  Volume: ''
+  Voucher: ''
+  Voucher Number: ''
+  Voucher deleted!: ''
+  Voucher posted!: ''
+  Vouchers: ''
+  WLprinter: ''
+  Wage deleted!: ''
+  Wage saved!: ''
+  Wages: ''
+  Warehouse: "ä»\x93åº\x93"
+  Warehouse Transfer: ''
+  Warehouse Transfer Report: ''
+  Warehouse deleted!: "å·³å\x88\_é\x99¤ä»\x93åº\x93"
+  Warehouse saved!: "å·³å\x82¨å­\x98ä»\x93åº\x93"
+  Warehouses: "ä»\x93åº\x93"
+  Warning!: "è­¦å\x91\x8a"
+  Waybill: ''
+  We: ''
+  Website: ''
+  Wednesday: ''
+  Week: "å\x91¨"
+  Week(s): "å\x91¨"
+  Weeks: "å\x91¨"
+  Weight: "é\x87\x8dé\x87\x8f"
+  Weight Unit: "é\x87\x8dé\x87\x8få\x8d\x95ä½\x8d"
+  What type of item is this?: "æ­¤é¡¹ç\x9b®ç\x9a\x84å\x9e\x8bæ\x80\x81?"
+  Width: ''
+  Withholding: ''
+  Work Fax: ''
+  Work Mobile: ''
+  Work Order: "å·¥ä½\x9cå\x8d\x95"
+  Work Orders: "å·¥ä½\x9cå\x8d\x95"
+  Work Phone: "å·¥ä½\x9cç\x94µè¯\x9d"
+  Worksheet: ''
+  Workstation: ''
+  Workstations: ''
+  Workstations saved!: ''
+  XML: ''
+  XML Templates: ''
+  XML pain.001: ''
+  Year: å¹´ä»½
+  Year(s): å¹´
+  Yearend: "å¹´ç»\x93"
+  Yearend date missing!: "æ\x9cªæ\x8c\x87æ\x98\x8eå¹´ç»\x93æ\x97¥æ\x9c\x9f"
+  Yearend posted!: "å·³å\x8a\_å\N¥å¹´ç»\x93"
+  Yearend posting failed!: "å¹´ç»\x93å\x8a\_å\N¥å¤±è´¥"
+  Years: å¹´
+  Yes: "æ\x98¯"
+  Yes, Reissue Checks: ''
+  Yes, Reissue Receipts: ''
+  Yes, Void Checks: ''
+  Yes, Void Receipts: ''
+  Yes, delete: ''
+  Yes, delete transactions: ''
+  Yes, reconcile payments: ''
+  You are logged out: "ä½\_å·²ç»\x8fæ³¨é\x94\x80"
+  You are not authorized to add a new item!: ''
+  You are posting an existing transaction!: ''
+  You are printing and posting an existing transaction!: ''
+  You are printing and saving an existing order: ''
+  You are printing and saving an existing quotation: ''
+  You are printing and saving an existing transaction!: ''
+  You are saving an existing order: ''
+  You are saving an existing quotation: ''
+  You are saving an existing transaction!: ''
+  You did not enter a name!: "ä½\_å¹¶æ\x9cªé\x94®å\N¥å\x90\x8dç§°!"
+  You must enter a host and port for local and remote connections!: "æ\x82¨å¿\Né\x9c\x80é\x94®å\N¥ä¸»æ\x9cºå\x8f\x8aå\x9f\_å\x8f·, ä»¥è¿\x9bè¡\x8cæ\x9c¬æ\x9cºæ\x88\x96è¿\x9cç«¯è¿\x9eçº¿!"
+  Zip/Postal Code: "é\x82®ç¼\x96"
+  Zipcode: ''
+  account cannot be set to any other type of account: "å¸\x90æ\x88·ä¸\x8dè\x83½é\x80\x81å\x8e»å\N¶ä»\x96ç±»å\x9e\x8bå¸\x90æ\x88·"
+  added: ''
+  admin does not exist!: ''
+  as at: "æ\x88ªè\x87³"
+  camt.054: ''
+  converted to: ''
+  created from Sales Orders: ''
+  csv: ''
+  days: "æ\x97¥"
+  does not exist: "ä¸\x8då­\x98å\x9c¨"
+  does not exist!: ''
+  done: "å®\x8cæ\x88\x90"
+  ea: ä¸ª
+  exceeds quantity: ''
+  failed: å¤±è´¥
+  failed!: ''
+  for: ''
+  for Period: "æ\x9c\x9fé\x97´"
+  get copies: ''
+  gzip failed!: ''
+  html: ''
+  html Templates: ''
+  in row: ''
+  is already a member!: "å·²ç»\x8fæ\x98¯æ\x88\x90å\x91\x98äº\x86!"
+  last: ''
+  localhost: "æ\x9c¬å\x9c°å¯\x84ä¸»"
+  locked!: "å·³é\x94\x81ä¸\x8a"
+  logout: ''
+  must be negative: ''
+  must be positive: ''
+  ok: ''
+  partsgroup: ''
+  please wait: ''
+  posted!: "å·³å\x8a\_å\N¥"
+  rejected: ''
+  reset: ''
+  sent: "å·³é\x80\x81å\x87º"
+  successfully created!: "æ\x88\x90å\x8a\x9få»ºç«\x8b!"
+  successfully deleted!: "æ\x88\x90å\x8a\x9få\x88\_é\x99¤!"
+  time(s): æ¬¡
+  unexpected error!: "æ\x84\x8få¤\x96é\x94\x99è¯¯!"
+  updated: ''
+  void: ''
+  website: "ç½\x91ç«\x99"
+  will be restored with data from: ''
+  xml: ''

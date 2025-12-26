@@ -1,0 +1,17 @@
+---
+locale: chf_utf
+texts:
+  Cash:
+    am: espèce
+    ic: espèce
+    rp: espèce
+  Payment:
+    admin: Paiement sortant
+    hr: Paiement sortant
+    menu: Paiement sortant
+  Payments:
+    admin: Paiements sortants
+    menu: Paiements sortants
+  Ship:
+    admin: Envoyer
+    menu: Envoyer

@@ -1,9 +1,7 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2022
 #
-#  Author: Tekki
-#     Web: https://tekki.ch
+# © 2022-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -18,7 +16,7 @@ sub account_spreadsheet {
 
   $form->{title} = $locale->text('Accounts');
 
-  my $ss = SL::Spreadsheet->new($form, $userspath);
+  my $ss = SL::Spreadsheet->new($form, $slconfig{userspath});
 
   $ss->change_format(':all', color => undef, border_color => undef, underline => 0);
   $ss->change_format('total', bottom => 1);
@@ -59,7 +57,7 @@ sub account_spreadsheet {
   for my $ref (sort { $a->{accno} cmp $b->{accno} } @{$oldform->{TB}}) {
     next unless $ref->{charttype} eq 'A';
 
-    $form = bless {%$oldform}, Form;
+    $form = bless {%$oldform}, SL::Form;
     $form->{accno}     = $ref->{accno};
     $form->{l_accno}   = 1;
     $form->{sort}      = 'transdate';
@@ -143,7 +141,7 @@ sub _trialbalance_worksheet {
 sub _account_worksheet {
   my ($ss, $header_data) = @_;
 
-  CA->all_transactions(\%myconfig, \%$form);
+  SL::CA->all_transactions(\%myconfig, $form);
 
   my @column_index = qw|transdate reference description|;
   push @column_index, qw|source cleared| if $form->{link} =~ /_paid/;
@@ -202,23 +200,26 @@ sub tax_spreadsheet {
     $spreadsheet_info{columns}{"${curr}_curr"} = 'text';
   }
 
-  my $ss = SL::Spreadsheet->new($form, $userspath);
+  my $ss = SL::Spreadsheet->new($form, $slconfig{userspath});
   $ss->worksheet(form_title => 1)->structure(\%spreadsheet_info)->column_index($column_index)
     ->totalize([':decimal']);
-  if ($form->{l_subtotal}) {
-    $ss->group_by(['accno', $form->{sort}]);
-  } else {
-    $ss->group_by(['accno']);
-  }
-  $ss->group_label(['accno']);
-  $ss->group_title(
-    {
-      accno => sub {
-        my ($form, $row) = @_;
-        return qq|$row->{accno}--$form->{"$row->{accno}_description"}|;
-      }
+
+  if ($form->{reportcode} !~ /nontaxable/) {
+    if ($form->{l_subtotal}) {
+      $ss->group_by(['accno', $form->{sort}]);
+    } else {
+      $ss->group_by(['accno']);
     }
-  );
+    $ss->group_label(['accno']);
+    $ss->group_title(
+      {
+        accno => sub {
+          my ($form, $row) = @_;
+          return qq|$row->{accno}--$form->{"$row->{accno}_description"}|;
+        }
+      }
+    );
+  }
 
   $ss->change_format(':all', color => undef, border_color => undef);
   $ss->change_format('total', bottom => 1);
@@ -244,7 +245,7 @@ sub tax_spreadsheet {
 sub yearend_spreadsheet {
   my ($report_code, $periods) = @_;
 
-  my $ss = SL::Spreadsheet->new($form, $userspath);
+  my $ss = SL::Spreadsheet->new($form, $slconfig{userspath});
 
   $ss->change_format(':all', color => undef, border_color => undef);
   $ss->change_format('total', bottom => 1);

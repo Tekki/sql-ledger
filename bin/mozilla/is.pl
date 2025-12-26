@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -40,7 +39,7 @@ sub edit {
 
   $form->{linkshipto} = 1;
   &invoice_links;
-  RU->register(\%myconfig, $form);
+  SL::RU->register(\%myconfig, $form);
   &prepare_invoice;
   &display_form;
 
@@ -92,9 +91,9 @@ sub invoice_links {
   }
 
   if (! $form->{generate}) {
-    AA->get_name(\%myconfig, \%$form);
+    SL::AA->get_name(\%myconfig, $form);
     delete $form->{notes};
-    IS->retrieve_invoice(\%myconfig, \%$form);
+    SL::IS->retrieve_invoice(\%myconfig, $form);
   }
   $ml = ($form->{type} eq 'invoice') ? 1 : -1;
   $ml = 1 if $form->{type} eq 'pos_invoice';
@@ -286,7 +285,7 @@ sub prepare_invoice {
     $form->{selectformname} = qq|invoice--|.$locale->text('Invoice')
 .qq|\npick_list--|.$locale->text('Pick List')
 .qq|\npacking_list--|.$locale->text('Packing List');
-    $form->{selectformname} .= qq|\nbarcode--|.$locale->text('Barcode') if $dvipdf;
+    $form->{selectformname} .= qq|\nbarcode--|.$locale->text('Barcode') if $slconfig{dvipdf};
     $form->{selectformname} .= qq|\nremittance_voucher--|.$locale->text('Remittance Voucher') if $form->{remittancevoucher};
 
     $generate = ($form->{generate}) ? "generate_" : "";
@@ -297,7 +296,7 @@ sub prepare_invoice {
     $ml = -1;
     $form->{selectformname} = qq|credit_invoice--|.$locale->text('Credit Invoice')
 .qq|\nbin_list--|.$locale->text('Bin List');
-    $form->{selectformname} .= qq|\nbarcode--|.$locale->text('Barcode') if $dvipdf;
+    $form->{selectformname} .= qq|\nbarcode--|.$locale->text('Barcode') if $slconfig{dvipdf};
   }
 
   $i = 1;
@@ -1110,7 +1109,7 @@ $notes = qq|<textarea name=notes rows=$rows cols=35 wrap=soft accesskey="+" titl
         for ("Post", "Print and Post", "Delete") { delete $button{$_} }
       }
 
-      if (!$latex) {
+      if (!$slconfig{latex}) {
         for ("Preview", "Print and Post", "Print and Post as new") { delete $button{$_} }
       }
 
@@ -1119,7 +1118,7 @@ $notes = qq|<textarea name=notes rows=$rows cols=35 wrap=soft accesskey="+" titl
       if ($transdate > $form->{closedto}) {
 
         for ("Update", "Ship to", "Print", "E-mail", "Post", "Schedule", "New Number") { $ab{$_} = 1 }
-        if ($latex) {
+        if ($slconfig{latex}) {
           $ab{'Print and Post'} = 1;
           $ab{'Preview'} = 1;
         }
@@ -1257,7 +1256,7 @@ sub update {
 
   } else {
 
-    IS->retrieve_item(\%myconfig, \%$form);
+    SL::IS->retrieve_item(\%myconfig, $form);
 
     $rows = scalar @{ $form->{item_list} };
 
@@ -1265,7 +1264,7 @@ sub update {
       $language_code = $form->{language_code};
       $form->{language_code} = "";
 
-      IS->retrieve_item(\%myconfig, \%$form);
+      SL::IS->retrieve_item(\%myconfig, $form);
 
       $form->{language_code} = $language_code;
       $rows = scalar @{ $form->{item_list} };
@@ -1503,10 +1502,10 @@ sub post {
     $form->{$_} =~ s/^ //;
   }
 
-  $form->{userspath} = $userspath;
+  $form->{userspath} = $slconfig{userspath};
 
-  if (IS->post_invoice(\%myconfig, \%$form)) {
-    RU->register(\%myconfig, $form);
+  if (SL::IS->post_invoice(\%myconfig, $form)) {
+    SL::RU->register(\%myconfig, $form);
     $form->redirect($locale->text('Invoice')." $form->{invnumber} ".$locale->text('posted!'));
   } else {
     $form->error($locale->text('Cannot post invoice!'));
@@ -1528,7 +1527,7 @@ sub print_and_post {
     }
   }
 
-  $oldform = new Form;
+  $oldform = SL::Form->new;
   $form->{display_form} = "post";
   for (keys %$form) { $oldform->{$_} = $form->{$_} }
   $oldform->{rowcount}++;
@@ -1568,8 +1567,8 @@ sub delete {
 
 sub yes {
 
-  if (IS->delete_invoice(\%myconfig, \%$form, $spool)) {
-    RU->delete(\%myconfig, $form);
+  if (SL::IS->delete_invoice(\%myconfig, $form, $slconfig{spool})) {
+    SL::RU->delete(\%myconfig, $form);
     $form->redirect($locale->text('Invoice deleted!'));
   } else {
     $form->error($locale->text('Cannot delete invoice!'));
@@ -1589,7 +1588,7 @@ sub generate_invoices {
 
   $form->{reportcode} = "generate_sales_invoices";
 
-  AA->vc_links(\%myconfig, \%$form);
+  SL::AA->vc_links(\%myconfig, $form);
 
   for (qw(name city startdate)) { $form->{"l_$_"} = "checked" }
 
@@ -1733,7 +1732,7 @@ sub generate_invoices {
   for (qw(AR AR_discount AR_paid currency customer department employee formname language partsgroup paymentmethod projectnumber warehouse reportform)) { delete $form->{"select$_"} }
   for (qw(business pricegroup)) { delete $form->{"all_$_"} }
 
-  &change_report(\%$form, \@input, \@checked, \%radio);
+  &change_report($form, \@input, \@checked, \%radio);
 
   for (qw(report reportvars)) { delete $form->{"all_$_"} }
   for (@checked) { delete $form->{$_} }
@@ -1854,7 +1853,7 @@ sub list_names {
 
   $form->{vc} = "customer";
 
-  AA->all_names(\%myconfig, \%$form);
+  SL::AA->all_names(\%myconfig, $form);
 
   @columns = ();
   for (split /,/, $form->{flds}) {
@@ -1994,7 +1993,7 @@ sub list_names {
 
 sub do_generate_invoices {
 
-  $myform = new Form;
+  $myform = SL::Form->new;
   for (keys %$form) { $myform->{$_} = $form->{$_} }
 
   $form->info($locale->text('Generating Invoices')."\n");
@@ -2009,7 +2008,7 @@ sub do_generate_invoices {
       $myform->{"$form->{vc}_id"} = $form->{"ndx_$_"};
       $myform->{"$form->{vc}number"} = $form->{"$form->{vc}number_$_"};
 
-      $ok = IS->generate_invoice(\%myconfig, \%$myform);
+      $ok = SL::IS->generate_invoice(\%myconfig, \%$myform);
 
       $form->{precision} = $myform->{precision};
       $form->info("$i. $myform->{$form->{vc}} $myform->{city} $myform->{invnumber}, ");
@@ -2041,7 +2040,7 @@ sub consolidate {
 
   $form->{sort} ||= "transdate";
 
-  IS->consolidate(\%myconfig, \%$form);
+  SL::IS->consolidate(\%myconfig, $form);
 
   $form->{title} = $locale->text('Consolidate');
 
@@ -2217,9 +2216,9 @@ sub consolidate_invoices {
 
   delete $form->{callback};
 
-  if (IS->consolidate_invoices(\%myconfig, \%$form, $spool)) {
+  if (SL::IS->consolidate_invoices(\%myconfig, $form, $slconfig{spool})) {
     &invoice_links;
-    RU->register(\%myconfig, $form);
+    SL::RU->register(\%myconfig, $form);
     $form->redirect($locale->text('Invoices consolidated!'));
   } else {
     $form->error($locale->text('Failed to consolidate invoices!'));

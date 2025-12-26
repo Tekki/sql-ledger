@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -305,11 +304,11 @@ for (qw(description filename folder)) { $form->{$_} =~ s/'/\\'/g }
 |;
   } else {
 
-    $form->{userspath} = $userspath;
+    $form->{userspath} = $slconfig{userspath};
 
     $form->error($locale->text('No file selected!')) unless $form->{filename};
 
-    if (RD->save_document(\%myconfig, \%$form)) {
+    if (SL::RD->save_document(\%myconfig, $form)) {
       ($script, $argv) = split /\?/, $form->{callback};
       %argv = split /[&=]/, $argv;
       for (qw(action description folder filename)) { delete $form->{$_} }
@@ -357,12 +356,12 @@ self.resizeTo(600,600);
       print qq|Content-Type: $form->{contenttype}
 Content-Disposition: inline; filename=$form->{filename};\n\n|;
 
-      open(OUT, ">-") or $form->error("STDOUT : $!");
+      open my $out, ">-" or $form->error("STDOUT : $!");
 
-      binmode(OUT);
+      binmode $out;
 
-      print OUT $data;
-      close(OUT);
+      print $out $data;
+      close $out;
 
     } else {
       $form->error($locale->text('No data!'));
@@ -381,12 +380,12 @@ sub download_document {
     print qq|Content-Type: $form->{contenttype}
 Content-Disposition: $disposition; filename*=UTF-8''$form->{filename};\n\n|;
 
-    open(OUT, ">-") or $form->error("STDOUT : $!");
+    open my $out, ">-" or $form->error("STDOUT : $!");
 
-    binmode(OUT);
+    binmode $out;
 
-    print OUT $data;
-    close(OUT);
+    print $out $data;
+    close $out;
 
   } else {
     $form->error($locale->text('No data!'));
@@ -396,7 +395,7 @@ Content-Disposition: $disposition; filename*=UTF-8''$form->{filename};\n\n|;
 
 sub search_documents {
 
-  RD->prepare_search(\%myconfig, $form);
+  SL::RD->prepare_search(\%myconfig, $form);
 
   $form->{title} = $locale->text('Reference Documents');
 
@@ -492,7 +491,7 @@ sub list_documents {
 
   %m = &formnames;
 
-  RD->all_documents(\%myconfig, $form, \%m);
+  SL::RD->all_documents(\%myconfig, $form, \%m);
 
   $href = "$form->{script}?action=list_documents";
   for (qw(direction oldsort path login)) { $href .= qq|&$_=$form->{$_}| }
@@ -695,7 +694,7 @@ sub add_document { &upload }
 
 sub edit {
 
-  RD->get_document(\%myconfig, \%$form);
+  SL::RD->get_document(\%myconfig, $form);
 
   $form->{title} = $locale->text('Edit Reference Document');
   $form->helpref("cms", $myconfig{countrycode});
@@ -795,7 +794,7 @@ sub edit {
 
 sub detach {
 
-  $form->redirect($locale->text('Document detached!')) if RD->detach_document(\%myconfig, \%$form);
+  $form->redirect($locale->text('Document detached!')) if SL::RD->detach_document(\%myconfig, $form);
   $form->error($locale->text('Could not detach document!'));
 
 }
@@ -891,7 +890,7 @@ sub do_attach {
   $form->{db}           = $m{$form->{formname}}{db};
   $form->{number_field} = $m{$form->{formname}}{number};
 
-  if (RD->attach_document(\%myconfig, $form)) {
+  if (SL::RD->attach_document(\%myconfig, $form)) {
     $form->redirect($locale->text('Document attached!'));
   } else {
     $form->error(
@@ -902,7 +901,7 @@ sub do_attach {
 
 sub delete {
 
-  $form->redirect($locale->text('Document deleted!')) if RD->delete_document(\%myconfig, \%$form);
+  $form->redirect($locale->text('Document deleted!')) if SL::RD->delete_document(\%myconfig, $form);
 
   $form->error($locale->text('Could not delete document!'));
 
@@ -911,15 +910,15 @@ sub delete {
 
 sub delete_documents {
 
-  $form->redirect($locale->text('Documents deleted!')) if RD->delete_documents(\%myconfig, \%$form);
+  $form->redirect($locale->text('Documents deleted!')) if SL::RD->delete_documents(\%myconfig, $form);
 
 }
 
 
 sub save {
 
-  $form->{userspath} = $userspath;
-  $form->redirect($locale->text('Document saved!')) if RD->save_document(\%myconfig, \%$form);
+  $form->{userspath} = $slconfig{userspath};
+  $form->redirect($locale->text('Document saved!')) if SL::RD->save_document(\%myconfig, $form);
   $form->error($locale->text('Could not save document!'));
 
 }
@@ -981,31 +980,31 @@ sub upload_image {
 
 sub upload_imagefile {
 
-  if (-s "$userspath/$form->{tmpfile}") {
+  if (-s "$slconfig{userspath}/$form->{tmpfile}") {
     unless ($^O =~ /mswin/i) {
-      $image = `file $userspath/$form->{tmpfile}`;
+      $image = `file $slconfig{userspath}/$form->{tmpfile}`;
       unless ($image =~ /image/) {
-        unlink "$userspath/$form->{tmpfile}";
+        unlink "$slconfig{userspath}/$form->{tmpfile}";
         $form->error($locale->text('Not an Image file!'));
       }
     }
 
-    open(IN, "$userspath/$form->{tmpfile}") or $form->error("$userspath/$form->{tmpfile} : $!\n");
-    open(OUT, "> $images/$myconfig{dbname}/$form->{filename}") or $form->error("$images/$myconfig{dbname}/$form->{filename} : $!\n");
+    open my $in, "$slconfig{userspath}/$form->{tmpfile}" or $form->error("$slconfig{userspath}/$form->{tmpfile} : $!\n");
+    open my $out, "> $slconfig{images}/$myconfig{dbname}/$form->{filename}" or $form->error("$slconfig{images}/$myconfig{dbname}/$form->{filename} : $!\n");
 
-    binmode(IN);
-    binmode(OUT);
+    binmode $in;
+    binmode $out;
 
-    while (<IN>) {
-      print OUT $_;
+    while (<$in>) {
+      print $out $_;
     }
 
-    close(IN);
-    close(OUT);
+    close $in;
+    close $out;
 
   }
 
-  unlink "$userspath/$form->{tmpfile}";
+  unlink "$slconfig{userspath}/$form->{tmpfile}";
 
   &list_images;
 
@@ -1014,7 +1013,7 @@ sub upload_imagefile {
 
 sub list_images {
 
-  opendir DIR, "$images/$myconfig{dbname}" or $form->error("$images/$myconfig{dbname} : $!");
+  opendir DIR, "$slconfig{images}/$myconfig{dbname}" or $form->error("$slconfig{images}/$myconfig{dbname} : $!");
 
   @files = grep !/^\.\.?$/, readdir DIR;
   closedir DIR;
@@ -1061,7 +1060,7 @@ sub list_images {
     $i++;
     $column_data{ndx} = qq|<td><input name="ndx_$i" class=checkbox type=checkbox value=$_ $checked></td>|;
     $column_data{filename} = qq|<td>$_</td>|;
-    $column_data{image} = "<td><a href=$images/$myconfig{dbname}/$_><img src=$images/$myconfig{dbname}/$_ height=32 border=0></a></td>";
+    $column_data{image} = "<td><a href=$slconfig{images}/$myconfig{dbname}/$_><img src=$slconfig{images}/$myconfig{dbname}/$_ height=32 border=0></a></td>";
 
     $j++; $j %= 2;
     print "<tr class=listrow$j>";
@@ -1138,7 +1137,7 @@ sub delete_files {
 
   for $i (1 .. $form->{rowcount}) {
     if ($form->{"ndx_$i"}) {
-      unlink qq|$images/$myconfig{dbname}/$form->{"ndx_$i"}|;
+      unlink qq|$slconfig{images}/$myconfig{dbname}/$form->{"ndx_$i"}|;
     }
   }
 

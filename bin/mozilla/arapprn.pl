@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -26,7 +25,7 @@ if (-f "$form->{path}/custom/$form->{login}/arapprn.pl") {
 sub print {
 
   if ($form->{media} !~ /screen/) {
-    $oldform = new Form;
+    $oldform = SL::Form->new;
     for (keys %$form) { $oldform->{$_} = $form->{$_} }
   }
 
@@ -99,7 +98,7 @@ sub print_check {
 
   for (qw(datepaid source memo)) { $form->{$_} = $form->{"${_}_$i"} }
 
-  AA->company_details(\%myconfig, \%$form);
+  SL::AA->company_details(\%myconfig, $form);
   @a = qw(name address1 streetname buildingnumber address2 city state zipcode country);
   push @a, qw(firstname lastname salutation contacttitle occupation mobile);
 
@@ -113,7 +112,7 @@ sub print_check {
   push(@{ $form->{paid} }, $form->{"paid_$i"});
 
   use SL::CP;
-  $c = CP->new(($form->{language_code}) ? $form->{language_code} : $myconfig{countrycode});
+  $c = SL::CP->new(($form->{language_code}) ? $form->{language_code} : $myconfig{countrycode});
   $c->init;
   ($whole, $form->{decimal}) = split /\./, $form->parse_amount(\%myconfig, $form->{amount});
 
@@ -145,7 +144,7 @@ sub print_check {
 
   $form->format_string(@a);
 
-  $form->{templates} = "$templates/$myconfig{templates}";
+  $form->{templates} = "$slconfig{templates}/$myconfig{templates}";
   $form->{IN} = "$form->{formname}.$form->{format}";
 
   if ($form->{format} =~ /(ps|pdf)/) {
@@ -179,7 +178,7 @@ sub print_check {
   $form->{fileid} = $invnumber;
   $form->{fileid} =~ s/(\s|\W)+//g;
 
-  $form->parse_template(\%myconfig, $userspath, $dvipdf, $xelatex);
+  $form->parse_template(\%myconfig, $slconfig{userspath}, $slconfig{dvipdf}, $slconfig{xelatex});
 
   if ($form->{previousform}) {
 
@@ -231,7 +230,7 @@ sub print_transaction {
 
   $display_form = ($form->{display_form}) ? $form->{display_form} : "display_form";
 
-  AA->company_details(\%myconfig, \%$form);
+  SL::AA->company_details(\%myconfig, $form);
 
   @a = qw(name address1 streetname buildingnumber address2 city state zipcode country);
 
@@ -360,7 +359,7 @@ sub print_transaction {
   $form->{cd_invtotal} = $form->{cd_subtotal} + $cd_tax;
 
   use SL::CP;
-  $c = CP->new(($form->{language_code}) ? $form->{language_code} : $myconfig{countrycode});
+  $c = SL::CP->new(($form->{language_code}) ? $form->{language_code} : $myconfig{countrycode});
   $c->init;
 
   ($whole, $decimal) = split /\./, $form->{invtotal};
@@ -412,7 +411,7 @@ sub print_transaction {
 
   $form->{invdate} = $form->{transdate};
 
-  $form->{templates} = "$templates/$myconfig{templates}";
+  $form->{templates} = "$slconfig{templates}/$myconfig{templates}";
   $form->{IN} = "$form->{formname}.$form->{format}";
   $form->{IN} = lc $form->{ARAP} . "_$form->{formname}.$form->{format}" if $form->{formname} eq 'transaction';
 
@@ -453,7 +452,7 @@ sub print_transaction {
   $form->{fileid} = $form->{invnumber};
   $form->{fileid} =~ s/(\s|\W)+//g;
 
-  $form->parse_template(\%myconfig, $userspath, $dvipdf, $xelatex);
+  $form->parse_template(\%myconfig, $slconfig{userspath}, $slconfig{dvipdf}, $slconfig{xelatex});
 
   if (%$oldform) {
     $oldform->{invnumber} = $form->{invnumber};
@@ -487,7 +486,7 @@ sub print_debit_note { &print_transaction };
 sub print_payslip {
   my ($oldform) = @_;
 
-  HR->payslip_details(\%myconfig, \%$form);
+  SL::HR->payslip_details(\%myconfig, $form);
 
   $display_form = ($form->{display_form}) ? $form->{display_form} : "display_form";
 
@@ -506,7 +505,7 @@ sub print_payslip {
 
 
   use SL::CP;
-  $c = CP->new(($form->{language_code}) ? $form->{language_code} : $myconfig{countrycode});
+  $c = SL::CP->new(($form->{language_code}) ? $form->{language_code} : $myconfig{countrycode});
   $c->init;
   ($whole, $form->{decimal}) = split /\./, $form->parse_amount(\%myconfig, $form->{paid});
 
@@ -555,7 +554,7 @@ sub print_payslip {
 
   # $form->format_string(@a);
 
-  $form->{templates} = "$templates/$myconfig{templates}";
+  $form->{templates} = "$slconfig{templates}/$myconfig{templates}";
   $form->{IN} = "$form->{formname}.$form->{format}";
 
   if ($form->{format} =~ /(ps|pdf)/) {
@@ -568,7 +567,7 @@ sub print_payslip {
     $form->{OUT} = qq~| $form->{"$form->{media}_printer"}~;
   }
 
-  $form->parse_template(\%myconfig, $userspath, $dvipdf, $xelatex);
+  $form->parse_template(\%myconfig, $slconfig{userspath}, $slconfig{dvipdf}, $slconfig{xelatex});
 
   if (%$oldform) {
     for (keys %$form) { delete $form->{$_} }
@@ -705,12 +704,12 @@ sub print_options {
 <option value="xml">|.$locale->text('XML').qq|
 <option value="txt">|.$locale->text('Text');
 
-  if ($form->{selectprinter} && $latex) {
+  if ($form->{selectprinter} && $slconfig{latex}) {
     for (split /\n/, $form->unescape($form->{selectprinter})) { $media .= qq|
           <option value="$_">$_| }
   }
 
-  if ($latex) {
+  if ($slconfig{latex}) {
     $selectformat .= qq|
 <option value="ps">|.$locale->text('Postscript').qq|
 <option value="pdf">|.$locale->text('PDF');

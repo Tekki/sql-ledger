@@ -1,5 +1,17 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+Not Released
+  - INCLUDES BREAKING CHANGES
+  - Perl 5.40 and PostgreSQL 17 are minimum requirements
+  - backend modules rewritten using Perl 5.40 features
+  - global variables renamed and reduced
+  - WLprinter and scripts in bin/lynx removed
+  - config files and translations converted to YAML and binary format
+  - upgrade and update scripts added
+  - script for translations updated
+  - documentation rewritten
+  - backend, frontend and live tests added
+
 3.2.12.66 2025-12-18
   - import of QR Bills improved
 

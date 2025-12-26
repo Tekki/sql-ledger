@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -38,7 +37,7 @@ sub edit {
 
   $form->{linkshipto} = 1;
   &invoice_links;
-  RU->register(\%myconfig, $form);
+  SL::RU->register(\%myconfig, $form);
   &prepare_invoice;
   &display_form;
 
@@ -72,9 +71,9 @@ sub invoice_links {
     }
   }
 
-  AA->get_name(\%myconfig, \%$form);
+  SL::AA->get_name(\%myconfig, $form);
   delete $form->{notes};
-  IR->retrieve_invoice(\%myconfig, \%$form);
+  SL::IR->retrieve_invoice(\%myconfig, $form);
 
   $ml = ($form->{type} eq 'invoice') ? 1 : -1;
 
@@ -252,7 +251,7 @@ sub prepare_invoice {
   if ($form->{type} eq 'invoice') {
     $form->{selectformname} = qq|vendor_invoice--|.$locale->text('Invoice')  # 3.2.11: |invoice--|
 .qq|\nbin_list--|.$locale->text('Bin List');
-    $form->{selectformname} .= qq|\nbarcode--|.$locale->text('Barcode') if $dvipdf;
+    $form->{selectformname} .= qq|\nbarcode--|.$locale->text('Barcode') if $slconfig{dvipdf};
   }
   if ($form->{type} eq 'debit_invoice') {
     $ml = -1;
@@ -989,7 +988,7 @@ sub form_footer {
         for ("Post", "Print and Post", "Delete") { delete $button{$_} }
       }
 
-      if (!$latex) {
+      if (!$slconfig{latex}) {
         for ("Preview", "Print and Post", "Print and Post as new") { delete $button{$_} }
       }
 
@@ -997,7 +996,7 @@ sub form_footer {
 
       if ($transdate > $form->{closedto}) {
         for ('Update', "New Number", "Ship to", "Print", "E-mail", 'Post', 'Schedule') { $a{$_} = 1 }
-        if ($latex) {
+        if ($slconfig{latex}) {
           $a{'Print and Post'} = 1;
           $a{'Preview'} = 1;
         }
@@ -1134,14 +1133,14 @@ sub update {
 
   } else {
 
-    IR->retrieve_item(\%myconfig, \%$form);
+    SL::IR->retrieve_item(\%myconfig, $form);
 
     my $rows = scalar @{ $form->{item_list} };
 
     if ($form->{language_code} && $rows == 0) {
       $language_code = $form->{language_code};
       $form->{language_code} = "";
-      IR->retrieve_item(\%myconfig, \%$form);
+      SL::IR->retrieve_item(\%myconfig, $form);
       $form->{language_code} = $language_code;
       $rows = scalar @{ $form->{item_list} };
     }
@@ -1334,10 +1333,10 @@ sub post {
   $form->{"AP_paid_$i"} = $AP_paid;
   $form->{"paymentmethod_$i"} = $paymentmethod;
 
-  $form->{userspath} = $userspath;
+  $form->{userspath} = $slconfig{userspath};
 
-  if (IR->post_invoice(\%myconfig, \%$form)) {
-    RU->register(\%myconfig, $form);
+  if (SL::IR->post_invoice(\%myconfig, $form)) {
+    SL::RU->register(\%myconfig, $form);
     $form->redirect($locale->text('Invoice')." $form->{invnumber} ".$locale->text('posted!'));
   } else {
     $form->error($locale->text('Cannot post invoice!'));
@@ -1358,7 +1357,7 @@ sub print_and_post {
     }
   }
 
-  $oldform = new Form;
+  $oldform = SL::Form->new;
   $form->{display_form} = "post";
   for (keys %$form) { $oldform->{$_} = $form->{$_} }
   $oldform->{rowcount}++;
@@ -1397,8 +1396,8 @@ sub delete {
 
 sub yes {
 
-  if (IR->delete_invoice(\%myconfig, \%$form, $spool)) {
-    RU->delete(\%myconfig, $form);
+  if (SL::IR->delete_invoice(\%myconfig, $form, $slconfig{spool})) {
+    SL::RU->delete(\%myconfig, $form);
     $form->redirect($locale->text('Invoice deleted!'));
   } else {
     $form->error($locale->text('Cannot delete invoice!'));

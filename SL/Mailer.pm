@@ -1,19 +1,20 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2006
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
 # mailer package
 #
 #======================================================================
+use v5.40;
 
-package Mailer;
+package SL::Mailer;
 
 use utf8;
+use MIME::Base64;
 
 sub new {
   my ($type) = @_;
@@ -24,7 +25,7 @@ sub new {
 
 
 sub send {
-  my ($self, $out) = @_;
+  my ($self, $target) = @_;
 
   my $boundary = time;
   my $domain = $self->{from};
@@ -43,13 +44,13 @@ sub send {
     $self->{$_} =~ s/\&lt;/</g;
     $self->{$_} =~ s/\&gt;/>/g;
     $self->{$_} =~ s/(\/|\\|\$)//g;
-    $self->{$_} =~ s/["]?(.*?)["]? (<.*>)/"=?$self->{charset}?B?".&encode_base64($1,"")."?= $2"/e if $self->{$_} =~ m/[\x00-\x1F]|[\x7B-\xFFFF]/;
+    $self->{$_} =~ s/["]?(.*?)["]? (<.*>)/"=?$self->{charset}?B?".encode_base64($1,"")."?= $2"/e if $self->{$_} =~ m/[\x00-\x1F]|[\x7B-\xFFFF]/;
     $h{$_} = $self->{$_};
   }
 
   $h{cc} = "Cc: $h{cc}\n" if $self->{cc};
   $h{bcc} = "Bcc: $h{bcc}\n" if $self->{bcc};
-  $h{subject} = ($self->{subject} =~ /([\x00-\x1F]|[\x7B-\xFFFF])/) ? "Subject: =?$self->{charset}?B?".&encode_base64($self->{subject},"")."?=" : "Subject: $self->{subject}";
+  $h{subject} = ($self->{subject} =~ /([\x00-\x1F]|[\x7B-\xFFFF])/) ? "Subject: =?$self->{charset}?B?".encode_base64($self->{subject},"")."?=" : "Subject: $self->{subject}";
 
   if ($self->{notify}) {
     if ($self->{notify} =~ /\@/) {
@@ -59,30 +60,31 @@ sub send {
     }
   }
 
-  if ($out) {
+  my $out;
+  if ($target) {
     $self->{from} =~ /<(.*)>/;
     my $envelope = $1;
     $envelope =~ s/@/%/;
-    $out =~ s/<%from%>/$envelope/;
-    open(OUT, $out) or return "$out : $!";
+    $target =~ s/<%from%>/$envelope/;
+    open $out, $target or return "$target : $!";
   } else {
-    open(OUT, ">-") or return "STDOUT : $!";
+    open $out, ">-" or return "STDOUT : $!";
   }
 
-  print OUT qq|From: $h{from}
+  print $out qq|From: $h{from}
 To: $h{to}
 $h{cc}$h{bcc}$h{subject}
 Message-ID: <$msgid>
-$h{notify}X-Mailer: SQL-Ledger $self->{version}
+$h{notify}X-SL::Mailer: SQL-Ledger $self->{version}
 MIME-Version: 1.0
 |;
 
 
   if (@{ $self->{attachments} }) {
-    print OUT qq|Content-Type: multipart/mixed; boundary=$boundary\n\n|;
+    print $out qq|Content-Type: multipart/mixed; boundary=$boundary\n\n|;
 
     if ($self->{message} ne "") {
-      print OUT qq|--${boundary}
+      print $out qq|--${boundary}
 Content-Type: $self->{contenttype}; charset=$self->{charset}
 
 $self->{message}
@@ -94,68 +96,44 @@ $self->{message}
 
       my $application = ($attachment =~ /(^\w+$)|\.(html|text|txt|sql)$/) ? "text" : "application";
 
-      unless (open IN, $attachment) {
-        close(OUT);
+      my $in;
+      unless (open $in, $attachment) {
+        close $out;
         return "$attachment : $!";
       }
 
-      binmode(IN);
+      binmode $in;
 
       my $filename = $attachment;
       # strip path
       $filename =~ s/(.*\/|$self->{fileid})//g;
 
-      print OUT qq|--${boundary}
+      print $out qq|--${boundary}
 Content-Type: $application/$self->{format}; name=${filename}; charset=$self->{charset}
 Content-Transfer-Encoding: BASE64
 Content-Disposition: attachment; filename=$filename\n\n|;
 
       my $msg = "";
-      while (<IN>) {;
+      while (<$in>) {;
         $msg .= $_;
       }
-      print OUT &encode_base64($msg);
+      print $out encode_base64($msg);
 
-      close(IN);
+      close $in;
 
     }
-    print OUT qq|--${boundary}--\n|;
+    print $out qq|--${boundary}--\n|;
 
   } else {
-    print OUT qq|Content-Type: $self->{contenttype}; charset=$self->{charset}
+    print $out qq|Content-Type: $self->{contenttype}; charset=$self->{charset}
 
 $self->{message}
 |;
   }
 
-  close(OUT);
+  close $out;
 
   return "";
-
-}
-
-
-sub encode_base64 ($;$) {
-
-  # this code is from the MIME-Base64-2.12 package
-  # Copyright 1995-1999,2001 Gisle Aas <gisle@ActiveState.com>
-
-  my $res = "";
-  my $eol = $_[1];
-  $eol = "\n" unless defined $eol;
-  pos($_[0]) = 0;                          # ensure start at the beginning
-
-  $res = join '', map( pack('u',$_)=~ /^.(\S*)/, ($_[0]=~/(.{1,45})/gs));
-
-  $res =~ tr|` -_|AA-Za-z0-9+/|;               # `# help emacs
-  # fix padding at the end
-  my $padding = (3 - length($_[0]) % 3) % 3;
-  $res =~ s/.{$padding}$/'=' x $padding/e if $padding;
-  # break encoded string into lines of no more than 60 characters each
-  if (length $eol) {
-    $res =~ s/(.{1,60})/$1$eol/g;
-  }
-  return $res;
 
 }
 
@@ -167,31 +145,27 @@ sub encode_base64 ($;$) {
 
 =head1 NAME
 
-Mailer - Mailer package
+SL::Mailer - Mailer package
 
 =head1 DESCRIPTION
 
-L<SL::Mailer> contains the mailer package.
+L<SL::SL::Mailer> contains the mailer package.
 
 
 =head1 CONSTRUCTOR
 
-L<SL::Mailer> uses the following constructor:
+L<SL::SL::Mailer> uses the following constructor:
 
 =head2 new
 
-  $mailer = Mailer->new;
+  $mailer = SL::Mailer->new;
 
 =head1 METHODS
 
-L<SL::Mailer> implements the following methods:
-
-=head2 encode_base64
-
-  Mailer::encode_base64($unencoded, $eol);
+L<SL::SL::Mailer> implements the following methods:
 
 =head2 send
 
-  $mailer->send($out);
+  $mailer->send($target);
 
 =cut

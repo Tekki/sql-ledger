@@ -1,21 +1,20 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2016-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2016-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
 # CMS backend routines
 #
 #======================================================================
+use v5.40;
 
-package RD;
+package SL::RD;
 
 
-sub prepare_search {
-  my ($self, $myconfig, $form) = @_;
+sub prepare_search ($, $myconfig, $form) {
 
   my $dbh = $form->dbconnect($myconfig);
 
@@ -24,7 +23,7 @@ sub prepare_search {
   my $sth = $dbh->prepare($query);
   $sth->execute or $form->dberror($query);
 
-  while (my $ref = $sth->fetchrow_hashref('NAME_lc')) {
+  while (my $ref = $sth->fetchrow_hashref) {
     $form->{has_formname}{$ref->{formname}} = 1;
   }
   $sth->finish;
@@ -34,10 +33,10 @@ sub prepare_search {
     FROM reference
     ORDER BY folder|;
 
-  my $sth = $dbh->prepare($query);
+  $sth = $dbh->prepare($query);
   $sth->execute or $form->dberror($query);
 
-  while (my $ref = $sth->fetchrow_hashref('NAME_lc')) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push $form->{all_folder}->@*, $ref;
   }
   $sth->finish;
@@ -47,8 +46,7 @@ sub prepare_search {
 }
 
 
-sub all_documents {
-  my ($self, $myconfig, $form, $formnames) = @_;
+sub all_documents ($, $myconfig, $form, $formnames) {
 
   my $dbh = $form->dbconnect($myconfig);
 
@@ -96,7 +94,7 @@ sub all_documents {
         AND lower(r.folder) LIKE '$var'|;
   }
   if ($form->{formname}) {
-    (undef, $var) = split /--/, $form->{formname};
+    (undef, $var) = split /--/, $form->{formname} // '';
 
     $where .= qq|
         AND r.formname = '$var'|;
@@ -130,10 +128,10 @@ sub all_documents {
     WHERE lower(document_number) LIKE '$var'|;
   }
 
-  $sth = $dbh->prepare($query) || $form->dberror($query);
-  $sth->execute || $form->dberror($query);
+  my $sth = $dbh->prepare($query) or $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     if ($ref->{login}) {
       next if $ref->{login} ne $login;
     }
@@ -146,8 +144,7 @@ sub all_documents {
 }
 
 
-sub get_document {
-  my ($self, $myconfig, $form) = @_;
+sub get_document ($, $myconfig, $form) {
 
   my $dbh = $form->dbconnect($myconfig);
 
@@ -155,14 +152,14 @@ sub get_document {
   my $sth;
   my $ref;
 
-  if ($form->{id} *= 1) {
+  if (($form->{id} ||= 0) *= 1) {
     $query = qq|SELECT *
                 FROM reference
                 WHERE id = $form->{id}|;
-    $sth = $dbh->prepare($query) || $form->dberror($query);
-    $sth->execute || $form->dberror($query);
+    $sth = $dbh->prepare($query) or $form->dberror($query);
+    $sth->execute or $form->dberror($query);
 
-    $ref = $sth->fetchrow_hashref(NAME_lc);
+    $ref = $sth->fetchrow_hashref;
     $ref->{confidential} = ($ref->{login}) ? 1 : 0;
     delete $ref->{login};
 
@@ -183,8 +180,7 @@ sub get_document {
 }
 
 
-sub save_document {
-  my ($self, $myconfig, $form) = @_;
+sub save_document ($, $myconfig, $form) {
 
   my $dbh = $form->dbconnect_noauto($myconfig);
 
@@ -195,25 +191,25 @@ sub save_document {
   $login =~ s/\@.*//;
   $login = '' unless $form->{confidential};
 
-  if ($form->{id} *= 1) {
+  if (($form->{id} ||= 0) *= 1) {
 
     $query = qq|UPDATE reference SET
                 description = |.$dbh->quote($form->{description}).qq|,
                 folder = |.$dbh->quote($form->{folder}).qq|,
                 login = '$login'
                 WHERE id = $form->{id}|;
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
 
     $query = qq|SELECT archive_id
                 FROM reference
                 WHERE id = $form->{id}|;
-    ($archive_id) = $dbh->selectrow_array($query);
+    my ($archive_id) = $dbh->selectrow_array($query);
 
     if ($archive_id) {
       $query = qq|UPDATE archive SET
                   filename = |.$dbh->quote($form->{file}).qq|
                   WHERE id = $archive_id|;
-      $dbh->do($query) || $form->dberror($query);
+      $dbh->do($query) or $form->dberror($query);
     }
 
   } else {
@@ -222,7 +218,7 @@ sub save_document {
     $form->{filename} = ($form->{file}) ? $form->{file} : $form->{filename};
     for (qw(description folder filename confidential tmpfile)) { $form->{"reference${_}_1"} = $form->{$_} }
     delete $form->{filename};
-    $form->save_reference($dbh, $formname);
+    $form->save_reference($dbh, $form->{formname});
   }
 
   my $rc = $dbh->commit;
@@ -233,8 +229,7 @@ sub save_document {
 }
 
 
-sub delete_document {
-  my ($self, $myconfig, $form, $dbh) = @_;
+sub delete_document ($, $myconfig, $form, $dbh = undef) {
 
   my $disconnect = ($dbh) ? 0 : 1;
 
@@ -243,14 +238,14 @@ sub delete_document {
   my $query;
   my $count;
 
-  $form->{id} *= 1;
+  ($form->{id} ||= 0) *= 1;
 
   $query = qq|SELECT archive_id
               FROM reference
               WHERE id = $form->{id}|;
   ($form->{archive_id}) = $dbh->selectrow_array($query);
 
-  if ($form->{archive_id} *= 1) {
+  if (($form->{archive_id} ||= 0) *= 1) {
     $query = qq|SELECT count(*)
                 FROM reference
                 WHERE archive_id = $form->{archive_id}|;
@@ -259,14 +254,14 @@ sub delete_document {
     if ($count == 1) {
       $query = qq|DELETE FROM archive
                   WHERE id = $form->{archive_id}|;
-      $dbh->do($query) || $form->dberror($query);
+      $dbh->do($query) or $form->dberror($query);
     }
 
   }
 
   $query = qq|DELETE FROM reference
               WHERE id = $form->{id}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   my $rc = $dbh->commit;
 
@@ -277,15 +272,14 @@ sub delete_document {
 }
 
 
-sub delete_documents {
-  my ($self, $myconfig, $form) = @_;
+sub delete_documents ($, $myconfig, $form) {
 
   my $dbh = $form->dbconnect_noauto($myconfig);
 
   for (1 .. $form->{rowcount}) {
     if ($form->{"id_$_"}) {
       $form->{id} = $form->{"id_$_"};
-      RD->delete_document($myconfig, $form, $dbh);
+      SL::RD->delete_document($myconfig, $form, $dbh);
     }
   }
 
@@ -296,8 +290,7 @@ sub delete_documents {
 }
 
 
-sub detach_document {
-  my ($self, $myconfig, $form) = @_;
+sub detach_document ($, $myconfig, $form) {
 
   my $dbh = $form->dbconnect_noauto($myconfig);
 
@@ -307,7 +300,7 @@ sub detach_document {
               trans_id = NULL,
               formname = NULL
               WHERE id = $form->{id} * 1|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   my $rc = $dbh->commit;
   $dbh->disconnect;
@@ -317,8 +310,7 @@ sub detach_document {
 }
 
 
-sub attach_document {
-  my ($self, $myconfig, $form) = @_;
+sub attach_document ($, $myconfig, $form) {
 
   my $dbh = $form->dbconnect_noauto($myconfig);
 
@@ -326,8 +318,8 @@ sub attach_document {
   my $sth;
   my $ref;
 
-  $form->{trans_id} *= 1;
-  $form->{id} *= 1;
+  ($form->{trans_id} ||= 0) *= 1;
+  ($form->{id} ||= 0) *= 1;
 
   $query = qq|SELECT id
               FROM $form->{db}
@@ -338,9 +330,9 @@ sub attach_document {
     $query = qq|SELECT *
                 FROM reference
                 WHERE id = $form->{id}|;
-    $sth = $dbh->prepare($query) || $form->dberror($query);
-    $sth->execute || $form->dberror($query);
-    $ref = $sth->fetchrow_hashref(NAME_lc);
+    $sth = $dbh->prepare($query) or $form->dberror($query);
+    $sth->execute or $form->dberror($query);
+    $ref = $sth->fetchrow_hashref;
 
     if ($ref->{trans_id}) {
       $query = qq|INSERT INTO reference (code, trans_id, description,
@@ -354,7 +346,7 @@ sub attach_document {
                   formname = '$form->{formname}'
                   WHERE id = $form->{id}|;
     }
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
 
     $sth->finish;
   }
@@ -374,7 +366,7 @@ sub attach_document {
 
 =head1 NAME
 
-RD - Cms backend routines
+SL::RD - Cms backend routines
 
 =head1 DESCRIPTION
 
@@ -386,30 +378,30 @@ L<SL::RD> implements the following functions:
 
 =head2 all_documents
 
-  RD->all_documents($myconfig, $form);
+  SL::RD->all_documents($myconfig, $form);
 
 =head2 attach_document
 
-  RD->attach_document($myconfig, $form);
+  SL::RD->attach_document($myconfig, $form);
 
 =head2 delete_document
 
-  RD->delete_document($myconfig, $form, $dbh);
+  SL::RD->delete_document($myconfig, $form, $dbh);
 
 =head2 delete_documents
 
-  RD->delete_documents($myconfig, $form);
+  SL::RD->delete_documents($myconfig, $form);
 
 =head2 detach_document
 
-  RD->detach_document($myconfig, $form);
+  SL::RD->detach_document($myconfig, $form);
 
 =head2 get_document
 
-  RD->get_document($myconfig, $form);
+  SL::RD->get_document($myconfig, $form);
 
 =head2 save_document
 
-  RD->save_document($myconfig, $form);
+  SL::RD->save_document($myconfig, $form);
 
 =cut

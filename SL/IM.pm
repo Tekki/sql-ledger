@@ -1,20 +1,19 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (c) 2007
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2007-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
 # Import/Export module
 #
 #======================================================================
+use v5.40;
 
-package IM;
+package SL::IM;
 
-sub sales_invoice_links {
-  my ($self, $myconfig, $form) = @_;
+sub sales_invoice_links ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -23,7 +22,7 @@ sub sales_invoice_links {
   my $sth;
   my $ref;
 
-  my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  my %defaults = $form->get_defaults($dbh, ['precision']);
   $form->{precision} = $defaults{precision};
 
   $form->{ARAP} = "AR";
@@ -31,13 +30,13 @@ sub sales_invoice_links {
   # check for AR accounts
   $query = qq|SELECT accno FROM chart
               WHERE link = '$form->{ARAP}'|;
-  $sth = $dbh->prepare($query) || $form->dberror($query);
+  $sth = $dbh->prepare($query) or $form->dberror($query);
 
   my %ARAP = ();
   my $default_arap_accno;
 
-  $sth->execute || $form->dberror($query);
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  $sth->execute or $form->dberror($query);
+  while (my $ref = $sth->fetchrow_hashref) {
     $ARAP{$ref->{accno}} = 1;
     $default_arap_accno ||= $ref->{accno};
   }
@@ -59,13 +58,13 @@ sub sales_invoice_links {
               LEFT JOIN chart c ON (c.id = ct.chart_id)
               LEFT JOIN chart a ON (a.id = vc.arap_accno_id)
               WHERE customernumber = ?|;
-  my $cth = $dbh->prepare($query) || $form->dberror($query);
+  my $cth = $dbh->prepare($query) or $form->dberror($query);
 
   # employee
   $query = qq|SELECT id, name
               FROM employee
               WHERE employeenumber = ?|;
-  my $eth = $dbh->prepare($query) || $form->dberror($query);
+  my $eth = $dbh->prepare($query) or $form->dberror($query);
 
   # parts
   $query = qq|SELECT p.id, p.unit, p.description, c.accno
@@ -73,32 +72,32 @@ sub sales_invoice_links {
               LEFT JOIN partstax pt ON (p.id = pt.parts_id)
               LEFT JOIN chart c ON (c.id = pt.chart_id)
               WHERE partnumber = ?|;
-  my $pth = $dbh->prepare($query) || $form->dberror($query);
+  my $pth = $dbh->prepare($query) or $form->dberror($query);
 
   # department
   $query = qq|SELECT id
               FROM department
               WHERE description = ?|;
-  my $dth = $dbh->prepare($query) || $form->dberror($query);
+  my $dth = $dbh->prepare($query) or $form->dberror($query);
 
   # warehouse
   $query = qq|SELECT id
               FROM warehouse
               WHERE description = ?|;
-  my $wth = $dbh->prepare($query) || $form->dberror($query);
+  my $wth = $dbh->prepare($query) or $form->dberror($query);
 
   # project
   $query = qq|SELECT id
               FROM project
               WHERE projectnumber = ?|;
-  my $ptth = $dbh->prepare($query) || $form->dberror($query);
+  my $ptth = $dbh->prepare($query) or $form->dberror($query);
 
   # clean out report
   my $reportid = &delete_import($dbh, $form);
 
   $query = qq|INSERT INTO reportvars (reportid, reportvariable, reportvalue)
               VALUES ($reportid, ?, ?)|;
-  my $rth = $dbh->prepare($query) || $form->dberror($query);
+  my $rth = $dbh->prepare($query) or $form->dberror($query);
 
 
   my $terms;
@@ -108,7 +107,7 @@ sub sales_invoice_links {
   my $sameinvoice = "\x01";
   my $parts_id;
 
-  my @d = split /\n/, $form->{data};
+  my @d = split /\n/, $form->{data} // '';
   shift @d;
 
   my @dl;
@@ -139,10 +138,11 @@ sub sales_invoice_links {
 
         $terms = 0;
         %customertax = ();
+        my $arap_accno;
 
         $cth->execute("$dl[$form->{$form->{type}}->{customernumber}{ndx}]");
 
-        while ($ref = $cth->fetchrow_hashref(NAME_lc)) {
+        while (my $ref = $cth->fetchrow_hashref) {
           $arap_accno = $ref->{arap_accno};
           $terms = $ref->{terms};
           $form->{"customer_id_$i"} = $ref->{id};
@@ -189,12 +189,12 @@ sub sales_invoice_links {
       }
 
       $form->{transdate} = $form->{"transdate_$i"};
-      %tax = &taxrates("", $myconfig, $form, $dbh);
+      my %tax = &taxrates("", $myconfig, $form, $dbh);
 
       $pth->execute("$dl[$form->{$form->{type}}->{partnumber}{ndx}]");
 
       $parts_id = 0;
-      while ($ref = $pth->fetchrow_hashref(NAME_lc)) {
+      while (my $ref = $pth->fetchrow_hashref) {
         $form->{"parts_id_$i"} = $ref->{id};
         for (qw(unit description)) { $form->{"${_}_$i"} ||= $ref->{$_} }
 
@@ -220,7 +220,7 @@ sub sales_invoice_links {
       $form->{"totalqty_$j"} += $dl[$form->{$form->{type}}->{qty}{ndx}];
 
       for (qw(name customer_id city employee employee_id department_id warehouse_id paymentaccno paymentmethod transdate duedate terms parts_id unit description)) {
-        $form->{$form->{type}}->{$_}{ndx} == 0;
+        $form->{$form->{type}}->{$_}{ndx} = 0;
       }
 
       for (keys %{$form->{$form->{type}}}) {
@@ -243,8 +243,7 @@ sub sales_invoice_links {
 }
 
 
-sub order_links {
-  my ($self, $myconfig, $form) = @_;
+sub order_links ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -253,7 +252,7 @@ sub order_links {
   my $sth;
   my $ref;
 
-  my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  my %defaults = $form->get_defaults($dbh, ['precision']);
   $form->{precision} = $defaults{precision};
 
   $form->{vc} =~ s/;//g;
@@ -269,13 +268,13 @@ sub order_links {
               LEFT JOIN $form->{vc}tax ct ON (vc.id = ct.$form->{vc}_id)
               LEFT JOIN chart c ON (c.id = ct.chart_id)
               WHERE $form->{vc}number = ?|;
-  my $cth = $dbh->prepare($query) || $form->dberror($query);
+  my $cth = $dbh->prepare($query) or $form->dberror($query);
 
   # employee
   $query = qq|SELECT id, name
               FROM employee
               WHERE employeenumber = ?|;
-  my $eth = $dbh->prepare($query) || $form->dberror($query);
+  my $eth = $dbh->prepare($query) or $form->dberror($query);
 
   # parts
   $query = qq|SELECT p.id, p.unit, p.description,
@@ -284,32 +283,32 @@ sub order_links {
               LEFT JOIN partstax pt ON (p.id = pt.parts_id)
               LEFT JOIN chart c ON (c.id = pt.chart_id)
               WHERE partnumber = ?|;
-  my $pth = $dbh->prepare($query) || $form->dberror($query);
+  my $pth = $dbh->prepare($query) or $form->dberror($query);
 
   # department
   $query = qq|SELECT id
               FROM department
               WHERE description = ?|;
-  my $dth = $dbh->prepare($query) || $form->dberror($query);
+  my $dth = $dbh->prepare($query) or $form->dberror($query);
 
   # warehouse
   $query = qq|SELECT id
               FROM warehouse
               WHERE description = ?|;
-  my $wth = $dbh->prepare($query) || $form->dberror($query);
+  my $wth = $dbh->prepare($query) or $form->dberror($query);
 
   # project
   $query = qq|SELECT id
               FROM project
               WHERE projectnumber = ?|;
-  my $ptth = $dbh->prepare($query) || $form->dberror($query);
+  my $ptth = $dbh->prepare($query) or $form->dberror($query);
 
   # clean out report
   my $reportid = &delete_import($dbh, $form);
 
   $query = qq|INSERT INTO reportvars (reportid, reportvariable, reportvalue)
               VALUES ($reportid, ?, ?)|;
-  my $rth = $dbh->prepare($query) || $form->dberror($query);
+  my $rth = $dbh->prepare($query) or $form->dberror($query);
 
 
   my $terms;
@@ -319,7 +318,7 @@ sub order_links {
   my $sameorder = "\x01";
   my $parts_id;
 
-  my @d = split /\n/, $form->{data};
+  my @d = split /\n/, $form->{data} // '';
   shift @d;
 
   my @dl;
@@ -353,7 +352,7 @@ sub order_links {
 
         $cth->execute(qq|$dl[$form->{$form->{type}}->{"$form->{vc}number"}{ndx}]|);
 
-        while ($ref = $cth->fetchrow_hashref(NAME_lc)) {
+        while (my $ref = $cth->fetchrow_hashref) {
           $terms = $ref->{terms};
           $form->{"$form->{vc}_id_$i"} = $ref->{id};
           $form->{"name_$i"} = $ref->{name};
@@ -395,13 +394,13 @@ sub order_links {
       }
 
       $form->{transdate} = $form->{"transdate_$i"};
-      %tax = &taxrates("", $myconfig, $form, $dbh);
+      my %tax = &taxrates("", $myconfig, $form, $dbh);
 
       $pth->execute("$dl[$form->{$form->{type}}->{partnumber}{ndx}]");
 
 
       $parts_id = 0;
-      while ($ref = $pth->fetchrow_hashref(NAME_lc)) {
+      while (my $ref = $pth->fetchrow_hashref) {
         $form->{"parts_id_$i"} = $ref->{id};
         for (qw(unit description)) { $form->{"${_}_$i"} ||= $ref->{$_} }
 
@@ -426,9 +425,9 @@ sub order_links {
       $form->{"total_$j"} += $dl[$form->{$form->{type}}->{sellprice}{ndx}] * $dl[$form->{$form->{type}}->{qty}{ndx}] + $form->{"tax_$i"};
 
       for (qw(name city employee employee_id department_id warehouse_id transdate reqdate terms parts_id unit description)) {
-        $form->{$form->{type}}->{$_}{ndx} == 0;
+        $form->{$form->{type}}->{$_}{ndx} = 0;
       }
-      $form->{$form->{type}}->{"$form->{vc}_id"}{ndx} == 0;
+      $form->{$form->{type}}->{"$form->{vc}_id"}{ndx} = 0;
 
       for (keys %{$form->{$form->{type}}}) {
         if ($form->{"${_}_$i"}) {
@@ -451,8 +450,7 @@ sub order_links {
 
 
 
-sub delete_import {
-  my ($dbh, $form) = @_;
+sub delete_import ($dbh, $form) {
 
   for (qw(login reportcode)) { $form->{$_} =~ s/;//g }
 
@@ -464,7 +462,7 @@ sub delete_import {
   if (! $reportid) {
     $query = qq|INSERT INTO report (reportcode, login)
                 VALUES ('$form->{reportcode}', '$form->{login}')|;
-    $dbh->do($query) || $form->dberror($query);
+    $dbh->do($query) or $form->dberror($query);
 
     $query = qq|SELECT reportid FROM report
                 WHERE reportcode = '$form->{reportcode}'
@@ -474,15 +472,14 @@ sub delete_import {
 
   $query = qq|DELETE FROM reportvars
               WHERE reportid = $reportid|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $reportid;
 
 }
 
 
-sub taxrates {
-  my ($self, $myconfig, $form, $dbh) = @_;
+sub taxrates ($, $myconfig, $form, $dbh) {
 
   return unless $form->{transdate} =~ /\d+/;
 
@@ -494,11 +491,11 @@ sub taxrates {
               AND (t.validto >= ? OR t.validto IS NULL)
               ORDER BY c.accno, t.validto|;
   my $sth = $dbh->prepare($query);
-  $sth->execute($form->{transdate}) || $form->dberror($query);
+  $sth->execute($form->{transdate}) or $form->dberror($query);
 
   my %tax = ();
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     if (not exists $tax{$ref->{accno}}) {
       $tax{$ref->{accno}} = $ref->{rate};
     }
@@ -510,8 +507,7 @@ sub taxrates {
 }
 
 
-sub import_sales_invoice {
-  my ($self, $myconfig, $form, $ndx) = @_;
+sub import_sales_invoice ($, $myconfig, $form, $ndx) {
 
   use SL::IS;
 
@@ -531,14 +527,14 @@ sub import_sales_invoice {
   $query = qq|SELECT * FROM reportvars
               WHERE reportid = $reportid
               AND reportvariable LIKE ?|;
-  my $sth = $dbh->prepare($query) || $form->dberror($query);
+  my $sth = $dbh->prepare($query) or $form->dberror($query);
 
   # retrieve invoice
   my $i = 1;
   my $j;
   for $j (@{$ndx}) {
-    $sth->execute("%\\_$j") || $form->dberror($query);
-    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    $sth->execute("%\\_$j") or $form->dberror($query);
+    while (my $ref = $sth->fetchrow_hashref) {
       $ref->{reportvariable} =~ s/_$j/_$i/;
       $form->{$ref->{reportvariable}} = $ref->{reportvalue};
     }
@@ -624,11 +620,11 @@ sub import_sales_invoice {
               WHERE ct.customer_id = $form->{customer_id}
               AND (validto > '$form->{transdate}' OR validto IS NULL)
               ORDER BY t.validto DESC|;
-  $sth = $dbh->prepare($query) || $form->dberror($query);
-  $sth->execute || $form->dberror($query);
+  $sth = $dbh->prepare($query) or $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
   my %tax;
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     $tax{$ref->{accno}} = 1;
     $form->{"$ref->{accno}_rate"} = $ref->{rate};
   }
@@ -642,7 +638,7 @@ sub import_sales_invoice {
   $form->{warehouse} = qq|--$form->{"warehouse_id_1"}|;
 
   # post invoice
-  my $rc = IS->post_invoice($myconfig, $form, $dbh);
+  my $rc = SL::IS->post_invoice($myconfig, $form, $dbh);
 
   $dbh->disconnect;
 
@@ -651,8 +647,7 @@ sub import_sales_invoice {
 }
 
 
-sub import_order {
-  my ($self, $myconfig, $form, $ndx) = @_;
+sub import_order ($, $myconfig, $form, $ndx) {
 
   use SL::OE;
 
@@ -672,14 +667,14 @@ sub import_order {
   $query = qq|SELECT * FROM reportvars
               WHERE reportid = $reportid
                     AND reportvariable LIKE ?|;
-  my $sth = $dbh->prepare($query) || $form->dberror($query);
+  my $sth = $dbh->prepare($query) or $form->dberror($query);
 
   # retrieve order
   my $i = 1;
   my $j;
   for $j (@{$ndx}) {
-    $sth->execute("%\\_$j") || $form->dberror($query);
-    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    $sth->execute("%\\_$j") or $form->dberror($query);
+    while (my $ref = $sth->fetchrow_hashref) {
       $ref->{reportvariable} =~ s/_$j/_$i/;
       $form->{$ref->{reportvariable}} = $ref->{reportvalue};
     }
@@ -742,11 +737,11 @@ sub import_order {
               WHERE ct.$form->{vc}_id = $form->{"$form->{vc}_id"}
               AND (validto > '$form->{transdate}' OR validto IS NULL)
               ORDER BY t.validto DESC|;
-  $sth = $dbh->prepare($query) || $form->dberror($query);
+  $sth = $dbh->prepare($query) or $form->dberror($query);
   $sth->execute;
 
   $form->{taxaccounts} = "";
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     $form->{taxaccounts} .= "$ref->{accno} ";
     $form->{"$ref->{accno}_rate"} = $ref->{rate};
   }
@@ -758,7 +753,7 @@ sub import_order {
   $form->{warehouse} = qq|--$form->{"warehouse_id_1"}|;
 
   # save order
-  my $rc = OE->save($myconfig, $form, $dbh);
+  my $rc = SL::OE->save($myconfig, $form, $dbh);
 
   $dbh->disconnect;
 
@@ -767,12 +762,11 @@ sub import_order {
 }
 
 
-sub import_vc {
-  my ($self, $myconfig, $form) = @_;
+sub import_vc ($, $myconfig, $form) {
 
   use SL::CT;
 
-  my $newform = new Form;
+  my $newform = SL::Form->new;
 
   # connect to database, turn off AutoCommit
   my $dbh = $form->dbconnect_noauto($myconfig);
@@ -791,7 +785,7 @@ sub import_vc {
   $query = qq|SELECT * FROM reportvars
               WHERE reportid = $reportid
               AND reportvariable LIKE ?|;
-  my $sth = $dbh->prepare($query) || $form->dberror($query);
+  my $sth = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|SELECT curr
               FROM curr
@@ -800,16 +794,16 @@ sub import_vc {
 
   $query = qq|SELECT id FROM $form->{type}
               WHERE id = ?|;
-  my $ith = $dbh->prepare($query) || $form->dberror($query);
+  my $ith = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|SELECT id FROM $form->{type}
               WHERE $form->{type}number = ?|;
-  my $cth = $dbh->prepare($query) || $form->dberror($query);
+  my $cth = $dbh->prepare($query) or $form->dberror($query);
 
-  my %link = ( business => { fld => description },
-               pricegroup => { fld => pricegroup },
-               paymentmethod => { fld => description },
-               employee => { fld => name }
+  my %link = ( business => { fld => 'description' },
+               pricegroup => { fld => 'pricegroup' },
+               paymentmethod => { fld => 'description' },
+               employee => { fld => 'name' }
              );
 
   for my $i (1 .. $form->{rowcount}) {
@@ -821,7 +815,7 @@ sub import_vc {
       $newform->{db} = $form->{type};
 
       $sth->execute("%\\_$i");
-      while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+      while (my $ref = $sth->fetchrow_hashref) {
         $ref->{reportvariable} =~ s/_\d+//;
         $newform->{$ref->{reportvariable}} = $ref->{reportvalue};
       }
@@ -853,13 +847,13 @@ sub import_vc {
       for (qw(employee business pricegroup paymentmethod)) {
         $query = qq|SELECT id FROM $_
               WHERE $link{$_}{fld} = '$newform->{$_}'|;
-        ($var) = $dbh->selectrow_array($query);
+        my ($var) = $dbh->selectrow_array($query);
         $newform->{$_} = "--$var";
       }
 
       for (split / /, $newform->{taxaccounts}) { $newform->{"tax_$_"} = 1 }
 
-      CT->save($myconfig, $newform, $dbh);
+      SL::CT->save($myconfig, $newform, $dbh);
 
       if ($new) {
         $form->{added} .= qq|$newform->{"$newform->{db}number"}, $newform->{name}\n|;
@@ -876,12 +870,11 @@ sub import_vc {
 }
 
 
-sub import_item {
-  my ($self, $myconfig, $form) = @_;
+sub import_item ($, $myconfig, $form) {
 
-  use SL::IC;
+  require SL::IC;
 
-  my $newform = new Form;
+  my $newform = SL::Form->new;
 
   # connect to database, turn off AutoCommit
   my $dbh = $form->dbconnect_noauto($myconfig);
@@ -907,7 +900,7 @@ sub import_item {
   $query = qq|SELECT * FROM reportvars
               WHERE reportid = $reportid
               AND reportvariable LIKE ?|;
-  my $sth = $dbh->prepare($query) || $form->dberror($query);
+  my $sth = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|SELECT p.id, pg.partsgroup,
               c1.accno AS inventory_accno,
@@ -920,45 +913,45 @@ sub import_item {
               LEFT JOIN chart c3 ON (c3.id = p.expense_accno_id)
               WHERE p.partnumber = ?
               ORDER BY p.id DESC|;
-  my $pth = $dbh->prepare($query) || $form->dberror($query);
+  my $pth = $dbh->prepare($query) or $form->dberror($query);
 
 
   $query = qq|SELECT id FROM partsgroup
               WHERE partsgroup = ?|;
-  my $gsth = $dbh->prepare($query) || $form->dberror($query);
+  my $gsth = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|INSERT INTO partsgroup (partsgroup)
               VALUES (?)|;
-  my $gath = $dbh->prepare($query) || $form->dberror($query);
+  my $gath = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|SELECT id FROM partsgroup
               WHERE code = ?|;
-  my $csth = $dbh->prepare($query) || $form->dberror($query);
+  my $csth = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|INSERT INTO partsgroup (partsgroup,code)
               VALUES (?,?)|;
-  my $cath = $dbh->prepare($query) || $form->dberror($query);
+  my $cath = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|SELECT * FROM makemodel
               WHERE parts_id = ?|;
-  my $makesth = $dbh->prepare($query) || $form->dberror($query);
+  my $makesth = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|SELECT * FROM partscustomer
               WHERE parts_id = ?|;
-  my $pcsth = $dbh->prepare($query) || $form->dberror($query);
+  my $pcsth = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|SELECT * FROM partsvendor
               WHERE parts_id = ?|;
-  my $pvsth = $dbh->prepare($query) || $form->dberror($query);
+  my $pvsth = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|SELECT id FROM vendor
               WHERE vendornumber = ?|;
-  my $vsth = $dbh->prepare($query) || $form->dberror($query);
+  my $vsth = $dbh->prepare($query) or $form->dberror($query);
 
   my %makemodel;
   my %partsvendor;
 
-  my %defaults = $form->get_defaults($dbh, \@{['%_accno_id']});
+  my %defaults = $form->get_defaults($dbh, ['%_accno_id']);
   for (qw(inventory income expense)) {
     $query = qq|SELECT accno FROM chart
                 WHERE id = $defaults{"${_}_accno_id"}|;
@@ -972,24 +965,24 @@ sub import_item {
 
   $query = qq|SELECT accno FROM chart
               WHERE link LIKE '%IC_tax%'|;
-  my $tth = $dbh->prepare($query) || $form->dberror($query);
-  $tth->execute || $form->dberror($query);
+  my $tth = $dbh->prepare($query) or $form->dberror($query);
+  $tth->execute or $form->dberror($query);
 
   $form->{taxaccounts} = "";
-  while ($ref = $tth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $tth->fetchrow_hashref) {
     $form->{taxaccounts} .= "$ref->{accno} ";
   }
   $tth->finish;
   chop $form->{taxaccounts};
 
   my @acclink = ();
-  if ($form->{type} eq 'part') {
+  if (($form->{type} // '') eq 'part') {
     @acclink = qw(inventory income expense);
   }
-  if ($form->{type} eq 'service') {
+  if (($form->{type} // '') eq 'service') {
     @acclink = qw(income expense);
   }
-  if ($form->{type} eq 'labor') {
+  if (($form->{type} // '') eq 'labor') {
     @acclink = qw(inventory expense);
   }
 
@@ -997,8 +990,8 @@ sub import_item {
   my @accno;
   $query = qq|SELECT accno, link FROM chart
               WHERE link LIKE '%IC%'|;
-  $tth = $dbh->prepare($query) || $form->dberror($query);
-  $tth->execute || $form->dberror($query);
+  $tth = $dbh->prepare($query) or $form->dberror($query);
+  $tth->execute or $form->dberror($query);
 
   while ((@accno) = $tth->fetchrow_array) {
     $accno{$accno[0]} = 1 unless $accno[1] =~ /tax/;
@@ -1022,7 +1015,7 @@ sub import_item {
       $newform->{item} = $form->{type};
 
       $sth->execute("%\\_$i");
-      while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+      while (my $ref = $sth->fetchrow_hashref) {
         $ref->{reportvariable} =~ s/_(\d+)//;
         if ($1 == $i) {
           $newform->{$ref->{reportvariable}} = $ref->{reportvalue};
@@ -1046,13 +1039,13 @@ sub import_item {
 
       if ($newform->{partnumber}) {
         $pth->execute($newform->{partnumber});
-        $ref = $pth->fetchrow_hashref(NAME_lc);
+        $ref = $pth->fetchrow_hashref;
 
         $newform->{id} = $ref->{id};
 
         if ($newform->{id}) {
           $new = 0;
-          $newform->{orphaned} = IC->orphaned($dbh, \%$newform);
+          $newform->{orphaned} = SL::IC->orphaned($dbh, \%$newform);
 
           if (! $newform->{orphaned}) {
             for (@acclink) {
@@ -1074,7 +1067,7 @@ sub import_item {
 
         # makes and models
         $makesth->execute($newform->{id});
-        while ($ref = $makesth->fetchrow_hashref(NAME_lc)) {
+        while (my $ref = $makesth->fetchrow_hashref) {
           $makemodel{"$ref->{make}$sep$ref->{model}"} = $ref;
         }
         $makesth->finish;
@@ -1083,7 +1076,7 @@ sub import_item {
         $pcsth->execute($newform->{id});
 
         $j = 1;
-        while ($ref = $pcsth->fetchrow_hashref(NAME_lc)) {
+        while (my $ref = $pcsth->fetchrow_hashref) {
 
           for $var (qw(customer pricegroup)) { $newform->{"${var}_$j"} = qq|--$ref->{"${var}_id"}| }
           for $var (qw(pricebreak validfrom validto)) { $newform->{"${var}_$j"} = $ref->{$var} }
@@ -1096,7 +1089,7 @@ sub import_item {
 
         # partsvendor, keep old ones and replace
         $pvsth->execute($newform->{id});
-        while ($ref = $pvsth->fetchrow_hashref(NAME_lc)) {
+        while (my $ref = $pvsth->fetchrow_hashref) {
           $partsvendor{"$ref->{vendor_id}$sep$ref->{partnumber}"} = $ref;
         }
         $pvsth->finish;
@@ -1135,7 +1128,7 @@ sub import_item {
           $csth->finish;
 
           if (!$partsgroup_id) {
-            $partsgroup = $newform->{partsgroup} || $newform->{code};
+            my $partsgroup = $newform->{partsgroup} || $newform->{code};
 
             $cath->execute($partsgroup, $newform->{code});
             $cath->finish;
@@ -1196,7 +1189,7 @@ sub import_item {
 
       for (split / /, $newform->{taxaccounts}) { $newform->{"tax_$_"} = 1 }
 
-      IC->save($myconfig, \%$newform, $dbh);
+      SL::IC->save($myconfig, \%$newform, $dbh);
 
       if ($new) {
         $form->{added} .= qq|$newform->{partnumber}, $newform->{description}\n|;
@@ -1213,12 +1206,11 @@ sub import_item {
 }
 
 
-sub import_coa {
-  my ($self, $myconfig, $form) = @_;
+sub import_coa ($, $myconfig, $form) {
 
-  use SL::AM;
+  require SL::AM;
 
-  my $newform = new Form;
+  my $newform = SL::Form->new;
 
   # connect to database, turn off AutoCommit
   my $dbh = $form->dbconnect_noauto($myconfig);
@@ -1236,19 +1228,19 @@ sub import_coa {
   $query = qq|SELECT * FROM reportvars
               WHERE reportid = $reportid
               AND reportvariable LIKE ?|;
-  my $sth = $dbh->prepare($query) || $form->dberror($query);
+  my $sth = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|SELECT id
               FROM chart
               WHERE accno = ?|;
-  my $cth = $dbh->prepare($query) || $form->dberror($query);
+  my $cth = $dbh->prepare($query) or $form->dberror($query);
 
   for my $i (1 .. $form->{rowcount}) {
 
     for (keys %$newform) { delete $newform->{$_} }
 
     $sth->execute("%\\_$i");
-    while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+    while (my $ref = $sth->fetchrow_hashref) {
       $ref->{reportvariable} =~ s/_(\d+)//;
       if ($1 == $i) {
         $newform->{$ref->{reportvariable}} = $ref->{reportvalue};
@@ -1271,7 +1263,7 @@ sub import_coa {
       $form->{added} .= qq|$newform->{accno}, $newform->{description}\n|;
     }
 
-    AM->save_account($myconfig, \%$newform, $dbh);
+    SL::AM->save_account($myconfig, \%$newform, $dbh);
 
   }
 
@@ -1281,10 +1273,9 @@ sub import_coa {
 
 
 
-sub import_groups {
-  my ($self, $myconfig, $form) = @_;
+sub import_groups ($, $myconfig, $form) {
 
-  my $newform = new Form;
+  my $newform = SL::Form->new;
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -1303,20 +1294,20 @@ sub import_groups {
   $query = qq|SELECT * FROM reportvars
               WHERE reportid = $reportid
                     AND reportvariable LIKE ?|;
-  my $sth = $dbh->prepare($query) || $form->dberror($query);
+  my $sth = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|SELECT id FROM partsgroup
                     WHERE partsgroup = ?|;
-  my $gsth = $dbh->prepare($query) || $form->dberror($query);
+  my $gsth = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|INSERT INTO partsgroup (partsgroup, pos)
               VALUES (?,?)|;
-  my $gath = $dbh->prepare($query) || $form->dberror($query);
+  my $gath = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|UPDATE partsgroup SET
               pos = ?
                     WHERE id = ?|;
-  my $guth = $dbh->prepare($query) || $form->dberror($query);
+  my $guth = $dbh->prepare($query) or $form->dberror($query);
 
 
   for my $i (1 .. $form->{rowcount}) {
@@ -1325,7 +1316,7 @@ sub import_groups {
       for (keys %$newform) { delete $newform->{$_} }
 
       $sth->execute("%\\_$i");
-      while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+      while (my $ref = $sth->fetchrow_hashref) {
         $ref->{reportvariable} =~ s/_\d+//;
         $newform->{$ref->{reportvariable}} = $ref->{reportvalue};
       }
@@ -1356,12 +1347,11 @@ sub import_groups {
 }
 
 
-sub import_gl {
-  my ($self, $myconfig, $form) = @_;
+sub import_gl ($, $myconfig, $form) {
 
-  use SL::GL;
+  require SL::GL;
 
-  my $newform = new Form;
+  my $newform = SL::Form->new;
 
   # connect to database, turn off AutoCommit
   my $dbh = $form->dbconnect_noauto($myconfig);
@@ -1386,7 +1376,7 @@ sub import_gl {
   $query = qq|SELECT * FROM reportvars
               WHERE reportid = $reportid
                     AND reportvariable LIKE ?|;
-  my $sth = $dbh->prepare($query) || $form->dberror($query);
+  my $sth = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|SELECT curr
               FROM curr
@@ -1395,18 +1385,18 @@ sub import_gl {
 
   $query = qq|SELECT id FROM project
                           WHERE projectnumber LIKE ?|;
-        my $pth = $dbh->prepare($query) || $form->dberror($query);
+        my $pth = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|SELECT id FROM department
                           WHERE description LIKE ?|;
-        my $dth = $dbh->prepare($query) || $form->dberror($query);
+        my $dth = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|SELECT id FROM chart
                           WHERE accno LIKE ?|;
-        my $ath = $dbh->prepare($query) || $form->dberror($query);
+        my $ath = $dbh->prepare($query) or $form->dberror($query);
 
   for $i (1 .. $form->{rowcount}) {
-    if ($form->{"reference_$i"} ne $sameitem) {
+    if (($form->{"reference_$i"} // '') ne $sameitem) {
       $ndxon = $form->{"ndx_$i"};
                         $j = 1;
     } else {
@@ -1421,7 +1411,7 @@ sub import_gl {
 
   for $i (1 .. $form->{rowcount}) {
     if ($form->{"ndx_$i"}) {
-      if ($form->{"reference_$i"} ne $sameitem) {
+      if (($form->{"reference_$i"} // '') ne $sameitem) {
 
         for (keys %$newform) { delete $newform->{$_} }
 
@@ -1434,7 +1424,7 @@ sub import_gl {
 
       $sth->execute("%\\_$i");
 
-      while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+      while (my $ref = $sth->fetchrow_hashref) {
         $ref->{reportvariable} =~ s/_\d+//;
         $newform->{"$ref->{reportvariable}_$j"} = $ref->{reportvalue};
       }
@@ -1477,7 +1467,7 @@ sub import_gl {
 
                                         $form->{added} .= qq|$newform->{reference}, $newform->{description}\n|;
 
-                                        GL->post_transaction($myconfig, $newform, $dbh);
+                                        SL::GL->post_transaction($myconfig, $newform, $dbh);
                                         $dbh->commit;
                                 }
                                 $failed = 0;
@@ -1494,8 +1484,7 @@ sub import_gl {
 
 
 
-sub prepare_import_data {
-  my ($self, $myconfig, $form) = @_;
+sub prepare_import_data ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -1512,16 +1501,16 @@ sub prepare_import_data {
 
   $query = qq|DELETE FROM reportvars
               WHERE reportid = $form->{reportid}|;
-  $dbh->do($query) || $form->dberror($query);
+  $dbh->do($query) or $form->dberror($query);
 
   $query = qq|INSERT INTO reportvars (reportid, reportvariable, reportvalue)
               VALUES ($form->{reportid}, ?, ?)|;
-  my $rth = $dbh->prepare($query) || $form->dberror($query);
+  my $rth = $dbh->prepare($query) or $form->dberror($query);
 
   my $i = 0;
   my $j = 0;
 
-  my @d = $form->{filetype} eq 'xlsx' ? $form->{data}->@* : split /\n/, $form->{data};
+  my @d = $form->{filetype} eq 'xlsx' ? $form->{data}->@* : split /\n/, $form->{data} // '';
   shift @d;
 
   my @dl;
@@ -1552,17 +1541,16 @@ sub prepare_import_data {
 
 
 
-sub paymentaccounts {
-  my ($self, $myconfig, $form) = @_;
+sub paymentaccounts ($, $myconfig, $form) {
 
-  $dbh = $form->dbconnect($myconfig);
+  my $dbh = $form->dbconnect($myconfig);
 
   $form->load_defaults(undef, $dbh, ['address', 'companycountry']);
 
   my $where = qq|c.link LIKE '%_paid' AND NOT c.closed|;
 
   if ($form->{paymentaccount}) {
-    my ($accno) = split /--/m, $form->{paymentaccount};
+    my ($accno) = split /--/m, $form->{paymentaccount} // '';
     $where .= ' AND c.accno = ' . $dbh->quote($accno);
   }
 
@@ -1575,11 +1563,11 @@ sub paymentaccounts {
                  WHERE $where
                  ORDER BY c.accno|;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
   my $ref;
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     $ref->{description} = $ref->{translation} if $ref->{translation};
     push @{ $form->{all_paymentaccount} }, $ref;
   }
@@ -1591,9 +1579,9 @@ sub paymentaccounts {
               FROM paymentmethod
               ORDER BY rn|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{ $form->{all_paymentmethod} }, $ref;
   }
   $sth->finish;
@@ -1603,8 +1591,7 @@ sub paymentaccounts {
 }
 
 
-sub payment_links {
-  my ($self, $myconfig, $form) = @_;
+sub payment_links ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -1612,7 +1599,7 @@ sub payment_links {
   my $query;
   my $ref;
 
-  my %defaults = $form->get_defaults($dbh, \@{['precision']});
+  my %defaults = $form->get_defaults($dbh, ['precision']);
   $form->{precision} = ($defaults{precision}) ? $defaults{precision} : 2;
 
   $query = qq|SELECT c.name, c.customernumber AS companynumber, ad.city,
@@ -1636,12 +1623,12 @@ sub payment_links {
               JOIN address ad ON (ad.trans_id = c.id)
               WHERE a.amount != a.paid|;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
   my %amount;
   my $amount;
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     $amount = $form->format_amount($myconfig, $ref->{amount}, $form->{precision});
     push @{ $amount{$amount} }, $ref;
   }
@@ -1666,19 +1653,19 @@ sub payment_links {
               JOIN address ad ON (ad.trans_id = c.id)
               WHERE a.dcn = ?
               |;
-  $sth = $dbh->prepare($query) || $form->dberror($query);
+  $sth = $dbh->prepare($query) or $form->dberror($query);
 
   $query = qq|SELECT exchangerate FROM exchangerate
               WHERE curr = '$form->{currency}'
               AND transdate = ?|;
-  my $eth = $dbh->prepare($query) || $form->dberror($query);
+  my $eth = $dbh->prepare($query) or $form->dberror($query);
 
   my $i = 0;
   my $j = 0;
 
   my $vc;
 
-  my @d = split /\n/, $form->{data};
+  my @d = split /\n/, $form->{data} // '';
   shift @d;
 
   my @dl;
@@ -1708,7 +1695,7 @@ sub payment_links {
         if ($dl[$form->{$form->{type}}->{dcn}{ndx}]) {
           $am = 0;
           $sth->execute("$dl[$form->{$form->{type}}->{dcn}{ndx}]", "$dl[$form->{$form->{type}}->{dcn}{ndx}]");
-          $ref = $sth->fetchrow_hashref(NAME_lc);
+          $ref = $sth->fetchrow_hashref;
           if ($ref->{invnumber}) {
             $vc = $ref->{vc};
             $ref->{outstanding} = $ref->{amount};
@@ -1729,7 +1716,7 @@ sub payment_links {
       }
 
       # get exchangerate
-      if ($form->{currency} ne $form->{defaultcurrency}) {
+      if (($form->{currency} // '') ne $form->{defaultcurrency}) {
                                 $eth->execute($dl[$form->{$form->{type}}->{datepaid}{ndx}]);
                                 ($form->{"exchangerate_$i"}) = $eth->fetchrow_array;
                                 $eth->finish;
@@ -1746,8 +1733,7 @@ sub payment_links {
 }
 
 
-sub dataline {
-  my ($form) = @_;
+sub dataline ($form) {
 
   my @dl = ();
   my $string = 0;
@@ -1756,7 +1742,7 @@ sub dataline {
 
   chomp;
 
-  if ($form->{filetype} eq 'xlsx') {
+  if (($form->{filetype} // '') eq 'xlsx') {
     @dl = @$_;
   } elsif ($form->{tabdelimited}) {
     @dl = split /\t/, $_;
@@ -1794,8 +1780,7 @@ sub dataline {
 }
 
 
-sub unreconciled_payments {
-  my ($self, $myconfig, $form) = @_;
+sub unreconciled_payments ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -1809,7 +1794,7 @@ sub unreconciled_payments {
   my $query;
   my $ref;
 
-  my ($accno) = split /--/, $form->{paymentaccount};
+  my ($accno) = split /--/, $form->{paymentaccount} // '';
 
   $form->load_defaults(undef, $dbh, [qw|precision company companycountry address|]);
 
@@ -1826,7 +1811,7 @@ sub unreconciled_payments {
   }
 
   my ($ml, $transdate, $ar_dcn);
-  if ($form->{filetype} eq 'xml') {
+  if (($form->{filetype} // '') eq 'xml') {
     $ml        = 1;
     $transdate = qq|ac.transdate AS datepaid|;
     $ar_dcn = q|'' AS dcn|;
@@ -1838,7 +1823,7 @@ sub unreconciled_payments {
 
   my $paymentmethod_id;
   if ($form->{paymentmethod}) {
-    (undef, $paymentmethod_id) = split /--/, $form->{paymentmethod};
+    (undef, $paymentmethod_id) = split /--/, $form->{paymentmethod} // '';
     $where .= " AND pm.paymentmethod_id = $paymentmethod_id";
   }
 
@@ -1892,10 +1877,10 @@ sub unreconciled_payments {
               ORDER BY datepaid
               |;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $form->dberror($query);
+  $sth->execute or $form->dberror($query);
 
   delete $form->{TR};
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while (my $ref = $sth->fetchrow_hashref) {
     $form->create_lock($myconfig, $dbh, $ref->{id}, $ref->{module});
     push @{ $form->{TR} }, $ref;
   }
@@ -1913,13 +1898,12 @@ sub unreconciled_payments {
 }
 
 
-sub reconcile_payments {
-  my ($self, $myconfig, $form) = @_;
+sub reconcile_payments ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
-  my ($paymentaccount) = split /--/, $form->{paymentaccount};
+  my ($paymentaccount) = split /--/, $form->{paymentaccount} // '';
 
   my $sth;
   my $query;
@@ -1933,12 +1917,12 @@ sub reconcile_payments {
               WHERE trans_id = ?
               AND id = ?
               AND chart_id = ?|;
-  $sth = $dbh->prepare($query) || $form->dberror($query);
+  $sth = $dbh->prepare($query) or $form->dberror($query);
 
   my $i;
   for $i (1 .. $form->{rowcount}) {
     if ($form->{"ndx_$i"}) {
-      $sth->execute($form->{dateprepared}, split('-', $form->{"ndx_$i"}), $paymentaccount_id);
+      $sth->execute($form->{dateprepared}, split('-', $form->{"ndx_$i"} // ''), $paymentaccount_id);
       $sth->finish;
     }
   }
@@ -1950,8 +1934,7 @@ sub reconcile_payments {
 }
 
 
-sub qrbill_links {
-  my ($self, $myconfig, $form) = @_;
+sub qrbill_links ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -1968,7 +1951,7 @@ sub qrbill_links {
 
   $form->{CT} = [];
   $sth->execute($form->{qriban}) or $form->dberror($query);
-  while (my $ref = $sth->fetchrow_hashref('NAME_lc')) {
+  while (my $ref = $sth->fetchrow_hashref) {
     push @{$form->{CT}}, $ref;
   }
 
@@ -1984,7 +1967,7 @@ sub qrbill_links {
 
 =head1 NAME
 
-IM - Import/export module
+SL::IM - Import/export module
 
 =head1 DESCRIPTION
 
@@ -2004,62 +1987,62 @@ L<SL::IM> implements the following functions:
 
 =head2 import_coa
 
-  IM->import_coa($myconfig, $form);
+  SL::IM->import_coa($myconfig, $form);
 
 =head2 import_gl
 
-  IM->import_gl($myconfig, $form);
+  SL::IM->import_gl($myconfig, $form);
 
 =head2 import_groups
 
-  IM->import_groups($myconfig, $form);
+  SL::IM->import_groups($myconfig, $form);
 
 =head2 import_item
 
-  IM->import_item($myconfig, $form);
+  SL::IM->import_item($myconfig, $form);
 
 =head2 import_order
 
-  IM->import_order($myconfig, $form, $ndx);
+  SL::IM->import_order($myconfig, $form, $ndx);
 
 =head2 import_sales_invoice
 
-  IM->import_sales_invoice($myconfig, $form, $ndx);
+  SL::IM->import_sales_invoice($myconfig, $form, $ndx);
 
 =head2 import_vc
 
-  IM->import_vc($myconfig, $form);
+  SL::IM->import_vc($myconfig, $form);
 
 =head2 order_links
 
-  IM->order_links($myconfig, $form);
+  SL::IM->order_links($myconfig, $form);
 
 =head2 payment_links
 
-  IM->payment_links($myconfig, $form);
+  SL::IM->payment_links($myconfig, $form);
 
 =head2 paymentaccounts
 
-  IM->paymentaccounts($myconfig, $form);
+  SL::IM->paymentaccounts($myconfig, $form);
 
 =head2 prepare_import_data
 
-  IM->prepare_import_data($myconfig, $form);
+  SL::IM->prepare_import_data($myconfig, $form);
 
 =head2 reconcile_payments
 
-  IM->reconcile_payments($myconfig, $form);
+  SL::IM->reconcile_payments($myconfig, $form);
 
 =head2 sales_invoice_links
 
-  IM->sales_invoice_links($myconfig, $form);
+  SL::IM->sales_invoice_links($myconfig, $form);
 
 =head2 taxrates
 
-  IM->taxrates($myconfig, $form, $dbh);
+  SL::IM->taxrates($myconfig, $form, $dbh);
 
 =head2 unreconciled_payments
 
-  IM->unreconciled_payments($myconfig, $form);
+  SL::IM->unreconciled_payments($myconfig, $form);
 
 =cut

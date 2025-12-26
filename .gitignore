@@ -2,8 +2,9 @@ users
 sql-ledger.conf
 wlprinter.conf
 locale/*.zip
-locales*.pl
 *.missing
+config/*.bin
+config/sql-ledger.yml
 doc/templates/template-config.yml
 *~
 *.swp

@@ -1,0 +1,1673 @@
+---
+locale: fi_utf
+texts:
+  '%': ''
+  (empty): ''
+  (none): ''
+  +/-: ''
+  .v11: ''
+  1.Reminder: ''
+  2.Reminder: ''
+  3.Reminder: ''
+  <hr>: ''
+  A: ''
+  AP: Ostot
+  AP Aging: Erääntyvät ostolaskut
+  AP Amount: ''
+  AP Outstanding: ''
+  AP Payment: ''
+  AP Transaction: Ostotapahtuma
+  AP Transactions: Ostotapahtumat
+  AP account does not exist!: ''
+  AP account missing!: ''
+  AR: Myynnit
+  AR Aging: Erääntyvät myyntilaskut
+  AR Amount: ''
+  AR Outstanding: ''
+  AR Payment: ''
+  AR Transaction: Myyntitapahtuma
+  AR Transactions: Myyntitapahtumat
+  AR account does not exist!: ''
+  AR account missing!: ''
+  AR/AP: ''
+  About: Lisätietoja
+  Above: Edellä
+  Accepted format is: ''
+  Access Control: Kulunvalvonta
+  Access Denied!: ''
+  Account: Tili
+  Account Number: Tilinumero
+  Account Number missing!: Tilinumero puuttuu
+  Account Type: Tilityyppi
+  Account Type missing!: Tilityyppi puuttuu
+  Account deleted!: Tili poistettu
+  Account does not exist!: Tiliä ei ole olemassa
+  Account saved!: Tili lisätty
+  Accounting: Kirjanpito
+  Accounting Menu: Kirjanpitovalikko
+  Accounts: Tilit
+  Accrual: ''
+  Action: ''
+  Activate Audit trail: ''
+  Active: Avoin
+  Add: Lisää
+  Add AP Transaction: Lisää ostotapahtuma
+  Add AP Voucher: ''
+  Add AR Transaction: Lisää myyntitapahtuma
+  Add Account: Lisää tili
+  Add Assembly: Lisää tuote
+  Add Business: Lisää toimiala
+  Add Cash Transfer Transaction: Lisää rahansiirtotapahtuma
+  Add Column: ''
+  Add Credit Invoice: ''
+  Add Credit Note: ''
+  Add Currency: ''
+  Add Customer: Lisää asiakas
+  Add Dataset: ''
+  Add Debit Invoice: ''
+  Add Debit Note: ''
+  Add Deduction: ''
+  Add Department: Lisää toimipiste
+  Add Document: ''
+  Add Employee: Lisää työntekijä
+  Add Exchange Rate: Lisää vaihtokurssi
+  Add FX Adjustment: ''
+  Add File: ''
+  Add GIFI: Lisää GIFI
+  Add General Ledger Batch: ''
+  Add General Ledger Transaction: Lisää pääkirjantapahtuma
+  Add General Ledger Voucher: ''
+  Add Group: Lisää ryhmä
+  Add Job: ''
+  Add Kit: ''
+  Add Labor/Overhead: ''
+  Add Language: Lisää kieli
+  Add Mimetype: ''
+  Add POS Invoice: ''
+  Add Part: Lisää raaka-aine/tarvike
+  Add Payable Batch: ''
+  Add Payment Batch: ''
+  Add Payment Method: ''
+  Add Payment Reversal Batch: ''
+  Add Payments Batch: ''
+  Add Payroll: ''
+  Add Pricegroup: Lisää hintaryhmä
+  Add Project: Lisää projekti
+  Add Purchase Order: Ostotilaus
+  Add Quotation: Lisää tarjous
+  Add Request for Quotation: Lisää tarjouspyyntö
+  Add Role: ''
+  Add SIC: Lisää SIC
+  Add Sales Invoice: Lisää myyntilasku
+  Add Sales Order: Lisää tilausvahvistus
+  Add Service: Lisää palvelu
+  Add Snapshot: ''
+  Add Stores Card: ''
+  Add Time Card: ''
+  Add Timecard: ''
+  Add Transaction: Lisää tapahtuma
+  Add User: Lisää käyttäjä
+  Add Vendor: Lisää toimittaja
+  Add Vendor Invoice: Lisää ostolasku
+  Add Voucher: ''
+  Add Wage: ''
+  Add Warehouse: Lisää varasto
+  Add document failed!: ''
+  Added: ''
+  Addition: ''
+  Address: Osoite
+  Address Line 1: ''
+  Address Line 2: ''
+  Addresses from UID Register: ''
+  Admin: ''
+  Administration: Ylläpito
+  Administrator: Pääkäyttäjä
+  After Deduction: ''
+  Aged: ''
+  Aged Overdue: ''
+  Align: ''
+  All: Kaikki
+  All Accounts: Kaikki tunnukset
+  All Batches: ''
+  All Datasets up to date!: Kaikki tietokannat ajan tasalla
+  All Items: Kaikki tuotteet
+  All amounts in: ''
+  All selected!: ''
+  Allocated: ''
+  Allowances: ''
+  Allowed range for selected month is: ''
+  Allowed range is: ''
+  Amount: Summa
+  Amount Due: Erääntyvä summa
+  Amount missing!: Summa puuttuu!
+  Annual Interest: ''
+  Approved: ''
+  Apr: Huh
+  April: Huhtikuu
+  Archive File: ''
+  Are you sure you want to delete: ''
+  Are you sure you want to delete Batch: ''
+  Are you sure you want to delete Invoice Number: Haluatko poistaa laskun numero
+  Are you sure you want to delete Order Number: Haluatko poistaa tilauksen numero
+  Are you sure you want to delete Quotation Number: Haluatko poistaa tarjouksen numero
+  Are you sure you want to delete Timecard for: ''
+  Are you sure you want to delete Transaction: Haluatko poistaa viennin
+  Are you sure you want to delete dataset: ''
+  'Are you sure you want to delete language: ': ''
+  Are you sure you want to delete stores card: ''
+  Are you sure you want to delete the following Snapshots?: ''
+  Are you sure you want to delete the following Transactions?: ''
+  Are you sure you want to delete time card for: ''
+  Are you sure you want to reconcile all marked payments: ''
+  Are you sure you want to remove the marked entries from the queue?: Haluatko poistaa merkityt kentät listasta?
+  Are you sure you want to void checks: ''
+  Are you sure you want to void receipts: ''
+  As of: ''
+  Assemblies: Tuotteet
+  Assemblies restocked!: Tuotteet viety varastoon
+  Assemblies stocked!: ''
+  Assembly: ''
+  Assembly BOM Transfer: ''
+  Assembly Changeup: ''
+  Assembly Number: ''
+  Assembly stocked!: ''
+  Asset: Vastaavaa
+  Assets: ''
+  Assign Number: ''
+  Attach: ''
+  Attach Document: ''
+  Attach to: ''
+  Attached to: ''
+  Attachment: Liite
+  Audit Control: Tilien tarkistus
+  Audit Log: ''
+  Audit trail disabled: ''
+  Audit trail enabled: ''
+  Audit trail removed up to: ''
+  Aug: Elo
+  August: Elokuu
+  Authenticator: ''
+  Available Credit: ''
+  Avalable Credit: ''
+  Average Cost: ''
+  Avg Cost: ''
+  BC Number: ''
+  BIC: ''
+  BIC missing!: ''
+  BOM: Materiaalilista
+  Back: ''
+  Backorder: ''
+  'Backorder from Orders: ': ''
+  Backup: Varmuuskopio
+  Backup File: ''
+  Backup sent to: Varmuuskopio lähetetty
+  Balance: Tase
+  Balance Sheet: Taselaskelma
+  Bank: ''
+  Bank Account: ''
+  Bank Account Details: ''
+  Bank Accounts: ''
+  Bank saved!: ''
+  Barcode: ''
+  Barcodes: ''
+  Based on: Perustuen
+  Batch: ''
+  Batch No.: ''
+  Batch Number: ''
+  Batch Posting failed!: ''
+  Batch deleted!: ''
+  Batch posted!: ''
+  Bcc: Näkymätön kopio
+  Before Deduction: ''
+  Beginning Balance: Alkusaldo
+  Beginning date: ''
+  Below: ''
+  Billing Address: Laskutusosoite
+  Bin: Varastopaikka
+  Bin List: ''
+  Bin Lists: ''
+  Books are open: Kirjat ovat avoinna
+  Books closed up to: ''
+  Break: ''
+  Building Number: ''
+  Business: Toimiala
+  Business Number: Y-numero
+  Business deleted!: Toimiala poistettu
+  Business saved!: Toimiala tallennettu
+  C: C
+  CO: ''
+  COGS: Myydyn tuotteen kulut
+  COGS account does not exist!: ''
+  Can only send one reminder at a time!: ''
+  Can only send one statement at a time!: ''
+  Cannot add stores card for a completed job!: ''
+  Cannot add time card for a completed job!: ''
+  Cannot add timecard for a completed job!: ''
+  Cannot change stores card for a completed job!: ''
+  Cannot change time card for a completed job!: ''
+  Cannot change timecard for a completed job!: ''
+  Cannot create Assembly: ''
+  Cannot create Kit: ''
+  Cannot create Labor: ''
+  Cannot create Lock!: Ei voi lukita!
+  Cannot create Part: ''
+  Cannot create Service: ''
+  Cannot delete Timecard!: ''
+  Cannot delete account!: Tiliä ei voi poistaa!
+  Cannot delete batch!: ''
+  Cannot delete customer!: Asiakasta ei voi poistaa!
+  Cannot delete default account!: Oletustiliä ei voi poistaa!
+  Cannot delete employee!: ''
+  Cannot delete invoice!: Laskua ei voi poistaa!
+  Cannot delete item!: Nimikettä ei voi poistaa!
+  Cannot delete order!: Tilausta ei voi poistaa!
+  Cannot delete quotation!: Tarjouspyyntöä ei voi poistaa!
+  Cannot delete stores card!: ''
+  Cannot delete time card!: ''
+  Cannot delete transaction!: Vientiä ei voi poistaa!
+  Cannot delete vendor!: Toimittajaa ei voi poistaa!
+  Cannot delete voucher!: ''
+  Cannot post Payment!: ''
+  Cannot post Receipt!: ''
+  Cannot post cash discount for a closed period!: ''
+  Cannot post invoice for a closed period!: Laskun kirjaus suljetulle ajanjaksolle kielletty!
+  Cannot post invoice!: Laskua ei voi kirjata!
+  Cannot post payment for a closed period!: Maksun kirjaus suljetulle ajanjaksolle kielletty!
+  Cannot post transaction for a closed period!: Viennin kirjaus suljetulle ajanjaksolle kielletty!
+  Cannot post transaction with a debit and credit entry for the same account!: ''
+  Cannot post transaction!: Vientiä ei voi kirjata
+  Cannot post voucher!: ''
+  Cannot process gzipped file!: ''
+  Cannot remove files!: Tiedostojen poisto ei onnistu!
+  Cannot return assembly!: ''
+  Cannot save Batch: ''
+  Cannot save account!: Tilin tallennus ei onnistu!
+  Cannot save defaults!: Oletusasetuksien tallennus ei onnistu!
+  Cannot save order!: Tilauksen tallennus ei onnistu!
+  Cannot save preferences!: Asetuksien tallennus ei onnistu!
+  Cannot save quotation!: Ei voi tallentaa tarjousta!
+  Cannot save stores card for a closed period!: ''
+  Cannot save stores card!: ''
+  Cannot save taxes!: ''
+  Cannot save time card for a closed period!: ''
+  Cannot save time card!: ''
+  Cannot save timecard for a closed period!: ''
+  Cannot save timecard!: ''
+  Cannot set account for more than one of AR, AP or IC: Tili voi olla vain yksi yhteenvetotili
+  Cannot set multiple options for: Ei voi asettaa useita asetuksia
+  Cannot set multiple options for Item: ''
+  Cannot stock Assembly!: ''
+  Cannot stock assemblies!: Tuotteiden varastointi ei onnistu!
+  Cannot transfer to the same warehouse!: ''
+  Cannot use: ''
+  Cannot use admin as login!: ''
+  Card Number: ''
+  Cash: Käteiskauppa
+  Cash Discount: ''
+  Cash Discount date missing!: ''
+  Cash Drawer: ''
+  Cash Over/Short: ''
+  Cash discount date missing!: ''
+  Cash discount date past due!: ''
+  Cash discount exceeds available discount!: ''
+  Category: ''
+  Cc: Kopio
+  Change: Vaihda
+  Change Admin Password: Muuta pääkäyttäjän salasana
+  Change Host: ''
+  Change Host for Dataset: ''
+  Change Password: Muuta salasana
+  Change Password for Dataset: ''
+  Changeup: ''
+  Changeup Assemblies: ''
+  Changeup Labor/Overhead: ''
+  Changeup Parts: ''
+  Changeup Services: ''
+  Charge: ''
+  Chargeable: ''
+  Chargeout Rate: ''
+  Chart of Accounts: Tilikartta
+  Chart of Accounts Translations: ''
+  Check: Sekki
+  Check In: ''
+  Check Inventory: ''
+  Check No.: ''
+  Check Number: ''
+  Check Out: ''
+  Check Register: ''
+  Checks: ''
+  City: Kaupunki
+  Clear Semaphores: ''
+  Cleared: Tyhjennetty
+  Clearing No.: ''
+  Clearing Number: ''
+  Click on login name to edit!: Klikkaa kirjautumisnimeä muokataksesi sitä!
+  Clocked: ''
+  Close Books up to: Sulje kirjat hetkeen
+  Close Window: ''
+  Closed: Suljettu
+  Code: Koodi
+  Code from Authenticator: ''
+  Code missing!: Koodi puuttuu!
+  Code on page: ''
+  Combine: ''
+  Command: ''
+  Company: Yritys
+  Company Name: Yrityksen nimi
+  Company Number: ''
+  Company missing!: ''
+  Compare to: verrattuna
+  Completed: ''
+  Components: Komponentit
+  Confidential: ''
+  Configuration file missing!: ''
+  Confirm: Hyväksy
+  Confirm!: Vahvista!
+  Connect to: Yhdistä
+  Consolidate: ''
+  Consolidate Invoices: ''
+  Consolidate Orders: ''
+  Consolidate Orders to Invoice: ''
+  Consolidate Purchase Orders: ''
+  Consolidate Sales Orders: ''
+  Consolidate Sales Orders to Invoice: ''
+  Consolidate Transactions: ''
+  Consolidated Orders: ''
+  Consolidated to Invoice: ''
+  Contact: Yhteyshenkilö
+  Content-Type: ''
+  Content-Type missing!: ''
+  Continue: Jatka
+  Continue?: ''
+  Contra: Kontra
+  Copies: Kopiot
+  Copy: ''
+  Copy to COA: Kopioi tilikarttaan
+  Cost: Hinta
+  Cost Center: ''
+  Could not delete document!: ''
+  Could not detach document!: ''
+  Could not save document!: ''
+  Could not save pricelist!: ''
+  Could not save reminder level!: ''
+  Could not save!: Ei voi talelntaa
+  Could not transfer Inventory!: ''
+  Could not void payments!: ''
+  Country: Maa
+  Country code missing!: ''
+  Country of Origin: ''
+  Create Chart of Accounts: Luo tilikartta
+  Create Dataset: Luo tietolähteet
+  Create missing vendor: ''
+  Create new snapshot for current point of time: ''
+  Credit: Kredit
+  Credit Invoice: ''
+  'Credit Invoice ': ''
+  Credit Limit: Luottoraja
+  Credit Note: ''
+  Curr: Valuutta
+  Currencies: ''
+  Currency: Valuutta
+  Currency deleted!: ''
+  Currency missing!: ''
+  Currency saved!: ''
+  Current: Erääntyy
+  Current Earnings: Nykyisen tilikauden tuotot
+  Customer: Asiakas
+  Customer History: Asiakashistoria
+  Customer Number: Asiakasnumero
+  Customer Transactions: ''
+  Customer deleted!: Asiakas poistettu!
+  Customer missing!: Asiakas puuttuu!
+  Customer not on file!: Asiakas ei järjestelmässä!
+  Customer saved!: Asiakas tallennettu!
+  Customer/Vendor: ''
+  Customer/Vendor Number: ''
+  Customers: Asiakkaat
+  DBI not installed!: DBI-ajuria ei ole asennettu!
+  DCN: ''
+  DCN missing!: ''
+  DOB: Syntymäaika
+  DOS: ''
+  Database: Tietokanta
+  Database Administration: Tietokannan ylläpito
+  Database Driver missing!: ''
+  Database Driver not checked!: Tietokanta-ajuria ei ole tarkastettu
+  Database Host: Tietokannan osoite
+  Database Monitor: ''
+  Database Snapshots: ''
+  Database User missing!: Tietokannan käyttäjä puuttuu
+  Dataset: Tietokanta
+  Dataset Size: ''
+  Dataset Version different!: ''
+  'Dataset Version:': ''
+  Dataset deleted!: ''
+  Dataset different!: ''
+  Dataset is newer than version!: Tietokanta on uudempi kuin sovelluksen versio
+  Dataset lock removed!: ''
+  Dataset locked!: ''
+  Dataset missing!: Tietokanta puuttuu
+  Dataset updated!: Tietokanta päivitetty
+  Dataset version newer, SQL-Ledger must first be upgraded!: ''
+  Dataset will be upgraded to: ''
+  Date: Päiväys
+  Date Format: Päiväyksen muoto
+  Date Issued: ''
+  Date Paid: Maksupäivä
+  Date Prepared: ''
+  Date Received: ''
+  Date for cash discount missing!: ''
+  Date for cash discount past due!: ''
+  Date missing!: Päiväys puuttuu
+  Date received missing!: ''
+  Date worked: ''
+  Day: ''
+  Day(s): ''
+  Days: ''
+  Debit: Debet
+  Debit Invoice: ''
+  'Debit Invoice ': ''
+  Debit Note: ''
+  Dec: Jou
+  December: Joulukuu
+  Decimal Point: ''
+  Decimalplaces: Desimaalipaikkoja
+  Decrease: ''
+  Deduct: ''
+  Deduct after: ''
+  Deduction deleted!: ''
+  Deduction saved!: ''
+  Deductions: ''
+  Default: ''
+  Default Accounts: ''
+  Default Template: ''
+  Defaults: Oletukset
+  Defaults saved!: Oletusasetukset poistettu
+  Defer: ''
+  Defer Payout: ''
+  Deferred: ''
+  Delete: Poista
+  Delete Account: Poista tili
+  Delete Batch: ''
+  Delete Column: ''
+  Delete Customers: ''
+  Delete Dataset: Poista tietokanta
+  Delete Documents: ''
+  Delete Files: ''
+  Delete Report: ''
+  Delete SQL command: ''
+  Delete Schedule: ''
+  Delete Snapshots: ''
+  Delete Transactions: ''
+  Delete Vendors: ''
+  Deleting a language will also delete the templates for the language: ''
+  Delimiter: ''
+  Delivery Date: Toimituspäivä
+  Department: Toimipiste
+  Department deleted!: Toimipiste poistettu
+  Department saved!: Toimipiste tallennettu
+  Departments: Toimipisteet
+  Deposit: Rahatallennus
+  Deposit Register: ''
+  Description: Kuvaus
+  Description Translations: ''
+  Description missing!: Kuvaus puuttuu
+  Deselect all: ''
+  Detach: ''
+  Detail: Yksityiskohdat
+  Difference: Ero
+  Directory: Hakemisto
+  Disable: ''
+  Disc: ''
+  Discount: Alennus
+  Display: ''
+  Display All: ''
+  Document attached!: ''
+  Document deleted!: ''
+  Document detached!: ''
+  Document not archived!: ''
+  Document saved!: ''
+  Documents deleted!: ''
+  Done: Suoritettu
+  Download Dump: ''
+  Drag and Drop: ''
+  Drawing: Piirros
+  Driver: Ajuri
+  Drop-down: ''
+  Dropdown Limit: Pudotusvalikkojen rivimäärä
+  Due: ''
+  Due Date: Eräpäivä
+  Due Date missing!: Eräpäivä puuttuu!
+  Duplicate Dataset!: ''
+  E-Mail: ''
+  E-Mail TAN: ''
+  E-mail: Sähköposti
+  E-mail Reminder to: ''
+  E-mail Statement to: Sähköpostilla tiliote
+  E-mail TAN: ''
+  E-mail address missing!: Sähköpostiosoite puuttuu!
+  E-mail message: ''
+  E-mailed: Lähetetty
+  E-mailing: ''
+  Early Payment Discount given: ''
+  Early Payment Discount received: ''
+  Edit: Muokkaa
+  Edit AP Transaction: Muokkaa ostotapahtumaa
+  Edit AP Voucher: ''
+  Edit AR Transaction: Muokkaa myyntitapahtumaa
+  Edit Account: Muokkaa tiliä
+  Edit Assembly: Muokkaa tuotetta
+  Edit Batch: ''
+  Edit Business: Muokkaa toimialaa
+  Edit Cash Transfer Transaction: ''
+  Edit Column: ''
+  Edit Column Header: ''
+  Edit Column Total: ''
+  Edit Credit Invoice: ''
+  Edit Credit Note: ''
+  Edit Currency: ''
+  Edit Customer: Muokkaa asiakasta
+  Edit Debit Invoice: ''
+  Edit Debit Note: ''
+  Edit Deduction: ''
+  Edit Department: Muokkaa toimipistettä
+  Edit Description Translations: ''
+  Edit Employee: Muokkaa työntekijää
+  Edit Exchange Rate: ''
+  Edit FX Adjustment: ''
+  Edit GIFI: Muokkaa GIFI
+  Edit General Ledger Transaction: Muokkaa pääkirjavientiä
+  Edit General Ledger Voucher: ''
+  Edit Group: Muokkaa ryhmää
+  Edit Group Translations: ''
+  Edit Job: ''
+  Edit Labor/Overhead: ''
+  Edit Language: Muokkaa kieltä
+  Edit Mimetype: ''
+  Edit POS Invoice: ''
+  Edit Part: Muokkaa raaka-ainetta/tarviketta
+  Edit Payment Method: ''
+  Edit Payroll: ''
+  Edit Preferences: ''
+  Edit Preferences for: Muokkaa asetuksia
+  Edit Pricegroup: Muokkaa hintaryhmää
+  Edit Project: Muokkaa projektia
+  Edit Project Description Translations: ''
+  Edit Purchase Order: Muokkaa ostotilausta
+  Edit Quotation: Muokkaa tarjousta
+  Edit Reference Document: ''
+  Edit Request for Quotation: Muokkaa tarjouspyyntöä
+  Edit Role: ''
+  Edit SIC: ''
+  Edit Sales Invoice: Muokkaa myyntilaskua
+  Edit Sales Order: Muokkaa myyntitilausta
+  Edit Service: Muokkaa palvelua
+  Edit Stores Card: ''
+  Edit Template: Muokkaa mallia
+  Edit Time Card: ''
+  Edit Timecard: ''
+  Edit User: Muokkaa käyttäjää
+  Edit Vendor: Muokkaa myyjää
+  Edit Vendor Invoice: Muokkaa ostolaskua
+  Edit Warehouse: Muokkaa varastoa
+  Email: ''
+  Employee: Työntekijä
+  Employee Login: ''
+  Employee Name: Työntekijän nimi
+  Employee Number: Työntekijän numero
+  Employee deleted!: Työntekijä poistettu
+  Employee missing!: ''
+  Employee pays: ''
+  Employee saved!: Työntekijä tallennettu
+  Employees: Työntekijät
+  Employer: Työntekijä
+  Employer pays: ''
+  Encryption: ''
+  Enddate: Päättymispäivä
+  Ending Balance: ''
+  Ends: ''
+  Enforce transaction reversal for all dates: Pakota muunnos kaikille viennille
+  Enter a SQL command to send to the server: ''
+  Enter up to 3 letters separated by a colon (i.e CAD:USD:EUR) for your native and foreign currencies: Merkitse käyttämäsi valuutat 3 kirjaimella ja erota ne kaksoispisteellä, esim.(EUR:USD:SEK).
+  Equity: Oma pääoma
+  Error processing payment!: ''
+  Error!: ''
+  Every: ''
+  Excempt age <: Paitsi ajalta <
+  Exch: Vaihtokurssi
+  Exchange Rate: Vaihtokurssi
+  Exchange Rate Difference: ''
+  Exchange Rate saved!: ''
+  Exchange Rates: ''
+  Exchange rate for cash discount missing!: ''
+  Exchange rate for payment missing!: Maksun vaihtokurssi puuttuu
+  Exchange rate missing!: Vaihtokurssi puuttuu
+  Exchangerate: ''
+  Exclude Void Checks: ''
+  Exclude Void Receipts: ''
+  Exempt: ''
+  Exempt age <: ''
+  Existing Datasets: Nykyiset tietokannat
+  Expense: Meno
+  Expense account does not exist!: ''
+  Expense/Asset: Meno/Varat
+  Expenses: ''
+  Expires: ''
+  Export: ''
+  Export Customers: ''
+  Export Payments: ''
+  Export Vendors: ''
+  Extended: Pidennetty
+  Extension: ''
+  Extension missing!: ''
+  FX: ''
+  FX Adjustment: ''
+  Failed: ''
+  Failed to consolidate invoices!: ''
+  Failed to delete Currency!: ''
+  Failed to delete Role!: ''
+  Failed to delete Warehouse!: ''
+  Failed to save Bank!: ''
+  Failed to save Currency!: ''
+  Failed to save Role!: ''
+  Failed to save Warehouse!: ''
+  Failed to save order!: ''
+  Failed to save workstations!: ''
+  Fax: Faksi
+  Feb: Hel
+  February: Helmikuu
+  Fee: ''
+  Female: ''
+  File: ''
+  'File is too big! Allowed are:': ''
+  File to Import: ''
+  Filename: ''
+  Fill: ''
+  Finished: ''
+  First Name: ''
+  Firstname: ''
+  Fixed Length Text: ''
+  Fixed value: ''
+  Folder: ''
+  For: ''
+  Force Warehouse: ''
+  Foreign Exchange Gain: Vaihtokurssivoitto
+  Foreign Exchange Gain/Loss: ''
+  Foreign Exchange Loss: Vaihtokurssitappio
+  Form: ''
+  Fr: ''
+  Friday: ''
+  From: Alkaen
+  From Warehouse: ''
+  G: ''
+  G.W.: ''
+  GIFI: GIFI
+  GIFI deleted!: GIFI poistettu!
+  GIFI missing!: GIFI puuttuu!
+  GIFI saved!: GIFI tallennettu!
+  GL: ''
+  GL Reference Number: ''
+  GL Transaction: Pääkirjavienti
+  GL Transactions: ''
+  Gender: ''
+  General Ledger: Pääkirja
+  General Ledger Batches: ''
+  General Ledger Vouchers: ''
+  Generate: ''
+  Generate Invoices: ''
+  Generate Orders: ''
+  Generate Purchase Orders: ''
+  Generate Purchase Orders failed!: ''
+  Generate Purchase Orders from Sales Order: ''
+  Generate Sales Invoices: ''
+  Generate Sales Invoices from Sales Order: ''
+  Generate Sales Order: ''
+  Generate Sales Order from Purchase Orders: ''
+  Generate Sales Orders: ''
+  Generating Invoices: ''
+  Goods & Services: Hyödykkeet ja palvelut
+  Group: Ryhmä
+  Group Code: ''
+  Group Items: Ryhmän tuotteet
+  Group Translations: ''
+  Group by: ''
+  Group deleted!: Ryhmä poistettu
+  Group missing!: Ryhmä puuttuu
+  Group saved!: Ryhmä tallennettu
+  Groups: Ryhmät
+  HR: ''
+  HS Code: ''
+  HTML Templates: HTML-mallit
+  Heading: Otsikko
+  Hide Closed Accounts: ''
+  History: Historia
+  Home Mobile: ''
+  Home Phone: Kotipuhelin
+  Host: Osoite
+  Hostname missing!: Osoite puuttuu
+  I: ''
+  IBAN: ''
+  IBAN missing!: ''
+  ID: ID
+  Image: Kuva
+  Image Files: ''
+  Import: ''
+  Import Chart of Accounts: ''
+  Import Customers: ''
+  Import File missing!: ''
+  Import General Ledger: ''
+  Import Groups: ''
+  Import Labor/Overhead: ''
+  Import Orders: ''
+  Import Parts: ''
+  Import Payments: ''
+  Import Purchase Orders: ''
+  'Import QR-Bill: AP Transaction': ''
+  'Import QR-Bill: Vendor Invoice': ''
+  Import Sales Invoices: ''
+  Import Sales Orders: ''
+  Import Services: ''
+  Import Vendors: ''
+  In-line: Linjalla
+  Inactive: ''
+  Include Exchange Rate Difference: ''
+  Include Header: ''
+  Include Payment: ''
+  Include in Report: Sisällytä raporttiin
+  Include in drop-down menus: Sisällytä pudotusvalikoihin
+  Income: Tulo
+  Income / (Loss): ''
+  Income Statement: Tuloslaskelma
+  Income account does not exist!: ''
+  Incorrect Dataset version!: Väärä tietokannan versio!
+  Incorrect Password!: ''
+  Incorrect Username or Password!: ''
+  Incorrect Username!: ''
+  Increase: Lisää
+  Individual Items: Yksittäiset nimikkeet
+  Internal Notes: Sisäiset viestit
+  Invalid Code: ''
+  Invalid TAN: ''
+  Invalid UID: ''
+  Invalid country code!: ''
+  'Invalid date:': ''
+  'Invalid day:': ''
+  'Invalid month:': ''
+  Inventory: Varasto
+  Inventory Count: ''
+  Inventory Value: ''
+  Inventory account does not exist!: ''
+  Inventory quantity must be zero before you can set this assembly obsolete!: Tuotteen varaston on oltava nolla ennen asettamista epäkurantiksi!
+  Inventory quantity must be zero before you can set this part obsolete!: Raaka-aineen/tarvikkeen varaston määrä on oltava nolla ennen asettamista epäkurantiksi!
+  Inventory saved!: Varasto tallennettu!
+  Inventory transferred!: Varasto siirretty!
+  Invoice: Lasku
+  Invoice Date: Laskun päiväys
+  Invoice Date missing!: Laskun päiväys puuttuu!
+  Invoice Number: Laskun numero
+  Invoice Number missing!: Laskun numero puuttuu!
+  Invoice deleted!: Lasku poistettu!
+  Invoice generation failed!: ''
+  Invoices: Laskut
+  Invoices consolidated!: ''
+  Is this a summary account to record: Onko tämä tallennettava yhteenvetotili?
+  Item: ''
+  Item already on pricelist!: ''
+  Item deleted!: Nimike poistettu!
+  Item not on file!: Nimikettä ei ole järjestelmässä!
+  Item saved!: ''
+  Items: Tuotteet
+  Items stocked!: ''
+  Jan: Tam
+  January: Tammikuu
+  Job: ''
+  Job Name: ''
+  Job Number: ''
+  Job Number missing!: ''
+  Job deleted!: ''
+  Job saved!: ''
+  Job/Project Number: ''
+  Jobs: ''
+  Jul: Hei
+  July: Heinäkuu
+  Jun: Kes
+  June: Kesäkuu
+  Keep restored snapshot: ''
+  Kits: ''
+  LaTeX Templates: LaTeX mallit
+  Labor: ''
+  Labor Code: ''
+  Labor Code missing!: ''
+  Labor/Overhead: ''
+  Labor/Overhead Changeup: ''
+  Language: Kieli
+  Language deleted!: Kieli tuhottu
+  Language saved!: Kieli tallennettu
+  Languages: Kielet
+  Languages not defined!: Kielet ei ole määritelty
+  Last Cost: ''
+  Last Name: ''
+  Last Numbers: ''
+  Last Numbers & Default Accounts: Edelliset numerot ja oletustilit
+  Lastcost: ''
+  Lastname: ''
+  Late Payment Fee: ''
+  Lead: ''
+  Leadtime: ''
+  Leave host and port field empty unless you want to make a remote connection.: Jätä osoite- ja porttikentät tyhjiksi mikäli et halua ottaa etäyhteyttä.
+  Left: ''
+  Level: ''
+  Liabilities: ''
+  Liability: Vastattavaa
+  Licensed to: Lisenssin omistaja
+  Line Item: ''
+  Line Total: Rivi yhteensä
+  Linefeed: ''
+  Lineitem: ''
+  Link: Linkki
+  Link Accounts: Linkkaa tilit
+  List: Lista
+  List Accounts: Listaa tilit
+  List Businesses: Listaa toimialat
+  List Departments: Listaa toimipisteet
+  List Documents: ''
+  List Files: ''
+  List GIFI: Listaa GIFI
+  List Languages: Listaa kielet
+  List Price: Listaa hinnat
+  List Projects: Listaa projektit
+  List SIC: Listaa SIC
+  List Transactions: Listaa viennit
+  List Warehouses: Listaa varastot
+  Listprice: ''
+  Local branches: ''
+  Localized Addresses: ''
+  Lock: ''
+  Lock Dataset: ''
+  Lock Message: ''
+  Lock System: Lukitse järjestelmä
+  Locked: ''
+  Locked by: ''
+  Lockfile created!: Järjestelmä lukittu!
+  Lockfile removed!: Järjestelmä avattu!
+  Locks removed!: ''
+  Login: Nimi
+  Login name missing!: Nimi puuttuu
+  Logistics: ''
+  Logout: Kirjaudu ulos
+  Lot: ''
+  MAC: ''
+  MFA: ''
+  Main Groups: ''
+  Main Menu: ''
+  Maintenance: ''
+  Make: Valmistaja
+  Male: ''
+  Manager: Johtaja
+  Mapfile: ''
+  Mar: Maa
+  March: Maaliskuu
+  Margin: ''
+  Marked entries printed!: Valitut kentät tulostettu
+  Markup: ''
+  Maximum: Maksimi
+  Maximum Upload Size: ''
+  Maximum tries exceeded!: ''
+  May: Tou
+  'May ': Toukokuu
+  Member No.: ''
+  Member Number: ''
+  Memo: ''
+  Menu Width: Valikon leveys
+  Merchandise: ''
+  Message: Viesti
+  Method: Tapa
+  Method of Payment: ''
+  Microfiche: Mikrokuva
+  Mimetype deleted!: ''
+  Mimetype saved!: ''
+  Mimetypes: ''
+  Missing Vendors: ''
+  Mo: ''
+  Mobile: ''
+  Mock: ''
+  Model: Tuotenimi
+  'Module not installed:': ''
+  Monday: ''
+  Monitor: ''
+  Month: Kuukausi
+  Month(s): ''
+  Months: ''
+  'More than one vendor found:': ''
+  Multibyte Encoding: Itämaisten kielten tuki
+  Must be logged in as admin!: ''
+  N.W.: ''
+  N/A: Ei saatavilla
+  Name: Nimi
+  Name missing!: Nimi puuttuu!
+  Net: ''
+  New Number: ''
+  New Templates: Uudet mallit
+  New Window: ''
+  Next: ''
+  Next Date: ''
+  Next Number: ''
+  No: Ei
+  No Database Drivers available!: Tietokannan ajuria ei saatavilla!
+  No Dataset selected!: Ei tietokantaa valittuna!
+  No Employees on file!: ''
+  No History!: ''
+  No Labor codes on file!: ''
+  No data!: ''
+  No email address for: Sähköpostiosoite puuttuu
+  No file selected!: ''
+  No foreign currencies!: ''
+  No open Jobs!: ''
+  No open Projects!: ''
+  No snapshots: ''
+  No warehouses!: ''
+  No.: no
+  Non-chargeable: ''
+  Non-taxable: Veroton
+  Non-taxable Purchases: Verottomat ostot
+  Non-taxable Sales: Verottomat myynnit
+  Non-tracking Item Expense: ''
+  Non-tracking Item Income: ''
+  Non-tracking Item Tax: ''
+  Non-tracking Items: ''
+  None: ''
+  Not E-mailed: ''
+  Not Printed: ''
+  Not a SQL-Ledger backup!: ''
+  Not an Image file!: ''
+  Not enough inventory in Row: ''
+  Not enough inventory!: ''
+  Notes: Lisätietoja
+  Nothing entered!: Ei syötettä
+  Nothing in the Queue!: ''
+  Nothing selected!: Mitään valitsematta!
+  Nothing to consolidate!: ''
+  Nothing to delete!: Ei poistettavaa!
+  Nothing to generate!: ''
+  Nothing to import!: ''
+  Nothing to print: ''
+  Nothing to print!: Ei tulostettavaa!
+  Nothing to transfer!: Ei siirrettävää!
+  Nov: Mar
+  November: Marraskuu
+  Number: Numero
+  Number Format: Numeron muoto
+  Number missing in Row: Numero puuttuu kannan riviltä
+  O: O
+  OH: ''
+  Obsolete: Vanhentunut
+  Occupation: ''
+  Oct: Lok
+  October: Lokakuu
+  On: ''
+  On Hand: Varastossa
+  On Hold: ''
+  Only Sums: ''
+  Only one selection allowed!: ''
+  Open: Avoinna
+  Open Drawer: ''
+  Open drawer command failed!: ''
+  Open drawer command not defined!: ''
+  Oracle: ''
+  Oracle Database Administration: Oracle-tietokannan ylläpito
+  Ord: ''
+  Order: Tilaus
+  Order Date: Tilauspäivämäärä
+  Order Date missing!: Tilauspäivämäärä puuttuu!
+  Order Entry: Tilauksen kirjaus
+  Order Number: Tilausnumero
+  Order Number missing!: Tilausnumero puuttuu!
+  Order consolidation failed!: ''
+  Order deleted!: Tilaus poistettu!
+  Order generation failed!: ''
+  Order saved!: Tilaus tallennettu!
+  Orders generated!: ''
+  Origin: ''
+  Orphaned: Hylätyt
+  Our Address Line: ''
+  Our BC Number: ''
+  Our Company Name: ''
+  Out of balance transaction!: Viennin taseet eivät täsmää!
+  Out of balance!: Taseet eivät täsmää
+  Output Format: ''
+  Outstanding: ''
+  Over: ''
+  Overdue: ''
+  Overpaid: ''
+  P: ''
+  PDF: PDF
+  PO: ''
+  PO Number: ''
+  POS: ''
+  POS Button: ''
+  POS Invoice: ''
+  Packaging: ''
+  Packing List: Pakkauslista
+  Packing List Date missing!: Pakkauslistan päiväys puuttuu!
+  Packing List Number missing!: Pakkauslistan numero puuttuu!
+  Packing Lists: Pakkauslistat
+  Paid: Maksettu
+  Paid Early: ''
+  Paid Late: ''
+  Part: Tarvike
+  Part Changeup: ''
+  Part Number: ''
+  Partnumber: Tarvikenumero
+  Parts: Tarvikkeet
+  Parts Report: ''
+  Partsgroup: ''
+  Partsgroup Code: ''
+  Password: Salasana
+  Password changed!: Salasana muutettu!
+  Password does not match!: Salasana ei täsmää!
+  Passwords do not match!: Salasanat eivät täsmää!
+  Pay Period Ending: ''
+  Pay Periods: ''
+  Pay Rates: ''
+  Pay Slip: ''
+  Payable: ''
+  Payable Batches: ''
+  Payable Vouchers: ''
+  Payables: Maksettavaa
+  Payment: Maksu
+  Payment Account: ''
+  Payment Batches: ''
+  Payment Difference: ''
+  Payment Method: ''
+  Payment Method deleted!: ''
+  Payment Method saved!: ''
+  Payment Methods: ''
+  Payment Register: ''
+  Payment Reversal: ''
+  Payment Reversal Batches: ''
+  Payment Reversal Voucher: ''
+  Payment account missing!: ''
+  Payment date missing!: Maksupäivä puuttuu!
+  Payment posted!: Maksu kirjattu!
+  Payments: Maksut
+  Payments posted!: ''
+  Payroll: ''
+  Payroll Deduction: ''
+  Payroll Transactions: ''
+  Payslip: ''
+  Period: Ajanjakso
+  Perl Modules: ''
+  Person: ''
+  Pg: ''
+  Pg Database Administration: Postgres-tietokannan ylläpito
+  PgPP: ''
+  PgPP Database Administration: PgPP-tietokannan ylläpito
+  Phone: Puhelin
+  Pick List: ''
+  Pick Lists: ''
+  Pole Display: ''
+  Poledisplay: ''
+  Port: Portti
+  Port missing!: Portti puuttuu!
+  Pos: ''
+  Post: Kirjaa
+  Post Batch: ''
+  Post Batches: ''
+  Post as new: Kirjaa uutena
+  Posted!: Kirjattu!
+  Posting: ''
+  Posting Batch: ''
+  Posting Date: ''
+  Posting Invoice ...: ''
+  Posting Payment: ''
+  Posting Payment ...: ''
+  Posting failed!: ''
+  Postscript: Postscript
+  Pre-Payment: ''
+  Precision: ''
+  Preferences: Asetukset
+  Preferences saved!: Asetukset tallennettu!
+  Prepayment: Ennakkomaksu
+  Preview: ''
+  Previous Year: ''
+  Price: Hinta
+  Pricegroup: Hintaryhmä
+  Pricegroup deleted!: Hintaryhmä poistettu
+  Pricegroup missing!: Hintaryhmä puuttuu
+  Pricegroup saved!: Hintaryhmä tallennettu
+  Pricegroups: Hintaryhmät
+  Pricelist: Hintalista
+  Print: Tulosta
+  'Print ': ''
+  Print Report: ''
+  Print and Post: Tulosta ja kirjaa
+  Print and Post as new: ''
+  Print and Save: Tulosta ja tallenna
+  Print and Save as new: ''
+  Print and post as new: ''
+  Print and save as new: ''
+  Printed: Tulostettu
+  Printed Checks: ''
+  Printed Receipts: ''
+  Printer: Tulostin
+  Printing: ''
+  'Printing ... ': Tulostaa..
+  Printing check for: ''
+  Printing receipt for: ''
+  Process Transactions: ''
+  Production: ''
+  Profit Center: ''
+  Project: Projekti
+  Project Description: ''
+  Project Description Translations: ''
+  Project Name: ''
+  Project Number: Projektinumero
+  Project Number missing!: Projektinumero puuttuu!
+  Project Transactions: Projektin tapahtumat
+  Project deleted!: Projekti poistettu!
+  Project not on file!: Projekti ei ole järjestelmässä!
+  Project saved!: Projekti tallennettu!
+  Project/Job Description Translations: ''
+  Project/Job Name: ''
+  Project/Job Number: ''
+  Project/Job Number missing!: ''
+  Projects: Projektit
+  Projects & Jobs: ''
+  Public: ''
+  Public Key: ''
+  Purchase Order: Ostotilaus
+  Purchase Order Number: Ostotilausnumero
+  Purchase Orders: Ostotilaukset
+  Purchase Orders generated!: ''
+  QR AP Transaction: ''
+  QR IBAN: ''
+  QR Vendor Invoice: ''
+  Qty: Määrä
+  Quantity: ''
+  Quantity exceeds available units to stock!: ''
+  Quarter: Neljännes
+  Quarters: ''
+  Queue: ''
+  Queued: ''
+  Quotation: Tarjous
+  'Quotation ': 'Tarjous '
+  Quotation Date: Tarjouspäivä
+  Quotation Date missing!: Tarjouspäivä puuttuu
+  Quotation Number: Tarjousnumero
+  Quotation Number missing!: Tarjousnumero puuttuu
+  Quotation deleted!: Tarjous poistettu
+  Quotations: Tarjoukset
+  R: ''
+  RFQ: Tarjouspyyntö
+  'RFQ ': 'Tarjouspyyntö '
+  RFQ Number: Tarjouspyynnön numero
+  RFQs: Tarjouspyynnöt
+  ROP: ''
+  RV: ''
+  RVC: ''
+  RVC missing!: ''
+  Rate: Kurssi
+  Rate %: ''
+  Rate missing!: Kurssi puuttuu
+  Recd: Vastaanotettu
+  Receipt: Kuitti
+  Receipt No.: ''
+  Receipt Number: ''
+  Receipt posted!: Kuitti kirjattu
+  Receipts: Kuitit
+  Receivables: Saamiset
+  Receive: ''
+  Receive Merchandise: ''
+  Received: ''
+  Recently Used: ''
+  Reconcile Payments: ''
+  Reconciliation: Sovitus
+  Reconciliation Date: ''
+  Reconciliation Report: ''
+  Record in: Talleta tilille
+  Recurring: ''
+  Recurring Transaction: ''
+  Recurring Transactions: ''
+  Reference: Viite
+  Reference Document does not exist!: ''
+  Reference Documents: ''
+  Reference Documents URL: ''
+  Reference missing!: ''
+  Reissue Check: ''
+  Reissue Checks: ''
+  Reissue Payments: ''
+  Reissue Receipt: ''
+  Reissue Receipts: ''
+  Rem: ''
+  Remaining: Jäljellä
+  Reminder: ''
+  Reminder sent to: ''
+  Reminders sent to printer!: ''
+  Remittance Voucher: ''
+  Remittance Vouchers: ''
+  Remove: Poista
+  Remove Audit trail up to: ''
+  Remove semaphores?: ''
+  Removed spoolfiles!: Spool-tiedostot poistettu
+  Removing marked entries from queue ...: ''
+  Repeat: ''
+  Report: ''
+  Report for: Raportti
+  Report processed!: ''
+  Reporting Method: ''
+  Reports: Raportit
+  Repost Invoices: ''
+  'Reposting Invoices ... ': ''
+  Req: ''
+  Reqd: ''
+  Request for Quotation: Tarjouspyyntö
+  Request for Quotations: Tarjouspyynnöt
+  Required: ''
+  Required by: Toimituspäivä
+  Requirements: ''
+  Restocking Charge: ''
+  Restore: ''
+  Restore Snapshot: ''
+  'Restoring Dataset:': ''
+  Restoring dataset version: ''
+  Retained Earnings: Käyttörahasto\jakamaton voitto
+  Reverse Display: ''
+  Right: ''
+  Role: ''
+  Role deleted!: ''
+  Role saved!: ''
+  Roles: ''
+  Round: ''
+  Run SQL command: ''
+  S: ''
+  SIC: ''
+  SIC deleted!: SIC poistettu!
+  SIC saved!: SIC tallennettu!
+  SKU: ''
+  SO: ''
+  SQL Run: ''
+  SQL command: ''
+  SQL statement missing: ''
+  SSN: ''
+  Sa: ''
+  Sale: ''
+  Sales: Myynti
+  Sales Invoice: Myyntilasku
+  'Sales Invoice ': 'Myyntilasku '
+  Sales Invoice.: Myyntilasku.
+  Sales Invoice/AR Transaction Number: ''
+  Sales Invoices: Myyntilaskut
+  Sales Order: Tilausvahvistus
+  Sales Order Number: Tilausvahvistuksen numero
+  Sales Order Requirements: ''
+  Sales Order consolidation failed!: ''
+  Sales Orders: Tilausvahvistukset
+  Sales Orders to Invoice: ''
+  Sales Quotation Number: ''
+  Salesperson: Myyjä
+  Salutation: ''
+  Same kit in Row: ''
+  Saturday: ''
+  Save: Tallenna
+  Save Column: ''
+  Save Level: ''
+  Save Pricelist: ''
+  Save Report: ''
+  Save SQL command: ''
+  Save Schedule: ''
+  Save as new: Tallenna uutena
+  Save failed!: ''
+  Save to File: Tallenna tiedostoon
+  Saving: ''
+  Saving Order ...: ''
+  'Scan the following code with your Authenticator App:': ''
+  Schedule: ''
+  Scheduled: ''
+  Screen: Näyttö
+  Search: Etsi
+  Select: Valitse
+  Select Customer: ''
+  Select Vendor: ''
+  Select a Printer!: ''
+  Select a printer!: ''
+  Select all: Valitse kaikki
+  Select from one of the items below: Valitse yksi nimike alapuolelta
+  Select from one of the names below: Valitse yksi nimi alapuolelta
+  Select from one of the projects below: Valitse yksi projekti alapuolelta
+  Select items: ''
+  Select payment: Valitse maksutapa
+  Select postscript or PDF!: Valitse postscript tai PDF!
+  Select txt, postscript or PDF!: Valitse tekstitiedosto, postscript tai PDF!
+  Sell: Myynti
+  Sell Price: Myyntihinta
+  Sellprice: ''
+  Send by E-Mail: Lähetä sähköpostilla
+  Sending: ''
+  Sep: Syy
+  September: Syyskuu
+  Serial No.: Sarjanumero
+  Serial Number: Sarjanumero
+  Service: Palvelu
+  Service Changeup: ''
+  Service Code: ''
+  Service Code missing!: ''
+  Service/Labor Code: ''
+  Services: Palvelut
+  Session Timeout: Yhteys aikakatkaistu
+  Session expired!: Yhteys vanhentunut
+  Setup: ''
+  Setup Templates: Aseta mallit
+  Ship: Lähetä
+  Ship Merchandise: ''
+  Ship all: ''
+  Ship to: Toimitusosoite
+  Ship via: Välipiste
+  Shipped: ''
+  Shipped Items: ''
+  Shipping: ''
+  Shipping Address: ''
+  Shipping Date: ''
+  Shipping Date missing!: ''
+  Shipping Point: ''
+  Short: Lyhytaikaiset
+  Signature: Allekirjoitus
+  Snapshot created: ''
+  Snapshot restored: ''
+  Snapshots: ''
+  Snapshots deleted: ''
+  Software Administration: ''
+  Sort Names by: ''
+  Sort by: ''
+  Source: Lähde
+  Source missing!: ''
+  Split Ledger: ''
+  Spoolfile: ''
+  Spreadsheet: ''
+  Standard: Vakio
+  Standard Industrial Codes: ''
+  Startdate: Aloituspäivä
+  State: Lääni
+  State/Province: Lääni
+  Statement: Tiliote
+  Statement Balance: Tiliotteen tase
+  Statement sent to: Tiliote lähetetty
+  Statements sent to printer!: Tiliotteet lähetetty tulostimelle!
+  Stock: ''
+  Stock Adjustment: ''
+  Stock Assembly: Varastoi tuote
+  Stock Finished Goods: ''
+  Stock level: ''
+  Stocking Date: ''
+  Stores Card: ''
+  Stores Card deleted!: ''
+  Stores Card saved!: ''
+  Stores Cards: ''
+  Storescard: ''
+  Street: ''
+  Street Name: ''
+  Strings quoted: ''
+  Stylesheet: Tyylitiedosto
+  Su: ''
+  Sub-contract GIFI: ''
+  Subject: Aihe
+  Subtotal: Välisumma
+  Summary: Kooste
+  Sunday: ''
+  Supervisor: Valvoja
+  Supply & Demand: ''
+  Supply / Demand: ''
+  Switch branch: ''
+  Sybase: ''
+  System: Järjestelmä
+  System Defaults: Järjestelmän oletukset
+  T: ''
+  TAN: ''
+  Tab delimited: ''
+  Table: ''
+  Tariff: ''
+  Tax: Vero
+  Tax Accounts: Verotilit
+  Tax Included: ALV sisältyy
+  Tax Number: Veronumero
+  Tax Number / SSN: Veronumero / SSN
+  Tax collected: Veroa kerätty
+  Tax paid: Veroa maksettu
+  Taxable: Verotettavaa
+  Taxes: ''
+  Taxes saved!: ''
+  Taxnumber: ''
+  Template: ''
+  Template saved!: Malli tallennettu
+  Templates: Mallit
+  Templates managed externally: ''
+  Terms: Maksuehto
+  Text: ''
+  Text Templates: Tekstimallit
+  Th: ''
+  The following Datasets are not in use and can be deleted: |-
+    Seuraavat tietolähteet 
+    eivät ole käytössä ja voidaan poistaa
+  The following Datasets need to be updated: Seuraavat tietolähteet päivitettävä
+  'The following customers are not on file:': ''
+  'The following parts are not on file:': ''
+  'The following snapshot will be restored:': ''
+  'The following vendors are not on file:': ''
+  This is a preliminary check for existing sources. Nothing will be created or deleted at this stage!: Tämä on olemassa olevien lähteiden ennakkotarkistus. Mitään ei luoda tai poisteta tässä vaiheessa!
+  Threshold: ''
+  Thursday: ''
+  Till: ''
+  Time: ''
+  Time & Stores Cards: ''
+  Time Card: ''
+  Time Card deleted!: ''
+  Time Card saved!: ''
+  Time Cards: ''
+  Time In: ''
+  Time Out: ''
+  Time and Stores Cards: ''
+  Timecard: ''
+  Timecard deleted!: ''
+  Timecard saved!: ''
+  Timecards: ''
+  Times: ''
+  Title: ''
+  To: Hetkeen
+  To Warehouse: ''
+  To add a user to a group edit a name, change the login name and save.  A new user with the same variables will then be saved under the new login name.: Lisätäksesi käyttäjän ryhmään muokkaa nimeä, muuta kirjautumisnimi ja tallenna.
+  Tool Number: ''
+  Toolnumber: ''
+  Top Level: Ylin taso
+  Total: Yhteensä
+  Total Cost: ''
+  'Total:': ''
+  Tracking Item Income: ''
+  Tracking Item Tax: ''
+  Tracking Items: ''
+  Trade Discount: ''
+  Transaction: Vienti
+  Transaction Date missing!: Viennin päiväys puuttuu!
+  Transaction Dates: ''
+  Transaction deleted!: Vienti poistettu!
+  Transaction posted!: Vienti kirjattu!
+  Transaction reversal enforced for all dates: Kirjaukset muunnettu kaikille päiväyksille
+  Transaction reversal enforced up to: 'Kirjaukset muunnnettu hetkeen '
+  Transactions: Tapahtumat
+  Transfer: Siirto
+  Transfer Inventory: ''
+  Transfer from: ''
+  Transfer to: ''
+  Translation: ''
+  Translation deleted!: ''
+  Translation not on file!: ''
+  Translations: ''
+  Translations saved!: ''
+  Trial Balance: Saldolista
+  Tu: ''
+  Tuesday: ''
+  Type: ''
+  Type of Business: Toimialan luokitus
+  Type of Contact: ''
+  Type of File: ''
+  UID Register: ''
+  UNIX: ''
+  'Unable to create directory: ': ''
+  'Unable to delete:': ''
+  Unit: Yksikkö
+  Unit of measure: Mittayksikkö
+  Unknown Error!: ''
+  Unlock Dataset: ''
+  Unlock System: Avaa järjestelmä
+  Unlock dataset?: ''
+  Unprinted Checks: ''
+  Unprinted Receipts: ''
+  Update: Päivitä
+  Update Dataset: Päivitä tietokanta
+  Update Software: ''
+  Updated: Päivitetty
+  Upgrading to Version: Päivitetään
+  Upload Document: ''
+  Upload Image: ''
+  Uploading ...: ''
+  Use Templates: Käytä mallia
+  User: Käyttäjä
+  User deleted!: Käyttäjä poistettu!
+  User saved!: Käyttäjä tallennettu!
+  Valid To: ''
+  Valid To date missing for: ''
+  Valid until: ''
+  Vendor: Toimittaja
+  Vendor History: Toimittajahistoria
+  Vendor Invoice: Ostolasku
+  'Vendor Invoice ': 'Ostolasku '
+  Vendor Invoice.: Ostolasku.
+  Vendor Invoice/AP Transaction Number: ''
+  Vendor Invoices: Ostolaskut
+  Vendor Number: Toimittajanumero
+  Vendor Transactions: ''
+  Vendor deleted!: Toimittaja poistettu!
+  Vendor missing!: Toimittaja puuttuu!
+  'Vendor not found:': ''
+  Vendor not on file!: Toimittajaa ei järjestelmässä!
+  Vendor saved!: Toimittaja tallennettu!
+  Vendors: Toimittajat
+  Version: Versio
+  Void Check: ''
+  Void Checks: ''
+  Void Receipt: ''
+  Void Receipts: ''
+  Volume: ''
+  Voucher: ''
+  Voucher Number: ''
+  Voucher deleted!: ''
+  Voucher posted!: ''
+  Vouchers: ''
+  WLprinter: ''
+  Wage deleted!: ''
+  Wage saved!: ''
+  Wages: ''
+  Warehouse: Varasto
+  Warehouse Transfer: ''
+  Warehouse Transfer Report: ''
+  Warehouse deleted!: Varasto poistettu
+  Warehouse saved!: Varasto tallennettu
+  Warehouses: Varastot
+  Warning!: Varoitus!
+  Waybill: ''
+  We: ''
+  Website: ''
+  Wednesday: ''
+  Week: ''
+  Week(s): ''
+  Weeks: ''
+  Weight: Paino
+  Weight Unit: Painoyksikkö
+  What type of item is this?: Minkä tyyppinen nimike tämä on?
+  Width: ''
+  Withholding: ''
+  Work Fax: ''
+  Work Mobile: ''
+  Work Order: Työtilaus
+  Work Orders: Työtilaukset
+  Work Phone: Työpuhelin
+  Worksheet: ''
+  Workstation: ''
+  Workstations: ''
+  Workstations saved!: ''
+  XML: ''
+  XML Templates: ''
+  XML pain.001: ''
+  Year: Vuosi
+  Year(s): ''
+  Yearend: Tilinpäätös
+  Yearend date missing!: Tilikauden päätöspäivä puuttuu
+  Yearend posted!: Tilinpäätös kirjattu
+  Yearend posting failed!: Tilinpäätöksen kirjaus epäonnistui!
+  Years: ''
+  Yes: Kyllä
+  Yes, Reissue Checks: ''
+  Yes, Reissue Receipts: ''
+  Yes, Void Checks: ''
+  Yes, Void Receipts: ''
+  Yes, delete: ''
+  Yes, delete transactions: ''
+  Yes, reconcile payments: ''
+  You are logged out: Olet kirjautunut ulos
+  You are not authorized to add a new item!: ''
+  You are posting an existing transaction!: ''
+  You are printing and posting an existing transaction!: ''
+  You are printing and saving an existing order: ''
+  You are printing and saving an existing quotation: ''
+  You are printing and saving an existing transaction!: ''
+  You are saving an existing order: ''
+  You are saving an existing quotation: ''
+  You are saving an existing transaction!: ''
+  You did not enter a name!: Et kirjoittanut nimeä
+  You must enter a host and port for local and remote connections!: Sinun täytyy antaa isäntäkone ja portti paikallisille ja etäyhteyksille!
+  Zip/Postal Code: Postinumero
+  Zipcode: ''
+  account cannot be set to any other type of account: tilityyppiä ei voi muuttaa
+  added: ''
+  admin does not exist!: ''
+  as at: 'päivänä '
+  camt.054: ''
+  converted to: ''
+  created from Sales Orders: ''
+  csv: ''
+  days: päivää
+  does not exist: ei löydy
+  does not exist!: ''
+  done: valmis
+  ea: kpl
+  exceeds quantity: ''
+  failed: ''
+  failed!: ''
+  for: ''
+  for Period: jaksolle
+  get copies: ''
+  gzip failed!: ''
+  html: ''
+  html Templates: ''
+  in row: ''
+  is already a member!: on jo käyttäjä
+  last: ''
+  localhost: paikallinen tietokone
+  locked!: lukittu!
+  logout: ''
+  must be negative: ''
+  must be positive: ''
+  ok: ''
+  partsgroup: ''
+  please wait: ''
+  posted!: kirjattu!
+  rejected: ''
+  reset: ''
+  sent: lähetetty
+  successfully created!: onnistuneesti luotu!
+  successfully deleted!: onnistuneesti poistettu!
+  time(s): ''
+  unexpected error!: ''
+  updated: ''
+  void: ''
+  website: www-sivu
+  will be restored with data from: ''
+  xml: ''

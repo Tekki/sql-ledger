@@ -1,9 +1,7 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2018-2019
 #
-#  Author: Tekki
-#     Web: https://tekki.ch
+# © 2018-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #  Version: 0.1
 #
@@ -12,8 +10,9 @@
 # backend for recently used objects
 #
 #======================================================================
+use v5.40;
 
-package RU;
+package SL::RU;
 
 use constant {
   MAX_RECENT => 12,
@@ -91,8 +90,7 @@ use constant {
   VENDOR_INVOICE    => 'd2',
 };
 
-sub delete {
-  my ($self, $myconfig, $form) = @_;
+sub delete ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -109,8 +107,7 @@ sub delete {
   $dbh->disconnect;
 }
 
-sub list {
-  my ($self, $myconfig, $form) = @_;
+sub list ($, $myconfig, $form) {
   $form->{all_recent} = [];
 
   # connect to database
@@ -141,7 +138,7 @@ sub list {
   $sth = $dbh->prepare($query) or $form->dberror($query);
   $sth->execute($employee_id) or $form->dberror($query);
 
-  while ($ref = $sth->fetchrow_hashref(NAME_lc)) {
+  while ($ref = $sth->fetchrow_hashref) {
     $ref->{object_id} = abs $ref->{object_id};
     push @{$form->{all_recent}}, $ref;
   }
@@ -149,8 +146,7 @@ sub list {
   $dbh->disconnect;
 }
 
-sub register {
-  my ($self, $myconfig, $form) = @_;
+sub register ($self, $myconfig, $form) {
   my $login = $form->{login};
   $login =~ s/\@.*//;
 
@@ -208,8 +204,7 @@ sub register {
   $dbh->disconnect;
 }
 
-sub unregister {
-  my ($self, $myconfig, $form) = @_;
+sub unregister ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -232,80 +227,77 @@ sub unregister {
 
 # internal methods
 
-sub _code {
-  my ($self, $form) = @_;
+sub _code ($self, $form) {
   $form->{script} =~ /(.+)\.pl/;
   return $self->can("_code_$1")->($form);
 }
 
-sub _code_ {
-  my ($form) = @_;
+sub _code_ ($form) {
   return SALES_ORDER   if $form->{type} eq 'sales_order';
   return SALES_INVOICE if $form->{type} eq 'invoice';
   $form->error('type not identified');
 }
 
-sub _code_ap {
+sub _code_ap ($) {
   return AP_TRANSACTION;
 }
 
-sub _code_ar {
+sub _code_ar ($) {
   return AR_TRANSACTION;
 }
 
-sub _code_ct {
-  return &{uc shift->{db}};
+sub _code_ct ($form) {
+  my $db = uc $form->{db};
+  return SL::RU->$db;
 }
 
-sub _code_gl {
+sub _code_gl ($) {
   return GL_TRANSACTION;
 }
 
-sub _code_ic {
+sub _code_ic ($) {
   return ITEM;
 }
 
-sub _code_ir {
+sub _code_ir ($) {
   return VENDOR_INVOICE;
 }
 
-sub _code_is {
+sub _code_is ($) {
   return SALES_INVOICE;
 }
 
-sub _code_jc {
+sub _code_jc ($) {
   return TIMECARD;
 }
 
-sub _code_oe {
-  my ($form) = @_;
-  my $type = $form->{type};
-  $type =~ s/consolidate_//;
-  return &{uc $type};
+sub _code_oe ($form) {
+  my $type = uc $form->{type};
+  $type =~ s/CONSOLIDATE_//;
+  return SL::RU->$type;
 }
 
-sub _code_pe {
+sub _code_pe ($) {
   PROJECT;
 }
 
-sub _descr {
-  my ($self, $form, $code) = @_;
+sub _descr ($self, $form, $code) {
 
   my %descr = (
-    &AP_TRANSACTION    => \&_descr_ap,
-    &AR_TRANSACTION    => \&_descr_ar,
-    &CUSTOMER          => \&_descr_ct,
-    &GL_TRANSACTION    => \&_descr_gl,
-    &ITEM              => \&_descr_ic,
-    &PROJECT           => \&_descr_pe,
-    &PURCHASE_ORDER    => \&_descr_oe2,
-    &REQUEST_QUOTATION => \&_descr_oe1,
-    &SALES_INVOICE     => \&_descr_ar,
-    &SALES_ORDER       => \&_descr_oe2,
-    &SALES_QUOTATION   => \&_descr_oe1,
-    &TIMECARD          => \&_descr_jc,
-    &VENDOR            => \&_descr_ct,
-    &VENDOR_INVOICE    => \&_descr_ap,
+   $self->AP_TRANSACTION    => \&_descr_ap,
+   $self->AR_TRANSACTION    => \&_descr_ar,
+   $self->CUSTOMER          => \&_descr_ct,
+   $self->GL_TRANSACTION    => \&_descr_gl,
+   $self->ITEM              => \&_descr_ic,
+   $self->PROJECT           => \&_descr_pe,
+   $self->PURCHASE_ORDER    => \&_descr_oe2,
+   $self->REQUEST_QUOTATION => \&_descr_oe1,
+   $self->SALES_INVOICE     => \&_descr_ar,
+   $self->SALES_ORDER       => \&_descr_oe2,
+   $self->SALES_QUOTATION   => \&_descr_oe1,
+   $self->TIMECARD          => \&_descr_jc,
+   $self->VENDOR            => \&_descr_ct,
+   $self->VENDOR_INVOICE    => \&_descr_ap,
   );
   my $fn = $descr{$code} or return $form->{id}, '';
 
@@ -316,72 +308,61 @@ sub _descr {
   return substr($number, 0, 32), $description;
 }
 
-sub _descr_ap {
-  my ($form) = @_;
+sub _descr_ap ($form) {
   return $form->{invnumber}, "$form->{vendor}, $form->{transdate}";
 }
 
-sub _descr_ar {
-  my ($form) = @_;
+sub _descr_ar ($form) {
   return $form->{invnumber}, "$form->{customer}, $form->{transdate}";
 }
 
-sub _descr_ct {
-  my ($form) = @_;
+sub _descr_ct ($form) {
   return $form->{"$form->{db}number"},
     "$form->{name}, $form->{zipcode} $form->{city}";
 }
 
-sub _descr_gl {
-  my ($form) = @_;
+sub _descr_gl ($form) {
   return $form->{reference}, $form->{transdate};
 }
 
-sub _descr_ic {
-  my ($form) = @_;
-  return $form->{partnumber}, (split "\n", $form->{description})[0] // '';
+sub _descr_ic ($form) {
+  return $form->{partnumber}, (split "\n", $form->{description} // '')[0] // '';
 }
 
-sub _descr_jc {
-  my ($form) = @_;
+sub _descr_jc ($form) {
   return $form->{id},
     ($form->{projectdescription} || $form->{projectnumber})
     . qq|, $form->{transdate} $form->{inhour}:$form->{inmin}-$form->{outhour}:$form->{outmin}, $form->{qty}|;
 }
 
-sub _descr_oe1 {
-  my ($form) = @_;
+sub _descr_oe1 ($form) {
   return $form->{quonumber}, qq|$form->{$form->{vc}}, $form->{transdate}|;
 }
 
-sub _descr_oe2 {
-  my ($form) = @_;
+sub _descr_oe2 ($form) {
   return $form->{ordnumber}, qq|$form->{$form->{vc}}, $form->{transdate}|;
 }
 
-sub _descr_pe {
-  my ($form) = @_;
+sub _descr_pe ($form) {
   return $form->{projectnumber},
     qq|$form->{$form->{vc}}, $form->{startdate}-$form->{enddate}|;
 }
 
-sub _employee_id {
-  my ($form, $dbh) = @_;
+sub _employee_id ($form, $dbh) {
 
   return -1 if $form->{admin};
 
   my $login = $form->{login};
   $login =~ s/\@.*//;
 
-  $query = qq|SELECT id FROM employee WHERE login = '$login'|;
+  my $query = qq|SELECT id FROM employee WHERE login = '$login'|;
   my ($rv) = $dbh->selectrow_array($query);
-  $rv *= 1;
+  ($rv //= 0) *= 1;
 
   return $rv;
 }
 
-sub _object_id {
-  my ($form) = @_;
+sub _object_id ($form) {
   return $form->{script} eq 'jc.pl' ? -$form->{id} : $form->{id};
 }
 
@@ -391,7 +372,7 @@ sub _object_id {
 
 =head1 NAME
 
-RU - backend for recently used objects
+SL::RU - backend for recently used objects
 
 =head1 DESCRIPTION
 
@@ -403,14 +384,14 @@ L<SL::RU> implements the following functions:
 
 =head2 delete
 
-  RU->delete($myconfig, $form);
+  SL::RU->delete($myconfig, $form);
 
 =head2 list
 
-  RU->list($myconfig, $form);
+  SL::RU->list($myconfig, $form);
 
 =head2 register
 
-  RU->register($myconfig, $form);
+  SL::RU->register($myconfig, $form);
 
 =cut

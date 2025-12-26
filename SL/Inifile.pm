@@ -1,22 +1,21 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2006
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
-#=====================================================================
+#======================================================================
 #
 # routines to retrieve / manipulate win ini style files
 # ORDER is used to keep the elements in the order they appear in .ini
 #
-#=====================================================================
+#======================================================================
+use v5.40;
 
-package Inifile;
+package SL::Inifile;
 
 
-sub new {
-  my ($type, $file) = @_;
+sub new ($type, $file) {
 
   $type = ref($type) || $type;
   my $self = bless {}, $type;
@@ -26,17 +25,16 @@ sub new {
 }
 
 
-sub add_file {
-  my ($self, $file) = @_;
+sub add_file ($self, $file) {
 
   my $id = "";
   my %menuorder = ();
 
   for (@{$self->{ORDER}}) { $menuorder{$_} = 1 }
 
-  open(FH, '<:utf8', "$file") or Form->error("$file : $!");
+  open my $fh, '<:encoding(UTF-8)', "$file" or SL::Form->error("$file : $!");
 
-  while (<FH>) {
+  while (<$fh>) {
     next if /^(#|;|\s)/;
     last if /^\./;
 
@@ -62,7 +60,7 @@ sub add_file {
     $self->{$id}{$key} = $value;
 
   }
-  close FH;
+  close $fh;
 
 }
 
@@ -74,7 +72,7 @@ sub add_file {
 
 =head1 NAME
 
-Inifile - Routines to retrieve / manipulate win ini style files
+SL::Inifile - Routines to retrieve / manipulate win ini style files
 
 =head1 DESCRIPTION
 
@@ -87,7 +85,7 @@ L<SL::Inifile> uses the following constructor:
 
 =head2 new
 
-  $inifile = Inifile->new($file);
+  $inifile = SL::Inifile->new($file);
 
 =head1 METHODS
 

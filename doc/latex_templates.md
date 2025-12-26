@@ -1,12 +1,17 @@
-# Extensions for LaTeX templates
+[SQL-Ledger Documentation](index.md) ▶ LaTeX Templates
 
-This version of SQL-Ledger provides some additional functions and variables that
-can be used in LaTeX templates.
+# LaTeX Templates
 
-## <a id="md"></a>Text decoration and links
+It is recommended to use `XeLaTeX` instead of `LaTeX` with `pdflatex`. If your
+templates still rely on the latter, plan to convert them promptly.
 
-Input fields accepts simple accept simple markdown commands to format the output
-as italic or bold.
+This release of SQL-Ledger introduces additional functions and variables that
+can be utilized in templates.
+
+## Simple Markdown
+
+Input fields accepts simple markdown commands to format the output as italic or
+bold.
 
 ```
 This word is *italic*. And this one is **bold**.
@@ -23,9 +28,10 @@ The repo for this code on [Github](https://github.com/Tekki/sql-ledger).
 Will be printed as: «The repo for this code on
 [Github](https://github.com/Tekki/sql-ledger).»
 
-## <a id="localaddr"></a>Variables for localized addresses
+## Variables for Localized Addresses
 
-If localized addresses are activted, there are four new variables available:
+If [Localized Postal Addresses](configuration.md#localized-postal-addresses) are
+activted, four new variables are made available:
 
 | variable           | content                                            |
 |--------------------|----------------------------------------------------|
@@ -37,7 +43,7 @@ If localized addresses are activted, there are four new variables available:
 Formatted addresses contain all the name and address fields and are formatted
 following the rules published by the Universal Postal Union.
 
-## <a id="qrbill"></a>Variables for Swiss QR Bill
+## Variables for Swiss QR Bill
 
 For documents sent to customers, several variables are prepared that can be used
 to generate QR Codes for Swiss QR Bills.
@@ -60,7 +66,7 @@ instead of `qr_` that contains characters that are encoded twice. With
 `pdflatex` you can only use plain ASCII texts that are available with prefix
 `qrasc_`.
 
-## <a id="qrcode"></a>Directive for QR Codes
+## Directive to Generate QR Codes
 
 This directive inserts a QR Code as TikZ graphics into the `.tex` file. The
 calculation of the code is made inside SQL-Ledger an not delegated to LaTeX.
@@ -75,10 +81,10 @@ version screen as admin for this) and the template loads TikZ.
 A QR Code can now be generated with
 
 ```
-<%var qrcode=height%>
+<%VAR qrcode=HEIGHT%>
 ```
 
-where `var` is the name of the variable and `height` the height of the image in
+where `VAR` is the name of the variable and `HEIGHT` the height of the image in
 millimeters.
 
 A QR Code for the partnumber with height 15 mm for example is produced with

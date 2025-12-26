@@ -1,19 +1,17 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2024
 #
-#  Author: Tekki
-#     Web: https://tekki.ch
+# © 2024-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
 # Address Validation
 #
 #======================================================================
+use v5.40;
+
 package SL::ADR;
 
-use strict;
-use warnings;
 use utf8;
 
 use constant {
@@ -288,9 +286,7 @@ use constant {
 
 # functions
 
-sub check_country {
-  my ($form, $msg, $pre) = @_;
-  $pre ||= '';
+sub check_country ($form, $msg, $pre = '') {
   my $countrycode = $form->{"${pre}country"};
 
   if ($countrycode && !country_name($countrycode)) {
@@ -304,8 +300,7 @@ sub country_name {
   return COUNTRY_CODES->{$_[0] // ''} || '';
 }
 
-sub default_country {
-  my ($form) = @_;
+sub default_country ($form) {
   my %rv = (valid => 0);
 
   if (my $name = country_name($form->{companycountry})) {
@@ -319,10 +314,8 @@ sub default_country {
   return \%rv;
 }
 
-sub local_address {
-  my ($form, $ref, $pre) = @_;
+sub local_address ($form, $ref = undef, $pre = '') {
   my $in = $ref || $form;
-  $pre ||= '';
   my ($rv, @values);
 
   if ($pre) {
@@ -362,8 +355,7 @@ sub local_address {
   return $rv;
 }
 
-sub uid_register {
-  my ($form) = @_;
+sub uid_register ($form) {
   my %rv;
 
   my $uid = $form->{taxnumber} =~ s/\D//gr;

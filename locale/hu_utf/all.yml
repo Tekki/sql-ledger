@@ -1,0 +1,1546 @@
+---
+locale: hu_utf
+texts:
+  '%': '%'
+  (empty): (üres)
+  (none): (nincs)
+  +/-: +/-
+  .v11: .v11
+  1.Reminder: 1. emlékeztető
+  2.Reminder: 2. emlékeztető
+  3.Reminder: 3. emlékeztető
+  <hr>: ''
+  A: A
+  AP: Szállító számlák
+  AP Aging: Lejárt számlák
+  AP Amount: Szállító összeg
+  AP Outstanding: Szállítói tartozás
+  AP Payment: Szállító kifizetés
+  AP Transaction: Szállító számla rögzítése
+  AP Transactions: Szállító tranzakciók
+  AP account does not exist!: Szállító főkönyvi szám nem létezik!
+  AP account missing!: Hiányzik a szállító főkönyvi száma!
+  AR: Vevő számlák
+  AR Aging: Lejárt számlák
+  AR Amount: Vevő összeg
+  AR Outstanding: Vevői kinnlevőség
+  AR Payment: Vevő kifizetés
+  AR Transaction: Vevő számla rögzítése
+  AR Transactions: Vevő tranzakciók
+  AR account does not exist!: Vevő főkönyvi szám nem létezik!
+  AR account missing!: Hiányzik a vevő főkönyvi száma!
+  AR/AP: Vevő/Szállító
+  About: -ról
+  Above: Felett
+  Accepted format is: 'Elfogadott formátum:'
+  Access Control: Jogosultságok
+  Access Denied!: Hozzáférés megtagadva!
+  Account: Főkönyvi számla
+  Account Number: Főkönyvi szám azonosító
+  Account Number missing!: Hiányzik a főkönyvi szám!
+  Account Type: Főkönyv típus
+  Account Type missing!: Hiányzik a főkönyv típus!
+  Account deleted!: Főkönyvi szám törölve!
+  Account saved!: Főkönyvi szám elmentve
+  Accounting Menu: Könyvelés
+  Accounts: Főkönyvi számok
+  Accrual: Teljesítés
+  Action: Akció
+  Activate Audit trail: Eseménynapló bekapcsolása
+  Active: Aktív
+  Add: Új
+  Add AP Transaction: Új szállító tranzakció
+  Add AP Voucher: Új szállító bizonylat
+  Add AR Transaction: Új vevő tranzakció
+  Add Account: Új főkönyvi számla
+  Add Assembly: Új saját termék
+  Add Business: Új partnercsoport
+  Add Column: Oszlop hozzáadása
+  Add Credit Invoice: Új jóváíró számla
+  Add Credit Note: Új jóváíró értesítő
+  Add Currency: Devizanem hozzáadás
+  Add Customer: Új vevő felvitele
+  Add Dataset: Adatbázis létrehozás
+  Add Debit Invoice: Új szállító számla
+  Add Debit Note: Új terhelési értesítő
+  Add Deduction: Új levonás
+  Add Department: Részleg hozzáadása
+  Add Document: Dokumentum hozzáadás
+  Add Employee: Új dolgozó felvitele
+  Add Exchange Rate: Árfolyam hozzáadása
+  Add FX Adjustment: Új FX kiigazítás
+  Add File: Fájl feltöltése
+  Add GIFI: Új gyűjtőkód
+  Add General Ledger Batch: Új vegyes könyvelési tétel
+  Add General Ledger Transaction: Új vegyes könyvelési tétel
+  Add General Ledger Voucher: Új vegyes könyvelési bizonylat
+  Add Group: Új termékcsoport
+  Add Job: Új gyártás
+  Add Kit: Új szerelvény
+  Add Labor/Overhead: Új munkaművelet
+  Add Language: Nyelv hozzáadása
+  Add Mimetype: Fájltípus hozzáadása
+  Add New GL: Új vegyes könyvelés
+  Add POS Invoice: Új pénztárgép nyugta
+  Add Part: Új alapanyag
+  Add Payable Batch: Új fizetendő tétel
+  Add Payment Batch: Új kifizetési tétel
+  Add Payment Method: Fizetési mód hozzáadása
+  Add Payment Reversal Batch: Új kifizetés érvénytelenítő tétel
+  Add Payments Batch: Új kifizetési tételek
+  Add Payroll: Új bérjegyzék
+  Add Pricegroup: Új árcsoport
+  Add Project: Új projekt
+  Add Purchase Order: Új beszerzési rendelés
+  Add Quotation: Új árajánlat
+  Add Request for Quotation: Új ajánlatkérés
+  Add Role: Munkakör hozzáadása
+  Add SIC: VTSZ hozzáadása
+  Add Sales Invoice: Új vevőszámla
+  Add Sales Order: Új vevőrendelés
+  Add Service: Új szolgáltatás
+  Add Snapshot: Pillanatfelvétel hozzáadása
+  Add Stores Card: Új anyaglap
+  Add Time Card: Új munkalap
+  Add Transaction: Új tranzakció
+  Add Vendor: Új beszállító
+  Add Vendor Invoice: Új vevő számla
+  Add Voucher: Új bizonylat
+  Add Wage: Új bér
+  Add Warehouse: Raktár hozzáadása
+  Add document failed!: Sikertelen a dokumentum hozzáadása!
+  Added: Hozzáadott
+  Addition: Kiegészítés
+  Address: Cím
+  Address Line 1: Cím 1
+  Address Line 2: Cím 2
+  Addresses from UID Register: ''
+  Admin: Admin
+  Administration: Adminisztráció
+  Administrator: Adminisztrátor
+  Aged: Esedékes
+  Aged Overdue: Lejárt esedékesség
+  Align: Rendez
+  All: Minden
+  All Accounts: Összes főkönyvi szám
+  All Batches: Összes köteg
+  All Items: Összes tétel
+  All amounts in: Minden összeg
+  All selected!: Minden kiválasztva!
+  Allocated: Lefoglalva
+  Allowed range for selected month is: Megadott hónap időszaka
+  Allowed range is: Engedélyezett időszak
+  Amount: Öszeg
+  Amount missing!: Hiányzik az összeg!
+  Annual Interest: Éves kamat
+  Approved: Jóváhagyott
+  Apr: Ápr.
+  April: Április
+  Archive File: Archivált fájl
+  Are you sure you want to delete: Biztosan törli ezt a tételt
+  Are you sure you want to delete Batch: Biztos törli ezt a tételt?
+  Are you sure you want to delete Invoice Number: Biztosan törli a számlát?
+  Are you sure you want to delete Order Number: Biztosan törli ezt a sorszámú rendelést?
+  Are you sure you want to delete Quotation Number: Biztosan törli ezt a sorszámú árajánlatot?
+  Are you sure you want to delete Transaction: Biztosan törli az alábbi tranzakciót?
+  Are you sure you want to delete dataset: Biztosan törli az adatbázist?
+  'Are you sure you want to delete language: ': Biztosan törli ezt a nyelvet?
+  Are you sure you want to delete stores card: Biztosan törli a anyaglapot?
+  Are you sure you want to delete the following Snapshots?: Biztosan törli ezt a pillanatfelvételt?
+  Are you sure you want to delete the following Transactions?: Biztosan törli az alábbi tranzakciókat?
+  Are you sure you want to delete time card for: Biztosan törli a munkalapot ehhez a gyártáshoz?
+  Are you sure you want to reconcile all marked payments: Biztos, hogy egyezteti az összes megjelölt kifizetést?
+  Are you sure you want to remove the marked entries from the queue?: Biztos, hogy eltávolítja a megjelölt tételeket a várólistából?
+  Are you sure you want to void checks: Biztos, hogy érvényteleníti a csekket?
+  Are you sure you want to void receipts: Biztos, hogy érvényteleníti a nyugtát?
+  As of: Ettől
+  Assemblies: Saját termékek
+  Assemblies stocked!: Saját termékek bevételezve!
+  Assembly: Saját termék
+  Assembly BOM Transfer: Saját termék összetevő transzfere
+  Assembly Changeup: Saját termék változtatás
+  Assembly Number: Saját termék azonosító
+  Assembly stocked!: Saját termék bevételezve!
+  Asset: Eszköz
+  Assets: Eszközök
+  Assign Number: Szám hozzárendelése
+  Attach: Csatolás
+  Attach Document: Dokumentum csatolása
+  Attach to: Csatolás ehhez
+  Attached to: Csatolva ehhez
+  Attachment: Csatolmány
+  Audit Control: Audit beállítások
+  Audit Log: Audit napló
+  Audit trail disabled: Eseménynapló letiltva
+  Audit trail enabled: Eseménynapló engedélyezve
+  Audit trail removed up to: 'Eseménynapló eltávolítása eddig:'
+  Aug: Aug.
+  August: Augusztus
+  Authenticator: Hitelesítő
+  Available Credit: Szabad hitelkeret
+  Average Cost: Átlag beszerzési ár
+  Avg Cost: Átl. besz. ár
+  BC Number: BC azonosító
+  BIC: BIC
+  BIC missing!: Hiányzik a BIC!
+  BOM: Anyagjegyzék
+  Back: Vissza
+  Backorder: Visszamaradt
+  'Backorder from Orders: ': 'Visszamaradt ebből a rendelésből:'
+  Backup: Mentés
+  Backup File: Mentés fájlba
+  Backup sent to: Mentés küldése
+  Balance: Egyenleg
+  Balance Sheet: Egyenleg
+  Bank: Bank
+  Bank Account: Bankszámlaszám
+  Bank Account Details: Bankszámlaszám adatai
+  Bank Accounts: Bankszámla számok
+  Bank saved!: Bank elmentve!
+  Barcode: Vonalkód
+  Barcodes: Vonalkódok
+  Based on: Alapján
+  Batch: Kötegelt műveletek
+  Batch Number: Tételszám
+  Batch Posting failed!: Tétel rögzítése sikertelen!
+  Batch deleted!: A tétel törölve!
+  Batch posted!: A tétel rögzítve!
+  Bcc: Titkos másolat
+  Beginning Balance: Nyitóegyenleg
+  Beginning date: Kezdő dátum
+  Below: Alatt
+  Billing Address: Számlázási cím
+  Bin: VTSZ/SZJ
+  Bin List: Rendelési lista
+  Bin Lists: Rendelési listák
+  Bookkeeping: Könyvelés
+  Books are open: Nyitott könyvelés
+  Books closed up to: 'Könyvelés lezárása eddig a dátumig:'
+  Break: Határ
+  Building Number: Épület száma
+  Business: Partnercsoport
+  Business Number: Adószám
+  Business deleted!: Partnercsoport törölve!
+  Business saved!: Partnercsoport elmentve!
+  C: C
+  CO: CO
+  COGS: ELÁBÉ
+  COGS account does not exist!: Nem létezik ELÁBÉ főkönyvi számla!
+  Can only send one reminder at a time!: Egyszerre csak egy emlékeztető küldhető!
+  Can only send one statement at a time!: Egyszerre csak egy kimutatás küldhető!
+  Cannot add stores card for a completed job!: Nem adható hozzá anyaglap egy lezárt gyártáshoz!
+  Cannot add time card for a completed job!: Nem adható hozzá munkalap egy lezárt gyártáshoz!
+  Cannot change stores card for a completed job!: Nem módosítható a anyaglap egy lezárt gyártásnál!
+  Cannot change time card for a completed job!: Nem módosítható a munkalap egy lezárt gyártásnál!
+  Cannot create Assembly: Nem lehet létrehozni a saját terméket!
+  Cannot create Kit: Nem lehet létrehozni a szerelvényt!
+  Cannot create Labor: Nem lehet létrehozni a munkaműveletet!
+  Cannot create Lock!: Nem lehet zárolni!
+  Cannot create Part: Nem lehet létrehozni az alapanyagot!
+  Cannot create Service: Nem lehet létrehozni a szolgáltatást!
+  Cannot delete account!: Főkönyvi szám nem törölhető!
+  Cannot delete batch!: A tétel nem törölhető!
+  Cannot delete customer!: A vevő nem törölhető!
+  Cannot delete default account!: Alapértelmezett főkönyvi szám nem törölhető!
+  Cannot delete employee!: Nem törölhető az alkalmazott!
+  Cannot delete invoice!: Nem törölhető a számla!
+  Cannot delete item!: Nem törölhető tétel!
+  Cannot delete order!: Nem törölhető a rendelés!
+  Cannot delete quotation!: Nem törölhető az árajánlat!
+  Cannot delete stores card!: Nem törölhető a anyaglap!
+  Cannot delete time card!: Nem módosítható a munkalap!
+  Cannot delete transaction!: A tranzakció nem törölhető!
+  Cannot delete vendor!: A szállító nem törölhető!
+  Cannot delete voucher!: A bizonylat nem törölhető!
+  Cannot post cash discount for a closed period!: Nem rögzíthető kedvezmény egy lezárt időszakra!
+  Cannot post invoice for a closed period!: Nem rögzíthető számla egy lezárt időszakra!
+  Cannot post invoice!: Nem rögzíthető számla!
+  Cannot post payment for a closed period!: Nem rögzíthető kifizetés egy lezárt időszakra!
+  Cannot post transaction for a closed period!: Nem rögzíthető tranzakció egy lezárt időszakra!
+  Cannot post transaction with a debit and credit entry for the same account!: Nem rögzíthető tartozik/követel tranzakció ugyanahhoz a főkönyvi számhoz!
+  Cannot post transaction!: Nem rögzíthető a tranzakció!
+  Cannot post voucher!: A bizonylat nem rögzíthető!
+  Cannot process gzipped file!: A tömörített fájl nem használható!
+  Cannot remove files!: Nem távolítható el a fájl!
+  Cannot return assembly!: Nem lehet visszavételezni a saját terméket!
+  Cannot save Batch: A tétel nem menthető!
+  Cannot save account!: Nem menthető a főkönyvi szám!
+  Cannot save defaults!: Nem menthetők az alapbeállítások!
+  Cannot save order!: Nem menthető a rendelés!
+  Cannot save preferences!: Nem menthetők az felhasználói beállítások!
+  Cannot save quotation!: Nem menthető az árajánlat!
+  Cannot save stores card for a closed period!: Nem menthető anyaglap egy lezárt időszakhoz!
+  Cannot save stores card!: Nem menthető a anyaglap!
+  Cannot save taxes!: Nem menthetők az adószámlák!
+  Cannot save time card for a closed period!: Nem menthető munkalap egy lezárt időszakhoz!
+  Cannot save time card!: Nem menthető a munkalap!
+  Cannot set account for more than one of AR, AP or IC: Gyűjtőszámla nem lehet egyszerre Vevők, Szállítók vagy Készlet!
+  Cannot set multiple options for: Ehhez a tételhez nem állítható be többszörös opció
+  Cannot stock Assembly!: Nem lehet bevételezni a saját terméket!
+  Cannot stock assemblies!: Nem lehet készletre venni a saját terméket!
+  Cannot transfer to the same warehouse!: Nem lehet áttárolni ugyanabba a raktárba!
+  Cannot use: Nem használható
+  Cannot use admin as login!: Nem lehet használni az admin bejelentkezést!
+  Card Number: Lap sorszáma
+  Cash: Pénzmozgások
+  Cash Discount: Készpénz kedvezmény
+  Cash Discount date missing!: Hiányzik a kedvezmény dátuma!
+  Cash Drawer: Pénztárgép
+  Cash Over/Short: Készpénz többlet/hiány
+  Cash discount date missing!: Hiányzik a kedvezmény dátuma!
+  Cash discount date past due!: Lejárt a kedvezmény érvényessége!
+  Cash discount exceeds available discount!: A kedvezmény meghaladja az elérhető mértéket!
+  Category: Kategória
+  Cc: Másolat
+  Change: Módosítás
+  Change Host: Gazdagép módosítása
+  Change Host for Dataset: Adatbázis gazdagépének módosítása
+  Change Password: Jelszó módosítás
+  Change Password for Dataset: Adatbázis jelszavának módosítása
+  Changeup: Módosítás
+  Changeup Assemblies: Saját termék változtatása
+  Changeup Labor/Overhead: Munkaművelet változtatása
+  Changeup Parts: Alapanyag változtatása
+  Changeup Services: Szolgáltatás változtatása
+  Chargeable: Felszámítható
+  Chargeout Rate: Felszámítható arány
+  Chart of Accounts: Számlatükör
+  Chart of Accounts Translations: Főkönyvi számlák fordítása
+  Check: 'Utalvány '
+  Check Addresses: Címek ellenőrzése
+  Check In: Bejelentkezés
+  Check Inventory: Készlet figyelés
+  Check No.: Utalvány No.
+  Check Number: Utalvány sorszáma
+  Check Out: Kijelentkezés
+  Check Register: Utalávny nyilvántartás
+  City: Település
+  Clear Semaphores: Jelölők törlése
+  Clearing No.: Klíring sorszáma
+  Clearing Number: Klírin sorszáma
+  Clocked: Szinkronizálva
+  Close Books up to: Könyvelés lezárása eddig a dátumig
+  Close Window: Ablak bezárása
+  Closed: Lezárt
+  Code: Kód
+  Code from Authenticator: Hitelesítő kódja
+  Code missing!: Hiányzik a kód!
+  Code on page: Kód az oldalon
+  Combine: Egyesít
+  Command: Parancs
+  Company: Cég
+  Company Name: Cégnév
+  Company Number: Cégazonosító
+  Company missing!: Hiányzik a cég!
+  'Company:': 'Cég:'
+  Completed: Elkészült
+  Components: Saját termékek összetevői
+  Confidential: Bizalmas
+  Configuration file missing!: Hiányzó beállítási fájl!
+  Confirm: Elfogadás
+  Confirm!: Jóváhagyás!
+  Connect to: Csatlakozás
+  Consolidate: Egyesítés
+  Consolidate Invoices: Számlák egyesítése
+  Consolidate Orders: Rendelések egyesítése
+  Consolidate Orders to Invoice: Rendelések egyesítése számlába
+  Consolidate Purchase Orders: Beszerzési rendelések egyesítése
+  Consolidate Sales Orders: Vevőrendelések egyesítése
+  Consolidate Sales Orders to Invoice: Vevőrendelések egyesítése számlába
+  Consolidated Orders: Egyesített rendelések
+  Consolidated to Invoice: Egyesítve számlába
+  Contact: Kapcsolat
+  Content-Type: Tartalom típus
+  Content-Type missing!: Hiányzik a tartalom típus!
+  Continue: Folytatás
+  Continue?: Folytatás?
+  Contra: Ellenszámla
+  Copies: Pédányszám
+  Copy: Másolat
+  Copy to COA: Másolás a számlatükörbe
+  Cost: Költség
+  Cost Center: Költséghely
+  Could not delete document!: Nem törölhető a dokumentum!
+  Could not detach document!: Nem választható le a dokumentum!
+  Could not save document!: Nem menthető a dokumentum!
+  Could not save pricelist!: Az árlista nem menthető!
+  Could not save reminder level!: Nem lehet menteni az emlékeztető szintet!
+  Could not save!: Nem menthető!
+  Could not transfer Inventory!: Nem lehetett áttárolni a készletet!
+  Could not void payments!: Nem lehet érvényteleníti a kifizetést!
+  Country: Ország
+  Country code missing!: Hiányzik az országkód!
+  Country of Origin: Származási ország
+  Create Chart of Accounts: Számlatükör létrehozása
+  Create Dataset: Adatbázis létrehozása
+  Create missing vendor: Hiányzó szállító létrehozása
+  Create new snapshot for current point of time: Új pillanatfelvétel készítése az aktuális időpontról
+  Credit: Követel
+  Credit Invoice: Jóváíró számla
+  'Credit Invoice ': Vevő számla
+  Credit Limit: Hitelkeret
+  Credit Note: Jóváírási értesítés
+  Credits: 'Köszönet:'
+  Curr: Deviza
+  Currencies: Devizanemek
+  Currency: Devizanem
+  Currency deleted!: Devizanem törölve!
+  Currency missing!: Hiányzik a devizanem!
+  Currency saved!: Devizanem elmentve!
+  Current: Aktuális
+  Current Earnings: Aktuális jövedelem
+  Customer: Vevő
+  Customer History: Vevőelemzés
+  Customer Number: Vevő azonosító
+  Customer Transactions: Vevő tranzakciók
+  Customer deleted!: Vevő törölve!
+  Customer missing!: Hiányzik a vevő!
+  Customer not on file!: Vevő nem található a rendszerben!
+  Customer saved!: Vevőadatok mentve!
+  Customer/Vendor: Vevő/Szállító
+  Customer/Vendor Number: Vevő/Szállító azonosító
+  Customers: Vevők
+  DBI not installed!: Telepíteni kell a DBI-t!
+  DCN: DCN
+  DCN missing!: Hiányzik a DCN!
+  DOB: Szül.
+  DOS: Kezdő dátum
+  Database Driver missing!: Hiányzó adatbázis meghajtó!
+  Database Host: Adatábázis helye
+  Database Monitor: Adatbázis figyelés
+  Database Snapshots: Adatbázis pillanatfelvétel
+  Dataset: Adatbázis
+  Dataset Size: Adatállomány mérete
+  Dataset Version different!: Adatbázis verzió eltér!
+  'Dataset Version:': 'Adatbázis verzió:'
+  Dataset deleted!: Törölt adatbázis!
+  Dataset different!: Eltérő adatbázis!
+  Dataset is newer than version!: Az adatbázis újabb, mint a programverzió!
+  Dataset lock removed!: Adatbázis zárolás visszavonva!
+  Dataset locked!: Zárolt adatbázis!
+  Dataset missing!: Hiányzó adatbázis!
+  Dataset version newer, SQL-Ledger must first be upgraded!: Frissíteni kell az SQL-Ledger programot, mert újabb az adatbázis!
+  Dataset will be upgraded to: 'Adatbázis frissítése erre a verzióra:'
+  'Dataset:': Adatbázis
+  Date: Dátum
+  Date Format: Dátum formátum
+  Date Issued: Készítés dátuma
+  Date Paid: Fizetés dátuma
+  Date Prepared: Gyártási dátum
+  Date Received: Bevételezés dátuma
+  Date for cash discount missing!: Hiányzik a kedvezmény dátuma!
+  Date for cash discount past due!: A kedvezmény esedékessége lejárt!
+  Date missing!: Hiányzik a dátum!
+  Date received missing!: Hiányzik a bevételezés dátuma!
+  Date worked: Munkavégzés dátuma
+  Day: Nap
+  Day(s): Nap(ok)
+  Days: Napok
+  Debit: Tartozik
+  Debit Invoice: Terhelési számla
+  'Debit Invoice ': Szállító számla
+  Debit Note: Terhelési értesítés
+  Dec: Dec.
+  December: december
+  Decimal Point: Tizedesvesszó
+  Decimalplaces: Tizedeshelyek
+  Deduct: Levonás
+  Deduction deleted!: Levonás törölve!
+  Deduction saved!: Levonás elmentve!
+  Deductions: Levonások
+  Default: Alapbeállítás
+  Default Accounts: Alapértelmezett főkönyvi számok
+  Default Template: Alapértelmezett sablon
+  Defaults: Alapbeállítások
+  Defaults saved!: Alapbeállítások elmentve!
+  Defer: Késleltetés
+  Defer Payout: Kifizetés késleltetése
+  Deferred: Késleltetett
+  Delete: Törlés
+  Delete Account: Főkönyvi számla törlése
+  Delete Batch: Tétel törlése
+  Delete Column: Oszlop törlése
+  Delete Customers: Vevők törlése
+  Delete Documents: Dokumentumok törlése
+  Delete Files: Fájlok törlése
+  Delete Report: Lekérdezés törlése
+  Delete SQL command: SQL parancs törlése
+  Delete Schedule: Ütemezés törlése
+  Delete Snapshots: Pillanatfelvétel törlése
+  Delete Transactions: Tranzakciók törlése
+  Delete Vendors: Szállítók törlése
+  Delimiter: Elválasztó
+  Delivery Date: Szállítás dátuma
+  Department: Részleg
+  Department deleted!: Részleg törölve!
+  Department saved!: Részleg elmentve!
+  Departments: Részlegek
+  Deposit: Letét
+  Deposit Register: Letét nyilvántartás
+  Description: Megnevezés
+  Description Translations: Fordítások leírása
+  Description missing!: Hiányzik a megnevezés!
+  Deselect all: Összes kijelölés törlése
+  Detach: Leválasztás
+  Detail: Részletezve
+  Development Environment: Fejlesztési környezet
+  Difference: Eltérés
+  Disable: Letilt
+  Disc: Kedv.
+  Discount: Kedvezmény
+  Display: Megjelenítés
+  Display All: Összes megjelenítése
+  Document attached!: Dokumentum csatolva!
+  Document deleted!: Dokumentum törölve!
+  Document detached!: Dokumentum leválasztva!
+  Document not archived!: Dokumentum nem archiv!
+  Document saved!: Dokumentum elmentve!
+  Documents deleted!: Dokumentumok törölve!
+  Done: Elvégezve
+  Download Dump: ''
+  Drag and Drop: Húzd és ejtsd
+  Drawing: Rajz
+  Driver: Meghajtó
+  Drop-down: Legördülő
+  Dropdown Limit: Legördülő menü limit
+  Due: Esedékes
+  Due Date: Fizetési határidő
+  Duplicate Dataset!: Adatbázis másolat készítése!
+  E-Mail: E-levél
+  E-Mail TAN: Hitelesítő küldése E-levélben
+  E-mail: E-levél
+  E-mail Reminder to: 'Emlékeztető küldése e-levélben:'
+  E-mail Statement to: 'Kimutatás küldése e-levélben:'
+  E-mail TAN: TAN küldése e-levélben
+  E-mail address missing!: Hiányzik az e-levél cím!
+  E-mail message: E-levél üzenet
+  E-mailed: E-levélben elküldve
+  E-mailing: E-levél küldése erre a címre
+  Early Payment Discount given: Adott előrefizetési kedvezmény
+  Early Payment Discount received: Kapott előrefizetési kedvezmény
+  Edit: Módosítás
+  Edit AP Transaction: Szállító tranzakció módosítása
+  Edit AP Voucher: Szállító bizonylat módosítása
+  Edit AR Transaction: Vevő tranzakció módosítása
+  Edit Account: Főkönyvi szám módosítása
+  Edit Assembly: Saját termék módosítása
+  Edit Batch: Tétel módosítása
+  Edit Business: Partnercsoport módosítása
+  Edit Column: Oszlop módosítása
+  Edit Column Header: Oszlopfejléc módosítása
+  Edit Column Total: Oszlop összesítő módosítása
+  Edit Credit Invoice: Jóváíró számla módosítása
+  Edit Credit Note: Jóváíró értesítő módosítása
+  Edit Currency: Devizanem módosítása
+  Edit Customer: Vevőadatok módosítása
+  Edit Debit Invoice: Szállító számla módosítása
+  Edit Debit Note: Terhelési értesítő módosítása
+  Edit Deduction: Levonás módosítása
+  Edit Department: Részleg módosítása
+  Edit Description Translations: Fordítások leírásának módosítása
+  Edit Employee: Alkalmazott adatainak módosítása
+  Edit Exchange Rate: Árfolyam módosítása
+  Edit FX Adjustment: FX kiigazítás módosítása
+  Edit GIFI: Gyűjtőkód módosítása
+  Edit General Ledger Transaction: Vegyes könyvelési tétel módosítása
+  Edit General Ledger Voucher: Vegyes könyvelési bizonylat módosítása
+  Edit Group: Termékcsoport módosítása
+  Edit Group Translations: Termékcsoport fordítások módosítása
+  Edit Job: Gyártás módosítása
+  Edit Labor/Overhead: Munkaművelet módosítása
+  Edit Language: Nyelv módosítása
+  Edit Mimetype: Fájltípus módosítása
+  Edit POS Invoice: Pénztárgép nyugta módosítása
+  Edit Part: Alapanyag módosítása
+  Edit Payment Method: Fizetési mód módosítása
+  Edit Payroll: Bérjegyzék módosítása
+  Edit Preferences: Felhasználó beállítások módosítása
+  Edit Pricegroup: Árcsoport módosítása
+  Edit Project: Projekt módosítása
+  Edit Project Description Translations: Projekt fordítások módosítása
+  Edit Purchase Order: Beszerzési rendelés módosítása
+  Edit Quotation: Ajánlat módosítása
+  Edit Reference Document: Feltöltött dokumentum módosítása
+  Edit Request for Quotation: Ajánlatkérés módosítása
+  Edit Role: Munkakör módosítása
+  Edit SIC: VTSZ módosítása
+  Edit Sales Invoice: Vevőszámla módosítása
+  Edit Sales Order: Vevőrendelés módosítása
+  Edit Service: Szolgáltatás módosítása
+  Edit Stores Card: Anyaglap módosítása
+  Edit Time Card: Munkalap módosítása
+  Edit Vendor: Szállítóadatok módosítása
+  Edit Vendor Invoice: Vevő számla módosítása
+  Edit Warehouse: Raktár módosítása
+  Email: E-levél
+  Employee: Alkalmazott
+  Employee Login: Bejelentkezési név
+  Employee Name: Alkalmazott neve
+  Employee Number: Alkalmazott azonosítója
+  Employee deleted!: Alkalmazott törölve!
+  Employee missing!: Hiányzik az alkalmazott!
+  Employee pays: Alkalmazott fizetése
+  Employee saved!: Alkalmazott elmentve!
+  Employees: Alkalmazottak
+  Employer: Munkaadó
+  Employer pays: Munkaadó fizeti
+  Encryption: Titkosítás
+  Enddate: Kilépés
+  Ending Balance: Záróegyenleg
+  Ends: -ig
+  Enforce transaction reversal for all dates: Ellentétes előjelű tranzakció kényszerítése minden dátum esetében
+  Enter a SQL command to send to the server: SQL parancs megadása a szerveren való futtatáshoz
+  Equity: Tőke?
+  Error processing payment!: Hiba a fizetés feldolgozásában!
+  Error!: Hiba!
+  Every: Összes
+  Exch: Árf.
+  Exchange Rate: Árfolyam
+  Exchange Rate Difference: Árfolyam különbözet
+  Exchange Rate saved!: Árfolyam elmentve!
+  Exchange Rates: Árfolyamok
+  Exchange rate for cash discount missing!: Hiányzik a kedvezmény árfolyama!
+  Exchange rate for payment missing!: Hiányzik a kifizetés árfolyama!
+  Exchange rate missing!: Hiányzik az árfolyam!
+  Exchangerate: Árfolyam
+  Exclude Void Checks: Érvénytelen utalványok kivételével
+  Exclude Void Receipts: Érvénytelen nyugták kivételével
+  Exempt: Mentes
+  Exempt age <: Adómentes korhatár
+  Existing Datasets: Létező adatbázis
+  Expense: Költség
+  Expense account does not exist!: Nem létezik költség főkönyvi számla!
+  Expenses: Költségek
+  Expires: Lejárat
+  Export: Exportálás
+  Export Customers: Vevők exportálása
+  Export Payments: Kifizetések exportálása
+  Export Vendors: Szállítók exportálása
+  Extended: Kiterjeszett
+  Extension: Kiterjesztés
+  Extension missing!: Hiányzik a kiterjesztés
+  FX: FX
+  FX Adjustment: FX kiigazítás
+  Failed: Sikertelen
+  Failed to consolidate invoices!: Sikertelen a számlák egyesítése!
+  Failed to delete Currency!: Devizanem nem törölhető!
+  Failed to delete Role!: Munkakör nem törölhető!
+  Failed to delete Warehouse!: Raktár nem törölhető!
+  Failed to save Bank!: Bank mentése sikertelen!
+  Failed to save Currency!: Devizanem mentése sikertelen!
+  Failed to save Role!: Munkakör mentése sikertelen!
+  Failed to save Warehouse!: Raktár mentése sikertelen!
+  Failed to save order!: Sikertelen a rendelés mentése!
+  Failed to save workstations!: Munkaállomás mentése sikertelen!
+  Fax: Fax
+  Feb: Febr.
+  February: február
+  Fee: Díj
+  Female: Hölgy
+  File: Fájl
+  'File is too big! Allowed are:': 'Túl nagy a fájl! Megengedett méret:'
+  File to Import: Importálandó fájl
+  Filename: Fájlnév
+  Fill: Kitölt
+  Finance: Pénzügy
+  Financial Reports: Pénzügyi jelentések
+  Finished: Befejezve
+  First Name: Utónév
+  Firstname: Keresztnév
+  Fixed Length Text: Fix hosszúságú szöveg
+  Fixed value: Rögzített érték
+  Folder: Mappa
+  For: Részére
+  Force Warehouse: Raktár kényszerítése
+  Foreign Exchange Gain/Loss: Árfolyam nyereség/veszteség
+  Form: Űrlap
+  Fr: -tól
+  From: Mikortól
+  From Warehouse: Raktárból
+  G: G
+  G.W.: Br. súly
+  GIFI: Gyűjtőkód
+  GIFI deleted!: Gyűjtőkód törölve!
+  GIFI missing!: Hiányzik a gyűjtőkód
+  GIFI saved!: Gyűjtőkód elmentve!
+  GL: GL
+  GL Reference Number: Vegyes könyvelési azonosító
+  GL Transaction: Főkönyvi tranzakció
+  GL Transactions: ''
+  Gender: Nem
+  General Ledger: Főkönyv
+  General Ledger Accounts: Főkönyvi számlák
+  General Ledger Batches: Vegyes könyvelési tételek
+  General Ledger Vouchers: Vegyes könyvelési bizonylatok
+  Generate: Létrehozás
+  Generate Invoices: Számlák létrehozása
+  Generate Orders: Rendelések létrehozása
+  Generate Purchase Orders: Beszerzési rendelések létrehozása
+  Generate Purchase Orders failed!: Sikertelen a beszerzési rendelések létrehozása!
+  Generate Purchase Orders from Sales Order: Beszerzési rendelések létrehozása vevőrendelésből
+  Generate Sales Invoices: Vevőszámla létrehozása
+  Generate Sales Invoices from Sales Order: Vevőszámla létrehozása vevőrendelésből
+  Generate Sales Orders: Vevőrendelések létrehozása
+  Generating Invoices: Számlák létrehozása
+  Goods & Services: Termékek & Szolgáltatások
+  Group: Termékcsoport
+  Group Code: Termékcsoport kód
+  Group Translations: Termékcsoport fordítások
+  Group by: Csoportosítás
+  Group deleted!: Termékcsoport törölve!
+  Group missing!: Hiányzik a termékcsoport
+  Group saved!: Termékcsoport elmentve!
+  Groups: Termékcsoportok
+  HR: HR
+  HS Code: KN kód
+  Heading: Címsor
+  Hide Closed Accounts: Lezárt főkönyvi számok elrejtése
+  History: Elemzés
+  Home Mobile: Privát mobil
+  Home Phone: Privát telefon
+  Host: Gazdagép
+  I: I
+  IBAN: IBAN
+  IBAN missing!: Hiányzik az IBAN!
+  ID: Azonosító
+  Image: Kép
+  Image Files: Képfájlok
+  Import: Importálás
+  Import Chart of Accounts: Főkönyvi számok importálása
+  Import Customers: Vevők importálása
+  Import File missing!: Hiányzik az importálandó fájl!
+  Import General Ledger: Vegyes könyvelés importálása
+  Import Groups: Termékcsoportok importálása
+  Import Labor/Overhead: Munkaműveletek importálása
+  Import Orders: Rendelések importálása
+  Import Parts: Alapanyagok importálása
+  Import Payments: Kifizetések importálása
+  Import Purchase Orders: Beszerzési rendelések importálása
+  'Import QR-Bill: AP Transaction': 'QR bizonylat importálása: Szállító tranzakció'
+  'Import QR-Bill: Vendor Invoice': 'QR bizonylat importálása: Szállító számla'
+  Import Sales Invoices: Vevő számlák importálása
+  Import Sales Orders: Vevőrendelések importálása
+  Import Services: Szolgáltatások importálása
+  Import Vendors: Szállítók importálása
+  In-line: Beépítve
+  Inactive: Inaktív
+  Include Exchange Rate Difference: Árfolyamkülönbséget tartalmazza
+  Include Header: Tartalmazza a fejlécet
+  Include Payment: Fizetési tételek
+  Include in Report: Megjelenített oszlopok
+  Include in drop-down menus: Legördülő menük tartalmazzák
+  Income: Bevétel
+  Income / (Loss): Bevétel / Veszteség
+  Income Statement: Eredménykimutatás
+  Income account does not exist!: Nem létezik az árbevétel főkönyvi számla!
+  Incorrect Dataset version!: Helytelen adatbázis verzió!
+  Incorrect Password!: Helytelen jelszó!
+  Incorrect Username or Password!: Érvénytelen felhasználónév vagy jelszó!
+  Incorrect Username!: Helytelen felhasználónév!
+  Individual Items: Összetevők
+  Internal Notes: Belső megjegyzés
+  Invalid Code: Érvénytelen kód
+  Invalid TAN: Érvénytelen TAN
+  Invalid UID: ''
+  Invalid country code!: Érvénytelen országkód!
+  'Invalid date:': 'Érvénytelen dátum:'
+  'Invalid day:': 'Érvénytelen nap:'
+  'Invalid month:': 'Érvénytelen hónap:'
+  Inventory: Készlet
+  Inventory Count: Leltár
+  Inventory Value: Készletérték
+  Inventory account does not exist!: Nem létezik készlet főkönyvi számla!
+  Inventory saved!: Készlet elmentve!
+  Inventory transferred!: Készlet áttárolva!
+  Invoice: Számla
+  Invoice Date: Számla dátuma
+  Invoice Date missing!: Hiányzik a számla dátuma!
+  Invoice Number: Számla sorszáma
+  Invoice Number missing!: Hiányzik a számla száma!
+  Invoice deleted!: Számla törölve!
+  Invoice generation failed!: Sikertelen a számla létrehozása!
+  Invoices: Számlák
+  Invoices consolidated!: Számlák egyesítve!
+  Is this a summary account to record: Gyűjtőszámlaként kell rögzíteni?
+  Item: Tétel
+  Item already on pricelist!: A tétel már az árlistában található!
+  Item deleted!: Tétel törölve!
+  Item not on file!: A tétel nem található az adatbázisban!
+  Item saved!: Tétel elmentve!
+  Items: Tételek
+  Items stocked!: Tételek bevételezve!
+  Jan: Jan.
+  January: január
+  Job: Gyártás
+  Job Name: Gyártás megnevezése
+  Job Number: Munkaszám
+  Job Number missing!: Hiányzik a munkaszám!
+  Job deleted!: Gyártás törölve!
+  Job saved!: Gyártás elmentve!
+  Job/Project Number: Munka/Projekt szám
+  Jobs: Gyártások
+  Jul: Júl.
+  July: Július
+  Jun: Jún.
+  June: június
+  Keep restored snapshot: A visszaállított pillanatfelvétel megőrzése
+  Kits: Szerelvények
+  LaTeX Templates: LaTeX sablonok
+  Labor: Munkaművelet
+  Labor Code: Munkaművelet kód
+  Labor Code missing!: Hiányzik a munkaművelet kód
+  Labor/Overhead: Munkaműveletek
+  Labor/Overhead Changeup: Munkaművelet változtatása
+  Language: Nyelv
+  Language deleted!: Nyelv törölve!
+  Language saved!: Nyelv elmentve
+  Languages: Nyelvek
+  Languages not defined!: Nincs meghatározva a nyelv!
+  Last Cost: Utolsó beszerzési ár
+  Last Name: Vezetéknév
+  Last Numbers: Legutolsó számok
+  Lastcost: Utolsó beszerzési ár
+  Lastname: Vezetéknév
+  Late Payment Fee: Késedelmi kamat
+  Lead: Vezető
+  Leadtime: Átfutási idő
+  Left: Maradvány
+  Level: Szint
+  Liabilities: Kötelezettségek
+  Liability: Kötelezettség
+  Licensed to: Licenc jogosultja
+  Line Item: Tételsor
+  Linefeed: Soremelés
+  Lineitem: Tételsor
+  Link: Hivatkozás
+  Link Accounts: Főkönyvi szám hivatkozás
+  List: Lista
+  List Accounts: Főkönyvi számok listája
+  List Documents: Dokumentumok listája
+  List Files: Fájlok listája
+  List GIFI: Gyűjtőkódok listája
+  List Price: Árlista
+  List Transactions: Trazakciók listázása
+  Listprice: Listaár
+  Localized Addresses: ''
+  Lock: Lezárás
+  Lock Dataset: Adatbázis zárolása
+  Lock Message: Zárolási üzenet
+  Lock System: Rendszer zárolása
+  Locked: Zárolt
+  Locked by: Zárolta
+  Lockfile created!: Zárolási fájl létrehozva!
+  Lockfile removed!: Zárolási fájl eltávolítva!
+  Locks removed!: Lezárás visszavonva!
+  Login: Bejelentkezés
+  Logistics: Logisztika
+  Logout: Kijelentkezés
+  Lot: LOT
+  MAC: MAC
+  MFA: MFA
+  Main Groups: Fő csoportok
+  Maintenance: Karbantartás
+  Make: Gyártmány
+  Male: Férfi
+  Mapfile: Mapfile
+  Mar: Márc.
+  March: március
+  Margin: Árrés
+  Markup: Haszonkulcs
+  Master Records: Törzsadatok
+  Maximum: Maximum
+  Maximum Upload Size: Maximális feltöltési méret
+  Maximum tries exceeded!: Túllépte a maximum bejelentkezési kísérletet!
+  May: máj.
+  'May ': Máj.
+  Member No.: Tagsági szám
+  Member Number: Tagsági szám
+  Memo: Feljegyzés
+  Menu Width: Menü szélessége
+  Merchandise: ''
+  Message: Üzenet
+  Method: Szemlélet
+  Method of Payment: Fizetési mód
+  Microfiche: Mikrofilm
+  Mimetype deleted!: Fájltípus törölve!
+  Mimetype saved!: Fájltípus elmentve!
+  Mimetypes: Fájltársítások
+  Missing Vendors: Hiányzik a szállító!
+  Mo: Hó
+  Mobile: Mobil
+  Mock: ''
+  Model: Modell
+  'Module not installed:': 'Nincs telepítve ez a modul:'
+  Monitor: Direkt SQL
+  Month: Hónap
+  Month(s): Hónap(ok)
+  Months: Hónapok
+  'More than one vendor found:': 'Több, mint egy szállító található:'
+  Multibyte Encoding: Karakter kódolás
+  Must be logged in as admin!: Admin felhasználóként kell bejelentkezni!
+  N.W.: Net. súly
+  N/A: Nincs adat
+  Name: Név
+  Name missing!: Hiányzik a név!
+  Net: Nettó
+  New Number: Új sorszám
+  New Window: Új ablak
+  Next: Következő
+  Next Date: Következő dátum
+  Next Number: Következő szám
+  No Employees on file!: Nen található alkalmazott az adatbázisban!
+  No History!: Nincs előzmény!
+  No data!: Nincs adat+
+  No email address for: 'Nincs e-levél cím beállítva ennek a felhasználónak:'
+  No file selected!: Nincs kiválasztva fájl!
+  No foreign currencies!: Nincs devizanem!
+  No open Jobs!: Nincs megkezdett munka!
+  No open Projects!: Nincs nyitott projekt!
+  No snapshots: Nincsenek pillanatfelvételek
+  No warehouses!: Nem található raktár!
+  No.: No.
+  Non-chargeable: Nem felszámítható
+  Non-taxable: Adómentes
+  Non-taxable Purchases: Nem adóköteles beszerzések
+  Non-taxable Sales: Nem adóköteles eladások
+  Non-tracking Item Expense: Nem követett tétel költsége
+  Non-tracking Item Income: Nem követett tétel árbevétele
+  Non-tracking Item Tax: Nem követett tétel adója
+  Non-tracking Items: Nem követett tételek
+  None: Nem
+  Not E-mailed: Nincs elküldve e-levélben
+  Not Printed: Nincs kinyomtatva
+  Not a SQL-Ledger backup!: Ez nem SQL-Ledger mentés!
+  Not an Image file!: Ez nem egy képfájl!
+  Not enough inventory in Row: Nincs elegendő készlet a sorban
+  Not enough inventory!: Nincs elegendő készlet
+  Notes: Jegyzetek
+  Nothing entered!: Nem írt be semmit!
+  Nothing in the Queue!: Nincs semmi a várólistában!
+  Nothing selected!: Semmi nincs kiválasztva!
+  Nothing to consolidate!: Nincs egyesíthető adat!
+  Nothing to generate!: Nincs adat a létrehozáshoz!
+  Nothing to import!: Nincs importálható adat!
+  Nothing to print: Nincs semmi nyomtatható
+  Nothing to print!: Nincs mit nyomtatni!
+  Nothing to transfer!: Nincs semmi áttárolható!
+  Nov: Nov.
+  November: November
+  Number: Szám
+  Number Format: Számformátum
+  Number missing in Row: Hiányzik a szám  sorban
+  O: O
+  OH: Készl.
+  Obsolete: Elévült
+  Occupation: Foglalkozás
+  Oct: Okt.
+  October: Október
+  On: Bekapcsol
+  On Hand: Készleten
+  On Hold: Készleten
+  Only Sums: Csak összegek
+  Only one selection allowed!: Csak egy kiválasztása lehetséges!
+  Open: Nyitott
+  Open Drawer: Fiók nyitás
+  Open drawer command failed!: Sikertelen fiók nyitás parancs!
+  Open drawer command not defined!: A fiók parancs nyitás nincs meghatározva!
+  Open source ERP system: Nyílt forráskódú VET rendszer
+  Oracle: Oracle
+  Ord: Rend.
+  Order: Rendelés
+  Order Date: Rendelés dátuma
+  Order Date missing!: Hiányzik a rendelés dátuma!
+  Order Entry: Rendelések
+  Order Number: Rendelés sorszáma
+  Order Number missing!: Hiányzik a rendelés sorszáma!
+  Order consolidation failed!: Sikertelen a rendelés egyesítése!
+  Order deleted!: Rendelés törölve!
+  Order saved!: Rendelés elmentve!
+  Orders generated!: Rendelések létrehozva!
+  Origin: Eredet
+  Orphaned: Elárvult
+  Our Address Line: Saját cím
+  Our BC Number: Saját BC azonosító
+  Our Company Name: Saját cégnév
+  Out of balance transaction!: Kiegyenlítetlen tranzakció
+  Out of balance!: Az egyenleg nem stimmel!
+  Output Format: Alapértelmezett nyomtatási formátum
+  Outstanding: Kintlevőségek
+  Over: Túl
+  Overdue: Lejárt
+  Overpaid: Túlfizetés
+  P: P
+  PDF: PDF
+  PO: BR
+  PO Number: PO sorszáma
+  POS: Pénztárgép
+  POS Button: Pénztárgép gomb
+  POS Invoice: Nyugta
+  Packaging: Csomagolás
+  Packing List: Szállítólevél
+  Packing List Date missing!: Hiányzik a szállítólevél dátuma!
+  Packing List Number missing!: Hiányzik a szállítólevél sorszáma!
+  Packing Lists: Szállítólevelek
+  Paid: Fizetve
+  Paid Early: Előre fizetés
+  Paid Late: Késedelmes fizetés
+  Part: Alapanyag
+  Part Changeup: Alapanyag változtatása
+  Part Number: Alapanyag azonosító
+  Parts: Alapanyagok
+  Parts Report: Alapanyag lekérdezés
+  Partsgroup: Termékcsoport
+  Partsgroup Code: Termékcsoport kód
+  Password: Jelszó
+  Password changed!: Jelszó megváltozott!
+  Password does not match!: Jelszavak nem egyeznek!
+  Pay Period Ending: Fizetési időszak vége
+  Pay Periods: Fizetési időszakok
+  Pay Rates: Fizetési arányok
+  Pay Slip: Fizetési papír
+  Payable: Fizetendő
+  Payable Batches: Fizetendő tételek
+  Payable Vouchers: Fizetendő bizonylatok
+  Payment: Új bank/pénztár kiadás
+  Payment Account: Kifizetés főkönyvi számla
+  Payment Batches: Kifizetési tételek
+  Payment Difference: Kifizetési eltérés
+  Payment Method: Fizetési mód
+  Payment Method deleted!: Fizetési mód törölve!
+  Payment Method saved!: Fizetési mód elmentve!
+  Payment Methods: Fizetési módok
+  Payment Register: Kifizetés nyilvántartás
+  Payment Reversal: Kifizetés érvénytelenítés
+  Payment Reversal Batches: 'Kifizetés érvénytelenítő tételek '
+  Payment Reversal Voucher: Kifizetés érvénytelenítő bizonylatok
+  Payment account missing!: Hiányzik a kifizetés főkönyvi száma!
+  Payment date missing!: Hiányzik a kifizetés dátuma!
+  Payment posted!: Kifizetés rögzítve!
+  Payments: Bank/pénztár kiadások
+  Payroll: Bérelszámolás
+  Payroll Deduction: Bérlevonás
+  Payroll Transactions: Bérjegyzék tranzakciók
+  Payslip: Fizetési papír
+  Period: Időszak
+  Perl Modules: Perl modulok
+  Person: Magánszemély
+  Pg: Pg
+  PgPP: PgPP
+  Phone: Telefon
+  Pick List: Kitárolási lista
+  Pick Lists: Kitárolási listák
+  Poledisplay: Póluskijelző
+  Port: Port
+  Pos: Azonosító
+  Post: Rögzít
+  Post Batch: Tétel rögzítése
+  Post Batches: Tételek rögzítése
+  Post as new: Rögzítés újként
+  Posted!: Rögzítve!
+  Posting: Rögzítés
+  Posting Batch: Tétel rögzítése folyamatban
+  Posting Date: Dátum rögzítése folyamatban
+  Posting Invoice ...: Számlák rögzítése...
+  Posting Payment: Kifizetés rögzítése
+  Posting Payment ...: Kifizetések rögzítése...
+  Posting failed!: Sikertelen rögzítés!
+  Postscript: Postscript
+  Pre-Payment: Előleg főkönyvi számla
+  Precision: Pontosság
+  Preferences: Felhasználói beállítások
+  Preferences saved!: Beállítások elmentve!
+  Prepayment: Előrefizetés
+  Preview: Előnézet
+  Previous Year: Előző év
+  Price: Ár
+  Pricegroup: Árcsoport
+  Pricegroup deleted!: Árcsoport törölve!
+  Pricegroup missing!: Hiányzik az árcsoport!
+  Pricegroup saved!: Árcsoport elmentve!
+  Pricegroups: Árcsoportok
+  Pricelist: Árlista
+  Print: Nyomtatás
+  'Print ': Nyomtatás
+  Print Report: Lekérdezés kinyomtatása
+  Print and Post: Nyomtat és rögzít
+  Print and Post as new: Nyomtat és újként rögzít
+  Print and Save: Nyomtat és ment
+  Print and Save as new: Nyomtat és ment újként
+  Printed: Kinyomtatva
+  Printed Checks: Nyomtatott utalványok
+  Printed Receipts: Nyomtatott nyugták
+  Printer: Nyomtató
+  Printing: Nyomtatás
+  Printing check for: 'Utalvány nyomtatása ide:'
+  Printing receipt for: 'Nyugták nyomtatása ide:'
+  Process Transactions: Tranzakció feldolgozása
+  Production: Gyártandó
+  Profit Center: Profitcenter
+  Project: Projekt
+  Project Description: Project leírása
+  Project Name: Projekt megnevezése
+  Project Number: Projekt sorszáma
+  Project Number missing!: Hiányzik a projekt sorszáma!
+  Project Transactions: Projekt tranzakciók
+  Project deleted!: Projekt törölve!
+  Project not on file!: A projekt nem található a rendszerben!
+  Project saved!: Projekt elmentve
+  Project/Job Description Translations: Projekt/Gyártás leírás fordítások
+  Project/Job Number: Projekt/Munkaszám
+  Project/Job Number missing!: Hiányzik a Projekt/Munkaszám!
+  Projects: Projektek
+  Projects & Jobs: ''
+  Public: Nyilvános
+  Public Key: Nyilvános kulcs
+  Purchase Order: Új beszerzési rendelés
+  Purchase Order Number: Beszerzési rendelés száma
+  Purchase Orders: Beszerzési rendelések
+  Purchase Orders generated!: Beszerzési rendelések létrehozva!
+  QR AP Transaction: ''
+  QR IBAN: IBAN QR
+  QR Vendor Invoice: ''
+  Qty: Menny.
+  Quantity: Mennyiség
+  Quantity exceeds available units to stock!: A mennyiség meghaladja a raktáron lévő készletet!
+  Quarter: Negyedév
+  Quarters: Negyedévek
+  Queue: Sorbaállítás
+  Queued: Sorba állítva
+  Quotation: Új ajánlat
+  'Quotation ': Árajánlat
+  Quotation Date: Árajánlat dátuma
+  Quotation Date missing!: Hiányzik az árajánlat dátuma!
+  Quotation Number: Árajánlat sorszáma
+  Quotation Number missing!: Hiányzik az árajánlat sorszáma!
+  Quotation deleted!: Árajánlat törölve!
+  Quotations: Ajánlatok
+  R: R
+  RFQ: Új ajánlatkérés
+  'RFQ ': Ajánlatkérés
+  RFQ Number: Árajánlat kérés száma
+  RFQs: Ajánlatkérések
+  ROP: Rendelésiu pont
+  RV: RV
+  RVC: RVC
+  RVC missing!: Hiányzik az RVC
+  Rate: Kamat
+  Rate %: Arány %
+  Rate missing!: Hiányzik az arány!
+  Recd: Bev.
+  Receipt: Új bank/pénztár bevétel
+  Receipt No.: Nyugta No.
+  Receipt Number: Nyugta sorszáma
+  Receipts: Bank/pénztár bevételek
+  Receive: Bevételezés
+  Receive Merchandise: Bevételezés
+  Received: Bevételezett
+  Recently Used: Előzőleg használt
+  Reconcile Payments: Kifizetések egyeztetése
+  Reconciliation: Pénzmozgások egyeztetése
+  Reconciliation Date: Egyeztetés dátuma
+  Reconciliation Report: Egyeztetés lista
+  Record in: Rekord
+  Recurring: Ismétlődő
+  Recurring Transaction: Ismétlődő tranzakciók
+  Recurring Transactions: Ismétlődő tranzakciók
+  Reference: Hivatkozás
+  Reference Document does not exist!: A feltöltött dokumentum nem létezik!
+  Reference Documents: Feltöltött dokumentumok
+  Reference Documents URL: Feltöltött dokumentumok URL-je
+  Reference missing!: Hiányzik a hivatkozás
+  Reissue Check: Utalvány újból
+  Reissue Checks: Utalványok újból
+  Reissue Payments: Kifizetések újból
+  Reissue Receipt: Nyugta újból
+  Reissue Receipts: Nyugták újból
+  Rem: Mar.
+  Remaining: Fennmaradó
+  Reminder: Emlékeztető
+  Reminder sent to: 'Emlékeztető elküldve ide:'
+  Reminders sent to printer!: Emlékeztető kinyomtatva!
+  Remittance Voucher: Átutalási bizonylat
+  Remittance Vouchers: Átutalási bizonylatok
+  Remove: Eltávolítás
+  Remove Audit trail up to: 'Naplóesemények törlése eddig a dátumig:'
+  Remove semaphores?: Eltávolítsuk a jelölőket?
+  Removed spoolfiles!: Spool fájlok eltávolítva!
+  Removing marked entries from queue ...: A megjelölt tételek eltávolítása a várólistából...
+  Repeat: Újra
+  Report: Lekérdezés
+  Report for: Lekérdezés a következőkről
+  Report processed!: Lekérdezés feldolgozva!
+  Reporting Method: Szemlélet
+  Reports: Lekérdezés/Keresés
+  Repost Invoices: Számlák újraküldése
+  'Reposting Invoices ... ': Számlák újrarögzítése...
+  Req: Rend.
+  Request for Quotation: Ajánlatkérés
+  Request for Quotations: Ajánlatkérések
+  Required: Kötelező
+  Required by: Leszállítás
+  Requirements: Szükséges készlet
+  Restocking Charge: Visszavételezési költség
+  Restore: Visszaállítás
+  Restore Snapshot: Pillanatfelvétel visszaállítása
+  'Restoring Dataset:': Adatbázis visszaállítása
+  Restoring dataset version: 'Visszaállítandó adatbázis verziója:'
+  Retained Earnings: Eredménytartalék
+  Reverse Display: Fordított megjelenítés
+  Right: Helyes
+  Role: Mukakör
+  Role deleted!: Munkakör törölve!
+  Role saved!: Munkakör elmentve!
+  Roles: Munkakörök
+  Round: Kerekítés
+  Run SQL command: SQL parancs futtatása
+  S: S
+  SIC: SIC
+  SIC deleted!: VTSZ törölve!
+  SIC saved!: VTSZ elmentve!
+  SKU: SKU
+  SO: VR
+  SQL Run: SQL futtatása
+  SQL command: SQL parancs
+  SQL statement missing: Hiányzik az SQL utasítás
+  SSN: SSN
+  Sa: szo.
+  Sale: Eladás
+  Sales: Értékesítő
+  Sales Invoice: Új számla kiállítása
+  'Sales Invoice ': Vevő számla
+  Sales Invoice.: Vevő számla
+  Sales Invoice/AR Transaction Number: Vevő számla/tranzakció száma
+  Sales Invoices: Vevőszámlák
+  Sales Order: Új vevőrendelés
+  Sales Order Number: Vevőrendelés száma
+  Sales Order Requirements: Készlet igény beszerzési rendelés alapján
+  Sales Order consolidation failed!: Sikertelen a vevőszámla egyesítés!
+  Sales Orders: Vevőrendelések
+  Sales Orders to Invoice: Vevőrendelésekből számla
+  Sales Quotation Number: Árajánlat száma
+  Salesperson: Értékesítő
+  Salutation: Megszólítás
+  Same kit in Row: Ugyanaz a szerelvény a sorban
+  Save: Mentés
+  Save Column: Oszlop mentése
+  Save Level: Szint mentése
+  Save Pricelist: Árlista mentése
+  Save Report: Lekérdezés mentése
+  Save SQL command: SQL lekérdezés mentése
+  Save Schedule: Ütemezés mentése
+  Save as new: Mentés újként
+  Save failed!: Sikertelen mentés
+  Save to File: Mentés fájlba
+  Saving: Mentés folyamatban
+  Saving Order ...: Rendelés mentése...
+  'Scan the following code with your Authenticator App:': 'Olvassa be a kódot egy hitelesítő alkalmazással:'
+  Schedule: Ütemezés
+  Scheduled: Ütemezett
+  Screen: Kijelző
+  Search: Keresés
+  Select: Kiválaszt
+  Select Customer: Vevő kiválasztása
+  Select Vendor: Szállító kiválasztása
+  Select a Printer!: Válasszon egy noymtatót!
+  Select all: Összes kijelölése
+  Select from one of the names below: Választás az alábbi megnevezések közül
+  Select from one of the projects below: Választás az alábbi projektek közül
+  Select items: Tételek kiválasztása
+  Select payment: Válasszon kifizetést
+  Select postscript or PDF!: Válassza a postscript vagy a PDF fájltípust!
+  Sell: Elad
+  Sell Price: Eladási ár
+  Sellprice: Eladási ár
+  Send by E-Mail: Elküldés e-levélben
+  Sending: Küldés folyamatban
+  Sep: Szept.
+  September: Szeptember
+  Serial No.: Gyári szám
+  Serial Number: Gyári szám
+  Service: Szolgáltatás
+  Service Changeup: Szolgáltatás változtatása
+  Service Code: Szolgáltatás kód
+  Service Code missing!: Hiányzik a szolgáltatás kódja!
+  Service/Labor Code: Szolgáltatás/Munkaművelet kód
+  Services: Szolgáltatások
+  Session Timeout: Munkamenet időtartama (mp)
+  Session expired!: Letelt a munkamenet!
+  Setup: Beállítás
+  Ship: Kiszállítás
+  Ship Merchandise: Kiszállítás
+  Ship all: Összes kiszállítása
+  Ship to: Szállítás
+  Ship via: Szállítási mód
+  Shipped: Kiszállított
+  Shipped Items: Szállított tételek
+  Shipping Address: Szállítási cím
+  Shipping Date: Szállítás dátuma
+  Shipping Date missing!: Hiányzik a szállítás dátuma
+  Shipping Point: Szállítási hely
+  Short: Rendelni kell
+  Signature: Aláírás
+  Snapshot created: Pillanatfelvétel létrehozva
+  Snapshot restored: Pillanatfelvétel visszaállítva
+  Snapshots: ''
+  Snapshots deleted: Pillanatfelvétel törölve
+  Sort Names by: Rendezési sorrend
+  Sort by: Rendezés
+  Source: Forrás
+  Source missing!: Hiányzik a forrás
+  Split Ledger: Főkönyv megosztása
+  Spoolfile: Spool fájl
+  Spreadsheet: Táblázat
+  Standard: Szabványos
+  Standard Industrial Codes: Vámtarifaszámok
+  Startdate: Kezdő dátum
+  State: Megye
+  State/Province: Megye/Régió
+  Statement: Kimutatás
+  Statement Balance: Kimutatás egyenlege
+  Statement sent to: 'Kimutatás elküldve ide:'
+  Statements sent to printer!: Kimutatás kinyomtatva
+  Stock Adjustment: Készlet kiigazítás
+  Stock Assembly: Összeszerelés
+  Stock Finished Goods: Gyártás
+  Stock level: Raktárkészlet
+  Stores Card: Anyag hozzárendelés
+  Stores Card deleted!: Anyaglap törölve!
+  Stores Card saved!: Anyaglap elmentve!
+  Stores Cards: Anyag hozzárendelések
+  Street: Közterület
+  Street Name: Utcanév
+  Strings quoted: Idézett karakterláncok
+  Stylesheet: Stíluslap
+  Su: vas.
+  Sub-contract GIFI: Alvállakozói gyűjtőkód
+  Subject: Tárgy
+  Subtotal: Részösszeg
+  Summary: Összegezve
+  Supply & Demand: Kereslet/Kínálat
+  Supply / Demand: Beszerzési igény
+  Sybase: Sybase
+  System: Rendszer
+  System Defaults: Rendszer alapbeállítások
+  T: T
+  TAN: TAN
+  Tab delimited: Tab-bal elválaszott
+  Table: Táblázat
+  Tariff: Díjszabás
+  Tax: Adó
+  Tax Included: Bruttó adattartalom
+  Tax Number: Adószám
+  Tax Number / SSN: Adószám
+  Tax collected: Fizetendő ÁFA
+  Tax paid: Levonható ÁFA
+  Taxable: Adóköteles
+  Taxes: Adószámlák
+  Taxes saved!: Adók elmentve!
+  Taxnumber: Adószám
+  Template: Sablon
+  Template saved!: Sablon elmentve!
+  Templates: Sablonok
+  Templates managed externally: ''
+  Terms: Feltételek
+  Text: Szöveg
+  Text Templates: Szöveg sablonok
+  Th: Csüt.
+  'The following customers are not on file:': 'Az alábbi vevők nem találhatók a fájlban:'
+  'The following parts are not on file:': 'Az alábbi alapanyagok nem találhatók a fájlban:'
+  'The following snapshot will be restored:': 'Ez a pillanatfelvétel kerül visszaállításra:'
+  'The following vendors are not on file:': 'Az alábbi szállítók nem találhatók a fájlban:'
+  Threshold: Határérték
+  Till: -ig
+  Time: Idő
+  Time & Stores Cards: Munkalapok & Anyag hozzárendelések
+  Time Card: Munkalap
+  Time Card deleted!: Munkalap törölve!
+  Time Card saved!: Munkalap elmentve!
+  Time Cards: Munkalapok
+  Time In: Kezdés ideje
+  Time Out: 'Befejezés ideje '
+  Time and Stores Cards: Munka- és Anyaglapok
+  Timecard: Munkalap
+  Times: Időszak
+  Title: Beosztás
+  To: Meddig
+  To Warehouse: Raktárba
+  Tool Number: Szerszám sorszáma
+  Toolnumber: Eszközszám
+  Top Level: Legfelső szint
+  Total: Összesen
+  Total Cost: Összes költség
+  'Total:': 'Összesen:'
+  Tracking Item Income: Készlet árbevétele
+  Tracking Item Tax: Készlet adója
+  Tracking Items: Készletek
+  Trade Discount: Kereskedelmi kedvezmény
+  Transaction: Tranzakció
+  Transaction Date missing!: Hiányzik a tranzakció dátuma
+  Transaction Dates: Tranzakció dátumok
+  Transaction deleted!: Tranzakció törölve!
+  Transaction posted!: Tranzakció rögzítve!
+  Transaction reversal enforced for all dates: Ellentétes előjelű tranzakció kényszerítése minden dátum esetében
+  Transactions: Tranzakciók
+  Transfer: Áttárolás
+  Transfer Inventory: Készlet áttárolása
+  Translation: Fordítás
+  Translation deleted!: Fordítás törölve!
+  Translation not on file!: Nem található fordítás az adatbázisban!
+  Translations: Fordítások
+  Translations saved!: Fordítás elmentve!
+  Trial Balance: Főkönyvi kivonat
+  Tu: kedd
+  Type: Típus
+  Type of Business: Partnercsoportok
+  Type of Contact: Felhasználó jellege
+  Type of File: Fájl típusa
+  UID Register: ''
+  UNIX: UNIX
+  'Unable to create directory: ': 'Nem hozható létre a mappa:'
+  'Unable to delete:': 'Nem lehet törölni:'
+  Unit: Egység
+  Unknown Error!: Ismeretlen hiba!
+  Unlock Dataset: Adatbázis feloldása
+  Unlock System: Rendszer feloldása
+  Unlock dataset?: Feloldjuk az adatbázist?
+  Unprinted Checks: Kinyomtatatlan utalványok
+  Unprinted Receipts: Kinyomtatatlan nyugták
+  Update: Frissítés
+  Updated: Frissítve
+  Upgrading to Version: Frissítés az újabb verzióra
+  Upload Document: Dokumentum feltöltése
+  Upload Image: Kép feltöltése
+  Uploading ...: Feltöltés...
+  Use Templates: Sablonok használata
+  User: Felhasználó
+  Valid To: Érvényes eddig
+  Valid To date missing for: Hiányzik az érvényességi idő
+  Valid until: Érvényes eddig
+  Vendor: Szállító
+  Vendor History: Szállító elemzés
+  Vendor Invoice: Szállító számla
+  'Vendor Invoice ': Szállít számla
+  Vendor Invoice.: Szállító számla
+  Vendor Invoice/AP Transaction Number: Szállító számla/tranzakció száma
+  Vendor Invoices: Szállító számlák
+  Vendor Number: Szállító azonosító
+  Vendor Transactions: Szállító tranzakciók
+  Vendor deleted!: Szállító törölve!
+  Vendor missing!: Hiányzik a szállító!
+  'Vendor not found:': 'Nem található ez a szállító:'
+  Vendor not on file!: A szállító nincs a rendszerben!
+  Vendor saved!: Szállító adatok mentve!
+  Vendors: Szállítók
+  Version: Verzió
+  Void Check: Kitöltetlen kifizetés
+  Void Checks: Érvénytelen utalványok
+  Void Receipt: Kitöltetlen bevétel
+  Void Receipts: Érvénytelen nyugták
+  Volume: Mennyiség
+  Voucher: Bizonylat
+  Voucher Number: Bizonylat száma
+  Voucher deleted!: Bizonylat törölve!
+  Voucher posted!: Bizonylat rögzítve!
+  Vouchers: Kötegelt pénzmozgások
+  WLprinter: WLprinter
+  Wage deleted!: Bér törölve!
+  Wage saved!: Bér elmentve!
+  Wages: Bérek
+  Warehouse: Raktár
+  Warehouse Transfer: Transzfer raktárak között
+  Warehouse Transfer Report: Raktári mozgások listája
+  Warehouse deleted!: Raktár törölve!
+  Warehouse saved!: Raktár elmentve!
+  Warehouses: Raktárak
+  Warning!: Figyelem!
+  Waybill: Szállítólevél
+  We: Mi
+  Website: Honlap
+  Week: Hét
+  Week(s): Hét
+  Weeks: Hetek
+  Weight: Súly
+  Weight Unit: Súlyegység
+  Width: Szélesség
+  Withholding: Munkabér adó
+  Work Fax: Irodai fax
+  Work Mobile: Munkahelyi mobil
+  Work Order: Munka kiírás
+  Work Orders: Munka kiírások
+  Work Phone: Munkahelyi telefon
+  Worksheet: Munkalap
+  Workstation: Munkaállomás
+  Workstations: Munkaállomások
+  Workstations saved!: Munkaállomások elmentve!
+  XML: XML
+  XML Templates: XML sablonok
+  XML pain.001: XML pain.001
+  Year: Év
+  Year(s): Év(ek)
+  Yearend: Évzárás
+  Yearend date missing!: Évzásár dátuma hiányzik!
+  Yearend posted!: Évzárás elvégezve!
+  Yearend posting failed!: Évzárás sikertelen!
+  Years: Évek
+  Yes: Igen
+  Yes, Reissue Checks: Igen, hozza létre újból az utalványokat
+  Yes, Reissue Receipts: Igen, hozza létre újból a nyugtákat
+  Yes, Void Checks: Igen, érvénytelenítse az utalványokat
+  Yes, Void Receipts: Igen, érvénytelenítse a nyugtákat
+  Yes, delete: Igen, törlés
+  Yes, delete transactions: Igen, a tranzakció törölhető
+  Yes, reconcile payments: Igen, egyeztesse a kifizetéseket
+  You are logged out: Ön kijelentkezett
+  You are not authorized to add a new item!: Nincs jogosultsága új tételt hozzáadni!
+  You are posting an existing transaction!: Biztos, hogy módosítja a tranzakciót?
+  You are printing and posting an existing transaction!: Biztos, hogy kinyomtatja és módosítja a tranzakciót?
+  You are printing and saving an existing order: Biztos, hogy kinyomtatja és módosítja a rendelést?
+  You are printing and saving an existing quotation: Biztos, hogy kinyomtatja és módosítja az ajánlatot?
+  You are printing and saving an existing transaction!: Biztosan nyomtatja és menti a tranzakciót?
+  You are saving an existing order: Biztos, hogy módosítja a rendelést?
+  You are saving an existing quotation: Biztos, hogy módosítja az ajánlatot?
+  You are saving an existing transaction!: Biztosan menti a tranzakciót?
+  You did not enter a name!: Nem adott meg nevet!
+  Zip/Postal Code: Irányítószám
+  Zipcode: Iránytószám
+  account cannot be set to any other type of account: a főkönyvi számla nem állítható be más típusú számlának
+  added: hozzáadva
+  admin does not exist!: admin felhasználó nem létezik!
+  as at: eszerint
+  based: alapokon
+  camt.054: camt.054
+  converted to: átalakítva
+  created from Sales Orders: vevőrendelésből készült
+  csv: csv
+  days: napok
+  does not exist!: nem létezik!
+  done: elvégezve
+  ea: ea
+  exceeds quantity: meghaladja a mennyiséget
+  failed: sikertelen
+  failed!: sikertelen!
+  for: részére
+  for Period: időszakra
+  get copies: másolatot kap
+  gzip failed!: gzip mentése sikertelen
+  html: html
+  html Templates: html sablonok
+  in row: sorban
+  last: utolsó
+  locked!: zárolt!
+  logout: kijelentkezés
+  must be negative: negatívnak kell lennie
+  must be positive: pozitívnak kell lennie
+  ok: rendben
+  operated by: üzemelteti
+  please wait: kérem várjon
+  posted!: rögzítve!
+  rejected: elutasítva
+  reset: visszaállít
+  sent: elküldött
+  time(s): idő(k)
+  updated: frissítve
+  void: érvénytelen
+  website: honlap
+  will be restored with data from: 'visszaállítás ettől a dátumtól:'
+  xml: xml

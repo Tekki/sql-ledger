@@ -1,15 +1,14 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2006
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
-#=====================================================================
+#======================================================================
 #
 # this is the default code for the Check package
 #
-#=====================================================================
+#======================================================================
 
 
 sub init {
@@ -72,7 +71,7 @@ sub num2text {
     for (1 .. 3) {
       push @a, shift @num;
     }
-    push @numblock, join / /, reverse @a;
+    push @numblock, join ' ', reverse @a;
   }
 
   while (@numblock) {
@@ -109,7 +108,7 @@ sub num2text {
 
     # add thousand, million
     if ($i) {
-      $num = 10**($i * 3);
+      my $num = 10**($i * 3);
       push @textnumber, $self->{numbername}{$num};
     }
 

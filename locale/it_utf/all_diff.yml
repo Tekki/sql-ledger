@@ -1,0 +1,17 @@
+---
+locale: it_utf
+texts:
+  Add Purchase Invoice:
+    qe: Aggiungi Fattura di acquisto
+  Exchangerate:
+    qe: Tasso di Cambio
+  Exchangerate missing!:
+    qe: Manca il Tasso di Cambio!
+  Order Number:
+    qe: Ordine Numero
+  Terms:
+    qe: 'Termini: Netto'
+  emailed to:
+    qe: Mandato via e-mail a
+  sent to printer:
+    qe: mandato in stampa

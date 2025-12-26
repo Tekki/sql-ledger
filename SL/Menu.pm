@@ -1,24 +1,23 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2006
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
-#=====================================================================
+#======================================================================
 #
 # routines for menu items
 #
-#=====================================================================
+#======================================================================
+use v5.40;
 
-package Menu;
+package SL::Menu;
 
 use SL::Inifile;
-@ISA = qw/Inifile/;
+use parent 'SL::Inifile';
 
 
-sub menuitem {
-  my ($self, $myconfig, $form, $item) = @_;
+sub menuitem ($self, $myconfig, $form, $item, $) {
 
   my $module = ($self->{$item}{module}) ? $self->{$item}{module} : $form->{script};
   my $action = ($self->{$item}{action}) ? $self->{$item}{action} : "section_menu";
@@ -44,7 +43,7 @@ sub menuitem {
   # add other params
   foreach my $key (keys %{ $self->{$item} }) {
     $str .= "&".$form->escape($key)."=";
-    ($value, $conf) = split /=/, $self->{$item}{$key}, 2;
+    my ($value, $conf) = split /=/, $self->{$item}{$key}, 2;
     $value = "$myconfig->{$value}$conf" if $self->{$item}{$key} =~ /=/;
 
     $str .= $form->escape($value);
@@ -61,10 +60,10 @@ sub menuitem {
 }
 
 
-sub access_control {
-  my ($self, $myconfig, $menulevel) = @_;
+sub access_control ($self, $myconfig, $menulevel) {
 
   my @menu = ();
+  $menulevel //= '';
 
   if ($menulevel eq "") {
     @menu = grep { !/--/ } @{ $self->{ORDER} };
@@ -72,8 +71,8 @@ sub access_control {
     @menu = grep { /^${menulevel}--/; } @{ $self->{ORDER} };
   }
 
-  my @acs = split /;/, $myconfig->{acs};
-  my $excl = ();
+  my @acs = split /;/, $myconfig->{acs} // '';
+  my %excl = ();
 
   grep { ($a, $b) = split /--/; s/--$a$//; } @acs;
   for (@acs) { $excl{$_} = 1 }
@@ -86,7 +85,7 @@ sub access_control {
   for (@menu) {
     $acs = "";
     $n = 0;
-    for $item (split /--/, $_) {
+    for my $item (split /--/, $_) {
       $acs .= $item;
       if ($excl{$acs}) {
         $n = 1;
@@ -112,7 +111,7 @@ sub access_control {
 
 =head1 NAME
 
-Menu - Routines for menu items
+SL::Menu - Routines for menu items
 
 =head1 DESCRIPTION
 

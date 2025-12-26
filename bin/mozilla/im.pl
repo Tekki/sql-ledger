@@ -1,9 +1,8 @@
-#=====================================================================
-# SQL-Ledger
-# Copyright (c) DWS Systems Inc.
+#======================================================================
+# SQL-Ledger ERP
 #
-#  Author: DWS Systems Inc.
-#     Web: http://www.sql-ledger.com
+# © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
+# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -17,14 +16,6 @@ use SL::CP;
 
 require "$form->{path}/sr.pl";
 require "$form->{path}/js.pl";
-
-# any custom scripts for this one
-if (-f "$form->{path}/custom/im.pl") {
-    eval { require "$form->{path}/custom/im.pl"; };
-}
-if (-f "$form->{path}/custom/$form->{login}/im.pl") {
-    eval { require "$form->{path}/custom/$form->{login}/im.pl"; };
-}
 
 1;
 # end of main
@@ -73,7 +64,7 @@ sub import {
   my $checked = ' checked';
 
   if ($form->{type} eq 'payment') {
-    IM->paymentaccounts(\%myconfig, \%$form);
+    SL::IM->paymentaccounts(\%myconfig, $form);
     if (@{ $form->{all_paymentaccount} }) {
       @curr = split /:/, $form->{currencies};
       $form->{defaultcurrency} = $curr[0];
@@ -425,7 +416,7 @@ sub export_screen_vc {
 
 sub export_screen_payment {
 
-  IM->paymentaccounts(\%myconfig, $form) if $form->{type} eq 'payment';
+  SL::IM->paymentaccounts(\%myconfig, $form) if $form->{type} eq 'payment';
 
   $focus = $form->{focus} || 'paymentaccount';
 
@@ -585,7 +576,7 @@ sub export_screen_payment {
   }
 
 
-  &change_report(\%$form, \@input, \@checked, \%radio);
+  &change_report($form, \@input, \@checked, \%radio);
 
   &calendar;
 
@@ -738,7 +729,7 @@ sub im_sales_invoice {
   push @flds, "$form->{vc}_id";
 
   $form->{reportcode} = "import_$form->{type}";
-  IM->sales_invoice_links(\%myconfig, \%$form);
+  SL::IM->sales_invoice_links(\%myconfig, $form);
 
   $column_data{runningnumber} = "&nbsp;";
   $column_data{transdate} = $locale->text('Invoice Date');
@@ -929,7 +920,7 @@ sub im_order {
   push @flds, "$form->{vc}_id";
 
   $form->{reportcode} = "import_$form->{type}";
-  IM->order_links(\%myconfig, \%$form);
+  SL::IM->order_links(\%myconfig, $form);
 
   $column_data{runningnumber} = "&nbsp;";
   $column_data{transdate} = $locale->text('Order Date');
@@ -1105,7 +1096,7 @@ sub im_coa {
 
   $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
 
-  IM->prepare_import_data(\%myconfig, \%$form);
+  SL::IM->prepare_import_data(\%myconfig, $form);
 
   $form->helpref("import_$form->{type}", $myconfig{countrycode});
 
@@ -1183,7 +1174,7 @@ sub im_coa {
 sub import_chart_of_accounts {
 
   $form->{reportcode} = "import_$form->{type}";
-  IM->import_coa(\%myconfig, \%$form);
+  SL::IM->import_coa(\%myconfig, $form);
 
   if ($form->{added}) {
     $form->info($locale->text('Added').":\n$form->{added}\n");
@@ -1231,7 +1222,7 @@ sub im_gl {
 
   $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
 
-  IM->prepare_import_data(\%myconfig, \%$form);
+  SL::IM->prepare_import_data(\%myconfig, $form);
 
   $sameitem = "";
 
@@ -1340,7 +1331,7 @@ sub im_gl {
 sub import_general_ledger {
 
   $form->{reportcode} = "import_$form->{type}";
-  IM->import_gl(\%myconfig, \%$form);
+  SL::IM->import_gl(\%myconfig, $form);
 
   if ($form->{added}) {
     $form->info($locale->text('Added').":\n$form->{added}\n");
@@ -1506,9 +1497,9 @@ sub xrefhdr {
       $form->{$form->{type}}{$_} = {field => $_, length => '', ndx => $i++};
     }
   } elsif ($form->{mapfile}) {
-    open(FH, "$templates/$myconfig{templates}/$form->{mapfile}/import.map") or $form->error($!);
+    open my $fh, "$slconfig{templates}/$myconfig{templates}/$form->{mapfile}/import.map" or $form->error($!);
 
-    while (<FH>) {
+    while (<$fh>) {
       next if /^(#|;|\s)/;
       chomp;
 
@@ -1529,7 +1520,7 @@ sub xrefhdr {
       }
     }
     delete $form->{$form->{type}}{''};
-    close FH;
+    close $fh;
 
   } else {
     # get first line
@@ -1575,7 +1566,7 @@ sub import_sales_invoices {
 
   my $total = 0;
 
-  $newform = new Form;
+  $newform = SL::Form->new;
 
   my $m = 0;
 
@@ -1593,7 +1584,7 @@ sub import_sales_invoices {
 
       # post invoice
       $form->info("${m}. ".$locale->text('Posting Invoice ...'));
-      if (IM->import_sales_invoice(\%myconfig, \%$newform, \@{ $ndx{$k} })) {
+      if (SL::IM->import_sales_invoice(\%myconfig, \%$newform, \@{ $ndx{$k} })) {
         $form->{precision} = $newform->{precision};
 
         $form->info(qq| $newform->{invnumber}, $newform->{description}, $newform->{customernumber}, $newform->{name}, $newform->{city}, |);
@@ -1645,7 +1636,7 @@ sub import_orders {
 
   my $total = 0;
 
-  $newform = new Form;
+  $newform = SL::Form->new;
 
   my $m = 0;
 
@@ -1661,7 +1652,7 @@ sub import_orders {
 
       # save order
       $form->info("${m}. ".$locale->text('Saving Order ...'));
-      if (IM->import_order(\%myconfig, \%$newform, \@{ $ndx{$k} })) {
+      if (SL::IM->import_order(\%myconfig, \%$newform, \@{ $ndx{$k} })) {
         $form->{precision} = $newform->{precision};
 
         $form->info(qq| $newform->{ordnumber}, $newform->{description}, $newform->{"$form->{vc}number"}, $newform->{name}, $newform->{city}, |);
@@ -1739,20 +1730,20 @@ sub im_v11_payment {
 sub im_camt054_payment {
   $form->load_module(['Archive::Zip', 'Mojo::DOM'], $locale->text('Module not installed:'));
 
-  IM->paymentaccounts(\%myconfig, $form);
+  SL::IM->paymentaccounts(\%myconfig, $form);
   $form->{iban} = $form->{all_paymentaccount}[0]{iban};
   $form->{iban} =~ s/ //g;
 
   if ($form->{filename} =~ /\.zip/) {
     my $zip = Archive::Zip->new;
-    $zip->read("$userspath/$form->{tmpfile}");
+    $zip->read("$slconfig{userspath}/$form->{tmpfile}");
 
     $form->{data} = '';
     for my $member ($zip->members) {
       $form->{data} .= $member->contents;
     }
 
-    unlink "$userspath/$form->{tmpfile}";
+    unlink "$slconfig{userspath}/$form->{tmpfile}";
   }
 
   my $dom = Mojo::DOM->new($form->{data});
@@ -1819,7 +1810,7 @@ sub im_csv_payment {
 
   &xrefhdr;
 
-  IM->payment_links(\%myconfig, \%$form);
+  SL::IM->payment_links(\%myconfig, $form);
 
   (undef, my $account) = split /--/, $form->{paymentaccount};
   $option = $locale->text('Account') . " : $account";
@@ -1952,7 +1943,7 @@ sub import_file {
     $form->load_module(['Spreadsheet::ParseXLSX'], $locale->text('Module not installed:'));
 
     my $parser   = Spreadsheet::ParseXLSX->new;
-    my $workbook = $parser->parse("$userspath/$form->{tmpfile}");
+    my $workbook = $parser->parse("$slconfig{userspath}/$form->{tmpfile}");
 
     if (my $worksheet = $workbook->worksheet($form->{worksheet} - 1)) {
 
@@ -1985,14 +1976,14 @@ sub import_file {
 
   } else {
 
-    open(FH, "$userspath/$form->{tmpfile}") or $form->error("$userspath/$form->{tmpfile} : $!");
-    while (<FH>) {
+    open my $fh, "$slconfig{userspath}/$form->{tmpfile}" or $form->error("$slconfig{userspath}/$form->{tmpfile} : $!");
+    while (<$fh>) {
       $form->{data} .= $_;
     }
-    close(FH);
+    close $fh;
   }
 
-  unlink "$userspath/$form->{tmpfile}";
+  unlink "$slconfig{userspath}/$form->{tmpfile}";
 
   $form->error($locale->text('Import File missing!')) unless $form->{filename};
   $form->error($locale->text('No data!')) unless $form->{data};
@@ -2006,7 +1997,7 @@ sub import_payments {
 
   $form->error($locale->text('Nothing to import!')) unless $form->{rowcount};
 
-  $newform = new Form;
+  $newform = SL::Form->new;
 
   for my $i (1 .. $form->{rowcount}) {
 
@@ -2028,7 +2019,7 @@ sub import_payments {
 
       $form->info("${m}. ".$locale->text('Posting Payment ...'));
 
-      if (CP->post_payment(\%myconfig, \%$newform)) {
+      if (SL::CP->post_payment(\%myconfig, \%$newform)) {
         $form->info(qq| $form->{"invnumber_$i"}, $form->{"description_$i"}, $form->{"companynumber_$i"}, $form->{"name_$i"}, $form->{"city_$i"}, $form->{"amount_$i"} ... | . $locale->text('ok'));
 
         $ou = $form->round_amount($form->{"outstanding_$i"} - $form->parse_amount(\%myconfig, $form->{"amount_$i"}), $form->{precision});
@@ -2178,7 +2169,7 @@ sub im_vc {
 |;
 
   $form->{reportcode} = "import_$form->{type}";
-  IM->prepare_import_data(\%myconfig, \%$form);
+  SL::IM->prepare_import_data(\%myconfig, $form);
 
   for $i (1 .. $form->{rowcount}) {
 
@@ -2248,7 +2239,7 @@ sub import_vc {
 
   $form->{reportcode} = "import_$form->{type}";
 
-  IM->import_vc(\%myconfig, \%$form);
+  SL::IM->import_vc(\%myconfig, $form);
 
   if ($form->{added}) {
     $form->info($locale->text('Added').":\n$form->{added}");
@@ -2347,7 +2338,7 @@ sub im_item {
 |;
 
   $form->{reportcode} = "import_$form->{type}";
-  IM->prepare_import_data(\%myconfig, \%$form);
+  SL::IM->prepare_import_data(\%myconfig, $form);
 
   for $i (1 .. $form->{rowcount}) {
 
@@ -2412,7 +2403,7 @@ sub import_labor_overhead { &import_items }
 sub import_items {
 
   $form->{reportcode} = "import_$form->{type}";
-  IM->import_item(\%myconfig, \%$form);
+  SL::IM->import_item(\%myconfig, $form);
 
   if ($form->{added}) {
     $form->info($locale->text('Added').":\n$form->{added}\n");
@@ -2480,7 +2471,7 @@ sub im_partsgroup {
 |;
 
   $form->{reportcode} = "import_$form->{type}";
-  IM->prepare_import_data(\%myconfig, \%$form);
+  SL::IM->prepare_import_data(\%myconfig, $form);
 
   for $i (1 .. $form->{rowcount}) {
 
@@ -2532,7 +2523,7 @@ sub im_partsgroup {
 sub import_groups {
 
   $form->{reportcode} = "import_$form->{type}";
-  IM->import_groups(\%myconfig, \%$form);
+  SL::IM->import_groups(\%myconfig, $form);
 
   if ($form->{added}) {
     $form->info($locale->text('Added').":\n$form->{added}");
@@ -2638,11 +2629,11 @@ sub import_qrbill {
 sub im_qrbill {
   require SL::QRCode;
 
-  my $res = SL::QRCode::decode_qrbill("$userspath/$form->{tmpfile}", $form->{qr_page});
+  my $res = SL::QRCode::decode_qrbill("$slconfig{userspath}/$form->{tmpfile}", $form->{qr_page});
   my $data;
 
   unless ($form->{qr_attach}) {
-    unlink "$userspath/$form->{tmpfile}";
+    unlink "$slconfig{userspath}/$form->{tmpfile}";
     delete $form->{tmpfile};
   }
 
@@ -2652,7 +2643,7 @@ sub im_qrbill {
       = "$data->{currency} " . $form->format_amount(\%myconfig, $data->{amount}, 2);
 
     $form->{qriban} = $res->{structured_data}{qriban};
-    IM->qrbill_links(\%myconfig, $form);
+    SL::IM->qrbill_links(\%myconfig, $form);
 
     my @ct = @{$form->{CT}};
     if (@ct == 1) {
@@ -2670,7 +2661,7 @@ sub im_qrbill {
 
       require JSON::PP;
       require "$form->{path}/ct.pl";
-      $locale = Locale->new($myconfig{countrycode}, 'ct');
+      $locale = SL::Locale->new($myconfig{countrycode}, 'ct');
 
       $form->{callback} = "im.pl?action=process_qrbill&qrbill_data="
         . $form->escape(JSON::PP->new->utf8(0)->encode($data), 1);
@@ -2725,14 +2716,14 @@ sub process_qrbill {
   if ($form->{type} eq 'qr_invoice') {
     $form->{script}      = 'ir.pl';
     $form->{type}        = 'invoice';
-    $locale              = Locale->new($myconfig{countrycode}, 'ir');
+    $locale              = SL::Locale->new($myconfig{countrycode}, 'ir');
     $form->{sellprice_1} = $form->format_amount(\%myconfig, $data->{amount}, 2);
     $form->{rowcount}    = 0;
   } else {
     $form->{script}   = 'ap.pl';
     $form->{type}     = 'transaction';
     $form->{focus}    = 'amount_1';
-    $locale           = Locale->new($myconfig{countrycode}, 'ap');
+    $locale           = SL::Locale->new($myconfig{countrycode}, 'ap');
     $form->{amount_1} = $data->{amount};
     $form->{rowcount} = 2;
   }
@@ -2786,7 +2777,7 @@ sub ex_vc {
 
   require SL::CT;
 
-  CT->search(\%myconfig, $form);
+  SL::CT->search(\%myconfig, $form);
 
   @column_index = (
     'runningnumber',     'ndx',      'name',       'typeofcontact',
@@ -2968,7 +2959,7 @@ sub ex_payment {
     exit;
   }
 
-  IM->unreconciled_payments(\%myconfig, \%$form);
+  SL::IM->unreconciled_payments(\%myconfig, $form);
 
   if ($form->{filetype} eq 'xml') {
     my @errors;
@@ -3119,7 +3110,7 @@ sub ex_payment {
     if ($l > 1) {
       for (1 .. $l) {
         print
-          "\n<td align=center><a href=$href&movecolumn=$column_index[$_],left><img src=$images/left.png border=0><a href=$href&movecolumn=$column_index[$_],right><img src=$images/right.png border=0></td>";
+          "\n<td align=center><a href=$href&movecolumn=$column_index[$_],left><img src=$slconfig{images}/left.png border=0><a href=$href&movecolumn=$column_index[$_],right><img src=$slconfig{images}/right.png border=0></td>";
       }
     }
 
@@ -3486,7 +3477,7 @@ sub export_vc {
   require SL::Spreadsheet;
 
   $form->{ids} = join ',', @ids;
-  CT->search(\%myconfig, $form);
+  SL::CT->search(\%myconfig, $form);
 
   my @column_index = (
     'id',                 "$form->{db}number", 'typeofcontact', 'name',
@@ -3506,7 +3497,7 @@ sub export_vc {
     'bic',                'membernumber',      'clearingnumber',
   );
 
-  my $ss = SL::Spreadsheet->new($form, $userspath);
+  my $ss = SL::Spreadsheet->new($form, $slconfig{userspath});
 
   my @date_columns    = qw|enddate startdate|;
   my @decimal_columns = qw|creditlimit discount threshold|;
@@ -3560,7 +3551,7 @@ sub export_payments {
 sub _do_export_payments {
 
   # get transactions
-  IM->unreconciled_payments(\%myconfig, $form);
+  SL::IM->unreconciled_payments(\%myconfig, $form);
 
   $j = 0;
   for (split /\n/, $form->{address}) {
@@ -3763,9 +3754,9 @@ sub _do_export_payments {
 
   $form->{filename} ||= time;
 
-  open(OUT, ">-") or $form->error("STDOUT : $!");
+  open my $out, ">-" or $form->error("STDOUT : $!");
 
-  binmode(OUT);
+  binmode $out;
 
   print qq|Content-Type: application/file;
 Content-Disposition: attachment; filename=$form->{filename}.$form->{filetype}\n\n|;
@@ -3779,7 +3770,7 @@ Content-Disposition: attachment; filename=$form->{filename}.$form->{filetype}\n\
     &export_payments_txt;
   }
 
-  close(OUT);
+  close $out;
 
   $form->{dateprepared} = $dateprepared;
 
@@ -3867,7 +3858,7 @@ sub export_payments_xml {
   # get transactions
   delete $myconfig{dboptions};
   $myconfig{dateformat} = 'yyyy-mm-dd';
-  IM->unreconciled_payments(\%myconfig, $form);
+  SL::IM->unreconciled_payments(\%myconfig, $form);
 
   my $sps      = SL::SPS->new($form);
   my $ok;
@@ -3924,7 +3915,7 @@ sub reconcile_payments {
 sub yes__reconcile_payments {
 
   # reconcile payments
-  IM->reconcile_payments(\%myconfig, \%$form);
+  SL::IM->reconcile_payments(\%myconfig, $form);
 
   $form->redirect;
 

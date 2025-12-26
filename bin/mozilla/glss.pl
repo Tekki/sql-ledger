@@ -1,9 +1,7 @@
-#=====================================================================
+#======================================================================
 # SQL-Ledger ERP
-# Copyright (C) 2024
 #
-#  Author: Tekki
-#     Web: https://tekki.ch
+# © 2024-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
@@ -38,7 +36,7 @@ sub transactions_spreadsheet {
     },
   );
 
-  my $ss = SL::Spreadsheet->new($form, $userspath);
+  my $ss = SL::Spreadsheet->new($form, $slconfig{userspath});
 
   $ss->change_format(':all', color => undef, border_color => undef, underline => 0);
   $ss->change_format('total', bottom => 1);

@@ -1,0 +1,1681 @@
+---
+locale: dk_utf
+texts:
+  '%': ''
+  (empty): ''
+  (none): ''
+  +/-: +/-
+  .v11: ''
+  1.Reminder: ''
+  2.Reminder: ''
+  3.Reminder: ''
+  <hr>: ''
+  A: A
+  AP: Kreditorer
+  AP Aging: Aldersfordeling
+  AP Amount: ''
+  AP Outstanding: Udestående kreditorer
+  AP Payment: ''
+  AP Transaction: Leverandørfaktura
+  AP Transactions: Leverandørfakturaer
+  AP account does not exist!: ''
+  AP account missing!: ''
+  AR: Debitorer
+  AR Aging: Aldersfordeling
+  AR Amount: ''
+  AR Outstanding: Udestående debitorer
+  AR Payment: ''
+  AR Transaction: Debitorpostering
+  AR Transactions: Debitorposteringer
+  AR account does not exist!: ''
+  AR account missing!: ''
+  AR/AP: Kreditor/Debitor
+  About: Om
+  Above: Over
+  Accepted format is: ''
+  Access Control: Adgangskontrol
+  Access Denied!: Adgang Nægtet!
+  Account: Konto
+  Account Number: Kontonummer
+  Account Number missing!: Kontonummer mangler!
+  Account Type: Kontotype
+  Account Type missing!: Kontotype mangler!
+  Account deleted!: Konto slettet!
+  Account does not exist!: Konto eksisterer ikke!
+  Account saved!: Konto gemt!
+  Accounting: Bogføring
+  Accounting Menu: Konto-menu
+  Accounts: Konti
+  Accrual: Påløbet
+  Action: ''
+  Activate Audit trail: Aktivér revisionssporing
+  Activate Audit trails: Aktivér revisionssporing
+  Active: Aktiv
+  Add: Tilføj
+  Add AP Transaction: Ny kreditorpostering
+  Add AP Voucher: ''
+  Add AR Transaction: Ny debitorpostering
+  Add Account: Ny konto
+  Add Assembly: Ny sammensætning
+  Add Business: Ny forretning
+  Add Cash Transfer Transaction: Ny kontantoverførsel
+  Add Column: ''
+  Add Credit Invoice: Ny kreditfaktura
+  Add Credit Note: Ny kreditnota
+  Add Currency: Ny valuta
+  Add Customer: Ny kunde
+  Add Dataset: ''
+  Add Debit Invoice: ''
+  Add Debit Note: Ny debietnota
+  Add Deduction: Nyt fradrag
+  Add Department: Ny afdeling
+  Add Document: ''
+  Add Employee: Ny medarbejder
+  Add Exchange Rate: Ny vekselkurs
+  Add FX Adjustment: ''
+  Add File: ''
+  Add GIFI: Ny GIFI
+  Add General Ledger Batch: ''
+  Add General Ledger Transaction: Ny postering i hovedbog
+  Add General Ledger Voucher: ''
+  Add Group: Ny gruppe
+  Add Job: Nyt job
+  Add Kit: ''
+  Add Labor/Overhead: Nyt arbejde/overhead
+  Add Language: Nyt sprog
+  Add Method: Ny metode
+  Add Mimetype: ''
+  Add POS Invoice: Ny POS faktura
+  Add Part: Ny vare
+  Add Payable Batch: ''
+  Add Payment Batch: ''
+  Add Payment Method: Ny betalingsmåde
+  Add Payment Reversal Batch: ''
+  Add Payments Batch: ''
+  Add Payroll: ''
+  Add Pricegroup: Ny prisgruppe
+  Add Project: Nyt projekt
+  Add Purchase Order: Ny indkøbsordre
+  Add Quotation: Nyt tilbud
+  Add Request for Quotation: Nyt tilbudsønske
+  Add Role: ''
+  Add SIC: Ny SIC
+  Add Sales Invoice: Ny salgsfaktura
+  Add Sales Order: Ny salgsordre
+  Add Service: Ny tjeneste
+  Add Snapshot: ''
+  Add Stores Card: ''
+  Add Time Card: Ny timeseddel
+  Add Timecard: Ny timeseddel
+  Add Transaction: Ny postering
+  Add User: Ny bruger
+  Add Vendor: Ny leverandør
+  Add Vendor Invoice: Ny indkøbsfaktura
+  Add Voucher: ''
+  Add Wage: ''
+  Add Warehouse: Nyt varehus
+  Add document failed!: ''
+  Added: ''
+  Addition: ''
+  Address: Adresse
+  Address Line 1: ''
+  Address Line 2: ''
+  Addresses from UID Register: ''
+  Admin: ''
+  Administration: Administration
+  Administrator: Administrator
+  After Deduction: Efter fradrag
+  Aged: ''
+  Aged Overdue: ''
+  Align: ''
+  All: Alt
+  All Accounts: Alle konti
+  All Batches: ''
+  All Datasets up to date!: Alle datasæt opdaterede
+  All Items: Alle dele
+  All amounts in: ''
+  All selected!: ''
+  Allocated: ''
+  Allowances: Fradrag
+  Allowed range for selected month is: ''
+  Allowed range is: ''
+  Amount: Beløb
+  Amount Due: Forfaldent
+  Amount missing!: Beløb mangler!
+  Annual Interest: ''
+  Approved: Godkendt
+  Apr: apr
+  April: april
+  Archive File: ''
+  Are you sure you want to delete: ''
+  Are you sure you want to delete Batch: ''
+  Are you sure you want to delete Invoice Number: Er du sikker på du vil fjerne fakturanummer
+  Are you sure you want to delete Order Number: Er du sikker på at du vil fjerne ordrenummer
+  Are you sure you want to delete Quotation Number: Er du sikker på at du vil slette tilbudsnummer
+  Are you sure you want to delete Timecard for: ''
+  Are you sure you want to delete Transaction: Er du sikker på du vil fjerne postering
+  Are you sure you want to delete dataset: ''
+  'Are you sure you want to delete language: ': ''
+  Are you sure you want to delete stores card: ''
+  Are you sure you want to delete the following Snapshots?: ''
+  Are you sure you want to delete the following Transactions?: ''
+  Are you sure you want to delete time card for: ''
+  Are you sure you want to reconcile all marked payments: ''
+  Are you sure you want to remove the marked entries from the queue?: Er du sikker på at du vil fjerne de markerede poster fra køen?
+  Are you sure you want to void checks: ''
+  Are you sure you want to void receipts: ''
+  As of: ''
+  Assemblies: Sammensætninger
+  Assemblies restocked!: Sammensætninger genlagret
+  Assemblies stocked!: ''
+  Assembly: Sammensætning
+  Assembly BOM Transfer: ''
+  Assembly Changeup: ''
+  Assembly Number: ''
+  Assembly stocked!: Sammensætning lagret!
+  Asset: Aktiv
+  Assets: ''
+  Assign Number: ''
+  Attach: ''
+  Attach Document: ''
+  Attach to: ''
+  Attached to: ''
+  Attachment: Bilag
+  Audit Control: Revisionskontrol
+  Audit Log: ''
+  Audit trail disabled: Revisionssporing deaktiveret
+  Audit trail enabled: Revisionssporing aktiveret
+  Audit trail removed up to: Revisionssporing fjernet indtil
+  Audit trails disabled: Revisionssporing deaktiveret
+  Audit trails enabled: Revisionssporing aktiveret
+  Aug: aug
+  August: august
+  Authenticator: ''
+  Available Credit: ''
+  Avalable Credit: ''
+  Average Cost: ''
+  Avg Cost: ''
+  BC Number: ''
+  BIC: BIC
+  BIC missing!: ''
+  BOM: BOM
+  Back: ''
+  Backorder: ''
+  'Backorder from Orders: ': ''
+  Backup: Sikkerheskopi
+  Backup File: ''
+  Backup sent to: Sikkerhedskopier sendt til
+  Balance: Balance
+  Balance Sheet: Status
+  Bank: Bank
+  Bank Account: ''
+  Bank Account Details: ''
+  Bank Accounts: Bankkonti
+  Bank saved!: ''
+  Barcode: ''
+  Barcodes: ''
+  Based on: Baseret på
+  Batch: ''
+  Batch No.: ''
+  Batch Number: ''
+  Batch Posting failed!: ''
+  Batch deleted!: ''
+  Batch posted!: ''
+  Bcc: Blind kopi
+  Before Deduction: Før fradrag
+  Beginning Balance: Åbningsbalance
+  Beginning date: ''
+  Below: Under
+  Billing Address: Fakturaadresse
+  Bin: Varelager
+  Bin List: Sendings-list
+  Bin Lists: Sendings-lister
+  Books are open: Bogføringen er åben for rettelser
+  Books closed up to: ''
+  Break: Bryd
+  Building Number: ''
+  Business: Forretning
+  Business Number: CVR-nummer
+  Business deleted!: Forretning slettet
+  Business saved!: Forretning gemt
+  Buy: Køb
+  C: C
+  CO: ''
+  COGS: Indkøb
+  COGS account does not exist!: Indkøbs konto findes ikke!
+  Can only send one reminder at a time!: ''
+  Can only send one statement at a time!: ''
+  Cannot add stores card for a completed job!: ''
+  Cannot add time card for a completed job!: ''
+  Cannot add timecard for a completed job!: ''
+  Cannot change stores card for a completed job!: ''
+  Cannot change time card for a completed job!: ''
+  Cannot change timecard for a completed job!: ''
+  Cannot create Assembly: Kan ikke oprette sammensætning
+  Cannot create Kit: ''
+  Cannot create Labor: ''
+  Cannot create Lock!: Cannot create Lock!
+  Cannot create Part: Kan ikke oprette vare
+  Cannot create Service: Kan ikke oprette tjeneste
+  Cannot delete Timecard!: ''
+  Cannot delete account!: Kan ikke slette konto!
+  Cannot delete batch!: ''
+  Cannot delete customer!: Kan ikke slette kunde!
+  Cannot delete default account!: Kan ikke slette standardkonto!
+  Cannot delete employee!: ''
+  Cannot delete invoice!: Kan ikke slette faktura!
+  Cannot delete item!: Kan ikke slette enhed!
+  Cannot delete order!: Kan ikke slette ordre!
+  Cannot delete quotation!: Kan ikke slette tilbud
+  Cannot delete stores card!: ''
+  Cannot delete time card!: ''
+  Cannot delete transaction!: Kan ikke slette postering!
+  Cannot delete vendor!: Kan ikke slette leverandør!
+  Cannot delete voucher!: ''
+  Cannot post Payment!: Kan ikke postere udbetaling
+  Cannot post Receipt!: kan ikke postere indbetaling
+  Cannot post cash discount for a closed period!: ''
+  Cannot post invoice for a closed period!: Kan ikke bogføre faktura for en afsluttet periode!
+  Cannot post invoice!: Kan ikke bogføre faktura!
+  Cannot post payment for a closed period!: Kan ikke bogføre betaling for en afsluttet periode
+  Cannot post transaction for a closed period!: Kan ikke bogføre postering for en afsluttet periode!
+  Cannot post transaction with a debit and credit entry for the same account!: ''
+  Cannot post transaction!: Kan ikke bogføre postering!
+  Cannot post voucher!: ''
+  Cannot process gzipped file!: ''
+  Cannot remove files!: Kan ikke fjerne filer!
+  Cannot return assembly!: ''
+  Cannot save Batch: ''
+  Cannot save account!: Kan ikke gemme konto!
+  Cannot save defaults!: Kan ikke gemme standardopsætning
+  Cannot save order!: Kan ikke gemme ordre!
+  Cannot save preferences!: Kan ikke gemme præferencer!
+  Cannot save quotation!: Kan ikke gemme tilbud
+  Cannot save stores card for a closed period!: ''
+  Cannot save stores card!: ''
+  Cannot save taxes!: ''
+  Cannot save time card for a closed period!: ''
+  Cannot save time card!: ''
+  Cannot save timecard for a closed period!: ''
+  Cannot save timecard!: ''
+  Cannot set account for more than one of AR, AP or IC: Kan ikke sætte konto for mere end én af AR, AP eller IC
+  Cannot set multiple options for: Kan ikke sætte flere muligheder for
+  Cannot set multiple options for Item: ''
+  Cannot stock Assembly!: Kan ikke lagre sammensætning!
+  Cannot stock assemblies!: Kan ikke genbesætte sammensætninger
+  Cannot transfer to the same warehouse!: ''
+  Cannot use: ''
+  Cannot use admin as login!: ''
+  Card Number: ''
+  Cash: Kontanter
+  Cash Discount: Kontantrabat
+  Cash Discount date missing!: Kontantrabat dato mangler!
+  Cash Drawer: ''
+  Cash Over/Short: ''
+  Cash discount date missing!: Kontantrabat dato mangler!
+  Cash discount date past due!: ''
+  Cash discount exceeds available discount!: Kontantrabat overstiger tilgængelig rabat!
+  Category: ''
+  Cc: Kopi
+  Change: Ændr
+  Change Admin Password: Ændr adgangskode for administrator
+  Change Host: ''
+  Change Host for Dataset: ''
+  Change Password: Ændr adgangskode
+  Change Password for Dataset: ''
+  Changeup: ''
+  Changeup Assemblies: ''
+  Changeup Labor/Overhead: ''
+  Changeup Parts: ''
+  Changeup Services: ''
+  Charge: ''
+  Chargeable: ''
+  Chargeout Rate: ''
+  Chart of Accounts: Kontoplan
+  Chart of Accounts Translations: ''
+  Check: Check
+  Check In: ''
+  Check Inventory: Kontrollér lager
+  Check No.: ''
+  Check Number: ''
+  Check Out: ''
+  Check Register: ''
+  Checks: Kontroller
+  City: By
+  Clear Semaphores: ''
+  Cleared: Udlignet
+  Clearing No.: ''
+  Clearing Number: ''
+  Click on login name to edit!: Klik på brugernavn for at redigere!
+  Clocked: ''
+  Close Books up to: Afslut bogføring op til
+  Close Window: ''
+  Closed: Afsluttet
+  Code: Kode
+  Code from Authenticator: ''
+  Code missing!: Kode mangler!
+  Code on page: ''
+  Combine: ''
+  Command: ''
+  Company: Firma
+  Company Name: Firmanavn
+  Company Number: Firmanummer
+  Company missing!: ''
+  Compare to: Sammenlign med
+  Completed: ''
+  Components: Komponenter
+  Confidential: ''
+  Configuration file missing!: ''
+  Confirm: Bekræft
+  Confirm!: Bekræft!
+  Connect to: Forbind til
+  Consolidate: ''
+  Consolidate Invoices: ''
+  Consolidate Orders: ''
+  Consolidate Orders to Invoice: ''
+  Consolidate Purchase Orders: ''
+  Consolidate Sales Orders: ''
+  Consolidate Sales Orders to Invoice: ''
+  Consolidate Transactions: ''
+  Consolidated Orders: ''
+  Consolidated to Invoice: ''
+  Contact: Kontakt
+  Content-Type: ''
+  Content-Type missing!: ''
+  Continue: Fortsæt
+  Continue?: ''
+  Contra: Kontra
+  Copies: Kopier
+  Copy: ''
+  Copy to COA: Kopiér til COA
+  Cost: Udgifter
+  Cost Center: Kostcenter
+  Could not delete document!: ''
+  Could not detach document!: ''
+  Could not save document!: ''
+  Could not save pricelist!: Kunne ikke gemme prisliste!
+  Could not save reminder level!: ''
+  Could not save!: Kunne ikke gemme!
+  Could not transfer Inventory!: Kunne ikke overføre lager!
+  Could not void payments!: ''
+  Country: Land
+  Country code missing!: ''
+  Country of Origin: ''
+  Create Chart of Accounts: Opret kontoplan
+  Create Dataset: Opret datasæt
+  Create missing vendor: ''
+  Create new snapshot for current point of time: ''
+  Credit: Kredit
+  Credit Invoice: Kreditfaktura
+  'Credit Invoice ': ''
+  Credit Limit: Kreditgrænse
+  Credit Note: Kreditnota
+  Curr: Val
+  Currencies: Valutaer
+  Currency: Valuta
+  Currency deleted!: ''
+  Currency missing!: ''
+  Currency saved!: ''
+  Current: Aktuel
+  Current Earnings: Aktuelle indtægter
+  Customer: Kunde
+  Customer History: Kundehistorik
+  Customer Number: Kundenummer
+  Customer Transactions: ''
+  Customer deleted!: Kunde slettet!
+  Customer missing!: Kunde mangler!
+  Customer not on file!: Kunde ikke i databasen!
+  Customer saved!: Kunde gemt!
+  Customer/Vendor: ''
+  Customer/Vendor Number: ''
+  Customers: Kunder
+  DBI not installed!: DBI ikke installeret
+  DCN: ''
+  DCN missing!: ''
+  DOB: ''
+  DOS: ''
+  Database: Database
+  Database Administration: Administration af database
+  Database Driver missing!: ''
+  Database Driver not checked!: Databasedriver ikke kontrolleret
+  Database Host: Database-vært
+  Database Monitor: ''
+  Database Snapshots: ''
+  Database User missing!: Bruger af database mangler!
+  Dataset: Datasæt
+  Dataset Size: ''
+  Dataset Version different!: ''
+  'Dataset Version:': ''
+  Dataset deleted!: ''
+  Dataset different!: ''
+  Dataset is newer than version!: Datasæt er nyere end version!
+  Dataset lock removed!: ''
+  Dataset locked!: ''
+  Dataset missing!: Datasæt mangler!
+  Dataset updated!: Datasæt opdateret!
+  Dataset version newer, SQL-Ledger must first be upgraded!: ''
+  Dataset will be upgraded to: ''
+  Date: Dato
+  Date Format: Datoformat
+  Date Issued: ''
+  Date Paid: Betalingsdato
+  Date Prepared: ''
+  Date Received: Modtagelsesdato
+  Date for cash discount missing!: ''
+  Date for cash discount past due!: ''
+  Date missing!: Dato mangler!
+  Date received missing!: Modtagelsesdato mangler!
+  Date worked: ''
+  Day: Dag
+  Day(s): Dag(e)
+  Days: Dage
+  Debit: Debet
+  Debit Invoice: Debetfaktura
+  'Debit Invoice ': ''
+  Debit Note: Debetnota
+  Dec: dec
+  December: december
+  Decimal Point: ''
+  Decimalplaces: Decimalpladser
+  Decrease: Formindsk
+  Deduct: ''
+  Deduct after: Fratræk efter
+  Deduction deleted!: Fradrag slettet!
+  Deduction saved!: Fradrag gemt!
+  Deductions: Fradrag
+  Default: ''
+  Default Accounts: ''
+  Default Template: ''
+  Defaults: Standardopsætning
+  Defaults saved!: Standardopsætning gemt!
+  Defer: ''
+  Defer Payout: ''
+  Deferred: ''
+  Delete: Fjern
+  Delete Account: Fjern konto
+  Delete Batch: ''
+  Delete Column: ''
+  Delete Customers: ''
+  Delete Dataset: Fjern datasæt
+  Delete Documents: ''
+  Delete Files: ''
+  Delete Report: ''
+  Delete SQL command: ''
+  Delete Schedule: ''
+  Delete Snapshots: ''
+  Delete Transactions: ''
+  Delete Vendors: ''
+  Deleting a language will also delete the templates for the language: ''
+  Delimiter: ''
+  Delivery Date: Leveringsdato
+  Department: Afdeling
+  Department deleted!: Afdeling slettet!
+  Department saved!: Afdeling gemt!
+  Departments: Afdelinger
+  Deposit: Depositum
+  Deposit Register: ''
+  Description: Beskrivelse
+  Description Translations: Oversættelser af beskrivelse
+  Description missing!: Beskrivelse mangler!
+  Deselect all: Fravælg alle
+  Detach: ''
+  Detail: Detalje
+  Difference: Difference
+  Directory: Katalog
+  Disable: ''
+  Disc: ''
+  Discount: Rabat
+  Display: ''
+  Display All: ''
+  Document attached!: ''
+  Document deleted!: ''
+  Document detached!: ''
+  Document not archived!: ''
+  Document saved!: ''
+  Documents deleted!: ''
+  Done: Færdig
+  Download Dump: ''
+  Drag and Drop: ''
+  Drawing: Træk
+  Driver: Driver
+  Drop-down: ''
+  Dropdown Limit: Grænse for nedtræk
+  Due: Forfald
+  Due Date: Forfaldsdato
+  Due Date missing!: Forfaldsdato mangler!
+  Duplicate Dataset!: ''
+  E-Mail: ''
+  E-Mail TAN: ''
+  E-mail: E-post
+  E-mail Reminder to: ''
+  E-mail Statement to: Send opgørelse til
+  E-mail TAN: ''
+  E-mail address missing!: E-post-adresse mangler!
+  E-mail message: Email besked
+  E-mailed: Sendt per e-post
+  E-mailing: ''
+  Early Payment Discount given: ''
+  Early Payment Discount received: ''
+  Edit: Redigér
+  Edit AP Transaction: Redigér kreditorpostering
+  Edit AP Voucher: ''
+  Edit AR Transaction: Redigér debitorpostering
+  Edit Account: Redigér konto
+  Edit Assembly: Redigér sammensætning
+  Edit Batch: ''
+  Edit Business: Redigér forretning
+  Edit Cash Transfer Transaction: Redigér kontantoverførsel
+  Edit Column: ''
+  Edit Column Header: ''
+  Edit Column Total: ''
+  Edit Credit Invoice: Redigér kreditfaktura
+  Edit Credit Note: Redigér kreditnota
+  Edit Currency: ''
+  Edit Customer: Redigér kunde
+  Edit Debit Invoice: ''
+  Edit Debit Note: Redigér debetnota
+  Edit Deduction: Redigér fradrag
+  Edit Department: Redigér afdeling
+  Edit Description Translations: Redigér oversættelser af beskrivelser
+  Edit Employee: Redigér medarbejder
+  Edit Exchange Rate: ''
+  Edit FX Adjustment: ''
+  Edit GIFI: Redigér GIFI
+  Edit General Ledger Transaction: Redigér en postering i hovedbog
+  Edit General Ledger Voucher: ''
+  Edit Group: Redigér gruppe
+  Edit Group Translations: ''
+  Edit Job: Redigér job
+  Edit Labor/Overhead: Redigér arbejde/overhead
+  Edit Language: Redigér sprog
+  Edit Mimetype: ''
+  Edit POS Invoice: Redigér POS faktura
+  Edit Part: Redigér vare
+  Edit Payment Method: Redigér betalingsmåde
+  Edit Payroll: ''
+  Edit Preferences: ''
+  Edit Preferences for: Redigér opsætning for
+  Edit Pricegroup: Redigér prisgruppe
+  Edit Project: Redigér præferencer for
+  Edit Project Description Translations: ''
+  Edit Purchase Order: Redigér indkøbsordre
+  Edit Quotation: Redigér tilbud
+  Edit Reference Document: ''
+  Edit Request for Quotation: Redigér ønske om tilbud
+  Edit Role: ''
+  Edit SIC: Redigér SIC
+  Edit Sales Invoice: Redigér salgsfaktura
+  Edit Sales Order: Redigér salgsordre
+  Edit Service: Redigér tjeneste
+  Edit Stores Card: ''
+  Edit Template: Redigér skabelon
+  Edit Time Card: ''
+  Edit Timecard: ''
+  Edit User: Redigér bruger
+  Edit Vendor: Redigér leverandør
+  Edit Vendor Invoice: Redigér projekt
+  Edit Warehouse: Redigér varehus
+  Email: Email
+  Employee: Medarbejder
+  Employee Login: ''
+  Employee Name: Navn for medarbejder
+  Employee Number: Medarbejdernummer
+  Employee deleted!: Medarbejder slettet!
+  Employee missing!: ''
+  Employee pays: Medarbejder betaler
+  Employee saved!: Medarbejder gemt!
+  Employees: Medarbejdere
+  Employer: Arbejdsgiver
+  Employer pays: Arbejdsgiver betaler
+  Encryption: ''
+  Enddate: Slutdato
+  Ending Balance: ''
+  Ends: Slutter
+  Enforce transaction reversal for all dates: Gennemtving explicitte rettelser af posteringer for alle datoer
+  Enter a SQL command to send to the server: ''
+  Enter up to 3 letters separated by a colon (i.e CAD:USD:EUR) for your native and foreign currencies: Angiv op til 3 bogstaver adskilt med kolon (fx DKK:EUR:USD) for dine indenlandske og udenlandske valutaer
+  Equity: Egenkapital
+  Error processing payment!: ''
+  Error!: Fejl!
+  Every: Hver
+  Excempt age <: ''
+  Exch: Vxl
+  Exchange Rate: Vekselkurs
+  Exchange Rate Difference: Difference i vekselkurs
+  Exchange Rate saved!: ''
+  Exchange Rates: Valuta kurser
+  Exchange rate for cash discount missing!: Valutakurs for kontantrabat mangler!
+  Exchange rate for payment missing!: Valutakurs for betaling mangler!
+  Exchange rate missing!: Vekselkurs mangler!
+  Exchangerate: ''
+  Exclude Void Checks: ''
+  Exclude Void Receipts: ''
+  Exempt: ''
+  Exempt age <: ''
+  Existing Datasets: Eksisterende datasæt
+  Expense: Udgift
+  Expense account does not exist!: Udgifts konto findes ikke!
+  Expense/Asset: Udgift/Aktiv
+  Expenses: ''
+  Expires: ''
+  Export: Eksport
+  Export Customers: ''
+  Export Payments: Eksportér betalinger
+  Export Vendors: ''
+  Extended: Udvidet
+  Extension: ''
+  Extension missing!: ''
+  FX: FX
+  FX Adjustment: ''
+  Failed: ''
+  Failed to consolidate invoices!: ''
+  Failed to delete Currency!: ''
+  Failed to delete Role!: ''
+  Failed to delete Warehouse!: ''
+  Failed to save Bank!: ''
+  Failed to save Currency!: ''
+  Failed to save Role!: ''
+  Failed to save Warehouse!: ''
+  Failed to save order!: Kunne ikke gemme ordre!
+  Failed to save workstations!: ''
+  Fax: Fax
+  Feb: feb
+  February: februar
+  Fee: ''
+  Female: ''
+  File: Fil
+  'File is too big! Allowed are:': ''
+  File to Import: Fil at importere
+  Filename: Filnavn
+  Fill: ''
+  Finished: ''
+  First Name: ''
+  Firstname: ''
+  Fixed Length Text: ''
+  Fixed value: ''
+  Folder: ''
+  For: ''
+  Force Warehouse: ''
+  Foreign Exchange Gain: Gevinst på valutahandel
+  Foreign Exchange Gain/Loss: ''
+  Foreign Exchange Loss: Tab på valutahandel
+  Form: ''
+  Fr: ''
+  Friday: Fredag
+  From: Fra
+  From Warehouse: ''
+  G: ''
+  G.W.: ''
+  GIFI: GIFI
+  GIFI deleted!: GIFI slettet!
+  GIFI missing!: GIFI mangler!
+  GIFI saved!: GIFI gemt!
+  GL: Hovedbog
+  GL Reference Number: Hovedbog reference nummer
+  GL Transaction: Postering i hovedbog
+  GL Transactions: ''
+  Gender: ''
+  General Ledger: Hovedbog
+  General Ledger Batches: ''
+  General Ledger Vouchers: ''
+  Generate: Generér
+  Generate Invoices: ''
+  Generate Orders: Generér ordrer
+  Generate Purchase Orders: Generér indkøbsordrer
+  Generate Purchase Orders failed!: ''
+  Generate Purchase Orders from Sales Order: Generér indkøbsordrer udfra salgsordrer
+  Generate Sales Invoices: ''
+  Generate Sales Invoices from Sales Order: ''
+  Generate Sales Order: Generér salgsordre
+  Generate Sales Order from Purchase Orders: Generér salgsordrer udfra indkøbsordrer
+  Generate Sales Orders: Gererér salgsordrer
+  Generating Invoices: ''
+  Goods & Services: Varer og tjenester
+  Group: Gruppe
+  Group Code: ''
+  Group Items: Gruppedele
+  Group Translations: Gruppeoversættelser
+  Group by: Gruppér efter
+  Group deleted!: Gruppe slettet!
+  Group missing!: Gruppe mangler!
+  Group saved!: Gruppe gemt!
+  Groups: Grupper
+  HR: HR
+  HS Code: ''
+  HTML Templates: HTML-skabeloner
+  Heading: Overskrift
+  Hide Closed Accounts: ''
+  History: Historik
+  Home Mobile: ''
+  Home Phone: Telefon privat
+  Host: Vært
+  Hostname missing!: Værtsnavn mangler
+  I: ''
+  IBAN: IBAN
+  IBAN missing!: ''
+  ID: ID
+  Image: Billede
+  Image Files: ''
+  Import: Import
+  Import Chart of Accounts: ''
+  Import Customers: ''
+  Import File missing!: Import fil mangler!
+  Import General Ledger: ''
+  Import Groups: ''
+  Import Labor/Overhead: ''
+  Import Orders: ''
+  Import Parts: ''
+  Import Payments: Importér betalinger
+  Import Purchase Orders: ''
+  'Import QR-Bill: AP Transaction': ''
+  'Import QR-Bill: Vendor Invoice': ''
+  Import Sales Invoices: Importér salgsfakturaer
+  Import Sales Orders: ''
+  Import Services: ''
+  Import Vendors: ''
+  In-line: Indlejret
+  Inactive: Inaktiv
+  Include Exchange Rate Difference: Inkludér difference i vekselkurs
+  Include Header: ''
+  Include Payment: Inkludér betaling
+  Include in Report: Inkludér i rapport
+  Include in drop-down menus: Inkludér i rullegardin-menuer
+  Income: Indtægt
+  Income / (Loss): ''
+  Income Statement: Driftsregnskab
+  Income account does not exist!: Indtægtskonto findes ikke!
+  Incorrect Dataset version!: Forkert version af datasæt!
+  Incorrect Password!: ''
+  Incorrect Username or Password!: ''
+  Incorrect Username!: ''
+  Increase: Forøg
+  Individual Items: Individuelle enheder
+  Internal Notes: Interne noter
+  Invalid Code: ''
+  Invalid TAN: ''
+  Invalid UID: ''
+  Invalid country code!: ''
+  'Invalid date:': ''
+  'Invalid day:': ''
+  'Invalid month:': ''
+  Inventory: Artikler
+  Inventory Count: ''
+  Inventory Value: ''
+  Inventory account does not exist!: Lagerkonto findes ikke!
+  Inventory quantity must be zero before you can set this assembly obsolete!: Lagerbeholdning skal være nul for at du kan forælde denne sammensætning
+  Inventory quantity must be zero before you can set this part obsolete!: Lagerbeholdning skal være nul for at du kan forælde denne enhed
+  Inventory saved!: Lager gemt!
+  Inventory transferred!: Lager overført!
+  Invoice: Faktura
+  Invoice Date: Fakturadato
+  Invoice Date missing!: Fakturadato mangler!
+  Invoice Number: Fakturanummer
+  Invoice Number missing!: Fakturanummer mangler!
+  Invoice deleted!: Faktura slettet!
+  Invoice generation failed!: ''
+  Invoices: Fakturaer
+  Invoices consolidated!: ''
+  Is this a summary account to record: Samlekonto for
+  Item: ''
+  Item already on pricelist!: Enkeltdel allerede på prisliste!
+  Item deleted!: Enkeltdel slettet!
+  Item not on file!: Enkeltdel er ikke i databasen!
+  Item saved!: ''
+  Items: Enkeltdele
+  Items stocked!: ''
+  Jan: jan
+  January: januar
+  Job: Job
+  Job Name: Job navn
+  Job Number: Job nummer
+  Job Number missing!: Job nummer mangler!
+  Job deleted!: Job slettet!
+  Job saved!: Job gemt!
+  Job/Project Number: ''
+  Jobs: Job
+  Jul: jul
+  July: juli
+  Jun: jun
+  June: juni
+  Keep restored snapshot: ''
+  Kits: ''
+  LaTeX Templates: LaTeX-skabeloner
+  Labor: ''
+  Labor Code: ''
+  Labor Code missing!: ''
+  Labor/Overhead: Arbejde/overhead
+  Labor/Overhead Changeup: ''
+  Language: Sprog
+  Language deleted!: Sprog slettet!
+  Language saved!: Sprog gemt!
+  Languages: Sprog
+  Languages not defined!: Sprog ikke definerede!
+  Last Cost: ''
+  Last Name: ''
+  Last Numbers: ''
+  Last Numbers & Default Accounts: Løbenumre og standardkonti
+  Lastcost: ''
+  Lastname: ''
+  Late Payment Fee: ''
+  Lead: ''
+  Leadtime: forsinkelsestid
+  Leave host and port field empty unless you want to make a remote connection.: Lad felterne "vært" og "port" være tomme medmindre du vil etablere en ekstern forbindelse.
+  Left: ''
+  Level: ''
+  Liabilities: ''
+  Liability: Passiv
+  Licensed to: Udført for
+  Line Item: ''
+  Line Total: Antal linjer
+  Linefeed: ''
+  Lineitem: ''
+  Link: Referencer
+  Link Accounts: Forbind konti
+  List: Vís
+  List Accounts: Vís konti
+  List Businesses: Vís forretninger
+  List Currencies: Vís valutaer
+  List Departments: Vís afdelinger
+  List Documents: ''
+  List Files: ''
+  List GIFI: Vís GIFI
+  List Languages: Vís sprog
+  List Methods: Vís metoder
+  List Price: Listepris
+  List Projects: Vís projekter
+  List SIC: Vís SIC
+  List Transactions: Vís bogføringer
+  List Warehouses: Vís varehuse
+  Listprice: ''
+  Local branches: ''
+  Localized Addresses: ''
+  Lock: ''
+  Lock Dataset: ''
+  Lock Message: ''
+  Lock System: Lås system
+  Locked: ''
+  Locked by: Låst af
+  Lockfile created!: Lockfile created!
+  Lockfile removed!: Lockfile removed!
+  Locks removed!: ''
+  Login: Log ind
+  Login name missing!: Login name missing!
+  Logistics: ''
+  Logout: Log ud
+  Lot: ''
+  MAC: ''
+  MFA: ''
+  Main Groups: ''
+  Main Menu: ''
+  Maintenance: ''
+  Make: Fabrikat
+  Male: ''
+  Manager: Leder
+  Mapfile: ''
+  Mar: mar
+  March: marts
+  Margin: ''
+  Marked entries printed!: Markerede poster udskrevet!
+  Markup: Markup
+  Maximum: Maksimum
+  Maximum Upload Size: ''
+  Maximum tries exceeded!: ''
+  May: maj
+  'May ': 'maj '
+  Member No.: ''
+  Member Number: ''
+  Memo: Note
+  Menu Width: Menubredde
+  Merchandise: ''
+  Message: Besked
+  Method: Metode
+  Method of Payment: ''
+  Microfiche: Mikrofilm
+  Mimetype deleted!: ''
+  Mimetype saved!: ''
+  Mimetypes: ''
+  Missing Vendors: ''
+  Mo: ''
+  Mobile: ''
+  Mock: ''
+  Model: Model
+  'Module not installed:': ''
+  Monday: Mandag
+  Monitor: ''
+  Month: Måned
+  Month(s): Måned(er)
+  Months: Måneder
+  'More than one vendor found:': ''
+  Multibyte Encoding: Multibyte Encoding
+  Must be logged in as admin!: ''
+  N.W.: ''
+  N/A: I/T
+  Name: Navn
+  Name missing!: Navn mangler!
+  Net: Netto
+  New Number: ''
+  New Templates: Nye skabeloner
+  New Window: Nyt vindue
+  Next: Næste
+  Next Date: Næste dato
+  Next Number: Næste nummer
+  No: Nej
+  No Database Drivers available!: Ingen databasedrivere tilgængelige
+  No Dataset selected!: Intet datasæt valgt
+  No Employees on file!: ''
+  No History!: ''
+  No Labor codes on file!: ''
+  No data!: ''
+  No email address for: Ingen epostadresse for
+  No file selected!: ''
+  No foreign currencies!: ''
+  No open Jobs!: Ingen åbne job!
+  No open Projects!: Ingen åbne projekter!
+  No snapshots: ''
+  No warehouses!: ''
+  No.: Nummer
+  Non-chargeable: ''
+  Non-taxable: Ikke-beskattet
+  Non-taxable Purchases: Ikke-beskattede køb
+  Non-taxable Sales: Ikke-beskattede salg
+  Non-tracking Item Expense: ''
+  Non-tracking Item Income: ''
+  Non-tracking Item Tax: ''
+  Non-tracking Items: ''
+  None: ''
+  Not E-mailed: ''
+  Not Printed: ''
+  Not a SQL-Ledger backup!: ''
+  Not an Image file!: ''
+  Not enough inventory in Row: ''
+  Not enough inventory!: ''
+  Notes: Bemærkninger
+  Nothing entered!: Ingenting indtastet!
+  Nothing in the Queue!: ''
+  Nothing selected!: Ingenting valgt!
+  Nothing to consolidate!: ''
+  Nothing to delete!: Intet at slette!
+  Nothing to generate!: ''
+  Nothing to import!: ''
+  Nothing to print: ''
+  Nothing to print!: Ingenting at udskrive!
+  Nothing to transfer!: Intet at overføre!
+  Nov: nov
+  November: november
+  Number: Nummer
+  Number Format: Numerisk format
+  Number missing in Row: Tal mangler i række
+  O: O
+  OH: ''
+  Obsolete: Forældet
+  Occupation: ''
+  Oct: okt
+  October: oktober
+  On: ''
+  On Hand: På lager
+  On Hold: ''
+  Only Sums: ''
+  Only one selection allowed!: ''
+  Open: Åbn
+  Open Drawer: ''
+  Open drawer command failed!: ''
+  Open drawer command not defined!: ''
+  Oracle: ''
+  Oracle Database Administration: Oracle Administration af database
+  Ord: ''
+  Order: Ordre
+  Order Date: Ordredato
+  Order Date missing!: Ordredato mangler
+  Order Entry: Ordreindgang
+  Order Number: Ordrenummer
+  Order Number missing!: Ordrenummer mangler
+  Order consolidation failed!: ''
+  Order deleted!: Ordre slettet
+  Order generation failed!: Kan ikke generere ordre!
+  Order saved!: Ordre gemt
+  Orders generated!: Ordrer genereret!
+  Origin: ''
+  Orphaned: Fritstående
+  Our Address Line: ''
+  Our BC Number: ''
+  Our Company Name: ''
+  Out of balance transaction!: Ubalanceret overførsel
+  Out of balance!: Ikke i balance!
+  Output Format: ''
+  Outstanding: Udestående
+  Over: ''
+  Overdue: ''
+  Overpaid: ''
+  P: ''
+  PDF: PDF
+  PO: ''
+  PO Number: ''
+  POS: POS
+  POS Button: ''
+  POS Invoice: POS faktura
+  Packaging: ''
+  Packing List: Følgeseddel
+  Packing List Date missing!: Dato for pakkeliste mangler!
+  Packing List Number missing!: Nummer for pakkeliste mangler!
+  Packing Lists: Følgesedler
+  Paid: Betalt
+  Paid Early: Betalt tidligt
+  Paid Late: Betalt sent
+  Part: Vare
+  Part Changeup: ''
+  Part Number: Varenummer
+  Partnumber: Varenummer
+  Parts: Dele
+  Parts Report: ''
+  Partsgroup: ''
+  Partsgroup Code: ''
+  Password: Adgangskode
+  Password changed!: Adgangskode ændret
+  Password does not match!: Adgangskode passer ikke!
+  Password may only contain alphanumeric characters!: Adgangskode må kun indeholde tal og bogstaver!
+  Passwords do not match!: Adgangskoder er ikke ens!
+  Pay Period Ending: ''
+  Pay Periods: ''
+  Pay Rates: ''
+  Pay Slip: ''
+  Payable: ''
+  Payable Batches: ''
+  Payable Vouchers: ''
+  Payables: Udeståender
+  Payment: Betaling
+  Payment Account: ''
+  Payment Batches: ''
+  Payment Difference: Betalingsdifference
+  Payment Method: Betalingsmåde
+  Payment Method deleted!: Betalingsmåde slettet!
+  Payment Method saved!: Betalingsmåde gemt!
+  Payment Methods: ''
+  Payment Register: ''
+  Payment Reversal: ''
+  Payment Reversal Batches: ''
+  Payment Reversal Voucher: ''
+  Payment account missing!: Betalingskonto mangler!
+  Payment date missing!: Betalingsdato mangler!
+  Payment posted!: Betaling bogført!
+  Payments: Betalinger
+  Payments posted!: ''
+  Payroll: ''
+  Payroll Deduction: Fradrag i løn
+  Payroll Transactions: ''
+  Payslip: ''
+  Period: Periode
+  Perl Modules: ''
+  Person: ''
+  Pg: ''
+  Pg Database Administration: Pg Administration af database
+  PgPP: ''
+  PgPP Database Administration: PgPP Database Administration
+  Phone: Tel.
+  Pick List: Pakkeliste
+  Pick Lists: Pakkelister
+  Pole Display: ''
+  Poledisplay: ''
+  Port: Port
+  Port missing!: Port mangler
+  Pos: ''
+  Post: Bogfør
+  Post Batch: ''
+  Post Batches: ''
+  Post as new: Bogfør som ny
+  Posted!: Bogført!
+  Posting: ''
+  Posting Batch: ''
+  Posting Date: ''
+  Posting Invoice ...: Bogfører faktura ...
+  Posting Payment: ''
+  Posting Payment ...: Bogfører betaling ...
+  Posting failed!: Bogføring fejlede!
+  Postscript: Postscript
+  Pre-Payment: ''
+  Precision: ''
+  Preferences: Præferencer
+  Preferences saved!: Indstillinger gemt!
+  Prepayment: Forudbetaling
+  Preview: ''
+  Previous Year: ''
+  Price: Pris
+  Pricegroup: Prisgruppe
+  Pricegroup deleted!: Prisgruppe slettet!
+  Pricegroup missing!: Prisgruppe mangler!
+  Pricegroup saved!: Prisgruppe gemt!
+  Pricegroups: Prisgrupper
+  Pricelist: Prisliste
+  Print: Udskriv
+  'Print ': ''
+  Print Report: Udskriv rapport
+  Print and Post: Udskriv og send
+  Print and Post as new: Udskrive og bogfør som ny
+  Print and Save: Udskriv og gem
+  Print and Save as new: Udskriv og gem som ny
+  Print and post as new: Udskrive og bogfør som ny
+  Print and save as new: Udskriv og gem som ny
+  Printed: Udskrevet
+  Printed Checks: ''
+  Printed Receipts: ''
+  Printer: Printer
+  Printing: Udskriver
+  'Printing ... ': 'Udskriver ... '
+  Printing check for: ''
+  Printing receipt for: ''
+  Process Transactions: Behandl posteringer
+  Production: Produktion
+  Profit Center: Profitcenter
+  Project: Projekt
+  Project Description: ''
+  Project Description Translations: Oversættelser af projektbeskrivelse
+  Project Name: Projekt navn
+  Project Number: Projektnummer
+  Project Number missing!: Projektnummer mangler!
+  Project Transactions: Projektposteringer
+  Project deleted!: Projekt slettet!
+  Project not on file!: Projekt ikke i databasen!
+  Project saved!: Projekt gemt!
+  Project/Job Description Translations: ''
+  Project/Job Name: ''
+  Project/Job Number: Projekt/job nummer
+  Project/Job Number missing!: ''
+  Projects: Projekter
+  Projects & Jobs: ''
+  Public: ''
+  Public Key: ''
+  Purchase Order: Indkøbsordre
+  Purchase Order Number: Nummer på indkøbsordre
+  Purchase Orders: Indkøbsordrer
+  Purchase Orders generated!: ''
+  QR AP Transaction: ''
+  QR IBAN: ''
+  QR Vendor Invoice: ''
+  Qty: Mængde
+  Quantity: ''
+  Quantity exceeds available units to stock!: Mængde overstiger tilgægeligt antal på lager!
+  Quarter: Kvartal
+  Quarters: ''
+  Queue: Kø
+  Queued: I kø
+  Quotation: Tilbud
+  'Quotation ': 'Tilbud '
+  Quotation Date: Tilbudsdato
+  Quotation Date missing!: Tilbudsdato mangler!
+  Quotation Number: Tilbudsnummer
+  Quotation Number missing!: Tilbudsnummer mangler!
+  Quotation deleted!: Tilbud slettet!
+  Quotations: Tilbud
+  R: R
+  RFQ: Tilbudsønske
+  'RFQ ': 'Tilbudsønske '
+  RFQ Number: Nummer for tilbudsønske
+  RFQs: Tilbudsønsker
+  ROP: Genbestil ved
+  RV: ''
+  RVC: ''
+  RVC missing!: ''
+  Rate: Sats
+  Rate %: ''
+  Rate missing!: Sats mangler!
+  Recd: Modtaget
+  Receipt: Kvittering
+  Receipt No.: ''
+  Receipt Number: ''
+  Receipt posted!: Modtagelse posteret
+  Receipts: Kvitteringer
+  Receivables: Indbetalinger
+  Receive: Modtagelse
+  Receive Merchandise: Modtagelse af varer
+  Received: ''
+  Recently Used: ''
+  Reconcile Payments: ''
+  Reconciliation: Afstemning
+  Reconciliation Date: ''
+  Reconciliation Report: Afstemningsrapport
+  Record in: Bogfør på
+  Recurring: ''
+  Recurring Transaction: Gentaget transaktion
+  Recurring Transactions: Gentagne transaktioner
+  Reference: Reference
+  Reference Document does not exist!: ''
+  Reference Documents: ''
+  Reference Documents URL: ''
+  Reference missing!: ''
+  Reissue Check: ''
+  Reissue Checks: ''
+  Reissue Payments: ''
+  Reissue Receipt: ''
+  Reissue Receipts: ''
+  Rem: ''
+  Remaining: Resterer
+  Reminder: ''
+  Reminder sent to: ''
+  Reminders sent to printer!: ''
+  Remittance Voucher: ''
+  Remittance Vouchers: ''
+  Remove: Fjern
+  Remove Audit trail up to: Fjern revisionssporing indtil
+  Remove Audit trails up to: Fjern revisionssporing indtil
+  Remove Locks: Fjern låse
+  Remove semaphores?: ''
+  Removed spoolfiles!: Fjernede køfiler!
+  Removing marked entries from queue ...: Fjerner markerede poster fra kø ...
+  Repeat: Gentag
+  Report: ''
+  Report for: Rapport for
+  Report processed!: ''
+  Reporting Method: ''
+  Reports: Rapporter
+  Repost Invoices: ''
+  'Reposting Invoices ... ': ''
+  Req: ''
+  Reqd: ''
+  Request for Quotation: Ønske om tilbud
+  Request for Quotations: Ønske om tilbud
+  Required: ''
+  Required by: Bestilt af
+  Requirements: ''
+  Restocking Charge: ''
+  Restore: ''
+  Restore Snapshot: ''
+  'Restoring Dataset:': ''
+  Restoring dataset version: ''
+  Retained Earnings: Realiseret overskud
+  Reverse Display: ''
+  Right: ''
+  Role: Rolle
+  Role deleted!: ''
+  Role saved!: ''
+  Roles: ''
+  Round: ''
+  Run SQL command: ''
+  S: S
+  SIC: SIC
+  SIC deleted!: SIC slettet!
+  SIC saved!: SIC gemt!
+  SKU: SKU
+  SO: ''
+  SQL Run: ''
+  SQL command: ''
+  SQL statement missing: ''
+  SSN: CIR
+  Sa: ''
+  Sale: Salg
+  Sales: Salg
+  Sales Invoice: Salgsfaktura
+  'Sales Invoice ': 'Salgsfaktura '
+  Sales Invoice.: Salgsfaktura.
+  Sales Invoice/AR Transaction Number: Salgsfaktura/Debitor posteringsnummer
+  Sales Invoices: Salgsfakturaer
+  Sales Order: Salgsordre
+  Sales Order Number: Salgsordrenummer
+  Sales Order Requirements: ''
+  Sales Order consolidation failed!: ''
+  Sales Orders: Salgsordrer
+  Sales Orders to Invoice: ''
+  Sales Quotation Number: Salgstilbudsnummer
+  Salesperson: Sælger
+  Salutation: ''
+  Same kit in Row: ''
+  Saturday: Lørdag
+  Save: Gem
+  Save Column: ''
+  Save Level: ''
+  Save Pricelist: Gem prisliste
+  Save Report: ''
+  Save SQL command: ''
+  Save Schedule: ''
+  Save as new: Gem som ny
+  Save failed!: ''
+  Save to File: Gem i fil
+  Saving: Gemmer
+  Saving Order ...: ''
+  'Scan the following code with your Authenticator App:': ''
+  Schedule: ''
+  Scheduled: ''
+  Screen: Skærm
+  Search: Søg
+  Select: Vælg
+  Select Customer: Vælg kunde
+  Select Vendor: Vælg leverandør
+  Select a Printer!: Vælg en printer!
+  Select a printer!: ''
+  Select all: Vælg alt
+  Select from one of the items below: Vælg fra en af tingene nedenfor, og tryk "Fortsæt"
+  Select from one of the names below: Vælg en af navnene nedenfor
+  Select from one of the projects below: Vælg et af projekterne nedenfor
+  Select items: ''
+  Select payment: Vælg betaling
+  Select postscript or PDF!: Vælg postscript eller PDF
+  Select txt, postscript or PDF!: Vælg txt, postscript eller PDF!
+  Sell: Sælg
+  Sell Price: Salgspris
+  Sellprice: ''
+  Send by E-Mail: Sendt med epost
+  Sending: ''
+  Sep: sep
+  September: september
+  Serial No.: Serienummer
+  Serial Number: Serienummer
+  Service: Tjeneste
+  Service Changeup: ''
+  Service Code: Tjeneste kode
+  Service Code missing!: ''
+  Service/Labor Code: ''
+  Services: Tjenester
+  Session Timeout: Sessionen er udløbet
+  Session expired!: Sessionen er udløbet!
+  Setup: ''
+  Setup Templates: Skabeloner for opsætning
+  Ship: Afsend
+  Ship Merchandise: Afsend varer
+  Ship all: ''
+  Ship to: Send til
+  Ship via: Send via
+  Shipped: ''
+  Shipped Items: ''
+  Shipping: Afsendelse
+  Shipping Address: Afsendelsesadresse
+  Shipping Date: Afsendelsesdato
+  Shipping Date missing!: Afsendelsesdato mangler!
+  Shipping Point: Afsendelsessted
+  Short: Kort
+  Signature: Underskrift
+  Snapshot created: ''
+  Snapshot restored: ''
+  Snapshots: ''
+  Snapshots deleted: ''
+  Software Administration: ''
+  Sort Names by: ''
+  Sort by: Sortér efter
+  Source: Bilag
+  Source missing!: ''
+  Split Ledger: ''
+  Spoolfile: køfil
+  Spreadsheet: ''
+  Standard: Standard
+  Standard Industrial Codes: Standard industrikoder (SIC)
+  Startdate: Startdato
+  State: Stat
+  State/Province: Stat/provins
+  Statement: Opgørelse
+  Statement Balance: Balanceopgørelse
+  Statement sent to: Opgørelse sendt til
+  Statements sent to printer!: Opgørelser sendt til printer
+  Stock: Lager
+  Stock Adjustment: ''
+  Stock Assembly: Lagr sammensætning
+  Stock Finished Goods: ''
+  Stock level: ''
+  Stocking Date: ''
+  Stores Card: ''
+  Stores Card deleted!: ''
+  Stores Card saved!: ''
+  Stores Cards: ''
+  Storescard: ''
+  Street: ''
+  Street Name: ''
+  Strings quoted: ''
+  Stylesheet: Stilark
+  Su: ''
+  Sub-contract GIFI: Kode for underleverandør
+  Subject: Emne
+  Subtotal: Subtotal
+  Summary: Oversigt
+  Sunday: Søndag
+  Supervisor: ''
+  Supply & Demand: ''
+  Supply / Demand: ''
+  Switch branch: ''
+  Sybase: ''
+  System: System
+  System Defaults: Standardopsætning for system
+  T: ''
+  TAN: ''
+  Tab delimited: ''
+  Table: ''
+  Tariff: ''
+  Tax: Afgift/Moms
+  Tax Accounts: Afgift/Momskonti
+  Tax Included: Inkl. afgifter og moms
+  Tax Number: Skattenummer
+  Tax Number / SSN: Skattenumme/CIR
+  Tax collected: Skat opkrævet
+  Tax paid: Skat betalt
+  Taxable: Afgifts/momspligtig
+  Taxes: Skatter
+  Taxes saved!: ''
+  Taxnumber: ''
+  Template: ''
+  Template saved!: Skabelon gemt!
+  Templates: Skabeloner
+  Templates managed externally: ''
+  Terms: Netto
+  Text: Tekst
+  Text Templates: Skabeloner for tekst
+  Th: ''
+  The following Datasets are not in use and can be deleted: De følgende datasæt er ikke i brug og kan slettes
+  The following Datasets need to be updated: De følgende datasæt skal opdateres
+  'The following customers are not on file:': ''
+  'The following parts are not on file:': ''
+  'The following snapshot will be restored:': ''
+  'The following vendors are not on file:': ''
+  This is a preliminary check for existing sources. Nothing will be created or deleted at this stage!: Dette er en indledende kontrol af eksisterende kilder. Ingenting vil blive oprettet eller slettet på dette trin
+  Threshold: ''
+  Thursday: Torsdag
+  Till: Indtil
+  Time: ''
+  Time & Stores Cards: ''
+  Time Card: ''
+  Time Card deleted!: ''
+  Time Card saved!: ''
+  Time Cards: ''
+  Time In: ''
+  Time Out: ''
+  Time and Stores Cards: ''
+  Timecard: ''
+  Timecard deleted!: ''
+  Timecard saved!: ''
+  Timecards: ''
+  Times: ''
+  Title: ''
+  To: til
+  To Warehouse: ''
+  To add a user to a group edit a name, change the login name and save.  A new user with the same variables will then be saved under the new login name.: Skift brugernavnet for en eksisterende bruger og gem for at tilføje en ny bruger til en gruppe. Den nye bruger vil så bive gemt med de samme indstillinger under det nye brugernavn.
+  Tool Number: ''
+  Toolnumber: ''
+  Top Level: Topniveau
+  Total: I alt
+  Total Cost: ''
+  'Total:': 'Total:'
+  Tracking Item Income: ''
+  Tracking Item Tax: ''
+  Tracking Items: ''
+  Trade Discount: Handelsrabat
+  Transaction: Postering
+  Transaction Date missing!: Posteringsdato mangler!
+  Transaction Dates: Posteringsdatoer
+  Transaction deleted!: Postering slettet!
+  Transaction posted!: Postering bogført!
+  Transaction reversal enforced for all dates: Rettelser af posteringer skal altid bogføres explicit
+  Transaction reversal enforced up to: Rettelser af posteringer skal bogføres explicit indtil
+  Transactions: Posteringer
+  Transfer: Overførsel
+  Transfer Inventory: Oversigt over overførsler
+  Transfer from: ''
+  Transfer to: Overfør til
+  Translation: Oversættelse
+  Translation deleted!: Oversættelser slettet!
+  Translation not on file!: Oversættelse ikke tilgængelig
+  Translations: Oversættelser
+  Translations saved!: Oversættelser gemt!
+  Trial Balance: Foreløbig status
+  Tu: ''
+  Tuesday: Tirsdag
+  Type: ''
+  Type of Business: Type forretning
+  Type of Contact: ''
+  Type of File: Filtype
+  UID Register: ''
+  UNIX: ''
+  'Unable to create directory: ': ''
+  'Unable to delete:': ''
+  Unit: Enhed
+  Unit of measure: Måleenhed
+  Unknown Error!: ''
+  Unlock Dataset: ''
+  Unlock System: Unlock System
+  Unlock dataset?: ''
+  Unprinted Checks: ''
+  Unprinted Receipts: ''
+  Update: Opdatér
+  Update Dataset: Opdatér datasæt
+  Update Software: ''
+  Updated: Opdateret
+  Upgrading to Version: Opgraderer til version
+  Upload Document: ''
+  Upload Image: ''
+  Uploading ...: ''
+  Use Templates: Brug skabeloner
+  User: Bruger
+  User deleted!: Bruger slettet!
+  User saved!: Bruger gemt!
+  Valid To: ''
+  Valid To date missing for: ''
+  Valid until: Gældende indtil
+  Vendor: Leverandør
+  Vendor History: Leverandørhistorik
+  Vendor Invoice: Indkøbsfaktura
+  'Vendor Invoice ': 'Indkøbsfaktura '
+  Vendor Invoice.: Indkøbsfaktura.
+  Vendor Invoice/AP Transaction Number: Indkøbsfaktura/Kreditor posteringsnummer
+  Vendor Invoices: Leverandørfakturaer
+  Vendor Number: Leverandørnummer
+  Vendor Transactions: ''
+  Vendor deleted!: Leverandør slettet!
+  Vendor missing!: Leverandør mangler!
+  'Vendor not found:': ''
+  Vendor not on file!: Leverandør ikke i databasen!
+  Vendor saved!: Leverandør gemt!
+  Vendors: Leverandører
+  Version: Version
+  Void Check: ''
+  Void Checks: ''
+  Void Receipt: ''
+  Void Receipts: ''
+  Volume: ''
+  Voucher: ''
+  Voucher Number: ''
+  Voucher deleted!: ''
+  Voucher posted!: ''
+  Vouchers: ''
+  WLprinter: ''
+  Wage deleted!: ''
+  Wage saved!: ''
+  Wages: ''
+  Warehouse: Varehus
+  Warehouse Transfer: ''
+  Warehouse Transfer Report: ''
+  Warehouse deleted!: Varehus slettet!
+  Warehouse saved!: Varehus gemt!
+  Warehouses: Varehuse
+  Warning!: Advarsel!
+  Waybill: Fragtbrev
+  We: ''
+  Website: ''
+  Wednesday: Onsdag
+  Week: Uge
+  Week(s): Uge(r)
+  Weeks: Uger
+  Weight: Vægt
+  Weight Unit: Vægtenhed
+  What type of item is this?: Hvilken type ting er dette?
+  Width: ''
+  Withholding: ''
+  Work Fax: ''
+  Work Mobile: ''
+  Work Order: Arbejdsnummer
+  Work Orders: Arbejdsordrer
+  Work Phone: Telefon arbejde
+  Worksheet: ''
+  Workstation: ''
+  Workstations: ''
+  Workstations saved!: ''
+  XML: ''
+  XML Templates: ''
+  XML pain.001: ''
+  Year: År
+  Year(s): År
+  Yearend: Årsslutning
+  Yearend date missing!: Dato for årsslutning mangler!
+  Yearend posted!: Årsslutning posteret!
+  Yearend posting failed!: Postering af årsslutning mislykkedes!
+  Years: År
+  Yes: Ja
+  Yes, Reissue Checks: ''
+  Yes, Reissue Receipts: ''
+  Yes, Void Checks: ''
+  Yes, Void Receipts: ''
+  Yes, delete: ''
+  Yes, delete transactions: ''
+  Yes, reconcile payments: ''
+  You are logged out: Du er logget ud
+  You are not authorized to add a new item!: ''
+  You are posting an existing transaction!: Du bogfører en eksisterende postering!
+  You are printing and posting an existing transaction!: Du udskriver og bogfører en eksisterende postering!
+  You are printing and saving an existing order: Du udskriver og gemmer en eksisterende ordre
+  You are printing and saving an existing quotation: Du udskriver og gemmer et eksisterende tilbud
+  You are printing and saving an existing transaction!: Du udskriver og gemmer en eksisterende postering!
+  You are saving an existing order: Du gemmer en eksisterende ordre
+  You are saving an existing quotation: Du gemmer en eksisterende tilbud
+  You are saving an existing transaction!: Du gemmer en eksisterende postering!
+  You did not enter a name!: Du angav ikke et navn
+  You must enter a host and port for local and remote connections!: Du skal angive en vært og en port for lokale og eksterne forbindelser!
+  Zip/Postal Code: Postnummer
+  Zipcode: ''
+  account cannot be set to any other type of account: konto kan ikke sættes til nogen anden type konto
+  added: ''
+  admin does not exist!: ''
+  as at: som ved
+  camt.054: ''
+  converted to: ''
+  created from Sales Orders: ''
+  csv: ''
+  days: dage
+  does not exist: eksisterer ikke
+  does not exist!: ''
+  done: færdig
+  ea: stk
+  exceeds quantity: ''
+  failed: fejlet
+  failed!: ''
+  for: for
+  for Period: for perioden
+  get copies: ''
+  gzip failed!: ''
+  html: ''
+  html Templates: ''
+  in row: ''
+  is already a member!: er allerede et medlem
+  last: ''
+  localhost: lokalt
+  locked!: låst
+  logout: ''
+  must be negative: ''
+  must be positive: ''
+  ok: ok
+  partsgroup: ''
+  please wait: ''
+  posted!: bogført!
+  rejected: ''
+  reset: ''
+  sent: sendt
+  successfully created!: oprettet!
+  successfully deleted!: slettet!
+  time(s): gang(e)
+  unexpected error!: ''
+  updated: ''
+  void: ''
+  website: på Internet
+  will be restored with data from: ''
+  xml: ''

@@ -1,0 +1,35 @@
+---
+locale: ua_utf
+texts:
+  AP Transactions:
+    ru: №вЯзЯФЫЩ їЩдвСд
+  AR Transactions:
+    ru: №вЯзЯФЫЩ фЯШЯФІз
+  Balance Sheet:
+    rpss: тСЬСЮг
+  Customers:
+    ru: ыЬІЄЮдЩ
+  Description:
+    ru: яаЩг
+  Equity:
+    rpss: ыСаІдСЬ
+  Income Statement:
+    rpss: њзІд авЯ ФЯШЯФЩ І зЩФСдЫЩ
+  Number:
+    ru: юЯЭХв
+  Projects:
+    ru: №вЯХЫдЩ
+  Purchase Orders:
+    ru: ыеаІзХЬиЮІ њСЭЯзЬХЮЮб
+  Sales Orders:
+    ru: №вЯФСжЮІ юСЫЬСФЮІ
+  Select Printer or Queue!:
+    op: Виберіть принтер для черги!
+  Total:
+    rpss: њСЧСЬиЮС ѓеЭС
+  Vendors:
+    ru: №ЯгдСоСЬиЮЩЫЩ
+  as at:
+    rpss: бЫ з
+  for Period:
+    rpss: кС №ХвІЯФ
