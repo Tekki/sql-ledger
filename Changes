@@ -1,6 +1,6 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
-Not Released
+4.0.0 2025-12-28
   - INCLUDES BREAKING CHANGES
   - Perl 5.40 and PostgreSQL 17 are minimum requirements
   - backend modules rewritten using Perl 5.40 features
