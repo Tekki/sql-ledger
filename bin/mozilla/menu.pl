@@ -25,6 +25,7 @@ sub display {
   $menuwidth = '25%' if $form->{small_device};
   $script = $form->{main} =~ /recent/ ? 'ru.pl' : 'am.pl';
 
+  $form->{title}    = "$form->{login} - SQL-Ledger";
   $form->{frameset} = 1;
   $form->header;
 
