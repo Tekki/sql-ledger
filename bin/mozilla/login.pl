@@ -194,9 +194,9 @@ sub selectdataset {
                 $form->hide_form(qw(js path));
 
                 $checked = "checked";
-                for (sort { lc $login{$a} cmp lc $login{$b} } keys %{ $login }) {
+                for (sort { lc $login->{$a} cmp lc $login->{$b} } keys %$login) {
                   print qq|
-                  <br><input class=login type=radio name=login value=$_ $checked>$login->{$_}
+                  <br><input class="login" type="radio" name="login" value="$_" $checked>$login->{$_}
                   |;
                   $checked = "";
                 }
@@ -238,7 +238,7 @@ sub login {
 
     my %login;
     for (grep /^\Q$form->{login}\E(\@|$)/, keys %$members) {
-      $login{$_} = $members->{$_};
+      $login{$_} = $members->{$_}{dbname};
     }
 
     if (keys %login > 1) {
