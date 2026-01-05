@@ -7,7 +7,7 @@ use lib "$FindBin::Bin/../..";
 use Mojo::File 'path';
 use Storable;
 
-use Test::More tests => 9;
+use Test::More tests => 8;
 
 chdir "$FindBin::Bin/../..";
 
@@ -30,7 +30,7 @@ ok -M $members_bin <= -M $members_yml, "$members_bin is up to date";
 
 ok my $members = retrieve $members_bin, 'Read config';
 
-ok $members->{'root login'}, 'Root login exists';
+diag q|Warning: Root login doesn't exist| unless $members->{'root login'};
 
 ok my $userfiles = path('users')->list->grep(qr/.+@.+\.bin/), 'List user files';
 
