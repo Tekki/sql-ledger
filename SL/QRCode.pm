@@ -1,7 +1,7 @@
 #======================================================================
 # SQL-Ledger ERP
 #
-# © 2025-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
+# © 2025-2026 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #

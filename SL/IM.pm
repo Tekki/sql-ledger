@@ -2,7 +2,7 @@
 # SQL-Ledger ERP
 #
 # © 2007-2023 DWS Systems Inc.                   https://sql-ledger.com
-# © 2007-2025 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
+# © 2007-2026 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
 #
 #======================================================================
 #
