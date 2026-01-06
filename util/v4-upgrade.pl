@@ -55,9 +55,13 @@ class Members {
 
   method convert ($memberfile) {
     croak "$memberfile not found" unless -f $memberfile;
-    return !!0 if -f "$memberfile.yml" && -f "$memberfile.bin";
 
-    my (%member, $user);
+    my (%member, $user, $user_added);
+
+    if (-f "$memberfile.bin") {
+      %member = retrieve("$memberfile.bin")->%*;
+    }
+
     for my $line (split "\n", path($memberfile)->slurp('UTF-8')) {
       $line =~ s/^\s+//;
       $line =~ s/\s+$//;
@@ -66,17 +70,24 @@ class Members {
       last if $line =~ /^\./;
 
       if ($line =~ /\[(.+)\]/) {
+        my $login = $1;
         $user = {};
-        $member{$1} = $user;
+
+        unless ($member{$login}) {
+          $member{$login} = $user;
+          $user_added = 1;
+        }
       } elsif ($line =~ /(.+?)=(.+)/) {
         $user->{$1} = $2;
       }
     }
 
-    YAML::PP->new->dump_file("$memberfile.yml", \%member);
-    store \%member, "$memberfile.bin";
+    if ($user_added) {
+      YAML::PP->new->dump_file("$memberfile.yml", \%member);
+      store \%member, "$memberfile.bin";
+    }
 
-    return !!1;
+    return !!$user_added;
   }
 }
 
@@ -92,9 +103,16 @@ class SLConf {
     $helpful_login, $admin_totp_activated
   );
 
-  field $config :reader;
+  # start: temporary change because of problems with Perl 5.40.1 on Debian
+  # field $config :reader;
+  field $config;
+  # end
   field $config_old = 'sql-ledger.conf';
   field $config_new = 'config/sql-ledger.yml';
+
+  # start: temporary change because of problems with Perl 5.40.1 on Debian
+  method config () { return $config; }
+  # end
 
   method convert () {
     my $yml = YAML::PP->new(preserve => PRESERVE_ORDER);
