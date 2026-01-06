@@ -18,9 +18,16 @@ use MIME::Base64;
 
 sub new {
   my ($type) = @_;
-  my $self = {};
 
-  bless $self, $type;
+  my %self = (
+    attachments => [],
+    charset     => 'UTF-8',
+    contenttype => 'text/plain',
+  );
+
+  $self{$_} = '' for qw|from to cc bcc subject message notify fileid version|;
+
+  return bless \%self, $type;
 }
 
 
@@ -33,13 +40,9 @@ sub send {
   my $msgid = "$boundary\@$domain";
   $boundary = "SL-$self->{version}-$boundary";
 
-  $self->{charset} = 'UTF-8';
-
-  $self->{contenttype} ||= "text/plain";
-
   utf8::encode $self->{$_} for qw|from to cc bcc subject message|;
 
-  my %h;
+  my %h = (notify => '');
   for (qw(from to cc bcc)) {
     $self->{$_} =~ s/\&lt;/</g;
     $self->{$_} =~ s/\&gt;/>/g;

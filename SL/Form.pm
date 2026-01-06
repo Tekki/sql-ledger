@@ -899,12 +899,16 @@ sub parse_template ($self, $myconfig, $userspath, $dvipdf = '', $xelatex = '') {
 
       my $mail = SL::Mailer->new;
 
-      for (qw(email cc bcc)) { $self->{$_} =~ s/(\\|\&gt;|\&lt;|<|>)//g; }
-      for (qw(cc bcc subject message version format notify)) { $mail->{$_} = $self->{$_} }
+      for (qw|email cc bcc|) {
+        $self->{$_} =~ s/(\\|\&gt;|\&lt;|<|>)//g;
+      }
+      for (qw|cc bcc subject message version format notify|) {
+        $mail->{$_} = $self->{$_} if $self->{$_};
+      }
       $mail->{charset} = $self->{charset};
-      $mail->{to} = $self->{email};
-      $mail->{from} = qq|"$myconfig->{name}" <$myconfig->{email}>|;
-      $mail->{fileid} = "${fileid}.";
+      $mail->{to}      = $self->{email};
+      $mail->{from}    = qq|"$myconfig->{name}" <$myconfig->{email}>|;
+      $mail->{fileid}  = "${fileid}.";
 
       $mail->{subject} =~ s/<%(.*?)%>/$self->{$1}/g;
       $mail->{message} =~ s/<%(.*?)%>/$self->{$1}/g;
