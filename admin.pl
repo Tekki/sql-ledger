@@ -40,6 +40,12 @@ if ($@) {
   );
 }
 
+unless (-f "$slconfig{memberfile}.bin") {
+  print "Content-Type: text/html\n\n" if $ENV{HTTP_USER_AGENT};
+  print "\n$slconfig{memberfile}.bin: File not found!\n";
+  exit;
+}
+
 if ($ENV{CONTENT_LENGTH}) {
   read(STDIN, $_, $ENV{CONTENT_LENGTH});
 }
