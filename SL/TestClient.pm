@@ -54,18 +54,27 @@ class SL::TestClient {
     return $mj->tx->res->body;
   }
 
-  method connect_ok () {
+  method connect_ok ($admin = 0) {
     $connected = 0;
 
-    if ( $config->{server}
-      && $config->{server}{url}
-      && $config->{server}{username}
-      && $config->{server}{password})
-    {
+    my $config_ok = $config->{server} && $config->{server}{url};
+    if ($admin) {
+      $config_ok &&= $config->{server}{adminpassword};
+    } else {
+       $config_ok &&= $config->{server}{$_} for qw|username password|;
+    }
+
+    if ($config_ok) {
       try {
         my $res = $mj->ua->get("$config->{server}{url}/login.pl")->result;
         if ($res->is_success) {
-          ($url, $username, $password) = $config->{server}->@{'url', 'username', 'password'};
+          if ($admin) {
+            ($url, $password) = $config->{server}->@{'url', 'adminpassword'};
+            $username = 'root login';
+          } else {
+            ($url, $username, $password) = $config->{server}->@{'url', 'username', 'password'};
+          }
+
           $connected = 1;
           pass "Connect to $url";
         } else {
@@ -237,7 +246,7 @@ class SL::TestClient {
       for my ($key, $value) (%params) {
         push @elements, url_escape($key) . '=' . url_escape($value // '');
       }
-      push @elements, "login=$username"  unless $params{login};
+      push @elements, "login=$username" unless $params{login} || $username eq 'root login';
       push @elements, 'path=bin/mozilla' unless $params{path};
 
       $path .= '?' . join('&', @elements);
@@ -288,7 +297,7 @@ class SL::TestClient {
 
     %params = %form_params unless (%params);
 
-    $params{login} ||= $username;
+    $params{login} ||= $username unless $username eq 'root login';
     $params{path}  ||= 'bin/mozilla';
 
     subtest "$label, POST request" => sub {

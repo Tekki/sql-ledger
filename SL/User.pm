@@ -703,7 +703,7 @@ sub save_member ($self, $memberfile, $userspath) {
   }
   $member{$self->{login}} = \%config;
 
-  YAML::PP->new->dump_file("$memberfile.bin", \%member);
+  YAML::PP->new->dump_file("$memberfile.yml", \%member);
   Storable::store \%member, "$memberfile.bin";
   unlink "${memberfile}.LCK";
 

@@ -51,7 +51,7 @@ unless (-f $members_yml) {
   open my $out, '>', $members_yml or die "$members_yml: $!";
   say $out <<~'EOT';
     ---
-    root_login:
+    root login:
       password:
     EOT
   close $out;

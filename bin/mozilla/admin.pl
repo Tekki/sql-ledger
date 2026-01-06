@@ -42,9 +42,11 @@ if (-f "$form->{path}/custom/$form->{script}") {
 
 if ($form->{action}) {
 
-  &check_password unless $form->{action} eq $locale->text('logout');
+  my $action = $locale->findsub($form->{action});
 
-  &{ $locale->findsub($form->{action}) };
+  &check_password unless $action eq 'logout';
+
+  &{$action};
 
 } else {
 
@@ -285,7 +287,7 @@ sub list_datasets {
     for (qw(company dbdriver dbhost dbport dbuser templates)) {
       $column_data{$_} = qq|<td>$dataset->{$_}</td>|;
     }
-    $column_data{dbname} = qq|<td><a href=$href>$dataset->{dbname}</a></td>|;
+    $column_data{dbname} = qq|<td><a class="dataset-l" href="$href">$dataset->{dbname}</a></td>|;
     $column_data{locked} = qq|<td align=center>$dataset->{locked}</td>|;
     $column_data{size}   = qq|<td align=right>$dataset->{size}</td>|;
 
@@ -635,25 +637,20 @@ sub do_change_password {
     Storable::store \%member, "$slconfig{memberfile}.bin";
     unlink "$slconfig{memberfile}.LCK";
 
+    $form->{callback} = "$form->{script}?action=list_datasets&path=$form->{path}";
+
   } else {
 
-    $root->{password} = $form->{new_password};
+    $root = SL::User->new($slconfig{memberfile}, 'root login');
 
-    unless (-f "$slconfig{memberfile}.bin") {
-      my %member = ('root login' => {});
-      Storable::store \%member, "$slconfig{memberfile}.bin";
-    }
-
+    $root->{password}     = $form->{new_password};
     $root->{'root login'} = 1;
-    $root->{login} = 'root login';
+
     $root->save_member($slconfig{memberfile}, $slconfig{userspath});
 
-    $form->{password} = $form->{new_password};
-    &create_config;
+    $form->{callback} = "$form->{script}?action=logout";
 
   }
-
-  $form->{callback} = "$form->{script}?action=list_datasets&path=$form->{path}&password=$form->{password}";
 
   $form->redirect($locale->text('Password changed!'));
 
@@ -829,6 +826,9 @@ sub check_password {
         exit;
       }
     }
+  } elsif ($form->{nextsub} ne 'do_change_password') {
+    &change_password;
+    exit;
   }
 
 }
