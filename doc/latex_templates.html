@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>LaTeX Templates - SQL-Ledger Documentation</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="simple.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">LaTeX Templates - SQL-Ledger Documentation</h1>
+</header>
+<p><a href="index.html">SQL-Ledger Documentation</a> ▶ LaTeX Templates</p>
+<h1 id="latex-templates">LaTeX Templates</h1>
+<p>It is recommended to use <code>XeLaTeX</code> instead of
+<code>LaTeX</code> with <code>pdflatex</code>. If your templates still
+rely on the latter, plan to convert them promptly.</p>
+<p>This release of SQL-Ledger introduces additional functions and
+variables that can be utilized in templates.</p>
+<h2 id="simple-markdown">Simple Markdown</h2>
+<p>Input fields accepts simple markdown commands to format the output as
+italic or bold.</p>
+<pre><code>This word is *italic*. And this one is **bold**.</code></pre>
+<p>In a PDF, it will look like: «This word is <em>italic</em>. And this
+one is <strong>bold</strong>.»</p>
+<p>Links are written with a combination of square and round
+brackets.</p>
+<pre><code>The repo for this code on [GitHub](https://github.com/Tekki/sql-ledger).</code></pre>
+<p>Will be printed as: «The repo for this code on <a
+href="https://github.com/Tekki/sql-ledger">GitHub</a>.»</p>
+<h2 id="variables-for-localized-addresses">Variables for Localized
+Addresses</h2>
+<p>If <a href="configuration.html#localized-postal-addresses">Localized
+Postal Addresses</a> are activted, four new variables are made
+available:</p>
+<table>
+<thead>
+<tr class="header">
+<th>variable</th>
+<th>content</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>countryname</td>
+<td>full name of the country of the customer or vendor</td>
+</tr>
+<tr class="even">
+<td>shiptocountryname</td>
+<td>full name of the shipto country</td>
+</tr>
+<tr class="odd">
+<td>localaddress</td>
+<td>formatted address of the customer or vendor</td>
+</tr>
+<tr class="even">
+<td>shiptolocaladdress</td>
+<td>formatted shipto address</td>
+</tr>
+</tbody>
+</table>
+<p>Formatted addresses contain all the name and address fields and are
+formatted following the rules published by the Universal Postal
+Union.</p>
+<h2 id="variables-for-swiss-qr-bill">Variables for Swiss QR Bill</h2>
+<p>For documents sent to customers, several variables are prepared that
+can be used to generate QR Codes for Swiss QR Bills.</p>
+<table>
+<thead>
+<tr class="header">
+<th>variable</th>
+<th>content</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>qr_company_name</td>
+<td>the name of the own company</td>
+</tr>
+<tr class="even">
+<td>qr_company_address</td>
+<td>the own postal address</td>
+</tr>
+<tr class="odd">
+<td>qr_company_city</td>
+<td>the own zipcode and city</td>
+</tr>
+<tr class="even">
+<td>qr_company_country</td>
+<td>the ISO code of the own country</td>
+</tr>
+<tr class="odd">
+<td>qr_customer_name</td>
+<td>the name of the customer</td>
+</tr>
+<tr class="even">
+<td>qr_customer_address</td>
+<td>the postal address of the customer</td>
+</tr>
+<tr class="odd">
+<td>qr_customer_city</td>
+<td>the zipcode and city of the customer</td>
+</tr>
+<tr class="even">
+<td>qr_customer_country</td>
+<td>the ISO code of the country of the customer</td>
+</tr>
+</tbody>
+</table>
+<p>The the <code>qrcode</code> LaTeX package is not only terribly slow,
+its behavior is rather tricky when it has to process UTF-8 characters.
+It will not accept the above variables. With <code>xelatex</code>, you
+have to use a second set with prefix <code>qr2e_</code> instead of
+<code>qr_</code> that contains characters that are encoded twice. With
+<code>pdflatex</code> you can only use plain ASCII texts that are
+available with prefix <code>qrasc_</code>.</p>
+<h2 id="directive-to-generate-qr-codes">Directive to Generate QR
+Codes</h2>
+<p>This directive inserts a QR Code as TikZ graphics into the
+<code>.tex</code> file. The calculation of the code is made inside
+SQL-Ledger an not delegated to LaTeX.</p>
+<p>This function requires that all the Perl modules are installed (check
+the version screen as admin for this) and the template loads TikZ.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode latex"><code class="sourceCode latex"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">tikz</span>}</span></code></pre></div>
+<p>A QR Code can now be generated with</p>
+<pre><code>&lt;%VAR qrcode=HEIGHT%&gt;</code></pre>
+<p>where <code>VAR</code> is the name of the variable and
+<code>HEIGHT</code> the height of the image in millimeters.</p>
+<p>A QR Code for the partnumber with height 15 mm for example is
+produced with</p>
+<pre><code>&lt;%partnumber qrcode=15%&gt;</code></pre>
+<p>The following parameters modify the appearance of the code:</p>
+<table>
+<thead>
+<tr class="header">
+<th>parameter</th>
+<th>default</th>
+<th>function</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>foreground</td>
+<td>black</td>
+<td>color of the dots</td>
+</tr>
+<tr class="even">
+<td>background</td>
+<td>(none)</td>
+<td>color of the background</td>
+</tr>
+<tr class="odd">
+<td>margin</td>
+<td>0</td>
+<td>margin between the code and the border of the image</td>
+</tr>
+<tr class="even">
+<td>unit</td>
+<td>mm</td>
+<td>length unit for height and margin</td>
+</tr>
+<tr class="odd">
+<td>level</td>
+<td>M</td>
+<td>error correction level, one of M, L, Q, and H</td>
+</tr>
+<tr class="even">
+<td>version</td>
+<td>0</td>
+<td>version of the symbol, with 0 it is adapted to the content</td>
+</tr>
+</tbody>
+</table>
+<p>If the code for the partnumber needs a margin of 10 mm and a green
+background, it would be written as</p>
+<pre><code>&lt;%partnumber qrcode=35% margin=10 background=green&gt;</code></pre>
+</body>
+</html>

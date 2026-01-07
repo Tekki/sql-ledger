@@ -93,4 +93,4 @@ Currently, localization is limited to Europe and North America. The default
 address format follows the pattern: street name, building number, postal code,
 and city, with no text transformation applied. As a result, users outside these
 regions may see addresses that look incorrect. In such a case, please open an
-[issue on Github](https://github.com/Tekki/sql-ledger/issues).
+[issue on GitHub](https://github.com/Tekki/sql-ledger/issues).

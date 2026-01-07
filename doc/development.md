@@ -59,7 +59,21 @@ If you encounter an error or have a feature idea, please open an issue on our
 discuss it further.
 
 Planning to modify the code? Familiarity with Git and creating pull requests on
-GitHub is required. After making your changes, format the updated code with the
-`.perltidyrc` configuration found in this repository, but skip formatting any
-sections that generate HTML output. Always include tests; ideally, add tests
-first and then adjust the code until they all pass.
+GitHub is required.
+
+Some rules:
+
+* Always include tests. Ideally, add tests first and then adjust the code until
+  they all pass.
+* Format the updated code with the `.perltidyrc` configuration found in this
+  repository. Skip formatting any sections that generate HTML output.
+* Use short, but meaningful variable names and never use the same name at the
+  same place for different purposes. Variables are here for humans to understand
+  the code.
+* Explicitly return values from subroutines with keyword `return`.
+* Write `qw|a b c|` with vertical bar and not with parentheses.
+* Write `for` instead of `foreach`.
+* Use suffix statements like `for`, `if`, `unless` only if the code fits on one
+  line.
+* Read about new Perl features up to v5.40 and don't hesitate to use them.
+* Feel free to change existing code that doesn't follow these rules.

@@ -61,7 +61,7 @@ Then log in to trigger any pending database upgrades.
 
 If you have modified the original program code, proceed differently: first
 identify any pending changes with `git status`. Commit them, then merge the new
-updates from Github.
+updates from GitHub.
 
 ## Upgrade from Version 3 to Version 4
 

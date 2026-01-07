@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Translations - SQL-Ledger Documentation</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="simple.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Translations - SQL-Ledger Documentation</h1>
+</header>
+<p><a href="index.html">SQL-Ledger Documentation</a> ▶ Translations</p>
+<h1 id="translations">Translations</h1>
+<h2 id="file-structure">File Structure</h2>
+<p>The translations reside in subdirectories of the <code>locale</code>
+directory. Each subdirectory is named using a country code followed by
+<code>_utf</code>. They consist of the following files:</p>
+<table>
+<thead>
+<tr class="header">
+<th>File</th>
+<th>Content</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>all.yml</td>
+<td>main translation</td>
+</tr>
+<tr class="even">
+<td>all_diff.yml</td>
+<td>differing translations</td>
+</tr>
+<tr class="odd">
+<td>Num2text</td>
+<td>number to text conversion</td>
+</tr>
+<tr class="even">
+<td>locales.pl</td>
+<td>update script</td>
+</tr>
+<tr class="odd">
+<td>LANGUAGE</td>
+<td>name of the language</td>
+</tr>
+<tr class="even">
+<td>COPYING</td>
+<td>copyright information</td>
+</tr>
+</tbody>
+</table>
+<p>Plus around 40 binary files created by <code>locales.pl</code>.</p>
+<h2 id="updating-and-creating-translations">Updating and Creating
+Translations</h2>
+<p>Only modify translation strings in the program code if you intend to
+patch the application. Changing them otherwise risks breaking future
+updates.</p>
+<p>To add a new translation:</p>
+<ul>
+<li>Create a directory for the language.</li>
+<li>Add the <code>LANGUAGE</code> file.</li>
+<li>Copy <code>locales.pl</code> from an existing language directory and
+run it. This generates <code>all.yml</code> and
+<code>all_diff.yml</code>.</li>
+<li>Edit <code>all.yml</code> in a Markdown-compatible editor, adding
+your translations.</li>
+<li>Run <code>./locales.pl</code> again to refresh the binary
+files.</li>
+</ul>
+<p>Check the user interface screens to grasp context and do not aim for
+a 100 % complete translation.</p>
+<p><code>all_diff.yml</code> lists terms that vary across screens.
+Efforts are ongoing to eliminate any ambiguous English terms, so this
+file should eventually stay empty.</p>
+</body>
+</html>

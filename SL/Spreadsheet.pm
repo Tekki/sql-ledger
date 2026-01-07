@@ -736,6 +736,8 @@ L<Scalar::Util>
 
 =head1 METHODS
 
+L<SL::Spreadsheet> implements the following methods:
+
 =head2 adjust_columns
 
   $ss = $ss->adjust_columns;

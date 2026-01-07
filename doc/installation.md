@@ -2,7 +2,18 @@
 
 # Installation
 
-## Organization of the Github Repository
+This document explains how to install the SQL-Ledger program code. As detailed
+in the [Quick Start](introduction.md#quick-start), this is only the first step
+required to achieve a fully operational system.
+
+## GitHub Repository
+
+It is always recommended to install the program via Git, either through the
+Ansible role or a manual installation. Both approaches are described below.
+Downloading and extracting archive files introduces unnecessary complications
+during [upgrades](upgrade.md#upgrade).
+
+The GitHub repository is structured as follows:
 
 | Branch |         | Content                     |
 |--------|---------|-----------------------------|
@@ -30,7 +41,7 @@ configure SQL-Ledger on a preinstalled Debian 13 Trixie.
 
 ## Manual Installation
 
-For a manual installation, the steps are:
+For a manual installation, the procedure is:
 
 - generate the locales
 - install Git, Perl, PostgreSQL database and Apache web server

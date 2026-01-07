@@ -22,11 +22,11 @@ In a PDF, it will look like: «This word is *italic*. And this one is **bold**.�
 Links are written with a combination of square and round brackets.
 
 ```
-The repo for this code on [Github](https://github.com/Tekki/sql-ledger).
+The repo for this code on [GitHub](https://github.com/Tekki/sql-ledger).
 ```
 
 Will be printed as: «The repo for this code on
-[Github](https://github.com/Tekki/sql-ledger).»
+[GitHub](https://github.com/Tekki/sql-ledger).»
 
 ## Variables for Localized Addresses
 

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>User Interface - SQL-Ledger Documentation</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="simple.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">User Interface - SQL-Ledger Documentation</h1>
+</header>
+<p><a href="index.html">SQL-Ledger Documentation</a> ▶ User Interface</p>
+<h1 id="user-interface">User Interface</h1>
+<h2 id="keyboard-shortcuts">Keyboard Shortcuts</h2>
+<p>Advanced users try to avoid to switch from keyboard to mouse, they do
+most of their work with the keyboard only. For them, many shortcuts are
+available.</p>
+<h3 id="access-keys">Access Keys</h3>
+<p>It is possible to use keyboard combinations to press a button or to
+jump directly to an input field. The keys used to activate the command
+depend on the browser and the operating system. On Windows and Linux, it
+can be either:</p>
+<ul>
+<li><code>Alt-[key]</code></li>
+<li><code>Alt-Shift-[key]</code></li>
+</ul>
+<p>and on MacOS:</p>
+<ul>
+<li><code>Control-Option-[key]</code></li>
+<li><code>Control-Option-Shift-[key]</code></li>
+<li><code>Control-Alt-[key]</code></li>
+</ul>
+<p>The <code>[key]</code> is revealed when the mouse is moved over the
+input field or the button in question. Notice that depending on the
+browser and the operating system not all combinations are available.</p>
+<p>Some of the commonly used shortcuts for buttons are:</p>
+<table>
+<thead>
+<tr class="header">
+<th>key</th>
+<th>command</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>U</td>
+<td>Update</td>
+</tr>
+<tr class="even">
+<td>C</td>
+<td>Continue</td>
+</tr>
+<tr class="odd">
+<td>S</td>
+<td>Save</td>
+</tr>
+<tr class="even">
+<td>O</td>
+<td>Post</td>
+</tr>
+<tr class="odd">
+<td>V</td>
+<td>Preview</td>
+</tr>
+<tr class="even">
+<td>P</td>
+<td>Print</td>
+</tr>
+</tbody>
+</table>
+<p>The following keys move the cursor directly to an input field:</p>
+<table>
+<thead>
+<tr class="header">
+<th>key</th>
+<th>jump to</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>last row of the document</td>
+</tr>
+<tr class="even">
+<td>1 … 9</td>
+<td>row 1 … 9 of the document</td>
+</tr>
+<tr class="odd">
+<td>/</td>
+<td>customer or vendor</td>
+</tr>
+<tr class="even">
+<td>*</td>
+<td>document date</td>
+</tr>
+<tr class="odd">
+<td>-</td>
+<td>description</td>
+</tr>
+<tr class="even">
+<td>+</td>
+<td>notes</td>
+</tr>
+<tr class="odd">
+<td>.</td>
+<td>payment date</td>
+</tr>
+<tr class="even">
+<td>$</td>
+<td>curreny</td>
+</tr>
+<tr class="odd">
+<td>,</td>
+<td>invoice number</td>
+</tr>
+</tbody>
+</table>
+<p><code>/ * - + .</code> are the special characters on the numeric
+keypad. The shortcuts for customer or vendor, date, description, and
+notes are available in the frontend of the reports, too. The keys
+<code>1 … 9</code> open the document at the specified position of a
+report.</p>
+<h3 id="quick-date-entry">Quick Date Entry</h3>
+<p>It is not necessary to enter full dates, they can be abbreviated and
+will be expanded as soon as the cursor jumps out of the date field, for
+example by pressing <code>TAB</code>.</p>
+<p>Let's assume the current date is November 26, 2022 and the date
+format is set to <code>dd.mm.yy</code>.</p>
+<table>
+<thead>
+<tr class="header">
+<th>input</th>
+<th>is expanded to</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>+5</td>
+<td>01.12.2022</td>
+</tr>
+<tr class="even">
+<td>-10</td>
+<td>16.11.2022</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>03.11.2022</td>
+</tr>
+<tr class="even">
+<td>5-2</td>
+<td>05.02.2022</td>
+</tr>
+<tr class="odd">
+<td>4.3.23</td>
+<td>04.03.2023</td>
+</tr>
+</tbody>
+</table>
+<h4 id="--n-plus-or-minus-days"><code>+/- n</code>: plus or minus
+days</h4>
+<p>A <code>+</code> or <code>-</code> followed by a number
+<code>n</code> will set the date to today in <code>n</code> days or to
+<code>n</code> days ago.</p>
+<h4 id="n-day"><code>n</code>: day</h4>
+<p>A single number sets the date to day <code>n</code> in the current
+month and year.</p>
+<h4 id="n1-n2-day-and-month"><code>n1 n2</code>: day and month</h4>
+<p>Two numbers define the day and month in the current year. They can be
+separated by any non-numeric character. Depending on the date format set
+in the user preferences, the first number is either the day or the
+month.</p>
+<h4 id="n1-n2-n3-day-month-year"><code>n1 n2 n3</code>: day, month,
+year</h4>
+<p>Three numbers set day, month and year, in the order according to the
+date format. Days and months are always written with two digits, they
+get a leading zero if necessary. Years lower than 100 are expanded to
+<code>20..</code> if they are below 70, to <code>19..</code> if they are
+above.</p>
+</body>
+</html>

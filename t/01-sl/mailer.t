@@ -22,6 +22,7 @@ can_ok $obj, ('encode_base64', 'new', 'send',);
 
 subtest 'Defaults' => sub {
   my %expected = (
+    attachments => [],
     bcc         => '',
     cc          => '',
     charset     => 'UTF-8',
@@ -35,7 +36,5 @@ subtest 'Defaults' => sub {
     version     => '',
   );
 
-  is $obj->{$_}, $expected{$_}, "Value for $_" for keys %expected;
-
-  is ref $obj->{attachments}, 'ARRAY', 'Attachments array';
+  is_deeply $obj, \%expected, 'Content is correct';
 };

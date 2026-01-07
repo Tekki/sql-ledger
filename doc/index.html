@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>SQL-Ledger Documentation</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="simple.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">SQL-Ledger Documentation</h1>
+</header>
+<h1 id="sql-ledger-documentation">SQL-Ledger Documentation</h1>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><p><a href="introduction.html#introduction">Introduction</a></p>
+<ul>
+<li><a href="introduction.html#quick-start">Quick Start</a></li>
+<li><a href="introduction.html#feature-list">Feature List</a></li>
+</ul></li>
+<li><p><a href="installation.html#installation">Installation</a></p>
+<ul>
+<li><a href="installation.html#github-repository">GitHub
+Repository</a></li>
+<li><a href="installation.html#requirements">Requirements</a></li>
+<li><a href="installation.html#ansible-role">Ansible Role</a></li>
+<li><a href="installation.html#manual-installation">Manual
+Installation</a></li>
+<li><a href="installation.html#virtualization">Virtualization</a></li>
+</ul></li>
+<li><p><a href="upgrade.html#upgrade">Upgrade</a></p>
+<ul>
+<li><a href="upgrade.html#git-version-control">Git Version
+Control</a></li>
+<li><a href="upgrade.html#upgrade-within-major-version">Upgrade Within
+Major Version</a></li>
+<li><a href="upgrade.html#upgrade-from-version-3-to-version-4">Upgrade
+from Version 3 to Version 4</a></li>
+<li><a href="upgrade.html#downgrade-from-version-4-to-version-3">Downgrade
+from Version 4 to Version 3</a></li>
+</ul></li>
+<li><p><a href="configuration.html#configuration">Configuration</a></p>
+<ul>
+<li><a href="configuration.html#storage-location">Storage
+Location</a></li>
+<li><a href="configuration.html#global-configuration">Global
+Configuration</a></li>
+<li><a href="configuration.html#database-configuration">Database
+Configuration</a></li>
+<li><a href="configuration.html#user-configuration">User
+Configuration</a></li>
+<li><a href="configuration.html#localized-postal-addresses">Localized
+Postal Addresses</a>
+<ul>
+<li><a href="configuration.html#prerequisites">Prerequisites</a></li>
+<li><a href="configuration.html#customer-and-vendor-screens">Customer and
+Vendor Screens</a></li>
+<li><a href="configuration.html#templates">Templates</a></li>
+<li><a href="configuration.html#missing-localizations">Missing
+Localizations</a></li>
+</ul></li>
+</ul></li>
+<li><p><a href="backup.html#backup">Backup</a></p>
+<ul>
+<li><a href="backup.html#backup-formats">Backup Formats</a></li>
+<li><a href="backup.html#encrypted-backups">Encrypted Backups</a></li>
+<li><a href="backup.html#restore">Restore</a></li>
+</ul></li>
+<li><p><a href="user_interface.html#user-interface">User Interface</a></p>
+<ul>
+<li><a href="user_interface.html#keyboard-shortcuts">Keyboard
+Shortcuts</a>
+<ul>
+<li><a href="user_interface.html#access-keys">Access Keys</a></li>
+<li><a href="user_interface.html#quick-date-entry">Quick Date
+Entry</a></li>
+</ul></li>
+</ul></li>
+<li><p><a href="latex_templates.html#latex-templates">LaTeX
+Templates</a></p>
+<ul>
+<li><a href="latex_templates.html#simple-markdown">Simple
+Markdown</a></li>
+<li><a
+href="latex_templates.html#variables-for-localized-addresses">Variables
+for Localized Addresses</a></li>
+<li><a href="latex_templates.html#variables-for-swiss-qr-bill">Variables
+for Swiss QR Bill</a></li>
+<li><a
+href="latex_templates.html#directive-to-generate-qr-codes">Directive to
+Generate QR Codes</a></li>
+</ul></li>
+<li><p><a href="translations.html#translations">Translations</a></p>
+<ul>
+<li><a href="translations.html#file-structure">File Structure</a></li>
+<li><a
+href="translations.html#updating-and-creating-translations">Updating and
+Creating Translations</a></li>
+</ul></li>
+<li><p><a href="api.html#api">API</a></p>
+<ul>
+<li><a href="api.html#json-and-html-api">JSON and HTML API</a></li>
+<li><a href="api.html#prerequisites">Prerequisites</a></li>
+<li><a href="api.html#authentication">Authentication</a>
+<ul>
+<li><a href="api.html#access-token-(recommended)">Access token
+(recommended)</a></li>
+<li><a href="api.html#login-with-every-request-(alternative)">Login with
+every request (alternative)</a></li>
+</ul></li>
+<li><a href="api.html#json-api">JSON API</a>
+<ul>
+<li><a href="api.html#list-accounts">List Accounts</a></li>
+<li><a href="api.html#search-customers">Search Customers</a></li>
+<li><a href="api.html#customer-details">Customer Details</a></li>
+<li><a href="api.html#search-order">Search Order</a></li>
+<li><a href="api.html#search-transaction">Search Transaction</a></li>
+<li><a href="api.html#invoice-details">Invoice Details</a></li>
+<li><a href="api.html#add-payment">Add Payment</a></li>
+<li><a href="api.html#add-reference">Add Reference</a></li>
+</ul></li>
+<li><a href="api.html#html-api">HTML API</a>
+<ul>
+<li><a href="api.html#preparation">Preparation</a></li>
+<li><a href="api.html#add-an-invoice">Add an invoice</a></li>
+</ul></li>
+</ul></li>
+<li><p><a href="development.html#development">Development</a></p>
+<ul>
+<li><a href="development.html#perldoc">Perldoc</a></li>
+<li><a href="development.html#testing">Testing</a></li>
+<li><a href="development.html#contibuting">Contibuting</a></li>
+</ul></li>
+</ul>
+</body>
+</html>

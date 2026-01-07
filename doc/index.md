@@ -7,7 +7,7 @@
   - [Feature List](introduction.md#feature-list)
 
 - [Installation](installation.md#installation)
-  - [Organization of the Github Repository](installation.md#organization-of-the-github-repository)
+  - [GitHub Repository](installation.md#github-repository)
   - [Requirements](installation.md#requirements)
   - [Ansible Role](installation.md#ansible-role)
   - [Manual Installation](installation.md#manual-installation)

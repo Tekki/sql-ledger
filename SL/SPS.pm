@@ -317,3 +317,105 @@ sub xml_payment_reference ($self, $pmt) {
 
 
 1;
+
+=encoding utf8
+
+=head1 NAME
+
+SL::SPS - Swiss Payment Standard
+
+=head1 SYNOPSIS
+
+    use SL::SPS;
+
+    my $sps = SL::SPS->new($form);
+    $sps->add_payment($pmt);
+    my $xml = $sps->to_xml;
+
+
+=head1 DESCRIPTION
+
+L<SL::SPS> provides support for Swiss Payment Standard.
+
+=head1 DEPENDENCIES
+
+L<SL::SPS>
+
+=over
+
+=item * uses
+L<Time::Piece>
+
+=back
+
+=head1 FUNCTIONS
+
+L<SL::SPS> implements the following functions:
+
+=head2 payment_add_metadata
+
+    $pmt = SL::SPS::payment_add_metadata($pmt);
+
+=head2 payment_type
+
+    $type = SL::SPS::payment_type($pmt);
+
+=head2 payment_valid
+
+    $bool = SL::SPS::payment_valid($pmt);
+
+=head2 sepa_escape
+
+    $escaped = SL::SPS::sepa_escape($string);
+
+=head2 xml_escape
+
+    $escaped = SL::SPS::xml_escape($string);
+
+=head1 CONSTRUCTOR
+
+=head2 new
+
+    $sps = SL::SPS->new($form);
+
+=head1 METHODS
+
+L<SL::SPS> implements the following methods:
+
+=head2 add_payment
+
+    $sps = $sps->add_payment($pmt);
+
+=head2 to_xml
+
+    $xml = $sps->to_xml;
+
+=head2 xml_address
+
+    $addr = $sps->xml_address($pmt);
+
+=head2 xml_header
+
+    $header = $sps->xml_header;
+
+=head2 xml_payment
+
+    $payment = $sps->xml_payment($pmt, $addr, $bank, $ref);
+
+=head2 xml_payment_bank
+
+    $bank = $sps->xml_payment_bank($pmt);
+
+=head2 xml_payment_group
+
+    $group = $sps->xml_payment_group($pmtdt, $psum, $info, \@pmts);
+
+=head2 xml_payment_info
+
+    $info = $sps->xml_payment_info($pmt);
+
+=head2 xml_payment_reference
+
+    $reference = $sps->xml_payment_reference($pmt);
+
+=cut

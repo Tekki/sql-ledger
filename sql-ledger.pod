@@ -6,19 +6,9 @@ SQL-Ledger - open source ERP and accounting system
 
 =head1 DESCRIPTION
 
-L<SQL-Ledger|http://sql-ledger.com> is an open source ERP and accounting system.
-It gives you all the functionality you need for quotations, order management,
-invoices, payrolls and much more. The program is written in Perl, runs on an
-Apache webserver, uses a PostgreSQL database and is highly configurable.
-
-=head1 ABOUT THIS REPO
-
-SQL-Ledger is developed by L<DWS Systems Inc.|http://sql-ledger.com>. The
-C<dws> branch contains the original version from DWS. It has version tags,
-so you can download a specific version back to 2.6.0 from October 1, 2005.
-
-The C<full> branch, which is checked out by default, provides some additions.
-Refer to the file README.md for a full description.
+L<SQL-Ledger|https://github.com/Tekki/sql-ledger> is a web-based open source ERP
+and accounting platform that delivers all the essential tools for order
+management, invoicing, and accounting.
 
 =head1 REFERENCE
 
@@ -108,6 +98,8 @@ Refer to the file README.md for a full description.
 
 =item * L<SL::AA> - AR/AP backend routines
 
+=item * L<SL::ADR> - Address Validation
+
 =item * L<SL::AM> - Administration module
 
 =item * L<SL::API> - JSON API
@@ -169,6 +161,8 @@ Refer to the file README.md for a full description.
 =item * L<SL::Spreadsheet> - Spreadsheet module
 
 =item * L<SL::SPS> - Swiss Payment Standard
+
+=item * L<SL::TOTP> - Time-based one-time passwords
 
 =item * L<SL::User> - User related functions
 
