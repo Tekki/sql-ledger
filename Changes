@@ -1,5 +1,15 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+4.0.1 2026-01-10
+  - main page shows the user login in the title
+  - documentation in HTML format, accessible from menu
+  - missing fields in e-mails have default values
+    contributed by György Tóth-Szabó
+  - selection of datasets with enabled helpful login corrected
+  - handling of incomplete configurations improved
+  - the main admin in no longer allowed to have an empty password
+  - tests warn and don't fail if the login of the main admin is missing
+
 4.0.0 2025-12-28
   - INCLUDES BREAKING CHANGES
   - Perl 5.40 and PostgreSQL 17 are minimum requirements
