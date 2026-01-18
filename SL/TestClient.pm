@@ -95,7 +95,9 @@ class SL::TestClient {
   }
 
   method date_jan1 () {
-    return localtime->strftime('%Y0101');
+    my $time = localtime;
+    $time -= ONE_YEAR if $time->mon < 4;
+    return $time->strftime('%Y0101');
   }
 
   method date_today () {
