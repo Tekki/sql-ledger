@@ -85,6 +85,8 @@ class Members {
     if ($user_added) {
       YAML::PP->new->dump_file("$memberfile.yml", \%member);
       store \%member, "$memberfile.bin";
+      chown $www_user_id, $www_group_id, "$memberfile.yml";
+      chown $www_user_id, $www_group_id, "$memberfile.bin";
     }
 
     return !!$user_added;

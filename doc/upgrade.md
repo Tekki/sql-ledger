@@ -73,7 +73,7 @@ version 4 and run the upgrade script:
 
 ```bash
 git switch main
-script/v4-upgrade.pl
+util/v4-upgrade.pl
 ```
 
 The script performs the following transformations:
@@ -83,8 +83,8 @@ The script performs the following transformations:
 - `users/members` to YAML `users/members.yml`
 - `users/members.yml` and all user config files to binary format
 
-Existing YAML files will not be overwritten and the old config files are not
-deleted.
+Existing YAML files will not be overwritten, but `members.yml` is updated with
+new users from `members`. The old config files are not deleted.
 
 Finally, log in to your database to complete the upgrade to version 4.
 
