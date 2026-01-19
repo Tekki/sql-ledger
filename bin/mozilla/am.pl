@@ -3081,6 +3081,9 @@ sub config {
 
   SL::AM->get_defaults(\%myconfig, $form);
 
+  require Digest::SHA;
+  my $token = Digest::SHA::sha256_base64($myconfig{sessionkey});
+
   for (qw(mm-dd-yy mm/dd/yy dd-mm-yy dd/mm/yy dd.mm.yy yyyy-mm-dd)) { $form->{selectdateformat} .= "$_\n" }
 
   for (qw(1,000.00 1000.00 1.000,00 1000,00 1'000.00 1,00,000.00)) { $form->{selectnumberformat} .= "$_\n" }
@@ -3195,16 +3198,23 @@ pdf--PDF|;
                 <td><input type=password name=confirm_password value="$myconfig{password}" size=10></td>
               </tr>
               $adminname
-        <tr>
-    <th align=right>|.$locale->text('E-Mail').qq|</th>
-    <td>
-      <input name=emailcopy type=checkbox class=checkbox value=1 $checked{emailcopy}>
-      |.$locale->text('get copies').qq|
-    </td>
-        </tr>
+              <tr>
+                <th align=right>|.$locale->text('E-Mail').qq|</th>
+                <td>
+                  <input name=emailcopy type=checkbox class=checkbox value=1 $checked{emailcopy}>
+                  |.$locale->text('get copies').qq|
+                </td>
+              </tr>
               <tr valign=top>
                 <th align=right>|.$locale->text('Signature').qq|</th>
                 <td><textarea name="signature" rows="3" cols="35">$form->{signature}</textarea></td>
+              </tr>
+              <tr valign=top>
+                <th align=right>|.$locale->text('API Token').qq|</th>
+                <td>
+                  <span id="api-token">$token</span>
+                  <span class="clickable" accesskey="Y" title="|.$locale->text('Copy').qq| [Y]" onclick="copyElement(event, 'api-token')">&#128203</span>
+                </td>
               </tr>
             </table>
           </td>
@@ -3278,7 +3288,9 @@ pdf--PDF|;
   }
 
   print qq|
-  </form>
+  </form>|;
+  &copy_element;
+  print qq|
 
 </body>
 </html>
