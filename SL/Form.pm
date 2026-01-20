@@ -13,6 +13,7 @@ use utf8;
 
 use Digest::SHA 'sha256_hex';
 use Time::Local;
+use YAML::PP ();
 
 sub new ($type, $userspath = '') {
 
@@ -139,10 +140,31 @@ sub new ($type, $userspath = '') {
 
   $self->{favicon} = 'favicon.ico';
 
+  _load_environment($self);
+
   bless $self, $type;
 
 }
 
+sub _load_environment {
+  my ($self) = @_;
+
+  my $cfgfile = 'config/sql-ledger.yml';
+  return unless -r $cfgfile;
+
+  my $cfg;
+  eval {
+    $cfg = YAML::PP->new->load_file($cfgfile);
+  };
+  return if $@ || ref $cfg ne 'HASH';
+
+  $self->{environment} = lc($cfg->{environment} // '');
+}
+
+sub environment {
+  my ($self) = @_;
+  return $self->{environment} // '';
+}
 
 sub debug ($self, $file) {
 
@@ -545,40 +567,54 @@ sub header ($self, $endsession = undef, $nocookie = undef) {
   if ($ENV{HTTP_USER_AGENT}) {
 
     if ($self->{stylesheet} && (-f "css/$self->{stylesheet}")) {
-      $stylesheet = qq|<link rel="stylesheet" href="css/$self->{stylesheet}?v=$self->{cssversion}" type="text/css" title="SQL-Ledger stylesheet">
+      $stylesheet = qq|<link rel="stylesheet" href="css/$self->{stylesheet}?v=$self->{cssversion}">
   |;
     }
 
     if ($self->{favicon} && (-f "$self->{favicon}")) {
-      $favicon = qq|<link rel="icon" href="$self->{favicon}" type="image/x-icon">
+      $favicon = qq|<link rel="icon" href="$self->{favicon}">
   |;
     }
 
-    if ($self->{charset}) {
-      $charset = qq|<meta http-equiv="Content-Type" content="text/html; charset=$self->{charset}">
+    my $cs_http = $self->{charset} || '';
+    if ($cs_http ne '') {
+      $cs_http =~ s/^utf8$/UTF-8/i;
+      $cs_http =~ s/^utf-8$/UTF-8/i;
+      my $cs_meta = lc $cs_http; # UTF-8 -> utf-8
+      $charset = qq|<meta charset="$cs_meta">
   |;
     }
 
-    my $doctype = $self->{frameset}
-      ? q|HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd"|
-      : 'HTML';
+    my $doctype = 'html';
 
     my $title = ($self->{title}) ? $self->{title} : "SQL-Ledger";
 
     $self->set_cookie($endsession) unless $nocookie;
 
-    print qq|Content-Type: text/html
+    my $lang_attr = '';
+    my $lang_src  = $self->{language} || $self->{lang} || '';
+    if ($lang_src ne '') {
+      $lang_src =~ s/_/-/g;
+      if ($lang_src =~ /^([A-Za-z]{2})(?:-([A-Za-z]{2}))?$/) {
+        my ($l, $r) = (lc($1), $2);
+        $lang_attr = defined($r) && $r ne '' ? qq| lang="$l-@{[uc($r)]}"| : qq| lang="$l"|;
+      }
+    }
+
+    my $ct_charset = $cs_http ne '' ? qq|; charset=$cs_http| : '';
+
+    print qq|Content-Type: text/html$ct_charset
 
 <!DOCTYPE $doctype>
-<html>
+<html$lang_attr>
 <head>
+  $charset
   <title>$title</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" CONTENT="noindex,nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
   $favicon
   $self->{customheader}
   $stylesheet
-  $charset
 </head>
 
 $self->{pre}
