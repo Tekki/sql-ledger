@@ -138,7 +138,7 @@ Installation</a>.</p>
 <code>main</code> containing version 4 and run the upgrade script:</p>
 <div class="sourceCode" id="cb6"><pre
 class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> switch main</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">script/v4-upgrade.pl</span></span></code></pre></div>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">util/v4-upgrade.pl</span></span></code></pre></div>
 <p>The script performs the following transformations:</p>
 <ul>
 <li><code>sql-ledger.conf</code> to YAML
@@ -150,8 +150,9 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="
 <li><code>users/members.yml</code> and all user config files to binary
 format</li>
 </ul>
-<p>Existing YAML files will not be overwritten and the old config files
-are not deleted.</p>
+<p>Existing YAML files will not be overwritten, but
+<code>members.yml</code> is updated with new users from
+<code>members</code>. The old config files are not deleted.</p>
 <p>Finally, log in to your database to complete the upgrade to version
 4.</p>
 <h2 id="downgrade-from-version-4-to-version-3">Downgrade from Version 4

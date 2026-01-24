@@ -21,8 +21,9 @@ Plus around 40 binary files created by `locales.pl`.
 
 ## Updating and Creating Translations
 
-Only modify translation strings in the program code if you intend to patch the
-application. Changing them otherwise risks breaking future updates.
+Only modify translation strings in the original code if you intend to patch the
+application. Changing them otherwise risks breaking future updates. For your
+private translation, create a new directory.
 
 To add a new translation:
 - Create a directory for the language.
@@ -30,6 +31,7 @@ To add a new translation:
 - Copy `locales.pl` from an existing language directory and run it. This
   generates `all.yml` and `all_diff.yml`.
 - Edit `all.yml` in a Markdown-compatible editor, adding your translations.
+- Edit `all_diff.yml` if necessary.
 - Run `./locales.pl` again to refresh the binary files.
 
 Check the user interface screens to grasp context and do not aim for a 100 %
@@ -38,3 +40,14 @@ complete translation.
 `all_diff.yml` lists terms that vary across screens. Efforts are ongoing to
 eliminate any ambiguous English terms, so this file should eventually stay
 empty.
+
+If you need variants on different screens, add them to `all_diff.yml` in the
+following way:
+
+```yaml
+texts:
+  English Term:
+    script1: Translation for Script 1
+    script2: Translation for Script 2
+```
+

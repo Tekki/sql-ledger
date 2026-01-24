@@ -149,12 +149,28 @@ potentially corrupt data; they must not be run in production
 environments. These tests are restricted to core developers and are
 currently undocumented.</p>
 <h2 id="contributing">Contributing</h2>
-<p>If you encounter an error or have a feature idea, please open an
-issue on our <a href="https://github.com/Tekki/sql-ledger/issues">GitHub
-repository</a> so we can discuss it further.</p>
-<p>Planning to modify the code? Familiarity with Git and creating pull
-requests on GitHub is required.</p>
-<p>Some rules:</p>
+<p>If you encounter an error or have a feature idea, first of all open
+an issue on our <a
+href="https://github.com/Tekki/sql-ledger/issues">GitHub repository</a>
+so we can discuss it further. Pull requests without prior discussion
+will not get reviewed, except for small corrections of obvious
+errors.</p>
+<p>The entire contribution process is:</p>
+<ul>
+<li>opening of an issue</li>
+<li>description of the facts</li>
+<li>discussion of the options</li>
+<li>assessment of the risks</li>
+<li>decision on the path to be taken</li>
+<li>code change</li>
+<li>opening of a pull request</li>
+<li>check if the new code meets the expectations</li>
+<li>publication of a new release</li>
+</ul>
+<p>Familiarity with Git and creating pull requests on GitHub is
+required. Sign the commits. Remember that changing the code is step 6 on
+the above list, not the first.</p>
+<p>Some coding rules:</p>
 <ul>
 <li>Always include tests. Ideally, add tests first and then adjust the
 code until they all pass.</li>
@@ -171,6 +187,9 @@ parentheses.</li>
 <li>Write <code>for</code> instead of <code>foreach</code>.</li>
 <li>Use suffix statements like <code>for</code>, <code>if</code>,
 <code>unless</code> only if the code fits on one line.</li>
+<li>Use postfix dereferencing.</li>
+<li>Use subroutine signatures.</li>
+<li>Separate subroutines with two line breaks.</li>
 <li>Read about new Perl features up to v5.40 and don't hesitate to use
 them.</li>
 <li>Feel free to change existing code that doesn't follow these

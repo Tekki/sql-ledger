@@ -54,14 +54,28 @@ restricted to core developers and are currently undocumented.
 
 ## Contributing
 
-If you encounter an error or have a feature idea, please open an issue on our
-[GitHub repository](https://github.com/Tekki/sql-ledger/issues) so we can
-discuss it further.
+If you encounter an error or have a feature idea, first of all open an issue on
+our [GitHub repository](https://github.com/Tekki/sql-ledger/issues) so we can
+discuss it further. Pull requests without prior discussion will not get
+reviewed, except for small corrections of obvious errors.
 
-Planning to modify the code? Familiarity with Git and creating pull requests on
-GitHub is required.
+The entire contribution process is:
 
-Some rules:
+* opening of an issue
+* description of the facts
+* discussion of the options
+* assessment of the risks
+* decision on the path to be taken
+* code change
+* opening of a pull request
+* check if the new code meets the expectations
+* publication of a new release
+
+Familiarity with Git and creating pull requests on GitHub is required. Sign the
+commits. Remember that changing the code is step 6 on the above list, not the
+first.
+
+Some coding rules:
 
 * Always include tests. Ideally, add tests first and then adjust the code until
   they all pass.
@@ -75,5 +89,8 @@ Some rules:
 * Write `for` instead of `foreach`.
 * Use suffix statements like `for`, `if`, `unless` only if the code fits on one
   line.
+* Use postfix dereferencing.
+* Use subroutine signatures.
+* Separate subroutines with two line breaks.
 * Read about new Perl features up to v5.40 and don't hesitate to use them.
 * Feel free to change existing code that doesn't follow these rules.
