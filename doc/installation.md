@@ -20,9 +20,14 @@ The GitHub repository is structured as follows:
 | main   | default | Version 4                   |
 | full   |         | extended Version 3 by Tekki |
 | dws    |         | DWS Version 3               |
+| beta   |         | development of Version 4    |
 
-`main` is the default branch and contains version 4. The repository has version
-tags, so you can download a specific version back to 2.6.0 from October 1, 2005.
+`main` is the default branch and contains version 4. `beta` is used for
+development and contains the planned changes for the next release. It's history
+may get modified, fast forwarding of a local copy is therefore not guaranteed.
+
+The repository has version tags that allow to download a specific version back
+to 2.6.0 from October 1, 2005.
 
 ## Requirements
 
