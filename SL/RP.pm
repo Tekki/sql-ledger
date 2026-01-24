@@ -9,12 +9,12 @@
 # backend code for reports
 #
 #======================================================================
+use v5.40;
 
 package SL::RP;
 
 
-sub yearend_statement {
-  my ($self, $myconfig, $form) = @_;
+sub yearend_statement ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -55,7 +55,7 @@ sub yearend_statement {
   }
 
   for (qw(I E)) {
-    %{ $form->{$_} } = &get_accounts($form, $dbh, $form->{fromdate}, $form->{todate}, $_);
+    %{ $form->{$_} } = &get_accounts($myconfig, $form, $dbh, $form->{fromdate}, $form->{todate}, $_);
   }
 
   # disconnect
@@ -64,8 +64,7 @@ sub yearend_statement {
 }
 
 
-sub create_links {
-  my ($self, $myconfig, $form, $vc) = @_;
+sub create_links ($, $myconfig, $form, $vc) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -81,13 +80,13 @@ sub create_links {
 }
 
 
-sub income_statement {
-  my ($self, $myconfig, $form, $locale) = @_;
+sub income_statement ($, $myconfig, $form, $locale) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
   $form->{"old_$_"} = $form->{$_} for qw|fromdate todate|;
+  $form->{$_} //= '' for qw|currency defaultcurrency|;
   delete $myconfig->{dateformat} if $form->{action} eq 'spreadsheet';
 
   unless ($form->{fromdate} || $form->{todate}) {
@@ -113,7 +112,7 @@ sub income_statement {
   $form->{transdate} = $form->{fromdate};
   $form->fdld($myconfig, $locale);
 
-  if (($form->{currency} // '') ne $form->{defaultcurrency}) {
+  if ($form->{currency} ne $form->{defaultcurrency}) {
     $form->{exchangerate} = $form->get_exchangerate($myconfig, $dbh, $form->{currency}, $form->{todate});
   }
 
@@ -136,7 +135,7 @@ sub income_statement {
 
     $form->{period}{0}{this} = { fromdate => $locale->date($myconfig, $fromdate, $form->{longformat}), todate => $locale->date($myconfig, $todate, $form->{longformat}) };
 
-    %c = &get_accounts($form, $dbh, $fromdate, $todate, $_, 1);
+    %c = &get_accounts($myconfig, $form, $dbh, $fromdate, $todate, $_, 1);
     &add_accounts($form, \%c, 'this', '0', $_);
 
     if (($form->{includeperiod} // '') eq 'month') {
@@ -145,7 +144,7 @@ sub income_statement {
 
       $form->{period}{1}{this} = { fromdate => $locale->date($myconfig, $fromdate, $form->{longformat}), todate => $locale->date($myconfig, $todate, $form->{longformat}) };
 
-      %c = &get_accounts($form, $dbh, $fromdate, $todate, $_, 1);
+      %c = &get_accounts($myconfig, $form, $dbh, $fromdate, $todate, $_, 1);
       &add_accounts($form, \%c, 'this', '1', $_);
 
       $interval = $form->{interval} || 12;
@@ -165,7 +164,7 @@ sub income_statement {
 
         $form->{period}{$j}{this} = { fromdate => $locale->date($myconfig, $fromdate, $form->{longformat}), todate => $locale->date($myconfig, $todate, $form->{longformat}) };
 
-        %c = &get_accounts($form, $dbh, $fromdate, $todate, $_, 1);
+        %c = &get_accounts($myconfig, $form, $dbh, $fromdate, $todate, $_, 1);
         &add_accounts($form, \%c, 'this', $j, $_);
 
       }
@@ -177,7 +176,7 @@ sub income_statement {
 
       $form->{period}{1}{this} = { fromdate => $locale->date($myconfig, $fromdate, $form->{longformat}), todate => $locale->date($myconfig, $todate, $form->{longformat}) };
 
-      %c = &get_accounts($form, $dbh, $fromdate, $todate, $_, 1);
+      %c = &get_accounts($myconfig, $form, $dbh, $fromdate, $todate, $_, 1);
       &add_accounts($form, \%c, 'this', '1', $_);
 
       $interval = ($form->{interval} / 3) || 4;
@@ -199,7 +198,7 @@ sub income_statement {
 
         $form->{period}{$j}{this} = { fromdate => $locale->date($myconfig, $fromdate, $form->{longformat}), todate => $locale->date($myconfig, $todate, $form->{longformat}) };
 
-        %c = &get_accounts($form, $dbh, $fromdate, $todate, $_, 1);
+        %c = &get_accounts($myconfig, $form, $dbh, $fromdate, $todate, $_, 1);
         &add_accounts($form, \%c, 'this', $j, $_);
 
       }
@@ -215,7 +214,7 @@ sub income_statement {
 
       $form->{period}{0}{previous} = { fromdate => $locale->date($myconfig, $fromdate, $form->{longformat}), todate => $locale->date($myconfig, $todate, $form->{longformat}) };
 
-      %c = &get_accounts($form, $dbh, $fromdate, $todate, $_, 1);
+      %c = &get_accounts($myconfig, $form, $dbh, $fromdate, $todate, $_, 1);
       &add_accounts($form, \%c, 'previous', '0', $_);
 
       if (($form->{includeperiod} // '') eq 'month') {
@@ -226,7 +225,7 @@ sub income_statement {
 
         $form->{period}{1}{previous} = { fromdate => $locale->date($myconfig, $fromdate, $form->{longformat}), todate => $locale->date($myconfig, $todate, $form->{longformat}) };
 
-        %c = &get_accounts($form, $dbh, $fromdate, $todate, $_, 1);
+        %c = &get_accounts($myconfig, $form, $dbh, $fromdate, $todate, $_, 1);
         &add_accounts($form, \%c, 'previous', '1', $_);
 
         $interval = $form->{interval} || 12;
@@ -249,7 +248,7 @@ sub income_statement {
 
           $form->{period}{$j}{previous} = { fromdate => $locale->date($myconfig, $fromdate, $form->{longformat}), todate => $locale->date($myconfig, $todate, $form->{longformat}) };
 
-          %c = &get_accounts($form, $dbh, $fromdate, $todate, $_, 1);
+          %c = &get_accounts($myconfig, $form, $dbh, $fromdate, $todate, $_, 1);
           &add_accounts($form, \%c, 'previous', $j, $_);
 
         }
@@ -263,7 +262,7 @@ sub income_statement {
 
         $form->{period}{1}{previous} = { fromdate => $locale->date($myconfig, $fromdate, $form->{longformat}), todate => $locale->date($myconfig, $todate, $form->{longformat}) };
 
-        %c = &get_accounts($form, $dbh, $fromdate, $todate, $_, 1);
+        %c = &get_accounts($myconfig, $form, $dbh, $fromdate, $todate, $_, 1);
         &add_accounts($form, \%c, 'previous', '1', $_);
 
         $interval = ($form->{interval} / 3) || 4;
@@ -288,7 +287,7 @@ sub income_statement {
 
           $form->{period}{$j}{previous} = { fromdate => $locale->date($myconfig, $fromdate, $form->{longformat}), todate => $locale->date($myconfig, $todate, $form->{longformat}) };
 
-          %c = &get_accounts($form, $dbh, $fromdate, $todate, $_, 1);
+          %c = &get_accounts($myconfig, $form, $dbh, $fromdate, $todate, $_, 1);
           &add_accounts($form, \%c, 'previous', $j, $_);
 
         }
@@ -309,13 +308,13 @@ sub income_statement {
 }
 
 
-sub balance_sheet {
-  my ($self, $myconfig, $form, $locale) = @_;
+sub balance_sheet ($, $myconfig, $form, $locale) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
 
   $form->{old_todate} = $form->{todate};
+  $form->{$_} //= '' for qw|currency defaultcurrency includeperiod|;
   delete $myconfig->{dateformat} if $form->{action} eq 'spreadsheet';
 
   # $form->{todate} = $form->datetonum($myconfig, $form->{todate});
@@ -328,7 +327,7 @@ sub balance_sheet {
 
   $form->{todate} ||= $form->current_date($myconfig);
 
-  if (($form->{currency} // '') ne $form->{defaultcurrency}) {
+  if ($form->{currency} ne $form->{defaultcurrency}) {
     $form->{exchangerate} = $form->get_exchangerate($myconfig, $dbh, $form->{currency}, $form->{todate});
   }
 
@@ -339,21 +338,21 @@ sub balance_sheet {
   my $p = 1;
   my $i;
   my $j;
-  my $k;
+  my $k = 0;
 
   $form->{period}{0}{this} = { todate => $locale->date($myconfig, $form->{todate}, $form->{longformat}) };
 
-  $todate = $form->add_date($myconfig, $form->{todate}, -1, "year");
+  my $todate = $form->add_date($myconfig, $form->{todate}, -1, "year");
   $form->{period}{0}{previous} = { todate => $locale->date($myconfig, $todate, $form->{longformat}) };
 
   for (qw(A L Q)) {
-    %c = &get_accounts($form, $dbh, undef, $form->{todate}, $_);
+    %c = &get_accounts($myconfig, $form, $dbh, undef, $form->{todate}, $_);
     &add_accounts($form, \%c, 'this', '0', $_);
 
-    if (($form->{includeperiod} // '') eq 'month') {
+    if ($form->{includeperiod} eq 'month') {
       $k = 11;
     }
-    if (($form->{includeperiod} // '') eq 'quarter') {
+    if ($form->{includeperiod} eq 'quarter') {
       $k = 3;
       $p = 3;
     }
@@ -361,7 +360,7 @@ sub balance_sheet {
     if ($form->{previousyear}) {
       $todate = $form->add_date($myconfig, $form->{todate}, -1, "year");
 
-      %c = &get_accounts($form, $dbh, undef, $todate, $_);
+      %c = &get_accounts($myconfig, $form, $dbh, undef, $todate, $_);
       &add_accounts($form, \%c, 'previous', '0', $_);
     }
 
@@ -369,14 +368,14 @@ sub balance_sheet {
       $todate = $form->add_date($myconfig, $form->{todate}, ($i*$p*-1), "month");
       $form->{period}{$i}{this} = { todate => $locale->date($myconfig, $todate, $form->{longformat}) };
 
-      %c = &get_accounts($form, $dbh, undef, $todate, $_);
+      %c = &get_accounts($myconfig, $form, $dbh, undef, $todate, $_);
       &add_accounts($form, \%c, 'this', $i, $_);
 
       if ($form->{previousyear}) {
         $todate = $form->add_date($myconfig, $todate, -1, "year");
         $form->{period}{$i}{previous} = { todate => $locale->date($myconfig, $todate, $form->{longformat}) };
 
-        %c = &get_accounts($form, $dbh, undef, $todate, $_);
+        %c = &get_accounts($myconfig, $form, $dbh, undef, $todate, $_);
         &add_accounts($form, \%c, 'previous', $i, $_);
       }
     }
@@ -396,8 +395,7 @@ sub balance_sheet {
 }
 
 
-sub add_accounts {
-  my ($form, $c, $year, $period, $category) = @_;
+sub add_accounts ($form, $c, $year, $period, $category) {
 
   for my $var (keys %{$c}) {
     next unless $form->round_amount($c->{$var}{amount}, $form->{decimalplaces});
@@ -413,8 +411,7 @@ sub add_accounts {
 }
 
 
-sub get_accounts {
-  my ($form, $dbh, $fromdate, $todate, $category, $excludeyearend) = @_;
+sub get_accounts ($myconfig, $form, $dbh, $fromdate, $todate, $category, $excludeyearend = undef) {
 
   my %c;
   my $department_id;
@@ -424,12 +421,13 @@ sub get_accounts {
   (undef, $project_id) = split /--/, $form->{projectnumber} // '';
 
   my $query;
-  my $dpt_where;
-  my $dpt_join;
-  my $project;
-  my $where = "1 = 1";
-  my $glwhere = "";
-  my $subwhere = "";
+  my $dpt_where    = '';
+  my $dpt_join     = '';
+  my $project      = '';
+  my $where        = "1 = 1";
+  my $ywhere       = '';
+  my $glwhere      = "";
+  my $subwhere     = "";
   my $yearendwhere = "1 = 1";
   my $item;
 
@@ -460,11 +458,11 @@ sub get_accounts {
                 ORDER BY 1|;
   }
 
-  $sth = $dbh->prepare($query);
+  my $sth = $dbh->prepare($query);
   $sth->execute or $form->dberror($query);
 
   my @headingaccounts = ();
-  while ($ref = $sth->fetchrow_hashref)
+  while (my $ref = $sth->fetchrow_hashref)
   {
     $ref->{description} = $ref->{translation} if $ref->{translation};
 
@@ -848,7 +846,7 @@ sub get_accounts {
   my $accno;
   my $ref;
 
-  my $sth = $dbh->prepare($query);
+  $sth = $dbh->prepare($query);
   $sth->execute or $form->dberror($query);
 
   $form->{exchangerate} ||= 1;
@@ -880,23 +878,23 @@ sub get_accounts {
 }
 
 
-
-sub trial_balance {
-  my ($self, $myconfig, $form) = @_;
+sub trial_balance ($, $myconfig, $form) {
 
   my $dbh = $form->dbconnect($myconfig);
 
   $form->{"old_$_"} = $form->{$_} for qw|fromdate todate|;
 
+  $form->{$_} ||= '' for qw|language_code countrycode|;
+
   my ($query, $sth, $ref);
   my %balance = ();
-  my %trb = ();
+  my %trb     = ();
   my $department_id;
   my $project_id;
   my @headingaccounts = ();
-  my $dpt_where;
-  my $dpt_join;
-  my $project;
+  my $dpt_where       = '';
+  my $dpt_join        = '';
+  my $project         = '';
 
   my %defaults = $form->get_defaults($dbh, ['precision', 'company']);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
@@ -1112,7 +1110,7 @@ sub trial_balance {
 
   }
 
-  $drcr = $dbh->prepare($query);
+  my $drcr = $dbh->prepare($query);
 
   # calculate debit and credit for the period
   while ($ref = $sth->fetchrow_hashref) {
@@ -1126,7 +1124,8 @@ sub trial_balance {
   }
   $sth->finish;
 
-  my ($debit, $credit);
+  my $debit  = '';
+  my $credit = '';
 
   foreach my $accno (sort keys %trb) {
     $ref = ();
@@ -1135,6 +1134,8 @@ sub trial_balance {
     for (qw(description category contra charttype amount)) { $ref->{$_} = $trb{$accno}{$_} }
 
     $ref->{balance} = $balance{$ref->{accno}};
+    $ref->{debit}  //= 0;
+    $ref->{credit} //= 0;
 
     if ($trb{$accno}{charttype} eq 'A') {
       if ($project_id) {
@@ -1151,10 +1152,10 @@ sub trial_balance {
         # get DR/CR
         $drcr->execute($ref->{accno}, $ref->{accno});
 
-        ($debit, $credit) = (0,0);
+        ($debit, $credit) = (0, 0);
         while (($debit, $credit) = $drcr->fetchrow_array) {
-          $ref->{debit} += $debit;
-          $ref->{credit} += $credit;
+          $ref->{debit}  += $debit  if $debit;
+          $ref->{credit} += $credit if $credit;
         }
         $drcr->finish;
 
@@ -1164,16 +1165,18 @@ sub trial_balance {
       $ref->{credit} = $form->round_amount($ref->{credit}, $form->{precision});
 
       if (!$form->{all_accounts}) {
-        next if $ref->{balance} == 0 && $ref->{debit} == 0 && $ref->{credit} == 0;
+        next if ($ref->{balance} // 0) == 0 && $ref->{debit} == 0 && $ref->{credit} == 0;
       }
     }
 
     # add subtotal
-    @accno = grep { $_ le "$ref->{accno}" } @headingaccounts;
-    $accno = pop @accno;
+    my @accno = grep { $_ le "$ref->{accno}" } @headingaccounts;
+    my $accno = pop @accno;
     if ($accno) {
-      $trb{$accno}{debit} += $ref->{debit};
-      $trb{$accno}{credit} += $ref->{credit};
+      for (qw|debit credit|) {
+        $trb{$accno}{$_} //= 0;
+        $trb{$accno}{$_} += $ref->{$_};
+      }
     }
 
     push @{ $form->{TB} }, $ref;
@@ -1185,8 +1188,8 @@ sub trial_balance {
   $dbh->disconnect;
 
   # debits and credits for headings
-  foreach $accno (@headingaccounts) {
-    foreach $ref (@{ $form->{TB} }) {
+  for my $accno (@headingaccounts) {
+    for my $ref (@{ $form->{TB} }) {
       if ($accno eq $ref->{accno}) {
         $ref->{debit} = $trb{$accno}{debit};
         $ref->{credit} = $trb{$accno}{credit};
@@ -1197,8 +1200,7 @@ sub trial_balance {
 }
 
 
-sub aging {
-  my ($self, $myconfig, $form) = @_;
+sub aging ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -1248,6 +1250,7 @@ sub aging {
     }
   }
 
+  my $department_id;
   if ($form->{department}) {
     (undef, $department_id) = split /--/, $form->{department} // '';
     $where .= qq| AND a.department_id = $department_id|;
@@ -1324,7 +1327,7 @@ sub aging {
   }
 
   my @sf = qw(vc_id transdate invnumber);
-  my $sortorder = $form->sort_order(\@sf);
+  $sortorder = $form->sort_order(\@sf);
 
   if (@c) {
 
@@ -1419,8 +1422,7 @@ sub aging {
 }
 
 
-sub reminder {
-  my ($self, $myconfig, $form) = @_;
+sub reminder ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -1463,6 +1465,7 @@ sub reminder {
     }
   }
 
+  my $department_id;
   if ($form->{department}) {
     (undef, $department_id) = split /--/, $form->{department} // '';
     $where .= qq| AND a.department_id = $department_id|;
@@ -1512,7 +1515,7 @@ sub reminder {
   }
 
   my @sf = qw(vc_id transdate invnumber);
-  my $sortorder = $form->sort_order(\@sf);
+  $sortorder = $form->sort_order(\@sf);
 
   $query = qq|SELECT c.id AS vc_id, c.$form->{vc}number, c.name, c.terms,
               ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
@@ -1564,17 +1567,17 @@ sub reminder {
         $bth->execute($ref->{bank_id});
         $bank = $bth->fetchrow_hashref;
         for (qw(rvc iban qriban bic membernumber clearingnumber)) {
-          $ref->{$_} = delete $bank->{$_};
-          $ref->{qriban} =~ s/\s+//g;
+          $ref->{$_} = delete $bank->{$_} // '';
         }
+        $ref->{qriban} =~ s/\s+//g;
         for (keys %$bank) {
           $ref->{"bank$_"} = $bank->{$_};
         }
         $bth->finish;
 
         $rth->execute($ref->{id}, $curr);
-        $found = 0;
-        while (($reminder) = $rth->fetchrow_array) {
+        my $found = 0;
+        while ((my $reminder) = $rth->fetchrow_array) {
           $ref->{level} = substr($reminder, -1);
           $ref->{level}++;
           push @{ $form->{AG} }, $ref;
@@ -1603,8 +1606,7 @@ sub reminder {
 }
 
 
-sub save_level {
-  my ($self, $myconfig, $form) = @_;
+sub save_level ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect_noauto($myconfig);
@@ -1642,8 +1644,7 @@ sub save_level {
 }
 
 
-sub get_customer {
-  my ($self, $myconfig, $form) = @_;
+sub get_customer ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -1660,8 +1661,7 @@ sub get_customer {
 }
 
 
-sub get_taxaccounts {
-  my ($self, $myconfig, $form, $dbh) = @_;
+sub get_taxaccounts ($, $myconfig, $form, $dbh = undef) {
 
   # connect to database
   my $disconnect;
@@ -1672,8 +1672,10 @@ sub get_taxaccounts {
 
   my $ARAP = uc $form->{db};
 
+  my ($query, $sth);
+
   # get tax accounts
-  my $query = qq|SELECT DISTINCT c.id, c.accno, c.description,
+  $query = qq|SELECT DISTINCT c.id, c.accno, c.description,
                  l.description AS translation
                  FROM chart c
                  JOIN tax t ON (c.id = t.chart_id)
@@ -1681,27 +1683,28 @@ sub get_taxaccounts {
                  WHERE c.link LIKE '%${ARAP}_tax%'
                  AND c.closed = '0'
                  ORDER BY c.accno|;
-  my $sth = $dbh->prepare($query);
+  $sth = $dbh->prepare($query);
   $sth->execute or $form->dberror;
 
-  my $ref = ();
-  while ($ref = $sth->fetchrow_hashref ) {
-    push @{ $form->{taxaccounts} }, $ref;
+  $form->{taxaccounts} = [];
+  while (my $ref = $sth->fetchrow_hashref) {
+    push @{$form->{taxaccounts}}, $ref;
   }
   $sth->finish;
 
   # get gifi tax accounts
-  my $query = qq|SELECT DISTINCT g.accno, g.description
+  $query = qq|SELECT DISTINCT g.accno, g.description
                  FROM gifi g
                  JOIN chart c ON (c.gifi_accno= g.accno)
                  JOIN tax t ON (c.id = t.chart_id)
                  WHERE c.link LIKE '%${ARAP}_tax%'
                  ORDER BY g.accno|;
-  my $sth = $dbh->prepare($query);
+  $sth = $dbh->prepare($query);
   $sth->execute or $form->dberror;
 
-  while ($ref = $sth->fetchrow_hashref ) {
-    push @{ $form->{gifi_taxaccounts} }, $ref;
+  $form->{gifi_taxaccounts} = [];
+  while (my $ref = $sth->fetchrow_hashref) {
+    push @{$form->{gifi_taxaccounts}}, $ref;
   }
   $sth->finish;
 
@@ -1711,8 +1714,7 @@ sub get_taxaccounts {
 
 
 
-sub tax_report {
-  my ($self, $myconfig, $form) = @_;
+sub tax_report ($, $myconfig, $form) {
 
   # connect to database
   my $dbh = $form->dbconnect($myconfig);
@@ -2249,7 +2251,8 @@ sub tax_report {
   $sth = $dbh->prepare($query);
   $sth->execute or $form->dberror($query);
 
-  my ($last_id, %used_currencies);
+  my $last_id = 0;
+  my %used_currencies;
 
   while ( my $ref = $sth->fetchrow_hashref) {
     $ref->{netamount} = $form->round_amount($ref->{netamount}, $form->{precision});
@@ -2267,6 +2270,7 @@ sub tax_report {
       $ref->{"$ref->{curr}_total"} = $ref->{"$ref->{curr}_netamount"} + $ref->{"$ref->{curr}_tax"};
     }
 
+    $ref->{address} = '';
     for (qw(address1 streetname buildingnumber address2 city zipcode)) {
       $ref->{address} .= "$ref->{$_} " if $ref->{$_};
     }
@@ -2313,8 +2317,7 @@ sub tax_report {
 }
 
 
-sub paymentaccounts {
-  my ($self, $myconfig, $form) = @_;
+sub paymentaccounts ($, $myconfig, $form) {
 
   # connect to database, turn AutoCommit off
   my $dbh = $form->dbconnect_noauto($myconfig);
@@ -2344,8 +2347,7 @@ sub paymentaccounts {
 }
 
 
-sub payments {
-  my ($self, $myconfig, $form) = @_;
+sub payments ($, $myconfig, $form) {
 
   # connect to database, turn AutoCommit off
   my $dbh = $form->dbconnect_noauto($myconfig);
@@ -2357,11 +2359,11 @@ sub payments {
   my $ml = (($form->{db} // '') eq 'ar') ? -1 : 1;
   my $query;
   my $sth;
-  my $dpt_join;
-  my $where = "1 = 1";
+  my $dpt_join = '';
+  my $where    = "1 = 1";
   my $var;
-  my $arapwhere;
-  my $gl = (($form->{till} // '') eq "");
+  my $arapwhere = '';
+  my $gl        = (($form->{till} // '') eq "");
 
   my %defaults = $form->get_defaults($dbh, ['precision', 'company']);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
@@ -2534,7 +2536,7 @@ L<SL::RP> implements the following functions:
 
 =head2 get_accounts
 
-  RP::get_accounts($form, $dbh, $fromdate, $todate, $category, $excludeyearend);
+  RP::get_accounts($myconfig, $form, $dbh, $fromdate, $todate, $category, $excludeyearend);
 
 =head2 get_customer
 

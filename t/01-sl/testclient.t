@@ -58,7 +58,9 @@ subtest 'Dates' => sub {
   my $month = (localtime)[4] + 1;
   my $day   = (localtime)[3];
 
-  is $obj->date_jan1,  "${year}0101",                              'Jan 6';
+  my $year1 = $month < 4 ? $year - 1 : $year;
+
+  is $obj->date_jan1,  "${year1}0101",                             'Jan 1';
   is $obj->date_dec31, "${year}1231",                              'Dec 31';
   is $obj->date_today, sprintf('%d%02d%02d', $year, $month, $day), 'Today';
 };
