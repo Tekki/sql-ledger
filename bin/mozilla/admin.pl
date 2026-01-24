@@ -27,7 +27,7 @@ $locale = SL::Locale->new($slconfig{language}, "admin");
 eval { require DBI; };
 $form->error($locale->text('DBI not installed!')) if ($@);
 
-$form->{stylesheet} = "sql-ledger.css";
+$form->{stylesheet} = "blue.css";
 $form->{favicon} = "favicon.ico";
 $form->{timeout} = 86400;
 $form->{'root login'} = 1;
@@ -67,44 +67,101 @@ if ($form->{action}) {
 # end
 
 
+sub login_env_html {
+  my ($form, $locale) = @_;
+
+  my $env = $form->environment;
+
+  my %env_label = (
+    dev  => $locale->text('Development Environment'),
+    test => $locale->text('Test Environment'),
+  );
+
+  my $version_label = $locale->text('Version');
+
+  if (exists $env_label{$env}) {
+    return qq{
+      <div class="login-env">
+        <header class="login-env-header smallcaps">
+          <h1>$env_label{$env}</h1>
+          <h3>$version_label $form->{version}-$form->{cssversion}</h3>
+        </header>
+      </div>
+    };
+  }
+
+  return qq{
+    <div class="login-env">
+      <header class="login-env-header smallcaps">
+        <h3>$version_label $form->{version}-$form->{cssversion}</h3>
+      </header>
+    </div>
+  };
+}
+
+
 sub adminlogin {
 
   $form->{title} = qq|SQL-Ledger |.$locale->text('Version').qq| $form->{version} |.$locale->text('Administration');
 
+  my $env_html = login_env_html($form, $locale);
+
   $form->header;
 
-    print qq|
-<script language="javascript" type="text/javascript">
-<!--
-function sf(){
-  document.main.password.focus();
-}
-// End -->
-</script>
+        print qq|
+<body class="admin">
 
-<body class=admin onload="sf()">
+<div class="login-wrapper">
+  <div class="login-column">
 
-<div align=center>
+    <div class="login-brand">
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="$slconfig{images}/sql-ledger.png" class="flip-logo" alt="SQL-Ledger">
+            <h2>|.$locale->text('Open source ERP system').qq|</h2>
+          </div>
+          <div class="flip-card-back smallcaps">
+            <h3>Credits</h3>
+            <div class="ai-row">
+              <div class="ai-half">
+                <a href="https://github.com/Tekki/sql-ledger"><img src="$slconfig{images}/sql-ledger.png" height="100" class="image-hover" alt=""></a>
+                <br><b>|.$locale->text('based').qq|</b>
+              </div>
+              <div class="ai-half">
+                <a href="mailto:spam.spam@spam.spam" onmouseover="this.href='mailto:'+'info'+'@'+'domain,com';"><img src="$slconfig{images}/sql-ledger.png" height="100" class="image-hover"></a>
+                <br><b>|.$locale->text('operated by').qq|</b>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-<a href="https://github.com/Tekki/sql-ledger"><img src=$slconfig{images}/sql-ledger.gif border=0 target=_blank></a>
-<h1 class=login>|.$locale->text('Version').qq| $form->{version}<p>|.$locale->text('Administration').qq|</h1>
+    $env_html
 
-<form method=post name=main action="$form->{script}">
+    <div class="login-form">
+      <form method="post" name="main" action="$form->{script}">
+        <div class="card">
+          <div class="login-field floating">
+            <input id="password" name="password" class="login-input" type="password"
+                   autocomplete="current-password" required placeholder=" " autofocus>
+            <label for="password">|.$locale->text('Password').qq|</label>
+          </div>
 
-<table>
-  <tr>
-    <th>|.$locale->text('Password').qq|</th>
-    <td><input type=password name=password></td>
-    <td><input type=submit class=submit name=action value="|.$locale->text('Login').qq|"></td>
-  </tr>
-<input type=hidden name=action value=login>
-<input type=hidden name=path value=$form->{path}>
-</table>
+          <div class="login-field">
+            <button type="submit" class="button login-button" name="action" value="login">
+              |.$locale->text('Login').qq|
+            </button>
+          </div>
 
-</form>
+          <input type="hidden" name="path" value="$form->{path}">
+        </div>
+      </form>
 
-<a href="https://github.com/Tekki/sql-ledger" target=_blank>SQL-Ledger |.$locale->text('website').qq|</a>
+    </div>
 
+  </div>
 </div>
 
 </body>
@@ -190,15 +247,22 @@ sub form_footer {
     $button{'Lock Dataset'} = { ndx => 1, key => 'L', value => $locale->text('Lock Dataset') };
   }
 
-  $form->{callback} = "$form->{script}?action=list_datasets&path=$form->{path}";
+  my $p = $form->escape($form->{path}, 1);
+  $form->{callback} = "$form->{script}?action=list_datasets&path=$p";
 
-  $form->hide_form(qw(templates company dbname dbhost dbport dbdriver dbuser path callback));
+  $form->hide_form(qw(templates company dbname dbhost dbport dbdriver dbuser path callback nextsub));
 
+  print qq|<div class="admin-actions">|;
   $form->print_button(\%button);
+  print qq|</div>|;
 
   print qq|
 
 </form>
+
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
@@ -219,21 +283,22 @@ sub list_datasets {
   delete $member{'root login'};
 
   for (grep /^admin@/, keys %member) {
-    $datasets{$member{$_}{dbname}} = $member{$_};
-    $datasets{$_}{locked} = "x" if -f "$slconfig{userspath}/$member{$_}{dbname}.LCK";
+    my $dbname = $member{$_}{dbname};
+    $datasets{$dbname} = $member{$_};
+    $datasets{$dbname}{locked} = "x" if -f "$slconfig{userspath}/$dbname.LCK";
   }
 
   SL::User::add_db_size($form, \%datasets);
 
-  $column_data{company}   = qq|<th>| . $locale->text('Company') . qq|</th>|;
-  $column_data{dbdriver}  = qq|<th>| . $locale->text('Driver') . qq|</th>|;
-  $column_data{dbhost}    = qq|<th>| . $locale->text('Host') . qq|</th>|;
-  $column_data{dbname}    = qq|<th>| . $locale->text('Dataset') . qq|</th>|;
-  $column_data{dbport}    = qq|<th>| . $locale->text('Port') . qq|</th>|;
-  $column_data{dbuser}    = qq|<th>| . $locale->text('User') . qq|</th>|;
-  $column_data{locked}    = qq|<th width=1%>| . $locale->text('Locked') . qq|</th>|;
-  $column_data{size}      = qq|<th>| . $locale->text('Dataset Size') . qq|</th>|;
-  $column_data{templates} = qq|<th>| . $locale->text('Templates') . qq|</th>|;
+  $column_data{company}   = qq|<th scope="col">| . $locale->text('Company') . qq|</th>|;
+  $column_data{dbdriver}  = qq|<th scope="col">| . $locale->text('Driver') . qq|</th>|;
+  $column_data{dbhost}    = qq|<th scope="col">| . $locale->text('Host') . qq|</th>|;
+  $column_data{dbname}    = qq|<th scope="col">| . $locale->text('Dataset') . qq|</th>|;
+  $column_data{dbport}    = qq|<th scope="col">| . $locale->text('Port') . qq|</th>|;
+  $column_data{dbuser}    = qq|<th scope="col">| . $locale->text('User') . qq|</th>|;
+  $column_data{locked}    = qq|<th scope="col" class="col-locked">| . $locale->text('Locked') . qq|</th>|;
+  $column_data{size}      = qq|<th scope="col">| . $locale->text('Dataset Size') . qq|</th>|;
+  $column_data{templates} = qq|<th scope="col">| . $locale->text('Templates') . qq|</th>|;
 
   @column_index = qw(dbname company size templates locked dbdriver dbuser dbhost dbport);
 
@@ -248,35 +313,50 @@ sub list_datasets {
   $dbdriver{$dbdriver} = "checked";
 
   for (SL::User->dbdrivers) {
-    $dbdrivers .= qq|
-               <input name=dbdriver type=radio class=radio value="$_" $dbdriver{$_}>|.$locale->text($_).qq|&nbsp;|;
+  $dbdrivers .= qq|
+              <label class="admin-chip"><input name="dbdriver" type="radio" class="radio" value="$_" $dbdriver{$_}> |.$locale->text($_).qq|</label>|;
   }
 
   $form->{title} = "SQL-Ledger ".$locale->text('Administration');
 
+  # HTML escape is required for display (not URL escape).
+  my $script = $form->{script};
+  my $html_escape = sub {
+    my ($s) = @_;
+    $s //= '';
+    $s =~ s/&/&amp;/g;
+    $s =~ s/</&lt;/g;
+    $s =~ s/>/&gt;/g;
+    $s =~ s/"/&quot;/g;
+    $s =~ s/'/&#39;/g;
+    return $s;
+  };
 
   $form->header;
 
   # Tekki: Software Administration
   print qq|
-<body class=admin>
+<body class="admin">
 
-<form method=post action=$form->{script}>
+<div class="admin-wrapper">
+  <div class="admin-column">
+    <div class="card admin-card">
 
-<table width=100%>
-  <tr class=listheading>
-    <th>$form->{title}</th>
-  </tr>
-  <tr size=5></tr>
-  <tr>
-    <td>
-      <table width=100%>
-        <tr class=listheading>|;
+      <form method="post" action="$form->{script}" class="admin-form">
+        <h1 class="admin-title">$form->{title}</h1>
+
+        <div class="admin-table">
+          <table class="list" style="width:100%">
+            <caption class="sr-only">|.$locale->text('Datasets').qq|</caption>
+            <thead>
+              <tr class="listheading">|;
 
   for (@column_index) { print "$column_data{$_}\n" }
 
   print qq|
-        </tr>
+              </tr>
+            </thead>
+            <tbody>
 |;
 
   for $key (sort keys %datasets) {
@@ -285,40 +365,45 @@ sub list_datasets {
     $href .= "&company=".$form->escape($dataset->{company},1);
 
     for (qw(company dbdriver dbhost dbport dbuser templates)) {
-      $column_data{$_} = qq|<td>$dataset->{$_}</td>|;
+      my $v = $html_escape->($dataset->{$_});
+      $column_data{$_} = qq|<td>$v</td>|;
     }
-    $column_data{dbname} = qq|<td><a class="dataset-l" href="$href">$dataset->{dbname}</a></td>|;
-    $column_data{locked} = qq|<td align=center>$dataset->{locked}</td>|;
-    $column_data{size}   = qq|<td align=right>$dataset->{size}</td>|;
+    my $href_attr   = $html_escape->($href);
+    my $dbname_disp = $html_escape->($dataset->{dbname});
+    my $locked_disp = $html_escape->($dataset->{locked});
+    my $size_disp   = $html_escape->($dataset->{size});
+    $column_data{dbname} = qq|<td><a href="$href_attr">$dbname_disp</a></td>|;
+    $column_data{locked} = qq|<td class="align-center">$locked_disp</td>|;
+    $column_data{size}   = qq|<td class="align-right">$size_disp</td>|;
 
     $i++; $i %= 2;
     print qq|
-          <tr class=listrow$i>|;
+              <tr class="listrow$i">|;
 
     for (@column_index) { print "$column_data{$_}\n" }
 
     print qq|
-          </tr>|;
+              </tr>|;
   }
 
   print qq|
-      </table>
-    </td>
-  </tr>
-  <tr>
-    <td><hr size=3 noshade></td>
-  </tr>
-</table>
+            </tbody>
+          </table>
+        </div>
 
-<input type=hidden name=path value=$form->{path}>
+        <hr class="divider">
 
-<p>
-<b>|.$locale->text('Perl Modules').qq|</b> $perl_modules
-</p>
-<p>
-$dbdrivers
-</p>
-<p>
+        <div class="admin-grid">
+          <div class="admin-label">|.$locale->text('Perl Modules').qq|</div>
+          <div class="admin-field">|.$html_escape->($perl_modules).qq|</div>
+
+          <div class="admin-label">|.$locale->text('Driver').qq|</div>
+          <div class="admin-field">$dbdrivers</div>
+        </div>
+
+        <input type="hidden" name="path" value="$form->{path}">
+
+        <div class="admin-actions">
 |;
 
   %button = ('Add Dataset' => { ndx => 1, key => 'A', value => $locale->text('Add Dataset') },
@@ -336,7 +421,12 @@ $dbdrivers
 
   print qq|
 
-</form>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
@@ -354,46 +444,48 @@ sub form_header {
 
   $focus = "lock";
 
+  my $h = sub {
+    my ($s) = @_;
+    $s //= '';
+    $s =~ s/&/&amp;/g;
+    $s =~ s/</&lt;/g;
+    $s =~ s/>/&gt;/g;
+    $s =~ s/"/&quot;/g;
+    $s =~ s/'/&#39;/g;
+    return $s;
+  };
+
   if ($form->{locked}) {
-    $locked = qq|
-          <td>$form->{lock}</td>|;
+    my $lock_text = $form->{lock} // '';
+    $locked = qq|<div class="admin-static">|.$h->($lock_text).qq|</div>|;
   } else {
-    $locked = qq|
-          <td><input name=lock size=25 value="$form->{lock}"></td>|;
+    my $lock_val = $form->{lock} // '';
+    $locked = qq|<input id="lock" name="lock" size="25" value="|.$h->($lock_val).qq|">|;
   }
 
-  print qq|
-<body class=admin onload="document.main.${focus}.focus()">
+    print qq|
+<body class="admin">
 
-<form name=main method=post action=$form->{script}>
+<div class="admin-wrapper">
+  <div class="admin-column">
+    <div class="card admin-card">
 
-<table>
-  <tr class=listheading><th>$form->{title}</th></tr>
-  <tr size=5></tr>
-  <tr valign=top>
-    <td>
-      <table>
-        <tr>
-          <th align=right>|.$locale->text('Company').qq|</th>
-          <td>$form->{company}</td>
-        </tr>
-        <tr>
-          <th align=right>|.$locale->text('Dataset').qq|</th>
-          <td>$form->{dbname}</td>
-        </tr>
-        <tr>
-          <th align=right>|.$locale->text('Lock Message').qq|</th>
-          $locked
-        </tr>
-      </table>
-    </td>
-  </tr>
+<form name="main" method="post" action="$form->{script}" class="admin-form">
+  <h1 class="admin-title">$form->{title}</h1>
 
-   <tr>
-    <td><hr size=3 noshade></td>
-  </tr>
-</table>
-</div>
+  <div class="admin-grid">
+    <div class="admin-label">|.$locale->text('Company').qq|</div>
+    <div class="admin-field">|.$h->($form->{company}).qq|</div>
+
+    <div class="admin-label">|.$locale->text('Dataset').qq|</div>
+    <div class="admin-field">|.$h->($form->{dbname}).qq|</div>
+
+    <label class="admin-label" for="lock">|.$locale->text('Lock Message').qq|</label>
+    <div class="admin-field">$locked</div>
+  </div>
+
+  <hr class="divider">
+
 |;
 
 }
@@ -401,35 +493,53 @@ sub form_header {
 
 sub delete {
 
-  $form->{title} = $locale->text('Confirm!');
+  $form->{title}   = $locale->text('Confirm!');
+  $form->{nextsub} = 'do_delete';
+
+  $form->{message} ||= $locale->text('Are you sure you want to delete dataset') . " $form->{dbname}";
 
   $form->header;
 
-  print qq|
-<body class=admin>
+  my $h = sub {
+    my ($s) = @_;
+    $s //= '';
+    $s =~ s/&/&amp;/g;
+    $s =~ s/</&lt;/g;
+    $s =~ s/>/&gt;/g;
+    $s =~ s/"/&quot;/g;
+    $s =~ s/'/&#39;/g;
+    return $s;
+  };
 
-<form method=post action=$form->{script}>
+  print qq|
+<body class="admin">
+<div class="admin-wrapper">
+  <div class="admin-column">
+    <div class="card admin-card">
+
+      <form method="post" action="$form->{script}" class="admin-form">
 |;
 
-  $form->{nextsub} = "do_delete";
-  $form->{action} = "do_delete";
-
-  delete $form->{script};
-
-  $form->hide_form;
+  $form->hide_form(qw(path dbname nextsub callback));
 
   print qq|
-<h2 class=confirm>$form->{title}</h2>
+        <h1 class="admin-title">$form->{title}</h1>
 
-<h4>|.$locale->text('Are you sure you want to delete dataset').qq| $form->{dbname}</h4>
+        <p class="admin-message">|.$h->($form->{message}).qq|</p>
 
-<input name=action class=submit type=submit value="|.$locale->text('Yes').qq|">
-</form>
+        <div class="admin-actions">
+          <input type="submit" class="button" name="action" value="|.$locale->text('Yes').qq|" accesskey="Y" title="|.$locale->text('Yes').qq| [Y]">
+          <input type="submit" class="button" name="action" value="|.$locale->text('No').qq|" accesskey="N" title="|.$locale->text('No').qq| [N]">
+        </div>
 
+      </form>
+
+    </div>
+  </div>
+</div>
 </body>
 </html>
 |;
-
 }
 
 
@@ -537,50 +647,43 @@ sub change_password {
     $form->{title} = $locale->text('Change Password for Dataset')." $form->{dbname}";
   }
 
-  $focus = "new_password";
-
   $form->header;
 
-  print qq|
-<body class=admin onload="document.main.${focus}.focus()">
+    print qq|
+<body class="admin">
 
-<form method=post name=main action=$form->{script}>
+<div class="admin-wrapper">
+  <div class="admin-column">
+    <div class="card admin-card">
 
-<table>
-  <tr>
-  <tr class=listheading>
-    <th>$form->{title}</th>
-  </tr>
-  <tr size=5></tr>
-  <tr>
-    <td>
-      <table width=100%>
-        <tr>
-          <th align=right>|.$locale->text('Password').qq|</th>
-          <td><input type=password name=new_password></td>
-        </tr>
-        <tr>
-          <th align=right>|.$locale->text('Confirm').qq|</th>
-          <td><input type=password name=confirm_password></td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <hr size=3 noshade>
-    </td>
-  </tr>
-</table>
+<form method="post" name="main" action="$form->{script}" class="admin-form">
+  <h1 class="admin-title">$form->{title}</h1>
 
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
+  <div class="admin-grid">
+    <label class="admin-label" for="new_password">|.$locale->text('Password').qq|</label>
+    <div class="admin-field"><input id="new_password" type="password" name="new_password" autocomplete="new-password" required autofocus></div>
+
+    <label class="admin-label" for="confirm_password">|.$locale->text('Confirm').qq|</label>
+    <div class="admin-field"><input id="confirm_password" type="password" name="confirm_password" autocomplete="new-password" required></div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="admin-actions">
+    <input type="submit" class="submit" name="action" value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+  </div>
+|;
 
   $form->{nextsub} = "do_change_password";
 
-  $form->hide_form(qw(path nextsub dbname));
+  $form->hide_form(qw(path nextsub dbname callback));
 
   print qq|
 </form>
+
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
@@ -592,7 +695,6 @@ sub change_password {
 sub do_change_password {
 
   if ($form->{new_password}) {
-    $form->error('Password may not contain ? or &') if $form->{new_password} =~ /\?|\&/;
     if ($form->{new_password} ne $form->{confirm_password}) {
       $form->error($locale->text('Password does not match!'));
     }
@@ -652,6 +754,9 @@ sub do_change_password {
 
   }
 
+  my $p = $form->escape($form->{path}, 1);
+  $form->{callback} = "$form->{script}?action=list_datasets&path=$p";
+
   $form->redirect($locale->text('Password changed!'));
 
 }
@@ -661,43 +766,32 @@ sub change_host {
 
   $form->{title} = $locale->text('Change Host for Dataset')." $form->{dbname}";
 
-  $focus = "new_host";
-
   $form->header;
 
-  print qq|
-<body class=admin onload="document.main.${focus}.focus()">
+    print qq|
+<body class="admin">
 
-<form method=post name=main action=$form->{script}>
+<div class="admin-wrapper">
+  <div class="admin-column">
+    <div class="card admin-card">
 
-<table>
-  <tr>
-  <tr class=listheading>
-    <th>$form->{title}</th>
-  </tr>
-  <tr size=5></tr>
-  <tr>
-    <td>
-      <table width=100%>
-        <tr>
-          <th align=right>|.$locale->text('Host').qq|</th>
-          <td><input name=new_host size=40 value=$form->{dbhost}></td>
-        </tr>
-        <tr>
-          <th align=right>|.$locale->text('Port').qq|</th>
-          <td><input name=new_port size=5 value=$form->{dbport}></td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <hr size=3 noshade>
-    </td>
-  </tr>
-</table>
+<form method="post" name="main" action="$form->{script}" class="admin-form">
+  <h1 class="admin-title">$form->{title}</h1>
 
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
+  <div class="admin-grid">
+    <label class="admin-label" for="new_host">|.$locale->text('Host').qq|</label>
+    <div class="admin-field"><input id="new_host" name="new_host" size="40" value="$form->{dbhost}" required autofocus></div>
+
+    <label class="admin-label" for="new_port">|.$locale->text('Port').qq|</label>
+    <div class="admin-field"><input id="new_port" name="new_port" size="5" value="$form->{dbport}" required inputmode="numeric"></div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="admin-actions">
+    <input type="submit" class="submit" name="action" value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+  </div>
+|;
 
   $form->{nextsub} = "do_change_host";
 
@@ -705,6 +799,10 @@ sub change_host {
 
   print qq|
 </form>
+
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
@@ -853,7 +951,11 @@ sub dbdriver_defaults {
 
   $driverdefaults{Mock} = $driverdefaults{Pg};
 
-  for (keys %{ $driverdefaults{Pg} }) { $form->{$_} = $driverdefaults{$form->{dbdriver}}{$_} }
+  my $drv = $form->{dbdriver} || 'Pg';
+  $drv = 'Pg' unless exists $driverdefaults{$drv};
+  for (keys %{ $driverdefaults{Pg} }) {
+    $form->{$_} = $driverdefaults{$drv}{$_};
+  }
 
 }
 
@@ -864,49 +966,44 @@ sub dbselect_source {
 
   $form->{title} = "SQL-Ledger / ".$locale->text('Add Dataset');
 
-  $form->{callback} = "$form->{script}?action=list_datasets&path=$form->{path}";
-
-  $focus = "dbhost";
+  my $p = $form->escape($form->{path}, 1);
+  $form->{callback} = "$form->{script}?action=list_datasets&path=$p";
 
   $form->header;
 
-  print qq|
-<body class=admin onLoad="document.main.${focus}.focus()">
+    print qq|
+<body class="admin">
 
-<form name=main method=post action=$form->{script}>
+<div class="admin-wrapper">
+  <div class="admin-column">
+    <div class="card admin-card">
 
-<table>
-  <tr class=listheading>
-    <th>$form->{title}</th>
-  </tr>
-  <tr size=5></tr>
-  <tr>
-    <td>
-      <table>
-        <tr>
-          <th align=right>|.$locale->text('Host').qq|</th>
-          <td><input name=dbhost size=50 value=$form->{dbhost}></td>
-          <th align=right>|.$locale->text('Port').qq|</th>
-          <td><input name=dbport size=5 value=$form->{dbport}></td>
-        </tr>
-        <tr>
-          <th align=right>|.$locale->text('User').qq|</th>
-          <td><input name=dbuser size=25 value=$form->{dbuser}></td>
-          <th align=right>|.$locale->text('Password').qq|</th>
-          <td><input type=password name=dbpasswd size=10 value=$form->{dbpasswd}></td>
-        </tr>
-        <tr>
-          <th align=right>$form->{connectstring}</th>
-          <td colspan=3><input name=dbdefault size=10 value=$form->{dbdefault}></td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-</table>
-<hr size=3 noshade>
+<form name="main" method="post" action="$form->{script}" class="admin-form">
+  <h1 class="admin-title">$form->{title}</h1>
 
-<br>
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+  <div class="admin-grid">
+    <label class="admin-label" for="dbhost">|.$locale->text('Host').qq|</label>
+    <div class="admin-field"><input id="dbhost" name="dbhost" size="50" value="$form->{dbhost}" required autofocus></div>
+
+    <label class="admin-label" for="dbport">|.$locale->text('Port').qq|</label>
+    <div class="admin-field"><input id="dbport" name="dbport" size="5" value="$form->{dbport}" required inputmode="numeric"></div>
+
+    <label class="admin-label" for="dbuser">|.$locale->text('User').qq|</label>
+    <div class="admin-field"><input id="dbuser" name="dbuser" size="25" value="$form->{dbuser}" required></div>
+
+    <label class="admin-label" for="dbpasswd">|.$locale->text('Password').qq|</label>
+    <div class="admin-field"><input id="dbpasswd" type="password" name="dbpasswd" size="10" autocomplete="new-password"></div>
+
+    <div class="admin-label">$form->{connectstring}</div>
+    <div class="admin-field"><input id="dbdefault" name="dbdefault" size="10" value="$form->{dbdefault}"></div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="admin-actions">
+    <input type="submit" class="submit" name="action" value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+  </div>
+
 |;
 
   $form->{nextsub} = "create_dataset";
@@ -915,6 +1012,10 @@ sub dbselect_source {
   print qq|
 </form>
 
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
 |;
@@ -922,8 +1023,23 @@ sub dbselect_source {
 }
 
 
-sub continue { &{ $form->{nextsub} } }
-sub yes { &{ $form->{nextsub} } }
+sub _run_nextsub {
+  my $next = $form->{nextsub};
+  $form->error('Internal error: nextsub missing') unless $next;
+
+  if (ref $next eq 'CODE') {
+    return $next->();
+  }
+
+  $form->error("Internal error: invalid nextsub '$next'") unless $next =~ /^\w+$/;
+
+  no strict 'refs';
+  return &{$next}();
+}
+
+sub continue { _run_nextsub() }
+sub yes      { _run_nextsub() }
+sub no       { list_datasets() }
 
 
 sub create_dataset {
@@ -975,10 +1091,8 @@ sub create_dataset {
       chop $selectusetemplates;
 
       $usetemplates = qq|
-        <tr>
-          <th align=right nowrap>|.$locale->text('Use Templates').qq|</th>
-          <td><select name=usetemplates>|.$form->select_option($selectusetemplates).qq|</select></td>
-        </tr>
+    <div class="admin-label">|.$locale->text('Use Templates').qq|</div>
+    <div class="admin-field"><select id="usetemplates" name="usetemplates">|.$form->select_option($selectusetemplates).qq|</select></div>
 |;
     }
 
@@ -987,92 +1101,92 @@ sub create_dataset {
   $form->{title} = "SQL-Ledger / ".$locale->text('Create Dataset');
 
   $form->header;
+  my $h = sub {
+    my ($s) = @_;
+    $s //= '';
+    $s =~ s/&/&amp;/g;
+    $s =~ s/</&lt;/g;
+    $s =~ s/>/&gt;/g;
+    $s =~ s/"/&quot;/g;
+    $s =~ s/'/&#39;/g;
+    return $s;
+  };
 
-  print qq|
-<body class=admin>
+    print qq|
+<body class="admin">
 
-<form method=post action=$form->{script}>
+<div class="admin-wrapper">
+  <div class="admin-column">
+    <div class="card admin-card">
 
-<table>
-  <tr class=listheading>
-    <th>$form->{title}</th>
-  </tr>
-  <tr size=5></tr>
-  <tr>
-    <td>
-      <table>
-        <tr>
-          <th align=right nowrap>|.$locale->text('Existing Datasets').qq|</th>
-          <td>
+<form method="post" action="$form->{script}" class="admin-form">
+  <h1 class="admin-title">$form->{title}</h1>
+
+  <div class="admin-grid">
+    <div class="admin-label">|.$locale->text('Existing Datasets').qq|</div>
+    <div class="admin-field admin-existing">
 |;
 
-          for (@dbsources) { print "[&nbsp;$_&nbsp;] " }
+          for (@dbsources) { print qq|<span class="admin-chip">|.$h->($_).qq|</span>| }
 
           print qq|
-          </td>
-        </tr>
-        <tr>
-          <th align=right nowrap>|.$locale->text('Dataset').qq|</th>
-          <td><input name=db></td>
-        </tr>
-        <tr>
-          <th align=right nowrap>|.$locale->text('Company').qq|</th>
-          <td><input name=company size=35></td>
-        </tr>
-        <tr>
-          <th align=right nowrap>|.$locale->text('Administrator').qq|</th>
-          <td><input name=name size=35 value="$form->{name}"></td>
-        </tr>
-        <tr>
-          <th align=right nowrap>|.$locale->text('E-mail').qq|</th>
-          <td><input name=email size=35></td>
-        </tr>
-        <tr>
-          <th align=right nowrap>|.$locale->text('Password').qq|</th>
-          <td><input name=adminpassword type=password size=25></td>
-        </tr>
-        <tr>
-          <th align=right nowrap>|.$locale->text('Templates').qq|</th>
-          <td><select name=mastertemplates>|.$form->select_option($selecttemplates).qq|</select></td>
-        </tr>
-        $usetemplates
+    </div>
+
+    <label class="admin-label" for="db">|.$locale->text('Dataset').qq|</label>
+    <div class="admin-field"><input id="db" name="db" required autocomplete="off"></div>
+
+    <label class="admin-label" for="company">|.$locale->text('Company').qq|</label>
+    <div class="admin-field"><input id="company" name="company" size="35" required></div>
+
+    <label class="admin-label" for="name">|.$locale->text('Administrator').qq|</label>
+    <div class="admin-field"><input id="name" name="name" size="35" value="|.$h->($form->{name}).qq|" required autocomplete="name"></div>
+
+    <label class="admin-label" for="email">|.$locale->text('E-mail').qq|</label>
+    <div class="admin-field"><input id="email" name="email" type="email" size="35" required autocomplete="email"></div>
+
+    <label class="admin-label" for="adminpassword">|.$locale->text('Password').qq|</label>
+    <div class="admin-field"><input id="adminpassword" name="adminpassword" type="password" size="25" required autocomplete="new-password"></div>
+
+    <label class="admin-label" for="mastertemplates">|.$locale->text('Templates').qq|</label>
+    <div class="admin-field"><select id="mastertemplates" name="mastertemplates">|.$form->select_option($selecttemplates).qq|</select></div>
+
+    $usetemplates
 |;
 
   if ($selectencoding) {
     print qq|
-        <tr>
-          <th align=right nowrap>|.$locale->text('Multibyte Encoding').qq|</th>
-          <td><select name=encoding>|.$form->select_option($selectencoding, $form->{charset},1,1).qq|</select></td>
-        </tr>
+    <label class="admin-label" for="encoding">|.$locale->text('Multibyte Encoding').qq|</label>
+    <div class="admin-field"><select id="encoding" name="encoding">|.$form->select_option($selectencoding, $form->{charset},1,1).qq|</select></div>
+
 |;
   }
 
   print qq|
 
-        <tr>
-          <th align=right nowrap>|.$locale->text('Create Chart of Accounts').qq|</th>
-          <td><select name=chart>|.$form->select_option($selectchart).qq|</select></td>
-        </tr>
-|;
+    <label class="admin-label" for="chart">|.$locale->text('Create Chart of Accounts').qq|</label>
+    <div class="admin-field"><select id="chart" name="chart">|.$form->select_option($selectchart).qq|</select></div>
+  </div>
 
-  print qq|
-      </table>
-    </td>
-  </tr>
-</table>
+  <hr class="divider">
 
-<hr size=3 noshade>
-<br>
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+  <div class="admin-actions">
+    <input type="submit" class="submit" name="action" value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+  </div>
+</div>
 |;
 
   $form->{nextsub} = "dbcreate";
-  $form->{callback} = "$form->{script}?action=list_datasets&path=$form->{path}";
+  my $p = $form->escape($form->{path}, 1);
+  $form->{callback} = "$form->{script}?action=list_datasets&path=$p";
 
   $form->hide_form(qw(dbdriver dbuser dbhost dbport dbpasswd dbdefault path nextsub callback));
 
   print qq|
 </form>
+
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
@@ -1169,7 +1283,7 @@ sub dbcreate {
   $form->{charset} = $form->{encoding};
   $form->{dbname} = $form->{db};
   $form->{login} = "admin\@$form->{db}";
-  $form->{stylesheet} = "sql-ledger.css";
+  $form->{stylesheet} = "blue.css";
   $form->{dateformat} = "mm-dd-yy";
   $form->{numberformat} = "1,000.00";
   $form->{dboptions} = "set DateStyle to 'POSTGRES, US'";
@@ -1237,43 +1351,54 @@ sub lock_system {
     $form->{title} .= $locale->text('Lock System');
   }
 
-  $focus = "lock";
-
   $form->header;
 
-  print qq|
-<body class=admin onLoad="document.main.${focus}.focus()">
-
-<form name=main method=post action=$form->{script}>
-
-<table>
-  <tr class=listheading>
-    <th>$form->{title}</th>
-  </tr>
-  <tr size=5></tr>
-  <tr>
-    <td>
-      <table>
-        <tr>
-          <th align=right>|.$locale->text('Lock Message').qq|</th>
-          <td><input name=lock size=25></td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-</table>
-<hr size=3 noshade>
-
-<br>
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
-
-  $form->{callback} = "$form->{script}?action=list_datasets&path=$form->{path}";
+  my $p = $form->escape($form->{path}, 1);
+  $form->{callback} = "$form->{script}?action=list_datasets&path=$p";
   $form->{nextsub} = "do_lock_system";
+
+  my $h = sub {
+    my ($s) = @_;
+    $s //= '';
+    $s =~ s/&/&amp;/g;
+    $s =~ s/</&lt;/g;
+    $s =~ s/>/&gt;/g;
+    $s =~ s/"/&quot;/g;
+    $s =~ s/'/&#39;/g;
+    return $s;
+  };
+  my $lock_val  = $form->{lock} // '';
+  my $lock_html = $h->($lock_val);
+
+  print qq|
+<body class="admin">
+<div class="admin-wrapper">
+  <div class="admin-column">
+    <div class="card admin-card">
+
+      <form name="main" method="post" action="$form->{script}" class="admin-form">
+        <h1 class="admin-title">$form->{title}</h1>
+
+        <div class="admin-grid">
+          <label class="admin-label" for="lock">|.$locale->text('Lock Message').qq|</label>
+          <div class="admin-field">
+            <input id="lock" name="lock" size="25" value="$lock_html" autofocus>
+          </div>
+        </div>
+
+        <hr class="divider">
+        <div class="admin-actions">
+          <input type="submit" class="submit" name="action" value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+        </div>
+|;
+
   $form->hide_form(qw(callback dbname dbdriver path nextsub));
 
   print qq|
-</form>
-
+      </form>
+    </div>
+  </div>
+</div>
 </body>
 </html>
 |;
@@ -1283,16 +1408,20 @@ sub lock_system {
 
 sub do_lock_system {
 
+  my $lockfile;
   if ($form->{dbname}) {
-    open $fh, ">$slconfig{userspath}/$form->{dbname}.LCK" or $form->error($locale->text('Cannot create Lock!'));
+    $form->error('Invalid dataset name')
+    if $form->{dbname} !~ /^[A-Za-z0-9_.-]+$/ || $form->{dbname} =~ /\.\./;
+    $lockfile = "$slconfig{userspath}/$form->{dbname}.LCK";
   } else {
-    open $fh, ">$slconfig{userspath}/nologin.LCK" or $form->error($locale->text('Cannot create Lock!'));
+    $lockfile = "$slconfig{userspath}/nologin.LCK";
   }
 
-  if ($form->{lock}) {
-    print $fh $form->{lock};
-  }
-  close $fh;
+  open my $fh, '>', $lockfile
+    or $form->error($locale->text('Cannot create Lock!') . " ($!)");
+
+  print {$fh} $form->{lock} if defined $form->{lock} && $form->{lock} ne '';
+  close $fh or $form->error($locale->text('Cannot create Lock!') . " ($!)");
 
   $form->redirect($locale->text('Lockfile created!'));
 
