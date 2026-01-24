@@ -1,5 +1,12 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+4.0.2 2026-01-24
+  - ownership of members file in upgrade script corrected
+  - the API token is displayed on the version screen
+  - documentation for translations and development extended
+  - report backend upgraded to Perl 5.40
+  - live tests use data from previous year during the first quarter
+
 4.0.1 2026-01-10
   - main page shows the user login in the title
   - documentation in HTML format, accessible from menu

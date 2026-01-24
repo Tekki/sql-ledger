@@ -60,6 +60,6 @@ support.
 
 © 1999-2023 DWS Systems Inc.
 
-© 2007-2025 Tekki (Rolf Stöckli)
+© 2007-2026 Tekki (Rolf Stöckli)
 
 [GPL3](LICENSE)
