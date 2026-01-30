@@ -24,6 +24,6 @@ $t = SL::TestClient->new(configfile => $configfile)->connect_ok->api_login_ok;
 subtest 'Documents' => sub {
   $t->get_ok('Report frontend', 'rd.pl', action => 'search_documents')
     ->press_button_ok('Generate report', 'continue')
-    ->download_ok('Spreadsheet', 'spreadsheet')
+    ->download_ok('Spreadsheet', 'xlsx', 'spreadsheet')
     ->download_is('Spreadsheet', 'xlsx');
 };

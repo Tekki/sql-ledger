@@ -26,7 +26,7 @@ subtest 'Quotations' => sub {
     ->set_params_ok('Report parameters', closed => 1) # debug
     ->press_button_ok('Generate report', 'continue')
     ->elements_exist('Links to quotation, name', 'a.quonumber-l', 'a.name-l')
-    ->download_ok('Spreadsheet', 'spreadsheet')
+    ->download_ok('Spreadsheet', 'xlsx', 'spreadsheet')
     ->download_is('Spreadsheet', 'xlsx');
 };
 
@@ -35,6 +35,6 @@ subtest 'RFQs' => sub {
     ->set_params_ok('Report parameters', closed => 1) # debug
     ->press_button_ok('Generate report', 'continue')
     ->elements_exist('Links to quotation, name', 'a.quonumber-l', 'a.name-l')
-    ->download_ok('Spreadsheet', 'spreadsheet')
+    ->download_ok('Spreadsheet', 'xlsx', 'spreadsheet')
     ->download_is('Spreadsheet', 'xlsx');
 };

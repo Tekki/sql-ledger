@@ -20,6 +20,13 @@ class SL::TestClient {
   field %form_params :reader = ();
   field $form_script :reader = '';
   field $last_download;
+  field %mimetypes = (
+    gz   => 'application/x-gzip',
+    html => 'text/html',
+    pdf  => 'application/pdf',
+    txt  => 'text/plain',
+    xlsx => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  );
   field $mj :reader;
   field $password;
   field $test_output;
@@ -138,7 +145,7 @@ class SL::TestClient {
     }
   }
 
-  method download_ok ($label, $button) {
+  method download_ok ($label, $type, $button) {
     BAIL_OUT 'Not connected.' unless $connected;
 
     my %params = %form_params;
@@ -152,37 +159,10 @@ class SL::TestClient {
       my $uri = "$url/$form_script";
       $mj->post_ok($uri, $self->headers($uri), form => \%params)
         ->status_is(200, "$label: status ok")
-        ->header_isnt('Content-Type' => 'text/html', "$label: no HTML response")
-        ->or(sub { $self->_register_problems('error'); $self-&_register_problems('warn'); })
-        ->header_like('Content-Disposition' => qr/attachment/, "$label: Attachment header");
-      if ($mj->success) {
-        if ($config->{downloads}) {
-          if (-d $config->{downloads}) {
-            my $content_disposition = $mj->tx->res->headers->content_disposition;
+        ->header_is('Content-Type' => $mimetypes{$type}, "$label: response is $type")
+        ->or(sub { $self->_register_problems('error'); $self-&_register_problems('warn'); });
 
-            my $filename;
-            if ($content_disposition =~ /filename\*=UTF-8''(.+)/) {
-              $filename = decode 'UTF-8', url_unescape $1;
-            } else {
-              ($filename) = $content_disposition =~ /filename=(.+)/;
-            }
-            $filename =~ s/^\d+_//;
-
-            my $download_file
-              = path($config->{downloads})->child(localtime->strftime("%Y-%m-%d-%H%M%S_$filename"));
-
-            $mj->tx->result->save_to($download_file);
-            $last_download = $download_file;
-            pass "$label: download to $config->{downloads}";
-          } else {
-            BAIL_OUT "$config->{downloads}: not found";
-          }
-        } else {
-          BAIL_OUT 'Download folder not configured';
-        }
-      } else {
-        fail "$label: download file available";
-      }
+      $self->_download_file($label);
     };
 
     return $self;
@@ -242,17 +222,7 @@ class SL::TestClient {
   method get_ok ($label, $path, %params) {
     BAIL_OUT 'Not connected.' unless $connected;
 
-    if (%params) {
-      my @elements;
-
-      for my ($key, $value) (%params) {
-        push @elements, url_escape($key) . '=' . url_escape($value // '');
-      }
-      push @elements, "login=$username" unless $params{login} || $username eq 'root login';
-      push @elements, 'path=bin/mozilla' unless $params{path};
-
-      $path .= '?' . join('&', @elements);
-    }
+    $path = $self->_build_path($path, %params);
 
     subtest "$label, GET request" => sub {
       my $uri = "$url/$path";
@@ -442,6 +412,55 @@ class SL::TestClient {
   }
 
   # internal methods
+
+  method _build_path ($path, %params) {
+    if (%params) {
+      my @elements;
+
+      for my ($key, $value) (%params) {
+        push @elements, url_escape($key) . '=' . url_escape($value // '');
+      }
+      push @elements, "login=$username" unless $params{login} || $username eq 'root login';
+      push @elements, 'path=bin/mozilla' unless $params{path};
+
+      $path .= '?' . join('&', @elements);
+    }
+
+    return $path;
+  }
+
+  method _download_file ($label) {
+    if ( $mj->header_like('Content-Disposition' => qr/attachment/, "$label: Attachment header")
+      && $mj->success)
+    {
+      if ($config->{downloads}) {
+        if (-d $config->{downloads}) {
+          my $content_disposition = $mj->tx->res->headers->content_disposition;
+
+          my $filename;
+          if ($content_disposition =~ /filename\*=UTF-8''(.+)/) {
+            $filename = decode 'UTF-8', url_unescape $1;
+          } else {
+            ($filename) = $content_disposition =~ /filename=(.+)/;
+          }
+          $filename =~ s/^\d+_//;
+
+          my $download_file
+            = path($config->{downloads})->child(localtime->strftime("%Y-%m-%d-%H%M%S_$filename"));
+
+          $mj->tx->result->save_to($download_file);
+          $last_download = $download_file;
+          pass "$label: download to $config->{downloads}";
+        } else {
+          BAIL_OUT "$config->{downloads}: not found";
+        }
+      } else {
+        BAIL_OUT 'Download folder not configured';
+      }
+    } else {
+      fail "$label: download file available";
+    }
+  }
 
   method _register_problems ($type) {
     my $outputfile = $config->{output};

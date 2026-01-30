@@ -37,7 +37,7 @@ subtest 'Trial balance' => sub {
     ->set_params_ok('Report parameters', fromdate => $t->date_jan1, todate => $t->date_dec31)
     ->press_button_ok('Generate report', 'continue')
     ->press_button_ok('Generate details report', 'display_all')
-    ->download_ok('Spreadsheet', 'spreadsheet')
+    ->download_ok('Spreadsheet', 'xlsx', 'spreadsheet')
     ->download_is('Spreadsheet', 'xlsx');
 };
 
@@ -45,7 +45,7 @@ subtest 'Income statement' => sub {
   $t->get_ok('Report frontend', 'rp.pl', action => 'report', reportcode => 'income_statement')
     ->set_params_ok('Report parameters', fromdate => $t->date_jan1, todate => $t->date_dec31)
     ->press_button_ok('Generate report', 'continue')
-    ->download_ok('Spreadsheet', 'spreadsheet')
+    ->download_ok('Spreadsheet', 'xlsx', 'spreadsheet')
     ->download_is('Spreadsheet', 'xlsx');
 };
 
@@ -53,6 +53,6 @@ subtest 'Balance sheet' => sub {
   $t->get_ok('Report frontend', 'rp.pl', action => 'report', reportcode => 'balance_sheet')
     ->set_params_ok('Report parameters', todate => $t->date_dec31)
     ->press_button_ok('Generate report', 'continue')
-    ->download_ok('Spreadsheet', 'spreadsheet')
+    ->download_ok('Spreadsheet', 'xlsx', 'spreadsheet')
     ->download_is('Spreadsheet', 'xlsx');
 };

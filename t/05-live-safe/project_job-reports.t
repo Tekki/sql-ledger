@@ -35,7 +35,7 @@ subtest 'Project transactions' => sub {
 subtest 'Project time cards' => sub {
   $t->get_ok('Report frontend', 'jc.pl', action => 'search', type => 'timecard', project => 'project')
     ->press_button_ok('Generate report', 'continue')
-    ->elements_exist('Links to name, time card', 'a.id-l');
+    ->elements_exist('Links to time card', 'a.id-l');
 };
 
 subtest 'Jobs' => sub {

@@ -25,7 +25,7 @@ subtest 'Transactions' => sub {
   $t->get_ok('Report frontend', 'ap.pl', action => 'search', nextsub => 'transactions')
     ->post_ok('Generate report')
     ->elements_exist('Links to invoice, name', 'a.invnumber-l', 'a.ap-l', 'a.ir-l', 'a.name-l')
-    ->download_ok('Spreadsheet', 'spreadsheet')
+    ->download_ok('Spreadsheet', 'xlsx', 'spreadsheet')
     ->download_is('Spreadsheet', 'xlsx');
 };
 
@@ -38,7 +38,7 @@ subtest 'Outstanding' => sub {
     )
     ->press_button_ok('Generate report', 'continue')
     ->elements_exist('Links to invoice, name', 'a.invnumber-l', 'a.ap-l', 'a.ir-l', 'a.name-l')
-    ->download_ok('Spreadsheet', 'spreadsheet')
+    ->download_ok('Spreadsheet', 'xlsx', 'spreadsheet')
     ->download_is('Spreadsheet', 'xlsx');
 };
 
@@ -54,7 +54,7 @@ subtest 'Tax paid' => sub {
     ->set_params_ok('Report parameters', fromdate => $t->date_jan1, todate => $t->date_dec31)
     ->press_button_ok('Generate report', 'continue')
     ->elements_exist('Links to invoice, name', 'a.invnumber-l', 'a.name-l')
-    ->download_ok('Spreadsheet', 'spreadsheet')
+    ->download_ok('Spreadsheet', 'xlsx', 'spreadsheet')
     ->download_is('Spreadsheet', 'xlsx');
 };
 
@@ -63,6 +63,6 @@ subtest 'Non taxable' => sub {
     ->set_params_ok('Report parameters', fromdate => $t->date_jan1, todate => $t->date_dec31)
     ->press_button_ok('Generate report', 'continue')
     ->elements_exist('Links to invoice, name', 'a.invnumber-l', 'a.name-l')
-    ->download_ok('Spreadsheet', 'spreadsheet')
+    ->download_ok('Spreadsheet', 'xlsx', 'spreadsheet')
     ->download_is('Spreadsheet', 'xlsx');
 };

@@ -73,7 +73,7 @@ subtest 'Print quotation' => sub {
 
     for my $template (@$templates) {
       $t->set_params_ok("Template $template", formname => $template)
-        ->download_ok("Print $lang $template", 'preview')
+        ->download_ok("Print $lang $template", 'pdf', 'preview')
         ->download_is("$lang $template", 'pdf');
     }
   }
