@@ -219,9 +219,13 @@ sub save ($, $myconfig, $form, $dbh = undef) {
   }
 
   # undo amount formatting
-  for (qw(rop weight listprice sellprice lastcost onhand)) { $form->{$_} = $form->parse_amount($myconfig, $form->{$_}) }
+  for (qw|rop weight listprice sellprice lastcost onhand oldonhand|) {
+    $form->{$_} = $form->parse_amount($myconfig, $form->{$_});
+  }
 
-  $form->{assembly} = (($form->{item} // '') eq 'assembly') ? 1 : 0;
+  $form->{$_} //= '' for qw|item partsgroup IC_inventory IC_expense IC_income|;
+
+  $form->{assembly} = ($form->{item} eq 'assembly') ? 1 : 0;
   for (qw(id alternate obsolete checkinventory)) { ($form->{$_} ||= 0) *= 1 }
 
   my $query;
@@ -255,9 +259,10 @@ sub save ($, $myconfig, $form, $dbh = undef) {
 
   }
 
-  ($form->{inventory_accno}) = split(/--/, $form->{IC_inventory} // '');
-  ($form->{expense_accno}) = split(/--/, $form->{IC_expense} // '');
-  ($form->{income_accno}) = split(/--/, $form->{IC_income} // '');
+  ($form->{inventory_accno}) = split(/--/, $form->{IC_inventory});
+  ($form->{expense_accno})   = split(/--/, $form->{IC_expense});
+  ($form->{income_accno})    = split(/--/, $form->{IC_income});
+  $form->{$_} //= '' for qw|inventory_accno expense_accno inventory_accno|;
 
   $form->{makemodel} = (($form->{make_1}) || ($form->{model_1})) ? 1 : 0;
 
@@ -278,7 +283,7 @@ sub save ($, $myconfig, $form, $dbh = undef) {
 
     if ($id) {
 
-      if (($form->{item} // '') eq 'assembly' && !$project_id) {
+      if ($form->{item} eq 'assembly' && !$project_id) {
         # if item is part of an assembly adjust all assemblies
         $query = qq|SELECT aid, qty, adj
                     FROM assembly
@@ -305,14 +310,14 @@ sub save ($, $myconfig, $form, $dbh = undef) {
         $dbh->do($query) or $form->dberror($query);
       }
 
-      if (($form->{item} // '') eq 'kit') {
+      if ($form->{item} eq 'kit') {
         # delete assembly records
         $query = qq|DELETE FROM assembly
                     WHERE aid = $form->{id}|;
         $dbh->do($query) or $form->dberror($query);
       }
 
-      if (($form->{item} // '') eq 'assembly') {
+      if ($form->{item} eq 'assembly') {
 
         if ($form->{orphaned}) {
           # delete assembly records
@@ -372,7 +377,7 @@ sub save ($, $myconfig, $form, $dbh = undef) {
   }
 
   my $partsgroup_id;
-  (undef, $partsgroup_id) = split /--/, $form->{partsgroup} // '';
+  (undef, $partsgroup_id) = split /--/, $form->{partsgroup};
   ($partsgroup_id //= 0) *= 1;
 
   $form->{partnumber} = $form->update_defaults($myconfig, "partnumber", $dbh) if ! $form->{partnumber};

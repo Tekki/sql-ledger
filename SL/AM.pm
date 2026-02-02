@@ -1811,8 +1811,9 @@ sub backup ($, $myconfig, $form, $userspath, $gzip, $gpg) {
   $t[4] = substr("0$t[4]", -2);
 
   my $boundary = time;
-  my $tmpfile = "$userspath/$boundary.$myconfig->{dbname}-$form->{version}-$t[5]$t[4]$t[3].sql";
-  my $target = $form->{OUT};
+  my $tmpfile  = "$userspath/$boundary.$myconfig->{dbname}-$form->{version}-$t[5]$t[4]$t[3].sql";
+  my $mimetype = 'application/octet-stream';
+  my $target   = $form->{OUT};
   $form->{OUT} = $tmpfile;
 
   open my $out, '>:encoding(UTF-8)', $form->{OUT} or $form->error("$form->{OUT} : $!");
@@ -2057,7 +2058,7 @@ $myconfig->{dboptions};
   $dbh->disconnect;
 
   # compress backup if gzip defined
-  my $suffix = "";
+  my $suffix   = '';
   if ($gzip) {
     my @args = split / /, $gzip;
     my @s = @args;
@@ -2067,14 +2068,16 @@ $myconfig->{dboptions};
 
     shift @s;
     my %s = @s;
-    $suffix = ${-S} || ".gz";
+    $suffix = '.gz';
     $tmpfile .= $suffix;
+    $mimetype = 'application/x-gzip';
   }
 
   if ($gpg && SL::AM->encrypt_file($myconfig, $form, $gpg, $tmpfile)) {
     unlink $tmpfile;
-    $suffix .= '.gpg';
+    $suffix  .= '.gpg';
     $tmpfile .= '.gpg';
+    $mimetype = 'application/octet-stream';
   }
 
   if (($form->{media} // '') eq 'email') {
@@ -2101,7 +2104,7 @@ $myconfig->{dboptions};
     open my $in, "$tmpfile" or $form->error("$tmpfile : $!");
     open my $out, ">-" or $form->error("STDOUT : $!");
 
-    print $out qq|Content-Type: application/file;
+    print $out qq|Content-Type: $mimetype
 Content-Disposition: attachment; filename=$myconfig->{dbname}-$form->{version}-$t[5]$t[4]$t[3].sql$suffix\n\n|;
 
     binmode $in;
@@ -2807,54 +2810,52 @@ sub workstations ($, $myconfig, $form) {
   my $ws;
   my $tp;
   my $command;
-  my %ws;
+  my %workstations;
 
   $form->{numprinters} = 1;
 
-  for (keys %defaults) {
+  for my $key (keys %defaults) {
 
-    if ($_ =~ /printer_/) {
-      ($fld, $ws, $tp) = split /_/, $_;
+    if ($key =~ /printer_/) {
+      ($fld, $ws, $tp) = split /_/, $key;
 
       if ($tp) {
-        ($fld, $command) = split /=/, $defaults{$_}, 2;
+        ($fld, $command) = split /=/, $defaults{$key}, 2;
 
-        $ws{$ws}{workstation}{$tp} = $ws;
-
-        $ws{$ws}{printer}{$tp} = $fld;
-        $ws{$ws}{command}{$tp} = $command;
+        $workstations{$ws}{printer}{$tp} = $fld;
+        $workstations{$ws}{command}{$tp} = $command;
 
       } else {
         # main
-        ($fld, $command) = split /=/, $defaults{$_}, 2;
+        ($fld, $command) = split /=/, $defaults{$key}, 2;
 
-        $form->{$_} = $fld;
-        ($fld, $tp) = split /_/, $_;
+        $form->{$key} = $fld;
+        ($fld, $tp) = split /_/, $key;
         $form->{"command_$tp"} = $command;
 
         $form->{numprinters}++;
       }
     } else {
-      ($fld, $ws) = split /_/, $_;
+      ($fld, $ws) = split /_/, $key;
       if ($ws) {
-        $ws{$ws}{$fld} = $defaults{$_};
+        $workstations{$ws}{$fld} = $defaults{$key};
       } else {
         # main
-        $form->{$_} = $defaults{$_};
+        $form->{$key} = $defaults{$key};
       }
     }
   }
 
   my $i = 1;
-  for (sort { $a <=> $b } keys %ws) {
+  for my $key (sort keys %workstations) {
 
     for my $item (qw(workstation cashdrawer poledisplay poledisplayon)) {
-      $form->{"${item}_$i"} = $ws{$_}{$item};
+      $form->{"${item}_$i"} = $workstations{$key}{$item};
     }
 
-    for $tp (keys %{ $ws{$_}{printer} }) {
-      $form->{"printer_${i}_$tp"} = $ws{$_}{printer}{$tp};
-      $form->{"command_${i}_$tp"} = $ws{$_}{command}{$tp};
+    for my $tp (keys $workstations{$key}{printer}->%*) {
+      $form->{"printer_${i}_$tp"} = $workstations{$key}{printer}{$tp};
+      $form->{"command_${i}_$tp"} = $workstations{$key}{command}{$tp};
       $form->{"numprinters_$i"}++;
     }
     $form->{"numprinters_$i"}++;
@@ -2903,7 +2904,7 @@ sub save_workstations ($, $myconfig, $form) {
   my %audittrail;
 
   for my $ws (1 .. $form->{numworkstations}) {
-    for (1 .. $form->{"numprinters_$ws"}) {
+    for (1 .. $form->{"numprinters_$ws"} || 0) {
       if ($form->{"printer_${ws}_$_"}) {
         $sth->execute(qq|printer_$form->{"workstation_$ws"}_$_|, qq|$form->{"printer_${ws}_$_"}=$form->{"command_${ws}_$_"}|);
         $sth->finish;

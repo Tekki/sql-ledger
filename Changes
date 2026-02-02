@@ -1,7 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
 Not Released
-  -
+  - errors with uninitialized variables corrected
+  - the live tests check the correct MIME type of the file downloads
 
 4.0.2 2026-01-24
   - ownership of members file in upgrade script corrected

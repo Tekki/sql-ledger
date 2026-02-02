@@ -72,7 +72,10 @@ sub retrieve_card ($, $myconfig, $form) {
       $form->{queued} .= "$ref->{formname} $ref->{spoolfile} " if $ref->{spoolfile};
     }
     $sth->finish;
-    for (qw(printed queued)) { $form->{$_} =~ s/ +$//g }
+    for (qw|printed queued|) {
+      $form->{$_} //= '';
+      $form->{$_} =~ s/ +$//g;
+    }
 
     if ($form->{customer_id}) {
       $form->exchangerate_defaults($dbh, $myconfig, $form);

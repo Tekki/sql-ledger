@@ -17,6 +17,11 @@ class SL::TestClient {
   field $config :reader;
   field $configfile :param;
   field $connected;
+  field %filetypes = (
+    gz   => 'gzip compressed data',
+    pdf  => 'PDF document',
+    xlsx => 'Microsoft Excel 2007',
+  );
   field %form_params :reader = ();
   field $form_script :reader = '';
   field $last_download;
@@ -124,15 +129,10 @@ class SL::TestClient {
   }
 
   method download_is ($label, $type) {
-    my %types = (
-      pdf  => 'PDF document',
-      xlsx => 'Microsoft Excel 2007',
-    );
-
     if ($last_download && -f $last_download) {
-      if ($types{$type}) {
+      if ($filetypes{$type}) {
         my $test = "$label: type $type";
-        if (`file '$last_download'` =~ $types{$type}) {
+        if (`file '$last_download'` =~ $filetypes{$type}) {
           pass $test;
         } else {
           fail $test;
@@ -214,6 +214,26 @@ class SL::TestClient {
       for (@names) {
         $mj->element_exists(qq|input[name=$_][type=hidden]|, "Hidden form field '$_'");
       }
+    };
+
+    return $self;
+  }
+
+  method get_download_ok ($label, $type, $path, %params) {
+    BAIL_OUT 'Not connected.' unless $connected;
+
+    $path = $self->_build_path($path, %params);
+
+    subtest "$label, download file" => sub {
+      $last_download = '';
+
+      my $uri = "$url/$path";
+      $mj->get_ok($uri, $self->headers($uri))
+        ->status_is(200, "$label: status ok")
+        ->header_is('Content-Type' => $mimetypes{$type}, "$label: response is $type")
+        ->or(sub { $self->_register_problems('error'); $self-&_register_problems('warn'); });
+
+      $self->_download_file($label);
     };
 
     return $self;

@@ -1094,7 +1094,7 @@ sub combine {
     chdir("$slconfig{spool}/$myconfig{dbname}");
     if ($filename = SL::BP->spoolfile(\%myconfig, $form)) {
       my $spoolfiles = join ' ', @files;
-      @args = ("pdftk $slconfig{spool}files cat output $filename");
+      @args = ("pdftk $spoolfiles cat output $filename");
       system(@args) % 256 == 0 or $form->error("@args : $?");
       SL::BP->set_printed(\%myconfig, $form, \@files);
     }

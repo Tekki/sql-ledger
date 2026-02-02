@@ -3604,15 +3604,14 @@ sub do_print_reminder {
 
       $c->init;
 
-      ($whole, $form->{decimal}) = split /\./, $ref->{due} / $ref->{exchangerate};
-      $form->{decimal} = substr("$form->{decimal}00", 0, 2);
+      ($form->{integer_amount}, $form->{decimal}) = split /\./, sprintf '%.2f',
+        $ref->{due} / $ref->{exchangerate};
       $form->{text_decimal} = $c->num2text($form->{decimal} * 1);
-      $form->{text_amount} = $c->num2text($whole);
-      $form->{integer_amount} = $whole;
+      $form->{text_amount}  = $c->num2text($form->{integer_amount});
 
-      $form->{out_decimal} = $form->{decimal};
-      $form->{text_out_decimal} = $form->{text_decimal};
-      $form->{text_out_amount} = $form->{text_amount};
+      $form->{out_decimal}        = $form->{decimal};
+      $form->{text_out_decimal}   = $form->{text_decimal};
+      $form->{text_out_amount}    = $form->{text_amount};
       $form->{integer_out_amount} = $form->{integer_amount};
 
       my $i = 10;

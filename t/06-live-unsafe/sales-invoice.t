@@ -89,7 +89,9 @@ subtest 'Print invoice' => sub {
     for my $template (@$templates) {
       $t->set_params_ok("Template $template", formname => $template)
         ->download_ok("Print $lang $template", 'pdf', 'preview')
-        ->download_is("$lang $template", 'pdf');
+        ->download_is("$lang $template", 'pdf')
+        ->set_params_ok('Set media', media => 'queue')
+        ->press_button_ok('Print to queue', 'print');
     }
   }
 };

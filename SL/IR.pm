@@ -575,11 +575,9 @@ sub invoice_details ($, $myconfig, $form) {
 
   $form->{totaltax} = $form->format_amount($myconfig, $tax, $form->{precision}, "");
 
-  my ($whole, $decimal) = split /\./, $form->{invtotal} // '';
-  $form->{decimal} = substr("${decimal}00", 0, 2);
+  ($form->{integer_amount}, $form->{decimal}) = split /\./, sprintf '%.2f', $form->{invtotal};
   $form->{text_decimal} = $c->num2text($form->{decimal} * 1);
-  $form->{text_amount} = $c->num2text($whole);
-  $form->{integer_amount} = $whole;
+  $form->{text_amount}  = $c->num2text($form->{integer_amount});
 
   if ($form->{roundto} > 0.01) {
     $form->{total} = $form->round_amount($form->round_amount(($form->{invtotal} - $form->{paid}) / $form->{roundto}, 0) * $form->{roundto}, $form->{precision});
@@ -588,18 +586,14 @@ sub invoice_details ($, $myconfig, $form) {
     $form->{total} = $form->{invtotal} - $form->{paid};
   }
 
-  ($whole, $decimal) = split /\./, $form->{total} // '';
-  $form->{out_decimal} = substr("${decimal}00", 0, 2);
+  ($form->{integer_out_amount}, $form->{out_decimal}) = split /\./, sprintf '%.2f', $form->{total};
   $form->{text_out_decimal} = $c->num2text($form->{out_decimal} * 1);
-  $form->{text_out_amount} = $c->num2text($whole);
-  $form->{integer_out_amount} = $whole;
+  $form->{text_out_amount}  = $c->num2text($form->{integer_out_amount});
 
   if ($form->{cd_amount}) {
-    ($whole, $decimal) = split /\./, $form->{cd_invtotal} // '';
-    $form->{cd_decimal} = substr("${decimal}00", 0, 2);
-    $form->{text_cd_decimal} = $c->num2text($form->{cd_decimal} * 1);
-    $form->{text_cd_invtotal} = $c->num2text($whole);
-    $form->{integer_cd_invtotal} = $whole;
+    ($form->{integer_cd_invtotal}, $form->{cd_decimal}) = split /\./, sprintf '%.2f', $form->{cd_invtotal};
+    $form->{text_cd_decimal}  = $c->num2text($form->{cd_decimal} * 1);
+    $form->{text_cd_invtotal} = $c->num2text($form->{integer_cd_invtotal});
   }
 
   $form->format_string(qw(text_amount text_decimal text_cd_invtotal text_cd_decimal text_out_amount text_out_decimal));

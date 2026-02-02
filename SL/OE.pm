@@ -1639,13 +1639,9 @@ sub order_details ($, $myconfig, $form) {
   $form->{paid} = $form->format_amount($myconfig, $form->{paid}, $form->{precision});
   $form->{subtotal} = $form->format_amount($myconfig, $form->{subtotal}, $form->{precision}, 0);
 
-  my $whole;
-  ($whole, $form->{decimal}) = split /\./, $form->{ordtotal} // '';
-  $form->{decimal} .= "00";
-  $form->{decimal} = substr($form->{decimal}, 0, 2);
+  ($form->{integer_amount}, $form->{decimal}) = split /\./, sprintf '%.2f', $form->{ordtotal};
   $form->{text_decimal} = $c->num2text($form->{decimal} * 1);
-  $form->{text_amount} = $c->num2text($whole);
-  $form->{integer_amount} = $whole;
+  $form->{text_amount}  = $c->num2text($form->{integer_amount});
 
   # format amounts
   $form->{quototal} = $form->{ordtotal} = $form->format_amount($myconfig, $form->{ordtotal}, $form->{precision}, 0);

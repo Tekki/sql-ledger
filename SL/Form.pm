@@ -113,7 +113,7 @@ sub new ($type, $userspath = '') {
 
   }
 
-  $self->{$_} //= '' for qw|action login path|;
+  $self->{$_} //= '' for qw|action login path language_code|;
 
   if ($esc) {
     for (keys %$self) { $self->{$_} = unescape("", $self->{$_}) }
@@ -192,7 +192,9 @@ sub dump_form ($self, @fields) {
   my ($package, $filename, $line) = caller;
   print {*STDERR} "$line $filename\n";
 
-  print {*STDERR} "  $_: |$self->{$_}|\n" for @dump_fields;
+  for (@dump_fields) {
+    print {*STDERR} defined $self->{$_} ? "  $_: |$self->{$_}|\n" : "  $_: undefined\n";
+  }
 }
 
 
@@ -900,6 +902,7 @@ sub parse_template ($self, $myconfig, $userspath, $dvipdf = '', $xelatex = '') {
       my $mail = SL::Mailer->new;
 
       for (qw|email cc bcc|) {
+        $self->{$_} //= '';
         $self->{$_} =~ s/(\\|\&gt;|\&lt;|<|>)//g;
       }
       for (qw|cc bcc subject message version format notify|) {
@@ -1154,7 +1157,7 @@ sub process_template ($self, $myconfig, @template) {
       # check if it is set and display
       chomp $ln;
       $ln =~ s/.*?<%if\s+?(.+?)%>/$1/;
-      $var = $1;
+      $var = $1 // '';
       my $ok = 0;
       if ($var =~ /\s/) {
         my @k = split / /, $var, 3;
@@ -1350,12 +1353,13 @@ sub gentex ($self, $myconfig, $templates, $userspath, $dvipdf, $xelatex, $column
   $fileid .= $$;
   $self->{tmpfile} = "$userspath/${fileid}.tex";
 
-  open $hdr, "$templates/$myconfig->{templates}/$self->{language_code}/invoice.tex" or $self->error("$templates/$myconfig->{templates}/$self->{language_code}/invoice.tex : $!");
-  open my $out, ">$self->{tmpfile}" or $self->error("$self->{tmpfile} : $!");
+  open my $header, '<', "$templates/$myconfig->{templates}/$self->{language_code}/invoice.tex"
+    or $self->error("$templates/$myconfig->{templates}/$self->{language_code}/invoice.tex : $!");
+  open my $out, '>', $self->{tmpfile} or $self->error("$self->{tmpfile} : $!");
 
   my @h = ();
 
-  while (<$hdr>) {
+  while (<$header>) {
     if ($_ =~ /<%include /) {
       s/<%include //;
       s/%>//;
@@ -1375,13 +1379,13 @@ sub gentex ($self, $myconfig, $templates, $userspath, $dvipdf, $xelatex, $column
 
 |;
 
-  while (<$hdr>) {
+  while (<$header>) {
     if ($_ =~ /fontfamily/) {
       push @h, $_;
       last;
     }
   }
-  close $hdr;
+  close $header;
 
   print $out @h;
 
@@ -1479,10 +1483,10 @@ sub process_tex ($self, $target) {
   chdir("$self->{cwd}");
 
   if ($self->{OUT}) {
-    unless (open $out, $self->{$out}) {
+    unless (open $out, $self->{OUT}) {
       $err = $!;
       $self->cleanup;
-      $self->error("$self->{$out} : $err");
+      $self->error("$self->{OUT} : $err");
     }
   } else {
 
@@ -1638,7 +1642,7 @@ sub format_line ($self, $ln, $i = undef) {
         }
       }
     } else {
-      if (defined $i) {
+      if (defined $i && ref $self->{$var} eq 'ARRAY') {
         $str = $self->{$var}[$i];
       } else {
         $str = $self->{$var};
@@ -1974,8 +1978,10 @@ sub qr_variables ($self, $myconfig) {
   $self->format_string(@sf);
 
   my %alt;
-  $alt{invdate}        = $self->datetonum($myconfig, $self->{transdate}) =~ s/^..//r;
-  $alt{businessnumber} = $self->{businessnumber}                         =~ s/\D//gr;
+  $alt{invdate} = $self->datetonum($myconfig, $self->{transdate} // $self->{invdate});
+  $alt{invdate} =~ s/^..//;
+  $alt{businessnumber} = $self->{businessnumber} // '';
+  $alt{businessnumber} =~ s/\D//g;
 
   my @date;
   for my $i (1 .. $self->{rowcount}) {
@@ -2049,6 +2055,7 @@ sub rerun_latex ($self) {
 sub format_string ($self, @fields) {
 
   my $format = $self->{format} or return;
+  $self->{charset} //= '';
   if ($self->{format} =~ /(ps|pdf)/) {
     $format = ($self->{charset} =~ /utf/i) ? 'utf' : 'tex';
   }
@@ -2575,8 +2582,9 @@ sub exchangerate_defaults ($self, $dbh, $myconfig, $form) {
   my $query;
 
   # get default currencies
-  $self->{currencies} = $self->get_currencies($myconfig, $dbh);
-  $self->{defaultcurrency} = substr($self->{currencies},0,3);
+  $self->{currencies}      = $self->get_currencies($myconfig, $dbh);
+  $self->{defaultcurrency} = substr($self->{currencies}, 0, 3);
+  $self->{currency} ||= $self->{defaultcurrency};
 
   $query = qq|SELECT exchangerate
               FROM exchangerate
@@ -2716,7 +2724,7 @@ sub get_employee ($self, $dbh) {
 
 
 # this sub gets the id and name from $table
-sub get_name ($self, $myconfig, $table, $transdate) {
+sub get_name ($self, $myconfig, $table, $transdate = undef) {
 
   # connect to database
   my $dbh = $self->dbconnect($myconfig);
@@ -3928,7 +3936,7 @@ sub get_partsgroup ($self, $myconfig, $p, $dbh = undef) {
   if ($self->{partsgroup}) {
     ($partsgroup, $id) = split /--/, $self->{partsgroup};
     @pt = split /:/, $partsgroup;
-    $id *= 1;
+    ($id //= 0) *= 1;
 
     $query = qq|SELECT code FROM partsgroup
                 WHERE id = $id|;
@@ -4053,6 +4061,8 @@ sub update_status ($self, $myconfig) {
   ($self->{id} //= 0) *= 1;
   return unless $self->{id};
 
+  $self->{$_} //= '' for qw|printed emailed|;
+
   my $dbh = $self->dbconnect_noauto($myconfig);
 
   my %queued = split / +/, $self->{queued};
@@ -4079,8 +4089,8 @@ sub update_status ($self, $myconfig) {
 
 sub save_status ($self, $dbh) {
 
-  my $formnames = $self->{printed};
-  my $emailforms = $self->{emailed};
+  my $formnames  = $self->{printed} // '';
+  my $emailforms = $self->{emailed} // '';
 
   ($self->{id} //= 0) *= 1;
   my $query = qq|DELETE FROM status
@@ -4154,8 +4164,8 @@ sub all_references ($self, $dbh, $formname = undef) {
     while (my $ref = $sth->fetchrow_hashref) {
       if ($ref->{login}) {
         next if $ref->{login} ne $login;
+        $ref->{confidential} = ($login eq $ref->{login});
       }
-      $ref->{confidential} = ($login eq $ref->{login});
       push @{ $self->{all_reference} }, $ref;
     }
     $sth->finish;

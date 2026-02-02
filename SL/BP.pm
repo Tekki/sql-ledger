@@ -68,7 +68,7 @@ sub get_vc ($, $myconfig, $form) {
   my $union = "";
   $query = "";
   if (($form->{batch} // '') eq 'queue') {
-    if ($count && ($count < $myconfig->{vclimit} // 0)) {
+    if ($count && ($count < ($myconfig->{vclimit} // 0))) {
       foreach $item (keys %{ $arap{$form->{type}} }) {
         $query .= qq|
                     $union

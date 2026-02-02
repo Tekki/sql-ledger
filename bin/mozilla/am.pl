@@ -2970,8 +2970,8 @@ sub workstations {
   $form->hide_form(map { "numprinters_$_" } (1 .. $form->{numworkstations}));
 
   print qq|
-<input type=submit class=submit name=action value="|.$locale->text('Update').qq|">
-<input type=submit class=submit name=action value="|.$locale->text('Save').qq|">|;
+<input type=submit class=submit name=action value="|.$locale->text('Update').qq|" accesskey="U">
+<input type=submit class=submit name=action value="|.$locale->text('Save').qq|" accesskey="S">|;
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -3383,6 +3383,7 @@ sub pg_dump {
   my $boundary = time;
   my $tmpfile
     = "$slconfig{userspath}/$boundary.$myconfig{dbname}-$form->{version}-$t[5]$t[4]$t[3].dump";
+  my $mimetype = 'application/octet-stream';
 
   my @args = ('pg_dump');
   if ($myconfig{dbpasswd}) {
@@ -3395,6 +3396,7 @@ sub pg_dump {
   push @args, '-f', $tmpfile;
   system(@args) == 0 or $form->error("$args[0] : $?");
 
+  my $suffix = '';
   if ($slconfig{gzip}) {
     my @args = split / /, $slconfig{gzip};
     my @s = @args;
@@ -3404,20 +3406,22 @@ sub pg_dump {
 
     shift @s;
     my %s = @s;
-    $suffix = ${-S} || ".gz";
+    $suffix = '.gz';
     $tmpfile .= $suffix;
+    $mimetype = 'application/x-gzip';
   }
 
   if ($slconfig{gpg} && SL::AM->encrypt_file(\%myconfig, $form, $slconfig{gpg}, $tmpfile)) {
     unlink $tmpfile;
-    $suffix .= '.gpg';
+    $suffix  .= '.gpg';
     $tmpfile .= '.gpg';
+    $mimetype = 'application/octet-stream';
   }
 
   open my $in,  "$tmpfile" or $form->error("$tmpfile : $!");
   open my $out, ">-"       or $form->error("STDOUT : $!");
 
-  print $out qq|Content-Type: application/file;
+  print $out qq|Content-Type: $mimetype
 Content-Disposition: attachment; filename=$myconfig{dbname}-$form->{version}-$t[5]$t[4]$t[3].dump$suffix\n\n|;
 
   binmode $in;

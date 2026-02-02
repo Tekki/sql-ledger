@@ -3688,8 +3688,8 @@ sub check_vendor {
 
     if ($form->{"vendor_$i"} && !$form->{"vendor_id_$i"}) {
       ($form->{vendor}) = split /--/, $form->{"vendor_$i"};
-      if (($j = $form->get_name(\%myconfig, vendor)) > 1) {
-        &select_name(vendor, $i);
+      if (($j = $form->get_name(\%myconfig, 'vendor')) > 1) {
+        &select_name('vendor', $i);
         exit;
       }
 
@@ -3747,8 +3747,8 @@ sub check_customer {
     if ($form->{"customer_$i"} && !$form->{"customer_id_$i"}) {
       ($form->{customer}) = split /--/, $form->{"customer_$i"};
 
-      if (($j = $form->get_name(\%myconfig, customer)) > 1) {
-        &select_name(customer, $i);
+      if (($j = $form->get_name(\%myconfig, 'customer')) > 1) {
+        &select_name('customer', $i);
         exit;
       }
 

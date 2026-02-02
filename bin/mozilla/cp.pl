@@ -2146,13 +2146,11 @@ sub print_form {
   $c = SL::CP->new(($form->{language_code}) ? $form->{language_code} : $myconfig{countrycode});
   $c->init;
 
-  ($whole, $form->{decimal}) = split /\./, $form->{amount};
-  $form->{amount} = $form->format_amount(\%myconfig, $form->{amount}, $form->{precision});
-  $form->{decimal} .= "00";
-  $form->{decimal} = substr($form->{decimal}, 0, 2);
+  ($form->{integer_amount}, $form->{decimal}) = split /\./, sprintf '%.2f', $form->{amount};
   $form->{text_decimal} = $c->num2text($form->{decimal} * 1);
-  $form->{text_amount} = $c->num2text($whole);
-  $form->{integer_amount} = $whole;
+  $form->{text_amount}  = $c->num2text($form->{integer_amount});
+
+  $form->{amount} = $form->format_amount(\%myconfig, $form->{amount}, $form->{precision});
 
   $datepaid = $form->datetonum(\%myconfig, $form->{datepaid});
   ($form->{yyyy}, $form->{mm}, $form->{dd}) = $datepaid =~ /(....)(..)(..)/;

@@ -1471,6 +1471,7 @@ sub reminder ($, $myconfig, $form) {
     $where .= qq| AND a.department_id = $department_id|;
   }
 
+  $form->{sort} //= '';
   $form->{sort} =~ s/;//g;
   my $sortorder = $form->{sort} || "name";
 
