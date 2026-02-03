@@ -1,5 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+Not Released
+  - 
+
 4.0.3 2026-02-03
   - errors with uninitialized variables corrected
   - tests for backup, parts, services, timecards and workstations added
