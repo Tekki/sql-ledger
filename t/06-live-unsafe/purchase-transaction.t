@@ -61,11 +61,13 @@ subtest 'Add new transactions' => sub {
       ->texts_are('Most recently used transaction', 'a.number-l' => \'invnumber')
       ->follow_link_ok('Open transaction', 'number-l')
       ->params_are(
-      'Content of transaction',
-      description => \'test_stamp',
-      invnumber   => \'invnumber',
-      $tr->{expected}->%*
-      );
+        'Content of transaction',
+        description => \'test_stamp',
+        invnumber   => \'invnumber',
+        $tr->{expected}->%*
+        )
+      ->rows_are('Transaction rows', $tr->{expected_rows}->@*)
+      ->rows_are('Payments', $tr->{expected_payments}->@*);
   }
 };
 

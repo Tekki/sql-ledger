@@ -61,11 +61,13 @@ subtest 'Add new invoices' => sub {
       ->texts_are('Most recently used invoice', 'a.number-l' => \'invnumber')
       ->follow_link_ok('Open invoice', 'number-l')
       ->params_are(
-      'Content of invoice',
-      description => \'test_stamp',
-      invnumber   => \'invnumber',
-      $inv->{expected}->%*
-      );
+        'Invoice header',
+        description => \'test_stamp',
+        invnumber   => \'invnumber',
+        $inv->{expected}->%*
+        )
+      ->rows_are('Invoice rows', $inv->{expected_rows}->@*)
+      ->rows_are('Payments', $inv->{expected_payments}->@*);
   }
 };
 

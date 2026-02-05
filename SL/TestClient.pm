@@ -143,6 +143,8 @@ class SL::TestClient {
     } else {
       fail "$label: download available";
     }
+
+    return $self;
   }
 
   method download_ok ($label, $type, $button) {
@@ -320,6 +322,22 @@ class SL::TestClient {
       $self->get_ok('Clear semaphores', 'am.pl', action => 'clear_semaphores')
         ->press_button_ok('Confirm', 'yes');
     };
+  }
+
+  method rows_are ($label, @rows) {
+    subtest "$label: check rows" => sub {
+      my $i = 0;
+      for my $row (@rows) {
+        $i++;
+        for my ($key, $expected) (%$row) {
+          my $row_key = "${key}_$i";
+          ok exists($form_params{$row_key}), "$row_key exists"
+            and is $form_params{$row_key}, $expected, "$row_key is '$expected'";
+        }
+      }
+    };
+
+    return $self;
   }
 
   method set_action_ok ($action_parameter) {

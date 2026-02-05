@@ -56,11 +56,13 @@ subtest 'Add new orders' => sub {
       ->texts_are('Most recently used order', 'a.number-l' => \'ordnumber')
       ->follow_link_ok('Open order', 'number-l')
       ->params_are(
-      'Content of order',
-      description => \'test_stamp',
-      ordnumber   => \'ordnumber',
-      $ord->{expected}->%*
-      );
+        'Content of order',
+        description => \'test_stamp',
+        ordnumber   => \'ordnumber',
+        $ord->{expected}->%*
+        )
+      ->rows_are('Order rows', $ord->{expected_rows}->@*)
+      ->rows_are('Payments', $ord->{expected_payments}->@*);
   }
 };
 

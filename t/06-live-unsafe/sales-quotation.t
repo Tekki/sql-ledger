@@ -51,11 +51,12 @@ subtest 'Add new quotations' => sub {
       ->texts_are('Most recently used quotation', 'a.number-l' => \'quonumber')
       ->follow_link_ok('Open quotation', 'number-l')
       ->params_are(
-      'Content of quotation',
-      description => \'test_stamp',
-      quonumber   => \'quonumber',
-      $quo->{expected}->%*
-      );
+        'Content of quotation',
+        description => \'test_stamp',
+        quonumber   => \'quonumber',
+        $quo->{expected}->%*
+        )
+      ->rows_are('Quotation rows', $quo->{expected_rows}->@*)
   }
 };
 

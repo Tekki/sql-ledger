@@ -52,11 +52,12 @@ subtest 'Add new GL transactions' => sub {
       ->texts_are('Most recently used transaction', 'a.number-l' => \'reference')
       ->follow_link_ok('Open transaction', 'number-l')
       ->params_are(
-      'Content of transaction',
-      description => \'test_stamp',
-      reference   => \'reference',
-      $tr->{expected}->%*
-      );
+        'Content of transaction',
+        description => \'test_stamp',
+        reference   => \'reference',
+        $tr->{expected}->%*
+        )
+      ->rows_are('Transaction rows', $tr->{expected_rows}->@*)
   }
 };
 

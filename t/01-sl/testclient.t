@@ -44,8 +44,8 @@ can_ok $obj, (
   'download_is',       'elements_exist', 'follow_link_ok',  'form_exists',     'form_fields_exist',
   'form_hidden_exist', 'form_params',    'get_download_ok', 'get_ok',          'headers',
   'json',              'params_are',     'post_ok',         'press_button_ok', 'remove_locks_ok',
-  'set_action_ok',     'set_form',       'set_params_ok',   'store_ok',        'test_stamp',
-  'texts_are',         'update_row_ok',  'user_login_ok',   'DESTROY',
+  'rows_are',          'set_action_ok',  'set_form',        'set_params_ok',   'store_ok',
+  'test_stamp',        'texts_are',      'update_row_ok',   'user_login_ok',   'DESTROY',
 
   # internal mmethods
   '_build_path', '_download_file', '_register_problems',
