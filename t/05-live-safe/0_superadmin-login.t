@@ -20,13 +20,13 @@ unless ($ENV{SL_LIVETEST}) {
 
 $t = SL::TestClient->new(configfile => $configfile);
 
-if ($adminpwd = $t->config->{server}{adminpassword}) {
+if ($adminpwd = $t->config->{server}{login}{superadmin}) {
   plan tests => 2;
 } else {
   plan skip_all => 'Admin password not available.';
 }
 
-$t->connect_ok(1);
+$t->connect_ok('superadmin');
 
 subtest 'Admin screen' => sub {
   $t->post_ok('Login as admin', 'admin.pl', action   => 'login', password => $adminpwd)

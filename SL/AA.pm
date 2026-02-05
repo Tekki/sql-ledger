@@ -1118,8 +1118,9 @@ sub get_name ($, $myconfig, $form, $dbh = undef) {
   # connect to database
   $dbh = $form->dbconnect($myconfig) unless $dbh;
 
+  $form->{transdate} //= '';
   my $dateformat = $myconfig->{dateformat};
-  if ($myconfig->{dateformat} !~ /^y/) {
+  if ($form->{transdate} && $myconfig->{dateformat} !~ /^y/) {
     my @transdate = split /\W/, $form->{transdate} // '';
     $dateformat .= "yy" if (length $transdate[2] > 2);
   }

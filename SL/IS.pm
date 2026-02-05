@@ -606,7 +606,7 @@ sub invoice_details ($, $myconfig, $form) {
   $form->{text_decimal} = $c->num2text($form->{decimal} * 1);
   $form->{text_amount}  = $c->num2text($form->{integer_amount});
 
-  if ($form->{roundto} > 0.01) {
+  if (($form->{roundto} // 0) > 0.01) {
     $form->{total} = $form->round_amount($form->round_amount(($form->{invtotal} - $form->{paid}) / $form->{roundto}, 0) * $form->{roundto}, $form->{precision});
     $form->{roundingdifference} = $form->round_amount($form->{paid} + $form->{total} - $form->{invtotal}, $form->{precision});
   } else {

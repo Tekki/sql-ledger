@@ -2622,7 +2622,7 @@ sub add_shipto ($self, $dbh, $id) {
 
   my $shipto;
   for my $item (qw(name address1 streetname buildingnumber address2 city state zipcode country contact phone fax email)) {
-    if ($self->{"shipto$item"} ne "") {
+    if (($self->{"shipto$item"} // '') ne "") {
       if ($self->{$item} ne $self->{"shipto$item"}) {
         $shipto = 1;
         last;
@@ -4131,8 +4131,8 @@ sub save_status ($self, $dbh) {
   for (split / +/, $emailforms) { $status{$_}{emailed} = 1 }
 
   for $formname (keys %status) {
-    my $printed = $status{$formname}{printed} * 1;
-    my $emailed = $status{$formname}{emailed} * 1;
+    my $printed = ($status{$formname}{printed} // 0 ) * 1;
+    my $emailed = ($status{$formname}{emailed} // 0 ) * 1;
 
     $query = qq|INSERT INTO status (trans_id, printed, emailed, formname)
                 VALUES ($self->{id}, '$printed', '$emailed', '$formname')|;
@@ -4285,12 +4285,12 @@ sub save_reference ($self, $dbh, $formname = '') {
              VALUES (?, ?, ?)|;
   my $acth = $dbh->prepare($query) || $self->dberror($query);
 
-  for $i (1 .. $self->{reference_rows}) {
+  for $i (1 .. $self->{reference_rows} // 0) {
     ($self->{"referencearchive_id_$i"} ||= 0) *= 1;
     delete $unused{$self->{"referencearchive_id_$i"}} if $self->{"referencedescription_$i"};
   }
 
-  for $i (1 .. $self->{reference_rows}) {
+  for $i (1 .. $self->{reference_rows} // 0) {
 
     unless ($self->{referenceurl}) {
 
@@ -4854,6 +4854,7 @@ sub report_level ($self, $myconfig, $dbh = undef) {
   }
 
   ($self->{reportid} //= 0) *= 1;
+  $self->{reportlogin} //= '';
 
   my $query = qq|SELECT login
               FROM report

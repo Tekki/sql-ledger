@@ -1257,6 +1257,8 @@ sub generate_income_statement {
   }
 
   if ($form->{usetemplate}) {
+    $form->{format} = 'html';
+    $form->{media}  = 'screen';
     $form->parse_template(\%myconfig, $slconfig{userspath});
   } else {
 
@@ -1809,6 +1811,8 @@ sub generate_balance_sheet {
 
 
   if ($form->{usetemplate}) {
+    $form->{format} = 'html';
+    $form->{media}  = 'screen';
     $form->parse_template(\%myconfig, $slconfig{userspath});
   } else {
 
@@ -2126,12 +2130,12 @@ sub list_accounts {
     }
 
     if ($ref->{charttype} eq "A") {
-      $column_data{accno} = "<td><a href=$href>$ref->{accno}</a></td>";
-      $column_data{description} = "<td>$ref->{description}</td>";
-      $column_data{debit} = "<td align=right>$debit</td>";
-      $column_data{credit} = "<td align=right>$credit</td>";
-      $column_data{begbalance} = "<td align=right>$begbalance</td>";
-      $column_data{endbalance} = "<td align=right>$endbalance</td>";
+      $column_data{accno}       = qq|<td><a class="accno-l" href="$href">$ref->{accno}</a></td>|;
+      $column_data{description} = qq|<td>$ref->{description}</td>|;
+      $column_data{debit}       = qq|<td align=right>$debit</td>|;
+      $column_data{credit}      = qq|<td align=right>$credit</td>|;
+      $column_data{begbalance}  = qq|<td align=right>$begbalance</td>|;
+      $column_data{endbalance}  = qq|<td align=right>$endbalance</td>|;
 
       $totaldebit += $ref->{debit};
       $totalcredit += $ref->{credit};

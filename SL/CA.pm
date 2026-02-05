@@ -103,8 +103,8 @@ sub all_transactions ($, $myconfig, $form) {
   }
   $sth->finish;
 
-  my $fromdate_where;
-  my $todate_where;
+  my $fromdate_where = '';
+  my $todate_where   = '';
 
   unless ($form->{fromdate} || $form->{todate}) {
     ($form->{fromdate}, $form->{todate}) = $form->from_to($form->{year}, $form->{month}, $form->{interval}) if $form->{year} && $form->{month};

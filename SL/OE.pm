@@ -667,7 +667,7 @@ sub save ($, $myconfig, $form) {
 
     my $t = $form->{type};
 
-    for my $i (1 .. $form->{paidaccounts}) {
+    for my $i (1 .. $form->{paidaccounts} // 0) {
       if ($form->{"paid_$i"}) {
         $query = qq|INSERT INTO $arap (id) VALUES ($form->{id})|;
         $dbh->do($query) or $form->dberror($query);

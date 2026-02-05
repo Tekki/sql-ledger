@@ -19,7 +19,7 @@ if ($ENV{SL_LIVETEST}) {
   plan skip_all => 'SL_LIVETEST not enabled.';
 }
 
-$t = SL::TestClient->new(configfile => $configfile)->connect_ok->api_login_ok;
+$t = SL::TestClient->new(configfile => $configfile)->connect_ok('admin')->api_login_ok;
 
 subtest 'Menu frame' => sub {
   $t->post_ok('Menu', 'menu.pl', action => 'acc_menu', js => 1)

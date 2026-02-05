@@ -2752,6 +2752,7 @@ sub generate_sales_orders {
   $order = SL::Form->new;
   for (keys %{ $form->{order} }) {
 
+    $order->{script} = 'oe.pl';
     for (qw(type vc defaultcurrency login)) { $order->{$_} = $form->{$_} }
     for (split / /, $form->{taxaccounts}) { $order->{"${_}_rate"} = $form->{"${_}_rate"} }
 

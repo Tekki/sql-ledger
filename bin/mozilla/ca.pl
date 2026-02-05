@@ -104,9 +104,9 @@ sub chart_of_accounts {
     } else {
       $i++; $i %= 2;
       print qq|<tr class=listrow$i>|;
-      $column_data{accno} = "<td><a href=$href>$ca->{accno}</a></td>";
-      $column_data{gifi_accno} = "<td><a href=$href&accounttype=gifi>$ca->{gifi_accno}</a>&nbsp;</td>";
-      $column_data{description} = "<td>$ca->{description}</td>";
+      $column_data{accno} = qq|<td><a class="accno-l" href="$href">$ca->{accno}</a></td>|;
+      $column_data{gifi_accno} = qq|<td><a class="gifi-l" href="$href&accounttype=gifi">$ca->{gifi_accno}</a>&nbsp;</td>|;
+      $column_data{description} = qq|<td>$ca->{description}</td>|;
     }
 
     $column_data{debit} = "<td align=right>".$form->format_amount(\%myconfig, $ca->{debit}, $form->{precision}, "&nbsp;")."</td>\n";

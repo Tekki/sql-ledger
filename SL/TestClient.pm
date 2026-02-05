@@ -66,25 +66,26 @@ class SL::TestClient {
     return $mj->tx->res->body;
   }
 
-  method connect_ok ($admin = 0) {
+  method connect_ok ($user = 'user') {
     $connected = 0;
 
     my $config_ok = $config->{server} && $config->{server}{url};
-    if ($admin) {
-      $config_ok &&= $config->{server}{adminpassword};
+    if ($user eq 'superadmin') {
+      $config_ok &&= $config->{server}{login}{superadmin};
     } else {
-       $config_ok &&= $config->{server}{$_} for qw|username password|;
+       $config_ok &&= $config->{server}{login}{$user}{$_} for qw|username password|;
     }
 
     if ($config_ok) {
       try {
         my $res = $mj->ua->get("$config->{server}{url}/login.pl")->result;
         if ($res->is_success) {
-          if ($admin) {
-            ($url, $password) = $config->{server}->@{'url', 'adminpassword'};
+          $url = $config->{server}{url};
+          if ($user eq 'superadmin') {
             $username = 'root login';
+            $password = $config->{server}{login}{superadmin};
           } else {
-            ($url, $username, $password) = $config->{server}->@{'url', 'username', 'password'};
+            ($username, $password) = $config->{server}{login}{$user}->@{'username', 'password'};
           }
 
           $connected = 1;
@@ -329,8 +330,9 @@ class SL::TestClient {
       my $i = 0;
       for my $row (@rows) {
         $i++;
-        for my ($key, $expected) (%$row) {
+        for my ($key, $value) (%$row) {
           my $row_key = "${key}_$i";
+          my $expected = ref $value ? $store{$$value} : $value;
           ok exists($form_params{$row_key}), "$row_key exists"
             and is $form_params{$row_key}, $expected, "$row_key is '$expected'";
         }

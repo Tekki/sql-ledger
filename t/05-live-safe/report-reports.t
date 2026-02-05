@@ -14,7 +14,7 @@ my $configfile = "$FindBin::Bin/../testdata/testconfig.yml";
 my $t;
 
 if ($ENV{SL_LIVETEST}) {
-  plan tests => 7;
+  plan tests => 9;
 } else {
   plan skip_all => 'SL_LIVETEST not enabled.';
 }
@@ -23,7 +23,9 @@ $t = SL::TestClient->new(configfile => $configfile)->connect_ok->api_login_ok;
 
 subtest 'Chart of accounts' => sub {
   $t->get_ok('Report frontend', 'ca.pl', action => 'chart_of_accounts')
-    ->press_button_ok('Generate report', 'continue');
+    ->elements_exist('Links to account number, gifi', 'a.accno-l', 'a.gifi-l')
+    ->follow_link_ok('Account details', 'accno-l')
+    ->press_button_ok('List transactions', 'list_transactions');
 };
 
 subtest 'Reconciliation' => sub {
@@ -36,23 +38,46 @@ subtest 'Trial balance' => sub {
   $t->get_ok('Report frontend', 'rp.pl', action => 'report', reportcode => 'trial_balance')
     ->set_params_ok('Report parameters', fromdate => $t->date_jan1, todate => $t->date_dec31)
     ->press_button_ok('Generate report', 'continue')
+    ->elements_exist('Link to account number', 'a.accno-l')
     ->press_button_ok('Generate details report', 'display_all')
     ->download_ok('Spreadsheet', 'xlsx', 'spreadsheet')
     ->download_is('Spreadsheet', 'xlsx');
 };
 
-subtest 'Income statement' => sub {
+subtest 'Income statement, no template' => sub {
   $t->get_ok('Report frontend', 'rp.pl', action => 'report', reportcode => 'income_statement')
-    ->set_params_ok('Report parameters', fromdate => $t->date_jan1, todate => $t->date_dec31)
+    ->set_params_ok(
+      'Report parameters',
+      fromdate    => $t->date_jan1,
+      todate      => $t->date_dec31,
+      usetemplate => ''
+      )
     ->press_button_ok('Generate report', 'continue')
     ->download_ok('Spreadsheet', 'xlsx', 'spreadsheet')
     ->download_is('Spreadsheet', 'xlsx');
 };
 
-subtest 'Balance sheet' => sub {
+subtest 'Income statement, template' => sub {
+  $t->get_ok('Report frontend', 'rp.pl', action => 'report', reportcode => 'income_statement')
+    ->set_params_ok(
+      'Report parameters',
+      fromdate    => $t->date_jan1,
+      todate      => $t->date_dec31,
+      usetemplate => 'Y'
+      )
+    ->press_button_ok('Generate report', 'continue');
+};
+
+subtest 'Balance sheet, no template' => sub {
   $t->get_ok('Report frontend', 'rp.pl', action => 'report', reportcode => 'balance_sheet')
-    ->set_params_ok('Report parameters', todate => $t->date_dec31)
+    ->set_params_ok('Report parameters', todate => $t->date_dec31, usetemplate => '')
     ->press_button_ok('Generate report', 'continue')
     ->download_ok('Spreadsheet', 'xlsx', 'spreadsheet')
     ->download_is('Spreadsheet', 'xlsx');
+};
+
+subtest 'Balance sheet, template' => sub {
+  $t->get_ok('Report frontend', 'rp.pl', action => 'report', reportcode => 'balance_sheet')
+    ->set_params_ok('Report parameters', todate => $t->date_dec31, usetemplate => 'Y')
+    ->press_button_ok('Generate report', 'continue');
 };

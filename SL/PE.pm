@@ -1497,7 +1497,8 @@ sub get_jcitems ($, $myconfig, $form) {
   $form->{precision} = $defaults{precision};
 
   my $var;
-  my $where;
+  my $query;
+  my $where = '';
 
   if ($form->{projectnumber}) {
     (undef, $var) = split /--/, $form->{projectnumber} // '';
@@ -1520,8 +1521,6 @@ sub get_jcitems ($, $myconfig, $form) {
     $where .= " AND j.checkedout <= (date '$form->{transdateto}' + interval '1 days')";
   }
 
-  my $query;
-  my $ref;
   $form->{vc} = (($form->{vc} // '') eq 'customer') ? 'customer' : 'vendor';
 
   $query = qq|SELECT j.id, j.description, j.qty - j.allocated AS qty,
