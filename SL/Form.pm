@@ -1353,9 +1353,9 @@ sub gentex ($self, $myconfig, $templates, $userspath, $dvipdf, $xelatex, $column
   $fileid .= $$;
   $self->{tmpfile} = "$userspath/${fileid}.tex";
 
-  open my $header, '<', "$templates/$myconfig->{templates}/$self->{language_code}/invoice.tex"
+  open my $header, '<:encoding(UTF-8)', "$templates/$myconfig->{templates}/$self->{language_code}/invoice.tex"
     or $self->error("$templates/$myconfig->{templates}/$self->{language_code}/invoice.tex : $!");
-  open my $out, '>', $self->{tmpfile} or $self->error("$self->{tmpfile} : $!");
+  open my $out, '>:encoding(UTF-8)', $self->{tmpfile} or $self->error("$self->{tmpfile} : $!");
 
   my @h = ();
 
