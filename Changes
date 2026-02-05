@@ -1,7 +1,9 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
-Not Released
-  - 
+4.0.4 2026-02-05
+  - distorted onhand amounts with numberformat 1.000,00 corrected
+  - encoding of parts report template corrected
+  - tests for documents splitted into subtests for headers and rows
 
 4.0.3 2026-02-03
   - errors with uninitialized variables corrected
