@@ -219,14 +219,16 @@ sub save ($, $myconfig, $form, $dbh = undef) {
   }
 
   # undo amount formatting
-  for (qw|rop weight listprice sellprice lastcost onhand oldonhand|) {
+  for (qw|rop weight listprice sellprice lastcost onhand|) {
     $form->{$_} = $form->parse_amount($myconfig, $form->{$_});
   }
 
-  $form->{$_} //= '' for qw|item partsgroup IC_inventory IC_expense IC_income|;
+  for (qw|id alternate obsolete checkinventory oldonhand|) {
+    ($form->{$_} ||= 0) *= 1;
+  }
 
+  $form->{$_} //= '' for qw|item partsgroup IC_inventory IC_expense IC_income|;
   $form->{assembly} = ($form->{item} eq 'assembly') ? 1 : 0;
-  for (qw(id alternate obsolete checkinventory)) { ($form->{$_} ||= 0) *= 1 }
 
   my $query;
 
@@ -455,7 +457,7 @@ sub save ($, $myconfig, $form, $dbh = undef) {
   ($form->{employee}, $form->{employee_id}) = $form->get_employee($dbh);
 
   # add assembly records
-  if (($form->{item} // '') eq 'assembly' && !$project_id) {
+  if ($form->{item} eq 'assembly' && !$project_id) {
 
     if ($form->{orphaned}) {
       for my $i (1 .. $form->{assembly_rows}) {
