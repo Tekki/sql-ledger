@@ -1,6 +1,14 @@
 ---
 # Sample for config/sql-ledger.yml
 
+## Environment
+
+### set application environment to use different text and visualization
+### dev: for Development
+### test: for Testing
+### empty - this is the default for Production
+environment: 
+
 ## Language
 
 # set language and charset for login and admin
