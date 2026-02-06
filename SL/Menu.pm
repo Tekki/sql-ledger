@@ -16,6 +16,20 @@ package SL::Menu;
 use SL::Inifile;
 use parent 'SL::Inifile';
 
+sub _url ($form, $s) {
+  $s = '' if !defined $s;
+  return $form->escape($s, 1);
+}
+
+sub _ha ($s) {
+  $s = '' if !defined $s;
+  $s =~ s/&/&amp;/g;
+  $s =~ s/</&lt;/g;
+  $s =~ s/>/&gt;/g;
+  $s =~ s/"/&quot;/g;
+  return $s;
+}
+
 
 sub menuitem ($self, $myconfig, $form, $item, $) {
 
@@ -23,16 +37,21 @@ sub menuitem ($self, $myconfig, $form, $item, $) {
   my $action = ($self->{$item}{action}) ? $self->{$item}{action} : "section_menu";
   my $target = ($self->{$item}{target}) ? $self->{$item}{target} : "";
 
-  my $level = $form->escape($item);
-  my $login = $form->{login};
-  $login =~ s/ /\%20/;
+  my $legacy = $self->{$item}{jsmenu} ? 1 : 0;
 
-  my $str = qq|<a href=$module?path=$form->{path}&action=$action&level=$level&login=$login&js=$form->{js}|;
+  my $href = $module
+    . '?path='  . _url($form, $form->{path})
+    . '&action='. _url($form, $action)
+    . '&level=' . _url($form, $item)
+    . '&login=' . _url($form, $form->{login})
+    . '&js='    . _url($form, $form->{js});
+
+  my $str;
 
   my @vars = qw(module action target href);
 
   if ($self->{$item}{href}) {
-    $str = qq|<a href=$self->{$item}{href}|;
+    $href = $self->{$item}{href};
     @vars = qw(module target href);
   }
 
@@ -40,22 +59,35 @@ sub menuitem ($self, $myconfig, $form, $item, $) {
 
   delete $self->{$item}{submenu};
 
-  # add other params
-  foreach my $key (keys %{ $self->{$item} }) {
-    $str .= "&".$form->escape($key)."=";
+  foreach my $key (keys %{ $self->{$item} // {} }) {
+    $href .= "&" . _url($form, $key) . "=";
     my ($value, $conf) = split /=/, $self->{$item}{$key}, 2;
     $value = "$myconfig->{$value}$conf" if $self->{$item}{$key} =~ /=/;
 
-    $str .= $form->escape($value);
+    $href .= _url($form, $value);
   }
 
-  $str .= qq|#id$form->{tag}| if $target eq 'acc_menu';
+  my $tag = $form->{tag} // 0;
+  $href .= qq|#id$tag| if $target eq 'acc_menu' && !$form->{js};
+
+  if ($legacy) {
+    $str = qq|<a href=$href|;
+    $str .= qq| target=$target| if $target;
+    $str .= qq|>|;
+    return $str;
+  }
+
+  my $href_html = _ha($href);
+  $str = qq|<a href="$href_html"|;
 
   if ($target) {
-    $str .= qq| target=$target|;
+    my $t_html = _ha($target);
+    $str .= qq| target="$t_html"|;
+    $str .= qq| rel="noopener noreferrer"| if $target eq '_blank';
   }
 
   $str .= qq|>|;
+  return $str;
 
 }
 
