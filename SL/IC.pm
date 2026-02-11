@@ -2361,9 +2361,14 @@ sub create_links ($, $module, $myconfig, $form) {
 }
 
 
-sub get_warehouses ($, $myconfig, $form) {
+sub get_warehouses ($, $myconfig, $form, $dbh = undef) {
 
-  my $dbh = $form->dbconnect($myconfig);
+  my $disconnect;
+
+  unless ($dbh) {
+    $dbh        = $form->dbconnect($myconfig);
+    $disconnect = 1;
+  }
 
   my $query = qq|SELECT id, description
                  FROM warehouse
@@ -2372,6 +2377,7 @@ sub get_warehouses ($, $myconfig, $form) {
   my $sth = $dbh->prepare($query);
   $sth->execute or $form->dberror($query);
 
+  $form->{searchitems} //= '';
   if ($form->{searchitems} !~ /(service|labor)/) {
     while (my $ref = $sth->fetchrow_hashref) {
       push @{ $form->{all_warehouse} }, $ref;
@@ -2383,7 +2389,7 @@ sub get_warehouses ($, $myconfig, $form) {
 
   $form->all_years($myconfig, $dbh);
 
-  $dbh->disconnect;
+  $dbh->disconnect if $disconnect;
 
 }
 
@@ -2477,6 +2483,7 @@ sub get_inventory ($, $myconfig, $form) {
   $sth->execute or $form->dberror($query);
 
   while (my $ref = $sth->fetchrow_hashref) {
+    $ref->{qty} //= 0;
     $ref->{qty} = $ref->{onhand} - $ref->{qty};
     push @{ $form->{all_inventory} }, $ref if $ref->{qty};
   }
