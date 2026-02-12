@@ -1,5 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+Not Released
+  - 
+
 4.0.5 2026-02-12
   - illegal function call in warehouse transfer corrected
   - filter for departments in transaction report corrected
