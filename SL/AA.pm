@@ -911,28 +911,10 @@ sub transactions {
       $where .= " AND lower(vc.$form->{vc}number) LIKE '$var'";
     }
   }
-  for (qw(warehouse employee)) {
+  for (qw(department warehouse employee)) {
     if ($form->{$_}) {
       (undef, $var) = split /--/, $form->{$_};
       $where .= " AND a.${_}_id = $var";
-    }
-  }
-  if ($form->{department}) {
-    ($var, undef) = split /--/, $form->{department};
-    my $query = qq|SELECT id
-                   FROM department
-                   WHERE description LIKE '$var%'|;
-    my $dth = $dbh->prepare($query);
-    my @ids;
-
-    $dth->execute || $form->dberror($query);
-    while (($var) = $dth->fetchrow_array) {
-      push @ids, $var;
-    }
-    if (@ids) {
-      $where .= " AND (";
-      for (@ids) { $where .= "a.department_id = $_ OR " }
-      $where = substr($where, 0, -4) . ")";
     }
   }
   if ($form->{projectnumber}) {
