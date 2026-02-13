@@ -72,4 +72,4 @@
 - [Development](development.md#development)
   - [Perldoc](development.md#perldoc)
   - [Testing](development.md#testing)
-  - [Contibuting](development.md#contibuting)
+  - [Contributing](development.md#contributing)

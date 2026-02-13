@@ -37,8 +37,14 @@ with the following basic structure:
 ---
 server:
   url: …
-  username: …
-  password: …
+  login:
+    user:
+      username: …
+      password: …
+    admin:
+      username: …
+      password: …
+    superadmin: …
 ```
 
 To activate the live tests, set the environment variable `SL_LIVETEST` to a true
@@ -48,7 +54,7 @@ value.
 SL_LIVETEST=1 prove -r t/05-live-safe
 ```
 
-The so-called unsafe tests create, update, print, delete object and potentially
+The so-called unsafe tests create, update, print, delete objects and potentially
 corrupt data; they must not be run in production environments. These tests are
 restricted to core developers and are currently undocumented.
 
@@ -56,8 +62,8 @@ restricted to core developers and are currently undocumented.
 
 If you encounter an error or have a feature idea, first of all open an issue on
 our [GitHub repository](https://github.com/Tekki/sql-ledger/issues) so we can
-discuss it further. Pull requests without prior discussion will not get
-reviewed, except for small corrections of obvious errors.
+discuss it further. Contributors are expected to be human beings and
+identifiable as such. 
 
 The entire contribution process is:
 
@@ -73,7 +79,8 @@ The entire contribution process is:
 
 Familiarity with Git and creating pull requests on GitHub is required. Sign the
 commits. Remember that changing the code is step 6 on the above list, not the
-first.
+first. Pull requests without prior discussion will not get reviewed, except for
+small corrections of obvious errors.
 
 Some coding rules:
 

@@ -138,13 +138,19 @@ structure:</p>
 class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">server</span><span class="kw">:</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">url</span><span class="kw">:</span><span class="at"> …</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">username</span><span class="kw">:</span><span class="at"> …</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">password</span><span class="kw">:</span><span class="at"> …</span></span></code></pre></div>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">login</span><span class="kw">:</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">user</span><span class="kw">:</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">username</span><span class="kw">:</span><span class="at"> …</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">password</span><span class="kw">:</span><span class="at"> …</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">admin</span><span class="kw">:</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">username</span><span class="kw">:</span><span class="at"> …</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">password</span><span class="kw">:</span><span class="at"> …</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">superadmin</span><span class="kw">:</span><span class="at"> …</span></span></code></pre></div>
 <p>To activate the live tests, set the environment variable
 <code>SL_LIVETEST</code> to a true value.</p>
 <div class="sourceCode" id="cb3"><pre
 class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="va">SL_LIVETEST</span><span class="op">=</span>1 <span class="ex">prove</span> <span class="at">-r</span> t/05-live-safe</span></code></pre></div>
-<p>The so-called unsafe tests create, update, print, delete object and
+<p>The so-called unsafe tests create, update, print, delete objects and
 potentially corrupt data; they must not be run in production
 environments. These tests are restricted to core developers and are
 currently undocumented.</p>
@@ -152,9 +158,8 @@ currently undocumented.</p>
 <p>If you encounter an error or have a feature idea, first of all open
 an issue on our <a
 href="https://github.com/Tekki/sql-ledger/issues">GitHub repository</a>
-so we can discuss it further. Pull requests without prior discussion
-will not get reviewed, except for small corrections of obvious
-errors.</p>
+so we can discuss it further. Contributors are expected to be human
+beings and identifiable as such.</p>
 <p>The entire contribution process is:</p>
 <ul>
 <li>opening of an issue</li>
@@ -169,7 +174,9 @@ errors.</p>
 </ul>
 <p>Familiarity with Git and creating pull requests on GitHub is
 required. Sign the commits. Remember that changing the code is step 6 on
-the above list, not the first.</p>
+the above list, not the first. Pull requests without prior discussion
+will not get reviewed, except for small corrections of obvious
+errors.</p>
 <p>Some coding rules:</p>
 <ul>
 <li>Always include tests. Ideally, add tests first and then adjust the

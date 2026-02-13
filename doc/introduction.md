@@ -71,8 +71,7 @@ To establish a fully operational system, follow these steps:
 - reports for
   - search
   - related transactions
-  - supply and demand
-  - requirements
+  - resource planning
 
 ### Invoicing
 
