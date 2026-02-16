@@ -1443,7 +1443,7 @@ sub gentex ($self, $myconfig, $templates, $userspath, $dvipdf, $xelatex, $column
   for my $i (0 .. $l) {
     $line = "";
     for (@{$column}) {
-      $self->{temp} = $self->{$_}[$i];
+      $self->{temp} = $self->{$_}[$i] // '';
       if ($self->{temp} && $hdr->{$_}{type} ne 'n') {
         $self->format_string('temp') unless $hdr->{$_}{image};
       }

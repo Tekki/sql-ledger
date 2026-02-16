@@ -264,7 +264,7 @@ sub save ($, $myconfig, $form, $dbh = undef) {
   ($form->{inventory_accno}) = split(/--/, $form->{IC_inventory});
   ($form->{expense_accno})   = split(/--/, $form->{IC_expense});
   ($form->{income_accno})    = split(/--/, $form->{IC_income});
-  $form->{$_} //= '' for qw|inventory_accno expense_accno inventory_accno|;
+  $form->{$_} //= '' for qw|inventory_accno expense_accno income_accno|;
 
   $form->{makemodel} = (($form->{make_1}) || ($form->{model_1})) ? 1 : 0;
 

@@ -180,6 +180,7 @@ sub create_links ($, $myconfig, $form) {
   $sth = $dbh->prepare($query);
   $sth->execute or $form->dberror($query);
 
+  $form->{taxaccounts} = '';
   while ($ref = $sth->fetchrow_hashref) {
     $ref->{description} = $ref->{translation} if $ref->{translation};
     my $ok = 1;
