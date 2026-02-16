@@ -12,6 +12,7 @@ package SL::Form;
 use utf8;
 
 use Digest::SHA 'sha256_hex';
+use Scalar::Util 'looks_like_number';
 use Time::Local;
 
 sub new ($type, $userspath = '') {
@@ -682,10 +683,10 @@ sub format_amount ($self, $myconfig, $amount ||= 0, $places //= '', $dash //= ''
     $amount = $self->round_amount($amount, $places);
   }
 
-  # is the amount negative
-  my $negative = ($amount < 0);
+  if (looks_like_number $amount) {
+    # is the amount negative
+    my $negative = ($amount < 0);
 
-  if ($amount) {
     if ($myconfig->{numberformat}) {
       my ($whole, $dec) = split /\./, "$amount";
       $dec //= '';
@@ -1443,7 +1444,7 @@ sub gentex ($self, $myconfig, $templates, $userspath, $dvipdf, $xelatex, $column
   for my $i (0 .. $l) {
     $line = "";
     for (@{$column}) {
-      $self->{temp} = $self->{$_}[$i];
+      $self->{temp} = $self->{$_}[$i] // '';
       if ($self->{temp} && $hdr->{$_}{type} ne 'n') {
         $self->format_string('temp') unless $hdr->{$_}{image};
       }

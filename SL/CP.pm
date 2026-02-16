@@ -439,12 +439,16 @@ sub get_openinvoices ($self, $myconfig, $form) {
   # remove locks
   $form->remove_locks($myconfig, $dbh, $form->{arap});
 
-  my $where = qq|WHERE a.$form->{vc}_id = $form->{"$form->{vc}_id"}
-                 AND a.amount != a.paid
+  my $where = qq|WHERE a.amount != a.paid
                  AND a.approved = '1'
                  AND a.onhold = '0'
                  AND NOT a.id IN (SELECT id
                                   FROM semaphore)|;
+
+  if ($form->{"$form->{vc}_id"}) {
+    $where .= qq|
+                 AND a.$form->{vc}_id = $form->{"$form->{vc}_id"}|;
+  }
 
   my %defaults = $form->get_defaults($dbh, [qw(namesbynumber cdt precision)]);
 
