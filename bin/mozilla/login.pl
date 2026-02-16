@@ -15,10 +15,21 @@ use DBI;
 use SL::User;
 use SL::Form;
 use SL::Locale;
+use Storable ();
+
+sub h {
+  my ($s) = @_;
+  $s = '' unless defined $s;
+  $s =~ s/&/&amp;/g;
+  $s =~ s/</&lt;/g;
+  $s =~ s/>/&gt;/g;
+  $s =~ s/"/&quot;/g;
+  $s =~ s/'/&#39;/g;
+  return $s;
+}
 
 
 $form = SL::Form->new;
-
 
 $locale = SL::Locale->new($slconfig{language}, "login");
 
@@ -42,98 +53,176 @@ if ($form->{action}) {
   &login_screen;
 }
 
-
 1;
 
+sub login_env_html {
+  my ($form, $locale) = @_;
+
+  my $env = $form->environment;
+
+  my %env_label = (
+    dev  => $locale->text('Development Environment'),
+    test => $locale->text('Test Environment'),
+  );
+
+  my $version_label = $locale->text('Version');
+
+  if (exists $env_label{$env}) {
+    return qq{
+      <div class="login-env">
+        <header class="login-env-header smallcaps">
+          <h1>$env_label{$env}</h1>
+          <h3>$version_label $form->{version}-$form->{cssversion}</h3>
+        </header>
+      </div>
+    };
+  }
+
+  return qq{
+    <div class="login-env">
+      <header class="login-env-header smallcaps">
+        <h3>$version_label $form->{version}-$form->{cssversion}</h3>
+      </header>
+    </div>
+  };
+}
 
 sub login_screen {
 
-  $form->{stylesheet} = "sql-ledger.css";
+  $form->{stylesheet} = "blue.css";
   $form->{favicon} = "favicon.ico";
 
   $form->header;
 
-  $focus = ($form->{login}) ? "password" : "login";
+  $focus = ($form->{login}) ? "user" : "login";
+
+  my $env_html = login_env_html($form, $locale);
 
   print qq|
-<body class=login onload="jsp(); document.forms[0].${focus}.focus()">
+<body class="login">
 
-<pre>
-
-
-
-
-
-
-</pre>
-
-<center>
-<table class=login border=3 cellpadding=20>
-  <tr>
-    <td class=login align=center><a href="https://github.com/Tekki/sql-ledger" target=_blank><img src=$slconfig{images}/sql-ledger.png border=0></a>
-<h1 class=login align=center>|.$locale->text('Version').qq| $form->{version}</h1>
-<p>
-
-    <form method=post name=main action=$form->{script}>
-
-      <table width=100%>
-        <tr>
-          <td align=center>
-            <table>
-              <tr>
-                <th align=right>|.$locale->text('Name').qq|</th>
-                <td><input class=login name=login size=30></td>
-              </tr>
-              <tr>
-                <th align=right>|.$locale->text('Password').qq|</th>
-                <td><input class=login type=password name=password size=30></td>
-              </tr>
-            </table>
-
-            <br>
-            <input type=submit name=action value="|.$locale->text('Login').qq|">
-          </td>
-        </tr>
-      </table>
-|;
-
-    $form->hide_form(qw(js path small_device));
-
-  print qq|
+<div class="login-wrapper">
+  <div class="login-column">
+    <div class="login-brand">
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="$slconfig{images}/sql-ledger.png" class="flip-logo" alt="SQL-Ledger">
+            <h1>|.$locale->text('Open source ERP system').qq|</h1>
+          </div>
+          <div class="flip-card-back smallcaps">
+            <h3>Credits</h3>
+            <div class="ai-row">
+              <div class="ai-half">
+                <a href="https://github.com/Tekki/sql-ledger"><img src="$slconfig{images}/sql-ledger.png" height="100" class="image-hover" alt=""></a>
+                <br><b>|.$locale->text('based').qq|</b>
+              </div>
+              <div class="ai-half">
+                <a href="mailto:spam.spam@spam.spam" data-email-user="info" data-email-domain="domain.com"><img src="$slconfig{images}/sql-ledger.png" height="100" class="image-hover" alt=""></a>
+                <br><b>|.$locale->text('operated by').qq|</b>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    $env_html
+    <div class="login-form">
+      <form method="post" name="main" action="$form->{script}">
+        <div class="card">
+          <div class="login-field floating">
+            <input id="login" name="login" class="login-input" type="text" autocomplete="username" required placeholder=" ">
+            <label for="login">|.$locale->text('User').qq|</label>
+          </div>
+          <div class="login-field floating">
+            <input id="password" name="password" class="login-input" type="password" autocomplete="current-password" required placeholder=" ">
+            <label for="password">|.$locale->text('Password').qq|</label>
+            <div class="capslock-warning" hidden>
+              |.$locale->text('Caps Lock is ON').qq|
+            </div>
+          </div>
+          <div class="login-field">
+            <button type="submit" class="button login-button" name="action" value="login">|.$locale->text('Login').qq|</button>
+          </div>
+            |;
+            $form->hide_form(qw(js path small_device));
+            print qq|
+        </div>
       </form>
-
-    </td>
-  </tr>
-</table>
+    </div>
+    <div class="login-quote">
+      <noscript>
+        <em>|.$locale->text('Welcome').qq|</em>
+      </noscript>
+      <script src="https://www.citatum.hu/js.php?kategoria=B%F6lcsess%E9g"></script>
+    </div>
+  </div>
+</div>
 
 <script>
-<!--
-var agt = navigator.userAgent.toLowerCase();
-var is_major = parseInt(navigator.appVersion);
-var is_nav = ((agt.indexOf('mozilla') != -1) && (agt.indexOf('spoofer') == -1)
-           && (agt.indexOf('compatible') == -1) && (agt.indexOf('opera') == -1)
-           && (agt.indexOf('webtv') == -1));
-var is_nav4lo = (is_nav && (is_major <= 4));
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.forms[0];
+  if (!form) return;
 
-function jsp() {
-  if (is_nav4lo)
-    document.forms[0].js.value = ""
-  else
-    document.forms[0].js.value = "1"
-}
+  document.querySelectorAll('a[data-email-user][data-email-domain]').forEach((a) => {
+    const user = a.dataset.emailUser;
+    const domain = a.dataset.emailDomain;
+    if (user && domain) a.href = `mailto:${user}@${domain}`;
+  });
 
-function checkWidth(window_x) {
-  if (window_x.matches) {
-    document.forms[0].small_device.value = 1;
-  } else {
-    document.forms[0].small_device.value = 0;
+  form.addEventListener("submit", function (e) {
+    if (typeof checkform === "function" && !checkform()) {
+      e.preventDefault();
+    }
+  });
+
+  if (form.js) {
+    form.js.value = "1";
   }
-}
 
-var window_x = window.matchMedia("(max-width: 700px)");
-checkWidth(window_x);
-window_x.addListener(checkWidth);
-// End -->
+  function checkWidth(mql) {
+    if (form.small_device) {
+      form.small_device.value = mql.matches ? 1 : 0;
+    }
+  }
+
+  if (window.matchMedia) {
+    const mql = window.matchMedia("(max-width: 700px)");
+    checkWidth(mql);
+
+    if (mql.addEventListener) {
+      mql.addEventListener("change", checkWidth);
+    } else if (mql.addListener) {
+      mql.addListener(checkWidth);
+    }
+  }
+
+  const focus = "$focus";
+  if (form[focus]) {
+    form[focus].focus();
+  }
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const pwd = document.getElementById("password");
+  if (!pwd) return;
+
+  const warning = pwd
+    .closest(".login-field")
+    .querySelector(".capslock-warning");
+
+  function checkCaps(e) {
+    const caps = e.getModifierState && e.getModifierState("CapsLock");
+    warning.hidden = !caps;
+  }
+
+  pwd.addEventListener("keydown", checkCaps);
+  pwd.addEventListener("keyup", checkCaps);
+  pwd.addEventListener("focus", checkCaps);
+  pwd.addEventListener("blur", () => warning.hidden = true);
+});
 </script>
 
 </body>
@@ -146,76 +235,117 @@ window_x.addListener(checkWidth);
 sub selectdataset {
   my ($login) = @_;
 
-  if (-f "css/sql-ledger.css") {
-    $form->{stylesheet} = "sql-ledger.css";
+  if (-f "css/blue.css") {
+    $form->{stylesheet} = "blue.css";
   }
   if (-f 'favicon.ico') {
     $form->{favicon} = "favicon.ico";
   }
 
-  delete $self->{sessioncookie};
+  delete $form->{sessioncookie};
   $form->header(1);
 
+  my $env_html = login_env_html($form, $locale);
+  my $login_h  = h($form->{login});
+
   print qq|
-<body class=login onload="document.forms[0].password.focus()">
+<body class="login">
 
-<pre>
+<div class="login-wrapper">
+  <div class="login-column">
+    <div class="login-brand">
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="$slconfig{images}/sql-ledger.png" class="flip-logo" alt="SQL-Ledger">
+            <h1>|.$locale->text('Open source ERP system').qq|</h1>
+          </div>
+          <div class="flip-card-back smallcaps">
+            <h3>Credits</h3>
+            <div class="ai-row">
+              <div class="ai-half">
+                <a href="https://github.com/Tekki/sql-ledger"><img src="$slconfig{images}/sql-ledger.png" height="100" class="image-hover" alt=""></a>
+                <br><b>|.$locale->text('based').qq|</b>
+              </div>
+              <div class="ai-half">
+                <a href="mailto:spam.spam@spam.spam" data-email-user="info" data-email-domain="domain.com"><img src="$slconfig{images}/sql-ledger.png" height="100" class="image-hover" alt=""></a>
+                <br><b>|.$locale->text('operated by').qq|</b>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    $env_html
+    <div class="login-form">
+      <form method="post" action="$form->{script}">
+        <div class="card">
+          <div class="login-field floating">
+            <input id="login" name="login_display" class="login-input login-static" type="text" value="|.$login_h.qq|" readonly tabindex="-1" placeholder=" ">
+            <label for="login">|.$locale->text('User').qq|</label>
+          </div>
+          <div class="login-field floating">
+            <input id="password" name="password" class="login-input" type="password" autocomplete="current-password" required placeholder=" ">
+            <label for="password">|.$locale->text('Password').qq|</label>
+          </div>
+        </div>
+        <div class="card login-dataset">
+          <div class="login-dataset-header">
+            <svg class="dataset-icon" aria-hidden="true">
+              <use href="images/icons.svg#icon-database"></use>
+            </svg>
+            <div class="dataset-text">
+              <div class="dataset-label">
+                |.$locale->text('Select Company').qq|
+              </div>
+            </div>
+          </div>
+          <div class="login-field">
+            <select id="company" name="login" class="login-input" aria-label="|.$locale->text('Select Company').qq|">
+              |;
+              for my $key ( sort { lc( $login->{$a}{company} // $a ) cmp lc( $login->{$b}{company} // $b ) } keys %{ $login } ) {
+              my $label = $login->{$key}{company} // $key;
+              my $sel   = ($current && $current eq $key) ? ' selected' : '';
+              my $key_h   = h($key);
+              my $label_h = h($label);
+              print qq|<option value="$key_h"$sel>$label_h</option>\n|;
+              }
+              print qq|
+            </select>
+          </div>
+            |;
+            print qq|
+          <div class="login-field">
+            <button type="submit" class="button login-button" name="action" value="login">|.$locale->text('Login').qq|</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
-</pre>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.forms[0];
+  if (!form) return;
 
-<center>
-<table class=login border=3 cellpadding=20>
-  <tr>
-    <td class=login align=center><a href="https://github.com/Tekki/sql-ledger" target=_blank><img src=$slconfig{images}/sql-ledger.png border=0></a>
-<h1 class=login align=center>|.$locale->text('Version').qq| $form->{version}</h1>
+  document.querySelectorAll('a[data-email-user][data-email-domain]').forEach((a) => {
+    const user = a.dataset.emailUser;
+    const domain = a.dataset.emailDomain;
+    if (user && domain) a.href = `mailto:${user}@${domain}`;
+  });
 
-<p>
+  form.addEventListener("submit", function (e) {
+    if (typeof checkform === "function" && !checkform()) {
+      e.preventDefault();
+    }
+  });
 
-<form method=post action=$form->{script}>
-
-<input type=hidden name=beenthere value=1>
-
-      <table width=100%>
-        <tr>
-          <td align=center>
-            <table>
-              <tr>
-                <th align=right>|.$locale->text('Name').qq|</th>
-                <td>$form->{login}</td>
-              </tr>
-              <tr>
-                <th align=right>|.$locale->text('Password').qq|</th>
-                <td><input class=login type=password name=password size=30 value=$form->{password}></td>
-              </tr>
-              <tr>
-                <th align=right>|.$locale->text('Company').qq|</th>
-                <td>|;
-
-                $form->hide_form(qw(js path));
-
-                $checked = "checked";
-                for (sort { lc $login->{$a} cmp lc $login->{$b} } keys %$login) {
-                  print qq|
-                  <br><input class="login" type="radio" name="login" value="$_" $checked>$login->{$_}
-                  |;
-                  $checked = "";
-                }
-
-                print qq|
-                  </td>
-              </tr>
-            </table>
-            <br>
-            <input type=submit name=action value="|.$locale->text('Login').qq|">
-          </td>
-        </tr>
-      </table>
-
-</form>
-
-    </td>
-  </tr>
-</table>
+  if (form.password) {
+    form.password.focus();
+  }
+});
+</script>
 
 </body>
 </html>
@@ -227,7 +357,7 @@ sub selectdataset {
 
 sub login {
 
-  $form->{stylesheet} = "sql-ledger.css";
+  $form->{stylesheet} = "blue.css";
   $form->{favicon} = "favicon.ico";
 
   $form->error($locale->text('You did not enter a name!')) unless ($form->{login});
@@ -249,8 +379,9 @@ sub login {
         $form->error($locale->text('Incorrect Username or Password!'));
       }
     } else {
-      if ($form->{login} !~ /\@/) {
-        $form->{login} .= "\@$dbname";
+      if ($form->{login} !~ /\@/ && keys %login == 1) {
+        my ($only) = keys %login;
+        $form->{login} = $only if defined $only && $only =~ /\@/;
       }
     }
   }
@@ -279,7 +410,18 @@ sub login {
 
       $form->info($err[4]);
 
-      $form->info("<p><a href=menu.pl?login=$form->{login}&path=$form->{path}&action=display&main=company_logo&js=$form->{js}&password=$form->{password}>".$locale->text('Continue')."</a>");
+      my $login_u = $form->escape($form->{login}, 1);
+      my $path_u  = $form->escape($form->{path}, 1);
+      my $js_u    = $form->escape($form->{js}, 1);
+      my $sess_u  = defined $form->{sessioncookie} ? $form->escape($form->{sessioncookie}, 1) : '';
+      my $sd_u    = defined $form->{small_device} ? $form->escape($form->{small_device}, 1) : '';
+
+      my $href = "menu.pl?action=display&main=company_logo&login=$login_u&path=$path_u&js=$js_u";
+      $href   .= "&sessioncookie=$sess_u" if defined $form->{sessioncookie} && length $form->{sessioncookie};
+      $href   .= "&small_device=$sd_u"    if defined $form->{small_device} && length $form->{small_device};
+
+      my $href_h = h($href);
+      $form->info('<p><a href="' . $href_h . '">' . $locale->text('Continue') . '</a>');
 
       exit;
 
@@ -288,7 +430,7 @@ sub login {
     if ($errno == 5) {
       if (-f "$slconfig{userspath}/$user->{dbname}.LCK") {
         if (-s "$slconfig{userspath}/$user->{dbname}.LCK") {
-          open my $fh, "$slconfig{userspath}/$user->{dbname}.LCK" ;
+          open my $fh, '<', "$slconfig{userspath}/$user->{dbname}.LCK" or $form->error("$slconfig{userspath}/$user->{dbname}.LCK : $!");
           $msg = <$fh>;
           close $fh;
           if ($form->{admin}) {
@@ -308,7 +450,18 @@ sub login {
       } else {
 
         # upgrade dataset and log in again
-        open FH, ">$slconfig{userspath}/$user->{dbname}.LCK" or $form->error($!);
+        my $login_u = $form->escape($form->{login}, 1);
+        my $path_u  = $form->escape($form->{path}, 1);
+        my $js_u    = $form->escape($form->{js}, 1);
+        my $sess_u  = defined $form->{sessioncookie} ? $form->escape($form->{sessioncookie}, 1) : '';
+        my $sd_u    = defined $form->{small_device} ? $form->escape($form->{small_device}, 1) : '';
+
+        my $href = "menu.pl?action=display&main=company_logo&login=$login_u&path=$path_u&js=$js_u";
+        $href   .= "&sessioncookie=$sess_u" if defined $form->{sessioncookie} && length $form->{sessioncookie};
+        $href   .= "&small_device=$sd_u"    if defined $form->{small_device} && length $form->{small_device};
+
+        my $href_h = h($href);
+        $form->info('<p><a href="' . $href_h . '">' . $locale->text('Continue') . '</a>');
 
         for (qw(dbname dbhost dbport dbdriver dbconnect dbuser dbpasswd)) { $form->{$_} = $user->{$_} }
 
@@ -321,7 +474,25 @@ sub login {
 
       }
 
-      $form->info("<p><a href=menu.pl?login=$form->{login}&path=$form->{path}&action=display&main=company_logo&js=$form->{js}&password=$form->{password}>".$locale->text('Continue')."</a>");
+      # Do NOT put password in query string. Hand off via POST.
+      my $login_h = h($form->{login});
+      my $path_h  = h($form->{path});
+      my $js_h    = h($form->{js});
+      my $pwd_h   = h($form->{password});
+
+      my $post = qq|
+<p>
+<form method="post" action="menu.pl" autocomplete="off">
+  <input type="hidden" name="login" value="$login_h">
+  <input type="hidden" name="path" value="$path_h">
+  <input type="hidden" name="js" value="$js_h">
+  <input type="hidden" name="action" value="display">
+  <input type="hidden" name="main" value="company_logo">
+  <input type="hidden" name="password" value="$pwd_h">
+  <input type="submit" class="button login-button" value="|.$locale->text('Continue').qq|">
+</form>
+|;
+      $form->info($post);
 
       exit;
 
@@ -354,7 +525,11 @@ sub login {
 
   # made it this far, setup callback for the menu
   $form->{callback} = "menu.pl?action=display";
-  for (qw(login path password js sessioncookie small_device)) { $form->{callback} .= "&$_=$form->{$_}" }
+  for my $k (qw(login path js sessioncookie small_device)) {
+    my $v = $form->{$k};
+    next unless defined $v;
+    $form->{callback} .= "&$k=" . $form->escape($v, 1);
+  }
 
   # check for recurring transactions
   if ($user->{acs} !~ /Recurring Transactions/) {
@@ -396,12 +571,17 @@ sub email_tan {
   use SL::Mailer;
   $mail = SL::Mailer->new;
 
-  srand( time() ^ ($$ + ($$ << 15)) );
-  $digits = "0123456789";
-  $tan = "";
-  while (length($tan) < 4) {
-    $tan .= substr($digits, (int(rand(length($digits)))), 1);
-  }
+  open my $fh, '<', '/dev/urandom'
+  or $form->error('Cannot open /dev/urandom');
+
+  my $n = read $fh, my $buf, 6;
+  close $fh;
+
+  $form->error('Cannot read /dev/urandom') unless defined $n && $n == 6;
+
+  my $tan = join '', map { ord($_) % 10 } split //, $buf;
+
+  for ($user->{name}, $user->{email}) {s/[\r\n]//g if defined;}
 
   $mail->{message} = $locale->text('TAN').": $tan";
   $mail->{from} = $mail->{to} = qq|"$user->{name}" <$user->{email}>|;
@@ -421,50 +601,73 @@ sub email_tan {
 
   $form->header;
 
-  print qq|
-
-<body class=login>
-
-<pre>
-
-</pre>
-
-<center>
-<table class=login border=3 cellpadding=20>
-  <tr>
-    <td class=login align=center><a href="https://github.com/Tekki/sql-ledger" target=_blank><img src=$slconfig{images}/sql-ledger.png border=0></a>
-<h1 class=login align=center>|.$locale->text('Version').qq| $form->{version}</h1>
-<h1 class=login align=center>$user->{company}</h1>
-
-<p>
-
-      <form method=post action=$form->{script}>
-
-      <table width=100%>
-        <tr>
-          <td align=center>
-            <table>
-              <tr>
-                <th align=right>|.$locale->text('TAN').qq|</th>
-                <td><input class=login type=password name=password size=30></td>
-              </tr>
-            </table>
-            <br>
-            <input type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
-          </td>
-        </tr>
-      </table>
-|;
-
-
-    $form->hide_form(qw(nextsub js login path));
+  my $env_html = login_env_html($form, $locale);
 
   print qq|
+
+<body class="login">
+
+<div class="login-wrapper">
+  <div class="login-column">
+    <div class="login-brand">
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="$slconfig{images}/sql-ledger.png" class="flip-logo" alt="SQL-Ledger">
+            <h1>|.$locale->text('Open source ERP system').qq|</h1>
+          </div>
+          <div class="flip-card-back smallcaps">
+            <h3>Credits</h3>
+            <div class="ai-row">
+              <div class="ai-half">
+                <a href="https://github.com/Tekki/sql-ledger"><img src="$slconfig{images}/sql-ledger.png" height="100" class="image-hover" alt=""></a>
+                <br><b>|.$locale->text('based').qq|</b>
+              </div>
+              <div class="ai-half">
+                <a href="mailto:spam.spam@spam.spam" data-email-user="info" data-email-domain="domain.com"><img src="$slconfig{images}/sql-ledger.png" height="100" class="image-hover" alt=""></a>
+                <br><b>|.$locale->text('operated by').qq|</b>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    $env_html
+    <div class="login-form">
+      <form method="post" action="$form->{script}">
+        <div class="card">
+          <div class="login-field floating">
+            <input id="password" name="password" class="login-input" type="password" autocomplete="current-password" required placeholder=" ">
+            <label for="password">|.$locale->text('One-time code (6 digits)').qq|</label>
+          </div>
+          <div class="login-field">
+            <input type="submit" class="button login-button" name="action" value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+          </div>
+        </div>
+          |;
+          $form->hide_form(qw(nextsub js login path));
+          print qq|
       </form>
+    </div>
+  </div>
+</div>
 
-    </td>
-  </tr>
-</table>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.forms[0];
+  if (!form) return;
+
+  document.querySelectorAll('a[data-email-user][data-email-domain]').forEach((a) => {
+    const user = a.dataset.emailUser;
+    const domain = a.dataset.emailDomain;
+    if (user && domain) a.href = `mailto:${user}@${domain}`;
+  });
+
+  if (form.password) {
+    form.password.focus();
+  }
+});
+</script>
 
 </body>
 </html>
@@ -487,14 +690,14 @@ sub tan_login {
 
   if ((crypt $form->{password}, substr($form->{login}, 0, 2)) ne $myconfig{password}) {
     if (-f "$slconfig{userspath}/$form->{login}.tan") {
-      open my $fh, "+<$slconfig{userspath}/$form->{login}.tan" or $form->error("$slconfig{userspath}/$form->{login}.tan : $!");
+      open my $fh, '+<', "$slconfig{userspath}/$form->{login}.tan" or $form->error("$slconfig{userspath}/$form->{login}.tan : $!");
 
       $tries = <$fh>;
       $tries++;
 
       seek($fh, 0, 0);
       truncate($fh, 0);
-      print $fh $tries;
+      print {$fh} $tries;
       close $fh;
 
       if ($tries > 3) {
@@ -503,8 +706,8 @@ sub tan_login {
         $form->error($locale->text('Maximum tries exceeded!'));
       }
     } else {
-      open my $fh, ">$slconfig{userspath}/$form->{login}.tan" or $form->error("$slconfig{userspath}/$form->{login}.tan : $!");
-      print $fh "1";
+      open my $fh, '>', "$slconfig{userspath}/$form->{login}.tan" or $form->error("$slconfig{userspath}/$form->{login}.tan : $!");
+      print {$fh} "1";
       close $fh;
     }
 
@@ -516,11 +719,76 @@ sub tan_login {
 
     unlink "$slconfig{userspath}/$form->{login}.tan";
 
-    $form->{callback} = "menu.pl?action=display";
-    for (qw(login path js password)) { $form->{callback} .= "&$_=$form->{$_}" }
-    $form->{callback} .= "&main=company_logo";
+    # TAN flow: menu.pl must receive the TAN code (in field 'password') to proceed.
+    # Do NOT put it in the query string -> hand off via POST (auto-submit).
+    my $h = sub {
+      my ($s) = @_;
+      $s = '' unless defined $s;
+      $s =~ s/&/&amp;/g;
+      $s =~ s/</&lt;/g;
+      $s =~ s/>/&gt;/g;
+      $s =~ s/"/&quot;/g;
+      $s =~ s/'/&#39;/g;
+      return $s;
+    };
 
-    $form->redirect;
+    # If available in the stored config, keep sessioncookie around (optional but harmless)
+    $form->{sessioncookie} ||= $myconfig{sessioncookie} if defined $myconfig{sessioncookie};
+
+    $form->{stylesheet} ||= $myconfig{stylesheet} || "blue.css";
+    $form->{favicon}   ||= "favicon.ico";
+    $form->header;
+
+    my $login_h = $h->($form->{login});
+    my $path_h  = $h->($form->{path});
+    my $js_h    = $h->($form->{js});
+    my $pwd_h   = $h->($form->{password});  # TAN code arrives as 'password'
+    my $sess_h  = $h->($form->{sessioncookie});
+    my $sd_h    = $h->($form->{small_device});
+
+    print qq|
+<body class="login">
+  <div class="login-wrapper">
+    <div class="login-column">
+      <div class="login-form">
+        <form id="post_tan" method="post" action="menu.pl" autocomplete="off">
+          <input type="hidden" name="action" value="display">
+          <input type="hidden" name="main" value="company_logo">
+          <input type="hidden" name="login" value="$login_h">
+          <input type="hidden" name="path" value="$path_h">
+          <input type="hidden" name="js" value="$js_h">
+          <input type="hidden" name="password" value="$pwd_h">
+|;
+    if (defined $form->{sessioncookie} && length $form->{sessioncookie}) {
+      print qq|          <input type="hidden" name="sessioncookie" value="$sess_h">\n|;
+    }
+    if (defined $form->{small_device} && length $form->{small_device}) {
+      print qq|          <input type="hidden" name="small_device" value="$sd_h">\n|;
+    }
+
+    print qq|
+          <noscript>
+            <div class="card">
+              <div class="login-field">|.$locale->text('Continue').qq|</div>
+              <div class="login-field">
+                <input type="submit" class="button login-button" value="|.$locale->text('Continue').qq|">
+              </div>
+            </div>
+          </noscript>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var f = document.getElementById("post_tan");
+      if (f) f.submit();
+    });
+  </script>
+</body>
+</html>
+|;
+    exit;
 
   }
 
@@ -538,19 +806,13 @@ sub totp_screen {
     SL::TOTP::add_secret($user, $slconfig{memberfile}, $slconfig{userspath});
 
     $qrcode = qq|
-              <tr>
-                <th colspan="2">|.$locale->text('Scan the following code with your Authenticator App:').qq|</th>
-              </tr>
-              <tr><td>&nbsp;</td></tr>
-              <tr>
-                <th colspan="2">
+          <div class="totp-setup">
+            <div class="help-text">|.$locale->text('Scan the following code with your Authenticator App:').qq|</div>
+            <div class="totp-qrcode">
 |. SL::QRCode::plot_svg(SL::TOTP::url($user), scale => 4) . qq|
-                </th>
-              </tr>
-              <tr>
-                <th colspan="2">$user->{totp_secret}</th>
-              </tr>
-              <tr><td>&nbsp;</td></tr>|;
+            </div>
+            <div class="totp-secret">$user->{totp_secret}</div>
+          </div>|;
   }
 
   $form->{stylesheet} = $user->{stylesheet};
@@ -559,50 +821,75 @@ sub totp_screen {
 
   $form->header;
 
-  print qq|
-
-<body class=login onload="document.forms[0].totp.focus()">
-
-<pre>
-
-</pre>
-
-<center>
-<table class=login border=3 cellpadding=20>
-  <tr>
-    <td class=login align=center><a href="https://github.com/Tekki/sql-ledger" target=_blank><img src=$slconfig{images}/sql-ledger.png border=0></a>
-<h1 class=login align=center>|.$locale->text('Version').qq| $form->{version}</h1>
-<p>
-
-      <form method=post action=$form->{script}>
-
-      <table width=100%>
-        <tr>
-          <td align=center>
-            <table>
-              <tr>
-                <th colspan=2>$form->{login}</th>
-              </tr>$qrcode
-              <tr>
-                <th align=right>|.$locale->text('Code from Authenticator').qq|</th>
-                <td><input class=login type=text name=totp size=6></td>
-              </tr>
-            </table>
-            <br>
-            <input type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
-          </td>
-        </tr>
-      </table>
-|;
-
-    $form->hide_form(qw|nextsub js login path|);
+  my $env_html = login_env_html($form, $locale);
 
   print qq|
+
+<body class="login">
+
+<div class="login-wrapper">
+  <div class="login-column">
+    <div class="login-brand">
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="$slconfig{images}/sql-ledger.png" class="flip-logo" alt="SQL-Ledger">
+            <h1>|.$locale->text('Open source ERP system').qq|</h1>
+          </div>
+          <div class="flip-card-back smallcaps">
+            <h3>Credits</h3>
+            <div class="ai-row">
+              <div class="ai-half">
+                <a href="https://github.com/Tekki/sql-ledger"><img src="$slconfig{images}/sql-ledger.png" height="100" class="image-hover" alt=""></a>
+                <br><b>|.$locale->text('based').qq|</b>
+              </div>
+              <div class="ai-half">
+                <a href="mailto:spam.spam@spam.spam" data-email-user="info" data-email-domain="domain.com"><img src="$slconfig{images}/sql-ledger.png" height="100" class="image-hover" alt=""></a>
+                <br><b>|.$locale->text('operated by').qq|</b>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    $env_html
+    <div class="login-form">
+      <form method="post" action="$form->{script}">
+        <div class="card">
+          <h3 class="smallcaps">$form->{login}</h3>
+          $qrcode
+          <div class="login-field floating">
+            <input id="totp" name="totp" class="login-input" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" required placeholder=" ">
+            <label for="totp">|.$locale->text('Code from Authenticator').qq|</label>
+          </div>
+          <div class="login-field">
+            <input type="submit" class="button login-button" name="action" value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+          </div>
+        </div>
+          |;
+          $form->hide_form(qw|nextsub js login path|);
+          print qq|
       </form>
+    </div>
+  </div>
+</div>
 
-    </td>
-  </tr>
-</table>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.forms[0];
+  if (!form) return;
+
+  document.querySelectorAll('a[data-email-user][data-email-domain]').forEach((a) => {
+    const user = a.dataset.emailUser;
+    const domain = a.dataset.emailDomain;
+    if (user && domain) a.href = `mailto:${user}@${domain}`;
+  });
+
+  if (form.totp) {
+    form.totp.focus();
+  }
+});
+</script>
 
 </body>
 </html>
@@ -636,8 +923,10 @@ sub totp_login {
 
   # made it this far, setup callback for the menu
   $form->{callback} = "menu.pl?action=display";
-  for (qw(login path password js sessioncookie small_device)) {
-    $form->{callback} .= "&$_=$form->{$_}";
+  for my $k (qw(login path js sessioncookie small_device)) {
+    my $v = $form->{$k};
+    next unless defined $v;
+    $form->{callback} .= "&$k=" . $form->escape($v, 1);
   }
 
   # check for recurring transactions
