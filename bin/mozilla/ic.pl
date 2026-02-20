@@ -4567,7 +4567,8 @@ sub history {
     for (@column_index) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
 
     $amount = $form->format_amount(\%myconfig, $ref->{sellprice}, $form->{precision});
-    $column_data{sellprice} = qq|<td align=right><a href="#" onClick="pickvalue('$form->{pickvar}','$amount'); window.close()">${amount}&nbsp;</a></td>|;
+    my $js_amount = $amount =~ s/'/\\'/gr;
+    $column_data{sellprice} = qq|<td align=right><a href="#" onClick="pickvalue('$form->{pickvar}','$js_amount'); window.close()">${amount}&nbsp;</a></td>|;
 
     $column_data{trn} = qq|<td><a href="$mdl{$ref->{module}}?action=edit&type=$ref->{type}&id=$ref->{id}&path=$form->{path}&login=$form->{login}&readonly=1">$ref->{trn}&nbsp;</a></td>|;
 
