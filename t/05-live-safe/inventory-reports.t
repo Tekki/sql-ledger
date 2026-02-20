@@ -14,7 +14,7 @@ my $configfile = "$FindBin::Bin/../testdata/testconfig.yml";
 my $t;
 
 if ($ENV{SL_LIVETEST}) {
-  plan tests => 13;
+  plan tests => 14;
 } else {
   plan skip_all => 'SL_LIVETEST not enabled.';
 }
@@ -81,4 +81,13 @@ subtest 'Requirements' => sub {
   $t->get_ok('Report frontend', 'ic.pl', action => 'requirements')
     ->press_button_ok('Generate report', 'continue')
     ->elements_exist('Links to partnumber', 'a.partnumber-l');
+};
+
+subtest 'Resource planning' => sub {
+  $t->get_ok('Requirements report', 'ic.pl', action => 'requirements')
+    ->press_button_ok('Generate report', 'continue')
+    ->follow_link_ok('Open first part', 'partnumber-l')
+    ->elements_exist('Links to order, customer/vendor', 'a.number-l', 'a.name-l')
+    ->press_button_ok('Switch to next item', 'next')
+    ->press_button_ok('Switch to previous item', 'previous');
 };

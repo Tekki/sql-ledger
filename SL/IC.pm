@@ -13,11 +13,17 @@ use v5.40;
 
 package SL::IC;
 
+use List::Util;
 
-sub get_part ($, $myconfig, $form) {
+sub get_part ($, $myconfig, $form, $dbh = undef) {
 
-  # connect to db
-  my $dbh = $form->dbconnect($myconfig);
+  my $disconnect;
+
+  unless ($dbh) {
+    $dbh        = $form->dbconnect($myconfig);
+    $disconnect = 1;
+  }
+
   my $i;
 
   ($form->{id} ||= 0) *= 1;
@@ -179,7 +185,7 @@ sub get_part ($, $myconfig, $form) {
     $sth->finish;
   }
 
-  $dbh->disconnect;
+  $dbh->disconnect if $disconnect;
 
 }
 
@@ -2094,9 +2100,12 @@ sub supply_demand ($, $myconfig, $form) {
 
   $dbh->disconnect;
 
+  my @report_ids;
   for (sort { $parts{$a}->{$form->{sort}} cmp $parts{$b}->{$form->{sort}} } keys %parts) {
     push @{ $form->{parts} }, $parts{$_};
+    push @report_ids, $parts{$_}{id};
   }
+  $form->{report_ids} = join ' ', @report_ids;
 
 }
 
@@ -2151,18 +2160,33 @@ sub requirements ($, $myconfig, $form) {
   my $id;
   my $qty;
 
+  $form->{$_} //= '' for qw|partnumber description partsgroup searchitems|;
+
   my $where = qq|p.obsolete = '0'|;
 
   for (qw(partnumber description)) {
-    if (($form->{$_} // '') ne "") {
+    if ($form->{$_} ne '') {
       $var = $form->like(lc $form->{$_});
       $where .= qq| AND lower(p.$_) LIKE '$var'|;
     }
   }
 
-  if (($form->{partsgroup} // '') ne "") {
+  if ($form->{partsgroup} ne '') {
     (undef, $var) = split /--/, $form->{partsgroup} // '';
     $where .= qq| AND p.partsgroup_id = $var|;
+  }
+
+  if ($form->{searchitems} eq 'part') {
+    $where .= qq| AND p.inventory_accno_id > 0 AND p.income_accno_id > 0|;
+  } elsif ($form->{searchitems} eq 'service') {
+    $where .= qq| AND NOT p.assembly AND p.inventory_accno_id IS NULL AND p.income_accno_id > 0|;
+  } elsif ($form->{searchitems} eq 'assembly') {
+    $where .= qq| AND p.assembly|;
+  } elsif ($form->{searchitems} eq 'kit') {
+    $where
+      .= qq| AND p.inventory_accno_id IS NULL AND p.income_accno_id IS NULL AND p.expense_accno_id IS NULL|;
+  } elsif ($form->{searchitems} eq 'labor') {
+    $where .= qq| AND p.inventory_accno_id > 0 AND p.income_accno_id IS NULL|;
   }
 
   # connect to database
@@ -2175,12 +2199,7 @@ sub requirements ($, $myconfig, $form) {
               UNION
               SELECT p.*
               FROM parts p
-              WHERE $where
-              AND (p.assembly = '1'
-                  OR (p.inventory_accno_id IS NULL
-                  AND p.income_accno_id IS NULL
-                  AND p.expense_accno_id IS NULL))
-              |;
+              WHERE $where|;
   my $sth = $dbh->prepare($query);
 
   my %parts;
@@ -2238,9 +2257,18 @@ sub requirements ($, $myconfig, $form) {
 
   $dbh->disconnect;
 
-  for (sort { $parts{$a}->{$form->{sort}} cmp $parts{$b}->{$form->{sort}} } keys %parts) {
-    push @{ $form->{parts} }, $parts{$_};
+  my @report_ids;
+  for my $id (sort { $parts{$a}->{$form->{sort}} cmp $parts{$b}->{$form->{sort}} } keys %parts) {
+
+    my $part = $parts{$id};
+    $part->{required} = $part->{so} - $part->{po} - $part->{onhand} + $part->{rop};
+
+    if ($part->{required} > 0) {
+      push @{$form->{parts}}, $part;
+      push @report_ids,       $part->{id};
+    }
   }
+  $form->{report_ids} = join ' ', @report_ids;
 
 }
 
@@ -2769,8 +2797,72 @@ sub so_requirements ($, $myconfig, $form) {
   my $sth = $dbh->prepare($query);
   $sth->execute or $form->dberror($query);
 
+  my @report_ids;
+
   while (my $ref = $sth->fetchrow_hashref) {
-    push @{ $form->{all_parts} }, $ref;
+    push @{$form->{all_parts}}, $ref;
+    push @report_ids,           $ref->{parts_id};
+  }
+  $sth->finish;
+
+  $form->{report_ids} = join ' ', List::Util::uniq(@report_ids);
+
+  $dbh->disconnect;
+
+}
+
+
+sub resource_planning ($, $myconfig, $form) {
+
+  my $dbh = $form->dbconnect($myconfig);
+
+  SL::IC->get_part($myconfig, $form, $dbh);
+
+  $form->load_defaults(undef, $dbh, ['precision']);
+
+  my $query = <<~'EOT';
+    WITH requirements AS (
+      SELECT
+        oe.id AS order_id,
+        oi.id AS orderitems_id,
+        oe.customer_id,
+        oe.vendor_id,
+        oe.ordnumber,
+        oe.quonumber,
+        ARRAY_TO_STRING(
+          ARRAY[NULLIF(oe.description, ''), SPLIT_PART(oi.description, E'\n', 1)], ', '
+        ) AS description,
+        COALESCE(oi.reqdate, oe.reqdate, oe.transdate) AS reqdate,
+        COALESCE(c.name, v.name) AS vc_name,
+        (qty - ship) * ((oe.vendor_id > 0)::int * 2 - 1) AS qty
+      FROM oe
+      LEFT JOIN vendor v ON v.id = oe.vendor_id
+      LEFT JOIN customer c ON c.id = oe.customer_id
+      LEFT JOIN orderitems oi ON oi.trans_id = oe.id
+      WHERE NOT oe.closed
+        AND NOT oe.quotation
+        AND oi.parts_id = $1
+      ORDER BY reqdate, order_id, orderitems_id
+    )
+    SELECT
+      req.*,
+      SUM(qty) OVER (ORDER BY reqdate, order_id, orderitems_id) AS total,
+      reqdate < CURRENT_DATE as expired
+    FROM requirements req
+    EOT
+
+  my $sth = $dbh->prepare($query);
+  $sth->execute($form->{id}) or $form->dberror($query);
+
+  $form->{all_requirement} = [];
+
+  if ($form->{item} =~ /(part|assembly|kit)/) {
+    push $form->{all_requirement}->@*, {total => $form->{onhand}};
+  }
+
+  while (my $ref = $sth->fetchrow_hashref) {
+    $ref->{total} += $form->{onhand};
+    push $form->{all_requirement}->@*, $ref;
   }
   $sth->finish;
 
@@ -2991,7 +3083,7 @@ L<SL::IC> implements the following functions:
 
 =head2 get_part
 
-  SL::IC->get_part($myconfig, $form);
+  SL::IC->get_part($myconfig, $form, $dbh);
 
 =head2 get_warehouses
 
@@ -3012,6 +3104,10 @@ L<SL::IC> implements the following functions:
 =head2 requirements
 
   SL::IC->requirements($myconfig, $form);
+
+=head2 resource_planning
+
+  SL::IC->($myconfig, $form);
 
 =head2 retrieve_assemblies
 

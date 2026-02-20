@@ -703,11 +703,13 @@ sub form_header {
   $s = ($s > 20) ? $s : 20;
   $fld{partnumber} = qq|<input name=partnumber value="|.$form->quote($form->{partnumber}).qq|" size=$s>|;
 
-  $linkaccounts = qq|$linkaccounts
+  if ($linkaccounts) {
+    $linkaccounts = qq|
               <tr class="listheading">
                 <th class="listheading" align="center" colspan=2>|.$locale->text('Link Accounts').qq|</th>
               </tr>
-| if $linkaccounts;
+$linkaccounts|;
+  }
 
   $form->header;
 
@@ -822,23 +824,33 @@ sub form_footer {
 
   if (! $form->{readonly}) {
 
-    %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
-               'Save' => { ndx => 2, key => 'S', value => $locale->text('Save') },
-               'New Number' => { ndx => 15, key => 'M', value => $locale->text('New Number') },
-              );
+    my @buttons = (
+      {
+        'Update'     => {ndx => 1,  key => 'U', value => $locale->text('Update')},
+        'Save'       => {ndx => 2,  key => 'S', value => $locale->text('Save')},
+        'New Number' => {ndx => 15, key => 'M', value => $locale->text('New Number')},
+      },
+      {
+        _label_             => $locale->text('Reports'),
+        'Resource Planning' => {ndx => 1, key => '1', value => $locale->text('Resource Planning')},
+      },
+    );
 
     if ($form->{id}) {
 
       if (! ($form->{changeup} || $form->{project_id})) {
-        $button{'Save as new'} = { ndx => 7, key => 'N', value => $locale->text('Save as new') };
+        $buttons[0]{'Save as new'} = { ndx => 7, key => 'N', value => $locale->text('Save as new') };
       }
 
       if ($form->{orphaned}) {
-        $button{'Delete'} = { ndx => 16, key => 'D', value => $locale->text('Delete') };
+        $buttons[0]{'Delete'} = { ndx => 16, key => 'D', value => $locale->text('Delete') };
       }
+
+    } else {
+      delete $buttons[1];
     }
 
-    $form->print_button(\%button);
+    $form->print_button_table(\@buttons);
 
   }
 
@@ -2609,7 +2621,7 @@ sub supply_demand_report {
 
     $ref->{description} =~ s/\r?\n/<br>/g;
 
-    $column_data{partnumber} = "<td><a href=$form->{script}?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{partnumber}&nbsp;</a></td>";
+    $column_data{partnumber} = qq|<td><a href="$form->{script}?action=resource_planning&id=$ref->{id}&report_ids=$form->{report_ids}&path=$form->{path}&login=$form->{login}&callback=$callback">$ref->{partnumber}&nbsp;</a></td>|;
 
     $column_data{description} = "<td>$ref->{description}&nbsp;</td>";
 
@@ -2736,6 +2748,23 @@ sub requirements {
         <tr>
           $partsgroup
         </tr>
+        <tr>
+          <td></td>
+          <td>
+            <input name=searchitems class=radio type=radio value=all checked>
+            |.$locale->text('All').qq|
+            <input name=searchitems class=radio type=radio value=part>
+            |.$locale->text('Parts').qq|
+            <input name=searchitems class=radio type=radio value=service>
+            |.$locale->text('Services').qq|
+            <input name=searchitems class=radio type=radio value=assembly>
+            |.$locale->text('Assemblies').qq|
+            <input name=searchitems class=radio type=radio value=kit>
+            |.$locale->text('Kits').qq|
+            <input name=searchitems class=radio type=radio value=labor>
+            |.$locale->text('Labor/Overhead').qq|
+          </td>
+        </tr>
       </table>
     </td>
   </tr>
@@ -2853,41 +2882,41 @@ sub requirements_report {
 
   $i = 0;
 
-  foreach $ref (@{ $form->{parts} }) {
+  for my $ref (@{$form->{parts}}) {
 
-    $required = $ref->{so} - $ref->{po} - $ref->{onhand} + $ref->{rop};
-    $required = 0 if $required < 0;
+    $i++;
+    $column_data{runningnumber} = "<td align=right>$i</td>";
 
-    if ($required) {
+    $column_data{partnumber}
+      = qq|<td><a class="partnumber-l" href="$form->{script}?action=resource_planning&id=$ref->{id}&report_ids=$form->{report_ids}&path=$form->{path}&login=$form->{login}&callback=$callback">$ref->{partnumber}&nbsp;</a></td>|;
 
-      $i++;
-      $column_data{runningnumber} = "<td align=right>$i</td>";
+    $ref->{description} =~ s/\r?\n/<br>/g;
+    $column_data{description} = "<td>$ref->{description}&nbsp;</td>";
 
-      $column_data{partnumber} = qq|<td><a class="partnumber-l" href=$form->{script}?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{partnumber}&nbsp;</a></td>|;
+    $column_data{onhand} = "<td align=right>"
+      . $form->format_amount(\%myconfig, $ref->{onhand}, undef, "&nbsp;") . "</td>";
+    $column_data{rop} = "<td align=right>"
+      . $form->format_amount(\%myconfig, $ref->{rop}, undef, "&nbsp;") . "</td>";
+    $column_data{so} = "<td align=right>"
+      . $form->format_amount(\%myconfig, $ref->{so}, undef, "&nbsp;") . "</td>";
+    $column_data{po} = "<td align=right>"
+      . $form->format_amount(\%myconfig, $ref->{po}, undef, "&nbsp;") . "</td>";
+    $column_data{required}
+      = "<td align=right>" . $form->format_amount(\%myconfig, $ref->{required}, undef, "-") . "</td>";
 
-      $ref->{description} =~ s/\r?\n/<br>/g;
-      $column_data{description} = "<td>$ref->{description}&nbsp;</td>";
+    $j++;
+    $j %= 2;
+    print "<tr class=listrow$j>";
 
-      $column_data{onhand} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{onhand}, undef, "&nbsp;")."</td>";
-      $column_data{rop} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{rop}, undef, "&nbsp;")."</td>";
-      $column_data{so} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{so}, undef, "&nbsp;")."</td>";
-      $column_data{po} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{po}, undef, "&nbsp;")."</td>";
-      $column_data{required} = "<td align=right>".$form->format_amount(\%myconfig, $required, undef, "-")."</td>";
+    for (@column_index) {
+      print "\n$column_data{$_}";
+      $column_data{$_} = "<td>&nbsp;</td>";
+    }
 
-      $j++; $j %= 2;
-      print "<tr class=listrow$j>";
-
-      for (@column_index) {
-        print "\n$column_data{$_}";
-        $column_data{$_} = "<td>&nbsp;</td>";
-      }
-
-      print qq|
+    print qq|
     </tr>
 |;
 
-
-    }
   }
 
 
@@ -3035,17 +3064,18 @@ sub so_requirements {
         <tr>
           <td></td>
           <td>
-          <input name=searchitems class=radio type=radio value=all checked>
-          <b>|.$locale->text('All').qq|</b>
-          <input name=searchitems class=radio type=radio value=part>
-          <b>|.$locale->text('Parts').qq|</b>
-          <input name=searchitems class=radio type=radio value=assembly>
-          <b>|.$locale->text('Assemblies').qq|</b>
-          <input name=searchitems class=radio type=radio value=kit>
-          <b>|.$locale->text('Kits').qq|</b>
-          <input name=searchitems class=radio type=radio value=service>
-          <b>|.$locale->text('Services').qq|</b>
+            <input name=searchitems class=radio type=radio value=all checked>
+            |.$locale->text('All').qq|
+            <input name=searchitems class=radio type=radio value=part>
+            |.$locale->text('Parts').qq|
+            <input name=searchitems class=radio type=radio value=assembly>
+            |.$locale->text('Assemblies').qq|
+            <input name=searchitems class=radio type=radio value=kit>
+            |.$locale->text('Kits').qq|
+            <input name=searchitems class=radio type=radio value=service>
+            |.$locale->text('Services').qq|
           </td>
+        </tr>
       </table>
     </td>
   </tr>
@@ -3184,21 +3214,21 @@ sub so_requirements_report {
   $callback = $form->escape($callback);
 
   $i = 0;
-  foreach $ref (@{ $form->{all_parts} }) {
+  for my $ref (@{ $form->{all_parts} }) {
 
     $i++;
 
     $column_data{qty} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{qty}, undef, "&nbsp;")."</td>";
 
-    $column_data{ordnumber} = "<td><a href=oe.pl?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=sales_order&callback=$callback>$ref->{ordnumber}&nbsp;</a></td>";
+    $column_data{ordnumber} = qq|<td><a href="oe.pl?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&type=sales_order&callback=$callback">$ref->{ordnumber}&nbsp;</a></td>|;
 
     $ref->{description} =~ s/\r?\n/<br>/g;
     $column_data{reqdate} = "<td nowrap>$ref->{reqdate}</td>";
     $column_data{description} = "<td>$ref->{description}</td>";
 
-    $column_data{partnumber} = qq|<td><a href=ic.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{parts_id}&callback=$callback>$ref->{partnumber}</a></td>|;
+    $column_data{partnumber} = qq|<td><a href="ic.pl?path=$form->{path}&login=$form->{login}&action=resource_planning&id=$ref->{parts_id}&report_ids=$form->{report_ids}&callback=$callback">$ref->{partnumber}</a></td>|;
 
-    $column_data{name} = qq|<td><a href=ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{"$form->{vc}_id"}&db=$form->{vc}&callback=$callback>$ref->{name}</a></td>|;
+    $column_data{name} = qq|<td><a href="ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{"$form->{vc}_id"}&db=$form->{vc}&callback=$callback">$ref->{name}</a></td>|;
 
     $column_data{$namefld} = qq|<td>$ref->{$namefld}&nbsp;</td>|;
 
@@ -3229,6 +3259,200 @@ sub so_requirements_report {
 </html>
 |;
 
+
+}
+
+
+sub resource_planning {
+
+  $form->{title} = $locale->text('Resource Planning');
+
+  SL::IC->resource_planning(\%myconfig, $form);
+
+  my $callback = qq|$form->{script}?action=resource_planning|;
+  $callback .= qq|&$_=$form->{$_}| for qw|path login id report_ids|;
+
+  $form->{callback} = $callback;
+  $callback = $form->escape($callback);
+
+  my %fld;
+
+  for (qw|partsgroup|) {
+    $fld{$_} = qq|<input name="$_" value="|.$form->quote($form->{$_} // '').qq|" disabled>|
+  }
+
+  my $group = $fld{partsgroup} ? $locale->text('Group') : '';
+
+  my $size = List::Util::max(20, length $form->{partnumber});
+  $fld{partnumber} = qq|<input name="partnumber" value="|.$form->quote($form->{partnumber}).qq|" size="$size" disabled>|;
+
+  for (qw|description notes|) {
+    my $rows = List::Util::max($form->numtextrows($form->{$_}, 40), 2);
+
+    $fld{$_} = qq|<textarea name="$_" rows="$rows" cols="40" wrap="soft" disabled>$form->{$_}</textarea>|;
+  }
+
+  my @column_index = qw|reqdate ordnumber vc_name description qty total|;
+
+  my %column_label = (
+    description => $locale->text('Description'),
+    ordnumber   => $locale->text('Order'),
+    qty         => $locale->text('Qty'),
+    total       => $locale->text('Total'),
+    reqdate     => $locale->text('Date'),
+    vc_name     => $locale->text('Name'),
+  );
+
+  my (%column_header, %column_data);
+  for (@column_index) {
+    $column_header{$_} = qq|<th class="listheading" width="">$column_label{$_}</th>|;
+  }
+  for (qw|description vc_name|) {
+    $column_header{$_} = qq|<th class="listheading">$column_label{$_}</th>|;
+  }
+
+  $form->header;
+
+  &calendar;
+
+  print qq|
+<body>
+
+<form method="post" name="main" action="$form->{script}">
+
+<table width="100%">
+  <tr>
+    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+  </tr>
+  <tr height="5"></tr>
+  <tr>
+    <td>
+      <table width="100%">
+        <tr valign=top>
+          <th align=left width=20%>|.$locale->text('Number').qq|</th>
+          <th align=left width=50%>|.$locale->text('Description').qq|</th>
+          <th align=left width=30%>$group</th>
+        </tr>
+        <tr valign=top>
+          <td>$fld{partnumber}</td>
+          <td>$fld{description}</td>
+          <td>$fld{partsgroup}</td>
+        </tr>
+      </table>
+    </td>
+  </tr>|;
+
+  print qq|
+  <tr>
+    <td>
+      <table width="100%">
+        <tr class="listheading">|;
+
+  for (@column_index) {
+    print "\n$column_header{$_}";
+  }
+
+  print qq|
+        </tr>|;
+
+  my $j;
+
+  for my $ref ($form->{all_requirement}->@*) {
+    $column_data{$_} = qq|<td nowrap>$ref->{$_}</td>| for @column_index;
+
+    if ($ref->{customer_id} || $ref->{vendor_id}) {
+      my ($db, $type, $vc_id);
+      if ($ref->{customer_id}) {
+        $db   = 'customer';
+        $type = 'sales_order';
+      } else {
+        $db   = 'vendor';
+        $type = 'purchase_order';
+      }
+      $column_data{vc_name}
+        = qq|<td nowrap><a class="name-l" href="ct.pl?action=edit&id=$ref->{"${db}_id"}&db=$db&login=$form->{login}&path=$form->{path}&callback=$callback">$ref->{vc_name}</a></td>|;
+      $column_data{ordnumber}
+        = qq|<td nowrap><a class="number-l" href="oe.pl?action=edit&id=$ref->{order_id}&type=$type&login=$form->{login}&path=$form->{path}&callback=$callback">$ref->{ordnumber}</a></td>|;
+    }
+
+    if ($ref->{expired}) {
+      $column_data{reqdate} = qq|<td class="plus0" nowrap>$ref->{reqdate}</td>|;
+    }
+
+    if (defined $ref->{qty}) {
+      $column_data{qty}
+        = qq|<td align="right">|.$form->format_amount(\%myconfig, $ref->{qty}, $form->{precision}, 0).qq|</td>|;
+    }
+
+    my $class = $ref->{total} < 0 ? ' class="plus0"' : '';
+    $column_data{total}
+      = qq|<td align="right"$class>|.$form->format_amount(\%myconfig, $ref->{total}, $form->{precision}, 0).qq|</td>|;
+
+  $j++; $j %= 2;
+  print qq|
+        <tr class="listrow$j">|;
+
+  print "\n$column_data{$_}" for @column_index;
+
+  print qq|
+        </tr>|;
+
+  }
+
+  print qq|
+      </table>
+    </td>
+  </tr>
+|;
+
+  print qq|
+  <tr>
+    <td><hr size=3 noshade></td>
+  </tr>
+</table>
+|;
+
+  my $ndx = 0;
+  my %button = (
+    'Previous Item' => {ndx => ++$ndx, key => 'H', value => $locale->text('Previous Item')},
+    'Next Item'     => {ndx => ++$ndx, key => 'L', value => $locale->text('Next Item')},
+    'Edit'          => {ndx => ++$ndx, key => 'E', value => $locale->text('Edit')},
+  );
+
+  delete $button{'Previous Item'} unless $form->{report_ids} =~ /\d+ $form->{id}/;
+  delete $button{'Next Item'} unless $form->{report_ids} =~ /$form->{id} \d+/;
+
+  $form->print_button(\%button);
+
+  $form->hide_form(qw|login path callback id report_ids|);
+
+  print q|
+</form>
+</body>
+</html>
+|;
+
+}
+
+
+sub previous_item {
+
+  if ($form->{report_ids} =~ /(\d+) $form->{id}/) {
+    $form->{id} = $1;
+  }
+
+  &resource_planning;
+
+}
+
+
+sub next_item {
+
+  if ($form->{report_ids} =~ /$form->{id} (\d+)/) {
+    $form->{id} = $1;
+  }
+
+  &resource_planning;
 
 }
 
@@ -5621,6 +5845,8 @@ Calls C<< &{ $form->{nextsub} } >>.
 =head2 requirements
 
 =head2 requirements_report
+
+=head2 resource_planning
 
 =head2 restock_assemblies
 

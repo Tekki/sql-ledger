@@ -2406,11 +2406,46 @@ sub workingday ($self, $myconfig, $date) {
 }
 
 
-sub print_button ($self, $button) {
+sub print_button ($, $button) {
 
-  for (sort { $button->{$a}->{ndx} <=> $button->{$b}->{ndx} } keys %{$button}) {
-    print qq|<input class="submit noprint" type=submit name=action value="$button->{$_}{value}" accesskey="$button->{$_}{key}" title="$button->{$_}{value} [$button->{$_}{key}]">\n|;
+  for (sort { $button->{$a}->{ndx} <=> $button->{$b}->{ndx} } grep !/_label_/, keys %$button) {
+    print qq|\n<input class="submit noprint" type=submit name=action value="$button->{$_}{value}" accesskey="$button->{$_}{key}" title="$button->{$_}{value} [$button->{$_}{key}]">|;
   }
+
+}
+
+
+sub print_button_table ($self, $buttons) {
+
+  print qq|
+<table width="100%">|;
+
+  for my $button (@$buttons) {
+    next unless grep !/_label_/, keys %$button;
+
+    if (my $label = $button->{_label_}) {
+
+      print qq|
+  <tr>
+    <td width="1%">$label</td>
+    <td>|;
+
+    } else {
+
+      print qq|
+  <tr>
+    <td colspan="2">|;
+
+    }
+
+    $self->print_button($button);
+    print qq|
+    </td>
+  </tr>|;
+
+  }
+  print qq|
+</table>|;
 
 }
 
@@ -5756,6 +5791,10 @@ L<SL::Form> implements the following methods:
 =head2 print_button
 
   $form->print_button($button);
+
+=head2 print_button_table
+
+  $form->print_button_table(\@buttons);
 
 =head2 process_template
 

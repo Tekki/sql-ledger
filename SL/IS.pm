@@ -2416,6 +2416,7 @@ sub retrieve_invoice ($, $myconfig, $form) {
     my $ath = $dbh->prepare($query) or $form->dberror($query);
 
     my $aref;
+    my @report_ids;
 
     while (my $ref = $sth->fetchrow_hashref) {
 
@@ -2502,9 +2503,12 @@ sub retrieve_invoice ($, $myconfig, $form) {
         $ath->finish;
       }
 
-      push @{ $form->{invoice_details} }, $ref;
+      push @{$form->{invoice_details}}, $ref;
+      push @report_ids,                 $ref->{id};
     }
     $sth->finish;
+
+    $form->{report_ids} = join ' ', List::Util::uniq(@report_ids);
 
   } else {
     $form->{transdate} = $form->current_date($myconfig);

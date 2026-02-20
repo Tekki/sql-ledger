@@ -27,6 +27,7 @@ subtest 'Update latest purchase order' => sub {
     ->press_button_ok('Generate report', 'continue')
     ->follow_link_ok('Open order', 'ordnumber-l', 0)
     ->store_ok('ordnumber')
+    ->elements_exist('Links to part, planning, history', 'a.part-l', 'a.planning-l', 'a.history-l')
     ->press_button_ok('Update',           'update')
     ->press_button_ok('Save order', 'save')
     ->press_button_ok('Confirm changes',  'continue')

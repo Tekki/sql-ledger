@@ -239,8 +239,9 @@ sub display_row {
 
     if ($i < $numrows) {
       $zero = "0";
-      $itemhref = qq| <a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"id_$i"}" target=_blank>&#9701;</a>|;
-      $itemhistory = qq| <a href="ic.pl?action=history&history=sales&login=$form->{login}&path=$form->{path}&pickvar=sellprice_$i&id=$form->{"id_$i"}" target=popup>&#9701;</a>|;
+      $itemhref = qq| <a class="part-l" href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"id_$i"}" target=_blank>&#9701;</a>|;
+      $itemhistory = qq| <a class="history-l" href="ic.pl?action=history&history=sales&login=$form->{login}&path=$form->{path}&pickvar=sellprice_$i&id=$form->{"id_$i"}" target=popup>&#9701;</a>|;
+      $itemplanning = qq| <a class="planning-l" href="ic.pl?action=resource_planning&login=$form->{login}&path=$form->{path}&id=$form->{"id_$i"}&report_ids=$form->{report_ids}" target=popup>&#9701;</a>|;
 
       %p = split /[: ]/, $form->{"pricematrix_$i"};
       for (split / /, $form->{"kit_$i"}) {
@@ -256,15 +257,16 @@ sub display_row {
       }
 
     } else {
-      $itemhref = "";
-      $itemhistory = "";
-      $zero = "";
+      $itemhref     = '';
+      $itemhistory  = '';
+      $itemplanning = '';
+      $zero         = '';
     }
 
     $column_data{runningnumber} = qq|<td><input name="runningnumber_$i" class="inputright" size="3" value="$i"></td>|;
     my $accesskey = $i == $form->{rowcount} ? 0 : $i;
     $column_data{partnumber} = qq|<td nowrap><input name="partnumber_$i" size="15" value="|.$form->quote($form->{"partnumber_$i"}).qq|" accesskey="$accesskey" title="[$accesskey]">$skunumber$itemhref</td>|;
-    $column_data{qty} = qq|<td><input name="qty_$i" class="inputright" title="$form->{"onhand_$i"}" size="5" value="|.$form->format_amount(\%myconfig, $form->{"qty_$i"}).qq|"></td>|;
+    $column_data{qty} = qq|<td nowrap><input name="qty_$i" class="inputright" title="$form->{"onhand_$i"}" size="5" value="|.$form->format_amount(\%myconfig, $form->{"qty_$i"}).qq|">$itemplanning</td>|;
     $column_data{ship} = qq|<td><input name="ship_$i" class="inputright" size="5" value="|.$form->format_amount(\%myconfig, $form->{"ship_$i"}).qq|"></td>|;
     $column_data{unit} = qq|<td><input name="unit_$i" size="5" maxlength="5" value="|.$form->quote($form->{"unit_$i"}).qq|"></td>|;
     $column_data{sellprice} = qq|<td nowrap><input name="sellprice_$i" class="inputright" size="11" value="|.$form->format_amount(\%myconfig, $form->{"sellprice_$i"}, $decimalplaces, $zero).qq|">$itemhistory</td>|;
@@ -449,7 +451,7 @@ sub display_row {
 
 
   $form->{oldcurrency} = $form->{currency};
-  $form->hide_form(qw(audittrail oldcurrency));
+  $form->hide_form(qw(audittrail oldcurrency report_ids));
 
   $form->hide_form(map { "select$_" } qw(partsgroup projectnumber));
 
