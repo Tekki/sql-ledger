@@ -32,6 +32,7 @@ subtest 'Update latest invoice' => sub {
     ->press_button_ok('Generate report', 'continue')
     ->follow_link_ok('Open invoice', 'is-l', 0)
     ->store_ok('invnumber')
+    ->elements_exist('Links to part, planning, history', 'a.part-l', 'a.planning-l', 'a.history-l')
     ->press_button_ok('Update', 'update')
     ->press_button_ok('Post invoice', 'post')
     ->press_button_ok('Confirm changes', 'continue')

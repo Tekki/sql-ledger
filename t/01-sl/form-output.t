@@ -9,7 +9,7 @@ use Mojo::DOM;
 
 use SL::Form;
 
-use Test::More tests => 2;
+use Test::More tests => 4;
 
 chdir "$FindBin::Bin/../..";
 
@@ -47,6 +47,62 @@ subtest 'Info' => sub {
   is _get_output($form, 'info', 'hello'), '<b>hello</b>', 'HTML info';
   is _get_output($form, 'info', 'hello', 'type1'), '<b class="type1">hello</b>',
     'HTML info with type';
+};
+
+subtest 'Buttons' => sub {
+  my $form = new_ok 'SL::Form';
+  $ENV{HTTP_USER_AGENT} = 'x';
+
+  my %button = (
+    _label_ => 'Label',
+    'One'   => {ndx => 1, key => 'A', value => 'Value 1'},
+    'Two'   => {ndx => 2, key => 'B', value => 'Value 2'},
+    'Three' => {ndx => 3, key => 'C', value => 'Value 3'},
+  );
+
+  my $expected = q|
+<input class="submit noprint" type=submit name=action value="Value 1" accesskey="A" title="Value 1 [A]">
+<input class="submit noprint" type=submit name=action value="Value 2" accesskey="B" title="Value 2 [B]">
+<input class="submit noprint" type=submit name=action value="Value 3" accesskey="C" title="Value 3 [C]">|;
+
+  is _get_output($form, 'print_button', \%button), $expected;
+};
+
+subtest 'Button table' => sub {
+  my $form = new_ok 'SL::Form';
+  $ENV{HTTP_USER_AGENT} = 'x';
+
+  my @buttons = (
+    {
+      'One' => {ndx => 1, key => 'A', value => 'Value 1'},
+    },
+    {
+      _label_ => 'Label 1',
+      'Two'   => {ndx => 2, key => 'B', value => 'Value 2'},
+      'Three' => {ndx => 3, key => 'C', value => 'Value 3'},
+    },
+    {
+      _label_ => 'Label 2',
+    },
+  );
+
+  my $expected = q|
+<table width="100%">
+  <tr>
+    <td colspan="2">
+<input class="submit noprint" type=submit name=action value="Value 1" accesskey="A" title="Value 1 [A]">
+    </td>
+  </tr>
+  <tr>
+    <td width="1%">Label 1</td>
+    <td>
+<input class="submit noprint" type=submit name=action value="Value 2" accesskey="B" title="Value 2 [B]">
+<input class="submit noprint" type=submit name=action value="Value 3" accesskey="C" title="Value 3 [C]">
+    </td>
+  </tr>
+</table>|;
+
+  is _get_output($form, 'print_button_table', \@buttons), $expected;
 };
 
 # internal subroutines

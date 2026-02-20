@@ -13,11 +13,17 @@ use v5.40;
 
 package SL::IC;
 
+use List::Util;
 
-sub get_part ($, $myconfig, $form) {
+sub get_part ($, $myconfig, $form, $dbh = undef) {
 
-  # connect to db
-  my $dbh = $form->dbconnect($myconfig);
+  my $disconnect;
+
+  unless ($dbh) {
+    $dbh        = $form->dbconnect($myconfig);
+    $disconnect = 1;
+  }
+
   my $i;
 
   ($form->{id} ||= 0) *= 1;
@@ -179,7 +185,7 @@ sub get_part ($, $myconfig, $form) {
     $sth->finish;
   }
 
-  $dbh->disconnect;
+  $dbh->disconnect if $disconnect;
 
 }
 
@@ -617,7 +623,9 @@ sub retrieve_items ($, $myconfig, $form) {
   my $var;
   my $where = '1 = 1';
 
-  if (($form->{partnumber} // '') ne "") {
+  if ($form->{id}){
+    $where .= " AND p.id = $form->{id}";
+  } elsif (($form->{partnumber} // '') ne "") {
     $var = $form->like(lc $form->{partnumber});
     $where .= " AND lower(p.partnumber) LIKE '$var'";
   }
@@ -1177,6 +1185,11 @@ sub all_parts ($, $myconfig, $form) {
     $where .= " AND p.inventory_accno_id > 0
                 AND p.income_accno_id > 0";
   }
+  if (($form->{searchitems} // '') eq 'service') {
+    $where .= " AND p.assembly = '0'
+                AND p.inventory_accno_id IS NULL
+                AND p.income_accno_id > 0";
+  }
   if (($form->{searchitems} // '') eq 'assembly') {
     $form->{bought} = "";
     $where .= " AND p.assembly = '1'";
@@ -1186,11 +1199,6 @@ sub all_parts ($, $myconfig, $form) {
     $where .= " AND p.inventory_accno_id IS NULL
                 AND p.income_accno_id IS NULL
                 AND p.expense_accno_id IS NULL";
-  }
-  if (($form->{searchitems} // '') eq 'service') {
-    $where .= " AND p.assembly = '0'
-                AND p.inventory_accno_id IS NULL
-                AND p.income_accno_id > 0";
   }
   if (($form->{searchitems} // '') eq 'labor') {
     $where .= " AND p.inventory_accno_id > 0
@@ -1994,16 +2002,31 @@ sub supply_demand ($, $myconfig, $form) {
   my $where  = qq|p.obsolete = '0'|;
   my $dwhere = '';
 
+  $form->{$_} //= '' for qw|partnumber description partsgroup searchitems|;
+
   for (qw(partnumber description)) {
-    if (($form->{$_} // '') ne "") {
+    if ($form->{$_} ne "") {
       $var = $form->like(lc $form->{$_});
       $where .= qq| AND lower(p.$_) LIKE '$var'|;
     }
   }
 
-  if (($form->{partsgroup} // '') ne "") {
+  if ($form->{partsgroup} ne "") {
     (undef, $var) = split /--/, $form->{partsgroup} // '';
     $where .= qq| AND p.partsgroup_id = $var|;
+  }
+
+  if ($form->{searchitems} eq 'part') {
+    $where .= qq| AND p.inventory_accno_id > 0 AND p.income_accno_id > 0|;
+  } elsif ($form->{searchitems} eq 'service') {
+    $where .= qq| AND NOT p.assembly AND p.inventory_accno_id IS NULL AND p.income_accno_id > 0|;
+  } elsif ($form->{searchitems} eq 'assembly') {
+    $where .= qq| AND p.assembly|;
+  } elsif ($form->{searchitems} eq 'kit') {
+    $where
+      .= qq| AND p.inventory_accno_id IS NULL AND p.income_accno_id IS NULL AND p.expense_accno_id IS NULL|;
+  } elsif ($form->{searchitems} eq 'labor') {
+    $where .= qq| AND p.inventory_accno_id > 0 AND p.income_accno_id IS NULL|;
   }
 
   # connect to database
@@ -2026,7 +2049,6 @@ sub supply_demand ($, $myconfig, $form) {
               JOIN ar a ON (a.id = i.trans_id)
               WHERE $where
               $dwhere
-              AND p.inventory_accno_id > 0
               GROUP BY p.id, p.partnumber, p.description, p.onhand, p.rop,
               extract(MONTH FROM a.transdate)|;
   my $sth = $dbh->prepare($query);
@@ -2047,6 +2069,8 @@ sub supply_demand ($, $myconfig, $form) {
   my %ofld = ( customer => 'so',
                vendor => 'po' );
 
+  my $no_quotation = $form->{include_quotations} ? '' : 'AND NOT a.quotation';
+
   for (qw(customer vendor)) {
     $query = qq|SELECT p.id, p.partnumber, p.description,
                 sum(i.qty) - sum(i.ship) AS $ofld{$_}, p.onhand, p.rop,
@@ -2055,9 +2079,9 @@ sub supply_demand ($, $myconfig, $form) {
                 JOIN parts p ON (p.id = i.parts_id)
                 JOIN oe a ON (a.id = i.trans_id)
                 WHERE $where
-                AND p.inventory_accno_id > 0
-                AND a.closed = '0'
-                AND a.quotation = '0'
+                $dwhere
+                AND NOT a.closed
+                $no_quotation
                 AND a.${_}_id > 0
                 GROUP BY p.id, p.partnumber, p.description, p.onhand, p.rop,
                 month|;
@@ -2081,7 +2105,8 @@ sub supply_demand ($, $myconfig, $form) {
               JOIN oe a ON (a.id = i.trans_id)
               WHERE p.obsolete = '0'
               AND p.assembly = '1'
-              AND a.closed = '0'
+              AND NOT a.closed
+              $no_quotation
               GROUP BY p.id, p.onhand, p.rop|;
   $sth = $dbh->prepare($query);
   $sth->execute or $form->dberror($query);
@@ -2094,9 +2119,12 @@ sub supply_demand ($, $myconfig, $form) {
 
   $dbh->disconnect;
 
+  my @report_ids;
   for (sort { $parts{$a}->{$form->{sort}} cmp $parts{$b}->{$form->{sort}} } keys %parts) {
     push @{ $form->{parts} }, $parts{$_};
+    push @report_ids, $parts{$_}{id};
   }
+  $form->{report_ids} = join ' ', @report_ids;
 
 }
 
@@ -2109,7 +2137,7 @@ sub assembly_demand ($dbh, $form, $parts, $id, $qty, $where) {
                  p.partsgroup_id
                  FROM assembly a
                  JOIN parts p ON (p.id = a.parts_id)
-                  WHERE $where
+                 WHERE $where
                  AND a.aid = $id
                  AND p.inventory_accno_id > 0
 
@@ -2120,7 +2148,7 @@ sub assembly_demand ($dbh, $form, $parts, $id, $qty, $where) {
                  p.partsgroup_id
                  FROM assembly a
                  JOIN parts p ON (p.id = a.parts_id)
-                  WHERE $where
+                 WHERE $where
                  AND a.aid = $id
                  AND p.assembly = '1'|;
 
@@ -2151,18 +2179,33 @@ sub requirements ($, $myconfig, $form) {
   my $id;
   my $qty;
 
+  $form->{$_} //= '' for qw|partnumber description partsgroup searchitems|;
+
   my $where = qq|p.obsolete = '0'|;
 
   for (qw(partnumber description)) {
-    if (($form->{$_} // '') ne "") {
+    if ($form->{$_} ne '') {
       $var = $form->like(lc $form->{$_});
       $where .= qq| AND lower(p.$_) LIKE '$var'|;
     }
   }
 
-  if (($form->{partsgroup} // '') ne "") {
+  if ($form->{partsgroup} ne '') {
     (undef, $var) = split /--/, $form->{partsgroup} // '';
     $where .= qq| AND p.partsgroup_id = $var|;
+  }
+
+  if ($form->{searchitems} eq 'part') {
+    $where .= qq| AND p.inventory_accno_id > 0 AND p.income_accno_id > 0|;
+  } elsif ($form->{searchitems} eq 'service') {
+    $where .= qq| AND NOT p.assembly AND p.inventory_accno_id IS NULL AND p.income_accno_id > 0|;
+  } elsif ($form->{searchitems} eq 'assembly') {
+    $where .= qq| AND p.assembly|;
+  } elsif ($form->{searchitems} eq 'kit') {
+    $where
+      .= qq| AND p.inventory_accno_id IS NULL AND p.income_accno_id IS NULL AND p.expense_accno_id IS NULL|;
+  } elsif ($form->{searchitems} eq 'labor') {
+    $where .= qq| AND p.inventory_accno_id > 0 AND p.income_accno_id IS NULL|;
   }
 
   # connect to database
@@ -2175,12 +2218,7 @@ sub requirements ($, $myconfig, $form) {
               UNION
               SELECT p.*
               FROM parts p
-              WHERE $where
-              AND (p.assembly = '1'
-                  OR (p.inventory_accno_id IS NULL
-                  AND p.income_accno_id IS NULL
-                  AND p.expense_accno_id IS NULL))
-              |;
+              WHERE $where|;
   my $sth = $dbh->prepare($query);
 
   my %parts;
@@ -2205,14 +2243,16 @@ sub requirements ($, $myconfig, $form) {
   my %ofld = ( customer => 'so',
                vendor => 'po' );
 
+  my $no_quotation = $form->{include_quotations} ? '' : 'AND NOT a.quotation';
+
   # check for parts on open orders
   for (qw(customer vendor)) {
     $query = qq|SELECT sum(i.qty) - sum(i.ship) AS $ofld{$_}
                 FROM orderitems i
                 JOIN oe a ON (a.id = i.trans_id)
                 WHERE i.parts_id = ?
-                AND a.closed = '0'
-                AND a.quotation = '0'
+                AND NOT a.closed
+                $no_quotation
                 AND a.${_}_id > 0
                 |;
     $sth = $dbh->prepare($query) or $form->dberror($query);
@@ -2238,9 +2278,18 @@ sub requirements ($, $myconfig, $form) {
 
   $dbh->disconnect;
 
-  for (sort { $parts{$a}->{$form->{sort}} cmp $parts{$b}->{$form->{sort}} } keys %parts) {
-    push @{ $form->{parts} }, $parts{$_};
+  my @report_ids;
+  for my $id (sort { $parts{$a}->{$form->{sort}} cmp $parts{$b}->{$form->{sort}} } keys %parts) {
+
+    my $part = $parts{$id};
+    $part->{required} = $part->{so} - $part->{po} - $part->{onhand} + $part->{rop};
+
+    if ($part->{required} > 0) {
+      push @{$form->{parts}}, $part;
+      push @report_ids,       $part->{id};
+    }
   }
+  $form->{report_ids} = join ' ', @report_ids;
 
 }
 
@@ -2713,22 +2762,24 @@ sub so_requirements ($, $myconfig, $form) {
   my %defaults = $form->get_defaults($dbh, ['company']);
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
+  $form->{$_} //= '' for qw|searchitems|;
+
   my $var;
   my $where = "o.closed = '0' AND o.quotation = '0'";
 
   $form->{vc} =~ s/;//g;
 
-  if (($form->{searchitems} // '') eq 'part') {
+  if ($form->{searchitems} eq 'part') {
     $where .= " AND p.inventory_accno_id > 0 AND p.income_accno_id > 0";
   }
-  if (($form->{searchitems} // '') eq 'assembly') {
+  if ($form->{searchitems} eq 'service') {
+    $where .= " AND p.assembly = '0' AND p.inventory_accno_id IS NULL AND p.income_accno_id > 0";
+  }
+  if ($form->{searchitems} eq 'assembly') {
     $where .= " AND p.assembly = '1'";
   }
-  if (($form->{searchitems} // '') eq 'kit') {
+  if ($form->{searchitems} eq 'kit') {
     $where .= " AND p.inventory_accno_id IS NULL AND p.income_accno_id IS NULL AND p.expense_accno_id IS NULL";
-  }
-  if (($form->{searchitems} // '') eq 'service') {
-    $where .= " AND p.assembly = '0' AND p.inventory_accno_id IS NULL AND p.income_accno_id > 0";
   }
   if ($form->{partnumber}) {
     $var = $form->like(lc $form->{partnumber});
@@ -2769,8 +2820,76 @@ sub so_requirements ($, $myconfig, $form) {
   my $sth = $dbh->prepare($query);
   $sth->execute or $form->dberror($query);
 
+  my @report_ids;
+
   while (my $ref = $sth->fetchrow_hashref) {
-    push @{ $form->{all_parts} }, $ref;
+    push @{$form->{all_parts}}, $ref;
+    push @report_ids,           $ref->{parts_id};
+  }
+  $sth->finish;
+
+  $form->{report_ids} = join ' ', List::Util::uniq(@report_ids);
+
+  $dbh->disconnect;
+
+}
+
+
+sub resource_planning ($, $myconfig, $form) {
+
+  my $dbh = $form->dbconnect($myconfig);
+
+  SL::IC->get_part($myconfig, $form, $dbh);
+
+  $form->load_defaults(undef, $dbh, ['precision']);
+
+  my $no_quotation = $form->{include_quotations} ? '' : 'AND NOT oe.quotation';
+
+  my $query = <<~"EOT";
+    WITH requirements AS (
+      SELECT
+        oe.id AS order_id,
+        oi.id AS orderitems_id,
+        oe.customer_id,
+        oe.vendor_id,
+        oe.ordnumber,
+        oe.quonumber,
+        oe.quotation,
+        ARRAY_TO_STRING(
+          ARRAY[NULLIF(oe.description, ''), SPLIT_PART(oi.description, E'\\n', 1)], ', '
+        ) AS description,
+        COALESCE(oi.reqdate, oe.reqdate, oe.transdate) AS reqdate,
+        COALESCE(c.name, v.name) AS vc_name,
+        (qty - ship) * (oe.vendor_id > 0)::int AS incoming,
+        (qty - ship) * (oe.customer_id > 0)::int AS outgoing
+      FROM oe
+      LEFT JOIN vendor v ON v.id = oe.vendor_id
+      LEFT JOIN customer c ON c.id = oe.customer_id
+      LEFT JOIN orderitems oi ON oi.trans_id = oe.id
+      WHERE NOT oe.closed
+        $no_quotation
+        AND oi.parts_id = ?
+      ORDER BY reqdate, order_id, orderitems_id
+    )
+    SELECT
+      req.*,
+      SUM(incoming - outgoing) OVER (ORDER BY reqdate, order_id, orderitems_id) AS total,
+      reqdate < CURRENT_DATE as expired
+    FROM requirements req
+    EOT
+
+  my $sth = $dbh->prepare($query);
+  $sth->execute($form->{id}) or $form->dberror($query);
+
+  $form->{all_requirement} = [];
+
+  if ($form->{item} =~ /(part|assembly|kit)/) {
+    push $form->{all_requirement}->@*, {total => $form->{onhand}};
+  }
+
+  while (my $ref = $sth->fetchrow_hashref) {
+    $ref->{total} += $form->{onhand};
+    push $form->{all_requirement}->@*, $ref;
   }
   $sth->finish;
 
@@ -2991,7 +3110,7 @@ L<SL::IC> implements the following functions:
 
 =head2 get_part
 
-  SL::IC->get_part($myconfig, $form);
+  SL::IC->get_part($myconfig, $form, $dbh);
 
 =head2 get_warehouses
 
@@ -3012,6 +3131,10 @@ L<SL::IC> implements the following functions:
 =head2 requirements
 
   SL::IC->requirements($myconfig, $form);
+
+=head2 resource_planning
+
+  SL::IC->($myconfig, $form);
 
 =head2 retrieve_assemblies
 

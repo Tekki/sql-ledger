@@ -953,6 +953,7 @@ sub retrieve ($, $myconfig, $form) {
     my $ath = $dbh->prepare($query) or $form->dberror($query);
 
     my $aref;
+    my @report_ids;
 
     while (my $ref = $sth->fetchrow_hashref) {
 
@@ -1046,10 +1047,13 @@ sub retrieve ($, $myconfig, $form) {
         $ith->finish;
       }
 
-      push @{ $form->{form_details} }, $ref;
+      push @{$form->{form_details}}, $ref;
+      push @report_ids,              $ref->{id};
 
     }
     $sth->finish;
+
+    $form->{report_ids} = join ' ', List::Util::uniq(@report_ids);
 
     # get payments
     $query = qq|SELECT c.accno, c.description, c.closed, ac.source, ac.amount,

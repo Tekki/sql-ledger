@@ -2298,6 +2298,7 @@ sub form_footer {
       'Delete'           => {ndx => 22, key => 'D', value => $locale->text('Delete')},
     },
     {
+      _label_          => $locale->text('Add'),
       'AR Transaction' => {ndx => 7,  key => 'A', value => $locale->text('AR Transaction')},
       'Credit Note'    => {ndx => 8,  key => 'E', value => $locale->text('Credit Note')},
       'AP Transaction' => {ndx => 9,  key => 'A', value => $locale->text('AP Transaction')},
@@ -2314,6 +2315,7 @@ sub form_footer {
       'Pricelist'      => {ndx => 20, key => 'P', value => $locale->text('Pricelist')},
     },
     {
+      _label_           => $locale->text('Reports'),
       'AR Transactions' => {ndx => 23, key => '1', value => $locale->text('AR Transactions')},
       'AP Transactions' => {ndx => 24, key => '1', value => $locale->text('AP Transactions')},
       'Sales Orders'    => {ndx => 25, key => '2', value => $locale->text('Sales Orders')},
@@ -2323,7 +2325,7 @@ sub form_footer {
     },
   );
 
-  %f = ();
+  %f = ( _label_ => 1);
 
   if ($form->{db} eq 'customer') {
     if ($myconfig{acs} !~ /Customers--Add Customer/) {
@@ -2462,32 +2464,7 @@ sub form_footer {
     }
   }
 
-  print qq|
-<table width="100%">
-  <tr>
-    <td colspan="2">|;
-  $form->print_button($buttons[0]);
-  print qq|
-    </td>
-</tr>|;
-
-  my @labels = ($locale->text('Add'), $locale->text('Reports'));
-  for my $button (@buttons[1 .. 2]) {
-    my $label = shift @labels;
-    if (keys %$button) {
-      print qq|
-  <tr>
-    <td width="1%">$label</td>
-    <td>|;
-      $form->print_button($button);
-      print qq|
-    </td>
-  </tr>|;
-    }
-  }
-
-  print qq|
-</table>|;
+  $form->print_button_table(\@buttons);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
