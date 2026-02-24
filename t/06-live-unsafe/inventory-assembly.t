@@ -22,8 +22,8 @@ if ($ENV{SL_LIVETEST}) {
 
 $t = SL::TestClient->new(configfile => $configfile)->connect_ok->api_login_ok;
 
-subtest 'Update part with the hightest number' => sub {
-  $t->get_ok('Report frontend', 'ic.pl', action => 'search', searchitems => 'part')
+subtest 'Update assembly with the hightest number' => sub {
+  $t->get_ok('Report frontend', 'ic.pl', action => 'search', searchitems => 'assembly')
     ->press_button_ok('Generate report', 'continue')
     ->follow_link_ok('Open part', 'partnumber-l', 0)
     ->store_ok('partnumber')
@@ -34,30 +34,30 @@ subtest 'Update part with the hightest number' => sub {
     ->texts_are('Most recently used part', 'a.number-l' => \'partnumber');
 };
 
-subtest 'Add new parts' => sub {
-  for my $part ($t->config->{ic_part}{new}->@*) {
-    $t->get_ok('Part screen', 'ic.pl', action => 'add', item => 'part')
-      ->set_params_ok('Part header', notes => $t->test_stamp, $part->{header}->%*)
+subtest 'Add new assemblies' => sub {
+  for my $assembly ($t->config->{ic_assembly}{new}->@*) {
+    $t->get_ok('Assembly screen', 'ic.pl', action => 'add', item => 'assembly')
+      ->set_params_ok('Assembly header', notes => $t->test_stamp, $assembly->{header}->%*)
       ->press_button_ok('Get new number', 'new_number')
       ->store_ok('partnumber');
 
-    for my $customer ($part->{customers}->@*) {
+    for my $component ($assembly->{components}->@*) {
+      $t->update_row_ok('Add component', 'assembly_rows', $component->%*);
+    }
+
+    for my $customer ($assembly->{customers}->@*) {
       $t->update_row_ok('Add customer', 'customer_rows', $customer->%*);
     }
 
-    for my $vendor ($part->{vendors}->@*) {
-      $t->update_row_ok('Add vendor', 'vendor_rows', $vendor->%*);
-    }
-
-    $t->press_button_ok('Save part', 'save')
+    $t->press_button_ok('Save assembly', 'save')
       ->get_ok('Recently used', 'ru.pl', action => 'list_recent')
-      ->texts_are('Most recently used part', 'a.number-l' => \'partnumber')
-      ->follow_link_ok('Open part', 'number-l')
+      ->texts_are('Most recently used assembly', 'a.number-l' => \'partnumber')
+      ->follow_link_ok('Open assembly', 'number-l')
       ->params_are(
-      'Content of part',
+      'Content of assembly',
       notes      => \'test_stamp',
       partnumber => \'partnumber',
-      $part->{expected}->%*
+      $assembly->{expected}->%*
       );
   }
 };
