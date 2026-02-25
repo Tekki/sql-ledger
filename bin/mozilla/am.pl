@@ -2492,9 +2492,9 @@ sub defaults {
   $form->header;
 
   print qq|
-<body>
+<body onload="document.main.company.focus()">
 
-<form method=post action=$form->{script}>
+<form method="post" name="main" action="$form->{script}">
 
 <input type=hidden name=type value=defaults>
 
@@ -2802,7 +2802,7 @@ sub defaults {
 
   my $save = $locale->text('Save');
   print qq|
-<input type=submit class=submit name=action value="$save" accesskey="S" title="$save [S]">|;
+<input type="submit" class="submit" name="action" value="$save" accesskey="S" title="$save [S]">|;
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -3173,9 +3173,9 @@ pdf--PDF|;
   $form->header;
 
   print qq|
-<body>
+<body onload="document.main.signature.focus()">
 
-<form method=post action=$form->{script}>
+<form method="post" name="main" action="$form->{script}">
 
 <table width=100%>
   <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
@@ -3279,8 +3279,9 @@ pdf--PDF|;
     $form->hide_form(qw(name email));
   }
 
+  my $save = $locale->text('Save');
   print qq|
-<input type=submit class=submit name=action value="|.$locale->text('Save').qq|">|;
+<input type="submit" class="submit" name="action" value="$save" accesskey="S" title="$save [S]">|;
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
