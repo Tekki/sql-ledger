@@ -49,7 +49,7 @@ sub add_file ($self, $file) {
     if (/^\[/) {
       s/(\[|\])//g;
       $id = $_;
-      push @{$self->{ORDER}}, $_ if ! $menuorder{$_};
+      push @{$self->{ORDER}}, $_ if !$menuorder{$_} || /^<.*>$/;
       $menuorder{$_} = 1;
       next;
     }
