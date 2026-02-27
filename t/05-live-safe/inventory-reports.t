@@ -88,6 +88,6 @@ subtest 'Resource planning' => sub {
     ->press_button_ok('Generate report', 'continue')
     ->follow_link_ok('Open first part', 'partnumber-l')
     ->elements_exist('Links to order, customer/vendor', 'a.number-l', 'a.name-l')
-    ->press_button_ok('Switch to next item', 'next')
-    ->press_button_ok('Switch to previous item', 'previous');
+    ->press_button_ok('Switch to next item', 'next_item')
+    ->press_button_ok('Switch to previous item', 'previous_item');
 };

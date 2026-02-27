@@ -31,8 +31,9 @@ subtest 'Update latest transaction' => sub {
     )
     ->press_button_ok('Generate report', 'continue')
     ->follow_link_ok('Open transaction', 'ar-l', 0)
-    ->store_ok('invnumber')
+    ->store_ok('invnumber', 'paidaccounts')
     ->press_button_ok('Update', 'update')
+    ->params_are('Check payments', paidaccounts => \'paidaccounts')
     ->press_button_ok('Post transaction', 'post')
     ->press_button_ok('Confirm changes', 'continue')
     ->elements_exist('Links to invoice, name', 'a.invnumber-l', 'a.ar-l', 'a.is-l', 'a.name-l')
@@ -43,6 +44,7 @@ subtest 'Update latest transaction' => sub {
 subtest 'Add new transactions' => sub {
   for my $tr ($t->config->{ar_transaction}{new}->@*) {
     $t->get_ok('Transaction screen', 'ar.pl', action => 'add', type => 'transaction')
+      ->params_are_empty('Empty start values', qw|amount_1 description_1 datepaid_1 source_1 memo_1 paid_1|)
       ->set_params_ok('Transaction header', description => $t->test_stamp, $tr->{header}->%*)
       ->press_button_ok('Get new number', 'new_number')
       ->store_ok('invnumber');

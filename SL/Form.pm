@@ -50,7 +50,7 @@ sub new ($type, $userspath = '') {
     %$self = ();
 
     my $var;
-    my @file = ($windows) ? split /\n/, $_ : split /\r\n/, $_;
+    my @file = ($windows) ? split /\n/, $query_string : split /\r\n/, $query_string;
 
     for my $line (@file) {
 
@@ -683,7 +683,7 @@ sub format_amount ($self, $myconfig, $amount ||= 0, $places //= '', $dash //= ''
     $amount = $self->round_amount($amount, $places);
   }
 
-  if (looks_like_number $amount) {
+  if ($amount && looks_like_number $amount) {
     # is the amount negative
     my $negative = ($amount < 0);
 
@@ -786,6 +786,7 @@ sub parse_amount ($self, $myconfig, $amount //= 0) {
 
 
 sub round_amount ($self, $amount ||= 0, $places //= 0) {
+  return 0 unless looks_like_number $amount;
 
   $amount *= 1;
   $places *= 1;

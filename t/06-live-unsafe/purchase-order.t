@@ -28,9 +28,9 @@ subtest 'Update latest purchase order' => sub {
     ->follow_link_ok('Open order', 'ordnumber-l', 0)
     ->store_ok('ordnumber')
     ->elements_exist('Links to part, planning, history', 'a.part-l', 'a.planning-l', 'a.history-l')
-    ->press_button_ok('Update',           'update')
-    ->press_button_ok('Save order', 'save')
-    ->press_button_ok('Confirm changes',  'continue')
+    ->press_button_ok('Update',          'update')
+    ->press_button_ok('Save order',      'save')
+    ->press_button_ok('Confirm changes', 'continue')
     ->elements_exist('Links to number, name', 'a.ordnumber-l', 'a.name-l')
     ->get_ok('Recently used', 'ru.pl', action => 'list_recent')
     ->texts_are('Most recently used order', 'a.number-l' => \'ordnumber');
@@ -39,6 +39,10 @@ subtest 'Update latest purchase order' => sub {
 subtest 'Add new orders' => sub {
   for my $ord ($t->config->{purchase_order}{new}->@*) {
     $t->get_ok('Order screen', 'oe.pl', action => 'add', type => 'purchase_order')
+      ->params_are_empty(
+      'Empty start values',
+      qw|partnumber_1 description_1 qty_1 sellprice_1 discount_1 datepaid_1 source_1 memo_1 paid_1|
+      )
       ->set_params_ok('Order header', description => $t->test_stamp, $ord->{header}->%*)
       ->press_button_ok('Get new number', 'new_number')
       ->store_ok('ordnumber');

@@ -28,9 +28,9 @@ subtest 'Update latest sales quotation' => sub {
     ->follow_link_ok('Open quotation', 'quonumber-l', 0)
     ->store_ok('quonumber')
     ->elements_exist('Links to part, planning, history', 'a.part-l', 'a.planning-l', 'a.history-l')
-    ->press_button_ok('Update',           'update')
-    ->press_button_ok('Save quotation', 'save')
-    ->press_button_ok('Confirm changes',  'continue')
+    ->press_button_ok('Update',          'update')
+    ->press_button_ok('Save quotation',  'save')
+    ->press_button_ok('Confirm changes', 'continue')
     ->elements_exist('Links to number, name', 'a.quonumber-l', 'a.name-l')
     ->get_ok('Recently used', 'ru.pl', action => 'list_recent')
     ->texts_are('Most recently used quotation', 'a.number-l' => \'quonumber');
@@ -39,6 +39,7 @@ subtest 'Update latest sales quotation' => sub {
 subtest 'Add new quotations' => sub {
   for my $quo ($t->config->{sales_quotation}{new}->@*) {
     $t->get_ok('Quotation screen', 'oe.pl', action => 'add', type => 'sales_quotation')
+      ->params_are_empty('Empty start values', qw|partnumber_1 description_1 qty_1 sellprice_1 discount_1|)
       ->set_params_ok('Quotation header', description => $t->test_stamp, $quo->{header}->%*)
       ->press_button_ok('Get new number', 'new_number')
       ->store_ok('quonumber');

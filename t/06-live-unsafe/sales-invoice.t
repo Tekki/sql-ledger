@@ -31,9 +31,9 @@ subtest 'Update latest invoice' => sub {
     )
     ->press_button_ok('Generate report', 'continue')
     ->follow_link_ok('Open invoice', 'is-l', 0)
-    ->store_ok('invnumber')
-    ->elements_exist('Links to part, planning, history', 'a.part-l', 'a.planning-l', 'a.history-l')
+    ->store_ok('invnumber', 'paidaccounts')
     ->press_button_ok('Update', 'update')
+    ->params_are('Check payments', paidaccounts => \'paidaccounts')
     ->press_button_ok('Post invoice', 'post')
     ->press_button_ok('Confirm changes', 'continue')
     ->elements_exist('Links to invoice, name', 'a.invnumber-l', 'a.ar-l', 'a.is-l', 'a.name-l')
@@ -44,6 +44,10 @@ subtest 'Update latest invoice' => sub {
 subtest 'Add new invoices' => sub {
   for my $inv ($t->config->{ar_invoice}{new}->@*) {
     $t->get_ok('Invoice screen', 'is.pl', action => 'add', type => 'invoice')
+      ->params_are_empty(
+      'Empty start values',
+      qw|partnumber_1 description_1 qty_1 sellprice_1 discount_1 datepaid_1 source_1 memo_1 paid_1|
+      )
       ->set_params_ok('Invoice header', description => $t->test_stamp, $inv->{header}->%*)
       ->press_button_ok('Get new number', 'new_number')
       ->store_ok('invnumber');
@@ -62,13 +66,13 @@ subtest 'Add new invoices' => sub {
       ->texts_are('Most recently used invoice', 'a.number-l' => \'invnumber')
       ->follow_link_ok('Open invoice', 'number-l')
       ->params_are(
-        'Content of invoice',
-        description => \'test_stamp',
-        invnumber   => \'invnumber',
-        $inv->{expected}->%*
-        )
+      'Content of invoice',
+      description => \'test_stamp',
+      invnumber   => \'invnumber',
+      $inv->{expected}->%*
+      )
       ->rows_are('Invoice rows', $inv->{expected_rows}->@*)
-      ->rows_are('Payments', $inv->{expected_payments}->@*);
+      ->rows_are('Payments',     $inv->{expected_payments}->@*);
   }
 };
 

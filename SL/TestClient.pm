@@ -287,6 +287,10 @@ class SL::TestClient {
     return $self;
   }
 
+  method params_are_empty ($label, @params) {
+    $self->params_are($label, map { $_ => '' } @params);
+  }
+
   method post_ok ($label, $path = $form_script, %params) {
     BAIL_OUT 'Not connected.' unless $connected;
 
