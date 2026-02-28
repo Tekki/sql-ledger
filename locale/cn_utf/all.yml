@@ -20,6 +20,7 @@ texts:
   AP Transactions: "åº\x94ä»\x98äº¤æ\x98\x93"
   AP account does not exist!: ''
   AP account missing!: ''
+  API Token: ''
   AR: "åº\x94æ\x94¶å¸\x90æ¬¾"
   AR Aging: "åº\x94æ\x94¶å¸\x90é¾\x84å\x88\x86æ\x9e\x90"
   AR Amount: ''
@@ -530,6 +531,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: "å·³å®\x8cæ\x88\x90"
   Download Dump: ''
@@ -776,12 +778,14 @@ texts:
   Include Exchange Rate Difference: "å\x8c\Nå\x90«å¤\x96æ±\x87å·®è·\x9d"
   Include Header: ''
   Include Payment: ''
+  Include Quotations: ''
   Include in Report: "ä¸\x80å¹¶æ\x98¾ç¤º"
   Include in drop-down menus: "å\x8c\Nå\x90«å\x9c¨ä¸\x8bæ\x8b\x89å¼\x8fé\x80\x89å\x8d\x95ä¸­"
   Income: "æ\x94¶å\N¥"
   Income / (Loss): ''
   Income Statement: "æ\x8d\x9fç\x9b\x8aè¡¨"
   Income account does not exist!: "æ\x94¶å\N¥ç§\x91ç\x9b®å\x8b¿å­\x98å\x9c¨"
+  Incoming: ''
   Incorrect Dataset version!: "èµ\x84æ\x96\x99é\x9b\x86ç\x89\x88æ\x9c¬é\x94\x99è¯¯!"
   Incorrect Password!: ''
   Incorrect Username or Password!: ''
@@ -954,6 +958,7 @@ texts:
   New Window: "æ\x96°è§\x86çª\x97"
   Next: ''
   Next Date: ''
+  Next Item: ''
   Next Number: ''
   No: "å\x90¦"
   No Database Drivers available!: "æ²¡æ\x9c\x89å\x8f¯ç\x94¨ç\x9a\x84é©±å\x8a¨ç¨\x8bå¼\x8f!"
@@ -1037,6 +1042,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: "ä¸\x8då\x8d\x8fè°\x83äº¤æ\x98\x93"
   Out of balance!: "ä¸\x8då\x8d\x8fè°\x83"
+  Outgoing: ''
   Output Format: ''
   Outstanding: "æ\x9cªä»\x98"
   Over: ''
@@ -1132,6 +1138,7 @@ texts:
   Preferences saved!: "ä¸ªäººè®¾å®\x9aå·²å\x82¨å­\x98!"
   Prepayment: "é¢\x84ç¼´"
   Preview: ''
+  Previous Item: ''
   Previous Year: ''
   Price: "ä»·æ\_¼"
   Pricegroup: "ä»·æ\_¼ç»\x84"
@@ -1269,6 +1276,7 @@ texts:
   Required: ''
   Required by: "é\x9c\x80è¦\x81è\x80\N"
   Requirements: ''
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1396,6 +1404,8 @@ texts:
   Statement Balance: "ä¼\x9aè®¡å¸\x90ä½\x99é¢\x9d"
   Statement sent to: "é\x80\x81ä¼\x9aè®¡å¸\x90è\x87³"
   Statements sent to printer!: "é\x80\x81ä¼\x9aè®¡å¸\x90è\x87³å\x88\x97å\x8d°æ\x9cº"
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: "åº\x93å­\x98"
   Stock Adjustment: ''
   Stock Assembly: "ç\x9b\x98ç\x82¹"

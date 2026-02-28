@@ -20,6 +20,7 @@ texts:
   AP Transactions: Odberateľské transakcie
   AP account does not exist!: ''
   AP account missing!: Chýba záväzkový účet !
+  API Token: ''
   AR: Pohľadávky
   AR Aging: Analýza splatnosti
   AR Amount: ''
@@ -520,6 +521,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: Hotovo
   Download Dump: ''
@@ -764,12 +766,14 @@ texts:
   Include Exchange Rate Difference: Obsahuje kurzový rozdiel
   Include Header: ''
   Include Payment: S platbou
+  Include Quotations: ''
   Include in Report: Zahrnúť do prehľadu
   Include in drop-down menus: Ukazovať v drop-down menu
   Income: Príjem
   Income / (Loss): ''
   Income Statement: Výsledovka
   Income account does not exist!: Neexistuje príjmový účet!
+  Incoming: ''
   Incorrect Dataset version!: Chybná verzia databáz!
   Incorrect Password!: ''
   Incorrect Username or Password!: ''
@@ -941,6 +945,7 @@ texts:
   New Window: Nové okno
   Next: Nasledujúci
   Next Date: Ďalší dátum
+  Next Item: ''
   Next Number: Nasledujúce číslo
   No: Nie
   No Database Drivers available!: Neni inštalovaný žiadný ovladač databáz!
@@ -1029,6 +1034,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: Transakcia nie je súvahová!
   Out of balance!: Narušená súvaha!
+  Outgoing: ''
   Output Format: ''
   Outstanding: Nezaplatené faktúry
   Over: ''
@@ -1124,6 +1130,7 @@ texts:
   Preferences saved!: Nastavenia uložené!
   Prepayment: Zálohová platba
   Preview: ''
+  Previous Item: ''
   Previous Year: ''
   Price: Cena
   Pricegroup: Cenová skupina
@@ -1257,6 +1264,7 @@ texts:
   Required: ''
   Required by: Žiadal
   Requirements: Požiadavky
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1382,6 +1390,8 @@ texts:
   Statement Balance: Súvaha
   Statement sent to: Hlásenie odoslané
   Statements sent to printer!: Hlásenie odoslané pre tlač!
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: Skladuje
   Stock Adjustment: ''
   Stock Assembly: Výrobky

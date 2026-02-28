@@ -20,6 +20,7 @@ texts:
   AP Transactions: Leverandørfakturaer
   AP account does not exist!: ''
   AP account missing!: ''
+  API Token: ''
   AR: Debitorer
   AR Aging: Aldersfordeling
   AR Amount: ''
@@ -532,6 +533,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: Færdig
   Download Dump: ''
@@ -778,12 +780,14 @@ texts:
   Include Exchange Rate Difference: Inkludér difference i vekselkurs
   Include Header: ''
   Include Payment: Inkludér betaling
+  Include Quotations: ''
   Include in Report: Inkludér i rapport
   Include in drop-down menus: Inkludér i rullegardin-menuer
   Income: Indtægt
   Income / (Loss): ''
   Income Statement: Driftsregnskab
   Income account does not exist!: Indtægtskonto findes ikke!
+  Incoming: ''
   Incorrect Dataset version!: Forkert version af datasæt!
   Incorrect Password!: ''
   Incorrect Username or Password!: ''
@@ -958,6 +962,7 @@ texts:
   New Window: Nyt vindue
   Next: Næste
   Next Date: Næste dato
+  Next Item: ''
   Next Number: Næste nummer
   No: Nej
   No Database Drivers available!: Ingen databasedrivere tilgængelige
@@ -1041,6 +1046,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: Ubalanceret overførsel
   Out of balance!: Ikke i balance!
+  Outgoing: ''
   Output Format: ''
   Outstanding: Udestående
   Over: ''
@@ -1137,6 +1143,7 @@ texts:
   Preferences saved!: Indstillinger gemt!
   Prepayment: Forudbetaling
   Preview: ''
+  Previous Item: ''
   Previous Year: ''
   Price: Pris
   Pricegroup: Prisgruppe
@@ -1275,6 +1282,7 @@ texts:
   Required: ''
   Required by: Bestilt af
   Requirements: ''
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1402,6 +1410,8 @@ texts:
   Statement Balance: Balanceopgørelse
   Statement sent to: Opgørelse sendt til
   Statements sent to printer!: Opgørelser sendt til printer
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: Lager
   Stock Adjustment: ''
   Stock Assembly: Lagr sammensætning

@@ -20,6 +20,7 @@ texts:
   AP Transactions: Проводки витрат
   AP account does not exist!: ''
   AP account missing!: ''
+  API Token: ''
   AR: Доходи
   AR Aging: Старіння рахунків доходів
   AR Amount: ''
@@ -516,6 +517,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: Зроблено
   Download Dump: ''
@@ -756,12 +758,14 @@ texts:
   Include Exchange Rate Difference: Вкючити різницю курсів
   Include Header: ''
   Include Payment: Включити плтіж
+  Include Quotations: ''
   Include in Report: Додати до звіту
   Include in drop-down menus: Додати до листових меню
   Income: Прибуток
   Income / (Loss): ''
   Income Statement: Звіт про доходи і видатки
   Income account does not exist!: ''
+  Incoming: ''
   Incorrect Dataset version!: Невірна версія Бази Даних!
   Incorrect Password!: ''
   Incorrect Username or Password!: ''
@@ -931,6 +935,7 @@ texts:
   New Window: Нове вікно
   Next: Далі
   Next Date: Наступна дата
+  Next Item: ''
   Next Number: ''
   No: Ні
   No Database Drivers available!: Недоступний драйвер Бази Даних!
@@ -1013,6 +1018,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: Незбалансована проводка
   Out of balance!: Не збалансовано!
+  Outgoing: ''
   Output Format: ''
   Outstanding: Не сплачено
   Over: ''
@@ -1106,6 +1112,7 @@ texts:
   Preferences saved!: Параметри збережено!
   Prepayment: Передплата
   Preview: ''
+  Previous Item: ''
   Previous Year: ''
   Price: Ціна
   Pricegroup: Цінова група
@@ -1238,6 +1245,7 @@ texts:
   Required: ''
   Required by: Термін доставки
   Requirements: ''
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1362,6 +1370,8 @@ texts:
   Statement Balance: Балансовий Звіт
   Statement sent to: Звіт послано до
   Statements sent to printer!: Звіт послано до принтера!
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: Інвентар
   Stock Adjustment: ''
   Stock Assembly: Інвентар комплекту

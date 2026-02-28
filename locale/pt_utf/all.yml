@@ -20,6 +20,7 @@ texts:
   AP Transactions: Transacções Fornecedores
   AP account does not exist!: ''
   AP account missing!: ''
+  API Token: ''
   AR: Clientes
   AR Aging: Idade Saldos Clientes
   AR Amount: ''
@@ -527,6 +528,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: Pronto
   Download Dump: ''
@@ -773,12 +775,14 @@ texts:
   Include Exchange Rate Difference: ''
   Include Header: ''
   Include Payment: ''
+  Include Quotations: ''
   Include in Report: Incluir no Relatório
   Include in drop-down menus: Incluir nos menus drop-down
   Income: ''
   Income / (Loss): ''
   Income Statement: Estado de Receitas
   Income account does not exist!: ''
+  Incoming: ''
   Incorrect Dataset version!: Versão Dataset incorrecta!
   Incorrect Password!: ''
   Incorrect Username or Password!: ''
@@ -951,6 +955,7 @@ texts:
   New Window: ''
   Next: ''
   Next Date: ''
+  Next Item: ''
   Next Number: ''
   No: Não
   No Database Drivers available!: Não há Drivers de Base de Dados disponiveis!
@@ -1034,6 +1039,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: ''
   Out of balance!: ''
+  Outgoing: ''
   Output Format: ''
   Outstanding: ''
   Over: ''
@@ -1129,6 +1135,7 @@ texts:
   Preferences saved!: Preferências Guardadas!
   Prepayment: ''
   Preview: ''
+  Previous Item: ''
   Previous Year: ''
   Price: Preço
   Pricegroup: ''
@@ -1265,6 +1272,7 @@ texts:
   Required: ''
   Required by: Requerido por
   Requirements: ''
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1392,6 +1400,8 @@ texts:
   Statement Balance: ''
   Statement sent to: ''
   Statements sent to printer!: ''
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: ''
   Stock Adjustment: ''
   Stock Assembly: Conjunto em stock

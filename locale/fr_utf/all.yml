@@ -20,6 +20,7 @@ texts:
   AP Transactions: Transactions Dettes
   AP account does not exist!: ''
   AP account missing!: Compte Charge  manquant
+  API Token: ''
   AR: CREANCES
   AR Aging: Echéancier
   AR Amount: ''
@@ -534,6 +535,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: Fait!
   Download Dump: ''
@@ -782,6 +784,7 @@ texts:
   Include Exchange Rate Difference: Avec différence de change
   Include Header: Inclure Header
   Include Payment: Inclure Réglement
+  Include Quotations: ''
   Include in Report: Inclure dans l'Etat
   Include in drop-down menus: 'Inclure dans les zones déroulantes des formulaires suivants:'
   Include this account on the customer/vendor forms to flag customer/vendor as taxable?: A inclure lors de la CrÃ©ation DÃ©biteur/Creancier pour signaler la taxe ?
@@ -790,6 +793,7 @@ texts:
   Income Account: Compte de produits
   Income Statement: Compte de résultat
   Income account does not exist!: Compte de Produit inexistant!
+  Incoming: ''
   Incorrect Dataset version!: Fichier de données incorrect!
   Incorrect Password!: Mot de passe incorrect!
   Incorrect Username or Password!: ''
@@ -971,6 +975,7 @@ texts:
   New Window: Nouvel Ecran
   Next: Prochain
   Next Date: Prochaine date
+  Next Item: ''
   Next Number: Numéro suivant
   No: Non
   No Database Drivers available!: Pas de pilote de base de données disponible!
@@ -1064,6 +1069,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: Transaction non-soldée!
   Out of balance!: Non-soldée!
+  Outgoing: ''
   Output Format: Format de sortie
   Outstanding: En Cours
   Over: ''
@@ -1162,6 +1168,7 @@ texts:
   Preferences saved!: Préférences enregistrées!
   Prepayment: Paiement Acompte
   Preview: Preview
+  Previous Item: ''
   Previous Year: Année précédente
   Price: Montant
   Pricegroup: Tarif
@@ -1298,6 +1305,7 @@ texts:
   Required: ''
   Required by: Requis pour
   Requirements: Entree stock-Fabrication
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1428,6 +1436,8 @@ texts:
   Statement Balance: Solde relevé de compte
   Statement sent to: Relevé envoyé a
   Statements sent to printer!: Relevés envoyés vers l'imprimante!
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: Stock
   Stock Adjustment: ''
   Stock Assembly: Entrée Stock Fabrication

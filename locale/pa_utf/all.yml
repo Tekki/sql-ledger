@@ -20,6 +20,7 @@ texts:
   AP Transactions: Movimientos de Cuentas por Pagar
   AP account does not exist!: ''
   AP account missing!: ''
+  API Token: ''
   AR: Cuentas por Cobrar
   AR Aging: Vencimiento Cuentas por Cobrar
   AR Amount: ''
@@ -530,6 +531,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: Terminado
   Download Dump: ''
@@ -776,12 +778,14 @@ texts:
   Include Exchange Rate Difference: Incluir Diferencia por Tasa de Cambio
   Include Header: ''
   Include Payment: ''
+  Include Quotations: ''
   Include in Report: Incluir en informe
   Include in drop-down menus: Incluir en listas desplegables
   Income: Ingreso
   Income / (Loss): ''
   Income Statement: Cuadro de Resultados
   Income account does not exist!: ''
+  Incoming: ''
   Incorrect Dataset version!: ¡La Versión de la base de datos es incorrecta!
   Incorrect Password!: ''
   Incorrect Username or Password!: ''
@@ -954,6 +958,7 @@ texts:
   New Window: Ventana nueva
   Next: ''
   Next Date: ''
+  Next Item: ''
   Next Number: ''
   No: No
   No Database Drivers available!: ¡No hay manejadores de bases de datos disponibles!
@@ -1037,6 +1042,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: ¡Asiento desbalanceado!
   Out of balance!: ¡Fuera de balance!
+  Outgoing: ''
   Output Format: ''
   Outstanding: Pendiente
   Over: ''
@@ -1132,6 +1138,7 @@ texts:
   Preferences saved!: ¡Preferencias guardadas!
   Prepayment: Anticipo
   Preview: ''
+  Previous Item: ''
   Previous Year: ''
   Price: Precio
   Pricegroup: Grupo de precios
@@ -1269,6 +1276,7 @@ texts:
   Required: ''
   Required by: Requerido para el
   Requirements: ''
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1396,6 +1404,8 @@ texts:
   Statement Balance: Saldo bancario
   Statement sent to: Estado de cuenta enviado a
   Statements sent to printer!: ¡Estado de cuenta enviado a la impresora!
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: Inventario
   Stock Adjustment: ''
   Stock Assembly: Reponer ensamblaje

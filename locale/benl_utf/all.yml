@@ -20,6 +20,7 @@ texts:
   AP Transactions: Crediteurenboekingen
   AP account does not exist!: ''
   AP account missing!: ''
+  API Token: ''
   AR: Debiteuren
   AR Aging: Debiteuren Ouderdomsoverzicht
   AR Amount: ''
@@ -520,6 +521,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: Klaar
   Download Dump: ''
@@ -761,12 +763,14 @@ texts:
   Include Exchange Rate Difference: Inclusief wisselkoersverschil
   Include Header: ''
   Include Payment: ''
+  Include Quotations: ''
   Include in Report: Toevoegen aan Uitvoer
   Include in drop-down menus: Toevoegen aan drop-down menus
   Income: Inkomsten
   Income / (Loss): ''
   Income Statement: Inkomstenoverzicht
   Income account does not exist!: ''
+  Incoming: ''
   Incorrect Dataset version!: Ongeldige versie Dataset!!
   Incorrect Password!: ''
   Incorrect Username or Password!: ''
@@ -938,6 +942,7 @@ texts:
   New Window: ''
   Next: ''
   Next Date: ''
+  Next Item: ''
   Next Number: ''
   No: Nee
   No Database Drivers available!: Geen database besturings programma aanwezig
@@ -1019,6 +1024,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: Boeking is niet in evenwicht
   Out of balance!: Niet in evenwicht!
+  Outgoing: ''
   Output Format: ''
   Outstanding: Openstaand
   Over: ''
@@ -1111,6 +1117,7 @@ texts:
   Preferences saved!: Instellingen bewaard!
   Prepayment: Voorschot
   Preview: ''
+  Previous Item: ''
   Previous Year: ''
   Price: Prijs
   Pricegroup: Prijsgroep
@@ -1245,6 +1252,7 @@ texts:
   Required: ''
   Required by: Nodig voor
   Requirements: ''
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1369,6 +1377,8 @@ texts:
   Statement Balance: Saldo Overzicht
   Statement sent to: Overzicht verzonden aan
   Statements sent to printer!: Overzichten afgedrukt
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: Voorraad
   Stock Adjustment: ''
   Stock Assembly: Assemblage voorraad

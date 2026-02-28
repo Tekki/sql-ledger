@@ -20,6 +20,7 @@ texts:
   AP Transactions: Преводи покупки
   AP account does not exist!: ''
   AP account missing!: ''
+  API Token: ''
   AR: Продажби
   AR Aging: Разчети с клиенти
   AR Amount: ''
@@ -518,6 +519,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: Готов
   Download Dump: ''
@@ -761,12 +763,14 @@ texts:
   Include Exchange Rate Difference: Включи курсовата разлика
   Include Header: ''
   Include Payment: Включено плащане
+  Include Quotations: ''
   Include in Report: Включен в справката
   Include in drop-down menus: Включи в падащо меню
   Income: Приходи
   Income / (Loss): ''
   Income Statement: Отчет за Приходи и Разходи
   Income account does not exist!: Липсва приходна сметка!
+  Incoming: ''
   Incorrect Dataset version!: Коригирай версията на базата-данни!
   Incorrect Password!: ''
   Incorrect Username or Password!: ''
@@ -936,6 +940,7 @@ texts:
   New Window: Нов прозорец
   Next: Следващ
   Next Date: Следваща дата
+  Next Item: ''
   Next Number: Следващ номер
   No: Но.
   No Database Drivers available!: Липсва драйвер за базите-данни!
@@ -1020,6 +1025,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: Ивън балансови преводи
   Out of balance!: Извън балансови!
+  Outgoing: ''
   Output Format: ''
   Outstanding: Задължения
   Over: ''
@@ -1115,6 +1121,7 @@ texts:
   Preferences saved!: Свойствата за запазени!
   Prepayment: Авансово плащане
   Preview: ''
+  Previous Item: ''
   Previous Year: ''
   Price: Цена
   Pricegroup: Ценова група
@@ -1247,6 +1254,7 @@ texts:
   Required: ''
   Required by: Необходим е за
   Requirements: Съгласия
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1371,6 +1379,8 @@ texts:
   Statement Balance: Баланс за потвърждение
   Statement sent to: Потвърждението изпрати на
   Statements sent to printer!: Разпечатай потвърждението!
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: Стока
   Stock Adjustment: ''
   Stock Assembly: Изграждане на комплект

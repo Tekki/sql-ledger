@@ -20,6 +20,7 @@ texts:
   AP Transactions: Szállító tranzakciók
   AP account does not exist!: Szállító főkönyvi szám nem létezik!
   AP account missing!: Hiányzik a szállító főkönyvi száma!
+  API Token: ''
   AR: Vevő számlák
   AR Aging: Lejárt számlák
   AR Amount: Vevő összeg
@@ -495,6 +496,7 @@ texts:
   Document detached!: Dokumentum leválasztva!
   Document not archived!: Dokumentum nem archiv!
   Document saved!: Dokumentum elmentve!
+  Documentation: Dokumentáció
   Documents deleted!: Dokumentumok törölve!
   Done: Elvégezve
   Download Dump: ''
@@ -727,12 +729,14 @@ texts:
   Include Exchange Rate Difference: Árfolyamkülönbséget tartalmazza
   Include Header: Tartalmazza a fejlécet
   Include Payment: Fizetési tételek
+  Include Quotations: ''
   Include in Report: Megjelenített oszlopok
   Include in drop-down menus: Legördülő menük tartalmazzák
   Income: Bevétel
   Income / (Loss): Bevétel / Veszteség
   Income Statement: Eredménykimutatás
   Income account does not exist!: Nem létezik az árbevétel főkönyvi számla!
+  Incoming: ''
   Incorrect Dataset version!: Helytelen adatbázis verzió!
   Incorrect Password!: Helytelen jelszó!
   Incorrect Username or Password!: Érvénytelen felhasználónév vagy jelszó!
@@ -887,6 +891,7 @@ texts:
   New Window: Új ablak
   Next: Következő
   Next Date: Következő dátum
+  Next Item: ''
   Next Number: Következő szám
   No Employees on file!: Nen található alkalmazott az adatbázisban!
   No History!: Nincs előzmény!
@@ -964,6 +969,7 @@ texts:
   Our Company Name: Saját cégnév
   Out of balance transaction!: Kiegyenlítetlen tranzakció
   Out of balance!: Az egyenleg nem stimmel!
+  Outgoing: ''
   Output Format: Alapértelmezett nyomtatási formátum
   Outstanding: Kintlevőségek
   Over: Túl
@@ -1051,6 +1057,7 @@ texts:
   Preferences saved!: Beállítások elmentve!
   Prepayment: Előrefizetés
   Preview: Előnézet
+  Previous Item: ''
   Previous Year: Előző év
   Price: Ár
   Pricegroup: Árcsoport
@@ -1179,6 +1186,7 @@ texts:
   Required: Kötelező
   Required by: Leszállítás
   Requirements: Szükséges készlet
+  Resource Planning: Erőforrás-tervezés
   Restocking Charge: Visszavételezési költség
   Restore: Visszaállítás
   Restore Snapshot: Pillanatfelvétel visszaállítása
@@ -1299,6 +1307,8 @@ texts:
   Statement Balance: Kimutatás egyenlege
   Statement sent to: 'Kimutatás elküldve ide:'
   Statements sent to printer!: Kimutatás kinyomtatva
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock Adjustment: Készlet kiigazítás
   Stock Assembly: Összeszerelés
   Stock Finished Goods: Gyártás

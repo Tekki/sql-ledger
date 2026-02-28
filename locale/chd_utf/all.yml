@@ -20,6 +20,7 @@ texts:
   AP Transactions: Eingangsbuchungen
   AP account does not exist!: Verbindlichkeitskonto existiert nicht!
   AP account missing!: Verbindlichkeitskonto fehlt!
+  API Token: ''
   AR: Forderungen
   AR Aging: Forderungsspiegel
   AR Amount: Forderung
@@ -77,9 +78,9 @@ texts:
   Add General Ledger Transaction: Buchung im Hauptbuch erfassen
   Add General Ledger Voucher: Hauptbuch-Voucher erfassen
   Add Group: Warengruppe erfassen
-  Add Job: Auftrag erfassen
+  Add Job: Arbeit erfassen
   Add Kit: Kit erfassen
-  Add Labor/Overhead: Arbeit erfassen
+  Add Labor/Overhead: Arbeitskosten erfassen
   Add Language: Sprache erfassen
   Add Method: Zahlungsweise erfassen
   Add Mimetype: MIME-Type erfassen
@@ -147,7 +148,7 @@ texts:
   Are you sure you want to delete: Soll folgendes gelöscht werden
   Are you sure you want to delete Batch: 'Soll der Voucher mit der folgenden Nummer wirklich gelöscht werden:'
   Are you sure you want to delete Invoice Number: 'Soll die Rechnung mit folgender Nummer wirklich gelöscht werden:'
-  Are you sure you want to delete Order Number: 'Soll die Bestellung mit folgender Nummer wirklich gelöscht werden:'
+  Are you sure you want to delete Order Number: 'Soll der Auftrag mit folgender Nummer wirklich gelöscht werden:'
   Are you sure you want to delete Quotation Number: 'Soll die Offerte mit folgender Nummer wirklich gelöscht werden:'
   Are you sure you want to delete Transaction: 'Soll die Buchung wirklich gelöscht werden: '
   Are you sure you want to delete dataset: 'Soll die Datenbank wirklich gelöscht werden: '
@@ -196,7 +197,7 @@ texts:
   BOM: Stückliste
   Back: Zurück
   Backorder: Rückauftrag
-  'Backorder from Orders: ': 'Rückauftrag von Bestellungen:'
+  'Backorder from Orders: ': 'Rückauftrag von Aufträge:'
   Backup: Datensicherung
   Backup File: Backup-Datei
   Backup sent to: Eine Sicherungskopie wurde gesandt an
@@ -258,7 +259,7 @@ texts:
   Cannot delete employee!: Mitarbeiter kann nicht gelöscht werden!
   Cannot delete invoice!: Rechnung kann nicht gelöscht werden!
   Cannot delete item!: Artikel kann nicht gelöscht werden!
-  Cannot delete order!: Bestellung kann nicht gelöscht werden!
+  Cannot delete order!: Auftrag kann nicht gelöscht werden!
   Cannot delete quotation!: Offerte kann nicht gelöscht werden!
   Cannot delete stores card!: Artikelkarte kann nicht gelöscht werden!
   Cannot delete time card!: Stempelkarte kann nicht gelöscht werden!
@@ -279,7 +280,7 @@ texts:
   Cannot save Batch: Voucher kann nicht gespeichert werden!
   Cannot save account!: Konto kann nicht gespeichert werden!
   Cannot save defaults!: Standardeinstellungen können nicht gespeichert werden!
-  Cannot save order!: Bestellung kann nicht gespeichert werden!
+  Cannot save order!: Auftrag kann nicht gespeichert werden!
   Cannot save preferences!: Benutzereinstellungen können nicht gespeichert werden!
   Cannot save quotation!: Offerte kann nicht gespeichert werden!
   Cannot save stores card for a closed period!: Artikelkarte für eine geschlossene Periode kann nicht gespeichert werden!
@@ -313,7 +314,7 @@ texts:
   Change Password for Dataset: Passwort ändern für Datenbank
   Changeup: Modifikation
   Changeup Assemblies: Erzeugnisse modifizieren
-  Changeup Labor/Overhead: Arbeit modifizieren
+  Changeup Labor/Overhead: Arbeitskosten modifizieren
   Changeup Parts: Waren modifizieren
   Changeup Services: Dienstleistungen modifizieren
   Chargeable: Verrechenbar
@@ -349,7 +350,7 @@ texts:
   Company missing!: Firmenname fehlt!
   Compare to: Vergleichen mit
   Completed: Fertig
-  Components: Einzelteile
+  Components: Komponenten
   Confidential: Vertraulich
   Configuration file missing!: Konfigurationsdatei fehlt!
   Confirm: Bestätigen
@@ -357,13 +358,13 @@ texts:
   Connect to: Als Vorlage verwenden
   Consolidate: Konsolidieren
   Consolidate Invoices: Rechnungen konsolidieren
-  Consolidate Orders: Bestellungen konsolidieren
-  Consolidate Orders to Invoice: Bestellungen in Rechnung konsolidieren
+  Consolidate Orders: Aufträge konsolidieren
+  Consolidate Orders to Invoice: Aufträge in Rechnung konsolidieren
   Consolidate Purchase Orders: Einkaufsbestellungen konsolidieren
   Consolidate Sales Orders: Kundenaufträge konsolidieren
   Consolidate Sales Orders to Invoice: Kundenaufträge in Rechnung konsolidieren
   Consolidate Transactions: Buchungen konsolidieren
-  Consolidated Orders: Konsolidierte Bestellungen
+  Consolidated Orders: Konsolidierte Aufträge
   Consolidated to Invoice: In Rechnung konsolidiert
   Contact: Kontakt
   Content-Type: ''
@@ -405,7 +406,7 @@ texts:
   Current: Aktuell
   Current Earnings: Aktuelles Ergebnis
   Customer: Kunde
-  Customer History: Alle Belege für Kunde
+  Customer History: Vergangene Belege für Kunde
   Customer Number: Kundennummer
   Customer Transactions: Kundenbuchungen
   Customer deleted!: Kunde gelöscht!
@@ -522,6 +523,7 @@ texts:
   Document detached!: Dokument entfernt!
   Document not archived!: Dokument nicht archiviert!
   Document saved!: Dokument gespeichert!
+  Documentation: Dokumentation
   Documents deleted!: Dokument gelöscht?
   Done: Fertig
   Download Dump: Dump herunterladen
@@ -574,7 +576,7 @@ texts:
   Edit General Ledger Voucher: Hauptbuch-Voucher bearbeiten
   Edit Group: Warengruppe bearbeiten
   Edit Group Translations: Übersetzte Warengruppen bearbeiten
-  Edit Job: Auftrag bearbeiten
+  Edit Job: Arbeit bearbeiten
   Edit Labor/Overhead: Arbeit bearbeiten
   Edit Language: Sprache bearbeiten
   Edit Mimetype: MIME-Type bearbeiten
@@ -663,7 +665,7 @@ texts:
   Failed to save Currency!: Währung kann nicht gespeichert werden!
   Failed to save Role!: Rolle kann nicht gespeichert werden!
   Failed to save Warehouse!: Warenlager kann nicht gespeichert werden!
-  Failed to save order!: Bestellung kann nicht gespeichert werden!
+  Failed to save order!: Auftrag kann nicht gespeichert werden!
   Failed to save workstations!: Arbeitsplatzrechner kann nicht gespeichert werden!
   Fax: Fax
   Feb: Feb
@@ -708,16 +710,16 @@ texts:
   Generate: Erzeugen
   Generate Invoices: Rechnungen erstellen
   Generate Orders: Aufträge erstellen
-  Generate Purchase Orders: Bestellungen erstellen
-  Generate Purchase Orders failed!: Bestellungen können nicht erstellt werden!
-  Generate Purchase Orders from Sales Order: Bestellungen von Aufträgen erstellen
+  Generate Purchase Orders: Aufträge erstellen
+  Generate Purchase Orders failed!: Aufträge können nicht erstellt werden!
+  Generate Purchase Orders from Sales Order: Einkaufsbestellungen aus Aufträgen erstellen
   Generate Sales Invoices: Ausgangsrechnungen erstellen
-  Generate Sales Invoices from Sales Order: Rechnungen aus Kundenaufträgen erzeugen
+  Generate Sales Invoices from Sales Order: Rechnungen aus Kundenaufträgen erstellen
   Generate Sales Order: Aufträge erstellen
-  Generate Sales Order from Purchase Orders: Auftrag anhand von Bestellungen erstellen
+  Generate Sales Order from Purchase Orders: Auftrag aus Einkaufsbestellungen erstellen
   Generate Sales Orders: Aufträge erstellen
   Generating Invoices: Rechnungen werden erstellt
-  Goods & Services: Waren & Dienstleistungen
+  Goods & Services: Waren und Dienstleistungen
   Group: Warengruppe
   Group Code: Gruppencode
   Group Translations: Übersetzung von Warengruppen
@@ -731,7 +733,7 @@ texts:
   HTML Templates: HTML Vorlagen
   Heading: Überschrift
   Hide Closed Accounts: Inaktive Konten verbergen
-  History: Statistik
+  History: Vergangene Belege
   Home Mobile: Mobile Privat
   Home Phone: Tel Privat
   Host: Server
@@ -748,8 +750,8 @@ texts:
   Import File missing!: Importdatei nicht gefunden
   Import General Ledger: Hauptbuchbuchungen importieren
   Import Groups: Warengruppen importieren
-  Import Labor/Overhead: Arbeit importieren
-  Import Orders: Bestellungen importieren
+  Import Labor/Overhead: Arbeitskosten importieren
+  Import Orders: Aufträge importieren
   Import Parts: Waren importieren
   Import Payments: Zahlungen importieren
   Import Purchase Orders: Lieferantenbestellungen importieren
@@ -764,12 +766,14 @@ texts:
   Include Exchange Rate Difference: Wechselkursunterschied aufnehmen
   Include Header: Header einschliessen
   Include Payment: Bezahlung einschliessen
+  Include Quotations: Offerten einschliessen
   Include in Report: In Bericht aufnehmen
   Include in drop-down menus: In Aufklapp-Menü aufnehmen
   Income: Ertrag
   Income / (Loss): Ergebnis
   Income Statement: Erfolgsrechnung
   Income account does not exist!: Es existiert kein Konto für Einnahmen!
+  Incoming: Eingang
   Incorrect Dataset version!: Ungültige Datenbank-Version
   Incorrect Password!: Ungültiges Passwort!
   Incorrect Username or Password!: Ungültiger Benutzername oder Passwort!
@@ -811,14 +815,14 @@ texts:
   Items stocked!: Artikel eingelagert!
   Jan: Jan
   January: Januar
-  Job: Auftrag
-  Job Name: Auftragsname
-  Job Number: Auftragsnummer
-  Job Number missing!: Auftragsnummer fehlt!
-  Job deleted!: Auftrag gelöscht!
-  Job saved!: Auftrag gespeichert!
-  Job/Project Number: Auftrags-/Projektnummer
-  Jobs: Aufträge
+  Job: Arbeit
+  Job Name: Arbeitsname
+  Job Number: Arbeitsnummer
+  Job Number missing!: Arbeitsnummer fehlt!
+  Job deleted!: Arbeit gelöscht!
+  Job saved!: Arbeit gespeichert!
+  Job/Project Number: Arbeits-/Projektnummer
+  Jobs: Arbeiten
   Jul: Jul
   July: Juli
   Jun: Jun
@@ -829,8 +833,8 @@ texts:
   Labor: Arbeit
   Labor Code: Arbeitscode
   Labor Code missing!: Arbeitscode fehlt!
-  Labor/Overhead: Arbeit
-  Labor/Overhead Changeup: Arbeit modifizieren
+  Labor/Overhead: Arbeitskosten
+  Labor/Overhead Changeup: Arbeitskosten modifizieren
   Language: Sprache
   Language deleted!: Sprache gelöscht!
   Language saved!: Sprache gespeichert!
@@ -944,17 +948,18 @@ texts:
   New Window: Neues Fenster
   Next: Nächste
   Next Date: Nächstes Datum
+  Next Item: Nächster Artikel
   Next Number: Nächste Nummer
   No: Nr.
   No Database Drivers available!: Kein Datenbanktreiber verfügbar!
   No Dataset selected!: Keine Datenbank ausgewählt!
   No Employees on file!: Kein Mitarbeiter in Datenbank!
-  No History!: Kein Verlauf!
+  No History!: Keine vergangenen Belege!
   No data!: Keine Daten!
   No email address for: Keine E-Mailadresse für
   No file selected!: Keine Datei ausgewählt
   No foreign currencies!: Keine Fremdwährungen!
-  No open Jobs!: Keine offenen Aufträge!
+  No open Jobs!: Keine offenen Arbeiten!
   No open Projects!: Keine offenen Projekte!
   No open Sales Orders!: Keine offenen Kundenaufträge!
   No snapshots: Keine Snapshots
@@ -1011,18 +1016,18 @@ texts:
   Oracle: ''
   Oracle Database Administration: Oracle Datenbankverwaltung
   Ord: Bst
-  Order: Bestellung
+  Order: Auftrag
   Order Date: Bestelldatum
   Order Date missing!: Bestelldatum fehlt!
-  Order Entry: Bestellungen
+  Order Entry: Aufträge
   Order Number: Auftragsnummer
   Order Number missing!: Auftragsnummer fehlt!
-  Order consolidation failed!: Bestellungen können nicht konsolidiert werden!
-  Order deleted!: Bestellung gelöscht!
+  Order consolidation failed!: Aufträge können nicht konsolidiert werden!
+  Order deleted!: Auftrag gelöscht!
   Order generation failed!: Auftragserstellung fehlgeschlagen!
-  Order not on file!: Bestellung nicht in der Datenbank!
-  Order saved!: Bestellung gespeichert!
-  Orders generated!: Bestellungen erstellt!
+  Order not on file!: Auftrag nicht in der Datenbank!
+  Order saved!: Auftrag gespeichert!
+  Orders generated!: Aufträge erstellt!
   Origin: Ursprung
   Orphaned: nie benutzt
   Our Address Line: Unsere Adresse
@@ -1030,6 +1035,7 @@ texts:
   Our Company Name: Unser Firnmenname
   Out of balance transaction!: Soll und Haben sind nicht gleich!
   Out of balance!: Summen stimmen nicht überein!
+  Outgoing: Ausgang
   Output Format: Ausgabeformat
   Outstanding: Offen
   Over: Über
@@ -1126,6 +1132,7 @@ texts:
   Preferences saved!: Benutzereinstellungen gespeichert!
   Prepayment: Anzahlung
   Preview: Vorschau
+  Previous Item: Vorheriger Artikel
   Previous Year: Vorjahr
   Price: Preis
   Pricegroup: Preisgruppe
@@ -1161,11 +1168,11 @@ texts:
   Project deleted!: Projekt gelöscht!
   Project not on file!: Dieses Projekt ist nicht in der Datenbank!
   Project saved!: Projekt gespeichert!
-  Project/Job Description Translations: Übersetzung Projekt-/Auftragsbeschreibung
-  Project/Job Number: Projekt-/Auftragsnummer
-  Project/Job Number missing!: Projektnummer fehlt!
+  Project/Job Description Translations: Übersetzung Projekt-/Arbeitsbeschreibung
+  Project/Job Number: Projekt-/Arbeitsnummer
+  Project/Job Number missing!: Projekt-/Arbeitsnummer fehlt!
   Projects: Projekte
-  Projects & Jobs: Projekte und Aufträge
+  Projects & Jobs: Projekte und Arbeiten
   Public: Öffentlich
   Public Key: Öffentlicher Schlüssel
   Purchase Order: Einkaufsbestellung
@@ -1259,6 +1266,7 @@ texts:
   Required: Erforderlich
   Required by: Liefertermin
   Requirements: Bedarfsübersicht
+  Resource Planning: Bedarfsplanung
   Restocking Charge: ''
   Restore: Wiederherstellen
   Restore Snapshot: Snapshot wiederherstellen
@@ -1315,7 +1323,7 @@ texts:
   Save failed!: Speichern fehlgeschlagen
   Save to File: Auf Festplatte speichern
   Saving: Speichert
-  Saving Order ...: Speichere Bestellung...
+  Saving Order ...: Speichere Auftrag...
   'Scan the following code with your Authenticator App:': 'Folgenden Code mit der Authenticator-App einscannen:'
   Schedule: Buchungstermine
   Scheduled: geplant
@@ -1387,6 +1395,8 @@ texts:
   Statement Balance: Auszugsbilanz
   Statement sent to: Zahlungserinnerung gesendet an
   Statements sent to printer!: Zahlungserinnerungen gedruckt!
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: Einlagern
   Stock Adjustment: Lagerkorrektur
   Stock Assembly: Erzeugnis einlagern
@@ -1530,7 +1540,7 @@ texts:
   Valid To date missing for: Enddatum fehlt für
   Valid until: Gültig bis
   Vendor: Lieferant
-  Vendor History: Alle Belege für Lieferant
+  Vendor History: Vergangene Belege für Lieferant
   Vendor Invoice: Lieferantenrechnung
   'Vendor Invoice ': 'Lieferantenrechnung '
   Vendor Invoice.: Lieferantenrechnung.

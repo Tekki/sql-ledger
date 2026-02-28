@@ -20,6 +20,7 @@ texts:
   AP Transactions: Transactions dépenses
   AP account does not exist!: Compte de dépense n'existe pas !
   AP account missing!: Compte de dépense manquant !
+  API Token: ''
   AR: Recettes
   AR Aging: Extrait recettes
   AR Amount: Montant recettes
@@ -131,7 +132,7 @@ texts:
   All: Tout
   All Accounts: Tous les comptes
   All Batches: Toutes tâches différées
-  All Datasets up to date!: "Tous les bases de données sont à\_ jour!"
+  All Datasets up to date!: Tous les bases de données sont à jour!
   All Items: Tous articles
   All amounts in: Tous les montants en
   All selected!: Tous sélectionnés!
@@ -147,23 +148,23 @@ texts:
   Apr: Avr
   April: Avril
   Archive File: Fichier d'archive
-  Are you sure you want to delete: Etes-vous sûr que vous voulez supprimer ?
-  Are you sure you want to delete Batch: Etes-vous sûr de vouloir supprimer cette tâche ?
-  Are you sure you want to delete Invoice Number: Etes-vous sûr de vouloir supprimer cette facture ?
-  Are you sure you want to delete Order Number: Etes-vous sûr de vouloir supprimer cette commande ?
-  Are you sure you want to delete Quotation Number: Etes-vous sûr de vouloir supprimer cette offre ?
-  Are you sure you want to delete Transaction: Etes-vous sûr de vouloir effacer cette transaction ?
-  Are you sure you want to delete dataset: Etes-vous sûr de vouloir effacer cette base de données ?
-  'Are you sure you want to delete language: ': Etes-vous sûr de vouloir effacer cette langue ?
-  Are you sure you want to delete stores card: Etes-vous sûr de vouloir effacer la carte de la boutique ?
-  Are you sure you want to delete the following Snapshots?: Etes-vous sûr de vouloir supprimer les instantanés suivants ?
-  Are you sure you want to delete the following Transactions?: Etes-vous sûr de vouloir effacer cette transactions ?
-  Are you sure you want to delete time card for: Etes-vous sûr de vouloir effacer ces heures de travail ?
-  Are you sure you want to reconcile all marked payments: Etes-vous sûr de vouloir rapprocher tous les paiements marqués ?
+  Are you sure you want to delete: Êtes-vous sûr que vous voulez supprimer ?
+  Are you sure you want to delete Batch: Êtes-vous sûr de vouloir supprimer cette tâche ?
+  Are you sure you want to delete Invoice Number: Êtes-vous sûr de vouloir supprimer cette facture ?
+  Are you sure you want to delete Order Number: Êtes-vous sûr de vouloir supprimer cette commande ?
+  Are you sure you want to delete Quotation Number: Êtes-vous sûr de vouloir supprimer cette offre ?
+  Are you sure you want to delete Transaction: Êtes-vous sûr de vouloir effacer cette transaction ?
+  Are you sure you want to delete dataset: Êtes-vous sûr de vouloir effacer cette base de données ?
+  'Are you sure you want to delete language: ': Êtes-vous sûr de vouloir effacer cette langue ?
+  Are you sure you want to delete stores card: Êtes-vous sûr de vouloir effacer la carte de la boutique ?
+  Are you sure you want to delete the following Snapshots?: Êtes-vous sûr de vouloir supprimer les instantanés suivants ?
+  Are you sure you want to delete the following Transactions?: Êtes-vous sûr de vouloir effacer cette transactions ?
+  Are you sure you want to delete time card for: Êtes-vous sûr de vouloir effacer ces heures de travail ?
+  Are you sure you want to reconcile all marked payments: Êtes-vous sûr de vouloir rapprocher tous les paiements marqués ?
   Are you sure you want to remove all the locks: Voulez-vous vraiment tout débloquer ?
-  Are you sure you want to remove the marked entries from the queue?: Etes-vous sûr de vouloir enlever les tâches de la file d'attente ?
-  Are you sure you want to void checks: Etes-vous sûr de vouloir annuler les chèques ?
-  Are you sure you want to void receipts: Etes-vous sûr de vouloir annuler les reçus ?
+  Are you sure you want to remove the marked entries from the queue?: Êtes-vous sûr de vouloir enlever les tâches de la file d'attente ?
+  Are you sure you want to void checks: Êtes-vous sûr de vouloir annuler les chèques ?
+  Are you sure you want to void receipts: Êtes-vous sûr de vouloir annuler les reçus ?
   As of: A partir de
   Assemblies: Produits
   Assemblies restocked!: Produits réapprovisionné!
@@ -535,6 +536,7 @@ texts:
   Document detached!: Document détaché !
   Document not archived!: Document pas archivé !
   Document saved!: Document sauvgardé !
+  Documentation: ''
   Documents deleted!: Documents supprimés !
   Done: Exécuté
   Download Dump: Télécharge dump
@@ -557,7 +559,7 @@ texts:
   E-mail message: Message émail
   E-mailed: Envoyé par émail
   E-mailing: Emailing
-  ETATS: Etats
+  ETATS: États
   Early Payment Discount given: Remise pour paiement anticipé accordée
   Early Payment Discount received: Remise pour paiement anticipé reçu
   Edit: Modifier
@@ -783,6 +785,7 @@ texts:
   Include Exchange Rate Difference: Inclure différence de change
   Include Header: Inclure tête
   Include Payment: Inclure paiement
+  Include Quotations: Inclure offres
   Include in Report: Inclure dans le rapport
   Include in drop-down menus: Inclure dans les menues déroulantes
   Include this account on the customer/vendor forms to flag customer/vendor as taxable?: Inclure ce compte au formulaire client/fournisseur pour marquer le client/fournisseur comme imposable ?
@@ -791,6 +794,7 @@ texts:
   Income Account: Compte de produits
   Income Statement: Compte de résultat
   Income account does not exist!: Compte de produit inexistant !
+  Incoming: Entrant
   Incorrect Dataset version!: Version de base de données incorrect !
   Incorrect Password!: Mot de passe incorrect !
   Incorrect Username or Password!: 'Utilisateur ou mot de lpasse incorrect ! '
@@ -972,6 +976,7 @@ texts:
   New Window: Nouvel écran
   Next: Prochain
   Next Date: Prochaine date
+  Next Item: Article suivant
   Next Number: Numéro suivant
   No: Non
   No Database Drivers available!: Pas de base de données disponible !
@@ -1065,6 +1070,7 @@ texts:
   Our Company Name: Nom de notre entreprise
   Out of balance transaction!: Transaction hors solde !
   Out of balance!: Hors solde !
+  Outgoing: Sortant
   Output Format: Format de sortie
   Outstanding: Solde impayé
   Over: Sur
@@ -1163,6 +1169,7 @@ texts:
   Preferences saved!: Préférences enregistrées !
   Prepayment: Prépaiement
   Preview: Aperçu
+  Previous Item: Article précédent
   Previous Year: Année précédente
   Price: Prix
   Pricegroup: Groupe de prix
@@ -1299,6 +1306,7 @@ texts:
   Required: Requis
   Required by: Requis de
   Requirements: Requis clients
+  Resource Planning: Planification de ressources
   Restocking Charge: Frais de réapprovisionnement
   Restore: Restaurer
   Restore Snapshot: Restaurer instantané
@@ -1423,12 +1431,14 @@ texts:
   Standard: Standard
   Standard Industrial Codes: Code industriels standard
   Startdate: Date de début
-  State: Etat
-  State/Province: Etat/région
+  State: État
+  State/Province: État/région
   Statement: Relevé
   Statement Balance: Solde relevé compte
   Statement sent to: Relevé envoyé à
   Statements sent to printer!: Relevés envoyés à l'imprimante !
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: Stock
   Stock Adjustment: Adjustement stock
   Stock Assembly: Stocker produit
@@ -1693,7 +1703,7 @@ texts:
   last: dernière
   localhost: hôte local
   locked!: verrouillé !
-  login may only contain alphanumeric characters!: 'seulement caractères alphabétiques pour le login ! '
+  login may only contain alphanumeric characters!: seulement caractères alphabétiques pour le login !
   logout: déconnexion
   must be negative: doit être négatif
   must be positive: doit être positif

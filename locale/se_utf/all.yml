@@ -20,6 +20,7 @@ texts:
   AP Transactions: Leverantörsfakturor
   AP account does not exist!: ''
   AP account missing!: Konto för leverantörsfakturor saknas
+  API Token: ''
   AR: Intäkter
   AR Aging: Förfallna kundfordringar
   AR Amount: ''
@@ -535,6 +536,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: Klart
   Download Dump: ''
@@ -782,6 +784,7 @@ texts:
   Include Exchange Rate Difference: Inkludera växelkurs differens
   Include Header: Inkludera överskrift
   Include Payment: Inkudera betalning
+  Include Quotations: ''
   Include in Report: Inkludera i rapport
   Include in drop-down menus: Inkludera i rullgardinsmenyer
   Include this account on the customer/vendor forms to flag customer/vendor as taxable?: Inkludera det här kontot för kund/leverantör för att markera kund/leverantör som momspliktig
@@ -790,6 +793,7 @@ texts:
   Income Account: Intäktskonto
   Income Statement: Resultaträkning
   Income account does not exist!: Intäktskonto ej angivet
+  Incoming: ''
   Incorrect Dataset version!: Felaktig databasversion
   Incorrect Password!: Felaktigt lösenord
   Incorrect Username or Password!: ''
@@ -969,6 +973,7 @@ texts:
   New Window: Nytt fönster
   Next: Nästa
   Next Date: Nästa datum
+  Next Item: ''
   Next Number: Nästa nummer
   No: Inga
   No Database Drivers available!: Inga databasdrivers tillgängliga
@@ -1063,6 +1068,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: Transaktion ej i balans
   Out of balance!: Ej i balans
+  Outgoing: ''
   Output Format: Utskriftsformat
   Outstanding: Obetalda fakturor
   Over: ''
@@ -1165,6 +1171,7 @@ texts:
   Preferences saved!: Inställningar sparade
   Prepayment: Förskottsbetald
   Preview: ''
+  Previous Item: ''
   Previous Year: ''
   Price: Pris
   Pricegroup: Prisgrupp
@@ -1301,6 +1308,7 @@ texts:
   Required: ''
   Required by: Beställt den
   Requirements: Behov
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1431,6 +1439,8 @@ texts:
   Statement Balance: Verkligt saldo
   Statement sent to: Redovisning skickad till
   Statements sent to printer!: Redovisning skickade till skrivare
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: Lager
   Stock Adjustment: ''
   Stock Assembly: Lager produkter

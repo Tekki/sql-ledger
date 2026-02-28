@@ -20,6 +20,7 @@ texts:
   AP Transactions: Ostotapahtumat
   AP account does not exist!: ''
   AP account missing!: ''
+  API Token: ''
   AR: Myynnit
   AR Aging: Erääntyvät myyntilaskut
   AR Amount: ''
@@ -527,6 +528,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: Suoritettu
   Download Dump: ''
@@ -773,12 +775,14 @@ texts:
   Include Exchange Rate Difference: ''
   Include Header: ''
   Include Payment: ''
+  Include Quotations: ''
   Include in Report: Sisällytä raporttiin
   Include in drop-down menus: Sisällytä pudotusvalikoihin
   Income: Tulo
   Income / (Loss): ''
   Income Statement: Tuloslaskelma
   Income account does not exist!: ''
+  Incoming: ''
   Incorrect Dataset version!: Väärä tietokannan versio!
   Incorrect Password!: ''
   Incorrect Username or Password!: ''
@@ -951,6 +955,7 @@ texts:
   New Window: ''
   Next: ''
   Next Date: ''
+  Next Item: ''
   Next Number: ''
   No: Ei
   No Database Drivers available!: Tietokannan ajuria ei saatavilla!
@@ -1034,6 +1039,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: Viennin taseet eivät täsmää!
   Out of balance!: Taseet eivät täsmää
+  Outgoing: ''
   Output Format: ''
   Outstanding: ''
   Over: ''
@@ -1129,6 +1135,7 @@ texts:
   Preferences saved!: Asetukset tallennettu!
   Prepayment: Ennakkomaksu
   Preview: ''
+  Previous Item: ''
   Previous Year: ''
   Price: Hinta
   Pricegroup: Hintaryhmä
@@ -1265,6 +1272,7 @@ texts:
   Required: ''
   Required by: Toimituspäivä
   Requirements: ''
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1392,6 +1400,8 @@ texts:
   Statement Balance: Tiliotteen tase
   Statement sent to: Tiliote lähetetty
   Statements sent to printer!: Tiliotteet lähetetty tulostimelle!
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: ''
   Stock Adjustment: ''
   Stock Assembly: Varastoi tuote

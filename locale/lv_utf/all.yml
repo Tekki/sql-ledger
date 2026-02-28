@@ -20,6 +20,7 @@ texts:
   AP Transactions: KP transakcijas
   AP account does not exist!: ''
   AP account missing!: ''
+  API Token: ''
   AR: Debitoru parādi
   AR Aging: DP novecojums
   AR Amount: ''
@@ -530,6 +531,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: Izdarīts
   Download Dump: ''
@@ -776,12 +778,14 @@ texts:
   Include Exchange Rate Difference: Iekļaut valūtas kursu atšķirības
   Include Header: ''
   Include Payment: ''
+  Include Quotations: ''
   Include in Report: Iekļaut atskaitē
   Include in drop-down menus: Iekļaut nolaižamo izvēlni
   Income: Ienākums
   Income / (Loss): ''
   Income Statement: Peļņas vai zaudējuma aprēķins
   Income account does not exist!: ''
+  Incoming: ''
   Incorrect Dataset version!: Nepareiza datukopas versija!
   Incorrect Password!: ''
   Incorrect Username or Password!: ''
@@ -954,6 +958,7 @@ texts:
   New Window: ''
   Next: ''
   Next Date: ''
+  Next Item: ''
   Next Number: ''
   No: Nē
   No Database Drivers available!: Nav pieejams datubāzes draiveris!
@@ -1037,6 +1042,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: Transakcija bez bilances
   Out of balance!: Nav bilances!
+  Outgoing: ''
   Output Format: ''
   Outstanding: Neapmaksātais
   Over: ''
@@ -1132,6 +1138,7 @@ texts:
   Preferences saved!: Izvēles saglabātas!
   Prepayment: Avansa maksājums
   Preview: ''
+  Previous Item: ''
   Previous Year: ''
   Price: Cena
   Pricegroup: Cenu grupa
@@ -1269,6 +1276,7 @@ texts:
   Required: ''
   Required by: Pieprasīja
   Requirements: ''
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1396,6 +1404,8 @@ texts:
   Statement Balance: Bilances atskaite
   Statement sent to: Nosūtīt pārskatu uz
   Statements sent to printer!: Nosūtīt pārskatu uz drukāšanu!
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: Krājums
   Stock Adjustment: ''
   Stock Assembly: Komplektācijas krājumā

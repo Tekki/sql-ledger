@@ -20,6 +20,7 @@ texts:
   AP Transactions: Transacciones - Cuentas por Pagar
   AP account does not exist!: ''
   AP account missing!: ''
+  API Token: ''
   AR: Ctas X Cobrar
   AR Aging: 'Antiguedad de Saldos - CxC '
   AR Amount: ''
@@ -531,6 +532,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: Listo
   Download Dump: ''
@@ -777,12 +779,14 @@ texts:
   Include Exchange Rate Difference: Incluya diferencia de tasa de cambio
   Include Header: ''
   Include Payment: ''
+  Include Quotations: ''
   Include in Report: Incluya en informe
   Include in drop-down menus: Incluya en menús desplegables
   Income: Ingreso
   Income / (Loss): ''
   Income Statement: Estado de Cuentas
   Income account does not exist!: ''
+  Incoming: ''
   Incorrect Dataset version!: '!Version incorrecta de conjunto de datos!'
   Incorrect Password!: ''
   Incorrect Username or Password!: ''
@@ -955,6 +959,7 @@ texts:
   New Window: ''
   Next: ''
   Next Date: ''
+  Next Item: ''
   Next Number: ''
   No: No
   No Database Drivers available!: |-
@@ -1040,6 +1045,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: ''
   Out of balance!: Fuera de balance!
+  Outgoing: ''
   Output Format: ''
   Outstanding: Extraordinario
   Over: ''
@@ -1135,6 +1141,7 @@ texts:
   Preferences saved!: Preferencias guardadas!
   Prepayment: ''
   Preview: ''
+  Previous Item: ''
   Previous Year: ''
   Price: Precio
   Pricegroup: ''
@@ -1271,6 +1278,7 @@ texts:
   Required: ''
   Required by: Requerido por
   Requirements: ''
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1398,6 +1406,8 @@ texts:
   Statement Balance: Balance Estado de Cuenta
   Statement sent to: Estado de Cuenta enviado a
   Statements sent to printer!: Estados de Cuenta enviados a impresora!
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: Existencia
   Stock Adjustment: ''
   Stock Assembly: Inventariar Ensamblaje?

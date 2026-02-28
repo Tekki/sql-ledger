@@ -3748,7 +3748,7 @@ sub assembly_row {
   $column_data{partnumber} = qq|<th align=left nowrap width=20%>|.$locale->text('Number').qq|</th>|;
   $column_data{description} = qq|<th nowrap width=50%>|.$locale->text('Description').qq|</th>|;
   $column_data{sellprice} = qq|<th align=right nowrap>|.$locale->text('Sell').qq|</th>|;
-  $column_data{listprice} = qq|<th align=right nowrap>|.$locale->text('List').qq|</th>|;
+  $column_data{listprice} = qq|<th align=right nowrap>|.$locale->text('List Price').qq|</th>|;
   $column_data{lastcost} = qq|<th align=right nowrap>|.$locale->text('Cost').qq|</th>|;
   $column_data{bom} = qq|<th>|.$locale->text('BOM').qq|</th>|;
   $column_data{adj} = qq|<th>|.$locale->text('A').qq|</th>|;

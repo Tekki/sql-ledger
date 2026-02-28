@@ -20,6 +20,7 @@ texts:
   AP Transactions: Borç İşlemleri
   AP account does not exist!: Borç hesabı yok!
   AP account missing!: Borç hesabı eksik!
+  API Token: ''
   AR: Alacaklar
   AR Aging: Gecikmiş Alacaklar
   AR Amount: Alacak Tutarı
@@ -528,6 +529,7 @@ texts:
   Document detached!: Döküman ayrıldı!
   Document not archived!: Döküman arşivlenmedi!
   Document saved!: Döküman kaydedildi!
+  Documentation: Dokümantasyon
   Documents deleted!: Dökümanlar silindi!
   Done: Yapıldı
   Download Dump: İndir
@@ -774,12 +776,14 @@ texts:
   Include Exchange Rate Difference: Kur Farkını dahil et
   Include Header: Başlığı dahil et
   Include Payment: Ödemeyi dahil et
+  Include Quotations: ''
   Include in Report: Raporda dahil et
   Include in drop-down menus: Seçmeli Menüye dahil et
   Income: Gelir
   Income / (Loss): Gelir / (Kayıp)
   Income Statement: Gelir Tablosu
   Income account does not exist!: Gelir hesabı yok!
+  Incoming: ''
   Incorrect Dataset version!: Geçersiz Veriseti versiyonu!
   Incorrect Password!: Geçersiz şifre
   Incorrect Username or Password!: Geçersiz kullanıcı adı veya şifre
@@ -952,6 +956,7 @@ texts:
   New Window: Yeni Pencere
   Next: Sonraki
   Next Date: Sonraki Gün
+  Next Item: ''
   Next Number: Sonraki Numara
   No: Hayır
   No Database Drivers available!: Veritabanı Sürücüsü yok!
@@ -1035,6 +1040,7 @@ texts:
   Our Company Name: Şirket Adımız
   Out of balance transaction!: Eşitsiz işlem
   Out of balance!: Eşitsiz!
+  Outgoing: ''
   Output Format: Çıktı Formatı
   Outstanding: Bekleyen
   Over: Over
@@ -1130,6 +1136,7 @@ texts:
   Preferences saved!: Tercihler kaydedildi!
   Prepayment: Önödeme
   Preview: Önizleme
+  Previous Item: ''
   Previous Year: Önceki Yıl
   Price: Fiyat
   Pricegroup: Fiyat Grubu
@@ -1266,6 +1273,7 @@ texts:
   Required: İstenen
   Required by: Talep tarihi
   Requirements: Gereksinimler
+  Resource Planning: Kaynak planlaması
   Restocking Charge: Yeniden Stok Masrafı
   Restore: Geri kur
   Restore Snapshot: Anlık durumu geri kur
@@ -1393,6 +1401,8 @@ texts:
   Statement Balance: Ekstre çıktısı
   Statement sent to: 'Çıktı gönderildi:'
   Statements sent to printer!: Çıktılar yazıcıya gönderildi!
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: Stok
   Stock Adjustment: Stok Ayarlaması
   Stock Assembly: Montajı Stokla

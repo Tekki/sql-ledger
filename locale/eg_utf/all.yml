@@ -20,6 +20,7 @@ texts:
   AP Transactions: حركات حساب الموردين
   AP account does not exist!: ''
   AP account missing!: ''
+  API Token: ''
   AR: عملاء
   AR Aging: كشوفات حسابات العملاء
   AR Amount: ''
@@ -527,6 +528,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: نفذ
   Download Dump: ''
@@ -773,12 +775,14 @@ texts:
   Include Exchange Rate Difference: اظهار تغيير سعر العملة
   Include Header: ''
   Include Payment: ''
+  Include Quotations: ''
   Include in Report: ارفق في التقرير ------
   Include in drop-down menus: ضع الحساب فى قائمة الخيارات ---
   Income: الربح
   Income / (Loss): ''
   Income Statement: قائمة الدخل
   Income account does not exist!: ''
+  Incoming: ''
   Incorrect Dataset version!: نسخة غير صحيحة من مجموعة البيانات
   Incorrect Password!: ''
   Incorrect Username or Password!: ''
@@ -951,6 +955,7 @@ texts:
   New Window: ''
   Next: ''
   Next Date: ''
+  Next Item: ''
   Next Number: ''
   No: لا
   No Database Drivers available!: ''
@@ -1034,6 +1039,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: ''
   Out of balance!: ''
+  Outgoing: ''
   Output Format: ''
   Outstanding: ارصدة
   Over: ''
@@ -1129,6 +1135,7 @@ texts:
   Preferences saved!: ''
   Prepayment: ''
   Preview: ''
+  Previous Item: ''
   Previous Year: ''
   Price: سعر
   Pricegroup: مجموعة سعرية
@@ -1265,6 +1272,7 @@ texts:
   Required: ''
   Required by: مطلوب من قبل
   Requirements: ''
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1392,6 +1400,8 @@ texts:
   Statement Balance: رصيد كشف حساب
   Statement sent to: كشف حساب مرسل الى
   Statements sent to printer!: كشف حساب مرسل الى الطابعة
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: مخزون
   Stock Adjustment: ''
   Stock Assembly: تجميع مخزون

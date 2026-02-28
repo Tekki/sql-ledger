@@ -20,6 +20,7 @@ texts:
   AP Transactions: 買掛トランザクション
   AP account does not exist!: ''
   AP account missing!: 買掛勘定は未入力
+  API Token: ''
   AR: 売掛
   AR Aging: 売掛 Aging
   AR Amount: ''
@@ -525,6 +526,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: 処理済
   Download Dump: ''
@@ -769,12 +771,14 @@ texts:
   Include Exchange Rate Difference: 為替差異込み
   Include Header: ヘッダが入ってる
   Include Payment: 支払い込み
+  Include Quotations: ''
   Include in Report: レポートに入れる
   Include in drop-down menus: ドロップ・ダウン・メニューに入れる
   Income: 所得
   Income / (Loss): ''
   Income Statement: 所得伝票
   Income account does not exist!: 所得勘定は未登録です
+  Incoming: ''
   Incorrect Dataset version!: 間違えたデタセットバージョン
   Incorrect Password!: ''
   Incorrect Username or Password!: ''
@@ -950,6 +954,7 @@ texts:
   New Window: 新画面
   Next: 次ぎ
   Next Date: 次日付
+  Next Item: ''
   Next Number: 次番号
   No: いいえ
   No Database Drivers available!: データベースダライバーではありません
@@ -1037,6 +1042,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: トランザクションの不均衡
   Out of balance!: 勘定の不均衡
+  Outgoing: ''
   Output Format: 出力フォーマット
   Outstanding: 未決済
   Over: ''
@@ -1132,6 +1138,7 @@ texts:
   Preferences saved!: 設定を保存された
   Prepayment: 前払金
   Preview: ''
+  Previous Item: ''
   Previous Year: ''
   Price: 価格
   Pricegroup: 価格グループ
@@ -1266,6 +1273,7 @@ texts:
   Required: ''
   Required by: 要求者
   Requirements: 工数
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1391,6 +1399,8 @@ texts:
   Statement Balance: 申告釣合
   Statement sent to: 申告の出先
   Statements sent to printer!: 申告がプリンターへ送った
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: 在庫
   Stock Adjustment: ''
   Stock Assembly: 在庫組立

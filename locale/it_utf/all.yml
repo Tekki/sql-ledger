@@ -20,6 +20,7 @@ texts:
   AP Transactions: Transazioni Fornitori
   AP account does not exist!: ''
   AP account missing!: ''
+  API Token: ''
   AR: Crediti Clienti
   AR Aging: Partite Aperte
   AR Amount: ''
@@ -506,6 +507,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: Fatto
   Download Dump: ''
@@ -745,12 +747,14 @@ texts:
   Include Exchange Rate Difference: ''
   Include Header: ''
   Include Payment: ''
+  Include Quotations: ''
   Include in Report: Includi nel Prospetto
   Include in drop-down menus: Da includere nei menu a discesa dei seguenti moduli
   Income: Ricavi
   Income / (Loss): ''
   Income Statement: Conto Economico
   Income account does not exist!: ''
+  Incoming: ''
   Incorrect Dataset version!: Versione del Dataset non corretta!
   Incorrect Password!: ''
   Incorrect Username or Password!: ''
@@ -912,6 +916,7 @@ texts:
   New Window: ''
   Next: ''
   Next Date: ''
+  Next Item: ''
   Next Number: ''
   No: No
   No Database Drivers available!: Nessun Database Driver disponibile!
@@ -993,6 +998,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: ''
   Out of balance!: Non conciliato!
+  Outgoing: ''
   Output Format: ''
   Outstanding: ''
   Over: ''
@@ -1084,6 +1090,7 @@ texts:
   Preferences saved!: Preferenze Salvate!
   Prepayment: ''
   Preview: ''
+  Previous Item: ''
   Previous Year: ''
   Price: Prezzo
   Pricegroup: ''
@@ -1215,6 +1222,7 @@ texts:
   Required: ''
   Required by: Necessario dal
   Requirements: ''
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1338,6 +1346,8 @@ texts:
   Statement Balance: Saldo
   Statement sent to: Sollecito mandato a
   Statements sent to printer!: Solleciti mandati in stampa!
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock Adjustment: ''
   Stock Assembly: Magazzino Assemblati
   Stock Finished Goods: ''

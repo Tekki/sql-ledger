@@ -21,6 +21,7 @@ texts:
   AP Transactions: Crediteurenboekingen
   AP account does not exist!: ''
   AP account missing!: Rekening Crediteuren ontbreekt!
+  API Token: ''
   AR: Debiteuren
   AR Aging: Ouderdomsoverzicht Debiteuren
   AR Amount: Debiteur Bedrag
@@ -546,6 +547,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: Klaar
   Download Dump: ''
@@ -793,12 +795,14 @@ texts:
   Include Exchange Rate Difference: Inclusief Wisselkoersverschil
   Include Header: Kopregel meenemen
   Include Payment: Inclusief Bedrag
+  Include Quotations: ''
   Include in Report: Toevoegen aan Uitvoer
   Include in drop-down menus: Toevoegen aan drop-down menu's
   Income: Inkomsten
   Income / (Loss): ''
   Income Statement: Resultatenrekening
   Income account does not exist!: Rekening Inkomsten bestaat niet!
+  Incoming: ''
   Incorrect Dataset version!: Dataset heeft verkeerde versie!
   Incorrect Password!: Onjuist wachtwoord
   Incorrect Username or Password!: ''
@@ -975,6 +979,7 @@ texts:
   New Window: Nieuw Venster
   Next: Volgende
   Next Date: Volgende Datum
+  Next Item: ''
   Next Number: Volgende Code
   No: Nee
   No Database Drivers available!: Geen Stuurprogramma voor Database beschikbaar!
@@ -1066,6 +1071,7 @@ texts:
   Our Company Name: Onze bedrijfsnaam
   Out of balance transaction!: Boeking is niet in evenwicht!
   Out of balance!: Niet in evenwicht!
+  Outgoing: ''
   Output Format: Uitvoer Formaat
   Outstanding: Openstaand
   Over: Over
@@ -1164,6 +1170,7 @@ texts:
   Preferences saved!: Voorkeursinstellingen bewaard!
   Prepayment: Voorschot
   Preview: Voorbeeld
+  Previous Item: ''
   Previous Year: ''
   Price: Prijs
   Pricegroup: Prijsgroep
@@ -1300,6 +1307,7 @@ texts:
   Required: ''
   Required by: Nodig voor
   Requirements: Vereisten
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: Terugzetten
   Restore Snapshot: ''
@@ -1430,6 +1438,8 @@ texts:
   Statement Balance: Saldo Overzicht
   Statement sent to: Overzicht verzonden aan
   Statements sent to printer!: Overzichten naar de printer gestuurd!
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: Voorraad
   Stock Adjustment: ''
   Stock Assembly: Assemblage in voorraad nemen

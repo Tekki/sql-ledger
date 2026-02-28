@@ -20,6 +20,7 @@ texts:
   AP Transactions: Asientos de CxP
   AP account does not exist!: ''
   AP account missing!: ''
+  API Token: ''
   AR: CxC
   AR Aging: Diario Resumido de CxC
   AR Amount: ''
@@ -534,6 +535,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: Hecho
   Download Dump: ''
@@ -780,12 +782,14 @@ texts:
   Include Exchange Rate Difference: Incluir Diferencial por Tasa de Cambio
   Include Header: ''
   Include Payment: Inclir Pago
+  Include Quotations: ''
   Include in Report: Incluir en Informe
   Include in drop-down menus: Incluir en menús desplegables
   Income: Ingreso
   Income / (Loss): ''
   Income Statement: Estado de Cuenta de Igresos
   Income account does not exist!: ¡No existe la cuenta de ingreso!
+  Incoming: ''
   Incorrect Dataset version!: Versión de Base de Datos incorrecta
   Incorrect Password!: ''
   Incorrect Username or Password!: ''
@@ -958,6 +962,7 @@ texts:
   New Window: Nueva Ventana
   Next: Prox.
   Next Date: Siguiente fecha
+  Next Item: ''
   Next Number: Siguiente Número
   No: No
   No Database Drivers available!: ¡No hay ningún manejador de base de datos disponible!
@@ -1041,6 +1046,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: ¡Asiento fuera de balance!
   Out of balance!: ¡Fuera de balance!
+  Outgoing: ''
   Output Format: ''
   Outstanding: Pendientes
   Over: ''
@@ -1136,6 +1142,7 @@ texts:
   Preferences saved!: ¡Preferencias guardadas!
   Prepayment: Prepago
   Preview: ''
+  Previous Item: ''
   Previous Year: ''
   Price: Precio
   Pricegroup: Grupo de Precios
@@ -1273,6 +1280,7 @@ texts:
   Required: ''
   Required by: Requerido para el
   Requirements: ''
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1400,6 +1408,8 @@ texts:
   Statement Balance: Balance de Cuenta
   Statement sent to: Estado de Cuenta enviado a
   Statements sent to printer!: ¡Estado de Cuenta enviado a la impresora!
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: Inventario
   Stock Adjustment: ''
   Stock Assembly: Inventariar Juego

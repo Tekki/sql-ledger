@@ -20,6 +20,7 @@ texts:
   AP Transactions: 應付交易
   AP account does not exist!: ''
   AP account missing!: ''
+  API Token: ''
   AR: 應收帳款
   AR Aging: 應收帳齡分析
   AR Amount: ''
@@ -530,6 +531,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: 已完成
   Download Dump: ''
@@ -776,12 +778,14 @@ texts:
   Include Exchange Rate Difference: 包含外匯差距
   Include Header: ''
   Include Payment: 包括付款
+  Include Quotations: ''
   Include in Report: 一併顯示
   Include in drop-down menus: 包含在下拉式選單中
   Income: 收入
   Income / (Loss): ''
   Income Statement: 損益表
   Income account does not exist!: 收入帳戶不存在！
+  Incoming: ''
   Incorrect Dataset version!: 資料集版本錯誤！
   Incorrect Password!: ''
   Incorrect Username or Password!: ''
@@ -954,6 +958,7 @@ texts:
   New Window: 新視窗
   Next: 下一個
   Next Date: 下一日
+  Next Item: ''
   Next Number: 下一個號碼
   No: 否
   No Database Drivers available!: 沒有可用的資料庫驅動程式！
@@ -1037,6 +1042,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: 不協調交易！
   Out of balance!: 不平衡！
+  Outgoing: ''
   Output Format: ''
   Outstanding: 未收款交易
   Over: ''
@@ -1132,6 +1138,7 @@ texts:
   Preferences saved!: 個人設定已儲存！
   Prepayment: 預繳
   Preview: ''
+  Previous Item: ''
   Previous Year: ''
   Price: 價格
   Pricegroup: 價格組別
@@ -1269,6 +1276,7 @@ texts:
   Required: ''
   Required by: 要求交付日期
   Requirements: ''
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1396,6 +1404,8 @@ texts:
   Statement Balance: 會計帳餘額
   Statement sent to: 會計帳已送至
   Statements sent to printer!: 會計帳已送至印表機！
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: 庫存
   Stock Adjustment: ''
   Stock Assembly: 把製成品入貨

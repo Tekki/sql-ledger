@@ -20,6 +20,7 @@ texts:
   AP Transactions: Transações - Contas a Pagar
   AP account does not exist!: ''
   AP account missing!: ''
+  API Token: ''
   AR: Contas a Receber
   AR Aging: Contas a Receber Vencidas
   AR Amount: ''
@@ -525,6 +526,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: Feito
   Download Dump: ''
@@ -770,12 +772,14 @@ texts:
   Include Exchange Rate Difference: Incluir diferença de taxa de câmbio
   Include Header: ''
   Include Payment: Incluir Pagamento
+  Include Quotations: ''
   Include in Report: Incluir no Relatório
   Include in drop-down menus: Incluir nos menus drop-down (tipo cortina)
   Income: Receita
   Income / (Loss): ''
   Income Statement: Apuração de L&P
   Income account does not exist!: Não existe conta de resultados
+  Incoming: ''
   Incorrect Dataset version!: Versão incorreta de grupos de dados!
   Incorrect Password!: ''
   Incorrect Username or Password!: ''
@@ -949,6 +953,7 @@ texts:
   New Window: Nova Janela
   Next: Próximo
   Next Date: Próxima Data
+  Next Item: ''
   Next Number: Próximo Número
   No: Não
   No Database Drivers available!: Nenhum driver de banco de dados disponível!
@@ -1036,6 +1041,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: Transação fora de balanço!
   Out of balance!: Fora de balanço!
+  Outgoing: ''
   Output Format: ''
   Outstanding: Pendente
   Over: ''
@@ -1132,6 +1138,7 @@ texts:
   Preferences saved!: Preferências Salvas!
   Prepayment: Pré-pagamento
   Preview: ''
+  Previous Item: ''
   Previous Year: ''
   Price: Preço
   Pricegroup: Grupo de Preço
@@ -1269,6 +1276,7 @@ texts:
   Required: ''
   Required by: Requerido por
   Requirements: Requerimentos
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1396,6 +1404,8 @@ texts:
   Statement Balance: Declaração de Balanço
   Statement sent to: Declaração enviada para
   Statements sent to printer!: Declaração enviada para impressora!
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: Estoque
   Stock Adjustment: ''
   Stock Assembly: Estoque de Conjuntos

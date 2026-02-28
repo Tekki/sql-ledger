@@ -20,6 +20,7 @@ texts:
   AP Transactions: Проводки закупки
   AP account does not exist!: ''
   AP account missing!: ''
+  API Token: ''
   AR: Продажи
   AR Aging: Взаиморасчеты с клиентами
   AR Amount: ''
@@ -520,6 +521,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: Выполнено
   Download Dump: ''
@@ -764,12 +766,14 @@ texts:
   Include Exchange Rate Difference: Включить курсовую разность
   Include Header: ''
   Include Payment: Включая оплату
+  Include Quotations: ''
   Include in Report: Включить в отчет
   Include in drop-down menus: Включить в падающее меню
   Income: Поступление
   Income / (Loss): ''
   Income Statement: Отчет о прибыли/убытках
   Income account does not exist!: Счет поступления отсутствует
+  Incoming: ''
   Incorrect Dataset version!: Неверная версия базы данных!
   Incorrect Password!: ''
   Incorrect Username or Password!: ''
@@ -941,6 +945,7 @@ texts:
   New Window: Новое окно
   Next: Следующий
   Next Date: Следующая дата
+  Next Item: ''
   Next Number: Следующий номер
   No: Нет
   No Database Drivers available!: Недоступен драйвер базы данных!
@@ -1025,6 +1030,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: Вне балланса проводок!
   Out of balance!: Вне балланса!
+  Outgoing: ''
   Output Format: ''
   Outstanding: Задолженость
   Over: ''
@@ -1119,6 +1125,7 @@ texts:
   Preferences saved!: Настройки сохранены!
   Prepayment: Предварительная оплата
   Preview: ''
+  Previous Item: ''
   Previous Year: ''
   Price: Цена
   Pricegroup: Тип цен
@@ -1253,6 +1260,7 @@ texts:
   Required: ''
   Required by: Запрошен
   Requirements: ''
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1378,6 +1386,8 @@ texts:
   Statement Balance: Балансовая ведомость
   Statement sent to: Ведомость отправлена для
   Statements sent to printer!: Ведомость отправлена на принтер!
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: Сформировать
   Stock Adjustment: ''
   Stock Assembly: Сформировать комплект

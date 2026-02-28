@@ -20,6 +20,7 @@ texts:
   AP Transactions: Kreditorpostering
   AP account does not exist!: ''
   AP account missing!: ''
+  API Token: ''
   AR: Debitorer
   AR Aging: Aldersfordeling
   AR Amount: ''
@@ -530,6 +531,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: Ferdig
   Download Dump: ''
@@ -776,12 +778,14 @@ texts:
   Include Exchange Rate Difference: Inkluder forskjell i vekslingsrate
   Include Header: ''
   Include Payment: ''
+  Include Quotations: ''
   Include in Report: Inkludér i rapport
   Include in drop-down menus: Inkludér i rullegardin-menyer
   Income: Inntekt
   Income / (Loss): ''
   Income Statement: Driftsregnskap
   Income account does not exist!: ''
+  Incoming: ''
   Incorrect Dataset version!: Gal versjon av datasett!
   Incorrect Password!: ''
   Incorrect Username or Password!: ''
@@ -954,6 +958,7 @@ texts:
   New Window: ''
   Next: ''
   Next Date: ''
+  Next Item: ''
   Next Number: ''
   No: Nei
   No Database Drivers available!: Ingen databasedrivere tilgjengelige!
@@ -1037,6 +1042,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: Transaksjonen er i ubalanse!
   Out of balance!: Ute av balanse!
+  Outgoing: ''
   Output Format: ''
   Outstanding: Utestående
   Over: ''
@@ -1132,6 +1138,7 @@ texts:
   Preferences saved!: Innstillinger lagret!
   Prepayment: Forskuddsbetaling
   Preview: ''
+  Previous Item: ''
   Previous Year: ''
   Price: Pris
   Pricegroup: Prisgruppe
@@ -1269,6 +1276,7 @@ texts:
   Required: ''
   Required by: Leveringsdato
   Requirements: ''
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1396,6 +1404,8 @@ texts:
   Statement Balance: Balanseoppgjør
   Statement sent to: Oppgjør sendt til
   Statements sent to printer!: Oppgjør sendt til skriver!
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: Lager
   Stock Adjustment: ''
   Stock Assembly: Lagersammensetning

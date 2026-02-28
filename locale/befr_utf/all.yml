@@ -20,6 +20,7 @@ texts:
   AP Transactions: Mouvements - Dépenses
   AP account does not exist!: ''
   AP account missing!: ''
+  API Token: ''
   AR: Recettes
   AR Aging: Recettes exigibles
   AR Amount: ''
@@ -524,6 +525,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: Fait!
   Download Dump: ''
@@ -768,12 +770,14 @@ texts:
   Include Exchange Rate Difference: Inclure différence conversion devises
   Include Header: ''
   Include Payment: Inclure paiement
+  Include Quotations: ''
   Include in Report: Inclure dans l'état
   Include in drop-down menus: Inclure dans les menus déroulants
   Income: Recettes
   Income / (Loss): ''
   Income Statement: Compte de résultat
   Income account does not exist!: Compte de recettes inexistant!
+  Incoming: ''
   Incorrect Dataset version!: Fichier de données incorrect!
   Incorrect Password!: ''
   Incorrect Username or Password!: ''
@@ -947,6 +951,7 @@ texts:
   New Window: Nouvelle fenêtre
   Next: Prochain
   Next Date: Prochaine date
+  Next Item: ''
   Next Number: Prochain numéro
   No: Non
   No Database Drivers available!: Pas de pilote de base de données disponible!
@@ -1034,6 +1039,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: Écriture non-soldée!
   Out of balance!: Non-soldée!
+  Outgoing: ''
   Output Format: ''
   Outstanding: En retard
   Over: ''
@@ -1130,6 +1136,7 @@ texts:
   Preferences saved!: Préférences enregistrées!
   Prepayment: Paiement à l'avance
   Preview: ''
+  Previous Item: ''
   Previous Year: ''
   Price: Prix
   Pricegroup: Groupe de prix
@@ -1265,6 +1272,7 @@ texts:
   Required: ''
   Required by: Requis pour
   Requirements: Exigences
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1392,6 +1400,8 @@ texts:
   Statement Balance: Solde relevé de compte
   Statement sent to: Relevé envoyé à
   Statements sent to printer!: Relevés envoyés à l'imprimante!
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: Stock
   Stock Adjustment: ''
   Stock Assembly: Stock de produits

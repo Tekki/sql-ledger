@@ -20,6 +20,7 @@ texts:
   AP Transactions: Gestiones de pagos
   AP account does not exist!: ''
   AP account missing!: ''
+  API Token: ''
   AR: Cartera de cobros
   AR Aging: 'Diario resumido de cobros '
   AR Amount: ''
@@ -534,6 +535,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: Hecho
   Download Dump: ''
@@ -780,12 +782,14 @@ texts:
   Include Exchange Rate Difference: Incluir Diferencia por Tasa de Cambio
   Include Header: ''
   Include Payment: ''
+  Include Quotations: ''
   Include in Report: Incluir en informe
   Include in drop-down menus: 'Incluir en menúes desplegables:'
   Income: Ingreso
   Income / (Loss): ''
   Income Statement: Balance de situación
   Income account does not exist!: ''
+  Incoming: ''
   Incorrect Dataset version!: Versión de base de datos incorrecta
   Incorrect Password!: ''
   Incorrect Username or Password!: ''
@@ -958,6 +962,7 @@ texts:
   New Window: ''
   Next: ''
   Next Date: ''
+  Next Item: ''
   Next Number: ''
   No: No
   No Database Drivers available!: No hay ningún gestor de base de datos disponible
@@ -1041,6 +1046,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: Transacción fuera de Balance!
   Out of balance!: ¡Fuera de balance!
+  Outgoing: ''
   Output Format: ''
   Outstanding: Impagados
   Over: ''
@@ -1136,6 +1142,7 @@ texts:
   Preferences saved!: Preferencias guardadas
   Prepayment: Prepago
   Preview: ''
+  Previous Item: ''
   Previous Year: ''
   Price: Precio
   Pricegroup: Grupo de Precios
@@ -1273,6 +1280,7 @@ texts:
   Required: ''
   Required by: Aceptado el
   Requirements: ''
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1400,6 +1408,8 @@ texts:
   Statement Balance: Balance de cuenta
   Statement sent to: Estado de cuenta enviado a
   Statements sent to printer!: ¡Estado de cuenta enviado a la impresora!
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: Inventario
   Stock Adjustment: ''
   Stock Assembly: Inventariar compuesto

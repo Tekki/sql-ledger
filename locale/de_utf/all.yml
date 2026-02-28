@@ -20,6 +20,7 @@ texts:
   AP Transactions: Eingangsbuchungen
   AP account does not exist!: ''
   AP account missing!: Kreditkonto fehlt!
+  API Token: ''
   AR: Debitoren
   AR Aging: OF Forderungenspiegel
   AR Amount: Forderungshöhe
@@ -502,6 +503,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: Fertig
   Download Dump: ''
@@ -736,12 +738,14 @@ texts:
   Include Exchange Rate Difference: Wechselkursunterschied aufnehmen
   Include Header: Kopfzeile
   Include Payment: Bezahlung aufnehmen
+  Include Quotations: ''
   Include in Report: In Bericht aufnehmen
   Include in drop-down menus: In Aufklapp-Menü aufnehmen
   Income: Einnahmen
   Income / (Loss): ''
   Income Statement: G & V
   Income account does not exist!: Es existiert kein Konto für Einnahmen!
+  Incoming: ''
   Incorrect Dataset version!: Ungültige Datensatzversion
   Incorrect Password!: Falsches Passwort
   Incorrect Username or Password!: ''
@@ -902,6 +906,7 @@ texts:
   New Window: ''
   Next: Nächste
   Next Date: Nächstes Datum
+  Next Item: ''
   Next Number: Nächste Nummer
   No: Nein
   No Employees on file!: Kein Mitarbeiter in der Datenbank!
@@ -982,6 +987,7 @@ texts:
   Our Company Name: Unser Firmenname
   Out of balance transaction!: Soll und Haben sind nicht gleich!
   Out of balance!: Summen stimmen nicht überein!
+  Outgoing: ''
   Output Format: Ausgabeformat
   Outstanding: Offen
   Over: Über
@@ -1073,6 +1079,7 @@ texts:
   Preferences saved!: Einstellungen gespeichert!
   Prepayment: Anzahlung
   Preview: Vorschau
+  Previous Item: ''
   Previous Year: ''
   Price: Preis
   Pricegroup: Preisgruppe
@@ -1203,6 +1210,7 @@ texts:
   Required: ''
   Required by: Erforderlich am
   Requirements: Benötigte Teile
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: Wiederherstellen
   Restore Snapshot: ''
@@ -1328,6 +1336,8 @@ texts:
   Statement Balance: Auszugsbilanz
   Statement sent to: Zahlungserinnerung verschickt an
   Statements sent to printer!: Zahlungserinnerungen gedruckt!
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: Einlagern
   Stock Adjustment: ''
   Stock Assembly: Erzeugnis einlagern

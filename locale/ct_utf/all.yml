@@ -20,6 +20,7 @@ texts:
   AP Transactions: Transaccions de Despeses
   AP account does not exist!: ''
   AP account missing!: ''
+  API Token: ''
   AR: Ingressos
   AR Aging: Diari d'Ingressos
   AR Amount: ''
@@ -504,6 +505,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: ''
   Download Dump: ''
@@ -743,12 +745,14 @@ texts:
   Include Exchange Rate Difference: ''
   Include Header: ''
   Include Payment: ''
+  Include Quotations: ''
   Include in Report: Incloure en l'Informe
   Include in drop-down menus: Incloure en Menús Desplegables
   Income: ''
   Income / (Loss): ''
   Income Statement: Balanç Situació
   Income account does not exist!: ''
+  Incoming: ''
   Incorrect Dataset version!: Versió Incorrecta del Conjunt de Dades!
   Incorrect Password!: ''
   Incorrect Username or Password!: ''
@@ -911,6 +915,7 @@ texts:
   New Window: ''
   Next: ''
   Next Date: ''
+  Next Item: ''
   Next Number: ''
   No: No
   No Database Drivers available!: Cap Mòdul de Base de Dades disponible!
@@ -992,6 +997,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: ''
   Out of balance!: ''
+  Outgoing: ''
   Output Format: ''
   Outstanding: ''
   Over: ''
@@ -1084,6 +1090,7 @@ texts:
   Preferences saved!: Preferències Guardades!
   Prepayment: ''
   Preview: ''
+  Previous Item: ''
   Previous Year: ''
   Price: Preu
   Pricegroup: ''
@@ -1215,6 +1222,7 @@ texts:
   Required: ''
   Required by: Soliciat per
   Requirements: ''
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1338,6 +1346,8 @@ texts:
   Statement Balance: ''
   Statement sent to: ''
   Statements sent to printer!: ''
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock Adjustment: ''
   Stock Assembly: Inventari Compost
   Stock Finished Goods: ''

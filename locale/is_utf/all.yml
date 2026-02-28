@@ -20,6 +20,7 @@ texts:
   AP Transactions: Innkaupafærslur
   AP account does not exist!: ''
   AP account missing!: ''
+  API Token: ''
   AR: Sölukerfi
   AR Aging: Aldursgreining
   AR Amount: ''
@@ -527,6 +528,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: Búið
   Download Dump: ''
@@ -773,12 +775,14 @@ texts:
   Include Exchange Rate Difference: ''
   Include Header: ''
   Include Payment: ''
+  Include Quotations: ''
   Include in Report: Innifela í skýrslu
   Include in drop-down menus: Innifela í fellivalmynd
   Income: ''
   Income / (Loss): ''
   Income Statement: Inn yfirlýsing
   Income account does not exist!: ''
+  Incoming: ''
   Incorrect Dataset version!: Röng útgáfa af gagnasfni!
   Incorrect Password!: ''
   Incorrect Username or Password!: ''
@@ -951,6 +955,7 @@ texts:
   New Window: ''
   Next: ''
   Next Date: ''
+  Next Item: ''
   Next Number: ''
   No: Nei
   No Database Drivers available!: Engin gagnagrunnstengin til
@@ -1034,6 +1039,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: ''
   Out of balance!: Ekki jafnvægi!
+  Outgoing: ''
   Output Format: ''
   Outstanding: ''
   Over: ''
@@ -1129,6 +1135,7 @@ texts:
   Preferences saved!: Uppsetningar geymdar!
   Prepayment: ''
   Preview: ''
+  Previous Item: ''
   Previous Year: ''
   Price: Verð
   Pricegroup: ''
@@ -1265,6 +1272,7 @@ texts:
   Required: ''
   Required by: Pantað af
   Requirements: ''
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1392,6 +1400,8 @@ texts:
   Statement Balance: jöfnunaruppgjör
   Statement sent to: Uppgjör sendist til
   Statements sent to printer!: Uppgjör sendist á prentara
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: ''
   Stock Adjustment: ''
   Stock Assembly: Lager samsetning

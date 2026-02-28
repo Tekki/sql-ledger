@@ -20,6 +20,7 @@ texts:
   AP Transactions: OR Tehingud
   AP account does not exist!: ''
   AP account missing!: ''
+  API Token: ''
   AR: MüügiReskontro
   AR Aging: MR Aegunud
   AR Amount: ''
@@ -522,6 +523,7 @@ texts:
   Document detached!: ''
   Document not archived!: ''
   Document saved!: ''
+  Documentation: ''
   Documents deleted!: ''
   Done: Valmis
   Download Dump: ''
@@ -766,12 +768,14 @@ texts:
   Include Exchange Rate Difference: Lisa Valuutavahetuskursside erinevus
   Include Header: ''
   Include Payment: Lisa Makse
+  Include Quotations: ''
   Include in Report: Kaasa Aruandesse
   Include in drop-down menus: Kaasa rippmenüüdesse
   Income: Tulu
   Income / (Loss): ''
   Income Statement: Kasumiaruanne
   Income account does not exist!: Tulude konto puudu!
+  Incoming: ''
   Incorrect Dataset version!: Vale Andmekogu versioon
   Incorrect Password!: ''
   Incorrect Username or Password!: ''
@@ -943,6 +947,7 @@ texts:
   New Window: Uus Aken
   Next: Järgmine
   Next Date: Järgmine Kuupäev
+  Next Item: ''
   Next Number: Järgmine Number
   No: Ei
   No Database Drivers available!: Ühtegi Andmebaasiohjurit pole saadaval!
@@ -1030,6 +1035,7 @@ texts:
   Our Company Name: ''
   Out of balance transaction!: Bilansiväline tehing!
   Out of balance!: Bilanss ei klapi!
+  Outgoing: ''
   Output Format: ''
   Outstanding: Laekumata
   Over: ''
@@ -1126,6 +1132,7 @@ texts:
   Preferences saved!: Eelistused salvestatud!
   Prepayment: Ettemaksmine
   Preview: ''
+  Previous Item: ''
   Previous Year: ''
   Price: Hind
   Pricegroup: Hinnagrupp
@@ -1261,6 +1268,7 @@ texts:
   Required: ''
   Required by: Tarnetähtaeg
   Requirements: Nõudmised
+  Resource Planning: ''
   Restocking Charge: ''
   Restore: ''
   Restore Snapshot: ''
@@ -1387,6 +1395,8 @@ texts:
   Statement Balance: Bilansiaruanne
   Statement sent to: Aruanne saadetud
   Statements sent to printer!: Aruanded saadetud printerile
+  Stempelkarte LX: ''
+  Stempelkarten: ''
   Stock: Kaubavaru
   Stock Adjustment: ''
   Stock Assembly: Komplekti Ladustamine
