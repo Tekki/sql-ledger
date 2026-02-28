@@ -35,7 +35,7 @@ sub save_report {
     $publicreport = $form->hide_form(qw(reportlogin public));
   }
 
-  $form->helpref("save_report", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "save_report");
 
   $form->header;
 
@@ -46,7 +46,7 @@ print qq|
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -160,7 +160,7 @@ sub edit_column {
   for (qw(left right center)) { $checked{$_} = "checked" if $form->{$temp{a}} eq $_ }
 
   $helpref = $form->{helpref};
-  $form->helpref("edit_column", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "edit_column");
 
   $form->header;
 
@@ -171,7 +171,7 @@ sub edit_column {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
     <td>
@@ -247,7 +247,7 @@ sub add_column {
   $form->{title} = $locale->text('Add Column');
 
   $helpref = $form->{helpref};
-  $form->helpref("column", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "column");
 
   $form->header;
 
@@ -258,7 +258,7 @@ sub add_column {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
     <td>

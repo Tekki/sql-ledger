@@ -574,7 +574,7 @@ sub select_payment {
   push @column_index, "$form->{ARAP}_paid";
 
   $helpref = $form->{helpref};
-  $form->helpref("select_payment", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "select_payment");
 
   # list payments with radio button on a form
   $form->header;
@@ -595,7 +595,7 @@ sub select_payment {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$title</a></th>
+    <th class=listtop>$title $form->{helpref}</th>
   </tr>
   <tr space=5></tr>
   <tr>

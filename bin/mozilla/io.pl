@@ -481,7 +481,7 @@ sub select_item {
   $exchangerate = $form->{exchangerate} || 1;
 
   $helpref = $form->{helpref};
-  $form->helpref("select_item", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "select_item");
 
   # list items with radio button on a form
   $form->header;
@@ -513,7 +513,7 @@ sub select_item {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$title</a></th>
+    <th class=listtop>$title $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1289,7 +1289,7 @@ sub e_mail {
 
 <table width=100%>
   <tr class=listtop>
-    <th class=listtop>$form->{helpref}$title</a></th>
+    <th class=listtop>$title $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -2005,17 +2005,17 @@ sub ship_to {
   if ($form->{vc} eq 'customer') {
 
     if ($form->{type} eq 'invoice') {
-      $form->helpref("sales_invoice_ship_to", $myconfig{countrycode});
+      $form->helpref(\%myconfig, \%slconfig, "sales_invoice_ship_to");
     } else {
-      $form->helpref("$form->{type}_ship_to", $myconfig{countrycode});
+      $form->helpref(\%myconfig, \%slconfig, "$form->{type}_ship_to");
     }
 
   } else {
 
     if ($form->{type} eq 'invoice') {
-      $form->helpref("vendor_invoice_ship_to", $myconfig{countrycode});
+      $form->helpref(\%myconfig, \%slconfig, "vendor_invoice_ship_to");
     } else {
-      $form->helpref("$form->{type}_ship_to", $myconfig{countrycode});
+      $form->helpref(\%myconfig, \%slconfig, "$form->{type}_ship_to");
     }
 
   }
@@ -2048,7 +2048,7 @@ sub ship_to {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>

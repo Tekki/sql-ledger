@@ -103,6 +103,11 @@ class SL::TestClient {
     return $self;
   }
 
+  method content_is ($label, $selector, $content) {
+    is $self->dom->at($selector)->content, $content, $label;
+    return $self;
+  }
+
   method date_dec31 () {
     return localtime->strftime('%Y1231');
   }

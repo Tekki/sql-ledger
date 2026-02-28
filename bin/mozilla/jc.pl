@@ -266,7 +266,7 @@ sub search {
   }
 
   $type = $form->{type} || "stcard";
-  $form->helpref("search_$type", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "search_$type");
 
   $focus = $form->{focus} || 'employee';
 
@@ -283,7 +283,7 @@ sub search {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr valign=top>
@@ -560,7 +560,7 @@ sub timecard_header {
         </tr>
 | if $form->{id};
 
-  $form->helpref($form->{type}, $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, $form->{type});
 
   $form->{action} = "update";
 
@@ -583,7 +583,7 @@ sub timecard_header {
   print qq|
 <table width=100%>
   <tr class=listtop>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -864,7 +864,7 @@ sub storescard_header {
         </tr>
 | if $form->{id};
 
-  $form->helpref("storescard", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "storescard");
 
   $form->{action} = "update";
 
@@ -887,7 +887,7 @@ sub storescard_header {
   print qq|
 <table width=100%>
   <tr class=listtop>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1584,7 +1584,7 @@ sub list_cards {
   $column_header{sellprice} = "<th class=listheading>".$locale->text('Amount')."</th>";
 
 
-  $form->helpref("list_$form->{type}", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_$form->{type}");
 
   $form->header;
 
@@ -1593,7 +1593,7 @@ sub list_cards {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -2120,7 +2120,7 @@ sub select_item {
   $column_data{sellprice} .= qq|</th>|;
 
   $helpref = $form->{helpref};
-  $form->helpref("select_item", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "select_item");
 
   # list items with radio button on a form
   $form->header;
@@ -2134,7 +2134,7 @@ sub select_item {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$title</a></th>
+    <th class=listtop>$title $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>

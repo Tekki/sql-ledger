@@ -128,6 +128,12 @@ A.listheading:link, A.listheading:active, A.listheading:visited {
 .listsubtotal { font-size: 10px; background-color: #336666; color: white; }
 .listtotal { font-size: 10px; background-color: black; color: white; }
 
+a.help {
+  color: white;
+  float: right;
+  padding-right: 3px;
+}
+
 textarea {
   font-family: Verdana, Arial, Helvetica;
   font-size: 10px;

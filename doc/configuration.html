@@ -125,17 +125,19 @@ binary files.</p>
 <code>config/sql-ledger.yml</code>. A detailed example is provided in
 <code>config/sql-ledger-sample.yml</code>. The configuration is exposed
 to the program via the global variable <code>%slconfig</code>. If the
-file is missing, the variable contains the following defaults:</p>
+file itself or any of the following keys is missing, their values are
+set to:</p>
 <div class="sourceCode" id="cb1"><pre
 class="sourceCode perl"><code class="sourceCode perl"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>  <span class="dt">%slconfig</span> = (</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    userspath     =&gt; <span class="ot">&#39;</span><span class="ss">users</span><span class="ot">&#39;</span>,</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    templates     =&gt; <span class="ot">&#39;</span><span class="ss">templates</span><span class="ot">&#39;</span>,</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    spool         =&gt; <span class="ot">&#39;</span><span class="ss">spool</span><span class="ot">&#39;</span>,</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    images        =&gt; <span class="ot">&#39;</span><span class="ss">images</span><span class="ot">&#39;</span>,</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    memberfile    =&gt; <span class="ot">&#39;</span><span class="ss">users/members</span><span class="ot">&#39;</span>,</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    sendmail      =&gt; <span class="ot">&#39;</span><span class="ss">| /usr/sbin/sendmail -f &lt;%from%&gt; -t</span><span class="ot">&#39;</span>,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    accessfolders =&gt; [<span class="ot">&#39;</span><span class="ss">templates</span><span class="ot">&#39;</span>, <span class="ot">&#39;</span><span class="ss">css</span><span class="ot">&#39;</span>],</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  );</span></code></pre></div>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    notes         =&gt; <span class="ot">&#39;</span><span class="ss">notes</span><span class="ot">&#39;</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    memberfile    =&gt; <span class="ot">&#39;</span><span class="ss">users/members</span><span class="ot">&#39;</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    sendmail      =&gt; <span class="ot">&#39;</span><span class="ss">| /usr/sbin/sendmail -f &lt;%from%&gt; -t</span><span class="ot">&#39;</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    accessfolders =&gt; [<span class="ot">&#39;</span><span class="ss">templates</span><span class="ot">&#39;</span>, <span class="ot">&#39;</span><span class="ss">notes</span><span class="ot">&#39;</span>],</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  );</span></code></pre></div>
 <h2 id="database-configuration">Database Configuration</h2>
 <p>The database configuration is performed via the
 <code>System → Defaults</code> menu, which is available to

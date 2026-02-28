@@ -80,14 +80,14 @@ sub add {
   if ($form->{batch}) {
     $title = "Add $form->{ARAP} Voucher";
     $form->{title} = $locale->text($title);
-    $form->helpref("${arap}_voucher", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "${arap}_voucher");
     if ($form->{batchdescription}) {
       $form->{title} .= " / $form->{batchdescription}";
     }
   } else {
     $title = "Add $title{$form->{type}}";
     $form->{title} = $locale->text($title);
-    $form->helpref("${arap}_$form->{type}", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "${arap}_$form->{type}");
   }
 
   $form->{callback} = "$form->{script}?action=add&type=$form->{type}&path=$form->{path}&login=$form->{login}" unless $form->{callback};
@@ -120,7 +120,7 @@ sub edit {
 
   $arap = lc $form->{ARAP};
 
-  $form->helpref("${arap}_$form->{type}", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "${arap}_$form->{type}");
 
   &display_form;
 
@@ -670,7 +670,7 @@ print qq|
 
 <table width=100%>
   <tr class=listtop>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr valign=top>
@@ -1710,10 +1710,10 @@ sub search {
 
   if ($form->{ARAP} eq 'AR') {
     $form->{title} = $locale->text('AR Transactions');
-    $form->helpref("ar_transactions", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "ar_transactions");
   } else {
     $form->{title} = $locale->text('AP Transactions');
-    $form->helpref("ap_transactions", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "ap_transactions");
   }
 
   $invnumber = qq|
@@ -1769,10 +1769,10 @@ sub search {
   if ($form->{outstanding}) {
     if ($form->{ARAP} eq 'AR') {
       $form->{title} = $locale->text('AR Outstanding');
-      $form->helpref("ar_outstanding", $myconfig{countrycode});
+      $form->helpref(\%myconfig, \%slconfig, "ar_outstanding");
     } else {
       $form->{title} = $locale->text('AP Outstanding');
-      $form->helpref("ap_outstanding", $myconfig{countrycode});
+      $form->helpref(\%myconfig, \%slconfig, "ap_outstanding");
     }
 
     $invnumber = "";
@@ -1857,7 +1857,7 @@ sub search {
 <form method=post name="main" action="$form->{script}">
 
 <table width=100%>
-  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
+  <tr><th class=listtop>$form->{title} $form->{helpref}</th></tr>
   <tr height="5"></tr>
   <tr>
     <td>
@@ -2338,7 +2338,7 @@ sub transactions {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>

@@ -68,6 +68,8 @@ sub list_recent {
   my $version_url
     = qq|am.pl?path=$form->{path}&login=$form->{login}&action=company_logo|;
 
+  $form->helpref(\%myconfig, \%slconfig, 'recently_used');
+
   $form->header;
 
   print qq|
@@ -80,7 +82,7 @@ sub list_recent {
   </tr>
   <tr height="5"></tr>
   <tr>
-    <th class=listtop><a class=listtop href="$href">$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>

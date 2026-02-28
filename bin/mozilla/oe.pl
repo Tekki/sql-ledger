@@ -366,7 +366,7 @@ sub prepare_order {
     for (qw(paid exchangerate)) { $form->{"${_}_$i"} = $form->parse_amount(\%myconfig, $form->{"${_}_$i"}) }
   }
 
-  $form->helpref($form->{type}, $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, $form->{type});
 
 }
 
@@ -781,7 +781,7 @@ sub form_header {
   print qq|
 <table width=100%>
   <tr class=listtop>
-    <th class=listtop>$form->{helpref}$form->{title} / $form->{company}$title</a></th>
+    <th class=listtop>$form->{title} / $form->{company}$title $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1711,7 +1711,7 @@ sub search {
   push @a, qq|<input name="l_notes" class=checkbox type=checkbox value=Y> |.$locale->text('Notes');
   push @a, $l_backorder if $l_backorder;
 
-  $form->helpref("search_$form->{type}", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "search_$form->{type}");
 
   $form->header;
 
@@ -1725,7 +1725,7 @@ sub search {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1837,7 +1837,7 @@ sub transactions {
   $name = $form->escape($form->{$form->{vc}});
   $name .= qq|--$form->{"$form->{vc}_id"}| if $form->{"$form->{vc}_id"};
 
-  $form->helpref("list_$form->{type}", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_$form->{type}");
 
   # construct href
   $href = qq|$form->{script}?action=transactions|;
@@ -2192,7 +2192,7 @@ sub transactions {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -3004,7 +3004,7 @@ sub display_ship_receive {
 |;
 
 
-  $form->helpref($form->{type}, $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, $form->{type});
 
   $form->header;
 
@@ -3029,7 +3029,7 @@ sub display_ship_receive {
 
 <table width=100%>
   <tr class=listtop>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>

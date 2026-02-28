@@ -87,7 +87,7 @@ sub prepare_job {
 
   SL::PE->get_job(\%myconfig, $form);
 
-  $form->helpref("jobs", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "jobs");
 
   $form->{taxaccounts} = "";
   for (keys %{ $form->{IC_links} }) {
@@ -303,7 +303,7 @@ sub job_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -494,7 +494,7 @@ sub list_stock {
   $column_header{warehouse} = "<th class=listheading>" . $locale->text('Warehouse') . "</th>";
 
 
-  $form->helpref("list_stock", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_stock");
 
   $form->header;
 
@@ -515,7 +515,7 @@ sub list_stock {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -607,7 +607,7 @@ sub prepare_project {
   SL::PE->get_project(\%myconfig, $form);
   SL::RU->register(\%myconfig, $form) if $form->{id};
 
-  $form->helpref("projects", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "projects");
 
   $form->{title} = ($form->{id}) ? $locale->text('Edit Project') : $locale->text('Add Project');
 
@@ -787,7 +787,7 @@ sub search {
 |;
   }
 
-  $form->helpref("search_$form->{type}", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "search_$form->{type}");
 
   $focus = $form->{focus} || 'projectnumber';
 
@@ -804,7 +804,7 @@ sub search {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -946,7 +946,7 @@ sub list_projects {
   $column_header{completed} = "<th width=10 class=listheading>" . $locale->text('Completed') . "</th>";
   $column_header{name} = "<th class=listheading>" . $locale->text('Customer') . "</th>";
 
-  $form->helpref("list_$form->{type}", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_$form->{type}");
 
   $form->header;
 
@@ -959,7 +959,7 @@ sub list_projects {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1128,7 +1128,7 @@ sub project_header {
   print qq|
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1355,7 +1355,7 @@ sub partsgroup_report {
 
   $form->{title} = $locale->text('Groups') . " / $form->{company}";
 
-  $form->helpref("partsgroup_report", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "partsgroup_report");
 
   $form->header;
 
@@ -1364,7 +1364,7 @@ sub partsgroup_report {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1461,7 +1461,7 @@ sub partsgroup_header {
   for (qw(partsgroup code)) { $form->{$_} = $form->quote($form->{$_}) }
   $form->{pos} = ($form->{pos}) ? "checked" : "";
 
-  $form->helpref("partsgroup", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "partsgroup");
 
   $preview = ($form->{image}) ? qq|<a href=$slconfig{images}/$myconfig{dbname}/$form->{image}> ?| : qq| <a href="ic.pl?action=upload_image&login=$form->{login}&path=$form->{path}" target=popup>&#9701;</a>|;
 
@@ -1474,7 +1474,7 @@ sub partsgroup_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1576,7 +1576,7 @@ sub pricegroup_report {
 
   $form->{title} = $locale->text('Pricegroups') . " / $form->{company}";
 
-  $form->helpref("pricegroup_report", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "pricegroup_report");
 
   $form->header;
 
@@ -1585,7 +1585,7 @@ sub pricegroup_report {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1674,7 +1674,7 @@ sub pricegroup_header {
 
   $form->{pricegroup} = $form->quote($form->{pricegroup});
 
-  $form->helpref("pricegroup", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "pricegroup");
 
   $form->header;
 
@@ -1685,7 +1685,7 @@ sub pricegroup_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1744,7 +1744,7 @@ sub translation {
 
   if ($form->{translation} eq 'description') {
     $form->{title} = $locale->text('Description Translations');
-    $form->helpref("item_translation", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "item_translation");
 
     $sort = qq|<input type=hidden name=sort value=partnumber>|;
     $form->{number} = "partnumber";
@@ -1759,12 +1759,12 @@ sub translation {
   if ($form->{translation} eq 'partsgroup') {
     $form->{title} = $locale->text('Group Translations');
     $sort = qq|<input type=hidden name=sort value=partsgroup>|;
-    $form->helpref("group_translation", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "group_translation");
   }
 
   if ($form->{translation} eq 'project') {
     $form->{title} = $locale->text('Project/Job Description Translations');
-    $form->helpref("project_job_translation", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "project_job_translation");
     $form->{number} = "projectnumber";
     $sort = qq|<input type=hidden name=sort value=projectnumber>|;
     $number = qq|
@@ -1777,7 +1777,7 @@ sub translation {
 
   if ($form->{translation} eq 'chart') {
     $form->{title} = $locale->text('Chart of Accounts Translations');
-    $form->helpref("coa_translation", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "coa_translation");
     $form->{number} = "accno";
     $sort = qq|<input type=hidden name=sort value=accno>|;
     $number = qq|
@@ -1802,7 +1802,7 @@ sub translation {
   print qq|
 
 <table width="100%">
-  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
+  <tr><th class=listtop>$form->{title} $form->{helpref}</th></tr>
   <tr height="5"></tr>
   <tr valign=top>
     <td>
@@ -1878,14 +1878,14 @@ sub list_translations {
 
   $form->header;
 
-  $form->helpref("list_$form->{translation}_translations", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_$form->{translation}_translations");
 
   print qq|
 <body>
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
 
@@ -1973,7 +1973,7 @@ sub edit_translation {
 
   $form->error($locale->text('Languages not defined!')) unless @{ $form->{all_language} };
 
-  $form->helpref("$form->{translation}_translations", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "$form->{translation}_translations");
 
   $form->{selectlanguage} = qq|\n|;
   for (@{ $form->{all_language} }) { $form->{selectlanguage} .= qq|$_->{code}--$_->{description}\n| }
@@ -2024,7 +2024,7 @@ sub translation_header {
   print qq|
 
 <table width="100%">
-  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
+  <tr><th class=listtop>$form->{title} $form->{helpref}</th></tr>
   <tr height="5"></tr>
   <tr valign=top>
     <td>
@@ -2378,6 +2378,8 @@ sub project_sales_order {
 
   $focus = $form->{focus} || 'projectnumber';
 
+  $form->helpref(\%myconfig, \%slconfig, 'project_sales_order');
+
   $form->header;
 
   &calendar;
@@ -2389,7 +2391,7 @@ sub project_sales_order {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{title}</th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr valign=top>

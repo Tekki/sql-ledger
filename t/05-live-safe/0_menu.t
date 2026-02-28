@@ -39,7 +39,9 @@ subtest 'Call entries' => sub {
 
       $t->get_ok($label, $href);
 
-      # ->element_exists('form[name=main]', 'Main form');
+      return if $href =~ /action=(clear_semaphores|unlock_dataset|company_logo)/;
+
+      $t->elements_exist("Content of $label", 'a.help');
     }
   );
 };

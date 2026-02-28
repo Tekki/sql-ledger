@@ -63,7 +63,7 @@ sub chart_of_accounts {
   $column_header{credit} = qq|<th class=listtop>|.$locale->text('Credit').qq|</th>\n|;
   $column_header{closed} = qq|<th width=1% class=listtop>|.$locale->text('Closed').qq|</th>\n|;
 
-  $form->helpref("coa", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "coa");
 
   $form->{title} = $locale->text('Chart of Accounts') . " / $form->{company}";
 
@@ -76,7 +76,7 @@ sub chart_of_accounts {
 
 <table border=0 width=100%>
   <tr>
-    <th class=listtop colspan=$colspan>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop colspan=$colspan>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr class=listheading>|;
@@ -193,7 +193,7 @@ sub list {
   }
 
 
-  $form->helpref("account_transactions", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "account_transactions");
 
   $form->header;
 
@@ -212,7 +212,7 @@ sub list {
 <input type=hidden name=oldsort value=transdate>
 
 <table border=0 width=100%>
-  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
+  <tr><th class=listtop>$form->{title} $form->{helpref}</th></tr>
   <tr height="5"></tr>
   <tr valign=top>
     <td>
@@ -348,7 +348,7 @@ sub list_transactions {
   $form->{callback} = "$form->{script}?action=$action&department=$department&projectnumber=$projectnumber&title=$title";
   for (qw(path direction oldsort accno login fromdate todate accounttype gifi_accno l_heading l_subtotal l_accno prevreport)) { $form->{callback} .= "&$_=$form->{$_}" }
 
-  $form->helpref("account_transactions", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "account_transactions");
 
   if ($form->{subreport}) {
     $form->{helpref} = qq|<a name="$form->{accno}">|;
@@ -373,7 +373,7 @@ sub list_transactions {
   print qq|
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>

@@ -66,7 +66,7 @@ sub search_employee {
 
   $form->{title} = $locale->text('Employees');
 
-  $form->helpref("search_employee", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "search_employee");
 
   @f = ();
 
@@ -110,7 +110,7 @@ sub search_employee {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr valign=top>
@@ -297,7 +297,7 @@ sub list_employees {
     $option .= $locale->text('Notes')." : $form->{notes}";
   }
 
-  $form->helpref("list_employees", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_employees");
 
   $href .= "&helpref=".$form->escape($form->{helpref});
   $callback .= "&helpref=".$form->escape($form->{helpref},1);
@@ -347,7 +347,7 @@ sub list_employees {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -538,7 +538,7 @@ sub prepare_employee {
     $form->{readonly} = 1 if $myconfig{acs} =~ /Add Employee/;
   }
 
-  $form->helpref("employee", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "employee");
 
 }
 
@@ -684,7 +684,7 @@ sub employee_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1042,7 +1042,7 @@ sub access_control {
 
   $menufile = "menu.ini";
 
-  $form->helpref("access_control", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "access_control");
 
   $form->header;
 
@@ -1467,7 +1467,7 @@ sub prepare_payroll {
 
   for (qw(formname language employee ap payment paymentmethod printer department project)) { $form->{"select$_"} = $form->escape($form->{"select$_"},1) }
 
-  $form->helpref("payrolltransaction", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "payrolltransaction");
 
   if ($form->{id}) {
 
@@ -1549,7 +1549,7 @@ sub payroll_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
 
@@ -2009,7 +2009,7 @@ sub search_payroll {
 
   $form->{title} = $locale->text('Payroll Transactions');
 
-  $form->helpref("payroll_transactions", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "payroll_transactions");
 
   $employeelabel = $locale->text('Employee');
 
@@ -2147,7 +2147,7 @@ sub search_payroll {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr valign=top>
@@ -2295,7 +2295,7 @@ sub payroll_transactions {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -2576,7 +2576,7 @@ sub search_deduction {
 
   @column_index = qw(description rate amount above below basedon employeepays employee_accno employerpays employer_accno);
 
-  $form->helpref("deductions", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "deductions");
 
   $form->{callback} = $callback;
   $callback = $form->escape($form->{callback});
@@ -2602,7 +2602,7 @@ sub search_deduction {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -2735,7 +2735,7 @@ sub prepare_deduction {
 
   for (qw(accounts basedon)) { $form->{"select$_"} = $form->escape($form->{"select$_"},1) }
 
-  $form->helpref("deduction", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "deduction");
 
 }
 
@@ -2759,7 +2759,7 @@ sub deduction_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -2940,7 +2940,7 @@ sub search_wage {
 
   @column_index = qw(description amount accno defer exempt);
 
-  $form->helpref("wages", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "wages");
 
   $form->{callback} = $callback;
   $callback = $form->escape($form->{callback});
@@ -2960,7 +2960,7 @@ sub search_wage {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -3057,7 +3057,7 @@ sub prepare_wage {
     $form->{readonly} = 1 if $myconfig{acs} =~ /Add Wage/;
   }
 
-  $form->helpref("wage", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "wage");
 
 }
 
@@ -3081,7 +3081,7 @@ sub wage_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>

@@ -84,7 +84,7 @@ sub report {
 
   $form->{nextsub} = "generate_$form->{reportcode}";
 
-  $form->helpref("rp_$form->{reportcode}", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "rp_$form->{reportcode}");
 
   %checked = ();
   $form->{accounttype} = "standard" unless $form->{accounttype} =~ /(standard|gifi)/;
@@ -467,7 +467,7 @@ sub report {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1964,7 +1964,7 @@ sub generate_trial_balance {
   SL::RP->trial_balance(\%myconfig, $form);
 
   $form->{title} = $locale->text('Trial Balance') . " / $form->{company}";
-  $form->helpref("trial_balance", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "trial_balance");
   $form->{l_accno} = 1;
 
   &list_accounts;
@@ -2026,7 +2026,7 @@ sub list_accounts {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -2302,7 +2302,7 @@ sub display_all {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -2508,7 +2508,7 @@ sub aging {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$title</a></th>
+    <th class=listtop>$title $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -2922,7 +2922,7 @@ sub reminder {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$title</a></th>
+    <th class=listtop>$title $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -3229,7 +3229,7 @@ sub e_mail_statement {
 |;
   }
 
-  $form->helpref("e_mail_$form->{arap}_statement", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "e_mail_$form->{arap}_statement");
 
   $title = $locale->text('E-mail Statement to')." $form->{$form->{vc}}";
 
@@ -3269,7 +3269,7 @@ sub e_mail_reminder {
 |;
   }
 
-  $form->helpref("e_mail_reminder", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "e_mail_reminder");
 
   $title = $locale->text('E-mail Reminder to')." $form->{$form->{vc}}";
 
@@ -3295,7 +3295,7 @@ sub prepare_e_mail {
 
 <table width=100%>
   <tr class=listtop>
-    <th>$form->{helpref}$title</a></th>
+    <th>$title $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -3883,7 +3883,7 @@ sub generate_tax_report {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$title</a></th>
+    <th class=listtop>$title $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -4306,7 +4306,7 @@ sub list_payments {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$title</a></th>
+    <th class=listtop>$title $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>

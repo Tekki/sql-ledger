@@ -246,7 +246,7 @@ sub prepare_invoice {
 
   $ml = 1;
 
-  $form->helpref($form->{type}, $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, $form->{type});
 
   if ($form->{type} eq 'invoice') {
     $form->{selectformname} = qq|vendor_invoice--|.$locale->text('Invoice')  # 3.2.11: |invoice--|
@@ -492,7 +492,7 @@ sub form_header {
   print qq|
 <table width=100%>
   <tr class=listtop>
-    <th class=listtop>$form->{helpref}$form->{title} / $form->{company}$title</a></th>
+    <th class=listtop>$form->{title} / $form->{company}$title $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>

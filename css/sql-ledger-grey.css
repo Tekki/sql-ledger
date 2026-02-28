@@ -144,7 +144,12 @@ A.listsubtotal:link, A.listsubtotal:active, A.listsubtotal:visited {
 A.listtotal:link, A.listtotal:active, A.listtotal:visited {
   color: white;
   text-decoration: none; }
-.help { font-size: 11px; background-color: #686868; color: black; vertical-align: top; }
+
+a.help {
+  color: white;
+  float: right;
+  padding-right: 3px;
+}
 
 textarea {
   font-family: Verdana, Arial, Helvetica, sans-serif;

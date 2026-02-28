@@ -89,7 +89,7 @@ sub add_batch {
 
 <table width=100%>
   <tr class=listtop>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr valign=top>
@@ -141,7 +141,7 @@ sub payable_batch {
   $form->{script} = "ap.pl";
   $form->{nextsub} = "add";
 
-  $form->helpref("payable_batch", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "payable_batch");
 
   &add_batch;
 
@@ -159,7 +159,7 @@ sub general_ledger_batch {
   $form->{script} = "gl.pl";
   $form->{nextsub} = "add";
 
-  $form->helpref("gl_batch", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "gl_batch");
 
   &add_batch;
 
@@ -176,7 +176,7 @@ sub payment_batch {
   $form->{script} = "cp.pl";
   $form->{nextsub} = "payment";
 
-  $form->helpref("payment_batch", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "payment_batch");
 
   &add_batch;
 
@@ -195,7 +195,7 @@ sub payments_batch {
   $form->{script} = "cp.pl";
   $form->{nextsub} = "payments";
 
-  $form->helpref("payments_batch", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "payments_batch");
 
   &add_batch;
 
@@ -212,7 +212,7 @@ sub payment_reversal_batch {
   $form->{nextsub} = "edit_payment_reversal";
   $form->{batch} = "payment_reversal";
 
-  $form->helpref("payment_reversal", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "payment_reversal");
 
   &add_batch;
 
@@ -240,7 +240,7 @@ sub edit_payment_reversal {
     $form->{title} .= " / $form->{batchdescription}";
   }
 
-  $form->helpref("payment_reversal", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "payment_reversal");
 
   $form->header;
 
@@ -251,7 +251,7 @@ sub edit_payment_reversal {
 
 <table width=100%>
   <tr class=listtop>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -470,9 +470,9 @@ sub search {
   $form->{title} = $locale->text($title{$form->{batch}});
 
   if ($form->{batch}) {
-    $form->helpref("$form->{batch}_batch", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "$form->{batch}_batch");
   } else {
-    $form->helpref("all_batch", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "all_batch");
   }
 
   $form->header;
@@ -485,7 +485,7 @@ sub search {
 <form method="post" name="main" action="$form->{script}" />
 
 <table width=100%>
-  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
+  <tr><th class=listtop>$form->{title} $form->{helpref}</th></tr>
   <tr height="5"></tr>
   <tr>
     <td>
@@ -664,7 +664,7 @@ sub list_batches {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$title</a></th>
+    <th class=listtop>$title $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -937,7 +937,7 @@ sub list_vouchers {
   }
 
 
-  $form->helpref("list_vouchers", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_vouchers");
 
   $form->header;
 
@@ -946,7 +946,7 @@ sub list_vouchers {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>

@@ -145,6 +145,12 @@ vertical-align: top; }
 .listsubtotal { font-size: 10px; background-color: #dad561; color: white; }
 .listtotal { font-size: 10px; background-color: black; color: white; }
 
+a.help {
+  color: white;
+  float: right;
+  padding-right: 3px;
+}
+
 textarea {
         font-family: Verdana, Helvetica, Arial, sans-serif;
         border: 1px solid #888888;

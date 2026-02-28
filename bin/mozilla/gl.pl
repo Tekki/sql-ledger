@@ -55,17 +55,17 @@ sub add {
 
   if ($form->{batch}) {
     $form->{title} = $locale->text('Add General Ledger Voucher');
-    $form->helpref("gl_voucher", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "gl_voucher");
     if ($form->{batchdescription}) {
       $form->{title} .= " / $form->{batchdescription}";
     }
   } else {
     if ($form->{fxadj}) {
       $form->{title} = $locale->text('Add FX Adjustment');
-      $form->helpref("fx_adjustment", $myconfig{countrycode});
+      $form->helpref(\%myconfig, \%slconfig, "fx_adjustment");
     } else {
       $form->{title} = $locale->text('Add General Ledger Transaction');
-      $form->helpref("gl_transaction", $myconfig{countrycode});
+      $form->helpref(\%myconfig, \%slconfig, "gl_transaction");
     }
   }
 
@@ -97,17 +97,17 @@ sub edit {
 
   if ($form->{batch}) {
     $form->{title} = $locale->text('Edit General Ledger Voucher');
-    $form->helpref("gl_voucher", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "gl_voucher");
     if ($form->{batchdescription}) {
       $form->{title} .= " / $form->{batchdescription}";
     }
   } else {
     if ($form->{fxadj}) {
       $form->{title} = $locale->text('Edit FX Adjustment');
-      $form->helpref("fx_adjustment", $myconfig{countrycode});
+      $form->helpref(\%myconfig, \%slconfig, "fx_adjustment");
     } else {
       $form->{title} = $locale->text('Edit General Ledger Transaction');
-      $form->helpref("gl_transaction", $myconfig{countrycode});
+      $form->helpref(\%myconfig, \%slconfig, "gl_transaction");
     }
   }
 
@@ -435,7 +435,7 @@ sub search {
   }
   chop $form->{flds};
 
-  $form->helpref("search_gl_transactions", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "search_gl_transactions");
 
   $focus = $form->{focus} || 'reference';
 
@@ -452,7 +452,7 @@ sub search {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -898,7 +898,7 @@ sub transactions {
     exit;
   }
 
-  $form->helpref("list_gl_transactions", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_gl_transactions");
 
   $form->header;
 
@@ -907,7 +907,7 @@ sub transactions {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1509,7 +1509,7 @@ sub form_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>

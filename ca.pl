@@ -31,16 +31,18 @@ eval {
   %slconfig = Storable::retrieve('config/sql-ledger.bin')->%*;
 };
 
-if ($@) {
-  %slconfig = (
-    userspath     => 'users',
-    spool         => 'spool',
-    templates     => 'templates',
-    images        => 'images',
-    memberfile    => 'users/members',
-    sendmail      => '| /usr/sbin/sendmail -f <%from%> -t',
-    accessfolders => ['templates', 'css'],
-  );
+for my ($key, $value) (
+  userspath     => 'users',
+  spool         => 'spool',
+  templates     => 'templates',
+  images        => 'images',
+  notes         => 'notes',
+  memberfile    => 'users/members',
+  sendmail      => '| /usr/sbin/sendmail -f <%from%> -t',
+  accessfolders => ['templates', 'notes'],
+  )
+{
+  $slconfig{$key} ||= $value;
 }
 
 $form = SL::Form->new($slconfig{userspath});

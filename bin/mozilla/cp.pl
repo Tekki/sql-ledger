@@ -142,7 +142,7 @@ sub payment {
     $form->{vc} = "customer";
     $form->{formname} = "receipt";
 
-    $form->helpref("receipt", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "receipt");
   }
   if ($form->{type} eq 'check') {
     $form->{ARAP} = "AP";
@@ -151,9 +151,9 @@ sub payment {
     $form->{formname} = "check";
 
     if ($form->{batch}) {
-      $form->helpref("payment_voucher", $myconfig{countrycode});
+      $form->helpref(\%myconfig, \%slconfig, "payment_voucher");
     } else {
-      $form->helpref("payment", $myconfig{countrycode});
+      $form->helpref(\%myconfig, \%slconfig, "payment");
     }
   }
 
@@ -349,7 +349,7 @@ sub payments {
     $form->{vc} = "customer";
     $form->{formname} = "receipt";
 
-    $form->helpref("receipts", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "receipts");
   }
   if ($form->{type} eq 'check') {
     $form->{ARAP} = "AP";
@@ -358,9 +358,9 @@ sub payments {
     $form->{formname} = "check";
 
     if ($form->{batch}) {
-      $form->helpref("payments_voucher", $myconfig{countrycode});
+      $form->helpref(\%myconfig, \%slconfig, "payments_voucher");
     } else {
-      $form->helpref("payments", $myconfig{countrycode});
+      $form->helpref(\%myconfig, \%slconfig, "payments");
     }
   }
 
@@ -556,7 +556,7 @@ javascript:window.history.forward(1);
   print qq|
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1548,7 +1548,7 @@ javascript:window.history.forward(1);
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -2395,12 +2395,12 @@ sub payment_register {
     $rglabel = $locale->text('Void Receipt') if $form->{void};
     $rglabel = $locale->text('Reissue Receipt') if $form->{reissue};
     $form->{title} = $locale->text('Deposit Register')." / ".$rglabel;
-    $form->helpref("deposits", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "deposits");
   } else {
     $rglabel = $locale->text('Void Check') if $form->{void};
     $rglabel = $locale->text('Reissue Check') if $form->{reissue};
     $form->{title} = $locale->text('Payment Register')." / ".$rglabel;
-    $form->helpref("checks", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "checks");
   }
 
   $checknumber = qq|
@@ -2483,7 +2483,7 @@ sub payment_register {
 <form method=post name=main action=$form->{script}>
 
 <table width=100%>
-  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
+  <tr><th class=listtop>$form->{title} $form->{helpref}</th></tr>
   <tr height="5"></tr>
   <tr>
     <td>
@@ -2655,7 +2655,7 @@ sub list_checks {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
     <td>$option</td>
@@ -2934,7 +2934,7 @@ sub reissue_payments {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>

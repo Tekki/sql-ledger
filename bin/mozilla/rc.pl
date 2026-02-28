@@ -91,7 +91,7 @@ sub reconciliation {
 
   $form->{fx_transaction} = "checked" unless exists $form->{fx_transaction};
 
-  $form->helpref("reconciliation", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "reconciliation");
 
   $focus = $form->{focus} || 'accno';
 
@@ -106,7 +106,7 @@ sub reconciliation {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -223,7 +223,7 @@ sub display_form {
 
   $form->{title} = "$form->{accno}--$form->{account} / $form->{company}";
 
-  $form->helpref("rec_list", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "rec_list");
 
   $form->header;
 
@@ -236,7 +236,7 @@ sub display_form {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>

@@ -52,7 +52,7 @@ sub import {
   $msg = "Import $title{$form->{type}}";
   $form->{title} = $locale->text($msg);
 
-  $form->helpref("import_$form->{type}", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "import_$form->{type}");
 
   $focus = $form->{focus} || $form->{type} eq 'payment' ? 'paymentaccount' : 'data';
 
@@ -126,7 +126,7 @@ sub import {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -198,7 +198,7 @@ sub export {
   $msg = "Export $title{$form->{type}}";
   $form->{title} = $locale->text($msg);
 
-  $form->helpref("export_$form->{type}", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "export_$form->{type}");
 
   $form->{nextsub} = "ex_$form->{type}";
   $form->{action} = "continue";
@@ -312,7 +312,7 @@ sub export_screen_vc {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr valign=top>
@@ -587,7 +587,7 @@ sub export_screen_payment {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -747,7 +747,7 @@ sub im_sales_invoice {
 
   $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
 
-  $form->helpref("import_$form->{type}", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "import_$form->{type}");
 
   $form->header;
 
@@ -760,7 +760,7 @@ sub im_sales_invoice {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -935,7 +935,7 @@ sub im_order {
 
   $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
 
-  $form->helpref("import_$form->{type}", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "import_$form->{type}");
 
   $form->header;
 
@@ -948,7 +948,7 @@ sub im_order {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1098,7 +1098,7 @@ sub im_coa {
 
   SL::IM->prepare_import_data(\%myconfig, $form);
 
-  $form->helpref("import_$form->{type}", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "import_$form->{type}");
 
   $form->header;
 
@@ -1111,7 +1111,7 @@ sub im_coa {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1243,7 +1243,7 @@ sub im_gl {
     $sameitem = $form->{"reference_$i"};
   }
 
-  $form->helpref("import_$form->{type}", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "import_$form->{type}");
 
   $form->header;
 
@@ -1256,7 +1256,7 @@ sub im_gl {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1835,7 +1835,7 @@ sub im_csv_payment {
 
   $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
 
-  $form->helpref("import_$form->{type}", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "import_$form->{type}");
 
   $form->header;
 
@@ -1848,7 +1848,7 @@ sub im_csv_payment {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -2140,7 +2140,7 @@ sub im_vc {
 
   $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
 
-  $form->helpref("import_$form->{type}", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "import_$form->{type}");
 
   $form->header;
 
@@ -2153,7 +2153,7 @@ sub im_vc {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -2309,7 +2309,7 @@ sub im_item {
 
   $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
 
-  $form->helpref("import_$form->{type}", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "import_$form->{type}");
 
   $form->header;
 
@@ -2322,7 +2322,7 @@ sub im_item {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -2442,7 +2442,7 @@ sub im_partsgroup {
 
   $column_data{ndx} = qq|<input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();">|;
 
-  $form->helpref("import_$form->{type}", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "import_$form->{type}");
 
   $form->header;
 
@@ -2455,7 +2455,7 @@ sub im_partsgroup {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -2561,7 +2561,7 @@ sub import_qrbill {
     $checked{$_} = $form->{$_} ? ' checked' : '';
   }
 
-  $form->helpref("import_$form->{type}", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "import_$form->{type}");
 
   $focus = $form->{focus} || 'data';
 
@@ -2576,7 +2576,7 @@ sub import_qrbill {
 
 <table width="100%">
   <tr>
-    <th class="listtop">$form->{helpref}$form->{title}</a></th>
+    <th class="listtop">$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -2826,7 +2826,7 @@ sub ex_vc {
 
 <table>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -3075,7 +3075,7 @@ sub ex_payment {
 
   $column_data{ndx} = qq|<input name="allbox" type="checkbox" class="checkbox" value="1" accesskey="A" checked onChange="CheckAll();">|;
 
-  $form->helpref("export_$form->{type}", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "export_$form->{type}");
 
   $form->header;
 
@@ -3093,7 +3093,7 @@ sub ex_payment {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>

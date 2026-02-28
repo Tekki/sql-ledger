@@ -24,7 +24,8 @@ script must be run to update the binary files.
 To set the global configuration, create a file named `config/sql-ledger.yml`. A
 detailed example is provided in `config/sql-ledger-sample.yml`. The
 configuration is exposed to the program via the global variable `%slconfig`. If
-the file is missing, the variable contains the following defaults:
+the file itself or any of the following keys is missing, their values are set
+to:
 
 ```perl
   %slconfig = (
@@ -32,9 +33,10 @@ the file is missing, the variable contains the following defaults:
     templates     => 'templates',
     spool         => 'spool',
     images        => 'images',
+    notes         => 'notes',
     memberfile    => 'users/members',
     sendmail      => '| /usr/sbin/sendmail -f <%from%> -t',
-    accessfolders => ['templates', 'css'],
+    accessfolders => ['templates', 'notes'],
   );
 ```
 

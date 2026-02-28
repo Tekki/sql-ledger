@@ -61,10 +61,11 @@ The following directories need to be preserved:
 
 | Directory          | Content                     |
 |--------------------|-----------------------------|
-| config             | global system configuration |
-| users              | user configuration          |
-| templates          | printing templates          |
-| images             | uploaded images             |
 | bin/mozilla/custom | custom scripts and menus    |
+| config             | global system configuration |
+| images             | uploaded images             |
+| notes              | helping notes               |
+| templates          | printing templates          |
+| users              | user configuration          |
 
 If you use the queue for more than transient storage, back up `spool` as well.

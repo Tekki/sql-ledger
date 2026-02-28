@@ -1485,6 +1485,7 @@ sub update_recurring ($, $myconfig, $form, $id) {
 
 }
 
+
 sub check_access ($, $form, $folders, $errormessage) {
 
   $errormessage ||= 'Access Denied!';
@@ -1498,20 +1499,29 @@ sub check_access ($, $form, $folders, $errormessage) {
   $file =~ s|\.+/||g;
   $file =~ s|//|/|g;
 
-  $form->error("$file: $errormessage") unless $file =~ /^$folderstring/ && -f $file;
+  unless ($file =~ /^$folderstring/ && (-f $file || $form->{allow_inexistant})) {
+    $form->error("$file: $errormessage");
+  }
   $form->{file} = $file;
 }
+
 
 sub load_template ($, $form, $accessfolders, $errmsg) {
 
   SL::AM->check_access($form, $accessfolders, $errmsg);
-  open my $template, '<:encoding(UTF-8)', $form->{file} or $form->error("$form->{file} : $!");
 
-  while (<$template>) {
-    $form->{body} .= $_;
+  if (!-f $form->{file} && $form->{allow_inexistant}) {
+    $form->{body} = '';
+  } else {
+
+    open my $template, '<:encoding(UTF-8)', $form->{file} or $form->error("$form->{file} : $!");
+
+    while (<$template>) {
+      $form->{body} .= $_;
+    }
+
+    close $template;
   }
-
-  close $template;
 
 }
 
@@ -1528,20 +1538,25 @@ sub save_template ($, $form, $accessfolders, $errmsg) {
       $dir .= "$_\/";
       if (! -d $dir) {
         umask(002);
-        mkdir "$dir", oct("771");
+        mkdir "$dir", oct("771") or $form->error("$dir : $!");
       }
     }
   }
 
   SL::AM->check_access($form, $accessfolders, $errmsg);
-  open my $template, '>:encoding(UTF-8)', $form->{file} or $form->error("$form->{file} : $!");
 
-  # strip
-  $form->{body} =~ s/\r//g;
-  chomp $form->{body};
-  print $template $form->{body};
+  if (!$form->{body} && $form->{allow_inexistant}) {
+    unlink $form->{file};
+  } else {
 
-  close $template;
+    # strip
+    $form->{body} =~ s/\r//g;
+    chomp $form->{body};
+
+    open my $template, '>:encoding(UTF-8)', $form->{file} or $form->error("$form->{file} : $!");
+    print $template $form->{body};
+    close $template;
+  }
 
 }
 

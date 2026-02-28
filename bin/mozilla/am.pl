@@ -117,7 +117,7 @@ sub account_header {
 
   $form->{type} = "account";
 
-  $form->helpref("account", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "account");
 
   $focus = $form->{focus} || 'accno';
 
@@ -137,7 +137,7 @@ sub account_header {
   print qq|
 <table border=0 width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr valign=top>
@@ -361,7 +361,7 @@ sub list_account {
   $column_data{contra} = qq|<th width=1% class=listtop>|.$locale->text('Contra').qq|</a></th>|;
   $column_data{closed} = qq|<th width=1% class=listtop>|.$locale->text('Closed').qq|</a></th>|;
 
-  $form->helpref("list_account", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_account");
 
   $form->header;
 
@@ -372,7 +372,7 @@ sub list_account {
 
 <table width=100%>
   <tr>
-    <th class=listtop colspan=$colspan>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop colspan=$colspan>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height=5></tr>
   <tr class=listheading>
@@ -474,7 +474,7 @@ sub list_gifi {
   $column_data{accno} = qq|<th class=listheading>|.$locale->text('GIFI').qq|</a></th>|;
   $column_data{description} = qq|<th class=listheading>|.$locale->text('Description').qq|</a></th>|;
 
-  $form->helpref("list_gifi", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_gifi");
 
   $form->header;
 
@@ -485,7 +485,7 @@ sub list_gifi {
 
 <table width=100%>
   <tr>
-    <th class=listtop colspan=$colspan>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop colspan=$colspan>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr class=listheading>
@@ -569,7 +569,7 @@ sub gifi_header {
 
   for (qw(accno description)) { $form->{$_} = $form->quote($form->{$_}) }
 
-  $form->helpref("gifi", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "gifi");
 
   $form->header;
 
@@ -583,7 +583,7 @@ sub gifi_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -726,7 +726,7 @@ sub list_department {
   $column_data{up} = qq|<th class=listheading>&nbsp;</th>|;
   $column_data{down} = qq|<th class=listheading>&nbsp;</th>|;
 
-  $form->helpref("list_department", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_department");
 
   $form->header;
 
@@ -735,7 +735,7 @@ sub list_department {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -831,7 +831,7 @@ sub department_header {
   $checked{C} = "checked" if $form->{role} eq "C";
   $checked{P} = "checked" if $form->{role} eq "P";
 
-  $form->helpref("department", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "department");
 
   $form->header;
 
@@ -845,7 +845,7 @@ sub department_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop colspan=2>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop colspan=2>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -931,7 +931,7 @@ sub list_business {
   $column_data{up} = qq|<th class=listheading>&nbsp;</th>|;
   $column_data{down} = qq|<th class=listheading>&nbsp;</th>|;
 
-  $form->helpref("list_business", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_business");
 
   $form->header;
 
@@ -940,7 +940,7 @@ sub list_business {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1020,7 +1020,7 @@ sub business_header {
   $form->{description} = $form->quote($form->{description});
   $form->{discount} = $form->format_amount(\%myconfig, $form->{discount} * 100);
 
-  $form->helpref("business", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "business");
 
   $form->header;
 
@@ -1034,7 +1034,7 @@ sub business_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1130,7 +1130,7 @@ sub list_paymentmethod {
   $column_data{up} = qq|<th class=listheading>&nbsp;</th>|;
   $column_data{down} = qq|<th class=listheading>&nbsp;</th>|;
 
-  $form->helpref("list_paymentmethod", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_paymentmethod");
 
   $form->{title} .= " / $form->{company}";
 
@@ -1141,7 +1141,7 @@ sub list_paymentmethod {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1226,7 +1226,7 @@ sub paymentmethod_header {
 
   $roundchange{$form->{roundchange}} = "checked";
 
-  $form->helpref("paymentmethod", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "paymentmethod");
 
   $form->header;
 
@@ -1240,7 +1240,7 @@ sub paymentmethod_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1346,7 +1346,7 @@ sub list_sic {
   $column_data{code} = qq|<th><a class=listheading href=$href&sort=code>|.$locale->text('Code').qq|</a></th>|;
   $column_data{description} = qq|<th><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</a></th>|;
 
-  $form->helpref("list_sic", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_sic");
 
   $form->{title} .= " / $form->{company}";
 
@@ -1357,7 +1357,7 @@ sub list_sic {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1444,7 +1444,7 @@ sub sic_header {
   my %checked;
   $checked{H} = ($form->{sictype} eq 'H') ? "checked" : "";
 
-  $form->helpref("sic", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "sic");
 
   $form->header;
 
@@ -1458,7 +1458,7 @@ sub sic_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop colspan=2>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop colspan=2>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1551,7 +1551,7 @@ sub list_language {
   $column_data{code} = qq|<th><a class=listheading href=$href&sort=code>|.$locale->text('Code').qq|</a></th>|;
   $column_data{description} = qq|<th><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</a></th>|;
 
-  $form->helpref("list_language", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_language");
 
   $form->header;
 
@@ -1560,7 +1560,7 @@ sub list_language {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1634,7 +1634,7 @@ sub language_header {
 
   for (qw(code description)) { $form->{$_} = $form->quote($form->{$_}) }
 
-  $form->helpref("language", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "language");
 
   $form->header;
 
@@ -1648,7 +1648,7 @@ sub language_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop colspan=2>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop colspan=2>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1811,7 +1811,7 @@ sub list_mimetypes {
   $column_data{extension} = qq|<th><a class=listheading href=$href&sort=extension>|.$locale->text('Extension').qq|</a></th>|;
   $column_data{contenttype} = qq|<th><a class=listheading href=$href&sort=contenttype>|.$locale->text('Content-Type').qq|</a></th>|;
 
-  $form->helpref("list_mimetypes", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_mimetypes");
 
   $form->header;
 
@@ -1820,7 +1820,7 @@ sub list_mimetypes {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1912,7 +1912,7 @@ sub add_mimetype {
 
 sub mimetype_header {
 
-  $form->helpref("mimetype", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "mimetype");
 
   $form->header;
 
@@ -1925,7 +1925,7 @@ sub mimetype_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop colspan=2>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop colspan=2>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -2025,7 +2025,7 @@ sub list_templates {
   $column_data{code} = qq|<th><a class=listheading href=$href&sort=code>|.$locale->text('Code').qq|</a></th>|;
   $column_data{description} = qq|<th><a class=listheading href=$href&sort=description>|.$locale->text('Description').qq|</a></th>|;
 
-  $form->helpref("list_templates", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_templates");
 
   $form->header;
 
@@ -2034,7 +2034,7 @@ sub list_templates {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>|;
 
@@ -2110,10 +2110,19 @@ sub display_form {
   $form->{callback} = qq|$form->{script}?action=display_form&file=$form->{file}&path=$form->{path}&login=$form->{login}| unless $form->{callback};
   my $callback = $form->escape($form->{callback});
 
+  my ($helpref, $allow_empty);
+
   $form->{file} =~ s/^(.:)*?\/|\.\.\/|\.\///g;
   $form->{file} =~ s/^\/*//g;
   $form->{file} =~ s/$slconfig{userspath}//;
   $form->{file} =~ s/$slconfig{memberfile}//;
+
+  if ($form->{file} =~ /^helpref/) {
+    $form->{file} =~ s|^helpref|$slconfig{notes}/$myconfig{dbname}|;
+    $form->{file} .= '.md';
+    $helpref = 1;
+    $form->{allow_inexistant} = 1;
+  }
 
   @f = split /\//, $form->{file};
   $file = pop @f;
@@ -2150,6 +2159,16 @@ sub display_form {
       }
       $str = substr $str, $pos;
     }
+  } elsif ($form->{file} =~ /\.md$/) {
+    $form->{body} =~ s~^(#+) (.*)$~sprintf '<h%1$s>%2$s</h%1$s>', length($1), $2~gem;
+    $form->{body} =~ s~\*\*([^*]+)\*\*~<b>$1</b>~g;
+    $form->{body} =~ s~\*([^*]+)\*~<i>$1</i>~g;
+    $form->{body} =~ s~\[([^]]+)\]\((https?://[^)]+)\)~<a href="$2" target="_blank">$1</a>~g;
+
+    if ($helpref) {
+      $form->{body}
+        =~ s~\[([^]]+)\]\((\w+)\)~<a href="am.pl?action=display_form&file=helpref/$2&path=$form->{path}&login=$form->{login}">$1</a>~g;
+    }
   }
 
   $form->{body} =~ s/<%(.*?)%>/$1/g;
@@ -2160,11 +2179,8 @@ sub display_form {
 
   $form->{edit} = 1;
 
-  if ($form->{file} =~ /\/help\//) {
-    $form->{edit} = $form->{admin};
-  }
-
-  $form->helpref("display_form", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "display_form");
+  my $edit_label = $locale->text('Edit');
 
   $form->header;
 
@@ -2173,7 +2189,7 @@ sub display_form {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
 </table>
 
@@ -2189,17 +2205,19 @@ $form->{body}
 
   $form->{type} = "template";
 
-  $form->hide_form(qw(file type path login callback));
+  $form->hide_form(qw|file type allow_inexistant path login callback|);
 
   print qq|
 <hr size="3" noshade>
 <br>|;
 
-  if (-f "$templates/$myconfig{templates}/managed.LCK") {
+  if ($form->{file} =~ /^$slconfig{templates}/
+    && -f "$slconfig{templates}/$myconfig{templates}/managed.LCK")
+  {
     print $locale->text('Templates managed externally');
-  } else {
+  } elsif ($form->{edit}) {
     print qq|
-<input name=action type=submit class=submit value="|.$locale->text('Edit').qq|">| if $form->{edit};
+<input name="action" type="submit" class="submit" value="$edit_label" accesskey="E" title="$edit_label [E]">|;
   }
 
 
@@ -2231,20 +2249,20 @@ sub edit_template {
 
   $form->{callback} = "$form->{script}?action=display_form&file=$form->{file}&path=$form->{path}&login=$form->{login}" unless $form->{callback};
 
-  $form->helpref("edit_form", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "edit_form");
+  $form->{type} = "template";
+  my $save_label = $locale->text('Save');
 
   $form->header;
 
-  $form->{type} = "template";
-
   print qq|
-<body>
+<body onload="document.main.body.focus()">
 
-<form method=post action=$form->{script}>
+<form method="post" name="main" action="$form->{script}">
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -2259,10 +2277,10 @@ $form->{body}</textarea>
 
 <hr size="3" noshade>
 <br>
-<input type=submit class=submit name=action value="|.$locale->text('Save').qq|">
+<input type="submit" class="submit" name="action" value="$save_label" accesskey="S" title="$save_label [S]">
 |;
 
-  $form->hide_form(qw(file type path login callback));
+  $form->hide_form(qw|file type allow_inexistant path login callback|);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -2314,7 +2332,7 @@ sub display_taxes {
 
   $form->{type} = "taxes";
 
-  $form->helpref("display_taxes", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "display_taxes");
 
   $form->header;
 
@@ -2326,7 +2344,7 @@ sub display_taxes {
 <form method="post" name="main" action="$form->{script}">
 
 <table width=100%>
-  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
+  <tr><th class=listtop>$form->{title} $form->{helpref}</th></tr>
   <tr>
     <td>
       <table>
@@ -2487,7 +2505,7 @@ sub defaults {
 
   $form->{title} = $locale->text('System Defaults');
 
-  $form->helpref("system_defaults", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "system_defaults");
 
   $form->header;
 
@@ -2499,7 +2517,7 @@ sub defaults {
 <input type=hidden name=type value=defaults>
 
 <table width=100%>
-  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
+  <tr><th class=listtop>$form->{title} $form->{helpref}</th></tr>
   <tr height="5"></tr>
   <tr>
     <td>
@@ -2832,7 +2850,7 @@ sub workstations {
   $form->{numprinters} ||= 1;
   $form->{numprinters_1} ||= 1;
 
-  $form->helpref("workstations", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "workstations");
 
   $form->header;
 
@@ -2844,7 +2862,7 @@ sub workstations {
 <input type=hidden name=type value=workstations>
 
 <table width=100%>
-  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
+  <tr><th class=listtop>$form->{title} $form->{helpref}</th></tr>
   <tr height="5"></tr>
   <tr>
     <th class=listheading>|.$locale->text('Default').qq|</th>
@@ -3163,7 +3181,7 @@ pdf--PDF|;
 
   $form->{title} = $locale->text('Edit Preferences');
 
-  $form->helpref("user_preferences", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "user_preferences");
 
   $form->{type} = "preferences";
 
@@ -3178,7 +3196,7 @@ pdf--PDF|;
 <form method="post" name="main" action="$form->{script}">
 
 <table width=100%>
-  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
+  <tr><th class=listtop>$form->{title} $form->{helpref}</th></tr>
   <tr>
     <td>
       <table width=100%>
@@ -3462,7 +3480,7 @@ sub restore {
 
   $form->{title} = $locale->text('Restore');
 
-  $form->helpref("restore", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "restore");
 
   $form->header;
 
@@ -3478,7 +3496,7 @@ print qq|
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -3599,7 +3617,7 @@ $locale->text('will be restored with data from').qq| <b>$form->{restoredbname}</
 
   $form->{title} = $locale->text('Restore');
 
-  $form->helpref("restore", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "restore");
 
   $form->header;
 
@@ -3609,7 +3627,7 @@ print qq|
 <form method=post action=$form->{script}>
 
 <table width=100%>
-  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
+  <tr><th class=listtop>$form->{title} $form->{helpref}</th></tr>
   <tr height="5"></tr>
   $dbname
   $dbversion
@@ -3697,7 +3715,7 @@ sub audit_control {
   my %checked;
   for (qw(revtrans audittrail)) { $checked{$_} = "checked" if $form->{$_} }
 
-  $form->helpref("audit_control", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "audit_control");
 
   $form->header;
 
@@ -3709,7 +3727,7 @@ sub audit_control {
 <form method="post" name="main" action="$form->{script}">
 
 <table width=100%>
-  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
+  <tr><th class=listtop>$form->{title} $form->{helpref}</th></tr>
   <tr height="5"></tr>
   <tr>
     <td>
@@ -3829,7 +3847,7 @@ sub audit_log {
 
   $form->{title} = $locale->text('Audit Log') . " / $form->{company}";
 
-  $form->helpref("audit_log", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "audit_log");
 
   $form->header;
 
@@ -3841,7 +3859,7 @@ sub audit_log {
 <form method="post" name="main" action="$form->{script}">
 
 <table width=100%>
-  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
+  <tr><th class=listtop>$form->{title} $form->{helpref}</th></tr>
   <tr height="5"></tr>
   <tr>
     <td>
@@ -3888,7 +3906,7 @@ sub list_audit_log {
 
   SL::AM->audit_log(\%myconfig, $form);
 
-  $form->helpref("audit_trail", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "audit_trail");
 
   # construct href
   $href = qq|$form->{script}?action=list_audit_log|;
@@ -3957,7 +3975,7 @@ sub list_audit_log {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -4120,7 +4138,7 @@ sub list_warehouse {
   $column_data{up} = qq|<th width=1% class=listheading>&nbsp;</th>|;
   $column_data{down} = qq|<th width=1% class=listheading>&nbsp;</th>|;
 
-  $form->helpref("list_warehouse", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_warehouse");
 
   $form->header;
 
@@ -4129,7 +4147,7 @@ sub list_warehouse {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -4215,7 +4233,7 @@ sub warehouse_header {
     $description = qq|<input name=description size=60 value="|.$form->quote($form->{description}).qq|">|;
   }
 
-  $form->helpref("warehouse", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "warehouse");
 
   $form->header;
 
@@ -4229,7 +4247,7 @@ sub warehouse_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop colspan=2>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop colspan=2>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -4314,7 +4332,7 @@ sub yearend {
 
   $form->{title} = $locale->text('Yearend') . " / $form->{company}";
 
-  $form->helpref("yearend", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "yearend");
 
   $form->header;
 
@@ -4327,7 +4345,7 @@ sub yearend {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -4577,7 +4595,7 @@ sub recurring_transactions {
   }
   $callback = $form->escape("$callback&sort=$form->{sort}");
 
-  $form->helpref("recurring_transactions", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "recurring_transactions");
 
   # create the logo screen
   $form->header;
@@ -4593,7 +4611,7 @@ print qq|
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -5262,7 +5280,7 @@ sub remove_locks {
 sub lock_dataset {
 
   $form->{title} = $locale->text('Lock Dataset');
-  $form->helpref("lock_dataset", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "lock_dataset");
 
   $form->error($locale->text('Must be logged in as admin!')) unless $form->{admin};
 
@@ -5284,7 +5302,7 @@ print qq|
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -5401,7 +5419,7 @@ sub bank_accounts {
   $column_header{dcn} = qq|<th class=listheading>|.$locale->text('DCN').qq|</th>|;
   $column_header{closed} = qq|<th class=listheading>|.$locale->text('Closed').qq|</th>|;
 
-  $form->helpref("bank_accounts", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "bank_accounts");
 
   $form->header;
 
@@ -5410,7 +5428,7 @@ sub bank_accounts {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -5477,7 +5495,7 @@ sub bank_header {
 
   $form->{title} = $locale->text('Bank Account Details') . " / $form->{company}";
 
-  $form->helpref("bank", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "bank");
 
   $checked{closed} = ($form->{closed}) ? "checked" : "";
 
@@ -5490,7 +5508,7 @@ sub bank_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
 
   <tr>
@@ -5674,7 +5692,7 @@ sub search_exchangerates {
 |;
   }
 
-  $form->helpref("search_exchangerates", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "search_exchangerates");
 
   $focus = $form->{focus} || 'currency';
 
@@ -5689,7 +5707,7 @@ sub search_exchangerates {
 
 
 <table width=100%>
-  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
+  <tr><th class=listtop>$form->{title} $form->{helpref}</th></tr>
   <tr height="5"></tr>
   <tr>
     <td>
@@ -5784,7 +5802,7 @@ sub list_exchangerates {
   $column_header{transdate} = "<th><a class=listheading href=$href&sort=$form->{sort}>".$locale->text('Date')."</a></th>";
 
 
-  $form->helpref("list_exchangerates", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_exchangerates");
 
   $form->header;
 
@@ -5793,7 +5811,7 @@ sub list_exchangerates {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -5950,7 +5968,7 @@ sub add_exchange_rate {
 
 sub exchangerate_header {
 
-  $form->helpref("exchangerates", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "exchangerates");
 
   $form->header;
 
@@ -5961,7 +5979,7 @@ sub exchangerate_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -6038,7 +6056,7 @@ sub list_currencies {
   $column_data{up} = qq|<th class=listheading>&nbsp;</th>|;
   $column_data{down} = qq|<th class=listheading>&nbsp;</th>|;
 
-  $form->helpref("list_currencies", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_currencies");
 
   $form->header;
 
@@ -6047,7 +6065,7 @@ sub list_currencies {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -6166,7 +6184,7 @@ sub move {
 
 sub currency_header {
 
-  $form->helpref("currency", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "currency");
 
   $form->header;
 
@@ -6179,7 +6197,7 @@ sub currency_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop colspan=2>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop colspan=2>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -6246,7 +6264,7 @@ sub list_roles {
 
   for (qw(up down)) { $column_data{$_} = qq|<th class=listheading>&nbsp;</th>| }
 
-  $form->helpref("list_roles", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_roles");
 
   $form->header;
 
@@ -6255,7 +6273,7 @@ sub list_roles {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -6403,7 +6421,7 @@ sub role_header {
 
   $form->{type} = "role";
 
-  $form->helpref("roles", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "roles");
 
   $locale = SL::Locale->new("$myconfig{countrycode}", "menu");
 
@@ -6418,7 +6436,7 @@ sub role_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop colspan=2>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop colspan=2>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -6565,6 +6583,8 @@ sub monitor {
 
   $form->error($locale->text('Must be logged in as admin!')) unless $form->{admin};
 
+  $form->helpref(\%myconfig, \%slconfig, 'database_monitor');
+
   $form->{title} = $locale->text('Database Monitor');
 
   $form->{reportcode} = 'monitor';
@@ -6589,7 +6609,7 @@ sub monitor {
   print qq|
 <body>
 
-<h2 class=confirm>$form->{title}</h2>
+<h2 class=confirm>$form->{title} $form->{helpref}</h2>
 
 <form method=post action=$form->{script}>
 
@@ -6700,7 +6720,7 @@ sub save_sql_command {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -6789,6 +6809,8 @@ sub list_snapshots {
   $column_header{timestamp} = qq|<th class="listheading">| . $locale->text('Date') . qq|</th>|;
   $column_header{login}    = qq|<th class="listheading">| . $locale->text('Login') . qq|</th>|;
 
+  $form->helpref(\%myconfig, \%slconfig, 'snapshots');
+
   $form->header;
 
   &check_all('allbox', 'ndx_');
@@ -6800,7 +6822,7 @@ sub list_snapshots {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>

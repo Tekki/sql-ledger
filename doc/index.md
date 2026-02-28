@@ -36,6 +36,7 @@
   - [Restore](backup.md#restore)
 
 - [User Interface](user_interface.md#user-interface)
+  - [Helping Notes](user_interface.md#helping-notes)
   - [Keyboard Shortcuts](user_interface.md#keyboard-shortcuts)
     - [Access Keys](user_interface.md#access-keys)
     - [Quick Date Entry](user_interface.md#quick-date-entry)

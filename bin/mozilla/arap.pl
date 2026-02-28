@@ -149,7 +149,7 @@ sub select_name {
   $column_data{name} = qq|<th class=listheading>|.$locale->text($label).qq|</th>|;
   $column_data{address} = qq|<th class=listheading colspan=5>|.$locale->text('Address').qq|</th>|;
 
-  $form->helpref("list_names", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_names");
 
   # list items with radio button on a form
   $form->header;
@@ -163,7 +163,7 @@ sub select_name {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$title</a></th>
+    <th class=listtop>$title $form->{helpref}</th>
   </tr>
   <tr space=5></tr>
   <tr>
@@ -413,7 +413,7 @@ sub select_project {
   $column_data{projectnumber} = qq|<th>|.$locale->text('Number').qq|</th>|;
   $column_data{description} = qq|<th>|.$locale->text('Description').qq|</th>|;
 
-  $form->helpref("select_project", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "select_project");
 
   # list items with radio button on a form
   $form->header;
@@ -429,7 +429,7 @@ sub select_project {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$title</a></th>
+    <th class=listtop>$title $form->{helpref}</th>
   </tr>
   <tr space=5></tr>
   <tr>
@@ -619,7 +619,7 @@ sub schedule {
   if (exists $form->{ARAP}) {
     $type = lc $form->{ARAP} . "_$form->{type}";
   }
-  $form->helpref("recurring_$type", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "recurring_$type");
 
   $form->{recurringstartdate} ||= $form->{transdate};
   $recurringpayment = "checked" if $form->{recurringpayment};
@@ -830,7 +830,7 @@ pdf--|.$locale->text('PDF');
 
 <table width=100%>
   <tr class=listtop>
-    <th class=listtop>$form->{helpref}$title</a></th>
+    <th class=listtop>$title $form->{helpref}</th>
   </tr>
   <tr space=5></tr>
   <tr>

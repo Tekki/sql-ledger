@@ -136,7 +136,7 @@ sub new ($type, $userspath = '') {
 
   $self->{version}    = '4.0.7_01';
   $self->{dbversion}  = '4.0.0';
-  $self->{cssversion} = 53;
+  $self->{cssversion} = 407;
 
   $self->{favicon} = 'favicon.ico';
 
@@ -300,15 +300,12 @@ sub unquote ($self, $str //= '') {
 }
 
 
-sub helpref ($self, $file, $countrycode = '') {
+sub helpref ($self, $myconfig, $slconfig, $file) {
 
-return; # disable for now
+  my $symbol = -f "$slconfig->{notes}/$myconfig->{dbname}/$file.md" ? '&#9701;' : '&#9721;';
 
-  if ($countrycode) {
-    $self->{helpref} = qq|<a href=am.pl?action=display_form&file=doc/help/$countrycode/$file&path=$self->{path}&login=$self->{login} target=_blank class=help>|;
-  } else {
-    $self->{helpref} = qq|<a href=am.pl?action=display_form&file=doc/help/$file&path=$self->{path}&login=$self->{login} target=_blank class=help>|;
-  }
+  $self->{helpref}
+    = qq|<a href=am.pl?action=display_form&file=helpref/$file&path=$self->{path}&login=$self->{login} target=_blank class=help accesskey=? title=[?]>$symbol</a>|;
 
 }
 
@@ -5735,7 +5732,7 @@ L<SL::Form> implements the following methods:
 
 =head2 helpref
 
-  $form->helpref($file, $countrycode);
+  $form->helpref($myconfig, $slconfig, $file);
 
 =head2 hide_form
 

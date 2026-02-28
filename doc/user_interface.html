@@ -22,6 +22,22 @@
 </header>
 <p><a href="index.html">SQL-Ledger Documentation</a> ▶ User Interface</p>
 <h1 id="user-interface">User Interface</h1>
+<h2 id="helping-notes">Helping Notes</h2>
+<p>A click on the triangle right of a page title opens a helping note.
+This note is related to the page, not to the currently displayed data
+and is accessible for all users of a company. It can contain hints or
+instructions for the employees with login to the system.</p>
+<p>A filled triangle (◥) indicates an existing note, if it is just
+outlined (◹), it means that no note has been added yet. The content is
+written in plain text, optionally decorated with simple markdown.</p>
+<pre><code># Big Title
+## Smaller Title
+This word is *italic*. And this one is **bold**.
+The repo for this code on [GitHub](https://github.com/Tekki/sql-ledger).
+See the note for [adding a customer](customer).</code></pre>
+<p>The access to the directory used for the notes has to be granted in
+the <a href="configuration.html#global-configuration">global
+configuration</a>.</p>
 <h2 id="keyboard-shortcuts">Keyboard Shortcuts</h2>
 <p>Advanced users try to avoid to switch from keyboard to mouse, they do
 most of their work with the keyboard only. For them, many shortcuts are
@@ -54,26 +70,30 @@ browser and the operating system not all combinations are available.</p>
 </thead>
 <tbody>
 <tr class="odd">
+<td>?</td>
+<td>Helping Note</td>
+</tr>
+<tr class="even">
 <td>U</td>
 <td>Update</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>C</td>
 <td>Continue</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>S</td>
 <td>Save</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>O</td>
 <td>Post</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>V</td>
 <td>Preview</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>P</td>
 <td>Print</td>
 </tr>
@@ -129,8 +149,8 @@ browser and the operating system not all combinations are available.</p>
 <p><code>/ * - + .</code> are the special characters on the numeric
 keypad. The shortcuts for customer or vendor, date, description, and
 notes are available in the frontend of the reports, too. The keys
-<code>1 … 9</code> open the document at the specified position of a
-report.</p>
+<code>1 … 9</code> and <code>0</code> open the document at the specified
+position of a report.</p>
 <h3 id="quick-date-entry">Quick Date Entry</h3>
 <p>It is not necessary to enter full dates, they can be abbreviated and
 will be expanded as soon as the cursor jumps out of the date field, for

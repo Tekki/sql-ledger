@@ -13,9 +13,9 @@ chdir "$FindBin::Bin/../..";
 my @config_params = (
   'accessfolders', 'admin_totp_activated', 'charset',       'dvipdf',
   'gpg',           'gzip',                 'helpful_login', 'images',
-  'language',      'latex',                'memberfile',    'pdftk',
-  'sendmail',      'spool',                'templates',     'userspath',
-  'xelatex',
+  'language',      'latex',                'memberfile',    'notes',
+  'pdftk',         'sendmail',             'stylesheet',    'spool',
+  'templates',     'userspath',            'xelatex',
 );
 
 my $sl_bin = 'config/sql-ledger.bin';

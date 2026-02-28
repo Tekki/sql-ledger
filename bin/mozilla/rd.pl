@@ -209,7 +209,7 @@ sub upload {
 
   $form->{title} = $locale->text('Upload Document');
 
-  $form->helpref("cms", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "cms");
 
   $form->header;
 
@@ -226,7 +226,7 @@ sub upload {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -329,7 +329,7 @@ sub display_documents {
 
   $form->{title} = $locale->text('Reference Documents');
 
-  $form->helpref("cms", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "cms");
 
   if ($form->{id} eq '-') {
     $form->header;
@@ -401,7 +401,7 @@ sub search_documents {
 
   $form->{nextsub} = "list_documents";
 
-  $form->helpref("cms", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "cms");
 
   %m = &formnames;
   $selectformname = "\n";
@@ -427,7 +427,7 @@ sub search_documents {
 
 
 <table width=100%>
-  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
+  <tr><th class=listtop>$form->{title} $form->{helpref}</th></tr>
   <tr height="5"></tr>
   <tr>
     <td>
@@ -569,7 +569,7 @@ sub list_documents {
 
   unshift @column_index, "delete";
 
-  $form->helpref("cms", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "cms");
 
   $form->header;
 
@@ -582,7 +582,7 @@ sub list_documents {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -697,7 +697,7 @@ sub edit {
   SL::RD->get_document(\%myconfig, $form);
 
   $form->{title} = $locale->text('Edit Reference Document');
-  $form->helpref("cms", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "cms");
   $form->{confidential} = ($form->{confidential}) ? "checked" : "";
 
   $form->error($locale->text('Reference Document does not exist!')) unless $form->{id};
@@ -726,7 +726,7 @@ sub edit {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -812,7 +812,7 @@ sub attach {
   }
 
   $form->{title} = $locale->text('Attach Document');
-  $form->helpref("cms", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "cms");
 
   $form->header;
 
@@ -823,7 +823,7 @@ sub attach {
 
 
 <table width=100%>
-  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
+  <tr><th class=listtop>$form->{title} $form->{helpref}</th></tr>
   <tr height="5"></tr>
   <tr>
     <td>
@@ -928,7 +928,7 @@ sub upload_image {
 
   $form->{title} = $locale->text('Upload Image');
 
-  $form->helpref("upload_image", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "upload_image");
 
   $form->header;
 
@@ -943,7 +943,7 @@ sub upload_image {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1028,6 +1028,10 @@ sub list_images {
 
   $form->{callback} = "$form->{script}?action=list_images&path=$form->{path}&login=$form->{login}";
 
+  $form->{title} = $locale->text('Images');
+
+  $form->helpref(\%myconfig, \%slconfig, 'list_images');
+
   $form->header;
 
   &check_all(qw(allbox ndx_));
@@ -1039,7 +1043,7 @@ sub list_images {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>

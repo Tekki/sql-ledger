@@ -43,7 +43,7 @@ sub add {
     }
   }
 
-  $form->helpref("pos_invoice", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "pos_invoice");
 
   $focus = "partnumber_1";
 
@@ -65,7 +65,7 @@ sub openinvoices {
     $form->{l_employee} = 'Y';
   }
 
-  $form->helpref("open_pos_invoices", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "open_pos_invoices");
 
   $form->{title} = $locale->text('Open');
 
@@ -101,7 +101,7 @@ sub edit {
     }
   }
 
-  $form->helpref("pos_invoice", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "pos_invoice");
 
   &display_form;
 
@@ -288,7 +288,7 @@ sub form_header {
 
 <table width=100%>
   <tr class=listtop>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1253,7 +1253,7 @@ sub receipts {
   $form->{subtotal} = 1;
   $form->{nextsub} = "list_payments";
 
-  $form->helpref("pos_receipts", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "pos_receipts");
 
   $form->hide_form(qw(nextsub sort title paymentaccounts till subtotal helpref));
 
@@ -1264,7 +1264,7 @@ sub receipts {
   print qq|
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>

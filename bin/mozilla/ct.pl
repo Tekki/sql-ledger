@@ -37,7 +37,7 @@ sub add {
 
   $form->{callback} = "$form->{script}?action=add&db=$form->{db}&typeofcontact=$form->{typeofcontact}&path=$form->{path}&login=$form->{login}" unless $form->{callback};
 
-  $form->helpref("$form->{db}", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "$form->{db}");
   &create_links;
 
   &display_form;
@@ -49,7 +49,7 @@ sub edit {
 
   $form->{title} = "Edit";
 
-  $form->helpref("$form->{db}", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "$form->{db}");
   &create_links;
   SL::RU->register(\%myconfig, $form);
 
@@ -148,13 +148,13 @@ sub history {
   $label .= " History";
 
   if ($form->{db} eq 'customer') {
-    $form->helpref("customer_history", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "customer_history");
 
     $invlabel = $locale->text('Sales Invoices');
     $ordlabel = $locale->text('Sales Orders');
     $quolabel = $locale->text('Quotations');
   } else {
-    $form->helpref("vendor_history", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "vendor_history");
 
     $invlabel = $locale->text('Vendor Invoices');
     $ordlabel = $locale->text('Purchase Orders');
@@ -620,7 +620,7 @@ sub search_name {
   }
 
   if (! $form->{helpref}) {
-    $form->helpref("search_$form->{db}", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "search_$form->{db}");
   }
 
   $focus = "name";
@@ -636,7 +636,7 @@ sub search_name {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr valign=top>
@@ -969,7 +969,7 @@ sub list_names {
     $option .= $locale->text('Closed');
   }
 
-  $form->helpref("list_$form->{db}", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_$form->{db}");
 
   $form->{callback} = "$callback&sort=$form->{sort}";
   $callback = $form->escape($form->{callback});
@@ -1090,7 +1090,7 @@ sub list_names {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1513,7 +1513,7 @@ sub list_history {
 
   $colspan = $#column_index + 1;
 
-  $form->helpref("list_$form->{db}_history", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_$form->{db}_history");
 
   $form->header;
 
@@ -1522,7 +1522,7 @@ sub list_history {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -2051,7 +2051,7 @@ sub form_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr>
     <td>
@@ -2487,7 +2487,7 @@ sub form_footer {
 sub shipping_address {
 
   $form->{title} = $locale->text('Shipping Address');
-  $form->helpref("$form->{db}_shipping_address", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "$form->{db}_shipping_address");
 
   $form->{name} ||= "$form->{firstname} $form->{lastname}";
 
@@ -2528,7 +2528,7 @@ sub shipping_address {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -2889,7 +2889,7 @@ sub pricelist_header {
 
   $form->{title} = ($form->{typeofcontact} ne 'company') ? "$form->{firstname} $form->{lastname}" : $form->{name};
 
-  $form->helpref("pricelist", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "pricelist");
 
   $form->header;
 
@@ -2900,7 +2900,7 @@ sub pricelist_header {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
 |;
@@ -3166,7 +3166,7 @@ sub select_item {
   $column_data{lastcost} = qq|<th class=listheading>|.$locale->text('Cost').qq|</th>|;
 
   $helpref = $form->{helpref};
-  $form->helpref("select_item", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "select_item");
 
   $form->header;
 
@@ -3179,7 +3179,7 @@ sub select_item {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$title</a></th>
+    <th class=listtop>$title $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -3673,11 +3673,13 @@ sub yes__delete {
 sub ar_transactions {
 
   $form->{script} = 'ar.pl';
+  $form->helpref(\%myconfig, \%slconfig, 'ar_transactions');
   %params = (
-    l_datepaid      => 'Y',
-    l_invnumber     => 'Y',
-    l_paid          => 'Y',
-    $form->{db}     => "$name--$form->{id}",
+    helpref     => $form->escape($form->{helpref}, 1),
+    l_datepaid  => 'Y',
+    l_invnumber => 'Y',
+    l_paid      => 'Y',
+    $form->{db} => "$name--$form->{id}",
   );
 
   &_transaction_report;
@@ -3688,11 +3690,13 @@ sub ar_transactions {
 sub ap_transactions {
 
   $form->{script} = 'ap.pl';
+  $form->helpref(\%myconfig, \%slconfig, 'ap_transactions');
   %params = (
-    l_datepaid      => 'Y',
-    l_invnumber     => 'Y',
-    l_paid          => 'Y',
-    $form->{db}     => "$name--$form->{id}",
+    helpref     => $form->escape($form->{helpref}, 1),
+    l_datepaid  => 'Y',
+    l_invnumber => 'Y',
+    l_paid      => 'Y',
+    $form->{db} => "$name--$form->{id}",
   );
 
   &_transaction_report;

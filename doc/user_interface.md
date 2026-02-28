@@ -2,6 +2,28 @@
 
 # User Interface
 
+## Helping Notes
+
+A click on the triangle right of a page title opens a helping note. This note is
+related to the page, not to the currently displayed data and is accessible for
+all users of a company. It can contain hints or instructions for the employees
+with login to the system.
+
+A filled triangle (◥) indicates an existing note, if it is just outlined (◹), it
+means that no note has been added yet. The content is written in plain text,
+optionally decorated with simple markdown.
+
+```
+# Big Title
+## Smaller Title
+This word is *italic*. And this one is **bold**.
+The repo for this code on [GitHub](https://github.com/Tekki/sql-ledger).
+See the note for [adding a customer](customer).
+```
+
+The access to the directory used for the notes has to be granted in the [global
+configuration](configuration.md#global-configuration).
+
 ## Keyboard Shortcuts
 
 Advanced users try to avoid to switch from keyboard to mouse, they do most of
@@ -28,14 +50,15 @@ system not all combinations are available.
 
 Some of the commonly used shortcuts for buttons are:
 
-| key | command  |
-|-----|----------|
-| U   | Update   |
-| C   | Continue |
-| S   | Save     |
-| O   | Post     |
-| V   | Preview  |
-| P   | Print    |
+| key | command      |
+|-----|--------------|
+| ?   | Helping Note |
+| U   | Update       |
+| C   | Continue     |
+| S   | Save         |
+| O   | Post         |
+| V   | Preview      |
+| P   | Print        |
 
 The following keys move the cursor directly to an input field:
 
@@ -53,7 +76,7 @@ The following keys move the cursor directly to an input field:
 
 `/ * - + .` are the special characters on the numeric keypad. The shortcuts for
 customer or vendor, date, description, and notes are available in the frontend
-of the reports, too. The keys `1 … 9` open the document at the specified
+of the reports, too. The keys `1 … 9` and `0` open the document at the specified
 position of a report.
 
 ### Quick Date Entry

@@ -109,9 +109,9 @@ sub link_part {
   # readonly
   if ($form->{changeup}) {
     $form->{readonly} = 1 if $myconfig{acs} =~ /Goods \& Services--Changeup/;
-    $form->helpref("changeup_$form->{item}", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "changeup_$form->{item}");
   } else {
-    $form->helpref($form->{item}, $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, $form->{item});
   }
 
   if ($form->{item} eq 'part') {
@@ -728,7 +728,7 @@ $linkaccounts|;
 
 <table width="100%">
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1179,10 +1179,10 @@ sub search {
 # $locale->text('Changeup Assemblies')
 
   if ($form->{changeup}) {
-    $form->helpref("changeup_items", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "changeup_items");
     $form->{title} = $locale->text('Changeup' . ' ' .$title{$form->{searchitems}});
   } else {
-    $form->helpref("search_items", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "search_items");
     $form->{title} = _searchitems_title($form->{searchitems});
   }
 
@@ -1201,7 +1201,7 @@ sub search {
   print qq|
 
 <table width="100%">
-  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
+  <tr><th class=listtop>$form->{title} $form->{helpref}</th></tr>
   <tr height="5"></tr>
   <tr valign=top>
     <td>
@@ -1775,9 +1775,9 @@ sub generate_report {
 
   $i = 1;
   if ($form->{changeup}) {
-    $form->helpref("list_changeup", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "list_changeup");
   } else {
-    $form->helpref("list_items", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "list_items");
     if ($form->{searchitems} eq 'part') {
       $button{'Goods & Services--Add Part'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Part').qq|"> |;
       $button{'Goods & Services--Add Part'}{order} = $i++;
@@ -1817,7 +1817,7 @@ sub generate_report {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$title</a></th>
+    <th class=listtop>$title $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
 
@@ -2407,7 +2407,7 @@ sub supply_demand {
   }
 
   $form->{title} = $locale->text('Supply & Demand');
-  $form->helpref("supply_demand", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "supply_demand");
 
   $form->{sort} = "partnumber";
   $form->{nextsub} = "supply_demand_report";
@@ -2427,7 +2427,7 @@ sub supply_demand {
 
 <table width="100%">
 
-  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
+  <tr><th class=listtop>$form->{title} $form->{helpref}</th></tr>
   <tr height="5"></tr>
   <tr valign=top>
     <td>
@@ -2573,7 +2573,7 @@ sub supply_demand_report {
 
   $form->{title} = $locale->text('Supply & Demand');
 
-  $form->helpref("supply_demand_report", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "supply_demand_report");
 
   $form->header;
 
@@ -2582,7 +2582,7 @@ sub supply_demand_report {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
 
@@ -2736,7 +2736,7 @@ sub requirements {
   }
 
   $form->{title} = $locale->text('Requirements');
-  $form->helpref("requirements", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "requirements");
 
   $form->header;
 
@@ -2751,7 +2751,7 @@ sub requirements {
 
 <table width="100%">
 
-  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
+  <tr><th class=listtop>$form->{title} $form->{helpref}</th></tr>
   <tr height="5"></tr>
   <tr valign=top>
     <td>
@@ -2879,7 +2879,7 @@ sub requirements_report {
 
   $form->{title} = $locale->text('Requirements');
 
-  $form->helpref("requirements_report", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "requirements_report");
 
   $form->header;
 
@@ -2888,7 +2888,7 @@ sub requirements_report {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
 
@@ -3053,7 +3053,7 @@ sub so_requirements {
 
   $form->{title} = $locale->text('Sales Order Requirements');
 
-  $form->helpref("so_requirements", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "so_requirements");
 
   $form->{sort} = "partnumber";
   $form->{nextsub} = "so_requirements_report";
@@ -3073,7 +3073,7 @@ sub so_requirements {
 
 <table width="100%">
 
-  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
+  <tr><th class=listtop>$form->{title} $form->{helpref}</th></tr>
   <tr height="5"></tr>
   <tr valign=top>
     <td>
@@ -3220,7 +3220,7 @@ sub so_requirements_report {
 
   $title = "$form->{title} / $form->{company}";
 
-  $form->helpref("so_requirements_report", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "so_requirements_report");
 
   $form->header;
 
@@ -3229,7 +3229,7 @@ sub so_requirements_report {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$title</a></th>
+    <th class=listtop>$title $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -3356,6 +3356,8 @@ sub resource_planning {
     $column_header{$_} = qq|<th class="listheading">$column_label{$_}</th>|;
   }
 
+  $form->helpref(\%myconfig, \%slconfig, 'resource_planning');
+
   $form->header;
 
   &calendar;
@@ -3367,7 +3369,7 @@ sub resource_planning {
 
 <table width="100%">
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -4093,7 +4095,7 @@ sub select_name {
   $column_data{address} = qq|<th class=listheading colspan=5>|.$locale->text('Address').qq|</th>|;
 
   $helpref = $form->{helpref};
-  $form->helpref("select_name", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "select_name");
 
   # list items with radio button on a form
   $form->header;
@@ -4109,7 +4111,7 @@ sub select_name {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$title</a></th>
+    <th class=listtop>$title $form->{helpref}</th>
   </tr>
   <tr space=5></tr>
   <tr>
@@ -4367,7 +4369,7 @@ sub stock_adjustment {
 
   $form->{title} = $locale->text('Stock Adjustment');
 
-  $form->helpref("stock_adjustment", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "stock_adjustment");
 
   $form->get_partsgroup(\%myconfig, { searchitems => 'noservice', subgroup => 1 });
 
@@ -4395,7 +4397,7 @@ sub stock_adjustment {
 
 <table width="100%">
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr valign=top>
@@ -4468,7 +4470,7 @@ sub list_inventory {
 
   $form->{title} = $locale->text('Inventory Count');
 
-  $form->helpref("inventory_count", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "inventory_count");
 
   $form->header;
 
@@ -4479,7 +4481,7 @@ sub list_inventory {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr size=5></tr>
   <tr>
@@ -4597,7 +4599,7 @@ sub stock_assembly {
 
   $form->{title} = $locale->text('Stock Assembly');
 
-  $form->helpref("stock_assembly", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "stock_assembly");
 
   $form->header;
 
@@ -4608,7 +4610,7 @@ sub stock_assembly {
 
 <table width="100%">
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr valign=top>
@@ -4706,7 +4708,7 @@ sub list_assemblies {
 
   $form->{title} = $locale->text('Stock Assembly');
 
-  $form->helpref("list_assemblies", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_assemblies");
 
   $form->header;
 
@@ -4717,7 +4719,7 @@ sub list_assemblies {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr size=5></tr>
 
@@ -4970,9 +4972,9 @@ sub search_transfer {
 
   $form->{title} = $locale->text('Warehouse Transfer');
   if ($form->{nextsub} eq 'transfer_report') {
-    $form->helpref("warehouse_transfer_report", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "warehouse_transfer_report");
   } elsif ($form->{nextsub} eq 'transfer_list') {
-    $form->helpref("warehouse_transfer", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "warehouse_transfer");
   }
 
   $form->header;
@@ -4986,7 +4988,7 @@ sub search_transfer {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -5306,7 +5308,7 @@ sub transfer_report {
 
   $form->{title} = $locale->text('Warehouse Transfer Report');
 
-  $form->helpref("warehouse_transfer_report", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "warehouse_transfer_report");
 
   $form->header;
 
@@ -5315,7 +5317,7 @@ sub transfer_report {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -5423,7 +5425,7 @@ sub assembly_bom_transfer {
 
   $form->{title} = $locale->text('Assembly BOM Transfer');
 
-  $form->helpref("assembly_bom_transfer", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "assembly_bom_transfer");
 
   $form->header;
 
@@ -5434,7 +5436,7 @@ sub assembly_bom_transfer {
 
 <table width="100%">
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr valign=top>
@@ -5736,7 +5738,7 @@ sub upload_image {
 
   $form->{title} = $locale->text('Upload Image');
 
-  $form->helpref("upload_image", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "upload_image");
 
   $form->header;
 
@@ -5751,7 +5753,7 @@ sub upload_image {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>

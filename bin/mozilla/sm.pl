@@ -25,7 +25,7 @@ sub repost_invoices {
   # reverse invoices and save in temporary tables
   # post vendor invoices then sales invoices
 
-  $form->helpref("repost_invoices", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "repost_invoices");
 
   $form->{title} = $locale->text('Repost Invoices');
 
@@ -40,7 +40,7 @@ sub repost_invoices {
 
 <table width=100%>
   <tr class=listtop>
-    <th>$form->{helpref}$form->{title}</a></th>
+    <th>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>

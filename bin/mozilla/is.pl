@@ -279,7 +279,7 @@ sub prepare_invoice {
 
   $ml = 1;
 
-  $form->helpref($form->{type}, $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, $form->{type});
 
   if ($form->{type} eq 'invoice') {
     $form->{selectformname} = qq|invoice--|.$locale->text('Invoice')
@@ -289,7 +289,7 @@ sub prepare_invoice {
     $form->{selectformname} .= qq|\nremittance_voucher--|.$locale->text('Remittance Voucher') if $form->{remittancevoucher};
 
     $generate = ($form->{generate}) ? "generate_" : "";
-    $form->helpref("${generate}sales_invoice", $myconfig{countrycode});
+    $form->helpref(\%myconfig, \%slconfig, "${generate}sales_invoice");
 
   }
   if ($form->{type} eq 'credit_invoice') {
@@ -626,7 +626,7 @@ sub form_header {
   print qq|
 <table width=100%>
   <tr class=listtop>
-    <th class=listtop>$form->{helpref}$form->{title} / $form->{company}$title</a></th>
+    <th class=listtop>$form->{title} / $form->{company}$title $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -1746,7 +1746,7 @@ sub generate_invoices {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr valign=top>
@@ -1908,7 +1908,7 @@ sub list_names {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
@@ -2067,7 +2067,7 @@ sub consolidate {
 
   $colspan = $#column_index + 1;
 
-  $form->helpref("consolidate", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "consolidate");
 
   $title = "$form->{title} / $form->{company}";
 
@@ -2088,7 +2088,7 @@ sub consolidate {
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$title</a></th>
+    <th class=listtop>$title $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>

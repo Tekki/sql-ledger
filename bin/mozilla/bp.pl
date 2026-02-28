@@ -279,7 +279,7 @@ sub search {
   $form->{sort} = "transdate";
   $form->{nextsub} = "list_spool";
 
-  $form->helpref("bp_$form->{type}", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "bp_$form->{type}");
 
   $form->header;
 
@@ -295,7 +295,7 @@ sub search {
 
   print qq|
 <table width=100%>
-  <tr><th class=listtop>$form->{helpref}$form->{title}</a></th></tr>
+  <tr><th class=listtop>$form->{title} $form->{helpref}</th></tr>
   <tr height="5"></tr>
   <tr>
     <td>
@@ -762,7 +762,7 @@ sub list_spool {
   $column_header{spoolfile} = "<th class=listheading>".$locale->text('Spoolfile')."</th>";
   $column_header{amount} = "<th class=listheading>".$locale->text('Amount')."</th>";
 
-  $form->helpref("list_spool", $myconfig{countrycode});
+  $form->helpref(\%myconfig, \%slconfig, "list_spool");
 
   $form->header;
 
@@ -775,7 +775,7 @@ print qq|
 
 <table width=100%>
   <tr>
-    <th class=listtop>$form->{helpref}$form->{title}</a></th>
+    <th class=listtop>$form->{title} $form->{helpref}</th>
   </tr>
   <tr height="5"></tr>
   <tr>
