@@ -209,8 +209,17 @@ sub dbconnect_vars ($form, $db) {
   );
   $dboptions{Mock} = $dboptions{Pg};
 
-  $form->{dbconnect} = "dbi:$form->{dbdriver}:dbname=$db";
-  $form->{dboptions} = $dboptions{$form->{dbdriver}}{$form->{dateformat}};
+  my $drv = $form->{dbdriver}   || 'Pg';
+  my $df  = $form->{dateformat} || 'mm-dd-yy';
+  $df = 'mm-dd-yy' unless exists $dboptions{$drv} && exists $dboptions{$drv}{$df};
+  $form->{dateformat} = $df;
+
+  if (!defined($db) || $db eq '') {
+  $db = $form->{dbname} || $form->{dbdefault} || $form->{db} || 'template1';
+  }
+
+  $form->{dbconnect} = "dbi:$drv:dbname=$db";
+  $form->{dboptions} = $dboptions{$drv}{$df};
 
   if ($form->{encoding}) {
     $form->{dboptions} .= ';set client_encoding to \''.$form->{encoding}."'";
@@ -511,13 +520,15 @@ sub dbpassword ($self, $form) {
 
   my $query;
 
-  if ($form->{new_password}) {
-    $query = qq|ALTER ROLE "$form->{dbuser}" WITH PASSWORD '$form->{new_password}'|;
+  if (defined($form->{new_password}) && $form->{new_password} ne '') {
+    $query = qq|ALTER ROLE "$form->{dbuser}" WITH PASSWORD ?|;
+    my $sth = $dbh->prepare($query);
+    $sth->execute($form->{new_password}) or $form->dberror($query);
+    $sth->finish;
   } else {
     $query = qq|ALTER ROLE "$form->{dbuser}" WITH PASSWORD NULL|;
+    $dbh->do($query) or $form->dberror($query);
   }
-
-  $dbh->do($query) or $form->dberror($query);
 
   $dbh->disconnect;
 
@@ -695,6 +706,7 @@ sub save_member ($self, $memberfile, $userspath) {
   }
 
   # replace \r\n with \n
+  $self->{signature} //= '';
   $self->{signature} =~ s/\r?\n/\\n/g;
 
   my %config;
