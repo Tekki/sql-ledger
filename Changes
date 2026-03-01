@@ -1,7 +1,15 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
-Not Released
-  - 
+4.0.6 2026-03-01
+  - resource planning report
+  - system defaults and user preferences screens optimized for keyboard
+    interaction
+  - the custom menu accepts repeated HTML tags
+  - translations updated
+  - documentation updated
+  - JavaScript to pick values from history repaired
+  - file upload, number formatting and some more uninitialized variables
+    corrected
 
 4.0.5 2026-02-12
   - illegal function call in warehouse transfer corrected
@@ -55,13 +63,16 @@ Not Released
   - import of QR Bills improved
 
 3.2.12.65 2025-11-14
-  - buttons in customer and vendor export changed to produce correct translations
-  - link for exchange rates from Swiss Federal Office for Customs and Border updated
+  - buttons in customer and vendor export changed to produce correct
+    translations
+  - link for exchange rates from Swiss Federal Office for Customs and Border
+    updated
   - login to database of the next version is possible
 
 3.2.12.64 2025-11-07
   - import is able to load custom scripts
-  - variables for QR Bills adapted to structured addresses (needs updated templates)
+  - variables for QR Bills adapted to structured addresses (needs updated
+    templates)
   - BREAKING CHANGE: branch with DWS code renamed from master to dws
 
 3.2.12.63 2025-10-14
@@ -71,9 +82,9 @@ Not Released
   - database port for new users corrected
 
 3.2.12.62 2025-09-20
-  - new Hungarian translation
-    contributed by György Tóth-Szabó
-  - customers and vendors in Switzerland can be updated with data from UID Register
+  - new Hungarian translation contributed by György Tóth-Szabó
+  - customers and vendors in Switzerland can be updated with data from UID
+    Register
   - payments in foreign currencies use exchange rate of transaction as default
   - script that generates and distributes templates for multiple datasets
   - encoding of parsed SQL files corrected
@@ -118,7 +129,8 @@ Not Released
   - button for order and quotation reports for customers and vendors
 
 3.2.12.53 2025-01-25
-  - new option in transaction reports to display the notes for customers or vendors
+  - new option in transaction reports to display the notes for customers or
+    vendors
   - warning if payment date is not a working day
   - new filter for transaction date in all payment reports
 
@@ -151,7 +163,8 @@ Not Released
 3.2.12.47 2024-11-09
   - hidden order number is deleted when a quotation or rfq is saved a new
   - ct.pl accepts custom scripts
-  - income, expense and inventory account numbers are included in API invoice details
+  - income, expense and inventory account numbers are included in API invoice
+    details
   - custom menus accept UTF-8 characters
 
 3.2.12.46 2024-08-18
@@ -223,7 +236,8 @@ Not Released
 3.2.12 DWS 2023-01-02
   - fixed reissue check function
   - fixed locales.pl to generate the 'all' file
-  - removed delete option from AR/AP transaction report if enforce transaction reversal is set
+  - removed delete option from AR/AP transaction report if enforce transaction
+    reversal is set
 
 3.2.11.34 2022-12-21
   - spreadsheet for tax reports
