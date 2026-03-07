@@ -2996,7 +2996,7 @@ sub consolidate_invoices ($, $myconfig, $form, $spool) {
   for my $customer_id (keys %inv) {
     for my $curr (keys %{ $inv{$customer_id} }) {
 
-      next unless $#{@{$inv{$customer_id}{$curr}}};
+      next unless $#{$inv{$customer_id}{$curr}};
 
       # precision for currency
       $currh->execute($curr);
@@ -3027,7 +3027,7 @@ sub consolidate_invoices ($, $myconfig, $form, $spool) {
       # delete spool files
       $sph->execute($id);
       for (($spoolfile) = $sph->fetchrow_array) {
-        unlink "$spool/$myconfig->{dbname}/$spoolfile";
+        unlink "$spool/$myconfig->{dbname}/$spoolfile" if $spoolfile;
       }
       $sph->finish;
 
@@ -3061,6 +3061,7 @@ sub consolidate_invoices ($, $myconfig, $form, $spool) {
         $npth->execute($_);
         ($n) = $npth->fetchrow_array;
         $npth->finish;
+        $n //= 0;
 
         # update id for payments
         for my $i (1 .. $n) {
@@ -3087,7 +3088,7 @@ sub consolidate_invoices ($, $myconfig, $form, $spool) {
         # delete spool files
         $sph->execute($_);
         for (($spoolfile) = $sph->fetchrow_array) {
-          unlink "$spool/$myconfig->{dbname}/$spoolfile";
+          unlink "$spool/$myconfig->{dbname}/$spoolfile" if $spoolfile;
         }
         $sph->finish;
 

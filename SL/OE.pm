@@ -2550,11 +2550,12 @@ sub consolidate_orders ($, $myconfig, $form) {
       $dbh->do($query) or $form->dberror($query);
 
       my $sortorder = $form->{sort};
-      $sortorder = "customerponumber" if $form->{sort} eq 'ponumber';
+      $sortorder = 'customerponumber' if $form->{sort} eq 'ponumber';
+      $sortorder = 'trans_id'         if $form->{sort} eq 'transdate';
 
       # add items
       for my $item (sort { $a->{$sortorder} cmp $b->{$sortorder} } @orderitems) {
-        for (qw(qty sellprice discount project_id ship)) { $item->{$_} *= 1 }
+        for (qw(qty sellprice discount ship)) { $item->{$_} *= 1 }
 
         $query = qq|INSERT INTO orderitems (
                     trans_id, parts_id, description,
@@ -2566,8 +2567,8 @@ sub consolidate_orders ($, $myconfig, $form) {
                     $form->{id}, $item->{parts_id}, |
                     .$dbh->quote($item->{description})
                     .qq|, $item->{qty}, $item->{sellprice}, $item->{discount}, |
-                    .$dbh->quote($item->{unit})
-                    .qq|, $item->{project_id}, |
+                    .$dbh->quote($item->{unit}) .qq|, |
+                    .$form->dbquote($item->{project_id}, 'SQL_INT') .qq|, |
                     .$form->dbquote($item->{reqdate}, 'SQL_DATE')
                     .qq|, $item->{ship}, |
                     .$dbh->quote($item->{serialnumber}).qq|, |
