@@ -233,7 +233,14 @@ sub save ($, $myconfig, $form, $dbh = undef) {
     ($form->{$_} ||= 0) *= 1;
   }
 
-  $form->{$_} //= '' for qw|item partsgroup IC_inventory IC_expense IC_income|;
+  for (
+    'IC_expense', 'IC_income', 'IC_inventory', 'barcode',    'countryorigin', 'drawing',
+    'image',      'item',      'microfiche',   'partsgroup', 'tariff_hscode', 'toolnumber',
+    )
+  {
+    $form->{$_} //= '';
+  }
+
   $form->{assembly} = ($form->{item} eq 'assembly') ? 1 : 0;
 
   my $query;
@@ -409,10 +416,10 @@ sub save ($, $myconfig, $form, $dbh = undef) {
               inventory_accno_id = (SELECT id FROM chart
                                     WHERE accno = '$form->{inventory_accno}'),
               income_accno_id = (SELECT id FROM chart
-              WHERE accno = '$form->{income_accno}'),
+                                 WHERE accno = '$form->{income_accno}'),
               expense_accno_id = (SELECT id FROM chart
                                   WHERE accno = '$form->{expense_accno}'),
-                                  obsolete = '$form->{obsolete}',
+              obsolete = '$form->{obsolete}',
               image = '$form->{image}',
               drawing = '$form->{drawing}',
               microfiche = '$form->{microfiche}',
@@ -1798,6 +1805,7 @@ sub all_parts ($, $myconfig, $form) {
 sub include_assembly ($dbh, $myconfig, $form, $id, $flds, $makemodeljoin, $qty, $all) {
 
   $form->{stagger}++;
+  $form->{pncol} ||= 0;
   if ($form->{stagger} > $form->{pncol}) {
     $form->{pncol} = $form->{stagger};
   }
@@ -1819,7 +1827,7 @@ sub include_assembly ($dbh, $myconfig, $form, $id, $flds, $makemodeljoin, $qty, 
                  FROM parts p
                  JOIN assembly a ON (a.parts_id = p.id)
                  LEFT JOIN partsgroup pg ON (pg.id = p.id)
-                  LEFT JOIN chart c1 ON (c1.id = p.inventory_accno_id)
+                 LEFT JOIN chart c1 ON (c1.id = p.inventory_accno_id)
                  LEFT JOIN chart c2 ON (c2.id = p.income_accno_id)
                  LEFT JOIN chart c3 ON (c3.id = p.expense_accno_id)
                  $makemodeljoin
@@ -1836,7 +1844,7 @@ sub include_assembly ($dbh, $myconfig, $form, $id, $flds, $makemodeljoin, $qty, 
   my $pth = $dbh->prepare($query) or $form->dberror($query);
 
   my $accno;
-  my $sameid;
+  my $sameid = 0;
 
   while (my $ref = $sth->fetchrow_hashref) {
 
@@ -1856,7 +1864,7 @@ sub include_assembly ($dbh, $myconfig, $form, $id, $flds, $makemodeljoin, $qty, 
 
     $ref->{assemblyitem} = 1;
     $ref->{stagger} = $form->{stagger};
-    $ref->{perassembly} *= $qty;
+    $ref->{perassembly} *= $qty if $ref->{perassembly};
 
     push @sf, $ref;
     $sameid = $ref->{id};
@@ -1931,17 +1939,17 @@ sub get_assembly_bom_transfer ($, $myconfig, $form) {
 
   for (@{ $form->{parts} }) {
     push @li, $_;
-    push @li, &include_assembly($dbh, $myconfig, $form, $_->{id}, $flds, undef, $form->{qty}, undef);
+    push @li, &include_assembly($dbh, $myconfig, $form, $_->{id}, $flds, '', $form->{qty}, undef);
   }
 
-  $query = qq|SELECT SUM(i.qty)
+  $query = qq|SELECT COALESCE(SUM(i.qty), 0)
               FROM inventory i
               WHERE i.warehouse_id = ?
               AND i.parts_id = ?|;
   $sth = $dbh->prepare($query) or $form->dberror($query);
 
   # total all warehouses
-  $query = qq|SELECT SUM(i.qty)
+  $query = qq|SELECT COALESCE(SUM(i.qty), 0)
               FROM inventory i
               WHERE i.warehouse_id > 0
               AND i.parts_id = ?|;

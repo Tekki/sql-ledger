@@ -62,7 +62,7 @@ sub all_accounts ($, $myconfig, $form) {
 
   while ($ref = $sth->fetchrow_hashref) {
     $ref->{amount}           = $amount{$ref->{accno}}    // 0;
-    $ref->{gifi_description} = $gifi{$ref->{gifi_accno}} // '';
+    $ref->{gifi_description} = $gifi{$ref->{gifi_accno} // ''};
     if ($ref->{amount} < 0) {
       $ref->{debit} = $ref->{amount} * -1;
     } else {

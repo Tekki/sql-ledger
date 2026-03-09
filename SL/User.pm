@@ -825,7 +825,7 @@ sub add_db_size ($form, $datasets) {
 
   my %dbhosts;
   for my $dataset (values %$datasets) {
-    my $hostcode = "$dataset->{dbhost}$dataset->{dbport}$dataset->{dbuser}";
+    my $hostcode = join '', map {$dataset->{$_} // ''} qw|dbhost dbport dbuser|;
 
     $dbhosts{$hostcode} ||= {$dataset->%*};
     push $dbhosts{$hostcode}{dbnames}->@*, $dataset->{dbname};

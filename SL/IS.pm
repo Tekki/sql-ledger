@@ -1571,7 +1571,7 @@ sub post_invoice ($, $myconfig, $form, $dbh = undef) {
 
   # for dcn
   $form->{oldinvtotal} ||= $invamount * $sw;
-  ($form->{integer_amount}, $form->{decimal}) = split /\./, $form->{oldinvtotal} // '';
+  ($form->{integer_amount}, $form->{decimal}) = split /\./, sprintf '%.2f', $form->{oldinvtotal};
   $form->{decimal} = substr("$form->{decimal}00", 0, 2);
 
   $query = qq|SELECT bk.membernumber, bk.dcn
@@ -2667,11 +2667,11 @@ sub retrieve_item ($, $myconfig, $form) {
 
   while (my $ref = $sth->fetchrow_hashref) {
 
-    if ($n = ($ref->{inventory_accno_id} // 0) + ($ref->{income_accno_id} // 0) + ($ref->{expense_accno_id}) // 0) {
+    if ($n = $ref->{inventory_accno_id} || $ref->{income_accno_id} || $ref->{expense_accno_id}) {
       next unless $ref->{income_accno_id};
     }
 
-    if (!$n) {
+    unless ($n) {
       $ath->execute($ref->{id});
       while (my $aref = $ath->fetchrow_hashref) {
         $ref->{kit} .= "$aref->{id}:$aref->{qty}:$aref->{sellprice}";

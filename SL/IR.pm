@@ -2379,11 +2379,11 @@ sub retrieve_item ($, $myconfig, $form) {
 
   while (my $ref = $sth->fetchrow_hashref) {
 
-    if ($n = ($ref->{inventory_accno_id} // 0) + ($ref->{income_accno_id} // 0) + ($ref->{expense_accno_id}) // 0) {
-      next unless $ref->{income_accno_id};
+    if ($n = $ref->{inventory_accno_id} || $ref->{income_accno_id} || $ref->{expense_accno_id}) {
+      next unless $ref->{expense_accno_id};
     }
 
-    if (!$n) {
+    unless ($n) {
       $ath->execute($ref->{id});
       while (my $aref = $ath->fetchrow_hashref) {
         $ref->{kit} .= "$aref->{id}:$aref->{qty}:$aref->{sellprice}";

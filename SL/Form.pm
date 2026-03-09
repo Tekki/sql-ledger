@@ -947,8 +947,10 @@ sub parse_template ($self, $myconfig, $userspath, $dvipdf = '', $xelatex = '') {
 
         @{ $mail->{attachments} } = ($self->{tmpfile});
 
-        $myconfig->{signature} =~ s/\\n/\n/g;
-        $mail->{message} .= "\n-- \n$myconfig->{signature}" if $myconfig->{signature};
+        if ($myconfig->{signature}) {
+          $myconfig->{signature} =~ s/\\n/\n/g;
+          $mail->{message} .= "\n-- \n$myconfig->{signature}";
+        }
 
       }
 
@@ -2879,9 +2881,11 @@ sub get_onhand ($self, $myconfig, $dbh = undef) {
   }
 
   for (1 .. $self->{rowcount}) {
-    $sth->execute($self->{"id_$_"} * 1);
-    ($self->{"onhand_$_"}) = $sth->fetchrow_array;
-    $sth->finish;
+    if ($self->{"id_$_"}) {
+      $sth->execute($self->{"id_$_"});
+      ($self->{"onhand_$_"}) = $sth->fetchrow_array;
+      $sth->finish;
+    }
   }
 
   $dbh->disconnect if $disconnect;
@@ -4320,8 +4324,9 @@ sub save_reference ($self, $dbh, $formname = '') {
   my $acth = $dbh->prepare($query) || $self->dberror($query);
 
   for $i (1 .. $self->{reference_rows} // 0) {
-    ($self->{"referencearchive_id_$i"} ||= 0) *= 1;
-    delete $unused{$self->{"referencearchive_id_$i"}} if $self->{"referencedescription_$i"};
+    if (looks_like_number $self->{"referencearchive_id_$i"}) {
+      delete $unused{$self->{"referencearchive_id_$i"}} if $self->{"referencedescription_$i"};
+    }
   }
 
   for $i (1 .. $self->{reference_rows} // 0) {

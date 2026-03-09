@@ -3021,7 +3021,7 @@ sub display_ship_receive {
 <input type=hidden name=display_form value=display_ship_receive>
 |;
 
-  $form->hide_form(qw(id action type printed emailed queued vc weightunit description));
+  $form->hide_form(qw(id action type printed emailed queued vc weightunit description precision paidaccounts));
   $form->hide_form(map { "select$_" } qw(warehouse employee printer));
   $form->hide_form("old$form->{vc}", "oldwarehouse");
 
