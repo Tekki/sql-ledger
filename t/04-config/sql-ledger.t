@@ -11,11 +11,11 @@ use Test::More tests => 8;
 chdir "$FindBin::Bin/../..";
 
 my @config_params = (
-  'accessfolders', 'admin_totp_activated', 'charset',       'dvipdf',
-  'gpg',           'gzip',                 'helpful_login', 'images',
-  'language',      'latex',                'memberfile',    'notes',
-  'pdftk',         'sendmail',             'stylesheet',    'spool',
-  'templates',     'userspath',            'xelatex',
+  'accessfolders', 'admin_totp_activated', 'dvipdf', 'gpg',
+  'gzip',          'helpful_login',        'images', 'language',
+  'latex',         'memberfile',           'notes',  'pdftk',
+  'sendmail',      'stylesheet',           'spool',  'templates',
+  'userspath',     'xelatex',
 );
 
 my $sl_bin = 'config/sql-ledger.bin';

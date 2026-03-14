@@ -22,14 +22,15 @@ $form = SL::Form->new;
 
 $locale = SL::Locale->new($slconfig{language}, "admin");
 
-# $form->{charset} = $slconfig{charset};
-
 eval { require DBI; };
 $form->error($locale->text('DBI not installed!')) if ($@);
 
-$form->{stylesheet} = "sql-ledger.css";
-$form->{favicon} = "favicon.ico";
-$form->{timeout} = 86400;
+$form->{stylesheet}
+  = $slconfig{stylesheet} && -f "css/$slconfig{stylesheet}"
+  ? $slconfig{stylesheet}
+  : 'sql-ledger.css';
+$form->{favicon}      = "favicon.ico";
+$form->{timeout}      = 86400;
 $form->{'root login'} = 1;
 
 require "$form->{path}/pw.pl";
@@ -960,7 +961,6 @@ sub create_dataset {
   }
 
   $selectencoding = SL::User->encoding($form->{dbdriver});
-  $form->{charset} = $slconfig{charset};
 
   # get subdirectories from templates directory
   if (-d $slconfig{templates}) {

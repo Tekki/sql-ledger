@@ -3,10 +3,9 @@
 
 ## Language
 
-# set language, charset and stylesheet for login and admin
+# set language and stylesheet for login and admin
 language: ''
-charset: UTF8
-stylesheet: sql-ledger.css
+stylesheet: ''
 
 ## Paths
 

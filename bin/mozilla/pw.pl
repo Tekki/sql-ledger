@@ -59,7 +59,6 @@ Content-Type: text/html
   <title>$pwt</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   $stylesheet
-  $slconfig{charset}
 </head>
 |;
 

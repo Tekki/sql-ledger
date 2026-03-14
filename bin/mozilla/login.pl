@@ -22,8 +22,6 @@ $form = SL::Form->new;
 
 $locale = SL::Locale->new($slconfig{language}, "login");
 
-# $form->{charset} = $slconfig{charset};
-
 # customization
 if (-f "$form->{path}/custom/$form->{script}") {
   eval { require "$form->{path}/custom/$form->{script}"; };
@@ -48,7 +46,10 @@ if ($form->{action}) {
 
 sub login_screen {
 
-  $form->{stylesheet} = "sql-ledger.css";
+  $form->{stylesheet}
+    = $slconfig{stylesheet} && -f "css/$slconfig{stylesheet}"
+    ? $slconfig{stylesheet}
+    : 'sql-ledger.css';
   $form->{favicon} = "favicon.ico";
 
   $form->header;
@@ -146,9 +147,7 @@ window_x.addListener(checkWidth);
 sub selectdataset {
   my ($login) = @_;
 
-  if (-f "css/sql-ledger.css") {
-    $form->{stylesheet} = "sql-ledger.css";
-  }
+  $form->{stylesheet} = $slconfig{stylesheet} || "sql-ledger.css";
   if (-f 'favicon.ico') {
     $form->{favicon} = "favicon.ico";
   }
@@ -227,7 +226,7 @@ sub selectdataset {
 
 sub login {
 
-  $form->{stylesheet} = "sql-ledger.css";
+  $form->{stylesheet} = $slconfig{stylesheet} || 'sql-ledger.css';
   $form->{favicon} = "favicon.ico";
 
   $form->error($locale->text('You did not enter a name!')) unless ($form->{login});
