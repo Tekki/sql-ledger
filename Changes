@@ -1,7 +1,12 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
-Not Released
-  - 
+4.0.7 2026-03-14
+  - helping notes can be added to every page (disabled helpref function
+    activated and rewritten)
+  - Turkish translation updated
+  - configurable stylesheet for login and admin page
+  - consolidation of orders and invoices corrected
+  - and again some uninitialized variables corrected
 
 4.0.6 2026-03-01
   - resource planning report
