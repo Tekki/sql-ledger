@@ -1028,7 +1028,7 @@ sub list_images {
 
   $form->{callback} = "$form->{script}?action=list_images&path=$form->{path}&login=$form->{login}";
 
-  $form->{title} = $locale->text('Images');
+  $form->{title} = $locale->text('Image Files');
 
   $form->helpref(\%myconfig, \%slconfig, 'list_images');
 
