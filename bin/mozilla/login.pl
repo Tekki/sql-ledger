@@ -247,10 +247,8 @@ sub login {
       } else {
         $form->error($locale->text('Incorrect Username or Password!'));
       }
-    } else {
-      if ($form->{login} !~ /\@/) {
-        $form->{login} .= "\@$dbname";
-      }
+    } elsif ($form->{login} !~ /\@/) {
+      ($form->{login}) = (keys %login);
     }
   }
 
