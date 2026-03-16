@@ -13,6 +13,8 @@ use YAML::PP;
 
 my $slconfig;
 
+die 'Not called from console.' unless -t STDIN && -t STDOUT;
+
 say 'Updating config files';
 
 # sql-ledger.yml

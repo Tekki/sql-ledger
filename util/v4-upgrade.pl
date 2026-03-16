@@ -11,6 +11,8 @@ use lib "$FindBin::Bin/..";
 chdir "$FindBin::Bin/..";
 use Print::Colored ':all';
 
+die 'Not called from console.' unless -t STDIN && -t STDOUT;
+
 say "Upgrade to SQL-Ledger Version 4\n";
 
 my $www_user = prompt_input 'User name for web server [www-data]: ';
