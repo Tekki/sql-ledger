@@ -277,7 +277,6 @@ sub invoice_details ($, $myconfig, $form) {
       push(@{ $form->{netprice} }, ($form->{"netprice_$i"}) ? $form->format_amount($myconfig, $form->{"netprice_$i"}, $form->{precision}) : " ");
 
       $discount = ($discount) ? $form->format_amount($myconfig, $discount * -1, $form->{precision}) : " ";
-      $linetotal = ($linetotal) ? $linetotal : " ";
 
       push(@{ $form->{discount} }, $discount);
       push(@{ $form->{discountrate} }, $form->format_amount($myconfig, $form->{"discount_$i"}));
