@@ -32,6 +32,7 @@ subtest 'Update latest transaction' => sub {
     ->press_button_ok('Generate report', 'continue')
     ->follow_link_ok('Open transaction', 'ar-l', 0)
     ->store_ok('invnumber', 'paidaccounts')
+    ->form_fields_exist('currency', 'department', 'employee')
     ->press_button_ok('Update', 'update')
     ->params_are('Check payments', paidaccounts => \'paidaccounts')
     ->press_button_ok('Post transaction', 'post')

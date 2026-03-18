@@ -6308,7 +6308,7 @@ sub list_roles {
    $edit = 1 if $form->{admin};
 
    if ($edit) {
-     $column_data{description} = qq|<td><a href=$form->{script}?action=edit_role&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{description}</td>|;
+     $column_data{description} = qq|<td><a class="role-l" href="$form->{script}?action=edit_role&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback">$ref->{description}</td>|;
     } else {
      $column_data{description} = qq|<td>$ref->{description}</td>|;
     }

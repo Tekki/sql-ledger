@@ -27,6 +27,7 @@ subtest 'Update timecard' => sub {
     ->press_button_ok('Generate report', 'continue')
     ->follow_link_ok('Open time card', 'id-l', 0)
     ->store_ok('id')
+    ->form_fields_exist('employee', 'projectnumber')
     ->press_button_ok('Update', 'update')
     ->press_button_ok('Save timecard', 'save')
     ->press_button_ok('Confirm changes', 'continue')

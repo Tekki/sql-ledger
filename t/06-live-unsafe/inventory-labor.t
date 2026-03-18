@@ -27,6 +27,8 @@ subtest 'Update labor with the hightest number' => sub {
     ->press_button_ok('Generate report', 'continue')
     ->follow_link_ok('Open labor', 'partnumber-l', 0)
     ->store_ok('partnumber')
+    ->form_fields_exist('partsgroup', 'IC_expense', 'IC_inventory')
+    ->form_fields_exist_not('IC_income')
     ->press_button_ok('Update',    'update')
     ->press_button_ok('Save labor', 'save')
     ->elements_exist('Link to partnumber', 'a.partnumber-l')

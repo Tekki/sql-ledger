@@ -15,12 +15,12 @@ my $configfile = "$FindBin::Bin/../testdata/testconfig.yml";
 my $t;
 
 if ($ENV{SL_LIVETEST}) {
-  plan tests => 4;
+  plan tests => 5;
 } else {
   plan skip_all => 'SL_LIVETEST not enabled.';
 }
 
-$t = SL::TestClient->new(configfile => $configfile)->connect_ok->api_login_ok;
+$t = SL::TestClient->new(configfile => $configfile)->connect_ok('admin')->api_login_ok;
 
 subtest 'Update employee' => sub {
   $t->get_ok('Report frontend', 'hr.pl', action => 'search', db => 'employee')
@@ -61,3 +61,5 @@ subtest 'Add new employees' => sub {
       );
   }
 };
+
+$t->remove_locks_ok;

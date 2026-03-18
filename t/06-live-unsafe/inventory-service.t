@@ -27,6 +27,8 @@ subtest 'Update service with the hightest number' => sub {
     ->press_button_ok('Generate report', 'continue')
     ->follow_link_ok('Open service', 'partnumber-l', 0)
     ->store_ok('partnumber')
+    ->form_fields_exist('partsgroup', 'IC_expense', 'IC_income')
+    ->form_fields_exist_not('IC_inventory')
     ->press_button_ok('Update',           'update')
     ->press_button_ok('Save service', 'save')
     ->elements_exist('Link to partnumber', 'a.partnumber-l')

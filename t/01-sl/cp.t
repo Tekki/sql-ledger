@@ -18,8 +18,7 @@ isa_ok $package, 'SL::CP';
 
 can_ok $package,
   (
-  'create_selects',   'format_ten',      'get_openinvoices', 'get_openvc',
-  'init',             'invoice_ids',     'new',              'num2text',
-  'payment_register', 'paymentaccounts', 'post_payment',     'reissue_payment',
-  'retrieve',         'sortsource',      'void_payments',
+    'create_selects',  'get_openinvoices', 'get_openvc',      'invoice_ids',
+    'new',             'payment_register', 'paymentaccounts', 'post_payment',
+    'reissue_payment', 'retrieve',         'sortsource',      'void_payments',
   );

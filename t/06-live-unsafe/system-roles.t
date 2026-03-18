@@ -20,10 +20,12 @@ if ($ENV{SL_LIVETEST}) {
   plan skip_all => 'SL_LIVETEST not enabled.';
 }
 
-$t = SL::TestClient->new(configfile => $configfile)->connect_ok->api_login_ok;
+$t = SL::TestClient->new(configfile => $configfile)->connect_ok('admin')->api_login_ok;
 
-subtest 'Warehouse transfer' => sub {
-  $t->get_ok('Transfer frontend', 'ic.pl', action => 'search_transfer', nextsub => 'transfer_list')
-    ->form_fields_exist('partsgroup', 'warehouse')
-    ->press_button_ok('Generate report', 'continue');
+subtest 'Update employee' => sub {
+  $t->get_ok('Role screen', 'am.pl', action => 'list_roles')
+    ->follow_link_ok('Open role', 'role-l', 0)
+    ->form_fields_exist('description')
+    ->press_button_ok('Save role', 'save')
+    ->elements_exist('Link to role', 'a.role-l')
 };

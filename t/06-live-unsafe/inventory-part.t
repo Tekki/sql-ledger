@@ -27,6 +27,7 @@ subtest 'Update part with the hightest number' => sub {
     ->press_button_ok('Generate report', 'continue')
     ->follow_link_ok('Open part', 'partnumber-l', 0)
     ->store_ok('partnumber')
+    ->form_fields_exist('partsgroup', 'IC_expense', 'IC_income', 'IC_inventory')
     ->press_button_ok('Update',    'update')
     ->press_button_ok('Save part', 'save')
     ->elements_exist('Link to partnumber', 'a.partnumber-l')

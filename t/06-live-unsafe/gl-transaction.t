@@ -28,6 +28,7 @@ subtest 'Update latest GL transaction' => sub {
     ->press_button_ok('Generate report', 'continue')
     ->follow_link_ok('Open transaction', 'gl-l', 0)
     ->store_ok('reference')
+    ->form_fields_exist('currency', 'department')
     ->press_button_ok('Update',           'update')
     ->press_button_ok('Post transaction', 'post')
     ->press_button_ok('Confirm changes',  'continue')

@@ -184,6 +184,14 @@ class SL::TestClient {
     return $self;
   }
 
+  method elements_exist_not ($label, @selectors) {
+    subtest "$label: check inexistant elements" => sub {
+      $mj->element_exists_not($_, "Element '$_'") for @selectors;
+    };
+
+    return $self;
+  }
+
   method follow_link_ok ($label, $selector, $i = 1) {
     subtest "$label: follow link $selector no. $i" => sub {
       my $links = $self->dom->find("a.$selector");
@@ -210,6 +218,17 @@ class SL::TestClient {
     subtest 'Visible form fields' => sub {
       for (@names) {
         $mj->element_exists(qq|select[name=$_], input[name=$_]:not([type=hidden])|,
+          "Form field '$_'");
+      }
+    };
+
+    return $self;
+  }
+
+  method form_fields_exist_not (@names) {
+    subtest 'Inexistant form fields' => sub {
+      for (@names) {
+        $mj->element_exists_not(qq|select[name=$_], input[name=$_]|,
           "Form field '$_'");
       }
     };
