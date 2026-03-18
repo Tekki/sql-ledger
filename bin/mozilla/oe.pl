@@ -688,7 +688,8 @@ sub form_header {
 |;
   }
 
-  $department = qq|
+  if ($form->{selectdepartment}) {
+    $department = qq|
               <tr>
                 <th align="right" nowrap>|.$locale->text('Department').qq|</th>
                 <td><select name=department onChange="doSubmit(document.main)">|
@@ -696,9 +697,11 @@ sub form_header {
                 </select>
                 </td>
               </tr>
-| if $form->{selectdepartment};
+|;
+  }
 
-  $warehouse = qq|
+  if ($form->{selectwarehouse}) {
+    $warehouse = qq|
               <tr>
                 <th align="right" nowrap>|.$locale->text('Warehouse').qq|</th>
                 <td><select name=warehouse onChange="doSubmit(document.main)">|
@@ -706,7 +709,8 @@ sub form_header {
                 </select>
                 </td>
               </tr>
-| if $form->{selectwarehouse} && $form->{type} !~ /_quotation/;
+|;
+  }
 
   $form->{oldwarehouse} = $form->{warehouse};
 
