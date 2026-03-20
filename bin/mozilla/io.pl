@@ -1072,6 +1072,14 @@ sub invoicetotal {
     $form->{oldinvtotal} += $form->round_amount($amount, $form->{precision});
   }
 
+  unless ($form->{taxincluded}) {
+    for (split / /, $form->{taxaccounts}) {
+      next unless $form->{"${_}_base"};
+      $form->{oldinvtotal}
+        += $form->round_amount($form->{"${_}_base"} * $form->{"${_}_rate"}, $form->{precision});
+    }
+  }
+
   $totalpaid = 0;
   for $i (1 .. $form->{paidaccounts}) {
     $totalpaid += $form->{"paid_$i"};
