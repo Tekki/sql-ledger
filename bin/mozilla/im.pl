@@ -1769,8 +1769,10 @@ sub im_camt054_payment {
               my ($debit, $credit);
               if ($transaction->at('CdtDbtInd')->text eq 'CRDT') {
                 $credit = $amount;
+                $debit  = 0;
               } else {
-                $debit = $amount;
+                $debit  = $amount;
+                $credit = 0;
               }
 
               my $dcn  = $transaction->at('RmtInf Strd CdtrRefInf Ref')->text;

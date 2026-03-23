@@ -1683,10 +1683,10 @@ sub payment_links ($, $myconfig, $form) {
       $i++;
 
       for (keys %{$form->{$form->{type}}}) {
-                                if ($form->{$form->{type}}->{$_}{ndx} >= 0) {
-                                        $dl[$form->{$form->{type}}->{$_}{ndx}] =~ s/(^"|"$)//g;
-                                        $form->{"${_}_$i"} = $dl[$form->{$form->{type}}->{$_}{ndx}];
-                                }
+        if ($form->{$form->{type}}{$_}{ndx} >= 0) {
+          ($dl[$form->{$form->{type}}{$_}{ndx}] //= '') =~ s/(^"|"$)//g;
+          $form->{"${_}_$i"} = $dl[$form->{$form->{type}}{$_}{ndx}];
+        }
       }
       $form->{"amount_$i"} = $amount;
 

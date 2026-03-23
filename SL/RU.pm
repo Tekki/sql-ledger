@@ -345,7 +345,8 @@ sub _descr_oe2 ($form) {
 
 sub _descr_pe ($form) {
   return $form->{projectnumber},
-    qq|$form->{$form->{vc}}, $form->{startdate}-$form->{enddate}|;
+    sprintf '%s, %s-%s', map { $_ // '' } $form->{$form->{vc}}, $form->{startdate},
+    $form->{enddate};
 }
 
 sub _employee_id ($form, $dbh) {

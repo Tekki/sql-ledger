@@ -598,7 +598,9 @@ sub post_payment ($self, $myconfig, $form) {
     $form->{exchangerate} = 1;
   }
 
-  $form->update_defaults($myconfig, qq|$form->{type}_$paymentaccno|, $dbh, $form->{source});
+  if ($form->{type} && $paymentaccno) {
+    $form->update_defaults($myconfig, qq|$form->{type}_$paymentaccno|, $dbh, $form->{source});
+  }
 
   my $query;
   my $sth;
@@ -749,17 +751,18 @@ sub post_payment ($self, $myconfig, $form) {
 
   if ($form->{batch}) {
     $voucherid = $form->{voucherid};
-    if (! $form->{voucherid}) {
+    unless ($form->{voucherid}) {
       $query = qq|SELECT nextval('id')|;
       ($voucherid) = $dbh->selectrow_array($query);
     }
-    $form->{vouchernumber} = $form->update_defaults($myconfig, 'vouchernumber', $dbh) unless $form->{vouchernumber};
-  }
+    $form->{vouchernumber} = $form->update_defaults($myconfig, 'vouchernumber', $dbh)
+      unless $form->{vouchernumber};
 
-  $query = qq|INSERT INTO vr (br_id, trans_id, id, vouchernumber)
+    $query = qq|INSERT INTO vr (br_id, trans_id, id, vouchernumber)
               VALUES ($form->{batchid}, ?, $voucherid, |
-              .$dbh->quote($form->{vouchernumber}).qq|)|;
-  $vth = $dbh->prepare($query) or $form->dberror($query);
+      . $dbh->quote($form->{vouchernumber}) . qq|)|;
+    $vth = $dbh->prepare($query) or $form->dberror($query);
+  }
 
   my $assignvoucherid;
   my $arap;
@@ -998,7 +1001,7 @@ sub post_payment ($self, $myconfig, $form) {
     OP::overpayment("", $myconfig, $form, $dbh, $paymentamount, $ml);
   }
 
-  $form->remove_locks($myconfig, $dbh, $form->{arap}) if $form->{payment} eq 'payment';
+  $form->remove_locks($myconfig, $dbh, $form->{arap}) if ($form->{payment} // '') eq 'payment';
 
   my $rc = $dbh->commit;
   $dbh->disconnect;

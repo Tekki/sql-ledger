@@ -3116,7 +3116,7 @@ sub save_role ($, $myconfig, $form) {
 
   }
 
-  my $acs;
+  my $acs = '';
   my $item;
   my $item1;
   my $item2;

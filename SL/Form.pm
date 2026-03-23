@@ -2684,7 +2684,7 @@ sub add_shipto ($self, $dbh, $id) {
   }
 
   if ($shipto) {
-    ($self->{shiptorecurring} //= 0) *= 1;
+    my $shiptorecurring = $self->{shiptorecurring} ? 'TRUE' : 'FALSE';
     my $query = qq|INSERT INTO shipto (trans_id, shiptoname,
                    shiptoaddress1, shiptostreetname, shiptobuildingnumber,
                    shiptoaddress2, shiptocity, shiptostate,
@@ -2702,7 +2702,7 @@ sub add_shipto ($self, $dbh, $id) {
                    .$dbh->quote($self->{shiptocountry}).qq|, |
                    .$dbh->quote($self->{shiptocontact}).qq|,
                    '$self->{shiptophone}', '$self->{shiptofax}',
-                   '$self->{shiptoemail}', '$self->{shiptorecurring}')|;
+                   '$self->{shiptoemail}', $shiptorecurring)|;
     $dbh->do($query) || $self->dberror($query);
   }
 
