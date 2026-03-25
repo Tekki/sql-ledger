@@ -378,7 +378,7 @@ sub download_document {
     my $disposition = $form->{contenttype} =~ /^image/ ? 'inline' : 'attachment';
 
     print qq|Content-Type: $form->{contenttype}
-Content-Disposition: $disposition; filename*=UTF-8''$form->{filename};\n\n|;
+Content-Disposition: $disposition; filename="$form->{filename}";\n\n|;
 
     open my $out, ">-" or $form->error("STDOUT : $!");
 

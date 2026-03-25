@@ -86,6 +86,7 @@ sub new ($type, $userspath = '') {
     }
 
     if ($data) {
+      $esc = 1;
       $self->{tmpfile} = time;
       $self->{tmpfile} .= $$;
       my (@e) = split /\./, $self->{filename};

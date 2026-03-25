@@ -18,7 +18,7 @@ sub prepare_search ($, $myconfig, $form) {
 
   my $dbh = $form->dbconnect($myconfig);
 
-  my $query = qq|SELECT DISTINCT formname FROM reference|;
+  my $query = qq|SELECT DISTINCT formname FROM reference WHERE formname IS NOT NULL|;
 
   my $sth = $dbh->prepare($query);
   $sth->execute or $form->dberror($query);
