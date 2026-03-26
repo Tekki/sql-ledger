@@ -1,0 +1,161 @@
+use utf8;
+
+#=====================================================================
+# SQL-Ledger ERP
+# Copyright (C) 2025
+#
+#  Author: Müfit Eribol
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#======================================================================
+#
+# Turkish number to text conversion
+# written for check and receipt printing
+# it returns a properly formatted text string
+# for a number up to 10**12
+#
+# Turkish rules:
+# - "Bir Yüz" is simply "Yüz" (no "one" before hundred)
+# - "Bir Bin" is simply "Bin" (no "one" before thousand)
+# - "Bir Milyon", "Bir Milyar", "Bir Trilyon" keep "Bir"
+
+sub init {
+  my $self = shift;
+
+  %{ $self->{numbername} } =
+                   (0 => 'Sıfır',
+                    1 => 'Bir',
+                    2 => 'İki',
+                    3 => 'Üç',
+                    4 => 'Dört',
+                    5 => 'Beş',
+                    6 => 'Altı',
+                    7 => 'Yedi',
+                    8 => 'Sekiz',
+                    9 => 'Dokuz',
+                   10 => 'On',
+                   11 => 'On Bir',
+                   12 => 'On İki',
+                   13 => 'On Üç',
+                   14 => 'On Dört',
+                   15 => 'On Beş',
+                   16 => 'On Altı',
+                   17 => 'On Yedi',
+                   18 => 'On Sekiz',
+                   19 => 'On Dokuz',
+                   20 => 'Yirmi',
+                   30 => 'Otuz',
+                   40 => 'Kırk',
+                   50 => 'Elli',
+                   60 => 'Altmış',
+                   70 => 'Yetmiş',
+                   80 => 'Seksen',
+                   90 => 'Doksan',
+                10**2 => 'Yüz',
+                10**3 => 'Bin',
+                10**6 => 'Milyon',
+                10**9 => 'Milyar',
+               10**12 => 'Trilyon',
+                );
+}
+
+
+sub num2text {
+  my ($self, $amount) = @_;
+
+  return $self->{numbername}{0} unless $amount;
+
+  my @textnumber = ();
+
+  # split amount into chunks of 3
+  my @num = reverse split //, abs($amount);
+  my @numblock = ();
+  my @a;
+  my $i;
+
+  while (@num) {
+    @a = ();
+    for (1 .. 3) {
+      push @a, shift @num;
+    }
+    push @numblock, join / /, reverse @a;
+  }
+
+  while (@numblock) {
+    $i = $#numblock;
+    @num = split //, $numblock[$i];
+
+    if ($numblock[$i] == 0) {
+      pop @numblock;
+      next;
+    }
+
+    if ($numblock[$i] > 99) {
+      # in Turkish, 1 before Yüz is omitted: "Yüz" not "Bir Yüz"
+      push @textnumber, $self->{numbername}{$num[0]} unless $num[0] == 1;
+
+      # add hundred designation
+      push @textnumber, $self->{numbername}{10**2};
+
+      # reduce numblock
+      $numblock[$i] -= $num[0] * 100;
+    }
+
+    $numblock[$i] *= 1;
+
+    if ($numblock[$i] > 9) {
+      # tens
+      push @textnumber, $self->format_ten($numblock[$i]);
+    } elsif ($numblock[$i] > 0) {
+      # in Turkish, 1 before Bin is omitted: "Bin" not "Bir Bin"
+      # but "Bir Milyon", "Bir Milyar" etc. keep "Bir"
+      unless ($numblock[$i] == 1 && $i == 1) {
+        push @textnumber, $self->{numbername}{$numblock[$i]};
+      }
+    }
+
+    # add thousand, million
+    if ($i) {
+      my $num = 10**($i * 3);
+      push @textnumber, $self->{numbername}{$num};
+    }
+
+    pop @numblock;
+  }
+
+  join ' ', @textnumber;
+}
+
+
+sub format_ten {
+  my ($self, $amount) = @_;
+
+  my $textnumber = "";
+  my @num = split //, $amount;
+
+  if ($amount > 20) {
+    $textnumber = $self->{numbername}{$num[0] * 10};
+    $amount = $num[1];
+  } else {
+    $textnumber = $self->{numbername}{$amount};
+    $amount = 0;
+  }
+
+  $textnumber .= " " . $self->{numbername}{$amount} if $amount;
+
+  $textnumber;
+}
+
+
+1;
