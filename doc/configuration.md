@@ -56,6 +56,13 @@ The user configuration is stored in the file `users/members.yml` and a
 corresponding binary version. Experienced administrators frequently edit the
 YAML file to apply bulk changes.
 
+## Passwords
+
+The user passwords are managed by the users themselves or by the administrators
+of the respective datasets through the `HR` menu. If administrators forget their
+own password or if the password of the root login at `admin.pl` gets lost, the
+script `util/admin-login.pl` is available to create a new one.
+
 ## Localized Postal Addresses
 
 ### Prerequisites

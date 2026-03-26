@@ -24,6 +24,7 @@
   - [Global Configuration](configuration.md#global-configuration)
   - [Database Configuration](configuration.md#database-configuration)
   - [User Configuration](configuration.md#user-configuration)
+  - [Passwords](configuration.md#passwords)
   - [Localized Postal Addresses](configuration.md#localized-postal-addresses)
     - [Prerequisites](configuration.md#prerequisites)
     - [Customer and Vendor Screens](configuration.md#customer-and-vendor-screens)
