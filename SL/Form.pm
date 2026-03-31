@@ -1,4 +1,4 @@
-#=================================================================
+#======================================================================
 # SQL-Ledger ERP
 #
 # © 2006-2023 DWS Systems Inc.                   https://sql-ledger.com
@@ -14,6 +14,20 @@ use utf8;
 use Digest::SHA 'sha256_hex';
 use Scalar::Util 'looks_like_number';
 use Time::Local;
+
+BEGIN {
+  no strict 'refs';
+  no warnings 'redefine';
+  use Math::BigFloat;
+
+  my $bf_new = \&Math::BigFloat::new;
+  *Math::BigFloat::new = sub ($class, $arg //= 0) {
+    my $rv = $bf_new->($class, $arg);
+    $rv = $bf_new->($class, 0) if $rv->is_nan;
+    return $rv;
+  };
+}
+
 
 sub new ($type, $userspath = '') {
 
@@ -763,11 +777,13 @@ sub format_amount ($self, $myconfig, $amount ||= 0, $places //= '', $dash //= ''
 }
 
 
-sub parse_amount ($self, $myconfig, $amount //= 0) {
-  return 0 unless $amount;
+sub parse_amount ($self, $myconfig, $amount = undef) {
+  return Math::BigFloat->new(0) unless defined $amount;
+  return $amount if ref $amount eq 'Math::BigFloat';
 
-  if (($myconfig->{numberformat} eq '1.000,00') ||
-      ($myconfig->{numberformat} eq '1000,00')) {
+  if ( ($myconfig->{numberformat} eq '1.000,00')
+    || ($myconfig->{numberformat} eq '1000,00'))
+  {
     $amount =~ s/\.//g;
     $amount =~ s/,/\./;
   }
@@ -778,7 +794,7 @@ sub parse_amount ($self, $myconfig, $amount //= 0) {
 
   $amount =~ s/[, ]+//g;
 
-  return ($amount || 0) * 1;
+  return Math::BigFloat->new($amount);
 
 }
 

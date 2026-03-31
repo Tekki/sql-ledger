@@ -894,8 +894,10 @@ sub check_form {
 
         for (@flds) { $f[$j]->{$_} = $form->{"${_}_$i"} }
 
-        if (! $form->{project_id}) {
-          for (qw(sellprice listprice weight lastcost)) { $form->{$_} += ($form->{"${_}_$i"} * $form->{"qty_$i"}) }
+        if (!$form->{project_id}) {
+          for (qw(sellprice listprice weight lastcost)) {
+            $form->{$_} += $form->{"${_}_$i"} * $form->{"qty_$i"};
+          }
         }
 
         $count++;
@@ -1142,10 +1144,11 @@ sub purchase_order {
   $form->{formname} = 'purchase_order';
 
   # remove payment
-        for $i (1 .. $form->{paidaccounts}) {
-                for (qw(olddatepaid cleared vr_id source memo paid exchangerate paymentmethod AP_paid)) { delete $form->{"${_}_$i"} }
-        }
-
+  for $i (1 .. $form->{paidaccounts}) {
+    for (qw(olddatepaid cleared vr_id source memo paid exchangerate paymentmethod AP_paid)) {
+      delete $form->{"${_}_$i"};
+    }
+  }
 
   &create_form;
 
@@ -1157,12 +1160,6 @@ sub sales_order {
   if ($form->{type} eq 'sales_quotation') {
     $form->{closed} = 1;
     SL::OE->save(\%myconfig, $form);
-    # format amounts
-    for $i (1 .. $form->{rowcount}) {
-      for (qw(qty discount sellprice cost netweight grossweight volume)) {
-        $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"});
-      }
-    }
   }
 
   $form->{title} = $locale->text('Add Sales Order');
@@ -1171,9 +1168,11 @@ sub sales_order {
   $form->{formname} = 'sales_order';
 
   # remove payment
-        for $i (1 .. $form->{paidaccounts}) {
-                for (qw(olddatepaid cleared vr_id source memo paid exchangerate paymentmethod AR_paid)) { delete $form->{"${_}_$i"} }
-        }
+  for $i (1 .. $form->{paidaccounts}) {
+    for (qw(olddatepaid cleared vr_id source memo paid exchangerate paymentmethod AR_paid)) {
+      delete $form->{"${_}_$i"};
+    }
+  }
 
   &create_form;
 
