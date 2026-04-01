@@ -8,7 +8,7 @@
 #
 # Check and receipt printing payment module backend routines
 # Number to text conversion routines are in
-# locale/{countrycode}/Num2text
+# locale/{countrycode}/Num2text or locale/{countrycode}_utf/Num2text
 #
 #======================================================================
 use v5.40;
@@ -21,13 +21,15 @@ sub new ($type, $countrycode) {
   my $self = {};
 
   if ($countrycode) {
+    $countrycode = lc $countrycode;
+    $countrycode .= '_utf' unless $countrycode =~ /_utf$/;
     if (-f "locale/$countrycode/Num2text") {
       require "locale/$countrycode/Num2text";
     } else {
-      use SL::Num2text;
+      require SL::Num2text;
     }
   } else {
-    use SL::Num2text;
+    require SL::Num2text;
   }
 
   bless $self, $type;
@@ -1459,10 +1461,9 @@ SL::CP - Check and receipt printing payment module backend routines
 
 =head1 DESCRIPTION
 
-L<SL::CP> contains the check and receipt printing payment module backend routines,
-number to text conversion routines are in,
-locale/{countrycode}/num2text.
-
+L<SL::CP> contains the check and receipt printing payment module backend
+routines, number to text conversion routines are in
+C<locale/{countrycode}/Num2text> or C<locale/{countrycode}_utf/Num2text>.
 
 =head1 CONSTRUCTOR
 
