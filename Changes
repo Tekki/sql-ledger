@@ -1,7 +1,19 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
-Not Released
-  - 
+4.0.8 2026-04-02
+  - warehouse can be selected in quotations and RFQs
+  - Turkish number to text conversion routine added
+    contributed by Müfit Eribol
+  - loading of number to text conversion routines according to
+    language of customers and vendors improved
+  - console script to generate new admin passwords
+  - login with username without dataset improved
+  - new data format for parsed localized numbers, prevents multiple
+    parsing of the same value
+  - calculation of remaining credit in invoices and orders corrected
+  - line totals with amount zero in invoices corrected
+  - handling of UTF-8 filenames of reference documents corrected
+  - uninitalized variable corrected
 
 4.0.7 2026-03-14
   - helping notes can be added to every page (disabled helpref function
