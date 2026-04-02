@@ -1,5 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+Not Released
+  - 
+
 4.0.8 2026-04-02
   - warehouse can be selected in quotations and RFQs
   - Turkish number to text conversion routine added
