@@ -6,6 +6,7 @@ RUN set -ex \
   && apt-get install -y --no-install-recommends \
     ca-certificates \
     cpanminus \
+    file \
     gpg \
     gpg-agent \
     libarchive-extract-perl \

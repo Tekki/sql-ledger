@@ -40,7 +40,7 @@ services:
     build:
       context: .
       dockerfile: DockerfileAlma
-    image: sql-ledger-almatest:0.18
+    image: sql-ledger-almatest:0.19
     ports:
       - 80:80
     volumes:

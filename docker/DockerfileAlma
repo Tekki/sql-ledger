@@ -4,6 +4,7 @@ FROM almalinux:9
 RUN set -ex \
   && dnf install -y epel-release \
   && dnf install -y \
+    file \
     httpd \
     perl \
     perl-App-cpanminus \

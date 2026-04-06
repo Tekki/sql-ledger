@@ -5,7 +5,7 @@ test -f sql-ledger.conf || cp sql-ledger.conf.default sql-ledger.conf
 
 sed -i -e 's|#$gpg.*|$gpg = "gpg --homedir /usr/local/apache2/gnupg --batch --yes";|' sql-ledger.conf
 
-chown -R apache:apache images spool templates users
+chown -R apache:apache images notes spool templates users
 
 # Apache gets grumpy about PID files pre-existing
 rm -f /var/run/httpd/httpd.pid
