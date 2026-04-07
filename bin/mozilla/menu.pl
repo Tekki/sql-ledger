@@ -12,32 +12,94 @@
 
 $menufile = "menu.ini";
 use SL::Menu;
+use SL::AM;
 
 require "$form->{path}/js.pl";
 
 1;
 # end of main
 
+sub _h {
+  my ($s) = @_;
+  $s = '' if !defined $s;
+  $s =~ s/&/&amp;/g;
+  $s =~ s/</&lt;/g;
+  $s =~ s/>/&gt;/g;
+  $s =~ s/"/&quot;/g;
+  return $s;
+}
+
+
+sub menu_env_html {
+  my ($form, $locale, $myconfig) = @_;
+
+  my $env = $form->environment // '';
+
+  my %env_label = (
+    dev  => $locale->text('Development Environment'),
+    test => $locale->text('Test Environment'),
+  );
+
+  my $env_txt = _h($env_label{$env} // '');
+
+  my $company_raw = $form->{company} // $myconfig->{company} // $myconfig->{dbname} // '';
+  my $company = _h($company_raw);
+  my $user    = _h($myconfig->{name}  // '');
+  my $db      = _h($myconfig->{dbname} // '');
+
+  my $u = _h($locale->text('User'));
+  my $d = _h($locale->text('Dataset'));
+
+  my $html = qq|<div class="menu-env">|;
+  $html   .= qq|<div class="menu-env-line menu-env-line--env">$env_txt</div>| if $env_txt ne '';
+  $html   .= qq|<div class="menu-env-line"><b>$company</b></div>| if $company ne '';
+  $html   .= qq|<div class="menu-env-line">$u: <b>$user</b></div>| if $user ne '';
+  $html   .= qq|<div class="menu-env-line">$d: <b>$db</b></div>| if $db ne '';
+  $html   .= qq|</div>|;
+
+  return $html;
+}
+
 
 sub display {
+  $form->{js} = 1 if !defined($form->{js}) || $form->{js} eq '';
 
-  $menuwidth = $myconfig{menuwidth} || 155;
+  $menuwidth = $myconfig{menuwidth} || 275;
   $menuwidth = '25%' if $form->{small_device};
   $script = $form->{main} =~ /recent/ ? 'ru.pl' : 'am.pl';
 
-  $form->{title}    = "$form->{login} - SQL-Ledger";
-  $form->{frameset} = 1;
+  my $menu_css_width = $menuwidth;
+  $menu_css_width .= 'px' if $menu_css_width =~ /^\d+$/;
+
   $form->header;
 
-  print qq|
+print qq|
 
-<frameset id="menu_frames" cols="$menuwidth,*" border="1">
+<body class="app" style="--menu-width: $menu_css_width;">
+  <div id="menu_frames" class="app-frames">
 
-  <frame name="acc_menu" src="$form->{script}?login=$form->{login}&action=acc_menu&path=$form->{path}&js=$form->{js}">
-  <frame name="main_window" src="$script?login=$form->{login}&action=$form->{main}&path=$form->{path}">
+    <div class="app-pane app-pane--menu">
+      <iframe
+        id="acc_menu"
+        class="app-menu"
+        name="acc_menu"
+        src="$form->{script}?login=$form->{login}&action=acc_menu&path=$form->{path}&js=$form->{js}"
+        title="Menu"
+        loading="eager"></iframe>
+    </div>
 
-</frameset>
+    <div class="app-pane app-pane--main">
+      <iframe
+        id="main_window"
+        class="app-main"
+        name="main_window"
+        src="$script?login=$form->{login}&action=$form->{main}&path=$form->{path}"
+        title="Main"
+        loading="eager"></iframe>
+    </div>
 
+  </div>
+</body>
 </html>
 |;
 
@@ -45,6 +107,11 @@ sub display {
 
 
 sub acc_menu {
+  $form->{js} = 1 if !defined($form->{js}) || $form->{js} eq '';
+
+  if (!defined $form->{company}) {
+    eval { SL::AM->company_defaults(\%myconfig, $form); 1 };
+  }
 
   my $menu = SL::Menu->new("$menufile");
   $menu->add_file("$form->{path}/custom/$menufile") if -f "$form->{path}/custom/$menufile";
@@ -54,40 +121,48 @@ sub acc_menu {
 
   $form->header;
 
-  print qq|
-<script type="text/javascript">
-function SwitchMenu(obj) {
-  if (document.getElementById) {
-    var el = document.getElementById(obj);
+  my $body_class = $form->{js} ? 'menu menu--js' : 'menu';
 
-    if (el.style.display == "none") {
-      el.style.display = "block"; //display the block of info
-    } else {
-      el.style.display = "none";
+  my $js_src = '/js/menu-frame.js';
+  if (my $sn = $ENV{SCRIPT_NAME}) {
+    if ($sn =~ m{^(.*)/bin/mozilla/[^/]+$}) {
+      $js_src = "$1/js/menu-frame.js";
     }
   }
-}
+  my $js_src_html = $js_src;
+  $js_src_html =~ s/&/&amp;/g;
+  $js_src_html =~ s/"/&quot;/g;
+  $js_src_html =~ s/</&lt;/g;
+  $js_src_html =~ s/>/&gt;/g;
 
-function ChangeClass(menu, newClass) {
-  if (document.getElementById) {
-    document.getElementById(menu).className = newClass;
-  }
-}
-document.onselectstart = new Function("return false");
-</script>
+  my $env_html = menu_env_html($form, $locale, \%myconfig);
 
-<body class=menu>
-
-<img src=$slconfig{images}/sql-ledger.gif width=80 border=0>
-
-<br>$myconfig{name}
+  print qq|
+<body class="$body_class">
+  <header class="menu-headerbar">
+    $env_html
+  </header>
+  <nav aria-label="Menu">
 |;
 
   if ($form->{js}) {
-    &jsmenu_frame($menu);
+    my $state = { i => 0, root_actions => [] };
+    jsmenu_frame($menu, undef, $state);
+
+    if (@{ $state->{root_actions} || [] }) {
+      print qq|\n<div class="menu-root-actions" role="group" aria-label="Actions">\n|;
+      print join('', @{ $state->{root_actions} });
+      print qq|</div>\n|;
+    }
   } else {
     &section_menu($menu);
   }
+
+  print qq|
+  </nav>
+|;
+
+  print qq|  <script src="$js_src_html" defer></script>\n| if $form->{js};
 
   print qq|
 </body>
@@ -165,82 +240,86 @@ sub section_menu {
 
 
 sub jsmenu_frame {
-  my ($menu, $level) = @_;
+  my ($menu, $level, $state) = @_;
+  $state //= { i => 0, root_actions => [] };
+  $state->{root_actions} //= [];
 
-  # build tiered menus
   my @menuorder = $menu->access_control(\%myconfig, $level);
 
-  while (@menuorder){
-    $i++;
-    $item = shift @menuorder;
-    $label = $item;
-    $label =~ s/.*--//g;
+  while (@menuorder) {
+    $state->{i}++;
+    my $i    = $state->{i};
+    my $item = shift @menuorder;
+
+    (my $label = $item) =~ s/.*--//g;
     $label = $locale->text($label);
+    my $label_html = ($label =~ /<img\b/i) ? $label : _h($label);
 
     $menu->{$item}{target} = "main_window" unless $menu->{$item}{target};
 
-    if ($menu->{$item}{submenu}) {
+    my $is_leaf = ($menu->{$item}{module} || $menu->{$item}{href}) && !$menu->{$item}{submenu};
 
-        $display = "display: none;" unless $level eq ' ';
+    if (!$is_leaf) {
+      my $subid = "sub$i";
 
-        print qq|
-        <div id="menu$i" class="menuOut" onclick="SwitchMenu('sub$i')" onmouseover="ChangeClass('menu$i','menuOver')" onmouseout="ChangeClass('menu$i','menuOut')">$label</div>
-        <div class="submenu" id="sub$i" style="$display">|;
+      print qq|
+<button type="button"
+        class="menu-header"
+        data-menu-toggle="$subid"
+        aria-controls="$subid"
+        aria-expanded="false">$label_html</button>
+<div class="submenu" id="$subid">|;
 
-        # remove same level items
-        map { shift @menuorder } grep /^$item/, @menuorder;
+      map { shift @menuorder } grep /^\Q$item\E--/, @menuorder;
 
-        &jsmenu_frame($menu, $item);
+      jsmenu_frame($menu, $item, $state);
 
-        print qq|
-        </div>
+      print qq|
+</div>
 |;
 
     } else {
+      my $is_root = (!defined($level) || $level eq '');
+      my $t       = $menu->{$item}{target} // '';
+      my $m       = $menu->{$item}{module} // '';
+      my $act     = $menu->{$item}{action} // '';
+      my $is_root_action = $is_root && (
+        $t =~ /^_(?:blank|top)$/i
+        || ($m eq 'login.pl' && $act eq 'logout')
+      );
 
-      if ($menu->{$item}{module}) {
-        if ($level eq "") {
-          print qq|<div id="menu$i" class="menuOut" onmouseover="ChangeClass('menu$i','menuOver')" onmouseout="ChangeClass('menu$i','menuOut')"> |.
-          $menu->menuitem(\%myconfig, $form, $item, $level).qq|$label</a></div>|;
+      my $a = $menu->menuitem(\%myconfig, $form, $item, $level);
+      $a =~ s/^<a\b/<a class="menu-link"/;
 
-          # remove same level items
-          map { shift @menuorder } grep /^$item/, @menuorder;
+      my $cls = 'menu-item';
+      $cls .= ' menu-item--root' if $is_root;
 
-          &jsmenu_frame($menu, $item);
+      my $html = qq|<div class="$cls">$a$label_html</a></div>\n|;
 
-        } else {
-
-          print qq|<div class="submenu"> |.
-          $menu->menuitem(\%myconfig, $form, $item, $level).qq|$label</a></div>|;
-        }
-
+      if ($is_root_action) {
+        push @{ $state->{root_actions} }, $html;
       } else {
-
-        $display = "display: none;" unless $item eq ' ';
-
-        print qq|
-<div id="menu$i" class="menuOut" onclick="SwitchMenu('sub$i')" onmouseover="ChangeClass('menu$i','menuOver')" onmouseout="ChangeClass('menu$i','menuOut')">$label</div>
-        <div class="submenu" id="sub$i" style="$display">|;
-
-        &jsmenu_frame($menu, $item);
-
-        print qq|
-        </div>
-|;
-
+        print $html;
       }
-
     }
-
   }
-
 }
 
 
 sub jsmenu {
   my ($menu, $level) = @_;
 
-  # build menu_{login}.js for user
+  # Legacy JS menu generator (menu_{login}.js) is deprecated.
+  # By default it is disabled. Enable ONLY for debugging/compatibility:
+  #   SetEnv SQLLEDGER_ALLOW_LEGACY_JSMENU 1   (Apache)
+  # or export SQLLEDGER_ALLOW_LEGACY_JSMENU=1 for the CGI environment.
+  if (!$ENV{SQLLEDGER_ALLOW_LEGACY_JSMENU}) {
+    $form->{items}   = 0;
+    $form->{stagger} = '';
+    $form->{jsmenu}  = '';   # empty payload; wrapper output remains valid
+    return;
+  }
+
   my @menuorder = $menu->access_control(\%myconfig, $level);
 
   while (@menuorder){
@@ -256,7 +335,6 @@ sub jsmenu {
       $form->{jsmenu} .= $form->{stagger};
       $form->{jsmenu} .= qq|['$label', null, null,\n|;
 
-      # remove same level items
       map { shift @menuorder } grep /^$item/, @menuorder;
 
       $form->{stagger} .= "\t";
