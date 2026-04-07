@@ -2426,8 +2426,10 @@ sub workingday ($self, $myconfig, $date) {
 
 sub print_button ($, $button) {
 
-  for (sort { $button->{$a}->{ndx} <=> $button->{$b}->{ndx} } grep !/_label_/, keys %$button) {
-    print qq|\n<input class="submit noprint" type=submit name=action value="$button->{$_}{value}" accesskey="$button->{$_}{key}" title="$button->{$_}{value} [$button->{$_}{key}]">|;
+  for my $id (sort { $button->{$a}{ndx} <=> $button->{$b}{ndx} } grep !/_label_/, keys %$button) {
+    my %btn = $button->{$id}->%*;
+    my $id  = lc $id =~ s/ /_/gr;
+    print qq|\n<button class="submit noprint" type="submit" name="action" value="$id" accesskey="$btn{key}" title="$btn{value} [$btn{key}]">$btn{value}</button>|;
   }
 
 }

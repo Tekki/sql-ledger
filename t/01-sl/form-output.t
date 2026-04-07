@@ -54,16 +54,16 @@ subtest 'Buttons' => sub {
   $ENV{HTTP_USER_AGENT} = 'x';
 
   my %button = (
-    _label_ => 'Label',
-    'One'   => {ndx => 1, key => 'A', value => 'Value 1'},
-    'Two'   => {ndx => 2, key => 'B', value => 'Value 2'},
-    'Three' => {ndx => 3, key => 'C', value => 'Value 3'},
+    _label_   => 'Label',
+    'Value 1' => {ndx => 1, key => 'A', value => 'Value 1'},
+    'Value 2' => {ndx => 2, key => 'B', value => 'Value 2'},
+    'Value 3' => {ndx => 3, key => 'C', value => 'Value 3'},
   );
 
   my $expected = q|
-<input class="submit noprint" type=submit name=action value="Value 1" accesskey="A" title="Value 1 [A]">
-<input class="submit noprint" type=submit name=action value="Value 2" accesskey="B" title="Value 2 [B]">
-<input class="submit noprint" type=submit name=action value="Value 3" accesskey="C" title="Value 3 [C]">|;
+<button class="submit noprint" type="submit" name="action" value="value_1" accesskey="A" title="Value 1 [A]">Value 1</button>
+<button class="submit noprint" type="submit" name="action" value="value_2" accesskey="B" title="Value 2 [B]">Value 2</button>
+<button class="submit noprint" type="submit" name="action" value="value_3" accesskey="C" title="Value 3 [C]">Value 3</button>|;
 
   is _get_output($form, 'print_button', \%button), $expected;
 };
@@ -74,12 +74,12 @@ subtest 'Button table' => sub {
 
   my @buttons = (
     {
-      'One' => {ndx => 1, key => 'A', value => 'Value 1'},
+      'Value 1' => {ndx => 1, key => 'A', value => 'Value 1'},
     },
     {
-      _label_ => 'Label 1',
-      'Two'   => {ndx => 2, key => 'B', value => 'Value 2'},
-      'Three' => {ndx => 3, key => 'C', value => 'Value 3'},
+      _label_   => 'Label 1',
+      'Value 2' => {ndx => 2, key => 'B', value => 'Value 2'},
+      'Value 3' => {ndx => 3, key => 'C', value => 'Value 3'},
     },
     {
       _label_ => 'Label 2',
@@ -90,14 +90,14 @@ subtest 'Button table' => sub {
 <table width="100%">
   <tr>
     <td colspan="2">
-<input class="submit noprint" type=submit name=action value="Value 1" accesskey="A" title="Value 1 [A]">
+<button class="submit noprint" type="submit" name="action" value="value_1" accesskey="A" title="Value 1 [A]">Value 1</button>
     </td>
   </tr>
   <tr>
     <td width="1%">Label 1</td>
     <td>
-<input class="submit noprint" type=submit name=action value="Value 2" accesskey="B" title="Value 2 [B]">
-<input class="submit noprint" type=submit name=action value="Value 3" accesskey="C" title="Value 3 [C]">
+<button class="submit noprint" type="submit" name="action" value="value_2" accesskey="B" title="Value 2 [B]">Value 2</button>
+<button class="submit noprint" type="submit" name="action" value="value_3" accesskey="C" title="Value 3 [C]">Value 3</button>
     </td>
   </tr>
 </table>|;

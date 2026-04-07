@@ -1562,7 +1562,7 @@ sub delete {
 </h4>
 
 <p>
-<input name=action class=submit type=submit value="|.$locale->text('Yes').qq|">
+<button name="action" class="submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
 </form>
 |;
 
@@ -1829,7 +1829,7 @@ sub generate_invoices {
 </table>
 
 <br>
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button type="submit" class="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 |;
 
   $form->{sort} ||= "name";

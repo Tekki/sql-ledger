@@ -601,7 +601,7 @@ sub select_item {
 
   print qq|
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>
 
 </body>
@@ -1354,7 +1354,7 @@ sub e_mail {
 </table>
 
 <br>
-<input name=action class=submit type=submit value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button name="action" class="submit" type="submit" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>
 
 </body>
@@ -2200,7 +2200,7 @@ sub ship_to {
 <hr size=3 noshade>
 
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>
 
 </body>

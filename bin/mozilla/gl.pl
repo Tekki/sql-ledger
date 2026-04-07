@@ -1694,7 +1694,7 @@ sub delete {
 
 <h4>|.$locale->text('Are you sure you want to delete Transaction').qq| $form->{reference}</h4>
 
-<input name=action class=submit type=submit value="|.$locale->text('Yes').qq|">
+<button name="action" class="submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
 </form>
 |;
 

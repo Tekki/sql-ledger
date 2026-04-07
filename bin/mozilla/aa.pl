@@ -1545,7 +1545,7 @@ sub delete {
 
 <h4>|.$locale->text('Are you sure you want to delete Transaction').qq| $form->{invnumber}</h4>
 
-<input name=action class=submit type=submit value="|.$locale->text('Yes').qq|">
+<button name="action" class="submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
 </form>
 
 </body>
@@ -1947,7 +1947,7 @@ sub search {
 
 <br>
 <input type=hidden name=action value=continue>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>|;
 
   $form->hide_form(qw(nextsub path login));
 
@@ -2526,23 +2526,23 @@ sub transactions {
     $i = 1;
 
     unless ($form->{revtrans}) {
-      $button{'Select all'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Select all').qq|"> |;
+      $button{'Select all'}{code} = qq|<button class="submit" type="submit" name="action" value="select_all">|.$locale->text('Select all').qq|</button> |;
       $button{'Select all'}{order} = $i++;
 
-      $button{'Deselect all'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Deselect all').qq|"> |;
+      $button{'Deselect all'}{code} = qq|<button class="submit" type="submit" name="action" value="deselect_all">|.$locale->text('Deselect all').qq|</button> |;
       $button{'Deselect all'}{order} = $i++;
     }
 
     if ($form->{ARAP} eq 'AR') {
       unless ($form->{till}) {
-        $button{'AR--Add Transaction'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('AR Transaction').qq|"> |;
+        $button{'AR--Add Transaction'}{code} = qq|<button class="submit" type="submit" name="action" value="ar_transaction">|.$locale->text('AR Transaction').qq|</button> |;
         $button{'AR--Add Transaction'}{order} = $i++;
-        $button{'AR--Sales Invoice'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Sales Invoice.').qq|"> |;
+        $button{'AR--Sales Invoice'}{code} = qq|<button class="submit" type="submit" name="action" value="sales_invoice_">|.$locale->text('Sales Invoice.').qq|</button> |;
         $button{'AR--Sales Invoice'}{order} = $i++;
       }
 
       unless ($form->{revtrans}) {
-        $button{'AR--Delete Transactions'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Delete Transactions').qq|"> |;
+        $button{'AR--Delete Transactions'}{code} = qq|<button class="submit" type="submit" name="action" value="delete_transactions">|.$locale->text('Delete Transactions').qq|</button> |;
         $button{'AR--Delete Transactions'}{order} = $i++;
       }
 
@@ -2551,13 +2551,13 @@ sub transactions {
       }
 
     } else {
-      $button{'AP--Add Transaction'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('AP Transaction').qq|"> |;
+      $button{'AP--Add Transaction'}{code} = qq|<button class="submit" type="submit" name="action" value="ap_transaction">|.$locale->text('AP Transaction').qq|</button> |;
       $button{'AP--Add Transaction'}{order} = $i++;
-      $button{'AP--Vendor Invoice'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Vendor Invoice.').qq|"> |;
+      $button{'AP--Vendor Invoice'}{code} = qq|<button class="submit" type="submit" name="action" value="vendor_invoice_">|.$locale->text('Vendor Invoice.').qq|</button> |;
       $button{'AP--Vendor Invoice'}{order} = $i++;
 
       unless ($form->{revtrans}) {
-        $button{'AP--Delete Transactions'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Delete Transactions').qq|"> |;
+        $button{'AP--Delete Transactions'}{code} = qq|<button class="submit" type="submit" name="action" value="delete_transactions">|.$locale->text('Delete Transactions').qq|</button> |;
         $button{'AP--Delete Transactions'}{order} = $i++;
       }
 
@@ -2567,7 +2567,7 @@ sub transactions {
 
     }
 
-    $button{spreadsheet}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Spreadsheet').qq|" accesskey="X" title="[X]">|;
+    $button{spreadsheet}{code} = qq|<button class="submit" type="submit" name="action" value="spreadsheet" accesskey="X" title="[X]">|.$locale->text('Spreadsheet').qq|</button>|;
     $button{spreadsheet}{order} = $i++;
 
     unless ($form->{revtrans}) {
@@ -2713,7 +2713,7 @@ sub delete_transactions {
 
   print qq|
 <p>
-<input name=action class=submit type=submit value="|.$locale->text('Yes, delete transactions').qq|">
+<button name="action" class="submit" type="submit" value="yes__delete_transactions">|.$locale->text('Yes, delete transactions').qq|</button>
 
 </form>
 

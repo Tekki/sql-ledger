@@ -86,7 +86,7 @@ function sf(){
   </tr>$totp
   <tr>
     <th></th>
-    <td><input type=submit class=submit value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]"></td>
+    <td><button type="submit" class="submit" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button></td>
   </tr>
 </table>
 

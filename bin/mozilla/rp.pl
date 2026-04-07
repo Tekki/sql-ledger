@@ -1160,7 +1160,7 @@ sub report {
 </table>
 
 <br>
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button type="submit" class="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 |;
 
   $form->hide_form(qw(helpref reportcode reportlogin title nextsub path login));
@@ -3350,7 +3350,7 @@ sub prepare_e_mail {
 <input type=hidden name=nextsub value="$nextsub">
 
 <br>
-<input name=action class=submit type=submit value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button name="action" class="submit" type="submit" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>
 
 </body>
@@ -4538,7 +4538,7 @@ sub print_report_options {
 </table>
 
 <p>
-<input class=submit type=submit name=action value="|.$locale->text('Print Report').qq|">|;
+<button class="submit" type="submit" name="action" value="print_report">|.$locale->text('Print Report').qq|</button>|;
 
   $form->{action} = "print_report";
   $form->{nextsub} = "";

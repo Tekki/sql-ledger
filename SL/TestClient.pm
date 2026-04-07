@@ -208,7 +208,7 @@ class SL::TestClient {
 
   method form_exists () {
     subtest 'Form exists' => sub {
-      $self->elements_exist('form', 'input[type=submit]');
+      $self->elements_exist('form', 'button[type=submit]');
     };
 
     return $self;
@@ -340,6 +340,7 @@ class SL::TestClient {
 
   method press_button_ok ($label, $button) {
     subtest "$label: press button $button" => sub {
+      $mj->element_exists("button[name='action'][value='$button']", "Button $button");
       $self->set_action_ok($button)->post_ok($label);
     };
 

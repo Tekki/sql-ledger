@@ -579,7 +579,7 @@ sub list_stock {
   print qq|
 <input type=hidden name=nextsub value="stock">
 <br>
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button type="submit" class="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>
 
 </body>
@@ -834,7 +834,7 @@ sub search {
   $form->hide_form(qw(path login title sort direction type nextsub reportcode reportlogin));
 
   print qq|
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>
 |;
 
@@ -1517,17 +1517,17 @@ sub partsgroup_footer {
 
   if ($myconfig{acs} !~ /Goods \& Services--Add Group/) {
     print qq|
-<input type=submit class=submit name=action value="|.$locale->text('Save').qq|">
+<button type="submit" class="submit" name="action" value="save">|.$locale->text('Save').qq|</button>
 |;
 
     if ($form->{id}) {
 
       print qq|
-<input type=submit class=submit name=action value="|.$locale->text('Save as new').qq|">
+<button type="submit" class="submit" name="action" value="save_as_new">|.$locale->text('Save as new').qq|</button>
 |;
       if ($form->{orphaned}) {
         print qq|
-<input type=submit class=submit name=action value="|.$locale->text('Delete').qq|">|;
+<button type="submit" class="submit" name="action" value="delete">|.$locale->text('Delete').qq|</button>|;
       }
     }
   }
@@ -1716,12 +1716,12 @@ sub pricegroup_footer {
 
   if ($myconfig{acs} !~ /Goods \& Services--Add Pricegroup/) {
     print qq|
-<input type=submit class=submit name=action value="|.$locale->text('Save').qq|">
+<button type="submit" class="submit" name="action" value="save">|.$locale->text('Save').qq|</button>
 |;
 
     if ($form->{id} && $form->{orphaned}) {
       print qq|
-<input type=submit class=submit name=action value="|.$locale->text('Delete').qq|">|;
+<button type="submit" class="submit" name="action" value="delete">|.$locale->text('Delete').qq|</button>|;
     }
   }
 
@@ -1827,7 +1827,7 @@ $sort
   print qq|
 
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>
 
 </body>
@@ -2265,7 +2265,7 @@ sub select_name {
   print qq|
 <input type=hidden name=nextsub value=name_selected>
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>
 
 </body>
@@ -2425,7 +2425,7 @@ sub project_sales_order {
   $form->hide_form(qw(path login nextsub type vc));
 
   print qq|
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button type="submit" class="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 
 </form>
 |;
@@ -2627,10 +2627,10 @@ sub jcitems {
 
   if ($form->{rowcount}) {
     print qq|
-<input class=submit type=submit name=action value="|.$locale->text('Generate Sales Orders').qq|">|;
+<button class="submit" type="submit" name="action" value="generate_sales_orders">|.$locale->text('Generate Sales Orders').qq|</button>|;
 
     print qq|
-<input class=submit type=submit name=action value="|.$locale->text('Select Customer').qq|">|;
+<button class="submit" type="submit" name="action" value="select_customer">|.$locale->text('Select Customer').qq|</button>|;
 
   }
 
@@ -2676,7 +2676,7 @@ sub select_customer {
   $form->hide_form;
 
   print qq|
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 
 </form>
 |;

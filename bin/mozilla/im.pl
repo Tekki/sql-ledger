@@ -173,7 +173,7 @@ sub import {
   $form->hide_form(qw(defaultcurrency title type nextsub login path));
 
   print qq|
-<input name=action class=submit type=submit value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button name="action" class="submit" type="submit" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>
 
 </body>
@@ -683,7 +683,7 @@ sub export_screen_payment {
 </table>
 
 <br>
-<input name=action class=submit type=submit value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button name="action" class="submit" type="submit" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 |;
 
   $form->hide_form(qw(initreport reportcode defaultcurrency title type action nextsub login path));
@@ -869,7 +869,7 @@ sub im_sales_invoice {
   $form->hide_form(qw(delimiter tabdelimited mapfile stringsquoted vc rowcount ndx type login path callback));
 
   print qq|
-<input name=action class=submit type=submit value="|.$locale->text('Import Sales Invoices').qq|">
+<button name="action" class="submit" type="submit" value="import_sales_invoices">|.$locale->text('Import Sales Invoices').qq|</button>
 </form>
 
 </body>
@@ -1059,7 +1059,7 @@ sub im_order {
   $form->hide_form(qw(delimiter tabdelimited mapfile stringsquoted vc rowcount ndx type login path callback));
 
   print qq|
-<input name=action class=submit type=submit value="|.$locale->text('Import Orders').qq|">
+<button name="action" class="submit" type="submit" value="import_orders">|.$locale->text('Import Orders').qq|</button>
 </form>
 
 </body>
@@ -1161,7 +1161,7 @@ sub im_coa {
   $form->hide_form(qw(delimiter tabdelimited mapfile stringsquoted rowcount type login path callback));
 
   print qq|
-<input name=action class=submit type=submit value="|.$locale->text('Import Chart of Accounts').qq|">
+<button name="action" class="submit" type="submit" value="import_chart_of_accounts">|.$locale->text('Import Chart of Accounts').qq|</button>
 </form>
 
 </body>
@@ -1318,7 +1318,7 @@ sub im_gl {
   $form->hide_form(qw(delimiter tabdelimited mapfile stringsquoted type rowcount login path callback));
 
   print qq|
-<input name=action class=submit type=submit value="|.$locale->text('Import General Ledger').qq|">
+<button name="action" class="submit" type="submit" value="import_general_ledger">|.$locale->text('Import General Ledger').qq|</button>
 </form>
 
 </body>
@@ -1928,7 +1928,7 @@ sub im_csv_payment {
   $form->hide_form(qw(precision rowcount type paymentaccount currency defaultcurrency login path callback));
 
   print qq|
-<input name=action class=submit type=submit value="|.$locale->text('Import Payments').qq|">
+<button name="action" class="submit" type="submit" value="import_payments">|.$locale->text('Import Payments').qq|</button>
 </form>
 
 </body>
@@ -2512,7 +2512,7 @@ sub im_partsgroup {
   $form->hide_form(qw(rowcount type login path callback));
 
   print qq|
-<input name=action class=submit type=submit value="|.$locale->text('Import Groups').qq|">
+<button name="action" class="submit" type="submit" value="import_groups">|.$locale->text('Import Groups').qq|</button>
 </form>
 
 </body>
@@ -2619,7 +2619,7 @@ sub import_qrbill {
   $form->hide_form(qw|nextsub type login path|);
 
   print qq|
-<input name=action class=submit type=submit value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button name="action" class="submit" type="submit" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>
 
 </body>
@@ -3904,7 +3904,7 @@ sub reconcile_payments {
 
 <h4>|.$locale->text('Are you sure you want to reconcile all marked payments').qq|</h4>
 <p>
-<input name=action class=submit type=submit value="|.$locale->text('Yes, reconcile payments').qq|">
+<button name="action" class="submit" type="submit" value="yes__reconcile_payments">|.$locale->text('Yes, reconcile payments').qq|</button>
 </form>
 
 </body>

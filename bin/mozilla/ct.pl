@@ -1270,23 +1270,23 @@ sub list_names {
   $i = 1;
   if ($myconfig{acs} !~ /AR--AR/) {
     if ($form->{db} eq 'customer') {
-      $button{'Customers--Add Customer'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Customer').qq|"> |;
+      $button{'Customers--Add Customer'}{code} = qq|<button class="submit" type="submit" name="action" value="add_customer">|.$locale->text('Add Customer').qq|</button> |;
       $button{'Customers--Add Customer'}{order} = $i++;
     }
   }
   if ($myconfig{acs} !~ /AP--AP/) {
     if ($form->{db} eq 'vendor') {
-      $button{'Vendors--Add Vendor'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Vendor').qq|"> |;
+      $button{'Vendors--Add Vendor'}{code} = qq|<button class="submit" type="submit" name="action" value="add_vendor">|.$locale->text('Add Vendor').qq|</button> |;
       $button{'Vendors--Add Vendor'}{order} = $i++;
     }
   }
 
   if ($form->{status} eq 'orphaned') {
     if ($form->{db} eq 'customer') {
-      $button{'Customer--Delete'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Delete Customers').qq|"> |;
+      $button{'Customer--Delete'}{code} = qq|<button class="submit" type="submit" name="action" value="delete_customers">|.$locale->text('Delete Customers').qq|</button> |;
       $button{'Customer--Delete'}{order} = $i++;
     } else {
-      $button{'Vendor--Delete'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Delete Vendors').qq|"> |;
+      $button{'Vendor--Delete'}{code} = qq|<button class="submit" type="submit" name="action" value="delete_vendors">|.$locale->text('Delete Vendors').qq|</button> |;
       $button{'Vendor--Delete'}{order} = $i++;
     }
   }
@@ -2668,7 +2668,7 @@ sub shipping_address {
 <hr size=3 noshade>
 
 <br>
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button type="submit" class="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>|;
   &copy_element if $form->{checkaddress};
   print qq|
@@ -3250,7 +3250,7 @@ sub select_item {
 <input type=hidden name=nextsub value=item_selected>
 
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>
 
 </body>
@@ -3652,7 +3652,7 @@ sub retrieve_names {
 
   print qq|
 <p>
-<input name=action class=submit type=submit value="|.$locale->text('Yes, delete').qq|">
+<button name="action" class="submit" type="submit" value="yes__delete">|.$locale->text('Yes, delete').qq|</button>
 </form>
 
 </body>

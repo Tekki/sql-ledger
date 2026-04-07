@@ -270,7 +270,7 @@ sub upload {
   $form->hide_form(qw(callback row title nextsub login path));
 
   print qq|
-<input name=action class=submit type=submit value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button name="action" class="submit" type="submit" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>|;
 
   &check_upload_size if $form->{max_upload_size};
@@ -467,7 +467,7 @@ sub search_documents {
 </table>
 
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>|;
 
   $form->{action} = $form->{nextsub};
   $form->hide_form(qw(action nextsub login path));
@@ -862,7 +862,7 @@ sub attach {
 </table>
 
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>|;
 
   $form->{nextsub} = "do_attach";
   $form->{action} = $form->{nextsub};
@@ -968,7 +968,7 @@ sub upload_image {
   $form->hide_form(qw(nextsub login path));
 
   print qq|
-<input name=action class=submit type=submit value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button name="action" class="submit" type="submit" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>
 
 </body>

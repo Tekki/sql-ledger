@@ -111,7 +111,7 @@ sub add_batch {
 
 <input type=hidden name=action value=continue>
 
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>|;
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -371,7 +371,7 @@ sub delete_batch {
 
 <h4>|.$locale->text('Are you sure you want to delete Batch').qq| $form->{batchnumber}</h4>
 
-<input name=action class=submit type=submit value="|.$locale->text('Yes').qq|">
+<button name="action" class="submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
 </form>
 
 </body>
@@ -541,7 +541,7 @@ sub search {
 </table>
 
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 |;
 
   $form->{sort} = "batchnumber";

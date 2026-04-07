@@ -242,7 +242,7 @@ textarea {
   width: 100%;
 }
 
-input {
+input, button {
   background-color: var(--bg-2);
   border: 1px solid var(--gray-1);
   border-radius: 0px;

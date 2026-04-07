@@ -43,7 +43,7 @@ if (-f "$form->{path}/custom/$form->{script}") {
 
 if ($form->{action}) {
 
-  my $action = $locale->findsub($form->{action});
+  my $action = $form->{action};
 
   &check_password unless $action eq 'logout';
 
@@ -96,7 +96,7 @@ function sf(){
   <tr>
     <th>|.$locale->text('Password').qq|</th>
     <td><input type=password name=password></td>
-    <td><input type=submit class=submit name=action value="|.$locale->text('Login').qq|"></td>
+    <td><button type="submit" class="submit" name="action" value="login">|.$locale->text('Login').qq|</button></td>
   </tr>
 <input type=hidden name=action value=login>
 <input type=hidden name=path value=$form->{path}>
@@ -424,7 +424,7 @@ sub delete {
 
 <h4>|.$locale->text('Are you sure you want to delete dataset').qq| $form->{dbname}</h4>
 
-<input name=action class=submit type=submit value="|.$locale->text('Yes').qq|">
+<button name="action" class="submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
 </form>
 
 </body>
@@ -574,7 +574,7 @@ sub change_password {
   </tr>
 </table>
 
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
+<button type="submit" class="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>|;
 
   $form->{nextsub} = "do_change_password";
 
@@ -698,7 +698,7 @@ sub change_host {
   </tr>
 </table>
 
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
+<button type="submit" class="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>|;
 
   $form->{nextsub} = "do_change_host";
 
@@ -907,7 +907,7 @@ sub dbselect_source {
 <hr size=3 noshade>
 
 <br>
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button type="submit" class="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 |;
 
   $form->{nextsub} = "create_dataset";
@@ -1063,7 +1063,7 @@ sub create_dataset {
 
 <hr size=3 noshade>
 <br>
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button type="submit" class="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 |;
 
   $form->{nextsub} = "dbcreate";
@@ -1265,7 +1265,7 @@ sub lock_system {
 <hr size=3 noshade>
 
 <br>
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
+<button type="submit" class="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>|;
 
   $form->{callback} = "$form->{script}?action=list_datasets&path=$form->{path}";
   $form->{nextsub} = "do_lock_system";

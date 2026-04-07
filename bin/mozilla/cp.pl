@@ -2527,7 +2527,7 @@ sub payment_register {
 
 <br>
 <input type=hidden name=action value=continue>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>|;
 
   $form->{sort} = "datepaid";
   $form->{nextsub} = "list_checks";
@@ -2822,11 +2822,13 @@ sub void_checks {
   $form->error($locale->text('Nothing selected!')) unless $source;
 
   if ($form->{ARAP} eq 'AR') {
-    $action = $locale->text('Yes, Void Receipts');
-    $msg = $locale->text('Are you sure you want to void receipts');
+    $action         = $locale->text('Yes, Void Receipts');
+    $form->{action} = 'yes__void_receipts';
+    $msg            = $locale->text('Are you sure you want to void receipts');
   } else {
-    $action = $locale->text('Yes, Void Checks');
-    $msg = $locale->text('Are you sure you want to void checks');
+    $action         = $locale->text('Yes, Void Checks');
+    $form->{action} = 'yes__void_checks';
+    $msg            = $locale->text('Are you sure you want to void checks');
   }
 
   $form->header;
@@ -2845,7 +2847,7 @@ sub void_checks {
 
 <h4>$msg $source</h4>
 
-<input name=action class=submit type=submit value="$action">
+<button name="action" class="submit" type="submit" value="$form->{action}">$action</button>
 </form>
 
 </body>
@@ -2977,7 +2979,7 @@ sub reissue_payments {
   </tr>
 </table>
 
-<input name=action class=submit type=submit value="$action">
+<button name="action" class="submit" type="submit" value="_button_nam">$action</button>
 </form>
 
 </body>

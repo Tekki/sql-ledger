@@ -237,7 +237,7 @@ sub list {
   <tr><td><hr size=3 noshade></td></tr>
 </table>
 
-<br><input class=submit type=submit name=action value="|.$locale->text('List Transactions').qq|">
+<br><button class="submit" type="submit" name="action" value="list_transactions">|.$locale->text('List Transactions').qq|</button>
 </form>
 
 </body>

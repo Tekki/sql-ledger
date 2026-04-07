@@ -24,7 +24,7 @@ $t->get_ok('Index', 'index.html')->mj->content_like(qr/content="0; URL=login.pl"
 
 subtest 'Login page' => sub {
   $t->get_ok('Login page', 'login.pl')
-    ->elements_exist('Login form', 'form', 'input[type=submit]')
+    ->elements_exist('Login form', 'form', 'button[type=submit]')
     ->form_fields_exist('login', 'password')
     ->form_hidden_exist('js', 'path', 'small_device');
 };

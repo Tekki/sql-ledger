@@ -35,7 +35,7 @@ if (-f "$form->{path}/custom/$form->{login}/$form->{script}") {
 }
 
 if ($form->{action}) {
-  &{ $locale->findsub($form->{action}) };
+  &{ $form->{action} };
 } else {
   &login_screen;
 }
@@ -92,7 +92,7 @@ sub login_screen {
             </table>
 
             <br>
-            <input type=submit name=action value="|.$locale->text('Login').qq|">
+            <button type="submit" name="action" value="login">|.$locale->text('Login').qq|</button>
           </td>
         </tr>
       </table>
@@ -205,7 +205,7 @@ sub selectdataset {
               </tr>
             </table>
             <br>
-            <input type=submit name=action value="|.$locale->text('Login').qq|">
+            <button type="submit" name="action" value="login">|.$locale->text('Login').qq|</button>
           </td>
         </tr>
       </table>
@@ -447,7 +447,7 @@ sub email_tan {
               </tr>
             </table>
             <br>
-            <input type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+            <button type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
           </td>
         </tr>
       </table>
@@ -586,7 +586,7 @@ sub totp_screen {
               </tr>
             </table>
             <br>
-            <input type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+            <button type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
           </td>
         </tr>
       </table>

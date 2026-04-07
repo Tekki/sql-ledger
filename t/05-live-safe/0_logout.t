@@ -23,7 +23,7 @@ $t = SL::TestClient->new(configfile => $configfile)->connect_ok->api_login_ok;
 
 subtest 'Logout' => sub {
   $t->post_ok('Logout', 'login.pl', action => 'logout')
-    ->elements_exist('Links to invoice, name', 'form', 'input[type=submit]')
+    ->elements_exist('Links to invoice, name', 'form', 'button[type=submit]')
     ->form_fields_exist('login', 'password')
     ->form_hidden_exist('js', 'path', 'small_device');
 };

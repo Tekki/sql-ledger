@@ -159,7 +159,7 @@ textarea {
         font-weight: bold;
         }
 
-input {
+input, button {
         font-family: Verdana, Helvetica, Arial, sans-serif;
         border: 1px solid #888888;
         font-size: 11px;

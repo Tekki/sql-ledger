@@ -180,7 +180,7 @@ sub search_employee {
 
   print qq|
 <br>
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button type="submit" class="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>
 |;
 
@@ -404,7 +404,7 @@ sub list_employees {
   }
 
   $i = 1;
-  $button{'HR--Employees--Add Employee'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Employee').qq|"> |;
+  $button{'HR--Employees--Add Employee'}{code} = qq|<button class="submit" type="submit" name="action" value="add_employee">|.$locale->text('Add Employee').qq|</button> |;
   $button{'HR--Employees--Add Employee'}{order} = $i++;
 
   foreach $item (split /;/, $myconfig{acs}) {
@@ -1357,7 +1357,7 @@ sub delete_payroll {
 
 <h4>|.$locale->text('Are you sure you want to delete Transaction').qq| $form->{invnumber}</h4>
 
-<input name=action class=submit type=submit value="|.$locale->text('Yes').qq|">
+<button name="action" class="submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
 </form>
 
 </body>
@@ -2188,7 +2188,7 @@ sub search_payroll {
 
   print qq|
 <br>
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button type="submit" class="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>
 |;
 

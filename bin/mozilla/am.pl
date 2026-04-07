@@ -796,7 +796,7 @@ sub list_department {
   $form->hide_form(qw(type callback path login));
 
   print qq|
-<input class=submit type=submit name=action value="|.$locale->text('Add Department').qq|">|;
+<button class="submit" type="submit" name="action" value="add_department">|.$locale->text('Add Department').qq|</button>|;
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -998,7 +998,7 @@ sub list_business {
   $form->hide_form(qw(type callback path login));
 
   print qq|
-<input class=submit type=submit name=action value="|.$locale->text('Add Business').qq|">|;
+<button class="submit" type="submit" name="action" value="add_business">|.$locale->text('Add Business').qq|</button>|;
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -1202,7 +1202,7 @@ sub list_paymentmethod {
   $form->hide_form(qw(type callback path login));
 
   print qq|
-<input class=submit type=submit name=action value="|.$locale->text('Add Payment Method').qq|">|;
+<button class="submit" type="submit" name="action" value="add_payment_method">|.$locale->text('Add Payment Method').qq|</button>|;
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -1420,7 +1420,7 @@ sub list_sic {
   $form->hide_form(qw(type callback path login));
 
   print qq|
-<input class=submit type=submit name=action value="|.$locale->text('Add SIC').qq|">|;
+<button class="submit" type="submit" name="action" value="add_sic">|.$locale->text('Add SIC').qq|</button>|;
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -1613,7 +1613,7 @@ sub list_language {
   $form->hide_form(qw(type callback path login));
 
   print qq|
-<input class=submit type=submit name=action value="|.$locale->text('Add Language').qq|">|;
+<button class="submit" type="submit" name="action" value="add_language">|.$locale->text('Add Language').qq|</button>|;
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -1752,7 +1752,7 @@ sub delete_language {
 
 <input type=hidden name=action value=continue>
 <input type=hidden name=nextsub value=yes_delete_language>
-<input name=action class=submit type=submit value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button name="action" class="submit" type="submit" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>
 
 </body>
@@ -1873,7 +1873,7 @@ sub list_mimetypes {
   $form->hide_form(qw(type callback path login));
 
   print qq|
-<input class=submit type=submit name=action value="|.$locale->text('Add Mimetype').qq|">|;
+<button class="submit" type="submit" name="action" value="add_mimetype">|.$locale->text('Add Mimetype').qq|</button>|;
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -2407,8 +2407,8 @@ sub display_taxes {
   $form->hide_form(qw(company type taxaccounts path login));
 
   print qq|
-<input type=submit class=submit name=action value="|.$locale->text('Update').qq|">
-<input type=submit class=submit name=action value="|.$locale->text('Save').qq|">|;
+<button type="submit" class="submit" name="action" value="update">|.$locale->text('Update').qq|</button>
+<button type="submit" class="submit" name="action" value="save">|.$locale->text('Save').qq|</button>|;
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -2988,8 +2988,8 @@ sub workstations {
   $form->hide_form(map { "numprinters_$_" } (1 .. $form->{numworkstations}));
 
   print qq|
-<input type=submit class=submit name=action value="|.$locale->text('Update').qq|" accesskey="U">
-<input type=submit class=submit name=action value="|.$locale->text('Save').qq|" accesskey="S">|;
+<button type="submit" class="submit" name="action" value="update" accesskey="U">|.$locale->text('Update').qq|</button>
+<button type="submit" class="submit" name="action" value="save" accesskey="S">|.$locale->text('Save').qq|</button>|;
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -3521,7 +3521,7 @@ print qq|
   $form->hide_form(qw(nextsub login path));
 
   print qq|
-<input name=action class=submit type=submit value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button name="action" class="submit" type="submit" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>
 
 </body>
@@ -3636,7 +3636,7 @@ print qq|
 <hr size=3 noshade>
 
 <br>
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button type="submit" class="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 |;
 
   $form->{nextsub} = "do_restore";
@@ -3756,7 +3756,7 @@ sub audit_control {
 <hr size=3 noshade>
 
 <br>
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button type="submit" class="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 |;
 
   $form->{nextsub} = "doclose";
@@ -3885,7 +3885,7 @@ sub audit_log {
 </table>
 
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 |;
 
   $form->{nextsub} = "list_audit_log";
@@ -4202,7 +4202,7 @@ sub list_warehouse {
   $form->hide_form(qw(type callback path login));
 
   print qq|
-<input class=submit type=submit name=action value="|.$locale->text('Add Warehouse').qq|">|;
+<button class="submit" type="submit" name="action" value="add_warehouse">|.$locale->text('Add Warehouse').qq|</button>|;
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -4388,7 +4388,7 @@ sub yearend {
   $form->hide_form(qw(l_accno nextsub precision path login));
 
   print qq|
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>|;
 
 }
 
@@ -5258,7 +5258,7 @@ sub clear_semaphores {
 
 <h4>|.$locale->text('Remove semaphores?').qq|</h4>
 
-<input name=action class=submit type=submit value="|.$locale->text('Yes').qq|">
+<button name="action" class="submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
 </form>
 
 </body>
@@ -5327,7 +5327,7 @@ print qq|
   $form->hide_form(qw(nextsub login path));
 
   print qq|
-<input name=action class=submit type=submit value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button name="action" class="submit" type="submit" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>
 
 </body>
@@ -5373,7 +5373,7 @@ sub unlock_dataset {
 
 <h4>|.$locale->text('Unlock dataset?').qq|</h4>
 
-<input name=action class=submit type=submit value="|.$locale->text('Yes').qq|">
+<button name="action" class="submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
 </form>
 
 </body>
@@ -5728,7 +5728,7 @@ sub search_exchangerates {
 
 <br>
 <input type=hidden name=action value=continue>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>|;
 
   $form->{sort} = "transdate";
 
@@ -5906,7 +5906,7 @@ sub list_exchangerates {
 <br>
 <form method=post action=$form->{script}>
 
-<input class=submit type=submit name=action value="|.$locale->text('Add Exchange Rate').qq|">|;
+<button class="submit" type="submit" name="action" value="add_exchange_rate">|.$locale->text('Add Exchange Rate').qq|</button>|;
 
   $form->hide_form(qw(currencies sort callback path login));
 
@@ -6117,7 +6117,7 @@ sub list_currencies {
 <br>
 <form method=post action=$form->{script}>
 
-<input class=submit type=submit name=action value="|.$locale->text('Add Currency').qq|">|;
+<button class="submit" type="submit" name="action" value="add_currency">|.$locale->text('Add Currency').qq|</button>|;
 
   $form->{type} = "currency";
 
@@ -6368,7 +6368,7 @@ sub list_roles {
     print qq|
 <form method=post action=$form->{script}>
 
-<input class=submit type=submit name=action value="|.$locale->text('Add Role').qq|">|;
+<button class="submit" type="submit" name="action" value="add_role">|.$locale->text('Add Role').qq|</button>|;
 
     $form->{type} = "role";
 
@@ -6910,7 +6910,7 @@ sub add_snapshot {
 
 <h4>|.$locale->text('Create new snapshot for current point of time').qq|</h4>
 <p>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>
 
 </body>
@@ -6956,7 +6956,7 @@ sub delete_snapshots {
 
   print qq|
 </ul>
-<input class=submit type=submit name=action value="|.$locale->text('Yes').qq|">
+<button class="submit" type="submit" name="action" value="yes">|.$locale->text('Yes').qq|</button>
 </form>
 
 </body>
@@ -7003,7 +7003,7 @@ sub restore_snapshot {
 <p>
 <input type="checkbox" name="create_snapshot" value="1" checked>&nbsp;|.$locale->text('Create new snapshot for current point of time').qq|
 <p>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 
 </form>
 

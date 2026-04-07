@@ -642,29 +642,30 @@ sub form_footer {
 
   } else {
 
-    %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
-               'Main Groups' => { ndx => 2, key => 'M', value => $locale->text('Main Groups') },
-               'Print' => { ndx => 3, key => 'P', value => $locale->text('Print') },
-               'Open Drawer' => { ndx => 4, key => 'C', value => $locale->text('Open Drawer') },
-               'Preview' => { ndx => 5, key => 'V', value => $locale->text('Preview') },
-               'Post' => { ndx => 6, key => 'O', value => $locale->text('Post') },
-               'Print and Post' => { ndx => 7, key => 'R', value => $locale->text('Print and Post') },
-               'Assign Number' => { ndx => 8, key => 'A', value => $locale->text('Assign Number') },
-               'Delete' => { ndx => 9, key => 'D', value => $locale->text('Delete') }
-              );
+    %button = (
+      update         => {ndx => 1, key => 'U', value => $locale->text('Update')},
+      main_groups    => {ndx => 2, key => 'M', value => $locale->text('Main Groups')},
+      print          => {ndx => 3, key => 'P', value => $locale->text('Print')},
+      open_drawer    => {ndx => 4, key => 'C', value => $locale->text('Open Drawer')},
+      preview        => {ndx => 5, key => 'V', value => $locale->text('Preview')},
+      post           => {ndx => 6, key => 'O', value => $locale->text('Post')},
+      print_and_post => {ndx => 7, key => 'R', value => $locale->text('Print and Post')},
+      assign_number  => {ndx => 8, key => 'A', value => $locale->text('Assign Number')},
+      delete         => {ndx => 9, key => 'D', value => $locale->text('Delete')}
+    );
 
-    delete $button{'Main Groups'} if $form->{parentgroups};
+    delete $button{'main_groups'} if $form->{parentgroups};
 
     if ($transdate > $form->{closedto}) {
 
       if (! $form->{id}) {
-        delete $button{'Delete'};
+        delete $button{'delete'};
       }
 
-      delete $button{'Print and Post'} unless $slconfig{latex};
+      delete $button{'print_and_post'} unless $slconfig{latex};
 
       for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) {
-        print qq|<input class=pos type=submit name=action value="$button{$_}{value}" accesskey="$button{$_}{key}" title="$button{$_}{value} [$button{$_}{key}]">\n|;
+        print qq|<button class="pos" type="submit" name="action" value="$_" accesskey="$button{$_}{key}" title="$button{$_}{value} [$button{$_}{key}]">$button{$_}{value}</button>\n|;
       }
 
       print qq|<p>
@@ -681,7 +682,7 @@ sub form_footer {
           ($partsgroup, $translation, $image) = split /--/, $item;
           $item = ($translation) ? $translation : $partsgroup;
           $item = $form->quote($item);
-          print qq| <button name="action" value="$spc$item" type="submit" class="pos" title="$item"><img src="$slconfig{images}/$myconfig{dbname}/$image" height="32" alt="$item">\n| if $item;
+          print qq| <button name="action" value="$spc$item" type="submit" class="pos" title="$item"><img src="$slconfig{images}/$myconfig{dbname}/$image" height="32" alt="$item"></button>\n| if $item;
         }
       }
     }
@@ -1292,7 +1293,7 @@ sub receipts {
 </table>
 
 <br>
-<input type=submit class=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button type="submit" class="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 |;
 
   $form->hide_form(qw(vc db path login));

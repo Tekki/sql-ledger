@@ -1287,7 +1287,7 @@ sub search {
 <input type=hidden name=nextsub value=generate_report>
 
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 |;
 
   $form->hide_form(qw(path login));
@@ -1779,30 +1779,30 @@ sub generate_report {
   } else {
     $form->helpref(\%myconfig, \%slconfig, "list_items");
     if ($form->{searchitems} eq 'part') {
-      $button{'Goods & Services--Add Part'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Part').qq|"> |;
+      $button{'Goods & Services--Add Part'}{code} = qq|<button class="submit" type="submit" name="action" value="add_part">|.$locale->text('Add Part').qq|</button> |;
       $button{'Goods & Services--Add Part'}{order} = $i++;
     }
     if ($form->{searchitems} eq 'service') {
-      $button{'Goods & Services--Add Service'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Service').qq|"> |;
+      $button{'Goods & Services--Add Service'}{code} = qq|<button class="submit" type="submit" name="action" value="add_service">|.$locale->text('Add Service').qq|</button> |;
       $button{'Goods & Services--Add Service'}{order} = $i++;
     }
     if ($form->{searchitems} eq 'assembly') {
-      $button{'Goods & Services--Add Assembly'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Assembly').qq|"> |;
+      $button{'Goods & Services--Add Assembly'}{code} = qq|<button class="submit" type="submit" name="action" value="add_assembly">|.$locale->text('Add Assembly').qq|</button> |;
       $button{'Goods & Services--Add Assembly'}{order} = $i++;
     }
     if ($form->{searchitems} eq 'kit') {
-      $button{'Goods & Services--Add Kit'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Kit').qq|"> |;
+      $button{'Goods & Services--Add Kit'}{code} = qq|<button class="submit" type="submit" name="action" value="add_kit">|.$locale->text('Add Kit').qq|</button> |;
       $button{'Goods & Services--Add Kit'}{order} = $i++;
     }
     if ($form->{searchitems} eq 'labor') {
-      $button{'Goods & Services--Add Labor/Overhead'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Add Labor/Overhead').qq|"> |;
+      $button{'Goods & Services--Add Labor/Overhead'}{code} = qq|<button class="submit" type="submit" name="action" value="add_labor_overhead">|.$locale->text('Add Labor/Overhead').qq|</button> |;
       $button{'Goods & Services--Add Labor/Overhead'}{order} = $i++;
     }
 
-    $button{'Goods & Services--Preview'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Preview').qq|"> |;
+    $button{'Goods & Services--Preview'}{code} = qq|<button class="submit" type="submit" name="action" value="preview">|.$locale->text('Preview').qq|</button> |;
     $button{'Goods & Services--Preview'}{order} = $i++;
 
-    $button{'Goods & Services--Print'}{code} = qq|<input class=submit type=submit name=action value="|.$locale->text('Print ').qq|"> |;
+    $button{'Goods & Services--Print'}{code} = qq|<button class="submit" type="submit" name="action" value="print_">|.$locale->text('Print ').qq|</button> |;
     $button{'Goods & Services--Print'}{order} = $i++;
   }
 
@@ -2473,7 +2473,7 @@ sub supply_demand {
   </tr>
 </table>
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>|;
 
   $form->hide_form(qw(sort nextsub path login));
 
@@ -2800,7 +2800,7 @@ sub requirements {
 <input type=hidden name=sort value=partnumber>
 
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>|;
 
   $form->hide_form(qw(path login));
 
@@ -3117,7 +3117,7 @@ sub so_requirements {
   </tr>
 </table>
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>|;
 
   $form->hide_form(qw(sort nextsub vc path login));
 
@@ -4177,7 +4177,7 @@ sub select_name {
 <input type=hidden name=nextsub value=name_selected>
 <input type=hidden name=vc value=$table>
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>
 
 </body>
@@ -4419,7 +4419,7 @@ sub stock_adjustment {
   <tr><td><hr size=3 noshade></td></tr>
 </table>
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 |;
 
   $form->hide_form(qw(sort nextsub path login));
@@ -4556,7 +4556,7 @@ sub list_inventory {
 <input type=hidden name=nextsub value=adjust_onhand>
 
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 
 </form>
 
@@ -4645,7 +4645,7 @@ sub stock_assembly {
 <input type=hidden name=nextsub value=list_assemblies>
 
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>
 |;
 
@@ -4787,7 +4787,7 @@ sub list_assemblies {
 <input type=hidden name=nextsub value=restock_assemblies>
 
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 
 </form>
 
@@ -5015,7 +5015,7 @@ sub search_transfer {
 
 <br>
 
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>|;
 
   $form->hide_form(qw(nextsub path login));
 
@@ -5471,7 +5471,7 @@ sub assembly_bom_transfer {
 <input type=hidden name=nextsub value=list_assembly_bom_transfer>
 
 <br>
-<input class=submit type=submit name=action value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>
 |;
 
@@ -5778,7 +5778,7 @@ sub upload_image {
   $form->hide_form(qw(nextsub login path));
 
   print qq|
-<input name=action class=submit type=submit value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">
+<button name="action" class="submit" type="submit" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>
 
 </body>
