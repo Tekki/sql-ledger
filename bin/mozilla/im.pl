@@ -164,7 +164,7 @@ sub import {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 
 </table>
@@ -391,7 +391,7 @@ sub export_screen_vc {
   </tr>
 
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -677,7 +677,7 @@ sub export_screen_payment {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 
 </table>
@@ -860,7 +860,7 @@ sub im_sales_invoice {
 
   print qq|
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 
 </table>
@@ -1050,7 +1050,7 @@ sub im_order {
 
   print qq|
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 
 </table>
@@ -1152,7 +1152,7 @@ sub im_coa {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 
 </table>
@@ -1309,7 +1309,7 @@ sub im_gl {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 
 </table>
@@ -1917,7 +1917,7 @@ sub im_csv_payment {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 
 </table>
@@ -2208,7 +2208,7 @@ sub im_vc {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 
 </table>
@@ -2370,7 +2370,7 @@ sub im_item {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 
 </table>
@@ -2503,7 +2503,7 @@ sub im_partsgroup {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 
 </table>
@@ -2612,7 +2612,7 @@ sub import_qrbill {
     </td>
   </tr>
   <tr>
-    <td><hr size="3" noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table> |;
 
@@ -2874,7 +2874,7 @@ sub ex_vc {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -3426,7 +3426,7 @@ sub ex_payment {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 
 </table>
@@ -3438,7 +3438,7 @@ sub ex_payment {
     'Export Payments'    => {ndx => 1, key => 'X', value => $locale->text('Export Payments')},
     'Reconcile Payments' => {ndx => 2, key => 'R', value => $locale->text('Reconcile Payments')},
     'Add Column'         => {ndx => 3, key => 'A', value => $locale->text('Add Column')},
-    'Save Report'        => {ndx => 4, key => 'S', value => $locale->text('Save Report')}
+    'Save Report'        => {ndx => 4, key => 'S', value => $locale->text('Save Report'), class => 'positive' }
   );
 
   delete $button{'Export Payments'} if !$form->{rowcount} || $form->{export_message};
@@ -3904,7 +3904,7 @@ sub reconcile_payments {
 
 <h4>|.$locale->text('Are you sure you want to reconcile all marked payments').qq|</h4>
 <p>
-<button name="action" class="submit" type="submit" value="yes__reconcile_payments">|.$locale->text('Yes, reconcile payments').qq|</button>
+<button name="action" class="critical submit" type="submit" value="yes__reconcile_payments">|.$locale->text('Yes, reconcile payments').qq|</button>
 </form>
 
 </body>

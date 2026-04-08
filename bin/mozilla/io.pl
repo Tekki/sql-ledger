@@ -158,8 +158,8 @@ sub display_row {
   for $i (1 .. $numrows) {
 
     if ($form->{type} =~ /invoice/ || $form->{type} =~ /(sales|purchase)_order/) {
-      $lot = ($form->{"lot_$i"}) ? qq|<b>$lotlabel</b>&nbsp;$form->{"lot_$i"}&nbsp;&nbsp;&nbsp;| : "";
-      $expires = ($form->{"expires_$i"}) ? qq|<b>$expireslabel</b>&nbsp;$form->{"expires_$i"}| : "";
+      $lot = ($form->{"lot_$i"}) ? qq|<span class="label">$lotlabel</span>&nbsp;$form->{"lot_$i"}&nbsp;&nbsp;&nbsp;| : "";
+      $expires = ($form->{"expires_$i"}) ? qq|<span class="label">$expireslabel</span>&nbsp;$form->{"expires_$i"}| : "";
     }
 
     if ($spc eq '.') {
@@ -215,7 +215,7 @@ sub display_row {
     }
 
     $skunumber = qq|
-                <br><b>$sku</b> $form->{"sku_$i"}| if ($form->{vc} eq 'vendor' && $form->{"sku_$i"});
+                <br><span class="label">$sku</span> $form->{"sku_$i"}| if ($form->{vc} eq 'vendor' && $form->{"sku_$i"});
 
 
     if ($form->{selectpartsgroup}) {
@@ -223,9 +223,9 @@ sub display_row {
         $partsgroup = qq|
                 <tr>
                   <td colspan=3>
-                  <b>$group</b>|.$form->hide_form("partsgroup_$i", "partsgroupcode_$i");
+                  <span class="label">$group</span>|.$form->hide_form("partsgroup_$i", "partsgroupcode_$i");
         ($form->{"partsgroup_$i"}) = split /--/, $form->{"partsgroup_$i"};
-        $partsgroup .= qq|$form->{"partsgroup_$i"} <b>$groupcode</b> $form->{"partsgroupcode_$i"}</td>
+        $partsgroup .= qq|$form->{"partsgroup_$i"} <span class="label">$groupcode</span> $form->{"partsgroupcode_$i"}</td>
                 </tr>|;
         $partsgroup = "" unless $form->{"partsgroup_$i"};
       }
@@ -233,7 +233,7 @@ sub display_row {
 
     $delivery = qq|
           <td colspan=2 nowrap>
-          <b>${$delvar}</b>
+          <span class="label">${$delvar}</span>
           <input name="${delvar}_$i" size=11 class=date title="$myconfig{dateformat}" value="$form->{"${delvar}_$i"}">|.&js_calendar("main", "${delvar}_$i").qq|</td>
 |;
 
@@ -296,7 +296,7 @@ sub display_row {
     $form->hide_form(map { "${_}_$i" } qw(oldqty oldship orderitems_id id weight sell listprice lastcost taxaccounts pricematrix sku onhand bin assembly inventory_accno_id income_accno_id expense_accno_id kit lot expires checkinventory make model));
 
     $project = qq|
-                <b>$projectnumber</b>
+                <span class="label">$projectnumber</span>
                 <select name="projectnumber_$i">|
                 .$form->select_option($form->{selectprojectnumber}, $form->{"projectnumber_$i"}, 1)
                 .qq|</select>
@@ -304,14 +304,14 @@ sub display_row {
 
     if ($form->{type} !~ /_quotation/) {
       $orderxref = qq|
-                <b>$orderxrefnumber</b>
+                <span class="label">$orderxrefnumber</span>
                 <input name="ordernumber_$i" value="$form->{"ordernumber_$i"}">&nbsp;<a href=oe.pl?action=lookup_order&ordnumber=|.$form->escape($form->{"ordernumber_$i"},1).qq|&vc=customer&type=sales_order&pickvar=ordernumber_$i&path=$form->{path}&login=$form->{login} target=popup>&#9701;</a>
-                <b>$poxrefnumber</b>
+                <span class="label">$poxrefnumber</span>
                 <input name="customerponumber_$i" value="$form->{"customerponumber_$i"}">&nbsp;<a href=oe.pl?action=lookup_order&ordnumber=|.$form->escape($form->{"customerponumber_$i"},1).qq|&vc=vendor&type=purchase_order&pickvar=customerponumber_$i&path=$form->{path}&login=$form->{login} target=popup>&#9701;</a>
 |;
 
       $serial = qq|
-                <td colspan=7><b>$serialnumber</b>
+                <td colspan=7><span class="label">$serialnumber</span>
                 <input name="serialnumber_$i" value="|.$form->quote($form->{"serialnumber_$i"}).qq|"><br>$lot$expires|;
 
     }
@@ -327,14 +327,14 @@ sub display_row {
         $name = $form->escape($form->{"costvendor_$i"},1);
         $costprice = qq|
           <input name="costvendorid_$i" type="hidden" value="$form->{"costvendorid_$i"}">
-          <b>$costvendorlabel</b>
+          <span class="label">$costvendorlabel</span>
           <input name="costvendor_$i" value="$form->{"costvendor_$i"}">
           <a href="ct.pl?action=lookup_name&db=vendor&login=$form->{login}&path=$form->{path}&pickvar=costvendor_$i&pickid=costvendorid_$i&name=$name" target=popup> &#9701;</a>
-          <b>$costlabel</b>
+          <span class="label">$costlabel</span>
           <input name="cost_$i" class=inputright size=10 value="|.$form->format_amount(\%myconfig, $form->{"cost_$i"}, $form->{precision}).qq|">&nbsp;<a href="ic.pl?action=history&history=purchases&login=$form->{login}&path=$form->{path}&pickvar=cost_$i&id=$form->{"id_$i"}" target=popup> &#9701;</a>
 |;
         $costprice .= qq|
-                <b>$marginlabel</b>
+                <span class="label">$marginlabel</span>
                 $margin
 | if ($margin && $form->{"cost_$i"});
         $costprice .= qq|
@@ -355,13 +355,13 @@ sub display_row {
     $package = qq|
                 <tr>
                   <td colspan=$colspan>
-                  <b>$packagenumber</b>
+                  <span class="label">$packagenumber</span>
                   <input name="package_$i" size=20 value="|.$form->quote($form->{"package_$i"}).qq|">
-                  <b>$netweight</b>
+                  <span class="label">$netweight</span>
                   <input name="netweight_$i" class="inputright" size="8" value="|.$form->format_amount(\%myconfig, $form->{"netweight_$i"}).qq|">
-                  <b>$grossweight</b>
+                  <span class="label">$grossweight</span>
                   <input name="grossweight_$i" class="inputright" size="8" value="|.$form->format_amount(\%myconfig, $form->{"grossweight_$i"}).qq|"> ($form->{weightunit})
-                  <b>$volume</b>
+                  <span class="label">$volume</span>
                   <input name="volume_$i" class="inputright" size="8" value="|.$form->format_amount(\%myconfig, $form->{"volume_$i"}).qq|">
                   </td>
                 </tr>
@@ -373,8 +373,8 @@ sub display_row {
         $partsgroup = qq|
                 <tr>
                   <td colspan=$colspan>
-                    <b>$group</b>
-                    <select name="partsgroup_$i">|
+                    <span class="label">$group</span>
+                    <select name="partsgroup_$i" onChange="CheckAll(); doSubmit(document.main)">|
                     .$form->select_option($form->{selectpartsgroup}, undef, 1)
                     .qq|</select>
                     <input name="partsgroupcode_$i" size=10>
@@ -429,7 +429,7 @@ sub display_row {
 
     print qq|
         <tr>
-          <td colspan=$colspan><hr size=1 noshade></td>
+          <td colspan=$colspan><hr class="thin"></td>
         </tr>
 |;
 
@@ -582,7 +582,7 @@ sub select_item {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -599,9 +599,10 @@ sub select_item {
 
   $form->hide_form;
 
+  my $pos = $form->{script} eq 'ps.pl' ? 'pos ' : '';
   print qq|
 <br>
-<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
+<button class="${pos}submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>
 
 </body>
@@ -1303,7 +1304,7 @@ sub e_mail {
     <td>
       <table width=100%>
         <tr>
-          <th align=right nowrap>|.$locale->text('E-mail').qq| <font color=red>*</font></th>
+          <th align=right nowrap>|.$locale->text('E-mail').qq| <span class="important">*</span></th>
           <td><input name=email size=30 value="$form->{email}"></td>
           <th align=right nowrap>|.$locale->text('Cc').qq|</th>
           <td><input name=cc size=30 value="$form->{cc}"></td>
@@ -1349,7 +1350,7 @@ sub e_mail {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -2144,8 +2145,8 @@ sub ship_to {
     print qq|
         <tr>
           <td></td>
-          <td><hr noshade></td>
-          <td><hr noshade></td>
+          <td><hr class="thin"></td>
+          <td><hr class="thin"></td>
         </tr>
 
         <tr>
@@ -2197,7 +2198,7 @@ sub ship_to {
 
   print qq|
 
-<hr size=3 noshade>
+<hr class="thick">
 
 <br>
 <button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>

@@ -169,7 +169,7 @@ sub search_employee {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -416,7 +416,7 @@ sub list_employees {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -695,7 +695,7 @@ sub employee_header {
             <table>
               $employeenumber
               <tr>
-                <th align=right nowrap>|.$locale->text('Name').qq| <font color=red>*</font></th>
+                <th align=right nowrap>|.$locale->text('Name').qq| <span class="important">*</span></th>
                 <td><input name=name size=35 maxlength=64 value="|.$form->quote($form->{name}).qq|"></td>
               </tr>
               <tr>
@@ -974,7 +974,7 @@ sub employee_header {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -993,11 +993,11 @@ sub employee_footer {
   } else {
 
     %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
-               'Save' => { ndx => 2, key => 'S', value => $locale->text('Save') },
-               'Save as new' => { ndx => 5, key => 'N', value => $locale->text('Save as new') },
+               'Save' => { ndx => 2, key => 'S', value => $locale->text('Save'), class => 'positive' },
+               'Save as new' => { ndx => 5, key => 'N', value => $locale->text('Save as new'), class => 'positive' },
                'Access Control' => { ndx => 6, key => 'A', value => $locale->text('Access Control') },
-               'New Number' => { ndx => 15, key => 'M', value => $locale->text('New Number') },
-               'Delete' => { ndx => 16, key => 'D', value => $locale->text('Delete') },
+               'New Number' => { ndx => 15, key => 'M', value => $locale->text('New Number'), class => 'critical' },
+               'Delete' => { ndx => 16, key => 'D', value => $locale->text('Delete'), class => 'negative' },
               );
 
     %f = ();
@@ -1146,7 +1146,7 @@ sub access_control {
 
   print qq|
   <tr>
-    <td colspan=2><hr size=3 noshade></td>
+    <td colspan=2><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -1302,7 +1302,7 @@ sub save_memberfile {
         $m{dbpasswd} = pack 'u', $myconfig{dbpasswd};
         chop $m{dbpasswd};
       }
-      $m{stylesheet} = 'sql-ledger.css';
+      $m{stylesheet} = 'horizon-flex.css';
       $m{timeout} = 86400;
 
       if ($form->{employeepassword}) {
@@ -1357,7 +1357,7 @@ sub delete_payroll {
 
 <h4>|.$locale->text('Are you sure you want to delete Transaction').qq| $form->{invnumber}</h4>
 
-<button name="action" class="submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
+<button name="action" class="critical submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
 </form>
 
 </body>
@@ -1560,7 +1560,7 @@ sub payroll_header {
           <td>
             <table>
               <tr>
-                <th align=right nowrap>|.$locale->text('Employee').qq| <font color=red>*</font></th>
+                <th align=right nowrap>|.$locale->text('Employee').qq| <span class="important">*</span></th>
                 <td><select name=employee onChange="javascript:document.main.submit()">|
                 .$form->select_option($form->{selectemployee}, $form->{employee}, 1)
                 .qq|</select>
@@ -1612,7 +1612,7 @@ sub payroll_header {
       print qq|
               <tr>
                 <th align=right nowrap>$form->{"wage_$i"}</th>
-                <td><input name="qty_$i" class="inputright" size=10 value=$form->{"qty_$i"}> x <input name="amount_$i" class="inputright" size=10 value=$form->{"amount_$i"}> <b>$exempt</b></td>
+                <td><input name="qty_$i" class="inputright" size=10 value=$form->{"qty_$i"}> x <input name="amount_$i" class="inputright" size=10 value=$form->{"amount_$i"}> <span class="label">$exempt</span></td>
               </tr>
 |;
     }
@@ -1718,7 +1718,7 @@ sub payroll_header {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -1745,11 +1745,11 @@ sub payroll_footer {
     %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
                'Preview' => { ndx => 2, key => 'V', value => $locale->text('Preview') },
                'Print' => { ndx => 3, key => 'P', value => $locale->text('Print') },
-               'Post' => { ndx => 4, key => 'O', value => $locale->text('Post') },
+               'Post' => { ndx => 4, key => 'O', value => $locale->text('Post'), class => 'positive' },
                'Print and Post' => { ndx => 5, key => 'R', value => $locale->text('Print and Post') },
-               'Post as new' => { ndx => 6, key => 'N', value => $locale->text('Post as new') },
+               'Post as new' => { ndx => 6, key => 'N', value => $locale->text('Post as new'), class => 'positive' },
                'Print and Post as new' => { ndx => 7, key => 'W', value => $locale->text('Print and Post as new') },
-               'Delete' => { ndx => 8, key => 'D', value => $locale->text('Delete') }
+               'Delete' => { ndx => 8, key => 'D', value => $locale->text('Delete'), class => 'negative' }
               );
 
     if (! $form->{id}) {
@@ -2177,7 +2177,7 @@ sub search_payroll {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -2491,7 +2491,7 @@ sub payroll_transactions {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -2508,7 +2508,7 @@ sub payroll_transactions {
   $form->hide_form(qw(callback path login report reportcode reportlogin db sort direction));
 
   %button = ('Add Transaction' => { ndx => 1, key => 'A', value => $locale->text('Add Transaction') },
-             'Save Report' => { ndx => 8, key => 'S', value => $locale->text('Save Report') }
+             'Save Report' => { ndx => 8, key => 'S', value => $locale->text('Save Report'), class => 'positive' }
             );
 
   if ($myconfig{acs} =~ /HR--HR/) {
@@ -2668,7 +2668,7 @@ sub search_deduction {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -2766,7 +2766,7 @@ sub deduction_header {
     <td>
       <table>
         <tr>
-          <th align=right nowrap>|.$locale->text('Description').qq| <font color=red>*</font></th>
+          <th align=right nowrap>|.$locale->text('Description').qq| <span class="important">*</span></th>
           <td><input name=description size=35 value="|.$form->quote($form->{description}).qq|"></td>
         </tr>
         <tr>
@@ -2784,7 +2784,7 @@ sub deduction_header {
         <tr>
           <th align=right nowrap>|.$locale->text('Exempt age <').qq|</th>
           <td><input name=fromage class="inputright" size=4 value=|.$form->format_amount(\%myconfig, $form->{fromage}).qq|>
-          <b>&gt;</b>
+          <span class="label">&gt;</span>
           <input name=toage class="inputright" size=4 value=|.$form->format_amount(\%myconfig, $form->{toage}).qq|>
           <input name=agedob type=checkbox style=checkbox value=1 $agedob{1}>&nbsp;|.$locale->text('DOB').qq|</td>
         </tr>
@@ -2874,7 +2874,7 @@ sub deduction_header {
 
   print qq|
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -2894,9 +2894,9 @@ sub deduction_footer {
   } else {
 
     %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
-               'Save' => { ndx => 3, key => 'S', value => $locale->text('Save') },
-               'Save as new' => { ndx => 7, key => 'N', value => $locale->text('Save as new') },
-               'Delete' => { ndx => 16, key => 'D', value => $locale->text('Delete') },
+               'Save' => { ndx => 3, key => 'S', value => $locale->text('Save'), class => 'positive' },
+               'Save as new' => { ndx => 7, key => 'N', value => $locale->text('Save as new'), class => 'positive' },
+               'Delete' => { ndx => 16, key => 'D', value => $locale->text('Delete'), class => 'negative' },
               );
 
     %f = ();
@@ -3016,7 +3016,7 @@ sub search_wage {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -3088,11 +3088,11 @@ sub wage_header {
     <td>
       <table>
         <tr>
-          <th align=right nowrap>|.$locale->text('Description').qq| <font color=red>*</font></th>
+          <th align=right nowrap>|.$locale->text('Description').qq| <span class="important">*</span></th>
           <td><input name=description size=35 value="|.$form->quote($form->{description}).qq|"></td>
         </tr>
         <tr>
-          <th align=right nowrap>|.$locale->text('Account').qq| <font color=red>*</font></th>
+          <th align=right nowrap>|.$locale->text('Account').qq| <span class="important">*</span></th>
           <td>
           <select name=accno>|
           .$form->select_option($form->{selectaccounts}, $form->{accno}).qq|</select></td>
@@ -3109,13 +3109,13 @@ sub wage_header {
         </tr>
         <tr>
           <th></th>
-           <td><input name="exempt" type=checkbox class=checkbox value=1 $checked{exempt}> <b>|.$locale->text('Exempt').qq|</b></td>
+           <td><input name="exempt" type=checkbox class=checkbox value=1 $checked{exempt}> <span class="label">|.$locale->text('Exempt').qq|</span></td>
         </tr>
       </table>
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -3135,9 +3135,9 @@ sub wage_footer {
   } else {
 
     %button = (
-               'Save' => { ndx => 3, key => 'S', value => $locale->text('Save') },
-               'Save as new' => { ndx => 7, key => 'N', value => $locale->text('Save as new') },
-               'Delete' => { ndx => 16, key => 'D', value => $locale->text('Delete') },
+               'Save' => { ndx => 3, key => 'S', value => $locale->text('Save'), class => 'positive' },
+               'Save as new' => { ndx => 7, key => 'N', value => $locale->text('Save as new'), class => 'positive' },
+               'Delete' => { ndx => 16, key => 'D', value => $locale->text('Delete'), class => 'negative' },
               );
 
     %f = ();

@@ -62,7 +62,7 @@ Content-Type: text/html
 </head>
 |;
 
-  $sessionexpired = qq|<b><font color=red><blink>|.$locale->text('Session expired!').qq|</blink></font></b><p>| if $s;
+  $sessionexpired = qq|<span class="label"><span class="important"><blink>|.$locale->text('Session expired!').qq|</blink></span></span><p>| if $s;
 
   print qq|
 <script language="javascript" type="text/javascript">

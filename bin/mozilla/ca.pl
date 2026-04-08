@@ -135,7 +135,7 @@ sub chart_of_accounts {
   print qq|
 </tr>
 <tr>
-  <td colspan=$colspan><hr size=3 noshade></td>
+  <td colspan=$colspan><hr class="thick"></td>
 </tr>
 </table>
 
@@ -220,7 +220,7 @@ sub list {
         $department
         <tr>
           <th align=right>|.$locale->text('From').qq|</th>
-          <td><input name=fromdate size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "fromdate").qq|<b>|.$locale->text('To').qq|</b>
+          <td><input name=fromdate size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "fromdate").qq|<span class="label">|.$locale->text('To').qq|</span>
           <input name=todate size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "todate").qq|</td>
         </tr>
         $selectfrom
@@ -234,7 +234,7 @@ sub list {
       </table>
     </td>
   </tr>
-  <tr><td><hr size=3 noshade></td></tr>
+  <tr><td><hr class="thick"></td></tr>
 </table>
 
 <br><button class="submit" type="submit" name="action" value="list_transactions">|.$locale->text('List Transactions').qq|</button>
@@ -507,7 +507,7 @@ sub list_transactions {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;

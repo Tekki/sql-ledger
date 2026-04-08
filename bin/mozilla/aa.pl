@@ -459,7 +459,7 @@ sub form_header {
       $ldm = $form->dayofmonth($myconfig{dateformat}, $form->{transdate});
 
       $exchangerate .= qq|
-      <th align=right nowrap>|.$locale->text('Exchange Rate').qq| <font color=red>*</font></th>
+      <th align=right nowrap>|.$locale->text('Exchange Rate').qq| <span class="important">*</span></th>
       <td><input name=exchangerate class="inputright" size=10 value=$form->{exchangerate}>
           <a href=am.pl?action=list_exchangerates&transdatefrom=$fdm&transdateto=$ldm&currency=$form->{currency}&login=$form->{login}&path=$form->{path} target=_blank>&#9701;</a></td>|;
     }
@@ -518,7 +518,7 @@ sub form_header {
 
   $vc = qq|<input type=hidden name=action value="Update">
               <tr>
-                <th align=right nowrap>$vclabel <font color=red>*</font></th>
+                <th align=right nowrap>$vclabel <span class="important">*</span></th>
 |;
 
   if ($form->{"select$form->{vc}"}) {
@@ -713,7 +713,7 @@ print qq|
                 <td><input name=ordnumber size=20 value="|.$form->quote($form->{ordnumber}).qq|"></td>
               </tr>
               <tr>
-                <th align=right nowrap>|.$locale->text('Invoice Date').qq| <font color=red>*</font></th>
+                <th align=right nowrap>|.$locale->text('Invoice Date').qq| <span class="important">*</span></th>
                 $transdate
               </tr>
               <tr>
@@ -850,7 +850,7 @@ print qq|
   if ($form->{cashdiscount}) {
     $discountavailable = qq|
   <tr>
-    <td><b>|.$locale->text('Cash Discount').qq|:</b> |.$form->format_amount(\%myconfig, $form->{cd_available}, $form->{precision}).qq|</td>
+    <td><span class="label">|.$locale->text('Cash Discount').qq|:</span> |.$form->format_amount(\%myconfig, $form->{cd_available}, $form->{precision}).qq|</td>
   </tr>
 |;
 
@@ -954,7 +954,7 @@ print qq|
   if ($form->{taxaccounts}) {
     $taxincluded = qq|
               <tr>
-                <td><input name=taxincluded class=checkbox type=checkbox value=1 $form->{taxincluded} onChange="doSubmit(document.main)"><b> |.$locale->text('Tax Included').qq|</b></td>
+                <td><input name=taxincluded class=checkbox type=checkbox value=1 $form->{taxincluded} onChange="doSubmit(document.main)"><span class="label"> |.$locale->text('Tax Included').qq|</span></td>
               </tr>
 |;
   }
@@ -975,9 +975,9 @@ print qq|
       <table width=100%>
         $taxincluded
         <tr>
-          <td width=50%><b>|.$locale->text('Notes').qq|</b><br>
+          <td width=50%><span class="label">|.$locale->text('Notes').qq|</span><br>
           $notes</td>
-          <td width=50%><b>|.$locale->text('Internal Notes').qq|</b><br>
+          <td width=50%><span class="label">|.$locale->text('Internal Notes').qq|</span><br>
           $intnotes</td>
         </tr>
       </table>
@@ -1077,13 +1077,13 @@ print qq|
     if ($outstanding > 0) {
       print qq|
           <tr>
-            <td colspan=4><b>|.$locale->text('Outstanding').":</b> ".$form->format_amount(\%myconfig, $outstanding, $form->{precision}).qq|</td>
+            <td colspan=4><span class="label">|.$locale->text('Outstanding').":</span> ".$form->format_amount(\%myconfig, $outstanding, $form->{precision}).qq|</td>
           </tr>
 |;
     } else {
       print qq|
           <tr>
-            <td colspan=4><b>|.$locale->text('Overpaid').":</b> ".$form->format_amount(\%myconfig, $outstanding * -1, $form->{precision}).qq|</td>
+            <td colspan=4><span class="label">|.$locale->text('Overpaid').":</span> ".$form->format_amount(\%myconfig, $outstanding * -1, $form->{precision}).qq|</td>
           </tr>
 |;
     }
@@ -1096,7 +1096,7 @@ print qq|
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -1123,13 +1123,13 @@ sub form_footer {
     %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
                'Preview' => { ndx => 3, key => 'V', value => $locale->text('Preview') },
                'Print' => { ndx => 4, key => 'P', value => $locale->text('Print') },
-               'Post' => { ndx => 5, key => 'O', value => $locale->text('Post') },
+               'Post' => { ndx => 5, key => 'O', value => $locale->text('Post'), class => 'positive' },
                'Print and Post' => { ndx => 6, key => 'R', value => $locale->text('Print and Post') },
-               'Post as new' => { ndx => 7, key => 'N', value => $locale->text('Post as new') },
+               'Post as new' => { ndx => 7, key => 'N', value => $locale->text('Post as new'), class => 'positive' },
                'Print and Post as new' => { ndx => 8, key => 'W', value => $locale->text('Print and Post as new') },
                'Schedule' => { ndx => 9, key => 'H', value => $locale->text('Schedule') },
-               'New Number' => { ndx => 10, key => 'M', value => $locale->text('New Number') },
-               'Delete' => { ndx => 11, key => 'D', value => $locale->text('Delete') },
+               'New Number' => { ndx => 10, key => 'M', value => $locale->text('New Number'), class => 'critical' },
+               'Delete' => { ndx => 11, key => 'D', value => $locale->text('Delete'), class => 'negative' },
               );
 
     delete $button{'Schedule'} if $form->{batch};
@@ -1545,7 +1545,7 @@ sub delete {
 
 <h4>|.$locale->text('Are you sure you want to delete Transaction').qq| $form->{invnumber}</h4>
 
-<button name="action" class="submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
+<button name="action" class="submit" type="critical submit" value="yes">|.$locale->text('Yes').qq|</button>
 </form>
 
 </body>
@@ -1875,7 +1875,7 @@ sub search {
               $invnumber
               <tr>
                 <th align=right nowrap>|.$locale->text('From').qq|</th>
-                <td colspan=3 nowrap><input name=transdatefrom size=11 class=date accesskey="*" title="$myconfig{dateformat} [*]"> <b>|.&js_calendar("main", "transdatefrom").$locale->text('To').qq|</b> <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
+                <td colspan=3 nowrap><input name=transdatefrom size=11 class=date accesskey="*" title="$myconfig{dateformat} [*]"> <span class="label">|.&js_calendar("main", "transdatefrom").$locale->text('To').qq|</span> <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
               </tr>
               $selectfrom
             </table>
@@ -1941,7 +1941,7 @@ sub search {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -2542,7 +2542,7 @@ sub transactions {
       }
 
       unless ($form->{revtrans}) {
-        $button{'AR--Delete Transactions'}{code} = qq|<button class="submit" type="submit" name="action" value="delete_transactions">|.$locale->text('Delete Transactions').qq|</button> |;
+        $button{'AR--Delete Transactions'}{code} = qq|<button class="negative submit" type="submit" name="action" value="delete_transactions">|.$locale->text('Delete Transactions').qq|</button> |;
         $button{'AR--Delete Transactions'}{order} = $i++;
       }
 
@@ -2557,7 +2557,7 @@ sub transactions {
       $button{'AP--Vendor Invoice'}{order} = $i++;
 
       unless ($form->{revtrans}) {
-        $button{'AP--Delete Transactions'}{code} = qq|<button class="submit" type="submit" name="action" value="delete_transactions">|.$locale->text('Delete Transactions').qq|</button> |;
+        $button{'AP--Delete Transactions'}{code} = qq|<button class="negative submit" type="submit" name="action" value="delete_transactions">|.$locale->text('Delete Transactions').qq|</button> |;
         $button{'AP--Delete Transactions'}{order} = $i++;
       }
 
@@ -2589,7 +2589,7 @@ sub transactions {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -2713,7 +2713,7 @@ sub delete_transactions {
 
   print qq|
 <p>
-<button name="action" class="submit" type="submit" value="yes__delete_transactions">|.$locale->text('Yes, delete transactions').qq|</button>
+<button name="action" class="critical submit" type="submit" value="yes__delete_transactions">|.$locale->text('Yes, delete transactions').qq|</button>
 
 </form>
 

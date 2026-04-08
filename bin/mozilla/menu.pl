@@ -151,7 +151,7 @@ sub section_menu {
 
         $form->{tag}++;
         print qq|<a name="id$form->{tag}"></a>
-        <p><b>$label</b>|;
+        <p><span class="label">$label</span>|;
 
         &section_menu($menu, $item);
 

@@ -215,7 +215,7 @@ sub select_name {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -471,7 +471,7 @@ sub select_project {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -599,7 +599,7 @@ sub repost {
 
 <h4>$msg</h4>
 
-<button name="action" class="submit" type="submit" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
+<button name="action" class="critical submit" type="submit" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>
 
 </body>
@@ -883,15 +883,15 @@ pdf--|.$locale->text('PDF');
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
 <br>
 |;
 
-  %button = ('Save Schedule' => { ndx => 1, key => 'S', value => $locale->text('Save Schedule') },
-             'Delete Schedule' => { ndx => 16, key => 'D', value => $locale->text('Delete Schedule') },
+  %button = ('Save Schedule' => { ndx => 1, key => 'S', value => $locale->text('Save Schedule'), class => 'positive' },
+             'Delete Schedule' => { ndx => 16, key => 'D', value => $locale->text('Delete Schedule'), class => 'negative' },
             );
 
   unless ($form->{recurring}) {
@@ -1036,7 +1036,7 @@ sub reprint {
 
 sub islocked {
 
-  print "<p><font color=red>".$locale->text('Locked by').": $form->{haslock}</font>" if $form->{haslock};
+  print qq|<p><span class="important">|.$locale->text('Locked by').qq|: $form->{haslock}</span>| if $form->{haslock};
 
 }
 

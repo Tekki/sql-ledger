@@ -21,9 +21,10 @@ td {
   font-size: 11px;
 }
 
-th {
+th, .label {
   font-family: Verdana, Arial, Helvetica, sans-serif;
   font-size: 11px;
+  font-weight: bold;
 }
 
 /* login and admin */
@@ -39,7 +40,8 @@ h1.login {
 }
 table.login {
   background-color: #f2f2f2;
-  padding: 20px;
+  padding: 30px;
+  border: 3px outset grey;
 }
 
 /* Not Known */
@@ -202,7 +204,7 @@ select {
   cursor: pointer;
 }
 
-.plus0 {    /* font color for negative numbers */
+.plus0, .important {    /* font color for negative numbers */
   color: red;
 }
 
@@ -222,6 +224,15 @@ h2.error {
 
 input.error {
   background-color: red;
+}
+
+hr.thin {
+  border: 0;
+  border-top: 1px solid #888888;
+}
+
+hr.thick {
+  border: 1px solid #888888;
 }
 
 .dnd-idle {

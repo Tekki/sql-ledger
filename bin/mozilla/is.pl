@@ -374,7 +374,7 @@ sub form_header {
       $ldm = $form->dayofmonth($myconfig{dateformat}, $form->{transdate});
 
       $exchangerate .= qq|
-              <th align=right nowrap>|.$locale->text('Exchange Rate').qq| <font color=red>*</font></th>
+              <th align=right nowrap>|.$locale->text('Exchange Rate').qq| <span class="important">*</span></th>
               <td nowrap><input name="exchangerate" class="inputright" size="10" value="$form->{exchangerate}">
                   <a href="am.pl?action=list_exchangerates&transdatefrom=$fdm&transdateto=$ldm&currency=$form->{currency}&login=$form->{login}&path=$form->{path}" target=_blank>&#9701;</a></td>|;
     }
@@ -403,7 +403,7 @@ sub form_header {
 
   $vc = qq|<input type="hidden" name="action" value="update">
               <tr>
-                <th align=right nowrap>$vcname <font color=red>*</font></th>
+                <th align=right nowrap>$vcname <span class="important">*</span></th>
 |;
 
   if ($form->{"select$form->{vc}"}) {
@@ -466,7 +466,7 @@ sub form_header {
                 <th align=right nowrap>|.$locale->text('Business').qq|</th>
                 <td nowrap>$form->{business}
                 &nbsp;&nbsp;&nbsp;
-                <b>|.$locale->text('Trade Discount').qq|</b> |
+                <span class="label">|.$locale->text('Trade Discount').qq|</span> |
                 .$form->format_amount(\%myconfig, $form->{tradediscount} * 100).qq| %</td>
               </tr>
 |;
@@ -677,7 +677,7 @@ sub form_header {
                 <td><input name="ordnumber" size="20" value="|.$form->quote($form->{ordnumber}).qq|"></td>
               </tr>
               <tr>
-                <th align=right nowrap>|.$locale->text('Invoice Date').qq| <font color=red>*</font></th>
+                <th align=right nowrap>|.$locale->text('Invoice Date').qq| <span class="important">*</span></th>
                 <td nowrap><input name="transdate" size="11" class="date" value="$form->{transdate}" accesskey="*" title="$myconfig{dateformat} [*]">|.&js_calendar("main", "transdate").qq|</td>
               </tr>
               <tr>
@@ -839,7 +839,7 @@ $notes = qq|<textarea name=notes rows=$rows cols=35 wrap=soft accesskey="+" titl
   if ($form->{cashdiscount}) {
     $cashdiscount = qq|
   <tr>
-    <td><b>|.$locale->text('Cash Discount').qq|:</b> |
+    <td><span class="label">|.$locale->text('Cash Discount').qq|:</span> |
     .$form->format_amount(\%myconfig, $form->{cd_available}, $form->{precision}, 0).qq|</td>
   </tr>
 
@@ -1035,16 +1035,16 @@ $notes = qq|<textarea name=notes rows=$rows cols=35 wrap=soft accesskey="+" titl
     if ($outstanding > 0) {
       print qq|
         <tr>
-          <td colspan=7><b>|.$locale->text('Outstanding').":</b> ".$form->format_amount(\%myconfig, $outstanding, $form->{precision});
+          <td colspan=7><span class="label">|.$locale->text('Outstanding').":</span> ".$form->format_amount(\%myconfig, $outstanding, $form->{precision});
     } else {
       print qq|
         <tr>
-          <td colspan=7><b>|.$locale->text('Overpaid').":</b> ".$form->format_amount(\%myconfig, $outstanding * -1, $form->{precision});
+          <td colspan=7><span class="label">|.$locale->text('Overpaid').":</span> ".$form->format_amount(\%myconfig, $outstanding * -1, $form->{precision});
     }
   }
 
-  print qq| <b>|.$locale->text('Total Cost').":</b> ".$form->format_amount(\%myconfig, $form->{costsubtotal}, $form->{precision}, 0);
-  print " <b>".$locale->text('Margin').":</b> ".$form->format_amount(\%myconfig, $margin, 1).qq|</b>| if $margin;
+  print qq| <span class="label">|.$locale->text('Total Cost').":</span> ".$form->format_amount(\%myconfig, $form->{costsubtotal}, $form->{precision}, 0);
+  print qq| <span class="label">|.$locale->text('Margin').":</span> ".$form->format_amount(\%myconfig, $margin, 1).qq|</span>| if $margin;
 
   print qq|</td>
         </tr>
@@ -1058,7 +1058,7 @@ $notes = qq|<textarea name=notes rows=$rows cols=35 wrap=soft accesskey="+" titl
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
   <tr>
     <td>
@@ -1093,16 +1093,16 @@ $notes = qq|<textarea name=notes rows=$rows cols=35 wrap=soft accesskey="+" titl
     %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
                'Preview' => { ndx => 3, key => 'V', value => $locale->text('Preview') },
                'Print' => { ndx => 4, key => 'P', value => $locale->text('Print') },
-               'Post' => { ndx => 5, key => 'O', value => $locale->text('Post') },
+               'Post' => { ndx => 5, key => 'O', value => $locale->text('Post'), class => 'positive' },
                'Ship to' => { ndx => 6, key => 'T', value => $locale->text('Ship to') },
                'E-mail' => { ndx => 7, key => 'E', value => $locale->text('E-mail') },
                'Print and Post' => { ndx => 8, key => 'R', value => $locale->text('Print and Post') },
-               'Post as new' => { ndx => 9, key => 'N', value => $locale->text('Post as new') },
+               'Post as new' => { ndx => 9, key => 'N', value => $locale->text('Post as new'), class => 'positive' },
                'Print and Post as new' => { ndx => 10, key => 'W', value => $locale->text('Print and Post as new') },
                'Sales Order' => { ndx => 11, key => 'L', value => $locale->text('Sales Order') },
                'Schedule' => { ndx => 12, key => 'H', value => $locale->text('Schedule') },
-               'New Number' => { ndx => 13, key => 'M', value => $locale->text('New Number') },
-               'Delete' => { ndx => 14, key => 'D', value => $locale->text('Delete') },
+               'New Number' => { ndx => 13, key => 'M', value => $locale->text('New Number'), class => 'critical' },
+               'Delete' => { ndx => 14, key => 'D', value => $locale->text('Delete'), class => 'negative' },
               );
     }
 
@@ -1562,7 +1562,7 @@ sub delete {
 </h4>
 
 <p>
-<button name="action" class="submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
+<button name="action" class="critical submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
 </form>
 |;
 
@@ -1824,7 +1824,7 @@ sub generate_invoices {
     </td>
   <tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -1960,7 +1960,7 @@ sub list_names {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 
 </table>
@@ -1971,7 +1971,7 @@ sub list_names {
   map { delete $form->{"all_$_"} } qw(business pricegroup vc);
 
   %button = ('Generate Invoices' => { ndx => 1, key => 'G', value => $locale->text('Generate Invoices') },
-             'Save Report' => { ndx => 8, key => 'S', value => $locale->text('Save Report') }
+             'Save Report' => { ndx => 8, key => 'S', value => $locale->text('Save Report'), class => 'positive' }
             );
 
   if (!$form->{admin}) {
@@ -2178,7 +2178,7 @@ sub consolidate {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 

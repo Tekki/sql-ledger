@@ -123,7 +123,7 @@ sub report {
   $fromto = qq|
         <tr>
           <th align=right>|.$locale->text('From').qq|</th>
-          <td colspan=3 nowrap><input name=fromdate size=11 class=date title="$myconfig{dateformat}" value=$form->{fromdate}>|.&js_calendar("main", "fromdate").qq| <b>|.$locale->text('To').qq|</b> <input name=todate size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "todate").qq|</td>
+          <td colspan=3 nowrap><input name=fromdate size=11 class=date title="$myconfig{dateformat}" value=$form->{fromdate}>|.&js_calendar("main", "fromdate").qq| <span class="label">|.$locale->text('To').qq|</span> <input name=todate size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "todate").qq|</td>
         </tr>
 |;
 
@@ -1155,7 +1155,7 @@ sub report {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -1238,7 +1238,7 @@ sub generate_income_statement {
   $form->{address} =~ s/\n/<br>/g;
 
   %button = (
-    'Save Report' => {ndx => 8, key => 'S', value => $locale->text('Save Report')},
+    'Save Report' => {ndx => 8, key => 'S', value => $locale->text('Save Report'), class => 'positive' },
     'Spreadsheet' => {ndx => 9, key => 'X', value => $locale->text('Spreadsheet')},
   );
 
@@ -1793,7 +1793,7 @@ sub generate_balance_sheet {
   $form->{address} =~ s/\n/<br>/g;
 
   %button = (
-    'Save Report' => {ndx => 8, key => 'S', value => $locale->text('Save Report')},
+    'Save Report' => {ndx => 8, key => 'S', value => $locale->text('Save Report'), class => 'positive' },
     'Spreadsheet' => {ndx => 9, key => 'X', value => $locale->text('Spreadsheet')},
   );
 
@@ -2211,7 +2211,7 @@ sub list_accounts {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -2727,7 +2727,7 @@ sub aging {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -2759,7 +2759,7 @@ sub aging {
 
   }
 
-  $button{'Save Report'} = { ndx => 8, key => 'S', value => $locale->text('Save Report') };
+  $button{'Save Report'} = { ndx => 8, key => 'S', value => $locale->text('Save Report'), class => 'positive' };
 
   if (!$form->{admin}) {
     delete $button{'Save Report'} unless $form->{savereport};
@@ -3046,7 +3046,7 @@ sub reminder {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -3062,7 +3062,7 @@ sub reminder {
              'Preview' => { ndx => 3, key => 'V', value => $locale->text('Preview') },
              'Print' => { ndx => 4, key => 'P', value => $locale->text('Print') },
              'E-mail' => { ndx => 5, key => 'E', value => $locale->text('E-mail') },
-             'Save Level' => { ndx => 6, key => 'L', value => $locale->text('Save Level') },
+             'Save Level' => { ndx => 6, key => 'L', value => $locale->text('Save Level'), class => 'positive' },
             );
 
   if ($form->{deselect}) {
@@ -3071,7 +3071,7 @@ sub reminder {
     delete $button{'Deselect all'};
   }
 
-  $button{'Save Report'} = { ndx => 8, key => 'S', value => $locale->text('Save Report') };
+  $button{'Save Report'} = { ndx => 8, key => 'S', value => $locale->text('Save Report'), class => 'positive' };
 
   if (!$form->{admin}) {
     delete $button{'Save Report'} unless $form->{savereport};
@@ -3343,7 +3343,7 @@ sub prepare_e_mail {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -4058,7 +4058,7 @@ sub generate_tax_report {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -4074,7 +4074,7 @@ sub generate_tax_report {
   $form->hide_form(qw(report reportcode reportlogin));
 
   %button = (
-    'Save Report' => {ndx => 8, key => 'S', value => $locale->text('Save Report')},
+    'Save Report' => {ndx => 8, key => 'S', value => $locale->text('Save Report'), class => 'positive' },
     'Spreadsheet' => {ndx => 9, key => 'X', value => $locale->text('Spreadsheet')},
   );
 
@@ -4438,7 +4438,7 @@ sub list_payments {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -4456,7 +4456,7 @@ sub list_payments {
   $form->hide_form(qw(fx_transaction department fromdate todate month year interval account payment accounts vc db callback path login));
   $form->hide_form(qw(report reportcode reportlogin));
 
-  $button{'Save Report'} = { ndx => 8, key => 'S', value => $locale->text('Save Report') };
+  $button{'Save Report'} = { ndx => 8, key => 'S', value => $locale->text('Save Report'), class => 'positive' };
 
   if (!$form->{admin}) {
     delete $button{'Save Report'} unless $form->{savereport};

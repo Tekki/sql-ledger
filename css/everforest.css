@@ -93,9 +93,10 @@ td {
   font-size: 11px;
 }
 
-th {
+th, .label {
   font-family: var(--main-font);
   font-size: 11px;
+  font-weight: bold;
 }
 
 body.menu {
@@ -242,7 +243,7 @@ textarea {
   width: 100%;
 }
 
-input, button {
+button, input {
   background-color: var(--bg-2);
   border: 1px solid var(--gray-1);
   border-radius: 0px;
@@ -318,7 +319,7 @@ option {
   cursor: pointer;
 }
 
-.plus0 {
+.plus0, .important {
   color: var(--purple);
 }
 
@@ -336,13 +337,18 @@ h2.error {
   font-size: 14px;
 }
 
-input.error {
+button.error, input.error {
   color: black;
   background-color: var(--red);
 }
 
-font[color='red'] {
-  color: var(--red);
+hr.thin {
+  border: 0;
+  border-top: 1px solid var(--bg-6);
+}
+
+hr.thick {
+  border: 1px solid var(--bg-6);
 }
 
 .dnd-idle {

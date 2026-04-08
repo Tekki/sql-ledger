@@ -151,7 +151,7 @@ sub new ($type, $userspath = '') {
 
   $self->{version}    = '4.0.9_01';
   $self->{dbversion}  = '4.0.0';
-  $self->{cssversion} = 407;
+  $self->{cssversion} = '409_03';
 
   $self->{favicon} = 'favicon.ico';
 
@@ -2429,7 +2429,8 @@ sub print_button ($, $button) {
   for my $id (sort { $button->{$a}{ndx} <=> $button->{$b}{ndx} } grep !/_label_/, keys %$button) {
     my %btn = $button->{$id}->%*;
     my $id  = lc $id =~ s/ /_/gr;
-    print qq|\n<button class="submit noprint" type="submit" name="action" value="$id" accesskey="$btn{key}" title="$btn{value} [$btn{key}]">$btn{value}</button>|;
+    my $class = $btn{class} ? "$btn{class} " : '';
+    print qq|\n<button class="${class}submit noprint" type="submit" name="action" value="$id" accesskey="$btn{key}" title="$btn{value} [$btn{key}]">$btn{value}</button>|;
   }
 
 }

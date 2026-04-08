@@ -49,7 +49,7 @@ sub login_screen {
   $form->{stylesheet}
     = $slconfig{stylesheet} && -f "css/$slconfig{stylesheet}"
     ? $slconfig{stylesheet}
-    : 'sql-ledger.css';
+    : 'horizon-flex.css';
   $form->{favicon} = "favicon.ico";
 
   $form->header;
@@ -69,7 +69,7 @@ sub login_screen {
 </pre>
 
 <center>
-<table class=login border=3 cellpadding=20>
+<table class="login">
   <tr>
     <td class=login align=center><a href="https://github.com/Tekki/sql-ledger" target=_blank><img src=$slconfig{images}/sql-ledger.png border=0></a>
 <h1 class=login align=center>|.$locale->text('Version').qq| $form->{version}</h1>
@@ -147,7 +147,7 @@ window_x.addListener(checkWidth);
 sub selectdataset {
   my ($login) = @_;
 
-  $form->{stylesheet} = $slconfig{stylesheet} || "sql-ledger.css";
+  $form->{stylesheet} = $slconfig{stylesheet} || "horizon-flex.css";
   if (-f 'favicon.ico') {
     $form->{favicon} = "favicon.ico";
   }
@@ -226,7 +226,7 @@ sub selectdataset {
 
 sub login {
 
-  $form->{stylesheet} = $slconfig{stylesheet} || 'sql-ledger.css';
+  $form->{stylesheet} = $slconfig{stylesheet} || 'horizon-flex.css';
   $form->{favicon} = "favicon.ico";
 
   $form->error($locale->text('You did not enter a name!')) unless ($form->{login});
@@ -565,13 +565,13 @@ sub totp_screen {
 </pre>
 
 <center>
-<table class=login border=3 cellpadding=20>
+<table class="login">
   <tr>
     <td class=login align=center><a href="https://github.com/Tekki/sql-ledger" target=_blank><img src=$slconfig{images}/sql-ledger.png border=0></a>
 <h1 class=login align=center>|.$locale->text('Version').qq| $form->{version}</h1>
 <p>
 
-      <form method=post action=$form->{script}>
+      <form method=post name=main action=$form->{script}>
 
       <table width=100%>
         <tr>

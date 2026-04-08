@@ -28,7 +28,7 @@ $form->error($locale->text('DBI not installed!')) if ($@);
 $form->{stylesheet}
   = $slconfig{stylesheet} && -f "css/$slconfig{stylesheet}"
   ? $slconfig{stylesheet}
-  : 'sql-ledger.css';
+  : 'horizon-flex.css';
 $form->{favicon}      = "favicon.ico";
 $form->{timeout}      = 86400;
 $form->{'root login'} = 1;
@@ -180,7 +180,7 @@ sub edit {
 
 sub form_footer {
 
-  %button = ('Delete' => { ndx => 2, key => 'D', value => $locale->text('Delete') },
+  %button = ('Delete' => { ndx => 2, key => 'D', value => $locale->text('Delete'), class => 'negative' },
              'Change Password' => { ndx => 4, key => 'C', value => $locale->text('Change Password') },
              'Change Host' => { ndx => 5, key => 'H', value => $locale->text('Change Host') },
             );
@@ -307,14 +307,14 @@ sub list_datasets {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
 <input type=hidden name=path value=$form->{path}>
 
 <p>
-<b>|.$locale->text('Perl Modules').qq|</b> $perl_modules
+<span class="label">|.$locale->text('Perl Modules').qq|</span> $perl_modules
 </p>
 <p>
 $dbdrivers
@@ -391,7 +391,7 @@ sub form_header {
   </tr>
 
    <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 </div>
@@ -424,7 +424,7 @@ sub delete {
 
 <h4>|.$locale->text('Are you sure you want to delete dataset').qq| $form->{dbname}</h4>
 
-<button name="action" class="submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
+<button name="action" class="critical submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
 </form>
 
 </body>
@@ -569,7 +569,7 @@ sub change_password {
   </tr>
   <tr>
     <td>
-      <hr size=3 noshade>
+      <hr class="thick">
     </td>
   </tr>
 </table>
@@ -693,7 +693,7 @@ sub change_host {
   </tr>
   <tr>
     <td>
-      <hr size=3 noshade>
+      <hr class="thick">
     </td>
   </tr>
 </table>
@@ -904,7 +904,7 @@ sub dbselect_source {
     </td>
   </tr>
 </table>
-<hr size=3 noshade>
+<hr class="thick">
 
 <br>
 <button type="submit" class="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
@@ -1061,7 +1061,7 @@ sub create_dataset {
   </tr>
 </table>
 
-<hr size=3 noshade>
+<hr class="thick">
 <br>
 <button type="submit" class="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 |;
@@ -1169,7 +1169,7 @@ sub dbcreate {
   $form->{charset} = $form->{encoding};
   $form->{dbname} = $form->{db};
   $form->{login} = "admin\@$form->{db}";
-  $form->{stylesheet} = "sql-ledger.css";
+  $form->{stylesheet} = "horizon-flex.css";
   $form->{dateformat} = "mm-dd-yy";
   $form->{numberformat} = "1,000.00";
   $form->{dboptions} = "set DateStyle to 'POSTGRES, US'";
@@ -1262,7 +1262,7 @@ sub lock_system {
     </td>
   </tr>
 </table>
-<hr size=3 noshade>
+<hr class="thick">
 
 <br>
 <button type="submit" class="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>|;

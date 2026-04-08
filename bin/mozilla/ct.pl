@@ -213,7 +213,7 @@ sub history {
                   <table>
                     <tr>
                       <th>|.$locale->text('From').qq|</th>
-                      <td><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}"> <b>|.&js_calendar("main", "transdatefrom").$locale->text('To').qq|</b> <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
+                      <td><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}"> <span class="label">|.&js_calendar("main", "transdatefrom").$locale->text('To').qq|</span> <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
                     </tr>
                     $selectfrom
                     <tr>
@@ -370,7 +370,7 @@ sub transactions {
                   <table>
                     <tr>
                       <th>|.$locale->text('From').qq|</th>
-                      <td nowrap><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}"> <b>|.&js_calendar("main", "transdatefrom").$locale->text('To').qq|</b> <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
+                      <td nowrap><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}"> <span class="label">|.&js_calendar("main", "transdatefrom").$locale->text('To').qq|</span> <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
                     </tr>
                     $selectfrom
                     <tr>
@@ -719,7 +719,7 @@ sub search_name {
   </tr>
 
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -1300,7 +1300,7 @@ sub list_names {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -1702,7 +1702,7 @@ sub list_history {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -1744,9 +1744,9 @@ sub form_header {
   for (split / /, $form->{taxaccounts}) {
     $form->{"tax_${_}_description"} =~ s/ /&nbsp;/g;
     if ($form->{"tax_$_"}) {
-      $taxable .= qq| <input name="tax_$_" value=1 class=checkbox type=checkbox checked>&nbsp;<b>$form->{"tax_${_}_description"}</b>|;
+      $taxable .= qq| <input name="tax_$_" value=1 class=checkbox type=checkbox checked>&nbsp;$form->{"tax_${_}_description"}|;
     } else {
-      $taxable .= qq| <input name="tax_$_" value=1 class=checkbox type=checkbox>&nbsp;<b>$form->{"tax_${_}_description"}</b>|;
+      $taxable .= qq| <input name="tax_$_" value=1 class=checkbox type=checkbox>&nbsp;$form->{"tax_${_}_description"}|;
     }
   }
 
@@ -1759,7 +1759,7 @@ sub form_header {
               <table>
                 <tr>
                   <td>$taxable</td>
-                  <td><input name=taxincluded class=checkbox type=checkbox value=1 $form->{taxincluded}> <b>|.$locale->text('Tax Included').qq|</b></td>
+                  <td><input name=taxincluded class=checkbox type=checkbox value=1 $form->{taxincluded}> |.$locale->text('Tax Included').qq|</td>
                 </tr>
               </table>
             </td>
@@ -1781,7 +1781,7 @@ sub form_header {
           <th align=right>|.$locale->text('Credit Limit').qq|</th>
           <td><input name=creditlimit class="inputright" size=11 value="$form->{creditlimit}">
 
-           &nbsp;<b>|.$locale->text('Pre-Payment').qq|</b>
+           &nbsp;<span class="label">|.$locale->text('Pre-Payment').qq|</span>
           &nbsp;<select name="prepayment_accno">|
           .$form->select_option($form->{selectarap}, $form->{prepayment_accno})
           .qq|</select>
@@ -1794,7 +1794,7 @@ sub form_header {
   $discountaccount = qq|
         <tr>
           <th align=right>|.$locale->text('Terms').qq|</th>
-          <td><b>|.$locale->text('Net').qq|</b> <input name=terms class="inputright" size=3 value="$form->{terms}"> <b>|.$locale->text('days').qq|</b></td>
+          <td><span class="label">|.$locale->text('Net').qq|</span> <input name=terms class="inputright" size=3 value="$form->{terms}"> <span class="label">|.$locale->text('days').qq|</span></td>
         </tr>
 |.$form->hide_form(qw(discount_accno cashdiscount discountterms));
 
@@ -1808,7 +1808,7 @@ sub form_header {
           .qq|</select>
           </td>
           <th align=right>|.$locale->text('Terms').qq|</th>
-          <td><input name=cashdiscount class="inputright" size=3 value=$form->{cashdiscount}>% / <input name=discountterms class="inputright" size=3 value=$form->{discountterms}> <b>|.$locale->text('Net').qq|</b> <input name=terms class="inputright" size=3 value="$form->{terms}"> <b>|.$locale->text('days').qq|</b></td>
+          <td><input name=cashdiscount class="inputright" size=3 value=$form->{cashdiscount}>% / <input name=discountterms class="inputright" size=3 value=$form->{discountterms}> <span class="label">|.$locale->text('Net').qq|</span> <input name=terms class="inputright" size=3 value="$form->{terms}"> <span class="label">|.$locale->text('days').qq|</span></td>
         </tr>
 |;
   }
@@ -1816,7 +1816,7 @@ sub form_header {
   if ($form->{selectpaymentmethod}) {
 
     $paymentmethod = qq|
-           &nbsp;<b>|.$locale->text('Method').qq|</b>
+           &nbsp;<span class="label">|.$locale->text('Method').qq|</span>
           <select name=paymentmethod>|
           .$form->select_option($form->{selectpaymentmethod}, $form->{paymentmethod}, 1)
           .qq|</select>
@@ -1928,7 +1928,7 @@ sub form_header {
   $typeofcontact = qq|
               <input type=hidden name=action value="update">
               <tr>
-                <td align=center><b>|.$locale->text('Type').qq|</b>
+                <td align=center><span class="label">|.$locale->text('Type').qq|</span>
                 <input name=typeofcontact type=radio value="company" $typeofcontact{company} onClick="javascript:main.submit()">|.$locale->text('Company').qq|
                 <input name=typeofcontact type=radio value="person" $typeofcontact{person} onClick="javascript:main.submit()">|.$locale->text('Person').qq|
                 </td>
@@ -1973,7 +1973,7 @@ sub form_header {
 
     $name = qq|
                <tr>
-                <th align=right nowrap>$vcname <font color=red>*</font></th>
+                <th align=right nowrap>$vcname <span class="important">*</span></th>
                 <td><input name=name size=35 maxlength=64 value="|.$form->quote($form->{name}).qq|"></td>
               </tr>
 |;
@@ -2168,7 +2168,7 @@ sub form_header {
         <tr>
           <th align=right>|.$locale->text('Discount').qq|</th>
           <td><input name=discount class="inputright" size=4 value="$form->{discount}">
-          <b>%</b></td>
+          <span class="label">%</span></td>
 
           $lang
         </tr>
@@ -2271,7 +2271,7 @@ sub form_header {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -2290,12 +2290,12 @@ sub form_footer {
   my @buttons = (
     {
       'Update'           => {ndx => 1,  key => 'U', value => $locale->text('Update')},
-      'Save'             => {ndx => 2,  key => 'S', value => $locale->text('Save')},
+      'Save'             => {ndx => 2,  key => 'S', value => $locale->text('Save'), class => 'positive'},
       'UID Register'     => {ndx => 3,  key => 'G', value => $locale->text('UID Register')},
       'Shipping Address' => {ndx => 4,  key => 'H', value => $locale->text('Shipping Address')},
-      'Save as new'      => {ndx => 5,  key => 'N', value => $locale->text('Save as new')},
-      'New Number'       => {ndx => 21, key => 'M', value => $locale->text('New Number')},
-      'Delete'           => {ndx => 22, key => 'D', value => $locale->text('Delete')},
+      'Save as new'      => {ndx => 5,  key => 'N', value => $locale->text('Save as new'), class => 'positive'},
+      'New Number'       => {ndx => 21, key => 'M', value => $locale->text('New Number') },
+      'Delete'           => {ndx => 22, key => 'D', value => $locale->text('Delete'), class => 'negative' },
     },
     {
       _label_          => $locale->text('Add'),
@@ -2446,12 +2446,12 @@ sub form_footer {
   $form->{action}         = 'update';
   $form->{update_contact} = 1;
   $form->hide_form(
-    'ARAP',           '_updated',        'action',             'addressid',
-    'callback',       'checkaddress',    'company',            'companycountry',
-    'contactid',      'db',              'id',                 'localaddress',
-    'login',          'max_upload_size', 'path',               'precision',
-    'reference_rows', 'referenceurl',    'shiptolocaladdress', 'status',
-    'taxaccounts',    'update_contact',  'uidaddress',
+    'ARAP',         '_updated',       'action',          'addressid',
+    'callback',     'checkaddress',   'company',         'companycountry',
+    'contactid',    'db',             'helpref',         'id',
+    'localaddress', 'login',          'max_upload_size', 'path',
+    'precision',    'reference_rows', 'referenceurl',    'shiptolocaladdress',
+    'status',       'taxaccounts',    'update_contact',  'uidaddress',
   );
 
   if ($form->{callback} =~ /^im\.pl\?action=process_qrbill/) {
@@ -2619,7 +2619,7 @@ sub shipping_address {
     print qq|
         <tr>
           <td>$select</td>
-          <td colspan=3><hr noshade></td>
+          <td colspan=3><hr class="thin"></td>
         </tr>
 
         <tr>
@@ -2665,7 +2665,7 @@ sub shipping_address {
   $form->hide_form;
 
   print qq|
-<hr size=3 noshade>
+<hr class="thick">
 
 <br>
 <button type="submit" class="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
@@ -3018,7 +3018,7 @@ sub pricelist_header {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -3035,7 +3035,7 @@ sub pricelist_header {
 sub pricelist_footer {
 
   %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
-             'Save Pricelist' => { ndx => 3, key => 'S', value => $locale->text('Save Pricelist') },
+             'Save Pricelist' => { ndx => 3, key => 'S', value => $locale->text('Save Pricelist'), class => 'positive' },
             );
 
   $form->print_button(\%button);
@@ -3230,7 +3230,7 @@ sub select_item {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -3608,7 +3608,7 @@ sub lookup_name {
       </table>
     </td>
   </tr>
-  <tr><td><hr size=3 noshade></td></tr>
+  <tr><td><hr class="thick"></td></tr>
 </table>
 
 x <a href="javascript:window.close();">|.$locale->text('Close Window').qq|</a>
@@ -3652,7 +3652,7 @@ sub retrieve_names {
 
   print qq|
 <p>
-<button name="action" class="submit" type="submit" value="yes__delete">|.$locale->text('Yes, delete').qq|</button>
+<button name="action" class="critical submit" type="submit" value="yes__delete">|.$locale->text('Yes, delete').qq|</button>
 </form>
 
 </body>

@@ -118,7 +118,7 @@ sub reconciliation {
         </tr>
         <tr>
           <th align=right>|.$locale->text('From').qq|</th>
-          <td colspan=3><input name=fromdate size=11 class=date title="$myconfig{dateformat}" value="$form->{fromdate}"> |.&js_calendar("main", "fromdate").qq|<b>|.$locale->text('To').qq|</b> <input name=todate size=11 class=date title="$myconfig{dateformat}" value="$form->{todate}">|.&js_calendar("main", "todate").qq|</td>
+          <td colspan=3><input name=fromdate size=11 class=date title="$myconfig{dateformat}" value="$form->{fromdate}"> |.&js_calendar("main", "fromdate").qq|<span class="label">|.$locale->text('To').qq|</span> <input name=todate size=11 class=date title="$myconfig{dateformat}" value="$form->{todate}">|.&js_calendar("main", "todate").qq|</td>
         </tr>
         $selectfrom
         <tr>
@@ -134,7 +134,7 @@ sub reconciliation {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -453,7 +453,7 @@ sub display_form {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;

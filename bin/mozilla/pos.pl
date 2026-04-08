@@ -142,7 +142,7 @@ sub form_header {
   if ($form->{selectcustomer}) {
     $customer = qq|
               <tr>
-                <th align=right nowrap>|.$locale->text('Customer').qq| <font color=red>*</font></th>
+                <th align=right nowrap>|.$locale->text('Customer').qq| <span class="important">*</span></th>
                 <td><select name=customer onChange="javascript:main.submit()" accesskey="/" title="[/]">|.$form->select_option($form->{selectcustomer}, $form->{customer}, 1).qq|</select>
                 $vcref
                 </td>
@@ -157,7 +157,7 @@ sub form_header {
   } else {
     $customer = qq|
               <tr>
-                <th align=right nowrap>|.$locale->text('Customer').qq| <font color=red>*</font></th>
+                <th align=right nowrap>|.$locale->text('Customer').qq| <span class="important">*</span></th>
                 <td><input name=customer value="|.$form->quote($form->{customer}).qq|" size=35 accesskey="/" title="[/]">
                 $vcref
                 </td>
@@ -227,7 +227,7 @@ sub form_header {
                 <th align=right nowrap>|.$locale->text('Business').qq|</th>
                 <td nowrap>$form->{business}
                 &nbsp;&nbsp;&nbsp;
-                <b>|.$locale->text('Trade Discount').qq|</b> |
+                <span class="label">|.$locale->text('Trade Discount').qq|</span> |
                 .$form->format_amount(\%myconfig, $form->{tradediscount} * 100).qq| %</td>
               </tr>
 |;
@@ -312,7 +312,7 @@ sub form_header {
                       <td>|.$form->format_amount(\%myconfig, $form->{creditlimit}, $form->{precision}, "0").qq|</td>
                       <td width=10></td>
                       <th align=right nowrap>|.$locale->text('Remaining').qq|</th>
-                      <td class="plus$n" width=99%>|.$form->format_amount(\%myconfig, $form->{creditremaining}, $form->{precision}, "0").qq|</font></td>
+                      <td class="plus$n" width=99%>|.$form->format_amount(\%myconfig, $form->{creditremaining}, $form->{precision}, "0").qq|</td>
                     </tr>
                   </table>
                 </td>
@@ -629,7 +629,7 @@ sub form_footer {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -643,15 +643,15 @@ sub form_footer {
   } else {
 
     %button = (
-      update         => {ndx => 1, key => 'U', value => $locale->text('Update')},
-      main_groups    => {ndx => 2, key => 'M', value => $locale->text('Main Groups')},
-      print          => {ndx => 3, key => 'P', value => $locale->text('Print')},
-      open_drawer    => {ndx => 4, key => 'C', value => $locale->text('Open Drawer')},
-      preview        => {ndx => 5, key => 'V', value => $locale->text('Preview')},
-      post           => {ndx => 6, key => 'O', value => $locale->text('Post')},
-      print_and_post => {ndx => 7, key => 'R', value => $locale->text('Print and Post')},
-      assign_number  => {ndx => 8, key => 'A', value => $locale->text('Assign Number')},
-      delete         => {ndx => 9, key => 'D', value => $locale->text('Delete')}
+      update         => {ndx => 1, key => 'U', value => $locale->text('Update'), class => 'pos'},
+      main_groups    => {ndx => 2, key => 'M', value => $locale->text('Main Groups'), class => 'pos'},
+      print          => {ndx => 3, key => 'P', value => $locale->text('Print'), class => 'pos'},
+      open_drawer    => {ndx => 4, key => 'C', value => $locale->text('Open Drawer'), class => 'pos'},
+      preview        => {ndx => 5, key => 'V', value => $locale->text('Preview'), class => 'pos'},
+      post           => {ndx => 6, key => 'O', value => $locale->text('Post'), class => 'pos positive'},
+      print_and_post => {ndx => 7, key => 'R', value => $locale->text('Print and Post'), class => 'pos'},
+      assign_number  => {ndx => 8, key => 'A', value => $locale->text('Assign Number'), class => 'pos critical'},
+      delete         => {ndx => 9, key => 'D', value => $locale->text('Delete'), class => 'pos negative'},
     );
 
     delete $button{'main_groups'} if $form->{parentgroups};
@@ -664,9 +664,7 @@ sub form_footer {
 
       delete $button{'print_and_post'} unless $slconfig{latex};
 
-      for (sort { $button{$a}->{ndx} <=> $button{$b}->{ndx} } keys %button) {
-        print qq|<button class="pos" type="submit" name="action" value="$_" accesskey="$button{$_}{key}" title="$button{$_}{value} [$button{$_}{key}]">$button{$_}{value}</button>\n|;
-      }
+      $form->print_button(\%button);
 
       print qq|<p>
       <input class=pos type=text size=1 value="B" accesskey="B" title="[B]">\n|;
@@ -682,7 +680,11 @@ sub form_footer {
           ($partsgroup, $translation, $image) = split /--/, $item;
           $item = ($translation) ? $translation : $partsgroup;
           $item = $form->quote($item);
-          print qq| <button name="action" value="$spc$item" type="submit" class="pos" title="$item"><img src="$slconfig{images}/$myconfig{dbname}/$image" height="32" alt="$item"></button>\n| if $item;
+          my $label
+            = $image && -f "$slconfig{images}/$myconfig{dbname}/$image"
+            ? qq|<img src="$slconfig{images}/$myconfig{dbname}/$image" height="32">|
+            : $item;
+          print qq| <button name="action" value="$spc$item" type="submit" class="pos submit noprint" title="$item">$label</button>\n| if $item;
         }
       }
     }
@@ -1288,7 +1290,7 @@ sub receipts {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 

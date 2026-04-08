@@ -1,0 +1,355 @@
+@charset 'utf-8';
+/* Flexible Monochrome Theme for SQL-Ledger
+ *
+ * © Tekki 2026 */
+
+:root {
+  --main-font: Verdana, Arial, Helvetica, sans-serif;
+  --prim-1: white;
+  --prim-2: black;
+  --prim-3: white;
+  --prim-4: white;
+  --prim-5: black;
+  --prim-6: black;
+  --prim-7: black;
+  --grsc-1: black;
+  --grsc-2: black;
+  --grsc-3: black;
+  --grsc-4: black;
+  --grsc-5: black;
+  --grsc-6: black;
+  --grsc-7: white;
+  --fg-neg: black;
+  --fg-cri: black;
+  --fg-pos: black;
+  --fg-inf: black;
+  --bg-neg: white;
+  --bg-cri: white;
+  --bg-pos: white;
+  --bg-inf: white;
+}
+
+@media screen {
+  .noscreen {
+    display: none;
+  }
+
+  img {
+    opacity: 1.0;
+    filter: grayscale(100%);
+  }
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --main-font: Verdana, Arial, Helvetica, sans-serif;
+    --prim-1: black;
+    --prim-2: white;
+    --prim-3: black;
+    --prim-4: black;
+    --prim-5: white;
+    --prim-6: white;
+    --prim-7: white;
+    --grsc-1: white;
+    --grsc-2: white;
+    --grsc-3: white;
+    --grsc-4: white;
+    --grsc-5: white;
+    --grsc-6: white;
+    --grsc-7: black;
+    --fg-neg: white;
+    --fg-cri: white;
+    --fg-pos: white;
+    --fg-inf: white;
+    --bg-neg: black;
+    --bg-cri: black;
+    --bg-pos: black;
+    --bg-inf: black;
+  }
+
+  img {
+    opacity: 1.0;
+    filter: grayscale(100%);
+  }
+}
+
+@media print {
+  :root {
+    --prim-1: white;
+    --prim-2: black;
+    --prim-3: white;
+    --prim-4: white;
+    --prim-5: black;
+    --prim-6: black;
+    --prim-7: black;
+    --grsc-1: black;
+    --grsc-2: black;
+    --grsc-3: black;
+    --grsc-4: white;
+    --grsc-5: white;
+    --grsc-6: white;
+    --grsc-7: white;
+    --fg-neg: black;
+    --fg-cri: black;
+    --fg-pos: black;
+    --fg-inf: black;
+    --bg-neg: white;
+    --bg-cri: white;
+    --bg-pos: white;
+    --bg-inf: white;
+  }
+
+  a {
+    text-decoration: none !important;
+  }
+
+  .noprint {
+    display: none;
+  }
+}
+
+body {
+  background-color: var(--prim-4);
+  color: var(--prim-6);
+  font-family: var(--main-font);
+  font-size: 11px;
+}
+
+body.login {
+  background-color: var(--grsc-5);
+}
+
+table.login {
+  background-color: var(--prim-4);
+  padding: 30px;
+  border: 3px outset var(--grsc-5);
+}
+
+table table {
+  background-color: var(--prim-3);
+  border-radius: 10px;
+}
+
+a:link, a:active, a:visited {
+  color: var(--prim-2);
+  text-decoration: underline;
+}
+
+a:hover {
+  color: var(--prim-2);
+  text-decoration: underline;
+}
+
+.menuOut {
+  background-color: var(--prim-3);
+  border: 1px solid;
+  border-color: var(--prim-4) var(--prim-3) var(--prim-4) var(--prim-3);
+  color: var(--prim-6);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px;
+  text-align: left;
+}
+
+.menuOver {
+  background-color: var(--bg-inf);
+  border: 1px solid;
+  border-color: var(--prim-3) var(--prim-4) var(--prim-3) var(--prim-4);
+  color: var(--prim-6);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px;
+  text-align: left;
+}
+
+.menuOut a {
+  color: var(--prim-2);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: bold;
+  margin: 0px;
+  padding: 0px;
+  text-align: left;
+  text-decoration: underline;
+}
+
+.menuOver a {
+  color: var(--prim-2);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: bold;
+  margin: 0px;
+  padding: 0px;
+  text-align: left;
+  text-decoration: underline;
+}
+
+.submenu {
+  background-color: var(--prim-3);
+  border: 1px solid;
+  border-color: var(--prim-4) var(--prim-3) var(--prim-4) var(--prim-3);
+  font-family: var(--main-font);
+  font-size: 11px;
+  font-weight: bold;
+  padding-left: 5px;
+}
+
+.submenu a {
+  color: var(--prim-2);
+  text-decoration: underline;
+}
+
+.submenu a:hover {
+  color: var(--prim-2);
+  text-decoration: underline;
+}
+
+th, .label {
+  color: var(--grsc-2);
+  font-weight: bold;
+}
+
+.listtop {
+  background-color: var(--prim-3);
+  border-bottom: 2px solid var(--grsc-5);
+  color: var(--prim-6);
+  font-size: 14px;
+  font-weight: bold;
+  padding: 5px;
+}
+
+.listheading {
+  background-color: var(--prim-4);
+  font-size: 12px;
+  font-weight: bold;
+}
+
+tr.listrow0 td, tr.listrow1 td  {
+  border-bottom: 1px solid var(--grsc-6);
+  height: 19px;
+}
+
+tr.listsubtotal th, tr.listsubtotal td {
+  border-bottom: 1px solid var(--grsc-4);
+  font-weight: bold;
+}
+
+tr.listtotal th, tr.listtotal td {
+  border-bottom: 2px solid var(--grsc-4);
+  font-weight: bold;
+}
+
+a.help {
+  float: right;
+  padding-right: 3px;
+}
+
+button, input, option, select, textarea {
+  background-color: var(--prim-3);
+  border-radius: 0px;
+  border: 1px solid var(--grsc-4);
+  color: var(--prim-6);
+  cursor: pointer;
+  font-family: var(--main-font);
+  font-size: 11px;
+  font-weight: bold;
+  outline-color: var(--prim-2);
+}
+
+select, option {
+  color: var(--prim-2);
+}
+
+textarea {
+  width: 98%;
+}
+
+button.submit {
+  color: var(--prim-2);
+  background-color: var(--prim-3);
+  border: 1px solid var(--prim-2);
+  margin: 2px;
+}
+
+button.submit:hover {
+  background-color: var(--bg-inf);
+}
+
+button.positive, input.positive {
+  color: var(--fg-pos);
+  background-color: var(--bg-pos);
+  border: 1px solid var(--fg-pos);
+}
+
+button.critical, input.critical {
+  color: var(--fg-cri);
+  background-color: var(--bg-cri);
+  border: 1px solid var(--fg-cri);
+}
+
+button.negative, input.negative {
+  color: var(--fg-neg);
+  background-color: var(--bg-neg);
+  border: 1px solid var(--fg-neg);
+}
+
+.pos {
+  font-size: 14px;
+}
+
+.inputright {
+  text-align: right;
+}
+
+input[type='checkbox'], input[type='radio'] {
+  accent-color: var(--prim-2);
+}
+
+.clickable {
+  color: var(--prim-2);
+  cursor: pointer;
+}
+
+hr.thin {
+  border: 0;
+  border-top: 1px solid var(--grsc-6);
+}
+
+hr.thick {
+  border: 1px solid var(--grsc-6);
+}
+
+.dnd-idle {
+  color: var(--prim-2);
+  text-align: left;
+  vertical-align: top;
+}
+
+.dnd-active {
+  border: 1px dashed var(--prim-2);
+  color: var(--prim-2);
+  text-align: center;
+  vertical-align: middle;
+}
+
+.important {
+  color: var(--fg-neg);
+}
+
+.negative, .plus0, .error {
+  background-color: var(--bg-neg);
+  color: var(--fg-neg);
+}
+
+.positive, .plus1 {
+  background-color: var(--bg-pos);
+  color: var(--fg-pos);
+}
+
+.critical, .confirm {
+  background-color: var(--bg-cri);
+  color: var(--fg-cri);
+}

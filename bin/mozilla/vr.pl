@@ -105,7 +105,7 @@ sub add_batch {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -279,7 +279,7 @@ sub edit_payment_reversal {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -299,8 +299,8 @@ sub edit_payment_reversal {
 
   $form->hide_form(qw(id vouchernumber transdate memo path login batch batchid batchnumber batchdescription callback));
 
-  %button = ('Delete' => { ndx => 1, key => 'D', value => $locale->text('Delete') },
-             'Post' => { ndx => 6, key => 'O', value => $locale->text('Post') },
+  %button = ('Delete' => { ndx => 1, key => 'D', value => $locale->text('Delete'), class => 'negative' },
+             'Post' => { ndx => 6, key => 'O', value => $locale->text('Post'), class => 'positive' },
             );
 
   delete $button{'Delete'} unless $form->{id};
@@ -371,7 +371,7 @@ sub delete_batch {
 
 <h4>|.$locale->text('Are you sure you want to delete Batch').qq| $form->{batchnumber}</h4>
 
-<button name="action" class="submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
+<button name="action" class="critical submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
 </form>
 
 </body>
@@ -501,7 +501,7 @@ sub search {
         $employee
         <tr>
           <th align=right nowrap>|.$locale->text('From').qq|</th>
-          <td colspan=3><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdatefrom").qq|<b>|.$locale->text('To').qq|</b> <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
+          <td colspan=3><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdatefrom").qq|<span class="label">|.$locale->text('To').qq|</span> <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
         </tr>
         $selectfrom
       </table>
@@ -536,7 +536,7 @@ sub search {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -783,7 +783,7 @@ sub list_batches {
       $button{'Select all'} = { ndx => 1, key => 'S', value => $locale->text('Select all') };
     }
 
-    $button{'Post Batches'} = { ndx => 5, key => 'O', value => $locale->text('Post Batches') };
+    $button{'Post Batches'} = { ndx => 5, key => 'O', value => $locale->text('Post Batches'), class => 'positive' };
 
     for (split /;/, $myconfig{acs}) {
       ($module, $function) = split /--/, $_;
@@ -797,7 +797,7 @@ sub list_batches {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -1034,11 +1034,11 @@ sub list_vouchers {
       if (! $form->{apprdate}) {
         $button{'Add Voucher'} = { ndx => 1, key => 'A', value => $locale->text('Add Voucher') };
         if ($form->{admin}) {
-          $button{'Post Batch'} = { ndx => 2, key => 'O', value => $locale->text('Post Batch') };
+          $button{'Post Batch'} = { ndx => 2, key => 'O', value => $locale->text('Post Batch'), class => 'positive' };
         }
       }
 
-      $button{'Delete Batch'} = { ndx => 3, key => 'D', value => $locale->text('Delete Batch') };
+      $button{'Delete Batch'} = { ndx => 3, key => 'D', value => $locale->text('Delete Batch'), class => 'negative' };
 
       for (split /;/, $myconfig{acs}) {
         ($module, $function) = split /--/, $_;
@@ -1053,7 +1053,7 @@ sub list_vouchers {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 

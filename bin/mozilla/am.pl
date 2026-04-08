@@ -144,7 +144,7 @@ sub account_header {
     <td>
       <table>
         <tr>
-          <th align=right>|.$locale->text('Account Number').qq| <font color=red>*</font></th>
+          <th align=right>|.$locale->text('Account Number').qq| <span class="important">*</span></th>
           <td><input name=accno size=20 value="|.$form->quote($form->{accno}).qq|"></td>
           <td><input name=closed class=checkbox type=checkbox value=1 $checked{closed}>&nbsp;|.$locale->text('Closed').qq|</td>
         </tr>
@@ -153,7 +153,7 @@ sub account_header {
           <td><input name=description size=40 value="|.$form->quote($form->{description}).qq|"></td>
         </tr>
         <tr>
-          <th align=right>|.$locale->text('Account Type').qq| <font color=red>*</font></th>
+          <th align=right>|.$locale->text('Account Type').qq| <span class="important">*</span></th>
           <td>
             <table>
               <tr valign=top>
@@ -244,7 +244,7 @@ print qq|
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -259,14 +259,14 @@ sub form_footer {
   my %button;
 
   if ($form->{id}) {
-    $button{'Save'} = { ndx => 3, key => 'S', value => $locale->text('Save') };
-    $button{'Save as new'} = { ndx => 7, key => 'N', value => $locale->text('Save as new') } if $form->{type} ne 'currency';
+    $button{'Save'} = { ndx => 3, key => 'S', value => $locale->text('Save'), class => 'positive' };
+    $button{'Save as new'} = { ndx => 7, key => 'N', value => $locale->text('Save as new'), class => 'positive' } if $form->{type} ne 'currency';
 
     if ($form->{orphaned}) {
-      $button{'Delete'} = { ndx => 16, key => 'D', value => $locale->text('Delete') };
+      $button{'Delete'} = { ndx => 16, key => 'D', value => $locale->text('Delete'), class => 'negative' };
     }
   } else {
-    $button{'Save'} = { ndx => 3, key => 'S', value => $locale->text('Save') };
+    $button{'Save'} = { ndx => 3, key => 'S', value => $locale->text('Save'), class => 'positive' };
   }
 
   $form->print_button(\%button);
@@ -426,7 +426,7 @@ sub list_account {
   }
 
   print qq|
-  <tr><td colspan=$colspan><hr size=3 noshade></td></tr>
+  <tr><td colspan=$colspan><hr class="thick"></td></tr>
 </table>
 
 </body>
@@ -520,7 +520,7 @@ sub list_gifi {
 
   print qq|
   <tr>
-    <td colspan=$colspan><hr size=3 noshade></td>
+    <td colspan=$colspan><hr class="thick"></td>
   </tr>
 </table>
 
@@ -601,7 +601,7 @@ sub gifi_header {
     </td>
   </tr>
   <tr>
-    <td colspan=2><hr size=3 noshade></td>
+    <td colspan=2><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -615,11 +615,11 @@ sub gifi_footer {
 
   my %button;
 
-  $button{'Save'} = { ndx => 3, key => 'S', value => $locale->text('Save') };
+  $button{'Save'} = { ndx => 3, key => 'S', value => $locale->text('Save'), class => 'positive' };
 
   if ($form->{accno}) {
     if ($form->{orphaned}) {
-      $button{'Delete'} = { ndx => 16, key => 'D', value => $locale->text('Delete') };
+      $button{'Delete'} = { ndx => 16, key => 'D', value => $locale->text('Delete'), class => 'negative' };
     }
   }
 
@@ -783,7 +783,7 @@ sub list_department {
     </td>
   </tr>
   <tr>
-  <td><hr size=3 noshade></td>
+  <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -859,7 +859,7 @@ sub department_header {
     </td>
   </tr>
   <tr>
-    <td colspan=2><hr size=3 noshade></td>
+    <td colspan=2><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -985,7 +985,7 @@ sub list_business {
     </td>
   </tr>
   <tr>
-  <td><hr size=3 noshade></td>
+  <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -1052,7 +1052,7 @@ sub business_header {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -1189,7 +1189,7 @@ sub list_paymentmethod {
     </td>
   </tr>
   <tr>
-  <td><hr size=3 noshade></td>
+  <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -1270,7 +1270,7 @@ sub paymentmethod_header {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -1407,7 +1407,7 @@ sub list_sic {
     </td>
   </tr>
   <tr>
-  <td><hr size=3 noshade></td>
+  <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -1474,7 +1474,7 @@ sub sic_header {
     <td><input name=description size=60 value="|.$form->quote($form->{description}).qq|"></td>
   </tr>
   <tr>
-    <td colspan=2><hr size=3 noshade></td>
+    <td colspan=2><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -1600,7 +1600,7 @@ sub list_language {
     </td>
   </tr>
   <tr>
-  <td><hr size=3 noshade></td>
+  <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -1659,7 +1659,7 @@ sub language_header {
     <th align=right>|.$locale->text('Description').qq|</th>
     <td><input name=description size=60 value="|.$form->quote($form->{description}).qq|"></td>
   </tr>
-    <td colspan=2><hr size=3 noshade></td>
+    <td colspan=2><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -1860,7 +1860,7 @@ sub list_mimetypes {
     </td>
   </tr>
   <tr>
-  <td><hr size=3 noshade></td>
+  <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -1936,7 +1936,7 @@ sub mimetype_header {
     <th align=right>|.$locale->text('Content-Type').qq|</th>
     <td><input name=contenttype size=60 value="|.$form->quote($form->{contenttype}).qq|"></td>
   </tr>
-    <td colspan=2><hr size=3 noshade></td>
+    <td colspan=2><hr class="thick"></td>
   </tr>
 </table>
 
@@ -1946,10 +1946,10 @@ sub mimetype_header {
 
   my %button;
 
-  $button{'Save'} = { ndx => 3, key => 'S', value => $locale->text('Save') };
+  $button{'Save'} = { ndx => 3, key => 'S', value => $locale->text('Save'), class => 'positive' };
 
   if ($form->{extension}) {
-    $button{'Delete'} = { ndx => 16, key => 'D', value => $locale->text('Delete') };
+    $button{'Delete'} = { ndx => 16, key => 'D', value => $locale->text('Delete'), class => 'negative' };
   }
 
   $form->print_button(\%button);
@@ -2084,7 +2084,7 @@ sub list_templates {
     </td>
   </tr>
   <tr>
-  <td><hr size=3 noshade></td>
+  <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -2208,7 +2208,7 @@ $form->{body}
   $form->hide_form(qw|file type allow_inexistant path login callback|);
 
   print qq|
-<hr size="3" noshade>
+<hr class="thick">
 <br>|;
 
   if ($form->{file} =~ /^$slconfig{templates}/
@@ -2217,7 +2217,7 @@ $form->{body}
     print $locale->text('Templates managed externally');
   } elsif ($form->{edit}) {
     print qq|
-<input name="action" type="submit" class="submit" value="$edit_label" accesskey="E" title="$edit_label [E]">|;
+<button name="action" type="submit" class="submit" value="edit" accesskey="E" title="$edit_label [E]">$edit_label</button>|;
   }
 
 
@@ -2275,9 +2275,9 @@ $form->{body}</textarea>
   </tr>
 </table>
 
-<hr size="3" noshade>
+<hr class="thick">
 <br>
-<input type="submit" class="submit" name="action" value="$save_label" accesskey="S" title="$save_label [S]">
+<button type="submit" class="submit" name="action" value="save" accesskey="S" title="$save_label [S]">$save_label</button>
 |;
 
   $form->hide_form(qw|file type allow_inexistant path login callback|);
@@ -2399,7 +2399,7 @@ sub display_taxes {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -2772,7 +2772,7 @@ sub defaults {
       </table>
     </td>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>|;
   }
 
@@ -2820,7 +2820,7 @@ sub defaults {
 
   my $save = $locale->text('Save');
   print qq|
-<input type="submit" class="submit" name="action" value="$save" accesskey="S" title="$save [S]">|;
+<button type="submit" class="submit" name="action" value="save" accesskey="S" title="$save [S]">$save</button>|;
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -2905,7 +2905,7 @@ sub workstations {
           <th align=right nowrap>|.$locale->text('Poledisplay').qq|</th>
           <td>&nbsp;</td>
           <td><input name="poledisplay" value="|.$form->quote($form->{"poledisplay"}).qq|" size=60></td>
-          <td><input name="poledisplayon" type=checkbox style=checkbox $checked><b>|.$locale->text('On').qq|</b></td>
+          <td><input name="poledisplayon" type=checkbox style=checkbox $checked><span class="label">|.$locale->text('On').qq|</span></td>
         </tr>
 |;
 
@@ -2960,14 +2960,14 @@ sub workstations {
           <th align=right nowrap>|.$locale->text('Poledisplay').qq|</th>
           <td>&nbsp;</td>
           <td><input name="poledisplay_$i" value="|.$form->quote($form->{"poledisplay_$i"}).qq|" size=60></td>
-          <td><input name="poledisplayon_$i" type=checkbox style=checkbox $checked><b>|.$locale->text('On').qq|</b></td>
+          <td><input name="poledisplayon_$i" type=checkbox style=checkbox $checked><span class="label">|.$locale->text('On').qq|</span></td>
         </tr>
 |;
 
     if ($i != $form->{numworkstations}) {
       print qq|
         <tr>
-          <td colspan=4><hr size=3 noshade></td>
+          <td colspan=4><hr class="thick"></td>
         </tr>
 |;
     }
@@ -2979,7 +2979,7 @@ sub workstations {
   </tr>
 
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -3286,7 +3286,7 @@ pdf--PDF|;
       </table>
     </td>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -3299,7 +3299,7 @@ pdf--PDF|;
 
   my $save = $locale->text('Save');
   print qq|
-<input type="submit" class="submit" name="action" value="$save" accesskey="S" title="$save [S]">|;
+<button type="submit" class="submit" name="action" value="save" accesskey="S" title="$save [S]">$save</button>|;
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
@@ -3512,7 +3512,7 @@ print qq|
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 
 </table>
@@ -3581,9 +3581,9 @@ sub get_dataset {
   if ($myconfig{dbname} ne $form->{restoredbname}) {
     $dbname = qq|
   <tr>
-    <td><b>|.$locale->text('Dataset different!').qq|</b>
-<br><b>$myconfig{dbname}</b> |.
-$locale->text('will be restored with data from').qq| <b>$form->{restoredbname}</b></td>
+    <td><span class="label">|.$locale->text('Dataset different!').qq|</span>
+<br><span class="label">$myconfig{dbname}</span> |.
+$locale->text('will be restored with data from').qq| <span class="label">$form->{restoredbname}</span></td>
   </tr>
 |;
   } else {
@@ -3602,8 +3602,8 @@ $locale->text('will be restored with data from').qq| <b>$form->{restoredbname}</
 
     $dbversion = qq|
   <tr>
-    <td><b>|.$locale->text('Dataset Version different!').qq|</b>
-<br>|.$locale->text('Dataset will be upgraded to').qq| <b>$form->{dbversion}</b></td>
+    <td><span class="label">|.$locale->text('Dataset Version different!').qq|</span>
+<br>|.$locale->text('Dataset will be upgraded to').qq| <span class="label">$form->{dbversion}</span></td>
   </tr>
 |;
 
@@ -3633,7 +3633,7 @@ print qq|
   $dbversion
 </table>
 
-<hr size=3 noshade>
+<hr class="thick">
 
 <br>
 <button type="submit" class="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
@@ -3753,7 +3753,7 @@ sub audit_control {
   </tr>
 </table>
 
-<hr size=3 noshade>
+<hr class="thick">
 
 <br>
 <button type="submit" class="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
@@ -3873,14 +3873,14 @@ sub audit_log {
         <tr>
           <th align=right nowrap>|.$locale->text('From').qq|</th>
           <td><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdatefrom").qq|
-          <b>|.$locale->text('To').qq|</b>
+          <span class="label">|.$locale->text('To').qq|</span>
           <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
         </tr>
       </table>
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -4066,7 +4066,7 @@ sub list_audit_log {
     </table>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -4189,7 +4189,7 @@ sub list_warehouse {
     </td>
   </tr>
   <tr>
-  <td><hr size=3 noshade></td>
+  <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -4286,7 +4286,7 @@ sub warehouse_header {
     <td><input name=country size=10 maxlength=32 value="|.$form->quote($form->{country}).qq|"></td>
   </tr>
   <tr>
-    <td colspan=2><hr size=3 noshade></td>
+    <td colspan=2><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -4352,7 +4352,7 @@ sub yearend {
     <td>
       <table>
         <tr>
-          <th align=right>|.$locale->text('Date').qq| <font color=red>*</font></th>
+          <th align=right>|.$locale->text('Date').qq| <span class="important">*</span></th>
           <td><input name=todate size=11 class=date title="$myconfig{dateformat}" value=$todate>|.&js_calendar("main", "todate").qq|</td>
         </tr>
         <tr>
@@ -4378,7 +4378,7 @@ sub yearend {
   </tr>
 </table>
 
-<hr size=3 noshade>
+<hr class="thick">
 
 |;
 
@@ -4509,7 +4509,7 @@ sub company_logo {
 <p>
 |.$locale->text('Licensed to').qq|
 <p>
-<b>
+<span class="label">
 $form->{company}
 <br>$form->{address}
 </b>
@@ -4739,7 +4739,7 @@ print qq|
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -5258,7 +5258,7 @@ sub clear_semaphores {
 
 <h4>|.$locale->text('Remove semaphores?').qq|</h4>
 
-<button name="action" class="submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
+<button name="action" class="critical submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
 </form>
 
 </body>
@@ -5318,7 +5318,7 @@ print qq|
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 
 </table>
@@ -5373,7 +5373,7 @@ sub unlock_dataset {
 
 <h4>|.$locale->text('Unlock dataset?').qq|</h4>
 
-<button name="action" class="submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
+<button name="action" class="critical submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
 </form>
 
 </body>
@@ -5470,7 +5470,7 @@ sub bank_accounts {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -5594,7 +5594,7 @@ sub bank_header {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -5606,7 +5606,7 @@ sub bank_header {
 sub bank_footer {
 
   %button = (
-             'Save' => { ndx => 2, key => 'S', value => $locale->text('Save') }
+             'Save' => { ndx => 2, key => 'S', value => $locale->text('Save'), class => 'positive' }
             );
 
   $form->{type} = "bank";
@@ -5715,14 +5715,14 @@ sub search_exchangerates {
         $selectcurrency
         <tr>
           <th align=right nowrap>|.$locale->text('From').qq|</th>
-          <td colspan=3><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdatefrom").qq|<b>|.$locale->text('To').qq|</b> <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
+          <td colspan=3><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdatefrom").qq|<span class="label">|.$locale->text('To').qq|</span> <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
         </tr>
         $selectfrom
       </table>
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -5899,7 +5899,7 @@ sub list_exchangerates {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -6007,7 +6007,7 @@ sub exchangerate_header {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -6110,7 +6110,7 @@ sub list_currencies {
     </td>
   </tr>
   <tr>
-  <td><hr size=3 noshade></td>
+  <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -6213,7 +6213,7 @@ sub currency_header {
   </td>
   </tr>
   <tr>
-    <td colspan=2><hr size=3 noshade></td>
+    <td colspan=2><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -6357,7 +6357,7 @@ sub list_roles {
     </td>
   </tr>
   <tr>
-  <td><hr size=3 noshade></td>
+  <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -6536,7 +6536,7 @@ sub role_header {
 
   print qq|
   <tr>
-    <td colspan=2><hr size=3 noshade></td>
+    <td colspan=2><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -6624,9 +6624,9 @@ $reportform
 
   $button{'Run SQL command'} = { ndx => 1, key => 'R', value => $locale->text('Run SQL command') };
 
-  $button{'Save SQL command'} = { ndx => 2, key => 'S', value => $locale->text('Save SQL command') } if $form->{sqlcommand};
+  $button{'Save SQL command'} = { ndx => 2, key => 'S', value => $locale->text('Save SQL command'), class => 'positive' } if $form->{sqlcommand};
 
-  $button{'Delete SQL command'} = { ndx => 3, key => 'D', value => $locale->text('Delete SQL command') } if $form->{report};
+  $button{'Delete SQL command'} = { ndx => 3, key => 'D', value => $locale->text('Delete SQL command'), class => 'negative' } if $form->{report};
 
   $form->print_button(\%button);
 
@@ -6739,7 +6739,7 @@ sub save_sql_command {
 <hr>
 |;
 
-  %button = ('Save' => { ndx => 1, key => 'S', value => $locale->text('Save') } );
+  %button = ('Save' => { ndx => 1, key => 'S', value => $locale->text('Save'), class => 'positive' } );
 
   $form->print_button(\%button);
 
@@ -6868,7 +6868,7 @@ sub list_snapshots {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -6956,7 +6956,7 @@ sub delete_snapshots {
 
   print qq|
 </ul>
-<button class="submit" type="submit" name="action" value="yes">|.$locale->text('Yes').qq|</button>
+<button class="critical submit" type="submit" name="action" value="yes">|.$locale->text('Yes').qq|</button>
 </form>
 
 </body>

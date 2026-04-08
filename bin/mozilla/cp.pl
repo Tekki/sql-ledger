@@ -782,7 +782,7 @@ sub payments_footer {
 
   print qq|
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -792,7 +792,7 @@ sub payments_footer {
              'Deselect all' => { ndx => 4, key => 'A', value => $locale->text('Deselect all') },
              'Preview' => { ndx => 5, key => 'V', value => $locale->text('Preview') },
              'Print' => { ndx => 6, key => 'P', value => $locale->text('Print') },
-             'Post' => { ndx => 7, key => 'O', value => $locale->text('Post') },
+             'Post' => { ndx => 7, key => 'O', value => $locale->text('Post'), class => 'positive' },
             );
 
   if ($form->{allbox}) {
@@ -1789,7 +1789,7 @@ sub payment_footer {
 
     print qq|
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 |;
 
@@ -1815,7 +1815,7 @@ sub payment_footer {
                'Deselect all' => { ndx => 3, key => 'A', value => $locale->text('Deselect all') },
                'Preview' => { ndx => 4, key => 'V', value => $locale->text('Preview') },
                'Print' => { ndx => 5, key => 'P', value => $locale->text('Print') },
-               'Post' => { ndx => 6, key => 'O', value => $locale->text('Post') },
+               'Post' => { ndx => 6, key => 'O', value => $locale->text('Post'), class => 'positive' },
                'Back' => { ndx => 7, key => 'B', value => $locale->text('Back') }
               );
 
@@ -2521,7 +2521,7 @@ sub payment_register {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -2749,7 +2749,7 @@ sub list_checks {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -2975,7 +2975,7 @@ sub reissue_payments {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 

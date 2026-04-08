@@ -502,19 +502,19 @@ sub search {
 
         <tr>
           <th align=right>|.$locale->text('From').qq|</th>
-          <td><input name=datefrom size=11 class=date title="$myconfig{dateformat}"> <b>|.&js_calendar("main", "datefrom").$locale->text('To').qq|</b> <input name=dateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "dateto").qq|</td>
+          <td><input name=datefrom size=11 class=date title="$myconfig{dateformat}"> <span class="label">|.&js_calendar("main", "datefrom").$locale->text('To').qq|</span> <input name=dateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "dateto").qq|</td>
         </tr>
 
         $selectfrom
 
         <tr>
           <th align=right>|.$locale->text('Account').qq| >=</th>
-          <td><input name=accnofrom> <b>|.$locale->text('Account').qq| <=</b> <input name=accnoto></td>
+          <td><input name=accnofrom> <span class="label">|.$locale->text('Account').qq| <=</span> <input name=accnoto></td>
         </tr>
 
         <tr>
           <th align=right>|.$locale->text('Amount').qq| >=</th>
-          <td><input name=amountfrom size=11> <b>|.$locale->text('Amount').qq| <=</b> <input name=amountto size=11></td>
+          <td><input name=amountfrom size=11> <span class="label">|.$locale->text('Amount').qq| <=</span> <input name=amountto size=11></td>
         </tr>
 
         <tr>
@@ -563,7 +563,7 @@ sub search {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 <br>
@@ -1123,7 +1123,7 @@ sub transactions {
     'AP--Add Transaction' => {ndx => 5, key => 'P', value => $locale->text('AP Transaction')},
     'AP--Vendor Invoice'  => {ndx => 6, key => 'V', value => $locale->text('Vendor Invoice ')},
     'AP--Vendor Invoice'  => {ndx => 7, key => 'D', value => $locale->text('Debit Invoice ')},
-    'Save Report'         => {ndx => 8, key => 'S', value => $locale->text('Save Report')},
+    'Save Report'         => {ndx => 8, key => 'S', value => $locale->text('Save Report'), class => 'positive' },
     'Spreadsheet'         => {ndx => 9, key => 'X', value => $locale->text('Spreadsheet')},
   );
 
@@ -1158,7 +1158,7 @@ sub transactions {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -1443,7 +1443,7 @@ sub form_header {
       $form->{exchangerate} = $form->format_amount(\%myconfig, $form->{exchangerate});
 
       $exchangerate .= qq|
-      <th align=right nowrap>|.$locale->text('Exchange Rate').qq| <font color=red>*</font></th>
+      <th align=right nowrap>|.$locale->text('Exchange Rate').qq| <span class="important">*</span></th>
       <td><input name=exchangerate class="inputright" size=10 value=$form->{exchangerate}></td>|;
     }
     $exchangerate .= qq|</tr></table></td></tr>|;
@@ -1483,12 +1483,12 @@ sub form_header {
     $reference = qq|
           <th align=right>|.$locale->text('Reference').qq|</th>
           <td>|.$form->quote($form->{reference}).qq|</td>
-          <th align=right>|.$locale->text('Date').qq| <font color=red>*</font></th>|.$form->hide_form(qw(reference lock_glnumber));
+          <th align=right>|.$locale->text('Date').qq| <span class="important">*</span></th>|.$form->hide_form(qw(reference lock_glnumber));
   } else {
     $reference = qq|
           <th align=right>|.$locale->text('Reference').qq|</th>
           <td><input name=reference size=20 value="|.$form->quote($form->{reference}).qq|"></td>
-          <th align=right>|.$locale->text('Date').qq| <font color=red>*</font></th>|;
+          <th align=right>|.$locale->text('Date').qq| <span class="important">*</span></th>|;
   }
 
   $form->header;
@@ -1605,7 +1605,7 @@ sub form_footer {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -1623,11 +1623,11 @@ sub form_footer {
   } else {
 
     %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
-               'Post' => { ndx => 3, key => 'O', value => $locale->text('Post') },
-               'Post as new' => { ndx => 6, key => 'N', value => $locale->text('Post as new') },
+               'Post' => { ndx => 3, key => 'O', value => $locale->text('Post'), class => 'positive' },
+               'Post as new' => { ndx => 6, key => 'N', value => $locale->text('Post as new'), class => 'positive' },
                'Schedule' => { ndx => 7, key => 'H', value => $locale->text('Schedule') },
-               'New Number' => { ndx => 10, key => 'M', value => $locale->text('New Number') },
-               'Delete' => { ndx => 11, key => 'D', value => $locale->text('Delete') },
+               'New Number' => { ndx => 10, key => 'M', value => $locale->text('New Number'), class => 'critical' },
+               'Delete' => { ndx => 11, key => 'D', value => $locale->text('Delete'), class => 'negative' },
               );
 
     %f = ();
@@ -1694,7 +1694,7 @@ sub delete {
 
 <h4>|.$locale->text('Are you sure you want to delete Transaction').qq| $form->{reference}</h4>
 
-<button name="action" class="submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
+<button name="action" class="critical submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
 </form>
 |;
 

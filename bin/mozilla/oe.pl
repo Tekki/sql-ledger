@@ -434,7 +434,7 @@ sub lookup_order {
       </table>
     </td>
   </tr>
-  <tr><td><hr size=3 noshade></td></tr>
+  <tr><td><hr class="thick"></td></tr>
 </table>
 
 x <a href="javascript:window.close();">|.$locale->text('Close Window').qq|</a>
@@ -475,7 +475,7 @@ sub form_header {
       $ldm = $form->dayofmonth($myconfig{dateformat}, $form->{transdate});
 
       $exchangerate .= qq|
-      <th align=right nowrap>|.$locale->text('Exchange Rate').qq| <font color=red>*</font></th>
+      <th align=right nowrap>|.$locale->text('Exchange Rate').qq| <span class="important">*</span></th>
       <td nowrap><input name=exchangerate class="inputright" size=10 value=$form->{exchangerate}>
           <a href=am.pl?action=list_exchangerates&transdatefrom=$fdm&transdateto=$ldm&currency=$form->{currency}&login=$form->{login}&path=$form->{path} target=_blank>&#9701;</a></td>|;
     }
@@ -487,7 +487,7 @@ sub form_header {
   $terms = qq|
                     <tr>
                       <th align=right nowrap>|.$locale->text('Terms').qq| |.$locale->text('Net').qq|</th>
-                      <td nowrap><input name=terms class="inputright" size="3" maxlength="3" value=$form->{terms}> <b>|.$locale->text('days').qq|</b></td>
+                      <td nowrap><input name=terms class="inputright" size="3" maxlength="3" value=$form->{terms}> <span class="label">|.$locale->text('days').qq|</span></td>
                     </tr>
 |;
 
@@ -511,7 +511,7 @@ sub form_header {
                 <th align=right nowrap>|.$locale->text('Business').qq|</th>
                 <td nowrap>$form->{business}|;
     $business .= qq|&nbsp;&nbsp;&nbsp;
-                <b>|.$locale->text('Trade Discount').qq|</b> |
+                <span class="label">|.$locale->text('Trade Discount').qq|</span> |
                 .$form->format_amount(\%myconfig, $form->{tradediscount} * 100).qq| %| if $form->{vc} eq 'customer';
     $business .= qq|</td>
               </tr>
@@ -541,7 +541,7 @@ sub form_header {
 
     $ordnumber .= qq|
               <tr>
-                <th align=right nowrap>|.$locale->text('Order Date').qq| <font color=red>*</font></th>
+                <th align=right nowrap>|.$locale->text('Order Date').qq| <span class="important">*</span></th>
                 <td><input name=transdate size=11 class=date value=$form->{transdate} accesskey="*" title="$myconfig{dateformat} [*]">|.&js_calendar("main", "transdate").qq|</td>
               </tr>
               <tr>
@@ -656,7 +656,7 @@ sub form_header {
 
   $vc = qq|<input type=hidden name=action value="update">
               <tr>
-                <th align=right nowrap>$vcname <font color=red>*</font></th>
+                <th align=right nowrap>$vcname <span class="important">*</span></th>
 |;
 
   if ($form->{"select$form->{vc}"}) {
@@ -966,9 +966,9 @@ sub form_footer {
     print qq|
   <tr>
     <td>
-    <b>|.$locale->text('Total Cost').":</b> ".$form->format_amount(\%myconfig, $form->{costsubtotal}, $form->{precision}, 0);
+    <span class="label">|.$locale->text('Total Cost').":</span> ".$form->format_amount(\%myconfig, $form->{costsubtotal}, $form->{precision}, 0);
 
-    print " <b>".$locale->text('Margin').":</b> ".$form->format_amount(\%myconfig, $margin, 1).qq|</b>| if $margin;
+    print qq| <span class="label">|.$locale->text('Margin').":</span> ".$form->format_amount(\%myconfig, $margin, 1).qq|</span>| if $margin;
   }
 
   if ($form->{type} =~ /_order/) {
@@ -1097,7 +1097,7 @@ sub form_footer {
 
   print qq|
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
   <tr>
     <td>
@@ -1124,12 +1124,12 @@ sub form_footer {
     %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
                'Preview' => { ndx => 3, key => 'V', value => $locale->text('Preview') },
                'Print' => { ndx => 4, key => 'P', value => $locale->text('Print') },
-               'Save' => { ndx => 5, key => 'S', value => $locale->text('Save') },
+               'Save' => { ndx => 5, key => 'S', value => $locale->text('Save'), class => 'positive' },
                'Ship to' => { ndx => 6, key => 'T', value => $locale->text('Ship to') },
                'Ship all' => { ndx => 7, key => 'A', value => $locale->text('Ship all') },
                'E-mail' => { ndx => 8, key => 'E', value => $locale->text('E-mail') },
                'Print and Save' => { ndx => 9, key => 'R', value => $locale->text('Print and Save') },
-               'Save as new' => { ndx => 10, key => 'N', value => $locale->text('Save as new') },
+               'Save as new' => { ndx => 10, key => 'N', value => $locale->text('Save as new'), class => 'positive' },
                'Print and Save as new' => { ndx => 11, key => 'W', value => $locale->text('Print and Save as new') },
                'Sales Invoice' => { ndx => 12, key => 'I', value => $locale->text('Sales Invoice') },
                'Sales Order' => { ndx => 13, key => 'O', value => $locale->text('Sales Order') },
@@ -1138,8 +1138,8 @@ sub form_footer {
                'Purchase Order' => { ndx => 16, key => 'O', value => $locale->text('Purchase Order') },
                'RFQ' => { ndx => 17, key => 'Q', value => $locale->text('RFQ') },
                'Schedule' => { ndx => 18, key => 'H', value => $locale->text('Schedule') },
-               'New Number' => { ndx => 19, key => 'M', value => $locale->text('New Number') },
-               'Delete' => { ndx => 20, key => 'D', value => $locale->text('Delete') },
+               'New Number' => { ndx => 19, key => 'M', value => $locale->text('New Number'), class => 'critical' },
+               'Delete' => { ndx => 20, key => 'D', value => $locale->text('Delete'), class => 'negative' },
               );
 
 
@@ -1772,7 +1772,7 @@ sub search {
 
         <tr>
           <th align=right>|.$locale->text('From').qq|</th>
-          <td colspan=3 nowrap><input name=transdatefrom size=11 class=date accesskey="*" title="$myconfig{dateformat} [*]">|.&js_calendar("main", "transdatefrom").qq|<b>|.$locale->text('To').qq| <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
+          <td colspan=3 nowrap><input name=transdatefrom size=11 class=date accesskey="*" title="$myconfig{dateformat} [*]">|.&js_calendar("main", "transdatefrom").qq|<span class="label">|.$locale->text('To').qq| <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
         </tr>
         <input type=hidden name=sort value=transdate>
         $selectfrom
@@ -1803,7 +1803,7 @@ sub search {
       </table>
     </td>
   </tr>
-  <tr><td colspan=4><hr size=3 noshade></td></tr>
+  <tr><td colspan=4><hr class="thick"></td></tr>
 </table>
 
 <br>
@@ -2346,7 +2346,7 @@ sub transactions {
   </tr>
   $orddescription
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -2617,7 +2617,7 @@ sub delete {
 
 <h4>$msg $form->{$ordnumber}</h4>
 <p>
-<button name="action" class="submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
+<button name="action" class="critical submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
 </form>
 
 </body>
@@ -3016,6 +3016,10 @@ sub display_ship_receive {
               </tr>
 |;
 
+  my $waybill = '';
+  if ($form->{waybill} =~ qr|^https?://|) {
+    $waybill = qq| <a class="waybill-l" href="$form->{waybill}" target="_blank">&#9701;</a>|;
+  }
 
   $form->helpref(\%myconfig, \%slconfig, $form->{type});
 
@@ -3071,7 +3075,7 @@ sub display_ship_receive {
               <tr>
                 <th align=right>|.$locale->text('Waybill').qq|</th>
                 <td colspan=3>
-                <input name=waybill size=35 value="|.$form->quote($form->{waybill}).qq|">
+                <input name=waybill size=35 value="|.$form->quote($form->{waybill}).qq|">$waybill
               </tr>
               $warehouse
             </table>
@@ -3092,7 +3096,7 @@ sub display_ship_receive {
                 <td>$form->{ponumber}</td>
               </tr>
               <tr>
-                <th align=right nowrap>$shipped <font color=red>*</font></th>
+                <th align=right nowrap>$shipped <span class="important">*</span></th>
                 <td><input name=shippingdate size=11 class=date value=$form->{shippingdate} title="$myconfig{dateformat}">|.&js_calendar("main", "shippingdate").qq|</td>
               </tr>
             </table>
@@ -3192,19 +3196,19 @@ sub display_ship_receive {
       print qq|
                 <tr>
                   <td colspan=$colspan>
-                  <b>$packagenumber</b>
+                  <span class="label">$packagenumber</span>
                   <input name="package_$i" size=20 value="|.$form->quote($form->{"package_$i"}).qq|">
-                  <b>$netweight</b>
+                  <span class="label">$netweight</span>
                   <input name="netweight_$i" class="inputright" size=8 value=|.$form->format_amount(\%myconfig, $form->{"netweight_$i"}).qq|>
-                  <b>$grossweight</b>
+                  <span class="label">$grossweight</span>
                   <input name="grossweight_$i" class="inputright" size=8 value=|.$form->format_amount(\%myconfig, $form->{"grossweight_$i"}).qq|> ($form->{weightunit})
-                  <b>$volume</b>
+                  <span class="label">$volume</span>
                   <input name="volume_$i" class="inputright" size=8 value=|.$form->format_amount(\%myconfig, $form->{"volume_$i"}).qq|>
                   </td>
                 </tr>
                 <tr>
                   <td colspan=$colspan>
-                    <hr noshade>
+                    <hr class="thin">
                   </td>
                 </tr>
 |;
@@ -3227,7 +3231,7 @@ sub display_ship_receive {
     print qq|
   <tr>
     <td>
-      <hr noshade>
+      <hr class="thin">
     </td>
   </tr>
 |;
@@ -3467,7 +3471,7 @@ BLANKROW:
   </tr>
 
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -3661,7 +3665,7 @@ sub select_vendor {
 
 <form method=post name=main action=$form->{script}>
 
-<b>|.$locale->text('Vendor').qq|</b> <input name=vendor size=40>
+<span class="label">|.$locale->text('Vendor').qq|</span> <input name=vendor size=40>
 
 |;
 

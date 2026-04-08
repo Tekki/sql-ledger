@@ -55,10 +55,10 @@ sub repost_invoices {
   </tr>
 </table>
 
-<hr size=3 noshade>
+<hr class="thick">
 
 <br>
-<input class="submit" type="submit" name="action" value="|.$locale->text('Continue').qq|" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|;
+<button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>|;
 
   $form->{nextsub} = "do_repost_invoices";
 
@@ -81,7 +81,7 @@ sub do_repost_invoices {
   $form->header;
   print $locale->text('Reposting Invoices ... ');
   if ($ENV{HTTP_USER_AGENT}) {
-    print "<blink><font color=red>".$locale->text('please wait')."</font></blink>\n";
+    print qq|<span class="important">|.$locale->text('please wait').qq|</span></blink>\n|;
   } else {
     print $locale->text('please wait')."\n";
   }

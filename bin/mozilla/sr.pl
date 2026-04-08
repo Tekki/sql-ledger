@@ -63,7 +63,7 @@ print qq|
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 
 </table>
@@ -73,10 +73,10 @@ print qq|
 
   $form->hide_form;
 
-  %button = ('Save Report' => { ndx => 1, key => 'S', value => $locale->text('Save Report') });
+  %button = ('Save Report' => { ndx => 1, key => 'S', value => $locale->text('Save Report'), class => 'positive' });
 
   if ($form->{reportid}) {
-    $button{'Delete Report'} = { ndx => 3, key => 'D', value => $locale->text('Delete Report') };
+    $button{'Delete Report'} = { ndx => 3, key => 'D', value => $locale->text('Delete Report'), class => 'negative' };
   }
 
   $form->print_button(\%button);
@@ -183,8 +183,8 @@ sub edit_column {
         <tr>
           <th align=right>|.$locale->text('Align').qq|</th>
           <td>
-          <input name="$temp{a}" type=radio value=left $checked{left}> <b>|.$locale->text('Left').qq|</b>
-          <input name="$temp{a}" type=radio value=right $checked{right}> <b>|.$locale->text('Right').qq|</b>
+          <input name="$temp{a}" type=radio value=left $checked{left}> <span class="label">|.$locale->text('Left').qq|</span>
+          <input name="$temp{a}" type=radio value=right $checked{right}> <span class="label">|.$locale->text('Right').qq|</span>
           </td>
         </tr>
         <tr>
@@ -195,7 +195,7 @@ sub edit_column {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -210,8 +210,8 @@ sub edit_column {
 
   $form->hide_form;
 
-  %button = ('Save Column' => { ndx => 1, key => 'S', value => $locale->text('Save Column') },
-             'Delete Column' => { ndx => 2, key => 'D', value => $locale->text('Delete Column') }
+  %button = ('Save Column' => { ndx => 1, key => 'S', value => $locale->text('Save Column'), class => 'positive' },
+             'Delete Column' => { ndx => 2, key => 'D', value => $locale->text('Delete Column'), class => 'negative' }
             );
 
   $form->print_button(\%button);
@@ -281,8 +281,8 @@ sub add_column {
         <tr>
           <th align=right>|.$locale->text('Align').qq|</th>
           <td>
-          <input name="new_a_$ndx" type=radio value=left checked> <b>|.$locale->text('Left').qq|</b>
-          <input name="new_a_$ndx" type=radio value=right> <b>|.$locale->text('Right').qq|</b>
+          <input name="new_a_$ndx" type=radio value=left checked> <span class="label">|.$locale->text('Left').qq|</span>
+          <input name="new_a_$ndx" type=radio value=right> <span class="label">|.$locale->text('Right').qq|</span>
           </td>
         </tr>
         <tr>
@@ -315,8 +315,8 @@ sub add_column {
         <tr>
           <th align=right>|.$locale->text('Align').qq|</th>
           <td>
-          <input name="new_a_$ndx" type=radio value=left checked> <b>|.$locale->text('Left').qq|</b>
-          <input name="new_a_$ndx" type=radio value=right> <b>|.$locale->text('Right').qq|</b>
+          <input name="new_a_$ndx" type=radio value=left checked> <span class="label">|.$locale->text('Left').qq|</span>
+          <input name="new_a_$ndx" type=radio value=right> <span class="label">|.$locale->text('Right').qq|</span>
           </td>
         </tr>
         <tr>
@@ -327,7 +327,7 @@ sub add_column {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -339,7 +339,7 @@ sub add_column {
 
   $form->hide_form;
 
-  %button = ('Save Column' => { ndx => 1, key => 'S', value => $locale->text('Save Column') }
+  %button = ('Save Column' => { ndx => 1, key => 'S', value => $locale->text('Save Column'), class => 'positive' }
             );
 
   $form->print_button(\%button);

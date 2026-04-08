@@ -335,7 +335,7 @@ sub search {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -591,14 +591,14 @@ sub timecard_header {
       <table>
         $cardno
         <tr>
-          <th align=right nowrap>|.$locale->text('Employee').qq| <font color=red>*</font></th>
+          <th align=right nowrap>|.$locale->text('Employee').qq| <span class="important">*</span></th>
           <td colspan=3><select name=employee>|
           .$form->select_option($form->{selectemployee}, $form->{employee}, 1)
           .qq|</select>
           </td>
         </tr>
         <tr>
-          <th align=right nowrap>$projectlabel <font color=red>*</font></th>
+          <th align=right nowrap>$projectlabel <span class="important">*</span></th>
           <td><select name=projectnumber onChange="doSubmit(document.main)">|
           .$form->select_option($form->{selectprojectnumber}, $form->{projectnumber}, 1)
           .qq|</select>
@@ -608,11 +608,11 @@ sub timecard_header {
           .qq|
         </tr>
         <tr>
-          <th align=right nowrap>|.$locale->text('Date worked').qq| <font color=red>*</font></th>
+          <th align=right nowrap>|.$locale->text('Date worked').qq| <span class="important">*</span></th>
           <td nowrap><input name=transdate size=11 class=date title="$myconfig{dateformat}" value=$form->{transdate}>|.&js_calendar("main", "transdate").qq|</td>
         </tr>
         <tr>
-          <th align=right nowrap>$laborlabel <font color=red>*</font></th>
+          <th align=right nowrap>$laborlabel <span class="important">*</span></th>
           <td><input name=partnumber value="|.$form->quote($form->{partnumber})
           .qq|">
           $lookup
@@ -670,7 +670,7 @@ sub timecard_footer {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
   <tr>
     <td>
@@ -698,12 +698,12 @@ sub timecard_footer {
              'Check Out' => { ndx => 2, key => 'C', value => $locale->text('Check Out') },
              'Preview' => { ndx => 3, key => 'V', value => $locale->text('Preview') },
              'Print' => { ndx => 4, key => 'P', value => $locale->text('Print') },
-             'Save' => { ndx => 5, key => 'S', value => $locale->text('Save') },
+             'Save' => { ndx => 5, key => 'S', value => $locale->text('Save'), class => 'positive' },
              'Print and Save' => { ndx => 6, key => 'R', value => $locale->text('Print and Save') },
-             'Save as new' => { ndx => 7, key => 'N', value => $locale->text('Save as new') },
+             'Save as new' => { ndx => 7, key => 'N', value => $locale->text('Save as new'), class => 'positive' },
              'Print and Save as new' => { ndx => 8, key => 'W', value => $locale->text('Print and Save as new') },
 
-             'Delete' => { ndx => 16, key => 'D', value => $locale->text('Delete') },
+             'Delete' => { ndx => 16, key => 'D', value => $locale->text('Delete'), class => 'negative' },
             );
 
     %a = ();
@@ -895,7 +895,7 @@ sub storescard_header {
       <table>
         $cardno
         <tr>
-          <th align=right nowrap>|.$locale->text('Job Number').qq| <font color=red>*</font></th>
+          <th align=right nowrap>|.$locale->text('Job Number').qq| <span class="important">*</span></th>
           <td colspan=2><select name=projectnumber onChange="javascript:document.main.submit()">|
           .$form->select_option($form->{selectprojectnumber}, $form->{projectnumber}, 1)
           .qq|</select>
@@ -905,11 +905,11 @@ sub storescard_header {
           .qq|
         </tr>
         <tr>
-          <th align=right nowrap>|.$locale->text('Date').qq| <font color=red>*</font></th>
+          <th align=right nowrap>|.$locale->text('Date').qq| <span class="important">*</span></th>
           <td colspan=3><input name=transdate size=11 class=date title="$myconfig{dateformat}" value=$form->{transdate}>|.&js_calendar("main", "transdate").qq|</td>
         </tr>
         <tr>
-          <th align=right nowrap>|.$locale->text('Part Number').qq| <font color=red>*</font></th>
+          <th align=right nowrap>|.$locale->text('Part Number').qq| <span class="important">*</span></th>
           <td colspan=3><input name=partnumber value="|.$form->quote($form->{partnumber}) .qq|">
           $lookup
           </td>
@@ -942,7 +942,7 @@ sub storescard_footer {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
   <tr>
     <td>
@@ -964,11 +964,11 @@ sub storescard_footer {
     %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
                'Preview' => { ndx => 2, key => 'V', value => $locale->text('Preview') },
                'Print' => { ndx => 3, key => 'P', value => $locale->text('Print') },
-               'Save' => { ndx => 4, key => 'S', value => $locale->text('Save') },
+               'Save' => { ndx => 4, key => 'S', value => $locale->text('Save'), class => 'positive' },
                'Print and Save' => { ndx => 6, key => 'R', value => $locale->text('Print and Save') },
-               'Save as new' => { ndx => 7, key => 'N', value => $locale->text('Save as new') },
+               'Save as new' => { ndx => 7, key => 'N', value => $locale->text('Save as new'), class => 'positive' },
                'Print and Save as new' => { ndx => 8, key => 'W', value => $locale->text('Print and Save as new') },
-               'Delete' => { ndx => 16, key => 'D', value => $locale->text('Delete') },
+               'Delete' => { ndx => 16, key => 'D', value => $locale->text('Delete'), class => 'negative' },
               );
 
     %a = ();
@@ -1282,7 +1282,7 @@ sub resave {
 
 <h4>$msg</h4>
 
-<button name="action" class="submit" type="submit" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
+<button name="action" class="critical submit" type="submit" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
 </form>
 
 </body>
@@ -1343,7 +1343,7 @@ sub delete_timecard {
 </h4>
 
 <p>
-<button name="action" class="submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
+<button name="action" class="critical submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
 </form>
 |;
 
@@ -1371,7 +1371,7 @@ sub delete_storescard {
 </h4>
 
 <p>
-<button name="action" class="submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
+<button name="action" class="critical submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
 </form>
 |;
 
@@ -1859,7 +1859,7 @@ sub list_cards {
   }
 
 
-  $button{'Save Report'} = { ndx => $i++, key => 'S', value => $locale->text('Save Report') };
+  $button{'Save Report'} = { ndx => $i++, key => 'S', value => $locale->text('Save Report'), class => 'positive' };
 
   if (!$form->{admin}) {
     if ($form->{reportid}) {
@@ -1879,7 +1879,7 @@ sub list_cards {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -2183,7 +2183,7 @@ sub select_item {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -2275,7 +2275,7 @@ sub new_item {
 
 sub islocked {
 
-  print "<p><font color=red>".$locale->text('Locked by').": $form->{haslock}</font>" if $form->{haslock};
+  print qq|<p><span class="important">|.$locale->text('Locked by').qq|: $form->{haslock}</span>| if $form->{haslock};
 
 }
 

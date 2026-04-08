@@ -247,7 +247,7 @@ sub search {
   <tr>
     <th align=right nowrap>|.$locale->text('Paid').' '.$locale->text('From').qq|</th>
     <td><input name=datepaidfrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "datepaidfrom").qq|
-    <b>|.$locale->text('To').qq|</b>
+    <span class="label">|.$locale->text('To').qq|</span>
     <input name=datepaidto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "datepaidto").qq|</td>
   </tr>|;
     }
@@ -316,7 +316,7 @@ sub search {
         <tr>
           <th align=right nowrap>|.$locale->text('From').qq|</th>
           <td><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdatefrom").qq|
-          <b>|.$locale->text('To').qq|</b>
+          <span class="label">|.$locale->text('To').qq|</span>
           <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
         </tr>
         $datepaid
@@ -326,7 +326,7 @@ sub search {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -380,7 +380,7 @@ sub remove {
 
 <h4>|.$locale->text('Are you sure you want to remove the marked entries from the queue?').qq|</h4>
 
-<button name="action" class="submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
+<button name="action" class="critical submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
 </form>
 
 </body>
@@ -905,7 +905,7 @@ print qq|
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -970,10 +970,10 @@ print qq|
     $sendmode =~ s/(<option value="\Q$form->{sendmode}\E")/$1 selected/;
 
     $message = qq|<tr>
-                    <td nowrap><b>|.$locale->text('Subject').qq|</b>&nbsp;<input name=subject size=60></td>
+                    <td nowrap><span class="label">|.$locale->text('Subject').qq|</span>&nbsp;<input name=subject size=60></td>
                   </tr>
                   <tr>
-                    <td><b>|.$locale->text('Message').qq|</b><br><textarea name=message rows=15 cols=60 wrap=soft>$form->{message}</textarea></td>
+                    <td><span class="label">|.$locale->text('Message').qq|</span><br><textarea name=message rows=15 cols=60 wrap=soft>$form->{message}</textarea></td>
       </tr>|;
 
     $media = qq|<input type="hidden" name="media" value="email">

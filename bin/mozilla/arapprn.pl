@@ -640,7 +640,7 @@ sub select_payment {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -716,7 +716,7 @@ sub print_options {
     $status = qq|
              <tr>
                <td align=right><input name="onhold" type="checkbox" class="checkbox" value="1" $checked{onhold}></td>
-               <th align=left nowrap>|.$locale->text('On Hold').qq|</font></th>
+               <th align=left nowrap>|.$locale->text('On Hold').qq|</th>
                <td align=right><input name="$form->{formname}_printed" type="checkbox" class="checkbox" value="1" $checked{printed}></td>
                <th align=left nowrap>|.$locale->text('Printed').qq|</th>
              </tr>

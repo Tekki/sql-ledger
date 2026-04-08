@@ -57,13 +57,13 @@ subtest 'Buttons' => sub {
     _label_   => 'Label',
     'Value 1' => {ndx => 1, key => 'A', value => 'Value 1'},
     'Value 2' => {ndx => 2, key => 'B', value => 'Value 2'},
-    'Value 3' => {ndx => 3, key => 'C', value => 'Value 3'},
+    'Value 3' => {ndx => 3, key => 'C', value => 'Value 3', class => 'someclass'},
   );
 
   my $expected = q|
 <button class="submit noprint" type="submit" name="action" value="value_1" accesskey="A" title="Value 1 [A]">Value 1</button>
 <button class="submit noprint" type="submit" name="action" value="value_2" accesskey="B" title="Value 2 [B]">Value 2</button>
-<button class="submit noprint" type="submit" name="action" value="value_3" accesskey="C" title="Value 3 [C]">Value 3</button>|;
+<button class="someclass submit noprint" type="submit" name="action" value="value_3" accesskey="C" title="Value 3 [C]">Value 3</button>|;
 
   is _get_output($form, 'print_button', \%button), $expected;
 };

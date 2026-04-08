@@ -248,7 +248,7 @@ sub job_header {
 
     for (split / /, $form->{taxaccounts}) {
       $tax .= qq|
-        <input class=checkbox type=checkbox name="IC_tax_$_" value=1 $form->{"IC_tax_$_"}>&nbsp;<b>$form->{"IC_tax_${_}_description"}</b>
+        <input class=checkbox type=checkbox name="IC_tax_$_" value=1 $form->{"IC_tax_$_"}>&nbsp;<span class="label">$form->{"IC_tax_${_}_description"}</span>
         <br><input type=hidden name=IC_tax_${_}_description value="|.$form->quote($form->{"IC_tax_${_}_description"}).qq|">
 |;
     }
@@ -415,7 +415,7 @@ sub job_header {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -431,10 +431,10 @@ sub job_footer {
             );
 
   if ($myconfig{acs} !~ /Job Costing--Add Job/) {
-    $button{'Save'} = { ndx => 3, key => 'S', value => $locale->text('Save') };
+    $button{'Save'} = { ndx => 3, key => 'S', value => $locale->text('Save'), class => 'positive' };
 
     if ($form->{id} && $form->{orphaned}) {
-      $button{'Delete'} = { ndx => 16, key => 'D', value => $locale->text('Delete') };
+      $button{'Delete'} = { ndx => 16, key => 'D', value => $locale->text('Delete'), class => 'negative' };
     }
   }
 
@@ -569,7 +569,7 @@ sub list_stock {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -825,7 +825,7 @@ sub search {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -1022,7 +1022,7 @@ sub list_projects {
     }
   }
 
-  $button{'Save Report'} = { ndx => $i++, key => 'S', value => $locale->text('Save Report') };
+  $button{'Save Report'} = { ndx => $i++, key => 'S', value => $locale->text('Save Report'), class => 'positive' };
 
   if (!$form->{admin}) {
     if ($form->{reportid}) {
@@ -1042,7 +1042,7 @@ sub list_projects {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -1164,7 +1164,7 @@ sub project_header {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -1180,10 +1180,10 @@ sub project_footer {
             );
 
   if ($myconfig{acs} !~ /Projects--Add Project/) {
-    $button{'Save'} = { ndx => 3, key => 'S', value => $locale->text('Save') };
+    $button{'Save'} = { ndx => 3, key => 'S', value => $locale->text('Save'), class => 'positive' };
 
     if ($form->{id} && $form->{orphaned}) {
-      $button{'Delete'} = { ndx => 16, key => 'D', value => $locale->text('Delete') };
+      $button{'Delete'} = { ndx => 16, key => 'D', value => $locale->text('Delete'), class => 'negative' };
     }
   }
 
@@ -1422,7 +1422,7 @@ sub partsgroup_report {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -1481,7 +1481,7 @@ sub partsgroup_header {
     <td>
       <table>
         <tr>
-          <th align=right nowrap>|.$locale->text('Group').qq| <font color=red>*</font></th>
+          <th align=right nowrap>|.$locale->text('Group').qq| <span class="important">*</span></th>
 
           <td><input name=partsgroup size=40 value="$form->{partsgroup}"></td>
         </tr>
@@ -1501,7 +1501,7 @@ sub partsgroup_header {
     </td>
   </tr>
   <tr>
-    <td colspan=2><hr size=3 noshade></td>
+    <td colspan=2><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -1638,7 +1638,7 @@ sub pricegroup_report {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -1692,7 +1692,7 @@ sub pricegroup_header {
     <td>
       <table>
         <tr>
-          <th align=right nowrap>|.$locale->text('Pricegroup').qq| <font color=red>*</font></th>
+          <th align=right nowrap>|.$locale->text('Pricegroup').qq| <span class="important">*</span></th>
 
           <td><input name=pricegroup size=30 value="|.$form->quote($form->{pricegroup}).qq|"></td>
         </tr>
@@ -1700,7 +1700,7 @@ sub pricegroup_header {
     </td>
   </tr>
   <tr>
-    <td colspan=2><hr size=3 noshade></td>
+    <td colspan=2><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -1815,7 +1815,7 @@ sub translation {
       </table>
     </td>
   </tr>
-  <tr><td><hr size=3 noshade></td></tr>
+  <tr><td><hr class="thick"></td></tr>
 </table>
 
 <input type=hidden name=nextsub value=list_translations>
@@ -1937,7 +1937,7 @@ sub list_translations {
       </table>
     </td>
   </tr>
-  <tr><td><hr size=3 noshade></td></tr>
+  <tr><td><hr class="thick"></td></tr>
 </table>
 
 |;
@@ -2064,7 +2064,7 @@ sub translation_header {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -2077,8 +2077,8 @@ sub translation_footer {
   $form->hide_form(qw(path login callback));
 
   %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
-             'Save' => { ndx => 3, key => 'S', value => $locale->text('Save') },
-             'Delete' => { ndx => 16, key => 'D', value => $locale->text('Delete') },
+             'Save' => { ndx => 3, key => 'S', value => $locale->text('Save'), class => 'positive' },
+             'Delete' => { ndx => 16, key => 'D', value => $locale->text('Delete'), class => 'negative' },
             );
 
   if (! $form->{trans_id}) {
@@ -2249,7 +2249,7 @@ sub select_name {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -2415,7 +2415,7 @@ sub project_sales_order {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -2615,7 +2615,7 @@ sub jcitems {
   </tr>
 
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -2666,7 +2666,7 @@ sub select_customer {
 
 <form method=post name=main action=$form->{script}>
 
-<b>$label</b> <input name=$form->{vc} size=40>
+<span class="label">$label</span> <input name=$form->{vc} size=40>
 
 |;
 

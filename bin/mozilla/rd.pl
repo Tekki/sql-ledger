@@ -261,7 +261,7 @@ sub upload {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 
 </table>
@@ -462,7 +462,7 @@ sub search_documents {
       </table>
     </td>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -656,7 +656,7 @@ sub list_documents {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -759,7 +759,7 @@ sub edit {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 
 </table>
@@ -767,10 +767,10 @@ sub edit {
 
   $form->hide_form(qw(callback trans_id formname id archive_id login path));
 
-  %button = ('Save' => { ndx => 1, key => 'S', value => $locale->text('Save') },
+  %button = ('Save' => { ndx => 1, key => 'S', value => $locale->text('Save'), class => 'positive' },
              'Attach' => { ndx => 2, key => 'A', value => $locale->text('Attach') },
              'Detach' => { ndx => 3, key => 'E', value => $locale->text('Detach') },
-             'Delete' => { ndx => 11, key => 'D', value => $locale->text('Delete') }
+             'Delete' => { ndx => 11, key => 'D', value => $locale->text('Delete'), class => 'negative' }
             );
 
   delete $button{'Delete'} unless $form->{id};
@@ -857,7 +857,7 @@ sub attach {
       </table>
     </td>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -959,7 +959,7 @@ sub upload_image {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 
 </table>
@@ -1080,7 +1080,7 @@ sub list_images {
       </table>
     </td>
   </tr>
-  <tr><td><hr size=3 noshade></td></tr>
+  <tr><td><hr class="thick"></td></tr>
 </table>
 |;
 
@@ -1091,7 +1091,7 @@ sub list_images {
   %button = ('Select all' => { ndx => 2, key => 'A', value => $locale->text('Select all') },
              'Deselect all' => { ndx => 3, key => 'A', value => $locale->text('Deselect all') },
              'Add File' => { ndx => 4, key => 'I', value => $locale->text('Add File') },
-             'Delete Files' => { ndx => 5, key => 'D', value => $locale->text('Delete Files') }
+             'Delete Files' => { ndx => 5, key => 'D', value => $locale->text('Delete Files'), class => 'negative' }
              );
 
   if ($form->{deselect}) {

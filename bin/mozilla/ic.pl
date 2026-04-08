@@ -341,7 +341,7 @@ sub form_header {
   # tax fields
   foreach $item (split / /, $form->{taxaccounts}) {
     $tax .= qq|
-      <input class=checkbox type=checkbox name="IC_tax_$item" value=1 $form->{"IC_tax_$item"}>&nbsp;<b>$form->{"IC_tax_${item}_description"}</b>
+      <input class=checkbox type=checkbox name="IC_tax_$item" value=1 $form->{"IC_tax_$item"}>&nbsp;$form->{"IC_tax_${item}_description"}
       <br>|.$form->hide_form("IC_tax_${item}_description");
   }
 
@@ -815,7 +815,7 @@ sub form_footer {
 
   print qq|
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -827,8 +827,8 @@ sub form_footer {
     my @buttons = (
       {
         'Update'     => {ndx => 1,  key => 'U', value => $locale->text('Update')},
-        'Save'       => {ndx => 2,  key => 'S', value => $locale->text('Save')},
-        'New Number' => {ndx => 15, key => 'M', value => $locale->text('New Number')},
+        'Save'       => {ndx => 2,  key => 'S', value => $locale->text('Save'), class => 'positive' },
+        'New Number' => {ndx => 15, key => 'M', value => $locale->text('New Number'), class => 'critical' },
       },
       {
         _label_             => $locale->text('Reports'),
@@ -839,11 +839,11 @@ sub form_footer {
     if ($form->{id}) {
 
       if (! ($form->{changeup} || $form->{project_id})) {
-        $buttons[0]{'Save as new'} = { ndx => 7, key => 'N', value => $locale->text('Save as new') };
+        $buttons[0]{'Save as new'} = { ndx => 7, key => 'N', value => $locale->text('Save as new'), class => 'positive' };
       }
 
       if ($form->{orphaned}) {
-        $buttons[0]{'Delete'} = { ndx => 16, key => 'D', value => $locale->text('Delete') };
+        $buttons[0]{'Delete'} = { ndx => 16, key => 'D', value => $locale->text('Delete'), class => 'negative' };
       }
 
     } else {
@@ -977,7 +977,7 @@ sub search {
           <td>
             <table>
               <tr>
-                <td nowrap><b>|.$locale->text('From').qq|</b> <input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdatefrom").qq|<b>|.$locale->text('To').qq|</b> <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
+                <td nowrap><span class="label">|.$locale->text('From').qq|</span> <input name=transdatefrom size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdatefrom").qq|<span class="label">|.$locale->text('To').qq|</span> <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
               </tr>
               $selectfrom
               <tr>
@@ -1239,7 +1239,7 @@ sub search {
         <tr>
           <td></td>
           <td colspan=3>
-            <hr size=1 noshade>
+            <hr class="thin">
           </td>
         </tr>
         <tr>
@@ -1251,7 +1251,7 @@ sub search {
         <tr>
           <td></td>
           <td colspan=3>
-            <hr size=1 noshade>
+            <hr class="thin">
           </td>
         </tr>
         <tr>
@@ -1281,7 +1281,7 @@ sub search {
       </table>
     </td>
   </tr>
-  <tr><td colspan=4><hr size=3 noshade></td></tr>
+  <tr><td colspan=4><hr class="thick"></td></tr>
 </table>
 
 <input type=hidden name=nextsub value=generate_report>
@@ -2073,7 +2073,7 @@ sub generate_report {
       </table>
     </td>
   </tr>
-  <tr><td><hr size=3 noshade></td></tr>
+  <tr><td><hr class="thick"></td></tr>
 </table>
 |;
 
@@ -2469,7 +2469,7 @@ sub supply_demand {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 <br>
@@ -2686,7 +2686,7 @@ sub supply_demand_report {
       </table>
     </td>
   </tr>
-  <tr><td><hr size=3 noshade></td></tr>
+  <tr><td><hr class="thick"></td></tr>
 </table>
 
 |;
@@ -2792,7 +2792,7 @@ sub requirements {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -2957,7 +2957,7 @@ sub requirements_report {
       </table>
     </td>
   </tr>
-  <tr><td><hr size=3 noshade></td></tr>
+  <tr><td><hr class="thick"></td></tr>
 </table>
 
 |;
@@ -3091,7 +3091,7 @@ sub so_requirements {
         </tr>
         <tr>
           <th align=right nowrap>|.$locale->text('From').qq|</th>
-          <td colspan=3 nowrap><input name=reqdatefrom size=11 class=date title="$myconfig{dateformat}"><b>|.&js_calendar("main", "reqdatefrom").qq|<b>|.$locale->text('To').qq| <input name=reqdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "reqdateto").qq|</td>
+          <td colspan=3 nowrap><input name=reqdatefrom size=11 class=date title="$myconfig{dateformat}"><span class="label">|.&js_calendar("main", "reqdatefrom").qq|<span class="label">|.$locale->text('To').qq| <input name=reqdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "reqdateto").qq|</td>
         </tr>
           $selectfrom
         <tr>
@@ -3113,7 +3113,7 @@ sub so_requirements {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 <br>
@@ -3292,7 +3292,7 @@ sub so_requirements_report {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -3444,7 +3444,7 @@ sub resource_planning {
       $column_data{$number}
         = qq|<td nowrap><a class="number-l" href="oe.pl?action=edit&id=$ref->{order_id}&type=$type&login=$form->{login}&path=$form->{path}&callback=$callback"$accesskey>$ref->{$number}</a></td>|;
 
-      $class = $ref->{expired} ? ' class="plus0"' : '';
+      $class = $ref->{expired} ? ' class="critical"' : '';
       $column_data{reqdate} = qq|<td$class>$ref->{reqdate}</td>|;
 
       $column_data{vc_name}
@@ -3459,7 +3459,7 @@ sub resource_planning {
         = qq|<td nowrap><a class="inventory-l" href="ic.pl?action=list_inventory&id=$form->{id}&login=$form->{login}&path=$form->{path}&callback=$callback"$accesskey>|.$locale->text('On Hand').qq|</a></td>|;
     }
 
-    $class = $ref->{total} < $form->{rop} ? ' class="plus0"' : '';
+    $class = $ref->{total} >= $form->{rop} ? '' : $ref->{total} < 0 ? ' class="plus0"' : ' class="critical"';
     $column_data{total}
       = qq|<td align="right"$class>|.$form->format_amount(\%myconfig, $ref->{total}, $form->{precision}, 0).qq|</td>|;
 
@@ -3484,7 +3484,7 @@ sub resource_planning {
 
   print qq|
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 |;
@@ -3629,7 +3629,7 @@ sub vendor_row {
           <td>$fld{partnumber}</td>
           <td><input name="lastcost_$i" class="inputright" size=11 value=|.$form->format_amount(\%myconfig, $form->{"lastcost_$i"}, $form->{decimalplacescost}).qq|></td>
           $currency
-          <td nowrap><input name="leadtime_$i" class="inputright" size=5 value=|.$form->format_amount(\%myconfig, $form->{"leadtime_$i"}).qq|> <b>|.$locale->text('days').qq|</b></td>
+          <td nowrap><input name="leadtime_$i" class="inputright" size=5 value=|.$form->format_amount(\%myconfig, $form->{"leadtime_$i"}).qq|> <span class="label">|.$locale->text('days').qq|</span></td>
         </tr>
 |;
 
@@ -4159,7 +4159,7 @@ sub select_name {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -4416,7 +4416,7 @@ sub stock_adjustment {
       </table>
     </td>
   </tr>
-  <tr><td><hr size=3 noshade></td></tr>
+  <tr><td><hr class="thick"></td></tr>
 </table>
 <br>
 <button class="submit" type="submit" name="action" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
@@ -4544,7 +4544,7 @@ sub list_inventory {
       </td>
     </table>
   <tr>
-    <td><hr size=3 noshade>
+    <td><hr class="thick">
   </tr>
 </table>
 |;
@@ -4633,7 +4633,7 @@ sub stock_assembly {
       </table>
     </td>
   </tr>
-  <tr><td><hr size=3 noshade></td></tr>
+  <tr><td><hr class="thick"></td></tr>
 </table>
 
 <input type=hidden name=sort value=partnumber>
@@ -4775,7 +4775,7 @@ sub list_assemblies {
       </td>
     </table>
   <tr>
-    <td><hr size=3 noshade>
+    <td><hr class="thick">
   </tr>
 </table>
 |;
@@ -4891,7 +4891,7 @@ sub history {
       </table>
     </td>
   </tr>
-  <tr><td><hr size=3 noshade></td></tr>
+  <tr><td><hr class="thick"></td></tr>
 </table>
 
 x <a href="javascript:window.close();">|.$locale->text('Close Window').qq|</a>
@@ -4943,7 +4943,7 @@ sub search_transfer {
     $transferreport = qq|
           <tr>
             <th align=right>|.$locale->text('From').qq|</th>
-            <td colspan=3 nowrap><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}" value=$form->{transdatefrom}>|.&js_calendar("main", "transdatefrom").qq| <b>|.$locale->text('To').qq|</b> <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
+            <td colspan=3 nowrap><input name=transdatefrom size=11 class=date title="$myconfig{dateformat}" value=$form->{transdatefrom}>|.&js_calendar("main", "transdatefrom").qq| <span class="label">|.$locale->text('To').qq|</span> <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
           </tr>
 |;
 
@@ -5009,7 +5009,7 @@ sub search_transfer {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -5181,14 +5181,14 @@ sub transfer_list {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
   <tr>
     <td nowrap>|.$locale->text('Date').qq| <input name=shippingdate size=11 value="$form->{shippingdate}" class="date" title="$myconfig{dateformat}">|.&js_calendar("main", "shippingdate").qq|
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -5368,7 +5368,7 @@ sub transfer_report {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -5397,7 +5397,7 @@ sub assembly_bom_transfer {
         <td><select name=fromwarehouse>|
         .$form->select_option($selectfromwarehouse, undef, 1)
         .qq|</select>
-        <b>|.$locale->text('To Warehouse').qq|</b>
+        <span class="label">|.$locale->text('To Warehouse').qq|</span>
         <select name=towarehouse>|
         .$form->select_option($selecttowarehouse, undef, 1)
         .qq|</select>
@@ -5460,7 +5460,7 @@ sub assembly_bom_transfer {
       </table>
     </td>
   </tr>
-  <tr><td><hr size=3 noshade></td></tr>
+  <tr><td><hr class="thick"></td></tr>
 </table>
 
 |;
@@ -5606,11 +5606,11 @@ sub list_assembly_bom_transfer {
     $column_data{fromwarehouse} = qq|<td><input type=hidden name="warehouse_id_$i" value=$ref->{fromwarehouse_id}><input type=hidden name="warehouse_$i" value="$ref->{fromwarehouse}">$ref->{fromwarehouse}</td>|;
     $pm = "";
     if ($ref->{assemblyitem}) {
-      $pm = "<font color=";
+      $pm = "<span class=";
       if ($ref->{fromonhand} >= $ref->{transfer}) {
-        $pm .= "green";
+        $pm .= "positive";
       } else {
-        $pm .= "red";
+        $pm .= "negative";
         if ($ref->{fromonhand} <= 0) {
           $ref->{transfer} = 0;
         } else {
@@ -5620,7 +5620,7 @@ sub list_assembly_bom_transfer {
       $pm .= ">";
     }
     $column_data{fromonhand} = qq|<td align=right>$pm|.$form->format_amount(\%myconfig, $ref->{fromonhand}, undef, "0");
-    $column_data{fromonhand} .= "</font>" if $pm;
+    $column_data{fromonhand} .= "</span>" if $pm;
     $column_data{fromonhand} .= qq|</td>|;
 
     $column_data{towarehouse} = qq|<td><input type=hidden name="towarehouse_$i" value="$ref->{towarehouse}--$ref->{towarehouse_id}">$ref->{towarehouse}</td>|;
@@ -5656,14 +5656,14 @@ sub list_assembly_bom_transfer {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
    <tr>
     <td nowrap>|.$locale->text('Date').qq| <input name=shippingdate size=11 value="$form->{shippingdate}" class="date" title="$myconfig{dateformat}">|.&js_calendar("main", "shippingdate").qq|
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 </table>
 
@@ -5769,7 +5769,7 @@ sub upload_image {
     </td>
   </tr>
   <tr>
-    <td><hr size=3 noshade></td>
+    <td><hr class="thick"></td>
   </tr>
 
 </table>
