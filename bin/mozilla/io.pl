@@ -1810,11 +1810,15 @@ sub print_form {
     }
   }
 
+  if ($form->{waybill} =~ qr|^https?://|) {
+    $form->{waybill_link} = $form->{waybill};
+  }
+
   # remove email
   shift @f;
 
   # some of the stuff could have umlauts so we translate them
-  push @f, qw(contact shippingpoint shipvia notes intnotes employee warehouse paymentmethod);
+  push @f, qw(contact shippingpoint shipvia waybill notes intnotes employee warehouse paymentmethod);
   push @f, qw(all_partsgroup all_projectnumber first_projectnumber first_projectdescription);
   push @f, map { "shipto$_" } qw(name address1 streetname buildingnumber address2 city state zipcode country contact email phone fax);
   push @f, qw(firstname lastname salutation contacttitle occupation mobile);

@@ -2457,6 +2457,10 @@ sub transactions {
       $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>";
     }
 
+    if ($ref->{waybill} =~ qr|^https?://([^/]+)/|) {
+      $column_data{waybill} = qq|<td><a href="$ref->{waybill}" target="_blank">$1</a></td>|;
+    }
+
     $column_data{email} = qq|<td><a class="email-l" href="mailto:$ref->{email}">$ref->{email}</a></td>|;
 
     if ($ref->{paymentdiff} <= 0) {

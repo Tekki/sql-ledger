@@ -399,7 +399,7 @@ sub form_header {
               </tr>|;
   }
 
-  $vcref = qq|<a href="ct.pl?action=edit&db=$form->{vc}&id=$form->{"$form->{vc}_id"}&login=$form->{login}&path=$form->{path}" target=_blank>&#9701;</a>|;
+  $vcref = qq|<a class="$form->{vc}-l" href="ct.pl?action=edit&db=$form->{vc}&id=$form->{"$form->{vc}_id"}&login=$form->{login}&path=$form->{path}" target=_blank>&#9701;</a>|;
 
   $vc = qq|<input type="hidden" name="action" value="update">
               <tr>
@@ -508,6 +508,11 @@ sub form_header {
           <td>|.$form->quote($form->{dcn}).qq|</td>
         </tr>
 |;
+
+  my $waybill = '';
+  if ($form->{waybill} =~ qr|^https?://|) {
+    $waybill = qq| <a class="waybill-l" href="$form->{waybill}" target="_blank">&#9701;</a>|;
+  }
 
   %title = ( pick_list => $locale->text('Pick List'),
              packing_list => $locale->text('Packing List'),
@@ -658,7 +663,7 @@ sub form_header {
               </tr>
               <tr>
                 <th align=right nowrap>|.$locale->text('Waybill').qq|</th>
-                <td><input name="waybill" size="35" value="|.$form->quote($form->{waybill}).qq|"></td>
+                <td><input name="waybill" size="35" value="|.$form->quote($form->{waybill}).qq|">$waybill</td>
               </tr>
             </table>
           </td>

@@ -652,7 +652,7 @@ sub form_header {
     $vcnumber = $locale->text('Vendor Number');
   }
 
-  $vcref = qq|<a href=ct.pl?action=edit&db=$form->{vc}&id=$form->{"$form->{vc}_id"}&login=$form->{login}&path=$form->{path} target=_blank>&#9701;</a>|;
+  $vcref = qq|<a class="$form->{vc}-l" href=ct.pl?action=edit&db=$form->{vc}&id=$form->{"$form->{vc}_id"}&login=$form->{login}&path=$form->{path} target=_blank>&#9701;</a>|;
 
   $vc = qq|<input type=hidden name=action value="update">
               <tr>
@@ -742,6 +742,11 @@ sub form_header {
     }
   }
 
+  my $waybill = '';
+  if ($form->{waybill} =~ qr|^https?://|) {
+    $waybill = qq| <a class="waybill-l" href="$form->{waybill}" target="_blank">&#9701;</a>|;
+  }
+
   %title = ( work_order => $locale->text('Work Order'),
              pick_list => $locale->text('Pick List'),
              packing_list => $locale->text('Packing List'),
@@ -814,7 +819,7 @@ sub form_header {
               </tr>
               <tr>
                 <th align=right>|.$locale->text('Waybill').qq|</th>
-                <td><input name=waybill size=35 value="|.$form->quote($form->{waybill}).qq|"></td>
+                <td><input name=waybill size=35 value="|.$form->quote($form->{waybill}).qq|">$waybill</td>
               </tr>
             </table>
           </td>
@@ -2282,6 +2287,10 @@ sub transactions {
     $column_data{"$form->{vc}number"} = qq|<td>$ref->{"$form->{vc}number"}</td>|;
 
     for (qw(employee warehouse shipvia shippingpoint waybill curr ponumber notes)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
+
+    if ($ref->{waybill} =~ qr|^https?://([^/]+)/|) {
+      $column_data{waybill} = qq|<td><a href="$ref->{waybill}" target="_blank">$1</a></td>|;
+    }
 
     if ($ref->{closed}) {
       $column_data{closed} = "<td align=center>*</td>";
