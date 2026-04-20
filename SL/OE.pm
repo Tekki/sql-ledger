@@ -86,7 +86,7 @@ sub transactions ($, $myconfig, $form) {
               o.closed, o.quonumber, o.shippingpoint, o.shipvia, o.waybill,
               e.name AS employee, o.curr, o.ponumber,
               o.notes, w.description AS warehouse, o.description,
-              o.backorder
+              o.backorder, o.onhold
               $orderitems_description
               FROM oe o
               JOIN $form->{vc} ct ON (o.$form->{vc}_id = ct.id)
@@ -138,10 +138,14 @@ sub transactions ($, $myconfig, $form) {
     }
   }
 
-  if (!$form->{open} && !$form->{closed}) {
-    $query .= " AND o.id = 0";
-  } elsif (!($form->{open} && $form->{closed})) {
-    $query .= ($form->{open}) ? " AND o.closed = '0'" : " AND o.closed = '1'";
+  if ($form->{open} xor $form->{closed}) {
+    my $not = $form->{open} ? 'NOT' : '';
+    $query .= " AND $not o.closed";
+  }
+
+  if ($form->{onhold} xor $form->{notonhold}) {
+    my $not = $form->{notonhold} ? 'NOT' : '';
+    $query .= " AND $not o.onhold";
   }
 
   if (($form->{shipvia} // '') ne "") {
@@ -560,7 +564,7 @@ sub save ($, $myconfig, $form) {
 
 
   # set values which could be empty
-  for (qw(vendor_id customer_id taxincluded closed quotation)) { ($form->{$_} ||= 0) *= 1 }
+  for (qw(vendor_id customer_id taxincluded closed quotation onhold)) { ($form->{$_} ||= 0) *= 1 }
 
   # add up the tax
   my $tax = 0;
@@ -617,7 +621,8 @@ sub save ($, $myconfig, $form) {
               terms = $form->{terms},
               warehouse_id = $form->{warehouse_id},
               exchangerate = $form->{exchangerate},
-              backorder = '$form->{backorder}'
+              backorder = '$form->{backorder}',
+              onhold = '$form->{onhold}'
               WHERE id = $form->{id}|;
   $dbh->do($query) or $form->dberror($query);
 
@@ -843,7 +848,7 @@ sub retrieve ($, $myconfig, $form) {
                 o.closed, o.quonumber, o.department_id,
                 d.description AS department, o.language_code, o.ponumber,
                 o.warehouse_id, w.description AS warehouse, o.description,
-                o.aa_id, o.backorder
+                o.aa_id, o.backorder, o.onhold
                 FROM oe o
                 JOIN $form->{vc} vc ON (o.$form->{vc}_id = vc.id)
                 LEFT JOIN employee e ON (o.employee_id = e.id)

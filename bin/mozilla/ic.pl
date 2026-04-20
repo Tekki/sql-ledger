@@ -3441,8 +3441,15 @@ sub resource_planning {
         $type   = $ordtype;
       }
 
+      my $onholdclass = '';
+      my $onholdlabel = '';
+      if ($ref->{onhold}) {
+        $onholdclass = ' class="critical"';
+        $onholdlabel = ' &#8856;';
+      }
+      
       $column_data{$number}
-        = qq|<td nowrap><a class="number-l" href="oe.pl?action=edit&id=$ref->{order_id}&type=$type&login=$form->{login}&path=$form->{path}&callback=$callback"$accesskey>$ref->{$number}</a></td>|;
+        = qq|<td$onholdclass nowrap><a class="number-l" href="oe.pl?action=edit&id=$ref->{order_id}&type=$type&login=$form->{login}&path=$form->{path}&callback=$callback"$accesskey>$ref->{$number}</a>$onholdlabel</td>|;
 
       $class = $ref->{expired} ? ' class="critical"' : '';
       $column_data{reqdate} = qq|<td$class>$ref->{reqdate}</td>|;

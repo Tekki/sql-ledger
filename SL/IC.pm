@@ -2863,6 +2863,7 @@ sub resource_planning ($, $myconfig, $form) {
         oe.ordnumber,
         oe.quonumber,
         oe.quotation,
+        oe.onhold,
         ARRAY_TO_STRING(
           ARRAY[NULLIF(oe.description, ''), SPLIT_PART(oi.description, E'\\n', 1)], ', '
         ) AS description,

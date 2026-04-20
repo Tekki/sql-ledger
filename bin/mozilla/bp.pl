@@ -128,25 +128,23 @@ sub search {
   $form->{title} = $locale->text($label{$form->{batch}}{title})." ".$locale->text($label{$form->{type}}{title});
 
   if ($form->{batch} ne 'queue') {
-    $onhold = qq|
-                <input name=onhold class=checkbox type=checkbox value=Y> |.$locale->text('On Hold');
-
-    @f = qw(invoice packing_list pick_list bin_list);
-
-    if (! grep /$form->{type}/, @f) {
-      $onhold = "";
-    }
-
     $openclosed = qq|
               <tr>
                 <td></td>
-                <td colspan=3 nowrap><input name=open class=checkbox type=checkbox value=Y checked> |.$locale->text('Open').qq|
-                <input name=closed class=checkbox type=checkbox value=Y> |.$locale->text('Closed').qq|
-                $onhold
-                <input name="printed" class=checkbox type=checkbox value=Y> |.$locale->text('Printed').qq|
-                <input name="notprinted" class=checkbox type=checkbox value=Y $checked{print}> |.$locale->text('Not Printed').qq|
-                <input name="emailed" class=checkbox type=checkbox value=Y> |.$locale->text('E-mailed').qq|
-                <input name="notemailed" class=checkbox type=checkbox value=Y $checked{email}> |.$locale->text('Not E-mailed').qq|
+                <td colspan=3 nowrap>
+                  <input name=open class=checkbox type=checkbox value=Y checked> |.$locale->text('Open').qq|
+                  <input name=closed class=checkbox type=checkbox value=Y> |.$locale->text('Closed').qq|
+                  <input name=onhold class=checkbox type=checkbox value=Y> |.$locale->text('On Hold').qq|
+                  <input name=notonhold class=checkbox type=checkbox value=Y> |.$locale->text('Not on Hold').qq|
+                </td>
+              </tr>
+              <tr>
+                <td></td>
+                <td colspan=3 nowrap>
+                  <input name="printed" class=checkbox type=checkbox value=Y> |.$locale->text('Printed').qq|
+                  <input name="notprinted" class=checkbox type=checkbox value=Y $checked{print}> |.$locale->text('Not Printed').qq|
+                  <input name="emailed" class=checkbox type=checkbox value=Y> |.$locale->text('E-mailed').qq|
+                  <input name="notemailed" class=checkbox type=checkbox value=Y $checked{email}> |.$locale->text('Not E-mailed').qq|
                 </td>
               </tr>
 |;
@@ -694,6 +692,12 @@ sub list_spool {
     $href .= "&onhold=$form->{onhold}";
     $option .= "\n<br>" if ($option);
     $option .= $locale->text('On Hold');
+  }
+  if ($form->{notonhold}) {
+    $callback .= "&notonhold=$form->{notonhold}";
+    $href .= "&notonhold=$form->{notonhold}";
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Not on Hold');
   }
   if ($form->{printed}) {
     $callback .= "&printed=$form->{printed}";
