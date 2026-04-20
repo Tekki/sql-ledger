@@ -327,10 +327,9 @@ sub get_spoolfiles ($, $myconfig, $form) {
                   AND s.spoolfile <> ''
                   AND s.formname LIKE '$wildcard$form->{type}'|;
       } else {
-        if ($item ne 'oe' && $form->{onhold}) {
-          $form->{open} = "Y";
-          $form->{closed} = "";
-          $where .= " AND a.onhold = '1'";
+        if ($form->{onhold} xor $form->{notonhold}) {
+          my $not = $form->{notonhold} ? 'NOT' : '';
+          $where .= " AND $not a.onhold";
         }
 
         if ($item eq 'oe') {

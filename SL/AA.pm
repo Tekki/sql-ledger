@@ -878,6 +878,7 @@ sub transactions ($, $myconfig, $form) {
                  a.ponumber, a.warehouse_id, w.description AS warehouse,
                  a.description, a.dcn, pm.description AS paymentmethod,
                  a.datepaid - a.duedate AS paymentdiff,
+                 a.onhold,
                  ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
                  ad.city, ad.state, ad.zipcode, ad.country,
                  ct.salutation, ct.firstname, ct.lastname, ct.contacttitle,
@@ -975,8 +976,9 @@ sub transactions ($, $myconfig, $form) {
     }
   }
 
-  if ($form->{onhold}) {
-    $where .= " AND a.onhold = '1'";
+  if ($form->{onhold} xor $form->{notonhold}) {
+    my $not = $form->{notonhold} ? 'NOT' : '';
+    $where .= " AND $not a.onhold";
   }
 
   if ($form->{open} || $form->{closed}) {

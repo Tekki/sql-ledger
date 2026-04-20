@@ -1663,7 +1663,9 @@ sub search {
     $openclosed = qq|
               <tr>
                 <td nowrap><input name="open" class=checkbox type=checkbox value=1 $cb{open}> |.$locale->text('Open').qq|</td>
-                <td nowrap><input name="closed" class=checkbox type=checkbox value=1 $form->{closed}> |.$locale->text('Closed').qq|</td>
+                <td nowrap><input name="closed" class=checkbox type=checkbox value=1 $cb{closed}> |.$locale->text('Closed').qq|</td>
+                <td nowrap><input name=onhold class=checkbox type=checkbox value=Y $cb{onhold}> |.$locale->text('On Hold').qq|</td>
+                <td/ nowrap><input name=notonhold class=checkbox type=checkbox value=Y $cb{notonhold}> |.$locale->text('Not On Hold').qq|</td>
               </tr>
 |;
   }
@@ -1990,6 +1992,18 @@ sub transactions {
     $option .= "\n<br>" if ($option);
     $option .= $locale->text('Closed');
   }
+  if ($form->{onhold}) {
+    $callback .= "&onhold=$form->{onhold}";
+    $href .= "&onhold=$form->{onhold}";
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('On Hold');
+  }
+  if ($form->{notonhold}) {
+    $callback .= "&notonhold=$form->{notonhold}";
+    $href .= "&notonhold=$form->{notonhold}";
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Not On Hold');
+  }
   if ($form->{shippeditems}) {
     $callback .= "&shippeditems=$form->{shippeditems}";
     $href .= "&shippeditems=$form->{shippeditems}";
@@ -2000,8 +2014,9 @@ sub transactions {
   @columns = $form->sort_columns($d{columns}->@*);
   unshift @columns, "runningnumber";
 
-  $form->{l_open} = $form->{l_closed} = "Y" if ($form->{open} && $form->{closed}) ;
-  $form->{l_memo} = "Y" if $form->{detail};
+  $form->{l_open}   = $form->{l_closed} = 'Y' if ($form->{open}   && $form->{closed});
+  $form->{l_onhold} = 'Y'                     if ($form->{onhold} && $form->{notonhold});
+  $form->{l_memo}   = 'Y'                     if $form->{detail};
 
   for (@columns) {
     if ($form->{"l_$_"} eq "Y") {
@@ -2188,6 +2203,7 @@ sub transactions {
   $column_header{notes} = qq|<th class=listheading>|.$locale->text('Notes').qq|</th>|;
   $column_header{open} = qq|<th class=listheading>|.$locale->text('O').qq|</th>|;
   $column_header{closed} = qq|<th class=listheading>|.$locale->text('C').qq|</th>|;
+  $column_header{onhold} = qq|<th class=listheading title="|.$locale->text('On Hold').qq|">&#8856;</th>|;
 
   $column_header{employee} = qq|<th><a class=listheading href=$href&sort=employee>$employee</a></th>|;
 
@@ -2309,6 +2325,12 @@ sub transactions {
     } else {
       $column_data{closed} = "<td>&nbsp;</td>";
       $column_data{open} = "<td align=center>*</td>";
+    }
+
+    if ($ref->{onhold}) {
+      $column_data{onhold} = "<td align=center>*</td>";
+    } else {
+      $column_data{onhold} = "<td>&nbsp;</td>";
     }
 
     if ($ref->{id} != $sameid) {
@@ -3856,7 +3878,7 @@ sub _transactions_defaults {
       'vendornumber', 'description', 'memo',          'notes',
       'netamount',    'tax',         'amount',        'curr',
       'employee',     'warehouse',   'shippingpoint', 'shipvia',
-      'waybill',      'open',        'closed',
+      'waybill',      'open',        'closed',        'onhold',
     ],
     sort      => 'transdate',
     direction => '',

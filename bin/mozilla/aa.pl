@@ -1754,6 +1754,9 @@ sub search {
                 <td nowrap><input name=open class=checkbox type=checkbox value=Y $cb{open}> |.$locale->text('Open').qq|</td>
                 <td nowrap><input name=closed class=checkbox type=checkbox value=Y $cb{closed}> |.$locale->text('Closed').qq|</td>
                 <td nowrap><input name=onhold class=checkbox type=checkbox value=Y $cb{onhold}> |.$locale->text('On Hold').qq|</td>
+                <td nowrap><input name=notonhold class=checkbox type=checkbox value=Y $cb{notonhold}> |.$locale->text('Not On Hold').qq|</td>
+              </tr>
+              <tr>
                 <td nowrap><input name=paidlate class=checkbox type=checkbox value=Y $cb{paidlate}> |.$locale->text('Paid Late').qq|</td>
                 <td nowrap><input name=paidearly class=checkbox type=checkbox value=Y $cb{paidearly}> |.$locale->text('Paid Early').qq|</td>
               </tr>
@@ -2134,6 +2137,12 @@ sub transactions {
     $option .= "\n<br>" if ($option);
     $option .= $locale->text('On Hold');
   }
+  if ($form->{notonhold}) {
+    $callback .= "&notonhold=$form->{notonhold}";
+    $href .= "&notonhold=$form->{notonhold}";
+    $option .= "\n<br>" if ($option);
+    $option .= $locale->text('Not On Hold');
+  }
   if ($form->{paidlate}) {
     $callback .= "&paidlate=$form->{paidlate}";
     $href .= "&paidlate=$form->{paidlate}";
@@ -2189,6 +2198,8 @@ sub transactions {
       $form->{"l_$_"} = 'Y' if $form->{_flds}{$_};
     }
   }
+
+  $form->{l_onhold} = 'Y' if ($form->{onhold} && $form->{notonhold});
 
   foreach $item (@columns) {
     if ($form->{"l_$item"} eq "Y") {
@@ -2305,6 +2316,8 @@ sub transactions {
   }
 
   $column_data{delete} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll(); doSubmit(document.main)"><input type=hidden name=action value="$action"></th>|;
+
+  $column_data{onhold} = qq|<th class=listheading title="|.$locale->text('On Hold').qq|">&#8856;</th>|;
 
   $form->{title} = ($form->{outstanding}) ? $locale->text("$form->{ARAP} Outstanding") : $locale->text("$form->{ARAP} Transactions");
 
@@ -2456,6 +2469,12 @@ sub transactions {
       $column_data{paymentdiff} = qq|<td class="plus1" align=right>$ref->{paymentdiff}&nbsp;</td>|;
     } else {
       $column_data{paymentdiff} = qq|<td class="plus0" align=right>+$ref->{paymentdiff}&nbsp;</td>|;
+    }
+
+    if ($ref->{onhold}) {
+      $column_data{onhold} = "<td align=center>*</td>";
+    } else {
+      $column_data{onhold} = "<td>&nbsp;</td>";
     }
 
     for (qw(id curr accno)) { $column_data{$_} = "<td>$ref->{$_}</td>" }
@@ -2808,7 +2827,7 @@ sub _transactions_defaults {
       'duedate',        'dcn',          'memo',        'notes',
       'till',           'employee',     'warehouse',   'shippingpoint',
       'shipvia',        'waybill',      'paymentdiff', 'department',
-      'projectnumber',
+      'projectnumber',  'onhold',
     ],
     sort      => 'transdate',
     direction => '',

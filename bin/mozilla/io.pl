@@ -1447,36 +1447,31 @@ sub print_options {
 
     for (qw(printed emailed)) { $checked{$_} = "checked" if $form->{"$form->{formname}_$_"} }
 
-    $onhold = "";
-    if ($form->{formname} =~ /invoice/) {
-      $checked{onhold} = "checked" if $form->{onhold};
-      $onhold = qq|
-                 <td align=right><input name="onhold" type="checkbox" class="checkbox" value="1" $checked{onhold}></td>
-                 <th align=left nowrap>|.$locale->text('On Hold').qq|</th>
-|;
+    my $queued = '';
+    if ($form->{queued}) {
+      if ($form->{queued} =~ /$form->{formname}/) {
+        $queued = qq|
+                 <td><input name="" type="checkbox" class="checkbox" checked></td>
+                 <th align=left nowrap>|.$locale->text('Queued').qq|</th>|;
+      }
     }
 
+    $checked{onhold} = "checked" if $form->{onhold};
     print qq|
              <table>
                <tr>
-                 $onhold
+                 <td align=right><input name="onhold" type="checkbox" class="checkbox" value="1" $checked{onhold}></td>
+                 <th align=left nowrap>|.$locale->text('On Hold').qq|</th>
+               </tr>
+               <tr>
                  <td align=right><input name="$form->{formname}_printed" type="checkbox" class="checkbox" value="1" $checked{printed}></td>
                  <th align=left nowrap>|.$locale->text('Printed').qq|</th>
                  <td align=right><input name="$form->{formname}_emailed" type="checkbox" class="checkbox" value="1" $checked{emailed}></td>
                  <th align=left nowrap>|.$locale->text('E-mailed').qq|</th>
+                 $queued
                </tr>
 |;
 
-    if ($form->{queued}) {
-      if ($form->{queued} =~ /$form->{formname}/) {
-        print qq|
-               <tr>
-                 <td><input name="" type="checkbox" class="checkbox" checked></td>
-                 <th align=left nowrap>|.$locale->text('Queued').qq|</th>
-               </tr>
-|;
-      }
-    }
     if ($form->{recurring}) {
       print qq|
                <tr>
