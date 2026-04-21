@@ -97,9 +97,11 @@
 restore and may result in empty tables if the database was modified by
 the user.</p>
 <p>Dump format is created by the external program <code>pg_dump</code>
-that is part of PostgreSQL. These backups are reliable and can be
-restored on PostgreSQL of the same or a newer version, if the user names
-and permissions are the same on both systems.</p>
+that is part of the PostgreSQL client software. These backups are
+reliable and can be restored on PostgreSQL of the same or a newer
+version, if the user names and permissions are the same on both systems.
+If a remote database is used, ensure that <code>pg_dump</code> on the
+SQL-Ledger server is compatible with it.</p>
 <h3 id="encrypted-backups">Encrypted Backups</h3>
 <p>Your country's legislation may stipulate that you store only
 encrypted backups.</p>
@@ -130,7 +132,8 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="
 <h2 id="file-system-backup">File System Backup</h2>
 <p>The commands described above backup only the PostgreSQL database.
 Additional mission-critical data is stored in the file system and must
-also be backed up. The following directories need to be preserved:</p>
+also be saved at a secure place. The following directories need to be
+preserved:</p>
 <table>
 <thead>
 <tr class="header">

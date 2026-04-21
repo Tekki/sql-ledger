@@ -155,11 +155,26 @@ format</li>
 <code>members</code>. The old config files are not deleted.</p>
 <p>Finally, log in to your database to complete the upgrade to version
 4.</p>
+<p>Custom scripts written for version 3 have to consider the following
+changes:</p>
+<ul>
+<li>The names of the SQL-Ledger Perl modules are built using their
+relative path, for example <code>SL::Form</code>.</li>
+<li>The global variables no longer exist as such, but have been moved to
+the new global hash <code>%slconfig</code>. The former
+<code>$userspath</code> for example is now called as
+<code>$slconfig{userspath}</code>.</li>
+<li>Buttons in the user interface built with HTML
+<code>&lt;input&gt;</code> tags are no longer supported and function
+calls are not translated back to English. Buttons are now written using
+<code>&lt;button&gt;</code> tags with the name of the targeted function
+as value.</li>
+</ul>
 <h2 id="downgrade-from-version-4-to-version-3">Downgrade from Version 4
 to Version 3</h2>
-<p>You can always revert from version 4.0 to any release of 3.2.12.65 or
-newer. When your branches point to one of those versions, run
-<code>git switch full</code> to move to the 3.x line and
+<p>You can always revert from a version 4.0 database to any release of
+3.2.12.65 or newer. When your branches point to one of those versions,
+run <code>git switch full</code> to move to the 3.x line and
 <code>git switch main</code> to return to the 4.x line. Remember that
 each branch uses its own configuration files (conf vs. YAML format) and
 changes in one set are not mirrored to the other.</p>

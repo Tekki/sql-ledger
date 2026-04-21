@@ -40,6 +40,9 @@ to:
   );
 ```
 
+If `stylesheet` is not set, `horizon-flex.css` will be used for the login and
+administrator screens..
+
 ## Database Configuration
 
 The database configuration is performed via the `System → Defaults` menu, which

@@ -63,19 +63,22 @@ restricted to core developers and are currently undocumented.
 If you encounter an error or have a feature idea, first of all open an issue on
 our [GitHub repository](https://github.com/Tekki/sql-ledger/issues) so we can
 discuss it further. Contributors are expected to be human beings and
-identifiable as such. 
+identifiable as such.
 
-The entire contribution process is:
+For improvements to translations refer to [Updating and Creating
+Translations](translations.md#updating-and-creating-translations).
 
-* opening of an issue
-* description of the facts
-* discussion of the options
-* assessment of the risks
-* decision on the path to be taken
-* code change
-* opening of a pull request
-* check if the new code meets the expectations
-* publication of a new release
+The contribution process for code changes is:
+
+- opening of an issue
+- description of the facts
+- discussion of the options
+- assessment of the risks
+- decision on the path to be taken
+- code change
+- opening of a pull request
+- check if the new code meets the expectations
+- publication of a new release
 
 Familiarity with Git and creating pull requests on GitHub is required. Sign the
 commits. Remember that changing the code is step 6 on the above list, not the
@@ -84,20 +87,21 @@ small corrections of obvious errors.
 
 Some coding rules:
 
-* Always include tests. Ideally, add tests first and then adjust the code until
+- Always include tests. Ideally, add tests first and then adjust the code until
   they all pass.
-* Format the updated code with the `.perltidyrc` configuration found in this
+- Format the updated code with the `.perltidyrc` configuration found in this
   repository. Skip formatting any sections that generate HTML output.
-* Use short, but meaningful variable names and never use the same name at the
+- Use short, but meaningful variable names and never use the same name at the
   same place for different purposes. Variables are here for humans to understand
   the code.
-* Explicitly return values from subroutines with keyword `return`.
-* Write `qw|a b c|` with vertical bar and not with parentheses.
-* Write `for` instead of `foreach`.
-* Use suffix statements like `for`, `if`, `unless` only if the code fits on one
+- Explicitly return values from subroutines with keyword `return`.
+- Write `qw|a b c|` with vertical bar and not with parentheses.
+- Write `for` instead of `foreach`.
+- Use suffix statements like `for`, `if`, `unless` only if the code fits on one
   line.
-* Use postfix dereferencing.
-* Use subroutine signatures.
-* Separate subroutines with two line breaks.
-* Read about new Perl features up to v5.40 and don't hesitate to use them.
-* Feel free to change existing code that doesn't follow these rules.
+- Use postfix dereferencing.
+- In backend code use subroutine signatures.
+- Separate subroutines with two line breaks.
+- Use functions from core modules if they simplify the code.
+- Read about new Perl features up to v5.40 and don't hesitate to use them.
+- Feel free to change existing code that doesn't follow these rules.

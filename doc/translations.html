@@ -126,9 +126,14 @@ directory. Each subdirectory is named using a country code followed by
 <p>Plus around 40 binary files created by <code>locales.pl</code>.</p>
 <h2 id="updating-and-creating-translations">Updating and Creating
 Translations</h2>
+<p>If you are updating a translation for more then just personal use,
+you should be familiar with the technical vocabulary around trade and
+manufacturing and with the current accounting standards of your
+country.</p>
 <p>Only modify translation strings in the original code if you intend to
-patch the application. Changing them otherwise risks breaking future
-updates. For your private translation, create a new directory.</p>
+patch the application and create a pull request on GitHub. Changing them
+otherwise risks breaking future updates. For your private translation,
+create a new directory.</p>
 <p>To add a new translation:</p>
 <ul>
 <li>Create a directory for the language.</li>
@@ -141,12 +146,13 @@ your translations.</li>
 <li>Edit <code>all_diff.yml</code> if necessary.</li>
 <li>Run <code>./locales.pl</code> again to refresh the binary
 files.</li>
+<li>Optionally copy <code>Num2text</code> from another directory.</li>
 </ul>
-<p>Check the user interface screens to grasp context and do not aim for
-a 100 % complete translation.</p>
-<p><code>all_diff.yml</code> lists terms that vary across screens.
-Efforts are ongoing to eliminate any ambiguous English terms, so this
-file should eventually stay empty.</p>
+<p>Check the user interface screens to grasp the context of the terms.
+And do not aim for a 100 % complete translation.</p>
+<p><code>all_diff.yml</code> lists translations that vary across
+screens. Efforts are ongoing to eliminate any ambiguous English terms,
+so this file should eventually stay empty.</p>
 <p>If you need variants on different screens, add them to
 <code>all_diff.yml</code> in the following way:</p>
 <div class="sourceCode" id="cb1"><pre
@@ -154,5 +160,12 @@ class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb1-1"><a href="
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">English Term</span><span class="kw">:</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">script1</span><span class="kw">:</span><span class="at"> Translation for Script 1</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">script2</span><span class="kw">:</span><span class="at"> Translation for Script 2</span></span></code></pre></div>
+<p>Take a look at <code>locale/chd_utf/all_diff.yml</code> as an
+example.</p>
+<p>The number to text conversion is used in certain countries, mainly to
+print checks. To improve an existing conversion script or to add a new
+one, always start with a copy of <code>t/01-sl/num2text-en.t</code> that
+is adapted to the desired language. Then modify <code>Num2text</code>
+until it produces the expected output and the test passes.</p>
 </body>
 </html>

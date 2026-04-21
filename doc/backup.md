@@ -15,10 +15,11 @@ SQL-Ledger produces two different backup formats:
 SQL format is created by SQL-Ledger itself. It is fragile, slow to restore and
 may result in empty tables if the database was modified by the user.
 
-Dump format is created by the external program `pg_dump` that is part of
-PostgreSQL. These backups are reliable and can be restored on PostgreSQL of the
-same or a newer version, if the user names and permissions are the same on both
-systems.
+Dump format is created by the external program `pg_dump` that is part of the
+PostgreSQL client software. These backups are reliable and can be restored on
+PostgreSQL of the same or a newer version, if the user names and permissions are
+the same on both systems. If a remote database is used, ensure that `pg_dump` on
+the SQL-Ledger server is compatible with it.
 
 ### Encrypted Backups
 
@@ -56,8 +57,8 @@ gpg -d $ENCRYPTED -o $BACKUPFILE
 ## File System Backup
 
 The commands described above backup only the PostgreSQL database. Additional
-mission-critical data is stored in the file system and must also be backed up.
-The following directories need to be preserved:
+mission-critical data is stored in the file system and must also be saved at a
+secure place. The following directories need to be preserved:
 
 | Directory          | Content                     |
 |--------------------|-----------------------------|

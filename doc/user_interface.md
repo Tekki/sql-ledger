@@ -2,6 +2,28 @@
 
 # User Interface
 
+## Color Themes
+
+Several color themes are available to customize the appearance of the user
+interface:
+
+- the legacy themes with `sql-ledger-` in their name
+- `Everforest`, a dark and low-contrast theme based on the color scheme with the
+  same name by Sainnhe Park, available for several code editors
+- `Horizon` and `Quartz`, based on the color model of the SAP Fiori Design
+  System
+- `Silver`, a pure black-and-white theme
+
+`Horizon`, `Quartz` and `Silver` come in three variants:
+
+- `light`, always displays dark text on a light background
+- `dark`, always displays light text on a dark background
+- `flex`, flexibly adapts to the settings of the operating system
+
+The theme is set individually for each user under `Preferences`. The system
+default is `horizon-flex.css`. It is changed via the variable `stylesheet` in
+the [Global Configuration](configuration.md#global-configuration).
+
 ## Helping Notes
 
 A click on the triangle right of a page title opens a helping note. This note is
