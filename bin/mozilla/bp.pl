@@ -463,12 +463,12 @@ sub print {
 
         $form->{linkshipto} = 1;
 
-        if ($myform->{"module_$i"} eq 'oe.pl') {
+        if ($myform->{"module_$i"} eq 'oe') {
           &order_links;
           &prepare_order;
           $form->{formname} = $myform->{type};
           $inv = ($form->{formname} =~ /_quotation/) ? 'quo' : 'ord';
-        } elsif ($myform->{"module_$i"} eq 'jc.pl') {
+        } elsif ($myform->{"module_$i"} eq 'jc') {
           $form->{formname} = $myform->{type};
           &{"prepare_$myform->{type}"};
         } else {
@@ -551,7 +551,7 @@ sub print {
         $myform->info(qq|${r}. $msg{$myform->{batch}} ... $myform->{"reference_$i"}|);
         $myform->info(qq|, $myform->{description}|) if $myform->{description};
 
-        if ($myform->{"module_$i"} ne 'jc.pl') {
+        if ($myform->{"module_$i"} ne 'jc') {
           if ($form->{formname} =~ /_invoice/) {
             $form->{"${inv}total"} = qq|($form->{"${inv}total"})| if ($form->{formname} eq "credit_invoice");
           } else {
