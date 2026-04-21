@@ -79,18 +79,7 @@ sub num2text {
   my @textnumber = ();
 
   # split amount into chunks of 3
-  my @num = reverse split //, abs($amount);
-  my @numblock = ();
-  my @a;
-  my $i;
-
-  while (@num) {
-    @a = ();
-    for (1 .. 3) {
-      push @a, shift @num;
-    }
-    push @numblock, join / /, reverse @a;
-  }
+  my @numblock = map { scalar reverse } reverse(abs $amount) =~ /(.{1,3})/g;
 
   while (@numblock) {
     $i = $#numblock;
