@@ -2294,7 +2294,7 @@ sub form_footer {
       'UID Register'     => {ndx => 3,  key => 'G', value => $locale->text('UID Register')},
       'Shipping Address' => {ndx => 4,  key => 'H', value => $locale->text('Shipping Address')},
       'Save as new'      => {ndx => 5,  key => 'N', value => $locale->text('Save as new'), class => 'positive'},
-      'New Number'       => {ndx => 21, key => 'M', value => $locale->text('New Number') },
+      'New Number'       => {ndx => 21, key => 'M', value => $locale->text('New Number'), class => 'critical'},
       'Delete'           => {ndx => 22, key => 'D', value => $locale->text('Delete'), class => 'negative' },
     },
     {

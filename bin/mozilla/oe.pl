@@ -3118,7 +3118,7 @@ sub display_ship_receive {
   </tr>
 |;
 
-  $form->hide_form(qw(ordnumber transdate ponumber));
+  $form->hide_form(qw(ordnumber transdate ponumber currency defaultcurrency));
   $form->hide_form(map { "shipto$_" } qw(name address1 streetname buildingnumber address2 city state zipcode country contact phone fax email recurring));
   $form->hide_form(qw(message email subject cc bcc));
 
@@ -3261,7 +3261,7 @@ sub display_ship_receive {
     $button{'E-mail'} = { ndx => 5, key => 'E', value => $locale->text('E-mail') };
   }
 
-  $button{'Done'} = { ndx => 11, key => 'D', value => $locale->text('Done') };
+  $button{'Done'} = { ndx => 11, key => 'S', value => $locale->text('Save'), class => 'positive' };
 
   $form->print_button(\%button);
 

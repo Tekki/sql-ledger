@@ -4043,7 +4043,7 @@ sub get_partsgroup ($self, $myconfig, $p, $dbh = undef) {
           (@pt) = split /:/, $ref->{partsgroup};
           $str = "";
           for (0 .. $level) {
-            $str .= $pt[$_];
+            $str .= $pt[$_] // '';
             $pth->execute($str);
             $pref = $pth->fetchrow_hashref;
             $pth->finish;
@@ -4480,8 +4480,12 @@ sub get_recurring ($self, $dbh) {
 
   while (my $ref = $sth->fetchrow_hashref) {
     for (keys %$ref) { $self->{"recurring$_"} = $ref->{$_} }
-    $self->{recurringemail} .= "$ref->{formnamee}:$ref->{formate}:";
-    $self->{recurringprint} .= "$ref->{formnamep}:$ref->{formatp}:$ref->{printerp}:";
+    if ($ref->{formnamee} && $ref->{formate}) {
+      $self->{recurringemail} .= "$ref->{formnamee}:$ref->{formate}:";
+    }
+    if ($ref->{formnamep} && $ref->{formatp}) {
+      $self->{recurringprint} .= "$ref->{formnamep}:$ref->{formatp}:$ref->{printerp}:";
+    }
     for (qw(formnamee formate formnamep formatp printerp)) { delete $self->{"recurring$_"} }
   }
   $sth->finish;
@@ -4517,7 +4521,7 @@ sub save_recurring ($self, $dbh = undef, $myconfig = '') {
     ($s{reference}, $s{description}, $s{startdate}, $s{repeat}, $s{unit}, $s{howmany}, $s{payment}, $s{print}, $s{email}, $s{message}) = split /,/, $self->{recurring};
 
     for (qw(reference description message)) { $s{$_} = $self->unescape($s{$_}) }
-    for (qw(repeat howmany payment)) { $s{$_} *= 1 }
+    for (qw(repeat howmany payment)) { ($s{$_} ||= 0) *= 1 }
 
     # calculate enddate
     my $advance = $s{repeat} * ($s{howmany} - 1);
@@ -4573,7 +4577,7 @@ sub save_recurring ($self, $dbh = undef, $myconfig = '') {
       }
     }
 
-    ($self->{recurringpayment} //= 0) *= 1;
+    ($self->{recurringpayment} ||= 0) *= 1;
     $query = qq|INSERT INTO recurring (id, reference, description,
                 startdate, enddate, nextdate,
                 repeat, unit, howmany, payment)

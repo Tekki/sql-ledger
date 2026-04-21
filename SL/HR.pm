@@ -937,12 +937,16 @@ sub payroll_links ($, $myconfig, $form) {
     ($form->{project}) = $dbh->selectrow_array($query);
 
     for (qw(ap payment)) {
-      $ref->{$_} = qq|$ref->{"${_}_accno"}--$ref->{"${_}_accno_description"}|;
-      $ref->{$_} = qq|$ref->{"${_}_accno"}--$ref->{"${_}_accno_description"}| if $ref->{"${_}_accno_translation"};
+      if ($ref->{"${_}_accno"}) {
+        $ref->{$_} = qq|$ref->{"${_}_accno"}--$ref->{"${_}_accno_description"}|;
+        $ref->{$_} = qq|$ref->{"${_}_accno"}--$ref->{"${_}_accno_description"}| if $ref->{"${_}_accno_translation"};
+      }
     }
 
     for (qw(paymentmethod department)) {
-      $ref->{$_} = qq|$ref->{$_}--$ref->{"${_}_id"}|;
+      if ($ref->{$_}) {
+        $ref->{$_} = qq|$ref->{$_}--$ref->{"${_}_id"}|;
+      }
     }
 
     $ref->{employee} = qq|$ref->{employee}--$ref->{vendor_id}|;
@@ -1518,6 +1522,7 @@ sub post_transaction ($, $myconfig, $form) {
 
   $ap->{vendor_id}       = $employee_id;
   $ap->{defaultcurrency} = $ap->{currency};
+  $ap->{type}            = 'invoice';
   $ap->{vc}              = 'vendor';
   $ap->{duedate}         = $form->{transdate};
   $ap->{AP}              = $form->{ap};
@@ -1859,6 +1864,7 @@ sub save_deduction ($, $myconfig, $form) {
   my $query;
   my $sth;
 
+  ($form->{agedob} ||= 0) *= 1;
   (undef, $form->{basedon}) = split /--/, $form->{basedon} // '';
 
   if (! $form->{id}) {
@@ -2095,8 +2101,8 @@ sub save_wage ($, $myconfig, $form) {
 
   ($form->{exempt} ||= 0) *= 1;
   $form->{amount} = $form->parse_amount($myconfig, $form->{amount});
-  ($form->{accno}) = split /--/, $form->{accno} // '';
-  ($form->{defer}) = split /--/, $form->{defer} // '';
+  ($form->{accno}) = split /--/, $form->{accno} || '--';
+  ($form->{defer}) = split /--/, $form->{defer} || '--';
 
   $query = qq|UPDATE wage SET
               description = |.$dbh->quote($form->{description}).qq|,

@@ -97,7 +97,8 @@ $self->{message}
 
     foreach my $attachment (@{ $self->{attachments} }) {
 
-      my $application = ($attachment =~ /(^\w+$)|\.(html|text|txt|sql)$/) ? "text" : "application";
+      my $mimetype = ($attachment =~ /(^\w+$)|\.(html|text|txt|sql)$/) ? 'text/' : 'application/';
+      $mimetype .= $self->{format} || 'octet-stream';
 
       my $in;
       unless (open $in, $attachment) {
@@ -112,7 +113,7 @@ $self->{message}
       $filename =~ s/(.*\/|$self->{fileid})//g;
 
       print $out qq|--${boundary}
-Content-Type: $application/$self->{format}; name=${filename}; charset=$self->{charset}
+Content-Type: $mimetype; name=${filename}; charset=$self->{charset}
 Content-Transfer-Encoding: BASE64
 Content-Disposition: attachment; filename=$filename\n\n|;
 

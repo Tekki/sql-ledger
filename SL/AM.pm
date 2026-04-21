@@ -2109,8 +2109,12 @@ $myconfig->{dboptions};
     $mail->{version} = $form->{version};
     $mail->{fileid} = "$boundary.";
 
-    $myconfig->{signature} =~ s/\\n/\n/g;
-    $mail->{message} = "-- \n$myconfig->{signature}";
+    if ($myconfig->{signature}) {
+      $myconfig->{signature} =~ s/\\n/\n/g;
+      $mail->{message} = "-- \n$myconfig->{signature}";
+    } else {
+      $mail->{message} = '';
+    }
 
     $err = $mail->send($target);
   }

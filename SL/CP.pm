@@ -254,7 +254,7 @@ sub get_openvc ($self, $myconfig, $form) {
 
     next if $vc{$ref->{id}};
     if (($form->{vc} // '') eq 'vendor') {
-      if ($ref->{threshold} > 0) {
+      if (($ref->{threshold} // 0) > 0) {
         next if $due{$ref->{id}} < $ref->{threshold};
       }
     }
@@ -566,7 +566,7 @@ sub get_openinvoices ($self, $myconfig, $form) {
 
   for my $ref (@transactions) {
     if (($form->{vc} // '') eq 'vendor') {
-      if ($ref->{threshold} > 0) {
+      if (($ref->{threshold} // 0) > 0) {
         $total{$ref->{"$form->{vc}_id"}} = $form->round_amount($total{$ref->{"$form->{vc}_id"}}, $form->{precision});
         next if $total{$ref->{"$form->{vc}_id"}} < $ref->{threshold};
       }
@@ -1223,7 +1223,7 @@ sub payment_register ($self, $myconfig, $form) {
 
       $form->{"$_->{accno}"} = "$_->{accno}--$_->{description}";
 
-      if ($ref->{source} && ($ref->{source} eq $samesource)) {
+      if ($ref->{source} && $samesource && ($ref->{source} eq $samesource)) {
         my $i = @{ $source{$_->{accno}} };
         $source{$_->{accno}}[$i-1]->{amount} += $ref->{amount};
         $source{$_->{accno}}[$i-1]->{trans_id} .= "\n$ref->{trans_id}";

@@ -4683,28 +4683,24 @@ print qq|
       }
 
       $reference = ($ref->{reference}) ? $ref->{reference} : $locale->text('Next Number');
-      $column_data{reference} = qq|<td nowrap><a href=$form->{script}?action=edit_recurring&id=$ref->{id}&vc=$ref->{vc}&path=$form->{path}&login=$form->{login}&module=$ref->{module}&invoice=$ref->{invoice}&transaction=$ref->{transaction}&recurringnextdate=$ref->{nextdate}&callback=$callback>$reference</a></td>|;
+      $column_data{reference} = qq|<td nowrap><a class="schedule-l" href="$form->{script}?action=edit_recurring&id=$ref->{id}&vc=$ref->{vc}&path=$form->{path}&login=$form->{login}&module=$ref->{module}&invoice=$ref->{invoice}&transaction=$ref->{transaction}&recurringnextdate=$ref->{nextdate}&callback=$callback">$reference</a></td>|;
 
       $module = "$ref->{module}.pl";
       $type = "";
 
       if ($ref->{module} eq 'ar') {
-        $module = "is.pl" if $ref->{invoice};
+        $module = 'is.pl' if $ref->{invoice};
         $ref->{amount} /= $ref->{exchangerate};
-        $column_data{name} = qq|<td><a href=ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{name_id}&db=$ref->{vc}&callback=$callback>$ref->{name}</a></td>|;
-      }
-      if ($ref->{module} eq 'ap') {
-        $module = "ir.pl" if $ref->{invoice};
+      } elsif ($ref->{module} eq 'ap') {
+        $module = 'ir.pl' if $ref->{invoice};
         $ref->{amount} /= $ref->{exchangerate};
-        $column_data{name} = qq|<td><a href=ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{name_id}&db=$ref->{vc}&callback=$callback>$ref->{name}</a></td>|;
+      } elsif ($ref->{module} eq 'oe') {
+        $type = ($ref->{vc} eq 'customer') ? 'sales_order' : 'purchase_order';
       }
-      if ($ref->{module} eq 'oe') {
-        $type = ($ref->{vc} eq 'customer') ? "sales_order" : "purchase_order";
-        $column_data{name} = qq|<td><a href=ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{name_id}&db=$ref->{vc}&callback=$callback>$ref->{name}</a></td>|;
-      }
+      $column_data{name} = qq|<td><a class="name-l" href="ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{name_id}&db=$ref->{vc}&callback=$callback">$ref->{name}</a></td>|;
 
       $column_data{vcnumber} = qq|<td>$ref->{vcnumber}&nbsp;</td>|;
-      $column_data{id} = qq|<td><a href=$module?action=edit&id=$ref->{id}&vc=$ref->{vc}&path=$form->{path}&login=$form->{login}&type=$type&callback=$callback>$ref->{id}</a></td>|;
+      $column_data{id} = qq|<td><a class="transaction-l" href="$module?action=edit&id=$ref->{id}&vc=$ref->{vc}&path=$form->{path}&login=$form->{login}&type=$type&callback=$callback">$ref->{id}</a></td>|;
 
       $column_data{repeat} = "<td align=right nowrap>$repeat</td>";
       $column_data{howmany} = "<td align=right nowrap>".$form->format_amount(\%myconfig, $ref->{howmany})."</td>";

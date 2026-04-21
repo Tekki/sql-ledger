@@ -652,6 +652,7 @@ sub search ($, $myconfig, $form) {
   my $var;
   my $item;
 
+  $form->{db} //= '';
   $form->{db} =~ s/;//g;
 
   my @sf = ("$form->{db}number");
@@ -659,6 +660,10 @@ sub search ($, $myconfig, $form) {
 
   if ($form->{ids}) {
     $where .= qq| AND c.id IN ($form->{ids})|;
+  }
+
+  if ($form->{db} eq 'vendor') {
+    $where .= qq| AND NOT EXISTS (SELECT 1 FROM employee WHERE id = c.id)|;
   }
 
   if ($form->{employee}) {
@@ -713,12 +718,12 @@ sub search ($, $myconfig, $form) {
     $where .= qq| AND c.id NOT IN (SELECT o.$form->{db}_id
                                     FROM oe o, $form->{db} vc
                                      WHERE vc.id = o.$form->{db}_id)|;
-    if (($form->{db} // '') eq 'customer') {
+    if ($form->{db} eq 'customer') {
       $where .= qq| AND c.id NOT IN (SELECT a.customer_id
                                       FROM ar a, customer vc
                                       WHERE vc.id = a.customer_id)|;
     }
-    if (($form->{db} // '') eq 'vendor') {
+    if ($form->{db} eq 'vendor') {
       $where .= qq| AND c.id NOT IN (SELECT a.vendor_id
                                       FROM ap a, vendor vc
                                       WHERE vc.id = a.vendor_id)|;
@@ -764,7 +769,7 @@ sub search ($, $myconfig, $form) {
     }
 
     if ($form->{l_transnumber}) {
-      $ar = (($form->{db} // '') eq 'customer') ? 'ar' : 'ap';
+      $ar = ($form->{db} eq 'customer') ? 'ar' : 'ap';
       $module = $ar;
 
       $transwhere = "";
@@ -804,7 +809,7 @@ sub search ($, $myconfig, $form) {
     }
 
     if ($form->{l_invnumber}) {
-      $ar = (($form->{db} // '') eq 'customer') ? 'ar' : 'ap';
+      $ar = ($form->{db} eq 'customer') ? 'ar' : 'ap';
       $module = ($ar eq 'ar') ? 'is' : 'ir';
 
       $transwhere = "";

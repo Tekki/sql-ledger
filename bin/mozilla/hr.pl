@@ -1369,6 +1369,8 @@ sub delete_payroll {
 
 sub yes {
 
+  $form->{vc} = 'vendor';
+
   if (SL::AA->delete_transaction(\%myconfig, $form)) {
     $form->redirect($locale->text('Transaction deleted!'));
   }
@@ -2350,11 +2352,11 @@ sub payroll_transactions {
     }
     $column_data{deductions} = "<td align=right>".$form->format_amount(\%myconfig, $amount, $form->{precision}, "&nbsp;")."</td>";
 
-    $column_data{invnumber} = "<td><a href=ap.pl?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{invnumber}&nbsp;</a></td>";
-    $column_data{reference} = "<td><a href=gl.pl?action=edit&id=$ref->{glid}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{reference}&nbsp;</a></td>";
-    $column_data{payslip} = "<td><a href=$form->{script}?action=edit&id=$ref->{id}&db=payroll&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{invnumber}&nbsp;</a></td>";
-    $column_data{transdate} = "<td nowrap>$ref->{transdate}</td>";
-    $column_data{employee} = "<td>$ref->{employee}</td>";
+    $column_data{invnumber} = qq|<td><a class="invoice-l" href="ap.pl?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback">$ref->{invnumber}&nbsp;</a></td>|;
+    $column_data{reference} = qq|<td><a class="gl-l" href="gl.pl?action=edit&id=$ref->{glid}&path=$form->{path}&login=$form->{login}&callback=$callback">$ref->{reference}&nbsp;</a></td>|;
+    $column_data{payslip}   = qq|<td><a class="payroll-l" href="$form->{script}?action=edit&id=$ref->{id}&db=payroll&path=$form->{path}&login=$form->{login}&callback=$callback">$ref->{invnumber}&nbsp;</a></td>|;
+    $column_data{transdate} = qq|<td nowrap>$ref->{transdate}</td>|;
+    $column_data{employee}  = qq|<td>$ref->{employee}</td>|;
 
 
     if ($form->{summary}) {
@@ -2634,7 +2636,7 @@ sub search_deduction {
     for (qw(employerpays employeepays)) { $column_data{$_} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{$_}, undef, "&nbsp;")."</td>" }
 
     if ($ref->{description} ne $sameitem) {
-      $column_data{description} = "<td><a href=$form->{script}?action=edit&db=$form->{db}&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{description}</a></td>";
+      $column_data{description} = qq|<td><a class="deduction-l" href="$form->{script}?action=edit&db=$form->{db}&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback">$ref->{description}</a></td>|;
     } else {
       $column_data{description} = "<td>&nbsp;</td>";
     }
@@ -2987,7 +2989,7 @@ sub search_wage {
 
     $column_data{exempt} = ($ref->{exempt}) ? "<td>x</td>" : "<td></td>";
 
-    $column_data{description} = "<td><a href=$form->{script}?action=edit&db=$form->{db}&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{description}</a></td>";
+    $column_data{description} = qq|<td><a class="wage-l" href="$form->{script}?action=edit&db=$form->{db}&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback">$ref->{description}</a></td>|;
 
     $i++; $i %= 2;
     print "
