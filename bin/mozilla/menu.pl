@@ -21,9 +21,9 @@ require "$form->{path}/js.pl";
 
 sub display {
 
-  $menuwidth = $myconfig{menuwidth} || 155;
-  $menuwidth = '25%' if $form->{small_device};
-  $script = $form->{main} =~ /recent/ ? 'ru.pl' : 'am.pl';
+  my $menuwidth = $myconfig{menuwidth} || 200;
+  $menuwidth = int($menuwidth * .75) if $form->{small_device};
+  my $script = $form->{main} =~ /recent/ ? 'ru.pl' : 'am.pl';
 
   $form->{title}    = "$form->{login} - SQL-Ledger";
   $form->{frameset} = 1;
@@ -33,7 +33,7 @@ sub display {
 
 <frameset id="menu_frames" cols="$menuwidth,*" border="1">
 
-  <frame name="acc_menu" src="$form->{script}?login=$form->{login}&action=acc_menu&path=$form->{path}&js=$form->{js}">
+  <frame name="acc_menu" src="$form->{script}?login=$form->{login}&action=acc_menu&path=$form->{path}&js=$form->{js}&small_device=$form->{small_device}">
   <frame name="main_window" src="$script?login=$form->{login}&action=$form->{main}&path=$form->{path}">
 
 </frameset>
@@ -46,9 +46,17 @@ sub display {
 
 sub acc_menu {
 
+  my $menuwidth = $myconfig{menuwidth} || 200;
+  $menuwidth = int($menuwidth * .75) if $form->{small_device};
+
   my $menu = SL::Menu->new("$menufile");
   $menu->add_file("$form->{path}/custom/$menufile") if -f "$form->{path}/custom/$menufile";
   $menu->add_file("$form->{path}/custom/$form->{login}/$menufile") if -f "$form->{path}/custom/$form->{login}/$menufile";
+
+  my %label = (
+    hide => $locale->text('Hide'),
+    show => $locale->text('Show'),
+  );
 
   $form->{title} = $locale->text('Accounting Menu');
 
@@ -56,29 +64,43 @@ sub acc_menu {
 
   print qq|
 <script type="text/javascript">
-function SwitchMenu(obj) {
-  if (document.getElementById) {
-    var el = document.getElementById(obj);
+function SwitchMenu (obj) {
+  var el = document.getElementById(obj);
 
-    if (el.style.display == "none") {
-      el.style.display = "block"; //display the block of info
-    } else {
-      el.style.display = "none";
-    }
+  if (el.style.display == "none") {
+    el.style.display = "block"; //display the block of info
+  } else {
+    el.style.display = "none";
   }
 }
 
-function ChangeClass(menu, newClass) {
-  if (document.getElementById) {
-    document.getElementById(menu).className = newClass;
-  }
+function ChangeClass (menu, newClass) {
+  document.getElementById(menu).className = newClass;
 }
+
 document.onselectstart = new Function("return false");
+
+function hideMenu () {
+  document.getElementById('menu-visible').style.display = 'none';
+  document.getElementById('menu-hidden').style.display = 'block';
+  window.parent.document.getElementById('menu_frames').cols = '40,*';
+}
+
+function showMenu () {
+  document.getElementById('menu-hidden').style.display = 'none';
+  document.getElementById('menu-visible').style.display = 'block';
+  window.parent.document.getElementById('menu_frames').cols = '$menuwidth,*';
+}
 </script>
 
-<body class=menu>
+<body class="menu">
 
-<img src=$slconfig{images}/sql-ledger.gif width=80 border=0>
+<div id="menu-hidden" style="display:none">
+  <img src="$slconfig{images}/sql-ledger-ball.png" width="24" border="0" onclick="showMenu()" title="$label{show}">
+</div>
+<div id="menu-visible">
+
+<img src="$slconfig{images}/sql-ledger.gif" width="80" border="0" onclick="hideMenu()" title="$label{hide}">
 
 <br>$myconfig{name}
 |;
@@ -90,6 +112,7 @@ document.onselectstart = new Function("return false");
   }
 
   print qq|
+</div>
 </body>
 </html>
 |;
