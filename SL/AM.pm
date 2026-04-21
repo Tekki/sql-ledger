@@ -1567,13 +1567,14 @@ sub save_preferences ($, $form, $memberfile, $userspath) {
   my $admin = SL::User->new($memberfile, "admin\@$config->{dbname}");
   $config->{templates} = $admin->{templates};
 
-  for (keys %$form) {
+  for (grep !/password/, keys %$form) {
     $config->{$_} = $form->{$_};
   }
   delete $config->{emailcopy} unless $form->{emailcopy};
 
   if (($form->{oldpassword} // '') eq $form->{new_password}) {
-    $config->{encrypted} = 1;
+    $config->{encrypted}    = 1;
+    $config->{keep_session} = 1;
   } else {
     $config->{password} = $form->{new_password};
   }

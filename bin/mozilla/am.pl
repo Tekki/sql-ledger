@@ -3379,8 +3379,8 @@ sub save_preferences {
     }
   }
   $form->{password} = $form->{new_password};
-  $form->{tan} = $myconfig{tan};
-  $form->{charset} = $form->{encoding};
+  $form->{charset}  = $form->{encoding};
+  $form->{$_}       = $myconfig{$_} for qw|sessionkey tan|;
 
   if (SL::AM->save_preferences($form, $slconfig{memberfile}, $slconfig{userspath})) {
     $form->redirect($locale->text('Preferences saved!'));

@@ -603,12 +603,11 @@ sub create_config ($self, $filename) {
   $self->{acs} = join ';', sort keys %acs;
 
   my $password = $self->{password};
-  my $key = "";
 
-  $self->{sessionkey} = "";
-  $self->{sessioncookie} = "";
-
-  if ($self->{password}) {
+  if ($self->{password} && !$self->{keep_session}) {
+    my $key = '';
+    $self->{sessionkey}    = '';
+    $self->{sessioncookie} = '';
     $self->{timeout} ||= 3600;
 
     my $t = time + $self->{timeout};
