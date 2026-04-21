@@ -1272,7 +1272,11 @@ sub update {
   }
 
   $form->{exchangerate} = $form->parse_amount(\%myconfig, $form->{exchangerate});
-  for (1 .. $form->{paidaccounts}) { $form->{"paid_$_"} = $form->parse_amount(\%myconfig, $form->{"paid_$_"}) }
+  for my $i (1 .. $form->{paidaccounts}) {
+    for (qw|paid exchangerate|) {
+      $form->{"${_}_$i"} = $form->parse_amount(\%myconfig, $form->{"${_}_$i"});
+    }
+  }
 
   if ($form->{vc} eq 'customer') {
     $form->{ARAP} = "AR";
