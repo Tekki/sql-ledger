@@ -149,9 +149,9 @@ sub new ($type, $userspath = '') {
 
   $self->{charset} = 'UTF-8';
 
-  $self->{version}    = '4.0.9_01';
+  $self->{version}    = '4.0.9';
   $self->{dbversion}  = '4.0.0';
-  $self->{cssversion} = '409_03';
+  $self->{cssversion} = '409';
 
   $self->{favicon} = 'favicon.ico';
 

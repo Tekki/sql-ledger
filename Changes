@@ -1,11 +1,24 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
-Not Released
-  - 
+4.0.9 2026-04-21
+  - new color themes Horizon, Quartz and Silver
+  - theme 'dark' renamed to 'everforest'
+  - menu can be hidden by clicking on the icon
+  - if waybill contains a URL a web link is displayed
+  - number to text conversion improved
+  - documentation updated
+  - reauthentication is no longer required when preferences are changed
+  - side effects of saving preferences with activated MFA corrected
+  - handling of numbers in payments for orders corrected
+  - batch printing of orders corrected
+  - missing package added to Docker files
+  - uninitalized variables corrected
+  - HTML input tags used as buttons changed to button tags,
+    BREAKING CHANGE for custom scripts with buttons
 
 4.0.8 2026-04-02
   - warehouse can be selected in quotations and RFQs
-  - Turkish number to text conversion routine added
+  - Turkish number to text conversion routine added,
     contributed by Müfit Eribol
   - loading of number to text conversion routines according to
     language of customers and vendors improved
