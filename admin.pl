@@ -42,6 +42,10 @@ for my ($key, $value) (
   $slconfig{$key} ||= $value;
 }
 
+if ($slconfig{binpath}) {
+  $ENV{PATH} .= ":$slconfig{binpath}";
+}
+
 unless (-f "$slconfig{memberfile}.bin") {
   print "Content-Type: text/html\n\n" if $ENV{HTTP_USER_AGENT};
   print "\n$slconfig{memberfile}.bin: File not found!\n";

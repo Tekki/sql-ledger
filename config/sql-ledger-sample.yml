@@ -9,6 +9,9 @@ stylesheet: ''
 
 ## Paths
 
+### set to '/usr/local/bin' if the server doesn't find external programs
+binpath: ''
+
 ### path to user configuration files
 userspath: users
 
@@ -60,7 +63,7 @@ pdftk: true
 ### folders with read and write access
 accessfolders:
   - templates
-  - css
+  - notes
 
 ### login security
 

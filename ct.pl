@@ -45,6 +45,10 @@ for my ($key, $value) (
   $slconfig{$key} ||= $value;
 }
 
+if ($slconfig{binpath}) {
+  $ENV{PATH} .= ":$slconfig{binpath}";
+}
+
 $form = SL::Form->new($slconfig{userspath});
 
 # name of this script

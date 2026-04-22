@@ -47,6 +47,17 @@ $user->list($sl->config->{userpath})->each(
   }
 );
 
+# notes directory
+
+print "\nCreating 'notes' directory ... ";
+if (-d 'notes') {
+  say_warn 'skipped';
+} else {
+  mkdir 'notes';
+  chown $www_user_id, $www_group_id, 'notes';
+  say_ok 'ok';
+}
+
 # classes
 
 class Members {
@@ -120,6 +131,7 @@ class SLConf {
 
   method convert () {
     my $yml = YAML::PP->new(preserve => PRESERVE_ORDER);
+    my $old_path = $ENV{PATH};
 
     if (-f $config_new) {
       $config = $yml->load_file($config_new);
@@ -131,21 +143,27 @@ class SLConf {
 
     tie my %conf, 'Tie::IxHash';
 
+    $conf{stylesheet} = '';
+
+    if ($ENV{PATH} ne $old_path) {
+      $conf{binpath} = $ENV{PATH} =~ s/$old_path://r;
+    }
+
     $conf{userspath}            = $userspath;
     $conf{spool}                = $spool;
     $conf{memberfile}           = $memberfile;
     $conf{templates}            = $templates;
     $conf{sendmail}             = $sendmail;
     $conf{images}               = $images;
+    $conf{notes}                = 'notes';
     $conf{language}             = $language;
-    $conf{charset}              = $charset;
     $conf{latex}                = !!$latex;
     $conf{gzip}                 = $gzip;
     $conf{gpg}                  = $gpg;
     $conf{dvipdf}               = !!$dvipdf;
     $conf{pdftk}                = !!$pdftk;
     $conf{xelatex}              = !!$xelatex;
-    $conf{accessfolders}        = \@accessfolders;
+    $conf{accessfolders}        = [grep !/css/, @accessfolders, 'notes'];
     $conf{helpful_login}        = !!$helpful_login;
     $conf{admin_totp_activated} = !!$admin_totp_activated;
 
