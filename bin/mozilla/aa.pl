@@ -12,11 +12,10 @@
 
 
 # any custom scripts for this one
-if (-f "$form->{path}/custom/aa.pl") {
-      eval { require "$form->{path}/custom/aa.pl"; };
-}
-if (-f "$form->{path}/custom/$form->{login}/aa.pl") {
-      eval { require "$form->{path}/custom/$form->{login}/aa.pl"; };
+for ('', "/$myconfig{dbname}", "/$form->{login}") {
+  if (-f "$form->{path}/custom$_/aa.pl") {
+    eval { require "$form->{path}/custom$_/aa.pl"; };
+  }
 }
 
 use SL::VR;

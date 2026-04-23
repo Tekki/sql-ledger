@@ -23,15 +23,10 @@ $form = SL::Form->new;
 $locale = SL::Locale->new($slconfig{language}, "login");
 
 # customization
-if (-f "$form->{path}/custom/$form->{script}") {
-  eval { require "$form->{path}/custom/$form->{script}"; };
-  $form->error($@) if ($@);
-}
-
-# per login customization
-if (-f "$form->{path}/custom/$form->{login}/$form->{script}") {
-  eval { require "$form->{path}/custom/$form->{login}/$form->{script}"; };
-  $form->error($@) if ($@);
+for ('', "/$myconfig{dbname}", "/$form->{login}") {
+  if (-f "$form->{path}/custom$_/login.pl") {
+    eval { require "$form->{path}/custom$_/login.pl"; };
+  }
 }
 
 if ($form->{action}) {

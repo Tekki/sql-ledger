@@ -50,8 +50,9 @@ sub acc_menu {
   $menuwidth = int($menuwidth * .75) if $form->{small_device};
 
   my $menu = SL::Menu->new("$menufile");
-  $menu->add_file("$form->{path}/custom/$menufile") if -f "$form->{path}/custom/$menufile";
-  $menu->add_file("$form->{path}/custom/$form->{login}/$menufile") if -f "$form->{path}/custom/$form->{login}/$menufile";
+  for ('', "/$myconfig{dbname}", "/$form->{login}") {
+    $menu->add_file("$form->{path}/custom$_/$menufile") if -f "$form->{path}/custom$_/$menufile";
+  }
 
   my %label = (
     hide => $locale->text('Hide'),

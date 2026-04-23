@@ -18,13 +18,11 @@ require "$form->{path}/cm.pl";
 require "$form->{path}/js.pl";
 
 # any custom scripts for this one
-if (-f "$form->{path}/custom/ct.pl") {
-    eval { require "$form->{path}/custom/ct.pl"; };
+for ('', "/$myconfig{dbname}", "/$form->{login}") {
+  if (-f "$form->{path}/custom$_/ct.pl") {
+    eval { require "$form->{path}/custom$_/ct.pl"; };
+  }
 }
-if (-f "$form->{path}/custom/$form->{login}/ct.pl") {
-    eval { require "$form->{path}/custom/$form->{login}/ct.pl"; };
-}
-
 
 1;
 # end of main

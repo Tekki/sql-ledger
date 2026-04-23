@@ -11,11 +11,10 @@
 #======================================================================
 
 # any custom scripts for this one
-if (-f "$form->{path}/custom/arapprn.pl") {
-      eval { require "$form->{path}/custom/arapprn.pl"; };
-}
-if (-f "$form->{path}/custom/$form->{login}/arapprn.pl") {
-      eval { require "$form->{path}/custom/$form->{login}/arapprn.pl"; };
+for ('', "/$myconfig{dbname}", "/$form->{login}") {
+  if (-f "$form->{path}/custom$_/arapprn.pl") {
+    eval { require "$form->{path}/custom$_/arapprn.pl"; };
+  }
 }
 
 1;

@@ -20,11 +20,10 @@ require "$form->{path}/is.pl";
 require "$form->{path}/pos.pl";
 
 # customizations
-if (-f "$form->{path}/custom/pos.pl") {
-  eval { require "$form->{path}/custom/pos.pl"; };
-}
-if (-f "$form->{path}/custom/$form->{login}/pos.pl") {
-  eval { require "$form->{path}/custom/$form->{login}/pos.pl"; };
+for ('', "/$myconfig{dbname}", "/$form->{login}") {
+  if (-f "$form->{path}/custom$_/ps.pl") {
+    eval { require "$form->{path}/custom$_/ps.pl"; };
+  }
 }
 
 1;

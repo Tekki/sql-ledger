@@ -13,13 +13,11 @@
 use SL::ADR;
 
 # any custom scripts for this one
-if (-f "$form->{path}/custom/io.pl") {
-  eval { require "$form->{path}/custom/io.pl"; };
+for ('', "/$myconfig{dbname}", "/$form->{login}") {
+  if (-f "$form->{path}/custom$_/io.pl") {
+    eval { require "$form->{path}/custom$_/io.pl"; };
+  }
 }
-if (-f "$form->{path}/custom/$form->{login}/io.pl") {
-  eval { require "$form->{path}/custom/$form->{login}/io.pl"; };
-}
-
 
 1;
 # end of main

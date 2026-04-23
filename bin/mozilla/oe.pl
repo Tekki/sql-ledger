@@ -2734,13 +2734,10 @@ sub invoice {
   require "$form->{path}/$form->{script}";
 
   # customized scripts
-  if (-f "$form->{path}/custom/$form->{script}") {
-    eval { require "$form->{path}/custom/$form->{script}"; };
-  }
-
-  # customized scripts for login
-  if (-f "$form->{path}/custom/$form->{login}/$form->{script}") {
-    eval { require "$form->{path}/custom/$form->{login}/$form->{script}"; };
+  for ('', "/$myconfig{dbname}", "/$form->{login}") {
+    if (-f "$form->{path}/custom$_/$form->{script}") {
+      eval { require "$form->{path}/custom$_/$form->{script}"; };
+    }
   }
 
   for ("$form->{vc}", "currency") { $form->{"select$_"} = "" }
