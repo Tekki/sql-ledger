@@ -3290,8 +3290,8 @@ sub ex_payment {
 </td>|;
 
     if ($form->{filetype} eq 'xml') {
-      $column_data{invnumber} = qq|<td><a href="$ref->{script}.pl?id=$ref->{payment_id}&action=edit&login=$form->{login}&path=$form->{path}&callback=$callback">$ref->{invnumber}</a></td>|;
-      $column_data{name} = qq|<td><a href="ct.pl?db=$ref->{vc}&id=$ref->{vc_id}&action=edit&login=$form->{login}&path=$form->{path}&callback=$callback">$ref->{name}</a></td>|;
+      $column_data{invnumber} = qq|<td><a class="invnumber-l" href="$ref->{script}.pl?id=$ref->{id}&action=edit&login=$form->{login}&path=$form->{path}&callback=$callback">$ref->{invnumber}</a></td>|;
+      $column_data{name} = qq|<td><a class="name-l" href="ct.pl?db=$ref->{vc}&id=$ref->{vc_id}&action=edit&login=$form->{login}&path=$form->{path}&callback=$callback">$ref->{name}</a></td>|;
 
       unless (SL::SPS::payment_valid($ref)) {
         $column_data{ndx} = qq|<td></td>|;

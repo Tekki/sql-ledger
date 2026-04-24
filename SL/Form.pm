@@ -397,7 +397,7 @@ sub save_form ($self, $myconfig, $dbh = undef) {
   my %newform;
   for (keys %$self) {
     if ($_ !~ /^report_/) {
-      if ($self->{$_} !~ /(HASH|ARRAY)/) {
+      if ($self->{$_} && $self->{$_} !~ /(HASH|ARRAY)/) {
         $newform{$_} = $self->{$_};
       }
     }
@@ -405,7 +405,7 @@ sub save_form ($self, $myconfig, $dbh = undef) {
   for (qw(initreport sessioncookie movecolumn header)) { delete $newform{$_} }
 
   for (keys %newform) {
-    $sth->execute("$_", "$self->{$_}");
+    $sth->execute("$_", "$newform{$_}");
     $sth->finish;
   }
 
@@ -2122,6 +2122,7 @@ sub format_string ($self, @fields) {
 
 sub pad ($self, $str, $chr, $align, $width, $display) {
 
+  $chr //= '';
   $chr =~ s/-(-|\+)??\d+(s|S)?//;
   $chr = " " if $chr eq "";
   if ($display) {
@@ -2138,7 +2139,11 @@ sub pad ($self, $str, $chr, $align, $width, $display) {
     }
   }
 
+  $chr   //= '';
+  $width //= 0;
   my $fill = "$chr" x $width;
+  $fill //= '';
+  $str  //= '';
 
   if ($align eq 'right') {
     $str = substr("$fill$str", -($width));

@@ -5444,7 +5444,7 @@ sub bank_accounts {
     for (qw(name description)) { $column_data{$_} = "<td nowrap>$ref->{$_}&nbsp;</td>" }
     for (qw(membernumber clearingnumber rvc dcn)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
     for (qw(iban qriban bic)) { $column_data{$_} = "<td nowrap>$ref->{$_}&nbsp;</td>" }
-    $column_data{accno} = "<td><a href=$form->{script}?action=edit_bank&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{accno}</td>";
+    $column_data{accno} = qq|<td><a class="bank-l" href=$form->{script}?action=edit_bank&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{accno}</td>|;
     $closed = ($ref->{closed}) ? "*" : "&nbsp;";
     $column_data{closed} = "<td>$closed</td>";
 
@@ -5633,7 +5633,7 @@ sub save_bank {
     SL::ADR::check_country($form, $locale->text('Invalid country code!'));
   }
 
-  if (!AM->save_bank(\%myconfig, $form)) {
+  unless (SL::AM->save_bank(\%myconfig, $form)) {
     $form->error($locale->text('Failed to save Bank!'));
   }
 

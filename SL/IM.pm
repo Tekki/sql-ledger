@@ -1559,7 +1559,7 @@ sub paymentaccounts ($, $myconfig, $form) {
                  l.description AS translation
                  FROM chart c
                  LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
-                 LEFT JOIN bank b ON b.id = c.id
+                 JOIN bank b ON b.id = c.id
                  WHERE $where
                  ORDER BY c.accno|;
   my $sth = $dbh->prepare($query);
@@ -1801,7 +1801,7 @@ sub unreconciled_payments ($, $myconfig, $form) {
   $query = qq|SELECT curr FROM curr ORDER BY rn LIMIT 1|;
   ($form->{defaultcurrency}) = $dbh->selectrow_array($query);
 
-  my $where;
+  my $where = '';
 
   if ($form->{curr}) {
     $where = " AND a.curr = '$form->{curr}'";

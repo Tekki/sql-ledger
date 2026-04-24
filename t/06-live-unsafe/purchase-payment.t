@@ -15,7 +15,7 @@ my $configfile = "$FindBin::Bin/../testdata/testconfig.yml";
 my $t;
 
 if ($ENV{SL_LIVETEST}) {
-  plan tests => 4;
+  plan tests => 5;
 } else {
   plan skip_all => 'SL_LIVETEST not enabled.';
 }
@@ -28,7 +28,8 @@ subtest 'Single payment' => sub {
     action => 'payment',
     type   => 'check',
     )
-    ->press_button_ok('List open invoices', 'continue');
+    ->press_button_ok('List open invoices', 'continue')
+    ->elements_exist('Link to invoice', 'a.invnumber-l');
 };
 
 subtest 'Multiple payments' => sub {
@@ -38,4 +39,14 @@ subtest 'Multiple payments' => sub {
     type   => 'check',
     )
     ->press_button_ok('Update list', 'update');
+};
+
+subtest 'Export payments' => sub {
+  $t->get_ok(
+    'Report frontend', 'im.pl',
+    action => 'export',
+    type   => 'payment',
+    )
+    ->press_button_ok('Generate report', 'continue')
+    ->elements_exist('Links to invoice, vendor', 'a.invnumber-l', 'a.name-l');
 };

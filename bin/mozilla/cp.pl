@@ -308,7 +308,7 @@ sub prepare_payments_header {
   foreach $ref (@{ $form->{PR} }) {
     $i++;
 
-    for (qw(id invnumber invdescription transdate duedate calcdiscount discountterms cashdiscount netamount)) { $form->{"${_}_$i"} = $ref->{$_} }
+    for (qw(id invnumber invdescription transdate duedate calcdiscount discountterms cashdiscount netamount script)) { $form->{"${_}_$i"} = $ref->{$_} }
     $ref->{exchangerate} ||= 1;
     $due = ($form->{edit}) ? $ref->{amount} : $ref->{amount} - $ref->{paid};
     $due = $form->round_amount($due / $ref->{exchangerate}, $form->{precision});
@@ -1695,7 +1695,7 @@ sub list_invoices {
 
     for (qw(amount due paid discount total)) { $form->{"${_}_$i"} = $form->format_amount(\%myconfig, $form->{"${_}_$i"}, $form->{precision}) }
 
-    $column_data{invnumber} = qq|<td width="30%"><a href="$form->{"script_$i"}.pl?action=edit&id=$form->{"id_$i"}&path=$form->{path}&login=$form->{login}" target="_blank">$form->{"invnumber_$i"}</a></td>|;
+    $column_data{invnumber} = qq|<td width="30%"><a class="invnumber-l" href="$form->{"script_$i"}.pl?action=edit&id=$form->{"id_$i"}&path=$form->{path}&login=$form->{login}" target="_blank">$form->{"invnumber_$i"}</a></td>|;
     $column_data{transdate} = qq|<td width=30% nowrap>$form->{"transdate_$i"}</td>|;
     $column_data{duedate} = qq|<td width=30% nowrap>$form->{"duedate_$i"}</td>|;
     $column_data{amount} = qq|<td align=right>$form->{"amount_$i"}</td>|;
