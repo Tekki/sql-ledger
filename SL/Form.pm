@@ -3670,7 +3670,7 @@ sub create_lock ($self, $myconfig, $dbh = undef, $id = '', $module = '', $add = 
               WHERE expires < '$expires'|;
   $dbh->do($query) || $self->dberror($query);
 
-  $expires = time + $myconfig->{timeout};
+  $expires = time + ($myconfig->{timeout} // 3600);
 
   if ($id) {
     $query = qq|SELECT id, login FROM semaphore
