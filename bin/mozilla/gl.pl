@@ -349,7 +349,7 @@ sub search {
       sort     => 'department',
       checkbox => 1,
       html     =>
-        qq|<input name="l_department" class=checkbox type=checkbox value=Y $form->{l_department}>|,
+        qq|<input name="l_department" class=checkbox type=checkbox value=Y $cb{l_department}>|,
       label => $locale->text('Department')
     };
   }
@@ -1432,7 +1432,7 @@ sub form_header {
                 <td>
                   <table>
                     <tr>
-                      <td><select name=currency onChange="javascript:document.main.submit()">|
+                      <td><select name=currency onChange="doSubmit(document.main)">|
                       .$form->select_option($form->{selectcurrency}, $form->{currency})
                       .qq|</select></td>|;
 
@@ -1449,7 +1449,7 @@ sub form_header {
 
   $department = qq|
           <th align=right nowrap>|.$locale->text('Department').qq|</th>
-          <td><select name=department onChange="javascript:document.main.submit()">|
+          <td><select name=department onChange="doSubmit(document.main)">|
           .$form->select_option($form->{selectdepartment}, $form->{department}, 1)
           .qq|</select></td>
 | if $form->{selectdepartment};

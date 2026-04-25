@@ -26,10 +26,11 @@ subtest 'Parse numbers' => sub {
     q|1234,56|     => q|1000,00|     => 1234.56,
     q|1'234.56|    => q|1'000.00|    => 1234.56,
     q|1,23,456.78| => q|1,00,000.00| => 123456.78,
+    q|1234.56|     => ''             => 1234.56,
   );
 
   for my ($number, $format, $expected) (@numbers) {
-    my %myconfig = (numberformat => $format);
+    my %myconfig = $format ? (numberformat => $format) : ();
     is my $parsed = $form->parse_amount(\%myconfig, $number), $expected, "Parse |$number| with $format";
     isa_ok $parsed, 'Math::BigFloat', "Parsed |$number|";
     is $form->parse_amount(\%myconfig, $parsed), $parsed, "Parse parsed $parsed";
@@ -87,10 +88,11 @@ subtest 'Format numbers' => sub {
     5432.1   => q|1.000,00| => q|5.432,10| => q|5.432,10|,
     5432.12  => q|1.000,00| => q|5.432,12| => q|5.432,12|,
     5432.123 => q|1.000,00| => q|5.432,12| => q|5.432,12|,
+    5432.1   => ''          => q|5432.1|   => q|5432.1|,
   );
 
   for my ($number, $format, $formatted, $dashed) (@numbers) {
-    my %myconfig = (numberformat => $format);
+    my %myconfig = $format ? (numberformat => $format) : ();
     is $form->format_amount(\%myconfig, $number, 2), $formatted, "Format '$number'";
     is $form->format_amount(\%myconfig, Math::BigFloat->new($number), 2), $formatted,
       "Format BigFloat '$number'";

@@ -1028,7 +1028,7 @@ sub transactions ($, $myconfig, $form) {
   $sth->execute or $form->dberror($query);
 
   my $i      = -1;
-  my $sameid = '';
+  my $sameid = 0;
   my %curr;
 
   while (my $ref = $sth->fetchrow_hashref) {

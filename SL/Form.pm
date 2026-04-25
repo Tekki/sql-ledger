@@ -781,15 +781,15 @@ sub parse_amount ($self, $myconfig, $amount = undef) {
   return Math::BigFloat->new(0) unless defined $amount;
   return $amount if ref $amount eq 'Math::BigFloat';
 
-  if ( ($myconfig->{numberformat} eq '1.000,00')
-    || ($myconfig->{numberformat} eq '1000,00'))
-  {
-    $amount =~ s/\.//g;
-    $amount =~ s/,/\./;
-  }
-
-  if ($myconfig->{numberformat} eq "1'000.00") {
-    $amount =~ s/'//g;
+  if ($myconfig->{numberformat}) {
+    if ( ($myconfig->{numberformat} eq '1.000,00')
+      || ($myconfig->{numberformat} eq '1000,00'))
+    {
+      $amount =~ s/\.//g;
+      $amount =~ s/,/\./;
+    } elsif ($myconfig->{numberformat} eq "1'000.00") {
+      $amount =~ s/'//g;
+    }
   }
 
   $amount =~ s/[, ]+//g;
@@ -2207,15 +2207,18 @@ sub datediff ($self, $myconfig, $date1, $date2) {
     }
   }
 
-  $dd1 *= 1;
-  $dd2 *= 1;
-  $mm1--;
-  $mm2--;
-  $mm1 *= 1;
-  $mm2 *= 1;
-
   if ($dd1 && $dd2) {
-    sprintf("%.0f", (timelocal(0,0,12,$dd2,$mm2,$yy2) - timelocal(0,0,12,$dd1,$mm1,$yy1))/86400);
+    $dd1 *= 1;
+    $dd2 *= 1;
+    $mm1--;
+    $mm2--;
+    $mm1 *= 1;
+    $mm2 *= 1;
+
+    return sprintf("%.0f",
+      (timelocal(0, 0, 12, $dd2, $mm2, $yy2) - timelocal(0, 0, 12, $dd1, $mm1, $yy1)) / 86400);
+  } else {
+    return 0;
   }
 
 }
@@ -2769,7 +2772,7 @@ sub reset_shipped ($self, $dbh, $id, $ml) {
 
 sub get_employee ($self, $dbh) {
 
-  my $login = $self->{login};
+  my $login = $self->{login} // '';
   $login =~ s/@.*//;
   my $query = qq|SELECT name, id FROM employee
                  WHERE login = '$login'|;
@@ -5463,6 +5466,8 @@ sub audittrail ($self, $dbh, $myconfig, $audittrail) {
 
   # if we have an id add audittrail, otherwise get a new timestamp
 
+  $audittrail->{$_} //= '' for qw|id action formname tablename|;
+
   if ($audittrail->{id} *= 1) {
 
     $audittrail->{id} = 'NULL' if $audittrail->{id} == 1;
@@ -5524,6 +5529,8 @@ sub audittrail ($self, $dbh, $myconfig, $audittrail) {
       $dbh->do($query);
     }
   } else {
+
+    $audittrail->{reference} //= '';
 
     $query = qq|SELECT current_timestamp FROM defaults
                 WHERE fldname = 'version'|;

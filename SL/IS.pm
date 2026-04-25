@@ -1563,7 +1563,7 @@ sub post_invoice ($, $myconfig, $form, $dbh = undef) {
   for (qw(terms discountterms onhold)) { ($form->{$_} ||= 0) *= 1 }
   $form->{cashdiscount} = $form->parse_amount($myconfig, $form->{cashdiscount}) / 100;
 
-  if ($form->{cdt} && $form->{"paid_$form->{discount_index}"}) {
+  if ($form->{cdt} && $form->{discount_index} && $form->{"paid_$form->{discount_index}"}) {
     $invamount -= $cd_tax if !$form->{taxincluded};
   }
 

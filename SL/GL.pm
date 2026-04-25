@@ -800,8 +800,10 @@ sub transactions ($, $myconfig, $form) {
         }
         if (@paid) {
           $i = pop @arap;
-          $form->{GL}[$i]{contra} = $paid;
-          $form->{GL}[$i]{gifi_contra} = $gifi_paid;
+          if ($i) {
+            $form->{GL}[$i]{contra}      = $paid;
+            $form->{GL}[$i]{gifi_contra} = $gifi_paid;
+          }
         }
         for (@arap) {
           $i = 0;

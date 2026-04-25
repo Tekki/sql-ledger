@@ -1134,6 +1134,7 @@ sub trial_balance ($, $myconfig, $form) {
     for (qw(description category contra charttype amount)) { $ref->{$_} = $trb{$accno}{$_} }
 
     $ref->{balance} = $balance{$ref->{accno}};
+    $ref->{amount} //= 0;
     $ref->{debit}  //= 0;
     $ref->{credit} //= 0;
 

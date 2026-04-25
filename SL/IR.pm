@@ -716,6 +716,8 @@ sub post_invoice ($, $myconfig, $form, $dbh = undef) {
   my $keepcleared;
   my $ok;
 
+  $form->{acc_trans} = {};
+
   (undef, $form->{employee_id}) = split /--/, $form->{employee} // '';
   unless ($form->{employee_id}) {
     ($form->{employee}, $form->{employee_id}) = $form->get_employee($dbh);
@@ -786,8 +788,7 @@ sub post_invoice ($, $myconfig, $form, $dbh = undef) {
   if (! $form->{id}) {
 
     $query = qq|INSERT INTO ap (invnumber, employee_id)
-                VALUES ('$uid', (SELECT id FROM employee
-                                 WHERE login = '$form->{login}'))|;
+                VALUES ('$uid', $form->{employee_id} WHERE login = '$form->{login}'))|;
     $dbh->do($query) or $form->dberror($query);
 
     $query = qq|SELECT id FROM ap
@@ -1368,7 +1369,7 @@ sub post_invoice ($, $myconfig, $form, $dbh = undef) {
   for (qw(terms discountterms onhold)) { ($form->{$_} ||= 0) *= 1 }
   $form->{cashdiscount} = $form->parse_amount($myconfig, $form->{cashdiscount}) / 100;
 
-  if ($form->{cdt} && $form->{"paid_$form->{discount_index}"}) {
+  if ($form->{cdt} && $form->{discount_index} && $form->{"paid_$form->{discount_index}"}) {
     $invamount -= $cd_tax if !$form->{taxincluded};
   }
 

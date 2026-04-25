@@ -2207,7 +2207,7 @@ sub earningsaccounts ($, $myconfig, $form) {
               ORDER by c.accno|;
   $sth = $dbh->prepare($query);
   $sth->execute or $form->dberror($query);
-  $form->{chart} = "";
+  $form->{chart} = [];
 
   while (my $ref = $sth->fetchrow_hashref) {
     $ref->{description} = $ref->{translation} if $ref->{translation};

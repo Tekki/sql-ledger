@@ -754,10 +754,11 @@ sub search ($, $myconfig, $form) {
   my $transwhere;
   if ($form->{l_transnumber} || $form->{l_invnumber} || $form->{l_ordnumber} || $form->{l_quonumber}) {
 
-    my ($ar, $union, $module);
-    $query = "";
-    my $openarap = "";
-    my $openoe = "";
+    my ($ar, $module);
+    $query = '';
+    my $openarap = '';
+    my $openoe   = '';
+    my $union    = '';
 
     if ($form->{open} || $form->{closed}) {
       unless ($form->{open} && $form->{closed}) {

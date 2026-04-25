@@ -14,7 +14,7 @@ my $configfile = "$FindBin::Bin/../testdata/testconfig.yml";
 my $t;
 
 if ($ENV{SL_LIVETEST}) {
-  plan tests => 7;
+  plan tests => 9;
 } else {
   plan skip_all => 'SL_LIVETEST not enabled.';
 }
@@ -23,10 +23,25 @@ $t = SL::TestClient->new(configfile => $configfile)->connect_ok->api_login_ok;
 
 subtest 'Transactions' => sub {
   $t->get_ok('Report frontend', 'ap.pl', action => 'search', nextsub => 'transactions')
+    ->set_params_ok('Report parameters', transdatefrom => $t->date_jan1)
     ->post_ok('Generate report')
     ->elements_exist('Links to invoice, name', 'a.invnumber-l', 'a.ap-l', 'a.ir-l', 'a.name-l')
     ->download_ok('Spreadsheet', 'xlsx', 'spreadsheet')
     ->download_is('Spreadsheet', 'xlsx');
+};
+
+subtest 'Transactions with details' => sub {
+  $t->get_ok('Report frontend', 'ap.pl', action => 'search', nextsub => 'transactions')
+    ->set_params_ok('Report parameters', transdatefrom => $t->date_jan1, detail => 'detail')
+    ->post_ok('Generate report')
+    ->elements_exist('Links to invoice, name', 'a.invnumber-l', 'a.ap-l', 'a.ir-l', 'a.name-l');
+};
+
+subtest 'Transactions with payments' => sub {
+  $t->get_ok('Report frontend', 'ap.pl', action => 'search', nextsub => 'transactions')
+    ->set_params_ok('Report parameters', transdatefrom => $t->date_jan1, detail => 'payment')
+    ->post_ok('Generate report')
+    ->elements_exist('Links to invoice, name', 'a.invnumber-l', 'a.ap-l', 'a.ir-l', 'a.name-l');
 };
 
 subtest 'Outstanding' => sub {

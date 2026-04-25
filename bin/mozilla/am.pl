@@ -4886,7 +4886,7 @@ sub process_transactions {
 
       # reset $form
       for (keys %$form) { delete $form->{$_}; }
-      for (qw(login path stylesheet timeout precision)) { $form->{$_} = $pt->{$_}; }
+      for (qw(login path stylesheet cssversion timeout precision)) { $form->{$_} = $pt->{$_}; }
       $form->{id} = $id;
       $form->{header} = $header;
 
