@@ -1,0 +1,113 @@
+#======================================================================
+# SQL-Ledger ERP
+#
+# © 2026-2026 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
+#
+#======================================================================
+#
+# custom aa.pl
+# 
+# sample for customization of
+#   AR--Reports--Transactions
+#   AR--Reports--Outstanding
+#   AP--Reports--Transactions
+#   AP--Reports--Outstanding
+# 
+#======================================================================
+
+1;
+# end of main
+
+
+# defaults for reports
+
+sub _search_defaults {
+  my %defaults = (
+    checkboxes => {
+      open             => 'checked',
+      closed           => 'checked',
+      onhold           => '',
+      notonhold        => '',
+      paidlate         => '',
+      paidearly        => '',
+      l_runningnumber  => '',
+      l_id             => '',
+      l_invnumber      => 'checked',
+      l_ordnumber      => '',
+      l_description    => 'checked',
+      l_ponumber       => '',
+      l_transdate      => 'checked',
+      l_name           => 'checked',
+      l_customernumber => '',
+      l_vendornumber   => '',
+      l_taxnumber      => '',
+      l_address        => '',
+      l_contact        => '',
+      l_vcnotes        => '',
+      l_employee       => '',
+      l_department     => '',
+      l_projectnumber  => '',
+      l_netamount      => '',
+      l_tax            => '',
+      l_amount         => 'checked',
+      l_curr           => '',
+      l_datepaid       => '',
+      l_paymentdiff    => '',
+      l_paid           => 'checked',
+      l_paymentaccount => '',
+      l_paymentmethod  => '',
+      l_duedate        => '',
+      l_due            => '',
+      l_dcn            => '',
+      l_memo           => '',
+      l_notes          => '',
+      l_till           => '',
+      l_warehouse      => '',
+      l_shippingpoint  => '',
+      l_shipvia        => '',
+      l_waybill        => '',
+      l_subtotal       => '',
+    },
+    radiobuttons => {
+      interval => {
+        current => 'checked',
+        month   => '',
+        quarter => '',
+        year    => '',
+      },
+      detail => {
+        summary => 'checked',
+        detail  => '',
+        payment => '',
+      },
+    },
+    focus => $form->{outstanding} ? $form->{vc} : 'invnumber',
+  );
+
+  return \%defaults;
+}
+
+
+sub _transactions_defaults {
+  my %defaults = (
+    columns => [
+      'transdate',      'id',           'invnumber',   'ordnumber',
+      'ponumber',       'description',  'name',        'customernumber',
+      'vendornumber',   'taxnumber',    'address1',    'streetname',
+      'buildingnumber', 'address2',     'state',       'city',
+      'zipcode',        'country',      'salutation',  'firstname',
+      'lastname',       'contacttitle', 'occupation',  'phone',
+      'mobile',         'email',        'vcnotes',     'netamount',
+      'tax',            'amount',       'paid',        'paymentaccount',
+      'paymentmethod',  'due',          'curr',        'datepaid',
+      'duedate',        'dcn',          'memo',        'notes',
+      'till',           'employee',     'warehouse',   'shippingpoint',
+      'shipvia',        'waybill',      'paymentdiff', 'department',
+      'projectnumber',
+    ],
+    sort      => 'transdate',
+    direction => '',
+  );
+
+  return \%defaults;
+}

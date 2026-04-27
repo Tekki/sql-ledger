@@ -1439,6 +1439,9 @@ sub update {
 
 sub search {
 
+  my %d  = &_search_defaults;
+  my %cb = $d{checkboxes}->%*;
+
   $requiredby = $locale->text('Required by');
 
   if ($form->{type} eq 'purchase_order') {
@@ -1514,8 +1517,8 @@ sub search {
     $employee = $locale->text('Salesperson');
     $detail = qq|
                 <tr>
-                  <td><input name=detail type=radio class=radio value=0 checked> |.$locale->text('Summary').qq|</td>
-                  <td><input name=detail type=radio class=radio value=1> |.$locale->text('Detail').qq|
+                  <td><input name=detail type=radio class=radio value=0 $cb{detail}{summary}> |.$locale->text('Summary').qq|</td>
+                  <td><input name=detail type=radio class=radio value=1 $cb{detail}{detail}> |.$locale->text('Detail').qq|
                   </td>
                 </tr>
 |;
@@ -1529,8 +1532,8 @@ sub search {
     $employee = $locale->text('Salesperson');
     $detail = qq|
                 <tr>
-                  <td><input name=shippeditems type=radio class=radio value=0> |.$locale->text('All').qq|</td>
-                  <td><input name=shippeditems type=radio class=radio value=1 checked> |.$locale->text('Shipped Items').qq|
+                  <td><input name=shippeditems type=radio class=radio value=0 $cb{shippeditems}{all}> |.$locale->text('All').qq|</td>
+                  <td><input name=shippeditems type=radio class=radio value=1 $cb{shippeditems}{shipped}> |.$locale->text('Shipped Items').qq|
                 </tr>
 |;
   }
@@ -1543,7 +1546,7 @@ sub search {
     $employee = $locale->text('Employee');
   }
 
-  $l_employee = qq|<input name="l_employee" class=checkbox type=checkbox value=Y> $employee|;
+  $l_employee = qq|<input name="l_employee" class=checkbox type=checkbox value=Y $cb{l_employee}> $employee|;
 
   # setup vendor / customer selection
   $transdate = $form->current_date(\%myconfig);
@@ -1555,15 +1558,15 @@ sub search {
 
   $vcname = $locale->text('Customer');
   $vcnumber = $locale->text('Customer Number');
-  $l_name = qq|<input name="l_name" class=checkbox type=checkbox value=Y checked> $vcname|;
-  $l_customernumber = qq|<input name="l_customernumber" class=checkbox type=checkbox value=Y> $vcnumber|;
+  $l_name = qq|<input name="l_name" class=checkbox type=checkbox value=Y $cb{l_name}> $vcname|;
+  $l_customernumber = qq|<input name="l_customernumber" class=checkbox type=checkbox value=Y $cb{l_customernumber}> $vcnumber|;
 
   if ($form->{vc} eq 'vendor') {
     $vcname = $locale->text('Vendor');
     $vcnumber = $locale->text('Vendor Number');
     $l_customernumber = "";
-    $l_name = qq|<input name="l_name" class=checkbox type=checkbox value=Y checked> $vcname|;
-    $l_vendornumber = qq|<input name="l_vendornumber" class=checkbox type=checkbox value=Y> $vcnumber|;
+    $l_name = qq|<input name="l_name" class=checkbox type=checkbox value=Y $cb{l_name}> $vcname|;
+    $l_vendornumber = qq|<input name="l_vendornumber" class=checkbox type=checkbox value=Y $cb{l_vendornumber}> $vcnumber|;
   }
 
 
@@ -1614,7 +1617,7 @@ sub search {
             </tr>
 |;
 
-      $l_warehouse = qq|<input name="l_warehouse" class=checkbox type=checkbox value=Y> |.$locale->text('Warehouse');
+      $l_warehouse = qq|<input name="l_warehouse" class=checkbox type=checkbox value=Y $cb{l_warehouse}> |.$locale->text('Warehouse');
     }
 
   }
@@ -1659,7 +1662,7 @@ sub search {
 
     $openclosed = qq|
               <tr>
-                <td nowrap><input name="open" class=checkbox type=checkbox value=1 checked> |.$locale->text('Open').qq|</td>
+                <td nowrap><input name="open" class=checkbox type=checkbox value=1 $cb{open}> |.$locale->text('Open').qq|</td>
                 <td nowrap><input name="closed" class=checkbox type=checkbox value=1 $form->{closed}> |.$locale->text('Closed').qq|</td>
               </tr>
 |;
@@ -1696,32 +1699,32 @@ sub search {
 |;
 
 
-    $l_ponumber = qq|<input name="l_ponumber" class=checkbox type=checkbox value=Y> |.$locale->text('PO Number');
+    $l_ponumber = qq|<input name="l_ponumber" class=checkbox type=checkbox value=Y $cb{l_ponumber}> |.$locale->text('PO Number');
 
-    $l_backorder = qq|<input name="l_backorder" class=checkbox type=checkbox value=Y> |.$locale->text('Backorder');
+    $l_backorder = qq|<input name="l_backorder" class=checkbox type=checkbox value=Y $cb{l_backorder}> |.$locale->text('Backorder');
   }
 
   @a = ();
-  push @a, qq|<input name="l_runningnumber" class=checkbox type=checkbox value=Y> |.$locale->text('No.');
-  push @a, qq|<input name="l_id" class=checkbox type=checkbox value=Y> |.$locale->text('ID');
-  push @a, qq|<input name="l_$ordnumber" class=checkbox type=checkbox value=Y checked> $ordlabel|;
-  push @a, qq|<input name="l_description" class=checkbox type=checkbox value=Y checked> |.$locale->text('Description');
-  push @a, qq|<input name="l_transdate" class=checkbox type=checkbox value=Y checked> |.$locale->text('Date');
+  push @a, qq|<input name="l_runningnumber" class=checkbox type=checkbox value=Y $cb{l_runningnumber}> |.$locale->text('No.');
+  push @a, qq|<input name="l_id" class=checkbox type=checkbox value=Y $cb{l_id}> |.$locale->text('ID');
+  push @a, qq|<input name="l_$ordnumber" class=checkbox type=checkbox value=Y $cb{"l_$ordnumber"}> $ordlabel|;
+  push @a, qq|<input name="l_description" class=checkbox type=checkbox value=Y $cb{l_description}> |.$locale->text('Description');
+  push @a, qq|<input name="l_transdate" class=checkbox type=checkbox value=Y $cb{l_transdate}> |.$locale->text('Date');
   push @a, $l_ponumber if $l_ponumber;
-  push @a, qq|<input name="l_reqdate" class=checkbox type=checkbox value=Y checked> $requiredby|;
-  push @a, qq|<input name="l_name" class=checkbox type=checkbox value=Y checked> $vcname|;
-  push @a, qq|<input name="l_$form->{vc}number" class=checkbox type=checkbox value=Y checked> $vcnumber|;
+  push @a, qq|<input name="l_reqdate" class=checkbox type=checkbox value=Y $cb{l_reqdate}> $requiredby|;
+  push @a, qq|<input name="l_name" class=checkbox type=checkbox value=Y $cb{l_name}> $vcname|;
+  push @a, qq|<input name="l_$form->{vc}number" class=checkbox type=checkbox value=Y $cb{"l_$form->{vc}number"}> $vcnumber|;
   push @a, $l_employee if $l_employee;
   push @a, $l_warehouse if $l_warehouse;
-  push @a, qq|<input name="l_shippingpoint" class=checkbox type=checkbox value=Y> |.$locale->text('Shipping Point');
-  push @a, qq|<input name="l_shipvia" class=checkbox type=checkbox value=Y> |.$locale->text('Ship via');
-  push @a, qq|<input name="l_waybill" class=checkbox type=checkbox value=Y> |.$locale->text('Waybill');
-  push @a, qq|<input name="l_netamount" class=checkbox type=checkbox value=Y> |.$locale->text('Amount');
-  push @a, qq|<input name="l_tax" class=checkbox type=checkbox value=Y> |.$locale->text('Tax');
-  push @a, qq|<input name="l_amount" class=checkbox type=checkbox value=Y checked> |.$locale->text('Total');
-  push @a, qq|<input name="l_curr" class=checkbox type=checkbox value=Y checked> |.$locale->text('Currency');
-  push @a, qq|<input name="l_memo" class=checkbox type=checkbox value=Y> |.$locale->text('Line Item');
-  push @a, qq|<input name="l_notes" class=checkbox type=checkbox value=Y> |.$locale->text('Notes');
+  push @a, qq|<input name="l_shippingpoint" class=checkbox type=checkbox value=Y $cb{l_shippingpoint}> |.$locale->text('Shipping Point');
+  push @a, qq|<input name="l_shipvia" class=checkbox type=checkbox value=Y $cb{l_shipvia}> |.$locale->text('Ship via');
+  push @a, qq|<input name="l_waybill" class=checkbox type=checkbox value=Y $cb{l_waybill}> |.$locale->text('Waybill');
+  push @a, qq|<input name="l_netamount" class=checkbox type=checkbox value=Y $cb{l_netamount}> |.$locale->text('Amount');
+  push @a, qq|<input name="l_tax" class=checkbox type=checkbox value=Y $cb{l_tax}> |.$locale->text('Tax');
+  push @a, qq|<input name="l_amount" class=checkbox type=checkbox value=Y $cb{l_amount}> |.$locale->text('Total');
+  push @a, qq|<input name="l_curr" class=checkbox type=checkbox value=Y $cb{l_curr}> |.$locale->text('Currency');
+  push @a, qq|<input name="l_memo" class=checkbox type=checkbox value=Y $cb{l_memo}> |.$locale->text('Line Item');
+  push @a, qq|<input name="l_notes" class=checkbox type=checkbox value=Y $cb{l_notes}> |.$locale->text('Notes');
   push @a, $l_backorder if $l_backorder;
 
   $form->helpref(\%myconfig, \%slconfig, "search_$form->{type}");
@@ -1730,7 +1733,7 @@ sub search {
 
   &calendar;
 
-  my $focus = $form->{type} =~ /quotation/ ? 'quonumber' : 'ordnumber';
+  my $focus = $form->{focus} || $d{focus} || ($form->{type} =~ /quotation/ ? 'quonumber' : 'ordnumber');
   print qq|
 <body onload="document.main.$focus.focus()">
 
@@ -1778,7 +1781,6 @@ sub search {
           <th align=right>|.$locale->text('From').qq|</th>
           <td colspan=3 nowrap><input name=transdatefrom size=11 class=date accesskey="*" title="$myconfig{dateformat} [*]">|.&js_calendar("main", "transdatefrom").qq|<span class="label">|.$locale->text('To').qq| <input name=transdateto size=11 class=date title="$myconfig{dateformat}">|.&js_calendar("main", "transdateto").qq|</td>
         </tr>
-        <input type=hidden name=sort value=transdate>
         $selectfrom
         <tr>
           <th align=right>|.$locale->text('Include in Report').qq|</th>
@@ -1799,7 +1801,7 @@ sub search {
 
   print qq|
               <tr>
-                <td><input name="l_subtotal" class=checkbox type=checkbox value=Y> |.$locale->text('Subtotal').qq|</td>
+                <td><input name="l_subtotal" class=checkbox type=checkbox value=Y $cb{l_subtotal}> |.$locale->text('Subtotal').qq|</td>
               </tr>
             </table>
           </td>
@@ -1836,6 +1838,11 @@ sub search {
 
 
 sub transactions {
+
+  my %d = &_transactions_defaults;
+  for (qw|sort direction|) {
+    $form->{$_} ||= $d{$_} if $d{$_};
+  }
 
   # split vendor / customer
   ($form->{$form->{vc}}, $form->{"$form->{vc}_id"}) = split(/--/, $form->{$form->{vc}});
@@ -1990,7 +1997,7 @@ sub transactions {
     $option .= $locale->text('Shipped');
   }
 
-  @columns = $form->sort_columns("transdate", "reqdate", "id", "$ordnumber", "ponumber", "name", "$form->{vc}number", "description", "memo", "notes", "netamount", "tax", "amount", "curr", "employee", "warehouse", "shippingpoint", "shipvia", "waybill", "open", "closed");
+  @columns = $form->sort_columns($d{columns}->@*);
   unshift @columns, "runningnumber";
 
   $form->{l_open} = $form->{l_closed} = "Y" if ($form->{open} && $form->{closed}) ;
@@ -3783,6 +3790,78 @@ sub generate_sales_invoices {
 }
 
 
+# defaults for reports
+
+sub _search_defaults {
+  return (
+    checkboxes => {
+      interval => {
+        current => 'checked',
+        month   => '',
+        quarter => '',
+        year    => '',
+      },
+      detail => {
+        summary => 'checked',
+        detail  => '',
+      },
+      shippeditems => {
+        all     => '',
+        shipped => 'checked',
+      },
+      open             => 'checked',
+      closed           => '',
+      onhold           => '',
+      notonhold        => '',
+      l_employee       => '',
+      l_name           => 'checked',
+      l_customernumber => '',
+      l_vendornumber   => '',
+      l_warehouse      => '',
+      open             => 'checked',
+      closed           => '',
+      l_ponumber       => '',
+      l_backorder      => '',
+      l_runningnumber  => '',
+      l_id             => '',
+      l_ordnumber      => 'checked',
+      l_quonumber      => 'checked',
+      l_number         => 'checked',
+      l_description    => 'checked',
+      l_transdate      => 'checked',
+      l_reqdate        => 'checked',
+      l_customernumber => 'checked',
+      l_vendornumber   => 'checked',
+      l_shippingpoint  => '',
+      l_shipvia        => '',
+      l_waybill        => '',
+      l_netamount      => '',
+      l_tax            => '',
+      l_amount         => 'checked',
+      l_curr           => 'checked',
+      l_memo           => '',
+      l_notes          => '',
+      l_subtotal       => '',
+    },
+    focus => $form->{type} =~ /quotation/ ? 'quonumber' : 'ordnumber',
+  );
+}
+
+
+sub _transactions_defaults {
+  return (
+    columns => [
+      'transdate',    'reqdate',     'id',            'ordnumber',
+      'quonumber',    'ponumber',    'name',          'customernumber',
+      'vendornumber', 'description', 'memo',          'notes',
+      'netamount',    'tax',         'amount',        'curr',
+      'employee',     'warehouse',   'shippingpoint', 'shipvia',
+      'waybill',      'open',        'closed',
+    ],
+    sort      => 'transdate',
+    direction => '',
+  );
+}
 
 
 =encoding utf8
@@ -3893,5 +3972,11 @@ L<bin::mozilla::oe> implements the following functions:
 =head2 vendor_selected
 
 =head2 yes
+
+=head1 INTERNAL FUNCTIONS
+
+=head2 _search_defaults
+
+=head2 _transactions_defaults
 
 =cut

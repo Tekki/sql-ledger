@@ -2956,6 +2956,28 @@ sub load_defaults ($self, $myconfig, $dbh = undef, $flds = []) {
 }
 
 
+sub search_defaults ($self, $values, $defaults, $checkboxes, $radiobuttons) {
+
+  %$defaults     = $values->%*;
+  %$checkboxes   = $defaults->{checkboxes}->%*;
+  %$radiobuttons = $defaults->{radiobuttons}->%*;
+
+  return 1;
+}
+
+
+sub report_defaults ($self, $values, $defaults) {
+
+  %$defaults = $values->%*;
+
+  for (qw|sort direction|) {
+    $self->{$_} ||= $values->{$_} if $values->{$_};
+  }
+
+  return 1;
+}
+
+
 sub all_vc ($self, $myconfig, $vc, $module, $dbh = undef, $transdate = '', $job = '', $openinv = '', $openord = '') {
 
   my $ref;
@@ -5917,7 +5939,11 @@ L<SL::Form> implements the following methods:
 
   $form->save_status($dbh);
 
-=head2 select_optionform
+=head2 search_defaults
+
+  $form->search_defaults($values, $defaults, $checkboxes, $radiobuttons);
+
+=head2 select_option
 
   $form->select_option($list, $selected, $removeid, $rev);
 

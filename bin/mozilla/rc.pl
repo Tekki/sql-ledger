@@ -86,7 +86,7 @@ sub reconciliation {
   }
 
   %checked = ();
-  $form->{summary} = "1" unless exists $form->{summary};
+  $form->{summary} = "0" unless exists $form->{summary};
   $checked{"$form->{summary}"} = "checked";
 
   $form->{fx_transaction} = "checked" unless exists $form->{fx_transaction};

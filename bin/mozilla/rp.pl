@@ -64,20 +64,23 @@ use SL::CP;
 
 sub report {
 
+  my (%d, %cb, %rb);
+  $form->search_defaults(&_report_defaults, \%d, \%cb, \%rb);
+
   %report = (
-    ap_aging             => {title => 'AP Aging',         vc    => 'vendor'},
-    ar_aging             => {title => 'AR Aging',         vc    => 'customer'},
-    balance_sheet        => {title => 'Balance Sheet',    focus => 'todate'},
-    income_statement     => {title => 'Income Statement', focus => 'fromdate'},
+    ap_aging             => {title => 'AP Aging', vc => 'vendor'},
+    ar_aging             => {title => 'AR Aging', vc => 'customer'},
+    balance_sheet        => {title => 'Balance Sheet'},
+    income_statement     => {title => 'Income Statement'},
     nontaxable_purchases => {title => 'Non-taxable Purchases'},
     nontaxable_sales     => {title => 'Non-taxable Sales', vc => 'customer'},
     payments             => {title => 'Payments'},
-    projects             => {title => 'Project Transactions', focus => 'projectnumber'},
-    receipts             => {title => 'Receipts',             vc    => 'customer'},
-    reminder             => {title => 'Reminder',             vc    => 'customer'},
-    tax_collected        => {title => 'Tax collected',        vc    => 'customer'},
+    projects             => {title => 'Project Transactions'},
+    receipts             => {title => 'Receipts',      vc => 'customer'},
+    reminder             => {title => 'Reminder',      vc => 'customer'},
+    tax_collected        => {title => 'Tax collected', vc => 'customer'},
     tax_paid             => {title => 'Tax paid'},
-    trial_balance        => {title => 'Trial Balance', focus => 'fromdate'},
+    trial_balance        => {title => 'Trial Balance'},
   );
 
   $form->{title} = $locale->text($report{$form->{reportcode}}->{title});
@@ -86,16 +89,12 @@ sub report {
 
   $form->helpref(\%myconfig, \%slconfig, "rp_$form->{reportcode}");
 
-  %checked = ();
-  $form->{accounttype} = "standard" unless $form->{accounttype} =~ /(standard|gifi)/;
-  $checked{$form->{accounttype}} = "checked";
-
   $gifi = qq|
 <tr>
   <th align=right>|.$locale->text('Accounts').qq|</th>
-  <td><input name=accounttype class=radio type=radio value=standard $checked{standard}> |.$locale->text('Standard').qq|
+  <td><input name=accounttype class=radio type=radio value=standard $rb{accounttype}{standard}> |.$locale->text('Standard').qq|
 
-      <input name=accounttype class=radio type=radio value=gifi $checked{gifi}> |.$locale->text('GIFI').qq|
+      <input name=accounttype class=radio type=radio value=gifi $rb{accounttype}{gifi}> |.$locale->text('GIFI').qq|
   </td>
 </tr>
 |;
@@ -134,40 +133,32 @@ sub report {
     $selectaccountingmonth = "\n";
     for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|$_--|.$locale->text($form->{all_month}{$_}).qq|\n| }
 
-    %checked = ();
-    $form->{interval} = "0" unless $form->{interval} =~ /(0|1|3|12)/;
-    $checked{$form->{interval}} = "checked";
-
     $selectfrom = qq|
         <tr>
           <th align=right>|.$locale->text('Period').qq|</th>
           <td colspan=3>
           <select name=month>|.$form->select_option($selectaccountingmonth, $form->{month}, 1, 1).qq|</select>
           <select name=year>|.$form->select_option($selectaccountingyear, $form->{year}, 1).qq|</select>
-          <input name=interval class=radio type=radio value=0 $checked{0}>&nbsp;|.$locale->text('Current').qq|
-          <input name=interval class=radio type=radio value=1 $checked{1}>&nbsp;|.$locale->text('Month').qq|
-          <input name=interval class=radio type=radio value=3 $checked{3}>&nbsp;|.$locale->text('Quarter').qq|
-          <input name=interval class=radio type=radio value=12 $checked{12}>&nbsp;|.$locale->text('Year').qq|
+          <input name=interval class=radio type=radio value=0 $rb{interval}{current}>&nbsp;|.$locale->text('Current').qq|
+          <input name=interval class=radio type=radio value=1 $rb{interval}{month}>&nbsp;|.$locale->text('Month').qq|
+          <input name=interval class=radio type=radio value=3 $rb{interval}{quarter}>&nbsp;|.$locale->text('Quarter').qq|
+          <input name=interval class=radio type=radio value=12 $rb{interval}{year}>&nbsp;|.$locale->text('Year').qq|
           </td>
         </tr>
 |;
 
   }
 
-  %checked = ();
-  $form->{summary} = "1" unless $form->{summary} =~ /(0|1)/;
-  $checked{$form->{summary}} = "checked";
-
   if ($form->{reportcode} =~ /^tax_/) {
     $taxsummary = q|
-          <input name=summary type=radio class=radio value=2> |.$locale->text('Only Sums');
+          <input name=summary type=radio class=radio value=2 $rb{summary}{tax_summary}> |.$locale->text('Only Sums');
   }
 
   $summary = qq|
         <tr>
           <th></th>
-          <td><input name=summary type=radio class=radio value=1 $checked{1}> |.$locale->text('Summary').qq|
-          <input name=summary type=radio class=radio value=0 $checked{0}> |.$locale->text('Detail').qq|$taxsummary
+          <td><input name=summary type=radio class=radio value=1 $rb{summary}{summary}> |.$locale->text('Summary').qq|
+          <input name=summary type=radio class=radio value=0 $rb{summary}{detail}> |.$locale->text('Detail').qq|$taxsummary
           </td>
         </tr>
 |;
@@ -218,10 +209,6 @@ sub report {
 
   $form->{decimalplaces} = $form->{precision};
 
-  %checked = ();
-  $form->{method} = "accrual" unless $form->{method} =~ /(accrual|cash)/;
-  $checked{$form->{method}} = "checked";
-
   if ($form->{reportcode} eq 'balance_sheet' || $form->{reportcode} eq 'income_statement') {
     $form->{currencies} = $form->get_currencies(\%myconfig);
 
@@ -245,31 +232,25 @@ sub report {
   $method = qq|
         <tr>
           <th align=right>|.$locale->text('Method').qq|</th>
-          <td colspan=3><input name=method class=radio type=radio value=accrual $checked{accrual}>&nbsp;|.$locale->text('Accrual').qq|
-          &nbsp;<input name=method class=radio type=radio value=cash $checked{cash}>&nbsp;|.$locale->text('Cash').qq|</td>
+          <td colspan=3><input name=method class=radio type=radio value=accrual $rb{method}{accrual}>&nbsp;|.$locale->text('Accrual').qq|
+          &nbsp;<input name=method class=radio type=radio value=cash $rb{method}{cash}>&nbsp;|.$locale->text('Cash').qq|</td>
         </tr>
 |;
 
-  %checked = ();
-  $form->{includeperiod} = "year" unless $form->{includeperiod} =~ /(month|quarter|year)/;
-  $checked{$form->{includeperiod}} = "checked";
-
-  for (qw(previousyear reversedisplay)) { $checked{$_} = "checked" if $form->{$_} }
-
   $includeperiod = qq|
         <tr>
-          <th></th>
-          <td colspan=3>
-          <input name=includeperiod class=radio type=radio value=month $checked{month}>&nbsp;|.$locale->text('Months').qq|
-          <input name=includeperiod class=radio type=radio value=quarter $checked{quarter}>&nbsp;|.$locale->text('Quarters').qq|
-          <input name=includeperiod class=radio type=radio value=year $checked{year}>&nbsp;|.$locale->text('Year').qq|
+          <th align=right></th>
+          <td colspan=3><input name=previousyear class=checkbox type=checkbox value=Y $cb{previousyear}>&nbsp;|.$locale->text('Previous Year').qq|
+          <input name=reversedisplay class=checkbox type=checkbox value=Y $cb{reversedisplay}>&nbsp;|.$locale->text('Reverse Display').qq|
           </td>
         </tr>
 
         <tr>
-          <th align=right></th>
-          <td colspan=3><input name=previousyear class=checkbox type=checkbox value=Y $checked{previousyear}>&nbsp;|.$locale->text('Previous Year').qq|
-          <input name=reversedisplay class=checkbox type=checkbox value=Y $checked{reversedisplay}>&nbsp;|.$locale->text('Reverse Display').qq|
+          <th align=right>|.$locale->text('Subdivision').qq|</th>
+          <td colspan=3>
+          <input name=includeperiod class=radio type=radio value=month $rb{includeperiod}{month}>&nbsp;|.$locale->text('Months').qq|
+          <input name=includeperiod class=radio type=radio value=quarter $rb{includeperiod}{quarter}>&nbsp;|.$locale->text('Quarters').qq|
+          <input name=includeperiod class=radio type=radio value=year $rb{includeperiod}{year}>&nbsp;|.$locale->text('Year').qq|
           </td>
         </tr>
 |;
@@ -452,7 +433,7 @@ sub report {
 
   }
 
-  $focus = $form->{focus} || $report{$form->{reportcode}}{focus};
+  $focus = $form->{focus} || $d{focus}{$form->{reportcode}};
 
   $form->header;
 
@@ -477,11 +458,6 @@ sub report {
       $department
 |;
 
-  %checked = ( l_heading => "checked", l_subtotal => "checked" );
-  for (qw(l_heading l_subtotal)) {
-    $checked{$_} = ($form->{$_}) ? "checked" : "";
-  }
-
   if ($form->{reportcode} eq "projects") {
 
     print qq|
@@ -496,8 +472,8 @@ sub report {
       <table>
         <tr>
           <th align=right nowrap>|.$locale->text('Include in Report').qq|</th>
-          <td><input name=l_heading class=checkbox type=checkbox value=Y $checked{l_heading}>&nbsp;|.$locale->text('Heading').qq|
-          <input name=l_subtotal class=checkbox type=checkbox value=Y $checked{l_subtotal}>&nbsp;|.$locale->text('Subtotal').qq|</td>
+          <td><input name=l_heading class=checkbox type=checkbox value=Y $cb{l_heading}>&nbsp;|.$locale->text('Heading').qq|
+          <input name=l_subtotal class=checkbox type=checkbox value=Y $cb{l_subtotal}>&nbsp;|.$locale->text('Subtotal').qq|</td>
         </tr>
 |;
   }
@@ -511,28 +487,19 @@ sub report {
 
     if ($selectfrom) {
 
-      %checked = ();
-      $form->{interval} = "0" unless $form->{interval} =~ /(0|1|3|12)/;
-      $checked{$form->{interval}} = "checked";
-
       print qq|
         <tr>
           <th align=right>|.$locale->text('Period').qq|</th>
           <td colspan=3>
           <select name=frommonth>|.$form->select_option($selectaccountingmonth, $form->{frommonth}, 1, 1).qq|</select>
           <select name=fromyear>|.$form->select_option($selectaccountingyear, $form->{fromyear}).qq|</select>
-          <input name=interval class=radio type=radio value=0 $checked{0}>&nbsp;|.$locale->text('Current').qq|
-          <input name=interval class=radio type=radio value=1 $checked{1}>&nbsp;|.$locale->text('Month').qq|
-          <input name=interval class=radio type=radio value=3 $checked{3}>&nbsp;|.$locale->text('Quarter').qq|
-          <input name=interval class=radio type=radio value=12 $checked{12}>&nbsp;|.$locale->text('Year').qq|
+          <input name=interval class=radio type=radio value=0 $rb{interval}{current}>&nbsp;|.$locale->text('Current').qq|
+          <input name=interval class=radio type=radio value=1 $rb{interval}{month}>&nbsp;|.$locale->text('Month').qq|
+          <input name=interval class=radio type=radio value=3 $rb{interval}{quarter}>&nbsp;|.$locale->text('Quarter').qq|
+          <input name=interval class=radio type=radio value=12 $rb{interval}{year}>&nbsp;|.$locale->text('Year').qq|
           </td>
         </tr>
 |;
-    }
-
-    %checked = ( l_heading => 'checked', l_account => 'checked', l_accno => 'checked' );
-    for (qw(l_heading l_subtotal)) {
-      $checked{$_} = ($form->{$_}) ? "checked" : "";
     }
 
     print qq|
@@ -544,7 +511,7 @@ sub report {
         $lang
         <tr>
           <th align=right>|.$locale->text('Template').qq|</th>
-          <td><input name=usetemplate class=checkbox type=checkbox value=Y $checked{usetemplate}>
+          <td><input name=usetemplate class=checkbox type=checkbox value=Y $cb{usetemplate}>
           </td>
         </tr>
       </table>
@@ -557,10 +524,10 @@ sub report {
 
         <tr>
           <th align=right nowrap>|.$locale->text('Include in Report').qq|</th>
-          <td colspan=3><input name=l_heading class=checkbox type=checkbox value=Y $checked{l_heading}>&nbsp;|.$locale->text('Heading').qq|
-          <input name=l_account class=checkbox type=checkbox value=Y $checked{l_account}>&nbsp;|.$locale->text('Account').qq|
-          <input name=l_subtotal class=checkbox type=checkbox value=Y $checked{l_subtotal}>&nbsp;|.$locale->text('Subtotal').qq|
-          <input name=l_accno class=checkbox type=checkbox value=Y $checked{l_accno}>&nbsp;|.$locale->text('Account Number').qq|</td>
+          <td colspan=3><input name=l_heading class=checkbox type=checkbox value=Y $cb{l_heading}>&nbsp;|.$locale->text('Heading').qq|
+          <input name=l_account class=checkbox type=checkbox value=Y $cb{l_account}>&nbsp;|.$locale->text('Account').qq|
+          <input name=l_accno class=checkbox type=checkbox value=Y $cb{l_accno}>&nbsp;|.$locale->text('Account Number').qq|
+          <input name=l_subtotal class=checkbox type=checkbox value=Y $cb{l_subtotal}>&nbsp;|.$locale->text('Subtotal').qq|</td>
         </tr>
 
         $includeperiod
@@ -586,11 +553,6 @@ sub report {
 |;
    }
 
-   %checked = ( l_heading => 'checked', l_account => 'checked', l_accno => 'checked' );
-   for (qw(l_heading l_subtotal reversedisplay usetemplate)) {
-     $checked{$_} = ($form->{$_}) ? "checked" : "";
-   }
-
    print qq|
         </tr>
         <tr>
@@ -601,7 +563,7 @@ sub report {
         $lang
         <tr>
           <th align=right>|.$locale->text('Template').qq|</th>
-          <td><input name=usetemplate class=checkbox type=checkbox value=Y $checked{usetemplate}>
+          <td><input name=usetemplate class=checkbox type=checkbox value=Y $cb{usetemplate}>
           </td>
         </tr>
       </table>
@@ -614,10 +576,10 @@ sub report {
 
         <tr>
           <th align=right nowrap>|.$locale->text('Include in Report').qq|</th>
-          <td><input name=l_heading class=checkbox type=checkbox value=Y $checked{l_heading}>&nbsp;|.$locale->text('Heading').qq|
-          <input name=l_account class=checkbox type=checkbox value=Y $checked{l_account}>&nbsp;|.$locale->text('Account').qq|
-          <input name=l_subtotal class=checkbox type=checkbox value=Y $checked{l_subtotal}>&nbsp;|.$locale->text('Subtotal').qq|
-          <input name=l_accno class=checkbox type=checkbox value=Y $checked{l_accno}>&nbsp;|.$locale->text('Account Number').qq|</td>
+          <td><input name=l_heading class=checkbox type=checkbox value=Y $cb{l_heading}>&nbsp;|.$locale->text('Heading').qq|
+          <input name=l_account class=checkbox type=checkbox value=Y $cb{l_account}>&nbsp;|.$locale->text('Account').qq|
+          <input name=l_accno class=checkbox type=checkbox value=Y $cb{l_accno}>&nbsp;|.$locale->text('Account Number').qq|
+          <input name=l_subtotal class=checkbox type=checkbox value=Y $cb{l_subtotal}>&nbsp;|.$locale->text('Subtotal').qq|</td>
         </tr>
 
         $includeperiod
@@ -626,11 +588,6 @@ sub report {
   }
 
   if ($form->{reportcode} eq "trial_balance") {
-
-    %checked = ();
-    for (qw(l_heading l_subtotal all_accounts)) {
-      $checked{$_} = ($form->{$_}) ? "checked" : "";
-    }
 
     print qq|
         $fromto
@@ -644,9 +601,9 @@ sub report {
       <table>
         <tr>
           <th align=right nowrap>|.$locale->text('Include in Report').qq|</th>
-          <td><input name=l_heading class=checkbox type=checkbox value=Y $checked{l_heading}>&nbsp;|.$locale->text('Heading').qq|
-          <input name=l_subtotal class=checkbox type=checkbox value=Y $checked{l_subtotal}>&nbsp;|.$locale->text('Subtotal').qq|
-          <input name=all_accounts class=checkbox type=checkbox value=Y $checked{all_accounts}>&nbsp;|.$locale->text('All Accounts').qq|</td>
+          <td><input name=l_heading class=checkbox type=checkbox value=Y $cb{l_heading}>&nbsp;|.$locale->text('Heading').qq|
+          <input name=l_subtotal class=checkbox type=checkbox value=Y $cb{l_subtotal}>&nbsp;|.$locale->text('Subtotal').qq|
+          <input name=all_accounts class=checkbox type=checkbox value=Y $cb{all_accounts}>&nbsp;|.$locale->text('All Accounts').qq|</td>
         </tr>
 |;
   }
@@ -720,17 +677,17 @@ sub report {
 
     if ($form->{db} eq 'ar') {
       $vc = qq|
-    <td><input name="l_name" class=checkbox type=checkbox value=Y checked></td>
+    <td><input name="l_name" class=checkbox type=checkbox value=Y $cb{l_name}></td>
     <td>| . $locale->text('Customer') . qq|</td>
-    <td><input name="l_customernumber" class=checkbox type=checkbox value=Y></td>
+    <td><input name="l_customernumber" class=checkbox type=checkbox value=Y $cb{l_customernumber}></td>
     <td>| . $locale->text('Customer Number') . qq|</td>|;
     }
 
     if ($form->{db} eq 'ap') {
       $vc = qq|
-    <td><input name="l_name" class=checkbox type=checkbox value=Y checked></td>
+    <td><input name="l_name" class=checkbox type=checkbox value=Y $cb{l_name}></td>
     <td>| . $locale->text('Vendor') . qq|</td>
-    <td><input name="l_vendornumber" class=checkbox type=checkbox value=Y></td>
+    <td><input name="l_vendornumber" class=checkbox type=checkbox value=Y $cb{l_vendornumber}></td>
     <td>| . $locale->text('Vendor Number') . qq|</td>|;
     }
 
@@ -748,42 +705,42 @@ sub report {
           <td>
             <table>
               <tr>
-                <td><input name="l_accno" class=checkbox type=checkbox value=Y></td>
+                <td><input name="l_accno" class=checkbox type=checkbox value=Y $cb{l_accno}></td>
                 <td>| . $locale->text('Account') . qq|</td>
-                <td><input name="l_transdate" class=checkbox type=checkbox value=Y checked></td>
+                <td><input name="l_transdate" class=checkbox type=checkbox value=Y $cb{l_transdate}></td>
                 <td>| . $locale->text('Date') . qq|</td>
-                <td><input name="l_id" class=checkbox type=checkbox value=Y></td>
+                <td><input name="l_id" class=checkbox type=checkbox value=Y $cb{l_id}></td>
                 <td>| . $locale->text('ID') . qq|</td>
-                <td><input name="l_invnumber" class=checkbox type=checkbox value=Y checked></td>
+                <td><input name="l_invnumber" class=checkbox type=checkbox value=Y $cb{l_invnumber}></td>
                 <td>| . $locale->text('Invoice') . qq|</td>
               </tr>
 
               <tr>
-                <td><input name="l_description" class=checkbox type=checkbox value=Y checked></td>
+                <td><input name="l_description" class=checkbox type=checkbox value=Y $cb{l_description}></td>
                 <td>| . $locale->text('Description') . qq|</td>
                 $vc
-                <td><input name="l_address" class=checkbox type=checkbox value=Y></td>
+                <td><input name="l_address" class=checkbox type=checkbox value=Y $cb{l_address}></td>
                 <td>| . $locale->text('Address') . qq|</td>
               </tr>
 
               <tr>
-                <td><input name="l_country" class=checkbox type=checkbox value=Y></td>
+                <td><input name="l_country" class=checkbox type=checkbox value=Y $cb{l_country}></td>
                 <td>| . $locale->text('Country') . qq|</td>
-                <td><input name="l_taxnumber" class=checkbox type=checkbox value=Y></td>
+                <td><input name="l_taxnumber" class=checkbox type=checkbox value=Y $cb{l_taxnumber}></td>
                 <td>| . $locale->text('Taxnumber') . qq|</td>
-                <td><input name="l_netamount" class=checkbox type=checkbox value=Y checked></td>
+                <td><input name="l_netamount" class=checkbox type=checkbox value=Y $cb{l_netamount}></td>
                 <td>| . $locale->text('Amount') . qq|</td>
 
-                <td><input name="l_tax" class=checkbox type=checkbox value=Y checked></td>
+                <td><input name="l_tax" class=checkbox type=checkbox value=Y $cb{l_tax}></td>
                 <td>| . $locale->text('Tax') . qq|</td>
 
               </tr>
               <tr>
-                <td><input name="l_total" class=checkbox type=checkbox value=Y checked></td>
+                <td><input name="l_total" class=checkbox type=checkbox value=Y $cb{l_total}></td>
                 <td>| . $locale->text('Total') . qq|</td>
-                <td><input name="l_currency" class=checkbox type=checkbox value=Y></td>
+                <td><input name="l_currency" class=checkbox type=checkbox value=Y $cb{l_currency}></td>
                 <td>| . $locale->text('Currency') . qq|</td>
-                <td><input name="l_subtotal" class=checkbox type=checkbox value=Y></td>
+                <td><input name="l_subtotal" class=checkbox type=checkbox value=Y $cb{l_subtotal}></td>
                 <td>| . $locale->text('Subtotal') . qq|</td>
               </tr>
             </table>
@@ -804,17 +761,17 @@ sub report {
 
     if ($form->{db} eq 'ar') {
       $vc = qq|
-      <td><input name="l_name" class=checkbox type=checkbox value=Y checked></td>
+      <td><input name="l_name" class=checkbox type=checkbox value=Y $cb{l_name}></td>
       <td>|.$locale->text('Customer').qq|</td>
-      <td><input name="l_customernumber" class=checkbox type=checkbox value=Y></td>
+      <td><input name="l_customernumber" class=checkbox type=checkbox value=Y $cb{l_customernumber}></td>
       <td>|.$locale->text('Customer Number').qq|</td>|;
     }
 
     if ($form->{db} eq 'ap') {
       $vc = qq|
-      <td><input name="l_name" class=checkbox type=checkbox value=Y checked></td>
+      <td><input name="l_name" class=checkbox type=checkbox value=Y $cb{l_name}></td>
       <td>|.$locale->text('Vendor').qq|</td>
-      <td><input name="l_vendornumber" class=checkbox type=checkbox value=Y></td>
+      <td><input name="l_vendornumber" class=checkbox type=checkbox value=Y $cb{l_vendornumber}></td>
       <td>|.$locale->text('Vendor Number').qq|</td>|;
     }
 
@@ -832,34 +789,34 @@ sub report {
           <td colspan=3>
             <table>
               <tr>
-                <td><input name="l_id" class=checkbox type=checkbox value=Y></td>
+                <td><input name="l_id" class=checkbox type=checkbox value=Y $cb{l_id}></td>
                 <td>| . $locale->text('ID') . qq|</td>
-                <td><input name="l_invnumber" class=checkbox type=checkbox value=Y checked></td>
+                <td><input name="l_invnumber" class=checkbox type=checkbox value=Y $cb{l_invnumber}></td>
                 <td>| . $locale->text('Invoice') . qq|</td>
-                <td><input name="l_transdate" class=checkbox type=checkbox value=Y checked></td>
+                <td><input name="l_transdate" class=checkbox type=checkbox value=Y $cb{l_transdate}></td>
                 <td>| . $locale->text('Date') . qq|</td>
-                      <td><input name="l_description" class=checkbox type=checkbox value=Y checked></td>
+                      <td><input name="l_description" class=checkbox type=checkbox value=Y $cb{l_description}></td>
                 <td>| . $locale->text('Description') . qq|</td>
               </tr>
               <tr>
 
                 $vc
 
-                <td><input name="l_address" class=checkbox type=checkbox value=Y></td>
+                <td><input name="l_address" class=checkbox type=checkbox value=Y $cb{l_address}></td>
                 <td>| . $locale->text('Address') . qq|</td>
 
-                <td><input name="l_country" class=checkbox type=checkbox value=Y></td>
+                <td><input name="l_country" class=checkbox type=checkbox value=Y $cb{l_country}></td>
                 <td>| . $locale->text('Country') . qq|</td>
 
               </tr>
               <tr>
-                <td><input name="l_netamount" class=checkbox type=checkbox value=Y checked></td>
+                <td><input name="l_netamount" class=checkbox type=checkbox value=Y $cb{l_netamount}></td>
                 <td>| . $locale->text('Amount') . qq|</td>
               </tr>
               <tr>
-                <td><input name="l_currency" class=checkbox type=checkbox value=Y></td>
+                <td><input name="l_currency" class=checkbox type=checkbox value=Y $cb{l_currency}></td>
                 <td>| . $locale->text('Currency') . qq|</td>
-                <td><input name="l_subtotal" class=checkbox type=checkbox value=Y></td>
+                <td><input name="l_subtotal" class=checkbox type=checkbox value=Y $cb{l_subtotal}></td>
                 <td>| . $locale->text('Subtotal') . qq|</td>
               </tr>
             </table>
@@ -942,26 +899,25 @@ sub report {
         <td>
           <table>
             <tr>
-              <td nowrap><input name=overdue type=radio class=radio value=0 checked> |.$locale->text('Aged').qq|</td>
-              <td nowrap><input name=overdue type=radio class=radio value=1> |.$locale->text('Overdue').qq|</td>
+              <td nowrap><input name=overdue type=radio class=radio value=0 $rb{overdue}{aged}> |.$locale->text('Aged').qq|</td>
+              <td nowrap><input name=overdue type=radio class=radio value=1 $rb{overdue}{overdue}> |.$locale->text('Overdue').qq|</td>
             </tr>
             <tr>
-              <td nowrap width=70><input name=c0 type=checkbox class=checkbox value=1 checked> |.$locale->text('Current').qq|</td>
-              <td nowrap width=70><input name=c30 type=checkbox class=checkbox value=1 checked> 30</td>
-              <td nowrap width=70><input name=c60 type=checkbox class=checkbox value=1 checked> 60</td>
-              <td nowrap width=70><input name=c90 type=checkbox class=checkbox value=1 checked> 90</td>
+              <td nowrap width=70><input name=c0 type=checkbox class=checkbox value=1 $cb{c0}> |.$locale->text('Current').qq|</td>
+              <td nowrap width=70><input name=c30 type=checkbox class=checkbox value=1 $cb{c30}> 30</td>
+              <td nowrap width=70><input name=c60 type=checkbox class=checkbox value=1 $cb{c60}> 60</td>
+              <td nowrap width=70><input name=c90 type=checkbox class=checkbox value=1 $cb{c90}> 90</td>
             </tr>
             <tr>
-              <td nowrap width=70><input name=c15 type=checkbox class=checkbox value=1> 15</td>
-              <td nowrap width=70><input name=c45 type=checkbox class=checkbox value=1> 45</td>
-              <td nowrap width=70><input name=c75 type=checkbox class=checkbox value=1> 75</td>
+              <td nowrap width=70><input name=c15 type=checkbox class=checkbox value=1 $cb{c15}> 15</td>
+              <td nowrap width=70><input name=c45 type=checkbox class=checkbox value=1 $cb{c45}> 45</td>
+              <td nowrap width=70><input name=c75 type=checkbox class=checkbox value=1 $cb{c75}> 75</td>
             </tr>
           </table>
-              </td>
-            </tr>
-          </table>
-        </tr>
-
+        </td>
+      </tr>
+    </table>
+  </tr>
 |;
 
     $form->hide_form(qw(type format media sort));
@@ -1108,20 +1064,20 @@ sub report {
           <td>
             <table width=100%>
               <tr>
-                <td align=right><input type=checkbox class=checkbox name=fx_transaction value=1 checked> |.$locale->text('Exchange Rate Difference').qq|</td>
+                <td align=right><input type=checkbox class=checkbox name=fx_transaction value=1 $cb{fx_transaction}> |.$locale->text('Exchange Rate Difference').qq|</td>
               </tr>
 |;
 
     @a = ();
 
-    push @a, qq|<input name="l_transdate" class=checkbox type=checkbox value=Y checked> |.$locale->text('Date');
-    push @a, qq|<input name="l_reference" class=checkbox type=checkbox value=Y checked> |.$locale->text('Reference');
-    push @a, qq|<input name="l_name" class=checkbox type=checkbox value=Y checked> |.$locale->text($vclabel);
-    push @a, qq|<input name="l_$form->{vc}number" class=checkbox type=checkbox value=Y> |.$locale->text($vcnumber);
-    push @a, qq|<input name="l_description" class=checkbox type=checkbox value=Y checked> |.$locale->text('Description');
-    push @a, qq|<input name="l_paid" class=checkbox type=checkbox value=Y checked> |.$locale->text('Amount');
-    push @a, qq|<input name="l_source" class=checkbox type=checkbox value=Y checked> |.$locale->text('Source');
-    push @a, qq|<input name="l_memo" class=checkbox type=checkbox value=Y checked> |.$locale->text('Memo');
+    push @a, qq|<input name="l_transdate" class=checkbox type=checkbox value=Y $cb{l_transdate}> |.$locale->text('Date');
+    push @a, qq|<input name="l_reference" class=checkbox type=checkbox value=Y $cb{l_reference}> |.$locale->text('Reference');
+    push @a, qq|<input name="l_name" class=checkbox type=checkbox value=Y $cb{l_name}> |.$locale->text($vclabel);
+    push @a, qq|<input name="l_$form->{vc}number" class=checkbox type=checkbox value=Y $cb{"l_$form->{vc}number"}> |.$locale->text($vcnumber);
+    push @a, qq|<input name="l_description" class=checkbox type=checkbox value=Y $cb{l_description}> |.$locale->text('Description');
+    push @a, qq|<input name="l_paid" class=checkbox type=checkbox value=Y $cb{l_paid}> |.$locale->text('Amount');
+    push @a, qq|<input name="l_source" class=checkbox type=checkbox value=Y $cb{l_source}> |.$locale->text('Source');
+    push @a, qq|<input name="l_memo" class=checkbox type=checkbox value=Y $cb{l_memo}> |.$locale->text('Memo');
 
     while (@a) {
       print qq|<tr>\n|;
@@ -1134,7 +1090,7 @@ sub report {
 
     print qq|
               <tr>
-                <td><input name=l_subtotal class=checkbox type=checkbox value=Y> |.$locale->text('Subtotal').qq|</td>
+                <td><input name=l_subtotal class=checkbox type=checkbox value=Y $cb{l_subtotal}> |.$locale->text('Subtotal').qq|</td>
               </tr>
             </table>
           </td>
@@ -4558,6 +4514,100 @@ sub print_report {
 
 }
 
+
+# defaults for reports
+
+sub _report_defaults {
+  my %defaults = (
+    checkboxes => {
+      usetemplate      => '',
+      l_heading        => '',
+      l_account        => 'checked',
+      l_subtotal       => '',
+      l_accno          => 'checked',
+      previousyear     => '',
+      reversedisplay   => '',
+      all_accounts     => '',
+      fx_transaction   => 'checked',
+      l_name           => 'checked',
+      l_customernumber => '',
+      l_vendornumber   => '',
+      l_transdate      => 'checked',
+      l_id             => '',
+      l_invnumber      => 'checked',
+      l_description    => 'checked',
+      l_address        => '',
+      l_country        => '',
+      l_taxnumber      => '',
+      l_netamount      => 'checked',
+      l_tax            => 'checked',
+      l_total          => 'checked',
+      l_currency       => '',
+      l_reference      => 'checked',
+      l_customernumber => '',
+      l_vendornumber   => '',
+      l_paid           => 'checked',
+      l_source         => 'checked',
+      l_memo           => 'checked',
+      c0               => 'checked',
+      c30              => 'checked',
+      c60              => 'checked',
+      c90              => 'checked',
+      c15              => '',
+      c45              => '',
+      c75              => '',
+    },
+    radiobuttons => {
+      interval => {
+        current => 'checked',
+        month   => '',
+        quarter => '',
+        year    => '',
+      },
+      summary => {
+        summary     => 'checked',
+        detail      => '',
+        tax_summary => '',
+      },
+      method => {
+        accrual => 'checked',
+        cash    => '',
+      },
+      includeperiod => {
+        month   => '',
+        quarter => '',
+        year    => 'checked',
+      },
+      accounttype => {
+        standard => 'checked',
+        gifi     => '',
+      },
+      overdue => {
+        aged    => 'checked',
+        overdue => '',
+      },
+    },
+    focus => {
+      ap_aging             => 'vendor',
+      ar_aging             => 'customer',
+      balance_sheet        => 'todate',
+      income_statement     => 'fromdate',
+      nontaxable_purchases => 'fromdate',
+      nontaxable_sales     => 'fromdate',
+      payments             => 'vendor',
+      projects             => 'projectnumber',
+      receipts             => 'customer',
+      reminder             => 'customer',
+      tax_collected        => 'fromdate',
+      tax_paid             => 'fromdate',
+      trial_balance        => 'fromdate',
+    },
+  );
+
+  return \%defaults;
+}
+
+
 =encoding utf8
 
 =head1 NAME
@@ -4684,5 +4734,9 @@ Calls C<< &{ "select_all_$form->{type}" } >>.
   &statement_details($ref);
 
 =head2 subtotal
+
+=head1 INTERNAL FUNCTIONS
+
+=head2 _report_defaults
 
 =cut

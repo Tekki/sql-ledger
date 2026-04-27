@@ -1,0 +1,72 @@
+#======================================================================
+# SQL-Ledger ERP
+#
+# © 2026-2026 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
+#
+#======================================================================
+#
+# custom gl.pl
+# 
+# sample for customization of
+#   General Ledger--Reports
+# 
+#======================================================================
+
+1;
+# end of main
+
+
+# defaults for reports
+
+sub _search_defaults {
+   my %defaults = (
+    checkboxes => {
+      l_splitledger => '',
+      l_id          => '',
+      l_transdate   => 'checked',
+      l_reference   => 'checked',
+      l_description => 'checked',
+      l_name        => '',
+      l_vcnumber    => '',
+      l_address     => '',
+      l_department  => '',
+      l_project     => '',
+      l_notes       => '',
+      l_debit       => 'checked',
+      l_credit      => 'checked',
+      l_source      => '',
+      l_memo        => '',
+      l_lineitem    => '',
+      l_accno       => '',
+      l_gifi_accno  => '',
+      l_contra      => '',
+      l_subtotal    => '',
+    },
+    radiobuttons => {
+      interval => {
+        current => 'checked',
+        month   => '',
+        quarter => '',
+        year    => '',
+      },
+      category => {
+        all       => 'checked',
+        asset     => '',
+        liability => '',
+        equity    => '',
+        income    => '',
+        expense   => '',
+      },
+    },
+    focus   => 'description',
+    columns => [
+      'id',      'transdate',  'reference', 'description', 'name',       'vcnumber',
+      'address', 'department', 'project',   'notes',       'debit',      'credit',
+      'source',  'memo',       'lineitem',  'accno',       'gifi_accno', 'contra',
+    ],
+    sort      => 'transdate',
+    direction => '',
+  );
+
+  return \%defaults;
+}

@@ -333,10 +333,10 @@ sub transactions {
         <td>
         <select name=month>|.$form->select_option($selectaccountingmonth, undef, 1, 1).qq|</select>
         <select name=year>|.$form->select_option($selectaccountingyear, undef, 1).qq|</select>
-        <input name=interval class=radio type=radio value=0 checked>&nbsp;|.$locale->text('Current').qq|
-        <input name=interval class=radio type=radio value=1>&nbsp;|.$locale->text('Month').qq|
-        <input name=interval class=radio type=radio value=3>&nbsp;|.$locale->text('Quarter').qq|
-        <input name=interval class=radio type=radio value=12>&nbsp;|.$locale->text('Year').qq|
+        <input name=interval class=radio type=radio value=0 $rb{interval}{current}>&nbsp;|.$locale->text('Current').qq|
+        <input name=interval class=radio type=radio value=1 $rb{interval}{month}>&nbsp;|.$locale->text('Month').qq|
+        <input name=interval class=radio type=radio value=3 $rb{interval}{quarter}>&nbsp;|.$locale->text('Quarter').qq|
+        <input name=interval class=radio type=radio value=12 $rb{interval}{year}>&nbsp;|.$locale->text('Year').qq|
       </td>
     </tr>
 |;
@@ -351,16 +351,16 @@ sub transactions {
                 <td>
                   <table>
                     <tr>
-                      <td><input name="l_transnumber" type=checkbox class=checkbox value=Y> $translabel</td>
+                      <td><input name="l_transnumber" type=checkbox class=checkbox value=Y $cb{l_transnumber}> $translabel</td>
                     </tr>
                     <tr>
-                      <td><input name="l_invnumber" type=checkbox class=checkbox value=Y> $invlabel</td>
+                      <td><input name="l_invnumber" type=checkbox class=checkbox value=Y $cb{l_invnumber}> $invlabel</td>
                     </tr>
                     <tr>
-                      <td><input name="l_ordnumber" type=checkbox class=checkbox value=Y> $ordlabel</td>
+                      <td><input name="l_ordnumber" type=checkbox class=checkbox value=Y $cb{l_ordnumber}> $ordlabel</td>
                     </tr>
                     <tr>
-                      <td><input name="l_quonumber" type=checkbox class=checkbox value=Y> $quolabel</td>
+                      <td><input name="l_quonumber" type=checkbox class=checkbox value=Y $cb{l_quonumber}> $quolabel</td>
                     </tr>
                   </table>
                 </td>
@@ -374,17 +374,17 @@ sub transactions {
                     <tr>
                       <td></td>
                       <td colspan=3>
-                      <input name="open" type=checkbox class=checkbox value=Y checked>&nbsp;|.$locale->text('Open').qq|
-                      <input name="closed" type=checkbox class=checkbox value=Y checked>&nbsp;|.$locale->text('Closed').qq|
+                      <input name="open" type=checkbox class=checkbox value=Y $cb{open}>&nbsp;|.$locale->text('Open').qq|
+                      <input name="closed" type=checkbox class=checkbox value=Y $cb{closed}>&nbsp;|.$locale->text('Closed').qq|
                       </td>
                     </tr>
                     <tr>
                       <td></td>
                       <td colspan=3>
-                      <input name="l_amount" type=checkbox class=checkbox value=Y checked>&nbsp;|.$locale->text('Amount').qq|
-                      <input name="l_tax" type=checkbox class=checkbox value=Y checked>&nbsp;|.$locale->text('Tax').qq|
-                      <input name="l_total" type=checkbox class=checkbox value=Y checked>&nbsp;|.$locale->text('Total').qq|
-                      <input name="l_subtotal" type=checkbox class=checkbox value=Y>&nbsp;|.$locale->text('Subtotal').qq|
+                      <input name="l_amount" type=checkbox class=checkbox value=Y $cb{l_amount}>&nbsp;|.$locale->text('Amount').qq|
+                      <input name="l_tax" type=checkbox class=checkbox value=Y $cb{l_tax}>&nbsp;|.$locale->text('Tax').qq|
+                      <input name="l_total" type=checkbox class=checkbox value=Y $cb{l_total}>&nbsp;|.$locale->text('Total').qq|
+                      <input name="l_subtotal" type=checkbox class=checkbox value=Y $cb{l_subtotal}>&nbsp;|.$locale->text('Subtotal').qq|
                       </td>
                     </tr>
                   </table>
@@ -410,65 +410,65 @@ sub include_in_report {
 
   @f = ();
 
-  push @f, qq|<input name="l_ndx" type=checkbox class=checkbox value=Y> |.$locale->text('No.');
-  push @f, qq|<input name="l_id" type=checkbox class=checkbox value=Y> |.$locale->text('ID');
-  push @f, qq|<input name="l_typeofcontact" type=checkbox class=checkbox value=Y> |.$locale->text('Type');
-  push @f, qq|<input name="l_name" type=checkbox class=checkbox value=Y $form->{l_name}> $vcname|;
-  push @f, qq|<input name="l_$form->{db}number" type=checkbox class=checkbox value=Y> $vcnumber|;
-  push @f, qq|<input name="l_address" type=checkbox class=checkbox value=Y> |.$locale->text('Address');
-  push @f, qq|<input name="l_salutation" type=checkbox class=checkbox value=Y $form->{l_salutation}> |.$locale->text('Salutation');
-  push @f, qq|<input name="l_contact" type=checkbox class=checkbox value=Y $form->{l_contact}> |.$locale->text('Contact');
-  push @f, qq|<input name="l_contacttitle" type=checkbox class=checkbox value=Y $form->{l_contacttitle}> |.$locale->text('Title');
-  push @f, qq|<input name="l_gender" type=checkbox class=checkbox value=Y $form->{l_gender}> |.$locale->text('Gender');
-  push @f, qq|<input name="l_occupation" type=checkbox class=checkbox value=Y $form->{l_occupation}> |.$locale->text('Occupation');
-  push @f, qq|<input name="l_email" type=checkbox class=checkbox value=Y $form->{l_email}> |.$locale->text('E-mail');
-  push @f, qq|<input name="l_cc" type=checkbox class=checkbox value=Y> |.$locale->text('Cc');
-  push @f, qq|<input name="l_bcc" type=checkbox class=checkbox value=Y> |.$locale->text('Bcc');
-  push @f, qq|<input name="l_city" type=checkbox class=checkbox value=Y> |.$locale->text('City');
-  push @f, qq|<input name="l_state" type=checkbox class=checkbox value=Y> |.$locale->text('State/Province');
-  push @f, qq|<input name="l_zipcode" type=checkbox class=checkbox value=Y> |.$locale->text('Zip/Postal Code');
-  push @f, qq|<input name="l_country" type=checkbox class=checkbox value=Y> |.$locale->text('Country');
-  push @f, qq|<input name="l_phone" type=checkbox class=checkbox value=Y $form->{l_phone}> |.$locale->text('Phone');
-  push @f, qq|<input name="l_fax" type=checkbox class=checkbox value=Y> |.$locale->text('Fax');
-  push @f, qq|<input name="l_notes" type=checkbox class=checkbox value=Y> |.$locale->text('Notes');
-  push @f, qq|<input name="l_discount" type=checkbox class=checkbox value=Y> |.$locale->text('Discount');
-  push @f, qq|<input name="l_threshold" type=checkbox class=checkbox value=Y> |.$locale->text('Threshold');
-  push @f, qq|<input name="l_accounts" type=checkbox class=checkbox value=Y> |.$locale->text('Accounts');
-  push @f, qq|<input name="l_paymentmethod" type=checkbox class=checkbox value=Y> |.$locale->text('Payment Method');
-  push @f, qq|<input name="l_taxnumber" type=checkbox class=checkbox value=Y> |.$locale->text('Tax Number');
+  push @f, qq|<input name="l_ndx" type=checkbox class=checkbox value=Y $cb{l_ndx}> |.$locale->text('No.');
+  push @f, qq|<input name="l_id" type=checkbox class=checkbox value=Y $cb{l_id}> |.$locale->text('ID');
+  push @f, qq|<input name="l_typeofcontact" type=checkbox class=checkbox value=Y $cb{l_typeofcontact}> |.$locale->text('Type');
+  push @f, qq|<input name="l_name" type=checkbox class=checkbox value=Y $cb{l_name}> $vcname|;
+  push @f, qq|<input name="l_$form->{db}number" type=checkbox class=checkbox value=Y $cb{"l_$form->{db}number"}> $vcnumber|;
+  push @f, qq|<input name="l_address" type=checkbox class=checkbox value=Y $cb{l_address}> |.$locale->text('Address');
+  push @f, qq|<input name="l_salutation" type=checkbox class=checkbox value=Y $cb{l_salutation}> |.$locale->text('Salutation');
+  push @f, qq|<input name="l_contact" type=checkbox class=checkbox value=Y $cb{l_contact}> |.$locale->text('Contact');
+  push @f, qq|<input name="l_contacttitle" type=checkbox class=checkbox value=Y $cb{l_contacttitle}> |.$locale->text('Title');
+  push @f, qq|<input name="l_gender" type=checkbox class=checkbox value=Y $cb{l_gender}> |.$locale->text('Gender');
+  push @f, qq|<input name="l_occupation" type=checkbox class=checkbox value=Y $cb{l_occupation}> |.$locale->text('Occupation');
+  push @f, qq|<input name="l_email" type=checkbox class=checkbox value=Y $cb{l_email}> |.$locale->text('E-mail');
+  push @f, qq|<input name="l_cc" type=checkbox class=checkbox value=Y $cb{l_cc}> |.$locale->text('Cc');
+  push @f, qq|<input name="l_bcc" type=checkbox class=checkbox value=Y $cb{l_bcc}> |.$locale->text('Bcc');
+  push @f, qq|<input name="l_city" type=checkbox class=checkbox value=Y $cb{l_city}> |.$locale->text('City');
+  push @f, qq|<input name="l_state" type=checkbox class=checkbox value=Y $cb{l_state}> |.$locale->text('State/Province');
+  push @f, qq|<input name="l_zipcode" type=checkbox class=checkbox value=Y $cb{l_zipcode}> |.$locale->text('Zip/Postal Code');
+  push @f, qq|<input name="l_country" type=checkbox class=checkbox value=Y $cb{l_country}> |.$locale->text('Country');
+  push @f, qq|<input name="l_phone" type=checkbox class=checkbox value=Y $cb{l_phone}> |.$locale->text('Phone');
+  push @f, qq|<input name="l_fax" type=checkbox class=checkbox value=Y $cb{l_fax}> |.$locale->text('Fax');
+  push @f, qq|<input name="l_notes" type=checkbox class=checkbox value=Y $cb{l_notes}> |.$locale->text('Notes');
+  push @f, qq|<input name="l_discount" type=checkbox class=checkbox value=Y $cb{l_discount}> |.$locale->text('Discount');
+  push @f, qq|<input name="l_threshold" type=checkbox class=checkbox value=Y $cb{l_threshold}> |.$locale->text('Threshold');
+  push @f, qq|<input name="l_accounts" type=checkbox class=checkbox value=Y $cb{l_accounts}> |.$locale->text('Accounts');
+  push @f, qq|<input name="l_paymentmethod" type=checkbox class=checkbox value=Y $cb{l_paymentmethod}> |.$locale->text('Payment Method');
+  push @f, qq|<input name="l_taxnumber" type=checkbox class=checkbox value=Y $cb{l_taxnumber}> |.$locale->text('Tax Number');
 
   if ($form->{db} eq 'customer') {
-    push @f, qq|<input name="l_employee" type=checkbox class=checkbox value=Y> |.$locale->text('Salesperson');
-    push @f, qq|<input name="l_pricegroup" type=checkbox class=checkbox value=Y> |.$locale->text('Pricegroup');
+    push @f, qq|<input name="l_employee" type=checkbox class=checkbox value=Y $cb{l_employee}> |.$locale->text('Salesperson');
+    push @f, qq|<input name="l_pricegroup" type=checkbox class=checkbox value=Y $cb{l_pricegroup}> |.$locale->text('Pricegroup');
 
   } else {
-    push @f, qq|<input name="l_employee" type=checkbox class=checkbox value=Y> |.$locale->text('Employee');
-    push @f, qq|<input name="l_gifi_accno" type=checkbox class=checkbox value=Y> |.$locale->text('GIFI');
+    push @f, qq|<input name="l_employee" type=checkbox class=checkbox value=Y $cb{l_employee}> |.$locale->text('Employee');
+    push @f, qq|<input name="l_gifi_accno" type=checkbox class=checkbox value=Y $cb{l_gifi_accno}> |.$locale->text('GIFI');
 
   }
 
-  push @f, qq|<input name="l_sic_code" type=checkbox class=checkbox value=Y> |.$locale->text('SIC');
-  push @f, qq|<input name="l_bankname" type=checkbox class=checkbox value=Y> |.$locale->text('Bank');
-  push @f, qq|<input name="l_bankaddress" type=checkbox class=checkbox value=Y> |.$locale->text('Address');
-  push @f, qq|<input name="l_bankcity" type=checkbox class=checkbox value=Y> |.$locale->text('City');
-  push @f, qq|<input name="l_bankstate" type=checkbox class=checkbox value=Y> |.$locale->text('State/Province');
-  push @f, qq|<input name="l_bankzipcode" type=checkbox class=checkbox value=Y> |.$locale->text('Zip/Postal Code');
-  push @f, qq|<input name="l_bankcountry" type=checkbox class=checkbox value=Y> |.$locale->text('Country');
+  push @f, qq|<input name="l_sic_code" type=checkbox class=checkbox value=Y $cb{l_sic_code}> |.$locale->text('SIC');
+  push @f, qq|<input name="l_bankname" type=checkbox class=checkbox value=Y $cb{l_bankname}> |.$locale->text('Bank');
+  push @f, qq|<input name="l_bankaddress" type=checkbox class=checkbox value=Y $cb{l_bankaddress}> |.$locale->text('Address');
+  push @f, qq|<input name="l_bankcity" type=checkbox class=checkbox value=Y $cb{l_bankcity}> |.$locale->text('City');
+  push @f, qq|<input name="l_bankstate" type=checkbox class=checkbox value=Y $cb{l_bankstate}> |.$locale->text('State/Province');
+  push @f, qq|<input name="l_bankzipcode" type=checkbox class=checkbox value=Y $cb{l_bankzipcode}> |.$locale->text('Zip/Postal Code');
+  push @f, qq|<input name="l_bankcountry" type=checkbox class=checkbox value=Y $cb{l_bankcountry}> |.$locale->text('Country');
 
-  push @f, qq|<input name="l_iban" type=checkbox class=checkbox value=Y> |.$locale->text('IBAN');
-  push @f, qq|<input name="l_qriban" type=checkbox class=checkbox value=Y> |.$locale->text('QR IBAN');
-  push @f, qq|<input name="l_bic" type=checkbox class=checkbox value=Y> |.$locale->text('BIC');
-  push @f, qq|<input name="l_membernumber" type=checkbox class=checkbox value=Y> |.$locale->text('Member Number');
-  push @f, qq|<input name="l_clearingnumber" type=checkbox class=checkbox value=Y> |.$locale->text('BC Number');
-  push @f, qq|<input name="l_business" type=checkbox class=checkbox value=Y> |.$locale->text('Type of Business');
-  push @f, qq|<input name="l_creditlimit" type=checkbox class=checkbox value=Y> |.$locale->text('Credit Limit');
-  push @f, qq|<input name="l_outstanding" type=checkbox class=checkbox value=Y> |.$locale->text('Outstanding');
-  push @f, qq|<input name="l_availablecredit" type=checkbox class=checkbox value=Y> |.$locale->text('Available Credit');
-  push @f, qq|<input name="l_terms" type=checkbox class=checkbox value=Y> |.$locale->text('Terms');
-  push @f, qq|<input name="l_language" type=checkbox class=checkbox value=Y> |.$locale->text('Language');
-  push @f, qq|<input name="l_remittancevoucher" type=checkbox class=checkbox value=Y> |.$locale->text('Remittance Voucher');
-  push @f, qq|<input name="l_startdate" type=checkbox class=checkbox value=Y> |.$locale->text('Startdate');
-  push @f, qq|<input name="l_enddate" type=checkbox class=checkbox value=Y> |.$locale->text('Enddate');
+  push @f, qq|<input name="l_iban" type=checkbox class=checkbox value=Y $cb{l_iban}> |.$locale->text('IBAN');
+  push @f, qq|<input name="l_qriban" type=checkbox class=checkbox value=Y $cb{l_qriban}> |.$locale->text('QR IBAN');
+  push @f, qq|<input name="l_bic" type=checkbox class=checkbox value=Y $cb{l_bic}> |.$locale->text('BIC');
+  push @f, qq|<input name="l_membernumber" type=checkbox class=checkbox value=Y $cb{l_membernumber}> |.$locale->text('Member Number');
+  push @f, qq|<input name="l_clearingnumber" type=checkbox class=checkbox value=Y $cb{l_clearingnumber}> |.$locale->text('BC Number');
+  push @f, qq|<input name="l_business" type=checkbox class=checkbox value=Y $cb{l_business}> |.$locale->text('Type of Business');
+  push @f, qq|<input name="l_creditlimit" type=checkbox class=checkbox value=Y $cb{l_creditlimit}> |.$locale->text('Credit Limit');
+  push @f, qq|<input name="l_outstanding" type=checkbox class=checkbox value=Y $cb{l_outstanding}> |.$locale->text('Outstanding');
+  push @f, qq|<input name="l_availablecredit" type=checkbox class=checkbox value=Y $cb{l_availablecredit}> |.$locale->text('Available Credit');
+  push @f, qq|<input name="l_terms" type=checkbox class=checkbox value=Y $cb{l_terms}> |.$locale->text('Terms');
+  push @f, qq|<input name="l_language" type=checkbox class=checkbox value=Y $cb{l_language}> |.$locale->text('Language');
+  push @f, qq|<input name="l_remittancevoucher" type=checkbox class=checkbox value=Y $cb{l_remittancevoucher}> |.$locale->text('Remittance Voucher');
+  push @f, qq|<input name="l_startdate" type=checkbox class=checkbox value=Y $cb{l_startdate}> |.$locale->text('Startdate');
+  push @f, qq|<input name="l_enddate" type=checkbox class=checkbox value=Y $cb{l_enddate}> |.$locale->text('Enddate');
 
 
   $include = qq|
@@ -498,24 +498,23 @@ sub include_in_report {
 
 sub search {
 
+  our (%d, %cb, %rb);
+  $form->search_defaults(&_search_defaults, \%d, \%cb, \%rb);
+
 # $locale->text('Customers')
 # $locale->text('Vendors')
 
   $form->{title} = $locale->text('Search') unless $form->{title};
 
-  for (qw(name contact phone email)) { $form->{"l_$_"} = 'checked' }
-
   $form->{nextsub} = "list_names";
-
-  %checked = ( all => 'checked' );
 
   $orphan = qq|
         <tr>
           <td></td>
-          <td><input name=status class=radio type=radio value=all $checked{all}>&nbsp;|.$locale->text('All').qq|
-          <input name=status class=radio type=radio value=active $checked{active}>&nbsp;|.$locale->text('Active').qq|
-          <input name=status class=radio type=radio value=inactive $checked{inactive}>&nbsp;|.$locale->text('Inactive').qq|
-          <input name=status class=radio type=radio value=orphaned $checked{orphaned}>&nbsp;|.$locale->text('Orphaned').qq|</td>
+          <td><input name=status class=radio type=radio value=all $rb{status}{all}>&nbsp;|.$locale->text('All').qq|
+          <input name=status class=radio type=radio value=active $rb{status}{active}>&nbsp;|.$locale->text('Active').qq|
+          <input name=status class=radio type=radio value=inactive $rb{status}{inactive}>&nbsp;|.$locale->text('Inactive').qq|
+          <input name=status class=radio type=radio value=orphaned $rb{status}{orphaned}>&nbsp;|.$locale->text('Orphaned').qq|</td>
         </tr>
 |;
 
@@ -621,7 +620,7 @@ sub search_name {
     $form->helpref(\%myconfig, \%slconfig, "search_$form->{db}");
   }
 
-  $focus = "name";
+  my $focus = $form->{focus} || $d{focus} || 'name';
 
   $form->header;
 
@@ -729,6 +728,9 @@ sub search_name {
 
 sub list_names {
 
+  my %d;
+  $form->report_defaults(&_list_names_defaults, \%d);
+
   SL::CT->search(\%myconfig, $form);
 
   $href = "$form->{script}?action=list_names";
@@ -747,61 +749,46 @@ sub list_names {
     $vcnumber = $locale->text('Vendor Number');
   }
 
-  @columns = (id, name, typeofcontact, "$form->{db}number");
-
-  if ($form->{l_address}) {
-    for (qw|address1 streetname buildingnumber address2|) {
-      $form->{"l_$_"} = "Y";
-      push @columns, $_;
-    }
-    $callback .= "&l_address=Y";
-    $href .= "&l_address=Y";
-  }
-
-  push @columns, (city, state, zipcode, country, salutation);
-
-  if ($form->{l_contact}) {
-    for (firstname, lastname) {
-      $form->{"l_$_"} = "Y";
-      push @columns, $_;
-    }
-    $callback .= "&l_contact=Y";
-    $href .= "&l_contact=Y";
-  }
-
-  push @columns, (contacttitle, gender, occupation,
-             phone, fax, email, cc, bcc, employee,
-             notes, discount, terms, creditlimit, outstanding, availablecredit);
-
-  if ($form->{l_accounts}) {
-    for (arap_accno, payment_accno, discount_accno, taxaccounts) {
-      $form->{"l_$_"} = "Y";
-      push @columns, $_;
-    }
-    $callback .= "&l_accounts=Y";
-    $href .= "&l_accounts=Y";
-  }
-
-  push @columns, (paymentmethod, threshold, taxnumber, gifi_accno, sic_code,
-             business, pricegroup, language, bankname);
-
-  if ($form->{l_bankaddress}) {
-    for (qw|address1 streetname buildingnumber address2|) {
-      $form->{"l_bank$_"} = "Y";
-      push @columns, "bank$_";
-    }
-    $callback .= "&l_bankaddress=Y";
-    $href .= "&l_bankaddress=Y";
-  }
-
-  push @columns, qw(bankcity bankstate bankzipcode bankcountry iban qriban bic remittancevoucher membernumber clearingnumber startdate enddate invnumber invamount invtax invtotal ordnumber ordamount ordtax ordtotal quonumber quoamount quotax quototal);
-  @columns = $form->sort_columns(@columns);
+  @columns = $form->sort_columns($d{columns}->@*);
 
   if ($form->{sort} eq 'contact') {
     grep { s/^(firstname|lastname|contact)$// } @columns;
     unshift @columns, (firstname, lastname);
   }
-  unshift @columns, "ndx";
+
+  unshift @columns, 'ndx';
+
+  if ($form->{l_address}) {
+    for (qw|address1 streetname buildingnumber address2|) {
+      $form->{"l_$_"} = "Y";
+    }
+    $callback .= "&l_address=Y";
+    $href .= "&l_address=Y";
+  }
+
+  if ($form->{l_contact}) {
+    for (qw|firstname lastname|) {
+      $form->{"l_$_"} = "Y";
+    }
+    $callback .= "&l_contact=Y";
+    $href .= "&l_contact=Y";
+  }
+
+  if ($form->{l_accounts}) {
+    for (qw|arap_accno payment_accno discount_accno taxaccounts|) {
+      $form->{"l_$_"} = "Y";
+    }
+    $callback .= "&l_accounts=Y";
+    $href .= "&l_accounts=Y";
+  }
+
+  if ($form->{l_bankaddress}) {
+    for (qw|address1 streetname buildingnumber address2|) {
+      $form->{"l_bank$_"} = "Y";
+    }
+    $callback .= "&l_bankaddress=Y";
+    $href .= "&l_bankaddress=Y";
+  }
 
   $form->{l_invnumber} = "Y" if $form->{l_transnumber};
   foreach $item (qw(inv ord quo)) {
@@ -3800,6 +3787,126 @@ sub _transaction_report {
 }
 
 
+# defaults for reports
+
+sub _search_defaults {
+  my %defaults = (
+    checkboxes => {
+      l_transnumber       => '',
+      l_invnumber         => '',
+      l_ordnumber         => '',
+      l_quonumber         => '',
+      open                => 'checked',
+      closed              => 'checked',
+      onhold              => '',
+      notonhold           => '',
+      l_amount            => 'checked',
+      l_tax               => 'checked',
+      l_total             => 'checked',
+      l_subtotal          => '',
+      l_ndx               => '',
+      l_id                => '',
+      l_typeofcontact     => '',
+      l_name              => 'checked',
+      l_customernumber    => '',
+      l_vendornumber      => '',
+      l_address           => '',
+      l_salutation        => '',
+      l_contact           => 'checked',
+      l_contacttitle      => '',
+      l_gender            => '',
+      l_occupation        => '',
+      l_email             => 'checked',
+      l_cc                => '',
+      l_bcc               => '',
+      l_city              => '',
+      l_state             => '',
+      l_zipcode           => '',
+      l_country           => '',
+      l_phone             => 'checked',
+      l_fax               => '',
+      l_notes             => '',
+      l_discount          => '',
+      l_threshold         => '',
+      l_accounts          => '',
+      l_paymentmethod     => '',
+      l_taxnumber         => '',
+      l_employee          => '',
+      l_pricegroup        => '',
+      l_gifi_accno        => '',
+      l_sic_code          => '',
+      l_bankname          => '',
+      l_bankaddress       => '',
+      l_bankcity          => '',
+      l_bankstate         => '',
+      l_bankzipcode       => '',
+      l_bankcountry       => '',
+      l_iban              => '',
+      l_qriban            => '',
+      l_bic               => '',
+      l_membernumber      => '',
+      l_clearingnumber    => '',
+      l_business          => '',
+      l_creditlimit       => '',
+      l_outstanding       => '',
+      l_availablecredit   => '',
+      l_terms             => '',
+      l_language          => '',
+      l_remittancevoucher => '',
+      l_startdate         => '',
+      l_enddate           => '',
+    },
+    radiobuttons => {
+      status => {
+        all      => 'checked',
+        active   => '',
+        inactive => '',
+        orphaned => '',
+      },
+      interval => {
+        0  => 'checked',
+        1  => '',
+        3  => '',
+        12 => '',
+      },
+    },
+    focus => 'contact',
+  );
+
+  return \%defaults;
+}
+
+
+sub _list_names_defaults {
+  my %defaults = (
+    columns => [
+      'id',            'name',           'typeofcontact',      'customernumber',
+      'vendornumber',  'address1',       'streetname',         'buildingnumber',
+      'address2',      'city',           'state',              'zipcode',
+      'country',       'salutation',     'firstname',          'lastname',
+      'contacttitle',  'gender',         'occupation',         'phone',
+      'fax',           'email',          'cc',                 'bcc',
+      'employee',      'notes',          'discount',           'terms',
+      'creditlimit',   'outstanding',    'availablecredit',    'arap_accno',
+      'payment_accno', 'discount_accno', 'taxaccounts',        'paymentmethod',
+      'threshold',     'taxnumber',      'gifi_accno',         'sic_code',
+      'business',      'pricegroup',     'language',           'bankname',
+      'bankaddress1',  'bankstreetname', 'bankbuildingnumber', 'bankaddress2',
+      'bankcity',      'bankstate',      'bankzipcode',        'bankcountry',
+      'iban',          'qriban',         'bic',                'remittancevoucher',
+      'membernumber',  'clearingnumber', 'startdate',          'enddate',
+      'invnumber',     'invamount',      'invtax',             'invtotal',
+      'ordnumber',     'ordamount',      'ordtax',             'ordtotal',
+      'quonumber',     'quoamount',      'quotax',             'quototal',
+    ],
+    sort      => 'name',
+    direction => '',
+  );
+
+  return \%defaults;
+}
+
+
 =encoding utf8
 
 =head1 NAME
@@ -3936,5 +4043,11 @@ Calls C<< &{ $form->{nextsub} } >>.
 =head2 vendor_pricelist
 
 =head2 yes__delete
+
+=head1 INTERNAL FUNCTIONS
+
+=head2 _list_names_defaults
+
+=head2 _search_defaults
 
 =cut

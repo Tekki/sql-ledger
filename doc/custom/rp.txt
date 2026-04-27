@@ -1,0 +1,121 @@
+#======================================================================
+# SQL-Ledger ERP
+#
+# © 2026-2026 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
+#
+#======================================================================
+#
+# custom rp.pl
+# 
+# sample for customization of
+#   AR--Reports--AR Aging
+#   AR--Reports--Reminder
+#   AR--Reports--Tax collected
+#   AR--Reports--Non-taxable
+#   AP--Reports--AP Aging
+#   AP--Reports--Tax paid
+#   AP--Reports--Non-taxable
+#   Cash--Reports--Receipts
+#   Cash--Reports--Payments
+#   Projects & Jobs--Projects--Reports--Transactions
+#   Reports--Trial Balance
+#   Reports--Income Statement
+#   Reports--Balance Sheet
+#
+#======================================================================
+
+1;
+# end of main
+
+
+# defaults for reports
+
+sub _report_defaults {
+  my %defaults = (
+    checkboxes => {
+      usetemplate      => '',
+      l_heading        => '',
+      l_account        => 'checked',
+      l_subtotal       => '',
+      l_accno          => 'checked',
+      previousyear     => '',
+      reversedisplay   => '',
+      all_accounts     => '',
+      fx_transaction   => 'checked',
+      l_name           => 'checked',
+      l_customernumber => '',
+      l_vendornumber   => '',
+      l_transdate      => 'checked',
+      l_id             => '',
+      l_invnumber      => 'checked',
+      l_description    => 'checked',
+      l_address        => '',
+      l_country        => '',
+      l_taxnumber      => '',
+      l_netamount      => 'checked',
+      l_tax            => 'checked',
+      l_total          => 'checked',
+      l_currency       => '',
+      l_reference      => 'checked',
+      l_customernumber => '',
+      l_vendornumber   => '',
+      l_paid           => 'checked',
+      l_source         => 'checked',
+      l_memo           => 'checked',
+      c0               => 'checked',
+      c30              => 'checked',
+      c60              => 'checked',
+      c90              => 'checked',
+      c15              => '',
+      c45              => '',
+      c75              => '',
+    },
+    radiobuttons => {
+      interval => {
+        current => 'checked',
+        month   => '',
+        quarter => '',
+        year    => '',
+      },
+      summary => {
+        summary     => 'checked',
+        detail      => '',
+        tax_summary => '',
+      },
+      method => {
+        accrual => 'checked',
+        cash    => '',
+      },
+      includeperiod => {
+        month   => '',
+        quarter => '',
+        year    => 'checked',
+      },
+      accounttype => {
+        standard => 'checked',
+        gifi     => '',
+      },
+      overdue => {
+        aged    => 'checked',
+        overdue => '',
+      },
+    },
+    focus => {
+      ap_aging             => 'vendor',
+      ar_aging             => 'customer',
+      balance_sheet        => 'todate',
+      income_statement     => 'fromdate',
+      nontaxable_purchases => 'fromdate',
+      nontaxable_sales     => 'fromdate',
+      payments             => 'vendor',
+      projects             => 'projectnumber',
+      receipts             => 'customer',
+      reminder             => 'customer',
+      tax_collected        => 'fromdate',
+      tax_paid             => 'fromdate',
+      trial_balance        => 'fromdate',
+    },
+  );
+
+  return \%defaults;
+}

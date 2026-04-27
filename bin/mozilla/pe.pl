@@ -1788,13 +1788,14 @@ sub translation {
 |;
   }
 
+  my $focus = $form->{focus} || 'accno';
 
   $form->header;
 
   print qq|
-<body>
+<body onload="document.main.$focus.focus()">
 
-<form method=post action=$form->{script}>
+<form method="post" name="main" action="$form->{script}">
 |;
 
   $form->hide_form(qw(translation title number));

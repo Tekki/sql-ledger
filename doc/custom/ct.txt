@@ -1,0 +1,137 @@
+#======================================================================
+# SQL-Ledger ERP
+#
+# © 2026-2026 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
+#
+#======================================================================
+#
+# custom ct.pl
+# 
+# sample for customization of
+#   Customers--Reports--Search
+#   Vendors--Reports--Search
+# 
+#======================================================================
+
+1;
+# end of main
+
+
+# defaults for reports
+
+sub _search_defaults {
+  my %defaults = (
+    checkboxes => {
+      l_transnumber       => '',
+      l_invnumber         => '',
+      l_ordnumber         => '',
+      l_quonumber         => '',
+      open                => 'checked',
+      closed              => 'checked',
+      onhold              => '',
+      notonhold           => '',
+      l_amount            => 'checked',
+      l_tax               => 'checked',
+      l_total             => 'checked',
+      l_subtotal          => '',
+      l_ndx               => '',
+      l_id                => '',
+      l_typeofcontact     => '',
+      l_name              => 'checked',
+      l_customernumber    => '',
+      l_vendornumber      => '',
+      l_address           => '',
+      l_salutation        => '',
+      l_contact           => 'checked',
+      l_contacttitle      => '',
+      l_gender            => '',
+      l_occupation        => '',
+      l_email             => 'checked',
+      l_cc                => '',
+      l_bcc               => '',
+      l_city              => '',
+      l_state             => '',
+      l_zipcode           => '',
+      l_country           => '',
+      l_phone             => 'checked',
+      l_fax               => '',
+      l_notes             => '',
+      l_discount          => '',
+      l_threshold         => '',
+      l_accounts          => '',
+      l_paymentmethod     => '',
+      l_taxnumber         => '',
+      l_employee          => '',
+      l_pricegroup        => '',
+      l_gifi_accno        => '',
+      l_sic_code          => '',
+      l_bankname          => '',
+      l_bankaddress       => '',
+      l_bankcity          => '',
+      l_bankstate         => '',
+      l_bankzipcode       => '',
+      l_bankcountry       => '',
+      l_iban              => '',
+      l_qriban            => '',
+      l_bic               => '',
+      l_membernumber      => '',
+      l_clearingnumber    => '',
+      l_business          => '',
+      l_creditlimit       => '',
+      l_outstanding       => '',
+      l_availablecredit   => '',
+      l_terms             => '',
+      l_language          => '',
+      l_remittancevoucher => '',
+      l_startdate         => '',
+      l_enddate           => '',
+    },
+    radiobuttons => {
+      status => {
+        all      => 'checked',
+        active   => '',
+        inactive => '',
+        orphaned => '',
+      },
+      interval => {
+        0  => 'checked',
+        1  => '',
+        3  => '',
+        12 => '',
+      },
+    },
+    focus => 'contact',
+  );
+
+  return \%defaults;
+}
+
+
+sub _list_names_defaults {
+  my %defaults = (
+    columns => [
+      'id',            'name',           'typeofcontact',      'customernumber',
+      'vendornumber',  'address1',       'streetname',         'buildingnumber',
+      'address2',      'city',           'state',              'zipcode',
+      'country',       'salutation',     'firstname',          'lastname',
+      'contacttitle',  'gender',         'occupation',         'phone',
+      'fax',           'email',          'cc',                 'bcc',
+      'employee',      'notes',          'discount',           'terms',
+      'creditlimit',   'outstanding',    'availablecredit',    'arap_accno',
+      'payment_accno', 'discount_accno', 'taxaccounts',        'paymentmethod',
+      'threshold',     'taxnumber',      'gifi_accno',         'sic_code',
+      'business',      'pricegroup',     'language',           'bankname',
+      'bankaddress1',  'bankstreetname', 'bankbuildingnumber', 'bankaddress2',
+      'bankcity',      'bankstate',      'bankzipcode',        'bankcountry',
+      'iban',          'qriban',         'bic',                'remittancevoucher',
+      'membernumber',  'clearingnumber', 'startdate',          'enddate',
+      'invnumber',     'invamount',      'invtax',             'invtotal',
+      'ordnumber',     'ordamount',      'ordtax',             'ordtotal',
+      'quonumber',     'quoamount',      'quotax',             'quototal',
+    ],
+    sort      => 'name',
+    direction => '',
+  );
+
+  return \%defaults;
+}

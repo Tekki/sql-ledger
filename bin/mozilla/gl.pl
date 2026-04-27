@@ -189,6 +189,13 @@ sub create_links {
 
 sub search {
 
+  my (%d, %cb, %rb);
+  $form->search_defaults(&_search_defaults, \%d, \%cb, \%rb);
+  @checked = sort keys %d;
+  for (qw|sort direction|) {
+    $form->{$_} ||= $d{$_} if $d{$_};
+  }
+
   $form->{title} = $locale->text('General Ledger')." ".$locale->text('Reports');
 
   $form->{reportcode} = 'gl';
@@ -243,20 +250,16 @@ sub search {
     $selectaccountingmonth = "\n";
     for (sort keys %{ $form->{all_month} }) { $selectaccountingmonth .= qq|$_--|.$locale->text($form->{all_month}{$_}).qq|\n| }
 
-    %checked = ();
-    $form->{interval} = "0" unless $form->{interval} =~ /(0|1|3|12)/;
-    $checked{$form->{interval}} = "checked";
-
     $selectfrom = qq|
         <tr>
         <th align=right>|.$locale->text('Period').qq|</th>
         <td>
         <select name=month>|.$form->select_option($selectaccountingmonth, $form->{month}, 1, 1).qq|</select>
         <select name=year>|.$form->select_option($selectaccountingyear, $form->{year}).qq|</select>
-        <input name=interval class=radio type=radio value=0 $checked{0}>&nbsp;|.$locale->text('Current').qq|
-        <input name=interval class=radio type=radio value=1 $checked{1}>&nbsp;|.$locale->text('Month').qq|
-        <input name=interval class=radio type=radio value=3 $checked{3}>&nbsp;|.$locale->text('Quarter').qq|
-        <input name=interval class=radio type=radio value=12 $checked{12}>&nbsp;|.$locale->text('Year').qq|
+        <input name=interval class=radio type=radio value=0 $rb{interval}{current}>&nbsp;|.$locale->text('Current').qq|
+        <input name=interval class=radio type=radio value=1 $rb{interval}{month}>&nbsp;|.$locale->text('Month').qq|
+        <input name=interval class=radio type=radio value=3 $rb{interval}{quarter}>&nbsp;|.$locale->text('Quarter').qq|
+        <input name=interval class=radio type=radio value=12 $rb{interval}{year}>&nbsp;|.$locale->text('Year').qq|
         </td>
       </tr>
 |;
@@ -277,74 +280,72 @@ sub search {
 |;
   }
 
-  for (qw(transdate reference description debit credit)) { $form->{"l_$_"} = "checked" }
-
-  @checked = qw(l_subtotal);
   @input = qw(reference description name vcnumber lineitem notes source memo datefrom dateto month year accnofrom accnoto amountfrom amountto sort direction reportlogin);
   for (qw|department project|) {
     push @input, $_ if exists $form->{$_};
   }
+
   %radio = ( interval => { 0 => 0, 1 => 1, 3 => 2, 12 => 3 },
              category => { X => 0, A => 1, L => 2, Q => 3, I => 4, E => 5 }
            );
-  %checked = ();
-  $checked{X} = "checked";
 
-  $i = 1;
+  my @cols = $d{columns}->@*;
+  my %ndx;
+  @ndx{@cols} = 1 .. @cols;
   $includeinreport{id} = {
-    ndx      => $i++,
+    ndx      =>  $ndx{id},
     sort    => 'id',
     checkbox => 1,
-    html     => qq|<input name="l_id" class=checkbox type=checkbox value=Y $form->{l_id}>|,
+    html     => qq|<input name="l_id" class=checkbox type=checkbox value=Y $cb{l_id}>|,
     label    => $locale->text('ID')
   };
   $includeinreport{transdate} = {
-    ndx      => $i++,
+    ndx      =>  $ndx{transdate},
     sort    => 'transdate',
     checkbox => 1,
     html     =>
-      qq|<input name="l_transdate" class=checkbox type=checkbox value=Y $form->{l_transdate}>|,
+      qq|<input name="l_transdate" class=checkbox type=checkbox value=Y $cb{l_transdate}>|,
     label => $locale->text('Date')
   };
   $includeinreport{reference} = {
-    ndx      => $i++,
+    ndx      =>  $ndx{reference},
     sort    => 'reference',
     checkbox => 1,
     html     =>
-      qq|<input name="l_reference" class=checkbox type=checkbox value=Y $form->{l_reference}>|,
+      qq|<input name="l_reference" class=checkbox type=checkbox value=Y $cb{l_reference}>|,
     label => $locale->text('Reference')
   };
   $includeinreport{description} = {
-    ndx      => $i++,
+    ndx      =>  $ndx{description},
     sort    => 'description',
     checkbox => 1,
     html     =>
-      qq|<input name="l_description" class=checkbox type=checkbox value=Y $form->{l_description}>|,
+      qq|<input name="l_description" class=checkbox type=checkbox value=Y $cb{l_description}>|,
     label => $locale->text('Description')
   };
   $includeinreport{name} = {
-    ndx      => $i++,
+    ndx      =>  $ndx{name},
     sort    => 'name',
     checkbox => 1,
-    html     => qq|<input name="l_name" class=checkbox type=checkbox value=Y $form->{l_name}>|,
+    html     => qq|<input name="l_name" class=checkbox type=checkbox value=Y $cb{l_name}>|,
     label    => $locale->text('Company Name')
   };
   $includeinreport{vcnumber} = {
-    ndx      => $i++,
+    ndx      =>  $ndx{vcnumber},
     sort    => 'vcnumber',
     checkbox => 1,
-    html  => qq|<input name="l_vcnumber" class=checkbox type=checkbox value=Y $form->{l_vcnumber}>|,
+    html  => qq|<input name="l_vcnumber" class=checkbox type=checkbox value=Y $cb{l_vcnumber}>|,
     label => $locale->text('Company Number')
   };
   $includeinreport{address} = {
-    ndx      => $i++,
+    ndx      =>  $ndx{address},
     checkbox => 1,
-    html  => qq|<input name="l_address" class=checkbox type=checkbox value=Y $form->{l_address}>|,
+    html  => qq|<input name="l_address" class=checkbox type=checkbox value=Y $cb{l_address}>|,
     label => $locale->text('Address')
   };
   if ($l_department) {
     $includeinreport{department} = {
-      ndx      => $i++,
+      ndx      => $ndx{department},
       sort     => 'department',
       checkbox => 1,
       html     =>
@@ -354,72 +355,72 @@ sub search {
   }
   if ($l_project) {
     $includeinreport{project} = {
-      ndx      => $i++,
+      ndx      => $ndx{project},
       sort     => 'project',
       checkbox => 1,
       html     =>
-        qq|<input name="l_project" class=checkbox type=checkbox value=Y $form->{l_project}>|,
+        qq|<input name="l_project" class=checkbox type=checkbox value=Y $cb{l_project}>|,
       label => $locale->text('Project')
     };
   }
   $includeinreport{notes} = {
-    ndx      => $i++,
+    ndx      =>  $ndx{notes},
     checkbox => 1,
-    html     => qq|<input name="l_notes" class=checkbox type=checkbox value=Y $form->{l_notes}>|,
+    html     => qq|<input name="l_notes" class=checkbox type=checkbox value=Y $cb{l_notes}>|,
     label    => $locale->text('Notes')
   };
   $includeinreport{debit} = {
-    ndx      => $i++,
+    ndx      =>  $ndx{debit},
     checkbox => 1,
-    html     => qq|<input name="l_debit" class=checkbox type=checkbox value=Y $form->{l_debit}>|,
+    html     => qq|<input name="l_debit" class=checkbox type=checkbox value=Y $cb{l_debit}>|,
     label    => $locale->text('Debit')
   };
   $includeinreport{credit} = {
-    ndx      => $i++,
+    ndx      =>  $ndx{credit},
     checkbox => 1,
-    html     => qq|<input name="l_credit" class=checkbox type=checkbox value=Y $form->{l_credit}>|,
+    html     => qq|<input name="l_credit" class=checkbox type=checkbox value=Y $cb{l_credit}>|,
     label    => $locale->text('Credit')
   };
   $includeinreport{source} = {
-    ndx      => $i++,
+    ndx      =>  $ndx{source},
     sort    => 'source',
     checkbox => 1,
-    html     => qq|<input name="l_source" class=checkbox type=checkbox value=Y $form->{l_source}>|,
+    html     => qq|<input name="l_source" class=checkbox type=checkbox value=Y $cb{l_source}>|,
     label    => $locale->text('Source')
   };
   $includeinreport{memo} = {
-    ndx      => $i++,
+    ndx      =>  $ndx{memo},
     sort    => 'memo',
     checkbox => 1,
-    html     => qq|<input name="l_memo" class=checkbox type=checkbox value=Y $form->{l_memo}>|,
+    html     => qq|<input name="l_memo" class=checkbox type=checkbox value=Y $cb{l_memo}>|,
     label    => $locale->text('Memo')
   };
   $includeinreport{lineitem} = {
-    ndx      => $i++,
+    ndx      =>  $ndx{lineitem},
     sort    => 'lineitem',
     checkbox => 1,
-    html  => qq|<input name="l_lineitem" class=checkbox type=checkbox value=Y $form->{l_lineitem}>|,
+    html  => qq|<input name="l_lineitem" class=checkbox type=checkbox value=Y $cb{l_lineitem}>|,
     label => $locale->text('Line Item')
   };
   $includeinreport{accno} = {
-    ndx      => $i++,
+    ndx      =>  $ndx{accno},
     sort    => 'accno',
     checkbox => 1,
-    html     => qq|<input name="l_accno" class=checkbox type=checkbox value=Y $form->{l_accno}>|,
+    html     => qq|<input name="l_accno" class=checkbox type=checkbox value=Y $cb{l_accno}>|,
     label    => $locale->text('Account')
   };
   $includeinreport{gifi_accno} = {
-    ndx      => $i++,
+    ndx      =>  $ndx{gifi_accno},
     sort    => 'gifi_accno',
     checkbox => 1,
     html     =>
-      qq|<input name="l_gifi_accno" class=checkbox type=checkbox value=Y $form->{l_gifi_accno}>|,
+      qq|<input name="l_gifi_accno" class=checkbox type=checkbox value=Y $cb{l_gifi_accno}>|,
     label => $locale->text('GIFI')
   };
   $includeinreport{contra} = {
-    ndx      => $i++,
+    ndx      =>  $ndx{contra},
     checkbox => 1,
-    html     => qq|<input name="l_contra" class=checkbox type=checkbox value=Y $form->{l_contra}>|,
+    html     => qq|<input name="l_contra" class=checkbox type=checkbox value=Y $cb{l_contra}>|,
     label    => $locale->text('Contra')
   };
 
@@ -428,7 +429,6 @@ sub search {
 
   for (sort { $includeinreport{$a}->{ndx} <=> $includeinreport{$b}->{ndx} } keys %includeinreport) {
     $form->{flds} .= "$_=$includeinreport{$_}->{label}=$includeinreport{$_}->{sort},";
-    push @checked, "l_$_";
     if ($includeinreport{$_}->{checkbox}) {
       push @f, "$includeinreport{$_}->{html} $includeinreport{$_}->{label}";
     }
@@ -437,7 +437,7 @@ sub search {
 
   $form->helpref(\%myconfig, \%slconfig, "search_gl_transactions");
 
-  $focus = $form->{focus} || 'reference';
+  $focus = $form->{focus} || $d{focus} || 'reference';
 
   $form->header;
 
@@ -523,12 +523,12 @@ sub search {
             <table>
               <tr>
                 <td>
-                  <input name="category" class=radio type=radio value=X $checked{X}>&nbsp;|.$locale->text('All').qq|
-                  <input name="category" class=radio type=radio value=A $checked{A}>&nbsp;|.$locale->text('Asset').qq|
-                  <input name="category" class=radio type=radio value=L $checked{L}>&nbsp;|.$locale->text('Liability').qq|
-                  <input name="category" class=radio type=radio value=Q $checked{Q}>&nbsp;|.$locale->text('Equity').qq|
-                  <input name="category" class=radio type=radio value=I $checked{I}>&nbsp;|.$locale->text('Income').qq|
-                  <input name="category" class=radio type=radio value=E $checked{E}>&nbsp;|.$locale->text('Expense').qq|
+                  <input name="category" class=radio type=radio value=X $rb{category}{all}>&nbsp;|.$locale->text('All').qq|
+                  <input name="category" class=radio type=radio value=A $rb{category}{asset}>&nbsp;|.$locale->text('Asset').qq|
+                  <input name="category" class=radio type=radio value=L $rb{category}{liability}>&nbsp;|.$locale->text('Liability').qq|
+                  <input name="category" class=radio type=radio value=Q $rb{category}{equity}>&nbsp;|.$locale->text('Equity').qq|
+                  <input name="category" class=radio type=radio value=I $rb{category}{income}>&nbsp;|.$locale->text('Income').qq|
+                  <input name="category" class=radio type=radio value=E $rb{category}{expense}>&nbsp;|.$locale->text('Expense').qq|
                 </td>
               </tr>
 
@@ -551,7 +551,7 @@ sub search {
 
   print qq|
                     <tr>
-                      <td nowrap><input name="l_subtotal" class=checkbox type=checkbox value=Y>&nbsp;|.$locale->text('Subtotal').qq|</td>
+                      <td nowrap><input name="l_subtotal" class=checkbox type=checkbox value=Y $cb{l_subtotal}>&nbsp;|.$locale->text('Subtotal').qq|</td>
                     </tr>
                   </table>
                 </td>
@@ -599,8 +599,6 @@ sub search {
 sub transactions {
 
   ($form->{reportdescription}, $form->{reportid}) = split /--/, $form->{report};
-  $form->{sort} ||= $form->{oldsort};
-  $form->{sort} ||= "transdate";
   $form->{reportcode} = 'gl';
 
   SL::GL->transactions(\%myconfig, $form);
@@ -1766,6 +1764,63 @@ sub post {
 
 }
 
+
+# defaults for reports
+
+sub _search_defaults {
+   my %defaults = (
+    checkboxes => {
+      l_splitledger => '',
+      l_id          => '',
+      l_transdate   => 'checked',
+      l_reference   => 'checked',
+      l_description => 'checked',
+      l_name        => '',
+      l_vcnumber    => '',
+      l_address     => '',
+      l_department  => '',
+      l_project     => '',
+      l_notes       => '',
+      l_debit       => 'checked',
+      l_credit      => 'checked',
+      l_source      => '',
+      l_memo        => '',
+      l_lineitem    => '',
+      l_accno       => '',
+      l_gifi_accno  => '',
+      l_contra      => '',
+      l_subtotal    => '',
+    },
+    radiobuttons => {
+      interval => {
+        current => 'checked',
+        month   => '',
+        quarter => '',
+        year    => '',
+      },
+      category => {
+        all       => 'checked',
+        asset     => '',
+        liability => '',
+        equity    => '',
+        income    => '',
+        expense   => '',
+      },
+    },
+    focus   => 'description',
+    columns => [
+      'id',      'transdate',  'reference', 'description', 'name',       'vcnumber',
+      'address', 'department', 'project',   'notes',       'debit',      'credit',
+      'source',  'memo',       'lineitem',  'accno',       'gifi_accno', 'contra',
+    ],
+    sort      => 'transdate',
+    direction => '',
+  );
+
+  return \%defaults;
+}
+
+
 =encoding utf8
 
 =head1 NAME
@@ -1828,5 +1883,9 @@ L<bin::mozilla::gl> implements the following functions:
 =head2 update
 
 =head2 yes
+
+=head1 INTERNAL FUNCTIONS
+
+=head2 _search_defaults
 
 =cut
