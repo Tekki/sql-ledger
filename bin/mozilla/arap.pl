@@ -359,11 +359,10 @@ sub add_transaction {
 
   $form->{action} = "add";
 
-  $form->{callback} = $form->escape($form->{callback},1);
-  $argv = "";
-  for (keys %$form) { $argv .= "$_=$form->{$_}&" }
+  my @argv;
+  for (keys %$form) { push @argv, "$_=" . $form->escape($form->{$_}, 1); }
 
-  $form->{callback} = "$form->{script}?$argv";
+  $form->{callback} = "$form->{script}?" . join '&', @argv;
 
   $form->redirect;
 
@@ -1042,6 +1041,7 @@ sub islocked {
 sub continue { &{ $form->{nextsub} } };
 sub gl_transaction { &add };
 sub ar_transaction {
+  $form->dump_form(qw|path login action|); # debug
   $form->{script} = "ar.pl";
   $form->{rowcount} = 1;
   &add_transaction;

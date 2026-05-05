@@ -24,7 +24,8 @@ $t = SL::TestClient->new(configfile => $configfile)->connect_ok->api_login_ok;
 subtest 'Projects' => sub {
   $t->get_ok('Report frontend', 'pe.pl', action => 'search', type => 'project')
     ->press_button_ok('Generate report', 'continue')
-    ->elements_exist('Links to project, name', 'a.number-l', 'a.name-l');
+    ->elements_exist('Links to project, name', 'a.number-l', 'a.name-l')
+    ->press_button_ok('Screen to add project', 'add_project');
 };
 
 subtest 'Project transactions' => sub {
@@ -41,13 +42,15 @@ subtest 'Project time cards' => sub {
 subtest 'Jobs' => sub {
   $t->get_ok('Report frontend', 'pe.pl', action => 'search', type => 'job')
     ->press_button_ok('Generate report', 'continue')
-    ->elements_exist('Links to job, name, partnumber', 'a.number-l', 'a.name-l', 'a.partnumber-l');
+    ->elements_exist('Links to job, name, partnumber', 'a.number-l', 'a.name-l', 'a.partnumber-l')
+    ->press_button_ok('Screen to add job', 'add_job');
 };
 
 subtest 'Job time cards' => sub {
   $t->get_ok('Report frontend', 'jc.pl', action => 'search', type => 'timecard', project => 'job')
     ->press_button_ok('Generate report', 'continue')
-    ->elements_exist('Links to time card', 'a.id-l');
+    ->elements_exist('Links to time card', 'a.id-l')
+    ->press_button_ok('Screen to add time card', 'add_time_card');
 };
 
 subtest 'Job stores cards' => sub {
@@ -57,5 +60,6 @@ subtest 'Job stores cards' => sub {
 
 subtest 'Job times and stores cards' => sub {
   $t->get_ok('Report frontend', 'jc.pl', action => 'search', project => 'job')
-    ->press_button_ok('Generate report', 'continue');
+    ->press_button_ok('Generate report', 'continue')
+    ->press_button_ok('Screen to add time card', 'add_time_card');
 };

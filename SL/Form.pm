@@ -2432,10 +2432,11 @@ sub workingday ($self, $myconfig, $date) {
 sub print_button ($, $button) {
 
   for my $id (sort { $button->{$a}{ndx} <=> $button->{$b}{ndx} } grep !/_label_/, keys %$button) {
-    my %btn = $button->{$id}->%*;
-    my $id  = lc $id =~ s/ /_/gr;
-    my $class = $btn{class} ? "$btn{class} " : '';
-    print qq|\n<button class="${class}submit noprint" type="submit" name="action" value="$id" accesskey="$btn{key}" title="$btn{value} [$btn{key}]">$btn{value}</button>|;
+    my %btn    = $button->{$id}->%*;
+    my $action = $btn{action} || lc $id =~ s/ /_/gr;
+    my $class  = $btn{class} ? "$btn{class} " : '';
+    print
+      qq|\n<button class="${class}submit noprint" type="submit" name="action" value="$action" accesskey="$btn{key}" title="$btn{value} [$btn{key}]">$btn{value}</button>|;
   }
 
 }

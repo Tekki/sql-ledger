@@ -1114,13 +1114,13 @@ sub transactions {
 
   %button = (
     'General Ledger--Add Transaction' =>
-      {ndx => 1, key => 'G', value => $locale->text('GL Transaction')},
-    'AR--Add Transaction' => {ndx => 2, key => 'R', value => $locale->text('AR Transaction')},
-    'AR--Sales Invoice'   => {ndx => 3, key => 'I', value => $locale->text('Sales Invoice ')},
-    'AR--Credit Invoice'  => {ndx => 4, key => 'C', value => $locale->text('Credit Invoice ')},
-    'AP--Add Transaction' => {ndx => 5, key => 'P', value => $locale->text('AP Transaction')},
-    'AP--Vendor Invoice'  => {ndx => 6, key => 'V', value => $locale->text('Vendor Invoice ')},
-    'AP--Vendor Invoice'  => {ndx => 7, key => 'D', value => $locale->text('Debit Invoice ')},
+      {ndx => 1, action => 'gl_transaction', key => 'G', value => $locale->text('GL Transaction')},
+    'AR--Add Transaction' => {ndx => 2, action => 'ar_transaction', key => 'R', value => $locale->text('AR Transaction')},
+    'AR--Sales Invoice'   => {ndx => 3, action => 'sales_invoice_', key => 'I', value => $locale->text('Sales Invoice ')},
+    'AR--Credit Invoice'  => {ndx => 4, action => 'credit_invoice_', key => 'C', value => $locale->text('Credit Invoice ')},
+    'AP--Add Transaction' => {ndx => 5, action => 'ap_transaction', key => 'P', value => $locale->text('AP Transaction')},
+    'AP--Vendor Invoice'  => {ndx => 6, action => 'vendor_invoice_', key => 'V', value => $locale->text('Vendor Invoice ')},
+    'AP--Debit Invoice'  => {ndx => 7, action => 'debit_invoice_', key => 'D', value => $locale->text('Debit Invoice ')},
     'Save Report'         => {ndx => 8, key => 'S', value => $locale->text('Save Report'), class => 'positive' },
     'Spreadsheet'         => {ndx => 9, key => 'X', value => $locale->text('Spreadsheet')},
   );

@@ -1832,29 +1832,29 @@ sub list_cards {
   if ($form->{project} eq 'job') {
     if ($form->{type} eq 'timecard') {
       if ($myconfig{acs} !~ /Production--Add Time Card/) {
-        $button{'Production--Add Time Card'} = { ndx => $i++, key => 'T',  value => $locale->text('Add Time Card') };
+        $button{'Production--Add Time Card'} = { ndx => $i++, action => 'add_time_card', key => 'T',  value => $locale->text('Add Time Card') };
       }
     } elsif ($form->{type} eq 'storescard') {
       if ($myconfig{acs} !~ /Production--Add Stores Card/) {
-        $button{'Production--Add Stores Card'} = { ndx => $i++, key => 'T',  value => $locale->text('Add Stores Card') };
+        $button{'Production--Add Stores Card'} = { ndx => $i++, action => 'add_stores_card', key => 'T',  value => $locale->text('Add Stores Card') };
       }
     } else {
       $i = 1;
       if ($myconfig{acs} !~ /Production--Add Time Card/) {
-        $button{'Production--Add Time Card'} = { ndx => $i++, key => 'T',  value => $locale->text('Add Time Card') };
+        $button{'Production--Add Time Card'} = { ndx => $i++, action => 'add_time_card', key => 'T',  value => $locale->text('Add Time Card') };
       }
 
       if ($myconfig{acs} !~ /Production--Add Stores Card/) {
-        $button{'Production--Add Stores Card'} = { ndx => $i++, key => 'T',  value => $locale->text('Add Stores Card') };
+        $button{'Production--Add Stores Card'} = { ndx => $i++, action => 'add_stores_card', key => 'T',  value => $locale->text('Add Stores Card') };
       }
     }
   } elsif ($form->{project} eq 'project') {
     if ($myconfig{acs} !~ /Projects--Projects/) {
-      $button{'Production--Add Time Card'} = { ndx => $i++, key => 'T',  value => $locale->text('Add Time Card') };
+      $button{'Production--Add Time Card'} = { ndx => $i++, action => 'add_time_card', key => 'T',  value => $locale->text('Add Time Card') };
     }
   } else {
     if ($myconfig{acs} !~ /Time Cards--Time Cards/) {
-      $button{'Production--Add Time Card'} = { ndx => $i++, key => 'T',  value => $locale->text('Add Time Card') };
+      $button{'Production--Add Time Card'} = { ndx => $i++, action => 'add_time_card', key => 'T',  value => $locale->text('Add Time Card') };
     }
   }
 

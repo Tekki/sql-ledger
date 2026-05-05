@@ -1014,11 +1014,11 @@ sub list_projects {
   $i = 1;
   if ($form->{type} eq 'project') {
     if ($myconfig{acs} !~ /Projects--Projects/) {
-      $button{'Projects--Add Project'} = { ndx => $i++, key => 'A',  value => $locale->text('Add Project') };
+      $button{'Projects--Add Project'} = { ndx => $i++, action => 'add_project', key => 'A',  value => $locale->text('Add Project') };
     }
   } else {
     if ($myconfig{acs} !~ /Job Costing--Job Costing/) {
-      $button{'Job Costing--Add Job'} = { ndx => $i++, key => 'A',  value => $locale->text('Add Job') };
+      $button{'Job Costing--Add Job'} = { ndx => $i++, action => 'add_job', key => 'A',  value => $locale->text('Add Job') };
     }
   }
 
