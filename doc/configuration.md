@@ -2,6 +2,8 @@
 
 # Configuration
 
+For more possibilities, take a look at [Customization](customization.md).
+
 ## Storage Location
 
 The configuration is stored either in the filesystem or in the database.

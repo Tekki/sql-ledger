@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Customization - SQL-Ledger Documentation</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="simple.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Customization - SQL-Ledger Documentation</h1>
+</header>
+<p><a href="index.html">SQL-Ledger Documentation</a> ▶ Customization</p>
+<h1 id="customization">Customization</h1>
+<p>Customization means modifying the program itself, either by adding
+new or by changing existing functionality. It is used when then the
+possibilities provided by the <a
+href="configuration.html">configuration</a> are not sufficient.</p>
+<p>To customize the program, add files to
+<code>bin/mozilla/custom</code> or to its subdirectories. Don't edit the
+original program files; this would make it difficult or even impossible
+to update to newer versions.</p>
+<h2 id="structure">Structure</h2>
+<p>Custom files are either named <code>menu.ini</code> or after one of
+the <code>*.pl</code> files in <code>bin/mozilla</code>. They are
+processed after the original files in the following order:</p>
+<table>
+<thead>
+<tr class="header">
+<th>#</th>
+<th>directory</th>
+<th>active for</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td><code>bin/mozilla/custom</code></td>
+<td>the whole server</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td><code>bin/mozilla/custom/company</code></td>
+<td>all users of dataset <code>company</code></td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td><code>bin/mozilla/custom/user@company</code></td>
+<td>only <code>user</code> of <code>company</code></td>
+</tr>
+</tbody>
+</table>
+<p>If the files contain the same directives, the earlier ones are
+replaced by the later ones.</p>
+<h2 id="menu">Menu</h2>
+<p>Menu files are called <code>menu.ini</code>. They add new entries
+inside the existing tree or additional entries below
+<code>Logout</code>. Horizontal lines can be used to separate the
+headers.</p>
+<pre><code>[&lt;hr&gt;]
+
+[My reports]
+
+[My reports--Outstanding Invoices]
+module=ar.pl
+action=search
+outstanding=1
+nextsub=transactions</code></pre>
+<p>Experienced users create menu entries that directly generate the
+output of reports.</p>
+<h2 id="program-code">Program code</h2>
+<p>Custom program files use the same names as the files in
+<code>bin/mozilla</code>. They are loaded whenever the original file
+with the same name is called. If the contain the a function name that
+exists in the original, it is replaced. If the function names are new,
+the are added to the program.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode perl"><code class="sourceCode perl"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># bin/mozilla/custom/aa.pl</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">sub </span><span class="fu">add</span> {</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># replaces the add function</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">sub </span><span class="fu">my_new_function</span> {</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># creates a new function</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h3 id="customized-reports">Customized Reports</h3>
+<p>The sample files for customized reports, located in
+<code>doc/custom</code>, are good examples to learn how to to create
+custom program files. They override functions, for example
+<code>_search_defaults</code> and <code>_transactions_defaults</code> in
+<code>bin/mozilla/am.pl</code>. They are used to modify the default
+values on the frontends of the reports and for some of them to change
+the order of the columns and their sort order.</p>
+<table>
+<thead>
+<tr class="header">
+<th>sample</th>
+<th>target</th>
+<th>for reports</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="custom/aa.txt">aa.txt</a></td>
+<td><code>bin/mozilla/custom/aa.pl</code></td>
+<td>AR--Reports--Transactions</td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td>AR--Reports--Outstanding</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td>AP--Reports--Transactions</td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td>AP--Reports--Outstanding</td>
+</tr>
+<tr class="odd">
+<td><a href="custom/ct.txt">ct.txt</a></td>
+<td><code>bin/mozilla/custom/ct.pl</code></td>
+<td>Customers--Reports--Search</td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td>Vendors--Reports--Search</td>
+</tr>
+<tr class="odd">
+<td><a href="custom/gl.txt">gl.txt</a></td>
+<td><code>bin/mozilla/custom/gl.pl</code></td>
+<td>General Ledger--Reports</td>
+</tr>
+<tr class="even">
+<td><a href="custom/rp.txt">rp.txt</a></td>
+<td><code>bin/mozilla/custom/rp.pl</code></td>
+<td>AR--Reports--AR Aging</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td>AR--Reports--Reminder</td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td>AR--Reports--Tax collected</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td>AR--Reports--Non-taxable</td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td>AP--Reports--AP Aging</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td>AP--Reports--Tax paid</td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td>AP--Reports--Non-taxable</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td>Cash--Reports--Receipts</td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td>Cash--Reports--Payments</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td>Projects &amp; Jobs--Projects--Reports--Transactions</td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td>Reports--Trial Balance</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td>Reports--Income Statement</td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td>Reports--Balance Sheet</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

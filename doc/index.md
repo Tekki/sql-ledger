@@ -31,6 +31,12 @@
     - [Templates](configuration.md#templates)
     - [Missing Localizations](configuration.md#missing-localizations)
 
+- [Customization](customization.md#customization)
+  - [Structure](customization.md#structure)
+  - [Menu](customization.md#menu)
+  - [Program code](customization.md#program-code)
+    - [Customized Reports](customization.md#customized-reports)
+
 - [Backup](backup.md#backup)
   - [Backup Formats](backup.md#backup-formats)
   - [Encrypted Backups](backup.md#encrypted-backups)
