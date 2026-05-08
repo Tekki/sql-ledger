@@ -1041,7 +1041,6 @@ sub islocked {
 sub continue { &{ $form->{nextsub} } };
 sub gl_transaction { &add };
 sub ar_transaction {
-  $form->dump_form(qw|path login action|); # debug
   $form->{script} = "ar.pl";
   $form->{rowcount} = 1;
   &add_transaction;
