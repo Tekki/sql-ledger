@@ -1,0 +1,93 @@
+#======================================================================
+# SQL-Ledger ERP
+#
+# © 2026-2026 Tekki (Rolf Stöckli)  https://github.com/Tekki/sql-ledger
+#
+#======================================================================
+#
+# custom oe.pl
+#
+# sample for customization of
+#   Order Entry--Reports--Sales Orders
+#   Order Entry--Reports--Purchase Orders
+#   Quotations--Reports--Quotations
+#   Quotations--Reports--RFQs
+#
+#======================================================================
+
+1;
+# end of main
+
+
+# defaults for reports
+
+sub _search_defaults {
+  return (
+    checkboxes => {
+      interval => {
+        current => 'checked',
+        month   => '',
+        quarter => '',
+        year    => '',
+      },
+      detail => {
+        summary => 'checked',
+        detail  => '',
+      },
+      shippeditems => {
+        all     => '',
+        shipped => 'checked',
+      },
+      open             => 'checked',
+      closed           => '',
+      onhold           => '',
+      notonhold        => '',
+      l_employee       => '',
+      l_name           => 'checked',
+      l_customernumber => '',
+      l_vendornumber   => '',
+      l_warehouse      => '',
+      open             => 'checked',
+      closed           => '',
+      l_ponumber       => '',
+      l_backorder      => '',
+      l_runningnumber  => '',
+      l_id             => '',
+      l_ordnumber      => 'checked',
+      l_quonumber      => 'checked',
+      l_number         => 'checked',
+      l_description    => 'checked',
+      l_transdate      => 'checked',
+      l_reqdate        => 'checked',
+      l_customernumber => 'checked',
+      l_vendornumber   => 'checked',
+      l_shippingpoint  => '',
+      l_shipvia        => '',
+      l_waybill        => '',
+      l_netamount      => '',
+      l_tax            => '',
+      l_amount         => 'checked',
+      l_curr           => 'checked',
+      l_memo           => '',
+      l_notes          => '',
+      l_subtotal       => '',
+    },
+    focus => $form->{type} =~ /quotation/ ? 'quonumber' : 'ordnumber',
+  );
+}
+
+
+sub _transactions_defaults {
+  return (
+    columns => [
+      'transdate',    'reqdate',     'id',            'ordnumber',
+      'quonumber',    'ponumber',    'name',          'customernumber',
+      'vendornumber', 'description', 'memo',          'notes',
+      'netamount',    'tax',         'amount',        'curr',
+      'employee',     'warehouse',   'shippingpoint', 'shipvia',
+      'waybill',      'open',        'closed',        'onhold',
+    ],
+    sort      => 'transdate',
+    direction => '',
+  );
+}

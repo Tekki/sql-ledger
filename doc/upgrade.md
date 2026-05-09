@@ -107,3 +107,6 @@ newer. When your branches point to one of those versions, run `git switch full`
 to move to the 3.x line and `git switch main` to return to the 4.x line.
 Remember that each branch uses its own configuration files (conf vs. YAML
 format) and changes in one set are not mirrored to the other.
+
+Versions 4.1 and higher contain database changes and are no longer compatible
+with version 3.

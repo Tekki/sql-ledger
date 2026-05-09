@@ -84,6 +84,10 @@ sort order.
 | [ct.txt](custom/ct.txt) | `bin/mozilla/custom/ct.pl` | Customers--Reports--Search                       |
 |                         |                            | Vendors--Reports--Search                         |
 | [gl.txt](custom/gl.txt) | `bin/mozilla/custom/gl.pl` | General Ledger--Reports                          |
+| [oe.txt](custom/oe.txt) | `bin/mozilla/custom/oe.pl` | Order Entry--Reports--Sales Orders               |
+|                         |                            | Order Entry--Reports--Purchase Orders            |
+|                         |                            | Quotations--Reports--Quotations                  |
+|                         |                            | Quotations--Reports--RFQs                        |
 | [rp.txt](custom/rp.txt) | `bin/mozilla/custom/rp.pl` | AR--Reports--AR Aging                            |
 |                         |                            | AR--Reports--Reminder                            |
 |                         |                            | AR--Reports--Tax collected                       |
