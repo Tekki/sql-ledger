@@ -788,7 +788,7 @@ sub post_invoice ($, $myconfig, $form, $dbh = undef) {
   if (! $form->{id}) {
 
     $query = qq|INSERT INTO ap (invnumber, employee_id)
-                VALUES ('$uid', $form->{employee_id} WHERE login = '$form->{login}'))|;
+                VALUES ('$uid', $form->{employee_id})|;
     $dbh->do($query) or $form->dberror($query);
 
     $query = qq|SELECT id FROM ap
