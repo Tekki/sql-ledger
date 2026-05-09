@@ -719,7 +719,7 @@ texts:
   Generate Sales Order from Purchase Orders: Auftrag aus Einkaufsbestellungen erstellen
   Generate Sales Orders: Aufträge erstellen
   Generating Invoices: Rechnungen werden erstellt
-  Goods & Services: Waren und Dienstleistungen
+  Goods & Services: Artikelstamm
   Group: Warengruppe
   Group Code: Gruppencode
   Group Translations: Übersetzung von Warengruppen
@@ -732,6 +732,7 @@ texts:
   HS Code: HS Code
   HTML Templates: HTML Vorlagen
   Heading: Überschrift
+  Hide: Ausblenden
   Hide Closed Accounts: Inaktive Konten verbergen
   History: Vergangene Belege
   Home Mobile: Mobile Privat
@@ -982,6 +983,7 @@ texts:
   Not an Image file!: Keine Bilddatei!
   Not enough inventory in Row: Zu kleiner Bestand in Zeile
   Not enough inventory!: Zu kleiner Bestand!
+  Not on Hold: Nicht zurückgehalten
   Notes: Bemerkungen
   Nothing entered!: Es wurde nichts eingegeben!
   Nothing in the Queue!: Es steht nichts mehr an!
@@ -1006,7 +1008,7 @@ texts:
   October: Oktober
   On: ''
   On Hand: Lagerbestand
-  On Hold: zurückhalten
+  On Hold: Zurückgehalten
   Only Sums: Nur Summen
   Only one selection allowed!: Nur eine Auswahl erlaubt!
   Open: Offen
@@ -1329,7 +1331,7 @@ texts:
   Scheduled: geplant
   Screen: Bildschirm
   Search: Suchen
-  Select: ''
+  Select: Auswählen
   Select Customer: Kunde auswählen
   Select Vendor: Lieferant auswählen
   Select a Printer!: Drucker auswählen!
@@ -1373,6 +1375,7 @@ texts:
   Shipping Date missing!: Lieferdatum fehlt!
   Shipping Point: Lieferort
   Short: Kurz
+  Show: Anzeigen
   Signature: Signatur
   Snapshot created: Snapshot hinzugefügt
   Snapshot restored: Snapshot wiederhergestellt
@@ -1470,7 +1473,6 @@ texts:
   Time and Stores Cards: Stempel- und Artikelkarten
   Timecard: Stempelkarte
   Times: Anz.
-  Titel: ''
   Title: Titel
   To: Bis
   To Warehouse: Zu Lager
