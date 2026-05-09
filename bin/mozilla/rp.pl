@@ -246,7 +246,7 @@ sub report {
         </tr>
 
         <tr>
-          <th align=right>|.$locale->text('Subdivision').qq|</th>
+          <th align=right>|.$locale->text('Group by').qq|</th>
           <td colspan=3>
           <input name=includeperiod class=radio type=radio value=month $rb{includeperiod}{month}>&nbsp;|.$locale->text('Months').qq|
           <input name=includeperiod class=radio type=radio value=quarter $rb{includeperiod}{quarter}>&nbsp;|.$locale->text('Quarters').qq|

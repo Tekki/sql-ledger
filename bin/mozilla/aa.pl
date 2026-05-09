@@ -1754,7 +1754,7 @@ sub search {
                 <td nowrap><input name=open class=checkbox type=checkbox value=Y $cb{open}> |.$locale->text('Open').qq|</td>
                 <td nowrap><input name=closed class=checkbox type=checkbox value=Y $cb{closed}> |.$locale->text('Closed').qq|</td>
                 <td nowrap><input name=onhold class=checkbox type=checkbox value=Y $cb{onhold}> |.$locale->text('On Hold').qq|</td>
-                <td nowrap><input name=notonhold class=checkbox type=checkbox value=Y $cb{notonhold}> |.$locale->text('Not On Hold').qq|</td>
+                <td nowrap><input name=notonhold class=checkbox type=checkbox value=Y $cb{notonhold}> |.$locale->text('Not on Hold').qq|</td>
               </tr>
               <tr>
                 <td nowrap><input name=paidlate class=checkbox type=checkbox value=Y $cb{paidlate}> |.$locale->text('Paid Late').qq|</td>
@@ -2141,7 +2141,7 @@ sub transactions {
     $callback .= "&notonhold=$form->{notonhold}";
     $href .= "&notonhold=$form->{notonhold}";
     $option .= "\n<br>" if ($option);
-    $option .= $locale->text('Not On Hold');
+    $option .= $locale->text('Not on Hold');
   }
   if ($form->{paidlate}) {
     $callback .= "&paidlate=$form->{paidlate}";
