@@ -444,19 +444,16 @@ sub dbupdate ($self, $form) {
   $form->{sid} = $form->{dbdefault};
 
   my @upgradescripts = ();
-  my @upgradescripts2 = ();
   my $query;
 
   # read update scripts into memory
   opendir my $sqldir, "sql/." or $form->error($!);
   @upgradescripts = sort script_version grep /$form->{dbdriver}-upgrade-.*?\.sql$/, readdir $sqldir;
-  rewinddir $sqldir;
-  @upgradescripts2 = grep /Tekki-upgrade-.*\.sql$/, readdir $sqldir;
   closedir $sqldir;
 
   &dbconnect_vars($form, $form->{dbname});
 
-  my $dbh = DBI->connect($form->{dbconnect}, $form->{dbuser}, $form->{dbpasswd}) or $form->dberror;
+  my $dbh = DBI->connect($form->{dbconnect}, $form->{dbuser}, $form->{dbpasswd}) or $form->dberror($DBI::errstr);
 
   # check version
   $query = qq|SELECT * FROM defaults|;
