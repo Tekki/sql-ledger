@@ -3459,7 +3459,8 @@ sub resource_planning {
 
       $column_data{$in_out} = qq|<td align="right">|.$form->format_amount(\%myconfig, $ref->{$in_out}, $form->{precision}, 0).qq|</td>|;
 
-      $column_data{description} = qq|<td>$ref->{description}</td>|;
+      $ref->{description} =~ /(.{,120})\n?/;
+      $column_data{description} = qq|<td>$1</td>|;
 
     } elsif ($i == 1) {
       $column_data{ordnumber}

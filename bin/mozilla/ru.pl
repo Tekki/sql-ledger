@@ -108,8 +108,10 @@ sub list_recent {
 
     my $accesskey = $i < 10 ? qq| accesskey="$i" title="[$i]"| : '';
     $column_data{number}
-      = qq|<td><a class="number-l" href="$object_url"$accesskey>$ref->{number}</a></td>|;
-    $column_data{description} = "<td>$ref->{description}</td>";
+      = qq|<td nowrap><a class="number-l" href="$object_url"$accesskey>$ref->{number}</a></td>|;
+
+    $ref->{description} =~ /(.{,150})\n?/;
+    $column_data{description} = "<td>$1</td>";
     if ($ref->{code} eq $samecode) {
       $column_data{code} = q|<td>&nbsp;</td>|;
     } else {
