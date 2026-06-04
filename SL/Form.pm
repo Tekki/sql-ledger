@@ -149,7 +149,7 @@ sub new ($type, $userspath = '') {
 
   $self->{charset} = 'UTF-8';
 
-  $self->{version}    = '4.1.0_01';
+  $self->{version}    = '4.1.0';
   $self->{dbversion}  = '4.1.0';
   $self->{cssversion} = '409';
 
