@@ -2489,6 +2489,7 @@ sub retrieve_invoice ($, $myconfig, $form) {
           $tth->finish;
 
           $aref->{sellprice} *= (1 + $taxrate);
+          $aref->{discount} //= 0;
 
           if ($aref->{discount} != 1) {
             $aref->{sellprice} = $form->round_amount($aref->{sellprice}/(1 - $aref->{discount}), $form->{precision});

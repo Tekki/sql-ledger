@@ -388,7 +388,7 @@ sub yes_delete_batch {
     $form->{callback} .= "&$_=$form->{$_}";
   }
 
-  if (SL::VR->delete_batch(\%myconfig, $form, $slconfig{spool})) {
+  if (SL::VR->delete_batch(\%myconfig, $form)) {
     $form->redirect($locale->text('Batch deleted!'));
   } else {
     $form->error($locale->text('Cannot delete batch!'));

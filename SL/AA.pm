@@ -264,7 +264,7 @@ sub post_transaction ($, $myconfig, $form, $dbh = undef) {
 
   $form->{amount} = $invamount;          # need for vr batch
 
-  ($paymentaccno) = split /--/, $form->{"${ARAP}_paid_$form->{paidaccounts}"} // '';
+  ($paymentaccno) = split /--/, $form->{"${ARAP}_paid_$form->{paidaccounts}"} || '--';
   (undef, $paymentmethod_id) = split /--/, $form->{"paymentmethod_$form->{paidaccounts}"} // '';
   ($paymentmethod_id //= 0) *= 1;
 

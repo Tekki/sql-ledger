@@ -5003,7 +5003,7 @@ sub save_report ($self, $myconfig) {
   my $query;
   my $sth;
 
-  if (($self->{reportid} //= 0) *= 1) {
+  if (looks_like_number $self->{reportid}) {
     $query = qq|DELETE FROM reportvars
                 WHERE reportid = '$self->{reportid}'|;
     $dbh->do($query) || $self->dberror($query);
