@@ -1,5 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+Not Released
+  - 
+
 4.1.0 2026-06-04
   - 'on hold' flag for orders and quotations
   - improved filter for 'on hold' in reports
