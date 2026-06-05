@@ -5254,7 +5254,7 @@ sub clear_semaphores {
 
 <h4>|.$locale->text('Remove semaphores?').qq|</h4>
 
-<button name="action" class="critical submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
+<button name="action" class="critical submit" type="submit" value="yes" accesskey="J" title="|.$locale->text('Yes').qq| [J]">|.$locale->text('Yes').qq|</button>
 </form>
 
 </body>
@@ -5369,7 +5369,7 @@ sub unlock_dataset {
 
 <h4>|.$locale->text('Unlock dataset?').qq|</h4>
 
-<button name="action" class="critical submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
+<button name="action" class="critical submit" type="submit" value="yes" accesskey="J" title="|.$locale->text('Yes').qq| [J]">|.$locale->text('Yes').qq|</button>
 </form>
 
 </body>
@@ -6952,7 +6952,7 @@ sub delete_snapshots {
 
   print qq|
 </ul>
-<button class="critical submit" type="submit" name="action" value="yes">|.$locale->text('Yes').qq|</button>
+<button class="critical submit" type="submit" name="action" value="yes" accesskey="J" title="|.$locale->text('Yes').qq| [J]">|.$locale->text('Yes').qq|</button>
 </form>
 
 </body>

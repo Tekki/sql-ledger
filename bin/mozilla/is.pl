@@ -1562,7 +1562,7 @@ sub delete {
 </h4>
 
 <p>
-<button name="action" class="critical submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
+<button name="action" class="critical submit" type="submit" value="yes" accesskey="J" title="|.$locale->text('Yes').qq| [J]">|.$locale->text('Yes').qq|</button>
 </form>
 |;
 

@@ -3904,7 +3904,7 @@ sub reconcile_payments {
 
 <h4>|.$locale->text('Are you sure you want to reconcile all marked payments').qq|</h4>
 <p>
-<button name="action" class="critical submit" type="submit" value="yes__reconcile_payments">|.$locale->text('Yes, reconcile payments').qq|</button>
+<button name="action" class="critical submit" type="submit" value="yes__reconcile_payments" accesskey="J" title="|.$locale->text('Yes, reconcile payments').qq| [J]">|.$locale->text('Yes, reconcile payments').qq|</button>
 </form>
 
 </body>

@@ -378,7 +378,7 @@ sub remove {
 
 <h4>|.$locale->text('Are you sure you want to remove the marked entries from the queue?').qq|</h4>
 
-<button name="action" class="critical submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
+<button name="action" class="critical submit" type="submit" value="yes" accesskey="J" title="|.$locale->text('Yes').qq| [J]">|.$locale->text('Yes').qq|</button>
 </form>
 
 </body>

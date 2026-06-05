@@ -3637,7 +3637,7 @@ sub retrieve_names {
 
   print qq|
 <p>
-<button name="action" class="critical submit" type="submit" value="yes__delete">|.$locale->text('Yes, delete').qq|</button>
+<button name="action" class="critical submit" type="submit" value="yes__delete" accesskey="J" title="|.$locale->text('Yes').qq| [J]">|.$locale->text('Yes, delete').qq|</button>
 </form>
 
 </body>

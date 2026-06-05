@@ -1343,7 +1343,7 @@ sub delete_timecard {
 </h4>
 
 <p>
-<button name="action" class="critical submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
+<button name="action" class="critical submit" type="submit" value="yes" accesskey="J" title="|.$locale->text('Yes').qq| [J]">|.$locale->text('Yes').qq|</button>
 </form>
 |;
 
@@ -1371,7 +1371,7 @@ sub delete_storescard {
 </h4>
 
 <p>
-<button name="action" class="critical submit" type="submit" value="yes">|.$locale->text('Yes').qq|</button>
+<button name="action" class="critical submit" type="submit" value="yes" accesskey="J" title="|.$locale->text('Yes').qq| [J]">|.$locale->text('Yes').qq|</button>
 </form>
 |;
 
