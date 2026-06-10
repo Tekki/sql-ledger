@@ -597,6 +597,7 @@ sub repost {
 <h4>$msg</h4>
 
 <button name="action" class="critical submit" type="submit" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
+<button name="action" class="submit" type="submit" value="cancel_continue" accesskey="K" title="|.$locale->text('Cancel').qq| [K]">|.$locale->text('Cancel').qq|</button>
 </form>
 
 </body>
@@ -1038,7 +1039,22 @@ sub islocked {
 }
 
 
-sub continue { &{ $form->{nextsub} } };
+sub continue { &{$form->{nextsub}} }
+
+
+sub cancel_continue {
+  my $module = $form->{script} =~ s/\.pl//r;
+  if ($form->{script} eq 'is.pl') {
+    $module = 'ar';
+  } elsif ($form->{script} eq 'ir.pl') {
+    $module = 'ap';
+  }
+
+  $form->remove_locks(\%myconfig, undef, $module);
+  $form->redirect($locale->text('Cancelled'));
+}
+
+
 sub gl_transaction { &add };
 sub ar_transaction {
   $form->{script} = "ar.pl";

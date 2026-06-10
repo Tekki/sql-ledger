@@ -1283,6 +1283,7 @@ sub resave {
 <h4>$msg</h4>
 
 <button name="action" class="critical submit" type="submit" value="continue" accesskey="C" title="|.$locale->text('Continue').qq| [C]">|.$locale->text('Continue').qq|</button>
+<button name="action" class="submit" type="submit" value="cancel_continue" accesskey="K" title="|.$locale->text('Cancel').qq| [K]">|.$locale->text('Cancel').qq|</button>
 </form>
 
 </body>
@@ -1344,6 +1345,7 @@ sub delete_timecard {
 
 <p>
 <button name="action" class="critical submit" type="submit" value="yes" accesskey="J" title="|.$locale->text('Yes').qq| [J]">|.$locale->text('Yes').qq|</button>
+<button name="action" class="submit" type="submit" value="cancel_continue" accesskey="K" title="|.$locale->text('Cancel').qq| [K]">|.$locale->text('Cancel').qq|</button>
 </form>
 |;
 
@@ -1372,6 +1374,7 @@ sub delete_storescard {
 
 <p>
 <button name="action" class="critical submit" type="submit" value="yes" accesskey="J" title="|.$locale->text('Yes').qq| [J]">|.$locale->text('Yes').qq|</button>
+<button name="action" class="submit" type="submit" value="cancel_continue" accesskey="K" title="|.$locale->text('Cancel').qq| [K]">|.$locale->text('Cancel').qq|</button>
 </form>
 |;
 
@@ -1911,7 +1914,15 @@ sub list_cards {
 }
 
 
-sub continue { &{ $form->{nextsub} } };
+sub cancel_continue {
+  my $module = 'jcitems';
+
+  $form->remove_locks(\%myconfig, undef, $module);
+  $form->redirect($locale->text('Cancelled'));
+}
+
+
+sub continue { &{ $form->{nextsub} } }
 
 sub add_time_card {
 

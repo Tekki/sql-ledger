@@ -1358,6 +1358,7 @@ sub delete_payroll {
 <h4>|.$locale->text('Are you sure you want to delete Transaction').qq| $form->{invnumber}</h4>
 
 <button name="action" class="critical submit" type="submit" value="yes" accesskey="J" title="|.$locale->text('Yes').qq| [J]">|.$locale->text('Yes').qq|</button>
+<button name="action" class="submit" type="submit" value="cancel_continue" accesskey="K" title="|.$locale->text('Cancel').qq| [K]">|.$locale->text('Cancel').qq|</button>
 </form>
 
 </body>

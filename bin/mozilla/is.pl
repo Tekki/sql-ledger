@@ -1563,6 +1563,7 @@ sub delete {
 
 <p>
 <button name="action" class="critical submit" type="submit" value="yes" accesskey="J" title="|.$locale->text('Yes').qq| [J]">|.$locale->text('Yes').qq|</button>
+<button name="action" class="submit" type="submit" value="cancel_continue" accesskey="K" title="|.$locale->text('Cancel').qq| [K]">|.$locale->text('Cancel').qq|</button>
 </form>
 |;
 
