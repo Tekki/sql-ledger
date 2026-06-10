@@ -2252,35 +2252,35 @@ sub retrieve_item ($, $myconfig, $form) {
                   AND pv.vendor_id = $form->{vendor_id}|;
 
   if (($form->{"partnumber_$i"} // '') ne "") {
-    $var = $form->like(lc $form->{"partnumber_$i"});
-    $where .= " AND (lower(p.partnumber) LIKE '$var'
+    $var = $form->like($form->{"partnumber_$i"});
+    $where .= " AND (p.partnumber ILIKE '$var'
                 OR p.barcode LIKE '$var')";
-    $vwhere .= " AND (lower(pv.partnumber) LIKE '$var'
+    $vwhere .= " AND (pv.partnumber ILIKE '$var'
                  OR p.barcode LIKE '$var')";
   }
 
   if (($form->{"description_$i"} // '') ne "") {
-    $var = $form->like(lc $form->{"description_$i"});
+    $var = $form->like($form->{"description_$i"});
     if (($form->{language_code} // '') ne "") {
-      $where .= " AND lower(t1.description) LIKE '$var'";
-      $vwhere .= " AND lower(t1.description) LIKE '$var'";
+      $where .= " AND t1.description ILIKE '$var'";
+      $vwhere .= " AND t1.description ILIKE '$var'";
     } else {
-      $where .= " AND lower(p.description) LIKE '$var'";
-      $vwhere .= " AND lower(p.description) LIKE '$var'";
+      $where .= " AND p.description ILIKE '$var'";
+      $vwhere .= " AND p.description ILIKE '$var'";
     }
   }
 
   if (($form->{"partsgroup_$i"} // '') ne "") {
     ($var, $id) = split /--/, $form->{"partsgroup_$i"} // '';
     ($id //= 0) *= 1;
-    $where .= qq| AND (lower(pg.partsgroup) LIKE '${var}:%' OR p.partsgroup_id = $id)|;
-    $vwhere .= qq| AND (lower(pg.partsgroup) LIKE '${var}:%' OR p.partsgroup_id = $id)|;
+    $where .= qq| AND (pg.partsgroup ILIKE '${var}:%' OR p.partsgroup_id = $id)|;
+    $vwhere .= qq| AND (pg.partsgroup ILIKE '${var}:%' OR p.partsgroup_id = $id)|;
   }
 
   if (($form->{"partsgroupcode_$i"} // '') ne "") {
-    $var = $form->like(lc $form->{"partsgroupcode_$i"});
-    $where .= qq| AND lower(pg.code) LIKE '$var'|;
-    $vwhere .= qq| AND lower(pg.code) LIKE '$var'|;
+    $var = $form->like($form->{"partsgroupcode_$i"});
+    $where .= qq| AND pg.code ILIKE '$var'|;
+    $vwhere .= qq| AND pg.code ILIKE '$var'|;
   }
 
   # connect to database

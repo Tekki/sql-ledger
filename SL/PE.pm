@@ -37,12 +37,12 @@ sub projects ($, $myconfig, $form) {
 
   my $var;
   if (($form->{projectnumber} // '') ne "") {
-    $var = $form->like(lc $form->{projectnumber});
-    $where .= " AND lower(pr.projectnumber) LIKE '$var'";
+    $var = $form->like($form->{projectnumber});
+    $where .= " AND pr.projectnumber ILIKE '$var'";
   }
   if (($form->{description} // '') ne "") {
-    $var = $form->like(lc $form->{description});
-    $where .= " AND lower(pr.description) LIKE '$var'";
+    $var = $form->like($form->{description});
+    $where .= " AND pr.description ILIKE '$var'";
   }
 
   unless ($form->{startdatefrom} || $form->{startdateto}) {
@@ -232,13 +232,13 @@ sub list_stock ($, $myconfig, $form) {
   }
 
   if ($form->{projectnumber}) {
-    $var = $form->like(lc $form->{projectnumber});
-    $where .= " AND lower(pr.projectnumber) LIKE '$var'";
+    $var = $form->like($form->{projectnumber});
+    $where .= " AND pr.projectnumber ILIKE '$var'";
   }
 
   if ($form->{description}) {
-    $var = $form->like(lc $form->{description});
-    $where .= " AND lower(pr.description) LIKE '$var'";
+    $var = $form->like($form->{description});
+    $where .= " AND pr.description ILIKE '$var'";
   }
 
   $form->{sort} ||= "projectnumber";
@@ -282,12 +282,12 @@ sub jobs ($, $myconfig, $form) {
                  WHERE 1=1|;
 
   if (($form->{projectnumber} // '') ne "") {
-    my $var = $form->like(lc $form->{projectnumber});
-    $query .= " AND lower(pr.projectnumber) LIKE '$var'";
+    my $var = $form->like($form->{projectnumber});
+    $query .= " AND pr.projectnumber ILIKE '$var'";
   }
   if (($form->{description} // '') ne "") {
-    my $var = $form->like(lc $form->{description});
-    $query .= " AND lower(pr.description) LIKE '$var'";
+    my $var = $form->like($form->{description});
+    $query .= " AND pr.description ILIKE '$var'";
   }
 
   unless ($form->{startdatefrom} || $form->{startdateto}) {
@@ -954,12 +954,12 @@ sub partsgroups ($, $myconfig, $form) {
   my $where = "1 = 1";
 
   if (($form->{partsgroup} // '') ne "") {
-    $var = $form->like(lc $form->{partsgroup});
-    $where .= " AND lower(g.partsgroup) LIKE '$var'";
+    $var = $form->like($form->{partsgroup});
+    $where .= " AND g.partsgroup ILIKE '$var'";
   }
   if (($form->{partsgroupcode} // '') ne "") {
-    $var = $form->like(lc $form->{partsgroupcode});
-    $where .= " AND lower(g.code) LIKE '$var'";
+    $var = $form->like($form->{partsgroupcode});
+    $where .= " AND g.code ILIKE '$var'";
   }
 
   $query .= qq| WHERE $where|;
@@ -1080,8 +1080,8 @@ sub pricegroups ($, $myconfig, $form) {
   my $where = "1 = 1";
 
   if (($form->{pricegroup} // '') ne "") {
-    $var = $form->like(lc $form->{pricegroup});
-    $where .= " AND lower(g.pricegroup) LIKE '$var'";
+    $var = $form->like($form->{pricegroup});
+    $where .= " AND g.pricegroup ILIKE '$var'";
   }
   $query .= qq| WHERE $where|;
 
@@ -1182,8 +1182,8 @@ sub description_translations ($, $myconfig, $form) {
 
   for (qw(partnumber description)) {
     if ($form->{$_}) {
-      $var = $form->like(lc $form->{$_});
-      $where .= " AND lower(p.$_) LIKE '$var'";
+      $var = $form->like($form->{$_});
+      $where .= " AND p.$_ ILIKE '$var'";
     }
   }
 
@@ -1246,8 +1246,8 @@ sub partsgroup_translations ($, $myconfig, $form) {
   ($form->{id} ||= 0) *= 1;
 
   if ($form->{description}) {
-    $var = $form->like(lc $form->{description});
-    $where .= " AND lower(p.partsgroup) LIKE '$var'";
+    $var = $form->like($form->{description});
+    $where .= " AND p.partsgroup ILIKE '$var'";
   }
   $where .= " AND p.id = $form->{id}" if $form->{id};
 
@@ -1306,8 +1306,8 @@ sub project_translations ($, $myconfig, $form) {
 
   for (qw(projectnumber description)) {
     if ($form->{$_}) {
-      $var = $form->like(lc $form->{$_});
-      $where .= " AND lower(p.$_) LIKE '$var'";
+      $var = $form->like($form->{$_});
+      $where .= " AND p.$_ ILIKE '$var'";
     }
   }
 
@@ -1370,8 +1370,8 @@ sub chart_translations ($, $myconfig, $form) {
 
   for (qw(accno description)) {
     if ($form->{$_}) {
-      $var = $form->like(lc $form->{$_});
-      $where .= " AND lower(c.$_) LIKE '$var'";
+      $var = $form->like($form->{$_});
+      $where .= " AND c.$_ ILIKE '$var'";
     }
   }
 

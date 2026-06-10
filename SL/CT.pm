@@ -678,22 +678,22 @@ sub search ($, $myconfig, $form) {
 
   foreach $item (@sf) {
     if (($form->{$item} // '') ne "") {
-      $var = $form->like(lc $form->{$item});
-      $where .= " AND lower(c.$item) LIKE '$var'";
+      $var = $form->like($form->{$item});
+      $where .= " AND c.$item ILIKE '$var'";
     }
   }
 
   @sf = qw(city state zipcode);
   foreach $item (@sf) {
     if (($form->{$item} // '') ne "") {
-      $var = $form->like(lc $form->{$item});
-      $where .= " AND lower(ad.$item) LIKE '$var'";
+      $var = $form->like($form->{$item});
+      $where .= " AND ad.$item ILIKE '$var'";
     }
   }
 
   if (($form->{address} // '') ne "") {
-    $var = $form->like(lc $form->{address});
-    $where .= " AND (lower(ad.address1) LIKE '1$var' OR lower(ad.streetname) LIKE '$var' OR lower(ad.address2) LIKE '$var')";
+    $var = $form->like($form->{address});
+    $where .= " AND (ad.address1 ILIKE '$var' OR ad.streetname ILIKE '$var' OR ad.address2 ILIKE '$var')";
   }
 
   if (($form->{country} // '') ne "") {
@@ -1026,23 +1026,23 @@ sub get_history ($, $myconfig, $form) {
   for (keys %defaults) { $form->{$_} = $defaults{$_} }
 
   if (($form->{"$form->{db}number"} // '') ne "") {
-    $var = $form->like(lc $form->{"$form->{db}number"});
-    $where .= " AND lower(ct.$form->{db}number) LIKE '$var'";
+    $var = $form->like($form->{"$form->{db}number"});
+    $where .= " AND ct.$form->{db}number ILIKE '$var'";
   }
   if (($form->{address} // '') ne "") {
-    $var = $form->like(lc $form->{address});
-    $where .= " AND (lower(ad.address1) LIKE '$var' OR lower(ad.streetname) LIKE '$var')";
+    $var = $form->like($form->{address});
+    $where .= " AND (ad.address1 ILIKE '$var' OR ad.streetname ILIKE '$var')";
   }
   for (qw(name contact email phone notes)) {
     if (($form->{$_} // '') ne "") {
-      $var = $form->like(lc $form->{$_});
-      $where .= " AND lower(ct.$_) LIKE '$var'";
+      $var = $form->like($form->{$_});
+      $where .= " AND ct.$_ ILIKE '$var'";
     }
   }
   for (qw(city state zipcode)) {
     if (($form->{$_} // '') ne "") {
-      $var = $form->like(lc $form->{$_});
-      $where .= " AND lower(ad.$_) LIKE '$var'";
+      $var = $form->like($form->{$_});
+      $where .= " AND ad.$_ ILIKE '$var'";
     }
   }
 
@@ -1323,12 +1323,12 @@ sub retrieve_item ($, $myconfig, $form) {
   }
 
   if (($form->{"partnumber_$i"} // '') ne "") {
-    $var = $form->like(lc $form->{"partnumber_$i"});
-    $where .= " AND lower(p.partnumber) LIKE '$var'";
+    $var = $form->like($form->{"partnumber_$i"});
+    $where .= " AND p.partnumber ILIKE '$var'";
   }
   if (($form->{"description_$i"} // '') ne "") {
-    $var = $form->like(lc $form->{"description_$i"});
-    $where .= " AND lower(p.description) LIKE '$var'";
+    $var = $form->like($form->{"description_$i"});
+    $where .= " AND p.description ILIKE '$var'";
   }
 
   if (($form->{"partsgroup_$i"} // '') ne "") {

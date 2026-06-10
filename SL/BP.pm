@@ -254,13 +254,13 @@ sub get_spoolfiles ($, $myconfig, $form) {
       $query .= qq| AND j.employee_id = $employee_id|;
     } else {
       if ($employee) {
-        $item = $form->like(lc $employee);
-        $query .= " AND lower(e.name) LIKE '$item'";
+        $item = $form->like($employee);
+        $query .= " AND e.name ILIKE '$item'";
       }
     }
     if (($form->{description} // '') ne "") {
-      $item = $form->like(lc $form->{description});
-      $query .= " AND lower(j.description) LIKE '$item'";
+      $item = $form->like($form->{description});
+      $query .= " AND j.description ILIKE '$item'";
     }
     if (($form->{projectnumber} // '') ne "") {
       ($item, $var) = split /--/, $form->{projectnumber} // '';
@@ -396,32 +396,32 @@ sub get_spoolfiles ($, $myconfig, $form) {
         if (($form->{"$arap{$form->{type}}{$item}_id"} // '') ne "") {
           $query .= qq| AND a.$arap{$form->{type}}{$item}_id = $form->{"$arap{$form->{type}}{$item}_id"}|;
         } else {
-          $var = $form->like(lc $form->{$arap{$form->{type}}{$item}});
-          $query .= " AND lower(vc.name) LIKE '$var'";
+          $var = $form->like($form->{$arap{$form->{type}}{$item}});
+          $query .= " AND vc.name ILIKE '$var'";
         }
         $form->{$arap{$form->{type}}{$item}} =~ s/^\r//;
       }
 
       if ($form->{"$arap{$form->{type}}{$item}number"}) {
-        $var = $form->like(lc $form->{"$arap{$form->{type}}{$item}number"});
-        $query .= " AND lower(vc.$arap{$form->{type}}{$item}number) LIKE '$var'";
+        $var = $form->like($form->{"$arap{$form->{type}}{$item}number"});
+        $query .= " AND vc.$arap{$form->{type}}{$item}number ILIKE '$var'";
       }
 
       if (($form->{description} // '') ne "") {
-        $var = $form->like(lc $form->{description});
-        $query .= " AND lower(a.description) LIKE '$var'";
+        $var = $form->like($form->{description});
+        $query .= " AND a.description ILIKE '$var'";
       }
       if (($form->{invnumber} // '') ne "") {
-        $var = $form->like(lc $form->{invnumber});
-        $query .= " AND lower(a.invnumber) LIKE '$var'";
+        $var = $form->like($form->{invnumber});
+        $query .= " AND a.invnumber ILIKE '$var'";
       }
       if (($form->{ordnumber} // '') ne "") {
-        $var = $form->like(lc $form->{ordnumber});
-        $query .= " AND lower(a.ordnumber) LIKE '$var'";
+        $var = $form->like($form->{ordnumber});
+        $query .= " AND a.ordnumber ILIKE '$var'";
       }
       if (($form->{quonumber} // '') ne "") {
-        $var = $form->like(lc $form->{quonumber});
-        $query .= " AND lower(a.quonumber) LIKE '$var'";
+        $var = $form->like($form->{quonumber});
+        $query .= " AND a.quonumber ILIKE '$var'";
       }
 
       $query .= " AND a.transdate >= '$form->{transdatefrom}'" if $form->{transdatefrom};

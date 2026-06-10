@@ -62,8 +62,8 @@ sub transactions ($, $myconfig, $form) {
 
   my $number;
   my $name;
-  $number = $form->like(lc $form->{$ordnumber})  if $form->{$ordnumber};
-  $name   = $form->like(lc $form->{$form->{vc}}) if $form->{$form->{vc}};
+  $number = $form->like($form->{$ordnumber})  if $form->{$ordnumber};
+  $name   = $form->like($form->{$form->{vc}}) if $form->{$form->{vc}};
 
   for (qw(department warehouse employee)) {
     if ($form->{$_}) {
@@ -109,19 +109,19 @@ sub transactions ($, $myconfig, $form) {
     $query .= qq| AND o.$form->{vc}_id = $form->{"$form->{vc}_id"}|;
   } else {
     if (($form->{$form->{vc}} // '') ne "") {
-      $query .= " AND lower(ct.name) LIKE '$name'";
+      $query .= " AND ct.name ILIKE '$name'";
     }
     if (($form->{"$form->{vc}number"} // '') ne "") {
-      $name = $form->like(lc $form->{"$form->{vc}number"});
-      $query .= " AND lower(ct.$form->{vc}number) LIKE '$name'";
+      $name = $form->like($form->{"$form->{vc}number"});
+      $query .= " AND ct.$form->{vc}number ILIKE '$name'";
     }
   }
 
   if (($form->{$ordnumber} // '') ne "") {
     if ($form->{detail}) {
-      $query .= " AND lower(oi.ordernumber) LIKE '$number'";
+      $query .= " AND oi.ordernumber ILIKE '$number'";
     } else {
-      $query .= " AND lower(o.$ordnumber) LIKE '$number'";
+      $query .= " AND o.$ordnumber ILIKE '$number'";
     }
 
     if ($form->{type} !~ /(ship|receive|generate|consolidate)_/) {
@@ -130,11 +130,11 @@ sub transactions ($, $myconfig, $form) {
     }
   }
   if (($form->{ponumber} // '') ne "") {
-    $var = $form->like(lc $form->{ponumber});
+    $var = $form->like($form->{ponumber});
     if ($form->{detail}) {
-      $query .= " AND lower(oi.ponumber) LIKE '$var'";
+      $query .= " AND oi.ponumber ILIKE '$var'";
     } else {
-      $query .= " AND lower(o.ponumber) LIKE '$var'";
+      $query .= " AND o.ponumber ILIKE '$var'";
     }
   }
 
@@ -149,26 +149,26 @@ sub transactions ($, $myconfig, $form) {
   }
 
   if (($form->{shipvia} // '') ne "") {
-    $var = $form->like(lc $form->{shipvia});
-    $query .= " AND lower(o.shipvia) LIKE '$var'";
+    $var = $form->like($form->{shipvia});
+    $query .= " AND o.shipvia ILIKE '$var'";
   }
   if (($form->{waybill} // '') ne "") {
-    $var = $form->like(lc $form->{waybill});
-    $query .= " AND lower(o.waybill) LIKE '$var'";
+    $var = $form->like($form->{waybill});
+    $query .= " AND o.waybill ILIKE '$var'";
   }
   if (($form->{notes} // '') ne "") {
-    $var = $form->like(lc $form->{notes});
-    $query .= " AND lower(o.notes) LIKE '$var'";
+    $var = $form->like($form->{notes});
+    $query .= " AND o.notes ILIKE '$var'";
   }
   if (($form->{description} // '') ne "") {
-    $var = $form->like(lc $form->{description});
-    $query .= " AND lower(o.description) LIKE '$var'";
+    $var = $form->like($form->{description});
+    $query .= " AND o.description ILIKE '$var'";
   }
   if (($form->{memo} // '') ne "") {
-    $var = $form->like(lc $form->{memo});
+    $var = $form->like($form->{memo});
     $query .= " AND o.id IN (SELECT DISTINCT trans_id
                              FROM orderitems
-                             WHERE lower(description) LIKE '$var')";
+                             WHERE description ILIKE '$var')";
   }
   if ($form->{transdatefrom}) {
     $query .= " AND o.transdate >= '$form->{transdatefrom}'";

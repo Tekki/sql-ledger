@@ -76,22 +76,22 @@ sub all_documents ($, $myconfig, $form, $formnames) {
   my $where = '1=1';
 
   if ($form->{description}) {
-    $var = $form->like(lc $form->{description});
+    $var = $form->like($form->{description});
 
     $where .= qq|
-        AND lower(r.description) LIKE '$var'|;
+        AND r.description ILIKE '$var'|;
   }
   if ($form->{filename}) {
-    $var = $form->like(lc $form->{filename});
+    $var = $form->like($form->{filename});
 
     $where .= qq|
-        AND lower(a.filename) LIKE '$var'|;
+        AND a.filename ILIKE '$var'|;
   }
   if ($form->{folder}) {
-    $var = $form->like(lc $form->{folder});
+    $var = $form->like($form->{folder});
 
     $where .= qq|
-        AND lower(r.folder) LIKE '$var'|;
+        AND r.folder ILIKE '$var'|;
   }
   if ($form->{formname}) {
     (undef, $var) = split /--/, $form->{formname} // '';
@@ -118,14 +118,14 @@ sub all_documents ($, $myconfig, $form, $formnames) {
       ORDER BY $order|;
 
   if ($form->{document_number}) {
-    $var = $form->like(lc $form->{document_number});
+    $var = $form->like($form->{document_number});
 
     $query = qq|
     WITH all_numbers AS ($query
     )
     SELECT *
     FROM all_numbers
-    WHERE lower(document_number) LIKE '$var'|;
+    WHERE document_number ILIKE '$var'|;
   }
 
   my $sth = $dbh->prepare($query) or $form->dberror($query);

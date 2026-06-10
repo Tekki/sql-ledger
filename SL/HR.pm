@@ -756,13 +756,13 @@ sub employees ($, $myconfig, $form) {
 
   for (qw(name employeenumber notes)) {
     if (($form->{$_} // '') ne "") {
-      $var = $form->like(lc $form->{$_});
-      $where .= " AND lower(e.$_) LIKE '$var'";
+      $var = $form->like($form->{$_});
+      $where .= " AND e.$_ ILIKE '$var'";
     }
   }
   if (($form->{employeelogin} // '') ne "") {
-    $var = $form->like(lc $form->{employeelogin});
-    $where .= " AND lower(e.login) LIKE '$var'";
+    $var = $form->like($form->{employeelogin});
+    $where .= " AND e.login ILIKE '$var'";
   }
   if ($form->{startdatefrom}) {
     $where .= " AND e.startdate >= '$form->{startdatefrom}'";

@@ -1242,12 +1242,12 @@ sub aging ($, $myconfig, $form) {
     $where .= qq| AND vc.id = $form->{"$form->{vc}_id"}|;
   } else {
     if (($form->{$form->{vc}} // '') ne "") {
-      $name = $form->like(lc $form->{$form->{vc}});
-      $where .= qq| AND lower(vc.name) LIKE '$name'|;
+      $name = $form->like($form->{$form->{vc}});
+      $where .= qq| AND vc.name ILIKE '$name'|;
     }
     if (($form->{"$form->{vc}number"} // '') ne "") {
-      $name = $form->like(lc $form->{"$form->{vc}number"});
-      $where .= qq| AND lower(vc.$form->{vc}number) LIKE '$name'|;
+      $name = $form->like($form->{"$form->{vc}number"});
+      $where .= qq| AND vc.$form->{vc}number ILIKE '$name'|;
     }
   }
 
@@ -1458,12 +1458,12 @@ sub reminder ($, $myconfig, $form) {
     $where .= qq| AND vc.id = $vc_id|;
   } else {
     if (($form->{$form->{vc}} // '') ne "") {
-      $name = $form->like(lc $form->{$form->{vc}});
-      $where .= qq| AND lower(vc.name) LIKE '$name'|;
+      $name = $form->like($form->{$form->{vc}});
+      $where .= qq| AND vc.name ILIKE '$name'|;
     }
     if (($form->{"$form->{vc}number"} // '') ne "") {
-      $name = $form->like(lc $form->{"$form->{vc}number"});
-      $where .= qq| AND lower(vc.$form->{vc}number) LIKE '$name'|;
+      $name = $form->like($form->{"$form->{vc}number"});
+      $where .= qq| AND vc.$form->{vc}number ILIKE '$name'|;
     }
   }
 
@@ -2396,25 +2396,25 @@ sub payments ($, $myconfig, $form) {
   }
 
   if (($form->{description} // '') ne "") {
-    $var = $form->like(lc $form->{description});
-    $where .= " AND lower(a.description) LIKE '$var'";
+    $var = $form->like($form->{description});
+    $where .= " AND a.description ILIKE '$var'";
   }
   if (($form->{source} // '') ne "") {
-    $var = $form->like(lc $form->{source});
-    $where .= " AND lower(ac.source) LIKE '$var'";
+    $var = $form->like($form->{source});
+    $where .= " AND ac.source ILIKE '$var'";
   }
   if (($form->{memo} // '') ne "") {
-    $var = $form->like(lc $form->{memo});
-    $where .= " AND lower(ac.memo) LIKE '$var'";
+    $var = $form->like($form->{memo});
+    $where .= " AND ac.memo ILIKE '$var'";
   }
   if (($form->{"$form->{vc}number"} // '') ne "") {
-    $var = $form->like(lc $form->{"$form->{vc}number"});
-    $where .= " AND lower(c.$form->{vc}number) LIKE '$var'";
+    $var = $form->like($form->{"$form->{vc}number"});
+    $where .= " AND c.$form->{vc}number ILIKE '$var'";
     $gl = 0;
   }
   if (($form->{$form->{vc}} // '') ne "") {
-    $var = $form->like(lc $form->{$form->{vc}});
-    $where .= " AND lower(c.name) LIKE '$var'";
+    $var = $form->like($form->{$form->{vc}});
+    $where .= " AND c.name ILIKE '$var'";
     $gl = 0;
   }
 

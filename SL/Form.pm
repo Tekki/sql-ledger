@@ -2810,11 +2810,11 @@ sub get_name ($self, $myconfig, $table, $transdate = undef) {
   my $var;
 
   if ($sortorder eq 'name') {
-    $var = $self->like(lc $self->{$table});
-    $where .= qq| AND lower(ct.name) LIKE '$var'|;
+    $var = $self->like($self->{$table});
+    $where .= qq| AND ct.name ILIKE '$var'|;
   } else {
-    $var = $self->like(lc $self->{"${table}number"});
-    $where .= qq| AND lower(ct.${table}number) LIKE '$var'|;
+    $var = $self->like($self->{"${table}number"});
+    $where .= qq| AND ct.${table}number ILIKE '$var'|;
   }
 
   if ($defaults{namesbynumber}) {

@@ -217,8 +217,8 @@ sub retrieve_item ($, $myconfig, $form) {
   my $where;
 
   if (($form->{partnumber} // '') ne "") {
-    $var = $form->like(lc $form->{partnumber});
-    $where .= qq| AND lower(p.partnumber) LIKE '$var'|;
+    $var = $form->like($form->{partnumber});
+    $where .= qq| AND p.partnumber ILIKE '$var'|;
   }
 
   if (($form->{project} // '') eq 'job') {
@@ -356,8 +356,8 @@ sub jcitems ($, $myconfig, $form) {
     $form->{project} = ($job) ? "job" : "project";
   }
   if (($form->{partnumber} // '') ne "") {
-    $var = $form->like(lc $form->{partnumber});
-    $where .= " AND lower(p.partnumber) LIKE '$var'";
+    $var = $form->like($form->{partnumber});
+    $where .= " AND p.partnumber ILIKE '$var'";
 
     if ($form->{project}) {
       if (($form->{project} // '') eq 'job') {
@@ -366,7 +366,7 @@ sub jcitems ($, $myconfig, $form) {
     } else {
       $query = qq|SELECT inventory_accno_id
                   FROM parts
-                  WHERE lower(partnumber) LIKE '$var'|;
+                  WHERE partnumber ILIKE '$var'|;
       my ($job) = $dbh->selectrow_array($query);
       $form->{project} = ($job) ? "job" : "project";
     }
@@ -376,12 +376,12 @@ sub jcitems ($, $myconfig, $form) {
     $where .= " AND j.employee_id = $var";
   }
   if ($form->{description}) {
-    $var = $form->like(lc $form->{description});
-    $where .= " AND lower(j.description) LIKE '$var'";
+    $var = $form->like($form->{description});
+    $where .= " AND j.description ILIKE '$var'";
   }
   if ($form->{notes}) {
-    $var = $form->like(lc $form->{notes});
-    $where .= " AND lower(j.notes) LIKE '$var'";
+    $var = $form->like($form->{notes});
+    $where .= " AND j.notes ILIKE '$var'";
   }
 
   if ($form->{open} || $form->{closed}) {

@@ -633,13 +633,13 @@ sub retrieve_items ($, $myconfig, $form) {
   if ($form->{id}){
     $where .= " AND p.id = $form->{id}";
   } elsif (($form->{partnumber} // '') ne "") {
-    $var = $form->like(lc $form->{partnumber});
-    $where .= " AND lower(p.partnumber) LIKE '$var'";
+    $var = $form->like($form->{partnumber});
+    $where .= " AND p.partnumber ILIKE '$var'";
   }
 
   if (($form->{description} // '') ne "") {
-    $var = $form->like(lc $form->{description});
-    $where .= " AND lower(p.description) LIKE '$var'";
+    $var = $form->like($form->{description});
+    $where .= " AND p.description ILIKE '$var'";
   }
   $where .= qq| AND p.obsolete = '0'
                 AND (p.inventory_accno_id > 0 OR p.assembly = '1')|;
@@ -789,12 +789,12 @@ sub retrieve_assemblies ($, $myconfig, $form) {
   my $where = '1 = 1';
 
   if (($form->{partnumber} // '') ne "") {
-    $var = $form->like(lc $form->{partnumber});
-    $where .= " AND lower(p.partnumber) LIKE '$var'";
+    $var = $form->like($form->{partnumber});
+    $where .= " AND p.partnumber ILIKE '$var'";
   }
   if (($form->{description} // '') ne "") {
-    $var = $form->like(lc $form->{description});
-    $where .= " AND lower(p.description) LIKE '$var'";
+    $var = $form->like($form->{description});
+    $where .= " AND p.description ILIKE '$var'";
   }
 
   $where .= qq| AND p.obsolete = '0'
@@ -1102,12 +1102,12 @@ sub assembly_item ($, $myconfig, $form) {
   my $where = "p.obsolete = '0'";
 
   if (($form->{"partnumber_$i"} // '') ne "") {
-    $var = $form->like(lc $form->{"partnumber_$i"});
-    $where .= " AND lower(p.partnumber) LIKE '$var'";
+    $var = $form->like($form->{"partnumber_$i"});
+    $where .= " AND p.partnumber ILIKE '$var'";
   }
   if (($form->{"description_$i"} // '') ne "") {
-    $var = $form->like(lc $form->{"description_$i"});
-    $where .= " AND lower(p.description) LIKE '$var'";
+    $var = $form->like($form->{"description_$i"});
+    $where .= " AND p.description ILIKE '$var'";
   }
   if (($form->{"partsgroup_$i"} // '') ne "") {
     (undef, $var) = split /--/, $form->{"partsgroup_$i"} // '';
@@ -1158,15 +1158,15 @@ sub all_parts ($, $myconfig, $form) {
 
   for (qw(partnumber drawing microfiche toolnumber barcode lot)) {
     if (($form->{$_} // '') ne "") {
-      $var = $form->like(lc $form->{$_});
-      $where .= " AND lower(p.$_) LIKE '$var'";
+      $var = $form->like($form->{$_});
+      $where .= " AND p.$_ ILIKE '$var'";
     }
   }
   # special case for description
   if (($form->{description} // '') ne "") {
     unless ($form->{bought} || $form->{sold} || $form->{onorder} || $form->{ordered} || $form->{rfq} || $form->{quoted}) {
-      $var = $form->like(lc $form->{description});
-      $where .= " AND lower(p.description) LIKE '$var'";
+      $var = $form->like($form->{description});
+      $where .= " AND p.description ILIKE '$var'";
     }
   }
 
@@ -1179,8 +1179,8 @@ sub all_parts ($, $myconfig, $form) {
   # special case for serialnumber
   if ($form->{l_serialnumber}) {
     if (($form->{serialnumber} // '') ne "") {
-      $var = $form->like(lc $form->{serialnumber});
-      $where .= " AND lower(i.serialnumber) LIKE '$var'";
+      $var = $form->like($form->{serialnumber});
+      $where .= " AND i.serialnumber ILIKE '$var'";
     }
   }
 
@@ -1255,12 +1255,12 @@ sub all_parts ($, $myconfig, $form) {
     $makemodeljoin = qq|LEFT JOIN makemodel m ON (m.parts_id = p.id)|;
 
     if (($form->{make} // '') ne "") {
-      $var = $form->like(lc $form->{make});
-      $where .= " AND lower(m.make) LIKE '$var'";
+      $var = $form->like($form->{make});
+      $where .= " AND m.make ILIKE '$var'";
     }
     if (($form->{model} // '') ne "") {
-      $var = $form->like(lc $form->{model});
-      $where .= " AND lower(m.model) LIKE '$var'";
+      $var = $form->like($form->{model});
+      $where .= " AND m.model ILIKE '$var'";
     }
   }
   if (($form->{partsgroup} // '') ne "") {
@@ -1354,8 +1354,8 @@ sub all_parts ($, $myconfig, $form) {
       $invwhere .= " AND a.$transdate <= '$form->{transdateto}'" if $form->{transdateto};
 
       if (($form->{description} // '') ne "") {
-        $var = $form->like(lc $form->{description});
-        $invwhere .= " AND lower(i.description) LIKE '$var'";
+        $var = $form->like($form->{description});
+        $invwhere .= " AND i.description ILIKE '$var'";
       }
 
       if ($form->{open} || $form->{closed}) {
@@ -1453,8 +1453,8 @@ sub all_parts ($, $myconfig, $form) {
         $ordwhere .= " AND a.transdate <= '$form->{transdateto}'" if $form->{transdateto};
 
         if (($form->{description} // '') ne "") {
-          $var = $form->like(lc $form->{description});
-          $ordwhere .= " AND lower(i.description) LIKE '$var'";
+          $var = $form->like($form->{description});
+          $ordwhere .= " AND i.description ILIKE '$var'";
         }
 
         if ($form->{open} || $form->{closed}) {
@@ -1546,8 +1546,8 @@ sub all_parts ($, $myconfig, $form) {
         $quowhere .= " AND a.transdate <= '$form->{transdateto}'" if $form->{transdateto};
 
         if (($form->{description} // '') ne "") {
-          $var = $form->like(lc $form->{description});
-          $quowhere .= " AND lower(i.description) LIKE '$var'";
+          $var = $form->like($form->{description});
+          $quowhere .= " AND i.description ILIKE '$var'";
         }
 
         if ($form->{open} || $form->{closed}) {
@@ -1897,8 +1897,8 @@ sub get_assembly_bom_transfer ($, $myconfig, $form) {
 
   for (qw(partnumber description)) {
     if (($form->{$_} // '') ne "") {
-      $var = $form->like(lc $form->{$_});
-      $where .= " AND lower(p.$_) LIKE '$var'";
+      $var = $form->like($form->{$_});
+      $where .= " AND p.$_ ILIKE '$var'";
     }
   }
 
@@ -2014,8 +2014,8 @@ sub supply_demand ($, $myconfig, $form) {
 
   for (qw(partnumber description)) {
     if ($form->{$_} ne "") {
-      $var = $form->like(lc $form->{$_});
-      $where .= qq| AND lower(p.$_) LIKE '$var'|;
+      $var = $form->like($form->{$_});
+      $where .= qq| AND p.$_ ILIKE '$var'|;
     }
   }
 
@@ -2193,8 +2193,8 @@ sub requirements ($, $myconfig, $form) {
 
   for (qw(partnumber description)) {
     if ($form->{$_} ne '') {
-      $var = $form->like(lc $form->{$_});
-      $where .= qq| AND lower(p.$_) LIKE '$var'|;
+      $var = $form->like($form->{$_});
+      $where .= qq| AND p.$_ ILIKE '$var'|;
     }
   }
 
@@ -2467,14 +2467,14 @@ sub get_inventory ($, $myconfig, $form) {
                  OR p.assembly = '1')|;
 
   if (($form->{partnumber} // '') ne "") {
-    $var = $form->like(lc $form->{partnumber});
+    $var = $form->like($form->{partnumber});
     $where .= "
-                AND lower(p.partnumber) LIKE '$var'";
+                AND p.partnumber ILIKE '$var'";
   }
   if (($form->{description} // '') ne "") {
-    $var = $form->like(lc $form->{description});
+    $var = $form->like($form->{description});
     $where .= "
-                AND lower(p.description) LIKE '$var'";
+                AND p.description ILIKE '$var'";
   }
   if (($form->{partsgroup} // '') ne "") {
     (undef, $var) = split /--/, $form->{partsgroup} // '';
@@ -2659,14 +2659,14 @@ sub transfer_report ($, $myconfig, $form) {
   my $warehouse_id;
 
   if (($form->{partnumber} // '') ne "") {
-    $var = $form->like(lc $form->{partnumber});
+    $var = $form->like($form->{partnumber});
     $where .= "
-                AND lower(p.partnumber) LIKE '$var'";
+                AND p.partnumber ILIKE '$var'";
   }
   if (($form->{description} // '') ne "") {
-    $var = $form->like(lc $form->{description});
+    $var = $form->like($form->{description});
     $where .= "
-                AND lower(p.description) LIKE '$var'";
+                AND p.description ILIKE '$var'";
   }
   if (($form->{partsgroup} // '') ne "") {
     (undef, $var) = split /--/, $form->{partsgroup} // '';
@@ -2790,20 +2790,20 @@ sub so_requirements ($, $myconfig, $form) {
     $where .= " AND p.inventory_accno_id IS NULL AND p.income_accno_id IS NULL AND p.expense_accno_id IS NULL";
   }
   if ($form->{partnumber}) {
-    $var = $form->like(lc $form->{partnumber});
-    $where .= " AND lower(p.partnumber) LIKE '$var'";
+    $var = $form->like($form->{partnumber});
+    $where .= " AND p.partnumber ILIKE '$var'";
   }
   if ($form->{description}) {
-    $var = $form->like(lc $form->{description});
-    $where .= " AND lower(p.description) LIKE '$var'";
+    $var = $form->like($form->{description});
+    $where .= " AND p.description ILIKE '$var'";
   }
   if ($form->{$form->{vc}}) {
-    $var = $form->like(lc $form->{$form->{vc}});
-    $where .= " AND lower(c.name) LIKE '$var'";
+    $var = $form->like($form->{$form->{vc}});
+    $where .= " AND c.name ILIKE '$var'";
   }
   if ($form->{"$form->{vc}number"}) {
-    $var = $form->like(lc $form->{"$form->{vc}number"});
-    $where .= " AND lower(c.$form->{vc}number) LIKE '$var'";
+    $var = $form->like($form->{"$form->{vc}number"});
+    $where .= " AND c.$form->{vc}number ILIKE '$var'";
   }
 
   unless ($form->{reqdatefrom} || $form->{reqdateto}) {

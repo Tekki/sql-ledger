@@ -903,12 +903,12 @@ sub transactions ($, $myconfig, $form) {
     $where .= qq| AND a.$form->{vc}_id = $form->{"$form->{vc}_id"}|;
   } else {
     if ($form->{$form->{vc}}) {
-      $var = $form->like(lc $form->{$form->{vc}});
-      $where .= " AND lower(vc.name) LIKE '$var'";
+      $var = $form->like($form->{$form->{vc}});
+      $where .= " AND vc.name ILIKE '$var'";
     }
     if ($form->{"$form->{vc}number"}) {
-      $var = $form->like(lc $form->{"$form->{vc}number"});
-      $where .= " AND lower(vc.$form->{vc}number) LIKE '$var'";
+      $var = $form->like($form->{"$form->{vc}number"});
+      $where .= " AND vc.$form->{vc}number ILIKE '$var'";
     }
   }
   for (qw(department warehouse employee)) {
@@ -934,29 +934,29 @@ sub transactions ($, $myconfig, $form) {
 
   for (qw(invnumber ordnumber)) {
     if ($form->{$_}) {
-      $var = $form->like(lc $form->{$_});
-      $where .= " AND lower(a.$_) LIKE '$var'";
+      $var = $form->like($form->{$_});
+      $where .= " AND a.$_ ILIKE '$var'";
     }
   }
   for (qw(ponumber shipvia shippingpoint waybill notes description)) {
     if ($form->{$_}) {
-      $var = $form->like(lc $form->{$_});
-      $where .= " AND lower(a.$_) LIKE '$var'";
+      $var = $form->like($form->{$_});
+      $where .= " AND a.$_ ILIKE '$var'";
     }
   }
   if ($form->{memo}) {
     if ($acc_trans_flds) {
-      $var = $form->like(lc $form->{memo});
-      $where .= " AND lower(ac.memo) LIKE '$var'
-                  OR lower(i.description) LIKE '$var'";
+      $var = $form->like($form->{memo});
+      $where .= " AND ac.memo ILIKE '$var'
+                  OR i.description ILIKE '$var'";
     } else {
       $where .= " AND a.id = 0";
     }
   }
   if ($form->{source}) {
     if ($acc_trans_flds) {
-      $var = $form->like(lc $form->{source});
-      $where .= " AND lower(ac.source) LIKE '$var'";
+      $var = $form->like($form->{source});
+      $where .= " AND ac.source ILIKE '$var'";
     } else {
       $where .= " AND a.id = 0";
     }
@@ -1007,13 +1007,13 @@ sub transactions ($, $myconfig, $form) {
   }
 
   if ($form->{memo}) {
-    $var = $form->like(lc $form->{memo});
+    $var = $form->like($form->{memo});
     $where .= qq| AND (a.id IN (SELECT DISTINCT trans_id
                                 FROM acc_trans
-                 WHERE lower(memo) LIKE '$var')
+                 WHERE memo ILIKE '$var')
                  OR a.id IN (SELECT DISTINCT trans_id
                              FROM invoice
-                             WHERE lower(description) LIKE '$var'))|;
+                             WHERE description ILIKE '$var'))|;
   }
 
   if (($form->{detail} // '') eq 'payment') {
@@ -1503,8 +1503,8 @@ sub all_names ($, $myconfig, $form) {
 
   for (@sf) {
     if (($form->{$_} // '') ne "") {
-      $var = $form->like(lc $form->{$_});
-      $where .= " AND lower(vc.$_) LIKE '$var'";
+      $var = $form->like($form->{$_});
+      $where .= " AND vc.$_ ILIKE '$var'";
     }
   }
 
@@ -1529,8 +1529,8 @@ sub all_names ($, $myconfig, $form) {
 
   for (qw(city state zipcode country)) {
     if (($form->{$_} // '') ne "") {
-      $var = $form->like(lc $form->{$_});
-      $where .= " AND lower(ad.$_) LIKE '$var'";
+      $var = $form->like($form->{$_});
+      $where .= " AND ad.$_ ILIKE '$var'";
     }
   }
 

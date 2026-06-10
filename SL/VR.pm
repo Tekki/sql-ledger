@@ -97,12 +97,12 @@ sub list_batches ($, $myconfig, $form) {
   }
 
   if ($form->{batchnumber}) {
-    $var = $form->like(lc $form->{batchnumber});
-    $where .= " AND lower(a.batchnumber) LIKE '$var'";
+    $var = $form->like($form->{batchnumber});
+    $where .= " AND a.batchnumber ILIKE '$var'";
   }
   if ($form->{description}) {
-    $var = $form->like(lc $form->{description});
-    $where .= " AND lower(a.description) LIKE '$var'";
+    $var = $form->like($form->{description});
+    $where .= " AND a.description ILIKE '$var'";
   }
 
   $where .= " AND a.transdate >= '$form->{transdatefrom}'" if $form->{transdatefrom};

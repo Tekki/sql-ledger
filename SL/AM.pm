@@ -3359,8 +3359,8 @@ sub audit_log ($, $myconfig, $form) {
   }
   my $var;
   if ($form->{reference}) {
-    $var = $form->like(lc $form->{reference});
-    $where .= qq| AND lower(a.reference) LIKE '$var'|;
+    $var = $form->like($form->{reference});
+    $where .= qq| AND a.reference ILIKE '$var'|;
   }
 
   my $dateformat = $myconfig->{dateformat};

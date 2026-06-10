@@ -2531,16 +2531,16 @@ sub retrieve_item ($, $myconfig, $form) {
   my $where = "WHERE p.obsolete = '0'";
 
   if (($form->{"partnumber_$i"} // '') ne "") {
-    $var = $form->like(lc $form->{"partnumber_$i"});
-    $where .= " AND (lower(p.partnumber) LIKE '$var'
+    $var = $form->like($form->{"partnumber_$i"});
+    $where .= " AND (p.partnumber ILIKE '$var'
                 OR p.barcode LIKE '$var')";
   }
   if (($form->{"description_$i"} // '') ne "") {
-    $var = $form->like(lc $form->{"description_$i"});
+    $var = $form->like($form->{"description_$i"});
     if (($form->{language_code} // '') ne "") {
-      $where .= " AND lower(t1.description) LIKE '$var'";
+      $where .= " AND t1.description ILIKE '$var'";
     } else {
-      $where .= " AND lower(p.description) LIKE '$var'";
+      $where .= " AND p.description ILIKE '$var'";
     }
   }
 
@@ -2550,9 +2550,9 @@ sub retrieve_item ($, $myconfig, $form) {
   my $j;
 
   if (($form->{"partsgroupcode_$i"} // '') ne "") {
-    $var = $form->like(lc $form->{"partsgroupcode_$i"});
+    $var = $form->like($form->{"partsgroupcode_$i"});
     $query = qq|SELECT partsgroup, id FROM partsgroup
-                WHERE lower(code) LIKE '$var'|;
+                WHERE code ILIKE '$var'|;
     $sth = $dbh->prepare($query);
     $sth->execute or $form->dberror($query);
 
@@ -2569,8 +2569,8 @@ sub retrieve_item ($, $myconfig, $form) {
         $form->{"partsgroup_$i"} = qq|$var--$id|;
       } else {
         $form->{"partsgroup_$i"} = "";
-        $var = $form->like(lc $form->{"partsgroupcode_$i"});
-        $where .= qq| AND lower(pg.code) LIKE '$var'|;
+        $var = $form->like($form->{"partsgroupcode_$i"});
+        $where .= qq| AND pg.code ILIKE '$var'|;
       }
     } else {
       $dbh->disconnect;

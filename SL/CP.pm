@@ -190,12 +190,12 @@ sub get_openvc ($self, $myconfig, $form) {
 
   if (! $form->{"select$form->{vc}"}) {
     if ($form->{$form->{vc}}) {
-      $var = $form->like(lc $form->{$form->{vc}});
-      $where .= qq| AND lower(vc.name) LIKE '$var'|;
+      $var = $form->like($form->{$form->{vc}});
+      $where .= qq| AND vc.name ILIKE '$var'|;
     }
     if ($form->{"$form->{vc}number"}) {
-      $var = $form->like(lc $form->{"$form->{vc}number"});
-      $where .= qq| AND lower(vc.$form->{vc}number) LIKE '$var'|;
+      $var = $form->like($form->{"$form->{vc}number"});
+      $where .= qq| AND vc.$form->{vc}number ILIKE '$var'|;
     }
   }
 
@@ -1118,12 +1118,12 @@ sub payment_register ($self, $myconfig, $form) {
     $where .= qq| AND vc.id = $form->{"$form->{vc}_id"}|;
   } else {
     if ($form->{vc}) {
-      $var = $form->like(lc $form->{$form->{vc}});
-      $where .= qq| AND lower(vc.name) LIKE '$var'|;
+      $var = $form->like($form->{$form->{vc}});
+      $where .= qq| AND vc.name ILIKE '$var'|;
     }
     if ($form->{"$form->{vc}number"}) {
-      $var = $form->like(lc $form->{"$form->{vc}number"});
-      $where .= qq| AND lower(vc.$form->{vc}number) LIKE '$var'|;
+      $var = $form->like($form->{"$form->{vc}number"});
+      $where .= qq| AND vc.$form->{vc}number ILIKE '$var'|;
     }
   }
   $query .= qq| $where ORDER BY acc.source|;

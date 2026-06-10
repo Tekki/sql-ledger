@@ -327,28 +327,28 @@ sub transactions ($, $myconfig, $form) {
   my ($glwhere, $arwhere, $apwhere) = ("g.approved = '1'", "a.approved = '1'", "a.approved = '1'");
 
   if ($form->{reference}) {
-    $var = $form->like(lc $form->{reference});
-    $glwhere .= " AND lower(g.reference) LIKE '$var'";
-    $arwhere .= " AND lower(a.invnumber) LIKE '$var'";
-    $apwhere .= " AND lower(a.invnumber) LIKE '$var'";
+    $var = $form->like($form->{reference});
+    $glwhere .= " AND g.reference ILIKE '$var'";
+    $arwhere .= " AND a.invnumber ILIKE '$var'";
+    $apwhere .= " AND a.invnumber ILIKE '$var'";
   }
   if ($form->{description}) {
-    $var = $form->like(lc $form->{description});
-    $glwhere .= " AND lower(g.description) LIKE '$var'";
-    $arwhere .= " AND lower(a.description) LIKE '$var'";
-    $apwhere .= " AND lower(a.description) LIKE '$var'";
+    $var = $form->like($form->{description});
+    $glwhere .= " AND g.description ILIKE '$var'";
+    $arwhere .= " AND a.description ILIKE '$var'";
+    $apwhere .= " AND a.description ILIKE '$var'";
   }
   if ($form->{name}) {
-    $var = $form->like(lc $form->{name});
-    $glwhere .= " AND lower(g.description) LIKE '$var'";
-    $arwhere .= " AND lower(ct.name) LIKE '$var'";
-    $apwhere .= " AND lower(ct.name) LIKE '$var'";
+    $var = $form->like($form->{name});
+    $glwhere .= " AND g.description ILIKE '$var'";
+    $arwhere .= " AND ct.name ILIKE '$var'";
+    $apwhere .= " AND ct.name ILIKE '$var'";
   }
   if ($form->{vcnumber}) {
-    $var = $form->like(lc $form->{vcnumber});
+    $var = $form->like($form->{vcnumber});
     $glwhere .= " AND g.id = 0";
-    $arwhere .= " AND lower(ct.customernumber) LIKE '$var'";
-    $apwhere .= " AND lower(ct.vendornumber) LIKE '$var'";
+    $arwhere .= " AND ct.customernumber ILIKE '$var'";
+    $apwhere .= " AND ct.vendornumber ILIKE '$var'";
   }
   if ($form->{department}) {
     (undef, $var) = split /--/, $form->{department} // '';
@@ -367,10 +367,10 @@ sub transactions ($, $myconfig, $form) {
   my $lineitem     = "''";
 
   if ($form->{lineitem}) {
-    $var = $form->like(lc $form->{lineitem});
-    $glwhere .= " AND lower(ac.memo) LIKE '$var'";
-    $arwhere .= " AND lower(i.description) LIKE '$var'";
-    $apwhere .= " AND lower(i.description) LIKE '$var'";
+    $var = $form->like($form->{lineitem});
+    $glwhere .= " AND ac.memo ILIKE '$var'";
+    $arwhere .= " AND i.description ILIKE '$var'";
+    $apwhere .= " AND i.description ILIKE '$var'";
 
     $gdescription = "ac.memo";
     $lineitem = "i.description";
@@ -386,10 +386,10 @@ sub transactions ($, $myconfig, $form) {
   }
 
   if ($form->{source}) {
-    $var = $form->like(lc $form->{source});
-    $glwhere .= " AND lower(ac.source) LIKE '$var'";
-    $arwhere .= " AND lower(ac.source) LIKE '$var'";
-    $apwhere .= " AND lower(ac.source) LIKE '$var'";
+    $var = $form->like($form->{source});
+    $glwhere .= " AND ac.source ILIKE '$var'";
+    $arwhere .= " AND ac.source ILIKE '$var'";
+    $apwhere .= " AND ac.source ILIKE '$var'";
   }
 
   my $where;
@@ -425,10 +425,10 @@ sub transactions ($, $myconfig, $form) {
   }
 
   if ($form->{memo}) {
-    $var = $form->like(lc $form->{memo});
-    $glwhere .= " AND lower(ac.memo) LIKE '$var'";
-    $arwhere .= " AND lower(ac.memo) LIKE '$var'";
-    $apwhere .= " AND lower(ac.memo) LIKE '$var'";
+    $var = $form->like($form->{memo});
+    $glwhere .= " AND ac.memo ILIKE '$var'";
+    $arwhere .= " AND ac.memo ILIKE '$var'";
+    $apwhere .= " AND ac.memo ILIKE '$var'";
   }
 
   unless ($form->{datefrom} || $form->{dateto}) {
@@ -458,10 +458,10 @@ sub transactions ($, $myconfig, $form) {
     $apwhere .= " AND abs(ac.amount) <= $form->{amountto}";
   }
   if ($form->{notes}) {
-    $var = $form->like(lc $form->{notes});
-    $glwhere .= " AND lower(g.notes) LIKE '$var'";
-    $arwhere .= " AND lower(a.notes) LIKE '$var'";
-    $apwhere .= " AND lower(a.notes) LIKE '$var'";
+    $var = $form->like($form->{notes});
+    $glwhere .= " AND g.notes ILIKE '$var'";
+    $arwhere .= " AND a.notes ILIKE '$var'";
+    $apwhere .= " AND a.notes ILIKE '$var'";
   }
   if ($form->{accno}) {
     $glwhere .= " AND c.accno = '$form->{accno}'";
