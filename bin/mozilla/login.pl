@@ -78,11 +78,11 @@ sub login_screen {
             <table>
               <tr>
                 <th align=right>|.$locale->text('Name').qq|</th>
-                <td><input class=login name=login size=30></td>
+                <td><input class="login" name="login" size="30" value="|.$form->quote($form->{login}).qq|"></td>
               </tr>
               <tr>
-                <th align=right>|.$locale->text('Password').qq|</th>
-                <td><input class=login type=password name=password size=30></td>
+                <th align="right">|.$locale->text('Password').qq|</th>
+                <td><input class="login" type="password" name="password" size="30"></td>
               </tr>
             </table>
 
@@ -369,7 +369,6 @@ sub logout {
   $form->{callback} = "$form->{script}?path=$form->{path}&end session=1";
 
   if (-f "$slconfig{userspath}/$form->{login}.bin") {
-    $form->{callback} .= "&login=$form->{login}";
     %myconfig = Storable::retrieve("$slconfig{userspath}/$form->{login}.bin")->%*;
     $myconfig{dbpasswd} = unpack 'u', $myconfig{dbpasswd} if $myconfig{dbpasswd};
 
