@@ -13,7 +13,7 @@ use v5.40;
 package SL::Spreadsheet;
 
 use Excel::Writer::XLSX;
-use List::Util qw|max min|;
+use List::Util qw|max min mesh|;
 use Scalar::Util 'looks_like_number';
 
 # constructor
@@ -47,6 +47,7 @@ sub new ($class, $form, $userspath) {
   $self{workbook} = Excel::Writer::XLSX->new($form->{tmpfile})
     or $form->error("$form->{tmpfile}: $!");
 
+  my $integer           = 1;
   my $localized_date    = 14;
   my $localized_decimal = 4;
   my %formats = (
@@ -109,6 +110,8 @@ sub new ($class, $form, $userspath) {
       = $self{workbook}->add_format(%settings, num_format => $localized_date);
     $self{format}{"${format}_decimal"}
       = $self{workbook}->add_format(%settings, num_format => $localized_decimal);
+    $self{format}{"${format}_integer"}
+      = $self{workbook}->add_format(%settings, num_format => $integer);
     $self{format}{"${format}_link"}
       = $self{workbook}->add_format(%settings, color => 'blue', underline => 1);
   }
@@ -427,7 +430,7 @@ sub number ($self, $number, $format = 'default') {
 
   if (looks_like_number($number)) {
     $self->{worksheet}
-      ->write_number($self->{row}, $self->{col}, $number, $self->{format}{"${format}_text"});
+      ->write_number($self->{row}, $self->{col}, $number, $self->{format}{"${format}_integer"});
   } else {
     $self->{worksheet}
       ->write_string($self->{row}, $self->{col}, '', $self->{format}{"${format}_text"});
@@ -660,8 +663,11 @@ SL::Spreadsheet - Spreadsheet Module
 
     my $ss = SL::Spreadsheet->new($form, $userspath);
 
+    my $columns = {};
+    my $columns = SL::Spreadsheet::dbi_column_types($sth);
+
     my %spreadsheet_info = (
-      columns  => {},
+      columns  => $columns,
       group_by => $field,
     );
     $ss->worksheet;
@@ -733,6 +739,10 @@ L<Scalar::Util>
 =head2 new
 
   $ss = SL::Spreadsheet->new($form, $userspath);
+
+=head1 FUNCTIONS
+
+L<SL::Spreadsheet> implements the following functions:
 
 =head1 METHODS
 

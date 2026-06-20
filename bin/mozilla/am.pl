@@ -6600,14 +6600,12 @@ sub monitor {
 
   $form->header;
 
-  &change_report($form, \@input);
-
   print qq|
-<body>
+<body onload="document.main.sql.focus()">
 
 <h2 class=confirm>$form->{title} $form->{helpref}</h2>
 
-<form method=post action=$form->{script}>
+<form name="main" method="post" action="$form->{script}">
 
 $reportform
 |;
@@ -6615,8 +6613,47 @@ $reportform
   print $locale->text('Enter a SQL command to send to the server');
 
   print qq|
-<br><textarea rows=10 cols=70 wrap name=sql>$form->{sqlcommand}</textarea>
+<br><textarea rows=10 cols=70 wrap name=sql>$form->{sqlcommand}</textarea>|;
+
+  if ($form->{DATA}) {
+
+    print qq|
+    <table border=1>
+      <tr class=listtop>|;
+
+    print qq|\n<th class=listheading>$_</th>| for $form->{COLUMN_INDEX}->@*;
+
+    print qq|
+      </tr>|;
+
+    my %j;
+    for my $ref ($form->{DATA}->@*) {
+
+      $j++;
+      $j %= 2;
+
+      print qq| 
+      <tr class="listrow$j">|;
+
+      for ($form->{COLUMN_INDEX}->@*) {
+        my $align = $form->{COLUMNS}{$_} =~ /number|decimal/ ? ' align="right"' : '';
+        print qq|
+        <td$align>$ref->{$_}</td> |;
+      }
+
+      print qq| 
+      </tr>|;
+    }
+
+    print qq|
+    </table>|;
+
+  }
+
+  print qq|
+<hr class="thick">
 |;
+
 
   $button{'Run SQL command'} = { ndx => 1, key => 'R', value => $locale->text('Run SQL command') };
 
@@ -6624,13 +6661,18 @@ $reportform
 
   $button{'Delete SQL command'} = { ndx => 3, key => 'D', value => $locale->text('Delete SQL command'), class => 'negative' } if $form->{report};
 
+  $button{'Spreadsheet'} = { ndx => 4, key => 'X', value => $locale->text('Spreadsheet')} if $form->{DATA};
+
   $form->print_button(\%button);
 
-  $form->hide_form(qw(sqlcommand path login));
+  $form->hide_form(qw|path login callback|);
 
-print qq|
-</form>
+  print qq|
+</form>|;
 
+  &change_report($form, \@input);
+
+  print qq|
 </body>
 </html>
 |;
@@ -6644,55 +6686,20 @@ sub run_sql_command {
 
   $form->error($locale->text('Must be logged in as admin!')) unless $form->{admin};
 
-  $form->{callback} = "$form->{script}?action=monitor&path=$form->{path}&login=$form->{login}&report=$form->{report}&header=1&sqlcommand=".$form->escape($form->{sql},1);
+  $form->{sqlcommand} = delete $form->{sql};
+  $form->{callback}
+    = "$form->{script}?action=run_sql_command&path=$form->{path}&login=$form->{login}&report=$form->{report}&sqlcommand="
+    . $form->escape($form->{sqlcommand}, 1);
 
-  # connect to database
-  $dbh = $form->dbconnect(\%myconfig);
+  SL::AM->run_sql_command(\%myconfig, $form);
 
-  $form->{title} = $locale->text('SQL Run');
-
-  $form->header;
-
-  if ($form->{sql} =~ /^select|with/i) {
-    $sth = $dbh->prepare($form->{sql});
-
-    if ($sth->execute) {
-
-      $form->info($form->{sql});
-
-      print qq|
-      <table border=1>
-        <tr class=listtop>|;
-
-      for (0 .. $sth->{NUM_OF_FIELDS} - 1) {
-        print qq|
-        <th class=listheading>$sth->{NAME}->[$_]</th>
-  |;
-      }
-      print qq|</tr>\n|;
-
-      while (@arr = $sth->fetchrow_array) {
-        $j++; $j %= 2;
-        print "<tr class=listrow$j>";
-        foreach $item (@arr) {
-          print "<td>$item&nbsp;";
-        }
-        print "</tr>";
-      }
-      print "</table>";
-    }
-
-    $sth->finish;
-
+  if ($form->{action} eq 'spreadsheet') {
+    require "$form->{path}/amss.pl";
+    &sql_command_spreadsheet();
+    exit;
   } else {
-    if ($dbh->do($form->{sql})) {
-      $form->info($form->{sql});
-    }
+    &monitor;
   }
-
-  $dbh->disconnect;
-
-  $form->redirect;
 
 }
 
@@ -6710,7 +6717,7 @@ sub save_sql_command {
   $form->header;
 
   print qq|
-<body>
+<body onload="document.main.reportdescription.focus()">
 
 <form method="post" name="main" action="$form->{script}">
 
@@ -7014,6 +7021,15 @@ sub do_restore_snapshot {
   $form->error($locale->text('Must be logged in as admin!')) unless $form->{admin};
   SL::AM->restore_snapshot(\%myconfig, $form);
   $form->redirect($locale->text('Snapshot restored'));
+}
+
+
+sub spreadsheet {
+  $form->parse_callback(\%myconfig, iso_date => 1);
+
+  my $action = $form->{action};
+  $form->{action} = 'spreadsheet';
+  &$action;
 }
 
 

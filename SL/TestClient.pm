@@ -66,6 +66,26 @@ class SL::TestClient {
     return $mj->tx->res->body;
   }
 
+  method buttons_exist (@names) {
+    subtest 'Available buttons' => sub {
+      for (@names) {
+        $mj->element_exists("button[name='action'][value='$_']", "Button $_");
+      }
+    };
+
+    return $self;
+  }
+
+  method buttons_exist_not (@names) {
+    subtest 'Unavailable buttons' => sub {
+      for (@names) {
+        $mj->element_exists_not("button[name='action'][value='$_']", "Button $_");
+      }
+    };
+
+    return $self;
+  }
+
   method connect_ok ($user = 'user') {
     $connected = 0;
 

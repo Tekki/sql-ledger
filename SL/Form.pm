@@ -13,6 +13,7 @@ use utf8;
 
 use Digest::SHA 'sha256_hex';
 use Scalar::Util 'looks_like_number';
+use List::Util 'mesh';
 use Time::Local;
 
 BEGIN {
@@ -506,8 +507,7 @@ sub info ($self, $msg = '', $type = '') {
 
     unless ($self->{header}) {
       $self->header(0,1);
-      print qq|
-      <body>|;
+      print qq|<body>\n|;
     }
 
     print $type ? qq|<b class="$type">$msg</b>| : "<b>$msg</b>";
@@ -2529,6 +2529,38 @@ sub dbquote ($self, $var, $type) {
   }
 
   $_;
+
+}
+
+
+sub dbtypes ($self, $columns) {
+
+  my %data_types;
+  my %dbi_types = (
+    -6 => 'bool',       # SQL_TINYINT
+    -5 => 'number',     # SQL_BIGINT
+    2  => 'decimal',    # SQL_NUMERIC
+    3  => 'decimal',    # SQL_DECIMAL
+    4  => 'number',     # SQL_INTEGER
+    5  => 'number',     # SQL_SMALLINT
+    6  => 'decimal',    # SQL_FLOAT
+    8  => 'decimal',    # SQL_DOUBLE
+    9  => 'date',       # SQL_DATE
+    16 => 'bool',       # SQL_BOOLEAN
+    91 => 'date',       # SQL_TYPE_DATE
+  );
+
+  if (ref $columns eq 'DBI::st') {
+    for my ($name, $type) (mesh [$columns->{NAME}->@*], [$columns->{TYPE}->@*]) {
+      $data_types{$name} = $dbi_types{$type} || 'text';
+    }
+  } else {
+    for my ($name, $type) (%$columns) {
+      $data_types{$name} = $dbi_types{$type} || 'text';
+    }
+  }
+
+  return \%data_types;
 
 }
 
@@ -5002,6 +5034,8 @@ sub save_report ($self, $myconfig) {
 
   my $query;
   my $sth;
+
+  $self->{reportlogin} //= '';
 
   if (looks_like_number $self->{reportid}) {
     $query = qq|DELETE FROM reportvars

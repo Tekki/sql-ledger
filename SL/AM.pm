@@ -16,7 +16,6 @@ use v5.40;
 
 package SL::AM;
 
-
 sub get_account ($, $myconfig, $form) {
 
   # connect to database
@@ -3573,6 +3572,35 @@ sub encrypt_file ($, $myconfig, $form, $gpg, $file) {
   my @args = split / /, $gpg;
   push @args, ('--always-trust', '--recipient', $defaults{publickey}, '--encrypt', $file);
   return system(@args) == 0;
+}
+
+
+sub run_sql_command ($, $myconfig, $form) {
+
+  $form->{DATA} = [];
+  return unless $form->{sqlcommand};
+
+  my $dbh = $form->dbconnect($myconfig);
+
+  if ($form->{sqlcommand} =~ /^select|with/i) {
+    my $sth = $dbh->prepare($form->{sqlcommand});
+
+    if ($sth->execute) {
+      $form->{COLUMN_INDEX} = [$sth->{NAME}->@*];
+      $form->{COLUMNS}      = $form->dbtypes($sth);
+
+      while (my $ref = $sth->fetchrow_hashref) {
+        push $form->{DATA}->@*, $ref;
+      }
+
+      $sth->finish;
+    }
+
+  } else {
+    $dbh->do($form->{sqlcommand});
+  }
+
+  $dbh->disconnect;
 }
 
 
