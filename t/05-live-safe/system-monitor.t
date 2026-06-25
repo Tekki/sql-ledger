@@ -14,7 +14,7 @@ my $configfile = "$FindBin::Bin/../testdata/testconfig.yml";
 my $t;
 
 if ($ENV{SL_LIVETEST}) {
-  plan tests => 3;
+  plan tests => 4;
 } else {
   plan skip_all => 'SL_LIVETEST not enabled.';
 }
@@ -30,4 +30,16 @@ subtest 'Run SQL query' => sub {
     ->buttons_exist('save_sql_command', 'spreadsheet')
     ->download_ok('Spreadsheet', 'xlsx', 'spreadsheet')
     ->download_is('Spreadsheet', 'xlsx');
+};
+
+subtest 'Run SQL query with parameters' => sub {
+  my $parameter = $t->date_jan1 . " -- start date\n" . $t->date_dec31 . " -- end date";
+
+  $t->get_ok('Monitor screen', 'am.pl', action => 'monitor')
+    ->set_params_ok(
+    'Add query',
+    sql       => 'SELECT transdate, invnumber FROM ar WHERE transdate BETWEEN ? AND ?',
+    parameter => $parameter,
+    )
+    ->press_button_ok('Run query', 'run_sql_command');
 };

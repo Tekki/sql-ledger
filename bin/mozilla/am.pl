@@ -6590,35 +6590,40 @@ sub monitor {
     $form->{selectreportform} = "\n";
     for (@{ $form->{all_report} }) { $form->{selectreportform} .= qq|$_->{reportdescription}--$_->{reportid}\n| }
     $reportform = $locale->text('SQL command').qq|
-          <select name=report onChange="ChangeReport();">|.$form->select_option($form->{selectreportform}, $form->{report}, 1)
+          <select name="report" onChange="ChangeReport();" accesskey="Q" title="[Q]">|.$form->select_option($form->{selectreportform}, $form->{report}, 1)
           .qq|</select>
           <p>
 |;
   }
 
-  @input = qw(sql);
+  @input = qw|sql parameter|;
 
   $form->header;
 
   print qq|
 <body onload="document.main.sql.focus()">
 
-<h2 class=confirm>$form->{title} $form->{helpref}</h2>
+<h2 class="confirm">$form->{title} $form->{helpref}</h2>
 
 <form name="main" method="post" action="$form->{script}">
 
 $reportform
-|;
 
-  print $locale->text('Enter a SQL command to send to the server');
-
-  print qq|
-<br><textarea rows=10 cols=70 wrap name=sql>$form->{sqlcommand}</textarea>|;
+<table width="100%">
+  <tr>
+    <td width="70%">|.$locale->text('Enter a SQL command to send to the server').qq|</td>
+    <td>|.$locale->text('Parameter').qq|</td>
+  </tr>
+  <tr>
+    <td><textarea name="sql" rows="10" cols="70" wrap>$form->{sqlcommand}</textarea></td>
+    <td><textarea name="parameter" rows="10" nowrap>$form->{sqlparameter}</textarea></td>
+  </tr>
+</table>|;
 
   if ($form->{DATA}) {
 
     print qq|
-    <table border=1>
+    <table>
       <tr class=listtop>|;
 
     print qq|\n<th class=listheading>$_</th>| for $form->{COLUMN_INDEX}->@*;
@@ -6686,7 +6691,8 @@ sub run_sql_command {
 
   $form->error($locale->text('Must be logged in as admin!')) unless $form->{admin};
 
-  $form->{sqlcommand} = delete $form->{sql};
+  $form->{sqlcommand}   = delete $form->{sql};
+  $form->{sqlparameter} = delete $form->{parameter};
   $form->{callback}
     = "$form->{script}?action=run_sql_command&path=$form->{path}&login=$form->{login}&report=$form->{report}&sqlcommand="
     . $form->escape($form->{sqlcommand}, 1);
@@ -6731,10 +6737,12 @@ sub save_sql_command {
       <tr>
         <th>|.$locale->text('Description').qq|</th>
         <th>|.$locale->text('SQL command').qq|</th>
+        <th>|.$locale->text('Parameter').qq|</th>
       </tr>
       <tr valign=top>
-        <td><input name=reportdescription size=40 value="$form->{reportdescription}"></td>
-        <td>$form->{sql}</td>
+        <td><input name="reportdescription" size="40" value="$form->{reportdescription}"></td>
+        <td><pre>$form->{sql}</pre></td>
+        <td><pre>$form->{parameter}</pre></td>
       </tr>
     </table>
   </tr>
@@ -6749,7 +6757,7 @@ sub save_sql_command {
   $form->{type} = "sql";
   $form->{sql} =~ s/"/\\"/g;
 
-  $form->hide_form(qw(reportid sql type path login));
+  $form->hide_form(qw(reportid sql parameter type path login));
 
   print qq|
 </form>
@@ -6782,7 +6790,7 @@ sub delete_sql_command {
 sub save_sql {
 
   $form->{reportcode} = 'monitor';
-  for (qw(type sqlcommand)) { delete $form->{$_} }
+  for (qw(type sqlcommand sqlparameter)) { delete $form->{$_} }
 
   $form->save_report(\%myconfig);
 

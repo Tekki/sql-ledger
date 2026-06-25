@@ -3582,10 +3582,12 @@ sub run_sql_command ($, $myconfig, $form) {
 
   my $dbh = $form->dbconnect($myconfig);
 
-  if ($form->{sqlcommand} =~ /^select|with/i) {
+  my @args = split /\n/, $form->{sqlparameter} =~ s/\s+-- .*//gr;
+
+  if ($form->{sqlcommand} =~ /^select|^with|^returning/mi) {
     my $sth = $dbh->prepare($form->{sqlcommand});
 
-    if ($sth->execute) {
+    if ($sth->execute(@args)) {
       $form->{COLUMN_INDEX} = [$sth->{NAME}->@*];
       $form->{COLUMNS}      = $form->dbtypes($sth);
 
@@ -3597,7 +3599,7 @@ sub run_sql_command ($, $myconfig, $form) {
     }
 
   } else {
-    $dbh->do($form->{sqlcommand});
+    $dbh->do($form->{sqlcommand}, undef, @args);
   }
 
   $dbh->disconnect;
