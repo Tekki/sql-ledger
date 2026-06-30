@@ -14,8 +14,10 @@
   - [Virtualization](installation.md#virtualization)
 
 - [Upgrade](upgrade.md#upgrade)
-  - [Git Version Control](upgrade.md#git-version-control)
-  - [Upgrade Within Major Version](upgrade.md#upgrade-within-major-version)
+  - [Change to Git Version Control](upgrade.md#change-to-git-version-control)
+  - [Upgrade within Version 4](upgrade.md#upgrade-within-version-4)
+    - [Upgrade from Version 4.n.x to 4.n.y](upgrade.md#upgrade-from-version-4.n.x-to-4.n.y)
+    - [Upgrade from Version 4.x to 4.y](upgrade.md#upgrade-from-version-4.x-to-4.y)
   - [Upgrade from Version 3 to Version 4](upgrade.md#upgrade-from-version-3-to-version-4)
   - [Downgrade from Version 4 to Version 3](upgrade.md#downgrade-from-version-4-to-version-3)
 

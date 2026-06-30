@@ -85,7 +85,8 @@
 </header>
 <p><a href="index.html">SQL-Ledger Documentation</a> ▶ Upgrade</p>
 <h1 id="upgrade">Upgrade</h1>
-<h2 id="git-version-control">Git Version Control</h2>
+<h2 id="change-to-git-version-control">Change to Git Version
+Control</h2>
 <p>This documentation presumes you manage your SQL-Ledger installation
 with Git and refrain from copying downloaded program files. If you have
 followed a different method so far, switch to Git management before
@@ -120,15 +121,40 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="
 <code>full</code>.</p>
 <div class="sourceCode" id="cb4"><pre
 class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> switch full</span></code></pre></div>
-<h2 id="upgrade-within-major-version">Upgrade Within Major Version</h2>
-<p>A single command updates the code installed via the Ansible role or
-manually through Git.</p>
+<h2 id="upgrade-within-version-4">Upgrade within Version 4</h2>
+<h3 id="upgrade-from-version-4nx-to-4ny">Upgrade from Version 4.n.x to
+4.n.y</h3>
+<p>A new number at the third position means that small changes were made
+to the program. This probably includes new functionality or error
+corrections. To perform such an upgrade, lock the application by
+creating a lock file and download the new code.</p>
 <div class="sourceCode" id="cb5"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> pull</span></code></pre></div>
-<p>Then log in to trigger any pending database upgrades.</p>
-<p>If you have modified the original program code, proceed differently:
-first identify any pending changes with <code>git status</code>. Commit
-them, then merge the new updates from GitHub.</p>
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;System Upgrade.&#39;</span> <span class="op">&gt;</span> users/nologin.LCK</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> pull</span></code></pre></div>
+<p>If there are no error messages, delete the lock file.</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> users/nologin.LCK</span></code></pre></div>
+<p>After a small upgrade, it is always possible to jump back to the
+previous version.</p>
+<h3 id="upgrade-from-version-4x-to-4y">Upgrade from Version 4.x to
+4.y</h3>
+<p>Bigger changes are indicated by a new number at the second position.
+In most of the cases they include modifications to the database. Because
+of that, it is not possible to switch back to the old version without
+restoring a backup.</p>
+<p>Before starting a big upgrade, create a backup of all datasets. Then
+download the new code and call the database upgrade script. It is not
+recommended to rely on the automatic update made by the program itself,
+not at last because it is not triggered by users that are already logged
+in.</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;System Upgrade.&#39;</span> <span class="op">&gt;</span> users/nologin.LCK</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> pull</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">util/upgrade-datasets.pl</span></span></code></pre></div>
+<p>As after a small upgrade, delete the lock file if there were no
+errors.</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> users/nologin.LCK</span></code></pre></div>
 <h2 id="upgrade-from-version-3-to-version-4">Upgrade from Version 3 to
 Version 4</h2>
 <p>Before starting, ensure your system satisfies the prerequisites
@@ -136,9 +162,9 @@ listed in <a href="installation.html#manual-installation">Manual
 Installation</a>.</p>
 <p>After installing the required packages, switch to the branch
 <code>main</code> containing version 4 and run the upgrade script:</p>
-<div class="sourceCode" id="cb6"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> switch main</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">util/v4-upgrade.pl</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> switch main</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">util/v4-upgrade.pl</span></span></code></pre></div>
 <p>The script performs the following transformations:</p>
 <ul>
 <li><code>sql-ledger.conf</code> to YAML
@@ -178,5 +204,7 @@ run <code>git switch full</code> to move to the 3.x line and
 <code>git switch main</code> to return to the 4.x line. Remember that
 each branch uses its own configuration files (conf vs. YAML format) and
 changes in one set are not mirrored to the other.</p>
+<p>Versions 4.1 and higher contain database changes and are no longer
+compatible with version 3.</p>
 </body>
 </html>

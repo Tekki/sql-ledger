@@ -2,7 +2,7 @@
 
 # Upgrade
 
-## Git Version Control
+## Change to Git Version Control
 
 This documentation presumes you manage your SQL-Ledger installation with Git and
 refrain from copying downloaded program files. If you have followed a different
@@ -49,19 +49,51 @@ If you want to stay on version 3 for the moment, change to branch `full`.
 git switch full
 ```
 
-## Upgrade Within Major Version
+## Upgrade within Version 4
 
-A single command updates the code installed via the Ansible role or manually
-through Git.
+### Upgrade from Version 4.n.x to 4.n.y
+
+A new number at the third position means that small changes were made to the
+program. This probably includes new functionality or error corrections. To
+perform such an upgrade, lock the application by creating a lock file and
+download the new code.
 
 ```bash
+echo 'System Upgrade.' > users/nologin.LCK
 git pull
 ```
-Then log in to trigger any pending database upgrades.
 
-If you have modified the original program code, proceed differently: first
-identify any pending changes with `git status`. Commit them, then merge the new
-updates from GitHub.
+If there are no error messages, delete the lock file.
+
+```bash
+rm users/nologin.LCK
+```
+
+After a small upgrade, it is always possible to jump back to the previous
+version.
+
+### Upgrade from Version 4.x to 4.y
+
+Bigger changes are indicated by a new number at the second position. In most of
+the cases they include modifications to the database. Because of that, it is not
+possible to switch back to the old version without restoring a backup.
+
+Before starting a big upgrade, create a backup of all datasets. Then download
+the new code and call the database upgrade script. It is not recommended to rely
+on the automatic update made by the program itself, not at last because it is
+not triggered by users that are already logged in.
+
+```bash
+echo 'System Upgrade.' > users/nologin.LCK
+git pull
+util/upgrade-datasets.pl
+```
+
+As after a small upgrade, delete the lock file if there were no errors.
+
+```bash
+rm users/nologin.LCK
+```
 
 ## Upgrade from Version 3 to Version 4
 
