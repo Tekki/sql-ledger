@@ -229,6 +229,8 @@ texts:
   COGS account does not exist!: Nem létezik ELÁBÉ főkönyvi számla!
   Can only send one reminder at a time!: Egyszerre csak egy emlékeztető küldhető!
   Can only send one statement at a time!: Egyszerre csak egy kimutatás küldhető!
+  Cancel: Mégse
+  Cancelled: ''
   Cannot add stores card for a completed job!: Nem adható hozzá anyaglap egy lezárt gyártáshoz!
   Cannot add time card for a completed job!: Nem adható hozzá munkalap egy lezárt gyártáshoz!
   Cannot change stores card for a completed job!: Nem módosítható a anyaglap egy lezárt gyártásnál!
@@ -434,6 +436,7 @@ texts:
   Date missing!: Hiányzik a dátum!
   Date received missing!: Hiányzik a bevételezés dátuma!
   Date worked: Munkavégzés dátuma
+  Datenbank: ''
   Day: Nap
   Day(s): Nap(ok)
   Days: Napok
@@ -696,6 +699,7 @@ texts:
   HR: HR
   HS Code: KN kód
   Heading: Címsor
+  Hide: ''
   Hide Closed Accounts: Lezárt főkönyvi számok elrejtése
   History: Elemzés
   Home Mobile: Privát mobil
@@ -919,6 +923,7 @@ texts:
   Not an Image file!: Ez nem egy képfájl!
   Not enough inventory in Row: Nincs elegendő készlet a sorban
   Not enough inventory!: Nincs elegendő készlet
+  Not on Hold: ''
   Notes: Jegyzetek
   Nothing entered!: Nem írt be semmit!
   Nothing in the Queue!: Nincs semmi a várólistában!
@@ -990,6 +995,7 @@ texts:
   Paid: Fizetve
   Paid Early: Előre fizetés
   Paid Late: Késedelmes fizetés
+  Parameter: ''
   Part: Alapanyag
   Part Changeup: Alapanyag változtatása
   Part Number: Alapanyag azonosító
@@ -1286,6 +1292,7 @@ texts:
   Shipping Date missing!: Hiányzik a szállítás dátuma
   Shipping Point: Szállítási hely
   Short: Rendelni kell
+  Show: ''
   Signature: Aláírás
   Snapshot created: Pillanatfelvétel létrehozva
   Snapshot restored: Pillanatfelvétel visszaállítva

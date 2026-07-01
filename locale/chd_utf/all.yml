@@ -242,6 +242,8 @@ texts:
   CSV: CSV
   Can only send one reminder at a time!: Kann nur je eine Mahnung verschicken!
   Can only send one statement at a time!: Kann nur je eine Zahlungserinnerung verschicken
+  Cancel: Abbrechen
+  Cancelled: Abgebrochen
   Cannot add stores card for a completed job!: Artikelkarte  kann für eine abgeschlossene Arbeit nicht erfasst werden!
   Cannot add time card for a completed job!: Stempelkarte kann für eine abgeschlossene Arbeit nicht erfasst werden!
   Cannot change stores card for a completed job!: Artikelkarte für eine abgeschlossene Arbeit kann nicht geändert werden!
@@ -455,6 +457,7 @@ texts:
   Date missing!: Datum fehlt!
   Date received missing!: Eingangsdatum fehlt!
   Date worked: Datum
+  Datenbank: ''
   Day: Tag
   Day(s): Tag(e)
   Days: Tage
@@ -1059,6 +1062,7 @@ texts:
   Paid: Bezahlt
   Paid Early: Früh bezahlt
   Paid Late: Spät bezahlt
+  Parameter: ''
   Part: Ware
   Part Changeup: Ware modifizieren
   Part Number: Artikelnummer

@@ -248,6 +248,8 @@ texts:
   CSV: CSV
   Can only send one reminder at a time!: "Envoi d'un seul rappel à\_la fois possible !"
   Can only send one statement at a time!: Envoi d'un seul rapport à la fois possible !
+  Cancel: Annuler
+  Cancelled: Annulé
   Cannot add stores card for a completed job!: Envoi d'un seul carte de boutique à la fois possible !
   Cannot add time card for a completed job!: Impossible d'ajouter heures de travail pour une tâche terminée !
   Cannot change stores card for a completed job!: Impossible de modifier carte de boutique pour une tâche terminée !
@@ -469,6 +471,7 @@ texts:
   Date missing!: Date manquante !
   Date received missing!: Date de réception manquante !
   Date worked: Date de travail
+  Datenbank: ''
   Day: Jour
   Day(s): Jour(s)
   Days: Jours
@@ -751,6 +754,7 @@ texts:
   HS Code: HS code
   HTML Templates: Modèles HTML
   Heading: Titres
+  Hide: ''
   Hide Closed Accounts: Masquer comptes fermés
   History: Historique
   Home Mobile: Tél. portable privé
@@ -1013,6 +1017,7 @@ texts:
   Not an Image file!: C'est pas un fichier image
   Not enough inventory in Row: Pas assez d'inventaire en ligne
   Not enough inventory!: Pas assez d'inventaire !
+  Not on Hold: ''
   Notes: Notes
   Nothing entered!: Rien n'a été saisi !
   Nothing in the Queue!: 'Rien en attente ! '
@@ -1091,6 +1096,7 @@ texts:
   Paid: Payé
   Paid Early: Paiement ultérieur
   Paid Late: Paiement retardé
+  Parameter: ''
   Part: Pièce
   Part Changeup: Modifier pièce
   Part Number: Numéro d'article
@@ -1415,6 +1421,7 @@ texts:
   Shipping Date missing!: Date de livraison manquante !
   Shipping Point: Point d'expédition
   Short: Court
+  Show: ''
   Signature: Signature
   Snapshot created: Instantané créé
   Snapshot restored: Instantané restauré

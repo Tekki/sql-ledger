@@ -241,6 +241,8 @@ texts:
   COGS account does not exist!: SMM hesabı yok!
   Can only send one reminder at a time!: Bir defada sadece bir hatırlatma gönderilebilir!
   Can only send one statement at a time!: Bir defada sadece bir çıktı gönderilebilir!
+  Cancel: İptal
+  Cancelled: ''
   Cannot add stores card for a completed job!: Tamamlanmış iş için stok kartı eklenemez!
   Cannot add time card for a completed job!: Tamamlanmış iş için zaman kartı eklenemez!
   Cannot add timecard for a completed job!: Tamamlanmış iş için zaman kartı eklenemez!
@@ -463,6 +465,7 @@ texts:
   Date missing!: Tarih yok!
   Date received missing!: Alındığı tarih yok!
   Date worked: Çalışılan tarih
+  Datenbank: ''
   Day: Gün
   Day(s): Gün
   Days: Gün
@@ -742,6 +745,7 @@ texts:
   HS Code: HS Kodu
   HTML Templates: HTML Şablonları
   Heading: Başlık
+  Hide: ''
   Hide Closed Accounts: Kapalı Hesapları Gizle
   History: Geçmiş
   Home Mobile: Ev Cep
@@ -989,6 +993,7 @@ texts:
   Not an Image file!: Bir Resim dosyası değil!
   Not enough inventory in Row: Satırda yetersiz stok
   Not enough inventory!: Yetersiz Stok
+  Not on Hold: ''
   Notes: Notlar
   Nothing entered!: Hiçbirşey girilmedi!
   Nothing in the Queue!: Sırada bir şey yok!
@@ -1062,6 +1067,7 @@ texts:
   Paid: Ödendi
   Paid Early: Erken Ödeme
   Paid Late: Gecikmiş Ödeme
+  Parameter: ''
   Part: Parça
   Part Changeup: Parça Değişimi
   Part Number: Parça No
@@ -1380,6 +1386,7 @@ texts:
   Shipping Date missing!: Sevk Tarihi yok!
   Shipping Point: Sevk Yeri
   Short: Kısa
+  Show: ''
   Signature: İmza
   Snapshot created: Anlık durum oluşturuldu
   Snapshot restored: Anlık durum geri kuruldu
