@@ -1,7 +1,12 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
-Not Released
-  - 
+4.1.1 2026-07-01
+  - 'cancel' button for repost, resave and delete dialogs
+  - keyboard shortcut for 'yes' buttons
+  - request parameters for query in database monitor
+  - spreadsheet export for database monitor
+  - documentation updated
+  - code for search queries simplified using the ILIKE key word
 
 4.1.0 2026-06-04
   - 'on hold' flag for orders and quotations
