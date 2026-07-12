@@ -111,7 +111,7 @@ other accessible by the web server and change its owner to
 <code>www-data:www-data</code> on Debian or <code>apache:apache</code>
 on Fedora based distributions. Set the parameter <code>gpg</code> in
 <code>config/sql-ledger.yml</code> accordingly and run
-<code>util/update-config.pl</code>.</p>
+<code>make config</code> or <code>util/update-config.pl</code>.</p>
 <p>Generate a key pair locally. Sign in to your database, navigate to
 <code>System → Defaults</code>, and paste the public key into the field
 in the <code>Encryption</code> section. From that point forward, this

@@ -119,9 +119,9 @@ database.</p>
 <p>The YAML files can be edited directly on the server. They have binary
 counterparts with the <code>.bin</code> extension, which are optimized
 for fast reading by SQL-Ledger.</p>
-<p><strong>Important:</strong> After any change to a YAML file, the
-<code>util/update-config.pl</code> script must be run to update the
-binary files.</p>
+<p><strong>Important:</strong> After any change to a YAML file,
+<code>make config</code> or the <code>util/update-config.pl</code>
+script must be run to update the binary files.</p>
 <h2 id="global-configuration">Global Configuration</h2>
 <p>To set the global configuration, create a file named
 <code>config/sql-ledger.yml</code>. A detailed example is provided in
@@ -196,7 +196,9 @@ default address format follows the pattern: street name, building
 number, postal code, and city, with no text transformation applied. As a
 result, users outside these regions may see addresses that look
 incorrect. In such a case, please open an <a
-href="https://github.com/Tekki/sql-ledger/issues">issue on
-GitHub</a>.</p>
+href="https://github.com/Tekki/sql-ledger/issues">issue on GitHub</a> or
+send an e-mail to the mailing list <a
+href="https://lists.sr.ht/~tekki/sql-ledger-discuss">sql-ledger-discuss</a>
+on SourceHut.</p>
 </body>
 </html>

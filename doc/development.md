@@ -60,10 +60,12 @@ restricted to core developers and are currently undocumented.
 
 ## Contributing
 
-If you encounter an error or have a feature idea, first of all open an issue on
-our [GitHub repository](https://github.com/Tekki/sql-ledger/issues) so we can
-discuss it further. Contributors are expected to be human beings and
-identifiable as such.
+If you encounter an error or have a feature idea, first of all open either an
+issue on our [GitHub repository](https://github.com/Tekki/sql-ledger/issues) or
+send an e-mail to the
+[sql-ledger-discuss](https://lists.sr.ht/~tekki/sql-ledger-discuss) mailing list
+on SourceHut. Then we can discuss it further. Contributors are expected to be
+human beings and identifiable as such.
 
 For improvements to translations refer to [Updating and Creating
 Translations](translations.md#updating-and-creating-translations).
@@ -80,10 +82,10 @@ The contribution process for code changes is:
 - check if the new code meets the expectations
 - publication of a new release
 
-Familiarity with Git and creating pull requests on GitHub is required. Sign the
-commits. Remember that changing the code is step 6 on the above list, not the
-first. Pull requests without prior discussion will not get reviewed, except for
-small corrections of obvious errors.
+Familiarity with Git and either creating pull requests on GitHub or creating
+patches is required. Sign the commits. Remember that changing the code is step 6
+on the above list, not the first. Pull requests without prior discussion will
+not get reviewed, except for small corrections of obvious errors.
 
 Some coding rules:
 

@@ -26,8 +26,9 @@ familiar with the technical vocabulary around trade and manufacturing and with
 the current accounting standards of your country.
 
 Only modify translation strings in the original code if you intend to patch the
-application and create a pull request on GitHub. Changing them otherwise risks
-breaking future updates. For your private translation, create a new directory.
+application and create a pull request on GitHub or send a path to SourceHut.
+Changing them otherwise risks breaking future updates. For your private
+translation, create a new directory.
 
 To add a new translation:
 - Create a directory for the language.

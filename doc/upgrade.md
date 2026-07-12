@@ -86,7 +86,7 @@ not triggered by users that are already logged in.
 ```bash
 echo 'System Upgrade.' > users/nologin.LCK
 git pull
-util/upgrade-datasets.pl
+make dbupgrade  # or: util/upgrade-datasets.pl
 ```
 
 As after a small upgrade, delete the lock file if there were no errors.

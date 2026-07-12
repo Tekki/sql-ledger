@@ -6,14 +6,19 @@ This document explains how to install the SQL-Ledger program code. As detailed
 in the [Quick Start](introduction.md#quick-start), this is only the first step
 required to achieve a fully operational system.
 
-## GitHub Repository
+## Repository
 
 It is always recommended to install the program via Git, either through the
 Ansible role or a manual installation. Both approaches are described below.
 Downloading and extracting archive files introduces unnecessary complications
 during [upgrades](upgrade.md#upgrade).
 
-The GitHub repository is structured as follows:
+The repository is located at two places:
+- on GitHub at [Tekki/sql-ledger](https://github.com/Tekki/sql-ledger)
+- on SourceHut as mirror at
+  [~tekki/sql-ledger](https://git.sr.ht/~tekki/sql-ledger)
+
+It is structured as follows:
 
 | Branch |         | Content                     |
 |--------|---------|-----------------------------|

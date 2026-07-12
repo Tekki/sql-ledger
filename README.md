@@ -47,6 +47,25 @@ docker compose -p sql-ledger up
 
 For more information, take a look at the [documentation](doc/index.md).
 
+# Stay Informed
+
+To get news about the SQL-Ledger project there are two possibilities:
+
+- Watch the [GitHub repo](https://github.com/Tekki/sql-ledger). You need a
+  GitHub login for that. To reduce the amount of messages activate only the
+  checkbox under «Custom—Releases».
+- Subscribe to the mailing list on
+  [sql-ledger-news](https://lists.sr.ht/~tekki/sql-ledger-news) on SourceHut. No
+  login is required and the subscription is anonymous.
+
+To discuss anything around this project, there are again two possibilities:
+
+- Open an issue on the [GitHub
+  repository](https://github.com/Tekki/sql-ledger/issues).
+- Send an e-mail to the
+  [sql-ledger-discuss](https://lists.sr.ht/~tekki/sql-ledger-discuss) mailing
+  list on SourceHut.
+
 # History
 
 SQL-Ledger was developed from 1999 until 2023 by [DWS Systems

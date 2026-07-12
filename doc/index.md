@@ -7,7 +7,7 @@
   - [Feature List](introduction.md#feature-list)
 
 - [Installation](installation.md#installation)
-  - [GitHub Repository](installation.md#github-repository)
+  - [Repository](installation.md#repository)
   - [Requirements](installation.md#requirements)
   - [Ansible Role](installation.md#ansible-role)
   - [Manual Installation](installation.md#manual-installation)
@@ -16,8 +16,8 @@
 - [Upgrade](upgrade.md#upgrade)
   - [Change to Git Version Control](upgrade.md#change-to-git-version-control)
   - [Upgrade within Version 4](upgrade.md#upgrade-within-version-4)
-    - [Upgrade from Version 4.n.x to 4.n.y](upgrade.md#upgrade-from-version-4.n.x-to-4.n.y)
-    - [Upgrade from Version 4.x to 4.y](upgrade.md#upgrade-from-version-4.x-to-4.y)
+    - [Upgrade from Version 4.n.x to 4.n.y](upgrade.md#upgrade-from-version-4nx-to-4ny)
+    - [Upgrade from Version 4.x to 4.y](upgrade.md#upgrade-from-version-4x-to-4y)
   - [Upgrade from Version 3 to Version 4](upgrade.md#upgrade-from-version-3-to-version-4)
   - [Downgrade from Version 4 to Version 3](upgrade.md#downgrade-from-version-4-to-version-3)
 

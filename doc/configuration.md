@@ -18,8 +18,8 @@ The YAML files can be edited directly on the server. They have binary
 counterparts with the `.bin` extension, which are optimized for fast reading by
 SQL-Ledger.
 
-**Important:** After any change to a YAML file, the `util/update-config.pl`
-script must be run to update the binary files.
+**Important:** After any change to a YAML file, `make config` or the
+`util/update-config.pl` script must be run to update the binary files.
 
 ## Global Configuration
 
@@ -107,4 +107,7 @@ Currently, localization is limited to Europe and North America. The default
 address format follows the pattern: street name, building number, postal code,
 and city, with no text transformation applied. As a result, users outside these
 regions may see addresses that look incorrect. In such a case, please open an
-[issue on GitHub](https://github.com/Tekki/sql-ledger/issues).
+[issue on GitHub](https://github.com/Tekki/sql-ledger/issues) or send an e-mail
+to the mailing list
+[sql-ledger-discuss](https://lists.sr.ht/~tekki/sql-ledger-discuss) on
+SourceHut.

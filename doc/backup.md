@@ -29,7 +29,7 @@ To comply with this, install [GnuPG](https://gnupg.org/) on your server, create
 a directory `/var/www/gnupg` or any other accessible by the web server and
 change its owner to `www-data:www-data` on Debian or `apache:apache` on Fedora
 based distributions. Set the parameter `gpg` in `config/sql-ledger.yml`
-accordingly and run `util/update-config.pl`.
+accordingly and run `make config` or `util/update-config.pl`.
 
 Generate a key pair locally. Sign in to your database, navigate to
 `System → Defaults`, and paste the public key into the field in the `Encryption`

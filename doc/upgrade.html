@@ -150,7 +150,7 @@ in.</p>
 <div class="sourceCode" id="cb7"><pre
 class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;System Upgrade.&#39;</span> <span class="op">&gt;</span> users/nologin.LCK</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> pull</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">util/upgrade-datasets.pl</span></span></code></pre></div>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> dbupgrade  <span class="co"># or: util/upgrade-datasets.pl</span></span></code></pre></div>
 <p>As after a small upgrade, delete the lock file if there were no
 errors.</p>
 <div class="sourceCode" id="cb8"><pre
