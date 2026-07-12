@@ -6596,6 +6596,13 @@ sub monitor {
 |;
   }
 
+  my %rows;
+  for (qw|command parameter|) {
+    $rows{$_} = List::Util::min(30,
+      $form->{"sql$_"} ? List::Util::max(5, ($form->{"sql$_"} =~ tr/\n//) + 2) : 5);
+  }
+  $rows{command} = $rows{parameter} = List::Util::max($rows{command}, $rows{parameter});
+
   @input = qw|sql parameter|;
 
   $form->header;
@@ -6615,8 +6622,8 @@ $reportform
     <td>|.$locale->text('Parameter').qq|</td>
   </tr>
   <tr>
-    <td><textarea name="sql" rows="10" cols="70" wrap>$form->{sqlcommand}</textarea></td>
-    <td><textarea name="parameter" rows="10" nowrap>$form->{sqlparameter}</textarea></td>
+    <td><textarea name="sql" rows="$rows{command}" cols="70" wrap>$form->{sqlcommand}</textarea></td>
+    <td><textarea name="parameter" rows="$rows{parameter}" nowrap>$form->{sqlparameter}</textarea></td>
   </tr>
 </table>|;
 
