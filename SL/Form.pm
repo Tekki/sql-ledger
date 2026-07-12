@@ -321,7 +321,7 @@ sub helpref ($self, $myconfig, $slconfig, $file) {
   my $symbol = -f "$slconfig->{notes}/$myconfig->{dbname}/$file.md" ? '&#9701;' : '&#9721;';
 
   $self->{helpref}
-    = qq|<a href=am.pl?action=display_form&file=helpref/$file&path=$self->{path}&login=$self->{login} target=_blank class=help accesskey=? title=[?]>$symbol</a>|;
+    = qq|<a href="am.pl?action=display_form&file=helpref/$file&path=$self->{path}&login=$self->{login}" target="_blank" class="help noprint" accesskey="?" title="[?]">$symbol</a>|;
 
 }
 
