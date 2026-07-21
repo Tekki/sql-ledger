@@ -1039,6 +1039,7 @@ sub transactions ($, $myconfig, $form) {
     }
 
     $ref->{$_} ||= 0 for qw|amount tax linetotal|;
+    $ref->{_groupitem} = $ref->{$form->{sort}};
 
     $curr{$ref->{curr}} = 1;
     $ref->{exchangerate} ||= 1;
@@ -1078,7 +1079,7 @@ sub transactions ($, $myconfig, $form) {
         }
       }
     } elsif (($form->{detail} // '') eq 'payment' && $sameid == $ref->{id}) {
-      push @{ $form->{transactions} }, {%$ref{qw|id datepaid paid paymentaccount paymentdiff memo|}};
+      push @{ $form->{transactions} }, {%$ref{qw|id datepaid paid paymentaccount paymentdiff memo _groupitem|}};
     } else {
       push @{ $form->{transactions} }, $ref;
     }

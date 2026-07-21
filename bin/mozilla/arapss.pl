@@ -69,7 +69,7 @@ sub transactions_spreadsheet {
   $ss->worksheet(form_title => 1)->structure(\%spreadsheet_info)
     ->column_index([grep !/delete|runningnumber/, @$column_index])->totalize([':decimal']);
   if ($form->{l_subtotal}) {
-    $ss->group_by([$form->{sort}])->group_label([$form->{sort}]);
+    $ss->group_by(['_groupitem'])->group_label([$form->{sort}]);
   }
 
   $ss->title($form->{title})->crlf->report_options($report_options);

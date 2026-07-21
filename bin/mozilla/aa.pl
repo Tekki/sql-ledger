@@ -2367,7 +2367,7 @@ sub transactions {
   $callback = $form->escape($callback);
 
   if (@{ $form->{transactions} }) {
-    $sameitem = $form->{transactions}->[0]->{$form->{sort}};
+    $sameitem = $form->{transactions}[0]{_groupitem};
   }
 
   $i = 0;
@@ -2377,9 +2377,9 @@ sub transactions {
     $checked{$i} = ($form->{"checked_$i"}) ? "checked" : "";
 
     if ($form->{l_subtotal} eq 'Y') {
-      if ($sameitem ne $ref->{$form->{sort}}) {
+      if ($sameitem ne $ref->{_groupitem}) {
         &subtotal;
-        $sameitem = $ref->{$form->{sort}};
+        $sameitem = $ref->{_groupitem};
       }
     }
 

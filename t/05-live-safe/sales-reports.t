@@ -37,11 +37,18 @@ subtest 'Transactions with details' => sub {
     ->elements_exist('Links to invoice, name', 'a.invnumber-l', 'a.ar-l', 'a.is-l', 'a.name-l');
 };
 
-subtest 'Transactions with payments' => sub {
+subtest 'Transactions with payments and subtotals' => sub {
   $t->get_ok('Report frontend', 'ar.pl', action => 'search', nextsub => 'transactions')
-    ->set_params_ok('Report parameters', transdatefrom => $t->date_jan1, detail => 'payment')
+    ->set_params_ok(
+    'Report parameters',
+    transdatefrom => $t->date_jan1,
+    detail        => 'payment',
+    l_subtotal    => 'Y',
+    )
     ->post_ok('Generate report')
-    ->elements_exist('Links to invoice, name', 'a.invnumber-l', 'a.ar-l', 'a.is-l', 'a.name-l');
+    ->elements_exist('Links to invoice, name', 'a.invnumber-l', 'a.ar-l', 'a.is-l', 'a.name-l')
+    ->download_ok('Spreadsheet', 'xlsx', 'spreadsheet')
+    ->download_is('Spreadsheet', 'xlsx');
 };
 
 subtest 'Outstanding' => sub {
