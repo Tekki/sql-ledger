@@ -1,7 +1,12 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
-Not Released
-  - 
+4.1.2 2026-07-25
+  - mailings lists and mirror of the repository on SourceHut mentioned in the
+    documentation
+  - query and parameter fields in the monitor adapt automatically to the size of
+    the content
+  - makefile to update the configuration and run tests added
+  - broken subtotals in transaction reports with option 'payments' corrected
 
 4.1.1 2026-07-01
   - 'cancel' button for repost, resave and delete dialogs
