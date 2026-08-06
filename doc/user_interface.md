@@ -74,13 +74,25 @@ Some of the commonly used shortcuts for buttons are:
 
 | key | command      |
 |-----|--------------|
-| ?   | Helping Note |
-| U   | Update       |
-| C   | Continue     |
-| S   | Save         |
-| O   | Post         |
-| V   | Preview      |
-| P   | Print        |
+| ?   | helping note |
+| U   | update       |
+| C   | continue     |
+| K   | cancel       |
+| J   | yes          |
+| S   | save         |
+| O   | post         |
+| V   | preview      |
+| P   | print        |
+| E   | e-mail       |
+
+On many screens the following shortcuts are available too:
+
+| key | command                                            |
+|-----|----------------------------------------------------|
+| :   | customer, vendor, employee of the current document |
+| <   | upload reference document                          |
+| >   | download first reference document in the list      |
+| &   | resource planning report                           |
 
 The following keys move the cursor directly to an input field:
 

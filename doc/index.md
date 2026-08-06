@@ -6,6 +6,13 @@
   - [Quick Start](introduction.md#quick-start)
   - [Feature List](introduction.md#feature-list)
 
+- [User Interface](user_interface.md#user-interface)
+  - [Color Themes](user_interface.md#color-themes)
+  - [Helping Notes](user_interface.md#helping-notes)
+  - [Keyboard Shortcuts](user_interface.md#keyboard-shortcuts)
+    - [Access Keys](user_interface.md#access-keys)
+    - [Quick Date Entry](user_interface.md#quick-date-entry)
+
 - [Installation](installation.md#installation)
   - [Repository](installation.md#repository)
   - [Requirements](installation.md#requirements)
@@ -43,13 +50,6 @@
   - [Backup Formats](backup.md#backup-formats)
   - [Encrypted Backups](backup.md#encrypted-backups)
   - [Restore](backup.md#restore)
-
-- [User Interface](user_interface.md#user-interface)
-  - [Color Themes](user_interface.md#color-themes)
-  - [Helping Notes](user_interface.md#helping-notes)
-  - [Keyboard Shortcuts](user_interface.md#keyboard-shortcuts)
-    - [Access Keys](user_interface.md#access-keys)
-    - [Quick Date Entry](user_interface.md#quick-date-entry)
 
 - [LaTeX Templates](latex_templates.md#latex-templates)
   - [Simple Markdown](latex_templates.md#simple-markdown)
