@@ -1121,44 +1121,56 @@ sub form_footer {
 
   } else {
 
-    %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
-               'Preview' => { ndx => 3, key => 'V', value => $locale->text('Preview') },
-               'Print' => { ndx => 4, key => 'P', value => $locale->text('Print') },
-               'Save' => { ndx => 5, key => 'S', value => $locale->text('Save'), class => 'positive' },
-               'Ship to' => { ndx => 6, key => 'T', value => $locale->text('Ship to') },
-               'Ship all' => { ndx => 7, key => 'A', value => $locale->text('Ship all') },
-               'E-mail' => { ndx => 8, key => 'E', value => $locale->text('E-mail') },
-               'Print and Save' => { ndx => 9, key => 'R', value => $locale->text('Print and Save') },
-               'Save as new' => { ndx => 10, key => 'N', value => $locale->text('Save as new'), class => 'positive' },
-               'Print and Save as new' => { ndx => 11, key => 'W', value => $locale->text('Print and Save as new') },
-               'Sales Invoice' => { ndx => 12, key => 'I', value => $locale->text('Sales Invoice') },
-               'Sales Order' => { ndx => 13, key => 'O', value => $locale->text('Sales Order') },
-               'Quotation' => { ndx => 14, key => 'Q', value => $locale->text('Quotation') },
-               'Vendor Invoice' => { ndx => 15, key => 'I', value => $locale->text('Vendor Invoice') },
-               'Purchase Order' => { ndx => 16, key => 'O', value => $locale->text('Purchase Order') },
-               'RFQ' => { ndx => 17, key => 'Q', value => $locale->text('RFQ') },
-               'Schedule' => { ndx => 18, key => 'H', value => $locale->text('Schedule') },
-               'New Number' => { ndx => 19, key => 'M', value => $locale->text('New Number'), class => 'critical' },
-               'Delete' => { ndx => 20, key => 'D', value => $locale->text('Delete'), class => 'negative' },
-              );
+    my @buttons = (
+      {
+        'Update'   => {ndx => 1, key => 'U', value => $locale->text('Update')},
+        'Save'     => {ndx => 2, key => 'S', value => $locale->text('Save'), class => 'positive'},
+        'Ship to'  => {ndx => 3, key => 'T', value => $locale->text('Ship to')},
+        'Ship all' => {ndx => 4, key => 'A', value => $locale->text('Ship all')},
+        'Schedule' => {ndx => 5, key => 'H', value => $locale->text('Schedule')},
+        'Save as new' =>
+          {ndx => 6, key => 'N', value => $locale->text('Save as new'), class => 'positive'},
+        'New Number' =>
+          {ndx => 7, key => 'M', value => $locale->text('New Number'), class => 'critical'},
+        'Delete' => {ndx => 8, key => 'D', value => $locale->text('Delete'), class => 'negative'},
+      },
+      {
+        _label_          => $locale->text('Share'),
+        'Preview'        => {ndx => 10, key => 'V', value => $locale->text('Preview')},
+        'Print'          => {ndx => 11, key => 'P', value => $locale->text('Print')},
+        'E-mail'         => {ndx => 12, key => 'E', value => $locale->text('E-mail')},
+        'Print and Save' => {ndx => 13, key => 'R', value => $locale->text('Print and Save')},
+        'Print and Save as new' =>
+          {ndx => 14, key => 'W', value => $locale->text('Print and Save as new')},
 
+      },
+      {
+        _label_          => $locale->text('Convert'),
+        'Sales Invoice'  => {ndx => 20, key => 'I', value => $locale->text('Sales Invoice')},
+        'Sales Order'    => {ndx => 21, key => 'O', value => $locale->text('Sales Order')},
+        'Quotation'      => {ndx => 22, key => 'Q', value => $locale->text('Quotation')},
+        'Vendor Invoice' => {ndx => 23, key => 'I', value => $locale->text('Vendor Invoice')},
+        'Purchase Order' => {ndx => 24, key => 'O', value => $locale->text('Purchase Order')},
+        'RFQ'            => {ndx => 25, key => 'Q', value => $locale->text('RFQ')},
+      },
+    );
 
-    %f = ();
-    for ("Update", "Ship to", "Print", "E-mail", "Save", "New Number") { $f{$_} = 1 }
+    %f = (_label_ => 1);
+    for ('Update', 'Ship to', 'Print', 'E-mail', 'Save', 'New Number') { $f{$_} = 1 }
     if ($slconfig{latex}) {
       $f{'Print and Save'} = 1;
-      $f{'Preview'} = 1;
+      $f{'Preview'}        = 1;
     }
 
     $f{'Ship all'} = 1 if $form->{type} =~ /(sales|purchase)_order/;
 
     if ($form->{id}) {
 
-      $f{'Delete'} = 1;
-      $f{'Save as new'} = 1;
+      $f{'Delete'}                = 1;
+      $f{'Save as new'}           = 1;
       $f{'Print and Save as new'} = 1 if $slconfig{latex};
       if ($form->{closed} && $transdate <= $form->{closedto}) {
-        $f{'Save'} = 0;
+        $f{'Save'}   = 0;
         $f{'Delete'} = 0;
       }
 
@@ -1201,7 +1213,9 @@ sub form_footer {
       }
 
       if ($form->{aa_id}) {
-        for ("Save", "Print and Save", "Sales Invoice", "Vendor Invoice", "Delete") { delete $f{$_} }
+        for ("Save", "Print and Save", "Sales Invoice", "Vendor Invoice", "Delete") {
+          delete $f{$_};
+        }
       }
     }
 
@@ -1209,11 +1223,15 @@ sub form_footer {
       $f{'Schedule'} = 1;
     }
 
+    for my $button (@buttons) {
+      for (keys %$button) {
+        delete $button->{$_} unless $f{$_};
+      }
+    }
+
+    $form->print_button_table(\@buttons);
+
   }
-
-  for (keys %button) { delete $button{$_} if ! $f{$_} }
-
-  $form->print_button(\%button);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";

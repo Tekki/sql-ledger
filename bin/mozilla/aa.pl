@@ -1119,40 +1119,52 @@ sub form_footer {
 
     print "<br>";
 
-    %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
-               'Preview' => { ndx => 3, key => 'V', value => $locale->text('Preview') },
-               'Print' => { ndx => 4, key => 'P', value => $locale->text('Print') },
-               'Post' => { ndx => 5, key => 'O', value => $locale->text('Post'), class => 'positive' },
-               'Print and Post' => { ndx => 6, key => 'R', value => $locale->text('Print and Post') },
-               'Post as new' => { ndx => 7, key => 'N', value => $locale->text('Post as new'), class => 'positive' },
-               'Print and Post as new' => { ndx => 8, key => 'W', value => $locale->text('Print and Post as new') },
-               'Schedule' => { ndx => 9, key => 'H', value => $locale->text('Schedule') },
-               'New Number' => { ndx => 10, key => 'M', value => $locale->text('New Number'), class => 'critical' },
-               'Delete' => { ndx => 11, key => 'D', value => $locale->text('Delete'), class => 'negative' },
-              );
+    my @buttons = (
+      {
+        'Update'   => {ndx => 1, key => 'U', value => $locale->text('Update')},
+        'Post'     => {ndx => 2, key => 'O', value => $locale->text('Post'), class => 'positive'},
+        'Schedule' => {ndx => 3, key => 'H', value => $locale->text('Schedule')},
+        'Post as new' =>
+          {ndx => 4, key => 'N', value => $locale->text('Post as new'), class => 'positive'},
+        'New Number' =>
+          {ndx => 5, key => 'M', value => $locale->text('New Number'), class => 'critical'},
+        'Delete' => {ndx => 6, key => 'D', value => $locale->text('Delete'), class => 'negative'},
+      },
+      {
+        _label_                 => $locale->text('Share'),
+        'Preview'               => {ndx => 10, key => 'V', value => $locale->text('Preview')},
+        'Print'                 => {ndx => 11, key => 'P', value => $locale->text('Print')},
+        'Print and Post'        => {ndx => 12, key => 'R', value => $locale->text('Print and Post')},
+        'Print and Post as new' =>
+          {ndx => 13, key => 'W', value => $locale->text('Print and Post as new')},
+      },
+    );
 
     delete $button{'Schedule'} if $form->{batch};
 
     if ($form->{id}) {
 
       if ($form->{locked} || $transdate <= $form->{closedto}) {
-        for ("Post", "Print and Post", "Delete") { delete $button{$_} }
+        for ('Post', 'Delete') { delete $buttons[0]{$_} }
+        delete $buttons[1]{'Print and Post'};
       }
 
     } else {
 
-      for ("Post as new", "Print and Post as new", "Delete") { delete $button{$_} }
+      for ('Post as new', 'Delete') { delete $buttons[0]{$_} }
+      delete $buttons[1]{'Print and Post as new'};
 
       if ($transdate <= $form->{closedto}) {
-        for ("Post", "Print and Post") { delete $button{$_} }
+        delete $buttons[0]{'Print'};
+        delete $buttons[1]{'Print and Post'};
       }
     }
 
-    if (!$slconfig{latex}) {
-      for ("Preview", "Print and Post", "Print and Post as new") { delete $button{$_} }
+    unless ($slconfig{latex}) {
+      for ('Preview', 'Print and Post', 'Print and Post as new') { delete $buttons[1]{$_} }
     }
 
-    $form->print_button(\%button);
+    $form->print_button_table(\@buttons);
 
   }
 

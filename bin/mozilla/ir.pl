@@ -970,46 +970,69 @@ sub form_footer {
     &islocked;
 
   } else {
-    %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
-               'Preview' => { ndx => 3, key => 'V', value => $locale->text('Preview') },
-               'Print' => { ndx => 4, key => 'P', value => $locale->text('Print') },
-               'Post' => { ndx => 5, key => 'O', value => $locale->text('Post'), class => 'positive' },
-               'Ship to' => { ndx => 6, key => 'T', value => $locale->text('Ship to') },
-               'E-mail' => { ndx => 7, key => 'E', value => $locale->text('E-mail') },
-               'Print and Post' => { ndx => 8, key => 'R', value => $locale->text('Print and Post') },
-               'Post as new' => { ndx => 9, key => 'N', value => $locale->text('Post as new'), class => 'positive' },
-               'Print and Post as new' => { ndx => 10, key => 'W', value => $locale->text('Print and Post as new') },
-               'Purchase Order' => { ndx => 11, key => 'L', value => $locale->text('Purchase Order') },
-               'Schedule' => { ndx => 12, key => 'H', value => $locale->text('Schedule') },
-               'New Number' => { ndx => 13, key => 'M', value => $locale->text('New Number'), class => 'critical' },
-               'Delete' => { ndx => 14, key => 'D', value => $locale->text('Delete'), class => 'negative' },
-              );
+    my @buttons = (
+      {
+        'Update'   => {ndx => 1, key => 'U', value => $locale->text('Update')},
+        'Post'     => {ndx => 2, key => 'O', value => $locale->text('Post'), class => 'positive'},
+        'Ship to'  => {ndx => 3, key => 'T', value => $locale->text('Ship to')},
+        'Schedule' => {ndx => 4, key => 'H', value => $locale->text('Schedule')},
+        'Post as new' =>
+          {ndx => 5, key => 'N', value => $locale->text('Post as new'), class => 'positive'},
+        'New Number' =>
+          {ndx => 6, key => 'M', value => $locale->text('New Number'), class => 'critical'},
+        'Delete' => {ndx => 7, key => 'D', value => $locale->text('Delete'), class => 'negative'},
+
+      },
+      {
+        _label_          => $locale->text('Share'),
+        'Preview'        => {ndx => 10, key => 'V', value => $locale->text('Preview')},
+        'Print'          => {ndx => 11, key => 'P', value => $locale->text('Print')},
+        'E-mail'         => {ndx => 12, key => 'E', value => $locale->text('E-mail')},
+        'Print and Post' => {ndx => 13, key => 'R', value => $locale->text('Print and Post')},
+        'Print and Post as new' =>
+          {ndx => 14, key => 'W', value => $locale->text('Print and Post as new')},
+      },
+      {
+        _label_       => $locale->text('Convert'),
+        'Purchase Order' => {ndx => 20, key => 'L', value => $locale->text('Purchase Order')},
+      },
+    );
 
     if ($form->{id}) {
 
-      delete $button{'Purchase Order'} if $myconfig{acs} =~ /(Order Entry--Order Entry|Order Entry--Purchase Order)/;
+      delete $buttons[2]{'Purchase Order'} if $myconfig{acs} =~ /(Order Entry--Order Entry|Order Entry--Purchase Order)/;
 
       if ($form->{locked} || $transdate <= $form->{closedto}) {
-        for ("Post", "Print and Post", "Delete") { delete $button{$_} }
+        for ('Post', 'Delete') { delete $buttons[0]{$_} }
+        delete $buttons[1]{'Print and Post'};
       }
 
-      if (!$slconfig{latex}) {
-        for ("Preview", "Print and Post", "Print and Post as new") { delete $button{$_} }
+      unless ($slconfig{latex}) {
+        for ('Preview', 'Print and Post', 'Print and Post as new') { delete $buttons[1]{$_} }
       }
 
     } else {
 
+      %ab = (_label_ => 1);
+
       if ($transdate > $form->{closedto}) {
-        for ('Update', "New Number", "Ship to", "Print", "E-mail", 'Post', 'Schedule') { $a{$_} = 1 }
+
+        for ('Update', 'Ship to', 'Print', 'E-mail', 'Post', 'Schedule', 'New Number') { $ab{$_} = 1 }
         if ($slconfig{latex}) {
-          $a{'Print and Post'} = 1;
-          $a{'Preview'} = 1;
+          $ab{'Print and Post'} = 1;
+          $ab{'Preview'} = 1;
+        }
+
+      }
+
+      for my $button (@buttons) {
+        for (keys %$button) {
+          delete $button->{$_} unless $ab{$_};
         }
       }
-      for (keys %button) { delete $button{$_} if ! $a{$_} }
     }
 
-    $form->print_button(\%button);
+    $form->print_button_table(\@buttons);
 
   }
 
