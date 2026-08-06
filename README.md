@@ -60,10 +60,16 @@ To get news about the SQL-Ledger project there are two possibilities:
 
 To discuss anything around this project, there are again two possibilities:
 
-- Open an issue on the [GitHub
-  repository](https://github.com/Tekki/sql-ledger/issues).
+- Open an issue on the
+  [GitHub repository](https://github.com/Tekki/sql-ledger/issues).
 - Send an e-mail to the
   [sql-ledger-discuss](https://lists.sr.ht/~tekki/sql-ledger-discuss) mailing
+  list on SourceHut.
+
+If you need help but don’t want to discuss the topic in public:
+
+- Send a private e-mail to the
+  [sql-ledger-support](https://lists.sr.ht/~tekki/sql-ledger-support) mailing
   list on SourceHut.
 
 # History
