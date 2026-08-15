@@ -1155,8 +1155,23 @@ sub form_footer {
       },
     );
 
+    if ($form->{planning_link}) {
+      push @buttons,
+        {
+        _label_             => $locale->text('Reports'),
+        'Resource Planning' => {
+          ndx     => 1,
+          key     => '&',
+          value   => $locale->text('Resource Planning'),
+          onclick => qq|window.open('$form->{planning_link}')|
+        },
+        };
+    }
+
     %f = (_label_ => 1);
-    for ('Update', 'Ship to', 'Print', 'E-mail', 'Save', 'New Number') { $f{$_} = 1 }
+    for ('Update', 'Ship to', 'Print', 'E-mail', 'Save', 'New Number', 'Resource Planning',) {
+      $f{$_} = 1;
+    }
     if ($slconfig{latex}) {
       $f{'Print and Save'} = 1;
       $f{'Preview'}        = 1;

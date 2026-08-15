@@ -2436,10 +2436,12 @@ sub print_button ($, $button) {
 
   for my $id (sort { $button->{$a}{ndx} <=> $button->{$b}{ndx} } grep !/_label_/, keys %$button) {
     my %btn    = $button->{$id}->%*;
-    my $action = $btn{action} || lc $id =~ s/ /_/gr;
-    my $class  = $btn{class} ? "$btn{class} " : '';
+    my $action  = $btn{action} // lc $id =~ s/ /_/gr;
+    my $class   = $btn{class}   ? "$btn{class} "   : '';
+    my $onclick = $btn{onclick} ? qq| onclick="$btn{onclick}"| : '';
+    my $type    = $btn{onclick} ? 'button' : 'submit';
     print
-      qq|\n<button class="${class}submit noprint" type="submit" name="action" value="$action" accesskey="$btn{key}" title="$btn{value} [$btn{key}]">$btn{value}</button>|;
+      qq|\n<button class="${class}submit noprint" type="$type" name="action" value="$action" accesskey="$btn{key}" title="$btn{value} [$btn{key}]"$onclick>$btn{value}</button>|;
   }
 
 }

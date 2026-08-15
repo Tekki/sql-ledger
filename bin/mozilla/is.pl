@@ -1124,6 +1124,19 @@ $notes = qq|<textarea name=notes rows=$rows cols=35 wrap=soft accesskey="+" titl
         },
       );
 
+      if ($form->{planning_link}) {
+        push @buttons,
+          {
+          _label_             => $locale->text('Reports'),
+          'Resource Planning' => {
+            ndx     => 1,
+            key     => '&',
+            value   => $locale->text('Resource Planning'),
+            onclick => qq|window.open('$form->{planning_link}')|
+          },
+          };
+      }
+
     }
 
     if ($form->{id}) {
@@ -1141,7 +1154,7 @@ $notes = qq|<textarea name=notes rows=$rows cols=35 wrap=soft accesskey="+" titl
 
     } else {
 
-      %ab = (_label_ => 1);
+      %ab = (_label_ => 1, 'Resource Planning' => 1,);
 
       if ($transdate > $form->{closedto}) {
 

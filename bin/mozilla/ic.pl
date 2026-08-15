@@ -832,7 +832,7 @@ sub form_footer {
       },
       {
         _label_             => $locale->text('Reports'),
-        'Resource Planning' => {ndx => 1, key => 'R', value => $locale->text('Resource Planning')},
+        'Resource Planning' => {ndx => 1, key => '&', value => $locale->text('Resource Planning')},
       },
     );
 

@@ -239,7 +239,11 @@ sub display_row {
       $zero = "0";
       $itemhref = qq| <a class="part-l" href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"id_$i"}" target=_blank>&#9701;</a>|;
       $itemhistory = qq| <a class="history-l" href="ic.pl?action=history&history=sales&login=$form->{login}&path=$form->{path}&pickvar=sellprice_$i&id=$form->{"id_$i"}" target=popup>&#9701;</a>|;
-      $itemplanning = qq| <a class="planning-l" href="ic.pl?action=resource_planning&login=$form->{login}&path=$form->{path}&id=$form->{"id_$i"}&report_ids=$form->{report_ids}" target=popup>&#9701;</a>|;
+
+      my $planning_link
+        = qq|ic.pl?action=resource_planning&login=$form->{login}&path=$form->{path}&id=$form->{"id_$i"}&report_ids=$form->{report_ids}|;
+      $itemplanning = qq| <a class="planning-l" href="$planning_link" target="_blank">&#9701;</a>|;
+      $form->{planning_link} = $planning_link if $i == 1;
 
       %p = split /[: ]/, $form->{"pricematrix_$i"};
       for (split / /, $form->{"kit_$i"}) {

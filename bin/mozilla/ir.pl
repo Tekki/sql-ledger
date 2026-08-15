@@ -998,6 +998,19 @@ sub form_footer {
       },
     );
 
+    if ($form->{planning_link}) {
+      push @buttons,
+        {
+        _label_             => $locale->text('Reports'),
+        'Resource Planning' => {
+          ndx     => 1,
+          key     => '&',
+          value   => $locale->text('Resource Planning'),
+          onclick => qq|window.open('$form->{planning_link}')|
+        },
+        };
+    }
+
     if ($form->{id}) {
 
       delete $buttons[2]{'Purchase Order'} if $myconfig{acs} =~ /(Order Entry--Order Entry|Order Entry--Purchase Order)/;
@@ -1013,7 +1026,7 @@ sub form_footer {
 
     } else {
 
-      %ab = (_label_ => 1);
+      %ab = (_label_ => 1, 'Resource Planning' => 1,);
 
       if ($transdate > $form->{closedto}) {
 
