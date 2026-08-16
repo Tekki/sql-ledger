@@ -399,7 +399,7 @@ sub form_header {
               </tr>|;
   }
 
-  $vcref = qq|<a class="$form->{vc}-l" href="ct.pl?action=edit&db=$form->{vc}&id=$form->{"$form->{vc}_id"}&login=$form->{login}&path=$form->{path}" target=_blank>&#9701;</a>|;
+  $vcref = qq|<a class="$form->{vc}-l" href="ct.pl?action=edit&db=$form->{vc}&id=$form->{"$form->{vc}_id"}&login=$form->{login}&path=$form->{path}" accesskey=":" title="$vcname [:]" target=_blank>&#9701;</a>|;
 
   $vc = qq|<input type="hidden" name="action" value="update">
               <tr>

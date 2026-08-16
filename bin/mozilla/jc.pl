@@ -488,14 +488,16 @@ sub timecard_header {
   $laborlabel = $locale->text('Service/Labor Code');
 
   if ($form->{project} eq 'job') {
-    $projectlabel = $locale->text('Job Number');
-    $laborlabel = $locale->text('Labor Code');
+    $projectlabel   = $locale->text('Job Number');
+    $labor          = $locale->text('Labor');
+    $laborlabel     = $locale->text('Labor Code');
     $chargeoutlabel = $locale->text('Amount');
   }
 
   if ($form->{project} eq 'project') {
-    $projectlabel = $locale->text('Project Number');
-    $laborlabel = $locale->text('Service Code');
+    $projectlabel   = $locale->text('Project Number');
+    $labor          = $locale->text('Service');
+    $laborlabel     = $locale->text('Service Code');
     $chargeoutlabel = $locale->text('Chargeout Rate');
   }
 
@@ -551,7 +553,7 @@ sub timecard_header {
 |;
 
   $lookup = qq|
-          <a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"parts_id"}" target=_blank>&#9701;</a>| if $form->{"parts_id"};
+          <a href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"parts_id"}" accesskey=":" title="$labor [:]" target=_blank>&#9701;</a>| if $form->{"parts_id"};
 
   $cardno = qq|
         <tr>

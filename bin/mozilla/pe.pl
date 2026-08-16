@@ -175,13 +175,13 @@ sub job_header {
 
   $notes = qq|<textarea name=notes rows=$rows cols=40 wrap=soft>$form->{notes}</textarea>|;
 
-  $label = ucfirst $form->{vc};
-  $vcref = qq|<a href=ct.pl?action=edit&db=$form->{vc}&id=$form->{"$form->{vc}_id"}&login=$form->{login}&path=$form->{path} target=_blank>&#9701;</a>|;
+  $label = $locale->text(ucfirst $form->{vc});
+  $vcref = qq|<a href="ct.pl?action=edit&db=$form->{vc}&id=$form->{"$form->{vc}_id"}&login=$form->{login}&path=$form->{path}" accesskey=":" title="$label [:]" target="_blank">&#9701;</a>|;
 
   if ($form->{"select$form->{vc}"}) {
     $name = qq|
         <tr>
-          <th align=right nowrap>|.$locale->text($label).qq|</th>
+          <th align=right nowrap>$label</th>
           <td colspan=3><select name="$form->{vc}"
           onChange="javascript:document.main.submit()">|
           .$form->select_option($form->{"select$form->{vc}"}, $form->{$form->{vc}}, 1).qq|</select>
@@ -193,7 +193,7 @@ sub job_header {
   } else {
     $name = qq|
         <tr>
-          <th align=right nowrap>|.$locale->text($label).qq|</th>
+          <th align=right nowrap>$label</th>
           <td colspan=3><input name="$form->{vc}" value="|.$form->quote($form->{"$form->{vc}"}).qq|" size=35> $vcref</td>
         </tr>
 |;
@@ -1086,13 +1086,13 @@ sub project_header {
     $description = qq|<input name=description size=60 value="|.$form->quote($form->{description}).qq|">|;
   }
 
-  $label = ucfirst $form->{vc};
-  $vcref = qq|<a href=ct.pl?action=edit&db=$form->{vc}&id=$form->{"$form->{vc}_id"}&login=$form->{login}&path=$form->{path} target=_blank>&#9701;</a>|;
+  $label = $locale->text(ucfirst $form->{vc});
+  $vcref = qq|<a href="ct.pl?action=edit&db=$form->{vc}&id=$form->{"$form->{vc}_id"}&login=$form->{login}&path=$form->{path}" accesskey=":" title="$label [:]" target="_blank">&#9701;</a>|;
 
   if ($form->{"select$form->{vc}"}) {
     $name = qq|
         <tr>
-          <th align=right nowrap>|.$locale->text($label).qq|</th>
+          <th align=right nowrap>$label</th>
           <td colspan=3>
           <select name="$form->{vc}"
           onChange="javascript:document.main.submit()">|
@@ -1105,7 +1105,7 @@ sub project_header {
   } else {
     $name = qq|
         <tr>
-          <th align=right nowrap>|.$locale->text($label).qq|</th>
+          <th align=right nowrap>$label</th>
           <td colspan=3><input name="$form->{vc}" value="|.$form->quote($form->{"$form->{vc}"}).qq|" size=35> $vcref</td>
         </tr>
 |;

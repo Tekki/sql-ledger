@@ -254,7 +254,7 @@ sub upload {
         <tr>
           <th align="right">|.$locale->text('File').qq|</th>
           <td>
-            <input name=data size=60 type=file>
+            <input name="data" size="60" type="file" accesskey="O" title="[O]">
           </td>
         </tr>
       </table>

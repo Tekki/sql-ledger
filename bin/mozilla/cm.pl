@@ -105,11 +105,12 @@ sub references {
         $rv .= qq|
                   <span title="|. $locale->text('Document not archived!').qq|">&#9203;</span>|;
       } elsif ($form->{"referencearchive_id_$i"} * 1) {
+        my $accesskey_title = $i == 1 ? qq| accesskey=">" title="|.$locale->text('Download Document').qq| [>]"| : '';
         $rv .= qq|
-                  <a href="rd.pl?action=download_document&login=$form->{login}&path=$form->{path}&id=$form->{"referencearchive_id_$i"}" target="_blank">&#9660;</a>|;
+                  <a href="rd.pl?action=download_document&login=$form->{login}&path=$form->{path}&id=$form->{"referencearchive_id_$i"}"$accesskey_title target="_blank">&#9660;</a>|;
       } else {
         $rv .= qq|
-                  <a href="rd.pl?action=upload&login=$form->{login}&path=$form->{path}&row=$i&description=|.$form->escape($form->{"referencedescription_$i"},1) . qq|" target="popup">&#9651;</a>|;
+                  <a href="rd.pl?action=upload&login=$form->{login}&path=$form->{path}&row=$i&description=|.$form->escape($form->{"referencedescription_$i"},1) . qq|" accesskey="<" title="|.$locale->text('Upload Document').qq| [<]" target="popup">&#9651;</a>|;
       }
 
       $rv .= $form->hide_form(map { "reference${_}_$i" } qw(tmpfile archive_id));

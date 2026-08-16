@@ -1567,7 +1567,7 @@ sub payroll_header {
                 <td><select name=employee onChange="javascript:document.main.submit()">|
                 .$form->select_option($form->{selectemployee}, $form->{employee}, 1)
                 .qq|</select>
-                <a href=hr.pl?action=edit&id=$employee_id&db=employee&login=$form->{login}&path=$form->{path} target=_blank>&#9701;</a>
+                <a href="hr.pl?action=edit&id=$employee_id&db=employee&login=$form->{login}&path=$form->{path}" accesskey=":" title="|.$locale->text('Employee').qq| [:]" target="_blank">&#9701;</a>
                 </td>
               </tr>
 |;
