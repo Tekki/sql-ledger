@@ -374,6 +374,7 @@ texts:
   Continue: Weiter
   Continue?: Weiter?
   Contra: Gegenkonto
+  Convert: Umwandeln
   Copies: Kopien
   Copy: Kopieren
   Copy to COA: In Kontenplan kopieren
@@ -529,6 +530,7 @@ texts:
   Documentation: Dokumentation
   Documents deleted!: Dokument gelöscht?
   Done: Fertig
+  Download Document: Dokument herunterladen
   Download Dump: Dump herunterladen
   Drag and Drop: Drag-and-Drop
   Drawing: Zeichnung
@@ -1223,7 +1225,7 @@ texts:
   Receipts: Zahlungseingänge
   Receivables: Forderungen
   Receive: Einlagern
-  Receive Merchandise: Artikeln einlagern
+  Receive Merchandise: Artikel einlagern
   Received: Eingelagert
   Recently Used: Zuletzt verwendet
   Reconcile Payments: Zahlungen abstimmen
@@ -1325,7 +1327,7 @@ texts:
   Save Report as new: Abfrage als neu speichern
   Save SQL command: SQL-Befehl speichern
   Save Schedule: Zeitplan speichern
-  Save as new: als neu speichern
+  Save as new: Als neu speichern
   Save failed!: Speichern fehlgeschlagen
   Save to File: Auf Festplatte speichern
   Saving: Speichert
@@ -1366,6 +1368,7 @@ texts:
   Session expired!: Sitzungsdauer abgelaufen!
   Setup: Einrichten
   Setup Templates: Vorlage auswählen
+  Share: Teilen
   Ship: Geliefert
   Ship Merchandise: Waren versenden
   Ship all: Gesamtlieferung

@@ -230,7 +230,7 @@ texts:
   Can only send one reminder at a time!: Egyszerre csak egy emlékeztető küldhető!
   Can only send one statement at a time!: Egyszerre csak egy kimutatás küldhető!
   Cancel: Mégse
-  Cancelled: ''
+  Cancelled: Lemondott
   Cannot add stores card for a completed job!: Nem adható hozzá anyaglap egy lezárt gyártáshoz!
   Cannot add time card for a completed job!: Nem adható hozzá munkalap egy lezárt gyártáshoz!
   Cannot change stores card for a completed job!: Nem módosítható a anyaglap egy lezárt gyártásnál!
@@ -358,6 +358,7 @@ texts:
   Continue: Folytatás
   Continue?: Folytatás?
   Contra: Ellenszámla
+  Convert: Konvertálás
   Copies: Pédányszám
   Copy: Másolat
   Copy to COA: Másolás a számlatükörbe
@@ -502,6 +503,7 @@ texts:
   Documentation: Dokumentáció
   Documents deleted!: Dokumentumok törölve!
   Done: Elvégezve
+  Download Document: Dokumentum letöltése
   Download Dump: ''
   Drag and Drop: Húzd és ejtsd
   Drawing: Rajz
@@ -671,7 +673,7 @@ texts:
   GL: GL
   GL Reference Number: Vegyes könyvelési azonosító
   GL Transaction: Főkönyvi tranzakció
-  GL Transactions: ''
+  GL Transactions: Főkönyvi tranzakciók
   Gender: Nem
   General Ledger: Főkönyv
   General Ledger Accounts: Főkönyvi számlák
@@ -740,7 +742,7 @@ texts:
   Income / (Loss): Bevétel / Veszteség
   Income Statement: Eredménykimutatás
   Income account does not exist!: Nem létezik az árbevétel főkönyvi számla!
-  Incoming: ''
+  Incoming: Bejövő
   Incorrect Dataset version!: Helytelen adatbázis verzió!
   Incorrect Password!: Helytelen jelszó!
   Incorrect Username or Password!: Érvénytelen felhasználónév vagy jelszó!
@@ -895,7 +897,7 @@ texts:
   New Window: Új ablak
   Next: Következő
   Next Date: Következő dátum
-  Next Item: ''
+  Next Item: Következő tétel
   Next Number: Következő szám
   No Employees on file!: Nen található alkalmazott az adatbázisban!
   No History!: Nincs előzmény!
@@ -923,7 +925,7 @@ texts:
   Not an Image file!: Ez nem egy képfájl!
   Not enough inventory in Row: Nincs elegendő készlet a sorban
   Not enough inventory!: Nincs elegendő készlet
-  Not on Hold: ''
+  Not on Hold: Nincs függőben
   Notes: Jegyzetek
   Nothing entered!: Nem írt be semmit!
   Nothing in the Queue!: Nincs semmi a várólistában!
@@ -947,7 +949,7 @@ texts:
   October: Október
   On: Bekapcsol
   On Hand: Készleten
-  On Hold: Készleten
+  On Hold: Függőben
   Only Sums: Csak összegek
   Only one selection allowed!: Csak egy kiválasztása lehetséges!
   Open: Nyitott
@@ -974,7 +976,7 @@ texts:
   Our Company Name: Saját cégnév
   Out of balance transaction!: Kiegyenlítetlen tranzakció
   Out of balance!: Az egyenleg nem stimmel!
-  Outgoing: ''
+  Outgoing: Kimenő
   Output Format: Alapértelmezett nyomtatási formátum
   Outstanding: Kintlevőségek
   Over: Túl
@@ -1063,7 +1065,7 @@ texts:
   Preferences saved!: Beállítások elmentve!
   Prepayment: Előrefizetés
   Preview: Előnézet
-  Previous Item: ''
+  Previous Item: Előző tétel
   Previous Year: Előző év
   Price: Ár
   Pricegroup: Árcsoport
@@ -1102,7 +1104,7 @@ texts:
   Project/Job Number: Projekt/Munkaszám
   Project/Job Number missing!: Hiányzik a Projekt/Munkaszám!
   Projects: Projektek
-  Projects & Jobs: ''
+  Projects & Jobs: Projektek és Gyártások
   Public: Nyilvános
   Public Key: Nyilvános kulcs
   Purchase Order: Új beszerzési rendelés
@@ -1280,6 +1282,7 @@ texts:
   Session Timeout: Munkamenet időtartama (mp)
   Session expired!: Letelt a munkamenet!
   Setup: Beállítás
+  Share: Megosztás
   Ship: Kiszállítás
   Ship Merchandise: Kiszállítás
   Ship all: Összes kiszállítása

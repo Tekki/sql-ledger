@@ -35,8 +35,8 @@ texts:
   About: A propos
   Above: En-dessus
   Accepted format is: Format accepté est
-  Access Control: Contrôle d'accés
-  Access Denied!: Accés refusé!
+  Access Control: Contrôle d'accès
+  Access Denied!: Accès refusé!
   Account: Compte
   Account Number: Numéro de compte
   Account Number missing!: No. compte manquant!
@@ -389,6 +389,7 @@ texts:
   Continue: Continuer
   Continue?: Continuer?
   Contra: Contre-compte
+  Convert: Convertir
   Copies: Copies
   Copy: Copier
   Copy to COA: Copier dans le plan comptable
@@ -471,7 +472,6 @@ texts:
   Date missing!: Date manquante !
   Date received missing!: Date de réception manquante !
   Date worked: Date de travail
-  Datenbank: ''
   Day: Jour
   Day(s): Jour(s)
   Days: Jours
@@ -542,7 +542,8 @@ texts:
   Documentation: ''
   Documents deleted!: Documents supprimés !
   Done: Exécuté
-  Download Dump: Télécharge dump
+  Download Document: Télécharger document
+  Download Dump: Télécharger dump
   Drag and Drop: Glisser-déposer
   Drawing: Tirage
   Driver: Pilote
@@ -1017,7 +1018,7 @@ texts:
   Not an Image file!: C'est pas un fichier image
   Not enough inventory in Row: Pas assez d'inventaire en ligne
   Not enough inventory!: Pas assez d'inventaire !
-  Not on Hold: ''
+  Not on Hold: Pas en attente
   Notes: Notes
   Nothing entered!: Rien n'a été saisi !
   Nothing in the Queue!: 'Rien en attente ! '
@@ -1408,6 +1409,7 @@ texts:
   Session expired!: Session expirée !
   Setup: Configuration
   Setup Templates: Configuration modèles
+  Share: Partager
   Ship: Expédier
   Ship Merchandise: Expédier marchandise
   Ship all: Expédier tout

@@ -242,7 +242,7 @@ texts:
   Can only send one reminder at a time!: Bir defada sadece bir hatırlatma gönderilebilir!
   Can only send one statement at a time!: Bir defada sadece bir çıktı gönderilebilir!
   Cancel: İptal
-  Cancelled: ''
+  Cancelled: İptal edildi
   Cannot add stores card for a completed job!: Tamamlanmış iş için stok kartı eklenemez!
   Cannot add time card for a completed job!: Tamamlanmış iş için zaman kartı eklenemez!
   Cannot add timecard for a completed job!: Tamamlanmış iş için zaman kartı eklenemez!
@@ -384,6 +384,7 @@ texts:
   Continue: Devam
   Continue?: Devam?
   Contra: Kontra
+  Convert: Dönüştür
   Copies: Kopya
   Copy: Kopyala
   Copy to COA: HPna Kopyala
@@ -535,6 +536,7 @@ texts:
   Documentation: Dokümantasyon
   Documents deleted!: Dökümanlar silindi!
   Done: Yapıldı
+  Download Document: Döküman i̇ndir
   Download Dump: İndir
   Drag and Drop: Sürükle ve Bırak
   Drawing: Çizim
@@ -993,7 +995,7 @@ texts:
   Not an Image file!: Bir Resim dosyası değil!
   Not enough inventory in Row: Satırda yetersiz stok
   Not enough inventory!: Yetersiz Stok
-  Not on Hold: ''
+  Not on Hold: Beklemede değil
   Notes: Notlar
   Nothing entered!: Hiçbirşey girilmedi!
   Nothing in the Queue!: Sırada bir şey yok!
@@ -1373,6 +1375,7 @@ texts:
   Session expired!: Oturum zamanaşımına uğradı!
   Setup: Ayarlar
   Setup Templates: Şablon ayarla
+  Share: Paylaş
   Ship: Nakliye
   Ship Merchandise: Ürün sevket
   Ship all: Hepsini sevket
@@ -1540,7 +1543,7 @@ texts:
   Update Software: Yazılımı Güncelle
   Updated: Güncellendi
   Upgrading to Version: Versiyon güncelleniyor
-  Upload Document: Göküman Yükle
+  Upload Document: Döküman yükle
   Upload Image: Resim Yükle
   Uploading ...: Yükleniyor ...
   Use Templates: Şablon Kullan
