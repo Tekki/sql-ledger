@@ -35,8 +35,8 @@ sub add {
 
   $form->{callback} = "$form->{script}?action=add&db=$form->{db}&typeofcontact=$form->{typeofcontact}&path=$form->{path}&login=$form->{login}" unless $form->{callback};
 
-  $form->helpref(\%myconfig, \%slconfig, "$form->{db}");
   &create_links;
+  $form->helpref(\%myconfig, \%slconfig, "$form->{db}");
 
   &display_form;
 
@@ -47,8 +47,8 @@ sub edit {
 
   $form->{title} = "Edit";
 
-  $form->helpref(\%myconfig, \%slconfig, "$form->{db}");
   &create_links;
+  $form->helpref(\%myconfig, \%slconfig, "$form->{db}");
   SL::RU->register(\%myconfig, $form);
 
   &display_form;
