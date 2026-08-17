@@ -46,6 +46,12 @@ sub add_file ($self, $file) {
     # remove any trailing whitespace
     s/^\s*(.*?)\s*$/$1/;
 
+    if ($_ eq '[<reset>]') {
+      delete $self->{$_} for keys %$self;
+      %menuorder = ();
+      next;
+    }
+
     if (/^\[/) {
       s/(\[|\])//g;
       $id = $_;
