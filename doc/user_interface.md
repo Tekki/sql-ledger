@@ -72,18 +72,19 @@ system not all combinations are available.
 
 Some of the commonly used shortcuts for buttons are:
 
-| key | command      |
-|-----|--------------|
-| ?   | helping note |
-| U   | update       |
-| C   | continue     |
-| K   | cancel       |
-| J   | yes          |
-| S   | save         |
-| O   | post         |
-| V   | preview      |
-| P   | print        |
-| E   | e-mail       |
+| key | command           |
+|-----|-------------------|
+| ?   | helping note      |
+| U   | update            |
+| C   | continue          |
+| K   | cancel            |
+| J   | yes               |
+| S   | save              |
+| O   | post              |
+| V   | preview           |
+| P   | print             |
+| E   | e-mail            |
+| A   | toggle checkboxes |
 
 On many screens the following shortcuts are available too:
 

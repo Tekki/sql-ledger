@@ -46,12 +46,27 @@ nextsub=transactions
 Experienced users create menu entries that directly generate the output of
 reports.
 
+A `reset` directive in a custom menu deletes all the menu entries read
+in up to this point and allows to create a completely new structure.
+
+```
+[<reset>]
+
+# we start from scratch
+```
+
+Remember that entries hidden from the menu don't restrict the access
+to any of the screens or functions of the program. The rights of a
+user are defined using individual access control or by assigning a
+role.
+
 ## Program code
 
-Custom program files use the same names as the files in `bin/mozilla`. They are
-loaded whenever the original file with the same name is called. If the contain
-the a function name that exists in the original, it is replaced. If the function
-names are new, the are added to the program.
+Custom program files use the same names as the files in `bin/mozilla`.
+They are loaded whenever the original file with the same name is
+called. If the file contains a function name that exists in the
+original, it is replaced. If the function names are new, the are added
+to the program.
 
 ```perl
 # bin/mozilla/custom/aa.pl

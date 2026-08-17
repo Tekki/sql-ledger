@@ -141,23 +141,32 @@ outstanding=1
 nextsub=transactions</code></pre>
 <p>Experienced users create menu entries that directly generate the
 output of reports.</p>
+<p>A <code>reset</code> directive in a custom menu deletes all the menu
+entries read in up to this point and allows to create a completely new
+structure.</p>
+<pre><code>[&lt;reset&gt;]
+
+# we start from scratch</code></pre>
+<p>Remember that entries hidden from the menu don't restrict the access
+to any of the screens or functions of the program. The rights of a user
+are defined using individual access control or by assigning a role.</p>
 <h2 id="program-code">Program code</h2>
 <p>Custom program files use the same names as the files in
 <code>bin/mozilla</code>. They are loaded whenever the original file
-with the same name is called. If the contain the a function name that
+with the same name is called. If the file contains a function name that
 exists in the original, it is replaced. If the function names are new,
 the are added to the program.</p>
-<div class="sourceCode" id="cb2"><pre
-class="sourceCode perl"><code class="sourceCode perl"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># bin/mozilla/custom/aa.pl</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">sub </span><span class="fu">add</span> {</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># replaces the add function</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">sub </span><span class="fu">my_new_function</span> {</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># creates a new function</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode perl"><code class="sourceCode perl"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># bin/mozilla/custom/aa.pl</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">sub </span><span class="fu">add</span> {</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># replaces the add function</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">sub </span><span class="fu">my_new_function</span> {</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># creates a new function</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h3 id="customized-reports">Customized Reports</h3>
 <p>The sample files for customized reports, located in
 <code>doc/custom</code>, are good examples to learn how to to create
