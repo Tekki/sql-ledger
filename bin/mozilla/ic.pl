@@ -4856,7 +4856,9 @@ sub history {
   <tr>
     <th class=listtop>$title</th>
   </tr>
-  <tr height="5"></tr>
+  <tr>
+    <td><a class="help" href="javascript:window.close();">x |.$locale->text('Close Window').qq|</a></td>
+  </tr>
 
   <tr>
     <td>
@@ -4874,9 +4876,10 @@ sub history {
     }
 
     $module = $ref->{module};
-    $ref->{description} =~ s/\r?\n/<br>/g;
 
     for (@column_index) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
+    $ref->{description} =~ /(.{,120})\n?/;
+    $column_data{description} = qq|<td>$1&nbsp;</td>|;
 
     $amount = $form->format_amount(\%myconfig, $ref->{sellprice}, $form->{precision});
     my $js_amount = $amount =~ s/'/\\'/gr;
@@ -4901,8 +4904,6 @@ sub history {
   </tr>
   <tr><td><hr class="thick"></td></tr>
 </table>
-
-x <a href="javascript:window.close();">|.$locale->text('Close Window').qq|</a>
 |;
 
 }

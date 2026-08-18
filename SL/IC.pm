@@ -2949,8 +2949,7 @@ sub history ($, $myconfig, $form) {
                 JOIN customer c ON (c.id = o.customer_id)
                 WHERE o.quotation = '1'
                 AND i.parts_id = $id
-                ORDER BY 1, transdate
-                |;
+              ORDER BY 1, transdate DESC|;
 
   } elsif (($form->{history} // '') eq 'purchases') {
     $query = qq|SELECT 'ap' AS module, p.partnumber, i.description,
@@ -2983,8 +2982,7 @@ sub history ($, $myconfig, $form) {
                 JOIN vendor v ON (v.id = o.vendor_id)
                 WHERE o.quotation = '1'
                 AND i.parts_id = $id
-                ORDER BY 1, transdate
-                |;
+              ORDER BY 1, transdate DESC|;
   } else {
     $query = qq|SELECT 'ar' AS module, p.partnumber, i.description,
                 i.sellprice, c.name, a.invnumber AS trn,
@@ -3047,8 +3045,7 @@ sub history ($, $myconfig, $form) {
                 JOIN vendor v ON (v.id = o.vendor_id)
                 WHERE o.quotation = '1'
                 AND i.parts_id = $id
-                ORDER BY 1, transdate
-                |;
+              ORDER BY 1, transdate DESC|;
   }
 
   my $sth = $dbh->prepare($query);

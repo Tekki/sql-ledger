@@ -238,7 +238,8 @@ sub display_row {
     if ($i < $numrows) {
       $zero = "0";
       $itemhref = qq| <a class="part-l" href="ic.pl?login=$form->{login}&path=$form->{path}&action=edit&id=$form->{"id_$i"}" target=_blank>&#9701;</a>|;
-      $itemhistory = qq| <a class="history-l" href="ic.pl?action=history&history=sales&login=$form->{login}&path=$form->{path}&pickvar=sellprice_$i&id=$form->{"id_$i"}" target=popup>&#9701;</a>|;
+      $context = $form->{vc} eq 'customer' ? 'sales' : 'purchases';
+      $itemhistory = qq| <a class="history-l" href="ic.pl?action=history&history=$context&login=$form->{login}&path=$form->{path}&pickvar=sellprice_$i&id=$form->{"id_$i"}" target=popup>&#9701;</a>|;
 
       my $planning_link
         = qq|ic.pl?action=resource_planning&login=$form->{login}&path=$form->{path}&id=$form->{"id_$i"}&report_ids=$form->{report_ids}|;
