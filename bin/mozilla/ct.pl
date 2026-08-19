@@ -3565,7 +3565,9 @@ sub lookup_name {
   <tr>
     <th class=listtop>$form->{title}</th>
   </tr>
-  <tr height="5"></tr>
+  <tr>
+    <td><a class="help" href="javascript:window.close();">x |.$locale->text('Close Window').qq|</a></td>
+  </tr>
 
   <tr>
     <td>
@@ -3576,7 +3578,8 @@ sub lookup_name {
 
     for (@column_index) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
 
-    $column_data{name} = qq|<td><a href="#" onClick="pickvalue('$form->{pickvar}','$ref->{name}'); pickvalue('$form->{pickid}','$ref->{id}'); window.close();">$ref->{name}</a></td>|;
+    my $js_name = $ref->{name} =~ s/'/\\'/gr;
+    $column_data{name} = qq|<td><a href="#" onClick="pickvalue('$form->{pickvar}','$js_name'); pickvalue('$form->{pickid}','$ref->{id}'); window.close();">$ref->{name}</a></td>|;
 
     $j++; $j %= 2;
     print "<tr class=listrow$j>";
@@ -3595,8 +3598,6 @@ sub lookup_name {
   </tr>
   <tr><td><hr class="thick"></td></tr>
 </table>
-
-x <a href="javascript:window.close();">|.$locale->text('Close Window').qq|</a>
 |;
 
 
