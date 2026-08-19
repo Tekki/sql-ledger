@@ -721,20 +721,25 @@ foreach $accno (split / /, $form->{taxaccounts}) { $form->hide_form(map { "${acc
 
 sub form_footer {
 
-$form->{invtotal} = $form->{invsubtotal};
+  $form->{invtotal} = $form->{invsubtotal};
 
-if ($form->{invsubtotal}) {
-  $margin = $form->round_amount((($form->{invsubtotal} - $form->{costsubtotal}) / $form->{invsubtotal}) * 100, 1);
-}
+  if ($form->{invsubtotal}) {
+    $marginamount = $form->{invsubtotal} - $form->{costsubtotal};
+    $marginpercent
+      = $form->format_amount(\%myconfig, $marginamount / $form->{invsubtotal} * 100, 1);
+    $marginamount = $form->format_amount(\%myconfig, $marginamount, $form->{precision});
+  }
 
-if (($rows = $form->numtextrows($form->{notes}, 35, 8)) < 2) {
-  $rows = 2;
-}
-if (($introws = $form->numtextrows($form->{intnotes}, 35, 8)) < 2) {
-  $introws = 2;
-}
-$rows = ($rows > $introws) ? $rows : $introws;
-$notes = qq|<textarea name=notes rows=$rows cols=35 wrap=soft accesskey="+" title="[+]">$form->{notes}</textarea>|;
+  if (($rows = $form->numtextrows($form->{notes}, 35, 8)) < 2) {
+    $rows = 2;
+  }
+  if (($introws = $form->numtextrows($form->{intnotes}, 35, 8)) < 2) {
+    $introws = 2;
+  }
+  $rows = ($rows > $introws) ? $rows : $introws;
+
+  $notes
+    = qq|<textarea name=notes rows=$rows cols=35 wrap=soft accesskey="+" title="[+]">$form->{notes}</textarea>|;
   $intnotes = qq|<textarea name=intnotes rows=$rows cols=35 wrap=soft>$form->{intnotes}</textarea>|;
 
   $form->{taxincluded} = ($form->{taxincluded}) ? "checked" : "";
@@ -1044,7 +1049,14 @@ $notes = qq|<textarea name=notes rows=$rows cols=35 wrap=soft accesskey="+" titl
   }
 
   print qq| <span class="label">|.$locale->text('Total Cost').":</span> ".$form->format_amount(\%myconfig, $form->{costsubtotal}, $form->{precision}, 0);
-  print qq| <span class="label">|.$locale->text('Margin').":</span> ".$form->format_amount(\%myconfig, $margin, 1).qq|</span>| if $margin;
+  if ($marginpercent) {
+    print qq|
+      <span class="label">|.$locale->text('Margin').qq|:</span>
+      $marginamount
+      <span class="label">=</span>
+      $marginpercent %
+|;
+  }
 
   print qq|</td>
         </tr>

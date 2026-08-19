@@ -324,22 +324,35 @@ sub display_row {
     if ($form->{vc} eq 'customer') {
       if ($form->{type} =~ /(invoice|_order|quotation)/ && $form->{type} !~ /credit/) {
         if ($linetotal) {
-          $margin = $form->format_amount(\%myconfig, (($linetotal - ($form->{"cost_$i"} * $form->{"qty_$i"}))) / $linetotal * 100, 1);
+          $marginamount  = $linetotal - ($form->{"cost_$i"} * $form->{"qty_$i"});
+          $marginpercent = $form->format_amount(\%myconfig, $marginamount / $linetotal * 100, 1);
+          $marginamount  = $form->format_amount(\%myconfig, $marginamount, $form->{precision});
         }
 
         $name = $form->escape($form->{"costvendor_$i"},1);
         $costprice = qq|
           <input name="costvendorid_$i" type="hidden" value="$form->{"costvendorid_$i"}">
           <span class="label">$costvendorlabel</span>
-          <input name="costvendor_$i" value="$form->{"costvendor_$i"}">
-          <a href="ct.pl?action=lookup_name&db=vendor&login=$form->{login}&path=$form->{path}&pickvar=costvendor_$i&pickid=costvendorid_$i&name=$name" target=popup> &#9701;</a>
+          <input name="costvendor_$i" value="$form->{"costvendor_$i"}">|;
+        if ($form->{"costvendor_$i"}) {
+          $costprice .= qq|
+          <a href="ct.pl?action=edit&id=$form->{"costvendorid_$i"}&db=vendor&login=$form->{login}&path=$form->{path}" target="_blank"> &#9701;</a>|;
+        } else {
+          $costprice .= qq|
+          <a href="ct.pl?action=lookup_name&db=vendor&login=$form->{login}&path=$form->{path}&pickvar=costvendor_$i&pickid=costvendorid_$i&name=$name" target=popup> &#9701;</a>|;
+        }
+        $costprice .= qq|
           <span class="label">$costlabel</span>
           <input name="cost_$i" class=inputright size=10 value="|.$form->format_amount(\%myconfig, $form->{"cost_$i"}, $form->{precision}).qq|">&nbsp;<a href="ic.pl?action=history&history=purchases&login=$form->{login}&path=$form->{path}&pickvar=cost_$i&id=$form->{"id_$i"}" target=popup> &#9701;</a>
 |;
-        $costprice .= qq|
-                <span class="label">$marginlabel</span>
-                $margin
-| if ($margin && $form->{"cost_$i"});
+        if ($marginamount && $form->{"cost_$i"}) {
+          $costprice .= qq|
+            <span class="label">$marginlabel</span>
+            $marginamount
+            <span class="label">=</span>
+            $marginpercent %
+|;
+        }
         $costprice .= qq|
 |;
 

@@ -863,7 +863,10 @@ sub form_footer {
   $form->{invtotal} = $form->{invsubtotal};
 
   if ($form->{invsubtotal}) {
-    $margin = $form->round_amount((($form->{invsubtotal} - $form->{costsubtotal}) / $form->{invsubtotal}) * 100, 1);
+    $marginamount = $form->{invsubtotal} - $form->{costsubtotal};
+    $marginpercent
+      = $form->format_amount(\%myconfig, $marginamount / $form->{invsubtotal} * 100, 1);
+    $marginamount = $form->format_amount(\%myconfig, $marginamount, $form->{precision});
   }
 
   if (($rows = $form->numtextrows($form->{notes}, 35, 8)) < 2) {
@@ -968,7 +971,14 @@ sub form_footer {
     <td>
     <span class="label">|.$locale->text('Total Cost').":</span> ".$form->format_amount(\%myconfig, $form->{costsubtotal}, $form->{precision}, 0);
 
-    print qq| <span class="label">|.$locale->text('Margin').":</span> ".$form->format_amount(\%myconfig, $margin, 1).qq|</span>| if $margin;
+    if ($marginpercent) {
+      print qq|
+        <span class="label">|.$locale->text('Margin').qq|:</span>
+        $marginamount
+        <span class="label">=</span>
+        $marginpercent %
+  |;
+    }
   }
 
   if ($form->{type} =~ /_order/) {
