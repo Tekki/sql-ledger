@@ -37,15 +37,18 @@ subtest 'Reconciliation' => sub {
 subtest 'Trial balance' => sub {
   $t->get_ok('Report frontend', 'rp.pl', action => 'report', reportcode => 'trial_balance')
     ->set_params_ok('Report parameters', fromdate => $t->date_jan1, todate => $t->date_dec31)
+    ->accesskeys_exist(qw|? C|)
     ->press_button_ok('Generate report', 'continue')
     ->elements_exist('Link to account number', 'a.accno-l')
     ->press_button_ok('Generate details report', 'display_all')
+    ->accesskeys_exist(qw|X|)
     ->download_ok('Spreadsheet', 'xlsx', 'spreadsheet')
     ->download_is('Spreadsheet', 'xlsx');
 };
 
 subtest 'Income statement, no template' => sub {
   $t->get_ok('Report frontend', 'rp.pl', action => 'report', reportcode => 'income_statement')
+    ->accesskeys_exist(qw|? C|)
     ->set_params_ok(
       'Report parameters',
       fromdate    => $t->date_jan1,
@@ -53,6 +56,7 @@ subtest 'Income statement, no template' => sub {
       usetemplate => ''
       )
     ->press_button_ok('Generate report', 'continue')
+    ->accesskeys_exist(qw|X|)
     ->download_ok('Spreadsheet', 'xlsx', 'spreadsheet')
     ->download_is('Spreadsheet', 'xlsx');
 };
@@ -70,8 +74,10 @@ subtest 'Income statement, template' => sub {
 
 subtest 'Balance sheet, no template' => sub {
   $t->get_ok('Report frontend', 'rp.pl', action => 'report', reportcode => 'balance_sheet')
+    ->accesskeys_exist(qw|? C|)
     ->set_params_ok('Report parameters', todate => $t->date_dec31, usetemplate => '')
     ->press_button_ok('Generate report', 'continue')
+    ->accesskeys_exist(qw|X|)
     ->download_ok('Spreadsheet', 'xlsx', 'spreadsheet')
     ->download_is('Spreadsheet', 'xlsx');
 };

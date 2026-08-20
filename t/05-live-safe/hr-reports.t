@@ -23,10 +23,12 @@ $t = SL::TestClient->new(configfile => $configfile)->connect_ok->api_login_ok;
 
 subtest 'Employees' => sub {
   $t->get_ok('Report frontend', 'hr.pl', action => 'search', db => 'employee')
+    ->accesskeys_exist(qw|? C|)
     ->press_button_ok('Generate report', 'continue');
 };
 
 subtest 'Payroll' => sub {
   $t->get_ok('Report frontend', 'hr.pl', action => 'search', db => 'payroll')
+    ->accesskeys_exist(qw|? C|)
     ->press_button_ok('Generate report', 'continue');
 };

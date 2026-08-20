@@ -24,10 +24,12 @@ $t = SL::TestClient->new(configfile => $configfile)->connect_ok->api_login_ok;
 
 subtest 'Update project' => sub {
   $t->get_ok('Report frontend', 'pe.pl', action => 'search', type => 'project')
+    ->accesskeys_exist(qw|? C|)
     ->press_button_ok('Generate report', 'continue')
     ->follow_link_ok('Open project', 'number-l')
     ->store_ok('projectnumber')
     ->form_fields_exist('description', 'customer', 'startdate', 'enddate')
+    ->accesskeys_exist(qw|? : < U S|)
     ->press_button_ok('Update', 'update')
     ->press_button_ok('Save project', 'save')
     ->elements_exist('Links to orders', 'a.number-l')

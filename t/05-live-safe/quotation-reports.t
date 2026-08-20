@@ -23,6 +23,7 @@ $t = SL::TestClient->new(configfile => $configfile)->connect_ok->api_login_ok;
 
 subtest 'Quotations' => sub {
   $t->get_ok('Report frontend', 'oe.pl', action => 'search', type => 'sales_quotation')
+    ->accesskeys_exist(qw|? / - * C|)
     ->set_params_ok('Report parameters', closed => 1) # debug
     ->press_button_ok('Generate report', 'continue')
     ->elements_exist('Links to quotation, name', 'a.quonumber-l', 'a.name-l')
@@ -32,6 +33,7 @@ subtest 'Quotations' => sub {
 
 subtest 'RFQs' => sub {
   $t->get_ok('Report frontend', 'oe.pl', action => 'search', type => 'request_quotation')
+    ->accesskeys_exist(qw|? / - * C|)
     ->set_params_ok('Report parameters', closed => 1) # debug
     ->press_button_ok('Generate report', 'continue')
     ->elements_exist('Links to quotation, name', 'a.quonumber-l', 'a.name-l')

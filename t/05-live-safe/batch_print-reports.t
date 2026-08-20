@@ -28,7 +28,10 @@ subtest 'Sales invoices' => sub {
     batch  => 'print',
     type   => 'invoice',
     vc     => 'customer',
-  )->press_button_ok('Generate report', 'continue');
+    )
+    ->press_button_ok('Generate report', 'continue')
+    ->buttons_exist('select_all', 'print')
+    ->accesskeys_exist(qw|? A P|);
 };
 
 subtest 'Remittance vouchers' => sub {
@@ -38,7 +41,10 @@ subtest 'Remittance vouchers' => sub {
     batch  => 'print',
     type   => 'remittance_voucher',
     vc     => 'customer',
-  )->press_button_ok('Generate report', 'continue');
+    )
+    ->press_button_ok('Generate report', 'continue')
+    ->buttons_exist('select_all', 'print')
+    ->accesskeys_exist(qw|? A P|);
 };
 
 subtest 'Sales orders' => sub {
@@ -47,7 +53,10 @@ subtest 'Sales orders' => sub {
     action => 'search',
     batch  => 'print',
     type   => 'sales_order',
-  )->press_button_ok('Generate report', 'continue');
+    )
+    ->press_button_ok('Generate report', 'continue')
+    ->buttons_exist('select_all', 'print')
+    ->accesskeys_exist(qw|? A P|);
 };
 
 subtest 'Work orders' => sub {
@@ -56,7 +65,10 @@ subtest 'Work orders' => sub {
     action => 'search',
     batch  => 'print',
     type   => 'work_order',
-  )->press_button_ok('Generate report', 'continue');
+    )
+    ->press_button_ok('Generate report', 'continue')
+    ->buttons_exist('select_all', 'print')
+    ->accesskeys_exist(qw|? A P|);
 };
 
 subtest 'Quotations' => sub {
@@ -65,7 +77,10 @@ subtest 'Quotations' => sub {
     action => 'search',
     batch  => 'print',
     type   => 'sales_quotation',
-  )->press_button_ok('Generate report', 'continue');
+    )
+    ->press_button_ok('Generate report', 'continue')
+    ->buttons_exist('select_all', 'print')
+    ->accesskeys_exist(qw|? A P|);
 };
 
 subtest 'Packing lists' => sub {
@@ -74,7 +89,10 @@ subtest 'Packing lists' => sub {
     action => 'search',
     batch  => 'print',
     type   => 'packing_list',
-  )->press_button_ok('Generate report', 'continue');
+    )
+    ->press_button_ok('Generate report', 'continue')
+    ->buttons_exist('select_all', 'print')
+    ->accesskeys_exist(qw|? A P|);
 };
 
 subtest 'Pick lists' => sub {
@@ -83,7 +101,10 @@ subtest 'Pick lists' => sub {
     action => 'search',
     batch  => 'print',
     type   => 'pick_list',
-  )->press_button_ok('Generate report', 'continue');
+    )
+    ->press_button_ok('Generate report', 'continue')
+    ->buttons_exist('select_all', 'print')
+    ->accesskeys_exist(qw|? A P|);
 };
 
 subtest 'Vendor invoices' => sub {
@@ -93,7 +114,10 @@ subtest 'Vendor invoices' => sub {
     batch  => 'print',
     type   => 'invoice',
     vc     => 'vendor',
-  )->press_button_ok('Generate report', 'continue');
+    )
+    ->press_button_ok('Generate report', 'continue')
+    ->buttons_exist('select_all', 'print')
+    ->accesskeys_exist(qw|? A P|);
 };
 
 subtest 'Purchase orders' => sub {
@@ -102,7 +126,10 @@ subtest 'Purchase orders' => sub {
     action => 'search',
     batch  => 'print',
     type   => 'purchase_order',
-  )->press_button_ok('Generate report', 'continue');
+    )
+    ->press_button_ok('Generate report', 'continue')
+    ->buttons_exist('select_all', 'print')
+    ->accesskeys_exist(qw|? A P|);
 };
 
 subtest 'Bin lists' => sub {
@@ -111,7 +138,10 @@ subtest 'Bin lists' => sub {
     action => 'search',
     batch  => 'print',
     type   => 'bin_list',
-  )->press_button_ok('Generate report', 'continue');
+    )
+    ->press_button_ok('Generate report', 'continue')
+    ->buttons_exist('select_all', 'print')
+    ->accesskeys_exist(qw|? A P|);
 };
 
 subtest 'RFQs' => sub {
@@ -119,8 +149,11 @@ subtest 'RFQs' => sub {
     'Report frontend', 'bp.pl',
     action => 'search',
     batch  => 'print',
-    type   => 'request_quotation',
-  )->press_button_ok('Generate report', 'continue');
+    type   => 'request_quotation'
+    )
+    ->press_button_ok('Generate report', 'continue')
+    ->buttons_exist('select_all', 'print')
+    ->accesskeys_exist(qw|? A P|);
 };
 
 subtest 'Time cards' => sub {
@@ -129,7 +162,10 @@ subtest 'Time cards' => sub {
     action => 'search',
     batch  => 'print',
     type   => 'timecard',
-  )->press_button_ok('Generate report', 'continue');
+    )
+    ->press_button_ok('Generate report', 'continue')
+    ->buttons_exist('select_all', 'print')
+    ->accesskeys_exist(qw|? A P|);
 };
 
 subtest 'Stores cards' => sub {
@@ -138,5 +174,8 @@ subtest 'Stores cards' => sub {
     action => 'search',
     batch  => 'print',
     type   => 'storescard',
-  )->press_button_ok('Generate report', 'continue');
+    )
+    ->press_button_ok('Generate report', 'continue')
+    ->buttons_exist('select_all', 'print')
+    ->accesskeys_exist(qw|? A P|);
 };

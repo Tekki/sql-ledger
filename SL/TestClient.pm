@@ -76,6 +76,16 @@ class SL::TestClient {
     return $self;
   }
 
+  method accesskeys_exist (@keys) {
+    subtest 'Available access keys' => sub {
+      for (@keys) {
+        $mj->element_exists("a[accesskey='$_'], button[accesskey='$_'], input[accesskey='$_']", "Access key $_");
+      }
+    };
+
+    return $self;
+  }
+
   method buttons_exist_not (@names) {
     subtest 'Unavailable buttons' => sub {
       for (@names) {

@@ -23,9 +23,11 @@ $t = SL::TestClient->new(configfile => $configfile)->connect_ok->api_login_ok;
 
 subtest 'Transactions' => sub {
   $t->get_ok('Report frontend', 'ap.pl', action => 'search', nextsub => 'transactions')
+    ->accesskeys_exist(qw|? / - + * C|)
     ->set_params_ok('Report parameters', transdatefrom => $t->date_jan1)
     ->post_ok('Generate report')
     ->elements_exist('Links to invoice, name', 'a.invnumber-l', 'a.ap-l', 'a.ir-l', 'a.name-l')
+    ->accesskeys_exist(qw|? A X|)
     ->download_ok('Spreadsheet', 'xlsx', 'spreadsheet')
     ->download_is('Spreadsheet', 'xlsx');
 };
@@ -59,6 +61,7 @@ subtest 'Outstanding' => sub {
 
 subtest 'Aging' => sub {
   $t->get_ok('Report frontend', 'rp.pl', action => 'report', reportcode => 'ap_aging')
+    ->accesskeys_exist(qw|? C|)
     ->press_button_ok('Generate report', 'continue')
     ->elements_exist('Links to name', 'a.vc-l')
     ->download_is('Spreadsheet', 'xlsx');
@@ -66,6 +69,7 @@ subtest 'Aging' => sub {
 
 subtest 'Tax paid' => sub {
   $t->get_ok('Report frontend', 'rp.pl', action => 'report', reportcode => 'tax_paid')
+    ->accesskeys_exist(qw|? C|)
     ->set_params_ok('Report parameters', fromdate => $t->date_jan1, todate => $t->date_dec31)
     ->press_button_ok('Generate report', 'continue')
     ->elements_exist('Links to invoice, name', 'a.invnumber-l', 'a.name-l')
@@ -75,6 +79,7 @@ subtest 'Tax paid' => sub {
 
 subtest 'Non taxable' => sub {
   $t->get_ok('Report frontend', 'rp.pl', action => 'report', reportcode => 'nontaxable_purchases')
+    ->accesskeys_exist(qw|? C|)
     ->set_params_ok('Report parameters', fromdate => $t->date_jan1, todate => $t->date_dec31)
     ->press_button_ok('Generate report', 'continue')
     ->elements_exist('Links to invoice, name', 'a.invnumber-l', 'a.name-l')

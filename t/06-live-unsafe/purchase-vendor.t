@@ -27,8 +27,8 @@ subtest 'Update vendor' => sub {
     ->press_button_ok('Generate report', 'continue')
     ->follow_link_ok('Open vendor', 'name-l', 0)
     ->store_ok('vendornumber')
-    ->set_action_ok('update')
-    ->post_ok('Update')
+    ->accesskeys_exist(qw|? < U S G H N M A E I R O Q P 1 2 3|)
+    ->press_button_ok('Update', 'update')
     ->press_button_ok('Save vendor', 'save')
     ->elements_exist('Links to name, e-mail', 'a.name-l', 'a.email-l')
     ->get_ok('Recently used', 'ru.pl', action => 'list_recent')
@@ -43,6 +43,7 @@ subtest 'Add new vendors' => sub {
       ->store_ok('vendornumber')
       ->press_button_ok('Save vendor', 'save')
       ->get_ok('Recently used', 'ru.pl', action => 'list_recent')
+      ->accesskeys_exist('D')
       ->texts_are('Most recently used vendor', 'a.number-l' => \'vendornumber')
       ->follow_link_ok('Open vendor', 'number-l')
       ->params_are(

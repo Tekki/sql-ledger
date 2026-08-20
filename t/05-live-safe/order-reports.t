@@ -23,9 +23,11 @@ $t = SL::TestClient->new(configfile => $configfile)->connect_ok->api_login_ok;
 
 subtest 'Sales orders' => sub {
   $t->get_ok('Report frontend', 'oe.pl', action => 'search', type => 'sales_order')
+    ->accesskeys_exist(qw|? / - * C|)
     ->set_params_ok('Report parameters', closed => 1) # debug
     ->press_button_ok('Generate report', 'continue')
     ->elements_exist('Links to order, name', 'a.ordnumber-l', 'a.name-l')
+    ->accesskeys_exist(qw|? X|)
     ->download_ok('Spreadsheet', 'xlsx', 'spreadsheet')
     ->download_is('Spreadsheet', 'xlsx');
 };
@@ -38,9 +40,11 @@ subtest 'Requirements' => sub {
 
 subtest 'Purchase orders' => sub {
   $t->get_ok('Report frontend', 'oe.pl', action => 'search', type => 'purchase_order')
+    ->accesskeys_exist(qw|? / - * C|)
     ->set_params_ok('Report parameters', closed => 1) # debug
     ->press_button_ok('Generate report', 'continue')
     ->elements_exist('Links to order, name', 'a.ordnumber-l', 'a.name-l')
+    ->accesskeys_exist(qw|? X|)
     ->download_ok('Spreadsheet', 'xlsx', 'spreadsheet')
     ->download_is('Spreadsheet', 'xlsx');
 };

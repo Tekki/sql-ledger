@@ -33,6 +33,7 @@ subtest 'Update latest invoice' => sub {
     ->follow_link_ok('Open invoice', 'is-l', 0)
     ->store_ok('creditremaining', 'invnumber', 'paidaccounts')
     ->form_fields_exist('currency', 'department', 'employee', 'warehouse')
+    ->accesskeys_exist(qw|? / : * < - A 1 0 . U O T H N M D V P E R W L &|, ',')
     ->press_button_ok('Update', 'update')
     ->params_are('Values unchanged', paidaccounts => \'paidaccounts', creditremaining => \'creditremaining')
     ->press_button_ok('Post invoice', 'post')

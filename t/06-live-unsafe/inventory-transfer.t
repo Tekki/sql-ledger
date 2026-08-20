@@ -24,6 +24,7 @@ $t = SL::TestClient->new(configfile => $configfile)->connect_ok->api_login_ok;
 
 subtest 'Warehouse transfer' => sub {
   $t->get_ok('Transfer frontend', 'ic.pl', action => 'search_transfer', nextsub => 'transfer_list')
+    ->accesskeys_exist(qw|? C|)
     ->form_fields_exist('partsgroup', 'warehouse')
     ->press_button_ok('Generate report', 'continue');
 };

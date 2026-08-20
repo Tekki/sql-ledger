@@ -25,6 +25,7 @@ subtest 'Run SQL query' => sub {
   $t->get_ok('Monitor screen', 'am.pl', action => 'monitor')
     ->buttons_exist('run_sql_command')
     ->buttons_exist_not('save_sql_command', 'delete_sql_command', 'spreadsheet')
+    ->accesskeys_exist(qw|? R|)
     ->set_params_ok('Add query', sql => 'SELECT customernumber, name FROM customer ORDER BY name')
     ->press_button_ok('Run query', 'run_sql_command')
     ->buttons_exist('save_sql_command', 'spreadsheet')

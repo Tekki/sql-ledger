@@ -24,11 +24,13 @@ $t = SL::TestClient->new(configfile => $configfile)->connect_ok->api_login_ok;
 
 subtest 'Update assembly with the hightest number' => sub {
   $t->get_ok('Report frontend', 'ic.pl', action => 'search', searchitems => 'assembly')
+    ->accesskeys_exist(qw|? C|)
     ->press_button_ok('Generate report', 'continue')
     ->follow_link_ok('Open part', 'partnumber-l', 0)
     ->store_ok('partnumber')
     ->form_fields_exist('partsgroup', 'IC_income')
     ->form_fields_exist_not('IC_expense', 'IC_inventory')
+    ->accesskeys_exist(qw|? < U S N M &|)
     ->press_button_ok('Update',    'update')
     ->press_button_ok('Save part', 'save')
     ->elements_exist('Link to partnumber', 'a.partnumber-l')
@@ -55,6 +57,7 @@ subtest 'Add new assemblies' => sub {
       ->get_ok('Recently used', 'ru.pl', action => 'list_recent')
       ->texts_are('Most recently used assembly', 'a.number-l' => \'partnumber')
       ->follow_link_ok('Open assembly', 'number-l')
+      ->accesskeys_exist(qw|D|)
       ->params_are(
       'Content of assembly',
       notes      => \'test_stamp',

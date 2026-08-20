@@ -29,7 +29,9 @@ subtest 'Single payment' => sub {
     type   => 'check',
     )
     ->press_button_ok('List open invoices', 'continue')
-    ->elements_exist('Link to invoice', 'a.invnumber-l');
+    ->elements_exist('Link to invoice', 'a.invnumber-l')
+    ->buttons_exist('update', 'select_all', 'preview', 'print', 'post')
+    ->accesskeys_exist(qw|? U A V P O|);
 };
 
 subtest 'Multiple payments' => sub {
@@ -38,7 +40,9 @@ subtest 'Multiple payments' => sub {
     action => 'payments',
     type   => 'check',
     )
-    ->press_button_ok('Update list', 'update');
+    ->press_button_ok('Update list', 'update')
+    ->buttons_exist('update', 'select_all', 'preview', 'print', 'post')
+    ->accesskeys_exist(qw|? U A V P O|);
 };
 
 subtest 'Export payments' => sub {
@@ -48,5 +52,7 @@ subtest 'Export payments' => sub {
     type   => 'payment',
     )
     ->press_button_ok('Generate report', 'continue')
-    ->elements_exist('Links to invoice, vendor', 'a.invnumber-l', 'a.name-l');
+    ->elements_exist('Links to invoice, vendor', 'a.invnumber-l', 'a.name-l')
+    ->buttons_exist('export_payments', 'reconcile_payments', 'save_report')
+    ->accesskeys_exist(qw|? A X R S|);
 };

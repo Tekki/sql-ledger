@@ -23,9 +23,11 @@ $t = SL::TestClient->new(configfile => $configfile)->connect_ok->api_login_ok;
 
 subtest 'Transactions' => sub {
   $t->get_ok('Report frontend', 'ar.pl', action => 'search', nextsub => 'transactions')
+    ->accesskeys_exist(qw|? / - + * C|)
     ->set_params_ok('Report parameters', transdatefrom => $t->date_jan1)
     ->press_button_ok('Generate report', 'continue')
     ->elements_exist('Links to invoice, name', 'a.invnumber-l', 'a.ar-l', 'a.is-l', 'a.name-l')
+    ->accesskeys_exist(qw|? A D X|)
     ->download_ok('Spreadsheet', 'xlsx', 'spreadsheet')
     ->download_is('Spreadsheet', 'xlsx');
 };
@@ -66,18 +68,21 @@ subtest 'Outstanding' => sub {
 
 subtest 'Aging' => sub {
   $t->get_ok('Report frontend', 'rp.pl', action => 'report', reportcode => 'ar_aging')
+    ->accesskeys_exist(qw|? C|)
     ->press_button_ok('Generate report', 'continue')
     ->elements_exist('Links to name', 'a.vc-l');
 };
 
 subtest 'Reminder' => sub {
   $t->get_ok('Report frontend', 'rp.pl', action => 'report', reportcode => 'reminder')
+    ->accesskeys_exist(qw|? C|)
     ->press_button_ok('Generate report', 'continue')
     ->elements_exist('Links to invoice, name', 'a.vc-l', 'a.invnumber-l');
 };
 
 subtest 'Tax collected' => sub {
   $t->get_ok('Report frontend', 'rp.pl', action => 'report', reportcode => 'tax_collected')
+    ->accesskeys_exist(qw|? C|)
     ->set_params_ok('Report parameters', fromdate => $t->date_jan1, todate => $t->date_dec31)
     ->press_button_ok('Generate report', 'continue')
     ->elements_exist('Links to invoice, name', 'a.invnumber-l', 'a.name-l')
@@ -87,6 +92,7 @@ subtest 'Tax collected' => sub {
 
 subtest 'Non taxable' => sub {
   $t->get_ok('Report frontend', 'rp.pl', action => 'report', reportcode => 'nontaxable_sales')
+    ->accesskeys_exist(qw|? C|)
     ->set_params_ok('Report parameters', fromdate => $t->date_jan1, todate => $t->date_dec31)
     ->press_button_ok('Generate report', 'continue')
     ->elements_exist('Links to invoice, name', 'a.invnumber-l', 'a.name-l')

@@ -27,8 +27,8 @@ subtest 'Update customer' => sub {
     ->press_button_ok('Generate report', 'continue')
     ->follow_link_ok('Open customer', 'name-l', 0)
     ->store_ok('customernumber')
-    ->set_action_ok('update')
-    ->post_ok('Update')
+    ->accesskeys_exist(qw|? < U S G H N M A E I R C O Q P 1 2 3|)
+    ->press_button_ok('Update', 'update')
     ->press_button_ok('Save customer', 'save')
     ->elements_exist('Links to name, e-mail', 'a.name-l', 'a.email-l')
     ->get_ok('Recently used', 'ru.pl', action => 'list_recent')
@@ -45,6 +45,7 @@ subtest 'Add new customers' => sub {
       ->get_ok('Recently used', 'ru.pl', action => 'list_recent')
       ->texts_are('Most recently used customer', 'a.number-l' => \'customernumber')
       ->follow_link_ok('Open customer', 'number-l')
+      ->accesskeys_exist(qw|D|)
       ->params_are(
       'Content of customer',
       notes          => \'test_stamp',

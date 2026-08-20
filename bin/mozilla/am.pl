@@ -6449,7 +6449,7 @@ sub role_header {
     <th colspan=2>|.$locale->text('Access Control').qq|</th>
   </tr>
   <tr>
-    <th colspan=2><input name="allbox type=checkbox class=checkbox value="1" accesskey="A" title="[A]" onChange="CheckAll();" checked></th>
+    <th colspan=2><input name="allbox" type="checkbox" class="checkbox" value="1" accesskey="A" title="[A]" onChange="CheckAll();" checked></th>
   </tr>
 |;
 

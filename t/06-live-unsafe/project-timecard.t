@@ -24,10 +24,12 @@ $t = SL::TestClient->new(configfile => $configfile)->connect_ok->api_login_ok;
 
 subtest 'Update timecard' => sub {
   $t->get_ok('Report frontend', 'jc.pl', action => 'search', type => 'timecard', project => 'project')
+    ->accesskeys_exist(qw|? C|)
     ->press_button_ok('Generate report', 'continue')
     ->follow_link_ok('Open time card', 'id-l', 0)
     ->store_ok('id')
     ->form_fields_exist('employee', 'projectnumber')
+    ->accesskeys_exist(qw|? : < U V P S R N W D|)
     ->press_button_ok('Update', 'update')
     ->press_button_ok('Save timecard', 'save')
     ->press_button_ok('Confirm changes', 'continue')

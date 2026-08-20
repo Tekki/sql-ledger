@@ -27,6 +27,7 @@ subtest 'Update employee' => sub {
     ->press_button_ok('Generate report', 'continue')
     ->follow_link_ok('Open employee', 'name-l', 0)
     ->store_ok('employeenumber')
+    ->accesskeys_exist(qw|? < U S N M|)
     ->press_button_ok('Update', 'update')
     ->press_button_ok('Save employee', 'save')
     ->elements_exist('Links to name', 'a.name-l')

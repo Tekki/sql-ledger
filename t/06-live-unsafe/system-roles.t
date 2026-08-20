@@ -26,6 +26,7 @@ subtest 'Update employee' => sub {
   $t->get_ok('Role screen', 'am.pl', action => 'list_roles')
     ->follow_link_ok('Open role', 'role-l', 0)
     ->form_fields_exist('description')
+    ->accesskeys_exist(qw|? A|)
     ->press_button_ok('Save role', 'save')
     ->elements_exist('Link to role', 'a.role-l')
 };

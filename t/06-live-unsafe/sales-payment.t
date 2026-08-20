@@ -28,7 +28,9 @@ subtest 'Single payment' => sub {
     action => 'payment',
     type   => 'receipt',
     )
-    ->press_button_ok('List open invoices', 'continue');
+    ->press_button_ok('List open invoices', 'continue')
+    ->buttons_exist('update', 'select_all', 'preview', 'print', 'post')
+    ->accesskeys_exist(qw|? U A V P O|);
 };
 
 subtest 'Multiple payments' => sub {
@@ -37,5 +39,7 @@ subtest 'Multiple payments' => sub {
     action => 'payments',
     type   => 'receipt',
     )
-    ->press_button_ok('Update list', 'update');
+    ->press_button_ok('Update list', 'update')
+    ->buttons_exist('update', 'select_all', 'preview', 'print', 'post')
+    ->accesskeys_exist(qw|? U A V P O|);
 };

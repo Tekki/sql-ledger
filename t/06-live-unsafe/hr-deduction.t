@@ -30,6 +30,7 @@ subtest 'Update deduction' => sub {
     )
     ->follow_link_ok('Open deduction', 'deduction-l')
     ->press_button_ok('Update deduction', 'update')
+    ->accesskeys_exist(qw|? S N|)
     ->press_button_ok('Save deduction', 'save')
     ->elements_exist('Link to deduction', 'a.deduction-l');
 };

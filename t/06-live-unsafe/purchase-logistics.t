@@ -24,6 +24,7 @@ $t = SL::TestClient->new(configfile => $configfile)->connect_ok()->api_login_ok;
 
 subtest 'Receive order' => sub {
   $t->get_ok('Report frontend', 'oe.pl', action => 'search', type => 'receive_order')
+    ->accesskeys_exist(qw|? / - * C|)
     ->press_button_ok('Generate report', 'continue')
     ->follow_link_ok('Open first order', 'ordnumber-l')
     ->set_params_ok('Add quantity and serial number', ship_1 => 1, serialnumber_1 => $t->test_stamp)

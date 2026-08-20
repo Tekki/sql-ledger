@@ -33,6 +33,7 @@ subtest 'Update latest transaction' => sub {
     ->follow_link_ok('Open transaction', 'ap-l', 0)
     ->store_ok('invnumber', 'paidaccounts')
     ->form_fields_exist('currency', 'department', 'employee')
+    ->accesskeys_exist(qw|? / : * < - 1 0 . U O H N M D V P R W|, ',')
     ->press_button_ok('Update', 'update')
     ->params_are('Check payments', paidaccounts => \'paidaccounts')
     ->press_button_ok('Post transaction', 'post')

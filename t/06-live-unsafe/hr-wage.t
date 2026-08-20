@@ -29,6 +29,7 @@ subtest 'Update wage' => sub {
     db     => 'wage'
     )
     ->follow_link_ok('Open wage', 'wage-l')
+    ->accesskeys_exist(qw|? S N|)
     ->press_button_ok('Save wage', 'save')
     ->elements_exist('Link to wage', 'a.wage-l');
 };

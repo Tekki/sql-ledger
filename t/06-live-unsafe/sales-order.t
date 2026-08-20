@@ -29,6 +29,7 @@ subtest 'Update latest sales order' => sub {
     ->store_ok('creditremaining', 'ordnumber')
     ->elements_exist('Links to part, planning, history', 'a.part-l', 'a.planning-l', 'a.history-l')
     ->form_fields_exist('currency', 'department', 'employee', 'warehouse')
+    ->accesskeys_exist(qw|? / : * < - A 1 0 . U S T L H N M D V P E R W I Q &|)
     ->press_button_ok('Update',          'update')
     ->params_are('Values unchanged', creditremaining => \'creditremaining')
     ->press_button_ok('Save order',      'save')
@@ -62,6 +63,7 @@ subtest 'Add new orders' => sub {
       ->get_ok('Recently used', 'ru.pl', action => 'list_recent')
       ->texts_are('Most recently used order', 'a.number-l' => \'ordnumber')
       ->follow_link_ok('Open order', 'number-l')
+      ->accesskeys_exist(qw|D|)
       ->params_are(
         'Content of order',
         description => \'test_stamp',
