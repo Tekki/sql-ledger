@@ -2547,10 +2547,10 @@ sub transactions {
     $i = 1;
 
     unless ($form->{revtrans}) {
-      $button{'Select all'}{code} = qq|<button class="submit" type="submit" name="action" value="select_all">|.$locale->text('Select all').qq|</button> |;
+      $button{'Select all'}{code} = qq|<button class="submit" type="submit" name="action" value="select_all" accesskey="A" title="[A]">|.$locale->text('Select all').qq|</button> |;
       $button{'Select all'}{order} = $i++;
 
-      $button{'Deselect all'}{code} = qq|<button class="submit" type="submit" name="action" value="deselect_all">|.$locale->text('Deselect all').qq|</button> |;
+      $button{'Deselect all'}{code} = qq|<button class="submit" type="submit" name="action" value="deselect_all" accesskey="A" title="[A]">|.$locale->text('Deselect all').qq|</button> |;
       $button{'Deselect all'}{order} = $i++;
     }
 
@@ -2563,7 +2563,7 @@ sub transactions {
       }
 
       unless ($form->{revtrans}) {
-        $button{'AR--Delete Transactions'}{code} = qq|<button class="negative submit" type="submit" name="action" value="delete_transactions">|.$locale->text('Delete Transactions').qq|</button> |;
+        $button{'AR--Delete Transactions'}{code} = qq|<button class="negative submit" type="submit" name="action" value="delete_transactions" accesskey="D" title="[D]">|.$locale->text('Delete Transactions').qq|</button> |;
         $button{'AR--Delete Transactions'}{order} = $i++;
       }
 

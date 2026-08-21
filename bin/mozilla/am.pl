@@ -6423,7 +6423,7 @@ sub role_header {
 
   $form->header;
 
-  &check_all(qw(allbox_select ndx_));
+  &check_all(qw(allbox ndx_));
 
   print qq|
 <body>
@@ -6449,7 +6449,7 @@ sub role_header {
     <th colspan=2>|.$locale->text('Access Control').qq|</th>
   </tr>
   <tr>
-    <th colspan=2><input name="allbox_select" type=checkbox class=checkbox value="1" onChange="CheckAll();" checked></th>
+    <th colspan=2><input name="allbox type=checkbox class=checkbox value="1" accesskey="A" title="[A]" onChange="CheckAll();" checked></th>
   </tr>
 |;
 
@@ -6823,7 +6823,7 @@ sub list_snapshots {
   
   my (%column_header, %column_data);
   $column_header{ndx}
-    = qq|<th class="listheading"><input name="allbox" type="checkbox" class="checkbox" value="1" onChange="CheckAll()"></th>|;
+    = qq|<th class="listheading"><input name="allbox" type="checkbox" class="checkbox" value="1" accesskey="A" title="[A]" onChange="CheckAll()"></th>|;
   $column_header{timestamp} = qq|<th class="listheading">| . $locale->text('Date') . qq|</th>|;
   $column_header{login}    = qq|<th class="listheading">| . $locale->text('Login') . qq|</th>|;
 
@@ -6892,7 +6892,7 @@ sub list_snapshots {
 |;
 
   my %button = (
-    'Add Snapshot'     => {ndx => 1, key => 'A', value => $locale->text('Add Snapshot')},
+    'Add Snapshot'     => {ndx => 1, key => 'S', value => $locale->text('Add Snapshot')},
     'Restore Snapshot' => {ndx => 2, key => 'R', value => $locale->text('Restore Snapshot')},
     'Delete Snapshots'  => {ndx => 3, key => 'D', value => $locale->text('Delete Snapshots')}
   );

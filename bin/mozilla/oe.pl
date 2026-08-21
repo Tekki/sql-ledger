@@ -1136,7 +1136,7 @@ sub form_footer {
         'Update'   => {ndx => 1, key => 'U', value => $locale->text('Update')},
         'Save'     => {ndx => 2, key => 'S', value => $locale->text('Save'), class => 'positive'},
         'Ship to'  => {ndx => 3, key => 'T', value => $locale->text('Ship to')},
-        'Ship all' => {ndx => 4, key => 'A', value => $locale->text('Ship all')},
+        'Ship all' => {ndx => 4, key => 'L', value => $locale->text('Ship all')},
         'Schedule' => {ndx => 5, key => 'H', value => $locale->text('Schedule')},
         'Save as new' =>
           {ndx => 6, key => 'N', value => $locale->text('Save as new'), class => 'positive'},
@@ -2222,7 +2222,7 @@ sub transactions {
   for (split /;/, $myconfig{acs}) { delete $button{$_} }
 
   $column_header{ndx} = qq|
-<th class=listheading width=1%><input name="allbox_select" type=checkbox class=checkbox value="1" checked onChange="CheckAll();"></th>|;
+<th class=listheading width=1%><input name="allbox_select" type=checkbox class=checkbox value="1" checked accesskey="A" title="[A]" onChange="CheckAll();"></th>|;
   $column_header{runningnumber} = qq|<th class=listheading>&nbsp;</th>|;
   $column_header{id} = qq|<th><a class=listheading href=$href&sort=id>|.$locale->text('ID').qq|</a></th>|;
   $column_header{transdate} = qq|<th><a class=listheading href=$href&sort=transdate>|.$locale->text('Date').qq|</a></th>|;

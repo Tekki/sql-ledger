@@ -1953,7 +1953,7 @@ sub list_names {
 
   for (@column_index) { $column_data{$_} = qq|\n<th nowrap><a class="listheading" href="$href&sort=$_">$column_data{$_}</a></th>| }
 
-  $column_data{ndx} = qq|<th class=listheading width=1%><input name="allbox" type="checkbox" class="checkbox" value="1" checked onChange="CheckAll();"></th>|;
+  $column_data{ndx} = qq|<th class=listheading width=1%><input name="allbox" type="checkbox" class="checkbox" value="1" accesskey="A" title="[A]" checked onChange="CheckAll();"></th>|;
 
 
   $form->header;
@@ -2156,7 +2156,7 @@ sub consolidate {
         <tr class=listheading>
 |;
 
-  $column_data{ndx} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll()"></th>|;
+  $column_data{ndx} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} accesskey="A" title="[A]" onChange="CheckAll()"></th>|;
 
   for (@column_index) { print "\n$column_data{$_}" }
 

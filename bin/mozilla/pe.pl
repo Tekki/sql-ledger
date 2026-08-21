@@ -2537,7 +2537,7 @@ sub jcitems {
   push @column_index, "itemnotes" if !$form->{summary};
   push @column_index, qw(employee qty amount);
 
-  $column_header{id} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" checked onChange="CheckAll();"></th>|;
+  $column_header{id} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" checked accesskey="A" title="[A]" onChange="CheckAll();"></th>|;
   $column_header{transdate} = qq|<th class=listheading>|.$locale->text('Date').qq|</th>|;
   $column_header{partnumber} = qq|<th class=listheading>|.$locale->text('Service Code').qq|<br>|.$locale->text('Part Number').qq|</th>|;
   $column_header{projectnumber} = qq|<th class=listheading>|.$locale->text('Project Number').qq|</th>|;
