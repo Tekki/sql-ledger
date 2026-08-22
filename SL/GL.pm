@@ -811,8 +811,10 @@ sub transactions ($, $myconfig, $form) {
             $form->{GL}[$_]{contra} .= "$ref->{accno} " unless $seen{"$ref->{accno}$ref->{transdate}"};
             $seen{"$ref->{accno}$ref->{transdate}"} = 1;
 
-            $form->{GL}[$_]{gifi_contra} .= "$ref->{gifi_accno} " unless $seen{"$ref->{gifi_accno}$ref->{transdate}"};
-            $seen{"$ref->{gifi_accno}$ref->{transdate}"} = 1;
+            if ($ref->{gifi_accno}) {
+              $form->{GL}[$_]{gifi_contra} .= "$ref->{gifi_accno} " unless $seen{"$ref->{gifi_accno}$ref->{transdate}"};
+              $seen{"$ref->{gifi_accno}$ref->{transdate}"} = 1;
+            }
           }
           $i++;
         }

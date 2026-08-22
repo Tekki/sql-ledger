@@ -4184,7 +4184,7 @@ sub update_status ($self, $myconfig) {
   ($self->{id} //= 0) *= 1;
   return unless $self->{id};
 
-  $self->{$_} //= '' for qw|printed emailed|;
+  $self->{$_} //= '' for qw|printed emailed queued|;
 
   my $dbh = $self->dbconnect_noauto($myconfig);
 

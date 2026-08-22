@@ -3542,15 +3542,18 @@ sub add_vendor { &add };
 
 sub lookup_name {
 
+  if ($form->{db} eq 'customer') {
+    $form->{title} = $locale->text('Customer');
+    $form->{ARAP} = 'ar';
+  } else {
+    $form->{title} = $locale->text('Vendor');
+    $form->{ARAP} = 'ap';
+  }
+
   SL::CT->search(\%myconfig, $form);
 
   @column_index = qw(name city);
 
-  $form->{title} = $locale->text('Vendor');
-
-  if ($form->{db} eq 'customer') {
-    $form->{title} = $locale->text('Customer');
-  }
 
   $form->header;
 
