@@ -3584,22 +3584,20 @@ sub run_sql_command ($, $myconfig, $form) {
 
   my @args = split /\n/, $form->{sqlparameter} =~ s/\s+-- .*//gr;
 
-  if ($form->{sqlcommand} =~ /^select|^with|^returning/mi) {
-    my $sth = $dbh->prepare($form->{sqlcommand});
+  my $sth = $dbh->prepare($form->{sqlcommand});
 
-    if ($sth->execute(@args)) {
+  if ($sth->execute(@args)) {
+
+    if ($sth->{NUM_OF_FIELDS}) {
       $form->{COLUMN_INDEX} = [$sth->{NAME}->@*];
       $form->{COLUMNS}      = $form->dbtypes($sth);
 
       while (my $ref = $sth->fetchrow_hashref) {
         push $form->{DATA}->@*, $ref;
       }
-
-      $sth->finish;
     }
 
-  } else {
-    $dbh->do($form->{sqlcommand}, undef, @args);
+    $sth->finish;
   }
 
   $dbh->disconnect;
