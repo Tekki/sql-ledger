@@ -3874,7 +3874,7 @@ sub _search_defaults {
         12 => '',
       },
     },
-    focus => 'contact',
+    focus => 'name',
   );
 
   return \%defaults;
