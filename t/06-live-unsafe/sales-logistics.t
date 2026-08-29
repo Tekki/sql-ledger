@@ -27,6 +27,7 @@ subtest 'Ship order' => sub {
     ->accesskeys_exist(qw|? / - * C|)
     ->press_button_ok('Generate report', 'continue')
     ->follow_link_ok('Open first order', 'ordnumber-l')
+    ->accesskeys_exist(qw|? : U T S L V P E|)
     ->set_params_ok('Add quantity and serial number', ship_1 => 1, serialnumber_1 => $t->test_stamp)
     ->press_button_ok('Update shipment', 'update')
     ->press_button_ok('Save shipment',   'done')

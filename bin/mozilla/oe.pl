@@ -3056,6 +3056,8 @@ sub display_ship_receive {
     $vcnumber = $locale->text('Vendor Number');
   }
 
+  $vcref = qq|<a class="$form->{vc}-l" href="ct.pl?action=edit&db=$form->{vc}&id=$form->{"$form->{vc}_id"}&login=$form->{login}&path=$form->{path}" accesskey=":" title="$vcname [:]" target="_blank">&#9701;</a>|;
+
   $warehouse = qq|
               <tr>
                 <th align=right>|.$locale->text('Warehouse').qq|</th>
@@ -3131,7 +3133,7 @@ sub display_ship_receive {
             <table width=100%>
               <tr>
                 <th align=right>$vcname</th>
-                <td colspan=3>$form->{$form->{vc}}</td>|
+                <td colspan=3>$form->{$form->{vc}} $vcref</td>|
                 .$form->hide_form("$form->{vc}", "$form->{vc}_id")
                 .qq|
               </tr>
@@ -3321,19 +3323,25 @@ sub display_ship_receive {
 <br>
 |;
 
-  %button = ('Update' => { ndx => 1, key => 'U', value => $locale->text('Update') },
-             'Preview' => { ndx => 2, key => 'V', value => $locale->text('Preview') },
-             'Print' => { ndx => 3, key => 'P', value => $locale->text('Print') },
-            );
+  my @buttons = (
+    {
+      'Update'   => {ndx => 1, key => 'U', value => $locale->text('Update')},
+      'Done'     => {ndx => 3, key => 'S', value => $locale->text('Save'), class => 'positive'},
+      'Ship all' => {ndx => 4, key => 'L', value => $locale->text('Ship all')},
+    },
+    {
+      _label_   => $locale->text('Share'),
+      'Preview' => {ndx => 10, key => 'V', value => $locale->text('Preview')},
+      'Print'   => {ndx => 11, key => 'P', value => $locale->text('Print')},
+    },
+  );
 
   if ($form->{type} eq 'ship_order') {
-    $button{'Ship to'} = { ndx => 4, key => 'T', value => $locale->text('Ship to') };
-    $button{'E-mail'} = { ndx => 5, key => 'E', value => $locale->text('E-mail') };
+    $buttons[0]{'Ship to'} = {ndx => 2,  key => 'T', value => $locale->text('Ship to')};
+    $buttons[1]{'E-mail'}  = {ndx => 12, key => 'E', value => $locale->text('E-mail')};
   }
 
-  $button{'Done'} = { ndx => 11, key => 'S', value => $locale->text('Save'), class => 'positive' };
-
-  $form->print_button(\%button);
+  $form->print_button_table(\@buttons);
 
   if ($form->{menubar}) {
     require "$form->{path}/menu.pl";
