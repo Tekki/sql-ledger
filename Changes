@@ -1,7 +1,14 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
-Not Released
-  - 
+4.1.4 2026-09-04
+  - sales margin of transactions displayed as amount and percentage
+  - keyboard shortcut for allbox
+  - new directive to start custom menus from scratch
+  - detection of the type of the query in database monitor improved
+  - focus in customer and vendor search corrected
+  - vendor lookup for sales corrected
+  - price history report for purchases corrected
+  - uninitalized variables corrected
 
 4.1.3 2026-08-17
   - buttons in transactions, orders and quotations organized in tables
