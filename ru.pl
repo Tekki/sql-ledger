@@ -19,6 +19,7 @@ BEGIN {
 }
 
 use open ':std', OUT => ':encoding(UTF-8)';
+use Digest::SHA qw|sha256_base64 sha256_hex|;
 use Storable ();
 use SL::Form;
 use SL::Locale;
@@ -161,13 +162,13 @@ sub check_password {
       my $err;
       if ($myconfig{totp_activated} || $form->{admin} && $admin_totp_activated) {
         require SL::TOTP;
-        $form->{password} = crypt $form->{password}, substr($form->{login}, 0, 2);
+        $form->{password} = sha256_hex $form->{password} . $form->{login} =~ s/@.*//r;
         $err = !(
           SL::TOTP::check_code(\%myconfig, $form->{totp})
-          && crypt($form->{password}, substr($form->{login}, 0, 2)) eq $myconfig{password}
+          && sha256_hex $form->{password} . $form->{login} =~ s/@.*//r  eq $myconfig{password}
         );
       } else {
-        $err = crypt($form->{password}, substr($form->{login}, 0, 2)) ne $myconfig{password};
+        $err = $myconfig{password} ne sha256_hex $form->{password} . $form->{login} =~ s/@.*//r;
       }
 
       if ($err) {
@@ -190,9 +191,8 @@ sub check_password {
         }
       }
     } elsif ($ENV{HTTP_SL_TOKEN} && $myconfig{sessionkey}) {
-      require Digest::SHA;
 
-      if ($ENV{HTTP_SL_TOKEN} ne Digest::SHA::sha256_base64($myconfig{sessionkey})) {
+      if ($ENV{HTTP_SL_TOKEN} ne sha256_base64 $myconfig{sessionkey}) {
         $form->error($locale->text('Access Denied!'));
       }
     } else {
@@ -234,7 +234,9 @@ sub check_password {
           $flogin =~ s/(\@| )/_/g;
 
           # validate cookie
-          if (($login ne $flogin) || ($myconfig{password} ne crypt $password, substr($form->{login}, 0, 2))) {
+          if ( ($login ne $flogin)
+            || ($myconfig{password} ne sha256_hex $password . $form->{login} =~ s/@.*//r))
+          {
             &getpassword(1);
             exit;
           }

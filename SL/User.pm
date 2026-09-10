@@ -13,6 +13,7 @@ use v5.40;
 
 package SL::User;
 
+use Digest::SHA 'sha256_hex';
 use Storable ();
 use YAML::PP;
 
@@ -59,7 +60,7 @@ sub country_codes {
 }
 
 
-sub login ($self, $form, $userspath) {
+sub login ($self, $form, $memberfile, $userspath) {
 
   my $rc = -1;
 
@@ -67,11 +68,17 @@ sub login ($self, $form, $userspath) {
 
     if ($self->{password} ne "") {
       return -2 unless $form->{password};
-      chomp $self->{password};
-      srand( time() ^ ($$ + ($$ << 15)) );
 
-      my $password = crypt $form->{password}, substr($self->{login}, 0, 2);
-      if ($self->{password} ne $password) {
+      if (length $self->{password} == 13) {
+
+        if ($self->{password} ne crypt $form->{password}, substr($self->{login}, 0, 2)) {
+          return -2;
+        } else {
+          $self->{password} = $form->{password};
+          $self->save_member($memberfile, $userspath);
+        }
+
+      } elsif ($self->{password} ne sha256_hex $form->{password} . $self->{login} =~ s/@.*//r) {
         return -2;
       }
     }
@@ -112,8 +119,8 @@ sub login ($self, $form, $userspath) {
     # no error check for employee table, ignore if it does not exist
     $query = qq|SELECT id
                 FROM employee
-                WHERE login = '$login'|;
-    my ($id) = $dbh->selectrow_array($query);
+                WHERE login = ?|;
+    my ($id) = $dbh->selectrow_array($query, undef, $login);
 
     if ($audittrail) {
       ($id //= 0) *= 1;
@@ -628,7 +635,9 @@ sub create_config ($self, $filename) {
       $j--;
     }
 
-    $self->{password} = crypt $self->{password}, substr($self->{login}, 0, 2) if ! $self->{encrypted};
+    unless ($self->{encrypted}) {
+      $self->{password} = sha256_hex $self->{password} . $self->{login} =~ s/@.*//r;
+    }
   }
 
   if ($self->{dbpasswd}) {
@@ -677,8 +686,7 @@ sub save_member ($self, $memberfile, $userspath) {
   my $password = $self->{password};
   if (!$self->{encrypted}) {
     if ($self->{password}) {
-      srand( time() ^ ($$ + ($$ << 15)) );
-      $self->{password} = crypt $self->{password}, substr($self->{login}, 0, 2);
+      $self->{password} = sha256_hex $self->{password} . $self->{login} =~ s/@.*//r;
     }
   }
 
@@ -941,7 +949,7 @@ L<SL::User> implements the following methods:
 
 =head2 login
 
-  $user->login($form, $userspath);
+  $user->login($form, $memberfile, $userspath);
 
 =head2 logout
 

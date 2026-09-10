@@ -15,6 +15,8 @@ use SL::User;
 use SL::AA;
 use SL::GL;
 
+use Digest::SHA 'sha256_hex';
+
 require "$form->{path}/arap.pl";
 require "$form->{path}/arapprn.pl";
 
@@ -1266,7 +1268,7 @@ sub save_memberfile {
       delete $params->{$_} for qw|name email password tan totp_activated templates|;
 
       if ($form->{admin} && $form->{employeepassword}) {
-        $password           = crypt $form->{employeepassword}, substr($form->{employeelogin}, 0, 2);
+        $password           = sha256_hex "$form->{employeepassword}$form->{employeelogin}";
         $params->{password} = $password;
       } else {
         $params->{password} = $oldemployeepassword;
@@ -1306,7 +1308,7 @@ sub save_memberfile {
       $m{timeout} = 86400;
 
       if ($form->{employeepassword}) {
-        $m{password} = crypt $form->{employeepassword}, substr($form->{employeelogin}, 0, 2);
+        $m{password} = sha256_hex "$form->{employeepassword}$form->{employeelogin}";
       }
 
       $member{$employeelogin} = \%m;

@@ -248,10 +248,8 @@ sub login {
   }
 
   $user = SL::User->new($slconfig{memberfile}, $form->{login});
-
   # if we get an error back, bale out
-  if (($errno = $user->login($form, $slconfig{userspath})) <= -1) {
-
+  if (($errno = $user->login($form, $slconfig{memberfile}, $slconfig{userspath})) <= -1) {
     $errno *= -1;
     if ($slconfig{helpful_login}) {
       $err[1] = $locale->text('Incorrect Username!');

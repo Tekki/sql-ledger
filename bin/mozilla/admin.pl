@@ -15,6 +15,7 @@ use SL::Form;
 use SL::Locale;
 use SL::User;
 
+use Digest::SHA 'sha256_hex';
 use Storable ();
 use YAML::PP;
 
@@ -122,7 +123,6 @@ sub create_config {
 
   if ($form->{password}) {
     my $t = time + $form->{timeout};
-    srand( time() ^ ($$ + ($$ << 15)) );
     $key = "root$form->{password}$t";
 
     my $i = 0;
@@ -772,7 +772,19 @@ sub check_password {
 
     if ($form->{password}) {
       $form->{callback} .= "&password=$form->{password}" if $form->{callback};
-      if ($root->{password} ne crypt $form->{password}, 'ro') {
+
+      if (length $root->{password} == 13) {
+
+        if ($root->{password} ne crypt $form->{password}, 'ro') {
+          &getpassword;
+          exit;
+        } else {
+          $root->{password}     = $form->{password};
+          $root->{'root login'} = 1;
+          $root->save_member($slconfig{memberfile}, $slconfig{userspath});
+        }
+
+      } elsif ($root->{password} ne sha256_hex "$form->{password}root login") {
         &getpassword;
         exit;
       }
@@ -814,7 +826,10 @@ sub check_password {
           $time = substr($s, -10);
           $password = substr($s, $l, (length $s) - ($l + 10));
 
-          if ((time > $time) || ($login ne 'root') || ($root->{password} ne crypt $password, 'ro')) {
+          if ( (time > $time)
+            || ($login ne 'root')
+            || ($root->{password} ne sha256_hex "${password}root login"))
+          {
             &getpassword;
             exit;
           }
@@ -1182,8 +1197,7 @@ sub dbcreate {
   }
 
   if ($form->{adminpassword}) {
-    srand( time() ^ ($$ + ($$ << 15)) );
-    $form->{password} = crypt $form->{adminpassword}, 'ad';
+    $form->{password} = sha256_hex "$form->{adminpassword}admin";
   }
 
   for (
