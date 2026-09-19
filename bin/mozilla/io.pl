@@ -1836,6 +1836,7 @@ sub print_form {
   push @f, qw(firstname lastname salutation contacttitle occupation mobile);
 
   push @f, ("${inv}number", "${inv}date", "${due}date", "${inv}description");
+  push @f, 'ordnumber' if $inv eq 'inv';
 
   push @f, qw(company address tel fax businessnumber companyemail companywebsite username useremail);
 
