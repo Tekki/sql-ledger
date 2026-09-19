@@ -420,7 +420,7 @@ sub jcitems ($, $myconfig, $form) {
               to_char(j.checkedout, 'HH24:MI') AS checkedout,
               to_char(j.checkedin, 'yyyymmdd') AS transdate,
               to_char(j.checkedin, '$dateformat') AS transdatea,
-              to_char(j.checkedin, 'D') AS weekday,
+              to_char(j.checkedin, 'ID') AS weekday,
               p.partnumber,
               pr.projectnumber, pr.description AS projectdescription,
               e.employeenumber, e.name AS employee,

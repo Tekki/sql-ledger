@@ -1565,14 +1565,15 @@ sub list_cards {
 
   if ($form->{type} eq 'timecard') {
 
-    %weekday = ( 1 => $locale->text('Su'),
-                 2 => $locale->text('Mo'),
-                 3 => $locale->text('Tu'),
-                 4 => $locale->text('We'),
-                 5 => $locale->text('Th'),
-                 6 => $locale->text('Fr'),
-                 7 => $locale->text('Sa')
-               );
+    %weekday = (
+      1 => $locale->text('Mo'),
+      2 => $locale->text('Tu'),
+      3 => $locale->text('We'),
+      4 => $locale->text('Th'),
+      5 => $locale->text('Fr'),
+      6 => $locale->text('Sa'),
+      7 => $locale->text('Su'),
+    );
 
     for (keys %weekday) { $column_header{$_} = "<th class=listheading width=25>$weekday{$_}</th>" }
   }
