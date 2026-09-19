@@ -1480,6 +1480,7 @@ sub list_cards {
 
   if ($form->{type} eq 'timecard') {
     push @column_index, (qw(1 2 3 4 5 6 7)) if ($form->{l_qty} || $form->{l_time});
+    push @column_index, 'qty', if $form->{l_qty};
   } else {
     push @column_index, (qw(qty sellprice)) if $form->{l_qty};
   }
@@ -1648,12 +1649,15 @@ sub list_cards {
 
           $weektotal = 0;
           for (keys %weekday) {
-            $column_data{$_} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{$_}, undef, "&nbsp;")."</th>";
+            $column_data{$_} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{$_}, $form->{precision}, "&nbsp;")."</th>";
             $weektotal += $subtotal{$_};
             $subtotal{$_} = 0;
           }
 
-          $column_data{$form->{sort}} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $weektotal, undef, "&nbsp;")."</th>";
+          $column_data{qty} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{qty}, $form->{precision}, "&nbsp;")."</th>";
+          $column_data{allocated} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{allocated}, $form->{precision}, "&nbsp;")."</th>";
+          $subtotal{qty}       = 0;
+          $subtotal{allocated} = 0;
 
           for (@column_index) { print "\n$column_data{$_}" }
         }
@@ -1665,14 +1669,15 @@ sub list_cards {
 
         for (@column_index) { $column_data{$_} = "<td>&nbsp;</td>" }
 
-        $total = 0;
         for (keys %weekday) {
-          $column_data{$_} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $total{$_}, undef, "&nbsp;")."</th>";
-          $total += $total{$_};
+          $column_data{$_} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $total{$_}, $form->{precision}, "&nbsp;")."</th>";
           $total{$_} = 0;
         }
 
-        $column_data{$form->{sort}} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $total, undef, "&nbsp;")."</th>";
+        $column_data{qty} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $total{qty}, $form->{precision}, "&nbsp;")."</th>";
+        $column_data{allocated} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $total{allocated}, $form->{precision}, "&nbsp;")."</th>";
+        $total{qty}       = 0;
+        $total{allocated} = 0;
 
         for (@column_index) { print "\n$column_data{$_}" }
 
@@ -1703,12 +1708,16 @@ sub list_cards {
         if ($ref->{workweek} != $sameweek) {
           $weektotal = 0;
           for (keys %weekday) {
-            $column_data{$_} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{$_}, undef, "&nbsp;")."</th>";
+            $column_data{$_} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{$_}, $form->{precision}, "&nbsp;")."</th>";
             $weektotal += $subtotal{$_};
-            $subtotal{$_} = 0
+            $subtotal{$_} = 0;
           }
-          $column_data{$form->{sort}} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $weektotal, undef, "&nbsp;")."</th>";
+
+          $column_data{qty} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{qty}, $form->{precision}, "&nbsp;")."</th>";
+          $column_data{allocated} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{allocated}, $form->{precision}, "&nbsp;")."</th>";
           $sameweek = $ref->{workweek};
+          $subtotal{qty}       = 0;
+          $subtotal{allocated} = 0;
 
           print qq|
           <tr class=listsubtotal>
@@ -1722,12 +1731,14 @@ sub list_cards {
 
       } else {
         if ($sameitem ne $ref->{$form->{sort}}) {
-          $column_data{qty} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{qty}, undef, "&nbsp;")."</th>";
+          $column_data{qty} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{qty}, $form->{precision}, "&nbsp;")."</th>";
+          $column_data{allocated} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{allocated}, $form->{precision}, "&nbsp;")."</th>";
           $column_data{sellprice} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{sellprice}, $form->{precision})."</th>";
 
           $sameitem = $ref->{$form->{sort}};
-          $subtotal{qty} = 0;
+          $subtotal{qty}       = 0;
           $subtotal{sellprice} = 0;
+          $subtotal{allocated} = 0;
 
           print qq|
         <tr class=listsubtotal>
@@ -1747,12 +1758,12 @@ sub list_cards {
 
     for (keys %weekday) { $column_data{$_} = "<td>&nbsp;</td>" }
 
-    $column_data{qty} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{qty}, undef, "&nbsp;")."</td>";
-    $column_data{allocated} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{allocated}, undef, "&nbsp;")."</td>";
+    $column_data{qty} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{qty}, $form->{precision}, "&nbsp;")."</td>";
+    $column_data{allocated} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{allocated}, $form->{precision}, "&nbsp;")."</td>";
     $column_data{sellprice} = qq|<td align=right>|.$form->format_amount(\%myconfig,$ref->{qty} * $ref->{sellprice}, $form->{precision})."</td>";
 
     $column_data{$ref->{weekday}} = "<td align=right>";
-    $column_data{$ref->{weekday}} .= $form->format_amount(\%myconfig, $ref->{qty}, undef, "&nbsp;") if $form->{l_qty};
+    $column_data{$ref->{weekday}} .= $form->format_amount(\%myconfig, $ref->{qty}, $form->{precision}, "&nbsp;") if $form->{l_qty};
 
     if ($form->{l_time}) {
       $column_data{$ref->{weekday}} .= "<br>" if $form->{l_qty};
@@ -1765,9 +1776,11 @@ sub list_cards {
     $subtotal{$ref->{weekday}} += $ref->{qty};
     $total{$ref->{weekday}} += $ref->{qty};
 
-    $total{qty} += $ref->{qty};
-    $total{sellprice} += $ref->{sellprice} * $ref->{qty};
-    $subtotal{qty} += $ref->{qty};
+    $total{qty}          += $ref->{qty};
+    $total{allocated}    += $ref->{allocated};
+    $total{sellprice}    += $ref->{sellprice} * $ref->{qty};
+    $subtotal{qty}       += $ref->{qty};
+    $subtotal{allocated} += $ref->{allocated};
     $subtotal{sellprice} += $ref->{sellprice} * $ref->{qty};
 
     $j++; $j %= 2;
@@ -1793,14 +1806,17 @@ sub list_cards {
     if ($form->{type} eq 'timecard') {
       $weektotal = 0;
       for (keys %weekday) {
-        $column_data{$_} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{$_}, undef, "&nbsp;")."</th>";
+        $column_data{$_} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{$_}, $form->{precision}, "&nbsp;")."</th>";
         $weektotal += $subtotal{$_};
       }
 
-      $column_data{$form->{sort}} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $weektotal, undef, "&nbsp;")."</th>";
+      $column_data{qty} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{qty}, $form->{precision}, "&nbsp;")."</th>";
+      $column_data{allocated} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{allocated}, $form->{precision}, "&nbsp;")."</th>";
+      $column_data{sellprice} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{sellprice}, $form->{precision})."</th>";
 
     } else {
-      $column_data{qty} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{qty}, undef, "&nbsp;")."</th>";
+      $column_data{qty} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{qty}, $form->{precision}, "&nbsp;")."</th>";
+      $column_data{allocated} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{allocated}, $form->{precision}, "&nbsp;")."</th>";
       $column_data{sellprice} = "<th class=listsubtotal align=right>".$form->format_amount(\%myconfig, $subtotal{sellprice}, $form->{precision})."</th>";
     }
 
@@ -1815,18 +1831,18 @@ sub list_cards {
   for (@column_index) { $column_data{$_} = "<td>&nbsp;</td>" }
 
   if ($form->{type} eq 'timecard') {
-    $total = 0;
     for (keys %weekday) {
-      $column_data{$_} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $total{$_}, undef, "&nbsp;")."</th>";
-      $total += $total{$_};
+      $column_data{$_} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $total{$_}, $form->{precision}, "&nbsp;")."</th>";
       $total{$_} = 0;
     }
 
-    $column_data{$form->{sort}} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $total, undef, "&nbsp;")."</th>";
+    $column_data{qty} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $total{qty}, $form->{precision}, "&nbsp;")."</th>";
+    $column_data{allocated} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $total{allocated}, $form->{precision}, "&nbsp;")."</th>";
 
   } else {
 
-    $column_data{qty} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $total{qty}, undef, "&nbsp;")."</th>";
+    $column_data{qty} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $total{qty}, $form->{precision}, "&nbsp;")."</th>";
+    $column_data{allocated} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $total{allocated}, $form->{precision}, "&nbsp;")."</th>";
     $column_data{sellprice} = "<th class=listtotal align=right>".$form->format_amount(\%myconfig, $total{sellprice}, $form->{precision})."</th>";
 
   }
