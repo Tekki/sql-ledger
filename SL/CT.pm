@@ -324,16 +324,10 @@ sub save ($, $myconfig, $form, $dbh = undef) {
     }
 
   } else {
-    my $uid = localtime;
-    $uid .= $$;
-
     $query = qq|INSERT INTO $form->{db} (name)
-                VALUES ('$uid')|;
-    $dbh->do($query) or $form->dberror($query);
-
-    $query = qq|SELECT id FROM $form->{db}
-                WHERE name = '$uid'|;
-    ($form->{id}) = $dbh->selectrow_array($query);
+                VALUES ('')
+                RETURNING id|;
+    ($form->{id}) = $dbh->selectrow_array($query) or $form->dberror($query);
 
     delete $form->{addressid};
 

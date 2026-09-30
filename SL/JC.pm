@@ -511,16 +511,11 @@ sub save ($, $myconfig, $form) {
     }
 
   } else {
-    my $uid = localtime;
-    $uid .= $$;
-
-    $query = qq|INSERT INTO jcitems (description, parts_id)
-                VALUES ('$uid', $form->{parts_id})|;
-    $dbh->do($query) or $form->dberror($query);
-
-    $query = qq|SELECT id FROM jcitems
-                WHERE description = '$uid'|;
-    ($form->{id}) = $dbh->selectrow_array($query);
+    $query = qq|INSERT INTO jcitems (parts_id)
+                VALUES (?)
+                RETURNING id|;
+    ($form->{id}) = $dbh->selectrow_array($query, undef, $form->{parts_id})
+      or $form->dberror($query);
   }
 
   for (qw(qty noncharge sellprice allocated)) { $form->{$_} = $form->parse_amount($myconfig, $form->{$_}) }

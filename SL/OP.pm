@@ -32,20 +32,14 @@ sub overpayment ($, $myconfig, $form, $dbh, $amount, $ml) {
     $action = 'saved';
   }
 
-  my $uid = localtime;
-  $uid .= $$;
-
   $form->{vc} =~ s/;//g;
 
   # add AR/AP header transaction with a payment
-  my $query = qq|INSERT INTO $form->{arap} (invnumber, employee_id, approved)
-              VALUES ('$uid', (SELECT id FROM employee
-                             WHERE login = '$form->{login}'), '$approved')|;
-  $dbh->do($query) or $form->dberror($query);
-
-  $query = qq|SELECT id FROM $form->{arap}
-            WHERE invnumber = '$uid'|;
-  ($uid) = $dbh->selectrow_array($query);
+  my $query = qq|INSERT INTO $form->{arap} (employee_id, approved)
+              VALUES ((SELECT id FROM employee WHERE login = ?), ?)
+              RETURNING id|;
+  my ($id) = $dbh->selectrow_array($query, undef, $form->{login} =~ s/@.*//r, $approved)
+    or $form->dberror($query);
 
   my $voucherid = 'NULL';
 
@@ -73,7 +67,7 @@ sub overpayment ($, $myconfig, $form, $dbh, $amount, $ml) {
               curr = '$form->{currency}',
               department_id = $department_id,
               bank_id = (SELECT id FROM chart WHERE accno = '$paymentaccno')
-              WHERE id = $uid|;
+              WHERE id = $id|;
   $dbh->do($query) or $form->dberror($query);
 
   # add AR/AP
@@ -81,7 +75,7 @@ sub overpayment ($, $myconfig, $form, $dbh, $amount, $ml) {
 
   $query = qq|INSERT INTO acc_trans (trans_id, chart_id, transdate, amount,
               approved, vr_id)
-              VALUES ($uid, (SELECT id FROM chart
+              VALUES ($id, (SELECT id FROM chart
                              WHERE accno = '$accno'),
               '$form->{datepaid}', $fxamount * $ml, '$approved', $voucherid)|;
   $dbh->do($query) or $form->dberror($query);
@@ -89,7 +83,7 @@ sub overpayment ($, $myconfig, $form, $dbh, $amount, $ml) {
   # add payment
   $query = qq|INSERT INTO acc_trans (trans_id, chart_id, transdate,
               amount, source, memo, approved, vr_id)
-              VALUES ($uid, (SELECT id FROM chart
+              VALUES ($id, (SELECT id FROM chart
                              WHERE accno = '$paymentaccno'),
                 '$form->{datepaid}', $amount * $ml * -1, |
                 .$dbh->quote($form->{source}).qq|, |
@@ -100,7 +94,7 @@ sub overpayment ($, $myconfig, $form, $dbh, $amount, $ml) {
   if ($fxamount != $amount) {
     $query = qq|INSERT INTO acc_trans (trans_id, chart_id, transdate,
                 amount, cleared, fx_transaction, source, approved, vr_id)
-                VALUES ($uid, (SELECT id FROM chart
+                VALUES ($id, (SELECT id FROM chart
                                WHERE accno = '$paymentaccno'),
                 '$form->{datepaid}', ($fxamount - $amount) * $ml * -1,
                 '$form->{datepaid}', '1', |
@@ -111,7 +105,7 @@ sub overpayment ($, $myconfig, $form, $dbh, $amount, $ml) {
   # add voucher
   if ($form->{batch}) {
     $query = qq|INSERT INTO vr (br_id, trans_id, id, vouchernumber)
-                VALUES ($batchid, $uid, $voucherid, |
+                VALUES ($batchid, $id, $voucherid, |
                 .$dbh->quote($form->{vouchernumber}).qq|)|;
     $dbh->do($query) or $form->dberror($query);
 
@@ -128,7 +122,7 @@ sub overpayment ($, $myconfig, $form, $dbh, $amount, $ml) {
                      reference  => $invnumber,
                      formname   => (($form->{arap} // '') eq 'ar') ? 'deposit' : 'pre-payment',
                      action     => $action,
-                     id         => $uid );
+                     id         => $id );
 
   $form->audittrail($dbh, "", \%audittrail);
 

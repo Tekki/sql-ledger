@@ -16,6 +16,8 @@ use v5.40;
 
 package SL::AM;
 
+use Scalar::Util 'looks_like_number';
+
 sub get_account ($, $myconfig, $form) {
 
   # connect to database
@@ -462,29 +464,18 @@ sub save_warehouse ($, $myconfig, $form) {
 
   my $query;
 
-  if (($form->{id} ||= 0) *= 1) {
+  if (looks_like_number $form->{id}) {
     $query = qq|SELECT id
                 FROM warehouse
                 WHERE id = $form->{id}|;
     ($form->{id}) = $dbh->selectrow_array($query);
   }
 
-  if (!$form->{id}) {
-    my $uid = localtime;
-    $uid .= $$;
-
-    $query = qq|SELECT MAX(rn) FROM warehouse|;
-    my ($rn) = $dbh->selectrow_array($query);
-    $rn++;
-
-    $query = qq|INSERT INTO warehouse (description, rn)
-                VALUES ('$uid', $rn)|;
-    $dbh->do($query) or $form->dberror($query);
-
-    $query = qq|SELECT id
-                FROM warehouse
-                WHERE description = '$uid'|;
-    ($form->{id}) = $dbh->selectrow_array($query);
+  unless ($form->{id}) {
+    $query = qq|INSERT INTO warehouse (rn)
+                SELECT COALESCE(MAX(rn), 0) + 1 FROM warehouse
+                RETURNING id|;
+    ($form->{id}) = $dbh->selectrow_array($query) or $form->dberror($query);
 
     $query = qq|INSERT INTO address (trans_id)
                 VALUES ($form->{id})|;
@@ -618,22 +609,20 @@ sub save_department ($, $myconfig, $form) {
 
   my $query;
 
-  if (($form->{id} ||= 0) *= 1) {
+  if (looks_like_number $form->{id}) {
     $query = qq|UPDATE department SET
                 description = |.$dbh->quote($form->{description}).qq|,
                 role = '$form->{role}'
                 WHERE id = $form->{id}|;
+    $dbh->do($query) or $form->dberror($query);
   } else {
-    $query = qq|SELECT MAX(rn) FROM department|;
-    my ($rn) = $dbh->selectrow_array($query);
-    $rn++;
-
     $query = qq|INSERT INTO department
                 (description, role, rn)
-                VALUES (|
-                .$dbh->quote($form->{description}).qq|, '$form->{role}', $rn)|;
+                SELECT ?, ?, COALESCE(MAX(rn), 0) + 1 FROM department
+                RETURNING id|;
+    ($form->{id}) = $dbh->selectrow_array($query, undef, $form->{description}, $form->{role})
+      or $form->dberror($query);
   }
-  $dbh->do($query) or $form->dberror($query);
 
   my %audittrail = ( tablename  => 'department',
                      reference  => $form->{description},
@@ -724,26 +713,24 @@ sub save_business ($, $myconfig, $form) {
 
   $form->{description} =~ s/-(-)+/-/g;
   $form->{description} =~ s/ ( )+/ /g;
-  $form->{discount} /= 100;
+  ($form->{discount} ||= 0) /= 100;
 
   my $query;
 
-  if (($form->{id} ||= 0) *= 1) {
+  if (looks_like_number $form->{id}) {
     $query = qq|UPDATE business SET
                 description = |.$dbh->quote($form->{description}).qq|,
                 discount = $form->{discount}
                 WHERE id = $form->{id}|;
+    $dbh->do($query) or $form->dberror($query);
   } else {
-    $query = qq|SELECT MAX(rn) FROM business|;
-    my ($rn) = $dbh->selectrow_array($query);
-    $rn++;
-
     $query = qq|INSERT INTO business
                 (description, discount, rn)
-                VALUES (|
-                .$dbh->quote($form->{description}).qq|, $form->{discount}, $rn)|;
+                SELECT ?, ?, COALESCE(MAX(rn), 0) + 1 FROM business
+                RETURNING id|;
+    ($form->{id}) = $dbh->selectrow_array($query, undef, $form->{description}, $form->{discount})
+      or $form->dberror($query);
   }
-  $dbh->do($query) or $form->dberror($query);
 
   my %audittrail = ( tablename  => 'business',
                      reference  => $form->{description},
@@ -844,25 +831,23 @@ sub save_paymentmethod ($, $myconfig, $form) {
 
   my $query;
 
-  if (($form->{id} ||= 0) *= 1) {
+  if (looks_like_number $form->{id}) {
     $query = qq|UPDATE paymentmethod SET
                 description = |.$dbh->quote($form->{description}).qq|,
                 roundchange = $form->{roundchange},
                 fee = |.$form->parse_amount($myconfig, $form->{fee}).qq|
                 WHERE id = $form->{id}|;
+    $dbh->do($query) or $form->dberror($query);
   } else {
-    $query = qq|SELECT MAX(rn) FROM paymentmethod|;
-    my ($rn) = $dbh->selectrow_array($query);
-    $rn++;
-
     $query = qq|INSERT INTO paymentmethod
                 (rn, description, fee, roundchange)
-                VALUES ($rn, |
-                .$dbh->quote($form->{description}).qq|, |.
-                $form->parse_amount($myconfig, $form->{fee})
-                .qq|, $form->{roundchange}|.qq|)|;
+                SELECT COALESCE(MAX(rn), 0) + 1, ?, ?, ? FROM paymentmethod
+                RETURNING id|;
+
+    my @values
+      = ($form->{description}, $form->parse_amount($myconfig, $form->{fee}), $form->{roundchange});
+    ($form->{id}) = $dbh->selectrow_array($query, undef, @values) or $form->dberror($query);
   }
-  $dbh->do($query) or $form->dberror($query);
 
   my %audittrail = ( tablename  => 'paymentmethod',
                      reference  => $form->{description},
@@ -2230,18 +2215,12 @@ sub post_yearend ($, $myconfig, $form) {
   my $dbh = $form->dbconnect_noauto($myconfig);
 
   my $query;
-  my $uid = localtime;
-  $uid .= $$;
 
-  my $curr = substr($form->get_currencies($myconfig, $dbh),0,3);
-  $query = qq|INSERT INTO gl (reference, employee_id, curr)
-              VALUES ('$uid', (SELECT id FROM employee
-                               WHERE login = '$form->{login}'), '$curr')|;
-  $dbh->do($query) or $form->dberror($query);
-
-  $query = qq|SELECT id FROM gl
-              WHERE reference = '$uid'|;
-  ($form->{id}) = $dbh->selectrow_array($query);
+  $query = qq|INSERT INTO gl (employee_id, curr)
+              VALUES ((SELECT id FROM employee WHERE login = ?),
+                      (SELECT curr FROM curr ORDER BY rn LIMIT 1))
+              RETURNING id|;
+  ($form->{id}) = $dbh->selectrow_array($query, undef, $form->{login} =~ s/@.*//r) or $form->dberror($query);
 
   $form->{reference} = $form->update_defaults($myconfig, 'glnumber', $dbh) unless $form->{reference};
 
@@ -2755,14 +2734,11 @@ sub save_currency ($, $myconfig, $form) {
 
   my $rn;
 
-  if (!$curr) {
-    $query = qq|SELECT MAX(rn) FROM curr|;
-    ($rn) = $dbh->selectrow_array($query);
-    $rn++;
-
-    $query = qq|INSERT INTO curr (rn, curr)
-                VALUES ($rn, '$form->{curr}')|;
-    $dbh->do($query) or $form->dberror($query);
+  unless ($curr) {
+    $query = qq|INSERT INTO curr
+                (rn, curr)
+                SELECT COALESCE(MAX(rn), 0) + 1, ? FROM curr|;
+    $dbh->do($query, undef, $form->{curr}) or $form->dberror($query);
   }
 
   ($form->{prec} ||= 0) *= 1;
@@ -3093,31 +3069,18 @@ sub save_role ($, $myconfig, $form) {
 
   my $query;
 
-  if (($form->{id} ||= 0) *= 1) {
+  if (looks_like_number $form->{id}) {
     $query = qq|SELECT id
                 FROM acsrole
                 WHERE id = $form->{id}|;
     ($form->{id}) = $dbh->selectrow_array($query);
   }
 
-  if (!$form->{id}) {
-    my $uid = localtime;
-    $uid .= $$;
-
-    $query = qq|SELECT MAX(rn)
-                FROM acsrole|;
-    my ($rn) = $dbh->selectrow_array($query);
-    $rn++;
-
-    $query = qq|INSERT INTO acsrole (description, rn)
-                VALUES ('$uid', $rn)|;
-    $dbh->do($query) or $form->dberror($query);
-
-    $query = qq|SELECT id
-                FROM acsrole
-                WHERE description = '$uid'|;
-    ($form->{id}) = $dbh->selectrow_array($query);
-
+  unless ($form->{id}) {
+    $query = qq|INSERT INTO acsrole (rn)
+                SELECT COALESCE(MAX(rn), 0) + 1 FROM acsrole
+                RETURNING id|;
+    ($form->{id}) = $dbh->selectrow_array($query) or $form->dberror($query);
   }
 
   my $acs = '';

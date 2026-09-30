@@ -342,7 +342,7 @@ sub retrieve_form ($self, $myconfig, $dbh = undef) {
   my $query = qq|SELECT * FROM reportvars
                  WHERE reportid = $self->{id}|;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $self->dberror($query);
+  $sth->execute or $self->dberror($query);
 
   while (my $ref = $sth->fetchrow_hashref) {
     $self->{$ref->{reportvariable}} = $ref->{reportvalue};
@@ -371,12 +371,12 @@ sub save_form ($self, $myconfig, $dbh = undef) {
   $query = qq|DELETE FROM report
               WHERE reportcode = 'form'
               AND login = '$self->{login}'|;
-  $dbh->do($query) || $self->dberror($query);
+  $dbh->do($query) or $self->dberror($query);
 
   if ($self->{id}) {
     $query = qq|DELETE FROM reportvars
                 WHERE reportid = $self->{id}|;
-    $dbh->do($query) || $self->dberror($query);
+    $dbh->do($query) or $self->dberror($query);
 
     $query = qq|INSERT INTO report (reportid, reportcode, login)
                 VALUES ($self->{id}, 'form', '$self->{login}')|;
@@ -384,7 +384,7 @@ sub save_form ($self, $myconfig, $dbh = undef) {
     $query = qq|INSERT INTO report (reportcode, login)
                 VALUES ('form', '$self->{login}')|;
   }
-  $dbh->do($query) || $self->dberror($query);
+  $dbh->do($query) or $self->dberror($query);
 
   $query = qq|SELECT reportid FROM report
               WHERE reportcode = 'form'
@@ -393,7 +393,7 @@ sub save_form ($self, $myconfig, $dbh = undef) {
 
   $query = qq|INSERT INTO reportvars (reportid, reportvariable, reportvalue)
               VALUES ($self->{id}, ?, ?)|;
-  my $sth = $dbh->prepare($query) || $self->dberror($query);
+  my $sth = $dbh->prepare($query) or $self->dberror($query);
 
   my %newform;
   for (keys %$self) {
@@ -2493,7 +2493,7 @@ sub dbconnect ($self, $myconfig) {
 
   # set db options
   if ($myconfig->{dboptions}) {
-    $dbh->do($myconfig->{dboptions}) || $self->dberror($myconfig->{dboptions});
+    $dbh->do($myconfig->{dboptions}) or $self->dberror($myconfig->{dboptions});
   }
 
   $dbh;
@@ -2578,7 +2578,7 @@ sub update_balance ($self, $dbh, $table, $field, $where, $value) {
     $balance += $value;
     # update balance
     $query = "UPDATE $table SET $field = $balance WHERE $where";
-    $dbh->do($query) || $self->dberror($query);
+    $dbh->do($query) or $self->dberror($query);
   }
 
 }
@@ -2594,7 +2594,7 @@ sub update_exchangerate ($self, $dbh, $curr, $transdate, $exchangerate) {
                  AND transdate = '$transdate'
                  FOR UPDATE|;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $self->dberror($query);
+  $sth->execute or $self->dberror($query);
 
   $exchangerate *= 1;
 
@@ -2609,7 +2609,7 @@ sub update_exchangerate ($self, $dbh, $curr, $transdate, $exchangerate) {
   }
   $sth->finish;
 
-  $dbh->do($query) || $self->dberror($query);
+  $dbh->do($query) or $self->dberror($query);
 
 }
 
@@ -2689,12 +2689,12 @@ sub exchangerate_defaults ($self, $dbh, $myconfig, $form) {
               FROM exchangerate
               WHERE curr = ?
               AND transdate = ?|;
-  my $eth1 = $dbh->prepare($query) || $self->dberror($query);
+  my $eth1 = $dbh->prepare($query) or $self->dberror($query);
 
   $query = qq~SELECT max(transdate || ' ' || exchangerate || ' ' || curr)
               FROM exchangerate
               WHERE curr = ?~;
-  my $eth2 = $dbh->prepare($query) || $self->dberror($query);
+  my $eth2 = $dbh->prepare($query) or $self->dberror($query);
 
   # get exchange rates for transdate or max
   foreach $var (split /:/, substr($self->{currencies},4)) {
@@ -2749,7 +2749,7 @@ sub add_shipto ($self, $dbh, $id) {
                    .$dbh->quote($self->{shiptocontact}).qq|,
                    '$self->{shiptophone}', '$self->{shiptofax}',
                    '$self->{shiptoemail}', $shiptorecurring)|;
-    $dbh->do($query) || $self->dberror($query);
+    $dbh->do($query) or $self->dberror($query);
   }
 
 }
@@ -2763,14 +2763,14 @@ sub reset_shipped ($self, $dbh, $id, $ml) {
                  JOIN parts p ON (p.id = o.parts_id)
                  WHERE trans_id = $id|;
 
-  my $sth = $dbh->prepare($query) || $self->dberror($query);
+  my $sth = $dbh->prepare($query) or $self->dberror($query);
   my $ref;
 
   $query = qq|SELECT p.id, p.inventory_accno_id, a.qty
               FROM assembly a
               JOIN parts p ON (p.id = a.parts_id)
               WHERE a.aid = ?|;
-  my $kth = $dbh->prepare($query) || $self->dberror($query);
+  my $kth = $dbh->prepare($query) or $self->dberror($query);
   my $kref;
 
   $sth->execute;
@@ -2865,7 +2865,7 @@ sub get_name ($self, $myconfig, $table, $transdate = undef) {
 
   my $sth = $dbh->prepare($query);
 
-  $sth->execute || $self->dberror($query);
+  $sth->execute or $self->dberror($query);
 
   my $i = 0;
   @{ $self->{name_list} } = ();
@@ -2898,7 +2898,7 @@ sub get_currencies ($self, $myconfig, $dbh = undef) {
                  FROM curr
                  ORDER BY rn|;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $self->dberror($query);
+  $sth->execute or $self->dberror($query);
 
   while (($curr, $precision) = $sth->fetchrow_array) {
     if ($self->{currency} // '' eq $curr) {
@@ -2935,12 +2935,12 @@ sub get_onhand ($self, $myconfig, $dbh = undef) {
                 FROM inventory
                 WHERE parts_id = ?
                 AND warehouse_id = $warehouse_id|;
-    $sth = $dbh->prepare($query) || $self->dberror($query);
+    $sth = $dbh->prepare($query) or $self->dberror($query);
   } else {
     $query = qq|SELECT onhand
                 FROM parts
                 WHERE id = ?|;
-    $sth = $dbh->prepare($query) || $self->dberror($query);
+    $sth = $dbh->prepare($query) or $self->dberror($query);
   }
 
   for (1 .. $self->{rowcount}) {
@@ -3066,7 +3066,7 @@ sub all_vc ($self, $myconfig, $vc, $module, $dbh = undef, $transdate = '', $job 
                 WHERE vc.id = $self->{"${vc}_id"}
                 ORDER BY 2|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $self->dberror($query);
+    $sth->execute or $self->dberror($query);
     @{ $self->{"all_$vc"} } = ();
     while ($ref = $sth->fetchrow_hashref) {
       push @{ $self->{"all_$vc"} }, $ref;
@@ -3114,7 +3114,7 @@ sub all_languages ($self, $myconfig, $dbh = undef) {
               FROM language
               ORDER BY 2|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $self->dberror($query);
+  $sth->execute or $self->dberror($query);
 
   $self->{all_language} = ();
   while (my $ref = $sth->fetchrow_hashref) {
@@ -3151,7 +3151,7 @@ sub all_taxaccounts ($self, $myconfig, $dbh = undef, $transdate = '') {
                 WHERE c.accno = ?
                 $where
                 ORDER BY c.accno, t.validto|;
-    $sth = $dbh->prepare($query) || $self->dberror($query);
+    $sth = $dbh->prepare($query) or $self->dberror($query);
 
     foreach my $accno (split / /, $self->{taxaccounts}) {
       $sth->execute("$accno");
@@ -3193,7 +3193,7 @@ sub all_employees ($self, $myconfig, $dbh = undef, $transdate = '', $sales = '')
   $query .= qq| ORDER BY name|;
 
   my $sth = $dbh->prepare($query);
-  $sth->execute || $self->dberror($query);
+  $sth->execute or $self->dberror($query);
 
   while (my $ref = $sth->fetchrow_hashref) {
     push @{ $self->{all_employee} }, $ref;
@@ -3239,7 +3239,7 @@ sub all_projects ($self, $myconfig, $dbh = undef, $transdate = '', $job = '') {
   $query .= qq| ORDER BY pr.projectnumber|;
 
   my $sth = $dbh->prepare($query);
-  $sth->execute || $self->dberror($query);
+  $sth->execute or $self->dberror($query);
 
   @{ $self->{all_project} } = ();
   while (my $ref = $sth->fetchrow_hashref) {
@@ -3273,7 +3273,7 @@ sub all_departments ($self, $myconfig, $dbh = undef, $vc = '') {
                  WHERE $where
                  ORDER BY rn|;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $self->dberror($query);
+  $sth->execute or $self->dberror($query);
 
   @{ $self->{all_department} } = ();
   while (my $ref = $sth->fetchrow_hashref) {
@@ -3305,7 +3305,7 @@ sub all_warehouses ($self, $myconfig, $dbh = undef) {
                  FROM warehouse
                  ORDER BY rn|;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $self->dberror($query);
+  $sth->execute or $self->dberror($query);
 
   @{ $self->{all_warehouse} } = ();
   while (my $ref = $sth->fetchrow_hashref) {
@@ -3330,7 +3330,7 @@ sub all_roles ($self, $myconfig, $dbh = undef) {
                  FROM acsrole
                  ORDER BY rn|;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $self->dberror($query);
+  $sth->execute or $self->dberror($query);
 
   @{ $self->{all_acsrole} } = ();
   while (my $ref = $sth->fetchrow_hashref) {
@@ -3400,7 +3400,7 @@ sub all_countries ($self, $myconfig, $db, $dbh = undef) {
               WHERE country != ''
               ORDER BY 1|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $self->dberror($query);
+  $sth->execute or $self->dberror($query);
 
   $self->{all_countries} = ();
   while (my $ref = $sth->fetchrow_hashref) {
@@ -3428,7 +3428,7 @@ sub all_business ($self, $myconfig, $dbh = undef) {
               FROM business
               ORDER BY rn|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $self->dberror($query);
+  $sth->execute or $self->dberror($query);
 
   while (my $ref = $sth->fetchrow_hashref) {
     push @{ $self->{all_business} }, $ref;
@@ -3474,7 +3474,7 @@ sub create_links ($self, $module, $myconfig, $vc) {
               AND c.closed = '0'
               ORDER BY c.accno|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $self->dberror($query);
+  $sth->execute or $self->dberror($query);
 
   $self->{accounts} = "";
   while (my $ref = $sth->fetchrow_hashref) {
@@ -3531,7 +3531,7 @@ sub create_links ($self, $module, $myconfig, $vc) {
                 LEFT JOIN paymentmethod pm ON (pm.id = a.paymentmethod_id)
                 WHERE a.id = $self->{id}|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $self->dberror($query);
+    $sth->execute or $self->dberror($query);
 
     my $ref = $sth->fetchrow_hashref;
 
@@ -3554,7 +3554,7 @@ sub create_links ($self, $module, $myconfig, $vc) {
                 FROM status s
                 WHERE s.trans_id = $self->{id}|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $self->dberror($query);
+    $sth->execute or $self->dberror($query);
 
     while ($ref = $sth->fetchrow_hashref) {
       $self->{printed} .= "$ref->{formname} " if $ref->{printed};
@@ -3584,7 +3584,7 @@ sub create_links ($self, $module, $myconfig, $vc) {
                 AND ac.fx_transaction = '0'
                 ORDER BY ac.transdate|;
     $sth = $dbh->prepare($query);
-    $sth->execute || $self->dberror($query);
+    $sth->execute or $self->dberror($query);
 
     my $resort;
 
@@ -3648,7 +3648,7 @@ sub create_links ($self, $module, $myconfig, $vc) {
               FROM paymentmethod
               ORDER BY rn|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $self->dberror($query);
+  $sth->execute or $self->dberror($query);
 
   @{ $self->{"all_paymentmethod"} } = ();
   while (my $ref = $sth->fetchrow_hashref) {
@@ -3728,7 +3728,7 @@ sub create_lock ($self, $myconfig, $dbh = undef, $id = '', $module = '', $add = 
   # remove expired locks
   $query = qq|DELETE FROM semaphore
               WHERE expires < '$expires'|;
-  $dbh->do($query) || $self->dberror($query);
+  $dbh->do($query) or $self->dberror($query);
 
   $expires = time + ($myconfig->{timeout} // 3600);
 
@@ -3747,7 +3747,7 @@ sub create_lock ($self, $myconfig, $dbh = undef, $id = '', $module = '', $add = 
     } else {
       $query = qq|INSERT INTO semaphore (id, login, module, expires)
                   VALUES ($id, '$self->{login}', '$module', '$expires')|;
-      $dbh->do($query) || $self->dberror($query);
+      $dbh->do($query) or $self->dberror($query);
     }
   }
 
@@ -4030,7 +4030,7 @@ sub get_partsgroup ($self, $myconfig, $p, $dbh = undef) {
                  ORDER BY $sortorder|;
 
   my $sth = $dbh->prepare($query);
-  $sth->execute || $self->dberror($query);
+  $sth->execute or $self->dberror($query);
 
   if ($p->{language_code}) {
     $query = qq|SELECT pg.*, t.description AS translation
@@ -4042,7 +4042,7 @@ sub get_partsgroup ($self, $myconfig, $p, $dbh = undef) {
                 FROM partsgroup
                 WHERE partsgroup = ?|;
   }
-  my $pth = $dbh->prepare($query) || $self->dberror($query);
+  my $pth = $dbh->prepare($query) or $self->dberror($query);
 
   $self->{all_partsgroup} = ();
 
@@ -4193,7 +4193,7 @@ sub update_status ($self, $myconfig) {
   my $query = qq|DELETE FROM status
                   WHERE formname = '$self->{formname}'
                  AND trans_id = $self->{id}|;
-  $dbh->do($query) || $self->dberror($query);
+  $dbh->do($query) or $self->dberror($query);
 
   my $printed = ($self->{printed} =~ /$self->{formname}/) ? "1" : "0";
   my $emailed = ($self->{emailed} =~ /$self->{formname}/) ? "1" : "0";
@@ -4202,7 +4202,7 @@ sub update_status ($self, $myconfig) {
               spoolfile, formname) VALUES ($self->{id}, '$printed',
               '$emailed', $spoolfile,
               '$self->{formname}')|;
-  $dbh->do($query) || $self->dberror($query);
+  $dbh->do($query) or $self->dberror($query);
 
   $dbh->commit;
   $dbh->disconnect;
@@ -4218,7 +4218,7 @@ sub save_status ($self, $dbh) {
   ($self->{id} //= 0) *= 1;
   my $query = qq|DELETE FROM status
                  WHERE trans_id = $self->{id}|;
-  $dbh->do($query) || $self->dberror($query);
+  $dbh->do($query) or $self->dberror($query);
 
   my %queued;
   my $formname;
@@ -4236,7 +4236,7 @@ sub save_status ($self, $dbh) {
                     spoolfile, formname)
                     VALUES ($self->{id}, '$printed', '$emailed',
                     '$queued{$formname}', '$formname')|;
-        $dbh->do($query) || $self->dberror($query);
+        $dbh->do($query) or $self->dberror($query);
       }
 
       $formnames =~ s/$formname//;
@@ -4259,7 +4259,7 @@ sub save_status ($self, $dbh) {
 
     $query = qq|INSERT INTO status (trans_id, printed, emailed, formname)
                 VALUES ($self->{id}, '$printed', '$emailed', '$formname')|;
-    $dbh->do($query) || $self->dberror($query);
+    $dbh->do($query) or $self->dberror($query);
   }
 
 }
@@ -4282,7 +4282,7 @@ sub all_references ($self, $dbh, $formname = undef) {
     }
 
     my $sth = $dbh->prepare($query);
-    $sth->execute || $self->dberror($query);
+    $sth->execute or $self->dberror($query);
 
     while (my $ref = $sth->fetchrow_hashref) {
       if ($ref->{login}) {
@@ -4365,9 +4365,9 @@ sub save_reference ($self, $dbh, $formname = '') {
                 WHERE trans_id = $self->{id}
                 $where
                 |;
-    $sth = $dbh->prepare($query) || $self->dberror($query);
+    $sth = $dbh->prepare($query) or $self->dberror($query);
 
-    $sth->execute || $self->dberror($query);
+    $sth->execute or $self->dberror($query);
 
     while (($archive_id) = $sth->fetchrow_array) {
       if ($archive_id) {
@@ -4379,34 +4379,34 @@ sub save_reference ($self, $dbh, $formname = '') {
     $query = qq|DELETE FROM reference
                 WHERE trans_id = $self->{id}
                 AND (login = '$login' OR login = '' OR login IS NULL)|;
-    $dbh->do($query) || $self->dberror($query);
+    $dbh->do($query) or $self->dberror($query);
   }
 
   $query = q|INSERT INTO reference (code, trans_id, description, archive_id, login, formname, folder)
              VALUES (?, ?, ?, ?, ?, ?, ?)|;
-  $sth = $dbh->prepare($query) || $self->dberror($query);
+  $sth = $dbh->prepare($query) or $self->dberror($query);
 
   $query = q|DELETE FROM archive
              WHERE id = $1
              AND NOT EXISTS (SELECT 1 FROM reference WHERE archive_id = $1)|;
-  my $dth = $dbh->prepare($query) || $self->dberror($query);
+  my $dth = $dbh->prepare($query) or $self->dberror($query);
 
   $query = q|SELECT id, filename FROM archive
              WHERE hash = ?|;
-  my $hath = $dbh->prepare($query) || $self->dberror($query);
+  my $hath = $dbh->prepare($query) or $self->dberror($query);
 
   $query = q|INSERT INTO archive (filename, hash)
              VALUES (?, ?)
              RETURNING id|;
-  my $aath = $dbh->prepare($query) || $self->dberror($query);
+  my $aath = $dbh->prepare($query) or $self->dberror($query);
 
   $query = q|UPDATE archive SET filename = ?
              WHERE id = ?|;
-  my $uath2 = $dbh->prepare($query) || $self->dberror($query);
+  my $uath2 = $dbh->prepare($query) or $self->dberror($query);
 
   $query = q|INSERT INTO archivedata (rn, archive_id, bt)
              VALUES (?, ?, ?)|;
-  my $acth = $dbh->prepare($query) || $self->dberror($query);
+  my $acth = $dbh->prepare($query) or $self->dberror($query);
 
   for $i (1 .. $self->{reference_rows} // 0) {
     if (looks_like_number $self->{"referencearchive_id_$i"}) {
@@ -4503,13 +4503,13 @@ sub delete_references ($self, $dbh) {
                  FROM reference
                  WHERE trans_id = $self->{id}
                  AND (login = '$login' OR login = '' OR login IS NULL)|;
-  my $sth = $dbh->prepare($query) || $self->dberror($query);
+  my $sth = $dbh->prepare($query) or $self->dberror($query);
 
   $query = qq|DELETE FROM archive
               WHERE id = ?|;
-  my $dth = $dbh->prepare($query) || $self->dberror($query);
+  my $dth = $dbh->prepare($query) or $self->dberror($query);
 
-  $sth->execute || $self->dberror($query);
+  $sth->execute or $self->dberror($query);
 
   while (my ($archive_id) = $sth->fetchrow_array) {
     if ($archive_id) {
@@ -4522,7 +4522,7 @@ sub delete_references ($self, $dbh) {
   $query = qq|DELETE FROM reference
               WHERE trans_id = $self->{id}
               AND (login = '$login' OR login = '' OR login IS NULL)|;
-  $dbh->do($query) || $self->dberror($query);
+  $dbh->do($query) or $self->dberror($query);
 
 }
 
@@ -4539,7 +4539,7 @@ sub get_recurring ($self, $dbh) {
               LEFT JOIN recurringprint sp ON (s.id = sp.id)
               WHERE s.id = $self->{id}|;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $self->dberror($query);
+  $sth->execute or $self->dberror($query);
 
   for (qw(email print)) { $self->{"recurring$_"} = "" }
 
@@ -4578,7 +4578,7 @@ sub save_recurring ($self, $dbh = undef, $myconfig = '') {
 
   for (qw(recurring recurringemail recurringprint)) {
     $query = qq|DELETE FROM $_ WHERE id = $self->{id}|;
-    $dbh->do($query) || $self->dberror($query);
+    $dbh->do($query) or $self->dberror($query);
   }
 
   if ($self->{recurring}) {
@@ -4651,7 +4651,7 @@ sub save_recurring ($self, $dbh = undef, $myconfig = '') {
                 '$s{startdate}', '$enddate', |.
                 $self->dbquote($nextdate, 'SQL_DATE').
                 qq|, $s{repeat}, '$s{unit}', $s{howmany}, '$s{payment}')|;
-    $dbh->do($query) || $self->dberror($query);
+    $dbh->do($query) or $self->dberror($query);
 
     my @p;
     my $p;
@@ -4664,7 +4664,7 @@ sub save_recurring ($self, $dbh = undef, $myconfig = '') {
 
       $query = qq|INSERT INTO recurringemail (id, formname, format, message)
                   VALUES ($self->{id}, ?, ?, ?)|;
-      $sth = $dbh->prepare($query) || $self->dberror($query);
+      $sth = $dbh->prepare($query) or $self->dberror($query);
 
       for ($i = 0; $i <= $#p; $i += 2) {
         $sth->execute($p[$i], $p[$i+1], $s{message});
@@ -4678,7 +4678,7 @@ sub save_recurring ($self, $dbh = undef, $myconfig = '') {
 
       $query = qq|INSERT INTO recurringprint (id, formname, format, printer)
                   VALUES ($self->{id}, ?, ?, ?)|;
-      $sth = $dbh->prepare($query) || $self->dberror($query);
+      $sth = $dbh->prepare($query) or $self->dberror($query);
 
       for ($i = 0; $i <= $#p; $i += 3) {
         $p = ($p[$i+2]) ? $p[$i+2] : "";
@@ -4708,7 +4708,7 @@ sub save_intnotes ($self, $myconfig, $vc) {
   my $query = qq|UPDATE $vc SET
                  intnotes = |.$dbh->quote($self->{intnotes}).qq|
                  WHERE id = $self->{id}|;
-  $dbh->do($query) || $self->dberror($query);
+  $dbh->do($query) or $self->dberror($query);
 
   $dbh->disconnect;
 
@@ -4736,14 +4736,14 @@ sub update_defaults ($self, $myconfig, $fld, $dbh = undef, $ini = '') {
       $query = qq|INSERT INTO defaults (fldname)
                   VALUES ('$fld')|;
     }
-    $dbh->do($query) || $self->dberror($query);
+    $dbh->do($query) or $self->dberror($query);
     $dbh->commit;
   } else {
     if ($ini) {
       $query = qq|UPDATE defaults SET
                   fldvalue = '$ini'
                   WHERE fldname = '$fld'|;
-      $dbh->do($query) || $self->dberror($query);
+      $dbh->do($query) or $self->dberror($query);
       $dbh->commit;
     }
   }
@@ -4865,7 +4865,7 @@ sub update_defaults ($self, $myconfig, $fld, $dbh = undef, $ini = '') {
   $query = qq|UPDATE defaults
               SET fldvalue = '$dbvar'
               WHERE fldname = '$fld'|;
-  $dbh->do($query) || $self->dberror($query);
+  $dbh->do($query) or $self->dberror($query);
 
   if ($disconnect) {
     $dbh->commit;
@@ -4909,7 +4909,7 @@ sub reports ($self, $myconfig, $dbh = undef, $login = '') {
   $query .= qq|
                  ORDER BY r.reportdescription|;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $self->dberror($query);
+  $sth->execute or $self->dberror($query);
 
   @{ $self->{all_report} } = ();
   while ($ref = $sth->fetchrow_hashref) {
@@ -4929,7 +4929,7 @@ sub reports ($self, $myconfig, $dbh = undef, $login = '') {
   $query .= qq|
               ORDER BY r.reportid|;
   $sth = $dbh->prepare($query);
-  $sth->execute || $self->dberror($query);
+  $sth->execute or $self->dberror($query);
 
   while ($ref = $sth->fetchrow_hashref) {
     $self->{all_reportvars}{$ref->{reportid}}{$ref->{reportvariable}} = $ref->{reportvalue};
@@ -4960,7 +4960,7 @@ sub retrieve_report ($self, $myconfig, $dbh = undef) {
   my $query = qq|SELECT * FROM reportvars
                  WHERE reportid = $self->{reportid}|;
   my $sth = $dbh->prepare($query);
-  $sth->execute || $self->dberror($query);
+  $sth->execute or $self->dberror($query);
 
   while (my $ref = $sth->fetchrow_hashref) {
     $self->{$ref->{reportvariable}} = $ref->{reportvalue};
@@ -5003,7 +5003,7 @@ sub report_level ($self, $myconfig, $dbh = undef) {
                 FROM employee e
                 JOIN acsrole a ON (a.id = e.acsrole_id)
                 WHERE e.login = ?|;
-    my $sth = $dbh->prepare($query) || $self->dberror($query);
+    my $sth = $dbh->prepare($query) or $self->dberror($query);
 
     $sth->execute($login);
     my ($l2) = $sth->fetchrow_array;
@@ -5042,29 +5042,23 @@ sub save_report ($self, $myconfig) {
   if (looks_like_number $self->{reportid}) {
     $query = qq|DELETE FROM reportvars
                 WHERE reportid = '$self->{reportid}'|;
-    $dbh->do($query) || $self->dberror($query);
+    $dbh->do($query) or $self->dberror($query);
 
     $query = qq|DELETE FROM report
                 WHERE reportid = '$self->{reportid}'|;
-    $dbh->do($query) || $self->dberror($query);
+    $dbh->do($query) or $self->dberror($query);
   }
 
   if ($self->{reportdescription}) {
     if ($self->{reportid}) {
       $query = qq|INSERT INTO report (reportid)
                   VALUES ($self->{reportid})|;
-      $dbh->do($query) || $self->dberror($query);
+      $dbh->do($query) or $self->dberror($query);
     } else {
-      my $uid = localtime;
-      $uid .= $$;
-
       $query = qq|INSERT INTO report (reportdescription)
-                  VALUES ('$uid')|;
-      $dbh->do($query) || $self->dberror($query);
-
-      $query = qq|SELECT reportid FROM report
-                  WHERE reportdescription = '$uid'|;
-      ($self->{reportid}) = $dbh->selectrow_array($query);
+                  VALUES ('')
+                  RETURNING id|;
+      ($self->{reportid}) = $dbh->selectrow_array($query) or $self->dberror($query);
     }
 
     $query = qq|UPDATE report SET
@@ -5072,7 +5066,7 @@ sub save_report ($self, $myconfig) {
                 reportdescription = |.$dbh->quote($self->{reportdescription}).qq|,
                 login = '$self->{reportlogin}'
                 WHERE reportid = $self->{reportid}|;
-    $dbh->do($query) || $self->dberror($query);
+    $dbh->do($query) or $self->dberror($query);
 
     $query = qq|INSERT INTO reportvars (reportid, reportvariable, reportvalue) VALUES ($self->{reportid}, ?, ?)|;
     $sth = $dbh->prepare($query);
@@ -5086,7 +5080,7 @@ sub save_report ($self, $myconfig) {
     for (qw(path login stylesheet dbversion report reportid reportcode reportdescription action script nextsub allbox charset timeout sessioncookie callback title version rowcount flds defaultcurrency selectlanguage savereport admin)) { delete $newform{$_} }
 
     for (keys %newform) {
-      $sth->execute("report_$_", $newform{$_}) || $self->dberror($query);
+      $sth->execute("report_$_", $newform{$_}) or $self->dberror($query);
       $sth->finish;
     }
   }
@@ -5535,13 +5529,13 @@ sub audittrail ($self, $dbh, $myconfig, $audittrail) {
                     formname, action, employee_id, transdate)
                     VALUES ($audittrail->{id}, ?, ?,
                     ?, ?, $employee_id, ?)|;
-        my $sth = $dbh->prepare($query) || $self->dberror($query);
+        my $sth = $dbh->prepare($query) or $self->dberror($query);
 
         foreach $key (sort { $newtrail{$a}{transdate} cmp $newtrail{$b}{transdate} } keys %newtrail) {
           $i = 1;
           for (@flds) { $sth->bind_param($i++, $newtrail{$key}{$_}) }
 
-          $sth->execute || $self->dberror;
+          $sth->execute or $self->dberror;
           $sth->finish;
         }
       }

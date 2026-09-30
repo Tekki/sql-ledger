@@ -782,23 +782,12 @@ sub post_invoice ($, $myconfig, $form, $dbh = undef) {
     }
   }
 
-  my $uid = localtime;
-  $uid .= $$;
-
-  if (! $form->{id}) {
-
-    $query = qq|INSERT INTO ap (invnumber, employee_id)
-                VALUES ('$uid', $form->{employee_id})|;
-    $dbh->do($query) or $form->dberror($query);
-
-    $query = qq|SELECT id FROM ap
-                WHERE invnumber = '$uid'|;
-    $sth = $dbh->prepare($query);
-    $sth->execute or $form->dberror($query);
-
-    ($form->{id}) = $sth->fetchrow_array;
-    $sth->finish;
-
+  unless ($form->{id}) {
+    $query = qq|INSERT INTO ap (employee_id)
+                VALUES (?)
+                RETURNING id|;
+    ($form->{id}) = $dbh->selectrow_array($query, undef, $form->{employee_id})
+      or $form->dberror($query);
   }
 
   if ($form->{department_id}) {
@@ -958,13 +947,11 @@ sub post_invoice ($, $myconfig, $form, $dbh = undef) {
       $form->{"sellprice_$i"} = $form->round_amount($form->{"sellprice_$i"} * $form->{exchangerate}, $form->{precision});
 
       # save detail record in invoice table
-      $query = qq|INSERT INTO invoice (description, trans_id, parts_id)
-                  VALUES ('$uid', $form->{id}, $form->{"id_$i"})|;
-      $dbh->do($query) or $form->dberror($query);
-
-      $query = qq|SELECT id FROM invoice
-                  WHERE description = '$uid'|;
-      ($id) = $dbh->selectrow_array($query);
+      $query = qq|INSERT INTO invoice (trans_id, parts_id)
+                  VALUES (?,?)
+                  RETURNING id|;
+      ($id) = $dbh->selectrow_array($query, undef, $form->{id}, $form->{"id_$i"})
+        or $form->dberror($query);
 
       $lineitemdetail = ($form->{"lineitemdetail_$i"}) ? 1 : 0;
 
@@ -1501,8 +1488,6 @@ sub process_kit ($dbh, $form, $project_id, $i) {
   my $taxrate;
   my %taxbase;
   my $id;
-  my $uid = localtime;
-  $uid .= $$;
   my $accno;
   my %kit;
   my $ref;
@@ -1633,14 +1618,11 @@ sub process_kit ($dbh, $form, $project_id, $i) {
     }
 
     # save detail record in invoice table
-    $query = qq|INSERT INTO invoice (description, trans_id, parts_id)
-                VALUES ('$uid', $form->{id}, $kit{$_}{parts_id})|;
-    $dbh->do($query) or $form->dberror($query);
-
-    $query = qq|SELECT id
-                FROM invoice
-                WHERE description = '$uid'|;
-    ($id) = $dbh->selectrow_array($query);
+    $query = qq|INSERT INTO invoice (trans_id, parts_id)
+                VALUES (?, ?)
+                RETURNING id|;
+    ($id) = $dbh->selectrow_array($query, undef, $form->{id}, $kit{$_}{parts_id})
+      or $form->dberror($query);
 
     # save detail record for individual kit item in invoice table
     $query = qq|UPDATE invoice SET

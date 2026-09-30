@@ -140,28 +140,20 @@ sub post_transaction ($, $myconfig, $form) {
 
   $form->{pending} = 1;
 
-  if (! $form->{batchid}) {
+  unless ($form->{batchid}) {
 
     $form->{batchnumber} = $form->update_defaults($myconfig, 'batchnumber', $dbh) unless $form->{batchnumber};
 
-    my $uid = localtime;
-    $uid .= $$;
-    $query = qq|INSERT INTO br (batchnumber, batch, employee_id)
-                VALUES ('$uid', '$form->{batch}',
-                    (SELECT id FROM employee
-                     WHERE login = '$form->{login}'))|;
-    $dbh->do($query) or $form->dberror($query);
+    $query = qq|INSERT INTO br (batchnumber, description, batch, transdate, employee_id)
+                VALUES (?,?,?,?, (SELECT id FROM employee WHERE login = ?))
+                RETURNING id|;
 
-    $query = qq|SELECT id FROM br
-                WHERE batchnumber = '$uid'|;
-    ($form->{batchid}) = $dbh->selectrow_array($query);
+    my @values = (
+      $form->{batchnumber}, $form->{batchdescription},
+      $form->{batch}, $form->{transdate}, $form->{login} =~ s/@.*//r
+    );
 
-    $query = qq|UPDATE br SET
-                batchnumber = |.$dbh->quote($form->{batchnumber}).qq|,
-                description = |.$dbh->quote($form->{batchdescription}).qq|,
-                transdate = '$form->{transdate}'
-                WHERE id = $form->{batchid}|;
-    $dbh->do($query) or $form->dberror($query);
+    ($form->{batchid}) = $dbh->selectrow_array($query, undef, @values) or $form->dberror($query);
 
     if(!($rc = $dbh->commit)) {
       $dbh->disconnect;
@@ -679,28 +671,20 @@ sub post_payment_reversal ($, $myconfig, $form) {
   $sth->execute($form->{source}) or $form->dberror($query);
 
   # create batch
-  if (! $form->{batchid}) {
+  unless ($form->{batchid}) {
 
     $form->{batchnumber} = $form->update_defaults($myconfig, 'batchnumber', $dbh) unless $form->{batchnumber};
 
-    my $uid = localtime;
-    $uid .= $$;
-    $query = qq|INSERT INTO br (batchnumber, batch, employee_id)
-                VALUES ('$uid', '$form->{batch}',
-                    (SELECT id FROM employee
-                     WHERE login = '$form->{login}'))|;
-    $dbh->do($query) or $form->dberror($query);
+    $query = qq|INSERT INTO br (batchnumber, description, batch, transdate, employee_id)
+                VALUES (?,?,?,?, (SELECT id FROM employee WHERE login = ?))
+                RETURNING id|;
 
-    $query = qq|SELECT id FROM br
-                WHERE batchnumber = '$uid'|;
-    ($form->{batchid}) = $dbh->selectrow_array($query);
+    my @values = (
+      $form->{batchnumber}, $form->{batchdescription},
+      $form->{batch}, $form->{transdate}, $form->{login} =~ s/@.*//r
+    );
 
-    $query = qq|UPDATE br SET
-                batchnumber = |.$dbh->quote($form->{batchnumber}).qq|,
-                description = |.$dbh->quote($form->{batchdescription}).qq|,
-                transdate = '$form->{transdate}'
-                WHERE id = $form->{batchid}|;
-    $dbh->do($query) or $form->dberror($query);
+    ($form->{batchid}) = $dbh->selectrow_array($query, undef, @values) or $form->dberror($query);
   }
 
   $query = qq|INSERT INTO acc_trans (trans_id, chart_id, amount, transdate,

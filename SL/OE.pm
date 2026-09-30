@@ -338,22 +338,12 @@ sub save ($, $myconfig, $form) {
     }
   }
 
-  if (! $form->{id}) {
-
-    my $uid = localtime;
-    $uid .= $$;
-
-    $query = qq|INSERT INTO oe (ordnumber, employee_id)
-                VALUES ('$uid', $form->{employee_id})|;
-    $dbh->do($query) or $form->dberror($query);
-
-    $query = qq|SELECT id FROM oe
-                WHERE ordnumber = '$uid'|;
-    $sth = $dbh->prepare($query);
-    $sth->execute or $form->dberror($query);
-    ($form->{id}) = $sth->fetchrow_array;
-    $sth->finish;
-
+  unless ($form->{id}) {
+    $query = qq|INSERT INTO oe (employee_id)
+                VALUES (?)
+                RETURNING id|;
+    ($form->{id}) = $dbh->selectrow_array($query, undef, $form->{employee_id})
+      or $form->dberror($query);
   }
 
   my $i;
@@ -370,9 +360,6 @@ sub save ($, $myconfig, $form) {
   my %taxaccounts;
   my $netamount = 0;
   my $lineitemdetail;
-
-  my $uid = localtime;
-  $uid .= $$;
 
   for my $i (1 .. $form->{rowcount}) {
 
@@ -498,14 +485,12 @@ sub save ($, $myconfig, $form) {
       $project_id = $form->{"project_id_$i"} if $form->{"project_id_$i"};
 
       # add/save detail record in orderitems table
-      $query = qq|INSERT INTO orderitems (description, trans_id, parts_id)
-                  VALUES ('$uid', $form->{id}, $form->{"id_$i"})|;
-      $dbh->do($query) or $form->dberror($query);
-
-      $query = qq|SELECT id
-                  FROM orderitems
-                  WHERE description = '$uid'|;
-      ($form->{"orderitems_id_$i"}) = $dbh->selectrow_array($query);
+      $query = qq|INSERT INTO orderitems (trans_id, parts_id)
+                  VALUES (?,?)
+                  RETURNING id|;
+      ($form->{"orderitems_id_$i"})
+        = $dbh->selectrow_array($query, undef, $form->{id}, $form->{"id_$i"})
+          or $form->dberror($query);
 
       &adj_inventory($dbh, $form, $i) unless $form->{aa_id};
 
@@ -2245,19 +2230,10 @@ sub generate_orders ($, $myconfig, $form) {
       $form->{precision} = $defaults{precision};
     }
 
-    $uid = localtime;
-    $uid .= $$;
-
     $query = qq|INSERT INTO oe (ordnumber)
-                VALUES ('$uid')|;
-    $dbh->do($query) or $form->dberror($query);
-
-    $query = qq|SELECT id FROM oe
-                WHERE ordnumber = '$uid'|;
-    $sth = $dbh->prepare($query);
-    $sth->execute or $form->dberror($query);
-    my ($id) = $sth->fetchrow_array;
-    $sth->finish;
+                VALUES ('')
+                RETURNING id|;
+    my ($id) = $dbh->selectrow_array($query) or $form->dberror($query);
 
     # get default shipto
     $query = qq|SELECT * FROM shipto
@@ -2472,9 +2448,6 @@ sub consolidate_orders ($, $myconfig, $form) {
   (undef, $warehouse_id) = split /--/, $form->{warehouse} // '';
   ($warehouse_id //= 0) *= 1;
 
-  my $uid = localtime;
-  $uid .= $$;
-
   my @orderitems = ();
 
   for my $curr (keys %{ $oe{orders} }) {
@@ -2520,13 +2493,9 @@ sub consolidate_orders ($, $myconfig, $form) {
       $ordnumber = $form->update_defaults($myconfig, $numberfld, $dbh);
 
       $query = qq|INSERT INTO oe (ordnumber)
-                  VALUES ('$uid')|;
-      $dbh->do($query) or $form->dberror($query);
-
-      $query = qq|SELECT id
-                  FROM oe
-                  WHERE ordnumber = '$uid'|;
-      ($form->{id}) = $dbh->selectrow_array($query);
+                  VALUES ('')
+                  RETURNING id|;
+      ($form->{id}) = $dbh->selectrow_array($query) or $form->dberror($query);
 
       $ref->{employee_id} *= 1;
 

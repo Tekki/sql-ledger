@@ -440,20 +440,10 @@ sub save_employee ($, $myconfig, $form) {
     $dbh->do($query) or $form->dberror($query);
 
   } else {
-    my $uid = localtime;
-    $uid .= $$;
-
     $query = qq|INSERT INTO employee (name)
-                VALUES ('$uid')|;
-    $dbh->do($query) or $form->dberror($query);
-
-    $query = qq|SELECT id FROM employee
-                WHERE name = '$uid'|;
-    $sth = $dbh->prepare($query);
-    $sth->execute or $form->dberror($query);
-
-    ($form->{id}) = $sth->fetchrow_array;
-    $sth->finish;
+                VALUES ('')
+                RETURNING id|;
+    ($form->{id}) = $dbh->selectrow_array($query) or $form->dberror($query);
   }
 
   $form->{employeenumber} = $form->update_defaults($myconfig, "employeenumber", $dbh) if ! $form->{employeenumber};
@@ -1867,21 +1857,11 @@ sub save_deduction ($, $myconfig, $form) {
   ($form->{agedob} ||= 0) *= 1;
   (undef, $form->{basedon}) = split /--/, $form->{basedon} // '';
 
-  if (! $form->{id}) {
-    my $uid = localtime;
-    $uid .= $$;
-
+  unless ($form->{id}) {
     $query = qq|INSERT INTO deduction (description)
-                VALUES ('$uid')|;
-    $dbh->do($query) or $form->dberror($query);
-
-    $query = qq|SELECT id FROM deduction
-                WHERE description = '$uid'|;
-    $sth = $dbh->prepare($query);
-    $sth->execute or $form->dberror($query);
-
-    ($form->{id}) = $sth->fetchrow_array;
-    $sth->finish;
+                VALUES ('')
+                RETURNING id|;
+    ($form->{id}) = $dbh->selectrow_array($query) or $form->dberror($query);
   }
 
 
@@ -2082,21 +2062,11 @@ sub save_wage ($, $myconfig, $form) {
   my $query;
   my $sth;
 
-  if (! $form->{id}) {
-    my $uid = localtime;
-    $uid .= $$;
-
+  unless ($form->{id}) {
     $query = qq|INSERT INTO wage (description)
-                VALUES ('$uid')|;
-    $dbh->do($query) or $form->dberror($query);
-
-    $query = qq|SELECT id FROM wage
-                WHERE description = '$uid'|;
-    $sth = $dbh->prepare($query);
-    $sth->execute or $form->dberror($query);
-
-    ($form->{id}) = $sth->fetchrow_array;
-    $sth->finish;
+                VALUES ('')
+                RETURNING id|;
+    ($form->{id}) = $dbh->selectrow_array($query) or $form->dberror($query);
   }
 
   ($form->{exempt} ||= 0) *= 1;

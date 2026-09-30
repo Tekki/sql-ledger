@@ -150,20 +150,12 @@ sub post_transaction ($, $myconfig, $form, $dbh = undef) {
     }
   }
 
-  if (!$form->{id}) {
-
-    my $uid = localtime;
-    $uid .= $$;
-
-    $query = qq|INSERT INTO gl (reference, employee_id, approved)
-                VALUES ('$uid', (SELECT id FROM employee
-                                 WHERE login = '$form->{login}'),
-                '$approved')|;
-    $dbh->do($query) or $form->dberror($query);
-
-    $query = qq|SELECT id FROM gl
-                WHERE reference = '$uid'|;
-    ($form->{id}) = $dbh->selectrow_array($query);
+  unless ($form->{id}) {
+    $query = qq|INSERT INTO gl (employee_id, approved)
+                VALUES ((SELECT id FROM employee WHERE login = ?), ?)
+                RETURNING id|;
+    ($form->{id}) = $dbh->selectrow_array($query, undef, $form->{login} =~ s/@.*//r, $approved)
+      or $form->dberror($query);
   }
 
   (undef, $department_id) = split /--/, $form->{department} // '';

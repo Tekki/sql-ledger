@@ -182,17 +182,11 @@ sub save_project ($, $myconfig, $form) {
     ($form->{id}) = $dbh->selectrow_array($query);
   }
 
-  if (!$form->{id}) {
-    my $uid = localtime;
-    $uid .= $$;
-
+  unless ($form->{id}) {
     $query = qq|INSERT INTO project (projectnumber)
-                VALUES ('$uid')|;
-    $dbh->do($query) or $form->dberror($query);
-
-    $query = qq|SELECT id FROM project
-                WHERE projectnumber = '$uid'|;
-    ($form->{id}) = $dbh->selectrow_array($query);
+                VALUES ('')
+                RETURNING id|;
+    ($form->{id}) = $dbh->selectrow_array($query) or $form->dberror($query);
   }
 
   $form->{projectnumber} = $form->update_defaults($myconfig, "projectnumber", $dbh) unless $form->{projectnumber};
@@ -532,17 +526,11 @@ sub save_job ($, $myconfig, $form) {
     ($form->{id}) = $dbh->selectrow_array($query);
   }
 
-  if (!$form->{id}) {
-    my $uid = localtime;
-    $uid .= $$;
-
+  unless ($form->{id}) {
     $query = qq|INSERT INTO project (projectnumber)
-                VALUES ('$uid')|;
-    $dbh->do($query) or $form->dberror($query);
-
-    $query = qq|SELECT id FROM project
-                WHERE projectnumber = '$uid'|;
-    ($form->{id}) = $dbh->selectrow_array($query);
+                VALUES ('')
+                RETURNING id|;
+    ($form->{id}) = $dbh->selectrow_array($query) or $form->dberror($query);
   }
 
   $form->{projectnumber} = $form->update_defaults($myconfig, "projectnumber", $dbh) unless $form->{projectnumber};
@@ -705,17 +693,10 @@ sub stock_assembly ($, $myconfig, $form) {
       }
       $jth->finish;
 
-      my $uid = localtime;
-      $uid .= $$;
-
       $query = qq|INSERT INTO parts (partnumber)
-                  VALUES ('$uid')|;
-      $dbh->do($query) or $form->dberror($query);
-
-      $query = qq|SELECT id
-                  FROM parts
-                  WHERE partnumber = '$uid'|;
-      ($uid) = $dbh->selectrow_array($query);
+                  VALUES ('')
+                  RETURNING id|;
+      my ($id) = $dbh->selectrow_array($query) or $form->dberror($query);
 
       $lastcost = $form->round_amount($lastcost / ($ref->{production} / $stock), $form->{precision});
       $sellprice = ($pref->{sellprice}) ? $pref->{sellprice} : $form->round_amount($sellprice / ($ref->{production} / $stock), $form->{precision});
@@ -753,17 +734,17 @@ sub stock_assembly ($, $myconfig, $form) {
                   expires = |.$form->dbquote($pref->{expires}, 'SQL_DATE').qq|,
                   checkinventory = '$pref->{checkinventory}',
                   project_id = $form->{"id_$i"}
-                  WHERE id = $uid|;
+                  WHERE id = $id|;
       $dbh->do($query) or $form->dberror($query);
 
       $query = qq|INSERT INTO partstax (parts_id, chart_id)
-                  SELECT '$uid', chart_id FROM partstax
+                  SELECT '$id', chart_id FROM partstax
                   WHERE parts_id = $pref->{id}|;
       $dbh->do($query) or $form->dberror($query);
 
       # make and models
       $query = qq|INSERT INTO makemodel (parts_id, make, model)
-                  SELECT '$uid', make, model
+                  SELECT '$id', make, model
                   FROM makemodel WHERE parts_id = $pref->{id}|;
       $dbh->do($query) or $form->dberror($query);
 
@@ -771,21 +752,21 @@ sub stock_assembly ($, $myconfig, $form) {
       $query = qq|INSERT INTO partscustomer (parts_id, customer_id,
                   pricegroup_id, pricebreak, sellprice, validfrom,
                   validto, curr)
-                  SELECT '$uid', customer_id, pricegroup_id, pricebreak,
+                  SELECT '$id', customer_id, pricegroup_id, pricebreak,
                   sellprice, validfrom, validto, curr
                   FROM partscustomer WHERE parts_id = $pref->{id}|;
       $dbh->do($query) or $form->dberror($query);
 
       for (keys %{$assembly{parts_id}}) {
         if ($assembly{qty}{$_}) {
-          $ath->execute($uid, $assembly{parts_id}{$_}, $form->round_amount($assembly{qty}{$_} / $stock, 4));
+          $ath->execute($id, $assembly{parts_id}{$_}, $form->round_amount($assembly{qty}{$_} / $stock, 4));
           $ath->finish;
         }
       }
 
       if ($form->{"warehouse_$i"}) {
         (undef, $form->{warehouse_id}) = split /--/, $form->{"warehouse_$i"} // '';
-        $ith->execute($form->{warehouse_id}, $uid, $stock);
+        $ith->execute($form->{warehouse_id}, $id, $stock);
         $ith->finish;
       }
 
@@ -808,7 +789,7 @@ sub stock_assembly ($, $myconfig, $form) {
                      reference  => "$pref->{partnumber}-$rev",
                      formname   => 'assembly',
                      action     => 'stock',
-                     id         => $uid );
+                     id         => $id );
 
       $form->audittrail($dbh, "", \%audittrail);
 

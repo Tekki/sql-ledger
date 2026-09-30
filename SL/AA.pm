@@ -230,18 +230,11 @@ sub post_transaction ($, $myconfig, $form, $dbh = undef) {
     }
   }
 
-  if (! $form->{id}) {
-
-    my $uid = localtime;
-    $uid .= $$;
-
-    $query = qq|INSERT INTO $table (invnumber, approved)
-                VALUES ('$uid', '$approved')|;
-    $dbh->do($query) or $form->dberror($query);
-
-    $query = qq|SELECT id FROM $table
-                WHERE invnumber = '$uid'|;
-    ($form->{id}) = $dbh->selectrow_array($query);
+  unless ($form->{id}) {
+    $query = qq|INSERT INTO $table (approved)
+                VALUES (?)
+                RETURNING id|;
+    ($form->{id}) = $dbh->selectrow_array($query, undef, $approved) or $form->dberror($query);
   }
 
   if ($form->{department_id}) {

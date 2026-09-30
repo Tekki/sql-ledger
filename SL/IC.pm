@@ -372,23 +372,11 @@ sub save ($, $myconfig, $form, $dbh = undef) {
     }
 
   } else {
-
-    my $uid = localtime;
-    $uid .= $$;
-
     $query = qq|INSERT INTO parts (partnumber)
-                VALUES ('$uid')|;
-    $dbh->do($query) or $form->dberror($query);
-
-    $query = qq|SELECT id FROM parts
-                WHERE partnumber = '$uid'|;
-    $sth = $dbh->prepare($query);
-    $sth->execute or $form->dberror($query);
-    ($form->{id}) = $sth->fetchrow_array;
-    $sth->finish;
-
+                VALUES ('')
+                RETURNING id|;
+    ($form->{id}) = $dbh->selectrow_array($query) or $form->dberror($query);
     $form->{orphaned} = 1;
-
   }
 
   my $partsgroup_id;
