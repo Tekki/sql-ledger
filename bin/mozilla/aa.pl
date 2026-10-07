@@ -2347,7 +2347,7 @@ sub transactions {
   &check_all(qw(allbox id_));
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <form method="post" name="main" action="$form->{script}" />
 

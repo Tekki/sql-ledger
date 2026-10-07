@@ -1813,7 +1813,7 @@ sub generate_report {
   $title = "$form->{title} / $form->{company}";
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>
@@ -2578,7 +2578,7 @@ sub supply_demand_report {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>
@@ -2884,7 +2884,7 @@ sub requirements_report {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>
@@ -3225,7 +3225,7 @@ sub so_requirements_report {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>
@@ -3363,7 +3363,7 @@ sub resource_planning {
   &calendar;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <form method="post" name="main" action="$form->{script}">
 
@@ -4721,7 +4721,7 @@ sub list_assemblies {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <form method=post action=$form->{script}>
 
@@ -5322,7 +5322,7 @@ sub transfer_report {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>

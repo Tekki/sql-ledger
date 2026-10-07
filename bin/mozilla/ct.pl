@@ -1069,7 +1069,7 @@ sub list_names {
   &check_all(qw(allbox_delete id_));
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <form method=post name="main" action="$form->{script}">
 
@@ -1503,7 +1503,7 @@ sub list_history {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>

@@ -901,7 +901,7 @@ sub transactions {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>

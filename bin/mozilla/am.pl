@@ -368,7 +368,7 @@ sub list_account {
   my $colspan = $#column_index + 1;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>
@@ -481,7 +481,7 @@ sub list_gifi {
   my $colspan = $#column_index + 1;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>
@@ -731,7 +731,7 @@ sub list_department {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>
@@ -936,7 +936,7 @@ sub list_business {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>
@@ -1137,7 +1137,7 @@ sub list_paymentmethod {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>
@@ -1353,7 +1353,7 @@ sub list_sic {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>
@@ -1556,7 +1556,7 @@ sub list_language {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>
@@ -1816,7 +1816,7 @@ sub list_mimetypes {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>
@@ -2030,7 +2030,7 @@ sub list_templates {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>
@@ -2339,7 +2339,7 @@ sub display_taxes {
   &calendar;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <form method="post" name="main" action="$form->{script}">
 
@@ -2855,7 +2855,7 @@ sub workstations {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <form method=post action=$form->{script}>
 
@@ -3969,7 +3969,7 @@ sub list_audit_log {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <form method="post" name="main" action="$form->{script}">
 
@@ -4143,7 +4143,7 @@ sub list_warehouse {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>
@@ -4339,7 +4339,7 @@ sub yearend {
   &calendar;
 
   print qq|
-<body>
+<body onload="document.main.todate.focus()">
 
 <form method="post" name="main" action="$form->{script}">
 
@@ -5420,7 +5420,7 @@ sub bank_accounts {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>
@@ -5803,7 +5803,7 @@ sub list_exchangerates {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>
@@ -6057,7 +6057,7 @@ sub list_currencies {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>
@@ -6265,7 +6265,7 @@ sub list_roles {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>
@@ -6834,7 +6834,7 @@ sub list_snapshots {
   &check_all('allbox', 'ndx_');
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <form method="post" name="main" action="$form->{script}">
 

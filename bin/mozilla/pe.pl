@@ -955,7 +955,7 @@ sub list_projects {
   }
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>
@@ -1581,7 +1581,7 @@ sub pricegroup_report {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>
@@ -1882,7 +1882,7 @@ sub list_translations {
   $form->helpref(\%myconfig, \%slconfig, "list_$form->{translation}_translations");
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>
@@ -2558,7 +2558,7 @@ sub jcitems {
   &check_all(qw(allbox checked_));
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <form method="post" name="main" action="$form->{script}" />
 

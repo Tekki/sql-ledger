@@ -1221,7 +1221,7 @@ sub generate_income_statement {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>
@@ -1775,7 +1775,7 @@ sub generate_balance_sheet {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>
@@ -1978,7 +1978,7 @@ sub list_accounts {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>
@@ -2458,7 +2458,7 @@ sub aging {
   &check_all(qw(allbox ndx_));
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <form method="post" name="main" action="$form->{script}">
 
@@ -2872,7 +2872,7 @@ sub reminder {
   &check_all(qw(allbox ndx_));
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <form method="post" name="main" action="$form->{script}">
 
@@ -3835,7 +3835,7 @@ sub generate_tax_report {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>
@@ -4258,7 +4258,7 @@ sub list_payments {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>

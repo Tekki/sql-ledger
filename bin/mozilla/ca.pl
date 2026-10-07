@@ -72,7 +72,7 @@ sub chart_of_accounts {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table border=0 width=100%>
   <tr>
@@ -363,7 +363,7 @@ sub list_transactions {
 
     $form->header;
     print qq|
-<body>
+<body onload="window.focus()">
 
 <form method="post" name="main" action="$form->{script}">
 |;

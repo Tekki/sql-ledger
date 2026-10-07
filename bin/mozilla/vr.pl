@@ -658,7 +658,7 @@ sub list_batches {
   &check_all(qw(allbox checked_));
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <form method=post name=main action="$form->{script}">
 
@@ -942,7 +942,7 @@ sub list_vouchers {
   $form->header;
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <table width=100%>
   <tr>

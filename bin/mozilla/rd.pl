@@ -576,7 +576,7 @@ sub list_documents {
   &check_all(qw(allbox_delete id_));
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <form method="post" name="main" action="$form->{script}">
 
@@ -1037,7 +1037,7 @@ sub list_images {
   &check_all(qw(allbox ndx_));
 
   print qq|
-<body>
+<body onload="window.focus()">
 
 <form method="post" name="main" action="$form->{script}">
 
