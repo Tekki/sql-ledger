@@ -201,6 +201,27 @@ sub search {
   $form->{reportcode} = 'gl';
   $form->{dateformat} = $myconfig{dateformat};
 
+  # employees
+  $form->all_employees(\%myconfig);
+
+  if (@{$form->{all_employee}}) {
+    $form->{selectemployee} = "\n";
+    for (@{$form->{all_employee}}) {
+      $form->{selectemployee} .= qq|$_->{name}--$_->{id}\n|;
+    }
+
+    $l_employee = 1;
+
+    $employee = qq|
+        <tr>
+          <th align=right>| . $locale->text('Employee') . qq|</th>
+          <td><select name=employee>|
+      . $form->select_option($form->{selectemployee}, $form->{employee}, 1) . qq|
+          </select></td>
+        </tr>
+|;
+  }
+
   # departments
   $form->all_departments(\%myconfig);
 
@@ -213,7 +234,7 @@ sub search {
     $l_department = 1;
 
     $department = qq|
-          <tr>
+        <tr>
           <th align=right>| . $locale->text('Department') . qq|</th>
           <td><select name=department>|
       . $form->select_option($form->{selectdepartment}, $form->{department}, 1) . qq|
@@ -234,7 +255,7 @@ sub search {
     $l_project = 1;
 
     $project = qq|
-          <tr>
+        <tr>
           <th align=right>| . $locale->text('Project') . qq|</th>
           <td><select name=project>|
       . $form->select_option($form->{selectproject}, $form->{project}, 1) . qq|
@@ -281,8 +302,8 @@ sub search {
   }
 
   @input = qw(reference description name vcnumber lineitem notes source memo datefrom dateto month year accnofrom accnoto amountfrom amountto sort direction reportlogin);
-  for (qw|department project|) {
-    push @input, $_ if exists $form->{$_};
+  for (qw|employee department project|) {
+    push @input, $_ if $form->{"all_$_"};
   }
 
   %radio = ( interval => { 0 => 0, 1 => 1, 3 => 2, 12 => 3 },
@@ -343,6 +364,16 @@ sub search {
     html  => qq|<input name="l_address" class=checkbox type=checkbox value=Y $cb{l_address}>|,
     label => $locale->text('Address')
   };
+  if ($l_employee) {
+    $includeinreport{employee} = {
+      ndx      => $ndx{employee},
+      sort     => 'employee',
+      checkbox => 1,
+      html     =>
+        qq|<input name="l_employee" class=checkbox type=checkbox value=Y $cb{l_employee}>|,
+      label => $locale->text('Employee')
+    };
+  }
   if ($l_department) {
     $includeinreport{department} = {
       ndx      => $ndx{department},
@@ -475,6 +506,8 @@ sub search {
           <th align=right>|.$locale->text('Company Number').qq|</th>
           <td><input name=vcnumber size=35></td>
         </tr>
+
+              $employee
 
               $department
 
@@ -666,6 +699,13 @@ sub transactions {
     $option .= "\n<br>" if $option;
     $option .= $locale->text('Company Number')." : $form->{vcnumber}";
   }
+  if ($form->{employee}) {
+    $href .= "&employee=".$form->escape($form->{employee});
+    $callback .= "&employee=".$form->escape($form->{employee},1);
+    ($employee) = split /--/, $form->{employee};
+    $option .= "\n<br>" if $option;
+    $option .= $locale->text('Employee')." : $employee";
+  }
   if ($form->{department}) {
     $href .= "&department=".$form->escape($form->{department});
     $callback .= "&department=".$form->escape($form->{department},1);
@@ -787,11 +827,7 @@ sub transactions {
     $column_data{balance} = $locale->text('Balance');
   }
 
-  for (qw|department project|) {
-    delete $form->{"l_$_"} if $form->{$_};
-  }
-
-  for (qw|department project|) {
+  for (qw|employee department project|) {
     delete $form->{"l_$_"} if $form->{$_};
   }
 
@@ -1048,7 +1084,9 @@ sub transactions {
     $ref->{reference} ||= "&nbsp;";
     $column_data{reference} = qq|<td><a class="reference-l $ref->{module}-l" href=$ref->{module}.pl?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback>$ref->{reference}</td>|;
 
-    for (qw(department project name vcnumber address)) { $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>" }
+    for (qw(employee department project name vcnumber address)) {
+      $column_data{$_} = "<td>$ref->{$_}&nbsp;</td>";
+    }
 
     for (qw(lineitem description source memo notes)) {
       $ref->{$_} =~ s/\r?\n/<br>/g;
@@ -1169,10 +1207,12 @@ sub transactions {
     for (qw(datefrom dateto)) { delete $form->{$_} }
   }
   $form->hide_form(
-    'accnofrom', 'accnoto',    'amountfrom',  'amountto', 'category',      'datefrom',
-    'dateto',    'department', 'description', 'interval', 'l_splitledger', 'l_subtotal',
-    'lineitem',  'memo',       'month',       'name',     'notes',         'project',
-    'reference', 'source',     'vcnumber',    'year',
+    'accnofrom',   'accnoto',  'amountfrom', 'amountto',
+    'category',    'datefrom', 'dateto',     'department',
+    'description', 'employee', 'interval',   'l_splitledger',
+    'l_subtotal',  'lineitem', 'memo',       'month',
+    'name',        'notes',    'project',    'reference',
+    'source',      'vcnumber', 'year',
   );
 
   $form->hide_form(qw(callback path login report reportcode reportlogin column_index flds sort direction));
@@ -1447,6 +1487,13 @@ sub form_header {
     $exchangerate .= qq|</tr></table></td></tr>|;
   }
 
+  $employee = qq|
+       <tr>
+          <th align=right nowrap>|.$locale->text('Employee').qq|</th>
+          <td>$form->{employee}</td>
+       </tr>
+| if $form->{employee};
+
   $department = qq|
           <th align=right nowrap>|.$locale->text('Department').qq|</th>
           <td><select name=department onChange="doSubmit(document.main)">|
@@ -1517,6 +1564,7 @@ sub form_header {
           $reference
           $transdate
         </tr>
+        $employee
         <tr>
           $department
           $exchangerate
@@ -1610,7 +1658,7 @@ sub form_footer {
 
   $form->{action} = "Update";
 
-  $form->hide_form(qw(action path login callback _updated));
+  $form->hide_form(qw(action path login callback employee _updated));
 
   $transdate = $form->datetonum(\%myconfig, $form->{transdate});
 
@@ -1769,7 +1817,7 @@ sub post {
 # defaults for reports
 
 sub _search_defaults {
-   my %defaults = (
+  my %defaults = (
     checkboxes => {
       l_splitledger => '',
       l_id          => '',
@@ -1779,6 +1827,7 @@ sub _search_defaults {
       l_name        => '',
       l_vcnumber    => '',
       l_address     => '',
+      l_employee    => '',
       l_department  => '',
       l_project     => '',
       l_notes       => '',
@@ -1810,9 +1859,10 @@ sub _search_defaults {
     },
     focus   => 'description',
     columns => [
-      'id',      'transdate',  'reference', 'description', 'name',       'vcnumber',
-      'address', 'department', 'project',   'notes',       'debit',      'credit',
-      'source',  'memo',       'lineitem',  'accno',       'gifi_accno', 'contra',
+      'id',      'transdate', 'reference',  'description', 'name',  'vcnumber',
+      'address', 'employee',  'department', 'project',     'notes', 'debit',
+      'credit',  'source',    'memo',       'lineitem',    'accno', 'gifi_accno',
+      'contra',
     ],
     sort      => 'transdate',
     direction => '',

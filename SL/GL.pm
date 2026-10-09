@@ -342,6 +342,12 @@ sub transactions ($, $myconfig, $form) {
     $arwhere .= " AND ct.customernumber ILIKE '$var'";
     $apwhere .= " AND ct.vendornumber ILIKE '$var'";
   }
+  if ($form->{employee}) {
+    (undef, $var) = split /--/, $form->{employee} // '';
+    $glwhere .= " AND g.employee_id = $var";
+    $arwhere .= " AND a.employee_id = $var";
+    $apwhere .= " AND a.employee_id = $var";
+  }
   if ($form->{department}) {
     (undef, $var) = split /--/, $form->{department} // '';
     $glwhere .= " AND g.department_id = $var";
@@ -575,8 +581,8 @@ sub transactions ($, $myconfig, $form) {
                  l.description AS account_translation, c.category,
                  c.contra AS ca,
                  c.gifi_accno, g.notes, c.link,
-                 '' AS till, ac.cleared, d.description AS department,
-                 p.description AS project,
+                 '' AS till, ac.cleared, e.name AS employee,
+                 d.description AS department, p.description AS project,
                  ac.memo, '0' AS name_id, '' AS db,
                  $gdescription AS lineitem, '' AS name, '' AS vcnumber,
                  '' AS address1, '' AS streetname, '' AS buildingnumber, '' AS address2,
@@ -584,6 +590,7 @@ sub transactions ($, $myconfig, $form) {
                  FROM gl g
                  JOIN acc_trans ac ON (g.id = ac.trans_id)
                  JOIN chart c ON (ac.chart_id = c.id)
+                 LEFT JOIN employee e ON (e.id = g.employee_id)
                  LEFT JOIN department d ON (d.id = g.department_id)
                  LEFT JOIN project p ON p.id = ac.project_id
                  LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
@@ -595,8 +602,8 @@ sub transactions ($, $myconfig, $form) {
                  l.description AS account_translation, c.category,
                  c.contra AS ca,
                  c.gifi_accno, a.notes, c.link,
-                 a.till, ac.cleared, d.description AS department,
-                 p.description AS project,
+                 a.till, ac.cleared, e.name AS employee,
+                 d.description AS department, p.description AS project,
                  ac.memo, ct.id AS name_id, 'customer' AS db,
                  $lineitem AS lineitem, ct.name, ct.customernumber,
                  ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
@@ -607,6 +614,7 @@ sub transactions ($, $myconfig, $form) {
                  JOIN chart c ON (ac.chart_id = c.id)
                  JOIN customer ct ON (a.customer_id = ct.id)
                  JOIN address ad ON (ad.trans_id = ct.id)
+                 LEFT JOIN employee e ON (e.id = a.employee_id)
                  LEFT JOIN department d ON (d.id = a.department_id)
                  LEFT JOIN project p ON p.id = ac.project_id
                  LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
@@ -618,8 +626,8 @@ sub transactions ($, $myconfig, $form) {
                  l.description AS account_translation, c.category,
                  c.contra AS ca,
                  c.gifi_accno, a.notes, c.link,
-                 a.till, ac.cleared, d.description AS department,
-                 p.description AS project,
+                 a.till, ac.cleared, e.name AS employee,
+                 d.description AS department, p.description AS project,
                  ac.memo, ct.id AS name_id, 'vendor' AS db,
                  $lineitem AS lineitem, ct.name, ct.vendornumber,
                  ad.address1, ad.streetname, ad.buildingnumber, ad.address2,
@@ -630,6 +638,7 @@ sub transactions ($, $myconfig, $form) {
                  JOIN chart c ON (ac.chart_id = c.id)
                  JOIN vendor ct ON (a.vendor_id = ct.id)
                  JOIN address ad ON (ad.trans_id = ct.id)
+                 LEFT JOIN employee e ON (e.id = a.employee_id)
                  LEFT JOIN department d ON (d.id = a.department_id)
                  LEFT JOIN project p ON p.id = ac.project_id
                  LEFT JOIN translation l ON (l.trans_id = c.id AND l.language_code = '$myconfig->{countrycode}')
@@ -888,9 +897,11 @@ sub transaction ($, $myconfig, $form) {
 
   if (($form->{id} ||= 0) *= 1) {
     $query = qq|SELECT g.*,
+                e.name AS employee,
                 d.description AS department,
                 br.id AS batchid, br.description AS batchdescription
                 FROM gl g
+                LEFT JOIN employee e ON (e.id = g.employee_id)
                 LEFT JOIN department d ON (d.id = g.department_id)
                 LEFT JOIN vr ON (vr.trans_id = g.id)
                 LEFT JOIN br ON (br.id = vr.br_id)

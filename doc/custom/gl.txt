@@ -19,7 +19,7 @@
 # defaults for reports
 
 sub _search_defaults {
-   my %defaults = (
+  my %defaults = (
     checkboxes => {
       l_splitledger => '',
       l_id          => '',
@@ -29,6 +29,7 @@ sub _search_defaults {
       l_name        => '',
       l_vcnumber    => '',
       l_address     => '',
+      l_employee    => '',
       l_department  => '',
       l_project     => '',
       l_notes       => '',
@@ -60,9 +61,10 @@ sub _search_defaults {
     },
     focus   => 'description',
     columns => [
-      'id',      'transdate',  'reference', 'description', 'name',       'vcnumber',
-      'address', 'department', 'project',   'notes',       'debit',      'credit',
-      'source',  'memo',       'lineitem',  'accno',       'gifi_accno', 'contra',
+      'id',      'transdate', 'reference',  'description', 'name',  'vcnumber',
+      'address', 'employee',  'department', 'project',     'notes', 'debit',
+      'credit',  'source',    'memo',       'lineitem',    'accno', 'gifi_accno',
+      'contra',
     ],
     sort      => 'transdate',
     direction => '',
