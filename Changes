@@ -1,5 +1,8 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
+Not Released
+  - 
+
 4.2.0 2026-10-10
   - password hash replaced with more secure algorithm
     BREAKING CHANGE: files in 'users' directory become incompatible
