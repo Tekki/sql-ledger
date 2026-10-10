@@ -1,7 +1,14 @@
 Revision history for SQL-Ledger, starting with version 3.0.0
 
-Not Released
-  - 
+4.2.0 2026-10-10
+  - password hash replaced with more secure algorithm
+    BREAKING CHANGE: files in 'users' directory become incompatible
+    with older versions
+  - layout of timecard report improved
+  - employee is displayed in general ledger transactions and available
+    in the report
+  - generation of new IDs for database entries improved
+  - formatting of order number in printed invoices corrected
 
 4.1.4 2026-09-04
   - sales margin of transactions displayed as amount and percentage
