@@ -1,7 +1,10 @@
 #!/bin/sh
 set -e
 
-test -f sql-ledger.conf || cp sql-ledger.conf.default sql-ledger.conf
+if [ ! -f config/sql-ledger.yml ]; then
+  cp config/sql-ledger-sample.yml config/sql-ledger.yml
+  util/update-config.pl
+fi
 
 sed -i -e 's|#$gpg.*|$gpg = "gpg --homedir /usr/local/apache2/gnupg --batch --yes";|' sql-ledger.conf
 

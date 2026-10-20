@@ -15,13 +15,17 @@ RUN set -ex \
     libdbd-pg-perl \
     libexcel-writer-xlsx-perl \
     libhtml-form-perl \
+    libio-prompter-perl \
     libio-socket-ssl-perl \
     libmojolicious-perl \
     libspreadsheet-parsexlsx-perl \
-    libtext-qrcode-perl \
     libtemplate-perl \
+    libterm-readkey-perl \
+    libtest-output-perl \
+    libtext-qrcode-perl \
     libtie-ixhash-perl \
     libyaml-pp-perl \
+    make \
     postgresql-client \
     vim \
   && rm -rf /var/lib/apt/lists/*

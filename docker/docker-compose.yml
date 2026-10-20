@@ -20,7 +20,7 @@ services:
     volumes:
       - db17:/var/lib/postgresql/data
 
-  dbdamin:
+  dbadmin:
     image: adminer
     environment:
       ADMINER_DESIGN: nette
@@ -40,7 +40,7 @@ services:
 
   app:
     build: .
-    image: sql-ledger-test:0.24
+    image: sql-ledger-test:0.25
     ports:
       - 80:80
     volumes:
