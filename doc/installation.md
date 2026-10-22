@@ -118,6 +118,8 @@ cd docker
 docker compose -f docker-compose-alma.yml -p sql-ledger up -d
 ```
 
+If you are on Windows, refer to the documentation for [WSL containers](wslc.md).
+
 This will set up a system with 4 containers, one for SQL-Ledger, one for
 PostgreSQL, and another two for the database management tools
 [Adminer](https://www.adminer.org) and [pgAdmin](https://pgadmin.org).

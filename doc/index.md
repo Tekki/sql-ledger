@@ -19,6 +19,7 @@
   - [Ansible Role](installation.md#ansible-role)
   - [Manual Installation](installation.md#manual-installation)
   - [Virtualization](installation.md#virtualization)
+    - [WSL Container](wslc.md)
 
 - [Upgrade](upgrade.md#upgrade)
   - [Change to Git Version Control](upgrade.md#change-to-git-version-control)
