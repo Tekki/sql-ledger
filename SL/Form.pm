@@ -1337,6 +1337,19 @@ sub run_latex ($self, $userspath, $dvipdf, $xelatex) {
 
   if ($self->{format} eq 'pdf') {
 
+    if ($self->{xmpdata}) {
+      my @xmpdata;
+      for (qw|author title language subject keywords creator|) {
+        if ($self->{xmpdata}{$_}) {
+          push @xmpdata, sprintf('\%s{%s}', ucfirst($_), $self->{xmpdata}{$_} =~ s/[{}%\\]/\\$&/gr);
+        }
+      }
+
+      open my $fh, '>:encoding(UTF-8)', $self->{tmpfile} =~ s/tex$/xmpdata/r;
+      say $fh join "\n", @xmpdata;
+      close $fh;
+    }
+
     if ($dvipdf) {
       system("latex --interaction=nonstopmode $self->{tmpfile} > $self->{errfile}");
       while ($self->rerun_latex) {

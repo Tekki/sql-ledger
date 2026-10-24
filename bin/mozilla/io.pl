@@ -1707,6 +1707,8 @@ sub print_form {
 
   SL::AA->company_details(\%myconfig, $form);
 
+  &_xmpdata;
+
   @f = ();
   foreach $i (1 .. $form->{rowcount}) {
     push @f, map { "${_}_$i" } qw(partnumber description projectnumber projectdescription partsgroup partsgroupcode serialnumber ordernumber customerponumber bin unit itemnotes package);
@@ -2238,6 +2240,19 @@ sub shipto_selected {
 
 }
 
+
+sub _xmpdata {
+
+  $form->{xmpdata} = {
+    author  => $form->{company},
+    title   => qq|$form->{"${inv}number"} $form->{name}|,
+    subject => $form->{description},
+    creator => qq|SQL-Ledger $form->{version}|,
+  };
+
+}
+
+
 =encoding utf8
 
 =head1 NAME
@@ -2307,5 +2322,9 @@ L<bin::mozilla::io> implements the following functions:
 =head2 shipto_selected
 
 =head2 validate_items
+
+=head1 INTERNAL FUNCTIONS
+
+=head2 _xmpdata
 
 =cut
