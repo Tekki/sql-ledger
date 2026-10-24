@@ -1707,6 +1707,13 @@ sub print_form {
 
   SL::AA->company_details(\%myconfig, $form);
 
+  $form->{metadata} = {
+    author  => $form->{company},
+    title   => qq|$form->{"${inv}number"} $form->{name}|,
+    subject => $form->{description},
+    creator => qq|SQL-Ledger $form->{version}|,
+  };
+
   @f = ();
   foreach $i (1 .. $form->{rowcount}) {
     push @f, map { "${_}_$i" } qw(partnumber description projectnumber projectdescription partsgroup partsgroupcode serialnumber ordernumber customerponumber bin unit itemnotes package);
