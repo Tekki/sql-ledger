@@ -5070,7 +5070,7 @@ sub save_report ($self, $myconfig) {
     } else {
       $query = qq|INSERT INTO report (reportdescription)
                   VALUES ('')
-                  RETURNING id|;
+                  RETURNING reportid|;
       ($self->{reportid}) = $dbh->selectrow_array($query) or $self->dberror($query);
     }
 
