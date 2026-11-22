@@ -7,7 +7,9 @@
 #
 # custom oe.pl
 #
-# sample for customization of
+# Version 4.2.3
+#
+# Sample for customization of
 #   Order Entry--Reports--Sales Orders
 #   Order Entry--Reports--Purchase Orders
 #   Quotations--Reports--Quotations
@@ -56,6 +58,7 @@ sub _search_defaults {
       l_ordnumber      => 'checked',
       l_quonumber      => 'checked',
       l_number         => 'checked',
+      l_onhold         => 'checked',
       l_description    => 'checked',
       l_transdate      => 'checked',
       l_reqdate        => 'checked',
@@ -80,12 +83,12 @@ sub _search_defaults {
 sub _transactions_defaults {
   return (
     columns => [
-      'transdate',    'reqdate',     'id',            'ordnumber',
-      'quonumber',    'ponumber',    'name',          'customernumber',
-      'vendornumber', 'description', 'memo',          'notes',
-      'netamount',    'tax',         'amount',        'curr',
-      'employee',     'warehouse',   'shippingpoint', 'shipvia',
-      'waybill',      'open',        'closed',        'onhold',
+      'transdate',      'reqdate',      'id',          'ordnumber',
+      'quonumber',      'ponumber',     'onhold',      'name',
+      'customernumber', 'vendornumber', 'description', 'memo',
+      'notes',          'netamount',    'tax',         'amount',
+      'curr',           'employee',     'warehouse',   'shippingpoint',
+      'shipvia',        'waybill',      'open',        'closed',
     ],
     sort      => 'transdate',
     direction => '',

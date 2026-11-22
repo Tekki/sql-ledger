@@ -1045,6 +1045,11 @@ sub form_footer {
       }
     }
 
+    if ($form->{onhold}) {
+      delete $buttons[$_] for 1, 2;
+      delete $buttons[0]{$_} for 'Post as new', 'Schedule';
+    }
+
     $form->print_button_table(\@buttons);
 
   }

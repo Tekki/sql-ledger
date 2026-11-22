@@ -15,7 +15,7 @@ my $configfile = "$FindBin::Bin/../testdata/testconfig.yml";
 my $t;
 
 if ($ENV{SL_LIVETEST}) {
-  plan tests => 6;
+  plan tests => 7;
 } else {
   plan skip_all => 'SL_LIVETEST not enabled.';
 }
@@ -101,6 +101,31 @@ subtest 'Print invoice' => sub {
         ->download_is("$lang $template", 'pdf');
     }
   }
+};
+
+subtest 'On hold flag in invoice' => sub {
+  $t->get_ok(
+    'Report frontend', 'ar.pl',
+    action      => 'search',
+    nextsub     => 'transactions',
+    outstanding => 1
+    )
+    ->press_button_ok('Generate report', 'continue')
+    ->follow_link_ok('Open invoice', 'is-l', 0)
+    ->set_params_ok('Reset on hold flag', onhold => '')
+    ->press_button_ok('Update', 'update')
+    ->buttons_exist(
+      'post',    'ship_to', 'schedule', 'post_as_new',
+      'preview', 'print',   'e-mail',   'print_and_post',
+      'print_and_post_as_new', 'sales_order'
+      )
+    ->set_params_ok('Set on hold flag', onhold => 1)
+    ->press_button_ok('Update', 'update')
+    ->buttons_exist('post', 'ship_to', 'new_number', 'delete', 'resource_planning')
+    ->buttons_exist_not(
+      'schedule',       'preview', 'print', 'e-mail',
+      'print_and_post', 'print_and_post_as_new', 'sales_order'
+    );
 };
 
 $t->remove_locks_ok;

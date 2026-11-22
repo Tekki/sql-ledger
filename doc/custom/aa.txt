@@ -7,7 +7,9 @@
 #
 # custom aa.pl
 # 
-# sample for customization of
+# Version 4.2.3
+#
+# Sample for customization of
 #   AR--Reports--Transactions
 #   AR--Reports--Outstanding
 #   AP--Reports--Transactions
@@ -52,6 +54,7 @@ sub _search_defaults {
       l_amount         => 'checked',
       l_curr           => '',
       l_datepaid       => '',
+      l_onhold         => 'checked',
       l_paymentdiff    => '',
       l_paid           => 'checked',
       l_paymentaccount => '',
@@ -91,19 +94,19 @@ sub _search_defaults {
 sub _transactions_defaults {
   my %defaults = (
     columns => [
-      'transdate',      'id',           'invnumber',   'ordnumber',
-      'ponumber',       'description',  'name',        'customernumber',
-      'vendornumber',   'taxnumber',    'address1',    'streetname',
-      'buildingnumber', 'address2',     'state',       'city',
-      'zipcode',        'country',      'salutation',  'firstname',
-      'lastname',       'contacttitle', 'occupation',  'phone',
-      'mobile',         'email',        'vcnotes',     'netamount',
-      'tax',            'amount',       'paid',        'paymentaccount',
-      'paymentmethod',  'due',          'curr',        'datepaid',
-      'duedate',        'dcn',          'memo',        'notes',
-      'till',           'employee',     'warehouse',   'shippingpoint',
-      'shipvia',        'waybill',      'paymentdiff', 'department',
-      'projectnumber',
+      'transdate',      'id',             'invnumber',    'onhold',
+      'ordnumber',      'ponumber',       'description',  'name',
+      'customernumber', 'vendornumber',   'taxnumber',    'address1',
+      'streetname',     'buildingnumber', 'address2',     'state',
+      'city',           'zipcode',        'country',      'salutation',
+      'firstname',      'lastname',       'contacttitle', 'occupation',
+      'phone',          'mobile',         'email',        'vcnotes',
+      'netamount',      'tax',            'amount',       'paid',
+      'paymentaccount', 'paymentmethod',  'due',          'curr',
+      'datepaid',       'duedate',        'dcn',          'memo',
+      'notes',          'till',           'employee',     'warehouse',
+      'shippingpoint',  'shipvia',        'waybill',      'paymentdiff',
+      'department',     'projectnumber',
     ],
     sort      => 'transdate',
     direction => '',

@@ -1308,16 +1308,24 @@ sub aging ($, $myconfig, $form) {
 
   $form->{AG} = ();
 
-  $query = "";
-  my $union = "";
+  $query = '';
+  my $union = '';
+  my ($due, $onhold);
+  if ($form->{onhold}) {
+    $due    = '(a.amount - a.paid) * (1 - a.onhold::int)';
+    $onhold = '(a.amount - a.paid) * a.onhold::int';
+  } else {
+    $due    = '(a.amount - a.paid)';
+    $onhold = 'a.onhold';
+  }
 
-  my %c = (c0 => { flds => '(a.amount - a.paid) AS c0, 0.00 AS c15, 0.00 AS c30, 0.00 AS c45, 0.00 AS c60, 0.00 AS c75, 0.00 AS c90' },
-           c15 => { flds => '0.00 AS c0, (a.amount - a.paid) AS c15, 0.00 AS c30, 0.00 AS c45, 0.00 AS c60, 0.00 AS c75, 0.00 AS c90' },
-           c30 => { flds => '0.00 AS c0, 0.00 AS c15, (a.amount - a.paid) AS c30, 0.00 AS c45, 0.00 AS c60, 0.00 AS c75, 0.00 AS c90' },
-           c45 => { flds => '0.00 AS c0, 0.00 AS c15, 0.00 AS c30, (a.amount - a.paid) AS c45, 0.00 AS c60, 0.00 AS c75, 0.00 AS c90' },
-           c60 => { flds => '0.00 AS c0, 0.00 AS c15, 0.00 AS c30, 0.00 AS c45, (a.amount - a.paid) AS c60, 0.00 AS c75, 0.00 AS c90' },
-           c75 => { flds => '0.00 AS c0, 0.00 AS c15, 0.00 AS c30, 0.00 AS c45, 0.00 AS c60, (a.amount - a.paid) AS c75, 0.00 AS c90' },
-           c90 => { flds => '0.00 AS c0, 0.00 AS c15, 0.00 AS c30, 0.00 AS c45, 0.00 AS c60, 0.00 AS c75, (a.amount - a.paid) AS c90' }
+  my %c = (c0 => { flds => qq|$onhold AS onhold, $due AS c0, 0.00 AS c15, 0.00 AS c30, 0.00 AS c45, 0.00 AS c60, 0.00 AS c75, 0.00 AS c90| },
+           c15 => { flds => qq|$onhold AS onhold, 0.00 AS c0, $due AS c15, 0.00 AS c30, 0.00 AS c45, 0.00 AS c60, 0.00 AS c75, 0.00 AS c90| },
+           c30 => { flds => qq|$onhold AS onhold, 0.00 AS c0, 0.00 AS c15, $due AS c30, 0.00 AS c45, 0.00 AS c60, 0.00 AS c75, 0.00 AS c90| },
+           c45 => { flds => qq|$onhold AS onhold, 0.00 AS c0, 0.00 AS c15, 0.00 AS c30, $due AS c45, 0.00 AS c60, 0.00 AS c75, 0.00 AS c90| },
+           c60 => { flds => qq|$onhold AS onhold, 0.00 AS c0, 0.00 AS c15, 0.00 AS c30, 0.00 AS c45, $due AS c60, 0.00 AS c75, 0.00 AS c90| },
+           c75 => { flds => qq|$onhold AS onhold, 0.00 AS c0, 0.00 AS c15, 0.00 AS c30, 0.00 AS c45, 0.00 AS c60, $due AS c75, 0.00 AS c90| },
+           c90 => { flds => qq|$onhold AS onhold, 0.00 AS c0, 0.00 AS c15, 0.00 AS c30, 0.00 AS c45, 0.00 AS c60, 0.00 AS c75, $due AS c90| }
           );
 
   my @c = ();
@@ -1529,7 +1537,7 @@ sub reminder ($, $myconfig, $form) {
               a.dcn, a.bank_id, a.description AS invdescription,
               a.invnumber, a.transdate, a.till, a.ordnumber, a.ponumber, a.notes,
               a.amount - a.paid AS due,
-              a.duedate, a.invoice, a.id, a.curr,
+              a.duedate, a.invoice, a.id, a.curr, a.onhold,
           (SELECT exchangerate FROM exchangerate e
            WHERE a.curr = e.curr
            AND e.transdate = a.transdate) AS exchangerate,

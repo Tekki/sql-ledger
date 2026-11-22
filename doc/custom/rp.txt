@@ -6,8 +6,10 @@
 #======================================================================
 #
 # custom rp.pl
+#
+# Version 4.2.3
 # 
-# sample for customization of
+# Sample for customization of
 #   AR--Reports--AR Aging
 #   AR--Reports--Reminder
 #   AR--Reports--Tax collected
@@ -62,6 +64,7 @@ sub _report_defaults {
       l_paid           => 'checked',
       l_source         => 'checked',
       l_memo           => 'checked',
+      onhold           => 'checked',
       c0               => 'checked',
       c30              => 'checked',
       c60              => 'checked',

@@ -15,7 +15,7 @@ my $configfile = "$FindBin::Bin/../testdata/testconfig.yml";
 my $t;
 
 if ($ENV{SL_LIVETEST}) {
-  plan tests => 6;
+  plan tests => 7;
 } else {
   plan skip_all => 'SL_LIVETEST not enabled.';
 }
@@ -93,6 +93,28 @@ subtest 'Print order' => sub {
         ->download_is("$lang $template", 'pdf');
     }
   }
+};
+
+subtest 'On hold flag in order' => sub {
+  $t->get_ok('Report frontend', 'oe.pl', action => 'search', type   => 'purchase_order')
+    ->press_button_ok('Generate report', 'continue')
+    ->follow_link_ok('Open order', 'ordnumber-l', 0)
+    ->set_params_ok('Reset on hold flag', onhold => '')
+    ->press_button_ok('Update', 'update')
+    ->buttons_exist(
+      'update',                'save',           'ship_to',    'ship_all',
+      'schedule',              'save_as_new',    'new_number', 'delete',
+      'preview',               'print',          'e-mail',     'print_and_save',
+      'print_and_save_as_new', 'vendor_invoice', 'rfq',        'resource_planning',
+      )
+    ->set_params_ok('Set on hold flag', onhold => 1)
+    ->press_button_ok('Update', 'update')
+    ->buttons_exist('update', 'save', 'ship_to', 'new_number', 'delete', 'resource_planning',)
+    ->buttons_exist_not(
+      'save_as_new',    'ship_all', 'schedule',       'preview',
+      'print',          'e-mail',   'print_and_save', 'print_and_save_as_new',
+      'vendor_invoice', 'rfq',
+    );
 };
 
 $t->remove_locks_ok;

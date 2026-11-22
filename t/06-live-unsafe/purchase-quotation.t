@@ -15,7 +15,7 @@ my $configfile = "$FindBin::Bin/../testdata/testconfig.yml";
 my $t;
 
 if ($ENV{SL_LIVETEST}) {
-  plan tests => 6;
+  plan tests => 7;
 } else {
   plan skip_all => 'SL_LIVETEST not enabled.';
 }
@@ -83,6 +83,26 @@ subtest 'Print quotation' => sub {
         ->download_is("$lang $template", 'pdf');
     }
   }
+};
+
+subtest 'On hold flag in quotation' => sub {
+  $t->get_ok('Report frontend', 'oe.pl', action => 'search', type => 'request_quotation')
+    ->press_button_ok('Generate report', 'continue')
+    ->follow_link_ok('Open quotation', 'quonumber-l', 0)
+    ->set_params_ok('Reset on hold flag', onhold => '')
+    ->press_button_ok('Update', 'update')
+    ->buttons_exist(
+      'save',           'save_as_new', 'delete',         'preview',
+      'print',          'e-mail',      'print_and_save', 'print_and_save_as_new',
+      'vendor_invoice', 'purchase_order'
+      )
+    ->set_params_ok('Set on hold flag', onhold => 1)
+    ->press_button_ok('Update', 'update')
+    ->buttons_exist('save', 'ship_to', 'new_number', 'delete', 'resource_planning')
+    ->buttons_exist_not(
+      'save_as_new',    'preview',               'print',          'e-mail',
+      'print_and_save', 'print_and_save_as_new', 'vendor_invoice', 'purchase_order'
+    );
 };
 
 $t->remove_locks_ok;

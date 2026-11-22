@@ -135,7 +135,7 @@ sub search {
                   <input name=open class=checkbox type=checkbox value=Y checked> |.$locale->text('Open').qq|
                   <input name=closed class=checkbox type=checkbox value=Y> |.$locale->text('Closed').qq|
                   <input name=onhold class=checkbox type=checkbox value=Y> |.$locale->text('On Hold').qq|
-                  <input name=notonhold class=checkbox type=checkbox value=Y> |.$locale->text('Not on Hold').qq|
+                  <input name=notonhold class=checkbox type=checkbox value=Y checked> |.$locale->text('Not on Hold').qq|
                 </td>
               </tr>
               <tr>

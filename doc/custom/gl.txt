@@ -6,8 +6,10 @@
 #======================================================================
 #
 # custom gl.pl
+#
+# Version 4.2.0
 # 
-# sample for customization of
+# Sample for customization of
 #   General Ledger--Reports
 # 
 #======================================================================

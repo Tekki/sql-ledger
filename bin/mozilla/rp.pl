@@ -280,9 +280,9 @@ sub report {
   if ($form->{reportcode} =~ /_aging/) {
     $form->{month} = "";
     $form->{year} = "";
-    for (qw(c0 c30 c60 c90)) { $form->{$_} = 1 }
+    for (qw(onhold c0 c30 c60 c90)) { $form->{$_} = 1 }
 
-    @checked = qw(c0 c30 c60 c90 c15 c45 c75);
+    @checked = qw(onhold c0 c30 c60 c90 c15 c45 c75);
     @input = qw(todate month year reportlogin);
     for (qw(department)) {
       push @input, $_ if $form->{"select$_"};
@@ -909,6 +909,7 @@ sub report {
               <td nowrap width=70><input name=c90 type=checkbox class=checkbox value=1 $cb{c90}> 90</td>
             </tr>
             <tr>
+              <td nowrap width=70><input name=onhold type=checkbox class=checkbox value=1 $cb{onhold}> |.$locale->text('On Hold').qq|</td>
               <td nowrap width=70><input name=c15 type=checkbox class=checkbox value=1 $cb{c15}> 15</td>
               <td nowrap width=70><input name=c45 type=checkbox class=checkbox value=1 $cb{c45}> 45</td>
               <td nowrap width=70><input name=c75 type=checkbox class=checkbox value=1 $cb{c75}> 75</td>
@@ -2387,6 +2388,7 @@ sub aging {
   $column_header{ordnumber} = qq|<th class=listheading>|.$locale->text('Order').qq|</th>|;
   $column_header{transdate} = qq|<th class=listheading nowrap>|.$locale->text('Date').qq|</th>|;
   $column_header{duedate} = qq|<th class=listheading nowrap>|.$locale->text('Due Date').qq|</th>|;
+  $column_header{onhold} = qq|<th class=listheading width=10% nowrap>|.$locale->text('On Hold').qq|</th>|;
   $column_header{c0} = qq|<th class=listheading width=10% nowrap>|.$locale->text('Current').qq|</th>|;
   $column_header{c15} = qq|<th class=listheading width=10% nowrap>15</th>|;
   $column_header{c30} = qq|<th class=listheading width=10% nowrap>30</th>|;
@@ -2410,7 +2412,7 @@ sub aging {
     push @column_index, qw(invnumber ordnumber transdate duedate);
   }
 
-  @c = qw(c0 c15 c30 c45 c60 c75 c90);
+  @c = qw(onhold c0 c15 c30 c45 c60 c75 c90);
 
   for (@c) {
     if ($form->{$_}) {
@@ -2531,6 +2533,14 @@ sub aging {
     }
 
     $curr = $ref->{curr};
+
+    my $onholdclass = '';
+    my $onholdlabel = '';
+    if ($ref->{onhold}) {
+      $onholdclass = ' class="critical"';
+      $onholdlabel = ' &#8856;';
+    }
+
     $k++;
 
     if ($vc_id != $ref->{vc_id}) {
@@ -2573,7 +2583,7 @@ sub aging {
 
     $href = qq|$ref->{module}.pl?path=$form->{path}&action=edit&id=$ref->{id}&login=$form->{login}&callback=|.$form->escape($form->{callback});
 
-    $column_data{invnumber} = qq|<td><a href=$href>$ref->{invnumber}</a></td>|;
+    $column_data{invnumber} = qq|<td$onholdclass><a href=$href>$ref->{invnumber}</a>$onholdlabel</td>|;
     $column_data{ordnumber} = qq|<td>$ref->{ordnumber}</td>|;
     for (qw(transdate duedate)) { $column_data{$_} = qq|<td nowrap>$ref->{$_}</td>| }
 
@@ -2931,6 +2941,13 @@ sub reminder {
 
     $curr = $ref->{curr};
 
+    my $onholdclass = '';
+    my $onholdlabel = '';
+    if ($ref->{onhold}) {
+      $onholdclass = ' class="critical"';
+      $onholdlabel = ' &#8856;';
+    }
+
     $column_data{vc} = qq|<td><a class="vc-l" href=ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{vc_id}&db=$form->{vc}&callback=$callback>$ref->{name}</a></td>
     <input type=hidden name="vc_$ref->{id}" value="$ref->{vc_id}">|;
 
@@ -2950,17 +2967,19 @@ sub reminder {
     }
 
     $checked = ($form->{"ndx_$ref->{id}"}) ? "checked" : "";
-    $column_data{ndx} = qq|<td><input name="ndx_$ref->{id}" type=checkbox class=checkbox value=1 $checked></td>|;
+    $column_data{ndx} = $ref->{onhold}
+      ? qq|<td></td>|
+      : qq|<td><input name="ndx_$ref->{id}" type=checkbox class=checkbox value=1 $checked></td>|;
 
     $form->{ids} .= "$ref->{id} ";
 
     $href = qq|$ref->{module}.pl?path=$form->{path}&action=edit&id=$ref->{id}&login=$form->{login}&callback=|.$form->escape($form->{callback});
 
-    $column_data{invnumber} = qq|<td><a class="invnumber-l" href=$href>$ref->{invnumber}</a></td>|;
+    $column_data{invnumber} = qq|<td$onholdclass><a class="invnumber-l" href=$href>$ref->{invnumber}</a>$onholdlabel</td>|;
     $column_data{ordnumber} = qq|<td>$ref->{ordnumber}</td>|;
     for (qw(transdate duedate)) { $column_data{$_} = qq|<td nowrap>$ref->{$_}</td>| }
 
-    $column_data{due} = qq|<td align=right>|.$form->format_amount(\%myconfig, $ref->{due} / $ref->{exchangerate}, $form->{precision}).qq|</td>|;
+    $column_data{due} = qq|<td$onholdclass align=right>|.$form->format_amount(\%myconfig, $ref->{due} / $ref->{exchangerate}, $form->{precision}).qq|</td>|;
 
     $j++; $j %= 2;
     print qq|
@@ -3665,7 +3684,7 @@ sub do_print_statement {
 
         }
 
-        for ("c0", "c15", "c30", "c45", "c60", "c75", "c90", "") { $form->{"${_}total"} = $form->format_amount(\%myconfig, $form->{"${_}total"}, $form->{precision}) }
+        for ("onhold", "c0", "c15", "c30", "c45", "c60", "c75", "c90", "") { $form->{"${_}total"} = $form->format_amount(\%myconfig, $form->{"${_}total"}, $form->{precision}) }
 
         $form->parse_template(\%myconfig, $slconfig{userspath}, $slconfig{dvipdf}, $slconfig{xelatex});
 
@@ -3685,7 +3704,7 @@ sub statement_details {
   $form->format_string(qw(invnumber_1 ordnumber_1 ponumber_1 notes_1 invdescription_1));
   for (@a) { push @{ $form->{$_} }, $form->{"${_}_1"} }
 
-  foreach $item (qw(c0 c15 c30 c45 c60 c75 c90)) {
+  foreach $item (qw(onhold c0 c15 c30 c45 c60 c75 c90)) {
     $ref->{exchangerate} ||= 1;
     $ref->{$item} = $form->round_amount($ref->{$item} / $ref->{exchangerate}, $form->{precision});
     $form->{"${item}total"} += $ref->{$item};
@@ -4549,6 +4568,7 @@ sub _report_defaults {
       l_paid           => 'checked',
       l_source         => 'checked',
       l_memo           => 'checked',
+      onhold           => 'checked',
       c0               => 'checked',
       c30              => 'checked',
       c60              => 'checked',

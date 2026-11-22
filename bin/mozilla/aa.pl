@@ -1164,6 +1164,11 @@ sub form_footer {
       for ('Preview', 'Print and Post', 'Print and Post as new') { delete $buttons[1]{$_} }
     }
 
+    if ($form->{onhold}) {
+      delete $buttons[1];
+      delete $buttons[0]{$_} for 'Post as new', 'Schedule';
+    }
+
     $form->print_button_table(\@buttons);
 
   }
@@ -1830,6 +1835,7 @@ sub search {
   push @f, qq|<input name="l_description" class=checkbox type=checkbox value=Y $cb{l_description}> |.$locale->text('Description');
   push @f, qq|<input name="l_ponumber" class=checkbox type=checkbox value=Y $cb{l_ponumber}> |.$locale->text('PO Number');
   push @f, qq|<input name="l_transdate" class=checkbox type=checkbox value=Y $cb{l_transdate}> |.$locale->text('Invoice Date');
+  push @f, qq|<input name="l_onhold" class=checkbox type=checkbox value=Y $cb{l_onhold}> |.$locale->text('On Hold');
   push @f, '';
   push @f, $l_name;
   push @f, $l_customernumber if $l_customernumber;
@@ -2212,8 +2218,6 @@ sub transactions {
     }
   }
 
-  $form->{l_onhold} = 'Y' if ($form->{onhold} && $form->{notonhold});
-
   foreach $item (@columns) {
     if ($form->{"l_$item"} eq "Y") {
       push @column_index, $item;
@@ -2277,6 +2281,7 @@ sub transactions {
     lastname       => $locale->text('Lastname'),
     mobile         => $locale->text('Mobile'),
     name           => $name,
+    onhold         => '&#8856;',
     occupation     => $locale->text('Occupation'),
     ordnumber      => $locale->text('Order'),
     paymentaccount => $locale->text('Payment Account'),
@@ -2330,7 +2335,8 @@ sub transactions {
 
   $column_data{delete} = qq|<th class=listheading width=1%><input name="allbox" type=checkbox class=checkbox value="1" $form->{allbox} onChange="CheckAll(); doSubmit(document.main)"><input type=hidden name=action value="$action"></th>|;
 
-  $column_data{onhold} = qq|<th class=listheading title="|.$locale->text('On Hold').qq|">&#8856;</th>|;
+  my $onhold_title = qq|title="|.$locale->text('On Hold').qq|"|;
+  $column_data{onhold} =~ s/<a/<a $onhold_title/;
 
   $form->{title} = ($form->{outstanding}) ? $locale->text("$form->{ARAP} Outstanding") : $locale->text("$form->{ARAP} Transactions");
 
@@ -2395,6 +2401,13 @@ sub transactions {
       }
     }
 
+    my $onholdclass = '';
+    my $onholdlabel = '';
+    if ($ref->{onhold}) {
+      $onholdclass = ' class="critical"';
+      $onholdlabel = ' &#8856;';
+    }
+
     if ($form->{l_curr}) {
       for $item (@curr) {
         for (qw(tax netamount amount paid due)) { $column_data{"${item}_$_"} = "<td>&nbsp;</td>" }
@@ -2432,7 +2445,7 @@ sub transactions {
     for (qw(netamount amount paid debit credit)) { $column_data{$_} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{$_}, $form->{precision}, "&nbsp;")."</td>" }
 
     $column_data{tax} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{amount} - $ref->{netamount}, $form->{precision}, "&nbsp;")."</td>";
-    $column_data{due} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{amount} - $ref->{paid}, $form->{precision}, "&nbsp;")."</td>";
+    $column_data{due} = "<td$onholdclass align=right>".$form->format_amount(\%myconfig, $ref->{amount} - $ref->{paid}, $form->{precision}, "&nbsp;")."</td>";
 
 
     $subtotalnetamount += $ref->{netamount};
@@ -2454,8 +2467,9 @@ sub transactions {
       = $i == @{$form->{transactions}} ? qq| accesskey="0" title="[0]"|
       : $i < 10                        ? qq| accesskey="$i" title="[$i]"|
       :                                  '';
-    my $class = qq|invnumber-l $module-l| =~ s/\.pl//r;
-    $column_data{invnumber} = qq|<td><a class="$class" href="$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback"$accesskey>$ref->{invnumber}&nbsp;</a></td>|;
+
+    my $invclass       = qq|invnumber-l $module-l| =~ s/\.pl//r;
+    $column_data{invnumber} = qq|<td$onholdclass><a class="$invclass" href="$module?action=edit&id=$ref->{id}&path=$form->{path}&login=$form->{login}&callback=$callback"$accesskey>$ref->{invnumber}&nbsp;</a></td>|;
 
     for (qw(notes description memo vcnotes)) { $ref->{$_} =~ s/\r?\n/<br>/g }
     for (qw(transdate datepaid duedate)) { $column_data{$_} = "<td nowrap>$ref->{$_}&nbsp;</td>" }
@@ -2485,7 +2499,7 @@ sub transactions {
     }
 
     if ($ref->{onhold}) {
-      $column_data{onhold} = "<td align=center>*</td>";
+      $column_data{onhold} = "<td$onholdclass align=center>$onholdlabel</td>";
     } else {
       $column_data{onhold} = "<td>&nbsp;</td>";
     }
@@ -2790,6 +2804,7 @@ sub _search_defaults {
       l_amount         => 'checked',
       l_curr           => '',
       l_datepaid       => '',
+      l_onhold         => 'checked',
       l_paymentdiff    => '',
       l_paid           => 'checked',
       l_paymentaccount => '',
@@ -2829,19 +2844,19 @@ sub _search_defaults {
 sub _transactions_defaults {
   my %defaults = (
     columns => [
-      'transdate',      'id',           'invnumber',   'ordnumber',
-      'ponumber',       'description',  'name',        'customernumber',
-      'vendornumber',   'taxnumber',    'address1',    'streetname',
-      'buildingnumber', 'address2',     'state',       'city',
-      'zipcode',        'country',      'salutation',  'firstname',
-      'lastname',       'contacttitle', 'occupation',  'phone',
-      'mobile',         'email',        'vcnotes',     'netamount',
-      'tax',            'amount',       'paid',        'paymentaccount',
-      'paymentmethod',  'due',          'curr',        'datepaid',
-      'duedate',        'dcn',          'memo',        'notes',
-      'till',           'employee',     'warehouse',   'shippingpoint',
-      'shipvia',        'waybill',      'paymentdiff', 'department',
-      'projectnumber',  'onhold',
+      'transdate',      'id',             'invnumber',    'onhold',
+      'ordnumber',      'ponumber',       'description',  'name',
+      'customernumber', 'vendornumber',   'taxnumber',    'address1',
+      'streetname',     'buildingnumber', 'address2',     'state',
+      'city',           'zipcode',        'country',      'salutation',
+      'firstname',      'lastname',       'contacttitle', 'occupation',
+      'phone',          'mobile',         'email',        'vcnotes',
+      'netamount',      'tax',            'amount',       'paid',
+      'paymentaccount', 'paymentmethod',  'due',          'curr',
+      'datepaid',       'duedate',        'dcn',          'memo',
+      'notes',          'till',           'employee',     'warehouse',
+      'shippingpoint',  'shipvia',        'waybill',      'paymentdiff',
+      'department',     'projectnumber',
     ],
     sort      => 'transdate',
     direction => '',

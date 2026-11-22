@@ -6,8 +6,10 @@
 #======================================================================
 #
 # custom ct.pl
+#
+# Version 4.1.4
 # 
-# sample for customization of
+# Sample for customization of
 #   Customers--Reports--Search
 #   Vendors--Reports--Search
 # 

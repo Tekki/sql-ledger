@@ -1248,6 +1248,11 @@ sub form_footer {
       $f{'Schedule'} = 1;
     }
 
+    if ($form->{onhold}) {
+      delete $buttons[$_] for 1, 2;
+      delete $buttons[0]{$_} for 'Ship all', 'Save as new', 'Schedule';
+    }
+
     for my $button (@buttons) {
       for (keys %$button) {
         delete $button->{$_} unless $f{$_};
@@ -1753,6 +1758,7 @@ sub search {
   push @a, qq|<input name="l_runningnumber" class=checkbox type=checkbox value=Y $cb{l_runningnumber}> |.$locale->text('No.');
   push @a, qq|<input name="l_id" class=checkbox type=checkbox value=Y $cb{l_id}> |.$locale->text('ID');
   push @a, qq|<input name="l_$ordnumber" class=checkbox type=checkbox value=Y $cb{"l_$ordnumber"}> $ordlabel|;
+  push @a, qq|<input name="l_onhold" class=checkbox type=checkbox value=Y $cb{l_onhold}> |.$locale->text('On Hold');
   push @a, qq|<input name="l_description" class=checkbox type=checkbox value=Y $cb{l_description}> |.$locale->text('Description');
   push @a, qq|<input name="l_transdate" class=checkbox type=checkbox value=Y $cb{l_transdate}> |.$locale->text('Date');
   push @a, $l_ponumber if $l_ponumber;
@@ -2230,6 +2236,7 @@ sub transactions {
   $column_header{ordnumber} = qq|<th><a class=listheading href=$href&sort=ordnumber>|.$locale->text('Order').qq|</a></th>|;
   $column_header{ponumber} = qq|<th><a class=listheading href=$href&sort=ponumber>|.$locale->text('PO Number').qq|</a></th>|;
   $column_header{quonumber} = qq|<th><a class=listheading href=$href&sort=quonumber>$quotation</a></th>|;
+  $column_header{onhold} = qq|<th><a class=listheading  href=$href&sort=onhold title="|.$locale->text('On Hold').qq|">&#8856;</a></th>|;
   $column_header{name} = qq|<th><a class=listheading href=$href&sort=name>$name</a></th>|;
   $column_header{"$form->{vc}number"} = qq|<th><a class=listheading href=$href&sort=$form->{vc}number>$vcnumber</a></th>|;
   $column_header{netamount} = qq|<th class=listheading>|.$locale->text('Amount').qq|</th>|;
@@ -2246,7 +2253,6 @@ sub transactions {
   $column_header{notes} = qq|<th class=listheading>|.$locale->text('Notes').qq|</th>|;
   $column_header{open} = qq|<th class=listheading>|.$locale->text('O').qq|</th>|;
   $column_header{closed} = qq|<th class=listheading>|.$locale->text('C').qq|</th>|;
-  $column_header{onhold} = qq|<th class=listheading title="|.$locale->text('On Hold').qq|">&#8856;</th>|;
 
   $column_header{employee} = qq|<th><a class=listheading href=$href&sort=employee>$employee</a></th>|;
 
@@ -2297,8 +2303,12 @@ sub transactions {
     $sameitem = $form->{OE}->[0]->{$form->{sort}};
   }
 
-  $action = "edit";
-  $action = "ship_receive" if ($form->{type} =~ /(ship|receive)_order/);
+  $action    = "edit";
+  $ship_type = '';
+  if ($form->{type} =~ /(ship|receive)_order/) {
+    $action    = "ship_receive";
+    $ship_type = $form->{type} =~ /ship/ ? 'sales_order' : 'purchase_order';
+  }
 
   $warehouse = $form->escape($form->{warehouse});
 
@@ -2312,6 +2322,13 @@ sub transactions {
         &subtotal;
         $sameitem = $ref->{$form->{sort}};
       }
+    }
+
+    my $onholdclass    = '';
+    my $onholdlabel    = '';
+    if ($ref->{onhold}) {
+      $onholdclass    = ' class="critical"';
+      $onholdlabel    = ' &#8856;';
     }
 
     if ($form->{l_curr}) {
@@ -2329,7 +2346,7 @@ sub transactions {
       $subtotalfxamount += $ref->{fx_amount};
     }
 
-    for (qw(netamount amount)) { $column_data{$_} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{$_}, $form->{precision}, "&nbsp;")."</td>" }
+    for (qw(netamount amount)) { $column_data{$_} = "<td$onholdclass align=right>".$form->format_amount(\%myconfig, $ref->{$_}, $form->{precision}, "&nbsp;")."</td>" }
     $column_data{tax} = "<td align=right>".$form->format_amount(\%myconfig, $ref->{amount} - $ref->{netamount}, $form->{precision}, "&nbsp;")."</td>";
 
     $totalnetamount += $ref->{netamount};
@@ -2350,7 +2367,11 @@ sub transactions {
       = $i == @{$form->{OE}} ? qq| accesskey="0" title="0"|
       : $i < 10              ? qq| accesskey="$i" title="[$i]"|
       :                        '';
-    $column_data{$ordnumber} = qq|<td><a class="$ordnumber-l" href=$form->{script}?path=$form->{path}&action=$action&type=$form->{type}&id=$ref->{id}&warehouse=$warehouse&vc=$form->{vc}&login=$form->{login}&callback=$callback$accesskey>$ref->{$ordnumber}</a><input type=hidden name="ordnumber_$i" value="$ref->{$ordnumber}"></td>|;
+    if ($ref->{onhold} && $ship_type) {
+      $column_data{$ordnumber} = qq|<td$onholdclass><a class="$ordnumber-l" href=$form->{script}?path=$form->{path}&action=edit&type=$ship_type&id=$ref->{id}&warehouse=$warehouse&vc=$form->{vc}&login=$form->{login}&callback=$callback$accesskey>$ref->{$ordnumber}</a><input type=hidden name="ordnumber_$i" value="$ref->{$ordnumber}"></td>|;
+    }  else {
+      $column_data{$ordnumber} = qq|<td$onholdclass><a class="$ordnumber-l" href=$form->{script}?path=$form->{path}&action=$action&type=$form->{type}&id=$ref->{id}&warehouse=$warehouse&vc=$form->{vc}&login=$form->{login}&callback=$callback$accesskey>$ref->{$ordnumber}</a><input type=hidden name="ordnumber_$i" value="$ref->{$ordnumber}"></td>|;
+    }
 
     $name = $form->escape($ref->{name});
     $column_data{name} = qq|<td><a class="name-l" href=ct.pl?path=$form->{path}&login=$form->{login}&action=edit&id=$ref->{"$form->{vc}_id"}&db=$form->{vc}&callback=$callback>$ref->{name}</a></td>|;
@@ -2371,7 +2392,7 @@ sub transactions {
     }
 
     if ($ref->{onhold}) {
-      $column_data{onhold} = "<td align=center>*</td>";
+      $column_data{onhold} = "<td$onholdclass align=center>$onholdlabel</td>";
     } else {
       $column_data{onhold} = "<td>&nbsp;</td>";
     }
@@ -3904,6 +3925,7 @@ sub _search_defaults {
       l_ordnumber      => 'checked',
       l_quonumber      => 'checked',
       l_number         => 'checked',
+      l_onhold         => 'checked',
       l_description    => 'checked',
       l_transdate      => 'checked',
       l_reqdate        => 'checked',
@@ -3928,12 +3950,12 @@ sub _search_defaults {
 sub _transactions_defaults {
   return (
     columns => [
-      'transdate',    'reqdate',     'id',            'ordnumber',
-      'quonumber',    'ponumber',    'name',          'customernumber',
-      'vendornumber', 'description', 'memo',          'notes',
-      'netamount',    'tax',         'amount',        'curr',
-      'employee',     'warehouse',   'shippingpoint', 'shipvia',
-      'waybill',      'open',        'closed',        'onhold',
+      'transdate',      'reqdate',      'id',          'ordnumber',
+      'quonumber',      'ponumber',     'onhold',      'name',
+      'customernumber', 'vendornumber', 'description', 'memo',
+      'notes',          'netamount',    'tax',         'amount',
+      'curr',           'employee',     'warehouse',   'shippingpoint',
+      'shipvia',        'waybill',      'open',        'closed',
     ],
     sort      => 'transdate',
     direction => '',

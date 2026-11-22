@@ -270,7 +270,9 @@ sub display_row {
     my $accesskey = $i == $form->{rowcount} ? 0 : $i;
     $column_data{partnumber} = qq|<td nowrap><input name="partnumber_$i" size="15" value="|.$form->quote($form->{"partnumber_$i"}).qq|" accesskey="$accesskey" title="[$accesskey]">$skunumber$itemhref</td>|;
     $column_data{qty} = qq|<td nowrap><input name="qty_$i" class="inputright" title="$form->{"onhand_$i"}" size="5" value="|.$form->format_amount(\%myconfig, $form->{"qty_$i"}).qq|">$itemplanning</td>|;
-    $column_data{ship} = qq|<td><input name="ship_$i" class="inputright" size="5" value="|.$form->format_amount(\%myconfig, $form->{"ship_$i"}).qq|"></td>|;
+    $column_data{ship} = $form->{onhold}
+      ? qq|<td align="right">$form->{"ship_$i"}</td>|
+      : qq|<td><input name="ship_$i" class="inputright" size="5" value="|.$form->format_amount(\%myconfig, $form->{"ship_$i"}).qq|"></td>|;
     $column_data{unit} = qq|<td><input name="unit_$i" size="5" maxlength="5" value="|.$form->quote($form->{"unit_$i"}).qq|"></td>|;
     $column_data{sellprice} = qq|<td nowrap><input name="sellprice_$i" class="inputright" size="11" value="|.$form->format_amount(\%myconfig, $form->{"sellprice_$i"}, $decimalplaces, $zero).qq|">$itemhistory</td>|;
     $column_data{discount} = qq|<td><input name="discount_$i" class="inputright" size="3" value="|.$form->format_amount(\%myconfig, $form->{"discount_$i"}).qq|"></td>|;
@@ -297,6 +299,7 @@ sub display_row {
     $form->{"oldqty_$i"} = $form->{"qty_$i"};
 
     $form->hide_form(map { "${_}_$i" } qw(oldqty oldship orderitems_id id weight sell listprice lastcost taxaccounts pricematrix sku onhand bin assembly inventory_accno_id income_accno_id expense_accno_id kit lot expires checkinventory make model));
+    $form->hide_form("ship_$i") if $form->{onhold};
 
     $project = qq|
                 <span class="label">$projectnumber</span>
@@ -1478,7 +1481,7 @@ sub print_options {
     print qq|
              <table>
                <tr>
-                 <td align=right><input name="onhold" type="checkbox" class="checkbox" value="1" $checked{onhold}></td>
+                 <td align=right><input name="onhold" type="checkbox" class="checkbox" value="1" $checked{onhold} onChange="doSubmit(document.main)"></td>
                  <th align=left nowrap>|.$locale->text('On Hold').qq|</th>
                </tr>
                <tr>
