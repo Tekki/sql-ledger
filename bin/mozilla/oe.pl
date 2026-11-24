@@ -3325,9 +3325,10 @@ sub display_ship_receive {
 
   my @buttons = (
     {
-      'Update'   => {ndx => 1, key => 'U', value => $locale->text('Update')},
-      'Done'     => {ndx => 3, key => 'S', value => $locale->text('Save'), class => 'positive'},
-      'Ship all' => {ndx => 4, key => 'L', value => $locale->text('Ship all')},
+      'Update'          => {ndx => 1, key => 'U', value => $locale->text('Update')},
+      'Ship all'        => {ndx => 3, key => 'L', value => $locale->text('Ship all')},
+      'Done'            => {ndx => 4, key => 'S', value => $locale->text('Save'), class => 'positive'},
+      'Cancel Continue' => {ndx => 5, key => 'K', value => $locale->text('Cancel')},
     },
     {
       _label_   => $locale->text('Share'),
@@ -3348,11 +3349,13 @@ sub display_ship_receive {
     &menubar;
   }
 
-  $form->hide_form(qw(rowcount callback path login));
+  $form->hide_form(qw(rowcount callback path login _updated));
 
   print qq|
 
-</form>
+</form>|;
+  &unload;
+  print q|
 
 </body>
 </html>
