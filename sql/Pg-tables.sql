@@ -73,7 +73,7 @@ CREATE TABLE defaults (
   fldvalue text
 );
 --
-INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '4.0.0');
+INSERT INTO defaults (fldname, fldvalue) VALUES ('version', '4.1.0');
 --
 CREATE TABLE acc_trans (
   trans_id int,
@@ -322,7 +322,8 @@ CREATE TABLE oe (
   description text,
   aa_id int,
   exchangerate float,
-  backorder bool DEFAULT 'f'
+  backorder bool DEFAULT 'f',
+  onhold bool DEFAULT 'f'
 );
 --
 CREATE TABLE orderitems (
