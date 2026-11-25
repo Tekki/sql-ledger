@@ -5,6 +5,7 @@ locale/*.zip
 *.missing
 config/*.bin
 config/sql-ledger.yml
+css/env.css
 doc/templates/template-config.yml
 *~
 *.swp
