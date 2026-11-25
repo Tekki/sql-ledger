@@ -446,29 +446,6 @@ sub form_header {
 
   for (qw(terms discountterms)) { $form->{$_} = "" if ! $form->{$_} }
 
-  $tt = $form->{title};
-  $form->{title} .= " / $form->{company}";
-
-  $form->header;
-
-  $form->{title} = $tt;
-
-  &calendar;
-
-  print qq|
-<body onLoad="document.main.${focus}.focus()">
-
-<form method="post" name="main" action="$form->{script}">
-|;
-
-  $form->info($form->{arap_message}) if $form->{arap_message};
-
-  $form->hide_form(qw(id type printed emailed queued title vc creditlimit creditremaining business closedto locked shipped oldtransdate oldduedate recurring defaultcurrency oldterms cdt precision order_id reference_rows referenceurl max_upload_size oldwarehouse olddepartment company));
-
-  $form->hide_form(map { "select$_" } ("$form->{vc}", "AP", "AP_paid", "AP_discount"));
-  $form->hide_form(map { "select$_" } qw(formname currency partsgroup projectnumber department warehouse employee language paymentmethod printer));
-  $form->hide_form("$form->{vc}_id", "old$form->{vc}", "quonumber", "old$form->{vc}number");
-
   $terms = qq|
               <tr>
                 <th align="right" nowrap>|.$locale->text('Terms').qq|</th>
@@ -493,6 +470,38 @@ sub form_header {
 |;
     }
   }
+
+  $checked{onhold} = ($form->{onhold}) ? 'checked' : '';
+  $onhold = qq|
+              <tr>
+                <td></td>
+                <th nowrap align="left">
+                  <input name="onhold" type="checkbox" class="checkbox" value="1" $checked{onhold} onChange="doSubmit(document.main)" accesskey="Z"> |.$locale->text('On Hold').qq|
+                </th>
+              </tr>|;
+
+  $tt = $form->{title};
+  $form->{title} .= " / $form->{company}";
+
+  $form->header;
+
+  $form->{title} = $tt;
+
+  &calendar;
+
+  print qq|
+<body onLoad="document.main.${focus}.focus()">
+
+<form method="post" name="main" action="$form->{script}">
+|;
+
+  $form->info($form->{arap_message}) if $form->{arap_message};
+
+  $form->hide_form(qw(id type printed emailed queued title vc creditlimit creditremaining business closedto locked shipped oldtransdate oldduedate recurring defaultcurrency oldterms cdt precision order_id reference_rows referenceurl max_upload_size oldwarehouse olddepartment company));
+
+  $form->hide_form(map { "select$_" } ("$form->{vc}", "AP", "AP_paid", "AP_discount"));
+  $form->hide_form(map { "select$_" } qw(formname currency partsgroup projectnumber department warehouse employee language paymentmethod printer));
+  $form->hide_form("$form->{vc}_id", "old$form->{vc}", "quonumber", "old$form->{vc}number");
 
   print qq|
 <table width=100%>
@@ -572,6 +581,7 @@ sub form_header {
                 <th align=right nowrap>|.$locale->text('PO Number').qq|</th>
                 <td><input name=ponumber size=20 value="|.$form->quote($form->{ponumber}).qq|"></td>
               </tr>
+              $onhold
             </table>
           </td>
         </tr>

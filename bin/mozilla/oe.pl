@@ -445,8 +445,8 @@ x <a href="javascript:window.close();">|.$locale->text('Close Window').qq|</a>
 
 sub form_header {
 
-  $checked{open} = ($form->{closed}) ? "" : "checked";
-  $checked{closed} = ($form->{closed}) ? "checked" : "";
+  $checked{open}   = ($form->{closed}) ? ''        : 'checked';
+  $checked{closed} = ($form->{closed}) ? 'checked' : '';
 
   if ($form->{id}) {
     $openclosed = qq|
@@ -490,6 +490,15 @@ sub form_header {
                       <td nowrap><input name=terms class="inputright" size="3" maxlength="3" value=$form->{terms}> <span class="label">|.$locale->text('days').qq|</span></td>
                     </tr>
 |;
+
+  $checked{onhold} = ($form->{onhold}) ? 'checked' : '';
+  $onhold = qq|
+              <tr>
+                <td></td>
+                <th nowrap align="left">
+                  <input name="onhold" type="checkbox" class="checkbox" value="1" $checked{onhold} onChange="doSubmit(document.main)" accesskey="Z"> |.$locale->text('On Hold').qq|
+                </th>
+              </tr>|;
 
   $reference_documents = &references;
 
@@ -830,6 +839,7 @@ sub form_header {
               $employee
               $ordnumber
               $terms
+              $onhold
             </table>
           </td>
         </tr>

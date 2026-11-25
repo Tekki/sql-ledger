@@ -29,7 +29,7 @@ subtest 'Update latest purchase order' => sub {
     ->store_ok('creditremaining', 'ordnumber')
     ->elements_exist('Links to part, planning, history', 'a.part-l', 'a.planning-l', 'a.history-l')
     ->form_fields_exist('currency', 'department', 'employee', 'warehouse')
-    ->accesskeys_exist(qw|? / : * < - A 1 0 . U S T L H N M D V P E R W I Q &|)
+    ->accesskeys_exist(qw|? / : * < - A 1 0 . Z U S T L H N M D V P E R W I Q &|)
     ->press_button_ok('Update',          'update')
     ->params_are('Values unchanged', creditremaining => \'creditremaining')
     ->press_button_ok('Save order',      'save')

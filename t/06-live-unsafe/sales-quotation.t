@@ -29,7 +29,7 @@ subtest 'Update latest sales quotation' => sub {
     ->store_ok('quonumber')
     ->elements_exist('Links to part, planning, history', 'a.part-l', 'a.planning-l', 'a.history-l')
     ->form_fields_exist('currency', 'department', 'employee', 'warehouse')
-    ->accesskeys_exist(qw|? / : * < - A 1 0 U S T N M D V P E R W I O &|)
+    ->accesskeys_exist(qw|? / : * < - A 1 0 Z U S T N M D V P E R W I O &|)
     ->press_button_ok('Update',          'update')
     ->press_button_ok('Save quotation',  'save')
     ->press_button_ok('Confirm changes', 'continue')

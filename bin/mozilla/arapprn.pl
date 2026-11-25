@@ -709,13 +709,10 @@ sub print_options {
   $media =~ s/(<option value="\Q$form->{media}\E")/$1 selected/;
 
   $checked{printed} = "checked" if $form->{"$form->{formname}_printed"};
-  $checked{onhold} = "checked" if $form->{onhold};
 
   if (!$form->{nohold}) {
     $status = qq|
              <tr>
-               <td align=right><input name="onhold" type="checkbox" class="checkbox" value="1" $checked{onhold} onchange="doSubmit(document.main)"></td>
-               <th align=left nowrap>|.$locale->text('On Hold').qq|</th>
                <td align=right><input name="$form->{formname}_printed" type="checkbox" class="checkbox" value="1" $checked{printed}></td>
                <th align=left nowrap>|.$locale->text('Printed').qq|</th>
              </tr>

@@ -569,6 +569,41 @@ sub form_header {
 
   for (qw(terms discountterms)) { $form->{$_} = "" if ! $form->{$_} }
 
+  $terms = qq|
+                <tr>
+                <th align="right" nowrap>|.$locale->text('Terms').qq|</th>
+                <th align=left nowrap>
+                |.$locale->text('Net').qq|
+                <input name="terms" class="inputright" size="3" value="$form->{terms}"> |.$locale->text('days').qq|
+                </th>
+              </tr>
+|;
+
+  if ($form->{type} !~ /credit_/) {
+
+    if ($form->{"selectAR_discount"}) {
+      $terms = qq|
+                <tr>
+                <th align="right" nowrap>|.$locale->text('Terms').qq|</th>
+                <th align=left nowrap>
+                <input name="cashdiscount" class="inputright" size="3" value="|.$form->format_amount(\%myconfig, $form->{cashdiscount}).qq|"> /
+                <input name="discountterms" class="inputright" size="3" value="$form->{discountterms}"> |.$locale->text('Net').qq|
+                <input name="terms" class="inputright" size="3" value="$form->{terms}"> |.$locale->text('days').qq|
+                </th>
+              </tr>
+|;
+    }
+  }
+
+  $checked{onhold} = ($form->{onhold}) ? 'checked' : '';
+  $onhold = qq|
+              <tr>
+                <td></td>
+                <th nowrap align="left">
+                  <input name="onhold" type="checkbox" class="checkbox" value="1" $checked{onhold} onChange="doSubmit(document.main)" accesskey="Z"> |.$locale->text('On Hold').qq|
+                </th>
+              </tr>|;
+
   $tt = $form->{title};
   $form->{title} .= " / $form->{company}";
 
@@ -599,32 +634,6 @@ sub form_header {
           $form->hide_form("${formname}_$_");
         }
       }
-    }
-  }
-
-  $terms = qq|
-                <tr>
-                <th align="right" nowrap>|.$locale->text('Terms').qq|</th>
-                <th align=left nowrap>
-                |.$locale->text('Net').qq|
-                <input name="terms" class="inputright" size="3" value="$form->{terms}"> |.$locale->text('days').qq|
-                </th>
-              </tr>
-|;
-
-  if ($form->{type} !~ /credit_/) {
-
-    if ($form->{"selectAR_discount"}) {
-      $terms = qq|
-                <tr>
-                <th align="right" nowrap>|.$locale->text('Terms').qq|</th>
-                <th align=left nowrap>
-                <input name="cashdiscount" class="inputright" size="3" value="|.$form->format_amount(\%myconfig, $form->{cashdiscount}).qq|"> /
-                <input name="discountterms" class="inputright" size="3" value="$form->{discountterms}"> |.$locale->text('Net').qq|
-                <input name="terms" class="inputright" size="3" value="$form->{terms}"> |.$locale->text('days').qq|
-                </th>
-              </tr>
-|;
     }
   }
 
@@ -689,6 +698,7 @@ sub form_header {
                 <th align=right nowrap>|.$locale->text('PO Number').qq|</th>
                 <td><input name="ponumber" size="20" value="|.$form->quote($form->{ponumber}).qq|"></td>
               </tr>
+              $onhold
             </table>
           </td>
         </tr>

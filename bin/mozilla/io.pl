@@ -1477,13 +1477,8 @@ sub print_options {
       }
     }
 
-    $checked{onhold} = "checked" if $form->{onhold};
     print qq|
              <table>
-               <tr>
-                 <td align=right><input name="onhold" type="checkbox" class="checkbox" value="1" $checked{onhold} onChange="doSubmit(document.main)"></td>
-                 <th align=left nowrap>|.$locale->text('On Hold').qq|</th>
-               </tr>
                <tr>
                  <td align=right><input name="$form->{formname}_printed" type="checkbox" class="checkbox" value="1" $checked{printed}></td>
                  <th align=left nowrap>|.$locale->text('Printed').qq|</th>

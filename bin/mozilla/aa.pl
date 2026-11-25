@@ -590,6 +590,15 @@ sub form_header {
 |;
   }
 
+  $checked{onhold} = $form->{onhold} ? 'checked' : '';
+  $onhold = qq|
+              <tr>
+                <td></td>
+                <th nowrap align="left">
+                  <input name="onhold" type="checkbox" class="checkbox" value="1" $checked{onhold} onChange="doSubmit(document.main)" accesskey="Z"> |.$locale->text('On Hold').qq|
+                </th>
+              </tr>|;
+
   if ($form->{batch} && ! $form->{approved}) {
     $transdate = qq|
                 <td>$form->{transdate}</td>
@@ -631,8 +640,6 @@ sub form_header {
                 <td>$description</td>
               </tr>
 |;
-
-  $checked{onhold} = ($form->{onhold}) ? "checked" : "";
 
   $title = $form->quote($form->{title});
 
@@ -724,6 +731,7 @@ print qq|
                 <td><input name=ponumber size=20 value="|.$form->quote($form->{ponumber}).qq|"></td>
               </tr>
               $terms
+              $onhold
             </table>
           </td>
         </tr>
